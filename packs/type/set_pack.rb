@@ -10,25 +10,7 @@ class Wagn::Renderer
   define_view(:core , :type=>'set') do |args|
     headings = ['Content','Type']
     setting_groups = card.setting_names_by_group
-=begin    
-    header= content_tag(:tr, :class=>'set-header') do
-      content_tag(:th, :colspan=>(headings.size+1)) do
-        count = card.count
-        span(:class=>'set-label') { card.label } +
-        span(:class=>'set-count') do
-          raw( ' (' + (count == 1 ? link_to_page('1', card.item_names.first) : count.to_s) + ') ' )
-        end + "\n" +
-        (count<2 ? '' : span(:class=>'set-links') do
-          raw(
-            ' list by: ' + 
-            [:name, :create, :update].map do |attrib|
-              link_to_page( raw(attrib.to_s), "#{card.name}+by_#{attrib}")
-            end.join( "\n" )
-          )
-        end)
-      end 
-    end
-=end
+
     body = [:perms, :look, :com, :pointer, :other].map do |group|
       
       next unless setting_groups[group]

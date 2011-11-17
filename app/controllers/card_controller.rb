@@ -1,7 +1,7 @@
 class CardController < ApplicationController
   helper :wagn, :card
 
-  EDIT_ACTIONS = [ :edit, :update, :rollback, :save_draft, :watch, :unwatch, :new_account, :create_account, :update_account ]
+  EDIT_ACTIONS = [ :edit, :update, :rollback, :save_draft, :watch, :unwatch, :create_account, :update_account ]
   LOAD_ACTIONS =  EDIT_ACTIONS + [ :show, :index, :mine, :comment, :remove, :view, :changes, :options, :related ]
 
   before_filter :index_preload, :only=> [ :index ]
@@ -205,12 +205,6 @@ class CardController < ApplicationController
     render :action=>'options'
   end
 
-
-  def new_account
-    System.ok!(:create_accounts) && @card.ok?(:update)
-  end
-
-
   def create_account
     System.ok!(:create_accounts) && @card.ok?(:update)
     email_args = { :subject => "Your new #{System.site_title} account.",   #ENGLISH
@@ -218,13 +212,12 @@ class CardController < ApplicationController
     @user, @card = User.create_with_card(params[:user],@card, email_args)
     raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
     @extension = User.new(:email=>@user.email)
-    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
+#    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
     @subtab = :account
     render :action=>'options'
   end
 
-
-
+  
   #-------- ( MISFIT METHODS )
   def watch
     watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )

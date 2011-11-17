@@ -3,21 +3,11 @@
   margin-bottom: 20px;
   padding: 5px 15px;
 }
+.set-select {
+  margin: 10px;
+}
 .set-rules {
   width: 100%;
-}
-.set-rules .set-header th {
-  background: #ddd;
-  font-style: normal;
-  color: #666;
-  border: 0;
-}
-.set-rules .set-header .set-label {
-  font-weight: bold;
-}
-.set-rules .set-header .set-links {
-  white-space: nowrap;
-  float:right;
 }
 .set-rules th {
   background: #aaa;

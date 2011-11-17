@@ -56,17 +56,17 @@ module Wagn::Set::Self
   
   module XAddHelp
     def self.setting_group() :com           end
-    def self.setting_seq()   2              end
+    def self.setting_seq()   1              end
   end
   
   module XEditHelp
     def self.setting_group() :com           end
-    def self.setting_seq()   3              end
+    def self.setting_seq()   2              end
   end
 
   module XSend
     def self.setting_group() :com           end
-    def self.setting_seq()   5              end
+    def self.setting_seq()   3              end
   end  
   
   module XThanks
@@ -84,12 +84,12 @@ module Wagn::Set::Self
 
   module XAccountable
     def self.setting_group() :other        end
-    def self.setting_seq()   6             end
+    def self.setting_seq()   2             end
   end
 
   module XCaptcha
     def self.setting_group() :other        end
-    def self.setting_seq()   6             end
+    def self.setting_seq()   3             end
   end
 
 end

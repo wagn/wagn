@@ -8,7 +8,7 @@
     <div class="set-selection">
       <%= form_tag "/card/options/#{slot.card.id}/settings", :method=>'get', :remote=>true, :class=>'standard-slotter' %>
       <label>Set:</label>
-      <select name="current_set" class="set_select">
+      <select name="current_set" class="set-select">
       <%- related_sets.each do |set_name| %>
         <%- set_card = Card.fetch set_name %>
         <option value="<%= set_card.key %>"<%= set_card.key==current_set ? ' selected="selected"' : ''%>><%= set_card.label %></option>
@@ -23,7 +23,8 @@
   
   <% if !card.extension_type && System.toggle(card.setting('accountable')) && System.ok?(:create_accounts) && card.ok?(:update) %>
     <div class="new-account-link">
-      <%= link_to %{Add a sign-in account for "#{card.name}"}, "/options/new_account/#{card.id}", :class=>'new-account-link', :remote=>true%>
+      <%= link_to %{Add a sign-in account for "#{card.name}"}, "/card/options/#{card.id}/new_account",
+        :class=>'standard-slotter new-account-link', :remote=>true%>
     </div>
   <% end %>
 </div>

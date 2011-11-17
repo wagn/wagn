@@ -1,10 +1,12 @@
 class Wagn::Renderer
   
   define_view(:core, :type=>'pointer') do |args|
+    args ||= {}
+    action = args[:action] || :edit
     %{<div class="pointer-list"> } +
       pointer_item(self, (@item_view || 'closed')) +
     "</div>" + 
-    link_to( 'add/edit', "/card/edit/#{card.id}",#ENGLISH 
+    link_to( 'add/edit', "/card/#{action}/#{card.id}",#ENGLISH 
       :class=>'standard-slotter add-edit-item',
       :remote=>true
     )
@@ -23,10 +25,12 @@ class Wagn::Renderer
   end
 
   define_view(:list, :type=>'pointer') do |args|
+    args ||= {}
     items = args[:items] || card.item_names(:context=>:raw)
     items = [''] if items.empty?
+    extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
 
-    %{<ul class="pointer-list-ul"> } +
+    %{<ul class="pointer-list-editor #{extra_css_class}"> } +
     items.map do |item|
       %{<li class="pointer-li"> } +
         text_field_tag( 'pointer_item', item, :class=>'pointer-item-text', :id=>'asdfsd' ) +

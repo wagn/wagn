@@ -16,10 +16,10 @@ jQuery.fn.extend {
     $.each map, (selector, fn)-> 
       this_form.setContentFields(selector, fn)
   setContentFields: (selector, fn) ->
-    $.each this.find(selector), -> 
+    $.each this.find(selector), ->
       $(this).setContentField(fn)     
   setContentField: (fn)->
-    this.closest('.editor').find('.card-content')[0].value = fn.call this[0]
+    this.closest('.card-editor').find('.card-content')[0].value = fn.call this[0]
 }
 
 #~~~~~ ( EVENTS )
@@ -68,6 +68,9 @@ $('.live-cardtype-field').live 'change', ->
       field.setSlotContent xhr.responseText
       wagn.initializeEditors()
   }
+
+$('.watch-toggle').live 'ajax:success', (event, data) ->
+  $(this).closest('.watch-link').html data
 
 $('.edit-cardtype-field').live 'change', ->
   $(this).closest('form').submit()

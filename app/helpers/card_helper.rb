@@ -12,7 +12,7 @@ module CardHelper
       :id=>@card.id, 
       :rev=>revision,
       :mode=>(mode || params[:mode] || true)
-    }, :remote=>true 
+    }, :class=>'standard-slotter', :remote=>true 
   end
 
   def rollback
@@ -21,7 +21,7 @@ module CardHelper
         :action=>'rollback',
         :id=>@card.id,
         :rev=>@revision_number,
-      }, :remote=>true
+      }, :class=>'standard-slotter', :remote=>true
     end
   end
 
@@ -38,7 +38,7 @@ module CardHelper
   def forward
     if @revision_number < @card.revisions.length
       revision_link('Newer', @revision_number +1, 'to_next_revision', 'F' ) +
-        " <small>(#{@revision.card.revisions.length - @revision_number})</small> "
+        raw(" <small>(#{raw(@revision.card.revisions.length - @revision_number)})</small> ")
     else
       'Newer <small>(0)</small>'
     end
@@ -47,7 +47,7 @@ module CardHelper
   def back_for_revision
     if @revision_number > 1
       revision_link('Older',@revision_number - 1, 'to_previous_revision') +
-        " <small>(#{@revision_number - 1})</small>"
+        raw("<small>(#{@revision_number - 1})</small>")
     else
       'Older <small>(0)</small>'
     end

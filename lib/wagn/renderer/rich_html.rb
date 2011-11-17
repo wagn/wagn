@@ -220,9 +220,8 @@ module Wagn
 
     def link_to_menu_action( to_action)
       klass = { 'edit' => 'edit-content-link init-editors'}
-      menu_action = (%w{ show update }.member?(to_action) ? 'view' : to_action)
       content_tag :li, link_to_action( to_action.capitalize, to_action,
-        :class=> "standard-slotter #{klass[to_action]} #{menu_action==to_action ? ' current' : ''}"
+        :class=> "standard-slotter #{klass[to_action]}" #{}" #{menu_action==to_action ? ' current' : ''}"
       )
     end
 
@@ -247,10 +246,10 @@ module Wagn
     def content_field(form,options={})
       @form = form
       @nested = options[:nested]
-      pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
-      User.as :wagbot do #why wagbot here??
-        pre_content + self.render_editor
-      end
+      raw(%{ <div class="content-editor">} +
+      ((card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : '') +
+      self.render_editor +
+      '</div>')
     end
     
     def form_for_multi

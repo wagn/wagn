@@ -228,6 +228,7 @@ class CardController < ApplicationController
   #-------- ( MISFIT METHODS )
   def watch
     watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
+    watchers = watchers.refresh if watchers.frozen?
     watchers.add_item User.current_user.card.name
     #flash[:notice] = "You are now watching #{@card.name}"
     ajax? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
@@ -235,6 +236,7 @@ class CardController < ApplicationController
 
   def unwatch
     watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
+    watchers = watchers.refresh if watchers.frozen?
     watchers.drop_item User.current_user.card.name
     #flash[:notice] = "You are no longer watching #{@card.name}"
     ajax? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view

@@ -676,14 +676,14 @@ body#wagn .card-slot.recent-changes h2 {
 }
 
 /*-------------( Pointer )--------*/
-.pointer-list-ul input {
+.pointer-list-editor input {
   float: left;
   width: 60%;
 }
-.pointer-list-ul li {
+.pointer-list-editor li {
   list-style: none;
 }
-.pointer-list-ul .pointer-item-delete {
+.pointer-list-editor .pointer-item-delete {
   margin-left: 4px;
   font-weight: bold;
   color: #933;

@@ -144,6 +144,7 @@ module Wagn::Model::Permissions
 
   def approve_comment
     approve_task :comment, 'comment on'
+    warn "approving comment for #{name}.  operation approved = #{operation_approved}.  template?  #{template?}; hard_template #{hard_template.inspect}"
     if operation_approved
       deny_because "No comments allowed on template cards" if template?
       deny_because "No comments allowed on hard templated cards" if hard_template

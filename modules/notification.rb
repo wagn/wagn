@@ -113,9 +113,13 @@ module Notification
       me = User.current_user.card.cardname   
 
       if card.card_watchers.include?(me) or card.typecode != 'Cardtype' && card.watchers.include?(me)
-        link_to_action( "unwatch#{type_link}", 'unwatch', :title => "stop getting emails about changes to #{card.name}#{type_msg}")
+        link_to_action( "unwatch#{type_link}", 'unwatch', :class=>'watch-toggle',
+          :title => "stop getting emails about changes to #{card.name}#{type_msg}"
+        )
       else
-        link_to_action( "watch#{type_link}", 'watch', :title=>"get emails about changes to #{card.name}#{type_msg}" )
+        link_to_action( "watch#{type_link}", 'watch', :class=>'watch-toggle',
+          :title=>"get emails about changes to #{card.name}#{type_msg}"
+        )
       end
     end
   end

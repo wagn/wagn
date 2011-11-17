@@ -74,7 +74,7 @@ class Wagn::Renderer::RichHtml
   define_view(:edit_in_form) do |args|
     eform = form_for_multi
     %{
-<div class="edit-area in-multi RIGHT-#{ card.cardname.tag_name.to_cardname.css_name }">
+<div class="edit-area in-multi card-editor RIGHT-#{ card.cardname.tag_name.to_cardname.css_name }">
   <div class="label-in-multi">
     <span class="title">
       #{ link_to_page raw(fancy_title(self.showname || card)), (card.new_card? ? card.cardname.tag_name : card.name) }

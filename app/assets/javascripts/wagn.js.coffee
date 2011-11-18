@@ -1,10 +1,9 @@
-wagn = {
-  initializeEditors : (map) ->
-    map = wagnConf.editorInitFunctionMap unless map?
+
+wagn.initializeEditors = (map) ->
+    map = wagn.conf.editorInitFunctionMap unless map?
     $.each map, (selector, fn) ->
       $.each $.find(selector), ->
         fn.call this
-}
 
 setInterval (-> $('.card-form').setContentFieldsFromMap()), 20000
 #window.setInterval "alert('hi')", 3000
@@ -28,7 +27,7 @@ jQuery.fn.extend {
     }
 
   setContentFieldsFromMap: (map) ->
-    map = wagnConf.editorContentFunctionMap unless map?
+    map = wagn.conf.editorContentFunctionMap unless map?
     this_form = $(this)
     $.each map, (selector, fn)-> 
       this_form.setContentFields(selector, fn)
@@ -48,19 +47,19 @@ jQuery.fn.extend {
 $(window).load -> wagn.initializeEditors()
 
 $('body').delegate '.standard-slotter', "ajax:success", (event, data) ->
-  #warn "standard slotter success"
+  warn "standard slotter success"
   $(this).setSlotContent data
 
 $('body').delegate '.standard-slotter', "ajax:error", (event, xhr) ->
-  #warn "standard slotter error"
+  warn "standard slotter error"
   result = xhr.responseText
   if xhr.status == 303
     window.location=result
   else 
     $(this).notify result or $(this).setSlotContent result
 
-#$('body').delegate '.standard-slotter', "ajax:complete", (event, xhr) ->
-  #warn "standard slotter complete"
+$('body').delegate '.standard-slotter', "ajax:complete", (event, xhr) ->
+  warn "standard slotter complete"
 
 $('.init-editors').live 'ajax:success', ->
   wagn.initializeEditors()
@@ -108,5 +107,4 @@ $('body').delegate '.card-form', 'submit', ->
 
 warn = (stuff) -> console.log stuff if console?
 
-
-window.wagn = wagn
+warn "this got loaded"

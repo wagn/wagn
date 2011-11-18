@@ -19,16 +19,31 @@ class Wagn::Renderer
       rss_href = rcard.name=='*search' ? "#{System.root_path}/search/#{ params[:_keyword] }.rss" : template.url_for_page( rcard.name, :format=>:rss )
       bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{rss_href} />}
     end
-    
+
     # CSS
-    bits += [ stylesheet_link_tag('application'), stylesheet_link_tag('print', :media=>'print') ]
+    bits += [ 
+      stylesheet_link_tag('application-all'),
+      stylesheet_link_tag('application-print', :media=>'print') 
+    ]
+    
     if star_css_card = Card['*css']
       bits << %{<link href="#{System.root_path}/*css.css?#{ star_css_card.current_revision_id }" media="screen" type="text/css" rel="stylesheet" />}
     end
 
+        blits = %(
+    <script>
+  //    var wagn = window.wagn;
+    </script>      
+          )
+    #      wagn.tinyMCEConfig : { #{System.setting('*tiny mce')} };
+          #{ (ga_key=System.setting("*google analytics key")) ? "wagn.googleAnalyticsKey = '#{ga_key}'" : '' } 
+
+
+
     #Javscript
     bits << javascript_include_tag('application')
-    bits << javascript_include_tag("/tinymce/jscripts/tiny_mce/tiny_mce.js") 
+    bits << javascript_include_tag("/tinymce/jscripts/tiny_mce/tiny_mce.js")
+    
     
     bits.join("\n")
   end

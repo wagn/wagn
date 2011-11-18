@@ -273,12 +273,14 @@ ul.pointer {
   margin: 0px;
   padding: 0px;
 }
-.edit-area .label not(.fieldset) {
+.edit-area .label {
+/* not(.fieldset)  did not compile */
   display: block;
   margin: 2px;
   font-size: 12px;
 }
-.edit-area .field not(.fieldset) {
+.edit-area .field {
+/* not(.fieldset)  did not compile */
   display: block;
   margin: 4px;
 }

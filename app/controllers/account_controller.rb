@@ -99,24 +99,6 @@ class AccountController < ApplicationController
     end
   end
 
-  def update
-    load_card
-    @user = @card.extension or raise("extension gotta be a user")    #ENGLISH
-    element_id = params[:element]
-
-    if @user.update_attributes params[:user]
-      render :update do |page|
-        page.wagn.card.find("#{element_id}").continue_save()
-      end
-    else
-      error_message = render_to_string :inline=>'<%= error_messages_for @user %>'
-      render :update do |page|
-        page.wagn.messenger.note "Update user failed" + error_message  #ENGLISH
-
-      end
-    end
-  end
-
 #  def deny_all  ## DEPRECATED:  this method will not be long for this world.
 #    if System.ok?(:administrate_users)
 #      Card::InvitationRequest.find_all_by_trash(false).each do |card|

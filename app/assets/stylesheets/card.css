@@ -239,12 +239,6 @@ a.email-link {
 .new-type {
   float: right;
 }
-.editor {
-  display: block;
-}
-.card-slot.new-card .editor {
-  padding: 0px;
-}
 .editor .revision-navigation,
 .editor .autosave-alert {
   display: none

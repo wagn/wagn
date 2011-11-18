@@ -7,11 +7,11 @@
 %>
 
 
-<%= wrap_slot(slot, slot_args) do |s| %>
+<%= wrap_slot(slot, slot_args) do |slot| %>
     <%= error_messages_for card %>
 
     <%= form_for card, :url=>"/card/create", :remote=>true, :html=>{ :class=>'card-form card-new-form standard-slotter' } do |form| %>
-      <%- s.form = form %>
+      <%- slot.form = form %>
       <%= hidden_field_tag :home_view, params[:home_view] || :open %>
       <% if redirect %><%= hidden_field_tag :redirect, redirect %><% end %>
     
@@ -21,7 +21,7 @@
         <% else %>
           <span class="new-type">
             <label>type:</label>
-            <%= s.typecode_field :class=>'cardtype-field new-cardtype-field live-cardtype-field', :href => '/card/new' %>
+            <%= slot.typecode_field :class=>'cardtype-field new-cardtype-field live-cardtype-field', :href => '/card/new' %>
           </span>
         <% end %>
         
@@ -29,7 +29,7 @@
           <label>name:</label>
           <% if card.cardname.blank? || Card.exists?(card.cardname) %>
             <% unless card.setting_card('autoname') %>
-              <span class="name-area"><%= raw s.name_field(form) %></span>
+              <span class="name-area"><%= raw slot.name_field(form) %></span>
             <% end %>
           <% else %>
             <%= hidden_field_tag 'card[name]', card.name %>
@@ -39,13 +39,13 @@
       </div>
 
       <% if instruction=card.setting_card('add help', 'edit help')  %>
-        <div class="instruction"><%= raw s.subrenderer(instruction).render_core %></div>
+        <div class="instruction"><%= raw slot.subrenderer(instruction).render_core %></div>
       <% end %>
 
 
       <div class="edit-area">
-        <div class="editor">
-          <%= raw s.render(:edit) %>
+        <div class="card-editor editor">
+          <%= raw slot.render(:edit) %>
         </div>
 
         <div class="edit-button-area">
@@ -56,6 +56,6 @@
       </div>
     <% end %>
 
-  <%= raw s.notice %>
+  <%= raw slot.notice %>
 <% end %>
 

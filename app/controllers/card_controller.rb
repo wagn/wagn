@@ -104,9 +104,7 @@ class CardController < ApplicationController
 
   def save_draft
     @card.save_draft( params[:card][:content] )
-    render(:update) do |page|
-      page.wagn.messenger.log("saved draft of #{@card.name}")
-    end
+    render :text=>'success'
   end
 
   def comment

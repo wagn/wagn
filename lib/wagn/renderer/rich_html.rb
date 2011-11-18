@@ -22,23 +22,22 @@ module Wagn
     LAYOUTS = { 'default' => %{
   <!DOCTYPE HTML>
   <html>
-    <head> {{*head|core}} </head>
+    <head> {{*head}} </head>
 
     <body id="wagn">
       <div id="menu">
-        [[/ | Home]]   [[/recent | Recent]]   {{*navbox|core}} {{*account links|core}}
+        [[/ | Home]]   [[/recent | Recent]]   {{*navbox}} {{*account links}}
       </div>
 
       <div id="primary"> {{_main}} </div>
 
       <div id="secondary">
         <div id="logo">[[/ | {{*logo}}]]</div>
-        {{*sidebar|core}}
-        <div id="credit"><a href="http://www.wagn.org" title="Wagn {{*version|bare}}">Wagn.</a> We're on it.</div>
-        {{*alerts|core}}
+        {{*sidebar}}
+        <div id="credit"><a href="http://www.wagn.org" title="Wagn {{*version}}">Wagn.</a> We're on it.</div>
+        {{*alerts}}
       </div>
 
-      {{*foot|core}}
     </body>
   </html> },
 
@@ -46,14 +45,14 @@ module Wagn
   <!DOCTYPE HTML>
   <html>
     <head> {{*head}} </head>
-    <body id="wagn"> {{_main}} {{*foot}} </body>
+    <body id="wagn"> {{_main}} </body>
   </html> },
 
           'simple' => %{
   <!DOCTYPE HTML>
   <html>
     <head> {{*head}} </head>
-    <body> {{_main}} {{*foot}} </body>
+    <body> {{_main}} </body>
   </html> },
 
           'none' => '{{_main}}',
@@ -74,7 +73,6 @@ module Wagn
         <div id="credit">Wheeled by [[http://www.wagn.org|Wagn]] v. {{*version}}</div>
       </div>
 
-      {{*foot}}
     </body>
   </html> },
 
@@ -122,6 +120,11 @@ module Wagn
     
       attributes = { :class => classes.join(' ') }
       [:style, :home_view, :item].each { |key| attributes[key] = args[key] }
+      
+      if card
+        attributes[:card_id]  = card.id
+        attributes[:card_key] = card.key
+      end
     
       div( attributes ) { yield }
     end

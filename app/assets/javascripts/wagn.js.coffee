@@ -6,9 +6,26 @@ wagn = {
         fn.call this
 }
 
+setInterval (-> $('.card-form').setContentFieldsFromMap()), 20000
+#window.setInterval "alert('hi')", 3000
+
 jQuery.fn.extend {
   slot: -> @closest '.card-slot'
   setSlotContent: (val) -> @slot().replaceWith val
+  notify: (message) -> 
+    notice = @slot().find('.notice')
+    return false unless notice[0]
+    notice.html(message)
+    true
+
+  autosave: ->
+    slot = @slot()
+    return if @attr('no-autosave')
+    href = '/card/save_draft/' + slot.attr('card_id')
+    $.ajax href, {
+      data : { 'card[content]' : @val() },
+      complete: (xhr) -> slot.notify('draft saved') 
+    }
 
   setContentFieldsFromMap: (map) ->
     map = wagnConf.editorContentFunctionMap unless map?
@@ -19,7 +36,11 @@ jQuery.fn.extend {
     $.each this.find(selector), ->
       $(this).setContentField(fn)     
   setContentField: (fn)->
-    this.closest('.card-editor').find('.card-content')[0].value = fn.call this[0]
+    field = this.closest('.card-editor').find('.card-content')
+    init_val = field.val()
+    new_val = fn.call this[0]
+    field.val new_val
+    field.change() if init_val != new_val 
 }
 
 #~~~~~ ( EVENTS )
@@ -27,19 +48,19 @@ jQuery.fn.extend {
 $(window).load -> wagn.initializeEditors()
 
 $('body').delegate '.standard-slotter', "ajax:success", (event, data) ->
-  wagn.obj = this
+  #warn "standard slotter success"
   $(this).setSlotContent data
 
 $('body').delegate '.standard-slotter', "ajax:error", (event, xhr) ->
+  #warn "standard slotter error"
   result = xhr.responseText
-  slot = $(this).slot()
-  notice = slot.find('.notice')
   if xhr.status == 303
     window.location=result
-  else if notice[0]
-    notice.html(result)
-  else  
-    slot.setSlotContent result
+  else 
+    $(this).notify result or $(this).setSlotContent result
+
+#$('body').delegate '.standard-slotter', "ajax:complete", (event, xhr) ->
+  #warn "standard slotter complete"
 
 $('.init-editors').live 'ajax:success', ->
   wagn.initializeEditors()
@@ -75,8 +96,14 @@ $('.watch-toggle').live 'ajax:success', (event, data) ->
 $('.edit-cardtype-field').live 'change', ->
   $(this).closest('form').submit()
 
+$('.autosave .card-content').live 'change', ->
+  content_field = $(this)
+  setTimeout ( -> content_field.autosave() ), 500
+
+
 $('body').delegate '.card-form', 'submit', ->
   $(this).setContentFieldsFromMap()
+  $(this).find('.card-content').attr('no-autosave','true')
   true
 
 warn = (stuff) -> console.log stuff if console?

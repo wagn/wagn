@@ -40,6 +40,7 @@ td.rule-setting {
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: inherit;
+  background: inherit;
 }
 .rule-content-container.closed-view .pointer-list,
 .rule-content-container.closed-view .search-list,

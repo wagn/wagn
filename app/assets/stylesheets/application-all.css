@@ -1,7 +1,6 @@
 /**
  * application-all.css
  *
- *= require_self
  *= require page
  *= require defaults
  *= require card

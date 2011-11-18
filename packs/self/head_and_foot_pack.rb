@@ -14,20 +14,17 @@ class Wagn::Renderer
       bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="#{System.root_path}/card/edit/#{ rcard.cardname.to_url_key }"/>}
     end
     
-    # RSS
+    # RSS # move to packs!
     if rcard.typecode == 'Search'
       rss_href = rcard.name=='*search' ? "#{System.root_path}/search/#{ params[:_keyword] }.rss" : template.url_for_page( rcard.name, :format=>:rss )
       bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{rss_href} />}
     end
 
     # CSS
-    bits += [ 
-      stylesheet_link_tag('application-all'),
-      stylesheet_link_tag('application-print', :media=>'print') 
-    ]
-    
-    if star_css_card = Card['*css']
-      bits << %{<link href="#{System.root_path}/*css.css?#{ star_css_card.current_revision_id }" media="screen" type="text/css" rel="stylesheet" />}
+    bits << stylesheet_link_tag('application-all')
+    bits << stylesheet_link_tag('application-print', :media=>'print')
+    if css_card = Card['*css']
+      bits << stylesheet_link_tag("#{System.root_path}/*css.css?#{ css_card.current_revision_id }")
     end
 
     #Javscript
@@ -38,10 +35,8 @@ class Wagn::Renderer
       #{ (ga_key=System.setting("*google analytics key")) ? "wagn.googleAnalyticsKey = '#{ga_key}'" : '' } 
     </script>      
           )
-
     bits << javascript_include_tag('application')
-    bits << javascript_include_tag("/tinymce/jscripts/tiny_mce/tiny_mce.js")
-    
+
     bits.join("\n")
   end
   alias_view(:raw, {:name=>'*head'}, :core)

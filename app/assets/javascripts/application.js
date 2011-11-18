@@ -7,6 +7,7 @@
 //= require jquery
 //= require jquery-ui
 //= require jquery_ujs
+//= require tinymce/jscripts/tiny_mce/tiny_mce
 //= require wagn_conf
 //= require wagn
 

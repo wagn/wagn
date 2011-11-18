@@ -43,7 +43,7 @@ module Wagn::Model
       def trunkless?()               false end
       def junction_only?()           false end
       def label(name)                ''    end
-      def prototype_args()           {}    end
+      def prototype_args(base)       {}    end
     end
 
     def css_name()

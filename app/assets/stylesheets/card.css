@@ -1,4 +1,4 @@
-.open-view {
+.open-view, .closed-view {
   width: 100%;  /*needed for ie6, or..?*/
   margin: 0px;
   background: #fff;

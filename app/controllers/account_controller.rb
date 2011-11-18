@@ -147,7 +147,7 @@ class AccountController < ApplicationController
     end
 
     def failed_login(message)
-      flash[:warning] = message
+      flash[:notice] = message
       render :action=>'signin', :status=>403
     end
 

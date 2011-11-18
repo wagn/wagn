@@ -2,7 +2,8 @@
  * application-all.css
  *
  *= require_self
- *= require_tree ./all
- */
- 
- /* timestamp */
+ *= require page
+ *= require defaults
+ *= require card
+ *= require settings
+  */

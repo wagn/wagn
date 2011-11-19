@@ -5,4 +5,6 @@
  *= require defaults
  *= require card
  *= require settings
+ *= require jquery-ui-smoothness
+ 
   */

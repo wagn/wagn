@@ -92,10 +92,10 @@ class System
     # FIXME stick this in session? cache it somehow??
     def ok_hash
       usr = User.as_user
-      ok_hash = self.cache.read('ok_hash') || self.cache.write('ok_hash', {})
+      ok_hash = self.cache.read('ok_hash') || {}
       #warn "user = #{usr.inspect}"
       if (h = ok_hash[usr.id]).nil?
-        ok_hash = {} if ok_hash.frozen? #HACK!! FIXME SOON!
+        ok_hash = ok_hash.dup if ok_hash.frozen?
         ok_hash[usr.id] = begin
           ok = {}
           ok[:role_ids] = {}
@@ -105,6 +105,7 @@ class System
           end
           ok
         end || false
+        self.cache.write 'ok_hash', ok_hash
       else
         h
       end
@@ -113,11 +114,11 @@ class System
     def always_ok?
       return false unless usr = User.as_user
       return true if usr.login == 'wagbot' #cannot disable
-      aok_hash = self.cache.read('always') || self.cache.write('always', {})
-      aok_hash = {} if aok_hash.frozen? #HACK!! FIXME SOON!
-#      Rails.logger.info "aok_hash = #{aok_hash.inspect}"
+      aok_hash = self.cache.read('always') || {}
       if (c = aok_hash[usr.id]).nil?
-        aok_hash[usr] = usr.all_roles.detect { |r| r.codename == 'admin' } || false
+        aok_hash = aok_hash.dup if aok_hash.frozen?
+        aok_hash[usr.id] = usr.all_roles.detect { |r| r.codename == 'admin' } || false
+        self.cache.write 'always', aok_hash
       else
         c
       end

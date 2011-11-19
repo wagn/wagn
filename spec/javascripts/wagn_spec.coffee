@@ -25,7 +25,7 @@ describe "card-form", ->
     expect($('.card-content').slot()).toHaveClass 'card-slot'
     
   it "should be able to populate slot from any element within", ->
-    $('.card-content').setSlotContent 'whoopee'
+    $('.card-content').setSlotContent '<div class="card-slot">whoopee</div>'
     expect($('.card-slot')).toHaveHtml 'whoopee'
 
     

@@ -1,3 +1,5 @@
+window.wagn ||= {} #needed to run w/o *head.  eg. jasmine
+
 wagn.conf = {
   
   editorContentFunctionMap : {
@@ -11,7 +13,8 @@ wagn.conf = {
   }
   
   editorInitFunctionMap : {
-    '.tinymce-textarea' : -> wagn.conf.initTinyMCE()
+    '.tinymce-textarea' : -> wagn.conf.initTinyMCE(),
+    '.date-editor'      : -> $(this).datepicker({ dateFormat: 'yy-mm-dd' })
   }
 
   initTinyMCE: ()->

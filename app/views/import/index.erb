@@ -1,7 +1,0 @@
-<% form_tag :action=>"import" do %>
-  <div>Cardtype</div> <%#ENGLISH%>
-  <%= select_tag('cardtype', cardtype_options_for_select(params[:cardtype]))  %>
-  <div>Data: (csv format)</div>
-  <%= text_area_tag 'data', {}, :columns=>100, :rows=>40 %>
-  <%= submit_tag 'Import' %>
-<% end %>

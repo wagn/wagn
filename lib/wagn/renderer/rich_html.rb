@@ -1,10 +1,7 @@
 module Wagn
   class Renderer::RichHtml < Renderer
 
-    include Recaptcha::ClientHelper
-
     attr_accessor  :options_need_save, :start_time, :skip_autosave
-
 
     def initialize(card, opts=nil)
       super

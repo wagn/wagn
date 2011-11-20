@@ -66,7 +66,7 @@ class Wagn::Renderer::RichHtml
     wrap(:missing, args) do
       link_to raw("Add <strong>#{ @showname || card.name }</strong>"),
         "/card/new?card[name]=#{CGI.escape(card.name)}",
-        :class=>'standard-slotter init-editors', :remote=>true,
+        :class=>'standard-slotter init-editors', :remote=>true
     end
   end
   

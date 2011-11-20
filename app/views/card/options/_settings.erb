@@ -1,0 +1,32 @@
+<%-  related_sets = slot.card.related_sets
+     current_set = params[:current_set] || related_sets[0]   %>
+
+<%= raw( slot.options_submenu(:settings) ) %>
+
+<div class="settings-tab">
+  <%- if !related_sets.empty? %>
+    <div class="set-selection">
+      <%= form_tag "/card/options/#{slot.card.id}/settings", :method=>'get', :remote=>true, :class=>'standard-slotter' %>
+      <label>Set:</label>
+      <select name="current_set" class="set-select">
+      <%- related_sets.each do |set_name| %>
+        <%- set_card = Card.fetch set_name %>
+        <option value="<%= set_card.key %>"<%= set_card.key==current_set ? ' selected="selected"' : ''%>><%= set_card.label %></option>
+      <%- end %>
+      </select>
+    </div>
+  <%- end %>
+  
+  <div class="current-set">
+    <%= raw( slot.subrenderer(Card.fetch current_set).render :content ) %>
+  </div>
+  
+  <% if !card.extension_type && System.toggle(card.setting('accountable')) && System.ok?(:create_accounts) && card.ok?(:update) %>
+    <div class="new-account-link">
+      <%= link_to %{Add a sign-in account for "#{card.name}"}, "/card/options/#{card.id}/new_account",
+        :class=>'standard-slotter new-account-link', :remote=>true%>
+    </div>
+  <% end %>
+</div>
+
+

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.expand_path('../test_helper', File.dirname(__FILE__))
 
 # Re-raise errors caught by the controller.
 class XmlrestController
@@ -174,22 +174,24 @@ class XmlrestControllerTest < ActionController::TestCase
   end
 
   def test_multi_create_without_name
-    post :post, "card"=>{"name"=>"", "type"=>"Form"},
-     "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}},
-     "content_to_replace"=>"",
-     "context"=>"main_1",
-     "multi_edit"=>"true", "view"=>"open"
+    post :post, "card"=>{
+        "name"=>"", 
+        "type"=>"Form",
+        "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}
+      },
+     "view"=>"open"
     assert_equal "can't be blank", assigns['card'].errors["name"]
     assert_response 422
   end
 
 
   def test_multi_create
-    post :post, "card"=>{"name"=>"sss", "type"=>"Form"},
-     "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}},
-     "content_to_replace"=>"",
-     "context"=>"main_1",
-     "multi_edit"=>"true", "view"=>"open"
+    post :post, "card"=>{
+        "name"=>"sss",
+        "type"=>"Form",
+        "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}
+      },
+     "view"=>"open"
     assert_response 418
     assert Card.find_by_name("sss")
     assert Card.find_by_name("sss+text")

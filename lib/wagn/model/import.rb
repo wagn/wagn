@@ -1,3 +1,4 @@
+=begin
 require 'csv'
 
 class Wagn::Model::Import
@@ -16,9 +17,10 @@ class Wagn::Model::Import
         
         record.each_with_index do |value, index|
           next if ( index == name_index or index == content_index )
-          Card.create :name=> "#{base_card.name}+#{fields[index].strip}", :content=>(value ? value.strip : '')
+          Card.create :name=> "#{base_card.cardname}+#{fields[index].strip}", :content=>(value ? value.strip : '')
         end
       end
     end 
   end
 end
+=end

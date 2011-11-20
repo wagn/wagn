@@ -1,0 +1,21 @@
+<div class="card-header">
+  <%= raw slot.menu %>
+
+  <div class="title-menu">
+      <%= link_to raw(fancy_title(card)), "/card/view/#{card.id}?view=closed", 
+        :class => "line-link title down-arrow standard-slotter",
+        :title => "close #{card.name}",
+        :remote => true 
+      %>
+
+    <% unless card.typecode=='Basic' %>
+      <span class="cardtype">
+        <%= raw link_to_page( Cardtype.name_for(card.typecode) ) %>
+      </span>
+    <% end %>
+
+    <%= raw page_icon(card.name) %> &nbsp;
+  </div>
+
+  <style type="text/css"><%= ".SELF-#{card.cardname.css_name} .content .namepart-#{card.cardname.css_name} { display: none; }" %></style>
+</div>

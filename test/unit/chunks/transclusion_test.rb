@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../test_helper')
+require File.expand_path('../../test_helper', File.dirname(__FILE__))
   
 #FIXME: None of these work now, since transclusion is handled at the slot/cache
 # level, but these cases should still be covered by tests
@@ -26,7 +26,7 @@ class TransclusionTest < ActiveSupport::TestCase
     adm = Card.find_by_name('Wagn Bot')
     adm.update_attributes :content => "{{Oak}}"
     #warn "circles: " + render(adm)
-    assert_match /Circular transclusion/, adm.errors.on(:content)
+    assert_match /Circular transclusion/, adm.errors[:content]
   end
 
   def test_missing_transclude

@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:raw, :name=>'*navbox') do
+  define_view(:raw, :name=>'*navbox') do |args|
 #Rails.logger.debug("Builtin *navbox")
     #ENGLISH
     %{
@@ -8,16 +8,16 @@ class Wagn::Renderer
     <a id="navbox_image" title="Search" onClick="navboxOnSubmit($('navbox_form'))">&nbsp;</a>
     <input type="text" name="navbox" value="#{ params[:_keyword] || '' }" id="navbox_field" autocomplete="off" />
     #{ #navbox_complete_field('navbox_field')
-      content_tag("div", "", :id => "navbox_field_auto_complete", :class => "auto_complete") +
-      auto_complete_field('navbox_field', {
-        :url =>"/card/auto_complete_for_navbox/",
-        :after_update_element => "navboxAfterUpdate" }.update({}))
+      content_tag("div", "", :id => "navbox_field_auto_complete", :class => "auto_complete") #+
+      #auto_complete_field('navbox_field', {
+      #  :url =>"/card/auto_complete_for_navbox/",
+      #  :after_update_element => "navboxAfterUpdate" }.update({}))
     }
   </span>
 </form>
     }
   end
-  alias_view(:raw, {:name=>'*navbox'}, :naked)
+  alias_view(:raw, {:name=>'*navbox'}, :core)
 
 
   private

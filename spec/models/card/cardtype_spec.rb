@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 class Card # this is used by some type based modules on CardtypeE from type_transition
   cattr_accessor :count
@@ -205,7 +205,7 @@ describe Card, "Cardtype with Existing Cards" do
 
   it "should raise an error when you try to delete it" do
     @ct.destroy
-    @ct.errors.on(:cardtype).should_not be_empty
+    @ct.errors[:cardtype].should_not be_empty
   end
 end
 

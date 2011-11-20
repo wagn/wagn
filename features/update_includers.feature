@@ -29,7 +29,7 @@ Feature: Update Includer cards
     When I create Book card "Bros Krmzv" with plusses:
       |author|
       |Dostoyevsky|
-    Then Joe Admin should be notified that "Joe User added \"Bros Krmzv\""    
+    Then Joe Admin should be notified that "Joe User added \"Bros Krmzv\""
     When I edit "Bros Krmzv" with plusses:
       |author|illustrator|
       |Rumi|Monet|
@@ -44,7 +44,6 @@ Feature: Update Includer cards
       |color|flavor|
       |yellow|sweet|
     And Joe Camel is watching "Banana+color"
-    And I wait a sec
     When I edit "Banana" with plusses:
       |color|flavor|
       |spotted|mushy|

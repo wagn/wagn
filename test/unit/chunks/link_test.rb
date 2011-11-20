@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../test_helper')
+require File.expand_path('../../test_helper', File.dirname(__FILE__))
 
 class LinkTest < ActiveSupport::TestCase
   include ChunkTestHelper
@@ -54,9 +54,9 @@ class LinkTest < ActiveSupport::TestCase
   end
   
   def test_relative_link
-    dude,job = newcard('Harvey',"[[#{String::JOINT}business]]"), newcard('business')
+    dude,job = newcard('Harvey',"[[#{Wagn::Cardname::JOINT}business]]"), newcard('business')
     card = Card.create! :name => "#{dude.name}+#{job.name}", :content => "icepicker" 
-    assert_equal("<a class=\"known-card\" href=\"/wagn/Harvey+business\">#{String::JOINT}business</a>", render_test_card(dude) )
+    assert_equal("<a class=\"known-card\" href=\"/wagn/Harvey+business\">#{Wagn::Cardname::JOINT}business</a>", render_test_card(dude) )
   end
   
   

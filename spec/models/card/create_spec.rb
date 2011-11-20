@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 # FIXME this shouldn't be here
 describe Wagn::Set::Type::Cardtype, ".create with :codename" do
@@ -144,7 +144,6 @@ describe Card, "types" do
     ct = Card.create! :name=>"BFoo", :type=>'Cardtype'
     ct.update_attributes! :name=>"BFooRenamed"
     ct.extension.class_name.should == 'BFoo'
-    Rails.logger.info "failing create with typecode"
     Card.create!(:typecode=>"BFoo",:name=>"testy").typecode.should == 'BFoo'
   end
   

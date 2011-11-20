@@ -1,0 +1,39 @@
+<%  @type   ||= 'Basic'   # only really need for create
+    @deny   ||= (card && !card.new_card? ? 'edit' : 'create')
+    @skip_slot_header ||= false
+%>
+
+<%= wrap_slot do |slot| %>
+  <%= raw( slot.header ) unless @skip_slot_header  %>
+    <div id="denied" class="instruction open-content">
+      <h1>Ooo.  Sorry, but...</h1>  <%#ENGLISH%>
+
+      <p>
+        <% if User.current_user.anonymous? %>
+          You have to <%= link_to "sign in", :controller=>'account', :action=>'signin' %>
+        <% else %>
+          You need permission
+        <% end %>
+          to
+        <%- title = card.name ? "<strong>#{fancy_title(card)}</strong>" : 'this card' %>
+        <%= raw(
+          case @deny
+          when 'view', 'edit'  ; "#{@deny} #{title}" 
+          when 'create'; "create this #{@type} card: #{title}"
+          end
+          )
+        %>
+      </p>
+
+      <% unless @skip_slot_header or @deny=='view' %>
+        <p>(See the <%= raw( slot.link_to_action('options', 'options') ) %> tab to learn more.)</p>
+      <% end %>
+
+      <% if User.current_user.anonymous? && Card.new(:typecode=>'InvitationRequest').ok?(:create) %>
+        <p><%= link_to 'Sign up for a new account', '/account/signup' %>.</p>
+      <% end %>
+    </div>
+
+  <%= raw( slot.footer ) unless @skip_slot_header  %>
+<% end %>
+

@@ -62,8 +62,8 @@ class MWikiReference < ActiveRecord::Base
 end
 
 
-require_dependency "#{RAILS_ROOT}/config/sample_wagn.rb"
-require_dependency "#{RAILS_ROOT}/config/wagn.rb"
+require_dependency "#{Rails.root}/config/sample_wagn.rb"
+require_dependency "#{Rails.root}/config/wagn.rb"
 
 module CardCreator
   def using_postgres?

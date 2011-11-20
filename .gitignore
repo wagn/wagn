@@ -7,6 +7,7 @@ config/newrelic.yml
 config/wagn.rb
 config/cruise*
 coverage
+.jhw-cache
 log/*
 pkg
 public/card_files

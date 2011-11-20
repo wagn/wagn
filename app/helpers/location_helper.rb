@@ -19,16 +19,12 @@ module LocationHelper
   end
 
   def save_location
-    location_history.push(request.request_uri)
-    load_location
-  end
-
-  def load_location
-    @previous_location = location_history.last
+    location_history.push(request.fullpath)
+    @previous_location = nil
   end
 
   def previous_location
-    @previous_location
+    @previous_location ||= location_history.last
   end
 
   def discard_locations_for(card)
@@ -37,7 +33,7 @@ module LocationHelper
     while location_history.last =~ pattern
       location_history.pop
     end
-    load_location
+    @previous_location = nil
   end
 
    # -----------( urls and redirects from application.rb) ----------------
@@ -52,11 +48,11 @@ module LocationHelper
       opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
       vars = '?' + pairs.join('&')
     end
-    System.root_path + "/wagn/#{title.to_url_key}#{format}#{vars}"
+    System.root_path + "/wagn/#{title.to_cardname.to_url_key}#{format}#{vars}"
   end
 
   def card_path( card )
-    System.root_path + "/wagn/#{card.name.to_url_key}"
+    System.root_path + "/wagn/#{card.cardname.to_url_key}"
   end
 
   def card_url( card )
@@ -76,10 +72,10 @@ module LocationHelper
   end
 
   def card_title_span( title )
-    %{<span class="namepart-#{title.css_name}">#{title}</span>}
+    %{<span class="namepart-#{title.to_cardname.css_name}">#{title}</span>}
   end
 
   def page_icon(cardname)
-    link_to_page '&nbsp;', cardname, {:class=>'page-icon', :title=>"Go to: #{cardname}"}
+    link_to_page '&nbsp;'.html_safe, cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
   end
 end

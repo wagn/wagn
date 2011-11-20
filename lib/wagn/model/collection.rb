@@ -14,12 +14,12 @@ module Wagn::Model::Collection
     end
 
     def find_by_name( name, opts={} ) 
-      self.find_by_key_and_trash( name.to_key, false, opts.merge( :include=>:current_revision ))
+      self.find_by_key_and_trash( name.to_cardname.to_key, false, opts.merge( :include=>:current_revision ))
     end
   end
 
   def item_names(args={})
-    self.raw_content.split /[,\n]/
+    Wagn::Renderer.new(self)._render_raw.split /[,\n]/
   end
   
   def item_cards(args={})  ## FIXME this is inconsistent with item_names
@@ -27,16 +27,16 @@ module Wagn::Model::Collection
   end
   
   def extended_list context = nil
-    context = (context ? context.name : self.name)
+    context = (context ? context.cardname : self.cardname)
     args={ :limit=>'' }
-    self.item_cards(args.merge(:context=>context)).map do |x| 
+    self.item_cards(args.merge(:context=>context)).map do |x|
       x.item_cards(args) 
     end.flatten.map do |x| 
       x.item_cards(args)
     end.flatten.map do |y|
       y.item_names(args)
     end.flatten
-    # this could go on and on..
+    # this could go on and on.  more elegant to recurse until you don't have a collection
   end
   
   def contextual_content(context_card=nil, renderer_args={})

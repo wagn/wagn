@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper')
+require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
 
 describe Card do
   before do
@@ -20,7 +20,7 @@ describe Card do
     
     it "retrieves default values" do
       Card.create :name => "all Basic cards", :type => "Set", :content => "{\"type\": \"Basic\"}"  #defaults should work when other Sets are present
-      Card.create :name => "*all+*add help", :content => "lobotomize"
+      assert c=Card.create(:name => "*all+*add help", :content => "lobotomize")
       Card.default_setting('add help', 'edit help').should == "lobotomize"
       Card.new( :type => "Basic" ).setting('add help', 'edit help').should == "lobotomize"
     end                                                                 
@@ -55,23 +55,34 @@ describe Card do
 
   describe "#setting_names" do
     before do
-      @pointer_settings = ['*update','*comment','*delete','*captcha','*edit help','*accountable','*options','*options label','*input']
+      @pointer_settings = ['*options','*options label','*input']
     end
     it "returns universal setting names for non-pointer set" do
       snbg = Card.fetch('*star').setting_names_by_group
-      snbg[:view].should  == ['*read','*content','*layout','*table of contents']
-      snbg[:edit].should  == ['*update','*comment','*delete','*captcha','*edit help','*accountable']
-      snbg[:add].should == ['*create','*default','*add help','*autoname','*thanks','*send']
+      snbg.keys.length.should == 4
+      snbg.keys.member?( :pointer ).should_not be_true
     end
     
     it "returns pointer-specific setting names for pointer card (*type)" do
-      snbg = Card.fetch('Pointer+*type').setting_names_by_group
-      snbg[:edit].should == @pointer_settings
+      # was this test wrong before?  What made Fruit a pointer without this?
+      User.as :wagbot do
+        Rails.logger.info "testing point 0"
+        c1=Card.create! :name=>'Fruit+*type+*default', :type=>'Pointer'
+        Rails.logger.info "testing point 1 #{c1.inspect}"
+      end
+      c2 = Card.fetch('Fruit+*type')
+      Rails.logger.info "testing point 2 #{c2.inspect}"
+      snbg = c2.setting_names_by_group
+      snbg[:pointer].map(&:to_s).should == @pointer_settings
+      c3 = Card.fetch('Pointer+*type')
+      Rails.logger.info "testing point 3 #{c3.inspect}"
+      snbg = c3.setting_names_by_group
+      snbg[:pointer].map(&:to_s).should == @pointer_settings
     end
 
     it "returns pointer-specific setting names for pointer card (*self)" do
-      snbg = Card.fetch('*account+*related+*self').setting_names_by_group
-      snbg[:edit].should == @pointer_settings
+      snbg = Card.fetch_or_new('*account+*related+*self').setting_names_by_group
+      snbg[:pointer].map(&:to_s).should == @pointer_settings
     end
 
   end
@@ -107,14 +118,14 @@ describe Card do
     
     it "processes inclusions relative to context card" do
       context_card = Card["A"] # refers to 'Z'
-      c = Card.new(:name=>"foo", :content => "{{_self+B|naked}}")
+      c = Card.new(:name=>"foo", :content => "{{_self+B|core}}")
       c.contextual_content( context_card ).should == "AlphaBeta"
     end
     
     it "returns content even when context card is hard templated" do
       context_card = Card["A"] # refers to 'Z'
-      Card.create! :name => "A+*self+*content", :content => "Banana"
-      c = Card.new( :name => "foo", :content => "{{_self+B|naked}}" )
+      c1=Card.create! :name => "A+*self+*content", :content => "Banana"
+      c = Card.new( :name => "foo", :content => "{{_self+B|core}}" )
       c.contextual_content( context_card ).should == "AlphaBeta"
     end
   end

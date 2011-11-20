@@ -1,1 +1,1 @@
-require 'spec'
+require 'rspec'

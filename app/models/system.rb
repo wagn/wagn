@@ -8,7 +8,6 @@ class System
     :enable_postgres_fulltext, :postgres_src_dir, :postgres_tsearch_dir, # Optimize PostgreSQL performance
     :multihost,:wagn_name
     
-  Wagn::Configuration.wagn_load_config
     
   @@role_tasks = %w{ administrate_users create_accounts assign_user_roles }
   
@@ -41,7 +40,7 @@ class System
 
     def setting(name)
       User.as :wagbot  do
-        card=Card.fetch(name, :skip_virtual => true) and !card.content.strip.empty? and card.content
+        card=Card[name] and !card.content.strip.empty? and card.content
       end
     rescue
       nil
@@ -73,7 +72,7 @@ class System
     end
     
     def logo
-      image_setting('*logo') || (File.exists?("#{RAILS_ROOT}/public/images/logo.gif") ? "#{root_path}/images/logo.gif" : nil)
+      image_setting('*logo') || (File.exists?("#{Rails.root}/public/images/logo.gif") ? "#{root_path}/images/logo.gif" : nil)
     end
 
     # PERMISSIONS
@@ -93,9 +92,9 @@ class System
     # FIXME stick this in session? cache it somehow??
     def ok_hash
       usr = User.as_user
-      ok_hash = self.cache.read('ok_hash') || self.cache.write('ok_hash', {})
-      #warn "user = #{usr.inspect}"
-      if (h = ok_hash[usr.id]).nil?
+      ok_hash = self.cache.read('ok_hash') || {}
+      if ok_hash[usr.id].nil?
+        ok_hash = ok_hash.dup if ok_hash.frozen?
         ok_hash[usr.id] = begin
           ok = {}
           ok[:role_ids] = {}
@@ -105,22 +104,23 @@ class System
           end
           ok
         end || false
-      else
-        h
+        self.cache.write 'ok_hash', ok_hash
       end
+      ok_hash[usr.id]
     end
     
     def always_ok?
       return false unless usr = User.as_user
       return true if usr.login == 'wagbot' #cannot disable
-      aok_hash = self.cache.read('always') || self.cache.write('always', {})
-      if (c = aok_hash[usr.id]).nil?
-        aok_hash[usr] = usr.all_roles.detect { |r| r.codename == 'admin' } || false
-      else
-        c
+      aok_hash = self.cache.read('always') || {}
+      if aok_hash[usr.id].nil?
+        aok_hash = aok_hash.dup if aok_hash.frozen?
+        aok_hash[usr.id] = usr.all_roles.detect { |r| r.codename == 'admin' } || false
+        self.cache.write 'always', aok_hash
       end
+      aok_hash[usr.id]
     end
   end
-  
+  Wagn::Configuration.wagn_load_config  
 end        
 

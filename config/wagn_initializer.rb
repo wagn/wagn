@@ -1,40 +1,33 @@
-require 'active_support'
-require 'active_record'
+#require 'active_support'
+#require 'active_record'
 
 module Wagn end
 
 module Wagn::Configuration
   def wagn_load
-    self.cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache"
-    self.frameworks -= [ :action_web_service ]
-    require 'yaml'
-    require 'erb'
+    self.cache_store = :file_store, "#{Rails.root}/tmp/cache"
+    
+    self.after_initialize do Wagn::Configuration.wagn_run end
+
     if ENV['MULTIDBCONFIG']
-      db_config_file = "#{RAILS_ROOT}/config/databases/#{RAILS_ENV}.yml" 
-      self.database_configuration_file = File.join(db_config_file)
-    else       
-      db_config_file = "#{RAILS_ROOT}/config/database.yml"
+      self.database_configuration_file = File.join("#{Rails.root}/config/databases/#{Rails.env}.yml" )
     end
-    db = YAML::load(ERB.new(IO.read(db_config_file)).result)
-    self.action_controller.session = {
-      :key    => db[RAILS_ENV]['session_key'],
-      :secret => db[RAILS_ENV]['secret']
-    }
+
     STDERR << "----------- Wagn Loaded -----------\n"
   end
 
   class << self
     def wagn_load_config  #loads when System.rb loads
       Rails.logger.debug "Load config ...\n"
-      config_dir = "#{RAILS_ROOT}/config/"
+      config_dir = "#{Rails.root}/config/"
       ['sample_wagn.rb','wagn.rb'].each do |filename|
+#        STDERR << "#{filename} exists? #{File.exists? config_dir+filename}\n"
         require_dependency config_dir+filename if File.exists? config_dir+filename
       end
       System.base_url.gsub!(/\/$/,'')
     end
 
     def wagn_run
-      #wagn_load_config
       wagn_setup_multihost
       return unless wagn_database_ready?
       wagn_load_modules
@@ -59,10 +52,15 @@ module Wagn::Configuration
 
     def wagn_load_modules
       Card
+      Cardtype
       #STDERR << "load_modules Pack load #{Wagn.const_defined?(:Pack)}\n\n"
       require_dependency "wagn/pack.rb"
-      %w{modules/*.rb packs/**/*_pack.rb}.each { |d| Wagn::Pack.dir(File.expand_path( "../../#{d}/",__FILE__)) }
+      %w{modules/*.rb packs/*/*_pack.rb}.each { |d| Wagn::Pack.dir(File.expand_path( "../../#{d}/",__FILE__)) }
       Wagn::Pack.load_all
+      
+      STDERR << "----------- Wagn MODULES Loaded -----------\n"
     end
+    
+    
   end
 end

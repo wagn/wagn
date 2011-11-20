@@ -10,7 +10,7 @@ begin
   $LOAD_PATH.unshift(rspec_base) if File.exist?(rspec_base)
   require 'spec/rake/spectask'
 
-  spec_prereq = File.exist?(File.join(RAILS_ROOT, 'config', 'database.yml')) ? "db:test:prepare" : :noop
+  spec_prereq = File.exist?(File.join(Rails.root, 'config', 'database.yml')) ? "db:test:prepare" : :noop
   task :noop do
   end
 
@@ -19,18 +19,18 @@ begin
 
   desc "Run all specs in spec directory (excluding plugin specs)"
   Spec::Rake::SpecTask.new(:spec => spec_prereq) do |t|
-    t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+    t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
     t.spec_files = FileList['spec/**/*_spec.rb']
   end
 
   namespace :spec do
     desc "Run all specs in spec directory with RCov (excluding plugin specs)"
     Spec::Rake::SpecTask.new(:rcov) do |t|
-      t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+      t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
       t.spec_files = FileList['spec/**/*_spec.rb']
       t.rcov = true
       t.rcov_opts = lambda do
-        IO.readlines("#{RAILS_ROOT}/spec/rcov.opts").map {|l| l.chomp.split " "}.flatten
+        IO.readlines("#{Rails.root}/spec/rcov.opts").map {|l| l.chomp.split " "}.flatten
       end
     end
   
@@ -49,21 +49,21 @@ begin
     [:models, :controllers, :views, :helpers, :lib].each do |sub|
       desc "Run the specs under spec/#{sub}"
       Spec::Rake::SpecTask.new(sub => spec_prereq) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList["spec/#{sub}/**/*_spec.rb"]
       end
     end
   
     desc "Run the specs under vendor/plugins (except RSpec's own)"
     Spec::Rake::SpecTask.new(:plugins => spec_prereq) do |t|
-      t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+      t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
       t.spec_files = FileList['vendor/plugins/**/spec/**/*_spec.rb'].exclude('vendor/plugins/rspec/*').exclude("vendor/plugins/rspec-rails/*")
     end
   
     namespace :plugins do
       desc "Runs the examples for rspec_on_rails"
       Spec::Rake::SpecTask.new(:rspec_on_rails) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
+        t.spec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
         t.spec_files = FileList['vendor/plugins/rspec-rails/spec/**/*_spec.rb']
       end
     end
@@ -89,8 +89,8 @@ begin
         desc "Load fixtures (from spec/fixtures) into the current environment's database.  Load specific fixtures using FIXTURES=x,y"
         task :load => :environment do
           require 'active_record/fixtures'
-          ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
-          (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : Dir.glob(File.join(RAILS_ROOT, 'spec', 'fixtures', '*.{yml,csv}'))).each do |fixture_file|
+          ActiveRecord::Base.establish_connection(Rails.env.to_sym)
+          (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : Dir.glob(File.join(Rails.root, 'spec', 'fixtures', '*.{yml,csv}'))).each do |fixture_file|
             Fixtures.create_fixtures('spec/fixtures', File.basename(fixture_file, '.*'))
           end
         end
@@ -98,7 +98,7 @@ begin
     end
 
     namespace :server do
-      daemonized_server_pid = File.expand_path("spec_server.pid", RAILS_ROOT + "/tmp")
+      daemonized_server_pid = File.expand_path("spec_server.pid", Rails.root + "/tmp")
 
       desc "start spec_server."
       task :start do
@@ -135,7 +135,7 @@ begin
     
 rescue LoadError
   task :spec_prereq do
-    puts "Required dependencies RSpec, RSpec-Rails or Cucumber are missing.\nRun 'rake gems:install RAILS_ENV=test'"
+    puts "Required dependencies RSpec, RSpec-Rails or Cucumber are missing.\nRun 'rake gems:install Rails.env=test'"
   end
   
   task :spec => :spec_prereq

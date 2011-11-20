@@ -1,0 +1,267 @@
+/*---- page layout */
+
+#primary {
+  margin: 0 1%;
+  float: left;
+  width: 67%;
+}
+#secondary {
+  margin: 0 1%;
+  float: right;
+  width: 28%;
+}
+
+
+/* --------menu -------------*/
+
+#menu {
+  display: block;
+  font-size: 14px;
+  background: #005800;
+  margin-bottom: 20px;
+  padding: 2px;
+} 
+#menu a {
+  color: white;
+  padding: 0px 4px;
+}
+#menu div {
+  display: inline;
+}
+#menu #logging {  /* signing in and out */
+  position: absolute;
+  right: 0.5%;
+  top: 2px;
+}
+#my-card-link {
+  font-weight: bold;
+}
+#navbox_background {
+  margin:  0 8px;
+  margin-bottom: 2px;     
+  background: #ffc;        
+  /* this is already specified in defaults.css, but specifying it again here fixes ie */
+  border: 1px solid #aaa;
+  border-top: 2px solid #666;
+  border-left: 2px solid #666;
+}
+html>body #navbox_background {
+  padding: 2px 0px;
+}
+/* use both ids otherwise #menu a  overrides */            
+#navbox_background #navbox_image {
+  padding: 2px 8px;
+  background: url(search.gif) no-repeat right;
+}
+html>body #navbox_background #navbox_image { 
+  background-image: url(search.png);
+}
+#navbox_field,
+#navbox_field:focus {
+  padding: 0px 3px;
+  margin: 0px;
+  height: 18px;
+  width: 30%;
+  position: relative;
+  z-index: 1;
+  font-size: 13px;
+  border: 0px;
+  background: #ffc;
+}
+#navbox_field_auto_complete {
+  background: #eee;
+  width: auto;
+}
+#navbox_field_auto_complete .informal {
+  color: #777;
+  font-size: 10px;
+}
+#navbox_field_auto_complete a {
+  display: inline;
+  padding: 3px 8px;
+  margin-right: 4px;
+}
+
+
+/* -------  Secondary --------- */
+
+#logo {
+  text-align: center;
+  padding: 10px 0px;
+  background: #fff; 
+  border: 1px solid #777; 
+  -moz-border-radius: 8px; 
+  border-radius: 8px; 
+}
+#logo a, 
+#logo a:link,
+#logo a:visited { 
+  color: #448; 
+  text-decoration: none;
+  text-align: center;
+}
+#credit {
+  margin: 30px 0;
+  padding: 5px;
+  text-align: center;
+  color: #333;
+  background: #bbb;
+  border: 1px solid #666;
+}
+#alerts {
+  padding: 2px 9px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  color: #555;
+  font-weight: bold;
+  z-index: 4;
+}
+html>body #alerts { /* not in IE  (won't do fixed position) */
+  position: fixed !important;
+  bottom: 0px;
+  right: 0px;
+  display: block;
+  background: #eee;
+  moz-border-radius: 8px 0px 0px 0px;
+  border-radius: 8px 0px 0px 0px;
+  border: 1px solid #ccc;
+  border-bottom: 0px;
+  border-right: 0px;
+
+}
+#alerts div {
+  display: none;
+}
+
+
+/*----- fieldset tables --------*/
+
+.fieldset { 
+  width: 100%; 
+}
+.fieldset td     { 
+  padding: 5px 3px 5px 3px; 
+  border-bottom: 1px solid #ddd; 
+}
+.fieldset .label { 
+  text-align: right;  
+  white-space: nowrap;
+  padding-right: 6px;
+  vertical-align: middle;
+}
+.fieldset .field { 
+  width: 25%;
+  vertical-align: middle;
+  padding: 7px
+}
+.fieldset .help { 
+  padding-left: 6px;
+  width: 50%;
+}
+.fieldset input[type=submit] {
+  margin: 6px
+}
+
+
+/* -- instructions ---*/
+
+.help, .instruction {
+  background: #eec;
+  color: #440;
+  font-style: italic;
+  text-align: center;
+  padding: 4px 10px;
+}
+#new-card .main-instruction {
+  margin-bottom: 20px;
+}
+
+
+/*-------- auto complete --------*/
+
+div.auto_complete {
+  width: 350px;
+  background: #fff;
+  text-align: left;
+  position: relative;
+  overflow: visible;
+  z-index: 10
+}
+div.auto_complete ul {
+  border:1px solid #888;
+  background: #fff;
+  margin:0;
+  padding:0;
+  width:100%;
+  list-style-type:none;
+}
+div.auto_complete ul li {
+  margin:0;
+  padding:3px;
+}
+div.auto_complete ul li.selected { 
+  background-color: #ffb; 
+}
+div.auto_complete ul strong.highlight { 
+  color: #444; 
+  margin:0;
+  padding:0;
+}
+
+
+/*--- errors -----*/
+
+.exception p {
+  margin: 15px;
+}
+.error-explanation {
+  margin: 10px;
+  padding: 10px;
+  border: 3px solid #966;
+  background: #ffa;
+  -moz-border-radius: 8px;
+  border: 1px solid #777;
+  border-bottom: 2px solid #888;
+  border-right: 2px solid #888;
+}
+.inclusion-error {
+  background-color: #ecc !important;
+  padding: 1px 20px;
+  font-style: italic;
+}
+
+/*-------- Special Pages --------*/
+
+/*-- sign in page --*/
+
+#sign-in p {
+  margin: 5px;
+}
+#sign-in input#login_field,
+#sign-in input#password,
+#sign-in input#email {
+  width: 50%;
+}
+
+
+/* -- permissions page -----*/
+
+#role_task {
+  margin-bottom: 2em;
+  padding: 3px;
+}
+.role {
+  text-align: center;
+  padding: 2px 8px;
+}
+.task {
+  padding: 2px;
+}
+
+
+
+
+
+
+
+

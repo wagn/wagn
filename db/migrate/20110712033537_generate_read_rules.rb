@@ -12,8 +12,8 @@ class GenerateReadRules < ActiveRecord::Migration
       cards.each do |card|
         begin
           rule = card.setting_card('*read')
-          next if rule.name.trunk_name.tag_name == card.read_rule_class
-          card.repair_key if card.key != card.name.to_key
+          next if rule.cardname.trunk_name.tag_name == card.read_rule_class
+          card.repair_key if card.key != card.cardname.to_key
           puts "updating read rule for #{card.name};  rule tag_name = #{rule.name.trunk_name.tag_name}, read_rule_class = #{card.read_rule_class}"
           card.update_read_rule
           success_count+=1

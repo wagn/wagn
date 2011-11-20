@@ -1,23 +1,27 @@
 module CardHelper
 
   def party_name(party)
-    party ? party.card.name : 'Nobody'
+    party ? party.card.cardname : 'Nobody'.to_cardname #CODENAME
   end
 
   # navigation for revisions -
   # --------------------------------------------------
   def revision_link( text, revision, name, accesskey='', mode=nil )
-    link_to_remote text,
-      :url=>{ :action=>'changes', :id=>@card.id,
-        :rev=>revision, :context=>@context, :mode=>(mode || params[:mode] || true)
-      },
-     :update=>'javascript:getSlotSpan(this)'
+   link_to text, {
+      :action=>'changes', 
+      :id=>@card.id, 
+      :rev=>revision,
+      :mode=>(mode || params[:mode] || true)
+    }, :class=>'standard-slotter', :remote=>true 
   end
 
   def rollback
     if @card.ok?(:update) && !(@card.current_revision==@revision)
-      link_to_remote 'Save as current',
-        :url => { :action=>'rollback', :id=>@card.id, :rev=>@revision_number, :context=>@context }
+      link_to 'Save as current', { 
+        :action=>'rollback',
+        :id=>@card.id,
+        :rev=>@revision_number,
+      }, :class=>'standard-slotter', :remote=>true
     end
   end
 
@@ -34,7 +38,7 @@ module CardHelper
   def forward
     if @revision_number < @card.revisions.length
       revision_link('Newer', @revision_number +1, 'to_next_revision', 'F' ) +
-        " <small>(#{@revision.card.revisions.length - @revision_number})</small> "
+        raw(" <small>(#{raw(@revision.card.revisions.length - @revision_number)})</small> ")
     else
       'Newer <small>(0)</small>'
     end
@@ -43,7 +47,7 @@ module CardHelper
   def back_for_revision
     if @revision_number > 1
       revision_link('Older',@revision_number - 1, 'to_previous_revision') +
-        " <small>(#{@revision_number - 1})</small>"
+        raw("<small>(#{@revision_number - 1})</small>")
     else
       'Older <small>(0)</small>'
     end

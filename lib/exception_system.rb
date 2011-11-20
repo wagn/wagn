@@ -34,7 +34,7 @@ module ExceptionSystem
   
   
   def render_404() 
-    logger.error("render_404 invoked for request_uri=#{request.request_uri} and env=#{request.env.inspect}")
+    logger.error("render_404 invoked for fullpath=#{request.fullpath} and env=#{request.env.inspect}")
     render_exception(404); 
   end  
   
@@ -62,8 +62,6 @@ module ExceptionSystem
     @request_type!='html'
   end
   
-  def requesting_ajax?
-    request.xhr?
-  end
+
   
 end

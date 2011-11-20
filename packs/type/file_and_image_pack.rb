@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:editor, :type=>'file') do
+  define_view(:editor, :type=>'file') do |args|
     attachment_model_name = card.attachment_model.name.underscore
     attachment_uuid = (0..29).to_a.map {|x| rand(10)}
     self.skip_autosave = true

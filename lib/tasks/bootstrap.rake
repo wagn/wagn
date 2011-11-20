@@ -15,9 +15,9 @@ namespace :wagn do
     #note: users, roles, and role_users have been manually edited
     task :dump => :environment do
       #ENV['BOOTSTRAP_DUMP'] = 'true'
-      %w{ cards revisions wiki_references cardtypes }.each do |table|
+      %w{ codename cards revisions wiki_references cardtypes }.each do |table|
         i = "000"
-        File.open("#{RAILS_ROOT}/db/bootstrap/#{table}.yml", 'w') do |file|
+        File.open("#{Rails.root}/db/bootstrap/#{table}.yml", 'w') do |file|
           data = 
             if table=='cards'
               User.as :wagbot do
@@ -42,8 +42,8 @@ namespace :wagn do
     desc "load bootstrap fixtures into db"
     task :load => :environment do
       require 'active_record/fixtures'                         
-      #ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
-      Dir.glob(File.join(RAILS_ROOT, 'db', 'bootstrap', '*.{yml,csv}')).each do |fixture_file|
+      #ActiveRecord::Base.establish_connection(Rails.env.to_sym)
+      Dir.glob(File.join(Rails.root, 'db', 'bootstrap', '*.{yml,csv}')).each do |fixture_file|
         Fixtures.create_fixtures('db/bootstrap', File.basename(fixture_file, '.*'))
       end 
     

@@ -28,6 +28,8 @@ class User < ActiveRecord::Base
   before_save :encrypt_password
   after_save :reset_instance_cache
   
+
+
   
   class << self
     def current_user
@@ -39,6 +41,8 @@ class User < ActiveRecord::Base
       @@current_user = user.class==User ? User[user.id] : User[user]
     end
    
+    def inspect() "#{@@current_user&&@@current_user.login}:#{as_user&&as_user.login}" end
+
     def as(given_user)
       tmp_user = @@as_user
       @@as_user = given_user.class==User ? User[given_user.id] : User[given_user]
@@ -124,14 +128,14 @@ class User < ActiveRecord::Base
   end
   
   def read_rule_ids
-    #Rails.logger.debug "Looking up #READ_RULE_IDS"
     return [] if self.login=='wagbot'  # avoids infinite loop
     @read_rule_ids ||= begin
       party_keys = ['in'] + parties
       self.class.as(:wagbot) do
-        Card.search(:right=>'*read', :refer_to=>{:key=>party_keys}).map &:id
+        Card.search(:right=>'*read', :refer_to=>{:key=>party_keys}, :return=>:id).map &:to_i
       end
     end
+    @read_rule_ids
   end
   
   def save_with_card(card)
@@ -167,8 +171,9 @@ class User < ActiveRecord::Base
     raise(Wagn::Oops, "subject is required") unless (args[:subject])
     raise(Wagn::Oops, "message is required") unless (args[:message])
     begin
-      Mailer.deliver_account_info(self, args[:subject], args[:message])
-    rescue; warn("ACCOUNT INFO DELIVERY FAILED: \n #{args.inspect}")
+      Mailer.account_info(self, args[:subject], args[:message]).deliver
+    rescue Exception=>e
+      warn "ACCOUNT INFO DELIVERY FAILED: \n #{args.inspect}\n   #{e.message}, #{e.backtrace*"\n"}"
     end
   end  
 

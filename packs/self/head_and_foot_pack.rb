@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:raw, :name=>'*head') do
+  define_view(:raw, :name=>'*head') do |args|
     rcard = root.card  # should probably be more explicit that this is really the *main* card.
     title = rcard.name
     title = params[:action] if title.nil? || title == '*placeholder'
@@ -11,51 +11,42 @@ class Wagn::Renderer
     
     #Universal Edit Button
     if !rcard.new_record? && rcard.ok?(:update)
-      bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="#{System.root_path}/card/edit/#{ rcard.name.to_url_key }"/>}
+      bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="#{System.root_path}/card/edit/#{ rcard.cardname.to_url_key }"/>}
     end
     
-    # RSS
+    # RSS # move to packs!
     if rcard.typecode == 'Search'
       rss_href = rcard.name=='*search' ? "#{System.root_path}/search/#{ params[:_keyword] }.rss" : template.url_for_page( rcard.name, :format=>:rss )
       bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{rss_href} />}
     end
-    
+
     # CSS
-    bits += [stylesheet_link_merged(:base), stylesheet_link_tag( 'print', :media=>'print') ]
-    if star_css_card = Card.fetch('*css', :skip_virtual => true)
-      bits << %{<link href="#{System.root_path}/*css.css?#{ star_css_card.current_revision_id }" media="screen" type="text/css" rel="stylesheet" />}
+    bits << stylesheet_link_tag('application-all')
+    bits << stylesheet_link_tag('application-print', :media=>'print')
+    if css_card = Card['*css']
+      bits << stylesheet_link_tag("#{System.root_path}/*css.css?#{ css_card.current_revision_id }")
     end
 
     #Javscript
-    bits << javascript_include_merged(:base)
-    
+    bits << %(
+    <script>
+      var wagn = {}; window.wagn = wagn;
+      wagn.tinyMCEConfig = { #{System.setting('*tiny mce')} }
+      #{ (ga_key=System.setting("*google analytics key")) ? "wagn.googleAnalyticsKey = '#{ga_key}'" : '' } 
+    </script>      
+          )
+    bits << javascript_include_tag('application')
+
     bits.join("\n")
   end
-  alias_view(:raw, {:name=>'*head'}, :naked)
+  alias_view(:raw, {:name=>'*head'}, :core)
   
   
   
   
-  define_view(:raw, :name=>'*foot') do
-    User.as(:wagbot) do
-      javascript_include_tag("#{System.root_path}/tinymce/jscripts/tiny_mce/tiny_mce.js") +
-      if ga_key = System.setting("*google analytics key")
-        %{
-          <script type="text/javascript">
-            // make sure this is only run once:  it may be called twice in the case that you are viewing a *layout page
-            if (typeof(pageTracker)=='undefined') {
-              var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-              document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-            }
-          </script>
-          <script type="text/javascript">
-            pageTracker = _gat._getTracker('#{ga_key}');
-            pageTracker._trackPageview();
-          </script>
-        }
-      else; ''; end
-    end
+  define_view(:raw, :name=>'*foot') do |args|
+    '<!-- *foot is deprecated. please remove from layout -->'
   end
-  alias_view(:raw, {:name=>'*foot'}, :naked)
+  alias_view(:raw, {:name=>'*foot'}, :core)
 
 end

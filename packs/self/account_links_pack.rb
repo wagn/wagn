@@ -1,8 +1,8 @@
 class Wagn::Renderer
-  define_view(:raw, :name=>'*account links') do
+  define_view(:raw, :name=>'*account links') do |args|
     #ENGLISH
     span(:id=>'logging') do
-      if logged_in?
+      if User.logged_in?
         link_to( "My Card: #{User.current_user.card.name}", '/me', :id=>'my-card-link') +
         (System.ok?(:create_accounts) ? link_to('Invite a Friend', '/account/invite', :id=>'invite-a-friend-link') : '') +
         link_to('Sign out', '/account/signout', :id=>'signout-link')
@@ -12,5 +12,5 @@ class Wagn::Renderer
       end
     end
   end
-  alias_view(:raw, {:name=>'*account link'}, :naked)
+  alias_view(:raw, {:name=>'*account link'}, :core)
 end

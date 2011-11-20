@@ -1,10 +1,4 @@
 module ScopeHelpers
-  # Maps a name to a path. Used by the
-  #
-  #   When /^I go to (.+)$/ do |page_name|
-  #
-  # step definition in webrat_steps.rb
-  #
   def scope_of(section)
     case section
     

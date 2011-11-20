@@ -17,7 +17,7 @@ module CaptchaSystem
       opts[:model].errors.add(:captcha, "is needed to verify that you're human")
       return false 
     end
-    verify_recaptcha(opts) 
+    #verify_recaptcha(opts) 
   end
 
   def captcha_required?

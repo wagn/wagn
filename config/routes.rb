@@ -43,7 +43,7 @@ Wagn::Application.routes.draw do
 #  match ':controller/:action' => '#index'
   
 #  match ':controller' => '#index'
-  match '' => 'card#index'
+  match '/' => 'card#index'
   
   match ':id(.:format)' => 'card#show', :constraints => ID_REQS
   match '*id' => 'application#render_404'

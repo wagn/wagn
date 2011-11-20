@@ -90,6 +90,7 @@ module Wagn
     attr_accessor :local
 
     def initialize(opts={})
+      #@klass = opts[:class]
       @store = opts[:store]
       @local = Hash.new
       self.system_prefix = opts[:prefix] || Wagn::Cache.system_prefix(opts[:class])
@@ -156,6 +157,7 @@ module Wagn
       @cache_id = self.class.generate_cache_id
       @store.write(@system_prefix + "cache_id", @cache_id)  if @store
       @prefix = @system_prefix + @cache_id + "/"
+      #System.cache.reset if @klass != System
     end
 
     private

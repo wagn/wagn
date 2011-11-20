@@ -408,7 +408,7 @@ describe Wagn::Renderer, "" do
   context "cards of type" do
     context "Date" do
       it "should have special editor" do
-        assert_view_select render_editor('Date'), 'a[class="date-editor-link"]'
+        assert_view_select render_editor('Date'), 'input[class="date-editor"]'
       end
     end
 

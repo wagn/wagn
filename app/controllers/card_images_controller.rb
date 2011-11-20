@@ -1,2 +1,0 @@
-class CardImagesController < AttachmentsController
-end

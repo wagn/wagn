@@ -93,8 +93,7 @@ class System
     def ok_hash
       usr = User.as_user
       ok_hash = self.cache.read('ok_hash') || {}
-      #warn "user = #{usr.inspect}"
-      if (h = ok_hash[usr.id]).nil?
+      if ok_hash[usr.id].nil?
         ok_hash = ok_hash.dup if ok_hash.frozen?
         ok_hash[usr.id] = begin
           ok = {}
@@ -106,22 +105,20 @@ class System
           ok
         end || false
         self.cache.write 'ok_hash', ok_hash
-      else
-        h
       end
+      ok_hash[usr.id]
     end
     
     def always_ok?
       return false unless usr = User.as_user
       return true if usr.login == 'wagbot' #cannot disable
       aok_hash = self.cache.read('always') || {}
-      if (c = aok_hash[usr.id]).nil?
+      if aok_hash[usr.id].nil?
         aok_hash = aok_hash.dup if aok_hash.frozen?
         aok_hash[usr.id] = usr.all_roles.detect { |r| r.codename == 'admin' } || false
         self.cache.write 'always', aok_hash
-      else
-        c
       end
+      aok_hash[usr.id]
     end
   end
   Wagn::Configuration.wagn_load_config  

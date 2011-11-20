@@ -15,7 +15,8 @@ describe "reader rules" do
   end
   
   it "should update to role ('Anyone Signed In')" do
-    @perm_card.save!
+
+    User.as(:wagbot) { @perm_card.save! }
     card = Card.fetch('Home')
     card.read_rule_id.should == @perm_card.id
     card.who_can(:read).should == ['anyone_signed_in']
@@ -26,7 +27,7 @@ describe "reader rules" do
     User.as(:wagbot) do
       card = Card.fetch('Home')
       @perm_card.content = '[[Joe Admin]]'
-      @perm_card.save!
+      User.as(:wagbot) { @perm_card.save! }
       card.read_rule_id.should == @perm_card.id
       card.who_can(:read).should == ['joe_admin']
       User.as(:anon)      { card.ok?(:read).should be_false }
@@ -37,14 +38,18 @@ describe "reader rules" do
   end
   
   it "should revert to more general rule when more specific (self) rule is deleted" do
-    @perm_card.save!
-    User.as( :wagbot ) { @perm_card.destroy! }
+    User.as(:wagbot) do 
+      @perm_card.save!
+      @perm_card.destroy!
+    end
     card = Card.fetch('Home')
     card.read_rule_id.should == Card.fetch('*all+*read').id
   end
 
   it "should revert to more general rule when more specific (right) rule is deleted" do
-    pc = Card.create(:name=>'B+*right+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
+    pc = User.as(:wagbot) do
+      Card.create(:name=>'B+*right+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
+    end
     card = Card.fetch('A+B')
     card.read_rule_id.should == pc.id
     pc = Card.fetch(pc.name) #important to re-fetch to catch issues with detecting change in trash status.
@@ -54,21 +59,25 @@ describe "reader rules" do
   end
 
   it "should revert to more general rule when more specific rule is renamed" do
-    @perm_card.save!
-    @perm_card.name = 'Something else+*self+*read'
-    @perm_card.confirm_rename = true
-    @perm_card.save!
+    User.as(:wagbot) do
+      @perm_card.save!
+      @perm_card.name = 'Something else+*self+*read'
+      @perm_card.confirm_rename = true
+      @perm_card.save!
+    end
     
     card = Card.fetch('Home')
     card.read_rule_id.should == Card.fetch('*all+*read').id
   end
 
   it "should not be overruled by a more general rule added later" do
-    @perm_card.save!
-    c= Card.fetch('Home')
-    c.typecode = 'Phrase'
-    c.save!
-    Card.create(:name=>'Phrase+*type+*read', :type=>'Pointer', :content=>'[[Joe User]]')
+    User.as(:wagbot) do
+      @perm_card.save!
+      c= Card.fetch('Home')
+      c.typecode = 'Phrase'
+      c.save!
+      Card.create(:name=>'Phrase+*type+*read', :type=>'Pointer', :content=>'[[Joe User]]')      
+    end
     
     card = Card.fetch('Home')
     card.read_rule_id.should == @perm_card.id  
@@ -76,7 +85,7 @@ describe "reader rules" do
   
   it "should get updated when trunk type change makes type-plus-right apply / unapply" do
     @perm_card.name = "Phrase+B+*type plus right+*read"
-    @perm_card.save!
+    User.as(:wagbot) { @perm_card.save! }
     Card.fetch('A+B').read_rule_id.should == Card.fetch('*all+*read').id
     c = Card.fetch('A')
     c.typecode = 'Phrase'
@@ -85,7 +94,7 @@ describe "reader rules" do
   end
   
   it "should work with relative settings" do
-    @perm_card.save!
+    User.as(:wagbot) { @perm_card.save! }
     all_plus = Card.fetch_or_create('*all plus+*read', :content=>'_left')
     c = Card.new(:name=>'Home+Heart')
     c.who_can(:read).should == ['anyone_signed_in']
@@ -101,7 +110,7 @@ describe "reader rules" do
     c.rule_card(:read).first.id.should == Card.fetch('*all+*read').id
     c.save
     c.read_rule_id.should == Card.fetch('*all+*read').id
-    @perm_card.save!
+    User.as(:wagbot) { @perm_card.save! }
     c2 = Card.fetch('Home+Heart')
     c2.who_can(:read).should == ['anyone_signed_in']
     c2.read_rule_id.should == @perm_card.id
@@ -114,7 +123,7 @@ describe "reader rules" do
   it "should insure that class overrides work with relative settings" do
     User.as :wagbot do
       all_plus = Card.fetch_or_create('*all plus+*read', :content=>'_left')
-      @perm_card.save
+      User.as(:wagbot) { @perm_card.save! }
       c = Card.create(:name=>'Home+Heart')
       c.read_rule_id.should == @perm_card.id
       r = Card.create(:name=>'Heart+*right+*read', :type=>'Pointer', :content=>'[[Administrator]]')

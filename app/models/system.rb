@@ -6,7 +6,7 @@ class System
     :base_url, :max_render_time, :max_renders,   # Common; docs in sample_wagn.rb
     :enable_ruby_cards, :enable_server_cards,    # Uncommon; Check Security risks before enabling these cardtypes (wagn.org ref url?)
     :enable_postgres_fulltext, :postgres_src_dir, :postgres_tsearch_dir, # Optimize PostgreSQL performance
-    :multihost,:wagn_name
+    :multihost, :wagn_name, :running
     
     
   @@role_tasks = %w{ administrate_users create_accounts assign_user_roles }

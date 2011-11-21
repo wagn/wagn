@@ -16,9 +16,6 @@ module Wagn
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
 
-    # Custom directories with classes and modules you want to be autoloadable.
-    # config.autoload_paths += %W(#{config.root}/extras)
-
     # Only load the plugins named here, in the order given (default is alphabetical).
     # :all can be used as a placeholder for all plugins not explicitly named.
     # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
@@ -43,12 +40,22 @@ module Wagn
     # Enable the asset pipeline
     config.assets.enabled = true
 
+    # The following shouldn't be necessary, but relative roots are otherwise failing on assets.
+    # May need to remove this later if fixed in rails core
+    config.assets.prefix = "#{ENV['RAILS_RELATIVE_URL_ROOT']}/assets"
+
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
     
-    config.extend Wagn::Configuration
-    config.wagn_load
+    config.cache_store = :file_store, "#{Rails.root}/tmp/cache"
     
+    config.after_initialize do Wagn::Configuration.wagn_run end
+
+    if ENV['MULTIDBCONFIG']
+      config.paths['config/database'] = File.join("#{Rails.root}/config/databases/#{Rails.env}.yml" )
+    end
+
+    # Custom directories with classes and modules you want to be autoloadable.
     config.autoload_paths += Dir["#{config.root}/app/models/"]
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
   end

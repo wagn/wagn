@@ -6,13 +6,13 @@ class AdminController < ApplicationController
     if request.post?
       #Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
       User.as :wagbot do
-        @user, @card = User.create_with_card( params[:extension].merge({:login=>'first'}), params[:card] )
+        @extension, @card = User.create_with_card( params[:extension].merge({:login=>'first'}), params[:card] )
         set_default_request_recipient
       end
 
-      if @user.errors.empty?
-        @user.roles = [Role[:admin]]
-        self.current_user = @user
+      if @extension.errors.empty?
+        @extension.roles = [Role[:admin]]
+        self.current_user = @extension
         User.cache.delete 'no_logins'
         flash[:notice] = "You're good to go!"
         redirect_to System.path_setting('/')
@@ -21,7 +21,7 @@ class AdminController < ApplicationController
       end
     else
       @card = Card.new( params[:card] || {} ) #should prolly skip defaults
-      @user = User.new( params[:user] || {} )
+      @extension = User.new( params[:user] || {} )
     end
   end
 

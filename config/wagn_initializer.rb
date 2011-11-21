@@ -10,7 +10,7 @@ module Wagn::Configuration
     self.after_initialize do Wagn::Configuration.wagn_run end
 
     if ENV['MULTIDBCONFIG']
-      self.database_configuration_file = File.join("#{Rails.root}/config/databases/#{Rails.env}.yml" )
+      self.paths['config/database'] = File.join("#{Rails.root}/config/databases/#{Rails.env}.yml" )
     end
 
     STDERR << "----------- Wagn Loaded -----------\n"

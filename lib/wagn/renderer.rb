@@ -353,7 +353,7 @@ module Wagn
     end
     
     def card_path(action, opts={})
-      base = "#{System.root_path}/card/#{action}"
+      base = "#{System.root_path}/card/#{action}/#{card_id}"
       if attrib = opts.delete( :attrib )
         base += "/#{attrib}"
       end

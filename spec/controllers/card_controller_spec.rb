@@ -53,11 +53,11 @@ describe CardController do
           )
         end           
 
-        it "should accept cards with dot sections that don't match extensions" do
-          {:get => "#{prefix}/random.card"}.should route_to(
-            :controller=>"card",:action=>"show",:id=>"random.card"
-          )
-        end
+#        it "should accept cards with dot sections that don't match extensions" do
+#          {:get => "#{prefix}/random.card"}.should route_to(
+#            :controller=>"card",:action=>"show",:id=>"random.card"
+#          )
+#        end
     
         it "should accept cards without dots" do
           {:get => "#{prefix}/random"}.should route_to(

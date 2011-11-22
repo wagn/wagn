@@ -36,6 +36,8 @@ jQuery.fn.extend {
   setContentField: (fn)->
     field = this.closest('.card-editor').find('.card-content')
     init_val = field.val()
+    wagn.func = fn
+    wagn.stash = this[0]
     new_val = fn.call this[0]
     field.val new_val
     field.change() if init_val != new_val 
@@ -45,7 +47,7 @@ jQuery.fn.extend {
 
 setInterval (-> $('.card-form').setContentFieldsFromMap()), 20000
 
-$(window).load -> 
+$(window).load ->
   wagn.initializeEditors()
 
   $('body').delegate '.standard-slotter', "ajax:success", (event, data) ->
@@ -100,8 +102,6 @@ $(window).load ->
   $('.autosave .card-content').live 'change', ->
     content_field = $(this)
     setTimeout ( -> content_field.autosave() ), 500
-
-
 
 
 warn = (stuff) -> console.log stuff if console?

@@ -153,12 +153,11 @@ module Wagn
         [[ :content,    true  ],
          [ :name,       true, ],
          [ :type,       !(card.type_template? || (card.typecode=='Cardtype' && card.cards_of_type_exist?))],
-         ].map do |attrib,ok,args|
-          if ok
-            raw( link_to attrib, path(:edit, :attrib=>attrib), :remote=>true,
-              :class=>"standard-slotter edit-#{attrib}-link #{extra_css_classes[attrib]}" + 
-                (attrib==current ? ' current-subtab' : ''))
-          end
+         ].map do |attrib,ok|
+          next unless ok
+          link_to attrib, path(:edit, :attrib=>attrib), :remote=>true,
+            :class=>"standard-slotter edit-#{attrib}-link #{extra_css_classes[attrib]}" + 
+              (attrib==current ? ' current-subtab' : '')
         end.compact.join
       end
     end
@@ -166,13 +165,11 @@ module Wagn
     def options_submenu(current)
       return '' if card && card.extension_type != 'User'
       div(:class=>'submenu') do
-        raw(
-          [:account, :settings].map do |key|
-            link_to( key, path(:options, :attrib=>key),
-              :class=>'standard-slotter' + (key==current ? ' current-subtab' : ''), :remote=>true
-            )
-          end.join
-        )
+        [:account, :settings].map do |key|
+          link_to( key, path(:options, :attrib=>key),
+            :class=>'standard-slotter' + (key==current ? ' current-subtab' : ''), :remote=>true
+          )
+        end.join
       end
     end
 
@@ -198,26 +195,9 @@ module Wagn
     end
 
 
-    def option( content, args )
-      args[:label] ||= args[:name]
-      args[:editable]= true unless args.has_key?(:editable)
-      self.options_need_save = true if args[:editable]
-      raw %{<tr>
-        <td class="inline label"><label for="#{args[:name]}">#{args[:label]}</label></td>
-        <td class="inline field">
-      } + content + %{
-        </td>
-        <td class="help">#{args[:help]}</td>
-        </tr>
-      }
-    end
-
-    def option_header(title)
-      %{<tr><td colspan="3" class="option-header"><h2>#{title}</h2></td></tr>}
-    end
 
     def link_to_menu_action( to_action)
-      klass = { 'edit' => 'edit-content-link init-editors'}
+      klass = { :edit => 'edit-content-link init-editors'}
       content_tag :li, link_to_action( to_action.to_s.capitalize, to_action,
         :class=> "standard-slotter #{klass[to_action]}" #{}" #{menu_action==to_action ? ' current' : ''}"
       )
@@ -259,6 +239,24 @@ module Wagn
   
     def form
       @form ||= form_for_multi
+    end
+
+    def option( content, args )
+      args[:label] ||= args[:name]
+      args[:editable]= true unless args.has_key?(:editable)
+      self.options_need_save = true if args[:editable]
+      raw %{<tr>
+        <td class="inline label"><label for="#{args[:name]}">#{args[:label]}</label></td>
+        <td class="inline field">
+      } + content + %{
+        </td>
+        <td class="help">#{args[:help]}</td>
+        </tr>
+      }
+    end
+
+    def option_header(title)
+      %{<tr><td colspan="3" class="option-header"><h2>#{title}</h2></td></tr>}
     end
 
   end

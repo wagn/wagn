@@ -14,7 +14,7 @@ class AccountController < ApplicationController
     @card = Card.new( card_args )
 
     return unless request.post?
-    return unless (captcha_required? && ENV['RECAPTCHA_PUBLIC_KEY'] ? verify_captcha(:model=>@user) : true)
+#    return unless (captcha_required? && ENV['RECAPTCHA_PUBLIC_KEY'] ? verify_captcha(:model=>@user) : true)
 
     return unless @user.errors.empty?
     @user, @card = User.create_with_card( user_args, card_args )

@@ -28,6 +28,7 @@ Feature: Set settings
     When I create card "User+*type+*content" with content "{{+cereal}}"
     And I log in as Joe User
     And I edit "Joe User"
+    Then what
     Then I should see "your favorite"
     When I go to new User
     Then I should see "your favorite"

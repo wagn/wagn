@@ -14,7 +14,7 @@ class CardController < ApplicationController
   before_filter :update_ok,   :only=> EDIT_ACTIONS
   before_filter :remove_ok, :only=>[ :remove ]
 
-  before_filter :require_captcha, :only => [ :create, :update, :comment ]
+#  before_filter :require_captcha, :only => [ :create, :update, :comment ]
 
   #----------( Special cards )
 
@@ -134,7 +134,7 @@ class CardController < ApplicationController
   #------------( deleting )
 
   def remove
-    return unless !captcha_required? || verify_captcha
+#    return unless !captcha_required? || verify_captcha
     
     @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy

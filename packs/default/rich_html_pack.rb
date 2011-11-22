@@ -72,7 +72,15 @@ class Wagn::Renderer::RichHtml
   
 ###---(  EDIT VIEWS )
   define_view(:edit_in_form) do |args|
+    instruction = ''
+    if instruction_card = (card.new_card? ? card.setting_card('add help', 'edit help') : card.setting_card('edit help'))
+      ss = self.subrenderer(instruction_card)
+      instruction = %{<div class="instruction">} +
+      ss.with_inclusion_mode(:main) { ss.render :core } +
+      '</div>'
+    end
     eform = form_for_multi
+    
     %{
 <div class="edit-area in-multi card-editor RIGHT-#{ card.cardname.tag_name.to_cardname.css_name }">
   <div class="label-in-multi">
@@ -85,10 +93,7 @@ class Wagn::Renderer::RichHtml
     #{ self.content_field( eform, :nested=>true ) }
     #{ card.new_card? ? eform.hidden_field(:typecode) : '' }
   </div>
-  #{if inst = (card.new_card? ? card.setting_card('add help', 'edit help') : card.setting_card('edit help'))
-    ss = self.subrenderer(inst); ss.state= :view
-    %{<div class="instruction">#{ ss.render :core }</div>}
-  end}
+  #{instruction}
   <div style="clear:both"></div>
 </div>
     }

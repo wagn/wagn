@@ -280,7 +280,9 @@ module Wagn
         end
         options[:tname] = tcard.cardname
         options[:view] ||= :open
-        wrap_main expand_inclusion(options)
+        with_inclusion_mode(:main) do
+          wrap_main expand_inclusion(options)
+        end
       end      
     end
   

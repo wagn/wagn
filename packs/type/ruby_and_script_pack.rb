@@ -24,7 +24,8 @@ class Wagn::Renderer
   end
   
   alias_view( :editor, {:type=>'plain_text'},  {:type=>'script'} )
-
+  
+=begin
   define_view(:core, :type=>'ruby') do |args|
     ruby = process_content( card.content )
     begin
@@ -49,4 +50,5 @@ class Wagn::Renderer
   define_view(:editor, :type=>'ruby') do |args|
     form.text_area :content
   end
+=end
 end

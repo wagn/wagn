@@ -139,10 +139,9 @@ module Wagn
   
     def template
       @template ||= begin
-        t = ActionView::Base.new( CardController.view_paths )
-        t.controller = controller
-        t.extend controller.class._helpers
-        t._routes = controller._routes 
+        c = controller
+        t = ActionView::Base.new c.class.view_paths, {:_routes=>c._routes}, c
+        t.extend c.class._helpers
         t
       end
     end
@@ -342,6 +341,27 @@ module Wagn
         args[:content]=content
       end
       args
+    end
+    
+    def card_id
+      case
+      when card.nil?         ; nil
+      when !card.new_record? ; card.id
+      when card.cardname     ; CGI.escape card.cardname.s
+      else                   ; nil
+      end
+    end
+    
+    def card_path(action, opts={})
+      base = "#{System.root_path}/card/#{action}"
+      if attrib = opts.delete( :attrib )
+        base += "/#{attrib}"
+      end
+      query =''
+      if !opts.empty?
+        query = '?' + (opts.map{ |k,v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&') )
+      end
+      base + query
     end
         
     def build_link(href, text)

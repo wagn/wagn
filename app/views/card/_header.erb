@@ -2,7 +2,8 @@
   <%= raw slot.menu %>
 
   <div class="title-menu">
-      <%= link_to raw(fancy_title(card)), "/card/view/#{card.id}?view=closed", 
+      <%= link_to raw(fancy_title(card)), 
+        slot.card_path(:view, :view=>:closed),
         :class => "line-link title down-arrow standard-slotter",
         :title => "close #{card.name}",
         :remote => true 

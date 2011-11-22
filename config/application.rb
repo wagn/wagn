@@ -40,10 +40,6 @@ module Wagn
     # Enable the asset pipeline
     config.assets.enabled = true
 
-    # The following shouldn't be necessary, but relative roots are otherwise failing on assets.
-    # May need to remove this later if fixed in rails core
-    config.assets.prefix = "#{ENV['RAILS_RELATIVE_URL_ROOT']}/assets"
-
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
     

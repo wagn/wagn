@@ -145,9 +145,7 @@ module Wagn
       %{<span class="notice"></span>}
     end
 
-    def card_id
-      (card.new_record? && card.cardname)  ? card.cardname.escape : card.id
-    end
+
 
     def edit_submenu(current)
       extra_css_classes = { :content => 'init-editors' }

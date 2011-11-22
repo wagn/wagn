@@ -4,10 +4,7 @@
 
 <% if card.ok?(:comment) %>
   <div class="comment-box">
-  <%= form_for :card, 
-    :url=>"/card/comment/#{card.id}/", 
-    :remote=>:true, 
-    :html=> { :class=>'standard-slotter' } do |f| %>
+  <%= form_for :card, :url=>slot.path(:comment), :remote=>:true, :html=> { :class=>'standard-slotter' } do |f| %>
     <%= f.text_area :comment, :rows=>3 %><br/>
     <% if User.current_user.login == "anon" %>
       <% card.comment_author= (slot.session[:comment_author] || params[:comment_author] || "Anonymous") %> <%#ENGLISH%>

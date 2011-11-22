@@ -1,3 +1,4 @@
+=begin
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 include AuthenticatedTestHelper
 
@@ -99,3 +100,4 @@ describe AccountController, "with captcha enabled" do
   end
 
 end
+=end

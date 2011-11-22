@@ -6,7 +6,7 @@
 <div class="settings-tab">
   <%- if !related_sets.empty? %>
     <div class="set-selection">
-      <%= form_tag "/card/options/#{slot.card.id}/settings", :method=>'get', :remote=>true, :class=>'standard-slotter' %>
+      <%= form_tag slot.path(:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'standard-slotter' %>
       <label>Set:</label>
       <select name="current_set" class="set-select">
       <%- related_sets.each do |set_name| %>
@@ -23,7 +23,7 @@
   
   <% if !card.extension_type && System.toggle(card.setting('accountable')) && System.ok?(:create_accounts) && card.ok?(:update) %>
     <div class="new-account-link">
-      <%= link_to %{Add a sign-in account for "#{card.name}"}, "/card/options/#{card.id}/new_account",
+      <%= link_to %{Add a sign-in account for "#{card.name}"}, slot.path(:options, :attrib=>:new_account),
         :class=>'standard-slotter new-account-link', :remote=>true%>
     </div>
   <% end %>

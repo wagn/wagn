@@ -11,7 +11,7 @@ class Wagn::Renderer
     
     #Universal Edit Button
     if !rcard.new_record? && rcard.ok?(:update)
-      bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="#{System.root_path}/card/edit/#{ rcard.cardname.to_url_key }"/>}
+      bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="#{ path(:edit, :card=>rcard) }"/>}
     end
     
     # RSS # move to packs!
@@ -31,6 +31,7 @@ class Wagn::Renderer
     bits << %(
     <script>
       var wagn = {}; window.wagn = wagn;
+      wagn.root_path = '#{System.root_path}';
       wagn.tinyMCEConfig = { #{System.setting('*tiny mce')} }
       #{ (ga_key=System.setting("*google analytics key")) ? "wagn.googleAnalyticsKey = '#{ga_key}'" : '' } 
     </script>      

@@ -142,13 +142,13 @@ class Wagn::Renderer
       out << '<span class="paging">'
 
       if first > 1
-        out << link_to( image_tag('prev-page.png'), "/card/view/#{card.id}?offset=#{[offset-limit,0].max}",
+        out << link_to( image_tag('prev-page.png'), path(:view, :offset=>[offset-limit,0].max),
           :html=> { :class=>'card-paging-link', :remote => true } )
       end
       out << %{<span class="paging-range">#{ first } to #{ last } of #{ total }</span>}
 
       if last < total
-        out << link_to( image_tag('next-page.png'), "/card/view/#{card.id}?offset=#{last}",
+        out << link_to( image_tag('next-page.png'), path(:view, :offset=>last),
           :html=> { :class=>'card-paging-link', :remote => true } )
       end    
       out << span

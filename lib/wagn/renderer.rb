@@ -349,13 +349,17 @@ module Wagn
       case
       when card.nil?         ; nil
       when !card.new_record? ; card.id
-      when card.cardname     ; CGI.escape card.cardname.s
+      when card.cardname     ; card.cardname.to_url_key
       else                   ; nil
       end
     end
     
-    def card_path(action, opts={})
-      base = "#{System.root_path}/card/#{action}/#{card_id}"
+    def path(action, opts={})
+      pcard = opts.delete(:card) || card
+      base = "#{System.root_path}/card/#{action}"
+      if pcard && ![:new, :create, :create_or_update].member?( action )
+        base += "/#{pcard.web_id}"
+      end
       if attrib = opts.delete( :attrib )
         base += "/#{attrib}"
       end

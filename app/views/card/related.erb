@@ -5,7 +5,7 @@
      @items.each do |item|
        key = item.to_cardname.to_key
        linktext = item.gsub('*','').gsub('subtab','').strip %>
-       <%= link_to linktext, "/card/related/#{card.id}/#{key}", 
+       <%= link_to linktext, slot.path(:options, :attrib=>key), 
           :html=> { :remote=>true, :class=>'standard-slotter' + (key==@current ? ' current_subtab' : '') } %>
     <% end %>
   <% end %>

@@ -460,6 +460,7 @@ class Card < ActiveRecord::Base
 
 
   def cardname() @cardname ||= name_without_cardname.to_cardname end
+  def web_id() new_card? ? cardname.to_url_key : id              end
 
   alias cardname= name=
   def name_with_cardname=(newname)

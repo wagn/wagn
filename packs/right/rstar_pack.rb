@@ -5,7 +5,7 @@ class Wagn::Renderer::RichHtml
 
     cells = [
       ["rule-setting", 
-        link_to( card.cardname.tag_name, "/card/view/#{card.cardname.to_url_key}?view=open_rule", 
+        link_to( card.cardname.tag_name, path(:view, :view=>:open_rule), 
           :class => 'edit-rule-link standard-slotter init-editors', :remote => true )
       ],
       ["rule-content", begin

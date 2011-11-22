@@ -10,7 +10,7 @@
 <%= wrap_slot(slot, slot_args) do |slot| %>
     <%= error_messages_for card %>
 
-    <%= form_for card, :url=>"/card/create", :remote=>true, :html=>{ :class=>'card-form card-new-form standard-slotter' } do |form| %>
+    <%= form_for card, :url=>slot.path(:create), :remote=>true, :html=>{ :class=>'card-form card-new-form standard-slotter' } do |form| %>
       <%- slot.form = form %>
       <%= hidden_field_tag :home_view, params[:home_view] || :open %>
       <% if redirect %><%= hidden_field_tag :redirect, redirect %><% end %>
@@ -21,7 +21,7 @@
         <% else %>
           <span class="new-type">
             <label>type:</label>
-            <%= slot.typecode_field :class=>'cardtype-field new-cardtype-field live-cardtype-field', :href => '/card/new' %>
+            <%= slot.typecode_field :class=>'cardtype-field new-cardtype-field live-cardtype-field', :href=>slot.path(:new) %>
           </span>
         <% end %>
         
@@ -51,7 +51,7 @@
         <div class="edit-button-area">
           <%= submit_tag 'Submit', :class=>'create-submit-button' %>
           <%= button_tag 'Cancel', :class=>"create-cancel-button standard-slotter", :type=>'button',
-            :href=>"/card/view/#{card.cardname.to_url_key}?view=missing" %>
+            :href=>slot.path(:view, :view=>:missing ) %>
         </div>
       </div>
     <% end %>

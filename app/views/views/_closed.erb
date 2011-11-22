@@ -1,7 +1,7 @@
 <div class="card-header">
   <div class="title-menu">
     <%= raw link_to( raw(fancy_title(card)),
-          slot.card_path(:view, :view=>:open),
+          slot.path(:view, :view=>:open),
           :title=>"open #{card.name}", 
           :class=>'title right-arrow standard-slotter',
           :remote=>true )

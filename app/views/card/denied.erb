@@ -26,7 +26,7 @@
       </p>
 
       <% unless @skip_slot_header or @deny=='view' %>
-        <p>(See the <%= raw( slot.link_to_action('options', 'options') ) %> tab to learn more.)</p>
+        <p>(See the <%= raw( slot.link_to_action('options', :options) ) %> tab to learn more.)</p>
       <% end %>
 
       <% if User.current_user.anonymous? && Card.new(:typecode=>'InvitationRequest').ok?(:create) %>

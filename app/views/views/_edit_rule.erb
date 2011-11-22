@@ -1,11 +1,10 @@
-<%= form_for card, :url=>"/card/create_or_update", :remote=>true, :html=>{ :class=>"card-form card-rule-form #{edit_mode ? 'standard-slotter' : ''}" } do |form| %>
+<%= form_for card, :url=>slot.path(:create_or_update), :remote=>true, :html=>{ :class=>"card-form card-rule-form #{edit_mode ? 'standard-slotter' : ''}" } do |form| %>
   <%= hidden_field_tag :success, open_rule.name %>
   <%= hidden_field_tag :view, 'open_rule' %>
   <div class="card-editor">
     <div class="rule-column-1">
       <div class="rule-setting">
-        <%= link_to( setting_name,
-          "/card/view/#{open_rule.cardname.to_url_key}?view=closed_rule",
+        <%= link_to( setting_name, slot.path(:view, :card=>open_rule, :view=>:closed_rule),
           :class => 'close-rule-link standard-slotter', :remote => true) %>
       </div>
     
@@ -39,8 +38,8 @@
         <% if edit_mode %>
           <label>type:</label>
           <%= raw slot.typecode_field( 
-            :class =>'cardtype-field rule-cardtype-field live-cardtype-field',
-            :href  =>"/card/view/#{open_rule.cardname.to_url_key}?view=open_rule&type_reload=true" 
+            :class => 'cardtype-field rule-cardtype-field live-cardtype-field',
+            :href  => slot.path(:view, :card=>open_rule, :view=>:open_rule, :type_reload=>true) 
             ) %>
         <% elsif current_set_key %>
           <label>type:</label>
@@ -58,19 +57,19 @@
   <% if edit_mode || params[:success] %>
     <div class="edit-button-area">
       <% if params[:success] %>
-        <%= button_tag 'Edit', :class=>'rule-edit-button standard-slotter', :type=>'button', :remote=>true,
-          :href => "/card/view/#{CGI.escape(open_rule.cardname.to_url_key)}?view=open_rule" %>
+        <%= button_tag 'Edit', :class=>'rule-edit-button standard-slotter', :type=>'button',
+          :href => slot.path(:view, :card=>open_rule, :view=>:open_rule), :remote=>true %>
         <%= button_tag 'Close', :class=>'rule-cancel-button', :type=>'button' %>
       <% else %>
         <% if !card.new_card? %>
           <span class='rule-delete-section'>
             <%= button_tag 'Delete', :class=>'rule-delete-button standard-slotter', :type=>'button', :remote=>true,
-              :href => "/card/remove/#{card.id}?success=#{CGI.escape(open_rule.cardname.to_url_key)}&view=open_rule",
+              :href => slot.path(:remove, :success=>CGI.escape(open_rule.cardname.to_url_key), :view=>:open_rule),
               'data-confirm'=>("Deleting will revert to #{setting_name} rule for #{ Card.fetch(fallback_set).label }" if fallback_set) 
               %>
           </span>
         <% end %>
-        <%= submit_tag 'Submit', :class=>'rule-submit-button' %> <%#>, :type=>'button' %>
+        <%= submit_tag 'Submit', :class=>'rule-submit-button' %>
         <%= button_tag 'Cancel', :class=>'rule-cancel-button', :type=>'button' %>
       <% end %>
     </div>

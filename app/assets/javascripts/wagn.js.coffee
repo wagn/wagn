@@ -18,7 +18,8 @@ jQuery.fn.extend {
   autosave: ->
     slot = @slot()
     return if @attr('no-autosave')
-    href = '/card/save_draft/' + slot.attr('card_id')
+    #might be better to put this href in the html
+    href = wagn.root_path + '/card/save_draft/' + slot.attr('card_id')
     $.ajax href, {
       data : { 'card[content]' : @val() },
       complete: (xhr) -> slot.notify('draft saved') 

@@ -10,7 +10,7 @@ namespace :cache do
   task :populate=>:environment do
     ActiveRecord::Base.connection.select_all("select name from cards order by updated_at desc").each do |record|
       cardname = URI.escape(Wagn::Cardname.escape(record['name']))
-      url = "#{System.base_url}/card/show/#{cardname}.json"
+      url = "#{System.base_url}#{System.root_path}/card/show/#{cardname}.json"
       cmd = "curl -s -S '#{url}' > /dev/null"
       puts url + " " + `#{cmd}`
     end

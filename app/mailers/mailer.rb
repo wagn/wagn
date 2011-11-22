@@ -29,10 +29,10 @@ class Mailer < ActionMailer::Base
     @url  = url_for(:host=>System.host, :controller=>'card', :action=>'show', :id=>invite_request.cardname.to_url_key)
 
     mail( {
-    :recipients => System.setting('*request+*to'),
-    :from        => System.setting('*request+*from') || invite_request.extension.email,
-    :subject => "#{invite_request.name} signed up for #{@site}",
-    :content_type => 'text/html',
+      :recipients => System.setting('*request+*to'),
+      :from        => System.setting('*request+*from') || invite_request.extension.email,
+      :subject => "#{invite_request.name} signed up for #{@site}",
+      :content_type => 'text/html',
     } )
   end               
 
@@ -44,10 +44,10 @@ class Mailer < ActionMailer::Base
     @updater = updated_card.updater.card.name
     @action = action
     @subedits = subedits
-    @card_url = "#{System.base_url}/wagn/#{card.cardname.to_url_key}"
-    @change_url = "#{System.base_url}/card/changes/#{card.cardname.to_url_key}"
-    @unwatch_url = "#{System.base_url}/card/unwatch/#{watched.to_cardname.to_url_key}"
-    @udpater_url = "#{System.base_url}/wagn/#{card.updater.card.cardname.to_url_key}"
+    @card_url = "#{System.base_url}#{System.root_path}/wagn/#{card.cardname.to_url_key}"
+    @change_url = "#{System.base_url}#{System.root_path}/card/changes/#{card.cardname.to_url_key}"
+    @unwatch_url = "#{System.base_url}#{System.root_path}/card/unwatch/#{watched.to_cardname.to_url_key}"
+    @udpater_url = "#{System.base_url}#{System.root_path}/wagn/#{card.updater.card.cardname.to_url_key}"
     @watched = (watched == card.cardname ? "#{watched}" : "#{watched} cards")
 
     mail( {

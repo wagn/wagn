@@ -155,7 +155,7 @@ module Wagn
          [ :type,       !(card.type_template? || (card.typecode=='Cardtype' && card.cards_of_type_exist?))],
          ].map do |attrib,ok,args|
           if ok
-            raw( link_to attrib, "/card/edit/#{card.id}/#{attrib}", :remote=>true,
+            raw( link_to attrib, path(:edit, :attrib=>attrib), :remote=>true,
               :class=>"standard-slotter edit-#{attrib}-link #{extra_css_classes[attrib]}" + 
                 (attrib==current ? ' current-subtab' : ''))
           end
@@ -168,7 +168,7 @@ module Wagn
       div(:class=>'submenu') do
         raw(
           [:account, :settings].map do |key|
-            link_to( key, "/card/options/#{card.id}/#{key}",
+            link_to( key, path(:options, :attrib=>key),
               :class=>'standard-slotter' + (key==current ? ' current-subtab' : ''), :remote=>true
             )
           end.join
@@ -188,10 +188,10 @@ module Wagn
       menu = %{<span class="card-menu">\n}
         menu << %{<span class="card-menu-left">\n}
           menu_options.each do |opt|
-            menu << link_to_menu_action(opt.to_s)
+            menu << link_to_menu_action(opt)
           end
         menu << "</span>"
-        menu << link_to_menu_action(top_option.to_s)
+        menu << link_to_menu_action(top_option)
       menu << "</span>"
       menu.html_safe
       menu
@@ -225,7 +225,7 @@ module Wagn
 
     def link_to_action( text, to_action, html_opts={})
       html_opts[:remote] = true
-      link_to text, "/card/#{to_action}/#{card.id}", html_opts
+      link_to text, path(to_action), html_opts
     end
 
     def name_field(form, options={})

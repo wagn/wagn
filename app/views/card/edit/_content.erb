@@ -11,7 +11,7 @@
 <% end %>
 
 <%= div( :class=>"card-editor edit-area #{card.hard_template ? :templated : ''}" ) do %>
-  <%= form_for :card, :url=>"/card/update/#{card.cardname.to_url_key}",
+  <%= form_for :card, :url=>slot.path(:update)
       :html=>{ :class=>'card-form card-edit-form standard-slotter autosave', :remote=>true } do |form| %>
     <div>
       <% slot.form = form %>
@@ -20,10 +20,10 @@
     
     <div class="edit-button-area">
       <% if !card.new_card? %>
-        <%= button_tag "Delete", :class=>'edit-delete-button delete-button standard-slotter', :href=>"/card/remove/#{card.id}", :type=>'button', 'data-type'=>'html' %>
+        <%= button_tag "Delete", :class=>'edit-delete-button delete-button standard-slotter', :href=>slot.path(:remove), :type=>'button', 'data-type'=>'html' %>
       <% end %>
       <%= submit_tag 'Submit', :class=>'edit-submit-button' %>
-      <%= button_tag 'Cancel', :class=>'edit-cancel-button standard-slotter', :href=>"/card/view/#{card.id}", :type=>'button' %>
+      <%= button_tag 'Cancel', :class=>'edit-cancel-button standard-slotter', :href=>slot.path(:view), :type=>'button' %>
     </div>
 
   <% end %>

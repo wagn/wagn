@@ -1,6 +1,6 @@
 <%= wrap_slot do |slot| %>
   <%= raw slot.header %>
-  <%= form_for :card, :url=>"/card/remove/#{@card.id}",
+  <%= form_for :card, :url=>slot.path(:remove),
     :html => { :remote=>true, :class=>'standard-slotter', 'data-type'=>'html' } do |f| %>
     
     <%= hidden_field_tag 'confirm_destroy', 'true' %>
@@ -19,7 +19,7 @@
       <%= raw error_messages_for( @card ) %>
       
       <%= submit_tag 'Yes, do it', :class=>'remove-submit-button' %>
-      <%= button_tag 'Cancel', :class=>'remove-cancel-button standard-slotter', :type=>'button', :href=>"/card/view/#{card.id}" %>
+      <%= button_tag 'Cancel', :class=>'remove-cancel-button standard-slotter', :type=>'button', :href=>slot.path(:view) %>
     
       <%= raw slot.notice %>
     </div>

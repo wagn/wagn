@@ -3,7 +3,7 @@
 
 <%= div(:class=>'edit-area edit-name' ) do %>
   <h2>Change Name</h2>
-  <%= form_for :card, :url=>"/card/update/#{@card.id}", 
+  <%= form_for :card, :url=>slot.path(:update), 
     :html=>{ :class=>'card-edit-name-form standard-slotter', :remote=>true } do |f| %>
     <div>to <%= raw slot.name_field(f) %></div>
 
@@ -43,6 +43,6 @@
     <% end %>
 
     <%= submit_tag 'Rename', :class=>'edit-name-submit-button' %>
-    <%= button_tag 'Cancel', :class=>'edit-name-cancel-button standard-slotter init-editors', :type=>'button', :href=>"/card/edit/#{card.id}" %>
+    <%= button_tag 'Cancel', :class=>'edit-name-cancel-button standard-slotter init-editors', :type=>'button', :href=>slot.path(:edit) %>
   <% end %>
 <% end %>

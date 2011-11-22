@@ -11,7 +11,7 @@
 <% end %>
 
 <%= div( :class=>"card-editor edit-area #{card.hard_template ? :templated : ''}" ) do %>
-  <%= form_for :card, :url=>slot.path(:update)
+  <%= form_for :card, :url=>slot.path(:update),
       :html=>{ :class=>'card-form card-edit-form standard-slotter autosave', :remote=>true } do |form| %>
     <div>
       <% slot.form = form %>

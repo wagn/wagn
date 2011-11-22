@@ -218,7 +218,7 @@ module Wagn
 
     def link_to_menu_action( to_action)
       klass = { 'edit' => 'edit-content-link init-editors'}
-      content_tag :li, link_to_action( to_action.capitalize, to_action,
+      content_tag :li, link_to_action( to_action.to_s.capitalize, to_action,
         :class=> "standard-slotter #{klass[to_action]}" #{}" #{menu_action==to_action ? ' current' : ''}"
       )
     end

@@ -7,10 +7,10 @@ source 'http://rubygems.org'
 
 
 gem 'rails', '~> 3.1'
-gem 'htmlentities'#, '~>4.2.1'
-gem 'uuid'
+gem 'htmlentities', '~>4.3.0'
+gem 'uuid', '~>2.3.4'
 gem 'jquery-rails', '~> 1.0.17'
-#gem 'ruby-openid'#, '~>2.1.8'
+gem 'tinymce-rails', '~> 3.4.7'
 
 
 # ~~~~~~~~~ #

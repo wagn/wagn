@@ -147,6 +147,7 @@ class CardController < ApplicationController
     url = previous_location if [nil, 'TO_PREVIOUS_CARD'].member? url
 
     case 
+    when !ajax?            ; wagn_redirect url
     when params[:redirect] ; wagn_redirect url
     when params[:success]  ; @card = Card.fetch_or_new(url); render_show 
     else                   ; render :text => "#{@card.name} removed"
@@ -293,7 +294,7 @@ class CardController < ApplicationController
       end
     end 
     
-    if params[:redirect]
+    if params[:redirect] || !ajax?
       wagn_redirect url
     else
       @card = Card.fetch_or_new(url) if url
@@ -302,7 +303,11 @@ class CardController < ApplicationController
   end
   
   def wagn_redirect(url)
-    ajax? ? render( :text => url, :status => 303 ) : redirect_to url
+    if ajax?
+      render :text => url, :status => 303
+    else
+      redirect_to url
+    end 
   end
   
 

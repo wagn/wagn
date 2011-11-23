@@ -144,21 +144,20 @@ describe CardController do
     it "redirects to thanks if present" do
       login_as :wagbot
       xhr :post, :create, :redirect=>'/thank_you', :card => { "name" => "Wombly" }
-      assert_response 303
-      assigns["url"].should == "/thank_you"
+      assert_response 303, "/thank_you"
     end
 
     it "redirects to card if thanks is blank" do
       login_as :wagbot
       post :create, :redirect=>'TO_CARD', "card" => { "name" => "Joe+boop" }
-      assigns["url"].should ==  "/wagn/Joe+boop"
+      assert_redirected_to "/wagn/Joe+boop"
     end
    
     it "redirects to home if not createable and thanks not specified" do
       # Fruits (from shared_data) are anon creatable but not readable
       login_as :anon
       post :create, :redirect=>'TO_CARD', "card" => { "type"=>"Fruit", :name=>"papaya" }
-      assigns["url"].should ==  "/"
+      assert_redirected_to "/"
     end    
   end
 

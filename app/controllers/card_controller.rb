@@ -24,9 +24,7 @@ class CardController < ApplicationController
       params[:id] = (System.setting('*home') || 'Home').to_cardname.to_url_key
   end
 
-  def mine_preload()  params[:id] = User.current_user.card.cardname.to_url_key   end
   def index() show  end
-  def mine()  show  end
 
   def show
     save_location if params[:format].nil? || params[:format].to_sym==:html

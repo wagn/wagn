@@ -20,7 +20,6 @@ Wagn::Application.routes.draw do
 #  match 'search/:_keyword(.:format)' => 'card#show', :id => '*search', :view => 'content', :format => FORMAT_PATTERN
   
   match 'new/:type' => 'card#new'
-  match 'me' => 'card#mine'
 
   match ':controller/:action(/:id(.:format)(/:attribute))', :format => FORMAT_PATTERN
   match ':controller(/:action)' => '#index'

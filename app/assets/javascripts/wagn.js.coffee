@@ -57,8 +57,10 @@ $(window).load ->
   $('body').delegate '.standard-slotter', "ajax:error", (event, xhr) ->
 #    warn "standard slotter error"
     result = xhr.responseText
-    if xhr.status == 303
+    if xhr.status == 303 #redirect
       window.location=result
+    else if xhr.status == 403 #permission denied
+      $(this).setSlotContent result
     else 
       $(this).notify result or $(this).setSlotContent result
 

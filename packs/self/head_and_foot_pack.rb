@@ -32,6 +32,7 @@ class Wagn::Renderer
     <script>
       var wagn = {}; window.wagn = wagn;
       wagn.root_path = '#{System.root_path}';
+      window.tinyMCEPreInit = {base:"#{System.root_path}/assets/tinymce",query:"3.4.7",suffix:""};
       wagn.tinyMCEConfig = { #{System.setting('*tiny mce')} }
       #{ (ga_key=System.setting("*google analytics key")) ? "wagn.googleAnalyticsKey = '#{ga_key}'" : '' } 
     </script>      

@@ -30,7 +30,7 @@
       <% end %>
 
       <% if User.current_user.anonymous? && Card.new(:typecode=>'InvitationRequest').ok?(:create) %>
-        <p><%= link_to 'Sign up for a new account', '/account/signup' %>.</p>
+        <p><%= link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' %>.</p>
       <% end %>
     </div>
 

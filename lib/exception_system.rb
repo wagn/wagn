@@ -56,12 +56,5 @@ module ExceptionSystem
     else 
       500 
     end
-  end
-
-  def requesting_javascript?
-    @request_type!='html'
-  end
-  
-
-  
+  end  
 end

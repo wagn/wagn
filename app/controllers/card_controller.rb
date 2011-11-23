@@ -143,13 +143,12 @@ class CardController < ApplicationController
 
     discard_locations_for(@card)
     
-    @url = params[:redirect] || params[:success]
-    @url = previous_location if [nil, 'TO_PREVIOUS_CARD'].member? @url
+    url = params[:redirect] || params[:success]
+    url = previous_location if [nil, 'TO_PREVIOUS_CARD'].member? url
 
     case 
-    when !ajax?            ; redirect_to @url
-    when params[:redirect] ; render :text => @url, :status => 303  # this should only happen on the main card
-    when params[:success]  ; @card = Card.fetch_or_new(@url); render_show 
+    when params[:redirect] ; wagn_redirect url
+    when params[:success]  ; @card = Card.fetch_or_new(url); render_show 
     else                   ; render :text => "#{@card.name} removed"
     end
   end
@@ -284,24 +283,28 @@ class CardController < ApplicationController
   end
   
   def render_success
-    @url = params[:redirect] || params[:success]
+    url = params[:redirect] || params[:success]
     
-    if @url == 'TO_CARD' or ( !ajax? && @url.nil? )
-      @url = if @card.ok?(:read)
+    if url == 'TO_CARD' or ( !ajax? && url.nil? )
+      url = if @card.ok?(:read)
         card_path @card
       else
         '/'
       end
     end 
     
-    case
-    when !ajax?             ; redirect_to @url
-    when params[:redirect]  ; render :text => @url, :status => 303
+    if params[:redirect]
+      wagn_redirect url
     else
-      @card = Card.fetch_or_new(@url) if @url
+      @card = Card.fetch_or_new(url) if url
       render_show
     end
   end
+  
+  def wagn_redirect(url)
+    ajax? ? render( :text => url, :status => 303 ) : redirect_to url
+  end
+  
 
 end
 

@@ -9,8 +9,6 @@ source 'http://rubygems.org'
 gem 'rails', '~> 3.1'
 gem 'htmlentities', '~>4.3.0'
 gem 'uuid', '~>2.3.4'
-gem 'jquery-rails', '~> 1.0.17'
-gem 'tinymce-rails', '~> 3.4.7'
 
 
 # ~~~~~~~~~ #
@@ -81,6 +79,9 @@ group :assets do
   gem 'sass-rails', "  ~> 3.1.0"
   gem 'coffee-rails', "~> 3.1.0"
   gem 'uglifier'
+  
+  gem 'jquery-rails', '~> 1.0.17'
+  gem 'tinymce-rails', '~> 3.4.7'
 end
 
 

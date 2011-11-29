@@ -205,7 +205,7 @@ describe Wagn::Renderer, "" do
 
       it "renders card content" do
         #warn "simple page = #{@simple_page}"
-        assert_view_select @simple_page, 'span[class="open-content content editOnDoubleClick"]', 'AlphaBeta'
+        assert_view_select @simple_page, 'span[class="open-content content"]', 'AlphaBeta'
       end
 
       it "renders notice info" do

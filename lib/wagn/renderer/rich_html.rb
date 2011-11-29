@@ -127,7 +127,7 @@ module Wagn
     end
 
     def wrap_content( view, content="" )
-      %{<span class="#{view}-content content editOnDoubleClick">#{content}</span>}
+      %{<span class="#{view}-content content">#{content}</span>}
     end
 
     def wrap_main(content)

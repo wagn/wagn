@@ -97,7 +97,7 @@ class TransclusionTest < ActiveSupport::TestCase
   end
     
   def span(card, text)
-    %{<span class="transcluded editOnDoubleClick" cardId="#{card.id}" inPopup="true">} +
+    %{<span class="transcluded" cardId="#{card.id}" inPopup="true">} +
       %{<span class="content transcludedContent" cardId="#{card.id}">#{text}</span></span>}
   end     
 =end

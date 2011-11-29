@@ -65,8 +65,6 @@ $(window).load ->
   $('body').delegate '.rule-cancel-button', 'click', ->
     $(this).closest('tr').find('.close-rule-link').click()
 
-  # google analytics module
-  initGoogleAnalytics()
   
 permissionsContent = (ed) ->
   return '_left' if ed.find('#inherit').attr('checked')
@@ -78,10 +76,3 @@ pointerContent = (vals) ->
   list = $.map $.makeArray(vals), (v)-> if v then '[[' + v + ']]'
   $.makeArray(list).join "\n"
 
-initGoogleAnalytics = ->
-  return false unless wagn.googleAnalyticsKey
-  if !pageTracker?
-    gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-  pageTracker = _gat._getTracker(wagn.googleAnalyticsKey);
-  pageTracker._trackPageview();

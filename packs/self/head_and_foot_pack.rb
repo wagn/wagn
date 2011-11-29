@@ -34,10 +34,26 @@ class Wagn::Renderer
       wagn.root_path = '#{System.root_path}';
       window.tinyMCEPreInit = {base:"#{System.root_path}/assets/tinymce",query:"3.4.7",suffix:""};
       wagn.tinyMCEConfig = { #{System.setting('*tiny mce')} }
-      #{ (ga_key=System.setting("*google analytics key")) ? "wagn.googleAnalyticsKey = '#{ga_key}'" : '' } 
     </script>      
           )
     bits << javascript_include_tag('application')
+
+    if ga_key=System.setting("*google analytics key")
+      bits << %(
+    
+      <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', '#{ga_key}']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+      </script>
+      )
+    end
 
     bits.join("\n")
   end

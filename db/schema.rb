@@ -84,11 +84,6 @@ ActiveRecord::Schema.define(:version => 20110929155053) do
 
   add_index "cardtypes", ["class_name"], :name => "cardtypes_class_name_uniq", :unique => true
 
-  create_table "codename", :force => true do |t|
-    t.integer "card_id",  :null => false
-    t.string  "codename", :null => false
-  end
-
   create_table "db_files", :force => true do |t|
     t.binary "data"
   end

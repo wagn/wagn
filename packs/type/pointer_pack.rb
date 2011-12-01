@@ -3,16 +3,14 @@ class Wagn::Renderer
   define_view(:core, :type=>'pointer') do |args|
     args ||= {}
     action = args[:action] || :edit
-    %{<div class="pointer-list"> } +
-      pointer_item(self, (@item_view || 'closed')) +
-    "</div>" + 
+    @item_view ||= :closed
+    %{<div class="pointer-list">#{pointer_items}</div>} + 
     link_to( 'add/edit', path(action), :remote=>true, :class=>'standard-slotter add-edit-item' ) #ENGLISH 
   end
 
   define_view(:closed_content, :type=>'pointer') do |args|
-    div( :class=>"pointer-list" ) do
-      pointer_item(self, ('name'==@item_view || params[:item] ? 'name' : 'link'))
-    end
+    @item_view = (@item_view=='name' or params[:item]=='name') ? 'name' : 'link'
+    %{<div class="pointer-list">#{pointer_items}</div>}
   end
 
   define_view(:editor, :type=>'pointer') do |args|
@@ -77,4 +75,16 @@ class Wagn::Renderer
     options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]} 
     select_tag("pointer_select", options_for_select(options, card.item_names.first), :class=>'pointer-select')
   end
+  
+  private
+  
+  def pointer_items
+    typeparam = case (type=card.item_type)
+      when String ; ";type:#{type}"
+      when Array  ; ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
+      else ""
+    end
+    expand_inclusions card.content.gsub(/\[\[/,"<div class=\"pointer-item item-#{@item_view}\">{{").gsub(/\]\]/,"|#{@item_view}#{typeparam}}}</div>")
+  end
+  
 end

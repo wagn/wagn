@@ -25,7 +25,6 @@ class Wagn::Renderer
   end
 
   define_view(:closed_content) do |args|
-    @mode = :line
     truncatewords_with_closing_tags( _render_core(args) { yield } )
   end
 

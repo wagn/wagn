@@ -43,7 +43,7 @@ module Wagn
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
     
-    config.cache_store = :file_store, "#{Rails.root}/tmp/cache"
+    # => config.cache_store = :file_store, "#{Rails.root}/tmp/cache"
     
     config.after_initialize do Wagn::Configuration.wagn_run end
 

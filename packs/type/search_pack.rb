@@ -22,7 +22,7 @@ class Wagn::Renderer
   end
 
   define_view(:closed_content, :type=>'search') do |args|
-    return "..." if depth > 2
+    return "..." if @depth > 2
     results= begin
       card.item_cards( paging_params )
     rescue Exception=>e

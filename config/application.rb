@@ -43,13 +43,9 @@ module Wagn
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
     
-    # => config.cache_store = :file_store, "#{Rails.root}/tmp/cache"
+    config.cache_store = :file_store, "#{Rails.root}/tmp/cache"
     
     config.after_initialize do Wagn::Configuration.wagn_run end
-
-    if ENV['MULTIDBCONFIG']
-      config.paths['config/database'] = File.join("#{Rails.root}/config/databases/#{Rails.env}.yml" )
-    end
 
     # Custom directories with classes and modules you want to be autoloadable.
     config.autoload_paths += Dir["#{config.root}/app/models/"]

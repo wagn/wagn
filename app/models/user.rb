@@ -92,7 +92,7 @@ class User < ActiveRecord::Base
         usr = Integer===key ? find(key) : find_by_login(key.to_s)
         if usr #preload to be sure these get cached.
           usr.card
-          usr.read_rule_ids
+          usr.read_rule_ids unless usr.login=='wagbot'
         end
         usr
       end)

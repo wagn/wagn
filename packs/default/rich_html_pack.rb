@@ -63,7 +63,7 @@ class Wagn::Renderer::RichHtml
   end
 
   define_view(:missing) do |args|
-    new_args = { 'card[name]'=>CGI.escape(card.name) }
+    new_args = { 'card[name]'=>card.name }
     new_args['card[type]'] = args[:type] if args[:type]
 
     wrap(:missing, args) do

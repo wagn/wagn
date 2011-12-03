@@ -4,7 +4,7 @@ See http://wagn.org/wagn/Installation for the latest version of these instructio
 OPTION A: QUICK START
 (recommended for trial)
  
-  You will need: ruby (1.8.6+) and either Postgres or Mysql, and the appropriate ruby gems for your database.
+  You will need: ruby (1.8.7+) and either Postgres or Mysql
   
     1. Download the latest stable release from RubyForge: http://rubyforge.org/frs/?group_id=3630
     2. untar or unzip the package

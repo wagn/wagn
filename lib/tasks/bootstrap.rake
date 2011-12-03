@@ -44,7 +44,7 @@ namespace :wagn do
       require 'active_record/fixtures'                         
       #ActiveRecord::Base.establish_connection(Rails.env.to_sym)
       Dir.glob(File.join(Rails.root, 'db', 'bootstrap', '*.{yml,csv}')).each do |fixture_file|
-        Fixtures.create_fixtures('db/bootstrap', File.basename(fixture_file, '.*'))
+        ActiveRecord::Fixtures.create_fixtures('db/bootstrap', File.basename(fixture_file, '.*'))
       end 
     
       extra_sql = { 

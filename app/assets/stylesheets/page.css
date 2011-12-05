@@ -36,28 +36,9 @@
 #my-card-link {
   font-weight: bold;
 }
-#navbox_background {
-  margin:  0 8px;
-  margin-bottom: 2px;     
-  background: #ffc;        
-  /* this is already specified in defaults.css, but specifying it again here fixes ie */
-  border: 1px solid #aaa;
-  border-top: 2px solid #666;
-  border-left: 2px solid #666;
-}
-html>body #navbox_background {
-  padding: 2px 0px;
-}
-/* use both ids otherwise #menu a  overrides */            
-#navbox_background #navbox_image {
-  padding: 2px 8px;
-  background: url(search.gif) no-repeat right;
-}
-html>body #navbox_background #navbox_image { 
-  background-image: url(search.png);
-}
-#navbox_field,
-#navbox_field:focus {
+
+.navbox,
+.navbox:focus {
   padding: 0px 3px;
   margin: 0px;
   height: 18px;
@@ -67,19 +48,6 @@ html>body #navbox_background #navbox_image {
   font-size: 13px;
   border: 0px;
   background: #ffc;
-}
-#navbox_field_auto_complete {
-  background: #eee;
-  width: auto;
-}
-#navbox_field_auto_complete .informal {
-  color: #777;
-  font-size: 10px;
-}
-#navbox_field_auto_complete a {
-  display: inline;
-  padding: 3px 8px;
-  margin-right: 4px;
 }
 
 
@@ -175,39 +143,6 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 #new-card .main-instruction {
   margin-bottom: 20px;
 }
-
-
-/*-------- auto complete --------*/
-
-div.auto_complete {
-  width: 350px;
-  background: #fff;
-  text-align: left;
-  position: relative;
-  overflow: visible;
-  z-index: 10
-}
-div.auto_complete ul {
-  border:1px solid #888;
-  background: #fff;
-  margin:0;
-  padding:0;
-  width:100%;
-  list-style-type:none;
-}
-div.auto_complete ul li {
-  margin:0;
-  padding:3px;
-}
-div.auto_complete ul li.selected { 
-  background-color: #ffb; 
-}
-div.auto_complete ul strong.highlight { 
-  color: #444; 
-  margin:0;
-  padding:0;
-}
-
 
 /*--- errors -----*/
 

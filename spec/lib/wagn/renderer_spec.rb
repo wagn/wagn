@@ -166,7 +166,7 @@ describe Wagn::Renderer, "" do
       before do
         User.as :wagbot do
           card = Card['A+B']
-          @simple_page = Wagn::Renderer::RichHtml.new(card).render(:layout)
+          @simple_page = Wagn::Renderer::Html.new(card).render(:layout)
         end
       end
 
@@ -192,9 +192,9 @@ describe Wagn::Renderer, "" do
         assert_view_select @simple_page, 'div[id="menu"]' do
           assert_select 'a[class="internal-link"][href="/"]', 'Home'
           assert_select 'a[class="internal-link"][href="/recent"]', 'Recent'
-          assert_select 'form[id="navbox_form"][action="/search"]' do
-            assert_select 'a[id="navbox_image"][title="Search"]'
-            assert_select 'input[name="navbox"]'
+          assert_select 'form[id="navbox-form"][action="/*search"]' do
+            #assert_select 'a[id="navbox_image"][title="Search"]'
+            assert_select 'input[name="_keyword"]'
           end
         end
       end
@@ -362,7 +362,7 @@ describe Wagn::Renderer, "" do
       card.should_receive(:setting_card).with("autoname").and_return(nil)
       card.should_receive(:setting_card).with("content","default").and_return(content_card)
       card.should_receive(:setting_card).with("add help","edit help").and_return(help_card)
-      assert_view_select Wagn::Renderer::RichHtml.new(card).render_new, 'div[class="field-in-multi"]' do
+      assert_view_select Wagn::Renderer::Html.new(card).render_new, 'div[class="field-in-multi"]' do
         assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', "card[cards][~plus~Yoruba][content]"
       end
     end
@@ -394,7 +394,7 @@ describe Wagn::Renderer, "" do
         Card.create(:name=>'Book+author+*type plus right+*default', :type=>'Phrase', :content=>'Zamma Flamma')
       end
       c = Card.new :name=>'Yo Buddddy', :type=>'Book'
-      result = Wagn::Renderer::RichHtml.new(c).render( :edit )
+      result = Wagn::Renderer::Html.new(c).render( :edit )
       assert_view_select result, 'div[class="field-in-multi"]' do
         assert_select 'input[name=?][type="text"][value="Zamma Flamma"]', 'card[cards][~plus~author][content]'
         assert_select 'input[name=?][type="hidden"][value="Phrase"]',     'card[cards][~plus~author][typecode]'

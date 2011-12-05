@@ -53,22 +53,24 @@ html>body .page-icon {
   background-image: url(page.png);
 }
 
-.card-icon {
-  background: url(card.gif) no-repeat right;
-}
-
-.plus-icon {
-  background: url(plus.gif) no-repeat right;
-}
-
-.search-icon {
-  background: url(search.gif) no-repeat right;
-}
                                           
 /* FIXE: these need the IE gifs as well */
-html>body .card-icon{ background-image: url(card.png); }
-html>body .plus-icon{ background-image: url(plus.png); }
-html>body .search-icon{ background-image: url(search.png); }
+
+
+.ui-menu .ui-menu-item {
+  padding: 2px;
+}
+
+.navbox-item-label {
+  color: #777;
+  font-size: 10px;
+  line-height: 15px;
+  padding: 3px 0 3px 25px;
+  background: left no-repeat;  
+}
+.search-icon { background-image: url(search.png); }
+.add-icon    { background-image: url(plus.png);   }
+.goto-icon   { background-image: url(page.png);   }
 
 
 .cardtype { 

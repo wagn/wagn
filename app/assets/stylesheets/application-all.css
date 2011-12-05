@@ -1,10 +1,10 @@
 /**
  * application-all.css
  *
+ *= require jquery-ui-smoothness
  *= require page
  *= require defaults
  *= require card
  *= require settings
- *= require jquery-ui-smoothness
  
   */

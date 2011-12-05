@@ -1,5 +1,5 @@
 module Wagn
-  class Renderer::RichHtml < Renderer
+  class Renderer::Html < Renderer
 
     attr_accessor  :options_need_save, :start_time, :skip_autosave
 

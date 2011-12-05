@@ -105,5 +105,60 @@ $(window).load ->
     content_field = $(this)
     setTimeout ( -> content_field.autosave() ), 500
 
+  $('.navbox').autocomplete({
+    html: 'html',
+    autoFocus: true,
+    source: navbox_results,
+    select: navbox_select
+  })
+  
+navbox_item = (item)->
+
+navbox_results = (term, cback) ->
+  term = term.term
+  eterm = escape(term)
+  #box = this.element
+  
+  res = { 
+    search : true,
+    add : true,
+#    type : false,
+    goto : [
+      ['Marie Deatherage', 'Marie_Deatherage'],
+      ['Marie Lamfrom Charitable Foundation', 'Marie_Lamfrom_Charitable_Foundation']
+    ]  
+  }
+
+  items = []
+  $.each res, (key, val)->
+    if key == 'goto'
+      $.each val, (index, gval) ->
+        items.push { type: key, prefix: 'Go to', value: gval[0], href: '/wagn/' + gval[1] }
+    else
+      i = { type : key, value : term }
+      if key == 'search'
+        i.prefix = 'Search for'
+        i.href  = '/*search?_keyword=' + eterm
+      else if key == 'add'
+        i.prefix = 'Add'
+        i.href = '/card/new?card[name]=' + eterm
+      else if key == 'type'
+        i.type = 'add'
+        i.prefix = 'Add with type'
+        i.href = '/card/new?card[type]=' + eterm
+      
+      items.push i
+    
+  $.each items, (index, i)->
+    i.href = wagn.root_path + i.href
+    i.label = '<span class="navbox-item-label '+ i.type + '-icon">' + i.prefix + ':</span> ' +
+      '<span class="navbox-item-value">' + i.value + '</span>'
+    
+  cback items
+  
+navbox_select = (event, ui) ->
+  $(this).attr('disabled', 'disabled')
+  window.location = wagn.ui.item.href
+  
 
 warn = (stuff) -> console.log stuff if console?

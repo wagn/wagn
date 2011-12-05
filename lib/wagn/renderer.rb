@@ -7,7 +7,7 @@ module Wagn
     INCLUSION_MODES  = [ :main, :closed, :edit, :layout ]
   
     RENDERERS = {
-      :html => :RichHtml,
+      :html => :Html,
       :css  => :Text,
       :txt  => :Text
     }
@@ -455,25 +455,5 @@ module Wagn
     end
   end
   
-
-  class Renderer::Text < Renderer
-    def initialize card, opts
-      super card,opts
-    
-      if @format=='css' && controller
-        controller.response.headers["Cache-Control"] = "public"
-      end
-    end
-  end
-
-  class Renderer::Kml < Renderer
-  end
-
-  class Renderer::Rss < Renderer::RichHtml
-    def full_uri(relative_uri)  System.base_url + relative_uri  end
-  end
-
-  class Renderer::EmailHtml < Renderer::RichHtml
-    def full_uri(relative_uri)  System.base_url + relative_uri  end
-  end
+  Renderer::EmailHtml
 end

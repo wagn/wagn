@@ -231,38 +231,6 @@ class CardController < ApplicationController
     ajax? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
-  def auto_complete_for_navbox
-    if @stub = params['navbox']
-      @items = Card.search( :complete=>@stub, :limit=>8, :sort=>'name' )
-      render :inline=> "<%= navbox_result @items, 'name', @stub %>"
-    else
-      render :inline=> ''
-    end
-  end
-
-  def auto_complete_for_card_name
-    complete = ''
-    # from pointers, the partial text is from fields called  pointer[N]
-    # from the goto box, it is in card[name]
-    params.keys.each do |key|
-      complete = params[key] if key.to_s == 'name'
-      next unless key.to_s =~ /card|pointer/
-      complete = params[key].values[0]
-    end
-    complete = complete.to_s
-    # FIXME - shouldn't we bail here if we don't have anything to complete?
-
-    options_card =
-      (!params[:id].blank? and
-       (pointer_card = Card.fetch_or_new(params[:id], :type=>'Pointer')) and
-       pointer_card.options_card)
-
-    search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }
-    @items = options_card ? options_card.item_cards(search_args) : Card.search(search_args)
-
-    render :inline => "<%= auto_complete_result @items, 'name' %>"
-  end
-
   protected
   
   

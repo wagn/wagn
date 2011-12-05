@@ -1,4 +1,4 @@
-class Wagn::Renderer::RichHtml
+class Wagn::Renderer::Html
 
   define_view(:closed_rule) do |args|
     rule_card, set_prototype = find_current_rule_card

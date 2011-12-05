@@ -1,4 +1,4 @@
-class Wagn::Renderer::RichHtml
+class Wagn::Renderer::Html
   define_view(:show) do |args|
     if ajax_call?
       home_view = params[:home_view]=='closed' ? :open : params[:home_view]

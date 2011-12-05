@@ -42,7 +42,7 @@ module Wagn
         Cardtype
         #STDERR << "load_modules Pack load #{Wagn.const_defined?(:Pack)}\n\n"
         require_dependency "wagn/pack.rb"
-        %w{modules/*.rb packs/*/*_pack.rb}.each { |d| Wagn::Pack.dir(File.expand_path( "../../#{d}/",__FILE__)) }
+        %w{lib/wagn/renderer.rb lib/wagn/renderer/*.rb modules/*.rb packs/*/*_pack.rb}.each { |d| Wagn::Pack.dir(File.expand_path( "../../#{d}/",__FILE__)) }
         Wagn::Pack.load_all
     
         STDERR << "----------- Wagn MODULES Loaded -----------\n"

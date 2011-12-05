@@ -9,7 +9,7 @@ module WagnHelper
   # Put the initialization in the controller and we no longer care here
   # whether it is a Slot or Renderer, and it will be from the parent class
   #   Now: Always a Renderer, and the subclass is selected by:
-  #     :format => :html (default and only -> Wagn::Renderer::RichHtml (was Slot))
+  #     :format => :html (default and only -> Wagn::Renderer::Html (was Slot))
 
 #=begin
   def slot() Wagn::Renderer.current_slot end
@@ -121,26 +121,6 @@ module WagnHelper
     end
   end
 
-
-  def navbox_result(entries, field, stub)
-    return unless entries
-    items = []
-    items << navbox_item( :search, %{<a class="search-icon">&nbsp;</a>Search for: }, stub )
-    if !Cardtype.createable_types.empty? && !Card.exists?(stub)
-      items << navbox_item( :new, %{<a class="plus-icon">&nbsp;</a>Add new card: }, stub )
-    end
-    items += entries.map do |entry|
-      navbox_item( :goto, %{<a class="page-icon">&nbsp;</a>Go to: }, entry[field], stub )
-    end
-    content_tag("ul", items.uniq)
-  end
-
-  def navbox_item( css_class, label, name, stub=nil )
-    stub ||= name
-    content_tag('li', :class=>"#{css_class}" ) do
-      content_tag('span', label, :class=>"informal") + highlight(name, stub)
-    end
-  end
 
   def form_for_card(options={}, &proc)    
     form_for(:card, options) do |form|

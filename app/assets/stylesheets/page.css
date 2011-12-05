@@ -36,20 +36,10 @@
 #my-card-link {
   font-weight: bold;
 }
-
-.navbox,
-.navbox:focus {
-  padding: 0px 3px;
-  margin: 0px;
+.navbox {
   height: 18px;
   width: 30%;
-  position: relative;
-  z-index: 1;
-  font-size: 13px;
-  border: 0px;
-  background: #ffc;
 }
-
 
 /* -------  Secondary --------- */
 

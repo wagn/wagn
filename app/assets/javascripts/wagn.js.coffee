@@ -112,8 +112,6 @@ $(window).load ->
     select: navbox_select
   })
   
-navbox_item = (item)->
-
 reqIndex = 0
 
 navbox_results = (request, response) ->

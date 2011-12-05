@@ -90,7 +90,7 @@ module Wagn
     def size() parts.size end
 
     def to_cardname() self end
-    def valid_cardname?() not parts.find {|pt| pt.match(BANNED_RE)} end
+    def valid?() not parts.find {|pt| pt.match(BANNED_RE)} end
 
     #FIXME codename
     def template_name?() junction? && !!%w{*default *content}.include?(tag_name) end

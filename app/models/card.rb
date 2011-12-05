@@ -514,7 +514,7 @@ class Card < ActiveRecord::Base
       #Rails.logger.debug "valid name #{rec.name.inspect} New #{value.inspect}"
       
       
-      unless cdname.valid_cardname?
+      unless cdname.valid?
         rec.errors.add :name,
           "may not contain any of the following characters: #{
           Wagn::Cardname::CARDNAME_BANNED_CHARACTERS}[#{cdname}]"

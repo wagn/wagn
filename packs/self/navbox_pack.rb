@@ -11,16 +11,17 @@ class Wagn::Renderer::Json < Wagn::Renderer
   define_view(:complete, :name=>'*search') do |args|
     term = params['term']
     exact = Card.fetch_or_new(term)
+    goto_cards = Card.search( :complete=>term, :limit=>8, :sort=>'name', :return=>'name' )
+    goto_cards.unshift term if exact.virtual?
+    
     JSON({ 
       :search => true, # card.ok?( :read ),
-      :add    => (exact.new_card? && exact.ok?( :create )),
+      :add    => (exact.new_card? && exact.cardname.valid? && !exact.virtual? && exact.ok?( :create )),
       :type   => (exact.typecode=='Cardtype' && 
                   Card.new(:typecode=>exact.codename).ok?(:create) && 
                   [exact.name, exact.cardname.to_url_key]
                  ),
-      :goto   => Card.search( :complete=>term, :limit=>8, :sort=>'name', :return=>'name' ).map do |name|
-          [name, highlight(name, term), name.to_cardname.to_url_key]
-        end
+      :goto   => goto_cards.map { |name| [name, highlight(name, term), name.to_cardname.to_url_key] }
     })
   end
 end

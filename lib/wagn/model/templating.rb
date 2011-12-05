@@ -26,7 +26,9 @@ module Wagn::Model::Templating
   end
   
   def virtual?
-    get_template if @virtual.nil?
+    if @virtual.nil?
+      cardname.simple? ? @virtual=false : get_template
+    end
     @virtual
   end
 

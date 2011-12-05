@@ -535,7 +535,7 @@ describe Wagn::Renderer, "" do
 
     context "*navbox" do
       it "should have a form" do
-        assert_view_select render_card(:raw, :name=>'*navbox'), 'form[id="navbox_form"]'
+        assert_view_select render_card(:raw, :name=>'*navbox'), 'form[id="navbox-form"]'
       end
     end
 

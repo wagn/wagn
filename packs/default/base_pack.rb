@@ -12,6 +12,9 @@ class Wagn::Renderer
   define_view(:titled) do |args|
     card.name + "\n\n" + _render_core
   end
+  define_view :show do |args|
+    render(params[:view] || :core)
+  end
 
 ###----------------( NAME) 
   define_view(:name)     { |args| card.name             }

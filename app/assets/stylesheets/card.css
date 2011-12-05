@@ -64,7 +64,8 @@ html>body .page-icon {
 .navbox-item-label {
   color: #777;
   font-size: 10px;
-  line-height: 15px;
+  float: left;
+  width: 50px;
   padding: 3px 0 3px 25px;
   background: left no-repeat;  
 }

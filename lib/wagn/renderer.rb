@@ -20,7 +20,7 @@ module Wagn
 
     class << self
       def get_pattern(view,opts)
-        unless pkey =  Wagn::Model::Pattern.method_key(opts) #and opts.empty?
+        unless pkey = Model::Pattern.method_key(opts) #and opts.empty?
           raise "Bad Pattern opts: #{pkey.inspect} #{opts.inspect}"
         end
         return (pkey.blank? ? view : "#{pkey}_#{view}").to_sym
@@ -454,6 +454,10 @@ module Wagn
       end
     end
   end
-  
-  Renderer::EmailHtml
+
+  # I was getting a load error from a non-wagn file when this was in its own file (renderer/json.rb).
+  module Wagn
+    class Renderer::Json < Renderer
+    end
+  end
 end

@@ -45,7 +45,7 @@ module Wagn
     
     config.cache_store = :file_store, "#{Rails.root}/tmp/cache"
     
-    config.after_initialize do Wagn::Configuration.wagn_run end
+    config.after_initialize do Configuration.wagn_run end
 
     # Custom directories with classes and modules you want to be autoloadable.
     config.autoload_paths += Dir["#{config.root}/app/models/"]

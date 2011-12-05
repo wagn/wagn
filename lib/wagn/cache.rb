@@ -30,7 +30,7 @@ module Wagn
             
       def initialize_on_startup
         cache_classes.each do |cc|
-          cc.cache = Wagn::Cache.new :class=>cc, :store=>(Rails.env =~ /^cucumber|test$/ ? nil : Rails.cache)
+          cc.cache = new :class=>cc, :store=>(Rails.env =~ /^cucumber|test$/ ? nil : Rails.cache)
         end
         preload_cache_for_tests if preload_cache?
       end
@@ -93,7 +93,7 @@ module Wagn
       #@klass = opts[:class]
       @store = opts[:store]
       @local = Hash.new
-      self.system_prefix = opts[:prefix] || Wagn::Cache.system_prefix(opts[:class])
+      self.system_prefix = opts[:prefix] || self.class.system_prefix(opts[:class])
     end
 
     def system_prefix=(system_prefix)

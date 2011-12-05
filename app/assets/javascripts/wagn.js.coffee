@@ -114,51 +114,54 @@ $(window).load ->
   
 navbox_item = (item)->
 
-navbox_results = (term, cback) ->
-  term = term.term
-  eterm = escape(term)
-  #box = this.element
-  
-  res = { 
-    search : true,
-    add : true,
-#    type : false,
-    goto : [
-      ['Marie Deatherage', 'Marie_Deatherage'],
-      ['Marie Lamfrom Charitable Foundation', 'Marie_Lamfrom_Charitable_Foundation']
-    ]  
-  }
+reqIndex = 0
 
+navbox_results = (request, response) ->
+  this.xhr = $.ajax {
+		url: wagn.root_path + '/*search.json?view=complete',
+		data: request,
+		dataType: "json",
+		wagReq: ++reqIndex,
+		success: ( data, status ) ->
+			response navboxize(request.term, data) if this.wagReq == reqIndex
+		error: () ->
+		  response [] if this.wagReq == reqIndex
+	  }
+
+navboxize = (term, result)->
   items = []
-  $.each res, (key, val)->
+  $.each result, (key, val)->
     if key == 'goto'
       $.each val, (index, gval) ->
-        items.push { type: key, prefix: 'Go to', value: gval[0], href: '/wagn/' + gval[1] }
+        items.push { type: key, prefix: 'Go to', value: gval[0], label: gval[1], href: '/wagn/' + gval[2] }
     else
-      i = { type : key, value : term }
-      if key == 'search'
-        i.prefix = 'Search for'
-        i.href  = '/*search?_keyword=' + eterm
+      i = { type : key, value : term, label : '<strong class="highlight">' + term + '</strong>' }
+      if !val #nothing
+      else if key == 'search'
+        i.prefix = 'Search'
+        i.href  = '/*search?_keyword=' + escape(term)
       else if key == 'add'
-        i.prefix = 'Add'
-        i.href = '/card/new?card[name]=' + eterm
+        i.prefix = 'Create'
+        i.href = '/card/new?card[name]=' + escape(term)
       else if key == 'type'
         i.type = 'add'
-        i.prefix = 'Add with type'
-        i.href = '/card/new?card[type]=' + eterm
+        i.prefix = 'Create'
+        i.label = '<strong class="highlight">' + val[0] + '</strong> <em>(type)</em>' 
+        i.href = '/new/' + val[1]
       
-      items.push i
+      items.push i if val
     
   $.each items, (index, i)->
     i.href = wagn.root_path + i.href
-    i.label = '<span class="navbox-item-label '+ i.type + '-icon">' + i.prefix + ':</span> ' +
-      '<span class="navbox-item-value">' + i.value + '</span>'
-    
-  cback items
+    i.label = 
+      '<span class="navbox-item-label '+ i.type + '-icon">' + i.prefix + ':</span> ' +
+      '<span class="navbox-item-value">' + i.label + '</span>'
+        
+  items
   
 navbox_select = (event, ui) ->
   $(this).attr('disabled', 'disabled')
-  window.location = wagn.ui.item.href
+  window.location = ui.item.href
   
 
 warn = (stuff) -> console.log stuff if console?

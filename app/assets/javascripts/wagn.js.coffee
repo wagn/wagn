@@ -1,9 +1,9 @@
 
 wagn.initializeEditors = (map) ->
-    map = wagn.conf.editorInitFunctionMap unless map?
+    map = wagn.editorInitFunctionMap unless map?
     $.each map, (selector, fn) ->
       $.each $.find(selector), ->
-        fn.call this
+        fn.call $(this)
 
 
 jQuery.fn.extend {
@@ -19,33 +19,32 @@ jQuery.fn.extend {
     slot = @slot()
     return if @attr('no-autosave')
     #might be better to put this href in the html
-    href = wagn.root_path + '/card/save_draft/' + slot.attr('card_id')
+    href = wagn.root_path + '/card/save_draft/' + slot.attr('card-id')
     $.ajax href, {
       data : { 'card[content]' : @val() },
       complete: (xhr) -> slot.notify('draft saved') 
     }
 
   setContentFieldsFromMap: (map) ->
-    map = wagn.conf.editorContentFunctionMap unless map?
+    map = wagn.editorContentFunctionMap unless map?
     this_form = $(this)
     $.each map, (selector, fn)-> 
       this_form.setContentFields(selector, fn)
   setContentFields: (selector, fn) ->
+    wagn.fn = fn if selector.match /tinymce/
     $.each this.find(selector), ->
       $(this).setContentField(fn)     
   setContentField: (fn)->
     field = this.closest('.card-editor').find('.card-content')
-    init_val = field.val()
-    wagn.func = fn
-    wagn.stash = this[0]
-    new_val = fn.call this[0]
+    init_val = field[0].value # tinymce-jquery overrides val()
+    new_val = fn.call this
     field.val new_val
     field.change() if init_val != new_val 
 }
 
 #~~~~~ ( EVENTS )
 
-setInterval (-> $('.card-form').setContentFieldsFromMap()), 20000
+setInterval (-> $('.card-form').setContentFieldsFromMap()), 5000
 
 $(window).load ->
   wagn.initializeEditors()
@@ -115,12 +114,9 @@ $(window).load ->
   $('#main').ajaxSend (event, xhr, opt) ->
     s = $(this).children('.card-slot')
     if s and mainName = s.attr('card-name')
-      newData = 'main=' + escape(mainName)
-      joiner = if opt.url.match /\?/ then '&' else '?'  
-      #note -- opt.data is already processed at this point, so I had to tweak the url directly 
-      opt.url = [ opt.url, newData ].join joiner
+      opt.url += ((if opt.url.match /\?/ then '&' else '?') + 'main=' + escape(mainName))
 
-      
+
 reqIndex = 0 #prevents race conditions
 
 navbox_results = (request, response) ->

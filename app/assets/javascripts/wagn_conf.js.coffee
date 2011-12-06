@@ -1,36 +1,25 @@
 window.wagn ||= {} #needed to run w/o *head.  eg. jasmine
 
-wagn.conf = {
-  
-  editorContentFunctionMap : {
-    '.tinymce-textarea'      : -> tinyMCE.getInstanceById(@id).getContent(),
-    '.pointer-select'        : -> pointerContent $(this).val(),
-    '.pointer-multiselect'   : -> pointerContent $(this).val(),
-    '.pointer-radio-list'    : -> pointerContent $(this).find('input:checked').val(),
-    '.pointer-list-ul'       : -> pointerContent $(this).find('input'        ).map( -> $(this).val() ),
-    '.pointer-checkbox-list' : -> pointerContent $(this).find('input:checked').map( -> $(this).val() ),
-    '.perm-editor'           : -> permissionsContent $(this) # must happen after pointer-list-ul, I think
-  }
-  
-  editorInitFunctionMap : {
-    '.tinymce-textarea'    : -> wagn.conf.initTinyMCE(),
-    '.date-editor'         : -> $(this).datepicker({ dateFormat: 'yy-mm-dd' })
-    '.pointer-list-editor' : ->
-      $(this).sortable()
-      wagn.conf.initPointerAutoComplete($(this).find('input'))
-  }
-
-  initTinyMCE: ()->
-    conf = if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {}
-    conf['mode'] = "specific_textareas"
-    conf['editor_selector'] = @id
-    tinyMCE.init conf
-
-  initPointerAutoComplete: (input)->
-    optionsCard = input.closest('ul').attr('options-card')
-    input.autocomplete { source: wagn.root_path + '/' + optionsCard + '.json?view=name_complete' }
-
+wagn.editorContentFunctionMap = {
+  '.tinymce-textarea'      : -> @html(),
+  '.pointer-select'        : -> pointerContent @val(),
+  '.pointer-multiselect'   : -> pointerContent @val(),
+  '.pointer-radio-list'    : -> pointerContent @find('input:checked').val(),
+  '.pointer-list-ul'       : -> pointerContent @find('input'        ).map( -> $(this).val() ),
+  '.pointer-checkbox-list' : -> pointerContent @find('input:checked').map( -> $(this).val() ),
+  '.perm-editor'           : -> permissionsContent this # must happen after pointer-list-ul, I think
 }
+
+wagn.editorInitFunctionMap = {
+  '.date-editor'         : -> @datepicker({ dateFormat: 'yy-mm-dd' }),
+  '.tinymce-textarea'    : -> @tinymce(if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {})
+  '.pointer-list-editor' : -> @sortable(); wagn.initPointerAutoComplete @find('input')
+}
+
+wagn.initPointerAutoComplete = (input)->
+  optionsCard = input.closest('ul').attr('options-card')
+  input.autocomplete { source: wagn.root_path + '/' + optionsCard + '.json?view=name_complete' }
+
 
 $(window).load ->
 
@@ -41,7 +30,7 @@ $(window).load ->
     input = new_item.find('input')
     input.val ''
     last_item.after new_item
-    wagn.conf.initPointerAutoComplete(input)    
+    wagn.initPointerAutoComplete(input)    
     event.preventDefault() # Prevent link from following its href
 
   $('.pointer-item-delete').live 'click', ->

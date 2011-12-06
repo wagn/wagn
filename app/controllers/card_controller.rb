@@ -45,7 +45,6 @@ class CardController < ApplicationController
     end
   end
 
-
   def create
     @card = Card.new params[:card]
     if @card.save

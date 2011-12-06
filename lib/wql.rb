@@ -32,7 +32,8 @@ class Wql
   def sql()                @sql ||= @cs.to_sql            end
   
   def run
-      rows = ActiveRecord::Base.connection.select_all( sql )
+    warn "WQL sql = #{sql}"
+    rows = ActiveRecord::Base.connection.select_all( sql )
     case (query[:return] || :card).to_sym
     when :card
       rows.map do |row|
@@ -252,6 +253,8 @@ class Wql
     
     def complete(val)
       no_plus_card = (val=~/\+/ ? '' : "and tag_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
+      warn "complete called.  val = #{val}; no + = #{no_plus_card}"
+      
       merge field(:cond) => SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
     end
     

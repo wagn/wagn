@@ -105,14 +105,14 @@ $(window).load ->
     content_field = $(this)
     setTimeout ( -> content_field.autosave() ), 500
 
-  $('.navbox').autocomplete({
+  $('.navbox').autocomplete {
     html: 'html',
     autoFocus: true,
     source: navbox_results,
     select: navbox_select
-  })
+  }
   
-reqIndex = 0
+reqIndex = 0 #prevents race conditions
 
 navbox_results = (request, response) ->
   this.xhr = $.ajax {
@@ -126,9 +126,9 @@ navbox_results = (request, response) ->
 		  response [] if this.wagReq == reqIndex
 	  }
 
-navboxize = (term, result)->
+navboxize = (term, results)->
   items = []
-  $.each result, (key, val)->
+  $.each results, (key, val)->
     if key == 'goto'
       $.each val, (index, gval) ->
         items.push { type: key, prefix: 'Go to', value: gval[0], label: gval[1], href: '/wagn/' + gval[2] }

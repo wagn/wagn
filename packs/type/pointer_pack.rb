@@ -5,7 +5,7 @@ class Wagn::Renderer
     action = args[:action] || :edit
     @item_view ||= :closed
     %{<div class="pointer-list">#{pointer_items}</div>} + 
-    link_to( 'add/edit', path(action), :remote=>true, :class=>'standard-slotter add-edit-item' ) #ENGLISH 
+    link_to( 'add/edit', path(action), :remote=>true, :class=>'standard-slotter add-edit-item init-editors' ) #ENGLISH 
   end
 
   define_view(:closed_content, :type=>'pointer') do |args|
@@ -23,17 +23,19 @@ class Wagn::Renderer
     args ||= {}
     items = args[:items] || card.item_names(:context=>:raw)
     items = [''] if items.empty?
+    options_card_name = ((oc = card.options_card) ? oc.name : '*all').to_cardname.to_url_key
+    
     extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
 
-    %{<ul class="pointer-list-editor #{extra_css_class}"> } +
+    %{<ul class="pointer-list-editor #{extra_css_class}" options-card="#{options_card_name}"> } +
     items.map do |item|
       %{<li class="pointer-li"> } +
         text_field_tag( 'pointer_item', item, :class=>'pointer-item-text', :id=>'asdfsd' ) +
         link_to( 'X', '#', :class=>'pointer-item-delete' ) +
       '</li>'
     end.join("\n") +
-    %{<li id="add-pointer-li">#{link_to 'Add another','#', :class=>'pointer-item-add'}</li>} +
-    '</ul>'
+    %{</ul><div class="add-another-div">#{link_to 'Add another','#', :class=>'pointer-item-add'}</div>}
+    
   end
 
   define_view(:checkbox, :type=>'pointer') do |args|

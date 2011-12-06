@@ -458,6 +458,9 @@ module Wagn
   # I was getting a load error from a non-wagn file when this was in its own file (renderer/json.rb).
   module Wagn
     class Renderer::Json < Renderer
+      define_view(:name_complete) do |args|
+        JSON( card.item_cards( :complete=>params['term'], :limit=>8, :sort=>'name', :return=>'name', :context=>'' ) )
+      end
     end
   end
 end

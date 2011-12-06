@@ -675,18 +675,25 @@ body#wagn .card-slot.recent-changes h2 {
 }
 
 /*-------------( Pointer )--------*/
+.pointer-list-editor {
+  margin: 0px;
+  padding: 0px;
+}
 .pointer-list-editor input {
   float: left;
   width: 60%;
 }
+.add-another-div,
 .pointer-list-editor li {
   list-style: none;
+  padding: 2px 10px;
 }
 .pointer-list-editor .pointer-item-delete {
   margin-left: 4px;
   font-weight: bold;
   color: #933;
   font-size: 15px;
+  vertical-align: middle;
 }
 
 

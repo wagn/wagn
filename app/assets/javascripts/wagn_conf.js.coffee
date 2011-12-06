@@ -13,8 +13,11 @@ wagn.conf = {
   }
   
   editorInitFunctionMap : {
-    '.tinymce-textarea' : -> wagn.conf.initTinyMCE(),
-    '.date-editor'      : -> $(this).datepicker({ dateFormat: 'yy-mm-dd' })
+    '.tinymce-textarea'    : -> wagn.conf.initTinyMCE(),
+    '.date-editor'         : -> $(this).datepicker({ dateFormat: 'yy-mm-dd' })
+    '.pointer-list-editor' : ->
+      $(this).sortable()
+      wagn.conf.initPointerAutoComplete($(this).find('input'))
   }
 
   initTinyMCE: ()->
@@ -23,17 +26,23 @@ wagn.conf = {
     conf['editor_selector'] = @id
     tinyMCE.init conf
 
+  initPointerAutoComplete: (input)->
+    optionsCard = input.closest('ul').attr('options-card')
+    input.autocomplete { source: wagn.root_path + '/' + optionsCard + '.json?view=name_complete' }
+
 }
 
 $(window).load ->
 
   #pointer pack
   $('.pointer-item-add').live 'click', (event)->
-    last_item = $(this).closest('ul').find '.pointer-li:last'
+    last_item = $(this).closest('.content-editor').find '.pointer-li:last'
     new_item = last_item.clone()
-    new_item.find('input').val ''
+    input = new_item.find('input')
+    input.val ''
     last_item.after new_item
-    event.preventDefault(); # Prevent link from following its href
+    wagn.conf.initPointerAutoComplete(input)    
+    event.preventDefault() # Prevent link from following its href
 
   $('.pointer-item-delete').live 'click', ->
     item = $(this).closest 'li'
@@ -41,7 +50,7 @@ $(window).load ->
       item.remove()
     else
       item.find('input').val ''
-    event.preventDefault(); # Prevent link from following its href
+    event.preventDefault() # Prevent link from following its href
 
   # permissions pack
   $('.perm-vals input').live 'click', ->

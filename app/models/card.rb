@@ -144,6 +144,7 @@ class Card < ActiveRecord::Base
       sub_name = sub_name.gsub('~plus~','+')
       absolute_name = cardname.to_absolute_name(sub_name)
       if card = Card[absolute_name]
+        card = card.refresh
         card.update_attributes(opts)
       elsif opts[:content].present? and opts[:content].strip.present?
         opts[:name] = absolute_name

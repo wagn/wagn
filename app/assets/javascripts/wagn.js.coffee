@@ -112,6 +112,15 @@ $(window).load ->
     select: navbox_select
   }
   
+  $('#main').ajaxSend (event, xhr, opt) ->
+    s = $(this).children('.card-slot')
+    if s and mainName = s.attr('card-name')
+      newData = 'main=' + escape(mainName)
+      joiner = if opt.url.match /\?/ then '&' else '?'  
+      #note -- opt.data is already processed at this point, so I had to tweak the url directly 
+      opt.url = [ opt.url, newData ].join joiner
+
+      
 reqIndex = 0 #prevents race conditions
 
 navbox_results = (request, response) ->

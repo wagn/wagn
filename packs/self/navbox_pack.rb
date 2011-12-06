@@ -10,6 +10,10 @@ end
 class Wagn::Renderer::Json < Wagn::Renderer
   define_view(:complete, :name=>'*search') do |args|
     term = params['term']
+    if term =~ /^\+/ && main = params['main']
+      term = main+term
+    end
+    
     exact = Card.fetch_or_new(term)
     goto_cards = Card.search( :complete=>term, :limit=>8, :sort=>'name', :return=>'name' )
     goto_cards.unshift term if exact.virtual?

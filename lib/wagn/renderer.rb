@@ -345,14 +345,14 @@ module Wagn
       args
     end
     
-    def card_id
-      case
-      when card.nil?         ; nil
-      when !card.new_record? ; card.id
-      when card.cardname     ; card.cardname.to_url_key
-      else                   ; nil
-      end
-    end
+#    def card_id
+#      case
+#      when card.nil?         ; nil
+#      when !card.new_record? ; card.id
+#      when card.cardname     ; card.cardname.to_url_key
+#      else                   ; nil
+#      end
+#    end
     
     def path(action, opts={})
       pcard = opts.delete(:card) || card

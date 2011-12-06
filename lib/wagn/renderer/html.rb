@@ -119,8 +119,8 @@ module Wagn
       [:style, :home_view, :item].each { |key| attributes[key] = args[key] }
       
       if card
-        attributes[:card_id]  = card.id
-        attributes[:card_key] = card.key
+        attributes['card-id']  = card.id
+        attributes['card-name'] = card.name
       end
     
       div( attributes ) { yield }

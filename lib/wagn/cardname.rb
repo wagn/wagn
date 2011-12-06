@@ -18,13 +18,12 @@ module Wagn
       def new(obj)
         return obj if Cardname===obj
         str = Array===obj ? obj*JOINT : obj.to_s
-#        raise "name error #{str}" if str[0] == '/'
         return obj if obj = NAME2CARDNAME[str]
         super str
       end
 
-      def each_cardname(&proc) NAME2CARDNAME.values.uniq.each(&proc) end
-      def each_key(&proc) each_cardname.map(&:key).each(&proc) end
+#      def each_cardname(&proc) NAME2CARDNAME.values.uniq.each(&proc) end
+#      def each_key(&proc) each_cardname.map(&:key).each(&proc) end
     end
 
 
@@ -51,22 +50,11 @@ module Wagn
       decode_html.underscore.gsub(/[^#{WORD_RE}\*]+/,'_').split(/_+/).reject(&:blank?).map(&:singularize)*'_'
     end
     
-
     def decode_html
       @decoded ||= (s.match(/\&/) ?  HTMLEntities.new.decode(s) : s)
     end
-
     
     alias simple? simple
-=begin
-    def simple?
-      @simple ||= !s.index(JOINT)
-    end
-    
-    def parts
-      @parts ||= (simple ? [s] : s.gsub(/\+$/,'+ ').split(JOINT))
-    end
-=end
     
     def inspect() "<CardName key=#{key}[#{s}, #{size}]>" end
 
@@ -90,7 +78,9 @@ module Wagn
     def size() parts.size end
 
     def to_cardname() self end
-    def valid?() not parts.find {|pt| pt.match(BANNED_RE)} end
+    def valid?
+      not (s =~ /\+$/ or parts.find {|pt| pt.match(BANNED_RE)})
+    end
 
     #FIXME codename
     def template_name?() junction? && !!%w{*default *content}.include?(tag_name) end

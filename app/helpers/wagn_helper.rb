@@ -110,11 +110,6 @@ module WagnHelper
   end
 
 
-  def span(*args, &block)  content_tag(:span, *args, &block);  end
-  def div(*args, &block)   content_tag(:div, *args, &block);  end
-
-
-
   def error_messages_for(object)
     if object && object.errors.any?
       object.errors.full_messages.map{ |msg| %{<div class="wagn-error-message">#{msg}</div} }.join("\n")

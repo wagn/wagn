@@ -10,12 +10,11 @@ class Wagn::Renderer
     end
     
     process_content(_render_raw) + 
-    if !card.new_card?
-      div( :class=>"invite-links help instruction" ) do
-        div { "<strong>#{card.name}</strong> requested an account on #{ format_date(card.created_at) }" } +
-        (!links.empty? ? div { links.join } : '')
-      end
-    else; ''; end
+    card.new_card? ? '' : %{<div class="invite-links help instruction>
+        <div><strong>#{card.name}</strong> requested an account on #{
+          format_date(card.created_at) }"</div>#{
+        %{<div>#{links*''}</div> } unless links.empty? }
+      </div>}
   end
 end
 

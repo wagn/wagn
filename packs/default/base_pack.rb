@@ -1,7 +1,7 @@
 class Wagn::Renderer
   ### ---- Core renders --- Keep these on top for dependencies
 
-  # update_references based on _render_refs, which is the same as 
+  # update_references based on _render_refs, which is the same as
   # _render_raw, except that you don't need to alias :refs as often
   # speeding up the process when there can't be any reference changes
   # (builtins, etc.)
@@ -16,7 +16,7 @@ class Wagn::Renderer
     render(params[:view] || :core)
   end
 
-###----------------( NAME) 
+###----------------( NAME)
   define_view(:name)     { |args| card.name             }
   define_view(:key)      { |args| card.key              }
   define_view(:linkname) { |args| card.cardname.to_url_key  }
@@ -24,7 +24,8 @@ class Wagn::Renderer
   define_view(:url)      { |args| "#{System.base_url}#{System.root_path}/wagn/#{_render_linkname}"}
 
   define_view(:open_content) do |args|
-    card.post_render(_render_core(args) { (yield) })
+    pre_render = _render_core(args) { (yield) }
+    card ? card.post_render(pre_render) : pre_render
   end
 
   define_view(:closed_content) do |args|
@@ -44,10 +45,28 @@ class Wagn::Renderer
 
   define_view(:blank) do |args| "" end
 
-  [ :deny_view, :edit_virtual, :too_slow, :too_deep, :closed_missing ].each do |view|
-    define_view(view) do |args|
-      render_view_action view, args
-    end
+
+
+  define_view(:deny_view) do
+    %{<span class="denied"><!-- Sorry, you don't have permission for this card --></span>}
+  end
+
+  define_view(:open_virtual) do #ENGLISH
+    %{<div class="faint">
+        <em>#{ raw( showname || card.name )} is a Virtual card</em>
+     </div> }
+  end
+
+  define_view(:closed_missing) do
+    %{<span class="faint"> #{ raw( showname || card.name ) } </span>}
+  end
+
+  define_view(:too_deep) do
+    %{Man, you're too deep.  (Too many levels of inclusions at a time)}
+  end
+
+  define_view(:too_slow) do #ENGLISH
+    %{<span class="too-slow">Timed out! #{ card.name } took too long to load.</span>}
   end
 
   ## DEPRECATED

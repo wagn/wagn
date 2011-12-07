@@ -128,6 +128,14 @@ class ApplicationController < ActionController::Base
   # ----------( rendering methods ) -------------
 
 
+  def wagn_redirect url
+    if ajax?
+      render :text => url, :status => 303
+    else
+      redirect_to url
+    end 
+  end
+
   def render_denied(action = '')
     Rails.logger.debug "~~~~~~~~~~~~~~~~~in render_denied for #{action}"
     

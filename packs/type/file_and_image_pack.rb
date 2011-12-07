@@ -1,23 +1,31 @@
+
 class Wagn::Renderer
+
+  define_view(:naked, :type=>'image') do |args|
+    image_tag card.attach.url args[:size] || :medium
+  end
+  alias_view(:naked, {:type=>'image'}, :raw)
+
+  define_view(:naked, :type=>'file') do |args|
+    "<a href=\"#{card.attach.url}\">#{card.name}</a>"
+  end
+  alias_view(:naked, {:type=>'file'}, :raw)
+
+end
+
+class Wagn::Renderer::Html
   define_view(:editor, :type=>'file') do |args|
-    attachment_model_name = card.attachment_model.name.underscore
-    attachment_uuid = (0..29).to_a.map {|x| rand(10)}
-    self.skip_autosave = true
-    # WEIRD: when I didn't check for new_record?, create would come up with random old attachment previews
-    div( :class=>"attachment-preview", :id=>"#{attachment_uuid}-preview") do
-      !card.new_card? && card.attachment ? card.attachment.preview : ''
-    end +
-    
-    div do
-      %{
-        <iframe id="upload-iframe-#{ attachment_uuid }" class="upload-iframe" name="upload-iframe" height="50" width="480" 
-          frameborder="0" src="#{System.root_path}/#{attachment_model_name.pluralize}/new?#{attachment_model_name}[attachment_uuid]=#{attachment_uuid}" scrolling="no">
-        </iframe>
-      }
-    end + 
-    form.hidden_field("attachment_id", :id=>attachment_uuid) +
-    form.hidden_field("content", :id=>"#{attachment_uuid}-content")
-    #= editor_hooks :save=>%{ //FIXME: handle the case that the upload isn't finished. }
+    Rails.logger.debug "editor for file #{card.inspect}"
+    %{<div class="attachment-preview", :id="#{card.attach_file_name}-preview"> #{
+       #!card.new_card? && card.attach ? _render_naked(args) : ''
+       _render_naked(args)
+    } </div>
+
+    <div> #{
+      #warn "file form for #{card}, [#{form.object_name}]"
+      form.file_field :attach
+    }
+    </div>}
   end
 
   alias_view :editor, {:type=>:file}, {:type=>:image}

@@ -123,7 +123,7 @@ module Wagn
         attributes['card-name'] = card.name
       end
     
-      div( attributes ) { yield }
+      content_tag(:div, attributes ) { yield }
     end
 
     def wrap_content( view, content="" )
@@ -135,6 +135,10 @@ module Wagn
       %{<div id="main">#{content}</div>}
     end
 
+    def edit_slot(args)
+      card.content_template ? raw(_render_core(args)) : content_field(form)
+    end
+ 
     #### --------------------  additional helpers ---------------- ###
     def notice
       # this used to access controller.notice, but as near I can tell
@@ -149,35 +153,34 @@ module Wagn
 
     def edit_submenu(current)
       extra_css_classes = { :content => 'init-editors' }
-      div(:class=>'submenu') do
-        [[ :content,    true  ],
-         [ :name,       true, ],
-         [ :type,       !(card.type_template? || (card.typecode=='Cardtype' && card.cards_of_type_exist?))],
-         ].map do |attrib,ok|
-          next unless ok
-          link_to attrib, path(:edit, :attrib=>attrib), :remote=>true,
-            :class=>"standard-slotter edit-#{attrib}-link #{extra_css_classes[attrib]}" + 
-              (attrib==current ? ' current-subtab' : '')
-        end.compact.join
-      end
+      %{<div class="submenu"> #{
+        [ :content, :name, :type ].map do |attr|
+          if attr != :type || !( card.type_template? ||
+                  (card.typecode=='Cardtype' && card.cards_of_type_exist?) )
+            link_to attr, path(:edit, :attrib=>attr), :remote=>true,
+              :class => %{standard-slotter edit-#{ attr }-link#{
+                ' init-editors' if attr==:content }#{
+                ' current-subtab' if attr==current}}
+          end
+        end.compact * "\n"}
+      </div>}
     end
 
     def options_submenu(current)
       return '' if card && card.extension_type != 'User'
-      div(:class=>'submenu') do
+      %{<div class="submenu">#{
         [:account, :settings].map do |key|
-          link_to( key, path(:options, :attrib=>key),
-            :class=>'standard-slotter' + (key==current ? ' current-subtab' : ''), :remote=>true
-          )
-        end.join
-      end
+          link_to key, path(:options, :attrib=>key), :remote=>true,
+            :class=> %{standard-slotter#{' current-subtab' if key==current}}
+        end * "\n" }
+      </div>}
     end
 
-    def header()  render_partial('card/header')  end  
-    def footer()  render_partial('card/footer')  end
+    def header()  render_header if card end  
+    def footer()  render_footer if card end
 
     def menu
-      if card.virtual?
+      if card && card.virtual?
         return %{<span class="card-menu faint">Virtual</span>\n}
       end
       menu_options = [:view,:changes,:options,:related,:edit]

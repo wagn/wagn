@@ -24,12 +24,12 @@ class Wagn::Renderer
       content_tag(:tr, :class=>'perm-options') do
         content_tag(:td, :class=>'perm-group perm-vals') do
           group_options.map do |option|
-            div(:class=>'group-option') do
+            %{<div class="group-option") #{
               checked = !!item_names.delete(option.name)
               check_box_tag( "#{option.key}-perm-checkbox", option.name, checked, :class=>'perm-checkbox-button'  ) +
               raw( "<label>#{link_to_page option.name}</label>" )
-            end
-          end.join( "\n" )
+            } </div>}
+          end * "\n"
         end +
         
         content_tag(:td, :class=>'perm-indiv perm-vals') do
@@ -63,6 +63,6 @@ class Wagn::Renderer
   private
   
   def core_inherit_content
-    div(:class=>'inherit-perm') { '(Inherit from left card)' }
+    %{<div class="inherit-perm"> (Inherit from left card) </div>}
   end
 end

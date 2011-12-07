@@ -8,13 +8,10 @@ class Wagn::Renderer::Html
         link_to( card.cardname.tag_name, path(:view, :view=>:open_rule), 
           :class => 'edit-rule-link standard-slotter init-editors', :remote => true )
       ],
-      ["rule-content", begin
-        div(:class=>'rule-content-container closed-view') do
-          %{ <span class="content">#{rule_card ? subrenderer(rule_card).render_closed_content : ''}</span> }
-          # these two extra layers are all about getting overflow:hidden to work right.
-          # was unable to do it without inline inside block inside table-cell.  would be happy to simplify if possible
-        end
-      end ],
+      ["rule-content", 
+        %{<div class="rule-content-container closed-view"> 
+           <span class="content">#{rule_card ? subrenderer(rule_card).render_closed_content : ''}</span>
+         </div> } ],
       ["rule-type", (rule_card ? rule_card.typename : '') ],
     ]
 
@@ -72,13 +69,112 @@ class Wagn::Renderer::Html
     %{
       <tr class="card-slot open-rule">
         <td class="rule-cell" colspan="3">        
-          #{subrenderer( current_rule ).render_view_action('edit_rule', opts )}
+          #{subrenderer( current_rule ).render(:edit_rule, opts )}
         </td>
       </tr>
     }
     
   end
   
+
+  define_view(:edit_rule) do
+    form_for card, :url=>path(:create_or_update), :remote=>true, :html=>
+     {:class=>"card-form card-rule-form #{edit_mode&&'standard-slotter'}" } do |form| 
+      %{#{ hidden_field_tag :success, open_rule.name }
+        #{ hidden_field_tag :view, 'open_rule' }
+        <div class="card-editor">
+          <div class="rule-column-1">
+            <div class="rule-setting"> #{
+              link_to( setting_name, path(:view, :card=>open_rule,
+                :view=>:closed_rule), :remote => true,
+                :class => 'close-rule-link standard-slotter')}
+            </div>
+
+            <ul class="set-editor"> #{
+              if edit_mode
+                %{<label>apply to:</label> #{
+                    set_options.each do |set_name|
+                      set_label =Card.fetch(set_name).label
+                      %{<li> #{
+                       form.radio_button :name, "#{set_name}+#{setting_name
+                           }", :checked=>(current_set_key &&
+                           set_options.length==1) } #{
+                      if set_name.to_cardname.to_key == current_set_key
+                        %{<span class="set-label current-set-label">#{
+                            set_label} <em>(current)</em></span>}
+                      else
+                        %{<span class="set-label">#{ set_label}</span>}
+                      end}
+                     </li>}
+                   end}}
+                 else
+                   %{<label>applies to:</label>
+                     <span class="set-label current-set-label">#{
+                        current_set_key ? Card.fetch(current_set_key).label :
+                                          'No Current Rule' }
+                     </span>}
+                 end}
+              </ul>
+           </div>
+
+           <div class="rule-column-2">
+             <div class="instruction rule-instruction">#{
+               raw process_content "{{#{setting_name}+*right+*edit help}}"}
+             </div>
+
+             <div class="type-editor"> #{
+               if edit_mode
+                 %{<label>type:</label> #{
+                   raw typecode_field( :class =>
+                     'cardtype-field rule-cardtype-field live-cardtype-field',
+                     :href  => path(:view, :card=>open_rule, :view=>:open_rule, :type_reload=>true)
+                   )}}
+               elsif current_set_key
+                 %{<label>type:</label>
+                 <span class="rule-type">#{ current_set_key ?
+                                            card.typename : '' }</span>}
+               end}
+             </div>
+
+             <div class="content-editor"> #{
+               raw( edit_mode ? content_field(form) : (current_set_key ? render_core(:action=>'edit_rule') : '') ) }
+             </div>
+           </div>
+         </div> #{
+
+       if edit_mode || params[:success]
+         %{<div class="edit-button-area"> #{
+           if params[:success]
+             %{#{button_tag 'Edit', :class=>
+               'rule-edit-button standard-slotter', :type=>'button',
+               :href => path(:view, :card=>open_rule,
+               :view=>:open_rule), :remote=>true } #{
+              button_tag 'Close', :class=>'rule-cancel-button',
+               :type=>'button'}}
+           else
+             if !card.new_card?
+               %{<span class='rule-delete-section'> #{
+                  button_tag 'Delete', :remote=>true, :class=>
+                    'rule-delete-button standard-slotter', :type=>'button',
+                    :href => path(:remove, :view=>:open_rule,
+                      :success=>CGI.escape(open_rule.cardname.to_url_key)),
+                    'data-confirm'=>(
+                      "Deleting will revert to #{setting_name} rule for #{
+                      Card.fetch(fallback_set).label }" if fallback_set ) }
+                  
+               </span>}
+             end
+             %{#{submit_tag 'Submit', :class=>'rule-submit-button' } #{
+               button_tag 'Cancel', :class=>'rule-cancel-button',
+                                    :type=>'button' }}
+           end}
+         </div>}
+       end} #{
+
+       raw notice}}
+    end
+  end
+
 
   
   private

@@ -151,7 +151,6 @@ class Wagn::Renderer
         out << link_to( image_tag('next-page.png'), path(:view, :offset=>last),
           :html=> { :class=>'card-paging-link', :remote => true } )
       end    
-      out << span
     end
     out.join
   end
@@ -163,7 +162,7 @@ class Wagn::Renderer
     else
       @paging_params ||= begin
         s = {}
-        if p = root.params
+        if p = eargs
           [:offset,:limit,:_keyword].each{|key| s[key] = p.delete(key)}
         end
         s[:offset] = s[:offset] ? s[:offset].to_i : 0

@@ -153,7 +153,7 @@ module Wagn
     
     
     def method_missing(method_id, *args, &proc)
-      proc = proc { raw yield } if proc
+      proc = proc {|*a| raw yield *a } if proc
       template.send(method_id, *args, &proc) 
     end
     
@@ -224,12 +224,9 @@ module Wagn
       content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
     end
   
-    def render_partial( partial, locals={} )
-      raw template.render(:partial=>partial, :locals=>{ :card=>card, :slot=>self }.merge(locals))
-    end
-  
     def render_view_action(action, locals={})
-      render_partial "views/#{action}", locals
+      template.render(:partial=>"views/#{action}", :locals=>{ :card=>card,
+                      :slot=>self }.merge(locals))
     end
   
     def with_inclusion_mode(mode)

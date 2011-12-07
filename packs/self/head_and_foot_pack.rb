@@ -1,7 +1,7 @@
 class Wagn::Renderer
   define_view(:raw, :name=>'*head') do |args|
-    rcard = root.card  # should probably be more explicit that this is really the *main* card.
-    title = rcard.name
+    #rcard = card  # should probably be more explicit that this is really the *main* card.
+    title = (card && card.name )
     title = params[:action] if title.nil? || title == '*placeholder'
 
     bits = [
@@ -10,14 +10,16 @@ class Wagn::Renderer
     ]
     
     #Universal Edit Button
-    if !rcard.new_record? && rcard.ok?(:update)
-      bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="#{ path(:edit, :card=>rcard) }"/>}
-    end
+    if card
+     if !card.new_record? && card.ok?(:update)
+      bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="#{ path(:edit, :card=>card) }"/>}
+     end
     
-    # RSS # move to packs!
-    if rcard.typecode == 'Search'
-      rss_href = rcard.name=='*search' ? "#{System.root_path}/search/#{ params[:_keyword] }.rss" : template.url_for_page( rcard.name, :format=>:rss )
+     # RSS # move to packs!
+     if card.typecode == 'Search'
+      rss_href = card.name=='*search' ? "#{System.root_path}/search/#{ params[:_keyword] }.rss" : template.url_for_page( card.name, :format=>:rss )
       bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{rss_href} />}
+     end
     end
 
     # CSS

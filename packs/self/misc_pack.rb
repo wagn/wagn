@@ -12,10 +12,10 @@ class Wagn::Renderer
 
   
   define_view(:raw, :name=>'*alerts') do |args|
-    div(:id=>"alerts") do
-      div(:id=>"notice") { flash[:notice] } +
-      div(:id=>"error")  { "#{flash[:warning]}#{flash[:error]}" }
-    end
+    %{<div id="alerts">
+      <div id="notice"> #{ flash[:notice] } </div>
+      <div id=>"error"> #{ flash[:warning]}#{flash[:error] }</div>
+    </div>}
   end
   alias_view(:raw, {:name=>'*alerts'}, :core)
 end

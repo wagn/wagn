@@ -151,38 +151,29 @@ class Wagn::Renderer::Html
                raw( edit_mode ? content_field(form) : (current_set_key ? render_core(:action=>'edit_rule') : '') ) }
              </div>
            </div>
-         </div> #{
+         </div> }.html_safe +
 
        if edit_mode || params[:success]
-         %{<div class="edit-button-area"> #{
+         ('<div class="edit-button-area">' + 
            if params[:success]
-             %{#{button_tag 'Edit', :class=>
-               'rule-edit-button standard-slotter', :type=>'button',
-               :href => path(:view, :card=>open_rule,
-               :view=>:open_rule), :remote=>true } #{
-              button_tag 'Close', :class=>'rule-cancel-button',
-               :type=>'button'}}
+             (button_tag( 'Edit', :class=>'rule-edit-button standard-slotter', :type=>'button',
+               :href => path(:view, :card=>open_rule, :view=>:open_rule), :remote=>true ) +
+             button_tag( 'Close', :class=>'rule-cancel-button', :type=>'button' )).html_safe
            else
-             if !card.new_card?
-               %{<span class='rule-delete-section'> #{
-                  button_tag 'Delete', :remote=>true, :class=>
-                    'rule-delete-button standard-slotter', :type=>'button',
-                    :href => path(:remove, :view=>:open_rule,
-                      :success=>CGI.escape(open_rule.cardname.to_url_key)),
-                    'data-confirm'=>(
-                      "Deleting will revert to #{setting_name} rule for #{
-                      Card.fetch(args[:fallback_set]).label }" if args[:fallback_set] ) }
-                  
-               </span>}
-             end +
-             %{#{submit_tag 'Submit', :class=>'rule-submit-button' } #{
-               button_tag 'Cancel', :class=>'rule-cancel-button',
-                                    :type=>'button' }}
-           end}
-         </div>}
-       end} #{
-
-       raw notice}}.html_safe
+             (if !card.new_card?
+               b_args = { :remote=>true, :class=>'rule-delete-button standard-slotter', :type=>'button' }
+               b_args[:href] = path :remove, :view=>:open_rule, :success=>open_rule.cardname.to_url_key
+               if fset = args[:fallback_set]
+                 b_args['data-confirm']="Deleting will revert to #{setting_name} rule for #{Card.fetch(fset).label }"
+               end 
+               %{<span class="rule-delete-section">#{ button_tag 'Delete', b_args }</span>}
+             else; ''; end + 
+             submit_tag( 'Submit', :class=>'rule-submit-button') +
+             button_tag( 'Cancel', :class=>'rule-cancel-button', :type=>'button' )).html_safe
+           end +
+         '</div>').html_safe
+       end +
+       notice.html_safe
 
     end.html_safe
   end
@@ -194,7 +185,10 @@ class Wagn::Renderer::Html
   def find_current_rule_card
     setting_name = card.cardname.tag_name
     set_card = Card.fetch( card.cardname.trunk_name )
+    warn "setting name = #{setting_name}, card = #{card.inspect}, set_card = #{set_card.inspect}"
     set_prototype = set_card.prototype
+    warn "got prototype"
+    
     rule_card = set_prototype.setting_card setting_name
     [rule_card, set_prototype]
   end

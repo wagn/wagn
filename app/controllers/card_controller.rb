@@ -137,7 +137,7 @@ class CardController < ApplicationController
     @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
     
-    return if !@card.errors[:confirmation_required].empty?  ## renders remove.erb, which is essentially a confirmation box.  
+    return render_show(:remove) if !@card.errors[:confirmation_required].empty?  ## renders remove.erb, which is essentially a confirmation box.  
 
     discard_locations_for(@card)
     
@@ -150,7 +150,6 @@ class CardController < ApplicationController
     when params[:success]  ; @card = Card.fetch_or_new(url); render_show 
     else                   ; render :text => "#{@card.name} removed"
     end
-    render_show :remove
   end
 
   #---------------( tabs )

@@ -8,6 +8,7 @@ class CardController < ApplicationController
   before_filter :mine_preload,  :only=> [ :mine ]
   
   before_filter :load_card!, :only=>LOAD_ACTIONS
+  before_filter :set_main
 
   before_filter :view_ok,   :only=> LOAD_ACTIONS
 #  before_filter :create_ok, :only=>[ :new, :create ]
@@ -17,6 +18,10 @@ class CardController < ApplicationController
 #  before_filter :require_captcha, :only => [ :create, :update, :comment ]
 
   #----------( Special cards )
+  
+  def set_main
+    System.main_name = params[:main] || (@card && @card.name) || '' # will be wagn.main ?
+  end
 
   def index_preload
     User.no_logins? ? 

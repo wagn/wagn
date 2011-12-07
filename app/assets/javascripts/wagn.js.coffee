@@ -5,7 +5,6 @@ wagn.initializeEditors = (map) ->
       $.each $.find(selector), ->
         fn.call $(this)
 
-
 jQuery.fn.extend {
   slot: -> @closest '.card-slot'
   setSlotContent: (val) -> @slot().replaceWith val
@@ -26,7 +25,6 @@ jQuery.fn.extend {
     }
 
   setContentFieldsFromMap: (map) ->
-
     map = wagn.editorContentFunctionMap unless map?
     this_form = $(this)
     $.each map, (selector, fn)-> 
@@ -133,26 +131,25 @@ navbox_results = (request, response) ->
 
 navboxize = (term, results)->
   items = []
-  $.each results, (key, val)->
-    if key == 'goto'
-      $.each val, (index, gval) ->
-        items.push { type: key, prefix: 'Go to', value: gval[0], label: gval[1], href: '/wagn/' + gval[2] }
-    else
-      i = { type : key, value : term, label : '<strong class="highlight">' + term + '</strong>' }
-      if !val #nothing
-      else if key == 'search'
-        i.prefix = 'Search'
-        i.href  = '/*search?_keyword=' + escape(term)
-      else if key == 'add'
-        i.prefix = 'Create'
-        i.href = '/card/new?card[name]=' + escape(term)
-      else if key == 'type'
-        i.type = 'add'
-        i.prefix = 'Create'
-        i.label = '<strong class="highlight">' + val[0] + '</strong> <em>(type)</em>' 
-        i.href = '/new/' + val[1]
-      
-      items.push i if val
+  
+  $.each ['search', 'add' ,'create'], (index, key)->
+    val = results[key]
+    i = { type: key, value: term, prefix: 'Create', label: '<strong class="highlight">' + term + '</strong>' }
+    if !val #nothing
+    else if key == 'search'
+      i.prefix = 'Search'
+      i.href  = '/*search?_keyword=' + escape(term)
+    else if key == 'add'
+      i.href = '/card/new?card[name]=' + escape(term)
+    else if key == 'type'
+      i.type = 'add'
+      i.label = '<strong class="highlight">' + val[0] + '</strong> <em>(type)</em>' 
+      i.href = '/new/' + val[1]
+    
+    items.push i if val
+   
+  $.each results['goto'], (index, val) ->
+    items.push { type: 'goto', prefix: 'Go to', value: val[0], label: val[1], href: '/wagn/' + val[2] } 
     
   $.each items, (index, i)->
     i.href = wagn.root_path + i.href

@@ -32,7 +32,6 @@ class Wql
   def sql()                @sql ||= @cs.to_sql            end
   
   def run
-    #warn "WQL sql = #{sql}"
     rows = ActiveRecord::Base.connection.select_all( sql )
     case (query[:return] || :card).to_sym
     when :card
@@ -122,7 +121,7 @@ class Wql
       @mods = MODIFIERS.clone
       @params = {}
       @joins = {}   
-      @selfname, @parent = nil, nil
+      @selfname, @parent = '', nil
       @query = clean(query.clone)
       @rawspec = @query.deep_clone
       @spec = {}
@@ -143,7 +142,7 @@ class Wql
     def selfname()  @selfname                      end
     
     def absolute_name(name)
-      name = (root.selfname ? name.to_cardname.to_absolute(root.selfname) : name)
+      name =~ /\b_/ ? name.to_cardname.to_absolute(root.selfname) : name
     end
     
     def clean(query)
@@ -253,8 +252,6 @@ class Wql
     
     def complete(val)
       no_plus_card = (val=~/\+/ ? '' : "and tag_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
-      #warn "complete called.  val = #{val}; no + = #{no_plus_card}"
-      
       merge field(:cond) => SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
     end
     
@@ -364,7 +361,7 @@ class Wql
         cs = CardSpec.build(val)
       end
       
-      cs.sql.fields << "#{cs.table_alias}.#{join_field} as sort_join_field"      
+      cs.sql.fields << "#{cs.table_alias}.#{join_field} as sort_join_field"
       add_join :sort, cs.to_sql, :id, :sort_join_field, :side=>'LEFT'
     end
     

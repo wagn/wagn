@@ -1,7 +1,7 @@
 class System
   
   cattr_writer :attachment_storage    # storage option passed to attachment_fu   
-  cattr_accessor :role_tasks, :request, :cache,                        
+  cattr_accessor :role_tasks, :request, :cache, :main_name,
     # Configuration Options     
     :base_url, :max_render_time, :max_renders,   # Common; docs in sample_wagn.rb
     :enable_ruby_cards, :enable_server_cards,    # Uncommon; Check Security risks before enabling these cardtypes (wagn.org ref url?)

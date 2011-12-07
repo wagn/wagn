@@ -88,7 +88,7 @@ class Wagn::Renderer::Html
   define_view(:content) do |args|
     c = _render_core(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
-    wrap(:content, args) { raw wrap_content(:content, c) }
+    wrap(:content, args) { wrap_content(:content, c) }
   end
 
   define_view(:titled) do |args|
@@ -151,7 +151,7 @@ class Wagn::Renderer::Html
       </div>}
     end }#{
 
-   raw notice}}
+   notice}}
    end
   end
 
@@ -218,7 +218,7 @@ class Wagn::Renderer::Html
   end
 
   define_view(:edit_name) do |args|
-    %{#{ raw edit_submenu :name }
+    %{#{ edit_submenu :name }
       <div class="edit-area edit-name">
        <h2>Change Name</h2>
       #{ form_for :card, :url=>path(:update), :html=>{ :class=>'card-edit-name-form standard-slotter', :remote=>true } do |f|
@@ -314,7 +314,7 @@ class Wagn::Renderer::Html
   define_view(:related) do |args|
     params['current'] ||= :incoming
     wrap(:open, args) do
-     %{#{raw header }
+     %{#{header }
        <div class="submenu"> #{
         #warn "related submenu: #{params['items'].inspect}, #{params['current']}"
          params['items'].map do |item|
@@ -325,7 +325,7 @@ class Wagn::Renderer::Html
              "standard-slotter#{key==params['current']&&' current-subtab'||''}"
          end * "\n"}
         </div> #{
-        raw notice }
+        notice }
 
         <div class="open-content related"> #{
           #warn "related #{params['current']}, #{card.name}+#{params['current']}"
@@ -337,7 +337,7 @@ class Wagn::Renderer::Html
   define_view(:options) do |args|
     @attribute ||= :settings
     wrap(:open, args) do
-      %{#{ raw header }
+      %{#{ header }
          <div class="options-body"> #{
            render "option_#{@attribute}" } </div> <span class="notice">#{
            flash[:notice] } </span>}
@@ -454,11 +454,11 @@ class Wagn::Renderer::Html
   end
 
   define_view(:changes) do |args| #ENGLISH
-    #warn "changes #{penv} [#{params['no_changes_header']}]"
+    warn "changes #{@revision_number}, [#{params.inspect}]"
     wrap(:changes, args) do
-    %{#{raw header unless params['no_changes_header']}
+    %{#{header unless params['no_changes_header']}
     <div class="revision-navigation">#{
-     raw revision_menu }
+     revision_menu }
     </div>
 
     <div class="revision-header">
@@ -484,21 +484,21 @@ class Wagn::Renderer::Html
 
     <div class="revision">#{
     if params['show_diff'] and params['previous_revision']
-      raw diff params['previous_revision'].content, params['revision'].content
+      diff params['previous_revision'].content, params['revision'].content
     else
-      raw params['revision'].content
+      params['revision'].content
     end}
     </div>
 
     <div class="revision-navigation card-footer">
-    #{ raw revision_menu }
+    #{ revision_menu }
     </div>}
     end
   end
 
   define_view(:remove) do |args|
     wrap(:remove, args) do
-    %{#{ raw header}#{
+    %{#{ header}#{
       form_for :card, :url=>path(:remove), :html => { :remote=>true,
         :class=>'standard-slotter', 'data-type'=>'html' } do |f|
     
@@ -520,7 +520,7 @@ class Wagn::Renderer::Html
        submit_tag 'Yes, do it', :class=>'remove-submit-button' } #{
        button_tag 'Cancel', :class=>'remove-cancel-button standard-slotter', :type=>'button', :href=>path(:view) } #{
     
-       raw notice}
+       notice}
     </div>
       }
     end}}
@@ -551,9 +551,9 @@ class Wagn::Renderer::Html
   define_view(:open) do |args|
     wrap(:open, args) do
       %{#{
-      raw header } #{
-      raw notice } #{
-      raw wrap_content( :open, raw(_render_open_content) ) } #{
+      header } #{
+      notice } #{
+      wrap_content( :open, raw(_render_open_content) ) } #{
 
       if card&&card.ok?(:comment)
         %{<div class="comment-box"> #{
@@ -570,7 +570,7 @@ class Wagn::Renderer::Html
        </div>}
      end} #{
 
-     raw footer }}
+     footer }}
     end
   end
 
@@ -587,7 +587,7 @@ class Wagn::Renderer::Html
           raw page_icon(card.name) }&nbsp;
         </div>
       </div> #{
-      raw wrap_content :closed, render_closed_content }}
+      wrap_content :closed, render_closed_content }}
     end
   end
 

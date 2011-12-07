@@ -1,9 +1,10 @@
 class Wagn::Renderer::Html
   define_view(:show) do |args|
+    home_view = params[:home_view]=='closed' ? :open : params[:home_view]
+    @main_view = args[:view] || params[:view] || home_view || :open
+    
     if ajax_call?
-      home_view = params[:home_view]=='closed' ? :open : params[:home_view]
-      view = params[:view] || home_view || :open
-      self.render(view)
+      self.render(@main_view)
     else
       self.render_layout
     end
@@ -371,23 +372,27 @@ class Wagn::Renderer::Html
     related_sets = card.related_sets
     current_set = params[:current_set] || related_sets[0]
 
-    %{#{raw( options_submenu(:settings) )
-      }
-      <div class="settings-tab">
+    options_submenu(:settings) +
+      %{<div class="settings-tab">
         #{if !related_sets.empty?
-         %{<div class="set-selection">
-          #{ form_tag path(:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'standard-slotter' }
+          %{<div class="set-selection">
+          #{
+          form_tag path(:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'standard-slotter' }
             <label>Set:</label>
             <select name="current_set" class="set-select">
-            #{ related_sets.map do |set_name| 
+            #{ 
+            related_sets.map do |set_name| 
                set_card = Card.fetch set_name
-              %{<option value="#{ set_card.key }"#{
-                  set_card.key==current_set && ' selected="selected"'||''}>#{
-                set_card.label }</option>}
-            end}
+              %{<option value="#{ set_card.key }" #{set_card.key==current_set ? 'selected="selected"' : ''}>
+                #{ set_card.label }
+              </option>
+              }
+            end.join
+            }
             </select>
           </div>}
-        end}
+        end
+        }
   
   
         <div class="current-set">

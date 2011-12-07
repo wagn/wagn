@@ -1,7 +1,7 @@
 class Wagn::Renderer
   define_view(:raw, :name=>'*head') do |args|
     #rcard = card  # should probably be more explicit that this is really the *main* card.
-    title = (card && card.name )
+    title = (root.card && root.card.name )
     title = params[:action] if title.nil? || title == '*placeholder'
 
     bits = [

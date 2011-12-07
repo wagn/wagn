@@ -17,8 +17,7 @@ class Card < ActiveRecord::Base
   before_destroy :destroy_extension, :base_before_destroy
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards, :set_mods_loaded,
-    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual, :type_args,
-    :attachment_id #should build flexible handling for this kind of set-specific attr
+    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual, :type_args
 
   before_save :base_before_save, :set_read_rule, :set_tracked_attributes, :set_extensions
   after_save :base_after_save, :update_ruled_cards
@@ -127,7 +126,6 @@ class Card < ActiveRecord::Base
     save_subcards
     self.virtual = false
     @from_trash = false
-    update_attachment
     Wagn::Hook.call :after_create, self if @was_new_card
     send_notifications
     if self.typecode == 'Cardtype'
@@ -419,7 +417,6 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # METHODS FOR OVERRIDE
 
-  def update_attachment()                 end
   def post_render( content )     content  end
   def clean_html?()                 true  end
   def collection?()                false  end

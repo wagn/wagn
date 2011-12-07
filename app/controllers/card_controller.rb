@@ -238,17 +238,17 @@ class CardController < ApplicationController
   protected
   
   
-  def render_show(render_view=:show)
+  def render_show(render_view = nil)
     render :text=>render_show_text(render_view)
   end
   
-  def render_show_text(render_view=:show)
+  def render_show_text(render_view)
     extension = request.parameters[:format]
     return "unknown format: #{extension}" if !FORMATS.split('|').member?( extension )
     
     respond_to do |format|
       format.send extension do
-        Wagn::Renderer.new(@card, :format=>extension, :controller=>self).render(render_view)
+        Wagn::Renderer.new(@card, :format=>extension, :controller=>self).render(:show, :view=>render_view)
       end
     end
   end

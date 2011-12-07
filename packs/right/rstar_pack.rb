@@ -77,64 +77,75 @@ class Wagn::Renderer::Html
   end
   
 
-  define_view(:edit_rule) do
+  define_view(:edit_rule) do |args|
+    edit_mode       = args[:edit_mode]
+    setting_name    = args[:setting_name]
+    current_set_key = args[:current_set_key]
+    open_rule       = args[:open_rule]
+    
     form_for card, :url=>path(:create_or_update), :remote=>true, :html=>
-     {:class=>"card-form card-rule-form #{edit_mode&&'standard-slotter'}" } do |form| 
-      %{#{ hidden_field_tag :success, open_rule.name }
-        #{ hidden_field_tag :view, 'open_rule' }
-        <div class="card-editor">
-          <div class="rule-column-1">
-            <div class="rule-setting"> #{
-              link_to( setting_name, path(:view, :card=>open_rule,
-                :view=>:closed_rule), :remote => true,
-                :class => 'close-rule-link standard-slotter')}
-            </div>
+        {:class=>"card-form card-rule-form #{edit_mode&&'standard-slotter'}" } do |form| 
+          
+      hidden_field_tag( :success, open_rule.name ) +
+      hidden_field_tag( :view, 'open_rule' ) +
+      %{
+      <div class="card-editor">
+        <div class="rule-column-1">
+          <div class="rule-setting"> 
+            #{ link_to( setting_name, path(:view, :card=>open_rule, :view=>:closed_rule), 
+                :remote => true, :class => 'close-rule-link standard-slotter') }
+          </div>
+          <ul class="set-editor">
+      }.html_safe +
 
-            <ul class="set-editor"> #{
-              if edit_mode
-                %{<label>apply to:</label> #{
-                    set_options.each do |set_name|
-                      set_label =Card.fetch(set_name).label
-                      %{<li> #{
-                       form.radio_button :name, "#{set_name}+#{setting_name
-                           }", :checked=>(current_set_key &&
-                           set_options.length==1) } #{
-                      if set_name.to_cardname.to_key == current_set_key
-                        %{<span class="set-label current-set-label">#{
-                            set_label} <em>(current)</em></span>}
-                      else
-                        %{<span class="set-label">#{ set_label}</span>}
-                      end}
-                     </li>}
-                   end}}
-                 else
-                   %{<label>applies to:</label>
-                     <span class="set-label current-set-label">#{
-                        current_set_key ? Card.fetch(current_set_key).label :
-                                          'No Current Rule' }
-                     </span>}
-                 end}
-              </ul>
-           </div>
 
-           <div class="rule-column-2">
-             <div class="instruction rule-instruction">#{
-               raw process_content "{{#{setting_name}+*right+*edit help}}"}
-             </div>
+      if edit_mode
+#        '<label>apply to:</label> ' +
+        raw( args[:set_options].map do |set_name|
+          set_label =Card.fetch(set_name).label
+          
+          '<li>' + 
+            raw( form.radio_button( :name, "#{set_name}+#{setting_name}", :checked=>(current_set_key && args[:set_options].length==1) ) ) +
+            if set_name.to_cardname.to_key == current_set_key
+              %{<span class="set-label current-set-label">#{ set_label } <em>(current)</em></span>}
+            else
+              %{<span class="set-label">#{ set_label }</span>}
+            end.html_safe +
+          '</li>'
+        end.join)
+      else
+        %{
+        <label>applies to:</label>
+        <span class="set-label current-set-label">
+          #{current_set_key ? Card.fetch(current_set_key).label : 'No Current Rule' }
+        </span>
+        }.html_safe
+      end +   
 
-             <div class="type-editor"> #{
-               if edit_mode
-                 %{<label>type:</label> #{
-                   raw typecode_field( :class =>
-                     'cardtype-field rule-cardtype-field live-cardtype-field',
-                     :href  => path(:view, :card=>open_rule, :view=>:open_rule, :type_reload=>true)
-                   )}}
-               elsif current_set_key
-                 %{<label>type:</label>
-                 <span class="rule-type">#{ current_set_key ?
-                                            card.typename : '' }</span>}
-               end}
-             </div>
+       
+      %{  </ul>
+        </div>
+
+        <div class="rule-column-2">
+          <div class="instruction rule-instruction">
+            #{ raw process_content( "{{#{setting_name}+*right+*edit help}}" ) }
+          </div>
+
+          <div class="type-editor"> }.html_safe +      
+
+
+          
+      if edit_mode
+        %{<label>type:</label>}+
+        raw(typecode_field( :class =>'cardtype-field rule-cardtype-field live-cardtype-field',
+          :href => path(:view, :card=>open_rule, :view=>:open_rule, :type_reload=>true) ) )
+      elsif current_set_key
+        '<label>type:</label>'+
+        %{<span class="rule-type">#{ current_set_key ? card.typename : '' }</span>}
+      else; ''; end.html_safe +
+
+      
+      %{  </div>
 
              <div class="content-editor"> #{
                raw( edit_mode ? content_field(form) : (current_set_key ? render_core(:action=>'edit_rule') : '') ) }
@@ -160,10 +171,10 @@ class Wagn::Renderer::Html
                       :success=>CGI.escape(open_rule.cardname.to_url_key)),
                     'data-confirm'=>(
                       "Deleting will revert to #{setting_name} rule for #{
-                      Card.fetch(fallback_set).label }" if fallback_set ) }
+                      Card.fetch(args[:fallback_set]).label }" if args[:fallback_set] ) }
                   
                </span>}
-             end
+             end +
              %{#{submit_tag 'Submit', :class=>'rule-submit-button' } #{
                button_tag 'Cancel', :class=>'rule-cancel-button',
                                     :type=>'button' }}
@@ -171,8 +182,9 @@ class Wagn::Renderer::Html
          </div>}
        end} #{
 
-       raw notice}}
-    end
+       raw notice}}.html_safe
+
+    end.html_safe
   end
 
 
@@ -183,7 +195,7 @@ class Wagn::Renderer::Html
     setting_name = card.cardname.tag_name
     set_card = Card.fetch( card.cardname.trunk_name )
     set_prototype = set_card.prototype
-    rule_card = set_card.prototype.setting_card setting_name
+    rule_card = set_prototype.setting_card setting_name
     [rule_card, set_prototype]
   end
   

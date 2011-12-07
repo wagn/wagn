@@ -9,6 +9,7 @@ source 'http://rubygems.org'
 gem 'rails', '~> 3.1'
 gem 'htmlentities', '~>4.3.0'
 gem 'uuid', '~>2.3.4'
+gem 'paperclip', '~>2.4'
 
 
 # ~~~~~~~~~ #
@@ -24,6 +25,10 @@ group :postgres do
     gem('postgres', '~>0.7.9.2008.01.28')
 end
 gem 'mysql', '~>2.8.1',                :group=>'mysql'
+
+group :execjs do
+  gem 'therubyracer'
+end
 
 # ~~~~~~~~~~~~~~ #
 # IMAGE HANDLING #
@@ -49,7 +54,9 @@ end
 
 group :debug do
   gem 'rdoc'
-  gem 'ruby-debug19', :require => 'ruby-debug'
+  RUBY_VERSION =~ /^1\.9/ ?
+  gem('ruby-debug19', :require => 'ruby-debug') :
+  gem('ruby-debug')
 end
 
 group :test, :development do

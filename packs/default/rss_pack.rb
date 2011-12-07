@@ -40,5 +40,10 @@ class Wagn::Renderer::Rss
   alias_view(:titled,      {}, :open)
   alias_view(:open_content,{}, :content)
   alias_view(:link,        {}, :closed)
+
+  define_view(:change) do |args|
+    #self.requested_view = 'content'
+    render_view_action('change')
+  end
   
 end

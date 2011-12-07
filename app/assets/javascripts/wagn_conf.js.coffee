@@ -1,24 +1,31 @@
 window.wagn ||= {} #needed to run w/o *head.  eg. jasmine
 
 wagn.editorContentFunctionMap = {
-  '.tinymce-textarea'      : -> @html(),
-  '.pointer-select'        : -> pointerContent @val(),
-  '.pointer-multiselect'   : -> pointerContent @val(),
-  '.pointer-radio-list'    : -> pointerContent @find('input:checked').val(),
-  '.pointer-list-ul'       : -> pointerContent @find('input'        ).map( -> $(this).val() ),
-  '.pointer-checkbox-list' : -> pointerContent @find('input:checked').map( -> $(this).val() ),
+  '.tinymce-textarea'      : -> tinyMCE.get(@[0].id).getContent()
+  '.pointer-select'        : -> pointerContent @val()
+  '.pointer-multiselect'   : -> pointerContent @val()
+  '.pointer-radio-list'    : -> pointerContent @find('input:checked').val()
+  '.pointer-list-ul'       : -> pointerContent @find('input'        ).map( -> $(this).val() )
+  '.pointer-checkbox-list' : -> pointerContent @find('input:checked').map( -> $(this).val() )
   '.perm-editor'           : -> permissionsContent this # must happen after pointer-list-ul, I think
 }
 
 wagn.editorInitFunctionMap = {
   '.date-editor'         : -> @datepicker({ dateFormat: 'yy-mm-dd' }),
-  '.tinymce-textarea'    : -> @tinymce(if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {})
-  '.pointer-list-editor' : -> @sortable(); wagn.initPointerAutoComplete @find('input')
+  '.tinymce-textarea'    : -> wagn.initTinyMCE(@[0].id)
+  '.pointer-list-editor' : -> @sortable(); wagn.initPointerList @find('input')
 }
 
-wagn.initPointerAutoComplete = (input)->
+wagn.initPointerList = (input)-> 
   optionsCard = input.closest('ul').attr('options-card')
   input.autocomplete { source: wagn.root_path + '/' + optionsCard + '.json?view=name_complete' }
+
+wagn.initTinyMCE = (id) ->
+  conf = if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {}
+  conf['content_css'] = wagn.root_path + '/assets/application-all.css,' + wagn.root_path + '/*css.css'
+  conf['mode'] = "exact"
+  conf['elements'] = id
+  tinyMCE.init conf
 
 
 $(window).load ->
@@ -30,7 +37,7 @@ $(window).load ->
     input = new_item.find('input')
     input.val ''
     last_item.after new_item
-    wagn.initPointerAutoComplete(input)    
+    wagn.initPointerList(input)    
     event.preventDefault() # Prevent link from following its href
 
   $('.pointer-item-delete').live 'click', ->

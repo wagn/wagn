@@ -8,6 +8,13 @@
 //= require jquery-ui
 //= require jquery.ui.autocomplete.html.js
 //= require jquery_ujs
-//= require tinymce-jquery
+//= require tinymce
 //= require wagn_conf
 //= require wagn
+
+
+/* 
+Note: I attempted to get tinymce up with tinymce-jquery, 
+but it overrode val() in ways that broke our filed updating / autosave
+*/
+

@@ -136,13 +136,13 @@ describe Wagn::Cardname do
 
   describe "#valid" do
     it "accepts valid names" do
-      "this+THAT".to_cardname.should be_valid_cardname
-      "THE*ONE*AND$!ONLY".to_cardname.should be_valid_cardname
+      "this+THAT".to_cardname.should be_valid
+      "THE*ONE*AND$!ONLY".to_cardname.should be_valid
     end           
     
     it "rejects invalide names" do
-      "Tes~sd".to_cardname.should_not be_valid_cardname
-      "TEST/DDER".to_cardname.should_not be_valid_cardname
+      "Tes~sd".to_cardname.should_not be_valid
+      "TEST/DDER".to_cardname.should_not be_valid
     end
   end         
   

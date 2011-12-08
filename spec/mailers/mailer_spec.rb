@@ -10,7 +10,7 @@ describe Mailer do
     ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries = []
 
-    @expected = Mail.new ( { :charset => CHARSET } )
+    @expected = Mail.new( { :charset => CHARSET } )
   end  
 
   #

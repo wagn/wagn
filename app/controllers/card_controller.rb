@@ -141,7 +141,6 @@ class CardController < ApplicationController
   end
 
 
-
   #-------- ( ACCOUNT METHODS )
   
   def update_account

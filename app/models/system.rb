@@ -35,12 +35,8 @@ class System
     def attachment_storage
       @@attachment_storage || :file_system
     end
-    def attachment_storage_dir
-      root_path + '/public/upload'
-    end
-    def attachment_base
-      base_url + '/upload'
-    end
+    def attachment_storage_dir() "#{Rails.root}/public/upload" end
+    def attachment_base_url() "#{System.root_path}/upload" end
     
     # CARD-BASED SETTINGS
 

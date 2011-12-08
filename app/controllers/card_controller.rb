@@ -15,39 +15,9 @@ class CardController < ApplicationController
   before_filter :remove_ok, :only=>[ :remove ]
 
 
-  #----------( Special cards )
+
+  #----------( CREATE )
   
-  def set_main
-    System.main_name = params[:main] || (@card && @card.name) || '' # will be wagn.main ?
-  end
-
-  def index_preload
-    User.no_logins? ? 
-      redirect_to( System.path_setting '/admin/setup' ) : 
-      params[:id] = (System.setting('*home') || 'Home').to_cardname.to_url_key
-  end
-
-  def index() show  end
-
-  def show
-    save_location if params[:format].nil? || params[:format].to_sym==:html
-    render_show
-  end
-
-  def new
-    args = params[:card] || {}
-    @type = ( args[:type] ||= params[:type] ) # for /new/:type shortcut
-
-    @card = Card.new args
-    if @card.ok? :create
-      render( ajax? ?
-        {:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
-        {:action=> 'new'} ) #normal
-    else
-      render_denied('create')
-    end
-  end
-
   def create
     @card = Card.new params[:card]
     if @card.save
@@ -66,8 +36,35 @@ class CardController < ApplicationController
   end
 
 
-  #--------------( editing )
+  #----------( READ )
 
+  def show
+    save_location if params[:format].nil? || params[:format].to_sym==:html
+    render_show
+  end
+
+  def index()    show                  end
+  def view()     render_show           end
+  def changes()  render_show :changes  end
+  def options()  render_show :options  end
+  def related()  render_show :related  end
+  def edit()     render_show :edit     end
+
+
+  def new
+    args = params[:card] || {}
+    @type = ( args[:type] ||= params[:type] ) # for /new/:type shortcut
+
+    @card = Card.new args
+    if @card.ok? :create
+      render_show :new
+    else
+      render_denied('create')
+    end
+  end
+
+
+  #--------------( UPDATE )
 
 
   def update
@@ -75,18 +72,6 @@ class CardController < ApplicationController
     args=params[:card] || {}
     args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type]
     
-#    # ~~~ REFACTOR! -- this conflict management handling is sloppy
-#    #Rails.logger.debug "update set current_revision #{@card.name}, #{@card.current_revision}"
-#    @current_revision_id = @card.current_revision.id
-#    old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
-#    if old_revision_id.to_i != @current_revision_id.to_i
-#      changes  # FIXME -- this should probably be abstracted?
-#      @no_changes_header = true
-#      @changes = render_to_string :action=>'changes'
-#      return render( :action=>:edit_conflict )
-#    end
-    # ~~~~~~  /REFACTOR ~~~~~ #
-
     @card.update_attributes(args)
 
     if !@card.errors[:confirmation_required].empty?
@@ -99,6 +84,9 @@ class CardController < ApplicationController
       render_success
     end
   end
+
+
+  ## the following three methods need to be merged into #update
 
   def save_draft
     @card.save_draft( params[:card][:content] )
@@ -129,11 +117,11 @@ class CardController < ApplicationController
     render_show
   end
 
-  #------------( deleting )
+
+
+  #------------( DELETE )
 
   def remove
-#    return unless !captcha_required? || verify_captcha
-    
     @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
     
@@ -152,13 +140,6 @@ class CardController < ApplicationController
     end
   end
 
-  #---------------( tabs )
-
-  def view()     render_show           end
-  def changes()  render_show :changes  end
-  def options()  render_show :options  end
-  def related()  render_show :related  end
-  def edit()     render_show :edit     end
 
 
   #-------- ( ACCOUNT METHODS )
@@ -195,6 +176,8 @@ class CardController < ApplicationController
 
   
   #-------- ( MISFIT METHODS )
+  
+  
   def watch
     watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
     watchers = watchers.refresh if watchers.frozen?
@@ -211,20 +194,35 @@ class CardController < ApplicationController
     ajax? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
-  protected
+  private
   
+  #-------( FILTERS )
   
-  def render_show(render_view = nil)
-    render :text=>render_show_text(render_view)
+  def index_preload
+    User.no_logins? ? 
+      redirect_to( System.path_setting '/admin/setup' ) : 
+      params[:id] = (System.setting('*home') || 'Home').to_cardname.to_url_key
   end
   
-  def render_show_text(render_view)
+  def set_main
+    System.main_name = params[:main] || (@card && @card.name) || '' # will be wagn.main ?
+  end
+  
+  
+  #---------( RENDER HELPERS)
+  
+  def render_show(view = nil)
+    render :text=>render_show_text(view)
+  end
+  
+  def render_show_text(view)
     extension = request.parameters[:format]
     return "unknown format: #{extension}" if !FORMATS.split('|').member?( extension )
     
     respond_to do |format|
       format.send extension do
-        Wagn::Renderer.new(@card, :format=>extension, :controller=>self).render(:show, :view=>render_view)
+        renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
+        renderer.render_show :view=>view
       end
     end
   end

@@ -20,7 +20,7 @@ gem 'paperclip', '~>2.4'
 gem 'mysql', '~>2.8.1', :group=>'mysql'
 
 group :postgres do
-  ENV['RUBY_VERSION'] =~ /^(1\.9|ree)/ ?
+  ENV['RUBY_VERSION']||RUBY_VERSION =~ /^(1\.9|ree)/ ?
     gem('pg', '~>0.7') :
     gem('postgres', '~>0.7.9.2008.01.28')
 end

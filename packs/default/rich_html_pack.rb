@@ -143,7 +143,7 @@ class Wagn::Renderer::Html
      %{#{error_messages_for card}#{
 
      form_for card, :url=>path(:create), :remote=>true, :html=>{ :class=>'card-form card-new-form standard-slotter' } do |form|
-      form = form
+      @form = form
       %{
       #{ hidden_field_tag :home_view, params[:home_view] || :open}
       <div class="card-header">
@@ -175,7 +175,7 @@ class Wagn::Renderer::Html
 
       <div class="edit-area">
         <div class="card-editor editor">
-          #{ raw edit_slot(args) }
+          #{ edit_slot(args) }
         </div>
 
         <div class="edit-button-area">

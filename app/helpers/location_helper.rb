@@ -65,9 +65,6 @@ module LocationHelper
     title ||= text
     url_options = (options[:type]) ? {:type=>options[:type]} : {}
     url = url_for_page(title, url_options)
-    url = System.base_url + url if (options.delete(:include_domain))
-
-    #Rails.logger.debug("link_to_page #{options.inspect}")
     link_to text, url, options
   end
 

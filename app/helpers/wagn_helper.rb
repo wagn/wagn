@@ -84,9 +84,6 @@ module WagnHelper
 
   # Other snippets -------------------------------------------------------------
 
-  def site_title
-    System.site_title
-  end
 
   def format_date(date, include_time = true)
     # Must use DateTime because Time doesn't support %e on at least some platforms
@@ -117,28 +114,11 @@ module WagnHelper
   end
 
 
-  def form_for_card(options={}, &proc)    
-    form_for(:card, options) do |form|
-      yield(form)
-      if options[:update]
-        out << hidden_field_tag('_update','true').html_safe
-      end
-    end
-  end
-
   def wrap_slot(renderer=nil, args={}, &block)
     renderer ||= (Wagn::Renderer.current_slot || get_slot)
     content = with_output_buffer { yield(renderer) } 
     renderer.wrap(:open, args) { content }
   end
   # ------------( helpers ) --------------
-  def edit_user_context(card)
-    if System.ok?(:administrate_users)
-      'admin'
-    elsif current_user == card.extension
-      'user'
-    else
-      'public'
-    end
-  end
+
 end

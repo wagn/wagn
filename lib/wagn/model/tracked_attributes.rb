@@ -28,7 +28,6 @@ module Wagn::Model::TrackedAttributes
   
   protected 
   def set_name(newname)
-    @old_cardname = cardname
     if (@old_name = self.name_without_tracking) != newname.to_s
       @cardname, name_without_tracking =
          Wagn::Cardname===newname ? [newname, newname.to_s] :
@@ -65,7 +64,8 @@ module Wagn::Model::TrackedAttributes
     end
           
     Cardtype.cache.reset if typecode=='Cardtype'
-    Wagn::Cache.expire_card(@old_cardname.to_key)
+    warn "expiring card cache for #{@old_name.to_cardname.key}"
+    Wagn::Cache.expire_card(@old_name.to_cardname.key)
     @name_changed = true          
     @name_or_content_changed=true
   end

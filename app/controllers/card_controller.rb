@@ -127,17 +127,9 @@ class CardController < ApplicationController
     
     return render_show(:remove) if !@card.errors[:confirmation_required].empty?  ## renders remove.erb, which is essentially a confirmation box.  
 
-    discard_locations_for(@card)
-    
-    url = params[:redirect] || params[:success]
-    url = previous_location if [nil, 'TO_PREVIOUS_CARD'].member? url
+    discard_locations_for(@card) 
 
-    case 
-    when !ajax?            ; wagn_redirect url
-    when params[:redirect] ; wagn_redirect url
-    when params[:success]  ; @card = Card.fetch_or_new(url); render_show 
-    else                   ; render :text => "#{@card.name} removed"
-    end
+    render_success (ajax? ? "TEXT:#{@card.name} removed" : 'TO-PREVIOUS')
   end
 
 
@@ -226,21 +218,29 @@ class CardController < ApplicationController
     end
   end
   
-  def render_success
-    url = params[:redirect] || params[:success]
+  def render_success(default_target='TO-CARD')
+    target = params[:success] || default_target
+    redirect = !ajax?
+
+    if m = target.match(/^REDIRECT:\s*(.*)/)
+      redirect = true
+      target = m[1]
+    end
     
-    if url == 'TO_CARD' or ( !ajax? && url.nil? )
-      url = if @card.ok?(:read)
-        card_path @card
-      else
-        '/'
+    target = case target
+      when 'TO-PREVIOUS'  ; previous_location
+      when 'TO-CARD'      ; @card
+      when /^(http|TEXT)/ ; target
+      else                ; Card.fetch_or_new(target)
       end
-    end 
-    
-    if params[:redirect] || !ajax?
-      wagn_redirect url
-    else
-      @card = Card.fetch_or_new(url) if url
+          
+    if redirect
+      target = card_path(target) if Card===target
+      wagn_redirect target
+    elsif String===target      
+      render :text => (m = target.match /^TEXT:\s*(.*)/) ? m[1] : target 
+    else  
+      @card = target
       render_show
     end
   end

@@ -68,11 +68,15 @@ $(window).load ->
     return false if !$.rails.allowAction $(this)
     $.rails.handleRemote($(this))
 
-
   $('body').delegate '.card-form', 'submit', ->
     $(this).setContentFieldsFromMap()
     $(this).find('.card-content').attr('no-autosave','true')
     true
+
+  $('body').delegate 'form.standard-slotter', 'submit', (event)->
+    if (target = $(this).attr 'main-success') and $(this).slot().parent('#main')[0]
+      input = $(this).find '[name=success]'
+      input.val (if target == 'REDIRECT' then target + ': ' + input.val() else action)    
 
   $('.init-editors').live 'ajax:success', ->
     wagn.initializeEditors()

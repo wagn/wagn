@@ -135,7 +135,7 @@ class Wagn::Renderer::Html
   def new_content(args, cancel=nil, redirect=nil, hide_type=nil)
     #warn "new_content(#{args.inspect}, #{cancel}, #{redirect}, #{hide_type}"
     cancel ||= previous_location
-    redirect ||= card.setting('thanks') || 'TO_CARD'
+    redirect ||= card.setting('thanks') || 'TO-CARD'
     hide_type ||= @type && !card.broken_type 
     args[:home_view] = params[:home_view] if params[:home_view]
     #warn "nc (#{args.inspect}, #{cancel}, #{redirect}, #{hide_type}"
@@ -143,9 +143,9 @@ class Wagn::Renderer::Html
      %{#{error_messages_for card}#{
 
      form_for card, :url=>path(:create), :remote=>true, :html=>{ :class=>'card-form card-new-form standard-slotter' } do |form|
-      form= form
-      %{#{ hidden_field_tag :home_view, params[:home_view] || :open}#{
-         hidden_field_tag :redirect, redirect if redirect}
+      form = form
+      %{
+      #{ hidden_field_tag :home_view, params[:home_view] || :open}
       <div class="card-header">
         #{ if hide_type
            form.hidden_field :typecode 
@@ -252,9 +252,14 @@ class Wagn::Renderer::Html
     %{#{ edit_submenu :name }
       <div class="edit-area edit-name">
        <h2>Change Name</h2>
-      #{ form_for :card, :url=>path(:update), :html=>{ :class=>'card-edit-name-form standard-slotter', :remote=>true } do |f|
-        %{<div>to #{ raw f.text_field( :name, :class=>'card-name-field', :value=>card.name, :autocomplete=>'off' ) } </div>#{
-
+      #{ form_for card, :url=>path(:update), :remote=>true,
+        :html=>{ :class=>'card-edit-name-form standard-slotter', 'main-success'=>'REDIRECT' } do |f|
+          
+          
+          
+        %{<div>to #{ raw f.text_field( :name, :class=>'card-name-field', :value=>card.name, :autocomplete=>'off' ) } </div>
+        #{ hidden_field_tag :success, 'TO-CARD' }
+        #{
 
      if card.confirm_rename
       %{#{if dependents = card.dependents and !dependents.empty?  #ENGLISH below
@@ -301,7 +306,7 @@ class Wagn::Renderer::Html
     %{#{ raw edit_submenu(:type)}
     <div class="edit-area edit-type">
     <h2>Change Type</h2> #{
-      form_for :card, :url=>path(:update), :remote=>true,
+      form_for :card, :url=>path(:update), :remote=>true, 'main-success'=>'REDIRECT: TO_CARD',
         :html=>{ :class=>'standard-slotter card-edit-type-form' } do |f|
           
         %{#{if card.typecode == 'Cardtype' and card.extension and !Card.search(:type=>card.cardname).empty? #ENGLISH

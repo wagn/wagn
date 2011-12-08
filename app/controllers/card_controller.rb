@@ -71,7 +71,6 @@ class CardController < ApplicationController
   #--------------( editing )
 
   def edit
-    @attribute = params[:attribute] || 'content'
     render_show :edit
   end
 
@@ -97,7 +96,7 @@ class CardController < ApplicationController
     if !@card.errors[:confirmation_required].empty?
       @confirm = @card.confirm_rename = @card.update_referencers = true
       @attribute = 'name'
-      render :action=>'edit'
+      render_show :edit
     elsif !@card.errors.empty?
       render_card_errors
     else
@@ -164,8 +163,6 @@ class CardController < ApplicationController
   end
 
   def options
-    @attribute = params[:attribute]
-    @attribute ||= (@card.extension_type=='User' ? 'account' : 'settings')
     render_show :options
   end
 
@@ -177,14 +174,6 @@ class CardController < ApplicationController
   end
 
   def related
-    sources = [@card.typename,nil]
-    sources.unshift '*account' if @card.extension_type=='User'
-    @items = sources.map do |root|
-      c = Card.fetch(root ? root.to_cardname.star_rule(:related) : '*related')
-      c && c.item_names
-    end.flatten.compact
-#    @items << 'config'
-    @current = params[:attribute] || @items.first.to_cardname.to_key
     render_show :related
   end
 

@@ -17,7 +17,7 @@ gem 'paperclip', '~>2.4'
 
 # need at least one of the following
 
-gem 'mysql', '~>2.8.1',                :group=>'mysql'
+gem 'mysql', '~>2.8.1', :group=>'mysql'
 
 group :postgres do
   RUBY_VERSION =~ /^(1\.9|ree)/ ?
@@ -63,6 +63,7 @@ group :test, :development do
   gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
   gem 'ruby-prof'                              # profiling
   gem 'rails-dev-tweaks', '~> 0.5.1'           # dramatic speeds up asset loading, among other tweaks
+
 #  gem 'jasmine-rails'
 end
 

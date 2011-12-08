@@ -11,14 +11,14 @@ class Wagn::Renderer
     
     #Universal Edit Button
     if card
-     if !card.new_record? && card.ok?(:update)
-      bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="#{ path(:edit, :card=>card) }"/>}
-     end
-    
-     # RSS # move to packs!
-     if card.typecode == 'Search'
-      rss_href = card.name=='*search' ? "#{System.root_path}/search/#{ params[:_keyword] }.rss" : template.url_for_page( card.name, :format=>:rss )
-      bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{rss_href} />}
+      if !card.new_record? && card.ok?(:update)
+        bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="#{ path(:edit, :card=>card) }"/>}
+      end
+      
+      # RSS # move to packs!
+      if card.typecode == 'Search'
+        rss_href = card.name=='*search' ? "#{System.root_path}/search/#{ params[:_keyword] }.rss" : template.url_for_page( card.name, :format=>:rss )
+        bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{rss_href} />}
      end
     end
 

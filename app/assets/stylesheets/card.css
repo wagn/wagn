@@ -1,11 +1,8 @@
-.open-view, .closed-view {
-}
-
-
 .open-view,
 .changes-view,
 .options-view,
 .related-view,
+.new-view,
 .edit-view {
   margin: 1px 0px;
   padding: 0px !important;

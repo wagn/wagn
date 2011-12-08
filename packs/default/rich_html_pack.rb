@@ -100,17 +100,14 @@ class Wagn::Renderer::Html
   end
 
   define_view(:new) do |args|
-    #warn "new(#{args.inspect})"
-    args ||= {}
-    if ajax = args[:ajax]
+    if ajax_call?
       new_content args
     else
      @title = "New Card"
-     #warn "new main #{args.inspect}"
-     # removed request.post?, it should render a different view in that case
      %{<div id="new-card">
-        <h1 class="page-header">New #{ card.typecode == 'Basic' && '' ||
-              card.typename } Card</h1>
+        <h1 class="page-header">
+          New #{ card.typecode == 'Basic' && '' || card.typename } Card
+        </h1>
         #{ new_instruction }
         #{ new_content args }
      </div> }

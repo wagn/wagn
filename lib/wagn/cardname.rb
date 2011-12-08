@@ -21,9 +21,6 @@ module Wagn
         return obj if obj = NAME2CARDNAME[str]
         super str
       end
-
-#      def each_cardname(&proc) NAME2CARDNAME.values.uniq.each(&proc) end
-#      def each_key(&proc) each_cardname.map(&:key).each(&proc) end
     end
 
 
@@ -153,27 +150,21 @@ module Wagn
 
     def to_absolute(context, params=nil)
       context = context.to_cardname
-      #Rails.logger.info "to_absolute(#{inspect}, #{context.inspect}, #{params.inspect}) T:#{Kernel.caller[0,8]*"\n"}"
       parts.map do |part|
-        #Rails.logger.info "to_abs part(#{part}) #{!!(part =~ /^_/)}, #{params&&params[part]}"
         new_part = case part
-          when /^_user$/i;  (user=User.current_user) ? user.cardname : part
+          when /^_user$/i;            (user=User.current_user) ? user.cardname : part
+          when /^_main$/i;            System.main_name
           when /^(_self|_whole|_)$/i; context
-        #Rails.logger.info "to_abs _self(#{context.inspect})"; context
           when /^_left$/i;            context.trunk_name
-        #Rails.logger.info "to_abs _left(#{context.trunk_name.inspect})"; context.trunk_name
           when /^_right$/i;           context.tag_name
-        #Rails.logger.info "to_abs _right(#{context.tag_name.inspect})"; context.tag_name
           when /^_(\d+)$/i;
             pos = $~[1].to_i
             pos = context.size if pos > context.size
-            #Rails.logger.info "to_abs Dig(#{pos}) #{context.parts.inspect}"
             context.parts[pos-1]
           when /^_(L*)(R?)$/i
             l_s, r_s = $~[1].size, $~[2].blank?
             trunk = context.nth_left(l_s)
             r= r_s ? trunk.to_s : trunk.tag_name
-            #Rails.logger.debug "_LR(#{l_s}, #{r_s}) TR:#{trunk}, R:#{r}"; r
           when /^_/
             (params && ppart = params[part]) ? CGI.escapeHTML( ppart ) : part
           else                     part

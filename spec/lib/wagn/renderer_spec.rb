@@ -16,14 +16,6 @@ describe Wagn::Renderer, "" do
 #~~~~~~~~~~~~ special syntax ~~~~~~~~~~~#
 
   context "special syntax handling should render" do
-    before do
-      User.as :wagbot do
-        @layout_card = Card.create(:name=>'tmp layout', :type=>'Html', :content=>"Mainly {{_main|core}}")
-        @layout_card.save
-        c = Card['*all+*layout'] and c.content = '[[tmp layout]]'
-      end
-    end
-
     it "simple card links" do
       render_content("[[A]]").should=="<a class=\"known-card\" href=\"/wagn/A\">A</a>"
     end
@@ -55,11 +47,6 @@ describe Wagn::Renderer, "" do
         result.should == "AlphaBeta"
       end
     end
-
-    it "renders layout card without recursing" do
-      Wagn::Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main">Mainly {{_main|core}}</div>}
-    end
-
   end
 
 #~~~~~~~~~~~~ Error handling ~~~~~~~~~~~~~~~~~~#

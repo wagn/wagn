@@ -1,14 +1,15 @@
 
 class Wagn::Renderer
-  #commented out for now...
-  
-  #define_view(:core, :type=>'image') do |args|
-  #  image_tag card.attach.url args[:size] || :medium
-  #end
 
-  #define_view(:core, :type=>'file') do |args|
-  #  "<a href=\"#{card.attach.url}\">#{card.name}</a>"
-  #end
+  define_view(:core, :type=>'image') do |args|
+    (rr = _render_raw) =~ /^\s*<img / ? rr :
+      image_tag(card.attach.url, args[:size] || :medium)
+  end
+
+  define_view(:core, :type=>'file') do |args|
+    (rr = _render_raw) =~ /^\s*<a / ? rr :
+      "<a href=\"#{card.attach.url}\">#{card.name}</a>"
+  end
 
 end
 

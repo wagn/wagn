@@ -47,25 +47,23 @@ class Wagn::Renderer
 
 
 
-  define_view(:deny_view) do
+  define_view(:deny_view) do |args|
     %{<span class="denied"><!-- Sorry, you don't have permission for this card --></span>}
   end
 
-  define_view(:open_virtual) do #ENGLISH
-    %{<div class="faint">
-        <em>#{ raw( showname || card.name )} is a Virtual card</em>
-     </div> }
+  define_view(:edit_virtual) do |args|
+    %{ <div class="faint"><em>#{ @showname || card.name } is a Virtual card</em></div> }
   end
 
-  define_view(:closed_missing) do
-    %{<span class="faint"> #{ raw( showname || card.name ) } </span>}
+  define_view(:closed_missing) do |args|
+    %{<span class="faint"> #{ @showname || card.name } </span>}
   end
 
-  define_view(:too_deep) do
+  define_view(:too_deep) do |args|
     %{Man, you're too deep.  (Too many levels of inclusions at a time)}
   end
 
-  define_view(:too_slow) do #ENGLISH
+  define_view(:too_slow) do |args|
     %{<span class="too-slow">Timed out! #{ card.name } took too long to load.</span>}
   end
 

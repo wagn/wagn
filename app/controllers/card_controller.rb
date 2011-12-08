@@ -1,5 +1,5 @@
 class CardController < ApplicationController
-  helper :wagn, :card
+  helper :wagn
 
   EDIT_ACTIONS = [ :edit, :update, :rollback, :save_draft, :watch, :unwatch, :create_account, :update_account ]
   LOAD_ACTIONS =  EDIT_ACTIONS + [ :show, :index, :mine, :comment, :remove, :view, :changes, :options, :related ]
@@ -12,7 +12,7 @@ class CardController < ApplicationController
 
   before_filter :view_ok,   :only=> LOAD_ACTIONS
 #  before_filter :create_ok, :only=>[ :new, :create ]
-  before_filter :update_ok,   :only=> EDIT_ACTIONS
+  before_filter :update_ok, :only=> EDIT_ACTIONS
   before_filter :remove_ok, :only=>[ :remove ]
 
 #  before_filter :require_captcha, :only => [ :create, :update, :comment ]
@@ -70,9 +70,7 @@ class CardController < ApplicationController
 
   #--------------( editing )
 
-  def edit
-    render_show :edit
-  end
+
 
   def update
     @card = @card.refresh # (cached card attributes often frozen)
@@ -94,8 +92,8 @@ class CardController < ApplicationController
     @card.update_attributes(args)
 
     if !@card.errors[:confirmation_required].empty?
-      @confirm = @card.confirm_rename = @card.update_referencers = true
-      @attribute = 'name'
+      @card.confirm_rename = @card.update_referencers = true
+      params[:attribute] = 'name'
       render_show :edit
     elsif !@card.errors.empty?
       render_card_errors
@@ -128,8 +126,8 @@ class CardController < ApplicationController
   end
 
   def rollback
-    load_card_and_revision
-    @card.update_attributes! :content=>@revision.content
+    revision = @card.revisions[params[:rev].to_i - 1]
+    @card.update_attributes! :content=>revision.content
     render_show
   end
 
@@ -162,19 +160,20 @@ class CardController < ApplicationController
     render_show
   end
 
+  def changes
+    render_show :changes
+  end
+
   def options
     render_show :options
   end
 
-  def changes
-    load_card_and_revision
-    @show_diff = (params[:mode] != 'false')
-    @previous_revision = @card.previous_revision(@revision)
-    render_show :changes
-  end
-
   def related
     render_show :related
+  end
+
+  def edit
+    render_show :edit
   end
 
 
@@ -194,7 +193,7 @@ class CardController < ApplicationController
     end
     
     flash[:notice] ||= "Got it!  Your changes have been saved."  #ENGLISH
-    @attribute = :account
+    params[:attribute] = :account
     render_show :options
   end
 
@@ -206,7 +205,7 @@ class CardController < ApplicationController
     raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
     @extension = User.new(:email=>@user.email)
 #    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
-    @attribute = :account
+    params[:attribute] = :account
     render_show :options
   end
 
@@ -264,7 +263,6 @@ class CardController < ApplicationController
       render_show
     end
   end
-  
 
 end
 

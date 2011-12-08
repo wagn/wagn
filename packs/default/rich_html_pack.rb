@@ -221,7 +221,7 @@ class Wagn::Renderer::Html
         %{<div>to #{ raw f.text_field( :name, :class=>'card-name-field', :value=>card.name, :autocomplete=>'off' ) } </div>#{
 
 
-     if card.confirm_rename==true
+     if card.confirm_rename
       %{#{if dependents = card.dependents and !dependents.empty?  #ENGLISH below
         %{<div class="instruction">
           <div>This will change the names of these cards, too:</div>
@@ -465,26 +465,28 @@ class Wagn::Renderer::Html
   end
 
   define_view(:changes) do |args| #ENGLISH
-    warn "changes #{@revision_number}, [#{params.inspect}]"
+    @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i
+    @revision = card.revisions[@revision_number - 1]
+    @show_diff = (params[:mode] != 'false')
+    @previous_revision = card.previous_revision(@revision)
+    
     wrap(:changes, args) do
     %{#{header unless params['no_changes_header']}
-    <div class="revision-navigation">#{
-     revision_menu }
-    </div>
+    <div class="revision-navigation">#{ revision_menu }</div>
 
     <div class="revision-header">
-      <span class="revision-title">#{ params['revision'].title }</span>
-    posted by #{ link_to_page params['revision'].author.card.name }
-    on #{ format_date(params['revision'].created_at) } #{
+      <span class="revision-title">#{ @revision.title }</span>
+      posted by #{ link_to_page @revision.author.card.name }
+    on #{ format_date(@revision.created_at) } #{
     if !card.drafts.empty?
       %{<p class="autosave-alert">
         This card has an #{ autosave_revision }
       </p>}
     end}#{
-    if params['show_diff'] and params['previous_revision']  #ENGLISH
+    if @show_diff and @previous_revision  #ENGLISH
       %{<p class="revision-diff-header">
         <small>
-          Showing changes from revision ##{ params['revision_number'] - 1 }:
+          Showing changes from revision ##{ @revision_number - 1 }:
           <ins class="diffins">Added</ins> | <del class="diffmod">Removed</del>
         </small>
       </p>}
@@ -494,10 +496,10 @@ class Wagn::Renderer::Html
 
 
     <div class="revision">#{
-    if params['show_diff'] and params['previous_revision']
-      diff params['previous_revision'].content, params['revision'].content
+    if @show_diff and @previous_revision
+      diff @previous_revision.content, @revision.content
     else
-      params['revision'].content
+      @revision.content
     end}
     </div>
 

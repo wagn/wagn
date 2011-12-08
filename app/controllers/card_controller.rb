@@ -2,10 +2,9 @@ class CardController < ApplicationController
   helper :wagn
 
   EDIT_ACTIONS = [ :edit, :update, :rollback, :save_draft, :watch, :unwatch, :create_account, :update_account ]
-  LOAD_ACTIONS =  EDIT_ACTIONS + [ :show, :index, :mine, :comment, :remove, :view, :changes, :options, :related ]
+  LOAD_ACTIONS =  EDIT_ACTIONS + [ :show, :index, :comment, :remove, :view, :changes, :options, :related ]
 
   before_filter :index_preload, :only=> [ :index ]
-  before_filter :mine_preload,  :only=> [ :mine ]
   
   before_filter :load_card!, :only=>LOAD_ACTIONS
   before_filter :set_main
@@ -15,7 +14,6 @@ class CardController < ApplicationController
   before_filter :update_ok, :only=> EDIT_ACTIONS
   before_filter :remove_ok, :only=>[ :remove ]
 
-#  before_filter :require_captcha, :only => [ :create, :update, :comment ]
 
   #----------( Special cards )
   
@@ -157,14 +155,15 @@ class CardController < ApplicationController
 
   #---------------( tabs )
 
-  def view
-    render_view
-  end
-
-  def self.add_actions(*methods)
-    methods.each do |method| define_method(method) { render_view method } end
-  end
-  add_actions :view, :changes, :options, :related, :edit
+  alias view render_show
+  #def self.add_actions(*methods)
+  #  methods.each do |method| define_method(method) { render_show method } end
+  #end
+  #add_actions :changes, :options, :related, :edit
+  def changes()  render_show :changes  end
+  def options()  render_show :options  end
+  def related()  render_show :related  end
+  def edit()     render_show :edit     end
 
   #-------- ( ACCOUNT METHODS )
   

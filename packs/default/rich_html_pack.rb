@@ -399,7 +399,7 @@ class Wagn::Renderer::Html
           :html=>{ :class=>'standard-slotter' } do |form|
 
          %{<table class="fieldset">
-           #{if edit_user_context(card)=='user' or System.ok?(:administrate_users)
+           #{if User.as_user==card.extension or System.ok?(:administrate_users)
               raw option_header( 'Account Details' ) +
                 template.render(:partial=>'account/edit',  :locals=>locals)
            end }
@@ -607,7 +607,7 @@ class Wagn::Renderer::Html
       notice } #{
       wrap_content( :open, raw(_render_open_content) ) } #{
 
-      if card&&card.ok?(:comment)
+      if card && card.ok?(:comment)
         %{<div class="comment-box"> #{
           form_for :card, :url=>path(:comment), :remote=>:true,
                 :html=> { :class=>'standard-slotter' } do |f|
@@ -670,22 +670,21 @@ class Wagn::Renderer::Html
   define_view(:footer) do |args|
     %{<div class="card-footer">
       <span class="footer-content">
-       <span class="watch-link">#{ raw slot.watch_link }</span>
-       <span class="footer-links">
-        <span class="card-links">
-         <span class="link-list">
-          <span>Cards:</span>
-           #{raw card.cardname.piece_names.map {|c| link_to_page c}.join(', ') }
-         </span>
-         #{ if !card.cached_revision.new_record?
-           %{<span class="last-editor">
-             <span>Last Editor:</span> #{ raw link_to_page card.cached_revision.author.card.name  #ENGLISH
-               }</span>}
-         end }
-        </span>   
-       </span>
-      </span>
-      <span class="height-holder">&nbsp;</span>
+        <span class="watch-link">#{ raw slot.watch_link }</span>
+        <span class="footer-links">
+          <label>Cards:</label>
+          #{raw card.cardname.piece_names.map {|c| link_to_page c}.join(', ') }
+        </span>
+        #{ 
+         if !card.cached_revision.new_record?
+           %{
+          <span class="last-editor">
+            <label>Last Editor:</span>
+            #{ raw link_to_page card.cached_revision.author.card.name }
+          </span>}
+         end 
+        }
+      </span>&nbsp;
     </div>}
   end
 

@@ -173,7 +173,7 @@ div:hover.card-header .card-menu-left {
   border-radius: 0px 0px 6px 6px;
 }
 html>body  .card-footer .footer-content {
-/*  display: none; */
+  display: none; 
 }
 div:hover.card-footer .footer-content {
   display: inline;

@@ -39,8 +39,8 @@ module Wagn::Model::Attach
   def self.included(base)
     base.class_eval do
       has_attached_file :attach,
-        :url => "/:dir/:basename_:style/:rev_id.:extension",
-        :path => ":rails_root/public/:dir/:basename_:style/:rev_id.:extension",
+        :url => "/:base/:card_id/:size:revision_id.:extension",
+        :path => ":local/:card_id/:size:revision_id.:extension",
         :styles => { :icon   => '16x16#', :small  => '75x75#',
                    :medium => '200x200>', :large  => '500x500>' } 
 
@@ -50,11 +50,20 @@ module Wagn::Model::Attach
 end
 
 module Paperclip::Interpolations
-  def dir attachment, style_name
-    attachment.instance.typecode == 'File' ? 'card_files' : 'card_images'
+  def local attachment, style_name
+    System.attachment_storage_dir
   end
 
-  def rev_id attachment, style_name
+  def base attachment, style_name
+    System.attachment_base_url
+  end
+
+  def size attachment, style_name
+    attachment.instance.typecode != 'File' || style_name.blank? ? 
+      style_name + '-' : '' 
+  end
+
+  def revision_id attachment, style_name
     (cr=attachment.instance.current_revision) && cr.id || 0
   end
 end

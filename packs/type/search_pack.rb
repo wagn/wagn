@@ -162,7 +162,7 @@ class Wagn::Renderer
     else
       @paging_params ||= begin
         s = {}
-        if p = eargs
+        if p = params
           [:offset,:limit,:_keyword].each{|key| s[key] = p.delete(key)}
         end
         s[:offset] = s[:offset] ? s[:offset].to_i : 0

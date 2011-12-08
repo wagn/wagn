@@ -45,7 +45,7 @@ class CardController < ApplicationController
       #render( ajax? ?
         #{:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
         #{:action=> 'new'} ) #normal
-      ajax? ?  render_view(:new) : render_view(:main_new)
+      render_view :new
     else
       render_denied('create')
     end
@@ -224,13 +224,21 @@ class CardController < ApplicationController
     render :text=>render_view_text(view)
   end
   
-  def render_view_text(view)
+  def render_view_text(view, args=nil)
     extension = request.parameters[:format]
     return "unknown format: #{extension}" if !FORMATS.split('|').member?( extension )
     
+    args ||= {}
     respond_to do |format|
       format.send extension do
-        Wagn::Renderer.new(@card, :format=>extension, :controller=>self).render(:show, :view=>view)
+        renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
+        if view.to_s == 'new' && args[:ajax] = ajax?
+          warn "rendering #{args.inspect}"
+          renderer.render_new args
+        else
+          args[:view] = view if view
+          renderer.render_show args
+        end
       end
     end
   end

@@ -185,9 +185,9 @@ class Wagn::Renderer::Html
   def find_current_rule_card
     setting_name = card.cardname.tag_name
     set_card = Card.fetch( card.cardname.trunk_name )
-    warn "setting name = #{setting_name}, card = #{card.inspect}, set_card = #{set_card.inspect}"
+    #warn "setting name = #{setting_name}, card = #{card.inspect}, set_card = #{set_card.inspect}"
     set_prototype = set_card.prototype
-    warn "got prototype"
+    #warn "got prototype"
     
     rule_card = set_prototype.setting_card setting_name
     [rule_card, set_prototype]

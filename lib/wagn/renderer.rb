@@ -148,6 +148,7 @@ module Wagn
     
     def render(view=:view, args={})
       args[:home_view] ||= view
+      #warn "render_#{canonicalize_view view}(#{args.inspect})"
       send("render_#{canonicalize_view view}", args)
     end
     
@@ -308,7 +309,9 @@ module Wagn
           case
             when requested_view==:raw    ; :blank
             when @mode==:closed          ; :closed_missing
-            else                         ; :missing
+            else
+              #warn "missing #{tcard}, #{options.inspect}"
+              options[:home_view] == :new ? :new : :missing
           end
         when @mode==:closed     ; :closed_content
         else                    ; requested_view

@@ -31,7 +31,7 @@ class CardController < ApplicationController
 
   def show
     save_location if params[:format].nil? || params[:format].to_sym==:html
-    render_view
+    render_show
   end
 
   def new
@@ -43,7 +43,7 @@ class CardController < ApplicationController
       #render( ajax? ?
         #{:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
         #{:action=> 'new'} ) #normal
-      render_view :new
+      render_show :new
     else
       render_denied('create')
     end
@@ -93,7 +93,7 @@ class CardController < ApplicationController
     if !@card.errors[:confirmation_required].empty?
       @card.confirm_rename = @card.update_referencers = true
       params[:attribute] = 'name'
-      render_view :edit
+      render_show :edit
     elsif !@card.errors.empty?
       render_card_errors
     else
@@ -121,13 +121,13 @@ class CardController < ApplicationController
     @comment=@comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
     @card.comment = "<hr>#{@comment}<p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!
-    render_view
+    render_show
   end
 
   def rollback
     revision = @card.revisions[params[:rev].to_i - 1]
     @card.update_attributes! :content=>revision.content
-    render_view
+    render_show
   end
 
   #------------( deleting )
@@ -138,7 +138,7 @@ class CardController < ApplicationController
     @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
     
-    return render_view(:remove) if !@card.errors[:confirmation_required].empty?  ## renders remove.erb, which is essentially a confirmation box.  
+    return render_show(:remove) if !@card.errors[:confirmation_required].empty?  ## renders remove.erb, which is essentially a confirmation box.  
 
     discard_locations_for(@card)
     
@@ -148,7 +148,7 @@ class CardController < ApplicationController
     case 
     when !ajax?            ; wagn_redirect url
     when params[:redirect] ; wagn_redirect url
-    when params[:success]  ; @card = Card.fetch_or_new(url); render_view 
+    when params[:success]  ; @card = Card.fetch_or_new(url); render_show 
     else                   ; render :text => "#{@card.name} removed"
     end
   end
@@ -182,7 +182,7 @@ class CardController < ApplicationController
     
     flash[:notice] ||= "Got it!  Your changes have been saved."  #ENGLISH
     params[:attribute] = :account
-    render_view :options
+    render_show :options
   end
 
   def create_account
@@ -194,7 +194,7 @@ class CardController < ApplicationController
     @extension = User.new(:email=>@user.email)
 #    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
     params[:attribute] = :account
-    render_view :options
+    render_show :options
   end
 
   
@@ -218,12 +218,12 @@ class CardController < ApplicationController
   private
   
   
-  def render_view(view = nil)
+  def render_show(view = nil)
     view=nil if view.to_s == 'view'
-    render :text=>render_view_text(view)
+    render :text=>render_show_text(view)
   end
   
-  def render_view_text(view, args=nil)
+  def render_show_text(view, args=nil)
     extension = request.parameters[:format]
     return "unknown format: #{extension}" if !FORMATS.split('|').member?( extension )
     
@@ -257,7 +257,7 @@ class CardController < ApplicationController
       wagn_redirect url
     else
       @card = Card.fetch_or_new(url) if url
-      render_view
+      render_show
     end
   end
 

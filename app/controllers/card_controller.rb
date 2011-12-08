@@ -155,7 +155,7 @@ class CardController < ApplicationController
 
   #---------------( tabs )
 
-  alias view render_show
+  def view()     render_show           end
   #def self.add_actions(*methods)
   #  methods.each do |method| define_method(method) { render_show method } end
   #end

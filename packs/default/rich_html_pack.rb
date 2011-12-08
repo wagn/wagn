@@ -107,13 +107,12 @@ class Wagn::Renderer::Html
     else
      @title = "New Card"
      #warn "new main #{args.inspect}"
+     # removed request.post?, it should render a different view in that case
      %{<div id="new-card">
-      #{ if !request.post?
-        %{<h1 class="page-header">New #{ card.typecode == 'Basic' && '' ||
+        <h1 class="page-header">New #{ card.typecode == 'Basic' && '' ||
               card.typename } Card</h1>
         #{ new_instruction }
-        #{ new_content args }}
-      end}
+        #{ new_content args }
      </div> }
     end
   end
@@ -679,7 +678,7 @@ class Wagn::Renderer::Html
          if !card.cached_revision.new_record?
            %{
           <span class="last-editor">
-            <label>Last Editor:</span>
+            <label>Last Editor:</label>
             #{ raw link_to_page card.cached_revision.author.card.name }
           </span>}
          end 

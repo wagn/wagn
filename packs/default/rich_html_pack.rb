@@ -100,6 +100,41 @@ class Wagn::Renderer::Html
   end
 
   define_view(:new) do |args|
+    @title = "New Card"
+    %{<div id="new-card">
+      #{ if !request.post?
+        %{<h1 class="page-header">New <%= card.typecode != 'Basic' ? card.typename : '' %> Card</h1>
+
+        #{ if card.broken_type
+          %{<div class="error" id="no-cardtype-error">
+            Oops! There's no <strong>card type</strong> called "<strong>#{ card.broken_type }</strong>".
+          </div>}
+        end}
+        #{ 
+        if card.setting_card('add help', 'edit help')
+          # they'll go inside the card
+        elsif !card.cardname.blank? #ENGLISH
+          %{<div>Currently, there is no card named "<strong>#{ card.name }</strong>", but you're welcomed to create it.</div>}
+        else
+          %{<div>Creating a new card is easy; you just need a unique name.</div>}
+        end}
+        #{
+        unless instruction.blank?
+          %{<div class="instruction main-instruction"> #{instruction} </div>}
+        end}
+        #{
+        render_new( 
+            :card      => card,
+            :cancel    => previous_location,
+            :hide_type => (@type && !card.broken_type),
+            :redirect  => (card.setting('thanks') || 'TO_CARD') 
+            )
+        }}
+      end}
+    </div> }
+  end
+
+  define_view(:main_new) do |args|
     cancel ||= nil
     redirect ||= nil
     hide_type ||= nil

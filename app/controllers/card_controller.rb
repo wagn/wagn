@@ -33,7 +33,7 @@ class CardController < ApplicationController
 
   def show
     save_location if params[:format].nil? || params[:format].to_sym==:html
-    render_show
+    render_view
   end
 
   def new
@@ -42,9 +42,10 @@ class CardController < ApplicationController
 
     @card = Card.new args
     if @card.ok? :create
-      render( ajax? ?
-        {:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
-        {:action=> 'new'} ) #normal
+      #render( ajax? ?
+        #{:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
+        #{:action=> 'new'} ) #normal
+      ajax? ?  render_view(:new) : render_view(:main_new)
     else
       render_denied('create')
     end
@@ -94,7 +95,7 @@ class CardController < ApplicationController
     if !@card.errors[:confirmation_required].empty?
       @card.confirm_rename = @card.update_referencers = true
       params[:attribute] = 'name'
-      render_show :edit
+      render_view :edit
     elsif !@card.errors.empty?
       render_card_errors
     else
@@ -122,13 +123,13 @@ class CardController < ApplicationController
     @comment=@comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
     @card.comment = "<hr>#{@comment}<p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!
-    render_show
+    render_view
   end
 
   def rollback
     revision = @card.revisions[params[:rev].to_i - 1]
     @card.update_attributes! :content=>revision.content
-    render_show
+    render_view
   end
 
   #------------( deleting )
@@ -139,7 +140,7 @@ class CardController < ApplicationController
     @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
     
-    return render_show(:remove) if !@card.errors[:confirmation_required].empty?  ## renders remove.erb, which is essentially a confirmation box.  
+    return render_view(:remove) if !@card.errors[:confirmation_required].empty?  ## renders remove.erb, which is essentially a confirmation box.  
 
     discard_locations_for(@card)
     
@@ -149,7 +150,7 @@ class CardController < ApplicationController
     case 
     when !ajax?            ; wagn_redirect url
     when params[:redirect] ; wagn_redirect url
-    when params[:success]  ; @card = Card.fetch_or_new(url); render_show 
+    when params[:success]  ; @card = Card.fetch_or_new(url); render_view 
     else                   ; render :text => "#{@card.name} removed"
     end
   end
@@ -157,25 +158,13 @@ class CardController < ApplicationController
   #---------------( tabs )
 
   def view
-    render_show
+    render_view
   end
 
-  def changes
-    render_show :changes
+  def self.add_actions(*methods)
+    methods.each do |method| define_method(method) { render_view method } end
   end
-
-  def options
-    render_show :options
-  end
-
-  def related
-    render_show :related
-  end
-
-  def edit
-    render_show :edit
-  end
-
+  add_actions :view, :changes, :options, :related, :edit
 
   #-------- ( ACCOUNT METHODS )
   
@@ -194,7 +183,7 @@ class CardController < ApplicationController
     
     flash[:notice] ||= "Got it!  Your changes have been saved."  #ENGLISH
     params[:attribute] = :account
-    render_show :options
+    render_view :options
   end
 
   def create_account
@@ -206,7 +195,7 @@ class CardController < ApplicationController
     @extension = User.new(:email=>@user.email)
 #    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
     params[:attribute] = :account
-    render_show :options
+    render_view :options
   end
 
   
@@ -227,20 +216,21 @@ class CardController < ApplicationController
     ajax? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
-  protected
+  private
   
   
-  def render_show(render_view = nil)
-    render :text=>render_show_text(render_view)
+  def render_view(view = nil)
+    view=nil if view.to_s == 'view'
+    render :text=>render_view_text(view)
   end
   
-  def render_show_text(render_view)
+  def render_view_text(view)
     extension = request.parameters[:format]
     return "unknown format: #{extension}" if !FORMATS.split('|').member?( extension )
     
     respond_to do |format|
       format.send extension do
-        Wagn::Renderer.new(@card, :format=>extension, :controller=>self).render(:show, :view=>render_view)
+        Wagn::Renderer.new(@card, :format=>extension, :controller=>self).render(:show, :view=>view)
       end
     end
   end
@@ -260,7 +250,7 @@ class CardController < ApplicationController
       wagn_redirect url
     else
       @card = Card.fetch_or_new(url) if url
-      render_show
+      render_view
     end
   end
 

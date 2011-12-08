@@ -1,7 +1,7 @@
 module Wagn::Model::Attach
   def attach_array()
     c=self.content
-    warn "attach_array #{c}"
+    #warn "attach_array #{c}"
     if !(c=self.content) || c =~ /^\s*<img /
        ['','','']
       else
@@ -30,7 +30,7 @@ module Wagn::Model::Attach
   def before_post_attach
     ext = $1 if attach_file_name =~ /\.([^\.]+)$/
     self.attach.instance_write :file_name, "#{self.key.gsub('*','X').camelize}.#{ext}"
-    warn "attach post #{self}, #{attach_file_name}"
+    #warn "attach post #{self}, #{attach_file_name}"
     typecode == 'Image'
   end
 
@@ -50,21 +50,20 @@ module Wagn::Model::Attach
 end
 
 module Paperclip::Interpolations
-  def local attachment, style_name
+  def local at, style_name
     System.attachment_storage_dir
   end
 
-  def base attachment, style_name
+  def base at, style_name
     System.attachment_base_url
   end
 
-  def size attachment, style_name
-    attachment.instance.typecode != 'File' || style_name.blank? ? 
-      style_name + '-' : '' 
+  def size at, style_name
+    (at.instance.typecode != 'File'||style_name.blank?) && "#{style_name}-"||''
   end
 
-  def revision_id attachment, style_name
-    (cr=attachment.instance.current_revision) && cr.id || 0
+  def revision_id at, style_name
+    (cr=at.instance.current_revision) && cr.id || 0
   end
 end
 

@@ -246,7 +246,6 @@ module Wagn
       tname=opts[:tname]
       return expand_main(opts) if tname=='_main' && !ajax_call? #&& @depth==0 
       # restore @depth condition above when layouts are set-addressable
-
       opts[:view] = canonicalize_view opts[:view]
       opts[:home_view] = opts[:view] ||= ( @mode == :layout ? :core : :content )
       
@@ -266,21 +265,18 @@ module Wagn
     end
   
     def expand_main(options)
-      if tcont = @root.main_content
-        wrap_main tcont
-      elsif @depth > 0
-        "{{#{options[:unmask]}}}"
-        #delete this condition once layouts are set-addressable
+      case
+      when tcont = @root.main_content ; wrap_main tcont
+      when @depth > 0 ; "{{#{options[:unmask]}}}" #delete this condition once layouts are set-addressable
       else
-        tcard = @root.main_card 
-        
+        tcard = @root.main_card
         [:item, :view, :size].each do |key|
           if val=params[key] and !val.to_s.empty?
             options[key] = val.to_sym
           end
         end
         options[:tname] = tcard.cardname
-        options[:view] ||= :open
+        options[:view] ||= @main_view || :open
         with_inclusion_mode(:main) do
           wrap_main( expand_inclusion(options) )
         end

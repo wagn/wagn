@@ -118,11 +118,6 @@ class ApplicationController < ActionController::Base
     @card = Card.fetch_or_new(name, card_params)
   end
 
-  def load_card_and_revision
-    params[:rev] ||= @card.revisions.count - @card.drafts.length
-    @revision_number = params[:rev].to_i
-    @revision = @card.revisions[@revision_number - 1]
-  end
 
 
   # ----------( rendering methods ) -------------

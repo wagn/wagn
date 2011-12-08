@@ -1,8 +1,24 @@
 .open-view, .closed-view {
+}
+
+
+.open-view,
+.changes-view,
+.options-view,
+.related-view,
+.edit-view {
+  margin: 1px 0px;
+  padding: 0px !important;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  border: 1px solid #777;
+  border-bottom: 2px solid #888;
+  border-right: 2px solid #888;
   width: 100%;  /*needed for ie6, or..?*/
   margin: 0px;
   background: #fff;
   padding: 0px;
+  
 }
 
 html>body .open-view {
@@ -126,7 +142,7 @@ div:hover.card-header .card-menu-left {
   padding: 0px 5px;
   color: #005800
 }
-.submenu a.on {
+.submenu a.current-subtab {
   background: #fff;
   color: #777;
   padding-bottom: 3px;
@@ -503,15 +519,7 @@ body#wagn .card-slot.recent-changes h2 {
 
 /*-----------  open cards -------*/
 
-.open-view {
-  margin: 1px 0px;
-  padding: 0px !important;
-  -moz-border-radius: 8px;
-  border-radius: 8px;
-  border: 1px solid #777;
-  border-bottom: 2px solid #888;
-  border-right: 2px solid #888;
-}
+
 
 /* this was occasionally busting auto-completes on pointers:
   overflow: auto;
@@ -530,6 +538,8 @@ body#wagn .card-slot.recent-changes h2 {
 /*------------- closed cards -------*/
 
 .closed-view {
+  width: 100%;  /*needed for ie6, or..?*/
+  background: #fff;
   overflow: hidden;
   white-space: nowrap;
   border-bottom: 0px;

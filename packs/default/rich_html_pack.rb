@@ -1,9 +1,10 @@
 class Wagn::Renderer::Html
   define_view(:show) do |args|
+    home_view = params[:home_view]=='closed' ? :open : params[:home_view]
+    @main_view = args[:view] || params[:view] || home_view || :open
+    
     if ajax_call?
-      home_view = params[:home_view]=='closed' ? :open : params[:home_view]
-      view = params[:view] || home_view || :open
-      self.render(view)
+      self.render(@main_view)
     else
       self.render_layout
     end
@@ -172,8 +173,7 @@ class Wagn::Renderer::Html
   
 ###---(  EDIT VIEWS )
   define_view(:edit) do |args|
-    #warn(Rails.logger.info "view :edit #{@attributte}, #{params.inspect}")
-    @attribute ||= :content
+    @attribute = params[:attribute] || 'content'
     wrap(:edit, args) do
       %{#{header
        }<style>.SELF-#{card.css_name} .edit-area .namepart-#{card.css_name} { display: none; } </style>
@@ -197,13 +197,9 @@ class Wagn::Renderer::Html
       end}
 
       <div class="card-editor edit-area #{card.hard_template ? :templated : ''}">
-      #{ form_for :card, :url=>path(:update),
+      #{ form_for card, :url=>path(:update),
       :html=>{ :class=>'card-form card-edit-form standard-slotter autosave', :remote=>true } do |f|
-        %{<div>
-         #{ @form= f 
-          Rails.logger.warn "edit form #{f.class}, #{f.object_id}, #{@form.object_name}"
-            edit_slot(args) }
-        </div>
+        %{<div>#{ @form= f; edit_slot(args) }</div>
 
         <div class="edit-button-area"> #{
           if !card.new_card?
@@ -222,8 +218,10 @@ class Wagn::Renderer::Html
       <div class="edit-area edit-name">
        <h2>Change Name</h2>
       #{ form_for :card, :url=>path(:update), :html=>{ :class=>'card-edit-name-form standard-slotter', :remote=>true } do |f|
-    %{<div>to #{ raw name_field(f) }</div>#{
-     if card.confirm_rename==true
+        %{<div>to #{ raw f.text_field( :name, :class=>'card-name-field', :value=>card.name, :autocomplete=>'off' ) } </div>#{
+
+
+     if card.confirm_rename
       %{#{if dependents = card.dependents and !dependents.empty?  #ENGLISH below
         %{<div class="instruction">
           <div>This will change the names of these cards, too:</div>
@@ -265,20 +263,20 @@ class Wagn::Renderer::Html
   end
 
   define_view (:edit_type) do |args|
-    %{#{ raw edit_submenu :type
-       }<div class="edit-area edit-type">
-  <h2>Change Type</h2> #{
-         form_for :card, :url=>path(:edit), 
-           :html=>{ :class=>'standard-slotter card-edit-type-form',
-             :remote=>true }  do |f|
-       %{#{if card.typecode == 'Cardtype' and card.extension and !Card.search(:type=>card.cardname).empty? #ENGLISH
-        %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
-      else
-         %{<div>to #{ raw typecode_field :class=>'cardtype-field edit-cardtype-field' }</div>}
-      end
-}     <div>#{
-        button_tag 'Cancel', :class=>'edit-type-cancel-button standard-slotter init-editors', :type=>'button', :href=>path(:edit)
-      }</div>}
+    %{#{ raw edit_submenu(:type)}
+    <div class="edit-area edit-type">
+    <h2>Change Type</h2> #{
+      form_for :card, :url=>path(:update), :remote=>true,
+        :html=>{ :class=>'standard-slotter card-edit-type-form' } do |f|
+          
+        %{#{if card.typecode == 'Cardtype' and card.extension and !Card.search(:type=>card.cardname).empty? #ENGLISH
+          %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
+        else
+          %{<div>to #{ raw typecode_field :class=>'cardtype-field edit-cardtype-field' }</div>}
+        end}
+        <div>
+          #{ button_tag 'Cancel', :href=>path(:edit), :type=>'button', :class=>'edit-type-cancel-button standard-slotter init-editors' }
+        </div>}
      end}
     </div>}
   end
@@ -312,35 +310,45 @@ class Wagn::Renderer::Html
   end
 
   define_view(:related) do |args|
-    params['current'] ||= :incoming
-    wrap(:open, args) do
-     %{#{header }
-       <div class="submenu"> #{
-        #warn "related submenu: #{params['items'].inspect}, #{params['current']}"
-         params['items'].map do |item|
-           key = item.to_cardname.to_key
-           #warn "related sub-item #{key}, [#{item.gsub('*','').gsub('subtab','').strip}] #{key==params['current']}"
-           link_to item.gsub('*','').gsub('subtab','').strip,
-             path(:related, :attrib=>key), :remote=>true, :class=>
-             "standard-slotter#{key==params['current']&&' current-subtab'||''}"
-         end * "\n"}
-        </div> #{
-        notice }
+    sources = [card.typename,nil]
+    sources.unshift '*account' if card.extension_type=='User'
+    items = sources.map do |source|
+      c = Card.fetch(source ? source.to_cardname.star_rule(:related) : '*related')
+      c && c.item_names
+    end.flatten.compact
+    
+    warn "items = #{items.inspect}"
+#    @items << 'config'
+    current = params[:attribute] || items.first.to_cardname.to_key
+
+    wrap(:related, args) do
+      %{#{header }
+        <div class="submenu"> #{
+          items.map do |item|
+            key = item.to_cardname.to_key
+            text = item.gsub('*','').gsub('subtab','').strip
+            link_to text, path(:related, :attrib=>key), :remote=>true,
+              :class=>"standard-slotter #{key==current ? 'current-subtab' : ''}"
+          end * "\n"}
+         </div> #{
+         notice }
 
         <div class="open-content related"> #{
-          #warn "related #{params['current']}, #{card.name}+#{params['current']}"
-          raw subrenderer(Card.fetch_or_new "#{card.name}+#{params['current']}").render(:content) }
+          raw subrenderer(Card.fetch_or_new "#{card.name}+#{current}").render(:content) }
         </div>}
     end
   end
 
   define_view(:options) do |args|
-    @attribute ||= :settings
-    wrap(:open, args) do
-      %{#{ header }
-         <div class="options-body"> #{
-           render "option_#{@attribute}" } </div> <span class="notice">#{
-           flash[:notice] } </span>}
+    attribute = params[:attribute]
+    attribute ||= (card.extension_type=='User' ? 'account' : 'settings')
+    warn "attribute = "
+    wrap(:options, args) do
+      %{ 
+      #{ header }
+      <div class="options-body"> #{ render "option_#{attribute}" } </div>
+      <span class="notice">#{ flash[:notice] } </span>
+      }
     end
   end
 
@@ -354,7 +362,7 @@ class Wagn::Renderer::Html
          %{<table class="fieldset">
            #{if edit_user_context(card)=='user' or System.ok?(:administrate_users)
               raw option_header( 'Account Details' ) +
-                  render(:partial=>'account/edit',  :locals=>locals)
+                template.render(:partial=>'account/edit',  :locals=>locals)
            end }
         #{ render_option_roles } #{
 
@@ -371,23 +379,27 @@ class Wagn::Renderer::Html
     related_sets = card.related_sets
     current_set = params[:current_set] || related_sets[0]
 
-    %{#{raw( options_submenu(:settings) )
-      }
-      <div class="settings-tab">
+    options_submenu(:settings) +
+      %{<div class="settings-tab">
         #{if !related_sets.empty?
-         %{<div class="set-selection">
-          #{ form_tag path(:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'standard-slotter' }
+          %{<div class="set-selection">
+          #{
+          form_tag path(:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'standard-slotter' }
             <label>Set:</label>
             <select name="current_set" class="set-select">
-            #{ related_sets.map do |set_name| 
+            #{ 
+            related_sets.map do |set_name| 
                set_card = Card.fetch set_name
-              %{<option value="#{ set_card.key }"#{
-                  set_card.key==current_set && ' selected="selected"'||''}>#{
-                set_card.label }</option>}
-            end}
+              %{<option value="#{ set_card.key }" #{set_card.key==current_set ? 'selected="selected"' : ''}>
+                #{ set_card.label }
+              </option>
+              }
+            end.join
+            }
             </select>
           </div>}
-        end}
+        end
+        }
   
   
         <div class="current-set">
@@ -406,26 +418,25 @@ class Wagn::Renderer::Html
 
   define_view(:option_roles) do |args|
     roles = Role.find :all, :conditions=>"codename not in ('auth','anon')"
-    user_roles = extension.roles 
+    user_roles = card.extension.roles 
 
     option_content = if System.ok? :assign_user_roles
       hidden_field_tag(:save_roles, true) +
-      roles.map do |role|
+      (roles.map do |role|
         if role.card && !role.card.trash
          %{<div style="white-space: nowrap">
-           #{ check_box_tag "user_roles[%s]" % role.id, 1,
-                  user_roles.member?(role) ? true : false } #{
-           link_to_page role.card.name }
+           #{ check_box_tag "user_roles[%s]" % role.id, 1, user_roles.member?(role) ? true : false }
+           #{ link_to_page role.card.name }
          </div>}
         end
-      end.compact * "\n"
+      end.compact * "\n").html_safe
     else
       if user_roles.empty?
         'No roles assigned'  # #ENGLISH
       else
-        user_roles.map do |role|
+        (user_roles.map do |role|
           %{ <div>#{ link_to_page role.card.name }</div>}
-        end * "\n"
+        end * "\n").html_safe
       end
     end
 
@@ -454,26 +465,28 @@ class Wagn::Renderer::Html
   end
 
   define_view(:changes) do |args| #ENGLISH
-    warn "changes #{@revision_number}, [#{params.inspect}]"
+    @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i
+    @revision = card.revisions[@revision_number - 1]
+    @show_diff = (params[:mode] != 'false')
+    @previous_revision = card.previous_revision(@revision)
+    
     wrap(:changes, args) do
     %{#{header unless params['no_changes_header']}
-    <div class="revision-navigation">#{
-     revision_menu }
-    </div>
+    <div class="revision-navigation">#{ revision_menu }</div>
 
     <div class="revision-header">
-      <span class="revision-title">#{ params['revision'].title }</span>
-    posted by #{ link_to_page params['revision'].author.card.name }
-    on #{ format_date(params['revision'].created_at) } #{
+      <span class="revision-title">#{ @revision.title }</span>
+      posted by #{ link_to_page @revision.author.card.name }
+    on #{ format_date(@revision.created_at) } #{
     if !card.drafts.empty?
       %{<p class="autosave-alert">
         This card has an #{ autosave_revision }
       </p>}
     end}#{
-    if params['show_diff'] and params['previous_revision']  #ENGLISH
+    if @show_diff and @previous_revision  #ENGLISH
       %{<p class="revision-diff-header">
         <small>
-          Showing changes from revision ##{ params['revision_number'] - 1 }:
+          Showing changes from revision ##{ @revision_number - 1 }:
           <ins class="diffins">Added</ins> | <del class="diffmod">Removed</del>
         </small>
       </p>}
@@ -483,10 +496,10 @@ class Wagn::Renderer::Html
 
 
     <div class="revision">#{
-    if params['show_diff'] and params['previous_revision']
-      diff params['previous_revision'].content, params['revision'].content
+    if @show_diff and @previous_revision
+      diff @previous_revision.content, @revision.content
     else
-      params['revision'].content
+      @revision.content
     end}
     </div>
 
@@ -593,10 +606,10 @@ class Wagn::Renderer::Html
 
   define_view(:header) do |args|
     %{<div class="card-header">
-       #{ raw slot.menu }
+       #{ raw menu }
 
          <div class="title-menu">
-           #{ link_to raw(fancy_title(card)), slot.path(:view, :view=>:closed),
+           #{ link_to raw(fancy_title(card)), path(:view, :view=>:closed),
              :class => "line-link title down-arrow standard-slotter",
              :title => "close #{card.name}", :remote => true }
 

@@ -1,5 +1,5 @@
 class CardController < ApplicationController
-  helper :wagn, :card
+  helper :wagn
 
   EDIT_ACTIONS = [ :edit, :update, :rollback, :save_draft, :watch, :unwatch, :create_account, :update_account ]
   LOAD_ACTIONS =  EDIT_ACTIONS + [ :show, :index, :mine, :comment, :remove, :view, :changes, :options, :related ]
@@ -12,7 +12,7 @@ class CardController < ApplicationController
 
   before_filter :view_ok,   :only=> LOAD_ACTIONS
 #  before_filter :create_ok, :only=>[ :new, :create ]
-  before_filter :update_ok,   :only=> EDIT_ACTIONS
+  before_filter :update_ok, :only=> EDIT_ACTIONS
   before_filter :remove_ok, :only=>[ :remove ]
 
 #  before_filter :require_captcha, :only => [ :create, :update, :comment ]
@@ -70,10 +70,7 @@ class CardController < ApplicationController
 
   #--------------( editing )
 
-  def edit
-    @attribute = params[:attribute] || 'content'
-    render_show :edit
-  end
+
 
   def update
     @card = @card.refresh # (cached card attributes often frozen)
@@ -95,9 +92,9 @@ class CardController < ApplicationController
     @card.update_attributes(args)
 
     if !@card.errors[:confirmation_required].empty?
-      @confirm = @card.confirm_rename = @card.update_referencers = true
-      @attribute = 'name'
-      render :action=>'edit'
+      @card.confirm_rename = @card.update_referencers = true
+      params[:attribute] = 'name'
+      render_show :edit
     elsif !@card.errors.empty?
       render_card_errors
     else
@@ -129,8 +126,8 @@ class CardController < ApplicationController
   end
 
   def rollback
-    load_card_and_revision
-    @card.update_attributes! :content=>@revision.content
+    revision = @card.revisions[params[:rev].to_i - 1]
+    @card.update_attributes! :content=>revision.content
     render_show
   end
 
@@ -142,7 +139,7 @@ class CardController < ApplicationController
     @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
     
-    return if !@card.errors[:confirmation_required].empty?  ## renders remove.erb, which is essentially a confirmation box.  
+    return render_show(:remove) if !@card.errors[:confirmation_required].empty?  ## renders remove.erb, which is essentially a confirmation box.  
 
     discard_locations_for(@card)
     
@@ -155,7 +152,6 @@ class CardController < ApplicationController
     when params[:success]  ; @card = Card.fetch_or_new(url); render_show 
     else                   ; render :text => "#{@card.name} removed"
     end
-    render_show :remove
   end
 
   #---------------( tabs )
@@ -164,29 +160,20 @@ class CardController < ApplicationController
     render_show
   end
 
-  def options
-    @attribute = params[:attribute]
-    @attribute ||= (@card.extension_type=='User' ? 'account' : 'settings')
-    render_show :options
-  end
-
   def changes
-    load_card_and_revision
-    @show_diff = (params[:mode] != 'false')
-    @previous_revision = @card.previous_revision(@revision)
     render_show :changes
   end
 
+  def options
+    render_show :options
+  end
+
   def related
-    sources = [@card.typename,nil]
-    sources.unshift '*account' if @card.extension_type=='User'
-    @items = sources.map do |root|
-      c = Card.fetch(root ? root.to_cardname.star_rule(:related) : '*related')
-      c && c.item_names
-    end.flatten.compact
-#    @items << 'config'
-    @current = params[:attribute] || @items.first.to_cardname.to_key
     render_show :related
+  end
+
+  def edit
+    render_show :edit
   end
 
 
@@ -206,7 +193,7 @@ class CardController < ApplicationController
     end
     
     flash[:notice] ||= "Got it!  Your changes have been saved."  #ENGLISH
-    @attribute = :account
+    params[:attribute] = :account
     render_show :options
   end
 
@@ -218,7 +205,7 @@ class CardController < ApplicationController
     raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
     @extension = User.new(:email=>@user.email)
 #    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
-    @attribute = :account
+    params[:attribute] = :account
     render_show :options
   end
 
@@ -243,17 +230,17 @@ class CardController < ApplicationController
   protected
   
   
-  def render_show(render_view=:show)
+  def render_show(render_view = nil)
     render :text=>render_show_text(render_view)
   end
   
-  def render_show_text(render_view=:show)
+  def render_show_text(render_view)
     extension = request.parameters[:format]
     return "unknown format: #{extension}" if !FORMATS.split('|').member?( extension )
     
     respond_to do |format|
       format.send extension do
-        Wagn::Renderer.new(@card, :format=>extension, :controller=>self).render(render_view)
+        Wagn::Renderer.new(@card, :format=>extension, :controller=>self).render(:show, :view=>render_view)
       end
     end
   end
@@ -276,7 +263,6 @@ class CardController < ApplicationController
       render_show
     end
   end
-  
 
 end
 

@@ -5,7 +5,6 @@ source 'http://rubygems.org'
 # DEFAULT #
 # ~~~~~~~ #
 
-
 gem 'rails', '~> 3.1'
 gem 'htmlentities', '~>4.3.0'
 gem 'uuid', '~>2.3.4'
@@ -18,21 +17,20 @@ gem 'paperclip', '~>2.4'
 
 # need at least one of the following
 
-#gem 'sqlite3-ruby', :require => 'sqlite3', :group=>'sqlite'
+gem 'mysql', '~>2.8.1', :group=>'mysql'
+
 group :postgres do
-  RUBY_VERSION =~ /^1\.9/ ?
+  RUBY_VERSION =~ /^(1\.9|ree)/ ?
     gem('pg', '~>0.7') :
     gem('postgres', '~>0.7.9.2008.01.28')
 end
-gem 'mysql', '~>2.8.1',                :group=>'mysql'
 
-group :execjs do
-  gem 'therubyracer'
-end
+#gem 'sqlite3-ruby', :require => 'sqlite3', :group=>'sqlite'
 
-# ~~~~~~~~~~~~~~ #
-# IMAGE HANDLING #
-# ~~~~~~~~~~~~~~ #
+
+# ~~~~~~~#
+# ASSETS #
+# ~~~~~~~#
 
 # This is important for image re-sizing, which is vital to Image cards.
 
@@ -42,28 +40,31 @@ group :image_science do
 end
 #gem 'rmagick', '>=2.13.1',    :group=>'rmagick'
 
-# ~~~~~~~ #
-# HOSTING #
-# ~~~~~~~ #
 
-group :hosting do
-#  gem 'hoptoad_notifier', '>=2.3.12'
-  gem 'aws-s3','>=0.6.2'
-  gem 'newrelic_rpm', '>=2.14.1'
+
+# These should only be needed if you're developing new JS / CSS.  It's all pre-compiled for production
+
+group :assets do
+  gem 'sass-rails', "  ~> 3.1.0"               # pretty code; compiles to CSS
+  gem 'coffee-rails', "~> 3.1.0"               # pretty code; compiles to JS
+  gem 'uglifier'                               # makes pretty code ugly again.  compresses js/css for fast loading
+
+  gem 'jquery-rails', '~> 1.0.17'              # main js framework, along with rails-specific unobtrusive lib
+  gem 'tinymce-rails', '~> 3.4.7'              # wysiwyg editor
+
+  gem 'therubyracer'                           # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this file
 end
 
-group :debug do
-  gem 'rdoc'
-  RUBY_VERSION =~ /^1\.9/ ?
-  gem('ruby-debug19', :require => 'ruby-debug') :
-  gem('ruby-debug')
-end
+
+
+
 
 group :test, :development do
   gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
   gem 'ruby-prof'                              # profiling
   gem 'rails-dev-tweaks', '~> 0.5.1'           # dramatic speeds up asset loading, among other tweaks
-  gem 'jasmine-rails'
+
+#  gem 'jasmine-rails'
 end
 
 group :test do
@@ -81,14 +82,21 @@ group :test do
   gem 'win32-process', '0.6.5', :platforms => ['mingw', 'mswin']
 end
 
-
-group :assets do
-  gem 'sass-rails', "  ~> 3.1.0"
-  gem 'coffee-rails', "~> 3.1.0"
-  gem 'uglifier'
-  
-  gem 'jquery-rails', '~> 1.0.17'
-  gem 'tinymce-rails', '~> 3.4.7'
+group :debug do
+  gem 'rdoc'
+  RUBY_VERSION =~ /^1\.9/ ?
+    gem('ruby-debug19', :require => 'ruby-debug') :
+    gem('ruby-debug')
 end
 
+
+# ~~~~~~~ #
+# HOSTING #
+# ~~~~~~~ #
+
+#group :hosting do
+##  gem 'hoptoad_notifier', '>=2.3.12'
+##  gem 'aws-s3','>=0.6.2'
+#  gem 'newrelic_rpm', '>=2.14.1'
+#end
 

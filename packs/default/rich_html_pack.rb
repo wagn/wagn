@@ -450,7 +450,7 @@ class Wagn::Renderer::Html
           #{ raw( subrenderer(Card.fetch current_set).render :content ) }
         </div>
   #{
-        if !card.extension_type && Wagn.toggle(card.setting('accountable')) && Card.ok?(:create_accounts) && card.ok?(:update)
+        if !card.extension_type && Card.toggle(card.setting('accountable')) && Card.ok?(:create_accounts) && card.ok?(:update)
           %{<div class="new-account-link">
           #{ link_to %{Add a sign-in account for "#{card.name}"},
               path(:options, :attrib=>:new_account),

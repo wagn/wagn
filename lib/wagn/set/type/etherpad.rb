@@ -1,4 +1,4 @@
-module Wagn::Set::Type::Pad
+module Wagn::Set::Type::Etherpad
   def before_save
     escape_content
   end

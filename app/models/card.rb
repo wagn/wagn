@@ -368,16 +368,13 @@ class Card < ActiveRecord::Base
   end
 
   def cached_revision
-    #return current_revision || Revision.new
-#    Rails.logger.info "looking up cached revision for key: #{key}-content.  read from cache: #{self.class.cache.read("#{key}-content").inspect}  " 
-    
+    #return current_revision || Revision.new    
     case
     when (@cached_revision and @cached_revision.id==current_revision_id);
     when (@cached_revision=self.class.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
     else
       rev = current_revision_id ? Revision.find(current_revision_id) : Revision.new
       @cached_revision = self.class.cache.write("#{key}-content", rev)
-#      Rails.logger.info "wrote cached revision for key: #{key}-content.  read from cache: #{self.class.cache.read("#{key}-content").inspect}  " 
     end
     @cached_revision
   end
@@ -429,7 +426,7 @@ class Card < ActiveRecord::Base
   # MISCELLANEOUS
   
   def to_s()  "#<#{self.class.name}[#{self.typename.to_s}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{n:#{new_card?}v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}}:#{@set_names.inspect}>" end
+  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{n:#{new_card?}v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}:r:#{current_revision_id}}:#{@set_names.inspect}>" end
   def mocha_inspect()     to_s                                   end
 
 #  def trash

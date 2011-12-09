@@ -109,7 +109,7 @@ module WagnHelper
 
   def error_messages_for(object)
     if object && object.errors.any?
-      object.errors.full_messages.map{ |msg| %{<div class="wagn-error-message">#{msg}</div} }.join("\n")
+      object.errors.full_messages.map{ |msg| %{<div class="wagn-error-message">#{msg}</div>} }.join("\n")
     end
   end
 

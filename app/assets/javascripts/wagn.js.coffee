@@ -14,6 +14,8 @@ jQuery.fn.extend {
     notice.html(message)
     true
 
+  isMain: -> @slot().parent('#main')[0]
+
   autosave: ->
     slot = @slot()
     return if @attr('no-autosave')
@@ -61,9 +63,15 @@ $(window).load ->
     else 
       $(this).notify result or $(this).setSlotContent result
 
-  $('body').delegate 'button.standard-slotter', 'click', ->
+  $('body').delegate 'button.standard-slotter', 'click', (event)->
     return false if !$.rails.allowAction $(this)
     $.rails.handleRemote($(this))
+
+  $('body').delegate 'form.standard-slotter', 'submit', (event)->
+    if (target = $(this).attr 'main-success') and $(this).isMain()
+      input = $(this).find '[name=success]'
+      input.val (if target == 'REDIRECT' then target + ': ' + input.val() else target)    
+
     
   $('body').delegate 'button.redirecter', 'click', ->
     window.location = $(this).attr('href')
@@ -73,13 +81,17 @@ $(window).load ->
     $(this).find('.card-content').attr('no-autosave','true')
     true
 
-  $('body').delegate 'form.standard-slotter', 'submit', (event)->
-    if (target = $(this).attr 'main-success') and $(this).slot().parent('#main')[0]
-      input = $(this).find '[name=success]'
-      input.val (if target == 'REDIRECT' then target + ': ' + input.val() else action)    
-
   $('.init-editors').live 'ajax:success', ->
     wagn.initializeEditors()
+
+
+    #more of this info should be in views; will need to refactor for HTTP DELETE anyway...
+  $('.card-slot').delegate '.standard-delete', 'click', ->
+    return if $(this).attr('success-ready') == 'true' #prevent double-click weirdness
+    s = if $(this).isMain() then 'REDIRECT: TO-PREVIOUS' else 'TEXT:' + $(this).slot().attr('card-name') + ' removed'
+    $(this).attr 'href', $(this).attr('href') + '?success=' + escape(s)
+    $(this).attr 'success-ready', 'true'
+
 
   # might be able to use more of standard-slotter 
   $('.live-cardtype-field').live 'change', ->
@@ -105,14 +117,6 @@ $(window).load ->
   $('.autosave .card-content').live 'change', ->
     content_field = $(this)
     setTimeout ( -> content_field.autosave() ), 500
-
-  $('.navbox').autocomplete {
-    html: 'html',
-    autoFocus: true,
-    source: navbox_results,
-    select: navbox_select
-  }
-  
   
   $('#main').ajaxSend (event, xhr, opt) ->
     s = $(this).children('.card-slot')
@@ -120,53 +124,7 @@ $(window).load ->
       opt.url += ((if opt.url.match /\?/ then '&' else '?') + 'main=' + escape(mainName))
 
 
-reqIndex = 0 #prevents race conditions
 
-navbox_results = (request, response) ->
-  this.xhr = $.ajax {
-		url: wagn.root_path + '/*search.json?view=complete',
-		data: request,
-		dataType: "json",
-		wagReq: ++reqIndex,
-		success: ( data, status ) ->
-			response navboxize(request.term, data) if this.wagReq == reqIndex
-		error: () ->
-		  response [] if this.wagReq == reqIndex
-	  }
-
-navboxize = (term, results)->
-  items = []
-  
-  $.each ['search', 'add' ,'create'], (index, key)->
-    val = results[key]
-    i = { type: key, value: term, prefix: 'Create', label: '<strong class="highlight">' + term + '</strong>' }
-    if !val #nothing
-    else if key == 'search'
-      i.prefix = 'Search'
-      i.href  = '/*search?_keyword=' + escape(term)
-    else if key == 'add'
-      i.href = '/card/new?card[name]=' + escape(term)
-    else if key == 'type'
-      i.type = 'add'
-      i.label = '<strong class="highlight">' + val[0] + '</strong> <em>(type)</em>' 
-      i.href = '/new/' + val[1]
-    
-    items.push i if val
-   
-  $.each results['goto'], (index, val) ->
-    items.push { type: 'goto', prefix: 'Go to', value: val[0], label: val[1], href: '/wagn/' + val[2] } 
-    
-  $.each items, (index, i)->
-    i.href = wagn.root_path + i.href
-    i.label = 
-      '<span class="navbox-item-label '+ i.type + '-icon">' + i.prefix + ':</span> ' +
-      '<span class="navbox-item-value">' + i.label + '</span>'
-        
-  items
-  
-navbox_select = (event, ui) ->
-  $(this).attr('disabled', 'disabled')
-  window.location = ui.item.href
   
 
 warn = (stuff) -> console.log stuff if console?

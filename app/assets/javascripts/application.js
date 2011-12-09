@@ -9,7 +9,7 @@
 //= require jquery.ui.autocomplete.html.js
 //= require jquery_ujs
 //= require tinymce
-//= require wagn_conf
+//= require wagn_pack
 //= require wagn
 
 

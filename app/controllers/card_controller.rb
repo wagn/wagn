@@ -129,7 +129,7 @@ class CardController < ApplicationController
 
     discard_locations_for(@card) 
 
-    render_success (ajax? ? "TEXT:#{@card.name} removed" : 'TO-PREVIOUS')
+    render_success 'REDIRECT: TO-PREVIOUS'
   end
 
 
@@ -222,26 +222,22 @@ class CardController < ApplicationController
     target = params[:success] || default_target
     redirect = !ajax?
 
-    if m = target.match(/^REDIRECT:\s*(.*)/)
-      redirect = true
-      target = m[1]
+    if target =~ /^REDIRECT:\s*(.+)/
+      redirect, target = true, $1
     end
     
     target = case target
-      when 'TO-PREVIOUS'     ;  previous_location
-      when 'TO-CARD'         ;  @card
-      when /^(http|\/|TEXT)/ ;  target
-      else                   ;  Card.fetch_or_new(target)
+      when 'TO-PREVIOUS'   ;  previous_location
+      when 'TO-CARD'       ;  @card
+      when /^(http|\/)/    ;  target
+      when /^TEXT:\s*(.+)/ ;  $1
+      else                 ;  Card.fetch_or_new(target)
       end
-          
-    if redirect
-      target = card_path(target) if Card===target
-      wagn_redirect target
-    elsif String===target      
-      render :text => (m = target.match /^TEXT:\s*(.*)/) ? m[1] : target 
-    else  
-      @card = target
-      render_show
+    
+    case
+    when  redirect        ; wagn_redirect ( Card===target ? card_path(target) : target )
+    when  String===target ; render :text => target 
+    else  @card = target  ; render_show
     end
   end
 

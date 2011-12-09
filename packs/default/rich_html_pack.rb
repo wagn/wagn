@@ -240,7 +240,9 @@ class Wagn::Renderer::Html
 
         <div class="edit-button-area"> #{
           if !card.new_card?
-            button_tag "Delete", :class=>'edit-delete-button delete-button standard-slotter', :href=>path(:remove), :type=>'button', 'data-type'=>'html'
+            button_tag "Delete", :href=>path(:remove), :type=>'button', 'data-type'=>'html',
+              :class=>'edit-delete-button delete-button standard-slotter standard-delete'
+              
           end}#{
           submit_tag 'Submit', :class=>'edit-submit-button'}#{
           button_tag 'Cancel', :class=>'edit-cancel-button standard-slotter', :href=>path(:view), :type=>'button'}
@@ -555,10 +557,10 @@ class Wagn::Renderer::Html
     wrap(:remove, args) do
     %{#{ header}#{
       form_for :card, :url=>path(:remove), :html => { :remote=>true,
-        :class=>'standard-slotter', 'data-type'=>'html' } do |f|
+        :class=>'standard-slotter', 'data-type'=>'html', 'main-success'=>'REDIRECT: TO-PREVIOUS' } do |f|
     
       %{#{ hidden_field_tag 'confirm_destroy', 'true' }#{
-        hidden_field_tag 'redirect', 'TO_REDIRECT' }
+        hidden_field_tag 'success', "TEXT: #{card.name} removed" }
     
     <div class="content open-content">
       <p>Really remove #{ link_to_page formal_title(card), card.name }?</p>#{
@@ -569,13 +571,11 @@ class Wagn::Renderer::Html
             %{<li>#{ link_to_page dep.name }</li>}
           end * ', '}
         </ul>}
-       end}#{
-       raw error_messages_for( card )} #{
-      
-       submit_tag 'Yes, do it', :class=>'remove-submit-button' } #{
-       button_tag 'Cancel', :class=>'remove-cancel-button standard-slotter', :type=>'button', :href=>path(:view) } #{
-    
-       notice}
+       end}
+       #{ error_messages_for card }
+       #{ submit_tag 'Yes do it', :class=>'remove-submit-button' }
+       #{ button_tag 'Cancel', :class=>'remove-cancel-button standard-slotter', :type=>'button', :href=>path(:view) } 
+       #{ notice }
     </div>
       }
     end}}

@@ -29,7 +29,7 @@ class Wagn::Renderer
   end
 
   define_view(:closed_content) do |args|
-    truncatewords_with_closing_tags( _render_core(args) { yield } )
+    truncatewords_with_closing_tags _render_core(args) { yield }
   end
 
 ###----------------( SPECIAL )

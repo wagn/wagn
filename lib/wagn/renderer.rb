@@ -354,7 +354,7 @@ module Wagn
     
     def path(action, opts={})
       pcard = opts.delete(:card) || card
-      base = "#{System.root_path}/card/#{action}"
+      base = "#{Wagn::Conf[:root_path]}/card/#{action}"
       if pcard && ![:new, :create, :create_or_update].member?( action )
         base += "/#{pcard.web_id}"
       end
@@ -374,14 +374,14 @@ module Wagn
         when /^https?:/; 'external-link'
         when /^mailto:/; 'email-link'
         when /^\//
-          href = System.root_path + full_uri(href.to_s)      
+          href = Wagn::Conf[:root_path] + full_uri(href.to_s)      
           'internal-link'
         else
           known_card = !!Card.fetch(href)
           cardname = href.to_cardname
           text = cardname.to_show(card.name) unless text
           href = href.to_cardname
-          href = System.root_path + '/wagn/' + (known_card ? href.to_url_key : CGI.escape(href.escape))
+          href = Wagn::Conf[:root_path] + '/wagn/' + (known_card ? href.to_url_key : CGI.escape(href.escape))
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
           href = full_uri(href.to_s)
           known_card ? 'known-card' : 'wanted-card'
@@ -454,11 +454,9 @@ module Wagn
   end
 
   # I was getting a load error from a non-wagn file when this was in its own file (renderer/json.rb).
-  module Wagn
-    class Renderer::Json < Renderer
-      define_view(:name_complete) do |args|
-        JSON( card.item_cards( :complete=>params['term'], :limit=>8, :sort=>'name', :return=>'name', :context=>'' ) )
-      end
+  class Renderer::Json < Renderer
+    define_view(:name_complete) do |args|
+      JSON( card.item_cards( :complete=>params['term'], :limit=>8, :sort=>'name', :return=>'name', :context=>'' ) )
     end
   end
 end

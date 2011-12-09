@@ -12,7 +12,7 @@
   <%#= a %>
 
 <div><%= link_to "See this request", @url %></div>
-</div><%= link_to 'See all account requests', :host=>System.host, :controller=>'card', :action=>'show', :id=>"account_request" %></div>
+</div><%= link_to 'See all account requests', :host=>Wagn::Conf[:host], :controller=>'card', :action=>'show', :id=>"account_request" %></div>
 
 
 <p>

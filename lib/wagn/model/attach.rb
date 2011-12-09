@@ -50,8 +50,8 @@ module Wagn::Model::Attach
 end
 
 module Paperclip::Interpolations
-  def local(at, style_name)    System.attachment_storage_dir end
-  def base_url(at, style_name) System.attachment_base_url    end
+  def local(at, style_name)    Wagn::Conf[:attachment_storage_dir] end
+  def base_url(at, style_name) Wagn::Conf[:attachment_base_url]    end
   def card_id(at, style_name)  at.instance.id                end
 
   def size(at, style_name)

@@ -113,7 +113,7 @@ module Wagn::Model::Permissions
   end
 
   def lets_user(operation)
-    return true if (System.always_ok? and operation != :comment)
+    return true if (Card.always_ok? and operation != :comment)
     User.as_user.among?( who_can(operation) )
   end
 
@@ -127,7 +127,7 @@ module Wagn::Model::Permissions
   end
 
   def approve_read
-    return true if System.always_ok?
+    return true if Card.always_ok?
     @read_rule_id ||= rule_card(:read).first.id
     ok = User.as_user.read_rule_ids.member?(@read_rule_id.to_i) 
     deny_because you_cant("read this card") unless ok
@@ -232,7 +232,7 @@ module Wagn::Model::Permissions
       # AND need to make sure @changed gets wiped after save (probably last in the sequence)
       
       User.cache.reset
-      System.cache.reset
+      #Wagn.cache.reset
       Wagn::Cache.expire_card self.key #probably shouldn't be necessary, 
       # but was sometimes getting cached version when card should be in the trash.
       # could be related to other bugs?

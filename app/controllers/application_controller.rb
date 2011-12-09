@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
     request.format = :html if !params[:format]
     
     Wagn::Renderer.ajax_call=request.xhr?
-    if System.multihost
+    if Wagn::Conf[:multihost]
       MultihostMapping.map_from_request(request) or return render_fast_404(request.host)
     end
     Wagn::Cache.re_initialize_for_new_request
@@ -37,13 +37,13 @@ class ApplicationController < ActionController::Base
     @action = params[:action]
 
     Wagn::Renderer.current_slot = nil
-    System.request = request
+    Wagn::Conf[:request] = request
   end
   
   def canonicalize_domain
-    if Rails.env=="production" and request.raw_host_with_port != System.host
+    if Rails.env=="production" and request.raw_host_with_port != Wagn::Conf[:host]
       query_string = request.query_string.empty? ? '' : "?#{request.query_string}"
-      return redirect_to("http://#{System.host}#{System.root_path}#{request.path}#{query_string}")
+      return redirect_to("http://#{Wagn::Conf[:host]}#{Wagn::Conf[:root_path]}#{request.path}#{query_string}")
     end
   end
 

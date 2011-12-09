@@ -153,7 +153,7 @@ module Wagn
       parts.map do |part|
         new_part = case part
           when /^_user$/i;            (user=User.current_user) ? user.cardname : part
-          when /^_main$/i;            System.main_name
+          when /^_main$/i;            Wagn::Conf[:main_name]
           when /^(_self|_whole|_)$/i; context
           when /^_left$/i;            context.trunk_name
           when /^_right$/i;           context.tag_name

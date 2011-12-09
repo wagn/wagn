@@ -11,7 +11,7 @@
     <div class="instruction">
       <% if inst = card.setting_card('add help', 'edit help') %> 
         <%= raw( slot.subrenderer(inst).render :core ) %>
-      <% elsif !System.ok?(:create_accounts) %>
+      <% elsif !Card.ok?(:create_accounts) %>
         <p><strong>All Account Requests are subject to review.</strong></p><%#ENGLISH%>
       <% else %>
         <p><strong>Send us the following, and we'll send you a password.</strong></p><%#ENGLISH%>

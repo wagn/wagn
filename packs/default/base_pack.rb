@@ -21,7 +21,7 @@ class Wagn::Renderer
   define_view(:key)      { |args| card.key              }
   define_view(:linkname) { |args| card.cardname.to_url_key  }
   define_view(:link)     { |args| name=card.name; build_link(name, name) }
-  define_view(:url)      { |args| "#{System.base_url}#{System.root_path}/wagn/#{_render_linkname}"}
+  define_view(:url)      { |args| "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/wagn/#{_render_linkname}"}
 
   define_view(:open_content) do |args|
     pre_render = _render_core(args) { (yield) }

@@ -139,7 +139,7 @@ class CardController < ApplicationController
     @extension = @card.extension 
     
     if params[:save_roles]
-      System.ok! :assign_user_roles
+      Card.ok! :assign_user_roles
       role_hash = params[:user_roles] || {}
       @extension.roles = Role.find role_hash.keys
     end
@@ -154,9 +154,9 @@ class CardController < ApplicationController
   end
 
   def create_account
-    System.ok!(:create_accounts) && @card.ok?(:update)
-    email_args = { :subject => "Your new #{System.site_title} account.",   #ENGLISH
-                   :message => "Welcome!  You now have an account on #{System.site_title}." } #ENGLISH
+    Card.ok!(:create_accounts) && @card.ok?(:update)
+    email_args = { :subject => "Your new #{Wagn::Conf[:site_title]} account.",   #ENGLISH
+                   :message => "Welcome!  You now have an account on #{Wagn::Conf[:site_title]}." } #ENGLISH
     @user, @card = User.create_with_card(params[:user],@card, email_args)
     raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
     @extension = User.new(:email=>@user.email)
@@ -191,12 +191,12 @@ class CardController < ApplicationController
   
   def index_preload
     User.no_logins? ? 
-      redirect_to( System.path_setting '/admin/setup' ) : 
-      params[:id] = (System.setting('*home') || 'Home').to_cardname.to_url_key
+      redirect_to( Card.path_setting '/admin/setup' ) : 
+      params[:id] = (Card.setting('*home') || 'Home').to_cardname.to_url_key
   end
   
   def set_main
-    System.main_name = params[:main] || (@card && @card.name) || '' # will be wagn.main ?
+    Wagn::Conf[:main_name] = params[:main] || (@card && @card.name) || '' # will be wagn.main ?
   end
   
   

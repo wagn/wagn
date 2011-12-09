@@ -10,8 +10,7 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
-module Wagn
-  class Application < Rails::Application
+class Wagn::Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -45,15 +44,14 @@ module Wagn
     
     config.cache_store = :file_store, "#{Rails.root}/tmp/cache"
     
-    config.after_initialize do Configuration.wagn_run end
+    config.after_initialize do Wagn::Conf.wagn_run end
 
     # Custom directories with classes and modules you want to be autoloadable.
     config.autoload_paths += Dir["#{config.root}/app/models/"]
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
-  end
 end
 
 
 ActionDispatch::Callbacks.to_prepare do
-  Wagn::Configuration.wagn_run
+  Wagn::Conf.wagn_run
 end

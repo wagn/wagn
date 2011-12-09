@@ -2,7 +2,7 @@ class Wagn::Renderer
   define_view(:core, :type=>'account_request') do |args|
     links = []
     #ENGLISH
-    if System.ok? :create_accounts
+    if Card.ok? :create_accounts
       links << link_to( "Invite #{card.name}", "/account/accept?card[key]=#{card.cardname.to_url_key}", :class=>'invitation-link')
     end
     if User.logged_in? && card.ok?(:delete)

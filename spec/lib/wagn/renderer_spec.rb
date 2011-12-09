@@ -84,7 +84,7 @@ describe Wagn::Renderer, "" do
     it("name"    ) { render_card(:name).should      == 'Tempo Rary' }
     it("key"     ) { render_card(:key).should       == 'tempo_rary' }
     it("linkname") { render_card(:linkname).should  == 'Tempo_Rary' }
-    it("url"     ) { render_card(:url).should       == System.base_url + '/wagn/Tempo_Rary' }
+    it("url"     ) { render_card(:url).should       == Wagn::Conf[:base_url] + '/wagn/Tempo_Rary' }
 
     it "image tags of different sizes" do
       Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}

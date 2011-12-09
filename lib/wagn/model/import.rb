@@ -1,7 +1,7 @@
 =begin
 require 'csv'
 
-class Wagn::Model::Import
+module Wagn::Model::Import
   class << self
     def csv(opts={})
       csv = CSV.parse(opts[:data])

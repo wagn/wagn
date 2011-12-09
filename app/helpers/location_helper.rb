@@ -48,15 +48,15 @@ module LocationHelper
       opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
       vars = '?' + pairs.join('&')
     end
-    System.root_path + "/wagn/#{title.to_cardname.to_url_key}#{format}#{vars}"
+    Wagn::Conf[:root_path] + "/wagn/#{title.to_cardname.to_url_key}#{format}#{vars}"
   end
 
   def card_path( card )
-    System.root_path + "/wagn/#{card.cardname.to_url_key}"
+    Wagn::Conf[:root_path] + "/wagn/#{card.cardname.to_url_key}"
   end
 
   def card_url( card )
-    "http://" + System.host + card_path(card)
+    "http://" + Wagn::Conf[:host] + card_path(card)
   end
 
   # Links ----------------------------------------------------------------------

@@ -306,12 +306,10 @@ module Wagn
         when @mode == :edit
          tcard.virtual? ? :edit_virtual : :edit_in_form
         when new_card
-          case
-            when requested_view==:raw    ; :blank
-            when @mode==:closed          ; :closed_missing
-            else
-              #warn "missing #{tcard}, #{options.inspect}"
-              options[:home_view] == :new ? :new : :missing
+          case requested_view
+          when :raw ; :blank
+          when :new ; :new
+          else; @mode==:closed ? :closed_missing : :missing
           end
         when @mode==:closed     ; :closed_content
         else                    ; requested_view

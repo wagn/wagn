@@ -101,16 +101,16 @@ class Wagn::Renderer::Html
 
   define_view(:new) do |args|
     if ajax_call?
-      new_content args
+      new_content :cancel_href=>path(:view, :view=>:missing), :cancel_class=>'standard-slotter'
     else
-     @title = "New Card"
-     %{<div id="new-card">
+     @title = "New Card"  #this doesn't work.
+     %{
         <h1 class="page-header">
           New #{ card.typecode == 'Basic' && '' || card.typename } Card
         </h1>
         #{ new_instruction }
-        #{ new_content args }
-     </div> }
+        #{ new_content :cancel_href=>previous_location, :cancel_class=>'redirecter' }
+      }
     end
   end
 
@@ -129,43 +129,45 @@ class Wagn::Renderer::Html
        else
          %{<div>Creating a new card is easy; you just need a unique name.</div>}
        end}}
-    i.blank? &&''||%{<div class="instruction main-instruction"> #{ i } </div>}
+    i.blank? ? '' : %{<div class="instruction new-instruction"> #{ i } </div>}
   end
 
-  def new_content(args, cancel=nil, redirect=nil, hide_type=nil)
-    #warn "new_content(#{args.inspect}, #{cancel}, #{redirect}, #{hide_type}"
-    cancel ||= previous_location
-    redirect ||= card.setting('thanks') || 'TO-CARD'
-    hide_type ||= @type && !card.broken_type 
-    args[:home_view] = params[:home_view] if params[:home_view]
-    #warn "nc (#{args.inspect}, #{cancel}, #{redirect}, #{hide_type}"
+  def new_content(args)
+    hide_type ||= params[:type] && !card.broken_type 
+
     wrap(:new, args) do  
      %{#{error_messages_for card}#{
 
-     form_for card, :url=>path(:create), :remote=>true, :html=>{ :class=>'card-form card-new-form standard-slotter' } do |form|
+     form_for card, :url=>path(:create), :remote=>true, 
+      :html=>{ :class=>'card-form card-new-form standard-slotter', 'main-success'=>'REDIRECT' } do |form|
       @form = form
+
       %{
+      #{ hidden_field_tag :success, card.setting('thanks') || 'TO-CARD' }
       #{ hidden_field_tag :home_view, params[:home_view] || :open}
       <div class="card-header">
-        #{ if hide_type
-           form.hidden_field :typecode 
-         else
+        #{ 
+        if hide_type
+          form.hidden_field :typecode 
+        else
           %{<span class="new-type">
             <label>type:</label>
             #{ typecode_field :class=>'cardtype-field new-cardtype-field live-cardtype-field', :href=>path(:new)}
           </span>}
-         end}
+        end}
         
         <span class="new-name">
           <label>name:</label>
-          #{ if card.cardname.blank? || Card.exists?(card.cardname)
-             unless card.setting_card('autoname')
+          #{ 
+          if card.cardname.blank? || Card.exists?(card.cardname)
+            unless card.setting_card('autoname')
               %{<span class="name-area">#{ raw name_field(form) }</span>}
             end
           else
             %{#{hidden_field_tag 'card[name]', card.name}
             <span class="title">#{ raw fancy_title(card.name) }</span>}
-          end}
+          end
+          }
         </span>
       </div>
 
@@ -180,8 +182,8 @@ class Wagn::Renderer::Html
 
         <div class="edit-button-area">
           #{ submit_tag 'Submit', :class=>'create-submit-button' }
-          #{ button_tag 'Cancel', :class=>"create-cancel-button standard-slotter", :type=>'button',
-            :href=>path(:view, :view=>:missing) }
+          #{ button_tag 'Cancel', :type=>'button',
+            :class=>"create-cancel-button #{args[:cancel_class]}", :href=>args[:cancel_href] }
         </div>
       </div>}
     end }#{

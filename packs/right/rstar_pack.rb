@@ -69,7 +69,7 @@ class Wagn::Renderer::Html
     %{
       <tr class="card-slot open-rule">
         <td class="rule-cell" colspan="3">        
-          #{subrenderer( current_rule ).render(:edit_rule, opts )}
+          #{subrenderer( current_rule )._render_edit_rule opts }
         </td>
       </tr>
     }

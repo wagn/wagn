@@ -53,7 +53,7 @@ class CardController < ApplicationController
 
   def new
     args = params[:card] || {}
-    @type = ( args[:type] ||= params[:type] ) # for /new/:type shortcut
+    params[:type] = ( args[:type] ||= params[:type] ) # for /new/:type shortcut
 
     @card = Card.new args
     if @card.ok? :create
@@ -228,10 +228,10 @@ class CardController < ApplicationController
     end
     
     target = case target
-      when 'TO-PREVIOUS'  ; previous_location
-      when 'TO-CARD'      ; @card
-      when /^(http|TEXT)/ ; target
-      else                ; Card.fetch_or_new(target)
+      when 'TO-PREVIOUS'     ;  previous_location
+      when 'TO-CARD'         ;  @card
+      when /^(http|\/|TEXT)/ ;  target
+      else                   ;  Card.fetch_or_new(target)
       end
           
     if redirect

@@ -61,12 +61,12 @@ $(window).load ->
     else 
       $(this).notify result or $(this).setSlotContent result
 
-#  $('body').delegate '.standard-slotter', "ajax:complete", (event, xhr) ->
-#    warn "standard slotter complete"
-
   $('body').delegate 'button.standard-slotter', 'click', ->
     return false if !$.rails.allowAction $(this)
     $.rails.handleRemote($(this))
+    
+  $('body').delegate 'button.redirecter', 'click', ->
+    window.location = $(this).attr('href')
 
   $('body').delegate '.card-form', 'submit', ->
     $(this).setContentFieldsFromMap()
@@ -81,7 +81,7 @@ $(window).load ->
   $('.init-editors').live 'ajax:success', ->
     wagn.initializeEditors()
 
-  # might be able to use more of standard-slotter if 
+  # might be able to use more of standard-slotter 
   $('.live-cardtype-field').live 'change', ->
     field = $(this)
     $.ajax field.attr('href'), {
@@ -112,6 +112,7 @@ $(window).load ->
     source: navbox_results,
     select: navbox_select
   }
+  
   
   $('#main').ajaxSend (event, xhr, opt) ->
     s = $(this).children('.card-slot')

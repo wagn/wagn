@@ -1,8 +1,10 @@
 class CardController < ApplicationController
   helper :wagn
 
-  EDIT_ACTIONS = [ :edit, :update, :rollback, :save_draft, :watch, :unwatch, :create_account, :update_account ]
-  LOAD_ACTIONS =  EDIT_ACTIONS + [ :show, :index, :comment, :remove, :view, :changes, :options, :related ]
+  EDIT_ACTIONS = [ :edit, :update, :rollback, :save_draft, :watch, :unwatch,
+    :create_account, :update_account ]
+  LOAD_ACTIONS =  EDIT_ACTIONS + [ :show_file, :show, :index, :comment,
+    :remove, :view, :changes, :options, :related ]
 
   before_filter :index_preload, :only=> [ :index ]
   
@@ -41,6 +43,12 @@ class CardController < ApplicationController
   def show
     save_location if params[:format].nil? || params[:format].to_sym==:html
     render_show
+  end
+
+  def show_file
+    if attachment? params[:format]
+      send_file card.attach.path, :type=>attach_content_type, :x_sendfile=>true
+    end
   end
 
   def index()    show                  end
@@ -203,17 +211,16 @@ class CardController < ApplicationController
   #---------( RENDER HELPERS)
   
   def render_show(view = nil)
-    render :text=>render_show_text(view)
-  end
-  
-  def render_show_text(view)
     extension = request.parameters[:format]
-    return "unknown format: #{extension}" if !FORMATS.split('|').member?( extension )
-    
-    respond_to do |format|
-      format.send extension do
-        renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
-        renderer.render_show :view=>view
+    return "unknown format: #{extension}" unless
+              FORMATS.split('|').member?( extension ) || show_file
+
+    render :text=> begin
+      respond_to do |format|
+        format.send extension do
+          renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
+          renderer.render_show :view=>view
+        end
       end
     end
   end

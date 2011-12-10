@@ -26,6 +26,10 @@ module Wagn::Model::Attach
   def attach_content_type=(v) attach_array_set(1, v) if v end
   def attach_file_size=(v) attach_array_set(2, v) if v end
 
+  def attachment?(ext)
+    # FIXME: test extension matches content type
+    %w{File Image}.member? card.typecode
+  end
   
   def before_post_attach
     ext = $1 if attach_file_name =~ /\.([^\.]+)$/
@@ -39,8 +43,8 @@ module Wagn::Model::Attach
   def self.included(base)
     base.class_eval do
       has_attached_file :attach,
-        :url => ":base_url/:card_id/:size:revision_id.:extension",
-        :path => ":local/:card_id/:size:revision_id.:extension",
+        :url => ":base_url/files/:file_name-:size:revision_id.:extension",
+        :path => ":local/:card-id/:size:revision_id.:extension",
         :styles => { :icon   => '16x16#', :small  => '75x75#',
                    :medium => '200x200>', :large  => '500x500>' } 
 

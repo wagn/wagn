@@ -113,7 +113,7 @@ module Wagn::Model::Permissions
   end
 
   def lets_user(operation)
-    return true if (Card.always_ok? and operation != :comment)
+    return true if (User.always_ok? and operation != :comment)
     User.as_user.among?( who_can(operation) )
   end
 
@@ -127,7 +127,8 @@ module Wagn::Model::Permissions
   end
 
   def approve_read
-    return true if Card.always_ok?
+    #warn "AR #{User.always_ok?}"
+    return true if User.always_ok?
     @read_rule_id ||= rule_card(:read).first.id
     ok = User.as_user.read_rule_ids.member?(@read_rule_id.to_i) 
     deny_because you_cant("read this card") unless ok

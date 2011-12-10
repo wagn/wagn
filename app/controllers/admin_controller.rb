@@ -26,7 +26,7 @@ class AdminController < ApplicationController
   end
 
   def tasks
-    raise Wagn::PermissionDenied.new('Only Administrators can view tasks') unless Card.always_ok?
+    raise Wagn::PermissionDenied.new('Only Administrators can view tasks') unless User.always_ok?
     @tasks = Wagn::Conf[:role_tasks]
     Role.cache.reset
     
@@ -36,7 +36,7 @@ class AdminController < ApplicationController
   end
 
   def save_tasks
-    raise Wagn::PermissionDenied.new('Only Administrators can change task permissions') unless Card.always_ok?
+    raise Wagn::PermissionDenied.new('Only Administrators can change task permissions') unless User.always_ok?
     role_tasks = params[:role_task] || {}
     Role.find( :all ).each  do |role|
       tasks = role_tasks[role.id.to_s] || {}
@@ -57,7 +57,7 @@ class AdminController < ApplicationController
   
   def clear_cache
     response = 
-      if Card.always_ok?
+      if User.always_ok?
         Wagn::Cache.reset_global
         'Cache cleared'
       else

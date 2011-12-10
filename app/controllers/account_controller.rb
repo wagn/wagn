@@ -20,7 +20,7 @@ class AccountController < ApplicationController
     @user, @card = User.create_with_card( user_args, card_args )
     return unless @user.errors.empty?
 
-    if Card.ok?(:create_accounts)       #complete the signup now
+    if User.ok?(:create_accounts)       #complete the signup now
       email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Wagn::Conf[:site_title]}!",  #ENGLISH
                      :subject => Card.setting('*signup+*subject') || "Account info for #{Wagn::Conf[:site_title]}!" }  #ENGLISH
       @user.accept(email_args)
@@ -39,7 +39,7 @@ class AccountController < ApplicationController
     raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
     @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
     @user = @card.extension or raise(Wagn::Oops, "This card doesn't have an account to approve")  #ENGLISH
-    Card.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create accounts")  #ENGLISH
+    User.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create accounts")  #ENGLISH
 
     if request.post?
       @user.accept(params[:email])
@@ -52,7 +52,7 @@ class AccountController < ApplicationController
   end
 
   def invite
-    Card.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create")  #ENGLISH
+    User.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create")  #ENGLISH
 
     @user, @card = request.post? ?
       User.create_with_card( params[:user], params[:card] ) :

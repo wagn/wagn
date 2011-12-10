@@ -17,7 +17,7 @@
     :help=>"", #ENGLISH
     :label=>"Confirm password") %> 
 
-<% if card.extension and Card.ok?(:administrate_users) and !extension.built_in? %>
+<% if card.extension and User.ok?(:administrate_users) and !extension.built_in? %>
   <% blocked_content = capture do %><%= check_box :extension, :blocked? %><% end %>
   <%= raw slot.option( blocked_content,
      :name=>"block_user", 

@@ -405,7 +405,7 @@ class Wagn::Renderer::Html
           :html=>{ :class=>'standard-slotter' } do |form|
 
          %{<table class="fieldset">
-           #{if User.as_user==card.extension or Card.ok?(:administrate_users)
+           #{if User.as_user==card.extension or User.ok?(:administrate_users)
               raw option_header( 'Account Details' ) +
                 template.render(:partial=>'account/edit',  :locals=>locals)
            end }
@@ -451,7 +451,7 @@ class Wagn::Renderer::Html
           #{ raw( subrenderer(Card.fetch current_set).render :content ) }
         </div>
   #{
-        if !card.extension_type && Card.toggle(card.setting('accountable')) && Card.ok?(:create_accounts) && card.ok?(:update)
+        if !card.extension_type && Card.toggle(card.setting('accountable')) && User.ok?(:create_accounts) && card.ok?(:update)
           %{<div class="new-account-link">
           #{ link_to %{Add a sign-in account for "#{card.name}"},
               path(:options, :attrib=>:new_account),
@@ -465,7 +465,7 @@ class Wagn::Renderer::Html
     roles = Role.find :all, :conditions=>"codename not in ('auth','anon')"
     user_roles = card.extension.roles 
 
-    option_content = if Card.ok? :assign_user_roles
+    option_content = if User.ok? :assign_user_roles
       hidden_field_tag(:save_roles, true) +
       (roles.map do |role|
         if role.card && !role.card.trash
@@ -487,9 +487,9 @@ class Wagn::Renderer::Html
 
     %{#{ raw option_header( 'User Roles' ) }#{
        option(option_content, :name=>"roles", 
-      :help=>%{ <span class="small">"#{ link_to_page 'Roles' }" determine which #{ Card.always_ok? ? link_to( 'global permissions', :controller=>'admin', :action=>'tasks') : 'global permissions'} a user has access to, as well as card-specific permissions like read, view, comment, and delete.  You can only change a user's roles if you have the global "assign user roles" permission. </span>}, #ENGLISH
+      :help=>%{ <span class="small">"#{ link_to_page 'Roles' }" determine which #{ User.always_ok? ? link_to( 'global permissions', :controller=>'admin', :action=>'tasks') : 'global permissions'} a user has access to, as well as card-specific permissions like read, view, comment, and delete.  You can only change a user's roles if you have the global "assign user roles" permission. </span>}, #ENGLISH
       :label=>"#{card.name}'s Roles",
-      :editable=>Card.ok?(:assign_user_roles)
+      :editable=>User.ok?(:assign_user_roles)
     )}}
   end
 

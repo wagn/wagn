@@ -4,7 +4,7 @@ module Wagn
 
     @@config_hash=false
 
-    def config_hash()  @@config_hash ||= wagn_load_config() end
+    def config_hash()  @@config_hash || wagn_load_config()      end
     def [](key)         config_hash[key&&key.to_sym||key]       end
     def []=(key, value) config_hash[key&&key.to_sym||key]=value end
       
@@ -28,10 +28,12 @@ module Wagn
     
 
     def wagn_load_config(hash={})
+      raise "Twice configged #{@@config_hash}" if @@config_hash
+      @@config_hash = hash
       Rails.logger.debug "Load config ...\n"
       hash.merge! YAML.load(DEFAULT_YML)
+
       config_file = "#{Rails.root}/config/wagn.yml"
-      STDERR << "#{config_file} exists? #{File.exists? config_file}\n"
       hash.merge!(
         YAML.load_file config_file ) if File.exists? config_file
 
@@ -50,36 +52,40 @@ module Wagn
         end
       hash[:role_tasks] =
         %w{ administrate_users create_accounts assign_user_roles }
+
+      hash[:site_title] = Card.setting('*title') || 'Wagn'
+      # bit of a kludge. 
+      Card.image_settings
+
       Rails.logger.debug "hash #{hash.inspect}"
       raise "no root path" unless hash[:root_path]
       hash
     end
-=begin
-    def site_title
-      setting('*title') || 'Wagn'
-    end
-    
-    def favicon
-      # bit of a kludge. 
-      image_setting('*favicon') || image_setting('*logo') || "#{root_path}/images/favicon.ico"
-    end
-    
-    def logo
-      image_setting('*logo') || (File.exists?("#{Rails.root}/public/images/logo.gif") ? "#{root_path}/images/logo.gif" : nil)
-    end
-=end
-
 
     def wagn_run
-      Rails.logger.debug "wagn_run ..."
-      return if Wagn::Conf[:running]
+      Rails.logger.debug "wagn_run ... #{config_hash}" # leave a ref here
+      STDERR << "----------- Wagn Starting 0 -----------\n"
       wagn_setup_multihost
-      return unless wagn_database_ready?
-      wagn_load_modules
+      STDERR << "----------- Wagn Starting 1 -----------\n"
       Wagn::Cache.initialize_on_startup      
+      STDERR << "----------- Wagn Starting 2 -----------\n"
+      wagn_load_modules
+      STDERR << "----------- Wagn reloaded 3 -----------\n"
+      return if Wagn::Conf[:running]
+      warn "why aren't we runnign yet?"
+      #wagn_init
+    end
+
+    def wagn_init
+      STDERR << "----------- Wagn Starting 1.5 -----------\n"
+      return unless wagn_database_ready?
+      STDERR << "----------- Wagn init 1 -----------\n"
+      wagn_load_modules
+      STDERR << "----------- Wagn Starting 3 -----------\n"
       Wagn::Conf[:running] = true
       Rails.logger.info "----------- Wagn Rolling -----------\n\n\n"
     end
+
 
     def wagn_database_ready?
       no_mod_msg = "----------Wagn Running without Modules----------"

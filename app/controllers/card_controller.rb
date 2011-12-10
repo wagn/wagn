@@ -47,8 +47,10 @@ class CardController < ApplicationController
 
   def show_file
     if attachment? params[:format]
+      warn "show_file #{params.inspect}"
       send_file card.attach.path, :type=>attach_content_type, :x_sendfile=>true
     end
+    warn "show_file 2"
   end
 
   def index()    show                  end
@@ -147,7 +149,7 @@ class CardController < ApplicationController
     @extension = @card.extension 
     
     if params[:save_roles]
-      Card.ok! :assign_user_roles
+      User.ok! :assign_user_roles
       role_hash = params[:user_roles] || {}
       @extension.roles = Role.find role_hash.keys
     end
@@ -162,7 +164,7 @@ class CardController < ApplicationController
   end
 
   def create_account
-    Card.ok!(:create_accounts) && @card.ok?(:update)
+    User.ok!(:create_accounts) && @card.ok?(:update)
     email_args = { :subject => "Your new #{Wagn::Conf[:site_title]} account.",   #ENGLISH
                    :message => "Welcome!  You now have an account on #{Wagn::Conf[:site_title]}." } #ENGLISH
     @user, @card = User.create_with_card(params[:user],@card, email_args)

@@ -397,7 +397,7 @@ class Wql
       return "(" + sql.conditions.last + ")" if @mods[:return]=='condition'
 
       # Permissions    
-      unless Card.always_ok? or (Wql.root_perms_only && !root?)
+      unless User.always_ok? or (Wql.root_perms_only && !root?)
         sql.conditions << %{ (#{table_alias}.read_rule_id IN (#{::User.as_user.read_rule_ids.join ','})) }
       end
            

@@ -5,7 +5,7 @@ class Wagn::Renderer
     action = args[:action] || :edit
     @item_view ||= :closed
     %{<div class="pointer-list">#{pointer_items}</div>} + 
-    link_to( 'add/edit', path(action), :remote=>true, :class=>'standard-slotter add-edit-item init-editors' ) #ENGLISH 
+    '' #link_to( 'add/edit', path(action), :remote=>true, :class=>'standard-slotter add-edit-item init-editors' ) #ENGLISH 
   end
 
   define_view(:closed_content, :type=>'pointer') do |args|

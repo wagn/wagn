@@ -82,7 +82,7 @@ class Wagn::Renderer::Html
     setting_name    = args[:setting_name]
     current_set_key = args[:current_set_key]
     open_rule       = args[:open_rule]
-    @item_view = :link
+    @item_view ||= :link
     
     form_for card, :url=>path(:create_or_update), :remote=>true, :html=>
         {:class=>"card-form card-rule-form #{edit_mode && 'standard-slotter'}" } do |form| 

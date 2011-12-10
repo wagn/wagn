@@ -9,7 +9,7 @@ class Wagn::Renderer
   end
 
   define_view(:closed_content, :type=>'pointer') do |args|
-    @item_view = (@item_view=='name' or params[:item]=='name') ? 'name' : 'link'
+    @item_view = 'link' unless @item_view == 'name'
     %{<div class="pointer-list">#{pointer_items}</div>}
   end
 

@@ -70,7 +70,8 @@ $(window).load ->
   $('body').delegate 'form.standard-slotter', 'submit', (event)->
     if (target = $(this).attr 'main-success') and $(this).isMain()
       input = $(this).find '[name=success]'
-      input.val (if target == 'REDIRECT' then target + ': ' + input.val() else target)    
+      return if input.val().match /^REDIRECT/
+      input.val ( if target == 'REDIRECT' then target + ': ' + input.val() else target )    
 
     
   $('body').delegate 'button.redirecter', 'click', ->

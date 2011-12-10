@@ -75,16 +75,17 @@ class Wagn::Renderer::Html
     }
     
   end
-  
-
+    
+  # THIS SHOULD NOT BE A VIEW
   define_view(:edit_rule) do |args|
     edit_mode       = args[:edit_mode]
     setting_name    = args[:setting_name]
     current_set_key = args[:current_set_key]
     open_rule       = args[:open_rule]
+    @item_view = :link
     
     form_for card, :url=>path(:create_or_update), :remote=>true, :html=>
-        {:class=>"card-form card-rule-form #{edit_mode&&'standard-slotter'}" } do |form| 
+        {:class=>"card-form card-rule-form #{edit_mode && 'standard-slotter'}" } do |form| 
           
       hidden_field_tag( :success, open_rule.name ) +
       hidden_field_tag( :view, 'open_rule' ) +
@@ -148,7 +149,7 @@ class Wagn::Renderer::Html
       %{  </div>
 
              <div class="content-editor"> #{
-               raw( edit_mode ? content_field(form) : (current_set_key ? render_core(:action=>'edit_rule') : '') ) }
+               raw( edit_mode ? content_field(form) : (current_set_key ? render_core : '') ) }
              </div>
            </div>
          </div> }.html_safe +

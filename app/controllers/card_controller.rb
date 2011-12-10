@@ -215,14 +215,14 @@ class CardController < ApplicationController
     return "unknown format: #{extension}" unless
               FORMATS.split('|').member?( extension ) || show_file
 
-    render :text=> begin
-      respond_to do |format|
-        format.send extension do
+    render(:text=> begin
+      respond_to() do |format|
+        format.send(extension) do
           renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
           renderer.render_show :view=>view
         end
       end
-    end
+    end)
   end
   
   def render_success(default_target='TO-CARD')

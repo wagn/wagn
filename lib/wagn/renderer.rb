@@ -1,3 +1,6 @@
+
+WikiReference
+
 module Wagn
   class Renderer
     include ReferenceTypes
@@ -20,7 +23,7 @@ module Wagn
 
     class << self
       def get_pattern(view,opts)
-        unless pkey = Model::Pattern.method_key(opts) #and opts.empty?
+        unless pkey = Wagn::Model::Pattern.method_key(opts) #and opts.empty?
           raise "Bad Pattern opts: #{pkey.inspect} #{opts.inspect}"
         end
         return (pkey.blank? ? view : "#{pkey}_#{view}").to_sym

@@ -7,7 +7,14 @@ wagn.initializeEditors = (map) ->
 
 jQuery.fn.extend {
   slot: -> @closest '.card-slot'
-  setSlotContent: (val) -> @slot().replaceWith val
+  
+  setSlotContent: (val) ->
+    s = @slot()
+    v = $(val)
+    v.attr 'home_view', s.attr 'home_view'
+    v.attr 'item',      s.attr 'item'
+    s.replaceWith v
+  
   notify: (message) -> 
     notice = @slot().find('.notice')
     return false unless notice[0]
@@ -62,6 +69,7 @@ $(window).load ->
       $(this).setSlotContent result
     else 
       $(this).notify result or $(this).setSlotContent result
+    
 
   $('body').delegate 'button.standard-slotter', 'click', (event)->
     return false if !$.rails.allowAction $(this)
@@ -70,9 +78,9 @@ $(window).load ->
   $('body').delegate 'form.standard-slotter', 'submit', (event)->
     if (target = $(this).attr 'main-success') and $(this).isMain()
       input = $(this).find '[name=success]'
-      return if input.val().match /^REDIRECT/
-      input.val ( if target == 'REDIRECT' then target + ': ' + input.val() else target )    
-
+      if input and input.val().match /^REDIRECT/
+        input.val ( if target == 'REDIRECT' then target + ': ' + input.val() else target )    
+      
     
   $('body').delegate 'button.redirecter', 'click', ->
     window.location = $(this).attr('href')
@@ -119,10 +127,20 @@ $(window).load ->
     content_field = $(this)
     setTimeout ( -> content_field.autosave() ), 500
   
-  $('#main').ajaxSend (event, xhr, opt) ->
-    s = $(this).children('.card-slot')
-    if s and mainName = s.attr('card-name')
-      opt.url += ((if opt.url.match /\?/ then '&' else '?') + 'main=' + escape(mainName))
+  $('.standard-slotter').live 'ajax:beforeSend', (event, xhr, opt)->
+    return if opt.url.match /home_view/ #avoiding duplication.  could be better test?
+    xtra = []
+    if mainSlot = $('#main').children('.card-slot')
+      if mainName = mainSlot.attr('card-name')
+        xtra.push { name: 'main', value: mainName }
+    if currentSlot = $(this).slot()
+      if homeView = currentSlot.attr 'home_view'
+        xtra.push { name: 'home_view', value: homeView }
+      if itemView = currentSlot.attr 'item'
+        xtra.push { name: 'item', value: itemView }
+        
+    if xtra[0]
+      opt.url += ( (if opt.url.match /\?/ then '&' else '?') + $.param(xtra) ) 
 
 
 

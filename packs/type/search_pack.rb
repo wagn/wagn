@@ -39,7 +39,7 @@ class Wagn::Renderer
       %{<span class="faint">(#{ card.count })</span>
       <div class="search-result-list">
         #{results.map do |c|
-          %{<div class="search-result-item">#{'name' == @item_view || params[:item] ? c.name : link_to_page( c.name ) }</div>}
+          %{<div class="search-result-item">#{@item_view == 'name' ? c.name : link_to_page( c.name ) }</div>}
         end*"\n"}
       </div>}
     end
@@ -155,6 +155,7 @@ class Wagn::Renderer
     out.join
   end
 
+private
 
   def paging_params
     if ajax_call? && @depth > 0

@@ -272,7 +272,7 @@ class Wagn::Renderer::Html
           <ul>#{
             dependents.map do |dep|
               %{<li>#{ link_to_page raw(formal_title dep), dep.name }</li>}
-            end * ', '}
+            end.join }
           </ul>
         </div>}
       end}#{
@@ -284,7 +284,7 @@ class Wagn::Renderer::Html
           <ul>
             #{children.map do |child|
               %{<li>#{ link_to_page raw(formal_title child), child.name }</li>}
-              end. * ', '}
+              end.join}
           </ul>
           <div>You can...
             <div class="radio">#{ f.radio_button :update_referencers, 'true' }
@@ -310,7 +310,8 @@ class Wagn::Renderer::Html
     %{#{ raw edit_submenu(:type)}
     <div class="edit-area edit-type">
     <h2>Change Type</h2> #{
-      form_for :card, :url=>path(:update), :remote=>true, 'main-success'=>'REDIRECT: TO_CARD',
+      form_for :card, :url=>path(:update), :remote=>true, 
+        #'main-success'=>'REDIRECT: TO-CARD', # adding this back in would make main cards redirect on cardtype changes
         :html=>{ :class=>'standard-slotter card-edit-type-form' } do |f|
           
         %{#{if card.typecode == 'Cardtype' and card.extension and !Card.search(:type=>card.cardname).empty? #ENGLISH
@@ -569,7 +570,7 @@ class Wagn::Renderer::Html
         <ul>
           #{ dependents.map do |dep|
             %{<li>#{ link_to_page dep.name }</li>}
-          end * ', '}
+          end.join }
         </ul>}
        end}
        #{ error_messages_for card }

@@ -11,7 +11,7 @@ wagn.editorContentFunctionMap = {
 }
 
 wagn.editorInitFunctionMap = {
-  '.date-editor'         : -> @datepicker({ dateFormat: 'yy-mm-dd' }),
+  '.date-editor'         : -> @datepicker { dateFormat: 'yy-mm-dd' }
   '.tinymce-textarea'    : -> wagn.initTinyMCE(@[0].id)
   '.pointer-list-editor' : -> @sortable(); wagn.initPointerList @find('input')
 }

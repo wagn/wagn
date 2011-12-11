@@ -28,7 +28,8 @@ class ApplicationController < ActionController::Base
       canonicalize_domain
     else
       Wagn::Conf[:base_url] = 'http://' + request.env['HTTP_HOST']
-      Wagn::Conf[:host] = base_u.gsub(/^http:\/\//,'').gsub(/\/.*/,'') unless Wagn::Conf[:host]
+      Wagn::Conf[:host] = Wagn::Conf[:base_url].
+        gsub(/^http:\/\//,'').gsub(/\/.*/,'') unless Wagn::Conf[:host]
     end
     Wagn::Renderer.ajax_call=request.xhr?
     

@@ -56,7 +56,7 @@ module Wagn
       # bit of a kludge. 
       Card.image_settings
 
-      STDERR << Rails.logger.debug("hash #{hash.map(&:inspect)*"\n"}")
+      Rails.logger.debug("hash #{hash.map(&:inspect)*"\n"}")
       hash
     end
 

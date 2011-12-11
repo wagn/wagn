@@ -11,7 +11,7 @@ module Wagn::Model::Attach
 
   def attach_array_set(i, v)
     #Rails.logger.debug "attach_set #{inspect} [#{i.inspect}] = #{v}"
-    c = attach_array(current_revision.id)
+    c = attach_array((cr=current_revision)&&cr.id)
     if c[i] != v
       c[i] = v
       #warn "update #{i} #{v}"

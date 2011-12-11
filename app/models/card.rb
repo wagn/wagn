@@ -367,7 +367,7 @@ class Card < ActiveRecord::Base
     r
   end
 
-  def selected_rev_id() @selected_rev_id || current_revision.id || 0 end
+  def selected_rev_id() @selected_rev_id || (cr=current_revision)&&cr.id || 0 end
 
   def cached_revision
     #return current_revision || Revision.new    

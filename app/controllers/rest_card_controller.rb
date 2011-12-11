@@ -2,7 +2,7 @@ require 'card_controller'
 require 'rexml/document'
 
 class RestCardController < CardController
-  helper :wagn, :card
+  helper :wagn
  
   before_filter :load_card!, :only=> [ :put, :get ]
   before_filter :load_card_with_cache, :only => [:get]

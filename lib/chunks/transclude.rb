@@ -1,6 +1,6 @@
 module Chunk
   class Transclude < Reference
-    attr_reader :stars, :inclusion_map, :renderer, :options, :base
+    attr_reader :stars, :renderer, :options, :base
     unless defined? TRANSCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
       TRANSCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(\|([^\}]+?))?)\}\}/
@@ -13,8 +13,7 @@ module Chunk
       #Rails.logger.warn "FOUND TRANSCLUDE #{match_data} #{content}"
       self.cardname, @options, @configs = a = self.class.parse(match_data)
       #Rails.logger.info "Chunk::transclude #{a.inspect}"
-      @base, @renderer, @inclusion_map =
-         content.card, content.renderer, content.inclusion_map
+      @base, @renderer = content.card, content.renderer
     end
   
     def self.parse(match)
@@ -26,7 +25,6 @@ module Chunk
       end
       options = {
         :tname   =>name,
-        :base  => 'self',
         :view  => nil,
         :item  => nil,
         :type  => nil,
@@ -53,9 +51,6 @@ module Chunk
       refcardname
       if view = @options[:view]
         view = view.to_sym
-        if inclusion_map and inclusion_map.key?(view)
-          view = @options[:view] = inclusion_map[view]
-        end
       end
       yield options
     end

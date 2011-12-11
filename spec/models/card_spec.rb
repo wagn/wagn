@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
 describe Card do
   context "new" do
@@ -54,12 +54,10 @@ describe Card do
 
   
   describe "#create" do 
-    it "calls :before_save, :before_create, :after_save, and :after_create hooks" do
+    it "calls :after_create hooks" do
       # We disabled these for the most part, what replaces them?
       #[:before_save, :before_create, :after_save, :after_create].each do |hookname|
-      [:after_save, :after_create].each do |hookname|
-        Wagn::Hook.should_receive(:call).with(hookname, instance_of(Card))
-      end 
+      Wagn::Hook.should_receive(:call).with(:after_create, instance_of(Card))
       User.as :wagbot do
         Card.create :name => "testit"
       end
@@ -185,9 +183,9 @@ describe Card do
   end    
      
 
-  describe "created with :virtual=>'true'" do
+  describe "created a virtual card when missing and has a template" do
     it "should be flagged as virtual" do
-      Card.new(:virtual=>true).virtual?.should be_true
+      Card.new(:name=>'A+*last edited').virtual?.should be_true
     end
   end
 end

@@ -14,99 +14,85 @@ class Card < ActiveRecord::Base
   has_many   :revisions, :order => 'id', :foreign_key=>'card_id'
 
   belongs_to :extension, :polymorphic=>true
-  before_destroy :destroy_extension
+  before_destroy :destroy_extension, :base_before_destroy
     
-  attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards,
-    :from_trash, :update_referencers, :allow_type_change, :broken_type, :loaded_trunk, :nested_edit,
-    :attachment_id #should build flexible handling for this kind of set-specific attr
+  attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards, :set_mods_loaded,
+    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual, :type_args, :selected_rev_id
 
+  before_save :base_before_save, :set_read_rule, :set_tracked_attributes, :set_extensions
+  after_save :base_after_save, :update_ruled_cards
+  cache_attributes('name', 'typecode')    
 
-
-  cache_attributes('name', 'typecode', 'trash')    
+  @@junk_args = %w{ missing skip_virtual id }
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INITIALIZATION METHODS
   
-  def self.new(args={})
-    #Rails.logger.warn "card#new with args: #{args.inspect}"
-    args ||= {}
-    args = args.stringify_keys # evidently different from args.stringify_keys!
-    if name = args['name']
-      cardname = name.to_cardname
-      if (card = cardname.card_without_fetch) ||
-           ( !args['missing'] && card = cardname.card(:skip_virtual=>true) )
-        #Rails.logger.debug "card#new found #{card.inspect}"
-        return card
+  def self.new(args={}, options={})
+    args = (args || {}).stringify_keys
+    @@junk_args.map { |a| args.delete(a) }
+    %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
+
+    if name = args['name'] and !name.blank?
+      if cc= Card.cache.read_local(name.to_cardname.key)    and
+          cc.type_args                                      and
+          args['type']          == cc.type_args[:type]      and
+          args['typecode']      == cc.type_args[:typecode]  and
+          args['loaded_trunk']  == cc.loaded_trunk
+          
+        args['typecode'] = cc.typecode
+        return cc.send( :initialize, args )
       end
     end
-    super
+    super args
   end
 
   def initialize(args={})
-    #Rails.logger.warn "card@initializing with args #{args.inspect}"
-    #Rails.logger.warn "card@initializing with args #{args.inspect} Trace: #{Kernel.caller*"\n"}" if args['name'] == 'a+y'
-    typename, skip_defaults = %w{type skip_defaults id}.map{|k| args.delete k }
-    args['name'] = args['name'].to_s
+    args['name'] = args['name'].to_s  
+    @type_args = { :type=>args.delete('type'), :typecode=>args['typecode'] }
+    skip_modules = args.delete 'skip_modules'
+    
+    super args
 
-    #Rails.logger.warn "initializing args:>>#{args.inspect}"
-    @attributes = get_attributes   
-    @attributes_cache = {}
-    @new_record = true
-    self.send :attributes=, args, false
-    #Rails.logger.debug "card#initialize[#{name}] 2 #{inspect}"
-    self.typecode = get_typecode(args['name'], typename) unless args['typecode']
-
-    include_set_modules #unless missing?
-    #Rails.logger.debug "card#initialize[#{name}] 3 #{inspect}"
-    set_defaults( args ) unless skip_defaults
-    #Rails.logger.debug "card#initialize[#{name}] 4 #{inspect}, #{cardname.card_without_fetch}"
-    self.cardname.card = self
+    if !args['typecode']
+      self.typecode_without_tracking = get_typecode(@type_args[:type]) 
+    end
+    
+    include_set_modules unless skip_modules    
     self
   end
 
-  def new_card?()  new_record? || from_trash  end
+  def new_card?()  new_record? || @from_trash  end
   def known?()    !(new_card? && !virtual?)   end
+  
+  def reset_mods() @set_mods_loaded=false end
 
-  private
-  def get_attributes
-    #was getting this from column defs.  very slow.
-    #@attributes ||= {"name"=>@name, "cardname"=>@cardname, "key"=>"", "codename"=>nil, "typecode"=>nil,
-    @attributes ||= {"key"=>"", "codename"=>nil, "typecode"=>nil,
-      "current_revision_id"=>nil, "trunk_id"=>nil,  "tag_id"=>nil,
-      "indexed_content"=>nil,"indexed_name"=>nil, "references_expired"=>nil,
-      "read_rule_class"=>nil, "read_rule_id"=>nil, "extension_type"=>nil,
-      "extension_id"=>nil, "created_at"=>nil, "created_by"=>nil, "updated_at"=>nil,"updated_by"=>nil, "trash"=>nil
-    }
-  end
+#private
 
-  def get_typecode(name, typename)
-    begin ; return Cardtype.classname_for(typename) if typename
-    rescue Exception => e;
-#Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
-      self.broken_type = typename
+  def get_typecode(typename=nil)
+    if typename
+      begin
+        return Cardtype.classname_for(typename)
+      rescue
+        @broken_type = typename
+      end
     end
-    t = (name &&
-      tmpl=self.template) ?
-        tmpl.typecode :
-        'Basic'
-    reset_patterns
-    t
+
+    if name && t=template
+      reset_patterns
+      t.typecode
+    else
+      'Basic'
+    end
   end
 
   def include_set_modules
-    #Rails.logger.info "include_set_modules[#{name}] #{typecode} called"  #{Kernel.caller[0..4]*"\n"}"
-    singleton_class.include_type_module(typecode)  
+    unless @set_mods_loaded
+      @set_mods_loaded=true
+      singleton_class.include_type_module(typecode)
+    end
   end
   
-  def set_defaults args
-
-    if (self.content.nil? || self.content.blank?)
-      self.content = setting('content', 'default')
-    end
-
-    self.key = cardname.to_key if cardname
-    self.trash=false
-  end
   
   
   
@@ -129,18 +115,22 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING
 
+  def base_before_save
+    if self.respond_to?(:before_save) and self.before_save == false
+      errors.add(:save, "could not prepare card for destruction")
+      return false
+    end
+  end
 
-  def after_save
+  def base_after_save
     save_subcards
-    self.missing = self.virtual = false
-    cardname.card = self
+    self.virtual = false
+    @from_trash = false
+    Wagn::Hook.call :after_create, self if @was_new_card
+    send_notifications
     if self.typecode == 'Cardtype'
       Cardtype.cache.reset
     end
-    update_attachment
-    Wagn::Hook.call :after_create, self if @was_new_card
-    Wagn::Hook.call :after_save, self
-    send_notifications
     true
   end
 
@@ -151,7 +141,8 @@ class Card < ActiveRecord::Base
       opts[:content] ||= ""
       sub_name = sub_name.gsub('~plus~','+')
       absolute_name = cardname.to_absolute_name(sub_name)
-      if card = Card.fetch(absolute_name, :skip_virtual=>true)
+      if card = Card[absolute_name]
+        card = card.refresh
         card.update_attributes(opts)
       elsif opts[:content].present? and opts[:content].strip.present?
         opts[:name] = absolute_name
@@ -165,17 +156,51 @@ class Card < ActiveRecord::Base
     end
   end
 
+  def set_extensions
+    self.create_extension if !extension && respond_to?(:create_extension)
+  end
+
   def save_with_trash!
     save || raise(errors.full_messages.join('. '))
   end
   alias_method_chain :save!, :trash
 
-  def save_with_trash(perform_checking=true)
+  def save_with_trash(*args)#(perform_checking=true)
     pull_from_trash if new_record?
     self.trash = !!trash
-    save_without_trash(perform_checking)
+    save_without_trash(*args)#(perform_checking)
   end
   alias_method_chain :save, :trash
+
+  def save_with_permissions(*args)  #checking is needed for update_attribute, evidently.  not sure I like it...
+    Rails.logger.debug "Card#save_with_permissions!:"
+    run_checked_save :save_without_permissions
+  end
+  alias_method_chain :save, :permissions
+   
+  def save_with_permissions!(*args)
+    Rails.logger.debug "Card#save_with_permissions!"
+    run_checked_save :save_without_permissions!
+  end 
+  alias_method_chain :save!, :permissions
+  
+  def run_checked_save(method)#, *args)
+    if approved?
+      begin
+        self.send(method)
+      rescue Exception => e
+        cardname.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_cardname.key)}
+        Rails.logger.debug "Exception #{method}:#{e.message} #{name} #{e.backtrace*"\n"}"
+        raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
+      end
+    else
+      raise Card::PermissionDenied.new(self)
+    end
+  end
+
+
+
+
 
   def reset_cardtype_cache() end
 
@@ -185,30 +210,26 @@ class Card < ActiveRecord::Base
     #could optimize to use fetch if we add :include_trashed_cards or something.
     #likely low ROI, but would be nice to have interface to retrieve cards from trash...
     self.id = trashed_card.id
-    self.from_trash = self.confirm_rename = @trash_changed = true
+    @from_trash = self.confirm_rename = @trash_changed = true
     @new_record = false
-    self.before_validation_on_create
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # DESTROY
  
-  def destroy_with_trash(caller="")     
-    if callback(:before_destroy) == false
-      errors.add(:destroy, "could not prepare card for destruction")
-      return false
+  def destroy_with_trash(caller="")
+    run_callbacks( :destroy ) do
+      deps = self.dependents
+      @trash_changed = true
+      
+      self.update_attribute(:trash, true) 
+      deps.each do |dep|
+        next if dep.trash
+        dep.confirm_destroy = true
+        dep.destroy_with_trash("#{caller} -> #{name}")
+      end
+      true
     end
-    deps = self.dependents
-    @trash_changed = true
-    self.update_attribute(:trash, true) 
-    deps.each do |dep|
-      next if dep.trash
-      dep.confirm_destroy = true
-      dep.destroy_with_trash("#{caller} -> #{name}")
-    end
-
-    callback(:after_destroy)
-    true
   end
   alias_method_chain :destroy, :trash
 
@@ -222,8 +243,8 @@ class Card < ActiveRecord::Base
 
     dependents.each do |dep|
       dep.send :validate_destroy
-      if dep.errors.on(:destroy)
-        errors.add(:destroy, "can't destroy dependent card #{dep.name}: #{dep.errors.on(:destroy)}")
+      if !dep.errors[:destroy].empty?
+        errors.add(:destroy, "can't destroy dependent card #{dep.name}: #{dep.errors[:destroy]}")
       end
     end
 
@@ -243,6 +264,10 @@ class Card < ActiveRecord::Base
     extension = nil
     true
   end
+  
+  def base_before_destroy
+    self.before_destroy if respond_to? :before_destroy
+  end
 
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -256,9 +281,9 @@ class Card < ActiveRecord::Base
   def css_name()    cardname.css_name      end
 
   def left()
-    #Rails.logger.debug "left(#{name}), #{cardname.trunk_name}, #{cardname.trunk_name.to_s}"
-    Card.fetch( cardname.trunk_name, :skip_virtual=> true, :skip_after_fetch=>true )  end
-  def right()     Card.fetch cardname.tag_name,   :skip_virtual=> true         end
+    Card[cardname.left_name]
+  end
+  def right()     Card[cardname.tag_name]   end
   def pieces()    simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq end
   def particles() cardname.particle_names.map{|name| Card.fetch name}          end
   def key()       cardname.key                                                 end
@@ -275,8 +300,10 @@ class Card < ActiveRecord::Base
   end
 
   def dependents(*args)
-    #raise "Includes self #{name}" if junctions(*args).map(&:name).include?(name)
     jcts = junctions(*args)
+    #raise "Includes self #{name}" if jcts.include?(self)
+    Rails.logger.warn "dependents include self #{name}" if jcts.include?(self)
+    jcts.delete(self) if jcts.include?(self)
     Rails.logger.info "dependents[#{name}](#{args.inspect}): #{jcts.inspect}"
     return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.
     jcts.map { |r| [r ] + r.dependents(*args) }.flatten
@@ -331,25 +358,25 @@ class Card < ActiveRecord::Base
   # CONTENT / REVISIONS
 
   def content
-    c = cached_revision
-    c.new_record? ? "" : c.content
+    new_card? ? template(reset=true).content : cached_revision.content
+  end
+  
+  def raw_content
+    r = (t=templated_content) || (c=content)
+    raise "???, #{name}, #{t}, #{c}" if r.nil? or r==false
+    r
   end
 
-  def raw_content
-    templated_content || content
-  end
+  def selected_rev_id() @selected_rev_id || (cr=current_revision)&&cr.id || 0 end
 
   def cached_revision
-    #return current_revision || Revision.new
-#    Rails.logger.info "looking up cached revision for key: #{key}-content.  read from cache: #{self.class.cache.read("#{key}-content").inspect}  " 
-    
+    #return current_revision || Revision.new    
     case
     when (@cached_revision and @cached_revision.id==current_revision_id);
     when (@cached_revision=self.class.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
     else
       rev = current_revision_id ? Revision.find(current_revision_id) : Revision.new
       @cached_revision = self.class.cache.write("#{key}-content", rev)
-#      Rails.logger.info "wrote cached revision for key: #{key}-content.  read from cache: #{self.class.cache.read("#{key}-content").inspect}  " 
     end
     @cached_revision
   end
@@ -389,7 +416,6 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # METHODS FOR OVERRIDE
 
-  def update_attachment()                 end
   def post_render( content )     content  end
   def clean_html?()                 true  end
   def collection?()                false  end
@@ -402,14 +428,14 @@ class Card < ActiveRecord::Base
   # MISCELLANEOUS
   
   def to_s()  "#<#{self.class.name}[#{self.typename.to_s}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{m:#{missing}:v:#{virtual}:#{object_id}}>" end
+  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{n:#{new_card?}v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}:r:#{current_revision_id}}:#{@set_names.inspect}>" end
   def mocha_inspect()     to_s                                   end
 
-  def trash
+#  def trash
     # needs special handling because default rails cache lookup uses `@attributes_cache['trash'] ||=`, which fails on "false" every time
-    ac= @attributes_cache
-    ac['trash'].nil? ? (ac['trash'] = read_attribute('trash')) : ac['trash']
-  end
+#    ac= @attributes_cache
+#    ac['trash'].nil? ? (ac['trash'] = read_attribute('trash')) : ac['trash']
+#  end
 
 
 
@@ -431,6 +457,7 @@ class Card < ActiveRecord::Base
 
 
   def cardname() @cardname ||= name_without_cardname.to_cardname end
+  def web_id() new_card? ? cardname.to_url_key : id              end
 
   alias cardname= name=
   def name_with_cardname=(newname)
@@ -467,7 +494,7 @@ class Card < ActiveRecord::Base
 
 
   validates_each :name do |rec, attr, value|
-    if rec.new_card? && (!rec.updates.for(:name) || rec.name.blank?)
+    if rec.new_card? && value.blank?
       if autoname_card = rec.setting_card('autoname')
         User.as(:wagbot) do
           value = rec.name = autoname_card.content
@@ -484,10 +511,10 @@ class Card < ActiveRecord::Base
       #Rails.logger.debug "valid name #{rec.name.inspect} New #{value.inspect}"
       
       
-      unless cdname.valid_cardname?
+      unless cdname.valid?
         rec.errors.add :name,
           "may not contain any of the following characters: #{
-          Wagn::Cardname::CARDNAME_BANNED_CHARACTERS}"
+          Wagn::Cardname::CARDNAME_BANNED_CHARACTERS}[#{cdname}]"
       end
       # this is to protect against using a junction card as a tag-- although it is technically possible now.
       if (cdname.junction? and rec.simple? and rec.left_junctions.size>0)
@@ -519,18 +546,21 @@ class Card < ActiveRecord::Base
   end
 
   validates_each :content do |rec, attr, value|
-    if rec.updates.for?(:content)
+    if rec.new_card? && !rec.updates.for?(:content)
+      value = rec.content = rec.content
+    end
+    if rec.updates.for? :content
       rec.send :validate_content, value
     end
   end
 
   validates_each :typecode do |rec, attr, value|
     # validate on update
-    if rec.updates.for?(:typecode) and !rec.new_record?
+    if rec.updates.for?(:typecode) and !rec.new_card?
       if !rec.validate_type_change
         rec.errors.add :type, "of #{rec.name} can't be changed; errors changing from #{rec.typename}"        
       end
-      if c = Card.new(:name=>'*validation dummy', :typecode=>value) and !c.valid?
+      if c = Card.new(:name=>'*validation dummy', :typecode=>value, :content=>'') and !c.valid?
         rec.errors.add :type, "of #{rec.name } can't be changed; errors creating new #{value}: #{c.errors.full_messages.join(', ')}"
       end      
     end
@@ -556,6 +586,43 @@ class Card < ActiveRecord::Base
       rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
     end
   end
+ 
+  # leftovers from model/system
+  class << self
   
+    def setting(name)
+      User.as :wagbot  do
+        card=Card[name] and !card.content.strip.empty? and card.content
+      end
+    rescue
+      nil
+    end           
+
+    def path_setting(name)
+      name ||= '/'
+      return name if name =~ /^(http|mailto)/
+      Wagn::Conf[:root_path] + name      
+    end
+    
+    def toggle(val) val == '1' end
+
+    # image defaults
+    def image_settings()
+      Wagn::Conf[:favicon] = image_setting('*favicon') ||
+                             image_setting('*logo') ||
+                             "#{Wagn::Conf[:root_path]}/images/favicon.ico"
+      Wagn::Conf[:logo] = image_setting('*logo')
+      logo_file = "#{Wagn::Conf[:root_path]}/public/images/logo.gif"
+      Wagn::Conf[:logo] ||= File.exists?(logo_file) && logo_file
+    end
+
+  protected
+    def image_setting(name)
+      # this is really only for legacy images, and a kluge anyway
+      if content = setting(name) and content.match(/src=\"([^\"]+)/)
+        $~[1]
+      end
+    end
+  end
 end  
 

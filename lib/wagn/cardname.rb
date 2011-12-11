@@ -1,63 +1,57 @@
+# encoding: utf-8
 module Wagn
   class Cardname < Object
     require 'htmlentities'
 
-    NAME2KEY = {}
+    NAME2CARDNAME = {}
 
     JOINT = '+'
     BANNED_ARRAY = [ '/', '~', '|']
     BANNED_RE = /#{'[\\'+JOINT+'\\'+BANNED_ARRAY*"\\"+']'}/
-    CARDNAME_BANNED_CHARACTERS = BANNED_ARRAY * ' ' 
+    CARDNAME_BANNED_CHARACTERS = BANNED_ARRAY * ' '
 
     FORMAL_JOINT = " <span class=\"wiki-joint\">#{JOINT}</span> "
 
+    WORD_RE = RUBY_VERSION =~ /^1\.9/ ? '\p{Word}/' : '/\w/'
 
     class << self
       def new(obj)
         return obj if Cardname===obj
-        allocate.send :initialize, obj
+        str = Array===obj ? obj*JOINT : obj.to_s
+        return obj if obj = NAME2CARDNAME[str]
+        super str
       end
-
-      def each_key(&proc) NAME2KEY.values.uniq.each(&proc) end
     end
 
 
-    attr_reader :s, :simple, :key, :card
+    attr_reader :s, :simple, :parts, :key
     alias to_key key
 
 
-    def initialize(obj)
-      @s = Array===obj ? obj*JOINT : obj.to_s
-      @key = (NAME2KEY[s] ||= generate_key)
-      NAME2KEY[@key] ||= @key
-      self
-    end
-    
-    def generate_key
-      simple? ? 
-        generate_simple_key : 
-        parts.map do |part|
-          partname = part.to_cardname
-          partname.key if !partname.blank?
-        end * JOINT  
+    def initialize(str)
+      @key = if (@s = str.to_s).index(JOINT)
+          @parts = @s.gsub(/\+$/,'+ ').split(JOINT)
+          @simple = false
+          @parts.map{|p| p.to_cardname.key } * JOINT  
+        else
+          @parts = [@s]
+          @simple = true
+          @s.blank? ? '' : generate_simple_key
+        end
+      #@key.to_cardname if @key != @s
+      NAME2CARDNAME[@s] = self
+#      Rails.logger.debug "new:#{self.inspect}"; self
     end
     
     def generate_simple_key
-      decode_html(s).underscore.gsub(/[^\w\*]+/,'_').split(/_+/).reject(&:blank?).map(&:singularize)*'_'
-    end
-
-    def decode_html(s)
-      s.match(/\&/) ?  HTMLEntities.new.decode(s) : s
-    end
-
-    
-    def simple?
-      @simple ||= !s.index(JOINT)
+      decode_html.underscore.gsub(/[^#{WORD_RE}\*]+/,'_').split(/_+/).reject(&:blank?).map(&:singularize)*'_'
     end
     
-    def parts
-      @parts ||= (simple ? [s] : s.gsub(/\+$/,'+ ').split(JOINT))
+    def decode_html
+      @decoded ||= (s.match(/\&/) ?  HTMLEntities.new.decode(s) : s)
     end
+    
+    alias simple? simple
     
     def inspect() "<CardName key=#{key}[#{s}, #{size}]>" end
 
@@ -80,8 +74,10 @@ module Wagn
     end
     def size() parts.size end
 
-
-    def valid_cardname?() not parts.find {|pt| pt.match(BANNED_RE)} end
+    def to_cardname() self end
+    def valid?
+      not (s =~ /\+$/ or parts.find {|pt| pt.match(BANNED_RE)})
+    end
 
     #FIXME codename
     def template_name?() junction? && !!%w{*default *content}.include?(tag_name) end
@@ -99,7 +95,7 @@ module Wagn
       else
         oldpart == parts[0, oldpart.size] ?
           ((self.size == oldpart.size) ? newpart :
-             (newpart.parts+(parts[oldpart.size,].to_a)).to_cardname) : self
+             (newpart.parts+(parts[oldpart.size,].lines.to_a)).to_cardname) : self
       end
     end
 
@@ -117,6 +113,7 @@ module Wagn
     def to_star()     star? ? s : '*'+s                                end
     def star?()       simple? and !!(s=~/^\*/)                         end
     def tag_star?()   !!((simple? ? self : parts[-1])=~/^\*/)          end
+    alias rstar? tag_star?
     def star_rule(star)
       [s, (star = star.to_s) =~ /^\*/ ? star : '*'+star].to_cardname end
 
@@ -127,7 +124,7 @@ module Wagn
     def escape()           s.gsub(' ','_')                             end
 
     def to_url_key()
-      decode_html(s).gsub(/[^\*\w\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
+      @url_key ||= decode_html.gsub(/[^\*#{WORD_RE}\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
     end
 
     def piece_names()
@@ -143,17 +140,6 @@ module Wagn
       args ? parts.map { |p| p =~ /^_/ and args[p] ? args[p] : p }*JOINT : self
     end
 
-    def fullname(context, base, args, params)
-      context = case
-          when base; (base.respond_to?(:cardname) ? base.cardname :
-                      base.respond_to?(:name) ? base.name : base)
-          when args[:base]=='parent'; context.left_name
-          else context
-          end.to_cardname
-      #Rails.logger.info "fullname s(#{inspect}, #{context.inspect}, #{base.inspect}, #{args.inspect}) P:#{params.inspect}"
-      to_absolute( context||self, params )
-    end
-
     def to_absolute_name(rel_name=nil)
       (rel_name || self.s).to_cardname.to_absolute(self)
     end
@@ -164,27 +150,21 @@ module Wagn
 
     def to_absolute(context, params=nil)
       context = context.to_cardname
-      #Rails.logger.info "to_absolute(#{inspect}, #{context.inspect}, #{params.inspect}) T:#{Kernel.caller[0,8]*"\n"}"
       parts.map do |part|
-        #Rails.logger.info "to_abs part(#{part}) #{!!(part =~ /^_/)}, #{params&&params[part]}"
         new_part = case part
-          when /^_user$/i;  (user=User.current_user) ? user.cardname : part
+          when /^_user$/i;            (user=User.current_user) ? user.cardname : part
+          when /^_main$/i;            Wagn::Conf[:main_name]
           when /^(_self|_whole|_)$/i; context
-        #Rails.logger.info "to_abs _self(#{context.inspect})"; context
           when /^_left$/i;            context.trunk_name
-        #Rails.logger.info "to_abs _left(#{context.trunk_name.inspect})"; context.trunk_name
           when /^_right$/i;           context.tag_name
-        #Rails.logger.info "to_abs _right(#{context.tag_name.inspect})"; context.tag_name
           when /^_(\d+)$/i;
             pos = $~[1].to_i
             pos = context.size if pos > context.size
-            #Rails.logger.info "to_abs Dig(#{pos}) #{context.parts.inspect}"
             context.parts[pos-1]
           when /^_(L*)(R?)$/i
             l_s, r_s = $~[1].size, $~[2].blank?
             trunk = context.nth_left(l_s)
             r= r_s ? trunk.to_s : trunk.tag_name
-            #Rails.logger.debug "_LR(#{l_s}, #{r_s}) TR:#{trunk}, R:#{r}"; r
           when /^_/
             (params && ppart = params[part]) ? CGI.escapeHTML( ppart ) : part
           else                     part
@@ -193,20 +173,6 @@ module Wagn
       end * JOINT
     end
 
-    #
-    # Fetch
-    #
-    def card=(card) @card = card end
-      #Rails.logger.info "cardname.card[#{s}]= #{card.inspect} was:#{@card.inspect}"
-    def card_with_new(opts={})
-      self.card = Card.fetch_or_new(s, opts) if card_without_fetch.nil?
-      card_without_fetch
-    end
-    def card_with_fetch(opts={})
-      self.card = Card.fetch(s, opts) if card_without_fetch.nil?
-      card_without_fetch
-    end
-    alias_method_chain :card, :fetch
   end
 end
 

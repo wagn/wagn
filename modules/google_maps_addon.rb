@@ -1,3 +1,4 @@
+require 'net/http'
 class GoogleMapsAddon    
   def self.geocode(address) 
     opts = {

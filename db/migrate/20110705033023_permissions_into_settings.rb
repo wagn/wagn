@@ -80,7 +80,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
           could = card.who_could(task)
           can = Card.new(:name=>"XXXXXHONK+#{base_name}", :skip_defaults=>true).who_can(task==:edit ? :update : task)
           if could && could != can
-            new_rule = create_rule "#{base_name}+*right", task, Card.fetch(could.first, :skip_after_fetch=>true)
+            new_rule = create_rule "#{base_name}+*right", task, Card.fetch(could.first, :skip_modules=>true)
             execute "update cards set read_rule_id=#{new_rule.id}, read_rule_class='*right' " + 
               " where trash is false and tag_id=#{Card[base_name].id}" if task == :read
           end
@@ -104,7 +104,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
           can = card.who_can(task==:edit ? :update : task)
           if could && could != can
             card.repair_key if card.key != card.name.to_key
-            new_rule = create_rule "#{card.name}+*self", task, Card.fetch(could.first, :skip_after_fetch=>true)
+            new_rule = create_rule "#{card.name}+*self", task, Card.fetch(could.first, :skip_modules=>true)
             execute "update cards set read_rule_id=#{new_rule.id}, read_rule_class='*self' " + 
               " where trash is false and id=#{card.id}" if task == :read
             

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
     
 describe Card, "validate name" do
   before(:each) do
@@ -7,12 +7,12 @@ describe Card, "validate name" do
   
   it "should error on name with /" do
     @c = Card.create :name=>"testname/"
-    @c.errors.on(:name).should_not be_blank
+    @c.errors[:name].should_not be_blank
   end
 
   it "should error on junction name  with /" do
     @c = Card.create :name=>"jasmin+ri/ce"
-    @c.errors.on(:name).should_not be_blank
+    @c.errors[:name].should_not be_blank
   end
   
   it "shouldn't create any new cards when name invalid" do
@@ -24,7 +24,7 @@ describe Card, "validate name" do
   it "should not allow empty name" do
     @c = Card.new :name=>""
     @c.valid?.should == false
-    @c.errors.on(:name).should_not be_blank
+    @c.errors[:name].should_not be_blank
   end
   
   # maybe the @c.key= should just throw an error, but now it doesn't take anyway
@@ -33,7 +33,7 @@ describe Card, "validate name" do
     @c.key="foo"  
     @c.key.should == 'test'
     #@c.valid?.should == false
-    #@c.errors.on(:key).should_not be_blank
+    #@c.errors[:key].should_not be_blank
   end
 
 end

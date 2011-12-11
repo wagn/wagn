@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper')
+require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
 
 describe Card do
   describe ".fetch" do
@@ -11,11 +11,7 @@ describe Card do
 
     it "returns nil and caches missing cards" do
       Card.fetch("Zork").should be_nil
-      cardname = "Zork".to_cardname
-      cardname.card.should be_nil
-      assert c=cardname.card_with_new
-      c.missing.should be_true
-      #Card.cache.read("zork").missing.should be_true
+      Card.cache.read("zork").new_card?.should be_true
       Card.fetch("Zork").should be_nil
     end
 
@@ -37,10 +33,16 @@ describe Card do
       card = Card.fetch("Joe User+*email")
       card.should be_instance_of(Card)
       card.name.should == "Joe User+*email"
-      card.content.should == 'joe@user.com'
-      cached_card = Card.cache.read("joe_user+*email")
-      cached_card.missing?.should be_true
-      cached_card.virtual?.should be_true
+      Wagn::Renderer.new(card).render_raw.should == 'joe@user.com'
+      #card.raw_content.should == 'joe@user.com'
+      #cached_card = Card.cache.read("joe_user+*email")
+      #cached_card.missing?.should be_true
+      #cached_card.virtual?.should be_true
+    end
+    
+    it "fetches virtual cards after skipping them" do
+      Card['A+*self'].should be_nil
+      Card.fetch( 'A+*self' ).should_not be_nil
     end
 
     it "does not recurse infinitely on template templates" do
@@ -82,8 +84,8 @@ describe Card do
       end
 
       it "prefers db cards to pattern virtual cards" do
-        Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
-        Card.create!(:name => "a+y", :content => "DB Content")
+        c1=Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
+        c2=Card.create!(:name => "a+y", :content => "DB Content")
         card = Card.fetch("a+y")
         card.virtual?.should be_false
         card.setting('content').should == "Formatted Content"
@@ -101,15 +103,24 @@ describe Card do
       end
 
       it "should recognize pattern overrides" do
-        Card.create!(:name => "y+*right+*content", :content => "Right Content")
+        tc=Card.create!(:name => "y+*right+*content", :content => "Right Content")
+        Rails.logger.info "testing point 0 #{tc.inspect}"
         card = Card.fetch("a+y")
         card.virtual?.should be_true
         card.content.should == "Right Content"
+        Rails.logger.info "testing point 1 #{card.inspect}"
         tpr = Card.create!(:name => "Basic+y+*type plus right+*content", :content => "Type Plus Right Content")
+        Rails.logger.info "testing point 1a #{tpr.inspect}"
+        card.reset_patterns
         card = Card.fetch("a+y")
+        card.reset_patterns
+        Rails.logger.info "testing point 2 #{card.inspect} #{card.content}"
         card.virtual?.should be_true
         card.content.should == "Type Plus Right Content"
         tpr.destroy!
+        Rails.logger.info "testing point 3 #{card.inspect}"
+        card.reset_patterns
+        Rails.logger.info "testing point 4 #{card.inspect}"
         card = Card.fetch("a+y")
         card.virtual?.should be_true
         card.content.should == "Right Content"
@@ -159,7 +170,8 @@ describe Card do
       User.as :wagbot do
         Card.create! :name=>"testsearch+*right+*content", :content=>'{"plus":"_self"}', :type => 'Search'
       end
-      c = Card.fetch_virtual("A+testsearch".to_cardname)
+      c = Card.fetch("A+testsearch".to_cardname)
+      assert c.virtual?
       c.typecode.should == 'Search'
       c.content.should ==  "{\"plus\":\"_self\"}"
     end

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Card, "deleted card" do
   before do User.as(:wagbot)
@@ -141,6 +141,7 @@ describe Card, "revived from trash" do
   
   it "should have a new revision" do
     @c.content.should == 'revived content'
+#    Card.fetch(@c.name).content.should == 'revived content'
   end
 end
         

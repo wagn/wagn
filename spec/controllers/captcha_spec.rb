@@ -1,4 +1,6 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+=begin
+require File.expand_path('../spec_helper', File.dirname(__FILE__))
+include AuthenticatedTestHelper
 
 module CaptchaExampleGroupMethods
   def require_captcha_on(action, params)
@@ -17,8 +19,10 @@ module CaptchaExampleMethods
   end
 end
 
-Spec::Rails::Example::ControllerExampleGroup.extend CaptchaExampleGroupMethods
-Spec::Rails::Example::ControllerExampleGroup.send(:include, CaptchaExampleMethods)
+RSpec::Core::ExampleGroup.extend CaptchaExampleGroupMethods
+RSpec::Core::ExampleGroup.send :include, CaptchaExampleMethods
+#Spec::Rails::Example::ControllerExampleGroup.extend CaptchaExampleGroupMethods
+#Spec::Rails::Example::ControllerExampleGroup.send(:include, CaptchaExampleMethods)
 
 describe CardController, "captcha_required?" do
   before do
@@ -96,3 +100,4 @@ describe AccountController, "with captcha enabled" do
   end
 
 end
+=end

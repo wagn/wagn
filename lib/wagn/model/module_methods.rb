@@ -13,15 +13,6 @@ module Wagn::Model::ModuleMethods
     end
   end
 
-  def valid_constant?(candidate)
-    begin
-      Card.const_defined?( candidate )
-    rescue Exception => e
-      return false
-    end
-    true
-  end
-
   def generate_codename_for(cardname)
     codename = cardname.gsub(/^\W+|\W+$/,'').gsub(/\W+/,'_').camelize
     base, i = codename, 1

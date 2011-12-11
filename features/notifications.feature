@@ -3,9 +3,9 @@ Feature: Notifications
   Users should be able to track changes to Wagn cards from their email
 
   Scenario: Watching a Card
-   Given Joe Admin is watching "Home"
-  And I log in as Joe Admin
-    When Joe User edits "Home" setting content to "Boo!"
+    Given Joe Admin is watching "Home"
+    And I log in as Joe Admin
+    When Joe User edits "Home" setting content to "Boo"
     Then Joe Admin should be notified that "Joe User edited \"Home\""  
 # FIXME:need multiline matching 
     #And He should see "was just edited by Joe User" in the email 

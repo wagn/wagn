@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.expand_path('../test_helper', File.dirname(__FILE__))
 
 #
 # Note that we are using stub rendering here to get links.  This isn't really a very good
@@ -27,14 +27,9 @@ class Wagn::RendererTest < ActiveSupport::TestCase
   end
 
   def slot_link(card, format=:html)
-    render = Wagn::Renderer.new(card, :context=>"nocontext", :format=>format).render(:content)
-    m = render.match(/<(cardlink|link|a) class.*<\/(cardlink|link|a)>/)
-#Rails.logger.info("slot_link(#{card.name},#{card.class}) #{m}, #{m.inspect} R:#{render}")
-    #<card cardId="817" class="transcluded ALL TYPE-basic SELF-kennedy" home_view="content" name="Kennedy" type="Basic">
-    #<cardlink class="wanted-card" card="/wagn/Kennedy%2BMonroe">+Monroe</cardlink>
-    #</card>
-    #
-    (m.to_s != "") ? m.to_s : render
+    result = Wagn::Renderer.new(card, :context=>"nocontext", :format=>format).render(:content)
+    m = result.match(/<(cardlink|link|a) class.*<\/(cardlink|link|a)>/)
+    (m.to_s != "") ? m.to_s : result
   end
 
   def test_slot_render

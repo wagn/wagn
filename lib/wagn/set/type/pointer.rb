@@ -6,20 +6,18 @@ module Wagn::Set::Type::Pointer
     if args[:complete]
       Wql.new({:referred_to_by=>name}.merge(args)).run
     else
-      item_names(args).map {|name|
-        Card.fetch_or_new(name, :skip_defaults=>true) }.compact
+      item_names(args).map do |name|
+        Card.fetch_or_new(name)
+      end.compact
     end
   end
 
   def item_names( args={} )
     context = args[:context] || self.cardname
     links = content.split(/\n+/).map{ |line|
-      #Rails.logger.debug "item Line #{name.inspect}, #{line.inspect}"
       line.gsub(/\[\[|\]\]/,'')}.map{|link|
       r=context==:raw ? link : link.to_cardname.to_absolute(context)
-      #Rails.logger.debug "itemR Link#{name.inspect}, #{link.inspect} > #{r.inspect}"; r
     }
-      #Rails.logger.debug "items Lines #{name.inspect}, #{links.inspect}"; links
   end
 
   def item_type
@@ -46,7 +44,6 @@ module Wagn::Set::Type::Pointer
   
   def options_card
     card = self.setting_card('options')
-    card.after_fetch if card
     (card && card.collection?) ? card : nil
   end
 
@@ -56,7 +53,7 @@ module Wagn::Set::Type::Pointer
 
   def option_text(option)
     name = setting('option label') || 'description'
-    textcard = Card.fetch(option+'+'+name, :skip_virtual => true)
+    textcard = Card["#{option}+#{name}"]
     textcard ? textcard.content : nil
   end
 end

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../test_helper'
+require File.expand_path('../../test_helper', File.dirname(__FILE__))
 class Card::RenameTest < ActiveSupport::TestCase
   
   
@@ -26,6 +26,10 @@ class Card::RenameTest < ActiveSupport::TestCase
     super           
   end
   
+  def test_subdivision
+    assert_rename card("A+B"), "A+B+T"  # re-uses the parent card: A+B
+  end
+  
   def test_rename_name_substitution
     c1, c2 = Card["chuck_wagn+chuck"], Card["chuck"]
     assert_rename c2, "buck"
@@ -36,7 +40,6 @@ class Card::RenameTest < ActiveSupport::TestCase
     assert_rename card("B"), "b"
   end                                     
 
-  
   def test_junction_to_simple
     assert_rename card("A+B"), "K" 
   end
@@ -82,14 +85,13 @@ class Card::RenameTest < ActiveSupport::TestCase
   def test_should_error_card_exists
     @t=card("T"); @t.name="A+B"; 
     assert !@t.save, "save should fail"
-    assert @t.errors.on(:name), "should have errors on key"
+    assert @t.errors[:name], "should have errors on key"
   end
 
   def test_used_as_tag  
     @b=card("B"); @b.name='A+D'; @b.save
-    assert @b.errors.on(:name)
+    assert @b.errors[:name]
   end
-
   
   def test_update_dependents
     c1 =   Card["One"]
@@ -105,14 +107,10 @@ class Card::RenameTest < ActiveSupport::TestCase
     assert_equal ["Uno+Two","Uno+Two+Three","Four+Uno","Four+Uno+Five"], [c12,c123,c41,c415].plot(:reload).plot(:name)
   end     
 
-
-   
-  
   def test_should_error_invalid_name
     @t=card("T"); @t.name="YT_o~Yo"; @t.save
-    assert @t.errors.on(:name)
+    assert @t.errors[:name]
   end  
-  
   
   def test_simple_to_simple
     assert_rename card("A"), "Alephant"
@@ -120,10 +118,6 @@ class Card::RenameTest < ActiveSupport::TestCase
          
   def test_simple_to_junction_with_create
     assert_rename card("T"), "C+J"
-  end
-
-  def test_subdivision
-    assert_rename card("A+B"), "A+B+T"  # re-uses the parent card: A+B
   end
   
   def test_reset_key
@@ -134,11 +128,6 @@ class Card::RenameTest < ActiveSupport::TestCase
     assert Card["Banana Card"] != nil
   end
   
-  def test_update_permissions
-    
-  end
-
-
   private
   
   def with_debugging

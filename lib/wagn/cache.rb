@@ -25,38 +25,43 @@ module Wagn
     
     class << self
       def cache_classes
-        [Card, Cardtype, MultihostMapping, Role, System, User]
+        [Card, Cardtype, MultihostMapping, Role, User]
       end
             
       def initialize_on_startup
         cache_classes.each do |cc|
-          cc.cache = Wagn::Cache.new :class=>cc, :store=>(RAILS_ENV =~ /^cucumber|test$/ ? nil : Rails.cache)
+          #warn "init cache #{cc}"
+          cc.cache = new :class=>cc, :store=>(Rails.env =~ /^cucumber|test$/ ? nil : Rails.cache)
         end
         preload_cache_for_tests if preload_cache?
       end
       
       def preload_cache?
-        RAILS_ENV=='cucumber'
+        Rails.env=='cucumber'
       end
       
       def preload_cache_for_tests
         return unless preload_cache?
         set_keys = ['*all','*all plus','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
         set_keys.map{|k| [k,"#{k}+*content", "#{k}+*default", "#{k}+*read", ]}.flatten.each do |key|        
-          Card.fetch key, :skip_virtual=>true, :skip_after_fetch=>true
+          Card[key]
         end
         Role[:auth]; Role[:anon]
         @@frozen = Marshal.dump([Card.cache, Role.cache])
       end
       
       def system_prefix(klass)
-        cache_env = (RAILS_ENV == 'cucumber') ? 'test' : RAILS_ENV
-        "#{System.host}/#{cache_env}/#{klass}"
+        cache_env = (Rails.env == 'cucumber') ? 'test' : Rails.env
+        "#{Wagn::Conf[:host]}/#{cache_env}/#{klass}"
       end
 
       def re_initialize_for_new_request
         cache_classes.each do |cc|
-          cc.cache.system_prefix = system_prefix(cc)
+          if cc.cache
+            cc.cache.system_prefix = system_prefix(cc)
+          else
+            warn "cache nil? #{cc}"
+          end
         end
         reset_local unless preload_cache?
       end
@@ -90,9 +95,10 @@ module Wagn
     attr_accessor :local
 
     def initialize(opts={})
+      #@klass = opts[:class]
       @store = opts[:store]
       @local = Hash.new
-      self.system_prefix = opts[:prefix] || Wagn::Cache.system_prefix(opts[:class])
+      self.system_prefix = opts[:prefix] || self.class.system_prefix(opts[:class])
     end
 
     def system_prefix=(system_prefix)
@@ -122,9 +128,8 @@ module Wagn
       value
     end
     
-    def write_local key, value
-      @local[key] = value
-    end
+    def write_local(key, value) @local[key] = value end
+    def read_local(key)         @local[key]         end
 
     def fetch key, &block
       fetch_local(key) do
@@ -165,6 +170,7 @@ module Wagn
         @local[key]
       else
         val = yield
+        val.reset_mods if val.respond_to?(:reset_mods)
         @local[key] = val
       end
     end

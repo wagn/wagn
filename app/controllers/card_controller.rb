@@ -1,186 +1,121 @@
 class CardController < ApplicationController
-  helper :wagn, :card
+  helper :wagn
 
-  EDIT_ACTIONS =  [ :edit, :update, :rollback, :save_draft, :watch, :unwatch ]
-  LOAD_ACTIONS = EDIT_ACTIONS + [ :show, :index, :mine, :comment, :remove, :view, :changes, :options, :related ]
+  EDIT_ACTIONS = [ :edit, :update, :rollback, :save_draft, :watch, :unwatch,
+    :create_account, :update_account ]
+  LOAD_ACTIONS =  EDIT_ACTIONS + [ :show_file, :show, :index, :comment,
+    :remove, :view, :changes, :options, :related ]
 
   before_filter :index_preload, :only=> [ :index ]
-  before_filter :mine_preload,  :only=> [ :mine ]
+  before_filter :show_file_preload, :only=> [ :show_file ]
   
   before_filter :load_card!, :only=>LOAD_ACTIONS
+  before_filter :set_main
 
   before_filter :view_ok,   :only=> LOAD_ACTIONS
 #  before_filter :create_ok, :only=>[ :new, :create ]
-  before_filter :update_ok,   :only=> EDIT_ACTIONS
+  before_filter :update_ok, :only=> EDIT_ACTIONS
   before_filter :remove_ok, :only=>[ :remove ]
 
-  before_filter :require_captcha, :only => [ :create, :update, :comment ]
 
-  #----------( Special cards )
 
-  def index_preload
-    User.no_logins? ? 
-      redirect_to( '/admin/setup' ) : 
-      params[:id] = (System.setting('*home') || 'Home').to_cardname.to_url_key
+  #----------( CREATE )
+  
+  def create
+    @card = Card.new params[:card]
+    if @card.save
+      render_success
+    else
+      render_card_errors      
+    end
   end
 
-  def mine_preload()  params[:id] = User.current_user.card.cardname.to_url_key   end  
-  def index() show  end
-  def mine()  show  end
+  def create_or_update
+    if @card = Card[ params[:card][:name] ]
+      update
+    else
+      create
+    end
+  end
 
-  #---------( VIEWING CARDS )
+
+  #----------( READ )
 
   def show
-    params[:_keyword] && params[:_keyword].gsub!('_',' ') # should not be here!!
     save_location if params[:format].nil? || params[:format].to_sym==:html
     render_show
   end
 
-  def render_show
-    render(:text=>render_show_text)
+  def show_file_preload
+    #warn "show preload #{params.inspect}"
+    params[:id] = params[:id].
+      sub(/(-(#{Card::STYLES*'|'}))?(-\d+)?(\.[^\.]*)?$/) {
+        @style = $1.nil? ? 'medium' : $2
+        @rev_id = $3 && $3[1..-1]
+        params[:format] = $4[1..-1] if $4
+        ''
+      }
   end
-  
-  def render_show_text
-    request.format = :html if !params[:format]
-    
-    known_formats = FORMATS.split('|')
-    f_ext = request.parameters[:format]
-    return "unknown format: #{f_ext}" if !known_formats.member?( f_ext )
-    
-    respond_to do |format|
-      known_formats.each do |f|
-        format.send f do
-          return Wagn::Renderer.new(@card, 
-            :format=>f, :flash=>flash, :params=>params, :controller=>self
-          ).render(:show)
-        end
-      end
+
+  def show_file
+    unless !@card||(style=@card.attachment_style(params[:format], @style)).nil?
+      @card.selected_rev_id = @rev_id
+      #warn "show_file #{params.inspect}, #{@card.selected_rev_id}, #{@style}"
+      send_file pth=@card.attach.path(style),
+                :type => @card.attach_content_type,
+                :x_sendfile => true
+      #warn "show file path (#{@style}, #{@rev_id}) #{pth}"
     end
   end
-  
 
-  #----------------( MODIFYING CARDS )
+  def index()    show                  end
+  def view()     render_show           end
+  def changes()  render_show :changes  end
+  def options()  render_show :options  end
+  def related()  render_show :related  end
+  def edit()     render_show :edit     end
 
-  #----------------( creating)
+
   def new
-    @args = (params[:card] ||= {})
-    @args[:name] ||= params[:id] # for ajax (?)
-    @args[:type] ||= params[:type] # for /new/:type shortcut
-    [:name, :type, :content].each {|key| @args.delete(key) unless a=@args[key] and !a.blank?} #filter blank args
-    @args.delete(:attachment_id) # was breaking changes to and away from image / file.  should refactor so this is unnecessary.
+    args = params[:card] || {}
+    params[:type] = ( args[:type] ||= params[:type] ) # for /new/:type shortcut
 
-    if @args[:name] and Card.exists?(@args[:name]) #card exists
-      render :text => "<span>Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>" #ENGLISH
+    @card = Card.new args
+    if @card.ok? :create
+      render_show :new
     else
-      @card = Card.new @args
-      if @card.ok? :create
-        render (request.xhr? ?
-          {:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
-          {:action=> 'new'} #normal
-        )
-      else
-        render_denied('create')
-      end
+      render_denied('create')
     end
   end
 
 
-  def create
-    if card_params = params[:card]
-      raise "why? #{Kernel.caller*"\n"}" if card_params[:cards]
-      #Rails.logger.info "controller create1 #{card_params.inspect}"
-      params[:multi_edit] and card_params[:cards] = params[:cards]
-      #Rails.logger.info "controller create #{card_params.inspect}"
-      @card = Card.create card_params
-    else
-      raise "No card parameters on create"
-    end
+  #--------------( UPDATE )
 
-    # according to rails / prototype docs:
-    # :success: [...] the HTTP status code is in the 2XX range.
-    # :failure: [...] the HTTP status code is not in the 2XX range.
-
-    # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
-    # for now, to get the redirect notice to go in the failure slot where we want it,
-    # we've chosen to render with the (418) 'teapot' failure status:
-    # http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-    handling_errors do
-      @thanks = Wagn::Hook.call( :redirect_after_create, @card ).first ||
-        @card.setting('thanks')
-      case
-        when @thanks.present?;               ajax_redirect_to @thanks
-        when @card.ok?(:read) && main_card?; ajax_redirect_to url_for_page( @card.name )
-        when @card.ok?(:read);               render_show
-        else                                 ajax_redirect_to "/"
-      end
-    end
-  end
-
-  def ajax_redirect_to url
-    @redirect_location = url
-    @message = "Create Successful!"
-    render :action => "ajax_redirect", :status => 418
-  end
-
-
-  #--------------( editing )
-
-  def edit
-    if ['name','type'].member?(params[:attribute])
-      render :partial=>"card/edit/#{params[:attribute]}"
-      #render_cardedit(:part=>params[:attribute])
-    end
-  end
 
   def update
-    card_args=params[:card] || {}
-    #fail "card params required" unless params[:card] or params[:cards]
+    @card = @card.refresh # (cached card attributes often frozen)
+    args=params[:card] || {}
+    args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type]
+    
+    @card.update_attributes(args)
 
-    # ~~~ REFACTOR! -- this conflict management handling is sloppy
-    #Rails.logger.debug "update set current_revision #{@card.name}, #{@card.current_revision}"
-    @current_revision_id = @card.current_revision.id
-    old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
-    if old_revision_id.to_i != @current_revision_id.to_i
-      changes  # FIXME -- this should probably be abstracted?
-      @no_changes_header = true
-      @changes = render_to_string :action=>'changes'
-      return render( :action=>:edit_conflict )
-    end
-    # ~~~~~~  /REFACTOR ~~~~~ #
-
-    @card_args = card_args
-
-    case
-    when params[:multi_edit];
-      #Rails.logger.debug "update[#{@card.name}] #{card_args.inspect}"
-      Card.update(@card.id, :cards=>params[:cards])
-    when card_args[:type]; @card.typecode=Cardtype.classname_for(card_args.delete(:type)); @card.save
-      #can't do this via update attributes: " Can't mass-assign these protected attributes: type"
-      #might be addressable via attr_accessors?
-    else; 
-      #Rails.logger.debug "update[#{@card.name}] #{card_args.inspect}"
-      @card.update_attributes(card_args)
-    end
-
-    if @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1
-      # If there is confirmation error and *only* that error
-      @confirm = (@card.confirm_rename=true)
-      @card.update_referencers = true
-      return render(:partial=>'card/edit/name', :status=>200)
-      #return render_cardedit(:part=>:name, :status=>200)
-    end
-
-    handling_errors do
-      @card = Card.fetch(@card.name)   # wtf?
-      request.xhr? ? render_update_slot(render_show_text, "updated #{@card.name}") : render_show
+    if !@card.errors[:confirmation_required].empty?
+      @card.confirm_rename = @card.update_referencers = true
+      params[:attribute] = 'name'
+      render_show :edit
+    elsif !@card.errors.empty?
+      render_card_errors
+    else
+      render_success
     end
   end
+
+
+  ## the following three methods need to be merged into #update
 
   def save_draft
     @card.save_draft( params[:card][:content] )
-    render(:update) do |page|
-      page.wagn.messenger.log("saved draft of #{@card.name}")
-    end
+    render :text=>'success'
   end
 
   def comment
@@ -198,125 +133,171 @@ class CardController < ApplicationController
     @comment=@comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
     @card.comment = "<hr>#{@comment}<p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!
-    render_update_slot render_to_string(:text=>render_show_text), "comment saved"
-  end
-
-  def rollback
-    load_card_and_revision
-    @card.update_attributes! :content=>@revision.content
-    render_update_slot render_to_string(:text=>render_show_text), "content rolled back"
-  end
-
-  #------------( deleting )
-
-  def remove
-    @card.confirm_destroy = params[:card][:confirm_destroy] if params[:card]
-    captcha_ok = captcha_required? ? verify_captcha : true
-    return render_update_slot( render_to_string(:partial=>'confirm_remove'), "confirmation required") unless captcha_ok
-
-    @card.destroy
-
-    if @card.errors.on(:confirmation_required)
-      return render_update_slot( render_to_string(:partial=>'confirm_remove'), "errors on confirmation")
-    end
-
-    handling_errors do
-      discard_locations_for(@card)
-      render_update_slot do |page,target|
-        if main_card?
-          flash[:notice] =  "#{@card.name} removed"
-          page.wagn.messenger.note "#{@card.name} removed."
-          page.redirect_to previous_location
-        else
-          target.replace %{<div class="faint">#{@card.name} was just removed</div>}
-          page.wagn.messenger.note( "#{@card.name} removed. ")
-        end
-      end
-    end
-  end
-
-  #---------------( tabs )
-
-  def view
     render_show
   end
 
-  def options
-    @extension = @card.extension
+  def rollback
+    revision = @card.revisions[params[:rev].to_i - 1]
+    @card.update_attributes! :content=>revision.content
+    @card.attachment_link revision.id
+    render_show
   end
 
-  def changes
-    load_card_and_revision
-    @show_diff = (params[:mode] != 'false')
-    @previous_revision = @card.previous_revision(@revision)
+
+
+  #------------( DELETE )
+
+  def remove
+    @card.confirm_destroy = params[:confirm_destroy]
+    @card.destroy
+    
+    return render_show(:remove) if !@card.errors[:confirmation_required].empty?  ## renders remove.erb, which is essentially a confirmation box.  
+
+    discard_locations_for(@card) 
+
+    render_success 'REDIRECT: TO-PREVIOUS'
   end
 
-  def related
-    sources = [@card.typename,nil]
-    sources.unshift '*account' if @card.extension_type=='User'
-    @items = sources.map do |root|
-      c = Card.fetch((root ? "#{root}+" : '') +'*related')
-      c && c.item_names
-    end.flatten.compact
-#    @items << 'config'
-    @current = params[:attribute] || @items.first.to_cardname.to_key
+
+  #-------- ( ACCOUNT METHODS )
+  
+  def update_account
+    @extension = @card.extension 
+    
+    if params[:save_roles]
+      User.ok! :assign_user_roles
+      role_hash = params[:user_roles] || {}
+      @extension.roles = Role.find role_hash.keys
+    end
+
+    if @extension && params[:extension]
+      @extension.update_attributes!(params[:extension])
+    end
+    
+    flash[:notice] ||= "Got it!  Your changes have been saved."  #ENGLISH
+    params[:attribute] = :account
+    render_show :options
   end
 
+  def create_account
+    User.ok!(:create_accounts) && @card.ok?(:update)
+    email_args = { :subject => "Your new #{Wagn::Conf[:site_title]} account.",   #ENGLISH
+                   :message => "Welcome!  You now have an account on #{Wagn::Conf[:site_title]}." } #ENGLISH
+    @user, @card = User.create_with_card(params[:user],@card, email_args)
+    raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
+    @extension = User.new(:email=>@user.email)
+#    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
+    params[:attribute] = :account
+    render_show :options
+  end
+
+  
   #-------- ( MISFIT METHODS )
+  
+  
   def watch
-    watchers = Card.fetch_or_new( @card.name + "+*watchers", :skip_virtual=>true, :type => 'Pointer' )
+    watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
+    watchers = watchers.refresh if watchers.frozen?
     watchers.add_item User.current_user.card.name
     #flash[:notice] = "You are now watching #{@card.name}"
-    request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
+    ajax? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
   def unwatch
-    watchers = Card.fetch_or_new( @card.name + "+*watchers", :skip_virtual=>true )
+    watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
+    watchers = watchers.refresh if watchers.frozen?
     watchers.drop_item User.current_user.card.name
     #flash[:notice] = "You are no longer watching #{@card.name}"
-    request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
+    ajax? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
-  def auto_complete_for_navbox
-    if @stub = params['navbox']
-      @items = Card.search( :complete=>@stub, :limit=>8, :sort=>'name' )
-      render :inline=> "<%= navbox_result @items, 'name', @stub %>"
-    else
-      render :inline=> ''
-    end
-  end
-
-  def auto_complete_for_card_name
-    complete = ''
-    # from pointers, the partial text is from fields called  pointer[N]
-    # from the goto box, it is in card[name]
-    params.keys.each do |key|
-      complete = params[key] if key.to_s == 'name'
-      next unless key.to_s =~ /card|pointer/
-      complete = params[key].values[0]
-    end
-    complete = complete.to_s
-    # FIXME - shouldn't we bail here if we don't have anything to complete?
-
-    options_card =
-      (!params[:id].blank? and
-       (pointer_card = Card.fetch_or_new(params[:id], :skip_defaults=>true, :type=>'Pointer')) and
-       pointer_card.options_card)
-
-    search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }
-    @items = options_card ? options_card.item_cards(search_args) : Card.search(search_args)
-
-    render :inline => "<%= auto_complete_result @items, 'name' %>"
-  end
-
-
-  # this should all happen in javascript
+  private
   
-  def add_field # for pointers only
-    load_card if params[:id]
-    @card ||= Card.new(:type=>'Pointer', :skip_defaults=>true)
-    #render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
-    render(:text => Wagn::Renderer.new(@card, :context=>params[:eid]).render(:field, :link=>:add, :index=>params[:index]) )
+  #-------( FILTERS )
+  
+  def index_preload
+    User.no_logins? ? 
+      redirect_to( Card.path_setting '/admin/setup' ) : 
+      params[:id] = (Card.setting('*home') || 'Home').to_cardname.to_url_key
+  end
+  
+  def set_main
+    Wagn::Conf[:main_name] = params[:main] || (@card && @card.name) || '' # will be wagn.main ?
+  end
+  
+  
+  # --------------( LOADING ) ----------
+  def load_card!
+    load_card
+    case
+    when !@card || @card.name.nil? || @card.name.empty?  #no card or no name -- bogus request, deserves error
+      raise Wagn::NotFound, "We don't know what card you're looking for."
+    when @card.known? # default case
+      @card
+    when params[:view] =~ /rule|missing/
+      # FIXME this is a hack so that you can view load rules that don't exist.  need better approach 
+      # (but this is not tested; please don't delete without adding a test) 
+      @card
+    when ajax? || ![nil, 'html'].member?(params[:format])  #missing card, nonstandard request
+      ##  I think what SHOULD happen here is that we render the missing view and let the Renderer decide what happens.
+      raise Wagn::NotFound, "We can't find a card named #{@card.name}"  
+    when @card.ok?(:create)  # missing card, user can create
+      params[:card]={:name=>@card.name, :type=>params[:type]}
+      self.new
+      false
+    else
+      render :action=>'missing' 
+      false     
+    end
+  end
+
+  def load_card
+    return @card=nil unless id = params[:id]
+    return (@card=Card.find(id); @card.include_set_modules; @card) if id =~ /^\d+$/
+    name = Wagn::Cardname.unescape(id)
+    card_params = params[:card] ? params[:card].clone : {}
+    @card = Card.fetch_or_new(name, card_params)
+  end
+
+
+  #---------( RENDER HELPERS)
+  
+  def render_show(view = nil)
+    extension = request.parameters[:format]
+    return "unknown format: #{extension}" unless
+              FORMATS.split('|').member?( extension ) || show_file
+
+    render(:text=> begin
+      respond_to() do |format|
+        format.send(extension) do
+          renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
+          renderer.render_show :view=>view
+        end
+      end
+    end)
+  end
+  
+  def render_success(default_target='TO-CARD')
+    target = params[:success] || default_target
+    redirect = !ajax?
+
+    if target =~ /^REDIRECT:\s*(.+)/
+      redirect, target = true, $1
+    end
+    
+    target = case target
+      when 'TO-PREVIOUS'   ;  previous_location
+      when 'TO-CARD'       ;  @card
+      when /^(http|\/)/    ;  target
+      when /^TEXT:\s*(.+)/ ;  $1
+      else                 ;  Card.fetch_or_new(target)
+      end
+    
+    case
+    when  redirect        ; wagn_redirect ( Card===target ? card_path(target) : target )
+    when  String===target ; render :text => target 
+    else  @card = target  ; render_show
+    end
   end
 
 end

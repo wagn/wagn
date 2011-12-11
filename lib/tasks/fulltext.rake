@@ -2,15 +2,15 @@ namespace :fulltext do
   desc "setup tsearch in postgres"
   task :prepare => :environment do
     cxn = ActiveRecord::Base.connection
-    if System.enable_postgres_fulltext and is_postgresql?(cxn) 
-      db = ActiveRecord::Base.configurations[RAILS_ENV]["database"]
-      user = ActiveRecord::Base.configurations[RAILS_ENV]["username"]    
+    if Wagn::Conf[:enable_postgres_fulltext] and is_postgresql?(cxn) 
+      db = ActiveRecord::Base.configurations[Rails.env]["database"]
+      user = ActiveRecord::Base.configurations[Rails.env]["username"]    
         
       # FIXME get this from somewhere else?
       schema = ENV['WAGN'].blank? ? "public" : ENV['WAGN']
 
        # NOTE: this will only work if the user running the migration has sudo priveleges
-                  tsearch_dir = System.postgres_tsearch_dir ? System.postgres_tsearch_dir : "#{System.postgres_src_dir}/contrib/tsearch2"
+                  tsearch_dir = Wagn::Conf[:postgres_tsearch_dir] ? Wagn::Conf[:postgres_tsearch_dir] : "#{Wagn::Conf[:postgres_src_dir]}/contrib/tsearch2"
       cmd = "cat #{tsearch_dir}/tsearch2.sql | ruby -ne '$_.gsub!(/public/,\"\\\"#{schema}\\\"\"); print' | sudo -u postgres psql #{db}"
       `#{cmd}`
       cmd =  %{ echo "} + 

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Set::Type::Pointer do
   before do
@@ -6,9 +6,11 @@ describe Wagn::Set::Type::Pointer do
   end
   
   context "item_names" do
-    p = Card.new(:name=>'foo', :type=>'Pointer', :content=>"[[Busy]]\n[[Body]]")
-    names = p.item_names
-    names.should == ['Busy', 'Body']
+    it "should return array of names of items referred to by a pointer" do
+      p = Card.new(:name=>'foo', :type=>'Pointer', :content=>"[[Busy]]\n[[Body]]")
+      names = p.item_names
+      names.should == ['Busy', 'Body']
+    end
   end
   
   context "add_item" do
@@ -33,8 +35,11 @@ describe Wagn::Set::Type::Pointer do
   
   context "drop_item" do
     it "remove the link" do
+      Rails.logger.info "testing point 0"
       @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]\n[[John]]"
+      Rails.logger.info "testing point 1 #{@pointer.inspect}"
       @pointer.drop_item "Jane" 
+      Rails.logger.info "testing point 2 #{@pointer.inspect}"
       assert_equal "[[John]]", @pointer.content
     end                                
     

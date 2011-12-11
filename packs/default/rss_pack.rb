@@ -1,12 +1,12 @@
 class Wagn::Renderer::Rss
-  define_view(:show) do
+  define_view(:show) do |args|
     
     xml = Builder::XmlMarkup.new
     xml.instruct! :xml, :version => "1.0"
 
     xml.rss :version => "2.0" do
       xml.channel do
-        xml.title  System.site_title + " : " + card.name.gsub(/^\*/,'')
+        xml.title  Wagn::Conf[:site_title] + " : " + card.name.gsub(/^\*/,'')
         xml.description ""
         xml.link card_url(card)
         begin
@@ -41,8 +41,8 @@ class Wagn::Renderer::Rss
   alias_view(:open_content,{}, :content)
   alias_view(:link,        {}, :closed)
 
-  define_view(:change) do
-    self.requested_view = 'content'
+  define_view(:change) do |args|
+    #self.requested_view = 'content'
     render_view_action('change')
   end
   

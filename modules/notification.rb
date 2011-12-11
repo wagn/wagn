@@ -6,7 +6,7 @@ module Notification
     end
     
     def send_notifications
-#      warn "send notifications called for #{name}. was new card = #{@was_new_card}"
+      #warn "send notifications called for #{name}. was new card = #{@was_new_card}"
       return false if Card.record_userstamps==false
       # userstamps and timestamps are turned off in cases like updating read_rules that are automated and 
       # generally not of enough interest to warrant notification
@@ -23,8 +23,9 @@ module Notification
       @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)      
       
       watcher_watched_pairs.reject {|p| @trunk_watchers.include?(p.first) }.each do |watcher, watched|
-        next unless watcher
-        Mailer.deliver_change_notice( watcher, self, action, watched, nested_notifications )
+        next unless watcher && mail=Mailer.change_notice(
+                 watcher, self, action, watched, nested_notifications )
+        mail.deliver
       end
       
       if nested_edit
@@ -33,7 +34,7 @@ module Notification
       else
         @trunk_watcher_watched_pairs.compact.each do |watcher, watched|
           next unless watcher
-          Mailer.deliver_change_notice( watcher, self.trunk, 'updated', watched, [[name, action]], self )
+          Mailer.change_notice( watcher, self.trunk, 'updated', watched, [[name, action]], self ).deliver
         end
       end
     end  
@@ -88,7 +89,7 @@ module Notification
 
   module RendererHelperMethods
     def watch_link 
-      return "" unless logged_in?   
+      return "" unless User.logged_in?   
       return "" if card.virtual? 
       me = User.current_user.card.name          
       if card.typecode == "Cardtype"
@@ -112,12 +113,13 @@ module Notification
       me = User.current_user.card.cardname   
 
       if card.card_watchers.include?(me) or card.typecode != 'Cardtype' && card.watchers.include?(me)
-        link_to_action( "unwatch#{type_link}", 'unwatch', {:update=>id("watch-link")},{
-   :title => "stop getting emails about changes to #{card.name}#{type_msg}"})
+        link_to_action( "unwatch#{type_link}", :unwatch, :class=>'watch-toggle',
+          :title => "stop getting emails about changes to #{card.name}#{type_msg}"
+        )
       else
-       link_to_action( "watch#{type_link}", 'watch',
-         {:update=>id("watch-link")},
-         {:title=>"get emails about changes to #{card.name}#{type_msg}" } )
+        link_to_action( "watch#{type_link}", :watch, :class=>'watch-toggle',
+          :title=>"get emails about changes to #{card.name}#{type_msg}"
+        )
       end
     end
   end

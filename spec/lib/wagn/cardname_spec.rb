@@ -1,4 +1,5 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+# encoding: utf-8
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Cardname do
   
@@ -135,13 +136,13 @@ describe Wagn::Cardname do
 
   describe "#valid" do
     it "accepts valid names" do
-      "this+THAT".to_cardname.should be_valid_cardname
-      "THE*ONE*AND$!ONLY".to_cardname.should be_valid_cardname
+      "this+THAT".to_cardname.should be_valid
+      "THE*ONE*AND$!ONLY".to_cardname.should be_valid
     end           
     
     it "rejects invalide names" do
-      "Tes~sd".to_cardname.should_not be_valid_cardname
-      "TEST/DDER".to_cardname.should_not be_valid_cardname
+      "Tes~sd".to_cardname.should_not be_valid
+      "TEST/DDER".to_cardname.should_not be_valid
     end
   end         
   
@@ -172,9 +173,11 @@ describe Wagn::Cardname do
   end
 
   describe "#replace_part" do
-    'a+b'.to_cardname.replace_part('a','x').to_s.should == 'x+b'
-    'a+b'.to_cardname.replace_part('b','x').to_s.should == 'a+x'
-    'a+b+c'.to_cardname.replace_part('a+b','x').to_s.should == 'x+c'
-    'a+b+c'.to_cardname.replace_part('b+c','x').to_s.should == 'a+b+c'    
+    it "replaces name parts" do
+      'a+b'.to_cardname.replace_part('a','x').to_s.should == 'x+b'
+      'a+b'.to_cardname.replace_part('b','x').to_s.should == 'a+x'
+      'a+b+c'.to_cardname.replace_part('a+b','x').to_s.should == 'x+c'
+      'a+b+c'.to_cardname.replace_part('b+c','x').to_s.should == 'a+b+c'
+    end
   end  
 end

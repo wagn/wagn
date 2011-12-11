@@ -5,6 +5,7 @@ module Wagn::Model::Attach
       else
         (rev=Revision.find_by_id(selected_rev_id)) && rev.content
       end
+    #warn "aa #{rev_id.inspect}, #{rev&&rev.id} #{selected_rev_id}}\ncc #{c}"
     !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/) 
   end
 
@@ -18,7 +19,10 @@ module Wagn::Model::Attach
     end
   end
     #r=warn "Afn #{r}"; r
-  def attach_file_name() attach_array[0] end
+  def attach_file_name()
+    r=attach_array[0]
+    raise "fn nil ???" if r.nil?; r
+  end
   def attach_content_type() attach_array[1] end
   def attach_file_size() attach_array[2] end
 
@@ -37,8 +41,8 @@ module Wagn::Model::Attach
   def before_post_attach
     ext = $1 if attach_file_name =~ /\.([^\.]+)$/
     self.attach.instance_write :file_name, "#{self.key.gsub('*','X').camelize}.#{ext}"
-    #warn "attach post #{self}, #{attach_file_name}"
-    typecode == 'Image'
+    warn "attach post #{self}, #{attach_file_name}"
+    typecode == 'Image' # returning true enables thumnail creation
   end
 
   #def item_names(args={}) [self.cardname] end
@@ -67,9 +71,7 @@ module Paperclip::Interpolations
   end
 
   def file_ext(at, style_name)
-    #r= at.instance.attach_file_name =~ /\.([^\.]*)$/ && $1
-    r= (at.instance.attach_file_name =~ /\.([^\.]*)$/) && $1
-    warn "file_ext #{at.instance.attach_file_name}, #{r.inspect}"; r
+    (at.instance.attach_file_name =~ /\.([^\.]*)$/) && $1
   end
 
   def revision_id(at, style_name)

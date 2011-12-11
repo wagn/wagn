@@ -33,7 +33,6 @@ module WagnHelper
         nil_given ? current : current.subrenderer(card)
       else
         opts = { :controller => self.controller }
-        opts[:relative_content] = opts[:params] = (controller and params) or {}        
         Wagn::Renderer.current_slot = Wagn::Renderer.new( card, opts )
       end
   end

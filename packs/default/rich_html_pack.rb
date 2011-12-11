@@ -26,7 +26,7 @@ class Wagn::Renderer::Html
     layout_content = get_layout_content(args)
     
     args[:action]="view"  
-    args[:relative_content] = args[:params] = params 
+    args[:params] = params 
     #warn "render_layout #{card}, #{penv}, #{layout_content}, #{args.inspect}"
     
     process_content(layout_content, args)
@@ -102,8 +102,8 @@ class Wagn::Renderer::Html
     if ajax_call?
       new_content :cancel_href=>path(:view, :view=>:missing), :cancel_class=>'standard-slotter'
     else
-     @title = "New Card"  #this doesn't work.
-     %{
+      @title = "New Card"  #this doesn't work.
+      %{
         <h1 class="page-header">
           New #{ card.typecode == 'Basic' && '' || card.typename } Card
         </h1>

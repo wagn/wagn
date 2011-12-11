@@ -30,6 +30,8 @@ module Wagn::Model::Attach
   def attach_content_type=(v) attach_array_set(1, v) if v end
   def attach_file_size=(v) attach_array_set(2, v) if v end
 
+  STYLES = %w{icon small medium large}
+
   def attachment_style(ext, style)
     # FIXME: test extension matches content type
     case typecode
@@ -38,6 +40,27 @@ module Wagn::Model::Attach
     end
   end
   
+  def attachment_link(rev_id)
+    if styles = case typecode
+          when 'File'; ['']
+          when 'Image'; STYLES
+        end
+      warn "al #{rev_id}, #{selected_rev_id}, #{current_revision.id}"
+      save_rev_id = selected_rev_id
+      self.selected_rev_id = rev_id
+      warn "al #{rev_id}, #{selected_rev_id}"
+      links = {}
+      styles.each {|style| links[style] = attach.path(style) }
+      self.selected_rev_id = current_revision.id
+      warn "al #{rev_id}, #{selected_rev_id}, #{current_revision.id}"
+      styles.each {|style|
+        warn "link to new rev #{links[style]}, #{attach.path(style)}"
+        File.link  links[style], attach.path(style)}
+      self.selected_rev_id = save_rev_id
+      warn "al #{rev_id}, #{save_rev_id}, #{selected_rev_id}"
+    end
+  end
+
   def before_post_attach
     ext = $1 if attach_file_name =~ /\.([^\.]+)$/
     self.attach.instance_write :file_name, "#{self.key.gsub('*','X').camelize}.#{ext}"
@@ -46,7 +69,6 @@ module Wagn::Model::Attach
   end
 
   #def item_names(args={}) [self.cardname] end
-  STYLES = %w{icon small medium large}
 
   def self.included(base)
     base.class_eval do
@@ -75,7 +97,7 @@ module Paperclip::Interpolations
   end
 
   def revision_id(at, style_name)
-    #warn "rev id #{at.instance.selected_rev_id}, #{at.instance.current_revision.id}"
+    warn "rev id #{at.instance.selected_rev_id}, #{at.instance.current_revision.id}"
     at.instance.selected_rev_id
   end
 end

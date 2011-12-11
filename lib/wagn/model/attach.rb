@@ -28,7 +28,7 @@ module Wagn::Model::Attach
 
   def attachment?(ext)
     # FIXME: test extension matches content type
-    %w{File Image}.member? card.typecode
+    %w{File Image}.member? typecode
   end
   
   def before_post_attach
@@ -39,6 +39,7 @@ module Wagn::Model::Attach
   end
 
   #def item_names(args={}) [self.cardname] end
+  STYLES = %w{icon small medium large}
 
   def self.included(base)
     base.class_eval do

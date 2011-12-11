@@ -26,9 +26,12 @@ module Wagn::Model::Attach
   def attach_content_type=(v) attach_array_set(1, v) if v end
   def attach_file_size=(v) attach_array_set(2, v) if v end
 
-  def attachment?(ext)
+  def attachment_style(ext, style)
     # FIXME: test extension matches content type
-    %w{File Image}.member? typecode
+    case typecode
+    when 'File'; ''
+    when 'Image'; style||:medium
+    end
   end
   
   def before_post_attach
@@ -64,7 +67,9 @@ module Paperclip::Interpolations
   end
 
   def revision_id(at, style_name)
-    (cr=at.instance.current_revision) && cr.id || 0
+    #warn "rev id #{at.instance.selected_rev_id}, #{at.instance.current_revision.id}"
+    (inst=at.instance).selected_rev_id ||
+      (cr=inst.current_revision) && cr.id || 0
   end
 end
 

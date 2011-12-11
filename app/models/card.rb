@@ -17,7 +17,7 @@ class Card < ActiveRecord::Base
   before_destroy :destroy_extension, :base_before_destroy
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards, :set_mods_loaded,
-    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual, :type_args
+    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual, :type_args, :selected_rev_id
 
   before_save :base_before_save, :set_read_rule, :set_tracked_attributes, :set_extensions
   after_save :base_after_save, :update_ruled_cards

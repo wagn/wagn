@@ -47,18 +47,25 @@ class CardController < ApplicationController
   end
 
   def show_file_preload
-    params[:id] = params[:id].gsub(/(-#{Card::STYLES*'|'})?(-\d+)?/,'')
-    @style = $1.nil? ? 'medium' : $1[1,]
-    #@rev = $2[1,] if $2
+    #warn "show preload #{params.inspect}"
+    params[:id] = params[:id].
+      sub(/(-(#{Card::STYLES*'|'}))?(-\d+)?(\.[^\.]*)?$/) {
+        @style = $1.nil? ? 'medium' : $2
+        @rev_id = $3 && $3[1..-1]
+        params[:format] = $4[1..-1] if $4
+        ''
+      }
   end
+
   def show_file
-    if @card && @card.attachment?(params[:format])
-      warn "show_file #{params.inspect}, #{@style}"
-      send_file @card.attach.path(@style),
+    unless !@card||(style=@card.attachment_style(params[:format], @style)).nil?
+      @card.selected_rev_id = @rev_id
+      #warn "show_file #{params.inspect}, #{@card.selected_rev_id}, #{@style}"
+      send_file pth=@card.attach.path(style),
                 :type => @card.attach_content_type,
                 :x_sendfile => true
+      #warn "show file path (#{@style}, #{@rev_id}) #{pth}"
     end
-    warn "show_file 2"
   end
 
   def index()    show                  end

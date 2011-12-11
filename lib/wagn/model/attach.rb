@@ -1,23 +1,23 @@
 module Wagn::Model::Attach
-  def attach_array()
-    c=self.content
-    #warn "attach_array #{c}"
-    if !(c=self.content) || c =~ /^\s*<img /
-       ['','','']
+  def attach_array(rev_id=nil)
+    c=if rev_id # if this is passed in, it is for update, so current content
+        self.content
       else
-        c.split(/\n/) 
+        (rev=Revision.find_by_id(selected_rev_id)) && rev.content
       end
+    !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/) 
   end
 
   def attach_array_set(i, v)
     #Rails.logger.debug "attach_set #{inspect} [#{i.inspect}] = #{v}"
-    c = attach_array
+    c = attach_array(current_revision.id)
     if c[i] != v
       c[i] = v
       #warn "update #{i} #{v}"
       self.content = c*"\n"
     end
   end
+    #r=warn "Afn #{r}"; r
   def attach_file_name() attach_array[0] end
   def attach_content_type() attach_array[1] end
   def attach_file_size() attach_array[2] end
@@ -46,9 +46,9 @@ module Wagn::Model::Attach
 
   def self.included(base)
     base.class_eval do
-      has_attached_file :attach,
-        :url => ":base_url/:basename-:size:revision_id.:extension",
-        :path => ":local/:card_id/:size:revision_id.:extension",
+      has_attached_file :attach, :preserve_files=>true,
+        :url => ":base_url/:basename-:size:revision_id.:file_ext",
+        :path => ":local/:card_id/:size:revision_id.:file_ext",
         :styles => { :icon   => '16x16#', :small  => '75x75#',
                    :medium => '200x200>', :large  => '500x500>' } 
 
@@ -66,10 +66,15 @@ module Paperclip::Interpolations
     (at.instance.typecode != 'File'||style_name.blank?) && "#{style_name}-"||''
   end
 
+  def file_ext(at, style_name)
+    #r= at.instance.attach_file_name =~ /\.([^\.]*)$/ && $1
+    r= (at.instance.attach_file_name =~ /\.([^\.]*)$/) && $1
+    warn "file_ext #{at.instance.attach_file_name}, #{r.inspect}"; r
+  end
+
   def revision_id(at, style_name)
     #warn "rev id #{at.instance.selected_rev_id}, #{at.instance.current_revision.id}"
-    (inst=at.instance).selected_rev_id ||
-      (cr=inst.current_revision) && cr.id || 0
+    at.instance.selected_rev_id
   end
 end
 

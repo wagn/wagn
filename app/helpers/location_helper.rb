@@ -13,9 +13,12 @@ module LocationHelper
   # you had to confirm before removing.
   #
   def location_history
+    warn "sess #{session.class}, #{session.object_id}"
     session[:history] ||= ['/']
+    if session[:history]
     session[:history].shift if session[:history].size > 5
     session[:history]
+    end
   end
 
   def save_location
@@ -24,7 +27,7 @@ module LocationHelper
   end
 
   def previous_location
-    @previous_location ||= location_history.last
+    @previous_location ||= location_history.last if location_history
   end
 
   def discard_locations_for(card)

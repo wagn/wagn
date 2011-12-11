@@ -9,8 +9,8 @@ module Wagn
     def []=(key, value) config_hash[key&&key.to_sym||key]=value end
       
     DEFAULT_YML= %{
-      base_url: http://localhost:3000/
       max_renders: 8
+      role_tasks: [administrate_users, create_accounts, assign_user_roles]
     }
 
     # from sample_wagn.rb
@@ -39,49 +39,46 @@ module Wagn
 
       hash.symbolize_keys!
 
-      base_u = hash[:base_url]
-      raise "no base url???" unless base_u
-      #base_u = 'http://' + request.env['HTTP_HOST'] if !base_u and request and request.env['HTTP_HOST']
-      hash[:base_url] = base_u.gsub!(/\/$/,'')
-      unless hash[:host]
-        hash[:host] = base_u.gsub(/^http:\/\//,'').gsub(/\/.*/,'')
-      end
-      hash[:root_path] ||= begin
+      if base_u = hash[:base_url]
+
+        hash[:base_url] = base_u.gsub!(/\/$/,'')
+        hash[:host] = base_u.gsub(/^http:\/\//,'').gsub(/\/.*/,'') unless hash[:host]
+        hash[:root_path] ||= begin
           epath = ENV['RAILS_RELATIVE_URL_ROOT'] 
           epath && epath != '/' ? epath : ''
         end
-      hash[:role_tasks] =
-        %w{ administrate_users create_accounts assign_user_roles }
+      end
 
       hash[:site_title] = Card.setting('*title') || 'Wagn'
+
+      hash[:attachment_storage_dir] ||= "#{Rails.root}/public/files"
+      hash[:attachment_base_url] ||= hash[:root_path] + '/files'
       # bit of a kludge. 
       Card.image_settings
 
-      Rails.logger.debug "hash #{hash.inspect}"
-      raise "no root path" unless hash[:root_path]
+      Rails.logger.debug("hash #{hash.map(&:inspect)*"\n"}")
       hash
     end
 
     def wagn_run
       Rails.logger.debug "wagn_run ... #{config_hash}" # leave a ref here
-      STDERR << "----------- Wagn Starting 0 -----------\n"
+      #STDERR << "----------- Wagn Starting 0 -----------\n"
       wagn_setup_multihost
-      STDERR << "----------- Wagn Starting 1 -----------\n"
+      #STDERR << "----------- Wagn Starting 1 -----------\n"
       Wagn::Cache.initialize_on_startup      
-      STDERR << "----------- Wagn Starting 2 -----------\n"
+      #STDERR << "----------- Wagn Starting 2 -----------\n"
       wagn_load_modules
-      STDERR << "----------- Wagn reloaded 3 -----------\n"
-      return if Wagn::Conf[:running]
-      warn "why aren't we runnign yet?"
-      #wagn_init
+      #STDERR << "----------- Wagn reloaded 3 -----------\n"
     end
 
     def wagn_init
-      STDERR << "----------- Wagn Starting 1.5 -----------\n"
+      #STDERR << "----------- Wagn init 0 -----#{Wagn::Conf[:running]}-----\n"
+      return if Wagn::Conf[:running]
+      #STDERR << "----------- Wagn init 1 --#{wagn_database_ready?}-------\n"
       return unless wagn_database_ready?
-      STDERR << "----------- Wagn init 1 -----------\n"
-      wagn_load_modules
-      STDERR << "----------- Wagn Starting 3 -----------\n"
+      #STDERR << "----------- Wagn init 2 -----------\n"
+      #wagn_load_modules
+      #STDERR << "----------- Wagn Starting 3 -----------\n"
       Wagn::Conf[:running] = true
       Rails.logger.info "----------- Wagn Rolling -----------\n\n\n"
     end

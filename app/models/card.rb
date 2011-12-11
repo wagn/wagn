@@ -17,7 +17,7 @@ class Card < ActiveRecord::Base
   before_destroy :destroy_extension, :base_before_destroy
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards, :set_mods_loaded,
-    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual, :type_args
+    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual, :type_args, :selected_rev_id
 
   before_save :base_before_save, :set_read_rule, :set_tracked_attributes, :set_extensions
   after_save :base_after_save, :update_ruled_cards
@@ -28,11 +28,6 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INITIALIZATION METHODS
   
-  def self.cache=(v)
-    warn "cache= #{v} #{caller[0..8]*' '}"
-    @@cache=v
-  end
-
   def self.new(args={}, options={})
     args = (args || {}).stringify_keys
     @@junk_args.map { |a| args.delete(a) }
@@ -371,6 +366,8 @@ class Card < ActiveRecord::Base
     raise "???, #{name}, #{t}, #{c}" if r.nil? or r==false
     r
   end
+
+  def selected_rev_id() @selected_rev_id || (cr=current_revision)&&cr.id || 0 end
 
   def cached_revision
     #return current_revision || Revision.new    

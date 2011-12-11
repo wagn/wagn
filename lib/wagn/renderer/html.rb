@@ -259,9 +259,10 @@ module Wagn
         :class=>"standard-slotter", :remote=>true
     end
 
-    def rollback
+    def rollback(to_rev=nil)
+      to_rev ||= @revision_number
       if card.ok?(:update) && !(card.current_revision==@revision)
-        link_to 'Save as current', path(:rollback, :rev=>@revision_number),
+        link_to 'Save as current', path(:rollback, :rev=>to_rev),
           :class=>'standard-slotter', :remote=>true
       end
     end

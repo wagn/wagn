@@ -6,7 +6,7 @@ Feature: Seeing a card
     Given I log in as Joe User
     #test authentication separately
   
-  @javascript
+#  @javascript
   Scenario: Home page visit 
     When I go to the homepage
     Then I should see "Home"

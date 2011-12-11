@@ -2,18 +2,7 @@ module Wagn
   class Renderer::Html < Renderer
 
     attr_accessor  :options_need_save, :start_time, :skip_autosave
-
-    def initialize(card, opts=nil)
-      super
-      @mode = :view
-      @renders = {}
-
-      if card and card.collection? and item_param=params[:item]
-        @item_view = item_param if !item_param.blank?
-      end
-    end
-
-  ### --- render action declarations --- wrapped views are defined for slots
+    DEFAULT_ITEM_VIEW = :closed
 
     # these initialize the content of missing builtin layouts
     LAYOUTS = { 'default' => %{
@@ -313,7 +302,5 @@ module Wagn
     def autosave_revision
        revision_link("Autosaved Draft", card.revisions.count, 'to autosave')
     end
-    
-
   end
 end

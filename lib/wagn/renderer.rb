@@ -8,6 +8,7 @@ module Wagn
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     UNDENIABLE_VIEWS = [ :deny_view, :edit_virtual, :too_slow, :too_deep, :missing, :closed_missing, :name, :link, :url ]
     INCLUSION_MODES  = [ :main, :closed, :edit, :layout ]
+    DEFAULT_ITEM_VIEW = :link
   
     RENDERERS = {
       :html => :Html,
@@ -129,6 +130,11 @@ module Wagn
       
       @char_count = @depth = 0
       @root = self
+      
+      if card && card.collection? && params[:item] && !params[:item].blank?
+        @item_view = params[:item]
+      end
+      
     end
 
 
@@ -150,8 +156,6 @@ module Wagn
     end
     
     def render(view=:view, args={})
-      args[:home_view] ||= view
-      #warn "render_#{canonicalize_view view}(#{args.inspect})"
       send("render_#{canonicalize_view view}", args)
     end
     
@@ -251,7 +255,7 @@ module Wagn
       return expand_main(opts) if tname=='_main' && !ajax_call? #&& @depth==0 
       # restore @depth condition above when layouts are set-addressable
       opts[:view] = canonicalize_view opts[:view]
-      opts[:home_view] = opts[:view] ||= ( @mode == :layout ? :core : :content )
+      opts[:view] ||= ( @mode == :layout ? :core : :content )
       
       tcardname = tname.to_cardname
       opts[:fullname] = tcardname.to_absolute(card.cardname, params)
@@ -301,18 +305,18 @@ module Wagn
   
       new_card = tcard.new_card? && !tcard.virtual?
   
-      requested_view = options[:home_view] = (options[:view] || :content).to_sym
-#      sub.requested_view = requested_view
+      requested_view = (options[:view] || :content).to_sym
+      options[:home_view] = requested_view == :closed ? :open : requested_view
       approved_view = case
 
-        when [:name, :link, :linkname, :closed_rule, :open_rule].member?(requested_view)  ; requested_view
+        when [:name, :link, :linkname, :new, :closed_rule, :open_rule].member?(requested_view)  ; requested_view
         when @mode == :edit
          tcard.virtual? ? :edit_virtual : :edit_in_form
         when new_card
-          case requested_view
-          when :raw ; :blank
-          when :new ; :new
-          else; @mode==:closed ? :closed_missing : :missing
+          case
+          when requested_view == :raw ; :blank
+          when @mode == :closed       ; :closed_missing
+          else                        ; :missing
           end
         when @mode==:closed     ; :closed_content
         else                    ; requested_view

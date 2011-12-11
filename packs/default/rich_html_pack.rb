@@ -1,7 +1,6 @@
 class Wagn::Renderer::Html
   define_view(:show) do |args|
-    home_view = params[:home_view]=='closed' ? :open : params[:home_view]
-    @main_view = args[:view] || params[:view] || home_view || :open
+    @main_view = args[:view] || params[:view] || params[:home_view] || :open
     
     if ajax_call?
       self.render(@main_view)
@@ -144,7 +143,7 @@ class Wagn::Renderer::Html
 
       %{
       #{ hidden_field_tag :success, card.setting('thanks') || 'TO-CARD' }
-      #{ hidden_field_tag :home_view, params[:home_view] || :open}
+
       <div class="card-header">
         #{ 
         if hide_type

@@ -7,6 +7,7 @@ describe Wagn::Renderer, "" do
   before do
     User.current_user = :joe_user
     Wagn::Renderer.current_slot = nil
+    Wagn::Renderer.ajax_call = false
   end
 
   def simplify_html string
@@ -98,7 +99,7 @@ describe Wagn::Renderer, "" do
 
     it "content" do
       result = render_card(:content, :name=>'A+B')
-      assert_view_select result, 'div[class="card-slot content-view ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"][home_view="content"]' do 
+      assert_view_select result, 'div[class="card-slot content-view ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]' do 
         assert_select 'span[class~="content-content content"]'
       end
     end
@@ -116,7 +117,7 @@ describe Wagn::Renderer, "" do
     it "titled" do
       result = render_card(:titled, :name=>'A+B')
       #warn "titled result = #{result}"
-      assert_view_select result, 'div[home_view="titled"]' do
+      assert_view_select result, 'div[class~="titled-view"]' do
         assert_select 'h1' do
           assert_select 'span', 3
         end
@@ -130,7 +131,7 @@ describe Wagn::Renderer, "" do
       end
 
       it "should have the appropriate attributes on open" do
-        assert_view_select @ocslot.render(:open), 'div[home_view="open"][class="card-slot open-view ALL TYPE-basic SELF-a"]' do
+        assert_view_select @ocslot.render(:open), 'div[class="card-slot open-view ALL TYPE-basic SELF-a"]' do
           assert_select 'div[class="card-header"]' do
             assert_select 'div[class="title-menu"]'
           end
@@ -140,7 +141,7 @@ describe Wagn::Renderer, "" do
 
       it "should have the appropriate attributes on closed" do
         v = @ocslot.render(:closed)
-        assert_view_select v, 'div[home_view="closed"][class="card-slot closed-view ALL TYPE-basic SELF-a"]' do
+        assert_view_select v, 'div[class="card-slot closed-view ALL TYPE-basic SELF-a"]' do
           assert_select 'div[class="card-header"]' do
             assert_select 'div[class="title-menu"]'
           end
@@ -153,34 +154,17 @@ describe Wagn::Renderer, "" do
       before do
         User.as :wagbot do
           card = Card['A+B']
+          warn "card = #{card.inspect}"
           @simple_page = Wagn::Renderer::Html.new(card).render(:layout)
         end
       end
 
-
-# looks like be_html_with does weird things with head and body??
-#      it "renders body with id" do
-#        @simple_page.should be_html_with do
-#          body(:id=>"wagn") {}
-#        end
-#      end
-#
-#      it "renders head" do
-#        @simple_page.should be_html_with do
-#          head() {
-#            title() {
-#              text('- My Wagn')
-#            }
-#          }
-#        end
-#      end
 
       it "renders top menu" do
         assert_view_select @simple_page, 'div[id="menu"]' do
           assert_select 'a[class="internal-link"][href="/"]', 'Home'
           assert_select 'a[class="internal-link"][href="/recent"]', 'Recent'
           assert_select 'form[id="navbox-form"][action="/*search"]' do
-            #assert_select 'a[id="navbox_image"][title="Search"]'
             assert_select 'input[name="_keyword"]'
           end
         end
@@ -343,7 +327,7 @@ describe Wagn::Renderer, "" do
 
     it "are used in new card forms" do
       User.as :joe_admin
-      content_card = Card.create!(:name=>"Cardtype E+*type+*content", :content=>"{{+Yoruba}}" )
+      content_card = Card.create!(:name=>"Cardtype E+*type+*content",  :content=>"{{+Yoruba}}" )
       help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
       card = Card.new(:type=>'Cardtype E')
       card.should_receive(:setting_card).with("autoname").and_return(nil)

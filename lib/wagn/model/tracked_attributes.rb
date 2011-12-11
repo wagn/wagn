@@ -64,7 +64,6 @@ module Wagn::Model::TrackedAttributes
     end
           
     Cardtype.cache.reset if typecode=='Cardtype'
-    warn "expiring card cache for #{@old_name.to_cardname.key}"
     Wagn::Cache.expire_card(@old_name.to_cardname.key)
     @name_changed = true          
     @name_or_content_changed=true

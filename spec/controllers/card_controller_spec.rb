@@ -121,7 +121,7 @@ describe CardController do
 
       it "creates card with subcards" do
         login_as :wagbot
-        xhr :post, :create, :redirect=>'/', :card=>{
+        xhr :post, :create, :success=>'REDIRECT: /', :card=>{
           :name  => "Gala", 
           :type  => "Fruit",
           :cards => {
@@ -143,21 +143,21 @@ describe CardController do
    
     it "redirects to thanks if present" do
       login_as :wagbot
-      xhr :post, :create, :redirect=>'/thank_you', :card => { "name" => "Wombly" }
+      xhr :post, :create, :success => 'REDIRECT: /thank_you', :card => { "name" => "Wombly" }
       assert_response 303, "/thank_you"
     end
 
     it "redirects to card if thanks is blank" do
       login_as :wagbot
-      post :create, :redirect=>'TO_CARD', "card" => { "name" => "Joe+boop" }
+      post :create, :success => 'REDIRECT: TO-CARD', "card" => { "name" => "Joe+boop" }
       assert_redirected_to "/wagn/Joe+boop"
     end
    
-    it "redirects to home if not createable and thanks not specified" do
+    it "redirects to previous" do
       # Fruits (from shared_data) are anon creatable but not readable
       login_as :anon
-      post :create, :redirect=>'TO_CARD', "card" => { "type"=>"Fruit", :name=>"papaya" }
-      assert_redirected_to "/"
+      post :create, { :success=>'REDIRECT: TO-PREVIOUS', "card" => { "type"=>"Fruit", :name=>"papaya" } }, :history=>['/blam']
+      assert_redirected_to "/blam"
     end    
   end
 
@@ -170,7 +170,6 @@ describe CardController do
       login_as(:anon)     
       get :new, :type=>"Fruit"
       assert_response :success
-      assert_template "new"
     end
 
     it "new with existing card" do
@@ -210,7 +209,6 @@ describe CardController do
       it "handles nonexistent card" do
         get :show, {:id=>'Sample_Fako'}
         assert_response :success   
-        assert_template 'new'
       end
 
       it "handles nonexistent card without create permissions" do
@@ -236,18 +234,6 @@ describe CardController do
       end
     end
     
-    describe "#changes" do
-      it "works" do
-        id = Card.find_by_name('revtest').id
-        get :changes, :id=>id, :rev=>1
-        assert_equal 'first', assigns['revision'].content, "revision 1 content==first"
-
-        get :changes, :id=>id, :rev=>2
-        assert_equal 'second', assigns['revision'].content, "revision 2 content==second"
-        assert_equal 'first', assigns['previous_revision'].content, 'prev content=="first"'
-      end
-    end
-
     it "new without typecode" do
       post :new   
       assert_response :success, "response should succeed"                     

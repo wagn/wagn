@@ -26,8 +26,9 @@ class Wagn::Renderer
           group_options.map do |option|
             %{<div class="group-option") #{
               checked = !!item_names.delete(option.name)
-              check_box_tag( "#{option.key}-perm-checkbox", option.name, checked, :class=>'perm-checkbox-button'  ) +
+              r=check_box_tag( "#{option.key}-perm-checkbox", option.name, checked, :class=>'perm-checkbox-button'  ) +
               raw( "<label>#{link_to_page option.name}</label>" )
+              warn "CB #{r}"; r
             } </div>}
           end * "\n"
         end +

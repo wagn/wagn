@@ -3,10 +3,6 @@ class MultihostMapping < ActiveRecord::Base
   set_table_name 'public.multihost_mappings'
   
   class << self
-    def cache=(v)
-      raise "seting to hash?? #{v.inspect}" if Hash===v
-      @@cache=v
-    end
     def map_from_name(wagn_name)
       Wagn::Conf[:wagn_name] = wagn_name or fail "map_from_name called without name"
       mapping = (@@cache[:name][wagn_name] ||= begin

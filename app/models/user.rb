@@ -89,7 +89,6 @@ class User < ActiveRecord::Base
     
     def [](key)
       #Rails.logger.info "Looking up USER[ #{key}]"
-      warn 'no user cache ???' unless self.cache
       self.cache ? self.cache.read(key.to_s) ||
         self.cache.write(key.to_s, without_cache(key)) : without_cache(key)
     end

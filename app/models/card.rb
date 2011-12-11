@@ -28,11 +28,6 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INITIALIZATION METHODS
   
-  def self.cache=(v)
-    warn "cache= #{v} #{caller[0..8]*' '}"
-    @@cache=v
-  end
-
   def self.new(args={}, options={})
     args = (args || {}).stringify_keys
     @@junk_args.map { |a| args.delete(a) }

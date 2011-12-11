@@ -24,13 +24,18 @@ class ApplicationController < ActionController::Base
 
   def per_request_setup
     request.format = :html if !params[:format]
-    
+    if Wagn::Conf[:base_url]
+      canonicalize_domain
+    else
+      Wagn::Conf[:base_url] = 'http://' + request.env['HTTP_HOST']
+      Wagn::Conf[:host] = base_u.gsub(/^http:\/\//,'').gsub(/\/.*/,'') unless Wagn::Conf[:host]
+    end
     Wagn::Renderer.ajax_call=request.xhr?
+    
     if Wagn::Conf[:multihost]
       MultihostMapping.map_from_request(request) or return render_fast_404(request.host)
     end
     Wagn::Cache.re_initialize_for_new_request
-    canonicalize_domain
     
     User.current_user = current_user || User[:anon]
 

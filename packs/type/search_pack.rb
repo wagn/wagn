@@ -150,7 +150,9 @@ class Wagn::Renderer
       if last < total
         out << link_to( image_tag('next-page.png'), path(:view, :offset=>last),
           :html=> { :class=>'card-paging-link', :remote => true } )
-      end    
+      end
+      
+      out << '</span>'
     end
     out.join
   end

@@ -6,7 +6,7 @@ class Wagn::Renderer::Html
     cells = [
       ["rule-setting",
         link_to( card.cardname.tag_name, path(:view, :view=>:open_rule),
-          :class => 'edit-rule-link standard-slotter init-editors', :remote => true )
+          :class => 'edit-rule-link slotter init-editors', :remote => true )
       ],
       ["rule-content",
         %{<div class="rule-content-container closed-view">
@@ -85,7 +85,7 @@ class Wagn::Renderer::Html
     @item_view ||= :link
 
     form_for card, :url=>path(:create_or_update), :remote=>true, :html=>
-        {:class=>"card-form card-rule-form #{edit_mode && 'standard-slotter'}" } do |form|
+        {:class=>"card-form card-rule-form #{edit_mode && 'slotter'}" } do |form|
 
       hidden_field_tag( :success, open_rule.name ) +
       hidden_field_tag( :view, 'open_rule' ) +
@@ -94,7 +94,7 @@ class Wagn::Renderer::Html
         <div class="rule-column-1">
           <div class="rule-setting">
             #{ link_to( setting_name, path(:view, :card=>open_rule, :view=>:closed_rule),
-                :remote => true, :class => 'close-rule-link standard-slotter') }
+                :remote => true, :class => 'close-rule-link slotter') }
           </div>
           <ul class="set-editor">
       } +
@@ -154,12 +154,12 @@ class Wagn::Renderer::Html
        if edit_mode || params[:success]
          ('<div class="edit-button-area">' +
            if params[:success]
-             (button_tag( 'Edit', :class=>'rule-edit-button standard-slotter', :type=>'button',
+             (button_tag( 'Edit', :class=>'rule-edit-button slotter', :type=>'button',
                :href => path(:view, :card=>open_rule, :view=>:open_rule), :remote=>true ) +
              button_tag( 'Close', :class=>'rule-cancel-button', :type=>'button' )).html_safe
            else
              (if !card.new_card?
-               b_args = { :remote=>true, :class=>'rule-delete-button standard-slotter', :type=>'button' }
+               b_args = { :remote=>true, :class=>'rule-delete-button slotter', :type=>'button' }
                b_args[:href] = path :remove, :view=>:open_rule, :success=>open_rule.cardname.to_url_key
                if fset = args[:fallback_set]
                  b_args['data-confirm']="Deleting will revert to #{setting_name} rule for #{Card.fetch(fset).label }"

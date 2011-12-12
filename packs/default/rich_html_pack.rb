@@ -9,12 +9,12 @@ class Wagn::Renderer::Html
     end
   end
   
-  define_view(:main_show) do |args|
-    wrap(:main, args) do
-      %{#{ header } #{ notice } #{
-      wrap_content( :open, raw( self.main_content ) ) }}
-    end
-  end
+#  define_view(:main_show) do |args|
+#    wrap(:main, args) do
+#      %{#{ header } #{ notice } #{
+#      wrap_content( :open, raw( self.main_content ) ) }}
+#    end
+#  end
 
   define_view(:layout) do |args|
     if @main_content = args.delete(:main_content)
@@ -51,39 +51,39 @@ class Wagn::Renderer::Html
     end
   end
 
-  define_view(:denied) do |args|
-    params['type']   ||= 'Basic'   # only really need for create
-    params['deny']   ||= (card && !card.new_card? ? 'edit' : 'create')
-    skip_slot_header ||= false
-
-
-    wrap(:denied, args) do #ENGLISH below
-      %{#{raw(header) unless @skip_slot_header }
-        <div id="denied" class="instruction open-content">
-          <h1>Ooo.  Sorry, but...</h1>
-
-          <p>
-       #{ if User.current_user.anonymous?
-           %{You have to #{ link_to "sign in", :controller=>'account', :action=>'signin' }}
-          else
-           "You need permission"
-          end} to #{
-          title = card.name ? "<strong>#{fancy_title(card)}</strong>" :'this card'
-          raw action == :create ? "create this #{typename} card: #{title}" :
-              "#{action} #{title}" }
-          </p>
-
-          #{unless @skip_slot_header or @deny=='view'
-            %{<p>(See the #{ raw( link_to_action('options', :options, :controller=>'card') ) } tab to learn more.)</p>}
-          end} #{
-
-          if User.current_user.anonymous? && Card.new(:typecode=>'InvitationRequest').ok?(:create)
-            %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}
-          end }
-        </div> #{
-        raw( footer ) unless @skip_slot_header }}
-    end
-  end
+#  define_view(:denied) do |args|
+#    params['type']   ||= 'Basic'   # only really need for create
+#    params['deny']   ||= (card && !card.new_card? ? 'edit' : 'create')
+#    skip_slot_header ||= false
+#
+#
+#    wrap(:denied, args) do #ENGLISH below
+#      %{#{ header } 
+#        <div id="denied" class="instruction open-content">
+#          <h1>Ooo.  Sorry, but...</h1>
+#
+#          <p>
+#       #{ if User.current_user.anonymous?
+#           %{You have to #{ link_to "sign in", :controller=>'account', :action=>'signin' }}
+#          else
+#           "You need permission"
+#          end} to #{
+#          title = card.name ? "<strong>#{fancy_title(card)}</strong>" :'this card'
+#          raw action == :create ? "create this #{typename} card: #{title}" :
+#              "#{action} #{title}" }
+#          </p>
+#
+#          #{unless @skip_slot_header or @deny=='view'
+#            %{<p>(See the #{ raw( link_to_action('options', :options, :controller=>'card') ) } tab to learn more.)</p>}
+#          end} #{
+#
+#          if User.current_user.anonymous? && Card.new(:typecode=>'InvitationRequest').ok?(:create)
+#            %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}
+#          end }
+#        </div>
+#        #{ _render_footer  }}
+#    end
+#  end
 
   define_view(:content) do |args|
     c = _render_core(args)
@@ -102,7 +102,6 @@ class Wagn::Renderer::Html
     if ajax_call?
       new_content :cancel_href=>path(:view, :view=>:missing), :cancel_class=>'slotter'
     else
-      @title = "New Card"  #this doesn't work.
       %{
         <h1 class="page-header">
           New #{ card.typecode == 'Basic' && '' || card.typename } Card
@@ -132,7 +131,7 @@ class Wagn::Renderer::Html
   end
 
   def new_content(args)
-    hide_type ||= params[:type] && !card.broken_type 
+    hide_type = params[:type] && !card.broken_type 
 
     wrap(:new, args) do  
      %{#{error_messages_for card}#{
@@ -151,7 +150,7 @@ class Wagn::Renderer::Html
         else
           %{<span class="new-type">
             <label>type:</label>
-            #{ typecode_field :class=>'cardtype-field new-cardtype-field live-cardtype-field', :href=>path(:new)}
+            #{ typecode_field :class=>'type-field new-type-field live-type-field init-editors', :href=>path(:new), 'data-remote'=>true}
           </span>}
         end}
         
@@ -211,7 +210,7 @@ class Wagn::Renderer::Html
   define_view(:edit) do |args|
     attrib = params[:attribute] || 'content'
     wrap(:edit, args) do
-      %{#{header
+      %{#{ header
        }<style>.SELF-#{card.css_name} .edit-area .namepart-#{card.css_name} { display: none; } </style>
        <div class="card-body">
          #{edit_submenu attrib}
@@ -317,7 +316,7 @@ class Wagn::Renderer::Html
         %{#{if card.typecode == 'Cardtype' and card.extension and !Card.search(:type=>card.cardname).empty? #ENGLISH
           %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
         else
-          %{<div>to #{ raw typecode_field :class=>'cardtype-field edit-cardtype-field' }</div>}
+          %{<div>to #{ raw typecode_field :class=>'type-field edit-type-field' }</div>}
         end}
         <div>
           #{ button_tag 'Cancel', :href=>path(:edit), :type=>'button', :class=>'edit-type-cancel-button slotter init-editors' }
@@ -606,8 +605,7 @@ class Wagn::Renderer::Html
 
   define_view(:open) do |args|
     wrap(:open, args) do
-      %{#{
-      header } #{
+      %{#{ header } #{
       notice } #{
       wrap_content( :open, raw(_render_open_content) ) } #{
 
@@ -674,7 +672,7 @@ class Wagn::Renderer::Html
   define_view(:footer) do |args|
     %{<div class="card-footer">
       <span class="footer-content">
-        <span class="watch-link">#{ raw slot.watch_link }</span>
+        <span class="watch-link">#{ _render_watch }</span>
         <span class="footer-links">
           <label>Cards:</label>
           #{raw card.cardname.piece_names.map {|c| link_to_page c}.join(', ') }
@@ -692,5 +690,38 @@ class Wagn::Renderer::Html
     </div>}
   end
 
+  define_view(:watch) do |args|
+    wrap(:watch) do
+      return "" unless User.logged_in?   
+      return "" if card.virtual? 
+      @me = User.current_user.card.name          
+      if card.typecode == "Cardtype"
+        (card.type_watchers.include?(@me) ? "#{watching_type_cards} | " : "") +  watch_unwatch
+      else
+        if card.type_watchers.include?(@me) 
+          "watching #{link_to_page Cardtype.name_for(card.typecode)} cards"
+        else
+          watch_unwatch
+        end
+      end      
+    end
+  end
+  
+  private
+
+  def watch_unwatch      
+    type_link = (card.typecode == "Cardtype") ? " #{card.name} cards" : ""
+    type_msg = (card.typecode == "Cardtype") ? " cards" : ""    
+
+    if card.card_watchers.include?(@me) or card.typecode != 'Cardtype' && card.watchers.include?(@me)
+      text, toggle, title = "unwatch", :off, "stop getting emails about changes to"
+    else
+      text, toggle, title = "watch", :on, "get emails about changes to"
+    end
+    
+    link_to "#{text}#{type_link}", path(:watch, :toggle=>toggle), :class=>'watch-toggle slotter',
+      :title=>"#{title} #{card.name}#{type_msg}", :remote=>true, :method=>'post'
+    
+  end
 end
 

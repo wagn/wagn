@@ -6,8 +6,9 @@ module Wagn::Set::Type::Pointer
     if args[:complete]
       Wql.new({:referred_to_by=>name}.merge(args)).run
     else
-      item_names(args).map {|name|
-        Card.fetch_or_new(name) }.compact
+      item_names(args).map do |name|
+        Card.fetch_or_new(name)
+      end.compact
     end
   end
 
@@ -52,7 +53,7 @@ module Wagn::Set::Type::Pointer
 
   def option_text(option)
     name = setting('option label') || 'description'
-    textcard = Card[option+'+'+name]
+    textcard = Card["#{option}+#{name}"]
     textcard ? textcard.content : nil
   end
 end

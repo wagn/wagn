@@ -1,2 +1,0 @@
-page.wagn.messenger.note("#{card.name} created.")
-page.redirect_to url_for_page(card.name)

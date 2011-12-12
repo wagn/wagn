@@ -1,4 +1,4 @@
-require "#{RAILS_ROOT}/lib/util/card_builder.rb"
+require "#{Rails.root}/lib/util/card_builder.rb"
 #require 'renderer'
 
 module WagnTestHelper

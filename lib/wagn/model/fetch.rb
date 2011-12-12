@@ -14,30 +14,26 @@ module Wagn::Model::Fetch
     #   - cache
     #   - database
     #   - virtual cards
-    #
-    # if a card is not in the cache and is found in the database, it is added to the cache
-    # if a card is not found in the database, a card of that name is created and added to cache
 
     def fetch cardname, opts = {}
-      #warn "fetching #{cardname}"
-      cardname = cardname.to_cardname unless Wagn::Cardname===cardname
-      return nil unless cardname.valid_cardname?
-      key = cardname.to_key
+      cardname = cardname.to_cardname
 
-      card = Card.cache.read( key )
-
+      card = Card.cache.read( cardname.key ) if Card.cache
       return nil if card && opts[:skip_virtual] && card.new_card?
 
-      cacheable = card.nil?
-      card ||= find_by_key_and_trash( key, false )
-      card ||= new :name=>cardname, :skip_type_lookup=>opts[:skip_virtual]
-
-
-      Card.cache.write( key, card ) if cacheable
-      #warn "fetch ret #{card.inspect}, #{opts.inspect}, #{card.new_card? && (!card.virtual? || opts[:skip_virtual])}" if key == 'pointer+*type'
+      needs_caching = !Card.cache.nil? && card.nil?
+      card ||= find_by_key_and_trash( cardname.key, false )
+      
+      if card.nil? || (!opts[:skip_virtual] && card.typecode=='$NoType')
+        # The $NoType typecode allows us to skip all the type lookup and flag the need for reinitialization later
+        needs_caching = !Card.cache.nil?
+        card = new :name=>cardname, :skip_modules=>true, :typecode=>( opts[:skip_virtual] ? '$NoType' : '' )
+      end
+      
+      Card.cache.write( cardname.key, card ) if needs_caching
       return nil if card.new_card? && (opts[:skip_virtual] || !card.virtual?)
 
-      card.include_set_modules unless opts[:skip_module_loading]
+      card.include_set_modules unless opts[:skip_modules]
       card
     end
 
@@ -50,9 +46,16 @@ module Wagn::Model::Fetch
       fetch( cardname, opts ) || create( opts.merge(:name=>cardname) )
     end
 
-    def exists?(cardname) self[cardname].present?  end
+    def exists?(cardname)
+      fetch(cardname, :skip_virtual=>true, :skip_modules=>true).present?
+    end
   end
 
+  def refresh
+    fresh_card = self.class.find(self.id)
+    fresh_card.include_set_modules
+    fresh_card
+  end
 
   def self.included(base)
     super

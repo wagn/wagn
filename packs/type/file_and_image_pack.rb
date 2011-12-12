@@ -1,24 +1,87 @@
+
 class Wagn::Renderer
+
+  define_view(:core, :type=>'image') do |args|
+    (rr = _render_raw) =~ /^\s*<img / ? resize_legacy_image_content( rr, args[:size] ) :
+      image_tag(card.attach.url args[:size] || :medium)
+  end
+
+  define_view(:core, :type=>'file') do |args|
+    (rr = _render_raw) =~ /^\s*<a / ? rr :
+      "<a href=\"#{card.attach.url}\">#{card.name}</a>"
+  end
+
+  private
+  def resize_legacy_image_content(content, size)
+    size = (size.to_s == "full" ? "" : "_#{size}")
+    content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
+  end
+end
+
+
+
+
+class Wagn::Renderer::Html
   define_view(:editor, :type=>'file') do |args|
-    attachment_model_name = card.attachment_model.name.underscore
-    attachment_uuid = (0..29).to_a.map {|x| rand(10)}
-    self.skip_autosave = true
-    # WEIRD: when I didn't check for new_record?, create would come up with random old attachment previews
-    div( :class=>"attachment-preview", :id=>"#{attachment_uuid}-preview") do
-      !card.new_card? && card.attachment ? card.attachment.preview : ''
-    end +
-    
-    div do
-      %{
-        <iframe id="upload-iframe-#{ attachment_uuid }" class="upload-iframe" name="upload-iframe" height="50" width="480" 
-          frameborder="0" src="/#{attachment_model_name.pluralize}/new?#{attachment_model_name}[attachment_uuid]=#{attachment_uuid}" scrolling="no">
-        </iframe>
-      }
-    end + 
-    form.hidden_field("attachment_id", :id=>attachment_uuid) +
-    form.hidden_field("content", :id=>"#{attachment_uuid}-content")
-    #= editor_hooks :save=>%{ //FIXME: handle the case that the upload isn't finished. }
+    Rails.logger.debug "editor for file #{card.inspect}"
+    %{<div class="attachment-preview", :id="#{card.attach_file_name}-preview"> #{
+       #!card.new_card? && card.attach ? _render_core(args) : ''
+       _render_core(args)
+    } </div>
+
+    <div> #{
+      #warn "file form for #{card}, [#{form.object_name}]"
+      form.file_field :attach
+    }
+    </div>}
   end
 
   alias_view :editor, {:type=>:file}, {:type=>:image}
+
+  define_view(:changes, :type=>'image') do |args| #ENGLISH
+    @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i
+    @revision = card.revisions[@revision_number - 1]
+    @show_diff = (params[:mode] != 'false')
+    @previous_revision= card.previous_revision(@revision)
+    
+    wrap(:changes, args) do
+    %{#{header unless params['no_changes_header']}
+    <div class="revision-navigation">#{ revision_menu }</div>
+
+    <div class="revision-header">
+      <span class="revision-title">#{ @revision.title }</span>
+      posted by #{ link_to_page @revision.author.card.name }
+    on #{ format_date(@revision.created_at) } #{
+    if !card.drafts.empty?
+      %{<p class="autosave-alert">
+        This card has an #{ autosave_revision }
+      </p>}
+    end}#{
+    if @show_diff and @previous_revision  #ENGLISH
+      %{<p class="revision-diff-header">
+        <small>
+          Showing changes from revision ##{ @revision_number - 1 }:
+          <ins class="diffins">Added</ins> | <del class="diffmod">Removed</del>
+        </small>
+      </p>}
+    end}
+
+    </div>
+
+
+    <div class="revision">#{
+    if @show_diff and @previous_revision
+      card.selected_rev_id=@previous_revision.id
+      _render_core
+    end
+    }
+   #{ card.selected_rev_id=@revision.id
+    _render_core
+   } </div>
+
+    <div class="revision-navigation card-footer">
+    #{ revision_menu }
+    </div>}
+    end
+  end
 end

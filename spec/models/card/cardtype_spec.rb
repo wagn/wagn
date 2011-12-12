@@ -206,7 +206,7 @@ describe Card, "Cardtype with Existing Cards" do
 
   it "should raise an error when you try to delete it" do
     @ct.destroy
-    @ct.errors.on(:cardtype).should_not be_empty
+    @ct.errors[:cardtype].should_not be_empty
   end
 end
 

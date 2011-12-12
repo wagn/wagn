@@ -32,7 +32,7 @@ class Wql
   def sql()                @sql ||= @cs.to_sql            end
   
   def run
-      rows = ActiveRecord::Base.connection.select_all( sql )
+    rows = ActiveRecord::Base.connection.select_all( sql )
     case (query[:return] || :card).to_sym
     when :card
       rows.map do |row|
@@ -121,7 +121,7 @@ class Wql
       @mods = MODIFIERS.clone
       @params = {}
       @joins = {}   
-      @selfname, @parent = nil, nil
+      @selfname, @parent = '', nil
       @query = clean(query.clone)
       @rawspec = @query.deep_clone
       @spec = {}
@@ -142,7 +142,7 @@ class Wql
     def selfname()  @selfname                      end
     
     def absolute_name(name)
-      name = (root.selfname ? name.to_cardname.to_absolute(root.selfname) : name)
+      name =~ /\b_/ ? name.to_cardname.to_absolute(root.selfname) : name
     end
     
     def clean(query)
@@ -235,7 +235,7 @@ class Wql
       v.gsub!(/\W+/,' ')
       
       cond =
-        if System.enable_postgres_fulltext
+        if Wagn::Conf[:enable_postgres_fulltext]
           v = v.strip.gsub(/\s+/, '&')
           sql.relevance_fields << "rank(indexed_name, to_tsquery(#{quote(v)}), 1) AS name_rank"
           sql.relevance_fields << "rank(indexed_content, to_tsquery(#{quote(v)}), 1) AS content_rank"
@@ -361,7 +361,7 @@ class Wql
         cs = CardSpec.build(val)
       end
       
-      cs.sql.fields << "#{cs.table_alias}.#{join_field} as sort_join_field"      
+      cs.sql.fields << "#{cs.table_alias}.#{join_field} as sort_join_field"
       add_join :sort, cs.to_sql, :id, :sort_join_field, :side=>'LEFT'
     end
     
@@ -397,7 +397,7 @@ class Wql
       return "(" + sql.conditions.last + ")" if @mods[:return]=='condition'
 
       # Permissions    
-      unless System.always_ok? or (Wql.root_perms_only && !root?)
+      unless User.always_ok? or (Wql.root_perms_only && !root?)
         sql.conditions << %{ (#{table_alias}.read_rule_id IN (#{::User.as_user.read_rule_ids.join ','})) }
       end
            
@@ -485,7 +485,7 @@ class Wql
       
       # bare value shortcut
       @spec = case spec   
-        when ValueSpec; spec.instance_variable_get('@spec')  # FIXME whatta fucking hack (what's this for?)
+        when ValueSpec; spec.instance_variable_get('@spec')  # FIXME what a hack (what's this for?)
         when Array;     spec
         when String;    ['=', spec]
         when Integer;   ['=', spec]

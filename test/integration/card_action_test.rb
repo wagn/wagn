@@ -41,7 +41,7 @@ class CardActionTest < ActionController::IntegrationTest
   def test_create_role_card   
     integration_login_as :admin
     post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
-    assert_response 418
+    assert_response 302
 
     assert Card.find_by_name('Editor').typecode == 'Role'
     assert_instance_of Role, Role.find_by_codename('Editor')
@@ -49,7 +49,7 @@ class CardActionTest < ActionController::IntegrationTest
 
   def test_create_cardtype_card
     post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"} )
-    assert_response 418
+    assert_response 302
     assert Card.find_by_name('Editor2').typecode == 'Cardtype'
     assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor2')
   end
@@ -60,10 +60,9 @@ class CardActionTest < ActionController::IntegrationTest
       :name=>"Editor",
       :content=>"testcontent2"
     }
-    assert_response 418
+    assert_response 302
     assert_equal "testcontent2", Card["Editor"].content
   end
-
 
   def test_newcard_shows_edit_instructions
     given_cards( 
@@ -102,12 +101,32 @@ class CardActionTest < ActionController::IntegrationTest
     get url_for_page( t2.name )
     
     post 'card/remove/' + t2.id.to_s
-    assert_rjs_redirected_to url_for_page( t1.name )   
+    assert_redirected_to url_for_page( t1.name )   
     assert_nil Card.find_by_name( t2.name )
     
     post 'card/remove/' + t1.id.to_s
-    assert_rjs_redirected_to '/'
+    assert_redirected_to '/'
     assert_nil Card.find_by_name( t1.name )
   end
 
+
+  def test_should_create_account_from_scratch
+    assert_difference ActionMailer::Base.deliveries, :size do 
+      post '/card/create_account/', :id=>'a', :user=>{:email=>'foo@bar.com'}
+      assert_response 200
+    end
+    email = ActionMailer::Base.deliveries[-1]
+    # emails should be 'from' inviting user
+    #assert_equal User.current_user.email, email.from[0]  
+    #assert_equal 'active', User.find_by_email('new@user.com').status
+    #assert_equal 'active', User.find_by_email('new@user.com').status
+  end
+
+  def test_update_user_extension_blocked_status
+    assert !User.find_by_login('joe_user').blocked?
+    post '/card/update_account', :id=>"Joe User".to_cardname.to_key, :extension => { :blocked => '1' }
+    assert User.find_by_login('joe_user').blocked?
+    post '/card/update_account', :id=>"Joe User".to_cardname.to_key, :extension => { :blocked => '0' }
+    assert !User.find_by_login('joe_user').blocked?
+  end
 end

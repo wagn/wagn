@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:naked, :type=>'search') do |args|
+  define_view(:core, :type=>'search') do |args|
     error=nil
     results = begin
       card.item_cards( paging_params )
@@ -22,7 +22,7 @@ class Wagn::Renderer
   end
 
   define_view(:closed_content, :type=>'search') do |args|
-    return "..." if depth > 2
+    return "..." if @depth > 2
     results= begin
       card.item_cards( paging_params )
     rescue Exception=>e
@@ -39,7 +39,7 @@ class Wagn::Renderer
       %{<span class="faint">(#{ card.count })</span>
       <div class="search-result-list">
         #{results.map do |c|
-          %{<div class="search-result-item">#{'name' == item_view || params[:item] ? c.name : link_to_page( c.name ) }</div>}
+          %{<div class="search-result-item">#{@item_view == 'name' ? c.name : link_to_page( c.name ) }</div>}
         end*"\n"}
       </div>}
     end
@@ -100,7 +100,7 @@ class Wagn::Renderer
 
     paging = render(:paging, :results=>cards)
 %{<h1 class="page-header">Recent Changes</h1>
-<div class="card-slot recent-changes">
+<div class="card-slot open-view recent-changes">
   <div class="open-content">
     #{ paging }
   } +
@@ -133,29 +133,31 @@ class Wagn::Renderer
     args = params.clone
     args[:limit] = limit
 
-    args[:requested_view] = requested_view 
-    args[:item] = item_view || args[:item]
+#    args[:requested_view] = requested_view 
+    args[:item] = @item_view || args[:item]
     args[:_keyword] = s[:_keyword] if s[:_keyword]
 
-    %{
-<!-- paging -->#{
-      if total > limit
-        %{
-<span class="paging">#{
-        if first > 1
-          link_to_remote image_tag('prev-page.png'), :update=>id,
-            :url=>url_for('card/view', args.merge(:offset=>[offset-limit,0].max)) 
-        end}
-  <span class="paging-range">#{ first } to #{ last } of #{ total }</span>#{
-        if last < total
-          link_to_remote image_tag('next-page.png'), :update=>id,
-             :url=>url_for('card/view', args.merge(:offset=>last))
-        end}
-  </span>}
-      end}
-<!-- /paging -->}
+    out = []
+    if total > limit
+      out << '<span class="paging">'
+
+      if first > 1
+        out << link_to( image_tag('prev-page.png'), path(:view, :offset=>[offset-limit,0].max),
+          :html=> { :class=>'card-paging-link', :remote => true } )
+      end
+      out << %{<span class="paging-range">#{ first } to #{ last } of #{ total }</span>}
+
+      if last < total
+        out << link_to( image_tag('next-page.png'), path(:view, :offset=>last),
+          :html=> { :class=>'card-paging-link', :remote => true } )
+      end
+      
+      out << '</span>'
+    end
+    out.join
   end
 
+private
 
   def paging_params
     if ajax_call? && @depth > 0
@@ -171,49 +173,10 @@ class Wagn::Renderer
           s[:limit] = s[:limit].to_i
         else
           s.delete(:limit)
-          s[:default_limit] = (main_card? ? 50 : 20) #can be overridden by card value
+          s[:default_limit] = 20 #can be overridden by card value
         end
         s
       end
     end
   end
-
-
-
-#  define_view(:tag_cloud, :type=>'search') do |args|
-#    cards ||= []
-#    link_to ||= 'page'  # other options is 'connect'
-#    tag_cloud = {}
-#    category_list = %w[1 2 3 4 5]
-#    droplets = []
-#    return if cards.empty?
-#
-#    # this does scaling by rank(X), where X is what we ordered by in wql.
-#    # if we wanted proportionate to X, we'd need to get X returned as part of
-#    # the cards, which has implications for wql; namely we'd need to be able to
-#    # return additional fields.
-#    cards.reverse.each_with_index do |tag, index|
-#      tag_cloud[tag] = index
-#    end
-#
-#    max, min = 0, 0
-#    tag_cloud.each_value do |count|
-#      max = count if count > max
-#      min = count if count < min
-#    end
-#
-#    divisor = ((max - min) / category_list.size) + 1
-#
-#    droplets = cards.sort_by {|c| c.name.downcase } .map do |card|
-#      category = category_list[(tag_cloud[card] - min) / divisor]
-#      options = { :class=>"cloud-#{category}" }
-#      WagnHelper::Droplet.new(card.name, options)
-#    end
-#    %{
-#<div class="cloud">#{
-#      for droplet in droplets 
-#        flexlink link_to, droplet.name,  droplet.link_options
-#      end * "\n" }
-#</div>}
-#  end
 end

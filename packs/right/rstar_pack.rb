@@ -1,140 +1,194 @@
-class Wagn::Renderer::RichHtml
-  define_view(:rule) do |args|
-    set_name = card.name.trunk_name
-    setting_name = card.name.tag_name
-    
-    is_self = set_name.tag_name =='*self'
-    rule_card = if is_self
-      c = Card.fetch(set_name.trunk_name)
-      return div(){"no such card #{set_name.trunk_name}"} unless c
-      c.setting_card(setting_name)
-    else
-      card.new_card? ? nil : card 
-    end
-      
+class Wagn::Renderer::Html
+
+  define_view(:closed_rule) do |args|
+    rule_card, set_prototype = find_current_rule_card
+
     cells = [
-#      ["rule-setting", link_to_page(setting_name) ],
-      ["rule-setting", link_to_remote( setting_name, :update=>id,
-        :url=>"/card/view/#{card.cardname.to_url_key}?view=edit_rule"
-      )],
-      ["rule-content", begin
-        div(:class=>'rule-content-container line') do
-          span(:class=>'content') do
-            # these two extra layers are all about getting overflow:hidden to work right.
-            # was unable to do it without inline inside block inside table-cell.  would be happy to simplify if possible
-            case
-            when !rule_card; ''
-            when is_self && card != rule_card
-              subrenderer(rule_card).render_closed_content
-            else; render_closed_content
-            end
-          end
-        end
-      end ],
+      ["rule-setting",
+        link_to( card.cardname.tag_name, path(:view, :view=>:open_rule),
+          :class => 'edit-rule-link standard-slotter init-editors', :remote => true )
+      ],
+      ["rule-content",
+        %{<div class="rule-content-container closed-view">
+           <span class="content">#{rule_card ? subrenderer(rule_card).render_closed_content : ''}</span>
+         </div> } ],
       ["rule-type", (rule_card ? rule_card.typename : '') ],
-      
-#      ["rule-action", link_to_remote( rule_card ? 'edit' : 'add',
-#        :url=>"/card/view/#{card.cardname.to_url_key}?view=edit_rule", :update=>id
-#      )]
     ]
-    if is_self
-      cells << ['rule-set', rule_card ? rule_card.trunk.label(rule_card.cardname.left_name.to_s) : ''] 
-    end
 
     extra_css_class = rule_card && !rule_card.new_card? ? 'known-rule' : 'missing-rule'
+
+    %{<tr class="card-slot closed-rule">} +
     cells.map do |css_class, content|
-      content_tag('td', :class=>"#{css_class} #{extra_css_class}") { content }
-    end.join "\n"
+      %{<td class="rule-cell #{css_class} #{extra_css_class}">#{content}</td>}
+    end.join("\n") +
+    '</tr>'
   end
-  
-  define_view(:edit_rule) do |args|
-    main_set_name = card.name.trunk_name
-    set_class = main_set_name.tag_name
-    setting_name = card.name.tag_name  
-    is_self = set_class =='*self'
-    col_count = is_self ? 5 : 4
-        
-    content_tag(:td, :class=>'edit-rule', :colspan=>col_count-1) do
-#      div(:class=>'rule-setting') { link_to_page setting_name } +
-      div(:class=>'rule-setting') do
-         link_to_remote setting_name, :url=>"/card/view/#{card.cardname.to_url_key}?view=rule", :update=>id 
-      end +
-      
-      
-      div(:class=>'edit-rule-content') do 
-        if is_self
-          ruled_card = Card[main_set_name.trunk_name]
-          current_rule = ruled_card.setting_card(setting_name)
-          current_rule_set = current_rule ? current_rule.name.trunk_name.to_key : nil
-          
-          mode, sifter = :override, {:override => [], :defer=>[]}
-          ruled_card.set_names().each do |set_name|
-            if [current_rule_set, params[:new_rule_set]].member? set_name.to_key
-              mode = :defer
-            else
-              sifter[mode] << set_name
-            end
-          end
-          
-          sections = []
-          sections << if !sifter[:override].empty?
-            div(:class=>'edit-rule-section edit-rule-override') do
-              if current_rule || params[:new_rule_set]
-                edit_rule_header('Override', 'add more specific rule for:')
-              else
-                edit_rule_header('Create', 'add new rule for:')
-              end +
-              content_tag(:ul) do
-                sifter[:override].map do |set_name|
-                  content_tag(:li) { link_to_remote ruled_card.label(set_name), :update=>id, 
-                    :url=>"/card/view/#{card.name.to_url_key}?view=edit_rule&new_rule_set=#{CGI.escape(set_name.to_key)}"
-                  }
-                end.join
-              end
-            end
-          end
-          
-          sections << if set_name = params[:new_rule_set]
-            div(:class=>'edit-rule-section edit-rule-new') do
-              edit_rule_header('Create', "add new rule for #{ruled_card.label(set_name)}:") +
-              process_inclusion(Card.new(:name=>"#{set_name}+#{setting_name}"), :view=>:open)
-            end
-          end
-          
-          sections << if current_rule
-            div(:class=>'edit-rule-section edit-rule-current') do
-              edit_rule_header('Edit', "change current rule for #{ruled_card.label(current_rule_set)}:") +
-              process_inclusion(current_rule, :view=>:open)
-            end
-          end
-          
-          deferrable_rules = sifter[:defer].map{ |set_name| Card["#{set_name}+#{setting_name}"] }.compact
-          sections << if !deferrable_rules.empty?
-            div(:class=>'edit-rule-section edit-rule-defer') do
-              edit_rule_header('Defer','delete current rule (above) in favor of more general rule:') +
-              deferrable_rules.map do |rule_card|
-                process_inclusion rule_card, :view=>:closed
-              end.join
-            end
-          end
-          sections.compact.join "\n"
-        else
-          process_inclusion(card, :view=>:open)
+
+
+
+  define_view(:open_rule) do |args|
+    current_rule, prototype = find_current_rule_card
+    setting_name = card.cardname.tag_name
+    current_rule ||= Card.new :name=> "*all+#{setting_name}"
+
+    if args=params[:card]
+      current_rule = current_rule.refresh if current_rule.frozen?
+      args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type]
+      current_rule.assign_attributes args
+    end
+
+    params.delete(:success) if params[:type_reload] #otherwise updating the editor looks like a successful post
+
+    opts = {
+      :fallback_set    => false,
+      :open_rule       => card,
+      :edit_mode       => (card.ok?(card.new_card? ? :create : :update) && !params[:success]),
+      :setting_name    => setting_name,
+      :current_set_key => (current_rule.new_card? ? nil : current_rule.cardname.trunk_name.key)
+    }
+
+    if !opts[:read_only]
+      set_options = prototype.set_names.reverse
+      first = (csk=opts[:current_set_key]) ? set_options.index{|s| s.to_cardname.key == csk} : 0
+      if first > 0
+        set_options[0..(first-1)].reverse.each do |set_name|
+          opts[:fallback_set] = set_name if Card.exists?("#{set_name}+#{opts[:setting_name]}")
         end
       end
-    end #+
-    #content_tag(:td, :class =>'edit-rule-action rule-action') do
-    #  div() { link_to_remote 'close', :url=>"/card/view/#{card.cardname.to_url_key}?view=rule", :update=>id } +
-    #  div() { link_to_remote 'refresh', :url=>"/card/view/#{card.cardname.to_url_key}?view=edit_rule", :update=>id }
-    #end 
-    
-  end
-  
-  def edit_rule_header(title, intro)
-    div(:class=>'edit-rule-header') do
-      span(:class=>'edit-rule-header-title') { title } +
-      span(:class=>'edit-rule-header-intro') { intro }
+      last = set_options.index{|s| s.to_cardname.key == card.cardname.trunk_name.key} or raise("set for #{card.name} not found in prototype set names")
+      opts[:set_options] = set_options[first..last]
+
+      # The above is about creating the options for the sets to which the user can apply the rule.
+      # The broadest set should always be the currently applied rule
+      # (for anything more general, they must explicitly choose to "DELETE" the current one)
+      # the narrowest rule should be the one attached to the set being viewed.  So, eg, if you're looking at the "*all plus" set, you shouldn't
+      # have the option to create rules based on arbitrary narrower sets, though narrower sets will always apply to whatever prototype we create
     end
+
+
+    %{
+      <tr class="card-slot open-rule">
+        <td class="rule-cell" colspan="3">
+          #{subrenderer( current_rule )._render_edit_rule opts }
+        </td>
+      </tr>
+    }
+
   end
-  
+
+  # THIS SHOULD NOT BE A VIEW
+  define_view(:edit_rule) do |args|
+    edit_mode       = args[:edit_mode]
+    setting_name    = args[:setting_name]
+    current_set_key = args[:current_set_key]
+    open_rule       = args[:open_rule]
+    @item_view ||= :link
+
+    form_for card, :url=>path(:create_or_update), :remote=>true, :html=>
+        {:class=>"card-form card-rule-form #{edit_mode && 'standard-slotter'}" } do |form|
+
+      hidden_field_tag( :success, open_rule.name ) +
+      hidden_field_tag( :view, 'open_rule' ) +
+      %{
+      <div class="card-editor">
+        <div class="rule-column-1">
+          <div class="rule-setting">
+            #{ link_to( setting_name, path(:view, :card=>open_rule, :view=>:closed_rule),
+                :remote => true, :class => 'close-rule-link standard-slotter') }
+          </div>
+          <ul class="set-editor">
+      } +
+
+
+      if edit_mode
+#        '<label>apply to:</label> ' +
+        raw( args[:set_options].map do |set_name|
+          set_label =Card.fetch(set_name).label
+
+          '<li>' +
+            raw( form.radio_button( :name, "#{set_name}+#{setting_name}", :checked=>(current_set_key && args[:set_options].length==1) ) ) +
+            if set_name.to_cardname.to_key == current_set_key
+              %{<span class="set-label current-set-label">#{ set_label } <em>(current)</em></span>}
+            else
+              %{<span class="set-label">#{ set_label }</span>}
+            end.html_safe +
+          '</li>'
+        end.join)
+      else
+        %{
+        <label>applies to:</label>
+        <span class="set-label current-set-label">
+          #{current_set_key ? Card.fetch(current_set_key).label : 'No Current Rule' }
+        </span>
+        }.html_safe
+      end +
+
+
+      %{  </ul>
+        </div>
+
+        <div class="rule-column-2">
+          <div class="instruction rule-instruction">
+            #{ raw process_content( "{{#{setting_name}+*right+*edit help}}" ).html_safe  }
+          </div>
+          <div class="type-editor"> }+
+
+      if edit_mode
+        %{<label>type:</label>}+
+        raw(typecode_field( :class =>'cardtype-field rule-cardtype-field live-cardtype-field',
+          :href => path(:view, :card=>open_rule, :view=>:open_rule, :type_reload=>true) ) )
+      elsif current_set_key
+        '<label>type:</label>'+
+        %{<span class="rule-type">#{ current_set_key ? card.typename : '' }</span>}
+      else; ''; end.html_safe +
+
+
+      %{  </div>
+
+             <div class="content-editor"> #{
+               raw( edit_mode ? content_field(form) : (current_set_key ? render_core : '') ) }
+             </div>
+           </div>
+         </div> }.html_safe +
+
+       if edit_mode || params[:success]
+         ('<div class="edit-button-area">' +
+           if params[:success]
+             (button_tag( 'Edit', :class=>'rule-edit-button standard-slotter', :type=>'button',
+               :href => path(:view, :card=>open_rule, :view=>:open_rule), :remote=>true ) +
+             button_tag( 'Close', :class=>'rule-cancel-button', :type=>'button' )).html_safe
+           else
+             (if !card.new_card?
+               b_args = { :remote=>true, :class=>'rule-delete-button standard-slotter', :type=>'button' }
+               b_args[:href] = path :remove, :view=>:open_rule, :success=>open_rule.cardname.to_url_key
+               if fset = args[:fallback_set]
+                 b_args['data-confirm']="Deleting will revert to #{setting_name} rule for #{Card.fetch(fset).label }"
+               end
+               %{<span class="rule-delete-section">#{ button_tag 'Delete', b_args }</span>}
+             else; ''; end +
+             submit_tag( 'Submit', :class=>'rule-submit-button') +
+             button_tag( 'Cancel', :class=>'rule-cancel-button', :type=>'button' )).html_safe
+           end +
+         '</div>').html_safe
+       end +
+       notice.html_safe
+
+    end.html_safe
+  end
+
+
+
+  private
+
+  def find_current_rule_card
+    setting_name = card.cardname.tag_name
+    set_card = Card.fetch( card.cardname.trunk_name )
+    #warn "setting name = #{setting_name}, card = #{card.inspect}, set_card = #{set_card.inspect}"
+    set_prototype = set_card.prototype
+    #warn "got prototype"
+
+    rule_card = set_prototype.setting_card setting_name
+    [rule_card, set_prototype]
+  end
+
 end

@@ -1,11 +1,10 @@
 module Wagn::Model
   module Pattern
 
-    @@subclasses = []
+    @@pattern_subclasses = []
 
     class << self
       def register_class(klass) @@subclasses.unshift klass end
-      def subclasses() @@subclasses end
 
       def method_key(opts)
         @@subclasses.each do |pclass|
@@ -112,6 +111,7 @@ module Wagn::Model
       def pattern_name(card)     key   end
       def new(card) super(card) if self.pattern_applies?(card) end
       def label(name)                ''    end
+      def prototype_args(base)       {}    end
     end
 
     def inspect()            "<#{self.class} #{@pat_name.inspect}>"        end
@@ -154,6 +154,7 @@ module Wagn::Model
       def junction_only?()             true                    end
       def pattern_applies?(card)       card.junction?          end
       def label(name)                  'All Plus Cards'        end
+      def prototype_args(base)         {:name=>'+'}            end
     end
     def css_name()                     "ALL_PLUS"              end
     def method_key()                   'all_plus'              end
@@ -173,6 +174,7 @@ module Wagn::Model
         card.typecode.nil? ? 'Basic+*type' : "#{card.typename}+#{key}"
       end
       def label(name)                "All #{name} cards"                       end
+      def prototype_args(base)       {:type=>base}                             end
     end
 #    def pat_name()
 #      Rails.logger.debug "pat_name( #{@pat_name.inspect} )"
@@ -199,6 +201,7 @@ module Wagn::Model
       def trunkless?()                 true                    end
       def pattern_applies?(card)       card.cardname.star?     end
       def label(name)                  'Star Cards'            end
+      def prototype_args(base)         {:name=>'*dummy'}       end
     end
     def css_name()                     "STAR"                  end
     def method_key()                   'star'                  end
@@ -218,6 +221,7 @@ module Wagn::Model
         card.junction? && card.cardname.tag_name.to_cardname.star?
       end
       def label(name)                  "Cards ending in +(Star Card)"   end
+      def prototype_args(base)         {:name=>'*dummy+*dummy'}         end
     end
     def method_key()                   'rstar'                          end
     def set_module()                   "Rstar"                          end
@@ -237,6 +241,7 @@ module Wagn::Model
       end
       def pattern_applies?(card)        card.junction?                   end
       def label(name)                  "Cards ending in +#{name}"        end
+      def prototype_args(base)         {:name=>"*dummy+#{base}"}         end
     end
     def method_key() self.class.method_key_from_opts :right=>@pat_name.left_name end
     def set_module()
@@ -251,6 +256,8 @@ module Wagn::Model
     class << self
       def key()              '*type plus right'                              end
       def opt_keys()         [:ltype, :right]                                end
+      def junction_only?()             true                                  end
+      def label(name) "Any #{name.left_name} card plus #{name.tag_name}"     end
       def method_key_from_opts(opts)
         %{#{opts[:ltype].to_cardname.css_name}_#{opts[:right].to_cardname.css_name}_typeplusright}
       end
@@ -268,10 +275,12 @@ module Wagn::Model
       end
       def pattern_applies?(card)     card.junction?                  end
       def label(name) "Any #{name.left_name} card plus #{name.right_name}"   end
+      def prototype_args(base)
     end
     def left_type()
-      r=@pat_name.left_name.left_name.to_s || 'Basic'
-      #Rails.logger.debug "left_type[#{pat_name.s}] #{r}"; r
+      #? r=@pat_name.left_name.left_name.to_s || 'Basic'
+      #warn "looking up left_type for #{card.name}.  left = #{left.inspect} left.type = #{left.typecode}" if left
+      (lft=self.left) ? lft.typename : 'Basic'     
     end
     def method_key()
       self.class.method_key_from_opts :ltype=>left_type, :right=>@pat_name.left_name.tag_name
@@ -283,22 +292,22 @@ module Wagn::Model
       "LTypeRight::#{left_type.camelcase+tk.camelcase}"
     end
 
+
     Wagn::Model::Pattern.register_class self
   end
 
   class SoloPattern < SetBase
     class << self
-      def key()                      '*self'                                  end
-      def opt_keys()                 [:name]                                  end
-      def method_key_from_opts(opts)
-        opts[:name].to_cardname.css_name+'_self'
-      end
+      def key()                      '*self'                                 end
+      def opt_keys()                 [:name]                                 end
+      def method_key_from_opts(opts) opts[:name].to_cardname.css_name+'_self' end
       def pattern_name(card)
 #        Rails.logger.info "pattern Solo Set recursion issue? #{name}" if cardname.tag_name == key # recursion protection ?
 #        return if cardname.tag_name == key # recursion protection ?
         "#{card.name}+#{key}"
       end
-      def label(name)                %{Just "#{name}"}                      end
+      def label(name)                %{The card "#{name}"}                   end
+      def prototype_args(base)       { :name=>base }                         end
     end
     def method_key()
 #      warn "pat name for #{pat_name}"

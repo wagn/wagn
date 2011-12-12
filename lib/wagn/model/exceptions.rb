@@ -7,7 +7,7 @@ module Wagn::Model::Exceptions
     end    
 
     def build_message
-      "for card #{@card.name}: #{@card.errors.on(:permission_denied)}"
+      "for card #{@card.name}: #{@card.errors[:permission_denied]}"
     end
   end
 end

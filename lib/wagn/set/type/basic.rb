@@ -10,7 +10,7 @@ module Wagn::Set::Type::Basic
     return unless min and min > 0
     
     toc, dep = [], 1
-    content.gsub!( /<(h\d)>(.*?)<\/h\d>/i ) do
+    content.gsub!( /<(h\d)>(.*?)<\/h\d>/i ) do |match|
       tag, value = $~[1,2]
       value = ActionView::Base.new.strip_tags(value).strip
       next if value.empty?
@@ -22,7 +22,7 @@ module Wagn::Set::Type::Basic
         toc << []  if dep == 1
         item[:depth] = dep = 2; toc.last << item
       end
-      %{<a name="#{item[:uri]}"></a>} + $MATCH
+      %{<a name="#{item[:uri]}"></a>#{match}}
     end
 
     if toc.flatten.length >= min

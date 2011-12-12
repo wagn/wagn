@@ -24,16 +24,16 @@ describe User, "Anonymous User" do
     User.current_user = ::User['anon']
   end
   
-  it "should ok anon role" do System.role_ok?(Role['anon'].id).should be_true end
-  it "should not ok auth role" do System.role_ok?(Role['auth'].id).should_not be_true end
+  it "should ok anon role" do Wagn.role_ok?(Role['anon'].id).should be_true end
+  it "should not ok auth role" do Wagn.role_ok?(Role['auth'].id).should_not be_true end
 end
 
 describe User, "Authenticated User" do
   before do
     User.current_user = ::User.find_by_login('joe_user')
   end
-  it "should ok anon role" do System.role_ok?(Role['anon'].id).should be_true end
-  it "should ok auth role" do System.role_ok?(Role['auth'].id).should be_true end
+  it "should ok anon role" do Wagn.role_ok?(Role['anon'].id).should be_true end
+  it "should ok auth role" do Wagn.role_ok?(Role['auth'].id).should be_true end
 end
 =end
 
@@ -41,7 +41,7 @@ describe User, "Admin User" do
   before do
     User.current_user = ::User[:wagbot]
   end
-#  it "should ok admin role" do System.role_ok?(Role['admin'].id).should be_true end
+#  it "should ok admin role" do Wagn.role_ok?(Role['admin'].id).should be_true end
   
   it "should have correct parties" do
     User.current_user.parties.sort.should == ['administrator', "anyone", "anyone_signed_in",'wagn_bot']

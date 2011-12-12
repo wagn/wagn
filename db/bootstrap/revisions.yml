@@ -1726,7 +1726,7 @@ revisions_372:
     
     /* page - background image and color */
     body#wagn {
-      background: url(/images/body-bg.png) repeat-x #CCCCCC;
+      background: url(/assets/body-bg.png) repeat-x #CCCCCC;
     }
     
     /* main card and sidebar widths */
@@ -3714,7 +3714,7 @@ revisions_381:
     
     /* page - background image and color */
     body#wagn {
-        background: url(/images/body-bg.png) repeat-x #CCCCCC;
+        background: url(/assets/body-bg.png) repeat-x #CCCCCC;
     }
     
     /* main card and sidebar widths */
@@ -4814,7 +4814,7 @@ revisions_317:
     </blockquote>
     <p>&nbsp;</p>
     <h1>[[_left+*watchers|Watchers]]</h1>
-    <div><strong>{{_left+watcher instructions for related tab|naked}}</strong>&nbsp;&nbsp;[[http://wagn.org/wagn/Notification|Learn more about notifications.]]</div>
+    <div><strong>{{_left+watcher instructions for related tab|core}}</strong>&nbsp;&nbsp;[[http://wagn.org/wagn/Notification|Learn more about notifications.]]</div>
     <blockquote>
     <p>{{_left+*watchers|item:link}}</p>
     </blockquote>
@@ -4973,7 +4973,7 @@ revisions_179:
   updated_at: 2009-05-21 13:30:09.367411
   created_by: "3"
   id: "2417"
-  content: "{\"type\":\"User\",\"sort\":\"name\",\"append\":\"name and email\", \"view\":\"naked\"}"
+  content: "{\"type\":\"User\",\"sort\":\"name\",\"append\":\"name and email\", \"view\":\"core\"}"
 revisions_420: 
   created_at: 2011-02-28 10:51:54.163612
   card_id: "446"

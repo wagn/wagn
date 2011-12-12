@@ -19,13 +19,9 @@ module Wagn
         raise "??? #{obj.inspect}" if Card===obj
         return obj if Cardname===obj
         str = Array===obj ? obj*JOINT : obj.to_s
-#        raise "name error #{str}" if str[0] == '/'
         return obj if obj = NAME2CARDNAME[str]
         super str
       end
-
-      def each_cardname(&proc) NAME2CARDNAME.values.uniq.each(&proc) end
-      def each_key(&proc) each_cardname.map(&:key).each(&proc) end
     end
 
 
@@ -45,29 +41,18 @@ module Wagn
         end
       #@key.to_cardname if @key != @s
       NAME2CARDNAME[@s] = self
-      #Rails.logger.debug "new:#{self.inspect}"; self
+#      Rails.logger.debug "new:#{self.inspect}"; self
     end
     
     def generate_simple_key
       decode_html.underscore.gsub(/[^#{WORD_RE}\*]+/,'_').split(/_+/).reject(&:blank?).map(&:singularize)*'_'
     end
     
-
     def decode_html
       @decoded ||= (s.match(/\&/) ?  HTMLEntities.new.decode(s) : s)
     end
-
     
     alias simple? simple
-=begin
-    def simple?
-      @simple ||= !s.index(JOINT)
-    end
-    
-    def parts
-      @parts ||= (simple ? [s] : s.gsub(/\+$/,'+ ').split(JOINT))
-    end
-=end
     
     def inspect() "<CardName key=#{key}[#{s}, #{size}]>" end
 
@@ -90,8 +75,10 @@ module Wagn
     end
     def size() parts.size end
 
-
-    def valid_cardname?() not parts.find {|pt| pt.match(BANNED_RE)} end
+    def to_cardname() self end
+    def valid?
+      not (s =~ /\+$/ or parts.find {|pt| pt.match(BANNED_RE)})
+    end
 
     #FIXME codename
     def template_name?() junction? && !!%w{*default *content}.include?(tag_name) end
@@ -154,17 +141,6 @@ module Wagn
       args ? parts.map { |p| p =~ /^_/ and args[p] ? args[p] : p }*JOINT : self
     end
 
-    def fullname(context, base, args, params)
-      context = case
-          when base; (base.respond_to?(:cardname) ? base.cardname :
-                      base.respond_to?(:name) ? base.name : base)
-          when args[:base]=='parent'; context.left_name
-          else context
-          end.to_cardname
-      #Rails.logger.info "fullname s(#{inspect}, #{context.inspect}, #{base.inspect}, #{args.inspect}) P:#{params.inspect}"
-      to_absolute( context||self, params )
-    end
-
     def to_absolute_name(rel_name=nil)
       (rel_name || self.s).to_cardname.to_absolute(self)
     end
@@ -175,27 +151,21 @@ module Wagn
 
     def to_absolute(context, params=nil)
       context = context.to_cardname
-      #Rails.logger.info "to_absolute(#{inspect}, #{context.inspect}, #{params.inspect}) T:#{Kernel.caller[0,8]*"\n"}"
       parts.map do |part|
-        #Rails.logger.info "to_abs part(#{part}) #{!!(part =~ /^_/)}, #{params&&params[part]}"
         new_part = case part
-          when /^_user$/i;  (user=User.current_user) ? user.cardname : part
+          when /^_user$/i;            (user=User.current_user) ? user.cardname : part
+          when /^_main$/i;            Wagn::Conf[:main_name]
           when /^(_self|_whole|_)$/i; context
-        #Rails.logger.info "to_abs _self(#{context.inspect})"; context
           when /^_left$/i;            context.trunk_name
-        #Rails.logger.info "to_abs _left(#{context.trunk_name.inspect})"; context.trunk_name
           when /^_right$/i;           context.tag_name
-        #Rails.logger.info "to_abs _right(#{context.tag_name.inspect})"; context.tag_name
           when /^_(\d+)$/i;
             pos = $~[1].to_i
             pos = context.size if pos > context.size
-            #Rails.logger.info "to_abs Dig(#{pos}) #{context.parts.inspect}"
             context.parts[pos-1]
           when /^_(L*)(R?)$/i
             l_s, r_s = $~[1].size, $~[2].blank?
             trunk = context.nth_left(l_s)
             r= r_s ? trunk.to_s : trunk.tag_name
-            #Rails.logger.debug "_LR(#{l_s}, #{r_s}) TR:#{trunk}, R:#{r}"; r
           when /^_/
             (params && ppart = params[part]) ? CGI.escapeHTML( ppart ) : part
           else                     part

@@ -47,7 +47,7 @@ module Wagn::Model::Collection
   end
   
   def update_search_index     
-    return unless @name_or_content_changed && System.enable_postgres_fulltext
+    return unless @name_or_content_changed && Wagn::Conf[:enable_postgres_fulltext]
     
     connection.execute %{
       update cards set indexed_content = concat( setweight( to_tsvector( name ), 'A' ), 

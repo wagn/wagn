@@ -1,17 +1,27 @@
-require 'rubygems'
+ENV["RAILS_ENV"] = "test"
+require File.expand_path('../../config/environment', __FILE__)
+require 'rails/test_help'
+require 'pathname'
 
 unless defined? TEST_ROOT
-  ENV["RAILS_ENV"] = "test"
-  require 'pathname'
-  TEST_ROOT = Pathname.new(File.expand_path(File.dirname(__FILE__))).cleanpath(true).to_s
-  require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-  require 'test_help' 
-  
+  TEST_ROOT = Pathname.new(File.expand_path(File.dirname(__FILE__))).cleanpath(true).to_s  
   load TEST_ROOT + '/helpers/wagn_test_helper.rb'
   load TEST_ROOT + '/helpers/permission_test_helper.rb'
   load TEST_ROOT + '/helpers/chunk_test_helper.rb'  # FIXME-- should only be in certain tests
-  
+
   class ActiveSupport::TestCase
+    # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
+    #
+    # Note: You'll currently still have to declare fixtures explicitly in integration tests
+    # -- they do not yet inherit this setting
+    #fixtures :all
+
+    # Add more helper methods to be used by all tests here...
+    
+    
+    
+    
+    
     include AuthenticatedTestHelper
     # Transactional fixtures accelerate your tests by wrapping each test method
     # in a transaction that's rolled back on completion.  This ensures that the
@@ -41,7 +51,12 @@ unless defined? TEST_ROOT
         Wagn::Cache.reset_for_tests
       end
     end
+    
+    
   end
+
+
+
 
   class ActiveSupport::TestCase      
     include AuthenticatedTestHelper
@@ -56,12 +71,12 @@ unless defined? TEST_ROOT
       end
       url
     end
-  
+
     class << self      
       def test_render(url,*args)  
         RenderTest.new(self,url,*args)
       end
-      
+
       # Class method for test helpers
       def test_helper(*names)
         names.each do |name|
@@ -82,12 +97,12 @@ unless defined? TEST_ROOT
       end    
       alias :test_helpers :test_helper
     end
-    
+
     class RenderTest
       attr_reader :title, :url, :cardtype, :user, :status, :card
       def initialize(test_class,url,args={})
         @test_class,@url = test_class,url
-        
+
         args[:users] ||= { :anon=>200 }
         args[:cardtypes] ||= ['Basic']
         if args[:cardtypes]==:all 
@@ -118,9 +133,7 @@ unless defined? TEST_ROOT
         end
       end                     
     end
-    
+
   end
-
-
-end  
+end
 

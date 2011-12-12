@@ -1,0 +1,99 @@
+.settings-tab {
+  border: 0px;
+  margin-bottom: 20px;
+  padding: 5px 15px;
+}
+.set-select {
+  margin: 10px;
+}
+.set-rules {
+  width: 100%;
+}
+.set-rules th {
+  background: #aaa;
+  color: #eee;
+  padding: 5px 0;
+}
+.set-rules th,
+.set-rules td.rule-cell {
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  padding: 2px 5px;  
+}
+.rule-setting {
+  font-weight: bold;
+}
+td.rule-setting { 
+  width: 30%;
+}
+.rule-type {
+  color: #666;
+}
+.rule-content {
+  width: 350px;
+}
+.rule-content div {
+  padding: 0;
+}
+.rule-content-container.closed-view {
+  width: 350px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: inherit;
+  background: inherit;
+}
+.rule-content-container.closed-view .pointer-list,
+.rule-content-container.closed-view .search-list,
+.rule-content-container.closed-view .content {
+  margin: 0;
+}
+td.missing-rule {
+  background-color: #eee;
+  border-bottom: 1px solid #fff;
+}
+.rule-column-1 {
+  float: left;
+  width: 25%;
+}
+.rule-column-2 { 
+  float: right;
+  width: 70%;
+  border: 1px solid #eee;
+}
+.open-rule .type-editor {
+  width: 35%;
+  float: right;
+  text-align: right;
+  padding: 5px 2px;
+}
+.open-rule .edit-button-area {
+  clear:both;
+}
+.open-rule .instruction {
+  float: left;
+  width: 55%;
+  margin: 0;
+}
+.open-rule .set-editor {
+  margin: 10px 0;
+  padding: 5px;
+  background: #eee;
+  list-style-type: none;
+}
+.open-rule .content-editor {
+  clear: both;
+  padding: 10px 0;
+  min-height: 50px;
+}
+.open-rule .content-editor .card-slot {
+  padding: 5px;
+}
+.open-rule .set-editor .current-set-label {
+  font-weight: bold;
+}
+.attention {
+  border: 3px solid red;
+}
+.rule-delete-section {
+  float: right;
+}

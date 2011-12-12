@@ -18,6 +18,7 @@ module Wagn::Model
     base.send :include, Wagn::Model::References
     base.send :include, Wagn::Model::Settings
     base.send :include, Wagn::Model::Pattern
+    base.send :include, Wagn::Model::Attach
   end
 end
 

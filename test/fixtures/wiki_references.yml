@@ -1174,7 +1174,7 @@ wiki_references_452:
   updated_at: 2011-09-30 12:15:44.381406
   id: "16654"
   referenced_card_id: 
-  referenced_name: illiad+author
+  referenced_name: iliad+author
 wiki_references_405: 
   link_type: T
   created_at: 2011-09-30 12:15:42.788666
@@ -1222,7 +1222,7 @@ wiki_references_453:
   updated_at: 2011-09-30 12:15:44.391407
   id: "16655"
   referenced_card_id: 
-  referenced_name: illiad+illustrator
+  referenced_name: iliad+illustrator
 wiki_references_406: 
   link_type: T
   created_at: 2011-09-30 12:15:42.791402

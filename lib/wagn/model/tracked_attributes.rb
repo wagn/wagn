@@ -1,6 +1,6 @@
 module Wagn::Model::TrackedAttributes 
    
-  def set_tracked_attributes  
+  def set_tracked_attributes
     #Rails.logger.debug "Card(#{name})#set_tracked_attributes begin"
     @was_new_card = self.new_card?
     updates.each_pair do |attrib, value| 
@@ -28,7 +28,6 @@ module Wagn::Model::TrackedAttributes
   
   protected 
   def set_name(newname)
-    @old_cardname = cardname
     if (@old_name = self.name_without_tracking) != newname.to_s
       @cardname, name_without_tracking =
          Wagn::Cardname===newname ? [newname, newname.to_s] :
@@ -46,11 +45,11 @@ module Wagn::Model::TrackedAttributes
         sidecard = Card[sidename]
         old_name_in_way = (sidecard && sidecard.id==self.id) # eg, renaming A to A+B
         suspend_name(sidename) if old_name_in_way
-        self.send "#{side}=", (!sidecard || old_name_in_way ? Card.new(:name=>sidename) : sidecard)
+        self.send "#{side}=", (!sidecard || old_name_in_way ? Card.create!(:name=>sidename) : sidecard)
       end
     else
       self.trunk = self.tag = nil
-    end         
+    end   
 
     return if new_card?
     if existing_card = Card.find_by_key(@cardname.to_key) and existing_card != self
@@ -65,7 +64,7 @@ module Wagn::Model::TrackedAttributes
     end
           
     Cardtype.cache.reset if typecode=='Cardtype'
-    Wagn::Cache.expire_card(@old_cardname.to_key)
+    Wagn::Cache.expire_card(@old_name.to_cardname.key)
     @name_changed = true          
     @name_or_content_changed=true
   end
@@ -182,11 +181,7 @@ module Wagn::Model::TrackedAttributes
   def self.included(base)
     super 
     base.after_create :set_initial_content 
-    base.before_save.unshift Proc.new{|rec| rec.set_tracked_attributes }
     base.after_save :cascade_name_changes
-#    base.after_create() do |card|
-#      Wagn::Hook.call :after_create, card
-#    end
   end    
 
 end

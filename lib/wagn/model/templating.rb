@@ -27,7 +27,7 @@ module Wagn::Model::Templating
   
   def virtual?
     if @virtual.nil?
-      junction? ? get_template(skip_module_loading=true) : (@virtual=false)
+      cardname.simple? ? @virtual=false : get_template
     end
     @virtual
   end

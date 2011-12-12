@@ -3,5 +3,5 @@ class Wagn::Renderer
     ext=card.left.extension 
     ext ? ext.send('email') : ''
   end 
-  alias_view :raw, {:right=>'*email'}, :naked
+  alias_view :raw, {:right=>'*email'}, :core
 end

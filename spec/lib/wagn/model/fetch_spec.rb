@@ -30,9 +30,6 @@ describe Card do
 
     it "returns virtual cards and caches them as missing" do
       User.as(:wagbot)
-      # FIXME: put this card in the wagn::create data
-      #Card.create!(:name=>'*email+*right+*content', :content=>'')
-
       card = Card.fetch("Joe User+*email")
       card.should be_instance_of(Card)
       card.name.should == "Joe User+*email"
@@ -41,6 +38,11 @@ describe Card do
       #cached_card = Card.cache.read("joe_user+*email")
       #cached_card.missing?.should be_true
       #cached_card.virtual?.should be_true
+    end
+    
+    it "fetches virtual cards after skipping them" do
+      Card['A+*self'].should be_nil
+      Card.fetch( 'A+*self' ).should_not be_nil
     end
 
     it "does not recurse infinitely on template templates" do

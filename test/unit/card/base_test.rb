@@ -6,7 +6,7 @@ class Card::BaseTest < ActiveSupport::TestCase
     setup_default_user
   end
 
-  def test_remove
+  test 'remove' do
     forba = Card.create! :name=>"Forba"
     torga = Card.create! :name=>"TorgA"
     torgb = Card.create! :name=>"TorgB"
@@ -30,19 +30,16 @@ class Card::BaseTest < ActiveSupport::TestCase
     #assert_equal 0, Card.find_all_by_trash(false).size
   end
 
-  #def test_attribute_card
+  #test test_attribute_card
   #  alpha, beta = Card.create(:name=>'alpha'), Card.create(:name=>'beta')
   #  assert_nil alpha.attribute_card('beta')
   #  Card.create :name=>'alpha+beta'   
   #  assert_instance_of Card, alpha.attribute_card('beta')
   #end
 
-  def test_create
-    Rails.logger.info "testing point 0"
+  test 'create' do
     alpha = Card.new :name=>'alpha', :content=>'alpha'
-    Rails.logger.info "testing point 1 #{alpha.inspect}"
     assert_equal 'alpha', alpha.content
-    Rails.logger.info "testing point 2"
     alpha.save
     assert alpha.name
     assert_stable(alpha)
@@ -50,25 +47,25 @@ class Card::BaseTest < ActiveSupport::TestCase
   
   
   # just a sanity check that we don't have broken data to start with
-  def test_fixtures
+  test 'fixtures' do
     Card.find(:all).each do |p|
       assert_instance_of String, p.name
     end
   end
 
-  def test_find_by_name
+  test 'find_by_name' do
     card = Card.create( :name=>"ThisMyCard", :content=>"Contentification is cool" )
     assert_equal card, Card.find_by_name("ThisMyCard")
   end
  
   
-  def test_find_nonexistent
+  test 'find_nonexistent' do
     assert !Card.find_by_name('no such card+no such tag')
     assert !Card.find_by_name('HomeCard+no such tag')
   end
           
 
-  def test_update_should_create_subcards
+  test 'update_should_create_subcards' do
     User.current_user = :joe_user
     User.as(:joe_user) do
       b = Card.create!( :name=>'Banana' )
@@ -78,7 +75,7 @@ class Card::BaseTest < ActiveSupport::TestCase
     end
   end
   
-  def test_update_should_create_subcards_as_wagbot_if_missing_subcard_permissions
+  test 'update_should_create_subcards_as_wagbot_if_missing_subcard_permissions' do
     Card.create(:name=>'peel')
     User.current_user = :anon
     assert_equal false, Card.fetch('Basic').ok?(:create)
@@ -87,7 +84,7 @@ class Card::BaseTest < ActiveSupport::TestCase
     assert_equal User[:anon].id, Card["Banana+peel"].created_by
   end
 
-  def test_update_should_not_create_subcards_if_missing_main_card_permissions
+  test 'update_should_not_create_subcards_if_missing_main_card_permissions' do
     b = nil
     User.as(:joe_user) do
       b = Card.create!( :name=>'Banana' )
@@ -100,7 +97,7 @@ class Card::BaseTest < ActiveSupport::TestCase
   end
 
 
-  def test_create_without_read_permission
+  test 'create_without_read_permission' do
     c = Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
     User.as(:anon) do
       assert_raises Card::PermissionDenied do

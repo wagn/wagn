@@ -1,4 +1,6 @@
 class Wagn::Renderer 
-  define_view( :naked, :right=>'*content' ) { |args| self._render_raw } 
-  alias_view :naked, {:right=>'*content'}, {:right=>'*default'}
+  define_view( :core, :right=>'*content' ) do |args|
+    self._render_raw 
+  end
+  alias_view :core, {:right=>'*content'}, {:right=>'*default'}
 end

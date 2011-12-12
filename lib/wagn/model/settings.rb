@@ -1,9 +1,7 @@
 module Wagn::Model::Settings
   def setting setting_name, fallback=nil
-    Rails.logger.debug "setting(#{setting_name}, #{fallback})" if key == 'home+*watcher'
-    card = setting_card setting_name, fallback, :skip_module_loading=>true
-    r=(card && card.content)
-    Rails.logger.debug "setting(#{setting_name}, #{fallback}) #{r}" if key == 'home+*watcher'; r
+    card = setting_card setting_name, fallback, :skip_modules=>true
+    card && card.content
   end
 
 #  def rule?
@@ -33,7 +31,7 @@ module Wagn::Model::Settings
   alias_method_chain :setting_card, :cache
 
   def related_sets
-    sets = []
+    sets = ["#{name}+*self"]
     sets<< "#{name}+*type" if typecode=='Cardtype'
     if cardname.simple?
       sets<< "#{name}+*right"
@@ -59,7 +57,7 @@ module Wagn::Model::Settings
       @@universal_setting_names_by_group ||= begin
         User.as(:wagbot) do
           setting_names = Card.search(:type=>'Setting', :return=>'name', :limit=>'0')
-          grouped = {:view=>[], :edit=>[], :add=>[]}
+          grouped = {:perms=>[], :look=>[], :com=>[], :other=>[]}
           setting_names.map(&:to_cardname).each do |cardname|
             next unless group = Card.setting_attrib(cardname, :setting_group)
             grouped[group] << cardname

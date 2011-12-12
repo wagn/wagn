@@ -5,7 +5,7 @@ Feature: Flexmail
   
   Background:
     Given I log in as Joe Admin
-    And I create Cardtype card "Testimony"    
+    And I create Cardtype card "Testimony"
     And I create Pointer card "Testimony+*type+*send" with content "[[Testemailconfig]]"
     And I create card "Testimony+*type+*content" with content
       """
@@ -22,7 +22,7 @@ Feature: Flexmail
 #    And I create Phrase card "Testemailconfig+*bcc"
     And I create Basic card "Testemailconfig+*message" with content 
       """
-      Pleistocles, {{_self+name|naked}} says: {{_self+Testimony|naked}} {{_self+search test|naked;item:name}}
+      Pleistocles, {{_self+name|core}} says: {{_self+Testimony|core}} {{_self+search test|core;item:name}}
       buena,
       Thaddeus
       """

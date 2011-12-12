@@ -1,8 +1,8 @@
-==Wagn: Wiki on Wheels
+==Wagn: how pioneers roll
 
-Wagn is an open web platform for collaborating to build open web systems.
+Wagn is an open web platform for collaborating to build coherent web systems.
 
-Using simple building blocks called cards, Wagneers can construct web systems ranging from simple content managers to custom project trackers to fully integrated web suites.  
+Using simple wiki-inspired building blocks called cards, "Wagneers" construct sites ranging from simple content managers to custom project trackers to fully integrated web suites.  
 
 To learn more about installation, see http://wagn.org/Installation
 

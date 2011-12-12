@@ -63,6 +63,7 @@ class User < ActiveRecord::Base
       @@as_user || self.current_user
     end
       
+
     # FIXME: args=params.  should be less coupled..
     def create_with_card(user_args, card_args, email_args={})
       @card = (Hash===card_args ? Card.new({'typecode'=>'User'}.merge(card_args)) : card_args) 
@@ -88,14 +89,17 @@ class User < ActiveRecord::Base
     
     def [](key)
       #Rails.logger.info "Looking up USER[ #{key}]"
-      self.cache.read(key.to_s) || self.cache.write(key.to_s, begin
-        usr = Integer===key ? find(key) : find_by_login(key.to_s)
-        if usr #preload to be sure these get cached.
-          usr.card
-          usr.read_rule_ids
-        end
-        usr
-      end)
+      self.cache ? self.cache.read(key.to_s) ||
+        self.cache.write(key.to_s, without_cache(key)) : without_cache(key)
+    end
+
+    def without_cache(key)
+      usr = Integer===key ? find(key) : find_by_login(key.to_s)
+      if usr #preload to be sure these get cached.
+        usr.card
+        usr.read_rule_ids unless usr.login=='wagbot'
+      end
+      usr
     end
     
     def logged_in?
@@ -106,6 +110,61 @@ class User < ActiveRecord::Base
       c = self.cache
       !c.read('no_logins').nil? ? c.read('no_logins') : c.write('no_logins', (User.count < 3))
     end
+
+    def always_ok?
+      return false unless usr = as_user
+      #warn "aok?(#{usr})"
+      return true if usr.login == 'wagbot' #cannot disable
+
+      @@always ||= {}
+      #warn "aok?3(#{usr}) #{@@always.inspect}"
+      if @@always[usr.id].nil?
+        @@always = @@always.dup if @@always.frozen?
+        aok=false; usr.all_roles.each{|r| aok=true if r.admin?}
+        @@always[usr.id] = aok
+      end
+      #warn "always> #{@@always.inspect}\n>>> #{@@always[usr.id]}"
+      @@always[usr.id]
+    end
+    # PERMISSIONS
+    
+    def ok?(task)
+      #warn "ok?(#{task}), #{always_ok?}"
+      return true if always_ok?
+      self.ok_hash.key? task.to_s
+    end
+    
+    def ok!(task)
+      if !ok?(task)
+        #FIXME -- needs better error message handling
+        raise Wagn::PermissionDenied.new(self.new)
+      end
+    end
+    
+  protected
+    # FIXME stick this in session? cache it somehow??
+    def ok_hash
+      usr = User.as_user
+      #ok_hash = self.cache.read('ok_hash') || {}
+      ok_hash = @@ok_hash ||= {}
+      if ok_hash[usr.id].nil?
+        ok_hash = ok_hash.dup if ok_hash.frozen?
+        ok_hash[usr.id] = begin
+          ok = {}
+          ok[:role_ids] = {}
+          usr.all_roles.each do |role|
+            ok[:role_ids][role.id] = true
+            role.task_list.each { |t| ok[t] = 1 }
+          end
+          ok
+        end || false
+        #self.cache.write 'ok_hash', ok_hash
+      end
+      ok_hash[usr.id]
+      #warn "ok_hash #{usr}, #{r}"; r
+    end
+    
+
   end 
 
 #~~~~~~~ Instance
@@ -171,8 +230,10 @@ class User < ActiveRecord::Base
     raise(Wagn::Oops, "subject is required") unless (args[:subject])
     raise(Wagn::Oops, "message is required") unless (args[:message])
     begin
-      Mailer.deliver_account_info(self, args[:subject], args[:message])
-    rescue; warn("ACCOUNT INFO DELIVERY FAILED: \n #{args.inspect}")
+      message = Mailer.account_info self, args[:subject], args[:message]
+      message.deliver
+    rescue Exception=>e
+      warn "ACCOUNT INFO DELIVERY FAILED: \n #{args.inspect}\n   #{e.message}, #{e.backtrace*"\n"}"
     end
   end  
 

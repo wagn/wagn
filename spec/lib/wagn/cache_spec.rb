@@ -40,7 +40,7 @@ describe Wagn::Cache do
     it "#fetch" do
       block = Proc.new { "hi" }
       @store.should_receive(:fetch).with("prefix/cache_id/foo", &block)
-      @cache.fetch("fetch", &block)
+      @cache.fetch("foo", &block)
     end
 
     it "#delete" do
@@ -77,7 +77,7 @@ describe Wagn::Cache do
 
   describe "with file store" do
     before do
-      cache_path = "#{RAILS_ROOT}/tmp/cache"
+      cache_path = "#{Rails.root}/tmp/cache"
       @store = ActiveSupport::Cache::FileStore.new cache_path
 
       # TODO @store.clear
@@ -89,7 +89,7 @@ describe Wagn::Cache do
       files_to_remove = root_dirs.collect{|f| File.join(cache_path, f)}
       FileUtils.rm_r(files_to_remove)
       
-      Wagn::Cache.should_receive("generate_cache_id").twice.and_return("cache_id1")
+      Wagn::Cache.should_receive("generate_cache_id").and_return("cache_id1")
       @cache = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
     end
 

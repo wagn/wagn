@@ -6,7 +6,7 @@ class Card::PermissionDenied < Wagn::PermissionDenied
   end    
   
   def build_message
-    "for card #{@card.name}: #{@card.errors.on(:permission_denied)}"
+    "for card #{@card.name}: #{@card.errors[:permission_denied]}"
   end
 end
        
@@ -37,39 +37,17 @@ module Wagn::Model::Permissions
     destroy_without_permissions!
   end
 
-  def save_with_permissions(perform_checking = true)  #checking is needed for update_attribute, evidently.  not sure I like it...
-    Rails.logger.debug "Card#save_with_permissions!"
-    run_checked_save :save_without_permissions, perform_checking
-  end
-   
-  def save_with_permissions!(perform_checking = true)
-    Rails.logger.debug "Card#save_with_permissions!"
-    run_checked_save :save_without_permissions!, perform_checking
-  end 
-  
-  def run_checked_save(method, perform_checking = true)
-    if !perform_checking || approved?
-      begin
-        self.send(method)
-      rescue Exception => e
-        cardname.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_cardname.key)}
-        Rails.logger.debug "Exception #{method}:#{e.message} #{name} #{e.backtrace*"\n"}"
-        raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
-      end
-    else
-      raise Card::PermissionDenied.new(self)
-    end
-  end
+
   
   def approved?
     self.operation_approved = true    
     self.permission_errors = []
-    #Rails.logger.debug "updates.keys = #{updates.keys.inspect}"
+
     unless updates.keys == ['comment'] # if only updating comment, next section will handle
       new_card? ? ok?(:create) : ok?(:update)
     end
     updates.each_pair do |attr,value|
-      #Rails.logger.info "approving: #{attr}"
+
       send("approve_#{attr}")
     end         
     permission_errors.each do |err|
@@ -114,7 +92,7 @@ module Wagn::Model::Permissions
       User.as :wagbot do
         #Rails.logger.debug "in rule_card #{opcard&&opcard.name} #{operation}"
         if opcard.content == '_left' && self.junction?
-          lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_module_loading=>true) 
+          lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_modules=>true) 
           lcard.rule_card(operation).first
         else
           opcard
@@ -136,13 +114,13 @@ module Wagn::Model::Permissions
   end
 
   def lets_user(operation)
-    return true if (System.always_ok? and operation != :comment)
+    return true if (User.always_ok? and operation != :comment)
     User.as_user.among?( who_can(operation) )
   end
 
   def approve_task(operation, verb=nil)           
     verb ||= operation.to_s
-    deny_because(you_cant "#{verb} this card") unless self.lets_user( operation ) 
+    deny_because you_cant("#{verb} this card") unless self.lets_user( operation ) 
   end
 
   def approve_create
@@ -150,10 +128,11 @@ module Wagn::Model::Permissions
   end
 
   def approve_read
-    return true if System.always_ok?
-    self.read_rule_id ||= rule_card(:read).first.id
-    ok = User.as_user.read_rule_ids.member?(self.read_rule_id.to_i) 
-    deny_because(you_cant "read this card") unless ok
+    #warn "AR #{User.always_ok?}"
+    return true if User.always_ok?
+    @read_rule_id ||= rule_card(:read).first.id
+    ok = User.as_user.read_rule_ids.member?(@read_rule_id.to_i) 
+    deny_because you_cant("read this card") unless ok
   end
   
   def approve_update
@@ -166,9 +145,11 @@ module Wagn::Model::Permissions
   end
 
   def approve_comment
-    approve_task(:comment, 'comment on')
-    deny_because("No comments allowed on template cards")       if operation_approved && template?  
-    deny_because("No comments allowed on hard templated cards") if operation_approved && hard_template
+    approve_task :comment, 'comment on'
+    if operation_approved
+      deny_because "No comments allowed on template cards" if template?
+      deny_because "No comments allowed on hard templated cards" if hard_template
+    end
   end
   
   def approve_typecode
@@ -210,9 +191,11 @@ module Wagn::Model::Permissions
     
     #find all cards with me as trunk and update their read_rule (because of *type plus right)
     # skip if name is updated because will already be resaved
-    if !new_card? && updates.for(:typecode) #&& !updates.for(:name)
+    
+    if !new_card? && updates.for(:typecode)
       User.as :wagbot do
         Card.search(:left=>self.name).each do |plus_card|
+          plus_card = plus_card.refresh if plus_card.frozen?
           plus_card.update_read_rule
         end
       end
@@ -255,13 +238,13 @@ module Wagn::Model::Permissions
       # AND need to make sure @changed gets wiped after save (probably last in the sequence)
       
       User.cache.reset
-      System.cache.reset
+      #Wagn.cache.reset
       Wagn::Cache.expire_card self.key #probably shouldn't be necessary, 
       # but was sometimes getting cached version when card should be in the trash.
       # could be related to other bugs?
       in_set = {}
       if !(self.trash)
-        rule_classes = Wagn::Model::Pattern.subclasses.map &:key
+        rule_classes = Wagn::Model::Pattern.pattern_subclasses.map &:key
         rule_class_index = rule_classes.index self.cardname.trunk_name.tag_name.to_s
         return 'not a proper rule card' unless rule_class_index
 
@@ -289,8 +272,10 @@ module Wagn::Model::Permissions
   def self.included(base)   
     super
     base.extend(ClassMethods)
-    base.alias_method_chain :save, :permissions
-    base.alias_method_chain :save!, :permissions
+#    base.before_save.unshift Proc.new{|rec| rec.set_read_rule }
+#    base.after_save.unshift  Proc.new{|rec| rec.update_ruled_cards }
+#    base.alias_method_chain :save, :permissions
+#    base.alias_method_chain :save!, :permissions
     base.alias_method_chain :destroy, :permissions
     base.alias_method_chain :destroy!, :permissions
     

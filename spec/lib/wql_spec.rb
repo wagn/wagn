@@ -20,7 +20,6 @@ describe Wql do
     end
 
     it "should find virtual cards" do
-      warn "\n\n\n~~~~~~~~~looking for virtual cards"
       Wql.new(:name=>[:in, 'C', 'D'], :append=>'*plus cards' ).run.plot(:name).sort.should == ["C+*plus cards", "D+*plus cards"]
     end
   end

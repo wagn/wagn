@@ -57,8 +57,6 @@ end
 
 
 
-
-
 group :test, :development do
   gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
   gem 'ruby-prof'                              # profiling

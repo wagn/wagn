@@ -148,7 +148,7 @@ module Wagn
             (card.typecode=='Set' && card.hard_template?) || #
             (card.typecode=='Cardtype' && card.cards_of_type_exist?)
           link_to attr, path(:edit, :attrib=>attr), :remote=>true,
-            :class => %{standard-slotter edit-#{ attr }-link #{'init-editors' if attr==:content } #{'current-subtab' if attr==current.to_sym}}
+            :class => %{slotter edit-#{ attr }-link #{'init-editors' if attr==:content } #{'current-subtab' if attr==current.to_sym}}
         end.compact * "\n"}
       </div>}
     end
@@ -158,7 +158,7 @@ module Wagn
       %{<div class="submenu">#{
         [:account, :settings].map do |key|
           link_to key, path(:options, :attrib=>key), :remote=>true,
-            :class=> %{standard-slotter#{' current-subtab' if key==current}}
+            :class=> %{slotter#{' current-subtab' if key==current}}
         end * "\n" }
       </div>}
     end
@@ -189,7 +189,7 @@ module Wagn
     def link_to_menu_action( to_action)
       klass = { :edit => 'edit-content-link init-editors'}
       content_tag :li, link_to_action( to_action.to_s.capitalize, to_action,
-        :class=> "standard-slotter #{klass[to_action]}" #{}" #{menu_action==to_action ? ' current' : ''}"
+        :class=> "slotter #{klass[to_action]}" #{}" #{menu_action==to_action ? ' current' : ''}"
       )
     end
 
@@ -254,13 +254,13 @@ module Wagn
     # some of this should be in rich_html, maybe most
     def revision_link( text, revision, name, accesskey='', mode=nil )
       link_to text, path(:changes, :rev=>revision, :mode=>(mode || params[:mode] || true) ), 
-        :class=>"standard-slotter", :remote=>true
+        :class=>"slotter", :remote=>true
     end
 
     def rollback
       if card.ok?(:update) && !(card.current_revision==@revision)
         link_to 'Save as current', path(:rollback, :rev=>@revision_number),
-          :class=>'standard-slotter', :remote=>true
+          :class=>'slotter', :remote=>true
       end
     end
 

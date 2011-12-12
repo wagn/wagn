@@ -100,7 +100,7 @@ class Wagn::Renderer::Html
 
   define_view(:new) do |args|
     if ajax_call?
-      new_content :cancel_href=>path(:view, :view=>:missing), :cancel_class=>'standard-slotter'
+      new_content :cancel_href=>path(:view, :view=>:missing), :cancel_class=>'slotter'
     else
       @title = "New Card"  #this doesn't work.
       %{
@@ -138,7 +138,7 @@ class Wagn::Renderer::Html
      %{#{error_messages_for card}#{
 
      form_for card, :url=>path(:create), :remote=>true, 
-      :html=>{ :class=>'card-form card-new-form standard-slotter', 'main-success'=>'REDIRECT' } do |form|
+      :html=>{ :class=>'card-form card-new-form slotter', 'main-success'=>'REDIRECT' } do |form|
       @form = form
 
       %{
@@ -203,7 +203,7 @@ class Wagn::Renderer::Html
 
     wrap(:missing, args) do
       link_to raw("Add <strong>#{ @showname || card.name }</strong>"), path(:new, new_args),
-        :class=>'standard-slotter init-editors', :remote=>true
+        :class=>'slotter init-editors', :remote=>true
     end
   end
   
@@ -235,17 +235,17 @@ class Wagn::Renderer::Html
 
       <div class="card-editor edit-area #{card.hard_template ? :templated : ''}">
       #{ form_for card, :url=>path(:update),
-      :html=>{ :class=>'card-form card-edit-form standard-slotter autosave', :remote=>true } do |f|
+      :html=>{ :class=>'card-form card-edit-form slotter autosave', :remote=>true } do |f|
         %{<div>#{ @form= f; edit_slot(args) }</div>
 
         <div class="edit-button-area"> #{
           if !card.new_card?
             button_tag "Delete", :href=>path(:remove), :type=>'button', 'data-type'=>'html',
-              :class=>'edit-delete-button delete-button standard-slotter standard-delete'
+              :class=>'edit-delete-button delete-button slotter standard-delete'
               
           end}#{
           submit_tag 'Submit', :class=>'edit-submit-button'}#{
-          button_tag 'Cancel', :class=>'edit-cancel-button standard-slotter', :href=>path(:view), :type=>'button'}
+          button_tag 'Cancel', :class=>'edit-cancel-button slotter', :href=>path(:view), :type=>'button'}
         </div>}
        end}
     </div>
@@ -257,7 +257,7 @@ class Wagn::Renderer::Html
       <div class="edit-area edit-name">
        <h2>Change Name</h2>
       #{ form_for card, :url=>path(:update), :remote=>true,
-        :html=>{ :class=>'card-edit-name-form standard-slotter', 'main-success'=>'REDIRECT' } do |f|
+        :html=>{ :class=>'card-edit-name-form slotter', 'main-success'=>'REDIRECT' } do |f|
           
           
           
@@ -300,7 +300,7 @@ class Wagn::Renderer::Html
     end
     }
     #{ submit_tag 'Rename', :class=>'edit-name-submit-button'}
-    #{ button_tag 'Cancel', :class=>'edit-name-cancel-button standard-slotter init-editors', :type=>'button', :href=>path(:edit)}
+    #{ button_tag 'Cancel', :class=>'edit-name-cancel-button slotter init-editors', :type=>'button', :href=>path(:edit)}
     }
     end}
     </div>}
@@ -312,7 +312,7 @@ class Wagn::Renderer::Html
     <h2>Change Type</h2> #{
       form_for :card, :url=>path(:update), :remote=>true, 
         #'main-success'=>'REDIRECT: TO-CARD', # adding this back in would make main cards redirect on cardtype changes
-        :html=>{ :class=>'standard-slotter card-edit-type-form' } do |f|
+        :html=>{ :class=>'slotter card-edit-type-form' } do |f|
           
         %{#{if card.typecode == 'Cardtype' and card.extension and !Card.search(:type=>card.cardname).empty? #ENGLISH
           %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
@@ -320,7 +320,7 @@ class Wagn::Renderer::Html
           %{<div>to #{ raw typecode_field :class=>'cardtype-field edit-cardtype-field' }</div>}
         end}
         <div>
-          #{ button_tag 'Cancel', :href=>path(:edit), :type=>'button', :class=>'edit-type-cancel-button standard-slotter init-editors' }
+          #{ button_tag 'Cancel', :href=>path(:edit), :type=>'button', :class=>'edit-type-cancel-button slotter init-editors' }
         </div>}
      end}
     </div>}
@@ -373,7 +373,7 @@ class Wagn::Renderer::Html
             key = item.to_cardname.to_key
             text = item.gsub('*','').gsub('subtab','').strip
             link_to text, path(:related, :attrib=>key), :remote=>true,
-              :class=>"standard-slotter #{key==current ? 'current-subtab' : ''}"
+              :class=>"slotter #{key==current ? 'current-subtab' : ''}"
           end * "\n"}
          </div> #{
          notice }
@@ -402,7 +402,7 @@ class Wagn::Renderer::Html
     %{#{raw( options_submenu(:account) ) }#{
 
         form_for :card, :url=>path(:update_account), :remote=>true,
-          :html=>{ :class=>'standard-slotter' } do |form|
+          :html=>{ :class=>'slotter' } do |form|
 
          %{<table class="fieldset">
            #{if User.as_user==card.extension or System.ok?(:administrate_users)
@@ -429,7 +429,7 @@ class Wagn::Renderer::Html
         #{if !related_sets.empty?
           %{<div class="set-selection">
           #{
-          form_tag path(:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'standard-slotter' }
+          form_tag path(:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'slotter' }
             <label>Set:</label>
             <select name="current_set" class="set-select">
             #{ 
@@ -455,7 +455,7 @@ class Wagn::Renderer::Html
           %{<div class="new-account-link">
           #{ link_to %{Add a sign-in account for "#{card.name}"},
               path(:options, :attrib=>:new_account),
-            :class=>'standard-slotter new-account-link', :remote=>true }
+            :class=>'slotter new-account-link', :remote=>true }
           </div>}
          end}
       </div>}
@@ -496,7 +496,7 @@ class Wagn::Renderer::Html
   define_view(:option_new_account) do |args|
     %{#{raw( options_submenu(:account) ) }#{
       form_for :card, :url=>path(:create_account),
-         :html=>{:class=>'standard-slotter'}, :remote=>true do |form|
+         :html=>{:class=>'slotter'}, :remote=>true do |form|
       #ENGLISH below
 
         %{<table class="fieldset">
@@ -558,7 +558,7 @@ class Wagn::Renderer::Html
     wrap(:remove, args) do
     %{#{ header}#{
       form_for :card, :url=>path(:remove), :html => { :remote=>true,
-        :class=>'standard-slotter', 'data-type'=>'html', 'main-success'=>'REDIRECT: TO-PREVIOUS' } do |f|
+        :class=>'slotter', 'data-type'=>'html', 'main-success'=>'REDIRECT: TO-PREVIOUS' } do |f|
     
       %{#{ hidden_field_tag 'confirm_destroy', 'true' }#{
         hidden_field_tag 'success', "TEXT: #{card.name} removed" }
@@ -575,7 +575,7 @@ class Wagn::Renderer::Html
        end}
        #{ error_messages_for card }
        #{ submit_tag 'Yes do it', :class=>'remove-submit-button' }
-       #{ button_tag 'Cancel', :class=>'remove-cancel-button standard-slotter', :type=>'button', :href=>path(:view) } 
+       #{ button_tag 'Cancel', :class=>'remove-cancel-button slotter', :type=>'button', :href=>path(:view) } 
        #{ notice }
     </div>
       }
@@ -614,7 +614,7 @@ class Wagn::Renderer::Html
       if card && card.ok?(:comment)
         %{<div class="comment-box"> #{
           form_for :card, :url=>path(:comment), :remote=>:true,
-                :html=> { :class=>'standard-slotter' } do |f|
+                :html=> { :class=>'slotter' } do |f|
             %{#{f.text_area :comment, :rows=>3 }<br/> #{
             if User.current_user.login == "anon"
               card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH
@@ -638,7 +638,7 @@ class Wagn::Renderer::Html
           raw link_to( raw(fancy_title(card)),
             path(:view, :view=>:open),
             :title=>"open #{card.name}",
-            :class=>'title right-arrow standard-slotter',
+            :class=>'title right-arrow slotter',
             :remote=>true ) } #{
           raw page_icon(card.name) }&nbsp;
         </div>
@@ -653,7 +653,7 @@ class Wagn::Renderer::Html
 
          <div class="title-menu">
            #{ link_to raw(fancy_title(card)), path(:view, :view=>:closed),
-             :class => "line-link title down-arrow standard-slotter",
+             :class => "line-link title down-arrow slotter",
              :title => "close #{card.name}", :remote => true }
 
            #{ unless card.typecode=='Basic'

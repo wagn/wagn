@@ -59,7 +59,7 @@ end
 
 
 
-group :test, :cucumber, :development do
+group :test, :development do
   gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
   gem 'ruby-prof'                              # profiling
   gem 'rails-dev-tweaks', '~> 0.5.1'           # dramatic speeds up asset loading, among other tweaks
@@ -67,7 +67,7 @@ group :test, :cucumber, :development do
 #  gem 'jasmine-rails'
 end
 
-group :test, :cucumber do
+group :test do
   gem 'cucumber-rails', '~>1.2.0'              # feature-driven-development suite
   gem 'launchy'                                # lets cucumber launch browser windows
   gem 'timecop'                                # not clear on use/need.  referred to in shared_data.rb

@@ -13,11 +13,11 @@ module LocationHelper
   # you had to confirm before removing.
   #
   def location_history
-    warn "sess #{session.class}, #{session.object_id}"
+#    warn "sess #{session.class}, #{session.object_id}"
     session[:history] ||= ['/']
     if session[:history]
-    session[:history].shift if session[:history].size > 5
-    session[:history]
+      session[:history].shift if session[:history].size > 5
+      session[:history]
     end
   end
 
@@ -59,7 +59,7 @@ module LocationHelper
   end
 
   def card_url( card )
-    "http://" + Wagn::Conf[:host] + card_path(card)
+    Wagn::Conf[:base_url] + card_path(card)
   end
 
   # Links ----------------------------------------------------------------------

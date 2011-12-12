@@ -97,7 +97,7 @@ module Paperclip::Interpolations
   end
 
   def revision_id(at, style_name)
-    warn "rev id #{at.instance.selected_rev_id}, #{at.instance.current_revision.id}"
+#    warn "rev id #{at.instance.selected_rev_id}, #{at.instance.current_revision.id}"
     at.instance.selected_rev_id
   end
 end

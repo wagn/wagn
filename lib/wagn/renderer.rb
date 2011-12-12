@@ -226,10 +226,10 @@ module Wagn
       nil
     end
   
-    def resize_image_content(content, size)
-      size = (size.to_s == "full" ? "" : "_#{size}")
-      content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
-    end
+#    def resize_image_content(content, size)
+#      size = (size.to_s == "full" ? "" : "_#{size}")
+#      content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
+#    end
   
     def render_view_action(action, locals={})
       template.render(:partial=>"views/#{action}", :locals=>{ :card=>card,
@@ -297,7 +297,8 @@ module Wagn
     def process_inclusion(tcard, options)
       sub = subrenderer( tcard, 
         :item_view =>options[:item], 
-        :type      =>options[:type], 
+        :type      =>options[:type],
+#        :size      =>options[:size],
         :showname  =>(options[:showname] || tcard.cardname)
       )
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub  #don't like depending on this global var switch
@@ -402,11 +403,6 @@ module Wagn
   
   
   
-    ##FIXME -- shouldn't be anything about specific cardtypes here
-    def resize_image_content(content, size)
-      size = (size.to_s == "full" ? "" : "_#{size}")
-      content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
-    end
   
 
      ### FIXME -- this should not be here!   probably in WikiReference model?

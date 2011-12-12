@@ -45,26 +45,22 @@ module Wagn::Model::Attach
           when 'File'; ['']
           when 'Image'; STYLES
         end
-      warn "al #{rev_id}, #{selected_rev_id}, #{current_revision.id}"
       save_rev_id = selected_rev_id
       self.selected_rev_id = rev_id
-      warn "al #{rev_id}, #{selected_rev_id}"
       links = {}
       styles.each {|style| links[style] = attach.path(style) }
       self.selected_rev_id = current_revision.id
-      warn "al #{rev_id}, #{selected_rev_id}, #{current_revision.id}"
       styles.each {|style|
-        warn "link to new rev #{links[style]}, #{attach.path(style)}"
+        #warn "link to new rev #{links[style]}, #{attach.path(style)}"
         File.link  links[style], attach.path(style)}
       self.selected_rev_id = save_rev_id
-      warn "al #{rev_id}, #{save_rev_id}, #{selected_rev_id}"
     end
   end
 
   def before_post_attach
     ext = $1 if attach_file_name =~ /\.([^\.]+)$/
     self.attach.instance_write :file_name, "#{self.key.gsub('*','X').camelize}.#{ext}"
-    warn "attach post #{self}, #{attach_file_name}"
+    #warn "attach post #{self}, #{attach_file_name}"
     typecode == 'Image' # returning true enables thumnail creation
   end
 
@@ -96,9 +92,6 @@ module Paperclip::Interpolations
     (at.instance.attach_file_name =~ /\.([^\.]*)$/) && $1
   end
 
-  def revision_id(at, style_name)
-    warn "rev id #{at.instance.selected_rev_id}, #{at.instance.current_revision.id}"
-    at.instance.selected_rev_id
-  end
+  def revision_id(at, style_name) at.instance.selected_rev_id end
 end
 

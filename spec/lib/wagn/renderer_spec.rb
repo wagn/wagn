@@ -87,12 +87,6 @@ describe Wagn::Renderer, "" do
     it("linkname") { render_card(:linkname).should  == 'Tempo_Rary' }
     it("url"     ) { render_card(:url).should       == Wagn::Conf[:base_url] + '/wagn/Tempo_Rary' }
 
-    it "image tags of different sizes" do
-      Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
-      c = Card.new :name => 'Image1', :content => "{{TestImage | core; size:small }}"
-      Wagn::Renderer.new(c).render( :core ).should == %{<img src="http://wagn.org/image53_small.jpg">}
-    end
-
     it "core" do
       render_card(:core, :name=>'A+B').should == "AlphaBeta"
     end
@@ -154,7 +148,6 @@ describe Wagn::Renderer, "" do
       before do
         User.as :wagbot do
           card = Card['A+B']
-          warn "card = #{card.inspect}"
           @simple_page = Wagn::Renderer::Html.new(card).render(:layout)
         end
       end

@@ -43,16 +43,18 @@ module Wagn
 
         hash[:base_url] = base_u.gsub!(/\/$/,'')
         hash[:host] = base_u.gsub(/^http:\/\//,'').gsub(/\/.*/,'') unless hash[:host]
-        hash[:root_path] ||= begin
-          epath = ENV['RAILS_RELATIVE_URL_ROOT'] 
-          epath && epath != '/' ? epath : ''
-        end
+        
       end
 
       hash[:site_title] = Card.setting('*title') || 'Wagn'
 
-      hash[:attachment_storage_dir] ||= "#{Rails.root}/public/files"
+      hash[:root_path] = begin
+        epath = ENV['RAILS_RELATIVE_URL_ROOT'] 
+        epath && epath != '/' ? epath : ''
+      end
+      
       hash[:attachment_base_url] ||= hash[:root_path] + '/files'
+      hash[:attachment_storage_dir] ||= "#{Rails.root}/public/files"
       # bit of a kludge. 
       Card.image_settings
 
@@ -61,7 +63,7 @@ module Wagn
     end
 
     def wagn_run
-      Rails.logger.debug "wagn_run ... #{config_hash}" # leave a ref here
+#      Rails.logger.debug "wagn_run ... #{config_hash}" # leave a ref here
       #STDERR << "----------- Wagn Starting 0 -----------\n"
       wagn_setup_multihost
       #STDERR << "----------- Wagn Starting 1 -----------\n"

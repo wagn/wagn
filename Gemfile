@@ -9,6 +9,8 @@ gem 'rails', '~> 3.1'
 gem 'htmlentities', '~>4.3.0'
 gem 'uuid', '~>2.3.4'
 gem 'paperclip', '~>2.4'
+gem 'devise', '>1.0.9'
+gem 'warden', '>0.10.1'
 
 
 # ~~~~~~~~~ #

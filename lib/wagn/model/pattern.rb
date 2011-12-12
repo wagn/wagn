@@ -1,7 +1,7 @@
 module Wagn::Model
   module Pattern
 
-    @@pattern_subclasses = []
+    @@subclasses = []
 
     class << self
       def register_class(klass) @@subclasses.unshift klass end
@@ -273,14 +273,13 @@ module Wagn::Model
         #typename = ((left=left_name.card) && left.known? && left.typename) || 'Basic'
         "#{typename}+#{card.cardname.tag_name}+#{key}"
       end
-      def pattern_applies?(card)     card.junction?                  end
-      def label(name) "Any #{name.left_name} card plus #{name.right_name}"   end
-      def prototype_args(base)
+      def pattern_applies?(card)     card.junction?                        end
+      def label(name) "Any #{name.left_name} card plus #{name.right_name}" end
+      def prototype_args(base) {:name=>base}                               end
     end
     def left_type()
-      #? r=@pat_name.left_name.left_name.to_s || 'Basic'
       #warn "looking up left_type for #{card.name}.  left = #{left.inspect} left.type = #{left.typecode}" if left
-      (lft=self.left) ? lft.typename : 'Basic'     
+      @pat_name.left_name.left_name.to_s || 'Basic'
     end
     def method_key()
       self.class.method_key_from_opts :ltype=>left_type, :right=>@pat_name.left_name.tag_name

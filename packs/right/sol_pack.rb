@@ -1,4 +1,4 @@
-class Wagn::Renderer::RichHtml
+class Wagn::Renderer::Html
   # from app/view/card/_declare.rhtml
   define_view(:declare_form, :right=>'*sol') do |args|
     @form = form_for_multi

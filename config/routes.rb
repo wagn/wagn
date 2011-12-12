@@ -7,12 +7,12 @@ Wagn::Application.routes.draw do
     mount Object.const_get(:JasmineRails).const_get(:Engine) => "/specs"
   end
 
-  map.devise_for :accounts
+  #devise_for :accounts
 
 
   REST_METHODS = [:get, :post, :put, :delete]
 
-  map.connect 'rest/:id.:format', :conditions => { :method => REST_METHODS }, :controller=>'rest_card', :requirements=>{ :id=>/.*/}, :action=> 'method'
+  match 'rest/:id.:format', :conditions => { :method => REST_METHODS }, :controller=>'rest_card', :requirements=>{ :id=>/.*/}, :action=> 'method'
   #map.connect_resource :rest_card
 
   #match 'rest/:id(.:format)' => 'rest_card#method', :constraints => { :id => /.*/ }, :via => [:get, :post, :put, :delete]

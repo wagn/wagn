@@ -31,7 +31,7 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INITIALIZATION METHODS
 
-  def self.new(args={})
+  def self.new(args={},options={})
     args = (args || {}).stringify_keys
     @@junk_args.map { |a| args.delete(a) }
     %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
@@ -91,7 +91,6 @@ class Card < ActiveRecord::Base
 
   def include_set_modules
     #warn "including set modules for #{name}"
-    type_lookup
     unless @set_mods_loaded
       #singleton_class.include_type_module(typecode)
       set_modules.each {|m| singleton_class.send :include, m }

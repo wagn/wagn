@@ -98,7 +98,7 @@ class Card::BaseTest < ActiveSupport::TestCase
 
 
   test 'create_without_read_permission' do
-    c = Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
+    c = Card.create!({:name=>"Banana", :type=>"Fruit", :content=>"mush"})
     User.as(:anon) do
       assert_raises Card::PermissionDenied do
         c.ok! :read

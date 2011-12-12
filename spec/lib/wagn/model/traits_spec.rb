@@ -21,7 +21,7 @@ describe Card do
   describe "#menu_options" do
     it "verifies that menu_option work without extras" do
       c = Card.fetch('A')
-      Wagn::Renderer::RichHtml.new(c).render_open.should be_html_with do
+      Wagn::Renderer::Html.new(c).render_open.should be_html_with do
         span(:class=>'card-menu') {
           span(:class=>'card-menu-left') {
             li { a { text('View') } }
@@ -34,7 +34,7 @@ describe Card do
 
     it "verifies that the extension's menu_option is added after Edit" do
       c = Card.fetch('B')
-      Wagn::Renderer::RichHtml.new(c).render_open.should be_html_with do
+      Wagn::Renderer::Html.new(c).render_open.should be_html_with do
         span(:class=>'card-menu') {
           span(:class=>'card-menu-left') {
             li { a { text('View') } }
@@ -47,20 +47,20 @@ describe Card do
 
     it "Error for missing setting card for form" do
       c = Card.fetch('B')
-      (r=Wagn::Renderer::RichHtml.new(c).render(:declare)).should match(/Missing setting/)
+      (r=Wagn::Renderer::Html.new(c).render(:declare)).should match(/Missing setting/)
     end
 
     it "Error for setting card wrong type for form" do
       Card.create!( :name=>"*sol+*right+*declare" )
       c = Card.fetch('B')
-      (r=Wagn::Renderer::RichHtml.new(c).render(:declare)).should_not match(/Missing setting/)
+      (r=Wagn::Renderer::Html.new(c).render(:declare)).should_not match(/Missing setting/)
       r.should match(/Setting not a Pointer/)
     end
 
     it "Error for no setting form pointee" do
       Card.create!( :name=>"*sol+*right+*declare", :type=>'Pointer' )
       c = Card.fetch('B')
-      (r=Wagn::Renderer::RichHtml.new(c).render(:declare)).should_not match(/Missing setting/)
+      (r=Wagn::Renderer::Html.new(c).render(:declare)).should_not match(/Missing setting/)
       r.should_not match(/Setting not a Pointer/)
       r.should match(/No form card/)
     end
@@ -69,7 +69,7 @@ describe Card do
       Card.create!( :name=>"*sol+*right+*declare", :type=>'Pointer', :content=>"[[*sol+declare]]\n[[*sol+special]]" )
       Card.create!( :name=>"*sol+declare", :content=>"{{+foo}}\n{{+bar}}\n{{Foobar+foo}}" )
       c = Card.fetch('B')
-      (r=Wagn::Renderer::RichHtml.new(c).render(:declare)).should_not match(/Missing setting/)
+      (r=Wagn::Renderer::Html.new(c).render(:declare)).should_not match(/Missing setting/)
       r.should_not match(/Setting not a Pointer/)
       r.should_not match(/No form card/)
       r.should be_html_with do

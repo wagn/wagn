@@ -87,9 +87,9 @@ class Wagn::Renderer::Html
     form_for card, :url=>path(:create_or_update), :remote=>true, :html=>
         {:class=>"card-form card-rule-form #{edit_mode && 'slotter'}" } do |form|
 
-      hidden_field_tag( :success, open_rule.name ) +
-      hidden_field_tag( :view, 'open_rule' ) +
       %{
+        #{ hidden_field_tag( :success, open_rule.name ) }
+        #{ hidden_field_tag( :view, 'open_rule' ) }
       <div class="card-editor">
         <div class="rule-column-1">
           <div class="rule-setting">
@@ -135,7 +135,7 @@ class Wagn::Renderer::Html
 
       if edit_mode
         %{<label>type:</label>}+
-        raw(typecode_field( :class =>'cardtype-field rule-cardtype-field live-cardtype-field',
+        raw(typecode_field( :class =>'type-field rule-type-field live-type-field init-editors', 'data-remote'=>true,
           :href => path(:view, :card=>open_rule, :view=>:open_rule, :type_reload=>true) ) )
       elsif current_set_key
         '<label>type:</label>'+
@@ -143,13 +143,10 @@ class Wagn::Renderer::Html
       else; ''; end.html_safe +
 
 
-      %{  </div>
-
-             <div class="content-editor"> #{
-               raw( edit_mode ? content_field(form) : (current_set_key ? render_core : '') ) }
-             </div>
-           </div>
-         </div> }.html_safe +
+          %{</div>
+          <div class="rule-content">#{ edit_mode ? content_field(form) : (current_set_key ? render_core : '') }</div> 
+        </div>
+       </div> }.html_safe +
 
        if edit_mode || params[:success]
          ('<div class="edit-button-area">' +

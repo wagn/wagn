@@ -53,7 +53,7 @@ module Wagn
     %{<link class="#{klass}" href="#{href}">#{text}</link>}
   end   
           
-  def wrap(args = {})
+  def wrap(view=nil, args = {})
     css_class = case args[:action].to_s
       when 'content'  ;  'transcluded'
       when 'exception';  'exception'
@@ -61,6 +61,7 @@ module Wagn
       else            ;  'card-slot paragraph'
     end 
     css_class << " " + card.css_names if card
+    css_class << " view-#{view}" if view
     
     attributes = {
       :name => card.cardname.tag_name,

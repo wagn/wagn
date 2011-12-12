@@ -22,27 +22,29 @@ class Wagn::Renderer::Xml < Wagn::Renderer
   end
 
   define_view(:content) do |args|
+    c = _render_core(args)
+    c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
+    wrap(:content, args) { wrap_content(:content, c) }
+  end
+
+  define_view(:content) do |args|
     @state = :view
-    self.requested_view = args[:action] = 'content'
-    self.wrap(args) { _render_naked(args) }
+    self.wrap(:content, args) { _render_core(args) }
   end
 
   define_view(:open) do |args|
     @state = :view
-    self.requested_view = 'open'
-    self.wrap(args) { _render_naked(args) }
+    self.wrap(:open, args) { _render_core(args) }
   end
 
   define_view(:closed) do |args|
     @state = :line
-    self.requested_view = args[:action] = 'closed'
-    self.wrap(args) { _render_line(args) }
+    self.wrap(:closed, args) { _render_line(args) }
   end
 
 =begin
   define_view(:setting) do |args|
-    self.requested_view = args[:action] = 'content'
-    self.wrap( args) { render_partial('views/setting') }
+    self.wrap(:content, args) { render_partial('views/setting') }
   end
 =end
 

@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 describe RestCardController do
+
   context "new" do    
+    include AuthenticatedTestHelper
     before do
       login_as :wagbot
     end
@@ -12,17 +14,40 @@ describe RestCardController do
   end     
   
   describe "#create" do
+    include AuthenticatedTestHelper
     before do
       login_as :joe_user
       @joe_id = User.current_user.id
     end
+
+#http://stackoverflow.com/questions/59655/how-to-setup-a-rails-integration-test-for-xml-mehtods
+=begin
+  class TruckTest < ActionController::IntegrationTest
+    def test_new_truck
+      paint_color = 'blue'
+      fuzzy_dice_count = 2
+      truck = Truck.new({:paint_color => paint_color, :fuzzy_dice_count => fuzzy_dice_count})
+      @headers ||= {}
+      @headers['HTTP_ACCEPT'] = @headers['CONTENT_TYPE'] = 'application/xml'
+      post '/trucks.xml', truck.to_xml, @headers
+      #puts @response.body
+      assert_select 'truck>paint_color', paint_color
+      assert_select 'truck>fuzzy_dice_count', fuzzy_dice_count.to_s
+    end
+  end
+=end
+  def post_xml(args={})
+  end
+
+#Note this test PASSES!
+assert_equal '201 Created', response.get_fields('Status')[0]
 
     # FIXME: several of these tests go all the way to DB,
     #  which means they're closer to integration than unit tests.
     #  maybe think about refactoring to use mocks etc. to reduce
     #  test dependencies.
     it "creates cards" do
-      post(:post, {:format=>:xml, :input=>%{<card name="NewCardFoo" type="Basic">Bananas</card>}}, {:user=>@joe_id})
+      post_xml :method=>:post, :format=>:xml, :data=>%{<card name="NewCardFoo" type="Basic">Bananas</card>}.html_safe #, {:user=>@joe_id}
       assert_instance_of Card, Card.find_by_name("NewCardFoo")
       #Card::Base.should_receive(:save) # The concept needs work, what model methodes should we expect?
       Card.find_by_name("NewCardFoo").content.should == "Bananas"

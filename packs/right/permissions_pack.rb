@@ -24,12 +24,11 @@ class Wagn::Renderer
       content_tag(:tr, :class=>'perm-options') do
         content_tag(:td, :class=>'perm-group perm-vals') do
           group_options.map do |option|
-            %{<div class="group-option") #{
-              checked = !!item_names.delete(option.name)
-              r=check_box_tag( "#{option.key}-perm-checkbox", option.name, checked, :class=>'perm-checkbox-button'  ) +
-              raw( "<label>#{link_to_page option.name}</label>" )
-              warn "CB #{r}"; r
-            } </div>}
+            checked = !!item_names.delete(option.name)        
+            %{<div class="group-option">
+              #{ check_box_tag( "#{option.key}-perm-checkbox", option.name, checked, :class=>'perm-checkbox-button'  ) }
+              <label>#{ link_to_page option.name }</label>
+            </div>}
           end * "\n"
         end +
         

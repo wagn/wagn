@@ -26,7 +26,7 @@ class Wagn::Renderer::Html
     layout_content = get_layout_content(args)
     
     args[:action]="view"  
-    args[:relative_content] = args[:params] = params 
+    args[:params] = params 
     #warn "render_layout #{card}, #{penv}, #{layout_content}, #{args.inspect}"
     
     process_content(layout_content, args)
@@ -102,8 +102,8 @@ class Wagn::Renderer::Html
     if ajax_call?
       new_content :cancel_href=>path(:view, :view=>:missing), :cancel_class=>'standard-slotter'
     else
-     @title = "New Card"  #this doesn't work.
-     %{
+      @title = "New Card"  #this doesn't work.
+      %{
         <h1 class="page-header">
           New #{ card.typecode == 'Basic' && '' || card.typename } Card
         </h1>
@@ -209,19 +209,20 @@ class Wagn::Renderer::Html
   
 ###---(  EDIT VIEWS )
   define_view(:edit) do |args|
-    @attribute = params[:attribute] || 'content'
+    attrib = params[:attribute] || 'content'
     wrap(:edit, args) do
       %{#{header
        }<style>.SELF-#{card.css_name} .edit-area .namepart-#{card.css_name} { display: none; } </style>
        <div class="card-body">
-         #{render "edit_#{@attribute}" }
+         #{edit_submenu attrib}
+         #{render "edit_#{attrib}" }
          #{notice }
        </div>}
     end
   end
 
   define_view (:edit_content) do |args|
-    %{#{raw edit_submenu(params[:inclusions] ? :inclusions : :content)}#{
+    %{#{
       if inst = card.setting_card('edit help')
         %{<div class="instruction">#{ raw subrenderer(inst).render_core }</div>}
       end}#{
@@ -252,7 +253,7 @@ class Wagn::Renderer::Html
   end
 
   define_view(:edit_name) do |args|
-    %{#{ edit_submenu :name }
+    %{
       <div class="edit-area edit-name">
        <h2>Change Name</h2>
       #{ form_for card, :url=>path(:update), :remote=>true,
@@ -306,7 +307,7 @@ class Wagn::Renderer::Html
   end
 
   define_view (:edit_type) do |args|
-    %{#{ raw edit_submenu(:type)}
+    %{
     <div class="edit-area edit-type">
     <h2>Change Type</h2> #{
       form_for :card, :url=>path(:update), :remote=>true, 

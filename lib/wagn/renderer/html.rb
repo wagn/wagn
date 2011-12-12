@@ -141,16 +141,14 @@ module Wagn
 
 
     def edit_submenu(current)
-      extra_css_classes = { :content => 'init-editors' }
       %{<div class="submenu"> #{
         [ :content, :name, :type ].map do |attr|
-          if attr != :type || !( card.type_template? ||
-                  (card.typecode=='Cardtype' && card.cards_of_type_exist?) )
-            link_to attr, path(:edit, :attrib=>attr), :remote=>true,
-              :class => %{standard-slotter edit-#{ attr }-link#{
-                ' init-editors' if attr==:content }#{
-                ' current-subtab' if attr==current}}
-          end
+          next if attr == :type and # this should be a set callback
+            card.type_template? ||  
+            (card.typecode=='Set' && card.hard_template?) || #
+            (card.typecode=='Cardtype' && card.cards_of_type_exist?)
+          link_to attr, path(:edit, :attrib=>attr), :remote=>true,
+            :class => %{standard-slotter edit-#{ attr }-link #{'init-editors' if attr==:content } #{'current-subtab' if attr==current.to_sym}}
         end.compact * "\n"}
       </div>}
     end

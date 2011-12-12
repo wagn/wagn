@@ -81,10 +81,11 @@ class CardController < ApplicationController
     params[:type] = ( args[:type] ||= params[:type] ) # for /new/:type shortcut
 
     @card = Card.new args
+    
     if @card.ok? :create
       render_show :new
     else
-      render_denied('create')
+      render_denied 'create'
     end
   end
 

@@ -7,7 +7,7 @@ module Wagn
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     UNDENIABLE_VIEWS = [ :deny_view, :edit_virtual, :too_slow, :too_deep, :missing, :closed_missing, :name, :link, :url ]
-    INCLUSION_MODES  = [ :main, :closed, :edit, :layout ]
+    INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :edit=>:edit, :layout=>:layout, :new=>:edit }
     DEFAULT_ITEM_VIEW = :link
   
     RENDERERS = {
@@ -125,7 +125,6 @@ module Wagn
       @card = card
       opts.each { |key, value| instance_variable_set "@#{key}", value }
   
-      @relative_content ||= {}
       @format ||= :html
       
       @char_count = @depth = 0
@@ -238,11 +237,11 @@ module Wagn
     end
   
     def with_inclusion_mode(mode)
-      if switch = INCLUSION_MODES.member?( mode )
-        old_mode, @mode = @mode, mode
+      if switch_mode = INCLUSION_MODES[ mode ]
+        old_mode, @mode = @mode, switch_mode
       end
       result = yield
-      @mode = old_mode if switch
+      @mode = old_mode if switch_mode
       result      
     end
   
@@ -265,28 +264,28 @@ module Wagn
       tcard ||= Card.fetch_or_new(opts[:fullname], new_args)
   
       result = process_inclusion(tcard, opts)
-      result = resize_image_content(result, opts[:size]) if opts[:size]
       @char_count += (result ? result.length : 0)
       result
     rescue Card::PermissionDenied
       ''
     end
   
-    def expand_main(options)
+    def expand_main(opts)
       case
       when tcont = @root.main_content ; wrap_main tcont
-      when @depth > 0 ; "{{#{options[:unmask]}}}" #delete this condition once layouts are set-addressable
+      when @depth > 0 ; "{{#{opts[:unmask]}}}" #delete this condition once layouts are set-addressable
       else
         tcard = @root.main_card
         [:item, :view, :size].each do |key|
           if val=params[key] and !val.to_s.empty?
-            options[key] = val.to_sym
+            opts[key] = val.to_sym
           end
         end
-        options[:tname] = tcard.cardname
-        options[:view] ||= @main_view || :open
+        opts[:tname] = tcard.cardname
+        opts[:view] ||= @main_view || :open
+        opts[:fullname] = opts[:showname] = tcard.name
         with_inclusion_mode(:main) do
-          wrap_main( expand_inclusion(options) )
+          wrap_main( process_inclusion(tcard, opts) )
         end
       end      
     end
@@ -332,10 +331,10 @@ module Wagn
   
     def get_inclusion_content(cardname)
       #Rails.logger.debug "get_inclusion_content(#{cardname.inspect})"
-      content = @relative_content[cardname.to_s.gsub(/\+/,'_')]
+      content = params[cardname.to_s.gsub(/\+/,'_')]
   
       # CLEANME This is a hack to get it so plus cards re-populate on failed signups
-      if @relative_content['cards'] and card_params = @relative_content['cards'][cardname.pre_cgi]
+      if p = params['cards'] and card_params = p[cardname.pre_cgi]
         content = card_params['content']
       end
       content if content.present?  #not sure I get why this is necessary - efm

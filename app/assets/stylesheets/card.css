@@ -179,7 +179,7 @@ div:hover.card-footer .footer-content {
 .card-footer .footer-content {
   width: 100%; 
 }        
-.card-footer .watch-link {
+.card-footer .watch-view {
   float: right;
   text-align: right;
   white-space: nowrap;
@@ -190,12 +190,6 @@ div:hover.card-footer .footer-content {
 
 /* -------- view tab / content ----------------- */
 
-/* isn't this covered?
-.card-slot p { 
-  margin: 0px; 
-}
-*/
-    
 .faint {
   color: #bbc;
 }

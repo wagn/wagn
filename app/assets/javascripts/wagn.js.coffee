@@ -85,9 +85,6 @@ $(window).load ->
     xtra['item']      = item      if item?
     opt.url += ( (if opt.url.match /\?/ then '&' else '?') + $.param(xtra) ) 
 
-
-
-
   $('body').delegate '.card-form', 'submit', ->
     $(this).setContentFieldsFromMap()
     $(this).find('.card-content').attr('no-autosave','true')
@@ -100,7 +97,6 @@ $(window).load ->
     window.location = $(this).attr('href')
 
 
-
   $('.card-slot').live 'dblclick', (event)->
     s = $(this)
     return false if s.find( '.edit-area' )[0]
@@ -110,8 +106,6 @@ $(window).load ->
     false # don't propagate up to next slot
 
   $('.comment-box').live 'dblclick', -> false
-  
-
 
   $('body').delegate 'form.slotter', 'submit', (event)->
     if (target = $(this).attr 'main-success') and $(this).isMain()
@@ -127,23 +121,13 @@ $(window).load ->
     $(this).attr 'success-ready', 'true'
 
 
+  $('body').delegate '.live-type-field', 'change', ->
+    $(this).data 'params', $(this).closest('form').serialize()
+    $(this).data 'url', $(this).attr 'href'
 
-  # might be able to use more of slotter 
-  $('.live-cardtype-field').live 'change', ->
-    field = $(this)
-    $.ajax field.attr('href'), {
-      data: field.closest('form').serialize()
-      complete: (xhr, status) ->
-        field.setSlotContent xhr.responseText
-        wagn.initializeEditors()
-    }
-
-  #should eventually work with slotter (if done with views)
-  $('.watch-toggle').live 'ajax:success', (event, data) ->
-    $(this).closest('.watch-link').html data
 
   #unify these next two
-  $('.edit-cardtype-field').live 'change', ->
+  $('.edit-type-field').live 'change', ->
     $(this).closest('form').submit()
 
   $('.set-select').live 'change', ->

@@ -87,46 +87,9 @@ module Notification
     end
   end    
 
-  module RendererHelperMethods
-    def watch_link 
-      return "" unless User.logged_in?   
-      return "" if card.virtual? 
-      me = User.current_user.card.name          
-      if card.typecode == "Cardtype"
-        (card.type_watchers.include?(me) ? "#{watching_type_cards} | " : "") +  watch_unwatch
-      else
-        if card.type_watchers.include?(me) 
-          watching_type_cards
-        else
-          watch_unwatch
-        end
-      end
-    end
-
-    def watching_type_cards
-      "watching #{link_to_page(Cardtype.name_for(card.typecode))} cards"      # can I parse this and get the link to happen? that wud r@wk.
-    end
-
-    def watch_unwatch      
-      type_link = (card.typecode == "Cardtype") ? " #{card.name} cards" : ""
-      type_msg = (card.typecode == "Cardtype") ? " cards" : ""    
-      me = User.current_user.card.cardname   
-
-      if card.card_watchers.include?(me) or card.typecode != 'Cardtype' && card.watchers.include?(me)
-        link_to_action( "unwatch#{type_link}", :unwatch, :class=>'watch-toggle',
-          :title => "stop getting emails about changes to #{card.name}#{type_msg}"
-        )
-      else
-        link_to_action( "watch#{type_link}", :watch, :class=>'watch-toggle',
-          :title=>"get emails about changes to #{card.name}#{type_msg}"
-        )
-      end
-    end
-  end
 
   def self.init
     Card.send :include, CardMethods
-    Wagn::Renderer.send :include, RendererHelperMethods
   end   
 end    
 

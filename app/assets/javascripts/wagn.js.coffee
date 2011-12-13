@@ -74,6 +74,7 @@ $(window).load ->
     $.rails.handleRemote($(this))
 
   $('.slotter').live 'ajax:beforeSend', (event, xhr, opt)->
+    return if opt.skip_before_send
     return if opt.url.match /home_view/ #avoiding duplication.  could be better test?
     s = $(this).slot()
     main = $('#main').children('.card-slot').attr 'card-name'
@@ -84,6 +85,16 @@ $(window).load ->
     xtra['home_view'] = home_view if home_view?
     xtra['item']      = item      if item?
     opt.url += ( (if opt.url.match /\?/ then '&' else '?') + $.param(xtra) ) 
+    
+    if $(this).is('form') && data = $(this).data('file-data')
+      fileoptions = $(this).find('.file-upload').fileupload 'wagnFileUploadSettings',
+        {files: data.files, formData: $(this).serializeArray() }
+      opt.skip_before_send = true
+      $.extend opt, fileoptions, {url: opt.url}
+      #wagn.d = data
+      #wagn.o = opt
+      $.ajax opt
+      false
 
   $('body').delegate '.card-form', 'submit', ->
     $(this).setContentFieldsFromMap()
@@ -110,7 +121,7 @@ $(window).load ->
   $('body').delegate 'form.slotter', 'submit', (event)->
     if (target = $(this).attr 'main-success') and $(this).isMain()
       input = $(this).find '[name=success]'
-      if input and input.val().match /^REDIRECT/
+      if input and !(input.val().match /^REDIRECT/)
         input.val ( if target == 'REDIRECT' then target + ': ' + input.val() else target )
         
   #more of this info should be in views; will need to refactor for HTTP DELETE anyway...

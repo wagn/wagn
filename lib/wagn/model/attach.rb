@@ -30,6 +30,8 @@ module Wagn::Model::Attach
   def before_post_attach
     ext = $1 if attach_file_name =~ /\.([^\.]+)$/
     self.attach.instance_write :file_name, "#{self.key.gsub('*','X').camelize}.#{ext}"
+    warn "typecode = #{typecode.inspect}"
+    
     #warn "attach post #{self}, #{attach_file_name}"
     typecode == 'Image'
   end

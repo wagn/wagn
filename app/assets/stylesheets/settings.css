@@ -29,10 +29,20 @@ td.rule-setting {
 .rule-type {
   color: #666;
 }
-.rule-content {
+.rule-type-field {
+  max-width: 70%;
+  margin-right: 5px;
+}
+.open-rule .rule-content {
+  padding: 10px;
+  clear: both;
+  min-height: 50px;
+
+}
+.closed-rule .rule-content {
   width: 350px;
 }
-.rule-content div {
+.closed-rule .rule-content div {
   padding: 0;
 }
 .rule-content-container.closed-view {
@@ -59,6 +69,7 @@ td.missing-rule {
   float: right;
   width: 70%;
   border: 1px solid #eee;
+  margin-top: 5px;
 }
 .open-rule .type-editor {
   width: 35%;
@@ -68,6 +79,7 @@ td.missing-rule {
 }
 .open-rule .edit-button-area {
   clear:both;
+  padding-top: 5px;
 }
 .open-rule .instruction {
   float: left;
@@ -79,14 +91,6 @@ td.missing-rule {
   padding: 5px;
   background: #eee;
   list-style-type: none;
-}
-.open-rule .content-editor {
-  clear: both;
-  padding: 10px 0;
-  min-height: 50px;
-}
-.open-rule .content-editor .card-slot {
-  padding: 5px;
 }
 .open-rule .set-editor .current-set-label {
   font-weight: bold;

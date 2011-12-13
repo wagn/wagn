@@ -52,8 +52,10 @@ class Card < ActiveRecord::Base
     @type_args = { :type=>args.delete('type'), :typecode=>args['typecode'] }
     skip_modules = args.delete 'skip_modules'
     
+    warn "pre-super"
     super args
-
+    warn "post-super"
+    
     if !args['typecode']
       self.typecode_without_tracking = get_typecode(@type_args[:type]) 
     end

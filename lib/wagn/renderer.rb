@@ -397,6 +397,8 @@ module Wagn
       %{<a class="#{klass}" href="#{href.to_s}">#{text.to_s}</a>}      
     end
     
+    def unique_id() "#{card.key}-#{Time.now.to_i}-#{rand(3)}" end
+
     def full_uri(relative_uri)
       relative_uri
     end

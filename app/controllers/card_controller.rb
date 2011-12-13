@@ -78,9 +78,10 @@ class CardController < ApplicationController
 
   def new
     args = params[:card] || {}
-    params[:type] = ( args[:type] ||= params[:type] ) # for /new/:type shortcut
+    args[:type] ||= params[:type] # for /new/:type shortcut
 
     @card = Card.new args
+    @title = "New Card"  #this doesn't work.
     
     if @card.ok? :create
       render_show :new
@@ -121,18 +122,16 @@ class CardController < ApplicationController
 
   def comment
     raise(Wagn::NotFound,"Action comment should be post with card[:comment]") unless request.post? and params[:card]
-    @comment = params[:card][:comment];
+    comment = params[:card][:comment];
     if User.current_user.login == 'anon'
-      @author = params[:card][:comment_author]
-      session[:comment_author] = @author
-      @author = "#{@author} (Not signed in)"
+      session[:comment_author] = author = params[:card][:comment_author]
+      author = "#{author} (Not signed in)"
     else
       username=User.current_user.card.name
-      #@author = "{{#{username}+image|size:icon}} [[#{username}]]"
-      @author = "[[#{username}]]"
+      author = "[[#{username}]]"
     end
-    @comment=@comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
-    @card.comment = "<hr>#{@comment}<p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
+    comment = comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
+    @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
     @card.save!
     render_show
   end
@@ -199,18 +198,10 @@ class CardController < ApplicationController
   def watch
     watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
     watchers = watchers.refresh if watchers.frozen?
-    watchers.add_item User.current_user.card.name
-    #flash[:notice] = "You are now watching #{@card.name}"
-    ajax? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
+    watchers.send (params[:toggle]=='on' ? :add_item : :drop_item), User.current_user.card.name
+    ajax? ? render_show(:watch) : view
   end
 
-  def unwatch
-    watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
-    watchers = watchers.refresh if watchers.frozen?
-    watchers.drop_item User.current_user.card.name
-    #flash[:notice] = "You are no longer watching #{@card.name}"
-    ajax? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
-  end
 
   private
   

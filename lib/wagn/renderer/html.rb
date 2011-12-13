@@ -163,8 +163,8 @@ module Wagn
       </div>}
     end
 
-    def header()  render_header if card end  
-    def footer()  render_footer if card end
+    def header()  _render_header if card end  
+    def footer()  _render_footer if card end
 
     def menu
       if card && card.virtual?
@@ -302,4 +302,7 @@ module Wagn
        revision_link("Autosaved Draft", card.revisions.count, 'to autosave')
     end
   end
+  
+
+  
 end

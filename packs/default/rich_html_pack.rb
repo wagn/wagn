@@ -191,8 +191,7 @@ class Wagn::Renderer::Html
   end
 
   define_view(:editor) do |args|
-    uid = "#{card.key}-#{Time.now.to_i}-#{rand(3)}"
-    form.text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>uid
+    form.text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id
   end
 
   define_view(:missing) do |args|

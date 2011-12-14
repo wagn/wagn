@@ -1,10 +1,8 @@
 class CardController < ApplicationController
   helper :wagn
 
-  EDIT_ACTIONS = [ :edit, :update, :rollback, :save_draft, :watch, :unwatch,
-    :create_account, :update_account ]
-  LOAD_ACTIONS =  EDIT_ACTIONS + [ :show_file, :show, :index, :comment,
-    :remove, :view, :changes, :options, :related ]
+  EDIT_ACTIONS = [ :edit, :update, :rollback, :save_draft, :watch, :create_account, :update_account ]
+  LOAD_ACTIONS =  EDIT_ACTIONS + [ :show_file, :show, :index, :comment, :remove, :view, :changes, :options, :related ]
 
   before_filter :index_preload, :only=> [ :index ]
   before_filter :show_file_preload, :only=> [ :show_file ]
@@ -46,29 +44,25 @@ class CardController < ApplicationController
     render_show
   end
 
-  def show_file_preload
-    #warn "show preload #{params.inspect}"
-    params[:id] = params[:id].
-      sub(/(-(#{Card::STYLES*'|'}))?(-\d+)?(\.[^\.]*)?$/) {
-        @style = $1.nil? ? 'medium' : $2
-        @rev_id = $3 && $3[1..-1]
-        params[:format] = $4[1..-1] if $4
-        ''
-      }
-  end
 
   def show_file
-    #warn "show file #{@card}"
-    if @card
-      @card.selected_rev_id = @rev_id
-      if style=@card.attachment_style(@card.typecode, params[:format], @style)
-
-        send_file @card.attach.path(style), :type => @card.attach.content_type,
-          :filename=> "#{params[:id]}.#{params[:format]}", :x_sendfile => true
-        return
-      end
+    return render_fast_404 if !@card
+    @card.selected_rev_id = @rev_id || @card.current_revision_id
+    
+    format = @card.attachment_format(params[:format])
+    return render_fast_404 if !format
+    if format != :ok && params[:format] != 'file'
+      return redirect_to( Wagn::Conf[:root_path] + "/files/" + @original_id.sub(params[:format], format) ) 
     end
-    render_fast_404
+      
+    style = @card.attachment_style( @card.typecode, params[:size] || @style)
+    render_fast_404 if !style
+    
+    send_file @card.attach.path(style), 
+      :type => @card.attach_content_type,
+      :filename =>  "#{@card.cardname.to_url_key}-#{style}.#{format}",
+      :x_sendfile => true,
+      :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
   end
 
   def index()    show                  end
@@ -209,6 +203,18 @@ class CardController < ApplicationController
   private
   
   #-------( FILTERS )
+  
+  def show_file_preload
+    #warn "show preload #{params.inspect}"
+    @original_id = params[:id]
+    params[:id] = @original_id.sub(/(-(#{Card::STYLES*'|'}))?(-\d+)?(\.[^\.]*)?$/) do
+      @style = $1.nil? ? 'original' : $2
+      @rev_id = $3 && $3[1..-1]
+      params[:format] = $4[1..-1] if $4
+      ''
+    end
+  end
+  
   
   def index_preload
     User.no_logins? ? 

@@ -14,7 +14,9 @@ Wagn::Application.routes.draw do
   match ':asset/:foo' => 'application#render_fast_404', :constraints =>
     { :asset=>/assets|images?|stylesheets?|javascripts?/, :foo => /.*/ }
 
-  match 'wagn/:id(.:format)' => 'card#show'
+#  match '(wagn/):id.:format' => 'card#show_file', :format => /jpg|jpeg|png|gif|ico/
+
+  match 'wagn/:id(.:format)' => 'card#show'#, :format => FORMAT_PATTERN
 
   match 'recent(.:format)' => 'card#show', :id => '*recent', :view => 'core', :format => FORMAT_PATTERN
 #  match 'search/:_keyword(.:format)' => 'card#show', :id => '*search', :view => 'content', :format => FORMAT_PATTERN

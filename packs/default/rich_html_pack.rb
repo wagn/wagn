@@ -551,9 +551,9 @@ class Wagn::Renderer::Html
   end
 
   define_view(:watch) do |args|
+    return "" unless User.logged_in?   
+    return "" if card.virtual?
     wrap(:watch) do
-      return "" unless User.logged_in?   
-      return "" if card.virtual? 
       @me = User.current_user.card.name          
       if card.typecode == "Cardtype"
         (card.type_watchers.include?(@me) ? "#{watching_type_cards} | " : "") +  watch_unwatch

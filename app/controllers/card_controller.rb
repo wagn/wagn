@@ -46,23 +46,7 @@ class CardController < ApplicationController
 
 
   def show_file
-    return render_fast_404 if !@card
-    @card.selected_rev_id = @rev_id || @card.current_revision_id
-    
-    format = @card.attachment_format(params[:format])
-    return render_fast_404 if !format
-    if format != :ok && params[:format] != 'file'
-      return redirect_to( Wagn::Conf[:root_path] + "/files/" + @original_id.sub(params[:format], format) ) 
-    end
-      
-    style = @card.attachment_style( @card.typecode, params[:size] || @style)
-    render_fast_404 if !style
-    
-    send_file @card.attach.path(style), 
-      :type => @card.attach_content_type,
-      :filename =>  "#{@card.cardname.to_url_key}-#{style}.#{format}",
-      :x_sendfile => true,
-      :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
+    render_show_file
   end
 
   def index()    show                  end
@@ -276,11 +260,31 @@ class CardController < ApplicationController
           end
         end
       end)
-    elsif show_file
+    elsif render_show_file
       return
     else
       return "unknown format: #{extension}"
     end
+  end
+  
+  def render_show_file
+    return render_fast_404 if !@card #will it ever get here
+    @card.selected_rev_id = @rev_id || @card.current_revision_id
+  
+    format = @card.attachment_format(params[:format])
+    return render_fast_404 if !format
+    if format != :ok && params[:format] != 'file'
+      return redirect_to( Wagn::Conf[:root_path] + "/files/" + @original_id.sub(params[:format], format) ) 
+    end
+    
+    style = @card.attachment_style( @card.typecode, params[:size] || @style)
+    render_fast_404 if !style
+  
+    send_file @card.attach.path(style), 
+      :type => @card.attach_content_type,
+      :filename =>  "#{@card.cardname.to_url_key}-#{style}.#{format}",
+      :x_sendfile => true,
+      :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
   end
   
   def render_success(default_target='TO-CARD')

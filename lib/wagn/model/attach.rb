@@ -58,9 +58,8 @@ module Wagn::Model::Attach
   end
 
   def before_post_attach
-    ext = $1 if attach_file_name =~ /\.([^\.]+)$/
-    self.attach.instance_write :file_name, "#{self.key.gsub('*','X').camelize}.#{ext}"
-    #warn "attach post #{self}, #{attach_file_name}"
+    self.attach.instance_write :file_name, "#{self.key.gsub('*','X').camelize}"
+    #warn "before_post_attach #{attach_file_name}, #{attach_content_type}"
     typecode == 'Image' # returning true enables thumnail creation
   end
 
@@ -69,8 +68,8 @@ module Wagn::Model::Attach
   def self.included(base)
     base.class_eval do
       has_attached_file :attach, :preserve_files=>true,
-        :url => ":base_url/:basename-:size:revision_id.:file_ext",
-        :path => ":local/:card_id/:size:revision_id.:file_ext",
+        :url => ":base_url/:basename-:size:revision_id.:content_type_extension",
+        :path => ":local/:card_id/:size:revision_id.:content_type_extension",
         :styles => { :icon   => '16x16#', :small  => '75x75#',
                    :medium => '200x200>', :large  => '500x500>' } 
 
@@ -87,11 +86,6 @@ module Paperclip::Interpolations
   def size(at, style_name)
     (at.instance.typecode != 'File'||style_name.blank?) && "#{style_name}-"||''
   end
-
-  def file_ext(at, style_name)
-    (at.instance.attach_file_name =~ /\.([^\.]*)$/) && $1
-  end
-
   def revision_id(at, style_name) at.instance.selected_rev_id end
 end
 

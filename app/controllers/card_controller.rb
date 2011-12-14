@@ -58,6 +58,7 @@ class CardController < ApplicationController
   end
 
   def show_file
+    #warn "show file #{@card}"
     unless !@card||(style=@card.attachment_style(params[:format], @style)).nil?
       @card.selected_rev_id = @rev_id
       #warn "show_file #{params.inspect}, #{@card.selected_rev_id}, #{@style}"
@@ -198,7 +199,7 @@ class CardController < ApplicationController
   def watch
     watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
     watchers = watchers.refresh if watchers.frozen?
-    watchers.send (params[:toggle]=='on' ? :add_item : :drop_item), User.current_user.card.name
+    watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), User.current_user.card.name)
     ajax? ? render_show(:watch) : view
   end
 
@@ -256,17 +257,22 @@ class CardController < ApplicationController
   
   def render_show(view = nil)
     extension = request.parameters[:format]
-    return "unknown format: #{extension}" unless
-              FORMATS.split('|').member?( extension ) || show_file
+    #warn "render_show #{extension}"
+    if FORMATS.split('|').member?( extension )
 
-    render(:text=> begin
-      respond_to() do |format|
-        format.send(extension) do
-          renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
-          renderer.render_show :view=>view
+      render(:text=> begin
+        respond_to() do |format|
+          format.send(extension) do
+            renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
+            renderer.render_show :view=>view
+          end
         end
-      end
-    end)
+      end)
+    elsif show_file
+      return
+    else
+      return "unknown format: #{extension}"
+    end
   end
   
   def render_success(default_target='TO-CARD')

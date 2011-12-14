@@ -15,7 +15,7 @@ class AdminController < ApplicationController
         self.current_user = @extension
         User.cache.delete 'no_logins'
         flash[:notice] = "You're good to go!"
-        redirect_to System.path_setting('/')
+        redirect_to Card.path_setting('/')
       else
         flash[:notice] = "Durn, setup went awry..."
       end
@@ -26,8 +26,8 @@ class AdminController < ApplicationController
   end
 
   def tasks
-    raise Wagn::PermissionDenied.new('Only Administrators can view tasks') unless System.always_ok?
-    @tasks = System.role_tasks
+    raise Wagn::PermissionDenied.new('Only Administrators can view tasks') unless User.always_ok?
+    @tasks = Wagn::Conf[:role_tasks]
     Role.cache.reset
     
     @roles = Role.find_configurables.sort{|a,b| a.card.name <=> b.card.name }
@@ -36,7 +36,7 @@ class AdminController < ApplicationController
   end
 
   def save_tasks
-    raise Wagn::PermissionDenied.new('Only Administrators can change task permissions') unless System.always_ok?
+    raise Wagn::PermissionDenied.new('Only Administrators can change task permissions') unless User.always_ok?
     role_tasks = params[:role_task] || {}
     Role.find( :all ).each  do |role|
       tasks = role_tasks[role.id.to_s] || {}
@@ -57,7 +57,7 @@ class AdminController < ApplicationController
   
   def clear_cache
     response = 
-      if System.always_ok?
+      if User.always_ok?
         Wagn::Cache.reset_global
         'Cache cleared'
       else

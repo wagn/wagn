@@ -13,9 +13,12 @@ module LocationHelper
   # you had to confirm before removing.
   #
   def location_history
+#    warn "sess #{session.class}, #{session.object_id}"
     session[:history] ||= ['/']
-    session[:history].shift if session[:history].size > 5
-    session[:history]
+    if session[:history]
+      session[:history].shift if session[:history].size > 5
+      session[:history]
+    end
   end
 
   def save_location
@@ -24,7 +27,7 @@ module LocationHelper
   end
 
   def previous_location
-    @previous_location ||= location_history.last
+    @previous_location ||= location_history.last if location_history
   end
 
   def discard_locations_for(card)
@@ -48,15 +51,15 @@ module LocationHelper
       opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
       vars = '?' + pairs.join('&')
     end
-    System.root_path + "/wagn/#{title.to_cardname.to_url_key}#{format}#{vars}"
+    Wagn::Conf[:root_path] + "/wagn/#{title.to_cardname.to_url_key}#{format}#{vars}"
   end
 
   def card_path( card )
-    System.root_path + "/wagn/#{card.cardname.to_url_key}"
+    Wagn::Conf[:root_path] + "/wagn/#{card.cardname.to_url_key}"
   end
 
   def card_url( card )
-    "http://" + System.host + card_path(card)
+    Wagn::Conf[:base_url] + card_path(card)
   end
 
   # Links ----------------------------------------------------------------------

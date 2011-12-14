@@ -25,11 +25,12 @@ module Wagn
     
     class << self
       def cache_classes
-        [Card, Cardtype, MultihostMapping, Role, System, User]
+        [Card, Cardtype, MultihostMapping, Role, User]
       end
             
       def initialize_on_startup
         cache_classes.each do |cc|
+          #warn "init cache #{cc}"
           cc.cache = new :class=>cc, :store=>(Rails.env =~ /^cucumber|test$/ ? nil : Rails.cache)
         end
         preload_cache_for_tests if preload_cache?
@@ -51,12 +52,16 @@ module Wagn
       
       def system_prefix(klass)
         cache_env = (Rails.env == 'cucumber') ? 'test' : Rails.env
-        "#{System.host}/#{cache_env}/#{klass}"
+        "#{Wagn::Conf[:host]}/#{cache_env}/#{klass}"
       end
 
       def re_initialize_for_new_request
         cache_classes.each do |cc|
-          cc.cache.system_prefix = system_prefix(cc)
+          if cc.cache
+            cc.cache.system_prefix = system_prefix(cc)
+          else
+            warn "cache nil? #{cc}"
+          end
         end
         reset_local unless preload_cache?
       end
@@ -157,7 +162,6 @@ module Wagn
       @cache_id = self.class.generate_cache_id
       @store.write(@system_prefix + "cache_id", @cache_id)  if @store
       @prefix = @system_prefix + @cache_id + "/"
-      #System.cache.reset if @klass != System
     end
 
     private

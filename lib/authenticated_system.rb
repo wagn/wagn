@@ -93,7 +93,7 @@ module AuthenticatedSystem
   # to access the requested action.  For example, a popup window might
   # simply close itself.
   def access_denied
-    wagn_redirect( System.base_url + url_for(:controller=>'account', :action=>'signin') )
+    wagn_redirect( Wagn::Conf[:base_url] + url_for(:controller=>'account', :action=>'signin') )
   end  
 
   # Store the URI of the current request in the session.

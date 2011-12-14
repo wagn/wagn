@@ -20,16 +20,16 @@ class AccountController < ApplicationController
     @user, @card = User.create_with_card( user_args, card_args )
     return unless @user.errors.empty?
 
-    if System.ok?(:create_accounts)       #complete the signup now
-      email_args = { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",  #ENGLISH
-                     :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }  #ENGLISH
+    if User.ok?(:create_accounts)       #complete the signup now
+      email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Wagn::Conf[:site_title]}!",  #ENGLISH
+                     :subject => Card.setting('*signup+*subject') || "Account info for #{Wagn::Conf[:site_title]}!" }  #ENGLISH
       @user.accept(email_args)
-      redirect_to System.path_setting(System.setting('*signup+*thanks'))
+      redirect_to Card.path_setting(Card.setting('*signup+*thanks'))
     else
       User.as :wagbot do
-        Mailer.signup_alert(@card).deliver if System.setting('*request+*to')
+        Mailer.signup_alert(@card).deliver if Card.setting('*request+*to')
       end
-      redirect_to System.path_setting(System.setting('*request+*thanks'))
+      redirect_to Card.path_setting(Card.setting('*request+*thanks'))
     end
   end
 
@@ -39,12 +39,12 @@ class AccountController < ApplicationController
     raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
     @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
     @user = @card.extension or raise(Wagn::Oops, "This card doesn't have an account to approve")  #ENGLISH
-    System.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create accounts")  #ENGLISH
+    User.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create accounts")  #ENGLISH
 
     if request.post?
       @user.accept(params[:email])
       if @user.errors.empty? #SUCCESS
-        redirect_to System.path_setting(System.setting('*invite+*thanks'))
+        redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
         return
       end
     end
@@ -52,14 +52,14 @@ class AccountController < ApplicationController
   end
 
   def invite
-    System.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create")  #ENGLISH
+    User.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create")  #ENGLISH
 
     @user, @card = request.post? ?
       User.create_with_card( params[:user], params[:card] ) :
       [User.new, Card.new()]
     if request.post? and @user.errors.empty?
       @user.send_account_info(params[:email])
-      redirect_to System.path_setting(System.setting('*invite+*thanks'))
+      redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
     end
   end
 
@@ -75,7 +75,7 @@ class AccountController < ApplicationController
   def signout
     self.current_user = nil
     flash[:notice] = "You have been logged out." #ENGLISH
-    redirect_to System.path_setting('/')  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
+    redirect_to Card.path_setting('/')  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
   end
 
   def forgot_password
@@ -122,7 +122,7 @@ class AccountController < ApplicationController
   private
 
     def successful_login
-      flash[:notice] = "Welcome to #{System.site_title}"  #ENGLISH
+      flash[:notice] = "Welcome to #{Wagn::Conf[:site_title]}"  #ENGLISH
       redirect_to previous_location
     end
 

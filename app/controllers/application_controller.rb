@@ -24,26 +24,32 @@ class ApplicationController < ActionController::Base
 
   def per_request_setup
     request.format = :html if !params[:format]
-    
+    if Wagn::Conf[:base_url]
+      canonicalize_domain
+    else
+      Wagn::Conf[:base_url] = 'http://' + request.env['HTTP_HOST']
+      Wagn::Conf[:host] = Wagn::Conf[:base_url].
+        gsub(/^http:\/\//,'').gsub(/\/.*/,'') unless Wagn::Conf[:host]
+    end
     Wagn::Renderer.ajax_call=request.xhr?
-    if System.multihost
+    
+    if Wagn::Conf[:multihost]
       MultihostMapping.map_from_request(request) or return render_fast_404(request.host)
     end
     Wagn::Cache.re_initialize_for_new_request
-    canonicalize_domain
     
     User.current_user = current_user || User[:anon]
 
     @action = params[:action]
 
     Wagn::Renderer.current_slot = nil
-    System.request = request
+    Wagn::Conf[:request] = request
   end
   
   def canonicalize_domain
-    if Rails.env=="production" and request.raw_host_with_port != System.host
+    if Rails.env=="production" and request.raw_host_with_port != Wagn::Conf[:host]
       query_string = request.query_string.empty? ? '' : "?#{request.query_string}"
-      return redirect_to("http://#{System.host}#{System.root_path}#{request.path}#{query_string}")
+      return redirect_to("http://#{Wagn::Conf[:host]}#{Wagn::Conf[:root_path]}#{request.path}#{query_string}")
     end
   end
 
@@ -82,40 +88,6 @@ class ApplicationController < ActionController::Base
 
   def remove_ok
     @card.ok!(:delete) || render_denied('delete')
-  end
-
-
-  # --------------( card loading filters ) ----------
-  def load_card!
-    load_card
-    case
-    when !@card || @card.name.nil? || @card.name.empty?  #no card or no name -- bogus request, deserves error
-      raise Wagn::NotFound, "We don't know what card you're looking for."
-    when @card.known? # default case
-      @card
-    when params[:view] =~ /rule|missing/
-      # FIXME this is a hack so that you can view load rules that don't exist.  need better approach 
-      # (but this is not tested; please don't delete without adding a test) 
-      @card
-    when ajax? || ![nil, 'html'].member?(params[:format])  #missing card, nonstandard request
-      ##  I think what SHOULD happen here is that we render the missing view and let the Renderer decide what happens.
-      raise Wagn::NotFound, "We can't find a card named #{@card.name}"  
-    when @card.ok?(:create)  # missing card, user can create
-      params[:card]={:name=>@card.name, :type=>params[:type]}
-      self.new
-      false
-    else
-      render :action=>'missing' 
-      false     
-    end
-  end
-
-  def load_card
-    return @card=nil unless id = params[:id]
-    return (@card=Card.find(id); @card.include_set_modules; @card) if id =~ /^\d+$/
-    name = Wagn::Cardname.unescape(id)
-    card_params = params[:card] ? params[:card].clone : {}
-    @card = Card.fetch_or_new(name, card_params)
   end
 
 

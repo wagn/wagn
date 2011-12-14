@@ -90,7 +90,7 @@ describe Flexmail do
 
     it "returns list with correct hash for card with configs" do
       User.as :wagbot do
-        System.base_url = 'http://a.com'
+        Wagn::Conf[:base_url] = 'http://a.com'
         c = Card.create(:name => "Banana Trigger", :content => "data content [[A]]", :type=>'Trigger')
         Rails.logger.info "testing point #{c.inspect}"
         assert c.id

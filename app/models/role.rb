@@ -14,12 +14,8 @@ class Role < ActiveRecord::Base
     end
   end
         
-  def task_list
-    (self.tasks || '').split ","
-  end
-  
-  def cardname
-    self.card.cardname
-  end  
+  def task_list() (self.tasks || '').split "," end
+  def admin?()    codename == 'admin'          end
+  def cardname()  self.card.cardname           end  
 
 end

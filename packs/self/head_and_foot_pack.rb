@@ -5,8 +5,8 @@ class Wagn::Renderer
     title = params[:action] if title.nil? || title == '*placeholder'
 
     bits = [
-      "<title>#{title ? "#{title} - " : ''}#{ System.site_title }</title>",
-      %{<link rel="shortcut icon" href="#{ System.favicon }" />}
+      "<title>#{title ? "#{title} - " : ''}#{ Wagn::Conf[:site_title] }</title>",
+      %{<link rel="shortcut icon" href="#{ Wagn::Conf[:favicon] }" />}
     ]
     
     #Universal Edit Button
@@ -17,7 +17,7 @@ class Wagn::Renderer
       
       # RSS # move to packs!
       if card.typecode == 'Search'
-        rss_href = card.name=='*search' ? "#{System.root_path}/search/#{ params[:_keyword] }.rss" : template.url_for_page( card.name, :format=>:rss )
+        rss_href = card.name=='*search' ? "#{Wagn::Conf[:root_path]}/search/#{ params[:_keyword] }.rss" : template.url_for_page( card.name, :format=>:rss )
         bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{rss_href} />}
      end
     end
@@ -26,21 +26,21 @@ class Wagn::Renderer
     bits << stylesheet_link_tag('application-all')
     bits << stylesheet_link_tag('application-print', :media=>'print')
     if css_card = Card['*css']
-      bits << stylesheet_link_tag("#{System.root_path}/*css.css?#{ css_card.current_revision_id }")
+      bits << stylesheet_link_tag("#{Wagn::Conf[:root_path]}/*css.css?#{ css_card.current_revision_id }")
     end
 
     #Javscript
     bits << %(
     <script>
       var wagn = {}; window.wagn = wagn;
-      wagn.root_path = '#{System.root_path}';
-      window.tinyMCEPreInit = {base:"#{System.root_path}/assets/tinymce",query:"3.4.7",suffix:""};
-      wagn.tinyMCEConfig = { #{System.setting('*tiny mce')} }
+      wagn.root_path = '#{Wagn::Conf[:root_path]}';
+      window.tinyMCEPreInit = {base:"#{Wagn::Conf[:root_path]}/assets/tinymce",query:"3.4.7",suffix:""};
+      wagn.tinyMCEConfig = { #{Card.setting('*tiny mce')} }
     </script>      
           )
     bits << javascript_include_tag('application')
 
-    if ga_key=System.setting("*google analytics key")
+    if ga_key=Card.setting("*google analytics key")
       bits << %(
     
       <script type="text/javascript">

@@ -42,7 +42,7 @@ namespace :test do
     # but we need development to get the right schema dumped. 
     ENV['::Rails.env'] = 'development'
     
-    if System.enable_postgres_fulltext
+    if Wagn::Conf[:enable_postgres_fulltext]
       raise("Oops!  you need to disable postgres_fulltext in wagn.rb before generating fixtures")
     end
          

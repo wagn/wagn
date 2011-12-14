@@ -1,10 +1,8 @@
 class CardController < ApplicationController
   helper :wagn
 
-  EDIT_ACTIONS = [ :edit, :update, :rollback, :save_draft, :watch, :unwatch,
-    :create_account, :update_account ]
-  LOAD_ACTIONS =  EDIT_ACTIONS + [ :show_file, :show, :index, :comment,
-    :remove, :view, :changes, :options, :related ]
+  EDIT_ACTIONS = [ :edit, :update, :rollback, :save_draft, :watch, :create_account, :update_account ]
+  LOAD_ACTIONS =  EDIT_ACTIONS + [ :show_file, :show, :index, :comment, :remove, :view, :changes, :options, :related ]
 
   before_filter :index_preload, :only=> [ :index ]
   before_filter :show_file_preload, :only=> [ :show_file ]
@@ -46,26 +44,17 @@ class CardController < ApplicationController
     render_show
   end
 
-  def show_file_preload
-    #warn "show preload #{params.inspect}"
-    params[:id] = params[:id].
-      sub(/(-(#{Card::STYLES*'|'}))?(-\d+)?(\.[^\.]*)?$/) {
-        @style = $1.nil? ? 'medium' : $2
-        @rev_id = $3 && $3[1..-1]
-        params[:format] = $4[1..-1] if $4
-        ''
-      }
-  end
 
   def show_file
-    unless !@card || (style = @card.attachment_style(params[:format], @style)).nil?
-      @card.selected_rev_id = @rev_id
-      #warn "show_file #{params.inspect}, #{@card.selected_rev_id}, #{@style}"
-      send_file pth=@card.attach.path(style),
-                :type => @card.attach_content_type,
-                :x_sendfile => true
-      #warn "show file path (#{@style}, #{@rev_id}) #{pth}"
-    end
+    return if !@card
+    style = params[:size] || @card.attachment_style( params[:format], @style)
+    return if !@style
+    
+    @card.selected_rev_id = @rev_id || @card.current_revision_id
+    send_file @card.attach.path(style), 
+      :type => @card.attach_content_type,
+      :x_sendfile => true,
+      :disposition => 'inline'
   end
 
   def index()    show                  end
@@ -206,6 +195,17 @@ class CardController < ApplicationController
   private
   
   #-------( FILTERS )
+  
+  def show_file_preload
+    #warn "show preload #{params.inspect}"
+    params[:id] = params[:id].sub(/(-(#{Card::STYLES*'|'}))?(-\d+)?(\.[^\.]*)?$/) do
+      @style = $1.nil? ? 'original' : $2
+      @rev_id = $3 && $3[1..-1]
+      params[:format] = $4[1..-1] if $4
+      ''
+    end
+  end
+  
   
   def index_preload
     User.no_logins? ? 

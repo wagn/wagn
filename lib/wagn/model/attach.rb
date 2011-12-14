@@ -37,7 +37,7 @@ module Wagn::Model::Attach
     # FIXME: test extension matches content type
     case typecode
     when 'File'; ''
-    when 'Image'; style || :medium
+    when 'Image'; style || 'original'
     end
   end
   
@@ -89,6 +89,10 @@ module Paperclip::Interpolations
   def local(    at, style_name )  Wagn::Conf[:attachment_storage_dir] end
   def base_url( at, style_name )  Wagn::Conf[:attachment_base_url]    end
   def card_id(  at, style_name )  at.instance.id                      end
+
+  def basename(at, style_name)
+    at.instance.name.to_cardname.to_url_key
+  end
 
   def size(at, style_name)
     (at.instance.typecode != 'File' || style_name.blank?) && "#{style_name}-" || ''

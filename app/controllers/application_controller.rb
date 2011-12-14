@@ -107,7 +107,7 @@ class ApplicationController < ActionController::Base
     Rails.logger.debug "~~~~~~~~~~~~~~~~~in render_denied for #{action}"
     
     @deny = action
-    render :controller=>'card', :action=>'denied', :status=>403
+    render :controller=>'card', :action=>'denied', :status=>403, :layout=>'application'
     return false
   end
 

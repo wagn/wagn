@@ -609,7 +609,7 @@ class Card < ActiveRecord::Base
     # image defaults
     def image_settings()
       Wagn::Conf[:favicon] = image_setting('*favicon') || image_setting('*logo') ||
-        "#{Wagn::Conf[:root_path]}/images/favicon.ico"
+        "#{Wagn::Conf[:root_path]}/favicon.ico"
     end
 
   protected

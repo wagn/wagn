@@ -31,24 +31,26 @@ module Wagn::Model::Attach
   def attach_content_type=(v) attach_array_set(1, v) if v end
   def attach_file_size=(v) attach_array_set(2, v) if v end
 
-  STYLES = %w{icon small medium large}
+  STYLES = %w{ icon small medium large original }
 
-  def attachment_style(typecode, ext, style)
-    if attach and MIME::Types[attach.content_type].
-                    find {|mt| mt.extensions.member? ext }
-    # FIXME: test extension matches content type
-<<<<<<< HEAD
-      case typecode
-        when 'File'; ''
-        when 'Image'; style||:medium
-      end
-=======
+  def attachment_style(typecode, style)
     case typecode
     when 'File'; ''
-    when 'Image'; style || :medium
->>>>>>> ethan/develop
+    when 'Image'; style || :original
     end
   end
+
+  def attachment_format(ext)
+    return nil unless attach
+    exts = MIME::Types[attach.content_type]
+    return nil unless exts
+    return :ok if exts.find {|mt| mt.extensions.member? ext }
+    return exts[0].extensions[0]
+  end
+    
+  # FIXME: test extension matches content type
+
+
   
   def attachment_link(rev_id)
     if styles = case typecode
@@ -97,6 +99,10 @@ module Paperclip::Interpolations
   def local(    at, style_name )  Wagn::Conf[:attachment_storage_dir] end
   def base_url( at, style_name )  Wagn::Conf[:attachment_base_url]    end
   def card_id(  at, style_name )  at.instance.id                      end
+
+  def basename(at, style_name)
+    at.instance.name.to_cardname.to_url_key
+  end
 
   def size(at, style_name)
     (at.instance.typecode != 'File' || style_name.blank?) && "#{style_name}-" || ''

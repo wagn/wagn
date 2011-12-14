@@ -200,7 +200,8 @@ module Wagn::Model::Permissions
     Card.record_timestamps = Card.record_userstamps = false
 
     rcard, rclass = rule_card(:read)
-    update_attributes!(
+    copy = self.frozen? ? self.dup : self
+    copy.update_attributes!(
       :read_rule_id => rcard.id,
       :read_rule_class => rclass
     )

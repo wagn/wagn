@@ -282,7 +282,6 @@
                             // This check allows the tests to run with
                             // dummy objects:
                             if (file instanceof Blob) {
-                              console.log( "file is a blob; paramName = " + options.paramName );
                                 formData.append(options.paramName, file);
                             }
                         });

@@ -58,7 +58,9 @@ module Wagn::Model::Attach
   end
 
   def before_post_attach
-    self.attach.instance_write :file_name, "#{self.key.gsub('*','X').camelize}"
+    at=self.attach
+    at.instance_write :file_name,
+      "#{self.key.gsub('*','X').camelize}#{File.extname(at.original_filename)}"
     #warn "before_post_attach #{attach_file_name}, #{attach_content_type}"
     typecode == 'Image' # returning true enables thumnail creation
   end

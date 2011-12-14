@@ -4,7 +4,7 @@ class Wagn::Renderer::Html
   define_view(:current_naked) do |args| _render_naked end
 
   define_view(:current, :fallback=>:raw, :type=>'Etherpad') do |args|
-    #Rails.logger.debug "current_pad view #{card}, #{card.inspect}"
+    warn Rails.logger.debug("current_pad view #{card}, #{card.inspect}")
     card.include_set_modules
     card.get_pad_content
   end

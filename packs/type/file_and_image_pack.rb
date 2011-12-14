@@ -1,6 +1,8 @@
 
 class Wagn::Renderer
 
+  
+  
   define_view(:core, :type=>'image') do |args|
     (rr = _render_raw) =~ /^\s*<img / ? resize_legacy_image_content( rr, args[:size] ) :
       image_tag(card.attach.url args[:size] || :medium)
@@ -9,6 +11,10 @@ class Wagn::Renderer
   define_view(:core, :type=>'file') do |args|
     (rr = _render_raw) =~ /^\s*<a / ? rr :
       "<a href=\"#{card.attach.url}\">#{card.name}</a>"
+  end
+
+  define_view(:closed_content, :type=>'image') do |args|
+    _render_core(:size=>:icon)
   end
 
   private

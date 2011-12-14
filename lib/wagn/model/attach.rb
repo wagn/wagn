@@ -105,7 +105,7 @@ module Paperclip::Interpolations
   end
 
   def size(at, style_name)
-    (at.instance.typecode != 'File' || style_name.blank?) && "#{style_name}-" || ''
+    style_name.blank? ? '' : "#{style_name}-"
   end
 
   def revision_id(at, style_name) at.instance.selected_rev_id end

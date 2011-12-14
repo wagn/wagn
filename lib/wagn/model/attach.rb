@@ -1,9 +1,10 @@
 module Wagn::Model::Attach
   def attach_array(rev_id=nil)
-    c=if rev_id # if this is passed in, it is for update, so current content
+    c=case 
+      when rev_id || self.new_card?
         self.content
-      else
-        (rev=Revision.find_by_id(selected_rev_id)) && rev.content
+      else  
+        Revision.find_by_id(selected_rev_id).content
       end
     #warn "aa #{rev_id.inspect}, #{rev&&rev.id} #{selected_rev_id}}\ncc #{c}"
     !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/) 
@@ -32,11 +33,20 @@ module Wagn::Model::Attach
 
   STYLES = %w{icon small medium large}
 
-  def attachment_style(ext, style)
+  def attachment_style(typecode, ext, style)
+    if attach and MIME::Types[attach.content_type].
+                    find {|mt| mt.extensions.member? ext }
     # FIXME: test extension matches content type
+<<<<<<< HEAD
+      case typecode
+        when 'File'; ''
+        when 'Image'; style||:medium
+      end
+=======
     case typecode
     when 'File'; ''
-    when 'Image'; style||:medium
+    when 'Image'; style || :medium
+>>>>>>> ethan/develop
     end
   end
   
@@ -58,10 +68,13 @@ module Wagn::Model::Attach
   end
 
   def before_post_attach
-    ext = $1 if attach_file_name =~ /\.([^\.]+)$/
-    self.attach.instance_write :file_name, "#{self.key.gsub('*','X').camelize}.#{ext}"
-    #warn "attach post #{self}, #{attach_file_name}"
-    typecode == 'Image' # returning true enables thumnail creation
+    at=self.attach
+    at.instance_write :file_name,
+      "#{self.key.gsub('*','X').camelize}#{File.extname(at.original_filename)}"
+    #warn "before_post_attach #{attach_file_name}, #{attach_content_type}"
+
+    'Image' == (typecode || Cardtype.classname_for( @type_args[:type] ) )
+    # returning true enables thumnail creation
   end
 
   #def item_names(args={}) [self.cardname] end
@@ -69,8 +82,8 @@ module Wagn::Model::Attach
   def self.included(base)
     base.class_eval do
       has_attached_file :attach, :preserve_files=>true,
-        :url => ":base_url/:basename-:size:revision_id.:file_ext",
-        :path => ":local/:card_id/:size:revision_id.:file_ext",
+        :url => ":base_url/:basename-:size:revision_id.:content_type_extension",
+        :path => ":local/:card_id/:size:revision_id.:content_type_extension",
         :styles => { :icon   => '16x16#', :small  => '75x75#',
                    :medium => '200x200>', :large  => '500x500>' } 
 
@@ -80,16 +93,13 @@ module Wagn::Model::Attach
 end
 
 module Paperclip::Interpolations
-  def local(at, style_name)    Wagn::Conf[:attachment_storage_dir] end
-  def base_url(at, style_name) Wagn::Conf[:attachment_base_url]    end
-  def card_id(at, style_name)  at.instance.id                      end
+  
+  def local(    at, style_name )  Wagn::Conf[:attachment_storage_dir] end
+  def base_url( at, style_name )  Wagn::Conf[:attachment_base_url]    end
+  def card_id(  at, style_name )  at.instance.id                      end
 
   def size(at, style_name)
-    (at.instance.typecode != 'File'||style_name.blank?) && "#{style_name}-"||''
-  end
-
-  def file_ext(at, style_name)
-    (at.instance.attach_file_name =~ /\.([^\.]*)$/) && $1
+    (at.instance.typecode != 'File' || style_name.blank?) && "#{style_name}-" || ''
   end
 
   def revision_id(at, style_name) at.instance.selected_rev_id end

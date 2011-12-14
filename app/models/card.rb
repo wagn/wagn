@@ -53,7 +53,7 @@ class Card < ActiveRecord::Base
     skip_modules = args.delete 'skip_modules'
     
     super args
-
+    
     if !args['typecode']
       self.typecode_without_tracking = get_typecode(@type_args[:type]) 
     end
@@ -608,12 +608,8 @@ class Card < ActiveRecord::Base
 
     # image defaults
     def image_settings()
-      Wagn::Conf[:favicon] = image_setting('*favicon') ||
-                             image_setting('*logo') ||
-                             "#{Wagn::Conf[:root_path]}/images/favicon.ico"
-      Wagn::Conf[:logo] = image_setting('*logo')
-      logo_file = "#{Wagn::Conf[:root_path]}/public/images/logo.gif"
-      Wagn::Conf[:logo] ||= File.exists?(logo_file) && logo_file
+      Wagn::Conf[:favicon] = image_setting('*favicon') || image_setting('*logo') ||
+        "#{Wagn::Conf[:root_path]}/images/favicon.ico"
     end
 
   protected

@@ -6,7 +6,7 @@ class Wagn::Renderer::Rss
 
     xml.rss :version => "2.0" do
       xml.channel do
-        xml.title  System.site_title + " : " + card.name.gsub(/^\*/,'')
+        xml.title  Wagn::Conf[:site_title] + " : " + card.name.gsub(/^\*/,'')
         xml.description ""
         xml.link card_url(card)
         begin

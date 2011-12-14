@@ -1,7 +1,7 @@
 <%-
 email = params[:email] || {}
-subject = email[:subject] || System.setting('*invite+*subject') || ''
-message = email[:message] || System.setting('*invite+*message') || ''
+subject = email[:subject] || Card.setting('*invite+*subject') || ''
+message = email[:message] || Card.setting('*invite+*message') || ''
 Wagn::Cardname.substitute!( message, {
   :invitor => User.current_user.card.name + " (#{current_user.email})",
   :invitee => card.name || ''}

@@ -17,7 +17,7 @@ class Card < ActiveRecord::Base
   before_destroy :destroy_extension, :base_before_destroy
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards, :set_mods_loaded,
-    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual, :type_args
+    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual, :type_args, :selected_rev_id
 
   before_save :base_before_save, :set_read_rule, :set_tracked_attributes, :set_extensions
   after_save :base_after_save, :update_ruled_cards
@@ -53,7 +53,7 @@ class Card < ActiveRecord::Base
     skip_modules = args.delete 'skip_modules'
     
     super args
-
+    
     if !args['typecode']
       self.typecode_without_tracking = get_typecode(@type_args[:type]) 
     end
@@ -367,6 +367,8 @@ class Card < ActiveRecord::Base
     r
   end
 
+  def selected_rev_id() @selected_rev_id || (cr=current_revision)&&cr.id || 0 end
+
   def cached_revision
     #return current_revision || Revision.new    
     case
@@ -585,5 +587,38 @@ class Card < ActiveRecord::Base
     end
   end
  
+  # leftovers from model/system
+  class << self
+  
+    def setting(name)
+      User.as :wagbot  do
+        card=Card[name] and !card.content.strip.empty? and card.content
+      end
+    rescue
+      nil
+    end           
+
+    def path_setting(name)
+      name ||= '/'
+      return name if name =~ /^(http|mailto)/
+      Wagn::Conf[:root_path] + name      
+    end
+    
+    def toggle(val) val == '1' end
+
+    # image defaults
+    def image_settings()
+      Wagn::Conf[:favicon] = image_setting('*favicon') || image_setting('*logo') ||
+        "#{Wagn::Conf[:root_path]}/images/favicon.ico"
+    end
+
+  protected
+    def image_setting(name)
+      # this is really only for legacy images, and a kluge anyway
+      if content = setting(name) and content.match(/src=\"([^\"]+)/)
+        $~[1]
+      end
+    end
+  end
 end  
 

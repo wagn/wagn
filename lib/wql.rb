@@ -235,7 +235,7 @@ class Wql
       v.gsub!(/\W+/,' ')
       
       cond =
-        if System.enable_postgres_fulltext
+        if Wagn::Conf[:enable_postgres_fulltext]
           v = v.strip.gsub(/\s+/, '&')
           sql.relevance_fields << "rank(indexed_name, to_tsquery(#{quote(v)}), 1) AS name_rank"
           sql.relevance_fields << "rank(indexed_content, to_tsquery(#{quote(v)}), 1) AS content_rank"
@@ -397,7 +397,7 @@ class Wql
       return "(" + sql.conditions.last + ")" if @mods[:return]=='condition'
 
       # Permissions    
-      unless System.always_ok? or (Wql.root_perms_only && !root?)
+      unless User.always_ok? or (Wql.root_perms_only && !root?)
         sql.conditions << %{ (#{table_alias}.read_rule_id IN (#{::User.as_user.read_rule_ids.join ','})) }
       end
            

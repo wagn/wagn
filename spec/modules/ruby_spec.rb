@@ -16,7 +16,7 @@ describe "Ruby Cardtype" do
     #Card.create! :name => "lr sum+*right+*content", :type => "Ruby", :content => "{{_1|core}}+{{_2|core}}"
     #Card.create! :name => "a1test", :type=>"Phrase", :content => "{{a1+b1+lr sum|core}}, {{b1+d1+lr sum|core}}"
     #
-    #System.stub(:enable_ruby_cards).and_return(true)
+    #Wagn.stub(:enable_ruby_cards).and_return(true)
   end
 
   it "should keep different ruby cards straight" do

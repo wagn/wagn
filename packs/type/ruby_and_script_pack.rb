@@ -13,7 +13,7 @@ class Wagn::Renderer
   define_view(:core, :type=>'script') do |args|
     command = process_content( card.content )
     begin
-      if System.enable_server_cards
+      if Wagn::Conf[:enable_server_cards]
         Shellbox.new.run( command )
       else  
         'sorry, server cards are not enabled' #ENGLISH
@@ -29,7 +29,7 @@ class Wagn::Renderer
   define_view(:core, :type=>'ruby') do |args|
     ruby = process_content( card.content )
     begin
-      if System.enable_ruby_cards
+      if Wagn::Conf[:enable_ruby_cards]
         s = Sandbox.new(4)
         s.fuehreAus( ruby )
         result = if s.securityViolationDetected

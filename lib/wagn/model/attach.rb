@@ -1,9 +1,10 @@
 module Wagn::Model::Attach
   def attach_array(rev_id=nil)
-    c=if rev_id # if this is passed in, it is for update, so current content
+    c=case 
+      when rev_id || self.new_card?
         self.content
-      else
-        (rev=Revision.find_by_id(selected_rev_id)) && rev.content
+      else  
+        Revision.find_by_id(selected_rev_id).content
       end
     #warn "aa #{rev_id.inspect}, #{rev&&rev.id} #{selected_rev_id}}\ncc #{c}"
     !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/) 
@@ -36,10 +37,16 @@ module Wagn::Model::Attach
     if attach and MIME::Types[attach.content_type].
                     find {|mt| mt.extensions.member? ext }
     # FIXME: test extension matches content type
+<<<<<<< HEAD
       case typecode
         when 'File'; ''
         when 'Image'; style||:medium
       end
+=======
+    case typecode
+    when 'File'; ''
+    when 'Image'; style || :medium
+>>>>>>> ethan/develop
     end
   end
   
@@ -65,7 +72,9 @@ module Wagn::Model::Attach
     at.instance_write :file_name,
       "#{self.key.gsub('*','X').camelize}#{File.extname(at.original_filename)}"
     #warn "before_post_attach #{attach_file_name}, #{attach_content_type}"
-    typecode == 'Image' # returning true enables thumnail creation
+
+    'Image' == (typecode || Cardtype.classname_for( @type_args[:type] ) )
+    # returning true enables thumnail creation
   end
 
   #def item_names(args={}) [self.cardname] end
@@ -84,13 +93,15 @@ module Wagn::Model::Attach
 end
 
 module Paperclip::Interpolations
-  def local(at, style_name)    Wagn::Conf[:attachment_storage_dir] end
-  def base_url(at, style_name) Wagn::Conf[:attachment_base_url]    end
-  def card_id(at, style_name)  at.instance.id                      end
+  
+  def local(    at, style_name )  Wagn::Conf[:attachment_storage_dir] end
+  def base_url( at, style_name )  Wagn::Conf[:attachment_base_url]    end
+  def card_id(  at, style_name )  at.instance.id                      end
 
   def size(at, style_name)
-    (at.instance.typecode != 'File'||style_name.blank?) && "#{style_name}-"||''
+    (at.instance.typecode != 'File' || style_name.blank?) && "#{style_name}-" || ''
   end
+
   def revision_id(at, style_name) at.instance.selected_rev_id end
 end
 

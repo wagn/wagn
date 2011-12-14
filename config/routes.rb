@@ -28,6 +28,7 @@ Wagn::Application.routes.draw do
 
   match ':id(.:format)' => 'card#show'
   match '/files/(*id)' => 'card#show_file'
+  
   match '*id' => 'application#render_404'
 
 end

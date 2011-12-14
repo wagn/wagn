@@ -32,11 +32,14 @@ module Wagn::Model::Attach
 
   STYLES = %w{icon small medium large}
 
-  def attachment_style(ext, style)
+  def attachment_style(typecode, ext, style)
+    if attach and MIME::Types[attach.content_type].
+                    find {|mt| mt.extensions.member? ext }
     # FIXME: test extension matches content type
-    case typecode
-    when 'File'; ''
-    when 'Image'; style||:medium
+      case typecode
+        when 'File'; ''
+        when 'Image'; style||:medium
+      end
     end
   end
   

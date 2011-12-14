@@ -59,14 +59,16 @@ class CardController < ApplicationController
 
   def show_file
     #warn "show file #{@card}"
-    unless !@card||(style=@card.attachment_style(params[:format], @style)).nil?
+    if @card
       @card.selected_rev_id = @rev_id
-      #warn "show_file #{params.inspect}, #{@card.selected_rev_id}, #{@style}"
-      send_file pth=@card.attach.path(style),
-                :type => @card.attach_content_type,
-                :x_sendfile => true
-      #warn "show file path (#{@style}, #{@rev_id}) #{pth}"
+      if style=@card.attachment_style(@card.typecode, params[:format], @style)
+
+        send_file @card.attach.path(style), :type => @card.attach.content_type,
+          :filename=> "#{params[:id]}.#{params[:format]}", :x_sendfile => true
+        return
+      end
     end
+    render_fast_404
   end
 
   def index()    show                  end

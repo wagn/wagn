@@ -268,19 +268,17 @@ class CardController < ApplicationController
   
   def render_show_file
     return render_fast_404 if !@card #will it ever get here
-    @card.selected_rev_id = @rev_id || @card.current_revision_id
+    @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
   
-    style = @card.attachment_style( @card.typecode, params[:size] || @style)
+    style = @card.attachment_style( @card.typecode, params[:size] || @style )
     render_fast_404 if !style
   
     format = @card.attachment_format(params[:format])
     return render_fast_404 if !format
     if format != :ok && params[:format] != 'file'
-      return redirect_to( request.fullpath.sub(/\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) ) 
+      return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) ) 
     end
-    
 
-  
     send_file @card.attach.path(style), 
       :type => @card.attach_content_type,
       :filename =>  "#{@card.cardname.to_url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",

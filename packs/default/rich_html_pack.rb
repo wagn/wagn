@@ -158,7 +158,7 @@ class Wagn::Renderer::Html
     %{
       <div class="edit-area edit-name">
        <h2>Change Name</h2>
-      #{ form_for card, :url=>path(:update), :remote=>true,
+      #{ form_for card, :url=>path(:update, :id=>card.id), :remote=>true,
         :html=>{ :class=>'card-edit-name-form slotter', 'main-success'=>'REDIRECT' } do |f|
           
           
@@ -202,7 +202,7 @@ class Wagn::Renderer::Html
     end
     }
     #{ submit_tag 'Rename', :class=>'edit-name-submit-button'}
-    #{ button_tag 'Cancel', :class=>'edit-name-cancel-button slotter init-editors', :type=>'button', :href=>path(:edit)}
+    #{ button_tag 'Cancel', :class=>'edit-name-cancel-button slotter init-editors', :type=>'button', :href=>path(:edit, :id=>card.id)}
     }
     end}
     </div>}

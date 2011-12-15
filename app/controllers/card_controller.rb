@@ -190,8 +190,7 @@ class CardController < ApplicationController
   
   def show_file_preload
     #warn "show preload #{params.inspect}"
-    @original_id = params[:id]
-    params[:id] = @original_id.sub(/(-(#{Card::STYLES*'|'}))?(-\d+)?(\.[^\.]*)?$/) do
+    params[:id] = params[:id].sub(/(-(#{Card::STYLES*'|'}))?(-\d+)?(\.[^\.]*)?$/) do
       @style = $1.nil? ? 'original' : $2
       @rev_id = $3 && $3[1..-1]
       params[:format] = $4[1..-1] if $4
@@ -271,18 +270,20 @@ class CardController < ApplicationController
     return render_fast_404 if !@card #will it ever get here
     @card.selected_rev_id = @rev_id || @card.current_revision_id
   
-    format = @card.attachment_format(params[:format])
-    return render_fast_404 if !format
-    if format != :ok && params[:format] != 'file'
-      return redirect_to( Wagn::Conf[:root_path] + "/files/" + @original_id.sub(params[:format], format) ) 
-    end
-    
     style = @card.attachment_style( @card.typecode, params[:size] || @style)
     render_fast_404 if !style
   
+    format = @card.attachment_format(params[:format])
+    return render_fast_404 if !format
+    if format != :ok && params[:format] != 'file'
+      return redirect_to( request.fullpath.sub(/\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) ) 
+    end
+    
+
+  
     send_file @card.attach.path(style), 
       :type => @card.attach_content_type,
-      :filename =>  "#{@card.cardname.to_url_key}-#{style}.#{format}",
+      :filename =>  "#{@card.cardname.to_url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
       :x_sendfile => true,
       :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
   end

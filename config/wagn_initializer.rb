@@ -32,9 +32,8 @@ module Wagn
       Rails.logger.debug "Load config ...\n"
       hash.merge! YAML.load(DEFAULT_YML)
 
-      config_file = "#{Rails.root}/config/wagn.yml"
-      hash.merge!(
-        YAML.load_file config_file ) if File.exists? config_file
+      config_file = ENV['WAGN_CONFIG_FILE'] || "#{Rails.root}/config/wagn.yml"
+      hash.merge!( YAML.load_file config_file ) if File.exists? config_file
 
       hash.symbolize_keys!
 
@@ -51,7 +50,7 @@ module Wagn
       end
       
       hash[:attachment_base_url] ||= hash[:root_path] + '/files'
-      hash[:attachment_storage_dir] ||= "#{Rails.root}/public/files"
+      hash[:attachment_storage_dir] ||= "#{Rails.root}/public/uploads"
       # bit of a kludge. 
       Card.image_settings
 

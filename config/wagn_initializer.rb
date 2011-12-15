@@ -50,7 +50,7 @@ module Wagn
       end
       
       hash[:attachment_base_url] ||= hash[:root_path] + '/files'
-      hash[:attachment_storage_dir] ||= "#{Rails.root}/public/files"
+      hash[:attachment_storage_dir] ||= "#{Rails.root}/public/uploads"
       # bit of a kludge. 
       Card.image_settings
 

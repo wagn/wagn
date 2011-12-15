@@ -9,7 +9,7 @@
   <%= wrap_slot(get_slot(card)) do |slot| %>
 
     <div class="instruction">
-      <% if inst = card.setting_card('add help', 'edit help') %> 
+      <% if inst = card.rule_card('add help', 'edit help') %> 
         <%= raw( slot.subrenderer(inst).render :core ) %>
       <% elsif !User.ok?(:create_accounts) %>
         <p><strong>All Account Requests are subject to review.</strong></p><%#ENGLISH%>

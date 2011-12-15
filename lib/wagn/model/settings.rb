@@ -1,15 +1,15 @@
 module Wagn::Model::Settings
-  def setting setting_name, fallback=nil
-    card = setting_card setting_name, fallback, :skip_modules=>true
+  def rule setting_name, fallback=nil
+    card = rule_card setting_name, fallback, :skip_modules=>true
     card && card.content
   end
 
-  def setting_card setting_name, fallback=nil, extra_fetch_args={}
+  def rule_card setting_name, fallback=nil, extra_fetch_args={}
     fetch_args = {:skip_virtual=>true}.merge extra_fetch_args
     real_set_names.each do |set_name|
-      rule_card = Card.fetch "#{set_name}+#{setting_name.to_cardname.to_star}", fetch_args
-      rule_card ||= fallback && Card.fetch("#{set_name}+#{fallback.to_cardname.to_star}", fetch_args)
-      return rule_card if rule_card
+      card = Card.fetch "#{set_name}+#{setting_name.to_cardname.to_star}", fetch_args
+      card ||= fallback && Card.fetch("#{set_name}+#{fallback.to_cardname.to_star}", fetch_args)
+      return card if card
     end
     return nil
   end
@@ -27,13 +27,13 @@ module Wagn::Model::Settings
   end
 
   module ClassMethods
-    def default_setting setting_name, fallback=nil
-      card = default_setting_card setting_name, fallback
+    def default_rule setting_name, fallback=nil
+      card = default_rule_card setting_name, fallback
       return card && card.content
     end
 
-    def default_setting_card setting_name, fallback=nil
-      Card["*all+#{setting_name.to_cardname.to_star}"] or (fallback ? default_setting_card(fallback) : nil)
+    def default_rule_card setting_name, fallback=nil
+      Card["*all+#{setting_name.to_cardname.to_star}"] or (fallback ? default_rule_card(fallback) : nil)
     end
 
     def universal_setting_names_by_group

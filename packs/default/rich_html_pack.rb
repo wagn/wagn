@@ -81,6 +81,7 @@ class Wagn::Renderer::Html
 
 
   define_view(:new) do |args|
+    @help_card = card.rule_card('add help', 'edit help')
     if ajax_call?
       new_content :cancel_href=>path(:view, :view=>:missing), :cancel_class=>'slotter'
     else
@@ -126,7 +127,7 @@ class Wagn::Renderer::Html
 
   define_view (:edit_content) do |args|
     %{#{
-      if inst = card.setting_card('edit help')
+      if inst = card.rule_card('edit help')
         %{<div class="instruction">#{ raw subrenderer(inst).render_core }</div>}
       end}#{
       if card.hard_template and card.hard_template.ok? :read
@@ -231,7 +232,7 @@ class Wagn::Renderer::Html
 
   define_view(:edit_in_form) do |args|
     instruction = ''
-    if instruction_card = (card.new_card? ? card.setting_card('add help', 'edit help') : card.setting_card('edit help'))
+    if instruction_card = (card.new_card? ? card.rule_card('add help', 'edit help') : card.rule_card('edit help'))
       ss = self.subrenderer(instruction_card)
       instruction = %{<div class="instruction">} +
       ss.with_inclusion_mode(:main) { ss.render :core } +
@@ -354,7 +355,7 @@ class Wagn::Renderer::Html
           #{ raw( subrenderer(Card.fetch current_set).render :content ) }
         </div>
   #{
-        if !card.extension_type && Card.toggle(card.setting('accountable')) && User.ok?(:create_accounts) && card.ok?(:update)
+        if !card.extension_type && Card.toggle(card.rule('accountable')) && User.ok?(:create_accounts) && card.ok?(:update)
           %{<div class="new-account-link">
           #{ link_to %{Add a sign-in account for "#{card.name}"},
               path(:options, :attrib=>:new_account),
@@ -581,7 +582,7 @@ class Wagn::Renderer::Html
             </div>}
           end }
        #{
-       if card.setting_card('add help', 'edit help')
+       if @help_card
          ''  # they'll go inside the card
        elsif !card.cardname.blank? #ENGLISH
          %{<div>Currently, there is no card named "<strong>#{ card.name
@@ -602,7 +603,7 @@ class Wagn::Renderer::Html
         :html=>{ :class=>'card-form card-new-form slotter', 'main-success'=>'REDIRECT' } do |form|
         @form = form
     
-        %{ #{ hidden_field_tag :success, card.setting('thanks') || 'TO-CARD' }
+        %{ #{ hidden_field_tag :success, card.rule('thanks') || 'TO-CARD' }
     
         <div class="card-header">
           #{ 
@@ -619,7 +620,7 @@ class Wagn::Renderer::Html
             <label>name:</label>
             #{ 
             if card.cardname.blank? || Card.exists?(card.cardname)
-              card.setting_card('autoname') ? '' : %{<span class="name-area">#{ raw name_field(form) }</span>}
+              card.rule_card('autoname') ? '' : %{<span class="name-area">#{ raw name_field(form) }</span>}
             else
               %{#{hidden_field_tag 'card[name]', card.name}  <span class="title">#{ raw fancy_title(card.name) }</span>}
             end
@@ -627,9 +628,7 @@ class Wagn::Renderer::Html
           </span>
         </div>
     
-       #{if instruction=card.setting_card('add help', 'edit help')
-         %{<div class="instruction">#{ raw subrenderer(instruction).render_core }</div>}
-       end}
+       #{@help_card ? %{<div class="instruction">#{ raw subrenderer(@help_card).render_core }</div>} : '' }
     
        <div class="edit-area">
          <div class="card-editor editor">

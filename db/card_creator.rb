@@ -149,7 +149,7 @@ module CardCreator
     end
   end
 
-  def create_setting_card( name, codename=nil, content="")
+  def create_rule_card( name, codename=nil, content="")
     if card = create_card( 'Setting', name, content )
       setting = MSetting.create( :codename=>codename )
       card.extension_type = 'Setting'

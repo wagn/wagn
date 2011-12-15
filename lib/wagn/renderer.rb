@@ -358,7 +358,7 @@ module Wagn
       pcard = opts.delete(:card) || card
       base = "#{Wagn::Conf[:root_path]}/card/#{action}"
       if pcard && ![:new, :create, :create_or_update].member?( action )
-        base += "/#{pcard.web_id}"
+        base += "/#{opts.delete(:id) || card.cardname.to_url_key}"
       end
       if attrib = opts.delete( :attrib )
         base += "/#{attrib}"

@@ -25,7 +25,7 @@ module Wagn
     
     class << self
       def cache_classes
-        [Card, Cardtype, MultihostMapping, Role, User]
+        [Card, Cardtype, MultihostMapping, Role, User, Revision]
       end
             
       def initialize_on_startup

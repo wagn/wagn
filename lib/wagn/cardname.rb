@@ -108,7 +108,7 @@ module Wagn
     alias particle_names parts
 
     def module_name() s.gsub(/^\*/,'X_').gsub(/[\b\s]+/,'_').camelcase end
-    def css_name() key.gsub('*','X').gsub('+','-')                     end
+    def css_name() @css_name ||= key.gsub('*','X').gsub('+','-')       end
 
     def to_star()     star? ? s : '*'+s                                end
     def star?()       simple? and !!(s=~/^\*/)                         end

@@ -1,0 +1,1 @@
+Wagn::Cache.initialize_on_startup

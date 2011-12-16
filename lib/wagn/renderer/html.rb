@@ -121,11 +121,10 @@ module Wagn
 
     def wrap_main(content)
       return content if p=root.params and p[:layout]=='none'
-      %{
-      #{if flash[:notice]
+      %{#{if flash[:notice]
             %{<div class="flash-notice">#{ flash[:notice] }</div>}
-      end}
-      <div id="main">#{content}</div>}
+      end
+      }<div id="main">#{content}</div>}
     end
 
     def edit_slot(args)

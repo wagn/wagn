@@ -137,6 +137,7 @@ module Wagn
 
 
     def params()     @params     ||= controller.params                          end
+    def flash()      @flash      ||= controller.request ? controller.flash : {} end
     def controller() @controller ||= StubCardController.new                     end
 
     def session
@@ -445,4 +446,14 @@ module Wagn
       JSON( card.item_cards( :complete=>params['term'], :limit=>8, :sort=>'name', :return=>'name', :context=>'' ) )
     end
   end
+  
+  # need automatic lookups
+  Wagn::Renderer::EmailHtml
+  Wagn::Renderer::Html
+  Wagn::Renderer::Kml
+  Wagn::Renderer::Rss
+  Wagn::Renderer::Text
+  
+  include Wagn::Pack
+  
 end

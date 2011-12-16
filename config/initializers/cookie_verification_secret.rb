@@ -1,1 +1,0 @@
-Wagn::Application.config.cookie_secret = 'j10u9sfeirwehasdfncvo3rgfrsdrs0ngm73928nf89329'

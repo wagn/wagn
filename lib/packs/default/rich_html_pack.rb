@@ -54,10 +54,11 @@ class Wagn::Renderer::Html
     end
     
     wrap(:open, args) do
-      %{ #{ header } 
-         #{ notice }
+      %{ 
+         #{ header }
          #{ wrap_content( :open, _render_open_content ) } 
-         #{ comment_box } 
+         #{ comment_box }
+         #{ notice }
          #{ footer }
       }
     end
@@ -115,12 +116,12 @@ class Wagn::Renderer::Html
     attrib = params[:attribute] || 'content'
     attrib = 'name' if params[:card] && params[:card][:name]
     wrap(:edit, args) do
-      %{#{ header
-       }<style>.SELF-#{card.css_name} .edit-area .namepart-#{card.css_name} { display: none; } </style>
+      %{#{ header}
+       <style>.SELF-#{card.css_name} .edit-area .namepart-#{card.css_name} { display: none; } </style>
        <div class="card-body">
-         #{edit_submenu attrib}
-         #{render "edit_#{attrib}" }
-         #{notice }
+         #{ edit_submenu attrib}
+         #{ render "edit_#{attrib}" }
+         #{ notice }
        </div>}
     end
   end
@@ -131,10 +132,7 @@ class Wagn::Renderer::Html
         %{<div class="instruction">#{ raw subrenderer(inst).render_core }</div>}
       end}#{
       if card.hard_template and card.hard_template.ok? :read
-       %{<div class="instruction">
-   Formatted by a #{ link_to_page 'form card', card.hard_template.name #ENGLISH
-       }
-  </div>}
+       %{<div class="instruction">Formatted by a #{ link_to_page 'form card', card.hard_template.name }</div>}
       end}
 
       <div class="card-editor edit-area #{card.hard_template ? :templated : ''}">
@@ -219,9 +217,11 @@ class Wagn::Renderer::Html
     <h2>Change Type</h2> #{
       form_for :card, :url=>path(:update), :remote=>true, 
         #'main-success'=>'REDIRECT: TO-CARD', # adding this back in would make main cards redirect on cardtype changes
-        :html=>{ :class=>'slotter card-edit-type-form' } do |f|
-          
-        %{#{if card.typecode == 'Cardtype' and card.extension and !Card.search(:type=>card.cardname).empty? #ENGLISH
+        :html=>{ :class=>'slotter card-edit-type-form init-editors' } do |f|
+        
+        
+        %{ #{ hidden_field_tag :view, :edit }
+        #{if card.typecode == 'Cardtype' and card.extension and !Card.search(:type=>card.cardname).empty? #ENGLISH
           %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
         else
           %{<div>to #{ raw typecode_field :class=>'type-field edit-type-field' }</div>}
@@ -294,13 +294,8 @@ class Wagn::Renderer::Html
   define_view(:options) do |args|
     attribute = params[:attribute]
     attribute ||= (card.extension_type=='User' ? 'account' : 'settings')
-    #warn "attribute = "
     wrap(:options, args) do
-      %{ 
-      #{ header }
-      <div class="options-body"> #{ render "option_#{attribute}" } </div>
-      <span class="notice">#{ flash[:notice] } </span>
-      }
+      %{ #{ header } <div class="options-body"> #{ render "option_#{attribute}" } </div> #{ notice } }
     end
   end
 
@@ -529,9 +524,7 @@ class Wagn::Renderer::Html
            #{ raw page_icon(card.name) } &nbsp;
          </div>
 
-         <style type="text/css">.SELF-#{card.cardname.css_name
-            } .content .namepart-#{card.cardname.css_name
-            } { display: none; }</style>
+         <style type="text/css">.SELF-#{card.cardname.css_name} .content .namepart-#{card.cardname.css_name} { display: none; }</style>
     </div>}
   end
 
@@ -561,9 +554,11 @@ class Wagn::Renderer::Html
 #    Rails.logger.debug "card_errors #{card}, #{card.errors.map(&:to_s).inspect}"
     wrap(:errors, args) do
       %{ <h2>Rats. Issue with #{card.name && card.name.upcase} card:</h2>
-      #{ card.errors.map do |attr, msg|
-          "<div>#{attr.to_s.gsub(/base/, 'captcha').upcase }: #{msg}</div>"
-         end * '' }}
+      #{ 
+      card.errors.map do |attr, msg|
+        "<div>#{attr.to_s.gsub(/base/, 'captcha').upcase }: #{msg}</div>"
+      end * '' 
+      }}
     end
   end
 

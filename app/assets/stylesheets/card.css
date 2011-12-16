@@ -136,6 +136,13 @@ div:hover.card-header .card-menu-left {
   padding: 0px 10px;
   text-align: right;
 }
+.submenu-left {
+  float: left;
+  display: none;
+  text-align: left;
+  font-style: italic;
+  width: 30%;
+}
 .submenu a {
   padding: 0px 5px;
   color: #005800

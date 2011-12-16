@@ -8,7 +8,6 @@
     <h2 class="page-header">To get started, set up an account. </h2><%#ENGLISH%>
     
     <%= form_tag :id=>params[:id], :action => "setup" do %>
-
       <table class="fieldset">
         <%- option_content = capture do %>
           <%= text_field :card, :name %>
@@ -19,6 +18,7 @@
             :label=>"Name")) %>
         <%= render :partial=>'account/edit', :locals=>{:slot=>slot, :card=>card} %>
       </table>
+      
       <%= submit_tag 'Create' %>
     <% end %>
   </div>

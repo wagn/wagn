@@ -76,7 +76,7 @@ class CardController < ApplicationController
 
   def update
     @card = @card.refresh # (cached card attributes often frozen)
-    if @card.update_attributes(params[:card])
+    if @card.update_attributes params[:card]
       render_success
     else
       render_errors
@@ -87,8 +87,11 @@ class CardController < ApplicationController
   ## the following three methods need to be merged into #update
 
   def save_draft
-    @card.save_draft( params[:card][:content] )
-    render :text=>'success'
+    if @card.save_draft params[:card][:content]
+      render :nothing=>true
+    else
+      render_errors
+    end
   end
 
   def comment
@@ -133,21 +136,24 @@ class CardController < ApplicationController
   #-------- ( ACCOUNT METHODS )
   
   def update_account
-    @extension = @card.extension 
+    extension = @card.extension 
     
     if params[:save_roles]
       User.ok! :assign_user_roles
       role_hash = params[:user_roles] || {}
-      @extension.roles = Role.find role_hash.keys
+      extension.roles = Role.find role_hash.keys
     end
 
-    if @extension && params[:extension]
-      @extension.update_attributes!(params[:extension])
+    if extension && params[:extension]
+      extension.update_attributes(params[:extension])
     end
-    
-    flash[:notice] ||= "Got it!  Your changes have been saved."  #ENGLISH
-    params[:attribute] = :account
-    render_show :options
+
+    if extension && extension.errors.any?
+      @card.errors = extension.errors
+      render_errors
+    else
+      render_show
+    end
   end
 
   def create_account
@@ -252,7 +258,7 @@ class CardController < ApplicationController
     elsif render_show_file
       return
     else
-      return "unknown format: #{extension}"
+      return render :text=>"unknown format: #{extension}", :status=>404
     end
   end
   
@@ -260,15 +266,15 @@ class CardController < ApplicationController
     #return render_fast_404 if !@card #will it ever get here??
     @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
   
-    style = @card.attachment_style( @card.typecode, params[:size] || @style )
-    return render_fast_404 if !style
-  
     format = @card.attachment_format(params[:format])
-    return render_fast_404 if !format
+    return nil if !format
 
     if ![format, 'file'].member?( params[:format] )
       return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) ) 
     end
+
+    style = @card.attachment_style( @card.typecode, params[:size] || @style )
+    return render_fast_404 if !style
 
     send_file @card.attach.path(style), 
       :type => @card.attach_content_type,

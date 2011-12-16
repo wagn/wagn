@@ -27,7 +27,8 @@ class MultihostMapping < ActiveRecord::Base
     private
     
     def set_base_url(mapping)
-      Wagn::Conf[:base_url] = ("http://" + mapping.canonical_host).gsub(/\/$/,'')
+      Wagn::Conf[:host] = host = mapping.canonical_host.gsub(/\/$/,'')
+      Wagn::Conf[:base_url] = "http://" + host
     end
     
     def set_connection(wagn_name)

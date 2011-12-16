@@ -9,9 +9,9 @@ module ExceptionSystem
     status = exception_status(exception)
     
     if exception.respond_to?(:get_card)
-      render_card_errors(exception.get_card)
+      render_errors(exception.get_card)
     elsif exception.respond_to?(:record)
-      render_card_errors(exception.record)
+      render_errors(exception.record)
     else
       if status==500
         if consider_all_requests_local || local_request?

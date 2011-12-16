@@ -24,7 +24,7 @@ class CardController < ApplicationController
     if @card.save
       render_success
     else
-      render_card_errors      
+      render_errors      
     end
   end
 
@@ -62,7 +62,6 @@ class CardController < ApplicationController
     args[:type] ||= params[:type] # for /new/:type shortcut
 
     @card = Card.new args
-    @title = "New Card"  #this doesn't work.
     
     if @card.ok? :create
       render_show :new
@@ -78,18 +77,12 @@ class CardController < ApplicationController
   def update
     @card = @card.refresh # (cached card attributes often frozen)
     args=params[:card] || {}
-    args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type]
+    args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type]  #should handle in model
     
-    @card.update_attributes(args)
-
-    if !@card.errors[:confirmation_required].empty?
-      @card.confirm_rename = @card.update_referencers = true
-      params[:attribute] = 'name'
-      render_show :edit
-    elsif !@card.errors.empty?
-      render_card_errors
-    else
+    if @card.update_attributes(args)
       render_success
+    else
+      render_errors
     end
   end
 
@@ -244,14 +237,14 @@ class CardController < ApplicationController
   end
 
 
-  #---------( RENDER HELPERS)
+  #---------( RENDERING )
   
-  def render_show(view = nil)
-    extension = request.parameters[:format]
+  def render_show(view = nil, status = 200, extension=nil)
+    extension ||= request.parameters[:format]
     #warn "render_show #{extension}"
     if FORMATS.split('|').member?( extension )
 
-      render(:text=> begin
+      render(:status=>status, :text=> begin
         respond_to() do |format|
           format.send(extension) do
             renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
@@ -267,15 +260,16 @@ class CardController < ApplicationController
   end
   
   def render_show_file
-    return render_fast_404 if !@card #will it ever get here
+    #return render_fast_404 if !@card #will it ever get here??
     @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
   
     style = @card.attachment_style( @card.typecode, params[:size] || @style )
-    render_fast_404 if !style
+    return render_fast_404 if !style
   
     format = @card.attachment_format(params[:format])
     return render_fast_404 if !format
-    if format != :ok && params[:format] != 'file'
+
+    if ![format, 'file'].member?( params[:format] )
       return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) ) 
     end
 
@@ -308,6 +302,5 @@ class CardController < ApplicationController
     else  @card = target  ; render_show
     end
   end
-
 end
 

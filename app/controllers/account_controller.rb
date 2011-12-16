@@ -53,7 +53,6 @@ class AccountController < ApplicationController
 
   def invite
     User.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create")  #ENGLISH
-
     @user, @card = request.post? ?
       User.create_with_card( params[:user], params[:card] ) :
       [User.new, Card.new()]

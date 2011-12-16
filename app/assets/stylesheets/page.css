@@ -139,7 +139,7 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 .exception p {
   margin: 15px;
 }
-.error-explanation {
+.errors-view {
   margin: 10px;
   padding: 10px;
   border: 3px solid #966;

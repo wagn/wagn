@@ -96,8 +96,7 @@ class Wagn::Renderer::Html
   end
 
   define_view(:editor) do |args|
-    uid = "#{card.key}-#{Time.now.to_i}-#{rand(3)}"
-    form.text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>uid
+    form.text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id
   end
 
   define_view(:missing) do |args|
@@ -114,6 +113,7 @@ class Wagn::Renderer::Html
 ###---(  EDIT VIEWS )
   define_view(:edit) do |args|
     attrib = params[:attribute] || 'content'
+    attrib = 'name' if params[:card] && params[:card][:name]
     wrap(:edit, args) do
       %{#{ header
        }<style>.SELF-#{card.css_name} .edit-area .namepart-#{card.css_name} { display: none; } </style>
@@ -169,7 +169,10 @@ class Wagn::Renderer::Html
         #{ hidden_field_tag :success, 'TO-CARD' }
         #{
 
-     if card.confirm_rename
+     if !card.errors[:confirmation_required].empty?
+       card.confirm_rename = card.update_referencers = true
+       params[:attribute] = 'name'
+       
       %{#{if dependents = card.dependents and !dependents.empty?  #ENGLISH below
         %{<div class="instruction">
           <div>This will change the names of these cards, too:</div>
@@ -413,12 +416,8 @@ class Wagn::Renderer::Html
      end}}
   end
 
-  define_view(:changes) do |args| #ENGLISH
-    @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i
-    @revision = card.revisions[@revision_number - 1]
-    @show_diff = (params[:mode] != 'false')
-    @previous_revision = card.previous_revision(@revision)
-    
+  define_view(:changes) do |args| 
+    load_revisions
     wrap(:changes, args) do
       %{#{header unless params['no_changes_header']}
       <div class="revision-navigation">#{ revision_menu }</div>
@@ -432,7 +431,7 @@ class Wagn::Renderer::Html
           This card has an #{ autosave_revision }
         </p>}
       end}#{
-      if @show_diff and @previous_revision  #ENGLISH
+      if @show_diff and @revision_number > 1  #ENGLISH
         %{<p class="revision-diff-header">
           <small>
             Showing changes from revision ##{ @revision_number - 1 }:
@@ -440,21 +439,27 @@ class Wagn::Renderer::Html
           </small>
         </p>}
       end}
-
       </div>
-
-
-      <div class="revision">#{
-      if @show_diff and @previous_revision
-        diff @previous_revision.content, @revision.content
-      else
-        @revision.content
-      end}
-      </div>
-
-      <div class="revision-navigation card-footer">
-      #{ revision_menu }
-      </div>}
+      <div class="revision">#{_render_diff}</div>
+      <div class="revision-navigation card-footer">#{ revision_menu }</div>}
+    end
+  end
+  
+  define_view(:diff) do |args|
+    if @show_diff and @previous_revision
+      diff @previous_revision.content, @revision.content
+    else
+      @revision.content
+    end
+  end
+  
+  define_view(:conflict) do |args|
+    load_revisions
+    wrap(:errors) do |args|
+      %{<strong>Not Saved!</strong><span class="new-current-revision-id">#{@revision.id}</span>
+        <div>#{ link_to_page @revision.author.card.name } has also been editing this card.</div>
+        <div>Please examine the changes, correct conflicts above, and re-save.</div>
+        #{wrap(:conflict) { |args| _render_diff } } }
     end
   end
 
@@ -551,6 +556,17 @@ class Wagn::Renderer::Html
     </div>}
   end
 
+
+  define_view(:errors) do |args|
+#    Rails.logger.debug "card_errors #{card}, #{card.errors.map(&:to_s).inspect}"
+    wrap(:errors, args) do
+      %{ <h2>Rats. Issue with #{card.name && card.name.upcase} card:</h2>
+      #{ card.errors.map do |attr, msg|
+          "<div>#{attr.to_s.gsub(/base/, 'captcha').upcase }: #{msg}</div>"
+         end * '' }}
+    end
+  end
+
   define_view(:watch) do |args|
     return "" unless User.logged_in?   
     return "" if card.virtual?
@@ -569,11 +585,14 @@ class Wagn::Renderer::Html
   end
   
   
-  
-  
-  
   private
 
+  def load_revisions
+    @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i
+    @revision = card.revisions[@revision_number - 1]
+    @show_diff = (params[:mode] != 'false')
+    @previous_revision = card.previous_revision(@revision)
+  end
 
   def new_instruction
     i=%{#{if card.broken_type
@@ -670,17 +689,7 @@ class Wagn::Renderer::Html
   #  end
   
   
-  #  define_view(:card_error) do |args|
-  #    Rails.logger.debug "card_errors #{card}, #{card.errors.map(&:to_s).inspect}"
-  #    wrap(:card_error, args) do
-  #      %{<div class="error-explanation">
-  #         <h2>Rats. Issue with #{card.name && card.name.upcase} card:</h2> #{
-  #         card.errors.map do |attr, msg|
-  #           "<div>#{attr.to_s.gsub(/base/, 'captcha').upcase }: #{msg}</div>"
-  #         end * ''}
-  #      </div> }
-  #    end
-  #  end
+
 
 
   #  define_view(:error) do |args|

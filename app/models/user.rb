@@ -113,18 +113,16 @@ class User < ActiveRecord::Base
 
     def always_ok?
       return false unless usr = as_user
-      #warn "aok?(#{usr})"
       return true if usr.login == 'wagbot' #cannot disable
 
-      @@always ||= {}
-      #warn "aok?3(#{usr}) #{@@always.inspect}"
-      if @@always[usr.id].nil?
-        @@always = @@always.dup if @@always.frozen?
+      always = User.cache.read('ALWAYS') || {}
+      if always[usr.id].nil?
+        always = always.dup if always.frozen?
         aok=false; usr.all_roles.each{|r| aok=true if r.admin?}
-        @@always[usr.id] = aok
+        always[usr.id] = aok
+        User.cache.write 'ALWAYS', always
       end
-      #warn "always> #{@@always.inspect}\n>>> #{@@always[usr.id]}"
-      @@always[usr.id]
+      always[usr.id]
     end
     # PERMISSIONS
     
@@ -145,8 +143,7 @@ class User < ActiveRecord::Base
     # FIXME stick this in session? cache it somehow??
     def ok_hash
       usr = User.as_user
-      #ok_hash = self.cache.read('ok_hash') || {}
-      ok_hash = @@ok_hash ||= {}
+      ok_hash = User.cache.read('OK') || {}
       if ok_hash[usr.id].nil?
         ok_hash = ok_hash.dup if ok_hash.frozen?
         ok_hash[usr.id] = begin
@@ -158,10 +155,9 @@ class User < ActiveRecord::Base
           end
           ok
         end || false
-        #self.cache.write 'ok_hash', ok_hash
+        User.cache.write 'OK', ok_hash
       end
       ok_hash[usr.id]
-      #warn "ok_hash #{usr}, #{r}"; r
     end
     
 

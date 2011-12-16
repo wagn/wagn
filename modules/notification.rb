@@ -6,7 +6,6 @@ module Notification
     end
     
     def send_notifications
-      #warn "send notifications called for #{name}. was new card = #{@was_new_card}"
       return false if Card.record_userstamps==false
       # userstamps and timestamps are turned off in cases like updating read_rules that are automated and 
       # generally not of enough interest to warrant notification

@@ -16,12 +16,14 @@ class Card < ActiveRecord::Base
   belongs_to :extension, :polymorphic=>true
   before_destroy :destroy_extension, :base_before_destroy
     
-  attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards, :set_mods_loaded,
-    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual, :type_args, :selected_rev_id
+  attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :update_referencers, :cards,
+    :allow_type_change, :nested_edit, :virtual, :selected_rev_id, :error_view, :error_status, :loaded_trunk
+ 
+  attr_reader :type_args, :broken_type
 
   before_save :base_before_save, :set_read_rule, :set_tracked_attributes, :set_extensions
   after_save :base_after_save, :update_ruled_cards
-  cache_attributes('name', 'typecode')    
+  cache_attributes('name', 'typecode')
 
   @@junk_args = %w{ missing skip_virtual id }
 
@@ -114,6 +116,11 @@ class Card < ActiveRecord::Base
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING
+
+  def update_attributes(args={})
+    args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type] 
+    super args
+  end
 
   def base_before_save
     if self.respond_to?(:before_save) and self.before_save == false
@@ -352,7 +359,9 @@ class Card < ActiveRecord::Base
   end
   
   def typename() typecode and Cardtype.name_for( typecode ) or 'Basic' end
-  
+  def type=(typename)
+    self.typecode = Cardtype.classname_for(typename) 
+  end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CONTENT / REVISIONS
@@ -533,12 +542,20 @@ class Card < ActiveRecord::Base
 
       # require confirmation for renaming multiple cards
       if !rec.confirm_rename
+        pass = true
         if !rec.dependents.empty?
+          pass = false
           rec.errors.add :confirmation_required, "#{rec.name} has #{rec.dependents.size} dependents"
         end
 
         if rec.update_referencers.nil? and !rec.extended_referencers.empty?
+          pass = false
           rec.errors.add :confirmation_required, "#{rec.name} has #{rec.extended_referencers.size} referencers"
+        end
+        
+        if !pass
+          rec.error_view = :edit
+          rec.error_status = 200 #I like 401 better, but would need special processing
         end
       end
     end
@@ -546,10 +563,20 @@ class Card < ActiveRecord::Base
 
   validates_each :content do |rec, attr, value|
     if rec.new_card? && !rec.updates.for?(:content)
-      value = rec.content = rec.content
+      value = rec.content = rec.content #this is not really a validation.  is the double rec.content meaningful?
     end
+    
     if rec.updates.for? :content
       rec.send :validate_content, value
+    end
+  end
+
+  validates_each :current_revision_id do |rec, attrib, value|
+    if value && value.to_i != rec.current_revision_id_was
+      rec.current_revision_id = rec.current_revision_id_was
+      rec.errors.add :conflict, "changes not based on latest revision"
+      rec.error_view = :conflict
+      rec.error_status = 409
     end
   end
 

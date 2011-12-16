@@ -10,21 +10,7 @@ module Wagn
       
     DEFAULT_YML= %{
       role_tasks: [administrate_users, create_accounts, assign_user_roles]
-    }
-
-    # from sample_wagn.rb
-#ExceptionNotifier.exception_recipients = ['person1@website.org','person2@website.org']
-#ExceptionNotifier.sender_address       = '"Wagn Error" <notifier@wagn.org>'
-#ExceptionNotifier.email_prefix         = "[Wagn]"
-
- # from model/system
- # cattr_accessor :role_tasks, :request, :cache, :main_name,
- #   # Configuration Options     
- #   :base_url, :max_render_time, :max_renders,   # Common; docs in sample_wagn.rb
- #   :enable_ruby_cards, :enable_server_cards,    # Uncommon; Check Security risks before enabling these cardtypes (wagn.org ref url?)
- #   :enable_postgres_fulltext, :postgres_src_dir, :postgres_tsearch_dir, # Optimize PostgreSQL performance
- #   :multihost, :wagn_name, :running
-    
+    }    
 
     def wagn_load_config(hash={})
       raise "Twice configged #{@@config_hash}" if @@config_hash

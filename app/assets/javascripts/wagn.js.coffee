@@ -65,8 +65,10 @@ $(window).load ->
       window.location=result
     else if xhr.status == 403 #permission denied
       $(this).setSlotContent result
-    else 
-      $(this).notify result or $(this).setSlotContent result
+    else
+      if xhr.status == 409 #edit conflict
+        $(this).find('[name="card[current_revision_id]"]').val $(this).find('.new-current-revision-id').text()
+      $(this).notify result
     
 
   $('body').delegate 'button.slotter', 'click', (event)->

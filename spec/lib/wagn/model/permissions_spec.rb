@@ -98,7 +98,7 @@ describe "reader rules" do
     all_plus = Card.fetch_or_create('*all plus+*read', :content=>'_left')
     c = Card.new(:name=>'Home+Heart')
     c.who_can(:read).should == ['anyone_signed_in']
-    c.rule_card(:read).first.id.should == @perm_card.id
+    c.permission_rule_card(:read).first.id.should == @perm_card.id
     c.save
     c.read_rule_id.should == @perm_card.id
   end
@@ -107,7 +107,7 @@ describe "reader rules" do
     all_plus = Card.fetch_or_create('*all plus+*read', :content=>'_left')
     c = Card.new(:name=>'Home+Heart')
     c.who_can(:read).should == ['anyone']
-    c.rule_card(:read).first.id.should == Card.fetch('*all+*read').id
+    c.permission_rule_card(:read).first.id.should == Card.fetch('*all+*read').id
     c.save
     c.read_rule_id.should == Card.fetch('*all+*read').id
     User.as(:wagbot) { @perm_card.save! }
@@ -166,10 +166,7 @@ describe "Permission", ActiveSupport::TestCase do
 
   it "reader setting" do
     Card.find(:all).each do |c|
-      Rails.logger.debug "reader setting #{c.name}"
-      assert rs = c.rule_card(:read).first.id
-      Rails.logger.debug "reader setting #{c.name}, #{rs} == #{c.read_rule_id}"
-      c.read_rule_id.should == rs
+      c.permission_rule_card(:read).first.id.should == c.read_rule_id
     end
   end
 
@@ -363,10 +360,10 @@ end
 describe Card, "settings based permissions" do
   before do
     User.as :wagbot
-    @delete_setting_card = Card.fetch_or_new '*all+*delete'
-    @delete_setting_card.typecode = 'Pointer'
-    @delete_setting_card.content = '[[Joe_User]]'
-    @delete_setting_card.save!
+    @delete_rule_card = Card.fetch_or_new '*all+*delete'
+    @delete_rule_card.typecode = 'Pointer'
+    @delete_rule_card.content = '[[Joe_User]]'
+    @delete_rule_card.save!
   end
   
   it "should handle delete as a setting" do

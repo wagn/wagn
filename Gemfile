@@ -1,19 +1,15 @@
 source 'http://rubygems.org'
 #source "http://gems.github.com"
 
-# ~~~~~~~ #
-# DEFAULT #
-# ~~~~~~~ #
+# DEFAULT
 
 gem 'rails', '~> 3.1'
 gem 'htmlentities', '~>4.3.0'
 gem 'uuid', '~>2.3.4'
 gem 'paperclip', '~>2.4'
+gem 'rmagick', '~>2.13.1'
 
-
-# ~~~~~~~~~ #
-# DATABASES #
-# ~~~~~~~~~ #
+# DATABASE
 
 # need at least one of the following
 
@@ -24,35 +20,20 @@ group :postgres do
     gem('pg', '~>0.7') :
     gem('postgres', '~>0.7.9.2008.01.28')
 end
-
 #gem 'sqlite3-ruby', :require => 'sqlite3', :group=>'sqlite'
 
 
-# ~~~~~~~#
-# ASSETS #
-# ~~~~~~~#
-
-# This is important for image re-sizing, which is vital to Image cards.
-
-group :image_science do
-#  gem 'image_science', '~>1.2.1'
-#  gem 'RubyInline', '~>3.8.4'
-end
-#gem 'rmagick', '>=2.13.1',    :group=>'rmagick'
-
-
-
 # These should only be needed if you're developing new JS / CSS.  It's all pre-compiled for production
-
 group :assets do
-  gem 'sass-rails', "  ~> 3.1.0"               # pretty code; compiles to CSS
+  gem 'sass-rails',   "~> 3.1.0"               # pretty code; compiles to CSS
   gem 'coffee-rails', "~> 3.1.0"               # pretty code; compiles to JS
   gem 'uglifier'                               # makes pretty code ugly again.  compresses js/css for fast loading
 
   gem 'jquery-rails', '~> 1.0.17'              # main js framework, along with rails-specific unobtrusive lib
+#  gem 'jquery.fileupload-rails'                # jquery plugin for uploading files
   gem 'tinymce-rails', '~> 3.4.7'              # wysiwyg editor
 
-  gem 'therubyracer'                           # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this file
+  gem 'therubyracer'                           # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one
 end
 
 

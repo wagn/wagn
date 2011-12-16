@@ -43,7 +43,7 @@ module Wagn::Set::Type::Pointer
   end
   
   def options_card
-    card = self.setting_card('options')
+    card = self.rule_card('options')
     (card && card.collection?) ? card : nil
   end
 

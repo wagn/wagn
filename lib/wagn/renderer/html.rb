@@ -90,9 +90,9 @@ module Wagn
     end
 
     def layout_from_card
-      return unless setting_card = (card.setting_card('layout') or Card.default_setting_card('layout'))
-      return unless setting_card.is_a?(Wagn::Set::Type::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.typecode == 'Pointer'        and
-        layout_name=setting_card.item_names.first                and
+      return unless rule_card = (card.rule_card('layout') or Card.default_rule_card('layout'))
+      return unless rule_card.is_a?(Wagn::Set::Type::Pointer) and  # type check throwing lots of warnings under cucumber: rule_card.typecode == 'Pointer'        and
+        layout_name=rule_card.item_names.first                and
         !layout_name.nil?                                        and
         lo_card = Card.fetch( layout_name, :skip_virtual => true, :skip_modules=>true )    and
         lo_card.ok?(:read)
@@ -259,7 +259,7 @@ module Wagn
 
     def rollback(to_rev=nil)
       to_rev ||= @revision_number
-      if card.ok?(:update) && !(card.current_revision==@revision)
+      if card.ok?(:update) && !(card.cached_revision==@revision)
         link_to 'Save as current', path(:rollback, :rev=>to_rev),
           :class=>'slotter', :remote=>true
       end

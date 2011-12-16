@@ -16,11 +16,18 @@ jQuery.fn.extend {
     s.replaceWith v
   
   notify: (message) -> 
-    notice = @slot().find('.notice')
+    notice = @slot().find('.card-notice')
     return false unless notice[0]
     notice.html(message)
-    true
 
+  report: (message) ->
+    report = @slot().find('.card-report')
+    return false unless report[0]
+    report.hide()
+    report.html(message)
+    report.show 'drop', 750
+    setTimeout (->report.hide 'drop', 750), 3000
+    
   isMain: -> @slot().parent('#main')[0]
 
   autosave: ->
@@ -30,7 +37,7 @@ jQuery.fn.extend {
     href = wagn.root_path + '/card/save_draft/' + slot.attr('card-id')
     $.ajax href, {
       data : { 'card[content]' : @val() },
-      complete: (xhr) -> slot.notify('draft saved') 
+      complete: (xhr) -> slot.report('draft saved') 
     }
 
   setContentFieldsFromMap: (map) ->
@@ -93,8 +100,6 @@ $(window).load ->
         {files: data.files, formData: $(this).serializeArray() }
       opt.skip_before_send = true
       $.extend opt, fileoptions, {url: opt.url}
-      #wagn.d = data
-      #wagn.o = opt
       $.ajax opt
       false
 

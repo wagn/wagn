@@ -1,6 +1,6 @@
 <div id="sign-in" class="content">
   <h1 class="page-header">Sign In</h1><%#ENGLISH%>
-    
+
   <%= form_tag :action=>'signin' do %>
     <p><label for="login">Email</label></p>
     <p><%= text_field_tag 'login', params[:login], :id=>'login_field' %></p>
@@ -25,5 +25,4 @@
     <p><%= link_to 'Sign Up!', :action=>'signup' %></p>
   <% end %>
   
-  <div class="notice"><%= flash[:notice] %></div>
 </div>

@@ -184,7 +184,14 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 }
 
 
-
+.flash-notice {
+  background: #ccc;
+  color: #333;
+  font-size: 15px;
+  border: 2px solid #999;
+  margin-bottom: 15px;
+  text-align: center;
+}
 
 
 

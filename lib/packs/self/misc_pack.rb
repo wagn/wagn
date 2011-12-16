@@ -12,10 +12,7 @@ class Wagn::Renderer
 
   
   define_view(:raw, :name=>'*alerts') do |args|
-    %{<div id="alerts">
-      <div id="notice"> #{ flash[:notice] } </div>
-      <div id=>"error"> #{ flash[:warning]}#{flash[:error] }</div>
-    </div>}
+    '<!-- *alerts is deprecated. please remove from layout -->'
   end
   alias_view(:raw, {:name=>'*alerts'}, :core)
 end

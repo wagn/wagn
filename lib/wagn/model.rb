@@ -2,8 +2,7 @@ Wagn.send :include, Wagn::Exceptions
 Wagn::Set::Self::Settings
 
 module Wagn::Model
-  include Wagn::Pack
-
+  
   def self.included(base)
     base.extend Wagn::Model::ModuleMethods
     base.superclass.extend Wagn::Model::ActsAsCardExtension

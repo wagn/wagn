@@ -448,4 +448,14 @@ module Wagn
       JSON( card.item_cards( :complete=>params['term'], :limit=>8, :sort=>'name', :return=>'name', :context=>'' ) )
     end
   end
+  
+  # need automatic lookups
+  Wagn::Renderer::EmailHtml
+  Wagn::Renderer::Html
+  Wagn::Renderer::Kml
+  Wagn::Renderer::Rss
+  Wagn::Renderer::Text
+  
+  include Wagn::Pack
+  
 end

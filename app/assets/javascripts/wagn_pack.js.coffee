@@ -12,10 +12,11 @@ wagn.editorContentFunctionMap = {
 }
 
 wagn.editorInitFunctionMap = {
-  '.date-editor'         : -> @datepicker { dateFormat: 'yy-mm-dd' }
-  '.tinymce-textarea'    : -> wagn.initTinyMCE(@[0].id)
-  '.pointer-list-editor' : -> @sortable(); wagn.initPointerList @find('input')
-  '.etherpad-textarea'   : -> wagn.initEtherpad(@[0].id)
+  '.date-editor'           : -> @datepicker { dateFormat: 'yy-mm-dd' }
+  '.tinymce-textarea'      : -> wagn.initTinyMCE(@[0].id)
+  '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
+  '.file-upload'           : -> @fileupload( add: (e, data)-> $(this).closest('form').data 'file-data', data )
+  '.etherpad-textarea'     : -> wagn.initEtherpad(@[0].id)
 }
 
 wagn.initPointerList = (input)-> 

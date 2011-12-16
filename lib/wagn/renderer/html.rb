@@ -121,7 +121,10 @@ module Wagn
 
     def wrap_main(content)
       return content if p=root.params and p[:layout]=='none'
-      %{<div id="main">#{content}</div>}
+      %{#{if flash[:notice]
+            %{<div class="flash-notice">#{ flash[:notice] }</div>}
+      end
+      }<div id="main">#{content}</div>}
     end
 
     def edit_slot(args)
@@ -130,37 +133,38 @@ module Wagn
  
     #### --------------------  additional helpers ---------------- ###
     def notice
-      # this used to access controller.notice, but as near I can tell
-      # nothing ever assigns to controller.notice, so I took it away.
-      # entries in flash[:notice] would be more appropriate in the page-wide
-      # alert area. a quick javascript hack to have this put them there resulted in
-      # odd behavior so leaving it off for now -LWH
-      %{<span class="notice"></span>}
+      %{<span class="card-notice"></span>}
     end
 
-
+    def wrap_submenu
+      %{<div class="submenu">
+          <span class="submenu-left card-report"></span>
+          <span class="submenu-right">#{yield}</span>
+        </div> }
+    end
 
     def edit_submenu(current)
-      %{<div class="submenu"> #{
+      wrap_submenu do
         [ :content, :name, :type ].map do |attr|
           next if attr == :type and # this should be a set callback
             card.type_template? ||  
             (card.typecode=='Set' && card.hard_template?) || #
             (card.typecode=='Cardtype' && card.cards_of_type_exist?)
+        
           link_to attr, path(:edit, :attrib=>attr), :remote=>true,
             :class => %{slotter edit-#{ attr }-link #{'init-editors' if attr==:content } #{'current-subtab' if attr==current.to_sym}}
-        end.compact * "\n"}
-      </div>}
+        end.compact * "\n"
+      end
     end
 
     def options_submenu(current)
       return '' if card && card.extension_type != 'User'
-      %{<div class="submenu">#{
+      wrap_submenu do
         [:account, :settings].map do |key|
           link_to key, path(:options, :attrib=>key), :remote=>true,
             :class=> %{slotter#{' current-subtab' if key==current}}
-        end * "\n" }
-      </div>}
+        end * "\n"
+      end
     end
 
     def header()  _render_header if card end  

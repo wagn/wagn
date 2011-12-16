@@ -646,5 +646,10 @@ class Card < ActiveRecord::Base
       end
     end
   end
+  
+  # these old_modules should be refactored out
+  require_dependency 'flexmail.rb'
+  require_dependency 'google_maps_addon.rb'
+  require_dependency 'notification.rb'
 end  
 

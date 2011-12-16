@@ -1,8 +1,8 @@
 class Wagn::Renderer
   define_view(:raw, :name=>'*head') do |args|
     #rcard = card  # should probably be more explicit that this is really the *main* card.
-    title = (root.card && root.card.name )
-    title = params[:action] if title.nil? || title == '*placeholder'
+    title = root.card && root.card.name
+    title = params[:action] if [nil, '', '*placeholder'].member? title
 
     bits = [
       "<title>#{title ? "#{title} - " : ''}#{ Wagn::Conf[:site_title] }</title>",

@@ -126,7 +126,6 @@ module Wagn
       opts.each { |key, value| instance_variable_set "@#{key}", value }
   
       @format ||= :html
-      
       @char_count = @depth = 0
       @root = self
       
@@ -301,7 +300,7 @@ module Wagn
       new_card = tcard.new_card? && !tcard.virtual?
   
       requested_view = (options[:view] || :content).to_sym
-      options[:home_view] = requested_view == :closed ? :open : requested_view
+      options[:home_view] = [:closed, :edit].member?(requested_view) ? :open : requested_view
       approved_view = case
 
         when [:name, :link, :linkname, :new, :closed_rule, :open_rule].member?(requested_view)  ; requested_view
@@ -344,15 +343,6 @@ module Wagn
       end
       args
     end
-    
-#    def card_id
-#      case
-#      when card.nil?         ; nil
-#      when !card.new_record? ; card.id
-#      when card.cardname     ; card.cardname.to_url_key
-#      else                   ; nil
-#      end
-#    end
     
     def path(action, opts={})
       pcard = opts.delete(:card) || card

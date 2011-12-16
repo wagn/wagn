@@ -353,10 +353,21 @@ div.content-view {
 .edit-name .radio {
   padding-left: 20px;
 }
+.edit-name .field_with_errors {
+  display: inline-block;
+}
 .edit-area .delete-button {
   float: right;
 }
-
+.conflict-view {
+  text-align: left;
+  background: #ffc;
+  border: 1px solid grey;
+  padding: 10px;
+}
+.new-current-revision-id {
+  display:none;
+}
 
 /* ---------- changes tab -------*/
 

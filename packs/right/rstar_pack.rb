@@ -184,7 +184,7 @@ class Wagn::Renderer::Html
     set_prototype = set_card.prototype
     #warn "got prototype"
 
-    rule_card = set_prototype.setting_card setting_name
+    rule_card = set_prototype.rule_card setting_name
     [rule_card, set_prototype]
   end
 

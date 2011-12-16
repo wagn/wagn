@@ -494,7 +494,7 @@ class Card < ActiveRecord::Base
 
   validates_each :name do |rec, attr, value|
     if rec.new_card? && value.blank?
-      if autoname_card = rec.setting_card('autoname')
+      if autoname_card = rec.rule_card('autoname')
         User.as(:wagbot) do
           value = rec.name = autoname_card.content
           autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create

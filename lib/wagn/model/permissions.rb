@@ -77,11 +77,11 @@ module Wagn::Model::Permissions
   end
   
   def who_can(operation)
-    rule_card(operation).first.content.split(/[,\n]/).map{|i| i.to_cardname.to_key}
+    permission_rule_card(operation).first.content.split(/[,\n]/).map{|i| i.to_cardname.to_key}
   end 
   
-  def rule_card(operation)
-    opcard = setting_card(operation.to_s)
+  def permission_rule_card(operation)
+    opcard = rule_card(operation.to_s)
     unless opcard or ENV['MIGRATE_PERMISSIONS'] == 'true'
       errors.add :permission_denied, "No #{operation} setting card for #{name}"      
       raise Card::PermissionDenied.new(self) 
@@ -89,16 +89,16 @@ module Wagn::Model::Permissions
     
     rcard = begin
       User.as :wagbot do
-        #Rails.logger.debug "in rule_card #{opcard&&opcard.name} #{operation}"
+        #Rails.logger.debug "in permission_rule_card #{opcard&&opcard.name} #{operation}"
         if opcard.content == '_left' && self.junction?
           lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_modules=>true) 
-          lcard.rule_card(operation).first
+          lcard.permission_rule_card(operation).first
         else
           opcard
         end
       end
     end
-    #Rails.logger.debug "rule_card #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}"
+    #Rails.logger.debug "permission_rule_card #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}"
     return rcard, opcard.cardname.trunk_name.tag_name.to_s
   end
   
@@ -129,7 +129,7 @@ module Wagn::Model::Permissions
   def approve_read
     #warn "AR #{User.always_ok?}"
     return true if User.always_ok?
-    @read_rule_id ||= rule_card(:read).first.id
+    @read_rule_id ||= permission_rule_card(:read).first.id
     ok = User.as_user.read_rule_ids.member?(@read_rule_id.to_i) 
     deny_because you_cant("read this card") unless ok
   end
@@ -179,7 +179,7 @@ module Wagn::Model::Permissions
   def set_read_rule
     return if ENV['MIGRATE_PERMISSIONS'] == 'true'
     # avoid doing this on simple content saves?
-    rcard, rclass = rule_card(:read)
+    rcard, rclass = permission_rule_card(:read)
     self.read_rule_id = rcard.id
     self.read_rule_class = rclass
     
@@ -199,7 +199,7 @@ module Wagn::Model::Permissions
   def update_read_rule
     Card.record_timestamps = Card.record_userstamps = false
 
-    rcard, rclass = rule_card(:read)
+    rcard, rclass = permission_rule_card(:read)
     copy = self.frozen? ? self.dup : self
     copy.update_attributes!(
       :read_rule_id => rcard.id,
@@ -210,7 +210,7 @@ module Wagn::Model::Permissions
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
       User.as :wagbot do
         Card.search(:left=>self.name).each do |plus_card|
-          if plus_card.setting(:read) == '_left'
+          if plus_card.rule(:read) == '_left'
             plus_card.update_read_rule
           end
         end
@@ -259,7 +259,7 @@ module Wagn::Model::Permissions
       if !new_record?
         Card.find_all_by_read_rule_id_and_trash(self.id, false).each do |was_ruled|  #optimize with WQL / fetch?
           next if in_set[was_ruled.key]
-          was_ruled.update_read_rule# was_ruled.rule_card(:read)
+          was_ruled.update_read_rule
         end
       end
     end

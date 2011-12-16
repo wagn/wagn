@@ -633,17 +633,12 @@ class Card < ActiveRecord::Base
     def toggle(val) val == '1' end
 
     # image defaults
-    def image_settings()
-      Wagn::Conf[:favicon] = image_setting('*favicon') || image_setting('*logo') ||
-        "#{Wagn::Conf[:root_path]}/favicon.ico"
-    end
+
 
   protected
     def image_setting(name)
       # this is really only for legacy images, and a kluge anyway
-      if content = setting(name) and content.match(/src=\"([^\"]+)/)
-        $~[1]
-      end
+
     end
   end
   

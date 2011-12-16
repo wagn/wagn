@@ -3,10 +3,11 @@ class Wagn::Renderer
     #rcard = card  # should probably be more explicit that this is really the *main* card.
     title = root.card && root.card.name
     title = params[:action] if [nil, '', '*placeholder'].member? title
-
+    favicon_card = Card['*favicon'] || Card['*logo']
+    
     bits = [
-      "<title>#{title ? "#{title} - " : ''}#{ Wagn::Conf[:site_title] }</title>",
-      %{<link rel="shortcut icon" href="#{ Wagn::Conf[:favicon] }" />}
+      "<title>#{title ? "#{title} - " : ''}#{ Card.setting('*title') }</title>",
+      %{<link rel="shortcut icon" href="#{ subrenderer(favicon_card)._render_source :size=>:icon }" />}
     ]
     
     #Universal Edit Button

@@ -30,7 +30,6 @@ module Wagn
             
       def initialize_on_startup
         cache_classes.each do |cc|
-          #warn "init cache #{cc}"
           cc.cache = new :class=>cc, :store=>(Rails.env =~ /^cucumber|test$/ ? nil : Rails.cache)
         end
         preload_cache_for_tests if preload_cache?
@@ -58,7 +57,7 @@ module Wagn
       def re_initialize_for_new_request
         cache_classes.each do |cc|
           if cc.cache
-            cc.cache.system_prefix = system_prefix(cc)
+              cc.cache.system_prefix = system_prefix(cc)
           else
             warn "cache nil? #{cc}"
           end

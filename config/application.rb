@@ -96,4 +96,9 @@ module Wagn
   end
   
   Wagn::Conf.load_after_app
+
+  ActionDispatch::Callbacks.to_prepare do
+    Wagn::Cache.initialize_on_startup
+  end
+  
 end

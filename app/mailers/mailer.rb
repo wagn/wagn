@@ -21,7 +21,7 @@ class Mailer < ActionMailer::Base
   end                 
   
   def signup_alert(invite_request)  
-    @site = Wagn::Conf[:site_title]
+    @site = Card.setting('*title')
     @card = invite_request
     @email= invite_request.extension.email
     @name = invite_request.name

@@ -20,15 +20,19 @@
 
 =end
       <%= button_to_function "Save", (card.typename == 'Etherpad') ? "Wagn.pad_save('#{slot.context}', '<need real config of epad app here>/epad/p/#{card.key}')" : "this.form.onsubmit()", :class=>'save-card-button' %>
+wagn.editorContentFunctionMap = {
+    '.etherpad-textarea'      : -> wagn.pat_save(@[0].id)
+    @[0].id is what accesses the id of the textarea, right?
 
   # Javascript part, fetch the exported form of the pad, save the data in
   # the content field of the form and trigger the submit action
-  pad_save: function(ctx, url) {
-  // perform an ajax call on contentsUrl and write it to the parent
-  var targetUrl = url + '/export/html'
-  jQuery.get(targetUrl, function(data) {
-    jQuery('#' + ctx + '-hidden-content')[0].value = data
-    jQuery('#'+ctx+'-form')[0].onsubmit();
+  wagn.pad_save: function(uid) {
+    var url = jQuery('#epframe-'+uid)[0].src
+    // perform an ajax call on contentsUrl and write it to the parent
+    var targetUrl = url + '/export/html'
+    jQuery.get(targetUrl, function(data) {
+    jQuery('#' + uid )[0].value = data
+    //jQuery('#'+ctx+'-form')[0].onsubmit();
     //jQuery('#' + ctx + '-epad')[0].value = data
   });
   }

@@ -40,10 +40,10 @@ module Wagn::Model::Attach
   end
 
   def attachment_format(ext)
-    return nil unless attach
+    return nil unless ext && !ext.blank? && attach
     exts = MIME::Types[attach.content_type]
     return nil unless exts
-    return :ok if exts.find {|mt| mt.extensions.member? ext }
+    return ext if exts.find {|mt| mt.extensions.member? ext }
     return exts[0].extensions[0]
   end
     

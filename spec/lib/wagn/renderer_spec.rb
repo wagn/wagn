@@ -85,7 +85,11 @@ describe Wagn::Renderer, "" do
     it("name"    ) { render_card(:name).should      == 'Tempo Rary' }
     it("key"     ) { render_card(:key).should       == 'tempo_rary' }
     it("linkname") { render_card(:linkname).should  == 'Tempo_Rary' }
-    it("url"     ) { render_card(:url).should       == Wagn::Conf[:base_url] + '/wagn/Tempo_Rary' }
+    
+    it "url" do
+      Wagn::Conf[:base_url] = 'http://eric.skippy.com'
+      render_card(:url).should == 'http://eric.skippy.com/wagn/Tempo_Rary' 
+    end
 
     it "core" do
       render_card(:core, :name=>'A+B').should == "AlphaBeta"

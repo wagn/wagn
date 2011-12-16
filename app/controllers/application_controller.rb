@@ -24,26 +24,26 @@ class ApplicationController < ActionController::Base
 
   def per_request_setup
     request.format = :html if !params[:format]
-    if Wagn::Conf[:base_url]
-      canonicalize_domain
-    else
-      Wagn::Conf[:base_url] = 'http://' + request.env['HTTP_HOST']
-      Wagn::Conf[:host] = Wagn::Conf[:base_url].
-        gsub(/^http:\/\//,'').gsub(/\/.*/,'') unless Wagn::Conf[:host]
-    end
-    Wagn::Renderer.ajax_call=request.xhr?
-    
+
     if Wagn::Conf[:multihost]
       MultihostMapping.map_from_request(request) or return render_fast_404(request.host)
     end
+
+    if Wagn::Conf[:base_url]
+      canonicalize_domain
+    else
+      Wagn::Conf[:host] = host = request.env['HTTP_HOST']
+      Wagn::Conf[:base_url] = 'http://' + host
+    end
+
+    Wagn::Renderer.ajax_call=request.xhr?
+    Wagn::Renderer.current_slot = nil
+    
     Wagn::Cache.re_initialize_for_new_request
     
     User.current_user = current_user || User[:anon]
-
+    
     @action = params[:action]
-
-    Wagn::Renderer.current_slot = nil
-    Wagn::Conf[:request] = request
   end
   
   def canonicalize_domain
@@ -93,7 +93,6 @@ class ApplicationController < ActionController::Base
 
   # ----------( rendering methods ) -------------
 
-
   def wagn_redirect url
     if ajax?
       render :text => url, :status => 303
@@ -110,19 +109,9 @@ class ApplicationController < ActionController::Base
     return false
   end
 
-  def render_card_errors(card=nil)
-    card ||= @card
-    body = %{<div class="error-explanation">
-      <h2>Rats. Issue with #{card.name && card.name.upcase} card:</h2>} +
-      card.errors.map do |attr, msg|
-        "<div>#{attr.to_s.gsub(/base/, 'captcha').upcase }: #{msg}</div>"
-      end.join + '</div>'
-
-    if ajax?
-      render :text=>body, :status=>422
-    else
-      render :inline=>body, :layout=>'application', :status=>422
-    end
+  def render_errors(card=nil, format='html')
+    @card = card if card
+    render_show( (@card.error_view || :errors), (@card.error_status || 422), format )
   end
 
 end

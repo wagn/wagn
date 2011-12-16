@@ -50,7 +50,7 @@ describe "On Card Changes" do
   
   it "sends notification of updates" do
     Mailer.should_receive(:change_notice).with( User.find_by_login('sara'), Card["Sunglasses"], "updated", "Optic", nil)
-    Card["Sunglasses"].update_attributes :type => "Basic"
+    Card["Sunglasses"].update_attributes :codename => "SUNGLASSES"
   end
   
   it "does not send notification to author of change" do

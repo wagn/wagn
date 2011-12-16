@@ -4,7 +4,7 @@ class Wagn::Renderer::Html
   define_view(:current_naked) do |args| _render_naked end
 
   define_view(:current, :fallback=>:raw, :type=>'Etherpad') do |args|
-    #Rails.logger.debug "current_pad view #{card}, #{card.inspect}"
+    warn Rails.logger.debug("current_pad view #{card}, #{card.inspect}")
     card.include_set_modules
     card.get_pad_content
   end
@@ -28,11 +28,11 @@ class Wagn::Renderer::Html
 =end
 
   define_view(:editor, :type=>'Etherpad') do |args|
-    eid, raw_id = context, context+'-raw-content'
     pad_opts = card.pad_options
-    %{#{form.hidden_field( :content, :id=>"#{eid}-hidden-content" )}#{
-      text_area_tag :content_to_replace, '...', :style=>'display:none', :id=>"#{eid}-etherpad"
-      }<iframe id="epframe-#{eid}" width="100%" height="500" src="#{
+    uid = unique_id
+    %{#{ form.text_area :content, :rows=>3, :id=>uid,
+                     :class=>'etherpad-textarea card-content'
+      }<iframe id="epframe-#{uid}" width="100%" height="500" src="#{
       pad_opts[:url]}#{card.key
       }?showControls=#{pad_opts[:showControls]
       }&showChat=#{pad_opts[:showChat]

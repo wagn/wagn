@@ -137,7 +137,6 @@ module Wagn
 
 
     def params()     @params     ||= controller.params                          end
-    def flash()      @flash      ||= controller.request ? controller.flash : {} end
     def controller() @controller ||= StubCardController.new                     end
 
     def session

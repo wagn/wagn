@@ -64,16 +64,14 @@ class AccountController < ApplicationController
 
 
   def signin
-    Rails.logger.info "~~~~~~~~~~~~~signing in"
     if params[:login]
       password_authentication(params[:login], params[:password])
     end
-    Rails.logger.info  "signed in? #{session.inspect}"
   end
 
   def signout
     self.current_user = nil
-    flash[:notice] = "You have been logged out." #ENGLISH
+    flash[:notice] = "Successfully signed out" #ENGLISH
     redirect_to Card.path_setting('/')  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
   end
 
@@ -81,19 +79,19 @@ class AccountController < ApplicationController
     return unless request.post?
     @user = User.find_by_email(params[:email].downcase)
     if @user.nil?
-      flash[:notice] = "Could not find a user with that email address."   #ENGLISH
+      flash[:notice] = "Unrecognized email."   #ENGLISH
       render :action=>'signin', :status=>404
     elsif !@user.active?
-      flash[:notice] = "The account associated with that email address is not active."  #ENGLISH
+      flash[:notice] = "That account is not active."  #ENGLISH
       render :action=>'signin', :status=>403
     else
       @user.generate_password
       @user.save!
       subject = "Password Reset"  #ENGLISH
       message = "You have been given a new temporary password.  " +  #ENGLISH
-         "Please update your password once you've logged in. "
+         "Please update your password once you've signed in. "
       Mailer.account_info(@user, subject, message).deliver
-      flash[:notice] = "A new temporary password has been set on your account and sent to your email address"  #ENGLISH
+      flash[:notice] = "Check your email for your new temporary password"  #ENGLISH
       redirect_to previous_location
     end
   end
@@ -102,31 +100,26 @@ class AccountController < ApplicationController
   
   def password_authentication(login, password)
     if self.current_user = User.authenticate(params[:login], params[:password])
-      Rails.logger.info "successful_login!!!"
-      successful_login
-    elsif u = User.find_by_email(params[:login].strip.downcase)
-      if u.blocked?
-        failed_login("Sorry, this account is currently blocked.")  #ENGLISH
-      else
-        failed_login("Wrong password for that email")  #ENGLISH
-      end
+      flash[:notice] = "Successfully signed in"  #ENGLISH
+      redirect_to previous_location
     else
-      failed_login("We don't recognize that email")  #ENGLISH
+      u = User.find_by_email(params[:login].strip.downcase)
+      failed_login(
+        case
+        when u.nil?     ; "Unrecognized email."
+        when u.blocked? ; "Sorry, that account is blocked."
+        else            ; "Wrong password"
+        end
+      )
     end
-    Rails.logger.info "finished pw auth"
   end
 
 
 
   private
 
-    def successful_login
-      flash[:notice] = "Welcome to #{Wagn::Conf[:site_title]}"  #ENGLISH
-      redirect_to previous_location
-    end
-
     def failed_login(message)
-      flash[:notice] = message
+      flash[:notice] = "Oops: #{message}"
       render :action=>'signin', :status=>403
     end
 

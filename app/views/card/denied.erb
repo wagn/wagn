@@ -1,5 +1,5 @@
-<%  @type   ||= 'Basic'   # only really need for create
-    @deny   ||= (card && !card.new_card? ? 'edit' : 'create')
+<%  @type ||= card ? card.typename : 'Basic'   # only really need for create
+    @deny ||= (card && !card.new_card? ? 'edit' : 'create')
     @skip_slot_header ||= false
 %>
 

@@ -15,7 +15,6 @@ wagn.editorInitFunctionMap = {
   '.tinymce-textarea'      : -> wagn.initTinyMCE(@[0].id)
   '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
   '.file-upload'           : -> @fileupload( add: (e, data)-> $(this).closest('form').data 'file-data', data )
-  #'.file-upload'           : -> @fileupload( add: (e, data)-> console.log('added file'); wagn.data=data ) 
 }
 
 wagn.initPointerList = (input)-> 

@@ -226,11 +226,6 @@ module Wagn
       nil
     end
   
-#    def resize_image_content(content, size)
-#      size = (size.to_s == "full" ? "" : "_#{size}")
-#      content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
-#    end
-  
     def render_view_action(action, locals={})
       template.render(:partial=>"views/#{action}", :locals=>{ :card=>card,
                       :slot=>self }.merge(locals))
@@ -363,7 +358,7 @@ module Wagn
       pcard = opts.delete(:card) || card
       base = "#{Wagn::Conf[:root_path]}/card/#{action}"
       if pcard && ![:new, :create, :create_or_update].member?( action )
-        base += "/#{pcard.web_id}"
+        base += "/#{opts.delete(:id) || card.cardname.to_url_key}"
       end
       if attrib = opts.delete( :attrib )
         base += "/#{attrib}"

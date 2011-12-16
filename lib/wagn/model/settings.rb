@@ -1,6 +1,6 @@
 module Wagn::Model::Settings
-  def setting setting_name, fallback=nil
-    card = setting_card setting_name, fallback, :skip_modules=>true
+  def rule setting_name, fallback=nil
+    card = rule_card setting_name, fallback, :skip_modules=>true
     card && card.content
   end
 
@@ -10,25 +10,24 @@ module Wagn::Model::Settings
 #    @rule = junction? ? (left&&left.typecode=='Set'&&right.typecode=='Setting') : false
 #  end
 
-  def setting_card setting_name, fallback=nil, extra_fetch_args={}
+  def rule_card setting_name, fallback=nil, extra_fetch_args={}
     fetch_args = {:skip_virtual=>true}.merge extra_fetch_args
-   r=
     real_set_names.first_value do |set_name|
-      Rails.logger.debug "setting_card search #{set_name.inspect}"
+      #Rails.logger.debug "rule_card search #{set_name.inspect}"
       set_name=set_name.to_cardname
-      Card.fetch(set_name.star_rule( setting_name ), fetch_args) ||
-        fallback && Card.fetch(set_name.star_rule( fallback ), fetch_args)
-
+      card = Card.fetch(set_name.star_rule( setting_name ), fetch_args)
+      card ||= fallback && Card.fetch(set_name.star_rule(fallback), fetch_args)
+      return card if card
     end
-    Rails.logger.debug "setting_card(#{setting_name}, #{fallback}) #{r.inspect}"; r
+    #Rails.logger.debug "rule_card(#{setting_name}, #{fallback}) #{r.inspect}"; r
   end
-  def setting_card_with_cache setting_name, fallback=nil, extra_fetch_args={}
+  def rule_card_with_cache setting_name, fallback=nil, extra_fetch_args={}
     setting_name=setting_name.to_sym
-    @setting_cards ||= {}  # FIXME: initialize this when creating card
-    @setting_cards[setting_name] ||= 
-      setting_card_without_cache setting_name, fallback, extra_fetch_args
+    @rule_cards ||= {}  # FIXME: initialize this when creating card
+    @rule_cards[setting_name] ||= 
+      rule_card_without_cache setting_name, fallback, extra_fetch_args
   end
-  alias_method_chain :setting_card, :cache
+  alias_method_chain :rule_card, :cache
 
   def related_sets
     sets = ["#{name}+*self"]
@@ -43,14 +42,14 @@ module Wagn::Model::Settings
   end
 
   module ClassMethods
-    def default_setting setting_name, fallback=nil
-      card = default_setting_card setting_name, fallback
+    def default_rule setting_name, fallback=nil
+      card = default_rule_card setting_name, fallback
       return card && card.content
     end
 
-    def default_setting_card setting_name, fallback=nil
+    def default_rule_card setting_name, fallback=nil
       Card["*all".to_cardname.star_rule(setting_name)] or
-        fallback ? default_setting_card(fallback) : nil
+        fallback ? default_rule_card(fallback) : nil
     end
 
     def universal_setting_names_by_group

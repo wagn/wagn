@@ -56,7 +56,7 @@ class Card < ActiveRecord::Base
     skip_modules = args.delete 'skip_modules'
 
     super args
-
+    
     if !args['typecode']
       self.typecode_without_tracking = get_typecode(@type_args[:type])
     end
@@ -358,16 +358,16 @@ class Card < ActiveRecord::Base
     r
   end
 
-  def selected_rev_id() @selected_rev_id || (cr=current_revision)&&cr.id || 0 end
+  def selected_rev_id() @selected_rev_id || (cr=cached_revision)&&cr.id || 0 end
 
   def cached_revision
     #return current_revision || Revision.new
     case
     when (@cached_revision and @cached_revision.id==current_revision_id);
-    when (@cached_revision=self.class.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
+    when (@cached_revision=Revision.cache.read("#{cardname.css_name}-content") and @cached_revision.id==current_revision_id);
     else
       rev = current_revision_id ? Revision.find(current_revision_id) : Revision.new
-      @cached_revision = self.class.cache.write("#{key}-content", rev)
+      @cached_revision = Revision.cache.write("#{cardname.css_name}-content", rev)      
     end
     @cached_revision
   end
@@ -449,7 +449,6 @@ class Card < ActiveRecord::Base
 
 
   def cardname() @cardname ||= name_without_cardname.to_cardname end
-  def web_id() new_card? ? cardname.to_url_key : id              end
 
   alias cardname= name=
   def name_with_cardname=(newname)
@@ -599,12 +598,8 @@ class Card < ActiveRecord::Base
 
     # image defaults
     def image_settings()
-      Wagn::Conf[:favicon] = image_setting('*favicon') ||
-                             image_setting('*logo') ||
-                             "#{Wagn::Conf[:root_path]}/images/favicon.ico"
-      Wagn::Conf[:logo] = image_setting('*logo')
-      logo_file = "#{Wagn::Conf[:root_path]}/public/images/logo.gif"
-      Wagn::Conf[:logo] ||= File.exists?(logo_file) && logo_file
+      Wagn::Conf[:favicon] = image_setting('*favicon') || image_setting('*logo') ||
+        "#{Wagn::Conf[:root_path]}/favicon.ico"
     end
 
   protected

@@ -255,10 +255,15 @@ describe CardController do
 
     it "should watch" do
       login_as(:joe_user)
-      post :watch, :id=>"Home"
+      post :watch, :id=>"Home", :toggle=>'on'
       assert c=Card["Home+*watchers"]
       c.content.should == "[[Joe User]]"
+      
+      post :watch, :id=>"Home", :toggle=>'off'
+      assert c=Card["Home+*watchers"]
+      c.content.should == ''
     end
+
 
     it "rename without update references should work" do
       User.as :joe_user

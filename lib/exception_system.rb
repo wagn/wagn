@@ -41,7 +41,7 @@ module ExceptionSystem
   def render_500()  render_exception(500); end
 
   def render_exception(status)
-    render :template => "/application/#{status}", :status => status, :layout=>wagn_layout
+    render "/application/#{status}", :status => status , :layout=>'application'
   end  
   
   def exception_status(exception)

@@ -6,11 +6,6 @@ describe RestCardController do
     before do
       login_as :wagbot
     end
-    
-    it "assigns @args[:name] from id" do
-      post :new, :id => "xxx"
-      assigns[:args][:name].should == "xxx"
-    end
   end     
   
   describe "#create" do
@@ -37,10 +32,10 @@ describe RestCardController do
   end
 =end
   def post_xml(args={})
+#Note this test PASSES!
+#assert_equal '201 Created', response.get_fields('Status')[0]
   end
 
-#Note this test PASSES!
-assert_equal '201 Created', response.get_fields('Status')[0]
 
     # FIXME: several of these tests go all the way to DB,
     #  which means they're closer to integration than unit tests.

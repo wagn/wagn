@@ -12,7 +12,7 @@ class Wagn::Renderer::Html
         concat %{<div>#{
           slot.form = form
           trait_submenu(:declare, (card.attribute||=:declare))}#{
-          #(args[:view] != 'setting' && inst = card.setting_card('declare help') ?
+          #(args[:view] != 'setting' && inst = card.rule_card('declare help') ?
              #%{<div class="instruction">#{slot.subslot(inst).render :naked }</div>} : '') +
           hidden_field_tag( :multi_edit, true)}#{
           hidden_field_tag( :attribute, card.attribute )}#{
@@ -76,7 +76,7 @@ class Wagn::Renderer::Html
   end
 
   def trait_forms(menu_name)
-    if formcard = card.setting_card(menu_name.to_cardname.to_star) and
+    if formcard = card.rule_card(menu_name.to_cardname.to_star) and
        (formtype = formcard.typecode) == 'Pointer'
       Rails.logger.debug "trait_forms(#{menu_name}) #{card&&card.name}, #{formcard&&formcard.name}"
       # is this names or cards? new api?

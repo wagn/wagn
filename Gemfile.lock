@@ -140,6 +140,7 @@ GEM
     rbx-require-relative (0.0.5)
     rdoc (3.11)
       json (~> 1.4)
+    rmagick (2.13.1)
     rspec (2.7.0)
       rspec-core (~> 2.7.0)
       rspec-expectations (~> 2.7.0)
@@ -219,6 +220,7 @@ DEPENDENCIES
   rails (~> 3.1)
   rails-dev-tweaks (~> 0.5.1)
   rdoc
+  rmagick (~> 2.13.1)
   rspec-rails (~> 2.6)
   ruby-debug
   ruby-prof

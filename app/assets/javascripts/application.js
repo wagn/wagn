@@ -6,6 +6,7 @@
 //
 //= require jquery
 //= require jquery-ui
+//= require jquery.fileupload.js
 //= require jquery.ui.autocomplete.html.js
 //= require jquery_ujs
 //= require tinymce

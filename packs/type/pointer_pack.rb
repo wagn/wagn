@@ -1,11 +1,9 @@
 class Wagn::Renderer
   
   define_view(:core, :type=>'pointer') do |args|
-    args ||= {}
-    action = args[:action] || :edit
     @item_view ||= :closed
-    %{<div class="pointer-list">#{pointer_items}</div>} + 
-    '' #link_to( 'add/edit', path(action), :remote=>true, :class=>'slotter add-edit-item init-editors' ) #ENGLISH 
+    %{<div class="pointer-list">#{pointer_items}</div>} 
+    #+ link_to( 'add/edit', path(action), :remote=>true, :class=>'slotter add-edit-item init-editors' ) #ENGLISH 
   end
 
   define_view(:closed_content, :type=>'pointer') do |args|
@@ -14,7 +12,7 @@ class Wagn::Renderer
   end
 
   define_view(:editor, :type=>'pointer') do |args|
-    part_view = (c = card.setting('input')) ? c.gsub(/[\[\]]/,'') : 'list'
+    part_view = (c = card.rule('input')) ? c.gsub(/[\[\]]/,'') : 'list'
     form.hidden_field( :content, :class=>'card-content') +
     raw(render(part_view))
   end

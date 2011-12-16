@@ -26,7 +26,7 @@ module Wagn::Model
 
     def reset_patterns()
 #      Rails.logger.debug "reset_patterns[#{name}]"
-      @setting_cards={}
+      @rule_cards={}
       @real_set_names = @set_mods_loaded = @junction_only = @patterns = @set_modules =
          @method_keys = @set_names = @template = @skip_type_lookup = nil
       true

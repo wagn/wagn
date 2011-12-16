@@ -9,7 +9,6 @@ module Wagn
     def []=(key, value) config_hash[key&&key.to_sym||key]=value end
       
     DEFAULT_YML= %{
-      max_renders: 8
       role_tasks: [administrate_users, create_accounts, assign_user_roles]
     }
 
@@ -33,17 +32,14 @@ module Wagn
       Rails.logger.debug "Load config ...\n"
       hash.merge! YAML.load(DEFAULT_YML)
 
-      config_file = "#{Rails.root}/config/wagn.yml"
-      hash.merge!(
-        YAML.load_file config_file ) if File.exists? config_file
+      config_file = ENV['WAGN_CONFIG_FILE'] || "#{Rails.root}/config/wagn.yml"
+      hash.merge!( YAML.load_file config_file ) if File.exists? config_file
 
       hash.symbolize_keys!
 
       if base_u = hash[:base_url]
-
         hash[:base_url] = base_u.gsub!(/\/$/,'')
         hash[:host] = base_u.gsub(/^http:\/\//,'').gsub(/\/.*/,'') unless hash[:host]
-        
       end
 
       hash[:site_title] = Card.setting('*title') || 'Wagn'
@@ -54,7 +50,7 @@ module Wagn
       end
       
       hash[:attachment_base_url] ||= hash[:root_path] + '/files'
-      hash[:attachment_storage_dir] ||= "#{Rails.root}/public/files"
+      hash[:attachment_storage_dir] ||= "#{Rails.root}/public/uploads"
       # bit of a kludge. 
       Card.image_settings
 

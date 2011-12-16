@@ -76,10 +76,7 @@ class CardController < ApplicationController
 
   def update
     @card = @card.refresh # (cached card attributes often frozen)
-    args=params[:card] || {}
-    args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type]  #should handle in model
-    
-    if @card.update_attributes(args)
+    if @card.update_attributes(params[:card])
       render_success
     else
       render_errors

@@ -38,7 +38,7 @@ class Mailer < ActionMailer::Base
 
   
   def change_notice( user, card, action, watched, subedits=[], updated_card=nil )       
-    #warn "change_notice( #{user}, #{card.inspect} ...)"
+    #warn "change_notice( #{user}, #{card.inspect}, #{action}, #{watched} ...)"
     updated_card ||= card
     @card = card
     @updater = updated_card.updater.card.name

@@ -23,7 +23,7 @@ class Card < ActiveRecord::Base
 
   before_save :base_before_save, :set_read_rule, :set_tracked_attributes, :set_extensions
   after_save :base_after_save, :update_ruled_cards
-  cache_attributes('name', 'typecode')    
+  cache_attributes('name', 'typecode')
 
   @@junk_args = %w{ missing skip_virtual id }
 
@@ -116,6 +116,11 @@ class Card < ActiveRecord::Base
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING
+
+  def update_attributes(args={})
+    args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type] 
+    super args
+  end
 
   def base_before_save
     if self.respond_to?(:before_save) and self.before_save == false
@@ -354,7 +359,9 @@ class Card < ActiveRecord::Base
   end
   
   def typename() typecode and Cardtype.name_for( typecode ) or 'Basic' end
-  
+  def type=(typename)
+    self.typecode = Cardtype.classname_for(typename) 
+  end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CONTENT / REVISIONS

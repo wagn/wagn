@@ -373,7 +373,7 @@ module Wagn
           cardname = href.to_cardname
           text = cardname.to_show(card.name) unless text
           href = href.to_cardname
-          href = Wagn::Conf[:root_path] + '/wagn/' + (known_card ? href.to_url_key : CGI.escape(href.escape))
+          href = Wagn::Conf[:root_path] + '/' + (known_card ? href.to_url_key : CGI.escape(href.escape))
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
           href = full_uri(href.to_s)
           known_card ? 'known-card' : 'wanted-card'
@@ -456,6 +456,9 @@ module Wagn
   Wagn::Renderer::Rss
   Wagn::Renderer::Text
   
+  Wagn::Conf[:pack_dirs].split(/,\s*/).each do |dir|
+    Wagn::Pack.dir File.expand_path( "#{dir}/**/*_pack.rb",__FILE__)
+  end
   include Wagn::Pack
   
 end

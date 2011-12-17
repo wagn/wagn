@@ -10,6 +10,7 @@ gem 'paperclip', '~>2.4'
 gem 'devise', '>1.0.9'
 gem 'warden', '>0.10.1'
 #gem 'rmagick', '~>2.13.1'
+gem "recaptcha", "~> 0.3.4"
 
 # DATABASE
 

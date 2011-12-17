@@ -34,9 +34,9 @@ class Wagn::RendererTest < ActiveSupport::TestCase
 
   def test_slot_render
     card = newcard('Baines', '[[Nixon]]')
-    assert_equal '<a class="wanted-card" href="/wagn/Nixon">Nixon</a>', slot_link(card)
+    assert_equal '<a class="wanted-card" href="/Nixon">Nixon</a>', slot_link(card)
 
-    lbj_link = '<a class="known-card" href="/wagn/Baines">Lyndon</a>'
+    lbj_link = '<a class="known-card" href="/Baines">Lyndon</a>'
     
     card2 = newcard('Johnson', '[Lyndon][Baines]')
     assert_equal(lbj_link, slot_link(card2))
@@ -61,10 +61,10 @@ class Wagn::RendererTest < ActiveSupport::TestCase
 
   def test_slot_relative_card
     cardA = newcard('Kennedy', '[[+Monroe]]')
-    assert_equal '<a class="wanted-card" href="/wagn/Kennedy%2BMonroe">+Monroe</a>', slot_link(cardA)
+    assert_equal '<a class="wanted-card" href="/Kennedy%2BMonroe">+Monroe</a>', slot_link(cardA)
 
     cardB = newcard('Clinton', '[[Lewinsky+]]')
-    assert_equal '<a class="wanted-card" href="/wagn/Lewinsky%2BClinton">Lewinsky+</a>', slot_link(cardB)
+    assert_equal '<a class="wanted-card" href="/Lewinsky%2BClinton">Lewinsky+</a>', slot_link(cardB)
   end
 
   def test_slot_relative_card_xml
@@ -93,7 +93,7 @@ class Wagn::RendererTest < ActiveSupport::TestCase
   
   def internal_needs_escaping    
     card5 = newcard('userlink', '[Marie][Marie "Mad Dog" Deatherage]')
-    assert_equal '<a class="wanted-card" href="/wagn/Marie_%22Mad_Dog%22_Deatherage">Marie</a>', slot_link(card5)
+    assert_equal '<a class="wanted-card" href="/Marie_%22Mad_Dog%22_Deatherage">Marie</a>', slot_link(card5)
   end
      
   def external_needs_not_escaped
@@ -107,7 +107,7 @@ class Wagn::RendererTest < ActiveSupport::TestCase
 #ActionController::Base.logger.info("ERROR:INFO:newcard is nil: +business") unless job
 #    card = dude.connect job, "icepicker" 
 #ActionController::Base.logger.info("ERROR:INFO:newcard is nil: Harvey+business") unless card
-#    assert_equal "<a class=\"known-card\" href=\"/wagn/Harvey+business\">#{JOINT}business</a>", slot_link(dude)
+#    assert_equal "<a class=\"known-card\" href=\"/Harvey+business\">#{JOINT}business</a>", slot_link(dude)
 #  end
   
 #  def test_relative_link_xml

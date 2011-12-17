@@ -30,7 +30,7 @@ class Wagn::Renderer::Html
   define_view(:editor, :type=>'Etherpad') do |args|
     pad_opts = card.pad_options
     uid = unique_id
-    %{#{ form.text_area :content, :rows=>3, :id=>uid,
+    %{#{ form.text_area :content, :rows=>3, :id=>uid, :style=>'display:none',
                      :class=>'etherpad-textarea card-content'
       }<iframe id="epframe-#{uid}" width="100%" height="500" src="#{
       pad_opts[:url]}#{card.key

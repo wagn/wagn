@@ -10,10 +10,10 @@ class LinkTest < ActiveSupport::TestCase
   
   def test_basic
     card = newcard('Baines', '[[Nixon]]')
-    assert_equal('<a class="wanted-card" href="/wagn/Nixon">Nixon</a>', render_test_card(card) )
+    assert_equal('<a class="wanted-card" href="/Nixon">Nixon</a>', render_test_card(card) )
 
 
-    lbj_link = '<a class="known-card" href="/wagn/Baines">Lyndon</a>'
+    lbj_link = '<a class="known-card" href="/Baines">Lyndon</a>'
     
     card2 = newcard('Johnson', '[Lyndon][Baines]')
     assert_equal(lbj_link, render_test_card(card2) )
@@ -25,10 +25,10 @@ class LinkTest < ActiveSupport::TestCase
 
   def test_relative_card
     cardA = newcard('Kennedy', '[[+Monroe]]')
-    assert_equal('<a class="wanted-card" href="/wagn/Kennedy%2BMonroe">+Monroe</a>', render_test_card(cardA) )
+    assert_equal('<a class="wanted-card" href="/Kennedy%2BMonroe">+Monroe</a>', render_test_card(cardA) )
 
     cardB = newcard('Clinton', '[[Lewinsky+]]')
-    assert_equal('<a class="wanted-card" href="/wagn/Lewinsky%2BClinton">Lewinsky+</a>', render_test_card(cardB) )
+    assert_equal('<a class="wanted-card" href="/Lewinsky%2BClinton">Lewinsky+</a>', render_test_card(cardB) )
   end
 
 
@@ -45,7 +45,7 @@ class LinkTest < ActiveSupport::TestCase
   
   def internal_needs_escaping    
     card5 = newcard('userlink', '[Marie][Marie "Mad Dog" Deatherage]')
-    assert_equal('<a class="wanted-card" href="/wagn/Marie_%22Mad_Dog%22_Deatherage">Marie</a>', render_test_card(card5) )
+    assert_equal('<a class="wanted-card" href="/Marie_%22Mad_Dog%22_Deatherage">Marie</a>', render_test_card(card5) )
   end
      
   def external_needs_not_escaped
@@ -56,7 +56,7 @@ class LinkTest < ActiveSupport::TestCase
   def test_relative_link
     dude,job = newcard('Harvey',"[[#{Wagn::Cardname::JOINT}business]]"), newcard('business')
     card = Card.create! :name => "#{dude.name}+#{job.name}", :content => "icepicker" 
-    assert_equal("<a class=\"known-card\" href=\"/wagn/Harvey+business\">#{Wagn::Cardname::JOINT}business</a>", render_test_card(dude) )
+    assert_equal("<a class=\"known-card\" href=\"/Harvey+business\">#{Wagn::Cardname::JOINT}business</a>", render_test_card(dude) )
   end
   
   

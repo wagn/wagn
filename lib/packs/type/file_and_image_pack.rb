@@ -2,20 +2,36 @@
 class Wagn::Renderer
   
   define_view(:core, :type=>'image') do |args|
-    (rr = _render_raw) =~ /^\s*<img / ? resize_legacy_image_content( rr, args[:size] ) :
+    (lc = legacy_content) ? resize_legacy_image_content( lc, args[:size] ) :
       image_tag(card.attach.url args[:size] || :medium)
   end
 
   define_view(:core, :type=>'file') do |args|
-    (rr = _render_raw) =~ /^\s*<a / ? rr :
-      "<a href=\"#{card.attach.url}\">Download #{card.name}</a>"
+    legacy_content || "<a href=\"#{card.attach.url}\">Download #{card.name}</a>"
   end
 
   define_view(:closed_content, :type=>'image') do |args|
     _render_core(:size=>:icon)
   end
+  
+  define_view(:source, :type=>'image') do |args|
+    (lc = legacy_content) ? legacy_source(lc, args[:size]) : card.attach.url( args[:size] )
+  end
 
+  define_view(:source, :type=>'file') do |args|
+    (lc = legacy_content) ? legacy_source(lc) : card.attach.url
+  end
+  
   private
+  
+  def legacy_source(tag, size=nil)
+    source = tag.match(/src=\"([^\"]+)/)[1]
+    size ? resize_legacy_image_content(source, size) : source
+  end
+  
+  def legacy_content
+    (rr = _render_raw) && rr =~ /^\s*\</ && rr
+  end
   
   def resize_legacy_image_content(content, size)
     return content if !size || size.blank?

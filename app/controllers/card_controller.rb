@@ -105,12 +105,14 @@ class CardController < ApplicationController
       author = "[[#{username}]]"
     end
     comment = comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
+    @card = @card.refresh
     @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
     @card.save!
     render_show
   end
 
   def rollback
+    @card = @card.refresh
     revision = @card.revisions[params[:rev].to_i - 1]
     @card.update_attributes! :content=>revision.content
     @card.attachment_link revision.id
@@ -158,8 +160,8 @@ class CardController < ApplicationController
 
   def create_account
     User.ok!(:create_accounts) && @card.ok?(:update)
-    email_args = { :subject => "Your new #{Wagn::Conf[:site_title]} account.",   #ENGLISH
-                   :message => "Welcome!  You now have an account on #{Wagn::Conf[:site_title]}." } #ENGLISH
+    email_args = { :subject => "Your new #{Card.setting('*title')} account.",   #ENGLISH
+                   :message => "Welcome!  You now have an account on #{Card.setting('*title')}." } #ENGLISH
     @user, @card = User.create_with_card(params[:user],@card, email_args)
     raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
     @extension = User.new(:email=>@user.email)

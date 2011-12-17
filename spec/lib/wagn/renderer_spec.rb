@@ -18,7 +18,7 @@ describe Wagn::Renderer, "" do
 
   context "special syntax handling should render" do
     it "simple card links" do
-      render_content("[[A]]").should=="<a class=\"known-card\" href=\"/wagn/A\">A</a>"
+      render_content("[[A]]").should=="<a class=\"known-card\" href=\"/A\">A</a>"
     end
 
     it "invisible comment inclusions as blank" do
@@ -88,7 +88,7 @@ describe Wagn::Renderer, "" do
     
     it "url" do
       Wagn::Conf[:base_url] = 'http://eric.skippy.com'
-      render_card(:url).should == 'http://eric.skippy.com/wagn/Tempo_Rary' 
+      render_card(:url).should == 'http://eric.skippy.com/Tempo_Rary' 
     end
 
     it "core" do
@@ -168,7 +168,7 @@ describe Wagn::Renderer, "" do
       end
 
       it "renders card header" do
-        assert_view_select @simple_page, 'a[href="/wagn/A+B"][class="page-icon"][title="Go to: A+B"]'
+        assert_view_select @simple_page, 'a[href="/A+B"][class="page-icon"][title="Go to: A+B"]'
       end
 
       it "renders card content" do
@@ -293,7 +293,7 @@ describe Wagn::Renderer, "" do
 
       # similar to above, but use link
       s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :link } )
-      s.render( :core ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
+      s.render( :core ).should == "<a class=\"known-card\" href=\"/t2\">t2</a>"
       s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :core } )
       s.render( :core ).should == "boo"
     end

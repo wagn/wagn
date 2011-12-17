@@ -496,6 +496,14 @@ class Card < ActiveRecord::Base
   
 
   protected
+  
+  validate do |rec|
+    return true unless Wagn::Conf[:recaptcha_on]
+    c = Wagn::Conf[:controller]
+    return true if (c.recaptcha_count += 1) > 1
+    c.verify_recaptcha( :model=>rec ) || rec.error_status = 449
+  end
+  
 
 #  validates_presence_of :name
   validates_associated :extension #1/2 ans:  this one runs the user validations on user cards.
@@ -572,7 +580,7 @@ class Card < ActiveRecord::Base
   end
 
   validates_each :current_revision_id do |rec, attrib, value|
-    if value && value.to_i != rec.current_revision_id_was
+    if rec.current_revision_id_changed? && value.to_i != rec.current_revision_id_was
       rec.current_revision_id = rec.current_revision_id_was
       rec.errors.add :conflict, "changes not based on latest revision"
       rec.error_view = :conflict
@@ -620,8 +628,8 @@ class Card < ActiveRecord::Base
       User.as :wagbot  do
         card=Card[name] and !card.content.strip.empty? and card.content
       end
-    rescue
-      nil
+#    rescue
+#      nil
     end           
 
     def path_setting(name)
@@ -631,21 +639,8 @@ class Card < ActiveRecord::Base
     end
     
     def toggle(val) val == '1' end
-
-    # image defaults
-    def image_settings()
-      Wagn::Conf[:favicon] = image_setting('*favicon') || image_setting('*logo') ||
-        "#{Wagn::Conf[:root_path]}/favicon.ico"
-    end
-
-  protected
-    def image_setting(name)
-      # this is really only for legacy images, and a kluge anyway
-      if content = setting(name) and content.match(/src=\"([^\"]+)/)
-        $~[1]
-      end
-    end
   end
+
   
   # these old_modules should be refactored out
   require_dependency 'flexmail.rb'

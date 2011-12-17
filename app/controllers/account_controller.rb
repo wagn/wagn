@@ -21,8 +21,8 @@ class AccountController < ApplicationController
     return unless @user.errors.empty?
 
     if User.ok?(:create_accounts)       #complete the signup now
-      email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Wagn::Conf[:site_title]}!",  #ENGLISH
-                     :subject => Card.setting('*signup+*subject') || "Account info for #{Wagn::Conf[:site_title]}!" }  #ENGLISH
+      email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!",  #ENGLISH
+                     :subject => Card.setting('*signup+*subject') || "Account info for #{Card.setting('*title')}!" }  #ENGLISH
       @user.accept(email_args)
       redirect_to Card.path_setting(Card.setting('*signup+*thanks'))
     else

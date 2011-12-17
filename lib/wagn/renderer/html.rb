@@ -215,11 +215,11 @@ module Wagn
       template.select_tag('card[type]', typecode_options_for_select( typename ), options)
     end
 
-    def content_field(form,options={})
+    def content_field(form, options={})
       @form = form
       @nested = options[:nested]
       raw(%{ <div class="content-editor">} +
-      ((card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : '') +
+      ((card && !card.new_card? && !options[:skip_rev_id]) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : '') +
       self.render_editor +
       '</div>')
     end
@@ -276,7 +276,9 @@ module Wagn
     end
 
     def revision_menu_items
-      [back_for_revision, forward, see_or_hide_changes_for_revision, rollback]
+      items = [back_for_revision, forward, see_or_hide_changes_for_revision]
+      items << rollback unless Wagn::Conf[:recaptcha_on]
+      items
     end
 
     def forward

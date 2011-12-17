@@ -8,7 +8,6 @@ wagn.editorContentFunctionMap = {
   '.pointer-list-ul'       : -> pointerContent @find('input'        ).map( -> $(this).val() )
   '.pointer-checkbox-list' : -> pointerContent @find('input:checked').map( -> $(this).val() )
   '.perm-editor'           : -> permissionsContent this # must happen after pointer-list-ul, I think
-  '.etherpad-textarea'     : -> @wagn.etherpadContent()
 }
 
 wagn.editorInitFunctionMap = {
@@ -16,16 +15,12 @@ wagn.editorInitFunctionMap = {
   '.tinymce-textarea'      : -> wagn.initTinyMCE(@[0].id)
   '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
   '.file-upload'           : -> @fileupload( add: (e, data)-> $(this).closest('form').data 'file-data', data )
-  '.etherpad-textarea'     : -> wagn.initEtherpad(@[0].id)
+  '.etherpad-textarea'   : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
 }
 
 wagn.initPointerList = (input)-> 
   optionsCard = input.closest('ul').attr('options-card')
   input.autocomplete { source: wagn.rootPath + '/' + optionsCard + '.json?view=name_complete' }
-
-wagn.initEtherpad = (el_id) ->
-
-wagn.etherpadContent = (el_id) ->
 
 wagn.initTinyMCE = (el_id) ->
   conf = if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {}
@@ -90,7 +85,19 @@ $(window).load ->
     $(this).closest('tr').find('.close-rule-link').click()
 
 
+  # etherpad pack
+  $('body').delegate '.etherpad-submit-button', 'click', ->
+    wagn.padform = $(this).closest('form')
 
+    padsrc = $(wagn.padform).find('iframe')[0].src
+    if (qindex = padsrc.indexOf('?')) != -1
+      padsrc = padsrc.slice(0,qindex)
+
+    # perform an ajax call on contentsUrl and write it to the parent
+    $.get padsrc + '/export/html', (data) ->
+       $(wagn.padform).find('.etherpad-textarea')[0].value = data
+       $(wagn.padform)[0].submit()
+    false
 
   
 permissionsContent = (ed) ->

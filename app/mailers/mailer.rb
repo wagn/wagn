@@ -8,7 +8,7 @@ class Mailer < ActionMailer::Base
 
     @email    = (user.email    or raise Wagn::Oops.new("Oops didn't have user email"))
     @password = (user.password or raise Wagn::Oops.new("Oops didn't have user password"))
-    @card_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/wagn/#{url_key}"
+    @card_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/#{url_key}"
     @pw_url   = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/card/options/#{url_key}"
     @login_url= "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/account/signin"
     @message  = message.clone
@@ -44,10 +44,10 @@ class Mailer < ActionMailer::Base
     @updater = updated_card.updater.card.name
     @action = action
     @subedits = subedits
-    @card_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/wagn/#{card.cardname.to_url_key}"
+    @card_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/#{card.cardname.to_url_key}"
     @change_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/card/changes/#{card.cardname.to_url_key}"
     @unwatch_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/card/unwatch/#{watched.to_cardname.to_url_key}"
-    @udpater_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/wagn/#{card.updater.card.cardname.to_url_key}"
+    @udpater_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/#{card.updater.card.cardname.to_url_key}"
     @watched = (watched == card.cardname ? "#{watched}" : "#{watched} cards")
 
     mail( {

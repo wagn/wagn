@@ -16,7 +16,7 @@ module Wagn
       def []=(key, value) @@hash[key.to_sym]=value      end
       
       WAGN_CONFIG_DEFAULTS = { :role_tasks => %w[administrate_users create_accounts assign_user_roles] }    
-      WAGN_CONFIG_FILE = ENV['WAGN_CONFIG_FILE'] || "#{Rails.root}/config/wagn.yml"
+      WAGN_CONFIG_FILE = ENV['WAGN_CONFIG_FILE'] || File.expand_path('../wagn.yml', __FILE__)
 
       def load
         @@hash = h = WAGN_CONFIG_DEFAULTS
@@ -25,7 +25,8 @@ module Wagn
         h.symbolize_keys!
       end
       
-      def load_after_app
+      def load_after_app 
+        #could do these at normal load time but can't use Rails.root
         h = @@hash
         if base_u = h[:base_url]
           h[:base_url] = base_u.gsub!(/\/$/,'')

@@ -21,17 +21,21 @@ wagn.editorInitFunctionMap = {
 
 wagn.initPointerList = (input)-> 
   optionsCard = input.closest('ul').attr('options-card')
-  input.autocomplete { source: wagn.root_path + '/' + optionsCard + '.json?view=name_complete' }
+  input.autocomplete { source: wagn.rootPath + '/' + optionsCard + '.json?view=name_complete' }
 
-wagn.initEtherpad = (id) ->
+wagn.initEtherpad = (el_id) ->
 
-wagn.etherpadContent = (id) ->
+wagn.etherpadContent = (el_id) ->
 
-wagn.initTinyMCE = (id) ->
+wagn.initTinyMCE = (el_id) ->
   conf = if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {}
-  conf['content_css'] = wagn.root_path + '/assets/application-all.css,' + wagn.root_path + '/*css.css'
-  conf['mode'] = "exact"
-  conf['elements'] = id
+  $.extend conf, { 
+    mode: "exact", 
+    elements: el_id, 
+    content_css: wagn.rootPath + '/assets/application-all.css,' + wagn.local_css_path
+    verify_html: false,
+    entity_encoding: 'raw'
+  }    
   tinyMCE.init conf
 
 
@@ -107,7 +111,7 @@ reqIndex = 0 #prevents race conditions
 
 navbox_results = (request, response) ->
   this.xhr = $.ajax {
-		url: wagn.root_path + '/*search.json?view=complete',
+		url: wagn.rootPath + '/*search.json?view=complete',
 		data: request,
 		dataType: "json",
 		wagReq: ++reqIndex,
@@ -137,10 +141,10 @@ navboxize = (term, results)->
     items.push i if val
 
   $.each results['goto'], (index, val) ->
-    items.push { type: 'goto', prefix: 'Go to', value: val[0], label: val[1], href: '/wagn/' + val[2] } 
+    items.push { type: 'goto', prefix: 'Go to', value: val[0], label: val[1], href: '/' + val[2] } 
 
   $.each items, (index, i)->
-    i.href = wagn.root_path + i.href
+    i.href = wagn.rootPath + i.href
     i.label = 
       '<span class="navbox-item-label '+ i.type + '-icon">' + i.prefix + ':</span> ' +
       '<span class="navbox-item-value">' + i.label + '</span>'

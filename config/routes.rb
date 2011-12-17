@@ -16,20 +16,18 @@ Wagn::Application.routes.draw do
 
 #  match '(wagn/):id.:format' => 'card#show_file', :format => /jpg|jpeg|png|gif|ico/
 
-  match 'wagn/:id(.:format)' => 'card#show'#, :format => FORMAT_PATTERN
-
+  match '/' => 'card#index'
   match 'recent(.:format)' => 'card#show', :id => '*recent', :view => 'core', :format => FORMAT_PATTERN
+  match '(/wagn)/:id(.:format)' => 'card#show'
+  match '/files/(*id)' => 'card#show_file'
+
 #  match 'search/:_keyword(.:format)' => 'card#show', :id => '*search', :view => 'content', :format => FORMAT_PATTERN
 
   match 'new/:type' => 'card#new'
 
   match ':controller/:action(/:id(.:format)(/:attribute))'
-  match ':controller(/:action)' => '#index'
 
-  match '/' => 'card#index'
 
-  match ':id(.:format)' => 'card#show'
-  match '/files/(*id)' => 'card#show_file'
   
   match '*id' => 'application#render_404'
 

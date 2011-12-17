@@ -105,12 +105,14 @@ class CardController < ApplicationController
       author = "[[#{username}]]"
     end
     comment = comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
+    @card = @card.refresh
     @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
     @card.save!
     render_show
   end
 
   def rollback
+    @card = @card.refresh
     revision = @card.revisions[params[:rev].to_i - 1]
     @card.update_attributes! :content=>revision.content
     @card.attachment_link revision.id

@@ -211,13 +211,13 @@ class XmlrestControllerTest < ActionController::TestCase
     ff.permit(:read, Role[:auth])
     ff.save!
 
-    Card.create! :name=>"Fruit+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
+    Card.create! :name=>"Fruit+*thanks", :type=>"Phrase", :content=>"/sweet"
 
     login_as(:anon)
     post :post, :card => {
       :name=>"Banana", :type=>"Fruit", :content=>"mush"
     }
-    assert_equal "/wagn/sweet", assigns["redirect_location"]
+    assert_equal "/sweet", assigns["redirect_location"]
     assert_template "redirect_to_thanks"
   end
 
@@ -240,7 +240,7 @@ class XmlrestControllerTest < ActionController::TestCase
     post :post, :context=>"main_1", :card => {
       :name=>"Banana", :type=>"Fruit", :content=>"mush"
     }
-    assert_equal "/wagn/Banana", assigns["redirect_location"]
+    assert_equal "/Banana", assigns["redirect_location"]
     assert_template "redirect_to_created_card"
   end
 

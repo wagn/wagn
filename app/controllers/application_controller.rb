@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   include ExceptionSystem
   include LocationHelper
   helper :all
+  include Recaptcha::Verify
 
   include ActionView::Helpers::SanitizeHelper
 
@@ -16,6 +17,7 @@ class ApplicationController < ActionController::Base
   # can we turn sessions off for it and see if that helps?
   layout :wagn_layout, :except=>[:render_fast_404]
   
+  attr_accessor :recaptcha_count
     
   BUILTIN_LAYOUTS = %w{ blank noside simple pre none }
 
@@ -42,6 +44,12 @@ class ApplicationController < ActionController::Base
     Wagn::Cache.re_initialize_for_new_request
     
     User.current_user = current_user || User[:anon]
+    
+    # RECAPTCHA HACKS
+    Wagn::Conf[:controller] = self # this should not be conf, but more like wagn.env
+    Wagn::Conf[:recaptcha_on] = !User.logged_in? &&     # this too 
+      !!( Wagn::Conf[:recaptcha_public_key] && Wagn::Conf[:recaptcha_private_key] )
+    @recaptcha_count = 0
     
     @action = params[:action]
   end

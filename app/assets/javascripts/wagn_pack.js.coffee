@@ -8,7 +8,7 @@ wagn.editorContentFunctionMap = {
   '.pointer-list-ul'       : -> pointerContent @find('input'        ).map( -> $(this).val() )
   '.pointer-checkbox-list' : -> pointerContent @find('input:checked').map( -> $(this).val() )
   '.perm-editor'           : -> permissionsContent this # must happen after pointer-list-ul, I think
-  '.etherpad-textarea'     : -> etherpad.getContent()
+  '.etherpad-textarea'     : -> @wagn.etherpadContent()
 }
 
 wagn.editorInitFunctionMap = {
@@ -24,6 +24,8 @@ wagn.initPointerList = (input)->
   input.autocomplete { source: wagn.root_path + '/' + optionsCard + '.json?view=name_complete' }
 
 wagn.initEtherpad = (id) ->
+
+wagn.etherpadContent = (id) ->
 
 wagn.initTinyMCE = (id) ->
   conf = if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {}

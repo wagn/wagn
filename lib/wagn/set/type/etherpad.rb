@@ -6,7 +6,7 @@ module Wagn::Set::Type::Etherpad
 
   # This needs to be part of configs
   PAD_DEFAULTS = {
-    :url              => 'http://brain/epad/p/',
+    :url              => 'http://brain.private.com/epad/p/',
     :apiurl           => '/api/1/',
     :showControls     => true,
     :showChat         => false,

@@ -47,7 +47,7 @@ class ApplicationController < ActionController::Base
     
     # RECAPTCHA HACKS
     Wagn::Conf[:controller] = self # this should not be conf, but more like wagn.env
-    Wagn::Conf[:recaptcha_on] = #!User.logged_in? &&     # this too 
+    Wagn::Conf[:recaptcha_on] = !User.logged_in? &&     # this too 
       !!( Wagn::Conf[:recaptcha_public_key] && Wagn::Conf[:recaptcha_private_key] )
     @recaptcha_count = 0
     

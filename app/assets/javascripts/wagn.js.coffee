@@ -171,22 +171,6 @@ newCaptcha = (form)->
   recapDiv = $('<div class="recaptcha-box"></div>')
   $(form).children().last().after recapDiv
   $.getScript recapUri, -> recapDiv.loadCaptcha()
-###    
-  <script 
-  )
 
-  $()
-  <script type="text/javascript">
-    var rc_script_tag = document.createElement('script'),
-        rc_init_func = function(){Recaptcha.create("#{key}", document.getElementById("dynamic_recaptcha")#{',RecaptchaOptions' if options[:display]});}
-    rc_script_tag.src = "#{uri}/js/recaptcha_ajax.js";
-    rc_script_tag.type = 'text/javascript';
-    rc_script_tag.onload = function(){rc_init_func.call();};
-    rc_script_tag.onreadystatechange = function(){
-      if (rc_script_tag.readyState == 'loaded' || rc_script_tag.readyState == 'complete') {rc_init_func.call();}
-    };
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(rc_script_tag);
-  </script>
-###  
 
 warn = (stuff) -> console.log stuff if console?

@@ -276,7 +276,9 @@ module Wagn
     end
 
     def revision_menu_items
-      [back_for_revision, forward, see_or_hide_changes_for_revision, rollback]
+      items = [back_for_revision, forward, see_or_hide_changes_for_revision]
+      items << rollback unless Wagn::Conf[:recaptcha_on]
+      items
     end
 
     def forward

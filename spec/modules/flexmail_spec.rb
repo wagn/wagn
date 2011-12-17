@@ -108,7 +108,7 @@ describe Flexmail do
         conf[:subject].should == "a very nutty thang"
         conf[:attach ].should == ['Banana Trigger+attachment']
         conf[:message].should == "Triggered by Banana Trigger and its wonderful content: data content " +
-          '<a class="known-card" href="http://a.com/wagn/A">A</a>'
+          '<a class="known-card" href="http://a.com/A">A</a>'
       end
     end
   end

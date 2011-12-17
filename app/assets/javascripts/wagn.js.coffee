@@ -29,12 +29,14 @@ jQuery.fn.extend {
     setTimeout (->report.hide 'drop', 750), 3000
     
   isMain: -> @slot().parent('#main')[0]
+  
+  loadCaptcha: -> Recaptcha.create wagn.recaptchaKey, this[0]
 
   autosave: ->
     slot = @slot()
     return if @attr('no-autosave')
     #might be better to put this href in the html
-    href = wagn.root_path + '/card/save_draft/' + slot.attr('card-id')
+    href = wagn.rootPath + '/card/save_draft/' + slot.attr('card-id')
     $.ajax href, {
       data : { 'card[content]' : @val() },
       complete: (xhr) -> slot.report('draft saved') 
@@ -75,33 +77,41 @@ $(window).load ->
     else
       if xhr.status == 409 #edit conflict
         $(this).find('[name="card[current_revision_id]"]').val $(this).find('.new-current-revision-id').text()
+      else if xhr.status == 449
+        $(this).find('.recaptcha-box').loadCaptcha()
+
       $(this).notify result
     
-
   $('body').delegate 'button.slotter', 'click', (event)->
     return false if !$.rails.allowAction $(this)
     $.rails.handleRemote($(this))
 
   $('.slotter').live 'ajax:beforeSend', (event, xhr, opt)->
     return if opt.skip_before_send
-    return if opt.url.match /home_view/ #avoiding duplication.  could be better test?
-    s = $(this).slot()
-    main = $('#main').children('.card-slot').attr 'card-name'
-    home_view = s.attr 'home_view'
-    item      = s.attr 'item' 
-    xtra = {}
-    xtra['main']      = main      if main?
-    xtra['home_view'] = home_view if home_view?
-    xtra['item']      = item      if item?
-    opt.url += ( (if opt.url.match /\?/ then '&' else '?') + $.param(xtra) ) 
     
-    if $(this).is('form') && data = $(this).data('file-data')
-      fileoptions = $(this).find('.file-upload').fileupload 'wagnFileUploadSettings',
-        {files: data.files, formData: $(this).serializeArray() }
-      opt.skip_before_send = true
-      $.extend opt, fileoptions, {url: opt.url}
-      $.ajax opt
-      false
+    unless opt.url.match /home_view/ #avoiding duplication.  could be better test?
+      s = $(this).slot()
+      main = $('#main').children('.card-slot').attr 'card-name'
+      home_view = s.attr 'home_view'
+      item      = s.attr 'item' 
+      xtra = {}
+      xtra['main']      = main      if main?
+      xtra['home_view'] = home_view if home_view?
+      xtra['item']      = item      if item?
+      opt.url += ( (if opt.url.match /\?/ then '&' else '?') + $.param(xtra) ) 
+    
+    if $(this).is('form')
+      if wagn.recaptchaKey and !($(this).find('.recaptcha-box')[0])
+         newCaptcha(this)
+         return false
+      
+      if data = $(this).data('file-data')
+        fileoptions = $(this).find('.file-upload').fileupload 'wagnFileUploadSettings',
+          {files: data.files, formData: $(this).serializeArray() }
+        opt.skip_before_send = true
+        $.extend opt, fileoptions, {url: opt.url}
+        $.ajax opt
+        false
 
   $('body').delegate '.card-form', 'submit', ->
     $(this).setContentFieldsFromMap()
@@ -119,7 +129,7 @@ $(window).load ->
     s = $(this)
     return false if s.find( '.edit-area' )[0]
     s.addClass 'slotter init-editors'
-    s.attr 'href', wagn.root_path + '/card/edit/' + s.attr('card-id')
+    s.attr 'href', wagn.rootPath + '/card/edit/' + s.attr('card-id')
     $.rails.handleRemote(s)
     false # don't propagate up to next slot
 
@@ -156,8 +166,27 @@ $(window).load ->
     setTimeout ( -> content_field.autosave() ), 500
   
 
+newCaptcha = (form)->
+  recapUri = 'http://www.google.com/recaptcha/api/js/recaptcha_ajax.js'
+  recapDiv = $('<div class="recaptcha-box"></div>')
+  $(form).children().last().after recapDiv
+  $.getScript recapUri, -> recapDiv.loadCaptcha()
+###    
+  <script 
+  )
 
-
-  
+  $()
+  <script type="text/javascript">
+    var rc_script_tag = document.createElement('script'),
+        rc_init_func = function(){Recaptcha.create("#{key}", document.getElementById("dynamic_recaptcha")#{',RecaptchaOptions' if options[:display]});}
+    rc_script_tag.src = "#{uri}/js/recaptcha_ajax.js";
+    rc_script_tag.type = 'text/javascript';
+    rc_script_tag.onload = function(){rc_init_func.call();};
+    rc_script_tag.onreadystatechange = function(){
+      if (rc_script_tag.readyState == 'loaded' || rc_script_tag.readyState == 'complete') {rc_init_func.call();}
+    };
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(rc_script_tag);
+  </script>
+###  
 
 warn = (stuff) -> console.log stuff if console?

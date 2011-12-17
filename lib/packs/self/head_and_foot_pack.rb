@@ -34,8 +34,9 @@ class Wagn::Renderer
     bits << %(
     <script>
       var wagn = {}; window.wagn = wagn;
-      wagn.root_path = '#{Wagn::Conf[:root_path]}';
-      window.tinyMCEPreInit = {base:"#{Wagn::Conf[:root_path]}/assets/tinymce",query:"3.4.7",suffix:""};
+      wagn.rootPath = '#{Wagn::Conf[:root_path]}';
+      window.tinyMCEPreInit = {base:"#{Wagn::Conf[:root_path]}/assets/tinymce",query:"3.4.7",suffix:""}; #{
+      Wagn::Conf[:recaptcha_on] ? %{wagn.recaptchaKey = "#{Wagn::Conf[:recaptcha_public_key]}"} : '' }
       wagn.tinyMCEConfig = { #{Card.setting('*tiny mce')} }
     </script>      
           )

@@ -18,10 +18,10 @@ module NavigationHelpers
     #     user_profile_path(User.find_by_login($1))
 
     when /card (.*) with (.*) layout$/
-      "/wagn/#{$1.to_cardname.to_url_key}?layout=$2"
+      "/#{$1.to_cardname.to_url_key}?layout=$2"
 
     when /card (.*)$/
-      "/wagn/#{$1.to_cardname.to_url_key}"
+      "/#{$1.to_cardname.to_url_key}"
 
     when /new (.*) presetting name to "(.*)" and author to "(.*)"/
       url = "/new/#{$1}?card[name]=#{$2.to_cardname.to_url_key}&_author=#{CGI.escape($3)}"
@@ -36,7 +36,7 @@ module NavigationHelpers
       "/new/#{$1.to_cardname.to_url_key}"
       
     when /kml source/
-       "/wagn/House+*type+by_name.kml"
+       "/House+*type+by_name.kml"
 
     when /url "(.*)"/
       "#{$1}"

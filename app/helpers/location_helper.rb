@@ -51,11 +51,11 @@ module LocationHelper
       opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
       vars = '?' + pairs.join('&')
     end
-    Wagn::Conf[:root_path] + "/wagn/#{title.to_cardname.to_url_key}#{format}#{vars}"
+    Wagn::Conf[:root_path] + "/#{title.to_cardname.to_url_key}#{format}#{vars}"
   end
 
   def card_path( card )
-    Wagn::Conf[:root_path] + "/wagn/#{card.cardname.to_url_key}"
+    Wagn::Conf[:root_path] + "/#{card.cardname.to_url_key}"
   end
 
   def card_url( card )

@@ -144,7 +144,7 @@ class Wagn::Renderer::Html
 
 
           %{</div>
-          <div class="rule-content">#{ edit_mode ? content_field(form) : (current_set_key ? render_core : '') }</div> 
+          <div class="rule-content">#{ edit_mode ? content_field(form, :skip_rev_id=>true) : (current_set_key ? render_core : '') }</div> 
         </div>
        </div> }.html_safe +
 

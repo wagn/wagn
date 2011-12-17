@@ -150,7 +150,7 @@ describe CardController do
     it "redirects to card if thanks is blank" do
       login_as :wagbot
       post :create, :success => 'REDIRECT: TO-CARD', "card" => { "name" => "Joe+boop" }
-      assert_redirected_to "/wagn/Joe+boop"
+      assert_redirected_to "/Joe+boop"
     end
    
     it "redirects to previous" do

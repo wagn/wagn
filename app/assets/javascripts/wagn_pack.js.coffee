@@ -21,11 +21,15 @@ wagn.initPointerList = (input)->
   optionsCard = input.closest('ul').attr('options-card')
   input.autocomplete { source: wagn.rootPath + '/' + optionsCard + '.json?view=name_complete' }
 
-wagn.initTinyMCE = (id) ->
+wagn.initTinyMCE = (el_id) ->
   conf = if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {}
-  conf['content_css'] = wagn.rootPath + '/assets/application-all.css,' + wagn.rootPath + '/*css.css'
-  conf['mode'] = "exact"
-  conf['elements'] = id
+  $.extend conf, { 
+    mode: "exact", 
+    elements: el_id, 
+    content_css: wagn.rootPath + '/assets/application-all.css,' + wagn.local_css_path
+    verify_html: false,
+    entity_encoding: 'raw'
+  }    
   tinyMCE.init conf
 
 

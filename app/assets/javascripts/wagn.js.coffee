@@ -1,9 +1,9 @@
 
 wagn.initializeEditors = (map) ->
-    map = wagn.editorInitFunctionMap unless map?
-    $.each map, (selector, fn) ->
-      $.each $.find(selector), ->
-        fn.call $(this)
+  map = wagn.editorInitFunctionMap unless map?
+  $.each map, (selector, fn) ->
+    $.each $.find(selector), ->
+      fn.call $(this)
 
 jQuery.fn.extend {
   slot: -> @closest '.card-slot'

@@ -235,7 +235,11 @@ class CardController < ApplicationController
 
   def load_card
     return @card=nil unless id = params[:id]
-    return (@card=Card.find(id); @card.include_set_modules; @card) if id =~ /^\d+$/
+    if id =~ /^\~(\d+)$/
+      @card=Card.find($1)
+      @card.include_set_modules
+      return @card
+    end 
     name = Wagn::Cardname.unescape(id)
     card_params = params[:card] ? params[:card].clone : {}
     @card = Card.fetch_or_new(name, card_params)

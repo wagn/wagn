@@ -36,6 +36,7 @@ Feature: Watch interface
   Scenario: Watching Cardtypes
     Given Joe User is watching "Cardtype"
     When I go to card User
+    Then what
     Then In the main card footer I should see "watching Cardtype cards | watch User cards"
   
                 

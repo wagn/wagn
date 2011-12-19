@@ -628,8 +628,6 @@ class Card < ActiveRecord::Base
       User.as :wagbot  do
         card=Card[name] and !card.content.strip.empty? and card.content
       end
-#    rescue
-#      nil
     end           
 
     def path_setting(name)

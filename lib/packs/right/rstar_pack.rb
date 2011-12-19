@@ -167,7 +167,7 @@ class Wagn::Renderer::Html
              button_tag( 'Cancel', :class=>'rule-cancel-button', :type=>'button' )).html_safe
            end +
          '</div>').html_safe
-       end +
+       else ''; end +
        notice.html_safe
 
     end.html_safe

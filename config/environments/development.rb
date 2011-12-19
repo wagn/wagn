@@ -33,7 +33,7 @@ Wagn::Application.configure do
   
   # Setting a bogus directory so rails won't find public/assets in dev mode.
   # Normally you could skip that by not serving static assets, but that breaks tinymce (see above)
-  config.assets.prefix = "assWets"
+  config.assets.prefix = "dynamic-assets"
   
   #  if File.exists?(File.join(Rails.root,'tmp', 'debug.txt'))
 #    require 'ruby-debug'

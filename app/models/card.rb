@@ -118,7 +118,9 @@ class Card < ActiveRecord::Base
   # SAVING
 
   def update_attributes(args={})
-    args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type] 
+    if type = (args.delete(:type) || args.delete('type'))
+      args[:typecode] = Cardtype.classname_for(type)
+    end
     super args
   end
 
@@ -205,11 +207,6 @@ class Card < ActiveRecord::Base
     end
   end
 
-
-
-
-
-  def reset_cardtype_cache() end
 
   def pull_from_trash
     return unless key

@@ -46,7 +46,7 @@ class Mailer < ActionMailer::Base
     @subedits = subedits
     @card_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/#{card.cardname.to_url_key}"
     @change_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/card/changes/#{card.cardname.to_url_key}"
-    @unwatch_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/card/unwatch/#{watched.to_cardname.to_url_key}"
+    @unwatch_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/card/watch/#{watched.to_cardname.to_url_key}?toggle=off"
     @udpater_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/#{card.updater.card.cardname.to_url_key}"
     @watched = (watched == card.cardname ? "#{watched}" : "#{watched} cards")
 

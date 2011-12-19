@@ -581,6 +581,35 @@ class Wagn::Renderer::Html
   end
   
   
+  define_view(:denial) do |args|
+    action = params[:action]
+  
+    wrap(:denial, args) do #ENGLISH below
+      %{#{ header } 
+        <div id="denied" class="instruction open-content">
+          <h1>Ooo.  Sorry, but...</h1>
+  
+          <div>
+       #{ if User.current_user.anonymous?
+           %{You have to #{ link_to "sign in", :controller=>'account', :action=>'signin' }}
+          else
+           "You need permission"
+          end} to #{action} this card#{": <strong>#{fancy_title(card)}</strong>" if card.name && !card.name.blank? }.
+          </div>
+  
+          #{unless @skip_slot_header or @deny=='view'
+            %{<p>#{ link_to 'See permission settings', path(:options, :attrib=>'settings'), :class=>'slotter', :remote=>true  }.</p>}
+          end} #{
+  
+          if User.current_user.anonymous? && Card.new(:typecode=>'InvitationRequest').ok?(:create)
+            %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}
+          end }
+        </div>
+        #{ _render_footer  }}
+    end
+  end
+  
+  
   private
 
   def load_revisions
@@ -694,39 +723,7 @@ class Wagn::Renderer::Html
   #    end
   #  end
 
-  #  define_view(:denied) do |args|
-  #    params['type']   ||= 'Basic'   # only really need for create
-  #    params['deny']   ||= (card && !card.new_card? ? 'edit' : 'create')
-  #    skip_slot_header ||= false
-  #
-  #
-  #    wrap(:denied, args) do #ENGLISH below
-  #      %{#{ header } 
-  #        <div id="denied" class="instruction open-content">
-  #          <h1>Ooo.  Sorry, but...</h1>
-  #
-  #          <p>
-  #       #{ if User.current_user.anonymous?
-  #           %{You have to #{ link_to "sign in", :controller=>'account', :action=>'signin' }}
-  #          else
-  #           "You need permission"
-  #          end} to #{
-  #          title = card.name ? "<strong>#{fancy_title(card)}</strong>" :'this card'
-  #          raw action == :create ? "create this #{typename} card: #{title}" :
-  #              "#{action} #{title}" }
-  #          </p>
-  #
-  #          #{unless @skip_slot_header or @deny=='view'
-  #            %{<p>(See the #{ raw( link_to_action('options', :options, :controller=>'card') ) } tab to learn more.)</p>}
-  #          end} #{
-  #
-  #          if User.current_user.anonymous? && Card.new(:typecode=>'InvitationRequest').ok?(:create)
-  #            %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}
-  #          end }
-  #        </div>
-  #        #{ _render_footer  }}
-  #    end
-  #  end
+
   
 end
 

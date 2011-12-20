@@ -14,9 +14,9 @@ class Mailer < ActionMailer::Base
     @message  = message.clone
 
     mail( {
-      :recipients => "#{user.email}",
-      :from       => (Card.setting('*invite+*from') || "#{from_name} <#{from_user.email}>"), #FIXME - might want different from settings for different emails?
-      :subject      => subject
+      :to       => @email,
+      :from     => (Card.setting('*invite+*from') || "#{from_name} <#{from_user.email}>"), #FIXME - might want different from settings for different emails?
+      :subject  => subject
     } )
   end                 
   
@@ -29,8 +29,8 @@ class Mailer < ActionMailer::Base
     @url  = url_for(:host=>Wagn::Conf[:host], :controller=>'card', :action=>'show', :id=>invite_request.cardname.to_url_key)
 
     mail( {
-      :recipients => Card.setting('*request+*to'),
-      :from        => Card.setting('*request+*from') || invite_request.extension.email,
+      :to      => Card.setting('*request+*to'),
+      :from    => Card.setting('*request+*from') || invite_request.extension.email,
       :subject => "#{invite_request.name} signed up for #{@site}",
       :content_type => 'text/html',
     } )

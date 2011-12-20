@@ -51,7 +51,6 @@ class CardActionTest < ActionController::IntegrationTest
     post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"} )
     assert_response 302
     assert Card.find_by_name('Editor2').typecode == 'Cardtype'
-    assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor2')
   end
 
   def test_create                   

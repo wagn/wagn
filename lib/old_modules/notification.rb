@@ -55,8 +55,8 @@ module Notification
       author = User.current_user.card.cardname
       (card_watchers.except(author).map {|watcher| [Card[watcher].extension,self.cardname] }  +
         type_watchers.except(author).map {|watcher|
-        #Rails.logger.info "watcher #{watcher.inspect}, #{::Cardtype.name_for(self.typecode)}"
-        [cd=Card[watcher].extension,::Cardtype.name_for(self.typecode)]})
+        #Rails.logger.info "watcher #{watcher.inspect}, #{::Card.classname_for(self.typecode)}"
+        [cd=Card[watcher].extension,::Card.classname_for(self.typecode)]})
     end
     
     def card_watchers 
@@ -65,8 +65,8 @@ module Notification
     end
     
     def type_watchers
-      #Rails.logger.debug "type_watchers #{Cardtype.name_for(self.typecode).to_s+"+*watchers"}"
-      items_from("#{Cardtype.name_for(self.typecode).to_s}+*watchers" )
+      #Rails.logger.debug "type_watchers #{Card.classname_for(self.typecode).to_s+"+*watchers"}"
+      items_from("#{Card.classname_for(self.typecode).to_s}+*watchers" )
     end
     
     def items_from( name )

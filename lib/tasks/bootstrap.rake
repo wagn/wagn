@@ -1,4 +1,7 @@
 namespace :wagn do
+  require 'wagn/codename'
+  Codename = Wagn::Codename
+
   desc "(re) create a wagn database from scratch"
   task :create => :environment do
     Rake::Task['db:drop'].invoke

@@ -26,9 +26,6 @@ class XmlrestControllerTest < ActionController::TestCase
     assert assigns['card']
     assert_response 418
     assert Card.find_by_name('Editor').class.include?(Wagn::Set::Type::Cardtype)
-    # this assertion fails under autotest when running the whole suite,
-    # passes under rake test.
-    # assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
   end
 
 =begin

@@ -13,6 +13,10 @@ end
 
 
 describe Card, ".create_these" do
+  before do
+    User.as :joe_user
+  end
+
   it 'should create basic cards given name and content' do 
     Card.create_these "testing_name" => "testing_content" 
     Card["testing_name"].content.should == "testing_content"
@@ -131,27 +135,35 @@ describe Card, "types" do
     ct = Card.create! :name=>"AFoo", :type=>'Cardtype'
     ct.typecode.should == 'Cardtype'
     ct = Card.fetch('AFoo')
-    ct.extension.class_name.should == 'AFoo'
+    Card.classname_for(ct.name).should == 'AFoo'
+    Wagn::Codename.insert(ct.id, Card.classname_for(ct.name))
+
     ct.update_attributes! :name=>"FooRenamed", :confirm_rename=>true
-    Card.fetch('FooRenamed').typecode.should == 'Cardtype'
-    Card.fetch('FooRenamed').extension.class_name.should == 'AFoo'
+    (ct=Card.fetch('FooRenamed')).typecode.should == 'Cardtype'
+    # now the classname changes if it doesn't have a codename in the table
+    Card.classname_for(ct.name).should == 'AFoo'
    
-    Cardtype.cache.reset
+    #Cardtype.cache.reset
     Card.create!(:type=>"FooRenamed",:name=>"testy").typecode.should == 'AFoo'
     Card.create!(:type=>"foo_renamed",:name=>"so testy").typecode.should == 'AFoo'
   end
   it "should accept classname as typecode" do
     ct = Card.create! :name=>"BFoo", :type=>'Cardtype'
+    Wagn::Codename.insert(ct.id, Card.classname_for(ct.name))
+
     ct.update_attributes! :name=>"BFooRenamed"
-    ct.extension.class_name.should == 'BFoo'
+    # give it a codename entry
+    # now the classname changes if it doesn't have a codename in the table
+    Card.classname_for(ct.name).should == 'BFoo'
     Card.create!(:typecode=>"BFoo",:name=>"testy").typecode.should == 'BFoo'
   end
   
   it "should accept cardtype name first when both are present" do
     ct = Card.create! :name=>"CFoo", :type=>'Cardtype'
+    Wagn::Codename.insert(ct.id, Card.classname_for(ct.name))
     ct.update_attributes! :name=>"CFooRenamed"
     Card.create! :name=>"CFoo", :type=>'Cardtype'
-    Card.create!(:type=>"CFoo",:name=>"testy").typecode.should == 'CFoo1'
+    Card.create!(:type=>"CFoo",:name=>"testy").typecode.should_not == 'CFoo'
   end
   
   it "should raise a validation error if a bogus type is given" do

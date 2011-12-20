@@ -135,7 +135,6 @@ GEM
     rdoc (3.12)
       json (~> 1.4)
     recaptcha (0.3.4)
-    rmagick (2.13.1)
     rspec (2.7.0)
       rspec-core (~> 2.7.0)
       rspec-expectations (~> 2.7.0)
@@ -218,7 +217,6 @@ DEPENDENCIES
   rails-dev-tweaks (~> 0.5.1)
   rdoc
   recaptcha (~> 0.3.4)
-  rmagick (~> 2.13.1)
   rspec-rails (~> 2.6)
   ruby-debug19
   ruby-prof

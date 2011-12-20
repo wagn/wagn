@@ -42,7 +42,7 @@ class TransclusionTest < ActiveSupport::TestCase
 
   def test_template_transclusion
      age, template = newcard('age'), Card['*template']
-     specialtype = Card::Cardtype.create :name=>'SpecialType'
+     specialtype = Card.create :typecode=>'Cardtype', :name=>'SpecialType'
 
      specialtype_template = specialtype.connect template, "{{#{JOINT}age}}" 
      assert_equal "{{#{JOINT}age}}", render_test_card(specialtype_template)

@@ -27,13 +27,13 @@ describe "Card (Cardtype)" do
     Card.create! :name=>'County', :type=>'Cardtype'
     c = Card.find_by_name('County')
     c.destroy
-    Cardtype.find_by_class_name('County').should == nil
+    Card.find_by_typecode('County').should == nil
   end
   
   it "cardtype creation and dynamic cardtype" do
     assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).typecode == 'Cardtype'
-    assert_instance_of Cardtype, Card.fetch("BananaPudding").extension
-    assert_instance_of Cardtype, Cardtype.find_by_class_name("BananaPudding")    
+    assert_instance_of Card, c=Card.fetch("BananaPudding")
+    assert c.typecode == "BananaPudding"
     # you have to have a module to include or it's just a Basic (typecode fielde excepted)
     #assert_instance_of Card::BananaPudding, Card::BananaPudding.create( :name=>"figgy" )
   end
@@ -47,10 +47,11 @@ describe "Card (Cardtype)" do
     it "creates cardtype model and permission" do
       @card.typecode = 'Cardtype'
       @card.save!
-      @card.extension.class_name.should == 'Cookie'
-      Cardtype.name_for('Cookie').should == 'Cookie'
+      @card.typecode.should == 'Cookie'
+      Card.classname_for('Cookie').should == 'Cookie'
       @card=Card['Cookie']
-      assert_instance_of Cardtype, @card.extension
+      assert_instance_of Card, @card
+      @card.typecode.should == "Cookie"
       assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).typecode
     end
   end
@@ -65,16 +66,16 @@ end
 
 
 
-describe Card, "codename_generation" do
+describe Card, "classname_validation" do
   it "should create valid classnames" do
-    Card.generate_codename_for("$SBJgg%%od").should == "SBJggOd"
+    Card.classname_for("$SBJgg%%od").should == "SBJggOd"
   end
   
   it "should create incremented classnames when first choice is taken" do
-    Card.generate_codename_for("User").should == "User1"
-    Card.generate_codename_for("Basic").should == "Basic1"
-    Card.generate_codename_for("Novelicious").should == "Novelicious"
-#    Card.generate_codename_for('Process').should == 'Process1'
+    #Card.classname_for("User").should thow an error
+    #Card.classname_for("Basic").should thow an error
+    Card.classname_for("Novelicious").should == "Novelicious"
+#    Card.classname_for('Process').should == 'Process1'
   end
 end                  
 
@@ -93,7 +94,7 @@ describe Card, "created without permission" do
   it "should not create a new cardtype until saved" do
     lambda {
       Card.new( :name=>'foo', :type=>'Cardtype')
-    }.should_not change(Cardtype, :count) 
+    }.should_not change(Card, :count) 
   end
 end
 
@@ -174,8 +175,8 @@ describe User, "Joe User" do
 
     User.as :joe_user
     @user = User[:joe_user]
-    Cardtype.cache.reset
-    @typenames = Cardtype.createable_types.map{ |ct| ct[:name] }
+    #Cardtype.cache.reset
+    @typenames = Card.createable_types.map{ |ct| ct[:name] }
   end
 
   it "should not have r3 permissions" do
@@ -185,9 +186,11 @@ describe User, "Joe User" do
     Card.new(:type=>'Cardtype F').ok?(:create).should be_false
   end
   it "should not find Cardtype F on its list of createable cardtypes" do
+    #pending "createable_types"
     @typenames.member?('Cardtype F').should be_false
   end
   it "should find Basic on its list of createable cardtypes" do
+    #pending "createable_types"
     @typenames.member?('Basic').should be_true
   end
   

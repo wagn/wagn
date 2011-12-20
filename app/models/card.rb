@@ -74,8 +74,9 @@ class Card < ActiveRecord::Base
   def get_typecode(typename=nil)
     if typename
       begin
-        return Cardtype.classname_for(typename)
-      rescue
+        return Card.classname_for(typename)
+      rescue Exception => e
+        warn "exception #{e.inspect}, #{e.backtrace*"\n"}"
         @broken_type = typename
       end
     end
@@ -112,13 +113,54 @@ class Card < ActiveRecord::Base
       # eg, this was failing in 2.3.11 on typecode "Task"
       Rails.logger.info "failed to include #{typecode}: #{e.message}"
     end
+
+    def classname_for(name)
+      Wagn::Codename.codename(name.to_cardname.key) ||
+        name.to_s.gsub(/^\W+|\W+$/,'').gsub(/\W+/,'_').camelize
+    end
+
+    def create_ok?( codename )
+      Card.new( :typecode=>codename).ok? :create
+    end
+
+    def create_these( *args )
+      definitions = args.size > 1 ? args : (args.first.inject([]) {|a,p| a.push({p.first=>p.last}); a })
+      #warn "create_these #{args.inspect}"
+      definitions.map do |input|
+        input.map do |key, content|
+          type, name = (key =~ /\:/ ? key.split(':') : ['Basic',key])
+          #warn "create_these #{key}, #{type}, #{name}, #{content}"
+          Card.create! :name=>name, :type=>type, :content=>content 
+        end
+      end.flatten
+    end
+
+    NON_CREATEABLE = %w{InvitationRequest Setting Set}
+
+    def load_createable
+      createable = Card.connection.select_all(%{
+           select cn.codename, c.name
+             from cards c
+             left outer join codename cn
+               on c.id=cn.card_id and c.typecode ='Cardtype'    
+            where c.trash is false order by c.name})         do |rec|
+          !NON_CREATEABLE.member?((h = rec.symbolize_keys)[:codename]) && h
+        end.compact
+      self.cache.write 'type_data/createable', createable
+    end
+
+    def createable_types  
+      createable = self.cache.read 'type_data/createable'
+      createable = load_createable if createable.empty?
+      createable.map { |h| create_ok?(h[:codename]) && h }.compact
+    end   
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING
 
   def update_attributes(args={})
-    args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type] 
+    args[:typecode] = Card.classname_for(args.delete(:type)) if args[:type] 
     super args
   end
 
@@ -135,9 +177,6 @@ class Card < ActiveRecord::Base
     @from_trash = false
     Wagn::Hook.call :after_create, self if @was_new_card
     send_notifications
-    if self.typecode == 'Cardtype'
-      Cardtype.cache.reset
-    end
     true
   end
 
@@ -207,9 +246,6 @@ class Card < ActiveRecord::Base
 
 
 
-
-
-  def reset_cardtype_cache() end
 
   def pull_from_trash
     return unless key
@@ -353,14 +389,14 @@ class Card < ActiveRecord::Base
   # TYPE
 
   def type_card
-    ct = ::Cardtype.find_by_class_name( self.typecode )
-    raise("Error in #{self.name}: No cardtype for #{self.typecode}")  unless ct
-    ct.card
+    #raise("Error in #{self.name}: No cardtype for #{self.typecode}")  unless ct
+    r=Card[ct = Card.classname_for( self.typecode )]
+    warn "no cardtype ??? #{self.typecode}" unless r; r
   end
   
-  def typename() typecode and Cardtype.name_for( typecode ) or 'Basic' end
+  def typename() typecode and Card.classname_for( typecode ) end
   def type=(typename)
-    self.typecode = Cardtype.classname_for(typename) 
+    self.typecode = Card.classname_for(typename) 
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

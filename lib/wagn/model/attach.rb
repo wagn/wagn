@@ -74,7 +74,7 @@ module Wagn::Model::Attach
       "#{self.key.gsub('*','X').camelize}#{File.extname(at.original_filename)}"
     #warn "before_post_attach #{attach_file_name}, #{attach_content_type}"
 
-    'Image' == (typecode || Cardtype.classname_for( @type_args[:type] ) )
+    'Image' == (typecode || Card.classname_for( @type_args[:type] ) )
     # returning true enables thumnail creation
   end
 

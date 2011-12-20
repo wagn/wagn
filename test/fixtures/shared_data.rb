@@ -40,7 +40,7 @@ class SharedData
     user_card = Card.create! :typecode=>'User', :name=>"Sample User", :extension=>user_user    
 
     request_card = Card.create! :typecode=>'InvitationRequest', :name=>"Sample InvitationRequest" #, :email=>"invitation@request.com"  
-    Cardtype.find(:all).each do |ct|
+    Card.createable_types.each do |ct|
       next if ['User','InvitationRequest','Set'].include? ct.codename
       Card.create! :type=>ct.codename, :name=>"Sample #{ct.codename}"
     end

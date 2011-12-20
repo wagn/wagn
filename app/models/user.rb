@@ -33,12 +33,15 @@ class User < ActiveRecord::Base
   
   class << self
     def current_user
+      #warn "cu #{@@current_user}"
       @@current_user ||= User[:anon]  
     end
 
     def current_user=(user)
+      #warn "cu=(#{user}) #{@@current_user}, #{@@as_user}"
       @@as_user = nil
       @@current_user = user.class==User ? User[user.id] : User[user]
+      #warn "cu= #{@@current_user}, #{@@as_user}"; @@current_user
     end
    
     def inspect() "#{@@current_user&&@@current_user.login}:#{as_user&&as_user.login}" end

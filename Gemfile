@@ -53,8 +53,8 @@ group :test do
   gem 'timecop'                                # not clear on use/need.  referred to in shared_data.rb
   gem 'spork'                                  #
                                                
-  gem 'email_spec'                             # using?
-  gem 'database_cleaner', '~>0.7.0'                      # using?
+  gem 'email_spec'                             # 
+  gem 'database_cleaner', '~>0.7.0'            # used by cucumber for db transactions
   
   gem 'turn', "<0.8.3", :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
   

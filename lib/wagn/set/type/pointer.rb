@@ -52,7 +52,7 @@ module Wagn::Set::Type::Pointer
   end
 
   def option_text(option)
-    name = setting('option label') || 'description'
+    name = self.rule('option label') || 'description'
     textcard = Card["#{option}+#{name}"]
     textcard ? textcard.content : nil
   end

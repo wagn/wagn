@@ -2,14 +2,13 @@
 Feature: Pointer Inputs
   In order to offer a more user friendly interface
   Users should be able to use different input methods for pointers
-
+  
   Background:
     Given I log in as Joe Admin
     And I create Pointer card "friends+*right+*default"
     And I create Search card "friends+*right+*options" with content "{"type":"User"}"
- 
 
-  Scenario: Creating a card with select input
+  Scenario: Creating a card with select input  
     Given I create Phrase card "friends+*right+*input" with content "select"
     When I go to card "Joe User+friends"
     And I select "Joe Camel" from "pointer_select"

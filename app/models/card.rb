@@ -305,10 +305,7 @@ class Card < ActiveRecord::Base
 
   def dependents(*args)
     jcts = junctions(*args)
-    #raise "Includes self #{name}" if jcts.include?(self)
-    Rails.logger.warn "dependents include self #{name}" if jcts.include?(self)
     jcts.delete(self) if jcts.include?(self)
-    Rails.logger.info "dependents[#{name}](#{args.inspect}): #{jcts.inspect}"
     return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.
     jcts.map { |r| [r ] + r.dependents(*args) }.flatten
   end

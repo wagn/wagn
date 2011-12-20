@@ -191,14 +191,14 @@ class User < ActiveRecord::Base
     @read_rule_ids
   end
   
-  def save_with_card(card)
+  def save_with_card(c)
     #Rails.logger.info "save with card #{card.inspect}, #{self.inspect}"
     User.transaction do
       save
-      card = card.refresh if card.frozen?
-      card.extension = self
-      card.save
-      card.errors.each do |key,err|
+      c = c.refresh if c.frozen?
+      c.extension = self
+      c.save
+      c.errors.each do |key,err|
         next if key=='extension'
         self.errors.add key,err
       end
@@ -209,12 +209,14 @@ class User < ActiveRecord::Base
   end
       
   def accept(email_args)
-    User.as :wagbot  do #what permissions does approver lack?  Should we check for them?
-      card.typecode = 'User'  # change from Invite Request -> User
+    User.as :wagbot do #what permissions does approver lack?  Should we check for them?
+      c = card
+      c = c.refresh if c.frozen?
+      c.typecode = 'User'  # change from Invite Request -> User
       self.status='active'
       self.invite_sender = ::User.current_user
       generate_password
-      save_with_card(card)
+      save_with_card(c)
     end
     #card.save #hack to make it so last editor is current user.
     self.send_account_info(email_args) if self.errors.empty?

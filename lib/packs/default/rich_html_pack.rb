@@ -91,7 +91,7 @@ class Wagn::Renderer::Html
           New #{ card.typecode == 'Basic' && '' || card.typename } Card
         </h1>
         #{ new_instruction }
-        #{ new_content :cancel_href=>previous_location, :cancel_class=>'redirecter' }
+        #{ new_content :cancel_href=>Card.path_setting('/*previous'), :cancel_class=>'redirecter' }
       }
     end
   end

@@ -202,10 +202,7 @@ class User < ActiveRecord::Base
         next if key=='extension'
         self.errors.add key,err
       end
-      raise ActiveRecord::RecordInvalid.new(self) if !self.errors.empty?
     end
-#  rescue
-#    Rails.logger.info "save with card failed.  #{card.inspect}"
   end
       
   def accept(email_args)

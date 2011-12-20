@@ -8,9 +8,7 @@ module LocationHelper
   #
   # we keep a history stack so that in the case of card removal
   # we can crawl back up to the last un-removed location
-  #
-  # a card may be on the location stack multiple times, especially if
-  # you had to confirm before removing.
+
   #
   def location_history
 #    warn "sess #{session.class}, #{session.object_id}"
@@ -22,8 +20,9 @@ module LocationHelper
   end
 
   def save_location
-    location_history.push(request.fullpath)
-    @previous_location = nil
+    discard_locations_for(@card)
+    @previous_location = card_path(@card)
+    location_history.push @previous_location
   end
 
   def previous_location
@@ -32,11 +31,16 @@ module LocationHelper
 
   def discard_locations_for(card)
     # quoting necessary because cards have things like "+*" in the names..
-    pattern = /#{Regexp.quote(card.id.to_s)}|#{Regexp.quote(card.cardname.to_url_key)}|#{Regexp.quote(card.name)}/
-    while location_history.last =~ pattern
-      location_history.pop
-    end
+    session[:history] = location_history.reject do |loc|
+      if url_key = url_key_for_location(loc)
+        url_key.to_cardname.key == card.key
+      end
+    end.compact
     @previous_location = nil
+  end
+  
+  def url_key_for_location(location)
+    location.match( /\/([^\/]*$)/ ) ? $1 : nil
   end
 
    # -----------( urls and redirects from application.rb) ----------------
@@ -54,11 +58,11 @@ module LocationHelper
     Wagn::Conf[:root_path] + "/#{title.to_cardname.to_url_key}#{format}#{vars}"
   end
 
-  def card_path( card )
+  def card_path( card ) #should be in cardname
     Wagn::Conf[:root_path] + "/#{card.cardname.to_url_key}"
   end
 
-  def card_url( card )
+  def card_url( card ) #should be in cardname
     Wagn::Conf[:base_url] + card_path(card)
   end
 

@@ -175,7 +175,7 @@ describe User, "Joe User" do
     User.as :joe_user
     @user = User[:joe_user]
     Cardtype.cache.reset
-    @typenames = Cardtype.createable_types.map{ |ct| ct[:name] }
+    @typenames = Card.createable_types.map{ |ct| ct[:name] }
   end
 
   it "should not have r3 permissions" do

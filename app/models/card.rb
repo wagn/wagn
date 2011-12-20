@@ -23,7 +23,7 @@ class Card < ActiveRecord::Base
 
   before_save :base_before_save, :set_read_rule, :set_tracked_attributes, :set_extensions
   after_save :base_after_save, :update_ruled_cards
-  cache_attributes('name', 'typecode')
+  cache_attributes('name', 'type_id')
 
   @@junk_args = %w{ missing skip_virtual id }
 
@@ -40,9 +40,10 @@ class Card < ActiveRecord::Base
           cc.type_args                                      and
           args['type']          == cc.type_args[:type]      and
           args['typecode']      == cc.type_args[:typecode]  and
+          args['type_id']       == cc.type_args[:type_id]   and
           args['loaded_trunk']  == cc.loaded_trunk
           
-        args['typecode'] = cc.typecode
+        args['type_id'] = cc.type_id
         return cc.send( :initialize, args )
       end
     end
@@ -51,14 +52,21 @@ class Card < ActiveRecord::Base
 
   def initialize(args={})
     args['name'] = args['name'].to_s  
-    @type_args = { :type=>args.delete('type'), :typecode=>args['typecode'] }
+    if tc=args.delete('typecode')
+      args['type_id'] = Card.type_id_from_code(tc)
+    end
+    @type_args = { :type=>args.delete('type'), :typecode=>tc, :type_id=>args['type_id'] }
     skip_modules = args.delete 'skip_modules'
-    
+
+    #warn "card#initialize #{args.inspect}" #\n#{caller*"\n"}"
     super args
     
-    if !args['typecode']
-      self.typecode_without_tracking = get_typecode(@type_args[:type]) 
+    if tid=get_type_id(@type_args) 
+      self.type_id_without_tracking = tid
+      #warn "got type_id #{type_id}, #{typecode}"
     end
+    self.typecode = Card.typecode_from_id(type_id)
+    #warn "got typecode #{type_id}, #{typecode}"
     
     include_set_modules unless skip_modules    
     self
@@ -70,23 +78,6 @@ class Card < ActiveRecord::Base
   def reset_mods() @set_mods_loaded=false end
 
 #private
-
-  def get_typecode(typename=nil)
-    if typename
-      begin
-        return Cardtype.classname_for(typename)
-      rescue
-        @broken_type = typename
-      end
-    end
-
-    if name && t=template
-      reset_patterns
-      t.typecode
-    else
-      'Basic'
-    end
-  end
 
   def include_set_modules
     unless @set_mods_loaded
@@ -112,14 +103,132 @@ class Card < ActiveRecord::Base
       # eg, this was failing in 2.3.11 on typecode "Task"
       Rails.logger.info "failed to include #{typecode}: #{e.message}"
     end
+
+    NON_CREATEABLE = %w{InvitationRequest Setting Set}
+
+    def load_createable
+      createable = Card.connection.select_all(%{
+           select ct.class_name as codename, c.name, c.id
+             from cards c
+             left outer join cardtypes ct
+               on c.typecode=ct.class_name and c.typecode ='Cardtype'    
+            where c.trash is false order by c.name}
+           ).map(&:symbolize_keys).compact
+
+      typecode2id = {}
+      typename2id = {}
+      typeid2name = {}
+      typeid2code = {}
+      createable.each {|h|
+        id, codename, name = h.delete(:id).to_i, h[:codename], h[:name]
+        typecode2id[codename] = typename2id[name] = id
+        typeid2name[id]=name
+        typeid2code[id]=codename
+      }
+          
+      self.cache.write 'type_data/typeid2name', typeid2name
+      self.cache.write 'type_data/typeid2code', typeid2code
+      self.cache.write 'type_data/typecode2id', typecode2id
+      self.cache.write 'type_data/typename2id', typename2id
+      self.cache.write 'type_data/createable', createable
+    end
+
+    def createable_types  
+      createable = self.cache.read 'type_data/createable'
+      createable = load_createable if createable.empty?
+      createable.map { |h|
+        !NON_CREATEABLE.member?(h[:codename]) && create_ok?(h[:codename]) && h
+      }.compact
+    end   
+
+    def create_ok?( codename )
+      new( :typecode=>codename).ok? :create
+    end
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # TYPE
+
+    def type_id_from_name(name)
+      typename2id = self.cache.read 'type_data/typename2id'
+      unless typename2id
+        load_createable
+        typename2id = self.cache.read 'type_data/typename2id'
+      end
+      #warn "type_id_from_name(#{name}) #{typename2id[name]}"
+      typename2id[name]
+    end
+
+    def type_id_from_code(code)
+      typecode2id = self.cache.read 'type_data/typecode2id'
+      unless typecode2id
+        load_createable
+        typecode2id = self.cache.read 'type_data/typecode2id'
+      end
+      #warn "type_id_from_code(#{code}) #{typecode2id[code]}"
+      typecode2id[code]
+    end
+
+    def typename_from_id(id)
+      typeid2name = self.cache.read 'type_data/typeid2name'
+      unless typeid2name
+        load_createable
+        typeid2name = self.cache.read 'type_data/typeid2name'
+      end
+      typeid2name[id]
+    end
+
+    def typecode_from_id(id)
+      typeid2name = self.cache.read 'type_data/typeid2name'
+      unless typeid2name
+        load_createable
+        typeid2name = self.cache.read 'type_data/typeid2name'
+      end
+      typeid2name[id]
+    end
   end
 
+  def get_type_id(type_args={})
+
+    #warn "get_type_id(#{type_args.inspect})"
+    ti, tc, tp = type_args[:type_id], type_args[:typecode], type_args[:type]
+    return if ti
+    if tc || tp
+      #warn "get_type_id bf[#{ti}, #{tc}, #{tp}]"
+      unless (tc && ti=Card.type_id_from_code(tc)) ||
+             (tp && ti=Card.type_id_from_name(tp))
+        @broken_type=tp||tc||"Basic"
+        #warn "get_type_id bt[#{@broken_type}], #{ti}"
+      end
+      #warn "get_type_id return[#{ti}] #{ti||3}"
+      return ti || 3 #DEFAULT_TYPE_ID
+    end
+
+    #warn "get_type_id returns #{type_id}"
+    if name && t=template
+      reset_patterns
+      ti = t.type_id
+    end
+    #raise "NoType" if tc == '$NoType' || type_id==0
+    #warn "get_type_id returns #{type_id||3}"
+    ti|| 3 # DEFAULT_TYPE_ID # 'Basic'
+  end
+
+  def typename() type_id and Card.typename_from_id( typecode ) or 'Basic' end
+  def type=(typename)
+    self.type_id = Card.type_id_from_name(typename) 
+    self.typecode = Card.type_id_from_name(typename) 
+  end
+
+  def type_card
+    Card[typename] || raise("Error in #{self.name}: Failed type #{self.type_id}")
+  end
+  
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING
 
   def update_attributes(args={})
     if type = (args.delete(:type) || args.delete('type'))
-      args[:typecode] = Cardtype.classname_for(type)
+      args[:type_id] = Card.type_id_from_name(type)
     end
     super args
   end
@@ -137,7 +246,7 @@ class Card < ActiveRecord::Base
     @from_trash = false
     Wagn::Hook.call :after_create, self if @was_new_card
     send_notifications
-    if self.typecode == 'Cardtype'
+    if self.type_id == 5 #CARDTYPE_TYPE_ID 'Cardtype'
       Cardtype.cache.reset
     end
     true
@@ -196,6 +305,7 @@ class Card < ActiveRecord::Base
   def run_checked_save(method)#, *args)
     if approved?
       begin
+        raise "run_checked_save #{method}, tc:#{typecode.inspect}, #{type_id.inspect}" if typecode.nil? || type_id.nil?
         self.send(method)
       rescue Exception => e
         cardname.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_cardname.key)}
@@ -344,30 +454,6 @@ class Card < ActiveRecord::Base
 
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # TYPE
-
-  def type_card
-    ct = ::Cardtype.find_by_class_name( self.typecode )
-    raise("Error in #{self.name}: No cardtype for #{self.typecode}")  unless ct
-    ct.card
-  end
-  
-  def self.typecode_from_id
-  end
-
-  def typecode_with_id
-    tc=typecode_from_id(type_id)
-    warn "typecode? #{tc} :: #{typecode_without_id}" unless tc == typecode_without_id
-    tc
-  end
-  alias_method_chain :typecode, :id
-
-  def typename() typecode and Cardtype.name_for( typecode ) or 'Basic' end
-  def type=(typename)
-    self.typecode = Cardtype.classname_for(typename) 
-  end
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CONTENT / REVISIONS
 
   def content
@@ -441,7 +527,7 @@ class Card < ActiveRecord::Base
   # MISCELLANEOUS
   
   def to_s()  "#<#{self.class.name}[#{self.typename.to_s}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{n:#{new_card?}v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}:r:#{current_revision_id}}:#{@set_names.inspect}>" end
+  def inspect()  "#<#{self.class.name}[#{self.type_id}]#{self.name}{n:#{new_card?}v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}:r:#{current_revision_id}}:#{@set_names.inspect}>" end
   def mocha_inspect()     to_s                                   end
 
 #  def trash
@@ -463,7 +549,7 @@ class Card < ActiveRecord::Base
   # Because of the way it chains methods, 'tracks' needs to come after
   # all the basic method definitions, and validations have to come after
   # that because they depend on some of the tracking methods.
-  tracks :name, :typecode, :content, :comment
+  tracks :name, :type_id, :content, :comment
 
   # this method piggybacks on the name tracking method and
   # must therefore be defined after the #tracks call
@@ -592,26 +678,27 @@ class Card < ActiveRecord::Base
     end
   end
 
-  validates_each :typecode do |rec, attr, value|
+  validates_each :type_id do |rec, attr, value|
     # validate on update
-    if rec.updates.for?(:typecode) and !rec.new_card?
+    if rec.updates.for?(:type_id) and !rec.new_card?
       if !rec.validate_type_change
         rec.errors.add :type, "of #{rec.name} can't be changed; errors changing from #{rec.typename}"        
       end
-      if c = Card.new(:name=>'*validation dummy', :typecode=>value, :content=>'') and !c.valid?
+      if c = Card.new(:name=>'*validation dummy', :type_id=>value, :content=>'') and !c.valid?
         rec.errors.add :type, "of #{rec.name } can't be changed; errors creating new #{value}: #{c.errors.full_messages.join(', ')}"
       end      
     end
 
     # validate on update and create
-    if rec.updates.for?(:typecode) or rec.new_record?
+    if rec.updates.for?(:type_id) or rec.new_record?
       # invalid type recorded on create
       if rec.broken_type
         rec.errors.add :type, "won't work.  There's no cardtype named '#{rec.broken_type}'"
       end
       # invalid to change type when type is hard_templated
       if (rt = rec.right_template and rt.hard_template? and 
-        value!=rt.typecode and !rec.allow_type_change)
+        value != Card.type_id_from_name(rt.typename) and !rec.allow_type_change)
+        warn "Type can't be changed because #{rec.name} is hard tag templated to #{rt.typename}: #{rt.type_id}, #{value}" # note rt.type_id is nil here?
         rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rt.typename}"
       end        
     end

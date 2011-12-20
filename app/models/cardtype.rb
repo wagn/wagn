@@ -59,18 +59,6 @@ class Cardtype < ActiveRecord::Base
       self.cache.read('class_names')[card_name.to_key] || raise("No class name for cardtype name #{card_name.to_s}") 
     end
     
-    def createable_types  
-      load_cache_if_empty
-      self.cache.read('card_names').collect do |codename,card_name|
-        next if ['InvitationRequest','Setting','Set'].include?(codename)
-        next unless create_ok?(codename)
-        { :codename=>codename, :name=>card_name }
-      end.compact.sort_by {|x| x[:name].to_s.downcase }
-    end   
-    
-    def create_ok?( codename )
-      Card.new( :typecode=>codename).ok? :create
-    end
   end        
   
   def codename

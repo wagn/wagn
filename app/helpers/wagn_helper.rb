@@ -95,7 +95,7 @@ module WagnHelper
 
   ## ----- for Linkers ------------------
   def typecode_options
-    Cardtype.createable_types.map do |type|
+    Card.createable_types.map do |type|
       [type[:name], type[:name]]
     end.compact
   end

@@ -151,7 +151,7 @@ module Wagn::Model::Permissions
     end
   end
   
-  def approve_typecode
+  def approve_type_id
     case
     when !typename
       deny_because("No such type")

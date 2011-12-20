@@ -68,6 +68,7 @@ class Card::BaseTest < ActiveSupport::TestCase
   test 'update_should_create_subcards' do
     User.current_user = :joe_user
     User.as(:joe_user) do
+      warn "tesing create card Banana"
       b = Card.create!( :name=>'Banana' )
       Card.update(b.id, :cards=>{ "+peel" => { :content => "yellow" }})
       assert_equal "yellow", Card["Banana+peel"].content   

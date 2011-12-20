@@ -24,10 +24,11 @@ module Wagn::Model::Fetch
       needs_caching = !Card.cache.nil? && card.nil?
       card ||= find_by_key_and_trash( cardname.key, false )
       
-      if card.nil? || (!opts[:skip_virtual] && card.typecode=='$NoType')
+      if card.nil? || (!opts[:skip_virtual] && card.type_id==0)
         # The $NoType typecode allows us to skip all the type lookup and flag the need for reinitialization later
         needs_caching = !Card.cache.nil?
-        card = new :name=>cardname, :skip_modules=>true, :typecode=>( opts[:skip_virtual] ? '$NoType' : '' )
+        #warn "fetch opts #{cardname}, #{opts.inspect}" if opts[:skip_virtual]
+        card = new (opts[:skip_virtual] ? {:type_id=>0} : {}).merge(:name=>cardname, :skip_modules=>true)
       end
       
       Card.cache.write( cardname.key, card ) if needs_caching

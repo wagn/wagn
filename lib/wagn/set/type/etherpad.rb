@@ -6,7 +6,7 @@ module Wagn::Set::Type::Etherpad
 
   # This needs to be part of configs
   PAD_DEFAULTS = {
-    :url              => 'http://brain/epad/p/'
+    :url              => 'http://brain.private.com/epad/p/',
     :apiurl           => '/api/1/',
     :showControls     => true,
     :showChat         => false,
@@ -20,9 +20,10 @@ module Wagn::Set::Type::Etherpad
   end
 
   def get_pad_options(params={})
-    pad_options = setting('*pad_options') || {}
+    pad_options = rule('*pad_options') || {}
     warn(Rails.logger.debug "get_pad_options #{params.inspect}, #{pad_options}")
-    pad_options = PAD_DEFAULTS.merge JSON.parse(pad_options).symbolize_keys
+    pad_options = pad_options.blank? ? PAD_DEFAULTS :
+         PAD_DEFAULTS.merge(JSON.parse(pad_options).symbolize_keys)
     pad_options.merge params.symbolize_keys
   end
   

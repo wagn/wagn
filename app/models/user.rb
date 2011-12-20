@@ -48,7 +48,6 @@ class User < ActiveRecord::Base
       @@as_user = given_user.class==User ? User[given_user.id] : User[given_user]
       self.current_user = @@as_user if @@current_user.nil?
       
-      #warn "\nas called: @@as_user = #{@@as_user.inspect}\n"
       if block_given?
         value = yield
         @@as_user = tmp_user
@@ -59,7 +58,6 @@ class User < ActiveRecord::Base
     end
     
     def as_user
-      #warn "\nas_user called: @@as_user = #{@@as_user.inspect}\n"
       @@as_user || self.current_user
     end
       
@@ -197,6 +195,7 @@ class User < ActiveRecord::Base
     #Rails.logger.info "save with card #{card.inspect}, #{self.inspect}"
     User.transaction do
       save
+      card = card.refresh if card.frozen?
       card.extension = self
       card.save
       card.errors.each do |key,err|
@@ -205,8 +204,8 @@ class User < ActiveRecord::Base
       end
       raise ActiveRecord::RecordInvalid.new(self) if !self.errors.empty?
     end
-  rescue
-    Rails.logger.info "save with card failed.  #{card.inspect}"
+#  rescue
+#    Rails.logger.info "save with card failed.  #{card.inspect}"
   end
       
   def accept(email_args)

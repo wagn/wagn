@@ -151,7 +151,7 @@ class Card < ActiveRecord::Base
       sub_name = sub_name.gsub('~plus~','+')
       absolute_name = cardname.to_absolute_name(sub_name)
       if card = Card[absolute_name]
-        card = card.refresh
+        card = card.refresh if card.frozen?
         card.update_attributes(opts)
       elsif opts[:content].present? and opts[:content].strip.present?
         opts[:name] = absolute_name
@@ -577,7 +577,7 @@ class Card < ActiveRecord::Base
   end
 
   validates_each :current_revision_id do |rec, attrib, value|
-    if rec.current_revision_id_changed? && value.to_i != rec.current_revision_id_was
+    if !rec.new_card? && rec.current_revision_id_changed? && value.to_i != rec.current_revision_id_was.to_i
       rec.current_revision_id = rec.current_revision_id_was
       rec.errors.add :conflict, "changes not based on latest revision"
       rec.error_view = :conflict

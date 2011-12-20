@@ -15,9 +15,9 @@ class AccountController < ApplicationController
 
     return unless request.post?
 
-    render_user_errors unless @user.errors.empty?
+    render_user_errors if @user.errors.any?
     @user, @card = User.create_with_card( user_args, card_args )
-    render_user_errors unless @user.errors.empty?
+    render_user_errors if @user.errors.any?
 
     if User.ok?(:create_accounts)       #complete the signup now
       email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!",  #ENGLISH

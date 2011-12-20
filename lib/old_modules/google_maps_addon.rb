@@ -19,7 +19,7 @@ end
 class Card
   after_save :update_geocode
   
-  def update_geocode 
+  def update_geocode
     User.as :wagbot do
       if conf = Card['*geocode']
         if self.junction? && conf.item_names.include?( self.cardname.tag_name )

@@ -570,11 +570,7 @@ class Wagn::Renderer::Html
       if card.typecode == "Cardtype"
         (card.type_watchers.include?(@me) ? "#{watching_type_cards} | " : "") +  watch_unwatch
       else
-        if card.type_watchers.include?(@me) 
-          "watching #{link_to_page Cardtype.name_for(card.typecode)} cards"
-        else
-          watch_unwatch
-        end
+        card.type_watchers.include?(@me)  ? watching_type_cards : watch_unwatch
       end      
     end
   end
@@ -610,6 +606,25 @@ class Wagn::Renderer::Html
   
   
   private
+
+  def watching_type_cards
+    "watching #{link_to_page(Cardtype.name_for(card.typecode))} cards"      # can I parse this and get the link to happen? that wud r@wk.
+  end
+
+  def watch_unwatch      
+    type_link = (card.typecode == "Cardtype") ? " #{card.name} cards" : ""
+    type_msg = (card.typecode == "Cardtype") ? " cards" : ""    
+
+    if card.card_watchers.include?(@me) or card.typecode != 'Cardtype' && card.watchers.include?(@me)
+      text, toggle, title = "unwatch", :off, "stop getting emails about changes to"
+    else
+      text, toggle, title = "watch", :on, "get emails about changes to"
+    end
+    
+    link_to "#{text}#{type_link}", path(:watch, :toggle=>toggle), :class=>'watch-toggle slotter',
+      :title=>"#{title} #{card.name}#{type_msg}", :remote=>true, :method=>'post'
+    
+  end
 
   def load_revisions
     @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i
@@ -690,20 +705,6 @@ class Wagn::Renderer::Html
   end
 
 
-  def watch_unwatch      
-    type_link = (card.typecode == "Cardtype") ? " #{card.name} cards" : ""
-    type_msg = (card.typecode == "Cardtype") ? " cards" : ""    
-
-    if card.card_watchers.include?(@me) or card.typecode != 'Cardtype' && card.watchers.include?(@me)
-      text, toggle, title = "unwatch", :off, "stop getting emails about changes to"
-    else
-      text, toggle, title = "watch", :on, "get emails about changes to"
-    end
-    
-    link_to "#{text}#{type_link}", path(:watch, :toggle=>toggle), :class=>'watch-toggle slotter',
-      :title=>"#{title} #{card.name}#{type_msg}", :remote=>true, :method=>'post'
-    
-  end
   
   #  define_view(:main_show) do |args|
   #    wrap(:main, args) do

@@ -100,11 +100,11 @@ class CardActionTest < ActionController::IntegrationTest
     get url_for_page( t1.name )
     get url_for_page( t2.name )
     
-    post 'card/remove/' + t2.id.to_s
+    post 'card/remove/~' + t2.id.to_s
     assert_redirected_to url_for_page( t1.name )   
     assert_nil Card.find_by_name( t2.name )
     
-    post 'card/remove/' + t1.id.to_s
+    post 'card/remove/~' + t1.id.to_s
     assert_redirected_to '/'
     assert_nil Card.find_by_name( t1.name )
   end

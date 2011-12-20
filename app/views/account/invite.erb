@@ -25,7 +25,7 @@ div_id = "main-body"
     
     <%= hidden_field_tag 'element', "#{div_id}"  %>
 
-    <%= error_messages_for @user %>
+    <%= raw error_messages_for( @user ) %>
 
     <table class="fieldset">
       <% if card.cardname.blank? %>

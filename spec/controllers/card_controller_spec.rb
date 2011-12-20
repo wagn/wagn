@@ -227,7 +227,7 @@ describe CardController do
     
     describe "#update" do
       it "works" do
-        xhr :post, :update, { :id=>@simple_card.id, 
+        xhr :post, :update, { :id=>"~#{@simple_card.id}",
           :card=>{:current_revision_id=>@simple_card.current_revision.id, :content=>'brand new content' }} #, {:user=>@user.id} 
         assert_response :success, "edited card"
         assert_equal 'brand new content', Card['Sample Basic'].content, "content was updated"
@@ -248,7 +248,7 @@ describe CardController do
 
     it "remove" do
       c = Card.create( :name=>"Boo", :content=>"booya")
-      post :remove, :id=>c.id.to_s
+      post :remove, :id=>"~#{c.id}"
       assert_response :redirect
       Card.find_by_name("Boo").should == nil
     end
@@ -268,7 +268,7 @@ describe CardController do
     it "rename without update references should work" do
       User.as :joe_user
       f = Card.create! :type=>"Cardtype", :name=>"Apple"
-      xhr :post, :update, :id => f.id, :card => {
+      xhr :post, :update, :id => "~#{f.id}", :card => {
         :confirm_rename => true,
         :name => "Newt",
         :update_referencers => "false",
@@ -287,7 +287,7 @@ describe CardController do
 
     it "update typecode" do
       User.as :joe_user   
-      xhr :post, :update, :id=>@simple_card.id, :card=>{ :type=>"Date" }
+      xhr :post, :update, :id=>"~#{@simple_card.id}", :card=>{ :type=>"Date" }
       assert_response :success, "changed card type"
       Card['Sample Basic'].typecode.should == "Date"
     end

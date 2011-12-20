@@ -6,7 +6,7 @@ module Wagn
     include ReferenceTypes
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
-    UNDENIABLE_VIEWS = [ :deny_view, :denial, :errors, :edit_virtual, :too_slow, :too_deep, :missing, :closed_missing, :name, :link, :url ]
+    UNDENIABLE_VIEWS = [ :deny_view, :denial, :errors, :edit_virtual, :too_slow, :too_deep, :missing, :closed_missing, :name, :link, :linkname, :url ]
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :edit=>:edit, :layout=>:layout, :new=>:edit }
     DEFAULT_ITEM_VIEW = :link
   
@@ -348,7 +348,7 @@ module Wagn
       pcard = opts.delete(:card) || card
       base = "#{Wagn::Conf[:root_path]}/card/#{action}"
       if pcard && ![:new, :create, :create_or_update].member?( action )
-        base += "/#{opts.delete(:id) || card.cardname.to_url_key}"
+        base += '/' + (opts[:id] ? "~#{opts.delete(:id)}" : card.cardname.to_url_key)
       end
       if attrib = opts.delete( :attrib )
         base += "/#{attrib}"

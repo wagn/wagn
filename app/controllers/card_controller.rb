@@ -75,7 +75,7 @@ class CardController < ApplicationController
 
 
   def update
-    @card = @card.refresh # (cached card attributes often frozen)
+    @card = @card.refresh if @card.frozen?
     if @card.update_attributes params[:card]
       render_success
     else
@@ -105,14 +105,14 @@ class CardController < ApplicationController
       author = "[[#{username}]]"
     end
     comment = comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
-    @card = @card.refresh
+    @card = @card.refresh if @card.frozen?
     @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
     @card.save!
     render_show
   end
 
   def rollback
-    @card = @card.refresh
+    @card = @card.refresh if @card.frozen?
     revision = @card.revisions[params[:rev].to_i - 1]
     @card.update_attributes! :content=>revision.content
     @card.attachment_link revision.id
@@ -235,7 +235,11 @@ class CardController < ApplicationController
 
   def load_card
     return @card=nil unless id = params[:id]
-    return (@card=Card.find(id); @card.include_set_modules; @card) if id =~ /^\d+$/
+    if id =~ /^\~(\d+)$/
+      @card=Card.find($1)
+      @card.include_set_modules
+      return @card
+    end 
     name = Wagn::Cardname.unescape(id)
     card_params = params[:card] ? params[:card].clone : {}
     @card = Card.fetch_or_new(name, card_params)

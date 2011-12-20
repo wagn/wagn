@@ -67,7 +67,7 @@ unless defined? TEST_ROOT
       if url =~ /:id/
         # find by naming convention in test data:
         card = Card["Sample #{cardtype}"] or puts "ERROR finding 'Sample #{cardtype}'"
-        url.gsub!(/:id/,card.id.to_s)
+        url.gsub!(/:id/,"~#{card.id.to_s}")
       end
       url
     end

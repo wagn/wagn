@@ -32,7 +32,7 @@ module LocationHelper
 
   def discard_locations_for(card)
     # quoting necessary because cards have things like "+*" in the names..
-    pattern = /#{Regexp.quote(card.id.to_s)}|#{Regexp.quote(card.key)}|#{Regexp.quote(card.name)}/
+    pattern = /#{Regexp.quote(card.id.to_s)}|#{Regexp.quote(card.cardname.to_url_key)}|#{Regexp.quote(card.name)}/
     while location_history.last =~ pattern
       location_history.pop
     end

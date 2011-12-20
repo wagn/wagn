@@ -358,6 +358,16 @@ class Card < ActiveRecord::Base
     ct.card
   end
   
+  def self.typecode_from_id
+  end
+
+  def typecode_with_id
+    tc=typecode_from_id(type_id)
+    warn "typecode? #{tc} :: #{typecode_without_id}" unless tc == typecode_without_id
+    tc
+  end
+  alias_method_chain :typecode, :id
+
   def typename() typecode and Cardtype.name_for( typecode ) or 'Basic' end
   def type=(typename)
     self.typecode = Cardtype.classname_for(typename) 

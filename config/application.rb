@@ -96,10 +96,16 @@ module Wagn
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
   end
   
-  Wagn::Conf.load_after_app
+  Wagn::Conf.load_after_app # move this stuff to initializer?
 
   ActionDispatch::Callbacks.to_prepare do
-    Wagn::Cache.initialize_on_startup
+    # this is called per-init in production, per-request in development 
+    if ActiveRecord::Base.connected? 
+      # we may also need the following for cases where the database exists but the tables don't yet.
+      # not sure it's worth supporting
+      # && ActiveRecord::Base.connection.table_exists?( 'cards' )  
+      Wagn::Cache.initialize_on_startup 
+    end
   end
   
 end

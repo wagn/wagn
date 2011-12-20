@@ -33,7 +33,7 @@ group :assets do
   gem 'jquery-rails', '~> 1.0.17'              # main js framework, along with rails-specific unobtrusive lib
 #  gem 'jquery.fileupload-rails'                # jquery plugin for uploading files
   gem 'tinymce-rails', '~> 3.4.7'              # wysiwyg editor
-
+  
   gem 'therubyracer'                           # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one
 end
 
@@ -53,8 +53,9 @@ group :test do
   gem 'timecop'                                # not clear on use/need.  referred to in shared_data.rb
   gem 'spork'                                  #
                                                
-  gem 'email_spec'                             # using?
-  gem 'database_cleaner'                       # using?
+  gem 'email_spec'                             # 
+  gem 'database_cleaner', '~>0.7.0'            # used by cucumber for db transactions
+  
   gem 'turn', "<0.8.3", :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
   
   #windows stuff

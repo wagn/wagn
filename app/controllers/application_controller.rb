@@ -111,11 +111,9 @@ class ApplicationController < ActionController::Base
   end
 
   def render_denied(action = '')
-    Rails.logger.debug "~~~~~~~~~~~~~~~~~in render_denied for #{action}"
-    
-    @deny = action
-    render :controller=>'card', :action=>'denied', :status=>403, :layout=>'application'
-    return false
+    @card.error_view = :denial
+    @card.error_status = 403
+    render_errors
   end
 
   def render_errors(card=nil, format='html')

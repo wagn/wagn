@@ -10,7 +10,7 @@ module ActiveRecord
       end
     end
 
-    class PostgreSQLAdapter
+    class PostgreSQLAdapter < AbstractAdapter
       def quote_interval(string)
         "interval '#{string}'"
       end
@@ -20,7 +20,7 @@ module ActiveRecord
       end
     end
     
-    class MysqlAdapter
+    class MysqlAdapter < AbstractAdapter
       def quote_interval(string)
         "interval #{string}"
       end
@@ -30,7 +30,7 @@ module ActiveRecord
       end
     end   
     
-    class SQLiteAdapter
+    class SQLiteAdapter < AbstractAdapter
       def quote_interval(string)
         "interval #{string}"
       end

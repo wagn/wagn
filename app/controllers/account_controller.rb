@@ -14,25 +14,28 @@ class AccountController < ApplicationController
     @card = Card.new( card_args )
 
     return unless request.post?
-#    return unless (captcha_required? && ENV['RECAPTCHA_PUBLIC_KEY'] ? verify_captcha(:model=>@user) : true)
 
-    return unless @user.errors.empty?
+    render_user_errors if @user.errors.any?
     @user, @card = User.create_with_card( user_args, card_args )
-    return unless @user.errors.empty?
+    render_user_errors if @user.errors.any?
 
     if User.ok?(:create_accounts)       #complete the signup now
       email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!",  #ENGLISH
                      :subject => Card.setting('*signup+*subject') || "Account info for #{Card.setting('*title')}!" }  #ENGLISH
       @user.accept(email_args)
-      redirect_to Card.path_setting(Card.setting('*signup+*thanks'))
+      wagn_redirect Card.path_setting(Card.setting('*signup+*thanks'))
     else
       User.as :wagbot do
         Mailer.signup_alert(@card).deliver if Card.setting('*request+*to')
       end
-      redirect_to Card.path_setting(Card.setting('*request+*thanks'))
+      wagn_redirect Card.path_setting(Card.setting('*request+*thanks'))
     end
   end
 
+  def render_user_errors
+    @card.errors += @user.errors
+    render_errors
+  end
 
 
   def accept

@@ -51,7 +51,6 @@ class User < ActiveRecord::Base
       @@as_user = given_user.class==User ? User[given_user.id] : User[given_user]
       self.current_user = @@as_user if @@current_user.nil?
       
-      #warn "\nas called: @@as_user = #{@@as_user.inspect}\n"
       if block_given?
         value = yield
         @@as_user = tmp_user
@@ -62,7 +61,6 @@ class User < ActiveRecord::Base
     end
     
     def as_user
-      #warn "\nas_user called: @@as_user = #{@@as_user.inspect}\n"
       @@as_user || self.current_user
     end
       
@@ -196,29 +194,32 @@ class User < ActiveRecord::Base
     @read_rule_ids
   end
   
-  def save_with_card(card)
+  def save_with_card(c)
     #Rails.logger.info "save with card #{card.inspect}, #{self.inspect}"
     User.transaction do
       save
-      card.extension = self
-      card.save
-      card.errors.each do |key,err|
+      c = c.refresh if c.frozen?
+      c.extension = self
+      c.save
+      c.errors.each do |key,err|
         next if key=='extension'
         self.errors.add key,err
       end
       raise ActiveRecord::RecordInvalid.new(self) if !self.errors.empty?
     end
-  rescue
-    Rails.logger.info "save with card failed.  #{card.inspect}"
+#  rescue
+#    Rails.logger.info "save with card failed.  #{card.inspect}"
   end
       
   def accept(email_args)
-    User.as :wagbot  do #what permissions does approver lack?  Should we check for them?
-      card.typecode = 'User'  # change from Invite Request -> User
+    User.as :wagbot do #what permissions does approver lack?  Should we check for them?
+      c = card
+      c = c.refresh if c.frozen?
+      c.typecode = 'User'  # change from Invite Request -> User
       self.status='active'
       self.invite_sender = ::User.current_user
       generate_password
-      save_with_card(card)
+      save_with_card(c)
     end
     #card.save #hack to make it so last editor is current user.
     self.send_account_info(email_args) if self.errors.empty?

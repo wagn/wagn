@@ -81,7 +81,7 @@ module Wagn::Model::TrackedAttributes
 
   def set_typecode(new_typecode)
 #    Rails.logger.debug "set_typecde No type code for #{name}, #{typecode}" unless new_typecode
-    self.typecode_without_tracking= new_typecode 
+    self.typecode_without_tracking = new_typecode
     return true if new_card?
     on_type_change # FIXME this should be a callback
     templatees = hard_templatees

@@ -127,7 +127,7 @@ module Wagn
       }<div id="main">#{content}</div>}
     end
 
-    def edit_slot(args)
+    def edit_slot(args={})
       card.content_template ? raw(_render_core(args)) : content_field(form)
     end
  

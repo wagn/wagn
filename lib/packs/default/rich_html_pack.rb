@@ -570,17 +570,61 @@ class Wagn::Renderer::Html
       if card.typecode == "Cardtype"
         (card.type_watchers.include?(@me) ? "#{watching_type_cards} | " : "") +  watch_unwatch
       else
-        if card.type_watchers.include?(@me) 
-          "watching #{link_to_page Card.classname_for(card.typecode)} cards"
-        else
-          watch_unwatch
-        end
+        card.type_watchers.include?(@me)  ? watching_type_cards : watch_unwatch
       end      
     end
   end
   
   
+  define_view(:denial) do |args|
+    action = params[:action]
+  
+    wrap(:denial, args) do #ENGLISH below
+      %{#{ header } 
+        <div id="denied" class="instruction open-content">
+          <h1>Ooo.  Sorry, but...</h1>
+  
+          <div>
+       #{ if User.current_user.anonymous?
+           %{You have to #{ link_to "sign in", :controller=>'account', :action=>'signin' }}
+          else
+           "You need permission"
+          end} to #{action} this card#{": <strong>#{fancy_title(card)}</strong>" if card.name && !card.name.blank? }.
+          </div>
+  
+          #{unless @skip_slot_header or @deny=='view'
+            %{<p>#{ link_to 'See permission settings', path(:options, :attrib=>'settings'), :class=>'slotter', :remote=>true  }.</p>}
+          end} #{
+  
+          if User.current_user.anonymous? && Card.new(:typecode=>'InvitationRequest').ok?(:create)
+            %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}
+          end }
+        </div>
+        #{ _render_footer  }}
+    end
+  end
+  
+  
   private
+
+  def watching_type_cards
+    "watching #{link_to_page(Card.classname_for(card.typecode))} cards"      # can I parse this and get the link to happen? that wud r@wk.
+  end
+
+  def watch_unwatch      
+    type_link = (card.typecode == "Cardtype") ? " #{card.name} cards" : ""
+    type_msg = (card.typecode == "Cardtype") ? " cards" : ""    
+
+    if card.card_watchers.include?(@me) or card.typecode != 'Cardtype' && card.watchers.include?(@me)
+      text, toggle, title = "unwatch", :off, "stop getting emails about changes to"
+    else
+      text, toggle, title = "watch", :on, "get emails about changes to"
+    end
+    
+    link_to "#{text}#{type_link}", path(:watch, :toggle=>toggle), :class=>'watch-toggle slotter',
+      :title=>"#{title} #{card.name}#{type_msg}", :remote=>true, :method=>'post'
+    
+  end
 
   def load_revisions
     @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i
@@ -661,20 +705,6 @@ class Wagn::Renderer::Html
   end
 
 
-  def watch_unwatch      
-    type_link = (card.typecode == "Cardtype") ? " #{card.name} cards" : ""
-    type_msg = (card.typecode == "Cardtype") ? " cards" : ""    
-
-    if card.card_watchers.include?(@me) or card.typecode != 'Cardtype' && card.watchers.include?(@me)
-      text, toggle, title = "unwatch", :off, "stop getting emails about changes to"
-    else
-      text, toggle, title = "watch", :on, "get emails about changes to"
-    end
-    
-    link_to "#{text}#{type_link}", path(:watch, :toggle=>toggle), :class=>'watch-toggle slotter',
-      :title=>"#{title} #{card.name}#{type_msg}", :remote=>true, :method=>'post'
-    
-  end
   
   #  define_view(:main_show) do |args|
   #    wrap(:main, args) do
@@ -693,39 +723,7 @@ class Wagn::Renderer::Html
   #    end
   #  end
 
-  #  define_view(:denied) do |args|
-  #    params['type']   ||= 'Basic'   # only really need for create
-  #    params['deny']   ||= (card && !card.new_card? ? 'edit' : 'create')
-  #    skip_slot_header ||= false
-  #
-  #
-  #    wrap(:denied, args) do #ENGLISH below
-  #      %{#{ header } 
-  #        <div id="denied" class="instruction open-content">
-  #          <h1>Ooo.  Sorry, but...</h1>
-  #
-  #          <p>
-  #       #{ if User.current_user.anonymous?
-  #           %{You have to #{ link_to "sign in", :controller=>'account', :action=>'signin' }}
-  #          else
-  #           "You need permission"
-  #          end} to #{
-  #          title = card.name ? "<strong>#{fancy_title(card)}</strong>" :'this card'
-  #          raw action == :create ? "create this #{typename} card: #{title}" :
-  #              "#{action} #{title}" }
-  #          </p>
-  #
-  #          #{unless @skip_slot_header or @deny=='view'
-  #            %{<p>(See the #{ raw( link_to_action('options', :options, :controller=>'card') ) } tab to learn more.)</p>}
-  #          end} #{
-  #
-  #          if User.current_user.anonymous? && Card.new(:typecode=>'InvitationRequest').ok?(:create)
-  #            %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}
-  #          end }
-  #        </div>
-  #        #{ _render_footer  }}
-  #    end
-  #  end
+
   
 end
 

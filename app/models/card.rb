@@ -160,7 +160,9 @@ class Card < ActiveRecord::Base
   # SAVING
 
   def update_attributes(args={})
-    args[:typecode] = Card.classname_for(args.delete(:type)) if args[:type] 
+    if type = (args.delete(:type) || args.delete('type'))
+      args[:typecode] = Card.classname_for(type)
+    end
     super args
   end
 
@@ -188,7 +190,7 @@ class Card < ActiveRecord::Base
       sub_name = sub_name.gsub('~plus~','+')
       absolute_name = cardname.to_absolute_name(sub_name)
       if card = Card[absolute_name]
-        card = card.refresh
+        card = card.refresh if card.frozen?
         card.update_attributes(opts)
       elsif opts[:content].present? and opts[:content].strip.present?
         opts[:name] = absolute_name
@@ -243,8 +245,6 @@ class Card < ActiveRecord::Base
       raise Card::PermissionDenied.new(self)
     end
   end
-
-
 
 
   def pull_from_trash
@@ -344,10 +344,7 @@ class Card < ActiveRecord::Base
 
   def dependents(*args)
     jcts = junctions(*args)
-    #raise "Includes self #{name}" if jcts.include?(self)
-    Rails.logger.warn "dependents include self #{name}" if jcts.include?(self)
     jcts.delete(self) if jcts.include?(self)
-    Rails.logger.info "dependents[#{name}](#{args.inspect}): #{jcts.inspect}"
     return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.
     jcts.map { |r| [r ] + r.dependents(*args) }.flatten
   end
@@ -616,7 +613,7 @@ class Card < ActiveRecord::Base
   end
 
   validates_each :current_revision_id do |rec, attrib, value|
-    if rec.current_revision_id_changed? && value.to_i != rec.current_revision_id_was
+    if !rec.new_card? && rec.current_revision_id_changed? && value.to_i != rec.current_revision_id_was.to_i
       rec.current_revision_id = rec.current_revision_id_was
       rec.errors.add :conflict, "changes not based on latest revision"
       rec.error_view = :conflict
@@ -664,8 +661,6 @@ class Card < ActiveRecord::Base
       User.as :wagbot  do
         card=Card[name] and !card.content.strip.empty? and card.content
       end
-#    rescue
-#      nil
     end           
 
     def path_setting(name)

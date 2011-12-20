@@ -4,6 +4,7 @@
 .related-view,
 .remove-view,
 .new-view,
+.denial-view,
 .edit-view {
   margin: 1px 0px;
   padding: 0px !important;

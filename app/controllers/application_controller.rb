@@ -73,6 +73,10 @@ class ApplicationController < ActionController::Base
     layout
   end
 
+  def ajax?
+    request.xhr?
+  end
+
   # ------------------( permission filters ) -------
   def view_ok
     @card.ok?(:read) || render_denied('view')
@@ -82,9 +86,7 @@ class ApplicationController < ActionController::Base
     @card.ok?(:update) || render_denied('edit')
   end
 
-  def ajax?
-    request.xhr?
-  end
+
 
  #def create_ok
  #  @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'

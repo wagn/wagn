@@ -1,4 +1,8 @@
 module ActiveRecord
+  module QuotingAndMatching
+    # dummy module to trigger loading code below
+  end
+  
   module ConnectionAdapters
     class AbstractAdapter
       def quote_interval(string)
@@ -10,7 +14,7 @@ module ActiveRecord
       end
     end
 
-    class PostgreSQLAdapter < AbstractAdapter
+    class PostgreSQLAdapter
       def quote_interval(string)
         "interval '#{string}'"
       end
@@ -20,7 +24,7 @@ module ActiveRecord
       end
     end
     
-    class MysqlAdapter < AbstractAdapter
+    class MysqlAdapter
       def quote_interval(string)
         "interval #{string}"
       end
@@ -30,7 +34,7 @@ module ActiveRecord
       end
     end   
     
-    class SQLiteAdapter < AbstractAdapter
+    class SQLiteAdapter
       def quote_interval(string)
         "interval #{string}"
       end

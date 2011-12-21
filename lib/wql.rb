@@ -1,4 +1,6 @@
 class Wql
+  include ActiveRecord::QuotingAndMatching
+  
   ATTRIBUTES = {
     :basic      =>  %w{ name type content id key extension_type extension_id updated_by trunk_id tag_id },
     :custom     =>  %w{ edited_by editor_of edited last_editor_of last_edited_by creator_of created_by } +

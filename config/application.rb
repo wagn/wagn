@@ -99,13 +99,15 @@ module Wagn
   Wagn::Conf.load_after_app # move this stuff to initializer?
 
   ActionDispatch::Callbacks.to_prepare do
-    # this is called per-init in production, per-request in development 
-    if ActiveRecord::Base.connected? 
-      # we may also need the following for cases where the database exists but the tables don't yet.
-      # not sure it's worth supporting
-      # && ActiveRecord::Base.connection.table_exists?( 'cards' )  
-      Wagn::Cache.initialize_on_startup 
-    end
-  end
-  
+    # this is called per- init in production, per-request in development 
+    
+    database_ready = begin; ActiveRecord::Base.connection; rescue; false; end
+    # for cases where the database exists but the tables don't yet, we could use:
+    # ActiveRecord::Base.connection.table_exists?( 'cards' )
+    # not it's worth it.  Note that ActiveRecord::Base.connected? does not work here, 
+    # because it fails until the first call has been made.
+    
+    Wagn::Cache.initialize_on_startup if database_ready
+    # This could/should be initialized lazily.
+  end  
 end

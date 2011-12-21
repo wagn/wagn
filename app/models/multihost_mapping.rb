@@ -21,7 +21,7 @@ class MultihostMapping < ActiveRecord::Base
     end
 
     def reset_cache
-      @@cache = {:name=>{},:host=>{}}
+      #@@cache = {:name=>{},:host=>{}}
     end
     
     private

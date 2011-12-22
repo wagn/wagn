@@ -16,7 +16,7 @@ module Wagn::Model::Fetch
     #   - virtual cards
 
     def fetch cardname, opts = {}
-      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{cardname}" do
+#      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{cardname}" do
       
         cardname = cardname.to_cardname
 
@@ -37,7 +37,7 @@ module Wagn::Model::Fetch
 
         card.include_set_modules unless opts[:skip_modules]
         card
-      end
+#      end
     end
 
     def fetch_or_new cardname, opts={}      

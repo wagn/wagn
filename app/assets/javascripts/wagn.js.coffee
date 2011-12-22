@@ -36,7 +36,7 @@ jQuery.fn.extend {
     slot = @slot()
     return if @attr('no-autosave')
     #might be better to put this href in the html
-    href = wagn.rootPath + '/card/save_draft/' + slot.attr('card-id')
+    href = wagn.rootPath + '/card/save_draft/~' + slot.attr('card-id')
     $.ajax href, {
       data : { 'card[content]' : @val() },
       complete: (xhr) -> slot.report('draft saved') 
@@ -129,7 +129,7 @@ $(window).load ->
     s = $(this)
     return false if s.find( '.edit-area' )[0]
     s.addClass 'slotter init-editors'
-    s.attr 'href', wagn.rootPath + '/card/edit/' + s.attr('card-id')
+    s.attr 'href', wagn.rootPath + '/card/edit/~' + s.attr('card-id')
     $.rails.handleRemote(s)
     false # don't propagate up to next slot
 

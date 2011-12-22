@@ -124,6 +124,7 @@ class CardController < ApplicationController
   #------------( DELETE )
 
   def remove
+    @card = @card.refresh if @card.frozen?
     @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
     

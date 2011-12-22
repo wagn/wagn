@@ -18,7 +18,9 @@ class Wagn::Renderer::Json < Wagn::Renderer
     goto_cards = Card.search( :complete=>term, :limit=>8, :sort=>'name', :return=>'name' )
     goto_cards.unshift term if exact.virtual?
     
-    JSON({ 
+    warn "exact = #{exact.inspect}, typecode = #{exact.typecode}, codename = #{exact.codename}"
+    
+    r = JSON({ 
       :search => true, # card.ok?( :read ),
       :add    => (exact.new_card? && exact.cardname.valid? && !exact.virtual? && exact.ok?( :create )),
       :type   => (exact.typecode=='Cardtype' && 
@@ -27,5 +29,8 @@ class Wagn::Renderer::Json < Wagn::Renderer
                  ),
       :goto   => goto_cards.map { |name| [name, highlight(name, term), name.to_cardname.to_url_key] }
     })
+    
+    warn "r = #{r}"
+    r
   end
 end

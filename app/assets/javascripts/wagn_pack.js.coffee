@@ -118,7 +118,7 @@ navbox_results = (request, response) ->
 navboxize = (term, results)->
   items = []
 
-  $.each ['search', 'add' ,'create'], (index, key)->
+  $.each ['search', 'add' ,'type'], (index, key)->
     val = results[key]
     i = { type: key, value: term, prefix: 'Create', label: '<strong class="highlight">' + term + '</strong>' }
     if !val #nothing

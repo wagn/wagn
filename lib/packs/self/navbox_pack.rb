@@ -1,6 +1,6 @@
 class Wagn::Renderer
   define_view(:raw, :name=>'*navbox') do |args|
-    form_tag '/*search', :id=>'navbox-form', :method=>'get' do
+    form_tag url_for_page('*search', :view=>'content'), :id=>'navbox-form', :method=>'get' do
       text_field_tag :_keyword, '', :class=>'navbox'
     end
   end

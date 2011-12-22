@@ -654,7 +654,6 @@ body#wagn .card-slot.recent-changes h2 {
 
 .card-slot .card-slot.closed-view,
 .card-slot .card-slot.open-view {
-  border: 1px solid white;
   border-bottom: 1px solid #ccc;
   -moz-border-radius: 0px;
   border-radius: 0px;

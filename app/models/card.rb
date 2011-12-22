@@ -1,5 +1,4 @@
 class Card < ActiveRecord::Base
-
   # FIXME:  this is ugly, but also useful sometimes... do in a more thoughtful way maybe?
   cattr_accessor :debug, :cache
   Card.debug = false
@@ -50,6 +49,8 @@ class Card < ActiveRecord::Base
   end
 
   def initialize(args={})
+    Rails.logger.debug "initialize #{args.inspect}"
+    
     args['name'] = args['name'].to_s  
     @type_args = { :type=>args.delete('type'), :typecode=>args['typecode'] }
     skip_modules = args.delete 'skip_modules'

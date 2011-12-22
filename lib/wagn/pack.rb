@@ -4,7 +4,6 @@ module Wagn::Pack
   mattr_accessor :dirs
 
   class << self
-    def included(base) load_all end
     def dirs() @@dirs ||= [] end
 
     def dir(newdir)

@@ -237,18 +237,20 @@ class CardController < ApplicationController
 
   def load_card
     return @card=nil unless id = params[:id]
-    case id
-    when /^\~(\d+)$/
-      @card=Card.find($1)
-      @card.include_set_modules
-      return @card
-    when '*previous'
-      @card = '*previous'
-    else
-      @card = Card.fetch_or_new( Wagn::Cardname.unescape(id), 
-        (params[:card] ? params[:card].clone : {} )
-      )
-    end 
+    ActiveSupport::Notifications.instrument 'wagn.load_card', :message=>"load #{id}" do
+      case id
+      when /^\~(\d+)$/
+        @card=Card.find($1)
+        @card.include_set_modules
+        return @card
+      when '*previous'
+        @card = '*previous'
+      else
+        @card = Card.fetch_or_new( Wagn::Cardname.unescape(id), 
+          (params[:card] ? params[:card].clone : {} )
+        )
+      end
+    end
   end
 
 

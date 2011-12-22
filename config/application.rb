@@ -107,7 +107,10 @@ module Wagn
     # not it's worth it.  Note that ActiveRecord::Base.connected? does not work here, 
     # because it fails until the first call has been made.
     
-    Wagn::Cache.initialize_on_startup if database_ready
-    # This could/should be initialized lazily.
+    if database_ready
+      ActiveSupport::Notifications.instrument 'wagn.init_cache', :message=>'' do
+        Wagn::Cache.initialize_on_startup if database_ready
+      end
+    end
   end  
 end

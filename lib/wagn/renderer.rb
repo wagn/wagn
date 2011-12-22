@@ -89,7 +89,10 @@ module Wagn
           define_method( "render_#{view}" ) do |*a|
             begin
               denial=deny_render(view, *a) and return denial
-              send( "_render_#{view}", *a)
+              msg = "render #{view} #{ card ? "called for #{card.name}" : '' }"
+              ActiveSupport::Notifications.instrument 'wagn.render', :message=>msg do
+                send( "_render_#{view}", *a)
+              end
             rescue Exception=>e
               Rails.logger.debug "Error #{e.message} #{e.backtrace*"\n"}"
               raise e          
@@ -447,7 +450,7 @@ module Wagn
     end
   end
   
-  # need automatic lookups
+  # automate
   Wagn::Renderer::EmailHtml
   Wagn::Renderer::Html
   Wagn::Renderer::Kml
@@ -457,6 +460,6 @@ module Wagn
   Wagn::Conf[:pack_dirs].split(/,\s*/).each do |dir|
     Wagn::Pack.dir File.expand_path( "#{dir}/**/*_pack.rb",__FILE__)
   end
-  include Wagn::Pack
+  Wagn::Pack.load_all
   
 end

@@ -36,11 +36,12 @@ class Card < ActiveRecord::Base
     %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
 
     if name = args['name'] and !name.blank?
-      if cc= Card.cache.read_local(name.to_cardname.key)    and
-          cc.type_args                                      and
-          args['type']          == cc.type_args[:type]      and
-          args['typecode']      == cc.type_args[:typecode]  and
-          args['type_id']       == cc.type_args[:type_id]   and
+      if Card.cache                                        and
+         cc= Card.cache.read_local(name.to_cardname.key)   and
+          cc.type_args                                     and
+          args['type']          == cc.type_args[:type]     and
+          args['typecode']      == cc.type_args[:typecode] and
+          args['type_id']       == cc.type_args[:type_id]  and
           args['loaded_trunk']  == cc.loaded_trunk
           
         args['type_id'] = cc.type_id
@@ -63,10 +64,10 @@ class Card < ActiveRecord::Base
     
     if tid=get_type_id(@type_args) 
       self.type_id_without_tracking = tid
-      #warn "got type_id #{type_id}, #{typecode}"
+      #warn "got type_id#{tid}, #{type_id}, #{typecode}"
     end
     self.typecode = Card.typecode_from_id(type_id)
-    #warn "got typecode #{type_id}, #{typecode}"
+    #warn "got typecode #{type_id}, #{typecode}, sk:#{skip_modules}"
     
     include_set_modules unless skip_modules    
     self
@@ -109,10 +110,9 @@ class Card < ActiveRecord::Base
     def load_createable
       createable = Card.connection.select_all(%{
            select ct.class_name as codename, c.name, c.id
-             from cards c
-             left outer join cardtypes ct
-               on c.typecode=ct.class_name and c.typecode ='Cardtype'    
-            where c.trash is false order by c.name}
+             from cards c, cardtypes ct
+            where c.extension_id=ct.id and c.typecode='Cardtype'
+              and c.trash is false order by c.name}
            ).map(&:symbolize_keys).compact
 
       typecode2id = {}
@@ -124,20 +124,67 @@ class Card < ActiveRecord::Base
         typecode2id[codename] = typename2id[name] = id
         typeid2name[id]=name
         typeid2code[id]=codename
+        #warn "loading #{h.inspect}"
       }
           
-      self.cache.write 'type_data/typeid2name', typeid2name
-      self.cache.write 'type_data/typeid2code', typeid2code
-      self.cache.write 'type_data/typecode2id', typecode2id
-      self.cache.write 'type_data/typename2id', typename2id
-      self.cache.write 'type_data/createable', createable
+      self.typeid2name=typeid2name
+      self.typeid2code=typeid2code
+      self.typename2id=typename2id
+      self.typecode2id=typecode2id
+      self.createable=createable
+    end
+    #Probably a better way, but some of these will go away soon
+    @@typeid2name=@@typeid2code=@@typename2id=@@typecode2id=@@createable=nil
+    def reset_types
+      #warn Rails.logger.warn( "reset_types")
+      @@typeid2name=@@typeid2code=@@typename2id=@@typecode2id=@@createable=nil
+      self.cache.write('type_data/typeid2name', nil)
+      self.cache.write('type_data/typeid2code', nil)
+      self.cache.write('type_data/typename2id', nil)
+      self.cache.write('type_data/typecode2id', nil)
+      self.cache.write('type_data/createable_types', nil)
+    end
+    def typeid2name()
+      self.cache ? self.cache.read('type_data/typeid2name') : @@typeid2name
+    end
+    def typeid2name=(v)
+      self.cache.write('type_data/typeid2name', v) if self.cache
+      @@typeid2name=v
+    end
+    def typeid2code()
+      self.cache ? self.cache.read('type_data/typeid2code') : @@typeid2code
+    end
+    def typeid2code=(v)
+      self.cache.write('type_data/typeid2code', v) if self.cache
+      @@typeid2code=v
+    end
+    def typename2id()
+      self.cache ? self.cache.read('type_data/typename2id') : @@typename2id
+    end
+    def typename2id=(v)
+      #warn Rails.logger.warn( "typename2id=(#{v.inspect})")
+      self.cache.write('type_data/typename2id', v) if self.cache
+      @@typename2id=v
+    end
+    def typecode2id()
+      self.cache ? self.cache.read('type_data/typecode2id') : @@typecode2id
+    end
+    def typecode2id=(v)
+      self.cache.write('type_data/typecode2id', v) if self.cache
+      @@typecode2id=v
+    end
+    def createable()
+      self.cache ? self.cache.read('type_data/createable') : @@createable
+    end
+    def createable=(v)
+      self.cache.write('type_data/createable', v) if self.cache
+      @@createable=v
     end
 
     def createable_types  
-      createable = self.cache.read 'type_data/createable'
-      createable = load_createable if createable.empty?
+      load_createable unless createable
       createable.map { |h|
-        !NON_CREATEABLE.member?(h[:codename]) && create_ok?(h[:codename]) && h
+        !NON_CREATEABLE.member?(h[:codename]) && create_ok?(h[:codename]) && h || nil
       }.compact
     end   
 
@@ -149,41 +196,29 @@ class Card < ActiveRecord::Base
   # TYPE
 
     def type_id_from_name(name)
-      typename2id = self.cache.read 'type_data/typename2id'
-      unless typename2id
-        load_createable
-        typename2id = self.cache.read 'type_data/typename2id'
-      end
-      #warn "type_id_from_name(#{name}) #{typename2id[name]}"
+      load_createable unless typename2id
+      name = name.camelize unless name=~/^[A-Z]/
+      name = 'HTML' if name=~/^html$/i
+      #warn Rails.logger.warn( "type_id_from_name(#{name}) #{typename2id[name]}")
+      #warn "type_id_from_name(#{name}) #{typename2id.inspect}" unless typename2id[name]
       typename2id[name]
     end
 
     def type_id_from_code(code)
-      typecode2id = self.cache.read 'type_data/typecode2id'
-      unless typecode2id
-        load_createable
-        typecode2id = self.cache.read 'type_data/typecode2id'
-      end
-      #warn "type_id_from_code(#{code}) #{typecode2id[code]}"
+      load_createable unless typecode2id
+      #warn Rails.logger.warn("type_id_from_code(#{code}) #{typecode2id.inspect}")
+      #warn Rails.logger.warn("type_id_from_code(#{code}) #{typecode2id.inspect}") unless typecode2id[code]
       typecode2id[code]
     end
 
     def typename_from_id(id)
-      typeid2name = self.cache.read 'type_data/typeid2name'
-      unless typeid2name
-        load_createable
-        typeid2name = self.cache.read 'type_data/typeid2name'
-      end
+      load_createable unless typeid2name
       typeid2name[id]
     end
 
     def typecode_from_id(id)
-      typeid2name = self.cache.read 'type_data/typeid2name'
-      unless typeid2name
-        load_createable
-        typeid2name = self.cache.read 'type_data/typeid2name'
-      end
-      typeid2name[id]
+      load_createable unless typeid2code
+      typeid2code[id]
     end
   end
 
@@ -203,17 +238,18 @@ class Card < ActiveRecord::Base
       return ti || 3 #DEFAULT_TYPE_ID
     end
 
-    #warn "get_type_id returns #{type_id}"
     if name && t=template
       reset_patterns
       ti = t.type_id
+    #warn "get_type_id returns[#{name}] ? #{type_args.inspect}, #{type_id}, #{ti}"
     end
-    #raise "NoType" if tc == '$NoType' || type_id==0
-    #warn "get_type_id returns #{type_id||3}"
+    raise "NoType" if tc == '$NoType' || ti==0
+    #warn "get_type_id returns #{ti||3}"
     ti|| 3 # DEFAULT_TYPE_ID # 'Basic'
   end
 
-  def typename() type_id and Card.typename_from_id( typecode ) or 'Basic' end
+  def typename()
+    type_id and Card.typename_from_id( type_id ) or 'Basic' end
   def type=(typename)
     self.type_id = Card.type_id_from_name(typename) 
     self.typecode = Card.type_id_from_name(typename) 
@@ -248,6 +284,7 @@ class Card < ActiveRecord::Base
     send_notifications
     if self.type_id == 5 #CARDTYPE_TYPE_ID 'Cardtype'
       Cardtype.cache.reset
+      Card.reset_types
     end
     true
   end
@@ -472,10 +509,10 @@ class Card < ActiveRecord::Base
     #return current_revision || Revision.new
     case
     when (@cached_revision and @cached_revision.id==current_revision_id);
-    when (@cached_revision=Revision.cache.read("#{cardname.css_name}-content") and @cached_revision.id==current_revision_id);
+    when (Revision.cache&&@cached_revision=Revision.cache.read("#{cardname.css_name}-content") and @cached_revision.id==current_revision_id);
     else
       rev = current_revision_id ? Revision.find(current_revision_id) : Revision.new
-      @cached_revision = Revision.cache.write("#{cardname.css_name}-content", rev)      
+      @cached_revision = Revision.cache ? Revision.cache.write("#{cardname.css_name}-content", rev) : rev
     end
     @cached_revision
   end
@@ -527,7 +564,7 @@ class Card < ActiveRecord::Base
   # MISCELLANEOUS
   
   def to_s()  "#<#{self.class.name}[#{self.typename.to_s}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}[#{self.type_id}]#{self.name}{n:#{new_card?}v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}:r:#{current_revision_id}}:#{@set_names.inspect}>" end
+  def inspect()  "#<#{self.class.name}[#{self.typecode}:#{self.type_id}]#{self.name}{n:#{new_card?}v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}:r:#{current_revision_id}}:#{@set_names.inspect}>" end
   def mocha_inspect()     to_s                                   end
 
 #  def trash
@@ -680,6 +717,7 @@ class Card < ActiveRecord::Base
 
   validates_each :type_id do |rec, attr, value|
     # validate on update
+    #warn "validate type_id #{rec.type_id}, #{attr}, #{value}"
     if rec.updates.for?(:type_id) and !rec.new_card?
       if !rec.validate_type_change
         rec.errors.add :type, "of #{rec.name} can't be changed; errors changing from #{rec.typename}"        
@@ -698,7 +736,7 @@ class Card < ActiveRecord::Base
       # invalid to change type when type is hard_templated
       if (rt = rec.right_template and rt.hard_template? and 
         value != Card.type_id_from_name(rt.typename) and !rec.allow_type_change)
-        warn "Type can't be changed because #{rec.name} is hard tag templated to #{rt.typename}: #{rt.type_id}, #{value}" # note rt.type_id is nil here?
+        #warn "Type can't be changed because #{rec.name} is hard tag templated to #{rt.typename}: #{rt.type_id}, #{value}, #{rt.inspect}" # note rt.type_id is nil here?
         rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rt.typename}"
       end        
     end

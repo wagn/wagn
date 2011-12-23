@@ -85,7 +85,11 @@ module Wagn
 
       private
       def reset_local
-        cache_classes.each{ |cc| cc.cache.reset_local }
+        cache_classes.each{ |cc|
+          if Wagn::Cache===cc.cache
+          cc.cache && cc.cache.reset_local
+          else warn "reset class #{cc}, #{cc.cache.class} ???" end
+        }
       end
 
     end

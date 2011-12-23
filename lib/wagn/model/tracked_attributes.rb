@@ -63,7 +63,11 @@ module Wagn::Model::TrackedAttributes
       end
     end
           
-    Cardtype.cache.reset if type_id==5 # CARDTYPE 'Cardtype'
+    if type_id==5 # CARDTYPE 'Cardtype'
+      #warn "name tracked[#{newname}] Cardtype reset"
+      Cardtype.cache.reset
+      Card.reset_types
+    end
     Wagn::Cache.expire_card(@old_name.to_cardname.key)
     @name_changed = true          
     @name_or_content_changed=true
@@ -80,6 +84,7 @@ module Wagn::Model::TrackedAttributes
 
   def set_type_id(new_type_id)
 #    Rails.logger.debug "set_typecde No type code for #{name}, #{type_id}" unless new_type_id
+    #warn "set_type_id(#{new_type_id}) #{self.type_id_without_tracking}"
     self.type_id_without_tracking= new_type_id 
     return true if new_card?
     on_type_change # FIXME this should be a callback
@@ -92,8 +97,8 @@ module Wagn::Model::TrackedAttributes
         tee.save!
       end
     end
-    typecode=Card.typecode_from_id(new_type_id) || raise("Bad type id #{new_type_id}")
-    warn "setting typeid(#{new_type_id}) and code (#{self.typecode})"
+    self.typecode=Card.typecode_from_id(new_type_id) || raise("Bad type id #{new_type_id}")
+    #warn "setting typeid(#{new_type_id}) and code (#{self.typecode})"
     
     # do we need to "undo" and loaded modules?  Maybe reload defaults?
     singleton_class.include_type_module(typecode)

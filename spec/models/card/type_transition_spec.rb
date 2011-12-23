@@ -158,7 +158,7 @@ end
 def change_card_to_type(name, typecode)
   User.as :joe_user do
     card = Card.fetch(name)
-    card.typecode = typecode;
+    card.type_id = Card.type_id_from_code typecode
     card.save
     card
   end

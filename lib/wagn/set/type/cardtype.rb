@@ -19,7 +19,9 @@ module Wagn::Set::Type::Cardtype
   end
   
   def reset_cardtype_cache
+    warn "reset cardtype cache"
     Cardtype.cache.reset
+    Card.reset_types
   end
 
   

@@ -3,6 +3,7 @@ class Cardtype < ActiveRecord::Base
   acts_as_card_extension
   cattr_accessor :cache
   
+=begin
   class << self
     
     # FIXME -- the current system of caching cardtypes is not "thread safe":
@@ -60,6 +61,7 @@ class Cardtype < ActiveRecord::Base
     end
     
   end        
+=end
   
   def codename
     class_name

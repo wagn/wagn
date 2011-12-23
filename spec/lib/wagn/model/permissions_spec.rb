@@ -281,6 +281,7 @@ describe "Permission", ActiveSupport::TestCase do
       [@c1,@c2,@c3].each do |c| 
         c.update_attribute(:content, 'WeirdWord')
       end
+      warn "creating read rule card"
       Card.create(:name=>"c1+*self+*read", :type=>'Pointer', :content=>"[[r1]]")
     end
 

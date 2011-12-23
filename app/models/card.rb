@@ -1,5 +1,4 @@
 class Card < ActiveRecord::Base
-
   # FIXME:  this is ugly, but also useful sometimes... do in a more thoughtful way maybe?
   cattr_accessor :debug, :cache
   Card.debug = false
@@ -52,6 +51,8 @@ class Card < ActiveRecord::Base
   end
 
   def initialize(args={})
+    Rails.logger.debug "initialize #{args.inspect}"
+    
     args['name'] = args['name'].to_s  
     if tc=args.delete('typecode')
       args['type_id'] = Card.type_id_from_code(tc)
@@ -640,6 +641,7 @@ class Card < ActiveRecord::Base
     if rec.new_card? && value.blank?
       if autoname_card = rec.rule_card('autoname')
         User.as(:wagbot) do
+          autoname_card = autoname_card.refresh if autoname_card.frozen?
           value = rec.name = autoname_card.content
           autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create
           autoname_card.save!

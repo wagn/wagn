@@ -20,7 +20,7 @@ wagn.editorInitFunctionMap = {
 
 wagn.initPointerList = (input)-> 
   optionsCard = input.closest('ul').attr('options-card')
-  input.autocomplete { source: wagn.rootPath + '/' + optionsCard + '.json?view=name_complete' }
+  input.autocomplete { source: wagn.prepUrl wagn.rootPath + '/' + optionsCard + '.json?view=name_complete' }
 
 wagn.initTinyMCE = (el_id) ->
   conf = if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {}
@@ -118,10 +118,10 @@ reqIndex = 0 #prevents race conditions
 
 navbox_results = (request, response) ->
   this.xhr = $.ajax {
-		url: wagn.rootPath + '/*search.json?view=complete',
-		data: request,
-		dataType: "json",
-		wagReq: ++reqIndex,
+		url: wagn.prepUrl wagn.rootPath + '/*search.json?view=complete'
+		data: request
+		dataType: "json"
+		wagReq: ++reqIndex
 		success: ( data, status ) ->
 			response navboxize(request.term, data) if this.wagReq == reqIndex
 		error: () ->
@@ -131,13 +131,13 @@ navbox_results = (request, response) ->
 navboxize = (term, results)->
   items = []
 
-  $.each ['search', 'add' ,'create'], (index, key)->
+  $.each ['search', 'add' ,'type'], (index, key)->
     val = results[key]
     i = { type: key, value: term, prefix: 'Create', label: '<strong class="highlight">' + term + '</strong>' }
     if !val #nothing
     else if key == 'search'
       i.prefix = 'Search'
-      i.href  = '/*search?_keyword=' + escape(term)
+      i.href  = '/*search?view=content&_keyword=' + escape(term)
     else if key == 'add'
       i.href = '/card/new?card[name]=' + escape(term)
     else if key == 'type'

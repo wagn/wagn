@@ -5,6 +5,17 @@ wagn.initializeEditors = (map) ->
     $.each $.find(selector), ->
       fn.call $(this)
 
+wagn.prepUrl = (url, slot)->
+  xtra = {}
+  main = $('#main').children('.card-slot').attr 'card-name'
+  xtra['main'] = main  if main?
+  if slot
+    home_view = slot.attr 'home_view'
+    item      = slot.attr 'item' 
+    xtra['home_view'] = home_view if home_view?
+    xtra['item']      = item      if item?
+  url + ( (if url.match /\?/ then '&' else '?') + $.param(xtra) )
+
 jQuery.fn.extend {
   slot: -> @closest '.card-slot'
   
@@ -36,11 +47,12 @@ jQuery.fn.extend {
     slot = @slot()
     return if @attr('no-autosave')
     #might be better to put this href in the html
-    href = wagn.rootPath + '/card/save_draft/' + slot.attr('card-id')
+    href = wagn.rootPath + '/card/save_draft/~' + slot.attr('card-id')
     $.ajax href, {
       data : { 'card[content]' : @val() },
       complete: (xhr) -> slot.report('draft saved') 
     }
+  
 
   setContentFieldsFromMap: (map) ->
     map = wagn.editorContentFunctionMap unless map?
@@ -90,15 +102,7 @@ $(window).load ->
     return if opt.skip_before_send
     
     unless opt.url.match /home_view/ #avoiding duplication.  could be better test?
-      s = $(this).slot()
-      main = $('#main').children('.card-slot').attr 'card-name'
-      home_view = s.attr 'home_view'
-      item      = s.attr 'item' 
-      xtra = {}
-      xtra['main']      = main      if main?
-      xtra['home_view'] = home_view if home_view?
-      xtra['item']      = item      if item?
-      opt.url += ( (if opt.url.match /\?/ then '&' else '?') + $.param(xtra) ) 
+      opt.url = wagn.prepUrl opt.url, $(this).slot()
     
     if $(this).is('form')
       if wagn.recaptchaKey and !($(this).find('.recaptcha-box')[0])
@@ -129,7 +133,7 @@ $(window).load ->
     s = $(this)
     return false if s.find( '.edit-area' )[0]
     s.addClass 'slotter init-editors'
-    s.attr 'href', wagn.rootPath + '/card/edit/' + s.attr('card-id')
+    s.attr 'href', wagn.rootPath + '/card/edit/~' + s.attr('card-id')
     $.rails.handleRemote(s)
     false # don't propagate up to next slot
 

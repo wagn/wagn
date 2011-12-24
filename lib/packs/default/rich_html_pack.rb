@@ -454,7 +454,7 @@ class Wagn::Renderer::Html
     wrap(:errors) do |args|
       %{<strong>Not Saved!</strong><span class="new-current-revision-id">#{@revision.id}</span>
         <div>#{ link_to_page @revision.author.card.name } has also been editing this card.</div>
-        <div>Please examine the changes, correct conflicts above, and re-save.</div>
+        <div>Please examine below, resolve above, and re-submit.</div>
         #{wrap(:conflict) { |args| _render_diff } } }
     end
   end

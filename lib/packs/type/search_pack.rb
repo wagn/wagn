@@ -100,7 +100,7 @@ class Wagn::Renderer
 
     paging = render(:paging, :results=>cards)
 %{<h1 class="page-header">Recent Changes</h1>
-<div class="card-slot open-view recent-changes">
+<div class="open-view recent-changes">
   <div class="open-content">
     #{ paging }
   } +
@@ -130,7 +130,7 @@ class Wagn::Renderer
     first,last = offset+1,offset+results.length 
     total = card.count(paging_params)
  
-    args = params.clone
+    args = {}
     args[:limit] = limit
 
 #    args[:requested_view] = requested_view 
@@ -142,13 +142,15 @@ class Wagn::Renderer
       out << '<span class="paging">'
 
       if first > 1
-        out << link_to( image_tag('prev-page.png'), path(:view, :offset=>[offset-limit,0].max),
+        args[:offset] = [offset-limit,0].max
+        out << link_to( image_tag('prev-page.png'), path(:view, args),
           :class=>'card-paging-link slotter', :remote => true )
       end
       out << %{<span class="paging-range">#{ first } to #{ last } of #{ total }</span>}
 
       if last < total
-        out << link_to( image_tag('next-page.png'), path(:view, :offset=>last),
+        args[:offset] = last
+        out << link_to( image_tag('next-page.png'), path(:view, args),
           :class=>'card-paging-link slotter', :remote => true ) 
       end
       

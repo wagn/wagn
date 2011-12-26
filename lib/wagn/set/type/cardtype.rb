@@ -10,7 +10,7 @@ module Wagn::Set::Type::Cardtype
   end
 
   def cards_of_type_exist?
-    Card.find_by_typecode_and_trash( codename, false )
+    Card.find_by_type_id_and_trash( id, false )
   end
 
   private

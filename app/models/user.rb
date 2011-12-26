@@ -205,7 +205,6 @@ class User < ActiveRecord::Base
         next if key=='extension'
         self.errors.add key,err
       end
-      raise ActiveRecord::RecordInvalid.new(self) if !self.errors.empty?
     end
 #  rescue
 #    Rails.logger.info "save with card failed.  #{card.inspect}"
@@ -215,7 +214,7 @@ class User < ActiveRecord::Base
     User.as :wagbot do #what permissions does approver lack?  Should we check for them?
       c = card
       c = c.refresh if c.frozen?
-      c.typecode = 'User'  # change from Invite Request -> User
+      c.type_id = Card.type_id_from_code 'User' # Invite Request -> User
       self.status='active'
       self.invite_sender = ::User.current_user
       generate_password

@@ -1,4 +1,8 @@
 module ActiveRecord
+  module QuotingAndMatching
+    # dummy module to trigger loading code below
+  end
+  
   module ConnectionAdapters
     class AbstractAdapter
       def quote_interval(string)

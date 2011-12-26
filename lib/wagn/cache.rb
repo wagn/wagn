@@ -79,13 +79,17 @@ module Wagn
       end
 
       def reset_global
-        cache_classes.each{ |cc| cc.cache.reset }
+        cache_classes.each{ |cc| cc.cache.reset if cc.cache }
         MultihostMapping.reset_cache
       end
 
       private
       def reset_local
-        cache_classes.each{ |cc| cc.cache.reset_local }
+        cache_classes.each{ |cc|
+          if Wagn::Cache===cc.cache
+          cc.cache && cc.cache.reset_local
+          else warn "reset class #{cc}, #{cc.cache.class} ???" end
+        }
       end
 
     end
@@ -109,7 +113,7 @@ module Wagn
         @cache_id = @store.fetch(@system_prefix + "cache_id") do
           self.class.generate_cache_id
         end
-        @prefix   = @system_prefix + @cache_id + "/"
+        @prefix = @system_prefix + @cache_id + "/"
       end
     end
 

@@ -63,6 +63,7 @@ module Wagn::Model::TrackedAttributes
       end
     end
           
+    Wagn::Codename.reset_cache if type_id==Wagn::Codename.cardtype_type_id
     old_key = @old_name.to_cardname.key
     Wagn::Cache.expire_card old_key
     Wagn::Codename.name_change old_key
@@ -79,9 +80,10 @@ module Wagn::Model::TrackedAttributes
     connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"'#{tmp_name}'",:key=>"'#{tmp_name}'"})} where id=#{self.id}}    
   end
 
-  def set_typecode(new_typecode)
-#    Rails.logger.debug "set_typecde No type code for #{name}, #{typecode}" unless new_typecode
-    self.typecode_without_tracking = new_typecode
+  def set_type_id(new_type_id)
+#    Rails.logger.debug "set_typecde No type code for #{name}, #{type_id}" unless new_type_id
+    #warn "set_type_id(#{new_type_id}) #{self.type_id_without_tracking}"
+    self.type_id_without_tracking= new_type_id 
     return true if new_card?
     on_type_change # FIXME this should be a callback
     templatees = hard_templatees
@@ -89,10 +91,12 @@ module Wagn::Model::TrackedAttributes
       #warn "going through hard templatees"  
       templatees.each do |tee|
         tee.allow_type_change = true  #FIXME? this is a hacky way around the standard validation
-        tee.typecode = new_typecode
+        tee.type_id = new_type_id
         tee.save!
       end
     end
+    #self.typecode=Card.typecode_from_id(new_type_id) || raise("Bad type id #{new_type_id}")
+    #warn "setting typeid(#{new_type_id}) and code (#{self.typecode})"
     
     # do we need to "undo" and loaded modules?  Maybe reload defaults?
     singleton_class.include_type_module(typecode)

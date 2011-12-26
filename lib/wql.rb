@@ -1,4 +1,6 @@
 class Wql
+  include ActiveRecord::QuotingAndMatching
+  
   ATTRIBUTES = {
     :basic      =>  %w{ name type content id key extension_type extension_id updated_by trunk_id tag_id },
     :custom     =>  %w{ edited_by editor_of edited last_editor_of last_edited_by creator_of created_by } +
@@ -522,11 +524,12 @@ class Wql
       v=@cardspec.card.name if v=='_self'
       table = @cardspec.table_alias
       
+      #warn "to_sql #{field}, #{v} (#{op})"
       field, v = case field
         when "cond";     return "(#{sqlize(v)})"
         when "name";     ["#{table}.key",      [v].flatten.map(&:to_cardname).map(&:to_key)]
         
-        when "type";     ["#{table}.typecode", [v].flatten.map{ |val| Card.classname_for( val ) }]
+        when "type";     ["#{table}.type_id", [v].flatten.map{ |val| Card.type_id_from_name( val )||0 }]
         when "content";   join_alias = @cardspec.add_revision_join
                          ["#{join_alias}.content", v]
         else;            ["#{table}.#{safe_sql(field)}", v]

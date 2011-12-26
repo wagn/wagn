@@ -39,7 +39,7 @@ class AccountRequestTest < ActionController::TestCase
     @card =  Card.find_by_name("Word Third")   
     @user = @card.extension
     
-    assert_equal @card.typecode, 'InvitationRequest'
+    @card.typecode.should == 'InvitationRequest'
 
     # this now happens only when created via account controller
     

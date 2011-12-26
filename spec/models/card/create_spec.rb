@@ -143,7 +143,7 @@ describe Card, "types" do
     # now the classname changes if it doesn't have a codename in the table
     Card.classname_for(ct.name).should == 'AFoo'
    
-    #Cardtype.cache.reset
+    Wagn::Codename.reset_cache
     Card.create!(:type=>"FooRenamed",:name=>"testy").typecode.should == 'AFoo'
     Card.create!(:type=>"foo_renamed",:name=>"so testy").typecode.should == 'AFoo'
   end

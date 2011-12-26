@@ -38,6 +38,7 @@ class AccountController < ApplicationController
   end
 
 
+
   def accept
     raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
     @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
@@ -101,6 +102,11 @@ class AccountController < ApplicationController
 
   protected
   
+  def render_user_errors
+    @card.errors += @user.errors
+    render_errors
+  end
+  
   def password_authentication(login, password)
     if self.current_user = User.authenticate(params[:login], params[:password])
       flash[:notice] = "Successfully signed in"  #ENGLISH
@@ -117,13 +123,9 @@ class AccountController < ApplicationController
     end
   end
 
-
-
-  private
-
-    def failed_login(message)
-      flash[:notice] = "Oops: #{message}"
-      render :action=>'signin', :status=>403
-    end
+  def failed_login(message)
+    flash[:notice] = "Oops: #{message}"
+    render :action=>'signin', :status=>403
+  end
 
 end

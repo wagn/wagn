@@ -74,7 +74,7 @@ describe "reader rules" do
     User.as(:wagbot) do
       @perm_card.save!
       c= Card.fetch('Home')
-      c.typecode = 'Phrase'
+      c.type_id = Card.type_id_from_code 'Phrase'
       c.save!
       Card.create(:name=>'Phrase+*type+*read', :type=>'Pointer', :content=>'[[Joe User]]')      
     end
@@ -88,7 +88,7 @@ describe "reader rules" do
     User.as(:wagbot) { @perm_card.save! }
     Card.fetch('A+B').read_rule_id.should == Card.fetch('*all+*read').id
     c = Card.fetch('A')
-    c.typecode = 'Phrase'
+    c.type_id = Card.type_id_from_code 'Phrase'
     c.save!
     Card.fetch('A+B').read_rule_id.should == @perm_card.id
   end
@@ -282,6 +282,7 @@ describe "Permission", ActiveSupport::TestCase do
       [@c1,@c2,@c3].each do |c| 
         c.update_attribute(:content, 'WeirdWord')
       end
+      warn "creating read rule card"
       Card.create(:name=>"c1+*self+*read", :type=>'Pointer', :content=>"[[r1]]")
     end
 
@@ -361,7 +362,7 @@ describe Card, "settings based permissions" do
   before do
     User.as :wagbot
     @delete_rule_card = Card.fetch_or_new '*all+*delete'
-    @delete_rule_card.typecode = 'Pointer'
+    @delete_rule_card.type_id = Card.type_id_from_code 'Pointer'
     @delete_rule_card.content = '[[Joe_User]]'
     @delete_rule_card.save!
   end

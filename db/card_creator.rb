@@ -18,14 +18,6 @@ class MCard < ActiveRecord::Base
   end
 end
 
-class MTag < ActiveRecord::Base
-  set_table_name 'tags'
-  has_one :root_card, :class_name=>'MCard', :foreign_key=>"tag_id",:conditions => "trunk_id IS NULL"
-  has_many :cards, :class_name=>'MCard', :foreign_key=>"tag_id", :conditions=>"trunk_id IS NOT NULL", :dependent=>:destroy
-  belongs_to :current_revision, :class_name=>'MTagRevision', :foreign_key=>'current_revision_id'
-  
-end
-
 class MRevision < ActiveRecord::Base
   set_table_name 'revisions'
 end
@@ -61,9 +53,6 @@ class MWikiReference < ActiveRecord::Base
   set_table_name 'wiki_references'
 end
 
-
-require_dependency "#{Rails.root}/config/sample_wagn.rb"
-require_dependency "#{Rails.root}/config/wagn.rb"
 
 module CardCreator
   def using_postgres?

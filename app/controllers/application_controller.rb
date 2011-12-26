@@ -25,33 +25,37 @@ class ApplicationController < ActionController::Base
   protected
 
   def per_request_setup
-    request.format = :html if !params[:format]
+    ActiveSupport::Notifications.instrument 'wagn.per_request_setup', :message=>"" do
+      request.format = :html if !params[:format]
 
-    if Wagn::Conf[:multihost]
-      MultihostMapping.map_from_request(request) or return render_fast_404(request.host)
+      if Wagn::Conf[:multihost]
+        MultihostMapping.map_from_request(request) or return render_fast_404(request.host)
+      end
+
+      # canonicalizing logic is wrong
+      #canonicalize_domain
+      #else
+        Wagn::Conf[:host] = host = request.env['HTTP_HOST']
+        Wagn::Conf[:base_url] = 'http://' + host
+      #end
+      
+      ActiveSupport::Notifications.instrument 'wagn.renderer_load', :message=>"(in development)" do
+        Wagn::Renderer.ajax_call=request.xhr?
+      end
+      Wagn::Renderer.current_slot = nil
+    
+      Wagn::Cache.re_initialize_for_new_request
+    
+      User.current_user = current_user || User[:anon]
+    
+      # RECAPTCHA HACKS
+      Wagn::Conf[:controller] = self # this should not be conf, but more like wagn.env
+      Wagn::Conf[:recaptcha_on] = !User.logged_in? &&     # this too 
+        !!( Wagn::Conf[:recaptcha_public_key] && Wagn::Conf[:recaptcha_private_key] )
+      @recaptcha_count = 0
+    
+      @action = params[:action]
     end
-
-    if Wagn::Conf[:base_url]
-      canonicalize_domain
-    else
-      Wagn::Conf[:host] = host = request.env['HTTP_HOST']
-      Wagn::Conf[:base_url] = 'http://' + host
-    end
-
-    Wagn::Renderer.ajax_call=request.xhr?
-    Wagn::Renderer.current_slot = nil
-    
-    Wagn::Cache.re_initialize_for_new_request
-    
-    User.current_user = current_user || User[:anon]
-    
-    # RECAPTCHA HACKS
-    Wagn::Conf[:controller] = self # this should not be conf, but more like wagn.env
-    Wagn::Conf[:recaptcha_on] = !User.logged_in? &&     # this too 
-      !!( Wagn::Conf[:recaptcha_public_key] && Wagn::Conf[:recaptcha_private_key] )
-    @recaptcha_count = 0
-    
-    @action = params[:action]
   end
   
   def canonicalize_domain
@@ -73,18 +77,22 @@ class ApplicationController < ActionController::Base
     layout
   end
 
+  def ajax?
+    request.xhr?
+  end
+
   # ------------------( permission filters ) -------
   def view_ok
-    @card.ok?(:read) || render_denied('view')
+    ActiveSupport::Notifications.instrument 'view_ok', :message=>"read #{@card.name}" do
+      @card.ok?(:read) || render_denied('view')
+    end
   end
 
   def update_ok
     @card.ok?(:update) || render_denied('edit')
   end
 
-  def ajax?
-    request.xhr?
-  end
+
 
  #def create_ok
  #  @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'

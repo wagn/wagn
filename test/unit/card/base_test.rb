@@ -68,6 +68,7 @@ class Card::BaseTest < ActiveSupport::TestCase
   test 'update_should_create_subcards' do
     User.current_user = :joe_user
     User.as(:joe_user) do
+      warn "tesing create card Banana"
       b = Card.create!( :name=>'Banana' )
       Card.update(b.id, :cards=>{ "+peel" => { :content => "yellow" }})
       assert_equal "yellow", Card["Banana+peel"].content   
@@ -98,7 +99,9 @@ class Card::BaseTest < ActiveSupport::TestCase
 
 
   test 'create_without_read_permission' do
+    warn "create a fruit, Banana #{Card.type_id_from_name('Fruit')}"
     c = Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
+    warn "created #{c.inspect} a fruit, Banana"
     User.as(:anon) do
       assert_raises Card::PermissionDenied do
         c.ok! :read

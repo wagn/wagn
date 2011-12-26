@@ -11,10 +11,15 @@ describe "Card (Cardtype)" do
   end
 
   it "should not allow cardtype remove when instances present" do
+    warn "create City type"
     Card.create :name=>'City', :type=>'Cardtype'
+    Wagn::Codename.reset_cache
     city = Card.fetch('City')
-    Card.create :name=>'Sparta', :type=>'City'
-    Card.create :name=>'Eugene', :type=>'City'
+    warn Rails.logger.warn("created City type, #{city.inspect}")
+    c1=Card.create :name=>'Sparta', :type=>'City'
+    warn Rails.logger.warn("created c1 type, #{c1.inspect}")
+    c2=Card.create :name=>'Eugene', :type=>'City'
+    warn Rails.logger.warn("created c2 type, #{c2.inspect}")
     assert_equal ['Eugene','Sparta'], Card.search(:type=>'City').plot(:name).sort
     assert_raises Wagn::Oops do
       city.destroy!
@@ -27,12 +32,15 @@ describe "Card (Cardtype)" do
     Card.create! :name=>'County', :type=>'Cardtype'
     c = Card.find_by_name('County')
     c.destroy
-    Card.find_by_typecode('County').should == nil
+    Card.find_by_type_id(Card.type_id_from_code('County')).should == nil
   end
   
   it "cardtype creation and dynamic cardtype" do
-    assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).typecode == 'Cardtype'
+    assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).type_id == Card.type_id_from_code('Cardtype')
     assert_instance_of Card, c=Card.fetch("BananaPudding")
+    assert_instance_of Integer, (tid=Card.type_id_from_name("BananaPudding"))
+    assert Card.find_by_type_id tid
+    #assert_instance_of Cardtype, Cardtype.find_by_class_name("BananaPudding")    
     assert c.typecode == "BananaPudding"
     # you have to have a module to include or it's just a Basic (typecode fielde excepted)
     #assert_instance_of Card::BananaPudding, Card::BananaPudding.create( :name=>"figgy" )
@@ -45,10 +53,10 @@ describe "Card (Cardtype)" do
     end
     
     it "creates cardtype model and permission" do
-      @card.typecode = 'Cardtype'
+      @card.type_id = Card.type_id_from_code('Cardtype')
       @card.save!
       @card.typecode.should == 'Cookie'
-      Card.classname_for('Cookie').should == 'Cookie'
+      Card.typename_from_id(Card.type_id_from_code('Cookie')).should == 'Cookie'
       @card=Card['Cookie']
       assert_instance_of Card, @card
       @card.typecode.should == "Cookie"
@@ -108,11 +116,14 @@ describe Card, "Normal card with junctions" do
     @a.junctions.length.should > 0
   end
   it "should successfull have its type changed" do
-    @a.typecode = 'Number'; @a.save!
+    @a.type_id = Card.type_id_from_code('Number');
+    warn "a.type_id is #{@a.type_id}, #{Card.type_id_from_code('Number')},  #{@a.inspect}"
+    @a.save!
     Card['A'].typecode.should== 'Number'
   end
   it "should still have its junctions after changing type" do
-    @a.typecode = 'CardtypeE'; @a.save!
+    assert type_id = Card.type_id_from_code('CardtypeE')
+    @a.type_id = type_id; @a.save!
     Card['A'].junctions.length.should > 0
   end
 end
@@ -151,7 +162,7 @@ describe Card, "Wannabe Cardtype Card" do
   before do
     User.as :wagbot 
     @card = Card.create! :name=> 'convertible'
-    @card.typecode='Cardtype'
+    @card.type_id=Card.type_id_from_code('Cardtype')
     @card.save!
     
   end
@@ -175,7 +186,7 @@ describe User, "Joe User" do
 
     User.as :joe_user
     @user = User[:joe_user]
-    #Cardtype.cache.reset
+    Wagn::Codename.reset_cache
     @typenames = Card.createable_types.map{ |ct| ct[:name] }
   end
 
@@ -220,7 +231,7 @@ describe Wagn::Set::Type::Cardtype do
   
   it "should handle changing away from Cardtype" do
     ctg = Card.create! :name=>"CardtypeG", :type=>"Cardtype"
-    ctg.typecode = 'Basic'
+    ctg.type_id = Card.type_id_from_code('Basic')
     ctg.save!
     ctg = Card["CardtypeG"]
     ctg.typecode.should == 'Basic'

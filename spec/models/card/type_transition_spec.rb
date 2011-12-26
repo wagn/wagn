@@ -50,7 +50,7 @@ describe Card, "with role" do
   it "should lose role extension upon changing type" do
     # this test fails on a permission error in Mysql
     pending
-    @role.typecode = 'Basic'
+    @role.type_id = Wagn::Codename.default_type_id
     @role.save
     @role.extension.should == nil
   end
@@ -61,6 +61,7 @@ end
 describe Card, "with account" do
   before do
     User.as :wagbot 
+    warn "change type ?"
     @joe = change_card_to_type('Joe User', 'Basic')
   end
   
@@ -158,7 +159,8 @@ end
 def change_card_to_type(name, typecode)
   User.as :joe_user do
     card = Card.fetch(name)
-    card.typecode = typecode;
+    warn "card[#{name}] is #{card.inspect}, #{Card.type_id_from_code(typecode)}"
+    card.type_id = Card.type_id_from_code typecode
     card.save
     card
   end

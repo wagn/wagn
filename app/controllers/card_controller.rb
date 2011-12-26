@@ -124,10 +124,11 @@ class CardController < ApplicationController
   #------------( DELETE )
 
   def remove
+    @card = @card.refresh if @card.frozen?
     @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
     
-    return render_show(:remove) if !@card.errors[:confirmation_required].empty?  ## renders remove.erb, which is essentially a confirmation box.  
+    return render_show(:remove) if @card.errors[:confirmation_required].any?  ## renders remove.erb, which is essentially a confirmation box.  
 
     discard_locations_for(@card) 
 
@@ -212,6 +213,8 @@ class CardController < ApplicationController
   def load_card!
     load_card
     case
+    when @card == '*previous'
+      wagn_redirect previous_location
     when !@card || @card.name.nil? || @card.name.empty?  #no card or no name -- bogus request, deserves error
       raise Wagn::NotFound, "We don't know what card you're looking for."
     when @card.known? # default case
@@ -235,14 +238,20 @@ class CardController < ApplicationController
 
   def load_card
     return @card=nil unless id = params[:id]
-    if id =~ /^\~(\d+)$/
-      @card=Card.find($1)
-      @card.include_set_modules
-      return @card
-    end 
-    name = Wagn::Cardname.unescape(id)
-    card_params = params[:card] ? params[:card].clone : {}
-    @card = Card.fetch_or_new(name, card_params)
+    ActiveSupport::Notifications.instrument 'wagn.load_card', :message=>"load #{id}" do
+      case id
+      when /^\~(\d+)$/
+        @card=Card.find($1)
+        @card.include_set_modules
+        return @card
+      when '*previous'
+        @card = '*previous'
+      else
+        @card = Card.fetch_or_new( Wagn::Cardname.unescape(id), 
+          (params[:card] ? params[:card].clone : {} )
+        )
+      end
+    end
   end
 
 

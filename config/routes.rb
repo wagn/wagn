@@ -17,7 +17,7 @@ Wagn::Application.routes.draw do
 #  match '(wagn/):id.:format' => 'card#show_file', :format => /jpg|jpeg|png|gif|ico/
 
   match '/' => 'card#index'
-  match 'recent(.:format)' => 'card#show', :id => '*recent', :view => 'core', :format => FORMAT_PATTERN
+  match 'recent(.:format)' => 'card#show', :id => '*recent', :view => 'content'
   match '(/wagn)/:id(.:format)' => 'card#show'
   match '/files/(*id)' => 'card#show_file'
 

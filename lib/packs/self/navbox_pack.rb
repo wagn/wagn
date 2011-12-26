@@ -1,8 +1,9 @@
 class Wagn::Renderer
   define_view(:raw, :name=>'*navbox') do |args|
-    form_tag url_for_page('*search', :view=>'content'), :id=>'navbox-form', :method=>'get' do
-      text_field_tag :_keyword, '', :class=>'navbox'
-    end
+    %{ <form action="#{url_for_page('*search', :view=>'content')} id="navbox-form" method="get">
+      #{hidden_field_tag :view, 'content' }
+      #{text_field_tag :_keyword, '', :class=>'navbox' }
+     </form>}
   end
   alias_view(:raw, {:name=>'*navbox'}, :core)
 end

@@ -87,10 +87,11 @@ $(window).load ->
     else if xhr.status == 403 #permission denied
       $(this).setSlotContent result
     else
+      s = $(this).slot()
       if xhr.status == 409 #edit conflict
-        $(this).find('[name="card[current_revision_id]"]').val $(this).find('.new-current-revision-id').text()
+        s.find('.current_revision_id').val s.find('.new-current-revision-id').text()
       else if xhr.status == 449
-        $(this).find('.recaptcha-box').loadCaptcha()
+        s.find('.recaptcha-box').loadCaptcha()
 
       $(this).notify result
     

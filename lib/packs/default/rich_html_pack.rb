@@ -453,7 +453,7 @@ class Wagn::Renderer::Html
     wrap(:errors) do |args|
       %{<strong>Not Saved!</strong><span class="new-current-revision-id">#{@revision.id}</span>
         <div>#{ link_to_page @revision.author.card.name } has also been editing this card.</div>
-        <div>Please examine the changes, correct conflicts above, and re-save.</div>
+        <div>Please examine below, resolve above, and re-submit.</div>
         #{wrap(:conflict) { |args| _render_diff } } }
     end
   end
@@ -678,7 +678,7 @@ class Wagn::Renderer::Html
             
             #{ 
             if card.cardname.blank? || Card.exists?(card.cardname)
-              card.rule_card('autoname') ? '' : %{<label>name:</label> <span class="name-area">#{ raw name_field(form) }</span>}
+              card.rule_card('autoname') ? '&nbsp;' : %{<label>name:</label> <span class="name-area">#{ raw name_field(form) }</span>}
             else
               %{#{hidden_field_tag 'card[name]', card.name} <label>name:</label> <span class="title">#{ raw fancy_title(card.name) }</span>}
             end

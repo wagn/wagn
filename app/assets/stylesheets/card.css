@@ -73,7 +73,7 @@ html>body .page-icon {
 
 
 .ui-menu .ui-menu-item {
-  padding: 2px;
+  padding: 2px 0;
 }
 
 .navbox-item-label {
@@ -726,7 +726,7 @@ body#wagn .card-slot.recent-changes h2 {
 
 /*---------( Search ) ---------- */
 
-.content .paging img {
+.paging img {
   float: none !important;
   padding: 0px 3px;
   margin: 0px;

@@ -76,14 +76,14 @@ end
 
 describe Card, "classname_validation" do
   it "should create valid classnames" do
-    Card.classname_for("$SBJgg%%od").should == "SBJggOd"
+    Card.klassname_for("$SBJgg%%od").should == "SBJggOd"
   end
   
   it "should create incremented classnames when first choice is taken" do
-    #Card.classname_for("User").should thow an error
-    #Card.classname_for("Basic").should thow an error
-    Card.classname_for("Novelicious").should == "Novelicious"
-#    Card.classname_for('Process').should == 'Process1'
+    #Card.klassname_for("User").should thow an error
+    #Card.klassname_for("Basic").should thow an error
+    Card.klassname_for("Novelicious").should == "Novelicious"
+#    Card.klassname_for('Process').should == 'Process1'
   end
 end                  
 

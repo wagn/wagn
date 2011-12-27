@@ -18,7 +18,7 @@ namespace :wagn do
     #note: users, roles, and role_users have been manually edited
     task :dump => :environment do
       #ENV['BOOTSTRAP_DUMP'] = 'true'
-      %w{ cards revisions wiki_references cardtypes }.each do |table|
+      %w{ cards revisions wiki_references }.each do |table|
         i = "000"
         File.open("#{Rails.root}/db/bootstrap/#{table}.yml", 'w') do |file|
           data = 

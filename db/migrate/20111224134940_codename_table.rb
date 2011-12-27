@@ -5,6 +5,8 @@ class CodenameTable < ActiveRecord::Migration
       t.string   "codename", :null => false
     end
 
+    change_column "cards", "typecode", :string, :null=>true
+
     renames = {"AccountRequest" => "InvitationRequest"}
 
     %w{ *account *accountable *account_link *add_help *alert *all *all_plu
@@ -28,6 +30,8 @@ class CodenameTable < ActiveRecord::Migration
 
 
   def self.down
+    change_column "cards", "typecode", :string, :null=>false
+
     drop_table "codename"
   end
 end

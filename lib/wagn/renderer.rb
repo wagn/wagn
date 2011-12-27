@@ -203,7 +203,6 @@ module Wagn
   
     def deny_render(action, args={})
       return false if UNDENIABLE_VIEWS.member?(action)
-      warn "render being checked for action: #{action}"
       ch_action = case
         when too_deep?      ; :too_deep
         when !card          ; false

@@ -577,6 +577,7 @@ class Card < ActiveRecord::Base
 
   validates_each :current_revision_id do |rec, attrib, value|
     if !rec.new_card? && rec.current_revision_id_changed? && value.to_i != rec.current_revision_id_was.to_i
+      warn "was_id = #{rec.current_revision_id_was}"
       rec.current_revision_id = rec.current_revision_id_was
       rec.errors.add :conflict, "changes not based on latest revision"
       rec.error_view = :conflict

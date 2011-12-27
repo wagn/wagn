@@ -152,7 +152,7 @@ module Wagn
             (card.typecode=='Cardtype' && card.cards_of_type_exist?)
         
           link_to attr, path(:edit, :attrib=>attr), :remote=>true,
-            :class => %{slotter edit-#{ attr }-link #{'init-editors' if attr==:content } #{'current-subtab' if attr==current.to_sym}}
+            :class => %{slotter edit-#{ attr }-link #{'current-subtab' if attr==current.to_sym}}
         end.compact * "\n"
       end
     end
@@ -191,7 +191,7 @@ module Wagn
 
 
     def link_to_menu_action( to_action)
-      klass = { :edit => 'edit-content-link init-editors'}
+      klass = { :edit => 'edit-content-link'}
       content_tag :li, link_to_action( to_action.to_s.capitalize, to_action,
         :class=> "slotter #{klass[to_action]}" #{}" #{menu_action==to_action ? ' current' : ''}"
       )

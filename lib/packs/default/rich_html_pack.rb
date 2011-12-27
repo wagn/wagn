@@ -108,7 +108,7 @@ class Wagn::Renderer::Html
 
     wrap(:missing, args) do
       link_to raw("Add <strong>#{ @showname || card.name }</strong>"), path(:new, new_args),
-        :class=>'slotter init-editors', :remote=>true
+        :class=>'slotter', :remote=>true
     end
   end
   
@@ -206,7 +206,7 @@ class Wagn::Renderer::Html
     end
     }
     #{ submit_tag 'Rename', :class=>'edit-name-submit-button'}
-    #{ button_tag 'Cancel', :class=>'edit-name-cancel-button slotter init-editors', :type=>'button', :href=>path(:edit, :id=>card.id)}
+    #{ button_tag 'Cancel', :class=>'edit-name-cancel-button slotter', :type=>'button', :href=>path(:edit, :id=>card.id)}
     }
     end}
     </div>}
@@ -218,7 +218,7 @@ class Wagn::Renderer::Html
     <h2>Change Type</h2> #{
       form_for :card, :url=>path(:update), :remote=>true, 
         #'main-success'=>'REDIRECT: TO-CARD', # adding this back in would make main cards redirect on cardtype changes
-        :html=>{ :class=>'slotter card-edit-type-form init-editors' } do |f|
+        :html=>{ :class=>'slotter card-edit-type-form' } do |f|
         
         
         %{ #{ hidden_field_tag :view, :edit }
@@ -228,7 +228,7 @@ class Wagn::Renderer::Html
           %{<div>to #{ raw typecode_field :class=>'type-field edit-type-field' }</div>}
         end}
         <div>
-          #{ button_tag 'Cancel', :href=>path(:edit), :type=>'button', :class=>'edit-type-cancel-button slotter init-editors' }
+          #{ button_tag 'Cancel', :href=>path(:edit), :type=>'button', :class=>'edit-type-cancel-button slotter' }
         </div>}
      end}
     </div>}
@@ -671,7 +671,7 @@ class Wagn::Renderer::Html
           else
             %{<span class="new-type">
               <label>type:</label>
-              #{ typecode_field :class=>'type-field new-type-field live-type-field init-editors', :href=>path(:new), 'data-remote'=>true}
+              #{ typecode_field :class=>'type-field new-type-field live-type-field', :href=>path(:new), 'data-remote'=>true}
             </span>}
           end}
          

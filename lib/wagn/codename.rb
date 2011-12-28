@@ -10,8 +10,19 @@ module Wagn
       def id_from_code(code) card_attr(code, :id)        end
       def exists?(key)       code_attr(key)              end
       def name_change(key)   exists?(key) && reset_cache end 
-      def codes()            get_cache('code2card').each_value      end
-      def type_codes() get_cache('code2card').find { |h| h[:type_id] == cardtype_type_id } end
+      def codes()            get_cache(:code2card).each_value      end
+      def type_codes()
+=begin
+        c=get_cache(:code2card)
+        warn "type_codes #{c.nil? ? "caller:#{caller*"\n"}" : "keys #{c.keys*"\n"}"}"
+        r=c.values.find_all {|h|
+          warn "type_search #{h[:type_id]==cardtype_type_id}, #{h.inspect}"
+          h[:type_id]==cardtype_type_id
+        }
+        warn "type_codes R:#{r.inspect}"; r
+=end
+        get_cache(:code2card).values.find_all {|h| h[:type_id]==cardtype_type_id}
+      end
 
       # This is a read-only cached model.  Entries must be added on bootstrap,
       # or as an administrative action when installing or upgrading wagn and
@@ -52,13 +63,16 @@ module Wagn
           load_cache
           return self.cache.read(key)
         else
-          return c if c = @@pre_cache[key]
+          return c if c = @@pre_cache[key.to_s]
           load_cache
-          @@pre_cache[key]
+          @@pre_cache[key.to_s]
         end
       end
 
       def set_cache(key, v)
+        key = key.to_s
+        #warn "set_cache(#{key.inspect}, #{v.inspect})"
+        #warn "no value set_cache #{key.inspect}, #{caller[0..20]*"\n"}" if v.nil? or v.blank?
         self.cache ? self.cache.write(key, v) : @@pre_cache[key] = v
       end
 
@@ -71,7 +85,7 @@ module Wagn
             where c.trash is false
               and (c.type_id = 5 or cd.codename is not null)
           }).map(&:symbolize_keys).each do |h|
-            h[:id] = h[:id].to_i
+            h[:type_id], h[:id] = h[:type_id].to_i, h[:id].to_i
             h[:codename] ||= Card.klassname_for(h[:name])
             code2card[h[:codename]] = card2code[h[:id]] = card2code[h[:key]] = h
           end

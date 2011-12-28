@@ -11,15 +11,11 @@ describe "Card (Cardtype)" do
   end
 
   it "should not allow cardtype remove when instances present" do
-    warn "create City type"
     Card.create :name=>'City', :type=>'Cardtype'
     Wagn::Codename.reset_cache
     city = Card.fetch('City')
-    warn Rails.logger.warn("created City type, #{city.inspect}")
     c1=Card.create :name=>'Sparta', :type=>'City'
-    warn Rails.logger.warn("created c1 type, #{c1.inspect}")
     c2=Card.create :name=>'Eugene', :type=>'City'
-    warn Rails.logger.warn("created c2 type, #{c2.inspect}")
     assert_equal ['Eugene','Sparta'], Card.search(:type=>'City').plot(:name).sort
     assert_raises Wagn::Oops do
       city.destroy!
@@ -117,7 +113,6 @@ describe Card, "Normal card with junctions" do
   end
   it "should successfull have its type changed" do
     @a.type_id = Card.type_id_from_code('Number');
-    warn "a.type_id is #{@a.type_id}, #{Card.type_id_from_code('Number')},  #{@a.inspect}"
     @a.save!
     Card['A'].typecode.should== 'Number'
   end
@@ -129,6 +124,7 @@ describe Card, "Normal card with junctions" do
 end
 
 
+=begin No extension any more, is there a modified version of this we need?
 describe Card, "Recreated Card" do
   before do
     User.as :wagbot 
@@ -142,6 +138,7 @@ describe Card, "Recreated Card" do
   end
   
 end
+=end
 
 describe Card, "New Cardtype" do
   before do
@@ -169,9 +166,9 @@ describe Card, "Wannabe Cardtype Card" do
   it "should successfully change its type to a Cardtype" do
     Card['convertible'].typecode.should=='Cardtype'
   end
-  it "should have an extension" do
-    Card['convertible'].extension.should_not== nil
-  end
+  #it "should have an extension" do
+  #  Card['convertible'].extension.should_not== nil
+  #end
 end
 
 describe User, "Joe User" do
@@ -187,7 +184,8 @@ describe User, "Joe User" do
     User.as :joe_user
     @user = User[:joe_user]
     Wagn::Codename.reset_cache
-    @typenames = Card.createable_types.map{ |ct| ct[:name] }
+    @typenames = Card.createable_types
+    #@typenames = Card.createable_types.map{ |ct| ct[:name] }
   end
 
   it "should not have r3 permissions" do
@@ -235,7 +233,7 @@ describe Wagn::Set::Type::Cardtype do
     ctg.save!
     ctg = Card["CardtypeG"]
     ctg.typecode.should == 'Basic'
-    ctg.extension.should == nil
+    #ctg.extension.should == nil
   end
 end
 

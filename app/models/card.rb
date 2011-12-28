@@ -126,7 +126,9 @@ class Card < ActiveRecord::Base
     NON_CREATEABLE = %w{InvitationRequest Setting Set}
 
     def createable_types
-      Wagn::Codename.type_codes.map { |id|
+      #warn "createable_types #{(cds=Wagn::Codename.type_codes).inspect}"
+      #cds.map { |h|
+      Wagn::Codename.type_codes.map { |h|
         !NON_CREATEABLE.member?( h[:codename] ) &&
           create_ok?( h[:id] ) && h[:name] || nil
       }.compact
@@ -625,7 +627,7 @@ class Card < ActiveRecord::Base
 
   validates_each :current_revision_id do |rec, attrib, value|
     if !rec.new_card? && rec.current_revision_id_changed? && value.to_i != rec.current_revision_id_was.to_i
-      warn "was_id = #{rec.current_revision_id_was}"
+      #warn "was_id = #{rec.current_revision_id_was}"
       rec.current_revision_id = rec.current_revision_id_was
       rec.errors.add :conflict, "changes not based on latest revision"
       rec.error_view = :conflict

@@ -6,7 +6,7 @@ class Wagn::Renderer::Html
     cells = [
       ["rule-setting",
         link_to( card.cardname.tag_name, path(:view, :view=>:open_rule),
-          :class => 'edit-rule-link slotter init-editors', :remote => true )
+          :class => 'edit-rule-link slotter', :remote => true )
       ],
       ["rule-content",
         %{<div class="rule-content-container closed-view">
@@ -135,7 +135,7 @@ class Wagn::Renderer::Html
 
       if edit_mode
         %{<label>type:</label>}+
-        raw(typecode_field( :class =>'type-field rule-type-field live-type-field init-editors', 'data-remote'=>true,
+        raw(typecode_field( :class =>'type-field rule-type-field live-type-field', 'data-remote'=>true,
           :href => path(:view, :card=>open_rule, :view=>:open_rule, :type_reload=>true) ) )
       elsif current_set_key
         '<label>type:</label>'+

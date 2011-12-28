@@ -1,8 +1,8 @@
 
-wagn.initializeEditors = (map) ->
+wagn.initializeEditors = (range, map) ->
   map = wagn.editorInitFunctionMap unless map?
   $.each map, (selector, fn) ->
-    $.each $.find(selector), ->
+    $.each range.find(selector), ->
       fn.call $(this)
 
 wagn.prepUrl = (url, slot)->
@@ -25,6 +25,7 @@ jQuery.fn.extend {
     v.attr 'home_view', s.attr 'home_view'
     v.attr 'item',      s.attr 'item'
     s.replaceWith v
+    v
   
   notify: (message) -> 
     notice = @slot().find('.card-notice')
@@ -52,7 +53,6 @@ jQuery.fn.extend {
       data : { 'card[content]' : @val() },
       complete: (xhr) -> slot.report('draft saved') 
     }
-  
 
   setContentFieldsFromMap: (map) ->
     map = wagn.editorContentFunctionMap unless map?
@@ -75,10 +75,11 @@ jQuery.fn.extend {
 setInterval (-> $('.card-form').setContentFieldsFromMap()), 20000
 
 $(window).load ->
-  wagn.initializeEditors()
-
+  wagn.initializeEditors $('body')
+  
   $('body').delegate '.slotter', "ajax:success", (event, data) ->
-    $(this).setSlotContent data
+    newslot = $(this).setSlotContent data
+    wagn.initializeEditors newslot
 
   $('body').delegate '.slotter', "ajax:error", (event, xhr) ->
     result = xhr.responseText
@@ -87,13 +88,15 @@ $(window).load ->
     else if xhr.status == 403 #permission denied
       $(this).setSlotContent result
     else
+      $(this).notify result
+    
       s = $(this).slot()
       if xhr.status == 409 #edit conflict
         s.find('.current_revision_id').val s.find('.new-current-revision-id').text()
       else if xhr.status == 449
         s.find('.recaptcha-box').loadCaptcha()
 
-      $(this).notify result
+      
     
   $('body').delegate 'button.slotter', 'click', (event)->
     return false if !$.rails.allowAction $(this)
@@ -122,18 +125,14 @@ $(window).load ->
     $(this).setContentFieldsFromMap()
     $(this).find('.card-content').attr('no-autosave','true')
     true
-
-  $('.init-editors').live 'ajax:success', ->
-    wagn.initializeEditors()
     
   $('body').delegate 'button.redirecter', 'click', ->
     window.location = $(this).attr('href')
 
-
   $('.card-slot').live 'dblclick', (event)->
     s = $(this)
     return false if s.find( '.edit-area' )[0]
-    s.addClass 'slotter init-editors'
+    s.addClass 'slotter'
     s.attr 'href', wagn.rootPath + '/card/edit/~' + s.attr('card-id')
     $.rails.handleRemote(s)
     false # don't propagate up to next slot

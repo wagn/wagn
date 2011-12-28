@@ -52,6 +52,10 @@ module Wagn::Model::Fetch
     def exists?(cardname)
       fetch(cardname, :skip_virtual=>true, :skip_modules=>true).present?
     end
+    
+    def autoname(name)
+      exists?(name) ? autoname(name.next) : name
+    end
   end
 
   def refresh

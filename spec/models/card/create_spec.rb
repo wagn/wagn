@@ -43,6 +43,8 @@ end
 
 
 
+
+
 describe Card, "created by Card.new " do
   before(:each) do     
     User.as :wagbot 
@@ -92,6 +94,27 @@ describe Card, "created by Card.create with valid attributes" do
     Card.find_by_name("New Card").class.should == Card
   end  
 end
+
+describe Card, "created with autoname" do
+  before do
+    User.as :wagbot do
+      Card.create :name=>'Book+*type+*autoname', :content=>'b1'
+    end
+  end
+  
+  it "should handle cards without names" do
+    c = Card.create! :type=>'Book'
+    c.name.should== 'b1'
+  end
+  
+  it "should increment again if name already exists" do 
+    Card.create :name=>'b1'
+    c = Card.create! :type=>'Book'
+    c.name.should== 'b2'
+    
+  end
+end
+
 
 describe Card, "create junction" do
   before(:each) do

@@ -509,8 +509,8 @@ class Card < ActiveRecord::Base
       if autoname_card = rec.rule_card('autoname')
         User.as(:wagbot) do
           autoname_card = autoname_card.refresh if autoname_card.frozen?
-          value = rec.name = autoname_card.content
-          autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create
+          value = rec.name = Card.autoname(autoname_card.content)
+          autoname_card.content = value  #fixme, should give placeholder on new, do next and save on create
           autoname_card.save!
         end
       end
@@ -577,6 +577,7 @@ class Card < ActiveRecord::Base
 
   validates_each :current_revision_id do |rec, attrib, value|
     if !rec.new_card? && rec.current_revision_id_changed? && value.to_i != rec.current_revision_id_was.to_i
+      warn "was_id = #{rec.current_revision_id_was}"
       rec.current_revision_id = rec.current_revision_id_was
       rec.errors.add :conflict, "changes not based on latest revision"
       rec.error_view = :conflict
@@ -617,9 +618,7 @@ class Card < ActiveRecord::Base
     end
   end
  
-  # leftovers from model/system
-  class << self
-  
+  class << self  
     def setting(name)
       User.as :wagbot  do
         card=Card[name] and !card.content.strip.empty? and card.content

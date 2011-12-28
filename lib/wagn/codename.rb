@@ -7,7 +7,7 @@ module Wagn
 
       def [](code)           card_attr(code, :name)      end
       def codename(key)      code_attr(key, :codename)   end
-      def id_from_code(code) code_attr(code, :id)        end
+      def id_from_code(code) card_attr(code, :id)        end
       def exists?(key)       code_attr(key)              end
       def name_change(key)   exists?(key) && reset_cache end 
       def codes()            get_cache('code2card').each_value      end
@@ -24,14 +24,16 @@ module Wagn
       end
 
       def code_attr(key, attr=nil?)
+        #warn "miss #{key} #{card2code.map(&:inspect)*"\n"}" unless card2code.has_key?(key)
         card2code.has_key?(key) && (attr ? card2code[key][attr] : true)
       end
 
       def card_attr(key, attr=nil?)
+        #warn "miss card #{key} #{code2card.map(&:inspect)*"\n"}" unless code2card.has_key?(key)
         code2card.has_key?(key) && (attr ? code2card[key][attr] : true)
       end
 
-      def default_type_id()  @@default_id ||= id_from_code('Basic') end
+      def default_type_id()  @@default_id  ||= id_from_code('Basic')    end
       def cardtype_type_id() @@cardtype_id ||= id_from_code('Cardtype') end
 
       def reset_cache()
@@ -76,7 +78,8 @@ module Wagn
 
         set_cache 'code2card', code2card
         set_cache 'card2code', card2code
-        #warn "loaded code2card #{code2card.map{|v|v.inspect}*"\n"}"
+        #warn "loaded code2card #{code2card.map(&:inspect)*"\n"}"
+        #warn "loaded code2card #{code2card.map{|k,v|k=~/^[A-Z]/ && "#{k}->#{v.inspect}"}.compact*"\n"}"
         #warn "loaded card2code #{card2code.map{|v|v.inspect}*"\n"}"
       rescue Exceptions => e
         warn(Rails.logger.info "Error loading codenames #{e.inspect}, #{e.backtrace*"\n"}")

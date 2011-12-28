@@ -36,31 +36,31 @@ describe "Card (Cardtype)" do
   end
   
   it "cardtype creation and dynamic cardtype" do
-    assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).type_id == Card.type_id_from_code('Cardtype')
+    
+    assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).type_id == Card.type_id_from_name('Cardtype')
     assert_instance_of Card, c=Card.fetch("BananaPudding")
-    assert_instance_of Integer, (tid=Card.type_id_from_name("BananaPudding"))
-    assert Card.find_by_type_id tid
-    #assert_instance_of Cardtype, Cardtype.find_by_class_name("BananaPudding")    
-    assert c.typecode == "BananaPudding"
+    assert Integer===(tid=Card.type_id_from_name("BananaPudding"))
+
     # you have to have a module to include or it's just a Basic (typecode fielde excepted)
-    #assert_instance_of Card::BananaPudding, Card::BananaPudding.create( :name=>"figgy" )
+    assert Card.create(:type=>'BananaPudding',:name=>"figgy" ).typename == 'BananaPudding'
+    assert Card.find_by_type_id(tid)
   end
 
   describe "conversion to cardtype" do
     before do
-      @card = Card.create!(:name=>'Cookie')
-      @card.typecode.should == 'Basic'      
+      @card = Card.create!(:type=>'Cardtype', :name=>'Cookie')
+      @card.typename.should == 'Cardtype'
     end
     
     it "creates cardtype model and permission" do
-      @card.type_id = Card.type_id_from_code('Cardtype')
+      @card.type_id = Card.type_id_from_code('Cookie')
       @card.save!
       @card.typecode.should == 'Cookie'
       Card.typename_from_id(Card.type_id_from_code('Cookie')).should == 'Cookie'
       @card=Card['Cookie']
       assert_instance_of Card, @card
       @card.typecode.should == "Cookie"
-      assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).typecode
+      assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).typename
     end
   end
   
@@ -122,7 +122,7 @@ describe Card, "Normal card with junctions" do
     Card['A'].typecode.should== 'Number'
   end
   it "should still have its junctions after changing type" do
-    assert type_id = Card.type_id_from_code('CardtypeE')
+    assert type_id = Card.type_id_from_name('CardtypeE')
     @a.type_id = type_id; @a.save!
     Card['A'].junctions.length.should > 0
   end

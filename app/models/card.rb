@@ -403,7 +403,7 @@ class Card < ActiveRecord::Base
   # TYPE
 
   def type_card()     Card[typename]                                  end
-  def typecode()      Card.typecode_from_id(type_id)                  end
+  def typecode() type_id && Card.typecode_from_id(type_id) || 'Basic' end
   def typename()      Card.typename_from_id( type_id ) || 'Basic'     end
   def type=(typename) self.type_id = Card.type_id_from_name(typename) end
 

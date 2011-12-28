@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111219204123) do
+ActiveRecord::Schema.define(:version => 20110929155053) do
 
   create_table "card_files", :force => true do |t|
     t.string   "filename"

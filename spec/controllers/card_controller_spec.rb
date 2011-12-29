@@ -16,7 +16,7 @@ describe CardController do
     end
     
     it "should recognize .rss on /recent" do
-      {:get => "/recent.rss"}.should route_to(:controller=>"card", :view=>"core", :action=>"show", 
+      {:get => "/recent.rss"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
         :id=>"*recent", :format=>"rss"
       )
     end

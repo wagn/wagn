@@ -1,10 +1,15 @@
 common: &common
-  adapter: mysql
+  adapter: mysql2
   username: root
-#  password: password
+  password:
+  pool: 5
+  socket: /tmp/mysql.sock
   encoding: utf8
   host: localhost
-  secret: YrDOFOmYJyFg2tTZykCbZjWYQUbKBt
+  
+production:
+  database: wagn_production
+  <<: *common  
 
 development:
   database: wagn_development
@@ -18,6 +23,4 @@ cucumber:
   database: wagn_test
   <<: *common
 
-production:
-  database: wagn_production
-  <<: *common
+

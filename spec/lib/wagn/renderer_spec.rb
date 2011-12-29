@@ -114,7 +114,6 @@ describe Wagn::Renderer, "" do
 
     it "titled" do
       result = render_card(:titled, :name=>'A+B')
-      #warn "titled result = #{result}"
       assert_view_select result, 'div[class~="titled-view"]' do
         assert_select 'h1' do
           assert_select 'span', 3

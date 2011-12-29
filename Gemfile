@@ -14,7 +14,10 @@ gem "recaptcha", "~> 0.3.4"
 
 # need at least one of the following
 
-gem 'mysql', '~>2.8.1', :group=>'mysql'
+group :mysql do
+#  gem "mysql2", "~> 0.3.11"
+  gem 'mysql', '~>2.8.1'
+end
 
 group :postgres do
   ENV['RUBY_VERSION']||RUBY_VERSION =~ /^(1\.9|ree)/ ?
@@ -31,7 +34,6 @@ group :assets do
   gem 'uglifier'                               # makes pretty code ugly again.  compresses js/css for fast loading
 
   gem 'jquery-rails', '~> 1.0.17'              # main js framework, along with rails-specific unobtrusive lib
-#  gem 'jquery.fileupload-rails'                # jquery plugin for uploading files
   gem 'tinymce-rails', '~> 3.4.7'              # wysiwyg editor
   
   gem 'therubyracer'                           # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one
@@ -48,19 +50,19 @@ group :test, :development do
 end
 
 group :test do
-  gem 'cucumber-rails', '~>1.2.0'              # feature-driven-development suite
+  gem 'cucumber-rails', '~> 1.2.0'              # feature-driven-development suite
   gem 'launchy'                                # lets cucumber launch browser windows
   gem 'timecop'                                # not clear on use/need.  referred to in shared_data.rb
   gem 'spork'                                  #
                                                
   gem 'email_spec'                             # 
-  gem 'database_cleaner', '~>0.7.0'            # used by cucumber for db transactions
+  gem 'database_cleaner', '~> 0.7.0'            # used by cucumber for db transactions
   
   gem 'turn', "<0.8.3", :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
   
   #windows stuff
-  gem 'win32console', '1.3.0', :platforms => ['mingw', 'mswin']
-  gem 'win32-process', '0.6.5', :platforms => ['mingw', 'mswin']
+  gem 'win32console', '~> 1.3.0', :platforms => ['mingw', 'mswin']
+  gem 'win32-process', '~> 0.6.5', :platforms => ['mingw', 'mswin']
 end
 
 group :debug do

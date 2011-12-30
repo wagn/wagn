@@ -1,5 +1,5 @@
 namespace :wagn do
-  desc "create configuration files"
+  desc "install wagn configuration files"
   task :install do
     require 'erb'
     rails_root = File.expand_path('./') # must be run from rails root dir

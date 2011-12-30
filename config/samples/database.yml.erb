@@ -1,9 +1,13 @@
-<% if @mode==:dev 
-%>common: &common<% 
-  else 
-%>production:
+<% 
+# note - this file is used by rake wagn:install to generate the initial database.yml file.
+# See more in the README.
+
+if @mode==:dev 
+  %>common: &common<% 
+else 
+  %>production:
   database: wagn_production<% 
-  end %>
+end %>
   adapter: <%= @engine == :postgres ? :postgresql : :mysql %>
   username: root
   password:

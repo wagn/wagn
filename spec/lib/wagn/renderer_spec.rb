@@ -161,7 +161,7 @@ describe Wagn::Renderer, "" do
         assert_view_select @simple_page, 'div[id="menu"]' do
           assert_select 'a[class="internal-link"][href="/"]', 'Home'
           assert_select 'a[class="internal-link"][href="/recent"]', 'Recent'
-          assert_select 'form[id="navbox-form"][action="/*search"]' do
+          assert_select 'form[id="navbox-form"][action="/*search?view=content"]' do
             assert_select 'input[name="_keyword"]'
           end
         end
@@ -366,7 +366,7 @@ describe Wagn::Renderer, "" do
       result = Wagn::Renderer::Html.new(c).render( :edit )
       assert_view_select result, 'div[class="field-in-multi"]' do
         assert_select 'input[name=?][type="text"][value="Zamma Flamma"]', 'card[cards][~plus~author][content]'
-        assert_select 'input[name=?][type="hidden"][value="Phrase"]',     'card[cards][~plus~author][typecode]'
+        assert_select %{input[name=?][type="hidden"][value="#{Card.type_id_from_code "Phrase"}"]},     'card[cards][~plus~author][type_id]'
       end
     end
   end

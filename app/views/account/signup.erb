@@ -22,7 +22,7 @@
     
       <%= form_for :card, :action=>'signup', :html=>{ :remote=>true, :class=>'slotter' } do |f| %>
         <%= hidden_field_tag 'element', "#{div_id}"  %>
-        <%= f.hidden_field :typecode  %>
+        <%= f.hidden_field :type_id  %>
         <%- slot.form = f %>
 
         <table class="fieldset">

@@ -253,7 +253,7 @@ class Wagn::Renderer::Html
   
   <div class="field-in-multi">
     #{ self.content_field( eform, :nested=>true ) }
-    #{ card.new_card? ? eform.hidden_field(:typecode) : '' }
+    #{ card.new_card? ? eform.hidden_field(:type_id) : '' }
   </div>
   #{instruction}
   <div style="clear:both"></div>
@@ -666,7 +666,7 @@ class Wagn::Renderer::Html
         <div class="card-header">
           #{ 
           if hide_type
-            form.hidden_field :typecode 
+            form.hidden_field :type_id 
           else
             %{<span class="new-type">
               <label>type:</label>

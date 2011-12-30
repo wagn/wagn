@@ -61,7 +61,6 @@ end
 describe Card, "with account" do
   before do
     User.as :wagbot 
-    warn "change type ?"
     @joe = change_card_to_type('Joe User', 'Basic')
   end
   

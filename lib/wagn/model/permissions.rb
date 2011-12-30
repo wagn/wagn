@@ -182,11 +182,10 @@ module Wagn::Model::Permissions
     rcard, rclass = permission_rule_card(:read)
     self.read_rule_id = rcard.id
     self.read_rule_class = rclass
-    
     #find all cards with me as trunk and update their read_rule (because of *type plus right)
     # skip if name is updated because will already be resaved
     
-    if !new_card? && updates.for(:typecode)
+    if !new_card? && updates.for(:type_id)
       User.as :wagbot do
         Card.search(:left=>self.name).each do |plus_card|
           plus_card = plus_card.refresh if plus_card.frozen?

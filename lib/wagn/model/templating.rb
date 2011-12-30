@@ -42,7 +42,6 @@ module Wagn::Model::Templating
 
   # FIXME: content settings -- do we really need the reference expiration system?
   def expire_templatee_references
-    return unless respond_to?('references_expired')
     if wql=hard_templatee_wql
       condition = User.as(:wagbot) { Wql::CardSpec.build(wql.merge(:return=>"condition")).to_sql }
       card_ids_to_update = connection.select_rows("select id from cards t where #{condition}").map(&:first)

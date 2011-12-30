@@ -1,12 +1,17 @@
-common: &common
-  adapter: mysql2
+<% if @mode==:dev 
+%>common: &common<% 
+  else 
+%>production:
+  database: wagn_production<% 
+  end %>
+  adapter: <%= @engine == :postgres ? :postgresql : :mysql %>
   username: root
   password:
   pool: 5
-  socket: /tmp/mysql.sock
   encoding: utf8
   host: localhost
-  
+<% if @engine==:mysql %>  socket: /tmp/mysql.sock<% end %>  
+<% if @mode==:dev %>
 production:
   database: wagn_production
   <<: *common  
@@ -22,5 +27,4 @@ test:
 cucumber:
   database: wagn_test
   <<: *common
-
-
+<% end %>

@@ -1,6 +1,0 @@
-
-# use mysqldump or similar to dump the database as SQL
-sqltoxml	# Converts the "pages" table to xml for processing
-deki2wagn	# Takes the output of sqltoxml and generates a console script
-
-# run: script/console [development] < file_from_deki2wagn

@@ -1,9 +1,7 @@
 .idea/
 .rvmrc
 .bundle
-config/amazon_s3.yml
-config/database.yml
-config/newrelic.yml
+config/*.yml
 config/wagn.rb
 config/cruise*
 coverage
@@ -15,12 +13,9 @@ public/card_images
 public/file
 public/image
 public/javascripts/inline-console.js
-public_scripts
-public/stylesheets/local.css
+local
 script/local
 script/performance/*.session
-test/unit/tmp_test.rb
 tmp/*
-/nbproject/
 /*.project
 *.sqlite3

@@ -1,8 +1,59 @@
-==Wagn: how pioneers roll
+=Wagn: how pioneers roll
 
-Wagn is an open web platform for collaborating to build coherent web systems.
+== Basics
+
+Wagn is an open web platform for building coherent web systems.
 
 Using simple wiki-inspired building blocks called cards, "Wagneers" construct sites ranging from simple content managers to custom project trackers to fully integrated web suites.  
+
+==Dependencies
+ 
+Ruby[http://www.ruby-lang.org/en/]:: version 1.8.7 or higher
+Bundler[http://gembundler.com/]:: version 1.0 or higher
+ImageMagick[http://www.imagemagick.org/]::
+git[http://git-scm.com/]::
+A database engine:: Either MySQL[http://www.mysql.com/] or PostgreSQL[http://www.postgresql.org/]
+ 
+=Installation
+
+===1. Get the source
+
+ git clone git://github.com/wagn/wagn.git
+ cd wagn # remaining commands should be executed from this directory
+
+===2. Install config files
+
+ rake wagn:install # production-only MySQL setup
+
+* For PostgreSQL setup, use `env ENGINE=postgres rake wagn:install` 
+* For developer setup, use `env MODE=dev rake wagn:install`
+
+===3. Get libraries (ruby gems)
+ bundle install
+
+Watch carefully for errors!  You may need to run as a admin user (using sudo, for example).  For more info see using bundler with Wagn.
+
+===4. Configure your database
+
+Edit the config/database.yml file.  The default configuration works if you have password-less root access to mysql.  Otherwise see database configuration.
+
+===5. Seed your data
+
+ rake wagn:create
+
+===6. Start your server
+
+To fire up the default, built-in WEBrick server, just run:
+
+ env STATIC_ASSETS=true rails server
+ 
+...and point your browser to http://localhost:3000 (unless otherwise configured).
+
+See rails documentation to run your wagn on other servers.
+
+
+
+=More Resources
 
 To learn more about installation, see http://wagn.org/Installation
 

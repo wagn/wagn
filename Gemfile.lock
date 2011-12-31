@@ -228,5 +228,5 @@ DEPENDENCIES
   turn (< 0.8.3)
   uglifier
   uuid (~> 2.3.4)
-  win32-process (= 0.6.5)
-  win32console (= 1.3.0)
+  win32-process (~> 0.6.5)
+  win32console (~> 1.3.0)

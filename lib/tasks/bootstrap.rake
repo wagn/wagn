@@ -2,12 +2,18 @@ namespace :wagn do
   require 'wagn/codename'
   Codename = Wagn::Codename
 
-  desc "(re) create a wagn database from scratch"
+  desc "create a wagn database from scratch"
   task :create => :environment do
+    puts "dropping"
     Rake::Task['db:drop'].invoke
+    
+    puts "creating"
     Rake::Task['db:create'].invoke
 
+    puts "loading schema"
     Rake::Task['db:schema:load'].invoke
+    
+    puts "loading bootstrap"
     Rake::Task['wagn:bootstrap:load'].invoke
   end
   
@@ -44,6 +50,8 @@ namespace :wagn do
   
     desc "load bootstrap fixtures into db"
     task :load => :environment do
+      Rake.application.options.trace = true
+      puts "bootstrap load starting"
       require 'active_record/fixtures'                         
       #ActiveRecord::Base.establish_connection(Rails.env.to_sym)
       Dir.glob(File.join(Rails.root, 'db', 'bootstrap', '*.{yml,csv}')).each do |fixture_file|

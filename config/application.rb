@@ -1,3 +1,4 @@
+#ENV['RAILS_ENV'] ||= 'production'
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
@@ -38,8 +39,8 @@ module Wagn
           epath && epath != '/' ? epath : ''
         end
       
-        h[:upload_base_url] ||= h[:root_path] + '/files'
-        h[:upload_storage_dir] ||= "#{Rails.root}/local/uploads"
+        h[:attachment_web_dir]     ||= h[:root_path] + '/files'
+        h[:attachment_storage_dir] ||= "#{Rails.root}/local/files"
 
         h[:pack_dirs] ||= "#{Rails.root}/lib/packs, #{Rails.root}/local/packs"
       end

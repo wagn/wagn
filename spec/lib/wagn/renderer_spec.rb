@@ -10,10 +10,6 @@ describe Wagn::Renderer, "" do
     Wagn::Renderer.ajax_call = false
   end
 
-  def simplify_html string
-    string.gsub(/\s*<!--[^>]*>\s*/, '').gsub(/\s*<\s*(\/?\w+)[^>]*>\s*/, '<\1>')
-  end
-
 #~~~~~~~~~~~~ special syntax ~~~~~~~~~~~#
 
   context "special syntax handling should render" do

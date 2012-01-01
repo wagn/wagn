@@ -38,7 +38,7 @@ describe Wagn::Renderer::Xml, "" do
     it "HTML in inclusion systnax as escaped" do
       c =Card.new :name => 'Afloat', :type => 'Html', :content => '{{A|float:<object class="subject">}}'
       data=Wagn::Renderer::Xml.new(c).render( :core )
-      warn "data is #{data}"
+      #warn "data is #{data}"
       assert_view_select data, %{card[style="float:&amp;lt;object class=&amp;quot;subject&amp;quot;&amp;gt;;"]}
     end
 
@@ -264,7 +264,8 @@ describe Wagn::Renderer::Xml, "" do
   context "cards of type" do
     context "Date" do
       it "should have special editor" do
-        warn "data = #{data=xml_render_card(:link,:type=>'Date')}"
+        data=xml_render_card(:link,:type=>'Date')
+        #warn "data = #{data}"
         assert_view_select data, 'cardlink[class="wanted-card"]'
       end
     end

@@ -20,7 +20,6 @@ class Card::RenameTest < ActiveSupport::TestCase
       Card.create! :name => "blue linker 1", :content => "[[Blue]]"
       Card.create! :name => "blue linker 2", :content => "[[blue]]"      
       
-      warn "creating Cardtype Dairy"
       Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
     end
     setup_default_user      

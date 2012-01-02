@@ -58,10 +58,10 @@ class Card < ActiveRecord::Base
       args['type_id'] = Card.type_id_from_code(tc)
     end
     @type_args = { :type=>args.delete('type'), :typecode=>tc, :type_id=>args['type_id'] }
-    raise "type_id type ??? #{type_id.inspect}" if args['type_id'] && !Integer=== args['type_id']
+    #raise "type_id type ??? #{args.inspect}" if @type_args.values.compact.empty?
     skip_modules = args.delete 'skip_modules'
 
-    #warn "card#initialize #{args.inspect}" #\n#{caller*"\n"}"
+    #warn "card#initialize #{type_args.inspect}, A: #{args.inspect}" #\n#{caller*"\n"}" if args['name'] == 'Ulysses'
     super args
 
     if tid=get_type_id(@type_args)
@@ -83,6 +83,7 @@ class Card < ActiveRecord::Base
   def include_set_modules
     unless @set_mods_loaded
       @set_mods_loaded=true
+      #warn "include mods #{name}, #{typecode}"
       singleton_class.include_type_module(typecode)
     end
   end
@@ -96,7 +97,7 @@ class Card < ActiveRecord::Base
   public
   class << self
     def include_type_module(typecode)
-      #Rails.logger.info "include set #{typecode} called"  #{Kernel.caller[0..4]*"\n"}"
+      #warn (Rails.logger.info "include set #{typecode} called")  #{Kernel.caller[0..4]*"\n"}"
       return unless typecode
       raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
       suppress(NameError) { include eval "Wagn::Set::Type::#{typecode}" }
@@ -239,7 +240,7 @@ class Card < ActiveRecord::Base
   alias_method_chain :save, :trash
 
   def save_with_permissions(*args)  #checking is needed for update_attribute, evidently.  not sure I like it...
-    Rails.logger.debug "Card#save_with_permissions!:"
+    #warn (Rails.logger.debug "Card#save_with_permissions![#{inspect}]")
     run_checked_save :save_without_permissions
   end
   alias_method_chain :save, :permissions
@@ -404,20 +405,16 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # TYPE
 
-  def type_card()     Card[typename]                                  end
-  def typecode() type_id && Card.typecode_from_id(type_id) || 'Basic' end
-  def typename()      Card.typename_from_id( type_id ) || 'Basic'     end
-  def type=(typename) self.type_id = Card.type_id_from_name(typename) end
+  def type_card() Card[typename]                                            end
+  def typecode()  type_id && Card.typecode_from_id(type_id.to_i) || 'Basic' end
+  def typename()  Card.typename_from_id( type_id.to_i ) || 'Basic'          end
+  def type=(typename) self.type_id = Card.type_id_from_name(typename)       end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CONTENT / REVISIONS
 
-  def content
-    new_card? ? template(reset=true).content : cached_revision.content
-  end
-
-  def raw_content() (t=templated_content) || (c=content) end
-
+  def content() new_card? ? template(true).content : cached_revision.content end
+  def raw_content()     templated_content || content                         end
   def selected_rev_id() @selected_rev_id || (cr=cached_revision)&&cr.id || 0 end
 
   def cached_revision
@@ -481,8 +478,8 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # MISCELLANEOUS
 
-  def to_s()  "#<#{self.class.name}[#{self.typename.to_s}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}:#{self.id}[#{self.typecode}:#{self.type_id}]#{self.name}{n:#{new_card?}v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}:r:#{current_revision_id}}:#{@set_names.inspect}>" end
+  def to_s()  "#<#{self.class.name}[#{self.typename.to_s}:#{self.type_id}]#{self.attributes['name']}>" end
+  def inspect()  "#<#{self.class.name}:#{self.id}[##{self.type_id}]#{self.name}{n:#{new_card?}v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}:r:#{current_revision_id}}:#{@set_names.inspect}>" end
   def mocha_inspect()     to_s                                   end
 
 #  def trash

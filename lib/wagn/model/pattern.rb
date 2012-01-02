@@ -31,8 +31,8 @@ module Wagn::Model
     def method_keys()    @method_keys ||= patterns.map(&:method_key) end
     def css_names()      patterns.map(&:css_name).reverse*" "        end
     def real_set_names()
-      set_names.find_all { |set_name| Card.exists? set_name }
-      #warn "rsn? #{set_name}, #{Card.exists? set_name}"
+      rsn=(sn=set_names).find_all { |set_name| Card.exists? set_name }
+      #warn "rsn = #{rsn.inspect}, sn = #{sn.inspect}"; rsn
     end
   end
 
@@ -102,7 +102,7 @@ module Wagn::Model
       def prototype_args(base)      {:type=>base}                           end
     end
     def pattern_applies?()          true                                    end
-    def set_name()                "#{card.typename.to_s}+#{self.class.key}" end
+    def set_name()                  "#{card.typename}+#{self.class.key}"    end
     def method_key()   self.class.method_key_from_opts :type=>card.typename end
 
     Wagn::Model::Pattern.register_class self

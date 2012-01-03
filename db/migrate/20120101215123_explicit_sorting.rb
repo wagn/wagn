@@ -1,4 +1,5 @@
-load 'db/helpers/wagn_migration_helper.rb'
+load 'db/wagn_migration
+_helper.rb'
 
 class ExplicitSorting < ActiveRecord::Migration
   include WagnMigrationHelper

@@ -55,7 +55,7 @@ namespace :test do
     begin
       # assume we have a good database, ie. just migrated dev db.
       puts "migrating database #{olddb}"
-      puts `echo #{::Rails.env}, #{config}; rake db:migrate`
+      puts `echo $RAILS_ENV; rake db:migrate`
       puts "dumping schema"
       puts `rake db:schema:dump`
       puts "setting database to wagn_test_template"

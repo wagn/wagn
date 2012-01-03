@@ -1,4 +1,6 @@
 module WagnMigrationHelper
+
+  # "pristine" here refers to cards that have not been edited directly by human users.  bleep blorp.
   def create_or_update_pristine(card, typecode, content)
     if card.revisions.any? && card.revisions.map(&:author).map(&:login).uniq != ["wagbot"]
       say "#{card.name} has been edited; leaving as is.", :yellow

@@ -11,26 +11,26 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111230202337) do
+ActiveRecord::Schema.define(:version => 20120102220247) do
 
   create_table "cards", :force => true do |t|
-    t.string   "name",                :null => false
-    t.string   "key",                 :null => false
-    t.string   "codename"
-    t.string   "typecode",            :null => false
-    t.integer  "current_revision_id"
-    t.boolean  "trash",               :null => false
     t.integer  "trunk_id"
-    t.integer  "tag_id"
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
-    t.integer  "created_by"
-    t.integer  "updated_by"
+    t.integer  "current_revision_id"
+    t.string   "name",                :null => false
+    t.string   "typecode",            :null => false
     t.integer  "extension_id"
     t.string   "extension_type"
+    t.integer  "created_by"
+    t.integer  "updated_by"
+    t.integer  "tag_id"
+    t.string   "key",                 :null => false
+    t.boolean  "trash",               :null => false
     t.integer  "references_expired"
     t.text     "indexed_name"
     t.text     "indexed_content"
+    t.string   "codename"
     t.string   "read_rule_class"
     t.integer  "read_rule_id"
   end

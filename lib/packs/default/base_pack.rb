@@ -66,9 +66,4 @@ class Wagn::Renderer
   define_view(:too_slow) do |args|
     %{<span class="too-slow">Timed out! #{ card.name } took too long to load.</span>}
   end
-
-  ## DEPRECATED
-  # this is a quick fix, will soon be replaced by view override
-  define_view(:when_created)     { |args| card.new_card? ? '' : card.created_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
-  define_view(:when_last_edited) { |args| card.new_card? ? '' : card.updated_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
 end

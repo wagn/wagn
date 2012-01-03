@@ -21,7 +21,7 @@ namespace :wagn do
     #note: users, roles, and role_users have been manually edited
     task :dump => :environment do
       #ENV['BOOTSTRAP_DUMP'] = 'true'
-      %w{ codename cards revisions wiki_references cardtypes }.each do |table|
+      %w{ cards revisions wiki_references cardtypes }.each do |table|
         i = "000"
         File.open("#{Rails.root}/db/bootstrap/#{table}.yml", 'w') do |file|
           data = 
@@ -62,7 +62,7 @@ namespace :wagn do
       require 'time'
       now = Time.new.strftime("%Y-%m-%d %H:%M:%S")
       %w{ users cards wiki_references revisions }.each do |table|
-        ActiveRecord::Base.connection.update("update #{table} set created_at='#{now}', updated_at='#{now}' #{extra_sql[table.to_sym] || ''};")
+        ActiveRecord::Base.connection.update("update #{table} set created_at='#{now}' #{extra_sql[table.to_sym] || ''};")
       end
     
       #CLEAN UP wiki references.  NOTE, this might bust in mysql?  test!

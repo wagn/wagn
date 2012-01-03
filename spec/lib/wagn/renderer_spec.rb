@@ -196,20 +196,24 @@ describe Wagn::Renderer, "" do
 
     context "layout" do
       before do
-        @layout_card = Card.create(:name=>'tmp layout', :type=>'Layout')
+        User.as :wagbot do
+          @layout_card = Card.create(:name=>'tmp layout', :type=>'Layout')
+        end
         c = Card['*all+*layout'] and c.content = '[[tmp layout]]'
         @main_card = Card.fetch('Joe User')
       end
 
       it "should default to core view for non-main inclusions when context is layout_0" do
         @layout_card.content = "Hi {{A}}"
-        @layout_card.save
+        User.as( :wagbot ) { @layout_card.save }
+
         Wagn::Renderer.new(@main_card).render(:layout).should match('Hi Alpha')
       end
 
       it "should default to open view for main card" do
         @layout_card.content='Open up {{_main}}'
-        @layout_card.save
+        User.as( :wagbot ) { @layout_card.save }
+
         result = Wagn::Renderer.new(@main_card).render_layout
         result.should match(/Open up/)
         result.should match(/card-header/)
@@ -218,7 +222,8 @@ describe Wagn::Renderer, "" do
 
       it "should render custom view of main" do
         @layout_card.content='Hey {{_main|name}}'
-        @layout_card.save
+        User.as( :wagbot ) { @layout_card.save }
+
         result = Wagn::Renderer.new(@main_card).render_layout
         result.should match(/Hey.*div.*Joe User/)
         result.should_not match(/card-header/)
@@ -226,13 +231,15 @@ describe Wagn::Renderer, "" do
 
       it "shouldn't recurse" do
         @layout_card.content="Mainly {{_main|core}}"
-        @layout_card.save
+        User.as( :wagbot ) { @layout_card.save }
+
         Wagn::Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main">Mainly {{_main|core}}</div>}
       end
 
       it "should handle non-card content" do
         @layout_card.content='Hello {{_main}}'
-        @layout_card.save
+        User.as( :wagbot ) { @layout_card.save }
+
         result = Wagn::Renderer.new(nil).render(:layout, :main_content=>'and Goodbye')
         result.should match(/Hello.*and Goodbye/)
       end

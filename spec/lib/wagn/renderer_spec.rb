@@ -196,7 +196,7 @@ describe Wagn::Renderer, "" do
 
     context "layout" do
       before do
-        @layout_card = Card.create(:name=>'tmp layout')
+        @layout_card = Card.create(:name=>'tmp layout', :type=>'Layout')
         c = Card['*all+*layout'] and c.content = '[[tmp layout]]'
         @main_card = Card.fetch('Joe User')
       end

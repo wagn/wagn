@@ -776,6 +776,13 @@ div.search-result-list .search-result-item {
   font-style: italic;
 }
 
+/*------------( Layout ) ------------*/
+
+.SELF-Xcss .open-content,
+.TYPE-layout .open-content {
+  white-space: pre-wrap;
+}
+
 /*----------- (Invitation Request)--------------*/
 
 .invite-links {

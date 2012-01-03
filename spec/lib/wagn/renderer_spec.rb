@@ -156,7 +156,7 @@ describe Wagn::Renderer, "" do
         assert_view_select @simple_page, 'div[id="menu"]' do
           assert_select 'a[class="internal-link"][href="/"]', 'Home'
           assert_select 'a[class="internal-link"][href="/recent"]', 'Recent'
-          assert_select 'form[id="navbox-form"][action="/*search?view=content"]' do
+          assert_select 'form[id="navbox-form"][action="/*search"]' do
             assert_select 'input[name="_keyword"]'
           end
         end

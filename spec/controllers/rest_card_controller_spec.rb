@@ -31,10 +31,17 @@ describe RestCardController do
     end
   end
 =end
-  def post_xml(args={})
+    def post_xml(args={})
+      request.env['content_type'] = 'application/xml' 
+      request.env['RAW_POST_DATA'] =  args[:card]
+      #warn "args #{args.inspect}"
+      #@headers ||= {}
+      #@headers['HTTP_ACCEPT'] = @headers['CONTENT_TYPE'] = 'application/xml'
+      post :post
+      #warn "response #{ @response.body}"
 #Note this test PASSES!
 #assert_equal '201 Created', response.get_fields('Status')[0]
-  end
+    end
 
 
     # FIXME: several of these tests go all the way to DB,
@@ -42,17 +49,17 @@ describe RestCardController do
     #  maybe think about refactoring to use mocks etc. to reduce
     #  test dependencies.
     it "creates cards" do
-      post_xml :method=>:post, :format=>:xml, :data=>%{<card name="NewCardFoo" type="Basic">Bananas</card>}.html_safe #, {:user=>@joe_id}
+      post_xml :card=> %{<card name="NewCardFoo" type="Basic">Bananas</card>}
+      #, :content_type=>'application/xml'  #.html_safe #, {:user=>@joe_id}
       assert_instance_of Card, Card.find_by_name("NewCardFoo")
       #Card::Base.should_receive(:save) # The concept needs work, what model methodes should we expect?
       Card.find_by_name("NewCardFoo").content.should == "Bananas"
-      assert_response 418
     end
     
     it "creates cardtype cards" do
-      post :post, :format => :xml, :input=>%{<card type="Cardtype" name="Editor">test</card>}
+      post_xml :card=>%{<card type="Cardtype" name="Editor">test</card>}
       assigns['card'].should_not be_nil
-      assert_response 418
+      #assert_response 418
       c=Card.find_by_name('Editor')
       assert_instance_of Card, c
       assert c.typecode == 'Cardtype'
@@ -61,101 +68,40 @@ describe RestCardController do
     it "pulls deleted cards from trash" do
       @c = Card.create! :name=>"Problem", :content=>"boof"
       @c.destroy!
-      post :post, :format=>:xml, :input=>%{<card name="Problem" type="Phrase">noof</card>}
-      assert_response 418
+      post_xml :card=>%{<card name="Problem" type="Phrase">noof</card>}
       assert_instance_of Card, c=Card.find_by_name("Problem")
       assert c.typecode, 'Phrase'
     end
 
     context "multi-create" do
       it "catches missing name error" do
-        post :post, :format=>:xml, :input=> %{<card name="" type="Fruit">
+        post_xml :card=> %{<card name="" type="Fruit">
           <card name="~plus~text"><p>abraid</p></card></card>}
         assigns['card'].should_not be_nil
-        assigns['card'].errors["name"].should == "can't be blank"
+        assigns['card'].errors["name"].first.should == "can't be blank"
         assert_response 422
       end
 
       it "creates card and plus cards" do
-        post :create, "card"=>{"name"=>"sss", "type"=>"Fruit"},
-         "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
-         "content_to_replace"=>"",
-         "context"=>"main_1", 
-         "multi_edit"=>"true", "view"=>"open"
-        assert_response 418    
+        post_xml :card=>%{<card name="sss" type="Fruit">
+          <card name="+text"><p>abraid</p></card></card>} 
         Card.find_by_name("sss").should_not be_nil
         Card.find_by_name("sss+text").should_not be_nil
       end
 
       it "creates card with hard template" do
-        pending
         Card.create!(:name=>"Fruit+*type+*content", :content=>"{{+kind}} {{+color}} {{+is citrus}} {{+edible}}")
-        post :create, "card"=>{"name"=>"sssHT", "type"=>"Fruit"},
-         "cards"=>{"~plus~kind"=>{"content"=>"<p>apple</p>"}}, 
-         "cards"=>{"~plus~color"=>{"content"=>"<p>red</p>"}}, 
-         "cards"=>{"~plus~is citrus"=>{"content"=>"<p>false</p>"}}, 
-         "cards"=>{"~plus~edible"=>{"content"=>"<p>true</p>"}}, 
-         "content_to_replace"=>"",
-         "context"=>"main_1", 
-         "multi_edit"=>"true", "view"=>"open"
-        assert_response 418    
-        Card.find_by_name("sssHT").should_not be_nil
-        Card.find_by_name("sssHT+kind").should_not be_nil
+        post_xml :card=>%{<card name="sssHT" type="Fruit">
+          <card name="+kind"><p>apple</p></card>
+          <card name="+color"><p>red</p></card>
+          <card name="+is citrus"><p>false</p></card>
+          <card name="+edible"><p>true</p></card>
+        </card>}
+        Card.find_by_name("sssHT").typename.should == 'Fruit'
+        Card.find_by_name("sssHT+kind").content.should == '<p>apple</p>'
       end
     end
    
-    it "renders errors if create fails" do
-      post :create, "card"=>{"name"=>"Joe User"}
-      assert_response 422
-      assert_template "application"  # this is a wee bit funky
-    end
-   
-    it "redirects to thanks if present" do
-      
-      User.as(:wagbot) { Card.create :name=>"*all+*thanks", :content=>"/thank_you" }
-      post :create, "card" => { "name" => "Wombly" }
-      assert_template "ajax_redirect"
-      assigns["redirect_location"].should == "/thank_you"
-    end
-
-    it "redirects to card if thanks is blank" do
-      User.as(:wagbot) do
-        Card.create! :name=>"*all+*thanks", :content=>"/thank_you"
-        Card.create! :name=>"boop+*right+*thanks", :content=>""
-      end
-      post :create, "card" => { "name" => "Joe+boop" }
-      assert_template "ajax_redirect"
-      assigns["redirect_location"].should ==  "/wagn/Joe+boop"
-    end
-   
-    it "redirects to home if not readable and thanks not specified" do
-      # Fruits (from shared_data) are anon creatable but not readable
-      login_as :anon
-      post :create, "card" => { "type"=>"Fruit", :name=>"papaya" }
-      assert_template "ajax_redirect"
-      assigns["redirect_location"].should ==  "/"
-    end
-
-    #hook
-    it "redirects to location specified by :after_create_location hook if it is present" do
-      Wagn::Hook.ephemerally do
-        Wagn::Hook.add :redirect_after_create, '*all' do
-          "/test"
-        end
-        post :create, "card" => { "name" => "Wombly" }
-      end
-      assert_template "ajax_redirect"
-      assigns["redirect_location"].should ==  "/test"
-    end
-      
-    it "should redirect to card on create main card" do
-      post :create, :context=>"main_1", :card => {
-        :name=>"Banana", :type=>"Basic", :content=>"mush"
-      }
-      assigns["redirect_location"].should == "/wagn/Banana"
-      assert_template "ajax_redirect"
-    end
-    
   end
 
   describe "unit tests" do
@@ -180,6 +126,7 @@ describe RestCardController do
     
     describe "#show" do
       it "works for basic request" do
+        pending "xml version of test"
         get :show, {:id=>'Sample_Basic'}
         response.should have_tag('body')
         assert_response :success
@@ -187,6 +134,7 @@ describe RestCardController do
       end
 
       it "handles nonexistent card" do
+        pending "xml version of test"
         get :show, {:id=>'Sample_Fako'}
         assert_response :success   
         assert_template 'new'
@@ -208,6 +156,7 @@ describe RestCardController do
     
     describe "#update" do
       it "works" do
+        pending "xml version needed"
         post :update, { :id=>@simple_card.id, 
           :card=>{:current_revision_id=>@simple_card.current_revision.id, :content=>'brand new content' }} #, {:user=>@user.id} 
         assert_response :success, "edited card"
@@ -215,18 +164,6 @@ describe RestCardController do
       end
     end
     
-    describe "#changes" do
-      it "works" do
-        id = Card.find_by_name('revtest').id
-        get :changes, :id=>id, :rev=>1
-        assert_equal 'first', assigns['revision'].content, "revision 1 content==first"
-
-        get :changes, :id=>id, :rev=>2
-        assert_equal 'second', assigns['revision'].content, "revision 2 content==second"
-        assert_equal 'first', assigns['previous_revision'].content, 'prev content=="first"'
-      end
-    end
-
     it "new without cardtype" do
       post :new   
       assert_response :success, "response should succeed"                     
@@ -247,12 +184,14 @@ describe RestCardController do
     end
 
     it "should watch" do
+      pending "xml version needed?"
       login_as(:joe_user)
       post :watch, :id=>"Home"
       Card["Home+*watchers"].content.should == "[[Joe User]]"
     end
 
     it "rename without update references should work" do
+      pending "need xml api for rename"
       User.as :joe_user
       f = Card.create! :type=>"Cardtype", :name=>"Apple"
       post :update, :id => f.id, :card => {
@@ -267,13 +206,8 @@ describe RestCardController do
     end
 
   #=end
-    it "unrecognized card renders missing unless can create basic" do
-      login_as(:anon) 
-      post :show, :id=>'crazy unknown name'
-      assert_template 'missing'
-    end
-
     it "update cardtype with stripping" do
+      pending "convert for xml api"
       User.as :joe_user                                               
       post :update, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
       #assert_equal "boo", assigns['card'].content

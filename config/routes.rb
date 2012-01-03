@@ -7,7 +7,7 @@ Wagn::Application.routes.draw do
     mount Object.const_get(:JasmineRails).const_get(:Engine) => "/specs"
   end
 
-  #match 'rest/:id(.:format)' => 'rest_card#method', :constraints => { :id => /.*/ }, :via => [:get, :post, :put, :delete]
+  match 'rest/:id(.:format)' => 'rest_card#method', :constraints => { :id => /.*/ }, :via => [:get, :post, :put, :delete]
   # these file requests should only get here if the file isn't present.
   # if we get a request for a file we don't have, don't waste any time on it.
   #FAST 404s

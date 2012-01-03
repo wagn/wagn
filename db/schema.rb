@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120102220247) do
+ActiveRecord::Schema.define(:version => 20120103180144) do
 
   create_table "cards", :force => true do |t|
     t.integer  "trunk_id"

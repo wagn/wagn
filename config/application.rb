@@ -102,11 +102,10 @@ module Wagn
   ActionDispatch::Callbacks.to_prepare do
     # this is called per- init in production, per-request in development 
     
-    database_ready = begin; ActiveRecord::Base.connection; rescue; false; end
-    # for cases where the database exists but the tables don't yet, we could use:
-    # ActiveRecord::Base.connection.table_exists?( 'cards' )
-    # not it's worth it.  Note that ActiveRecord::Base.connected? does not work here, 
+    database_ready = begin; ActiveRecord::Base.connection.table_exists?( 'cards' ); rescue; false; end
+    # Note that ActiveRecord::Base.connected? does not work here, 
     # because it fails until the first call has been made.
+    # also, without the "table_exists? call, generate_fixtures breaks"
     
     if database_ready
       ActiveSupport::Notifications.instrument 'wagn.init_cache', :message=>'' do

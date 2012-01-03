@@ -324,7 +324,7 @@ class Wagn::Renderer::Html
   
 
     related_sets = card.related_sets
-    current_set = params[:current_set] || related_sets[0]
+    current_set = params[:current_set] || related_sets[(card.typecode=='Cardtype' ? 1 : 0)]
 
     options_submenu(:settings) +
       %{<div class="settings-tab">
@@ -337,7 +337,7 @@ class Wagn::Renderer::Html
             #{ 
             related_sets.map do |set_name| 
                set_card = Card.fetch set_name
-              %{<option value="#{ set_card.key }" #{set_card.key==current_set ? 'selected="selected"' : ''}>
+              %{<option value="#{ set_card.key }" #{set_card.key==current_set.to_cardname.key ? 'selected="selected"' : ''}>
                 #{ set_card.label }
               </option>
               }

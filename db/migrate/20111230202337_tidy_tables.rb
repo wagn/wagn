@@ -19,6 +19,9 @@ class TidyTables < ActiveRecord::Migration
     
     remove_index :cards, :name=>"cards_extension_type_id_index"
     remove_index :cards, :name => "cards_name_uniq"
+    
+    Card.reset_column_information
+    Revision.reset_column_information
   end
 
   def down
@@ -41,5 +44,8 @@ class TidyTables < ActiveRecord::Migration
     
     add_index :cards, [:name], :name => "cards_name_uniq", :unique => true
     add_index :cards, [:extension_id, :extension_type], :name => "cards_extension_type_id_index", :unique => true
+    
+    Card.reset_column_information
+    Revision.reset_column_information
   end
 end

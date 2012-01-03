@@ -9,4 +9,5 @@ Example:
     This will create:
         db/migrate/(migration_number)_name
     
-    ...which will in turn use methods in db/helpers/wagn_migration_helper to update cards via the migration.
+    ...which will in turn use methods in db/wagn_migration
+_helper to update cards via the migration.

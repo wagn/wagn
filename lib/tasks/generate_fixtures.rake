@@ -40,7 +40,7 @@ namespace :test do
     Rake::Task['cache:clear']
     # env gets auto-set to 'test' somehow.
     # but we need development to get the right schema dumped. 
-    ENV['::Rails.env'] = 'development'
+    ENV['RAILS_ENV'] = 'development'
     
     if Wagn::Conf[:enable_postgres_fulltext]
       raise("Oops!  you need to disable postgres_fulltext in wagn.rb before generating fixtures")
@@ -55,7 +55,7 @@ namespace :test do
     begin
       # assume we have a good database, ie. just migrated dev db.
       puts "migrating database #{olddb}"
-      puts `echo $::Rails.env; rake db:migrate`
+      puts `echo $RAILS_ENV; rake db:migrate`
       puts "dumping schema"
       puts `rake db:schema:dump`
       puts "setting database to wagn_test_template"
@@ -69,7 +69,7 @@ namespace :test do
       puts "creating database"
       puts `rake db:create`
       puts "loading schema"
-      puts `rake db:schema:load`
+      puts `rake db:schema:load --trace`
       puts "loading bootstrap data"
       puts `rake wagn:bootstrap:load --trace`       
   

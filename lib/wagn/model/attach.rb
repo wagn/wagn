@@ -21,7 +21,7 @@ module Wagn::Model::Attach
     #r=warn "Afn #{r}"; r
   def attach_file_name()
     r=attach_array[0]
-    raise "fn nil ???" if r.nil?; r
+#    raise "fn nil ???" if r.nil?; r
   end
   def attach_content_type() attach_array[1] end
   def attach_file_size() attach_array[2] end
@@ -75,7 +75,7 @@ module Wagn::Model::Attach
     #warn "before_post_attach #{attach_file_name}, #{attach_content_type}"
 
     'Image' == (typecode || Cardtype.classname_for( @type_args[:type] ) )
-    # returning true enables thumnail creation
+    # returning true enables thumbnail creation
   end
 
   #def item_names(args={}) [self.cardname] end

@@ -46,11 +46,18 @@ end
 class Wagn::Renderer::Html
   define_view(:editor, :type=>'file') do |args|
     Rails.logger.debug "editor for file #{card.inspect}"
-    out = ''
+    out = '<div class="choose-file">'
     if !card.new_card?
       out << %{<div class="attachment-preview", :id="#{card.attach_file_name}-preview"> #{_render_core(args)} </div> }
     end
-    out << %{<div>#{form.file_field :attach, :class=>'file-upload'}</div>}
+    out << %{
+      <div>#{form.file_field :attach, :class=>'file-upload'}</div>
+    </div>
+    <div class="chosen-file" style="display:none">
+      <div><label>File chosen:</label> <span class="chosen-filename"></span></div>
+      <div><a class="cancel-upload">Undo</a></div>
+    </div>
+      }
     out
   end
 

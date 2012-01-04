@@ -14,7 +14,7 @@ wagn.editorInitFunctionMap = {
   '.date-editor'           : -> @datepicker { dateFormat: 'yy-mm-dd' }
   '.tinymce-textarea'      : -> wagn.initTinyMCE(@[0].id)
   '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
-  '.file-upload'           : -> @fileupload( add: (e, data)-> $(this).closest('form').data 'file-data', data )
+  '.file-upload'           : -> @fileupload( add: wagn.chooseFile )
 }
 
 wagn.initPointerList = (input)-> 
@@ -32,8 +32,31 @@ wagn.initTinyMCE = (el_id) ->
   }    
   tinyMCE.init conf
 
+wagn.chooseFile = (e, data) ->
+  s = $(this).slot()
+  filename = data.files[0].fileName
+  $(this).closest('form').data 'file-data', data
+  if name_field = s.find( '.card-name-field' ) 
+    if name_field[0] and name_field.val() == ''
+      name_field.val filename.replace /\..*/, ''
+  s.find('.choose-file').hide()
+  s.find('.chosen-filename').text filename
+  s.find('.chosen-file').show()
+  
+  wagn.e = e
+  wagn.data = data
+  wagn.t = this
+
 
 $(window).load ->
+
+  $('.cancel-upload').live 'click', ->
+    s = $(this).slot()
+    s.find('.chosen-file').hide()
+    s.find('.choose-file').show()
+    $(this).closest('form').data 'file-data', null
+
+    #FIXME -- handle actual file!!!
 
   #navbox pack
   $('.navbox').autocomplete {

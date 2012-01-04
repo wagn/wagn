@@ -177,6 +177,7 @@ class User < ActiveRecord::Base
   end
 
   def parties
+    warn "self = #{self.inspect}, all_roles = #{all_roles.inspect}"
     @parties ||= [self,all_roles].flatten.map{|p| p.card.key }
   end
   

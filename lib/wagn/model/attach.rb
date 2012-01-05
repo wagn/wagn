@@ -91,10 +91,11 @@ module Wagn::Model::Attach
       before_post_process :before_post_attach
       
       validates_each :attach do |rec, attr, value|
-        return true unless ['File', 'Image'].member? rec.typecode
-        max_size = 5 #this should eventually be a wagn configuration choice
-        if value.size > max_size.megabytes
-          rec.errors.add :file_size, "File cannot be larger than #{max_size} megabytes"
+        if ['File', 'Image'].member? rec.typecode
+          max_size = 5 #this should eventually be a wagn configuration choice
+          if value.size > max_size.megabytes
+            rec.errors.add :file_size, "File cannot be larger than #{max_size} megabytes"
+          end
         end
       end      
     end

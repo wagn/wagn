@@ -140,6 +140,7 @@ div:hover.card-header .card-menu-left {
 .submenu-left {
   float: left;
   display: none;
+  white-space: nowrap;
   text-align: left;
   font-style: italic;
   width: 30%;

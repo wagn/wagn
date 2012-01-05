@@ -42,10 +42,6 @@ wagn.chooseFile = (e, data) ->
   s.find('.choose-file').hide()
   s.find('.chosen-filename').text filename
   s.find('.chosen-file').show()
-  
-  wagn.e = e
-  wagn.data = data
-  wagn.t = this
 
 
 $(window).load ->
@@ -55,8 +51,6 @@ $(window).load ->
     s.find('.chosen-file').hide()
     s.find('.choose-file').show()
     $(this).closest('form').data 'file-data', null
-
-    #FIXME -- handle actual file!!!
 
   #navbox pack
   $('.navbox').autocomplete {

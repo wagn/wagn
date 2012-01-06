@@ -60,7 +60,7 @@ Wagn::Application.configure do
   
   
   if Wagn::Conf[:smtp]
-    config.action_mailer.smtp_settings = Wagn::Conf[:smtp].symbolize_keys
+    config.action_mailer.smtp_settings = Wagn::Conf[:smtp]
   end
   
   ENV['RAILS_ASSET_ID']=""

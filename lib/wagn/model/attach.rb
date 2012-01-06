@@ -35,7 +35,8 @@ module Wagn::Model::Attach
   def attachment_style(typecode, style)
     case typecode
     when 'File'; ''
-    when 'Image'; style || :original
+    when 'Image'
+      style.nil? || style.to_sym == :full ? :original : style
     end
   end
 
@@ -93,7 +94,7 @@ module Wagn::Model::Attach
       validates_each :attach do |rec, attr, value|
         if ['File', 'Image'].member? rec.typecode
           max_size = 5 #this should eventually be a wagn configuration choice
-          if value.size > max_size.megabytes
+          if value.size.to_i > max_size.megabytes
             rec.errors.add :file_size, "File cannot be larger than #{max_size} megabytes"
           end
         end
@@ -101,6 +102,8 @@ module Wagn::Model::Attach
     end
   end
 end
+
+
 
 module Paperclip::Interpolations
   

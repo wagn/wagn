@@ -15,6 +15,7 @@ wagn.editorInitFunctionMap = {
   '.tinymce-textarea'      : -> wagn.initTinyMCE(@[0].id)
   '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
   '.file-upload'           : -> @fileupload( add: wagn.chooseFile )
+  '.etherpad-textarea'   : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
 }
 
 wagn.initPointerList = (input)-> 
@@ -101,7 +102,19 @@ $(window).load ->
     $(this).closest('tr').find('.close-rule-link').click()
 
 
+  # etherpad pack
+  $('body').delegate '.etherpad-submit-button', 'click', ->
+    wagn.padform = $(this).closest('form')
 
+    padsrc = $(wagn.padform).find('iframe')[0].src
+    if (qindex = padsrc.indexOf('?')) != -1
+      padsrc = padsrc.slice(0,qindex)
+
+    # perform an ajax call on contentsUrl and write it to the parent
+    $.get padsrc + '/export/html', (data) ->
+       $(wagn.padform).find('.etherpad-textarea')[0].value = data
+       $(wagn.padform)[0].submit()
+    false
 
   
 permissionsContent = (ed) ->

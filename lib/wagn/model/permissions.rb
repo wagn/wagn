@@ -132,7 +132,8 @@ module Wagn::Model::Permissions
   end
 
   def lets_user(operation)
-    return true if (System.always_ok? and operation != :comment)
+    return false if operation != :read    and System.read_only?
+    return true  if operation != :comment and System.always_ok?
     User.as_user.among?( who_can(operation) )
   end
 

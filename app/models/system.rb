@@ -78,9 +78,15 @@ class System
 
     # PERMISSIONS
     
+    def read_only?()
+      @@read_only ||= (ro=ENV['WAGN_READ_ONLY']) && ro != 'false'
+    end
+
     def ok?(task)
-      return true if always_ok?
-      ok_hash.key? task.to_s
+      task = task.to_s
+      return false if task != 'read' and System.read_only?
+      return true  if always_ok?
+      ok_hash.key? task
     end
     
     def ok!(task)

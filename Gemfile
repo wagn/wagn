@@ -9,7 +9,6 @@ gem 'uuid', '~>2.3.4'
 gem 'paperclip', '~>2.4'
 gem 'rmagick', '~>2.13.1'
 gem "recaptcha", "~> 0.3.4"
-gem 'memcache-client'
 
 # DATABASE
 
@@ -26,6 +25,9 @@ group :postgres do
     gem('postgres', '~>0.7.9.2008.01.28')
 end
 #gem 'sqlite3-ruby', :require => 'sqlite3', :group=>'sqlite'
+
+
+gem 'memcache-client', :group => :memcache
 
 
 # These should only be needed if you're developing new JS / CSS.  It's all pre-compiled for production
@@ -80,7 +82,6 @@ end
 
 #group :hosting do
 ##  gem 'hoptoad_notifier', '>=2.3.12'
-##  gem 'aws-s3','>=0.6.2'
 #  gem 'newrelic_rpm', '>=2.14.1'
 #end
 

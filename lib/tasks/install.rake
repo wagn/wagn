@@ -27,11 +27,23 @@ namespace :wagn do
     
     bundle_config = "BUNDLE_WITHOUT: "
     bundle_config << ( @engine==:mysql ? 'postgres' : 'mysql' )
-    bundle_config << ":test:debug:development:assets\n" unless @mode==:dev
+    bundle_config << ":memcache:test:debug:development:assets\n" unless @mode==:dev
 
     File.open File.join(rails_root, '.bundle/config'), 'w' do |file|
       file.write bundle_config
       puts ""
     end
   end
+  
+  
+  task :copy_htaccess do
+    access_file = File.join(Rails.root, 'config/samples/asset_htaccess')
+
+    %w{ files assets }.each do |dirname|
+      dir = File.join Rails.public_path, dirname
+      mkdir_p dir
+      cp access_file, File.join( dir, '.htaccess' )
+    end
+  end
+  
 end

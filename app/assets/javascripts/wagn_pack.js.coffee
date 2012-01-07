@@ -148,24 +148,22 @@ navbox_results = (request, response) ->
 navboxize = (term, results)->
   items = []
 
-  $.each ['search', 'add' ,'type'], (index, key)->
+  $.each ['search', 'add', 'new'], (index, key)->
     val = results[key]
-    i = { type: key, value: term, prefix: 'Create', label: '<strong class="highlight">' + term + '</strong>' }
+    i = { type: key, value: term, prefix: key, label: '<strong class="highlight">' + term + '</strong>' }
     if !val #nothing
     else if key == 'search'
-      i.prefix = 'Search'
       i.href  = '/*search?view=content&_keyword=' + escape(term)
     else if key == 'add'
       i.href = '/card/new?card[name]=' + escape(term)
-    else if key == 'type'
-      i.type = 'add'
-      i.label = '<strong class="highlight">' + val[0] + '</strong> <em>(type)</em>' 
+    else if key == 'new'
+      i.type = 'add' # for icon
       i.href = '/new/' + val[1]
 
     items.push i if val
 
   $.each results['goto'], (index, val) ->
-    items.push { type: 'goto', prefix: 'Go to', value: val[0], label: val[1], href: '/' + val[2] } 
+    items.push { type: 'goto', prefix: 'go to', value: val[0], label: val[1], href: '/' + val[2] } 
 
   $.each items, (index, i)->
     i.href = wagn.rootPath + i.href

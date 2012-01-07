@@ -82,7 +82,7 @@ module Wagn
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
     
-    config.cache_store = :file_store, "#{Rails.root}/tmp/cache"
+    config.cache_store = :mem_cache_store # add cluster member in template
     
     if log_file = Wagn::Conf[:log_file]
       config.paths['log'] = File.join( log_file )

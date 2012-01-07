@@ -9,6 +9,7 @@ gem 'uuid', '~>2.3.4'
 gem 'paperclip', '~>2.4'
 gem 'rmagick', '~>2.13.1'
 gem "recaptcha", "~> 0.3.4"
+gem 'memcache-client'
 
 # DATABASE
 

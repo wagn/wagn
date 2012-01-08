@@ -14,7 +14,7 @@ end %>
   pool: 5
   encoding: utf8
   host: localhost
-<% if @engine==:mysql %>  socket: /tmp/mysql.sock<% end %>  
+#  socket: /tmp/mysql.sock  
 <% if @mode==:dev %>
 production:
   database: wagn_production

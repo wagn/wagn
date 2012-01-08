@@ -24,7 +24,10 @@ namespace :wagn do
     File.open File.join(config_dir, 'database.yml'), 'w' do |file|
       file.write ERB.new(dbfile).result(binding)
     end
-    
+
+=begin
+#  can't do this.  rake requires bundle!
+
     bundle_config = "BUNDLE_WITHOUT: "
     bundle_config << ( @engine==:mysql ? 'postgres' : 'mysql' )
     bundle_config << ":memcache:test:debug:development:assets\n" unless @mode==:dev
@@ -33,6 +36,7 @@ namespace :wagn do
       file.write bundle_config
       puts ""
     end
+=end
   end
   
   

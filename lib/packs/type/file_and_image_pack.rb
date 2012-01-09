@@ -23,6 +23,7 @@ class Wagn::Renderer
   private
 
   def attach_url(style=nil)
+    return nil if card.content.blank?
     style = :original if style.to_sym == :full 
     card.attach.url style
   rescue

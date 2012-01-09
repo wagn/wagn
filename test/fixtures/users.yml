@@ -5,8 +5,8 @@ users_001:
   email: noreply@wagn.org
   crypted_password: !!null 
   salt: !!null 
-  created_at: '2012-01-08 22:59:23'
-  updated_at: '2012-01-09 05:59:22'
+  created_at: '2012-01-09 00:14:06'
+  updated_at: '2012-01-09 07:14:04'
   password_reset_code: !!null 
   status: system
   invite_sender_id: '1'
@@ -17,8 +17,8 @@ users_002:
   email: noreply@wagn.org
   crypted_password: !!null 
   salt: !!null 
-  created_at: '2012-01-08 22:59:23'
-  updated_at: '2012-01-09 05:59:22'
+  created_at: '2012-01-09 00:14:06'
+  updated_at: '2012-01-09 07:14:04'
   password_reset_code: !!null 
   status: system
   invite_sender_id: '1'
@@ -27,10 +27,10 @@ users_003:
   id: '3'
   login: joe_user
   email: joe@user.com
-  crypted_password: ac04d6e46d14ab809a953db979939fc6b07636f2
-  salt: 3180ee7aaf4843c57b4744c77e7f0c0275ee8a2c
-  created_at: '2012-01-09 05:59:31.702036'
-  updated_at: '2012-01-09 05:59:31.702036'
+  crypted_password: b905f6be63e0b255a483a6881370b206d0a0d5e9
+  salt: 77f42156f50ce82010cd2d681646647d6edd8319
+  created_at: '2012-01-09 07:14:14.074494'
+  updated_at: '2012-01-09 07:14:14.074494'
   password_reset_code: !!null 
   status: active
   invite_sender_id: '1'
@@ -39,10 +39,10 @@ users_004:
   id: '4'
   login: joe_admin
   email: joe@admin.com
-  crypted_password: 9244f3fc1129d2ecb3f76fdffde8d4a8b3843ca9
-  salt: 9a6129a4b5ecf480dfcda72a06483a0113b35918
-  created_at: '2012-01-09 05:59:32.276039'
-  updated_at: '2012-01-09 05:59:32.276039'
+  crypted_password: 72e39c3e2336242d426752fd47ff1b5656f677e8
+  salt: 983c18f8a4081039b46e4bad3959be67b52eaeda
+  created_at: '2012-01-09 07:14:14.655556'
+  updated_at: '2012-01-09 07:14:14.655556'
   password_reset_code: !!null 
   status: active
   invite_sender_id: '1'
@@ -51,10 +51,10 @@ users_005:
   id: '5'
   login: joe_camel
   email: joe@camel.com
-  crypted_password: 61029f9e66a59687bc71e312e0f0bc3cbf249586
-  salt: f64844064b294b4770ea98277c49e1d830c997af
-  created_at: '2012-01-09 05:59:32.332789'
-  updated_at: '2012-01-09 05:59:32.332789'
+  crypted_password: 35f7a35b2047980ad5d5196a42661d77087d8f61
+  salt: 15e810392052cbb533053f665dceebc26439401e
+  created_at: '2012-01-09 07:14:14.732942'
+  updated_at: '2012-01-09 07:14:14.732942'
   password_reset_code: !!null 
   status: active
   invite_sender_id: '1'
@@ -63,10 +63,10 @@ users_006:
   id: '6'
   login: !!null 
   email: ron@request.com
-  crypted_password: 5e62e7f1c74beba76f497634e2b3201491a73b5a
-  salt: 2f5ffcf240d6704edbd164e5b876d262704d20b9
-  created_at: '2012-01-09 05:59:32.483543'
-  updated_at: '2012-01-09 05:59:32.483543'
+  crypted_password: 270bc395449a3ae5bd049dfa761549cdec21a439
+  salt: 6bfd131c01744c410f0dcda385e694d432c6d791
+  created_at: '2012-01-09 07:14:14.914625'
+  updated_at: '2012-01-09 07:14:14.914625'
   password_reset_code: !!null 
   status: active
   invite_sender_id: '1'
@@ -75,10 +75,10 @@ users_007:
   id: '7'
   login: sample_user
   email: sample@user.com
-  crypted_password: ac84fa479cc18a50f646d26678202cdff81d4637
-  salt: af93b77260b60b331684d384f1e8ba7352bb53b5
-  created_at: '2012-01-09 05:59:32.520584'
-  updated_at: '2012-01-09 05:59:32.520584'
+  crypted_password: 8ea400bf49a975195c6869c5f5f3bc6f53176ea7
+  salt: 68dc7a3827df530935a0506fe7fa921358ecf2d9
+  created_at: '2012-01-09 07:14:14.964019'
+  updated_at: '2012-01-09 07:14:14.964019'
   password_reset_code: !!null 
   status: active
   invite_sender_id: '1'
@@ -87,10 +87,10 @@ users_008:
   id: '8'
   login: u1
   email: u1@user.com
-  crypted_password: 6f14b451410e3e0b60d6b90c19553083c6d36e4e
-  salt: a408e09c90cd3ae925fb1d147500df537f0a1cdd
-  created_at: '2012-01-09 05:59:33.575379'
-  updated_at: '2012-01-09 05:59:33.575379'
+  crypted_password: 0176a8853fad541171d7c79ab34c49916e6296a4
+  salt: 3f4ad247382755cde753e3b53df3ef061a1c5fa2
+  created_at: '2012-01-09 07:14:15.992873'
+  updated_at: '2012-01-09 07:14:15.992873'
   password_reset_code: !!null 
   status: active
   invite_sender_id: '1'
@@ -99,10 +99,10 @@ users_009:
   id: '9'
   login: u2
   email: u2@user.com
-  crypted_password: 6613f3a23559479671c81801ae3f8c7e76f2027e
-  salt: cc12aa1368bc78426ece67a5f440379be7d6cad4
-  created_at: '2012-01-09 05:59:33.581663'
-  updated_at: '2012-01-09 05:59:33.581663'
+  crypted_password: 5e03a5128d4c6ed2096f2b5c39cfce2fcf8d4c89
+  salt: 3f5bce3bc796f6efcf5c611b9b0754d7c65cd020
+  created_at: '2012-01-09 07:14:15.998575'
+  updated_at: '2012-01-09 07:14:15.998575'
   password_reset_code: !!null 
   status: active
   invite_sender_id: '1'
@@ -111,10 +111,10 @@ users_010:
   id: '10'
   login: u3
   email: u3@user.com
-  crypted_password: 2dbeff0ec7a98c0e9b8983dcc6a8e45f3b09846c
-  salt: d46081c166f9540f569b362212ecc29eb10c378f
-  created_at: '2012-01-09 05:59:33.588235'
-  updated_at: '2012-01-09 05:59:33.588235'
+  crypted_password: 7491a015237947cad92af8a23abc163a6af06e10
+  salt: e68e37ec95532aa409b3465a5f642703a0f2e66b
+  created_at: '2012-01-09 07:14:16.00438'
+  updated_at: '2012-01-09 07:14:16.00438'
   password_reset_code: !!null 
   status: active
   invite_sender_id: '1'

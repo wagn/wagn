@@ -20,7 +20,10 @@ namespace :wagn do
     desc "dump db to bootstrap fixtures"
     #note: users, roles, and role_users have been manually edited
     task :dump => :environment do
-      #ENV['BOOTSTRAP_DUMP'] = 'true'
+      YAML::ENGINE.yamler = 'syck'
+      # use old engine while we're supporting ruby 1.8.7 because it can't support Psych, 
+      # which dumps with slashes that syck can't understand
+      
       %w{ cards revisions wiki_references cardtypes }.each do |table|
         i = "000"
         File.open("#{Rails.root}/db/bootstrap/#{table}.yml", 'w') do |file|
@@ -36,10 +39,10 @@ namespace :wagn do
               )
               ActiveRecord::Base.connection.select_all( sql % table)
             end
-          file.write data.inject({}) { |hash, record|
+          file.write YAML::dump( data.inject({}) { |hash, record|
             hash["#{table}_#{i.succ!}"] = record
             hash
-          }.to_yaml
+          })
         end
       end
     end

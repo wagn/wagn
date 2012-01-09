@@ -500,7 +500,7 @@ describe Wagn::Renderer, "" do
 
     context "*version" do
       it "should have an X.X.X version" do
-        (render_card(:raw, :name=>'*version') =~ (/\d\.\d\.\d/ )).should be_true
+        (render_card(:raw, :name=>'*version') =~ (/\d\.\d\.\w+/ )).should be_true
       end
     end
 

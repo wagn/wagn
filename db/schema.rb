@@ -50,11 +50,6 @@ ActiveRecord::Schema.define(:version => 20120105203350) do
 
   add_index "cardtypes", ["class_name"], :name => "cardtypes_class_name_uniq", :unique => true
 
-  create_table "codename", :force => true do |t|
-    t.integer "card_id",  :null => false
-    t.string  "codename", :null => false
-  end
-
   create_table "multihost_mappings", :force => true do |t|
     t.string   "requested_host"
     t.string   "canonical_host"

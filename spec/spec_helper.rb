@@ -1,67 +1,44 @@
-require File.expand_path('../../config/preinitializer',__FILE__)
-#require 'rubygems'
 require 'spork'
-ENV["RAILS_ENV"] = "test"
-require 'assert2/xhtml'
+ENV["RAILS_ENV"] ||= 'test'
 
 Spork.prefork do
-  require File.expand_path(File.dirname(__FILE__) + "/../config/wagn_initializer")
-  # how do you trap a module method, and de we still need this?
-  #Spork.trap_class_method(Wagn::Configuration,"wagn_load")
-
   require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-  require 'spec'
-  require 'spec/autorun'
-  require 'spec/rails' 
-  
-  require "email_spec"
-  
-  
-  # Loading more in this block will cause your tests to run faster. However, 
-  # if you change any configuration or code from libraries loaded here, you'll
-  # need to restart spork for it take effect.
-  # This file is copied to ~/spec when you run 'ruby script/generate rspec'
-  # from the project root directory.
+  require File.expand_path(File.dirname(__FILE__) + "/../lib/authenticated_test_helper.rb")
+  require 'rspec/rails' 
 
-  #Wagn::Configuration.wagn_run
 
-  Spec::Runner.configure do |config|
-    # If you're not using ActiveRecord you should remove these
-    # lines, delete config/database.yml and disable :active_record
-    # in your config/boot.rb
+  # Requires supporting ruby files with custom matchers and macros, etc,
+  # in spec/support/ and its subdirectories.
+  Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
+
+  RSpec.configure do |config|
+    
+    config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => { 
+      :file_path => /\bspec\/controllers\// }
+    
+    config.include AuthenticatedTestHelper, :type=>:controllers
+    #config.include(EmailSpec::Helpers)
+    #config.include(EmailSpec::Matchers)
+    
+    # == Mock Framework
+    # If you prefer to mock with mocha, flexmock or RR, uncomment the appropriate symbol:
+    # :mocha, :flexmock, :rr
+
+    config.mock_with :rspec
+    config.fixture_path = "#{::Rails.root}/spec/fixtures"
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
-    config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
-           
-    config.include AuthenticatedTestHelper, :type=>:controllers      
-    # == Notes
-    # 
-    # For more information take a look at Spec::Example::Configuration and Spec::Runner
-    config.include(EmailSpec::Helpers)
-    config.include(EmailSpec::Matchers)
-    
+  
     config.before(:each) do
-      # old cache stuff
       Wagn::Cache.reset_for_tests
+    end
+    config.after(:each) do
+      Timecop.return
     end
   end
 end
 
+
 Spork.each_run do     
   # This code will be run each time you run your specs.
 end
-
-# --- Instructions ---
-# - Sort through your spec_helper file. Place as much environment loading 
-#   code that you don't normally modify during development in the 
-#   Spork.prefork block.
-# - Place the rest under Spork.each_run block
-# - Any code that is left outside of the blocks will be ran during preforking
-#   and during each_run!
-# - These instructions should self-destruct in 10 seconds.  If they don't,
-#   feel free to delete them.
-#
-
-
-
-

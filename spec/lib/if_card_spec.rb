@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
 describe "if_card" do
   it "should run block for existing card" do

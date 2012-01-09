@@ -1,6 +1,0 @@
-#!/usr/bin/env ruby
-
-require 'rubygems'
-require 'spec_converter'
-
-SpecConverter.new.translate_file(ARGV[0])

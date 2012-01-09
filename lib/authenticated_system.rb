@@ -93,16 +93,14 @@ module AuthenticatedSystem
   # to access the requested action.  For example, a popup window might
   # simply close itself.
   def access_denied
-    #redirect_to :controller => '/account', :action => 'login'
-    login_url = System.base_url + "/account/signin"
-    render :inline=>%{ <%= javascript_tag "document.location.href='#{login_url}'" %>}
+    wagn_redirect( Wagn::Conf[:base_url] + url_for(:controller=>'account', :action=>'signin') )
   end  
 
   # Store the URI of the current request in the session.
   #
   # We can return to this location by calling #redirect_back_or_default.
   def store_location
-    session[:return_to] = request.request_uri
+    session[:return_to] = request.fullpath
   end
 
   # Redirect to the URI stored by the most recent store_location call or

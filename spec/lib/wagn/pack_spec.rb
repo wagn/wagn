@@ -1,10 +1,11 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Pack do
   context "load_all" do
     it "loads files in the modules directory" do
+      pending 'needs further isolation; generates broader dependency issues'
       begin
-        file = "#{RAILS_ROOT}/modules/dummy_spec_module.rb"
+        file = "#{Rails.root}/local/dummy_spec_module.rb"
         File.open(file, "w") do |f|
           f.write <<-EOF
             module JBob 
@@ -16,7 +17,7 @@ describe Wagn::Pack do
         Wagn::Pack.load_all
         JBob.foo.should == "bar"
       ensure
-        `rm #{file}`
+        `rm #{file}`  #PLATFORM SPECIFIC
       end
     end
   end

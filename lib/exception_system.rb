@@ -9,9 +9,9 @@ module ExceptionSystem
     status = exception_status(exception)
     
     if exception.respond_to?(:get_card)
-      render_card_errors(exception.get_card)
+      render_errors(exception.get_card)
     elsif exception.respond_to?(:record)
-      render_card_errors(exception.record)
+      render_errors(exception.record)
     else
       if status==500
         if consider_all_requests_local || local_request?
@@ -25,23 +25,23 @@ module ExceptionSystem
     end
   end
      
-  # these called by exception_notifier    
   def render_fast_404(host=nil)
     message = "<h1>404 Page Not Found</h1>"
     message += "Unknown host: #{host}" if host
     render :text=>message, :layout=>false, :status=>404
   end
   
+  # these called by exception_notifier    
   
   def render_404() 
-    logger.error("render_404 invoked for request_uri=#{request.request_uri} and env=#{request.env.inspect}")
+    logger.error("render_404 invoked for fullpath=#{request.fullpath} and env=#{request.env.inspect}")
     render_exception(404); 
   end  
   
   def render_500()  render_exception(500); end
 
   def render_exception(status)
-    render :template => "/application/#{status}", :status => status, :layout=>wagn_layout
+    render "/application/#{status}", :status => status , :layout=>'application'
   end  
   
   def exception_status(exception)
@@ -56,14 +56,5 @@ module ExceptionSystem
     else 
       500 
     end
-  end
-
-  def requesting_javascript?
-    @request_type!='html'
-  end
-  
-  def requesting_ajax?
-    request.xhr?
-  end
-  
+  end  
 end

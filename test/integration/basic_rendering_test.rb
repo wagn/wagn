@@ -1,8 +1,7 @@
-require "#{File.dirname(__FILE__)}/../test_helper"
+require File.expand_path('../test_helper', File.dirname(__FILE__))
 
 class BasicRenderingTest < ActionController::IntegrationTest
 
-  warn "Defining basic rendering tests"
   test_render "card/changes/:id"        , :users=>{ :anon=>200, :joe_user=>200 }
   test_render "card/view/:id"           , :users=>{ :anon=>200, :joe_user=>200 }, :cardtypes=>:all
   test_render "card/options/:id"        , :users=>{ :anon=>200, :joe_user=>200 }, :cardtypes=>:all

@@ -1,8 +1,0 @@
-<% form_for :card, card, :url=>"/attachment/create",
-    :html=>{ :id=>'upload-form', :multipart=>true, :name=>'fileupload' } do |f| %>
-  <%= f.hidden_field :type %>
-  <%= file_field_tag :uploaded_data, :onchange =>( card.new_record? ? %{n = window.parent.document.getElementById('card_name'); if (!n.value) { n.value=$F(this).match(/([^\\/]*)\\.\\w+$/)[1] }; this.form.submit() } : '')  %>
-<% end %>
-
-
-

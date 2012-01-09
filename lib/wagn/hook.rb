@@ -27,8 +27,7 @@ module Wagn
       end
       
       def call_card hookname, card, *args
-        set_names =  Wagn::Pattern.set_names( card )
-        hooks_for_set_names(hookname,set_names).map do |h|
+        hooks_for_set_names(hookname, card.set_names).map do |h|
           h.call(card, *args)
         end
       end

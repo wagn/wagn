@@ -8,36 +8,39 @@ module LocationHelper
   #
   # we keep a history stack so that in the case of card removal
   # we can crawl back up to the last un-removed location
-  #
-  # a card may be on the location stack multiple times, especially if
-  # you had to confirm before removing.
+
   #
   def location_history
+#    warn "sess #{session.class}, #{session.object_id}"
     session[:history] ||= ['/']
-    session[:history].shift if session[:history].size > 5
-    session[:history]
+    if session[:history]
+      session[:history].shift if session[:history].size > 5
+      session[:history]
+    end
   end
 
   def save_location
-    location_history.push(request.request_uri)
-    load_location
-  end
-
-  def load_location
-    @previous_location = location_history.last
+    discard_locations_for(@card)
+    @previous_location = card_path(@card)
+    location_history.push @previous_location
   end
 
   def previous_location
-    @previous_location
+    @previous_location ||= location_history.last if location_history
   end
 
   def discard_locations_for(card)
     # quoting necessary because cards have things like "+*" in the names..
-    pattern = /#{Regexp.quote(card.id.to_s)}|#{Regexp.quote(card.key)}|#{Regexp.quote(card.name)}/
-    while location_history.last =~ pattern
-      location_history.pop
-    end
-    load_location
+    session[:history] = location_history.reject do |loc|
+      if url_key = url_key_for_location(loc)
+        url_key.to_cardname.key == card.key
+      end
+    end.compact
+    @previous_location = nil
+  end
+  
+  def url_key_for_location(location)
+    location.match( /\/([^\/]*$)/ ) ? $1 : nil
   end
 
    # -----------( urls and redirects from application.rb) ----------------
@@ -52,22 +55,15 @@ module LocationHelper
       opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
       vars = '?' + pairs.join('&')
     end
-    # shaved order of magnitude off footer rendering
-    # vs. url_for( :action=> .. )
-#Rails.logger.debug "url_for_page( #{title}, #{format}, #{vars}"
-    "/wagn/#{title.to_url_key}#{format}#{vars}"
+    Wagn::Conf[:root_path] + "/#{title.to_cardname.to_url_key}#{format}#{vars}"
   end
 
-  def url_for_card( options={} )
-    url_for options_for_card( options )
+  def card_path( card ) #should be in cardname
+    Wagn::Conf[:root_path] + "/#{card.cardname.to_url_key}"
   end
 
-  def card_path( card )
-    "/wagn/#{card.name.to_url_key}"
-  end
-
-  def card_url( card )
-    "http://" + System.host + card_path(card)
+  def card_url( card ) #should be in cardname
+    Wagn::Conf[:base_url] + card_path(card)
   end
 
   # Links ----------------------------------------------------------------------
@@ -76,65 +72,14 @@ module LocationHelper
     title ||= text
     url_options = (options[:type]) ? {:type=>options[:type]} : {}
     url = url_for_page(title, url_options)
-    url = System.base_url + url if (options.delete(:include_domain))
-
-    #Rails.logger.debug("link_to_page #{options.inspect}")
     link_to text, url, options
   end
 
-  def link_to_connector_update( text, highlight_group, connector_method, value, *method_value_pairs )
-    #warn "method_value_pairs: #{method_value_pairs.inspect}"
-    extra_calls = method_value_pairs.size > 0 ? ".#{method_value_pairs[0]}('#{method_value_pairs[1]}')" : ''
-    link_to_function( text,
-      "Wagn.highlight('#{highlight_group}', '#{value}'); " +
-      "Wagn.lister().#{connector_method}('#{value}')#{extra_calls}.update()",
-      :class => highlight_group,
-      :id => "#{highlight_group}-#{value}"
-    )
-  end
-
-  def name_in_context(card, context_card)
-    context_card == card ? card.name : card.name.gsub(context_card.name, '')
-  end
-
   def card_title_span( title )
-    %{<span class="namepart-#{title.css_name}">#{title}</span>}
+    %{<span class="namepart-#{title.to_cardname.css_name}">#{title}</span>}
   end
-
-  def connector_function( name, *args )
-    "Wagn.lister().#{name.to_s}(#{args.join(',')});"
-  end
-
-  def pieces_icon( card, prefix='' )
-    image_tag "/images/#{prefix}pieces_icon.png", :title=>"cards that comprise \"#{card.name}\""
-  end
-
-  def connect_icon( card, prefix='' )
-    image_tag "/images/#{prefix}connect_icon.png", :title=>"plus cards that include \"#{card.name}\""
-  end
-
-  def connected_icon( card, prefix='' )
-    image_tag "/images/#{prefix}connected_icon.png", :title=>"cards connected to \"#{card.name}\""
-  end
-
 
   def page_icon(cardname)
-    link_to_page '&nbsp;', cardname, {:class=>'page-icon', :title=>"Go to: #{cardname}"}
+    link_to_page '&nbsp;'.html_safe, cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
   end
-
-  def flexlink( linktype, name, options )
-    case linktype
-      when 'connect'
-        link_to_function( name,
-           "var form = window.document.forms['connect'];\n" +
-           "form.elements['name'].value='#{name}';\n" +
-           "form.onsubmit();",
-           options)
-      when 'page'
-        link_to_page name, name, options
-      else
-        raise "no linktype specified"
-    end
-  end
-
 end

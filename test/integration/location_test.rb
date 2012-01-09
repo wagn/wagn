@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.expand_path('../test_helper', File.dirname(__FILE__))
 
 require 'card_controller'
 
@@ -25,11 +25,13 @@ class LocationTest < ActionController::IntegrationTest
   def test_previous_location_should_not_be_updated_by_nonexistent_card
     get "Joe_User"     
     get "Not_Me"
-    assert_equal "/Joe_User", assigns['previous_location']
+    get '*previous'
+    assert_equal '*previous', assigns['card']
+    assert_redirected_to '/Joe_User'
   end
   
   def test_return_to_special_url_when_logging_in_after_visit
     get '/recent'
-    assert_equal "/recent", assigns['previous_location']
+    assert_equal "/*recent",  assigns['previous_location']
   end
 end

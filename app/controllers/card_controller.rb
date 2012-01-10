@@ -216,23 +216,19 @@ class CardController < ApplicationController
     when @card == '*previous'
       wagn_redirect previous_location
     when !@card || @card.name.nil? || @card.name.empty?  #no card or no name -- bogus request, deserves error
-      raise Wagn::NotFound, "We don't know what card you're looking for."
+      raise Wagn::NotFound
     when @card.known? # default case
       @card
     when params[:view] =~ /rule|missing/
       # FIXME this is a hack so that you can view load rules that don't exist.  need better approach 
       # (but this is not tested; please don't delete without adding a test) 
       @card
-    when ajax? || ![nil, 'html'].member?(params[:format])  #missing card, nonstandard request
-      ##  I think what SHOULD happen here is that we render the missing view and let the Renderer decide what happens.
-      raise Wagn::NotFound, "We can't find a card named #{@card.name}"  
-    when @card.ok?(:create)  # missing card, user can create
+    when [nil, 'html'].member?(params[:format]) && @card.ok?(:create) 
       params[:card]={:name=>@card.name, :type=>params[:type]}
       self.new
       false
     else
-      render :action=>'missing' 
-      false     
+      raise Wagn::NotFound
     end
   end
 
@@ -257,46 +253,6 @@ class CardController < ApplicationController
 
   #---------( RENDERING )
   
-  def render_show(view = nil, status = 200, extension=nil)
-    extension ||= request.parameters[:format]
-    #warn "render_show #{extension}"
-    if FORMATS.split('|').member?( extension )
-
-      render(:status=>status, :text=> begin
-        respond_to() do |format|
-          format.send(extension) do
-            renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
-            renderer.render_show :view=>view
-          end
-        end
-      end)
-    elsif render_show_file
-      return
-    else
-      return render :text=>"unknown format: #{extension}", :status=>404
-    end
-  end
-  
-  def render_show_file
-    #return render_fast_404 if !@card #will it ever get here??
-    @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
-  
-    format = @card.attachment_format(params[:format])
-    return nil if !format
-
-    if ![format, 'file'].member?( params[:format] )
-      return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) ) 
-    end
-
-    style = @card.attachment_style( @card.typecode, params[:size] || @style )
-    return render_fast_404 if !style
-
-    send_file @card.attach.path(style), 
-      :type => @card.attach_content_type,
-      :filename =>  "#{@card.cardname.to_url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
-      :x_sendfile => true,
-      :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
-  end
   
   def render_success(default_target='TO-CARD')
     target = params[:success] || default_target
@@ -320,5 +276,6 @@ class CardController < ApplicationController
     else  @card = target  ; render_show
     end
   end
+
 end
 

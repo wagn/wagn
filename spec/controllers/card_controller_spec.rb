@@ -20,24 +20,6 @@ describe CardController do
         :id=>"*recent", :format=>"rss"
       )
     end
-    
-#    it "should search for simple keyword" do
-#      {:get => "/search/simple"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
-#        :id=>"*search", :_keyword=>'simple'
-#      )
-#    end
-#    
-#    it "should search for keyword with dot" do
-#      {:get => "/search/dot.com"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
-#        :id=>"*search", :_keyword=>'dot.com'
-#      )
-#    end
-#    it "should recognize formats on keyword search" do
-#      {:get => "/search/feedname.rss"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
-#        :id=>"*search", :_keyword=>'feedname', :format=>'rss'
-#      )
-#    end
-
 
     ["/wagn",""].each do |prefix|
       describe "routes prefixed with '#{prefix}'" do

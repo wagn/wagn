@@ -1,6 +1,9 @@
 class Wagn::Renderer::Rss
   define_view(:show) do |args|
+    render(args[:view] || params[:view] || :feed)
+  end
     
+  define_view(:feed) do |args|
     xml = Builder::XmlMarkup.new
     xml.instruct! :xml, :version => "1.0"
 

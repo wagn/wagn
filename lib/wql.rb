@@ -125,11 +125,14 @@ class Wql
       @mods = MODIFIERS.clone
       @joins = {}   
       @selfname, @parent = '', nil
-      @query = clean(query.clone)
+      
+      @query = query.clone
       
       @query.merge! @query.delete(:params) if @query[:params]
       @vars = @query.delete(:vars) || {}
       @vars.symbolize_keys!
+      
+      @query = clean(@query)
       
       @rawspec = @query.deep_clone
       @spec = {}

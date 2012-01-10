@@ -10,6 +10,7 @@ class Wagn::Renderer::Html
   end
 
   define_view(:layout) do |args|
+    @is_main = false
     if @main_content = args.delete(:main_content)
       @card = Card.fetch_or_new('*placeholder')
     else
@@ -450,7 +451,7 @@ class Wagn::Renderer::Html
   
   define_view(:conflict) do |args|
     load_revisions
-    wrap(:errors) do |args|
+    wrap(:conflict) do |args|
       %{<strong>Not Saved!</strong><span class="new-current-revision-id">#{@revision.id}</span>
         <div>#{ link_to_page @revision.author.card.name } has also been editing this card.</div>
         <div>Please examine below, resolve above, and re-submit.</div>
@@ -561,6 +562,26 @@ class Wagn::Renderer::Html
       }}
     end
   end
+  
+  
+  define_view(:not_found) do |args| #ug.  bad name.
+
+    sign_in_or_up_links = User.logged_in? ? '' :
+      %{
+      <div>
+        #{link_to "Sign In", :controller=>'account', :action=>'signin'} or 
+        #{link_to 'Sign Up', :controller=>'account', :action=>'signup'} to create it.
+      </div>
+      }
+    %{ <h1 class="page-header">Missing Card</h1> } +
+    wrap(:not_found, args) do # ENGLISH 
+      %{<div class="content instruction">
+          <div>There's no card named <strong>#{card.name}</strong>.</div> 
+          #{sign_in_or_up_links}
+        </div>}
+    end
+  end
+  
 
   define_view(:watch) do |args|
     return "" unless User.logged_in?   
@@ -602,6 +623,20 @@ class Wagn::Renderer::Html
         </div>
         #{ _render_footer  }}
     end
+  end
+  
+  
+  define_view(:server_error) do |args|
+    %{
+    <body>
+      <div class="dialog">
+        <h1>Wagn Hitch :(</h1>
+        <p>Server Error. Yuck, sorry about that.</p>
+        <p><a href="http://www.wagn.org/new/Support_Ticket">Add a support ticket</a>
+            to tell us more and follow the fix.</p>
+      </div>
+    </body>
+    }
   end
   
   

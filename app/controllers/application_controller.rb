@@ -1,26 +1,24 @@
-# # Filters added to this controller will be run for all controllers in the application.
-# Likewise, all the methods added will be available for all controllers.
-
 class ApplicationController < ActionController::Base
-  require_dependency 'exception_system'
   include AuthenticatedSystem
-  include ExceptionSystem
   include LocationHelper
-  helper :all
   include Recaptcha::Verify
-
   include ActionView::Helpers::SanitizeHelper
 
-  before_filter :per_request_setup, :except=>[:render_fast_404]
- # after_filter :set_encoding
-  # OPTIMIZE: render_fast_404 still isn't that fast (?18reqs/sec) 
-  # can we turn sessions off for it and see if that helps?
-  layout :wagn_layout, :except=>[:render_fast_404]
+  helper :all
+  before_filter :per_request_setup, :except=>[:fast_404]
+  layout :wagn_layout, :except=>[:fast_404]
   
   attr_accessor :recaptcha_count
-    
-  BUILTIN_LAYOUTS = %w{ blank noside simple pre none }
 
+  def fast_404(host=nil)
+    message = "<h1>404 Page Not Found</h1>"
+    message += "Unknown host: #{host}" if host
+    render :text=>message, :layout=>false, :status=>404
+  end
+
+  def bad_address
+    raise Wagn::BadAddress
+  end
 
   protected
 
@@ -29,7 +27,7 @@ class ApplicationController < ActionController::Base
       request.format = :html if !params[:format]
 
       if Wagn::Conf[:multihost]
-        MultihostMapping.map_from_request(request) or return render_fast_404(request.host)
+        MultihostMapping.map_from_request(request) or return fast_404(request.host)
       end
 
       # canonicalizing logic is wrong
@@ -125,11 +123,71 @@ class ApplicationController < ActionController::Base
     render_errors
   end
 
-  def render_errors(card=nil, format='html')
-    @card = card if card
-    render_show( (@card.error_view || :errors), (@card.error_status || 422), format )
+  def render_errors(card=nil, options={})
+    @card = card || Card.new
+    view   = options[:view]   || (@card && @card.error_view  ) || :errors
+    status = options[:status] || (@card && @card.error_status) || 422
+    render_show view, status
   end
 
+  def render_show(view = nil, status = 200)
+    extension = request.parameters[:format]
+    if FORMATS.split('|').member?( extension )
+      render(:status=>status, :text=> begin
+        respond_to do |format|
+          format.send(extension) do
+            renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
+            renderer.render_show( :view=>view )
+          end
+        end
+      end)
+    elsif render_show_file
+    else
+      render :text=>"unknown format: #{extension}", :status=>404
+    end
+  end
+  
+  def render_show_file
+    return fast_404 if !@card
+    @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
+  
+    format = @card.attachment_format(params[:format])
+    return nil if !format
+
+    if ![format, 'file'].member?( params[:format] )
+      return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) ) 
+    end
+
+    style = @card.attachment_style( @card.typecode, params[:size] || @style )
+    return fast_404 if !style
+
+    send_file @card.attach.path(style), 
+      :type => @card.attach_content_type,
+      :filename =>  "#{@card.cardname.to_url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
+      :x_sendfile => true,
+      :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
+  end
+  
+  
+  rescue_from Exception do |exception|
+    view, status = case exception
+    when Wagn::NotFound, ActiveRecord::RecordNotFound
+      [ :not_found, 404 ]                                                 
+    when Wagn::PermissionDenied, Card::PermissionDenied
+      [ :denial, 403]
+    when Wagn::Oops, ActiveRecord::RecordInvalid
+      [ :errors, 422 ]
+    when Wagn::BadAddress, ActionController::UnknownController, ActionController::UnknownAction  
+      [ :bad_address, 404 ]
+    else
+      [ :server_error, 500 ]
+    end
+    
+    render_errors nil, :view=>view, :status=>status
+  end
+     
+
+  
 end
 
 

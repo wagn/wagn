@@ -10,7 +10,7 @@ class Wagn::Renderer::Html
   end
 
   define_view(:layout) do |args|
-    @is_main = false
+    @is_qcard = false
     if @main_content = args.delete(:main_content)
       @card = Card.fetch_or_new('*placeholder')
     else

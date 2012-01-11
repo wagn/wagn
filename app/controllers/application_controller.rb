@@ -123,8 +123,8 @@ class ApplicationController < ActionController::Base
     render_errors
   end
 
-  def render_errors(card=nil, options={})
-    @card = card || Card.new
+  def render_errors(options={})
+    @card ||= Card.new
     view   = options[:view]   || (@card && @card.error_view  ) || :errors
     status = options[:status] || (@card && @card.error_status) || 422
     render_show view, status
@@ -183,7 +183,7 @@ class ApplicationController < ActionController::Base
       [ :server_error, 500 ]
     end
     
-    render_errors nil, :view=>view, :status=>status
+    render_errors :view=>view, :status=>status
   end
      
 

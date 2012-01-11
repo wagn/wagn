@@ -4,9 +4,13 @@ module Wagn
   class Renderer
     include ReferenceTypes
 
-    DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
-    UNDENIABLE_VIEWS = [ :deny_view, :denial, :errors, :edit_virtual, :too_slow, :too_deep, :missing, :closed_missing, :name, :link, :linkname, :url, :show, :layout ]
-    INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :edit=>:edit, :layout=>:layout, :new=>:edit }
+    DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed,
+      :bare=>:core, :naked=>:core }
+    UNDENIABLE_VIEWS = [ :deny_view, :denial, :errors, :edit_virtual,
+      :too_slow, :too_deep, :missing, :closed_missing, :name, :link,
+      :linkname, :url, :show, :layout ]
+    INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :edit=>:edit,
+      :layout=>:layout, :new=>:edit }
     DEFAULT_ITEM_VIEW = :link
   
     RENDERERS = {

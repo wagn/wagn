@@ -14,25 +14,25 @@
 ActiveRecord::Schema.define(:version => 20120111201744) do
 
   create_table "cards", :force => true do |t|
+    t.string   "name",                :null => false
+    t.string   "key",                 :null => false
+    t.string   "codename"
+    t.string   "typecode",            :null => false
     t.integer  "trunk_id"
+    t.integer  "tag_id"
+    t.integer  "current_revision_id"
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
-    t.integer  "current_revision_id"
-    t.string   "name",                :null => false
-    t.string   "typecode",            :null => false
-    t.integer  "extension_id"
-    t.string   "extension_type"
     t.integer  "created_by"
     t.integer  "updated_by"
-    t.integer  "tag_id"
-    t.string   "key",                 :null => false
-    t.boolean  "trash",               :null => false
-    t.integer  "references_expired"
+    t.integer  "extension_id"
+    t.string   "extension_type"
     t.text     "indexed_name"
     t.text     "indexed_content"
-    t.string   "codename"
     t.string   "read_rule_class"
     t.integer  "read_rule_id"
+    t.integer  "references_expired"
+    t.boolean  "trash",               :null => false
   end
 
   add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_index"

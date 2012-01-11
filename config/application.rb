@@ -41,6 +41,8 @@ module Wagn
         h[:attachment_storage_dir] ||= "#{Rails.root}/local/files"
 
         h[:pack_dirs] ||= "#{Rails.root}/lib/packs, #{Rails.root}/local/packs"
+
+        h[:read_only] ||= (ro=ENV['WAGN_READ_ONLY']) && ro != 'false'
       end
     end
   end

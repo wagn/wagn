@@ -21,7 +21,7 @@ module Wagn::Model::Attach
     #r=warn "Afn #{r}"; r
   def attach_file_name()
     r=attach_array[0]
-    raise "fn nil ???" if r.nil?; r
+#    raise "fn nil ???" if r.nil?; r
   end
   def attach_content_type() attach_array[1] end
   def attach_file_size() attach_array[2] end
@@ -35,7 +35,8 @@ module Wagn::Model::Attach
   def attachment_style(typecode, style)
     case typecode
     when 'File'; ''
-    when 'Image'; style || :original
+    when 'Image'
+      style.nil? || style.to_sym == :full ? :original : style
     end
   end
 
@@ -89,9 +90,20 @@ module Wagn::Model::Attach
                    :medium => '200x200>', :large  => '500x500>' } 
 
       before_post_process :before_post_attach
+      
+      validates_each :attach do |rec, attr, value|
+        if ['File', 'Image'].member? rec.typecode
+          max_size = 5 #this should eventually be a wagn configuration choice
+          if value.size.to_i > max_size.megabytes
+            rec.errors.add :file_size, "File cannot be larger than #{max_size} megabytes"
+          end
+        end
+      end      
     end
   end
 end
+
+
 
 module Paperclip::Interpolations
   

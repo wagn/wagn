@@ -1,6 +1,4 @@
-#ENV['RAILS_ENV'] ||= 'production'
 require File.expand_path('../boot', __FILE__)
-
 require 'rails/all'
 
 if defined?(Bundler)
@@ -82,7 +80,14 @@ module Wagn
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
     
-    config.cache_store = :file_store, "#{Rails.root}/tmp/cache"
+    cache_store = ( Wagn::Conf[:cache_store] || :file_store ).to_sym
+    cache_args = case cache_store
+      when :file_store
+        Wagn::Conf[:file_store_dir] || "#{Rails.root}/tmp/cache"
+      when :mem_cache_store
+        Wagn::Conf[:mem_cache_servers] || []
+      end
+    config.cache_store = cache_store, *cache_args
     
     if log_file = Wagn::Conf[:log_file]
       config.paths['log'] = File.join( log_file )

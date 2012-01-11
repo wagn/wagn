@@ -15,6 +15,10 @@
 # this is the base of the uri path that users see when downloading files
 # defaults to "/files"  
 
+# cache_store:
+# determines caching mechanism.  options include: file_store, memory_store, mem_cache_store  
+# defaults to file_store
+# mem_cache_store is highly recommended for production
 
 
 # IMPORTANT: please be sure to register for your own recaptcha keys before deploying a live site

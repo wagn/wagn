@@ -398,9 +398,11 @@ describe Wagn::Renderer, "" do
 
     context "Image" do
       it "should handle size argument in inclusion syntax" do
-        Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
-        c = Card.new :name => 'Image1', :content => "{{TestImage | core; size:small }}"
-        Wagn::Renderer.new(c).render( :core ).should == %{<img src="http://wagn.org/image53_small.jpg">}
+        image_card = Card.create! :name => "TestImage", :type=>"Image", :content => %{TestImage.jpg\nimage/jpeg\n12345}
+        including_card = Card.new :name => 'Image1', :content => "{{TestImage | core; size:small }}"
+        rendered = Wagn::Renderer.new(including_card).render :core
+        warn "rendererddfsfs = #{rendered}"
+        assert_view_select rendered, 'img[src=?]', "/files/TestImage-small-#{image_card.current_revision_id}.jpg"
       end
     end
 
@@ -494,7 +496,7 @@ describe Wagn::Renderer, "" do
 
     context "*version" do
       it "should have an X.X.X version" do
-        (render_card(:raw, :name=>'*version') =~ (/\d\.\d\.\d/ )).should be_true
+        (render_card(:raw, :name=>'*version') =~ (/\d\.\d\.\w+/ )).should be_true
       end
     end
 

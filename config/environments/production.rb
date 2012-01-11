@@ -58,5 +58,10 @@ Wagn::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
   
+  
+  if Wagn::Conf[:smtp]
+    config.action_mailer.smtp_settings = Wagn::Conf[:smtp]
+  end
+  
   ENV['RAILS_ASSET_ID']=""
 end

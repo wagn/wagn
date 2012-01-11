@@ -49,7 +49,7 @@ module Wagn::Set::Type::Search
   end
   
   def escape_content
-    self.content = CGI::unescapeHTML( URI.unescape(content) )
+    self.content = CGI.unescapeHTML( URI.unescape(content) )
   end
   
 end

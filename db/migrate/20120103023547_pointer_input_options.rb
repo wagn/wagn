@@ -1,6 +1,5 @@
 # encoding: utf-8
-load 'db/wagn_migration
-_helper.rb'
+load 'db/wagn_migration_helper.rb'
 class PointerInputOptions < ActiveRecord::Migration 
   include WagnMigrationHelper
 

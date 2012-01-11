@@ -38,6 +38,7 @@ class ApplicationController < ActionController::Base
         Wagn::Conf[:host] = host = request.env['HTTP_HOST']
         Wagn::Conf[:base_url] = 'http://' + host
       #end
+      Wagn::Conf[:main_name] = nil
       
       ActiveSupport::Notifications.instrument 'wagn.renderer_load', :message=>"(in development)" do
         Wagn::Renderer.ajax_call=request.xhr?

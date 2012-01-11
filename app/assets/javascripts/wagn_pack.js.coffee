@@ -14,7 +14,7 @@ wagn.editorInitFunctionMap = {
   '.date-editor'           : -> @datepicker { dateFormat: 'yy-mm-dd' }
   '.tinymce-textarea'      : -> wagn.initTinyMCE(@[0].id)
   '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
-  '.file-upload'           : -> @fileupload( add: (e, data)-> $(this).closest('form').data 'file-data', data )
+  '.file-upload'           : -> @fileupload( add: wagn.chooseFile )
   '.etherpad-textarea'   : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
 }
 
@@ -33,8 +33,25 @@ wagn.initTinyMCE = (el_id) ->
   }    
   tinyMCE.init conf
 
+wagn.chooseFile = (e, data) ->
+  s = $(this).slot()
+  filename = data.files[0].fileName
+  $(this).closest('form').data 'file-data', data
+  if name_field = s.find( '.card-name-field' ) 
+    if name_field[0] and name_field.val() == ''
+      name_field.val filename.replace /\..*/, ''
+  s.find('.choose-file').hide()
+  s.find('.chosen-filename').text filename
+  s.find('.chosen-file').show()
+
 
 $(window).load ->
+
+  $('.cancel-upload').live 'click', ->
+    s = $(this).slot()
+    s.find('.chosen-file').hide()
+    s.find('.choose-file').show()
+    $(this).closest('form').data 'file-data', null
 
   #navbox pack
   $('.navbox').autocomplete {
@@ -131,24 +148,22 @@ navbox_results = (request, response) ->
 navboxize = (term, results)->
   items = []
 
-  $.each ['search', 'add' ,'type'], (index, key)->
+  $.each ['search', 'add', 'new'], (index, key)->
     val = results[key]
-    i = { type: key, value: term, prefix: 'Create', label: '<strong class="highlight">' + term + '</strong>' }
+    i = { type: key, value: term, prefix: key, label: '<strong class="highlight">' + term + '</strong>' }
     if !val #nothing
     else if key == 'search'
-      i.prefix = 'Search'
       i.href  = '/*search?view=content&_keyword=' + escape(term)
     else if key == 'add'
       i.href = '/card/new?card[name]=' + escape(term)
-    else if key == 'type'
-      i.type = 'add'
-      i.label = '<strong class="highlight">' + val[0] + '</strong> <em>(type)</em>' 
+    else if key == 'new'
+      i.type = 'add' # for icon
       i.href = '/new/' + val[1]
 
     items.push i if val
 
   $.each results['goto'], (index, val) ->
-    items.push { type: 'goto', prefix: 'Go to', value: val[0], label: val[1], href: '/' + val[2] } 
+    items.push { type: 'goto', prefix: 'go to', value: val[0], label: val[1], href: '/' + val[2] } 
 
   $.each items, (index, i)->
     i.href = wagn.rootPath + i.href

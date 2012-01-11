@@ -27,6 +27,9 @@ end
 #gem 'sqlite3-ruby', :require => 'sqlite3', :group=>'sqlite'
 
 
+gem 'memcache-client', :group => :memcache
+
+
 # These should only be needed if you're developing new JS / CSS.  It's all pre-compiled for production
 group :assets do
   gem 'sass-rails',   "~> 3.1.0"               # pretty code; compiles to CSS
@@ -79,7 +82,6 @@ end
 
 #group :hosting do
 ##  gem 'hoptoad_notifier', '>=2.3.12'
-##  gem 'aws-s3','>=0.6.2'
 #  gem 'newrelic_rpm', '>=2.14.1'
 #end
 

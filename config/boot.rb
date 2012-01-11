@@ -1,3 +1,4 @@
+ENV['RAILS_ENV'] ||= 'production'
 require 'rubygems'
 
 # Set up gems listed in the Gemfile.

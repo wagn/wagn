@@ -22,7 +22,7 @@ class Wagn::Renderer::Json < Wagn::Renderer
     JSON({ 
       :search => true, # card.ok?( :read ),
       :add    => (exact.new_card? && exact.cardname.valid? && !exact.virtual? && exact.ok?( :create )),
-      :type   => (exact.type_id==Wagn::Codename.cardtype_type_id && 
+      :new    => (exact.type_id==Wagn::Codename.cardtype_type_id && 
                   Card.new(:typecode=>exact.typecode).ok?(:create) && 
                   [exact.name, exact.cardname.to_url_key]
                  ),

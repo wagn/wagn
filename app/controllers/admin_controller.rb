@@ -3,12 +3,15 @@ class AdminController < ApplicationController
 
   def setup
     raise(Wagn::Oops, "Already setup") unless User.no_logins? && !User[:first]
+    Wagn::Conf[:recaptcha_on] = false
     if request.post?
       #Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
       User.as :wagbot do
         @extension, @card = User.create_with_card( params[:extension].merge({:login=>'first'}), params[:card] )
         set_default_request_recipient
       end
+
+      warn "ext id = #{@extension.id}"
 
       if @extension.errors.empty?
         @extension.roles = [Role[:admin]]

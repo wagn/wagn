@@ -254,7 +254,7 @@ module Wagn
       tcardname = opts[:tname].to_cardname
       opts[:fullname] = tcardname.to_absolute(card.cardname, params)
       opts[:showname] = tcardname.to_show(opts[:fullname])
-  
+      
       new_args = @mode == :edit ? new_inclusion_card_args(opts) : {}
       tcard ||= Card.fetch_or_new(opts[:fullname], new_args)
   

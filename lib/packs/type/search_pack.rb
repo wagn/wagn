@@ -2,13 +2,14 @@ class Wagn::Renderer
   define_view(:core, :type=>'search') do |args|
     error=nil
     results = begin
-      card.item_cards( paging_params )
+      card.item_cards( search_params )
     rescue Exception=>e
       error = e; nil
     end
 
     case
     when results.nil?
+      Rails.logger.debug error.backtrace
       %{No results? #{error.class.to_s}: #{error&&error.message}<br/>#{card.content}}
     when card.spec[:return] =='count'
       results.to_s
@@ -24,7 +25,7 @@ class Wagn::Renderer
   define_view(:closed_content, :type=>'search') do |args|
     return "..." if @depth > 2
     results= begin
-      card.item_cards( paging_params )
+      card.item_cards( search_params )
     rescue Exception=>e
       error = e; nil
     end
@@ -51,8 +52,8 @@ class Wagn::Renderer
     @item_view ||= (card.spec[:view]) || :closed
 
     instruction, title = nil,nil
-    if card.name=='*search'
-      instruction = %{Cards matching keyword: <strong class="keyword">#{paging_params[:_keyword]}</strong>} #ENGLISH
+    if card.name=='*search' && keyword=search_params[:keyword]
+      instruction = %{Cards matching keyword: <strong class="keyword">#{keyword}</strong>} #ENGLISH
       title = 'Search Results' #ENGLISH
     end
 
@@ -125,32 +126,28 @@ class Wagn::Renderer
 
   define_view(:paging, :type=>'search') do |args|
     results = args[:results]
-    s = card.spec(paging_params)
+    s = card.spec(search_params)
     offset, limit = s[:offset].to_i, s[:limit].to_i
-    first,last = offset+1,offset+results.length 
-    total = card.count(paging_params)
+    first, last = offset+1, offset+results.length 
+    total = card.count(search_params)
  
-    args = {}
-    args[:limit] = limit
-
-#    args[:requested_view] = requested_view 
-    args[:item] = @item_view || args[:item]
-    args[:_keyword] = s[:_keyword] if s[:_keyword]
+    path_args = { :limit => limit, :item  => ( @item_view || args[:item] ) }
+    s[:vars].each { |key, value| path_args["_#{key}"] = value }
 
     out = []
     if total > limit
       out << '<span class="paging">'
 
       if first > 1
-        args[:offset] = [offset-limit,0].max
-        out << link_to( image_tag('prev-page.png'), path(:view, args),
+        path_args[:offset] = [offset-limit,0].max
+        out << link_to( image_tag('prev-page.png'), path(:view, path_args),
           :class=>'card-paging-link slotter', :remote => true )
       end
       out << %{<span class="paging-range">#{ first } to #{ last } of #{ total }</span>}
 
       if last < total
-        args[:offset] = last
-        out << link_to( image_tag('next-page.png'), path(:view, args),
+        path_args[:offset] = last
+        out << link_to( image_tag('next-page.png'), path(:view, path_args),
           :class=>'card-paging-link slotter', :remote => true ) 
       end
       
@@ -159,8 +156,6 @@ class Wagn::Renderer
     out.join
   end
 
-private
-
   def paging_params
     if ajax_call? && @depth > 0
       {:default_limit=>20}  #important that paging calls not pass variables to included searches
@@ -168,7 +163,7 @@ private
       @paging_params ||= begin
         s = {}
         if p = root.params
-          [:offset,:limit,:_keyword].each{|key| s[key] = p.delete(key)}
+          [:offset,:limit,:vars].each{|key| s[key] = p.delete(key)}
         end
         s[:offset] = s[:offset] ? s[:offset].to_i : 0
         if s[:limit]

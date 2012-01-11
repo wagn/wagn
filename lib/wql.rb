@@ -7,7 +7,7 @@ class Wql
                     %w{ member_of member role found_by part left right plus left_plus right_plus } + 
                     %w{ or match complete not and sort },
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
-    :ignore      => %w{ prepend append view }
+    :ignore      => %w{ prepend append view params vars }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
 
   MODIFIERS = {};  %w{ conj return sort sort_as group dir limit offset }.each{|key| MODIFIERS[key.to_sym] = nil }
@@ -29,11 +29,15 @@ class Wql
     result
   end
     
-  def initialize( query )  @cs = CardSpec.build( query )  end
+  def initialize( query )
+#    Rails.logger.info "\ninit query = #{query.inspect}\n"
+    @cs = CardSpec.build( query )
+  end
   def query()              @cs.query                      end
   def sql()                @sql ||= @cs.to_sql            end
   
   def run
+#    Rails.logger.info "\nrun query = #{query.inspect}\n"
     rows = ActiveRecord::Base.connection.select_all( sql )
     case (query[:return] || :card).to_sym
     when :card
@@ -74,8 +78,6 @@ class Wql
     
     def match_prep(v,cardspec=self)
       cxn ||= ActiveRecord::Base.connection
-      v=cardspec.root.params['_keyword'] if v=='_keyword' 
-      v.strip!#FIXME - breaks if v is nil
       [cxn, v]
     end
     
@@ -107,7 +109,7 @@ class Wql
   end
 
   class CardSpec < Spec 
-    attr_reader :params, :sql, :query, :rawspec
+    attr_reader :sql, :query, :rawspec
     attr_accessor :joins
     
     class << self
@@ -121,10 +123,17 @@ class Wql
       # NOTE:  when creating new specs, make sure to specify _parent *before*
       #  any spec which could trigger another cardspec creation further down.
       @mods = MODIFIERS.clone
-      @params = {}
       @joins = {}   
       @selfname, @parent = '', nil
-      @query = clean(query.clone)
+      
+      @query = query.clone
+      
+      @query.merge! @query.delete(:params) if @query[:params]
+      @vars = @query.delete(:vars) || {}
+      @vars.symbolize_keys!
+      
+      @query = clean(@query)
+      
       @rawspec = @query.deep_clone
       @spec = {}
       @sql = SqlStatement.new
@@ -153,7 +162,6 @@ class Wql
         case key.to_s
         when 'context'  ; @selfname         = query.delete(key)
         when '_parent'  ; @parent           = query.delete(key)   
-        when /^_\w+$/   ; @params[key.to_s] = query.delete(key)
         end
       end
       query.each{ |key,val| clean_val(val, query, key) } #must be separate loop to make sure card values are set
@@ -164,7 +172,11 @@ class Wql
     def clean_val(val, query, key)
       query[key] =
         case val
-        when String ; val.empty? ? val : absolute_name(val)
+        when String
+          if val =~ /^\$(\w+)$/
+            val = @vars[$1.to_sym].to_s.strip
+          end
+          absolute_name(val)
         when Hash   ; clean(val)
         when Array  ; val.map{ |v| clean_val(v, query, key)}
         else        ; val
@@ -234,6 +246,7 @@ class Wql
     
     def match(val)
       cxn, v = match_prep(val)
+      return nil if v.empty?
       v.gsub!(/\W+/,' ')
       
       cond =

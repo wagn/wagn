@@ -20,24 +20,6 @@ describe CardController do
         :id=>"*recent", :format=>"rss"
       )
     end
-    
-#    it "should search for simple keyword" do
-#      {:get => "/search/simple"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
-#        :id=>"*search", :_keyword=>'simple'
-#      )
-#    end
-#    
-#    it "should search for keyword with dot" do
-#      {:get => "/search/dot.com"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
-#        :id=>"*search", :_keyword=>'dot.com'
-#      )
-#    end
-#    it "should recognize formats on keyword search" do
-#      {:get => "/search/feedname.rss"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
-#        :id=>"*search", :_keyword=>'feedname', :format=>'rss'
-#      )
-#    end
-
 
     ["/wagn",""].each do |prefix|
       describe "routes prefixed with '#{prefix}'" do
@@ -114,9 +96,9 @@ describe CardController do
             "type"=>"Fruit",
             "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}
           }, "view"=>"open"
+        assert_response 422
         assigns['card'].errors[:key].first.should == "cannot be blank"
         assigns['card'].errors[:name].first.should == "can't be blank"
-        assert_response 422
       end
 
       it "creates card with subcards" do
@@ -214,8 +196,7 @@ describe CardController do
       it "handles nonexistent card without create permissions" do
         login_as :anon
         get :show, {:id=>'Sample_Fako'}
-        assert_response :success   
-        assert_template 'missing'
+        assert_response 404
       end
       
       #it "invokes before_show hook" do
@@ -276,13 +257,6 @@ describe CardController do
       assigns['card'].errors.empty?.should_not be_nil
       assert_response :success
       Card["Newt"].should_not be_nil
-    end
-
-  #=end
-    it "unrecognized card renders missing unless can create basic" do
-      login_as(:anon) 
-      get :show, :id=>'crazy unknown name'
-      assert_template 'missing'
     end
 
     it "update typecode" do

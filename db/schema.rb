@@ -11,13 +11,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120111201744) do
+ActiveRecord::Schema.define(:version => 20120112070200) do
 
   create_table "cards", :force => true do |t|
     t.string   "name",                :null => false
     t.string   "key",                 :null => false
     t.string   "codename"
-    t.string   "typecode",            :null => false
+    t.string   "typecode"
     t.integer  "trunk_id"
     t.integer  "tag_id"
     t.integer  "current_revision_id"
@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(:version => 20120111201744) do
     t.integer  "read_rule_id"
     t.integer  "references_expired"
     t.boolean  "trash",               :null => false
+    t.integer  "type_id"
   end
 
   add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_index"
@@ -49,6 +50,11 @@ ActiveRecord::Schema.define(:version => 20120111201744) do
   end
 
   add_index "cardtypes", ["class_name"], :name => "cardtypes_class_name_uniq", :unique => true
+
+  create_table "codename", :force => true do |t|
+    t.integer "card_id",  :null => false
+    t.string  "codename", :null => false
+  end
 
   create_table "multihost_mappings", :force => true do |t|
     t.string   "requested_host"

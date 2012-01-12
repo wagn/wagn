@@ -139,6 +139,7 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 .exception p {
   margin: 15px;
 }
+.conflict-view,
 .errors-view {
   margin: 10px;
   padding: 10px;

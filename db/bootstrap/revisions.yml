@@ -4052,246 +4052,240 @@ revisions_457:
   created_by: "1"
   content: "{\"sort\":\"update\", \"dir\":\"desc\", \"view\":\"change\"}"
 revisions_458: 
-  id: "5641"
-  created_at: 2011-04-27 10:28:06.745325
-  card_id: "466"
-  created_by: "1"
-  content: "{\"match\":\"_keyword\", \"sort\":\"relevance\"}"
-revisions_459: 
   id: "5642"
   created_at: 2011-04-27 10:28:06.993339
   card_id: "467"
   created_by: "1"
   content: "{\"link_to\":\"_none\"}"
-revisions_460: 
+revisions_459: 
   id: "5643"
   created_at: 2011-04-27 10:28:07.097345
   card_id: "468"
   created_by: "1"
   content: ""
-revisions_461: 
+revisions_460: 
   id: "5725"
   created_at: 2011-07-08 21:22:22.063591
   card_id: "486"
   created_by: "1"
   content: "{\"left\":{\"type\":\"_left\"}, \"right\":\"_right\"}"
-revisions_462: 
+revisions_461: 
   id: "5726"
   created_at: 2011-07-08 21:22:22.135596
   card_id: "487"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_463: 
+revisions_462: 
   id: "5727"
   created_at: 2011-07-08 21:22:22.335607
   card_id: "488"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_464: 
+revisions_463: 
   id: "5728"
   created_at: 2011-07-08 21:22:22.39561
   card_id: "489"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_465: 
+revisions_464: 
   id: "5729"
   created_at: 2011-07-08 21:22:22.451614
   card_id: "490"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_466: 
+revisions_465: 
   id: "5730"
   created_at: 2011-07-08 21:22:22.499616
   card_id: "491"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_467: 
+revisions_466: 
   id: "5731"
   created_at: 2011-07-08 21:22:22.583621
   card_id: "492"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_468: 
+revisions_467: 
   id: "5732"
   created_at: 2011-07-08 21:22:22.643624
   card_id: "493"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_469: 
+revisions_468: 
   id: "5733"
   created_at: 2011-07-08 21:22:22.695627
   card_id: "494"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_470: 
+revisions_469: 
   id: "5734"
   created_at: 2011-07-08 21:22:22.871637
   card_id: "495"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_471: 
+revisions_470: 
   id: "5735"
   created_at: 2011-07-08 21:22:22.943642
   card_id: "496"
   created_by: "1"
   content: "[[Anyone Signed In]]"
-revisions_472: 
+revisions_471: 
   id: "5736"
   created_at: 2011-07-08 21:22:23.011645
   card_id: "497"
   created_by: "1"
   content: "[[Anyone Signed In]]"
-revisions_473: 
+revisions_472: 
   id: "5737"
   created_at: 2011-07-08 21:22:23.223658
   card_id: "498"
   created_by: "1"
   content: "[[Anyone Signed In]]"
-revisions_474: 
+revisions_473: 
   id: "5738"
   created_at: 2011-07-08 21:22:23.279661
   card_id: "499"
   created_by: "1"
   content: _left
-revisions_475: 
+revisions_474: 
   id: "5739"
   created_at: 2011-07-08 21:22:23.523675
   card_id: "500"
   created_by: "1"
   content: "[[Anyone]]"
-revisions_476: 
+revisions_475: 
   id: "5740"
   created_at: 2011-07-08 21:22:23.583678
   card_id: "501"
   created_by: "1"
   content: _left
-revisions_477: 
+revisions_476: 
   id: "5741"
   created_at: 2011-07-08 21:22:23.631681
   card_id: "502"
   created_by: "1"
   content: "[[Anyone Signed In]]"
-revisions_478: 
+revisions_477: 
   id: "5742"
   created_at: 2011-07-08 21:22:23.687684
   card_id: "503"
   created_by: "1"
   content: _left
-revisions_479: 
+revisions_478: 
   id: "5743"
   created_at: 2011-07-08 21:22:23.739687
   card_id: "504"
   created_by: "1"
   content: "[[Anyone Signed In]]"
-revisions_480: 
+revisions_479: 
   id: "5744"
   created_at: 2011-07-08 21:22:23.78769
   card_id: "505"
   created_by: "1"
   content: _left
-revisions_481: 
+revisions_480: 
   id: "5745"
   created_at: 2011-07-08 21:22:23.855694
   card_id: "506"
   created_by: "1"
   content: ""
-revisions_482: 
+revisions_481: 
   id: "5746"
   created_at: 2011-07-08 21:22:24.011702
   card_id: "507"
   created_by: "1"
   content: _left
-revisions_483: 
+revisions_482: 
   id: "5747"
   created_at: 2011-07-08 21:22:25.955813
   card_id: "508"
   created_by: "1"
   content: "[[Anyone]]"
-revisions_484: 
+revisions_483: 
   id: "5748"
   created_at: 2011-07-08 21:22:27.779917
   card_id: "509"
   created_by: "1"
   content: "{\"name\":\"_self\"}"
-revisions_485: 
+revisions_484: 
   id: "5749"
   created_at: 2011-07-08 21:22:27.82392
   card_id: "510"
   created_by: "1"
   content: "[[Anyone Signed In]]"
-revisions_486: 
+revisions_485: 
   id: "5750"
   created_at: 2011-07-08 21:22:27.947927
   card_id: "511"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_487: 
+revisions_486: 
   id: "5751"
   created_at: 2011-07-08 21:22:28.00793
   card_id: "512"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_488: 
+revisions_487: 
   id: "5752"
   created_at: 2011-07-08 21:22:28.307947
   card_id: "513"
   created_by: "1"
   content: "{\"name\":\"_self\"}"
-revisions_489: 
+revisions_488: 
   id: "5753"
   created_at: 2011-07-08 21:22:28.35195
   card_id: "514"
   created_by: "1"
   content: "[[Anyone Signed In]]"
-revisions_490: 
+revisions_489: 
   id: "5754"
   created_at: 2011-07-08 21:22:28.451955
   card_id: "515"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_491: 
+revisions_490: 
   id: "5755"
   created_at: 2011-07-08 21:22:28.519959
   card_id: "516"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_492: 
+revisions_491: 
   id: "5756"
   created_at: 2011-07-08 21:22:28.819976
   card_id: "517"
   created_by: "1"
   content: "{\"name\":\"_self\"}"
-revisions_493: 
+revisions_492: 
   id: "5757"
   created_at: 2011-07-08 21:22:28.863979
   card_id: "518"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_494: 
+revisions_493: 
   id: "5758"
   created_at: 2011-07-08 21:22:28.947984
   card_id: "519"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_495: 
+revisions_494: 
   id: "6019"
   created_at: 2012-01-09 06:51:30.744641
   card_id: "566"
   created_by: "1"
   content: "{\"right\":\"_self\"}"
-revisions_496: 
+revisions_495: 
   id: "6020"
   created_at: 2012-01-09 06:51:30.933169
   card_id: "567"
   created_by: "1"
   content: ""
-revisions_497: 
+revisions_496: 
   id: "6021"
   created_at: 2012-01-09 06:51:31.038577
   card_id: "568"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_498: 
+revisions_497: 
   id: "6022"
   created_at: 2012-01-09 06:51:31.352822
   card_id: "53"
@@ -4319,31 +4313,31 @@ revisions_498:
     + "align|onmouseover|onmouseout|name],hr[class|width|size|noshade],"
     + "font[face|size|color|style],span[class|align|style]"          
 
-revisions_499: 
+revisions_498: 
   id: "4913"
   created_at: 2011-02-16 02:11:13.241543
   card_id: "376"
   created_by: "4"
   content: ""
-revisions_500: 
+revisions_499: 
   id: "4914"
   created_at: 2011-02-16 02:11:13.349549
   card_id: "417"
   created_by: "4"
   content: "4"
-revisions_501: 
+revisions_500: 
   id: "4915"
   created_at: 2011-02-16 02:12:11.482118
   card_id: "374"
   created_by: "4"
   content: ""
-revisions_502: 
+revisions_501: 
   id: "4916"
   created_at: 2011-02-16 02:12:11.578124
   card_id: "418"
   created_by: "4"
   content: "4"
-revisions_503: 
+revisions_502: 
   id: "4917"
   created_at: 2011-02-16 02:14:32.800827
   card_id: "362"
@@ -4351,7 +4345,7 @@ revisions_503:
   content: |-
     {"not":{"or":{"type":["in","Set","Setting"], "left":{"type":"Set"}, "right": "description", "referred_to_by":"*ignore"}},
      "sort": "name", "limit": "200"}
-revisions_504: 
+revisions_503: 
   id: "4919"
   created_at: 2011-02-16 02:15:44.414174
   card_id: "360"
@@ -4361,7 +4355,7 @@ revisions_504:
      "limit": "200",
      "sort": "name"
     }
-revisions_505: 
+revisions_504: 
   id: "4934"
   created_at: 2011-02-16 09:32:16.748753
   card_id: "412"
@@ -4377,7 +4371,7 @@ revisions_505:
      "limit": "200",
      "sort": "name"
     }
-revisions_506: 
+revisions_505: 
   id: "6023"
   created_at: 2012-01-09 06:51:31.928242
   card_id: "198"
@@ -4438,6 +4432,12 @@ revisions_506:
       background: #DDDDDD;
     }
 
+revisions_506: 
+  id: "6029"
+  created_at: 2012-01-10 05:02:19.8452
+  card_id: "466"
+  created_by: "3"
+  content: "{\"match\":\"$keyword\", \"sort\":\"relevance\"}"
 revisions_507: 
   id: "5764"
   created_at: 2011-07-15 15:40:20.408433
@@ -4525,12 +4525,6 @@ revisions_517:
   created_by: "3"
   content: ""
 revisions_518: 
-  id: "5996"
-  created_at: 2012-01-08 22:33:46.462566
-  card_id: "85"
-  created_by: "3"
-  content: <p>[[/card/new|Add a card]]</p>
-revisions_519: 
   id: "5998"
   created_at: 2012-01-08 22:34:09.037186
   card_id: "80"
@@ -4546,7 +4540,7 @@ revisions_519:
     </ul>
     <div><em>Double-click content to edit.</em></div>
     <p>&nbsp;</p>
-revisions_520: 
+revisions_519: 
   id: "6017"
   created_at: 2012-01-08 22:36:56.817104
   card_id: "151"
@@ -4558,7 +4552,7 @@ revisions_520:
     <p>[[/admin/tasks|Global permissions]]</p>
     <p>&nbsp;</p>
     <p>[[/admin/clear_cache|Clear the cache]]</p>
-revisions_521: 
+revisions_520: 
   id: "6024"
   created_at: 2012-01-09 06:51:32.014356
   card_id: "569"
@@ -4572,27 +4566,42 @@ revisions_521:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-revisions_522: 
+revisions_521: 
   id: "6025"
   created_at: 2012-01-09 06:51:32.336808
   card_id: "570"
   created_by: "1"
   content: "{\"type\":\"_self\"}"
-revisions_523: 
+revisions_522: 
   id: "6026"
   created_at: 2012-01-09 06:51:32.365315
   card_id: "571"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_524: 
+revisions_523: 
   id: "6027"
   created_at: 2012-01-09 06:51:32.45108
   card_id: "572"
   created_by: "1"
   content: "[[Administrator]]"
-revisions_525: 
+revisions_524: 
   id: "6028"
   created_at: 2012-01-09 06:51:32.50108
   card_id: "573"
   created_by: "1"
   content: "[[Administrator]]"
+revisions_525: 
+  id: "6031"
+  created_at: 2012-01-11 17:53:44.953062
+  card_id: "574"
+  created_by: "3"
+  content: " <body>{{_main}} </body>"
+revisions_526: 
+  id: "6032"
+  created_at: 2012-01-11 19:37:02.676205
+  card_id: "85"
+  created_by: "3"
+  content: |-
+    <p>[[/card/new|Add a card]]</p>
+    <p></p>
+    <p>{{_main+_user}}</p>

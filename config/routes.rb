@@ -11,7 +11,7 @@ Wagn::Application.routes.draw do
   # these file requests should only get here if the file isn't present.
   # if we get a request for a file we don't have, don't waste any time on it.
   #FAST 404s
-  match ':asset/:foo' => 'application#render_fast_404', :constraints =>
+  match ':asset/:foo' => 'application#fast_404', :constraints =>
     { :asset=>/assets|images?|stylesheets?|javascripts?/, :foo => /.*/ }
 
 #  match '(wagn/):id.:format' => 'card#show_file', :format => /jpg|jpeg|png|gif|ico/
@@ -21,15 +21,13 @@ Wagn::Application.routes.draw do
   match '(/wagn)/:id(.:format)' => 'card#show'
   match '/files/(*id)' => 'card#show_file'
 
-#  match 'search/:_keyword(.:format)' => 'card#show', :id => '*search', :view => 'content', :format => FORMAT_PATTERN
-
   match 'new/:type' => 'card#new'
 
   match ':controller/:action(/:id(.:format)(/:attribute))'
 
 
   
-  match '*id' => 'application#render_404'
+  match '*id' => 'application#bad_address'
 
 end
 

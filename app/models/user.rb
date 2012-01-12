@@ -129,10 +129,12 @@ class User < ActiveRecord::Base
     
     def ok?(task)
       #warn "ok?(#{task}), #{always_ok?}"
-      return true if always_ok?
-      self.ok_hash.key? task.to_s
+      task = task.to_s
+      return false if task != 'read' and Wagn::Conf[:read_only]
+      return true  if always_ok?
+      ok_hash.key? task
     end
-    
+
     def ok!(task)
       if !ok?(task)
         #FIXME -- needs better error message handling

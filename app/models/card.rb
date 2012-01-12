@@ -51,7 +51,7 @@ class Card < ActiveRecord::Base
   end
 
   def initialize(args={})
-    Rails.logger.debug "initialize #{args.inspect}"
+    #Rails.logger.debug "initialize #{args.inspect}"
 
     args['name'] = args['name'].to_s
     if tc=args.delete('typecode')
@@ -440,7 +440,7 @@ class Card < ActiveRecord::Base
   end
 
   def revised_at
-    (cached_revision && cached_revision.updated_at) || Time.now
+    (cached_revision && cached_revision.created_at) || Time.now
   end
 
   def updater
@@ -624,7 +624,6 @@ class Card < ActiveRecord::Base
 
   validates_each :current_revision_id do |rec, attrib, value|
     if !rec.new_card? && rec.current_revision_id_changed? && value.to_i != rec.current_revision_id_was.to_i
-      #warn "was_id = #{rec.current_revision_id_was}"
       rec.current_revision_id = rec.current_revision_id_was
       rec.errors.add :conflict, "changes not based on latest revision"
       rec.error_view = :conflict

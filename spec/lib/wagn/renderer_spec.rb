@@ -401,7 +401,6 @@ describe Wagn::Renderer, "" do
         image_card = Card.create! :name => "TestImage", :type=>"Image", :content => %{TestImage.jpg\nimage/jpeg\n12345}
         including_card = Card.new :name => 'Image1', :content => "{{TestImage | core; size:small }}"
         rendered = Wagn::Renderer.new(including_card).render :core
-        warn "rendererddfsfs = #{rendered}"
         assert_view_select rendered, 'img[src=?]', "/files/TestImage-small-#{image_card.current_revision_id}.jpg"
       end
     end

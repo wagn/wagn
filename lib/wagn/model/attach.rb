@@ -46,6 +46,8 @@ module Wagn::Model::Attach
     return nil unless exts
     return ext if exts.find {|mt| mt.extensions.member? ext }
     return exts[0].extensions[0]
+  rescue
+    nil
   end
     
   # FIXME: test extension matches content type

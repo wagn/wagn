@@ -126,6 +126,13 @@ class Card < ActiveRecord::Base
 
     NON_CREATEABLE = %w{InvitationRequest Setting Set}
 
+    def createable_typecodes
+      Wagn::Codename.type_codes.map { |h|
+        !NON_CREATEABLE.member?( h[:codename] ) &&
+          create_ok?( h[:id] ) && h[:codename] || nil
+      }.compact
+    end
+
     def createable_types
       #warn "createable_types #{(cds=Wagn::Codename.type_codes).inspect}"
       #cds.map { |h|

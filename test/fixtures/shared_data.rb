@@ -40,9 +40,9 @@ class SharedData
     user_card = Card.create! :typecode=>'User', :name=>"Sample User", :extension=>user_user    
 
     request_card = Card.create! :typecode=>'InvitationRequest', :name=>"Sample InvitationRequest" #, :email=>"invitation@request.com"  
-    Card.createable_types.each do |ct|
-      next if ['User','InvitationRequest','Set'].include? ct.codename
-      Card.create! :type=>ct.codename, :name=>"Sample #{ct.codename}"
+    Card.createable_typecodes.each do |typecode|
+      next if ['User','InvitationRequest','Set'].include? typecode
+      Card.create! :type=>typecode, :name=>"Sample #{typecode}"
     end
     # data for role_test.rb
     u1 = ::User.create! :login=>"u1",:email=>'u1@user.com', :status => 'active', :password=>'u1_pass', :password_confirmation=>'u1_pass', :invite_sender=>User[:wagbot]

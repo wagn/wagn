@@ -1,1 +1,73 @@
---- {}
+---
+cardtypes_001:
+  id: '14'
+  class_name: PlainText
+  system: !!null 
+cardtypes_002:
+  id: '6'
+  class_name: InvitationRequest
+  system: !!null 
+cardtypes_003:
+  id: '5'
+  class_name: Role
+  system: !!null 
+cardtypes_004:
+  id: '19'
+  class_name: Search
+  system: !!null 
+cardtypes_005:
+  id: '22'
+  class_name: Toggle
+  system: !!null 
+cardtypes_006:
+  id: '20'
+  class_name: Pointer
+  system: !!null 
+cardtypes_007:
+  id: '11'
+  class_name: Image
+  system: !!null 
+cardtypes_008:
+  id: '23'
+  class_name: Phrase
+  system: !!null 
+cardtypes_009:
+  id: '1'
+  class_name: Basic
+  system: !!null 
+cardtypes_010:
+  id: '9'
+  class_name: Date
+  system: !!null 
+cardtypes_011:
+  id: '12'
+  class_name: Number
+  system: !!null 
+cardtypes_012:
+  id: '21'
+  class_name: HTML
+  system: !!null 
+cardtypes_013:
+  id: '2'
+  class_name: User
+  system: !!null 
+cardtypes_014:
+  id: '10'
+  class_name: File
+  system: !!null 
+cardtypes_015:
+  id: '3'
+  class_name: Cardtype
+  system: !!null 
+cardtypes_016:
+  id: '24'
+  class_name: Set
+  system: !!null 
+cardtypes_017:
+  id: '25'
+  class_name: Setting
+  system: !!null 
+cardtypes_018:
+  id: '27'
+  class_name: Layout
+  system: !!null 

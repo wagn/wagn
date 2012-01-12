@@ -36,13 +36,9 @@ ActiveRecord::Schema.define(:version => 20120111201744) do
   end
 
   add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_index"
-  add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_type_id_index", :unique => true
   add_index "cards", ["key"], :name => "cards_key_uniq", :unique => true
   add_index "cards", ["name"], :name => "cards_name_index"
-  add_index "cards", ["name"], :name => "cards_name_uniq", :unique => true
   add_index "cards", ["read_rule_id"], :name => "index_cards_on_read_rule_id"
-  add_index "cards", ["reader_id"], :name => "card_reader_id_index"
-  add_index "cards", ["reader_type"], :name => "card_reader_type_index"
   add_index "cards", ["tag_id"], :name => "index_cards_on_tag_id"
   add_index "cards", ["trunk_id"], :name => "index_cards_on_trunk_id"
   add_index "cards", ["typecode"], :name => "card_type_index"
@@ -54,15 +50,6 @@ ActiveRecord::Schema.define(:version => 20120111201744) do
 
   add_index "cardtypes", ["class_name"], :name => "cardtypes_class_name_uniq", :unique => true
 
-  create_table "codename", :force => true do |t|
-    t.integer "card_id",  :null => false
-    t.string  "codename", :null => false
-  end
-
-  create_table "db_files", :force => true do |t|
-    t.binary "data"
-  end
-
   create_table "multihost_mappings", :force => true do |t|
     t.string   "requested_host"
     t.string   "canonical_host"
@@ -73,34 +60,8 @@ ActiveRecord::Schema.define(:version => 20120111201744) do
 
   add_index "multihost_mappings", ["requested_host"], :name => "index_multihost_mappings_on_requested_host", :unique => true
 
-  create_table "open_id_authentication_associations", :force => true do |t|
-    t.integer "issued"
-    t.integer "lifetime"
-    t.string  "handle"
-    t.string  "assoc_type"
-    t.binary  "server_url"
-    t.binary  "secret"
-  end
-
-  create_table "open_id_authentication_nonces", :force => true do |t|
-    t.integer "timestamp",  :null => false
-    t.string  "server_url"
-    t.string  "salt",       :null => false
-  end
-
-  create_table "permissions", :force => true do |t|
-    t.integer "card_id"
-    t.string  "task"
-    t.string  "party_type"
-    t.integer "party_id"
-  end
-
-  add_index "permissions", ["card_id", "task"], :name => "permissions_task_card_id_uniq", :unique => true
-  add_index "permissions", ["task"], :name => "permissions_task_index"
-
   create_table "revisions", :force => true do |t|
     t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
     t.integer  "card_id",    :null => false
     t.integer  "created_by", :null => false
     t.text     "content",    :null => false
@@ -129,10 +90,6 @@ ActiveRecord::Schema.define(:version => 20120111201744) do
   end
 
   add_index "sessions", ["session_id"], :name => "sessions_session_id_index"
-
-  create_table "system", :force => true do |t|
-    t.string "name", :default => ""
-  end
 
   create_table "users", :force => true do |t|
     t.string   "login",               :limit => 40

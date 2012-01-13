@@ -216,7 +216,7 @@ class User < ActiveRecord::Base
     User.as :wagbot do #what permissions does approver lack?  Should we check for them?
       c = card
       c = c.refresh if c.frozen?
-      c.type_id = Card.type_id_from_code 'User' # Invite Request -> User
+      c.type_id = Card::UserID # Invite Request -> User
       self.status='active'
       self.invite_sender = ::User.current_user
       generate_password

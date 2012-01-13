@@ -89,7 +89,7 @@ class Wagn::Renderer::Html
     else
       %{
         <h1 class="page-header">
-          New #{ card.type_id == Wagn::Codename.default_type_id && '' || card.typename } Card
+          New #{ card.type_id == Card::DefaultID && '' || card.typename } Card
         </h1>
         #{ new_instruction }
         #{ new_content :cancel_href=>Card.path_setting('/*previous'), :cancel_class=>'redirecter' }
@@ -222,7 +222,7 @@ class Wagn::Renderer::Html
         
         
         %{ #{ hidden_field_tag :view, :edit }
-        #{if card.type_id == Wagn::Codename.cardtype_type_id and !Card.search(:type=>card.cardname).empty? #ENGLISH
+        #{if card.type_id == Card::CardtypeID and !Card.search(:type=>card.cardname).empty? #ENGLISH
           %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
         else
           %{<div>to #{ raw typecode_field :class=>'type-field edit-type-field' }</div>}
@@ -518,7 +518,7 @@ class Wagn::Renderer::Html
            #{ link_to raw(fancy_title(card)), path(:view, :view=>:closed), :title => "close #{card.name}", 
              :class => "line-link title down-arrow slotter", :remote => true }
 
-           #{ unless card.type_id == Wagn::Codename.default_type_id
+           #{ unless card.type_id == Card::DefaultID
              %{<span class="cardtype">#{ link_to_page( Card.typename_from_id(card.type_id) ) }</span>}
             end }
 
@@ -588,7 +588,7 @@ class Wagn::Renderer::Html
     return "" if card.virtual?
     wrap(:watch) do
       @me = User.current_user.card.name          
-      if card.type_id == Wagn::Codename.cardtype_type_id
+      if card.type_id == Card::CardtypeID
         (card.type_watchers.include?(@me) ? "#{watching_type_cards} | " : "") +  watch_unwatch
       else
         card.type_watchers.include?(@me)  ? watching_type_cards : watch_unwatch
@@ -647,8 +647,8 @@ class Wagn::Renderer::Html
   end
 
   def watch_unwatch      
-    type_link = (card.type_id == Wagn::Codename.cardtype_type_id) ? " #{card.name} cards" : ""
-    type_msg = (card.type_id == Wagn::Codename.cardtype_type_id) ? " cards" : ""    
+    type_link = (card.type_id == Card::CardtypeID) ? " #{card.name} cards" : ""
+    type_msg = (card.type_id == Card::CardtypeID) ? " cards" : ""    
 
     if card.card_watchers.include?(@me) or card.typecode != 'Cardtype' && card.watchers.include?(@me)
       text, toggle, title = "unwatch", :off, "stop getting emails about changes to"

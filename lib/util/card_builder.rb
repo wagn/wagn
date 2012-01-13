@@ -40,8 +40,8 @@ module CardBuilderMethods
       )
 
       if c = Card.find_by_name(username)
-        if c.type_id==Wagn::Codename.default_type_id #'Basic'
-          c.type_id = Card.type_id_from_code 'User'
+        if c.type_id==Card::DefaultID #'Basic'
+          c.type_id = Card::UserID
         else
           raise "Can't create user card for #{username}: already points to different user"
         end

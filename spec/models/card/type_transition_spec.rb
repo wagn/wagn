@@ -50,7 +50,7 @@ describe Card, "with role" do
   it "should lose role extension upon changing type" do
     # this test fails on a permission error in Mysql
     pending
-    @role.type_id = Wagn::Codename.default_type_id
+    @role.type_id = Card::DefaultID
     @role.save
     @role.extension.should == nil
   end

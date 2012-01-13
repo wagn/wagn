@@ -112,7 +112,7 @@ describe Card, "Normal card with junctions" do
     @a.junctions.length.should > 0
   end
   it "should successfull have its type changed" do
-    @a.type_id = Card.type_id_from_code('Number');
+    @a.type_id = Card::NumberID;
     @a.save!
     Card['A'].typecode.should== 'Number'
   end
@@ -159,7 +159,7 @@ describe Card, "Wannabe Cardtype Card" do
   before do
     User.as :wagbot 
     @card = Card.create! :name=> 'convertible'
-    @card.type_id=Card.type_id_from_code('Cardtype')
+    @card.type_id=Card::CardtypeID
     @card.save!
     
   end
@@ -229,7 +229,7 @@ describe Wagn::Set::Type::Cardtype do
   
   it "should handle changing away from Cardtype" do
     ctg = Card.create! :name=>"CardtypeG", :type=>"Cardtype"
-    ctg.type_id = Card.type_id_from_code('Basic')
+    ctg.type_id = Card::BasicID
     ctg.save!
     ctg = Card["CardtypeG"]
     ctg.typecode.should == 'Basic'

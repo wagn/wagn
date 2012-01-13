@@ -7,21 +7,12 @@ module Wagn
 
       def [](code)           card_attr(code, :name)      end
       def codename(key)      code_attr(key, :codename)   end
-      def id_from_code(code) card_attr(code, :id)        end
+      def code2id(code) card_attr(code, :id)        end
       def exists?(key)       code_attr(key)              end
       def name_change(key)   exists?(key) && reset_cache end 
       def codes()            get_cache(:code2card).each_value      end
       def type_codes()
-=begin
-        c=get_cache(:code2card)
-        warn "type_codes #{c.nil? ? "caller:#{caller*"\n"}" : "keys #{c.keys*"\n"}"}"
-        r=c.values.find_all {|h|
-          warn "type_search #{h[:type_id]==cardtype_type_id}, #{h.inspect}"
-          h[:type_id]==cardtype_type_id
-        }
-        warn "type_codes R:#{r.inspect}"; r
-=end
-        get_cache(:code2card).values.find_all {|h| h[:type_id]==cardtype_type_id}
+        get_cache(:code2card).values.find_all {|h| h[:type_id]==Card::CardtypeID}
       end
 
       # This is a read-only cached model.  Entries must be added on bootstrap,
@@ -43,9 +34,6 @@ module Wagn
         #warn "miss card #{key} #{code2card.map(&:inspect)*"\n"}" unless code2card.has_key?(key)
         code2card.has_key?(key) && (attr ? code2card[key][attr] : true)
       end
-
-      def default_type_id()  @@default_id  ||= id_from_code('Basic')    end
-      def cardtype_type_id() @@cardtype_id ||= id_from_code('Cardtype') end
 
       def reset_cache()
         set_cache('card2code', nil)

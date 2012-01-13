@@ -245,9 +245,9 @@ module Wagn
       [[ :content,    true  ],
        [ :name,       true, ],
        [ :type,       !( card.type_template? ||
-         (card.type_id==Wagn::Codename.cardtype_type_id and ct=card.me_type
+         (card.type_id==Card::CardtypeID and ct=card.me_type
           and !ct.find_all_by_trash(false).empty?) )],
-       [ :codename,   (User.always_ok? && card.type_id==Wagn::Codename.cardtype_type_id)],
+       [ :codename,   (User.always_ok? && card.type_id==Card::CardtypeID)],
        [ :inclusions, !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
        ].map do |key,ok,args|
 

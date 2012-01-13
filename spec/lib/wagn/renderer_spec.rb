@@ -368,7 +368,7 @@ describe Wagn::Renderer, "" do
       result = Wagn::Renderer::Html.new(c).render( :edit )
       assert_view_select result, 'div[class="field-in-multi"]' do
         assert_select 'input[name=?][type="text"][value="Zamma Flamma"]', 'card[cards][~plus~author][content]'
-        assert_select %{input[name=?][type="hidden"][value="#{Card.type_id_from_code "Phrase"}"]},     'card[cards][~plus~author][type_id]'
+        assert_select %{input[name=?][type="hidden"][value="#{Card::PhraseID}"]},     'card[cards][~plus~author][type_id]'
       end
     end
   end

@@ -95,7 +95,29 @@ class Card < ActiveRecord::Base
   # CLASS METHODS
 
   public
+
+  CODE_CONST = {
+    :UserID => 'User',
+    :PhraseID => 'Phrase',
+    :PoitnerID => 'Pointer',
+    :NumberID => 'Number',
+    :CardtypeID => 'Cardtype',
+    :BasicID => 'Basic',
+    :DefaultID => 'Basic',
+    :UserID => 'User',
+    :ImageID => 'Image',
+    :WagbotID => 'wagbot',
+    :AdminID =>  'admin',
+    :AnyoneID =>  'anyone',
+    :AnonID => 'anonymous',
+  }
+
   class << self
+    def const_missing(const)
+      (code=CODE_CONST[const]) ? const_set(const, Wagn::Codename.code2id(code))
+                               : super
+    end
+
     def include_type_module(typecode)
       #warn (Rails.logger.info "include set #{typecode} called")  #{Kernel.caller[0..4]*"\n"}"
       return unless typecode
@@ -167,7 +189,7 @@ class Card < ActiveRecord::Base
         @broken_type=tp||tc||"Basic"
         #warn "get_type_id bt[#{@broken_type}], #{ti}"
       end
-      return ti || Wagn::Codename.default_type_id
+      return ti || Card::DefaultID
     end
 
     if name && t=template
@@ -175,7 +197,7 @@ class Card < ActiveRecord::Base
       ti = t.type_id
     end
     raise "NoType" if tc == '$NoType' || ti==0
-    ti|| Wagn::Codename.default_type_id
+    ti|| Card::DefaultID
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -201,7 +223,7 @@ class Card < ActiveRecord::Base
     @from_trash = false
     Wagn::Hook.call :after_create, self if @was_new_card
     send_notifications
-    Wagn::Codename.reset_cache if type_id==Wagn::Codename.cardtype_type_id
+    Wagn::Codename.reset_cache if type_id==Card::CardtypeID
     true
   end
 

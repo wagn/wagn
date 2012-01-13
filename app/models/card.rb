@@ -108,10 +108,11 @@ class Card < ActiveRecord::Base
     :BasicID => 'Basic',
     :DefaultID => 'Basic',
     :UserID => 'User',
+    :RoleID => 'Role',
     :ImageID => 'Image',
     :WagbotID => 'wagbot',
-    :AdminID =>  'admin',
-    :AnyoneID =>  'anyone',
+    :AdminID => 'admin',
+    :AnyoneID => 'anyone',
     :AnonID => 'anonymous',
   }
 

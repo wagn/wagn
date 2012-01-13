@@ -29,7 +29,6 @@ class CodenameTable < ActiveRecord::Migration
     renames = {
         "AccountRequest"   => "InvitationRequest",
         "wagn_bot"         => "wagbot",
-        "anonymous"        => "anon",
         "Administrator"    => "admin",
         "anyone_signed_id" => "auth",
       }

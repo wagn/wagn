@@ -20,8 +20,15 @@ class CodenameTable < ActiveRecord::Migration
         Set Setting *sidebar *signup *star *subject *table_of_content *tagged
         *thank *tiny_mce *title *to Toggle *type *type_plu_right *update
         User *version *watcher *watching *when_created *when_last_edited
+        anyone_signed_in anyone administrator anonymous wagn_bot
     }
-    renames = {"AccountRequest" => "InvitationRequest"}
+    renames = {
+        "AccountRequest"   => "InvitationRequest",
+        "wagn_bot"         => "wagbot",
+        "anonymous"        => "anon",
+        "Administrator"    => "admin",
+        "anyone_signed_id" => "auth",
+      }
 
     codecards.map { |name|
          c = Card[name] or raise "Missing codename #{name} card"

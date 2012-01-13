@@ -387,3 +387,23 @@ codename_097:
   id: "97"
   card_id: "438"
   codename: "*when_last_edited"
+codename_098: 
+  id: "98"
+  card_id: "9"
+  codename: anyone_signed_in
+codename_099: 
+  id: "99"
+  card_id: "8"
+  codename: anyone
+codename_100: 
+  id: "100"
+  card_id: "10"
+  codename: administrator
+codename_101: 
+  id: "101"
+  card_id: "15"
+  codename: anon
+codename_102: 
+  id: "102"
+  card_id: "1"
+  codename: wagbot

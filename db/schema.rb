@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(:version => 20120112070200) do
     t.string   "name",                :null => false
     t.string   "key",                 :null => false
     t.string   "codename"
+    t.integer  "type_id"
     t.string   "typecode"
     t.integer  "trunk_id"
     t.integer  "tag_id"
@@ -33,7 +34,6 @@ ActiveRecord::Schema.define(:version => 20120112070200) do
     t.integer  "read_rule_id"
     t.integer  "references_expired"
     t.boolean  "trash",               :null => false
-    t.integer  "type_id"
   end
 
   add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_index"

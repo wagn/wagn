@@ -867,7 +867,7 @@ cards_040:
   tag_id: 
   current_revision_id: 5948
   created_at: 2012-01-12 12:15:32 Z
-  updated_at: 2011-08-16 13:30:35.129899 Z
+  updated_at: 2011-08-16 13:30:35.129898 Z
   created_by: 1
   updated_by: 1
   extension_id: 
@@ -1526,7 +1526,7 @@ cards_070:
   trunk_id: 12
   tag_id: 266
   current_revision_id: 5764
-  created_at: 2012-01-12 12:40:33 Z
+  created_at: 2012-01-12 12:15:32 Z
   updated_at: 2011-07-15 15:40:20.416434 Z
   created_by: 1
   updated_by: 1
@@ -1878,7 +1878,7 @@ cards_086:
   trunk_id: 274
   tag_id: 479
   current_revision_id: 5739
-  created_at: 2012-01-12 12:40:33 Z
+  created_at: 2012-01-12 12:15:32 Z
   updated_at: 2011-07-08 21:22:23.395667 Z
   created_by: 1
   updated_by: 1
@@ -5750,7 +5750,7 @@ cards_262:
   trunk_id: 
   tag_id: 
   current_revision_id: 1541
-  created_at: 2012-01-12 12:40:33 Z
+  created_at: 2012-01-12 12:15:32 Z
   updated_at: 2010-04-19 14:17:59.130526 Z
   created_by: 1
   updated_by: 1
@@ -5794,7 +5794,7 @@ cards_264:
   trunk_id: 274
   tag_id: 318
   current_revision_id: 28
-  created_at: 2012-01-12 12:40:33 Z
+  created_at: 2012-01-12 12:15:32 Z
   updated_at: 2010-04-17 12:09:07.634862 Z
   created_by: 1
   updated_by: 1
@@ -7290,7 +7290,7 @@ cards_332:
   trunk_id: 
   tag_id: 
   current_revision_id: 3088
-  created_at: 2012-01-12 12:40:33 Z
+  created_at: 2012-01-12 12:15:32 Z
   updated_at: 2009-12-17 11:52:04.731074 Z
   created_by: 1
   updated_by: 1
@@ -7532,7 +7532,7 @@ cards_343:
   trunk_id: 4
   tag_id: 266
   current_revision_id: 3082
-  created_at: 2012-01-12 12:40:33 Z
+  created_at: 2012-01-12 12:15:32 Z
   updated_at: 2009-12-10 14:35:53.348457 Z
   created_by: 1
   updated_by: 1

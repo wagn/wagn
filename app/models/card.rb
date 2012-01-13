@@ -1,6 +1,6 @@
 class Card < ActiveRecord::Base
   # FIXME:  this is ugly, but also useful sometimes... do in a more thoughtful way maybe?
-  cattr_accessor :debug, :cache
+  cattr_accessor :debug, :cache, :id_cache
   Card.debug = false
 
   belongs_to :trunk, :class_name=>'Card', :foreign_key=>'trunk_id' #, :dependent=>:dependent
@@ -25,6 +25,9 @@ class Card < ActiveRecord::Base
   cache_attributes('name', 'type_id')
 
   @@junk_args = %w{ missing skip_virtual id }
+
+  @@id_cache = {}
+  def self.reset_id_cache() @@id_cache = {} end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INITIALIZATION METHODS

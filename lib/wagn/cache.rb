@@ -85,6 +85,7 @@ module Wagn
 
       private
       def reset_local
+        Card.reset_id_cache
         cache_classes.each{ |cc|
           if Wagn::Cache===cc.cache
           cc.cache && cc.cache.reset_local

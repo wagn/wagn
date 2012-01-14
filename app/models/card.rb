@@ -102,7 +102,7 @@ class Card < ActiveRecord::Base
   CODE_CONST = {
     :UserID => 'User',
     :PhraseID => 'Phrase',
-    :PoitnerID => 'Pointer',
+    :PointerID => 'Pointer',
     :NumberID => 'Number',
     :CardtypeID => 'Cardtype',
     :BasicID => 'Basic',

@@ -654,24 +654,13 @@ body#wagn .card-slot.recent-changes h2 {
 
 /*----------- Nested ---------*/
 
-.card-slot .card-slot.closed-view,
-.card-slot .card-slot.open-view {
+.card-slot .card-slot.closed-view {
   border: 0px;
   border-bottom: 1px solid #ccc;
   -moz-border-radius: 0px;
   border-radius: 0px;
   margin: 0px;
 }
-.card-slot .card-slot .card-footer {
-  -moz-border-radius: 0px;
-  border-radius: 0px;
-}
-.card-slot span:hover.card-slot {
-  border: 1px solid #ddd;
-  -moz-border-radius: 8px 8px 0 0;
-  border-radius: 8px 8px 0 0;
-}
-
 
 
 /* CARDTYPE_SPECIFIC ------------------------------*/

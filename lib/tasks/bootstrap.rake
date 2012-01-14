@@ -23,6 +23,7 @@ namespace :wagn do
     desc "dump db to bootstrap fixtures"
     #note: users, roles, and role_users have been manually edited
     task :dump => :environment do
+      Wagn::Cache.reset_global
       YAML::ENGINE.yamler = 'syck'
       # use old engine while we're supporting ruby 1.8.7 because it can't support Psych, 
       # which dumps with slashes that syck can't understand
@@ -53,6 +54,7 @@ namespace :wagn do
   
     desc "load bootstrap fixtures into db"
     task :load => :environment do
+      Wagn::Cache.reset_global
       Rake.application.options.trace = true
       puts "bootstrap load starting"
       require 'active_record/fixtures'                         

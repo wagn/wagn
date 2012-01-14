@@ -2,6 +2,7 @@ class RolesUsers < ActiveRecord::Migration
   def up
     User.as :wagbot do
       # Delete the old *roles template
+      (c = Card['*assign_user_roles']) && c.refresh && c.delete
       (c = Card['*role+*right+*content']) && c.refresh && c.delete
       Wagn::Cache.reset_global
       STDERR << "Deleted #{c.inspect}\n"

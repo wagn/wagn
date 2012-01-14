@@ -29,8 +29,6 @@ class CodenameTable < ActiveRecord::Migration
     renames = {
         "AccountRequest"   => "InvitationRequest",
         "wagn_bot"         => "wagbot",
-        "Administrator"    => "admin",
-        "anyone_signed_id" => "auth",
       }
 
     codecards.map { |name|

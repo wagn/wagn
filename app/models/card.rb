@@ -99,28 +99,23 @@ class Card < ActiveRecord::Base
 
   public
 
-  CODE_CONST = {
-    :UserID => 'User',
-    :PhraseID => 'Phrase',
-    :PointerID => 'Pointer',
-    :NumberID => 'Number',
-    :CardtypeID => 'Cardtype',
-    :BasicID => 'Basic',
-    :DefaultID => 'Basic',
-    :UserID => 'User',
-    :RoleID => 'Role',
-    :ImageID => 'Image',
-    :WagbotID => 'wagbot',
-    :AdminID => 'admin',
-    :AnyoneID => 'anyone',
-    :AnonID => 'anonymous',
-  }
+  CODE_CONST = {:UserID=> 'User', :PhraseID=> 'Phrase', :PointerID=> 'Pointer',
+    :NumberID=> 'Number', :CardtypeID=> 'Cardtype', :BasicID=> 'Basic',
+    :DefaultID=> 'Basic', :UserID=> 'User', :RoleID=> 'Role', :ReadID=> '*read',
+    :ImageID=> 'Image', :WagbotID=> 'wagbot', :AnyoneID=> 'anyone_signed_in',
+    :AdminID=>'administrator', :AnonID=> 'anonymous', :CommentID=> '*comment',
+    :CreateID=> '*create', :DeleteID=> '*delete', :UpdateID=> '*update' }
 
   class << self
+    def code2id(code) Wagn::Codename.card_attr(code, :id) end
     def const_missing(const)
-      (code=CODE_CONST[const]) ? const_set(const, Wagn::Codename.code2id(code))
-                               : super
+      code=CODE_CONST[const] and const_set(const, code2id(code)) or super
     end
+
+    def find_configurables
+      @roles = Card.where(
+        "type_id = '#{RoleID}' and id <> '#{AdminID}'" )
+    end  
 
     def include_type_module(typecode)
       #warn (Rails.logger.info "include set #{typecode} called")  #{Kernel.caller[0..4]*"\n"}"
@@ -193,7 +188,7 @@ class Card < ActiveRecord::Base
         @broken_type=tp||tc||"Basic"
         #warn "get_type_id bt[#{@broken_type}], #{ti}"
       end
-      return ti || Card::DefaultID
+      return ti || DefaultID
     end
 
     if name && t=template
@@ -201,7 +196,7 @@ class Card < ActiveRecord::Base
       ti = t.type_id
     end
     raise "NoType" if tc == '$NoType' || ti==0
-    ti|| Card::DefaultID
+    ti|| DefaultID
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -227,7 +222,7 @@ class Card < ActiveRecord::Base
     @from_trash = false
     Wagn::Hook.call :after_create, self if @was_new_card
     send_notifications
-    Wagn::Codename.reset_cache if type_id==Card::CardtypeID
+    Wagn::Codename.reset_cache if type_id==CardtypeID
     true
   end
 
@@ -295,7 +290,7 @@ class Card < ActiveRecord::Base
         raise Wagn::Oops, "error saving #{self.name}: #{e.message}"  #{e.backtrace*"\n"}"
       end
     else
-      raise Card::PermissionDenied.new(self)
+      raise PermissionDenied.new(self)
     end
   end
 

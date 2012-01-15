@@ -27,7 +27,7 @@ end
 #gem 'sqlite3-ruby', :require => 'sqlite3', :group=>'sqlite'
 
 
-gem 'memcache-client', :group => :memcache
+gem 'dalli', :group => :memcache
 
 
 # These should only be needed if you're developing new JS / CSS.  It's all pre-compiled for production

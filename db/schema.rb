@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120113203016) do
+ActiveRecord::Schema.define(:version => 20120116114524) do
 
   create_table "cards", :force => true do |t|
     t.string   "name",                :null => false
@@ -108,6 +108,7 @@ ActiveRecord::Schema.define(:version => 20120113203016) do
     t.string   "status",                             :default => "request"
     t.integer  "invite_sender_id"
     t.string   "identity_url"
+    t.integer  "card_id",                                                   :null => false
   end
 
   create_table "wiki_references", :force => true do |t|

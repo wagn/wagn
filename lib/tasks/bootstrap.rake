@@ -28,7 +28,7 @@ namespace :wagn do
       # use old engine while we're supporting ruby 1.8.7 because it can't support Psych, 
       # which dumps with slashes that syck can't understand
       
-      %w{ cards revisions wiki_references codename }.each do |table|
+      %w{ cards revisions wiki_references codename users }.each do |table|
         i = "000"
         File.open("#{Rails.root}/db/bootstrap/#{table}.yml", 'w') do |file|
           data = 

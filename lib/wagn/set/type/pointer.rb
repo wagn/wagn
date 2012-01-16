@@ -26,22 +26,31 @@ module Wagn::Set::Type::Pointer
     opt.item_type
   end
 
-  def add_item( cardname )
+  def << card
+    cardname = case card
+               when Card; card.name
+               when Integer; c = Card[card] and c.name
+               else card end
+    add_item cardname
+    self
+  end
+
+  def add_item cardname
     unless item_names.include? cardname
-      self.content = (item_names + [cardname]).reject{|x|x.blank?}.map{|x|
-        "[[#{x}]]"
-      }.join("\n")
-      save!
-    end
-  end 
-                                
-  def drop_item( cardname ) 
-    if item_names.include? cardname
-      self.content = (item_names - [cardname]).map{|x| "[[#{x}]]"}*"\n"
+      self.content= "[[#{(item_names << cardname).
+                          reject(&:blank?)*']]\n[['}]]"
       save!
     end
   end
-  
+
+  def drop_item cardname
+    if item_names.include? cardname
+      self.content= "[[#{(item_names.delete(cardname)).
+                          reject(&:blank?)*']]\n[['}]]"
+      save!
+    end
+  end
+
   def options_card
     card = self.rule_card('options')
     (card && card.collection?) ? card : nil

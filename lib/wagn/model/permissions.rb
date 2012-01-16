@@ -77,7 +77,7 @@ module Wagn::Model::Permissions
   end
   
   def who_can(operation)
-    permission_rule_card(operation).first.content.split(/[,\n]/).map{|i| i.to_cardname.to_key}
+    permission_rule_card(operation).first.item_cards.map(&:id)
   end 
   
   def permission_rule_card(operation)
@@ -115,11 +115,13 @@ module Wagn::Model::Permissions
   def lets_user(operation)
     return false if operation != :read    and Wagn::Conf[:read_only]
     return true  if operation != :comment and User.always_ok?
+    #warn "lets_user(#{operation})#{User.as_user} #{who_can(operation).inspect}"
     User.as_user.among?( who_can(operation) )
   end
 
   def approve_task(operation, verb=nil)           
     verb ||= operation.to_s
+    #warn "approve_task(#{operation}, #{verb})"
     deny_because you_cant("#{verb} this card") unless self.lets_user( operation ) 
   end
 
@@ -131,6 +133,7 @@ module Wagn::Model::Permissions
     #warn "AR #{User.always_ok?}"
     return true if User.always_ok?
     @read_rule_id ||= permission_rule_card(:read).first.id
+    #warn "ar_ok? #{User.as_user.read_rule_ids.inspect}, #{@read_rule_id.inspect}"
     ok = User.as_user.read_rule_ids.member?(@read_rule_id.to_i) 
     deny_because you_cant("read this card") unless ok
   end

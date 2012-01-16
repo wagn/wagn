@@ -68,8 +68,9 @@ class Card::BaseTest < ActiveSupport::TestCase
   test 'update_should_create_subcards' do
     User.current_user = :joe_user
     User.as(:joe_user) do
-      Card.update(Card.create!( :name=>'Banana' ).id,
-                  :cards=>{ "+peel" => { :content => "yellow" }})
+      c=Card.create!( :name=>'Banana' )
+      #warn "created #{c.inspect}"
+      Card.update(c.id, :cards=>{ "+peel" => { :content => "yellow" }})
       assert_equal "yellow", Card["Banana+peel"].content   
       assert_equal User[:joe_user].id, Card["Banana+peel"].created_by
     end
@@ -78,7 +79,7 @@ class Card::BaseTest < ActiveSupport::TestCase
   test 'update_should_create_subcards_as_wagbot_if_missing_subcard_permissions' do
     Card.create(:name=>'peel')
     User.current_user = :anon
-    assert_equal false, Card.fetch('Basic').ok?(:create)
+    assert_equal Card.fetch('Basic').ok?(:create), false
     Card.create!( :type=>"Fruit", :name=>'Banana', :cards=>{ "+peel" => { :content => "yellow" }})
     assert_equal "yellow", Card["Banana+peel"].current_revision.content
     assert_equal User[:anon].id, Card["Banana+peel"].created_by

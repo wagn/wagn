@@ -72,8 +72,8 @@ describe User, 'Joe User' do
   end
   
   it "should be 'among' itself" do
-    @ju.among?(['joe_user']).should == true
-    @ju.among?(['faker1','joe_user','faker2']).should == true
+    @ju.among?([Card['joe_user'].id]).should == true
+    @ju.among?([Card['faker1'].id,Card['joe_user'].id,Card['faker2'].id]).should == true
   end
   
 end

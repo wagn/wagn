@@ -99,12 +99,17 @@ class Card < ActiveRecord::Base
 
   public
 
-  CODE_CONST = {:UserID=> 'User', :PhraseID=> 'Phrase', :PointerID=> 'Pointer',
-    :NumberID=> 'Number', :CardtypeID=> 'Cardtype', :BasicID=> 'Basic',
-    :DefaultID=> 'Basic', :UserID=> 'User', :RoleID=> 'Role', :ReadID=> '*read',
-    :ImageID=> 'Image', :WagbotID=> 'wagbot', :AnyoneID=> 'anyone_signed_in',
-    :AdminID=>'administrator', :AnonID=> 'anonymous', :CommentID=> '*comment',
-    :CreateID=> '*create', :DeleteID=> '*delete', :UpdateID=> '*update' }
+  CODE_CONST = { :DefaultID=> 'Basic', :BasicID=> 'Basic',
+    :CardtypeID=> 'Cardtype', :ImageID=> 'Image',
+    :InvitationRequestID=>'InvitationRequest', :NumberID=> 'Number',
+    :PhraseID=> 'Phrase', :PointerID=> 'Pointer', :RoleID=> 'Role',
+    :UserID=> 'User',
+    :WagbotID=> 'wagbot', :AnonID=> 'anonymous',
+    :AnyoneID=> 'anyone', :AuthID => 'anyone_signed_in',
+    :AdminID=>'administrator',
+    :CreateID=> '*create', :ReadID=> '*read', :UpdateID=> '*update',
+    :DeleteID=> '*delete', :CommentID=> '*comment'
+  }
 
   class << self
     def code2id(code) Wagn::Codename.card_attr(code, :id) end
@@ -178,6 +183,12 @@ class Card < ActiveRecord::Base
     def typecode_from_id(id)    Wagn::Codename.code_attr(id, :codename) end
   end
 
+  def star_rule(rule)
+    #FIXME: remove roles hack when the migration is fixed with a *right setting
+    rule_card = Card.fetch_or_new(cardname.star_rule(rule),
+                       (rule == :roles ? {:type_id=>Card::PointerID} : {}))
+  end
+
   def get_type_id(type_args={})
 
     ti, tc, tp = type_args[:type_id], type_args[:typecode], type_args[:type]
@@ -206,6 +217,7 @@ class Card < ActiveRecord::Base
     if type = (args.delete(:type) || args.delete('type'))
       args[:type_id] = Card.type_id_from_name(type)
     end
+    #warn "update_attributes #{args.inspect}, #{::User.current_user}"
     super args
   end
 

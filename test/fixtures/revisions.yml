@@ -1,1573 +1,137 @@
 ---
 revisions_001:
-  id: '1253'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '115'
+  id: '6057'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '599'
   created_by: '1'
-  content: ''
+  content: ! '[[_left]]'
 revisions_002:
-  id: '6041'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '583'
+  id: '6056'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '598'
   created_by: '1'
-  content: ''
+  content: ! '{"right":"_self"}'
 revisions_003:
-  id: '6042'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '584'
+  id: '6055'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '597'
   created_by: '1'
-  content: ''
+  content: ! '[[_left]]'
 revisions_004:
-  id: '6048'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '590'
+  id: '6054'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '596'
   created_by: '1'
-  content: ! '[[*create_accounts]]'
+  content: ! '[[_left]]'
 revisions_005:
-  id: '6049'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '591'
+  id: '6053'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '595'
   created_by: '1'
-  content: ''
+  content: ! '{''type'':''User'';''refer_to'':''_left''}'
 revisions_006:
-  id: '6050'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '592'
+  id: '6052'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '594'
   created_by: '1'
-  content: ! '[[Administrator]]'
+  content: ! '{"left":{"type":"_left"}, "right":"_right"}'
 revisions_007:
   id: '6051'
-  created_at: '2012-01-14 12:47:12'
+  created_at: '2012-01-16 13:34:54'
   card_id: '593'
   created_by: '1'
   content: ''
 revisions_008:
-  id: '6052'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '594'
+  id: '6050'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '592'
   created_by: '1'
-  content: ! '{"left":{"type":"_left"}, "right":"_right"}'
+  content: ! '[[Administrator]]'
 revisions_009:
-  id: '6053'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '595'
+  id: '6049'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '591'
   created_by: '1'
-  content: ! '{''type'':''User'';''refer_to'':''_left''}'
+  content: ''
 revisions_010:
-  id: '6054'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '596'
+  id: '6048'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '590'
   created_by: '1'
-  content: ! '[[_left]]'
+  content: ! '[[*create_accounts]]'
 revisions_011:
-  id: '6055'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '597'
+  id: '6042'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '584'
   created_by: '1'
-  content: ! '[[_left]]'
+  content: ''
 revisions_012:
-  id: '6056'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '598'
+  id: '6041'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '583'
   created_by: '1'
-  content: ! '{"right":"_self"}'
+  content: ''
 revisions_013:
-  id: '6057'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '599'
+  id: '6029'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '466'
   created_by: '1'
-  content: ! '[[_left]]'
+  content: ! '{"match":"$keyword", "sort":"relevance"}'
 revisions_014:
-  id: '311'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '89'
+  id: '6032'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '85'
   created_by: '1'
-  content: ''
+  content: ! '<p>[[/card/new|Add a card]]</p>
+
+    <p></p>
+
+    <p>{{_main+_user}}</p>'
 revisions_015:
-  id: '43'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '43'
+  id: '6031'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '574'
   created_by: '1'
-  content: ''
+  content: ! ' <body>{{_main}} </body>'
 revisions_016:
-  id: '10'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '10'
+  id: '3172'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '314'
   created_by: '1'
-  content: ''
+  content: ! "<!DOCTYPE HTML>\n<html>\n  <head>\n    {{*head}}\n  </head>\n  \n  <body
+    id=\"wagn\">\n    <div id=\"menu\">\n      [[/ | Home]]   [[/recent | Recent]]
+    \  {{*navbox}} {{*account links}}\n    </div>\n    \n    <div id=\"primary\">\n
+    \     {{_main}}\n    </div>\n    \n    <div id=\"secondary\">\n      <div id=\"logo\">[[/
+    | {{*logo}}]]</div>\n      {{*sidebar}}\n      <div id=\"credit\">Wheeled by [[http://www.wagn.org|Wagn]]
+    v. {{*version}}</div>\n      {{*alerts}}\n    </div>\n    \n    {{*foot}}\n  </body>\n</html>"
 revisions_017:
-  id: '1541'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '1'
+  id: '6028'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '573'
   created_by: '1'
-  content: <p>This is the account that makes any automated updates &mdash; cards created
-    when someone signs up, link updates when renaming cards, etc.</p>
+  content: ! '[[Administrator]]'
 revisions_018:
-  id: '1407'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '128'
+  id: '6027'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '572'
   created_by: '1'
-  content: ''
+  content: ! '[[Administrator]]'
 revisions_019:
-  id: '1409'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '130'
+  id: '6026'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '571'
   created_by: '1'
-  content: ''
+  content: ! '[[Administrator]]'
 revisions_020:
-  id: '35'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '35'
+  id: '6025'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '570'
   created_by: '1'
-  content: ''
+  content: ! '{"type":"_self"}'
 revisions_021:
-  id: '1410'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '131'
-  created_by: '1'
-  content: ''
-revisions_022:
-  id: '37'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '37'
-  created_by: '1'
-  content: ''
-revisions_023:
-  id: '237'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '82'
-  created_by: '1'
-  content: ''
-revisions_024:
-  id: '39'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '39'
-  created_by: '1'
-  content: ''
-revisions_025:
-  id: '41'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '41'
-  created_by: '1'
-  content: ''
-revisions_026:
-  id: '8'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '8'
-  created_by: '1'
-  content: ''
-revisions_027:
-  id: '266'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '86'
-  created_by: '1'
-  content: ''
-revisions_028:
-  id: '9'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '9'
-  created_by: '1'
-  content: ''
-revisions_029:
-  id: '1521'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '137'
-  created_by: '1'
-  content: ''
-revisions_030:
-  id: '1550'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '138'
-  created_by: '1'
-  content: ''
-revisions_031:
-  id: '349'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '92'
-  created_by: '1'
-  content: ''
-revisions_032:
-  id: '1225'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '110'
-  created_by: '1'
-  content: ''
-revisions_033:
-  id: '1270'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '117'
-  created_by: '1'
-  content: ''
-revisions_034:
-  id: '355'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '98'
-  created_by: '1'
-  content: ''
-revisions_035:
-  id: '486'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '101'
-  created_by: '1'
-  content: ! '{"extension_type": "User"}'
-revisions_036:
-  id: '1696'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '146'
-  created_by: '1'
-  content: ''
-revisions_037:
-  id: '28'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '28'
-  created_by: '1'
-  content: ''
-revisions_038:
-  id: '1755'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '55'
-  created_by: '1'
-  content: My Wagn
-revisions_039:
-  id: '2013'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '172'
-  created_by: '1'
-  content: ''
-revisions_040:
-  id: '62'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '61'
-  created_by: '1'
-  content: ''
-revisions_041:
-  id: '33'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '33'
-  created_by: '1'
-  content: ''
-revisions_042:
-  id: '66'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '64'
-  created_by: '1'
-  content: ''
-revisions_043:
-  id: '1408'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '129'
-  created_by: '1'
-  content: ''
-revisions_044:
-  id: '1988'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '168'
-  created_by: '1'
-  content: ''
-revisions_045:
-  id: '2022'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '173'
-  created_by: '1'
-  content: ! '{"right_plus":["tags", {"refer_to":"_self"}]}'
-revisions_046:
-  id: '5779'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '534'
-  created_by: '1'
-  content: ''
-revisions_047:
-  id: '5246'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '426'
-  created_by: '1'
-  content: ''
-revisions_048:
-  id: '5253'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '432'
-  created_by: '1'
-  content: ''
-revisions_049:
-  id: '1871'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '118'
-  created_by: '1'
-  content: ! '[[*account]]'
-revisions_050:
-  id: '1881'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '99'
-  created_by: '1'
-  content: ! '{"member_of": "_self", "sort":"name"}'
-revisions_051:
-  id: '2266'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '185'
-  created_by: '1'
-  content: ! '{"found_by": "_self", "sort": "name"}
-
-'
-revisions_052:
-  id: '1993'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '170'
-  created_by: '1'
-  content: ''
-revisions_053:
-  id: '3196'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '317'
-  created_by: '1'
-  content: ''
-revisions_054:
-  id: '2008'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '112'
-  created_by: '1'
-  content: ! '[[*incoming]]
-
-    [[*outgoing]]
-
-    [[*plusses]]
-
-    [[*community]]'
-revisions_055:
-  id: '3197'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '318'
-  created_by: '1'
-  content: ''
-revisions_056:
-  id: '3198'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '319'
-  created_by: '1'
-  content: ''
-revisions_057:
-  id: '3199'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '320'
-  created_by: '1'
-  content: ''
-revisions_058:
-  id: '2054'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '169'
-  created_by: '1'
-  content: ! '<h1>[[_left+*links|"{{_left|name}}" links to]]</h1>
-
-    <blockquote>
-
-    <p>{{_left+*links}}</p>
-
-    </blockquote>
-
-    <p>&nbsp;</p>
-
-    <h1>[[_left+*inclusions|"{{_left|name}}" includes]]</h1>
-
-    <blockquote>
-
-    <p>{{_left+*inclusions}}</p>
-
-    </blockquote>
-
-    <p>&nbsp;</p>
-
-    <h1>[[_left+tags|"{{_left|name}}" is tagged with]]</h1>
-
-    <blockquote>
-
-    <p>{{_left+tags}}</p>
-
-    </blockquote>'
-revisions_059:
-  id: '2087'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '178'
-  created_by: '1'
-  content: ''
-revisions_060:
-  id: '2089'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '179'
-  created_by: '1'
-  content: ! '{"found_by": "_self", "sort": "update"}'
-revisions_061:
-  id: '2901'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '253'
-  created_by: '1'
-  content: ''
-revisions_062:
-  id: '2093'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '180'
-  created_by: '1'
-  content: <p><span><span>Every card has a type, which shapes what kind of information
-    goes into it. You can also add your own cardtypes. To learn more, read the [[http://wagn.org/wagn/card_types|documentation
-    about card types]].<br></span></span></p>
-revisions_063:
-  id: '2094'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '181'
-  created_by: '1'
-  content: <p>People with accounts generally have a User card. To learn more, read
-    the [[http://wagn.org/wagn/User|documentation about User cards]].</p>
-revisions_064:
-  id: '3203'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '322'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <h1>Accounts with the {{_self|name}} role<br></h1>
-
-    <blockquote>
-
-    <p>{{+*members}}</p>
-
-    </blockquote>'
-revisions_065:
-  id: '2210'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '111'
-  created_by: '1'
-  content: ! '<p><em>Plus cards have a plus (+) in their name </em><em>(e.g., "Menu+description").
-    They are formed by plussing two cards together to make a third.</em></p>
-
-    <p>&nbsp;</p>
-
-    <h1>[[_left+*plus cards|Plus cards "{{_left|name}}" is part of]]</h1>
-
-    <blockquote>
-
-    <p>{{_left+*plus cards}}</p>
-
-    </blockquote>
-
-    <p>&nbsp;</p>
-
-    <h1>[[_left+*plus parts|The other parts]]</h1>
-
-    <blockquote>
-
-    <p>{{_left+*plus parts}}</p>
-
-    </blockquote>'
-revisions_066:
-  id: '2264'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '184'
-  created_by: '1'
-  content: ''
-revisions_067:
-  id: '2430'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '205'
-  created_by: '1'
-  content: ''
-revisions_068:
-  id: '3201'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '321'
-  created_by: '1'
-  content: ''
-revisions_069:
-  id: '3206'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '324'
-  created_by: '1'
-  content: ''
-revisions_070:
-  id: '3207'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '325'
-  created_by: '1'
-  content: ''
-revisions_071:
-  id: '3208'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '326'
-  created_by: '1'
-  content: ''
-revisions_072:
-  id: '3209'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '327'
-  created_by: '1'
-  content: ''
-revisions_073:
-  id: '3213'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '329'
-  created_by: '1'
-  content: ''
-revisions_074:
-  id: '3214'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '330'
-  created_by: '1'
-  content: ''
-revisions_075:
-  id: '3233'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '342'
-  created_by: '1'
-  content: ''
-revisions_076:
-  id: '3218'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '331'
-  created_by: '1'
-  content: ''
-revisions_077:
-  id: '3223'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '334'
-  created_by: '1'
-  content: ''
-revisions_078:
-  id: '3224'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '335'
-  created_by: '1'
-  content: ''
-revisions_079:
-  id: '2290'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '190'
-  created_by: '1'
-  content: ''
-revisions_080:
-  id: '2291'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '191'
-  created_by: '1'
-  content: ! '{"found_by": "_self", "sort": "create"}'
-revisions_081:
-  id: '3225'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '336'
-  created_by: '1'
-  content: ''
-revisions_082:
-  id: '3226'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '337'
-  created_by: '1'
-  content: ''
-revisions_083:
-  id: '3228'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '338'
-  created_by: '1'
-  content: ''
-revisions_084:
-  id: '3229'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '339'
-  created_by: '1'
-  content: ''
-revisions_085:
-  id: '3230'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '340'
-  created_by: '1'
-  content: ''
-revisions_086:
-  id: '3232'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '341'
-  created_by: '1'
-  content: ''
-revisions_087:
-  id: '3235'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '343'
-  created_by: '1'
-  content: ''
-revisions_088:
-  id: '3238'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '345'
-  created_by: '1'
-  content: ''
-revisions_089:
-  id: '3239'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '346'
-  created_by: '1'
-  content: ''
-revisions_090:
-  id: '3240'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '347'
-  created_by: '1'
-  content: ''
-revisions_091:
-  id: '3241'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '348'
-  created_by: '1'
-  content: ''
-revisions_092:
-  id: '3242'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '349'
-  created_by: '1'
-  content: ''
-revisions_093:
-  id: '3243'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '350'
-  created_by: '1'
-  content: ''
-revisions_094:
-  id: '3244'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '351'
-  created_by: '1'
-  content: ''
-revisions_095:
-  id: '3246'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '352'
-  created_by: '1'
-  content: ''
-revisions_096:
-  id: '3250'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '354'
-  created_by: '1'
-  content: ''
-revisions_097:
-  id: '2331'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '81'
-  created_by: '1'
-  content: ! '<p>&nbsp;</p>
-
-    <p>{{Menu|open}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>{{Administrator links|open}}</p>'
-revisions_098:
-  id: '5780'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '535'
-  created_by: '1'
-  content: ! '{"extension_type":"User"}'
-revisions_099:
-  id: '3251'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '355'
-  created_by: '1'
-  content: ''
-revisions_100:
-  id: '5478'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '405'
-  created_by: '1'
-  content: <p>Basic cards are for rich text. &nbsp;As the default type for new cards,
-    "Basic" does not appear beside cardnames like other types.</p>
-revisions_101:
-  id: '3574'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '366'
-  created_by: '1'
-  content: ''
-revisions_102:
-  id: '2336'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '171'
-  created_by: '1'
-  content: ! '<h1>[[_left+*linkers|What links to "{{_left|name}}"?]]<br></h1>
-
-    <blockquote>
-
-    <p>{{_left+*linkers}}</p>
-
-    </blockquote>
-
-    <p>&nbsp;</p>
-
-    <h1>[[_left+*includers|What includes "{{_left|name}}"?]]</h1>
-
-    <blockquote>
-
-    <p>{{_left+*includers}}</p>
-
-    </blockquote>
-
-    <p>&nbsp;</p>
-
-    <h1>[[_left+*tagged|What''s tagged "{{_left|name}}"?]]</h1>
-
-    <blockquote>
-
-    <p>{{_left+*tagged}}</p>
-
-    </blockquote>'
-revisions_103:
-  id: '3253'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '356'
-  created_by: '1'
-  content: ''
-revisions_104:
-  id: '3260'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '358'
-  created_by: '1'
-  content: ''
-revisions_105:
-  id: '5772'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '528'
-  created_by: '1'
-  content: ! '{"right":"_self"}'
-revisions_106:
-  id: '5775'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '530'
-  created_by: '1'
-  content: ! '{"right":"_self"}'
-revisions_107:
-  id: '5777'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '532'
-  created_by: '1'
-  content: ! '{"right":"_self"}'
-revisions_108:
-  id: '3263'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '308'
-  created_by: '1'
-  content: <p>When "yes", users with the global "create accounts" permission can add
-    [[http://www.wagn.org/wagn/account|accounts]] to cards in the [[set]].</p>
-revisions_109:
-  id: '3264'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '311'
-  created_by: '1'
-  content: ! '<p><span> </span></p>
-
-    <div>
-
-    <p><span> </span></p>
-
-    <div>
-
-    <p>[[http://www.wagn.org/wagn/custom_help_text|Help text]] people will see when
-    adding cards in the [[set]].</p>
-
-    </div>
-
-    </div>'
-revisions_110:
-  id: '3318'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '69'
-  created_by: '1'
-  content: <div>Thank you for signing up with {{*title}}. Your new account information
-    is on it's way to your emailbox now and should be there soon.</div>
-revisions_111:
-  id: '2494'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '68'
-  created_by: '1'
-  content: ! '<p>Thanks!&nbsp; Your invitation is on its way.</p>
-
-    <p>&nbsp;</p>
-
-    <p>See [[Account Requests]].</p>'
-revisions_112:
-  id: '3266'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '306'
-  created_by: '1'
-  content: <p>[[http://www.wagn.org/wagn/custom_help_text|Help text]] people will
-    see when editing cards in the [[set]].</p>
-revisions_113:
-  id: '5768'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '524'
-  created_by: '1'
-  content: ! '{"right":"_self"}'
-revisions_114:
-  id: '5770'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '526'
-  created_by: '1'
-  content: ! '{"right":"_self"}'
-revisions_115:
-  id: '3606'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '368'
-  created_by: '1'
-  content: ! '[[_left+email config]]'
-revisions_116:
-  id: '3608'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '371'
-  created_by: '1'
-  content: ''
-revisions_117:
-  id: '3609'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '372'
-  created_by: '1'
-  content: ''
-revisions_118:
-  id: '3610'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '373'
-  created_by: '1'
-  content: ! '<p>{{+*from}}</p>
-
-    <p>{{+*to}}</p>
-
-    <p>{{+*cc}}</p>
-
-    <p>{{+*bcc}}</p>
-
-    <p>{{+*subject}}</p>
-
-    <p>{{+*message}}</p>
-
-    <p>{{+*attach}}</p>'
-revisions_119:
-  id: '3612'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '375'
-  created_by: '1'
-  content: ''
-revisions_120:
-  id: '5781'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '536'
-  created_by: '1'
-  content: ''
-revisions_121:
-  id: '5782'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '537'
-  created_by: '1'
-  content: ! '{"extension_type":"User"}'
-revisions_122:
-  id: '5785'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '538'
-  created_by: '1'
-  content: ''
-revisions_123:
-  id: '5786'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '539'
-  created_by: '1'
-  content: ! '{"extension_type":"User"}'
-revisions_124:
-  id: '5787'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '540'
-  created_by: '1'
-  content: ''
-revisions_125:
-  id: '5788'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '541'
-  created_by: '1'
-  content: ! '{"extension_type":"User"}'
-revisions_126:
-  id: '5789'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '542'
-  created_by: '1'
-  content: ''
-revisions_127:
-  id: '3614'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '377'
-  created_by: '1'
-  content: ''
-revisions_128:
-  id: '3615'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '378'
-  created_by: '1'
-  content: ''
-revisions_129:
-  id: '3617'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '380'
-  created_by: '1'
-  content: ''
-revisions_130:
-  id: '3618'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '381'
-  created_by: '1'
-  content: ''
-revisions_131:
-  id: '2516'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '147'
-  created_by: '1'
-  content: <p>Administrators automatically have all of the [[/admin/tasks|global permissions]],
-    and has the power to see, edit and delete every card in the system regardless
-    of its permissions settings. See the [[http://wagn.org/wagn/permissions|documentation
-    about permissions]].</p>
-revisions_132:
-  id: '2402'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '200'
-  created_by: '1'
-  content: <p>Thanks for submitting this form!</p>
-revisions_133:
-  id: '2403'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '201'
-  created_by: '1'
-  content: ''
-revisions_134:
-  id: '3620'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '383'
-  created_by: '1'
-  content: ''
-revisions_135:
-  id: '3621'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '384'
-  created_by: '1'
-  content: ''
-revisions_136:
-  id: '2408'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '202'
-  created_by: '1'
-  content: <p>These cards allow unrestricted use of HTML. See the [[http://wagn.org/wagn/HTML|documentation
-    on HTML cards]].</p>
-revisions_137:
-  id: '3624'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '387'
-  created_by: '1'
-  content: ''
-revisions_138:
-  id: '3626'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '389'
-  created_by: '1'
-  content: ''
-revisions_139:
-  id: '3628'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '390'
-  created_by: '1'
-  content: ''
-revisions_140:
-  id: '3629'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '391'
-  created_by: '1'
-  content: ''
-revisions_141:
-  id: '5790'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '543'
-  created_by: '1'
-  content: ! '{"extension_type":"User"}'
-revisions_142:
-  id: '3769'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '276'
-  created_by: '1'
-  content: '0'
-revisions_143:
-  id: '5793'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '527'
-  created_by: '1'
-  content: Who can add cards in the [[set]].
-revisions_144:
-  id: '3754'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '219'
-  created_by: '1'
-  content: ! '<p>These cards show who is getting email about changes to these cards
-    or card types. ([[http://www.wagn.org/wagn/Notification|Learn more about notification.]]):</p>
-
-    <p>&nbsp;</p>
-
-    <p>{{+*right+by name}}</p>'
-revisions_145:
-  id: '5794'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '531'
-  created_by: '1'
-  content: Who can view cards in the [[set]].
-revisions_146:
-  id: '5795'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '533'
-  created_by: '1'
-  content: Who can edit cards in the [[set]].
-revisions_147:
-  id: '5796'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '529'
-  created_by: '1'
-  content: Who can remove cards in the [[set]].
-revisions_148:
-  id: '5797'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '525'
-  created_by: '1'
-  content: Who can add comments to cards in the [[set]].
-revisions_149:
-  id: '5717'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '478'
-  created_by: '1'
-  content: ''
-revisions_150:
-  id: '5196'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '182'
-  created_by: '1'
-  content: <p>Searches return a list of cards using [[http://wagn.org/wagn/WQL|WQL,
-    the Wagn Query Language]]. See the [[http://wagn.org/wagn/WQL syntax|syntax documentation]].</p>
-revisions_151:
-  id: '2472'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '67'
-  created_by: '1'
-  content: /wagn/Signup_Success
-revisions_152:
-  id: '2473'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '108'
-  created_by: '1'
-  content: /wagn/Request_Sent
-revisions_153:
-  id: '2474'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '62'
-  created_by: '1'
-  content: /wagn/Invite_Success
-revisions_154:
-  id: '2878'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '241'
-  created_by: '1'
-  content: ''
-revisions_155:
-  id: '2879'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '242'
-  created_by: '1'
-  content: ''
-revisions_156:
-  id: '5249'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '428'
-  created_by: '1'
-  content: ''
-revisions_157:
-  id: '5250'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '429'
-  created_by: '1'
-  content: ''
-revisions_158:
-  id: '2570'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '211'
-  created_by: '1'
-  content: <p>Anyone who is signed in has this role. [[http://wagn.org/wagn/account|Learn
-    more about accounts]].</p>
-revisions_159:
-  id: '2571'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '210'
-  created_by: '1'
-  content: <p>Anyone who is not signed in has this role. Edits they make will be credited
-    to [[Anonymous]]. [[http://wagn.org/wagn/account|Learn more about accounts]].</p>
-revisions_160:
-  id: '2573'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '15'
-  created_by: '1'
-  content: <p>Edits made by people who are not signed in are credited to Anonymous.
-    [[http://wagn.org/wagn/account|Learn more about accounts]].</p>
-revisions_161:
-  id: '2574'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '212'
-  created_by: '1'
-  content: <p>Toggles simply indicate yes or no. [[http://wagn.org/wagn/Toggle|Learn
-    more about Toggles]].</p>
-revisions_162:
-  id: '2576'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '214'
-  created_by: '1'
-  content: <p>On Wagn you upload images to Image cards, then include them wherever
-    you want the image to appear. [[http://wagn.org/wagn/Image|Learn more about Image
-    cards]].</p>
-revisions_163:
-  id: '2581'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '216'
-  created_by: '1'
-  content: <p>People who have requested accounts but not yet been approved ([[http://wagn.org/wagn/account|learn
-    more about accounts]]):</p>
-revisions_164:
-  id: '5199'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '419'
-  created_by: '1'
-  content: ''
-revisions_165:
-  id: '5200'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '420'
-  created_by: '1'
-  content: ''
-revisions_166:
-  id: '2889'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '247'
-  created_by: '1'
-  content: ''
-revisions_167:
-  id: '2890'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '248'
-  created_by: '1'
-  content: ''
-revisions_168:
-  id: '2624'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '222'
-  created_by: '1'
-  content: ''
-revisions_169:
-  id: '2604'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '217'
-  created_by: '1'
-  content: ''
-revisions_170:
-  id: '2609'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '220'
-  created_by: '1'
-  content: ''
-revisions_171:
-  id: '5469'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '259'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <h2>{{_self|name}} Cards</h2>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_172:
-  id: '5470'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '5'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h1>{{_self|name}} Cards</h1>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_173:
-  id: '5471'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '12'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <blockquote>
-
-    <p>{{+*type+by update}}</p>
-
-    </blockquote>'
-revisions_174:
-  id: '5472'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '3'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h2>{{_self|name}} Cards</h2>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_175:
-  id: '5479'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '17'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h2>{{_self|name}} Cards</h2>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_176:
-  id: '5480'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '18'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h2>{{_self|name}} Cards</h2>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_177:
-  id: '5481'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '50'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h2>{{_self|name}} Cards</h2>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_178:
-  id: '5482'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '19'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|name}}|add an {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h2>{{_self|name}} Cards</h2>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_179:
-  id: '5483'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '20'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h2>{{_self|name}} Cards</h2>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_180:
-  id: '5484'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '52'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h2>{{_self|name}} Cards</h2>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_181:
-  id: '5485'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '22'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h2>{{_self|name}} Cards</h2>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_182:
-  id: '5486'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '47'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h2>{{_self|name}} Cards</h2>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_183:
-  id: '5487'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '7'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/Role|Add a new role]]</p>
-
-    <p>&nbsp;</p>
-
-    <h1>Roles</h1>
-
-    <p>{{+*type+by name}}</p>'
-revisions_184:
-  id: '5488'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '30'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h2>{{_self|name}} Cards</h2>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_185:
-  id: '5489'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '51'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h2>{{_self|name}} Cards</h2>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_186:
-  id: '5490'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '4'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h2>{{_self|name}} Cards</h2>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_187:
-  id: '2653'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '225'
-  created_by: '1'
-  content: <p>Each [[user]] has one or more roles, and each role's capabilities are
-    defined in [[/admin/tasks|Global permissions]] (except for the [[Administrator]]
-    role, which has all permissions). [[http://wagn.org/wagn/Role|Learn more about
-    roles]].</p>
-revisions_188:
-  id: '3133'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '307'
-  created_by: '1'
-  content: ! '{"right":"_self"}'
-revisions_189:
-  id: '5252'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '431'
-  created_by: '1'
-  content: ''
-revisions_190:
-  id: '5497'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '87'
-  created_by: '1'
-  content: ''
-revisions_191:
-  id: '5520'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '455'
-  created_by: '1'
-  content: ''
-revisions_192:
-  id: '5521'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '456'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <h1>{{_self|name}} Cards</h1>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_193:
-  id: '5524'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '213'
-  created_by: '1'
-  content: <p><span><span>Pointers list (or "point" to) one or more other cards. [[http://wagn.org/wagn/Pointer|Learn
-    more about Pointers]].<br></span></span></p>
-revisions_194:
-  id: '5214'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '77'
-  created_by: '1'
-  content: Home
-revisions_195:
-  id: '5510'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '452'
-  created_by: '1'
-  content: ''
-revisions_196:
-  id: '5511'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '453'
-  created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <h2>{{_self|name}} Cards</h2>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_197:
-  id: '5245'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '425'
-  created_by: '1'
-  content: ''
-revisions_198:
-  id: '5516'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '88'
+  id: '6024'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '569'
   created_by: '1'
   content: ! '<p>{{+description}}</p>
 
@@ -1584,804 +148,390 @@ revisions_198:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-revisions_199:
-  id: '5538'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '278'
+revisions_022:
+  id: '5795'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '533'
   created_by: '1'
-  content: ! '<p>&nbsp;</p>
-
-    <blockquote></blockquote>'
-revisions_200:
-  id: '3478'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '363'
+  content: Who can edit cards in the [[set]].
+revisions_023:
+  id: '5785'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '538'
   created_by: '1'
   content: ''
-revisions_201:
-  id: '5549'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '301'
+revisions_024:
+  id: '5786'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '539'
   created_by: '1'
-  content: <p>Value options for a set of [[Pointer]] cards. Can itself be a Pointer
-    or a [[Search]]. [[http://wagn.org/Pointer|Learn about setting options on Pointers.]]</p>
-revisions_202:
-  id: '3480'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '249'
+  content: ! '{"extension_type":"User"}'
+revisions_025:
+  id: '5794'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '531'
   created_by: '1'
-  content: <p>Wagn will autoname new cards in the [[set]] with the name you give here,
-    and increment for each new card. [[http://wagn.org/wagn/Autonaming|Learn more.]]</p>
-revisions_203:
-  id: '3482'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '359'
-  created_by: '1'
-  content: <p>Controls content of cards in the [[set]]. [[http://www.wagn.org/wagn/formatting|More
-    about formatting]].</p>
-revisions_204:
-  id: '3485'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '357'
-  created_by: '1'
-  content: <p>Determines initial type, content, and permissions of new cards in the
-    [[set]]. [[http://www.wagn.org/wagn/formatting|More about formatting]].</p>
-revisions_205:
-  id: '3490'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '281'
-  created_by: '1'
-  content: <p>Determines layout card used when viewing page of any card in the [[set]].&nbsp;
-    [[http://wagn.org/custom_layouts | Learn more about layouts]]</p>
-revisions_206:
-  id: '3494'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '90'
-  created_by: '1'
-  content: <p>Autogenerate [[http://www.wagn.org/wagn/table_of_contents|table of contents]]
-    when cards in the [[set]] have at least this many headers ("0" means never).</p>
-revisions_207:
-  id: '3495'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '250'
-  created_by: '1'
-  content: <p>Where to take people after they create a card in the [[set]]. [[http://www.wagn.org/wagn/Custom_thank_you_messages_for_forms|Learn
-    more about thank you messages.]]</p>
-revisions_208:
-  id: '3794'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '365'
-  created_by: '1'
-  content: <p>Configures email to be sent when card in [[set]] is added. Learn more
-    about [[http://wagn.org/flexible_email|flexible email]].</p>
-revisions_209:
-  id: '5718'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '479'
+  content: Who can view cards in the [[set]].
+revisions_026:
+  id: '5781'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '536'
   created_by: '1'
   content: ''
-revisions_210:
-  id: '5719'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '480'
+revisions_027:
+  id: '5782'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '537'
   created_by: '1'
-  content: ''
-revisions_211:
-  id: '5555'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '66'
+  content: ! '{"extension_type":"User"}'
+revisions_028:
+  id: '6023'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '198'
   created_by: '1'
-  content: ! '<p>People can&nbsp;<strong>sign up with no approval process</strong>&nbsp;if
-    you allow "Anyone" to [[/card/options/Account_Request|create account requests]],
-    and give "Anyone" the [[/admin/tasks |global permission]] to create accounts.</p>
-
-    <p>&nbsp;</p>
-
-    <p>Newly registered users will be sent an email with a password and the following
-    details:</p>
-
-    <p>&nbsp;</p>
-
-    <h2>Email Subject<br></h2>
-
-    <blockquote>
-
-    <p>{{*signup+*subject|type:Phrase}}</p>
-
-    </blockquote>
-
-    <p>&nbsp;</p>
-
-    <h2>Email Message</h2>
-
-    <blockquote>
-
-    <p>{{*signup+*message|closed;type:PlainText}}</p>
-
-    </blockquote>
-
-    <p>&nbsp;</p>
-
-    <p>As the email is sent, the<strong> person signing up will be sent here</strong>:</p>
-
-    <blockquote>
-
-    <div>HTTP://<em>(YOUR WAGN''S DOMAIN)</em>{{+*thanks}}</div>
-
-    </blockquote>
-
-    <p>&nbsp;</p>
-
-    <p>&nbsp;</p>'
-revisions_212:
-  id: '3500'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '254'
+  content: ! "/* body text */\nbody {\n  color: #444444;\n}\n\n/* page - background
+    image and color */\nbody#wagn {\n  background: url(assets/body-bg.png) repeat-x
+    #CCCCCC;\n}\n\n/* main card and sidebar widths */\n#primary {\n  width:67%;\n}\n#secondary
+    {\n  width:28%;\n}\n\n/* top bar background color; text colors */\n#menu {\n  background:
+    #335533;\n}\n#menu a {\n  color: #EEEEEE;\n}\n\n/* header text */\nh1, h2 {\n
+    \ color: #664444;\n}\nh1.page-header, \nh2.page-header {\n  color: #222299; \n}\n\n\n/*
+    card headers etc */\n.card-header {\n  background: #C0D9C0;\n}\n.card-header,\n.card-header
+    a {\n  font-weight: normal;\n  color: #333333; \n}\n\n/* misc */\n\n.card-footer,
+    \n.revision-navigation, \n.current,\n#credit {\n  background: #DDDDDD;\n}\n"
+revisions_029:
+  id: '6022'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '53'
   created_by: '1'
-  content: <p>Labels for [[Pointer]] options.&nbsp; Value is a card name, which is
-    plussed to each of a Pointer's option cards to form label cards for radio button
-    and checkbox items. E.g., "description" will make Wagn look for "option 1+description",
-    "option 2+description", etc. [[http://www.wagn.org/wagn/Pointer|Learn more.]]</p>
-revisions_213:
-  id: '3512'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '304'
-  created_by: '1'
-  content: <p>Anti-spam setting.&nbsp; If checked will require non-signed-in users
-    to complete a [[http://www.wagn.org/wagn/captcha|captcha]] before adding or editing
-    cards in the [[set]].</p>
-revisions_214:
-  id: '3513'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '364'
-  created_by: '1'
-  content: ''
-revisions_215:
-  id: '2930'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '257'
-  created_by: '1'
-  content: '1'
-revisions_216:
-  id: '5720'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '481'
-  created_by: '1'
-  content: ''
-revisions_217:
-  id: '3137'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '309'
-  created_by: '1'
-  content: ''
-revisions_218:
-  id: '3575'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '367'
-  created_by: '1'
-  content: '0'
-revisions_219:
-  id: '5721'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '482'
-  created_by: '1'
-  content: ''
-revisions_220:
-  id: '3140'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '310'
-  created_by: '1'
-  content: ! '{"right":"_self"}'
-revisions_221:
-  id: '5722'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '483'
+  content: ! "width: '100%',\nauto_resize : true,\nrelative_urls: false,\ntheme :
+    \"advanced\",\ntheme_advanced_buttons1 : \"formatselect,bold,italic,separator,\"\n+
+    \"blockquote,bullist,numlist,hr,separator,\"\n+ \"code\",                         \ntheme_advanced_buttons2
+    : \"\",                         \ntheme_advanced_buttons3 : \"\",                         \ntheme_advanced_path
+    : false,                         \ntheme_advanced_toolbar_location : \"top\",
+    \ \ntheme_advanced_toolbar_align : \"left\", \ntheme_advanced_resizing : true,\ntheme_advanced_resize_horizontal
+    : false,                      \ntheme_advanced_statusbar_location : \"bottom\",\ntheme_advanced_blockformats
+    : \"p,h1,h2\",\n\nextended_valid_elements : \"a[name|href|target|title|onclick],\"\n+
+    \"img[class|src|border=0|alt|title|hspace|vspace|width|height|\"\n+ \"align|onmouseover|onmouseout|name],hr[class|width|size|noshade],\"\n+
+    \"font[face|size|color|style],span[class|align|style]\"          \n"
+revisions_030:
+  id: '6021'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '568'
   created_by: '1'
   content: ! '[[Administrator]]'
-revisions_222:
-  id: '5619'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '395'
-  created_by: '1'
-  content: ! "{\"type\": \"File\",\n \"sort\": \"update\"\n}"
-revisions_223:
-  id: '5645'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '470'
+revisions_031:
+  id: '6020'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '567'
   created_by: '1'
   content: ''
-revisions_224:
-  id: '5557'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '56'
+revisions_032:
+  id: '6019'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '566'
   created_by: '1'
-  content: ! '<p>People can <strong>invite new users via email</strong> if they have
-    the&nbsp;[[/admin/tasks|global permission]] to "create accounts".</p>
-
-    <p>&nbsp;</p>
-
-    <p>Newy invited users will be sent an email with a password and the following
-    details:</p>
-
-    <p>&nbsp;</p>
-
-    <h2>Email subject</h2>
-
-    <blockquote>
-
-    <p>{{+*subject|type:Phrase}}</p>
-
-    </blockquote>
-
-    <p>&nbsp;</p>
-
-    <h2>Email message</h2>
-
-    <blockquote>
-
-    <p>{{+*message|type:PlainText}}</p>
-
-    </blockquote>
-
-    <p>&nbsp;</p>
-
-    <h2>Email from</h2>
-
-    <blockquote>
-
-    <p>{{+*from|type:Phrase}}</p>
-
-    </blockquote>
-
-    <p>&nbsp;</p>
-
-    <p><strong>After sending an invitation, you''re taken here:</strong><span><strong></strong></span></p>
-
-    <blockquote>
-
-    <div>HTTP:// <em>(YOUR WAGN''S DOMAIN) </em>{{+*thanks}}</div>
-
-    </blockquote>'
-revisions_225:
-  id: '5566'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '63'
-  created_by: '1'
-  content: ! '<p>People can <strong>request an account</strong> via a "Sign Up" link
-    if you allow "Anyone" to [[/card/options/Account_Request|create account requests]].</p>
-
-    <p>&nbsp;</p>
-
-    <p>Unless [[*signup|approved automatically]], the <strong>request will be emailed
-    to</strong>:</p>
-
-    <blockquote>
-
-    <p>{{+*to|closed;type:Phrase}}</p>
-
-    </blockquote>
-
-    <p>and the<strong> requester will be redirected here:</strong></p>
-
-    <blockquote>
-
-    <div>HTTP:// <em>(YOUR WAGN''S DOMAIN) </em>{{+*thanks}}</div>
-
-    </blockquote>
-
-    <div>You can <strong>approve/deny account requests [[Account Request|here]]</strong>.</div>'
-revisions_226:
-  id: '5290'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '430'
-  created_by: '1'
-  content: ! '{"creator_of": "_self"}'
-revisions_227:
-  id: '5291'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '427'
-  created_by: '1'
-  content: ! "{\"last_edited_by\": \"_self\",\n \"sort\": \"update\",\n \"view\":
-    \"change\"\n}"
-revisions_228:
-  id: '5292'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '433'
-  created_by: '1'
-  content: ! "{\"created_by\": \"_self\",\n \"sort\": \"create\", \"dir\": \"desc\"\n}"
-revisions_229:
-  id: '5296'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '435'
+  content: ! '{"right":"_self"}'
+revisions_033:
+  id: '6018'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '565'
   created_by: '1'
   content: ''
-revisions_230:
-  id: '5297'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '436'
+revisions_034:
+  id: '5750'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '511'
   created_by: '1'
-  content: ''
-revisions_231:
-  id: '5713'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '221'
+  content: ! '[[Administrator]]'
+revisions_035:
+  id: '6017'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '151'
   created_by: '1'
-  content: ! '{"extension_type": "User"}
+  content: ! '<p>[[Config|Configuration]]</p>
 
-    /* note -- this syntax is not yet deprecated but will be before Wagn 2.0 */'
-revisions_232:
-  id: '4888'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '388'
+    <p>&nbsp;</p>
+
+    <p>[[*account|Accounts]]</p>
+
+    <p>[[/admin/tasks|Global permissions]]</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/admin/clear_cache|Clear the cache]]</p>'
+revisions_036:
+  id: '5998'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '80'
+  created_by: '1'
+  content: ! '<h1>Welcome to Wagn!</h1>
+
+    <p>&nbsp;</p>
+
+    <p>[[Config| Start configuring]] or learn more:</p>
+
+    <ul>
+
+    <li>[[http://wagn.org/wagn/configuration| Configuration]]</li>
+
+    <li>[[http://wagn.org/wagn/Documentation| Other Docs]]</li>
+
+    <li>[[http://wagn.org/wagn/Support|Support]]</li>
+
+    </ul>
+
+    <div><em>Double-click content to edit.</em></div>
+
+    <p>&nbsp;</p>'
+revisions_037:
+  id: '5985'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '79'
   created_by: '1'
   content: ''
-revisions_233:
-  id: '5958'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '555'
+revisions_038:
+  id: '5984'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '421'
+  created_by: '1'
+  content: ! "{\"found_by\":\"_self\",\n \"return\":\"count\"\n}"
+revisions_039:
+  id: '5976'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '100'
+  created_by: '1'
+  content: ! '<p>[[/account/invite|Invite a new user]]</p>
+
+    <p>&nbsp;</p>
+
+    <p>By default, new accounts are associated with [[User]] cards. [[http://wagn.org/wagn/account|&nbsp;Learn
+    more&nbsp;about accounts.]]</p>
+
+    <p>&nbsp;</p>
+
+    <h1>Account Requests<br></h1>
+
+    <p>{{Account Request+*type+by create}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>{{Cards with accounts|titled}}</p>'
+revisions_040:
+  id: '5973'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '440'
+  created_by: '1'
+  content: ''
+revisions_041:
+  id: '5972'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '437'
+  created_by: '1'
+  content: ''
+revisions_042:
+  id: '5966'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '93'
+  created_by: '1'
+  content: ! "{\"editor_of\": \"_self\",\n \"sort\": \"name\"\n}"
+revisions_043:
+  id: '5964'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '561'
+  created_by: '1'
+  content: ! '[[Anyone]]
+
+'
+revisions_044:
+  id: '5963'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '560'
   created_by: '1'
   content: ! '{"name":"_self"}'
-revisions_234:
+revisions_045:
+  id: '5962'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '559'
+  created_by: '1'
+  content: ! '[[Anyone]]
+
+'
+revisions_046:
+  id: '5961'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '558'
+  created_by: '1'
+  content: ! '[[Anyone]]
+
+'
+revisions_047:
+  id: '5960'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '557'
+  created_by: '1'
+  content: ! '{"name":"_self"}'
+revisions_048:
   id: '5959'
-  created_at: '2012-01-14 12:47:12'
+  created_at: '2012-01-16 13:34:54'
   card_id: '556'
   created_by: '1'
   content: ! '[[Anyone]]
 
 '
-revisions_235:
-  id: '5306'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '116'
-  created_by: '1'
-  content: ! '<div><strong>Added by:</strong> {{_left+*creator|item:link}}</div>
-
-    <div><strong>Most recent editor:</strong> {{_left+*last editor|item:link}}</div>
-
-    <p>&nbsp;</p>
-
-    <h1>[[_left+*editors|All editors]]</h1>
-
-    <blockquote>
-
-    <p>{{_left+*editors|item:link}}</p>
-
-    </blockquote>
-
-    <p>&nbsp;</p>
-
-    <h1>[[_left+*watchers|Watchers]]</h1>
-
-    <div><strong>{{_left+watcher instructions for related tab|naked}}</strong>&nbsp;&nbsp;[[http://wagn.org/wagn/Notification|Learn
-    more about notifications.]]</div>
-
-    <blockquote>
-
-    <p>{{_left+*watchers|item:link}}</p>
-
-    </blockquote>
-
-    <p>&nbsp;</p>
-
-    <h1>[[_left+discussion|Discussion]]</h1>
-
-    <blockquote>
-
-    <p>{{_left+discussion|open}}</p>
-
-    </blockquote>
-
-    <p>&nbsp;</p>
-
-    <h1>[[_left+tags|"{{_left|name}}" is tagged with]]</h1>
-
-    <blockquote>
-
-    <p>{{_left+tags}}</p>
-
-    </blockquote>
-
-    <p>&nbsp;</p>'
-revisions_236:
-  id: '5573'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '297'
-  created_by: '1'
-  content: <div>Sets define a group of cards to which settings can apply. [[http://www.wagn.org/wagn/Setting|Learn
-    more about settings.]]</div>
-revisions_237:
-  id: '5723'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '484'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_238:
-  id: '6018'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '565'
-  created_by: '1'
-  content: ''
-revisions_239:
-  id: '3001'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '260'
-  created_by: '1'
-  content: ''
-revisions_240:
-  id: '3002'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '261'
-  created_by: '1'
-  content: ! '{"right":"_self"}'
-revisions_241:
-  id: '3003'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '262'
-  created_by: '1'
-  content: ''
-revisions_242:
-  id: '3004'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '263'
-  created_by: '1'
-  content: ! '{"left":{"type":"_left"}, "right":"_right"}'
-revisions_243:
-  id: '3005'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '264'
-  created_by: '1'
-  content: ''
-revisions_244:
-  id: '3006'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '265'
+revisions_049:
+  id: '5958'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '555'
   created_by: '1'
   content: ! '{"name":"_self"}'
-revisions_245:
-  id: '3007'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '266'
+revisions_050:
+  id: '5957'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '554'
+  created_by: '1'
+  content: ! '[[Anyone]]
+
+'
+revisions_051:
+  id: '5956'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '553'
+  created_by: '1'
+  content: ! '{"name":"_self"}'
+revisions_052:
+  id: '5955'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '552'
+  created_by: '1'
+  content: ! '[[Anyone]]
+
+'
+revisions_053:
+  id: '5954'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '551'
+  created_by: '1'
+  content: ! '[[Anyone]]
+
+'
+revisions_054:
+  id: '5953'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '550'
+  created_by: '1'
+  content: ! '{"name":"_self"}'
+revisions_055:
+  id: '5952'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '549'
+  created_by: '1'
+  content: ! '[[Anyone]]
+
+'
+revisions_056:
+  id: '5951'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '548'
+  created_by: '1'
+  content: ! '{"name":"_self"}'
+revisions_057:
+  id: '5950'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '476'
+  created_by: '1'
+  content: ! '{"complete":"*"}'
+revisions_058:
+  id: '5949'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '477'
+  created_by: '1'
+  content: ! '{"right":{"complete":"*"}}'
+revisions_059:
+  id: '5948'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '475'
+  created_by: '1'
+  content: ! '{"left":{}}'
+revisions_060:
+  id: '5945'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '298'
+  created_by: '1'
+  content: ! '<div>Settings affect how cards look and behave. Settings are available
+    under each card''s Options tab.</div>
+
+    <p>&nbsp;</p>
+
+    <div><em>[[http://www.wagn.org/wagn/Setting|Learn more about settings.]]</em></div>'
+revisions_061:
+  id: '5608'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '36'
+  created_by: '1'
+  content: ! "{\"plus\":\"_self\",\n \"sort\": \"name\"\n}"
+revisions_062:
+  id: '39'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '39'
   created_by: '1'
   content: ''
-revisions_246:
-  id: '3008'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '267'
+revisions_063:
+  id: '5607'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '34'
   created_by: '1'
-  content: ! '{"type":"_self"}'
-revisions_247:
-  id: '3009'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '268'
+  content: ! "{\"part\":\"_self\",\n \"sort\": \"name\"\n}"
+revisions_064:
+  id: '5606'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '40'
   created_by: '1'
-  content: ! '{"right":"_self"}'
-revisions_248:
-  id: '3010'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '269'
+  content: ! "{\"link_to\":\"_self\",\n \"sort\": \"name\"\n}"
+revisions_065:
+  id: '5605'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '44'
   created_by: '1'
-  content: ! '{"right":"_self"}'
-revisions_249:
-  id: '3019'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '255'
+  content: ! "{\"linked_to_by\":\"_self\",\n \"sort\": \"name\"\n}"
+revisions_066:
+  id: '5604'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '42'
   created_by: '1'
-  content: ''
-revisions_250:
-  id: '3021'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '256'
+  content: ! "{\"included_by\":\"_self\",\n \"sort\": \"name\"\n}"
+revisions_067:
+  id: '5603'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '38'
   created_by: '1'
-  content: ''
-revisions_251:
-  id: '3022'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '277'
+  content: ! "{\"include\":\"_self\",\n \"sort\": \"name\"\n}"
+revisions_068:
+  id: '5598'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '95'
   created_by: '1'
-  content: description
-revisions_252:
-  id: '3023'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '252'
+  content: ! "{\"edited_by\": \"_self\",\n \"sort\": \"update\"}"
+revisions_069:
+  id: '5471'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '12'
   created_by: '1'
-  content: ''
-revisions_253:
-  id: '5724'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '485'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_254:
-  id: '3031'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '109'
-  created_by: '1'
-  content: <div>Thank you for signing up with {{*title}}. Someone will receive your
-    request for an account and approve it as soon as possible.</div>
-revisions_255:
-  id: '3033'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '91'
-  created_by: '1'
-  content: '4'
-revisions_256:
-  id: '3040'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '280'
-  created_by: '1'
-  content: ''
-revisions_257:
-  id: '3060'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '284'
-  created_by: '1'
-  content: ''
-revisions_258:
-  id: '3061'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '285'
-  created_by: '1'
-  content: ''
-revisions_259:
-  id: '3063'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '286'
-  created_by: '1'
-  content: ''
-revisions_260:
-  id: '3065'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '288'
-  created_by: '1'
-  content: ''
-revisions_261:
-  id: '3066'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '289'
-  created_by: '1'
-  content: ''
-revisions_262:
-  id: '3078'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '291'
-  created_by: '1'
-  content: ''
-revisions_263:
-  id: '3079'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '292'
-  created_by: '1'
-  content: '0'
-revisions_264:
-  id: '3081'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '293'
-  created_by: '1'
-  content: '0'
-revisions_265:
-  id: '3082'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '294'
-  created_by: '1'
-  content: ! '{"type":"_self"}'
-revisions_266:
-  id: '3083'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '295'
+  content: ! '<p>{{+description}}</p>
+
+    <blockquote>
+
+    <p>{{+*type+by update}}</p>
+
+    </blockquote>'
+revisions_070:
+  id: '2930'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '257'
   created_by: '1'
   content: '1'
-revisions_267:
-  id: '3088'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '274'
-  created_by: '1'
-  content: ! '{}'
-revisions_268:
-  id: '3101'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '300'
-  created_by: '1'
-  content: ! '{"right":"_self"}'
-revisions_269:
-  id: '3123'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '302'
-  created_by: '1'
-  content: ! '{"right":"_self"}'
-revisions_270:
-  id: '3126'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '305'
-  created_by: '1'
-  content: ! '{"right":"_self"}'
-revisions_271:
-  id: '3171'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '275'
-  created_by: '1'
-  content: ! '[[Default Layout]]'
-revisions_272:
-  id: '3172'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '314'
-  created_by: '1'
-  content: ! "<!DOCTYPE HTML>\n<html>\n  <head>\n    {{*head}}\n  </head>\n  \n  <body
-    id=\"wagn\">\n    <div id=\"menu\">\n      [[/ | Home]]   [[/recent | Recent]]
-    \  {{*navbox}} {{*account links}}\n    </div>\n    \n    <div id=\"primary\">\n
-    \     {{_main}}\n    </div>\n    \n    <div id=\"secondary\">\n      <div id=\"logo\">[[/
-    | {{*logo}}]]</div>\n      {{*sidebar}}\n      <div id=\"credit\">Wheeled by [[http://www.wagn.org|Wagn]]
-    v. {{*version}}</div>\n      {{*alerts}}\n    </div>\n    \n    {{*foot}}\n  </body>\n</html>"
-revisions_273:
-  id: '3177'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '315'
-  created_by: '1'
-  content: ! '{"name":"_self"}'
-revisions_274:
-  id: '3178'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '316'
-  created_by: '1'
-  content: ! '{"type": "HTML"}'
-revisions_275:
-  id: '5936'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '83'
-  created_by: '1'
-  content: <p>Contents will appear in the sidebar. [[http://www.wagn.org/wagn/sidebar|Learn
-    more about customizing your sidebar.]]</p>
-revisions_276:
-  id: '5411'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '392'
-  created_by: '1'
-  content: <p>Configures an email to be sent using [[http://wagn.org/flexible_email|flexible
-    email]]. Note that [[http://www.wagn.org/wagn/contextual_names|contextual names]]
-    here such as "_self" will refer to the card triggering the email.</p>
-revisions_277:
-  id: '3810'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '398'
-  created_by: '1'
-  content: ''
-revisions_278:
-  id: '3811'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '399'
-  created_by: '1'
-  content: ''
-revisions_279:
-  id: '3814'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '401'
-  created_by: '1'
-  content: ''
-revisions_280:
-  id: '5938'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '546'
-  created_by: '1'
-  content: ! '{"name":"_self"}'
-revisions_281:
-  id: '4892'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '382'
-  created_by: '1'
-  content: ''
-revisions_282:
-  id: '4894'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '379'
-  created_by: '1'
-  content: ''
-revisions_283:
-  id: '6021'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '568'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_284:
-  id: '3859'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '397'
-  created_by: '1'
-  content: ! '<p>For the [[*community+*right+*content|community subtab]] of the Related
-    tab:</p>
-
-    <p>&nbsp;</p>
-
-    <p>{{+*right+*content|open}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>{{Cardtype+_+*type plus right+*content|open}}</p>'
-revisions_285:
-  id: '3867'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '402'
-  created_by: '1'
-  content: People receiving email when "{{_left|name}}" is changed.
-revisions_286:
-  id: '3868'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '400'
-  created_by: '1'
-  content: People receiving email when [[_left]] cards are changed.
-revisions_287:
-  id: '3871'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '279'
-  created_by: '1'
-  content: '0'
-revisions_288:
-  id: '5939'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '547'
-  created_by: '1'
-  content: ! '<p>Configure tinyMCE, the default editor for [[Basic]] cards.&nbsp;<em>[[http://wagn.org/wagn/TinyMCE|Learn
-    how to customize your edit toolbar]]</em></p>
-
-    <p>&nbsp;</p>'
-revisions_289:
-  id: '5581'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '458'
-  created_by: '1'
-  content: '2'
-revisions_290:
-  id: '5333'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '441'
-  created_by: '1'
-  content: ''
-revisions_291:
-  id: '5334'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '442'
-  created_by: '1'
-  content: '4'
-revisions_292:
-  id: '5935'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '545'
-  created_by: '1'
-  content: <p>Add custom CSS. &nbsp;[[http://wagn.org/wagn/Skin|Learn how to "skin"
-    your Wagn]]</p>
-revisions_293:
-  id: '5929'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '544'
-  created_by: '1'
-  content: ! '{"name":"_self"}'
-revisions_294:
-  id: '5592'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '461'
-  created_by: '1'
-  content: ! '[[radio]]
-
-    [[checkbox]]
-
-    [[select]]
-
-    [[multiselect]]
-
-    [[list]]'
-revisions_295:
-  id: '5593'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '462'
-  created_by: '1'
-  content: radio
-revisions_296:
-  id: '5644'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '469'
-  created_by: '1'
-  content: ''
-revisions_297:
+revisions_071:
   id: '5941'
-  created_at: '2012-01-14 12:47:12'
+  created_at: '2012-01-16 13:34:54'
   card_id: '73'
   created_by: '1'
   content: ! '<h1>Basics</h1>
@@ -2489,40 +639,497 @@ revisions_297:
     to customize your favicon]]</em></div>
 
     </blockquote>'
-revisions_298:
-  id: '5945'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '298'
+revisions_072:
+  id: '5939'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '547'
   created_by: '1'
-  content: ! '<div>Settings affect how cards look and behave. Settings are available
-    under each card''s Options tab.</div>
+  content: ! '<p>Configure tinyMCE, the default editor for [[Basic]] cards.&nbsp;<em>[[http://wagn.org/wagn/TinyMCE|Learn
+    how to customize your edit toolbar]]</em></p>
 
-    <p>&nbsp;</p>
-
-    <div><em>[[http://www.wagn.org/wagn/Setting|Learn more about settings.]]</em></div>'
-revisions_299:
-  id: '6120'
-  created_at: '2012-01-14 18:47:32.764836'
-  card_id: '662'
+    <p>&nbsp;</p>'
+revisions_073:
+  id: '5938'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '546'
   created_by: '1'
-  content: ! '<p>{{+description}}</p>
+  content: ! '{"name":"_self"}'
+revisions_074:
+  id: '5936'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '83'
+  created_by: '1'
+  content: <p>Contents will appear in the sidebar. [[http://www.wagn.org/wagn/sidebar|Learn
+    more about customizing your sidebar.]]</p>
+revisions_075:
+  id: '5935'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '545'
+  created_by: '1'
+  content: <p>Add custom CSS. &nbsp;[[http://wagn.org/wagn/Skin|Learn how to "skin"
+    your Wagn]]</p>
+revisions_076:
+  id: '5929'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '544'
+  created_by: '1'
+  content: ! '{"name":"_self"}'
+revisions_077:
+  id: '5797'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '525'
+  created_by: '1'
+  content: Who can add comments to cards in the [[set]].
+revisions_078:
+  id: '5789'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '542'
+  created_by: '1'
+  content: ''
+revisions_079:
+  id: '5790'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '543'
+  created_by: '1'
+  content: ! '{"extension_type":"User"}'
+revisions_080:
+  id: '5796'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '529'
+  created_by: '1'
+  content: Who can remove cards in the [[set]].
+revisions_081:
+  id: '5787'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '540'
+  created_by: '1'
+  content: ''
+revisions_082:
+  id: '5788'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '541'
+  created_by: '1'
+  content: ! '{"extension_type":"User"}'
+revisions_083:
+  id: '5793'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '527'
+  created_by: '1'
+  content: Who can add cards in the [[set]].
+revisions_084:
+  id: '5779'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '534'
+  created_by: '1'
+  content: ''
+revisions_085:
+  id: '5780'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '535'
+  created_by: '1'
+  content: ! '{"extension_type":"User"}'
+revisions_086:
+  id: '5777'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '532'
+  created_by: '1'
+  content: ! '{"right":"_self"}'
+revisions_087:
+  id: '5775'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '530'
+  created_by: '1'
+  content: ! '{"right":"_self"}'
+revisions_088:
+  id: '5772'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '528'
+  created_by: '1'
+  content: ! '{"right":"_self"}'
+revisions_089:
+  id: '5770'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '526'
+  created_by: '1'
+  content: ! '{"right":"_self"}'
+revisions_090:
+  id: '5768'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '524'
+  created_by: '1'
+  content: ! '{"right":"_self"}'
+revisions_091:
+  id: '3485'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '357'
+  created_by: '1'
+  content: <p>Determines initial type, content, and permissions of new cards in the
+    [[set]]. [[http://www.wagn.org/wagn/formatting|More about formatting]].</p>
+revisions_092:
+  id: '5765'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '523'
+  created_by: '1'
+  content: ! '[[Anyone]]'
+revisions_093:
+  id: '5764'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '323'
+  created_by: '1'
+  content: ! '{"type":"_self"}'
+revisions_094:
+  id: '5758'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '519'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_095:
+  id: '5757'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '518'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_096:
+  id: '5756'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '517'
+  created_by: '1'
+  content: ! '{"name":"_self"}'
+revisions_097:
+  id: '5755'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '516'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_098:
+  id: '5754'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '515'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_099:
+  id: '5751'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '512'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_100:
+  id: '5520'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '455'
+  created_by: '1'
+  content: ''
+revisions_101:
+  id: '5748'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '509'
+  created_by: '1'
+  content: ! '{"name":"_self"}'
+revisions_102:
+  id: '5747'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '508'
+  created_by: '1'
+  content: ! '[[Anyone]]'
+revisions_103:
+  id: '5745'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '506'
+  created_by: '1'
+  content: ''
+revisions_104:
+  id: '5744'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '505'
+  created_by: '1'
+  content: _left
+revisions_105:
+  id: '5743'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '504'
+  created_by: '1'
+  content: ! '[[Anyone Signed In]]'
+revisions_106:
+  id: '5742'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '503'
+  created_by: '1'
+  content: _left
+revisions_107:
+  id: '5741'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '502'
+  created_by: '1'
+  content: ! '[[Anyone Signed In]]'
+revisions_108:
+  id: '5740'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '501'
+  created_by: '1'
+  content: _left
+revisions_109:
+  id: '5739'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '500'
+  created_by: '1'
+  content: ! '[[Anyone]]'
+revisions_110:
+  id: '5738'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '499'
+  created_by: '1'
+  content: _left
+revisions_111:
+  id: '5737'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '498'
+  created_by: '1'
+  content: ! '[[Anyone Signed In]]'
+revisions_112:
+  id: '5736'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '497'
+  created_by: '1'
+  content: ! '[[Anyone Signed In]]'
+revisions_113:
+  id: '5735'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '496'
+  created_by: '1'
+  content: ! '[[Anyone Signed In]]'
+revisions_114:
+  id: '5734'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '495'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_115:
+  id: '5733'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '494'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_116:
+  id: '5732'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '493'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_117:
+  id: '5731'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '492'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_118:
+  id: '5730'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '491'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_119:
+  id: '5729'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '490'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_120:
+  id: '5728'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '489'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_121:
+  id: '5727'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '488'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_122:
+  id: '5726'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '487'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_123:
+  id: '5725'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '486'
+  created_by: '1'
+  content: ! '{"left":{"type":"_left"}, "right":"_right"}'
+revisions_124:
+  id: '5724'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '485'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_125:
+  id: '5723'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '484'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_126:
+  id: '5722'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '483'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_127:
+  id: '5721'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '482'
+  created_by: '1'
+  content: ''
+revisions_128:
+  id: '5720'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '481'
+  created_by: '1'
+  content: ''
+revisions_129:
+  id: '5719'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '480'
+  created_by: '1'
+  content: ''
+revisions_130:
+  id: '5718'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '479'
+  created_by: '1'
+  content: ''
+revisions_131:
+  id: '5717'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '478'
+  created_by: '1'
+  content: ''
+revisions_132:
+  id: '5713'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '221'
+  created_by: '1'
+  content: ! '{"extension_type": "User"}
 
-    <p>&nbsp;</p>
+    /* note -- this syntax is not yet deprecated but will be before Wagn 2.0 */'
+revisions_133:
+  id: '5649'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '474'
+  created_by: '1'
+  content: ''
+revisions_134:
+  id: '5648'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '473'
+  created_by: '1'
+  content: ''
+revisions_135:
+  id: '5647'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '472'
+  created_by: '1'
+  content: ''
+revisions_136:
+  id: '5646'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '471'
+  created_by: '1'
+  content: ''
+revisions_137:
+  id: '5645'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '470'
+  created_by: '1'
+  content: ''
+revisions_138:
+  id: '5644'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '469'
+  created_by: '1'
+  content: ''
+revisions_139:
+  id: '5643'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '468'
+  created_by: '1'
+  content: ''
+revisions_140:
+  id: '5642'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '467'
+  created_by: '1'
+  content: ! '{"link_to":"_none"}'
+revisions_141:
+  id: '5640'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '465'
+  created_by: '1'
+  content: ! '{"sort":"update", "dir":"desc", "view":"change"}'
+revisions_142:
+  id: '5627'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '299'
+  created_by: '1'
+  content: <p>The type of editor for a set of [[Pointer]] cards.</p>
+revisions_143:
+  id: '5593'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '462'
+  created_by: '1'
+  content: radio
+revisions_144:
+  id: '2879'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '242'
+  created_by: '1'
+  content: ''
+revisions_145:
+  id: '5592'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '461'
+  created_by: '1'
+  content: ! '[[radio]]
 
-    <p>[[/new/{{_self|linkname}}|add {{_self|name}} card]]</p>
+    [[checkbox]]
 
-    <p>&nbsp;</p>
+    [[select]]
 
-    <h1>{{_self|name}} Cards</h1>
+    [[multiselect]]
 
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_300:
+    [[list]]'
+revisions_146:
+  id: '5621'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '223'
+  created_by: '1'
+  content: ! "/* fixit - once \"type\" accepts card defs:\n{\"or\": \n {\"and\": {\"plus\":
+    [\"*watcher\", {\"refer_to\": \"_self\"} ], \"not\": {\"type\": \"Cardtype\"}
+    } },\n {\"type\": {\"plus\": [\"*watcher\", {\"refer_to\": \"_self\"} ], \"type\":
+    \"Cardtype\"} }\n}\n*/\n\n{\"plus\": [\"*watcher\", {\"refer_to\": \"_self\"}
+    ],\n \"sort\": \"name\"\n}"
+revisions_147:
+  id: '5619'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '395'
+  created_by: '1'
+  content: ! "{\"type\": \"File\",\n \"sort\": \"update\"\n}"
+revisions_148:
+  id: '5612'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '450'
+  created_by: '1'
+  content: ! "{\"refer_to\":\"_self\",\n \"sort\": \"name\"\n}"
+revisions_149:
+  id: '5611'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '447'
+  created_by: '1'
+  content: ! "{\"referred_to_by\":\"_self\",\n \"sort\": \"name\"\n}"
+revisions_150:
   id: '5597'
-  created_at: '2012-01-14 12:47:12'
+  created_at: '2012-01-16 13:34:54'
   card_id: '119'
   created_by: '1'
   content: ! '<h1>[[_left+*roles|{{_left|name}}''s roles]]<br></h1>
@@ -2565,635 +1172,212 @@ revisions_300:
     <p>{{_left+*editing|item:change}}</p>
 
     </blockquote>'
-revisions_301:
-  id: '5598'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '95'
-  created_by: '1'
-  content: ! "{\"edited_by\": \"_self\",\n \"sort\": \"update\"}"
-revisions_302:
-  id: '5603'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '38'
-  created_by: '1'
-  content: ! "{\"include\":\"_self\",\n \"sort\": \"name\"\n}"
-revisions_303:
-  id: '5604'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '42'
-  created_by: '1'
-  content: ! "{\"included_by\":\"_self\",\n \"sort\": \"name\"\n}"
-revisions_304:
-  id: '5605'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '44'
-  created_by: '1'
-  content: ! "{\"linked_to_by\":\"_self\",\n \"sort\": \"name\"\n}"
-revisions_305:
-  id: '5606'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '40'
-  created_by: '1'
-  content: ! "{\"link_to\":\"_self\",\n \"sort\": \"name\"\n}"
-revisions_306:
-  id: '5607'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '34'
-  created_by: '1'
-  content: ! "{\"part\":\"_self\",\n \"sort\": \"name\"\n}"
-revisions_307:
-  id: '5608'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '36'
-  created_by: '1'
-  content: ! "{\"plus\":\"_self\",\n \"sort\": \"name\"\n}"
-revisions_308:
-  id: '5611'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '447'
-  created_by: '1'
-  content: ! "{\"referred_to_by\":\"_self\",\n \"sort\": \"name\"\n}"
-revisions_309:
-  id: '5612'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '450'
-  created_by: '1'
-  content: ! "{\"refer_to\":\"_self\",\n \"sort\": \"name\"\n}"
-revisions_310:
-  id: '5621'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '223'
-  created_by: '1'
-  content: ! "/* fixit - once \"type\" accepts card defs:\n{\"or\": \n {\"and\": {\"plus\":
-    [\"*watcher\", {\"refer_to\": \"_self\"} ], \"not\": {\"type\": \"Cardtype\"}
-    } },\n {\"type\": {\"plus\": [\"*watcher\", {\"refer_to\": \"_self\"} ], \"type\":
-    \"Cardtype\"} }\n}\n*/\n\n{\"plus\": [\"*watcher\", {\"refer_to\": \"_self\"}
-    ],\n \"sort\": \"name\"\n}"
-revisions_311:
-  id: '5627'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '299'
-  created_by: '1'
-  content: <p>The type of editor for a set of [[Pointer]] cards.</p>
-revisions_312:
-  id: '5948'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '475'
-  created_by: '1'
-  content: ! '{"left":{}}'
-revisions_313:
-  id: '5949'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '477'
-  created_by: '1'
-  content: ! '{"right":{"complete":"*"}}'
-revisions_314:
-  id: '5950'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '476'
-  created_by: '1'
-  content: ! '{"complete":"*"}'
-revisions_315:
-  id: '5392'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '445'
-  created_by: '1'
-  content: ''
-revisions_316:
-  id: '5393'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '446'
-  created_by: '1'
-  content: ''
-revisions_317:
-  id: '5395'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '448'
-  created_by: '1'
-  content: ''
-revisions_318:
-  id: '5396'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '449'
-  created_by: '1'
-  content: ''
-revisions_319:
-  id: '5951'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '548'
-  created_by: '1'
-  content: ! '{"name":"_self"}'
-revisions_320:
-  id: '5952'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '549'
-  created_by: '1'
-  content: ! '[[Anyone]]
-
-'
-revisions_321:
-  id: '5953'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '550'
-  created_by: '1'
-  content: ! '{"name":"_self"}'
-revisions_322:
-  id: '5954'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '551'
-  created_by: '1'
-  content: ! '[[Anyone]]
-
-'
-revisions_323:
-  id: '5955'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '552'
-  created_by: '1'
-  content: ! '[[Anyone]]
-
-'
-revisions_324:
-  id: '5956'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '553'
-  created_by: '1'
-  content: ! '{"name":"_self"}'
-revisions_325:
-  id: '5957'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '554'
-  created_by: '1'
-  content: ! '[[Anyone]]
-
-'
-revisions_326:
-  id: '5646'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '471'
-  created_by: '1'
-  content: ''
-revisions_327:
-  id: '5647'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '472'
-  created_by: '1'
-  content: ''
-revisions_328:
-  id: '5648'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '473'
-  created_by: '1'
-  content: ''
-revisions_329:
-  id: '5649'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '474'
-  created_by: '1'
-  content: ''
-revisions_330:
-  id: '5966'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '93'
-  created_by: '1'
-  content: ! "{\"editor_of\": \"_self\",\n \"sort\": \"name\"\n}"
-revisions_331:
-  id: '5960'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '557'
-  created_by: '1'
-  content: ! '{"name":"_self"}'
-revisions_332:
-  id: '5961'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '558'
-  created_by: '1'
-  content: ! '[[Anyone]]
-
-'
-revisions_333:
-  id: '5962'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '559'
-  created_by: '1'
-  content: ! '[[Anyone]]
-
-'
-revisions_334:
-  id: '5963'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '560'
-  created_by: '1'
-  content: ! '{"name":"_self"}'
-revisions_335:
-  id: '5964'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '561'
-  created_by: '1'
-  content: ! '[[Anyone]]
-
-'
-revisions_336:
-  id: '4841'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '406'
-  created_by: '1'
-  content: <p>Number cards can contain only numerical values.</p>
-revisions_337:
-  id: '4846'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '409'
-  created_by: '1'
-  content: <p>Date cards contain a date.</p>
-revisions_338:
-  id: '4869'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '407'
-  created_by: '1'
-  content: <p>PlainText cards are for unstyled text.</p>
-revisions_339:
-  id: '4871'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '215'
-  created_by: '1'
-  content: <p>File cards are for uploading and downloading files. [[http://wagn.org/wagn/File|Learn
-    more about File cards]].</p>
-revisions_340:
-  id: '4872'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '408'
-  created_by: '1'
-  content: <p>Phrase cards are for short unstyled text.</p>
-revisions_341:
-  id: '5403'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '439'
-  created_by: '1'
-  content: ''
-revisions_342:
-  id: '5404'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '438'
-  created_by: '1'
-  content: ''
-revisions_343:
-  id: '5640'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '465'
-  created_by: '1'
-  content: ! '{"sort":"update", "dir":"desc", "view":"change"}'
-revisions_344:
-  id: '5642'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '467'
-  created_by: '1'
-  content: ! '{"link_to":"_none"}'
-revisions_345:
-  id: '5643'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '468'
-  created_by: '1'
-  content: ''
-revisions_346:
-  id: '5725'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '486'
-  created_by: '1'
-  content: ! '{"left":{"type":"_left"}, "right":"_right"}'
-revisions_347:
-  id: '5726'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '487'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_348:
-  id: '5727'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '488'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_349:
-  id: '5728'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '489'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_350:
-  id: '5729'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '490'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_351:
-  id: '5730'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '491'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_352:
-  id: '5731'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '492'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_353:
-  id: '5732'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '493'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_354:
-  id: '5733'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '494'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_355:
-  id: '5734'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '495'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_356:
-  id: '5735'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '496'
-  created_by: '1'
-  content: ! '[[Anyone Signed In]]'
-revisions_357:
-  id: '5736'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '497'
-  created_by: '1'
-  content: ! '[[Anyone Signed In]]'
-revisions_358:
-  id: '5737'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '498'
-  created_by: '1'
-  content: ! '[[Anyone Signed In]]'
-revisions_359:
-  id: '5738'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '499'
-  created_by: '1'
-  content: _left
-revisions_360:
-  id: '5739'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '500'
-  created_by: '1'
-  content: ! '[[Anyone]]'
-revisions_361:
-  id: '5740'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '501'
-  created_by: '1'
-  content: _left
-revisions_362:
-  id: '5741'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '502'
-  created_by: '1'
-  content: ! '[[Anyone Signed In]]'
-revisions_363:
-  id: '5742'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '503'
-  created_by: '1'
-  content: _left
-revisions_364:
-  id: '5743'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '504'
-  created_by: '1'
-  content: ! '[[Anyone Signed In]]'
-revisions_365:
-  id: '5744'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '505'
-  created_by: '1'
-  content: _left
-revisions_366:
-  id: '5745'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '506'
-  created_by: '1'
-  content: ''
-revisions_367:
-  id: '5747'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '508'
-  created_by: '1'
-  content: ! '[[Anyone]]'
-revisions_368:
-  id: '5748'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '509'
-  created_by: '1'
-  content: ! '{"name":"_self"}'
-revisions_369:
-  id: '5750'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '511'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_370:
-  id: '5751'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '512'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_371:
-  id: '5754'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '515'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_372:
-  id: '5755'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '516'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_373:
-  id: '5756'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '517'
-  created_by: '1'
-  content: ! '{"name":"_self"}'
-revisions_374:
-  id: '5757'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '518'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_375:
-  id: '5758'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '519'
-  created_by: '1'
-  content: ! '[[Administrator]]'
-revisions_376:
-  id: '6019'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '566'
-  created_by: '1'
-  content: ! '{"right":"_self"}'
-revisions_377:
-  id: '6020'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '567'
-  created_by: '1'
-  content: ''
-revisions_378:
-  id: '6022'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '53'
-  created_by: '1'
-  content: ! "width: '100%',\nauto_resize : true,\nrelative_urls: false,\ntheme :
-    \"advanced\",\ntheme_advanced_buttons1 : \"formatselect,bold,italic,separator,\"\n+
-    \"blockquote,bullist,numlist,hr,separator,\"\n+ \"code\",                         \ntheme_advanced_buttons2
-    : \"\",                         \ntheme_advanced_buttons3 : \"\",                         \ntheme_advanced_path
-    : false,                         \ntheme_advanced_toolbar_location : \"top\",
-    \ \ntheme_advanced_toolbar_align : \"left\", \ntheme_advanced_resizing : true,\ntheme_advanced_resize_horizontal
-    : false,                      \ntheme_advanced_statusbar_location : \"bottom\",\ntheme_advanced_blockformats
-    : \"p,h1,h2\",\n\nextended_valid_elements : \"a[name|href|target|title|onclick],\"\n+
-    \"img[class|src|border=0|alt|title|hspace|vspace|width|height|\"\n+ \"align|onmouseover|onmouseout|name],hr[class|width|size|noshade],\"\n+
-    \"font[face|size|color|style],span[class|align|style]\"          \n"
-revisions_379:
-  id: '4913'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '376'
-  created_by: '1'
-  content: ''
-revisions_380:
-  id: '4915'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '374'
-  created_by: '1'
-  content: ''
-revisions_381:
-  id: '6023'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '198'
-  created_by: '1'
-  content: ! "/* body text */\nbody {\n  color: #444444;\n}\n\n/* page - background
-    image and color */\nbody#wagn {\n  background: url(assets/body-bg.png) repeat-x
-    #CCCCCC;\n}\n\n/* main card and sidebar widths */\n#primary {\n  width:67%;\n}\n#secondary
-    {\n  width:28%;\n}\n\n/* top bar background color; text colors */\n#menu {\n  background:
-    #335533;\n}\n#menu a {\n  color: #EEEEEE;\n}\n\n/* header text */\nh1, h2 {\n
-    \ color: #664444;\n}\nh1.page-header, \nh2.page-header {\n  color: #222299; \n}\n\n\n/*
-    card headers etc */\n.card-header {\n  background: #C0D9C0;\n}\n.card-header,\n.card-header
-    a {\n  font-weight: normal;\n  color: #333333; \n}\n\n/* misc */\n\n.card-footer,
-    \n.revision-navigation, \n.current,\n#credit {\n  background: #DDDDDD;\n}\n"
-revisions_382:
-  id: '6029'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '466'
-  created_by: '1'
-  content: ! '{"match":"$keyword", "sort":"relevance"}'
-revisions_383:
-  id: '5764'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '323'
-  created_by: '1'
-  content: ! '{"type":"_self"}'
-revisions_384:
-  id: '5765'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '523'
-  created_by: '1'
-  content: ! '[[Anyone]]'
-revisions_385:
-  id: '5972'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '437'
-  created_by: '1'
-  content: ''
-revisions_386:
-  id: '5973'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '440'
-  created_by: '1'
-  content: ''
-revisions_387:
-  id: '5976'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '100'
-  created_by: '1'
-  content: ! '<p>[[/account/invite|Invite a new user]]</p>
+revisions_151:
+  id: '486'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '101'
+  created_by: '1'
+  content: ! '{"extension_type": "User"}'
+revisions_152:
+  id: '5581'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '458'
+  created_by: '1'
+  content: '2'
+revisions_153:
+  id: '5573'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '297'
+  created_by: '1'
+  content: <div>Sets define a group of cards to which settings can apply. [[http://www.wagn.org/wagn/Setting|Learn
+    more about settings.]]</div>
+revisions_154:
+  id: '5566'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '63'
+  created_by: '1'
+  content: ! '<p>People can <strong>request an account</strong> via a "Sign Up" link
+    if you allow "Anyone" to [[/card/options/Account_Request|create account requests]].</p>
 
     <p>&nbsp;</p>
 
-    <p>By default, new accounts are associated with [[User]] cards. [[http://wagn.org/wagn/account|&nbsp;Learn
-    more&nbsp;about accounts.]]</p>
+    <p>Unless [[*signup|approved automatically]], the <strong>request will be emailed
+    to</strong>:</p>
 
-    <p>&nbsp;</p>
+    <blockquote>
 
-    <h1>Account Requests<br></h1>
+    <p>{{+*to|closed;type:Phrase}}</p>
 
-    <p>{{Account Request+*type+by create}}</p>
+    </blockquote>
 
-    <p>&nbsp;</p>
+    <p>and the<strong> requester will be redirected here:</strong></p>
 
-    <p>{{Cards with accounts|titled}}</p>'
-revisions_388:
-  id: '5984'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '421'
+    <blockquote>
+
+    <div>HTTP:// <em>(YOUR WAGN''S DOMAIN) </em>{{+*thanks}}</div>
+
+    </blockquote>
+
+    <div>You can <strong>approve/deny account requests [[Account Request|here]]</strong>.</div>'
+revisions_155:
+  id: '5557'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '56'
   created_by: '1'
-  content: ! "{\"found_by\":\"_self\",\n \"return\":\"count\"\n}"
-revisions_389:
-  id: '5985'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '79'
+  content: ! '<p>People can <strong>invite new users via email</strong> if they have
+    the&nbsp;[[/admin/tasks|global permission]] to "create accounts".</p>
+
+    <p>&nbsp;</p>
+
+    <p>Newy invited users will be sent an email with a password and the following
+    details:</p>
+
+    <p>&nbsp;</p>
+
+    <h2>Email subject</h2>
+
+    <blockquote>
+
+    <p>{{+*subject|type:Phrase}}</p>
+
+    </blockquote>
+
+    <p>&nbsp;</p>
+
+    <h2>Email message</h2>
+
+    <blockquote>
+
+    <p>{{+*message|type:PlainText}}</p>
+
+    </blockquote>
+
+    <p>&nbsp;</p>
+
+    <h2>Email from</h2>
+
+    <blockquote>
+
+    <p>{{+*from|type:Phrase}}</p>
+
+    </blockquote>
+
+    <p>&nbsp;</p>
+
+    <p><strong>After sending an invitation, you''re taken here:</strong><span><strong></strong></span></p>
+
+    <blockquote>
+
+    <div>HTTP:// <em>(YOUR WAGN''S DOMAIN) </em>{{+*thanks}}</div>
+
+    </blockquote>'
+revisions_156:
+  id: '5253'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '432'
   created_by: '1'
   content: ''
-revisions_390:
-  id: '5998'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '80'
+revisions_157:
+  id: '5252'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '431'
   created_by: '1'
-  content: ! '<h1>Welcome to Wagn!</h1>
+  content: ''
+revisions_158:
+  id: '5250'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '429'
+  created_by: '1'
+  content: ''
+revisions_159:
+  id: '5555'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '66'
+  created_by: '1'
+  content: ! '<p>People can&nbsp;<strong>sign up with no approval process</strong>&nbsp;if
+    you allow "Anyone" to [[/card/options/Account_Request|create account requests]],
+    and give "Anyone" the [[/admin/tasks |global permission]] to create accounts.</p>
 
     <p>&nbsp;</p>
 
-    <p>[[Config| Start configuring]] or learn more:</p>
+    <p>Newly registered users will be sent an email with a password and the following
+    details:</p>
 
-    <ul>
+    <p>&nbsp;</p>
 
-    <li>[[http://wagn.org/wagn/configuration| Configuration]]</li>
+    <h2>Email Subject<br></h2>
 
-    <li>[[http://wagn.org/wagn/Documentation| Other Docs]]</li>
+    <blockquote>
 
-    <li>[[http://wagn.org/wagn/Support|Support]]</li>
+    <p>{{*signup+*subject|type:Phrase}}</p>
 
-    </ul>
+    </blockquote>
 
-    <div><em>Double-click content to edit.</em></div>
+    <p>&nbsp;</p>
+
+    <h2>Email Message</h2>
+
+    <blockquote>
+
+    <p>{{*signup+*message|closed;type:PlainText}}</p>
+
+    </blockquote>
+
+    <p>&nbsp;</p>
+
+    <p>As the email is sent, the<strong> person signing up will be sent here</strong>:</p>
+
+    <blockquote>
+
+    <div>HTTP://<em>(YOUR WAGN''S DOMAIN)</em>{{+*thanks}}</div>
+
+    </blockquote>
+
+    <p>&nbsp;</p>
 
     <p>&nbsp;</p>'
-revisions_391:
-  id: '6017'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '151'
+revisions_160:
+  id: '5549'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '301'
   created_by: '1'
-  content: ! '<p>[[Config|Configuration]]</p>
+  content: <p>Value options for a set of [[Pointer]] cards. Can itself be a Pointer
+    or a [[Search]]. [[http://wagn.org/Pointer|Learn about setting options on Pointers.]]</p>
+revisions_161:
+  id: '5538'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '278'
+  created_by: '1'
+  content: ! '<p>&nbsp;</p>
+
+    <blockquote></blockquote>'
+revisions_162:
+  id: '5524'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '213'
+  created_by: '1'
+  content: <p><span><span>Pointers list (or "point" to) one or more other cards. [[http://wagn.org/wagn/Pointer|Learn
+    more about Pointers]].<br></span></span></p>
+revisions_163:
+  id: '5521'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '456'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
 
     <p>&nbsp;</p>
 
-    <p>[[*account|Accounts]]</p>
+    <h1>{{_self|name}} Cards</h1>
 
-    <p>[[/admin/tasks|Global permissions]]</p>
+    <blockquote>
 
-    <p>&nbsp;</p>
+    <p>{{+*type+by name}}</p>
 
-    <p>[[/admin/clear_cache|Clear the cache]]</p>'
-revisions_392:
-  id: '6024'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '569'
+    </blockquote>'
+revisions_164:
+  id: '5516'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '88'
   created_by: '1'
   content: ! '<p>{{+description}}</p>
 
@@ -3210,122 +1394,1924 @@ revisions_392:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-revisions_393:
-  id: '6025'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '570'
+revisions_165:
+  id: '5511'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '453'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <h2>{{_self|name}} Cards</h2>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
+revisions_166:
+  id: '5510'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '452'
+  created_by: '1'
+  content: ''
+revisions_167:
+  id: '5497'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '87'
+  created_by: '1'
+  content: ''
+revisions_168:
+  id: '5490'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '4'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h2>{{_self|name}} Cards</h2>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
+revisions_169:
+  id: '5489'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '51'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h2>{{_self|name}} Cards</h2>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
+revisions_170:
+  id: '5488'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '30'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h2>{{_self|name}} Cards</h2>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
+revisions_171:
+  id: '5487'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '7'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/Role|Add a new role]]</p>
+
+    <p>&nbsp;</p>
+
+    <h1>Roles</h1>
+
+    <p>{{+*type+by name}}</p>'
+revisions_172:
+  id: '5486'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '47'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h2>{{_self|name}} Cards</h2>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
+revisions_173:
+  id: '3626'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '389'
+  created_by: '1'
+  content: ''
+revisions_174:
+  id: '5485'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '22'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h2>{{_self|name}} Cards</h2>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
+revisions_175:
+  id: '5484'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '52'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h2>{{_self|name}} Cards</h2>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
+revisions_176:
+  id: '5483'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '20'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h2>{{_self|name}} Cards</h2>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
+revisions_177:
+  id: '5482'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '19'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|name}}|add an {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h2>{{_self|name}} Cards</h2>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
+revisions_178:
+  id: '5481'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '50'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h2>{{_self|name}} Cards</h2>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
+revisions_179:
+  id: '5480'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '18'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h2>{{_self|name}} Cards</h2>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
+revisions_180:
+  id: '5479'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '17'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h2>{{_self|name}} Cards</h2>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
+revisions_181:
+  id: '5478'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '405'
+  created_by: '1'
+  content: <p>Basic cards are for rich text. &nbsp;As the default type for new cards,
+    "Basic" does not appear beside cardnames like other types.</p>
+revisions_182:
+  id: '5472'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '3'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h2>{{_self|name}} Cards</h2>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
+revisions_183:
+  id: '3033'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '91'
+  created_by: '1'
+  content: '4'
+revisions_184:
+  id: '5470'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '5'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h1>{{_self|name}} Cards</h1>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
+revisions_185:
+  id: '5469'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '259'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <h2>{{_self|name}} Cards</h2>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
+revisions_186:
+  id: '5411'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '392'
+  created_by: '1'
+  content: <p>Configures an email to be sent using [[http://wagn.org/flexible_email|flexible
+    email]]. Note that [[http://www.wagn.org/wagn/contextual_names|contextual names]]
+    here such as "_self" will refer to the card triggering the email.</p>
+revisions_187:
+  id: '5403'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '439'
+  created_by: '1'
+  content: ''
+revisions_188:
+  id: '5404'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '438'
+  created_by: '1'
+  content: ''
+revisions_189:
+  id: '5396'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '449'
+  created_by: '1'
+  content: ''
+revisions_190:
+  id: '5395'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '448'
+  created_by: '1'
+  content: ''
+revisions_191:
+  id: '5393'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '446'
+  created_by: '1'
+  content: ''
+revisions_192:
+  id: '5392'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '445'
+  created_by: '1'
+  content: ''
+revisions_193:
+  id: '5334'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '442'
+  created_by: '1'
+  content: '4'
+revisions_194:
+  id: '5333'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '441'
+  created_by: '1'
+  content: ''
+revisions_195:
+  id: '5306'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '116'
+  created_by: '1'
+  content: ! '<div><strong>Added by:</strong> {{_left+*creator|item:link}}</div>
+
+    <div><strong>Most recent editor:</strong> {{_left+*last editor|item:link}}</div>
+
+    <p>&nbsp;</p>
+
+    <h1>[[_left+*editors|All editors]]</h1>
+
+    <blockquote>
+
+    <p>{{_left+*editors|item:link}}</p>
+
+    </blockquote>
+
+    <p>&nbsp;</p>
+
+    <h1>[[_left+*watchers|Watchers]]</h1>
+
+    <div><strong>{{_left+watcher instructions for related tab|naked}}</strong>&nbsp;&nbsp;[[http://wagn.org/wagn/Notification|Learn
+    more about notifications.]]</div>
+
+    <blockquote>
+
+    <p>{{_left+*watchers|item:link}}</p>
+
+    </blockquote>
+
+    <p>&nbsp;</p>
+
+    <h1>[[_left+discussion|Discussion]]</h1>
+
+    <blockquote>
+
+    <p>{{_left+discussion|open}}</p>
+
+    </blockquote>
+
+    <p>&nbsp;</p>
+
+    <h1>[[_left+tags|"{{_left|name}}" is tagged with]]</h1>
+
+    <blockquote>
+
+    <p>{{_left+tags}}</p>
+
+    </blockquote>
+
+    <p>&nbsp;</p>'
+revisions_196:
+  id: '5297'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '436'
+  created_by: '1'
+  content: ''
+revisions_197:
+  id: '5296'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '435'
+  created_by: '1'
+  content: ''
+revisions_198:
+  id: '5292'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '433'
+  created_by: '1'
+  content: ! "{\"created_by\": \"_self\",\n \"sort\": \"create\", \"dir\": \"desc\"\n}"
+revisions_199:
+  id: '5291'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '427'
+  created_by: '1'
+  content: ! "{\"last_edited_by\": \"_self\",\n \"sort\": \"update\",\n \"view\":
+    \"change\"\n}"
+revisions_200:
+  id: '5290'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '430'
+  created_by: '1'
+  content: ! '{"creator_of": "_self"}'
+revisions_201:
+  id: '5249'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '428'
+  created_by: '1'
+  content: ''
+revisions_202:
+  id: '5246'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '426'
+  created_by: '1'
+  content: ''
+revisions_203:
+  id: '5245'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '425'
+  created_by: '1'
+  content: ''
+revisions_204:
+  id: '5214'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '77'
+  created_by: '1'
+  content: Home
+revisions_205:
+  id: '5200'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '420'
+  created_by: '1'
+  content: ''
+revisions_206:
+  id: '5199'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '419'
+  created_by: '1'
+  content: ''
+revisions_207:
+  id: '5196'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '182'
+  created_by: '1'
+  content: <p>Searches return a list of cards using [[http://wagn.org/wagn/WQL|WQL,
+    the Wagn Query Language]]. See the [[http://wagn.org/wagn/WQL syntax|syntax documentation]].</p>
+revisions_208:
+  id: '4915'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '374'
+  created_by: '1'
+  content: ''
+revisions_209:
+  id: '4913'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '376'
+  created_by: '1'
+  content: ''
+revisions_210:
+  id: '4894'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '379'
+  created_by: '1'
+  content: ''
+revisions_211:
+  id: '4892'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '382'
+  created_by: '1'
+  content: ''
+revisions_212:
+  id: '4888'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '388'
+  created_by: '1'
+  content: ''
+revisions_213:
+  id: '4872'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '408'
+  created_by: '1'
+  content: <p>Phrase cards are for short unstyled text.</p>
+revisions_214:
+  id: '4871'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '215'
+  created_by: '1'
+  content: <p>File cards are for uploading and downloading files. [[http://wagn.org/wagn/File|Learn
+    more about File cards]].</p>
+revisions_215:
+  id: '4869'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '407'
+  created_by: '1'
+  content: <p>PlainText cards are for unstyled text.</p>
+revisions_216:
+  id: '4846'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '409'
+  created_by: '1'
+  content: <p>Date cards contain a date.</p>
+revisions_217:
+  id: '4841'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '406'
+  created_by: '1'
+  content: <p>Number cards can contain only numerical values.</p>
+revisions_218:
+  id: '3867'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '402'
+  created_by: '1'
+  content: People receiving email when "{{_left|name}}" is changed.
+revisions_219:
+  id: '3868'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '400'
+  created_by: '1'
+  content: People receiving email when [[_left]] cards are changed.
+revisions_220:
+  id: '3197'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '318'
+  created_by: '1'
+  content: ''
+revisions_221:
+  id: '3196'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '317'
+  created_by: '1'
+  content: ''
+revisions_222:
+  id: '3871'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '279'
+  created_by: '1'
+  content: '0'
+revisions_223:
+  id: '3810'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '398'
+  created_by: '1'
+  content: ''
+revisions_224:
+  id: '3859'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '397'
+  created_by: '1'
+  content: ! '<p>For the [[*community+*right+*content|community subtab]] of the Related
+    tab:</p>
+
+    <p>&nbsp;</p>
+
+    <p>{{+*right+*content|open}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>{{Cardtype+_+*type plus right+*content|open}}</p>'
+revisions_225:
+  id: '3814'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '401'
+  created_by: '1'
+  content: ''
+revisions_226:
+  id: '3811'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '399'
+  created_by: '1'
+  content: ''
+revisions_227:
+  id: '3794'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '365'
+  created_by: '1'
+  content: <p>Configures email to be sent when card in [[set]] is added. Learn more
+    about [[http://wagn.org/flexible_email|flexible email]].</p>
+revisions_228:
+  id: '3754'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '219'
+  created_by: '1'
+  content: ! '<p>These cards show who is getting email about changes to these cards
+    or card types. ([[http://www.wagn.org/wagn/Notification|Learn more about notification.]]):</p>
+
+    <p>&nbsp;</p>
+
+    <p>{{+*right+by name}}</p>'
+revisions_229:
+  id: '3083'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '295'
+  created_by: '1'
+  content: '1'
+revisions_230:
+  id: '3769'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '276'
+  created_by: '1'
+  content: '0'
+revisions_231:
+  id: '3610'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '373'
+  created_by: '1'
+  content: ! '<p>{{+*from}}</p>
+
+    <p>{{+*to}}</p>
+
+    <p>{{+*cc}}</p>
+
+    <p>{{+*bcc}}</p>
+
+    <p>{{+*subject}}</p>
+
+    <p>{{+*message}}</p>
+
+    <p>{{+*attach}}</p>'
+revisions_232:
+  id: '3617'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '380'
+  created_by: '1'
+  content: ''
+revisions_233:
+  id: '3614'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '377'
+  created_by: '1'
+  content: ''
+revisions_234:
+  id: '3612'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '375'
+  created_by: '1'
+  content: ''
+revisions_235:
+  id: '3606'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '368'
+  created_by: '1'
+  content: ! '[[_left+email config]]'
+revisions_236:
+  id: '3620'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '383'
+  created_by: '1'
+  content: ''
+revisions_237:
+  id: '3629'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '391'
+  created_by: '1'
+  content: ''
+revisions_238:
+  id: '2093'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '180'
+  created_by: '1'
+  content: <p><span><span>Every card has a type, which shapes what kind of information
+    goes into it. You can also add your own cardtypes. To learn more, read the [[http://wagn.org/wagn/card_types|documentation
+    about card types]].<br></span></span></p>
+revisions_239:
+  id: '2094'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '181'
+  created_by: '1'
+  content: <p>People with accounts generally have a User card. To learn more, read
+    the [[http://wagn.org/wagn/User|documentation about User cards]].</p>
+revisions_240:
+  id: '2408'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '202'
+  created_by: '1'
+  content: <p>These cards allow unrestricted use of HTML. See the [[http://wagn.org/wagn/HTML|documentation
+    on HTML cards]].</p>
+revisions_241:
+  id: '2516'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '147'
+  created_by: '1'
+  content: <p>Administrators automatically have all of the [[/admin/tasks|global permissions]],
+    and has the power to see, edit and delete every card in the system regardless
+    of its permissions settings. See the [[http://wagn.org/wagn/permissions|documentation
+    about permissions]].</p>
+revisions_242:
+  id: '2570'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '211'
+  created_by: '1'
+  content: <p>Anyone who is signed in has this role. [[http://wagn.org/wagn/account|Learn
+    more about accounts]].</p>
+revisions_243:
+  id: '2571'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '210'
+  created_by: '1'
+  content: <p>Anyone who is not signed in has this role. Edits they make will be credited
+    to [[Anonymous]]. [[http://wagn.org/wagn/account|Learn more about accounts]].</p>
+revisions_244:
+  id: '2574'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '212'
+  created_by: '1'
+  content: <p>Toggles simply indicate yes or no. [[http://wagn.org/wagn/Toggle|Learn
+    more about Toggles]].</p>
+revisions_245:
+  id: '2576'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '214'
+  created_by: '1'
+  content: <p>On Wagn you upload images to Image cards, then include them wherever
+    you want the image to appear. [[http://wagn.org/wagn/Image|Learn more about Image
+    cards]].</p>
+revisions_246:
+  id: '2581'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '216'
+  created_by: '1'
+  content: <p>People who have requested accounts but not yet been approved ([[http://wagn.org/wagn/account|learn
+    more about accounts]]):</p>
+revisions_247:
+  id: '3040'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '280'
+  created_by: '1'
+  content: ''
+revisions_248:
+  id: '2653'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '225'
+  created_by: '1'
+  content: <p>Each [[user]] has one or more roles, and each role's capabilities are
+    defined in [[/admin/tasks|Global permissions]] (except for the [[Administrator]]
+    role, which has all permissions). [[http://wagn.org/wagn/Role|Learn more about
+    roles]].</p>
+revisions_249:
+  id: '3482'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '359'
+  created_by: '1'
+  content: <p>Controls content of cards in the [[set]]. [[http://www.wagn.org/wagn/formatting|More
+    about formatting]].</p>
+revisions_250:
+  id: '3263'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '308'
+  created_by: '1'
+  content: <p>When "yes", users with the global "create accounts" permission can add
+    [[http://www.wagn.org/wagn/account|accounts]] to cards in the [[set]].</p>
+revisions_251:
+  id: '3264'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '311'
+  created_by: '1'
+  content: ! '<p><span> </span></p>
+
+    <div>
+
+    <p><span> </span></p>
+
+    <div>
+
+    <p>[[http://www.wagn.org/wagn/custom_help_text|Help text]] people will see when
+    adding cards in the [[set]].</p>
+
+    </div>
+
+    </div>'
+revisions_252:
+  id: '3266'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '306'
+  created_by: '1'
+  content: <p>[[http://www.wagn.org/wagn/custom_help_text|Help text]] people will
+    see when editing cards in the [[set]].</p>
+revisions_253:
+  id: '3480'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '249'
+  created_by: '1'
+  content: <p>Wagn will autoname new cards in the [[set]] with the name you give here,
+    and increment for each new card. [[http://wagn.org/wagn/Autonaming|Learn more.]]</p>
+revisions_254:
+  id: '3242'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '349'
+  created_by: '1'
+  content: ''
+revisions_255:
+  id: '3490'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '281'
+  created_by: '1'
+  content: <p>Determines layout card used when viewing page of any card in the [[set]].&nbsp;
+    [[http://wagn.org/custom_layouts | Learn more about layouts]]</p>
+revisions_256:
+  id: '3494'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '90'
+  created_by: '1'
+  content: <p>Autogenerate [[http://www.wagn.org/wagn/table_of_contents|table of contents]]
+    when cards in the [[set]] have at least this many headers ("0" means never).</p>
+revisions_257:
+  id: '3495'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '250'
+  created_by: '1'
+  content: <p>Where to take people after they create a card in the [[set]]. [[http://www.wagn.org/wagn/Custom_thank_you_messages_for_forms|Learn
+    more about thank you messages.]]</p>
+revisions_258:
+  id: '3500'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '254'
+  created_by: '1'
+  content: <p>Labels for [[Pointer]] options.&nbsp; Value is a card name, which is
+    plussed to each of a Pointer's option cards to form label cards for radio button
+    and checkbox items. E.g., "description" will make Wagn look for "option 1+description",
+    "option 2+description", etc. [[http://www.wagn.org/wagn/Pointer|Learn more.]]</p>
+revisions_259:
+  id: '3512'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '304'
+  created_by: '1'
+  content: <p>Anti-spam setting.&nbsp; If checked will require non-signed-in users
+    to complete a [[http://www.wagn.org/wagn/captcha|captcha]] before adding or editing
+    cards in the [[set]].</p>
+revisions_260:
+  id: '3171'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '275'
+  created_by: '1'
+  content: ! '[[Default Layout]]'
+revisions_261:
+  id: '3575'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '367'
+  created_by: '1'
+  content: '0'
+revisions_262:
+  id: '3628'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '390'
+  created_by: '1'
+  content: ''
+revisions_263:
+  id: '1521'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '137'
+  created_by: '1'
+  content: ''
+revisions_264:
+  id: '3001'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '260'
+  created_by: '1'
+  content: ''
+revisions_265:
+  id: '66'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '64'
+  created_by: '1'
+  content: ''
+revisions_266:
+  id: '3624'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '387'
+  created_by: '1'
+  content: ''
+revisions_267:
+  id: '3621'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '384'
+  created_by: '1'
+  content: ''
+revisions_268:
+  id: '3618'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '381'
+  created_by: '1'
+  content: ''
+revisions_269:
+  id: '3615'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '378'
+  created_by: '1'
+  content: ''
+revisions_270:
+  id: '3609'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '372'
+  created_by: '1'
+  content: ''
+revisions_271:
+  id: '3608'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '371'
+  created_by: '1'
+  content: ''
+revisions_272:
+  id: '3206'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '324'
+  created_by: '1'
+  content: ''
+revisions_273:
+  id: '3198'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '319'
+  created_by: '1'
+  content: ''
+revisions_274:
+  id: '3199'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '320'
+  created_by: '1'
+  content: ''
+revisions_275:
+  id: '3201'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '321'
+  created_by: '1'
+  content: ''
+revisions_276:
+  id: '3478'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '363'
+  created_by: '1'
+  content: ''
+revisions_277:
+  id: '3574'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '366'
+  created_by: '1'
+  content: ''
+revisions_278:
+  id: '3513'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '364'
+  created_by: '1'
+  content: ''
+revisions_279:
+  id: '1541'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '1'
+  created_by: '1'
+  content: <p>This is the account that makes any automated updates &mdash; cards created
+    when someone signs up, link updates when renaming cards, etc.</p>
+revisions_280:
+  id: '3318'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '69'
+  created_by: '1'
+  content: <div>Thank you for signing up with {{*title}}. Your new account information
+    is on it's way to your emailbox now and should be there soon.</div>
+revisions_281:
+  id: '28'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '28'
+  created_by: '1'
+  content: ''
+revisions_282:
+  id: '3260'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '358'
+  created_by: '1'
+  content: ''
+revisions_283:
+  id: '3253'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '356'
+  created_by: '1'
+  content: ''
+revisions_284:
+  id: '1408'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '129'
+  created_by: '1'
+  content: ''
+revisions_285:
+  id: '3251'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '355'
+  created_by: '1'
+  content: ''
+revisions_286:
+  id: '1410'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '131'
+  created_by: '1'
+  content: ''
+revisions_287:
+  id: '3250'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '354'
+  created_by: '1'
+  content: ''
+revisions_288:
+  id: '3101'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '300'
+  created_by: '1'
+  content: ! '{"right":"_self"}'
+revisions_289:
+  id: '3246'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '352'
+  created_by: '1'
+  content: ''
+revisions_290:
+  id: '3244'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '351'
+  created_by: '1'
+  content: ''
+revisions_291:
+  id: '3243'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '350'
+  created_by: '1'
+  content: ''
+revisions_292:
+  id: '3241'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '348'
+  created_by: '1'
+  content: ''
+revisions_293:
+  id: '3240'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '347'
+  created_by: '1'
+  content: ''
+revisions_294:
+  id: '3239'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '346'
+  created_by: '1'
+  content: ''
+revisions_295:
+  id: '3238'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '345'
+  created_by: '1'
+  content: ''
+revisions_296:
+  id: '1270'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '117'
+  created_by: '1'
+  content: ''
+revisions_297:
+  id: '3235'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '343'
+  created_by: '1'
+  content: ''
+revisions_298:
+  id: '1881'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '99'
+  created_by: '1'
+  content: ! '{"member_of": "_self", "sort":"name"}'
+revisions_299:
+  id: '3233'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '342'
+  created_by: '1'
+  content: ''
+revisions_300:
+  id: '2089'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '179'
+  created_by: '1'
+  content: ! '{"found_by": "_self", "sort": "update"}'
+revisions_301:
+  id: '3232'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '341'
+  created_by: '1'
+  content: ''
+revisions_302:
+  id: '3230'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '340'
+  created_by: '1'
+  content: ''
+revisions_303:
+  id: '1871'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '118'
+  created_by: '1'
+  content: ! '[[*account]]'
+revisions_304:
+  id: '2054'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '169'
+  created_by: '1'
+  content: ! '<h1>[[_left+*links|"{{_left|name}}" links to]]</h1>
+
+    <blockquote>
+
+    <p>{{_left+*links}}</p>
+
+    </blockquote>
+
+    <p>&nbsp;</p>
+
+    <h1>[[_left+*inclusions|"{{_left|name}}" includes]]</h1>
+
+    <blockquote>
+
+    <p>{{_left+*inclusions}}</p>
+
+    </blockquote>
+
+    <p>&nbsp;</p>
+
+    <h1>[[_left+tags|"{{_left|name}}" is tagged with]]</h1>
+
+    <blockquote>
+
+    <p>{{_left+tags}}</p>
+
+    </blockquote>'
+revisions_305:
+  id: '3229'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '339'
+  created_by: '1'
+  content: ''
+revisions_306:
+  id: '2022'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '173'
+  created_by: '1'
+  content: ! '{"right_plus":["tags", {"refer_to":"_self"}]}'
+revisions_307:
+  id: '3228'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '338'
+  created_by: '1'
+  content: ''
+revisions_308:
+  id: '2210'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '111'
+  created_by: '1'
+  content: ! '<p><em>Plus cards have a plus (+) in their name </em><em>(e.g., "Menu+description").
+    They are formed by plussing two cards together to make a third.</em></p>
+
+    <p>&nbsp;</p>
+
+    <h1>[[_left+*plus cards|Plus cards "{{_left|name}}" is part of]]</h1>
+
+    <blockquote>
+
+    <p>{{_left+*plus cards}}</p>
+
+    </blockquote>
+
+    <p>&nbsp;</p>
+
+    <h1>[[_left+*plus parts|The other parts]]</h1>
+
+    <blockquote>
+
+    <p>{{_left+*plus parts}}</p>
+
+    </blockquote>'
+revisions_309:
+  id: '3226'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '337'
+  created_by: '1'
+  content: ''
+revisions_310:
+  id: '2266'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '185'
+  created_by: '1'
+  content: ! '{"found_by": "_self", "sort": "name"}
+
+'
+revisions_311:
+  id: '3225'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '336'
+  created_by: '1'
+  content: ''
+revisions_312:
+  id: '2291'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '191'
+  created_by: '1'
+  content: ! '{"found_by": "_self", "sort": "create"}'
+revisions_313:
+  id: '3224'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '335'
+  created_by: '1'
+  content: ''
+revisions_314:
+  id: '2336'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '171'
+  created_by: '1'
+  content: ! '<h1>[[_left+*linkers|What links to "{{_left|name}}"?]]<br></h1>
+
+    <blockquote>
+
+    <p>{{_left+*linkers}}</p>
+
+    </blockquote>
+
+    <p>&nbsp;</p>
+
+    <h1>[[_left+*includers|What includes "{{_left|name}}"?]]</h1>
+
+    <blockquote>
+
+    <p>{{_left+*includers}}</p>
+
+    </blockquote>
+
+    <p>&nbsp;</p>
+
+    <h1>[[_left+*tagged|What''s tagged "{{_left|name}}"?]]</h1>
+
+    <blockquote>
+
+    <p>{{_left+*tagged}}</p>
+
+    </blockquote>'
+revisions_315:
+  id: '3223'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '334'
+  created_by: '1'
+  content: ''
+revisions_316:
+  id: '2604'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '217'
+  created_by: '1'
+  content: ''
+revisions_317:
+  id: '3218'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '331'
+  created_by: '1'
+  content: ''
+revisions_318:
+  id: '2609'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '220'
+  created_by: '1'
+  content: ''
+revisions_319:
+  id: '2890'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '248'
+  created_by: '1'
+  content: ''
+revisions_320:
+  id: '3214'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '330'
+  created_by: '1'
+  content: ''
+revisions_321:
+  id: '3213'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '329'
+  created_by: '1'
+  content: ''
+revisions_322:
+  id: '2430'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '205'
+  created_by: '1'
+  content: ''
+revisions_323:
+  id: '2901'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '253'
+  created_by: '1'
+  content: ''
+revisions_324:
+  id: '3123'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '302'
+  created_by: '1'
+  content: ! '{"right":"_self"}'
+revisions_325:
+  id: '3008'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '267'
   created_by: '1'
   content: ! '{"type":"_self"}'
+revisions_326:
+  id: '3209'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '327'
+  created_by: '1'
+  content: ''
+revisions_327:
+  id: '3006'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '265'
+  created_by: '1'
+  content: ! '{"name":"_self"}'
+revisions_328:
+  id: '3208'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '326'
+  created_by: '1'
+  content: ''
+revisions_329:
+  id: '3004'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '263'
+  created_by: '1'
+  content: ! '{"left":{"type":"_left"}, "right":"_right"}'
+revisions_330:
+  id: '3207'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '325'
+  created_by: '1'
+  content: ''
+revisions_331:
+  id: '3002'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '261'
+  created_by: '1'
+  content: ! '{"right":"_self"}'
+revisions_332:
+  id: '3079'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '292'
+  created_by: '1'
+  content: '0'
+revisions_333:
+  id: '3133'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '307'
+  created_by: '1'
+  content: ! '{"right":"_self"}'
+revisions_334:
+  id: '3203'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '322'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <h1>Accounts with the {{_self|name}} role<br></h1>
+
+    <blockquote>
+
+    <p>{{+*members}}</p>
+
+    </blockquote>'
+revisions_335:
+  id: '2403'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '201'
+  created_by: '1'
+  content: ''
+revisions_336:
+  id: '3178'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '316'
+  created_by: '1'
+  content: ! '{"type": "HTML"}'
+revisions_337:
+  id: '237'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '82'
+  created_by: '1'
+  content: ''
+revisions_338:
+  id: '3177'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '315'
+  created_by: '1'
+  content: ! '{"name":"_self"}'
+revisions_339:
+  id: '3140'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '310'
+  created_by: '1'
+  content: ! '{"right":"_self"}'
+revisions_340:
+  id: '3137'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '309'
+  created_by: '1'
+  content: ''
+revisions_341:
+  id: '3078'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '291'
+  created_by: '1'
+  content: ''
+revisions_342:
+  id: '3126'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '305'
+  created_by: '1'
+  content: ! '{"right":"_self"}'
+revisions_343:
+  id: '62'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '61'
+  created_by: '1'
+  content: ''
+revisions_344:
+  id: '3088'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '274'
+  created_by: '1'
+  content: ! '{}'
+revisions_345:
+  id: '311'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '89'
+  created_by: '1'
+  content: ''
+revisions_346:
+  id: '2473'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '108'
+  created_by: '1'
+  content: /wagn/Request_Sent
+revisions_347:
+  id: '2474'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '62'
+  created_by: '1'
+  content: /wagn/Invite_Success
+revisions_348:
+  id: '2472'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '67'
+  created_by: '1'
+  content: /wagn/Signup_Success
+revisions_349:
+  id: '3066'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '289'
+  created_by: '1'
+  content: ''
+revisions_350:
+  id: '3065'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '288'
+  created_by: '1'
+  content: ''
+revisions_351:
+  id: '3063'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '286'
+  created_by: '1'
+  content: ''
+revisions_352:
+  id: '3061'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '285'
+  created_by: '1'
+  content: ''
+revisions_353:
+  id: '3060'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '284'
+  created_by: '1'
+  content: ''
+revisions_354:
+  id: '2331'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '81'
+  created_by: '1'
+  content: ! '<p>&nbsp;</p>
+
+    <p>{{Menu|open}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>{{Administrator links|open}}</p>'
+revisions_355:
+  id: '3082'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '294'
+  created_by: '1'
+  content: ! '{"type":"_self"}'
+revisions_356:
+  id: '3081'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '293'
+  created_by: '1'
+  content: '0'
+revisions_357:
+  id: '3009'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '268'
+  created_by: '1'
+  content: ! '{"right":"_self"}'
+revisions_358:
+  id: '3010'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '269'
+  created_by: '1'
+  content: ! '{"right":"_self"}'
+revisions_359:
+  id: '3031'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '109'
+  created_by: '1'
+  content: <div>Thank you for signing up with {{*title}}. Someone will receive your
+    request for an account and approve it as soon as possible.</div>
+revisions_360:
+  id: '3003'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '262'
+  created_by: '1'
+  content: ''
+revisions_361:
+  id: '3007'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '266'
+  created_by: '1'
+  content: ''
+revisions_362:
+  id: '3005'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '264'
+  created_by: '1'
+  content: ''
+revisions_363:
+  id: '3023'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '252'
+  created_by: '1'
+  content: ''
+revisions_364:
+  id: '266'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '86'
+  created_by: '1'
+  content: ''
+revisions_365:
+  id: '2878'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '241'
+  created_by: '1'
+  content: ''
+revisions_366:
+  id: '3019'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '255'
+  created_by: '1'
+  content: ''
+revisions_367:
+  id: '3021'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '256'
+  created_by: '1'
+  content: ''
+revisions_368:
+  id: '2889'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '247'
+  created_by: '1'
+  content: ''
+revisions_369:
+  id: '3022'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '277'
+  created_by: '1'
+  content: description
+revisions_370:
+  id: '2624'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '222'
+  created_by: '1'
+  content: ''
+revisions_371:
+  id: '2573'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '15'
+  created_by: '1'
+  content: <p>Edits made by people who are not signed in are credited to Anonymous.
+    [[http://wagn.org/wagn/account|Learn more about accounts]].</p>
+revisions_372:
+  id: '2494'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '68'
+  created_by: '1'
+  content: ! '<p>Thanks!&nbsp; Your invitation is on its way.</p>
+
+    <p>&nbsp;</p>
+
+    <p>See [[Account Requests]].</p>'
+revisions_373:
+  id: '2402'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '200'
+  created_by: '1'
+  content: <p>Thanks for submitting this form!</p>
+revisions_374:
+  id: '2290'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '190'
+  created_by: '1'
+  content: ''
+revisions_375:
+  id: '2264'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '184'
+  created_by: '1'
+  content: ''
+revisions_376:
+  id: '2008'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '112'
+  created_by: '1'
+  content: ! '[[*incoming]]
+
+    [[*outgoing]]
+
+    [[*plusses]]
+
+    [[*community]]'
+revisions_377:
+  id: '2087'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '178'
+  created_by: '1'
+  content: ''
+revisions_378:
+  id: '2013'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '172'
+  created_by: '1'
+  content: ''
+revisions_379:
+  id: '1993'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '170'
+  created_by: '1'
+  content: ''
+revisions_380:
+  id: '1988'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '168'
+  created_by: '1'
+  content: ''
+revisions_381:
+  id: '355'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '98'
+  created_by: '1'
+  content: ''
+revisions_382:
+  id: '43'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '43'
+  created_by: '1'
+  content: ''
+revisions_383:
+  id: '41'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '41'
+  created_by: '1'
+  content: ''
+revisions_384:
+  id: '37'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '37'
+  created_by: '1'
+  content: ''
+revisions_385:
+  id: '1253'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '115'
+  created_by: '1'
+  content: ''
+revisions_386:
+  id: '1225'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '110'
+  created_by: '1'
+  content: ''
+revisions_387:
+  id: '1755'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '55'
+  created_by: '1'
+  content: My Wagn
+revisions_388:
+  id: '10'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '10'
+  created_by: '1'
+  content: ''
+revisions_389:
+  id: '349'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '92'
+  created_by: '1'
+  content: ''
+revisions_390:
+  id: '1407'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '128'
+  created_by: '1'
+  content: ''
+revisions_391:
+  id: '1696'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '146'
+  created_by: '1'
+  content: ''
+revisions_392:
+  id: '33'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '33'
+  created_by: '1'
+  content: ''
+revisions_393:
+  id: '35'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '35'
+  created_by: '1'
+  content: ''
 revisions_394:
-  id: '6026'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '571'
+  id: '1550'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '138'
   created_by: '1'
-  content: ! '[[Administrator]]'
+  content: ''
 revisions_395:
-  id: '6027'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '572'
+  id: '1409'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '130'
   created_by: '1'
-  content: ! '[[Administrator]]'
+  content: ''
 revisions_396:
-  id: '6028'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '573'
+  id: '9'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '9'
   created_by: '1'
-  content: ! '[[Administrator]]'
+  content: ''
 revisions_397:
-  id: '6031'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '574'
+  id: '8'
+  created_at: '2012-01-16 13:34:54'
+  card_id: '8'
   created_by: '1'
-  content: ! ' <body>{{_main}} </body>'
+  content: ''
 revisions_398:
-  id: '6032'
-  created_at: '2012-01-14 12:47:12'
-  card_id: '85'
-  created_by: '1'
-  content: ! '<p>[[/card/new|Add a card]]</p>
-
-    <p></p>
-
-    <p>{{_main+_user}}</p>'
-revisions_399:
   id: '6058'
-  created_at: '2012-01-14 18:47:27.661221'
+  created_at: '2012-01-16 19:35:09.238035'
   card_id: '600'
   created_by: '1'
   content: I'm number two
-revisions_400:
+revisions_399:
   id: '6059'
-  created_at: '2012-01-14 18:47:28.121099'
+  created_at: '2012-01-16 19:35:09.821726'
   card_id: '601'
   created_by: '1'
   content: I'm number one
-revisions_401:
+revisions_400:
   id: '6060'
-  created_at: '2012-01-14 18:47:28.214097'
+  created_at: '2012-01-16 19:35:09.970105'
   card_id: '602'
+  created_by: '1'
+  content: ! '[[Administrator]]'
+revisions_401:
+  id: '6061'
+  created_at: '2012-01-16 19:35:10.19701'
+  card_id: '603'
   created_by: '1'
   content: Mr. Buttz
 revisions_402:
-  id: '6061'
-  created_at: '2012-01-14 18:47:28.341173'
-  card_id: '603'
-  created_by: '1'
-  content: ''
-revisions_403:
   id: '6062'
-  created_at: '2012-01-14 18:47:28.410133'
+  created_at: '2012-01-16 19:35:10.255144'
   card_id: '604'
   created_by: '1'
   content: ''
-revisions_404:
+revisions_403:
   id: '6063'
-  created_at: '2012-01-14 18:47:28.484081'
+  created_at: '2012-01-16 19:35:10.295806'
   card_id: '605'
   created_by: '1'
   content: ''
-revisions_405:
+revisions_404:
   id: '6064'
-  created_at: '2012-01-14 18:47:28.56767'
+  created_at: '2012-01-16 19:35:10.356432'
   card_id: '606'
+  created_by: '1'
+  content: ''
+revisions_405:
+  id: '6065'
+  created_at: '2012-01-16 19:35:10.500374'
+  card_id: '607'
   created_by: '1'
   content: I got no account
 revisions_406:
-  id: '6065'
-  created_at: '2012-01-14 18:47:28.628089'
-  card_id: '607'
-  created_by: '1'
-  content: ''
-revisions_407:
   id: '6066'
-  created_at: '2012-01-14 18:47:28.685782'
+  created_at: '2012-01-16 19:35:10.543865'
   card_id: '608'
   created_by: '1'
   content: ''
-revisions_408:
+revisions_407:
   id: '6067'
-  created_at: '2012-01-14 18:47:28.865655'
+  created_at: '2012-01-16 19:35:10.599152'
   card_id: '609'
   created_by: '1'
   content: ''
-revisions_409:
+revisions_408:
   id: '6068'
-  created_at: '2012-01-14 18:47:28.935888'
+  created_at: '2012-01-16 19:35:10.706601'
   card_id: '610'
   created_by: '1'
   content: ''
-revisions_410:
+revisions_409:
   id: '6069'
-  created_at: '2012-01-14 18:47:28.983627'
+  created_at: '2012-01-16 19:35:10.769098'
   card_id: '611'
   created_by: '1'
   content: ''
-revisions_411:
+revisions_410:
   id: '6070'
-  created_at: '2012-01-14 18:47:29.191872'
+  created_at: '2012-01-16 19:35:10.817651'
   card_id: '612'
+  created_by: '1'
+  content: ''
+revisions_411:
+  id: '6071'
+  created_at: '2012-01-16 19:35:10.96334'
+  card_id: '613'
   created_by: '1'
   content: ! '<p>{{+description}}</p>
 
@@ -3339,63 +3325,63 @@ revisions_411:
 
     </blockquote>'
 revisions_412:
-  id: '6071'
-  created_at: '2012-01-14 18:47:29.412006'
-  card_id: '613'
-  created_by: '1'
-  content: ''
-revisions_413:
   id: '6072'
-  created_at: '2012-01-14 18:47:29.473689'
+  created_at: '2012-01-16 19:35:11.048691'
   card_id: '614'
   created_by: '1'
   content: ''
-revisions_414:
+revisions_413:
   id: '6073'
-  created_at: '2012-01-14 18:47:29.522641'
+  created_at: '2012-01-16 19:35:11.103889'
   card_id: '615'
   created_by: '1'
   content: ''
-revisions_415:
+revisions_414:
   id: '6074'
-  created_at: '2012-01-14 18:47:29.57264'
+  created_at: '2012-01-16 19:35:11.15381'
   card_id: '616'
   created_by: '1'
   content: ''
-revisions_416:
+revisions_415:
   id: '6075'
-  created_at: '2012-01-14 18:47:29.688753'
+  created_at: '2012-01-16 19:35:11.202014'
   card_id: '617'
   created_by: '1'
   content: ''
-revisions_417:
+revisions_416:
   id: '6076'
-  created_at: '2012-01-14 18:47:29.763643'
+  created_at: '2012-01-16 19:35:11.255578'
   card_id: '618'
   created_by: '1'
   content: ''
-revisions_418:
+revisions_417:
   id: '6077'
-  created_at: '2012-01-14 18:47:29.8196'
+  created_at: '2012-01-16 19:35:11.314727'
   card_id: '619'
   created_by: '1'
   content: ''
-revisions_419:
+revisions_418:
   id: '6078'
-  created_at: '2012-01-14 18:47:29.868173'
+  created_at: '2012-01-16 19:35:11.366175'
   card_id: '620'
   created_by: '1'
   content: ''
-revisions_420:
+revisions_419:
   id: '6079'
-  created_at: '2012-01-14 18:47:29.97338'
+  created_at: '2012-01-16 19:35:11.483007'
   card_id: '621'
   created_by: '1'
   content: ''
-revisions_421:
+revisions_420:
   id: '6080'
-  created_at: '2012-01-14 18:47:30.041338'
+  created_at: '2012-01-16 19:35:11.523334'
   card_id: '622'
+  created_by: '1'
+  content: ''
+revisions_421:
+  id: '6081'
+  created_at: '2012-01-16 19:35:11.585352'
+  card_id: '623'
   created_by: '1'
   content: ! '<p>{{+description}}</p>
 
@@ -3413,42 +3399,26 @@ revisions_421:
 
     </blockquote>'
 revisions_422:
-  id: '6081'
-  created_at: '2012-01-14 18:47:30.225706'
-  card_id: '623'
-  created_by: '1'
-  content: ''
-revisions_423:
   id: '6082'
-  created_at: '2012-01-14 18:47:30.330823'
+  created_at: '2012-01-16 19:35:11.696365'
   card_id: '624'
   created_by: '1'
   content: ''
-revisions_424:
+revisions_423:
   id: '6083'
-  created_at: '2012-01-14 18:47:30.371706'
+  created_at: '2012-01-16 19:35:11.736259'
   card_id: '625'
   created_by: '1'
   content: ''
-revisions_425:
+revisions_424:
   id: '6084'
-  created_at: '2012-01-14 18:47:30.413101'
+  created_at: '2012-01-16 19:35:11.7774'
   card_id: '626'
   created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <h1>Accounts with the {{_self|name}} role<br></h1>
-
-    <blockquote>
-
-    <p>{{+*members}}</p>
-
-    </blockquote>'
-revisions_426:
+  content: ''
+revisions_425:
   id: '6085'
-  created_at: '2012-01-14 18:47:30.478406'
+  created_at: '2012-01-16 19:35:11.871341'
   card_id: '627'
   created_by: '1'
   content: ! '<p>{{+description}}</p>
@@ -3462,9 +3432,9 @@ revisions_426:
     <p>{{+*members}}</p>
 
     </blockquote>'
-revisions_427:
+revisions_426:
   id: '6086'
-  created_at: '2012-01-14 18:47:30.544607'
+  created_at: '2012-01-16 19:35:11.936396'
   card_id: '628'
   created_by: '1'
   content: ! '<p>{{+description}}</p>
@@ -3478,9 +3448,9 @@ revisions_427:
     <p>{{+*members}}</p>
 
     </blockquote>'
-revisions_428:
+revisions_427:
   id: '6087'
-  created_at: '2012-01-14 18:47:30.609483'
+  created_at: '2012-01-16 19:35:12.078252'
   card_id: '629'
   created_by: '1'
   content: ! '<p>{{+description}}</p>
@@ -3494,249 +3464,259 @@ revisions_428:
     <p>{{+*members}}</p>
 
     </blockquote>'
-revisions_429:
+revisions_428:
   id: '6088'
-  created_at: '2012-01-14 18:47:30.819558'
+  created_at: '2012-01-16 19:35:12.150408'
   card_id: '630'
   created_by: '1'
-  content: ''
-revisions_430:
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <h1>Accounts with the {{_self|name}} role<br></h1>
+
+    <blockquote>
+
+    <p>{{+*members}}</p>
+
+    </blockquote>'
+revisions_429:
   id: '6089'
-  created_at: '2012-01-14 18:47:30.860438'
+  created_at: '2012-01-16 19:35:12.229713'
   card_id: '631'
   created_by: '1'
-  content: ''
-revisions_431:
+  content: ! '[[# ]]'
+revisions_430:
   id: '6090'
-  created_at: '2012-01-14 18:47:30.959889'
+  created_at: '2012-01-16 19:35:12.276948'
+  card_id: '631'
+  created_by: '1'
+  content: ! '[[#]]\n[[# ]]'
+revisions_431:
+  id: '6091'
+  created_at: '2012-01-16 19:35:12.337112'
+  card_id: '631'
+  created_by: '1'
+  content: ! '[[#\n#]]\n[[# ]]'
+revisions_432:
+  id: '6092'
+  created_at: '2012-01-16 19:35:12.405145'
   card_id: '632'
   created_by: '1'
-  content: ''
-revisions_432:
-  id: '6091'
-  created_at: '2012-01-14 18:47:30.999119'
+  content: ! '[[# ]]'
+revisions_433:
+  id: '6093'
+  created_at: '2012-01-16 19:35:12.447403'
+  card_id: '632'
+  created_by: '1'
+  content: ! '[[#]]\n[[# ]]'
+revisions_434:
+  id: '6094'
+  created_at: '2012-01-16 19:35:12.513243'
+  card_id: '632'
+  created_by: '1'
+  content: ! '[[#\n#]]\n[[# ]]'
+revisions_435:
+  id: '6095'
+  created_at: '2012-01-16 19:35:12.586396'
   card_id: '633'
   created_by: '1'
-  content: I'm here to be referenced to
-revisions_433:
-  id: '6092'
-  created_at: '2012-01-14 18:47:31.040011'
+  content: ! '[[# ]]'
+revisions_436:
+  id: '6096'
+  created_at: '2012-01-16 19:35:12.627171'
+  card_id: '633'
+  created_by: '1'
+  content: ! '[[#]]\n[[# ]]'
+revisions_437:
+  id: '6097'
+  created_at: '2012-01-16 19:35:12.743091'
+  card_id: '633'
+  created_by: '1'
+  content: ! '[[#\n#]]\n[[Administrator]]'
+revisions_438:
+  id: '6098'
+  created_at: '2012-01-16 19:35:12.793517'
   card_id: '634'
   created_by: '1'
-  content: Alpha [[Z]]
-revisions_434:
-  id: '6093'
-  created_at: '2012-01-14 18:47:31.089439'
-  card_id: '635'
-  created_by: '1'
-  content: Beta {{Z}}
-revisions_435:
-  id: '6094'
-  created_at: '2012-01-14 18:47:31.130131'
-  card_id: '636'
-  created_by: '1'
-  content: Theta
-revisions_436:
-  id: '6095'
-  created_at: '2012-01-14 18:47:31.176255'
-  card_id: '637'
-  created_by: '1'
-  content: ! '[[A]] [[A+B]] [[T]]'
-revisions_437:
-  id: '6096'
-  created_at: '2012-01-14 18:47:31.252739'
-  card_id: '638'
-  created_by: '1'
-  content: ! '{{B}} {{A+B}} {{A}} {{T}}'
-revisions_438:
-  id: '6097'
-  created_at: '2012-01-14 18:47:31.395781'
-  card_id: '639'
-  created_by: '1'
-  content: AlphaBeta
+  content: ''
 revisions_439:
-  id: '6098'
-  created_at: '2012-01-14 18:47:31.493667'
-  card_id: '640'
+  id: '6099'
+  created_at: '2012-01-16 19:35:12.834126'
+  card_id: '635'
   created_by: '1'
   content: ''
 revisions_440:
-  id: '6099'
-  created_at: '2012-01-14 18:47:31.533882'
-  card_id: '641'
+  id: '6100'
+  created_at: '2012-01-16 19:35:12.875361'
+  card_id: '636'
   created_by: '1'
   content: ''
 revisions_441:
-  id: '6100'
-  created_at: '2012-01-14 18:47:31.557198'
+  id: '6101'
+  created_at: '2012-01-16 19:35:12.988125'
+  card_id: '637'
+  created_by: '1'
+  content: I'm here to be referenced to
+revisions_442:
+  id: '6102'
+  created_at: '2012-01-16 19:35:13.029977'
+  card_id: '638'
+  created_by: '1'
+  content: Alpha [[Z]]
+revisions_443:
+  id: '6103'
+  created_at: '2012-01-16 19:35:13.07965'
+  card_id: '639'
+  created_by: '1'
+  content: Beta {{Z}}
+revisions_444:
+  id: '6104'
+  created_at: '2012-01-16 19:35:13.120275'
+  card_id: '640'
+  created_by: '1'
+  content: Theta
+revisions_445:
+  id: '6105'
+  created_at: '2012-01-16 19:35:13.161783'
+  card_id: '641'
+  created_by: '1'
+  content: ! '[[A]] [[A+B]] [[T]]'
+revisions_446:
+  id: '6106'
+  created_at: '2012-01-16 19:35:13.227262'
   card_id: '642'
   created_by: '1'
-  content: ''
-revisions_442:
-  id: '6101'
-  created_at: '2012-01-14 18:47:31.60133'
+  content: ! '{{B}} {{A+B}} {{A}} {{T}}'
+revisions_447:
+  id: '6107'
+  created_at: '2012-01-16 19:35:13.287892'
   card_id: '643'
   created_by: '1'
-  content: ''
-revisions_443:
-  id: '6102'
-  created_at: '2012-01-14 18:47:31.691618'
+  content: AlphaBeta
+revisions_448:
+  id: '6108'
+  created_at: '2012-01-16 19:35:13.372542'
   card_id: '644'
   created_by: '1'
   content: ''
-revisions_444:
-  id: '6103'
-  created_at: '2012-01-14 18:47:31.7873'
+revisions_449:
+  id: '6109'
+  created_at: '2012-01-16 19:35:13.409151'
   card_id: '645'
   created_by: '1'
   content: ''
-revisions_445:
-  id: '6104'
-  created_at: '2012-01-14 18:47:31.813998'
+revisions_450:
+  id: '6110'
+  created_at: '2012-01-16 19:35:13.433196'
   card_id: '646'
   created_by: '1'
   content: ''
-revisions_446:
-  id: '6105'
-  created_at: '2012-01-14 18:47:31.858789'
+revisions_451:
+  id: '6111'
+  created_at: '2012-01-16 19:35:13.47457'
   card_id: '647'
   created_by: '1'
   content: ''
-revisions_447:
-  id: '6106'
-  created_at: '2012-01-14 18:47:31.884329'
+revisions_452:
+  id: '6112'
+  created_at: '2012-01-16 19:35:13.498235'
   card_id: '648'
   created_by: '1'
   content: ''
-revisions_448:
-  id: '6107'
-  created_at: '2012-01-14 18:47:31.953414'
+revisions_453:
+  id: '6113'
+  created_at: '2012-01-16 19:35:13.656686'
   card_id: '649'
   created_by: '1'
   content: ''
-revisions_449:
-  id: '6108'
-  created_at: '2012-01-14 18:47:32.048095'
+revisions_454:
+  id: '6114'
+  created_at: '2012-01-16 19:35:13.680883'
   card_id: '650'
   created_by: '1'
   content: ''
-revisions_450:
-  id: '6109'
-  created_at: '2012-01-14 18:47:32.108342'
+revisions_455:
+  id: '6115'
+  created_at: '2012-01-16 19:35:13.722529'
   card_id: '651'
   created_by: '1'
   content: ''
-revisions_451:
-  id: '6110'
-  created_at: '2012-01-14 18:47:32.134681'
+revisions_456:
+  id: '6116'
+  created_at: '2012-01-16 19:35:13.747607'
   card_id: '652'
   created_by: '1'
   content: ''
-revisions_452:
-  id: '6111'
-  created_at: '2012-01-14 18:47:32.198624'
+revisions_457:
+  id: '6117'
+  created_at: '2012-01-16 19:35:13.810286'
   card_id: '653'
   created_by: '1'
   content: ''
-revisions_453:
-  id: '6112'
-  created_at: '2012-01-14 18:47:32.223896'
+revisions_458:
+  id: '6118'
+  created_at: '2012-01-16 19:35:13.833808'
   card_id: '654'
   created_by: '1'
   content: ''
-revisions_454:
-  id: '6113'
-  created_at: '2012-01-14 18:47:32.287074'
+revisions_459:
+  id: '6119'
+  created_at: '2012-01-16 19:35:13.891375'
   card_id: '655'
   created_by: '1'
   content: ''
-revisions_455:
-  id: '6114'
-  created_at: '2012-01-14 18:47:32.342583'
+revisions_460:
+  id: '6120'
+  created_at: '2012-01-16 19:35:13.914942'
   card_id: '656'
   created_by: '1'
   content: ''
-revisions_456:
-  id: '6115'
-  created_at: '2012-01-14 18:47:32.395475'
+revisions_461:
+  id: '6121'
+  created_at: '2012-01-16 19:35:13.97376'
   card_id: '657'
   created_by: '1'
   content: ''
-revisions_457:
-  id: '6116'
-  created_at: '2012-01-14 18:47:32.491479'
+revisions_462:
+  id: '6122'
+  created_at: '2012-01-16 19:35:13.998354'
   card_id: '658'
   created_by: '1'
   content: ''
-revisions_458:
-  id: '6117'
-  created_at: '2012-01-14 18:47:32.547632'
+revisions_463:
+  id: '6123'
+  created_at: '2012-01-16 19:35:14.052559'
   card_id: '659'
   created_by: '1'
   content: ''
-revisions_459:
-  id: '6118'
-  created_at: '2012-01-14 18:47:32.589522'
+revisions_464:
+  id: '6124'
+  created_at: '2012-01-16 19:35:14.102165'
   card_id: '660'
   created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|linkname}}|add {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h1>{{_self|name}} Cards</h1>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_460:
-  id: '6119'
-  created_at: '2012-01-14 18:47:32.680182'
+  content: ''
+revisions_465:
+  id: '6125'
+  created_at: '2012-01-16 19:35:14.246123'
   card_id: '661'
   created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|linkname}}|add {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h1>{{_self|name}} Cards</h1>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_461:
-  id: '6121'
-  created_at: '2012-01-14 18:47:32.920971'
+  content: ''
+revisions_466:
+  id: '6126'
+  created_at: '2012-01-16 19:35:14.270935'
+  card_id: '662'
+  created_by: '1'
+  content: ''
+revisions_467:
+  id: '6127'
+  created_at: '2012-01-16 19:35:14.324246'
   card_id: '663'
   created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|linkname}}|add {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h1>{{_self|name}} Cards</h1>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
-revisions_462:
-  id: '6122'
-  created_at: '2012-01-14 18:47:33.010929'
+  content: ''
+revisions_468:
+  id: '6128'
+  created_at: '2012-01-16 19:35:14.36604'
   card_id: '664'
   created_by: '1'
   content: ! '<p>{{+description}}</p>
@@ -3754,9 +3734,9 @@ revisions_462:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-revisions_463:
-  id: '6123'
-  created_at: '2012-01-14 18:47:33.100514'
+revisions_469:
+  id: '6129'
+  created_at: '2012-01-16 19:35:14.457367'
   card_id: '665'
   created_by: '1'
   content: ! '<p>{{+description}}</p>
@@ -3774,132 +3754,150 @@ revisions_463:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-revisions_464:
-  id: '6124'
-  created_at: '2012-01-14 18:47:33.181326'
-  card_id: '666'
-  created_by: '1'
-  content: basiccontent
-revisions_465:
-  id: '6125'
-  created_at: '2012-01-14 18:47:33.342689'
-  card_id: '667'
-  created_by: '1'
-  content: type_a_content
-revisions_466:
-  id: '6126'
-  created_at: '2012-01-14 18:47:33.402564'
-  card_id: '668'
-  created_by: '1'
-  content: type_b_content
-revisions_467:
-  id: '6127'
-  created_at: '2012-01-14 18:47:33.454074'
-  card_id: '669'
-  created_by: '1'
-  content: type_c_content
-revisions_468:
-  id: '6128'
-  created_at: '2012-01-14 18:47:33.503391'
-  card_id: '670'
-  created_by: '1'
-  content: type_d_content
-revisions_469:
-  id: '6129'
-  created_at: '2012-01-14 18:47:33.562697'
-  card_id: '671'
-  created_by: '1'
-  content: type_e_content
 revisions_470:
   id: '6130'
-  created_at: '2012-01-14 18:47:33.610235'
-  card_id: '672'
+  created_at: '2012-01-16 19:35:14.541662'
+  card_id: '666'
   created_by: '1'
-  content: type_f_content
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|linkname}}|add {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h1>{{_self|name}} Cards</h1>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
 revisions_471:
   id: '6131'
-  created_at: '2012-01-14 18:47:33.651976'
-  card_id: '673'
+  created_at: '2012-01-16 19:35:14.623891'
+  card_id: '667'
   created_by: '1'
-  content: first
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|linkname}}|add {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h1>{{_self|name}} Cards</h1>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
 revisions_472:
   id: '6132'
-  created_at: '2012-01-14 18:47:33.690323'
-  card_id: '673'
+  created_at: '2012-01-16 19:35:14.706806'
+  card_id: '668'
   created_by: '1'
-  content: second
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|linkname}}|add {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h1>{{_self|name}} Cards</h1>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
 revisions_473:
   id: '6133'
-  created_at: '2012-01-14 18:47:33.757385'
-  card_id: '673'
+  created_at: '2012-01-16 19:35:14.901527'
+  card_id: '669'
   created_by: '1'
-  content: third
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|linkname}}|add {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h1>{{_self|name}} Cards</h1>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
 revisions_474:
   id: '6134'
-  created_at: '2012-01-14 18:47:33.878109'
-  card_id: '674'
+  created_at: '2012-01-16 19:35:14.990921'
+  card_id: '670'
   created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|linkname}}|add {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h1>{{_self|name}} Cards</h1>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
+  content: basiccontent
 revisions_475:
   id: '6135'
-  created_at: '2012-01-14 18:47:34.052787'
-  card_id: '675'
+  created_at: '2012-01-16 19:35:15.034614'
+  card_id: '671'
   created_by: '1'
-  content: ! '{"type":"_self"}'
+  content: type_a_content
 revisions_476:
   id: '6136'
-  created_at: '2012-01-14 18:47:34.174834'
-  card_id: '676'
+  created_at: '2012-01-16 19:35:15.08373'
+  card_id: '672'
   created_by: '1'
-  content: ! '{{+name}} {{+age}} {{+description}}'
+  content: type_b_content
 revisions_477:
   id: '6137'
-  created_at: '2012-01-14 18:47:34.352868'
-  card_id: '677'
-  created_by: '3'
-  content: test
+  created_at: '2012-01-16 19:35:15.133101'
+  card_id: '673'
+  created_by: '1'
+  content: type_c_content
 revisions_478:
   id: '6138'
-  created_at: '2012-01-14 18:47:34.472416'
-  card_id: '678'
-  created_by: '3'
-  content: test
+  created_at: '2012-01-16 19:35:15.18324'
+  card_id: '674'
+  created_by: '1'
+  content: type_d_content
 revisions_479:
   id: '6139'
-  created_at: '2012-01-14 18:47:34.523954'
-  card_id: '679'
+  created_at: '2012-01-16 19:35:15.23149'
+  card_id: '675'
   created_by: '1'
-  content: test
+  content: type_e_content
 revisions_480:
   id: '6140'
-  created_at: '2012-01-14 18:47:34.601206'
-  card_id: '680'
+  created_at: '2012-01-16 19:35:15.280788'
+  card_id: '676'
   created_by: '1'
-  content: ! '{"type":"_self"}'
+  content: type_f_content
 revisions_481:
   id: '6141'
-  created_at: '2012-01-14 18:47:34.640523'
-  card_id: '681'
+  created_at: '2012-01-16 19:35:15.32289'
+  card_id: '677'
   created_by: '1'
-  content: ! '[[r1]]'
+  content: first
 revisions_482:
   id: '6142'
-  created_at: '2012-01-14 18:47:34.702022'
-  card_id: '682'
+  created_at: '2012-01-16 19:35:15.435686'
+  card_id: '677'
+  created_by: '1'
+  content: second
+revisions_483:
+  id: '6143'
+  created_at: '2012-01-16 19:35:15.481676'
+  card_id: '677'
+  created_by: '1'
+  content: third
+revisions_484:
+  id: '6144'
+  created_at: '2012-01-16 19:35:15.528935'
+  card_id: '678'
   created_by: '1'
   content: ! '<p>{{+description}}</p>
 
@@ -3916,152 +3914,158 @@ revisions_482:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-revisions_483:
-  id: '6143'
-  created_at: '2012-01-14 18:47:34.873278'
-  card_id: '683'
-  created_by: '1'
-  content: ! '{"type":"_self"}'
-revisions_484:
-  id: '6144'
-  created_at: '2012-01-14 18:47:34.900335'
-  card_id: '684'
-  created_by: '1'
-  content: by {{+author}}, design by {{+illustrator}}
 revisions_485:
   id: '6145'
-  created_at: '2012-01-14 18:47:35.010045'
-  card_id: '685'
+  created_at: '2012-01-16 19:35:15.677003'
+  card_id: '679'
   created_by: '1'
-  content: by {{+author}}, design by {{+illustrator}}
+  content: ! '{"type":"_self"}'
 revisions_486:
   id: '6146'
-  created_at: '2019-12-31 06:00:00'
-  card_id: '686'
+  created_at: '2012-01-16 19:35:15.723092'
+  card_id: '680'
   created_by: '1'
-  content: ''
+  content: ! '{{+name}} {{+age}} {{+description}}'
 revisions_487:
   id: '6147'
-  created_at: '2019-12-31 06:00:00'
-  card_id: '687'
-  created_by: '1'
-  content: ''
+  created_at: '2012-01-16 19:35:15.956382'
+  card_id: '681'
+  created_by: '3'
+  content: test
 revisions_488:
   id: '6148'
-  created_at: '2019-12-31 06:00:00'
-  card_id: '688'
-  created_by: '1'
-  content: ''
+  created_at: '2012-01-16 19:35:16.004719'
+  card_id: '682'
+  created_by: '3'
+  content: test
 revisions_489:
   id: '6149'
-  created_at: '2019-12-31 06:00:00'
-  card_id: '689'
+  created_at: '2012-01-16 19:35:16.042824'
+  card_id: '683'
   created_by: '1'
-  content: ! '[[Sara]]'
+  content: test
 revisions_490:
   id: '6150'
-  created_at: '2019-12-31 06:00:00'
-  card_id: '690'
+  created_at: '2012-01-16 19:35:16.121458'
+  card_id: '684'
   created_by: '1'
-  content: ''
+  content: ! '{"type":"_self"}'
 revisions_491:
   id: '6151'
-  created_at: '2019-12-31 06:00:00'
-  card_id: '691'
+  created_at: '2012-01-16 19:35:16.158224'
+  card_id: '685'
   created_by: '1'
-  content: ! '[[Sara]]
-
-    [[John]]'
+  content: ! '[[r1]]'
 revisions_492:
   id: '6152'
-  created_at: '2019-12-31 06:00:00'
-  card_id: '692'
+  created_at: '2012-01-16 19:35:16.216343'
+  card_id: '686'
   created_by: '1'
-  content: ! '{{+her}}'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|linkname}}|add {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h1>{{_self|name}} Cards</h1>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
 revisions_493:
   id: '6153'
-  created_at: '2019-12-31 06:00:00'
-  card_id: '693'
+  created_at: '2012-01-16 19:35:16.316987'
+  card_id: '687'
   created_by: '1'
-  content: ! '[[John]]'
+  content: ! '{"type":"_self"}'
 revisions_494:
   id: '6154'
-  created_at: '2019-12-31 06:00:00'
-  card_id: '694'
+  created_at: '2012-01-16 19:35:16.416944'
+  card_id: '688'
   created_by: '1'
-  content: ''
+  content: by {{+author}}, design by {{+illustrator}}
 revisions_495:
   id: '6155'
-  created_at: '2019-12-31 06:00:00'
-  card_id: '695'
+  created_at: '2012-01-16 19:35:16.527082'
+  card_id: '689'
   created_by: '1'
-  content: ''
+  content: by {{+author}}, design by {{+illustrator}}
 revisions_496:
   id: '6156'
   created_at: '2019-12-31 06:00:00'
-  card_id: '696'
+  card_id: '690'
   created_by: '1'
   content: ''
 revisions_497:
   id: '6157'
   created_at: '2019-12-31 06:00:00'
-  card_id: '697'
+  card_id: '691'
   created_by: '1'
-  content: ! '<p>{{+description}}</p>
-
-    <p>&nbsp;</p>
-
-    <p>[[/new/{{_self|linkname}}|add {{_self|name}} card]]</p>
-
-    <p>&nbsp;</p>
-
-    <h1>{{_self|name}} Cards</h1>
-
-    <blockquote>
-
-    <p>{{+*type+by name}}</p>
-
-    </blockquote>'
+  content: ''
 revisions_498:
   id: '6158'
   created_at: '2019-12-31 06:00:00'
-  card_id: '698'
+  card_id: '692'
   created_by: '1'
-  content: ! '[[Sara]]'
+  content: ''
 revisions_499:
   id: '6159'
   created_at: '2019-12-31 06:00:00'
-  card_id: '699'
+  card_id: '693'
   created_by: '1'
-  content: ! '{{+tint}}'
+  content: ! '[[Sara]]'
 revisions_500:
   id: '6160'
   created_at: '2019-12-31 06:00:00'
-  card_id: '700'
+  card_id: '694'
   created_by: '1'
   content: ''
 revisions_501:
   id: '6161'
   created_at: '2019-12-31 06:00:00'
-  card_id: '701'
+  card_id: '695'
   created_by: '1'
-  content: ''
+  content: ! '[[Sara]]
+
+    [[John]]'
 revisions_502:
   id: '6162'
-  created_at: '2012-01-14 18:47:39.824608'
-  card_id: '702'
+  created_at: '2019-12-31 06:00:00'
+  card_id: '696'
   created_by: '1'
-  content: ! '{"type":"_self"}'
+  content: ! '{{+her}}'
 revisions_503:
   id: '6163'
-  created_at: '2012-01-14 18:47:39.866696'
-  card_id: '703'
+  created_at: '2019-12-31 06:00:00'
+  card_id: '697'
   created_by: '1'
-  content: ''
+  content: ! '[[John]]'
 revisions_504:
   id: '6164'
-  created_at: '2012-01-14 18:47:39.91554'
-  card_id: '704'
+  created_at: '2019-12-31 06:00:00'
+  card_id: '698'
+  created_by: '1'
+  content: ''
+revisions_505:
+  id: '6165'
+  created_at: '2019-12-31 06:00:00'
+  card_id: '699'
+  created_by: '1'
+  content: ''
+revisions_506:
+  id: '6166'
+  created_at: '2019-12-31 06:00:00'
+  card_id: '700'
+  created_by: '1'
+  content: ''
+revisions_507:
+  id: '6167'
+  created_at: '2019-12-31 06:00:00'
+  card_id: '701'
   created_by: '1'
   content: ! '<p>{{+description}}</p>
 
@@ -4078,21 +4082,77 @@ revisions_504:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-revisions_505:
-  id: '6165'
-  created_at: '2012-01-14 18:47:40.093566'
+revisions_508:
+  id: '6168'
+  created_at: '2019-12-31 06:00:00'
+  card_id: '702'
+  created_by: '1'
+  content: ! '[[Sara]]'
+revisions_509:
+  id: '6169'
+  created_at: '2019-12-31 06:00:00'
+  card_id: '703'
+  created_by: '1'
+  content: ! '{{+tint}}'
+revisions_510:
+  id: '6170'
+  created_at: '2019-12-31 06:00:00'
+  card_id: '704'
+  created_by: '1'
+  content: ''
+revisions_511:
+  id: '6171'
+  created_at: '2019-12-31 06:00:00'
   card_id: '705'
   created_by: '1'
-  content: ! '{"type":"_self"}'
-revisions_506:
-  id: '6166'
-  created_at: '2012-01-14 18:47:40.119336'
+  content: ''
+revisions_512:
+  id: '6172'
+  created_at: '2012-01-16 19:35:17.799395'
   card_id: '706'
   created_by: '1'
-  content: ! '[[Anyone]]'
-revisions_507:
-  id: '6167'
-  created_at: '2012-01-14 18:47:40.204632'
+  content: ! '{"type":"_self"}'
+revisions_513:
+  id: '6173'
+  created_at: '2012-01-16 19:35:17.837128'
   card_id: '707'
+  created_by: '1'
+  content: ''
+revisions_514:
+  id: '6174'
+  created_at: '2012-01-16 19:35:17.886449'
+  card_id: '708'
+  created_by: '1'
+  content: ! '<p>{{+description}}</p>
+
+    <p>&nbsp;</p>
+
+    <p>[[/new/{{_self|linkname}}|add {{_self|name}} card]]</p>
+
+    <p>&nbsp;</p>
+
+    <h1>{{_self|name}} Cards</h1>
+
+    <blockquote>
+
+    <p>{{+*type+by name}}</p>
+
+    </blockquote>'
+revisions_515:
+  id: '6175'
+  created_at: '2012-01-16 19:35:18.064518'
+  card_id: '709'
+  created_by: '1'
+  content: ! '{"type":"_self"}'
+revisions_516:
+  id: '6176'
+  created_at: '2012-01-16 19:35:18.091269'
+  card_id: '710'
+  created_by: '1'
+  content: ! '[[Anyone]]'
+revisions_517:
+  id: '6177'
+  created_at: '2012-01-16 19:35:18.195635'
+  card_id: '711'
   created_by: '1'
   content: ! '[[Administrator]]'

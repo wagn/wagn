@@ -41,7 +41,7 @@ module Wagn::Model::Fetch
         if card.nil? || (!opts[:skip_virtual] && card.type_id==0)
           # The 0 type_id allows us to skip all the type lookup and flag the need for reinitialization later
           needs_caching = !Card.cache.nil?
-          card = new (opts[:skip_virtual] ? {:type_id=>0} : {}).merge(:name=>cardname, :skip_modules=>true)
+          card = new((opts[:skip_virtual] ? {:type_id=>0} : {}).merge(:name=>cardname, :skip_modules=>true))
         end
       
         if needs_caching

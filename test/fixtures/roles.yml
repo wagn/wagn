@@ -1,33 +1,21 @@
 ---
 roles_001:
   id: '1'
-  codename: admin
+  codename: Sample Role
   tasks: !!null 
 roles_002:
   id: '2'
-  codename: auth
-  tasks: create_accounts
+  codename: r1
+  tasks: !!null 
 roles_003:
   id: '3'
-  codename: anon
+  codename: r2
   tasks: !!null 
 roles_004:
   id: '4'
-  codename: Sample Role
+  codename: r3
   tasks: !!null 
 roles_005:
   id: '5'
-  codename: r1
-  tasks: !!null 
-roles_006:
-  id: '6'
-  codename: r2
-  tasks: !!null 
-roles_007:
-  id: '7'
-  codename: r3
-  tasks: !!null 
-roles_008:
-  id: '8'
   codename: r4
   tasks: !!null 

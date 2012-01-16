@@ -9,10 +9,12 @@ class RevisionTest < ActiveSupport::TestCase
   def test_revise
     author1 = User.find_by_email('joe@user.com')
     author2 = User.find_by_email('sara@user.com')
+    author_cd1 = Card[author1.card_id]
+    author_cd2 = Card[author2.card_id]
     #author1, author2 = User.find(:all, :limit=>2)
     User.current_user = author1
-    author1.roles << Role.find_by_codename('admin')
-    author2.roles << Role.find_by_codename('admin')
+    author_cd1.star_rule(:roles) << Card::AdminID
+    author_cd2.star_rule(:roles) << Card::AdminID
     card = newcard( 'alpha', 'stuff')
     User.current_user = author2
     card.content = 'boogy'

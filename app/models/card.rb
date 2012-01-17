@@ -122,6 +122,15 @@ class Card < ActiveRecord::Base
         "type_id = '#{RoleID}' and id <> '#{AdminID}'" )
     end  
 
+    # mapping old task names to rule cardnames to use
+    def task_rule(task)
+      rulename = case task.to_sym
+          when :create_accounts;    "*account+*right+*create"
+          when :administrate_users; "*account+*right+*update"
+          when :assign_user_roles;  "*roles+*right+*update"
+        end
+    end
+
     def include_type_module(typecode)
       #warn (Rails.logger.info "include set #{typecode} called")  #{Kernel.caller[0..4]*"\n"}"
       return unless typecode

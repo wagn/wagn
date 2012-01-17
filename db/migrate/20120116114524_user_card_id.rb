@@ -9,6 +9,6 @@ class UserCardId < ActiveRecord::Migration
   end
 
   def down
-    drop_column :users, :card_id
+    remove_column :users, :card_id
   end
 end

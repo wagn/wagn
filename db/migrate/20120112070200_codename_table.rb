@@ -16,7 +16,7 @@ class CodenameTable < ActiveRecord::Migration
         *missing_link *navbox *now *option *option_label *outgoing *plu_card
         *plu_part *pluss *read *recent *referred_to_by *refer_to *related
         *request *right *role *rstar *search *self *send *sidebar *signup *star
-        *subject *table_of_content *tagged *task *thank *tiny_mce *title *to
+        *subject *table_of_content *tagged *thank *tiny_mce *title *to
         *type *watching *type_plu_right *update *user *version *watcher
         *when_created *when_last_edited
 

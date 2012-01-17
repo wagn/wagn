@@ -120,7 +120,7 @@ class Card < ActiveRecord::Base
     def find_configurables
       @roles = Card.where(
         "type_id = '#{RoleID}' and id <> '#{AdminID}'" )
-    end  
+    end
 
     # mapping old task names to rule cardnames to use
     def task_rule(task)
@@ -493,7 +493,7 @@ class Card < ActiveRecord::Base
   end
 
   def updater
-    User[updated_by]
+    Card[updated_by]
   end
 
   def drafts
@@ -576,7 +576,11 @@ class Card < ActiveRecord::Base
   # VALIDATIONS
 
   def validate_destroy
-    if extension_type=='User' and extension and Revision.find_by_created_by( extension.id )
+    # FIXME: need to make all codenamed card indestructable
+    if self.id == WagbotID or self.id == AnonymousID
+      errors.add :destroy, "#{name}'s is a system card.<br>  Deleting this card would mess up our revision records."
+      return false
+    elsif type_id==UserID and Revision.find_by_created_by( self.id )
       errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
       return false
     end
@@ -712,8 +716,8 @@ class Card < ActiveRecord::Base
       rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
     end
   end
- 
-  class << self  
+
+  class << self
     def setting(name)
       User.as :wagbot  do
         card=Card[name] and !card.content.strip.empty? and card.content

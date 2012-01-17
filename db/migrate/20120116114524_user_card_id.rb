@@ -10,6 +10,14 @@ class UserCardId < ActiveRecord::Migration
     execute %{update revisions set created_by = c.id from cards c
                where c.extension_id = revisions.created_by and c.extension_type = 'User'}
 
+    # change the created_by cards from revisions table
+    execute %{update cards as cb set created_by = c.id from cards c
+               where c.extension_id = cb.created_by and c.extension_type = 'User'}
+
+    # change the updated_by cards from revisions table
+    execute %{update cards as cb set updated_by = c.id from cards c
+               where c.extension_id = cb.updated_by and c.extension_type = 'User'}
+
     change_column :users, :card_id, :integer, :null => false
   end
 

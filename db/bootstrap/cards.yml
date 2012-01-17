@@ -8646,28 +8646,6 @@ cards_393:
   trash: false
   type_id: 3
 cards_394: 
-  id: 9
-  name: Anyone Signed In
-  key: anyone_signed_in
-  codename: 
-  typecode: Role
-  trunk_id: 
-  tag_id: 
-  current_revision_id: 9
-  created_at: 2012-01-17 00:27:20 Z
-  updated_at: 2009-04-06 14:11:12.920280 Z
-  created_by: 1
-  updated_by: 1
-  extension_id: 2
-  extension_type: Role
-  indexed_name: "'anyon':1 'sign':2"
-  indexed_content: "'anyon':1A 'sign':2A"
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: false
-  type_id: 7
-cards_395: 
   id: 8
   name: Anyone
   key: anyone
@@ -8684,6 +8662,28 @@ cards_395:
   extension_type: Role
   indexed_name: "'anyon':1"
   indexed_content: "'anyon':1A"
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 7
+cards_395: 
+  id: 9
+  name: Anyone Signed In
+  key: anyone_signed_in
+  codename: 
+  typecode: Role
+  trunk_id: 
+  tag_id: 
+  current_revision_id: 9
+  created_at: 2012-01-17 00:27:20 Z
+  updated_at: 2009-04-06 14:11:12.920280 Z
+  created_by: 1
+  updated_by: 1
+  extension_id: 2
+  extension_type: Role
+  indexed_name: "'anyon':1 'sign':2"
+  indexed_content: "'anyon':1A 'sign':2A"
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 

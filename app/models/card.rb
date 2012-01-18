@@ -265,9 +265,13 @@ class Card < ActiveRecord::Base
     send_notifications
     Wagn::Codename.reset_cache if type_id==CardtypeID
     true
+  rescue Exception=>e
+    @subcards.each{ |card| card.expire_pieces }
+    raise e
   end
 
   def save_subcards
+    @subcards = []
     return unless cards
     cards.each_pair do |sub_name, opts|
       opts[:nested_edit] = self
@@ -281,11 +285,13 @@ class Card < ActiveRecord::Base
         opts[:name] = absolute_name
         card = Card.create(opts)
       end
+      @subcards << card
       if card and !card.errors.empty?
         card.errors.each do |field, err|
           self.errors.add card.name, err
         end
       end
+      
     end
   end
 
@@ -335,11 +341,17 @@ class Card < ActiveRecord::Base
     end
   end
 
-  def rescue_save(e)
-    cardname.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_cardname.key)}
+  def rescue_save(e, method)
+    expire_pieces
     Rails.logger.info "Model exception #{method}:#{e.message} #{name}"
     Rails.logger.debug e.backtrace*"\n"
     raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
+  end
+
+  def expire_pieces
+    cardname.piece_names.each do |piece|
+      Wagn::Cache.expire_card piece.to_cardname.key
+    end
   end
 
   def pull_from_trash

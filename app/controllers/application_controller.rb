@@ -179,6 +179,7 @@ class ApplicationController < ActionController::Base
     when Wagn::BadAddress, ActionController::UnknownController, ActionController::UnknownAction  
       [ :bad_address, 404 ]
     when Wagn::Oops, ActiveRecord::RecordInvalid && @card && @card.errors.any?
+      [ :errors, 422]
     else
       Rails.logger.info "\n\nController exception: #{exception.message}"
       Rails.logger.debug exception.backtrace*"\n"

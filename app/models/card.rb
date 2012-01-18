@@ -3,6 +3,19 @@ class Card < ActiveRecord::Base
   cattr_accessor :debug, :cache, :id_cache
   Card.debug = false
 
+  model_stamper # Card is both stamped and stamper
+  stampable :stamper_class_name => :card, :creator_attribute => :created_by,
+    :updater_attribute => :updated_by
+  def self.current_user
+    warn "card cur user #{User.current_user.card_id}"
+    Card[User.current_user.card_id]
+  end
+
+  #belongs_to :created_by, :class_name=>"Card", :foreign_key=>"created_by"
+  #belongs_to :updated_by, :class_name=>"Card", :foreign_key=>"updated_by"
+  #def self.current_user() Card[User.current_user.card_id] end
+  #def self.current_user() Card[Card.current_id] end
+
   belongs_to :trunk, :class_name=>'Card', :foreign_key=>'trunk_id' #, :dependent=>:dependent
   has_many   :right_junctions, :class_name=>'Card', :foreign_key=>'trunk_id'#, :dependent=>:destroy
 
@@ -13,15 +26,17 @@ class Card < ActiveRecord::Base
   has_many   :revisions, :order => 'id', :foreign_key=>'card_id'
 
   belongs_to :extension, :polymorphic=>true
-  before_destroy :destroy_extension, :base_before_destroy
+  before_destroy :base_before_destroy
+  #before_destroy :destroy_extension, :base_before_destroy
 
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :update_referencers, :cards,
     :allow_type_change, :nested_edit, :virtual, :selected_rev_id, :error_view, :error_status, :loaded_trunk
 
   attr_reader :type_args, :broken_type
 
-  before_save :base_before_save, :set_read_rule, :set_tracked_attributes, :set_extensions
-  after_save :base_after_save, :update_ruled_cards
+  before_save :base_before_save, :set_read_rule, :set_tracked_attributes,
+    :set_stamper
+  after_save :base_after_save, :update_ruled_cards, :reset_stamper
   cache_attributes('name', 'type_id')
 
   @@junk_args = %w{ missing skip_virtual id }
@@ -230,6 +245,9 @@ class Card < ActiveRecord::Base
     super args
   end
 
+  def set_stamper() Card.stamper = User.current_user.card_id end
+  def reset_stamper() Card.reset_stamper end
+
   def base_before_save
     if self.respond_to?(:before_save) and self.before_save == false
       errors.add(:save, "could not prepare card for destruction")
@@ -269,9 +287,11 @@ class Card < ActiveRecord::Base
     end
   end
 
+=begin
   def set_extensions
     self.create_extension if !extension && respond_to?(:create_extension)
   end
+=end
 
   def save_with_trash!
     save || raise(errors.full_messages.join('. '))
@@ -371,11 +391,13 @@ class Card < ActiveRecord::Base
     destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
   end
 
+=begin
   def destroy_extension
     extension.destroy if extension
     extension = nil
     true
   end
+=end
 
   def base_before_destroy
     self.before_destroy if respond_to? :before_destroy
@@ -418,10 +440,12 @@ class Card < ActiveRecord::Base
     jcts.map { |r| [r ] + r.dependents(*args) }.flatten
   end
 
+=begin
   def codename
     return nil unless extension and extension.respond_to?(:codename)
     extension.codename
   end
+=end
 
   def repair_key
     ::User.as :wagbot do
@@ -492,8 +516,14 @@ class Card < ActiveRecord::Base
     (cached_revision && cached_revision.created_at) || Time.now
   end
 
+  def author
+    c=Card[created_by]
+    #warn "c author #{created_by}, #{c}, #{self}"; c
+  end
+  
   def updater
-    Card[updated_by]
+    c=Card[updated_by]
+    #warn "c upd #{updated_by}, #{c}, #{self}"; c
   end
 
   def drafts
@@ -577,7 +607,7 @@ class Card < ActiveRecord::Base
 
   def validate_destroy
     # FIXME: need to make all codenamed card indestructable
-    if self.id == WagbotID or self.id == AnonymousID
+    if self.id == WagbotID or self.id == AnonID
       errors.add :destroy, "#{name}'s is a system card.<br>  Deleting this card would mess up our revision records."
       return false
     elsif type_id==UserID and Revision.find_by_created_by( self.id )
@@ -601,7 +631,7 @@ class Card < ActiveRecord::Base
 
 
 #  validates_presence_of :name
-  validates_associated :extension #1/2 ans:  this one runs the user validations on user cards.
+  #validates_associated :extension #1/2 ans:  this one runs the user validations on user cards.
 
 
   validates_each :name do |rec, attr, value|

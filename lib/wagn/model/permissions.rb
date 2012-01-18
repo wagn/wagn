@@ -134,7 +134,8 @@ module Wagn::Model::Permissions
     return true if User.always_ok?
     @read_rule_id ||= permission_rule_card(:read).first.id
     #warn "ar_ok? #{User.as_user.read_rule_ids.inspect}, #{@read_rule_id.inspect}"
-    ok = User.as_user.read_rule_ids.member?(@read_rule_id.to_i) 
+    ok = Card::AnyoneID == @read_rule_id
+    ok ||= User.as_user.read_rule_ids.member?(@read_rule_id.to_i) 
     deny_because you_cant("read this card") unless ok
   end
   
@@ -200,7 +201,7 @@ module Wagn::Model::Permissions
   end
   
   def update_read_rule
-    Card.record_timestamps = Card.record_userstamps = false
+    Card.record_timestamps = Card.record_userstamp = false
 
     rcard, rclass = permission_rule_card(:read)
     copy = self.frozen? ? self.refresh : self
@@ -219,9 +220,9 @@ module Wagn::Model::Permissions
         end
       end
     end
-    Card.record_timestamps = Card.record_userstamps = true    
+    Card.record_timestamps = Card.record_userstamp = true    
   rescue
-    Card.record_timestamps = Card.record_userstamps = true
+    Card.record_timestamps = Card.record_userstamp = true
     raise
   end
 

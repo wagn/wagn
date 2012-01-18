@@ -3,8 +3,10 @@ module Wagn::Set::Type::User
 
   attr_accessor :email
   
+=begin
   def codename
     extension ? extension.login : nil
   end
+=end
        
 end

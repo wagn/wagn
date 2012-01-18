@@ -1,32 +1,32 @@
-module Notification   
+module Notification
   module CardMethods
-    def self.included(base)   
-      super                             
+    def self.included(base)
+      super
       base.class_eval { attr_accessor :nested_notifications }
     end
-    
+
     def send_notifications
-      return false if Card.record_userstamps==false
-      # userstamps and timestamps are turned off in cases like updating read_rules that are automated and 
+      return false if Card.record_userstamp==false
+      # userstamps and timestamps are turned off in cases like updating read_rules that are automated and
       # generally not of enough interest to warrant notification
-      
-      action = case  
+
+      action = case
         when trash;  'deleted'
         when @was_new_card; 'added'
         when nested_notifications; 'updated'
-        when updated_at.to_s==current_revision.created_at.to_s;  'edited'  
+        when updated_at.to_s==current_revision.created_at.to_s;  'edited'
         else; 'updated'
       end
-      
+
       @trunk_watcher_watched_pairs = trunk_watcher_watched_pairs
-      @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)      
-      
+      @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)
+
       watcher_watched_pairs.reject {|p| @trunk_watchers.include?(p.first) }.each do |watcher, watched|
         next unless watcher && mail=Mailer.change_notice(
-                 watcher, self, action, watched, nested_notifications )
+                 Card[watcher], self, action, watched, nested_notifications )
         mail.deliver
       end
-      
+
       if nested_edit
         nested_edit.nested_notifications ||= []
         nested_edit.nested_notifications << [ name, action ]
@@ -36,8 +36,8 @@ module Notification
           Mailer.change_notice( watcher, self.trunk, 'updated', watched, [[name, action]], self ).deliver
         end
       end
-    end  
-    
+    end
+
     def trunk_watcher_watched_pairs
       # do the watchers lookup before the transcluder test since it's faster.
       if cardname.junction?
@@ -50,47 +50,31 @@ module Notification
       end
       []
     end
-    
-    def watcher_watched_pairs
-      author = User.current_user.card.cardname
-      (card_watchers.except(author).map {|watcher| [Card[watcher].extension,self.cardname] }  +
-        type_watchers.except(author).map {|watcher|
-        #Rails.logger.info "watcher #{watcher.inspect}, #{::Card.type_name_from_code(self.typecode)}"
-        [cd=Card[watcher].extension,::Card.typename_from_id(self.type_id)]})
+
+    def watchers() watcher_watched_pairs(false) end
+    def watcher_watched_pairs(pairs=true)
+      ( watcher_pairs(pairs) + watcher_pairs(pairs, :type) )
     end
-    
-    def card_watchers 
-      #Rails.logger.debug "card_watchers #{name}"
-      items_from("#{name}+*watchers")
-    end
-    
-    def type_watchers
-      #Rails.logger.debug "type_watchers #{Card.type_name_from_code(self.typecode).to_s+"+*watchers"}"
-      items_from("#{Card.typename_from_id(self.type_id).to_s}+*watchers" )
-    end
-    
-    def items_from( name )
-      #Rails.logger.info "items_from (#{name.inspect})"
-      User.as :wagbot do
-        (c = Card[name.to_cardname]) ? c.item_names.reject{|x|x==''}.map(&:to_cardname) : []
-        #(c = Card[name.to_cardname]) ?
-        #  begin
-        #  r1=c.item_names; r2=r1.reject{|x|x==''}; r3=r2.map(&:to_cardname)
-        #  Rails.logger.info "items from 2 #{c.new_record?}, #{r1.inspect}, #{r2.inspect}, #{r3.inspect}"; r3
-        #  end : []
-      end
-    end  
+
+    def watcher_pairs(pairs=true, kind=:name)
       
-    def watchers
-      card_watchers + type_watchers
+      namep, rc = (kind == :type) ?  [lambda { self.typename },
+               (Card[self.type_id].star_rule(:watchers))] :
+            [lambda { self.cardname }, Card[cardname.star_rule(:watchers)]]
+      #warn "ww pairs A:#{User.current_user.card_id}, R:#{rc.nil? ? 'nil' : rc.name}, k#{kind}, p#{pairs}"
+      watchers = rc.nil? ? [] : rc.item_ids.except(User.current_user.card_id)
+      pairs ? watchers.map {|w| [w, namep.call] } : watchers
+      #  watchers should be required to have read perm
+      # or does this run as the one doing the action? either way why wagbot?
+      #User.as :wagbot { (c = Card[name]) ? c.item_ids : [] }
     end
-  end    
+  end
 
 
   def self.init
     Card.send :include, CardMethods
-  end   
-end    
+  end
+end
 
 Notification.init
 

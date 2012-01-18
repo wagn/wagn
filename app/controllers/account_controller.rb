@@ -19,7 +19,7 @@ class AccountController < ApplicationController
     @user, @card = User.create_with_card( user_args, card_args )
     render_user_errors if @user.errors.any?
 
-    if User.ok?(:create_accounts)       #complete the signup now
+    if Card['*account'].ok?(:create)       #complete the signup now
       email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!",  #ENGLISH
                      :subject => Card.setting('*signup+*subject') || "Account info for #{Card.setting('*title')}!" }  #ENGLISH
       @user.accept(email_args)
@@ -42,11 +42,11 @@ class AccountController < ApplicationController
   def accept
     raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
     @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
-    @user = @card.extension or raise(Wagn::Oops, "This card doesn't have an account to approve")  #ENGLISH
-    User.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create accounts")  #ENGLISH
+    @user = User.where(:card_id=>@card.id).first or raise(Wagn::Oops, "This card doesn't have an account to approve")  #ENGLISH
+    @card.ok?(:create) or raise(Wagn::PermissionDenied, "You need permission to create accounts")  #ENGLISH
 
     if request.post?
-      @user.accept(params[:email])
+      @user.accept(@card, params[:email])
       if @user.errors.empty? #SUCCESS
         redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
         return
@@ -56,7 +56,7 @@ class AccountController < ApplicationController
   end
 
   def invite
-    User.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create")  #ENGLISH
+    Card['*account'].ok?(:create) or raise(Wagn::PermissionDenied, "You need permission to create")  #ENGLISH
     @user, @card = request.post? ?
       User.create_with_card( params[:user], params[:card] ) :
       [User.new, Card.new()]
@@ -64,10 +64,14 @@ class AccountController < ApplicationController
       @user.send_account_info(params[:email])
       redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
     end
+    unless @user.errors.empty?
+      @user.errors.each do |k,e| warn "user error #{k}, #{e}" end
+    end
   end
 
 
   def signin
+    warn Rails.logger.info("signin #{params[:login]}")
     if params[:login]
       password_authentication(params[:login], params[:password])
     end
@@ -110,6 +114,7 @@ class AccountController < ApplicationController
   def password_authentication(login, password)
     if self.current_user = User.authenticate(params[:login], params[:password])
       flash[:notice] = "Successfully signed in"  #ENGLISH
+      warn Rails.logger.info("to prev #{previous_location}")
       redirect_to previous_location
     else
       u = User.find_by_email(params[:login].strip.downcase)

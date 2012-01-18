@@ -22,8 +22,8 @@ class RevisionTest < ActiveSupport::TestCase
     card.reload
     
     assert_equal 2, card.revisions.length, 'Should have two revisions'
-    assert_equal author2.card.name, card.current_revision.author.card.name, 'current author'
-    assert_equal author1.card.name, card.revisions.first.author.card.name,  'first author'
+    assert_equal author2.card.name, card.current_revision.author.name, 'current author'
+    assert_equal author1.card.name, card.revisions.first.author.name,  'first author'
   end
 
 =begin 

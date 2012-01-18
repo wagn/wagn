@@ -24,11 +24,14 @@ class Wagn::Set::Type::InvitationRequestTest < ActiveSupport::TestCase
 
 
   def test_should_block_user
-    ::User.as(:wagbot)  do
-      auth_user_card = Card[Card::AuthID]
-      auth_user_card.star_rule(:tasks).content = '[[deny_invitation_requests]]'
-    end
+    #::User.as(:wagbot)  do
+    #  auth_user_card = Card[Card::AuthID]
+      # FIXME: change from task ...
+      #auth_user_card.star_rule(:tasks).content = '[[deny_invitation_requests]]'
+    #end
+    warn Rails.logger.info("destroy (block) user")
     ::User.as :joe_user do Card.fetch('Ron Request').destroy!  end
+    warn Rails.logger.info("destroyed")
 
     assert_equal nil, Card.fetch('Ron Request')
     assert_equal 'blocked', ::User.find_by_email('ron@request.com').status

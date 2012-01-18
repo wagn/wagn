@@ -16,7 +16,6 @@ class CardController < ApplicationController
   before_filter :remove_ok, :only=>[ :remove ]
 
 
-
   #----------( CREATE )
   
   def create
@@ -139,20 +138,20 @@ class CardController < ApplicationController
   #-------- ( ACCOUNT METHODS )
   
   def update_account
-    extension = @card.extension 
+    account = User.where(:card_id=>@card.id).first 
     
     if params[:save_roles]
       User.ok! :assign_user_roles
       role_hash = params[:user_roles] || {}
-      extension.roles = Role.find role_hash.keys
+      account.roles = Role.find role_hash.keys
     end
 
-    if extension && params[:extension]
-      extension.update_attributes(params[:extension])
+    if account && params[:extension]
+      account.update_attributes(params[:extension])
     end
 
-    if extension && extension.errors.any?
-      @card.errors = extension.errors
+    if account && account.errors.any?
+      @card.errors = account.errors
       render_errors
     else
       render_show
@@ -160,12 +159,13 @@ class CardController < ApplicationController
   end
 
   def create_account
-    User.ok!(:create_accounts) && @card.ok?(:update)
+    # FIXME: or should this be @card.star_rule(:account).ok?
+    Card['*account'].ok?(:create) && @card.ok?(:update)
     email_args = { :subject => "Your new #{Card.setting('*title')} account.",   #ENGLISH
                    :message => "Welcome!  You now have an account on #{Card.setting('*title')}." } #ENGLISH
     @user, @card = User.create_with_card(params[:user],@card, email_args)
     raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
-    @extension = User.new(:email=>@user.email)
+    #@extension = User.new(:email=>@user.email)
 #    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
     params[:attribute] = :account
     render_show :options

@@ -180,6 +180,7 @@ class ApplicationController < ActionController::Base
     when Wagn::BadAddress, ActionController::UnknownController, ActionController::UnknownAction  
       [ :bad_address, 404 ]
     else
+      warn "except: #{exception.inspect}, #{exception.backtrace*"\n"}"
       [ :server_error, 500 ]
     end
     

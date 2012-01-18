@@ -12,6 +12,8 @@ module Wagn::Set::Type::Pointer
     end
   end
 
+  def item_ids( args={} ) item_cards.map(&:id) end
+
   def item_names( args={} )
     context = args[:context] || self.cardname
     links = content.split(/\n+/).map{ |line|

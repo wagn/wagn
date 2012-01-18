@@ -109,7 +109,8 @@ module Wagn::Model::TrackedAttributes
     new_content ||= '' 
     new_content = WikiContent.clean_html!(new_content) if clean_html?
     clear_drafts if current_revision_id
-    self.current_revision = Revision.create :card_id=>self.id, :content=>new_content
+    #warn "set_content #{User.current_user.card_id}"
+    self.current_revision = Revision.create :card_id=>self.id, :content=>new_content, :created_by =>User.current_user.card_id
     @name_or_content_changed = true
   end
            

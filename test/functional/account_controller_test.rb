@@ -69,11 +69,12 @@ class AccountControllerTest < ActionController::TestCase
   end
 
   def test_signup_without_approval
-    User.as :wagbot do  #make it so anyone can create accounts (ie, no approval needed)
-      ne1 = Role[:anon]
-      ne1.tasks = 'create_accounts'
-      ne1.save!
-    end
+    #User.as :wagbot do  #make it so anyone can create accounts (ie, no approval needed)
+    #  ne1 = Role[:anon]
+    #  ne1.tasks = 'create_accounts'
+    #  ne1.save!
+    #end
+  # need to use: Card['*account'].ok?(:create)
     post :signup, @newby_args
     assert_response :redirect
     assert_status @newby_email, 'active'

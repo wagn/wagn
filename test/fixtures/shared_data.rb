@@ -63,10 +63,10 @@ class SharedData
     ::User.create! :login=>"u3",:email=>'u3@user.com', :status => 'active', :password=>'u3_pass', :password_confirmation=>'u3_pass', :invite_sender=>User[:wagbot], :card_id=>u1.id
 
 
-    r1 = Card.create!( :typecode=>'Role', :name=>'r1' ).extension
-    r2 = Card.create!( :typecode=>'Role', :name=>'r2' ).extension
-    r3 = Card.create!( :typecode=>'Role', :name=>'r3' ).extension
-    r4 = Card.create!( :typecode=>'Role', :name=>'r4' ).extension
+    r1 = Card.create!( :typecode=>'Role', :name=>'r1' )
+    r2 = Card.create!( :typecode=>'Role', :name=>'r2' )
+    r3 = Card.create!( :typecode=>'Role', :name=>'r3' )
+    r4 = Card.create!( :typecode=>'Role', :name=>'r4' )
 
     u1.star_rule(:roles) << r1 << r2 << r3
     u2.star_rule(:roles) << r1 << r2 << r4

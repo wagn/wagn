@@ -23,14 +23,14 @@ class Mailer < ActionMailer::Base
   def signup_alert(invite_request)  
     @site = Card.setting('*title')
     @card = invite_request
-    @email= invite_request.extension.email
+    @email= User.where(:card_id=>invite_request.id).first.email
     @name = invite_request.name
     @content = invite_request.content
     @url  = url_for(:host=>Wagn::Conf[:host], :controller=>'card', :action=>'show', :id=>invite_request.cardname.to_url_key)
 
     mail( {
       :to      => Card.setting('*request+*to'),
-      :from    => Card.setting('*request+*from') || invite_request.extension.email,
+      :from    => Card.setting('*request+*from') || @email,
       :subject => "#{invite_request.name} signed up for #{@site}",
       :content_type => 'text/html',
     } )
@@ -41,13 +41,13 @@ class Mailer < ActionMailer::Base
     #warn "change_notice( #{user}, #{card.inspect}, #{action}, #{watched} ...)"
     updated_card ||= card
     @card = card
-    @updater = updated_card.updater.card.name
+    @updater = updated_card.updater.name
     @action = action
     @subedits = subedits
     @card_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/#{card.cardname.to_url_key}"
     @change_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/card/changes/#{card.cardname.to_url_key}"
     @unwatch_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/card/watch/#{watched.to_cardname.to_url_key}?toggle=off"
-    @udpater_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/#{card.updater.card.cardname.to_url_key}"
+    @udpater_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/#{card.updater.cardname.to_url_key}"
     @watched = (watched == card.cardname ? "#{watched}" : "#{watched} cards")
 
     mail( {

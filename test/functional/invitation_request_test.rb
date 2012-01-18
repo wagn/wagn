@@ -37,7 +37,7 @@ class AccountRequestTest < ActionController::TestCase
     }
 
     @card =  Card.find_by_name("Word Third")   
-    @user = @card.extension
+    @user = User.where(:card_id=>@card.id).first
     
     @card.typecode.should == 'InvitationRequest'
 

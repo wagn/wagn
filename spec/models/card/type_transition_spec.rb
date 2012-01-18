@@ -52,7 +52,7 @@ describe Card, "with role" do
     pending
     @role.type_id = Card::DefaultID
     @role.save
-    @role.extension.should == nil
+    #@role.extension.should == nil
   end
 end
 
@@ -72,9 +72,6 @@ describe Card, "with account" do
     @joe.typecode.should == 'Basic'
   end
 
-  it "should not lose account on card change" do
-    @joe.extension.should_not == nil
-  end
 end
 
 describe Card, "type transition approve create" do

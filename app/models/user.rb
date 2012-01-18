@@ -67,8 +67,10 @@ class User < ActiveRecord::Base
 
     # FIXME: args=params.  should be less coupled..
     def create_with_card(user_args, card_args, email_args={})
+      #warn "create with(#{user_args.inspect}, #{card_args.inspect}, #{email_args.inspect})"
       @card = (Hash===card_args ? Card.new({:type_id=>Card::UserID}.merge(card_args)) : card_args)
       @user = User.new({:invite_sender=>User.current_user, :status=>'active'}.merge(user_args))
+      #warn "user is #{@user.inspect}" unless @user.email
       @user.generate_password if @user.password.blank?
       @user.save_with_card(@card)
       begin
@@ -130,6 +132,7 @@ class User < ActiveRecord::Base
     end
     # PERMISSIONS
 
+=begin
     def ok?(task)
       #warn(Rails.logger.warn "ok?(#{task}), #{always_ok?}")
       task = task.to_s
@@ -145,6 +148,7 @@ class User < ActiveRecord::Base
         raise Wagn::PermissionDenied.new(self.new)
       end
     end
+=end
 
   protected
     # FIXME stick this in session? cache it somehow??
@@ -178,21 +182,21 @@ class User < ActiveRecord::Base
     self.class.cache.write(login, nil) if login
   end
 
-  def among? test_parties
-    #warn(Rails.logger.info "among called.  user = #{self.login}, parties = #{parties.inspect}, test_parties = #{test_parties.inspect}")
-    parties.each do |party|
-      return true if test_parties.member? party
-    end
+  def among? authzed
+    prties = parties
+    #warn(Rails.logger.info "among called.  user = #{self.login}, parties = #{prties.inspect}, authzed = #{authzed.inspect}")
+    authzed.each { |auth| return true if prties.member? auth }
+    authzed.member? Card::AnyoneID
   end
 
   def parties
-    @parties ||= [self.card_id,all_roles].flatten.reject(&:blank?)
+    @parties ||= [all_roles,self.card_id].flatten.reject(&:blank?)
   end
 
   def read_rule_ids
     return [] if card_id==Card::WagbotID  # avoids infinite loop
     @read_rule_ids ||= begin
-      party_keys = ['in'] + parties
+      party_keys = ['in', Card::AnyoneID] + parties
       User.as(:wagbot) do
         Card.search(:right=>'*read', :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
       end
@@ -200,14 +204,14 @@ class User < ActiveRecord::Base
     @read_rule_ids
   end
 
-  def save_with_card(c)
-    #Rails.logger.info "save with card #{card.inspect}, #{self.inspect}"
+  def save_with_card(card)
+    Rails.logger.info "save with card #{card.inspect}, #{self.inspect}" unless self.email
     User.transaction do
-      c = c.refresh if c.frozen?
-      c.save
-      self.card_id = c.id
+      card = card.refresh if card.frozen?
+      card.save
+      self.card_id = card.id
       save
-      c.errors.each do |key,err|
+      card.errors.each do |key,err|
         self.errors.add key,err
       end
     end
@@ -215,15 +219,14 @@ class User < ActiveRecord::Base
 #    Rails.logger.info "save with card failed.  #{card.inspect}"
   end
 
-  def accept(email_args)
+  def accept(card, email_args)
     User.as :wagbot do #what permissions does approver lack?  Should we check for them?
-      c = card
-      c = c.refresh if c.frozen?
-      c.type_id = Card::UserID # Invite Request -> User
+      card.type_id = Card::UserID # Invite Request -> User
       self.status='active'
       self.invite_sender = ::User.current_user
       generate_password
-      save_with_card(c)
+      #warn "user accept #{inspect}, #{card.inspect}"
+      save_with_card(card)
     end
     #card.save #hack to make it so last editor is current user.
     self.send_account_info(email_args) if self.errors.empty?
@@ -241,26 +244,20 @@ class User < ActiveRecord::Base
     end
   end
 
-  def card() Card[card_id] end
+  def card()
+    @card && @card.id == card_id ? @card : @card = Card[card_id]
+  end
+
   def all_roles
     #warn "all_roles #{card_id==Card::AnonID && inspect}, #{Card::AnyoneID}, #{Card::AuthID}"
-    @all_roles ||= (card_id==Card::AnonID ? [Card::AnyoneID] :
-      card.star_rule(:roles).item_cards.map(&:id) + [Card::AnyoneID, Card::AuthID])
+    @all_roles ||= (card_id==Card::AnonID ? [] :
+      [Card::AuthID] + card.star_rule(:roles).item_cards.map(&:id))
   end
 
-
-  def active?
-    status=='active'
-  end
-  def blocked?
-    status=='blocked'
-  end
-  def built_in?
-    status=='system'
-  end
-  def pending?
-    status=='pending'
-  end
+  def active?()   status=='active'  end
+  def blocked?()  status=='blocked' end
+  def built_in?() status=='system'  end
+  def pending?()  status=='pending' end
 
   # blocked methods for legacy boolean status
   def blocked=(block)

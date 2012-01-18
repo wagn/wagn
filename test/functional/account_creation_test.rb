@@ -14,10 +14,11 @@ class AccountCreationTest < ActionController::TestCase
 
   #FIXME - couldn't get this stuff to work in setup, but that's where it belongs.
   signed_in = Card[Card::AuthID]
-  if (tasks_card=Card.fetch_or_new(!signed_in.star_rule(:task_list))).
-       item_names.member?('create_accounts')
-    tasks_card << 'create_accounts'
-  end
+  # need to use: Card['*account'].ok?(:create)
+  #if (tasks_card=Card.fetch_or_new(!signed_in.star_rule(:task_list))).
+  #     item_names.member?('create_accounts')
+  #  tasks_card << 'create_accounts'
+  #end
 
   def setup
     super
@@ -40,17 +41,19 @@ class AccountCreationTest < ActionController::TestCase
 =end
 
   def test_should_create_account_from_invitation_request
-    assert_equal 'InvitationRequest', Card.fetch('Ron Request').typecode
+    assert_equal 'InvitationRequest', (c=Card.fetch('Ron Request')).typecode
     post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
-    assert_equal 'User', Card.fetch('Ron Request').typecode
+    c=Card.fetch('Ron Request')
+    assert_equal 'User', c.typecode
     assert_equal "active", User.find_by_email("ron@request.com").status
   end
 
   def test_should_create_account_from_invitation_request_when_user_hard_templated
     User.as(:wagbot) { Card.create :name=>'User+*type+*content', :content=>"like this" }
-    assert_equal 'InvitationRequest', Card.fetch('Ron Request').typecode
+    assert_equal 'InvitationRequest', (c=Card.fetch('Ron Request')).typecode
     post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
-    assert_equal 'User', Card.fetch('Ron Request').typecode
+    c=Card.fetch('Ron Request')
+    assert_equal 'User', c.typecode
     assert_equal "active", User.find_by_email("ron@request.com").status
   end
 

@@ -10,7 +10,7 @@ class NewFileStorage < ActiveRecord::Migration
               filename = filename_for_revision(revision, typecode)
               next unless filename
               card.selected_rev_id = revision.id
-              filename = File.join( Rails.root, 'public' ) if filename =~ /^\/card/
+              filename = File.join( Rails.root, 'public', filename ) if filename =~ /^\/card/
 
               file = begin
                   open filename

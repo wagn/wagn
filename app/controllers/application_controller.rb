@@ -170,18 +170,24 @@ class ApplicationController < ActionController::Base
   
   
   rescue_from Exception do |exception|
+        
     view, status = case exception
     when Wagn::NotFound, ActiveRecord::RecordNotFound
       [ :not_found, 404 ]                                                 
     when Wagn::PermissionDenied, Card::PermissionDenied
       [ :denial, 403]
-    when Wagn::Oops, ActiveRecord::RecordInvalid
-      [ :errors, 422 ]
     when Wagn::BadAddress, ActionController::UnknownController, ActionController::UnknownAction  
       [ :bad_address, 404 ]
+    when Wagn::Oops, ActiveRecord::RecordInvalid && @card && @card.errors.any?
     else
-      warn "except: #{exception.inspect}, #{exception.backtrace*"\n"}"
-      [ :server_error, 500 ]
+      Rails.logger.info "\n\nController exception: #{exception.message}"
+      Rails.logger.debug exception.backtrace*"\n"
+      
+      if Rails.logger.level == 0
+        raise exception
+      else
+        [ :server_error, 500 ]
+      end
     end
     
     render_errors :view=>view, :status=>status

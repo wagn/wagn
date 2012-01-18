@@ -243,6 +243,8 @@ class Card < ActiveRecord::Base
     end
     #warn "update_attributes #{args.inspect}, #{::User.current_user}"
     super args
+  rescue Exception => e
+    rescue_save(e, 'update_attributes')
   end
 
   def set_stamper() Card.stamper = User.current_user.card_id end
@@ -326,15 +328,19 @@ class Card < ActiveRecord::Base
         #warn "run_checked_save #{method}, tc:#{typecode.inspect}, #{type_id.inspect}"
         self.send(method)
       rescue Exception => e
-        cardname.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_cardname.key)}
-        Rails.logger.debug "Exception #{method}:#{e.message} #{name} #{e.backtrace*"\n"}"
-        raise Wagn::Oops, "error saving #{self.name}: #{e.message}"  #{e.backtrace*"\n"}"
+        rescue_save(e, method)
       end
     else
       raise PermissionDenied.new(self)
     end
   end
 
+  def rescue_save(e)
+    cardname.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_cardname.key)}
+    Rails.logger.info "Model exception #{method}:#{e.message} #{name}"
+    Rails.logger.debug e.backtrace*"\n"
+    raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
+  end
 
   def pull_from_trash
     return unless key
@@ -656,7 +662,7 @@ class Card < ActiveRecord::Base
       unless cdname.valid?
         rec.errors.add :name,
           "may not contain any of the following characters: #{
-          Wagn::Cardname::CARDNAME_BANNED_CHARACTERS}[#{cdname}]"
+          Wagn::Cardname::CARDNAME_BANNED_CHARACTERS}"
       end
       # this is to protect against using a junction card as a tag-- although it is technically possible now.
       if (cdname.junction? and rec.simple? and rec.left_junctions.size>0)

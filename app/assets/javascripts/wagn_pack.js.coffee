@@ -35,13 +35,14 @@ wagn.initTinyMCE = (el_id) ->
 
 wagn.chooseFile = (e, data) ->
   s = $(this).slot()
-  filename = data.files[0].fileName
+  file = data.files[0]
+  $(this).fileupload '_normalizeFile', 0, file
   $(this).closest('form').data 'file-data', data
   if name_field = s.find( '.card-name-field' ) 
     if name_field[0] and name_field.val() == ''
-      name_field.val filename.replace /\..*/, ''
+      name_field.val file.name.replace /\..*/, ''
   s.find('.choose-file').hide()
-  s.find('.chosen-filename').text filename
+  s.find('.chosen-filename').text file.name
   s.find('.chosen-file').show()
 
 

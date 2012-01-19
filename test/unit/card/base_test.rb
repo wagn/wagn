@@ -75,7 +75,7 @@ class Card::BaseTest < ActiveSupport::TestCase
       p = Card['Banana+peel']
       assert_equal "yellow", p.content
       warn "created_by #{p.created_by}, #{p.updated_by}, #{p.created_at}"
-      assert_equal Card['joe_user'], p.created_by
+      assert_equal Card['joe_user'].id, p.created_by
     end
   end
 

@@ -7,11 +7,13 @@ describe Role, "Authenticated User" do
   end
   
   it "should cache roles by codename" do
+    pending "uses Codename and Card caches now"
     Role.should_not_receive(:find_by_codename)
     Role[:auth]
   end
 
   it "should cache roles by id" do
+    pending "uses Codename and Card caches now"
     Role[@auth.id]
     Role.should_not_receive(:find)
     Role[@auth.id]
@@ -44,7 +46,7 @@ describe User, "Admin User" do
 #  it "should ok admin role" do Wagn.role_ok?(Role['admin'].id).should be_true end
   
   it "should have correct parties" do
-    User.current_user.parties.sort.should == ['administrator', "anyone", "anyone_signed_in",'wagn_bot']
+    User.current_user.parties.sort.should == [Card::WagbotID, Card::AuthID, Card::AdminID]
   end
     
 end
@@ -54,26 +56,32 @@ describe User, 'Joe User' do
     User.current_user = :joe_user
     User.cache.delete 'joe_user'
     @ju = User.current_user
-    @r1 = Role.find_by_codename 'r1'
+    @jucard = Card['joe_user']
+    @r1 = Card['r1']
+    @roles_card = @jucard.star_rule(:roles)
   end
   
   it "should initially have no roles" do
-    @ju.roles.length.should==0
+    warn "roles card #{@roles_card.inspect}"
+    @roles_card.type_id.should==Card::PointerID
+
+    @roles_card.item_names.length.should==0
   end
   it "should immediately set new roles and return auth, anon, and the new one" do
-    @ju.roles=[@r1]
-    @ju.roles.length.should==1
+    @roles_card << @r1
+    @roles_card.item_names.length.should==1
   end
   it "should save new roles and reload correctly" do
-    @ju.roles=[@r1]
+    @roles_card.content="[[#{@r1.name}]]"
     @ju = User.find_by_login 'joe_user'
-    @ju.roles.length.should==1  
-    @ju.parties.sort.should == ["anyone", "anyone_signed_in", 'joe_user', 'r1']
+    @roles_card = Card.fetch_or_new(@jucard.star_rule(:roles))
+    @roles_card.item_names.length.should==1  
+    @ju.parties.should == [Card::AuthID, Card['joe_user'].id, Card['r1'].id]
   end
   
   it "should be 'among' itself" do
     @ju.among?([Card['joe_user'].id]).should == true
-    @ju.among?([Card['faker1'].id,Card['joe_user'].id,Card['faker2'].id]).should == true
+    @ju.among?([Card['r1'].id,Card['joe_user'].id,Card['r2'].id]).should == true
   end
   
 end

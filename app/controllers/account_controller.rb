@@ -71,7 +71,7 @@ class AccountController < ApplicationController
 
 
   def signin
-    warn Rails.logger.info("signin #{params[:login]}")
+    #warn Rails.logger.info("signin #{params[:login]}")
     if params[:login]
       password_authentication(params[:login], params[:password])
     end
@@ -114,7 +114,7 @@ class AccountController < ApplicationController
   def password_authentication(login, password)
     if self.current_user = User.authenticate(params[:login], params[:password])
       flash[:notice] = "Successfully signed in"  #ENGLISH
-      warn Rails.logger.info("to prev #{previous_location}")
+      #warn Rails.logger.info("to prev #{previous_location}")
       redirect_to previous_location
     else
       u = User.find_by_email(params[:login].strip.downcase)

@@ -4,17 +4,11 @@ class Card < ActiveRecord::Base
   Card.debug = false
 
   model_stamper # Card is both stamped and stamper
-  stampable :stamper_class_name => :card, :creator_attribute => :created_by,
-    :updater_attribute => :updated_by
+  stampable :stamper_class_name => :card
   def self.current_user
     warn "card cur user #{User.current_user.card_id}"
     Card[User.current_user.card_id]
   end
-
-  #belongs_to :created_by, :class_name=>"Card", :foreign_key=>"created_by"
-  #belongs_to :updated_by, :class_name=>"Card", :foreign_key=>"updated_by"
-  #def self.current_user() Card[User.current_user.card_id] end
-  #def self.current_user() Card[Card.current_id] end
 
   belongs_to :trunk, :class_name=>'Card', :foreign_key=>'trunk_id' #, :dependent=>:dependent
   has_many   :right_junctions, :class_name=>'Card', :foreign_key=>'trunk_id'#, :dependent=>:destroy
@@ -208,9 +202,7 @@ class Card < ActiveRecord::Base
   end
 
   def star_rule(rule)
-    #FIXME: remove roles hack when the migration is fixed with a *right setting
-    rule_card = Card.fetch_or_new(cardname.star_rule(rule),
-                       (rule == :roles ? {:type_id=>Card::PointerID} : {}))
+    rule_card = Card.fetch_or_new cardname.star_rule(rule)
   end
 
   def get_type_id(type_args={})
@@ -576,7 +568,7 @@ class Card < ActiveRecord::Base
   # MISCELLANEOUS
 
   def to_s()  "#<#{self.class.name}[#{self.typename.to_s}:#{self.type_id}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}:#{self.id}[##{self.type_id}]#{self.name}{n:#{new_card?}v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}:r:#{current_revision_id}}:#{@set_names.inspect}>" end
+  def inspect()  "#<#{self.class.name}##{self.id}[#{self.typename}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}}:#{@set_names.inspect}>" end
   def mocha_inspect()     to_s                                   end
 
 #  def trash

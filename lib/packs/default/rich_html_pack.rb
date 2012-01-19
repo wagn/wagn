@@ -644,7 +644,7 @@ class Wagn::Renderer::Html
     type_link = (card.type_id == Card::CardtypeID) ? " #{card.name} cards" : ""
     type_msg = (card.type_id == Card::CardtypeID) ? " cards" : ""
 
-    if card.watchers_pairs(false).include?(@me) or card.typecode != 'Cardtype' && card.watchers.include?(@me)
+    if card.watcher_pairs(false).include?(@me) or card.typecode != 'Cardtype' && card.watchers.include?(@me)
       text, toggle, title = "unwatch", :off, "stop getting emails about changes to"
     else
       text, toggle, title = "watch", :on, "get emails about changes to"

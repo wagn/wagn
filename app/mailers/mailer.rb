@@ -61,7 +61,7 @@ class Mailer < ActionMailer::Base
   def flexmail config
     
     if config[:attach] and !config[:attach].empty?
-      
+      # FIXME - this doesn't look fully converted to me.
       config[:attach].each do |cardname|
         if c = Card[ cardname ] and c.respond_to?(:attachment) and cardfile = c.attachment
           attachment cardfile.content_type do |a|
@@ -72,8 +72,11 @@ class Mailer < ActionMailer::Base
           end
         end
       end
+    else
+      config[:content_type] = 'text/html'
+      config[:body] = config.delete(:message)
     end
-    config[:body] = config.delete(:message)
+    
     mail(config)
   end
   

@@ -235,8 +235,6 @@ class Card < ActiveRecord::Base
     end
     #warn "update_attributes #{args.inspect}, #{::User.current_user}"
     super args
-  rescue Exception => e
-    rescue_save(e, 'update_attributes')
   end
 
   def set_stamper() Card.stamper = User.current_user.card_id end

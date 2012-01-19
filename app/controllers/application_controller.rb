@@ -124,7 +124,6 @@ class ApplicationController < ActionController::Base
   end
 
   def render_errors(options={})
-    raise "render_errors: #{options.inspect}"
     @card ||= Card.new
     view   = options[:view]   || (@card && @card.error_view  ) || :errors
     status = options[:status] || (@card && @card.error_status) || 422

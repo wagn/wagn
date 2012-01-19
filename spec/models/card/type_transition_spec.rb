@@ -27,16 +27,12 @@ end
 module Wagn::Set::Type::CardtypeE
   def self.included(base) Card.count = 2   end
   def on_type_change()    decrement_count  end
-  def decrement_count()
-    raise "???"
-    Card.count -= 1  end
+  def decrement_count()   Card.count -= 1  end
 end
 
 module Wagn::Set::Type::CardtypeF
   def self.included(base) Card.count = 2   end
-  def create_extension()
-    raise "???"
-    increment_count  end
+  def create_extension()  increment_count  end
   def increment_count()   Card.count += 1  end
 end
 
@@ -49,14 +45,6 @@ describe Card, "with role" do
   
   it "should have a role extension" do
     @role.extension_type.should=='Role'
-  end
-
-  it "should lose role extension upon changing type" do
-    # this test fails on a permission error in Mysql
-    pending
-    @role.type_id = Card::DefaultID
-    @role.save
-    #@role.extension.should == nil
   end
 end
 
@@ -130,7 +118,6 @@ describe Card, "type transition destroy callback" do
   end
   
   it "should decrement counter in before destroy" do
-    pending "No extension to create/destroy"
     Card.count.should == 1
   end
   
@@ -148,7 +135,6 @@ describe Card, "type transition create callback" do
   end
     
   it "should increment counter"  do
-    pending "No extension to create/destroy"
     Card.count.should == 3
   end
   

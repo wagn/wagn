@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
   belongs_to :invite_sender, :class_name=>'User', :foreign_key=>'invite_sender_id'
   has_many :invite_recipients, :class_name=>'User', :foreign_key=>'invite_sender_id'
 
-  acts_as_card_extension
+  #acts_as_card_extension
 
   validates_presence_of     :email, :if => :email_required?
   validates_format_of       :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i  , :if => :email_required?
@@ -121,16 +121,21 @@ class User < ActiveRecord::Base
 
     def always_ok?
       return false unless usr = as_user
-      #warn "aok? #{usr}, #{@@current_user}, #{usr.card_id}"
       return true if usr.card_id == Card::WagbotID #cannot disable
+      warn "aok? #{usr}, #{@@current_user}, #{usr.card_id}"
 
       always = User.cache.read('ALWAYS') || {}
-      #Rails.logger.warn "always_ok? #{usr.card_id}"
+      warn(Rails.logger.warn "always_ok? #{usr.card_id}")
       if always[usr.card_id].nil?
         always = always.dup if always.frozen?
+        ar=usr.all_roles
+        warn "ar: #{ar.inspect}"
         always[usr.card_id] =
-          usr.all_roles.inject(false){ |s,role_id| s && role_id==Card::AdminID }
-        #Rails.logger.warn "update always hash #{always.inspect}"
+          ar.inject(false){ |s,role_id|
+          warn "t #{s}, #{role_id}, #{s&&role_id==Card::AdminID}"
+          s && role_id==Card::AdminID }
+          #usr.all_roles.inject(false){ |s,role_id| s && role_id==Card::AdminID }
+        warn(Rails.logger.warn "update always hash #{always[usr.card_id]}, #{always.inspect}")
         User.cache.write 'ALWAYS', always
       end
       always[usr.card_id]
@@ -254,15 +259,18 @@ class User < ActiveRecord::Base
   end
 
   def all_roles
-    #warn "all_roles #{card_id==Card::AnonID && inspect}, #{Card::AnyoneID}, #{Card::AuthID}"
+    ids=(cr=card.star_rule(:roles)).item_cards.map(&:id)
+    warn "all_roles #{inspect}: #{cr.inspect}, #{ids.inspect}"
     @all_roles ||= (card_id==Card::AnonID ? [] :
-      [Card::AuthID] + card.star_rule(:roles).item_cards.map(&:id))
+      [Card::AuthID] + ids)
+      #[Card::AuthID] + card.star_rule(:roles).item_cards.map(&:id))
   end
 
   def active?()   status=='active'  end
   def blocked?()  status=='blocked' end
   def built_in?() status=='system'  end
   def pending?()  status=='pending' end
+  def anonymous?() card_id == Card::AnonID end
 
   # blocked methods for legacy boolean status
   def blocked=(block)
@@ -271,10 +279,6 @@ class User < ActiveRecord::Base
     elsif !built_in?
       self.status = 'active'
     end
-  end
-
-  def anonymous?
-    login == 'anon'
   end
 
   def authenticated?(password)
@@ -323,10 +327,6 @@ class User < ActiveRecord::Base
      #not_openid? &&
      (crypted_password.blank? or not password.blank?)
   end
-
-#  def not_openid?
-#    identity_url.blank?
-#  end
 
 end
 

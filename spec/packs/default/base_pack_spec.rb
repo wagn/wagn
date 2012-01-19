@@ -6,7 +6,7 @@ include PackSpecHelper
 describe Wagn::Renderer do
   it "should render deny_view when user lacks read permissions" do
     c = Card.fetch('Administrator links')
-    c.who_can(:read).should == ['administrator']
+    c.who_can(:read).should == [Card::AdminID]
     User.as(:anon) do
       c.ok?(:read).should == false
       render_card(:core, c).match('denied').should_not be_nil

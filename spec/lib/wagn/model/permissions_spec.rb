@@ -145,14 +145,20 @@ describe "Permission", ActiveSupport::TestCase do
     User.as( :wagbot )
     User.cache.reset
     Role.cache.reset
-    @u1, @u2, @u3 = %w( u1 u2 u3 ).map do |x| Card[x] end
-    @r1, @r2, @r3 = %w( r1 r2 r3 ).map do |x| Card[x] end
-    @c1, @c2, @c3 = %w( c1 c2 c3 ).map do |x| Card[x] end
+    @u1, @u2, @u3, @r1, @r2, @r3, @c1, @c2, @c3 =
+      %w( u1 u2 u3 r1 r2 r3 c1 c2 c3 ).map do |x| Card[x] end
   end      
 
 
   it "checking ok read should not add to errors" do
+    User.as(:wagbot) do
+      User.always_ok?.should == true
+    end
+    User.as(:joe_user) do
+      User.always_ok?.should == false
+    end
     User.as(:joe_admin) do
+      User.always_ok?.should == true
       Card.create! :name=>"Hidden"
       warn "create more limited read"
       Card.create(:name=>'Hidden+*self+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
@@ -174,9 +180,12 @@ describe "Permission", ActiveSupport::TestCase do
 
 
   it "write user permissions" do
-    @u1.roles = [ @r1, @r2 ]
-    @u2.roles = [ @r1, @r3 ]
-    @u3.roles = [ @r1, @r2, @r3 ]
+    rc=@u1.star_rule(:roles)
+    rc.content = ''; rc << @r1 << @r2
+    rc=@u2.star_rule(:roles)
+    rc.content = ''; rc << @r1 << @r3
+    rc=@u3.star_rule(:roles)
+    rc.content = ''; rc << @r1 << @r2 << @r3
 
     ::User.as(:wagbot) {
       [1,2,3].each do |num|
@@ -194,8 +203,10 @@ describe "Permission", ActiveSupport::TestCase do
   end
  
   it "read group permissions" do
-    @u1.roles = [ @r1, @r2 ]; @u1.save;
-    @u2.roles = [ @r1, @r3 ]; @u2.save;
+    rc=@u1.star_rule(:roles)
+    rc.content = ''; rc << @r1 << @r2
+    rc=@u2.star_rule(:roles)
+    rc.content = ''; rc << @r1 << @r3
     
     ::User.as(:wagbot) do
       [1,2,3].each do |num|

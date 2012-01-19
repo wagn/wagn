@@ -29,7 +29,7 @@ class Card < ActiveRecord::Base
   attr_reader :type_args, :broken_type
 
   before_save :base_before_save, :set_read_rule, :set_tracked_attributes,
-    :set_stamper
+    :set_stamper, :set_extensions
   after_save :base_after_save, :update_ruled_cards, :reset_stamper
   cache_attributes('name', 'type_id')
 
@@ -285,11 +285,9 @@ class Card < ActiveRecord::Base
     end
   end
 
-=begin
   def set_extensions
     self.create_extension if !extension && respond_to?(:create_extension)
   end
-=end
 
   def save_with_trash!
     save || raise(errors.full_messages.join('. '))

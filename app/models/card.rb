@@ -123,8 +123,6 @@ class Card < ActiveRecord::Base
       args[:typecode] = Cardtype.classname_for(type)
     end
     super args
-  rescue Exception => e
-    rescue_save(e, 'update_attributes')
   end
 
   def base_before_save

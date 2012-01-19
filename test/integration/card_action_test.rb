@@ -48,7 +48,6 @@ class CardActionTest < ActionController::IntegrationTest
 
   def test_create_cardtype_card
     User.as(:wagbot) {
-    warn "test create #{User.as_user}, #{User.current_user}"
       post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"} )}
     assert_response 302
     assert Card.find_by_name('Editor2').typecode == 'Cardtype'
@@ -56,7 +55,6 @@ class CardActionTest < ActionController::IntegrationTest
 
   def test_create                   
     User.as(:wagbot) {
-     warn "test create 2 #{User.as_user}, #{User.current_user}"
      post 'card/create', :card=>{
       :type=>'Basic', 
       :name=>"Editor",

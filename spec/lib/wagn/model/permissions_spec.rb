@@ -160,9 +160,7 @@ describe "Permission", ActiveSupport::TestCase do
     User.as(:joe_admin) do
       User.always_ok?.should == true
       Card.create! :name=>"Hidden"
-      warn "create more limited read"
       Card.create(:name=>'Hidden+*self+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
-      warn "created more limited read"
     end
   
     User.as(:anon) do
@@ -230,7 +228,7 @@ describe "Permission", ActiveSupport::TestCase do
     
     (rc=@u3.star_rule(:roles)).content =  ''
     rc << @r1
-    warn "rule #{rc.item_names.inspect}"
+    #warn "rule #{rc.item_names.inspect}"
 
     %{        u1 u2 u3
       c1(r1)  T  T  T
@@ -238,7 +236,7 @@ describe "Permission", ActiveSupport::TestCase do
       c3(r3)  T  F  F
     }
 
-    warn "writeable #{@c1.inspect}, #{@u1.inspect}"
+    #warn "writeable #{@c1.inspect}, #{@u1.inspect}"
     assert_equal true,  @c1.writeable_by(@u1), "c1 writeable by u1"
     assert_equal true,  @c1.writeable_by(@u2), "c1 writeable by u2" 
     assert_equal true,  @c1.writeable_by(@u3), "c1 writeable by u3" 
@@ -253,13 +251,13 @@ describe "Permission", ActiveSupport::TestCase do
   it "read user permissions" do
     (rc=@u1.star_rule(:roles)).content = ''
     rc << @r1 << @r2
-    warn "rule #{rc.name}, #{rc.item_names.inspect}"
+    #warn "rule #{rc.name}, #{rc.item_names.inspect}"
     (rc=@u2.star_rule(:roles)).content = ''
     rc << @r1 << @r3
-    warn "rule #{rc.name}, #{rc.item_names.inspect}"
+    #warn "rule #{rc.name}, #{rc.item_names.inspect}"
     (rc=@u3.star_rule(:roles)).content = ''
     rc << @r1 << @r2 << @r3
-    warn "rule #{rc.name}, #{rc.item_names.inspect}"
+    #warn "rule #{rc.name}, #{rc.item_names.inspect}"
 
     ::User.as(:wagbot) {
       [1,2,3].each do |num|

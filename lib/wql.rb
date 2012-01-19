@@ -39,8 +39,9 @@ class Wql
   def run
 #    Rails.logger.info "\nrun query = #{query.inspect}\n"
     rows = ActiveRecord::Base.connection.select_all( sql )
-    case (query[:return] || :card).to_sym
-    when :card
+    qr=query[:return]
+    case qr = qr.nil? ? 'card' : qr.to_s
+    when 'card'
       rows.map do |row|
         card=
           if query[:prepend] || query[:append]
@@ -51,8 +52,8 @@ class Wql
           end
         card.nil? ? Card.find_by_name_and_trash(row['name'],false).repair_key : card
       end
-    when :count;    rows.first['count'].to_i
-    else;           rows.map { |row| row[query[:return].to_s] }
+    when 'count';    rows.first['count'].to_i
+    else;           rows.map { |row| row[qr] }
     end
   end  
   

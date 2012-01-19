@@ -122,20 +122,20 @@ class User < ActiveRecord::Base
     def always_ok?
       return false unless usr = as_user
       return true if usr.card_id == Card::WagbotID #cannot disable
-      warn "aok? #{usr}, #{@@current_user}, #{usr.card_id}"
+      #warn "aok? #{usr}, #{@@current_user}, #{usr.card_id}"
 
       always = User.cache.read('ALWAYS') || {}
-      warn(Rails.logger.warn "always_ok? #{usr.card_id}")
+      #warn(Rails.logger.warn "always_ok? #{usr.card_id}")
       if always[usr.card_id].nil?
         always = always.dup if always.frozen?
         ar=usr.all_roles
-        warn "ar: #{ar.inspect}"
+        #warn "ar: #{ar.inspect}"
         always[usr.card_id] =
           ar.inject(false){ |s,role_id|
-          warn "t #{s}, #{role_id}, #{s&&role_id==Card::AdminID}"
+          #warn "t #{s}, #{role_id}, #{s&&role_id==Card::AdminID}"
           s && role_id==Card::AdminID }
           #usr.all_roles.inject(false){ |s,role_id| s && role_id==Card::AdminID }
-        warn(Rails.logger.warn "update always hash #{always[usr.card_id]}, #{always.inspect}")
+        #warn(Rails.logger.warn "update always hash #{always[usr.card_id]}, #{always.inspect}")
         User.cache.write 'ALWAYS', always
       end
       always[usr.card_id]
@@ -260,7 +260,7 @@ class User < ActiveRecord::Base
 
   def all_roles
     ids=(cr=card.star_rule(:roles)).item_cards.map(&:id)
-    warn "all_roles #{inspect}: #{cr.inspect}, #{ids.inspect}"
+    #warn "all_roles #{inspect}: #{cr.inspect}, #{ids.inspect}"
     @all_roles ||= (card_id==Card::AnonID ? [] :
       [Card::AuthID] + ids)
       #[Card::AuthID] + card.star_rule(:roles).item_cards.map(&:id))

@@ -62,7 +62,7 @@ describe User, 'Joe User' do
   end
   
   it "should initially have no roles" do
-    warn "roles card #{@roles_card.inspect}"
+    #warn "roles card #{@roles_card.inspect}"
     @roles_card.type_id.should==Card::PointerID
 
     @roles_card.item_names.length.should==0

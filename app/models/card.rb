@@ -5,10 +5,6 @@ class Card < ActiveRecord::Base
 
   model_stamper # Card is both stamped and stamper
   stampable :stamper_class_name => :card
-  def self.current_user
-    warn "card cur user #{User.current_user.card_id}"
-    Card[User.current_user.card_id]
-  end
 
   belongs_to :trunk, :class_name=>'Card', :foreign_key=>'trunk_id' #, :dependent=>:dependent
   has_many   :right_junctions, :class_name=>'Card', :foreign_key=>'trunk_id'#, :dependent=>:destroy
@@ -129,15 +125,6 @@ class Card < ActiveRecord::Base
     def find_configurables
       @roles = Card.where(
         "type_id = '#{RoleID}' and id <> '#{AdminID}'" )
-    end
-
-    # mapping old task names to rule cardnames to use
-    def task_rule(task)
-      rulename = case task.to_sym
-          when :create_accounts;    "*account+*right+*create"
-          when :administrate_users; "*account+*right+*update"
-          when :assign_user_roles;  "*roles+*right+*update"
-        end
     end
 
     def include_type_module(typecode)
@@ -528,6 +515,7 @@ class Card < ActiveRecord::Base
   end
   
   def updater
+    #warn "updater #{updated_by}, #{updater_id}"
     c=Card[updated_by]
     #warn "c upd #{updated_by}, #{c}, #{self}"; c
   end

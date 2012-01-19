@@ -40,7 +40,7 @@ class Card::BaseTest < ActiveSupport::TestCase
   test 'create' do
     alpha = Card.new :name=>'alpha', :content=>'alpha'
     assert_equal 'alpha', alpha.content
-    warn "About to save #{alpha.inspect}"
+    #warn "About to save #{alpha.inspect}"
     alpha.save
     assert alpha.name
     assert_stable(alpha)
@@ -74,7 +74,7 @@ class Card::BaseTest < ActiveSupport::TestCase
       Card.update(c.id, :cards=>{ "+peel" => { :content => "yellow" }})
       p = Card['Banana+peel']
       assert_equal "yellow", p.content
-      warn "created_by #{p.created_by}, #{p.updated_by}, #{p.created_at}"
+      #warn "created_by #{p.created_by}, #{p.updated_by}, #{p.created_at}"
       assert_equal Card['joe_user'].id, p.created_by
     end
   end
@@ -82,11 +82,11 @@ class Card::BaseTest < ActiveSupport::TestCase
   test 'update_should_create_subcards_as_wagbot_if_missing_subcard_permissions' do
     Card.create(:name=>'peel')
     User.current_user = :anon
-    warn Rails.logger.info("check #{User.current_user}")
+    #warn Rails.logger.info("check #{User.current_user}")
     assert_equal false, Card['Basic'].ok?(:create), "anon can't creat"
     Card.create!( :type=>"Fruit", :name=>'Banana', :cards=>{ "+peel" => { :content => "yellow" }})
     peel= Card["Banana+peel"]
-    warn "peel #{peel.created_by}, #{peel.updated_by}, #{peel.created_at}"
+    #warn "peel #{peel.created_by}, #{peel.updated_by}, #{peel.created_at}"
     assert_equal "yellow", peel.current_revision.content
     assert_equal Card::AnonID, peel.created_by
   end
@@ -95,7 +95,7 @@ class Card::BaseTest < ActiveSupport::TestCase
     b = nil
     User.as(:joe_user) do
       b = Card.create!( :name=>'Banana' )
-      warn "created #{b.inspect}"
+      #warn "created #{b.inspect}"
     end
     User.as(:anon) do
       assert_raises( Card::PermissionDenied ) do
@@ -122,7 +122,7 @@ class Card::BaseTest < ActiveSupport::TestCase
     assert !card.name.empty?, "name not empty"
     rev = card.current_revision
     assert_instance_of Revision, rev
-    warn "revision #{rev.inspect}, #{rev.author}"
+    #warn "revision #{rev.inspect}, #{rev.author}"
     assert_instance_of Card, rev.author
   end
 

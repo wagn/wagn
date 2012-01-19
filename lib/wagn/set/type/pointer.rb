@@ -4,13 +4,13 @@ module Wagn::Set::Type::Pointer
 
   def item_cards( args={} )
     if args[:complete]
-      warn "item_card[#{args.inspect}], :complete"
+      #warn "item_card[#{args.inspect}], :complete"
       Wql.new({:referred_to_by=>name}.merge(args)).run
     else
-      warn "item_card[#{inspect}], :complete"
+      #warn "item_card[#{inspect}], :complete"
       item_names(args).map do |name|
         c=Card.fetch_or_new(name)
-        warn "item_card #{name}, #{c}"; c
+        #warn "item_card #{name}, #{c}"; c
       end.compact
     end
   end

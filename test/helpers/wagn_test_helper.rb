@@ -66,7 +66,7 @@ module WagnTestHelper
       #tmp_controller = @controller
       #@controller = AccountController.new
       
-      warn "login as #{user}"
+      #warn "login as #{user}"
       post '/account/signin', :login=>login, :password=>pass
       assert_response :redirect
       

@@ -116,14 +116,14 @@ def create_card(username,cardtype,cardname,content="")
 end
 
 def logged_in_as(username)
-  sameuser = (username == "I" or @current_user && @current_user.card.name == username)
+  sameuser = (username == "I" or @current_user && Card[@current_user].name == username)
   unless sameuser
     @saved_user = @current_user
     step "I log in as #{username}"
   end
   yield
   unless sameuser
-    step( @saved_user ? "I log in as #{@saved_user.card.name}" : "I log out" )
+    step( @saved_user ? "I log in as #{Card[@saved_user].name}" : "I log out" )
   end
 end
                    

@@ -19,7 +19,7 @@ class SharedData
     ja_card = Card.create! :typecode=>'User', :name=>"Joe Admin", :content => "I'm number one"
     joe_admin = ::User.create! :login=>"joe_admin",:email=>'joe@admin.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User[:wagbot], :card_id=>ja_card.id
     roles_card = ja_card.star_rule(:roles)
-    warn "roles card for #{ja_card.name} is #{roles_card.inspect}"
+    #warn "roles card for #{ja_card.name} is #{roles_card.inspect}"
     roles_card << Card::AdminID
     # FIXME: improve API: roles_card = jc_card.star_rule(:roles) << ja_card
     #roles_card = Card.fetch_or_new(jc_card.cardname.star_rule(:roles),

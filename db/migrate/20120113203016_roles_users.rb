@@ -2,16 +2,22 @@ class RolesUsers < ActiveRecord::Migration
   def up
     User.as :wagbot do
       # Delete the old *roles template
-      (c = Card['*assign_user_roles'])    && c.refresh && c.delete
-      (c = Card['*role+*right+*content']) && c.refresh && c.delete
-      (c=Card['*tasks+*right+*default'])  && c.refresh && c.delete
-      Card.where("name like '%+*tasks'").each { |c| c.refresh && c.delete }
+      (c = Card['*assign_user_roles'].refresh) && c.delete
+      (c = Card['*role+*right+*content'].refresh) && c.delete
+      (c = Card['*role+*right+*default'].refresh) && c.delete
+      (c = Card['*tasks+*right+*default'].refresh) && c.delete
+      Card.search(:right=>"*tasks").map(&:refresh).each(&:delete)
       Wagn::Cache.reset_global
 
       # Add rolename->*tasks pointers from roles.tasks
       Card.where(:extension_type => 'Role').each do |rolecard|
         tasks=rolecard.extension and tasks = tasks.tasks and tasks.split(',').each do |task|
-            Card.fetch_or_new(Card.task_rule(task)) << rolecard
+            # mapping old task names to rule cardnames to use
+            Card.fetch_or_new( case task.to_sym
+                when :create_accounts;    "*account+*right+*create"
+                when :administrate_users; "*account+*right+*update"
+                when :assign_user_roles;  "*roles+*right+*update"
+              end ) << rolecard
           end
       end
 
@@ -31,13 +37,13 @@ class RolesUsers < ActiveRecord::Migration
                    :content => "{'type':'User';'refer_to':'_left'}"
 
       # Add *account+*right+*create (create_accounts task)
-      c=Card['*account+*right+*create'] and c.delete
+      c=Card['*account+*right+*create'] ||
       Card.create! :name => "*account+*right+*create",
                    :type_id => Card::PointerID,
                    :content => "[[_left]]"
 
       # Add *account+*right+*update (administrate_users)
-      c=Card['*account+*right+*update'] and c.delete
+      c=Card['*account+*right+*update'] ||
       Card.create! :name => "*account+*right+*update",
                    :type_id => Card::PointerID,
                    :content => "[[_left]]"
@@ -54,13 +60,13 @@ class RolesUsers < ActiveRecord::Migration
 
   def down
     User.as :wagbot do
-      Card.where("name like '%+*roles'").each { |c| c.delete }
+      Card.search(:right => '*roles').each &:delete
 
       (c=Card['Role+*users+*type plus right+*content']) && c.delete
       (c=Card['*account+*right+*create'])               && c.delete
       (c=Card['*account+*right+*update'])               && c.delete
       (c=Card['*roles+*right+*update'])                 && c.delete
-      (c=Card['*roles+*right+*default'])                 && c.delete
+      (c=Card['*roles+*right+*default'])                && c.delete
       (c=Card['*roles+*right+*update'])                 && c.delete
       (c=Card['*roles+*right'])                         && c.delete
       (c=Card['*roles'])                                && c.delete

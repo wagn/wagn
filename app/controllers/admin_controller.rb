@@ -11,7 +11,7 @@ class AdminController < ApplicationController
         set_default_request_recipient
       end
 
-      warn "ext id = #{@extension.id}"
+      #warn "ext id = #{@extension.id}"
 
       if @extension.errors.empty?
         roles_card = Card.fetch_or_new(@card.cardname.star_rule(:roles))

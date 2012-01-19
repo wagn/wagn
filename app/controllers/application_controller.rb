@@ -124,6 +124,7 @@ class ApplicationController < ActionController::Base
   end
 
   def render_errors(options={})
+    raise "render_errors: #{options.inspect}"
     @card ||= Card.new
     view   = options[:view]   || (@card && @card.error_view  ) || :errors
     status = options[:status] || (@card && @card.error_status) || 422
@@ -178,16 +179,13 @@ class ApplicationController < ActionController::Base
       [ :denial, 403]
     when Wagn::BadAddress, ActionController::UnknownController, ActionController::UnknownAction  
       [ :bad_address, 404 ]
-    when Wagn::Oops, ActiveRecord::RecordInvalid && @card && @card.errors.any?
-      [ :errors, 422]
     else
-      Rails.logger.info "\n\nController exception: #{exception.message}"
-      Rails.logger.debug exception.backtrace*"\n"
-      
-      if Rails.logger.level == 0
-        raise exception
+      if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) && @card && @card.errors.any?
+        [ :errors, 422]
       else
-        [ :server_error, 500 ]
+        Rails.logger.info "\n\nController exception: #{exception.message}"
+        Rails.logger.debug exception.backtrace*"\n"
+        Rails.logger.level == 0 ? raise( exception ) : [ :server_error, 500 ]
       end
     end
     

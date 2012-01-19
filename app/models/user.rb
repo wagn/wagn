@@ -38,9 +38,14 @@ class User < ActiveRecord::Base
     end
 
     def current_user=(user)
-      #warn "cu=(#{user}) #{@@current_user}, #{@@as_user}"
+      #warn "cu=(#{user.inspect}) #{@@current_user}, #{@@as_user}"
       @@as_user = nil
-      @@current_user = user.class==User ? User[user.id] : User[user]
+      @@current_user = case user
+                         when User; user
+                         when Card; User.where(:card_id=>user.id).first
+                         when Integer; User.where(:card_id=>user).first
+                         else User.where(:login=>user.to_s).first
+                       end
       #warn "cu= #{@@current_user}, #{@@as_user}"; @@current_user
     end
 
@@ -97,7 +102,7 @@ class User < ActiveRecord::Base
     end
 
     def without_cache(key)
-      usr = Integer===key ? find(key) : find_by_login(key.to_s)
+      usr = Integer===key ? where(:card_id=>key).first : find_by_login(key.to_s)
       if usr #preload to be sure these get cached.
         usr.card
         usr.read_rule_ids unless usr.login=='wagbot'

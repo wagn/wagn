@@ -43,22 +43,25 @@ class CardActionTest < ActionController::IntegrationTest
     post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
     assert_response 302
 
-    assert Card.find_by_name('Editor').typecode == 'Role'
-    assert_instance_of Role, Role.find_by_codename('Editor')
+    assert Card['Editor'].type_id == Card::RoleID
   end
 
   def test_create_cardtype_card
-    post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"} )
+    User.as(:wagbot) {
+    warn "test create #{User.as_user}, #{User.current_user}"
+      post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"} )}
     assert_response 302
     assert Card.find_by_name('Editor2').typecode == 'Cardtype'
   end
 
   def test_create                   
-    post 'card/create', :card=>{
+    User.as(:wagbot) {
+     warn "test create 2 #{User.as_user}, #{User.current_user}"
+     post 'card/create', :card=>{
       :type=>'Basic', 
       :name=>"Editor",
       :content=>"testcontent2"
-    }
+    }}
     assert_response 302
     assert_equal "testcontent2", Card["Editor"].content
   end

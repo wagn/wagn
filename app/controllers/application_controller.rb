@@ -45,7 +45,9 @@ class ApplicationController < ActionController::Base
     
       Wagn::Cache.re_initialize_for_new_request
     
+      #warn "set curent_user (app-cont) #{self.current_user}, U.cu:#{User.current_user}"
       User.current_user = current_user || User[:anon]
+      #warn "set curent_user a #{current_user}, U.cu:#{User.current_user}"
     
       # RECAPTCHA HACKS
       Wagn::Conf[:controller] = self # this should not be conf, but more like wagn.env

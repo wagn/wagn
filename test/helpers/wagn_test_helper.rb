@@ -56,17 +56,17 @@ module WagnTestHelper
   def integration_login_as(user)
     User.cache.reset
     
-    case user.to_s 
-      when 'anon'; #do nothing
-      when 'joe_user'; login='joe@user.com'; pass='joe_pass'
-      when 'admin';    login='u3@user.com'; pass='u3_pass'
-      else raise "Don't know email & password for #{user}"
-    end
-    unless user==:anon
+    unless (user=user.to_sym)==:anon
+      case user
+        when :joe_user; login='joe@user.com'; pass='joe_pass'
+        when :admin;    login='u3@user.com'; pass='u3_pass'
+        else raise "Don't know email & password for #{user}"
+      end
       # FIXME- does setting controller here break anything else?
       #tmp_controller = @controller
       #@controller = AccountController.new
       
+      warn "login as #{user}"
       post '/account/signin', :login=>login, :password=>pass
       assert_response :redirect
       

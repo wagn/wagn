@@ -10,7 +10,7 @@ describe "reader rules" do
   it "should be *all+*read by default" do
     card = Card.fetch('Home')
     card.read_rule_id.should == Card.fetch('*all+*read').id
-    card.who_can(:read).should == ['anyone']
+    card.who_can(:read).should ==  [Card::AnyoneID]
     User.as(:anon){ card.ok?(:read).should be_true }
   end
   
@@ -19,7 +19,7 @@ describe "reader rules" do
     User.as(:wagbot) { @perm_card.save! }
     card = Card.fetch('Home')
     card.read_rule_id.should == @perm_card.id
-    card.who_can(:read).should == ['anyone_signed_in']
+    card.who_can(:read).should == [Card::AuthID]
     User.as(:anon){ card.ok?(:read).should be_false }
   end
   
@@ -29,7 +29,7 @@ describe "reader rules" do
       @perm_card.content = '[[Joe Admin]]'
       User.as(:wagbot) { @perm_card.save! }
       card.read_rule_id.should == @perm_card.id
-      card.who_can(:read).should == ['joe_admin']
+      card.who_can(:read).should == [Card['joe_admin'].id]
       User.as(:anon)      { card.ok?(:read).should be_false }
       User.as(:joe_user)  { card.ok?(:read).should be_false }
       User.as(:joe_admin) { card.ok?(:read).should be_true }
@@ -97,7 +97,7 @@ describe "reader rules" do
     User.as(:wagbot) { @perm_card.save! }
     all_plus = Card.fetch_or_create('*all plus+*read', :content=>'_left')
     c = Card.new(:name=>'Home+Heart')
-    c.who_can(:read).should == ['anyone_signed_in']
+    c.who_can(:read).should == [Card::AuthID]
     c.permission_rule_card(:read).first.id.should == @perm_card.id
     c.save
     c.read_rule_id.should == @perm_card.id
@@ -106,13 +106,13 @@ describe "reader rules" do
   it "should get updated when relative settings change" do
     all_plus = Card.fetch_or_create('*all plus+*read', :content=>'_left')
     c = Card.new(:name=>'Home+Heart')
-    c.who_can(:read).should == ['anyone']
+    c.who_can(:read).should == [Card::AnyoneID]
     c.permission_rule_card(:read).first.id.should == Card.fetch('*all+*read').id
     c.save
     c.read_rule_id.should == Card.fetch('*all+*read').id
     User.as(:wagbot) { @perm_card.save! }
     c2 = Card.fetch('Home+Heart')
-    c2.who_can(:read).should == ['anyone_signed_in']
+    c2.who_can(:read).should == [Card::AuthID]
     c2.read_rule_id.should == @perm_card.id
     Card.fetch('Home+Heart').read_rule_id.should == @perm_card.id
     User.as(:wagbot){ @perm_card.destroy }
@@ -145,16 +145,18 @@ describe "Permission", ActiveSupport::TestCase do
     User.as( :wagbot )
     User.cache.reset
     Role.cache.reset
-    @u1, @u2, @u3 = %w( u1 u2 u3 ).map do |x| ::User[x] end
-    @r1, @r2, @r3 = %w( r1 r2 r3 ).map do |x| ::Role[x] end
-    @c1, @c2, @c3 = %w( c1 c2 c3 ).map do |x| Card.fetch(x) end
+    @u1, @u2, @u3 = %w( u1 u2 u3 ).map do |x| Card[x] end
+    @r1, @r2, @r3 = %w( r1 r2 r3 ).map do |x| Card[x] end
+    @c1, @c2, @c3 = %w( c1 c2 c3 ).map do |x| Card[x] end
   end      
 
 
   it "checking ok read should not add to errors" do
     User.as(:joe_admin) do
       Card.create! :name=>"Hidden"
+      warn "create more limited read"
       Card.create(:name=>'Hidden+*self+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
+      warn "created more limited read"
     end
   
     User.as(:anon) do
@@ -215,7 +217,9 @@ describe "Permission", ActiveSupport::TestCase do
       Card.create(:name=>"c#{num}+*self+*update", :type=>'Pointer', :content=>"[[r#{num}]]")
     end
     
-    @u3.roles = [ @r1 ]  #not :admin here
+    (rc=@u3.star_rule(:roles)).content =  ''
+    rc << @r1
+    warn "rule #{rc.item_names.inspect}"
 
     %{        u1 u2 u3
       c1(r1)  T  T  T
@@ -223,6 +227,7 @@ describe "Permission", ActiveSupport::TestCase do
       c3(r3)  T  F  F
     }
 
+    warn "writeable #{@c1.inspect}, #{@u1.inspect}"
     assert_equal true,  @c1.writeable_by(@u1), "c1 writeable by u1"
     assert_equal true,  @c1.writeable_by(@u2), "c1 writeable by u2" 
     assert_equal true,  @c1.writeable_by(@u3), "c1 writeable by u3" 
@@ -235,9 +240,15 @@ describe "Permission", ActiveSupport::TestCase do
   end
 
   it "read user permissions" do
-    @u1.roles = [ @r1, @r2 ]
-    @u2.roles = [ @r1, @r3 ]
-    @u3.roles = [ @r1, @r2, @r3 ]
+    (rc=@u1.star_rule(:roles)).content = ''
+    rc << @r1 << @r2
+    warn "rule #{rc.name}, #{rc.item_names.inspect}"
+    (rc=@u2.star_rule(:roles)).content = ''
+    rc << @r1 << @r3
+    warn "rule #{rc.name}, #{rc.item_names.inspect}"
+    (rc=@u3.star_rule(:roles)).content = ''
+    rc << @r1 << @r2 << @r3
+    warn "rule #{rc.name}, #{rc.item_names.inspect}"
 
     ::User.as(:wagbot) {
       [1,2,3].each do |num|
@@ -368,7 +379,7 @@ describe Card, "settings based permissions" do
   
   it "should handle delete as a setting" do
     c = Card.new :name=>'whatever'
-    c.who_can(:delete).should == ['joe_user']
+    c.who_can(:delete).should == [Card['joe_user'].id]
     User.as :joe_user
     c.ok?(:delete).should == true
     User.as :u1

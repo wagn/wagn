@@ -117,14 +117,11 @@ class AccountController < ApplicationController
       #warn Rails.logger.info("to prev #{previous_location}")
       redirect_to previous_location
     else
-      u = User.find_by_email(params[:login].strip.downcase)
-      failed_login(
-        case
-        when u.nil?     ; "Unrecognized email."
-        when u.blocked? ; "Sorry, that account is blocked."
-        else            ; "Wrong password"
-        end
-      )
+      failed_login( case u=User.find_by_email(params[:login].strip.downcase)
+          when u.nil?     ; "Unrecognized email."
+          when u.blocked? ; "Sorry, that account is blocked."
+          else            ; "Wrong password"
+        end )
     end
   end
 

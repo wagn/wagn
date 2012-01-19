@@ -29,26 +29,24 @@ module Wagn::Set::Type::Pointer
   end
 
   def << card
-    cardname = case card
+    add_item case card
                when Card; card.name
                when Integer; c = Card[card] and c.name
                else card end
-    add_item cardname
     self
   end
 
-  def add_item cardname
-    unless item_names.include? cardname
-      self.content= "[[#{(item_names << cardname).
-                          reject(&:blank?)*']]\n[['}]]"
+  def add_item name
+    unless item_names.include? name
+      self.content="[[#{(item_names << name).reject(&:blank?)*"]]\n[["}]]"
       save!
     end
   end
 
-  def drop_item cardname
-    if item_names.include? cardname
-      self.content= "[[#{(item_names.delete(cardname)).
-                          reject(&:blank?)*']]\n[['}]]"
+  def drop_item name
+    if item_names.include? name
+      nitems = item_names.reject{|n|n==name||n.blank?}
+      self.content= nitems.empty? ? '' : "[[#{nitems*"]]\n[["}]]"
       save!
     end
   end

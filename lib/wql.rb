@@ -314,41 +314,45 @@ class Wql
       merge field(:updated_by) => ValueSpec.new( [:in, extension_select], self ) 
     end
 
+=begin
     def merge_extension( ext_type, ext_id_spec)
       merge(
         field(:extension_type)=>ValueSpec.new(ext_type,self), 
         field(:extension_id  )=>ValueSpec.new(['in',ext_id_spec], self)
       )
     end
+=end
     
     def creator_of(val)
-      merge_extension('User', CardSpec.build(:return=>'created_by', :_parent=>self).merge(val))
+      CardSpec.build(:return=>'created_by', :_parent=>self).merge(val)
+      #merge_extension('User', CardSpec.build(:return=>'created_by', :_parent=>self).merge(val))
     end
     
     def last_editor_of(val)
-      merge_extension('User', CardSpec.build(:return=>'updated_by', :_parent=>self).merge(val) )
+      CardSpec.build(:return=>'updated_by', :_parent=>self).merge(val)
+      #merge_extension('User', CardSpec.build(:return=>'updated_by', :_parent=>self).merge(val) )
     end
     
     def editor_of(val)
       inner_spec = CardSpec.build(:_parent=>self).merge(val)
       join_alias = inner_spec.add_join :ed, '(select distinct card_id, created_by from revisions)', :id, :card_id
       inner_spec.merge :return=>"#{join_alias}.created_by"
-      merge_extension('User', inner_spec )
+      #merge_extension('User', inner_spec )
     end
     alias :edited :editor_of
     
     def member_of(val)
-      inner_spec = CardSpec.build(:extension_type=>'Role', :_parent=>self).merge(val)
+      inner_spec = CardSpec.build(:type_id=>Card::RoleID, :_parent=>self).merge(val)
       join_alias = inner_spec.add_join :ru, :roles_users, :extension_id, :role_id
       inner_spec.merge :return=>"#{join_alias}.user_id" 
-      merge_extension('User',inner_spec )
+      #merge_extension('User',inner_spec )
     end
 
     def member(val)
       inner_spec = CardSpec.build(:return=>'ru2.role_id', :extension_type=>'User', :_parent=>self).merge(val)
       join_alias = inner_spec.add_join :ru2, :roles_users, :extension_id, :user_id
       inner_spec.merge :return=>"#{join_alias}.role_id"
-      merge_extension('Role', inner_spec )
+      #merge_extension('Role', inner_spec )
     end
     
     def sort(val)

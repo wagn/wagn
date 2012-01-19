@@ -6,16 +6,16 @@ module AuthenticatedSystem
 
   # Accesses the current user from the session.
   def current_user
-    @current_user ||= session[:user] ? User[session[:user]] : nil
-  rescue
+    @current_user ||= (su=session[:user]) ? User.where(:card_id=>su).first : nil
+  rescue Exception => e
     session[:user] = nil
     raise
   end
 
   # Store the given user in the session.
   def current_user=(new_user)
-    #session[:user] = new_user
-    session[:user] = new_user.nil? ? nil : new_user.id
+    #warn "cu set #{new_user.inspect} #{caller*"\n"}"
+    session[:user] = new_user.nil? ? nil : new_user.card_id
     @current_user = new_user
   end
 

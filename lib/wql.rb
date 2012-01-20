@@ -308,7 +308,7 @@ class Wql
     
     # what users are member of val
     def member_of(val)
-      merge field(:right_plus) => [Card::XrolesID, :refer_to=>val]
+      merge field(:right_plus) => [Card::XrolesID, {:refer_to=>val}]
     end
 
     def member(val)

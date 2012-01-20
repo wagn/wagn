@@ -86,7 +86,7 @@ describe Wql do
     end
   end
 
-  describe "creator_id/creator_of" do
+  describe "created_by/creator_of" do
     before do
       User.as :joe_user do
         Card.create :name=>'Create Test', :content=>'sufficiently distinctive'
@@ -99,7 +99,7 @@ describe Wql do
     end
     
     it "should find card created by Joe User" do
-      Wql.new(:creator_id=>'Joe User', :eq=>'sufficiently distinctive').run.first.name.should == 'Create Test'
+      Wql.new(:created_by=>'Joe User', :eq=>'sufficiently distinctive').run.first.name.should == 'Create Test'
     end
   end
 
@@ -107,6 +107,10 @@ describe Wql do
     before do
       User.current_user = User[:joe_user]
       c=Card.fetch('A'); c.content='peculicious'; c.save!
+      
+      warn "joe user card id = #{Card["Joe User"].id}"
+      warn "A's updater_id = #{c.updater_id}"
+      
     end
     
     it "should find Joe User as the card's last editor" do

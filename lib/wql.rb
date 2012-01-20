@@ -2,8 +2,8 @@ class Wql
   include ActiveRecord::QuotingAndMatching
   
   ATTRIBUTES = {
-    :basic      =>  %w{ name type content id key extension_type extension_id updater_id trunk_id tag_id },
-    :custom     =>  %w{ edited_by editor_of edited last_editor_of last_edited_by creator_of creator_id } +
+    :basic      =>  %w{ name type content id key updater_id trunk_id tag_id creator_id updater_id },
+    :custom     =>  %w{ edited_by editor_of edited last_editor_of last_edited_by creator_of created_by } +
                     %w{ member_of member role found_by part left right plus left_plus right_plus } + 
                     %w{ or match complete not and sort },
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
@@ -60,15 +60,6 @@ class Wql
   
   class Spec 
     attr_accessor :spec
-    
-    def walk(spec, method)
-      case 
-        when spec.respond_to?(method); spec.send(method)
-        when spec.is_a?(Hash); spec.inject({}) {|h,p| h[p[0]] = walk(p[1], method); h }
-        when spec.is_a?(Array); spec.collect {|v| walk(v, method) }
-        else spec
-      end
-    end
     
     def safe_sql(txt)
       txt = txt.to_s
@@ -207,13 +198,19 @@ class Wql
       end
       spec[:content] = content if content
       
-      spec.each do |key,val| 
-        case ATTRIBUTES[key]
+      spec.each do |key,val|
+        keyroot = key.to_s.sub( /\:\d+$/, '' ).to_sym
+        case ATTRIBUTES[keyroot]
           when :basic; spec[key] = ValueSpec.new(val, self)
-          when :custom; self.send(key, spec.delete(key))    
-          when :referential;  self.refspec(key, spec.delete(key))
+          when :custom; self.send(keyroot, spec.delete(key))    
+          when :referential;  self.refspec(keyroot, spec.delete(key))
           when :ignore; spec.delete(key)
-          else raise("Invalid attribute #{key}") unless key.to_s.match(/(type|id|by|cond)\:\d+/)
+          else 
+            if keyroot==:cond
+              #internal condition
+            else
+              raise("Invalid attribute #{key}")
+            end 
         end                      
       end
       
@@ -305,36 +302,13 @@ class Wql
       add_join :ed_by, "(select distinct card_id from revisions where creator_id in #{card_select} )", :id, :card_id
     end
     
-    def creator_id(val)
-      card_select = CardSpec.build(:return=>'card_id', :_parent=>self).merge(val)
-      merge field(:creator_id) => ValueSpec.new( [:in, card_select], self )
-    end
-    
-    def last_edited_by(val)
-      card_select = CardSpec.build(:return=>'card_id', :_parent=>self).merge(val)
-      merge field(:updater_id) => ValueSpec.new( [:in, card_select], self ) 
-    end
-
-=begin
-    def merge_extension( ext_type, ext_id_spec)
-      merge(
-        field(:extension_type)=>ValueSpec.new(ext_type,self), 
-        field(:extension_id  )=>ValueSpec.new(['in',ext_id_spec], self)
-      )
-    end
-=end
-    
-    def creator_of(val)
-      CardSpec.build(:return=>'creator_id', :_parent=>self).merge(val)
-      #merge_extension('User', CardSpec.build(:return=>'creator_id', :_parent=>self).merge(val))
-    end
-    
-    def last_editor_of(val)
-      CardSpec.build(:return=>'updater_id', :_parent=>self).merge(val)
-      #merge_extension('User', CardSpec.build(:return=>'updater_id', :_parent=>self).merge(val) )
-    end
+    def     created_by(val)  merge field(:creator_id) => subspec(val)                 end
+    def last_edited_by(val)  merge field(:updater_id) => subspec(val)                 end
+    def     creator_of(val)  merge field(:id) => subspec(val, :return=>'creator_id')  end
+    def last_editor_of(val)  merge field(:id) => subspec(val, :return=>'updater_id')  end
     
     def editor_of(val)
+      
       inner_spec = CardSpec.build(:_parent=>self).merge(val)
       join_alias = inner_spec.add_join :ed, '(select distinct card_id, creator_id from revisions)', :id, :card_id
       inner_spec.merge :return=>"#{join_alias}.creator_id"
@@ -344,20 +318,11 @@ class Wql
     
     # what users are member of val
     def member_of(val)
-      #inner_spec = CardSpec.build(:tag_id=>Card::XusersID)
-      #inner_spec = CardSpec.build(:refer_to=>Card::XusersID, :_parent=>self).merge(val)
-      #join_alias = inner_spec.add_join :ru, :roles_users, :extension_id, :role_id
-      #inner_spec.merge :return=>"#{join_alias}.id" 
-      #merge_extension('User',inner_spec )
+      merge field(:right_plus) => ['*roles', :refer_to=>val]
     end
 
-    # what roles have val as a member
     def member(val)
-      inner_spec = CardSpec.build(:tag_id=>Card::XrolesID, :_parent=>self).merge(val)
-      #inner_spec = CardSpec.build(:return=>'ru2.role_id', :_parent=>self).merge(val)
-      #join_alias = inner_spec.add_join :ru2, :roles_users, :id, :user_id
-      #inner_spec.merge :return=>"#{join_alias}.role_id"
-      #merge_extension('Role', inner_spec )
+      merge field(:referred_to_by) => {:left=>val, :right=>Card::XrolesID }
     end
     
     def sort(val)

@@ -229,19 +229,24 @@ class Wql
     def created_by(val)  merge field(:creator_id) => subspec(val)     end
     def last_edited_by(val)  merge field(:updater_id) => subspec(val) end
     def creator_of(val) merge field(:id)=>subspec(val,:return=>'creator_id') end
-    def last_editor_of(val) merge field(:id) => subspec(val, :return=>'updater_id')  end
-
-    def member_of(val) merge field(:right_plus) => [Card::XrolesID, {:refer_to=>val}]          end
-    def member(   val) merge field(:referred_to_by) => {:left=>val, {:right=>Card::XrolesID} } end
-          
     def editor_of(val)  revision_spec(:creator_id, :card_id, val) end
     def edited_by(val)  revision_spec(:card_id, :creator_id, val) end
+    def last_editor_of(val)
+      merge field(:id) => subspec(val, :return=>'updater_id')
+    end
+    alias :edited :editor_of
+
+    def member_of(val)
+      merge field(:right_plus) => [Card::XrolesID, {:refer_to=>val}]
+    end
+    def member(val)
+      merge field(:referred_to_by) => {:left=>val, :right=>Card::XrolesID }
+    end
     
     def revision_spec(field, linkfield, val)
       card_select = CardSpec.build(:_parent=>self, :return=>'id').merge(val).to_sql
       add_join :ed, "(select distinct #{field} from revisions where #{linkfield} in #{card_select})", :id, field      
     end
-    alias :edited :editor_of
     
     def found_by(val)
       cards = (String===val ? [Card.fetch_or_new(absolute_name(val))] : Wql.new(val).run)
@@ -356,7 +361,8 @@ class Wql
 
       # Permissions    
       unless User.always_ok? or (Wql.root_perms_only && !root?)
-        sql.conditions << %{ (#{table_alias}.read_rule_id IN (#{::User.as_user.read_rule_ids.join ','})) }
+        sql.conditions <<
+         "(#{table_alias}.read_rule_id IN (#{User.read_rules*','}))"
       end
            
       sql.fields.unshift fields_to_sql

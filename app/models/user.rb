@@ -65,10 +65,8 @@ class User < ActiveRecord::Base
       end
     end
 
-    def as_user
-      @@as_user || self.current_user
-    end
-
+    def as_user()       @@as_user ||  self.current_user  end
+    def read_rules() @@read_rules ||= as_user.read_rules end
 
     # FIXME: args=params.  should be less coupled..
     def create_with_card(user_args, card_args, email_args={})
@@ -105,7 +103,7 @@ class User < ActiveRecord::Base
       usr = Integer===key ? where(:card_id=>key).first : find_by_login(key.to_s)
       if usr #preload to be sure these get cached.
         usr.card
-        usr.read_rule_ids unless usr.login=='wagbot'
+        usr.read_rules unless usr.login=='wagbot'
       end
       usr
     end
@@ -203,15 +201,12 @@ class User < ActiveRecord::Base
     @parties ||= [all_roles,self.card_id].flatten.reject(&:blank?)
   end
 
-  def read_rule_ids
+  def read_rules
     return [] if card_id==Card::WagbotID  # avoids infinite loop
-    @read_rule_ids ||= begin
-      party_keys = ['in', Card::AnyoneID] + parties
-      User.as(:wagbot) do
-        Card.search(:right=>'*read', :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
-      end
+    party_keys = ['in', Card::AnyoneID] + parties
+    User.as(:wagbot) do
+      Card.search(:right=>'*read', :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
     end
-    @read_rule_ids
   end
 
   def save_with_card(card)

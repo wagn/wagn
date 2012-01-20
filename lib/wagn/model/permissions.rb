@@ -130,13 +130,12 @@ module Wagn::Model::Permissions
   end
 
   def approve_read
-    #warn "AR #{User.always_ok?}"
     return true if User.always_ok?
-    @read_rule_id ||= permission_rule_card(:read).first.id
-    #warn "ar_ok? #{User.as_user.read_rule_ids.inspect}, #{@read_rule_id.inspect}"
-    ok = Card::AnyoneID == @read_rule_id
-    ok ||= User.as_user.read_rule_ids.member?(@read_rule_id.to_i) 
-    deny_because you_cant("read this card") unless ok
+    @read_rule_id ||= permission_rule_card(:read).first.id.to_i
+    unless Card::AnyoneID == @read_rule_id ||
+           User.read_rules.member?(@read_rule_id) 
+      deny_because you_cant("read this card")
+    end
   end
   
   def approve_update
@@ -261,10 +260,8 @@ module Wagn::Model::Permissions
 
       #then find all cards with me as read_rule_id that were not just updated and regenerate their read_rules
       if !new_record?
-        Card.find_all_by_read_rule_id_and_trash(self.id, false).each do |was_ruled|  #optimize with WQL / fetch?
-          next if in_set[was_ruled.key]
-          was_ruled.update_read_rule
-        end
+        Card.where(:read_rule_id=>self.id, :trash=>false).
+          reject{|w|in_set[w.key]}.each(&:update_read_rule)
       end
     end
   end

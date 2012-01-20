@@ -44,7 +44,7 @@ describe Card, "with role" do
   end
   
   it "should have a role extension" do
-    @role.extension_type.should=='Role'
+    @role.typecode.should=='Role'
   end
 end
 

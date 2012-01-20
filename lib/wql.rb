@@ -29,15 +29,11 @@ class Wql
     result
   end
     
-  def initialize( query )
-#    Rails.logger.info "\ninit query = #{query.inspect}\n"
-    @cs = CardSpec.build( query )
-  end
-  def query()              @cs.query                      end
-  def sql()                @sql ||= @cs.to_sql            end
+  def initialize( query )  @card_spec = CardSpec.build( query )  end
+  def query()              @card_spec.query                      end
+  def sql()                @sql ||= @card_spec.to_sql            end
   
   def run
-#    Rails.logger.info "\nrun query = #{query.inspect}\n"
     rows = ActiveRecord::Base.connection.select_all( sql )
     qr=query[:return]
     case qr = qr.nil? ? 'card' : qr.to_s
@@ -86,8 +82,7 @@ class Wql
   
   
   class SqlStatement
-    attr_accessor :fields, :relevance_fields, :tables, :joins,
-      :conditions, :group, :order, :limit, :offset
+    attr_accessor :fields, :relevance_fields, :tables, :joins, :conditions, :group, :order, :limit, :offset
     
     def initialize
       @fields, @relevance_fields, @joins, @conditions = [],[],[],[]
@@ -111,24 +106,20 @@ class Wql
       end
     end 
      
-    def initialize(query)   
-      # NOTE:  when creating new specs, make sure to specify _parent *before*
-      #  any spec which could trigger another cardspec creation further down.
+    def initialize(query)
       @mods = MODIFIERS.clone
       @joins = {}   
       @selfname, @parent = '', nil
+      @spec = {}
+      @sql = SqlStatement.new
       
       @query = query.clone
-      
       @query.merge! @query.delete(:params) if @query[:params]
       @vars = @query.delete(:vars) || {}
       @vars.symbolize_keys!
-      
       @query = clean(@query)
-      
       @rawspec = @query.deep_clone
-      @spec = {}
-      @sql = SqlStatement.new
+      
       self
     end
     
@@ -152,9 +143,7 @@ class Wql
       query = query.symbolize_keys
       @selfname = query.delete(:context) if query[:context]
       @parent   = query.delete(:_parent) if query[:_parent]
-      query.each do |key,val|
-        clean_val val, query, key
-      end
+      query.each { |key,val| clean_val val, query, key }
       query
     end
     
@@ -212,20 +201,47 @@ class Wql
       self
     end
     
-    def add_join(name, table, cardfield, otherfield, opts={})
-      join_alias = "#{table_alias}_#{name}"
-      @joins[join_alias] = "#{opts[:side]} JOIN #{table} AS #{join_alias} ON #{table_alias}.#{cardfield} = #{join_alias}.#{otherfield}"
-      join_alias
-    end
+
     
-    def add_revision_join
-      add_join(:rev, :revisions, :current_revision_id, :id)
-    end
+    def cond(val)                                                                   end #noop
+    def and(val)   subcondition(val)                                                end
+    def or(val)    subcondition(val, :conj=>:or)                                    end
+    def not(val)   merge field(:id) => subspec(val, {:return=>'id'}, negate=true)   end
+                                                                                    
+    def left(val)  merge field(:trunk_id) => subspec(val)                           end
+    def right(val) merge field(:tag_id  ) => subspec(val)                           end
+    def part(val)  subcondition({ :left => val, :right => val.clone }, :conj=>:or)  end  
+
+    def left_plus(val)
+      part_spec, junc_spec = val.is_a?(Array) ? val : [ val, {} ]
+      merge( field(:id) => subspec(junc_spec, :return=>'tag_id', :left =>part_spec))      
+    end    
     
-    def field(name)
-      @fields||={}; @fields[name]||=0; @fields[name]+=1
-      "#{name}:#{@fields[name]}"
+    def right_plus(val) 
+      part_spec, junc_spec = val.is_a?(Array) ? val : [ val, {} ]
+      merge( field(:id) => subspec(junc_spec, :return=>'trunk_id', :right=> part_spec ))
+    end                                                                                                
+    
+    def plus(val)
+      subcondition( { :left_plus=>val, :right_plus=>val.clone }, :conj=>:or )
     end
+
+    def     created_by(val)  merge field(:creator_id) => subspec(val)                 end
+    def last_edited_by(val)  merge field(:updater_id) => subspec(val)                 end
+    def     creator_of(val)  merge field(:id) => subspec(val, :return=>'creator_id')  end
+    def last_editor_of(val)  merge field(:id) => subspec(val, :return=>'updater_id')  end
+
+    def member_of(val)  merge field(:right_plus) => [Card::XrolesID, :refer_to=>val]          end
+    def member(   val)  merge field(:referred_to_by) => {:left=>val, :right=>Card::XrolesID } end
+          
+    def editor_of(val)  revision_spec(:creator_id, :card_id, val) end
+    def edited_by(val)  revision_spec(:card_id, :creator_id, val) end
+    
+    def revision_spec(field, linkfield, val)
+      card_select = CardSpec.build(:_parent=>self, :return=>'id').merge(val).to_sql
+      add_join :ed, "(select distinct #{field} from revisions where #{linkfield} in #{card_select})", :id, field      
+    end
+    alias :edited :editor_of
     
     def found_by(val)
       cards = (String===val ? [Card.fetch_or_new(absolute_name(val))] : Wql.new(val).run)
@@ -234,6 +250,11 @@ class Wql
         found_by_spec = CardSpec.new(c.get_spec).rawspec
         merge(field(:id) => subspec(found_by_spec))
       end
+    end
+    
+    def complete(val)
+      no_plus_card = (val=~/\+/ ? '' : "and tag_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
+      merge field(:cond) => SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
     end
     
     def match(val)
@@ -257,63 +278,21 @@ class Wql
       merge field(:cond)=>SqlCond.new(cond)
     end
     
-    def complete(val)
-      no_plus_card = (val=~/\+/ ? '' : "and tag_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
-      merge field(:cond) => SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
+    def add_join(name, table, cardfield, otherfield, opts={})
+      join_alias = "#{table_alias}_#{name}"
+      @joins[join_alias] = "#{opts[:side]} JOIN #{table} AS #{join_alias} ON #{table_alias}.#{cardfield} = #{join_alias}.#{otherfield}"
+      join_alias
     end
     
-    def cond(val)                                                                 end #noop
-    def and(val)   subcondition(val)                                              end
-    def or(val)    subcondition(val, :conj=>:or)                                  end
-    def left(val)  merge field(:trunk_id) => subspec(val)                         end
-    def right(val) merge field(:tag_id  ) => subspec(val)                         end
-    def not(val)   merge field(:id) => subspec(val, {:return=>'id'}, negate=true) end
-    
-    def part(val) 
-      subcondition({ :left => val, :right => val.clone }, :conj=>:or)
-    end  
-
-    def left_plus(val)
-      part_spec, junc_spec = val.is_a?(Array) ? val : [ val, {} ]
-      merge( field(:id) => subspec(junc_spec, :return=>'tag_id', :left =>part_spec))      
-    end    
-    
-    def right_plus(val) 
-      part_spec, junc_spec = val.is_a?(Array) ? val : [ val, {} ]
-      merge( field(:id) => subspec(junc_spec, :return=>'trunk_id', :right=> part_spec ))
-    end                                                                                                
-    
-    def plus(val)
-      part_spec, junc_spec = val.is_a?(Array) ? val : [ val, {} ]
-      subcondition({ 
-        field(:id) => subspec(junc_spec.deep_clone, :return=>'trunk_id', :right=>part_spec.deep_clone),
-        field(:id) => subspec(junc_spec,            :return=>'tag_id',   :left=>part_spec)
-      }, :conj=>:or)
-    end          
-    
-    
-    def     created_by(val)  merge field(:creator_id) => subspec(val)                 end
-    def last_edited_by(val)  merge field(:updater_id) => subspec(val)                 end
-    def     creator_of(val)  merge field(:id) => subspec(val, :return=>'creator_id')  end
-    def last_editor_of(val)  merge field(:id) => subspec(val, :return=>'updater_id')  end
-    
-    def editor_of(val)  revision_spec(:creator_id, :card_id, val) end
-    def edited_by(val)  revision_spec(:card_id, :creator_id, val) end
-    
-    def revision_spec(field, linkfield, val)
-      card_select = CardSpec.build(:_parent=>self, :return=>'id').merge(val).to_sql
-      add_join :ed, "(select distinct #{field} from revisions where #{linkfield} in #{card_select})", :id, field      
+    def add_revision_join
+      add_join(:rev, :revisions, :current_revision_id, :id)
     end
-    alias :edited :editor_of
     
-    # what users are member of val
-    def member_of(val)
-      merge field(:right_plus) => [Card::XrolesID, :refer_to=>val]
+    def field(name)
+      @fields||={}; @fields[name]||=0; @fields[name]+=1
+      "#{name}:#{@fields[name]}"
     end
-
-    def member(val)
-      merge field(:referred_to_by) => {:left=>val, :right=>Card::XrolesID }
-    end
+    
     
     def sort(val)
       return nil if @parent
@@ -351,7 +330,13 @@ class Wql
       self.joins.merge! cardspec.joins 
       self.sql.relevance_fields += cardspec.sql.relevance_fields
     end
-
+    
+    def subspec(spec, additions={ :return=>'id'}, negate=false)   
+      additions = additions.merge(:_parent=>self)
+      operator = negate ? 'not in' : 'in'
+      ValueSpec.new([operator,CardSpec.build(additions).merge(spec)], self)
+    end
+    
     def refspec(key, cardspec)
       if cardspec == '_none'
         key = :link_to_missing
@@ -360,12 +345,6 @@ class Wql
       cardspec = CardSpec.build(:return=>'id', :_parent=>self).merge(cardspec)
       merge field(:id) => ValueSpec.new(['in',RefSpec.new([key,cardspec])], self)
     end
-    
-    def subspec(spec, additions={ :return=>'id'}, negate=false)   
-      additions = additions.merge(:_parent=>self)
-      operator = negate ? 'not in' : 'in'
-      ValueSpec.new([operator,CardSpec.build(additions).merge(spec)], self)
-    end 
     
     def to_sql(*args)
       # Basic conditions

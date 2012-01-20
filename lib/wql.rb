@@ -2,8 +2,8 @@ class Wql
   include ActiveRecord::QuotingAndMatching
   
   ATTRIBUTES = {
-    :basic      =>  %w{ name type content id key extension_type extension_id updated_by trunk_id tag_id },
-    :custom     =>  %w{ edited_by editor_of edited last_editor_of last_edited_by creator_of created_by } +
+    :basic      =>  %w{ name type content id key extension_type extension_id updater_id trunk_id tag_id },
+    :custom     =>  %w{ edited_by editor_of edited last_editor_of last_edited_by creator_of creator_id } +
                     %w{ member_of member role found_by part left right plus left_plus right_plus } + 
                     %w{ or match complete not and sort },
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
@@ -302,17 +302,17 @@ class Wql
     
     def edited_by(val)
       extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val).to_sql
-      add_join :ed_by, "(select distinct card_id from revisions where created_by in #{extension_select} )", :id, :card_id
+      add_join :ed_by, "(select distinct card_id from revisions where creator_id in #{extension_select} )", :id, :card_id
     end
     
-    def created_by(val)
+    def creator_id(val)
       extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val)
-      merge field(:created_by) => ValueSpec.new( [:in, extension_select], self )
+      merge field(:creator_id) => ValueSpec.new( [:in, extension_select], self )
     end
     
     def last_edited_by(val)
       extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val)
-      merge field(:updated_by) => ValueSpec.new( [:in, extension_select], self ) 
+      merge field(:updater_id) => ValueSpec.new( [:in, extension_select], self ) 
     end
 
 =begin
@@ -325,19 +325,19 @@ class Wql
 =end
     
     def creator_of(val)
-      CardSpec.build(:return=>'created_by', :_parent=>self).merge(val)
-      #merge_extension('User', CardSpec.build(:return=>'created_by', :_parent=>self).merge(val))
+      CardSpec.build(:return=>'creator_id', :_parent=>self).merge(val)
+      #merge_extension('User', CardSpec.build(:return=>'creator_id', :_parent=>self).merge(val))
     end
     
     def last_editor_of(val)
-      CardSpec.build(:return=>'updated_by', :_parent=>self).merge(val)
-      #merge_extension('User', CardSpec.build(:return=>'updated_by', :_parent=>self).merge(val) )
+      CardSpec.build(:return=>'updater_id', :_parent=>self).merge(val)
+      #merge_extension('User', CardSpec.build(:return=>'updater_id', :_parent=>self).merge(val) )
     end
     
     def editor_of(val)
       inner_spec = CardSpec.build(:_parent=>self).merge(val)
-      join_alias = inner_spec.add_join :ed, '(select distinct card_id, created_by from revisions)', :id, :card_id
-      inner_spec.merge :return=>"#{join_alias}.created_by"
+      join_alias = inner_spec.add_join :ed, '(select distinct card_id, creator_id from revisions)', :id, :card_id
+      inner_spec.merge :return=>"#{join_alias}.creator_id"
       #merge_extension('User', inner_spec )
     end
     alias :edited :editor_of

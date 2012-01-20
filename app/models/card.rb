@@ -510,14 +510,14 @@ class Card < ActiveRecord::Base
   end
 
   def author
-    c=Card[created_by]
-    #warn "c author #{created_by}, #{c}, #{self}"; c
+    c=Card[creator_id]
+    #warn "c author #{creator_id}, #{c}, #{self}"; c
   end
   
   def updater
-    #warn "updater #{updated_by}, #{updater_id}"
-    c=Card[updated_by]
-    #warn "c upd #{updated_by}, #{c}, #{self}"; c
+    #warn "updater #{updater_id}, #{updater_id}"
+    c=Card[updater_id||AnonID]
+    #warn "c upd #{updater_id}, #{c}, #{self}"; c
   end
 
   def drafts
@@ -604,7 +604,7 @@ class Card < ActiveRecord::Base
     if self.id == WagbotID or self.id == AnonID
       errors.add :destroy, "#{name}'s is a system card.<br>  Deleting this card would mess up our revision records."
       return false
-    elsif type_id==UserID and Revision.find_by_created_by( self.id )
+    elsif type_id==UserID and Revision.find_by_creator_id( self.id )
       errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
       return false
     end

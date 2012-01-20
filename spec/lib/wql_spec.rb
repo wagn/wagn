@@ -86,7 +86,7 @@ describe Wql do
     end
   end
 
-  describe "created_by/creator_of" do
+  describe "creator_id/creator_of" do
     before do
       User.as :joe_user do
         Card.create :name=>'Create Test', :content=>'sufficiently distinctive'
@@ -99,7 +99,7 @@ describe Wql do
     end
     
     it "should find card created by Joe User" do
-      Wql.new(:created_by=>'Joe User', :eq=>'sufficiently distinctive').run.first.name.should == 'Create Test'
+      Wql.new(:creator_id=>'Joe User', :eq=>'sufficiently distinctive').run.first.name.should == 'Create Test'
     end
   end
 

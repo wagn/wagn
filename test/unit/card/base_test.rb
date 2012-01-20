@@ -74,8 +74,8 @@ class Card::BaseTest < ActiveSupport::TestCase
       Card.update(c.id, :cards=>{ "+peel" => { :content => "yellow" }})
       p = Card['Banana+peel']
       assert_equal "yellow", p.content
-      #warn "created_by #{p.created_by}, #{p.updated_by}, #{p.created_at}"
-      assert_equal Card['joe_user'].id, p.created_by
+      #warn "creator_id #{p.creator_id}, #{p.updater_id}, #{p.created_at}"
+      assert_equal Card['joe_user'].id, p.creator_id
     end
   end
 
@@ -86,9 +86,9 @@ class Card::BaseTest < ActiveSupport::TestCase
     assert_equal false, Card['Basic'].ok?(:create), "anon can't creat"
     Card.create!( :type=>"Fruit", :name=>'Banana', :cards=>{ "+peel" => { :content => "yellow" }})
     peel= Card["Banana+peel"]
-    #warn "peel #{peel.created_by}, #{peel.updated_by}, #{peel.created_at}"
+    #warn "peel #{peel.creator_id}, #{peel.updater_id}, #{peel.created_at}"
     assert_equal "yellow", peel.current_revision.content
-    assert_equal Card::AnonID, peel.created_by
+    assert_equal Card::AnonID, peel.creator_id
   end
 
   test 'update_should_not_create_subcards_if_missing_main_card_permissions' do

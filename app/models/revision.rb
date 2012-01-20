@@ -5,8 +5,8 @@ class Revision < ActiveRecord::Base
   stampable :stamper_class_name => :card
   
   def author
-    c=Card[created_by]
-    #warn "author #{created_by}, #{c}, #{self}"; c
+    c=Card[creator_id]
+    #warn "author #{creator_id}, #{c}, #{self}"; c
   end
   
   

@@ -1,0 +1,33 @@
+---
+production:
+  adapter: postgresql
+  username: wagn_dev
+  database: play_d_dev
+  host: localhost
+  sesson_key: wagn_production
+  password: wdev_lppwpw
+  secret: YrDOGOmYJyFg2xTZykC5ZjWYQUbKBt
+development:
+  session_key: wagn_development
+  adapter: postgresql
+  username: wagn_dev
+  database: play_d_dev
+  host: localhost
+  password: wdev_lppwpw
+  secret: YrDOFOmYJyFg2tTZykCbZjWYQUbKBt
+cucumber:
+  session_key: wagn_test
+  adapter: postgresql
+  username: wagn_dev
+  database: play_d_test
+  host: localhost
+  password: wdev_lppwpw
+  secret: YrDOFOmYJyFg2tTZykCbZjWYQUbKBt
+test:
+  session_key: wagn_test
+  adapter: postgresql
+  username: wagn_dev
+  database: play_d_test
+  host: localhost
+  password: wdev_lppwpw
+  secret: YrDOFOmYJyFg2tTZykCbZjWYQUbKBt

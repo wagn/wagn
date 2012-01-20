@@ -1,27 +1,27 @@
 --- 
 users_001: 
-  id: "1"
-  login: wagbot
-  email: noreply@wagn.org
-  crypted_password: 
   salt: 
-  created_at: 2012-01-17 00:27:20
-  updated_at: 2012-01-16 14:20:15
+  created_at: 2012-01-19 22:25:48
+  crypted_password: 
+  card_id: "15"
   password_reset_code: 
-  status: system
+  updated_at: 2012-01-20 04:25:48
+  id: "2"
   invite_sender_id: "1"
   identity_url: 
-  card_id: "1"
-users_002: 
-  id: "2"
+  status: system
   login: anon
   email: noreply@wagn.org
-  crypted_password: 
+users_002: 
   salt: 
-  created_at: 2012-01-17 00:27:20
-  updated_at: 2012-01-16 14:20:15
+  created_at: 2012-01-19 22:25:48
+  crypted_password: 
+  card_id: "1"
   password_reset_code: 
-  status: system
+  updated_at: 2012-01-20 04:25:48
+  id: "1"
   invite_sender_id: "1"
   identity_url: 
-  card_id: "15"
+  status: system
+  login: wagbot
+  email: noreply@wagn.org

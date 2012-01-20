@@ -24,7 +24,10 @@ namespace :wagn do
     #note: users, roles, and role_users have been manually edited
     task :dump => :environment do
       Wagn::Cache.reset_global
+      begin
       YAML::ENGINE.yamler = 'syck'
+      rescue
+      end
       # use old engine while we're supporting ruby 1.8.7 because it can't support Psych, 
       # which dumps with slashes that syck can't understand
       
@@ -64,8 +67,8 @@ namespace :wagn do
       end 
     
       extra_sql = { 
-        :cards    =>',created_by=1, updated_by=1',  
-        :revisions=>',created_by=1' 
+        :cards    =>',creator_id=1, updater_id=1',  
+        :revisions=>',creator_id=1' 
       }
       require 'time'
       now = Time.new.strftime("%Y-%m-%d %H:%M:%S")

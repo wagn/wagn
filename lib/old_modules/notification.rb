@@ -23,7 +23,7 @@ module Notification
 
       watcher_watched_pairs.reject {|p| @trunk_watchers.include?(p.first) }.each do |watcher, watched|
         next unless watcher && mail=Mailer.change_notice(
-                 Card[watcher], self, action, watched, nested_notifications )
+                 watcher, self, action, watched, nested_notifications )
         mail.deliver
       end
 

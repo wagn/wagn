@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120116114524) do
+ActiveRecord::Schema.define(:version => 20120118013232) do
 
   create_table "cards", :force => true do |t|
     t.string   "name",                :null => false
@@ -23,8 +22,8 @@ ActiveRecord::Schema.define(:version => 20120116114524) do
     t.integer  "current_revision_id"
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
-    t.integer  "created_by"
-    t.integer  "updated_by"
+    t.integer  "creator_id",          :null => false
+    t.integer  "updater_id"
     t.integer  "extension_id"
     t.string   "extension_type"
     t.text     "indexed_name"
@@ -34,6 +33,8 @@ ActiveRecord::Schema.define(:version => 20120116114524) do
     t.integer  "references_expired"
     t.boolean  "trash",               :null => false
     t.integer  "type_id"
+    t.integer  "created_by"
+    t.integer  "updated_by"
   end
 
   add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_index"
@@ -47,6 +48,7 @@ ActiveRecord::Schema.define(:version => 20120116114524) do
   create_table "cardtypes", :force => true do |t|
     t.string  "class_name"
     t.boolean "system"
+    t.integer "card_id"
   end
 
   add_index "cardtypes", ["class_name"], :name => "cardtypes_class_name_uniq", :unique => true
@@ -69,12 +71,13 @@ ActiveRecord::Schema.define(:version => 20120116114524) do
   create_table "revisions", :force => true do |t|
     t.datetime "created_at", :null => false
     t.integer  "card_id",    :null => false
-    t.integer  "created_by", :null => false
+    t.integer  "creator_id", :null => false
     t.text     "content",    :null => false
+    t.integer  "created_by"
   end
 
   add_index "revisions", ["card_id"], :name => "revisions_card_id_index"
-  add_index "revisions", ["created_by"], :name => "revisions_created_by_index"
+  add_index "revisions", ["creator_id"], :name => "revisions_created_by_index"
 
   create_table "roles", :force => true do |t|
     t.string "codename"

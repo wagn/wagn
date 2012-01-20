@@ -79,7 +79,7 @@ module Wagn
           :card_id => @cards[rev['name']].id,
           :content => rev['content'] || ''  ,
           :created_at => rev['date'],
-          :created_by => @authors[rev['author']]
+          :creator_id => @authors[rev['author']]
         }      
         # FIXME: should check if this might be a duplicate revision
         Revision.create! data

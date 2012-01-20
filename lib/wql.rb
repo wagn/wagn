@@ -150,13 +150,11 @@ class Wql
     
     def clean(query)
       query = query.symbolize_keys
+      @selfname = query.delete(:context) if query[:context]
+      @parent   = query.delete(:_parent) if query[:_parent]
       query.each do |key,val|
-        case key.to_s
-        when 'context'  ; @selfname         = query.delete(key)
-        when '_parent'  ; @parent           = query.delete(key)   
-        end
+        clean_val val, query, key
       end
-      query.each{ |key,val| clean_val(val, query, key) } #must be separate loop to make sure card values are set
       query
     end
     
@@ -205,12 +203,8 @@ class Wql
           when :custom; self.send(keyroot, spec.delete(key))    
           when :referential;  self.refspec(keyroot, spec.delete(key))
           when :ignore; spec.delete(key)
-          else 
-            if keyroot==:cond
-              #internal condition
-            else
-              raise("Invalid attribute #{key}")
-            end 
+          else keyroot==:cond ? nil : #internal condition
+            raise("Invalid attribute #{key}")
         end                      
       end
       
@@ -297,28 +291,24 @@ class Wql
       }, :conj=>:or)
     end          
     
-    def edited_by(val)
-      card_select = CardSpec.build(:return=>'card_id', :_parent=>self).merge(val).to_sql
-      add_join :ed_by, "(select distinct card_id from revisions where creator_id in #{card_select} )", :id, :card_id
-    end
     
     def     created_by(val)  merge field(:creator_id) => subspec(val)                 end
     def last_edited_by(val)  merge field(:updater_id) => subspec(val)                 end
     def     creator_of(val)  merge field(:id) => subspec(val, :return=>'creator_id')  end
     def last_editor_of(val)  merge field(:id) => subspec(val, :return=>'updater_id')  end
     
-    def editor_of(val)
-      
-      inner_spec = CardSpec.build(:_parent=>self).merge(val)
-      join_alias = inner_spec.add_join :ed, '(select distinct card_id, creator_id from revisions)', :id, :card_id
-      inner_spec.merge :return=>"#{join_alias}.creator_id"
-      #merge_extension('User', inner_spec )
+    def editor_of(val)  revision_spec(:creator_id, :card_id, val) end
+    def edited_by(val)  revision_spec(:card_id, :creator_id, val) end
+    
+    def revision_spec(field, linkfield, val)
+      card_select = CardSpec.build(:_parent=>self, :return=>'id').merge(val).to_sql
+      add_join :ed, "(select distinct #{field} from revisions where #{linkfield} in #{card_select})", :id, field      
     end
     alias :edited :editor_of
     
     # what users are member of val
     def member_of(val)
-      merge field(:right_plus) => ['*roles', :refer_to=>val]
+      merge field(:right_plus) => [Card::XrolesID, :refer_to=>val]
     end
 
     def member(val)

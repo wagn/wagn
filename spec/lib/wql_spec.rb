@@ -107,10 +107,6 @@ describe Wql do
     before do
       User.current_user = User[:joe_user]
       c=Card.fetch('A'); c.content='peculicious'; c.save!
-      
-      warn "joe user card id = #{Card["Joe User"].id}"
-      warn "A's updater_id = #{c.updater_id}"
-      
     end
     
     it "should find Joe User as the card's last editor" do
@@ -171,7 +167,7 @@ describe Wql do
   describe "permissions" do
     it "should not find cards not in group" do
       User.as :wagbot  do
-        Card.create :name=>"C+*self+*read", :type=>'Pointer', :content=>"[[#{Role[:r1].card.name}]]"
+        Card.create :name=>"C+*self+*read", :type=>'Pointer', :content=>"[[R1]]"
       end
       Wql.new( :plus=>"A" ).run.plot(:name).sort.should == %w{ B D E F }
     end

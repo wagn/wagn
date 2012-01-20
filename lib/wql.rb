@@ -301,18 +301,18 @@ class Wql
     end          
     
     def edited_by(val)
-      extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val).to_sql
-      add_join :ed_by, "(select distinct card_id from revisions where creator_id in #{extension_select} )", :id, :card_id
+      card_select = CardSpec.build(:return=>'card_id', :_parent=>self).merge(val).to_sql
+      add_join :ed_by, "(select distinct card_id from revisions where creator_id in #{card_select} )", :id, :card_id
     end
     
     def creator_id(val)
-      extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val)
-      merge field(:creator_id) => ValueSpec.new( [:in, extension_select], self )
+      card_select = CardSpec.build(:return=>'card_id', :_parent=>self).merge(val)
+      merge field(:creator_id) => ValueSpec.new( [:in, card_select], self )
     end
     
     def last_edited_by(val)
-      extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val)
-      merge field(:updater_id) => ValueSpec.new( [:in, extension_select], self ) 
+      card_select = CardSpec.build(:return=>'card_id', :_parent=>self).merge(val)
+      merge field(:updater_id) => ValueSpec.new( [:in, card_select], self ) 
     end
 
 =begin
@@ -342,17 +342,21 @@ class Wql
     end
     alias :edited :editor_of
     
+    # what users are member of val
     def member_of(val)
-      inner_spec = CardSpec.build(:type_id=>Card::RoleID, :_parent=>self).merge(val)
-      join_alias = inner_spec.add_join :ru, :roles_users, :extension_id, :role_id
-      inner_spec.merge :return=>"#{join_alias}.user_id" 
+      #inner_spec = CardSpec.build(:tag_id=>Card::XusersID)
+      #inner_spec = CardSpec.build(:refer_to=>Card::XusersID, :_parent=>self).merge(val)
+      #join_alias = inner_spec.add_join :ru, :roles_users, :extension_id, :role_id
+      #inner_spec.merge :return=>"#{join_alias}.id" 
       #merge_extension('User',inner_spec )
     end
 
+    # what roles have val as a member
     def member(val)
-      inner_spec = CardSpec.build(:return=>'ru2.role_id', :extension_type=>'User', :_parent=>self).merge(val)
-      join_alias = inner_spec.add_join :ru2, :roles_users, :extension_id, :user_id
-      inner_spec.merge :return=>"#{join_alias}.role_id"
+      inner_spec = CardSpec.build(:tag_id=>Card::XrolesID, :_parent=>self).merge(val)
+      #inner_spec = CardSpec.build(:return=>'ru2.role_id', :_parent=>self).merge(val)
+      #join_alias = inner_spec.add_join :ru2, :roles_users, :id, :user_id
+      #inner_spec.merge :return=>"#{join_alias}.role_id"
       #merge_extension('Role', inner_spec )
     end
     

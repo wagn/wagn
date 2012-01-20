@@ -57,9 +57,8 @@ module Notification
     end
 
     def watcher_pairs(pairs=true, kind=:name)
-      
       namep, rc = (kind == :type) ?  [lambda { self.typename },
-               (Card[self.type_id].star_rule(:watchers))] :
+               (Card[self.type_id||Card::DefaultID].star_rule(:watchers))] :
             [lambda { self.cardname }, Card[cardname.star_rule(:watchers)]]
       #warn "ww pairs A:#{User.current_user.card_id}, R:#{rc.nil? ? 'nil' : rc.name}, k#{kind}, p#{pairs}"
       watchers = rc.nil? ? [] : rc.item_ids.except(User.current_user.card_id)

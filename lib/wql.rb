@@ -60,14 +60,14 @@ class Wql
   class Spec 
     attr_accessor :spec
     
-    def walk(spec, method)
-      case 
-        when spec.respond_to?(method); spec.send(method)
-        when spec.is_a?(Hash); spec.inject({}) {|h,p| h[p[0]] = walk(p[1], method); h }
-        when spec.is_a?(Array); spec.collect {|v| walk(v, method) }
-        else spec
-      end
-    end
+    #def walk(spec, method)
+    #  case 
+    #    when spec.respond_to?(method); spec.send(method)
+    #    when spec.is_a?(Hash); spec.inject({}) {|h,p| h[p[0]] = walk(p[1], method); h }
+    #    when spec.is_a?(Array); spec.collect {|v| walk(v, method) }
+    #    else spec
+    #  end
+    #end
     
     def safe_sql(txt)
       txt = txt.to_s

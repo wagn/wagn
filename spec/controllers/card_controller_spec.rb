@@ -137,7 +137,7 @@ describe CardController do
    
     it "redirects to previous" do
       # Fruits (from shared_data) are anon creatable but not readable
-      login_as :anon
+      login_as :anonymous
       post :create, { :success=>'REDIRECT: TO-PREVIOUS', "card" => { "type"=>"Fruit", :name=>"papaya" } }, :history=>['/blam']
       assert_redirected_to "/blam"
     end    
@@ -149,7 +149,7 @@ describe CardController do
     end
     
     it "new should work for creatable nonviewable cardtype" do
-      login_as(:anon)     
+      login_as(:anonymous)     
       get :new, :type=>"Fruit"
       assert_response :success
     end
@@ -194,7 +194,7 @@ describe CardController do
       end
 
       it "handles nonexistent card without create permissions" do
-        login_as :anon
+        login_as :anonymous
         get :show, {:id=>'Sample_Fako'}
         assert_response 404
       end

@@ -3,7 +3,7 @@ class Card::BaseTest < ActiveSupport::TestCase
   
   def setup
     super
-    ::User.as(:u3)  # FIXME!!! wtf?  this works and :admin doesn't
+    User.as(cid=Card['u3'].id)  # FIXME!!! wtf?  this works and :admin doesn't
   end
          
   def test_autocard_should_not_respond_to_tform 
@@ -12,6 +12,7 @@ class Card::BaseTest < ActiveSupport::TestCase
   
   def test_autocard_should_respond_to_ampersand_email_attribute
     assert c = Card.fetch_or_new("u1+*email")
+    
     assert_equal 'u1@user.com', Wagn::Renderer.new(c).render_raw
   end
   

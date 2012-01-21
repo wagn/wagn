@@ -81,7 +81,7 @@ class Card::BaseTest < ActiveSupport::TestCase
 
   test 'update_should_create_subcards_as_wagbot_if_missing_subcard_permissions' do
     Card.create(:name=>'peel')
-    User.current_user = :anon
+    User.current_user = :anonymous
     #warn Rails.logger.info("check #{User.current_user}")
     assert_equal false, Card['Basic'].ok?(:create), "anon can't creat"
     Card.create!( :type=>"Fruit", :name=>'Banana', :cards=>{ "+peel" => { :content => "yellow" }})
@@ -97,7 +97,7 @@ class Card::BaseTest < ActiveSupport::TestCase
       b = Card.create!( :name=>'Banana' )
       #warn "created #{b.inspect}"
     end
-    User.as(:anon) do
+    User.as(:anonymous) do
       assert_raises( Card::PermissionDenied ) do
         Card.update(b.id, :cards=>{ "+peel" => { :content => "yellow" }})
       end
@@ -107,7 +107,7 @@ class Card::BaseTest < ActiveSupport::TestCase
 
   test 'create_without_read_permission' do
     c=Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
-    User.as(:anon) do
+    User.as(:anonymous) do
       assert_raises Card::PermissionDenied do
         c.ok! :read
       end

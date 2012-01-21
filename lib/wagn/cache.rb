@@ -45,7 +45,7 @@ module Wagn
         set_keys.map{|k| [k,"#{k}+*content", "#{k}+*default", "#{k}+*read", ]}.flatten.each do |key|        
           Card[key]
         end
-        Role[:auth]; Role[:anon]
+        Role[:auth]; Role[:anonymous]
         @@frozen = Marshal.dump([Card.cache, Role.cache])
       end
       

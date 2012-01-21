@@ -96,7 +96,7 @@ class CardController < ApplicationController
   def comment
     raise(Wagn::NotFound,"Action comment should be post with card[:comment]") unless request.post? and params[:card]
     comment = params[:card][:comment];
-    if User.current_user.login == 'anon'
+    if User.current_user.card_id == Card::AnonID
       session[:comment_author] = author = params[:card][:comment_author]
       author = "#{author} (Not signed in)"
     else

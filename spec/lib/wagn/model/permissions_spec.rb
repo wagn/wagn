@@ -11,7 +11,7 @@ describe "reader rules" do
     card = Card.fetch('Home')
     card.read_rule_id.should == Card.fetch('*all+*read').id
     card.who_can(:read).should ==  [Card::AnyoneID]
-    User.as(:anon){ card.ok?(:read).should be_true }
+    User.as(:anonymous){ card.ok?(:read).should be_true }
   end
   
   it "should update to role ('Anyone Signed In')" do
@@ -20,7 +20,7 @@ describe "reader rules" do
     card = Card.fetch('Home')
     card.read_rule_id.should == @perm_card.id
     card.who_can(:read).should == [Card::AuthID]
-    User.as(:anon){ card.ok?(:read).should be_false }
+    User.as(:anonymous){ card.ok?(:read).should be_false }
   end
   
   it "should update to user ('Joe Admin')" do
@@ -30,7 +30,7 @@ describe "reader rules" do
       User.as(:wagbot) { @perm_card.save! }
       card.read_rule_id.should == @perm_card.id
       card.who_can(:read).should == [Card['joe_admin'].id]
-      User.as(:anon)      { card.ok?(:read).should be_false }
+      User.as(:anonymous)      { card.ok?(:read).should be_false }
       User.as(:joe_user)  { card.ok?(:read).should be_false }
       User.as(:joe_admin) { card.ok?(:read).should be_true }
       User.as(:wagbot)    { card.ok?(:read).should be_true }
@@ -163,7 +163,7 @@ describe "Permission", ActiveSupport::TestCase do
       Card.create(:name=>'Hidden+*self+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
     end
   
-    User.as(:anon) do
+    User.as(:anonymous) do
       h = Card.fetch('Hidden')
       h.ok?(:read).should == false
       h.errors.empty?.should_not == nil
@@ -180,10 +180,16 @@ describe "Permission", ActiveSupport::TestCase do
   it "write user permissions" do
     rc=@u1.star_rule(:roles)
     rc.content = ''; rc << @r1 << @r2
+    rc.save
+    warn "roles #{@u1}, #{rc.item_names*"\n"}"
     rc=@u2.star_rule(:roles)
     rc.content = ''; rc << @r1 << @r3
+    rc.save
+    warn "roles #{@u2}, #{rc.item_names*"\n"}"
     rc=@u3.star_rule(:roles)
     rc.content = ''; rc << @r1 << @r2 << @r3
+    rc.save
+    warn "roles #{@u3}, #{rc.item_names*"\n"}"
 
     ::User.as(:wagbot) {
       [1,2,3].each do |num|
@@ -203,8 +209,12 @@ describe "Permission", ActiveSupport::TestCase do
   it "read group permissions" do
     rc=@u1.star_rule(:roles)
     rc.content = ''; rc << @r1 << @r2
+    rc.save
+    warn "roles #{@u1}, #{rc.item_names*"\n"}"
     rc=@u2.star_rule(:roles)
     rc.content = ''; rc << @r1 << @r3
+    rc.save
+    warn "roles #{@u2}, #{rc.item_names*"\n"}"
     
     ::User.as(:wagbot) do
       [1,2,3].each do |num|
@@ -362,7 +372,7 @@ describe Card, "default permissions" do
   end
   
   it "should let anonymous users view basic cards" do
-    User.as :anon do
+    User.as :anonymous do
       @c.ok?(:read).should be_true
     end
   end
@@ -393,7 +403,7 @@ describe Card, "settings based permissions" do
     c.ok?(:delete).should == true
     User.as :u1
     c.ok?(:delete).should == false
-    User.as :anon
+    User.as :anonymous
     c.ok?(:delete).should == false
     User.as :wagbot
     c.ok?(:delete).should == true #because administrator

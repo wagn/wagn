@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
   class << self
     def current_user
       #warn "cu #{@@current_user}"
-      @@current_user ||= User[:anon]
+      @@current_user ||= User[:anonymous]
     end
 
     def current_user=(user)
@@ -52,8 +52,10 @@ class User < ActiveRecord::Base
     def inspect() "#{@@current_user&&@@current_user.login}:#{as_user&&as_user.login}" end
 
     def as(given_user)
+      #warn "as #{given_user.inspect}"
       tmp_user = @@as_user
       @@as_user = given_user.class==User ? User[given_user.id] : User[given_user]
+      #warn "as user is #{@@as_user} (#{tmp_user})"
       self.current_user = @@as_user if @@current_user.nil?
 
       if block_given?
@@ -67,6 +69,7 @@ class User < ActiveRecord::Base
 
     def as_user()       @@as_user ||  self.current_user  end
     def read_rules() @@read_rules ||= as_user.read_rules end
+    def user_roles() @@user_roles ||= as_user.all_roles  end
 
     # FIXME: args=params.  should be less coupled..
     def create_with_card(user_args, card_args, email_args={})
@@ -95,21 +98,38 @@ class User < ActiveRecord::Base
 
     def [](key)
       #Rails.logger.info "Looking up USER[ #{key}]"
-      self.cache ? self.cache.read(key.to_s) ||
-        self.cache.write(key.to_s, without_cache(key)) : without_cache(key)
-    end
 
-    def without_cache(key)
-      usr = Integer===key ? where(:card_id=>key).first : find_by_login(key.to_s)
-      if usr #preload to be sure these get cached.
-        usr.card
-        usr.read_rules unless usr.login=='wagbot'
+      key = case key
+        when Integer
+          card_id = key
+          @card = Card[card_id]
+          "##{key}"
+        when Card;
+          @card = key
+          key.key
+        else
+          @card = (card_id = Wagn::Codename.code2id(key.to_s)) ?
+                    Card[card_id] : @card = Card[key.to_s]
+          key.to_s
+        end
+
+      usr = self.cache.read(key.to_s)
+      return usr if usr
+
+      card_id ||= @card.id
+      key ||= @card.key
+      #warn "without #{key.inspect}, #{card_id}"
+      if usr = where(:card_id=>card_id).first #preload to be sure these get cached.
+        usr.read_rules unless card_id==Card::WagbotID
       end
+      #warn "user[#{key.inspect}] #{usr.inspect}"
+      self.cache.write(key.to_s, usr)
+      code = Wagn::Codename.codename(card_id.to_s) and self.cache.write(code, usr)
       usr
     end
 
     def logged_in?
-      !(current_user.nil? || current_user.login=='anon')
+      !(current_user.nil? || current_user.card_id==Card::AnonID)
     end
 
     def no_logins?
@@ -118,6 +138,7 @@ class User < ActiveRecord::Base
     end
 
     def always_ok?
+      #warn "aok? #{as_user&&as_user.card_id}"
       return false unless usr = as_user
       return true if usr.card_id == Card::WagbotID #cannot disable
       #warn "aok? #{usr}, #{@@current_user}, #{usr.card_id}"
@@ -249,10 +270,6 @@ class User < ActiveRecord::Base
     end
   end
 
-  def card()
-    @card && @card.id == card_id ? @card : @card = Card[card_id]
-  end
-
   def all_roles
     ids=(cr=card.star_rule(:roles)).item_cards.map(&:id)
     #warn "all_roles #{inspect}: #{cr.inspect}, #{ids.inspect}"
@@ -297,6 +314,10 @@ class User < ActiveRecord::Base
   #before validation
   def downcase_email!
     self.email=self.email.downcase if self.email
+  end
+
+  def card()
+    @card && @card.id == card_id ? @card : @card = Card[card_id]
   end
 
   protected

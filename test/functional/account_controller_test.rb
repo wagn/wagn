@@ -70,7 +70,7 @@ class AccountControllerTest < ActionController::TestCase
 
   def test_signup_without_approval
     #User.as :wagbot do  #make it so anyone can create accounts (ie, no approval needed)
-    #  ne1 = Role[:anon]
+    #  ne1 = Role[:anyone]
     #  ne1.tasks = 'create_accounts'
     #  ne1.save!
     #end

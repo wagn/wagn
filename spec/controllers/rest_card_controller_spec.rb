@@ -141,7 +141,7 @@ describe RestCardController do
       end
 
       it "handles nonexistent card without create permissions" do
-        login_as :anon
+        login_as :anonymous
         get :show, {:id=>'Sample_Fako'}
         assert_response :success   
         assert_template 'missing'

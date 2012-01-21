@@ -56,7 +56,7 @@ module WagnTestHelper
   def integration_login_as(user)
     User.cache.reset
     
-    unless (user=user.to_sym)==:anon
+    unless (user=user.to_sym)==:anonymous
       case user
         when :joe_user; login='joe@user.com'; pass='joe_pass'
         when :admin;    login='u3@user.com'; pass='u3_pass'

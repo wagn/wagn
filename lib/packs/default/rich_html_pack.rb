@@ -365,10 +365,14 @@ class Wagn::Renderer::Html
   end
 
   define_view(:option_roles) do |args|
-    roles = Role.find :all, :conditions=>"codename not in ('auth','anon')"
-    user_roles = card.extension.roles
+    #roles = Role.find :all, :conditions=>"codename not in ('auth','anon')"
+    roles = Card.search(:refer_to => {:right=> Card::Xroles})
+    role_card = card.star_rule(:roles)
+    user_roles = role_card.item_cards.map(&:id).
+      reject{|x|x == Card::AnyoneID.to_s || x == Card::AuthID.to_s }
+    #user_roles = card.extension.roles
 
-    option_content = if User.ok? :assign_user_roles
+    option_content = if role_card.ok? :update
       hidden_field_tag(:save_roles, true) +
       (roles.map do |role|
         if role.card && !role.card.trash

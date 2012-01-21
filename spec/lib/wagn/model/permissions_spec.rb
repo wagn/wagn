@@ -181,15 +181,12 @@ describe "Permission", ActiveSupport::TestCase do
     rc=@u1.star_rule(:roles)
     rc.content = ''; rc << @r1 << @r2
     rc.save
-    warn "roles #{@u1}, #{rc.item_names*"\n"}"
     rc=@u2.star_rule(:roles)
     rc.content = ''; rc << @r1 << @r3
     rc.save
-    warn "roles #{@u2}, #{rc.item_names*"\n"}"
     rc=@u3.star_rule(:roles)
     rc.content = ''; rc << @r1 << @r2 << @r3
     rc.save
-    warn "roles #{@u3}, #{rc.item_names*"\n"}"
 
     ::User.as(:wagbot) {
       [1,2,3].each do |num|
@@ -210,11 +207,9 @@ describe "Permission", ActiveSupport::TestCase do
     rc=@u1.star_rule(:roles)
     rc.content = ''; rc << @r1 << @r2
     rc.save
-    warn "roles #{@u1}, #{rc.item_names*"\n"}"
     rc=@u2.star_rule(:roles)
     rc.content = ''; rc << @r1 << @r3
     rc.save
-    warn "roles #{@u2}, #{rc.item_names*"\n"}"
     
     ::User.as(:wagbot) do
       [1,2,3].each do |num|
@@ -305,7 +300,10 @@ describe "Permission", ActiveSupport::TestCase do
   end
 
   it "role wql" do
-    @r1.users = [ @u1 ]
+    #warn "role #{@r1.name}"
+    rc=Card[ @u1.id ].star_rule(:roles)
+    rc.content=''; rc << @r1
+    #@r1.users = [ @u1 ]
 
     # set up cards of type TestType, 2 with nil reader, 1 with role1 reader 
     ::User.as(:wagbot) do 
@@ -319,6 +317,7 @@ describe "Permission", ActiveSupport::TestCase do
       Card.search(:content=>'WeirdWord').plot(:name).sort.should == %w( c1 c2 c3 )
     end
     ::User.as(@u2) do
+    warn "u2 #{@u2.inspect} #{User.as_user.inspect}"
       Card.search(:content=>'WeirdWord').plot(:name).sort.should == %w( c2 c3 )
     end
   end  

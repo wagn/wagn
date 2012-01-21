@@ -18,9 +18,9 @@ class Mailer < ActionMailer::Base
       :from     => (Card.setting('*invite+*from') || "#{from_name} <#{from_user.email}>"), #FIXME - might want different from settings for different emails?
       :subject  => subject
     } )
-  end                 
-  
-  def signup_alert(invite_request)  
+  end
+
+  def signup_alert(invite_request)
     @site = Card.setting('*title')
     @card = invite_request
     @email= User.where(:card_id=>invite_request.id).first.email
@@ -34,12 +34,13 @@ class Mailer < ActionMailer::Base
       :subject => "#{invite_request.name} signed up for #{@site}",
       :content_type => 'text/html',
     } )
-  end               
+  end
 
-  
-  def change_notice( user, card, action, watched, subedits=[], updated_card=nil )       
-    return unless user = User.where(:card_id=>user).first unless User===user
-    #warn "change_notice( #{user}, #{card.inspect}, #{action}, #{watched} ...)"
+
+  def change_notice(user, card, action, watched, subedits=[], updated_card=nil)
+    return unless user = User===user ? user : User.where(:card_id=>user).first
+
+    #warn "change_notice( #{user.inspect}, #{card.inspect}, #{action.inspect}, #{watched.inspect} ...)"
     updated_card ||= card
     @card = card
     @updater = updated_card.updater.name
@@ -58,9 +59,9 @@ class Mailer < ActionMailer::Base
       :content_type => 'text/html',
     } )
   end
-  
+
   def flexmail config
-    
+
     if config[:attach] and !config[:attach].empty?
       # FIXME - this doesn't look fully converted to me.
       config[:attach].each do |cardname|
@@ -77,9 +78,9 @@ class Mailer < ActionMailer::Base
       config[:content_type] = 'text/html'
       config[:body] = config.delete(:message)
     end
-    
+
     mail(config)
   end
-  
+
 end
 

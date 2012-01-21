@@ -1,13 +1,14 @@
 module AuthenticatedSystem
   protected
   def logged_in?
-    current_user && current_user.card_id != Card::AnonID.to_s
+    current_user and cuid=current_user.card_id and cuid.to_i != Card::AnonID
   end
 
   # Accesses the current user from the session.
   def current_user
     @current_user ||= (su=session[:user]) ? User.where(:card_id=>su).first : nil
   rescue Exception => e
+    warn "except #{e.inspect}, #{e.backtrace*"\n"}"
     session[:user] = nil
     raise
   end

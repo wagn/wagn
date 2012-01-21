@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
   after_save :reset_instance_cache
 
 
-
+  @@rules_user = nil
 
   class << self
     def current_user
@@ -67,9 +67,16 @@ class User < ActiveRecord::Base
       end
     end
 
-    def as_user()       @@as_user ||  self.current_user  end
-    def read_rules() @@read_rules ||= as_user.read_rules end
-    def user_roles() @@user_roles ||= as_user.all_roles  end
+    def as_user()   @@as_user || self.current_user  end
+    def read_rules() load_as_rules; @@read_rules    end
+    def user_roles() load_as_rules; @@user_roles    end
+    def load_as_rules
+      if as_user != @@rules_user
+        @@rules_user = as_user
+        @@user_roles = @@rules_user.all_roles
+        @@read_rules = @@rules_user.read_rules
+      end
+    end
 
     # FIXME: args=params.  should be less coupled..
     def create_with_card(user_args, card_args, email_args={})
@@ -147,13 +154,7 @@ class User < ActiveRecord::Base
       #warn(Rails.logger.warn "always_ok? #{usr.card_id}")
       if always[usr.card_id].nil?
         always = always.dup if always.frozen?
-        ar=usr.all_roles
-        #warn "ar: #{ar.inspect}"
-        always[usr.card_id] =
-          ar.inject(false){ |s,role_id|
-          #warn "t #{s}, #{role_id}, #{s&&role_id==Card::AdminID}"
-          s && role_id==Card::AdminID }
-          #usr.all_roles.inject(false){ |s,role_id| s && role_id==Card::AdminID }
+        always[usr.card_id] = !!usr.all_roles.detect{|r|r==Card::AdminID}
         #warn(Rails.logger.warn "update always hash #{always[usr.card_id]}, #{always.inspect}")
         User.cache.write 'ALWAYS', always
       end

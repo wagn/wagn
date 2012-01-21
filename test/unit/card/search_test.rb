@@ -22,8 +22,10 @@ class Card::BaseTest < ActiveSupport::TestCase
 
   def test_should_not_show_card_to_joe_user
     # FIXME: this needs some permission rules
-    ::User.as(:joe_user)
-    assert_equal false, Card.fetch("u1+*email").ok?(:read)
+    User.as(:joe_user)
+    assert c=Card.fetch("u1+*email")
+    warn "check #{c.inspect} #{c.ok?(:read)}, #{User.as_user.inspect}"
+    assert_equal false, c.ok?(:read)
   end
                             
   def test_autocard_should_not_break_if_extension_missing

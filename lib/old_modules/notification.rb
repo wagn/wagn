@@ -22,9 +22,8 @@ module Notification
       @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)
 
       watcher_watched_pairs.reject {|p| @trunk_watchers.include?(p.first) }.each do |watcher, watched|
-        next unless watcher && mail=Mailer.change_notice(
-                 watcher, self, action, watched, nested_notifications )
-        mail.deliver
+        watcher and mail = Mailer.change_notice( watcher, self, action,
+                        watched, nested_notifications ) and mail.deliver
       end
 
       if nested_edit
@@ -57,15 +56,18 @@ module Notification
     end
 
     def watcher_pairs(pairs=true, kind=:name)
+      cuid=User.current_user.card_id
       namep, rc = (kind == :type) ?  [lambda { self.typename },
                (Card[self.type_id||Card::DefaultID].star_rule(:watchers))] :
-            [lambda { self.cardname }, Card[cardname.star_rule(:watchers)]]
-      #warn "ww pairs A:#{User.current_user.card_id}, R:#{rc.nil? ? 'nil' : rc.name}, k#{kind}, p#{pairs}"
-      watchers = rc.nil? ? [] : rc.item_ids.except(User.current_user.card_id)
+            [lambda { self.cardname }, star_rule(:watchers)]
+      #warn "ww pairs rc:#{rc.inspect}, C:#{rc.content}, iids:#{rc.item_names*", "}, U:#{cuid}, R:#{rc.nil? ? 'nil' : rc.name}, k:#{kind}, p:#{pairs}"
+      watchers = rc.nil? ? [] : rc.item_cards.map(&:id) #.find_all{|i|i!=cuid}
+      #warn "looking for me #{c.id.inspect}, #{cuid.inspect}"
+      #warn "ww pairs A:#{User.as_user.card_id}, W:#{watchers.inspect}, U:#{cuid}, R:#{rc.nil? ? 'nil' : rc.name}, k:#{kind}, p:#{pairs}"
       pairs ? watchers.map {|w| [w, namep.call] } : watchers
       #  watchers should be required to have read perm
       # or does this run as the one doing the action? either way why wagbot?
-      #User.as :wagbot { (c = Card[name]) ? c.item_ids : [] }
+      #User.as :wagbot { ... }
     end
   end
 

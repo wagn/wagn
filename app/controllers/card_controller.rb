@@ -176,9 +176,10 @@ class CardController < ApplicationController
   
   
   def watch
-    watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
+    watchers = @card.star_rule(:watchers )
     watchers = watchers.refresh if watchers.frozen?
-    watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), User.current_user.card.name)
+    myname = Card[User.current_user.card_id].name
+    watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
     ajax? ? render_show(:watch) : view
   end
 

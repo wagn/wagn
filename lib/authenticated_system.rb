@@ -8,14 +8,14 @@ module AuthenticatedSystem
   def current_user
     @current_user ||= (su=session[:user]) ? User.where(:card_id=>su).first : nil
   rescue Exception => e
-    warn "except #{e.inspect}, #{e.backtrace*"\n"}"
+    #warn "except #{e.inspect}, #{e.backtrace*"\n"}"
     session[:user] = nil
     raise
   end
 
   # Store the given user in the session.
   def current_user=(new_user)
-    #warn "cu set #{new_user.inspect} #{caller*"\n"}"
+    #warn "cu set #{new_user.inspect}" #{caller*"\n"}"
     session[:user] = new_user.nil? ? nil : new_user.card_id
     @current_user = new_user
   end

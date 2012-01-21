@@ -589,9 +589,14 @@ class Wagn::Renderer::Html
 
   define_view(:watch) do |args|
     return "" if !User.logged_in? or card.virtual?
-    wrap(:watch) { "#{card.watcher_pairs(false,:type).
-        include?(User.current_user.card_id) && (card.type_id==Card::CardtypeID ?
-          "#{watching_type_cards} | " : watching_type_cards)}#{watch_unwatch}" }
+    wrap(:watch) {
+      r="#{card.watcher_pairs(false,:type).
+        include?(User.current_user.card_id) &&
+                 (card.type_id.to_i==Card::CardtypeID ?
+                     "#{watching_type_cards} | "    :
+                     watching_type_cards)||''}#{watch_unwatch}"
+      #warn "render_watch #{r}"; r
+    }
   end
 
 
@@ -648,7 +653,9 @@ class Wagn::Renderer::Html
     type_link = (card.type_id == Card::CardtypeID) ? " #{card.name} cards" : ""
     type_msg = (card.type_id == Card::CardtypeID) ? " cards" : ""
 
-    if card.watcher_pairs(false).include?(@me) or card.typecode != 'Cardtype' && card.watchers.include?(@me)
+    me=User.current_user.card_id
+    #warn "watch_unwatch #{card.inspect}, #{me.inspect}, #{card.watcher_pairs(false).inspect}, AW:#{card.watchers.inspect}"
+    if card.watcher_pairs(false).include?(me) or card.type_id != Card::CardtypeID && card.watchers.include?(me)
       text, toggle, title = "unwatch", :off, "stop getting emails about changes to"
     else
       text, toggle, title = "watch", :on, "get emails about changes to"

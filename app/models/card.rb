@@ -24,8 +24,8 @@ class Card < ActiveRecord::Base
 
   attr_reader :type_args, :broken_type
 
-  before_save :base_before_save, :set_read_rule, :set_tracked_attributes,
-    :set_stamper, :set_extensions
+  before_save :set_stamper, :base_before_save, :set_read_rule,
+    :set_tracked_attributes, :set_extensions
   after_save :base_after_save, :update_ruled_cards, :reset_stamper
   cache_attributes('name', 'type_id')
 
@@ -226,8 +226,14 @@ class Card < ActiveRecord::Base
     super args
   end
 
-  def set_stamper() Card.stamper = User.current_user.card_id end
-  def reset_stamper() Card.reset_stamper end
+  def set_stamper()
+    #warn "set stamper[#{name}] #{User.current_user}, #{User.as_user}" #{caller*"\n"}"
+    #Card.stamper = #User.current_user.card_id
+    self.updater_id = User.current_user.card_id
+    self.creator_id = self.updater_id if new_card?
+    #warn "set stamper[#{name}] #{self.creator_id}, #{self.updater_id}, #{User.current_user}, #{User.as_user}" #{caller*"\n"}"
+  end
+  def reset_stamper() end #Card.reset_stamper end
 
   def base_before_save
     if self.respond_to?(:before_save) and self.before_save == false
@@ -288,7 +294,6 @@ class Card < ActiveRecord::Base
     self.trash = !!trash
     save_without_trash(*args)#(perform_checking)
   rescue Exception => e
-    warn "exception: #{e.inspect}, #{e.backtrace*"\n"}"
     raise e
   end
   alias_method_chain :save, :trash
@@ -493,7 +498,7 @@ class Card < ActiveRecord::Base
        @cached_revision.id==current_revision_id )
     else
       rev = current_revision_id ? Revision.find(current_revision_id) :
-                                  Revision.new
+                    Revision.new(:creator_id => User.current_user.card_id)
       @cached_revision = Revision.cache ?
         Revision.cache.write("#{cardname.css_name}-content", rev) : rev
     end
@@ -528,7 +533,7 @@ class Card < ActiveRecord::Base
 
   def save_draft( content )
     clear_drafts
-    revisions.create(:content=>content)
+    revisions.create(:content=>content, :creator_id=>User.current_user.card_id)
   end
 
   protected
@@ -554,7 +559,8 @@ class Card < ActiveRecord::Base
   # MISCELLANEOUS
 
   def to_s()  "#<#{self.class.name}[#{self.typename.to_s}:#{self.type_id}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}##{self.id}[#{self.typename}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}}:#{@set_names.inspect}>" end
+  #def inspect()  "#<#{self.class.name}##{self.id}[#{self.typename}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}}:#{@set_names.inspect}>" end
+  def inspect()  "#<#{self.class.name}##{self.id}[#{self.typename}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}} U:#{updater_id} C:#{creator_id}>" end
   def mocha_inspect()     to_s                                   end
 
 #  def trash

@@ -233,7 +233,6 @@ describe "Permission", ActiveSupport::TestCase do
     
     (rc=@u3.star_rule(:roles)).content =  ''
     rc << @r1
-    #warn "rule #{rc.item_names.inspect}"
 
     %{        u1 u2 u3
       c1(r1)  T  T  T
@@ -241,7 +240,6 @@ describe "Permission", ActiveSupport::TestCase do
       c3(r3)  T  F  F
     }
 
-    #warn "writeable #{@c1.inspect}, #{@u1.inspect}"
     assert_equal true,  @c1.writeable_by(@u1), "c1 writeable by u1"
     assert_equal true,  @c1.writeable_by(@u2), "c1 writeable by u2" 
     assert_equal true,  @c1.writeable_by(@u3), "c1 writeable by u3" 
@@ -256,13 +254,10 @@ describe "Permission", ActiveSupport::TestCase do
   it "read user permissions" do
     (rc=@u1.star_rule(:roles)).content = ''
     rc << @r1 << @r2
-    #warn "rule #{rc.name}, #{rc.item_names.inspect}"
     (rc=@u2.star_rule(:roles)).content = ''
     rc << @r1 << @r3
-    #warn "rule #{rc.name}, #{rc.item_names.inspect}"
     (rc=@u3.star_rule(:roles)).content = ''
     rc << @r1 << @r2 << @r3
-    #warn "rule #{rc.name}, #{rc.item_names.inspect}"
 
     ::User.as(:wagbot) {
       [1,2,3].each do |num|
@@ -300,7 +295,6 @@ describe "Permission", ActiveSupport::TestCase do
   end
 
   it "role wql" do
-    #warn "role #{@r1.name}"
     rc=Card[ @u1.id ].star_rule(:roles)
     rc.content=''; rc << @r1
     #@r1.users = [ @u1 ]
@@ -317,7 +311,6 @@ describe "Permission", ActiveSupport::TestCase do
       Card.search(:content=>'WeirdWord').plot(:name).sort.should == %w( c1 c2 c3 )
     end
     ::User.as(@u2) do
-    warn "u2 #{@u2.inspect} #{User.as_user.inspect}"
       Card.search(:content=>'WeirdWord').plot(:name).sort.should == %w( c2 c3 )
     end
   end  

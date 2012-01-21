@@ -24,7 +24,6 @@ class Card::BaseTest < ActiveSupport::TestCase
     # FIXME: this needs some permission rules
     User.as(:joe_user)
     assert c=Card.fetch("u1+*email")
-    warn "check #{c.inspect} #{c.ok?(:read)}, #{User.as_user.inspect}"
     assert_equal false, c.ok?(:read)
   end
                             

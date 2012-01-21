@@ -15,14 +15,14 @@ module Wagn::Set::Type::Pointer
     end
   end
 
-  def item_ids( args={} ) item_cards.map(&:id) end
-
   def item_names( args={} )
     context = args[:context] || self.cardname
-    links = content.split(/\n+/).map{ |line|
-      line.gsub(/\[\[|\]\]/,'')}.map{|link|
-      r=context==:raw ? link : link.to_cardname.to_absolute(context)
-    }
+    cc=self.content
+    self.content.split(/\n+/).map{ |line|
+      line.gsub(/\[\[|\]\]/,'').map{|link|
+        context==:raw ? link : link.to_cardname.to_absolute(context)
+      }
+    }.flatten
   end
 
   def item_type
@@ -39,17 +39,19 @@ module Wagn::Set::Type::Pointer
     self
   end
 
-  def add_item name
-    unless item_names.include? name
-      self.content="[[#{(item_names << name).reject(&:blank?)*"]]\n[["}]]"
+  def add_item newname
+    inames = item_names
+    unless inames.include? newname
+      self.content="[[#{(inames << newname).reject(&:blank?)*"]]\n[["}]]"
       save!
     end
   end
 
   def drop_item name
-    if item_names.include? name
-      nitems = item_names.reject{|n|n==name||n.blank?}
-      self.content= nitems.empty? ? '' : "[[#{nitems*"]]\n[["}]]"
+    inames = item_names
+    if inames.include? name
+      self.content= inames.empty? ? '' : "[[#{inames.reject{|n|
+                      n==name||n.blank?} * "]]\n[["}]]"
       save!
     end
   end

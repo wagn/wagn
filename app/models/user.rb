@@ -123,8 +123,8 @@ class User < ActiveRecord::Base
       usr = self.cache.read(key.to_s)
       return usr if usr
 
-      card_id ||= @card.id
-      key ||= @card.key
+      
+      card_id ||= @card && @card.id
       #warn "without #{key.inspect}, #{card_id}"
       if usr = where(:card_id=>card_id).first #preload to be sure these get cached.
         usr.read_rules unless card_id==Card::WagbotID

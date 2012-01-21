@@ -59,8 +59,6 @@ module Wagn
 
       def set_cache(key, v)
         key = key.to_s
-        #warn "set_cache(#{key.inspect}, #{v.inspect})"
-        #warn "no value set_cache #{key.inspect}, #{caller[0..20]*"\n"}" if v.nil? or v.blank?
         self.cache ? self.cache.write(key, v) : @@pre_cache[key] = v
       end
 
@@ -74,15 +72,13 @@ module Wagn
               and (c.type_id = 5 or cd.codename is not null)
           }).map(&:symbolize_keys).each do |h|
             h[:type_id], h[:id] = h[:type_id].to_i, h[:id].to_i
-            h[:codename] ||= Card.klassname_for(h[:name])
+            h[:codename] ||= Card.respond_to?(:klassname_for) ?
+                  Card.klassname_for(h[:name]) : h[:name]
             code2card[h[:codename]] = card2code[h[:id]] = card2code[h[:key]] = h
           end
 
         set_cache 'code2card', code2card
         set_cache 'card2code', card2code
-        #warn "loaded code2card #{code2card.map(&:inspect)*"\n"}"
-        #warn "loaded code2card #{code2card.map{|k,v|k=~/^[A-Z]/ && "#{k}->#{v.inspect}"}.compact*"\n"}"
-        #warn "loaded card2code #{card2code.map{|v|v.inspect}*"\n"}"
       rescue Exceptions => e
         warn(Rails.logger.info "Error loading codenames #{e.inspect}, #{e.backtrace*"\n"}")
       end

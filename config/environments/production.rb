@@ -5,7 +5,7 @@ Wagn::Application.configure do
   config.cache_classes = true
 
   # Full error reports are disabled and caching is turned on
-  config.consider_all_requests_local       = false
+  config.consider_all_requests_local       = true # FIXME - this should be false.  temporarily switching!
   config.action_controller.perform_caching = true
 
   # Disable Rails's static asset server (Apache or nginx will already do this)
@@ -57,6 +57,12 @@ Wagn::Application.configure do
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
+  
+  
+  
+  if Wagn::Conf[:smtp]
+    config.action_mailer.smtp_settings = Wagn::Conf[:smtp].symbolize_keys
+  end
   
   ENV['RAILS_ASSET_ID']=""
 end

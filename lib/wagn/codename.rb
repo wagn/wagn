@@ -1,10 +1,18 @@
 module Wagn
   class Codename
-    @@code_cache = nil
+    cattr_accessor :cache
+    @@pre_cache = {}
 
     class <<self
-      def code_cache()
-        @@code_cache ||= load_cache()
+
+      def [](code)           card_attr(code, :name)      end
+      def codename(key)      code_attr(key, :codename)   end
+      def code2id(code) card_attr(code, :id)        end
+      def exists?(key)       code_attr(key)              end
+      def name_change(key)   exists?(key) && reset_cache end 
+      def codes()            get_cache(:code2card).each_value      end
+      def type_codes()
+        get_cache(:code2card).values.find_all {|h| h[:type_id]==Card::CardtypeID}
       end
 
       # This is a read-only cached model.  Entries must be added on bootstrap,
@@ -14,40 +22,68 @@ module Wagn
         Card.connection.insert(%{
           insert into codename (card_id, codename) values (#{card_id}, '#{codename}')
         })
+        reset_cache
+      end
+
+      def code_attr(key, attr=nil?)
+        #warn "miss #{key} #{card2code.map(&:inspect)*"\n"}" unless card2code.has_key?(key)
+        card2code.has_key?(key) && (attr ? card2code[key][attr] : true)
+      end
+
+      def card_attr(key, attr=nil?)
+        #warn "miss card #{key} #{code2card.map(&:inspect)*"\n"}" unless code2card.has_key?(key)
+        code2card.has_key?(key) && (attr ? code2card[key][attr] : true)
+      end
+
+      def reset_cache()
+        set_cache('card2code', nil)
+        set_cache('code2card', nil)
+      end
+
+    private
+
+      def card2code()   get_cache('card2code') end
+      def code2card()   get_cache('code2card') end
+
+      def get_cache(key)
+        if self.cache
+          return c if c = self.cache.read(key)
+          load_cache
+          return self.cache.read(key)
+        else
+          return c if c = @@pre_cache[key.to_s]
+          load_cache
+          @@pre_cache[key.to_s]
+        end
+      end
+
+      def set_cache(key, v)
+        key = key.to_s
+        self.cache ? self.cache.write(key, v) : @@pre_cache[key] = v
       end
 
       def load_cache()
-        cache = {}
-        Card.connection.select_all(%{
-           select c.id, c.name, c.key, cd.codename
-             from cards c join codename cd on c.id = cd.card_id
-            where c.trash is false
-          }).each do |rec|
-          Rails.logger.info "Loading codenames #{rec.inspect}"
-           id, key = rec['id'], rec['key']
-           cache[id] = cache[key] = {:name => rec['name'], :id => id,
-                         :codename => rec['codename'], :key => key}
-        end
-        cache
-      rescue
-        Rails.logger.info "Error loading codenames"
-      end
+        card2code = {}; code2card = {}
 
-      def codename(key)  
-        x = code_cache; y = x[key]; z = y and y[:codename]
-        Rails.logger.info "Codename[#{key}]: #{x}, #{y}, #{z}"
-        e=code_cache[key] and e[:codename] end
-      def codeid(key) 
-        x = code_cache; y = x[key]; z = y and y[:id]
-        Rails.logger.info "Codenme id[#{key}]: #{x}, #{y}, #{z}"
-        e=code_cache[key] and e[:id]       end
-      def name_of_code(key) key end
-=begin
-        Rails.logger.info "Codename name from code[#{key}]: #{code_cache.inspect}"
-        x = code_cache; y = x[key]; z = y and y[:name]
-        Rails.logger.info "Codename name from code[#{key}]: #{x}, #{y}, #{z}"
-        e=code_cache[key] and e[:name]     end
-=end
+        Card.connection.select_all(%{
+            select c.id, c.name, c.key, cd.codename, c.type_id
+             from cards c left outer join codename cd on c.id = cd.card_id
+            where c.trash is false
+              and (c.type_id = 5 or cd.codename is not null)
+          }).map(&:symbolize_keys).each do |h|
+            h[:type_id], h[:id] = h[:type_id].to_i, h[:id].to_i
+            h[:codename] ||= Card.respond_to?(:klassname_for) ?
+                  Card.klassname_for(h[:name]) : h[:name]
+            code2card[h[:codename]] = card2code[h[:id]] = card2code[h[:key]] = h
+          end
+
+        set_cache 'code2card', code2card
+        set_cache 'card2code', card2code
+      rescue Exceptions => e
+        warn(Rails.logger.info "Error loading codenames #{e.inspect}, #{e.backtrace*"\n"}")
+      end
     end
+
+    @@default_id = @@cardtype_id = nil
   end
 end

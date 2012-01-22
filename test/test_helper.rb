@@ -67,7 +67,7 @@ unless defined? TEST_ROOT
       if url =~ /:id/
         # find by naming convention in test data:
         card = Card["Sample #{cardtype}"] or puts "ERROR finding 'Sample #{cardtype}'"
-        url.gsub!(/:id/,card.id.to_s)
+        url.gsub!(/:id/,"~#{card.id.to_s}")
       end
       url
     end
@@ -103,7 +103,7 @@ unless defined? TEST_ROOT
       def initialize(test_class,url,args={})
         @test_class,@url = test_class,url
 
-        args[:users] ||= { :anon=>200 }
+        args[:users] ||= { :anonymous=>200 }
         args[:cardtypes] ||= ['Basic']
         if args[:cardtypes]==:all 
           args[:cardtypes] = YAML.load_file('test/fixtures/cardtypes.yml').collect {|k,v| v['class_name']}                   
@@ -117,7 +117,7 @@ unless defined? TEST_ROOT
             next if cardtype=~ /Cardtype|UserForm|Set|Fruit|Optic|Book/
 
             title = url.gsub(/:id/,'').gsub(/\//,'_') + "_#{cardtype}"
-            login = (user=='anon' ? '' : "integration_login_as '#{user}'")
+            login = (user=='anonymous' ? '' : "integration_login_as '#{user}'")
             test_def = %{
               def test_render_#{title}_#{user}_#{status} 
                 #{login}

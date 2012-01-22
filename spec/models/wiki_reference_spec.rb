@@ -50,7 +50,7 @@ describe "WikiReference" do
     newcard("Yellow")
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
     y=Card["Yellow"];  
-    y.typecode="UserForm"; 
+    y.type_id= Card.type_id_from_code "UserForm"; 
     y.save!
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
   end
@@ -175,7 +175,7 @@ describe "WikiReference" do
   # This test doesn't make much sense to me... LWH
   it "revise changes references from wanted to linked for new cards" do
     new_card = Card.create(:name=>'NewCard')
-    new_card.revise('Reference to [[WantedCard]], and to [[WantedCard2]]', Time.now, User.find_by_login('quentin'), 
+    new_card.revise('Reference to [[WantedCard]], and to [[WantedCard2]]', Time.now, User.where(:card_id=>Card['quentin'].id).first), 
         get_renderer)
     
     references = new_card.wiki_references(true)
@@ -186,7 +186,7 @@ describe "WikiReference" do
     references[1].link_type.should == WikiReference::WANTED_PAGE
 
     wanted_card = Card.create(:name=>'WantedCard')
-    wanted_card.revise('And here it is!', Time.now, User.find_by_login('quentin'), get_renderer)
+    wanted_card.revise('And here it is!', Time.now, User.where(:card_id=>Card['quentin'].id).first), get_renderer)
 
     # link type stored for NewCard -> WantedCard reference should change from WANTED to LINKED
     # reference NewCard -> WantedCard2 should remain the same

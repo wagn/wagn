@@ -77,7 +77,7 @@ module Wagn::Model::Permissions
   end
   
   def who_can(operation)
-    permission_rule_card(operation).first.content.split(/[,\n]/).map{|i| i.to_cardname.to_key}
+    permission_rule_card(operation).first.item_cards.map(&:id)
   end 
   
   def permission_rule_card(operation)
@@ -113,12 +113,15 @@ module Wagn::Model::Permissions
   end
 
   def lets_user(operation)
-    return true if (User.always_ok? and operation != :comment)
+    return false if operation != :read    and Wagn::Conf[:read_only]
+    return true  if operation != :comment and User.always_ok?
+    #warn "lets_user(#{operation})#{User.as_user} #{who_can(operation).inspect}"
     User.as_user.among?( who_can(operation) )
   end
 
   def approve_task(operation, verb=nil)           
     verb ||= operation.to_s
+    #warn "approve_task(#{operation}, #{verb})"
     deny_because you_cant("#{verb} this card") unless self.lets_user( operation ) 
   end
 
@@ -127,11 +130,13 @@ module Wagn::Model::Permissions
   end
 
   def approve_read
-    #warn "AR #{User.always_ok?}"
+    #warn "AR #{name} #{User.always_ok?}"
     return true if User.always_ok?
-    @read_rule_id ||= permission_rule_card(:read).first.id
-    ok = User.as_user.read_rule_ids.member?(@read_rule_id.to_i) 
-    deny_because you_cant("read this card") unless ok
+    @read_rule_id ||= permission_rule_card(:read).first.id.to_i
+    #warn "AR #{name} #{@read_rule_id}, #{User.read_rules.inspect}>"
+    unless User.read_rules.member?(@read_rule_id.to_i) 
+      deny_because you_cant("read this card")
+    end
   end
   
   def approve_update
@@ -151,7 +156,7 @@ module Wagn::Model::Permissions
     end
   end
   
-  def approve_typecode
+  def approve_type_id
     case
     when !typename
       deny_because("No such type")
@@ -186,11 +191,10 @@ module Wagn::Model::Permissions
     rcard, rclass = permission_rule_card(:read)
     self.read_rule_id = rcard.id
     self.read_rule_class = rclass
-    
     #find all cards with me as trunk and update their read_rule (because of *type plus right)
     # skip if name is updated because will already be resaved
     
-    if !new_card? && updates.for(:typecode)
+    if !new_card? && updates.for(:type_id)
       User.as :wagbot do
         Card.search(:left=>self.name).each do |plus_card|
           plus_card = plus_card.refresh if plus_card.frozen?
@@ -201,11 +205,11 @@ module Wagn::Model::Permissions
   end
   
   def update_read_rule
-    Card.record_timestamps = Card.record_userstamps = false
+    Card.record_timestamps = Card.record_userstamp = false
 
     reset_patterns
     rcard, rclass = permission_rule_card(:read)
-    copy = self.frozen? ? self.dup : self
+    copy = self.frozen? ? self.refresh : self
     copy.update_attributes!(
       :read_rule_id => rcard.id,
       :read_rule_class => rclass
@@ -221,9 +225,9 @@ module Wagn::Model::Permissions
         end
       end
     end
-    Card.record_timestamps = Card.record_userstamps = true    
+    Card.record_timestamps = Card.record_userstamp = true    
   rescue
-    Card.record_timestamps = Card.record_userstamps = true
+    Card.record_timestamps = Card.record_userstamp = true
     raise
   end
 
@@ -261,10 +265,8 @@ module Wagn::Model::Permissions
 
       #then find all cards with me as read_rule_id that were not just updated and regenerate their read_rules
       if !new_record?
-        Card.find_all_by_read_rule_id_and_trash(self.id, false).each do |was_ruled|  #optimize with WQL / fetch?
-          next if in_set[was_ruled.key]
-          was_ruled.update_read_rule
-        end
+        Card.where(:read_rule_id=>self.id, :trash=>false).
+          reject{|w|in_set[w.key]}.each(&:update_read_rule)
       end
     end
   end

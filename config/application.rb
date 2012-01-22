@@ -1,5 +1,4 @@
 require File.expand_path('../boot', __FILE__)
-
 require 'rails/all'
 
 if defined?(Bundler)
@@ -38,10 +37,12 @@ module Wagn
           epath && epath != '/' ? epath : ''
         end
       
-        h[:upload_base_url] ||= h[:root_path] + '/files'
-        h[:upload_storage_dir] ||= "#{Rails.root}/local/uploads"
+        h[:attachment_web_dir]     ||= h[:root_path] + '/files'
+        h[:attachment_storage_dir] ||= "#{Rails.root}/local/files"
 
         h[:pack_dirs] ||= "#{Rails.root}/lib/packs, #{Rails.root}/local/packs"
+
+        h[:read_only] ||= (ro=ENV['WAGN_READ_ONLY']) && ro != 'false'
       end
     end
   end
@@ -81,7 +82,14 @@ module Wagn
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
     
-    config.cache_store = :file_store, "#{Rails.root}/tmp/cache"
+    cache_store = ( Wagn::Conf[:cache_store] || :file_store ).to_sym
+    cache_args = case cache_store
+      when :file_store
+        Wagn::Conf[:file_store_dir] || "#{Rails.root}/tmp/cache"
+      when :mem_cache_store
+        Wagn::Conf[:mem_cache_servers] || []
+      end
+    config.cache_store = cache_store, *cache_args
     
     if log_file = Wagn::Conf[:log_file]
       config.paths['log'] = File.join( log_file )
@@ -96,10 +104,20 @@ module Wagn
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
   end
   
-  Wagn::Conf.load_after_app
+  Wagn::Conf.load_after_app # move this stuff to initializer?
 
   ActionDispatch::Callbacks.to_prepare do
-    Wagn::Cache.initialize_on_startup
-  end
-  
+    # this is called per- init in production, per-request in development 
+    
+    database_ready = begin; ActiveRecord::Base.connection.table_exists?( 'cards' ); rescue; false; end
+    # Note that ActiveRecord::Base.connected? does not work here, 
+    # because it fails until the first call has been made.
+    # also, without the "table_exists? call, generate_fixtures breaks"
+    
+    if database_ready
+      ActiveSupport::Notifications.instrument 'wagn.init_cache', :message=>'' do
+        Wagn::Cache.initialize_on_startup if database_ready
+      end
+    end
+  end  
 end

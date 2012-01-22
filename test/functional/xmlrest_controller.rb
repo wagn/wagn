@@ -26,9 +26,6 @@ class XmlrestControllerTest < ActionController::TestCase
     assert assigns['card']
     assert_response 418
     assert Card.find_by_name('Editor').class.include?(Wagn::Set::Type::Cardtype)
-    # this assertion fails under autotest when running the whole suite,
-    # passes under rake test.
-    # assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
   end
 
 =begin
@@ -104,7 +101,7 @@ class XmlrestControllerTest < ActionController::TestCase
   end
 
   def test_show_nonexistent_card_no_create
-    login_as :anon
+    login_as :anonymous
     get :get, {:id=>'Sample_Fako'}
     assert_response :success
     assert_template 'missing'
@@ -213,7 +210,7 @@ class XmlrestControllerTest < ActionController::TestCase
 
     Card.create! :name=>"Fruit+*thanks", :type=>"Phrase", :content=>"/sweet"
 
-    login_as(:anon)
+    login_as(:anonymous)
     post :post, :card => {
       :name=>"Banana", :type=>"Fruit", :content=>"mush"
     }
@@ -229,14 +226,14 @@ class XmlrestControllerTest < ActionController::TestCase
     #remove me after regenerating test data 
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
     Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
-    f.permit(:read, Role[:anon])
+    f.permit(:read, Role[:anyone])
     f.save!
 
     ff = Card.create! :name=>"Fruit+*tform"
-    ff.permit(:read, Role[:anon])
+    ff.permit(:read, Role[:anyone])
     ff.save!
 
-    login_as(:anon)
+    login_as(:anonymous)
     post :post, :context=>"main_1", :card => {
       :name=>"Banana", :type=>"Fruit", :content=>"mush"
     }
@@ -267,7 +264,7 @@ class XmlrestControllerTest < ActionController::TestCase
     ff.permit(:read, Role[:auth])
     ff.save!
 
-    login_as(:anon)
+    login_as(:anonymous)
     get :get, :type=>"Fruit"
     assert_response :success
     assert_template 'missing'
@@ -289,8 +286,8 @@ class XmlrestControllerTest < ActionController::TestCase
 
 #=end
   def test_unrecognized_card_renders_missing_unless_can_create_basic
-    #User.as :anon
-    login_as(:anon)
+    #User.as :anonymous
+    login_as(:anonymous)
     get :get, :id=>'crazy unknown name'
     assert_template 'missing'
   end

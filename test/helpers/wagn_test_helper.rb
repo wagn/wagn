@@ -9,17 +9,20 @@ module WagnTestHelper
     User.cache.reset
     
     # FIXME: should login as joe_user by default-- see what havoc it creates...
-    @user = User.current_user = User.find_by_login('wagbot')
+    user_card = Card['joe user'] #Card[Card::WagbotID]
+    @user = User.current_user= User.where(:card_id=>user_card.id).first
+    STDERR << "user #{@user.inspect}\n"
 
     @user.update_attribute('crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c')
-    @user.roles << Role.find_by_codename('admin')
-    
-    # setup admin while we're at it
-    @admin = User[:wagbot]
+    rc=user_card.star_rule(:roles)
+    STDERR << "setup test user #{rc.inspect}\n"
+    rc && rc << Card::AdminID
 
-    @ra = Role.find_by_codename('admin')
-    @admin.roles << @ra
-    #User.current_user = User.find_by_login('joe_user')
+    # setup admin while we're at it
+    #@admin_card = Card[User[:wagbot].card_id]
+
+    #@admin_card.star_rule(:roles) << Card::AdminID
+    #User.current_user = User.where(:card_id=>Card['joe_user'].id).first
   end
  
   def get_renderer()
@@ -56,17 +59,17 @@ module WagnTestHelper
   def integration_login_as(user)
     User.cache.reset
     
-    case user.to_s 
-      when 'anon'; #do nothing
-      when 'joe_user'; login='joe@user.com'; pass='joe_pass'
-      when 'admin';    login='u3@user.com'; pass='u3_pass'
-      else raise "Don't know email & password for #{user}"
-    end
-    unless user==:anon
+    unless (user=user.to_sym)==:anonymous
+      case user
+        when :joe_user; login='joe@user.com'; pass='joe_pass'
+        when :admin;    login='u3@user.com'; pass='u3_pass'
+        else raise "Don't know email & password for #{user}"
+      end
       # FIXME- does setting controller here break anything else?
       #tmp_controller = @controller
       #@controller = AccountController.new
       
+      #warn "login as #{user}"
       post '/account/signin', :login=>login, :password=>pass
       assert_response :redirect
       

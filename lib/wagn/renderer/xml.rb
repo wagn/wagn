@@ -41,11 +41,14 @@ module Wagn
         href = full_uri(href)
         'internal-link'
       else
-        href = href.to_cardname
         known_card = !!Card.fetch(href)
-        text = href.to_show(href) unless text
-        href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(href.escape))
-        href = full_uri(href)
+        cardname = href.to_cardname
+        text = cardname.to_show(card.name) unless text
+        href = href.to_cardname
+        href = Wagn::Conf[:root_path] + '/' + (known_card ? href.to_url_key : CGI.escape(href.escape))
+        #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
+        href = full_uri(href.to_s)
+
         return %{<cardlink class="#{
                     known_card ? 'known-card' : 'wanted-card'
                   }" card="#{href}">#{text}</cardlink>}
@@ -242,8 +245,10 @@ module Wagn
     div(:class=>'submenu') do
       [[ :content,    true  ],
        [ :name,       true, ],
-       [ :type,       !(card.type_template? || (card.typecode=='Cardtype' and ct=card.me_type and !ct.find_all_by_trash(false).empty?))],
-       [ :codename,   (System.always_ok? && card.typecode=='Cardtype')],
+       [ :type,       !( card.type_template? ||
+         (card.type_id==Card::CardtypeID and ct=card.me_type
+          and !ct.find_all_by_trash(false).empty?) )],
+       [ :codename,   (User.always_ok? && card.type_id==Card::CardtypeID)],
        [ :inclusions, !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
        ].map do |key,ok,args|
 
@@ -360,7 +365,7 @@ module Wagn
   end
 
   def cardtype_field(form,options={})
-    template.select_tag('card[type]', cardtype_options_for_select(Cardtype.name_for(card.typecode)), options)
+    template.select_tag('card[type]', cardtype_options_for_select(Card.classname_for(card.typecode)), options)
   end
 
   def update_cardtype_function(options={})

@@ -148,7 +148,6 @@ class Card::RenameTest < ActiveSupport::TestCase
       :revisions => card.revisions.length,
       :referencers => card.referencers.plot(:name).sort,
       :referencees => card.referencees.plot(:name).sort,
-      :extension => card.extension,
       :dependents => card.dependents.length
     }
   end

@@ -13,7 +13,7 @@ class Wagn::Renderer
     card.name + "\n\n" + _render_core
   end
   define_view :show do |args|
-    render(params[:view] || :core)
+    render(args[:view] || params[:view] || :core)
   end
 
 ###----------------( NAME)
@@ -46,6 +46,26 @@ class Wagn::Renderer
   define_view(:blank) do |args| "" end
 
 
+  define_view(:not_found) do |args|
+    %{ There's no card named "#{card.name}" }
+  end
+
+
+  define_view(:server_error) do |args|
+    %{ Wagn Hitch!  Server Error. Yuck, sorry about that.\n}+
+    %{ To tell us more and follow the fix, add a support ticket at http://wagn.org/new/Support_Ticket }
+  end
+
+  define_view(:denial) do |args|
+    'Permission Denied'
+  end
+  
+  define_view(:bad_address) do |args|
+    %{ Bad Address }
+  end
+
+
+  # The below have HTML!?  should not be any html in the base renderer
 
   define_view(:deny_view) do |args|
     %{<span class="denied"><!-- Sorry, you don't have permission for this card --></span>}
@@ -66,9 +86,4 @@ class Wagn::Renderer
   define_view(:too_slow) do |args|
     %{<span class="too-slow">Timed out! #{ card.name } took too long to load.</span>}
   end
-
-  ## DEPRECATED
-  # this is a quick fix, will soon be replaced by view override
-  define_view(:when_created)     { |args| card.new_card? ? '' : card.created_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
-  define_view(:when_last_edited) { |args| card.new_card? ? '' : card.updated_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
 end

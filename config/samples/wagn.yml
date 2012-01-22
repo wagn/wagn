@@ -1,0 +1,32 @@
+# Note: file settings below should use absolute paths and should NOT contain the phrase "RAILS_ROOT"
+
+
+# log_file:
+# defaults to RAILS_ROOT/log/<environment>.log
+
+# database_config_file:  
+# defaults to RAILS_ROOT/config/database.yml
+
+# attachment_storage_dir:
+# this is where uploaded files are actually stored. (eg Image and File cards)
+# defaults to RAILS_ROOT/local/files
+
+# attachment_web_dir:
+# this is the base of the uri path that users see when downloading files
+# defaults to "/files"  
+
+# cache_store:
+# determines caching mechanism.  options include: file_store, memory_store, mem_cache_store  
+# defaults to file_store
+# mem_cache_store is highly recommended for production
+
+
+# IMPORTANT: please be sure to register for your own recaptcha keys before deploying a live site
+# It's quick and easy.  Just follow instructions at https://www.google.com/recaptcha/admin/create
+
+# The below keys are fine for testing but should not be used in production sites.
+
+recaptcha_public_key: 6LdhRssSAAAAAFfLt1Wkw43hoaA8RTIgso9-tvtc
+
+recaptcha_private_key: 6LdhRssSAAAAAGwzl069pJQBdmzCZigm1nV-dmqK
+

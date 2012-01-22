@@ -11,7 +11,7 @@ end
 
 describe Card, "anonymous create permissions" do
   before do
-    User.as :anon
+    User.as :anonymous
   end
   it "should not allow someone not signed in to create Basic Cards" do
     c = Card.new(:type=>'Basic')

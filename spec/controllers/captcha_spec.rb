@@ -29,7 +29,7 @@ describe CardController, "captcha_required?" do
     User.as :wagbot do
       Card["*all+*captcha"].update_attributes! :content=>"1"
       Card.create :name=>'Book+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
-#      c=Card["Book"];c.permit(:create, Role[:anon]);c.save! 
+#      c=Card["Book"];c.permit(:create, Role[:anyone]);c.save! 
       Card.create :name=>"Book+*type+*captcha", :content => "1"  
     end
   end
@@ -91,7 +91,7 @@ describe AccountController, "with captcha enabled" do
     end
   end
 
-  User.as :anon do
+  User.as :anonymous do
     require_captcha_on( 
       :signup, 
       :card => { :name => "Bob", :type=>"Account Request" },

@@ -37,9 +37,9 @@ class AccountRequestTest < ActionController::TestCase
     }
 
     @card =  Card.find_by_name("Word Third")   
-    @user = @card.extension
+    @user = User.where(:card_id=>@card.id).first
     
-    assert_equal @card.typecode, 'InvitationRequest'
+    @card.typecode.should == 'InvitationRequest'
 
     # this now happens only when created via account controller
     
@@ -52,7 +52,7 @@ class AccountRequestTest < ActionController::TestCase
   def test_should_destroy_and_block_user  
     login_as :joe_user
     # FIXME: should test agains mocks here, instead of re-testing the model...
-    post :remove, :id=>Card.fetch('Ron Request').id
+    post :remove, :id=>"~#{Card.fetch('Ron Request').id}"
     assert_equal nil, Card.fetch('Ron Request')
     assert_equal 'blocked', ::User.find_by_email('ron@request.com').status
   end

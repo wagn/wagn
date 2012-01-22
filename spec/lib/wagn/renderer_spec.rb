@@ -10,10 +10,6 @@ describe Wagn::Renderer, "" do
     Wagn::Renderer.ajax_call = false
   end
 
-  def simplify_html string
-    string.gsub(/\s*<!--[^>]*>\s*/, '').gsub(/\s*<\s*(\/?\w+)[^>]*>\s*/, '<\1>')
-  end
-
 #~~~~~~~~~~~~ special syntax ~~~~~~~~~~~#
 
   context "special syntax handling should render" do
@@ -114,7 +110,6 @@ describe Wagn::Renderer, "" do
 
     it "titled" do
       result = render_card(:titled, :name=>'A+B')
-      #warn "titled result = #{result}"
       assert_view_select result, 'div[class~="titled-view"]' do
         assert_select 'h1' do
           assert_select 'span', 3
@@ -197,20 +192,24 @@ describe Wagn::Renderer, "" do
 
     context "layout" do
       before do
-        @layout_card = Card.create(:name=>'tmp layout')
+        User.as :wagbot do
+          @layout_card = Card.create(:name=>'tmp layout', :type=>'Layout')
+        end
         c = Card['*all+*layout'] and c.content = '[[tmp layout]]'
         @main_card = Card.fetch('Joe User')
       end
 
       it "should default to core view for non-main inclusions when context is layout_0" do
         @layout_card.content = "Hi {{A}}"
-        @layout_card.save
+        User.as( :wagbot ) { @layout_card.save }
+
         Wagn::Renderer.new(@main_card).render(:layout).should match('Hi Alpha')
       end
 
       it "should default to open view for main card" do
         @layout_card.content='Open up {{_main}}'
-        @layout_card.save
+        User.as( :wagbot ) { @layout_card.save }
+
         result = Wagn::Renderer.new(@main_card).render_layout
         result.should match(/Open up/)
         result.should match(/card-header/)
@@ -219,7 +218,8 @@ describe Wagn::Renderer, "" do
 
       it "should render custom view of main" do
         @layout_card.content='Hey {{_main|name}}'
-        @layout_card.save
+        User.as( :wagbot ) { @layout_card.save }
+
         result = Wagn::Renderer.new(@main_card).render_layout
         result.should match(/Hey.*div.*Joe User/)
         result.should_not match(/card-header/)
@@ -227,13 +227,15 @@ describe Wagn::Renderer, "" do
 
       it "shouldn't recurse" do
         @layout_card.content="Mainly {{_main|core}}"
-        @layout_card.save
+        User.as( :wagbot ) { @layout_card.save }
+
         Wagn::Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main">Mainly {{_main|core}}</div>}
       end
 
       it "should handle non-card content" do
         @layout_card.content='Hello {{_main}}'
-        @layout_card.save
+        User.as( :wagbot ) { @layout_card.save }
+
         result = Wagn::Renderer.new(nil).render(:layout, :main_content=>'and Goodbye')
         result.should match(/Hello.*and Goodbye/)
       end
@@ -365,7 +367,7 @@ describe Wagn::Renderer, "" do
       result = Wagn::Renderer::Html.new(c).render( :edit )
       assert_view_select result, 'div[class="field-in-multi"]' do
         assert_select 'input[name=?][type="text"][value="Zamma Flamma"]', 'card[cards][~plus~author][content]'
-        assert_select 'input[name=?][type="hidden"][value="Phrase"]',     'card[cards][~plus~author][typecode]'
+        assert_select %{input[name=?][type="hidden"][value="#{Card::PhraseID}"]},     'card[cards][~plus~author][type_id]'
       end
     end
   end
@@ -395,9 +397,10 @@ describe Wagn::Renderer, "" do
 
     context "Image" do
       it "should handle size argument in inclusion syntax" do
-        Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
-        c = Card.new :name => 'Image1', :content => "{{TestImage | core; size:small }}"
-        Wagn::Renderer.new(c).render( :core ).should == %{<img src="http://wagn.org/image53_small.jpg">}
+        image_card = Card.create! :name => "TestImage", :type=>"Image", :content => %{TestImage.jpg\nimage/jpeg\n12345}
+        including_card = Card.new :name => 'Image1', :content => "{{TestImage | core; size:small }}"
+        rendered = Wagn::Renderer.new(including_card).render :core
+        assert_view_select rendered, 'img[src=?]', "/files/TestImage-small-#{image_card.current_revision_id}.jpg"
       end
     end
 
@@ -491,7 +494,7 @@ describe Wagn::Renderer, "" do
 
     context "*version" do
       it "should have an X.X.X version" do
-        (render_card(:raw, :name=>'*version') =~ (/\d\.\d\.\d/ )).should be_true
+        (render_card(:raw, :name=>'*version') =~ (/\d\.\d\.\w+/ )).should be_true
       end
     end
 

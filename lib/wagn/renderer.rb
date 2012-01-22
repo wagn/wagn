@@ -1,13 +1,16 @@
-
-WikiReference
+#WikiReference # is this needed?
 
 module Wagn
   class Renderer
     include ReferenceTypes
 
-    DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
-    UNDENIABLE_VIEWS = [ :deny_view, :edit_virtual, :too_slow, :too_deep, :missing, :closed_missing, :name, :link, :url ]
-    INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :edit=>:edit, :layout=>:layout, :new=>:edit }
+    DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed,
+      :bare=>:core, :naked=>:core }
+    UNDENIABLE_VIEWS = [ :deny_view, :denial, :errors, :edit_virtual,
+      :too_slow, :too_deep, :missing, :not_found, :closed_missing, :name,
+      :link, :linkname, :url, :show, :layout, :bad_address, :server_error ]
+    INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :edit=>:edit,
+      :layout=>:layout, :new=>:edit }
     DEFAULT_ITEM_VIEW = :link
   
     RENDERERS = {
@@ -89,7 +92,10 @@ module Wagn
           define_method( "render_#{view}" ) do |*a|
             begin
               denial=deny_render(view, *a) and return denial
-              send( "_render_#{view}", *a)
+              msg = "render #{view} #{ card ? "called for #{card.name}" : '' }"
+              ActiveSupport::Notifications.instrument 'wagn.render', :message=>msg do
+                send( "_render_#{view}", *a)
+              end
             rescue Exception=>e
               Rails.logger.debug "Error #{e.message} #{e.backtrace*"\n"}"
               raise e          
@@ -125,6 +131,7 @@ module Wagn
       @card = card
       opts.each { |key, value| instance_variable_set "@#{key}", value }
   
+      @is_qcard = true
       @format ||= :html
       @char_count = @depth = 0
       @root = self
@@ -244,17 +251,17 @@ module Wagn
       # Don't bother processing inclusion if we're already out of view
       return '' if @mode == :closed && @char_count > @@max_char_count
   
-      tname=opts[:tname]
-      return expand_main(opts) if tname=='_main' && !ajax_call? #&& @depth==0 
-      # restore @depth condition above when layouts are set-addressable
+      return expand_main(opts) if opts[:tname]=='_main' && !ajax_call? && @depth==0 
+      @is_qcard = false
+      
       opts[:view] = canonicalize_view opts[:view]
       opts[:view] ||= ( @mode == :layout ? :core : :content )
       
-      tcardname = tname.to_cardname
+      tcardname = opts[:tname].to_cardname
       opts[:fullname] = tcardname.to_absolute(card.cardname, params)
       opts[:showname] = tcardname.to_show(opts[:fullname])
-  
-      new_args = @mode == :edit ? new_inclusion_card_args(tname, opts) : {}
+      
+      new_args = @mode == :edit ? new_inclusion_card_args(opts) : {}
       tcard ||= Card.fetch_or_new(opts[:fullname], new_args)
   
       result = process_inclusion(tcard, opts)
@@ -265,23 +272,19 @@ module Wagn
     end
   
     def expand_main(opts)
-      case
-      when tcont = @root.main_content ; wrap_main tcont
-      when @depth > 0 ; "{{#{opts[:unmask]}}}" #delete this condition once layouts are set-addressable
-      else
-        tcard = @root.main_card
-        [:item, :view, :size].each do |key|
-          if val=params[key] and !val.to_s.empty?
-            opts[key] = val.to_sym
-          end
+      @is_qcard = true
+      return wrap_main( @root.main_content ) if @root.main_content
+      [:item, :view, :size].each do |key|
+        if val=params[key] and !val.to_s.empty?
+          opts[key] = val.to_sym
         end
-        opts[:tname] = tcard.cardname
-        opts[:view] ||= @main_view || :open
-        opts[:fullname] = opts[:showname] = tcard.name
-        with_inclusion_mode(:main) do
-          wrap_main( process_inclusion(tcard, opts) )
-        end
-      end      
+      end
+      opts[:tname] = @root.main_card.cardname
+      opts[:view] ||= @main_view || :open
+      opts[:fullname] = opts[:showname] = @root.main_card.name
+      with_inclusion_mode(:main) do
+        wrap_main process_inclusion(@root.main_card, opts)
+      end
     end
   
     def wrap_main(content)
@@ -303,7 +306,7 @@ module Wagn
       options[:home_view] = [:closed, :edit].member?(requested_view) ? :open : requested_view
       approved_view = case
 
-        when [:name, :link, :linkname, :new, :closed_rule, :open_rule].member?(requested_view)  ; requested_view
+        when (UNDENIABLE_VIEWS + [ :new, :closed_rule, :open_rule ]).member?(requested_view)  ; requested_view
         when @mode == :edit
          tcard.virtual? ? :edit_virtual : :edit_in_form
         when new_card
@@ -315,6 +318,7 @@ module Wagn
         when @mode==:closed     ; :closed_content
         else                    ; requested_view
         end
+      #warn "rendering #{approved_view} for #{card.name}"
       result = raw( sub.render(approved_view, options) )
       Renderer.current_slot = oldrenderer
       result
@@ -335,9 +339,9 @@ module Wagn
       content if content.present?  #not sure I get why this is necessary - efm
     end
   
-    def new_inclusion_card_args(tname, options)
+    def new_inclusion_card_args(options)
       args = { :type =>options[:type] }
-      args[:loaded_trunk]=card if tname =~ /^\+/
+      args[:loaded_trunk]=card if options[:tname] =~ /^\+/
       if content=get_inclusion_content(options[:tname])
         args[:content]=content
       end
@@ -348,7 +352,7 @@ module Wagn
       pcard = opts.delete(:card) || card
       base = "#{Wagn::Conf[:root_path]}/card/#{action}"
       if pcard && ![:new, :create, :create_or_update].member?( action )
-        base += "/#{opts.delete(:id) || card.cardname.to_url_key}"
+        base += '/' + (opts[:id] ? "~#{opts.delete(:id)}" : card.cardname.to_url_key)
       end
       if attrib = opts.delete( :attrib )
         base += "/#{attrib}"
@@ -359,7 +363,28 @@ module Wagn
       end
       base + query
     end
-        
+
+    def qcard?
+      @is_qcard || false
+    end
+
+    def search_params
+      @search_params ||= begin
+        p = self.respond_to?(:paging_params) ? paging_params : {}
+        p[:vars] = {}
+      
+        if qcard?
+          params.each do |key,val|
+            p[:vars][$1.to_sym] = val if key =~ /^\_(\w+)$/
+          end
+        end
+        #if w = p[:wql] and explicit_vars = w[card.key]
+        #  p.merge! explicit_vars
+        #end
+        p
+      end
+    end
+      
     def build_link(href, text)
       #Rails.logger.info "build_link(#{href.inspect}, #{text.inspect})"
       klass = case href
@@ -449,7 +474,7 @@ module Wagn
     end
   end
   
-  # need automatic lookups
+  # automate
   Wagn::Renderer::EmailHtml
   Wagn::Renderer::Html
   Wagn::Renderer::Kml
@@ -459,6 +484,6 @@ module Wagn
   Wagn::Conf[:pack_dirs].split(/,\s*/).each do |dir|
     Wagn::Pack.dir File.expand_path( "#{dir}/**/*_pack.rb",__FILE__)
   end
-  include Wagn::Pack
+  Wagn::Pack.load_all
   
 end

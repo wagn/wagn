@@ -127,7 +127,7 @@ module Wagn
       }<div id="main">#{content}</div>}
     end
 
-    def edit_slot(args)
+    def edit_slot(args={})
       card.content_template ? raw(_render_core(args)) : content_field(form)
     end
  
@@ -152,13 +152,13 @@ module Wagn
             (card.typecode=='Cardtype' && card.cards_of_type_exist?)
         
           link_to attr, path(:edit, :attrib=>attr), :remote=>true,
-            :class => %{slotter edit-#{ attr }-link #{'init-editors' if attr==:content } #{'current-subtab' if attr==current.to_sym}}
+            :class => %{slotter edit-#{ attr }-link #{'current-subtab' if attr==current.to_sym}}
         end.compact * "\n"
       end
     end
 
     def options_submenu(current)
-      return '' if card && card.extension_type != 'User'
+      return '' unless card || [Card::WagbotID, Card::AnonID].member?(card.id) || card.type_id == Card::UserID
       wrap_submenu do
         [:account, :settings].map do |key|
           link_to key, path(:options, :attrib=>key), :remote=>true,
@@ -191,7 +191,7 @@ module Wagn
 
 
     def link_to_menu_action( to_action)
-      klass = { :edit => 'edit-content-link init-editors'}
+      klass = { :edit => 'edit-content-link'}
       content_tag :li, link_to_action( to_action.to_s.capitalize, to_action,
         :class=> "slotter #{klass[to_action]}" #{}" #{menu_action==to_action ? ' current' : ''}"
       )
@@ -211,7 +211,7 @@ module Wagn
     end
 
     def typecode_field(options={})
-      typename = card ? Cardtype.name_for(card.typecode) : ''
+      typename = card ? Card.typename_from_id(card.type_id) : ''
       template.select_tag('card[type]', typecode_options_for_select( typename ), options)
     end
 

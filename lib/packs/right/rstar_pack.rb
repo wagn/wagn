@@ -6,7 +6,7 @@ class Wagn::Renderer::Html
     cells = [
       ["rule-setting",
         link_to( card.cardname.tag_name, path(:view, :view=>:open_rule),
-          :class => 'edit-rule-link slotter init-editors', :remote => true )
+          :class => 'edit-rule-link slotter', :remote => true )
       ],
       ["rule-content",
         %{<div class="rule-content-container closed-view">
@@ -33,7 +33,7 @@ class Wagn::Renderer::Html
 
     if args=params[:card]
       current_rule = current_rule.refresh if current_rule.frozen?
-      args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type]
+      args[:type_id] = Card.type_id_from_name(args.delete(:type)) if args[:type]
       current_rule.assign_attributes args
     end
 
@@ -135,7 +135,7 @@ class Wagn::Renderer::Html
 
       if edit_mode
         %{<label>type:</label>}+
-        raw(typecode_field( :class =>'type-field rule-type-field live-type-field init-editors', 'data-remote'=>true,
+        raw(typecode_field( :class =>'type-field rule-type-field live-type-field', 'data-remote'=>true,
           :href => path(:view, :card=>open_rule, :view=>:open_rule, :type_reload=>true) ) )
       elsif current_set_key
         '<label>type:</label>'+
@@ -167,7 +167,7 @@ class Wagn::Renderer::Html
              button_tag( 'Cancel', :class=>'rule-cancel-button', :type=>'button' )).html_safe
            end +
          '</div>').html_safe
-       end +
+       else ''; end +
        notice.html_safe
 
     end.html_safe

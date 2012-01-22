@@ -1,4 +1,5 @@
-<div>
+<% if @card %> 
+  <div>
 <a href="<%= @card_url %>"><%= @card.name %></a>
   was just
   <%- if @action=='edited' -%>
@@ -28,3 +29,6 @@
   You received this email because you're watching "<%= @watched %>". <br/>
   <a href="<%= @unwatch_url %>">Unwatch</a> to stop receiving these emails.
 </div>
+<% else %>
+  <div> Missing user </div>
+<% end %>

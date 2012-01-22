@@ -11,8 +11,9 @@ module Wagn::Model::Settings
 #  end
 
   def rule_card setting_name, fallback=nil, extra_fetch_args={}
+    #warn "rule_card #{setting_name}, #{fallback}, #{extra_fetch_args.inspect}"
     fetch_args = {:skip_virtual=>true}.merge extra_fetch_args
-    real_set_names.first_value do |set_name|
+    real_set_names.each do |set_name|
       #Rails.logger.debug "rule_card search #{set_name.inspect}"
       set_name=set_name.to_cardname
       card = Card.fetch(set_name.star_rule( setting_name ), fetch_args)
@@ -31,7 +32,7 @@ module Wagn::Model::Settings
 
   def related_sets
     sets = ["#{name}+*self"]
-    sets<< "#{name}+*type" if typecode=='Cardtype'
+    sets<< "#{name}+*type" if type_id==Wagn::Codename.cardname_type_id
     if cardname.simple?
       sets<< "#{name}+*right"
       Card.search(:type=>'Set',:left=>{:right=>name},:right=>'*type plus right',:return=>'name').each do |set_name|

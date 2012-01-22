@@ -1,18 +1,19 @@
+require 'json'
 class Wagn::Renderer
   define_view(:core, :type=>'setting') do |args|
     _render_closed_content(args) +
     
-    card.patterns.reverse.map do |set_pattern|
-      set_class = set_pattern.class
-      search_card = Card.new( :type =>'Search', :content=>%~
-          { "left":{
-              "type":"Set",
-              "#{set_class.trunkless? ? 'name' : 'right'}":"#{set_class.key}"
-            },
-            "right":"#{card.name}","sort":"name","limit":"100"
-          }
-        ~
-      )
+    Wagn::Model::Pattern.pattern_subclasses.reverse.map do |set_class|
+      wql = { :left  => {:type =>"Set"},
+              :right => card.name,
+              :sort  => 'name',
+              :limit => 100
+            }
+      wql[:left][ (set_class.trunkless? ? :name : :right )] = set_class.key
+
+      warn "WQL = #{wql}"
+
+      search_card = Card.new :type =>'Search', :content=>wql.to_json
       next if search_card.count == 0
 
       content_tag( :h2, 

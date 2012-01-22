@@ -11,7 +11,7 @@
       <th>Cache Val</th>
       <th>Database Val</th>
     </tr>
-    <%- [ :name, :updated_at, :updated_by, :current_revision_id, :content ].each do |field| %>
+    <%- [ :name, :updated_at, :updater_id, :current_revision_id, :content ].each do |field| %>
       <tr>
         <td><%= field %></td>
         <td><%= @cache_card.send field %></td>

@@ -19,7 +19,7 @@ describe Mailer do
   #  (ie try renamed change notice below to change_notice) then *notify+*from gets stuck on.
   context "change notice" do
     before do
-      user =  ::User.find_by_login('sara')
+      user =  Card['sara'].id
       card =  Card["Sunglasses"]
       action = "edited"  
       Mailer.change_notice( user, card, action, card.name ).deliver
@@ -37,7 +37,7 @@ describe Mailer do
         assert_equal ["sara@user.com"],  @mail.to
       end    
       it "is from Wag bot email" do
-        assert_equal [User.find_by_login('wagbot').email], @mail.from
+        assert_equal [User.where(:card_id=>Card::WagbotID).first.email], @mail.from
       end     
     end     
   end

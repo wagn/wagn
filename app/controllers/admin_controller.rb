@@ -3,6 +3,7 @@ class AdminController < ApplicationController
 
   def setup
     raise(Wagn::Oops, "Already setup") unless User.no_logins? && !User[:first]
+    Wagn::Conf[:recaptcha_on] = false
     if request.post?
       #Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
       User.as :wagbot do
@@ -10,9 +11,13 @@ class AdminController < ApplicationController
         set_default_request_recipient
       end
 
+      #warn "ext id = #{@extension.id}"
+
       if @extension.errors.empty?
-        @extension.roles = [Role[:admin]]
-        self.current_user = @extension
+        roles_card = Card.fetch_or_new(@card.cardname.star_rule(:roles))
+        roles_card.content = "[[#{Card[Card::AdminID].name}]]"
+        roles_card.save
+        self.session_user = @card
         User.cache.delete 'no_logins'
         flash[:notice] = "You're good to go!"
         redirect_to Card.path_setting('/')
@@ -28,22 +33,32 @@ class AdminController < ApplicationController
   def tasks
     raise Wagn::PermissionDenied.new('Only Administrators can view tasks') unless User.always_ok?
     @tasks = Wagn::Conf[:role_tasks]
-    Role.cache.reset
+    #role.cache.reset
     
-    @roles = Role.find_configurables.sort{|a,b| a.card.name <=> b.card.name }
-    @role_tasks = {}
-    @roles.each { |r| @role_tasks[r.id] = r.task_list }
+    @roles = Card.find_configurables.sort{|a,b| a.name <=> b.name }
+    @role_tasks = @roles.inject({}) do |h, rolecard|
+      h[rolecard.id] = Card[rolecard.cardname.star_rule(:tasks)].item_names
+    end
   end
 
   def save_tasks
     raise Wagn::PermissionDenied.new('Only Administrators can change task permissions') unless User.always_ok?
     role_tasks = params[:role_task] || {}
-    Role.find( :all ).each  do |role|
-      tasks = role_tasks[role.id.to_s] || {}
-      role.tasks = tasks.keys.join(',')
-      role.save
+    rule_update = {}
+    Card.find(:type_id => Card::RoleID ).each do |role|
+
+      if tasks = role_tasks[role_id.to__s]
+        tasks.keys.each do |task|
+          rule_update[Card.task_rule(task)] = "#{rule_update[rulename]}[[#{role.name}]]"
+        end
+      end
     end
-    Role.cache.reset
+
+    rule_update.each do |rulename, content|
+      rulecard = Card.fetch_or_new(rulename)
+      rulecard.content = content
+      rulecard.save
+    end
 
     flash[:notice] = 'permissions saved'
     redirect_to :action=>'tasks'

@@ -2,10 +2,11 @@ class Revision < ActiveRecord::Base
   belongs_to :card, :class_name=>"Card", :foreign_key=>'card_id'
   
   cattr_accessor :cache
- # belongs_to :created_by, :class_name=>"User", :foreign_key=>"created_by"
+  stampable :stamper_class_name => :card
   
   def author
-    User[created_by]
+    c=Card[creator_id]
+    #warn "author #{creator_id}, #{c}, #{self}"; c
   end
   
   

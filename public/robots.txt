@@ -7,5 +7,5 @@
 User-agent: *
 Disallow: /card/*
 Disallow: /admin/*
-Disallow: /options/*
+Disallow: /account/*
 Allow: /

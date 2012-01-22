@@ -25,7 +25,7 @@ module Wagn
     
     class << self
       def cache_classes
-        [Card, Cardtype, MultihostMapping, Role, User, Revision]
+        [Card, MultihostMapping, Role, User, Revision]
       end
             
       def initialize_on_startup
@@ -45,7 +45,7 @@ module Wagn
         set_keys.map{|k| [k,"#{k}+*content", "#{k}+*default", "#{k}+*read", ]}.flatten.each do |key|        
           Card[key]
         end
-        Role[:auth]; Role[:anon]
+        Role[:auth]; Role[:anonymous]
         @@frozen = Marshal.dump([Card.cache, Role.cache])
       end
       
@@ -79,13 +79,18 @@ module Wagn
       end
 
       def reset_global
-        cache_classes.each{ |cc| cc.cache.reset }
+        cache_classes.each{ |cc| cc.cache.reset if cc.cache }
         MultihostMapping.reset_cache
       end
 
       private
       def reset_local
-        cache_classes.each{ |cc| cc.cache.reset_local }
+        Card.reset_id_cache
+        cache_classes.each{ |cc|
+          if Wagn::Cache===cc.cache
+          cc.cache && cc.cache.reset_local
+          else warn "reset class #{cc}, #{cc.cache.class} ???" end
+        }
       end
 
     end
@@ -109,7 +114,7 @@ module Wagn
         @cache_id = @store.fetch(@system_prefix + "cache_id") do
           self.class.generate_cache_id
         end
-        @prefix   = @system_prefix + @cache_id + "/"
+        @prefix = @system_prefix + @cache_id + "/"
       end
     end
 

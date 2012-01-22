@@ -6,12 +6,12 @@
   <h1 class="page-header">Sign Up</h1><%#ENGLISH%>
 
 
-  <%= wrap_slot(get_slot(card)) do |slot| %>
+  <%= wrap_slot do |slot| %>
 
     <div class="instruction">
       <% if inst = card.rule_card('add help', 'edit help') %> 
         <%= raw( slot.subrenderer(inst).render :core ) %>
-      <% elsif !User.ok?(:create_accounts) %>
+      <% elsif !Card['*account'].ok?(:create) %>
         <p><strong>All Account Requests are subject to review.</strong></p><%#ENGLISH%>
       <% else %>
         <p><strong>Send us the following, and we'll send you a password.</strong></p><%#ENGLISH%>
@@ -20,11 +20,11 @@
 
     <div class="content">
     
-      <%= form_for :card, :action=>'signup', :html=>{ :onsubmit=>"$(this).setContentFieldsFromMap()"} do |f| %>
+      <%= form_for :card, :action=>'signup', :html=>{ :remote=>true, :class=>'slotter' } do |f| %>
         <%= hidden_field_tag 'element', "#{div_id}"  %>
-        <%= f.hidden_field :typecode  %>
+        <%= f.hidden_field :type_id  %>
         <%- slot.form = f %>
-        <%= error_messages_for @user %> 
+
         <table class="fieldset">
           <%= raw( slot.option_header 'Account Details' ) %><%#ENGLISH%>
           <%- new_name_field = capture do %><%= f.text_field :name, {:class=>'new-card-name', :id=>"new-card-name-field"} %><% end %>
@@ -38,7 +38,7 @@
         </table>    
   
         <div class="open-content">
-          <%= raw( slot.render_edit ) %>
+          <%= raw( slot.with_inclusion_mode(:new) { slot.edit_slot } ) %>
         </div>
         <div class="submit-tag">
           <%= submit_tag 'Submit' %>

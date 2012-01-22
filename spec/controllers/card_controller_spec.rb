@@ -16,28 +16,10 @@ describe CardController do
     end
     
     it "should recognize .rss on /recent" do
-      {:get => "/recent.rss"}.should route_to(:controller=>"card", :view=>"core", :action=>"show", 
+      {:get => "/recent.rss"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
         :id=>"*recent", :format=>"rss"
       )
     end
-    
-#    it "should search for simple keyword" do
-#      {:get => "/search/simple"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
-#        :id=>"*search", :_keyword=>'simple'
-#      )
-#    end
-#    
-#    it "should search for keyword with dot" do
-#      {:get => "/search/dot.com"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
-#        :id=>"*search", :_keyword=>'dot.com'
-#      )
-#    end
-#    it "should recognize formats on keyword search" do
-#      {:get => "/search/feedname.rss"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
-#        :id=>"*search", :_keyword=>'feedname', :format=>'rss'
-#      )
-#    end
-
 
     ["/wagn",""].each do |prefix|
       describe "routes prefixed with '#{prefix}'" do
@@ -114,9 +96,9 @@ describe CardController do
             "type"=>"Fruit",
             "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}
           }, "view"=>"open"
+        assert_response 422
         assigns['card'].errors[:key].first.should == "cannot be blank"
         assigns['card'].errors[:name].first.should == "can't be blank"
-        assert_response 422
       end
 
       it "creates card with subcards" do
@@ -155,7 +137,7 @@ describe CardController do
    
     it "redirects to previous" do
       # Fruits (from shared_data) are anon creatable but not readable
-      login_as :anon
+      login_as :anonymous
       post :create, { :success=>'REDIRECT: TO-PREVIOUS', "card" => { "type"=>"Fruit", :name=>"papaya" } }, :history=>['/blam']
       assert_redirected_to "/blam"
     end    
@@ -167,7 +149,7 @@ describe CardController do
     end
     
     it "new should work for creatable nonviewable cardtype" do
-      login_as(:anon)     
+      login_as(:anonymous)     
       get :new, :type=>"Fruit"
       assert_response :success
     end
@@ -212,10 +194,9 @@ describe CardController do
       end
 
       it "handles nonexistent card without create permissions" do
-        login_as :anon
+        login_as :anonymous
         get :show, {:id=>'Sample_Fako'}
-        assert_response :success   
-        assert_template 'missing'
+        assert_response 404
       end
       
       #it "invokes before_show hook" do
@@ -227,7 +208,7 @@ describe CardController do
     
     describe "#update" do
       it "works" do
-        xhr :post, :update, { :id=>@simple_card.id, 
+        xhr :post, :update, { :id=>"~#{@simple_card.id}",
           :card=>{:current_revision_id=>@simple_card.current_revision.id, :content=>'brand new content' }} #, {:user=>@user.id} 
         assert_response :success, "edited card"
         assert_equal 'brand new content', Card['Sample Basic'].content, "content was updated"
@@ -248,7 +229,7 @@ describe CardController do
 
     it "remove" do
       c = Card.create( :name=>"Boo", :content=>"booya")
-      post :remove, :id=>c.id.to_s
+      post :remove, :id=>"~#{c.id}"
       assert_response :redirect
       Card.find_by_name("Boo").should == nil
     end
@@ -268,7 +249,7 @@ describe CardController do
     it "rename without update references should work" do
       User.as :joe_user
       f = Card.create! :type=>"Cardtype", :name=>"Apple"
-      xhr :post, :update, :id => f.id, :card => {
+      xhr :post, :update, :id => "~#{f.id}", :card => {
         :confirm_rename => true,
         :name => "Newt",
         :update_referencers => "false",
@@ -278,16 +259,9 @@ describe CardController do
       Card["Newt"].should_not be_nil
     end
 
-  #=end
-    it "unrecognized card renders missing unless can create basic" do
-      login_as(:anon) 
-      get :show, :id=>'crazy unknown name'
-      assert_template 'missing'
-    end
-
     it "update typecode" do
       User.as :joe_user   
-      xhr :post, :update, :id=>@simple_card.id, :card=>{ :type=>"Date" }
+      xhr :post, :update, :id=>"~#{@simple_card.id}", :card=>{ :type=>"Date" }
       assert_response :success, "changed card type"
       Card['Sample Basic'].typecode.should == "Date"
     end

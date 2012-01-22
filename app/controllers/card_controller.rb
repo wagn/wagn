@@ -16,7 +16,6 @@ class CardController < ApplicationController
   before_filter :remove_ok, :only=>[ :remove ]
 
 
-
   #----------( CREATE )
   
   def create
@@ -75,7 +74,7 @@ class CardController < ApplicationController
 
 
   def update
-    @card = @card.refresh # (cached card attributes often frozen)
+    @card = @card.refresh if @card.frozen?
     if @card.update_attributes params[:card]
       render_success
     else
@@ -97,7 +96,7 @@ class CardController < ApplicationController
   def comment
     raise(Wagn::NotFound,"Action comment should be post with card[:comment]") unless request.post? and params[:card]
     comment = params[:card][:comment];
-    if User.current_user.login == 'anon'
+    if User.current_user.card_id == Card::AnonID
       session[:comment_author] = author = params[:card][:comment_author]
       author = "#{author} (Not signed in)"
     else
@@ -105,14 +104,14 @@ class CardController < ApplicationController
       author = "[[#{username}]]"
     end
     comment = comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
-    @card = @card.refresh
+    @card = @card.refresh if @card.frozen?
     @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
     @card.save!
     render_show
   end
 
   def rollback
-    @card = @card.refresh
+    @card = @card.refresh if @card.frozen?
     revision = @card.revisions[params[:rev].to_i - 1]
     @card.update_attributes! :content=>revision.content
     @card.attachment_link revision.id
@@ -124,10 +123,11 @@ class CardController < ApplicationController
   #------------( DELETE )
 
   def remove
+    @card = @card.refresh if @card.frozen?
     @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
     
-    return render_show(:remove) if !@card.errors[:confirmation_required].empty?  ## renders remove.erb, which is essentially a confirmation box.  
+    return render_show(:remove) if @card.errors[:confirmation_required].any?  ## renders remove.erb, which is essentially a confirmation box.  
 
     discard_locations_for(@card) 
 
@@ -138,20 +138,20 @@ class CardController < ApplicationController
   #-------- ( ACCOUNT METHODS )
   
   def update_account
-    extension = @card.extension 
+    account = User.where(:card_id=>@card.id).first 
     
     if params[:save_roles]
       User.ok! :assign_user_roles
       role_hash = params[:user_roles] || {}
-      extension.roles = Role.find role_hash.keys
+      account.roles = Role.find role_hash.keys
     end
 
-    if extension && params[:extension]
-      extension.update_attributes(params[:extension])
+    if account && params[:extension]
+      account.update_attributes(params[:extension])
     end
 
-    if extension && extension.errors.any?
-      @card.errors = extension.errors
+    if account && account.errors.any?
+      @card.errors = account.errors
       render_errors
     else
       render_show
@@ -159,12 +159,13 @@ class CardController < ApplicationController
   end
 
   def create_account
-    User.ok!(:create_accounts) && @card.ok?(:update)
+    # FIXME: or should this be @card.star_rule(:account).ok?
+    Card['*account'].ok?(:create) && @card.ok?(:update)
     email_args = { :subject => "Your new #{Card.setting('*title')} account.",   #ENGLISH
                    :message => "Welcome!  You now have an account on #{Card.setting('*title')}." } #ENGLISH
     @user, @card = User.create_with_card(params[:user],@card, email_args)
     raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
-    @extension = User.new(:email=>@user.email)
+    #@extension = User.new(:email=>@user.email)
 #    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
     params[:attribute] = :account
     render_show :options
@@ -175,9 +176,10 @@ class CardController < ApplicationController
   
   
   def watch
-    watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
+    watchers = @card.star_rule(:watchers )
     watchers = watchers.refresh if watchers.frozen?
-    watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), User.current_user.card.name)
+    myname = Card[User.current_user.card_id].name
+    watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
     ajax? ? render_show(:watch) : view
   end
 
@@ -212,78 +214,46 @@ class CardController < ApplicationController
   def load_card!
     load_card
     case
+    when @card == '*previous'
+      wagn_redirect previous_location
     when !@card || @card.name.nil? || @card.name.empty?  #no card or no name -- bogus request, deserves error
-      raise Wagn::NotFound, "We don't know what card you're looking for."
+      raise Wagn::NotFound
     when @card.known? # default case
       @card
     when params[:view] =~ /rule|missing/
       # FIXME this is a hack so that you can view load rules that don't exist.  need better approach 
       # (but this is not tested; please don't delete without adding a test) 
       @card
-    when ajax? || ![nil, 'html'].member?(params[:format])  #missing card, nonstandard request
-      ##  I think what SHOULD happen here is that we render the missing view and let the Renderer decide what happens.
-      raise Wagn::NotFound, "We can't find a card named #{@card.name}"  
-    when @card.ok?(:create)  # missing card, user can create
+    when [nil, 'html'].member?(params[:format]) && @card.ok?(:create) 
       params[:card]={:name=>@card.name, :type=>params[:type]}
       self.new
       false
     else
-      render :action=>'missing' 
-      false     
+      raise Wagn::NotFound
     end
   end
 
   def load_card
     return @card=nil unless id = params[:id]
-    return (@card=Card.find(id); @card.include_set_modules; @card) if id =~ /^\d+$/
-    name = Wagn::Cardname.unescape(id)
-    card_params = params[:card] ? params[:card].clone : {}
-    @card = Card.fetch_or_new(name, card_params)
+    ActiveSupport::Notifications.instrument 'wagn.load_card', :message=>"load #{id}" do
+      case id
+      when /^\~(\d+)$/
+        @card=Card.find($1)
+        @card.include_set_modules
+        return @card
+      when '*previous'
+        @card = '*previous'
+      else
+        @card = Card.fetch_or_new( Wagn::Cardname.unescape(id), 
+          (params[:card] ? params[:card].clone : {} )
+        )
+      end
+    end
   end
 
 
   #---------( RENDERING )
   
-  def render_show(view = nil, status = 200, extension=nil)
-    extension ||= request.parameters[:format]
-    #warn "render_show #{extension}"
-    if FORMATS.split('|').member?( extension )
-
-      render(:status=>status, :text=> begin
-        respond_to() do |format|
-          format.send(extension) do
-            renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
-            renderer.render_show :view=>view
-          end
-        end
-      end)
-    elsif render_show_file
-      return
-    else
-      return render :text=>"unknown format: #{extension}", :status=>404
-    end
-  end
-  
-  def render_show_file
-    #return render_fast_404 if !@card #will it ever get here??
-    @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
-  
-    format = @card.attachment_format(params[:format])
-    return nil if !format
-
-    if ![format, 'file'].member?( params[:format] )
-      return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) ) 
-    end
-
-    style = @card.attachment_style( @card.typecode, params[:size] || @style )
-    return render_fast_404 if !style
-
-    send_file @card.attach.path(style), 
-      :type => @card.attach_content_type,
-      :filename =>  "#{@card.cardname.to_url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
-      :x_sendfile => true,
-      :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
-  end
   
   def render_success(default_target='TO-CARD')
     target = params[:success] || default_target
@@ -307,5 +277,6 @@ class CardController < ApplicationController
     else  @card = target  ; render_show
     end
   end
+
 end
 

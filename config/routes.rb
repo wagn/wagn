@@ -9,27 +9,19 @@ Wagn::Application.routes.draw do
 
   #devise_for :accounts
 
-
-  REST_METHODS = [:get, :post, :put, :delete]
-
-  match 'rest/:id.:format', :conditions => { :method => REST_METHODS }, :controller=>'rest_card', :requirements=>{ :id=>/.*/}, :action=> 'method'
-  #map.connect_resource :rest_card
-
-  #match 'rest/:id(.:format)' => 'rest_card#method', :constraints => { :id => /.*/ }, :via => [:get, :post, :put, :delete]
+  match 'rest/:id(.:format)' => 'rest_card#method', :constraints => { :id => /.*/ }, :via => [:get, :post, :put, :delete]
   # these file requests should only get here if the file isn't present.
   # if we get a request for a file we don't have, don't waste any time on it.
   #FAST 404s
-  match ':asset/:foo' => 'application#render_fast_404', :constraints =>
+  match ':asset/:foo' => 'application#fast_404', :constraints =>
     { :asset=>/assets|images?|stylesheets?|javascripts?/, :foo => /.*/ }
 
 #  match '(wagn/):id.:format' => 'card#show_file', :format => /jpg|jpeg|png|gif|ico/
 
   match '/' => 'card#index'
-  match 'recent(.:format)' => 'card#show', :id => '*recent', :view => 'core', :format => FORMAT_PATTERN
+  match 'recent(.:format)' => 'card#show', :id => '*recent', :view => 'content'
   match '(/wagn)/:id(.:format)' => 'card#show'
   match '/files/(*id)' => 'card#show_file'
-
-#  match 'search/:_keyword(.:format)' => 'card#show', :id => '*search', :view => 'content', :format => FORMAT_PATTERN
 
   match 'new/:type' => 'card#new'
 
@@ -37,7 +29,7 @@ Wagn::Application.routes.draw do
 
 
   
-  match '*id' => 'application#render_404'
+  match '*id' => 'application#bad_address'
 
 end
 

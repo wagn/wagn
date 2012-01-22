@@ -1,57 +1,62 @@
-# # Filters added to this controller will be run for all controllers in the application.
-# Likewise, all the methods added will be available for all controllers.
-
 class ApplicationController < ActionController::Base
-  require_dependency 'exception_system'
   include AuthenticatedSystem
-  include ExceptionSystem
   include LocationHelper
-  helper :all
   include Recaptcha::Verify
-
   include ActionView::Helpers::SanitizeHelper
 
-  before_filter :per_request_setup, :except=>[:render_fast_404]
- # after_filter :set_encoding
-  # OPTIMIZE: render_fast_404 still isn't that fast (?18reqs/sec) 
-  # can we turn sessions off for it and see if that helps?
-  layout :wagn_layout, :except=>[:render_fast_404]
+  helper :all
+  before_filter :per_request_setup, :except=>[:fast_404]
+  layout :wagn_layout, :except=>[:fast_404]
   
   attr_accessor :recaptcha_count
-    
-  BUILTIN_LAYOUTS = %w{ blank noside simple pre none }
 
+  def fast_404(host=nil)
+    message = "<h1>404 Page Not Found</h1>"
+    message += "Unknown host: #{host}" if host
+    render :text=>message, :layout=>false, :status=>404
+  end
+
+  def bad_address
+    raise Wagn::BadAddress
+  end
 
   protected
 
   def per_request_setup
-    request.format = :html if !params[:format]
+    ActiveSupport::Notifications.instrument 'wagn.per_request_setup', :message=>"" do
+      request.format = :html if !params[:format]
 
-    if Wagn::Conf[:multihost]
-      MultihostMapping.map_from_request(request) or return render_fast_404(request.host)
+      if Wagn::Conf[:multihost]
+        MultihostMapping.map_from_request(request) or return fast_404(request.host)
+      end
+
+      # canonicalizing logic is wrong
+      #canonicalize_domain
+      #else
+        Wagn::Conf[:host] = host = request.env['HTTP_HOST']
+        Wagn::Conf[:base_url] = 'http://' + host
+      #end
+      Wagn::Conf[:main_name] = nil
+      
+      ActiveSupport::Notifications.instrument 'wagn.renderer_load', :message=>"(in development)" do
+        Wagn::Renderer.ajax_call=request.xhr?
+      end
+      Wagn::Renderer.current_slot = nil
+    
+      Wagn::Cache.re_initialize_for_new_request
+    
+      #warn "set curent_user (app-cont) #{self.current_user}, U.cu:#{User.current_user}"
+      User.current_user = current_user || User[:anonymous]
+      #warn "set curent_user a #{current_user}, U.cu:#{User.current_user}"
+    
+      # RECAPTCHA HACKS
+      Wagn::Conf[:controller] = self # this should not be conf, but more like wagn.env
+      Wagn::Conf[:recaptcha_on] = !User.logged_in? &&     # this too 
+        !!( Wagn::Conf[:recaptcha_public_key] && Wagn::Conf[:recaptcha_private_key] )
+      @recaptcha_count = 0
+    
+      @action = params[:action]
     end
-
-    if Wagn::Conf[:base_url]
-      canonicalize_domain
-    else
-      Wagn::Conf[:host] = host = request.env['HTTP_HOST']
-      Wagn::Conf[:base_url] = 'http://' + host
-    end
-
-    Wagn::Renderer.ajax_call=request.xhr?
-    Wagn::Renderer.current_slot = nil
-    
-    Wagn::Cache.re_initialize_for_new_request
-    
-    User.current_user = current_user || User[:anon]
-    
-    # RECAPTCHA HACKS
-    Wagn::Conf[:controller] = self # this should not be conf, but more like wagn.env
-    Wagn::Conf[:recaptcha_on] = !User.logged_in? &&     # this too 
-      !!( Wagn::Conf[:recaptcha_public_key] && Wagn::Conf[:recaptcha_private_key] )
-    @recaptcha_count = 0
-    
-    @action = params[:action]
   end
   
   def canonicalize_domain
@@ -73,18 +78,22 @@ class ApplicationController < ActionController::Base
     layout
   end
 
+  def ajax?
+    request.xhr?
+  end
+
   # ------------------( permission filters ) -------
   def view_ok
-    @card.ok?(:read) || render_denied('view')
+    ActiveSupport::Notifications.instrument 'view_ok', :message=>"read #{@card.name}" do
+      @card.ok?(:read) || render_denied('view')
+    end
   end
 
   def update_ok
     @card.ok?(:update) || render_denied('edit')
   end
 
-  def ajax?
-    request.xhr?
-  end
+
 
  #def create_ok
  #  @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
@@ -110,18 +119,81 @@ class ApplicationController < ActionController::Base
   end
 
   def render_denied(action = '')
-    Rails.logger.debug "~~~~~~~~~~~~~~~~~in render_denied for #{action}"
+    @card.error_view = :denial
+    @card.error_status = 403
+    render_errors
+  end
+
+  def render_errors(options={})
+    @card ||= Card.new
+    view   = options[:view]   || (@card && @card.error_view  ) || :errors
+    status = options[:status] || (@card && @card.error_status) || 422
+    render_show view, status
+  end
+
+  def render_show(view = nil, status = 200)
+    extension = request.parameters[:format]
+    if FORMATS.split('|').member?( extension )
+      render(:status=>status, :text=> begin
+        respond_to do |format|
+          format.send(extension) do
+            renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
+            renderer.render_show( :view=>view )
+          end
+        end
+      end)
+    elsif render_show_file
+    else
+      render :text=>"unknown format: #{extension}", :status=>404
+    end
+  end
+  
+  def render_show_file
+    return fast_404 if !@card
+    @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
+  
+    format = @card.attachment_format(params[:format])
+    return nil if !format
+
+    if ![format, 'file'].member?( params[:format] )
+      return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) ) 
+    end
+
+    style = @card.attachment_style( @card.typecode, params[:size] || @style )
+    return fast_404 if !style
+
+    send_file @card.attach.path(style), 
+      :type => @card.attach_content_type,
+      :filename =>  "#{@card.cardname.to_url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
+      :x_sendfile => true,
+      :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
+  end
+  
+  
+  rescue_from Exception do |exception|
+        
+    view, status = case exception
+    when Wagn::NotFound, ActiveRecord::RecordNotFound
+      [ :not_found, 404 ]                                                 
+    when Wagn::PermissionDenied, Card::PermissionDenied
+      [ :denial, 403]
+    when Wagn::BadAddress, ActionController::UnknownController, ActionController::UnknownAction  
+      [ :bad_address, 404 ]
+    else
+      if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) && @card && @card.errors.any?
+        [ :errors, 422]
+      else
+        Rails.logger.info "\n\nController exception: #{exception.message}"
+        Rails.logger.debug exception.backtrace*"\n"
+        Rails.logger.level == 0 ? raise( exception ) : [ :server_error, 500 ]
+      end
+    end
     
-    @deny = action
-    render :controller=>'card', :action=>'denied', :status=>403, :layout=>'application'
-    return false
+    render_errors :view=>view, :status=>status
   end
+     
 
-  def render_errors(card=nil, format='html')
-    @card = card if card
-    render_show( (@card.error_view || :errors), (@card.error_status || 422), format )
-  end
-
+  
 end
 
 

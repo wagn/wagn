@@ -15,6 +15,7 @@ class RestCardController < CardController
     
   def method
     method = request.method
+    #warn "method #{method}"
     if REST_METHODS.member?(method)
       self.send(method)
     else
@@ -93,7 +94,7 @@ class RestCardController < CardController
   
   def post
     request.format = :xml if !params[:format]
-    #Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}"
+    #warn (Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}")
     #return render(:action=>"missing", :format=>:xml)  unless params[:card]
 =begin
     respond_to do |format|
@@ -101,12 +102,19 @@ class RestCardController < CardController
     Rails.logger.debug "POST(xml)[#{params.inspect}] #{request.format}"
 =end
         content = request.body.read
+        #warn "content is #{content}"
         doc = REXML::Document.new(content)
         raise "XML error: #{doc} #{content}" unless doc.root
         read_xml(doc.root, @card_name, card_create={})
         #card_create.delete(:name) if card_create[:name].nil?
         #Rails.logger.debug "postb #{@card&&@card.name}:: #{card_create.inspect}"; @card
-        @card = Card.create card_create 
+        #warn "content is #{card_create.inspect}"
+        @card = Card.new card_create 
+    if @card.save
+      render_success
+    else
+      render_errors      
+    end
         #Rails.logger.debug "posta #{@card&&@card.name}"; @card
 =begin
       end
@@ -123,26 +131,6 @@ class RestCardController < CardController
     end
 =end
 
-    # according to rails / prototype docs:
-    # :success: [...] the HTTP status code is in the 2XX range.
-    # :failure: [...] the HTTP status code is not in the 2XX range.
-
-    # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
-    # for now, to get the redirect notice to go in the failure slot where we want it,
-    # we've chosen to render with the (418) 'teapot' failure status:
-    # http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-    if @card
-      handling_errors do
-        @thanks = Wagn::Hook.call( :redirect_after_create, @card ).first ||
-          @card.setting('thanks')
-        case
-          when @thanks.present?;               ajax_redirect_to @thanks
-          when @card.ok?(:read) && main_card?; ajax_redirect_to url_for_page( @card.name )
-          when @card.ok?(:read);               render_show
-          else                                 ajax_redirect_to "/"
-        end
-      end
-    end
   end
   
   #----------------( creating)

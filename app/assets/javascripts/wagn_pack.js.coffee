@@ -14,13 +14,13 @@ wagn.editorInitFunctionMap = {
   '.date-editor'           : -> @datepicker { dateFormat: 'yy-mm-dd' }
   '.tinymce-textarea'      : -> wagn.initTinyMCE(@[0].id)
   '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
-  '.file-upload'           : -> @fileupload( add: (e, data)-> $(this).closest('form').data 'file-data', data )
+  '.file-upload'           : -> @fileupload( add: wagn.chooseFile )
   '.etherpad-textarea'   : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
 }
 
 wagn.initPointerList = (input)-> 
   optionsCard = input.closest('ul').attr('options-card')
-  input.autocomplete { source: wagn.rootPath + '/' + optionsCard + '.json?view=name_complete' }
+  input.autocomplete { source: wagn.prepUrl wagn.rootPath + '/' + optionsCard + '.json?view=name_complete' }
 
 wagn.initTinyMCE = (el_id) ->
   conf = if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {}
@@ -33,8 +33,26 @@ wagn.initTinyMCE = (el_id) ->
   }    
   tinyMCE.init conf
 
+wagn.chooseFile = (e, data) ->
+  s = $(this).slot()
+  file = data.files[0]
+  $(this).fileupload '_normalizeFile', 0, file
+  $(this).closest('form').data 'file-data', data
+  if name_field = s.find( '.card-name-field' ) 
+    if name_field[0] and name_field.val() == ''
+      name_field.val file.name.replace /\..*/, ''
+  s.find('.choose-file').hide()
+  s.find('.chosen-filename').text file.name
+  s.find('.chosen-file').show()
+
 
 $(window).load ->
+
+  $('.cancel-upload').live 'click', ->
+    s = $(this).slot()
+    s.find('.chosen-file').hide()
+    s.find('.choose-file').show()
+    $(this).closest('form').data 'file-data', null
 
   #navbox pack
   $('.navbox').autocomplete {
@@ -118,10 +136,10 @@ reqIndex = 0 #prevents race conditions
 
 navbox_results = (request, response) ->
   this.xhr = $.ajax {
-		url: wagn.rootPath + '/*search.json?view=complete',
-		data: request,
-		dataType: "json",
-		wagReq: ++reqIndex,
+		url: wagn.prepUrl wagn.rootPath + '/*search.json?view=complete'
+		data: request
+		dataType: "json"
+		wagReq: ++reqIndex
 		success: ( data, status ) ->
 			response navboxize(request.term, data) if this.wagReq == reqIndex
 		error: () ->
@@ -131,24 +149,22 @@ navbox_results = (request, response) ->
 navboxize = (term, results)->
   items = []
 
-  $.each ['search', 'add' ,'create'], (index, key)->
+  $.each ['search', 'add', 'new'], (index, key)->
     val = results[key]
-    i = { type: key, value: term, prefix: 'Create', label: '<strong class="highlight">' + term + '</strong>' }
+    i = { type: key, value: term, prefix: key, label: '<strong class="highlight">' + term + '</strong>' }
     if !val #nothing
     else if key == 'search'
-      i.prefix = 'Search'
-      i.href  = '/*search?_keyword=' + escape(term)
+      i.href  = '/*search?view=content&_keyword=' + escape(term)
     else if key == 'add'
       i.href = '/card/new?card[name]=' + escape(term)
-    else if key == 'type'
-      i.type = 'add'
-      i.label = '<strong class="highlight">' + val[0] + '</strong> <em>(type)</em>' 
+    else if key == 'new'
+      i.type = 'add' # for icon
       i.href = '/new/' + val[1]
 
     items.push i if val
 
   $.each results['goto'], (index, val) ->
-    items.push { type: 'goto', prefix: 'Go to', value: val[0], label: val[1], href: '/' + val[2] } 
+    items.push { type: 'goto', prefix: 'go to', value: val[0], label: val[1], href: '/' + val[2] } 
 
   $.each items, (index, i)->
     i.href = wagn.rootPath + i.href

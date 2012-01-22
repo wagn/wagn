@@ -85,7 +85,7 @@ describe Flexmail do
       Card.create! :name=>'Trigger+*type+*content', :content=>''
       Card.create! :name => "Trigger+*type+*send", :content => "[[mailconfig]]", :type=>'Pointer'
 
-      User.as :anon
+      User.as :anonymous
     end
 
     it "returns list with correct hash for card with configs" do

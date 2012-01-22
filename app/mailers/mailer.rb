@@ -14,54 +14,56 @@ class Mailer < ActionMailer::Base
     @message  = message.clone
 
     mail( {
-      :recipients => "#{user.email}",
-      :from       => (Card.setting('*invite+*from') || "#{from_name} <#{from_user.email}>"), #FIXME - might want different from settings for different emails?
-      :subject      => subject
+      :to       => @email,
+      :from     => (Card.setting('*invite+*from') || "#{from_name} <#{from_user.email}>"), #FIXME - might want different from settings for different emails?
+      :subject  => subject
     } )
-  end                 
-  
-  def signup_alert(invite_request)  
+  end
+
+  def signup_alert(invite_request)
     @site = Card.setting('*title')
     @card = invite_request
-    @email= invite_request.extension.email
+    @email= User.where(:card_id=>invite_request.id).first.email
     @name = invite_request.name
     @content = invite_request.content
     @url  = url_for(:host=>Wagn::Conf[:host], :controller=>'card', :action=>'show', :id=>invite_request.cardname.to_url_key)
 
     mail( {
-      :recipients => Card.setting('*request+*to'),
-      :from        => Card.setting('*request+*from') || invite_request.extension.email,
+      :to      => Card.setting('*request+*to'),
+      :from    => Card.setting('*request+*from') || @email,
       :subject => "#{invite_request.name} signed up for #{@site}",
       :content_type => 'text/html',
     } )
-  end               
+  end
 
-  
-  def change_notice( user, card, action, watched, subedits=[], updated_card=nil )       
-    #warn "change_notice( #{user}, #{card.inspect}, #{action}, #{watched} ...)"
+
+  def change_notice(user, card, action, watched, subedits=[], updated_card=nil)
+    return unless user = User===user ? user : User.where(:card_id=>user).first
+
+    #warn "change_notice( #{user.inspect}, #{card.inspect}, #{action.inspect}, #{watched.inspect} Uc:#{updated_card.inspect}...)"
     updated_card ||= card
     @card = card
-    @updater = updated_card.updater.card.name
+    @updater = updated_card.updater.name
     @action = action
     @subedits = subedits
     @card_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/#{card.cardname.to_url_key}"
     @change_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/card/changes/#{card.cardname.to_url_key}"
-    @unwatch_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/card/unwatch/#{watched.to_cardname.to_url_key}"
-    @udpater_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/#{card.updater.card.cardname.to_url_key}"
+    @unwatch_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/card/watch/#{watched.to_cardname.to_url_key}?toggle=off"
+    @udpater_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/#{card.updater.cardname.to_url_key}"
     @watched = (watched == card.cardname ? "#{watched}" : "#{watched} cards")
 
     mail( {
       :to           => "#{user.email}",
-      :from         => User.find_by_login('wagbot').email,
+      :from         => User.where(:card_id=>Card::WagbotID).first.email,
       :subject      => "[#{Card.setting('*title')} notice] #{@updater} #{action} \"#{card.name}\"" ,
       :content_type => 'text/html',
     } )
   end
-  
+
   def flexmail config
-    
+
     if config[:attach] and !config[:attach].empty?
-      
+      # FIXME - this doesn't look fully converted to me.
       config[:attach].each do |cardname|
         if c = Card[ cardname ] and c.respond_to?(:attachment) and cardfile = c.attachment
           attachment cardfile.content_type do |a|
@@ -72,10 +74,13 @@ class Mailer < ActionMailer::Base
           end
         end
       end
+    else
+      config[:content_type] = 'text/html'
+      config[:body] = config.delete(:message)
     end
-    config[:body] = config.delete(:message)
+
     mail(config)
   end
-  
+
 end
 

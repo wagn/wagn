@@ -70,7 +70,7 @@ module Wagn::Model
             #const = suppress(NameError) do
             if mod =~ /^\w+(::\w+)+$/            and
             const = begin
-                      find_module mod 
+                      find_module mod
   #                    r=(Module === mm) ? mm : nil
             #Rails.logger.debug "set_mod[#{cardname.inspect}]:#{mm}> #{subclass}, #{mod} R:#{r}"; r
                     rescue Exception => e
@@ -91,7 +91,7 @@ module Wagn::Model
       return mod1 if !parts[1]
       mod1.const_defined?(parts[1]) ? mod1.const_get(parts[1]) : nil
     end
-    
+
     def label
       found = @@subclasses.find { |sub| cardname.tag_name.to_s==sub.key }
       found and found.label(cardname.left_name)
@@ -131,8 +131,7 @@ module Wagn::Model
 
   class AllPattern < SetBase
     class << self
-      #def key()  Wagn::Codename.name_of_code('*all')  end
-      def key()                        '*all'         end
+      def key()                Wagn::Codename['*all'] end
       def opt_keys()                   []             end
       def method_key_from_opts(opts)   ''             end
       def trunkless?()                 true           end
@@ -147,7 +146,7 @@ module Wagn::Model
 
   class AllPlusPattern < SetBase
     class << self
-      def key() Wagn::Codename.name_of_code('*all plus')       end
+      def key()                     Wagn::Codename['*all_plu'] end
       def opt_keys()                   [:all_plus]             end
       def method_key_from_opts(opts)   'all_plus'              end
       def trunkless?()                 true                    end
@@ -165,16 +164,18 @@ module Wagn::Model
 
   class TypePattern < SetBase
     class << self
-      def key()                      Wagn::Codename.name_of_code('*type')      end
-      def opt_keys()                 [:type]                                   end
-      def method_key_from_opts(opts) opts[:type].to_cardname.css_name+'_type'  end
+      def key()                     Wagn::Codename['*type']                 end
+      def opt_keys()                 [:type]                                end
+      def method_key_from_opts(opts)
+        opts[:type].to_cardname.css_name+'_type'
+      end
+      def label(name)                "All #{name} cards"                    end
+      def prototype_args(base)       {:type=>base}                          end
 
       def pattern_name(card)
-#      Rails.logger.debug "pattern_name (type) #{card.inspect} #{card.typecode.inspect}"
+        #warn (Rails.logger.debug "pattern_name (type) #{card.inspect} #{card.typecode.inspect}")
         card.typecode.nil? ? 'Basic+*type' : "#{card.typename}+#{key}"
       end
-      def label(name)                "All #{name} cards"                       end
-      def prototype_args(base)       {:type=>base}                             end
     end
 #    def pat_name()
 #      Rails.logger.debug "pat_name( #{@pat_name.inspect} )"
@@ -182,20 +183,20 @@ module Wagn::Model
 #        @pat_name=self.class.pattern_name(@pat_name).to_cardname :
 #        @pat_name || 'Basic+*type'.to_cardname
 #    end
-    def label()      "All #{left_name} cards"                                  end
-    def left_name()  @pat_name.left_name.to_s                                  end
-    def method_key() self.class.method_key_from_opts :type=>left_name          end
+    def left_name()  @pat_name.left_name.to_s                                end
+    def method_key() self.class.method_key_from_opts :type=>left_name        end
     def set_module()
 #      Rails.logger.debug "set_module (type) #{left_name.inspect}, #{@pat_name.inspect}"
-      "Type::#{Cardtype.classname_for(left_name)}"
+      "Type::#{Card.typecode_from_id(Card.type_id_from_name(left_name))}"
     end
+    def set_name()   "#{@pat_name.left_name}+#{self.class.key}"              end
 
     Wagn::Model::Pattern.register_class self
   end
 
   class StarPattern < SetBase
     class << self
-      def key()          Wagn::Codename.name_of_code('*star')  end
+      def key()                        Wagn::Codename['*star'] end
       def opt_keys()                   [:star]                 end
       def method_key_from_opts(opts)   'star'                  end
       def trunkless?()                 true                    end
@@ -212,7 +213,7 @@ module Wagn::Model
 
   class RstarPattern < SetBase
     class << self
-      def key()                  Wagn::Codename.name_of_code('*rstar')  end
+      def key()                        Wagn::Codename['*rstar']         end
       def opt_keys()                   [:rstar]                         end
       def method_key_from_opts(opts)   'rstar'                          end
       def trunkless?()                 true                             end
@@ -232,45 +233,46 @@ module Wagn::Model
 
   class RightNamePattern < SetBase
     class << self
-      def key()                   Wagn::Codename.name_of_code('*right')  end
+      def key()                         Wagn::Codename['*right']         end
       def opt_keys()                     [:right]                        end
-      def method_key_from_opts(opts) opts[:right].to_cardname.css_name+'_right' end
+      def method_key_from_opts(opts)
+        opts[:right].to_cardname.css_name+'_right'
+      end
       def pattern_name(card)
         "#{card.cardname.tag_name}+#{key}"
-#        Rails.logger.debug "pattern_name Right #{card.cardname}, #{r}"; r
+       #warn (Rails.logger.debug "pattern_name Right #{card.cardname}, #{r}"); r
       end
       def pattern_applies?(card)        card.junction?                   end
       def label(name)                  "Cards ending in +#{name}"        end
       def prototype_args(base)         {:name=>"*dummy+#{base}"}         end
+      def junction_only?()             true                              end
     end
-    def method_key() self.class.method_key_from_opts :right=>@pat_name.left_name end
     def set_module()
       # this should be codename based
       "Right::#{(@pat_name.left_name.key.gsub(/^\*/,'X')).camelcase}"
     end
+    def method_key()
+      self.class.method_key_from_opts :right=>@pat_name.left_name
+    end
+    def set_name()            "#{@pat_name.tag_name}+#{self.class.key}"  end
 
     Wagn::Model::Pattern.register_class self
   end
 
   class LeftTypeRightNamePattern < SetBase
     class << self
-      def key()              '*type plus right'                              end
+      def key()              Wagn::Codename['*type_plu_right']              end
       def opt_keys()         [:ltype, :right]                                end
-      def junction_only?()             true                                  end
+      def junction_only?()   true                                            end
       def label(name) "Any #{name.left_name} card plus #{name.tag_name}"     end
       def method_key_from_opts(opts)
-        %{#{opts[:ltype].to_cardname.css_name}_#{opts[:right].to_cardname.css_name}_typeplusright}
+        %{#{opts[:ltype].to_cardname.css_name}_#{
+            opts[:right].to_cardname.css_name}_typeplusright}
       end
       def pattern_name(card)
-        #if cardname.tag_name == key # recursion protection ?
-          #Rails.logger.info "pattern ? #{key} (LtRt) Set #{cardname.to_s}"
-         # return cardname
-        #end
-        #left_name=card.cardname.left_name
         lft = card.loaded_trunk || card.left
-        #Rails.logger.info "pattern_name LTRN [#{card.cardname.to_s}] #{left}, #{left&&left.known?}, #{left&&left.typename}"
+        #warn (Rails.logger.info "pattern_name LTRN [#{card.cardname.to_s}] #{left}, #{left&&left.known?}, #{left&&left.typename}")
         typename = (lft && lft.typename) || 'Basic'
-        #typename = ((left=left_name.card) && left.known? && left.typename) || 'Basic'
         "#{typename}+#{card.cardname.tag_name}+#{key}"
       end
       def pattern_applies?(card)     card.junction?                        end
@@ -278,19 +280,25 @@ module Wagn::Model
       def prototype_args(base) {:name=>base}                               end
     end
     def left_type()
-      #warn "looking up left_type for #{card.name}.  left = #{left.inspect} left.type = #{left.typecode}" if left
+      warn "looking up left_type for #{@pat_name.inspect}.  left pattern name = #{@pat_name.left_name.left_name.inspect}"
       @pat_name.left_name.left_name.to_s || 'Basic'
+      id = Card.type_id_from_name(@pat_name.left_name.left_name)
+      lt = Card.typecode_from_id(id)
+      warn "left_type #{@pat_name}, #{id}, #{lt}"; lt
     end
     def method_key()
-      self.class.method_key_from_opts :ltype=>left_type, :right=>@pat_name.left_name.tag_name
+      self.class.method_key_from_opts :ltype=>left_type,
+           :right=>@pat_name.left_name.tag_name
     end
     def set_module()
       #Rails.logger.debug "set_module? #{pat_name.inspect}" unless  pat_name.left_name
       tk=((tn = @pat_name.left_name.tag_name) and tn.to_cardname.key.gsub(/^\*/,'X'))
-      #Rails.logger.debug "set_module LtypeRname #{left_type.camelcase} #{tk.camelcase}"
-      "LTypeRight::#{left_type.camelcase+tk.camelcase}"
+      warn (Rails.logger.debug "set_module LtypeRname #{left_type} #{tk.camelcase}")
+      "LTypeRight::#{left_type+tk.camelcase}"
     end
-
+    def css_name()
+      "TYPE_PLUS_RIGHT-#{set_name.to_cardname.trunk_name.css_name}"
+    end
 
     Wagn::Model::Pattern.register_class self
   end
@@ -319,7 +327,7 @@ module Wagn::Model
       return unless @pat_name.size == 2 # simple? cards have two parts <c>+*self
       "Self::#{@pat_name.left_name.to_s.camelize}";
     end
-    
+
     Wagn::Model::Pattern.register_class self
   end
 end

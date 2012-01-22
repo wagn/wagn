@@ -95,9 +95,7 @@ module WagnHelper
 
   ## ----- for Linkers ------------------
   def typecode_options
-    Cardtype.createable_types.map do |type|
-      [type[:name], type[:name]]
-    end.compact
+    Card.createable_types.map { |type| [type, type] }.compact
   end
 
   def typecode_options_for_select(selected=Card.default_typecode_key)
@@ -108,7 +106,7 @@ module WagnHelper
 
   def error_messages_for(object)
     if object && object.errors.any?
-      object.errors.full_messages.map{ |msg| %{<div class="wagn-error-message">#{msg}</div>} }.join("\n")
+      %{<div class="errors-view">#{object.errors.full_messages.map{ |msg| "<div>#{msg}</div>"}.join("\n")}</div>}
     end
   end
 

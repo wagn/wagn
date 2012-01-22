@@ -1,21 +1,22 @@
 module AuthenticatedSystem
   protected
   def logged_in?
-    current_user && current_user.login != 'anon'
+    current_user and cuid=current_user.card_id and cuid.to_i != Card::AnonID
   end
 
   # Accesses the current user from the session.
   def current_user
-    @current_user ||= session[:user] ? User[session[:user]] : nil
-  rescue
+    @current_user ||= (su=session[:user]) ? User.where(:card_id=>su).first : nil
+  rescue Exception => e
+    #warn "except #{e.inspect}, #{e.backtrace*"\n"}"
     session[:user] = nil
     raise
   end
 
   # Store the given user in the session.
   def current_user=(new_user)
-    #session[:user] = new_user
-    session[:user] = new_user.nil? ? nil : new_user.id
+    #warn "cu set #{new_user.inspect}" #{caller*"\n"}"
+    session[:user] = new_user.nil? ? nil : new_user.card_id
     @current_user = new_user
   end
 

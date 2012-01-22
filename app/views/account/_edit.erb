@@ -8,7 +8,7 @@
 <% password_content = capture do %><%= password_field :extension, :password %><% end %>
 <%= raw slot.option( password_content,
     :name=>"password", 
-    :help=> card.extension ? "If left blank, password will remain the same" : '', #ENGLISH
+    :help=> card.type_id==Card::UserID ? "If left blank, password will remain the same" : '', #ENGLISH
     :label=>"Password") %>
 
 <% password_conf_content = capture do %><%= password_field :extension, :password_confirmation %><% end %>
@@ -17,7 +17,7 @@
     :help=>"", #ENGLISH
     :label=>"Confirm password") %> 
 
-<% if card.extension and User.ok?(:administrate_users) and !extension.built_in? %>
+<% if card.type_id==Card::UserID and User.ok?(:administrate_users)  %>
   <% blocked_content = capture do %><%= check_box :extension, :blocked? %><% end %>
   <%= raw slot.option( blocked_content,
      :name=>"block_user", 

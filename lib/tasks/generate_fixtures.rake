@@ -40,22 +40,22 @@ namespace :test do
     Rake::Task['cache:clear']
     # env gets auto-set to 'test' somehow.
     # but we need development to get the right schema dumped. 
-    ENV['::Rails.env'] = 'development'
+    ENV['RAILS_ENV'] = 'development'
     
     if Wagn::Conf[:enable_postgres_fulltext]
       raise("Oops!  you need to disable postgres_fulltext in wagn.rb before generating fixtures")
     end
          
     abcs = ActiveRecord::Base.configurations    
-    config = ::Rails.env || 'development'  
+    config = ENV['RAILS_ENV'] || 'development'  
     olddb = abcs[config]["database"]
-    #abcs[config]["database"] = "wagn_test_template"
+    abcs[config]["database"] = "wagn_test_template"
 
   #=begin  
     begin
       # assume we have a good database, ie. just migrated dev db.
       puts "migrating database #{olddb}"
-      puts `echo $::Rails.env; rake db:migrate`
+      puts `echo $RAILS_ENV; rake db:migrate`
       puts "dumping schema"
       puts `rake db:schema:dump`
       puts "setting database to wagn_test_template"
@@ -69,7 +69,7 @@ namespace :test do
       puts "creating database"
       puts `rake db:create`
       puts "loading schema"
-      puts `rake db:schema:load`
+      puts `rake db:schema:load --trace`
       puts "loading bootstrap data"
       puts `rake wagn:bootstrap:load --trace`       
   
@@ -79,18 +79,19 @@ namespace :test do
       puts ">>populating test data"
       puts `rake test:populate_template_database --trace`      
       puts ">>extracting to fixtures"
-      puts `rake test:extract_fixtures`
+      puts `rake test:extract_fixtures --trace`
       set_database olddb 
     rescue Exception=>e
+      warn "exception #{e.inspect} #{olddb}"
       set_database olddb 
       raise e
     end
     # go ahead and load the fixtures into the test database
     
     puts ">> preparing test database"
-    puts `rake db:test:load`
+    puts `rake db:test:load --trace`
     puts ">> loading test fixtures"
-    puts `rake db:fixtures:load RAILS_ENV=test`
+    puts `rake db:fixtures:load RAILS_ENV=test --trace`
     
     #Rake::Task['db:test:prepare'].invoke
   #=end

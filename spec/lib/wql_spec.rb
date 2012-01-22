@@ -126,19 +126,15 @@ describe Wql do
 
   describe "search count" do
     it "should count search" do
-      s = Card.create! :name=>"ksearch", :type=>'Search', :content=>'{"match":"_keyword"}'
-      s.count("_keyword"=>"two").should==CARDS_MATCHING_TWO.length
+      s = Card.create! :name=>"ksearch", :type=>'Search', :content=>'{"match":"$keyword"}'
+      s.count(:vars=>{:keyword=>"two"}).should==CARDS_MATCHING_TWO.length
     end
   end
 
     
   describe "cgi_params" do
-  #  it "should match content from cgi with explicit content setting" do
-  #    Wql.new( :content=>[:match, "_keyword"], :_keyword=>"two").run.plot(:name).sort.should==CARDS_MATCHING_TWO
-  #  end
-
     it "should match content from cgi" do
-      Wql.new( :match=>"_keyword", :_keyword=>"two").run.plot(:name).sort.should==CARDS_MATCHING_TWO
+      Wql.new( :match=>"$keyword", :vars=>{:keyword=>"two"}).run.plot(:name).sort.should==CARDS_MATCHING_TWO
     end
   end
 
@@ -171,7 +167,7 @@ describe Wql do
   describe "permissions" do
     it "should not find cards not in group" do
       User.as :wagbot  do
-        Card.create :name=>"C+*self+*read", :type=>'Pointer', :content=>"[[#{Role[:r1].card.name}]]"
+        Card.create :name=>"C+*self+*read", :type=>'Pointer', :content=>"[[R1]]"
       end
       Wql.new( :plus=>"A" ).run.plot(:name).sort.should == %w{ B D E F }
     end
@@ -297,7 +293,11 @@ describe Wql do
 
   end
 
-
+  describe "params" do
+    it "should merge in params as normal WQL" do
+      Wql.new( :params=>{:name=>"two"}).run.first.name.should=='Two'
+    end
+  end
 
 
   describe "match" do 

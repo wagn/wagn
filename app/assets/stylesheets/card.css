@@ -4,6 +4,8 @@
 .related-view,
 .remove-view,
 .new-view,
+.denial-view,
+.not_found-view,
 .edit-view {
   margin: 1px 0px;
   padding: 0px !important;
@@ -72,7 +74,7 @@ html>body .page-icon {
 
 
 .ui-menu .ui-menu-item {
-  padding: 2px;
+  padding: 2px 0;
 }
 
 .navbox-item-label {
@@ -139,6 +141,7 @@ div:hover.card-header .card-menu-left {
 .submenu-left {
   float: left;
   display: none;
+  white-space: nowrap;
   text-align: left;
   font-style: italic;
   width: 30%;
@@ -651,24 +654,13 @@ body#wagn .card-slot.recent-changes h2 {
 
 /*----------- Nested ---------*/
 
-.card-slot .card-slot.closed-view,
-.card-slot .card-slot.open-view {
-  border: 1px solid white;
+.card-slot .card-slot.closed-view {
+  border: 0px;
   border-bottom: 1px solid #ccc;
   -moz-border-radius: 0px;
   border-radius: 0px;
   margin: 0px;
 }
-.card-slot .card-slot .card-footer {
-  -moz-border-radius: 0px;
-  border-radius: 0px;
-}
-.card-slot span:hover.card-slot {
-  border: 1px solid #ddd;
-  -moz-border-radius: 8px 8px 0 0;
-  border-radius: 8px 8px 0 0;
-}
-
 
 
 /* CARDTYPE_SPECIFIC ------------------------------*/
@@ -725,7 +717,7 @@ body#wagn .card-slot.recent-changes h2 {
 
 /*---------( Search ) ---------- */
 
-.content .paging img {
+.paging img {
   float: none !important;
   padding: 0px 3px;
   margin: 0px;
@@ -773,6 +765,13 @@ div.search-result-list .search-result-item {
 
 .TYPE-toggle .content {
   font-style: italic;
+}
+
+/*------------( Layout ) ------------*/
+
+.SELF-Xcss .open-content,
+.TYPE-layout .open-content {
+  white-space: pre-wrap;
 }
 
 /*----------- (Invitation Request)--------------*/

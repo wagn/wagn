@@ -44,15 +44,7 @@ describe Card, "with role" do
   end
   
   it "should have a role extension" do
-    @role.extension_type.should=='Role'
-  end
-
-  it "should lose role extension upon changing type" do
-    # this test fails on a permission error in Mysql
-    pending
-    @role.typecode = 'Basic'
-    @role.save
-    @role.extension.should == nil
+    @role.typecode.should=='Role'
   end
 end
 
@@ -72,9 +64,6 @@ describe Card, "with account" do
     @joe.typecode.should == 'Basic'
   end
 
-  it "should not lose account on card change" do
-    @joe.extension.should_not == nil
-  end
 end
 
 describe Card, "type transition approve create" do
@@ -158,7 +147,8 @@ end
 def change_card_to_type(name, typecode)
   User.as :joe_user do
     card = Card.fetch(name)
-    card.typecode = typecode;
+   #warn "card[#{name}] is #{card.inspect}, #{Card.type_id_from_code(typecode)}"
+    card.type_id = Card.type_id_from_code typecode
     card.save
     card
   end

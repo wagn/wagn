@@ -43,11 +43,15 @@ module Wagn::Model
 
     def set_names() @set_names ||= patterns_without_new.map(&:set_name) end
     def set_names_with_new()
-      new_card? ? set_names_without_new[1..-1] : set_names_without_new()
+      r=new_card? ? set_names_without_new[1..-1] : set_names_without_new()
+      #warn "set_names #{new_card?}: #{r*', '}"; r
     end
     alias_method_chain :set_names, :new
 
-    def real_set_names() set_names.find_all { |set_name| Card.exists? set_name }  end
+    def real_set_names()
+      rsn=set_names.find_all { |set_name| Card.exists? set_name }
+      #warn "real sets #{rsn*', '}"; rsn
+    end
 
     def method_keys()    @method_keys ||= patterns.map(&:method_key)        end
 
@@ -60,7 +64,7 @@ module Wagn::Model
     end
 
     def set_modules()
-#      warn "including set modules for #{name}"
+      #warn "including set modules for #{name}"
       #raise "no type #{cardname.inspect}" if cardname.typename.nil?
       #Rails.logger.debug "set_mods[#{cardname.inspect}]"
       @set_modules ||= patterns_without_new.reverse.map do
@@ -254,7 +258,7 @@ module Wagn::Model
     def method_key()
       self.class.method_key_from_opts :right=>@pat_name.left_name
     end
-    def set_name()            "#{@pat_name.tag_name}+#{self.class.key}"  end
+    def set_name()            "#{@pat_name.left_name}+#{self.class.key}"  end
 
     Wagn::Model::Pattern.register_class self
   end
@@ -280,11 +284,11 @@ module Wagn::Model
       def prototype_args(base) {:name=>base}                               end
     end
     def left_type()
-      warn "looking up left_type for #{@pat_name.inspect}.  left pattern name = #{@pat_name.left_name.left_name.inspect}"
+      #warn "looking up left_type for #{@pat_name.inspect}.  left pattern name = #{@pat_name.left_name.left_name.inspect}"
       @pat_name.left_name.left_name.to_s || 'Basic'
       id = Card.type_id_from_name(@pat_name.left_name.left_name)
       lt = Card.typecode_from_id(id)
-      warn "left_type #{@pat_name}, #{id}, #{lt}"; lt
+      #warn "left_type #{@pat_name}, #{id}, #{lt}"; lt
     end
     def method_key()
       self.class.method_key_from_opts :ltype=>left_type,
@@ -293,7 +297,7 @@ module Wagn::Model
     def set_module()
       #Rails.logger.debug "set_module? #{pat_name.inspect}" unless  pat_name.left_name
       tk=((tn = @pat_name.left_name.tag_name) and tn.to_cardname.key.gsub(/^\*/,'X'))
-      warn (Rails.logger.debug "set_module LtypeRname #{left_type} #{tk.camelcase}")
+      #warn (Rails.logger.debug "set_module LtypeRname #{left_type} #{tk.camelcase}")
       "LTypeRight::#{left_type+tk.camelcase}"
     end
     def css_name()
@@ -317,7 +321,7 @@ module Wagn::Model
       def prototype_args(base)       { :name=>base }                         end
     end
     def method_key()
-#      warn "pat name for #{pat_name}"
+      #warn "pat name for #{pat_name}"
       self.class.method_key_from_opts(:name=>@pat_name.left_name.to_s)
     end
     def set_module()

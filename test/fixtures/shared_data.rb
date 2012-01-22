@@ -148,7 +148,7 @@ class SharedData
       ::User.create! :login=>"john",:email=>'john@user.com', :status => 'active', :password=>'john_pass', :password_confirmation=>'john_pass', :invite_sender=>User[:wagbot], :card_id=>john_card.id
 
       sara_card = Card.create! :name=>"Sara", :type=> "User"
-      ::User.create! :login=>"sara",:email=>'sara@user.com', :status => 'active', :password=>'sara_pass', :password_confirmation=>'sara_pass', :invite_sender=>User[:wagbot], :card_id=>john_card.id
+      ::User.create! :login=>"sara",:email=>'sara@user.com', :status => 'active', :password=>'sara_pass', :password_confirmation=>'sara_pass', :invite_sender=>User[:wagbot], :card_id=>sara_card.id
 
 
       Card.create! :name => "Sara Watching+*watchers",  :content => "[[Sara]]"

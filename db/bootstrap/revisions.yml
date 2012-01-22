@@ -3256,6 +3256,13 @@ revisions_288:
   creator_id: "1"
   id: "4841"
   content: <p>Number cards can contain only numerical values.</p>
+revisions_396: 
+  created_at: 2012-01-22 01:04:17.119361
+  card_id: "583"
+  created_by: 
+  creator_id: "1"
+  id: "6041"
+  content: "[[Anyone Signed In]]"
 revisions_289: 
   created_at: 2012-01-19 22:25:48
   card_id: "512"

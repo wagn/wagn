@@ -50,8 +50,8 @@ module Wagn::Set::Type::Pointer
   def drop_item name
     inames = item_names
     if inames.include? name
-      self.content= inames.empty? ? '' : "[[#{inames.reject{|n|
-                      n==name||n.blank?} * "]]\n[["}]]"
+      inames = inames.reject{|n|n==name}
+      self.content= inames.empty? ? '' : "[[#{inames * "]]\n[["}]]"
       save!
     end
   end

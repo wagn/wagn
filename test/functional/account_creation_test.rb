@@ -73,6 +73,7 @@ class AccountCreationTest < ActionController::TestCase
     assert_difference ActionMailer::Base.deliveries, :size do
       assert_new_account do
         post_invite
+        warn "posted invite 77"
         assert_response 302
       end
     end
@@ -87,6 +88,7 @@ class AccountCreationTest < ActionController::TestCase
     User.as(:wagbot) { Card.create! :name=> 'User+*type+*content'}
     assert_new_account do
       post_invite
+      warn "posted invite 91"
       assert_response 302
     end
   end
@@ -95,6 +97,7 @@ class AccountCreationTest < ActionController::TestCase
   def test_should_generate_password_if_not_given
     assert_new_account do
       post_invite
+      warn "assigns #{assigns(:user).inspect}, #{assigns{:card}.inspect}"
       assert !assigns(:user).password.blank?
     end
   end

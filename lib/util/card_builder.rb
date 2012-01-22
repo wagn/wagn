@@ -25,7 +25,7 @@ module CardBuilderMethods
   def create_user( username )
     #username = separate_wikiword(username)
     raise( "invalid username" ) if username.nil? or username.empty?
-    if u = User.find_by_login(username) 
+    if u = User.where(:card_id=>Card[username].id).first
       return u      
     elsif c = Card::User.find_by_name(username)
       return User.where(:card_id=>c.id).first

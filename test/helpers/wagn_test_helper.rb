@@ -10,7 +10,8 @@ module WagnTestHelper
     
     # FIXME: should login as joe_user by default-- see what havoc it creates...
     user_card = Card[Card::WagbotID]
-    @user = User.current_user = User.find_by_login('wagbot')
+    @user = User.current_user= User.where(:card_id=>Card::WagbotID).first
+    #STDERR << "user #{@user.inspect}\n"
 
     @user.update_attribute('crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c')
     user_card.star_rule(:roles) << Card::AdminID
@@ -19,7 +20,7 @@ module WagnTestHelper
     #@admin_card = Card[User[:wagbot].card_id]
 
     #@admin_card.star_rule(:roles) << Card::AdminID
-    #User.current_user = User.find_by_login('joe_user')
+    #User.current_user = User.where(:card_id=>Card['joe_user'].id).first
   end
  
   def get_renderer()

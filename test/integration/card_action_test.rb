@@ -123,10 +123,10 @@ class CardActionTest < ActionController::IntegrationTest
   end
 
   def test_update_user_extension_blocked_status
-    assert !User.find_by_login('joe_user').blocked?
+    assert !User.where(:card_id=>Card['joe_user'].id).first.blocked?
     post '/card/update_account', :id=>"Joe User".to_cardname.to_key, :extension => { :blocked => '1' }
-    assert User.find_by_login('joe_user').blocked?
+    assert User.where(:card_id=>Card['joe_user'].id).first.blocked?
     post '/card/update_account', :id=>"Joe User".to_cardname.to_key, :extension => { :blocked => '0' }
-    assert !User.find_by_login('joe_user').blocked?
+    assert !User.where(:card_id=>Card['joe_user'].id).first.blocked?
   end
 end

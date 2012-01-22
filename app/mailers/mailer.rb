@@ -54,7 +54,7 @@ class Mailer < ActionMailer::Base
 
     mail( {
       :to           => "#{user.email}",
-      :from         => User.find_by_login('wagbot').email,
+      :from         => User.where(:card_id=>Card::WagbotID).first.email,
       :subject      => "[#{Card.setting('*title')} notice] #{@updater} #{action} \"#{card.name}\"" ,
       :content_type => 'text/html',
     } )

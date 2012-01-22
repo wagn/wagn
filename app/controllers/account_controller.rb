@@ -56,14 +56,19 @@ class AccountController < ApplicationController
   end
 
   def invite
-    Card['*account'].ok?(:create) or raise(Wagn::PermissionDenied, "You need permission to create")  #ENGLISH
+    warn "pi #{a=Card['*account']}"
+    warn "ok? #{a.ok?(:create)}"
+    cok=Card['*account'].ok?(:create) or raise(Wagn::PermissionDenied, "You need permission to create")  #ENGLISH
+    warn "post invite #{cok}, #{request.post?}, #{params.inspect}"
     @user, @card = request.post? ?
       User.create_with_card( params[:user], params[:card] ) :
       [User.new, Card.new()]
+    warn "invite U:#{@user.inspect} C:#{@card.inspect}"
     if request.post? and @user.errors.empty?
       @user.send_account_info(params[:email])
       redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
     end
+    warn "invite errors #{@user.errors} C:#{@card.errors}"
     unless @user.errors.empty?
       @user.errors.each do |k,e| warn "user error #{k}, #{e}" end
     end

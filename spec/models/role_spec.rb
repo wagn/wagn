@@ -32,7 +32,7 @@ end
 
 describe User, "Authenticated User" do
   before do
-    User.current_user = ::User.find_by_login('joe_user')
+    User.current_user = ::User.where(:card_id=>Card['joe_user'].id).first
   end
   it "should ok anon role" do Wagn.role_ok?(Role['anon'].id).should be_true end
   it "should ok auth role" do Wagn.role_ok?(Role['auth'].id).should be_true end
@@ -79,7 +79,7 @@ describe User, 'Joe User' do
       @roles_card << @r1;
       @roles_card.save
     }
-    @ju = User.find_by_login 'joe_user'
+    @ju = User.where(:card_id=>Card['joe_user'].id).first
     @roles_card = Card.fetch_or_new(@jucard.star_rule(:roles))
     warn Rails.logger.info("fetch it again roles #{@roles_card.content}")
     @roles_card.item_names.length.should==1  

@@ -37,7 +37,7 @@ describe Mailer do
         assert_equal ["sara@user.com"],  @mail.to
       end    
       it "is from Wag bot email" do
-        assert_equal [User.find_by_login('wagbot').email], @mail.from
+        assert_equal [User.where(:card_id=>Card::WagbotID).first.email], @mail.from
       end     
     end     
   end

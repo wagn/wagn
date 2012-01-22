@@ -13,18 +13,19 @@ class RolesUsers < ActiveRecord::Migration
       Card.where(:extension_type => 'Role').each do |rolecard|
         tasks=rolecard.extension and tasks = tasks.tasks and tasks.split(',').each do |task|
             # mapping old task names to rule cardnames to use
-            Card.fetch_or_new( case task.to_sym
+            c=Card.fetch_or_new( case task.to_sym
                 when :create_accounts;    "*account+*right+*create"
                 when :administrate_users; "*account+*right+*update"
                 when :assign_user_roles;  "*roles+*right+*update"
               end ).add_item(rolecard.name)
+            c.save
           end
       end
 
       # Add username->*roles pointers from user_roles table
       Card.where(:extension_type=> 'User').each do |usercard|
         roles = usercard.extension.roles.map {|r|
-          ((rcard=r.card).id!=Wagn::Codename.code2id('Anonymous').to_s) ?
+          ((rcard=r.card).id!=Wagn::Codename.code2id('Anonymous')) ?
               rcard.name : nil
         }.compact
         unless roles.empty?
@@ -40,10 +41,10 @@ class RolesUsers < ActiveRecord::Migration
                    :content => "{'type':'User';'refer_to':'_left'}"
 
       # Add *account+*right+*create (create_accounts task)
-      Card['*account+*right+*create'] or
-      Card.create!(:name => "*account+*right+*create",
-                   :type_id => Wagn::Codename.code2id('Pointer'),
-                   :content => "[[_left]]")
+      c=Card['*account+*right+*create'] and c << '_left' or
+          Card.create(:name => "*account+*right+*create",
+                      :type_id => Wagn::Codename.code2id('Pointer'),
+                      :content => "[[_left]]")
 
       # Add *account+*right+*update (administrate_users)
       Card['*account+*right+*update'] or

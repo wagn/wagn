@@ -14,8 +14,8 @@ wagn.editorInitFunctionMap = {
   '.date-editor'           : -> @datepicker { dateFormat: 'yy-mm-dd' }
   '.tinymce-textarea'      : -> wagn.initTinyMCE(@[0].id)
   '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
-  '.file-upload'           : -> @fileupload( add: wagn.chooseFile )
-  '.etherpad-textarea'   : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
+  '.file-upload'           : -> @fileupload( add: wagn.chooseFile , forceIframeTransport: true )
+  '.etherpad-textarea'     : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
 }
 
 wagn.initPointerList = (input)-> 
@@ -38,13 +38,15 @@ wagn.chooseFile = (e, data) ->
   file = data.files[0]
   $(this).fileupload '_normalizeFile', 0, file
   $(this).closest('form').data 'file-data', data
+  
+  filename = file.name.replace( /\..*$/, '' ).replace( /_/g, ' ')
   if name_field = s.find( '.card-name-field' ) 
     if name_field[0] and name_field.val() == ''
-      name_field.val file.name.replace /\..*/, ''
+      name_field.val filename
+
   s.find('.choose-file').hide()
   s.find('.chosen-filename').text file.name
   s.find('.chosen-file').show()
-
 
 $(window).load ->
 

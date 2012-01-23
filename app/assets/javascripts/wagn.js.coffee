@@ -17,10 +17,13 @@ wagn.prepUrl = (url, slot)->
   url + ( (if url.match /\?/ then '&' else '?') + $.param(xtra) )
 
 jQuery.fn.extend {
-  slot: -> @closest '.card-slot'
+  slot: -> 
+    wagn.slot_this = this
+    @closest '.card-slot'
   
   setSlotContent: (val) ->
     s = @slot()
+    wagn.val = val
     v = $(val)
     v.attr 'home_view', s.attr 'home_view'
     v.attr 'item',      s.attr 'item'
@@ -113,13 +116,17 @@ $(window).load ->
          newCaptcha(this)
          return false
       
-      if data = $(this).data('file-data')
-        fileoptions = $(this).find('.file-upload').fileupload 'wagnFileUploadSettings',
-          {files: data.files, formData: $(this).serializeArray() }
-        opt.skip_before_send = true
-        $.extend opt, fileoptions, {url: opt.url}
-        $.ajax opt
+      if data = $(this).data 'file-data'
+        input = $(this).find '.file-upload'
+        widget = input.data 'fileupload'
+        wagn.opt = opt
+        args = $.extend {}, (widget._getAJAXSettings data), { url: opt.url, context: this, success: opt.success }
+        wagn.args = args
+        args.skip_before_send = true
+        $.ajax( args ).always (a, b, c) -> widget._onAlways a, b, c, args
+        
         false
+        #true
 
   $('body').delegate '.card-form', 'submit', ->
     $(this).setContentFieldsFromMap()

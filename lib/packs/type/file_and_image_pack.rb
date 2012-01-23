@@ -49,6 +49,7 @@ class Wagn::Renderer::Html
       <div><label>File chosen:</label> <span class="chosen-filename"></span></div>
       <div><a class="cancel-upload">Undo</a></div>
     </div>
+    #{ form.hidden_field :content, :class=>'upload-card-content' }
       }
     out
   end

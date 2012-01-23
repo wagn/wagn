@@ -12,8 +12,6 @@
 /*jslint nomen: true, unparam: true, regexp: true */
 /*global document, XMLHttpRequestUpload, Blob, File, FormData, location, jQuery */
 
-window.wagn || (window.wagn = {});
-
 (function ($) {
     'use strict';
 
@@ -303,8 +301,6 @@ window.wagn || (window.wagn = {});
         },
 
         _initDataSettings: function (options) {
-          console.log('initDataSettings called');
-          
             if (this._isXHRUpload(options)) {
                 if (!this._chunkedUpload(options, true)) {
                     if (!options.data) {
@@ -323,7 +319,6 @@ window.wagn || (window.wagn = {});
         },
 
         _initFormSettings: function (options) {
-            console.log('initFormSettings called');
             // Retrieve missing options from the input field and the
             // associated form, if available:
             if (!options.form || !options.form.length) {
@@ -531,64 +526,62 @@ window.wagn || (window.wagn = {});
                     jqXHR = jqXHR || (
                         (resolve !== false &&
                         that._trigger('send', e, options) !== false &&
-                        (that._chunkedUpload(options) || console.log('opciones!!') || $.ajax(options))) ||
+                        (that._chunkedUpload(options) || $.ajax(options))) ||
                         that._getXHRPromise(false, options.context, args)
-//                    ).done(function (result, textStatus, jqXHR) {
-//                        that._onDone(result, textStatus, jqXHR, options);
-//                    }).fail(function (jqXHR, textStatus, errorThrown) {
-//                        that._onFail(jqXHR, textStatus, errorThrown, options);
-//                    }
-                    ).always(function (jqXHRorResult, textStatus, jqXHRorError) {
-//                        that._sending -= 1;
+                    ).done(function (result, textStatus, jqXHR) {
+                        that._onDone(result, textStatus, jqXHR, options);
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        that._onFail(jqXHR, textStatus, errorThrown, options);
+                    }).always(function (jqXHRorResult, textStatus, jqXHRorError) {
+                        that._sending -= 1;
                         that._onAlways(
                             jqXHRorResult,
                             textStatus,
                             jqXHRorError,
                             options
                         );
-//                        if (options.limitConcurrentUploads &&
-//                                options.limitConcurrentUploads > that._sending) {
-//                            // Start the next queued upload,
-//                            // that has not been aborted:
-//                            var nextSlot = that._slots.shift();
-//                            while (nextSlot) {
-//                                if (!nextSlot.isRejected()) {
-//                                    nextSlot.resolve();
-//                                    break;
-//                                }
-//                                nextSlot = that._slots.shift();
-//                            }
-//                        }
+                        if (options.limitConcurrentUploads &&
+                                options.limitConcurrentUploads > that._sending) {
+                            // Start the next queued upload,
+                            // that has not been aborted:
+                            var nextSlot = that._slots.shift();
+                            while (nextSlot) {
+                                if (!nextSlot.isRejected()) {
+                                    nextSlot.resolve();
+                                    break;
+                                }
+                                nextSlot = that._slots.shift();
+                            }
+                        }
                     });
                     return jqXHR;
                 };
-                wagn.jopts = options;
-//            this._beforeSend(e, options);
-//            if (this.options.sequentialUploads ||
-//                    (this.options.limitConcurrentUploads &&
-//                    this.options.limitConcurrentUploads <= this._sending)) {
-//                if (this.options.limitConcurrentUploads > 1) {
-//                    slot = $.Deferred();
-//                    this._slots.push(slot);
-//                    pipe = slot.pipe(send);
-//                } else {
-//                    pipe = (this._sequence = this._sequence.pipe(send, send));
-//                }
-//                // Return the piped Promise object, enhanced with an abort method,
-//                // which is delegated to the jqXHR object of the current upload,
-//                // and jqXHR callbacks mapped to the equivalent Promise methods:
-//                pipe.abort = function () {
-//                    var args = [undefined, 'abort', 'abort'];
-//                    if (!jqXHR) {
-//                        if (slot) {
-//                            slot.rejectWith(args);
-//                        }
-//                        return send(false, args);
-//                    }
-//                    return jqXHR.abort();
-//                };
-//                return this._enhancePromise(pipe);
-//            }
+            this._beforeSend(e, options);
+            if (this.options.sequentialUploads ||
+                    (this.options.limitConcurrentUploads &&
+                    this.options.limitConcurrentUploads <= this._sending)) {
+                if (this.options.limitConcurrentUploads > 1) {
+                    slot = $.Deferred();
+                    this._slots.push(slot);
+                    pipe = slot.pipe(send);
+                } else {
+                    pipe = (this._sequence = this._sequence.pipe(send, send));
+                }
+                // Return the piped Promise object, enhanced with an abort method,
+                // which is delegated to the jqXHR object of the current upload,
+                // and jqXHR callbacks mapped to the equivalent Promise methods:
+                pipe.abort = function () {
+                    var args = [undefined, 'abort', 'abort'];
+                    if (!jqXHR) {
+                        if (slot) {
+                            slot.rejectWith(args);
+                        }
+                        return send(false, args);
+                    }
+                    return jqXHR.abort();
+                };
+                return this._enhancePromise(pipe);
+            }
             return send();
         },
 
@@ -676,7 +669,7 @@ window.wagn || (window.wagn = {});
                 return false;
             }
         },
-/*
+
         _onPaste: function (e) {
             var that = e.data.fileupload,
                 cbd = e.originalEvent.clipboardData,
@@ -721,7 +714,7 @@ window.wagn || (window.wagn = {});
             }
             e.preventDefault();
         },
-*/
+
         _initEventHandlers: function () {
             var ns = this.options.namespace || this.widgetName;
             this.options.dropZone
@@ -769,7 +762,6 @@ window.wagn || (window.wagn = {});
         },
 
         _create: function () {
-            console.log("create called");
             var options = this.options;
             if (options.fileInput === undefined) {
                 options.fileInput = this.element.is('input:file') ?
@@ -799,15 +791,6 @@ window.wagn || (window.wagn = {});
         disable: function () {
             this._destroyEventHandlers();
             $.Widget.prototype.disable.call(this);
-        },
-        
-        wagnFileUploadSettings: function(data) {
-          return this._getAJAXSettings(data);
-        },
-
-        wagnSetFileUploadOptions: function(options) {
-          
-          this.options = $.extend(options, this.options);
         },
 
         // This method is exposed to the widget API and allows adding files

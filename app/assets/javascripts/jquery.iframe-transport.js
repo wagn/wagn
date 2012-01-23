@@ -12,9 +12,6 @@
 /*jslint unparam: true, nomen: true */
 /*global jQuery, document */
 
-
-//window.wagn ||= {};
-
 (function ($) {
     'use strict';
 
@@ -87,11 +84,8 @@
                                     .appendTo(form);
                             });
                         }
-                        //console.log( 'options.fileInput = ' + options.fileInput );
-                        
                         if (options.fileInput && options.fileInput.length &&
                                 options.type === 'POST') {
-                                  
                             fileInputClones = options.fileInput.clone();
                             // Insert a clone for each file input field:
                             options.fileInput.after(function (index) {
@@ -110,11 +104,7 @@
                                 // enctype must be set as encoding for IE:
                                 .prop('encoding', 'multipart/form-data');
                         }
-                        wagn.iopts = options
-                        console.log( 'definitely using iframe!! clone length = ' + fileInputClones.length);
-                        //bleepyborp();
                         form.submit();
-                        //bleepyblorp();
                         // Insert the file input fields at their original location
                         // by replacing the clones with the originals:
                         if (fileInputClones && fileInputClones.length) {

@@ -21,7 +21,6 @@ jQuery.fn.extend {
   
   setSlotContent: (val) ->
     s = @slot()
-    wagn.val = val
     v = $(val)
     v.attr 'home_view', s.attr 'home_view'
     v.attr 'item',      s.attr 'item'
@@ -115,23 +114,28 @@ $(window).load ->
          return false
       
       if data = $(this).data 'file-data'
+        # NOTE - this entire solution is temporary.  will be replaced in 1.9
         input = $(this).find '.file-upload'
         if input[1]
-          notify 'Wagn 1.8 cannot support multiple files in a single form;  This will be addressed by Wagn 1.9'
+          notify "Wagn 1.8 doesn't support multiple files in a single form; will work in Wagn 1.9."
           return false
-        widget = input.data 'fileupload'
+        widget = input.data 'fileupload' #jQuery UI widget
         
-        $(this).append '<input type="hidden" name="simulate_xhr" value="true">'
-        args = $.extend opt, widget._getAJAXSettings data
-        
-        
-        args.dataFilter = iframeUploadFilter
-        
-        args.skip_before_send = true
-        $.ajax( args ).always (a, b, c) -> widget._onAlways a, b, c, args
-        
+        unless widget._isXHRUpload(widget.options) # browsers that can't do ajax uploads use iframe
+          $(this).find('[name=success]').val('TO-CARD') # can't do normal redirects.
+          # iframe response not passed back; all responses treated as success.  boo
+          opt.url += '&simulate_xhr=true'
+          # iframe is not xhr request, so would otherwise get full response with layout
+          iframeUploadFilter = (data)-> data.find('body').html()
+          opt.dataFilter = iframeUploadFilter
+          # gets rid of default html and body tags
+            
+        args = $.extend opt, (widget._getAJAXSettings data), url: opt.url
+        # combines settings from wagn's slotter and jQuery UI's upload widget        
+        args.skip_before_send = true #avoid looping through this method again
+                
+        $.ajax( args )
         false
-        #true
 
   $('body').delegate '.card-form', 'submit', ->
     $(this).setContentFieldsFromMap()
@@ -186,10 +190,6 @@ newCaptcha = (form)->
   $(form).children().last().after recapDiv
   $.getScript recapUri, -> recapDiv.loadCaptcha()
 
-iframeUploadFilter = (data)->
-  data = data.find('body').html()
-  wagn.udata = data
-  warn "filter run"
-  data
+
   
 warn = (stuff) -> console.log stuff if console?

@@ -43,12 +43,13 @@ class Wagn::Renderer::Html
       out << %{<div class="attachment-preview", :id="#{card.attach_file_name}-preview"> #{_render_core(args)} </div> }
     end
     out << %{
-      <div>#{form.file_field :attach, :class=>'file-upload'}</div>
+      <div>#{form.file_field :attach, :class=>'file-upload slotter'}</div>
     </div>
     <div class="chosen-file" style="display:none">
       <div><label>File chosen:</label> <span class="chosen-filename"></span></div>
       <div><a class="cancel-upload">Undo</a></div>
     </div>
+    #{ form.hidden_field :content, :class=>'upload-card-content' }
       }
     out
   end

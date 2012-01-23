@@ -64,7 +64,7 @@ jQuery.fn.extend {
       $(this).setContentField(fn)     
   setContentField: (fn)->
     field = this.closest('.card-editor').find('.card-content')
-    init_val = field.val() # tinymce-jquery overrides val()
+    init_val = field.val() # tinymce-jquery overrides val(); that's why we're not using it.
     new_val = fn.call this
     field.val new_val
     field.change() if init_val != new_val  
@@ -113,12 +113,28 @@ $(window).load ->
          newCaptcha(this)
          return false
       
-      if data = $(this).data('file-data')
-        fileoptions = $(this).find('.file-upload').fileupload 'wagnFileUploadSettings',
-          {files: data.files, formData: $(this).serializeArray() }
-        opt.skip_before_send = true
-        $.extend opt, fileoptions, {url: opt.url}
-        $.ajax opt
+      if data = $(this).data 'file-data'
+        # NOTE - this entire solution is temporary.  will be replaced in 1.9
+        input = $(this).find '.file-upload'
+        if input[1]
+          notify "Wagn 1.8 doesn't support multiple files in a single form; will work in Wagn 1.9."
+          return false
+        widget = input.data 'fileupload' #jQuery UI widget
+        
+        unless widget._isXHRUpload(widget.options) # browsers that can't do ajax uploads use iframe
+          $(this).find('[name=success]').val('TO-CARD') # can't do normal redirects.
+          # iframe response not passed back; all responses treated as success.  boo
+          opt.url += '&simulate_xhr=true'
+          # iframe is not xhr request, so would otherwise get full response with layout
+          iframeUploadFilter = (data)-> data.find('body').html()
+          opt.dataFilter = iframeUploadFilter
+          # gets rid of default html and body tags
+            
+        args = $.extend opt, (widget._getAJAXSettings data), url: opt.url
+        # combines settings from wagn's slotter and jQuery UI's upload widget        
+        args.skip_before_send = true #avoid looping through this method again
+                
+        $.ajax( args )
         false
 
   $('body').delegate '.card-form', 'submit', ->
@@ -152,11 +168,9 @@ $(window).load ->
     $(this).attr 'href', $(this).attr('href') + '?success=' + escape(s)
     $(this).attr 'success-ready', 'true'
 
-
   $('body').delegate '.live-type-field', 'change', ->
     $(this).data 'params', $(this).closest('form').serialize()
     $(this).data 'url', $(this).attr 'href'
-
 
   #unify these next two
   $('.edit-type-field').live 'change', ->
@@ -177,4 +191,5 @@ newCaptcha = (form)->
   $.getScript recapUri, -> recapDiv.loadCaptcha()
 
 
+  
 warn = (stuff) -> console.log stuff if console?

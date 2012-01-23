@@ -14,8 +14,8 @@ wagn.editorInitFunctionMap = {
   '.date-editor'           : -> @datepicker { dateFormat: 'yy-mm-dd' }
   '.tinymce-textarea'      : -> wagn.initTinyMCE(@[0].id)
   '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
-  '.file-upload'           : -> @fileupload( add: wagn.chooseFile )
-  '.etherpad-textarea'   : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
+  '.file-upload'           : -> @fileupload( add: wagn.chooseFile )#, forceIframeTransport: true )
+  '.etherpad-textarea'     : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
 }
 
 wagn.initPointerList = (input)-> 
@@ -34,25 +34,35 @@ wagn.initTinyMCE = (el_id) ->
   tinyMCE.init conf
 
 wagn.chooseFile = (e, data) ->
-  s = $(this).slot()
+  ed = $(this).slot().find('.card-editor')
   file = data.files[0]
   $(this).fileupload '_normalizeFile', 0, file
   $(this).closest('form').data 'file-data', data
-  if name_field = s.find( '.card-name-field' ) 
+  
+  filename = file.name.replace( /\..*$/, '' ).replace( /_/g, ' ')
+  if name_field = ed.find( '.card-name-field' ) 
     if name_field[0] and name_field.val() == ''
-      name_field.val file.name.replace /\..*/, ''
-  s.find('.choose-file').hide()
-  s.find('.chosen-filename').text file.name
-  s.find('.chosen-file').show()
+      name_field.val filename
 
+  ed.find('.choose-file').hide()
+  ed.find('.chosen-filename').text file.name
+  ed.find('.chosen-file').show()
+  
+  cont = ed.find '.upload-card-content'
+  cont.data 'original', cont.val()
+  cont.val 'CHOSEN'
+  
 
 $(window).load ->
 
   $('.cancel-upload').live 'click', ->
-    s = $(this).slot()
-    s.find('.chosen-file').hide()
-    s.find('.choose-file').show()
+    ed = $(this).slot().find('.card-editor')
+    ed.find('.chosen-file').hide()
+    ed.find('.choose-file').show()
     $(this).closest('form').data 'file-data', null
+    
+    cont = ed.find '.upload-card-content'
+    cont.val cont.data 'original'
 
   #navbox pack
   $('.navbox').autocomplete {

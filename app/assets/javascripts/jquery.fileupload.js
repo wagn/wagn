@@ -669,7 +669,7 @@
                 return false;
             }
         },
-/*
+
         _onPaste: function (e) {
             var that = e.data.fileupload,
                 cbd = e.originalEvent.clipboardData,
@@ -714,7 +714,7 @@
             }
             e.preventDefault();
         },
-*/
+
         _initEventHandlers: function () {
             var ns = this.options.namespace || this.widgetName;
             this.options.dropZone
@@ -791,10 +791,6 @@
         disable: function () {
             this._destroyEventHandlers();
             $.Widget.prototype.disable.call(this);
-        },
-        
-        wagnFileUploadSettings: function(data) {
-          return this._getAJAXSettings(data);
         },
 
         // This method is exposed to the widget API and allows adding files

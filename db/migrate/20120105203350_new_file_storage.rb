@@ -13,9 +13,9 @@ class NewFileStorage < ActiveRecord::Migration
               filename = File.join( Rails.root, 'public', filename ) if filename =~ /^\/card/
 
               file = begin
-                  open filename
+                  open filename, 'rb'
                 rescue
-                  open filename.sub /\.png$/, '.gif'
+                  open filename.sub( /\.png$/, '.gif' ), 'rb'
                 end
               card.attach = file
               card.attach.instance_variable_set("@_attach_file_name", filename) # fixes ext in path
@@ -27,7 +27,7 @@ class NewFileStorage < ActiveRecord::Migration
               if typecode == 'Image'
                 Card::STYLES.each do |style|
                   next if style == 'original'
-                  f = open filename.sub( /\.\w+$/, "_#{style}\\0" )
+                  f = open filename.sub( /\.\w+$/, "_#{style}\\0" ), 'rb'
                   write_file f, card.attach.path( style )
                 end
               end
@@ -46,10 +46,7 @@ class NewFileStorage < ActiveRecord::Migration
   
   def filename_for_revision( revision, typecode )
     content = revision.content
-    if content !~ /^\s*\</
-      say "no source tag, not migrating: #{content}", :yellow
-      return nil
-    end
+    return nil if content !~ /^\s*\</
     
     filename = content.match(/(src|href)=\"([^\"]+)/)[2]
     filename.sub!('_medium', '') if typecode == 'Image'

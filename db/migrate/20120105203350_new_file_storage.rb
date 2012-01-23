@@ -58,7 +58,7 @@ class NewFileStorage < ActiveRecord::Migration
   
   def write_file( file, path )
     FileUtils.mkdir_p File.dirname(path)
-    File.open( path, 'w+b' ) do |f| 
+    File.open( path, 'wb' ) do |f| 
       f.write file.read
     end
   end

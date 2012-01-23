@@ -17,9 +17,7 @@ wagn.prepUrl = (url, slot)->
   url + ( (if url.match /\?/ then '&' else '?') + $.param(xtra) )
 
 jQuery.fn.extend {
-  slot: -> 
-    wagn.slot_this = this
-    @closest '.card-slot'
+  slot: -> @closest '.card-slot'
   
   setSlotContent: (val) ->
     s = @slot()
@@ -67,7 +65,7 @@ jQuery.fn.extend {
       $(this).setContentField(fn)     
   setContentField: (fn)->
     field = this.closest('.card-editor').find('.card-content')
-    init_val = field.val() # tinymce-jquery overrides val()
+    init_val = field.val() # tinymce-jquery overrides val(); that's why we're not using it.
     new_val = fn.call this
     field.val new_val
     field.change() if init_val != new_val  
@@ -118,10 +116,17 @@ $(window).load ->
       
       if data = $(this).data 'file-data'
         input = $(this).find '.file-upload'
+        if input[1]
+          notify 'Wagn 1.8 cannot support multiple files in a single form;  This will be addressed by Wagn 1.9'
+          return false
         widget = input.data 'fileupload'
-        wagn.opt = opt
-        args = $.extend {}, (widget._getAJAXSettings data), { url: opt.url, context: this, success: opt.success }
-        wagn.args = args
+        
+        $(this).append '<input type="hidden" name="simulate_xhr" value="true">'
+        args = $.extend opt, widget._getAJAXSettings data
+        
+        
+        args.dataFilter = iframeUploadFilter
+        
         args.skip_before_send = true
         $.ajax( args ).always (a, b, c) -> widget._onAlways a, b, c, args
         
@@ -159,11 +164,9 @@ $(window).load ->
     $(this).attr 'href', $(this).attr('href') + '?success=' + escape(s)
     $(this).attr 'success-ready', 'true'
 
-
   $('body').delegate '.live-type-field', 'change', ->
     $(this).data 'params', $(this).closest('form').serialize()
     $(this).data 'url', $(this).attr 'href'
-
 
   #unify these next two
   $('.edit-type-field').live 'change', ->
@@ -183,5 +186,10 @@ newCaptcha = (form)->
   $(form).children().last().after recapDiv
   $.getScript recapUri, -> recapDiv.loadCaptcha()
 
-
+iframeUploadFilter = (data)->
+  data = data.find('body').html()
+  wagn.udata = data
+  warn "filter run"
+  data
+  
 warn = (stuff) -> console.log stuff if console?

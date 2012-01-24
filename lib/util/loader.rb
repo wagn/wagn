@@ -125,24 +125,15 @@ module Wagn
     end
     
     def process_revisions     
-      @cardinput.values.sort_by{|r| r['name'].length}.each do |rev|
-        title = rev['name']
-        c=create_card(rev)
-        if not c.id
-         #warn("No id for card: "+title+" "+c.name+" "+c.id)
-         warn("No id for card: "+title+" "+c.id)
-        else
-          data = {
-            :card_id => c.id,
-            :type => rev['type'],
-            :content => rev['content'] || ''  ,
-            #:created_at => rev['date'],
-            :created_by => @authors[rev['author']]
-          }      
-          # FIXME: should check if this might be a duplicate revision
-          rc = Revision.create!(data).save
-          warn("revision added: "+title+" RC["+String(rc)+"] I:"+String(c.id)+"\nCont:"+rev['content'])
-        end
+      @revisions.sort_by{|r| r['date']}.each do |rev|
+        data = {
+          :card_id => @cards[rev['name']].id,
+          :content => rev['content'] || ''  ,
+          :created_at => rev['date'],
+          :creator_id => @authors[rev['author']]
+        }      
+        # FIXME: should check if this might be a duplicate revision
+        Revision.create! data
       end
     end
   end

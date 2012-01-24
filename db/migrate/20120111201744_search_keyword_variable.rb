@@ -2,6 +2,7 @@ class SearchKeywordVariable < ActiveRecord::Migration
   def up
     User.as :wagbot do
       c = Card.fetch_or_new '*search'
+      c = c.refresh if c.frozen
       c.typecode = 'Search'
       c.content.sub '"_keyword"', '"$keyword"'
       c.save!
@@ -11,6 +12,7 @@ class SearchKeywordVariable < ActiveRecord::Migration
   def down
     User.as :wagbot do
       c = Card.fetch_or_new '*search'
+      c = c.refresh if c.frozen
       c.typecode = 'Search'
       c.content.sub '"$keyword"', '"_keyword"'
       c.save!

@@ -8,16 +8,14 @@ module WagnTestHelper
   def setup_default_user
     User.cache.reset
     
-    # FIXME: should login as joe_user by default-- see what havoc it creates...
     user_card = Card['joe user'] #Card[Card::WagbotID]
-    @user = User.current_user= User.where(:card_id=>user_card.id).first
-    STDERR << "user #{@user.inspect}\n"
+    user_card = Card[Card::WagbotID]
+    @user = User.current_user= User.where(:card_id=>Card::WagbotID).first
+    #STDERR << "user #{@user.inspect}\n"
 
     @user.update_attribute('crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c')
-    rc=user_card.star_rule(:roles)
-    STDERR << "setup test user #{rc.inspect}\n"
-    rc && rc << Card::AdminID
-
+    user_card.star_rule(:roles) << Card::AdminID
+    
     # setup admin while we're at it
     #@admin_card = Card[User[:wagbot].card_id]
 
@@ -55,29 +53,24 @@ module WagnTestHelper
     assert_difference object, method, 0, &block
   end
   
+  USERS = {
+    'joe@user.com' => 'joe_pass',
+    'joe@admin.com' => 'joe_pass',
+    'u3@user.com' => 'u3_pass'
+  }
 
   def integration_login_as(user)
     User.cache.reset
     
-    unless (user=user.to_sym)==:anonymous
-      case user
-        when :joe_user; login='joe@user.com'; pass='joe_pass'
-        when :admin;    login='u3@user.com'; pass='u3_pass'
-        else raise "Don't know email & password for #{user}"
-      end
-      # FIXME- does setting controller here break anything else?
-      #tmp_controller = @controller
-      #@controller = AccountController.new
+    raise "Don't know email & password for #{user}" unless u =
+      User[user] and login = u.email and pass = USERS[login]
       
-      #warn "login as #{user}"
-      post '/account/signin', :login=>login, :password=>pass
-      assert_response :redirect
+    post 'account/signin', :login=>login, :password=>pass, :controller=>:account
+    assert_response :redirect
       
-      #@controller = tmp_controller
-    end
     if block_given?
       yield
-      post "/account/signout",:controller=>'account'
+      post 'account/signout',:controller=>'account'
     end
   end
   

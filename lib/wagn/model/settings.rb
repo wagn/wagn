@@ -18,6 +18,7 @@ module Wagn::Model::Settings
       set_name=set_name.to_cardname
       card = Card.fetch(set_name.star_rule( setting_name ), fetch_args)
       card ||= fallback && Card.fetch(set_name.star_rule(fallback), fetch_args)
+      #warn "rule[#{set_name}] #{card}"
       return card if card
     end
     #Rails.logger.debug "rule_card(#{setting_name}, #{fallback}) #{r.inspect}"; r

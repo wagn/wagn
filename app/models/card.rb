@@ -22,9 +22,9 @@ class Card < ActiveRecord::Base
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
     :cards, :set_mods_loaded, :update_referencers, :allow_type_change,
     :broken_type, :loaded_trunk, :nested_edit, :virtual, :attribute,
-    :error_view, :error_status, :selected_rev_id, :attachment_id,
-    :selected_rev_id
+    :error_view, :error_status, :selected_rev_id, :attachment_id
     #should build flexible handling for set-specific attributes
+
   attr_reader :type_args, :broken_type
   before_save :set_stamper, :base_before_save, :set_read_rule,
     :set_tracked_attributes, :set_extensions
@@ -84,13 +84,11 @@ class Card < ActiveRecord::Base
     self
   end
 
-  def new_card?()  new_record? || @from_trash  end
+  def new_card?() new_record? || @from_trash  end
   def known?()    real? || virtual?           end
   def real?()     !new_card?                  end
 
-  def reset_mods() @set_mods_loaded=false end
-
-
+  def reset_mods() @set_mods_loaded=false     end
   def include_set_modules
     #warn "including set modules for #{name}"
     unless @set_mods_loaded

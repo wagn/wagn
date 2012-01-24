@@ -39,7 +39,7 @@ class ApplicationController < ActionController::Base
       Wagn::Conf[:main_name] = nil
       
       ActiveSupport::Notifications.instrument 'wagn.renderer_load', :message=>"(in development)" do
-        Wagn::Renderer.ajax_call=request.xhr?
+        Wagn::Renderer.ajax_call = ajax?
       end
       Wagn::Renderer.current_slot = nil
     
@@ -69,17 +69,13 @@ class ApplicationController < ActionController::Base
   def wagn_layout
     layout = nil
     respond_to do |format|
-      format.html {
-        unless request.xhr?
-          layout = 'application'
-        end
-      }
+      format.html { layout = 'application' unless ajax? }
     end
     layout
   end
 
   def ajax?
-    request.xhr?
+    request.xhr? || params[:simulate_xhr]
   end
 
   # ------------------( permission filters ) -------
@@ -193,7 +189,67 @@ class ApplicationController < ActionController::Base
   end
      
 
+  def render_show(view = nil, status = 200)
+    extension = request.parameters[:format]
+    if FORMATS.split('|').member?( extension )
+      render(:status=>status, :text=> begin
+        respond_to do |format|
+          format.send(extension) do
+            renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
+            renderer.render_show( :view=>view )
+          end
+        end
+      end)
+    elsif render_show_file
+    else
+      render :text=>"unknown format: #{extension}", :status=>404
+    end
+  end
   
+  def render_show_file
+    return fast_404 if !@card
+    @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
+  
+    format = @card.attachment_format(params[:format])
+    return nil if !format
+
+    if ![format, 'file'].member?( params[:format] )
+      return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) ) 
+    end
+
+    style = @card.attachment_style( @card.typecode, params[:size] || @style )
+    return fast_404 if !style
+
+    send_file @card.attach.path(style), 
+      :type => @card.attach_content_type,
+      :filename =>  "#{@card.cardname.to_url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
+      :x_sendfile => true,
+      :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
+  end
+  
+  
+  rescue_from Exception do |exception|
+        
+    view, status = case exception
+    when Wagn::NotFound, ActiveRecord::RecordNotFound
+      [ :not_found, 404 ]                                                 
+    when Wagn::PermissionDenied, Card::PermissionDenied
+      [ :denial, 403]
+    when Wagn::BadAddress, ActionController::UnknownController, ActionController::UnknownAction  
+      [ :bad_address, 404 ]
+    else
+      if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) && @card && @card.errors.any?
+        [ :errors, 422]
+      else
+        Rails.logger.info "\n\nController exception: #{exception.message}"
+        Rails.logger.debug exception.backtrace*"\n"
+        Rails.logger.level == 0 ? raise( exception ) : [ :server_error, 500 ]
+      end
+    end
+    
+    render_errors :view=>view, :status=>status
+  end
+     
 end
 
 

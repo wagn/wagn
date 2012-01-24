@@ -59,7 +59,7 @@ group :test do
   gem 'cucumber-rails', '~> 1.2.0'              # feature-driven-development suite
   gem 'launchy'                                # lets cucumber launch browser windows
   gem 'timecop'                                # not clear on use/need.  referred to in shared_data.rb
-  gem 'spork'                                  #
+  gem 'spork', '>=0.9'
                                                
   gem 'email_spec'                             # 
   gem 'database_cleaner', '~> 0.7.0'            # used by cucumber for db transactions
@@ -73,9 +73,15 @@ end
 
 group :debug do
   gem 'rdoc'
-  RUBY_VERSION =~ /^1\.9/ ?
-    gem('ruby-debug19', :require => 'ruby-debug') :
-    gem('ruby-debug')
+  if RUBY_VERSION =~ /^1\.9\.3/
+    gem 'linecache19', '~>0.5.13'
+    gem 'ruby-debug-base19x', '~> 0.11.30.pre4'
+  end
+  if RUBY_VERSION =~ /^1\.9/
+    gem 'ruby-debug19', :require => 'ruby-debug'
+  else
+    gem 'ruby-debug'
+  end
 end
 
 

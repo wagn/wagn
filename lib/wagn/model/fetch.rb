@@ -50,6 +50,7 @@ module Wagn::Model::Fetch
         end
         return nil if card.new_card? && (opts[:skip_virtual] || !card.virtual?)
 
+        #warn "fetch returning #{card.inspect}"
         card.include_set_modules unless opts[:skip_modules]
         card
 #      end

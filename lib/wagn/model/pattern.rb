@@ -66,17 +66,23 @@ module Wagn::Model
     def set_modules()
       #warn "including set modules for #{name}"
       #raise "no type #{cardname.inspect}" if cardname.typename.nil?
-      #Rails.logger.debug "set_mods[#{cardname.inspect}]"
-      @set_modules ||= patterns_without_new.reverse.map do
+      @set_modules ||= begin
+          v1=patterns_without_new.reverse
+          v2=v1.map(&:set_const)
+          
+      #warn (Rails.logger.debug "set_mods[#{name}] :#{v2.inspect}, #{v2.compact.inspect}, #{v1.inspect}"); v2.compact
+      end
+=begin
         |pattern|
           if mod = pattern.set_module # and
-            #Rails.logger.debug "set_mod[#{name}] #{subclass}, #{mod}"
+            warn (Rails.logger.debug "set_mod[#{name}] #{pattern.inspect}, #{mod}")
             #const = suppress(NameError) do
+
             if mod =~ /^\w+(::\w+)+$/            and
             const = begin
-                      find_module mod
-  #                    r=(Module === mm) ? mm : nil
-            #Rails.logger.debug "set_mod[#{cardname.inspect}]:#{mm}> #{subclass}, #{mod} R:#{r}"; r
+                      mm=find_module mod
+                      #r=(Module === mm) ? mm : nil
+            warn (Rails.logger.debug "set_mod[#{cardname.inspect}]:#{mm}> #{mod} T:#{caller[0..20]*"\n"}") unless Module===mm; mm
                     rescue Exception => e
                       Rails.logger.info "include error is #{e.inspect}, #{e.backtrace*"\n"}" unless NameError === e
                       nil
@@ -85,15 +91,8 @@ module Wagn::Model
             const
         end
       end.compact
+=end
       #Rails.logger.debug "set_mods #{self}, #{self.object_id} [#{name}] #{m.map(&:to_s)*", "}"; m
-    end
-
-    def find_module(mod)
-      parts = mod.split '::'
-      mod1 = Wagn::Set.const_defined?(parts[0]) ? Wagn::Set.const_get(parts[0]) : nil
-      return nil  if !mod1
-      return mod1 if !parts[1]
-      mod1.const_defined?(parts[1]) ? mod1.const_get(parts[1]) : nil
     end
 
     def label
@@ -104,9 +103,34 @@ module Wagn::Model
 
 
   class SetBase
-#    attr_accessor :pat_name
+
+    def set_const() SetBase.find_module(set_module) end
+=begin
+    def set_const
+      m2=set_module
+      warn "set_mod #{m2}"
+      m1=SetBase.find_module(m2)
+      warn "#{inspect}.set_const: #{m1}, #{m1.inspect}"; m1
+    rescue Exception => e
+      return nil if NameError===e
+      warn "exception #{e.inspect}" #{e.backtrace*"\n"}"
+      raise e
+=end
 
     class << self
+      def find_module(mod)
+        set, name = mod.split '::'
+        return nil  unless name and mod1= (Wagn::Set.const_defined?(set,false) ?
+           Wagn::Set.const_get(set,false) : nil)
+        if mod1.const_defined?(name,false)
+          mod1.const_get(name,false)
+        else nil end
+      rescue Exception => e
+        return nil if NameError===e
+        warn "exception #{e.inspect}" #{e.backtrace*"\n"}"
+        raise e
+      end
+
       def opt_keys()                 []    end
       def method_key_from_opts(opts) ''    end
       def trunkless?()               false end
@@ -190,8 +214,8 @@ module Wagn::Model
     def left_name()  @pat_name.left_name.to_s                                end
     def method_key() self.class.method_key_from_opts :type=>left_name        end
     def set_module()
-#      Rails.logger.debug "set_module (type) #{left_name.inspect}, #{@pat_name.inspect}"
-      "Type::#{Card.typecode_from_id(Card.type_id_from_name(left_name))}"
+      r="Type::#{Card.typecode_from_id(Card.type_id_from_name(@pat_name.left_name))}"
+      #warn (Rails.logger.debug "set_module (type) #{@pat_name.left_name.inspect}, #{@pat_name.inspect} R:#{r}"); r
     end
     def set_name()   "#{@pat_name.left_name}+#{self.class.key}"              end
 
@@ -295,7 +319,7 @@ module Wagn::Model
            :right=>@pat_name.left_name.tag_name
     end
     def set_module()
-      #Rails.logger.debug "set_module? #{pat_name.inspect}" unless  pat_name.left_name
+      #Rails.logger.debug "set_module? #{@pat_name.inspect}" unless  @pat_name.left_name
       tk=((tn = @pat_name.left_name.tag_name) and tn.to_cardname.key.gsub(/^\*/,'X'))
       #warn (Rails.logger.debug "set_module LtypeRname #{left_type} #{tk.camelcase}")
       "LTypeRight::#{left_type+tk.camelcase}"
@@ -321,15 +345,15 @@ module Wagn::Model
       def prototype_args(base)       { :name=>base }                         end
     end
     def method_key()
-      #warn "pat name for #{pat_name}"
-      self.class.method_key_from_opts(:name=>@pat_name.left_name.to_s)
+      r=self.class.method_key_from_opts(:name=>@pat_name.left_name.to_s)
+      #warn "pat name for #{@pat_name}: #{r}"; r
     end
     def set_module()
-      #Rails.logger.info "set_mod solo#{pat_name}: #{pat_name.left_name.to_s.camelize}"
-      #Rails.logger.info "Solo set_module #{pat_name.codename}, #{pat_name}"
-      #"Wagn::Set::Self::#{(pat_name.codename||pat_name).camelize}";
+      Rails.logger.info "set_mod solo#{@pat_name}: #{@pat_name.left_name.to_s.camelize}"
+      #Rails.logger.info "Solo set_module #{@pat_name.codename}, #{@pat_name}"
+      #"Wagn::Set::Self::#{(@pat_name.codename||@pat_name).camelize}";
       return unless @pat_name.size == 2 # simple? cards have two parts <c>+*self
-      "Self::#{@pat_name.left_name.to_s.camelize}";
+      "Self::#{@pat_name.left_name.to_s.camelize}"
     end
 
     Wagn::Model::Pattern.register_class self

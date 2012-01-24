@@ -72,7 +72,7 @@ end
 group :debug do
   gem 'rdoc'
   if RUBY_VERSION =~ /^1\.9\.3/
-    gem 'linecache19', '~>0.5'
+    gem 'linecache19', '~>0.5.13'
     gem 'ruby-debug-base19x', '~> 0.11.30.pre4'
   end
   if RUBY_VERSION =~ /^1\.9/

@@ -39,7 +39,7 @@ class ApplicationController < ActionController::Base
       Wagn::Conf[:main_name] = nil
       
       ActiveSupport::Notifications.instrument 'wagn.renderer_load', :message=>"(in development)" do
-        Wagn::Renderer.ajax_call=request.xhr?
+        Wagn::Renderer.ajax_call = ajax?
       end
       Wagn::Renderer.current_slot = nil
     
@@ -69,17 +69,13 @@ class ApplicationController < ActionController::Base
   def wagn_layout
     layout = nil
     respond_to do |format|
-      format.html {
-        unless request.xhr?
-          layout = 'application'
-        end
-      }
+      format.html { layout = 'application' unless ajax? }
     end
     layout
   end
 
   def ajax?
-    request.xhr?
+    request.xhr? || params[:simulate_xhr]
   end
 
   # ------------------( permission filters ) -------

@@ -71,9 +71,15 @@ end
 
 group :debug do
   gem 'rdoc'
-  RUBY_VERSION =~ /^1\.9/ ?
-    gem('ruby-debug19', :require => 'ruby-debug') :
-    gem('ruby-debug')
+  if RUBY_VERSION =~ /^1\.9\.3/
+    gem 'linecache19', '~>0.5'
+    gem 'ruby-debug-base19x', '~> 0.11.30.pre4'
+  end
+  if RUBY_VERSION =~ /^1\.9/
+    gem 'ruby-debug19', :require => 'ruby-debug'
+  else
+    gem 'ruby-debug'
+  end
 end
 
 

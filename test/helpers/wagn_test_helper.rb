@@ -53,29 +53,24 @@ module WagnTestHelper
     assert_difference object, method, 0, &block
   end
   
+  USERS = {
+    'joe@user.com' => 'joe_pass',
+    'joe@admin.com' => 'joe_pass',
+    'u3@user.com' => 'u3_pass'
+  }
 
   def integration_login_as(user)
     User.cache.reset
     
-    unless (user=user.to_sym)==:anonymous
-      case user
-        when :joe_user; login='joe@user.com'; pass='joe_pass'
-        when :admin;    login='u3@user.com'; pass='u3_pass'
-        else raise "Don't know email & password for #{user}"
-      end
-      # FIXME- does setting controller here break anything else?
-      #tmp_controller = @controller
-      #@controller = AccountController.new
+    raise "Don't know email & password for #{user}" unless u =
+      User[user] and login = u.email and pass = USERS[login]
       
-      #warn "login as #{user}"
-      post '/account/signin', :login=>login, :password=>pass
-      assert_response :redirect
+    post 'account/signin', :login=>login, :password=>pass, :controller=>:account
+    assert_response :redirect
       
-      #@controller = tmp_controller
-    end
     if block_given?
       yield
-      post "/account/signout",:controller=>'account'
+      post 'account/signout',:controller=>'account'
     end
   end
   

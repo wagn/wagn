@@ -57,7 +57,7 @@ group :test do
   gem 'cucumber-rails', '~> 1.2.0'              # feature-driven-development suite
   gem 'launchy'                                # lets cucumber launch browser windows
   gem 'timecop'                                # not clear on use/need.  referred to in shared_data.rb
-  gem 'spork'                                  #
+  gem 'spork', '>=0.9'
                                                
   gem 'email_spec'                             # 
   gem 'database_cleaner', '~> 0.7.0'            # used by cucumber for db transactions

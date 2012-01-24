@@ -80,7 +80,7 @@ class User < ActiveRecord::Base
 
     # FIXME: args=params.  should be less coupled..
     def create_with_card(user_args, card_args, email_args={})
-      warn  "create with(#{user_args.inspect}, #{card_args.inspect}, #{email_args.inspect})"
+      #warn  "create with(#{user_args.inspect}, #{card_args.inspect}, #{email_args.inspect})"
       @card = (Hash===card_args ? Card.new({:type_id=>Card::UserID}.merge(card_args)) : card_args)
       @user = User.new({:invite_sender=>User.current_user, :status=>'active'}.merge(user_args))
       #warn "user is #{@user.inspect}" unless @user.email

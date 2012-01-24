@@ -178,7 +178,7 @@ GEM
       ffi (~> 1.0.9)
       multi_json (~> 1.0.4)
       rubyzip
-    spork (0.8.5)
+    spork (0.9.0)
     sprockets (2.0.3)
       hike (~> 1.2)
       rack (~> 1.0)
@@ -233,7 +233,7 @@ DEPENDENCIES
   ruby-debug19
   ruby-prof
   sass-rails (~> 3.1.0)
-  spork
+  spork (>= 0.9)
   therubyracer
   timecop
   tinymce-rails (~> 3.4.7)

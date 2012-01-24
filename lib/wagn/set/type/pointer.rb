@@ -19,10 +19,8 @@ module Wagn::Set::Type::Pointer
     context = args[:context] || self.cardname
     cc=self.content
     self.content.split(/\n+/).map{ |line|
-      line.gsub(/\[\[|\]\]/,'').map{|link|
-        context==:raw ? link : link.to_cardname.to_absolute(context)
-      }
-    }.flatten
+      line.gsub(/\[\[|\]\]/,'')
+    }.map{ |link| context==:raw ? link : link.to_cardname.to_absolute(context) }
   end
 
   def item_type

@@ -41,6 +41,16 @@ module ActiveRecord
         "REGEXP #{string}"
       end
     end   
+
+    class Mysql2Adapter
+      def quote_interval(string)
+        "interval #{string}"
+      end
+      
+      def match(string)
+        "REGEXP #{string}"
+      end
+    end   
     
 <<<<<<< HEAD
     class SQLiteAdapter < AbstractAdapter

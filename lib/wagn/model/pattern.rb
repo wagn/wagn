@@ -1,6 +1,7 @@
 module Wagn::Model
   module Pattern
 
+    mattr_accessor :subclasses
     @@subclasses = []
 
     class << self

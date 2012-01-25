@@ -39,7 +39,7 @@ class CardActionTest < ActionController::IntegrationTest
   end
 
   def test_create_role_card   
-    integration_login_as :admin
+    integration_login_as :joe_admin
     post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
     assert_response 302
 

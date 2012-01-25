@@ -219,6 +219,7 @@ module Wagn::Model::Permissions
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
       User.as :wagbot do
         Card.search(:left=>self.name).each do |plus_card|
+          warn "lft serch #{plus_card.inspect}, #{plus_card.rule}"
           if plus_card.rule(:read) == '_left'
             plus_card.update_read_rule
           end
@@ -248,7 +249,7 @@ module Wagn::Model::Permissions
       # could be related to other bugs?
       in_set = {}
       if !(self.trash)
-        rule_classes = Wagn::Model::Pattern.pattern_subclasses.map &:key
+        rule_classes = Wagn::Model::Pattern.subclasses.map &:key
         rule_class_index = rule_classes.index self.cardname.trunk_name.tag_name.to_s
         return 'not a proper rule card' unless rule_class_index
 

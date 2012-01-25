@@ -83,7 +83,7 @@ module Wagn::Model::Settings
   def self.included(base)
     super
     base.extend(ClassMethods)
-    base.class_eval { attr_accessor :rule }
+    #base.class_eval { attr_accessor :rule }
   end
 
 end

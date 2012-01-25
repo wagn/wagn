@@ -101,8 +101,8 @@ module Wagn::Model::TrackedAttributes
     # do we need to "undo" and loaded modules?  Maybe reload defaults?
     reset_patterns
     include_set_modules
-    self.before_validation_on_create
-    Cardtype.cache.reset
+    #self.before_validation_on_create
+    #Cardtype.cache.reset
     true
   end
   

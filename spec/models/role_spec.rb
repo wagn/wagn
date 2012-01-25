@@ -58,7 +58,6 @@ describe User, 'Joe User' do
     @ju = User.current_user
     @jucard = Card['joe_user']
     @r1 = Card['r1']
-    warn "roles card init: #{@roles_card = @jucard.star_rule(:roles)}"
   end
   
   it "should initially have no roles" do
@@ -69,19 +68,16 @@ describe User, 'Joe User' do
   end
   it "should immediately set new roles and return auth, anon, and the new one" do
     User.as(:wagbot) { @roles_card << @r1 }
-    warn Rails.logger.info("updated roles #{@roles_card.content}")
     @roles_card.item_names.length.should==1
   end
   it "should save new roles and reload correctly" do
     User.as(:wagbot) {
-      warn "roles card #{@roles_card.inspect}"
       @roles_card.content=''
       @roles_card << @r1;
       @roles_card.save
     }
     @ju = User.where(:card_id=>Card['joe_user'].id).first
     @roles_card = Card.fetch_or_new(@jucard.star_rule(:roles))
-    warn Rails.logger.info("fetch it again roles #{@roles_card.content}")
     @roles_card.item_names.length.should==1  
     @ju.parties.should == [Card::AuthID, @ju.card_id, Card['r1'].id]
   end

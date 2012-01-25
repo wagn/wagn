@@ -14,11 +14,7 @@ module ActiveRecord
       end
     end
 
-<<<<<<< HEAD
-    class PostgreSQLAdapter < AbstractAdapter
-=======
     class PostgreSQLAdapter
->>>>>>> 81387a6... Re-adding, but this probably means you need to un-install postgres for mysql to work on 1.9
       def quote_interval(string)
         "interval '#{string}'"
       end
@@ -28,11 +24,7 @@ module ActiveRecord
       end
     end
     
-<<<<<<< HEAD
-    class MysqlAdapter < AbstractAdapter
-=======
     class MysqlAdapter
->>>>>>> 81387a6... Re-adding, but this probably means you need to un-install postgres for mysql to work on 1.9
       def quote_interval(string)
         "interval #{string}"
       end
@@ -52,11 +44,7 @@ module ActiveRecord
       end
     end   
     
-<<<<<<< HEAD
-    class SQLiteAdapter < AbstractAdapter
-=======
     class SQLiteAdapter
->>>>>>> 81387a6... Re-adding, but this probably means you need to un-install postgres for mysql to work on 1.9
       def quote_interval(string)
         "interval #{string}"
       end

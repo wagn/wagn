@@ -28,9 +28,11 @@ class Flexmail
     end
     
     def email_config_cardnames card
+      #warn "card is #{card.inspect}"
       event_card = card.rule_card('send')
       return [] unless event_card
-      User.as(:wagbot){ event_card.item_names }
+      #warn "ec #{event_card.inspect}"
+      User.as(Card::WagbotID){ event_card.item_names }
     end
     
     def mail_for card #, &block # not sure if we need this options

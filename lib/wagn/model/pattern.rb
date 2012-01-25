@@ -30,7 +30,6 @@ module Wagn::Model
       @real_set_names = @set_mods_loaded = @junction_only = @patterns = @set_modules =
          @method_keys = @set_names = @template = @skip_type_lookup = nil
       true
-#      Rails.logger.debug "reset_patterns[#{name}] #{inspect}"
     end
 
     def patterns()
@@ -43,8 +42,7 @@ module Wagn::Model
 
     def set_names() @set_names ||= patterns_without_new.map(&:set_name) end
     def set_names_with_new()
-      r=new_card? ? set_names_without_new[1..-1] : set_names_without_new()
-      #warn "set_names #{new_card?}: #{r*', '}"; r
+      new_card? ? set_names_without_new[1..-1] : set_names_without_new()
     end
     alias_method_chain :set_names, :new
 
@@ -60,39 +58,11 @@ module Wagn::Model
     def junction_only?()
       !@junction_only.nil? ? @junction_only :
          @junction_only = patterns.map(&:class).find(&:junction_only?)
-      #@junction_only ||= patterns.map(&:class).find(&:junction_only?)
     end
 
     def set_modules()
-      #warn "including set modules for #{name}"
-      #raise "no type #{cardname.inspect}" if cardname.typename.nil?
-      @set_modules ||= begin
-          v1=patterns_without_new.reverse
-          v2=v1.map(&:set_const)
-          
-      #warn (Rails.logger.debug "set_mods[#{name}] :#{v2.inspect}, #{v2.compact.inspect}, #{v1.inspect}"); v2.compact
-      end
-=begin
-        |pattern|
-          if mod = pattern.set_module # and
-            warn (Rails.logger.debug "set_mod[#{name}] #{pattern.inspect}, #{mod}")
-            #const = suppress(NameError) do
-
-            if mod =~ /^\w+(::\w+)+$/            and
-            const = begin
-                      mm=find_module mod
-                      #r=(Module === mm) ? mm : nil
-            warn (Rails.logger.debug "set_mod[#{cardname.inspect}]:#{mm}> #{mod} T:#{caller[0..20]*"\n"}") unless Module===mm; mm
-                    rescue Exception => e
-                      Rails.logger.info "include error is #{e.inspect}, #{e.backtrace*"\n"}" unless NameError === e
-                      nil
-              end
-            end
-            const
-        end
-      end.compact
-=end
-      #Rails.logger.debug "set_mods #{self}, #{self.object_id} [#{name}] #{m.map(&:to_s)*", "}"; m
+      @set_modules ||= patterns_without_new.reverse.map(&:set_const).compact
+      #warn (Rails.logger.debug "set_mods#{self.object_id}[#{name}] #{@set_modules.map(&:inspect)*", "}"); @set_modules
     end
 
     def label
@@ -103,31 +73,31 @@ module Wagn::Model
 
 
   class SetBase
+    include AllSets
+    @@ruby19 = !!(RUBY_VERSION =~ /^1\.9/)
+    @@setmodroot = Wagn::Set
 
-    def set_const() SetBase.find_module(set_module) end
-=begin
-    def set_const
-      m2=set_module
-      warn "set_mod #{m2}"
-      m1=SetBase.find_module(m2)
-      warn "#{inspect}.set_const: #{m1}, #{m1.inspect}"; m1
-    rescue Exception => e
-      return nil if NameError===e
-      warn "exception #{e.inspect}" #{e.backtrace*"\n"}"
-      raise e
-=end
+    def set_const() (sm=set_module) ? SetBase.find_module(sm) : nil end
 
     class << self
       def find_module(mod)
-        set, name = mod.split '::'
-        return nil  unless name and mod1= (Wagn::Set.const_defined?(set,false) ?
-           Wagn::Set.const_get(set,false) : nil)
-        if mod1.const_defined?(name,false)
-          mod1.const_get(name,false)
-        else nil end
+        set, name = *(mod.split('::'))
+        #warn "find_mod #{set}, #{name}, #{@@ruby19}"
+        return nil unless name
+        setm = find_real_module(@@setmodroot, set) or return nil
+        find_real_module(setm, name)
+      end
+
+      def find_real_module(base, part)
+        if @@ruby19
+          base.const_defined?(part, false) ? base.const_get(part, false) : nil
+        else
+          #warn "1.8#{base}, #{part}: #{base.const_defined?(part)} ? #{base.const_get(part)}"
+          base.const_defined?(part)        ? base.const_get(part)        : nil
+        end
       rescue Exception => e
         return nil if NameError===e
-        warn "exception #{e.inspect}" #{e.backtrace*"\n"}"
+        warn "exception #{e.inspect} #{e.backtrace*"\n"}"
         raise e
       end
 
@@ -136,7 +106,7 @@ module Wagn::Model
       def trunkless?()               false end
       def junction_only?()           false end
       def pattern_applies?(c)        true  end
-      def pattern_name(card)     key   end
+      def pattern_name(card)         key   end
       def new(card) super(card) if self.pattern_applies?(card) end
       def label(name)                ''    end
       def prototype_args(base)       {}    end

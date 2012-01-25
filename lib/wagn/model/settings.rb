@@ -18,10 +18,11 @@ module Wagn::Model::Settings
       set_name=set_name.to_cardname
       card = Card.fetch(set_name.star_rule( setting_name ), fetch_args)
       card ||= fallback && Card.fetch(set_name.star_rule(fallback), fetch_args)
-      #warn "rule[#{set_name}] #{card}"
+      #warn "rule[#{set_name}] #{card.inspect}" if card
       return card if card
     end
-    #Rails.logger.debug "rule_card(#{setting_name}, #{fallback}) #{r.inspect}"; r
+    #warn "rc nothing #{setting_name}, #{name}"
+    nil
   end
   def rule_card_with_cache setting_name, fallback=nil, extra_fetch_args={}
     setting_name=setting_name.to_sym

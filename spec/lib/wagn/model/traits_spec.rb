@@ -1,4 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../../packs/pack_spec_helper', )
 
 describe Card do
   before do
@@ -21,27 +22,24 @@ describe Card do
   describe "#menu_options" do
     it "verifies that menu_option work without extras" do
       c = Card.fetch('A')
-      Wagn::Renderer::Html.new(c).render_open.should be_html_with do
-        span(:class=>'card-menu') {
-          span(:class=>'card-menu-left') {
-            li { a { text('View') } }
-            li { a { text('Related') } }
-          }
-          li { a { text('Edit') } }
-        }
+      result=Wagn::Renderer::Html.new(c).render_open
+      assert_view_select(result, 'span[class="card-menu"]') do
+          assert_select('span[class="card-menu-left"]') do
+            assert_select('li',  "View" )
+            assert_select('li', "Related")
+          end
+          assert_select('li', "Edit")
       end
     end                                          
 
     it "verifies that the extension's menu_option is added after Edit" do
       c = Card.fetch('B')
-      Wagn::Renderer::Html.new(c).render_open.should be_html_with do
-        span(:class=>'card-menu') {
-          span(:class=>'card-menu-left') {
-            li { a { text('View') } }
-            li { a { text('Edit') } }
-          }
-          li { a { text('Declare') } }
-        }
+      assert_view_select Wagn::Renderer::Html.new(c), 'span[class="card-menu"]' do
+          assert_select('span[class="card-menu-left"]') do
+            assert_select('li',  'View')
+            assert_select('li', 'Edit')
+          end
+          assert_select('li', 'Declare')
       end
     end                                          
 
@@ -72,13 +70,11 @@ describe Card do
       (r=Wagn::Renderer::Html.new(c).render(:declare)).should_not match(/Missing setting/)
       r.should_not match(/Setting not a Pointer/)
       r.should_not match(/No form card/)
-      r.should be_html_with do
-        form(:action=>"card/update/B+*sol") do
-          input(:id=>"attribute", :name=>"attribute", :type=>"hidden", :value=>"declare") {}
-          input(:name=>"ctxsig", :type=>"hidden") {}
-          div(:class=>"field-in-multi") {
-              input(:id=>"main_1_1_2-hidden-content", :name=>"cards[B~plus~*sol~plus~bar][content]", :type=>"hidden") {}
-          }
+      assert_view_select r, 'form[action="card/update/B+*sol"]' do
+        assert_select('input[id="attribute"][name="attribute"][type="hidden"][value=>"declare"]')
+        assert_select('input[name="ctxsig"][type="hidden"]')
+        assert_select('div[class="field-in-multi"]') do
+            assert_select('input[id="main_1_1_2-hidden-content"][name="cards[B~plus~*sol~plus~bar][content]"][type="hidden"]')
         end
       end
     end

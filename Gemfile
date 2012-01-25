@@ -15,8 +15,10 @@ gem 'userstamp', '~> 2.0'
 
 # need at least one of the following
 
+group :mysql2 do
+  gem "mysql2", "~> 0.3.11"
+end
 group :mysql do
-#  gem "mysql2", "~> 0.3.11"
   gem 'mysql', '~>2.8.1'
 end
 

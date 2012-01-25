@@ -1,4 +1,5 @@
 class Wql
+  include ActiveRecord::QuotingAndMatching
   
   ATTRIBUTES = {
     :basic      =>  %w{ name type content id key updater_id trunk_id tag_id creator_id updater_id },

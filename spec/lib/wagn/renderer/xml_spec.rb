@@ -91,10 +91,11 @@ describe Wagn::Renderer::Xml, "" do
     it("linkname") { render_card(:linkname).should  == 'Tempo_Rary' }
     it("url"     ) { render_card(:url).should       == '/Tempo_Rary' }
 
-    it "image tags of different sizes" do
-      Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
-      c = Card.new :name => 'Image1', :content => "{{TestImage | naked; size:small }}"
-      Wagn::Renderer::Xml.new(c).render( :naked ).should == %{<img src="http://wagn.org/image53_small.jpg">}
+    it "should handle size argument in inclusion syntax" do
+      image_card = Card.create! :name => "TestImage", :type=>"Image", :content => %{TestImage.jpg\nimage/jpeg\n12345}
+      including_card = Card.new :name => 'Image1', :content => "{{TestImage | core; size:small }}"
+      rendered = Wagn::Renderer::Xml.new(including_card).render :core
+      assert_view_select rendered, 'img[src=?]', "/files/TestImage-small-#{image_card.current_revision_id}.jpg"
     end
 
     describe "css classes" do
@@ -288,9 +289,11 @@ describe Wagn::Renderer::Xml, "" do
 
     context "Image" do
       it "should handle size argument in inclusion syntax" do
-        Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
-        c = Card.new :name => 'Image1', :content => "{{TestImage | naked; size:small }}"
-        Wagn::Renderer::Xml.new(c).render( :naked ).should == %{<img src="http://wagn.org/image53_small.jpg">}
+        Card.create! :name => "TestImage", :type=>"Image",
+          :content => %{TestImage.jpg\nimage/jpeg\n12345}
+        c = Card.new :name => 'Image1',
+             :content => "{{TestImage | naked; size:small }}"
+        Wagn::Renderer::Xml.new(c).render( :naked ).should match %r{^<img alt="Testimage-small-\d+" src="/files/TestImage-small-\d+\.jpg" />$}
       end
     end
 
@@ -376,7 +379,8 @@ describe Wagn::Renderer::Xml, "" do
 
     context "*version" do
       it "should have an X.X.X version" do
-        render_card(:raw, :name=>'*version').match(/\d\.\d\.\d/ ).should_not be_nil
+        render_card(:raw, :name=>'*version').
+          match(/\d\.\d\.\w+/ ).should_not be_nil
       end
     end
 

@@ -1,5 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper')
-require File.expand_path(File.dirname(__FILE__) + '/../../../packs/pack_spec_helper', )
+require File.expand_path(File.dirname(__FILE__) + '/../../../packs/pack_spec_helper')
 
 describe Card do
   before do
@@ -24,24 +24,24 @@ describe Card do
       c = Card.fetch('A')
       result=Wagn::Renderer::Html.new(c).render_open
       assert_view_select(result, 'span[class="card-menu"]') do
-          assert_select('span[class="card-menu-left"]') do
-            assert_select('li',  "View" )
-            assert_select('li', "Related")
-          end
-          assert_select('li', "Edit")
+        assert_select('span[class="card-menu-left"]') do
+          assert_select('li',  "View" )
+          assert_select('li', "Related")
+        end
+        assert_select('li', "Edit")
       end
     end                                          
 
     it "verifies that the extension's menu_option is added after Edit" do
       c = Card.fetch('B')
       assert_view_select Wagn::Renderer::Html.new(c), 'span[class="card-menu"]' do
-          assert_select('span[class="card-menu-left"]') do
-            assert_select('li',  'View')
-            assert_select('li', 'Edit')
-          end
-          assert_select('li', 'Declare')
+        assert_select('span[class="card-menu-left"]') do
+          assert_select('li',  'View')
+          assert_select('li', 'Edit')
+        end
+        assert_select('li', 'Declare')
       end
-    end                                          
+    end
 
     it "Error for missing setting card for form" do
       c = Card.fetch('B')

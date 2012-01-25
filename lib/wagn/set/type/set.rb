@@ -6,24 +6,24 @@ module Wagn::Set::Type::Set
     cardname.tag_name=='*self' && cardname.trunk_name.junction? 
   end
 
-  def pattern_subclass
-    Wagn::Model::Pattern.pattern_subclasses.find do |sub|
+  def subclass_for_set
+    Wagn::Model::Pattern.subclasses.find do |sub|
       cardname.tag_name.to_s==sub.key
     end
   end
 
   def junction_only?()
     !@junction_only.nil? ? @junction_only :
-       @junction_only = pattern_subclass.junction_only?
+       @junction_only = subclass_for_set.junction_only?
   end
 
   def label
-    return '' unless klass = pattern_subclass
+    return '' unless klass = subclass_for_set
     klass.label cardname.left_name
   end
 
   def prototype
-    opts = pattern_subclass.prototype_args(self.cardname.trunk_name)
+    opts = subclass_for_set.prototype_args(self.cardname.trunk_name)
     Card.fetch_or_new opts[:name], opts
   end
 

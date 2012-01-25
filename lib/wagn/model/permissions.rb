@@ -219,7 +219,6 @@ module Wagn::Model::Permissions
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
       User.as :wagbot do
         Card.search(:left=>self.name).each do |plus_card|
-          warn "lft serch #{plus_card.inspect}, #{plus_card.rule}"
           if plus_card.rule(:read) == '_left'
             plus_card.update_read_rule
           end

@@ -80,10 +80,10 @@ describe User, 'Joe User' do
       @roles_card.save
     }
     @ju = User.where(:card_id=>Card['joe_user'].id).first
-    @roles_card = Card.fetch_or_new(@jucard.star_rule(:roles))
+    @roles_card = @jucard.star_rule(:roles)
     warn Rails.logger.info("fetch it again roles #{@roles_card.content}")
     @roles_card.item_names.length.should==1  
-    @ju.parties.should == [Card::AuthID, @ju.card_id, Card['r1'].id]
+    @ju.parties.should == [Card::AuthID, Card['r1'].id, @ju.card_id]
   end
   
   it "should be 'among' itself" do

@@ -10,7 +10,7 @@ describe Card, "deleted card" do
   end
   it "should come out of the trash when a plus card is created" do
     #pending
-    Card.create(:name=>'A+*account')
+    Card.create(:name=>'A+*acct')
     c = Card['A']
     c.trash.should be_false
   end

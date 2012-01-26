@@ -31,8 +31,9 @@ class Card < ActiveRecord::Base
   
   def self.new(args={}, options={})
     args = (args || {}).stringify_keys
-    @@junk_args.map { |a| args.delete(a) }
+    @@junk_args.each { |a| args.delete(a) }
     %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
+    args.delete['content'] if args['attach'] # should not be handled here!
 
     if name = args['name'] and !name.blank?
       if cc= Card.cache.read_local(name.to_cardname.key)    and
@@ -582,7 +583,7 @@ class Card < ActiveRecord::Base
 
   validates_each :content do |rec, attr, value|
     if rec.new_card? && !rec.updates.for?(:content)
-      value = rec.content = rec.content #this is not really a validation.  is the double rec.content meaningful?
+      value = rec.content = rec.content #this is not really a validation.  is the double rec.content meaningful?  tracked attributes issue?
     end
     
     if rec.updates.for? :content

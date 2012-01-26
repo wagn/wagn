@@ -42,3 +42,5 @@ Wagn::Application.configure do
 #    File.delete(File.join(Rails.root,'tmp', 'debug.txt'))
 #  end
 end
+
+Paperclip.options[:command_path] = "/opt/local/bin"

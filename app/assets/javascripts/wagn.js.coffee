@@ -117,7 +117,7 @@ $(window).load ->
         # NOTE - this entire solution is temporary.  will be replaced in 1.9
         input = $(this).find '.file-upload'
         if input[1]
-          notify "Wagn 1.8 doesn't support multiple files in a single form; will work in Wagn 1.9."
+          $(this).notify "Wagn 1.8 doesn't support multiple files in a single form; will work in Wagn 1.9."
           return false
         widget = input.data 'fileupload' #jQuery UI widget
         

@@ -63,7 +63,7 @@ describe Wql do
   end
 
 
-  describe "edited_by/edited" do
+  describe "edited_by/editor_of" do
     it "should find card edited by joe using subspec" do
       Wql.new(:edited_by=>{:match=>"Joe User"}, :sort=>"name").run.should == [Card["JoeLater"], Card["JoeNow"]]
     end     
@@ -82,7 +82,7 @@ describe Wql do
     end
   
     it "should find joe user among card's editors" do
-      Wql.new(:edited=>'JoeLater').run.map(&:name).should == ['Joe User']
+      Wql.new(:editor_of=>'JoeLater').run.map(&:name).should == ['Joe User']
     end
   end
 

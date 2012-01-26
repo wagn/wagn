@@ -260,7 +260,6 @@ class Card < ActiveRecord::Base
     return unless cards
     cards.each_pair do |sub_name, opts|
       opts[:nested_edit] = self
-      opts[:content] ||= ""
       sub_name = sub_name.gsub('~plus~','+')
       absolute_name = cardname.to_absolute_name(sub_name)
       if card = Card[absolute_name]

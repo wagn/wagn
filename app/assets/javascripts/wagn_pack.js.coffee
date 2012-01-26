@@ -27,42 +27,41 @@ wagn.initTinyMCE = (el_id) ->
   $.extend conf, { 
     mode: "exact", 
     elements: el_id, 
-    content_css: wagn.rootPath + '/assets/application-all.css,' + wagn.local_css_path
+    content_css: wagn.rootPath + '/assets/application-all.css' # + wagn.local_css_path
+    #  TEMPORARY we probably want *css back once we have fingerprinting on this file - EFM
     verify_html: false,
     entity_encoding: 'raw'
   }    
   tinyMCE.init conf
 
 wagn.chooseFile = (e, data) ->
-  ed = $(this).slot().find('.card-editor')
   file = data.files[0]
-  $(this).fileupload '_normalizeFile', 0, file
-  $(this).closest('form').data 'file-data', data
+  $(this).fileupload '_normalizeFile', 0, file # so file objects have same fields in all browsers
+  $(this).closest('form').data 'file-data', data # stores data on form for use at submission time
   
-  filename = file.name.replace( /\..*$/, '' ).replace( /_/g, ' ')
-  if name_field = ed.find( '.card-name-field' ) 
+  if name_field = $(this).slot().find( '.card-name-field' )
+    # populates card name if blank
     if name_field[0] and name_field.val() == ''
-      name_field.val filename
+      name_field.val file.name.replace( /\..*$/, '' ).replace( /_/g, ' ')
 
-  ed.find('.choose-file').hide()
-  ed.find('.chosen-filename').text file.name
-  ed.find('.chosen-file').show()
+  editor = $(this).closest '.card-editor'
+  editor.find('.choose-file').hide()
+  editor.find('.chosen-filename').text file.name
+  editor.find('.chosen-file').show()
   
-  cont = ed.find '.upload-card-content'
-  cont.data 'original', cont.val()
-  cont.val 'CHOSEN'
+  contentFieldName = this.name.replace( /attach\]$/, 'content]' )
+  editor.append '<input type="hidden" value="CHOSEN" class="upload-card-content" name="' + contentFieldName + '">'
+  # we add and remove the contentField to insure that nothing is added / updated when nothing is chosen. 
   
 
 $(window).load ->
 
   $('.cancel-upload').live 'click', ->
-    ed = $(this).slot().find('.card-editor')
-    ed.find('.chosen-file').hide()
-    ed.find('.choose-file').show()
+    editor = $(this).closest '.card-editor'
+    editor.find('.chosen-file').hide()
+    editor.find('.choose-file').show()
     $(this).closest('form').data 'file-data', null
-    
-    cont = ed.find '.upload-card-content'
-    cont.val cont.data 'original'
+    contentField = editor.find( '.upload-card-content' ).remove()
 
   #navbox pack
   $('.navbox').autocomplete {

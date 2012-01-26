@@ -335,7 +335,6 @@ class Wql
       inner_spec.merge :return=>"#{join_alias}.created_by"
       merge_extension('User', inner_spec )
     end
-    alias :edited :editor_of
     
     def member_of(val)
       inner_spec = CardSpec.build(:extension_type=>'Role', :_parent=>self).merge(val)

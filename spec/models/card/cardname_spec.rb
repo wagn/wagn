@@ -25,12 +25,7 @@ end
 =end
 describe Wagn::Cardname, "changing from plus card to simple" do
   before do
-<<<<<<< HEAD
-    User.as :joe_user
-=======
     Card.as :joe_user
-    Rails.logger.info "testing point 0 #{@c.inspect}"
->>>>>>> bd15dd9... User.* to Card.* move of class methods
     @c = Card.create! :name=>'four+five'
     @c.name = 'nine'
     @c.confirm_rename = true

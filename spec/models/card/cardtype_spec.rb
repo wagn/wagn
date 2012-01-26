@@ -174,7 +174,7 @@ end
 describe User, "Joe User" do
   before do
     User.as :wagbot 
-    @r3 = Role[:r3]
+    @r3 = Card['r3']
 
     Card.create :name=>'Cardtype F+*type+*create', :type=>'Pointer', :content=>'[[r3]]'
     
@@ -183,13 +183,14 @@ describe User, "Joe User" do
 
     User.as :joe_user
     @user = User[:joe_user]
+    @ucard = @user.card
     Wagn::Codename.reset_cache
     @typenames = Card.createable_types
     #@typenames = Card.createable_types.map{ |ct| ct[:name] }
   end
 
   it "should not have r3 permissions" do
-    @user.roles.member?(@r3).should be_false
+    @ucard.star_rule(:roles).item_names.member?(@r3.name).should be_false
   end
   it "should ponder creating a card of Cardtype F, but find that he lacks create permissions" do
     Card.new(:type=>'Cardtype F').ok?(:create).should be_false

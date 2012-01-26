@@ -3,20 +3,13 @@ require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
 describe Role, "Authenticated User" do
   before do
-    @auth = Role[:auth]
+    @auth = Card[Card::AuthID]
   end
   
-  it "should cache roles by codename" do
-    pending "uses Codename and Card caches now"
-    Role.should_not_receive(:find_by_codename)
-    Role[:auth]
-  end
-
   it "should cache roles by id" do
-    pending "uses Codename and Card caches now"
-    Role[@auth.id]
-    Role.should_not_receive(:find)
-    Role[@auth.id]
+    Card[@auth.id]
+    Card.should_not_receive(:find)
+    Card[@auth.id]
   end
 end
 
@@ -58,6 +51,7 @@ describe User, 'Joe User' do
     @ju = User.current_user
     @jucard = Card['joe_user']
     @r1 = Card['r1']
+    @roles_card=@jucard.star_rule(:roles)
   end
   
   it "should initially have no roles" do
@@ -74,12 +68,11 @@ describe User, 'Joe User' do
     User.as(:wagbot) {
       @roles_card.content=''
       @roles_card << @r1;
-      @roles_card.save
     }
     @ju = User.where(:card_id=>Card['joe_user'].id).first
-    @roles_card = Card.fetch_or_new(@jucard.star_rule(:roles))
+    @roles_card = Card[@jucard.star_rule(:roles).id]
     @roles_card.item_names.length.should==1  
-    @ju.parties.should == [Card::AuthID, @ju.card_id, Card['r1'].id]
+    @ju.parties.should == [Card::AuthID, Card['r1'].id, @ju.card_id]
   end
   
   it "should be 'among' itself" do

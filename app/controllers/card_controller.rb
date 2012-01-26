@@ -146,8 +146,8 @@ class CardController < ApplicationController
       account.roles = Role.find role_hash.keys
     end
 
-    if account && params[:extension]
-      account.update_attributes(params[:extension])
+    if account && params[:account]
+      account.update_attributes(params[:account])
     end
 
     if account && account.errors.any?
@@ -165,7 +165,7 @@ class CardController < ApplicationController
                    :message => "Welcome!  You now have an account on #{Card.setting('*title')}." } #ENGLISH
     @user, @card = User.create_with_card(params[:user],@card, email_args)
     raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
-    #@extension = User.new(:email=>@user.email)
+    #@account = User.new(:email=>@user.email)
 #    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
     params[:attribute] = :account
     render_show :options

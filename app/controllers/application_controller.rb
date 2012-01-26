@@ -129,19 +129,19 @@ class ApplicationController < ActionController::Base
   end
 
   def render_show(view = nil, status = 200)
-    extension = request.parameters[:format]
-    if FORMATS.split('|').member?( extension )
+    name_ext = request.parameters[:format]
+    if FORMATS.split('|').member?( name_ext )
       render(:status=>status, :text=> begin
         respond_to do |format|
-          format.send(extension) do
-            renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
+          format.send(name_ext) do
+            renderer = Wagn::Renderer.new(@card, :format=>name_ext, :controller=>self)
             renderer.render_show( :view=>view )
           end
         end
       end)
     elsif render_show_file
     else
-      render :text=>"unknown format: #{extension}", :status=>404
+      render :text=>"unknown format: #{name_ext}", :status=>404
     end
   end
   

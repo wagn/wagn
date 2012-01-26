@@ -43,8 +43,8 @@ describe Card, "with role" do
     @role = Card.search(:type=>'Role')[0]
   end
   
-  it "should have a role extension" do
-    @role.typecode.should=='Role'
+  it "should have a role type" do
+    @role.type_id.should== Card::RoleID
   end
 end
 

@@ -33,7 +33,7 @@ class Card < ActiveRecord::Base
     args = (args || {}).stringify_keys
     @@junk_args.each { |a| args.delete(a) }
     %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
-    args.delete['content'] if args['attach'] # should not be handled here!
+    args.delete('content') if args['attach'] # should not be handled here!
 
     if name = args['name'] and !name.blank?
       if cc= Card.cache.read_local(name.to_cardname.key)    and

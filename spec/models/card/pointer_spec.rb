@@ -55,12 +55,9 @@ describe Wagn::Set::Type::Pointer do
      
   context "watching" do
     it "not break on permissions" do
-      Rails.logger.info "testing point 0"
       watchers = Card.fetch_or_new "Home+*watchers"
-      Rails.logger.info "testing point 1 #{watchers.inspect}"
       watchers.typecode.should == 'Pointer'
       watchers << Card.user_id
-      Rails.logger.info "testing point 2 #{watchers.inspect}, #{watchers.content}"
       assert_equal '[[Joe User]]', watchers.content
     end
   end

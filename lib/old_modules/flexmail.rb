@@ -31,7 +31,6 @@ class Flexmail
       #warn "card is #{card.inspect}"
       event_card = card.rule_card('send')
       return [] unless event_card
-      #warn "ec #{event_card.inspect}"
       Card.as(Card::WagbotID) { event_card.item_names }
     end
     

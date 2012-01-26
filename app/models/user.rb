@@ -11,8 +11,6 @@ class User < ActiveRecord::Base
   belongs_to :invite_sender, :class_name=>'User', :foreign_key=>'invite_sender_id'
   has_many :invite_recipients, :class_name=>'User', :foreign_key=>'invite_sender_id'
 
-  #acts_as_card_extension
-
   validates_presence_of     :email, :if => :email_required?
   validates_format_of       :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i  , :if => :email_required?
   validates_length_of       :email, :within => 3..100,   :if => :email_required?

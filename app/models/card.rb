@@ -15,7 +15,7 @@ class Card < ActiveRecord::Base
   belongs_to :current_revision, :class_name => 'Revision', :foreign_key=>'current_revision_id'
   has_many   :revisions, :order => 'id', :foreign_key=>'card_id'
 
-  belongs_to :extension, :polymorphic=>true
+  #belongs_to :extension, :polymorphic=>true
   before_destroy :base_before_destroy
   #before_destroy :destroy_extension, :base_before_destroy
 
@@ -262,7 +262,6 @@ class Card < ActiveRecord::Base
     return unless cards
     cards.each_pair do |sub_name, opts|
       opts[:nested_edit] = self
-      opts[:content] ||= ""
       sub_name = sub_name.gsub('~plus~','+')
       absolute_name = cardname.to_absolute_name(sub_name)
       if card = Card[absolute_name]
@@ -283,7 +282,7 @@ class Card < ActiveRecord::Base
   end
 
   def set_extensions
-    self.create_extension if !extension && respond_to?(:create_extension)
+    self.create_extension if respond_to?(:create_extension)
   end
 
   def save_with_trash!

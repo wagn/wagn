@@ -294,21 +294,21 @@ class Wagn::Renderer::Html
 
   define_view(:options) do |args|
     attribute = params[:attribute]
-    attribute ||= (card.extension_type=='User' ? 'account' : 'settings')
+    attribute ||= (card.type_id==Card::UserID ? 'account' : 'settings')
     wrap(:options, args) do
       %{ #{ header } <div class="options-body"> #{ render "option_#{attribute}" } </div> #{ notice } }
     end
   end
 
   define_view(:option_account) do |args|
-    locals = {:slot=>self, :card=>card, :extension=>card.extension }
+    locals = {:slot=>self, :card=>card, :account=>User.where(card_id=>card.id).first }
     %{#{raw( options_submenu(:account) ) }#{
 
         form_for :card, :url=>path(:update_account), :remote=>true,
           :html=>{ :class=>'slotter' } do |form|
 
          %{<table class="fieldset">
-           #{if User.as_user==card.extension or User.ok?(:administrate_users)
+           #{if User.as_user==card.id or User.ok?(:administrate_users)
               raw option_header( 'Account Details' ) +
                 template.render(:partial=>'account/edit',  :locals=>locals)
            end }
@@ -354,7 +354,7 @@ class Wagn::Renderer::Html
           #{ raw( subrenderer(Card.fetch current_set).render :content ) }
         </div>
   #{
-        if !card.extension_type && Card.toggle(card.rule('accountable')) && Card['*account'].ok?(:create) && card.ok?(:update)
+        if !card.star_rule(:account) && Card.toggle(card.rule('accountable')) && Card['*account'].ok?(:create) && card.ok?(:update)
           %{<div class="new-account-link">
           #{ link_to %{Add a sign-in account for "#{card.name}"},
               path(:options, :attrib=>:new_account),

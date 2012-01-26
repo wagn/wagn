@@ -234,7 +234,6 @@ class Wql
     def last_editor_of(val)
       merge field(:id) => subspec(val, :return=>'updater_id')
     end
-    alias :edited :editor_of
 
     def member_of(val)
       merge field(:right_plus) => [Card::XrolesID, {:refer_to=>val}]

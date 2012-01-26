@@ -38,8 +38,10 @@ class Wagn::Renderer
       var wagn = {}; window.wagn = wagn;
       wagn.rootPath = '#{Wagn::Conf[:root_path]}';
       window.tinyMCEPreInit = {base:"#{Wagn::Conf[:root_path]}/assets/tinymce",query:"3.4.7",suffix:""}; #{
-      Wagn::Conf[:recaptcha_on] ? %{wagn.recaptchaKey = "#{Wagn::Conf[:recaptcha_public_key]}";} : '' }
+      Wagn::Conf[:recaptcha_on] ? %{wagn.recaptchaKey = "#{Wagn::Conf[:recaptcha_public_key]}";} : '' } ) +
+      #  TEMPORARY we probably want this back once we have fingerprinting on this file - EFM
       #{ local_css_path ? %{ wagn.local_css_path = '#{local_css_path}'; } : '' }
+      %(
       wagn.tinyMCEConfig = { #{Card.setting('*tiny mce')} };
     </script>      
           )

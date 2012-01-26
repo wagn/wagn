@@ -163,7 +163,7 @@ class Wagn::Renderer
       @paging_params ||= begin
         s = {}
         if p = root.params
-          [:offset,:limit,:vars].each{|key| s[key] = p.delete(key)}
+          [:offset,:limit,:vars].each{ |key| s[key] = p[key] }
         end
         s[:offset] = s[:offset] ? s[:offset].to_i : 0
         if s[:limit]

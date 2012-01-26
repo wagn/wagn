@@ -7,13 +7,13 @@ class AdminController < ApplicationController
     if request.post?
       #Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
       User.as :wagbot do
-        @extension, @card = User.create_with_card( params[:extension].merge({:login=>'first'}), params[:card] )
+        @account, @card = User.create_with_card( params[:account].merge({:login=>'first'}), params[:card] )
         set_default_request_recipient
       end
 
-      #warn "ext id = #{@extension.id}"
+      #warn "ext id = #{@account.id}"
 
-      if @extension.errors.empty?
+      if @account.errors.empty?
         roles_card = Card.fetch_or_new(@card.cardname.star_rule(:roles))
         roles_card.content = "[[#{Card[Card::AdminID].name}]]"
         roles_card.save
@@ -26,7 +26,7 @@ class AdminController < ApplicationController
       end
     else
       @card = Card.new( params[:card] || {} ) #should prolly skip defaults
-      @extension = User.new( params[:user] || {} )
+      @account = User.new( params[:user] || {} )
     end
   end
 
@@ -85,7 +85,7 @@ class AdminController < ApplicationController
   
   def set_default_request_recipient
     to_card = Card.fetch_or_new('*request+*to')
-    to_card.content=params[:extension][:email]
+    to_card.content=params[:account][:email]
     to_card.save
   end
 

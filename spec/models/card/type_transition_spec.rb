@@ -39,7 +39,7 @@ end
 
 describe Card, "with role" do
   before do
-    User.as :wagbot 
+    Card.as(Card::WagbotID) 
     @role = Card.search(:type=>'Role')[0]
   end
   
@@ -52,7 +52,7 @@ end
 
 describe Card, "with account" do
   before do
-    User.as :wagbot 
+    Card.as(Card::WagbotID) 
     @joe = change_card_to_type('Joe User', 'Basic')
   end
   
@@ -68,7 +68,7 @@ end
 
 describe Card, "type transition approve create" do
   before do
-    User.as :wagbot do
+    Card.as(Card::WagbotID) do
       # this card/content is in the test DB, and this causes a duplicate id error
       #Card.create :name=>'Cardtype B+*type+*create', :content=>'[[r1]]'
       (c=Card.fetch('Cardtype B+*type+*create')).content.should == '[[r1]]'
@@ -128,7 +128,7 @@ end
 
 describe Card, "type transition create callback" do
   before do 
-    User.as :wagbot do
+    Card.as(Card::WagbotID) do
       Card.create(:name=>'Basic+*type+*delete', :type=>'Pointer', :content=>"[[Anyone Signed in]]")
     end
     @c = change_card_to_type("basicname", 'CardtypeF') 
@@ -145,7 +145,7 @@ end
 
 
 def change_card_to_type(name, typecode)
-  User.as :joe_user do
+  Card.as :joe_user do
     card = Card.fetch(name)
    #warn "card[#{name}] is #{card.inspect}, #{Card.type_id_from_code(typecode)}"
     card.type_id = Card.type_id_from_code typecode

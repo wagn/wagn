@@ -16,7 +16,7 @@ describe Card do
     end
 
     it "returns nil and caches trash cards" do
-      User.as(:wagbot)
+      Card.as(Card::WagbotID)
       Card.fetch("A").destroy!
       Card.fetch("A").should be_nil
       Card.should_not_receive(:find_by_key)
@@ -29,7 +29,7 @@ describe Card do
     end
 
     it "returns virtual cards and caches them as missing" do
-      User.as(:wagbot)
+      Card.as(Card::WagbotID)
       card = Card.fetch("Joe User+*email")
       card.should be_instance_of(Card)
       card.name.should == "Joe User+*email"
@@ -54,7 +54,7 @@ describe Card do
       Card.cache.reset_local
       Card.cache.local.keys.should == []
 
-      User.as :wagbot
+      Card.as(Card::WagbotID)
 
       a = Card.fetch("A")
       a.should be_instance_of(Card)
@@ -80,7 +80,7 @@ describe Card do
 
     describe "preferences" do
       before do
-        User.as :wagbot
+        Card.as(Card::WagbotID)
       end
 
       it "prefers db cards to pattern virtual cards" do
@@ -164,10 +164,10 @@ describe Card do
   end
 
   describe "#fetch_virtual" do
-    before { User.as :joe_user }
+    before { Card.as :joe_user }
 
     it "should find cards with *right+*content specified" do
-      User.as :wagbot do
+      Card.as(Card::WagbotID) do
         Card.create! :name=>"testsearch+*right+*content", :content=>'{"plus":"_self"}', :type => 'Search'
       end
       c = Card.fetch("A+testsearch".to_cardname)

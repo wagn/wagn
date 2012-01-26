@@ -25,7 +25,7 @@ class AccountController < ApplicationController
       @user.accept(email_args)
       wagn_redirect Card.path_setting(Card.setting('*signup+*thanks'))
     else
-      User.as :wagbot do
+      Card.as(Card::WagbotID) do
         Mailer.signup_alert(@card).deliver if Card.setting('*request+*to')
       end
       wagn_redirect Card.path_setting(Card.setting('*request+*thanks'))
@@ -42,10 +42,13 @@ class AccountController < ApplicationController
   def accept
     raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
     @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
+    #warn "accept #{Card.user_id}, #{@card.inspect}"
     @user = User.where(:card_id=>@card.id).first or raise(Wagn::Oops, "This card doesn't have an account to approve")  #ENGLISH
+    #warn "accept #{@user.inspect}"
     @card.ok?(:create) or raise(Wagn::PermissionDenied, "You need permission to create accounts")  #ENGLISH
 
     if request.post?
+      #warn "accept #{@card.inspect}, #{@user.inspect}"
       @user.accept(@card, params[:email])
       if @user.errors.empty? #SUCCESS
         redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
@@ -83,7 +86,7 @@ class AccountController < ApplicationController
   end
 
   def signout
-    self.current_user = nil
+    self.session_user = nil
     flash[:notice] = "Successfully signed out" #ENGLISH
     redirect_to Card.path_setting('/')  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
   end
@@ -117,7 +120,7 @@ class AccountController < ApplicationController
   end
   
   def password_authentication(login, password)
-    if self.current_user = User.authenticate(params[:login], params[:password])
+    if self.session_user = User.authenticate(params[:login], params[:password])
       flash[:notice] = "Successfully signed in"  #ENGLISH
       #warn Rails.logger.info("to prev #{previous_location}")
       redirect_to previous_location

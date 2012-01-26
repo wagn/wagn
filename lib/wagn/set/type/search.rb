@@ -35,7 +35,7 @@ module Wagn::Set::Type::Search
   end
 
   def get_spec(params={})
-    spec = ::User.as(:wagbot) do ## why is this a wagbot thing?  can't deny search content??
+    spec = Card.as(Card::WagbotID) do ## why is this a wagbot thing?  can't deny search content??
       spec_content = raw_content
       raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
       JSON.parse( spec_content )

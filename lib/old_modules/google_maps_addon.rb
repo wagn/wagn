@@ -20,7 +20,7 @@ class Card
   after_save :update_geocode
   
   def update_geocode
-    User.as :wagbot do
+    Card.as(Card::WagbotID) do
       if conf = Card['*geocode']
         if self.junction? && conf.item_names.include?( self.cardname.tag_name )
           address = conf.item_names.map{|p| (c=Card.fetch_or_new(self.cardname.trunk_name.to_s+"+#{p}")) && c.content}.select(&:present?).join(', ')

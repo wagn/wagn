@@ -70,7 +70,7 @@ module Wagn
 
 
     def get_layout_content(args)
-      User.as(:wagbot) do
+      Card.as(Card::WagbotID) do
         case
           when (params[:layout] || args[:layout]) ;  layout_from_name
           when card                               ;  layout_from_card

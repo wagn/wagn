@@ -359,11 +359,11 @@ class Wql
       return "(" + sql.conditions.last + ")" if @mods[:return]=='condition'
 
       # Permissions    
-      unless User.always_ok? or (Wql.root_perms_only && !root?)
+      unless Card.always_ok? or (Wql.root_perms_only && !root?)
         sql.conditions <<
-         "(#{table_alias}.read_rule_id IN (#{User.read_rules*','}))"
+         "(#{table_alias}.read_rule_id IN (#{Card.read_rules*','}))"
       end
-      #warn "wql perms? #{User.always_ok?} #{User.as_user.card_id}, #{User.read_rules*','} SqCond: #{sql.conditions.inspect}"
+      #warn "wql perms? #{Card.always_ok?} #{Card.as_user_id}, #{Card.read_rules*','} SqCond: #{sql.conditions.inspect}"
            
       sql.fields.unshift fields_to_sql
       sql.order = sort_to_sql  # has side effects!

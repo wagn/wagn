@@ -2,11 +2,11 @@ class AdminController < ApplicationController
   layout 'application'
 
   def setup
-    raise(Wagn::Oops, "Already setup") unless User.no_logins? && !User[:first]
+    raise(Wagn::Oops, "Already setup") unless Card.no_logins? && !User[:first]
     Wagn::Conf[:recaptcha_on] = false
     if request.post?
       #Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
-      User.as :wagbot do
+      Card.as(Card::WagbotID) do
         @account, @card = User.create_with_card( params[:account].merge({:login=>'first'}), params[:card] )
         set_default_request_recipient
       end
@@ -18,7 +18,7 @@ class AdminController < ApplicationController
         roles_card.content = "[[#{Card[Card::AdminID].name}]]"
         roles_card.save
         self.session_user = @card
-        User.cache.delete 'no_logins'
+        Card.cache.delete 'no_logins'
         flash[:notice] = "You're good to go!"
         redirect_to Card.path_setting('/')
       else
@@ -31,7 +31,7 @@ class AdminController < ApplicationController
   end
 
   def tasks
-    raise Wagn::PermissionDenied.new('Only Administrators can view tasks') unless User.always_ok?
+    raise Wagn::PermissionDenied.new('Only Administrators can view tasks') unless Card.always_ok?
     @tasks = Wagn::Conf[:role_tasks]
     #role.cache.reset
     
@@ -42,7 +42,7 @@ class AdminController < ApplicationController
   end
 
   def save_tasks
-    raise Wagn::PermissionDenied.new('Only Administrators can change task permissions') unless User.always_ok?
+    raise Wagn::PermissionDenied.new('Only Administrators can change task permissions') unless Card.always_ok?
     role_tasks = params[:role_task] || {}
     rule_update = {}
     Card.find(:type_id => Card::RoleID ).each do |role|
@@ -72,7 +72,7 @@ class AdminController < ApplicationController
   
   def clear_cache
     response = 
-      if User.always_ok?
+      if Card.always_ok?
         Wagn::Cache.reset_global
         'Cache cleared'
       else

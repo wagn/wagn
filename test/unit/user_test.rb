@@ -63,7 +63,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
 #  def test_should_authenticate_user_with_same_email_as_wagbot
-#    u1 = User[:wagbot]
+#    u1 = User.admin
 #  end
   
   protected

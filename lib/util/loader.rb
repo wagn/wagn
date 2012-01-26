@@ -49,7 +49,7 @@ module Wagn
         @import_user = @builder.create_user( "Importer" )
         @import_user.roles << Role.find_by_codename('admin')
       end                             
-      User.current_user = @import_user
+      Card.user = @import_user
     end
         
     def process_authors

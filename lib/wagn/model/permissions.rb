@@ -21,7 +21,7 @@ module Wagn::Model::Permissions
   end
 
   def ydhpt
-    "#{::User.current_user.name}, You don't have permission to"
+    "#{Card.user_card.name}, You don't have permission to"
   end
   
   def destroy_with_permissions
@@ -88,7 +88,7 @@ module Wagn::Model::Permissions
     end
     
     rcard = begin
-      User.as :wagbot do
+      Card.as(Card::WagbotID) do
         #Rails.logger.debug "in permission_rule_card #{opcard&&opcard.name} #{operation}"
         if opcard.content == '_left' && self.junction?
           lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_modules=>true) 
@@ -114,9 +114,9 @@ module Wagn::Model::Permissions
 
   def lets_user(operation)
     return false if operation != :read    and Wagn::Conf[:read_only]
-    return true  if operation != :comment and User.always_ok?
-    #warn "lets_user(#{operation})#{User.as_user} #{who_can(operation).inspect}"
-    User.as_user.among?( who_can(operation) )
+    return true  if operation != :comment and Card.always_ok?
+    #warn "lets_user(#{operation})#{Card.as_user_id} #{who_can(operation).inspect}"
+    Card.among?( who_can(operation) )
   end
 
   def approve_task(operation, verb=nil)           
@@ -130,11 +130,11 @@ module Wagn::Model::Permissions
   end
 
   def approve_read
-    #warn "AR #{name} #{User.always_ok?}"
-    return true if User.always_ok?
+    #warn "AR #{name} #{Card.always_ok?}"
+    return true if Card.always_ok?
     @read_rule_id ||= permission_rule_card(:read).first.id.to_i
-    #warn "AR #{name} #{@read_rule_id}, #{User.read_rules.inspect}>"
-    unless User.read_rules.member?(@read_rule_id.to_i) 
+    #warn "AR #{name} #{@read_rule_id}, #{Card.read_rules.inspect}>"
+    unless Card.read_rules.member?(@read_rule_id.to_i) 
       deny_because you_cant("read this card")
     end
   end
@@ -191,7 +191,7 @@ module Wagn::Model::Permissions
     # skip if name is updated because will already be resaved
     
     if !new_card? && updates.for(:type_id)
-      User.as :wagbot do
+      Card.as(Card::WagbotID) do
         Card.search(:left=>self.name).each do |plus_card|
           plus_card = plus_card.refresh if plus_card.frozen?
           plus_card.update_read_rule
@@ -212,7 +212,7 @@ module Wagn::Model::Permissions
     
     unless ENV['MIGRATE_PERMISSIONS'] == 'true' 
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
-      User.as :wagbot do
+      Card.as(Card::WagbotID) do
         Card.search(:left=>self.name).each do |plus_card|
           if plus_card.rule(:read) == '_left'
             plus_card.update_read_rule
@@ -249,7 +249,7 @@ module Wagn::Model::Permissions
         return 'not a proper rule card' unless rule_class_index
 
         #first update all cards in set that aren't governed by narrower rule
-        User.as :wagbot do
+        Card.as(Card::WagbotID) do
           Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
             in_set[item_card.key] = true
             #Rails.logger.debug "rule_classes[#{rule_class_index}] #{rule_classes.inspect} This:#{item_card.read_rule_class.inspect} idx:#{rule_classes.index(item_card.read_rule_class)}"

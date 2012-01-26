@@ -7,7 +7,7 @@ describe Wagn::Model::Pattern do
   end    
   
   before do
-    User.as :wagbot
+    Card.as(Card::WagbotID)
   end
   
   describe :set_names do

@@ -14,7 +14,7 @@ class AccountRequestTest < ActionController::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     
-    User.as :wagbot do 
+    Card.as(Card::WagbotID) do 
       Card.create(:name=>'Account Request+*type+*captcha', :content=>'0')
     end
   end
@@ -54,7 +54,7 @@ class AccountRequestTest < ActionController::TestCase
     # FIXME: should test agains mocks here, instead of re-testing the model...
     post :remove, :id=>"~#{Card.fetch('Ron Request').id}"
     assert_equal nil, Card.fetch('Ron Request')
-    assert_equal 'blocked', ::User.find_by_email('ron@request.com').status
+    assert_equal 'blocked', User.find_by_email('ron@request.com').status
   end
  
 end

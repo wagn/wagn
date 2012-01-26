@@ -2,7 +2,7 @@ require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
 
 describe Card do
   before do
-    User.as(:wagbot)
+    Card.as(Card::WagbotID)
   end
   
   describe "setting data setup" do
@@ -65,7 +65,7 @@ describe Card do
     
     it "returns pointer-specific setting names for pointer card (*type)" do
       # was this test wrong before?  What made Fruit a pointer without this?
-      User.as :wagbot do
+      Card.as(Card::WagbotID) do
         Rails.logger.info "testing point 0"
         c1=Card.create! :name=>'Fruit+*type+*default', :type=>'Pointer'
         Rails.logger.info "testing point 1 #{c1.inspect}"

@@ -13,7 +13,7 @@ module Wagn
       xml.kml do
         xml.Document do
         
-          cardnames = User.as(:wagbot) do
+          cardnames = Card.as(Card::WagbotID) do
             # Note: we use wagbot to find all the applicable cards, but not for the geocode or description cards
             # This is a workaround so that folks can have maps so long as their geocode cards are publicly viewable.
             # needs deeper redesign

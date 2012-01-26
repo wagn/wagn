@@ -6,7 +6,7 @@ class Wagn::Set::Type::InvitationRequestTest < ActiveSupport::TestCase
     super
     setup_default_user
     # make sure all this stuff works as anonymous user
-    ::User.current_user = ::User.where(:card_id=>Card::AnonID).first
+    Card.user = Card::AnonID
   end
 
 
@@ -24,15 +24,15 @@ class Wagn::Set::Type::InvitationRequestTest < ActiveSupport::TestCase
 
 
   def test_should_block_user
-    #::User.as(:wagbot)  do
+    #Card.as(Card::WagbotID)  do
     #  auth_user_card = Card[Card::AuthID]
       # FIXME: change from task ...
       #auth_user_card.star_rule(:tasks).content = '[[deny_invitation_requests]]'
     #end
-    ::User.as :joe_user do Card.fetch('Ron Request').destroy!  end
+    Card.as :joe_user do Card.fetch('Ron Request').destroy!  end
 
     assert_equal nil, Card.fetch('Ron Request')
-    assert_equal 'blocked', ::User.find_by_email('ron@request.com').status
+    assert_equal 'blocked', User.find_by_email('ron@request.com').status
   end
 
 

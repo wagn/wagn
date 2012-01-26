@@ -4,7 +4,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "pat
 
 Given /^I log in as (.+)$/ do |user_card_name|
   # FIXME: define a faster simulate method ("I am logged in as")
-  @current_user = ucid = Card[user_card_name].id
+  @session_user = ucid = Card[user_card_name].id
   user_object = User.where(:card_id=>ucid).first
   visit "/account/signin"
   fill_in("login", :with=> user_object.email )
@@ -20,7 +20,7 @@ Given /^I log out/ do
 end
 
 Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
-  User.as(:wagbot) do
+  Card.as(Card::WagbotID) do
     card = Card.fetch_or_create cardname
     card.content = content
     card.save!
@@ -116,9 +116,9 @@ def create_card(username,cardtype,cardname,content="")
 end
 
 def logged_in_as(username)
-  sameuser = (username == "I" or @current_user && Card[@current_user].name == username)
+  sameuser = (username == "I" or @session_user && Card[@session_user].name == username)
   unless sameuser
-    @saved_user = @current_user
+    @saved_user = @session_user
     step "I log in as #{username}"
   end
   yield

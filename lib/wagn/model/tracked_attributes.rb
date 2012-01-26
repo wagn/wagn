@@ -109,9 +109,9 @@ module Wagn::Model::TrackedAttributes
     new_content ||= '' 
     new_content = WikiContent.clean_html!(new_content) if clean_html?
     clear_drafts if current_revision_id
-    #warn Rails.logger.info("set_content #{name} #{User.current_user.card_id}, #{new_content} #{caller*"\n"}")
+    #warn Rails.logger.info("set_content #{name} #{Card.user_id}, #{new_content} #{caller*"\n"}")
     self.current_revision = Revision.create(:card_id=>self.id,
-           :content=>new_content, :creator_id =>User.current_user.card_id)
+           :content=>new_content, :creator_id =>Card.user_id)
     @name_or_content_changed = true
   end
            
@@ -161,7 +161,7 @@ module Wagn::Model::TrackedAttributes
         WikiReference.update_on_destroy(dep, @old_name) 
       end
     else
-      User.as(:wagbot) do
+      Card.as(Card::WagbotID) do
         [self.name_referencers(@old_name)+(deps.map &:referencers)].flatten.uniq.each do |card|
           # FIXME  using "name_referencers" instead of plain "referencers" for self because there are cases where trunk and tag
           # have already been saved via association by this point and therefore referencers misses things

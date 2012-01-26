@@ -10,7 +10,7 @@ class Card::RenameTest < ActiveSupport::TestCase
   
   def setup
     super
-    ::User.as(:wagbot) do
+    Card.as(Card::WagbotID) do
       Card.create! :name => "chuck_wagn+chuck"   
       Card.create! :name => "Blue" 
       
@@ -180,7 +180,7 @@ class Card::RenameTest < ActiveSupport::TestCase
 
   def test_rename_should_not_fail_when_updating_inaccessible_referencer
     Card.create! :name => "Joe Card", :content => "Whattup"
-    User.as(:joe_admin) { 
+    Card.as(:joe_admin) { 
       c = Card.create! :name => "Admin Card", :content => "[[Joe Card]]" 
 #      c.permit :edit, Role[:admin]
       c.save!

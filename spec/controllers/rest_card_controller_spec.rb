@@ -12,7 +12,7 @@ describe RestCardController do
     include AuthenticatedTestHelper
     before do
       login_as :joe_user
-      @joe_id = User.current_user.id
+      @joe_id = Card.user_id
     end
 
 #http://stackoverflow.com/questions/59655/how-to-setup-a-rails-integration-test-for-xml-mehtods
@@ -108,7 +108,7 @@ describe RestCardController do
     include AuthenticatedTestHelper
 
     before do
-      User.as :joe_user
+      Card.as :joe_user
       @user = User[:joe_user]
       @request    = ActionController::TestRequest.new
       @response   = ActionController::TestResponse.new                                
@@ -192,7 +192,7 @@ describe RestCardController do
 
     it "rename without update references should work" do
       pending "need xml api for rename"
-      User.as :joe_user
+      Card.as :joe_user
       f = Card.create! :type=>"Cardtype", :name=>"Apple"
       post :update, :id => f.id, :card => {
         :confirm_rename => true,
@@ -208,7 +208,7 @@ describe RestCardController do
   #=end
     it "update cardtype with stripping" do
       pending "convert for xml api"
-      User.as :joe_user                                               
+      Card.as :joe_user                                               
       post :update, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
       #assert_equal "boo", assigns['card'].content
       assert_response :success, "changed card type"   
@@ -223,7 +223,7 @@ describe RestCardController do
     #  for now.
     # 
     #  def test_update_cardtype_no_stripping
-    #    User.as :joe_user                                               
+    #    Card.as :joe_user                                               
     #    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
     #    #assert_equal "boo", assigns['card'].content
     #    assert_equal "<br/>", assigns['card'].content

@@ -2,8 +2,9 @@ require 'open-uri'
 
 class Mailer < ActionMailer::Base
   def account_info(user, subject, message)
-    from_user = User.current_user || User[:wagbot]
-    from_name = from_user.card ? from_user.card.cardname : ''
+    from_card = Card.user_card
+    from_name = from_card.nil? ? '' : from_card.name
+    from_user = User.where(:card_id=>from_card.id).first || User.admin
     url_key = user.card.cardname.to_url_key
 
     @email    = (user.email    or raise Wagn::Oops.new("Oops didn't have user email"))

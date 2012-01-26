@@ -7,7 +7,7 @@ end
 describe "Card (Cardtype)" do
   
   before do
-    User.as :joe_user
+    Card.as :joe_user
   end
 
   it "should not allow cardtype remove when instances present" do
@@ -85,7 +85,7 @@ end
 
 describe Card, "created without permission" do
   before do
-    User.current_user = :anonymous
+    Card.user= Card::AnonID
   end
    
   # FIXME:  this one should pass.  unfortunately when I tried to fix it it started looking like the clean solution 
@@ -105,7 +105,7 @@ end
 
 describe Card, "Normal card with junctions" do
   before do
-    User.as :wagbot 
+    Card.as(Card::WagbotID) 
     @a = Card['A']
   end
   it "should confirm that it has junctions" do
@@ -127,7 +127,7 @@ end
 =begin No extension any more, is there a modified version of this we need?
 describe Card, "Recreated Card" do
   before do
-    User.as :wagbot 
+    Card.as(Card::WagbotID) 
     @ct = Card.create! :name=>'Species', :type=>'Cardtype'
     @ct.destroy!
     @ct = Card.create! :name=>'Species', :type=>'Cardtype'
@@ -142,7 +142,7 @@ end
 
 describe Card, "New Cardtype" do
   before do
-    User.as :wagbot 
+    Card.as(Card::WagbotID) 
     @ct = Card.create! :name=>'Animal', :type=>'Cardtype'
   end
   
@@ -157,7 +157,7 @@ end
 
 describe Card, "Wannabe Cardtype Card" do
   before do
-    User.as :wagbot 
+    Card.as(Card::WagbotID) 
     @card = Card.create! :name=> 'convertible'
     @card.type_id=Card::CardtypeID
     @card.save!
@@ -173,7 +173,7 @@ end
 
 describe User, "Joe User" do
   before do
-    User.as :wagbot 
+    Card.as(Card::WagbotID) 
     @r3 = Card['r3']
 
     Card.create :name=>'Cardtype F+*type+*create', :type=>'Pointer', :content=>'[[r3]]'
@@ -181,9 +181,9 @@ describe User, "Joe User" do
 #    @ctf.permit(:create, @r3)
 #    @ctf.save!
 
-    User.as :joe_user
-    @user = User[:joe_user]
-    @ucard = @user.card
+    Card.as :joe_user
+    @user = User.where(:card_id=>Card.as_user_id).first
+    @ucard = Card[@user.card_id]
     Wagn::Codename.reset_cache
     @typenames = Card.createable_types
     #@typenames = Card.createable_types.map{ |ct| ct[:name] }
@@ -209,7 +209,7 @@ end
 
 describe Card, "Cardtype with Existing Cards" do
   before do
-    User.as :wagbot 
+    Card.as(Card::WagbotID) 
     @ct = Card['Basic']
   end
   it "should have existing cards of that type" do
@@ -225,7 +225,7 @@ end
 
 describe Wagn::Set::Type::Cardtype do
   before do
-    User.as :wagbot
+    Card.as(Card::WagbotID)
   end
   
   it "should handle changing away from Cardtype" do

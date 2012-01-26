@@ -16,7 +16,7 @@ end
 =begin
 describe User, "Anonymous User" do
   before do
-    User.current_user = ::User['anon']
+    Card.user= Card::AnonID
   end
   
   it "should ok anon role" do Wagn.role_ok?(Role['anon'].id).should be_true end
@@ -25,7 +25,7 @@ end
 
 describe User, "Authenticated User" do
   before do
-    User.current_user = ::User.where(:card_id=>Card['joe_user'].id).first
+    Card.user= 'joe_user'
   end
   it "should ok anon role" do Wagn.role_ok?(Role['anon'].id).should be_true end
   it "should ok auth role" do Wagn.role_ok?(Role['auth'].id).should be_true end
@@ -34,22 +34,22 @@ end
 
 describe User, "Admin User" do
   before do
-    User.current_user = ::User[:wagbot]
+    Card.user= Card::WagbotID
   end
 #  it "should ok admin role" do Wagn.role_ok?(Role['admin'].id).should be_true end
   
   it "should have correct parties" do
-    User.current_user.parties.sort.should == [Card::WagbotID, Card::AuthID, Card::AdminID]
+    Card.user_card.parties.sort.should == [Card::WagbotID, Card::AuthID, Card::AdminID]
   end
     
 end
 
 describe User, 'Joe User' do
   before do
-    User.current_user = :joe_user
+    Card.user= :joe_user
     User.cache.delete 'joe_user'
-    @ju = User.current_user
-    @jucard = Card['joe_user']
+    @ju = Card.user
+    @jucard = Card.user_card
     @r1 = Card['r1']
     @roles_card=@jucard.star_rule(:roles)
   end
@@ -61,23 +61,23 @@ describe User, 'Joe User' do
     @roles_card.item_names.length.should==0
   end
   it "should immediately set new roles and return auth, anon, and the new one" do
-    User.as(:wagbot) { @roles_card << @r1 }
+    Card.as(Card::WagbotID) { @roles_card << @r1 }
     @roles_card.item_names.length.should==1
   end
   it "should save new roles and reload correctly" do
-    User.as(:wagbot) {
+    Card.as(Card::WagbotID) {
       @roles_card.content=''
       @roles_card << @r1;
     }
     @ju = User.where(:card_id=>Card['joe_user'].id).first
     @roles_card = Card[@jucard.star_rule(:roles).id]
     @roles_card.item_names.length.should==1  
-    @ju.parties.should == [Card::AuthID, Card['r1'].id, @ju.card_id]
+    @jucard.parties.should == [Card::AuthID, Card['r1'].id, @ju.card_id]
   end
   
   it "should be 'among' itself" do
-    @ju.among?([Card['joe_user'].id]).should == true
-    @ju.among?([Card['r1'].id,Card['joe_user'].id,Card['r2'].id]).should == true
+    @jucard.among?([Card['joe_user'].id]).should == true
+    @jucard.among?([Card['r1'].id,Card['joe_user'].id,Card['r2'].id]).should == true
   end
   
 end

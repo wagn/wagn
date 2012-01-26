@@ -3,7 +3,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 # FIXME this shouldn't be here
 describe Wagn::Set::Type::Cardtype, ".create with :codename" do
   before do
-    User.as :joe_user
+    Card.as :joe_user
   end
   it "should work" do
     Card.create!(:name=>"Foo Type", :codename=>"foo", :type=>'Cardtype').typecode.should=='Cardtype'
@@ -14,7 +14,7 @@ end
 
 describe Card, ".create_these" do
   before do
-    User.as :joe_user
+    Card.as :joe_user
   end
 
   it 'should create basic cards given name and content' do 
@@ -51,7 +51,7 @@ end
 
 describe Card, "created by Card.new " do
   before(:each) do     
-    User.as :wagbot 
+    Card.as(Card::WagbotID) 
     @c = Card.new :name=>"New Card", :content=>"Great Content"
   end
   
@@ -79,7 +79,7 @@ end
 
 describe Card, "created by Card.create with valid attributes" do
   before(:each) do
-    User.as :wagbot 
+    Card.as(Card::WagbotID) 
     @b = Card.create :name=>"New Card", :content=>"Great Content"
     @c = Card.find(@b.id)
   end
@@ -101,7 +101,7 @@ end
 
 describe Card, "created with autoname" do
   before do
-    User.as :wagbot do
+    Card.as(Card::WagbotID) do
       Card.create :name=>'Book+*type+*autoname', :content=>'b1'
     end
   end
@@ -122,7 +122,7 @@ end
 
 describe Card, "create junction" do
   before(:each) do
-    User.as :joe_user
+    Card.as :joe_user
     @c = Card.create! :name=>"Peach+Pear", :content=>"juicy"
   end
 
@@ -147,7 +147,7 @@ end
 
 describe Card, "types" do
   before do
-    User.as :wagbot  
+    Card.as(Card::WagbotID)  
     # NOTE: it looks like these tests aren't DRY- but you can't pull the cardtype creation up here because:
     #  creating cardtypes creates constants in the namespace, and those aren't removed 
     #  when the db is rolled back, so you're not starting in the original state.

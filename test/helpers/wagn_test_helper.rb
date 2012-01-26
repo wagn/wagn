@@ -10,17 +10,18 @@ module WagnTestHelper
     
     # FIXME: should login as joe_user by default-- see what havoc it creates...
     user_card = Card[Card::WagbotID]
-    @user = User.current_user= User.where(:card_id=>Card::WagbotID).first
+    Card.user= Card::WagbotID
+    @user = Card.user
     #STDERR << "user #{@user.inspect}\n"
 
     @user.update_attribute('crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c')
     user_card.star_rule(:roles) << Card::AdminID
     
     # setup admin while we're at it
-    #@admin_card = Card[User[:wagbot].card_id]
+    #@admin_card = Card[Card::WagbotID]
 
     #@admin_card.star_rule(:roles) << Card::AdminID
-    #User.current_user = User.where(:card_id=>Card['joe_user'].id).first
+    Card.user = 'joe_user'
   end
  
   def get_renderer()
@@ -28,7 +29,7 @@ module WagnTestHelper
   end
   
   def given_cards( *definitions )   
-    User.as(:wagbot) do 
+    Card.as(Card::WagbotID) do 
       Card.create_these *definitions
     end
   end
@@ -62,8 +63,9 @@ module WagnTestHelper
   def integration_login_as(user)
     User.cache.reset
     
-    raise "Don't know email & password for #{user}" unless u =
-      User[user] and login = u.email and pass = USERS[login]
+    raise "Don't know email & password for #{user}" unless uc=Card[user] and
+        u=User.where(:card_id=>uc.id).first and
+        login = u.email and pass = USERS[login]
       
     post 'account/signin', :login=>login, :password=>pass, :controller=>:account
     assert_response :redirect

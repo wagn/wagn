@@ -23,7 +23,7 @@ class AccountControllerTest < ActionController::TestCase
     @newby_email = 'newby@wagn.net'
     @newby_args =  {:user=>{ :email=>@newby_email },
                     :card=>{ :name=>'Newby Dooby' }}
-    User.as :wagbot do 
+    Card.as(Card::WagbotID) do 
       Card.create(:name=>'Account Request+*type+*captcha', :content=>'0')
     end
     signout
@@ -59,22 +59,24 @@ class AccountControllerTest < ActionController::TestCase
 
   def test_signup_with_approval
     post :signup, @newby_args
+
     assert_response :redirect
     assert_status @newby_email, 'pending'
     
-    login_as :joe_user
+    login_as :joe_admin
     post :accept, :card=>{:key=>'newby_dooby'}, :email=>{:subject=>'hello', :message=>'world'}
     assert_response :redirect
     assert_status @newby_email, 'active'
   end
 
   def test_signup_without_approval
-    #User.as :wagbot do  #make it so anyone can create accounts (ie, no approval needed)
-    #  ne1 = Role[:anyone]
-    #  ne1.tasks = 'create_accounts'
-    #  ne1.save!
-    #end
-  # need to use: Card['*account'].ok?(:create)
+    Card.as(Card::WagbotID) do  #make it so anyone can create accounts (ie, no approval needed)
+      create_accounts_rule = Card['*account+*right'].star_rule(:create)
+      create_accounts_rule << Card::AnyoneID
+      #warn "accts: #{create_accounts_rule.item_names*", "}"
+      create_accounts_rule.save!
+    end
+    #warn "ok? #{Card.create_ok?(Card::UserID)}"
     post :signup, @newby_args
     assert_response :redirect
     assert_status @newby_email, 'active'
@@ -101,7 +103,7 @@ class AccountControllerTest < ActionController::TestCase
 #   
 #  def test_forgot_password_blocked
 #    email = 'u3@user.com'
-#    User.as :wagbot do
+#    Card.as(Card::WagbotID) do
 #      u = User.find_by_email(email)
 #      u.status = 'blocked'
 #      u.save!

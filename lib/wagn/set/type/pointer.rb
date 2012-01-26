@@ -29,6 +29,11 @@ module Wagn::Set::Type::Pointer
     opt.item_type
   end
 
+  def items=(array)
+    self.content=''
+    array.each {|i| self << i }
+  end
+
   def << card
     add_item case card
                when Card; card.name

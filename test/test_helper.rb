@@ -111,7 +111,7 @@ unless defined? TEST_ROOT
 
         args[:users].each_pair do |user,status|
           user = user.to_s
-          warn "test user: #{user}, #{Card[user]}"
+          #warn "test user: #{user}, #{Card[user]}"
           user_card_id = Integer===user ? user : Card[user].id
 
           args[:cardtypes].each do |cardtype|

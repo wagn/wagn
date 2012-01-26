@@ -104,7 +104,16 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CLASS METHODS
 
-  public
+
+
+  class << self
+    def const_missing(const)
+      #code=CODE_CONST[const]
+      #warn "const_missing #{const}, #{code}"
+      #code and const_set(const, code2id(code)) or super
+      code=CODE_CONST[const] and const_set(const, code2id(code)) or super
+    end
+  end
 
   CODE_CONST = { :DefaultID=> 'Basic', :BasicID=> 'Basic',
     :CardtypeID=> 'Cardtype', :ImageID=> 'Image',
@@ -120,15 +129,121 @@ class Card < ActiveRecord::Base
     :XrolesID=> '*role', :XusersID=>'*user',
   }
 
+  public
+
+  @@as_user_id = @@rules_uid = @@user_id = @@user_card = @@user = nil
+  cattr_accessor :user_id   # the card id of the current user
+
+
   class << self
-    def code2id(code) Wagn::Codename.card_attr(code, :id) end
-    def const_missing(const)
-      code=CODE_CONST[const] and const_set(const, code2id(code)) or super
+    def user_id() @@user_id ||= AnonID end
+    def user_card()
+      @@user_card && @@user_card.id == user_id ?
+        @@user_card : @@user_card = Card[user_id]
+    end
+    def user
+      @@user && @@user.card_id == user_id ?
+        @@user : @@user = User.where(:card_id=>user_id).first
     end
 
+    def user=(user) @@as_user_id=nil; @@user_id = user2id(user)
+      #warn "user=#{user.inspect}, As:#{@@as_user_id}, C:#{@@user_id}"; @@user_id
+    end
+    def user2id(user)
+      case user
+        when NilClass; nil
+        when User; user.card_id
+        when Card; user.id
+        when Integer; user
+        else Wagn::Codename.code2id(user) || cd=Card[user.to_s] and cd.id
+        #|| User.where(:login=>user.to_s).first.card_id
+      end
+    end
+
+    def as(given_user)
+      #warn "as #{given_user.inspect}"
+      tmp_user = @@as_user_id
+      @@as_user_id = user2id(given_user)
+      #warn "as user is #{@@as_user_id} (#{tmp_user})"
+      @@user_id = @@as_user_id if @@user_id.nil?
+
+      if block_given?
+        value = yield
+        @@as_user_id = tmp_user
+        return value
+      else
+        #fail "BLOCK REQUIRED with User#as"
+      end
+    end
+
+    def among?(authzed) Card[as_user_id].among?(authzed) end
+    def as_user_id()    @@as_user_id || @@user_id        end
+    def read_rules()    load_as_rules; @@read_rules      end
+    def user_roles()    load_as_rules; @@user_roles      end
+    def load_as_rules
+      if as_user_id != @@rules_uid
+        if rules_user_card = as_user_id && Card[as_user_id]
+          @@user_roles = rules_user_card.all_roles
+          @@read_rules = rules_user_card.read_rules
+          @@rules_uid = rules_user_card.id
+        else
+          @@user_roles = @@read_rules = @@rules_uid = nil
+        end
+      end
+    end
+
+    def logged_in?() user_id != Card::AnonID end
+
+    def no_logins?()
+      c = self.cache
+      !c.read('no_logins').nil? ? c.read('no_logins') : c.write('no_logins', (User.count < 3))
+    end
+
+    def always_ok?
+      #warn "aok? #{as_user_id&&Card[as_user_id].id}"
+      return false unless usr_id = as_user_id
+      return true if usr_id == Card::WagbotID #cannot disable
+      #warn "aok? #{usr_id}, #{@@user_id}"
+
+      always = Card.cache.read('ALWAYS') || {}
+      #warn(Rails.logger.warn "always_ok? #{usr_id}")
+      if always[usr_id].nil?
+        always = always.dup if always.frozen?
+        always[usr_id] = !!Card[usr_id].all_roles.detect{|r|r==Card::AdminID}
+        #warn(Rails.logger.warn "update always hash #{always[usr_id]}, #{always.inspect}")
+        Card.cache.write 'ALWAYS', always
+      end
+      always[usr_id]
+    end
+    # PERMISSIONS
+
+  protected
+    # FIXME stick this in session? cache it somehow??
+    def ok_hash
+      usr_id = Card.as_user_id
+      ok_hash = Card.cache.read('OK') || {}
+      #warn(Rails.logger.warn "ok_hash #{usr_id}")
+      if ok_hash[usr_id].nil?
+        ok_hash = ok_hash.dup if ok_hash.frozen?
+        ok_hash[usr_id] = begin
+            Card[usr_id].all_roles.inject({:role_ids => {}}) do |ok,role_id|
+              ok[:role_ids][role_id] = true
+              Role[role_id].task_list.each { |t| ok[t] = 1 }
+              ok
+            end
+          end || false
+        #warn(Rails.logger.warn "update ok_hash(#{usr_id}) #{ok_hash.inspect}")
+        Card.cache.write 'OK', ok_hash
+      end
+      r=ok_hash[usr_id]
+      #warn "ok_h #{r}, #{usr_id}, #{ok_hash.inspect}";
+    end
+
+  public
+
+    def code2id(code) Wagn::Codename.card_attr(code, :id) end
     def find_configurables
-      @roles = Card.where(
-        "type_id = '#{RoleID}' and id <> '#{AdminID}'" )
+      @roles = Card.search(:type => RoleID).reject{|r| r.id != AdminID}
     end
 
     def include_type_module(typecode)
@@ -192,6 +307,34 @@ class Card < ActiveRecord::Base
     def typecode_from_id(id)    Wagn::Codename.code_attr(id, :codename) end
   end
 
+#~~~~~~~ Instance
+
+  def among? authzed
+    prties = parties
+    #warn(Rails.logger.info "among called.  user = #{self.login}, parties = #{prties.inspect}, authzed = #{authzed.inspect}")
+    authzed.each { |auth| return true if prties.member? auth }
+    authzed.member? AnyoneID
+  end
+
+  def parties
+    @parties ||=  (all_roles << self.id).flatten.reject(&:blank?)
+  end
+
+  def read_rules
+    return [] if id==WagbotID  # avoids infinite loop
+    party_keys = ['in', AnyoneID] + parties
+    Card.as WagbotID do
+      Card.search(:right=>'*read', :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
+    end
+  end
+
+  def all_roles
+    ids=(cr=star_rule(:roles)).item_cards.map(&:id)
+    #warn "all_roles #{inspect}: #{cr.inspect}, #{ids.inspect}"
+    @all_roles ||= (id==AnonID ? [] : [AuthID] + ids)
+      #[AuthID] + star_rule(:roles).item_cards.map(&:id))
+  end
+
   def star_rule(rule)
     rule_card = Card.fetch_or_new cardname.star_rule(rule)
   end
@@ -224,16 +367,16 @@ class Card < ActiveRecord::Base
     if type = (args.delete(:type) || args.delete('type'))
       args[:type_id] = Card.type_id_from_name(type)
     end
-    #warn "update_attributes #{args.inspect}, #{::User.current_user}"
+    #warn "update_attributes #{args.inspect}, #{::Card.user_id}"
     super args
   end
 
   def set_stamper()
-    #warn "set stamper[#{name}] #{User.current_user}, #{User.as_user}" #{caller*"\n"}"
-    #Card.stamper = #User.current_user.card_id
-    self.updater_id = User.current_user.card_id
+    #warn "set stamper[#{name}] #{Card.user_id}, #{Card.as_user_id}" #{caller*"\n"}"
+    #Card.stamper = #Card.user_id
+    self.updater_id = Card.user_id
     self.creator_id = self.updater_id if new_card?
-    #warn "set stamper[#{name}] #{self.creator_id}, #{self.updater_id}, #{User.current_user}, #{User.as_user}" #{caller*"\n"}"
+    #warn "set stamper[#{name}] #{self.creator_id}, #{self.updater_id}, #{Card.user_id}, #{Card.as_user_id}" #{caller*"\n"}"
   end
   def reset_stamper() end #Card.reset_stamper end
 
@@ -450,7 +593,7 @@ class Card < ActiveRecord::Base
 =end
 
   def repair_key
-    ::User.as :wagbot do
+    ::Card.as WagbotID do
       correct_key = cardname.to_key
       current_key = key
       return self if current_key==correct_key
@@ -500,7 +643,7 @@ class Card < ActiveRecord::Base
        @cached_revision.id==current_revision_id )
     else
       rev = current_revision_id ? Revision.find(current_revision_id) :
-                    Revision.new(:creator_id => User.current_user.card_id)
+                    Revision.new(:creator_id => Card.user_id)
       @cached_revision = Revision.cache ?
         Revision.cache.write("#{cardname.css_name}-content", rev) : rev
     end
@@ -535,7 +678,7 @@ class Card < ActiveRecord::Base
 
   def save_draft( content )
     clear_drafts
-    revisions.create(:content=>content, :creator_id=>User.current_user.card_id)
+    revisions.create(:content=>content, :creator_id=>Card.user_id)
   end
 
   protected
@@ -623,7 +766,6 @@ class Card < ActiveRecord::Base
   end
 
 
-
   protected
 
   validate do |rec|
@@ -641,7 +783,7 @@ class Card < ActiveRecord::Base
   validates_each :name do |rec, attr, value|
     if rec.new_card? && value.blank?
       if autoname_card = rec.rule_card('autoname')
-        User.as(:wagbot) do
+        Card.as WagbotID do
           autoname_card = autoname_card.refresh if autoname_card.frozen?
           value = rec.name = Card.autoname(autoname_card.content)
           autoname_card.content = value  #fixme, should give placeholder on new, do next and save on create
@@ -752,7 +894,7 @@ class Card < ActiveRecord::Base
 
   class << self
     def setting(name)
-      User.as :wagbot  do
+      Card.as WagbotID  do
         card=Card[name] and !card.content.strip.empty? and card.content
       end
     end

@@ -96,11 +96,11 @@ class CardController < ApplicationController
   def comment
     raise(Wagn::NotFound,"Action comment should be post with card[:comment]") unless request.post? and params[:card]
     comment = params[:card][:comment];
-    if User.current_user.card_id == Card::AnonID
+    if Card.user_id == Card::AnonID
       session[:comment_author] = author = params[:card][:comment_author]
       author = "#{author} (Not signed in)"
     else
-      username=User.current_user.card.name
+      username=Card[Card.user_id].name
       author = "[[#{username}]]"
     end
     comment = comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
@@ -141,9 +141,8 @@ class CardController < ApplicationController
     account = User.where(:card_id=>@card.id).first 
     
     if params[:save_roles]
-      User.ok! :assign_user_roles
       role_hash = params[:user_roles] || {}
-      account.roles = Role.find role_hash.keys
+      Card[account.card_id].star_rule(:roles).items= role_hash.keys
     end
 
     if account && params[:account]
@@ -178,7 +177,7 @@ class CardController < ApplicationController
   def watch
     watchers = @card.star_rule(:watchers )
     watchers = watchers.refresh if watchers.frozen?
-    myname = Card[User.current_user.card_id].name
+    myname = Card[Card.user_id].name
     watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
     ajax? ? render_show(:watch) : view
   end
@@ -200,7 +199,7 @@ class CardController < ApplicationController
   
   
   def index_preload
-    User.no_logins? ? 
+    Card.no_logins? ? 
       redirect_to( Card.path_setting '/admin/setup' ) : 
       params[:id] = (Card.setting('*home') || 'Home').to_cardname.to_url_key
   end

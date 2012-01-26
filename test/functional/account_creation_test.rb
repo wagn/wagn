@@ -49,7 +49,7 @@ class AccountCreationTest < ActionController::TestCase
   end
 
   def test_should_create_account_from_invitation_request_when_user_hard_templated
-    User.as(:wagbot) { Card.create :name=>'User+*type+*content', :content=>"like this" }
+    Card.as(Card::WagbotID) { Card.create :name=>'User+*type+*content', :content=>"like this" }
     assert_equal 'InvitationRequest', (c=Card.fetch('Ron Request')).typecode
     post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
     c=Card.fetch('Ron Request')
@@ -79,13 +79,13 @@ class AccountCreationTest < ActionController::TestCase
     end
     email = ActionMailer::Base.deliveries[-1]
     # emails should be 'from' inviting user
-    assert_equal User.current_user.email, email.from[0]
+    assert_equal Card.user.email, email.from[0]
     assert_equal 'active', User.find_by_email('new@user.com').status
     assert_equal 'active', User.find_by_email('new@user.com').status
   end
 
   def test_should_create_account_when_user_cards_are_templated   ##FIXME -- I don't think this actually catches the bug I saw.
-    User.as(:wagbot) { Card.create! :name=> 'User+*type+*content'}
+    Card.as(Card::WagbotID) { Card.create! :name=> 'User+*type+*content'}
     assert_new_account do
       post_invite
       warn "posted invite 91"

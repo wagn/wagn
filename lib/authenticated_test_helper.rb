@@ -1,11 +1,12 @@
 module AuthenticatedTestHelper
   # Sets the current user in the session from the user fixtures.
   def login_as(user)
-    User.current_user = @request.session[:user] = User[user].card_id
+    Card.user = @request.session[:user] = uc=Card[user.to_s] and uc.id
+    #warn "login_as #{user.inspect}, #{Card.user_id}"
   end
                  
   def signout
-    User.current_user = @request.session[:user] = nil
+    Card.user = @request.session[:user] = nil
   end
   
   

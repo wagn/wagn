@@ -10,7 +10,7 @@ class XmlrestControllerTest < ActionController::TestCase
   include AuthenticatedTestHelper
 
   def setup
-    User.as :joe_user
+    Card.as :joe_user
     @user = User[:joe_user]
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
@@ -57,7 +57,7 @@ class XmlrestControllerTest < ActionController::TestCase
 #  for now.
 #
 #  def test_update_cardtype_no_stripping
-#    User.as :joe_user
+#    Card.as :joe_user
 #    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
 #    #assert_equal "boo", assigns['card'].content
 #    assert_equal "<br/>", assigns['card'].content
@@ -66,7 +66,7 @@ class XmlrestControllerTest < ActionController::TestCase
 #  end
 #
 #  def test_update_cardtype_with_stripping
-#    User.as :joe_user
+#    Card.as :joe_user
 #    post :edit, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
 #    #assert_equal "boo", assigns['card'].content
 #    assert_response :success, "changed card type"
@@ -196,7 +196,7 @@ class XmlrestControllerTest < ActionController::TestCase
 
   def test_should_redirect_to_thanks_on_create_without_read_permission
     # 1st setup anonymously create-able cardtype
-    User.as(:joe_admin)
+    Card.as(:joe_admin)
     
     #remove me after regenerating test data
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
@@ -221,7 +221,7 @@ class XmlrestControllerTest < ActionController::TestCase
 
   def test_should_redirect_to_card_on_create_main_card
     # 1st setup anonymously create-able cardtype
-    User.as(:joe_admin)
+    Card.as(:joe_admin)
     
     #remove me after regenerating test data 
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
@@ -251,7 +251,7 @@ class XmlrestControllerTest < ActionController::TestCase
 =end
 
   def test_new_should_not_for_creatable_nonviewable_cardtype
-    User.as(:joe_admin)
+    Card.as(:joe_admin)
     
     #remove me after regenerating test data
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
@@ -271,7 +271,7 @@ class XmlrestControllerTest < ActionController::TestCase
   end
 
   def test_rename_without_update_references_should_work
-    User.as :joe_user
+    Card.as :joe_user
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
     put :put, :id => f.id, :card => {
       :confirm_rename => true,
@@ -286,7 +286,7 @@ class XmlrestControllerTest < ActionController::TestCase
 
 #=end
   def test_unrecognized_card_renders_missing_unless_can_create_basic
-    #User.as :anonymous
+    #Card.as Card::AnonID
     login_as(:anonymous)
     get :get, :id=>'crazy unknown name'
     assert_template 'missing'

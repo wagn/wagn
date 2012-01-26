@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../../../packs/pack_spec_helper'
 
 describe Wagn::Renderer::Xml, "" do
   before do
-    User.current_user = :joe_user
+    Card.user= :joe_user
     Wagn::Renderer::Xml.current_slot = nil
   end
     
@@ -11,7 +11,7 @@ describe Wagn::Renderer::Xml, "" do
 
   context "special syntax handling should render" do
     before do
-      User.as :wagbot do
+      Card.as(Card::WagbotID) do
       end
     end
 
@@ -70,11 +70,11 @@ describe Wagn::Renderer::Xml, "" do
 
     it "renders deny for unpermitted cards" do
       pending "with html"
-      User.as( :wagbot ) do
+      Card.as(Card::WagbotID) do
         Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
         Card.create(:name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]')
       end
-      User.as :joe_user do
+      Card.as :joe_user do
         Wagn::Renderer::Xml.new(Card.fetch('Joe no see me')).render(:naked).should be_html_with { no_card(:status=>"deny view") }
       end
     end      
@@ -248,7 +248,7 @@ describe Wagn::Renderer::Xml, "" do
     it "skips *content if narrower *default is present" do  #this seems more like a settings test
       pending
       content_card = default_card = nil
-      User.as :wagbot do
+      Card.as(Card::WagbotID) do
         content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"Content Foo" )
         default_card = Card.create!(:name=>"templated+*right+*default", :content=>"Default Bar" )
       end
@@ -299,7 +299,7 @@ describe Wagn::Renderer::Xml, "" do
 
     context "HTML" do
       before do
-        User.current_user = :wagbot
+        Card.user= Card::WagbotID
       end
 
       it "should have special editor" do
@@ -409,7 +409,7 @@ describe Wagn::Renderer::Xml, "" do
     context "*account link" do
       it "should have a 'my card' link" do
         pending
-        User.as :joe_user do
+        Card.as :joe_user do
           render_card(:raw, :name=>'*account links').should be_html_with { span( :id=>'logging' ) {
               a( :id=>'my-card-link') { 'My Card: Joe User' }
             }
@@ -433,7 +433,7 @@ describe Wagn::Renderer::Xml, "" do
 
   context "replace refs" do
     before do
-      User.current_user = :wagbot
+      Card.user= Card::WagbotID
     end
   
     it "replace references should work on inclusions inside links" do       

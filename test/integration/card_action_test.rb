@@ -31,7 +31,7 @@ class CardActionTest < ActionController::IntegrationTest
   # connection/remove ??
 
   def test_comment      
-    User.as(:wagbot)  do
+    Card.as(Card::WagbotID)  do
       Card.create :name=>'A+*self+*comment', :type=>'Pointer', :content=>'[[Anyone]]'
     end
     post "card/comment/A", :card => { :comment=>"how come" }
@@ -47,14 +47,14 @@ class CardActionTest < ActionController::IntegrationTest
   end
 
   def test_create_cardtype_card
-    User.as(:wagbot) {
+    Card.as(Card::WagbotID) {
       post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"} )}
     assert_response 302
     assert Card.find_by_name('Editor2').typecode == 'Cardtype'
   end
 
   def test_create                   
-    User.as(:wagbot) {
+    Card.as(Card::WagbotID) {
      post 'card/create', :card=>{
       :type=>'Basic', 
       :name=>"Editor",
@@ -75,7 +75,7 @@ class CardActionTest < ActionController::IntegrationTest
 
   def test_newcard_works_with_fuzzy_renamed_cardtype
     given_cards "Cardtype:ZFoo" => ""
-    User.as(:joe_user) do
+    Card.as(:joe_user) do
       Card["ZFoo"].update_attributes! :name=>"ZFooRenamed", :update_referencers=>true
     end
     
@@ -92,7 +92,7 @@ class CardActionTest < ActionController::IntegrationTest
   # FIXME: this should probably be files in the spot for a remove test
   def test_removal_and_return_to_previous_undeleted_card_after_deletion
     t1 = t2 = nil
-    User.as(:wagbot) do 
+    Card.as(Card::WagbotID) do 
       t1 = Card.create! :name => "Testable1", :content => "hello"
       t2 = Card.create! :name => "Testable1+bandana", :content => "world"
     end
@@ -117,7 +117,7 @@ class CardActionTest < ActionController::IntegrationTest
     end
     email = ActionMailer::Base.deliveries[-1]
     # emails should be 'from' inviting user
-    #assert_equal User.current_user.email, email.from[0]  
+    #assert_equal Card.user.email, email.from[0]  
     #assert_equal 'active', User.find_by_email('new@user.com').status
     #assert_equal 'active', User.find_by_email('new@user.com').status
   end

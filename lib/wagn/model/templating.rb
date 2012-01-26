@@ -34,7 +34,7 @@ module Wagn::Model::Templating
 
   def hard_templatees
     if wql=hard_templatee_wql
-      User.as(:wagbot)  {  Wql.new(wql).run  }
+      Card.as(Card::WagbotID)  {  Wql.new(wql).run  }
     else
       []
     end
@@ -43,7 +43,7 @@ module Wagn::Model::Templating
   # FIXME: content settings -- do we really need the reference expiration system?
   def expire_templatee_references
     if wql=hard_templatee_wql
-      condition = User.as(:wagbot) { Wql::CardSpec.build(wql.merge(:return=>"condition")).to_sql }
+      condition = Card.as(Card::WagbotID) { Wql::CardSpec.build(wql.merge(:return=>"condition")).to_sql }
       card_ids_to_update = connection.select_rows("select id from cards t where #{condition}").map(&:first)
       card_ids_to_update.each_slice(100) do |id_batch|
         connection.execute "update cards set references_expired=1 where id in (#{id_batch.join(',')})"

@@ -2,7 +2,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 =begin
 describe Card, "Case Variant" do
   before do
-    User.as :joe_user
+    Card.as :joe_user
     @c = Card.create! :name=>'chump'
   end             
   
@@ -25,7 +25,7 @@ end
 =end
 describe Wagn::Cardname, "changing from plus card to simple" do
   before do
-    User.as :joe_user
+    Card.as :joe_user
     Rails.logger.info "testing point 0 #{@c.inspect}"
     @c = Card.create! :name=>'four+five'
     Rails.logger.info "testing point 1 #{@c.inspect}"

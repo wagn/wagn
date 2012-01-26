@@ -5,7 +5,7 @@ describe "WikiReference" do
   
   before do
     #setup_default_user  
-    User.as :wagbot
+    Card.as(Card::WagbotID)
   end
   
   describe "references on hard templated cards should get updated" do

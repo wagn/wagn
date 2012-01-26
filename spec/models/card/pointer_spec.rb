@@ -2,7 +2,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Set::Type::Pointer do
   before do
-    User.current_user = :joe_user
+    Card.user= :joe_user
   end
   
   context "item_names" do
@@ -59,7 +59,7 @@ describe Wagn::Set::Type::Pointer do
       watchers = Card.fetch_or_new "Home+*watchers"
       Rails.logger.info "testing point 1 #{watchers.inspect}"
       watchers.typecode.should == 'Pointer'
-      watchers.add_item User.current_user.card.name
+      watchers << Card.user_id
       Rails.logger.info "testing point 2 #{watchers.inspect}, #{watchers.content}"
       assert_equal '[[Joe User]]', watchers.content
     end

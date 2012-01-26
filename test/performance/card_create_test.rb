@@ -6,7 +6,7 @@ class CardCreateTest < ActionController::PerformanceTest
   def initialize(*args)
     @name = 'CardA'
     super(*args)
-    User.as(:wagbot)
+    Card.as(Card::WagbotID)
   end
 
   def test_card_create_simple

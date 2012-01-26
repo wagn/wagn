@@ -27,17 +27,17 @@ module CardBuilderMethods
     raise( "invalid username" ) if username.nil? or username.empty?
     if u = User.where(:card_id=>Card[username].id).first
       return u      
-    elsif c = Card::User.find_by_name(username)
+    elsif c = Card[username]
       return User.where(:card_id=>c.id).first
     else
-      if c = Card.find_by_name(username)
-        if c.type_id==Card::DefaultID #'Basic'
+      if c = Card[username]
+        if c.type_id==Card::DefaultID
           c.type_id = Card::UserID
         else
           raise "Can't create user card for #{username}: already points to different user"
         end
       else 
-        c = Card::User.create!( :name=>username )
+        c = Card.create!( :name=>username, :type_id=>Card::UserID )
       end
       c.save
 
@@ -56,13 +56,14 @@ module CardBuilderMethods
   end      
     
   def admin
-    User[:wagbot]
+    User.admin
   end
   
   def as(admin)
-    tmpuser, User.current_user = User.current_user, admin
+    tmpuser = Card.user_id
+    Card.user= admin
     yield
-    User.current_user = tmpuser
+    Card.user= tmpuser
   end
 end
 

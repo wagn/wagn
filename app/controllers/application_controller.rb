@@ -45,13 +45,13 @@ class ApplicationController < ActionController::Base
     
       Wagn::Cache.re_initialize_for_new_request
     
-      #warn "set curent_user (app-cont) #{self.current_user}, U.cu:#{User.current_user}"
-      User.current_user = current_user || User[:anonymous]
-      #warn "set curent_user a #{current_user}, U.cu:#{User.current_user}"
+      #warn "set curent_user (app-cont) #{self.session_user}, U.cu:#{Card.user_id}"
+      Card.user = session_user || Card::AnonID
+      #warn "set curent_user a #{session_user}, U.cu:#{Card.user_id}"
     
       # RECAPTCHA HACKS
       Wagn::Conf[:controller] = self # this should not be conf, but more like wagn.env
-      Wagn::Conf[:recaptcha_on] = !User.logged_in? &&     # this too 
+      Wagn::Conf[:recaptcha_on] = !Card.logged_in? &&     # this too 
         !!( Wagn::Conf[:recaptcha_public_key] && Wagn::Conf[:recaptcha_private_key] )
       @recaptcha_count = 0
     

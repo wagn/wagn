@@ -62,7 +62,7 @@ describe Card do
       # We disabled these for the most part, what replaces them?
       #[:before_save, :before_create, :after_save, :after_create].each do |hookname|
       Wagn::Hook.should_receive(:call).with(:after_create, instance_of(Card))
-      User.as :wagbot do
+      Card.as(Card::WagbotID) do
         Card.create :name => "testit"
       end
     end
@@ -105,7 +105,7 @@ describe Card do
                             
   describe "creation" do
     before(:each) do           
-      User.as :wagbot 
+      Card.as(Card::WagbotID) 
       @b = Card.create! :name=>"New Card", :content=>"Great Content"
       @c = Card.find(@b.id)
     end
@@ -128,7 +128,7 @@ describe Card do
 
   describe "attribute tracking for new card" do
     before(:each) do
-      User.as :wagbot 
+      Card.as(Card::WagbotID) 
       @c = Card.new :name=>"New Card", :content=>"Great Content"
     end
   
@@ -154,7 +154,7 @@ describe Card do
 
   describe "content change should create new revision" do
     before do
-      User.as :wagbot 
+      Card.as(Card::WagbotID) 
       @c = Card.find_by_name('basicname')
       @c.update_attributes! :content=>'foo'
     end
@@ -171,7 +171,7 @@ describe Card do
 
   describe "content change should create new revision" do
     before do
-      User.as :wagbot 
+      Card.as(Card::WagbotID) 
       @c = Card.find_by_name('basicname')
       @c.content = "foo"
       @c.save!

@@ -4328,7 +4328,7 @@ revisions_501:
   created_at: 2011-04-27 10:28:06
   card_id: "466"
   created_by: "1"
-  content: "{\"match\":\"_keyword\", \"sort\":\"relevance\"}"
+  content: "{\"match\":\"$keyword\", \"sort\":\"relevance\"}"
 revisions_502: 
   id: "5642"
   created_at: 2011-04-27 10:28:06

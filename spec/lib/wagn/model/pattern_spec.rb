@@ -97,7 +97,7 @@ describe Wagn::Model::Pattern do
   end
 end
 
-describe Wagn::Model::RightNamePattern do
+describe Wagn::Model::RightPattern do
   it_generates :name => "author+*right", :from => Card.new( :name => "Iliad+author" )
   it_generates :name => "author+*right", :from => Card.new( :name => "+author" )
   

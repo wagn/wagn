@@ -4,7 +4,7 @@ class SearchKeywordVariable < ActiveRecord::Migration
       c = Card.fetch_or_new '*search'
       c = c.refresh if c.frozen?
       c.typecode = 'Search'
-      c.content.sub '"_keyword"', '"$keyword"'
+      c.content = c.content.sub '"_keyword"', '"$keyword"'
       c.save!
     end
   end
@@ -14,7 +14,7 @@ class SearchKeywordVariable < ActiveRecord::Migration
       c = Card.fetch_or_new '*search'
       c = c.refresh if c.frozen?
       c.typecode = 'Search'
-      c.content.sub '"$keyword"', '"_keyword"'
+      c.content = c.content.sub '"$keyword"', '"_keyword"'
       c.save!
     end
   end

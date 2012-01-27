@@ -18,7 +18,7 @@ module Wagn::Model::Settings
 
   def related_sets
     sets = ["#{name}+*self"]
-    sets<< "#{name}+*type" if type_id==Wagn::Codename.cardname_type_id
+    sets<< "#{name}+*type" if type_id==Card::CardtypeID
     if cardname.simple?
       sets<< "#{name}+*right"
       Card.search(:type=>'Set',:left=>{:right=>name},:right=>'*type plus right',:return=>'name').each do |set_name|

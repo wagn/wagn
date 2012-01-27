@@ -128,7 +128,6 @@ module Wagn
       @card = card
       opts.each { |key, value| instance_variable_set "@#{key}", value }
   
-      @is_qcard = true
       @format ||= :html
       @char_count = @depth = 0
       @root = self
@@ -248,8 +247,7 @@ module Wagn
       # Don't bother processing inclusion if we're already out of view
       return '' if @mode == :closed && @char_count > @@max_char_count
   
-      return expand_main(opts) if opts[:tname]=='_main' && !ajax_call? && @depth==0 
-      @is_qcard = false
+      return expand_main(opts) if opts[:tname]=='_main' && !ajax_call? && @depth==0
       
       opts[:view] = canonicalize_view opts[:view]
       opts[:view] ||= ( @mode == :layout ? :core : :content )
@@ -269,7 +267,6 @@ module Wagn
     end
   
     def expand_main(opts)
-      @is_qcard = true
       return wrap_main( @root.main_content ) if @root.main_content
       [:item, :view, :size].each do |key|
         if val=params[key] and !val.to_s.empty?
@@ -361,16 +358,12 @@ module Wagn
       base + query
     end
 
-    def qcard?
-      @is_qcard || false
-    end
-
     def search_params
       @search_params ||= begin
         p = self.respond_to?(:paging_params) ? paging_params : {}
         p[:vars] = {}
       
-        if qcard?
+        if self == @root
           params.each do |key,val|
             p[:vars][$1.to_sym] = val if key =~ /^\_(\w+)$/
           end

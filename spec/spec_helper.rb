@@ -4,6 +4,8 @@ ENV["RAILS_ENV"] ||= 'test'
 Spork.prefork do
   require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
   require File.expand_path(File.dirname(__FILE__) + "/../lib/authenticated_test_helper.rb")
+  #require File.expand_path(File.dirname(__FILE__) + "/custom_matchers.rb")
+  #require File.expand_path(File.dirname(__FILE__) + "/controller_macros.rb")
   require 'rspec/rails' 
 
 
@@ -16,6 +18,8 @@ Spork.prefork do
     config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => { 
       :file_path => /\bspec\/controllers\// }
     
+    #config.include CustomMatchers
+    #config.include ControllerMacros, :type=>:controllers
     config.include AuthenticatedTestHelper, :type=>:controllers
     #config.include(EmailSpec::Helpers)
     #config.include(EmailSpec::Matchers)

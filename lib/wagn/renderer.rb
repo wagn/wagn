@@ -82,7 +82,7 @@ module Wagn
             if final_method = view_method(view)
               with_inclusion_mode(view) { send(final_method, *a) }
             else
-              "<strong>#{card.name} - unknown card view: '#{view}' M:#{render_meth.inspect}</strong>"
+              "<strong>#{card.name} - unknown card view: '#{view}'</strong>"
             end
           end
 
@@ -226,11 +226,6 @@ module Wagn
         return meth if respond_to?(meth.to_sym)
       end
       nil
-    end
-  
-    def render_view_action(action, locals={})
-      template.render(:partial=>"views/#{action}", :locals=>{ :card=>card,
-                      :slot=>self }.merge(locals))
     end
   
     def with_inclusion_mode(mode)

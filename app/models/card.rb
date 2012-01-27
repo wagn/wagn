@@ -242,7 +242,7 @@ class Card < ActiveRecord::Base
 
     def code2id(code) Wagn::Codename.card_attr(code, :id) end
     def find_configurables
-      @roles = Card.search(:type => RoleID).reject{|r| r.id != AdminID}
+      @roles = Card.search(:type => Card::RoleID).reject{|r| r.id != Card::AdminID}
     end
 
     def include_type_module(typecode)
@@ -312,7 +312,7 @@ class Card < ActiveRecord::Base
     prties = parties
     #warn(Rails.logger.info "among called.  user = #{self.login}, parties = #{prties.inspect}, authzed = #{authzed.inspect}")
     authzed.each { |auth| return true if prties.member? auth }
-    authzed.member? AnyoneID
+    authzed.member? Card::AnyoneID
   end
 
   def parties
@@ -320,9 +320,9 @@ class Card < ActiveRecord::Base
   end
 
   def read_rules
-    return [] if id==WagbotID  # avoids infinite loop
-    party_keys = ['in', AnyoneID] + parties
-    Card.as WagbotID do
+    return [] if id==Card::WagbotID  # avoids infinite loop
+    party_keys = ['in', Card::AnyoneID] + parties
+    Card.as Card::WagbotID do
       Card.search(:right=>'*read', :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
     end
   end
@@ -330,8 +330,8 @@ class Card < ActiveRecord::Base
   def all_roles
     ids=(cr=star_rule(:roles)).item_cards.map(&:id)
     #warn "all_roles #{inspect}: #{cr.inspect}, #{ids.inspect}"
-    @all_roles ||= (id==AnonID ? [] : [AuthID] + ids)
-      #[AuthID] + star_rule(:roles).item_cards.map(&:id))
+    @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
+      #[Card::AuthID] + star_rule(:roles).item_cards.map(&:id))
   end
 
   def star_rule(rule)
@@ -348,7 +348,7 @@ class Card < ActiveRecord::Base
         @broken_type=tp||tc||"Basic"
         #warn "get_type_id bt[#{@broken_type}], #{ti}"
       end
-      return ti || DefaultID
+      return ti || Card::DefaultID
     end
 
     if name && t=template
@@ -356,7 +356,7 @@ class Card < ActiveRecord::Base
       ti = t.type_id
     end
     raise "NoType" if tc == '$NoType' || ti==0
-    ti|| DefaultID
+    ti || Card::DefaultID
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -392,7 +392,7 @@ class Card < ActiveRecord::Base
     @from_trash = false
     Wagn::Hook.call :after_create, self if @was_new_card
     send_notifications
-    Wagn::Codename.reset_cache if type_id==CardtypeID
+    Wagn::Codename.reset_cache if type_id == Card::CardtypeID
     true
   rescue Exception=>e
     @subcards.each{ |card| card.expire_pieces }
@@ -591,7 +591,7 @@ class Card < ActiveRecord::Base
 =end
 
   def repair_key
-    ::Card.as WagbotID do
+    ::Card.as  Card::WagbotID do
       correct_key = cardname.to_key
       current_key = key
       return self if current_key==correct_key
@@ -666,7 +666,7 @@ class Card < ActiveRecord::Base
   
   def updater
     #warn "updater #{updater_id}, #{updater_id}"
-    c=Card[updater_id||AnonID]
+    c=Card[updater_id|| Card::AnonID]
     #warn "c upd #{updater_id}, #{c}, #{self}"; c
   end
 
@@ -752,10 +752,10 @@ class Card < ActiveRecord::Base
 
   def validate_destroy
     # FIXME: need to make all codenamed card indestructable
-    if self.id == WagbotID or self.id == AnonID
+    if self.id ==  Card::WagbotID or self.id ==  Card::AnonID
       errors.add :destroy, "#{name}'s is a system card.<br>  Deleting this card would mess up our revision records."
       return false
-    elsif type_id==UserID and Revision.find_by_creator_id( self.id )
+    elsif type_id== Card::UserID and Revision.find_by_creator_id( self.id )
       errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
       return false
     end
@@ -781,7 +781,7 @@ class Card < ActiveRecord::Base
   validates_each :name do |rec, attr, value|
     if rec.new_card? && value.blank?
       if autoname_card = rec.rule_card('autoname')
-        Card.as WagbotID do
+        Card.as  Card::WagbotID do
           autoname_card = autoname_card.refresh if autoname_card.frozen?
           value = rec.name = Card.autoname(autoname_card.content)
           autoname_card.content = value  #fixme, should give placeholder on new, do next and save on create
@@ -893,7 +893,7 @@ class Card < ActiveRecord::Base
 
   class << self
     def setting(name)
-      Card.as WagbotID  do
+      Card.as Card::WagbotID  do
         card=Card[name] and !card.content.strip.empty? and card.content
       end
     end

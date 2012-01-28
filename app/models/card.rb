@@ -41,7 +41,7 @@ class Card < ActiveRecord::Base
     args = (args || {}).stringify_keys
     @@junk_args.each { |a| args.delete(a) }
     %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
-    args.delete['content'] if args['attach'] # should not be handled here!
+    args.delete('content') if args['attach'] # should not be handled here!
 
     if name = args['name'] and !name.blank?
       if Card.cache                                        and
@@ -557,9 +557,7 @@ class Card < ActiveRecord::Base
   def key()         cardname.key           end
   def css_name()    cardname.css_name      end
 
-  def left()
-    Card[cardname.left_name]
-  end
+  def left()      Card[cardname.left_name]  end
   def right()     Card[cardname.tag_name]   end
   def pieces()    simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq end
   def particles() cardname.particle_names.map{|name| Card.fetch name}          end
@@ -571,9 +569,6 @@ class Card < ActiveRecord::Base
     args[:order] = 'id' unless args.has_key?(:order)
     # aparently find f***s up your args. if you don't clone them, the next find is busted.
     left_junctions.find(:all, args.clone) + right_junctions.find(:all, args.clone)
-    #l=left_junctions.find(:all, args.clone); r= right_junctions.find(:all, args.clone)
-    #Rails.logger.debug "junctions[#{name}] l=#{l.class}, r=#{l.class}; #{(l+r).class}"; l + r
-    #Rails.logger.debug "junctions[#{name}] l=#{l.map(&:name).inspect}, r=#{l.map(&:name).inspect}; #{(l+r).size}"; l + r
   end
 
   def dependents(*args)

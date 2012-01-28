@@ -1,7 +1,7 @@
 class Wagn::Renderer::Html
 
   define_view(:closed_rule) do |args|
-    rule_card, set_prototype = find_current_rule_card
+    rule_card = card.new_card? ? find_current_rule_card[0] : card
 
     cells = [
       ["rule-setting",
@@ -178,14 +178,12 @@ class Wagn::Renderer::Html
   private
 
   def find_current_rule_card
-    setting_name = card.cardname.tag_name
-    set_card = Card.fetch( card.cardname.trunk_name )
-    #warn "setting name = #{setting_name}, card = #{card.inspect}, set_card = #{set_card.inspect}"
-    set_prototype = set_card.prototype
-    #warn "got prototype"
-
-    rule_card = set_prototype.rule_card setting_name
-    [rule_card, set_prototype]
+    # self.card is a POTENTIAL rule; it quacks like a rule but may or may not exist.
+    # This generates a prototypical member of the POTENTIAL rule's set
+    # and returns that member's ACTUAL rule for the POTENTIAL rule's setting
+    set_prototype = Card.fetch( card.cardname.trunk_name ).prototype
+    rule_card = card.new_card? ? set_prototype.rule_card( card.cardname.tag_name ) : card
+    [ rule_card, set_prototype ]
   end
 
 end

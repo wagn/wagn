@@ -52,7 +52,7 @@ class Wagn::Renderer
     @item_view ||= (card.spec[:view]) || :closed
 
     instruction, title = nil,nil
-    if card.name=='*search' && keyword=search_params[:keyword]
+    if card.name=='*search' && search_params[:vars] && keyword=search_params[:vars][:keyword]
       instruction = %{Cards matching keyword: <strong class="keyword">#{keyword}</strong>} #ENGLISH
       title = 'Search Results' #ENGLISH
     end

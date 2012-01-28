@@ -157,10 +157,11 @@ class User < ActiveRecord::Base
     crypted_password == encrypt(password) and active?
   end
 
+  PW_CHARS = ['A'..'Z','a'..'z','0'..'9'].map(&:to_a).flatten
+
   def generate_password
-    pw=''; 9.times { pw << ['A'..'Z','a'..'z','0'..'9'].map{|r| r.to_a}.flatten[rand*61] }
-    self.password = pw
-    self.password_confirmation = self.password
+    self.password_confirmation = self.password =
+      9.times.inject('') { |pw| pw << PW_CHARS[rand*61] }
   end
 
   def to_s

@@ -7,7 +7,7 @@ module Wagn::Model
     def self.register_class(klass) @@subclasses.unshift klass end
     def self.method_key(opts)
       @@subclasses.each do |pclass|
-        if !pclass.opt_keys.map{|key| opts.has_key?(key)}.member? false; 
+        if !pclass.opt_keys.map(&opts.method(:has_key?)).member? false; 
           return pclass.method_key_from_opts(opts) 
         end
       end
@@ -45,7 +45,7 @@ module Wagn::Model
     alias_method_chain :patterns, :new
 
     def real_set_names()
-      rsn=set_names.find_all { |set_name| Card.exists? set_name }
+      rsn=set_names.find_all &Card.method(:exists?)
       #warn "real sets #{rsn*', '}"; rsn
     end
 

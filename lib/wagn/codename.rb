@@ -42,8 +42,8 @@ module Wagn
 
     private
 
-      def card2code()   get_cache('card2code') end
-      def code2card()   get_cache('code2card') end
+      def card2code() get_cache('card2code') end
+      def code2card() get_cache('code2card') end
 
       def get_cache(key)
         if self.cache
@@ -77,6 +77,7 @@ module Wagn
             code2card[h[:codename]] = card2code[h[:id]] = card2code[h[:key]] = h
           end
 
+        #warn "setting caches: #{code2card.inspect}\n#{card2code.inspect}\n"
         set_cache 'code2card', code2card
         set_cache 'card2code', card2code
       rescue Exceptions => e

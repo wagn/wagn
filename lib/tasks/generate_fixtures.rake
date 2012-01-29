@@ -120,7 +120,7 @@ namespace :test do
     # additional test data auto-loaded from Test classes    
     # when I load these I don't want them to run as is the default; this is somewhat brutal..
               
-    load 'test/fixtures/shared_data.rb'
+    load 'test/seed.rb'
     SharedData.add_test_data
 
     ## FIXME: this was an attempt to automate loading data from the test files.

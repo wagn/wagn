@@ -107,10 +107,9 @@ class Card < ActiveRecord::Base
 
   class << self
     def const_missing(const)
-      #code=CODE_CONST[const]
-      #warn "const_missing #{const}, #{code}"
-      #code and const_set(const, code2id(code)) or super
-      code=CODE_CONST[const] and const_set(const, code2id(code)) or super
+      code=CODE_CONST[const]
+      #warn "const_missing #{const}, #{code}, #{constants.member? const}"
+      code and newval=const_set(const, code2id(code)) or newval.nil? && super
     end
   end
 
@@ -240,7 +239,10 @@ class Card < ActiveRecord::Base
 
   public
 
-    def code2id(code) Wagn::Codename.card_attr(code, :id) end
+    def code2id(code)
+      r=Wagn::Codename.card_attr(code, :id)
+      raise "no code? #{code.inspect}" unless r; r
+    end
     def find_configurables
       @roles = Card.search(:type => Card::RoleID).reject{|r| r.id != Card::AdminID}
     end

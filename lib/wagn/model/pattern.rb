@@ -46,7 +46,7 @@ module Wagn::Model
       def register key, opt_keys, opts={} #(key, opt_keys)
         Wagn::Model::Pattern.register_class self
         cattr_accessor :key, :opt_keys, :trunkless, :junction_only, :method_key
-        self.key = Wagn::Codename[key] || key
+        self.key = Wagn::Codename[key] || key # failsafe for loading/migration
         self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]
         opts.each { |key, val| self.send "#{key}=", val }
       end
@@ -125,7 +125,8 @@ module Wagn::Model
     class << self
       def label(name) "Any #{name.left_name} card plus #{name.tag_name}"     end
       def prototype_args(base)
-        { :name=>"*dummy+#{base.tag_name}", :loaded_trunk=> Card.new( :name=>'*dummy', :type=>base.trunk_name ) }
+        { :name=>"*dummy+#{base.tag_name}", :loaded_trunk=>
+          Card.new( :name=>'*dummy', :type=>base.trunk_name ) }
       end
       def method_key_from_opts(opts)
         %{#{opts[:ltype].to_cardname.css_name}_#{

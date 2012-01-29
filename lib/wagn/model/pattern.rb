@@ -47,10 +47,9 @@ module Wagn::Model
 
     class << self
       def register key, opt_keys, opts={} #(key, opt_keys)
-        raise "type" unless String===key
         Wagn::Model::Pattern.register_class self
         cattr_accessor :key, :opt_keys, :trunkless, :junction_only, :method_key
-        self.key = key
+        self.key = Wagn::Codename[key] || key
         self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]
         opts.each { |key, val| self.send "#{key}=", val }
       end
@@ -79,19 +78,19 @@ module Wagn::Model
 
 
   class AllPattern < SetBase
-    register Wagn::Codename['*all'], [], :method_key=>''
+    register '*all', [], :method_key=>''
     def self.label(name)           'All Cards'    end
     def self.prototype_args(base)  {}             end
   end
   
   class AllPlusPattern < SetBase
-    register Wagn::Codename['*all_plu'], :all_plus, :method_key=>'all_plus', :junction_only=>true
+    register '*all_plu', :all_plus, :method_key=>'all_plus', :junction_only=>true
     def self.label(name)                  'All Plus Cards'        end
     def self.prototype_args(base)         {:name=>'+'}            end
   end
 
   class TypePattern < SetBase
-    register Wagn::Codename['*type'], :type
+    register '*type', :type
     def self.label(name)                "All #{name} cards"                  end
     def self.prototype_args(base)       {:type=>base}                        end
     def self.method_key_from_opts(opts)
@@ -101,21 +100,21 @@ module Wagn::Model
   end
 
   class StarPattern < SetBase
-    register Wagn::Codename['*star'], :star, :method_key=>'star'
+    register '*star', :star, :method_key=>'star'
     def self.label(name)               'Star Cards'            end
     def self.prototype_args(base)      {:name=>'*dummy'}       end
     def pattern_applies?()             card.cardname.star?     end
   end
 
   class RstarPattern < SetBase
-    register Wagn::Codename['*rstar'], :rstar, :method_key=>'rstar', :junction_only=>true
+    register '*rstar', :rstar, :method_key=>'rstar', :junction_only=>true
     def self.label(name)           "Cards ending in +(Star Card)"            end
     def self.prototype_args(base)  {:name=>'*dummy+*dummy'}                  end
     def pattern_applies?()    n=card.cardname and n.junction? && n.tag_star? end
   end
 
   class RightPattern < SetBase
-    register Wagn::Codename['*right'], :right, :junction_only=>true
+    register '*right', :right, :junction_only=>true
     def self.label(name)                "Cards ending in +#{name}"           end
     def self.prototype_args(base)       {:name=>"*dummy+#{base}"}            end
     def self.method_key_from_opts(opts)
@@ -125,7 +124,7 @@ module Wagn::Model
   end
 
   class LeftTypeRightNamePattern < SetBase
-    register Wagn::Codename['*type_plu_right'], [:ltype, :right], :junction_only=>true
+    register '*type_plu_right', [:ltype, :right], :junction_only=>true
     class << self
       def label(name) "Any #{name.left_name} card plus #{name.tag_name}"     end
       def prototype_args(base)
@@ -144,7 +143,7 @@ module Wagn::Model
   end
 
   class SelfPattern < SetBase
-    register Wagn::Codename['*self'], :name
+    register '*self', :name
     def self.label(name)                %{The card "#{name}"}                end
     def self.prototype_args(base)       { :name=>base }                      end
     def self.method_key_from_opts(opts)

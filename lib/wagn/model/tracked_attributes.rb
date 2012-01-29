@@ -114,6 +114,7 @@ module Wagn::Model::TrackedAttributes
     #warn Rails.logger.info("set_content #{name} #{Card.user_id}, #{new_content} #{caller*"\n"}")
     self.current_revision = Revision.create(:card_id=>self.id,
            :content=>new_content, :creator_id =>Card.user_id)
+    reset_patterns_if_rule
     @name_or_content_changed = true
   end
            

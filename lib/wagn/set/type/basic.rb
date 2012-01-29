@@ -7,6 +7,7 @@ module Wagn::Set::Type::Basic
 
   def table_of_contents(content)
     min = self.rule('table of contents').to_i
+    #warn "table_of #{name}, #{min}"
     return unless min and min > 0
     
     toc, dep = [], 1

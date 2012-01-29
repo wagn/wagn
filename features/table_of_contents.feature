@@ -5,12 +5,12 @@ Feature: Table of Contents
   
   Background:
     Given I log in as Joe Admin
-    And I create Basic card "One Header" with content "<h1>I'm a header</h1>"
+    And I create Basic card "Two Header" with content "<h1>I'm a header</h1><h1>me too</h1>"
     And I create Basic card "Three Headers" with content "<h1>I'm a header</h1><h2>Me too</h2><h1>same here</h1>"
     
  Scenario: always on setting
    When I create Phrase card "Basic+*type+*table of contents" with content "1"
-   When I go to card "One Header"
+   When I go to card "Two Header"
    Then I should see "Table of Contents"
    
  Scenario: minimum setting

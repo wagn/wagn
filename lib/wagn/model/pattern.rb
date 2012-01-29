@@ -19,10 +19,14 @@ module Wagn::Model
       rule? && left.reset_patterns()
       Rails.logger.debug "before_save_rule: #{name}, #{rule?}"
     end
-    def reset_patterns_if_rule() rule? && reset_patterns()
-      Rails.logger.debug "after_save_rule: #{name}, #{rule?}"
-    end
 =end
+
+    def reset_patterns_if_rule()
+      !simple? and tag.type_id == Card::SettingID and
+          (set=trunk).type_id == Card::SetID and set.reset_patterns
+          #set.simple? ? set.reset_patterns : set.trunk.reset_patterns()
+      #warn (Rails.logger.debug "after_save_rule: #{name}, #{set.inspect}")
+    end
 
     def reset_patterns()
 #      Rails.logger.debug "reset_patterns[#{name}]"

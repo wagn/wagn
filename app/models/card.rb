@@ -119,7 +119,7 @@ class Card < ActiveRecord::Base
     :CardtypeID=> 'Cardtype', :ImageID=> 'Image',
     :InvitationRequestID=>'InvitationRequest', :NumberID=> 'Number',
     :PhraseID=> 'Phrase', :PointerID=> 'Pointer', :RoleID=> 'Role',
-    :UserID=> 'User',
+    :SetID=> 'Set', :SettingID=> 'Setting', :UserID=> 'User',
     :WagbotID=> 'wagbot', :AnonID=> 'anonymous',
     :AnyoneID=> 'anyone', :AuthID => 'anyone_signed_in',
     :AdminID=>'administrator',

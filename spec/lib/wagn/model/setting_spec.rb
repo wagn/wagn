@@ -42,7 +42,9 @@ describe Card do
 
     # class methods
     describe ".default_rule" do
-      Card.default_rule(:table_of_content).should == '0'
+      it 'should have default rule' do
+        Card.default_rule(:table_of_content).should == '0'
+      end
     end
 
     describe ".default_rule_card" do
@@ -141,7 +143,9 @@ describe Card do
 
     # class methods
     describe ".default_rule" do
-      Card.default_rule(:table_of_content).should == '0'
+      it 'should have default rule' do
+        Card.default_rule(:table_of_content).should == '0'
+      end
     end
 
     describe ".default_rule_card" do

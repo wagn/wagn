@@ -161,7 +161,7 @@ class User < ActiveRecord::Base
 
   def generate_password
     self.password_confirmation = self.password =
-      9.times.inject('') { |pw| pw << PW_CHARS[rand*61] }
+      9.times.map { PW_CHARS[rand*61] }*''
   end
 
   def to_s

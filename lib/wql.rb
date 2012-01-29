@@ -3,10 +3,11 @@ class Wql
   
   ATTRIBUTES = {
     :basic      =>  %w{ name type content id key updater_id trunk_id tag_id creator_id updater_id },
-    :custom     =>  %w{ edited_by editor_of edited last_editor_of last_edited_by creator_of created_by } +
-                    %w{ member_of member role found_by part left right plus left_plus right_plus } + 
-                    %w{ or match complete not and sort },
-    :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
+    :custom     =>  %w{ edited_by editor_of edited last_editor_of extension_type
+       last_edited_by creator_of created_by member_of member role found_by sort
+       part left right plus left_plus right_plus or match complete not and },
+    :referential => %w{ link_to linked_to_by refer_to referred_to_by include
+       included_by },
     :ignore      => %w{ prepend append view params vars }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
 
@@ -226,11 +227,12 @@ class Wql
       subcondition( { :left_plus=>val, :right_plus=>val.clone }, :conj=>:or )
     end
 
-    def created_by(val)  merge field(:creator_id) => subspec(val)     end
-    def last_edited_by(val)  merge field(:updater_id) => subspec(val) end
+    def extension_type(val) add_join(:usr, :users, :id, :card_id)            end
+    def created_by(val)     merge field(:creator_id) => subspec(val)         end
+    def last_edited_by(val) merge field(:updater_id) => subspec(val)         end
     def creator_of(val) merge field(:id)=>subspec(val,:return=>'creator_id') end
-    def editor_of(val)  revision_spec(:creator_id, :card_id, val) end
-    def edited_by(val)  revision_spec(:card_id, :creator_id, val) end
+    def editor_of(val)      revision_spec(:creator_id, :card_id, val)        end
+    def edited_by(val)      revision_spec(:card_id, :creator_id, val)        end
     def last_editor_of(val)
       merge field(:id) => subspec(val, :return=>'updater_id')
     end

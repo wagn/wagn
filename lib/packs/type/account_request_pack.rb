@@ -12,7 +12,7 @@ class Wagn::Renderer
     process_content(_render_raw) + 
     if (card.new_card?); '' else 
       %{<div class="invite-links help instruction">
-          <div><strong>#{card.name}</strong> requested an account#{card.created_at&&" on #{format_date(card.created_at) }"}</div>
+          <div><strong>#{card.name}</strong> requested an account on #{format_date(card.created_at) }</div>
           #{%{<div>#{links.join('')}</div> } unless links.empty? }
       </div>}
     end

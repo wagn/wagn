@@ -60,14 +60,8 @@ module Notification
       namep, rc = (kind == :type) ?  [lambda { self.typename },
                (Card[self.type_id||Card::DefaultID].star_rule(:watchers))] :
             [lambda { self.cardname }, star_rule(:watchers)]
-      #warn "ww pairs rc:#{rc.inspect}, C:#{rc.content}, iids:#{rc.item_names*", "}, U:#{cuid}, R:#{rc.nil? ? 'nil' : rc.name}, k:#{kind}, p:#{pairs}"
       watchers = rc.nil? ? [] : rc.item_cards.map(&:id) #.find_all{|i|i!=cuid}
-      #warn "looking for me #{c.id.inspect}, #{cuid.inspect}"
-      #warn "ww pairs A:#{Card.as_user_id}, W:#{watchers.inspect}, U:#{cuid}, R:#{rc.nil? ? 'nil' : rc.name}, k:#{kind}, p:#{pairs}"
       pairs ? watchers.map {|w| [w, namep.call] } : watchers
-      #  watchers should be required to have read perm
-      # or does this run as the one doing the action? either way why wagbot?
-      #Card.as(Card::WagbotID) { ... }
     end
   end
 

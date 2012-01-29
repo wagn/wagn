@@ -14,7 +14,7 @@ describe "User" do
     it "3 more should apply to Joe Admin" do
       Card.as(:joe_admin) do
         ids = Card.read_rules
-        #warn "rules = #{ids.map{|id| Card.find(id).name}.join ', '}"
+        #warn "rules = #{ids.map(&Card.method(:find)).map(&:name) * ', '}"
         ids.length.should == @read_rules.size+3
       end
     end

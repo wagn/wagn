@@ -9,20 +9,20 @@ class AdminController < ApplicationController
       Card.as(Card::WagbotID) do
         @account, @card = User.create_with_card( params[:account].merge({:login=>'first'}), params[:card] )
         set_default_request_recipient
-      end
 
-      #warn "ext id = #{@account.id}"
+        #warn "ext id = #{@account.id}"
 
-      if @account.errors.empty?
-        roles_card = Card.fetch_or_new(@card.cardname.star_rule(:roles))
-        roles_card.content = "[[#{Card[Card::AdminID].name}]]"
-        roles_card.save
-        self.session_user = @card
-        Card.cache.delete 'no_logins'
-        flash[:notice] = "You're good to go!"
-        redirect_to Card.path_setting('/')
-      else
-        flash[:notice] = "Durn, setup went awry..."
+        if @account.errors.empty?
+          roles_card = Card.fetch_or_new(@card.cardname.star_rule(:roles))
+          roles_card.content = "[[#{Card[Card::AdminID].name}]]"
+          roles_card.save
+          self.session_user = @card
+          Card.cache.delete 'no_logins'
+          flash[:notice] = "You're good to go!"
+          redirect_to Card.path_setting('/')
+        else
+          flash[:notice] = "Durn, setup went awry..."
+        end
       end
     else
       @card = Card.new( params[:card] || {} ) #should prolly skip defaults

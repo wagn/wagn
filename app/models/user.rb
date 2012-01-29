@@ -96,6 +96,7 @@ class User < ActiveRecord::Base
     User.transaction do
       card = card.refresh if card.frozen?
       r1=card.save
+      warn "save with_card #{card.id}, #{card.inspect}"
       self.card_id = card.id
       r2=save
       #warn "save_with_card(#{card.name}) #{r1.inspect}, #{r2.inspect}, #{card.errors.empty?}, #{self.errors.empty?}"

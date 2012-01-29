@@ -300,7 +300,7 @@ class Wagn::Renderer::Html
   end
 
   define_view(:option_account) do |args|
-    locals = {:slot=>self, :card=>card, :account=>User.where(card_id=>card.id).first }
+    locals = {:slot=>self, :card=>card, :account=>User.where(:card_id=>card.id).first }
     %{#{raw( options_submenu(:account) ) }#{
 
         form_for :card, :url=>path(:update_account), :remote=>true,

@@ -9,7 +9,7 @@ module Wagn::Model
 
       def method_key(opts)
         @@pattern_subclasses.each do |pclass|
-          if !pclass.opt_keys.map{|key| opts.has_key?(key)}.member? false; 
+          if !pclass.opt_keys.map(&opts.method(:has_key?)).member? false; 
             return pclass.method_key_from_opts(opts) 
           end
         end
@@ -29,11 +29,8 @@ module Wagn::Model
     def set_names()      @set_names ||= patterns.map(&:set_name)     end
     def method_keys()    @method_keys ||= patterns.map(&:method_key) end
     def css_names()      patterns.map(&:css_name).reverse*" "        end
-    def real_set_names()
-      rsn=(sn=set_names).find_all { |set_name| Card.exists? set_name }
-      #warn "rsn = #{rsn.inspect}, sn = #{sn.inspect}"; rsn
-    end
-    def set_names()      @set_names ||= patterns.map(&:set_name)             end
+    def real_set_names() set_names.find_all &Card.method(:exists?)   end
+    def set_names()      @set_names ||= patterns.map(&:set_name)     end
     def real_set_names()
       set_names.find_all { |set_name| Card.exists? set_name }
     end

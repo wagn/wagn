@@ -559,9 +559,9 @@ class Card < ActiveRecord::Base
 
   def left()      Card[cardname.left_name]  end
   def right()     Card[cardname.tag_name]   end
-  def pieces()    simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq end
-  def particles() cardname.particle_names.map{|name| Card.fetch name}          end
-  def key()       cardname.key                                                 end
+  def pieces()  simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq end
+  def particles() cardname.particle_names.map(&Card.method(:fetch))          end
+  def key()       cardname.key                                               end
 
   def junctions(args={})
     return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.

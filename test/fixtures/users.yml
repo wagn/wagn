@@ -1,157 +1,157 @@
 ---
 users_001:
-  id: 1
+  id: '1'
   login: wagbot
   email: noreply@wagn.org
   crypted_password: 
   salt: 
-  created_at: !ruby/object:Mysql::Time {}
-  updated_at: !ruby/object:Mysql::Time {}
+  created_at: '2012-01-29 15:24:38'
+  updated_at: '2012-01-29 00:00:00'
   password_reset_code: 
   status: system
-  invite_sender_id: 1
+  invite_sender_id: '1'
   identity_url: 
-  card_id: 1
+  card_id: '1'
 users_002:
-  id: 2
+  id: '2'
   login: anon
   email: noreply@wagn.org
   crypted_password: 
   salt: 
-  created_at: !ruby/object:Mysql::Time {}
-  updated_at: !ruby/object:Mysql::Time {}
+  created_at: '2012-01-29 15:24:38'
+  updated_at: '2012-01-29 00:00:00'
   password_reset_code: 
   status: system
-  invite_sender_id: 1
+  invite_sender_id: '1'
   identity_url: 
-  card_id: 15
+  card_id: '15'
 users_003:
-  id: 3
+  id: '3'
   login: joe_user
   email: joe@user.com
-  crypted_password: caa7b95a46a72ebc71dc70d0da35a9fca2cce798
-  salt: e84d00a25bf0084177f88df57adfd7339ca86c7c
-  created_at: !ruby/object:Mysql::Time {}
-  updated_at: !ruby/object:Mysql::Time {}
+  crypted_password: e3dd704311d5ae68529ca67487d011ab82d5e01f
+  salt: 8039d409cb008a26b48f90e6f09e5ff96505b9bd
+  created_at: '2012-01-29 21:24:49.653652'
+  updated_at: '2012-01-29 21:24:49.653652'
   password_reset_code: 
   status: active
-  invite_sender_id: 1
+  invite_sender_id: '1'
   identity_url: 
-  card_id: 584
+  card_id: '584'
 users_004:
-  id: 4
+  id: '4'
   login: joe_admin
   email: joe@admin.com
-  crypted_password: 8bb5d3de817f61ef0dad96477289de21f3beb8eb
-  salt: 56c99cf0f01f5c8da869b0c9095a7eca0585b07f
-  created_at: !ruby/object:Mysql::Time {}
-  updated_at: !ruby/object:Mysql::Time {}
+  crypted_password: 595e73ff4b8e382bd0f971cbde1fb0fc006fc06d
+  salt: f830ef641128faa0f97cbce4896e8cf29905acba
+  created_at: '2012-01-29 21:24:49.926882'
+  updated_at: '2012-01-29 21:24:49.926882'
   password_reset_code: 
   status: active
-  invite_sender_id: 1
+  invite_sender_id: '1'
   identity_url: 
-  card_id: 585
+  card_id: '585'
 users_005:
-  id: 5
+  id: '5'
   login: joe_camel
   email: joe@camel.com
-  crypted_password: 37747f009ade670ad71078795e64e6b56f742d0a
-  salt: 526c44e0d6d4541182b529d21ff3e71db5e51cde
-  created_at: !ruby/object:Mysql::Time {}
-  updated_at: !ruby/object:Mysql::Time {}
+  crypted_password: 291b6ed01d43d0a9bb772b9a8a752d4bdffae77e
+  salt: a0162034d04e404d1190a27713cc113e05412f42
+  created_at: '2012-01-29 21:24:50.336223'
+  updated_at: '2012-01-29 21:24:50.336223'
   password_reset_code: 
   status: active
-  invite_sender_id: 1
+  invite_sender_id: '1'
   identity_url: 
-  card_id: 587
+  card_id: '587'
 users_006:
-  id: 6
+  id: '6'
   login: 
   email: ron@request.com
-  crypted_password: e58fc844494f940d327588c8e52fe94d40a8fd62
-  salt: cc6549f1165e2af8d23582f4d79c646e79480d3d
-  created_at: !ruby/object:Mysql::Time {}
-  updated_at: !ruby/object:Mysql::Time {}
+  crypted_password: a9cc2c01ad6cae9599acebcac759afbfcf1ae38a
+  salt: 649fb893b3c2f0125ae0fa6dc4fbfe6ac35f5b2d
+  created_at: '2012-01-29 21:24:50.599004'
+  updated_at: '2012-01-29 21:24:50.599004'
   password_reset_code: 
   status: active
-  invite_sender_id: 1
+  invite_sender_id: '1'
   identity_url: 
-  card_id: 590
+  card_id: '590'
 users_007:
-  id: 7
+  id: '7'
   login: sample_user
   email: sample@user.com
-  crypted_password: ae2ecd976e0680d84c79b6371dba0ca91bf6241f
-  salt: fbfd452a1465d0e8405498e30c8056480d5e7316
-  created_at: !ruby/object:Mysql::Time {}
-  updated_at: !ruby/object:Mysql::Time {}
+  crypted_password: 65bb2d89b975cae03fa923be5b7e331921eb326f
+  salt: 8f72a2eae5b3e958b3b990ad73f4d9ce73a1c9da
+  created_at: '2012-01-29 21:24:50.818587'
+  updated_at: '2012-01-29 21:24:50.818587'
   password_reset_code: 
   status: active
-  invite_sender_id: 1
+  invite_sender_id: '1'
   identity_url: 
-  card_id: 592
+  card_id: '592'
 users_008:
-  id: 8
+  id: '8'
   login: u1
   email: u1@user.com
-  crypted_password: f5d4814eb62427277655877d5ad3bda7663bc67f
-  salt: 910582534d4b72eacadeaf088f0f4013c02f6e52
-  created_at: !ruby/object:Mysql::Time {}
-  updated_at: !ruby/object:Mysql::Time {}
+  crypted_password: da1769284d5308a001148caa8830efba2a226300
+  salt: 44aeeabbb87c31e8e366e40f274a58217d113869
+  created_at: '2012-01-29 21:24:52.625754'
+  updated_at: '2012-01-29 21:24:52.625754'
   password_reset_code: 
   status: active
-  invite_sender_id: 1
+  invite_sender_id: '1'
   identity_url: 
-  card_id: 608
+  card_id: '608'
 users_009:
-  id: 9
+  id: '9'
   login: u2
   email: u2@user.com
-  crypted_password: aa40a1dd640d44a5aad3673bf18a940e04024730
-  salt: f9d50bccabb0b3d03d4cda4182b5c3f831fe3d07
-  created_at: !ruby/object:Mysql::Time {}
-  updated_at: !ruby/object:Mysql::Time {}
+  crypted_password: 361ffdcbd1b7e7ccf0401e31a8bd9f00b796db50
+  salt: 90b3760c1d52b3f9b73a59ee2fe89706eccd96ea
+  created_at: '2012-01-29 21:24:52.712534'
+  updated_at: '2012-01-29 21:24:52.712534'
   password_reset_code: 
   status: active
-  invite_sender_id: 1
+  invite_sender_id: '1'
   identity_url: 
-  card_id: 609
+  card_id: '609'
 users_010:
-  id: 10
+  id: '10'
   login: u3
   email: u3@user.com
-  crypted_password: 10752dbbfdcb5bea2cab1b8f5e48eb3dec984385
-  salt: 7016787b256d11312396bae71444fef44386e69b
-  created_at: !ruby/object:Mysql::Time {}
-  updated_at: !ruby/object:Mysql::Time {}
+  crypted_password: 3e05948087f997cdb3546cb1f6576ed1333f413d
+  salt: 776de3da673a63062756e6d086e484c0f83c9b06
+  created_at: '2012-01-29 21:24:52.725241'
+  updated_at: '2012-01-29 21:24:52.725241'
   password_reset_code: 
   status: active
-  invite_sender_id: 1
+  invite_sender_id: '1'
   identity_url: 
-  card_id: 610
+  card_id: '610'
 users_011:
-  id: 11
+  id: '11'
   login: john
   email: john@user.com
   crypted_password: 98a92f881fd1f440469e1bdb2a41477b8d1c3c10
   salt: 9410ce63d325bd6d7966dc38fa3c4318be80e4d8
-  created_at: !ruby/object:Mysql::Time {}
-  updated_at: !ruby/object:Mysql::Time {}
+  created_at: '2019-12-31 06:00:00'
+  updated_at: '2019-12-31 06:00:00'
   password_reset_code: 
   status: active
-  invite_sender_id: 1
+  invite_sender_id: '1'
   identity_url: 
-  card_id: 674
+  card_id: '674'
 users_012:
-  id: 12
+  id: '12'
   login: sara
   email: sara@user.com
   crypted_password: e10b6613f2568103814651d68c1d2d5bd80b7c96
   salt: 56793db80e3751d885e2ac6c2bb1e3a4120a2514
-  created_at: !ruby/object:Mysql::Time {}
-  updated_at: !ruby/object:Mysql::Time {}
+  created_at: '2019-12-31 06:00:00'
+  updated_at: '2019-12-31 06:00:00'
   password_reset_code: 
   status: active
-  invite_sender_id: 1
+  invite_sender_id: '1'
   identity_url: 
-  card_id: 675
+  card_id: '675'

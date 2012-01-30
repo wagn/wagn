@@ -38,7 +38,7 @@ class CardController < ApplicationController
 
 
   #----------( READ )
-
+  
   def show
     save_location if params[:format].nil? || params[:format].to_sym==:html
     render_show

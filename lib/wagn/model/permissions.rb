@@ -118,9 +118,9 @@ module Wagn::Model::Permissions
     User.as_user.among?( who_can(operation) )
   end
 
-  def approve_task(operation, verb=nil)           
-    verb ||= operation.to_s
-    deny_because you_cant("#{verb} this card") unless self.lets_user( operation ) 
+  def approve_task(operation, verb=nil)
+    deny_because "Currently in read-only mode" if operation != :read && Wagn::Conf[:read_only]
+    deny_because you_cant("#{verb || operation} this card") unless self.lets_user( operation ) 
   end
 
   def approve_create

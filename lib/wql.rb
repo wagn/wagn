@@ -60,15 +60,6 @@ class Wql
   class Spec 
     attr_accessor :spec
     
-    #def walk(spec, method)
-    #  case 
-    #    when spec.respond_to?(method); spec.send(method)
-    #    when spec.is_a?(Hash); spec.inject({}) {|h,p| h[p[0]] = walk(p[1], method); h }
-    #    when spec.is_a?(Array); spec.collect {|v| walk(v, method) }
-    #    else spec
-    #  end
-    #end
-    
     def safe_sql(txt)
       txt = txt.to_s
       txt.match( /[^\w\*\(\)\s\.\,]/ ) ? raise( "WQL contains disallowed characters: #{txt}" ) : txt
@@ -556,18 +547,3 @@ class Wql
   end         
 end
 
-
-class ActiveRecord::ConnectionAdapters::AbstractAdapter
-  def cast_types()  native_database_types.merge custom_cast_types  end
-  def custom_cast_types() {}                                       end
-end
-
-class ActiveRecord::ConnectionAdapters::MysqlAdapter
-  def custom_cast_types
-    { :string  => { :name=>'char'    },
-      :integer => { :name=>'signed'  },
-      :text    => { :name=>'char'    },
-      :float   => { :name=>'decimal' },
-      :binary  => { :name=>'binary'  }  }
-  end
-end

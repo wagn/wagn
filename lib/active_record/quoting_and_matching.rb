@@ -24,7 +24,7 @@ module ActiveRecord
       end
     end
     
-    class MysqlAdapter
+    module MysqlCommon
       def quote_interval(string)
         "interval #{string}"
       end
@@ -32,6 +32,22 @@ module ActiveRecord
       def match(string)
         "REGEXP #{string}"
       end
+
+      def custom_cast_types
+        { :string  => { :name=>'char'    },
+          :integer => { :name=>'signed'  },
+          :text    => { :name=>'char'    },
+          :float   => { :name=>'decimal' },
+          :binary  => { :name=>'binary'  }  }
+      end
+    end   
+
+    class MysqlAdapter
+      include MysqlCommon
+    end   
+    
+    class Mysql2Adapter
+      include MysqlCommon
     end   
     
     class SQLiteAdapter

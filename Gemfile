@@ -15,7 +15,7 @@ gem "recaptcha", "~> 0.3.4"
 # need at least one of the following
 
 group :mysql do
-#  gem "mysql2", "~> 0.3.11"
+  gem "mysql2", "~> 0.3.11"
   gem 'mysql', '~>2.8.1'
 end
 
@@ -27,7 +27,7 @@ end
 #gem 'sqlite3-ruby', :require => 'sqlite3', :group=>'sqlite'
 
 
-gem 'memcache-client', :group => :memcache
+gem 'dalli', :group => :memcache
 
 
 # These should only be needed if you're developing new JS / CSS.  It's all pre-compiled for production
@@ -70,9 +70,15 @@ end
 
 group :debug do
   gem 'rdoc'
-  RUBY_VERSION =~ /^1\.9/ ?
-    gem('ruby-debug19', :require => 'ruby-debug') :
-    gem('ruby-debug')
+  if RUBY_VERSION =~ /^1\.9\.3/
+    gem 'linecache19', '~>0.5'
+    gem 'ruby-debug-base19x', '~> 0.11.30.pre4'
+  end
+  if RUBY_VERSION =~ /^1\.9/
+    gem 'ruby-debug19', :require => 'ruby-debug'
+  else
+    gem 'ruby-debug'
+  end
 end
 
 

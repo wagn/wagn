@@ -162,14 +162,11 @@ class Wagn::Renderer
     else
       @paging_params ||= begin
         s = {}
-        if p = root.params
-          [:offset,:limit,:vars].each{ |key| s[key] = p[key] }
-        end
+        [:offset,:vars].each{ |key| s[key] = params[key] }
         s[:offset] = s[:offset] ? s[:offset].to_i : 0
-        if s[:limit]
-          s[:limit] = s[:limit].to_i
+        if params[:limit]
+          s[:limit] = params[:limit].to_i
         else
-          s.delete(:limit)
           s[:default_limit] = 20 #can be overridden by card value
         end
         s

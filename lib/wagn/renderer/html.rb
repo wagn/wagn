@@ -120,9 +120,10 @@ module Wagn
     end
 
     def wrap_main(content)
-      return content if p=root.params and p[:layout]=='none'
-      %{#{if flash[:notice]
-            %{<div class="flash-notice">#{ flash[:notice] }</div>}
+      return content if params[:layout]=='none'
+      %{#{
+      if flash[:notice]
+        %{<div class="flash-notice">#{ flash[:notice] }</div>}
       end
       }<div id="main">#{content}</div>}
     end
@@ -308,7 +309,5 @@ module Wagn
        revision_link("Autosaved Draft", card.revisions.count, 'to autosave')
     end
   end
-  
-
   
 end

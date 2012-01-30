@@ -357,13 +357,15 @@ module Wagn
       @search_params ||= begin
         p = self.respond_to?(:paging_params) ? paging_params : {}
         p[:vars] = {}
-      
         if self == @root
           params.each do |key,val|
-            p[:vars][$1.to_sym] = val if key =~ /^\_(\w+)$/
+            case key.to_s
+            when '_wql'      ;  p.merge! val
+            when /^\_(\w+)$/ ;  p[:vars][$1.to_sym] = val
+            end
           end
         end
-        #if w = p[:wql] and explicit_vars = w[card.key]
+        #if w = params[:wql] and explicit_vars = w[card.key]
         #  p.merge! explicit_vars
         #end
         p

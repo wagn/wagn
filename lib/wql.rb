@@ -164,23 +164,22 @@ class Wql
         when '_parent'  ; @parent           = query.delete(key)   
         end
       end
-      query.each{ |key,val| clean_val(val, query, key) } #must be separate loop to make sure card values are set
+      query.each{ |key,val| query[key] = clean_val(val, query, key) } #must be separate loop to make sure card values are set
       query
     end
     
     
     def clean_val(val, query, key)
-      query[key] =
-        case val
-        when String
-          if val =~ /^\$(\w+)$/
-            val = @vars[$1.to_sym].to_s.strip
-          end
-          absolute_name(val)
-        when Hash   ; clean(val)
-        when Array  ; val.map{ |v| clean_val(v, query, key)}
-        else        ; val
+      case val
+      when String
+        if val =~ /^\$(\w+)$/
+          val = @vars[$1.to_sym].to_s.strip
         end
+        absolute_name(val)
+      when Hash   ; clean(val)
+      when Array  ; val.map{ |v| clean_val(v, query, key)}
+      else        ; val
+      end
     end
     
     def merge(spec)

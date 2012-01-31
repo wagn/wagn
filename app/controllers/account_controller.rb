@@ -5,24 +5,30 @@ class AccountController < ApplicationController
   helper :wagn
 
   def signup
+    #warn "signup #{logged_in?}, #{request.post?}, #{Card.create_ok?(Card::InvitationRequestID)}"
     raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?  #ENGLISH
-    raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card.new(:typecode=>'InvitationRequest').ok? :create #ENGLISH
+    raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card.create_ok?(Card::InvitationRequestID) #ENGLISH
 
     user_args = (params[:user]||{}).merge(:status=>'pending').symbolize_keys
     @user = User.new( user_args ) #does not validate password
-    card_args = (params[:card]||{}).merge(:typecode=>'InvitationRequest')
+    card_args = (params[:card]||{}).merge(:type_id=>Card::InvitationRequestID)
+    #warn "signup UA:#{user_args.inspect}, CA:#{card_args.inspect}"
     @card = Card.new( card_args )
 
     return unless request.post?
 
+    #warn "signup #{@user.errors.any?}, #{@user.inspect}"
     render_user_errors if @user.errors.any?
     @user, @card = User.create_with_card( user_args, card_args )
+    #warn "signup 3:#{@card.inspect}, #{@user.inspect}"
     render_user_errors if @user.errors.any?
 
-    if Card['*account'].ok?(:create)       #complete the signup now
+    sr=@card.star_rule(:account)
+    #warn "signup #{sr.inspect}, #{sr.ok?(:create)}"
+    if @card.star_rule(:account).ok?(:create)       #complete the signup now
       email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!",  #ENGLISH
                      :subject => Card.setting('*signup+*subject') || "Account info for #{Card.setting('*title')}!" }  #ENGLISH
-      @user.accept(email_args)
+      @user.accept(@card, email_args)
       wagn_redirect Card.path_setting(Card.setting('*signup+*thanks'))
     else
       Card.as(Card::WagbotID) do
@@ -40,6 +46,8 @@ class AccountController < ApplicationController
 
 
   def accept
+    ckey=params[:card][:key]
+    #warn "accept #{ckey.inspect}, #{Card[ckey]}, #{params.inspect}"
     raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
     @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
     #warn "accept #{Card.user_id}, #{@card.inspect}"
@@ -59,9 +67,8 @@ class AccountController < ApplicationController
   end
 
   def invite
-    #warn "pi #{a=Card['*account']}"
-    #warn "ok? #{a.ok?(:create)}"
-    cok=Card['*account'].ok?(:create) or raise(Wagn::PermissionDenied, "You need permission to create")  #ENGLISH
+    #warn "invite: ok? #{Card.new(:name=>'dummy+*account').ok?(:create)}"
+    cok=Card.new(:name=>'dummy+*account').ok?(:create) or raise(Wagn::PermissionDenied, "You need permission to create")  #ENGLISH
     #warn "post invite #{cok}, #{request.post?}, #{params.inspect}"
     @user, @card = request.post? ?
       User.create_with_card( params[:user], params[:card] ) :
@@ -125,11 +132,9 @@ class AccountController < ApplicationController
       #warn Rails.logger.info("to prev #{previous_location}")
       redirect_to previous_location
     else
-      failed_login( case u=User.find_by_email(params[:login].strip.downcase)
-          when u.nil?     ; "Unrecognized email."
-          when u.blocked? ; "Sorry, that account is blocked."
-          else            ; "Wrong password"
-        end )
+      failed_login (u=User.find_by_email(params[:login].strip.downcase)).
+            nil? ? "Unrecognized email." :
+            u.blocked? ? "Sorry, that account is blocked." : "Wrong password"
     end
   end
 

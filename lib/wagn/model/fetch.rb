@@ -57,6 +57,7 @@ module Wagn::Model::Fetch
     end
 
     def fetch_or_new cardname, opts={}
+      #warn "fetch_or_new #{cardname.inspect}, #{opts.inspect}"
       fetch( cardname, opts ) || new( opts.merge(:name=>cardname) )
     end
 

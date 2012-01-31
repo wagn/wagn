@@ -60,14 +60,20 @@ module WagnTestHelper
     'u3@user.com' => 'u3_pass'
   }
 
-  def integration_login_as(user)
+  def integration_login_as(user, functional=nil)
     User.cache.reset
     
     raise "Don't know email & password for #{user}" unless uc=Card[user] and
         u=User.where(:card_id=>uc.id).first and
         login = u.email and pass = USERS[login]
       
-    post 'account/signin', :login=>login, :password=>pass, :controller=>:account
+    if functional
+      #warn "functional login #{login}, #{pass}"
+      post :signin, :login=>login, :password=>pass, :controller=>:account
+    else
+      #warn "integration login #{login}, #{pass}"
+      post 'account/signin', :login=>login, :password=>pass, :controller=>:account
+    end
     assert_response :redirect
       
     if block_given?

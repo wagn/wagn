@@ -26,7 +26,8 @@ class AccountCreationTest < ActionController::TestCase
     @controller = AccountController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
-    login_as :joe_user
+    #login_as :joe_admin
+    integration_login_as :joe_admin, true
     Wagn::Cache.reset_for_tests
   end
 
@@ -73,7 +74,6 @@ class AccountCreationTest < ActionController::TestCase
     assert_difference ActionMailer::Base.deliveries, :size do
       assert_new_account do
         post_invite
-        warn "posted invite 77"
         assert_response 302
       end
     end
@@ -88,7 +88,6 @@ class AccountCreationTest < ActionController::TestCase
     Card.as(Card::WagbotID) { Card.create! :name=> 'User+*type+*content'}
     assert_new_account do
       post_invite
-      warn "posted invite 91"
       assert_response 302
     end
   end
@@ -97,26 +96,27 @@ class AccountCreationTest < ActionController::TestCase
   def test_should_generate_password_if_not_given
     assert_new_account do
       post_invite
-      warn "assigns #{assigns(:user).inspect}, #{assigns{:card}.inspect}"
       assert !assigns(:user).password.blank?
     end
   end
 
   def test_should_require_password_confirmation_if_password_given
     assert_no_new_account do
-    #  assert_raises(ActiveRecord::RecordInvalid) do
+      #assert_raises(ActiveRecord::RecordInvalid) do
+        warn "post invite 107"
         post_invite :user=>{ :password=>'tedpass' }
-    #  end
+      #end
     end
   end
 
   def test_should_require_email
     assert_no_new_account do
-#      assert_raises(ActiveRecord::RecordInvalid) do
+      #assert_raises(ActiveRecord::RecordInvalid) do
+        warn "post invite 116"
         post_invite :user=>{ :email => nil }
-        #assert assigns(:user).errors[:email]
-        #assert_response :success
-#      end
+        assert assigns(:user).errors[:email]
+        assert_response :success
+      #end
     end
   end
 
@@ -126,13 +126,12 @@ class AccountCreationTest < ActionController::TestCase
       post_invite :user=>{ :email=>'duplor@user.com' }
     end
   end
-=begin  We may want to support this eventually, but we don't yet.
-    def test_should_create_account_from_existing_user
-        assert_difference ::User, :count do
-          assert_no_difference Card::User, :count do
-            post_invite :card=>{ :name=>"No Count" }, :user=>{ :email=>"no@count.com" }
-          end
-        end
+
+  def test_should_create_account_from_existing_user
+    assert_difference ::User, :count do
+      assert_no_difference Card.where(:type_id=>Card::UserID), :count do
+        post_invite :card=>{ :name=>"No Count" }, :user=>{ :email=>"no@count.com" }
       end
-=end
+    end
+  end
 end

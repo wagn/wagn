@@ -32,14 +32,14 @@ class User < ActiveRecord::Base
     # FIXME: args=params.  should be less coupled..
     def create_with_card(user_args, card_args, email_args={})
       #warn  "create with(#{user_args.inspect}, #{card_args.inspect}, #{email_args.inspect})"
-      @card = (Hash===card_args ? Card.new({:type_id=>Card::UserID}.merge(card_args)) : card_args)
+      @card = (Hash===card_args ? Card.fetch_or_new(card_args[:name],{:type_id=>Card::UserID}.merge(card_args)) : card_args)
       #warn "create with >>>#{Card.user_card.name}"
       #warn "create with args= #{({:invite_sender=>Card.user_card, :status=>'active'}.merge(user_args)).inspect}"
-      @user = User.new({:invite_sender=>Card.user_card, :status=>'active'}.merge(user_args))
-      #warn "user is #{@user.inspect}" unless @user.email
-      @user.generate_password if @user.password.blank?
-      @user.save_with_card(@card)
-      begin
+      Card.as Card::WagbotID do
+        @user = User.new({:invite_sender=>Card.user_card, :status=>'active'}.merge(user_args))
+        #warn "user is #{@user.inspect}" unless @user.email
+        @user.generate_password if @user.password.blank?
+        @user.save_with_card(@card)
         @user.send_account_info(email_args) if @user.errors.empty? && !email_args.empty?
       end
       [@user, @card]
@@ -95,18 +95,18 @@ class User < ActiveRecord::Base
     #warn(Rails.logger.info "save with card #{card.inspect}, #{self.inspect}")
     User.transaction do
       card = card.refresh if card.frozen?
-      r1=card.save
-      warn "save with_card #{card.id}, #{card.inspect}"
+      card.save
+      #warn "save with_card #{User.count}, #{card.id}, #{card.inspect}"
       self.card_id = card.id
-      r2=save
-      #warn "save_with_card(#{card.name}) #{r1.inspect}, #{r2.inspect}, #{card.errors.empty?}, #{self.errors.empty?}"
+      save
+      #warn "save_with_card(#{card.name}) #{User.count}, #{inspect}, #{card.errors.empty?}, #{self.errors.empty?}"
       card.errors.each do |key,err|
         self.errors.add key,err
       end
       true
     end
-#  rescue
-#    Rails.logger.info "save with card failed.  #{card.inspect}"
+  rescue
+    Rails.logger.info "save with card failed.  #{card.inspect}"
   end
 
   def accept(card, email_args)
@@ -123,8 +123,8 @@ class User < ActiveRecord::Base
     #card.save #hack to make it so last editor is current user.
     self.send_account_info(email_args) if self.errors.empty?
     #warn "errors? #{self.errors.empty?}"
-  rescue Exception => e
-    warn "exc: #{e.inspect}, #{e.backtrace*"\n"}"
+  #rescue Exception => e
+    #warn "exc: #{e.inspect}, #{e.backtrace*"\n"}"
   end
 
   def send_account_info(args)

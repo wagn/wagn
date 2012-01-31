@@ -27,7 +27,7 @@ class Wagn::RendererTest < ActiveSupport::TestCase
   end
 
   def slot_link(card, format=:html)
-    result = Wagn::Renderer.new(card, :context=>"nocontext", :format=>format).render(:content)
+    result = Wagn::Renderer.new(card, :format=>format).render(:content)
     m = result.match(/<(cardlink|link|a) class.*<\/(cardlink|link|a)>/)
     (m.to_s != "") ? m.to_s : result
   end

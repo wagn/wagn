@@ -95,36 +95,36 @@ class User < ActiveRecord::Base
     #warn(Rails.logger.info "save with card #{card.inspect}, #{self.inspect}")
     User.transaction do
       card = card.refresh if card.frozen?
+      newcard = card.new_card?
       card.save
       #warn "save with_card #{User.count}, #{card.id}, #{card.inspect}"
-      self.card_id = card.id
-      save
-      #warn "save_with_card(#{card.name}) #{User.count}, #{inspect}, #{card.errors.empty?}, #{self.errors.empty?}"
       card.errors.each do |key,err|
         self.errors.add key,err
       end
+      self.card_id = card.id
+      save
+      if newcard && errors.any?
+        card.delete
+        self.card_id=nil
+        save
+        raise ActiveRecord::Rollback
+      end
       true
     end
-  rescue
-    Rails.logger.info "save with card failed.  #{card.inspect}"
+  rescue Exception => e
+    warn (Rails.logger.info "save with card failed. #{e.inspect},  #{card.inspect} Bt:#{e.backtrace*"\n"}")
   end
 
   def accept(card, email_args)
-    #warn "\naccept user #{self.card_id}, #{card.inspect}, #{email_args.inspect}"
     Card.as(Card::WagbotID) do #what permissions does approver lack?  Should we check for them?
       card.type_id = Card::UserID # Invite Request -> User
       self.status='active'
       self.invite_sender = Card.user_card
       generate_password
-      #warn "user accept #{inspect}, #{card.inspect}"
       r=save_with_card(card)
-      #warn "accept save res: #{r.inspect}"; r
     end
     #card.save #hack to make it so last editor is current user.
     self.send_account_info(email_args) if self.errors.empty?
-    #warn "errors? #{self.errors.empty?}"
-  #rescue Exception => e
-    #warn "exc: #{e.inspect}, #{e.backtrace*"\n"}"
   end
 
   def send_account_info(args)
@@ -179,6 +179,7 @@ class User < ActiveRecord::Base
   end
 
   def card()
+    raise "deprecate user.card #{card_id}, #{@card&&@card.id} #{caller*"\n"}"
     @card && @card.id == card_id ? @card : @card = Card[card_id]
   end
 

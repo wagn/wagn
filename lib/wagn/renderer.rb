@@ -97,12 +97,12 @@ module Wagn
                 send( "_render_#{view}", *a)
               end
             rescue Exception=>e
-              Rails.logger.debug "Error #{e.message} #{e.backtrace*"\n"}"
-              raise e          
+              Rails.logger.info "\nRender Error: #{e.message}"
+              Rails.logger.debug "  #{e.backtrace*"\n  "}"
+              rendering_error e, (card ? card.name : 'unknown card')
             end
           end
         end
-        #end
       end
 
       def alias_view(view, opts={}, *aliases)
@@ -125,6 +125,9 @@ module Wagn
     attr_reader :card, :root, :showname #should be able to factor out showname
     attr_accessor :form, :main_content, :main_card
   
+    def rendering_error exception, cardname
+      "Error rendering: #{cardname}"
+    end
   
     def initialize(card, opts={})
       Renderer.current_slot ||= self unless(opts[:not_current])
@@ -314,10 +317,6 @@ module Wagn
       result = raw( sub.render(approved_view, options) )
       Renderer.current_slot = oldrenderer
       result
-    rescue Exception=>e
-      Rails.logger.info "inclusion-error #{e.message}"
-      Rails.logger.debug "Trace:\n#{e.backtrace*"\n"}"
-      %{<span class="inclusion-error">error rendering #{link_to_page((tcard ? tcard.name : 'unknown card'), nil, :title=>CGI.escapeHTML(e.message))}</span>}
     end
   
     def get_inclusion_content(cardname)
@@ -344,7 +343,7 @@ module Wagn
       pcard = opts.delete(:card) || card
       base = "#{Wagn::Conf[:root_path]}/card/#{action}"
       if pcard && ![:new, :create, :create_or_update].member?( action )
-        base += '/' + (opts[:id] ? "~#{opts.delete(:id)}" : card.cardname.to_url_key)
+        base += '/' + (opts[:id] ? "~#{opts.delete(:id)}" : pcard.cardname.to_url_key)
       end
       if attrib = opts.delete( :attrib )
         base += "/#{attrib}"

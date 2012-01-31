@@ -35,9 +35,12 @@ class Wagn::Renderer::Html
       current_rule = current_rule.refresh if current_rule.frozen?
       args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type]
       current_rule.assign_attributes args
+      current_rule.reset_mods
+      current_rule.include_set_modules
     end
 
-    params.delete(:success) if params[:type_reload] #otherwise updating the editor looks like a successful post
+    params.delete(:success) if params[:type_reload] # otherwise updating the editor looks like a successful post
+    # should this be in "if" above?
 
     opts = {
       :fallback_set    => false,
@@ -134,7 +137,7 @@ class Wagn::Renderer::Html
           <div class="type-editor"> }+
 
       if edit_mode
-        %{<label>type:</label>}+
+        %{<label>type:</label>}+ 
         raw(typecode_field( :class =>'type-field rule-type-field live-type-field', 'data-remote'=>true,
           :href => path(:view, :card=>open_rule, :view=>:open_rule, :type_reload=>true) ) )
       elsif current_set_key

@@ -144,6 +144,10 @@ module Wagn
         </div> }
     end
 
+    def rendering_error exception, cardname
+      %{<span class="render-error">error rendering #{link_to_page(cardname, nil, :title=>CGI.escapeHTML(exception.message))}</span>}
+    end
+
     def edit_submenu(current)
       wrap_submenu do
         [ :content, :name, :type ].map do |attr|

@@ -15,20 +15,20 @@ class AccountController < ApplicationController
 
     return unless request.post?
 
-    render_user_errors if @user.errors.any?
+    return render_user_errors if @user.errors.any?
     @user, @card = User.create_with_card( user_args, card_args )
-    render_user_errors if @user.errors.any?
+    return render_user_errors if @user.errors.any?
 
     if Card['*account'].ok?(:create)       #complete the signup now
       email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!",  #ENGLISH
                      :subject => Card.setting('*signup+*subject') || "Account info for #{Card.setting('*title')}!" }  #ENGLISH
       @user.accept(email_args)
-      wagn_redirect Card.path_setting(Card.setting('*signup+*thanks'))
+      return wagn_redirect Card.path_setting(Card.setting('*signup+*thanks'))
     else
       Card.as(Card::WagbotID) do
         Mailer.signup_alert(@card).deliver if Card.setting('*request+*to')
       end
-      wagn_redirect Card.path_setting(Card.setting('*request+*thanks'))
+      return wagn_redirect Card.path_setting(Card.setting('*request+*thanks'))
     end
   end
 
@@ -115,7 +115,9 @@ class AccountController < ApplicationController
   protected
   
   def render_user_errors
-    @card.errors += @user.errors
+    @user.errors.each do |field, err|
+      @card.errors.add field, err
+    end
     render_errors
   end
   

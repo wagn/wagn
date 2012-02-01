@@ -94,13 +94,18 @@ class User < ActiveRecord::Base
   def save_with_card(card)
     #warn(Rails.logger.info "save with card #{card.inspect}, #{self.inspect}")
     User.transaction do
-      card = card.refresh if card.frozen?
-      r1=card.save
-      self.card_id = card.id
-      r2=save
-      #warn "save_with_card(#{card.name}) #{r1.inspect}, #{r2.inspect}, #{card.errors.empty?}, #{self.errors.empty?}"
-      card.errors.each do |key,err|
-        self.errors.add key,err
+      save
+      if !errors.any?
+        c = c.refresh if c.frozen?
+        c.extension = self
+        c.save
+        if c.errors.any?
+          c.errors.each do |key,err|
+            next if key.to_s.downcase=='extension'
+            self.errors.add key,err
+          end
+          destroy
+        end
       end
       true
     end

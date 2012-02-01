@@ -250,7 +250,7 @@ class Wagn::Renderer::Html
     </span>
   </div>     
   
-  <div class="field-in-multi">
+  <div class="field-in-multi" #{ %{card-id="#{card.id}" card-name="#{h card.name}"} if card.id }>
     #{ self.content_field( eform, :nested=>true ) }
     #{ card.new_card? ? eform.hidden_field(:typecode) : '' }
   </div>

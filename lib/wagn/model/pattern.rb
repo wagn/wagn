@@ -43,33 +43,32 @@ module Wagn::Model
     attr_accessor :card
 
     class << self
-      def register key, opt_keys, opts={} #(key, opt_keys)
+      def register key, opt_keys, opts={}
         Wagn::Model::Pattern.register_class self
-        cattr_accessor :key, :opt_keys, :trunkless, :junction_only, :method_key
+        cattr_accessor :key, :opt_keys, :junction_only, :method_key, :trunkless
         self.key = Wagn::Codename[key] || key # failsafe for loading/migration
         self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]
         opts.each { |key, val| self.send "#{key}=", val }
+        self.trunkless = !!self.method_key
       end
       def method_key_from_opts(opts) method_key    end
-      def junction_only?()   !!self.junction_only  end
-      def trunkless?()       !!self.method_key     end
     end
 
     def initialize(card)   @card = card                           end
     def opt_vals()         []                                     end
     def set_name()         (opt_vals << self.class.key).join '+'  end
     def get_method_key()
-      return self.class.method_key if self.class.trunkless?
+      return self.class.method_key if self.class.trunkless
       opts = {}
       opt_keys.each_with_index{ |key, index| opts[key] = opt_vals[index] }
       self.class.method_key_from_opts opts
     end
     def pattern_applies?
-      self.class.junction_only? ? card.cardname.junction? : true
+      self.class.junction_only ? card.cardname.junction? : true
     end
     def css_name()
       caps_part = self.class.key.gsub(' ','_').gsub('*','').upcase
-      self.class.trunkless? ? caps_part : "#{caps_part}-#{set_name.to_cardname.trunk_name.css_name}"
+      self.class.trunkless ? caps_part : "#{caps_part}-#{set_name.to_cardname.trunk_name.css_name}"
     end
   end
 

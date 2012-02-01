@@ -120,9 +120,10 @@ module Wagn
     end
 
     def wrap_main(content)
-      return content if p=root.params and p[:layout]=='none'
-      %{#{if flash[:notice]
-            %{<div class="flash-notice">#{ flash[:notice] }</div>}
+      return content if params[:layout]=='none'
+      %{#{
+      if flash[:notice]
+        %{<div class="flash-notice">#{ flash[:notice] }</div>}
       end
       }<div id="main">#{content}</div>}
     end
@@ -141,6 +142,10 @@ module Wagn
           <span class="submenu-left card-report"></span>
           <span class="submenu-right">#{yield}</span>
         </div> }
+    end
+
+    def rendering_error exception, cardname
+      %{<span class="render-error">error rendering #{link_to_page(cardname, nil, :title=>CGI.escapeHTML(exception.message))}</span>}
     end
 
     def edit_submenu(current)
@@ -308,7 +313,5 @@ module Wagn
        revision_link("Autosaved Draft", card.revisions.count, 'to autosave')
     end
   end
-  
-
   
 end

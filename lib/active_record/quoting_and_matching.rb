@@ -12,6 +12,14 @@ module ActiveRecord
       def match(string)
         raise "match not implemented"
       end
+      
+      def cast_types
+        native_database_types.merge custom_cast_types
+      end
+      
+      def custom_cast_types
+        {}
+      end
     end
 
     class PostgreSQLAdapter

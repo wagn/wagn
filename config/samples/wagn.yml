@@ -1,5 +1,8 @@
 # Note: file settings below should use absolute paths and should NOT contain the phrase "RAILS_ROOT"
 
+# read_only:
+# defaults to false
+# disallows updating cards.
 
 # log_file:
 # defaults to RAILS_ROOT/log/<environment>.log
@@ -16,9 +19,9 @@
 # defaults to "/files"  
 
 # cache_store:
-# determines caching mechanism.  options include: file_store, memory_store, mem_cache_store  
+# determines caching mechanism.  options include: file_store, memory_store, mem_cache_store, dalli_store... 
 # defaults to file_store
-# mem_cache_store is highly recommended for production
+# memcache is highly recommended for production
 
 
 # IMPORTANT: please be sure to register for your own recaptcha keys before deploying a live site

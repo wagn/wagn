@@ -115,7 +115,8 @@ class ApplicationController < ActionController::Base
     end 
   end
 
-  def render_denied(action = '')
+  def render_denied(action = nil)
+    params[:action] = action if action
     @card.error_view = :denial
     @card.error_status = 403
     render_errors

@@ -9,7 +9,7 @@ class Wagn::Renderer
               :sort  => 'name',
               :limit => 100
             }
-      wql[:left][ (set_class.trunkless? ? :name : :right )] = set_class.key
+      wql[:left][ (set_class.trunkless ? :name : :right )] = set_class.key
 
       warn "WQL = #{wql}"
 
@@ -17,7 +17,7 @@ class Wagn::Renderer
       next if search_card.count == 0
 
       content_tag( :h2, 
-        raw( (set_class.trunkless? ? '' : '+') + set_class.key), 
+        raw( (set_class.trunkless ? '' : '+') + set_class.key), 
         :class=>'values-for-setting') + 
       raw( subrenderer(search_card).render(:content) )
     end.compact * "\n"

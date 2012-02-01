@@ -150,7 +150,7 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
   border-bottom: 2px solid #888;
   border-right: 2px solid #888;
 }
-.inclusion-error {
+.render-error {
   background-color: #ecc !important;
   padding: 1px 20px;
   font-style: italic;

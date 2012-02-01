@@ -120,6 +120,7 @@ module Wagn::Model::Permissions
   end
 
   def approve_task(operation, verb=nil)           
+    deny_because "Currently in read-only mode" if operation != :read && Wagn::Conf[:read_only]
     verb ||= operation.to_s
     #warn "approve_task(#{operation}, #{verb})"
     deny_because you_cant("#{verb} this card") unless self.lets_user( operation ) 

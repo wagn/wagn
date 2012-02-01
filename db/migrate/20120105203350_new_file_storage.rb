@@ -33,8 +33,8 @@ class NewFileStorage < ActiveRecord::Migration
               end
               
             rescue Exception => e
-              Rails.logger.info "Migration exception: #{exception.message}\n  #{exception.backtrace*"\n  "}"
-              say "Error converting file for #{card.name}. #{exception.message} continuing", :red
+              Rails.logger.info "Migration exception: #{e.message}\n  #{e.backtrace*"\n  "}"
+              say "Error converting file for #{card.name}. #{e.message} continuing", :red
             end
           end
         end

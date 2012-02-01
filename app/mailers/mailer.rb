@@ -1,6 +1,7 @@
 require 'open-uri'
 
 class Mailer < ActionMailer::Base
+  include LocationHelper
   def account_info(user, subject, message)
     from_card = Card.user_card
     from_name = from_card.nil? ? '' : from_card.name
@@ -9,9 +10,9 @@ class Mailer < ActionMailer::Base
 
     @email    = (user.email    or raise Wagn::Oops.new("Oops didn't have user email"))
     @password = (user.password or raise Wagn::Oops.new("Oops didn't have user password"))
-    @card_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/#{url_key}"
-    @pw_url   = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/card/options/#{url_key}"
-    @login_url= "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/account/signin"
+    @card_url = wagn_url user.card
+    @pw_url   = wagn_url "/card/options/#{url_key}"
+    @login_url= wagn_url "/account/signin"
     @message  = message.clone
 
     mail( {
@@ -27,7 +28,8 @@ class Mailer < ActionMailer::Base
     @email= User.where(:card_id=>invite_request.id).first.email
     @name = invite_request.name
     @content = invite_request.content
-    @url  = url_for(:host=>Wagn::Conf[:host], :controller=>'card', :action=>'show', :id=>invite_request.cardname.to_url_key)
+    @request_url  = wagn_url invite_request
+    @requests_url = wagn_url Card['Account Request']
 
     mail( {
       :to      => Card.setting('*request+*to'),
@@ -47,10 +49,10 @@ class Mailer < ActionMailer::Base
     @updater = updated_card.updater.name
     @action = action
     @subedits = subedits
-    @card_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/#{card.cardname.to_url_key}"
-    @change_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/card/changes/#{card.cardname.to_url_key}"
-    @unwatch_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/card/watch/#{watched.to_cardname.to_url_key}?toggle=off"
-    @udpater_url = "#{Wagn::Conf[:base_url]}#{Wagn::Conf[:root_path]}/#{card.updater.cardname.to_url_key}"
+    @card_url = wagn_url card
+    @change_url = wagn_url "/card/changes/#{card.cardname.to_url_key}"
+    @unwatch_url = wagn_url "/card/watch/#{watched.to_cardname.to_url_key}?toggle=off"
+    @udpater_url = wagn_url card.updater.card
     @watched = (watched == card.cardname ? "#{watched}" : "#{watched} cards")
 
     mail( {

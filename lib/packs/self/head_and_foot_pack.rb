@@ -31,7 +31,7 @@ class Wagn::Renderer
     bits << stylesheet_link_tag('application-all')
     bits << stylesheet_link_tag('application-print', :media=>'print')
     if css_card = Card['*css']
-      local_css_path = "#{Wagn::Conf[:root_path]}/*css.css?#{ css_card.current_revision_id }"
+      local_css_path = wagn_path "*css.css?#{ css_card.current_revision_id }"
       bits << stylesheet_link_tag(local_css_path)
     end
 
@@ -40,7 +40,7 @@ class Wagn::Renderer
     <script>
       var wagn = {}; window.wagn = wagn;
       wagn.rootPath = '#{Wagn::Conf[:root_path]}';
-      window.tinyMCEPreInit = {base:"#{Wagn::Conf[:root_path]}/assets/tinymce",query:"3.4.7",suffix:""}; #{
+      window.tinyMCEPreInit = {base:"#{wagn_path 'assets/tinymce'}",query:"3.4.7",suffix:""}; #{
       Wagn::Conf[:recaptcha_on] ? %{wagn.recaptchaKey = "#{Wagn::Conf[:recaptcha_public_key]}";} : '' } ) +
       #  TEMPORARY we probably want this back once we have fingerprinting on this file - EFM
       #{ local_css_path ? %{ wagn.local_css_path = '#{local_css_path}'; } : '' }

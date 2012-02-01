@@ -11,7 +11,7 @@ class Wagn::Renderer::Rss
       xml.channel do
         xml.title  Card.setting('*title') + " : " + card.name.gsub(/^\*/,'')
         xml.description ""
-        xml.link card_url(card)
+        xml.link wagn_url(card)
         begin
           cards = if card.typecode == 'Search'
             card.item_cards( search_params.merge(:default_limit => 25) )
@@ -25,8 +25,8 @@ class Wagn::Renderer::Rss
               xml.title item.name
               xml.description process_inclusion(item, :view=>(view_changes ? :change : :open_content))
               xml.pubDate item.revised_at.to_s(:rfc822)  #updated_at fails on virtual cards, because not all to_s's take args (just actual dates)
-              xml.link card_url(item)
-              xml.guid card_url(item)
+              xml.link wagn_url(item)
+              xml.guid wagn_url(item)
             end
           end
         rescue Exception=>e

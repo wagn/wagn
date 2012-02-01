@@ -271,7 +271,7 @@ class CardController < ApplicationController
       end
     
     case
-    when  redirect        ; wagn_redirect ( Card===target ? card_path(target) : target )
+    when  redirect        ; wagn_redirect ( Card===target ? wagn_path(target) : target )
     when  String===target ; render :text => target 
     else  @card = target  ; render_show
     end

@@ -3,6 +3,7 @@
 module Wagn
   class Renderer
     include ReferenceTypes
+    include LocationHelper
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed,
       :bare=>:core, :naked=>:core }
@@ -341,7 +342,7 @@ module Wagn
     
     def path(action, opts={})
       pcard = opts.delete(:card) || card
-      base = "#{Wagn::Conf[:root_path]}/card/#{action}"
+      base = wagn_path "/card/#{action}"
       if pcard && ![:new, :create, :create_or_update].member?( action )
         base += '/' + (opts[:id] ? "~#{opts.delete(:id)}" : pcard.cardname.to_url_key)
       end
@@ -380,14 +381,14 @@ module Wagn
         when /^https?:/; 'external-link'
         when /^mailto:/; 'email-link'
         when /^\//
-          href = Wagn::Conf[:root_path] + full_uri(href.to_s)      
+          href = full_uri(href.to_s)      
           'internal-link'
         else
           known_card = !!Card.fetch(href)
           #warn "build_link #{href}, #{text}"
           text = text.to_cardname.to_show(card.nil? ? '' : card.name)
           href = href.to_cardname
-          href = Wagn::Conf[:root_path] + '/' + (known_card ? href.to_url_key : CGI.escape(href.escape))
+          href = wagn_path (known_card ? href.to_url_key : CGI.escape(href.escape))
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
           href = full_uri(href.to_s)
           known_card ? 'known-card' : 'wanted-card'
@@ -399,7 +400,7 @@ module Wagn
     def unique_id() "#{card.key}-#{Time.now.to_i}-#{rand(3)}" end
 
     def full_uri(relative_uri)
-      relative_uri
+      wagn_path relative_uri
     end
   
   

@@ -97,6 +97,10 @@ module Wagn
     
     if db_file = Wagn::Conf[:database_config_file]
       config.paths['config/database'] = File.join( db_file )
+    end  
+  
+    if Wagn::Conf[:smtp]
+      config.action_mailer.smtp_settings = Wagn::Conf[:smtp].symbolize_keys
     end
 
     # Custom directories with classes and modules you want to be autoloadable.

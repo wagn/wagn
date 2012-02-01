@@ -504,7 +504,7 @@ class Card < ActiveRecord::Base
   protected
   
   validate do |rec|
-    return true unless Wagn::Conf[:recaptcha_on]
+    return true unless Wagn::Conf[:recaptcha_on] && Card.toggle( rec.rule('captcha') )
     c = Wagn::Conf[:controller]
     return true if (c.recaptcha_count += 1) > 1
     c.verify_recaptcha( :model=>rec ) || rec.error_status = 449

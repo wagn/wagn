@@ -109,7 +109,7 @@ $(window).load ->
       opt.url = wagn.prepUrl opt.url, $(this).slot()
     
     if $(this).is('form')
-      if wagn.recaptchaKey and !($(this).find('.recaptcha-box')[0])
+      if wagn.recaptchaKey and $(this).attr('recaptcha')=='on' and !($(this).find('.recaptcha-box')[0])
          newCaptcha(this)
          return false
       

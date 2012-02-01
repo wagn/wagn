@@ -197,12 +197,17 @@ class User < ActiveRecord::Base
     #Rails.logger.info "save with card #{card.inspect}, #{self.inspect}"
     User.transaction do
       save
-      c = c.refresh if c.frozen?
-      c.extension = self
-      c.save
-      c.errors.each do |key,err|
-        next if key=='extension'
-        self.errors.add key,err
+      if !errors.any?
+        c = c.refresh if c.frozen?
+        c.extension = self
+        c.save
+        if c.errors.any?
+          c.errors.each do |key,err|
+            next if key.to_s.downcase=='extension'
+            self.errors.add key,err
+          end
+          destroy
+        end
       end
     end
   end

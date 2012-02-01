@@ -20,7 +20,7 @@
 
     <div class="content">
     
-      <%= form_for :card, :action=>'signup', :html=>{ :remote=>true, :class=>'slotter' } do |f| %>
+      <%= form_for :card, slot.form_opts(Wagn::Conf[:root_path] + '/account/signup') do |f| %>
         <%= hidden_field_tag 'element', "#{div_id}"  %>
         <%= f.hidden_field :typecode  %>
         <%- slot.form = f %>

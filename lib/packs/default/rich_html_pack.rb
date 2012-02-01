@@ -42,7 +42,7 @@ class Wagn::Renderer::Html
     if card && card.ok?(:comment)
       comment_box =
       %{<div class="comment-box"> #{
-        form_for :card, :url=>path(:comment), :remote=>:true, :html=> { :class=>'slotter' } do |f|
+        card_form :comment do |f|
           %{#{f.text_area :comment, :rows=>3 }<br/> #{
           if Card.user_id == Card::AnonID
             card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH
@@ -136,8 +136,8 @@ class Wagn::Renderer::Html
       end}
 
       <div class="card-editor edit-area #{card.hard_template ? :templated : ''}">
-      #{ form_for card, :url=>path(:update),
-      :html=>{ :class=>'card-form card-edit-form slotter autosave', :remote=>true } do |f|
+      
+      #{ card_form :update, 'card-form card-edit-form autosave' do |f|
         %{<div>#{ @form= f; edit_slot(args) }</div>
 
         <div class="edit-button-area"> #{
@@ -158,11 +158,10 @@ class Wagn::Renderer::Html
     %{
       <div class="edit-area edit-name">
        <h2>Change Name</h2>
-      #{ form_for card, :url=>path(:update, :id=>card.id), :remote=>true,
-        :html=>{ :class=>'card-edit-name-form slotter', 'main-success'=>'REDIRECT' } do |f|
-
-
-
+      #{ card_form path(:update, :id=>card.id), 'card-edit-name-form', 'main-success'=>'REDIRECT' do |f|
+          
+          
+          
         %{<div>to #{ raw f.text_field( :name, :class=>'card-name-field', :value=>card.name, :autocomplete=>'off' ) } </div>
         #{ hidden_field_tag :success, 'TO-CARD' }
         #{
@@ -215,11 +214,11 @@ class Wagn::Renderer::Html
     %{
     <div class="edit-area edit-type">
     <h2>Change Type</h2> #{
-      form_for :card, :url=>path(:update), :remote=>true,
+      card_form :update, 'card-edit-type-form' do |f|
         #'main-success'=>'REDIRECT: TO-CARD', # adding this back in would make main cards redirect on cardtype changes
-        :html=>{ :class=>'slotter card-edit-type-form' } do |f|
-
-
+       
+        
+        
         %{ #{ hidden_field_tag :view, :edit }
         #{if card.type_id == Card::CardtypeID and !Card.search(:type=>card.cardname).empty? #ENGLISH
           %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
@@ -303,8 +302,7 @@ class Wagn::Renderer::Html
     locals = {:slot=>self, :card=>card, :account=>User.where(:card_id=>card.id).first }
     %{#{raw( options_submenu(:account) ) }#{
 
-        form_for :card, :url=>path(:update_account), :remote=>true,
-          :html=>{ :class=>'slotter' } do |form|
+       card_form :update_account do |form|
 
          %{<table class="fieldset">
            #{if Card.as_user_id==card.id or card.star_rule(:account).ok?(:update)
@@ -402,8 +400,7 @@ class Wagn::Renderer::Html
 
   define_view(:option_new_account) do |args|
     %{#{raw( options_submenu(:account) ) }#{
-      form_for :card, :url=>path(:create_account),
-         :html=>{:class=>'slotter'}, :remote=>true do |form|
+      card_form :create_account do |form|
       #ENGLISH below
 
         %{<table class="fieldset">
@@ -465,10 +462,9 @@ class Wagn::Renderer::Html
 
   define_view(:remove) do |args|
     wrap(:remove, args) do
-    %{#{ header}#{
-      form_for :card, :url=>path(:remove), :html => { :remote=>true,
-        :class=>'slotter', 'data-type'=>'html', 'main-success'=>'REDIRECT: TO-PREVIOUS' } do |f|
-
+    %{#{ header}
+    #{card_form :remove, '', 'data-type'=>'html', 'main-success'=>'REDIRECT: TO-PREVIOUS' do |f|
+    
       %{#{ hidden_field_tag 'confirm_destroy', 'true' }#{
         hidden_field_tag 'success', "TEXT: #{card.name} removed" }
 
@@ -645,8 +641,21 @@ class Wagn::Renderer::Html
     </body>
     }
   end
+  
+  def card_form *opts
+    form_for card, form_opts(*opts) do |form| 
+      yield form
+    end
+  end
 
-
+  def form_opts url, classes='', other_html={}
+    url = path(url) if Symbol===url
+    opts = { :url=>url, :remote=>true, :html=>other_html }
+    opts[:html][:class] = classes + ' slotter'
+    opts[:html][:recaptcha] = 'on' if Wagn::Conf[:recaptcha_on] && Card.toggle( card.rule('captcha') )
+    opts
+  end
+  
   private
 
   def watching_type_cards
@@ -700,9 +709,8 @@ class Wagn::Renderer::Html
 
     wrap(:new, args) do
       %{#{error_messages_for card}#{
-
-      form_for card, :url=>path(:create), :remote=>true,
-        :html=>{ :class=>'card-form card-new-form slotter', 'main-success'=>'REDIRECT' } do |form|
+    
+      card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
         @form = form
 
         %{ #{ hidden_field_tag :success, card.rule('thanks') || 'TO-CARD' }

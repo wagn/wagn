@@ -100,12 +100,13 @@ module Wagn::Model
 
       def pattern_applies?(c)        true  end
       def pattern_name(card)         key   end
-      def register key, opt_keys, opts={} #(key, opt_keys)
+      def register key, opt_keys, opts={}
         Wagn::Model::Pattern.register_class self
-        cattr_accessor :key, :opt_keys, :trunkless, :junction_only, :method_key
+        cattr_accessor :key, :opt_keys, :junction_only, :method_key, :trunkless
         self.key = Wagn::Codename[key] || key # failsafe for loading/migration
         self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]
         opts.each { |key, val| self.send "#{key}=", val }
+        self.trunkless = !!self.method_key
       end
       def method_key_from_opts(opts) method_key           end
       def junction_only?()          !!self.junction_only  end
@@ -123,7 +124,7 @@ module Wagn::Model
       self
     end
     def get_method_key()
-      return self.class.method_key if self.class.trunkless?
+      return self.class.method_key if self.class.trunkless
       opts = {}
       opt_keys.each_with_index{ |key, index| opts[key] = opt_vals[index] }
       self.class.method_key_from_opts opts

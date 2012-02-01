@@ -157,24 +157,22 @@ navboxize = (term, results)->
   items = []
 
   $.each ['search', 'add', 'new'], (index, key)->
-    val = results[key]
-    i = { type: key, value: term, prefix: key, label: '<strong class="highlight">' + term + '</strong>' }
-    if !val #nothing
-    else if key == 'search'
-      i.href  = '/*search?view=content&_keyword=' + escape(term)
-    else if key == 'add'
-      i.href = '/card/new?card[name]=' + escape(term)
-    else if key == 'new'
-      i.type = 'add' # for icon
-      i.href = '/new/' + val[1]
+    if val = results[key]
+      i = { type: key, value: term, prefix: key, label: '<strong class="highlight">' + term + '</strong>' }
+      if key == 'search'
+        i.term = term
+      else if key == 'add'
+        i.href = '/card/new?card[name]=' + escape(term)
+      else if key == 'new'
+        i.type = 'add' # for icon
+        i.href = '/new/' + val[1]
 
-    items.push i if val
+      items.push i
 
   $.each results['goto'], (index, val) ->
     items.push { type: 'goto', prefix: 'go to', value: val[0], label: val[1], href: '/' + val[2] } 
 
-  $.each items, (index, i)->
-    i.href = wagn.rootPath + i.href
+  $.each items, (index, i) ->
     i.label = 
       '<span class="navbox-item-label '+ i.type + '-icon">' + i.prefix + ':</span> ' +
       '<span class="navbox-item-value">' + i.label + '</span>'
@@ -182,5 +180,10 @@ navboxize = (term, results)->
   items
 
 navbox_select = (event, ui) ->
+  if ui.item.term
+    $(this).closest('form').submit()
+  else
+    window.location = wagn.rootPath + ui.item.href
+    
   $(this).attr('disabled', 'disabled')
-  window.location = ui.item.href
+  

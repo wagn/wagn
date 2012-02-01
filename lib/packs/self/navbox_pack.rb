@@ -1,4 +1,4 @@
-class Wagn::Renderer
+class Wagn::Renderer::Html
   define_view(:raw, :name=>'*navbox') do |args|
     %{ <form action="#{Card.path_setting '/*search'}" id="navbox-form" method="get">
       #{hidden_field_tag :view, 'content' }

@@ -33,7 +33,7 @@ class Wagn::Renderer
         end +
         
         content_tag(:td, :class=>'perm-indiv perm-vals') do
-          render :list, :items=>item_names, :extra_css_class=>'perm-indiv-ul'
+          _render_list :items=>item_names, :extra_css_class=>'perm-indiv-ul'
         end +
         
         if inheritable

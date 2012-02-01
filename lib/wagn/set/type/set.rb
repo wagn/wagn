@@ -14,7 +14,7 @@ module Wagn::Set::Type::Set
 
   def junction_only?()
     !@junction_only.nil? ? @junction_only :
-       @junction_only = subclass_for_set.junction_only?
+       @junction_only = subclass_for_set.junction_only
   end
 
   def label

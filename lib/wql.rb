@@ -144,23 +144,22 @@ class Wql
       query = query.symbolize_keys
       @selfname = query.delete(:context) if query[:context]
       @parent   = query.delete(:_parent) if query[:_parent]
-      query.each { |key,val| clean_val val, query, key }
+      query.each { |key,val| query[key]= clean_val val, query, key }
       query
     end
     
     
     def clean_val(val, query, key)
-      query[key] =
-        case val
-        when String
-          if val =~ /^\$(\w+)$/
-            val = @vars[$1.to_sym].to_s.strip
-          end
-          absolute_name(val)
-        when Hash   ; clean(val)
-        when Array  ; val.map{ |v| clean_val(v, query, key)}
-        else        ; val
+      case val
+      when String
+        if val =~ /^\$(\w+)$/
+          val = @vars[$1.to_sym].to_s.strip
         end
+        absolute_name(val)
+      when Hash   ; clean(val)
+      when Array  ; val.map{ |v| clean_val(v, query, key)}
+      else        ; val
+      end
     end
     
     def merge(spec)
@@ -485,7 +484,8 @@ class Wql
     
     def to_sql(field)
       op,v = @spec
-      v=@cardspec.card.name if v=='_self'
+      #warn "to_sql(#{field}), #{op}, #{v}, #{@cardspec.inspect}"
+      v=@cardspec.selfname if v=='_self'
       table = @cardspec.table_alias
       
       #warn "to_sql #{field}, #{v} (#{op})"
@@ -510,18 +510,3 @@ class Wql
   end         
 end
 
-
-class ActiveRecord::ConnectionAdapters::AbstractAdapter
-  def cast_types()  native_database_types.merge custom_cast_types  end
-  def custom_cast_types() {}                                       end
-end
-
-class ActiveRecord::ConnectionAdapters::MysqlAdapter
-  def custom_cast_types
-    { :string  => { :name=>'char'    },
-      :integer => { :name=>'signed'  },
-      :text    => { :name=>'char'    },
-      :float   => { :name=>'decimal' },
-      :binary  => { :name=>'binary'  }  }
-  end
-end

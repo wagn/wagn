@@ -601,28 +601,32 @@ class Wagn::Renderer::Html
 
 
   define_view(:denial) do |args|
-    action = params[:action]
-
     wrap(:denial, args) do #ENGLISH below
       %{#{ header }
         <div id="denied" class="instruction open-content">
           <h1>Ooo.  Sorry, but...</h1>
-
-          <div>
-       #{ if Card.user_id == Card::AnonID
-           %{You have to #{ link_to "sign in", :controller=>'account', :action=>'signin' }}
+  
+        
+       #{ if params[:action] != 'view' && Wagn::Conf[:read_only]
+            "<div>We are currently in read-only mode.  Please try again later.</div>"
           else
-           "You need permission"
-          end} to #{action} this card#{": <strong>#{fancy_title(card)}</strong>" if card.name && !card.name.blank? }.
-          </div>
-
-          #{unless @skip_slot_header or @deny=='view'
-            %{<p>#{ link_to 'See permission settings', path(:options, :attrib=>'settings'), :class=>'slotter', :remote=>true  }.</p>}
-          end} #{
-
-          if Card.user_id == Card::AnonID && Card.new(:typecode=>'InvitationRequest').ok?(:create)
-            %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}
-          end }
+            %{<div>#{
+            
+            if Card.user_id == Card::AnonID
+             %{You have to #{ link_to "sign in", :controller=>'account', :action=>'signin' }}
+            else
+             "You need permission"
+            end} to #{params[:action]} this card#{": <strong>#{fancy_title(card)}</strong>" if card.name && !card.name.blank? }.
+            </div>
+  
+            #{unless @skip_slot_header or @deny=='view'
+              %{<p>#{ link_to 'See permission settings', path(:options, :attrib=>'settings'), :class=>'slotter', :remote=>true  }.</p>}
+            end} #{
+  
+            if User.current_user.anonymous? && Card.new(:typecode=>'InvitationRequest').ok?(:create)
+              %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}
+            end }}
+          end   }
         </div>
         #{ _render_footer  }}
     end

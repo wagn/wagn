@@ -5,29 +5,29 @@ module Wagn::Model::Attach
       else
         Revision.find_by_id(selected_rev_id).content
       end
-    #warn "aa #{rev_id.inspect}, #{rev&&rev.id} #{selected_rev_id}}\ncc #{c}"
     !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/) 
   end
 
   def attach_array_set(i, v)
-    #Rails.logger.debug "attach_set #{inspect} [#{i.inspect}] = #{v}"
     c = attach_array((cr=cached_revision)&&cr.id)
     if c[i] != v
       c[i] = v
-      #warn "update #{i} #{v}"
       self.content = c*"\n"
     end
   end
-    #r=warn "Afn #{r}"; r
-  def attach_file_name()
-    r=attach_array[0]
-#    raise "fn nil ???" if r.nil?; r
-  end
+  def attach_file_name()    attach_array[0] end
   def attach_content_type() attach_array[1] end
-  def attach_file_size() attach_array[2] end
+  def attach_file_size()    attach_array[2] end
 
-  def attach_file_name=(v) attach_array_set(0, v) if v end
-  def attach_content_type=(v) attach_array_set(1, v) if v end
+  def attach_file_name=(v)
+    return if !v # does this happen?
+    attach_array_set 0, v
+    attach_array_set 1, MIME::Types.type_for(v).first.to_s
+    # was having issues with browsers getting mime types wrong,
+    # eg application/octet-stream for pdfs in Firefox (both versions 4 and 10)
+    # this solution means we just do a lookup based on the extension.
+    # perhaps not ideal, but at least consistent.  Not sure browsers do much more.
+  end
   def attach_file_size=(v) attach_array_set(2, v) if v end
 
   STYLES = %w{ icon small medium large original }
@@ -41,12 +41,15 @@ module Wagn::Model::Attach
   end
 
   def attachment_format(ext)
-    return nil unless ext && !ext.blank? && attach
+    return nil unless ext.present? && attach
+    return nil unless original_ext=attach.send( :interpolate, ':extension' )
+    return original_ext if ['file', original_ext].member? ext
     exts = MIME::Types[attach.content_type]
     return nil unless exts
     return ext if exts.find {|mt| mt.extensions.member? ext }
     return exts[0].extensions[0]
-  rescue
+  rescue Exception => e
+    Rails.logger.info "attachment_format issue: #{e.message}"
     nil
   end
     
@@ -54,19 +57,20 @@ module Wagn::Model::Attach
 
 
   
-  def attachment_link(rev_id)
+  def attachment_link(rev_id) # create filesystem links to previous revision
     if styles = case typecode
           when 'File'; ['']
           when 'Image'; STYLES
         end
       save_rev_id = selected_rev_id
-      self.selected_rev_id = rev_id
       links = {}
-      styles.each {|style| links[style] = attach.path(style) }
+      
+      self.selected_rev_id = rev_id
+      styles.each { |style|  links[style] = attach.path(style)          }
+      
       self.selected_rev_id = current_revision_id
-      styles.each {|style|
-        #warn "link to new rev #{links[style]}, #{attach.path(style)}"
-        File.link  links[style], attach.path(style)}
+      styles.each { |style|  File.link links[style], attach.path(style) }
+      
       self.selected_rev_id = save_rev_id
     end
   end
@@ -75,19 +79,17 @@ module Wagn::Model::Attach
     at=self.attach
     at.instance_write :file_name,
       "#{self.key.gsub('*','X').camelize}#{File.extname(at.original_filename)}"
-    #warn "before_post_attach #{attach_file_name}, #{attach_content_type}"
 
     'Image' == (typecode || Cardtype.classname_for( @type_args[:type] ) )
     # returning true enables thumbnail creation
   end
 
-  #def item_names(args={}) [self.cardname] end
 
   def self.included(base)
     base.class_eval do
       has_attached_file :attach, :preserve_files=>true,
-        :url => ":base_url/:basename-:size:revision_id.:content_type_extension",
-        :path => ":local/:card_id/:size:revision_id.:content_type_extension",
+        :url => ":base_url/:basename-:size:revision_id.:extension",
+        :path => ":local/:card_id/:size:revision_id.:extension",
         :styles => { :icon   => '16x16#', :small  => '75x75#',
                    :medium => '200x200>', :large  => '500x500>' } 
 

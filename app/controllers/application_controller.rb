@@ -77,17 +77,9 @@ class ApplicationController < ActionController::Base
   end
 
   # ------------------( permission filters ) -------
-  def view_ok
-    ActiveSupport::Notifications.instrument 'view_ok', :message=>"read #{@card.name}" do
-      @card.ok?(:read) || render_denied('view')
-    end
-  end
-
-  def update_ok
-    @card.ok?(:update) || render_denied('edit')
-  end
-
-
+  def view_ok()    @card.ok?(:read)   || render_denied('view')    end
+  def update_ok()  @card.ok?(:update) || render_denied('edit')    end
+  def remove_ok()  @card.ok!(:delete) || render_denied('delete')  end
 
  #def create_ok
  #  @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
@@ -96,11 +88,6 @@ class ApplicationController < ActionController::Base
  #  t = Card.class_for(@type, :cardname) || Card::Basic
  #  t.create_ok? || render_denied('create')
  #end
-
-  def remove_ok
-    @card.ok!(:delete) || render_denied('delete')
-  end
-
 
 
   # ----------( rendering methods ) -------------
@@ -149,7 +136,7 @@ class ApplicationController < ActionController::Base
     @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
   
     format = @card.attachment_format(params[:format])
-    return nil if !format
+    return fast_404 if !format
 
     if ![format, 'file'].member?( params[:format] )
       return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) ) 
@@ -188,8 +175,6 @@ class ApplicationController < ActionController::Base
     render_errors :view=>view, :status=>status
   end
      
-
-  
 end
 
 

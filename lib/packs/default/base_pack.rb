@@ -24,7 +24,7 @@ class Wagn::Renderer
   define_view(:url)      { |args| wagn_url(_render_linkname) }
 
   define_view(:open_content) do |args|
-    pre_render = _render_core(args) { (yield) }
+    pre_render = _render_core(args) { yield args }
     card ? card.post_render(pre_render) : pre_render
   end
 

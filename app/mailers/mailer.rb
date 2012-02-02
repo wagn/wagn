@@ -11,7 +11,7 @@ class Mailer < ActionMailer::Base
 
     @email    = (user.email    or raise Wagn::Oops.new("Oops didn't have user email"))
     @password = (user.password or raise Wagn::Oops.new("Oops didn't have user password"))
-    @card_url = wagn_url user.card
+    @card_url = wagn_url Card[user.card_id]
     @pw_url   = wagn_url "/card/options/#{url_key}"
     @login_url= wagn_url "/account/signin"
     @message  = message.clone
@@ -53,7 +53,7 @@ class Mailer < ActionMailer::Base
     @card_url = wagn_url card
     @change_url = wagn_url "/card/changes/#{card.cardname.to_url_key}"
     @unwatch_url = wagn_url "/card/watch/#{watched.to_cardname.to_url_key}?toggle=off"
-    @udpater_url = wagn_url card.updater.card
+    @udpater_url = wagn_url card.updater
     @watched = (watched == card.cardname ? "#{watched}" : "#{watched} cards")
 
     mail( {

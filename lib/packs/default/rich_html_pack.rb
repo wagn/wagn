@@ -248,9 +248,9 @@ class Wagn::Renderer::Html
     <span class="title">
       #{ link_to_page raw(fancy_title(self.showname || card)), (card.new_card? ? card.cardname.tag_name : card.name) }
     </span>
-  </div>
-
-  <div class="field-in-multi">
+  </div>     
+  
+  <div class="field-in-multi" #{ %{card-id="#{card.id}" card-name="#{h card.name}"} if card.id }>
     #{ self.content_field( eform, :nested=>true ) }
     #{ card.new_card? ? eform.hidden_field(:type_id) : '' }
   </div>

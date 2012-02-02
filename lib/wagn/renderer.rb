@@ -93,14 +93,14 @@ module Wagn
           define_method( "render_#{view}" ) do |*a|
             begin
               denial=deny_render(view, *a) and return denial
-              msg = "render #{view} #{ card ? "called for #{card.name}" : '' }"
+              msg = "render #{view} #{ card && card.name.present? ? "called for #{card.name}" : '' }"
               ActiveSupport::Notifications.instrument 'wagn.render', :message=>msg do
                 send( "_render_#{view}", *a)
               end
             rescue Exception=>e
               Rails.logger.info "\nRender Error: #{e.message}"
               Rails.logger.debug "  #{e.backtrace*"\n  "}"
-              rendering_error e, (card ? card.name : 'unknown card')
+              rendering_error e, (card && card.name.present? ? card.name : 'unknown card')
             end
           end
         end
@@ -213,7 +213,7 @@ module Wagn
       ch_action = case
         when too_deep?      ; :too_deep
         when !card          ; false
-        when [:edit, :edit_in_form].member?(action)
+        when [:new, :edit, :edit_in_form].member?(action)
           allowed = card.ok?(card.new_card? ? :create : :update)
           !allowed && :deny_view #should be deny_create or deny_update...
         else

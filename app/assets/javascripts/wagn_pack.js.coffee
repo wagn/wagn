@@ -105,7 +105,7 @@ $(window).load ->
       true
     else
       f.find('.set-editor').addClass('attention')
-      f.find('.notice').text('To what Set of cards does this Rule apply?')
+      $(this).notify 'To what Set of cards does this Rule apply?'
       false
 
   $('body').delegate '.rule-cancel-button', 'click', ->

@@ -225,7 +225,7 @@ module Wagn
       @nested = options[:nested]
       raw(%{ <div class="content-editor">} +
       ((card && !card.new_card? && !options[:skip_rev_id]) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : '') +
-      self.render_editor +
+      self._render_editor +
       '</div>')
     end
     

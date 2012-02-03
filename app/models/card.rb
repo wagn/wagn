@@ -410,18 +410,18 @@ class Card < ActiveRecord::Base
       absolute_name = cardname.to_absolute_name(sub_name)
       if card = Card[absolute_name]
         card = card.refresh if card.frozen?
-        card.update_attributes(opts)
+        card.update_attributes opts
       elsif opts[:content].present? and opts[:content].strip.present?
         opts[:name] = absolute_name
-        card = Card.create(opts)
+        card = Card.create opts
       end
       @subcards << card
-      if card and !card.errors.empty?
+      if card and card.errors.any?
         card.errors.each do |field, err|
           self.errors.add card.name, err
         end
+        raise ActiveRecord::Rollback
       end
-      
     end
   end
 

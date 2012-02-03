@@ -271,7 +271,7 @@ module Wagn
     def expand_main(opts)
       return wrap_main( @root.main_content ) if @root.main_content
       [:item, :view, :size].each do |key|
-        if val=params[key] and !val.to_s.empty?
+        if val=params[key] and val.to_s.present?
           opts[key] = val.to_sym
         end
       end

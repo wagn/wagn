@@ -21,7 +21,7 @@ class NewFileStorage < ActiveRecord::Migration
               card.attach.instance_variable_set("@_attach_file_name", filename) # fixes ext in path
               card.attach_file_name = "#{card.key.gsub('*','X').camelize}#{File.extname(filename)}" # fixes ext in content
             
-              revision.update_attribute :content,card.content
+              revision.update_attribute :content, card.content
               write_file file, card.attach.path(typecode=='Image' ? :original : '')
             
               if typecode == 'Image'

@@ -136,7 +136,7 @@ class Card < ActiveRecord::Base
 
 
   class << self
-    def user_id() @@user_id ||= AnonID end
+    def user_id() @@user_id ||= Card::AnonID end
     def user_card()
       @@user_card && @@user_card.id == user_id ?
         @@user_card : @@user_card = Card[user_id]
@@ -590,7 +590,7 @@ class Card < ActiveRecord::Base
 =end
 
   def repair_key
-    ::Card.as  Card::WagbotID do
+    Card.as  Card::WagbotID do
       correct_key = cardname.to_key
       current_key = key
       return self if current_key==correct_key

@@ -97,8 +97,8 @@ class AccountController < ApplicationController
   end
 
   def forgot_password
-    return unless request.post?
-    @user = User.find_by_email(params[:email].downcase)
+    return unless request.post? and email = params[:email].downcase
+    @user = User.find_by_email(email)
     if @user.nil?
       flash[:notice] = "Unrecognized email."   #ENGLISH
       render :action=>'signin', :status=>404

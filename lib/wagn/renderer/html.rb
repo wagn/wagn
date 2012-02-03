@@ -134,7 +134,7 @@ module Wagn
  
     #### --------------------  additional helpers ---------------- ###
     def notice
-      %{<span class="card-notice"></span>}
+      %{<div class="card-notice"></div>}
     end
 
     def wrap_submenu

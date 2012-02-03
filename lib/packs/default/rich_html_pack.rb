@@ -41,7 +41,7 @@ class Wagn::Renderer::Html
     comment_box = ''
     if card && card.ok?(:comment)
       comment_box = 
-      %{<div class="comment-box"> #{
+      %{<div class="comment-box nodblclick"> #{
         card_form :comment do |f|
           %{#{f.text_area :comment, :rows=>3 }<br/> #{
           if User.current_user.login == "anon"
@@ -447,9 +447,9 @@ class Wagn::Renderer::Html
   
   define_view(:conflict) do |args|
     load_revisions
-    wrap(:conflict) do |args|
-      %{<strong>Not Saved!</strong><span class="new-current-revision-id">#{@revision.id}</span>
-        <div>#{ link_to_page @revision.author.card.name } has also been editing this card.</div>
+    wrap(:errors) do |args|
+      %{<strong>Conflict!</strong><span class="new-current-revision-id">#{@revision.id}</span>
+        <div>#{ link_to_page @revision.author.card.name } has also been making changes.</div>
         <div>Please examine below, resolve above, and re-submit.</div>
         #{wrap(:conflict) { |args| _render_diff } } }
     end
@@ -742,25 +742,6 @@ class Wagn::Renderer::Html
      notice}}
    end
   end
-
-
-  
-  #  define_view(:main_show) do |args|
-  #    wrap(:main, args) do
-  #      %{#{ header } #{ notice } #{
-  #      wrap_content( :open, raw( self.main_content ) ) }}
-  #    end
-  #  end
-  
-  
-
-
-
-  #  define_view(:error) do |args|
-  #    wrap(:error, args) do
-  #      %{Caught error ...\n#{except.inspect}<br>\n<ul><li>#{except.backtrace * "</li>\n<li>"}</li></ul></div>}
-  #    end
-  #  end
 
 
   

@@ -28,15 +28,16 @@ jQuery.fn.extend {
     v
   
   notify: (message) -> 
-    notice = @slot().find('.card-notice')
+    notice = @slot().find '.card-notice'
     return false unless notice[0]
-    notice.html(message)
+    notice.html message
+    notice.show 'blind'
 
   report: (message) ->
-    report = @slot().find('.card-report')
+    report = @slot().find '.card-report'
     return false unless report[0]
     report.hide()
-    report.html(message)
+    report.html message
     report.show 'drop', 750
     setTimeout (->report.hide 'drop', 750), 3000
     
@@ -160,7 +161,7 @@ $(window).load ->
     $.rails.handleRemote(s)
     false # don't propagate up to next slot
 
-  $('.comment-box').live 'dblclick', -> false
+  $('.nodblclick').live 'dblclick', -> false
 
   $('body').delegate 'form.slotter', 'submit', (event)->
     if (target = $(this).attr 'main-success') and $(this).isMain()

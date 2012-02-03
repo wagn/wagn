@@ -290,7 +290,9 @@ class User < ActiveRecord::Base
    
   #before validation
   def downcase_email!
-    self.email=self.email.downcase if self.email
+    if e = self.email and e != e.downcase
+      self.email=e.downcase
+    end
   end 
    
   protected

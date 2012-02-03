@@ -21,9 +21,11 @@ describe Mailer do
   context "account info, new password" do # forgot password
     before do
       user_id =  Card['sara'].id
-      @user = User.where(:card_id=>user_id).first
-      @user.generate_password
-      @email = Mailer.account_info(@user, "New password subject", "Forgot my password")
+      Card.as Card::WagbotID do
+        @user = User.where(:card_id=>user_id).first
+        @user.generate_password
+        @email = Mailer.account_info(@user, "New password subject", "Forgot my password")
+      end
     end
 
     context "new password message" do
@@ -32,12 +34,17 @@ describe Mailer do
       end    
 
       it "is from Wag bot email" do
-        @email.should deliver_from(User.admin.email)
-        #assert_equal [User.admin.email], @mail.from
+        warn "test from #{User.admin.inspect}, #{User.admin.email}"
+        @email.should deliver_from("Wagn Bot <noreply@wagn.org>")
       end     
 
+      it "has subject" do
+        @email.should have_subject /^New password subject$/
+      end
+
       it "sends the right email" do
-        @email.should have_body_text /foobarbaz/
+        #@email.should have_body_text /Account Details\b.*\bPassword: *[0-9A-Za-z]{9}$/m
+        @email.should have_body_text /Account Details.*\bPassword: *[0-9A-Za-z]{9}$/m
       end
     end     
   end

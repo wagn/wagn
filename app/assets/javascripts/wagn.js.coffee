@@ -48,13 +48,15 @@ jQuery.fn.extend {
   autosave: ->
     slot = @slot()
     return if @attr 'no-autosave'
-    #might be better to put this href in the html
-    if multi = @closest '.field-in-multi'
+    multi = @closest '.field-in-multi'
+    if multi[0]
       return unless id = multi.attr 'card-id'
       reportee = ': ' + multi.attr 'card-name'
     else
       id = slot.attr 'card-id'
       reportee = ''
+
+    #might be better to put this href base in the html
     
     $.ajax wagn.rootPath + '/card/save_draft/~' + id, {
       data : { 'card[content]' : @val() },
@@ -79,8 +81,7 @@ jQuery.fn.extend {
 
 #~~~~~ ( EVENTS )
 
-setInterval (-> $('.card-form').setContentFieldsFromMap()), 20000
-
+setInterval (-> $('.card-form').setContentFieldsFromMap()), 5000
 
 $(window).load ->
   wagn.initializeEditors $('body')

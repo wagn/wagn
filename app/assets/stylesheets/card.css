@@ -374,6 +374,7 @@ div.content-view {
   background: #ffc;
   border: 1px solid grey;
   padding: 10px;
+  margin-top: 12px;
 }
 .new-current-revision-id {
   display:none;
@@ -461,7 +462,7 @@ del.diffmod,
   font-style: italic;
   text-align: center;
   color: #009;
-  display: block;
+  display: none;
   margin: 0px 0px 4px 0px;
 
 }

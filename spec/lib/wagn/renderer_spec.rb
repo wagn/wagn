@@ -156,7 +156,7 @@ describe Wagn::Renderer, "" do
         assert_view_select @simple_page, 'div[id="menu"]' do
           assert_select 'a[class="internal-link"][href="/"]', 'Home'
           assert_select 'a[class="internal-link"][href="/recent"]', 'Recent'
-          assert_select 'form[id="navbox-form"][action="/*search"]' do
+          assert_select 'form.navbox-form[action="/*search"]' do
             assert_select 'input[name="_keyword"]'
           end
         end
@@ -507,7 +507,7 @@ describe Wagn::Renderer, "" do
 
     context "*navbox" do
       it "should have a form" do
-        assert_view_select render_card(:raw, :name=>'*navbox'), 'form[id="navbox-form"]'
+        assert_view_select render_card(:raw, :name=>'*navbox'), 'form.navbox-form'
       end
     end
 

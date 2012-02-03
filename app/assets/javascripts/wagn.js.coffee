@@ -28,15 +28,16 @@ jQuery.fn.extend {
     v
   
   notify: (message) -> 
-    notice = @slot().find('.card-notice')
+    notice = @slot().find '.card-notice'
     return false unless notice[0]
-    notice.html(message)
+    notice.html message
+    notice.show 'blind'
 
   report: (message) ->
-    report = @slot().find('.card-report')
+    report = @slot().find '.card-report'
     return false unless report[0]
     report.hide()
-    report.html(message)
+    report.html message
     report.show 'drop', 750
     setTimeout (->report.hide 'drop', 750), 3000
     
@@ -47,13 +48,15 @@ jQuery.fn.extend {
   autosave: ->
     slot = @slot()
     return if @attr 'no-autosave'
-    #might be better to put this href in the html
-    if multi = @closest '.field-in-multi'
+    multi = @closest '.field-in-multi'
+    if multi[0]
       return unless id = multi.attr 'card-id'
       reportee = ': ' + multi.attr 'card-name'
     else
       id = slot.attr 'card-id'
       reportee = ''
+
+    #might be better to put this href base in the html
     
     $.ajax wagn.rootPath + '/card/save_draft/~' + id, {
       data : { 'card[content]' : @val() },
@@ -78,8 +81,7 @@ jQuery.fn.extend {
 
 #~~~~~ ( EVENTS )
 
-setInterval (-> $('.card-form').setContentFieldsFromMap()), 20000
-
+setInterval (-> $('.card-form').setContentFieldsFromMap()), 5000
 
 $(window).load ->
   wagn.initializeEditors $('body')
@@ -160,7 +162,7 @@ $(window).load ->
     $.rails.handleRemote(s)
     false # don't propagate up to next slot
 
-  $('.comment-box').live 'dblclick', -> false
+  $('.nodblclick').live 'dblclick', -> false
 
   $('body').delegate 'form.slotter', 'submit', (event)->
     if (target = $(this).attr 'main-success') and $(this).isMain()

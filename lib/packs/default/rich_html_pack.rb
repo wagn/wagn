@@ -56,11 +56,7 @@ class Wagn::Renderer::Html
     wrap(:open, args) do
       %{
          #{ header }
-<<<<<<< HEAD
-         #{ wrap_content( :open, _render_open_content ) }
-=======
          #{ wrap_content( :open, _render_open_content(args) ) } 
->>>>>>> develop
          #{ comment_box }
          #{ notice }
          #{ footer }

@@ -6,7 +6,7 @@ class Mailer < ActionMailer::Base
     from_card = Card.user_card
     from_name = from_card.nil? ? '' : from_card.name
     from_user = User.where(:card_id=>from_card.id).first || User.admin
-    warn Rails.logger.info("account info #{user.inspect} #{from_card.inspect}")
+    #warn Rails.logger.info("account info #{user.inspect} #{from_card.inspect}")
     url_key = Card[user.card_id].cardname.to_url_key
 
     @email    = (user.email    or raise Wagn::Oops.new("Oops didn't have user email"))

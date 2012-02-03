@@ -56,7 +56,11 @@ class Wagn::Renderer::Html
     wrap(:open, args) do
       %{
          #{ header }
+<<<<<<< HEAD
          #{ wrap_content( :open, _render_open_content ) }
+=======
+         #{ wrap_content( :open, _render_open_content(args) ) } 
+>>>>>>> develop
          #{ comment_box }
          #{ notice }
          #{ footer }
@@ -552,14 +556,9 @@ class Wagn::Renderer::Html
 
 
   define_view(:errors) do |args|
-#    Rails.logger.debug "card_errors #{card}, #{card.errors.map(&:to_s).inspect}"
     wrap(:errors, args) do
-      %{ <h2>Rats. Issue with #{card.name && card.name.upcase} card:</h2>
-      #{
-      card.errors.map do |attr, msg|
-        "<div>#{attr.to_s.gsub(/base/, 'captcha').upcase }: #{msg}</div>"
-      end * ''
-      }}
+      %{ <h2>Can't save "#{card.name}".</h2> } +
+      card.errors.map { |attr, msg| "<div>#{attr}: #{msg}</div>" } * ''
     end
   end
 
@@ -643,9 +642,7 @@ class Wagn::Renderer::Html
   end
   
   def card_form *opts
-    form_for card, form_opts(*opts) do |form| 
-      yield form
-    end
+    form_for( card, form_opts(*opts) ) { |form| yield form }
   end
 
   def form_opts url, classes='', other_html={}

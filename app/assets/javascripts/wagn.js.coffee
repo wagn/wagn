@@ -69,10 +69,10 @@ jQuery.fn.extend {
     $.each map, (selector, fn)-> 
       this_form.setContentFields(selector, fn)
   setContentFields: (selector, fn) ->
-    $.each this.find(selector), ->
+    $.each @find(selector), ->
       $(this).setContentField(fn)     
   setContentField: (fn)->
-    field = this.closest('.card-editor').find('.card-content')
+    field = @closest('.card-editor').find('.card-content')
     init_val = field.val() # tinymce-jquery overrides val(); that's why we're not using it.
     new_val = fn.call this
     field.val new_val
@@ -81,7 +81,7 @@ jQuery.fn.extend {
 
 #~~~~~ ( EVENTS )
 
-setInterval (-> $('.card-form').setContentFieldsFromMap()), 5000
+setInterval (-> $('.card-form').setContentFieldsFromMap()), 20000
 
 $(window).load ->
   wagn.initializeEditors $('body')

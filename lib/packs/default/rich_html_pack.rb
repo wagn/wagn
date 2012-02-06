@@ -226,6 +226,7 @@ class Wagn::Renderer::Html
           %{<div>to #{ raw typecode_field :class=>'type-field edit-type-field' }</div>}
         end}
         <div>
+          #{ submit_tag 'Submit', :disable_with=>'Submitting' }
           #{ button_tag 'Cancel', :href=>path(:edit), :type=>'button', :class=>'edit-type-cancel-button slotter' }
         </div>}
      end}

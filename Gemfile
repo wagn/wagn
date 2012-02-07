@@ -20,9 +20,9 @@ group :mysql do
 end
 
 group :postgres do
-  ENV['RUBY_VERSION']||RUBY_VERSION =~ /^(1\.9|ree)/ ?
-    gem('pg', '~>0.7') :
-    gem('postgres', '~>0.7.9.2008.01.28')
+  gem 'pg', '~>0.12.2'
+  # if using 1.8.7 or ree and having no luck with the above, try:
+  # gem 'postgres', '~>0.7.9.2008.01.28'
 end
 #gem 'sqlite3-ruby', :require => 'sqlite3', :group=>'sqlite'
 

@@ -385,9 +385,11 @@ module Wagn
           'internal-link'
         else
           known_card = !!Card.fetch(href)
-          text = text.to_cardname.to_show card.name
+          if card
+            text = text.to_cardname.to_show card.name
+          end
           href = href.to_cardname
-          href = wagn_path (known_card ? href.to_url_key : CGI.escape(href.escape))
+          href = wagn_path( (known_card ? href.to_url_key : CGI.escape(href.escape)) )
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
           href = full_uri(href.to_s)
           known_card ? 'known-card' : 'wanted-card'

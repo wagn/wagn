@@ -13,9 +13,6 @@ test:
   <<: *common
 
 cucumber:
-  database: wagn_cruise_cucumber
+  database: wagn_cruise_test
   <<: *common
 
-production:
-  database: wagn_cruise_production
-  <<: *common

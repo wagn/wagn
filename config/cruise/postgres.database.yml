@@ -1,5 +1,5 @@
 common: &common
-  adapter: postgresql
+  adapter: postgres
   username: postgres
   password: postgres
   encoding: utf8
@@ -14,9 +14,5 @@ test:
   <<: *common
 
 cucumber:
-  database: wagn_cruise_cucumber
-  <<: *common
-
-production:
-  database: wagn_cruise_production
+  database: wagn_cruise_test
   <<: *common

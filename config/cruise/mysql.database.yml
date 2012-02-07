@@ -1,0 +1,21 @@
+common: &common
+  adapter: mysql
+  username: root
+  encoding: utf8
+  host: localhost
+
+development:
+  database: wagn_cruise_development
+  <<: *common
+
+test:
+  database: wagn_cruise_test
+  <<: *common
+
+cucumber:
+  database: wagn_cruise_cucumber
+  <<: *common
+
+production:
+  database: wagn_cruise_production
+  <<: *common

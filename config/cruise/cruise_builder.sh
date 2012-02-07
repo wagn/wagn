@@ -1,17 +1,16 @@
 #!/bin/bash
 
-git submodule update --init
-bundle install
+bundle install --path ../gems
 
-if [ ! -f config/wagn.rb ]; then
+if [ ! -f config/wagn.yml ]; then
   export WAGN_CI_MODE=scratch
-  cp config/cruise.wagn.rb config/wagn.rb
+  cp config/cruise/wagn.yml config/wagn.yml
 else
   export WAGN_CI_MODE=pre
-  echo -e "USING PRE-EXISTING DATABASE\n to regenerate, delete config/wagn.rb"
+  echo -e "USING PRE-EXISTING DATABASE\n to regenerate, delete config/wagn.yml"
 fi
 
-for db_config in config/cruise.*.database.yml; do
+for db_config in config/cruise/*.database.yml; do
   echo -e "~~~~~~\nDATABASE CONFIGURATION: $db_config\n~~~~~~~"
   cp $db_config config/database.yml
   
@@ -22,6 +21,8 @@ for db_config in config/cruise.*.database.yml; do
     env RELOAD_TEST_DATA=true rake db:test:prepare
   fi
   
-  rake testspec  
+  rake test
+  rake spec
+  cucumber  
 done
 

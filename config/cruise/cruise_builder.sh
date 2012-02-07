@@ -16,13 +16,13 @@ for db_config in config/cruise/*.database.yml; do
   
   if [ $WAGN_CI_MODE = scratch ]; then
     echo "creating wagn database"
-    rake wagn:create --trace
+    bundle exec rake wagn:create --trace
     echo "reloading test data"
-    env RELOAD_TEST_DATA=true rake db:test:prepare
+    env RELOAD_TEST_DATA=true bundle exec rake db:test:prepare
   fi
   
-  rake test
-  rake spec
-  cucumber  
+  bundle exec rake test
+  bundle exec rake spec
+  bundle exec cucumber  
 done
 

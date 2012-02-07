@@ -60,11 +60,11 @@ module LocationHelper
 
   def wagn_path( rel ) #should be in cardname?
     rel_path = Card===rel ? rel.cardname.to_url_key : rel
-    Wagn::Conf[:root_path] + ( rel_path =~ /^\// ? '' : '/' ) + rel_path
+    Wagn::Conf[:root_path].to_s + ( rel_path =~ /^\// ? '' : '/' ) + rel_path
   end
 
   def wagn_url( rel ) #should be in cardname?
-    Wagn::Conf[:base_url] + wagn_path(rel)
+    Wagn::Conf[:base_url].to_s + wagn_path(rel)
   end
   
 

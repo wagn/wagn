@@ -1,33 +1,33 @@
----
-roles_001:
-  id: '1'
+--- 
+roles_001: 
+  id: "1"
   codename: admin
-  tasks: !!null 
-roles_002:
-  id: '2'
+  tasks: 
+roles_002: 
+  id: "2"
   codename: auth
   tasks: create_accounts
-roles_003:
-  id: '3'
+roles_003: 
+  id: "3"
   codename: anon
-  tasks: !!null 
-roles_004:
-  id: '4'
+  tasks: 
+roles_004: 
+  id: "4"
   codename: Sample Role
-  tasks: !!null 
-roles_005:
-  id: '5'
+  tasks: 
+roles_005: 
+  id: "5"
   codename: r1
-  tasks: !!null 
-roles_006:
-  id: '6'
+  tasks: 
+roles_006: 
+  id: "6"
   codename: r2
-  tasks: !!null 
-roles_007:
-  id: '7'
+  tasks: 
+roles_007: 
+  id: "7"
   codename: r3
-  tasks: !!null 
-roles_008:
-  id: '8'
+  tasks: 
+roles_008: 
+  id: "8"
   codename: r4
-  tasks: !!null 
+  tasks: 

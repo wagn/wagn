@@ -176,7 +176,7 @@ describe Wagn::Renderer, "" do
       end
 
       it "renders notice info" do
-        assert_view_select @simple_page, 'span[class="card-notice"]'
+        assert_view_select @simple_page, 'div[class="card-notice"]'
       end
 
       it "renders card footer" do

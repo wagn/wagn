@@ -19,8 +19,10 @@ module Wagn
 
       def load
         @@hash = h = WAGN_CONFIG_DEFAULTS
-
-        h.merge! YAML.load_file( WAGN_CONFIG_FILE ) if File.exists? WAGN_CONFIG_FILE
+        f = WAGN_CONFIG_FILE
+        if File.exists?( f ) and y = YAML.load_file( f ) and Hash === y
+          h.merge! y
+        end 
         h.symbolize_keys!
       end
       

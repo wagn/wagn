@@ -1,0 +1,18 @@
+common: &common
+  adapter: postgresql
+  username: postgres
+  password: postgres
+  encoding: utf8
+  host: localhost
+
+development:
+  database: wagn_cruise_development
+  <<: *common
+
+test:
+  database: wagn_cruise_test
+  <<: *common
+
+cucumber:
+  database: wagn_cruise_test
+  <<: *common

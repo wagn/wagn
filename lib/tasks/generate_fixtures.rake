@@ -99,6 +99,10 @@ namespace :test do
 
   desc "dump current db to test fixtures"
   task :extract_fixtures => :environment do
+     YAML::ENGINE.yamler = 'syck'
+      # use old engine while we're supporting ruby 1.8.7 because it can't support Psych, 
+      # which dumps with slashes that syck can't understand (also !!null stuff)
+      
     sql = "SELECT * FROM %s"
     skip_tables = ["schema_info","schema_migrations","sessions"]
     ActiveRecord::Base.establish_connection

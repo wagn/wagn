@@ -56,12 +56,12 @@ module Notification
     end
 
     def watcher_pairs(pairs=true, kind=:name)
-      cuid=Card.user_id
+      #warn "wp #{pairs}, #{kind}, #{Card.user_id}"
       namep, rc = (kind == :type) ?  [lambda { self.typename },
                (Card[self.type_id||Card::DefaultID].star_rule(:watchers))] :
             [lambda { self.cardname }, star_rule(:watchers)]
-      watchers = rc.nil? ? [] : rc.item_cards.map(&:id) #.find_all{|i|i!=cuid}
-      pairs ? watchers.map {|w| [w, namep.call] } : watchers
+      watchers = rc.nil? ? [] : rc.item_cards.map(&:id)
+      pairs ? watchers.except(Card.user_id).map {|w| [w, namep.call] } : watchers
     end
   end
 

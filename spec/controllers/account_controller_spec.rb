@@ -15,7 +15,7 @@ describe AccountController do
   end
   describe "#invite" do
     before do
-      new_instance_of(Mailer) do |m|
+      mock.instance_of(Mailer) do |m|
         @mailer = m
         mock(m).account_info.with_any_args
       end
@@ -46,13 +46,8 @@ describe AccountController do
 
   describe "#forgot_password" do
     before do
-      new_instance_of(Mailer) do |m|
-        @mailer = m
-        mock.dont_allow(m).flexmail.with_any_args
-        mock(m).account_info.with_any_args
-        #mock.proxy(m).account_info.with_any_args do |v|
-        #  warn "proxy #{v.inspect}"; v
-        #end
+      any_instance_of(Mailer) do
+        mock(Mailer).account_info.with_any_args
       end
 
       @email='joe@user.com'
@@ -61,7 +56,7 @@ describe AccountController do
     end
 
     it 'should send an email to user' do
-      @mailer.should have_received.account_info(@juser, "Password Reset",
+      Mailer.should have_received.account_info(@juser, "Password Reset",
           "You have been given a new temporary password.  " +
           "Please update your password once you've signed in. ")
     end

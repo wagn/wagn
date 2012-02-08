@@ -49,7 +49,7 @@ class Mailer < ActionMailer::Base
   def change_notice(user, card, action, watched, subedits=[], updated_card=nil)
     return unless user = User===user ? user : User.where(:card_id=>user).first
 
-    #warn "change_notice( #{user.inspect}, #{card.inspect}, #{action.inspect}, #{watched.inspect} Uc:#{updated_card.inspect}...)"
+    #warn "change_notice( #{user.email}, #{card.inspect}, #{action.inspect}, #{watched.inspect} Uc:#{updated_card.inspect}...)"
     updated_card ||= card
     @card = card
     @updater = updated_card.updater.name

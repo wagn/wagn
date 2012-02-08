@@ -7,9 +7,8 @@ gem 'rails', '~> 3.1'
 gem 'htmlentities', '~>4.3.0'
 gem 'uuid', '~>2.3.4'
 gem 'paperclip', '~>2.4'
-gem 'devise', '>1.0.9'
-gem 'warden', '>0.10.1'
-#gem 'rmagick', '~>2.13.1'
+gem 'warden'
+gem 'rmagick', '~>2.13.1'
 gem "recaptcha", "~> 0.3.4"
 gem 'userstamp', '~> 2.0'
 
@@ -64,7 +63,7 @@ group :test do
   gem 'timecop'                                # not clear on use/need.  referred to in shared_data.rb
   gem 'spork', '>=0.9'
                                                
-  gem 'rr', '=1.0.0'
+  gem 'rr'#, '=1.0.0'
 
   gem 'email_spec'                             # 
   gem 'database_cleaner', '~> 0.7.0'            # used by cucumber for db transactions

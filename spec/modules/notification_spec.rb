@@ -51,17 +51,15 @@ describe "On Card Changes" do
   end 
   
   it "sends notification of updates" do
-    warn "Userid #{Card.user_id}"
-    mock(Mailer).change_notice( Card.user_id, Card["Sunglasses"], "updated", "Optic", nil)
-    Card["Sunglasses"].update_attributes :content => "some new content"
+    mock(Mailer).change_notice( is_a(Integer), Card["Sunglasses"], "edited", "Optic", nil)
+    Card["Sunglasses"].update_attributes :content => 'updated content'
   end
   
   it "does not send notification to author of change" do
-    jid = Card['John'].id
-    warn "john id:#{jid}"
-    mock(Mailer).change_notice(satisfy {|uid| uid == jid},
-            anything, anything, anything, nil).times(any_times)
+    mock(Mailer).change_notice.with_any_args.times(any_times) do
+      |*a| a[0].should_not == Card.user_id
+    end
+
     Card["All Eyes On Me"].update_attributes :content => "edit by John"
-    # note no message to John
   end
 end

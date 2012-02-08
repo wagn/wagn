@@ -1,25 +1,50 @@
+# basic installation commands
 
-To configure Cruise Control
-  Install CC to <path>
-  cd <path>
-  
-  ./cruise add <build name> -r git@github/<repo> -b <branch> -s git
-
-  cd ~/.cruise/projects/<build name>/work
-  
-  # if you have a differen schema than the repo then put yours in:
-  ./config/cruise.schema.rb
-
-  # configure config/cruise/ to what you want to build
-
-  <path>/cruise start -d
+# once
+git clone https://github.com/thoughtworks/cruisecontrol.rb.git
+cd cruisecontrol.rb
+bundle install
+./cruise start -d
 
 
+# for each project
+export WCC_BRANCH=develop
+export WCC_PROJECT="wagn-$WCC_BRANCH"
 
-  # Using cruise with Wagn:
-  #
-  # 1. You can override settings in this cruise_config.rb file in [cruise data]/projects/your_project/cruise_config.rb
-  # 2. You should set up database.yml content in files that follow this pattern:  config/cruise.[name].database.yml
-  # 3. You should set up wagn.rb content in a file named config/cruise.wagn.rb
-  # 4. By default the databases are not regenerated from scratch each time you run the integration tests.  
-  #    To trigger re-creation, you will need to remove config/wagn.rb
+./cruise add $WAGN_CRUISE_PROJECT -r git://github.com/wagn/wagn.git -b $WCC_BRANCH -s git
+cd ~/.cruise/projects/$WAGN_CRUISE_PROJECT/
+cp work/config/cruise/cruise_config.rb cruise_config.rb
+
+# By default databases aren't regenerated from scratch each time.  To trigger re-creation, remove config/wagn.yml
+
+
+
+# additional ubuntu setup
+
+# basic mysql install
+
+apt-get update
+apt-get install ruby rubygems ruby-dev mysql-server libmysql-ruby libmysqlclient-dev imagemagick libmagick9-dev git-core
+gem install rubygems-update
+/var/lib/gems/1.8/bin/update_rubygems
+gem install bundler
+
+# to get postgres working
+
+locale-gen en_US.UTF-8
+update-locale LANG=en_US.UTF-8
+apt-get install postgresql g++ libpq-dev # for postgres
+sudo -u postgres psql postgres # set password with \password postgres.  default config expects pw "postgres"
+
+
+# to get nokogiri to build
+
+apt-get install ri1.8 rdoc1.8 irb1.8 libreadline-ruby1.8 libruby1.8 libopenssl-ruby libxslt-dev libxml2-dev
+
+
+# to get javascript working in cucumber (see http://www.sarahmei.com/blog/2010/12/17/cucumber-without-a-display/)
+
+apt-get install xubuntu-desktop exaile gconf2 xvfb firefox 
+Xvfb :99 -ac -screen 0 1024x768x16
+
+

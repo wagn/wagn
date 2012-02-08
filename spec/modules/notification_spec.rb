@@ -62,4 +62,8 @@ describe "On Card Changes" do
 
     Card["All Eyes On Me"].update_attributes :content => "edit by John"
   end
+
+  it "does include author in wathers" do
+     Card["All Eyes On Me"].watchers.member?(Card.user_id).should be_true
+  end
 end

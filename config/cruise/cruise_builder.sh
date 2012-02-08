@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export DISPLAY=:99.0
 bundle install --path ../gems
 
 if [ ! -f config/wagn.yml ]; then

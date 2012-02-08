@@ -28,7 +28,8 @@ Spork.prefork do
     # If you prefer to mock with mocha, flexmock or RR, uncomment the appropriate symbol:
     # :mocha, :flexmock, :rr
 
-    config.mock_with :rspec
+    config.mock_with :rr
+
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false

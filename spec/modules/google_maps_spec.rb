@@ -20,7 +20,7 @@ describe GoogleMapsAddon do
     end
     
     it "should save geocoding to +*geocode when configured cards card are present" do              
-      GoogleMapsAddon.should_receive(:geocode).with("519 Peterson St 80524").and_return('40.581144, -105.071947')
+      mock(GoogleMapsAddon).geocode("519 Peterson St 80524").returns('40.581144, -105.071947')
       Card.as(Card::WagbotID) do
         # FIXME: rules for this should be standard?
         Card.create :name=>"*geocode+*right+*update", :content=>'[[Anyone Signed In]]'

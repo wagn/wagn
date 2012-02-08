@@ -23,7 +23,7 @@ module Notification
 
       watcher_watched_pairs.reject {|p| @trunk_watchers.include?(p.first) }.each do |watcher, watched|
         watcher and mail = Mailer.change_notice( watcher, self, action,
-                        watched, nested_notifications ) and mail.deliver
+                        watched.to_s, nested_notifications ) and mail.deliver
       end
 
       if nested_edit
@@ -32,7 +32,7 @@ module Notification
       else
         @trunk_watcher_watched_pairs.compact.each do |watcher, watched|
           next unless watcher
-          Mailer.change_notice( watcher, self.trunk, 'updated', watched, [[name, action]], self ).deliver
+          Mailer.change_notice( watcher, self.trunk, 'updated', watched.to_s, [[name, action]], self ).deliver
         end
       end
     end

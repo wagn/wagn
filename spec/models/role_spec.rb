@@ -8,7 +8,7 @@ describe Role, "Authenticated User" do
   
   it "should cache roles by id" do
     Card[@auth.id]
-    Card.should_not_receive(:find)
+    mock.dont_allow(Card).find
     Card[@auth.id]
   end
 end

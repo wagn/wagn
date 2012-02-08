@@ -5,7 +5,7 @@ describe Card do
     it "returns and caches existing cards" do
       Card.fetch("A").should be_instance_of(Card)
       Card.cache.read("a").should be_instance_of(Card)
-      Card.should_not_receive(:find_by_key)
+      mock.dont_allow(Card).find_by_key
       Card.fetch("A").should be_instance_of(Card)
     end
 
@@ -19,7 +19,7 @@ describe Card do
       Card.as(Card::WagbotID)
       Card.fetch("A").destroy!
       Card.fetch("A").should be_nil
-      Card.should_not_receive(:find_by_key)
+      mock.dont_allow(Card).find_by_key
       Card.fetch("A").should be_nil
     end
 
@@ -60,21 +60,21 @@ describe Card do
       a.should be_instance_of(Card)
 
       # expires the saved card
-      Card.cache.should_receive(:delete).with('a')
+      mock(Card.cache).delete('a')
 
       # expires plus cards
-      Card.cache.should_receive(:delete).with('c+a')
-      Card.cache.should_receive(:delete).with('d+a')
-      Card.cache.should_receive(:delete).with('f+a')
-      Card.cache.should_receive(:delete).with('a+b')
-      Card.cache.should_receive(:delete).with('a+c')
-      Card.cache.should_receive(:delete).with('a+d')
-      Card.cache.should_receive(:delete).with('a+e')
-      Card.cache.should_receive(:delete).with('a+b+c')
+      mock(Card.cache).delete('c+a')
+      mock(Card.cache).delete('d+a')
+      mock(Card.cache).delete('f+a')
+      mock(Card.cache).delete('a+b')
+      mock(Card.cache).delete('a+c')
+      mock(Card.cache).delete('a+d')
+      mock(Card.cache).delete('a+e')
+      mock(Card.cache).delete('a+b+c')
 
       # expired including? cards
-      Card.cache.should_receive(:delete).with('x').twice
-      Card.cache.should_receive(:delete).with('y').twice
+      mock(Card.cache).delete('x').times(2)
+      mock(Card.cache).delete('y').times(2)
       a.save!
     end
 
@@ -131,7 +131,7 @@ describe Card do
       it "should not hit the database for every fetch_virtual lookup" do
         Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
         Card.fetch("a+y")
-        Card.should_not_receive(:find_by_key)
+        mock.dont_allow(Card).find_by_key
         Card.fetch("a+y")
       end
       

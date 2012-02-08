@@ -122,7 +122,7 @@ describe Flexmail do
       end
 
       it "calls to mailer on Card#create" do
-        Mailer.should_receive(:flexmail).at_least(:once).with(hash_including(:to=>"joe@user.com"))
+        mock(Mailer).flexmail(hash_including(:to=>"joe@user.com")).at_least(1)
         Card.create :name => "Banana+emailtest"
       end
 
@@ -132,7 +132,7 @@ describe Flexmail do
         Card.create! :name => "mailconfig+*message", :content => "this {{_self|core}}"
 
         Rails.logger.level = ActiveSupport::BufferedLogger::Severity::DEBUG
-        Mailer.should_receive(:flexmail).with(hash_including(:message=>"this had betta work"))
+        mock(Mailer).flexmail(hash_including(:message=>"this had betta work"))
         Card.create!(:name => "ToYou", :type => "Email", :content => "had betta work")
       end
 
@@ -147,12 +147,12 @@ describe Flexmail do
       end
 
       it "doesn't call to mailer on Card#create" do
-        Mailer.should_not_receive(:flexmail)
+        mock.dont_allow(Mailer).flexmail
         Card.create :name => "Banana+emailtest"
       end
 
       it "calls to mailer on Card#create" do
-        Mailer.should_receive(:flexmail).at_least(:once).with(hash_including(:to=>"joe@user.com"))
+        mock(Mailer).flexmail(hash_including(:to=>"joe@user.com")).at_least(1)
         c = Card.create :name => "Illiodity", :type=>"Book"
         Card.update(c.id, :cards=> {"~author" => {"name" => "Bukowski"}})
       end

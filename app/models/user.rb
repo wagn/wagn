@@ -36,6 +36,7 @@ class User < ActiveRecord::Base
       #warn "create with >>>#{Card.user_card.name}"
       #warn "create with args= #{({:invite_sender=>Card.user_card, :status=>'active'}.merge(user_args)).inspect}"
       Card.as Card::WagbotID do
+        #warn "cwa #{user_args.inspect}, #{card_args.inspect}"
         @user = User.new({:invite_sender=>Card.user_card, :status=>'active'}.merge(user_args))
         #warn "user is #{@user.inspect}" unless @user.email
         @user.generate_password if @user.password.blank?
@@ -132,10 +133,11 @@ class User < ActiveRecord::Base
     raise(Wagn::Oops, "subject is required") unless (args[:subject])
     raise(Wagn::Oops, "message is required") unless (args[:message])
     begin
-      message = Mailer.account_info self, args[:subject], args[:message]
+      #warn "send_account_info(#{args.inspect})"
+      message = Mailer.account_info(self, args[:subject], args[:message])
       message.deliver
     rescue Exception=>e
-      warn "ACCOUNT INFO DELIVERY FAILED: \n #{args.inspect}\n   #{e.message}, #{e.backtrace*"\n"}"
+      warn Rails.logger.info("ACCOUNT INFO DELIVERY FAILED: \n #{args.inspect}\n   #{e.message}, #{e.backtrace*"\n"}")
     end
   end
 

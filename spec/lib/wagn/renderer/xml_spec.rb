@@ -253,7 +253,7 @@ describe Wagn::Renderer::Xml, "" do
         default_card = Card.create!(:name=>"templated+*right+*default", :content=>"Default Bar" )
       end
       @card = Card.new( :name=>"test+templated", :type=>'Phrase' )
-      @card.should_receive(:rule_card).with("content", "default").and_return(default_card)
+      mock(@card).rule_card("content", "default").returns(default_card)
       Wagn::Renderer::Xml.new(@card).render(:raw).should == "Default Bar"
     end
 

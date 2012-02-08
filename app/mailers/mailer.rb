@@ -2,7 +2,12 @@ require 'open-uri'
 
 class Mailer < ActionMailer::Base
   include LocationHelper
+
+  CHARSET = "utf-8"
+  default :charset => CHARSET
+
   def account_info(user, subject, message)
+    #warn "account_info (#{user}, #{subject}, #{message})"
     from_card = Card.user_card
     from_name = from_card.nil? ? '' : from_card.name
     from_user = User.where(:card_id=>from_card.id).first || User.admin

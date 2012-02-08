@@ -40,23 +40,27 @@ describe "On Card Changes" do
   end
   
   it "sends notifications of edits" do
-    Mailer.should_receive(:change_notice).with( Card['Sara'].id, Card["Sara Watching"], "edited", "Sara Watching", nil )
+    mock(Mailer).change_notice( Card['Sara'].id, Card["Sara Watching"], "edited", "Sara Watching", nil )
     Card["Sara Watching"].update_attributes :content => "A new change"
   end
                                   
   it "sends notifications of additions" do
     new_card = Card.new :name => "Microscope", :type => "Optic"
-    Mailer.should_receive(:change_notice).with( Card['Sara'].id, new_card,"added", "Optic", nil  )
+    mock(Mailer).change_notice( Card['Sara'].id, new_card,"added", "Optic", nil  )
     new_card.save!
   end 
   
   it "sends notification of updates" do
-    Mailer.should_receive(:change_notice).with( Card['Sara'].id, Card["Sunglasses"], "updated", "Optic", nil)
-    Card["Sunglasses"].update_attributes :codename => "SUNGLASSES"
+    warn "Userid #{Card.user_id}"
+    mock(Mailer).change_notice( Card.user_id, Card["Sunglasses"], "updated", "Optic", nil)
+    Card["Sunglasses"].update_attributes :content => "some new content"
   end
   
   it "does not send notification to author of change" do
-    Mailer.should_receive(:change_notice).with( Card['Sara'].id, Card["All Eyes On Me"],"edited", "All Eyes On Me", nil)
+    jid = Card['John'].id
+    warn "john id:#{jid}"
+    mock(Mailer).change_notice(satisfy {|uid| uid == jid},
+            anything, anything, anything, nil).times(any_times)
     Card["All Eyes On Me"].update_attributes :content => "edit by John"
     # note no message to John
   end

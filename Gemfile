@@ -64,6 +64,8 @@ group :test do
   gem 'timecop'                                # not clear on use/need.  referred to in shared_data.rb
   gem 'spork', '>=0.9'
                                                
+  gem 'rr', '=1.0.0'
+
   gem 'email_spec'                             # 
   gem 'database_cleaner', '~> 0.7.0'            # used by cucumber for db transactions
   

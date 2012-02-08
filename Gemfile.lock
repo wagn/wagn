@@ -214,7 +214,7 @@ DEPENDENCIES
   mysql (~> 2.8.1)
   mysql2 (~> 0.3.11)
   paperclip (~> 2.4)
-  pg (~> 0.7)
+  pg (~> 0.12.2)
   rails (~> 3.1)
   rails-dev-tweaks (~> 0.5.1)
   rdoc

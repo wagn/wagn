@@ -3,7 +3,6 @@
 .bundle
 config/*.yml
 config/wagn.rb
-config/cruise*
 coverage
 .jhw-cache
 log/*

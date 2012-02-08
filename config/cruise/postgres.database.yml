@@ -1,5 +1,5 @@
 common: &common
-  adapter: postgres
+  adapter: postgresql
   username: postgres
   password: postgres
   encoding: utf8

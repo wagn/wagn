@@ -15,10 +15,10 @@ describe AccountController do
   end
   describe "#invite" do
     before do
-      mock.instance_of(Mailer) do |m|
-        @mailer = m
-        mock(m).account_info.with_any_args
-      end
+      @msgs=[]
+      mock.proxy(Mailer).account_info.with_any_args.times(any_times) { |m|
+        @msgs << m
+        mock(m).deliver }
 
       login_as :joe_user
 
@@ -34,7 +34,8 @@ describe AccountController do
     end
 
     it 'should send email' do
-      @mailer.should have_received.account_info(@new_user, @email_args[:subject], @email_args[:message])
+      @msgs.size.should == 1
+      @msgs[0].should be_a Mail::Message
     end
   end
 
@@ -46,9 +47,10 @@ describe AccountController do
 
   describe "#forgot_password" do
     before do
-      any_instance_of(Mailer) do
-        mock(Mailer).account_info.with_any_args
-      end
+      @msgs=[]
+      mock.proxy(Mailer).account_info.with_any_args.times(any_times) { |m|
+        @msgs << m
+        mock(@mail = m).deliver }
 
       @email='joe@user.com'
       @juser=User.where(:email=>@email).first
@@ -56,9 +58,8 @@ describe AccountController do
     end
 
     it 'should send an email to user' do
-      Mailer.should have_received.account_info(@juser, "Password Reset",
-          "You have been given a new temporary password.  " +
-          "Please update your password once you've signed in. ")
+      @msgs.size.should == 1
+      @msgs[0].should be_a Mail::Message
     end
 
 

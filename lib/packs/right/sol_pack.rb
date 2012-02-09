@@ -3,32 +3,27 @@ class Wagn::Renderer::Html
   define_view(:declare_form, :right=>'*sol') do |args|
     @form = form_for_multi
     @state=:edit
-    %{#{div( :id=>slot.id('declar-area'),
-             :class=>"declaror declar-area #{card.hard_template ? :templated : ''}" ) do
-      form_for_card :url=>"card/update/#{card.cardname.to_url_key}",
-                    :slot=>slot, :html=>{ :class=>'form editor',
-                    :onsubmit=>slot.save_function,
-                    :id=>(slot.context + '-form') } do |form|
-        concat %{<div>#{
+    %{<div id="declar-area" class="declaror declar-area #{card.hard_template ? :templated : ''}"> #{
+      card_form :update, 'card-form card-declare-form' do |form|
+        %{<div>#{
           slot.form = form
           trait_submenu(:declare, (card.attribute||=:declare))}#{
           #(args[:view] != 'setting' && inst = card.rule_card('declare help') ?
              #%{<div class="instruction">#{slot.subslot(inst).render :naked }</div>} : '') +
           hidden_field_tag( :multi_edit, true)}#{
+          warn "atrib is #{card.attribute.inspect}"
           hidden_field_tag( :attribute, card.attribute )}#{
           hidden_field_tag( :ctxsig, card.signature)}#{
-          expand_inclusions( trait_form(card.attribute) )
-          }</div>#{
-          slot.captcha_tags
-          }<div class="declare-button-area">#{
+          trait_form(card.attribute)
+          }</div>
+          <div class="declare-button-area">#{
           hidden_field_tag(:attribute, card.attribute )}#{
-          button_to_function "Declare", "this.form.onsubmit()", :class=>'save-card-button' }#{
-          slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function }
+          button_tag "Declare", :class=>'edit-submit-button'}#{
+          button_tag 'Cancel', :class=>'edit-cancel-button slotter', :href=>path(:view)
           }</div>
         }
-      end
-    end
-  }}
+      end}
+    </div>}
   end
 
 =begin
@@ -55,51 +50,52 @@ class Wagn::Renderer::Html
         tcard.cardname.css_name
       } { display: none; }</style>} +
 
-      div( :id=>id('card-body'), :class=>'card-body') do
+      %{<div id="card-body" class="card-body">#{
         Rails.logger.debug "render declare sub #{tcard&&tcard.name}"
         self.subrenderer(tcard).render(:declare_form)
-      end + notice
+      }#{ notice }
+      </div> }
     end
   end
 
   # Traits can have submenus: This is the links for differet form selections
   def trait_submenu(menu_name, on)
     menu_name = menu_name.to_s
-    div(:class=>'submenu') do
+    current = params[:attribute] || menu_name
+    %{<div class="submenu"> #{
       trait_forms(menu_name) do |key, ok, args|
         if ok
-          link_to_remote( key, { :url=>url_for("card/#{menu_name}",args,key),
-              :update => id , :menu => key}, :class=>(key==on.to_s ? 'on' : '') )
+            text = key.gsub('*','').gsub('subtab','').strip
+            link_to text, path(:declare, :attrib=>key), :remote=>true,
+              :class=>"slotter #{key==current ? 'current-subtab' : ''}"
         end
-      end
-    end
+      end.compact * "\n"}
+    </div>}
   end
 
   def trait_forms(menu_name)
-    if formcard = card.rule_card(menu_name.to_cardname.to_star) and
+    if formcard = card.rule_card(menu_name) and
        (formtype = formcard.typecode) == 'Pointer'
-      Rails.logger.debug "trait_forms(#{menu_name}) #{card&&card.name}, #{formcard&&formcard.name}"
+      #warn (Rails.logger.debug "trait_forms(#{menu_name}) #{card&&card.name}, #{formcard&&formcard.name}")
       # is this names or cards? new api?
       if block_given?
         formcard.item_names.map { |item| yield(item.to_cardname.tag_name, true, []) }
-      else
-        formcard.item_names.map {|i| i.gsub!(/^\[\[|\]\]$/, '');}
-      end
+      else formcard.item_names end
     else
-      return if block_given?
-      return %{#{formcard ? "Setting not a Pointer [#{formtype}]" : "Missing setting"
-                } for #{card&&card.name}, #{menu_name.to_cardname.to_star}}
+      #return if block_given?
+      raise %{#{formcard ? "Setting not a Pointer [#{formtype}]" : "Missing setting"
+                } for #{card&&card.name}, #{menu_name}}
     end
   end
 
   def trait_form(action)
     forms = trait_forms(action=action.to_s)
     return forms if String === forms
-    Rails.logger.info "trait_form(#{action.inspect}) #{forms.inspect}"
+    warn (Rails.logger.info "trait_form(#{action.inspect}) #{forms.inspect}")
     if form = forms.find { |k|
-      Rails.logger.info "trait_search(#{action.inspect}) #{card.attribute.inspect}, #{k.to_cardname.tag_name.inspect} #{forms.inspect}"
+      warn (Rails.logger.info "trait_search(#{action.inspect}) #{card.attribute.inspect}, #{k.to_cardname.tag_name.inspect} #{forms.inspect}")
       k.to_cardname.tag_name == action } and form = Card.fetch(form)
-      form.content
+      subrenderer(form).render_edit_in_form
     else
       "No form card #{@state} #{card&&card.name}"
     end

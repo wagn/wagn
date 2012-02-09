@@ -103,7 +103,6 @@ class AccountCreationTest < ActionController::TestCase
   def test_should_require_password_confirmation_if_password_given
     assert_no_new_account do
       #assert_raises(ActiveRecord::RecordInvalid) do
-        warn "post invite 107"
         post_invite :user=>{ :password=>'tedpass' }
       #end
     end
@@ -112,7 +111,6 @@ class AccountCreationTest < ActionController::TestCase
   def test_should_require_email
     assert_no_new_account do
       #assert_raises(ActiveRecord::RecordInvalid) do
-        warn "post invite 116"
         post_invite :user=>{ :email => nil }
         assert assigns(:user).errors[:email]
         assert_response :success

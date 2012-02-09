@@ -108,14 +108,15 @@ module Wagn
     lo_card.content
   end
 
-  def id(area="")
+=begin
+  def div_id(area="")
     area, id = area.to_s, ""
     id << "javascript:#{get(area)}"
   end
 
   def get(area="")
     area.empty? ? "getSlotSpan(this)" : "getSlotElement(this, '#{area}')"
-  end
+=end
 
 
 

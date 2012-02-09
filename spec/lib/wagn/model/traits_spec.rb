@@ -34,7 +34,8 @@ describe Card do
 
     it "verifies that the extension's menu_option is added after Edit" do
       c = Card.fetch('B')
-      assert_view_select Wagn::Renderer::Html.new(c), 'span[class="card-menu"]' do
+      warn "renders #{Wagn::Renderer::Html.new(c).render}"
+      assert_view_select Wagn::Renderer::Html.new(c).render, 'span[class="card-menu"]' do
         assert_select('span[class="card-menu-left"]') do
           assert_select('li',  'View')
           assert_select('li', 'Edit')
@@ -70,8 +71,9 @@ describe Card do
       (r=Wagn::Renderer::Html.new(c).render(:declare)).should_not match(/Missing setting/)
       r.should_not match(/Setting not a Pointer/)
       r.should_not match(/No form card/)
-      assert_view_select r, 'form[action="card/update/B+*sol"]' do
-        assert_select('input[id="attribute"][name="attribute"][type="hidden"][value=>"declare"]')
+      warn "render is #{r}\n<<<<"
+      assert_view_select r, 'form[action="/card/update/B+*sol"]' do
+        assert_select('input[id="attribute"][name="attribute"][type="hidden"][value="declare"]')
         assert_select('input[name="ctxsig"][type="hidden"]')
         assert_select('div[class="field-in-multi"]') do
             assert_select('input[id="main_1_1_2-hidden-content"][name="cards[B~plus~*sol~plus~bar][content]"][type="hidden"]')

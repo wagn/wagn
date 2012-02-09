@@ -34,7 +34,7 @@ describe Mailer do
       end    
 
       it "is from Wag bot email" do
-        warn "test from #{User.admin.inspect}, #{User.admin.email}"
+        #warn "test from #{User.admin.inspect}, #{User.admin.email}"
         @email.should deliver_from("Wagn Bot <noreply@wagn.org>")
       end     
 

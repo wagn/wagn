@@ -11,17 +11,22 @@
       <h1>Ooo.  Sorry, but...</h1>  <%#ENGLISH%>
 
       <p>
-        <% if User.current_user.anonymous? %>
-          You have to <%= link_to "sign in", :controller=>'account', :action=>'signin' %>
+        <% if @deny != 'view' && System.read_only? %>
+          <div>We are currently in read-only mode.  Please try again later.</div>
         <% else %>
-          You need permission
+                  
+          <% if User.current_user.anonymous? %>
+            You have to <%= link_to "sign in", :controller=>'account', :action=>'signin' %>
+          <% else %>
+            You need permission
+          <% end %>
+          to
+          <%= case @deny
+            when 'view', 'edit'  ; @deny+ " " + (card.name ? "<strong>#{fancy_title(card)}</strong>" : 'this card')
+            when 'create'; "create #{@type} cards"
+            end
+          %>
         <% end %>
-        to
-        <%= case @deny
-          when 'view', 'edit'  ; @deny+ " " + (card.name ? "<strong>#{fancy_title(card)}</strong>" : 'this card')
-          when 'create'; "create #{@type} cards"
-          end
-        %>
       </p>
 
       <% unless @skip_slot_header or @deny=='view' %>

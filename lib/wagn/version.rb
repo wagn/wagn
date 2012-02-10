@@ -1,8 +1,7 @@
-module Wagn
-  module Version
+module Wagn::Version
     Major = '1'
-    Minor = '7'
-    Tiny  = '2'
+    Minor = '8'
+    Tiny  = '0'
     Eensie = nil
   
     class << self
@@ -24,5 +23,4 @@ module Wagn
       
       alias :to_str :to_s
     end
-  end
 end

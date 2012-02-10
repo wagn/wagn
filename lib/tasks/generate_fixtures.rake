@@ -25,7 +25,7 @@ namespace :db do
       require 'active_record/fixtures'
       ActiveRecord::Base.establish_connection(::Rails.env.to_sym)
       (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : Dir.glob(File.join(Rails.root.to_s, 'test', 'fixtures', '*.{yml,csv}'))).each do |fixture_file|
-        Fixtures.create_fixtures('test/fixtures', File.basename(fixture_file, '.*'))
+        ActiveRecord::Fixtures.create_fixtures('test/fixtures', File.basename(fixture_file, '.*'))
       end  
       Rake::Task['fulltext:prepare'].invoke
     end
@@ -40,9 +40,9 @@ namespace :test do
     Rake::Task['cache:clear']
     # env gets auto-set to 'test' somehow.
     # but we need development to get the right schema dumped. 
-    ENV['::Rails.env'] = 'development'
+    ENV['RAILS_ENV'] = 'development'
     
-    if System.enable_postgres_fulltext
+    if Wagn::Conf[:enable_postgres_fulltext]
       raise("Oops!  you need to disable postgres_fulltext in wagn.rb before generating fixtures")
     end
          
@@ -55,7 +55,7 @@ namespace :test do
     begin
       # assume we have a good database, ie. just migrated dev db.
       puts "migrating database #{olddb}"
-      puts `echo $::Rails.env; rake db:migrate`
+      puts `echo $RAILS_ENV; rake db:migrate`
       puts "dumping schema"
       puts `rake db:schema:dump`
       puts "setting database to wagn_test_template"
@@ -69,7 +69,7 @@ namespace :test do
       puts "creating database"
       puts `rake db:create`
       puts "loading schema"
-      puts `rake db:schema:load`
+      puts `rake db:schema:load --trace`
       puts "loading bootstrap data"
       puts `rake wagn:bootstrap:load --trace`       
   
@@ -98,6 +98,10 @@ namespace :test do
 
   desc "dump current db to test fixtures"
   task :extract_fixtures => :environment do
+     YAML::ENGINE.yamler = 'syck'
+      # use old engine while we're supporting ruby 1.8.7 because it can't support Psych, 
+      # which dumps with slashes that syck can't understand (also !!null stuff)
+      
     sql = "SELECT * FROM %s"
     skip_tables = ["schema_info","schema_migrations","sessions"]
     ActiveRecord::Base.establish_connection

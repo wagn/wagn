@@ -1,17 +1,27 @@
-require 'rubygems'
+ENV["RAILS_ENV"] = "test"
+require File.expand_path('../../config/environment', __FILE__)
+require 'rails/test_help'
+require 'pathname'
 
 unless defined? TEST_ROOT
-  ENV["RAILS_ENV"] = "test"
-  require 'pathname'
-  TEST_ROOT = Pathname.new(File.expand_path(File.dirname(__FILE__))).cleanpath(true).to_s
-  require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-  require 'test_help' 
-  
+  TEST_ROOT = Pathname.new(File.expand_path(File.dirname(__FILE__))).cleanpath(true).to_s  
   load TEST_ROOT + '/helpers/wagn_test_helper.rb'
   load TEST_ROOT + '/helpers/permission_test_helper.rb'
   load TEST_ROOT + '/helpers/chunk_test_helper.rb'  # FIXME-- should only be in certain tests
-  
+
   class ActiveSupport::TestCase
+    # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
+    #
+    # Note: You'll currently still have to declare fixtures explicitly in integration tests
+    # -- they do not yet inherit this setting
+    #fixtures :all
+
+    # Add more helper methods to be used by all tests here...
+    
+    
+    
+    
+    
     include AuthenticatedTestHelper
     # Transactional fixtures accelerate your tests by wrapping each test method
     # in a transaction that's rolled back on completion.  This ensures that the
@@ -41,7 +51,12 @@ unless defined? TEST_ROOT
         Wagn::Cache.reset_for_tests
       end
     end
+    
+    
   end
+
+
+
 
   class ActiveSupport::TestCase      
     include AuthenticatedTestHelper
@@ -52,16 +67,16 @@ unless defined? TEST_ROOT
       if url =~ /:id/
         # find by naming convention in test data:
         card = Card["Sample #{cardtype}"] or puts "ERROR finding 'Sample #{cardtype}'"
-        url.gsub!(/:id/,card.id.to_s)
+        url.gsub!(/:id/,"~#{card.id.to_s}")
       end
       url
     end
-  
+
     class << self      
       def test_render(url,*args)  
         RenderTest.new(self,url,*args)
       end
-      
+
       # Class method for test helpers
       def test_helper(*names)
         names.each do |name|
@@ -82,17 +97,17 @@ unless defined? TEST_ROOT
       end    
       alias :test_helpers :test_helper
     end
-    
+
     class RenderTest
       attr_reader :title, :url, :cardtype, :user, :status, :card
       def initialize(test_class,url,args={})
         @test_class,@url = test_class,url
-        
+
         args[:users] ||= { :anon=>200 }
         args[:cardtypes] ||= ['Basic']
         if args[:cardtypes]==:all 
           args[:cardtypes] = YAML.load_file('test/fixtures/cardtypes.yml').collect {|k,v| v['class_name']}                   
-Rails.logger.info "render_test all types: #{args[:cardtypes].inspect}"
+#Rails.logger.info "render_test all types: #{args[:cardtypes].inspect}"
         end
 
         args[:users].each_pair do |user,status|
@@ -103,12 +118,11 @@ Rails.logger.info "render_test all types: #{args[:cardtypes].inspect}"
 
             title = url.gsub(/:id/,'').gsub(/\//,'_') + "_#{cardtype}"
             login = (user=='anon' ? '' : "integration_login_as '#{user}'")
-Rails.logger.info "test_def #{title} #{user} #{status} #{url} #{cardtype}"
             test_def = %{
               def test_render_#{title}_#{user}_#{status} 
                 #{login}
                 url = prepare_url('#{url}', '#{cardtype}')
-                #warn "GET \#\{url\}"
+                Rails.logger.warn "TR GET \#\{url\}"
                 get url
                 assert_response #{status}, "\#\{url\} as #{user} should have status #{status}"
               end
@@ -119,9 +133,7 @@ Rails.logger.info "test_def #{title} #{user} #{status} #{url} #{cardtype}"
         end
       end                     
     end
-    
+
   end
-
-
-end  
+end
 

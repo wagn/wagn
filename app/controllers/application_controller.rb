@@ -1,92 +1,85 @@
-# # Filters added to this controller will be run for all controllers in the application.
-# Likewise, all the methods added will be available for all controllers.
-
 class ApplicationController < ActionController::Base
-  require_dependency 'exception_system'
   include AuthenticatedSystem
-  include ExceptionSystem
   include LocationHelper
-  helper :all
-
-  helper_method :main_card?
-
-  attr_accessor :renderer
-
-  include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
+  include Recaptcha::Verify
   include ActionView::Helpers::SanitizeHelper
 
-  before_filter :per_request_setup, :except=>[:render_fast_404]
- # after_filter :set_encoding
-  # OPTIMIZE: render_fast_404 still isn't that fast (?18reqs/sec) 
-  # can we turn sessions off for it and see if that helps?
-  layout :wagn_layout, :except=>[:render_fast_404]
+  helper :all
+  before_filter :per_request_setup, :except=>[:fast_404]
+  layout :wagn_layout, :except=>[:fast_404]
   
-  
- # def set_encoding
- #   respond_to do |format|
- #     format.text {  headers['Content-Type'] ||= 'text/css' }
- #     format.css {  headers['Content-Type'] ||= 'text/css' }
- #   end  
- # end
-  
-  BUILTIN_LAYOUTS = %w{ blank noside simple pre none }
+  attr_accessor :recaptcha_count
 
+  def fast_404(host=nil)
+    message = "<h1>404 Page Not Found</h1>"
+    message += "Unknown host: #{host}" if host
+    render :text=>message, :layout=>false, :status=>404
+  end
+
+  def bad_address
+    raise Wagn::BadAddress
+  end
 
   protected
 
   def per_request_setup
-    Wagn::Renderer.ajax_call=request.xhr?
-    if System.multihost
-      MultihostMapping.map_from_request(request) or return render_fast_404(request.host)
-    end
-    Wagn::Cache.re_initialize_for_new_request
-    canonicalize_domain
+    ActiveSupport::Notifications.instrument 'wagn.per_request_setup', :message=>"" do
+      request.format = :html if !params[:format]
+
+      if Wagn::Conf[:multihost]
+        MultihostMapping.map_from_request(request) or return fast_404(request.host)
+      end
+
+      # canonicalizing logic is wrong
+      #canonicalize_domain
+      #else
+        Wagn::Conf[:host] = host = request.env['HTTP_HOST']
+        Wagn::Conf[:base_url] = 'http://' + host
+      #end
+      Wagn::Conf[:main_name] = nil
+      
+      ActiveSupport::Notifications.instrument 'wagn.renderer_load', :message=>"(in development)" do
+        Wagn::Renderer.ajax_call = ajax?
+      end
+      Wagn::Renderer.current_slot = nil
     
-    User.current_user = current_user || User[:anon]
-
-    @context = params[:context] || 'main_1'
-    @action = params[:action]
-
-    Wagn::Renderer.current_slot = nil
-    System.request = request
-    ActiveRecord::Base.logger.debug("WAGN: per request setup")
-    load_location
+      Wagn::Cache.re_initialize_for_new_request
+    
+      User.current_user = current_user || User[:anon]
+    
+      # RECAPTCHA HACKS
+      Wagn::Conf[:controller] = self # this should not be conf, but more like wagn.env
+      Wagn::Conf[:recaptcha_on] = !User.logged_in? &&     # this too 
+        !!( Wagn::Conf[:recaptcha_public_key] && Wagn::Conf[:recaptcha_private_key] )
+      @recaptcha_count = 0
+    
+      @action = params[:action]
+    end
   end
   
   def canonicalize_domain
-    if RAILS_ENV=="production" and request.raw_host_with_port != System.host
+    if Rails.env=="production" and request.raw_host_with_port != Wagn::Conf[:host]
       query_string = request.query_string.empty? ? '' : "?#{request.query_string}"
-      return redirect_to("http://#{System.host}#{System.root_path}#{request.path}#{query_string}")
+      return redirect_to("http://#{Wagn::Conf[:host]}#{request.path}#{query_string}")
     end
   end
 
   def wagn_layout
     layout = nil
     respond_to do |format|
-      format.html {
-        unless request.xhr?
-          layout = 'application'
-        end
-      }
+      format.html { layout = 'application' unless ajax? }
     end
     layout
   end
 
-  # ----------- (helper) ----------
-  def main_card?
-    @context =~ /^main_([^\_]+)$/
+  def ajax?
+    request.xhr? || params[:simulate_xhr]
   end
-
 
   # ------------------( permission filters ) -------
-  def view_ok
-    @card.ok?(:read) || render_denied('view')
-  end
-
-  def update_ok
-    @card.ok?(:update) || render_denied('edit')
-  end
-
+  def view_ok()    @card.ok?(:read)   || render_denied('view')    end
+  def update_ok()  @card.ok?(:update) || render_denied('edit')    end
+  def remove_ok()  @card.ok!(:delete) || render_denied('delete')  end
 
  #def create_ok
  #  @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
@@ -96,136 +89,92 @@ class ApplicationController < ActionController::Base
  #  t.create_ok? || render_denied('create')
  #end
 
-  def remove_ok
-    @card.ok!(:delete) || render_denied('delete')
-  end
-
-
-  # --------------( card loading filters ) ----------
-  def load_card!
-    load_card
-    case
-    when !@card || @card.name.nil? || @card.name.empty?  #no card or no name -- bogus request, deserves error
-      raise Wagn::NotFound, "We don't know what card you're looking for."
-    when @card.known? # default case
-      @card
-    when params[:view]=='edit_rule'
-      # FIXME this is a hack so that you can view load rules that don't exist.  need better approach 
-      # (but this is not tested; please don't delete without adding a test) 
-      @card
-    when requesting_ajax? || ![nil, :html].member?(params[:format])  #missing card, nonstandard request
-      ##  I think what SHOULD happen here is that we render the missing view and let the Renderer decide what happens.
-      raise Wagn::NotFound, "We can't find a card named #{@card.name}"  
-    when @card.ok?(:create)  # missing card, user can create
-      params[:card]={:name=>@card.name, :type=>params[:type]}
-      self.new
-      false
-    else
-      render :action=>'missing' 
-      false     
-    end
-  end
-
-  def load_card
-    return @card=nil unless id = params[:id]
-    return (@card=Card.find(id); @card.after_fetch; @card) if id =~ /^\d+$/
-    name = Wagn::Cardname.unescape(id)
-    card_params = params[:card] ? params[:card].clone : {}
-    @card = Card.fetch_or_new(name, card_params)
-  end
-
-  def load_card_and_revision
-    params[:rev] ||= @card.revisions.count - @card.drafts.length
-    @revision_number = params[:rev].to_i
-    @revision = @card.revisions[@revision_number - 1]
-  end
-
 
   # ----------( rendering methods ) -------------
 
-  # dormant code.
-  def render_jsonp(args)
-    str = render_to_string args
-    render :json=>(params[:callback] || "wadget") + '(' + str.to_json + ')'
-  end
-
-  def render_update_slot(stuff="", message=nil, &proc)
-    render_update_slot_element(name="", stuff, message, &proc)
-  end
-
-  # FIXME: this should be fixed to use a call to getSlotElement() instead of default
-  # selectors, so that we can reject elements inside nested slots.
-  def render_update_slot_element(name, stuff="", message=nil)
-    render :update do |page|
-      page.extend(WagnHelper::MyCrappyJavascriptHack)
-      elem_code = "getSlotFromContext('#{params[:context]}')"
-      unless name.empty?
-        elem_code = "getSlotElement(#{elem_code}, '#{name}')"
-      end
-      page.select_slot(elem_code).each() do |target, index|
-        target.update(stuff) unless stuff.empty?
-        yield(page, target) if block_given?
-      end
-      page.wagn.messenger.log(message) if message
-    end
-  end
-
-  def render_denied(action = '')
-    Rails.logger.debug "~~~~~~~~~~~~~~~~~in render_denied for #{action}"
-    
-    @deny = action
-    render :controller=>'card', :action=>'denied', :status=>403
-    return false
-  end
-
-  def handling_errors
-    if @card.errors.present?
-      render_card_errors(@card)
+  def wagn_redirect url
+    if ajax?
+      render :text => url, :status => 303
     else
-      yield
-    end
+      redirect_to url
+    end 
   end
 
-  def render_card_errors(card=nil)
-    card ||= @card
-    stuff = %{<div class="error-explanation">
-      <h2>Rats. Issue with #{card.name && card.name.upcase} card:</h2><p>} +
-        card.errors.map do |attr, msg|
-          "#{attr.gsub(/base/, 'captcha').upcase }: #{msg}"
-        end.join(",<br> ") +
-        '</p></div>'
+  def render_denied(action = nil)
+    params[:action] = action if action
+    @card.error_view = :denial
+    @card.error_status = 403
+    render_errors
+  end
 
-    # Create used this scroll
-    #<%= javascript_tag 'scroll(0,0)'
+  def render_errors(options={})
+    @card ||= Card.new
+    view   = options[:view]   || (@card && @card.error_view  ) || :errors
+    status = options[:status] || (@card && @card.error_status) || 422
+    render_show view, status
+  end
 
-    #errors.each{|attr,msg| puts "#{attr} - #{msg}" }
-    # getNextElement() will crawl up nested slots until it finds one with a notice div
-
-    on_error_js = ""
-
-    if captcha_required? && ENV['RECAPTCHA_PUBLIC_KEY']
-      key = card.new_record? ? "new" : card.name.to_key
-      on_error_js << %{ document.getElementById('dynamic_recaptcha-#{key}').innerHTML='<span class="faint">loading captcha</span>'; }
-      on_error_js << %{ Recaptcha.create('#{ENV['RECAPTCHA_PUBLIC_KEY']}', document.getElementById('dynamic_recaptcha-#{key}'),RecaptchaOptions); }
-    end
-
-    js_tag = %{<%= javascript_tag(%{#{on_error_js}}) %>}
-    stuff_with_javascript = stuff + js_tag
-
-    case
-      when requesting_ajax? && !params['_update'];
-        render :update do |page|
-          page << %{notice = getNextElement(#{get_slot.selector},'notice');\n}
-          page << %{notice.update('#{escape_javascript(stuff)}');\n}
-          page << on_error_js
+  def render_show(view = nil, status = 200)
+    extension = request.parameters[:format]
+    if FORMATS.split('|').member?( extension )
+      render(:status=>status, :text=> begin
+        respond_to do |format|
+          format.send(extension) do
+            renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
+            renderer.render_show( :view=>view )
+          end
         end
-      when requesting_ajax? && params['_update'];
-        render :inline=>stuff_with_javascript, :layout=>nil, :status=>422
-      when !requesting_ajax?;
-        render :inline=>stuff_with_javascript, :layout=>'application', :status=>422
+      end)
+    elsif render_show_file
+    else
+      render :text=>"unknown format: #{extension}", :status=>404
     end
   end
+  
+  def render_show_file
+    return fast_404 if !@card
+    @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
+  
+    format = @card.attachment_format(params[:format])
+    return fast_404 if !format
 
+    if ![format, 'file'].member?( params[:format] )
+      return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) ) 
+    end
+
+    style = @card.attachment_style( @card.typecode, params[:size] || @style )
+    return fast_404 if !style
+
+    send_file @card.attach.path(style), 
+      :type => @card.attach_content_type,
+      :filename =>  "#{@card.cardname.to_url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
+      :x_sendfile => true,
+      :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
+  end
+  
+  
+  rescue_from Exception do |exception|
+        
+    view, status = case exception
+    when Wagn::NotFound, ActiveRecord::RecordNotFound
+      [ :not_found, 404 ]                                                 
+    when Wagn::PermissionDenied, Card::PermissionDenied
+      [ :denial, 403]
+    when Wagn::BadAddress, ActionController::UnknownController, ActionController::UnknownAction  
+      [ :bad_address, 404 ]
+    else
+      if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) && @card && @card.errors.any?
+        [ :errors, 422]
+      else
+        Rails.logger.info "\n\nController exception: #{exception.message}"
+        Rails.logger.debug exception.backtrace*"\n"
+        Rails.logger.level == 0 ? raise( exception ) : [ :server_error, 500 ]
+      end
+    end
+    
+    render_errors :view=>view, :status=>status
+  end
+     
 end
 
 

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 class Card
   cattr_accessor :count
@@ -10,9 +10,6 @@ module Wagn::Set::Type::CardtypeA
   end
 end
 
-#  class CardtypeB < Basic                              
-    # create restricted in test_data
-#  end
   
 module Wagn::Set::Type::CardtypeC
   def validate_type_change
@@ -28,24 +25,15 @@ module Wagn::Set::Type::CardtypeD
 end
 
 module Wagn::Set::Type::CardtypeE
-  def self.included(base)
-    Card.count = 2
-  end
-
-  def on_type_change
-    decrement_count
-  end
-  def decrement_count() Card.count -= 1; end
+  def self.included(base) Card.count = 2   end
+  def on_type_change()    decrement_count  end
+  def decrement_count()   Card.count -= 1  end
 end
 
 module Wagn::Set::Type::CardtypeF
-  def self.included(base)
-    Card.count = 2
-  end
-  def before_validation_on_create
-    increment_count
-  end
-  def increment_count() Card.count += 1; end
+  def self.included(base) Card.count = 2   end
+  def create_extension()  increment_count  end
+  def increment_count()   Card.count += 1  end
 end
 
 
@@ -89,16 +77,18 @@ describe Card, "with account" do
   end
 end
 
-
-
 describe Card, "type transition approve create" do
   before do
     User.as :wagbot do
-      Card.create :name=>'Cardtype B+*type+*create', :type=>'Pointer', :content=>'[[r1]]'
+      # this card/content is in the test DB, and this causes a duplicate id error
+      #Card.create :name=>'Cardtype B+*type+*create', :content=>'[[r1]]'
+      (c=Card.fetch('Cardtype B+*type+*create')).content.should == '[[r1]]'
+      c.typecode.should == 'Pointer'
     end
   end
   
   it "should have errors" do
+      Rails.logger.info "testing point 2"
     lambda { change_card_to_type("basicname", "CardtypeB") }.should raise_error(Wagn::PermissionDenied)
   end
 
@@ -113,7 +103,7 @@ describe Card, "type transition validate_destroy" do
   before do @c = change_card_to_type("type-c-card", 'Basic') end
   
   it "should have errors" do
-    @c.errors.on(:destroy_error).should == "card c is indestructible"
+    @c.errors[:destroy_error].first.should == "card c is indestructible"
   end
   
   it "should retain original type" do
@@ -125,7 +115,7 @@ describe Card, "type transition validate_create" do
   before do @c = change_card_to_type("basicname", "CardtypeD") end
   
   it "should have errors" do
-    @c.errors.on(:type).match(/card d always has errors/).should be_true
+    @c.errors[:type].first.match(/card d always has errors/).should be_true
   end
   
   it "should retain original type" do

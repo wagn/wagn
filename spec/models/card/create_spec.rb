@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 # FIXME this shouldn't be here
 describe Wagn::Set::Type::Cardtype, ".create with :codename" do
@@ -40,6 +40,8 @@ describe Card, ".create_these" do
     Card['AA+BB'].content.should == 'ab'
   end
 end
+
+
 
 
 
@@ -93,6 +95,27 @@ describe Card, "created by Card.create with valid attributes" do
   end  
 end
 
+describe Card, "created with autoname" do
+  before do
+    User.as :wagbot do
+      Card.create :name=>'Book+*type+*autoname', :content=>'b1'
+    end
+  end
+  
+  it "should handle cards without names" do
+    c = Card.create! :type=>'Book'
+    c.name.should== 'b1'
+  end
+  
+  it "should increment again if name already exists" do 
+    Card.create :name=>'b1'
+    c = Card.create! :type=>'Book'
+    c.name.should== 'b2'
+    
+  end
+end
+
+
 describe Card, "create junction" do
   before(:each) do
     User.as :joe_user
@@ -144,7 +167,6 @@ describe Card, "types" do
     ct = Card.create! :name=>"BFoo", :type=>'Cardtype'
     ct.update_attributes! :name=>"BFooRenamed"
     ct.extension.class_name.should == 'BFoo'
-    Rails.logger.info "failing create with typecode"
     Card.create!(:typecode=>"BFoo",:name=>"testy").typecode.should == 'BFoo'
   end
   

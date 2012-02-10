@@ -4,8 +4,11 @@ class Cardtype < ActiveRecord::Base
   cattr_accessor :cache
   
   class << self
+    
+    # FIXME -- the current system of caching cardtypes is not "thread safe":
+    # multiple running ruby servers could get out of sync re: available cardtypes  
+    
     def load_cache
-      Rails.logger.debug "load_cardtype_cache"
       c = {}
       c[:card_keys  ] = {}
       c[:card_names ] = {}
@@ -18,7 +21,7 @@ class Cardtype < ActiveRecord::Base
         where c.trash is false
       }).each do |rec|
         c[:card_keys][rec['key']] = rec['name']
-        c[:card_names][rec['class_name']] = rec['name'];   
+        c[:card_names][rec['class_name']] = rec['name'] #.to_cardname
         c[:class_names][rec['key']] = rec['class_name']
       end
       
@@ -41,15 +44,19 @@ class Cardtype < ActiveRecord::Base
     
     # this is the only one that goes code (as camelized typecode) to name
     def name_for(classname)
+      classname = classname.to_s
       load_cache_if_empty
       self.cache.read('card_names')[classname] || begin
+        #Rails.logger.debug "name_for (#{classname.inspect}) #{self.cache.read('card_names'.inspect}"; nil
         raise("No card name for class #{classname}") 
       end
     end
 
     def classname_for(card_name) 
       load_cache_if_empty
-      self.cache.read('class_names')[card_name.to_key] || raise("No class name for cardtype name #{card_name}") 
+      card_name = card_name.to_cardname unless Wagn::Cardname===card_name
+      #Rails.logger.debug "classname_for #{card_name} #{card_name.to_key}, #{self.cache.read('class_names')[card_name.to_key].inspect}"
+      self.cache.read('class_names')[card_name.to_key] || raise("No class name for cardtype name #{card_name.to_s}") 
     end
     
     def createable_types  
@@ -58,11 +65,11 @@ class Cardtype < ActiveRecord::Base
         next if ['InvitationRequest','Setting','Set'].include?(codename)
         next unless create_ok?(codename)
         { :codename=>codename, :name=>card_name }
-      end.compact.sort_by {|x| x[:name].downcase }
+      end.compact.sort_by {|x| x[:name].to_s.downcase }
     end   
     
     def create_ok?( codename )
-      Card.new( :typecode=>codename, :skip_defaults=> true).ok? :create
+      Card.new( :typecode=>codename).ok? :create
     end
   end        
   

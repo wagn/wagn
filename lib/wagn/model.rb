@@ -2,8 +2,7 @@ Wagn.send :include, Wagn::Exceptions
 Wagn::Set::Self::Settings
 
 module Wagn::Model
-  include Wagn::Pack
-
+  
   def self.included(base)
     base.extend Wagn::Model::ModuleMethods
     base.superclass.extend Wagn::Model::ActsAsCardExtension
@@ -16,6 +15,8 @@ module Wagn::Model
     base.send :include, Wagn::Model::Permissions
     base.send :include, Wagn::Model::References
     base.send :include, Wagn::Model::Settings
+    base.send :include, Wagn::Model::Pattern
+    base.send :include, Wagn::Model::Attach
   end
 end
 

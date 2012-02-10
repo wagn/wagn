@@ -1,4 +1,5 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+# encoding: utf-8
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Cache do
   describe "with nil store" do
@@ -39,7 +40,7 @@ describe Wagn::Cache do
     it "#fetch" do
       block = Proc.new { "hi" }
       @store.should_receive(:fetch).with("prefix/cache_id/foo", &block)
-      @cache.fetch("fetch", &block)
+      @cache.fetch("foo", &block)
     end
 
     it "#delete" do
@@ -76,17 +77,17 @@ describe Wagn::Cache do
 
   describe "with file store" do
     before do
-      cache_path = "#{RAILS_ROOT}/tmp/cache"
+      cache_path = "#{Rails.root}/tmp/cache"
       @store = ActiveSupport::Cache::FileStore.new cache_path
 
-      # TODO @store.clear
-      cache_path = cache_path + "/prefix"
-      p = Pathname.new(cache_path)
-      p.mkdir if !p.exist?
-
-      root_dirs = Dir.entries(cache_path).reject{|f| ['.', '..'].include?(f)}
-      files_to_remove = root_dirs.collect{|f| File.join(cache_path, f)}
-      FileUtils.rm_r(files_to_remove)
+      @store.clear
+      #cache_path = cache_path + "/prefix"
+      #p = Pathname.new(cache_path)
+      #p.mkdir if !p.exist?
+      #
+      #root_dirs = Dir.entries(cache_path).reject{|f| ['.', '..'].include?(f)}
+      #files_to_remove = root_dirs.collect{|f| File.join(cache_path, f)}
+      #FileUtils.rm_r(files_to_remove)
       
       Wagn::Cache.should_receive("generate_cache_id").twice.and_return("cache_id1")
       @cache = Wagn::Cache.new :store=>@store, :prefix=>"prefix"

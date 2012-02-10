@@ -1,90 +1,93 @@
 source 'http://rubygems.org'
 #source "http://gems.github.com"
 
-# ~~~~~~~ #
-# DEFAULT #
-# ~~~~~~~ #
+# DEFAULT
 
-# must have all of these
+gem 'rails', '~> 3.1'
+gem 'htmlentities', '~>4.3.0'
+gem 'uuid', '~>2.3.4'
+gem 'paperclip', '~>2.4'
+gem 'rmagick', '~>2.13.1'
+gem "recaptcha", "~> 0.3.4"
 
-gem 'rails', '2.3.11'
-gem 'rack', '>=1.1.0'
-gem 'rake', '>=0.8.7'
-
-gem 'htmlentities', '~>4.2.1'
-gem 'macaddr', '~>1.0.0'
-gem 'uuid', '~>2.2.0'
-gem 'json', '~>1.4.6'
-#gem 'userstamp', '~>2.0.1'
-
-#gem 'ruby-openid', '2.1.8'
-
-
-# ~~~~~~~~~ #
-# DATABASES #
-# ~~~~~~~~~ #
+# DATABASE
 
 # need at least one of the following
 
-#gem 'sqlite3-ruby', :require => 'sqlite3', :group=>'sqlite'
-gem 'postgres', '~>0.7.9.2008.01.28',        :group=>'postgres'
-gem 'mysql', '~>2.8.1',                      :group=>'mysql'
-
-
-# ~~~~~~~~~~~~~~ #
-# IMAGE HANDLING #
-# ~~~~~~~~~~~~~~ #
-
-# This is important for image re-sizing, which is vital to Image cards.
-# the attachment_fu plug
-
-group :image_science do
-  gem 'image_science', '~>1.2.1'
-  gem 'RubyInline', '~>3.8.4'
+group :mysql do
+  gem "mysql2", "~> 0.3.11"
+  gem 'mysql', '~>2.8.1'
 end
-#gem 'rmagick', '>=2.13.1',    :group=>'rmagick'
+
+group :postgres do
+  gem 'pg', '~>0.12.2'
+  # if using 1.8.7 or ree and having no luck with the above, try:
+  # gem 'postgres', '~>0.7.9.2008.01.28'
+end
+#gem 'sqlite3-ruby', :require => 'sqlite3', :group=>'sqlite'
+
+
+gem 'dalli', :group => :memcache
+
+
+# These should only be needed if you're developing new JS / CSS.  It's all pre-compiled for production
+group :assets do
+  gem 'sass-rails',   "~> 3.1.0"               # pretty code; compiles to CSS
+  gem 'coffee-rails', "~> 3.1.0"               # pretty code; compiles to JS
+  gem 'uglifier'                               # makes pretty code ugly again.  compresses js/css for fast loading
+
+  gem 'jquery-rails', '~> 1.0.17'              # main js framework, along with rails-specific unobtrusive lib
+  gem 'tinymce-rails', '~> 3.4.7'              # wysiwyg editor
+  
+  gem 'therubyracer'                           # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one
+end
+
+
+
+group :test, :development do
+  gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
+  gem 'ruby-prof'                              # profiling
+  gem 'rails-dev-tweaks', '~> 0.5.1'           # dramatic speeds up asset loading, among other tweaks
+
+#  gem 'jasmine-rails'
+end
+
+group :test do
+  gem 'cucumber-rails', '~> 1.2.0'              # feature-driven-development suite
+  gem 'launchy'                                # lets cucumber launch browser windows
+  gem 'timecop'                                # not clear on use/need.  referred to in shared_data.rb
+  gem 'spork'                                  #
+                                               
+  gem 'email_spec'                             # 
+  gem 'database_cleaner', '~> 0.7.0'            # used by cucumber for db transactions
+  
+  gem 'turn', "<0.8.3", :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
+  
+  #windows stuff
+  gem 'win32console', '~> 1.3.0', :platforms => ['mingw', 'mswin']
+  gem 'win32-process', '~> 0.6.5', :platforms => ['mingw', 'mswin']
+end
+
+group :debug do
+  gem 'rdoc'
+  if RUBY_VERSION =~ /^1\.9\.3/
+    gem 'linecache19', '~>0.5'
+    gem 'ruby-debug-base19x', '~> 0.11.30.pre4'
+  end
+  if RUBY_VERSION =~ /^1\.9/
+    gem 'ruby-debug19', :require => 'ruby-debug'
+  else
+    gem 'ruby-debug'
+  end
+end
+
 
 # ~~~~~~~ #
 # HOSTING #
 # ~~~~~~~ #
 
-group :hosting do
-  gem 'hoptoad_notifier', '>=2.3.12'
-  gem 'aws-s3','>=0.6.2'
-  gem 'newrelic_rpm', '>=2.14.1'
-end
+#group :hosting do
+##  gem 'hoptoad_notifier', '>=2.3.12'
+#  gem 'newrelic_rpm', '>=2.14.1'
+#end
 
-# ~~~~~~~ #
-# TESTING #
-# ~~~~~~~ #
-
-group :debug do
-  gem 'rdoc'
-  gem 'ruby-debug'
-end
-
-group :test do
-  gem 'win32console', '1.3.0', :platforms => ['mingw', 'mswin']
-  gem 'win32-process', '0.6.5', :platforms => ['mingw', 'mswin']
-  
-  gem 'term-ansicolor', '1.0.5'
-  gem 'nokogiri', '1.4.1'
-  gem 'timecop', '>=0.2.1'
-  gem 'spork', '>=0.5.7'
-  gem 'assert2', '0.5.5'
-  gem 'webrat', '>=0.7.0'
-  gem 'rspec', '~>1.3', :require=>'spec'
-  gem 'rspec-rails', '~>1.3'
-  gem 'email_spec', '~>0.6.2'
-  gem 'gherkin', '>=2.2.8'
-  gem 'cucumber', '>=0.9.2'
-  gem 'cucumber-rails', '0.3.2'
-  gem 'database_cleaner', '0.5.0'
-  
-#  gem 'ZenTest', '4.4.0'
-#  gem 'autotest-rails', '<= 4.1.0'
-#  gem 'autotest-growl' , '0.2.6', :platforms => ['ruby']
-#  gem 'ruby-snarl', :platforms => ['mingw', 'mswin']
-end
-
-# original list http://groups.google.com/group/wagn-dev/browse_thread/thread/79ff17d0bd1145e0/d822516dc749db89#d822516dc749db89

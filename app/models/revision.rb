@@ -1,5 +1,7 @@
 class Revision < ActiveRecord::Base
   belongs_to :card, :class_name=>"Card", :foreign_key=>'card_id'
+  
+  cattr_accessor :cache
  # belongs_to :created_by, :class_name=>"User", :foreign_key=>"created_by"
   
   def author
@@ -8,7 +10,7 @@ class Revision < ActiveRecord::Base
   
   
   def title
-    current_id = card.current_revision.id
+    current_id = card.cached_revision.id
     if id == current_id
       'Current Revision'
     elsif id > current_id

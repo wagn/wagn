@@ -8,7 +8,7 @@ module ChunkTestHelper
     include ChunkManager
     def initialize(str)
       super
-      @renderer = Wagn::Renderer::RichHtml.new(nil)
+      @renderer = Wagn::Renderer::Html.new(nil)
       init_chunk_manager
     end             
     

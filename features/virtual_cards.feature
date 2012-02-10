@@ -4,7 +4,7 @@ Feature: Virtual Cards
     Given I log in as Joe Admin
     And I create Search card "editors+*right+*content" with content
       """
-      {"edited":"_self"}
+      {"editor_of":"_self"}
       """
     And I log in as Joe User
     And I create card "Scratch" with content "that itch"

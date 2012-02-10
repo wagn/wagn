@@ -1,8 +1,68 @@
-==Wagn: how pioneers roll
+=Wagn: how pioneers roll
 
-Wagn is an open web platform for collaborating to build coherent web systems.
+== Basics
+
+Wagn is an open web platform for building coherent web systems.
 
 Using simple wiki-inspired building blocks called cards, "Wagneers" construct sites ranging from simple content managers to custom project trackers to fully integrated web suites.  
+
+==Dependencies
+ 
+Ruby[http://www.ruby-lang.org/en/]:: version 1.8.7 or higher
+Bundler[http://gembundler.com/]:: version 1.0 or higher
+ImageMagick[http://www.imagemagick.org/]::
+git[http://git-scm.com/]::
+A database engine:: Either MySQL[http://www.mysql.com/] or PostgreSQL[http://www.postgresql.org/]
+
+Platform-specific details at: http://www.wagn.org/wagn/installation_1_8+Platform_Notes
+
+ 
+=Installation
+
+===1. Get the source
+
+ git clone git://github.com/wagn/wagn.git
+ cd wagn # remaining commands should be executed from this directory
+
+
+===2. Get libraries (ruby gems)
+
+ bundle install --without postgres:memcache:test:debug:development:assets
+
+The above is for a mysql installation.  If you want to use postgres, switch "postgres" to "mysql" on the without list.
+
+Watch carefully for errors!  You may need to run as a admin user (using sudo, for example).  For more info see using bundler with Wagn.
+
+
+===3. Configure
+First, install needed config files with:
+
+ rake wagn:install # production-only MySQL setup
+ 
+For PostgreSQL setup, use `env ENGINE=postgres rake wagn:install` 
+For developer setup, use `env MODE=dev rake wagn:install` 
+
+Then, edit the config/database.yml file as necessary.  The default configuration works if you have password-less root access to mysql.   More about database configuration at http://www.wagn.org/database_configuration.
+
+
+===4. Seed your data
+
+ bundle exec rake wagn:create
+
+
+===5. Start your server
+
+To fire up the default, built-in WEBrick server, just run:
+
+ env STATIC_ASSETS=true bundle exec rails server
+ 
+...and point your browser to http://localhost:3000 (unless otherwise configured).
+
+WEBrick is great for a quick test run.  To run a production website, see http://www.wagn.org/wagn_in_production.
+
+
+
+=More Resources
 
 To learn more about installation, see http://wagn.org/Installation
 

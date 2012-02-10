@@ -1,10 +1,6 @@
 module Wagn::Set::Type::Cardtype
   include Wagn::Set::Type::Basic
-  
-  def after_save
-    reset_cardtype_cache
-  end
-                                     
+                                       
   # codename should not change, but let's remove this with the codename refactor
   def codename
     extension ? extension.class_name : nil
@@ -15,28 +11,11 @@ module Wagn::Set::Type::Cardtype
     extension.save
   end
 
-
-  def before_validation_on_create
-    create_extension
-  end
-
   def create_extension
     return unless typecode == 'Cardtype'  #hack
     codename = Card.generate_codename_for(name)
-    Rails.logger.info "Cardtype extension #{name} #{codename}"
+    #Rails.logger.debug "Cardtype extension #{name} #{codename}"
     self.extension = ::Cardtype.create!( :class_name => codename )
-  end
-
-  # FIXME -- the current system of caching cardtypes is not "thread safe":
-  # multiple running ruby servers could get out of sync re: available cardtypes  
-
-  def before_destroy
-    validate_destroy
-    destroy_extension
-  end
-
-  def after_destroy
-    reset_cardtype_cache
   end
   
   def reset_cardtype_cache

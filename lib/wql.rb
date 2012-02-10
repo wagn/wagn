@@ -1,11 +1,13 @@
-  class Wql
+class Wql
+  include ActiveRecord::QuotingAndMatching
+  
   ATTRIBUTES = {
     :basic      =>  %w{ name type content id key extension_type extension_id updated_by trunk_id tag_id },
     :custom     =>  %w{ edited_by editor_of edited last_editor_of last_edited_by creator_of created_by } +
                     %w{ member_of member role found_by part left right plus left_plus right_plus } + 
                     %w{ or match complete not and sort },
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
-    :ignore      => %w{ prepend append view }
+    :ignore      => %w{ prepend append view params vars }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
 
   MODIFIERS = {};  %w{ conj return sort sort_as group dir limit offset }.each{|key| MODIFIERS[key.to_sym] = nil }
@@ -27,11 +29,15 @@
     result
   end
     
-  def initialize( query )  @cs = CardSpec.build( query )  end
+  def initialize( query )
+#    Rails.logger.info "\ninit query = #{query.inspect}\n"
+    @cs = CardSpec.build( query )
+  end
   def query()              @cs.query                      end
   def sql()                @sql ||= @cs.to_sql            end
   
   def run
+#    Rails.logger.info "\nrun query = #{query.inspect}\n"
     rows = ActiveRecord::Base.connection.select_all( sql )
     case (query[:return] || :card).to_sym
     when :card
@@ -39,9 +45,9 @@
         card=
           if query[:prepend] || query[:append]
             cardname = [query[:prepend], row['name'], query[:append]].compact.join('+')
-            Card.fetch_or_new cardname, :skip_defaults=>true
+            Card.fetch_or_new cardname
           else
-            Card.fetch row['name'], :skip_virtual=>true
+            Card[ row['name'] ]
           end
         card.nil? ? Card.find_by_name_and_trash(row['name'],false).repair_key : card
       end
@@ -54,15 +60,6 @@
   class Spec 
     attr_accessor :spec
     
-    def walk(spec, method)
-      case 
-        when spec.respond_to?(method); spec.send(method)
-        when spec.is_a?(Hash); spec.inject({}) {|h,p| h[p[0]] = walk(p[1], method); h }
-        when spec.is_a?(Array); spec.collect {|v| walk(v, method) }
-        else spec
-      end
-    end
-    
     def safe_sql(txt)
       txt = txt.to_s
       txt.match( /[^\w\*\(\)\s\.\,]/ ) ? raise( "WQL contains disallowed characters: #{txt}" ) : txt
@@ -72,8 +69,6 @@
     
     def match_prep(v,cardspec=self)
       cxn ||= ActiveRecord::Base.connection
-      v=cardspec.root.params['_keyword'] if v=='_keyword' 
-      v.strip!#FIXME - breaks if v is nil
       [cxn, v]
     end
     
@@ -105,13 +100,13 @@
   end
 
   class CardSpec < Spec 
-    attr_reader :params, :sql, :query
+    attr_reader :sql, :query, :rawspec
     attr_accessor :joins
     
     class << self
       def build(query)
         cardspec = self.new(query)
-        cardspec.merge(cardspec.spec)         
+        cardspec.merge(cardspec.rawspec)         
       end
     end 
      
@@ -119,11 +114,19 @@
       # NOTE:  when creating new specs, make sure to specify _parent *before*
       #  any spec which could trigger another cardspec creation further down.
       @mods = MODIFIERS.clone
-      @params = {}
       @joins = {}   
-      @selfname, @parent = nil, nil
-      @query = clean(query.clone)
-      @spec = @query.deep_clone
+      @selfname, @parent = '', nil
+      
+      @query = query.clone
+      
+      @query.merge! @query.delete(:params) if @query[:params]
+      @vars = @query.delete(:vars) || {}
+      @vars.symbolize_keys!
+      
+      @query = clean(@query)
+      
+      @rawspec = @query.deep_clone
+      @spec = {}
       @sql = SqlStatement.new
       self
     end
@@ -141,7 +144,7 @@
     def selfname()  @selfname                      end
     
     def absolute_name(name)
-      name = (root.selfname ? name.to_absolute(root.selfname) : name)
+      name =~ /\b_/ ? name.to_cardname.to_absolute(root.selfname) : name
     end
     
     def clean(query)
@@ -150,43 +153,48 @@
         case key.to_s
         when 'context'  ; @selfname         = query.delete(key)
         when '_parent'  ; @parent           = query.delete(key)   
-        when /^_\w+$/   ; @params[key.to_s] = query.delete(key)
         end
       end
-      query.each{ |key,val| clean_val(val, query, key) } #must be separate loop to make sure card values are set
+      query.each{ |key,val| query[key] = clean_val(val, query, key) } #must be separate loop to make sure card values are set
       query
     end
     
     
     def clean_val(val, query, key)
-      query[key] =
-        case val
-        when String ; val.empty? ? val : absolute_name(val)
-        when Hash   ; clean(val)
-        when Array  ; val.map{ |v| clean_val(v, query, key)}
-        else        ; val
+      case val
+      when String
+        if val =~ /^\$(\w+)$/
+          val = @vars[$1.to_sym].to_s.strip
         end
+        absolute_name(val)
+      when Hash   ; clean(val)
+      when Array  ; val.map{ |v| clean_val(v, query, key)}
+      else        ; val
+      end
     end
     
     def merge(spec)
+#      spec = spec.clone
       spec = case spec
-        when String;   { :key => spec.to_key }
-        when Integer;  { :id  => spec }  
+        when String;   { :key => spec.to_cardname.to_key }
+        when Integer;  { :id  => spec                    }  
         when Hash;     spec
         else raise("Invalid cardspec args #{spec.inspect}")
       end
 
+      content = nil
       spec.each do |key,val| 
         if key == :_parent
           @parent = spec.delete(key) 
         elsif OPERATORS.has_key?(key.to_s) && !ATTRIBUTES[key]
           spec.delete(key)
-          spec[:content] = [key,val]
+          content = [key,val]
         elsif MODIFIERS.has_key?(key)
           next if spec[key].is_a? Hash
           @mods[key] = spec.delete(key).to_s
         end
       end
+      spec[:content] = content if content
       
       spec.each do |key,val| 
         case ATTRIBUTES[key]
@@ -198,7 +206,7 @@
         end                      
       end
       
-      @spec.merge! spec  
+      @spec.merge! spec
       self
     end
     
@@ -221,17 +229,18 @@
       cards = (String===val ? [Card.fetch_or_new(absolute_name(val))] : Wql.new(val).run)
       cards.each do |c|
         raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && ['Search','Set'].include?(c.typecode)
-        found_by_spec = CardSpec.new(c.get_spec).spec
+        found_by_spec = CardSpec.new(c.get_spec).rawspec
         merge(field(:id) => subspec(found_by_spec))
       end
     end
     
     def match(val)
       cxn, v = match_prep(val)
+      return nil if v.empty?
       v.gsub!(/\W+/,' ')
       
       cond =
-        if System.enable_postgres_fulltext
+        if Wagn::Conf[:enable_postgres_fulltext]
           v = v.strip.gsub(/\s+/, '&')
           sql.relevance_fields << "rank(indexed_name, to_tsquery(#{quote(v)}), 1) AS name_rank"
           sql.relevance_fields << "rank(indexed_content, to_tsquery(#{quote(v)}), 1) AS content_rank"
@@ -316,7 +325,6 @@
       inner_spec.merge :return=>"#{join_alias}.created_by"
       merge_extension('User', inner_spec )
     end
-    alias :edited :editor_of
     
     def member_of(val)
       inner_spec = CardSpec.build(:extension_type=>'Role', :_parent=>self).merge(val)
@@ -357,7 +365,7 @@
         cs = CardSpec.build(val)
       end
       
-      cs.sql.fields << "#{cs.table_alias}.#{join_field} as sort_join_field"      
+      cs.sql.fields << "#{cs.table_alias}.#{join_field} as sort_join_field"
       add_join :sort, cs.to_sql, :id, :sort_join_field, :side=>'LEFT'
     end
     
@@ -384,16 +392,16 @@
       ValueSpec.new([operator,CardSpec.build(additions).merge(spec)], self)
     end 
     
-    def to_sql(*args)      
+    def to_sql(*args)
       # Basic conditions
-      sql.conditions << @spec.collect do |key, val|   
+      sql.conditions << (@spec.collect do |key, val|
         val.to_sql(key.to_s.gsub(/\:\d+/,''))
-      end.join(" #{@mods[:conj].blank? ? :and : @mods[:conj]} ")
+      end.join(" #{@mods[:conj].blank? ? :and : @mods[:conj]} "))
       
       return "(" + sql.conditions.last + ")" if @mods[:return]=='condition'
 
       # Permissions    
-      unless System.always_ok? or (Wql.root_perms_only && !root?) 
+      unless User.always_ok? or (Wql.root_perms_only && !root?)
         sql.conditions << %{ (#{table_alias}.read_rule_id IN (#{::User.as_user.read_rule_ids.join ','})) }
       end
            
@@ -481,7 +489,7 @@
       
       # bare value shortcut
       @spec = case spec   
-        when ValueSpec; spec.instance_variable_get('@spec')  # FIXME whatta fucking hack (what's this for?)
+        when ValueSpec; spec.instance_variable_get('@spec')  # FIXME what a hack (what's this for?)
         when Array;     spec
         when String;    ['=', spec]
         when Integer;   ['=', spec]
@@ -520,7 +528,8 @@
       
       field, v = case field
         when "cond";     return "(#{sqlize(v)})"
-        when "name";     ["#{table}.key",      [v].flatten.map{ |val| val.to_key }]
+        when "name";     ["#{table}.key",      [v].flatten.map(&:to_cardname).map(&:to_key)]
+        
         when "type";     ["#{table}.typecode", [v].flatten.map{ |val| Cardtype.classname_for( val ) }]
         when "content";   join_alias = @cardspec.add_revision_join
                          ["#{join_alias}.content", v]
@@ -538,18 +547,3 @@
   end         
 end
 
-
-class ActiveRecord::ConnectionAdapters::AbstractAdapter
-  def cast_types()  native_database_types.merge custom_cast_types  end
-  def custom_cast_types() {}                                       end
-end
-
-class ActiveRecord::ConnectionAdapters::MysqlAdapter
-  def custom_cast_types
-    { :string  => { :name=>'char'    },
-      :integer => { :name=>'signed'  },
-      :text    => { :name=>'char'    },
-      :float   => { :name=>'decimal' },
-      :binary  => { :name=>'binary'  }  }
-  end
-end

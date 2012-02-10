@@ -8,36 +8,39 @@ module LocationHelper
   #
   # we keep a history stack so that in the case of card removal
   # we can crawl back up to the last un-removed location
-  #
-  # a card may be on the location stack multiple times, especially if
-  # you had to confirm before removing.
+
   #
   def location_history
+#    warn "sess #{session.class}, #{session.object_id}"
     session[:history] ||= ['/']
-    session[:history].shift if session[:history].size > 5
-    session[:history]
+    if session[:history]
+      session[:history].shift if session[:history].size > 5
+      session[:history]
+    end
   end
 
   def save_location
-    location_history.push(request.request_uri)
-    load_location
-  end
-
-  def load_location
-    @previous_location = location_history.last
+    discard_locations_for(@card)
+    @previous_location = wagn_path(@card)
+    location_history.push @previous_location
   end
 
   def previous_location
-    @previous_location
+    @previous_location ||= location_history.last if location_history
   end
 
   def discard_locations_for(card)
     # quoting necessary because cards have things like "+*" in the names..
-    pattern = /#{Regexp.quote(card.id.to_s)}|#{Regexp.quote(card.key)}|#{Regexp.quote(card.name)}/
-    while location_history.last =~ pattern
-      location_history.pop
-    end
-    load_location
+    session[:history] = location_history.reject do |loc|
+      if url_key = url_key_for_location(loc)
+        url_key.to_cardname.key == card.key
+      end
+    end.compact
+    @previous_location = nil
+  end
+  
+  def url_key_for_location(location)
+    location.match( /\/([^\/]*$)/ ) ? $1 : nil
   end
 
    # -----------( urls and redirects from application.rb) ----------------
@@ -52,16 +55,18 @@ module LocationHelper
       opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
       vars = '?' + pairs.join('&')
     end
-    System.root_path + "/wagn/#{title.to_url_key}#{format}#{vars}"
+    wagn_path "/#{title.to_cardname.to_url_key}#{format}#{vars}"
   end
 
-  def card_path( card )
-    System.root_path + "/wagn/#{card.name.to_url_key}"
+  def wagn_path( rel ) #should be in cardname?
+    rel_path = Card===rel ? rel.cardname.to_url_key : rel
+    Wagn::Conf[:root_path].to_s + ( rel_path =~ /^\// ? '' : '/' ) + rel_path
   end
 
-  def card_url( card )
-    "http://" + System.host + card_path(card)
+  def wagn_url( rel ) #should be in cardname?
+    Wagn::Conf[:base_url].to_s + wagn_path(rel)
   end
+  
 
   # Links ----------------------------------------------------------------------
 
@@ -69,17 +74,14 @@ module LocationHelper
     title ||= text
     url_options = (options[:type]) ? {:type=>options[:type]} : {}
     url = url_for_page(title, url_options)
-    url = System.base_url + url if (options.delete(:include_domain))
-
-    #Rails.logger.debug("link_to_page #{options.inspect}")
     link_to text, url, options
   end
 
   def card_title_span( title )
-    %{<span class="namepart-#{title.css_name}">#{title}</span>}
+    %{<span class="namepart-#{title.to_cardname.css_name}">#{title}</span>}
   end
 
   def page_icon(cardname)
-    link_to_page '&nbsp;', cardname, {:class=>'page-icon', :title=>"Go to: #{cardname}"}
+    link_to_page '&nbsp;'.html_safe, cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
   end
 end

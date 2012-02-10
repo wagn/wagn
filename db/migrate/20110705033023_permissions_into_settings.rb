@@ -73,14 +73,14 @@ class PermissionsIntoSettings < ActiveRecord::Migration
 
     puts "creating *right set perms"
     Card.find(:all, :conditions=>"(name like '%*right+*content' or name like '%right+*default') and trash is false").each do |card|
-      next if card.star?
+      next if card.cardname.star?
       base_name = card.name.gsub(/^(.*)\+\*right\+\*(content|default)$/, '\1')
       [:read, :edit, :delete, :comment].each do |task|
         begin
           could = card.who_could(task)
           can = Card.new(:name=>"XXXXXHONK+#{base_name}", :skip_defaults=>true).who_can(task==:edit ? :update : task)
           if could && could != can
-            new_rule = create_rule "#{base_name}+*right", task, Card.fetch(could.first, :skip_after_fetch=>true)
+            new_rule = create_rule "#{base_name}+*right", task, Card.fetch(could.first, :skip_modules=>true)
             execute "update cards set read_rule_id=#{new_rule.id}, read_rule_class='*right' " + 
               " where trash is false and tag_id=#{Card[base_name].id}" if task == :read
           end
@@ -96,7 +96,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
       'Grant Application','Meeting','TechNote','ProjectStatus','Company']
     
     Card.find(:all, :conditions=>'tag_id is null and trash is false').each do |card|
-      next if card.star?
+      next if card.cardname.star?
       next if wagn_dot_org && wdo_reserved_list.member?( card.typecode )
       [:read, :edit, :delete, :comment].each do |task|
         begin
@@ -104,7 +104,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
           can = card.who_can(task==:edit ? :update : task)
           if could && could != can
             card.repair_key if card.key != card.name.to_key
-            new_rule = create_rule "#{card.name}+*self", task, Card.fetch(could.first, :skip_after_fetch=>true)
+            new_rule = create_rule "#{card.name}+*self", task, Card.fetch(could.first, :skip_modules=>true)
             execute "update cards set read_rule_id=#{new_rule.id}, read_rule_class='*self' " + 
               " where trash is false and id=#{card.id}" if task == :read
             
@@ -153,17 +153,23 @@ class PermissionsIntoSettings < ActiveRecord::Migration
           return false
         end
         "[[#{role.cardname}]]"
+      when party == false
+        puts "Bad rule false: #{set} #{task}"
+        return false
       else
         role_card = party.card
          "[[#{party.cardname}]]"
       end
       
     puts "- create rule for #{set}, #{task.to_s.upcase}:  #{content}"
-    c = Card.create(
-      :name=>"#{set}+*#{task.to_s=='edit' ? 'update' : task}",
+    cname = "#{set}+*#{task.to_s=='edit' ? 'update' : task}"
+    Card.create(
+      :name=>cname,
       :type=>'Pointer',
       :content=>content
     )
+    c = Card[cname]
+    puts "- created rule for #{set}, #{task.to_s.upcase}:  #{c&&c.id.inspect}, #{c&&c.name}"
     return c if String===party
     WikiReference.create(
       :card_id=>c.id, 

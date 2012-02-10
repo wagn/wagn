@@ -161,7 +161,7 @@ end
 
 #
 # Debugging
-# These only work with Rails and OSx ATM since EmailViewer uses RAILS_ROOT and OSx's 'open' command.
+# These only work with Rails and OSx ATM since EmailViewer uses Rails.root and OSx's 'open' command.
 # Patches accepted. ;)
 #
 

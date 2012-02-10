@@ -3,31 +3,34 @@ class AdminController < ApplicationController
 
   def setup
     raise(Wagn::Oops, "Already setup") unless User.no_logins? && !User[:first]
+    Wagn::Conf[:recaptcha_on] = false
     if request.post?
       #Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
       User.as :wagbot do
-        @user, @card = User.create_with_card( params[:extension].merge({:login=>'first'}), params[:card] )
+        @extension, @card = User.create_with_card( params[:extension].merge({:login=>'first'}), params[:card] )
         set_default_request_recipient
       end
 
-      if @user.errors.empty?
-        @user.roles = [Role[:admin]]
-        self.current_user = @user
+      warn "ext id = #{@extension.id}"
+
+      if @extension.errors.empty?
+        @extension.roles = [Role[:admin]]
+        self.current_user = @extension
         User.cache.delete 'no_logins'
         flash[:notice] = "You're good to go!"
-        redirect_to System.path_setting('/')
+        redirect_to Card.path_setting('/')
       else
         flash[:notice] = "Durn, setup went awry..."
       end
     else
       @card = Card.new( params[:card] || {} ) #should prolly skip defaults
-      @user = User.new( params[:user] || {} )
+      @extension = User.new( params[:user] || {} )
     end
   end
 
   def tasks
-    raise Wagn::PermissionDenied.new('Only Administrators can view tasks') unless System.always_ok?
-    @tasks = System.role_tasks
+    raise Wagn::PermissionDenied.new('Only Administrators can view tasks') unless User.always_ok?
+    @tasks = Wagn::Conf[:role_tasks]
     Role.cache.reset
     
     @roles = Role.find_configurables.sort{|a,b| a.card.name <=> b.card.name }
@@ -36,7 +39,7 @@ class AdminController < ApplicationController
   end
 
   def save_tasks
-    raise Wagn::PermissionDenied.new('Only Administrators can change task permissions') unless System.always_ok?
+    raise Wagn::PermissionDenied.new('Only Administrators can change task permissions') unless User.always_ok?
     role_tasks = params[:role_task] || {}
     Role.find( :all ).each  do |role|
       tasks = role_tasks[role.id.to_s] || {}
@@ -50,14 +53,14 @@ class AdminController < ApplicationController
   end
   
   def show_cache
-    key = params[:id].to_key
+    key = params[:id].to_cardname.to_key
     @cache_card = Card.fetch(key)
     @db_card = Card.find_by_key(key)
   end
   
   def clear_cache
     response = 
-      if System.always_ok?
+      if User.always_ok?
         Wagn::Cache.reset_global
         'Cache cleared'
       else

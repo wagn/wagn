@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 =begin
 describe Card, "Case Variant" do
   before do
@@ -16,10 +16,10 @@ end
 
 describe Wagn::Cardname, "Underscores" do
   it "should be treated like spaces when making keys" do
-    'weird_ combo'.to_key.should == 'weird  combo'.to_key
+    'weird_ combo'.to_cardname.to_key.should == 'weird  combo'.to_cardname.to_key
   end
   it "should not impede pluralization checks" do
-    'Mamas_and_Papas'.to_key.should == "Mamas and Papas".to_key
+    'Mamas_and_Papas'.to_cardname.to_key.should == "Mamas and Papas".to_cardname.to_key
   end
 end
 =end
@@ -41,11 +41,11 @@ describe Wagn::Cardname, "changing from plus card to simple" do
   
   describe "template_name?" do
     it "returns true for template" do
-      "bazoinga+*right+*content".template_name?.should be_true
+      "bazoinga+*right+*content".to_cardname.template_name?.should be_true
     end
     
     it "returns false for non-template" do
-      "bazoinga+*right+nontent".template_name?.should be_false
+      "bazoinga+*right+nontent".to_cardname.template_name?.should be_false
     end
   end
 end

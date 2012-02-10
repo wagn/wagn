@@ -1,6 +1,6 @@
 require 'timecop'    
 
-Dir["#{RAILS_ROOT}/app/models/card/*.rb"].sort.each do |cardtype|
+Dir["#{Rails.root}/app/models/card/*.rb"].sort.each do |cardtype|
   require_dependency cardtype
 end
 
@@ -10,6 +10,7 @@ class SharedData
   
   def self.add_test_data
     ::User.current_user = :wagbot
+    Wagn::Cache.reset_global
 
     joe_user = ::User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User[:wagbot]
     Card.create! :typecode=>'User', :name=>"Joe User", :extension=>joe_user, :content => "I'm number two"    
@@ -99,7 +100,7 @@ class SharedData
     Card.create! :typecode=>'CardtypeE', :name=>"type-e-card", :content=>"type_e_content"
     Card.create! :typecode=>'CardtypeF', :name=>"type-f-card", :content=>"type_f_content"
 
-#      warn "current user #{User.current_user.inspect}.  always ok?  #{System.always_ok?}" 
+#      warn "current user #{User.current_user.inspect}.  always ok?  #{User.always_ok?}" 
 
     c = Card.create! :name=>'revtest', :content=>'first'
     c.update_attributes! :content=>'second'
@@ -121,7 +122,7 @@ class SharedData
         
     Card.create! :type=>"Cardtype", :name=>"Book"
     Card.create! :name=>"Book+*type+*content", :content=>"by {{+author}}, design by {{+illustrator}}"
-    Card.create! :name => "Illiad", :type=>"Book"
+    Card.create! :name => "Iliad", :type=>"Book"
                                                                              
     
     ### -------- Notification data ------------

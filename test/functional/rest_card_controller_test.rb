@@ -1,11 +1,11 @@
 require File.expand_path('../test_helper', File.dirname(__FILE__))
 
 # Re-raise errors caught by the controller.
-class XmlrestController
+class RestCardController
   def rescue_action(e) raise e end
 end
 
-class XmlrestControllerTest < ActionController::TestCase
+class RestCardControllerTest < ActionController::TestCase
 
   include AuthenticatedTestHelper
 

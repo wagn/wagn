@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + '/../spec_helper'
+
 describe RestCardController do
 
   context "new" do    
@@ -15,32 +16,10 @@ describe RestCardController do
       @joe_id = Card.user_id
     end
 
-#http://stackoverflow.com/questions/59655/how-to-setup-a-rails-integration-test-for-xml-mehtods
-=begin
-  class TruckTest < ActionController::IntegrationTest
-    def test_new_truck
-      paint_color = 'blue'
-      fuzzy_dice_count = 2
-      truck = Truck.new({:paint_color => paint_color, :fuzzy_dice_count => fuzzy_dice_count})
-      @headers ||= {}
-      @headers['HTTP_ACCEPT'] = @headers['CONTENT_TYPE'] = 'application/xml'
-      post '/trucks.xml', truck.to_xml, @headers
-      #puts @response.body
-      assert_select 'truck>paint_color', paint_color
-      assert_select 'truck>fuzzy_dice_count', fuzzy_dice_count.to_s
-    end
-  end
-=end
     def post_xml(args={})
       request.env['content_type'] = 'application/xml' 
       request.env['RAW_POST_DATA'] =  args[:card]
-      #warn "args #{args.inspect}"
-      #@headers ||= {}
-      #@headers['HTTP_ACCEPT'] = @headers['CONTENT_TYPE'] = 'application/xml'
       post :post
-      #warn "response #{ @response.body}"
-#Note this test PASSES!
-#assert_equal '201 Created', response.get_fields('Status')[0]
     end
 
 
@@ -83,14 +62,19 @@ describe RestCardController do
       end
 
       it "creates card and plus cards" do
+        warn Rails.logger.info("post some xml")
         post_xml :card=>%{<card name="sss" type="Fruit">
-          <card name="+text"><p>abraid</p></card></card>} 
-        Card.find_by_name("sss").should_not be_nil
-        Card.find_by_name("sss+text").should_not be_nil
+          <card name="+sub"><p>abraid<card name="+text">Some Text</card></p></card></card>} 
+        (c=Card.find_by_name("sss")).should be
+        warn Rails.logger.info("posted xml #{c.inspect}")
+        Card.find_by_name("sss+sub+text").should be
       end
 
       it "creates card with hard template" do
-        Card.create!(:name=>"Fruit+*type+*content", :content=>"{{+kind}} {{+color}} {{+is citrus}} {{+edible}}")
+        Card.as Card::WagbotID do
+          Card.create!(:name=>"Fruit+*type+*content", :content=>"{{+kind}} {{+color}} {{+is citrus}} {{+edible}}")
+        end
+
         post_xml :card=>%{<card name="sssHT" type="Fruit">
           <card name="+kind"><p>apple</p></card>
           <card name="+color"><p>red</p></card>
@@ -112,7 +96,7 @@ describe RestCardController do
       @user = User[:joe_user]
       @request    = ActionController::TestRequest.new
       @response   = ActionController::TestResponse.new                                
-      @controller = CardController.new
+      @controller = RestCardController.new
       @simple_card = Card['Sample Basic']
       @combo_card = Card['A+B']
       login_as(:joe_user)
@@ -127,7 +111,7 @@ describe RestCardController do
     describe "#show" do
       it "works for basic request" do
         pending "xml version of test"
-        get :show, {:id=>'Sample_Basic'}
+        get :get, {:id=>'Sample_Basic'}
         response.should have_tag('body')
         assert_response :success
         'Sample Basic'.should == assigns['card'].name
@@ -135,21 +119,21 @@ describe RestCardController do
 
       it "handles nonexistent card" do
         pending "xml version of test"
-        get :show, {:id=>'Sample_Fako'}
+        get :get, {:id=>'Sample_Fako'}
         assert_response :success   
         assert_template 'new'
       end
 
       it "handles nonexistent card without create permissions" do
         login_as :anonymous
-        get :show, {:id=>'Sample_Fako'}
+        get :get, {:id=>'Sample_Fako'}
         assert_response :success   
         assert_template 'missing'
       end
       
       #it "invokes before_show hook" do
-      #  Wagn::Hook.should_receive(:call).with(:before_show, "*all", instance_of(CardController))
-      #  get :show, {:id=>'Sample_Basic'}
+      #  Wagn::Hook.should_receive(:call).with(:before_show, "*all", instance_of(RestCardController))
+      #  get :get, {:id=>'Sample_Basic'}
       #end
     end
     
@@ -157,7 +141,7 @@ describe RestCardController do
     describe "#update" do
       it "works" do
         pending "xml version needed"
-        post :update, { :id=>@simple_card.id, 
+        put :put, { :id=>@simple_card.id, 
           :card=>{:current_revision_id=>@simple_card.current_revision.id, :content=>'brand new content' }} #, {:user=>@user.id} 
         assert_response :success, "edited card"
         assert_equal 'brand new content', Card['Sample Basic'].content, "content was updated"
@@ -170,17 +154,12 @@ describe RestCardController do
       assert_equal 'Basic', assigns['card'].typecode, "@card type should == Basic"
     end
 
-    it "new with cardtype" do
-      post :new, :card => {:type=>'Date'}   
-      assert_response :success, "response should succeed"                     
-      assert_equal 'Date', assigns['card'].typecode, "@card type should == Date"
-    end        
-
     it "remove" do
       c = Card.create( :name=>"Boo", :content=>"booya")
-      post :remove, :id=>c.id.to_s
+      delete :delete, {:id => c.id.to_s}
       assert_response :success
-      Card.find_by_name("Boo").should == nil
+      warn Rails.logger.info("test remove #{c.inspect}")
+      Card["Boo"].should be_nil
     end
 
     it "should watch" do

@@ -212,6 +212,7 @@ class CardController < ApplicationController
   # --------------( LOADING ) ----------
   def load_card!
     load_card
+    warn Rails.logger.info("load_card! #{@card}")
     case
     when @card == '*previous'
       wagn_redirect previous_location
@@ -233,6 +234,7 @@ class CardController < ApplicationController
   end
 
   def load_card
+    warn Rails.logger.info("load_card #{params.inspect}")
     return @card=nil unless id = params[:id]
     ActiveSupport::Notifications.instrument 'wagn.load_card', :message=>"load #{id}" do
       case id
@@ -243,6 +245,7 @@ class CardController < ApplicationController
       when '*previous'
         @card = '*previous'
       else
+        warn Rails.logger.info("fetch#{id}")
         @card = Card.fetch_or_new( Wagn::Cardname.unescape(id), 
           (params[:card] ? params[:card].clone : {} )
         )

@@ -56,13 +56,9 @@ class Wagn::Renderer
     %{ To tell us more and follow the fix, add a support ticket at http://wagn.org/new/Support_Ticket }
   end
 
-  define_view(:denial) do |args|
-    'Permission Denied'
-  end
-  
-  define_view(:bad_address) do |args|
-    %{ Bad Address }
-  end
+  define_view(:missing)     do |args| ''                  end
+  define_view(:denial)      do |args| 'Permission Denied' end
+  define_view(:bad_address) do |args| %{ Bad Address }    end
 
 
   # The below have HTML!?  should not be any html in the base renderer

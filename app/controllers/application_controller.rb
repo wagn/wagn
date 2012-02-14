@@ -81,7 +81,9 @@ class ApplicationController < ActionController::Base
   # ------------------( permission filters ) -------
   def view_ok()    @card.ok?(:read)   || render_denied('view')    end
   def update_ok()  @card.ok?(:update) || render_denied('edit')    end
-  def remove_ok()  @card.ok!(:delete) || render_denied('delete')  end
+  def remove_ok()
+    warn "rok #{@card.ok?(:delete)}"
+    @card.ok!(:delete) || render_denied('delete')  end
 
  #def create_ok
  #  @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'

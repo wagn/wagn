@@ -4,10 +4,9 @@ require 'rexml/document'
 class RestCardController < CardController
   helper :wagn
  
-  before_filter :load_card!, :only=> [ :put, :get ]
-  before_filter :load_card_with_cache, :only => [:get]
+  before_filter :load_card!, :only=> [ :put, :get, :delete ]
  
-  before_filter :view_ok,   :only=> [ :get, :put, :delete ]
+  before_filter :view_ok,   :only=> [ :get, :put ]
   #before_filter :create_ok, :only=> [ :post ]
   before_filter :edit_ok,   :only=> [ :put ]
   before_filter :remove_ok, :only=> [ :delete ]          
@@ -15,7 +14,7 @@ class RestCardController < CardController
     
   def method
     method = request.method
-    #warn "method #{method}"
+    warn "method #{method}"
     if REST_METHODS.member?(method)
       self.send(method)
     else
@@ -27,30 +26,53 @@ class RestCardController < CardController
  
   # rest XML put/post
   # Need to split off envelope code somehome
-  def read_xml(xml, card_name, updates)
-    out_xml = REXML::Document.new('')
-    out_xml = out_xml.add_element('e')
-    no_card = false
-    if (root_card=card_name.nil?) or card_name.empty?
-      card_name = @card_name = xml.attribute('name').to_s
+  def read_xml(xml, updates)
+    warn "read_xml(#{xml.class}, #{xml.to_a.inspect}, #{updates.inspect})"
+    if REXML::Element === xml and xml.name == 'name'
+      card_name = xml.attribute('name').to_s
       card_type = xml.attribute('type').to_s
+    #out_xml = REXML::Document.new('')
+    #out_xml = out_xml.add_element('e')
+    #warn "out_xml is #{out_xml.inspect}"
+    #no_card = false
+    #if (root_card=card_name.nil?) or card_name.empty?
+      #card_name = @card_name = xml.attribute('name').to_s
+      #card_type = xml.attribute('type').to_s
+      #warn "root: #{root_card.inspect}, #{card_name.inspect}, #{card_type.inspect}"
+    #end
+    #raise("No xml?, #{card_name}") unless xml
+    #warn "xml size #{xml.to_a.size}"
+      REXML::XPath.each(xml, '*/card') do |x|
+        warn "search node: #{x.inspect}, #{x.to_a.inspect}"
+      end
+    else
+      warn "Not a card: #{xml.class}"
     end
-    raise("No xml?, #{card_name}") unless xml
-    xml.each_child do |e|
-      if REXML::Element===e
-        if e.name == 'card'
-          sub_cname = card_name+'+'+e.attribute('name').to_s
-          sub_type = e.attribute('type').to_s
-          read_xml(e, sub_cname, updates)
+  end
+=begin
+    xml.each do |el|
+      warn "each #{el.class}"
+      if REXML::Element===el
+        warn "each el #{el.name}: #{el.inspect}"
+        if el.name == 'card'
+          sub_cname = card_name+'+'+el.attribute('name').to_s
+          sub_type = el.attribute('type').to_s
+          warn "card element #{el.inspect}, #{sub_cname}, #{sub_type}"
+          read_xml(el, updates)
         else
-          e.name == 'no_card' && no_card=true
-          out_xml.add_element(REXML::Element.new(e.expanded_name), e.attributes)
+          el.name == 'no_card' && no_card=true
+          out_xml.add_element(REXML::Element.new(el.expanded_name), el.attributes)
+          read_xml(el, card_name, updates)
         end
       else
-        out_xml.add(e)
+        warn "each text #{el}"
+        out_xml.add(el.clone)
+    #warn "out_xml add text #{out_xml.inspect}"
       end
+      warn "loop?>"
     end
-    card_content = out_xml.to_s[3..-5]
+    warn "out_xml after #{out_xml.to_a.inspect}"
+    card_content = out_xml.to_a[3..-5]
     this_update = {:name=>nil, :type=>this_type = xml.attribute('type').to_s}
     unless card_name.blank?
       this_update = {:name=>card_name} unless card_name.blank?
@@ -63,7 +85,7 @@ class RestCardController < CardController
         this_update[:content] = card_content
       end
     end
-    #Rails.logger.info "XML post card: #{this_update.inspect} C:#{card_content}"
+    warn (Rails.logger.info "XML post card: #{this_update.inspect} C:#{card_content}")
     if root_card
       raise "Bad element #{xml.name}" unless xml.name == 'card'
       updates.merge!(this_update)
@@ -73,7 +95,7 @@ class RestCardController < CardController
     end
     #Rails.logger.info "updates: #{card_content} #{updates.inspect}"
     card_content
-  end
+=end
 
   def put
     @card_name = Cardname.unescape(params['id'] || '')
@@ -85,7 +107,8 @@ class RestCardController < CardController
     doc = REXML::Document.new(content)
     raise "XML error: #{doc} #{content}" unless doc.root
     #f = REXML::Formatters::Transitive.new
-    read_xml(doc.root, @card_name, card_updates={})
+    warn "doc.root #{doc.root.inspect}"
+    read_xml(doc.root, card_updates={})
     if !card_updates.empty?
       Card.update(@card.id, card_updates)
       #@card.multi_save card_updates 
@@ -94,7 +117,7 @@ class RestCardController < CardController
   
   def post
     request.format = :xml if !params[:format]
-    #warn (Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}")
+    warn (Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}")
     #return render(:action=>"missing", :format=>:xml)  unless params[:card]
 =begin
     respond_to do |format|
@@ -105,10 +128,15 @@ class RestCardController < CardController
         #warn "content is #{content}"
         doc = REXML::Document.new(content)
         raise "XML error: #{doc} #{content}" unless doc.root
-        read_xml(doc.root, @card_name, card_create={})
+        warn "doc.root (post) #{doc.inspect}"
+      begin
+        read_xml(doc, card_create={})
+      rescue Exception => e
+        warn "except #{e.inspect}, #{e.backtrace*"\n"}"
+      end
         #card_create.delete(:name) if card_create[:name].nil?
         #Rails.logger.debug "postb #{@card&&@card.name}:: #{card_create.inspect}"; @card
-        #warn "content is #{card_create.inspect}"
+        warn "card_create content is #{card_create.inspect}"
         @card = Card.new card_create 
     if @card.save
       render_success
@@ -133,8 +161,9 @@ class RestCardController < CardController
 
   end
   
-  #----------------( creating)
-  def delete  
+  def delete
+    @card = @card.refresh if @card.frozen?
+    warn "delete #{@card}, #{params.inspect}"
     @card.destroy
 
     if @card.errors.on(:confirmation_required)

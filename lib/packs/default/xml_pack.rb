@@ -48,7 +48,7 @@ class Wagn::Renderer::Xml < Wagn::Renderer
   end
 =end
 
-  [ :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing ].each do |view|
+  [ :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing, :missing ].each do |view|
     define_view(view) do |args|
        %{<no_card status="#{view.to_s.gsub('_',' ')}">#{card.name}</no_card>}
     end

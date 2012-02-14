@@ -32,6 +32,9 @@ class MultihostMapping < ActiveRecord::Base
     end
     
     def set_connection(wagn_name)
+      if Hash===System.read_only_hosts
+        System.read_only = !!System.read_only_hosts[wagn_name]
+      end
       ActiveRecord::Base.connection.schema_search_path = wagn_name
     end
   end

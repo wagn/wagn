@@ -45,6 +45,7 @@ module Wagn
         h[:pack_dirs] ||= "#{Rails.root}/lib/packs, #{Rails.root}/local/packs"
 
         h[:read_only] ||= (ro=ENV['WAGN_READ_ONLY']) && ro != 'false'
+        # this means config overrides env var.  is that what we want?
       end
     end
   end

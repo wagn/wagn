@@ -17,18 +17,20 @@ class NewFileStorage < ActiveRecord::Migration
                 rescue
                   open filename.sub( /\.png$/, '.gif' ), 'rb'
                 end
+                
+              data = file.read
               card.attach = file
               card.attach.instance_variable_set("@_attach_file_name", filename) # fixes ext in path
               card.attach_file_name = "#{card.key.gsub('*','X').camelize}#{File.extname(filename)}" # fixes ext in content
             
               revision.update_attribute :content, card.content
-              write_file file, card.attach.path(typecode=='Image' ? :original : '')
+              write_file data, card.attach.path(typecode=='Image' ? :original : '')
             
               if typecode == 'Image'
                 Card::STYLES.each do |style|
                   next if style == 'original'
                   f = open filename.sub( /\.\w+$/, "_#{style}\\0" ), 'rb'
-                  write_file f, card.attach.path( style )
+                  write_file f.read, card.attach.path( style )
                 end
               end
               
@@ -54,10 +56,11 @@ class NewFileStorage < ActiveRecord::Migration
     filename
   end
   
-  def write_file( file, path )
+  def write_file( data, path )
     FileUtils.mkdir_p File.dirname(path)
-    File.open( path, 'wb' ) do |f| 
-      f.write file.read
+    File.open( path, 'wb' ) do |f|
+      f.write data
     end
   end
+    
 end

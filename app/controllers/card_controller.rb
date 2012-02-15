@@ -95,18 +95,19 @@ class CardController < ApplicationController
   end
 
   def comment
-    raise(Wagn::NotFound,"Action comment should be post with card[:comment]") unless request.post? and params[:card]
-    comment = params[:card][:comment];
-    if User.current_user.login == 'anon'
-      session[:comment_author] = author = params[:card][:comment_author]
-      author = "#{author} (Not signed in)"
-    else
-      username=User.current_user.card.name
-      author = "[[#{username}]]"
-    end
-    comment = comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
+    raise Wagn::BadAddress unless params[:card]
+    # this previously failed unless request.post?, but it is now (properly) a PUT.
+    # if we enforce RESTful http methods, we should do it consistently,
+    # and error should be 405 Method Not Allowed
+
     @card = @card.refresh if @card.frozen?
+    
+    author = User.current_user.anonymous? ?
+        "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" :
+        "[[#{User.current_user.card.name}]]"
+    comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
     @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
+    
     @card.save!
     render_show
   end

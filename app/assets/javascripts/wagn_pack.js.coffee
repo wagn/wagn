@@ -164,7 +164,7 @@ navboxize = (term, results)->
       if key == 'search'
         i.term = term
       else if key == 'add'
-        i.href = '/card/new?card[name]=' + escape(term)
+        i.href = '/card/new?card[name]=' + encodeURIComponent(term)
       else if key == 'new'
         i.type = 'add' # for icon
         i.href = '/new/' + val[1]

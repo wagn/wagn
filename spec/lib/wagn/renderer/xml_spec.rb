@@ -3,6 +3,7 @@ require File.dirname(__FILE__) + '/../../../packs/pack_spec_helper'
 
 describe Wagn::Renderer::Xml, "" do
   before do
+    Wagn::Conf[:base_url] = nil
     Card.user= :joe_user
     Wagn::Renderer::Xml.current_slot = nil
   end

@@ -1,5 +1,6 @@
 class Wagn::Renderer::Html
   define_view(:show) do |args|
+    warn "show rich #{caller[0..12]*"\n"}"
     @main_view = args[:view] || params[:view] || params[:home_view] || :open
 
     if ajax_call?

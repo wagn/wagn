@@ -23,6 +23,7 @@ describe Mailer do
       user_id =  Card['sara'].id
       Card.as Card::WagbotID do
         @user = User.where(:card_id=>user_id).first
+        warn "cu? #{Card.user_id}, as:#{Card.as_user_id}"
         @user.generate_password
         @email = Mailer.account_info(@user, "New password subject", "Forgot my password")
       end

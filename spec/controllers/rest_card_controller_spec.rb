@@ -62,11 +62,9 @@ describe RestCardController do
       end
 
       it "creates card and plus cards" do
-        warn Rails.logger.info("post some xml")
         post_xml :card=>%{<card name="sss" type="Fruit">
           <card name="+sub"><p>abraid<card name="+text">Some Text</card></p></card></card>} 
         (c=Card.find_by_name("sss")).should be
-        warn Rails.logger.info("posted xml #{c.inspect}")
         Card.find_by_name("sss+sub+text").should be
       end
 
@@ -126,7 +124,9 @@ describe RestCardController do
 
       it "handles nonexistent card without create permissions" do
         login_as :anonymous
-        get :get, {:id=>'Sample_Fako'}
+      warn Rails.logger.info("test get")
+        get :get, {:id=>'Sample_Fako', :format=>'.xml'}
+        #get :get, {:id=>'Sample_Fako'}
         assert_response :success   
         assert_template 'missing'
       end

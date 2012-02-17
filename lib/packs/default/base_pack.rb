@@ -13,6 +13,7 @@ class Wagn::Renderer
     card.name + "\n\n" + _render_core
   end
   define_view :show do |args|
+    warn "base show"
     render(args[:view] || params[:view] || :core)
   end
 

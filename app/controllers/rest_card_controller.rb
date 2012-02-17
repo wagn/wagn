@@ -17,7 +17,7 @@ class RestCardController < CardController
     
   def method
     method = request.method
-    #warn "method #{method}"
+    warn "method #{method}"
     if REST_METHODS.member?(method)
       self.send(method)
     else
@@ -69,7 +69,7 @@ Done"
   
   def post
     request.format = :xml if !params[:format]
-    warn (Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}")
+    #warn (Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}")
     #return render(:action=>"missing", :format=>:xml)  unless params[:card]
 =begin
     respond_to do |format|
@@ -111,7 +111,7 @@ Done"
   
   def delete
     @card = @card.refresh if @card.frozen?
-    #warn "delete #{@card}, #{params.inspect}"
+    warn "delete #{@card}, #{params.inspect}"
     @card.destroy
 
     if @card.errors.on(:confirmation_required)

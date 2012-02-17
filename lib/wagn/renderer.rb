@@ -381,7 +381,7 @@ module Wagn
         when /^https?:/; 'external-link'
         when /^mailto:/; 'email-link'
         when /^\//
-          href = full_uri(href.to_s)      
+          href = full_uri href.to_s      
           'internal-link'
         else
           known_card = !!Card.fetch(href)
@@ -389,7 +389,7 @@ module Wagn
             text = text.to_cardname.to_show card.name
           end
           href = href.to_cardname
-          href = wagn_path( (known_card ? href.to_url_key : CGI.escape(href.escape)) )
+          href = known_card ? href.to_url_key : CGI.escape(href.escape)
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
           href = full_uri(href.to_s)
           known_card ? 'known-card' : 'wanted-card'

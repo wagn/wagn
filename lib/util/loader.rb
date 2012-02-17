@@ -19,7 +19,6 @@ module Wagn
     
     def load( method) 
       open( @filename ) do |file|
-        warn "parsing file..."
         @revisions = 
           case method.to_sym
           when :xml; Hash.from_xml( file.read )['hash']['revisions']['revision']
@@ -29,22 +28,17 @@ module Wagn
                
         setup_import_user
         
-        warn "Loading cards hash"
         load_cards
 
-        warn "processing authors..."      
         process_authors
                                 
         #warn "processing titles..."
         #process_titles 
         
-        warn "processing revisions..."
         process_revisions
         
-        warn "finalizing cards..."
         update_current_revisions
         
-        warn "done"
       end   
     end
                           

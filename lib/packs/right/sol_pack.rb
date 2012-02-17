@@ -11,7 +11,6 @@ class Wagn::Renderer::Html
           #(args[:view] != 'setting' && inst = card.rule_card('declare help') ?
              #%{<div class="instruction">#{slot.subslot(inst).render :naked }</div>} : '') +
           hidden_field_tag( :multi_edit, true)}#{
-          warn "atrib is #{card.attribute.inspect}"
           hidden_field_tag( :attribute, card.attribute )}#{
           hidden_field_tag( :ctxsig, card.signature)}#{
           trait_form(card.attribute)

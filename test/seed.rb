@@ -114,8 +114,7 @@ class SharedData
     Card.create! :typecode=>'CardtypeE', :name=>"type-e-card", :content=>"type_e_content"
     Card.create! :typecode=>'CardtypeF', :name=>"type-f-card", :content=>"type_f_content"
 
-#      warn "current user #{User.session_user.inspect}.  always ok?  #{Card.always_ok?}"
-
+    #warn "current user #{User.session_user.inspect}.  always ok?  #{Card.always_ok?}"
     c = Card.create! :name=>'revtest', :content=>'first'
     c.update_attributes! :content=>'second'
     c.update_attributes! :content=>'third'

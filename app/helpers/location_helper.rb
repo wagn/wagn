@@ -11,7 +11,7 @@ module LocationHelper
 
   #
   def location_history
-#    warn "sess #{session.class}, #{session.object_id}"
+    #warn "sess #{session.class}, #{session.object_id}"
     session[:history] ||= ['/']
     if session[:history]
       session[:history].shift if session[:history].size > 5

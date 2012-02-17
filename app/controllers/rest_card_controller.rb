@@ -1,5 +1,8 @@
+ 
+# encoding: UTF-8
+
+require 'xmlscan/processor'
 require 'card_controller' 
-require 'rexml/document'
 
 class RestCardController < CardController
   helper :wagn
@@ -23,10 +26,70 @@ class RestCardController < CardController
   end
   
   alias :get :show
- 
+
   # rest XML put/post
+ 
+  module CustomProcessing
+    def on_chardata(s) @out << s end
+    def on_stag_end(name, s, h, *a)
+      if name.to_sym == @element
+        # starting a new context, first output our substitute string
+        key= h&&h[@key.to_s]||'*no-name*'
+        sub = h['transclude'] || "{{#{key}}}"
+        @out << sub
+        # then push the current context and initialize this one
+        @stack.push([@context, @out, *@ex])
+        @context = key; @out = []
+        @ex = @extras.map {|e| h[e]}
+      else @out << s end # pass through tags we aren't processing
+    end
+
+    def on_etag(name, s=nil)
+      if name.to_sym == @element
+        # output a card (name, content, type)
+        @pairs << [@context, @out, @stack[-1][0], *@ex]
+        # restore previous context from stack
+        last = @stack.pop
+        @context, @out, @ex = last.shift, last.shift, *last
+      else @out << s end
+    end
+
+    def on_stag_empty_end(name, s=nil, h={}, *a)
+      if name.to_sym == @element
+        # I don't think we have this case, but it is simple to add later
+        STDERR << "empty card ???: #{name}, #{s}, #{h.inspect}\n"
+      else @out << s end
+    end
+
+    attr_reader :pairs, :parser
+  end
+
+
+  def read_xml(io)
+    pairs = XMLScan::XMLProcessor.process(io, {:key=>:name, :element=>:card,
+      :substitute=>":transclude|{{:name}}", :extras=>[:type]})
+    main = pairs.shift
+    main, content, type = main[0], main[1][0]*'', main[1][2]
+    data = { :name=>main,
+      :cards=>pairs.map{ |k,v|
+         h={:name=>k.to_cardname.to_absolute(v[1])}
+         h[:type] = v[2] if v[2]
+         h[:content] = v[0]*''
+         h } }
+    data[:content] = content unless content.blank?
+    data[:type] = type if type
+    data
+  end
+
+  def dump_pairs(pairs)
+    warn "Result
+#{    pairs.map do |p| n,o,c,t = p
+      "#{c&&c.size>0&&"#{c}::"||''}#{n}#{t&&"[#{t}]"}=>#{o*''}"
+    end * "\n"}
+Done"
+  end
   # Need to split off envelope code somehome
-  def read_xml(xml, updates)
+=begin
     warn "read_xml(#{xml.class}, #{xml.to_a.inspect}, #{updates.inspect})"
     if REXML::Element === xml and xml.name == 'name'
       card_name = xml.attribute('name').to_s
@@ -103,12 +166,8 @@ class RestCardController < CardController
     @card = Card.fetch(@card_name)
 
     #raise("PUT #{params.to_yaml}\n")
-    content = request.body.read
-    doc = REXML::Document.new(content)
-    raise "XML error: #{doc} #{content}" unless doc.root
-    #f = REXML::Formatters::Transitive.new
-    warn "doc.root #{doc.root.inspect}"
-    read_xml(doc.root, card_updates={})
+    card_updates = xml_read request.body
+    warn "PUT updates are  #{card_updates.inspect}"
     if !card_updates.empty?
       Card.update(@card.id, card_updates)
       #@card.multi_save card_updates 
@@ -124,13 +183,9 @@ class RestCardController < CardController
       format.xml do
     Rails.logger.debug "POST(xml)[#{params.inspect}] #{request.format}"
 =end
-        content = request.body.read
-        #warn "content is #{content}"
-        doc = REXML::Document.new(content)
-        raise "XML error: #{doc} #{content}" unless doc.root
-        warn "doc.root (post) #{doc.inspect}"
       begin
-        read_xml(doc, card_create={})
+        card_create = read_xml request.body
+        warn "POST creates are  #{card_create.inspect}"
       rescue Exception => e
         warn "except #{e.inspect}, #{e.backtrace*"\n"}"
       end

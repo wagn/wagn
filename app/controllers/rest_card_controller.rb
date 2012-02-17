@@ -71,11 +71,12 @@ class RestCardController < CardController
     main = pairs.shift
     main, content, type = main[0], main[1][0]*'', main[1][2]
     data = { :name=>main,
-      :cards=>pairs.map{ |k,v|
-         h={:name=>k.to_cardname.to_absolute(v[1])}
+      :cards=>pairs.inject({}) { |hash,p| k,v = p
+         warn "cards: #{hash.inspect}, #{k.inspect}, #{v.inspect}"
+         h = {:content => v[0]*''}
          h[:type] = v[2] if v[2]
-         h[:content] = v[0]*''
-         h } }
+         hash[k.to_cardname.to_absolute(v[1])] = h
+         hash } }
     data[:content] = content unless content.blank?
     data[:type] = type if type
     data

@@ -118,12 +118,12 @@ class ApplicationController < ActionController::Base
 
   def render_show(view = nil, status = 200)
     name_ext = request.parameters[:format].sub(/^\./,'')
-    warn "render_show #{FORMATS.inspect}, #{name_ext}"
+    #warn "render_show #{FORMATS.inspect}, #{name_ext}"
     if FORMATS.split('|').member?( name_ext )
-      warn "render_sho1 #{name_ext}"
+      #warn "render_sho1 #{name_ext}"
       respond_to do |format|
         format.send(name_ext) do
-          warn "rendering #{params.inspect}"
+          #warn "rendering #{params.inspect}"
           render( :status=>status, :text=> Wagn::Renderer.new(@card,
              :format=>name_ext, :controller=>self).render_show(:view=>view) )
         end
@@ -135,7 +135,7 @@ class ApplicationController < ActionController::Base
   end
   
   def render_show_file
-    warn "render_show_file #{@card}"
+    #warn "render_show_file #{@card}"
     return fast_404 if !@card
     @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
   

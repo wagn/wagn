@@ -90,9 +90,9 @@ class Wagn::Renderer::Html
   def trait_form(action)
     forms = trait_forms(action=action.to_s)
     return forms if String === forms
-    warn (Rails.logger.info "trait_form(#{action.inspect}) #{forms.inspect}")
+    #warn (Rails.logger.info "trait_form(#{action.inspect}) #{forms.inspect}")
     if form = forms.find { |k|
-      warn (Rails.logger.info "trait_search(#{action.inspect}) #{card.attribute.inspect}, #{k.to_cardname.tag_name.inspect} #{forms.inspect}")
+      #warn (Rails.logger.info "trait_search(#{action.inspect}) #{card.attribute.inspect}, #{k.to_cardname.tag_name.inspect} #{forms.inspect}")
       k.to_cardname.tag_name == action } and form = Card.fetch(form)
       subrenderer(form).render_edit_in_form
     else

@@ -39,7 +39,7 @@ class CardController < ApplicationController
   #----------( READ )
   
   def show
-    warn Rails.logger.info("show me")
+    #warn Rails.logger.info("show me")
     save_location if params[:format].nil? || params[:format].to_sym==:html
     render_show
   end

@@ -9,6 +9,9 @@ describe Mailer do
   #include ActionMailer::Quoting
 
   before do
+    #FIXME: from addresses are really Card.user, not Card.as_user based, but
+    # these tests are pretty much all using the Card.as, not logging in.
+    Card.user=nil # this is needed to clear logins from other test run before
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries = []

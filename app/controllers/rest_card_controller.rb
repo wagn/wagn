@@ -17,7 +17,7 @@ class RestCardController < CardController
     
   def method
     method = request.method
-    warn "method #{method}"
+    #warn "method #{method}"
     if REST_METHODS.member?(method)
       self.send(method)
     else

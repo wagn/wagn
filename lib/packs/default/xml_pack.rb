@@ -18,7 +18,6 @@ class Wagn::Renderer::Xml < Wagn::Renderer
   end
 
   define_view(:show) do
-    warn "xml show"
     self.render_content #???
   end
 

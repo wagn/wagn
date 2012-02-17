@@ -39,9 +39,9 @@ class Wagn::Renderer::Html
   def trait_form(action)
     forms = trait_forms(action=action.to_s)
     return forms if String === forms
-    Rails.logger.info "trait_form(#{action.inspect}) #{forms.inspect}"
+    #Rails.logger.info "trait_form(#{action.inspect}) #{forms.inspect}"
     if form = forms.find { |k|
-      Rails.logger.info "trait_search(#{action.inspect}) #{card.attribute.inspect}, #{k.tag_name.inspect} #{forms.inspect}"
+      #Rails.logger.info "trait_search(#{action.inspect}) #{card.attribute.inspect}, #{k.tag_name.inspect} #{forms.inspect}"
       k.tag_name == action } and form = Card.fetch(form)
       form.content
     else

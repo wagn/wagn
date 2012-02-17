@@ -14,7 +14,7 @@ class RestCardControllerTest < ActionController::TestCase
     @user = User[:joe_user]
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
-    @controller = XmlrestController.new
+    @controller = RestCardController.new
     @simple_card = Card['Sample Basic']
     @combo_card = Card['A+B']
     login_as(:joe_user)
@@ -30,7 +30,7 @@ class RestCardControllerTest < ActionController::TestCase
 
 =begin
 #assert_restful_routes_for (controller_name, options = {}) {|options[:options] if block_given?| ...}
-#    assert_restful_routes_for XmlrestController
+#    assert_restful_routes_for RestCardController
   def test_create_a_restful_routes
 #def test_with_collection_actions
     actions = { 'a' => :get, 'b' => :put, 'c' => :post, 'd' => :delete }

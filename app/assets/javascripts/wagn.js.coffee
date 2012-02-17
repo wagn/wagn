@@ -174,7 +174,7 @@ $(window).load ->
   $('.card-slot').delegate '.standard-delete', 'click', ->
     return if $(this).attr('success-ready') == 'true' #prevent double-click weirdness
     s = if $(this).isMain() then 'REDIRECT: TO-PREVIOUS' else 'TEXT:' + $(this).slot().attr('card-name') + ' removed'
-    $(this).attr 'href', $(this).attr('href') + '?success=' + escape(s)
+    $(this).attr 'href', $(this).attr('href') + '?success=' + encodeURIComponent(s)
     $(this).attr 'success-ready', 'true'
 
   $('body').delegate '.live-type-field', 'change', ->

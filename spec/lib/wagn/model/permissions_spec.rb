@@ -299,21 +299,20 @@ describe "Permission", ActiveSupport::TestCase do
   end
 
   it "role wql" do
-    rc=Card[ @u1.id ].star_rule(:roles)
-    rc.content=''; rc << @r1
-    #@r1.users = [ @u1 ]
+    #warn "u1 roles #{Card[ @u1.id ].star_rule(:roles).item_names.inspect}"
 
     # set up cards of type TestType, 2 with nil reader, 1 with role1 reader 
     Card.as(Card::WagbotID) do 
       [@c1,@c2,@c3].each do |c| 
         c.update_attribute(:content, 'WeirdWord')
       end
-      Card.create(:name=>"c1+*self+*read", :type=>'Pointer', :content=>"[[r1]]")
+      Card.create(:name=>"c1+*self+*read", :type=>'Pointer', :content=>"[[r3]]")
     end
 
     Card.as(@u1) do
       Card.search(:content=>'WeirdWord').plot(:name).sort.should == %w( c1 c2 c3 )
     end
+    Card.user=nil # for Card.as to be effective, you can't have a logged in user
     Card.as(@u2) do
       Card.search(:content=>'WeirdWord').plot(:name).sort.should == %w( c2 c3 )
     end

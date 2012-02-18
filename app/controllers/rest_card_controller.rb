@@ -31,15 +31,19 @@ class RestCardController < CardController
  
   def read_xml(io)
     pairs = XMLScan::XMLProcessor.process(io, {:key=>:name, :element=>:card,
-      :substitute=>":transclude|{{:name}}", :extras=>[:type]})
+                      :substitute=>":transclude|{{:name}}", :extras=>[:type]})
+    return if pairs.empty?
+
     main = pairs.shift
+    warn "main#{main.inspect}, #{pairs.empty?}"
     main, content, type = main[0], main[1][0]*'', main[1][2]
-    data = { :name=>main,
-      :cards=>pairs.inject({}) { |hash,p| k,v = p
+
+    data = { :name=>main }
+    data[:cards] = pairs.inject({}) { |hash,p| k,v = p
          h = {:content => v[0]*''}
          h[:type] = v[2] if v[2]
          hash[k.to_cardname.to_absolute(v[1])] = h
-         hash } }
+         hash } unless pairs.empty?
     data[:content] = content unless content.blank?
     data[:type] = type if type
     data
@@ -67,9 +71,18 @@ Done"
     end
   end
   
+  def render_errors(options={})
+    warn "rest rnder errors #{options.inspect}, #{@card&&@card.errors.map{|k,v| "#{k}::#{v}"}*''}, #{response}"
+    render :text=>"<card status=#{response.status}>Error in card</card>"
+  end
+  def render_success
+    warn "rest rnder suc #{@card&&@card.errors}, #{response}"
+    render :text=>'<card status=200>Good card</card>'
+  end
+
   def post
     request.format = :xml if !params[:format]
-    #warn (Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}")
+    warn (Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}")
     #return render(:action=>"missing", :format=>:xml)  unless params[:card]
 =begin
     respond_to do |format|
@@ -82,15 +95,15 @@ Done"
       rescue Exception => e
         warn "except #{e.inspect}, #{e.backtrace*"\n"}"
       end
-        #card_create.delete(:name) if card_create[:name].nil?
-        #Rails.logger.debug "postb #{@card&&@card.name}:: #{card_create.inspect}"; @card
         #warn "card_create content is #{card_create.inspect}"
-        @card = Card.new card_create 
-    if @card.save
-      render_success
-    else
-      render_errors      
-    end
+      if card_create
+         @card = Card.new card_create 
+         if @card.save
+           render_success
+         else
+           render_errors      
+         end
+      end
         #Rails.logger.debug "posta #{@card&&@card.name}"; @card
 =begin
       end

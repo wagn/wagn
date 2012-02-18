@@ -128,19 +128,19 @@ class RestCardControllerTest < ActionController::TestCase
 
   # needs at least a name to make sense
   def test_new_without_cardtype
-    post :post
+    post :post, :format=>xml
     assert_response :success, "response should succeed"
     assert_equal 'Basic', assigns['card'].cardtype, "@card type should == Basic"
   end
 
   def test_new_with_cardtype
-    post :post, :card => {:type=>'Date'}
+    post :post, :format=>:xml, :card => {:type=>'Date'}
     assert_response :success, "response should succeed"
     assert_equal 'Date', assigns['card'].cardtype, "@card type should == Date"
   end
 
   def test_create
-    post :post, :card => {
+    post :post, :format=>:xml, :card => {
       :name=>"NewCardFoo",
       :type=>"Basic",
       :content=>"Bananas"
@@ -198,15 +198,13 @@ class RestCardControllerTest < ActionController::TestCase
     # 1st setup anonymously create-able cardtype
     Card.as(:joe_admin)
     
-    #remove me after regenerating test data
-    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
     Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
-    f.permit(:read, Role[:admin])
-    f.save!
+    #f.permit(:read, Role[:admin])
+    #f.save!
 
-    ff = Card.create! :name=>"Fruit+*tform"
-    ff.permit(:read, Role[:auth])
-    ff.save!
+    ff = Card.create! :name=>"Fruit+*type+*content"
+    #ff.permit(:read, Role[:auth])
+    #ff.save!
 
     Card.create! :name=>"Fruit+*thanks", :type=>"Phrase", :content=>"/sweet"
 
@@ -223,8 +221,6 @@ class RestCardControllerTest < ActionController::TestCase
     # 1st setup anonymously create-able cardtype
     Card.as(:joe_admin)
     
-    #remove me after regenerating test data 
-    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
     Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
     f.permit(:read, Role[:anyone])
     f.save!
@@ -250,41 +246,6 @@ class RestCardControllerTest < ActionController::TestCase
   end
 =end
 
-  def test_new_should_not_for_creatable_nonviewable_cardtype
-    Card.as(:joe_admin)
-    
-    #remove me after regenerating test data
-    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-    Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
-    f.permit(:read, Role[:auth])
-#    f.permit(:edit, Role[:admin])
-    f.save!
-
-    ff = Card.create! :name=>"Fruit+*tform"
-    ff.permit(:read, Role[:auth])
-    ff.save!
-
-    login_as(:anonymous)
-    get :get, :type=>"Fruit"
-    assert_response :success
-    assert_template 'missing'
-  end
-
-  def test_rename_without_update_references_should_work
-    Card.as :joe_user
-    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-    put :put, :id => f.id, :card => {
-      :confirm_rename => true,
-      :name => "Newt",
-      :update_referencers => "false",
-    }
-    assert_equal ({ "name"=>"Newt", "update_referencers"=>'false', "confirm_rename"=>true }), assigns['card_args']
-    assert assigns['card'].errors.empty?
-    assert_template 'show'
-    assert Card["Newt"]
-  end
-
-#=end
   def test_unrecognized_card_renders_missing_unless_can_create_basic
     #Card.as Card::AnonID
     login_as(:anonymous)

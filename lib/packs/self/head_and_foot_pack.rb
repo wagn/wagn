@@ -4,12 +4,11 @@ class Wagn::Renderer
     
     title = root.card && root.card.name
     title = params[:action] if [nil, '', '*placeholder'].member? title
-    favicon_card = Card['*favicon'] || Card['*logo']
-    
-    bits = [
-      "<title>#{title ? "#{title} - " : ''}#{ Card.setting('*title') }</title>",
-      %{<link rel="shortcut icon" href="#{ subrenderer(favicon_card)._render_source :size=>:icon }" />}
-    ]
+    bits = ["<title>#{title ? "#{title} - " : ''}#{ Card.setting('*title') }</title>"]
+
+    if (favicon_card = Card['*favicon'] || Card['*logo']) and favicon_card.typecode == 'Image'
+      bits << %{<link rel="shortcut icon" href="#{ subrenderer(favicon_card)._render_source :size=>:icon }" />}
+    end
     
     #Universal Edit Button
     if root.card

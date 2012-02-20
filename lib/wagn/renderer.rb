@@ -170,7 +170,8 @@ module Wagn
     
     def method_missing(method_id, *args, &proc)
       proc = proc {|*a| raw yield *a } if proc
-      template.send(method_id, *args, &proc) 
+      response = template.send method_id, *args, &proc
+      String===response ? template.raw( response ) : response
     end
     
   

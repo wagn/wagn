@@ -29,11 +29,9 @@ class Wagn::Renderer::Html
     wrap(:content, args) { wrap_content(:content, c) }
   end
 
-  
   define_view(:titled) do |args|
     wrap(:titled, args) do
-      content_tag( :h1, raw(fancy_title(card.name))) + 
-      raw( wrap_content(:titled, _render_core(args)))
+      content_tag( :h1, fancy_title(card.name)) + wrap_content(:titled, _render_core(args))
     end
   end
 
@@ -69,8 +67,8 @@ class Wagn::Renderer::Html
       %{
         <div class="card-header">
           <div class="title-menu"> 
-            #{ link_to( raw(fancy_title(card)), path(:view, :view=>:open), :title=>"open #{card.name}",
-              :class=>'title right-arrow slotter', :remote=>true ) } 
+            #{ link_to fancy_title(card), path(:view, :view=>:open), :title=>"open #{card.name}",
+                :class=>'title right-arrow slotter', :remote=>true } 
             #{ page_icon(card.name) } &nbsp;
           </div>
         </div> 
@@ -511,14 +509,14 @@ class Wagn::Renderer::Html
        #{ menu }
 
          <div class="title-menu">
-           #{ link_to raw(fancy_title(card)), path(:view, :view=>:closed), :title => "close #{card.name}", 
+           #{ link_to fancy_title(card), path(:view, :view=>:closed), :title => "close #{card.name}", 
              :class => "line-link title down-arrow slotter", :remote => true }
 
            #{ unless card.typecode=='Basic'
              %{<span class="cardtype">#{ link_to_page( Cardtype.name_for(card.typecode) ) }</span>}
             end }
 
-           #{ raw page_icon(card.name) } &nbsp;
+           #{ page_icon(card.name) } &nbsp;
          </div>
 
          <style type="text/css">.SELF-#{card.cardname.css_name} .content .namepart-#{card.cardname.css_name} { display: none; }</style>

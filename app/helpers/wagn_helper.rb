@@ -66,12 +66,8 @@ module WagnHelper
   end
 
 
-  def formal_joint
-    " <span class=\"wiki-joint\">+</span> "
-  end
-
   def formal_title(card)
-    card.cardname.parts * formal_joint
+    card.cardname.parts.join " <span class=\"wiki-joint\">+</span> "
   end
 
   def fancy_title(card)

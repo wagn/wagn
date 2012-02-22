@@ -277,7 +277,7 @@ module Wagn
         end
       end
       opts[:tname] = @root.main_card.cardname
-      opts[:view] ||= @main_view || :open
+      opts[:view] = @main_view || opts[:view] || :open
       opts[:fullname] = opts[:showname] = @root.main_card.name
       with_inclusion_mode(:main) do
         wrap_main process_inclusion(@root.main_card, opts)

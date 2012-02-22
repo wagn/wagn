@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # helper for urls, links, redirects, and other location related things.
 #  note: i'm sure this isn't the optimal name..
 module LocationHelper

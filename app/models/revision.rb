@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Revision < ActiveRecord::Base
   belongs_to :card, :class_name=>"Card", :foreign_key=>'card_id'
   

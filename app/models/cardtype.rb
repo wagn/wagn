@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Cardtype < ActiveRecord::Base
   self.extend Wagn::Model::ActsAsCardExtension 
   acts_as_card_extension

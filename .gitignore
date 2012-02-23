@@ -12,7 +12,7 @@ public/card_images
 public/file
 public/image
 public/javascripts/inline-console.js
-local
+local*
 script/local
 script/performance/*.session
 tmp/*

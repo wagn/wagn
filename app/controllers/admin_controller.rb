@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AdminController < ApplicationController
   layout 'application'
 

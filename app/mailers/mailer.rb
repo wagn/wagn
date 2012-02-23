@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'open-uri'
 
 class Mailer < ActionMailer::Base

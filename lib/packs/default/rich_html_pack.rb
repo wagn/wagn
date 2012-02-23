@@ -3,7 +3,7 @@ class Wagn::Renderer::Html
     @main_view = args[:view] || params[:view] || params[:home_view] || :open
 
     if ajax_call?
-      self.render(@main_view)
+      self.render(@main_view || :open)
     else
       self.render_layout
     end
@@ -69,7 +69,7 @@ class Wagn::Renderer::Html
       %{
         <div class="card-header">
           <div class="title-menu">
-            #{ link_to( raw(fancy_title(card)), path(:view, :view=>:open), :title=>"open #{card.name}",
+            #{ link_to( fancy_title(card), path(:view, :view=>:open), :title=>"open #{card.name}",
               :class=>'title right-arrow slotter', :remote=>true ) }
             #{ page_icon(card.name) } &nbsp;
           </div>
@@ -516,14 +516,14 @@ class Wagn::Renderer::Html
        #{ menu }
 
          <div class="title-menu">
-           #{ link_to raw(fancy_title(card)), path(:view, :view=>:closed), :title => "close #{card.name}",
+           #{ link_to fancy_title(card), path(:view, :view=>:closed), :title => "close #{card.name}",
              :class => "line-link title down-arrow slotter", :remote => true }
 
            #{ unless card.type_id == Card::DefaultID
              %{<span class="cardtype">#{ link_to_page( Card.typename_from_id(card.type_id) ) }</span>}
             end }
 
-           #{ raw page_icon(card.name) } &nbsp;
+           #{ page_icon(card.name) } &nbsp;
          </div>
 
          <style type="text/css">.SELF-#{card.cardname.css_name} .content .namepart-#{card.cardname.css_name} { display: none; }</style>

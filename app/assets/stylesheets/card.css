@@ -49,23 +49,23 @@ html>body .open-view {
   padding: 2px 0px 2px 25px;
   white-space: nowrap;
 }
-.right-arrow {
+.card-header a.right-arrow {
   background: url(arrow_right.gif) no-repeat left;
 }
-html>body .right-arrow {
+html>body .card-header a.right-arrow {
   background-image: url(arrow_right.png);
 }
-.down-arrow {
+.card-header a.down-arrow {
   background: url(arrow_down.gif) no-repeat left;
 }
-html>body .down-arrow {
+html>body .card-header a.down-arrow {
   background-image: url(arrow_down.png);
 }
-.page-icon {
+.card-header a.page-icon {
   padding: 2px 7px;
   background: url(page.gif) no-repeat right;
 }
-html>body .page-icon {
+html>body .card-header a.page-icon {
   background-image: url(page.png);
 }
 

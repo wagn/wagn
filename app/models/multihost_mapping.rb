@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class MultihostMapping < ActiveRecord::Base
   cattr_accessor :cache
   set_table_name 'public.multihost_mappings'

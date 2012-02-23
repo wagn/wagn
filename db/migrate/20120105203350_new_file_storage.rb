@@ -9,6 +9,7 @@ class NewFileStorage < ActiveRecord::Migration
             begin
               filename = filename_for_revision(revision, typecode)
               next unless filename
+            
               card.selected_rev_id = revision.id
               filename = File.join( Rails.root, 'public', filename ) if filename =~ /^\/card/
 
@@ -17,22 +18,25 @@ class NewFileStorage < ActiveRecord::Migration
                 rescue
                   open filename.sub( /\.png$/, '.gif' ), 'rb'
                 end
-                
+              
               data = file.read
               card.attach = file
               card.attach.instance_variable_set("@_attach_file_name", filename) # fixes ext in path
               card.attach_file_name = "#{card.key.gsub('*','X').camelize}#{File.extname(filename)}" # fixes ext in content
-            
+          
               revision.update_attribute :content, card.content
               write_file data, card.attach.path(typecode=='Image' ? :original : '')
-            
+          
               if typecode == 'Image'
                 Card::STYLES.each do |style|
                   next if style == 'original'
                   f = open filename.sub( /\.\w+$/, "_#{style}\\0" ), 'rb'
                   write_file f.read, card.attach.path( style )
+                  f.close
                 end
               end
+            
+              file.close
               
             rescue Exception => e
               Rails.logger.info "Migration exception: #{e.message}\n  #{e.backtrace*"\n  "}"

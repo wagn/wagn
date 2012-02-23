@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Role < ActiveRecord::Base
   #acts_as_card_extension
   #has_and_belongs_to_many :users

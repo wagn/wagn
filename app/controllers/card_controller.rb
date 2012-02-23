@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CardController < ApplicationController
   helper :wagn
 
@@ -128,7 +129,7 @@ class CardController < ApplicationController
     @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
     
-    return render_show(:remove) if @card.errors[:confirmation_required].any?  ## renders remove.erb, which is essentially a confirmation box.  
+    return render_show(:remove) if @card.errors[:confirmation_required].any? 
 
     discard_locations_for(@card) 
 

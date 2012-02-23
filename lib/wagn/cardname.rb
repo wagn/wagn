@@ -1,4 +1,4 @@
-# encoding: utf-8
+# -*- encoding : utf-8 -*-
 module Wagn
   class Cardname < Object
     require 'htmlentities'

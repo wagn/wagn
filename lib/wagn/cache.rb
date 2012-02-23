@@ -25,7 +25,7 @@ module Wagn
     
     class << self
       def cache_classes
-        [Card, Cardtype, MultihostMapping, Role, User, Revision]
+        [Card, Cardtype, Role, User, Revision]
       end
             
       def initialize_on_startup
@@ -50,8 +50,7 @@ module Wagn
       end
       
       def system_prefix(klass)
-        cache_env = (Rails.env == 'cucumber') ? 'test' : Rails.env
-        "#{Wagn::Conf[:host]}/#{cache_env}/#{klass}"
+        "#{Wagn::Application.config.database_configuration[Rails.env]['database']}/#{klass}"
       end
 
       def re_initialize_for_new_request
@@ -80,7 +79,6 @@ module Wagn
 
       def reset_global
         cache_classes.each{ |cc| cc.cache.reset if cc.cache }
-        MultihostMapping.reset_cache
       end
 
       private

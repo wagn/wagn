@@ -236,7 +236,7 @@ class CardController < ApplicationController
 
   def load_card
     return @card=nil unless id = params[:id]
-    ActiveSupport::Notifications.instrument 'wagn.load_card', :message=>"load #{id}" do
+#    ActiveSupport::Notifications.instrument 'wagn.load_card', :message=>"load #{id}" do
       case id
       when /^\~(\d+)$/
         @card=Card.find($1)
@@ -249,7 +249,7 @@ class CardController < ApplicationController
           (params[:card] ? params[:card].clone : {} )
         )
       end
-    end
+#    end
   end
 
 

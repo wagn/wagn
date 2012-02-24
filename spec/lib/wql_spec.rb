@@ -194,15 +194,22 @@ describe Wql do
       Wql.new( :right=>"A" ).run.plot(:name).sort.should == ["C+A", "D+A", "F+A"]
     end
 
-  
     it "should return count" do
       Card.count_by_wql( :part=>"A" ).should == 7
     end
+    
 
-    it "should return count" do
+  end
+
+  describe "limit and offset" do
+    it "should return limit" do
       Wql.new( :part=>"A", :limit=>5 ).run.size.should == 5
     end
 
+    it "should not break if offset but no limit" do
+      Wql.new( :part=>"A", :offset=>5 ).run.size.should_not == 0      
+    end
+      
   end
 
   describe "type" do  

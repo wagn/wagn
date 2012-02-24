@@ -411,9 +411,11 @@ class Wql
       sql.joins += @joins.values                 
       
       sql.conditions << "#{table_alias}.trash is false"
-      sql.limit = (@mods[:limit].to_i <= 0) ? "" : "LIMIT #{@mods[:limit].to_i}"
-      sql.group = @mods[:group].blank? ? '': "GROUP BY #{safe_sql(@mods[:group])}"
-      sql.offset = @mods[:offset].blank? ? "" : "OFFSET #{@mods[:offset].to_i}"
+      sql.group = "GROUP BY #{safe_sql(@mods[:group])}" if !@mods[:group].blank? 
+      if @mods[:limit].to_i > 0
+        sql.limit  = "LIMIT #{@mods[:limit].to_i}"
+        sql.offset = "OFFSET #{@mods[:offset].to_i}" if !@mods[:offset].blank? 
+      end
       
       sql.to_s
     end

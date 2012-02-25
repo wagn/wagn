@@ -122,9 +122,9 @@ module Wagn
     # also, without the "table_exists? call, generate_fixtures breaks"
     
     if database_ready
-      ActiveSupport::Notifications.instrument 'wagn.init_cache', :message=>'' do
+#      ActiveSupport::Notifications.instrument 'wagn.init_cache', :message=>'' do
         Wagn::Cache.initialize_on_startup if database_ready
-      end
+#      end
     end
   end  
 end

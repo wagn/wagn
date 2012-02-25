@@ -94,9 +94,9 @@ module Wagn
             begin
               denial=deny_render(view, *a) and return denial
               msg = "render #{view} #{ card && card.name.present? ? "called for #{card.name}" : '' }"
-              ActiveSupport::Notifications.instrument 'wagn.render', :message=>msg do
+#              ActiveSupport::Notifications.instrument 'wagn.render', :message=>msg do
                 send( "_render_#{view}", *a)
-              end
+#              end
             rescue Exception=>e
               Rails.logger.info "\nRender Error: #{e.message}"
               Rails.logger.debug "  #{e.backtrace*"\n  "}"

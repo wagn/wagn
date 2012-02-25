@@ -153,14 +153,15 @@ $(window).load ->
     
   $('body').delegate 'button.redirecter', 'click', ->
     window.location = $(this).attr('href')
-
-  $('.card-slot').live 'dblclick', (event)->
-    s = $(this)
-    return false if s.find( '.edit-area' )[0]
-    s.addClass 'slotter'
-    s.attr 'href', wagn.rootPath + '/card/edit/~' + s.attr('card-id')
-    $.rails.handleRemote(s)
-    false # don't propagate up to next slot
+  
+  unless wagn.noDoubleClick
+    $('.card-slot').live 'dblclick', (event)->
+      s = $(this)
+      return false if s.find( '.edit-area' )[0]
+      s.addClass 'slotter'
+      s.attr 'href', wagn.rootPath + '/card/edit/~' + s.attr('card-id')
+      $.rails.handleRemote(s)
+      false # don't propagate up to next slot
 
   $('.nodblclick').live 'dblclick', -> false
 

@@ -154,7 +154,9 @@ class CardController < ApplicationController
     end
 
     if extension && extension.errors.any?
-      @card.errors = extension.errors
+      extension.errors.each do |field, err|
+        @card.errors.add field, err
+      end
       render_errors
     else
       render_show

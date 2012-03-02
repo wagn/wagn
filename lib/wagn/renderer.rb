@@ -86,7 +86,7 @@ module Wagn
             if final_method = view_method(view)
               with_inclusion_mode(view) { send(final_method, *a) }
             else
-              "<strong>#{card.name} - unknown card view: '#{view}'</strong>"
+              "<strong>unsupported view: <em>#{view}<em></strong>"
             end
           end
 
@@ -94,9 +94,9 @@ module Wagn
             begin
               denial=deny_render(view, *a) and return denial
               msg = "render #{view} #{ card && card.name.present? ? "called for #{card.name}" : '' }"
-#              ActiveSupport::Notifications.instrument 'wagn.render', :message=>msg do
+              ActiveSupport::Notifications.instrument 'wagn.render', :message=>msg do
                 send( "_render_#{view}", *a)
-#              end
+              end
             rescue Exception=>e
               Rails.logger.info "\nRender Error: #{e.message}"
               Rails.logger.debug "  #{e.backtrace*"\n  "}"
@@ -164,7 +164,12 @@ module Wagn
     end
     
     def render(view=:view, args={})
-      send("render_#{canonicalize_view view}", args)
+      method = "render_#{canonicalize_view view}"
+      if respond_to? method
+        send method, args
+      else
+        "<strong>unknown view: <em>#{view}<em></strong>"
+      end
     end
     
     
@@ -249,20 +254,18 @@ module Wagn
       return opts[:comment] if opts.has_key?(:comment)
       # Don't bother processing inclusion if we're already out of view
       return '' if @mode == :closed && @char_count > @@max_char_count
-  
       return expand_main(opts) if opts[:tname]=='_main' && !ajax_call? && @depth==0
       
       opts[:view] = canonicalize_view opts[:view]
       opts[:view] ||= ( @mode == :layout ? :core : :content )
       
       tcardname = opts[:tname].to_cardname
-      opts[:fullname] = tcardname.to_absolute(card.cardname, params)
-      opts[:showname] = tcardname.to_show(opts[:fullname])
+      fullname = tcardname.to_absolute(card.cardname, params)
+      opts[:showname] = tcardname.to_show(card.cardname)
       
-      new_args = @mode == :edit ? new_inclusion_card_args(opts) : {}
-      tcard ||= Card.fetch_or_new(opts[:fullname], new_args)
+      included_card = Card.fetch_or_new fullname, ( @mode==:edit ? new_inclusion_card_args(opts) : {} )
   
-      result = process_inclusion(tcard, opts)
+      result = process_inclusion included_card, opts
       @char_count += (result ? result.length : 0)
       result
     rescue Card::PermissionDenied
@@ -276,9 +279,9 @@ module Wagn
           opts[key] = val.to_sym
         end
       end
-      opts[:tname] = @root.main_card.cardname
+      opts[:tname] = @root.main_card.cardname # is this used?
       opts[:view] = @main_view || opts[:view] || :open
-      opts[:fullname] = opts[:showname] = @root.main_card.name
+      opts[:showname] = @root.main_card.name
       with_inclusion_mode(:main) do
         wrap_main process_inclusion(@root.main_card, opts)
       end

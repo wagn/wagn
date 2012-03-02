@@ -65,6 +65,10 @@ describe Wagn::Cardname do
     it "handles _left" do
       "_left+Z".to_cardname.to_absolute("A+B+C").should == "A+B+Z"
     end
+
+    it "handles white space" do
+      "_left + Z".to_cardname.to_absolute("A+B+C").should == "A+B+Z"
+    end
     
     it "handles _right" do
       "_right+bang".to_cardname.to_absolute("nutter+butter").should == "butter+bang"

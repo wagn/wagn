@@ -7,7 +7,7 @@ class CardController < ApplicationController
 
   before_filter :index_preload, :only=> [ :index ]
   before_filter :show_file_preload, :only=> [ :show_file ]
-  
+
   before_filter :load_card!, :only=>LOAD_ACTIONS
   before_filter :set_main
 
@@ -18,13 +18,13 @@ class CardController < ApplicationController
 
 
   #----------( CREATE )
-  
+
   def create
     @card = Card.new params[:card]
     if @card.save
       render_success
     else
-      render_errors      
+      render_errors
     end
   end
 
@@ -38,7 +38,7 @@ class CardController < ApplicationController
 
 
   #----------( READ )
-  
+
   def show
     #warn Rails.logger.info("show me")
     save_location if params[:format].nil? || params[:format].to_sym==:html
@@ -63,7 +63,7 @@ class CardController < ApplicationController
     args[:type] ||= params[:type] # for /new/:type shortcut
 
     @card = Card.new args
-    
+
     if @card.ok? :create
       render_show :new
     else
@@ -102,13 +102,13 @@ class CardController < ApplicationController
     # and error should be 405 Method Not Allowed
 
     @card = @card.refresh if @card.frozen?
-    
+
     author = Card.user_id == Card::AnonID ?
         "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" :
         "[[#{Card[Card.user_id].name}]]"
     comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
     @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
-    
+
     @card.save!
     render_show
   end
@@ -129,20 +129,20 @@ class CardController < ApplicationController
     @card = @card.refresh if @card.frozen?
     @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
-    
-    return render_show(:remove) if @card.errors[:confirmation_required].any? 
 
-    discard_locations_for(@card) 
+    return render_show(:remove) if @card.errors[:confirmation_required].any?
+
+    discard_locations_for(@card)
 
     render_success 'REDIRECT: TO-PREVIOUS'
   end
 
 
   #-------- ( ACCOUNT METHODS )
-  
+
   def update_account
-    account = User.where(:card_id=>@card.id).first 
-    
+    account = User.where(:card_id=>@card.id).first
+
     if params[:save_roles]
       role_hash = params[:user_roles] || {}
       Card[account.card_id].star_rule(:roles).items= role_hash.keys
@@ -153,7 +153,9 @@ class CardController < ApplicationController
     end
 
     if account && account.errors.any?
-      @card.errors = account.errors
+      account.errors.each do |field, err|
+        @card.errors.add field, err
+      end
       render_errors
     else
       render_show
@@ -173,10 +175,10 @@ class CardController < ApplicationController
     render_show :options
   end
 
-  
+
   #-------- ( MISFIT METHODS )
-  
-  
+
+
   def watch
     watchers = @card.star_rule(:watchers )
     watchers = watchers.refresh if watchers.frozen?
@@ -187,9 +189,9 @@ class CardController < ApplicationController
 
 
   private
-  
+
   #-------( FILTERS )
-  
+
   def show_file_preload
     #warn "show preload #{params.inspect}"
     params[:id] = params[:id].sub(/(-(#{Card::STYLES*'|'}))?(-\d+)?(\.[^\.]*)?$/) do
@@ -199,19 +201,19 @@ class CardController < ApplicationController
       ''
     end
   end
-  
-  
+
+
   def index_preload
-    Card.no_logins? ? 
-      redirect_to( Card.path_setting '/admin/setup' ) : 
+    Card.no_logins? ?
+      redirect_to( Card.path_setting '/admin/setup' ) :
       params[:id] = (Card.setting('*home') || 'Home').to_cardname.to_url_key
   end
-  
+
   def set_main
     Wagn::Conf[:main_name] = params[:main] || (@card && @card.name) || '' # will be wagn.main ?
   end
-  
-  
+
+
   # --------------( LOADING ) ----------
   def load_card!
     load_card
@@ -224,10 +226,10 @@ class CardController < ApplicationController
     when @card.known? # default case
       @card
     when params[:view] =~ /rule|missing/
-      # FIXME this is a hack so that you can view load rules that don't exist.  need better approach 
-      # (but this is not tested; please don't delete without adding a test) 
+      # FIXME this is a hack so that you can view load rules that don't exist.  need better approach
+      # (but this is not tested; please don't delete without adding a test)
       @card
-    when [nil, 'html'].member?(params[:format]) && @card.ok?(:create) 
+    when [nil, 'html'].member?(params[:format]) && @card.ok?(:create)
       params[:card]={:name=>@card.name, :type=>params[:type]}
       self.new
       false
@@ -248,7 +250,6 @@ class CardController < ApplicationController
       when '*previous'
         @card = '*previous'
       else
-        #warn Rails.logger.info("fetch#{id}")
         @card = Card.fetch_or_new( Wagn::Cardname.unescape(id), 
           (params[:card] ? params[:card].clone : {} )
         )
@@ -258,8 +259,8 @@ class CardController < ApplicationController
 
 
   #---------( RENDERING )
-  
-  
+
+
   def render_success(default_target='TO-CARD')
     target = params[:success] || default_target
     redirect = !ajax?
@@ -267,7 +268,7 @@ class CardController < ApplicationController
     if target =~ /^REDIRECT:\s*(.+)/
       redirect, target = true, $1
     end
-    
+
     target = case target
       when 'TO-PREVIOUS'   ;  previous_location
       when 'TO-CARD'       ;  @card
@@ -275,10 +276,10 @@ class CardController < ApplicationController
       when /^TEXT:\s*(.+)/ ;  $1
       else                 ;  Card.fetch_or_new(target)
       end
-    
+
     case
     when  redirect        ; wagn_redirect ( Card===target ? wagn_path(target) : target )
-    when  String===target ; render :text => target 
+    when  String===target ; render :text => target
     else  @card = target  ; render_show
     end
   end

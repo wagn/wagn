@@ -30,8 +30,9 @@ module Wagn
 
 
     def initialize(str)
-      @key = if (@s = str.to_s).index(JOINT)
-          @parts = @s.gsub(/\+$/,'+ ').split(JOINT)
+      @key = if (@s = str.to_s.strip).index(JOINT)
+          @parts = @s.split(/\s*#{Regexp.escape(JOINT)}\s*/)
+          @parts << '' if @s.last == JOINT
           @simple = false
           @parts.map{|p| p.to_cardname.key } * JOINT  
         else

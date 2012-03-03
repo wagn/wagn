@@ -34,6 +34,7 @@ class CodenameTable < ActiveRecord::Migration
     codecards.map { |name|
          c = Card[name] || User.as(:wagbot) { r=Card.create!(:name=>name) } or
              raise "Missing codename #{name} card"
+         name = name[1..-1] if name[0] == ?*
          name = renames[name] if renames[name]
          Wagn::Codename.insert(c.id, name)
        }

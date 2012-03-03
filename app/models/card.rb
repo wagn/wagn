@@ -30,7 +30,7 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INITIALIZATION METHODS
   
-  def self.new(args={}, options={})
+  def self.new args={}, options={}
     args = (args || {}).stringify_keys
     @@junk_args.each { |a| args.delete(a) }
     %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
@@ -63,7 +63,7 @@ class Card < ActiveRecord::Base
       self.typecode_without_tracking = get_typecode(@type_args[:type]) 
     end
     
-    include_set_modules unless skip_modules    
+    include_set_modules unless skip_modules
     self
   end
 

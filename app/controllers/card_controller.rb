@@ -228,7 +228,7 @@ class CardController < ApplicationController
       # (but this is not tested; please don't delete without adding a test) 
       @card
     when [nil, 'html'].member?(params[:format]) && @card.ok?(:create) 
-      params[:card]={:name=>@card.name, :type=>params[:type]}
+      params[:card] = { :name=>@card.name, :type=>params[:type] }
       self.new
       false
     else

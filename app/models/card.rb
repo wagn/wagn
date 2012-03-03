@@ -124,10 +124,10 @@ class Card < ActiveRecord::Base
     :WagbotID=> 'wagbot', :AnonID=> 'anonymous',
     :AnyoneID=> 'anyone', :AuthID => 'anyone_signed_in',
     :AdminID=>'administrator',
-    :XcreateID=> '*create', :XreadID=> '*read', :XupdateID=> '*update',
-    :XdeleteID=> '*delete', :XcommentID=> '*comment',
-    :XrightID=> '*right', :XtypeID=>'*type',
-    :XrolesID=> '*role', :XusersID=>'*user',
+    :XcreateID=> 'create', :XreadID=> 'read', :XupdateID=> 'update',
+    :XdeleteID=> 'delete', :XcommentID=> 'comment',
+    :XrightID=> 'right', :XtypeID=>'type',
+    :XrolesID=> 'role', :XusersID=>'user',
   }
 
   public

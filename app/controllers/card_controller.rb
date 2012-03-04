@@ -229,8 +229,8 @@ class CardController < ApplicationController
       # FIXME this is a hack so that you can view load rules that don't exist.  need better approach
       # (but this is not tested; please don't delete without adding a test)
       @card
-    when [nil, 'html'].member?(params[:format]) && @card.ok?(:create)
-      params[:card]={:name=>@card.name, :type=>params[:type]}
+    when [nil, 'html'].member?(params[:format]) && @card.ok?(:create) 
+      params[:card] = { :name=>@card.name, :type=>params[:type] }
       self.new
       false
     else

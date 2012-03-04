@@ -77,8 +77,7 @@ module Wagn::Model::Attach
 
   def before_post_attach
     at=self.attach
-    at.instance_write :file_name,
-      "#{self.key.gsub('*','X').camelize}#{File.extname(at.original_filename)}"
+    at.instance_write :file_name, at.original_filename
 
     Card::ImageID == (type_id || Card.type_id_from_name( @type_args[:type] ) )
     # returning true enables thumnail creation

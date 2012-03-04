@@ -41,7 +41,7 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INITIALIZATION METHODS
 
-  def self.new(args={}, options={})
+  def self.new args={}, options={}
     args = (args || {}).stringify_keys
     @@junk_args.each { |a| args.delete(a) }
     %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
@@ -80,7 +80,6 @@ class Card < ActiveRecord::Base
     if tid=get_type_id(@type_args)
       self.type_id_without_tracking = tid
     end
-    #warn "got typecode #{inspect}, sk:#{skip_modules}"
 
     include_set_modules unless skip_modules
     self
@@ -663,7 +662,7 @@ class Card < ActiveRecord::Base
     c=Card[creator_id]
     #warn "c author #{creator_id}, #{c}, #{self}"; c
   end
-  
+
   def updater
     #warn "updater #{updater_id}, #{updater_id}"
     c=Card[updater_id|| Card::AnonID]

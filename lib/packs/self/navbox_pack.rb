@@ -10,13 +10,13 @@ end
 
 class Wagn::Renderer::Json < Wagn::Renderer
   define_view(:complete, :name=>'*search') do |args|
-    term = params['term']
+    term = params['_keyword']
     if term =~ /^\+/ && main = params['main']
       term = main+term
     end
     
     exact = Card.fetch_or_new(term)
-    goto_cards = Card.search( :complete=>term, :limit=>8, :sort=>'name', :return=>'name' )
+    goto_cards = Card.search( goto_wql(term) )
     goto_cards.unshift term if exact.virtual?
     
     JSON({ 
@@ -29,4 +29,12 @@ class Wagn::Renderer::Json < Wagn::Renderer
       :goto   => goto_cards.map { |name| [name, highlight(name, term), name.to_cardname.to_url_key] }
     })    
   end
+  
+  private
+  
+  #hacky.  here for override
+  def goto_wql(term)
+   { :complete=>term, :limit=>8, :sort=>'name', :return=>'name' }
+  end
+  
 end

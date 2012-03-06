@@ -18,6 +18,8 @@ module Wagn::Model::Attach
   def attach_file_name()    attach_array[0] end
   def attach_content_type() attach_array[1] end
   def attach_file_size()    attach_array[2] end
+    
+  def attach_extension()    attach.send( :interpolate, ':extension' )  end
 
   def attach_file_name=(v)
     return if !v # does this happen?
@@ -42,7 +44,7 @@ module Wagn::Model::Attach
 
   def attachment_format(ext)
     return nil unless ext.present? && attach
-    return nil unless original_ext=attach.send( :interpolate, ':extension' )
+    return nil unless original_ext = attach_extension
     return original_ext if ['file', original_ext].member? ext
     exts = MIME::Types[attach.content_type]
     return nil unless exts

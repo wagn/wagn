@@ -62,25 +62,17 @@ class Mailer < ActionMailer::Base
   end
   
   def flexmail config
+    @message = config.delete(:message)
     
-    if config[:attach] and !config[:attach].empty?
-      # FIXME - this doesn't look fully converted to me.
-      config[:attach].each do |cardname|
-        if c = Card[ cardname ] and c.respond_to?(:attachment) and cardfile = c.attachment
-          attachment cardfile.content_type do |a|
-            open( cardfile.public_filename ) do |f|
-              a.filename cardfile.filename
-              a.body = f.read
-            end
-          end
+    if attachment_list = config.delete(:attach)
+      attachment_list.each_with_index do |cardname, i|
+        if c = Card[ cardname ] and c.respond_to?(:attach) 
+          attachments["attachment-#{i + 1}.#{c.attach_extension}"] = File.read( c.attach.path )
         end
       end
-    else
-      config[:content_type] = 'text/html'
-      config[:body] = config.delete(:message)
     end
     
-    mail(config)
+    mail config
   end
   
 end

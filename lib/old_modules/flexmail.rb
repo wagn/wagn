@@ -33,11 +33,9 @@ class Flexmail
       User.as(:wagbot){ event_card.item_names }
     end
     
-    def mail_for card #, &block # not sure if we need this options
-      #block = &:deliver unless block_given?
+    def mail_for card
       configs_for(card).map do |config|
-        #yield Mailer.flexmail(config)
-        Mailer.flexmail(config)
+        Mailer.flexmail config
       end.compact.each(&:deliver)
     end
     

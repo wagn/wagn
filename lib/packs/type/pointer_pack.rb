@@ -57,12 +57,13 @@ class Wagn::Renderer
   end
 
   define_view(:radio, :type=>'pointer') do |args|
+    input_name = "pointer_radio_button-#{card.key}"
     options = card.options.map do |option|
       checked = (option.name==card.item_names.first)
       id = "pointer-radio-#{option.cardname.key}"
       description = card.option_text(option.name)
       %{ <div class="pointer-radio"> } +
-        radio_button_tag( "pointer_radio_button", option.name, checked, :id=>id, :class=>'pointer-radio-button' ) +
+        radio_button_tag( input_name, option.name, checked, :id=>id, :class=>'pointer-radio-button' ) +
         %{<label for="#{id}">#{ option.name }</label> } +
         (description ? %{<div class="radio-option-description">#{ description }</div>} : '') +
       '</div>'

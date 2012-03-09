@@ -398,6 +398,7 @@ class Card < ActiveRecord::Base
     true
   rescue Exception=>e
     @subcards.each{ |card| card.expire_pieces }
+    Rails.logger.info "after save issue: #{e.message}"
     raise e
   end
 
@@ -415,7 +416,7 @@ class Card < ActiveRecord::Base
         opts[:name] = absolute_name
         card = Card.create opts
       end
-      @subcards << card
+      @subcards << card if card
       if card and card.errors.any?
         card.errors.each do |field, err|
           self.errors.add card.name, err
@@ -764,6 +765,7 @@ class Card < ActiveRecord::Base
   protected
 
   validate do |rec|
+    return true if @nested_edit
     return true unless Wagn::Conf[:recaptcha_on] && Card.toggle( rec.rule('captcha') )
     c = Wagn::Conf[:controller]
     return true if (c.recaptcha_count += 1) > 1

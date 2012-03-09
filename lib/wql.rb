@@ -276,9 +276,11 @@ class Wql
         else
           join_alias = add_revision_join
           # FIXME: OMFG this is ugly
-          '(' + ["replace(#{self.table_alias}.name,'+',' ')","#{join_alias}.content"].collect do |f|
+          '(' + 
+          ["replace(#{self.table_alias}.name,'+',' ')","#{join_alias}.content"].collect do |f|
             v.split(/\s+/).map{ |x| %{#{f} #{cxn.match(quote("[[:<:]]#{x}[[:>:]]"))}} }.join(" AND ")
-          end.join(" OR ") + ')'
+          end.join(" OR ") + 
+          ')'
         end
       merge field(:cond)=>SqlCond.new(cond)
     end

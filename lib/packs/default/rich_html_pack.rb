@@ -513,7 +513,7 @@ class Wagn::Renderer::Html
              :class => "line-link title down-arrow slotter", :remote => true }
 
            #{ unless card.typecode=='Basic'
-             %{<span class="cardtype">#{ link_to_page( Cardtype.name_for(card.typecode) ) }</span>}
+             %{<span class="cardtype">#{ link_to_page card.typename }</span>}
             end }
 
            #{ page_icon(card.name) } &nbsp;
@@ -647,7 +647,7 @@ class Wagn::Renderer::Html
   private
 
   def watching_type_cards
-    "watching #{link_to_page(Cardtype.name_for(card.typecode))} cards"      # can I parse this and get the link to happen? that wud r@wk.
+    "watching #{ link_to_page card.typename } cards"      # can I parse this and get the link to happen? that wud r@wk.
   end
 
   def watch_unwatch      

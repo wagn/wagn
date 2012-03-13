@@ -6,13 +6,6 @@ module WagnHelper
   require_dependency 'wiki_content'
   include HTMLDiff
 
-  # FIXME: slot -> renderer (model)
-  # Put the initialization in the controller and we no longer care here
-  # whether it is a Slot or Renderer, and it will be from the parent class
-  #   Now: Always a Renderer, and the subclass is selected by:
-  #     :format => :html (default and only -> Wagn::Renderer::Html (was Slot))
-
-#=begin
   def slot() Wagn::Renderer.current_slot end
   def card() @card ||= slot.card end
     
@@ -66,41 +59,6 @@ module WagnHelper
     wordstring
   end
 
-
-  def formal_title(card)
-    card.cardname.parts.join " <span class=\"wiki-joint\">+</span> "
-  end
-
-  def fancy_title(card)
-    cardname = (Card===card ? card.cardname : card.to_cardname)
-    return cardname if cardname.simple?
-    card_title_span(cardname.left_name) + %{<span class="joint">+</span>} +
-       card_title_span(cardname.tag_name)
-  end
-
-  # Other snippets -------------------------------------------------------------
-
-
-  def format_date(date, include_time = true)
-    # Must use DateTime because Time doesn't support %e on at least some platforms
-    if include_time
-      DateTime.new(date.year, date.mon, date.day, date.hour, date.min, date.sec).strftime("%B %e, %Y %H:%M:%S")
-    else
-      DateTime.new(date.year, date.mon, date.day).strftime("%B %e, %Y")
-    end
-  end
-
-  ## ----- for Linkers ------------------
-  def typecode_options
-    Cardtype.createable_types.map do |type|
-      [type[:name], type[:name]]
-    end.compact
-  end
-
-  def typecode_options_for_select(selected=Card.default_typecode_key)
-    #warn "SELECTED = #{selected}"
-    options_from_collection_for_select(typecode_options, :first, :last, selected)
-  end
 
 
   def error_messages_for(object)

@@ -53,10 +53,8 @@ module Notification
     
     def watcher_watched_pairs
       author = User.current_user.card.cardname
-      (card_watchers.except(author).map {|watcher| [Card[watcher].extension,self.cardname] }  +
-        type_watchers.except(author).map {|watcher|
-        #Rails.logger.info "watcher #{watcher.inspect}, #{::Cardtype.name_for(self.typecode)}"
-        [cd=Card[watcher].extension,::Cardtype.name_for(self.typecode)]})
+      card_watchers.except(author).map { |watcher| [ Card[watcher].extension, self.cardname ] } +
+      type_watchers.except(author).map { |watcher| [ Card[watcher].extension, self.typename ] }
     end
     
     def card_watchers 
@@ -65,19 +63,13 @@ module Notification
     end
     
     def type_watchers
-      #Rails.logger.debug "type_watchers #{Cardtype.name_for(self.typecode).to_s+"+*watchers"}"
-      items_from("#{Cardtype.name_for(self.typecode).to_s}+*watchers" )
+      items_from("#{self.typename}+*watchers" )
     end
     
     def items_from( name )
       #Rails.logger.info "items_from (#{name.inspect})"
       User.as :wagbot do
         (c = Card[name.to_cardname]) ? c.item_names.reject{|x|x==''}.map(&:to_cardname) : []
-        #(c = Card[name.to_cardname]) ?
-        #  begin
-        #  r1=c.item_names; r2=r1.reject{|x|x==''}; r3=r2.map(&:to_cardname)
-        #  Rails.logger.info "items from 2 #{c.new_record?}, #{r1.inspect}, #{r2.inspect}, #{r3.inspect}"; r3
-        #  end : []
       end
     end  
       

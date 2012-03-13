@@ -5,12 +5,11 @@ module Wagn
     include ReferenceTypes
     include LocationHelper
 
-    DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed,
-      :bare=>:core, :naked=>:core }
+    DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     UNDENIABLE_VIEWS = [ :deny_view, :denial, :errors, :edit_virtual,
       :too_slow, :too_deep, :missing, :not_found, :closed_missing, :name,
       :link, :linkname, :url, :show, :layout, :bad_address, :server_error ]
-    INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :edit=>:edit,
+    INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit }
     DEFAULT_ITEM_VIEW = :link
   
@@ -409,7 +408,48 @@ module Wagn
     end
   
   
-  
+    # moved in from wagn_helper
+    
+
+    def formal_title(card)
+      card.cardname.parts.join " <span class=\"wiki-joint\">+</span> "
+    end
+
+    def fancy_title(card)
+      cardname = (Card===card ? card.cardname : card.to_cardname)
+      return cardname if cardname.simple?
+      raw( card_title_span(cardname.left_name) + %{<span class="joint">+</span>} + card_title_span(cardname.tag_name))
+    end
+
+
+    def format_date(date, include_time = true)
+      # Must use DateTime because Time doesn't support %e on at least some platforms
+      if include_time
+        DateTime.new(date.year, date.mon, date.day, date.hour, date.min, date.sec).strftime("%B %e, %Y %H:%M:%S")
+      else
+        DateTime.new(date.year, date.mon, date.day).strftime("%B %e, %Y")
+      end
+    end
+
+    ## ----- for Linkers ------------------
+    def typecode_options
+      Cardtype.createable_types.map do |type|
+        [type[:name], type[:name]]
+      end.compact
+    end
+
+    def typecode_options_for_select(selected=Card.default_typecode_key)
+      #warn "SELECTED = #{selected}"
+      options_from_collection_for_select(typecode_options, :first, :last, selected)
+    end
+
+    def card_title_span( title )
+      %{<span class="namepart-#{title.to_cardname.css_name}">#{title}</span>}
+    end
+
+    def page_icon(cardname)
+      link_to_page '&nbsp;'.html_safe, cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
+    end
   
 
      ### FIXME -- this should not be here!   probably in WikiReference model?

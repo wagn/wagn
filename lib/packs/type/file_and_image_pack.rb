@@ -13,7 +13,7 @@ class Wagn::Renderer
   end
   
   define_view(:source, :type=>'image') do |args|
-    attach_url( args[:size] || :medium )
+    attach_url( @mode==:closed ? :icon : ( args[:size] || :medium ) )
   end
 
   define_view(:source, :type=>'file') do |args|

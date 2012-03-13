@@ -216,7 +216,7 @@ module Wagn
     end
 
     def typecode_field(options={})
-      typename = card ? Cardtype.name_for(card.typecode) : ''
+      typename = card ? card.typename : ''
       template.select_tag('card[type]', typecode_options_for_select( typename ), options)
     end
 

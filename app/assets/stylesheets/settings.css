@@ -45,16 +45,16 @@ td.rule-setting {
 .closed-rule .rule-content div {
   padding: 0;
 }
-.rule-content-container.closed-view {
+.rule-content-container {
   width: 350px;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: inherit;
   background: inherit;
 }
-.rule-content-container.closed-view .pointer-list,
-.rule-content-container.closed-view .search-list,
-.rule-content-container.closed-view .content {
+.rule-content-container .closed-content,
+.rule-content-container .closed-content .pointer-list,
+.rule-content-container .closed-content .search-list {
   margin: 0;
 }
 td.missing-rule {

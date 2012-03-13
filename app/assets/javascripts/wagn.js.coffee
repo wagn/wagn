@@ -84,6 +84,8 @@ jQuery.fn.extend {
 setInterval (-> $('.card-form').setContentFieldsFromMap()), 20000
 
 $(window).load ->
+  $.ajaxSetup cache: false
+  
   wagn.initializeEditors $('body')
   
   $('body').delegate '.slotter', "ajax:success", (event, data) ->

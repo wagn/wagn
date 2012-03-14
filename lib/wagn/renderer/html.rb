@@ -129,7 +129,7 @@ module Wagn
     end
 
     def edit_slot(args={})
-      card.content_template ? raw(_render_core(args)) : content_field(form)
+      card.hard_template ? raw(_render_core(args)) : content_field(form)
     end
  
     #### --------------------  additional helpers ---------------- ###

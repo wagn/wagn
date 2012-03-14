@@ -49,7 +49,7 @@ describe Card, "with role" do
 
   it "should lose role extension upon changing type" do
     # this test fails on a permission error in Mysql
-    pending
+    pending "actually broken? probably irrelevant in 1.8.2 anyway..."
     @role.typecode = 'Basic'
     @role.save
     @role.extension.should == nil

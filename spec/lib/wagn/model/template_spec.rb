@@ -13,13 +13,9 @@ describe Card do
       ]
     end
   end
-  
-  it "#content_template" do
-    pending
-  end
-  
+    
   it "#expire_templatee_references" do
-    pending
+    #TESTME
   end
   
 end

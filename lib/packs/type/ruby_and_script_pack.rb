@@ -24,31 +24,5 @@ class Wagn::Renderer
   end
   
   alias_view( :editor, {:type=>'plain_text'},  {:type=>'script'} )
-  
-=begin
-  define_view(:core, :type=>'ruby') do |args|
-    ruby = process_content( card.content )
-    begin
-      if Wagn::Conf[:enable_ruby_cards]
-        s = Sandbox.new(4)
-        s.fuehreAus( ruby )
-        result = if s.securityViolationDetected
-            s.securityViolationText.message
-          elsif s.syntaxErrorDetected
-            s.syntaxErrorText.message
-          else
-            s.sandboxOutput.value.to_s
-          end
-      else
-        "Ruby cards disabled" #ENGLISH
-      end
-    rescue Exception => e
-      CGI.escapeHTML( e.message )
-    end
-  end
 
-  define_view(:editor, :type=>'ruby') do |args|
-    form.text_area :content
-  end
-=end
 end

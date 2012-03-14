@@ -310,25 +310,32 @@ describe Wagn::Renderer, "" do
 # includes some *right stuff
 
 
-  context "Content settings" do
-    it "are rendered as raw" do
+  context "Content rule" do
+    it "is rendered as raw" do
       template = Card.new(:name=>'A+*right+*content', :content=>'[[link]] {{inclusion}}')
       Wagn::Renderer.new(template).render(:core).should == '[[link]] {{inclusion}}'
     end
 
-
-    it "uses content setting" do
-      pending
-      @card = Card.new( :name=>"templated", :content => "bar" )
-      config_card = Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
-      @card.should_receive(:rule_card).with("content","default").and_return(config_card)
-      Wagn::Renderer.new(@card).render_raw.should == "Yoruba"
-      @card.should_receive(:rule_card).with("content","default").and_return(config_card)
-      @card.should_receive(:rule_card).with("add help","edit help")
-      assert_view_select Wagn::Renderer.new(@card).render_new, 'div[class="unknown-class-name"]'
+    it "is used in new card forms when soft" do
+      User.as :joe_admin
+      content_card = Card["Cardtype E+*type+*default"]
+      content_card.content= "{{+Yoruba}}"
+      content_card.save!
+      
+      help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
+      card = Card.new(:type=>'Cardtype E')
+      card.should_receive(:rule_card).with("add help","edit help").and_return(help_card)
+      card.should_receive(:rule_card).with("thanks", nil, {:skip_modules=>true}).and_return(nil)
+      card.should_receive(:rule_card).with("autoname").and_return(nil)
+      card.should_receive(:rule_card).with("content","default").twice.and_return(content_card) # why twice?
+      
+      assert_view_select Wagn::Renderer::Html.new(card).render_new, 'div[class="content-editor"]' do
+        assert_select 'textarea[class="tinymce-textarea card-content"]', :text => '{{+Yoruba}}'
+      end
     end
 
-    it "are used in new card forms" do
+
+    it "is used in new card forms when hard" do
       User.as :joe_admin
       content_card = Card.create!(:name=>"Cardtype E+*type+*content",  :content=>"{{+Yoruba}}" )
       help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
@@ -336,7 +343,7 @@ describe Wagn::Renderer, "" do
       card.should_receive(:rule_card).with("add help","edit help").and_return(help_card)
       card.should_receive(:rule_card).with("thanks", nil, {:skip_modules=>true}).and_return(nil)
       card.should_receive(:rule_card).with("autoname").and_return(nil)
-      card.should_receive(:rule_card).with("content","default").and_return(content_card)
+      card.should_receive(:rule_card).with("content","default").and_return(content_card) 
       assert_view_select Wagn::Renderer::Html.new(card).render_new, 'div[class="field-in-multi"]' do
         assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', "card[cards][~plus~Yoruba][content]"
       end
@@ -390,12 +397,10 @@ describe Wagn::Renderer, "" do
     context "File and Image" do
       #image calls the file partial, so in a way this tests both
       it "should have special editor" do
-      pending  #This test works fine alone but fails when run with others
-        assert_view_select render_editor('Image'), 'body' do
-          assert_select 'div[class="attachment-preview"]'
-          assert_select 'div' do
-            assert_select 'iframe[class="upload-iframe"]'
-          end
+#        pending "getting html_document error.  paperclip integration issue?"
+        
+        assert_view_select render_editor('Image'), 'div[class="choose-file"]' do
+          assert_select 'input[class="file-upload slotter"]'
         end
       end
     end
@@ -425,10 +430,10 @@ describe Wagn::Renderer, "" do
 
     context "Account Request" do
       it "should have a special section for approving requests" do
-        pending
+        #pending
         #I can't get this working.  I keep getting this url_for error -- from a line that doesn't call url_for
         card = Card.create!(:name=>'Big Bad Wolf', :type=>'Account Request')
-        assert_view_select Wagn::Renderer.new(card).render(:core), 'div[class="invite-links"]'
+        assert_view_select Wagn::Renderer.new(card).render(:core), 'div[class="invite-links help instruction"]'
       end
     end
 
@@ -512,10 +517,9 @@ describe Wagn::Renderer, "" do
 
     context "*account link" do
       it "should have a 'my card' link" do
-        pending
         User.as :joe_user do
           assert_view_select render_card(:raw, :name=>'*account links'), 'span[id="logging"]' do
-            assert_select 'a[id="my-card-link"]', 'My Card: Joe User'
+            assert_select 'a[id="my-card-link"]', :text => 'My Card: Joe User'
           end
         end
       end

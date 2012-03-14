@@ -23,7 +23,7 @@ module Wagn
 
     @@max_char_count = 200
     @@max_depth = 10
-    @@non_base_views = {}
+    @@subset_views = {}
 
     class << self
       def new(card, opts={})
@@ -62,7 +62,7 @@ module Wagn
       def define_view(view, opts={}, &final)
         view_key = get_view_key(view, opts)
         define_method( "_final_#{view_key}", &final )
-        @@non_base_views[view] = true if !opts.empty?
+        @@subset_views[view] = true if !opts.empty?
 
         if !method_defined? "render_#{view}"
           define_method( "_render_#{view}" ) do |*a|
@@ -77,7 +77,7 @@ module Wagn
           define_method( "render_#{view}" ) do |*a|
             begin
               denial=deny_render(view.to_sym, *a) and return denial
-              msg = "render #{view} #{ card && card.name.present? ? "called for #{card.name}" : '' }"
+#              msg = "render #{view} #{ card && card.name.present? ? "called for #{card.name}" : '' }"
 #              ActiveSupport::Notifications.instrument 'wagn.render', :message=>msg do
                 send( "_render_#{view}", *a)
 #              end
@@ -226,7 +226,7 @@ module Wagn
     end
   
     def view_method(view)
-      return "_final_#{view}" if !card || !@@non_base_views[view]
+      return "_final_#{view}" if !card || !@@subset_views[view]
       card.method_keys.each do |method_key|
         meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
         return meth if respond_to?(meth.to_sym)
@@ -373,7 +373,6 @@ module Wagn
     end
       
     def build_link(href, text, known_card=nil)
-      #Rails.logger.info "build_link(#{href.inspect}, #{text.inspect})"
       klass = case href
         when /^https?:/; 'external-link'
         when /^mailto:/; 'email-link'
@@ -387,11 +386,12 @@ module Wagn
           end
           href = href.to_cardname
           href = known_card ? href.to_url_key : CGI.escape(href.escape)
+          
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
           href = full_uri href.to_s
           known_card ? 'known-card' : 'wanted-card'
+          
       end
-      #Rails.logger.info "build_link(#{href.inspect}, #{text.inspect}) #{klass}"
       %{<a class="#{klass}" href="#{href.to_s}">#{text.to_s}</a>}
     end
     

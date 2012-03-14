@@ -1,5 +1,3 @@
-#WikiReference # is this needed?
-
 module Wagn
   class Renderer
     include ReferenceTypes
@@ -26,7 +24,7 @@ module Wagn
     @@subset_views = {}
 
     class << self
-      def new(card, opts={})
+      def new card, opts={}
         if self==Renderer
           fmt = (opts[:format] ? opts[:format].to_sym : :html)
           renderer = (RENDERERS.has_key?(fmt) ? RENDERERS[fmt] : fmt.to_s.camelize).to_sym
@@ -42,7 +40,7 @@ module Wagn
     # View definitions
     #
     #   When you declare:
-    #     define_view(:view_name, "<set>") do |args|
+    #     define_view :view_name, "<set>" do |args|
     #
     #   Methods are defined on the renderer
     #
@@ -59,7 +57,7 @@ module Wagn
     #     _final(_set_key)_viewname(args)
 
 
-      def define_view(view, opts={}, &final)
+      def define_view view, opts={}, &final
         view_key = get_view_key(view, opts)
         define_method( "_final_#{view_key}", &final )
         @@subset_views[view] = true if !opts.empty?
@@ -90,7 +88,7 @@ module Wagn
         end
       end
 
-      def alias_view(view, opts={}, *aliases)
+      def alias_view view, opts={}, *aliases
         view_key = get_view_key(view, opts)
         aliases.each do |aview|
           aview_key = case aview
@@ -106,7 +104,7 @@ module Wagn
         end
       end
       
-      def get_view_key(view,opts)
+      def get_view_key view, opts
         unless pkey = Wagn::Model::Pattern.method_key(opts) 
           raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
         end
@@ -119,12 +117,21 @@ module Wagn
 
     attr_reader :card, :root, :showname #should be able to factor out showname
     attr_accessor :form, :main_content, :main_card
+
+    def render view=:view, args={}
+      method = "render_#{canonicalize_view view}"
+      if respond_to? method
+        send method, args
+      else
+        "<strong>unknown view: <em>#{view}<em></strong>"
+      end
+    end
   
     def rendering_error exception, cardname
       "Error rendering: #{cardname}"
     end
   
-    def initialize(card, opts={})
+    def initialize card, opts={}
       Renderer.current_slot ||= self unless(opts[:not_current])
       @card = card
       opts.each { |key, value| instance_variable_set "@#{key}", value }
@@ -138,15 +145,14 @@ module Wagn
       end
     end
 
+    def params()       @params     ||= controller.params                          end
+    def flash()        @flash      ||= controller.request ? controller.flash : {} end
+    def controller()   @controller ||= StubCardController.new                     end
+    def ajax_call?()   @@ajax_call                                                end
+    def outer_level?() @depth == 0                                                end
+    def too_deep?()    @depth >= @@max_depth                                      end
+    def session()      CardController===controller ? controller.session : {}      end
 
-    def params()     @params     ||= controller.params                          end
-    def flash()      @flash      ||= controller.request ? controller.flash : {} end
-    def controller() @controller ||= StubCardController.new                     end
-
-    def session
-      CardController===controller ? controller.session : {}
-    end
-  
     def template
       @template ||= begin
         c = controller
@@ -155,36 +161,20 @@ module Wagn
         t
       end
     end
-    
-    def render(view=:view, args={})
-      method = "render_#{canonicalize_view view}"
-      if respond_to? method
-        send method, args
-      else
-        "<strong>unknown view: <em>#{view}<em></strong>"
-      end
-    end
-    
-    
-    def method_missing(method_id, *args, &proc)
+
+    def method_missing method_id, *args, &proc
       proc = proc {|*a| raw yield *a } if proc
       response = template.send method_id, *args, &proc
       String===response ? template.raw( response ) : response
     end
-    
-  
-    def ajax_call?() @@ajax_call end
-    def outer_level?() @depth == 0 end
-  
-    def too_deep?() @depth >= @@max_depth end
   
     def subrenderer(subcard, opts={})
       subcard = Card.fetch_or_new(subcard) if String===subcard
       sub = self.clone
       sub.initialize_subrenderer(subcard, opts)
     end
-
-    def initialize_subrenderer(subcard, opts)
+    
+    def initialize_subrenderer subcard, opts
       @card = subcard
       @char_count = 0
       @depth += 1
@@ -192,8 +182,9 @@ module Wagn
       opts.each { |key, value| instance_variable_set "@#{key}", value }
       self
     end
-  
-    def process_content(content=nil, opts={})
+    
+    
+    def process_content content=nil, opts={}
       return content unless card
       content = card.content if content.blank?
   
@@ -207,7 +198,7 @@ module Wagn
     alias expand_inclusions process_content
   
   
-    def deny_render(action, args={})
+    def deny_render action, args={}
       return false if UNDENIABLE_VIEWS.member?(action)
       ch_action = case
         when too_deep?      ; :too_deep
@@ -221,11 +212,11 @@ module Wagn
       ch_action and render(ch_action, args)
     end
     
-    def canonicalize_view( view )
+    def canonicalize_view view
       (v=!view.blank? && DEPRECATED_VIEWS[view.to_sym]) ? v : view
     end
   
-    def view_method(view)
+    def view_method view
       return "_final_#{view}" if !card || !@@subset_views[view]
       card.method_keys.each do |method_key|
         meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
@@ -317,7 +308,7 @@ module Wagn
       result
     end
   
-    def get_inclusion_content(cardname)
+    def get_inclusion_content cardname
       #Rails.logger.debug "get_inclusion_content(#{cardname.inspect})"
       content = params[cardname.to_s.gsub(/\+/,'_')]
   
@@ -328,7 +319,7 @@ module Wagn
       content if content.present?  #not sure I get why this is necessary - efm
     end
   
-    def new_inclusion_card_args(options)
+    def new_inclusion_card_args options
       args = { :type =>options[:type] }
       args[:loaded_trunk]=card if options[:tname] =~ /^\+/
       if content=get_inclusion_content(options[:tname])
@@ -337,7 +328,7 @@ module Wagn
       args
     end
     
-    def path(action, opts={})
+    def path action, opts={}
       pcard = opts.delete(:card) || card
       base = wagn_path "/card/#{action}"
       if pcard && ![:new, :create, :create_or_update].member?( action )
@@ -405,16 +396,15 @@ module Wagn
     # moved in from wagn_helper
     
 
-    def formal_title(card)
+    def formal_title card
       card.cardname.parts.join " <span class=\"wiki-joint\">+</span> "
     end
 
-    def fancy_title(card)
+    def fancy_title card
       cardname = (Card===card ? card.cardname : card.to_cardname)
       return cardname if cardname.simple?
       raw( card_title_span(cardname.left_name) + %{<span class="joint">+</span>} + card_title_span(cardname.tag_name))
     end
-
 
     def format_date(date, include_time = true)
       # Must use DateTime because Time doesn't support %e on at least some platforms
@@ -432,22 +422,22 @@ module Wagn
       end.compact
     end
 
-    def typecode_options_for_select(selected=Card.default_typecode_key)
+    def typecode_options_for_select selected=Card.default_typecode_key
       #warn "SELECTED = #{selected}"
       options_from_collection_for_select(typecode_options, :first, :last, selected)
     end
 
-    def card_title_span( title )
+    def card_title_span title
       %{<span class="namepart-#{title.to_cardname.css_name}">#{title}</span>}
     end
 
-    def page_icon(cardname)
+    def page_icon cardname
       link_to_page '&nbsp;'.html_safe, cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
     end
   
 
      ### FIXME -- this should not be here!   probably in WikiReference model?
-    def replace_references( old_name, new_name )
+    def replace_references old_name, new_name
       #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
       wiki_content = WikiContent.new(card, card.content, self)
     
@@ -496,7 +486,7 @@ module Wagn
 
   # I was getting a load error from a non-wagn file when this was in its own file (renderer/json.rb).
   class Renderer::Json < Renderer
-    define_view(:name_complete) do |args|
+    define_view :name_complete do |args|
       JSON( card.item_cards( :complete=>params['term'], :limit=>8, :sort=>'name', :return=>'name', :context=>'' ) )
     end
   end

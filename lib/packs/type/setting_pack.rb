@@ -1,6 +1,6 @@
 require 'json'
 class Wagn::Renderer
-  define_view(:core, :type=>'setting') do |args|
+  define_view :core, :type=>'setting' do |args|
     _render_closed_content(args) +
     
     Wagn::Model::Pattern.pattern_subclasses.reverse.map do |set_class|
@@ -24,7 +24,7 @@ class Wagn::Renderer
   
   end
 
-  define_view(:closed_content, :type=>'setting') do |args|
+  define_view :closed_content, :type=>'setting' do |args|
    %{<div class="instruction">#{process_content "{{+*right+*edit help}}"}</div>}
   end
 end

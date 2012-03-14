@@ -10,7 +10,7 @@ class Shellbox
 end
 
 class Wagn::Renderer
-  define_view(:core, :type=>'script') do |args|
+  define_view :core, :type=>'script' do |args|
     command = process_content( card.content )
     begin
       if Wagn::Conf[:enable_server_cards]

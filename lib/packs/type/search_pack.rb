@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:core, :type=>'search') do |args|
+  define_view :core, :type=>'search' do |args|
     error=nil
     results = begin
       card.item_cards( search_params )
@@ -18,11 +18,11 @@ class Wagn::Renderer
     end
   end
   
-  define_view(:editor, :type=>'search') do |args|
+  define_view :editor, :type=>'search' do |args|
     form.text_area :content, :rows=>10
   end
 
-  define_view(:closed_content, :type=>'search') do |args|
+  define_view :closed_content, :type=>'search' do |args|
     return "..." if @depth > 2
     results= begin
       card.item_cards( search_params )
@@ -47,7 +47,7 @@ class Wagn::Renderer
   end
 
 
-  define_view(:card_list, :type=>'search') do |args|
+  define_view :card_list, :type=>'search' do |args|
     cards = args[:results]
     @item_view ||= (card.spec[:view]) || :closed
     paging = render(:paging, :results=>cards)
@@ -80,7 +80,7 @@ class Wagn::Renderer
     %{<h1 class="page-header search-result-header">Search results for: <em>#{keyword}</em></h1>}
   end
 
-  define_view(:card_list, :name=>'*recent') do |args|
+  define_view :card_list, :name=>'*recent' do |args|
     cards = args[:results]
     @item_view ||= (card.spec[:view]) || :change
 
@@ -121,7 +121,7 @@ class Wagn::Renderer
 
 
 
-  define_view(:paging, :type=>'search') do |args|
+  define_view :paging, :type=>'search' do |args|
     results = args[:results]
     s = card.spec(search_params)
     offset, limit = s[:offset].to_i, s[:limit].to_i

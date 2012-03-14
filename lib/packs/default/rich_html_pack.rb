@@ -1,5 +1,5 @@
 class Wagn::Renderer::Html
-  define_view(:show) do |args|
+  define_view :show do |args|
     @main_view = args[:view] || params[:view] || params[:home_view]
     
     if ajax_call?
@@ -9,7 +9,7 @@ class Wagn::Renderer::Html
     end
   end
 
-  define_view(:layout) do |args|
+  define_view :layout do |args|
     if @main_content = args.delete(:main_content)
       @card = Card.fetch_or_new('*placeholder')
     else
@@ -23,19 +23,19 @@ class Wagn::Renderer::Html
   end
 
 
-  define_view(:content) do |args|
+  define_view :content do |args|
     c = _render_core(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
     wrap(:content, args) { wrap_content(:content, c) }
   end
 
-  define_view(:titled) do |args|
-    wrap(:titled, args) do
+  define_view :titled do |args|
+    wrap :titled, args do
       content_tag( :h1, fancy_title(card.name)) + wrap_content(:titled, _render_core(args))
     end
   end
 
-  define_view(:open) do |args|
+  define_view :open do |args|
     comment_box = ''
     if card && card.ok?(:comment)
       comment_box = 
@@ -51,7 +51,7 @@ class Wagn::Renderer::Html
       </div>}
     end
     
-    wrap(:open, args) do
+    wrap :open, args do
       %{ 
          #{ header }
          #{ wrap_content( :open, _render_open_content(args) ) } 
@@ -62,8 +62,8 @@ class Wagn::Renderer::Html
     end
   end
 
-  define_view(:closed) do |args|
-    wrap(:closed, args) do
+  define_view :closed do |args|
+    wrap :closed, args do
       %{
         <div class="card-header">
           <div class="title-menu"> 
@@ -79,7 +79,7 @@ class Wagn::Renderer::Html
 
 
 
-  define_view(:new) do |args|
+  define_view :new do |args|
     @help_card = card.rule_card('add help', 'edit help')
     if ajax_call?
       new_content :cancel_href=>path(:view, :view=>:missing), :cancel_class=>'slotter'
@@ -94,26 +94,26 @@ class Wagn::Renderer::Html
     end
   end
 
-  define_view(:editor) do |args|
+  define_view :editor do |args|
     form.text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id
   end
 
-  define_view(:missing) do |args|
+  define_view :missing do |args|
     #warn "missing #{args.inspect} #{caller[0..10]*"\n"}"
     new_args = { 'card[name]'=>card.name }
     new_args['card[type]'] = args[:type] if args[:type]
 
-    wrap(:missing, args) do
+    wrap :missing, args do
       link_to raw("Add <strong>#{ @showname || card.name }</strong>"), path(:new, new_args),
         :class=>'slotter', :remote=>true
     end
   end
   
 ###---(  EDIT VIEWS )
-  define_view(:edit) do |args|
+  define_view :edit do |args|
     attrib = params[:attribute] || 'content'
     attrib = 'name' if params[:card] && params[:card][:name]
-    wrap(:edit, args) do
+    wrap :edit, args do
       %{#{ header}
        <style>.SELF-#{card.css_name} .edit-area .namepart-#{card.css_name} { display: none; } </style>
        <div class="card-body">
@@ -124,7 +124,7 @@ class Wagn::Renderer::Html
     end
   end
 
-  define_view (:edit_content) do |args|
+  define_view :edit_content do |args|
     %{#{
       if inst = card.rule_card('edit help')
         %{<div class="instruction">#{ raw subrenderer(inst).render_core }</div>}
@@ -152,7 +152,7 @@ class Wagn::Renderer::Html
       }
   end
 
-  define_view(:edit_name) do |args|
+  define_view :edit_name do |args|
     %{
       <div class="edit-area edit-name">
        <h2>Change Name</h2>
@@ -208,7 +208,7 @@ class Wagn::Renderer::Html
     </div>}
   end
 
-  define_view (:edit_type) do |args|
+  define_view :edit_type do |args|
     %{
     <div class="edit-area edit-type">
     <h2>Change Type</h2> #{
@@ -231,7 +231,7 @@ class Wagn::Renderer::Html
     </div>}
   end
 
-  define_view(:edit_in_form) do |args|
+  define_view :edit_in_form do |args|
     instruction = ''
     if instruction_card = (card.new_card? ? card.rule_card('add help', 'edit help') : card.rule_card('edit help'))
       ss = self.subrenderer(instruction_card)
@@ -259,7 +259,7 @@ class Wagn::Renderer::Html
     }
   end
 
-  define_view(:related) do |args|
+  define_view :related do |args|
     sources = [card.typename,nil]
     sources.unshift '*account' if card.extension_type=='User'
     items = sources.map do |source|
@@ -271,7 +271,7 @@ class Wagn::Renderer::Html
 #    @items << 'config'
     current = params[:attribute] || items.first.to_cardname.to_key
 
-    wrap(:related, args) do
+    wrap :related, args do
       %{#{header }
         <div class="submenu"> #{
           items.map do |item|
@@ -289,15 +289,15 @@ class Wagn::Renderer::Html
     end
   end
 
-  define_view(:options) do |args|
+  define_view :options do |args|
     attribute = params[:attribute]
     attribute ||= (card.extension_type=='User' ? 'account' : 'settings')
-    wrap(:options, args) do
+    wrap :options, args do
       %{ #{ header } <div class="options-body"> #{ render "option_#{attribute}" } </div> #{ notice } }
     end
   end
 
-  define_view(:option_account) do |args|
+  define_view :option_account do |args|
     locals = {:slot=>self, :card=>card, :extension=>card.extension }
     %{#{raw( options_submenu(:account) ) }#{
 
@@ -317,7 +317,7 @@ class Wagn::Renderer::Html
     end }}
   end
 
-  define_view(:option_settings) do |args|
+  define_view :option_settings do |args|
   
 
     related_sets = card.related_sets
@@ -360,7 +360,7 @@ class Wagn::Renderer::Html
       </div>}
   end
 
-  define_view(:option_roles) do |args|
+  define_view :option_roles do |args|
     roles = Role.find :all, :conditions=>"codename not in ('auth','anon')"
     user_roles = card.extension.roles 
 
@@ -392,7 +392,7 @@ class Wagn::Renderer::Html
     )}}
   end
 
-  define_view(:option_new_account) do |args|
+  define_view :option_new_account do |args|
     %{#{raw( options_submenu(:account) ) }#{
       card_form :create_account do |form|
       #ENGLISH below
@@ -407,9 +407,9 @@ class Wagn::Renderer::Html
      end}}
   end
 
-  define_view(:changes) do |args| 
+  define_view :changes do |args| 
     load_revisions
-    wrap(:changes, args) do
+    wrap :changes, args do
       %{#{header unless params['no_changes_header']}
       <div class="revision-navigation">#{ revision_menu }</div>
 
@@ -436,7 +436,7 @@ class Wagn::Renderer::Html
     end
   end
   
-  define_view(:diff) do |args|
+  define_view :diff do |args|
     if @show_diff and @previous_revision
       diff @previous_revision.content, @revision.content
     else
@@ -444,9 +444,9 @@ class Wagn::Renderer::Html
     end
   end
   
-  define_view(:conflict) do |args|
+  define_view :conflict do |args|
     load_revisions
-    wrap(:errors) do |args|
+    wrap :errors do |args|
       %{<strong>Conflict!</strong><span class="new-current-revision-id">#{@revision.id}</span>
         <div>#{ link_to_page @revision.author.card.name } has also been making changes.</div>
         <div>Please examine below, resolve above, and re-submit.</div>
@@ -454,8 +454,8 @@ class Wagn::Renderer::Html
     end
   end
 
-  define_view(:remove) do |args|
-    wrap(:remove, args) do
+  define_view :remove do |args|
+    wrap :remove, args do
     %{#{ header}
     #{card_form :remove, '', 'data-type'=>'html', 'main-success'=>'REDIRECT: TO-PREVIOUS' do |f|
     
@@ -482,8 +482,8 @@ class Wagn::Renderer::Html
     end
   end
 
-  define_view(:change) do |args|
-    wrap(:change, args) do
+  define_view :change do |args|
+    wrap :change, args do
       %{#{link_to_page card.name, nil, :class=>'change-card'} #{
        if rev = card.cached_revision and !rev.new_record?
          # this check should be unnecessary once we fix search result bug
@@ -504,7 +504,7 @@ class Wagn::Renderer::Html
   end
 
 
-  define_view(:header) do |args|
+  define_view :header do |args|
     %{<div class="card-header">
        #{ menu }
 
@@ -523,7 +523,7 @@ class Wagn::Renderer::Html
     </div>}
   end
 
-  define_view(:footer) do |args|
+  define_view :footer do |args|
     %{<div class="card-footer">
       <span class="footer-content">
         <span class="watch-link">#{ _render_watch }</span>
@@ -545,15 +545,15 @@ class Wagn::Renderer::Html
   end
 
 
-  define_view(:errors) do |args|
-    wrap(:errors, args) do
+  define_view :errors do |args|
+    wrap :errors, args do
       %{ <h2>Can't save "#{card.name}".</h2> } +
       card.errors.map { |attr, msg| "<div>#{attr}: #{msg}</div>" }.join('')
     end
   end
   
   
-  define_view(:not_found) do |args| #ug.  bad name.
+  define_view :not_found do |args| #ug.  bad name.
 
     sign_in_or_up_links = User.logged_in? ? '' :
       %{
@@ -563,7 +563,7 @@ class Wagn::Renderer::Html
       </div>
       }
     %{ <h1 class="page-header">Missing Card</h1> } +
-    wrap(:not_found, args) do # ENGLISH 
+    wrap( :not_found, args ) do # ENGLISH 
       %{<div class="content instruction">
           <div>There's no card named <strong>#{card.name}</strong>.</div> 
           #{sign_in_or_up_links}
@@ -572,10 +572,10 @@ class Wagn::Renderer::Html
   end
   
 
-  define_view(:watch) do |args|
+  define_view :watch do |args|
     return "" unless User.logged_in?   
     return "" if card.virtual?
-    wrap(:watch) do
+    wrap :watch do
       @me = User.current_user.card.name          
       if card.typecode == "Cardtype"
         (card.type_watchers.include?(@me) ? "#{watching_type_cards} | " : "") +  watch_unwatch
@@ -586,8 +586,8 @@ class Wagn::Renderer::Html
   end
   
   
-  define_view(:denial) do |args|
-    wrap(:denial, args) do #ENGLISH below
+  define_view :denial do |args|
+    wrap :denial, args do #ENGLISH below
       %{#{ header } 
         <div id="denied" class="instruction open-content">
           <h1>Ooo.  Sorry, but...</h1>
@@ -619,7 +619,7 @@ class Wagn::Renderer::Html
   end
   
   
-  define_view(:server_error) do |args|
+  define_view :server_error do |args|
     %{
     <body>
       <div class="dialog">
@@ -693,7 +693,7 @@ class Wagn::Renderer::Html
   def new_content(args)
     hide_type = params[:type] && !card.broken_type 
 
-    wrap(:new, args) do  
+    wrap :new, args do  
       %{#{error_messages_for card}#{
     
       card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|

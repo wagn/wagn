@@ -2,11 +2,11 @@ require 'active_support/builder' unless defined?(Builder)
 
 module Wagn
   class Renderer::Kml
-    define_view(:show) do |args|
+    define_view :show do |args|
       render(args[:view] || params[:view] || :search)
     end
 
-    define_view(:search) do |args|
+    define_view :search do |args|
       xml = Builder::XmlMarkup.new
       xml.instruct! :xml, :version => "1.0"
     

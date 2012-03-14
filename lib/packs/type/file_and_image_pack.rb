@@ -1,22 +1,22 @@
 class Wagn::Renderer
   
-  define_view(:core, :type=>'image') do |args|
+  define_view :core, :type=>'image' do |args|
     (source = _render_source( args )) ? image_tag( source ) : ''
   end
 
-  define_view(:core, :type=>'file') do |args|
+  define_view :core, :type=>'file' do |args|
     (source = _render_source) ?  "<a href=\"#{source}\">Download #{card.name}</a>" : ''
   end
 
-  define_view(:closed_content, :type=>'image') do |args|
+  define_view :closed_content, :type=>'image' do |args|
     _render_core :size=>:icon
   end
   
-  define_view(:source, :type=>'image') do |args|
+  define_view :source, :type=>'image' do |args|
     attach_url( @mode==:closed ? :icon : ( args[:size] || :medium ) )
   end
 
-  define_view(:source, :type=>'file') do |args|
+  define_view :source, :type=>'file' do |args|
     attach_url
   end
   
@@ -36,7 +36,7 @@ end
 
 
 class Wagn::Renderer::Html
-  define_view(:editor, :type=>'file') do |args|
+  define_view :editor, :type=>'file' do |args|
     Rails.logger.debug "editor for file #{card.inspect}"
     out = '<div class="choose-file">'
     if !card.new_card?
@@ -55,7 +55,7 @@ class Wagn::Renderer::Html
 
   alias_view :editor, {:type=>:file}, {:type=>:image}
 
-  define_view(:diff, :type=>'image') do |args|
+  define_view :diff, :type=>'image' do |args|
     out = ''
     if @show_diff and @previous_revision
       card.selected_rev_id=@previous_revision.id

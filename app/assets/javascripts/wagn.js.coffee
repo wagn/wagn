@@ -160,6 +160,8 @@ $(window).load ->
     $('.card-slot').live 'dblclick', (event)->
       s = $(this)
       return false if s.find( '.edit-area' )[0]
+      return false if s.closest( '.card-header' )[0]
+      return false unless s.attr('card-id')
       s.addClass 'slotter'
       s.attr 'href', wagn.rootPath + '/card/edit/~' + s.attr('card-id')
       $.rails.handleRemote(s)

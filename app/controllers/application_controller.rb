@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def per_request_setup
-    #ActiveSupport::Notifications.instrument 'wagn.per_request_setup', :message=>"" do
+#    ActiveSupport::Notifications.instrument 'wagn.per_request_setup', :message=>"" do
       request.format = :html if !params[:format]
 
       # these should not be Wagn::Conf, but more like wagn.env
@@ -46,7 +46,7 @@ class ApplicationController < ActionController::Base
       @recaptcha_count = 0
     
       @action = params[:action]
-    #end
+#    end
   end
   
   def canonicalize_domain
@@ -107,20 +107,22 @@ class ApplicationController < ActionController::Base
   end
 
   def render_show(view = nil, status = 200)
-    extension = request.parameters[:format]
-    if FORMATS.split('|').member?( extension )
-      render(:status=>status, :text=> begin
-        respond_to do |format|
-          format.send(extension) do
-            renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
-            renderer.render_show( :view=>view )
+#    ActiveSupport::Notifications.instrument 'wagn.render_show', :message=>"view: #{view}" do
+      extension = request.parameters[:format]
+      if FORMATS.split('|').member?( extension )
+        render(:status=>status, :text=> begin
+          respond_to do |format|
+            format.send(extension) do
+              renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
+              renderer.render_show( :view=>view )
+            end
           end
-        end
-      end)
-    elsif render_show_file
-    else
-      render :text=>"unknown format: #{extension}", :status=>404
-    end
+        end)
+      elsif render_show_file
+      else
+        render :text=>"unknown format: #{extension}", :status=>404
+      end
+#    end
   end
   
   def render_show_file

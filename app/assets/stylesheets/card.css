@@ -18,7 +18,6 @@
   margin: 0px;
   background: #fff;
   padding: 0px;
-  
 }
 
 html>body .open-view {
@@ -27,6 +26,7 @@ html>body .open-view {
 .card-slot,
 .card-slot .ALL {
   overflow: hidden;
+  white-space: normal;
 }
 
 /*----- header ---------*/
@@ -483,20 +483,6 @@ del.diffmod,
 
 /* -----   CONTEXTS  -------------------------------*/
 
-/*-------- main card ----*/
-
-/*-- makes things funny in IE
-#main .paragraph .title {
-  font-size: 16px;
-  line-height: 25px;
-}
-#main .paragraph .content .title,
-#main .card-slot .edit-area .title {
-  font-size: inherit;
-  line-height: inherit;
-}
-    
---*/
 
 /*----- Secondary (sidebar) ----------------*/
 
@@ -602,7 +588,7 @@ body#wagn .card-slot.recent-changes h2 {
   padding: 0px !important;
   border: 0px !important;
   font-size: 11px !important;  
-  white-space: nowrap;      
+  white-space: nowrap !important;      
   float: none !important;
 }
 .closed-content a {
@@ -758,11 +744,11 @@ div.search-result-list .search-result-item {
   font-style: italic;
 }
 
-/*------------( Layout ) ------------*/
+/*------------( Layout, Plain Text ) ------------*/
 
-.SELF-Xcss .open-content,
-.TYPE-layout .open-content {
-  white-space: pre-wrap;
+.TYPE-layout > .content,
+.TYPE-plain_text > .content {
+  white-space: pre-wrap
 }
 
 /*----------- (Invitation Request)--------------*/

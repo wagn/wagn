@@ -20,7 +20,7 @@ class Wagn::Renderer
   define_view(:name)     { |args| card.name             }
   define_view(:key)      { |args| card.key              }
   define_view(:linkname) { |args| card.cardname.to_url_key  }
-  define_view(:link)     { |args| name=card.name; build_link(name, name) }
+  define_view(:link)     { |args| name=card.name; build_link(name, name, card.known?) }
   define_view(:url)      { |args| wagn_url(_render_linkname) }
 
   define_view(:open_content) do |args|

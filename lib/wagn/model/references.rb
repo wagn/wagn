@@ -38,7 +38,9 @@ module Wagn::Model::References
   def expire_cache
     expire(self)
     return if ENV['MIGRATE_PERMISSIONS'] == 'true'
-    self.hard_templatees.each {|c| expire(c) }
+    if self.hard_template?
+      self.hard_templatees.each {|c| expire(c) }
+    end
     self.dependents.each {|c| expire(c) }
     self.referencers.each {|c| expire(c) }
     self.name_referencers.each{|c| expire(c)}

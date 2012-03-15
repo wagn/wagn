@@ -172,9 +172,6 @@ module Wagn
       end
     end
 
-    def header()  _render_header if card end  
-    def footer()  _render_footer if card end
-
     def menu
       if card && card.virtual?
         return %{<span class="card-menu faint">Virtual</span>\n}

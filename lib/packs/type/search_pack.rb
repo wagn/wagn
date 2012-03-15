@@ -14,7 +14,7 @@ class Wagn::Renderer
     when card.spec[:return] =='count'
       results.to_s
     else
-      render('card_list', :results=>results)
+      _render_card_list args.merge( :results=>results )
     end
   end
   
@@ -46,21 +46,18 @@ class Wagn::Renderer
     end
   end
 
-
   define_view :card_list, :type=>'search' do |args|
-    cards = args[:results]
     @item_view ||= (card.spec[:view]) || :closed
-    paging = render(:paging, :results=>cards)
+    paging = optional_render :paging, args, :skip_perms=>true
 
-    # now the result string ...
     _render_search_header +
-    if cards.empty?
+    if args[:results].empty?
       %{<div class="search-no-results"></div>}
     else
       %{
       #{paging}
       <div class="search-result-list"> #{
-      cards.map do |c|
+      args[:results].map do |c|
         %{<div class="search-result-item item-#{ @item_view }">
           #{ process_inclusion c, :view=>@item_view }
         </div>}
@@ -96,7 +93,7 @@ class Wagn::Renderer
       cards_by_day[day] << card
     end
 
-    paging = render(:paging, :results=>cards)
+    paging = _render_paging :results=>cards
 %{<h1 class="page-header">Recent Changes</h1>
 <div class="open-view recent-changes">
   <div class="open-content">
@@ -126,30 +123,31 @@ class Wagn::Renderer
     s = card.spec(search_params)
     offset, limit = s[:offset].to_i, s[:limit].to_i
     first, last = offset+1, offset+results.length 
-    total = card.count(search_params)
+    
+    return '' if offset==0 && limit > last #avoid query if we know there aren't enough results to warrant paging 
+    total = card.count search_params
+    return '' if limit >= total # should only happen if limit exactly equals the total
  
     path_args = { :limit => limit, :item  => ( @item_view || args[:item] ) }
     s[:vars].each { |key, value| path_args["_#{key}"] = value }
 
-    out = []
-    if total > limit
-      out << '<span class="paging">'
-
-      if first > 1
-        path_args[:offset] = [offset-limit,0].max
-        out << link_to( image_tag('prev-page.png'), path(:view, path_args),
-          :class=>'card-paging-link slotter', :remote => true )
-      end
-      out << %{<span class="paging-range">#{ first } to #{ last } of #{ total }</span>}
-
-      if last < total
-        path_args[:offset] = last
-        out << link_to( image_tag('next-page.png'), path(:view, path_args),
-          :class=>'card-paging-link slotter', :remote => true ) 
-      end
-      
-      out << '</span>'
+    out = ['<span class="paging">' ]
+    
+    if first > 1
+      path_args[:offset] = [offset-limit,0].max
+      out << link_to( image_tag('prev-page.png'), path(:view, path_args),
+        :class=>'card-paging-link slotter', :remote => true )
     end
+    
+    out << %{<span class="paging-range">#{ first } to #{ last } of #{ total }</span>}
+
+    if last < total
+      path_args[:offset] = last
+      out << link_to( image_tag('next-page.png'), path(:view, path_args),
+        :class=>'card-paging-link slotter', :remote => true ) 
+    end
+    
+    out << '</span>'
     out.join
   end
 

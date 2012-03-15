@@ -104,6 +104,8 @@ module Wagn
         end
       end
       
+      private
+      
       def get_view_key view, opts
         unless pkey = Wagn::Model::Pattern.method_key(opts) 
           raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
@@ -118,7 +120,7 @@ module Wagn
     attr_reader :card, :root, :showname #should be able to factor out showname
     attr_accessor :form, :main_content, :main_card
 
-    def render view=:view, args={}
+    def render view = :view, args={}
       method = "render_#{canonicalize_view view}"
       if respond_to? method
         send method, args
@@ -126,7 +128,14 @@ module Wagn
         "<strong>unknown view: <em>#{view}<em></strong>"
       end
     end
-  
+
+    def optional_render view, args, opts={}
+      test = opts[:default_hidden] ? :show : :hide
+      override = args[test] && args[test].member?(view.to_s)
+      return nil if opts[:default_hidden] ? !override : override
+      send "#{ opts[:skip_perms] ? '_' : '' }render_#{ view }", args
+    end
+
     def rendering_error exception, cardname
       "Error rendering: #{cardname}"
     end
@@ -225,7 +234,7 @@ module Wagn
       nil
     end
   
-    def with_inclusion_mode(mode)
+    def with_inclusion_mode mode
       if switch_mode = INCLUSION_MODES[ mode ]
         old_mode, @mode = @mode, switch_mode
       end
@@ -234,7 +243,7 @@ module Wagn
       result
     end
   
-    def expand_inclusion(opts)
+    def expand_inclusion opts
       return opts[:comment] if opts.has_key?(:comment)
       # Don't bother processing inclusion if we're already out of view
       return '' if @mode == :closed && @char_count > @@max_char_count
@@ -256,7 +265,7 @@ module Wagn
       ''
     end
   
-    def expand_main(opts)
+    def expand_main opts
       return wrap_main( @root.main_content ) if @root.main_content
       [:item, :view, :size].each do |key|
         if val=params[key] and val.to_s.present?
@@ -271,11 +280,11 @@ module Wagn
       end
     end
   
-    def wrap_main(content)
+    def wrap_main content
       content  #no wrapping in base renderer
     end
   
-    def process_inclusion(tcard, options)
+    def process_inclusion tcard, options
       sub = subrenderer( tcard, 
         :item_view =>options[:item], 
         :type      =>options[:type],
@@ -309,7 +318,6 @@ module Wagn
     end
   
     def get_inclusion_content cardname
-      #Rails.logger.debug "get_inclusion_content(#{cardname.inspect})"
       content = params[cardname.to_s.gsub(/\+/,'_')]
   
       # CLEANME This is a hack to get it so plus cards re-populate on failed signups
@@ -356,14 +364,11 @@ module Wagn
             end
           end
         end
-        #if w = params[:wql] and explicit_vars = w[card.key]
-        #  p.merge! explicit_vars
-        #end
         p
       end
     end
       
-    def build_link(href, text, known_card=nil)
+    def build_link href, text, known_card = nil
       klass = case href
         when /^https?:/; 'external-link'
         when /^mailto:/; 'email-link'
@@ -388,7 +393,7 @@ module Wagn
     
     def unique_id() "#{card.key}-#{Time.now.to_i}-#{rand(3)}" end
 
-    def full_uri(relative_uri)
+    def full_uri relative_uri
       wagn_path relative_uri
     end
   
@@ -406,7 +411,7 @@ module Wagn
       raw( card_title_span(cardname.left_name) + %{<span class="joint">+</span>} + card_title_span(cardname.tag_name))
     end
 
-    def format_date(date, include_time = true)
+    def format_date date, include_time = true
       # Must use DateTime because Time doesn't support %e on at least some platforms
       if include_time
         DateTime.new(date.year, date.mon, date.day, date.hour, date.min, date.sec).strftime("%B %e, %Y %H:%M:%S")
@@ -423,7 +428,6 @@ module Wagn
     end
 
     def typecode_options_for_select selected=Card.default_typecode_key
-      #warn "SELECTED = #{selected}"
       options_from_collection_for_select(typecode_options, :first, :last, selected)
     end
 

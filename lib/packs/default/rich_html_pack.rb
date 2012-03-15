@@ -11,7 +11,7 @@ class Wagn::Renderer::Html
 
   define_view :layout do |args|
     if @main_content = args.delete(:main_content)
-      @card = Card.fetch_or_new('*placeholder')
+      @card = Card.fetch_or_new '*placeholder'
     else
       @main_card = card
     end
@@ -31,36 +31,37 @@ class Wagn::Renderer::Html
 
   define_view :titled do |args|
     wrap :titled, args do
+      name_styler +
       content_tag( :h1, fancy_title(card.name)) + wrap_content(:titled, _render_core(args))
     end
   end
 
   define_view :open do |args|
-    comment_box = ''
-    if card && card.ok?(:comment)
-      comment_box = 
-      %{<div class="comment-box nodblclick"> #{
-        card_form :comment do |f|
-          %{#{f.text_area :comment, :rows=>3 }<br/> #{
-          if User.current_user.login == "anon"
-            card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH
-            %{<label>My Name is:</label> #{ f.text_field :comment_author }}
-          end}
-          <input type="submit" value="Comment"/>}
-        end}
-      </div>}
-    end
-    
     wrap :open, args do
       %{ 
-         #{ header }
-         #{ wrap_content( :open, _render_open_content(args) ) } 
-         #{ comment_box }
+         #{ _render_header }
+         #{ wrap_content :open, _render_open_content(args) } 
+         #{ _render_comment_box }
          #{ notice }
-         #{ footer }
+         #{ _render_footer }
       }
     end
   end
+
+  define_view :comment_box do |args|
+    return '' unless card && card.ok?(:comment) #move into deny_render??
+    %{<div class="comment-box nodblclick"> #{
+      card_form :comment do |f|
+        %{#{f.text_area :comment, :rows=>3 }<br/> #{
+        if User.current_user.login == "anon"
+          card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH
+          %{<label>My Name is:</label> #{ f.text_field :comment_author }}
+        end}
+        <input type="submit" value="Comment"/>}
+      end}
+    </div>}
+  end
+
 
   define_view :closed do |args|
     wrap :closed, args do
@@ -99,6 +100,7 @@ class Wagn::Renderer::Html
   end
 
   define_view :missing do |args|
+    return '' unless card.ok? :create
     #warn "missing #{args.inspect} #{caller[0..10]*"\n"}"
     new_args = { 'card[name]'=>card.name }
     new_args['card[type]'] = args[:type] if args[:type]
@@ -114,8 +116,8 @@ class Wagn::Renderer::Html
     attrib = params[:attribute] || 'content'
     attrib = 'name' if params[:card] && params[:card][:name]
     wrap :edit, args do
-      %{#{ header}
-       <style>.SELF-#{card.css_name} .edit-area .namepart-#{card.css_name} { display: none; } </style>
+      %{#{ _render_header }
+        #{ name_styler '.edit-area' }
        <div class="card-body">
          #{ edit_submenu attrib}
          #{ render "edit_#{attrib}" }
@@ -272,7 +274,7 @@ class Wagn::Renderer::Html
     current = params[:attribute] || items.first.to_cardname.to_key
 
     wrap :related, args do
-      %{#{header }
+      %{#{ _render_header }
         <div class="submenu"> #{
           items.map do |item|
             key = item.to_cardname.to_key
@@ -284,7 +286,7 @@ class Wagn::Renderer::Html
          notice }
 
         <div class="open-content related"> #{
-          raw subrenderer(Card.fetch_or_new "#{card.name}+#{current}").render(:content) }
+          raw subrenderer(Card.fetch_or_new "#{card.name}+#{current}").render_content }
         </div>}
     end
   end
@@ -293,7 +295,7 @@ class Wagn::Renderer::Html
     attribute = params[:attribute]
     attribute ||= (card.extension_type=='User' ? 'account' : 'settings')
     wrap :options, args do
-      %{ #{ header } <div class="options-body"> #{ render "option_#{attribute}" } </div> #{ notice } }
+      %{ #{ _render_header } <div class="options-body"> #{ render "option_#{attribute}" } </div> #{ notice } }
     end
   end
 
@@ -347,7 +349,7 @@ class Wagn::Renderer::Html
   
   
         <div class="current-set">
-          #{ raw( subrenderer(Card.fetch current_set).render :content ) }
+          #{ raw( subrenderer(Card.fetch current_set).render_content ) }
         </div>
   #{
         if !card.extension_type && Card.toggle(card.rule('accountable')) && User.ok?(:create_accounts) && card.ok?(:update)
@@ -410,7 +412,7 @@ class Wagn::Renderer::Html
   define_view :changes do |args| 
     load_revisions
     wrap :changes, args do
-      %{#{header unless params['no_changes_header']}
+      %{#{ _render_header unless params['no_changes_header'] }
       <div class="revision-navigation">#{ revision_menu }</div>
 
       <div class="revision-header">
@@ -431,7 +433,7 @@ class Wagn::Renderer::Html
         </p>}
       end}
       </div>
-      <div class="revision">#{_render_diff}</div>
+      <div class="revision content">#{_render_diff}</div>
       <div class="revision-navigation card-footer">#{ revision_menu }</div>}
     end
   end
@@ -456,7 +458,7 @@ class Wagn::Renderer::Html
 
   define_view :remove do |args|
     wrap :remove, args do
-    %{#{ header}
+    %{#{ _render_header}
     #{card_form :remove, '', 'data-type'=>'html', 'main-success'=>'REDIRECT: TO-PREVIOUS' do |f|
     
       %{#{ hidden_field_tag 'confirm_destroy', 'true' }#{
@@ -507,19 +509,16 @@ class Wagn::Renderer::Html
   define_view :header do |args|
     %{<div class="card-header">
        #{ menu }
-
-         <div class="title-menu">
-           #{ link_to fancy_title(card), path(:view, :view=>:closed), :title => "close #{card.name}", 
-             :class => "line-link title down-arrow slotter", :remote => true }
-
-           #{ unless card.typecode=='Basic'
-             %{<span class="cardtype">#{ link_to_page card.typename }</span>}
-            end }
-
-           #{ page_icon(card.name) } &nbsp;
-         </div>
-
-         <style type="text/css">.SELF-#{card.cardname.css_name} .content .namepart-#{card.cardname.css_name} { display: none; }</style>
+       <div class="title-menu">
+         #{ link_to fancy_title(card), path(:view, :view=>:closed),
+            :title => "close #{card.name}", 
+            :class => "line-link title down-arrow slotter", 
+            :remote => true 
+          }
+         #{ card.typecode=='Basic' ? '' : %{<span class="cardtype">#{ link_to_page card.typename }</span>} }
+         #{ page_icon(card.name) } &nbsp;
+       </div>
+       #{ name_styler }
     </div>}
   end
 
@@ -588,7 +587,7 @@ class Wagn::Renderer::Html
   
   define_view :denial do |args|
     wrap :denial, args do #ENGLISH below
-      %{#{ header } 
+      %{#{ _render_header } 
         <div id="denied" class="instruction open-content">
           <h1>Ooo.  Sorry, but...</h1>
   
@@ -630,6 +629,10 @@ class Wagn::Renderer::Html
       </div>
     </body>
     }
+  end
+  
+  def name_styler subsection='.content'
+    %{ <style type="text/css">.SELF-#{card.cardname.css_name} #{subsection} .namepart-#{card.cardname.css_name} { display: none; }</style> }    
   end
   
   def card_form *opts

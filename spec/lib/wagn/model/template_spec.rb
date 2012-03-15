@@ -31,7 +31,7 @@ describe Card, "with right content template" do
   end       
  
   it "should have default content" do
-    Wagn::Renderer.new(@jb).render(:raw).should == 'Today!'
+    Wagn::Renderer.new(@jb)._render_raw.should == 'Today!'
   end        
   
   it "should change content with template" do

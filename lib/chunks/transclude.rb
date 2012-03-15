@@ -24,12 +24,18 @@ module Chunk
         return [nil, {:comment=>"<!-- #{CGI.escapeHTML match[1]} -->"}]
       end
       options = {
-        :tname   =>name,
+        :tname   =>name,  # this "t" is for transclusion.  should rename
+        
         :view  => nil,
         :item  => nil,
         :type  => nil,
         :size  => nil,
-        :unmask => match[1]
+        
+        :hide  => nil,
+        :show  => nil,
+        :wild  => nil,
+        
+        :unmask => match[1] # is this used?
       }
       style = {}
       configs = Hash.new_from_semicolon_attr_list match[4]
@@ -38,6 +44,11 @@ module Chunk
           options[key.to_sym] = value
         else
           style[key] = value
+        end
+      end
+      [:hide, :show].each do |disp|
+        if options[disp]
+          options[disp] = options[disp].split /[\s\,]+/
         end
       end
       options[:style] = style.map{|k,v| CGI.escapeHTML("#{k}:#{v};")}.join

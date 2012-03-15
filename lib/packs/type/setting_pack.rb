@@ -19,7 +19,7 @@ class Wagn::Renderer
       content_tag( :h2, 
         raw( (set_class.trunkless ? '' : '+') + set_class.key), 
         :class=>'values-for-setting') + 
-      raw( subrenderer(search_card).render(:content) )
+      raw( subrenderer(search_card).render_content )
     end.compact * "\n"
   
   end

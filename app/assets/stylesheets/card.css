@@ -11,9 +11,9 @@
   padding: 0px !important;
   -moz-border-radius: 8px;
   border-radius: 8px;
-  border: 1px solid #777;
-  border-bottom: 2px solid #888;
-  border-right: 2px solid #888;
+  border: 1px solid #aaa;
+  border-bottom: 2px solid #ccc;
+  border-right: 2px solid #ccc;
   width: 100%;  /*needed for ie6, or..?*/
   margin: 0px;
   background: #fff;
@@ -24,9 +24,9 @@ html>body .open-view {
   width: auto;  /* so non-ie browsers do better with image floats */
 }
 .card-slot,
-.card-slot .ALL {
+.ALL {
   overflow: hidden;
-  white-space: normal;
+  white-space: normal;  
 }
 
 /*----- header ---------*/
@@ -430,17 +430,6 @@ del.diffmod,
   margin: 2px;
   line-height: 13px
 }
-.template,
-.option-header h2 {
-  padding: 6px ;
-  text-align: center;
-}
-.template {
-  background: #bdd
-}
-.template .card-slot {
-  text-align: left;
-}
 .new-account-link {
   text-align: center;
 }
@@ -513,12 +502,6 @@ body#wagn .card-slot.recent-changes h2 {
 
 /*-----------  open cards -------*/
 
-
-
-/* this was occasionally busting auto-completes on pointers:
-  overflow: auto;
-*/
-
   /* means content view */
 .content-content {
   display: inline;
@@ -535,33 +518,30 @@ body#wagn .card-slot.recent-changes h2 {
   width: 100%;  /*needed for ie6, or..?*/
   background: #fff;
   overflow: hidden;
-  white-space: nowrap;
-  border-bottom: 0px;
-  border-color: #ccc;
-  -moz-border-radius: 2px 8px 2px 2px !important;
-  border-radius: 2px 8px 2px 2px !important;
-  padding: 0px;
-  margin: 0px;
-  line-height: 25px;  
-  /* necessary for IE6 */
-  height: 25px;
+  white-space: nowrap !important;
+  border: 0px;
+  border-bottom: 1px solid #ccc;
+  -moz-border-radius: 0 !important;
+  border-radius: 0 !important;
+  padding: 0;
+  margin: 0;
 }
 .closed-view .card-header {
-  padding-right: 22px;
-  display: inline;
-  float: left;
-  vertical-align: center;
+  padding: 3px 22px 3px 3px;
+  vertical-align: middle;
+  line-height: 15px;
+  -moz-border-radius: 0px 6px 6px 0px;
+  border-radius: 0px 6px 6px 0px;
+  margin-right: 4px;
 }
 .closed-view div:hover.card-header {
   padding-right: 0px;
 }
-.closed-view .card-header {
-  line-height: 15px;
-  -moz-border-radius: 0px 6px 6px 0px;
-  border-radius: 0px 6px 6px 0px;
-  padding-top: 4px;
-  padding-bottom: 3px;
-  margin-right: 4px;
+
+.closed-view .card-header,
+.closed-view .closed-content {
+  display: inline-block;
+  vertical-align: center;
 }
 
 .closed-content,
@@ -629,15 +609,6 @@ body#wagn .card-slot.recent-changes h2 {
   white-space: nowrap;
 }
 
-/*----------- Nested ---------*/
-
-.card-slot .card-slot.closed-view {
-  border: 0px;
-  border-bottom: 1px solid #ccc;
-  -moz-border-radius: 0px;
-  border-radius: 0px;
-  margin: 0px;
-}
 
 
 /* CARDTYPE_SPECIFIC ------------------------------*/
@@ -710,19 +681,18 @@ div.search-result-list {
   padding: 5px 0;
   margin: 0;
 }
-
 div.pointer-list .pointer-item,
 div.search-result-list .search-result-item {
   margin: 0;
 }
-
-.search-result-item.item-link, .pointer-item.item-link,
-.search-result-item.item-name, .pointer-item.item-name {
+.search-result-item.item-link,
+.pointer-item.item-link,
+.search-result-item.item-name,
+.pointer-item.item-name {
   display: block;
   text-indent: -15px;
   padding-left: 15px;
 }
-
 .radio-option-description,
 .checkbox-option-description {
   margin-left: 40px; 

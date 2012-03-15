@@ -33,28 +33,25 @@ td.rule-setting {
   max-width: 70%;
   margin-right: 5px;
 }
-.open-rule .rule-content {
-  padding: 10px;
-  clear: both;
-  min-height: 50px;
-
+.closed-rule {
+  height: 30px;
+}
+.closed-rule td {
+  vertical-align: middle;
 }
 .closed-rule .rule-content {
   width: 350px;
 }
-.closed-rule .rule-content div {
-  padding: 0;
-}
-.rule-content-container.closed-view {
+.rule-content-container {
   width: 350px;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: inherit;
   background: inherit;
 }
-.rule-content-container.closed-view .pointer-list,
-.rule-content-container.closed-view .search-list,
-.rule-content-container.closed-view .content {
+.rule-content-container .closed-content,
+.rule-content-container .closed-content .pointer-list,
+.rule-content-container .closed-content .search-list {
   margin: 0;
 }
 td.missing-rule {
@@ -70,6 +67,14 @@ td.missing-rule {
   width: 70%;
   border: 1px solid #eee;
   margin-top: 5px;
+}
+.open-rule .rule-setting {
+  padding-top: 4px;
+}
+.open-rule .rule-content {
+  padding: 10px;
+  clear: both;
+  min-height: 50px;
 }
 .open-rule .type-editor {
   width: 35%;

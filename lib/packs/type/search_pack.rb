@@ -50,38 +50,35 @@ class Wagn::Renderer
   define_view(:card_list, :type=>'search') do |args|
     cards = args[:results]
     @item_view ||= (card.spec[:view]) || :closed
-
-    instruction, title = nil,nil
-    if card.name=='*search' && search_params[:vars] && keyword=search_params[:vars][:keyword]
-      instruction = %{Cards matching keyword: <strong class="keyword">#{keyword}</strong>} #ENGLISH
-      title = 'Search Results' #ENGLISH
-    end
-
     paging = render(:paging, :results=>cards)
 
     # now the result string ...
-    if title
-      %{<h1 class="page-header">#{ title }</h1>}
-    else '' end +
-    if instruction; %{
-<div class="instruction">
-    <p>#{ instruction }</p>
-  </div>}
-    else '' end +
+    _render_search_header +
     if cards.empty?
       %{<div class="search-no-results"></div>}
-    else %{#{paging}
-  <div class="search-result-list"> #{
+    else
+      %{
+      #{paging}
+      <div class="search-result-list"> #{
       cards.map do |c|
-        %{<div class="search-result-item item-#{ @item_view }">#{
-        process_inclusion(c, :view=>@item_view) }</div>}
+        %{<div class="search-result-item item-#{ @item_view }">
+          #{ process_inclusion c, :view=>@item_view }
+        </div>}
       end.join }
-  </div>#{ paging }}
+      </div>
+      #{ paging }
+      }
     end
   end
+  
+  define_view :search_header do |args|
+    ''
+  end
 
-
-
+  define_view :search_header, :name=>'*search' do |args|
+    return '' unless vars = search_params[:vars] and keyword = vars[:keyword]
+    %{<h1 class="page-header search-result-header">Search results for: <em>#{keyword}</em></h1>}
+  end
 
   define_view(:card_list, :name=>'*recent') do |args|
     cards = args[:results]

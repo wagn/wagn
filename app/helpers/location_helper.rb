@@ -13,7 +13,7 @@ module LocationHelper
   #
   def location_history
 #    warn "sess #{session.class}, #{session.object_id}"
-    session[:history] ||= ['/']
+    session[:history] ||= [wagn_path('')]
     if session[:history]
       session[:history].shift if session[:history].size > 5
       session[:history]
@@ -78,11 +78,4 @@ module LocationHelper
     link_to text, url, options
   end
 
-  def card_title_span( title )
-    %{<span class="namepart-#{title.to_cardname.css_name}">#{title}</span>}
-  end
-
-  def page_icon(cardname)
-    link_to_page '&nbsp;'.html_safe, cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
-  end
 end

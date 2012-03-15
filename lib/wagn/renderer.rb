@@ -5,12 +5,11 @@ module Wagn
     include ReferenceTypes
     include LocationHelper
 
-    DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed,
-      :bare=>:core, :naked=>:core }
+    DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     UNDENIABLE_VIEWS = [ :deny_view, :denial, :errors, :edit_virtual,
       :too_slow, :too_deep, :missing, :not_found, :closed_missing, :name,
       :link, :linkname, :url, :show, :layout, :bad_address, :server_error ]
-    INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :edit=>:edit,
+    INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit }
     DEFAULT_ITEM_VIEW = :link
   
@@ -24,24 +23,9 @@ module Wagn
 
     @@max_char_count = 200
     @@max_depth = 10
-    @@set_views = {}
+    @@non_base_views = {}
 
     class << self
-      def get_pattern(view,opts)
-        unless pkey = Wagn::Model::Pattern.method_key(opts) #and opts.empty?
-          raise "Bad Pattern opts: #{pkey.inspect} #{opts.inspect}"
-        end
-        return (pkey.blank? ? view : "#{pkey}_#{view}").to_sym
-      end
-  
-      def register_view(view_key, nview_key)
-        if @@set_views.has_key?(nview_key)
-          raise "Attempt to redefine view: #{nview_key}, #{view_key}"
-        end
-        @@set_views[nview_key.to_sym] = "_final_#{view_key}".to_sym
-      end
-  
-  
       def new(card, opts={})
         if self==Renderer
           fmt = (opts[:format] ? opts[:format].to_sym : :html)
@@ -54,8 +38,6 @@ module Wagn
         new_renderer.send :initialize, card, opts
         new_renderer
       end
-  
-      def set_view(key) @@set_views[key.to_sym] end
   
     # View definitions
     #
@@ -78,11 +60,13 @@ module Wagn
 
 
       def define_view(view, opts={}, &final)
-        view_key = get_pattern(view, opts)
+        view_key = get_view_key(view, opts)
         define_method( "_final_#{view_key}", &final )
+        @@non_base_views[view] = true if !opts.empty?
 
         if !method_defined? "render_#{view}"
-          define_method( "_render_#{view}" ) do |*a| a = [{}] if a.empty?
+          define_method( "_render_#{view}" ) do |*a|
+            a = [{}] if a.empty?
             if final_method = view_method(view)
               with_inclusion_mode(view) { send(final_method, *a) }
             else
@@ -92,11 +76,11 @@ module Wagn
 
           define_method( "render_#{view}" ) do |*a|
             begin
-              denial=deny_render(view, *a) and return denial
+              denial=deny_render(view.to_sym, *a) and return denial
               msg = "render #{view} #{ card && card.name.present? ? "called for #{card.name}" : '' }"
-              ActiveSupport::Notifications.instrument 'wagn.render', :message=>msg do
+#              ActiveSupport::Notifications.instrument 'wagn.render', :message=>msg do
                 send( "_render_#{view}", *a)
-              end
+#              end
             rescue Exception=>e
               Rails.logger.info "\nRender Error: #{e.message}"
               Rails.logger.debug "  #{e.backtrace*"\n  "}"
@@ -107,12 +91,12 @@ module Wagn
       end
 
       def alias_view(view, opts={}, *aliases)
-        view_key = get_pattern(view, opts)
+        view_key = get_view_key(view, opts)
         aliases.each do |aview|
           aview_key = case aview
             when String; aview
             when Symbol; (view_key==view ? aview.to_sym : view_key.to_s.sub(/_#{view}$/, "_#{aview}").to_sym)
-            when Hash;   get_pattern( aview[:view] || view, aview)
+            when Hash;   get_view_key( aview[:view] || view, aview)
             else; raise "Bad view #{aview.inspect}"
             end
 
@@ -121,7 +105,17 @@ module Wagn
           end
         end
       end
+      
+      def get_view_key(view,opts)
+        unless pkey = Wagn::Model::Pattern.method_key(opts) 
+          raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
+        end
+        key = pkey.blank? ? view : "#{pkey}_#{view}"
+        key.to_sym
+      end
+      
     end
+
 
     attr_reader :card, :root, :showname #should be able to factor out showname
     attr_accessor :form, :main_content, :main_card
@@ -142,7 +136,6 @@ module Wagn
       if card && card.collection? && params[:item] && !params[:item].blank?
         @item_view = params[:item]
       end
-      
     end
 
 
@@ -205,7 +198,7 @@ module Wagn
       content = card.content if content.blank?
   
       wiki_content = WikiContent.new(card, content, self)
-      update_references(wiki_content) if card.references_expired
+      update_references( wiki_content, true ) if card.references_expired
   
       wiki_content.render! do |opts|
         expand_inclusion(opts) { yield }
@@ -233,7 +226,7 @@ module Wagn
     end
   
     def view_method(view)
-      return "_final_#{view}" unless card
+      return "_final_#{view}" if !card || !@@non_base_views[view]
       card.method_keys.each do |method_key|
         meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
         return meth if respond_to?(meth.to_sym)
@@ -247,7 +240,7 @@ module Wagn
       end
       result = yield
       @mode = old_mode if switch_mode
-      result      
+      result
     end
   
     def expand_inclusion(opts)
@@ -379,7 +372,7 @@ module Wagn
       end
     end
       
-    def build_link(href, text)
+    def build_link(href, text, known_card=nil)
       #Rails.logger.info "build_link(#{href.inspect}, #{text.inspect})"
       klass = case href
         when /^https?:/; 'external-link'
@@ -388,18 +381,18 @@ module Wagn
           href = full_uri href.to_s      
           'internal-link'
         else
-          known_card = !!Card.fetch(href)
+          known_card = !!Card.fetch(href) if known_card.nil?
           if card
             text = text.to_cardname.to_show card.name
           end
           href = href.to_cardname
           href = known_card ? href.to_url_key : CGI.escape(href.escape)
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
-          href = full_uri(href.to_s)
+          href = full_uri href.to_s
           known_card ? 'known-card' : 'wanted-card'
       end
       #Rails.logger.info "build_link(#{href.inspect}, #{text.inspect}) #{klass}"
-      %{<a class="#{klass}" href="#{href.to_s}">#{text.to_s}</a>}      
+      %{<a class="#{klass}" href="#{href.to_s}">#{text.to_s}</a>}
     end
     
     def unique_id() "#{card.key}-#{Time.now.to_i}-#{rand(3)}" end
@@ -409,7 +402,48 @@ module Wagn
     end
   
   
-  
+    # moved in from wagn_helper
+    
+
+    def formal_title(card)
+      card.cardname.parts.join " <span class=\"wiki-joint\">+</span> "
+    end
+
+    def fancy_title(card)
+      cardname = (Card===card ? card.cardname : card.to_cardname)
+      return cardname if cardname.simple?
+      raw( card_title_span(cardname.left_name) + %{<span class="joint">+</span>} + card_title_span(cardname.tag_name))
+    end
+
+
+    def format_date(date, include_time = true)
+      # Must use DateTime because Time doesn't support %e on at least some platforms
+      if include_time
+        DateTime.new(date.year, date.mon, date.day, date.hour, date.min, date.sec).strftime("%B %e, %Y %H:%M:%S")
+      else
+        DateTime.new(date.year, date.mon, date.day).strftime("%B %e, %Y")
+      end
+    end
+
+    ## ----- for Linkers ------------------
+    def typecode_options
+      Cardtype.createable_types.map do |type|
+        [type[:name], type[:name]]
+      end.compact
+    end
+
+    def typecode_options_for_select(selected=Card.default_typecode_key)
+      #warn "SELECTED = #{selected}"
+      options_from_collection_for_select(typecode_options, :first, :last, selected)
+    end
+
+    def card_title_span( title )
+      %{<span class="namepart-#{title.to_cardname.css_name}">#{title}</span>}
+    end
+
+    def page_icon(cardname)
+      link_to_page '&nbsp;'.html_safe, cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
+    end
   
 
      ### FIXME -- this should not be here!   probably in WikiReference model?
@@ -435,29 +469,27 @@ module Wagn
     end
 
     #FIXME -- should not be here.
-    def update_references(rendering_result=nil)
-      return unless card
+    def update_references rendering_result = nil, refresh = false
+      return unless card && card.id
       WikiReference.delete_all ['card_id = ?', card.id]
+      card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
+      Wagn::Cache.expire_card( card.key ) if refresh
+      rendering_result ||= WikiContent.new(card, _render_refs, self)
+      rendering_result.find_chunks(Chunk::Reference).each do |chunk|
+        reference_type =
+          case chunk
+            when Chunk::Link;       chunk.refcard ? LINK : WANTED_LINK
+            when Chunk::Transclude; chunk.refcard ? TRANSCLUSION : WANTED_TRANSCLUSION
+            else raise "Unknown chunk reference class #{chunk.class}"
+          end
 
-      if card.id
-        card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
-        rendering_result ||= WikiContent.new(card, _render_refs, self)
-        rendering_result.find_chunks(Chunk::Reference).each do |chunk|
-          reference_type =
-            case chunk
-              when Chunk::Link;       chunk.refcard ? LINK : WANTED_LINK
-              when Chunk::Transclude; chunk.refcard ? TRANSCLUSION : WANTED_TRANSCLUSION
-              else raise "Unknown chunk reference class #{chunk.class}"
-            end
-
-         #ref_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
-          #raise "No name to ref? #{card.name}, #{chunk.inspect}" unless chunk.refcardname()
-          WikiReference.create!( :card_id=>card.id,
-            :referenced_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
-            :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
-            :link_type=>reference_type
-           )
-        end
+       #ref_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
+        #raise "No name to ref? #{card.name}, #{chunk.inspect}" unless chunk.refcardname()
+        WikiReference.create!( :card_id=>card.id,
+          :referenced_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
+          :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
+          :link_type=>reference_type
+         )
       end
     end
   end

@@ -519,8 +519,8 @@ class Wagn::Renderer::Html
            #{ link_to fancy_title(card), path(:view, :view=>:closed), :title => "close #{card.name}",
              :class => "line-link title down-arrow slotter", :remote => true }
 
-           #{ unless card.type_id == Card::DefaultID
-             %{<span class="cardtype">#{ link_to_page( Card.typename_from_id(card.type_id) ) }</span>}
+           #{ unless card.typecode=='Basic'
+             %{<span class="cardtype">#{ link_to_page card.typename }</span>}
             end }
 
            #{ page_icon(card.name) } &nbsp;
@@ -653,7 +653,7 @@ class Wagn::Renderer::Html
   private
 
   def watching_type_cards
-    "watching #{link_to_page(Card.typename_from_id(card.type_id))} cards"      # can I parse this and get the link to happen? that wud r@wk.
+    "watching #{ link_to_page card.typename } cards"      # can I parse this and get the link to happen? that wud r@wk.
   end
 
   def watch_unwatch

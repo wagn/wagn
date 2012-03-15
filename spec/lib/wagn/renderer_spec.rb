@@ -445,12 +445,7 @@ describe Wagn::Renderer, "" do
         assert_view_select render_editor('Plain Text'), 'textarea[rows="3"]'
       end
 
-      it "should have special content that converts newlines to <br>'s" do
-        render_card(:core, :type=>'Plain Text', :content=>"a\nb").should == 'a<br/>b'
-      end
-
       it "should have special content that escapes HTML" do
-        pending
         render_card(:core, :type=>'Plain Text', :content=>"<b></b>").should == '&lt;b&gt;&lt;/b&gt;'
       end
     end

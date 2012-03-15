@@ -666,6 +666,12 @@ body#wagn .card-slot.recent-changes h2 {
 .search-no-results:after {
   content:'0 results'; 
 }
+.search-count {
+  float: right;
+  color: #bbc;
+}
+
+
 
 /*---------(Search & Pointer) --------*/
 

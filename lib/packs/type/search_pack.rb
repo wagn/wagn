@@ -35,9 +35,9 @@ class Wagn::Renderer
     elsif card.spec[:return] =='count'
       results.to_s
     elsif results.length==0
-      '<span class="faint">(0)</span>'
+      '<span class="search-count">(0)</span>'
     else
-      %{<span class="faint">(#{ card.count })</span>
+      %{<span class="search-count">(#{ card.count })</span>
       <div class="search-result-list">
         #{results.map do |c|
           %{<div class="search-result-item">#{@item_view == 'name' ? c.name : link_to_page( c.name ) }</div>}
@@ -48,7 +48,7 @@ class Wagn::Renderer
 
   define_view :card_list, :type=>'search' do |args|
     @item_view ||= (card.spec[:view]) || :closed
-    paging = optional_render :paging, args, :skip_perms=>true
+    paging = _optional_render :paging, args
 
     _render_search_header +
     if args[:results].empty?
@@ -63,7 +63,7 @@ class Wagn::Renderer
         </div>}
       end.join }
       </div>
-      #{ paging }
+      #{ paging if args[:results].length > 10 }
       }
     end
   end
@@ -93,7 +93,8 @@ class Wagn::Renderer
       cards_by_day[day] << card
     end
 
-    paging = _render_paging :results=>cards
+    paging = _optional_render :paging, :results=>cards
+    
 %{<h1 class="page-header">Recent Changes</h1>
 <div class="open-view recent-changes">
   <div class="open-content">
@@ -119,36 +120,58 @@ class Wagn::Renderer
 
 
   define_view :paging, :type=>'search' do |args|
-    results = args[:results]
-    s = card.spec(search_params)
-    offset, limit = s[:offset].to_i, s[:limit].to_i
-    first, last = offset+1, offset+results.length 
-    
-    return '' if offset==0 && limit > last #avoid query if we know there aren't enough results to warrant paging 
+    s = card.spec search_params
+    offset, limit = s[:offset].to_i, s[:limit].to_i    
+    return '' if offset==0 && limit > offset + args[:results].length #avoid query if we know there aren't enough results to warrant paging 
     total = card.count search_params
     return '' if limit >= total # should only happen if limit exactly equals the total
  
-    path_args = { :limit => limit, :item  => ( @item_view || args[:item] ) }
+    @paging_path_args = { :limit => limit, :item  => ( @item_view || args[:item] ) }
+    @paging_limit = limit
+    
     s[:vars].each { |key, value| path_args["_#{key}"] = value }
 
     out = ['<span class="paging">' ]
     
-    if first > 1
-      path_args[:offset] = [offset-limit,0].max
-      out << link_to( image_tag('prev-page.png'), path(:view, path_args),
-        :class=>'card-paging-link slotter', :remote => true )
-    end
+    total_pages = (total / limit).to_i
+    current_page = (offset / limit).to_i
+    window = 2
+    window_min = current_page - window
+    window_max = current_page + window
     
-    out << %{<span class="paging-range">#{ first } to #{ last } of #{ total }</span>}
+    if current_page > 0
+      out << page_link( '&laquo; prev', current_page - 1 )
+    end
 
-    if last < total
-      path_args[:offset] = last
-      out << link_to( image_tag('next-page.png'), path(:view, path_args),
-        :class=>'card-paging-link slotter', :remote => true ) 
+    out << %{<span class="paging-numbers">}
+    if window_min > 0
+      out << page_link( 1, 0 )
+      out << '...' if window_min > 1
+    end    
+    
+    (window_min .. window_max).each do |page|
+      next if page < 0 or page > total_pages
+      text = page + 1
+      out <<  ( page==current_page ? text : page_link( text, page ) )
     end
     
-    out << '</span>'
+    if total_pages > window_max
+      out << '...' if total_pages > window_max + 1
+      out << page_link( total_pages + 1, total_pages )
+    end    
+    out << %{</span>}
+    
+    if current_page < total_pages
+      out << page_link( 'next &raquo;', current_page + 1 )
+    end
+    
+    out << %{<span class="search-count">(#{total})</span></span>}
     out.join
+  end
+  
+  def page_link text, page
+    @paging_path_args[:offset] = page * @paging_limit
+    " #{link_to raw(text), path(:view, @paging_path_args), :class=>'card-paging-link slotter', :remote => true} "
   end
 
   def paging_params

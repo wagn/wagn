@@ -129,11 +129,12 @@ module Wagn
       end
     end
 
-    def optional_render view, args, opts={}
-      test = opts[:default_hidden] ? :show : :hide
+    #should also be a #optional_render that checks perms
+    def _optional_render view, args, default_hidden=false
+      test = default_hidden ? :show : :hide
       override = args[test] && args[test].member?(view.to_s)
-      return nil if opts[:default_hidden] ? !override : override
-      send "#{ opts[:skip_perms] ? '_' : '' }render_#{ view }", args
+      return nil if default_hidden ? !override : override
+      send "_render_#{ view }", args
     end
 
     def rendering_error exception, cardname

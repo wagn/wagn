@@ -38,20 +38,18 @@ module Wagn::Model::References
   def expire_cache
     expire(self)
     return if ENV['MIGRATE_PERMISSIONS'] == 'true'
-    if self.hard_template?
-      self.hard_templatees.each {|c| expire(c) }
-    end
-    self.dependents.each {|c| expire(c) }
-    self.referencers.each {|c| expire(c) }
-    self.name_referencers.each{|c| expire(c)}
+    self.hard_templatee_names.each {|c| expire(c) } if self.hard_template?
+    # FIXME really shouldn't be instantiating all the following bastards.  Just need the key.
+    self.dependents.each           {|c| expire(c) }
+    self.referencers.each          {|c| expire(c) }
+    self.name_referencers.each     {|c| expire(c) }
     # FIXME: this will need review when we do the new defaults/templating system
     #if card.changed?(:content)
-
-    # this seems like oodles of unnecessary instantiations to me -efm
   end
   
   def expire(card)
-    Wagn::Cache.expire_card card.key
+    key = String===card ? card : card.key
+    Wagn::Cache.expire_card key
   end
   
   def self.included(base)   

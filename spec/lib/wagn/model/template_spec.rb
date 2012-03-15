@@ -8,7 +8,7 @@ describe Card do
   
   describe "#hard_templatees" do
     it "for User+*type+*content should return all Users" do
-      Card.create(:name=>'User+*type+*content').hard_templatees.map(&:name).sort.should == [
+      Card.create(:name=>'User+*type+*content').hard_templatee_names.sort.should == [
         "Joe Admin", "Joe Camel", "Joe User", "John", "No Count", "Sample User", "Sara", "u1", "u2", "u3"
       ]
     end

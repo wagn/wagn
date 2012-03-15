@@ -84,7 +84,8 @@ module Wagn::Model::TrackedAttributes
     return true if new_card?
     on_type_change # FIXME this should be a callback
     if hard_template? && !type_template?
-      hard_templatees.each do |tee|
+      hard_templatee_names.each do |templatee_name|
+        tee = Card[templatee_name]
         tee.allow_type_change = true  #FIXME? this is a hacky way around the standard validation
         tee.typecode = new_typecode
         tee.save!

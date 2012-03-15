@@ -524,11 +524,12 @@ body#wagn .card-slot.recent-changes h2 {
   -moz-border-radius: 0 !important;
   border-radius: 0 !important;
   padding: 0;
-  margin: 0;
+  margin: 1px 0 0 0;
 }
 .closed-view .card-header {
   padding: 3px 22px 3px 3px;
   vertical-align: middle;
+  display: inline-block;
   line-height: 15px;
   -moz-border-radius: 0px 6px 6px 0px;
   border-radius: 0px 6px 6px 0px;
@@ -537,13 +538,6 @@ body#wagn .card-slot.recent-changes h2 {
 .closed-view div:hover.card-header {
   padding-right: 0px;
 }
-
-.closed-view .card-header,
-.closed-view .closed-content {
-  display: inline-block;
-  vertical-align: center;
-}
-
 .closed-content,
 .closed-content tr, 
 .closed-content td, 

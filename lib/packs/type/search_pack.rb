@@ -129,7 +129,7 @@ class Wagn::Renderer
     @paging_path_args = { :limit => limit, :item  => ( @item_view || args[:item] ) }
     @paging_limit = limit
     
-    s[:vars].each { |key, value| path_args["_#{key}"] = value }
+    s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }
 
     out = ['<span class="paging">' ]
     

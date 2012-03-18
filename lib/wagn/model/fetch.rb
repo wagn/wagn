@@ -33,6 +33,8 @@ module Wagn::Model::Fetch
         end
       
         Card.cache.write( cardname.key, card ) if needs_caching
+        card.loaded_trunk = opts[:loaded_trunk] if opts[:loaded_trunk] && card.new_card?
+        
         return nil if card.new_card? && (opts[:skip_virtual] || !card.virtual?)
 
         card.include_set_modules unless opts[:skip_modules]

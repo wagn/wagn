@@ -7,20 +7,10 @@ describe "Card" do
   before do
     Timecop.travel(FUTURE)  # make sure we're ahead of all the test data
   end 
-
+  
   describe "#watchers" do
     it "returns users watching this card specifically" do
       Card["All Eyes On Me"].watchers.should == ["Sara", "John"]
-    end
-  
-    it "returns users watching cards of this type" do
-      Card["Sunglasses"].watchers.should == ["Sara"]
-    end
-  end
-  
-  describe "#card_watchers" do
-    it "returns users watching this card specifically" do
-      Card["All Eyes On Me"].card_watchers.should == ["Sara", "John"]
     end
   end
   

@@ -53,18 +53,10 @@ module Notification
     
     def watcher_watched_pairs
       author = User.current_user.card.cardname
-      card_watchers.except(author).map { |watcher| [ Card[watcher].extension, self.cardname ] } +
+      watchers.except(     author).map { |watcher| [ Card[watcher].extension, self.cardname ] } +
       type_watchers.except(author).map { |watcher| [ Card[watcher].extension, self.typename ] }
     end
     
-    def card_watchers 
-      #Rails.logger.debug "card_watchers #{name}"
-      items_from("#{name}+*watchers")
-    end
-    
-    def type_watchers
-      items_from("#{self.typename}+*watchers" )
-    end
     
     def items_from( name )
       #Rails.logger.info "items_from (#{name.inspect})"
@@ -72,10 +64,13 @@ module Notification
         (c = Card[name.to_cardname]) ? c.item_names.reject{|x|x==''}.map(&:to_cardname) : []
       end
     end  
-      
-    def watchers
-      card_watchers + type_watchers
-    end
+
+
+    def watchers()        items_from "#{name}+*watchers"                      end
+    def type_watchers()   items_from "#{self.typename}+*watchers"             end
+    def watching?()       watchers.include?      User.current_user.card.name  end
+    def watching_type?()  type_watchers.include? User.current_user.card.name  end
+    
   end    
 
 

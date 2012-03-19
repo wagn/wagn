@@ -211,8 +211,10 @@ module Wagn
     def deny_render action, args={}
       return false if UNDENIABLE_VIEWS.member?(action)
       ch_action = case
-        when too_deep?      ; :too_deep
-        when !card          ; false
+        when too_deep?            ; :too_deep
+        when !card                ; false
+        when action == :watch
+          :blank if !User.logged_in? || card.virtual?
         when [:new, :edit, :edit_in_form].member?(action)
           allowed = card.ok?(card.new_card? ? :create : :update)
           !allowed && :deny_view #should be deny_create or deny_update...

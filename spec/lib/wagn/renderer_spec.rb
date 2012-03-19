@@ -182,7 +182,7 @@ describe Wagn::Renderer, "" do
       it "renders card footer" do
         assert_view_select @simple_page, 'div[class="card-footer"]' do
           assert_select 'span[class="watch-link"]' do
-            assert_select 'a[title="get emails about changes to A+B"]', "watch"
+            assert_select 'a[title="send emails about changes to A+B"]', "watch"
           end
         end
       end

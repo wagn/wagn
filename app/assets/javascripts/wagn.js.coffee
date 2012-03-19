@@ -83,7 +83,7 @@ jQuery.fn.extend {
 
 setInterval (-> $('.card-form').setContentFieldsFromMap()), 20000
 
-$(window).load ->
+$(window).ready ->
   $.ajaxSetup cache: false
   
   wagn.initializeEditors $('body')

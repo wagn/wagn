@@ -79,7 +79,6 @@ class Wagn::Renderer::Html
   end
 
 
-
   define_view :new do |args|
     @help_card = card.rule_card('add help', 'edit help')
     if ajax_call?
@@ -160,8 +159,6 @@ class Wagn::Renderer::Html
        <h2>Change Name</h2>
       #{ card_form path(:update, :id=>card.id), 'card-edit-name-form', 'main-success'=>'REDIRECT' do |f|
           
-          
-          
         %{<div>to #{ raw f.text_field( :name, :class=>'card-name-field', :value=>card.name, :autocomplete=>'off' ) } </div>
         #{ hidden_field_tag :success, 'TO-CARD' }
         #{
@@ -217,8 +214,6 @@ class Wagn::Renderer::Html
       card_form :update, 'card-edit-type-form' do |f|
         #'main-success'=>'REDIRECT: TO-CARD', # adding this back in would make main cards redirect on cardtype changes
        
-        
-        
         %{ #{ hidden_field_tag :view, :edit }
         #{if card.typecode == 'Cardtype' and card.extension and !Card.search(:type=>card.cardname).empty? #ENGLISH
           %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
@@ -321,7 +316,6 @@ class Wagn::Renderer::Html
 
   define_view :option_settings do |args|
   
-
     related_sets = card.related_sets
     current_set = params[:current_set] || related_sets[(card.typecode=='Cardtype' ? 1 : 0)]
 
@@ -525,7 +519,7 @@ class Wagn::Renderer::Html
   define_view :footer do |args|
     %{<div class="card-footer">
       <span class="footer-content">
-        <span class="watch-link">#{ _render_watch }</span>
+        <span class="watch-link">#{ render_watch }</span>
         <span class="footer-links">
           <label>Cards:</label>
           #{raw card.cardname.piece_names.map {|c| link_to_page c}.join(', ') }
@@ -572,18 +566,28 @@ class Wagn::Renderer::Html
   
 
   define_view :watch do |args|
-    return "" unless User.logged_in?   
-    return "" if card.virtual?
     wrap :watch do
-      @me = User.current_user.card.name          
-      if card.typecode == "Cardtype"
-        (card.type_watchers.include?(@me) ? "#{watching_type_cards} | " : "") +  watch_unwatch
+      if card.watching_type?
+        watching_type_cards
       else
-        card.type_watchers.include?(@me)  ? watching_type_cards : watch_unwatch
-      end      
+        link_args = if card.watching?
+          ["unwatch", :off, "stop sending emails about changes to #{card.cardname}"]
+        else
+          ["watch", :on, "send emails about changes to #{card.cardname}"]
+        end
+        watch_link *link_args
+      end
     end
   end
   
+  def watching_type_cards
+    "watching #{ link_to_page card.typename } cards"
+  end
+
+  def watch_link text, toggle, title
+    link_to "#{text}", path(:watch, :toggle=>toggle), 
+      :class=>'watch-toggle slotter', :title=>title, :remote=>true, :method=>'post'
+  end
   
   define_view :denial do |args|
     wrap :denial, args do #ENGLISH below
@@ -649,24 +653,7 @@ class Wagn::Renderer::Html
   
   private
 
-  def watching_type_cards
-    "watching #{ link_to_page card.typename } cards"      # can I parse this and get the link to happen? that wud r@wk.
-  end
 
-  def watch_unwatch      
-    type_link = (card.typecode == "Cardtype") ? " #{card.name} cards" : ""
-    type_msg = (card.typecode == "Cardtype") ? " cards" : ""    
-
-    if card.card_watchers.include?(@me) or card.typecode != 'Cardtype' && card.watchers.include?(@me)
-      text, toggle, title = "unwatch", :off, "stop getting emails about changes to"
-    else
-      text, toggle, title = "watch", :on, "get emails about changes to"
-    end
-    
-    link_to "#{text}#{type_link}", path(:watch, :toggle=>toggle), :class=>'watch-toggle slotter',
-      :title=>"#{title} #{card.name}#{type_msg}", :remote=>true, :method=>'post'
-    
-  end
 
   def load_revisions
     @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i
@@ -745,7 +732,5 @@ class Wagn::Renderer::Html
    end
   end
 
-
-  
 end
 

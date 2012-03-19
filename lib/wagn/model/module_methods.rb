@@ -26,10 +26,12 @@ module Wagn::Model::ModuleMethods
   def codename_unavailable?(codename)
     Card.find_by_codename(codename) || ::Cardtype.find_by_class_name(codename)
   end
-
+  
   def default_typecode_key
     "Basic"
   end
+  
+
 end
 
 

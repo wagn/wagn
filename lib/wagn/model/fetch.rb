@@ -19,23 +19,23 @@ module Wagn::Model::Fetch
 #      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{cardname}" do
       
         cardname = cardname.to_cardname
+        opts[:skip_virtual] = true if opts[:loaded_trunk]
 
         card = Card.cache.read( cardname.key ) if Card.cache
         return nil if card && opts[:skip_virtual] && card.new_card?
 
-        needs_caching = !Card.cache.nil? && card.nil?
-        card ||= find_by_key_and_trash( cardname.key, false )
-      
-        if card.nil? || (!opts[:skip_virtual] && card.typecode=='$NoType')
+        needs_caching = card.nil?
+        card ||= find_by_key_and_trash cardname.key, false
+    
+        if card.nil? or !opts[:skip_virtual] && card.typecode=='$NoType'
           # The $NoType typecode allows us to skip all the type lookup and flag the need for reinitialization later
-          needs_caching = !Card.cache.nil?
+          needs_caching = true
           card = new :name=>cardname, :skip_modules=>true, :typecode=>( opts[:skip_virtual] ? '$NoType' : '' )
         end
+    
+        Card.cache.write( cardname.key, card ) if Card.cache && needs_caching
       
-        Card.cache.write( cardname.key, card ) if needs_caching
-        card.loaded_trunk = opts[:loaded_trunk] if opts[:loaded_trunk] && card.new_card?
-        
-        return nil if card.new_card? && (opts[:skip_virtual] || !card.virtual?)
+        return nil if card.new_card? and opts[:skip_virtual] || !card.virtual?
 
         card.include_set_modules unless opts[:skip_modules]
         card

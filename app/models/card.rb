@@ -68,9 +68,9 @@ class Card < ActiveRecord::Base
   end
 
   def new_card?()  new_record? || @from_trash  end
-  def known?()    !(new_card? && !virtual?)   end
+  def known?()    !(new_card? && !virtual?)    end
   
-  def reset_mods() @set_mods_loaded=false end
+  def reset_mods() @set_mods_loaded=false      end
 
 #private
 

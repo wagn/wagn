@@ -584,9 +584,9 @@ class Wagn::Renderer::Html
     "watching #{ link_to_page card.typename } cards"
   end
 
-  def watch_link text, toggle, title
+  def watch_link text, toggle, title, extra={}
     link_to "#{text}", path(:watch, :toggle=>toggle), 
-      :class=>'watch-toggle slotter', :title=>title, :remote=>true, :method=>'post'
+      {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :title=>title, :remote=>true, :method=>'post'}.merge(extra)
   end
   
   define_view :denial do |args|

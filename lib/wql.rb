@@ -166,9 +166,9 @@ class Wql
         absolute_name val
       when Wagn::Cardname         ; clean_val val.s
       when Hash                   ; clean val
-      when Array                  ; val.map{ |v| clean_val v }
+      when Array                  ; val.map { |v| clean_val v }
       when Integer, Float, Symbol ; val
-      else                        ; fail "unknown WQL value type: #{val.class}"
+      else                        ; raise "unknown WQL value type: #{val.class}"
       end
     end
     

@@ -8,12 +8,13 @@ wagn.initializeEditors = (range, map) ->
 wagn.prepUrl = (url, slot)->
   xtra = {}
   main = $('#main').children('.card-slot').attr 'card-name'
-  xtra['main'] = main  if main?
+  xtra['main'] = main if main?
   if slot
     home_view = slot.attr 'home_view'
     item      = slot.attr 'item' 
     xtra['home_view'] = home_view if home_view?
     xtra['item']      = item      if item?
+    xtra['is_main']   = true      if slot.isMain
   url + ( (if url.match /\?/ then '&' else '?') + $.param(xtra) )
 
 jQuery.fn.extend {
@@ -197,6 +198,11 @@ $(window).ready ->
     content_field = $(this)
     setTimeout ( -> content_field.autosave() ), 500
   
+  $('[hover_content]').live 'mouseenter', ->
+    $(this).attr 'hover_restore', $(this).html()
+    $(this).html $(this).attr( 'hover_content' )
+  $('[hover_content]').live 'mouseleave', ->
+    $(this).html $(this).attr( 'hover_restore' )
 
 newCaptcha = (form)->
   recapUri = 'http://www.google.com/recaptcha/api/js/recaptcha_ajax.js'

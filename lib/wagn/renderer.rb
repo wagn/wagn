@@ -158,11 +158,17 @@ module Wagn
     def params()       @params     ||= controller.params                          end
     def flash()        @flash      ||= controller.request ? controller.flash : {} end
     def controller()   @controller ||= StubCardController.new                     end
-    def ajax_call?()   @@ajax_call                                                end
-    def outer_level?() @depth == 0                                                end
-    def too_deep?()    @depth >= @@max_depth                                      end
     def session()      CardController===controller ? controller.session : {}      end
+    def ajax_call?()   @@ajax_call                                                end
 
+    def main?
+      if ajax_call?
+        @depth == 0 && params[:is_main]
+      else
+        @depth == 1 && @mode == :main
+      end                            
+    end
+      
     def template
       @template ||= begin
         c = controller
@@ -211,8 +217,8 @@ module Wagn
     def deny_render action, args={}
       return false if UNDENIABLE_VIEWS.member?(action)
       ch_action = case
-        when too_deep?            ; :too_deep
-        when !card                ; false
+        when @depth >= @@max_depth ; :too_deep
+        when !card                 ; false
         when action == :watch
           :blank if !User.logged_in? || card.virtual?
         when [:new, :edit, :edit_in_form].member?(action)

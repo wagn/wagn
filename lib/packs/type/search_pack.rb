@@ -121,7 +121,8 @@ class Wagn::Renderer
 
   define_view :paging, :type=>'search' do |args|
     s = card.spec search_params
-    offset, limit = s[:offset].to_i, s[:limit].to_i    
+    offset, limit = s[:offset].to_i, s[:limit].to_i
+    return '' if limit < 1
     return '' if offset==0 && limit > offset + args[:results].length #avoid query if we know there aren't enough results to warrant paging 
     total = card.count search_params
     return '' if limit >= total # should only happen if limit exactly equals the total

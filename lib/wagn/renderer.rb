@@ -379,7 +379,7 @@ module Wagn
           href = full_uri href.to_s      
           'internal-link'
         else
-          known_card = !!Card.fetch(href) if known_card.nil?
+          known_card = !!Card.fetch(href, :skip_modules=>true) if known_card.nil?
           if card
             text = text.to_cardname.to_show card.name
           end

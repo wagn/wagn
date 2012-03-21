@@ -313,7 +313,7 @@ describe Wagn::Renderer, "" do
     end
 
     it "is used in new card forms when soft" do
-      User.as :joe_admin
+      Card.as Card['joe_admin'].id
       content_card = Card["Cardtype E+*type+*default"]
       content_card.content= "{{+Yoruba}}"
       content_card.save!

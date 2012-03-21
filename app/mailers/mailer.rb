@@ -7,7 +7,7 @@ class Mailer < ActionMailer::Base
     from_card = Card.user_card
     from_name = from_card.nil? ? '' : from_card.name
     from_user = User.where(:card_id=>from_card.id).first || User.admin
-    url_key = user.card.cardname.to_url_key
+    url_key = Card[user.card_id].cardname.to_url_key
 
     @email    = (user.email    or raise Wagn::Oops.new("Oops didn't have user email"))
     @password = (user.password or raise Wagn::Oops.new("Oops didn't have user password"))
@@ -53,7 +53,7 @@ class Mailer < ActionMailer::Base
     @card_url = wagn_url card
     @change_url = wagn_url "/card/changes/#{card.cardname.to_url_key}"
     @unwatch_url = wagn_url "/card/watch/#{watched.to_cardname.to_url_key}?toggle=off"
-    @udpater_url = wagn_url card.updater.card
+    @udpater_url = wagn_url card.updater
     @watched = (watched == card.cardname ? "#{watched}" : "#{watched} cards")
 
     mail( {

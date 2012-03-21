@@ -12,10 +12,4 @@ module Wagn::Set::Type::InvitationRequest
     end
   end
   
-=begin
-  def destroy_extension
-    #do nothing - we want to keep these accounts around to know they're blocked.
-  end
-=end
-
 end

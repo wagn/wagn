@@ -95,23 +95,25 @@ class User < ActiveRecord::Base
   def save_with_card(card)
     #warn(Rails.logger.info "save with card #{card.inspect}, #{self.inspect}")
     User.transaction do
+      card = card.refresh if card.frozen?
+      newcard = card.new_card?
+      card.save
+      #warn "save with_card #{User.count}, #{card.id}, #{card.inspect}"
+      card.errors.each do |key,err|
+        self.errors.add key,err
+      end
+      self.card_id = card.id
       save
-      if !errors.any?
-        c = c.refresh if c.frozen?
-        c.extension = self
-        c.save
-        if c.errors.any?
-          c.errors.each do |key,err|
-            next if key.to_s.downcase=='extension'
-            self.errors.add key,err
-          end
-          destroy
-        end
+      if newcard && errors.any?
+        card.delete
+        self.card_id=nil
+        save
+        raise ActiveRecord::Rollback
       end
       true
     end
-#  rescue
-#    Rails.logger.info "save with card failed.  #{card.inspect}"
+  rescue Exception => e
+    warn (Rails.logger.info "save with card failed. #{e.inspect},  #{card.inspect} Bt:#{e.backtrace*"\n"}")
   end
 
   def accept(card, email_args)

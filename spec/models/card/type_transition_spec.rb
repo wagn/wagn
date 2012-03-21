@@ -32,6 +32,7 @@ end
 
 module Wagn::Set::Type::CardtypeF
   def self.included(base) Card.count = 2   end
+  # FIXME: create_extension doesn't exist anymore, need another hook
   def create_extension()  increment_count  end
   def increment_count()   Card.count += 1  end
 end

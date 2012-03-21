@@ -31,8 +31,8 @@ module Wagn::Model::Templating
     @virtual
   end
 
-  def hard_templatees
-    if wql=hard_templatee_wql
+  def hard_templatee_names
+    if wql=hard_templatee_wql(:name)
       Card.as(Card::WagbotID)  {  Wql.new(wql).run  }
     else
       []

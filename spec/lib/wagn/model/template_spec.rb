@@ -8,18 +8,14 @@ describe Card do
   
   describe "#hard_templatees" do
     it "for User+*type+*content should return all Users" do
-      Card.create(:name=>'User+*type+*content').hard_templatees.map(&:name).sort.should == [
+      Card.create(:name=>'User+*type+*content').hard_templatee_names.sort.should == [
         "Joe Admin", "Joe Camel", "Joe User", "John", "No Count", "Sample User", "Sara", "u1", "u2", "u3"
       ]
     end
   end
-  
-  it "#content_template" do
-    pending
-  end
-  
+    
   it "#expire_templatee_references" do
-    pending
+    #TESTME
   end
   
 end
@@ -35,7 +31,7 @@ describe Card, "with right content template" do
   end       
  
   it "should have default content" do
-    Wagn::Renderer.new(@jb).render(:raw).should == 'Today!'
+    Wagn::Renderer.new(@jb)._render_raw.should == 'Today!'
   end        
   
   it "should change content with template" do

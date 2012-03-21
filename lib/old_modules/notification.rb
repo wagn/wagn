@@ -65,7 +65,6 @@ module Notification
     end
   end
 
-
   def self.init
     Card.send :include, CardMethods
   end

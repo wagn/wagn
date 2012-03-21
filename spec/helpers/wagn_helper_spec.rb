@@ -1,12 +1,8 @@
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
-#include WagnHelper
 describe WagnHelper do
-  #helper WagnHelper
   
   it "should truncate correctly" do
-    pending
-    #this worked but including the WagnHelper spec here appeared to break other specs
     content = <<CONTENT
 
     <div>Favicons are the little icons that appear in browser tabs, and Wagn lets you set yours to whatever you like</div> 

@@ -140,25 +140,28 @@ class Wql
       name =~ /\b_/ ? name.to_cardname.to_absolute(root.selfname) : name
     end
     
-    def clean(query)
+    def clean query
       query = query.symbolize_keys
-      @selfname = query.delete(:context) if query[:context]
-      @parent   = query.delete(:_parent) if query[:_parent]
-      query.each { |key,val| clean_val val, query, key }
+      if s = query.delete(:context) then @selfname = s end
+      if p = query.delete(:_parent) then @parent   = p end
+      query.each do |key,val|
+        query[key] = clean_val val
+      end
       query
     end
     
-    
-    def clean_val(val, query, key)
+    def clean_val val
       case val
       when String
         if val =~ /^\$(\w+)$/
           val = @vars[$1.to_sym].to_s.strip
         end
-        absolute_name(val)
-      when Hash   ; clean(val)
-      when Array  ; val.map{ |v| clean_val(v, query, key)}
-      else        ; val
+        absolute_name val
+      when Wagn::Cardname         ; clean_val val.s
+      when Hash                   ; clean val
+      when Array                  ; val.map { |v| clean_val v }
+      when Integer, Float, Symbol ; val
+      else                        ; raise "unknown WQL value type: #{val.class}"
       end
     end
     

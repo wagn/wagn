@@ -1,23 +1,23 @@
 class Wagn::Renderer
   
-  define_view(:core, :type=>'pointer') do |args|
+  define_view :core, :type=>'pointer' do |args|
     @item_view ||= :closed
     %{<div class="pointer-list">#{pointer_items}</div>} 
     #+ link_to( 'add/edit', path(action), :remote=>true, :class=>'slotter add-edit-item' ) #ENGLISH 
   end
 
-  define_view(:closed_content, :type=>'pointer') do |args|
+  define_view :closed_content, :type=>'pointer' do |args|
     @item_view = 'link' unless @item_view == 'name'
     %{<div class="pointer-list">#{pointer_items}</div>}
   end
 
-  define_view(:editor, :type=>'pointer') do |args|
+  define_view :editor, :type=>'pointer' do |args|
     part_view = (c = card.rule('input')) ? c.gsub(/[\[\]]/,'') : :list
     form.hidden_field( :content, :class=>'card-content') +
     raw(render(part_view))
   end
 
-  define_view(:list, :type=>'pointer') do |args|
+  define_view :list, :type=>'pointer' do |args|
     args ||= {}
     items = args[:items] || card.item_names(:context=>:raw)
     items = [''] if items.empty?
@@ -36,7 +36,7 @@ class Wagn::Renderer
     
   end
 
-  define_view(:checkbox, :type=>'pointer') do |args|
+  define_view :checkbox, :type=>'pointer' do |args|
     %{<div class="pointer-checkbox-list">} +
     card.options.map do |option|
       checked = card.item_names.include?(option.name)
@@ -51,12 +51,12 @@ class Wagn::Renderer
     '</div>' 
   end
 
-  define_view(:multiselect, :type=>'pointer') do |args|
+  define_view :multiselect, :type=>'pointer' do |args|
     options = options_from_collection_for_select(card.options,:name,:name,card.item_names)
     select_tag("pointer_multiselect", options, :multiple=>true, :class=>'pointer-multiselect')
   end
 
-  define_view(:radio, :type=>'pointer') do |args|
+  define_view :radio, :type=>'pointer' do |args|
     input_name = "pointer_radio_button-#{card.key}"
     options = card.options.map do |option|
       checked = (option.name==card.item_names.first)
@@ -72,7 +72,7 @@ class Wagn::Renderer
     %{ <div class="pointer-radio-list">#{options}</div> }
   end
 
-  define_view(:select, :type=>'pointer') do |args|
+  define_view :select, :type=>'pointer' do |args|
     options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]} 
     select_tag("pointer_select", options_for_select(options, card.item_names.first), :class=>'pointer-select')
   end

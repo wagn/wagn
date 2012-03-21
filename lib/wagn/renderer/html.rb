@@ -129,7 +129,7 @@ module Wagn
     end
 
     def edit_slot(args={})
-      card.content_template ? raw(_render_core(args)) : content_field(form)
+      card.hard_template ? raw(_render_core(args)) : content_field(form)
     end
  
     #### --------------------  additional helpers ---------------- ###
@@ -171,9 +171,6 @@ module Wagn
         end * "\n"
       end
     end
-
-    def header()  _render_header if card end  
-    def footer()  _render_footer if card end
 
     def menu
       if card && card.virtual?

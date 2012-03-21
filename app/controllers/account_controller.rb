@@ -6,7 +6,7 @@ class AccountController < ApplicationController
   helper :wagn
 
   def signup
-    raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?  #ENGLISH
+    raise(Wagn::PermissionDenied, "You have to sign out before signing up for a new Account") if logged_in?  #ENGLISH
     raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card.new(:typecode=>'InvitationRequest').ok? :create #ENGLISH
 
     user_args = (params[:user]||{}).merge(:status=>'pending').symbolize_keys

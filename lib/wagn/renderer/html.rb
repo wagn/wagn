@@ -252,7 +252,7 @@ module Wagn
     end
 
     def option_header(title)
-      %{<tr><td colspan="3" class="option-header"><h2>#{title}</h2></td></tr>}
+      %{<tr><th colspan="3" class="option-header"><h2>#{title}</h2></th></tr>}
     end
     
     # navigation for revisions -

@@ -53,7 +53,7 @@ class Wagn::Renderer::Html
     %{<div class="comment-box nodblclick"> #{
       card_form :comment do |f|
         %{#{f.text_area :comment, :rows=>3 }<br/> #{
-        if User.current_user.login == "anon"
+        unless Card.logged_in?
           card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH
           %{<label>My Name is:</label> #{ f.text_field :comment_author }}
         end}
@@ -605,19 +605,17 @@ class Wagn::Renderer::Html
             "<div>We are currently in read-only mode.  Please try again later.</div>"
           else
             %{<div>#{
-            
-            if Card.user_id == Card::AnonID
-             %{You have to #{ link_to "sign in", :controller=>'account', :action=>'signin' }}
-            else
-             "You need permission"
-            end} to #{params[:action]} this card#{": <strong>#{fancy_title(card)}</strong>" if card.name && !card.name.blank? }.
+
+            Card.logged_in? ? "You need permission" :
+              %{You have to #{ link_to "sign in", :controller=>'account', :action=>'signin' }}
+            } to #{params[:action]} this card#{": <strong>#{fancy_title(card)}</strong>" if card.name && !card.name.blank? }.
             </div>
   
             #{unless @skip_slot_header or @deny=='view'
               %{<p>#{ link_to 'See permission settings', path(:options, :attrib=>'settings'), :class=>'slotter', :remote=>true  }.</p>}
             end} #{
   
-            if User.current_user.anonymous? && Card.new(:typecode=>'InvitationRequest').ok?(:create)
+            if !Card.logged_in? && Card.new(:type_id=>Card::InvitationRequestID).ok?(:create)
               %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}
             end }}
           end   }

@@ -22,6 +22,7 @@ module Notification
       @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)
 
       watcher_watched_pairs.reject {|p| @trunk_watchers.include?(p.first) }.each do |watcher, watched|
+        warn "wtch: Mailer.change_notice( #{watcher.inspect}, #{self.inspect}, #{action.inspect}, #{watched.inspect}, #{nested_notifications.inspect}"
         watcher and mail = Mailer.change_notice( watcher, self, action,
                         watched, nested_notifications ) and mail.deliver
       end
@@ -50,6 +51,8 @@ module Notification
       []
     end
 
+    def watching_type?() watcher_pairs(false, :type).member?(Card.user_id) end
+    def watching?() watchers().member?(Card.user_id) end
     def watchers() watcher_watched_pairs(false) end
     def watcher_watched_pairs(pairs=true)
       ( watcher_pairs(pairs) + watcher_pairs(pairs, :type) )

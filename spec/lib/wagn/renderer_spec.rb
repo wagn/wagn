@@ -178,7 +178,7 @@ describe Wagn::Renderer, "" do
       it "renders card footer" do
         assert_view_select @simple_page, 'div[class="card-footer"]' do
           assert_select 'span[class="watch-link"]' do
-            assert_select 'a[title="get emails about changes to A+B"]', "watch"
+            assert_select 'a[title="send emails about changes to A+B"]', "watch"
           end
         end
       end
@@ -306,8 +306,8 @@ describe Wagn::Renderer, "" do
 # includes some *right stuff
 
 
-  context "Content settings" do
-    it "are rendered as raw" do
+  context "Content rule" do
+    it "is rendered as raw" do
       template = Card.new(:name=>'A+*right+*content', :content=>'[[link]] {{inclusion}}')
       Wagn::Renderer.new(template).render(:core).should == '[[link]] {{inclusion}}'
     end
@@ -324,7 +324,7 @@ describe Wagn::Renderer, "" do
       assert_view_select Wagn::Renderer.new(@card).render_new, 'div[class="unknown-class-name"]'
     end
 
-    it "are used in new card forms" do
+    it "is used in new card forms when hard" do
       Card.as :joe_admin
       content_card = Card.create!(:name=>"Cardtype E+*type+*content",  :content=>"{{+Yoruba}}" )
       help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
@@ -386,12 +386,10 @@ describe Wagn::Renderer, "" do
     context "File and Image" do
       #image calls the file partial, so in a way this tests both
       it "should have special editor" do
-      pending  #This test works fine alone but fails when run with others
-        assert_view_select render_editor('Image'), 'body' do
-          assert_select 'div[class="attachment-preview"]'
-          assert_select 'div' do
-            assert_select 'iframe[class="upload-iframe"]'
-          end
+#        pending "getting html_document error.  paperclip integration issue?"
+        
+        assert_view_select render_editor('Image'), 'div[class="choose-file"]' do
+          assert_select 'input[class="file-upload slotter"]'
         end
       end
     end
@@ -421,10 +419,10 @@ describe Wagn::Renderer, "" do
 
     context "Account Request" do
       it "should have a special section for approving requests" do
-        pending
+        #pending
         #I can't get this working.  I keep getting this url_for error -- from a line that doesn't call url_for
         card = Card.create!(:name=>'Big Bad Wolf', :type=>'Account Request')
-        assert_view_select Wagn::Renderer.new(card).render(:core), 'div[class="invite-links"]'
+        assert_view_select Wagn::Renderer.new(card).render(:core), 'div[class="invite-links help instruction"]'
       end
     end
 
@@ -445,12 +443,7 @@ describe Wagn::Renderer, "" do
         assert_view_select render_editor('Plain Text'), 'textarea[rows="3"]'
       end
 
-      it "should have special content that converts newlines to <br>'s" do
-        render_card(:core, :type=>'Plain Text', :content=>"a\nb").should == 'a<br/>b'
-      end
-
       it "should have special content that escapes HTML" do
-        pending
         render_card(:core, :type=>'Plain Text', :content=>"<b></b>").should == '&lt;b&gt;&lt;/b&gt;'
       end
     end
@@ -513,10 +506,9 @@ describe Wagn::Renderer, "" do
 
     context "*account link" do
       it "should have a 'my card' link" do
-        pending
         Card.as :joe_user do
           assert_view_select render_card(:raw, :name=>'*account links'), 'span[id="logging"]' do
-            assert_select 'a[id="my-card-link"]', 'My Card: Joe User'
+            assert_select 'a[id="my-card-link"]', :text => 'My Card: Joe User'
           end
         end
       end

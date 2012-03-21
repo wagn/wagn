@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:core, :type=>'toggle') do |args|
+  define_view :core, :type=>'toggle' do |args|
     case card.raw_content.to_i
       when 1; 'yes'
       when 0; 'no'
@@ -7,7 +7,7 @@ class Wagn::Renderer
       end
   end
 
-  define_view(:editor, :type=>'toggle') do |args|
+  define_view :editor, :type=>'toggle' do |args|
     form.check_box(:content)
   end
 end

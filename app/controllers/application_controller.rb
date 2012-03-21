@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def per_request_setup
-    #ActiveSupport::Notifications.instrument 'wagn.per_request_setup', :message=>"" do
+#    ActiveSupport::Notifications.instrument 'wagn.per_request_setup', :message=>"" do
       request.format = :html if !params[:format]
 
       # these should not be Wagn::Conf, but more like wagn.env
@@ -48,7 +48,7 @@ class ApplicationController < ActionController::Base
       @recaptcha_count = 0
     
       @action = params[:action]
-    #end
+#    end
   end
   
   def canonicalize_domain

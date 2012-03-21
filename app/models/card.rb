@@ -16,9 +16,7 @@ class Card < ActiveRecord::Base
   belongs_to :current_revision, :class_name => 'Revision', :foreign_key=>'current_revision_id'
   has_many   :revisions, :order => 'id', :foreign_key=>'card_id'
 
-  #belongs_to :extension, :polymorphic=>true
   before_destroy :base_before_destroy
-  #before_destroy :destroy_extension, :base_before_destroy
 
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
     :cards, :set_mods_loaded, :update_referencers, :allow_type_change,
@@ -28,7 +26,7 @@ class Card < ActiveRecord::Base
 
   attr_reader :type_args, :broken_type
   before_save :set_stamper, :base_before_save, :set_read_rule,
-    :set_tracked_attributes, :set_extensions
+    :set_tracked_attributes
   after_save :base_after_save, :update_ruled_cards, :reset_stamper
 
   cache_attributes('name', 'type_id')
@@ -428,10 +426,6 @@ class Card < ActiveRecord::Base
     end
   end
 
-  def set_extensions
-    self.create_extension if respond_to?(:create_extension)
-  end
-
   def save_with_trash!
     save || raise(errors.full_messages.join('. '))
   end
@@ -539,14 +533,6 @@ class Card < ActiveRecord::Base
     destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
   end
 
-=begin
-  def destroy_extension
-    extension.destroy if extension
-    extension = nil
-    true
-  end
-=end
-
   def base_before_destroy
     self.before_destroy if respond_to? :before_destroy
   end
@@ -582,13 +568,6 @@ class Card < ActiveRecord::Base
     return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.
     jcts.map { |r| [r ] + r.dependents(*args) }.flatten
   end
-
-=begin
-  def codename
-    return nil unless extension and extension.respond_to?(:codename)
-    extension.codename
-  end
-=end
 
   def repair_key
     Card.as  Card::WagbotID do
@@ -773,11 +752,6 @@ class Card < ActiveRecord::Base
     return true if (c.recaptcha_count += 1) > 1
     c.verify_recaptcha( :model=>rec ) || rec.error_status = 449
   end
-
-
-#  validates_presence_of :name
-  #validates_associated :extension #1/2 ans:  this one runs the user validations on user cards.
-
 
   validates_each :name do |rec, attr, value|
     if rec.new_card? && value.blank?

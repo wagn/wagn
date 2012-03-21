@@ -3,7 +3,6 @@ module Wagn
   class Cardname < Object
     require 'htmlentities'
 
-    NAME2CARDNAME = {}
 
     JOINT = '+'
     BANNED_ARRAY = [ '/', '~', '|']
@@ -14,12 +13,14 @@ module Wagn
 
     WORD_RE = RUBY_VERSION =~ /^1\.9/ ? '\p{Word}/' : '/\w/'
 
+    @@name2cardname = {}
+
     class << self
       def new(obj)
         raise "??? #{obj.inspect}" if Card===obj
         return obj if Cardname===obj
         str = Array===obj ? obj*JOINT : obj.to_s
-        return obj if obj = NAME2CARDNAME[str]
+        return obj if obj = @@name2cardname[str]
         super str
       end
     end
@@ -41,7 +42,7 @@ module Wagn
           @s.blank? ? '' : generate_simple_key
         end
       #@key.to_cardname if @key != @s
-      NAME2CARDNAME[@s] = self
+      @@name2cardname[@s] = self
 #      Rails.logger.debug "new:#{self.inspect}"; self
     end
     

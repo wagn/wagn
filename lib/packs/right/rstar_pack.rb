@@ -1,6 +1,6 @@
 class Wagn::Renderer::Html
 
-  define_view(:closed_rule) do |args|
+  define_view :closed_rule do |args|
     rule_card = card.new_card? ? find_current_rule_card[0] : card
 
     cells = [
@@ -9,8 +9,8 @@ class Wagn::Renderer::Html
           :class => 'edit-rule-link slotter', :remote => true )
       ],
       ["rule-content",
-        %{<div class="rule-content-container closed-view">
-           <span class="content">#{rule_card ? subrenderer(rule_card).render_closed_content : ''}</span>
+        %{<div class="rule-content-container">
+           <span class="closed-content content">#{rule_card ? subrenderer(rule_card).render_closed_content : ''}</span>
          </div> } ],
       ["rule-type", (rule_card ? rule_card.typename : '') ],
     ]
@@ -26,7 +26,7 @@ class Wagn::Renderer::Html
 
 
 
-  define_view(:open_rule) do |args|
+  define_view :open_rule do |args|
     current_rule, prototype = find_current_rule_card
     setting_name = card.cardname.tag_name
     current_rule ||= Card.new :name=> "*all+#{setting_name}"
@@ -80,7 +80,7 @@ class Wagn::Renderer::Html
   end
 
   # THIS SHOULD NOT BE A VIEW
-  define_view(:edit_rule) do |args|
+  define_view :edit_rule do |args|
     edit_mode       = args[:edit_mode]
     setting_name    = args[:setting_name]
     current_set_key = args[:current_set_key]

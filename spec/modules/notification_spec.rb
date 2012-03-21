@@ -9,7 +9,7 @@ describe "Card" do
     @just_s = [Card["Sara"].id]
     @s_and_j= [Card["Sara"].id, Card["John"].id]
   end 
-
+  
   describe "#watchers" do
     it "returns users watching this card specifically" do
       Card["All Eyes On Me"].watchers.should == @s_and_j

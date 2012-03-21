@@ -7,7 +7,7 @@ class Wagn::Renderer
     :pointer => 'Pointer'
   }
   
-  define_view(:core , :type=>'set') do |args|
+  define_view :core , :type=>'set' do |args|
     headings = ['Content','Type']
     setting_groups = card.setting_names_by_group
 
@@ -30,7 +30,7 @@ class Wagn::Renderer
   end
 
 
-  define_view(:editor, :type=>'set') do |args|
+  define_view :editor, :type=>'set' do |args|
     'Cannot currently edit Sets' #ENGLISH
   end
 

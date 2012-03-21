@@ -82,11 +82,6 @@ describe Card do
         @d = Card.new :type=>'Date'
       end
   
-      it "c should have name before_typecast" do
-        pending # while I figure out if there is a clean way to test this
-        @c.name_before_type_cast.should == "Ceee"
-      end
-  
       it "c should have cardtype basic" do
         Rails.logger.info "testing point #{@c} #{@c.inspect}"
         @c.typecode.should == 'Basic'

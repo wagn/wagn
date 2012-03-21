@@ -129,7 +129,7 @@ module Wagn
     end
 
     def edit_slot(args={})
-      card.content_template ? raw(_render_core(args)) : content_field(form)
+      card.hard_template ? raw(_render_core(args)) : content_field(form)
     end
  
     #### --------------------  additional helpers ---------------- ###
@@ -172,9 +172,6 @@ module Wagn
       end
     end
 
-    def header()  _render_header if card end  
-    def footer()  _render_footer if card end
-
     def menu
       if card && card.virtual?
         return %{<span class="card-menu faint">Virtual</span>\n}
@@ -216,7 +213,7 @@ module Wagn
     end
 
     def typecode_field(options={})
-      typename = card ? Card.typename_from_id(card.type_id) : ''
+      typename = card ? card.typename : ''
       template.select_tag('card[type]', typecode_options_for_select( typename ), options)
     end
 

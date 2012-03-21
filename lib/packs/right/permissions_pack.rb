@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:editor, :right=>'*create') do |args|
+  define_view :editor, :right=>'*create' do |args|
     set_name = card.cardname.trunk_name
     set_card = Card.fetch(set_name)
     return "#{set_name} is not a Set" unless set_card and set_card.typecode=='Set'
@@ -47,18 +47,19 @@ class Wagn::Renderer
 
 
   end
-  alias_view(:editor, { :right=>'*create' }, { :right=>'*read' }, { :right=>'*update' }, { :right=>'*delete' }, { :right=>'*comment' } )
   
-  define_view(:core, { :right=>'*create'}) do |args|
+  define_view :core, { :right=>'*create'} do |args|
     @item_view ||= :link
     card.content=='_left' ? core_inherit_content : _final_pointer_type_core(args)
   end
-  alias_view(:core, { :right=>'*create' }, { :right=>'*read' }, { :right=>'*update' }, { :right=>'*delete' }, { :right=>'*comment' } )
   
-  define_view(:closed_content, { :right=>'*create'}) do |args|
+  define_view :closed_content, { :right=>'*create'} do |args|
     card.content=='_left' ? core_inherit_content : _final_pointer_type_closed_content(args)
   end
-  alias_view(:closed_content, { :right=>'*create' }, { :right=>'*read' }, { :right=>'*update' }, { :right=>'*delete' }, { :right=>'*comment' } )
+
+  alias_view :core,           { :right=>'*create' }, { :right=>'*read' }, { :right=>'*update' }, { :right=>'*delete' }, { :right=>'*comment' }
+  alias_view :editor,         { :right=>'*create' }, { :right=>'*read' }, { :right=>'*update' }, { :right=>'*delete' }, { :right=>'*comment' }
+  alias_view :closed_content, { :right=>'*create' }, { :right=>'*read' }, { :right=>'*update' }, { :right=>'*delete' }, { :right=>'*comment' }
 
   private
   

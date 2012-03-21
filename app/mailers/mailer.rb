@@ -73,7 +73,7 @@ class Mailer < ActionMailer::Base
   def flexmail config
     @message = config.delete(:message)
     
-    if attachment_list = config.delete(:attach)
+    if attachment_list = config.delete(:attach) and !attachment_list.empty?
       attachment_list.each_with_index do |cardname, i|
         if c = Card[ cardname ] and c.respond_to?(:attach) 
           attachments["attachment-#{i + 1}.#{c.attach_extension}"] = File.read( c.attach.path )

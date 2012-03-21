@@ -29,6 +29,7 @@ module Wagn::Model::Fetch
           end
         else
           cardname = cardname.to_cardname
+          opts[:skip_virtual] = true if opts[:loaded_trunk]
         end
 
         card = Card.cache.read( cardname.key ) if Card.cache
@@ -43,12 +44,12 @@ module Wagn::Model::Fetch
           needs_caching = !Card.cache.nil?
           card = new((opts[:skip_virtual] ? {:type_id=>0} : {}).merge(:name=>cardname, :skip_modules=>true))
         end
-      
-        if needs_caching
+    
+        if Card.cache && needs_caching
           Card.id_cache[card_id]= card if card_id
           Card.cache.write( cardname.key, card )
         end
-        return nil if card.new_card? && (opts[:skip_virtual] || !card.virtual?)
+        return nil if card.new_card? and opts[:skip_virtual] || !card.virtual?
 
         #warn "fetch returning #{card.inspect}"
         card.include_set_modules unless opts[:skip_modules]

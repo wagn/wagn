@@ -23,11 +23,13 @@ wagn.initPointerList = (input)->
 wagn.initTinyMCE = (el_id) ->
   conf = if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {}
   $.extend conf, { 
-    mode: "exact", 
-    elements: el_id, 
+    mode: 'exact'
+    plugins: 'autoresize'
+    autoresize_max_height: 500 #probably want to make several of these overridable....
+    elements: el_id 
     content_css: wagn.rootPath + '/assets/application-all.css' # + wagn.local_css_path
     #  TEMPORARY we probably want *css back once we have fingerprinting on this file - EFM
-    verify_html: false,
+    verify_html: false
     entity_encoding: 'raw'
   }    
   tinyMCE.init conf

@@ -496,7 +496,7 @@ class Card < ActiveRecord::Base
 
       self.update_attribute(:trash, true)
       deps.each do |dep|
-        next if dep.trash
+        next if dep.trash #shouldn't be getting trashed cards
         dep.confirm_destroy = true
         dep.destroy_with_trash("#{caller} -> #{name}")
       end
@@ -561,6 +561,7 @@ class Card < ActiveRecord::Base
   end
 
   def dependents(*args)
+    # all plus cards, plusses of plus cards, etc
     jcts = junctions(*args)
     jcts.delete(self) if jcts.include?(self)
     return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.

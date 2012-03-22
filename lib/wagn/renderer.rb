@@ -426,8 +426,8 @@ module Wagn
 
     ## ----- for Linkers ------------------
     def typecode_options
-      Cardtype.createable_types.map do |type|
-        [type[:name], type[:name]]
+      Card.createable_types.map do |type_id|
+        type=Card[type_id] and type=type.name and [type, type]
       end.compact
     end
 

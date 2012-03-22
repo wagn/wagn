@@ -52,8 +52,8 @@ module Notification
     end
 
     def watching_type?() watcher_pairs(false, :type).member?(Card.user_id) end
-    def watching?() watchers().member?(Card.user_id) end
-    def watchers() watcher_watched_pairs(false) end
+    def watching?()      watcher_pairs(false).member?(Card.user_id)        end
+    def watchers()       watcher_watched_pairs(false)                      end
     def watcher_watched_pairs(pairs=true)
       ( watcher_pairs(pairs) + watcher_pairs(pairs, :type) )
     end

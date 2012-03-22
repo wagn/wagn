@@ -27,7 +27,7 @@ wagn.initTinyMCE = (el_id) ->
     plugins: 'autoresize'
     autoresize_max_height: 500 #probably want to make several of these overridable....
     elements: el_id 
-    content_css: wagn.rootPath + '/assets/application-all.css' # + wagn.local_css_path
+    content_css: wagn.rootPath + '/assets/application-all.css' + ',' + wagn.rootPath + wagn.local_css_path
     #  TEMPORARY we probably want *css back once we have fingerprinting on this file - EFM
     verify_html: false
     entity_encoding: 'raw'
@@ -54,7 +54,7 @@ wagn.chooseFile = (e, data) ->
   # we add and remove the contentField to insure that nothing is added / updated when nothing is chosen. 
   
 
-$(window).load ->
+$(window).ready ->
 
   $('.cancel-upload').live 'click', ->
     editor = $(this).closest '.card-editor'

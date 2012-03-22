@@ -1,8 +1,6 @@
 module AuthenticatedSystem
   protected
-  def logged_in?
-    Card.user_id && Card.user_id != Card::AnonID
-  end
+  def logged_in?() Card.user_id && Card.logged_id? end
 
   # Accesses the current user from the session.
   def session_user

@@ -1,7 +1,7 @@
 module Wagn::Version
     Major = '1'
     Minor = '8'
-    Tiny  = '0'
+    Tiny  = '1'
     Eensie = nil
   
     class << self
@@ -18,7 +18,7 @@ module Wagn::Version
       end
       
       def to_i
-        Major.to_i*10000+Minor.to_i*100+Tiny.to_i
+        Major.to_i*10000 + Minor.to_i*100 + Tiny.to_i
       end
       
       alias :to_str :to_s

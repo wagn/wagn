@@ -463,8 +463,7 @@ class Wql
     end
   end
 
-
-    
+  
   class RefSpec < Spec
     def initialize(spec)
       @spec = spec   
@@ -485,6 +484,7 @@ class Wql
       %{(select #{f1} from wiki_references where #{where} #{and_where})}
     end
   end
+  
   
   class ValueSpec < Spec
     def initialize(spec, cardspec)

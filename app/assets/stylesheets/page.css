@@ -101,6 +101,11 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
   padding: 5px 3px 5px 3px; 
   border-bottom: 1px solid #ddd; 
 }
+.fieldset th {
+  text-align: center;
+  padding: 8px;
+  font-style: normal;
+}
 .fieldset .label { 
   text-align: right;  
   white-space: nowrap;
@@ -124,7 +129,7 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 /* -- instructions ---*/
 
 .help, .instruction {
-  background: #eec;
+  background: #e3e3e3;
   color: #440;
   font-style: italic;
   text-align: center;

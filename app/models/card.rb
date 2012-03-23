@@ -23,7 +23,7 @@ class Card < ActiveRecord::Base
 
   before_save :base_before_save, :set_read_rule, :set_tracked_attributes, :set_extensions
   after_save :base_after_save, :update_ruled_cards
-  cache_attributes('name', 'typecode')
+  cache_attributes 'name', 'typecode'
 
   @@junk_args = %w{ missing skip_virtual id }
 
@@ -502,8 +502,6 @@ class Card < ActiveRecord::Base
     true
   end
   
-  
-
   protected
   
   validate do |rec|
@@ -514,10 +512,8 @@ class Card < ActiveRecord::Base
     c.verify_recaptcha( :model=>rec ) || rec.error_status = 449
   end
   
-
 #  validates_presence_of :name
   validates_associated :extension #1/2 ans:  this one runs the user validations on user cards.
-
 
   validates_each :name do |rec, attr, value|
     if rec.new_card? && value.blank?
@@ -603,10 +599,10 @@ class Card < ActiveRecord::Base
     # validate on update
     if rec.updates.for?(:typecode) and !rec.new_card?
       if !rec.validate_type_change
-        rec.errors.add :type, "of #{rec.name} can't be changed; errors changing from #{rec.typename}"        
+        rec.errors.add :type, "of #{ rec.name } can't be changed; errors changing from #{ rec.typename }"        
       end
       if c = Card.new(:name=>'*validation dummy', :typecode=>value, :content=>'') and !c.valid?
-        rec.errors.add :type, "of #{rec.name } can't be changed; errors creating new #{value}: #{c.errors.full_messages.join(', ')}"
+        rec.errors.add :type, "of #{ rec.name } can't be changed; errors creating new #{ value }: #{ c.errors.full_messages.join ', ' }"
       end      
     end
 
@@ -633,13 +629,13 @@ class Card < ActiveRecord::Base
   end
  
   class << self  
-    def setting(name)
+    def setting name
       User.as :wagbot  do
         card=Card[name] and !card.content.strip.empty? and card.content
       end
     end           
 
-    def path_setting(name)
+    def path_setting name
       name ||= '/'
       return name if name =~ /^(http|mailto)/
       Wagn::Conf[:root_path] + name      

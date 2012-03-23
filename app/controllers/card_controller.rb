@@ -109,8 +109,11 @@ class CardController < ApplicationController
     comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
     @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
     
-    @card.save!
-    render_show
+    if @card.save
+      render_show
+    else
+      render_errors
+    end
   end
 
   def rollback

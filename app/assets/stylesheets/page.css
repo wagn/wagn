@@ -66,30 +66,6 @@
   background: #bbb;
   border: 1px solid #666;
 }
-#alerts {
-  padding: 2px 9px;
-  -moz-border-radius: 8px;
-  border-radius: 8px;
-  color: #555;
-  font-weight: bold;
-  z-index: 4;
-}
-html>body #alerts { /* not in IE  (won't do fixed position) */
-  position: fixed !important;
-  bottom: 0px;
-  right: 0px;
-  display: block;
-  background: #eee;
-  moz-border-radius: 8px 0px 0px 0px;
-  border-radius: 8px 0px 0px 0px;
-  border: 1px solid #ccc;
-  border-bottom: 0px;
-  border-right: 0px;
-
-}
-#alerts div {
-  display: none;
-}
 
 
 /*----- fieldset tables --------*/

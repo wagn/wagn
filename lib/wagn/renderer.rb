@@ -510,7 +510,8 @@ module Wagn
   Wagn::Renderer::Rss
   Wagn::Renderer::Text
   
-  Wagn::Conf[:pack_dirs].split(/,\s*/).each do |dir|
+  pack_dirs = Rails.env =~ /^cucumber|test$/ ? "#{Rails.root}/lib/packs" : Wagn::Conf[:pack_dirs]
+  pack_dirs.split(/,\s*/).each do |dir|
     Wagn::Pack.dir File.expand_path( "#{dir}/**/*_pack.rb",__FILE__)
   end
   Wagn::Pack.load_all

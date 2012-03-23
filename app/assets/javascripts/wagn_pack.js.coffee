@@ -21,6 +21,8 @@ wagn.initPointerList = (input)->
   input.autocomplete { source: wagn.prepUrl wagn.rootPath + '/' + optionsCard + '.json?view=name_complete' }
 
 wagn.initTinyMCE = (el_id) ->
+  # verify_html: false -- note: this option needed for empty paragraphs to add space.
+  
   conf = if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {}
   $.extend conf, { 
     mode: 'exact'
@@ -28,8 +30,6 @@ wagn.initTinyMCE = (el_id) ->
     autoresize_max_height: 500 #probably want to make several of these overridable....
     elements: el_id 
     content_css: wagn.rootPath + '/assets/application-all.css' + ',' + wagn.rootPath + wagn.local_css_path
-    #  TEMPORARY we probably want *css back once we have fingerprinting on this file - EFM
-    verify_html: false
     entity_encoding: 'raw'
   }    
   tinyMCE.init conf

@@ -93,7 +93,7 @@ class Wagn::Renderer
       cards_by_day[day] << card
     end
 
-    paging = _optional_render :paging, :results=>cards
+    paging = _optional_render :paging, args
     
 %{<h1 class="page-header">Recent Changes</h1>
 <div class="open-view recent-changes">
@@ -134,12 +134,15 @@ class Wagn::Renderer
 
     out = ['<span class="paging">' ]
     
-    total_pages = (total / limit).to_i
-    current_page = (offset / limit).to_i
+    
+    total_pages  = ((total-1) / limit).to_i
+    current_page = ( offset   / limit).to_i # should already be integer
     window = 2
     window_min = current_page - window
     window_max = current_page + window
     
+
+
     if current_page > 0
       out << page_link( '&laquo; prev', current_page - 1 )
     end
@@ -151,6 +154,8 @@ class Wagn::Renderer
     end    
     
     (window_min .. window_max).each do |page|
+      Rails.logger.info "current page = #{page} / total_pages = #{total_pages}"
+      
       next if page < 0 or page > total_pages
       text = page + 1
       out <<  ( page==current_page ? text : page_link( text, page ) )

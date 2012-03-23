@@ -9,6 +9,9 @@ class Wagn::Renderer
   define_view :raw      do |args|  card ? card.raw_content : _render_blank                          end
   define_view :refs     do |args|  card.respond_to?('references_expired') ? card.raw_content : ''   end
   define_view :core     do |args|  process_content _render_raw                                      end
+  define_view :content  do |args|  _render_core                                                     end
+    # this should be done as an alias, but you can't make an alias with an unknown view, 
+    # and base renderer doesn't know "content" at this point
   define_view :titled   do |args|  card.name + "\n\n" + _render_core                                end
   define_view :show     do |args|  render( args[:view] || params[:view] || :core )                  end
   define_view :name     do |args|  card.name                                                        end
@@ -19,7 +22,6 @@ class Wagn::Renderer
     build_link(name, name, card.known?)
   end
   define_view :url      do |args|  wagn_url _render_linkname                                        end
-  alias_view :core, {}, :content
 
   define_view :open_content do |args|
     pre_render = _render_core(args) { yield args }

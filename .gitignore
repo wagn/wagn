@@ -16,5 +16,7 @@ local*
 script/local
 script/performance/*.session
 tmp/*
-/*.project
+*.project
 *.sqlite3
+*.DS_Store
+*.swp

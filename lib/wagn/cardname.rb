@@ -4,9 +4,9 @@ module Wagn
     require 'htmlentities'
 
 
-    JOINT = '+'
-    BANNED_ARRAY = [ '/', '~', '|']
-    BANNED_RE = /#{'[\\'+JOINT+'\\'+BANNED_ARRAY*"\\"+']'}/
+    JOINT = ?+
+    BANNED_ARRAY = [ ?/, ?~, ?| ]
+    BANNED_RE = /#{ ([?[] + BANNED_ARRAY << JOINT )*?\\ }#{ ?] }/
     CARDNAME_BANNED_CHARACTERS = BANNED_ARRAY * ' '
 
     FORMAL_JOINT = " <span class=\"wiki-joint\">#{JOINT}</span> "

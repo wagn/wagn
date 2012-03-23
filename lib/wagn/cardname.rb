@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 module Wagn
-  class Cardname < Object
+  class Cardname < String
     require 'htmlentities'
 
 
@@ -43,7 +43,7 @@ module Wagn
         end
       #@key.to_cardname if @key != @s
       @@name2cardname[@s] = self
-#      Rails.logger.debug "new:#{self.inspect}"; self
+      #warn (Rails.logger.debug "new:#{self.inspect}"); self
     end
     
     def generate_simple_key
@@ -92,7 +92,7 @@ module Wagn
       newpart = newpart.to_cardname unless Cardname===newpart
       if oldpart.simple?
         simple? ? (self == oldpart ? newpart : self) :
-                    parts.map{ |s| oldpart == s ? newpart : s }.to_cardname
+                    parts.map{ |s| oldpart == s ? newpart.to_s : s }.to_cardname
       elsif simple?
         self
       else

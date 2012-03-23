@@ -263,7 +263,7 @@ module Wagn
       
       tcardname = opts[:tname].to_cardname
       fullname = tcardname.to_absolute(card.cardname, params)
-      opts[:showname] = tcardname.to_show(card.cardname)
+      opts[:showname] = tcardname.to_show(card.cardname).to_s
       
       included_card = Card.fetch_or_new fullname, ( @mode==:edit ? new_inclusion_card_args(opts) : {} )
   
@@ -298,7 +298,7 @@ module Wagn
         :item_view =>options[:item], 
         :type      =>options[:type],
 #        :size      =>options[:size],
-        :showname  =>(options[:showname] || tcard.cardname)
+        :showname  =>(options[:showname] || tcard.name)
       )
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub  #don't like depending on this global var switch
   
@@ -378,26 +378,25 @@ module Wagn
     end
       
     def build_link href, text, known_card = nil
+      href, cardname = href.to_s, href.to_cardname
       klass = case href
         when /^https?:/; 'external-link'
         when /^mailto:/; 'email-link'
         when /^\//
-          href = full_uri href.to_s      
+          href = full_uri href
           'internal-link'
         else
           known_card = !!Card.fetch(href, :skip_modules=>true) if known_card.nil?
           if card
             text = text.to_cardname.to_show card.name
           end
-          href = href.to_cardname
-          href = known_card ? href.to_url_key : CGI.escape(href.escape)
           
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
-          href = full_uri href.to_s
+          href = full_uri known_card ? cardname.to_url_key : CGI.escape(cardname.escape)
           known_card ? 'known-card' : 'wanted-card'
           
       end
-      %{<a class="#{klass}" href="#{href.to_s}">#{text.to_s}</a>}
+      %{<a class="#{klass}" href="#{href}">#{text.to_s}</a>}
     end
     
     def unique_id() "#{card.key}-#{Time.now.to_i}-#{rand(3)}" end

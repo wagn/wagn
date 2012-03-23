@@ -177,10 +177,16 @@ describe Wagn::Cardname do
   end
 
   describe "#replace_part" do
-    it "replaces name parts" do
+    it "replaces first name part" do
       'a+b'.to_cardname.replace_part('a','x').to_s.should == 'x+b'
+    end
+    it "replaces second name part" do
       'a+b'.to_cardname.replace_part('b','x').to_s.should == 'a+x'
+    end
+    it "replaces two name parts" do
       'a+b+c'.to_cardname.replace_part('a+b','x').to_s.should == 'x+c'
+    end
+    it "doesn't replace two part tag" do
       'a+b+c'.to_cardname.replace_part('b+c','x').to_s.should == 'a+b+c'
     end
   end  

@@ -156,7 +156,7 @@ module Wagn::Model
   class TypePattern < SetBase
     register '*type', :type
     class << self
-      def label(name)                "All #{name} cards"                  end
+      def label(name)                "All #{name.to_s} cards"             end
       def prototype_args(base)       {:type=>base}                        end
       def method_key_from_opts(opts)
         opts[:type].to_cardname.css_name+'_type'
@@ -191,7 +191,7 @@ module Wagn::Model
   class RightPattern < SetBase
     register '*right', :right, :junction_only=>true
     class << self
-      def label(name)                "Cards ending in +#{name}"         end
+      def label(name)                "Cards ending in +#{name.to_s}"    end
       def prototype_args(base)       {:name=>"*dummy+#{base}"}          end
       def method_key_from_opts(opts)
         opts[:right].to_cardname.css_name+'_right'
@@ -201,7 +201,7 @@ module Wagn::Model
        #warn (Rails.logger.debug "pattern_name Right #{card.cardname}, #{r}"); r
       end
     end
-    def opt_vals()                      [@pat_name.left_name.to_s]           end
+    def opt_vals()                      [@pat_name.left_name.to_s]      end
     def set_module()
       "Right::#{(@pat_name.left_name.key.gsub(/^\*/,'X')).camelcase}"
     end
@@ -210,7 +210,9 @@ module Wagn::Model
   class LeftTypeRightNamePattern < SetBase
     register '*type_plu_right', [:ltype, :right], :junction_only=>true
     class << self
-      def label(name) "Any #{name.left_name} card plus #{name.tag_name}"     end
+      def label(name)
+        "Any #{name.left_name.to_s} card plus #{name.tag_name.to_s}"
+      end
       def prototype_args(base)
         { :name=>"*dummy+#{base.tag_name}", :loaded_trunk=>
           Card.new( :name=>'*dummy', :type=>base.trunk_name ) }
@@ -237,7 +239,7 @@ module Wagn::Model
   class SelfPattern < SetBase
     register '*self', :name
     class << self
-      def label(name)                %{The card "#{name}"}                end
+      def label(name)                %{The card "#{name.to_s}"}           end
       def prototype_args(base)       { :name=>base }                      end
       def pattern_applies?(card)     true                                 end
       def method_key_from_opts(opts)

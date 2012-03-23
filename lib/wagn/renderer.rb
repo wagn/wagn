@@ -294,12 +294,7 @@ module Wagn
     end
   
     def process_inclusion tcard, options
-      sub = subrenderer( tcard, 
-        :item_view =>options[:item], 
-        :type      =>options[:type],
-#        :size      =>options[:size],
-        :showname  =>(options[:showname] || tcard.cardname)
-      )
+      sub = subrenderer tcard, :item_view=>options[:item], :showname=>options[:showname]
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub  #don't like depending on this global var switch
   
       new_card = tcard.new_card? && !tcard.virtual?
@@ -511,7 +506,8 @@ module Wagn
   Wagn::Renderer::Rss
   Wagn::Renderer::Text
   
-  Wagn::Conf[:pack_dirs].split(/,\s*/).each do |dir|
+  pack_dirs = Rails.env =~ /^cucumber|test$/ ? "#{Rails.root}/lib/packs" : Wagn::Conf[:pack_dirs]
+  pack_dirs.split(/,\s*/).each do |dir|
     Wagn::Pack.dir File.expand_path( "#{dir}/**/*_pack.rb",__FILE__)
   end
   Wagn::Pack.load_all

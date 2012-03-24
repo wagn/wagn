@@ -128,12 +128,11 @@ describe Wagn::Cardname do
 
 
   describe "#to_url_key" do
-    cardnames = ["GrassCommons.org", 'Oh you @##', "Alice's Restaurant!", "PB &amp; J", "Mañana"]
+    cardnames = ["GrassCommons.org", 'Oh you @##', "Alice's Restaurant!", "PB &amp; J", "Mañana"].map(&:to_cardname)
   
-    cardnames.each do |name| 
+    cardnames.each do |cardname| 
       it "should have the same key as the name" do
-        name.to_cardname.to_key.should ==
-          name.to_cardname.to_url_key.to_cardname.to_key
+        cardname.to_key.should == cardname.to_url_key.to_cardname.to_key
       end
     end
   end       

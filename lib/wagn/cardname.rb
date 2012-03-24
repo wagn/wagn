@@ -17,33 +17,31 @@ module Wagn
 
     class << self
       def new(obj)
-        raise "??? #{obj.inspect}" if Card===obj
         return obj if Cardname===obj
         str = Array===obj ? obj*JOINT : obj.to_s
         return obj if obj = @@name2cardname[str]
-        super str
+        super str.strip
       end
     end
 
 
-    attr_reader :s, :simple, :parts, :key
+    attr_reader :simple, :parts, :key
     alias to_key key
 
 
     def initialize(str)
-      @key = if (@s = str.to_s.strip).index(JOINT)
-          @parts = @s.split(/\s*#{Regexp.escape(JOINT)}\s*/)
-          @parts << '' if @s.last == JOINT
+      super str
+      @key = if index JOINT
+          @parts = str.split(/\s*#{Regexp.escape(JOINT)}\s*/)
+          @parts << '' if str.last == JOINT
           @simple = false
           @parts.map{|p| p.to_cardname.key } * JOINT  
         else
-          @parts = [@s]
+          @parts = [str]
           @simple = true
-          @s.blank? ? '' : generate_simple_key
+          blank? ? '' : generate_simple_key
         end
-      #@key.to_cardname if @key != @s
-      @@name2cardname[@s] = self
-      #warn (Rails.logger.debug "new:#{self.inspect}"); self
+      @@name2cardname[str] = self
     end
     
     def generate_simple_key
@@ -51,12 +49,13 @@ module Wagn
     end
     
     def decode_html
-      @decoded ||= (s.match(/\&/) ?  HTMLEntities.new.decode(s) : s)
+      s="#{self}"
+      @decoded ||= (match(/\&/) ?  HTMLEntities.new.decode(s) : s)
     end
     
     alias simple? simple
     
-    def inspect() "<CardName key=#{key}[#{s}, #{size}]>" end
+    def inspect() "<CardName key=#{key}[#{self}, #{@parts ? @parts.size : 'no size?'}]>" end
 
     def self.unescape(uri) uri.gsub(' ','+').gsub('_',' ')             end
 
@@ -68,19 +67,15 @@ module Wagn
       str
     end   
 
-    alias to_str s
-    alias to_s s
     def ==(obj)
       obj.nil? ? false :
         key == (obj.respond_to?(:to_key) ? obj.to_key :
                obj.respond_to?(:to_cardname) ? obj.to_cardname.key : obj.to_s)
     end
-    def size() parts.size end
 
-    def to_cardname() self end
-    def valid?
-      not (s =~ /\+$/ or parts.find {|pt| pt.match(BANNED_RE)})
-    end
+    def size()        parts.size                                end
+    def to_cardname() self                                      end
+    def valid?()      not parts.find {|pt| pt.match(BANNED_RE)} end
 
     #FIXME codename
     def template_name?() junction? && !!%w{*default *content}.include?(tag_name) end
@@ -92,7 +87,7 @@ module Wagn
       newpart = newpart.to_cardname unless Cardname===newpart
       if oldpart.simple?
         simple? ? (self == oldpart ? newpart : self) :
-                    parts.map{ |s| oldpart == s ? newpart.to_s : s }.to_cardname
+                    parts.map{ |p| oldpart == p ? newpart : p }.to_cardname
       elsif simple?
         self
       else
@@ -110,21 +105,20 @@ module Wagn
       #Rails.logger.info "trunk_name(#{to_str})[#{to_s}] #{r.to_s}"; r
     alias particle_names parts
 
-    def module_name() s.gsub(/^\*/,'X_').gsub(/[\b\s]+/,'_').camelcase end
+    def module_name() gsub(/^\*/,'X_').gsub(/[\b\s]+/,'_').camelcase end
     def css_name() @css_name ||= key.gsub('*','X').gsub('+','-')       end
 
-    def to_star()     star? ? s : '*'+s                                end
-    def star?()       simple? and !!(s=~/^\*/)                         end
+    def to_star()     star? ? self : '*'+self                                end
+    def star?()       simple? and !!(self=~/^\*/)                         end
     def tag_star?()   !!((simple? ? self : parts[-1])=~/^\*/)          end
     alias rstar? tag_star?
     def star_rule(star)
-      [s, (star = star.to_s) =~ /^\*/ ? star : '*'+star].to_cardname end
+      [self, (star = star.to_s) =~ /^\*/ ? star : '*'+star].to_cardname end
 
-    def empty?()      parts && parts.empty? or s && s.blank?           end
-    alias blank?      empty?
+    alias empty? blank?
 
     def pre_cgi()          parts * '~plus~'                            end
-    def escape()           s.gsub(' ','_')                             end
+    def escape()           gsub(' ','_')                             end
 
     def to_url_key()
       @url_key ||= decode_html.gsub(/[^\*#{WORD_RE}\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
@@ -136,7 +130,7 @@ module Wagn
 
     def to_show(context)
       # FIXME this is not quite right.  distinction is that is leaves blank parts blank.
-      (self.s =~/\b_(left|right|whole|self|user|main|\d+|L*R?)\b/) ?
+      (self =~/\b_(left|right|whole|self|user|main|\d+|L*R?)\b/) ?
          to_absolute(context) : self
     end
 
@@ -145,7 +139,7 @@ module Wagn
     end
 
     def to_absolute_name(rel_name=nil)
-      (rel_name || self.s).to_cardname.to_absolute(self)
+      (rel_name || self).to_cardname.to_absolute(self)
     end
 
     def nth_left(n)
@@ -173,6 +167,7 @@ module Wagn
             (params && ppart = params[part]) ? CGI.escapeHTML( ppart ) : part
           else                     part
         end.to_s.strip
+        #Rails.logger.warn "to_abs#{context}, #{part}, #{new_part}, #{new_part.blank? ? context.to_s : new_part}"
         new_part.blank? ? context.to_s : new_part
       end * JOINT
     end

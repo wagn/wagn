@@ -231,6 +231,7 @@ module Wagn::Model
     def opt_vals() [left_type, @pat_name.left_name.tag_name] end
     def set_module()
       lt, tn = opt_vals
+      Rails.logger.warn "set_mod #{tn.inspect}"
       tk = tn&&tn.to_cardname.key.gsub(/^\*/,'X')||''
       "LTypeRight::#{lt}#{tk.camelcase}" if lt and tk
     end

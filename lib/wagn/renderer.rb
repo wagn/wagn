@@ -378,7 +378,7 @@ module Wagn
     end
       
     def build_link href, text, known_card = nil
-      href, cardname = href.to_s, href.to_cardname
+      #Rails.logger.warn "bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}"
       klass = case href
         when /^https?:/; 'external-link'
         when /^mailto:/; 'email-link'
@@ -392,6 +392,7 @@ module Wagn
           end
           
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
+          cardname = Cardname===href ? href : href.to_cardname
           href = full_uri known_card ? cardname.to_url_key : CGI.escape(cardname.escape)
           known_card ? 'known-card' : 'wanted-card'
           

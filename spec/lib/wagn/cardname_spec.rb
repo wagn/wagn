@@ -132,7 +132,9 @@ describe Wagn::Cardname do
   
     cardnames.each do |cardname| 
       it "should have the same key as the name" do
-        cardname.to_key.should == cardname.to_url_key.to_cardname.to_key
+        k, k2 = cardname.to_key, cardname.to_url_key
+        #warn "cn tok #{cardname.inspect}, #{k.inspect}, #{k2.inspect}"
+        k.should == k2.to_cardname.to_key
       end
     end
   end       
@@ -189,4 +191,26 @@ describe Wagn::Cardname do
       'a+b+c'.to_cardname.replace_part('b+c','x').to_s.should == 'a+b+c'
     end
   end  
+
+  describe "Card sets" do
+    it "recognizes star cards" do
+      '*a'.to_cardname.star?.should be_true
+    end
+
+    it "doesn't recognize star cards with plusses" do
+      '*a+*b'.to_cardname.star?.should be_false
+    end
+
+    it "recognizes rstar cards" do
+      'a+*a'.to_cardname.rstar?.should be_true
+    end
+
+    it "doesn't recognize star cards as rstar" do
+      '*a'.to_cardname.rstar?.should be_false
+    end
+
+    it "doesn't recognize non-star or star left" do
+      '*a+a'.to_cardname.rstar?.should be_false
+    end
+  end
 end

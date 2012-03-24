@@ -109,7 +109,7 @@ module Wagn
 
     def to_star()       star? ? self : ?*+self                             end
     def star?()         simple? and ?* == self[0]                          end
-    def tag_star?()     ?* == parts[-1][0]                                 end
+    def tag_star?()     junction? and ?* == parts[-1][0]                   end
     alias rstar? tag_star?
     def star_rule(star)
       [self, (star=star.to_s)[0] == ?* ? star : ?*+star].to_cardname

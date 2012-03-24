@@ -136,6 +136,7 @@ describe Card, "type transition create callback" do
   end
     
   it "should increment counter"  do
+    pending "No extensions, so no hooks for this now"
     Card.count.should == 3
   end
   

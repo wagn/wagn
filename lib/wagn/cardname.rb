@@ -16,7 +16,7 @@ module Wagn
     @@name2cardname = {}
 
     class << self
-      def new(obj)
+      def new obj
         return obj if Cardname===obj
         str = Array===obj ? obj*JOINT : obj.to_s
         return obj if obj = @@name2cardname[str]
@@ -29,7 +29,7 @@ module Wagn
     alias to_key key
 
 
-    def initialize(str)
+    def initialize str
       super str
       @key = if index JOINT
           @parts = str.split(/\s*#{Regexp.escape(JOINT)}\s*/)
@@ -49,8 +49,7 @@ module Wagn
     end
     
     def decode_html
-      s="#{self}"
-      @decoded ||= (match(/\&/) ?  HTMLEntities.new.decode(s) : s)
+      @decoded ||= (index(?&) ?  HTMLEntities.new.decode(to_s) : to_s)
     end
     
     alias simple? simple
@@ -98,27 +97,28 @@ module Wagn
     end
 
 
-    def tag_name()    simple? ? self : parts[-1]                       end
-    def left_name()   simple? ? nil  : self.class.new(parts[0..-2])    end
-    def trunk_name()  simple? ? self : self.class.new(parts[0..-2])    end
-    def junction?()   not simple?                                      end
+    def tag_name()      simple? ? self : parts[-1]                         end
+    def left_name()     simple? ? nil  : self.class.new(parts[0..-2])      end
+    def trunk_name()    simple? ? self : self.class.new(parts[0..-2])      end
+    def junction?()     not simple?                                        end
       #Rails.logger.info "trunk_name(#{to_str})[#{to_s}] #{r.to_s}"; r
     alias particle_names parts
 
-    def module_name() gsub(/^\*/,'X_').gsub(/[\b\s]+/,'_').camelcase end
-    def css_name() @css_name ||= key.gsub('*','X').gsub('+','-')       end
+    def module_name()   gsub(/^\*/,'X_').gsub(/[\b\s]+/,'_').camelcase     end
+    def css_name()      @css_name ||= key.gsub('*','X').gsub('+','-')      end
 
-    def to_star()     star? ? self : '*'+self                                end
-    def star?()       simple? and !!(self=~/^\*/)                         end
-    def tag_star?()   !!((simple? ? self : parts[-1])=~/^\*/)          end
+    def to_star()       star? ? self : ?*+self                             end
+    def star?()         simple? and ?* == self[0]                          end
+    def tag_star?()     ?* == parts[-1][0]                                 end
     alias rstar? tag_star?
     def star_rule(star)
-      [self, (star = star.to_s) =~ /^\*/ ? star : '*'+star].to_cardname end
+      [self, (star=star.to_s)[0] == ?* ? star : ?*+star].to_cardname
+    end
 
     alias empty? blank?
 
-    def pre_cgi()          parts * '~plus~'                            end
-    def escape()           gsub(' ','_')                             end
+    def pre_cgi()       parts * '~plus~'                                   end
+    def escape()        gsub(' ','_')                                      end
 
     def to_url_key()
       @url_key ||= decode_html.gsub(/[^\*#{WORD_RE}\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')

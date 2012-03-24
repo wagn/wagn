@@ -184,7 +184,7 @@ module Wagn::Model
     register '*rstar', :rstar, :method_key=>'rstar', :junction_only=>true
     def self.label(name)           "Cards ending in +(Star Card)"            end
     def self.prototype_args(base)  {:name=>'*dummy+*dummy'}                  end
-    def self.pattern_applies?(card)    n=card.cardname and n.junction? && n.tag_star? end
+    def self.pattern_applies?(card) n=card.cardname and n.junction? && n.tag_star?  end
     def set_module()               "Rstar"                                   end
   end
 
@@ -231,7 +231,6 @@ module Wagn::Model
     def opt_vals() [left_type, @pat_name.left_name.tag_name] end
     def set_module()
       lt, tn = opt_vals
-      Rails.logger.warn "set_mod #{tn.inspect}"
       tk = tn&&tn.to_cardname.key.gsub(/^\*/,'X')||''
       "LTypeRight::#{lt}#{tk.camelcase}" if lt and tk
     end

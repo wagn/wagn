@@ -25,7 +25,7 @@ describe Wagn::Renderer::Xml, "" do
     end
 
     it "visible comment inclusions as html comments" do
-      render_content("{{# now you see me}}").should == '<!-- # now you see me -->'
+      xml_render_content("{{# now you see me}}").should == '<!-- # now you see me -->'
       xml_render_content("{{# -->}}").should == '<!-- # --&gt; -->'
     end
 
@@ -332,8 +332,8 @@ describe Wagn::Renderer::Xml, "" do
         render_editor('Plain Text').should be_html_with { textarea :rows=>'3' }
       end
 
-      it "should have special content that converts newlines to <br>'s" do
-        render_card(:naked, :type=>'Plain Text', :content=>"a\nb").should == 'a<br/>b'
+      it "should have special content that escapes HTML" do
+        render_card(:core, :type=>'Plain Text', :content=>"<b></b>").should == '&lt;b&gt;&lt;/b&gt;'
       end
     end
 
@@ -341,10 +341,10 @@ describe Wagn::Renderer::Xml, "" do
       it "should wrap search items with correct view class" do
         Card.create :type=>'Search', :name=>'Asearch', :content=>%{{"type":"User"}}        
 
-        c=render_content("{{Asearch|naked;item:name}}")
+        c=xml_render_content("{{Asearch|naked;item:name}}")
         c.should match('search-result-item item-name')
-        render_content("{{Asearch|naked;item:open}}").should match('search-result-item item-open')
-        render_content("{{Asearch|naked}}").should match('search-result-item item-closed')
+        xml_render_content("{{Asearch|naked;item:open}}").should match('search-result-item item-open')
+        xml_render_content("{{Asearch|naked}}").should match('search-result-item item-closed')
       end
 
       it "should handle returning 'count'" do
@@ -426,7 +426,7 @@ describe Wagn::Renderer::Xml, "" do
 
   context "open missing" do
     it "should use the showname" do
-      render_content('{{+cardipoo|open}}').match(/Add \<strong\>\+cardipoo/ ).should_not be_nil
+      xml_render_content('{{+cardipoo|open}}').match(/\<no_card status=\"missing\"\>Tempo Rary 2\+cardipoo\<\/no_card\>/ ).should_not be_nil
     end
   end
 

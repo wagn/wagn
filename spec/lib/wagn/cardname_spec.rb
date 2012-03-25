@@ -5,7 +5,15 @@ describe Wagn::Cardname do
   
   describe "#to_key" do
     it "should remove spaces" do
+      "this    Name".to_cardname.to_key.should == "this_name"
+    end
+  
+    it "should have initial _ for initial cap" do
       "This Name".to_cardname.to_key.should == "this_name"
+    end
+  
+    it "should have initial _ for initial cap" do
+      "_This Name".to_cardname.to_key.should == "this_name"
     end
   
     it "should singularize" do

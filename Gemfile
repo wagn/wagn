@@ -11,7 +11,7 @@ gem 'warden'
 gem 'rmagick', '~>2.13.1'
 gem "recaptcha", "~> 0.3.4"
 gem 'userstamp', '~> 2.0'
-gem 'xmlscan', '0.3.0prec'
+gem 'xmlscan', '~>0.3.0'
 
 # DATABASE
 

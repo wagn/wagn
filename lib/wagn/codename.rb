@@ -65,6 +65,7 @@ module Wagn
       def load_cache()
         card2code = {}; code2card = {}
 
+        #Card.where()
         Card.connection.select_all(%{
             select c.id, c.name, c.key, cd.codename, c.type_id
              from cards c left outer join codename cd on c.id = cd.card_id

@@ -29,8 +29,9 @@ module Wagn
       end
             
       def initialize_on_startup
+        store = Rails.env =~ /^cucumber|test$/ ? nil : Rails.cache
         cache_classes.each do |cc|
-          cc.cache = new :class=>cc, :store=>(Rails.env =~ /^cucumber|test$/ ? nil : Rails.cache)
+          cc.cache = new :class=>cc, :store=>store
         end
         preload_cache_for_tests if preload_cache?
       end

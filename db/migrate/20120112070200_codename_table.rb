@@ -31,13 +31,16 @@ class CodenameTable < ActiveRecord::Migration
         "wagn_bot"         => "wagbot",
       }
 
-    codecards.map { |name|
-         c = Card[name] || User.as(:wagbot) { r=Card.create!(:name=>name) } or
-             raise "Missing codename #{name} card"
-         name = name[1..-1] if name[0] == ?*
-         name = renames[name] if renames[name]
-         Wagn::Codename.insert(c.id, name)
-       }
+    codecards.each do |name|
+      c = Card[name]
+      c ||= User.as :wagbot do
+        Card.create! :name=>name
+      end
+      c or raise "Missing codename #{name} card"
+      name = name[1..-1] if name[0] == '*'
+      name = renames[name] if renames[name]
+      Wagn::Codename.insert c.id, name
+    end
 
     Card.reset_column_information
   end

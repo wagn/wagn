@@ -17,12 +17,13 @@ class Card::Codename
     # This is a read-only cached model.  Entries must be added on bootstrap,
     # or as an administrative action when installing or upgrading wagn and
     # its packs.
+=begin Use AR.create
     def insert(card_id, codename)
       Card.connection.insert(%{
-        insert into codename (card_id, codename) values (#{card_id}, '#{codename}')
+        insert into codenames (card_id, codename) values (#{card_id}, '#{codename}')
       })
       reset_cache
-    end
+=end
 
     def code_attr(key, attr=nil?)
       #warn "miss #{key} #{card2code.map(&:inspect)*"\n"}" unless card2code.has_key?(key)
@@ -67,7 +68,7 @@ class Card::Codename
       #Card.where()
       Card.connection.select_all(%{
           select c.id, c.name, c.key, cd.codename, c.type_id
-           from cards c left outer join codename cd on c.id = cd.card_id
+           from cards c left outer join codenames cd on c.id = cd.card_id
           where c.trash is false
             and (c.type_id = 5 or cd.codename is not null)
         }).map(&:symbolize_keys).each do |h|
@@ -80,7 +81,7 @@ class Card::Codename
       #warn "setting caches: #{code2card.inspect}\n#{card2code.inspect}\n"
       set_cache 'code2card', code2card
       set_cache 'card2code', card2code
-    rescue Exceptions => e
+    rescue Exception => e
       warn(Rails.logger.info "Error loading codenames #{e.inspect}, #{e.backtrace*"\n"}")
     end
   end

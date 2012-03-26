@@ -121,7 +121,7 @@ class Card::BaseTest < ActiveSupport::TestCase
     assert !card.name.nil?, "name not null"
     assert !card.name.empty?, "name not empty"
     rev = card.current_revision
-    assert_instance_of Revision, rev
+    assert_instance_of Card::Revision, rev
     #warn "revision #{rev.inspect}, #{rev.author}"
     assert_instance_of Card, rev.author
   end

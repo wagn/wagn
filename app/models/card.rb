@@ -614,16 +614,16 @@ class Card < ActiveRecord::Base
   def selected_rev_id() @selected_rev_id || (cr=cached_revision)&&cr.id || 0 end
 
   def cached_revision
-    #return current_revision || Revision.new
+    #return current_revision || Card::Revision.new
     if @cached_revision and @cached_revision.id==current_revision_id
-    elsif ( Revision.cache &&
-       @cached_revision=Revision.cache.read("#{cardname.css_name}-content") and
+    elsif ( Card::Revision.cache &&
+       @cached_revision=Card::Revision.cache.read("#{cardname.css_name}-content") and
        @cached_revision.id==current_revision_id )
     else
-      rev = current_revision_id ? Revision.find(current_revision_id) :
-                    Revision.new(:creator_id => Card.user_id)
-      @cached_revision = Revision.cache ?
-        Revision.cache.write("#{cardname.css_name}-content", rev) : rev
+      rev = current_revision_id ? Card::Revision.find(current_revision_id) :
+                    Card::Revision.new(:creator_id => Card.user_id)
+      @cached_revision = Card::Revision.cache ?
+        Card::Revision.cache.write("#{cardname.css_name}-content", rev) : rev
     end
     @cached_revision
   end
@@ -735,7 +735,7 @@ class Card < ActiveRecord::Base
     if self.id ==  Card::WagbotID or self.id ==  Card::AnonID
       errors.add :destroy, "#{name}'s is a system card.<br>  Deleting this card would mess up our revision records."
       return false
-    elsif type_id== Card::UserID and Revision.find_by_creator_id( self.id )
+    elsif type_id== Card::UserID and Card::Revision.find_by_creator_id( self.id )
       errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
       return false
     end

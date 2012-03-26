@@ -1,7 +1,7 @@
 require File.expand_path('../spec_helper', File.dirname(__FILE__)) 
 
 
-describe "WikiReference" do
+describe "Card::Reference" do
   
   before do
     #setup_default_user  
@@ -181,9 +181,9 @@ describe "WikiReference" do
     references = new_card.wiki_references(true)
     references.size.should == 2
     references[0].referenced_name.should == 'WantedCard'
-    references[0].link_type.should == WikiReference::WANTED_PAGE
+    references[0].link_type.should == Card::Reference::WANTED_PAGE
     references[1].referenced_name.should == 'WantedCard2'
-    references[1].link_type.should == WikiReference::WANTED_PAGE
+    references[1].link_type.should == Card::Reference::WANTED_PAGE
 
     wanted_card = Card.create(:name=>'WantedCard')
     wanted_card.revise('And here it is!', Time.now, Card['quentin'].to_user), get_renderer)
@@ -193,9 +193,9 @@ describe "WikiReference" do
     references = new_card.wiki_references(true)
     references.size.should == 2
     references[0].referenced_name.should == 'WantedCard'
-    references[0].link_type.should == WikiReference::LINKED_PAGE
+    references[0].link_type.should == Card::Reference::LINKED_PAGE
     references[1].referenced_name.should == 'WantedCard2'
-    references[1].link_type.should == WikiReference::WANTED_PAGE
+    references[1].link_type.should == Card::Reference::WANTED_PAGE
   end
 =end
   private

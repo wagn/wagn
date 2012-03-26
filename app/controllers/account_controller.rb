@@ -45,7 +45,7 @@ class AccountController < ApplicationController
     raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
     @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
     #warn "accept #{Card.user_id}, #{@card.inspect}"
-    @user = User.where(:card_id=>@card.id).first or raise(Wagn::Oops, "This card doesn't have an account to approve")  #ENGLISH
+    @user = @card.to_user or raise(Wagn::Oops, "This card doesn't have an account to approve")  #ENGLISH
     #warn "accept #{@user.inspect}"
     @card.ok?(:create) or raise(Wagn::PermissionDenied, "You need permission to create accounts")  #ENGLISH
 

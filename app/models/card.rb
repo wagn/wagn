@@ -139,7 +139,7 @@ class Card < ActiveRecord::Base
     end
     def user
       @@user && @@user.card_id == user_id ?
-        @@user : @@user = User.where(:card_id=>user_id).first
+        @@user : @@user = user_card.to_user
     end
 
     def user=(user) @@as_user_id=nil; @@user_id = user2id(user)
@@ -152,7 +152,7 @@ class Card < ActiveRecord::Base
         when Card; user.id
         when Integer; user
         else Wagn::Codename.code2id(user) || cd=Card[user.to_s] and cd.id
-        #|| User.where(:login=>user.to_s).first.card_id
+        #|| User.from_login(user.to_s).card_id
       end
     end
 
@@ -168,7 +168,7 @@ class Card < ActiveRecord::Base
         @@as_user_id = tmp_user
         return value
       else
-        #fail "BLOCK REQUIRED with User#as"
+        #fail "BLOCK REQUIRED with Card#as"
       end
     end
 
@@ -236,6 +236,8 @@ class Card < ActiveRecord::Base
     end
 
   public
+
+    def to_user() User.where(:card_id=>id).first end
 
     def code2id(code)
       r=Wagn::Codename.card_attr(code, :id)

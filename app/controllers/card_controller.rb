@@ -143,7 +143,7 @@ class CardController < ApplicationController
   #-------- ( ACCOUNT METHODS )
 
   def update_account
-    account = User.where(:card_id=>@card.id).first
+    account = @card.to_user
 
     if params[:save_roles]
       role_hash = params[:user_roles] || {}

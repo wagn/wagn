@@ -6,7 +6,7 @@ class Mailer < ActionMailer::Base
   def account_info(user, subject, message)
     from_card = Card.user_card
     from_name = from_card.nil? ? '' : from_card.name
-    from_user = User.where(:card_id=>from_card.id).first || User.admin
+    from_user = from_card.to_user || User.admin
     url_key = Card[user.card_id].cardname.to_url_key
 
     @email    = (user.email    or raise Wagn::Oops.new("Oops didn't have user email"))
@@ -26,7 +26,7 @@ class Mailer < ActionMailer::Base
   def signup_alert(invite_request)
     @site = Card.setting('*title')
     @card = invite_request
-    @email= User.where(:card_id=>invite_request.id).first.email
+    @email= invite_request.to_user.email
     @name = invite_request.name
     @content = invite_request.content
     @request_url  = wagn_url invite_request
@@ -42,7 +42,7 @@ class Mailer < ActionMailer::Base
 
 
   def change_notice(user, card, action, watched, subedits=[], updated_card=nil)
-    return unless user = User===user ? user : User.where(:card_id=>user).first
+    return unless user = User===user ? user : User.from_id(user)
 
     #warn "change_notice( #{user.inspect}, #{card.inspect}, #{action.inspect}, #{watched.inspect} Uc:#{updated_card.inspect}...)"
     updated_card ||= card
@@ -58,7 +58,7 @@ class Mailer < ActionMailer::Base
 
     mail( {
       :to           => "#{user.email}",
-      :from         => User.where(:card_id=>Card::WagbotID).first.email,
+      :from         => User.admin.email,
       :subject      => "[#{Card.setting('*title')} notice] #{@updater} #{action} \"#{card.name}\"" ,
       :content_type => 'text/html',
     } )

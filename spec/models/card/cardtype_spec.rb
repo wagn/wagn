@@ -182,7 +182,7 @@ describe User, "Joe User" do
 #    @ctf.save!
 
     Card.as :joe_user
-    @user = User.where(:card_id=>Card.as_user_id).first
+    @user = User.user
     @ucard = Card[@user.card_id]
     Wagn::Codename.reset_cache
     @typenames = Card.createable_types

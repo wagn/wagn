@@ -159,7 +159,7 @@ describe Card, "types" do
     ct.typecode.should == 'Cardtype'
     ct = Card.fetch('AFoo')
     Card.klassname_for(ct.name).should == 'AFoo'
-    Wagn::Codename.insert(ct.id, Card.klassname_for(ct.name))
+    Card::Codename.insert(ct.id, Card.klassname_for(ct.name))
 
     ct.update_attributes! :name=>"FooRenamed", :confirm_rename=>true
     (ct=Card.fetch('FooRenamed')).typecode.should == 'Cardtype'
@@ -168,13 +168,13 @@ describe Card, "types" do
     ncd.typename.should == 'FooRenamed'
     ncd.typecode.should == 'AFoo'
    
-    Wagn::Codename.reset_cache
+    Card::Codename.reset_cache
     Card.create!(:type=>"FooRenamed",:name=>"testy").typecode.should == 'AFoo'
     Card.create!(:type=>"foo_renamed",:name=>"so testy").typecode.should == 'AFoo'
   end
   it "should accept classname as typecode" do
     ct = Card.create! :name=>"BFoo", :type=>'Cardtype'
-    Wagn::Codename.insert(ct.id, Card.klassname_for(ct.name))
+    Card::Codename.insert(ct.id, Card.klassname_for(ct.name))
 
     ct.update_attributes! :name=>"BFooRenamed"
 
@@ -189,7 +189,7 @@ describe Card, "types" do
     #we don't detect this collision now, .typecode should be nil in the case that none is assigned, but that would break a lot of stuff now
     pending "we don't detect collision now, .typecode should be nil"
     ct = Card.create! :name=>"CFoo", :type=>'Cardtype'
-    Wagn::Codename.insert(ct.id, Card.klassname_for(ct.name))
+    Card::Codename.insert(ct.id, Card.klassname_for(ct.name))
     ct.update_attributes! :name=>"CFooRenamed"
     Card.create! :name=>"CFoo", :type=>'Cardtype'
     Card.create!(:type=>"CFoo",:name=>"testy").typecode.should_not == 'CFoo'

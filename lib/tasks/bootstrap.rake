@@ -1,8 +1,6 @@
 WAGN_BOOTSTRAP_TABLES = %w{ cards revisions wiki_references cardtypes }
 
 namespace :wagn do
-  require 'wagn/codename'
-  Codename = Wagn::Codename
 
   desc "create a wagn database from scratch"
   task :create => :environment do

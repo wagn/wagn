@@ -72,7 +72,7 @@ class User < ActiveRecord::Base
           @card = key
           key.key
         else
-          @card = (card_id = Wagn::Codename.code2id(key.to_s)) ?
+          @card = (card_id = Card::Codename.code2id(key.to_s)) ?
                     Card[card_id] : @card = Card[key.to_s]
           key.to_s
         end
@@ -83,7 +83,7 @@ class User < ActiveRecord::Base
       
       card_id ||= @card && @card.id
       self.cache.write(key.to_s, usr)
-      code = Wagn::Codename.codename(card_id.to_s) and self.cache.write(code, usr)
+      code = Card::Codename.codename(card_id.to_s) and self.cache.write(code, usr)
       usr
     end
   end

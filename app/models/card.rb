@@ -153,7 +153,7 @@ class Card < ActiveRecord::Base
         when User; user.card_id
         when Card; user.id
         when Integer; user
-        else Wagn::Codename.code2id(user) || cd=Card[user.to_s] and cd.id
+        else Card::Codename.code2id(user) || cd=Card[user.to_s] and cd.id
         #|| User.from_login(user.to_s).card_id
       end
     end
@@ -240,7 +240,7 @@ class Card < ActiveRecord::Base
   public
 
     def code2id(code)
-      r=Wagn::Codename.card_attr(code, :id)
+      r=Card::Codename.card_attr(code, :id)
       raise "no code? #{code.inspect}" unless r; r
     end
     def find_configurables
@@ -278,16 +278,16 @@ class Card < ActiveRecord::Base
     NON_CREATEABLE = %w{InvitationRequest Setting Set}
 
     def createable_typecodes
-      Wagn::Codename.type_codes.map { |h|
+      Card::Codename.type_codes.map { |h|
         !NON_CREATEABLE.member?( h[:codename] ) &&
           create_ok?( h[:id] ) && h[:codename] || nil
       }.compact
     end
 
     def createable_types
-      #warn "createable_types #{(cds=Wagn::Codename.type_codes).inspect}"
+      #warn "createable_types #{(cds=Card::Codename.type_codes).inspect}"
       #cds.map { |h|
-      Wagn::Codename.type_codes.map { |h|
+      Card::Codename.type_codes.map { |h|
         !NON_CREATEABLE.member?( h[:codename] ) &&
           create_ok?( h[:id] ) && h[:name] || nil
       }.compact
@@ -301,11 +301,11 @@ class Card < ActiveRecord::Base
   # TYPE
 
     def type_id_from_name(name)
-      Wagn::Codename.code_attr(name.to_cardname.key, :id)
+      Card::Codename.code_attr(name.to_cardname.key, :id)
     end
-    def type_id_from_code(code) Wagn::Codename.card_attr(code, :id)     end
-    def typename_from_id(id)    Wagn::Codename.code_attr(id, :name)     end
-    def typecode_from_id(id)    Wagn::Codename.code_attr(id, :codename) end
+    def type_id_from_code(code) Card::Codename.card_attr(code, :id)     end
+    def typename_from_id(id)    Card::Codename.code_attr(id, :name)     end
+    def typecode_from_id(id)    Card::Codename.code_attr(id, :codename) end
   end
 
 #~~~~~~~ Instance
@@ -394,7 +394,7 @@ class Card < ActiveRecord::Base
     @from_trash = false
     Wagn::Hook.call :after_create, self if @was_new_card
     send_notifications
-    Wagn::Codename.reset_cache if type_id == Card::CardtypeID
+    Card::Codename.reset_cache if type_id == Card::CardtypeID
     true
   rescue Exception=>e
     @subcards.each{ |card| card.expire_pieces }

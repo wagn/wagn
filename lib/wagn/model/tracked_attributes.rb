@@ -63,10 +63,10 @@ module Wagn::Model::TrackedAttributes
       end
     end
           
-    Wagn::Codename.reset_cache if type_id==Card::CardtypeID
+    Card::Codename.reset_cache if type_id==Card::CardtypeID
     old_key = @old_name.to_cardname.key
     Wagn::Cache.expire_card old_key
-    Wagn::Codename.name_change old_key
+    Card::Codename.name_change old_key
     @name_changed = true          
     @name_or_content_changed=true
   end

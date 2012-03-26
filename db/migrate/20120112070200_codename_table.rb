@@ -1,6 +1,6 @@
 class CodenameTable < ActiveRecord::Migration
   def self.up
-    create_table "codenames", :force => true, :id => false do |t|
+    create_table "card_codenames", :force => true, :id => false do |t|
       t.integer  "card_id", :null => false
       t.string   "codename", :null => false
     end
@@ -54,6 +54,6 @@ class CodenameTable < ActiveRecord::Migration
 
     change_column "cards", "typecode", :string, :null=>false
 
-    drop_table "codenames"
+    drop_table "card_codenames"
   end
 end

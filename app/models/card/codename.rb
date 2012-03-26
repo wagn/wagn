@@ -20,7 +20,7 @@ class Card::Codename
 =begin Use AR.create
     def insert(card_id, codename)
       Card.connection.insert(%{
-        insert into codenames (card_id, codename) values (#{card_id}, '#{codename}')
+        insert into card_codenames (card_id, codename) values (#{card_id}, '#{codename}')
       })
       reset_cache
 =end
@@ -68,7 +68,7 @@ class Card::Codename
       #Card.where()
       Card.connection.select_all(%{
           select c.id, c.name, c.key, cd.codename, c.type_id
-           from cards c left outer join codenames cd on c.id = cd.card_id
+           from cards c left outer join card_codenames cd on c.id = cd.card_id
           where c.trash is false
             and (c.type_id = 5 or cd.codename is not null)
         }).map(&:symbolize_keys).each do |h|

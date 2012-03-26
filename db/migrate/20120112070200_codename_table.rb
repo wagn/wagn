@@ -33,7 +33,7 @@ class CodenameTable < ActiveRecord::Migration
 
     codecards.each do |name|
       c = Card[name]
-      c ||= User.as :wagbot do
+      c ||= Card.as Card::WagbotID do
         Card.create! :name=>name
       end
       c or raise "Missing codename #{name} card"

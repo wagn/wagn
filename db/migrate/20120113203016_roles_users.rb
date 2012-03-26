@@ -1,6 +1,6 @@
 class RolesUsers < ActiveRecord::Migration
   def up
-    User.as :wagbot do
+    Card.as Card::WagbotID do
       # Delete the old *roles template
       (c = Card['*assign_user_roles'] and c=c.refresh) && c.delete
       (c = Card['*role+*right+*content'] and c=c.refresh) && c.delete
@@ -63,7 +63,7 @@ class RolesUsers < ActiveRecord::Migration
   end
 
   def down
-    User.as :wagbot do
+    Card.as Card::WagbotID do
       Card.search(:right => '*roles').each &:delete
 
       (c=Card['Role+*users+*type plus right+*content']) && c.delete

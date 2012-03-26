@@ -131,6 +131,8 @@ class Card < ActiveRecord::Base
   cattr_accessor :user_id   # the card id of the current user
 
 
+  def to_user() User.where(:card_id=>id).first end
+
   class << self
     def user_id() @@user_id ||= AnonID end
     def user_card()
@@ -236,8 +238,6 @@ class Card < ActiveRecord::Base
     end
 
   public
-
-    def to_user() User.where(:card_id=>id).first end
 
     def code2id(code)
       r=Wagn::Codename.card_attr(code, :id)

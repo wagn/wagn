@@ -200,7 +200,7 @@ GEM
       macaddr (~> 1.0)
     warden (1.1.1)
       rack (>= 1.0)
-    xmlscan (0.3.0prec)
+    xmlscan (0.3.0)
     xpath (0.1.4)
       nokogiri (~> 1.3)
 
@@ -241,4 +241,4 @@ DEPENDENCIES
   warden
   win32-process (~> 0.6.5)
   win32console (~> 1.3.0)
-  xmlscan (= 0.3.0prec)
+  xmlscan (~> 0.3.0)

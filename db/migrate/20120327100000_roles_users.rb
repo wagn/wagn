@@ -1,7 +1,7 @@
 class RolesUsers < ActiveRecord::Migration
   
   def up
-    Card.as :wagbot do
+    Card.as Card::WagbotID do
       # Delete the old *roles template
       (c = Card['*assign_user_roles'] and c=c.refresh) && c.delete
       (c = Card['*role+*right+*content'] and c=c.refresh) && c.delete
@@ -15,11 +15,11 @@ class RolesUsers < ActiveRecord::Migration
         tasks=Role.where(:id=>rolecard.extension_id).first and
               tasks = tasks.tasks and tasks.split(',').each do |task|
             # mapping old task names to rule cardnames to use
-            c=Card.fetch_or_new( case task.to_sym
+            (c=Card.fetch_or_new( case task.to_sym
                 when :create_accounts;    "*account+*right+*create"
                 when :administrate_users; "*account+*right+*update"
                 when :assign_user_roles;  "*roles+*right+*update"
-              end ).add_item(rolecard.name)
+              end )).add_item(rolecard.name)
             c.save
           end
       end

@@ -27,11 +27,13 @@ class Card::Codename < ActiveRecord::Base
 
     def code_attr(key, attr=nil?)
       #warn "miss #{key} #{card2code.map(&:inspect)*"\n"}" unless card2code.has_key?(key)
+      card2code &&
       card2code.has_key?(key) && (attr ? card2code[key][attr] : true)
     end
 
     def card_attr(key, attr=nil?)
       #warn "miss card #{key} #{code2card.map(&:inspect)*"\n"}" unless code2card.has_key?(key)
+      code2card &&
       code2card.has_key?(key) && (attr ? code2card[key][attr] : true)
     end
 

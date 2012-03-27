@@ -1,6 +1,5 @@
 class TableRename < ActiveRecord::Migration
   def up
-    rename_table :codenames, :card_codenames
     rename_table :wiki_references, :card_references
     rename_table :revisions, :card_revisions
   end

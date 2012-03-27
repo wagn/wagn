@@ -1,4 +1,6 @@
 class RolesUsers < ActiveRecord::Migration
+  class RolesUser < ActiveRecord::Base
+  end
   
   def up
     Card.as Card::WagbotID do
@@ -26,8 +28,9 @@ class RolesUsers < ActiveRecord::Migration
 
       # Add username->*roles pointers from user_roles table
       Card.where(:extension_type=> 'User').each do |usercard|
-        roles = User.where(:card_id=>usercard.id).first.roles.map {|r|
-          ((rcard=r.card).id!=Card::Codename.code2id('Anonymous')) ?
+        uid = User.where(:card_id=>usercard.id).first.id
+        roles = RolesUser.where(:user_id=>uid).map {|ru|
+          ((rcard=Card.where(:id=>ru.role_id).first).id!=Card::Codename.code2id('Anonymous')) ?
               rcard.name : nil
         }.compact
         unless roles.empty?

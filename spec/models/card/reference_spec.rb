@@ -1,4 +1,4 @@
-require File.expand_path('../spec_helper', File.dirname(__FILE__)) 
+require File.expand_path('../../spec_helper', File.dirname(__FILE__)) 
 
 
 describe "Card::Reference" do
@@ -178,7 +178,7 @@ describe "Card::Reference" do
     new_card.revise('Reference to [[WantedCard]], and to [[WantedCard2]]', Time.now, Card['quentin'].to_user), 
         get_renderer)
     
-    references = new_card.wiki_references(true)
+    references = new_card.card_references(true)
     references.size.should == 2
     references[0].referenced_name.should == 'WantedCard'
     references[0].link_type.should == Card::Reference::WANTED_PAGE
@@ -190,7 +190,7 @@ describe "Card::Reference" do
 
     # link type stored for NewCard -> WantedCard reference should change from WANTED to LINKED
     # reference NewCard -> WantedCard2 should remain the same
-    references = new_card.wiki_references(true)
+    references = new_card.card_references(true)
     references.size.should == 2
     references[0].referenced_name.should == 'WantedCard'
     references[0].link_type.should == Card::Reference::LINKED_PAGE

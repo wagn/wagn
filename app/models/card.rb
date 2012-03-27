@@ -661,7 +661,7 @@ class Card < ActiveRecord::Base
 
   protected
   def clear_drafts
-    connection.execute(%{delete from revisions where card_id=#{id} and id > #{current_revision_id} })
+    connection.execute(%{delete from card_revisions where card_id=#{id} and id > #{current_revision_id} })
   end
 
   public

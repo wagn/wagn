@@ -2,7 +2,7 @@ module Wagn::Model::References
   
   def name_referencers(rname = key)
     Card.find_by_sql(
-      "SELECT DISTINCT c.* FROM cards c JOIN wiki_references r ON c.id = r.card_id "+
+      "SELECT DISTINCT c.* FROM cards c JOIN card_references r ON c.id = r.card_id "+
       "WHERE (r.referenced_name = #{ActiveRecord::Base.connection.quote(rname.to_cardname.to_key)})"
     )
   end
@@ -56,7 +56,7 @@ module Wagn::Model::References
     super
     base.class_eval do           
       has_many :name_references, :class_name=>'Card::Reference',
-        :finder_sql=>%q{SELECT * from wiki_references w where w.referenced_name=#{ActiveRecord::Base.connection.quote(key)}}
+        :finder_sql=>%q{SELECT * from card_references w where w.referenced_name=#{ActiveRecord::Base.connection.quote(key)}}
 
       has_many :in_references,:class_name=>'Card::Reference', :foreign_key=>'referenced_card_id'
       has_many :out_references,:class_name=>'Card::Reference', :foreign_key=>'card_id', :dependent=>:destroy

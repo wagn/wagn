@@ -29,7 +29,6 @@ module Wagn
       end
             
       def initialize_on_startup
-        warn "iostart"
         store = Rails.env =~ /^cucumber|test$/ ? nil : Rails.cache
         cache_classes.each do |cc|
           cc.cache = new :class=>cc, :store=>store
@@ -55,7 +54,6 @@ module Wagn
       end
 
       def re_initialize_for_new_request
-        warn "rifnreq"
         cache_classes.each do |cc|
           if cc.cache
               cc.cache.system_prefix = system_prefix(cc)

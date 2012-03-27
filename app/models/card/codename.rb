@@ -1,4 +1,4 @@
-class Card::Codename
+class Card::Codename < ActiveRecord::Base
   cattr_accessor :cache
   @@pre_cache = {}
 

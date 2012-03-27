@@ -48,7 +48,7 @@ namespace :fulltext do
     
     cxn.execute %{
       update cards set indexed_content = concat( setweight( to_tsvector( name ), 'A' ), 
-      to_tsvector( (select content from revisions where id=cards.current_revision_id) ) ) 
+      to_tsvector( (select content from card_revisions where id=cards.current_revision_id) ) ) 
     }
     cxn.execute %{ CREATE INDEX content_fti ON cards USING gist(indexed_content);  }    
     # choosing GIST for faster updates, at least for now.

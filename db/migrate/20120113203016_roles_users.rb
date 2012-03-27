@@ -1,6 +1,6 @@
 class RolesUsers < ActiveRecord::Migration
   def up
-    User.as :wagbot do
+    Card.as Card::WagbotID do
       # Delete the old *roles template
       (c = Card['*assign_user_roles'] and c=c.refresh) && c.delete
       (c = Card['*role+*right+*content'] and c=c.refresh) && c.delete
@@ -25,45 +25,45 @@ class RolesUsers < ActiveRecord::Migration
       # Add username->*roles pointers from user_roles table
       Card.where(:extension_type=> 'User').each do |usercard|
         roles = usercard.extension.roles.map {|r|
-          ((rcard=r.card).id!=Wagn::Codename.code2id('Anonymous')) ?
+          ((rcard=r.card).id!=Card::Codename.code2id('Anonymous')) ?
               rcard.name : nil
         }.compact
         unless roles.empty?
           Card.create! :name    => usercard.cardname.star_rule(:roles),
-                       :type_id => Wagn::Codename.code2id('Pointer'),
+                       :type_id => Card::Codename.code2id('Pointer'),
                        :content => "[[#{roles*']][['}]]"
         end
       end
 
       # Add Role+*users+*type plus right+*content (edit_user_roles task)
       Card.create! :name => "Role+*users+*type plus right+*content",
-                   :type_id => Wagn::Codename.code2id('Pointer'),
+                   :type_id => Card::Codename.code2id('Pointer'),
                    :content => "{'type':'User';'refer_to':'_left'}"
 
       # Add *account+*right+*create (create_accounts task)
       c=Card['*account+*right+*create'] and c << '_left' or
           Card.create(:name => "*account+*right+*create",
-                      :type_id => Wagn::Codename.code2id('Pointer'),
+                      :type_id => Card::Codename.code2id('Pointer'),
                       :content => "[[_left]]")
 
       # Add *account+*right+*update (administrate_users)
       Card['*account+*right+*update'] or
       Card.create!(:name => "*account+*right+*update",
-                   :type_id => Wagn::Codename.code2id('Pointer'),
+                   :type_id => Card::Codename.code2id('Pointer'),
                    :content => "[[_left]]")
 
       # Add *roles+*right+*update   (edit_user_roles)
       Card.create! :name => "*roles+*right+*update",
-                   :type_id => Wagn::Codename.code2id('Pointer'),
+                   :type_id => Card::Codename.code2id('Pointer'),
                    :content => "[[_left]]"
 
       Card.create! :name => '*roles+*right+*default',
-                   :type_id => Wagn::Codename.code2id('Pointer')
+                   :type_id => Card::Codename.code2id('Pointer')
     end
   end
 
   def down
-    User.as :wagbot do
+    Card.as Card::WagbotID do
       Card.search(:right => '*roles').each &:delete
 
       (c=Card['Role+*users+*type plus right+*content']) && c.delete

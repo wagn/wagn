@@ -1,8 +1,6 @@
-WAGN_BOOTSTRAP_TABLES = %w{ cards revisions wiki_references cardtypes }
+WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references cardtypes }
 
 namespace :wagn do
-  require 'wagn/codename'
-  Codename = Wagn::Codename
 
   desc "create a wagn database from scratch"
   task :create => :environment do
@@ -42,7 +40,7 @@ namespace :wagn do
                 Card.search({:not=>{:referred_to_by=>'*ignore'}}).map &:attributes
               end
             else
-              sql = (table=='revisions' ?
+              sql = (table=='card_revisions' ?
                 #FIXME -- still getting ignored content in revisions / references.
                 # should probably clean database first then do simple dump
                 'select r.* from %s r join cards c on c.current_revision_id = r.id' :
@@ -70,15 +68,15 @@ namespace :wagn do
       # note, those three tables are hand-coded, not dumped
     
       # Correct time and user stamps
-      extra_sql = { :cards =>',created_by=1, updated_by=1',  :revisions=>',created_by=1' }
+      extra_sql = { :cards =>',created_by=1, updated_by=1',  :card_revisions=>',created_by=1' }
       now = Time.new.strftime("%Y-%m-%d %H:%M:%S")
-      %w{ users cards wiki_references revisions }.each do |table|
+      %w{ users cards card_references card_revisions }.each do |table|
         ActiveRecord::Base.connection.update("update #{table} set created_at='#{now}' #{extra_sql[table.to_sym] || ''};")
       end
     
-      ActiveRecord::Base.connection.delete( "delete from wiki_references where" +
-        " (referenced_card_id is not null and not exists (select * from cards where cards.id = wiki_references.referenced_card_id)) or " +
-        " (           card_id is not null and not exists (select * from cards where cards.id = wiki_references.card_id));"
+      ActiveRecord::Base.connection.delete( "delete from card_references where" +
+        " (referenced_card_id is not null and not exists (select * from cards where cards.id = card_references.referenced_card_id)) or " +
+        " (           card_id is not null and not exists (select * from cards where cards.id = card_references.card_id));"
       )
     end
   end

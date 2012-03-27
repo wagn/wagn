@@ -28,7 +28,10 @@ class User < ActiveRecord::Base
   after_save :reset_instance_cache
 
   class << self
-    def admin() User.where(:card_id=>Card::WagbotID).first end
+    def admin()          User.where(:card_id=>Card::WagbotID).first  end
+    def as_user()        User.where(:card_id=>Card.as_user_id).first end
+    def user()           User.where(:card_id=>Card.user_id).first    end
+    def from_id(card_id) User.where(:card_id=>card_id).first         end
 
     # FIXME: args=params.  should be less coupled..
     def create_with_card(user_args, card_args, email_args={})
@@ -70,7 +73,7 @@ class User < ActiveRecord::Base
           @card = key
           key.key
         else
-          @card = (card_id = Wagn::Codename.code2id(key.to_s)) ?
+          @card = (card_id = Card::Codename.code2id(key.to_s)) ?
                     Card[card_id] : @card = Card[key.to_s]
           key.to_s
         end
@@ -81,7 +84,7 @@ class User < ActiveRecord::Base
       
       card_id ||= @card && @card.id
       self.cache.write(key.to_s, usr)
-      code = Wagn::Codename.codename(card_id.to_s) and self.cache.write(code, usr)
+      code = Card::Codename.codename(card_id.to_s) and self.cache.write(code, usr)
       usr
     end
   end

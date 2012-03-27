@@ -127,7 +127,7 @@ module Wagn
           :creator_id => @authors[rev['author']]
         }      
         # FIXME: should check if this might be a duplicate revision
-        Revision.create! data
+        Card::Revision.create! data
       end
     end
   end

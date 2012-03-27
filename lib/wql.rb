@@ -248,7 +248,7 @@ class Wql
     
     def revision_spec(field, linkfield, val)
       card_select = CardSpec.build(:_parent=>self, :return=>'id').merge(val).to_sql
-      add_join :ed, "(select distinct #{field} from revisions where #{linkfield} in #{card_select})", :id, field      
+      add_join :ed, "(select distinct #{field} from card_revisions where #{linkfield} in #{card_select})", :id, field      
     end
     
     def found_by(val)
@@ -295,7 +295,7 @@ class Wql
     end
     
     def add_revision_join
-      add_join(:rev, :revisions, :current_revision_id, :id)
+      add_join(:rev, :card_revisions, :current_revision_id, :id)
     end
     
     def field(name)
@@ -317,7 +317,7 @@ class Wql
         when 'referred_to'
           join_field = 'id'
           cs = CardSpec.build cs_args.merge( field(:cond)=>SqlCond.new("card_id in #{CardSpec.build( val.merge(:return=>'id')).to_sql}") )
-          cs.add_join :wr, :wiki_references, :id, :referenced_card_id
+          cs.add_join :wr, :card_references, :id, :referenced_card_id
         else;  raise "count with item: #{item} not yet implemented"
         end 
       else
@@ -434,19 +434,19 @@ class Wql
       @spec = spec   
       @refspecs = {
         :refer_to       => ['card_id','referenced_card_id',''],
-        :link_to        => ['card_id','referenced_card_id',"link_type='#{WikiReference::LINK}' AND"],
-        :include        => ['card_id','referenced_card_id',"link_type='#{WikiReference::TRANSCLUSION}' AND"],
-        :link_to_missing=> ['card_id','referenced_card_id',"link_type='#{WikiReference::WANTED_LINK}'"],
+        :link_to        => ['card_id','referenced_card_id',"link_type='#{Card::Reference::LINK}' AND"],
+        :include        => ['card_id','referenced_card_id',"link_type='#{Card::Reference::TRANSCLUSION}' AND"],
+        :link_to_missing=> ['card_id','referenced_card_id',"link_type='#{Card::Reference::WANTED_LINK}'"],
         :referred_to_by => ['referenced_card_id','card_id',''],
-        :linked_to_by   => ['referenced_card_id','card_id',"link_type='#{WikiReference::LINK}' AND"],
-        :included_by    => ['referenced_card_id','card_id',"link_type='#{WikiReference::TRANSCLUSION}' AND"]
+        :linked_to_by   => ['referenced_card_id','card_id',"link_type='#{Card::Reference::LINK}' AND"],
+        :included_by    => ['referenced_card_id','card_id',"link_type='#{Card::Reference::TRANSCLUSION}' AND"]
       }
     end
     
     def to_sql(*args)
       f1, f2, where = @refspecs[@spec[0]]
       and_where = (@spec[0] == :link_to_missing) ? '' : "#{f2} IN #{@spec[1].to_sql}"
-      %{(select #{f1} from wiki_references where #{where} #{and_where})}
+      %{(select #{f1} from card_references where #{where} #{and_where})}
     end
   end
   

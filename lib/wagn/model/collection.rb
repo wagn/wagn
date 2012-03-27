@@ -51,7 +51,7 @@ module Wagn::Model::Collection
     
     connection.execute %{
       update cards set indexed_content = concat( setweight( to_tsvector( name ), 'A' ), 
-      to_tsvector( (select content from revisions where id=cards.current_revision_id) ) ),
+      to_tsvector( (select content from card_revisions where id=cards.current_revision_id) ) ),
       indexed_name = to_tsvector( name ) where id=#{self.id}
     }
     @name_or_content_changed = false

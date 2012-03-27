@@ -25,12 +25,13 @@ module Wagn
     
     class << self
       def cache_classes
-        [Card, User, Revision]
+        [Card, User, Card::Revision]
       end
             
       def initialize_on_startup
+        store = Rails.env =~ /^cucumber|test$/ ? nil : Rails.cache
         cache_classes.each do |cc|
-          cc.cache = new :class=>cc, :store=>(Rails.env =~ /^cucumber|test$/ ? nil : Rails.cache)
+          cc.cache = new :class=>cc, :store=>store
         end
         preload_cache_for_tests if preload_cache?
       end
@@ -73,6 +74,7 @@ module Wagn
       end
 
       def expire_card(key)
+        Card.cache and
         Card.cache.delete key
       end
 
@@ -86,7 +88,7 @@ module Wagn
         cache_classes.each{ |cc|
           if Wagn::Cache===cc.cache
           cc.cache && cc.cache.reset_local
-          else warn "reset class #{cc}, #{cc.cache.class} ???" end
+          else warn "reset class #{cc}, #{cc.cache.class} #{caller[0..8]*"\n"} ???" end
         }
       end
 

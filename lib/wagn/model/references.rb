@@ -2,7 +2,7 @@ module Wagn::Model::References
   
   def name_referencers(rname = key)
     Card.find_by_sql(
-      "SELECT DISTINCT c.* FROM cards c JOIN wiki_references r ON c.id = r.card_id "+
+      "SELECT DISTINCT c.* FROM cards c JOIN card_references r ON c.id = r.card_id "+
       "WHERE (r.referenced_name = #{ActiveRecord::Base.connection.quote(rname.to_cardname.to_key)})"
     )
   end
@@ -15,7 +15,7 @@ module Wagn::Model::References
   
   def update_references_on_create
     return if ENV['MIGRATE_PERMISSIONS'] == 'true'
-    ::WikiReference.update_on_create(self)  
+    Card::Reference.update_on_create(self)  
 
     # FIXME: bogus blank default content is set on hard_templated cards...
     Card.as(Card::WagbotID) {
@@ -31,7 +31,7 @@ module Wagn::Model::References
   end
 
   def update_references_on_destroy
-    ::WikiReference.update_on_destroy(self)
+    Card::Reference.update_on_destroy(self)
     expire_templatee_references
   end
 
@@ -55,17 +55,17 @@ module Wagn::Model::References
   def self.included(base)   
     super
     base.class_eval do           
-      has_many :name_references, :class_name=>'WikiReference',
-        :finder_sql=>%q{SELECT * from wiki_references w where w.referenced_name=#{ActiveRecord::Base.connection.quote(key)}}
+      has_many :name_references, :class_name=>'Card::Reference',
+        :finder_sql=>%q{SELECT * from card_references w where w.referenced_name=#{ActiveRecord::Base.connection.quote(key)}}
 
-      has_many :in_references,:class_name=>'WikiReference', :foreign_key=>'referenced_card_id'
-      has_many :out_references,:class_name=>'WikiReference', :foreign_key=>'card_id', :dependent=>:destroy
+      has_many :in_references,:class_name=>'Card::Reference', :foreign_key=>'referenced_card_id'
+      has_many :out_references,:class_name=>'Card::Reference', :foreign_key=>'card_id', :dependent=>:destroy
 
-      has_many :in_transclusions, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id',:conditions=>["link_type in (?,?)",::WikiReference::TRANSCLUSION, ::WikiReference::WANTED_TRANSCLUSION]
-      has_many :out_transclusions,:class_name=>'WikiReference', :foreign_key=>'card_id',           :conditions=>["link_type in (?,?)",::WikiReference::TRANSCLUSION, ::WikiReference::WANTED_TRANSCLUSION]
+      has_many :in_transclusions, :class_name=>'Card::Reference', :foreign_key=>'referenced_card_id',:conditions=>["link_type in (?,?)",Card::Reference::TRANSCLUSION, Card::Reference::WANTED_TRANSCLUSION]
+      has_many :out_transclusions,:class_name=>'Card::Reference', :foreign_key=>'card_id',           :conditions=>["link_type in (?,?)",Card::Reference::TRANSCLUSION, Card::Reference::WANTED_TRANSCLUSION]
 
-      has_many :in_links, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id',:conditions=>["link_type=?",::WikiReference::LINK]
-      has_many :out_links,:class_name=>'WikiReference', :foreign_key=>'card_id',:conditions=>["link_type=?",::WikiReference::LINK]
+      has_many :in_links, :class_name=>'Card::Reference', :foreign_key=>'referenced_card_id',:conditions=>["link_type=?",Card::Reference::LINK]
+      has_many :out_links,:class_name=>'Card::Reference', :foreign_key=>'card_id',:conditions=>["link_type=?",Card::Reference::LINK]
 
       has_many :referencers, :through=>:in_references
       has_many :referencees, :through=>:out_references

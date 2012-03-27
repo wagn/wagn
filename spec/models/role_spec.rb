@@ -69,7 +69,7 @@ describe User, 'Joe User' do
       @roles_card.content=''
       @roles_card << @r1;
     }
-    @ju = User.where(:card_id=>Card['joe_user'].id).first
+    @ju = Card['joe_user'].to_user
     @roles_card = Card[@jucard.star_rule(:roles).id]
     @roles_card.item_names.length.should==1  
     @jucard.parties.should == [Card::AuthID, Card['r1'].id, @ju.card_id]

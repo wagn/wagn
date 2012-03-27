@@ -3,7 +3,7 @@ module Wagn::Model::Attach
     c=if rev_id || self.new_card? || selected_rev_id==current_revision_id
         self.content
       else
-        Revision.find_by_id(selected_rev_id).content
+        Card::Revision.find_by_id(selected_rev_id).content
       end
     !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/) 
   end

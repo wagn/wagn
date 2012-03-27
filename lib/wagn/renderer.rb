@@ -449,7 +449,7 @@ module Wagn
     end
   
 
-     ### FIXME -- this should not be here!   probably in WikiReference model?
+     ### FIXME -- this should not be here!   probably in Card::Reference model?
     def replace_references old_name, new_name
       #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
       wiki_content = WikiContent.new(card, card.content, self)
@@ -474,7 +474,7 @@ module Wagn
     #FIXME -- should not be here.
     def update_references rendering_result = nil, refresh = false
       return unless card && card.id
-      WikiReference.delete_all ['card_id = ?', card.id]
+      Card::Reference.delete_all ['card_id = ?', card.id]
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
       Wagn::Cache.expire_card( card.key ) if refresh
       rendering_result ||= WikiContent.new(card, _render_refs, self)
@@ -488,7 +488,7 @@ module Wagn
 
        #ref_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
         #raise "No name to ref? #{card.name}, #{chunk.inspect}" unless chunk.refcardname()
-        WikiReference.create!( :card_id=>card.id,
+        Card::Reference.create!( :card_id=>card.id,
           :referenced_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
           :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
           :link_type=>reference_type

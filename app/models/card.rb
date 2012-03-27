@@ -132,6 +132,8 @@ class Card < ActiveRecord::Base
   cattr_accessor :user_id   # the card id of the current user
 
 
+  def to_user() User.where(:card_id=>id).first end
+
   class << self
     def user_id() @@user_id ||= Card::AnonID end
     def user_card()
@@ -140,7 +142,7 @@ class Card < ActiveRecord::Base
     end
     def user
       @@user && @@user.card_id == user_id ?
-        @@user : @@user = User.where(:card_id=>user_id).first
+        @@user : @@user = user_card.to_user
     end
 
     def user=(user) @@as_user_id=nil; @@user_id = user2id(user)
@@ -152,8 +154,8 @@ class Card < ActiveRecord::Base
         when User; user.card_id
         when Card; user.id
         when Integer; user
-        else Wagn::Codename.code2id(user) || cd=Card[user.to_s] and cd.id
-        #|| User.where(:login=>user.to_s).first.card_id
+        else Card::Codename.code2id(user) || cd=Card[user.to_s] and cd.id
+        #|| User.from_login(user.to_s).card_id
       end
     end
 
@@ -169,7 +171,7 @@ class Card < ActiveRecord::Base
         @@as_user_id = tmp_user
         return value
       else
-        #fail "BLOCK REQUIRED with User#as"
+        #fail "BLOCK REQUIRED with Card#as"
       end
     end
 
@@ -239,7 +241,7 @@ class Card < ActiveRecord::Base
   public
 
     def code2id(code)
-      r=Wagn::Codename.card_attr(code, :id)
+      r=Card::Codename.card_attr(code, :id)
       raise "no code? #{code.inspect}" unless r; r
     end
     def find_configurables
@@ -277,16 +279,16 @@ class Card < ActiveRecord::Base
     NON_CREATEABLE = %w{InvitationRequest Setting Set}
 
     def createable_typecodes
-      Wagn::Codename.type_codes.map { |h|
+      Card::Codename.type_codes.map { |h|
         !NON_CREATEABLE.member?( h[:codename] ) &&
           create_ok?( h[:id] ) && h[:codename] || nil
       }.compact
     end
 
     def createable_types
-      #warn "createable_types #{(cds=Wagn::Codename.type_codes).inspect}"
+      #warn "createable_types #{(cds=Card::Codename.type_codes).inspect}"
       #cds.map { |h|
-      Wagn::Codename.type_codes.map { |h|
+      Card::Codename.type_codes.map { |h|
         !NON_CREATEABLE.member?( h[:codename] ) &&
           create_ok?( h[:id] ) && h[:name] || nil
       }.compact
@@ -300,11 +302,11 @@ class Card < ActiveRecord::Base
   # TYPE
 
     def type_id_from_name(name)
-      Wagn::Codename.code_attr(name.to_cardname.key, :id)
+      Card::Codename.code_attr(name.to_cardname.key, :id)
     end
-    def type_id_from_code(code) Wagn::Codename.card_attr(code, :id)     end
-    def typename_from_id(id)    Wagn::Codename.code_attr(id, :name)     end
-    def typecode_from_id(id)    Wagn::Codename.code_attr(id, :codename) end
+    def type_id_from_code(code) Card::Codename.card_attr(code, :id)     end
+    def typename_from_id(id)    Card::Codename.code_attr(id, :name)     end
+    def typecode_from_id(id)    Card::Codename.code_attr(id, :codename) end
   end
 
 #~~~~~~~ Instance
@@ -393,7 +395,7 @@ class Card < ActiveRecord::Base
     @from_trash = false
     Wagn::Hook.call :after_create, self if @was_new_card
     send_notifications
-    Wagn::Codename.reset_cache if type_id == Card::CardtypeID
+    Card::Codename.reset_cache if type_id == Card::CardtypeID
     true
   rescue Exception=>e
     @subcards.each{ |card| card.expire_pieces }
@@ -613,16 +615,16 @@ class Card < ActiveRecord::Base
   def selected_rev_id() @selected_rev_id || (cr=cached_revision)&&cr.id || 0 end
 
   def cached_revision
-    #return current_revision || Revision.new
+    #return current_revision || Card::Revision.new
     if @cached_revision and @cached_revision.id==current_revision_id
-    elsif ( Revision.cache &&
-       @cached_revision=Revision.cache.read("#{cardname.css_name}-content") and
+    elsif ( Card::Revision.cache &&
+       @cached_revision=Card::Revision.cache.read("#{cardname.css_name}-content") and
        @cached_revision.id==current_revision_id )
     else
-      rev = current_revision_id ? Revision.find(current_revision_id) :
-                    Revision.new(:creator_id => Card.user_id)
-      @cached_revision = Revision.cache ?
-        Revision.cache.write("#{cardname.css_name}-content", rev) : rev
+      rev = current_revision_id ? Card::Revision.find(current_revision_id) :
+                    Card::Revision.new(:creator_id => Card.user_id)
+      @cached_revision = Card::Revision.cache ?
+        Card::Revision.cache.write("#{cardname.css_name}-content", rev) : rev
     end
     @cached_revision
   end
@@ -660,7 +662,7 @@ class Card < ActiveRecord::Base
 
   protected
   def clear_drafts
-    connection.execute(%{delete from revisions where card_id=#{id} and id > #{current_revision_id} })
+    connection.execute(%{delete from card_revisions where card_id=#{id} and id > #{current_revision_id} })
   end
 
   public
@@ -734,7 +736,7 @@ class Card < ActiveRecord::Base
     if self.id ==  Card::WagbotID or self.id ==  Card::AnonID
       errors.add :destroy, "#{name}'s is a system card.<br>  Deleting this card would mess up our revision records."
       return false
-    elsif type_id== Card::UserID and Revision.find_by_creator_id( self.id )
+    elsif type_id== Card::UserID and Card::Revision.find_by_creator_id( self.id )
       errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
       return false
     end

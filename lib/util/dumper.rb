@@ -30,7 +30,7 @@ module Wagn
     end
       
     def each_revision_hash
-      ::Revision.find(:all, :include=>['card']).each do |rev|
+      Card::Revision.find(:all, :include=>['card']).each do |rev|
        if rev.card
         yield( rev_to_hash(rev) )
        end

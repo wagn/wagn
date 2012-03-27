@@ -1,6 +1,6 @@
 class CodenameTable < ActiveRecord::Migration
   def self.up
-    create_table "codename", :force => true, :id => false do |t|
+    create_table "card_codenames", :force => true, :id => false do |t|
       t.integer  "card_id", :null => false
       t.string   "codename", :null => false
     end
@@ -31,13 +31,16 @@ class CodenameTable < ActiveRecord::Migration
         "wagn_bot"         => "wagbot",
       }
 
-    codecards.map { |name|
-         c = Card[name] || User.as(:wagbot) { r=Card.create!(:name=>name) } or
-             raise "Missing codename #{name} card"
-         name = name[1..-1] if name[0] == ?*
-         name = renames[name] if renames[name]
-         Wagn::Codename.insert(c.id, name)
-       }
+    codecards.each do |name|
+      c = Card[name]
+      c ||= Card.as Card::WagbotID do
+        Card.create! :name=>name
+      end
+      c or raise "Missing codename #{name} card"
+      name = name[1..-1] if name[0] == '*'
+      name = renames[name] if renames[name]
+      Card::Codename.create :card_id=>c.id, :codename=>name
+    end
 
     Card.reset_column_information
   end
@@ -51,6 +54,6 @@ class CodenameTable < ActiveRecord::Migration
 
     change_column "cards", "typecode", :string, :null=>false
 
-    drop_table "codename"
+    drop_table "card_codenames"
   end
 end

@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class Revision < ActiveRecord::Base
+class Card::Revision < ActiveRecord::Base
   belongs_to :card, :class_name=>"Card", :foreign_key=>'card_id'
   
   cattr_accessor :cache

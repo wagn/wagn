@@ -12,7 +12,7 @@ describe "Card (Cardtype)" do
 
   it "should not allow cardtype remove when instances present" do
     Card.create :name=>'City', :type=>'Cardtype'
-    Wagn::Codename.reset_cache
+    Card::Codename.reset_cache
     city = Card.fetch('City')
     c1=Card.create :name=>'Sparta', :type=>'City'
     c2=Card.create :name=>'Eugene', :type=>'City'
@@ -182,9 +182,9 @@ describe User, "Joe User" do
 #    @ctf.save!
 
     Card.as :joe_user
-    @user = User.where(:card_id=>Card.as_user_id).first
+    @user = User.user
     @ucard = Card[@user.card_id]
-    Wagn::Codename.reset_cache
+    Card::Codename.reset_cache
     @typenames = Card.createable_types
     #@typenames = Card.createable_types.map{ |ct| ct[:name] }
   end

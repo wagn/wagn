@@ -1,4 +1,4 @@
-class New < ActiveRecord::Migration
+class StampFields < ActiveRecord::Migration
   def up
     change_column "cards", "creator_id", "integer", :null=>false
     change_column "revisions", "creator_id", "integer", :null=>false

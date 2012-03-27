@@ -103,7 +103,7 @@ module Wagn::Model
       def register key, opt_keys, opts={}
         Wagn::Model::Pattern.register_class self
         cattr_accessor :key, :opt_keys, :junction_only, :method_key, :trunkless
-        self.key = Wagn::Codename[key[1..-1]] || key # failsafe for loading/migration
+        self.key = Card::Codename[key[1..-1]] || key # failsafe for loading/migration
         self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]
         opts.each { |key, val| self.send "#{key}=", val }
         self.trunkless = !!self.method_key

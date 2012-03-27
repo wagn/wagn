@@ -174,6 +174,8 @@ class Card < ActiveRecord::Base
       end
     end
 
+    @@read_rules = nil
+
     def among?(authzed) Card[as_user_id].among?(authzed) end
     def as_user_id()    @@as_user_id || @@user_id        end
     def read_rules()    load_as_rules; @@read_rules      end
@@ -182,7 +184,7 @@ class Card < ActiveRecord::Base
       if as_user_id != @@rules_uid
         if rules_user_card = as_user_id && Card[as_user_id]
           @@user_roles = rules_user_card.all_roles
-          @@read_rules = rules_user_card.read_rules
+          @@read_rules = rules_user_card.read_rules || [1]
           @@rules_uid = rules_user_card.id
         else
           @@user_roles = @@read_rules = @@rules_uid = nil
@@ -240,8 +242,10 @@ class Card < ActiveRecord::Base
   public
 
     def code2id(code)
-      r=Card::Codename.card_attr(code, :id)
-      raise "no code? #{code.inspect}" unless r; r
+      unless card_id=Card::Codename.card_attr(code, :id)
+        raise "no code? #{code.inspect}"
+        return 1 if code.to_s == 'wagbot' # to bootstrapping codenames
+      else card_id end
     end
     def find_configurables
       @roles = Card.search(:type => Card::RoleID).reject{|r| r.id != Card::AdminID}

@@ -367,7 +367,7 @@ class Wql
       # Permissions    
       unless Card.always_ok? or (Wql.root_perms_only && !root?)
         sql.conditions <<
-         "(#{table_alias}.read_rule_id IN (#{Card.read_rules*','}))"
+         "(#{table_alias}.read_rule_id IN (#{(rr=Card.read_rules).nil? ? 1 : rr*','}))"
       end
       #warn "wql perms? #{Card.always_ok?} #{Card.as_user_id}, #{Card.read_rules*','} SqCond: #{sql.conditions.inspect}"
            

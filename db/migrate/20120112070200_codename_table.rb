@@ -31,15 +31,19 @@ class CodenameTable < ActiveRecord::Migration
         "wagn_bot"         => "wagbot",
       }
 
-    codecards.each do |name|
-      c = Card[name]
-      c ||= Card.as Card::WagbotID do
-        Card.create! :name=>name
+    Card.as :wagbot do
+      codecards.each do |name|
+        if c = Card[name]
+        warn Rails.logger.warn("add codenames: #{name}, #{c}, #{renames[name]}, #{c&&c.id}")
+        c ||= Card.create! :name=>name
+        c or raise "Missing codename #{name} card"
+        name = name[1..-1] if name[0] == '*'
+        name = renames[name] if renames[name]
+        Card::Codename.create :card_id=>c.id, :codename=>name
+        else 
+        warn Rails.logger.warn("no_card codename: #{name}, #{renames[name]}")
+        end
       end
-      c or raise "Missing codename #{name} card"
-      name = name[1..-1] if name[0] == '*'
-      name = renames[name] if renames[name]
-      Card::Codename.create :card_id=>c.id, :codename=>name
     end
 
     Card.reset_column_information

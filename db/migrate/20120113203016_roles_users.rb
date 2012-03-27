@@ -1,6 +1,7 @@
 class RolesUsers < ActiveRecord::Migration
+  
   def up
-    Card.as Card::WagbotID do
+    Card.as :wagbot do
       # Delete the old *roles template
       (c = Card['*assign_user_roles'] and c=c.refresh) && c.delete
       (c = Card['*role+*right+*content'] and c=c.refresh) && c.delete
@@ -11,7 +12,8 @@ class RolesUsers < ActiveRecord::Migration
 
       # Add rolename->*tasks pointers from roles.tasks
       Card.where(:extension_type => 'Role').each do |rolecard|
-        tasks=rolecard.extension and tasks = tasks.tasks and tasks.split(',').each do |task|
+        tasks=Role.where(:id=>rolecard.extension_id).first and
+              tasks = tasks.tasks and tasks.split(',').each do |task|
             # mapping old task names to rule cardnames to use
             c=Card.fetch_or_new( case task.to_sym
                 when :create_accounts;    "*account+*right+*create"
@@ -24,7 +26,7 @@ class RolesUsers < ActiveRecord::Migration
 
       # Add username->*roles pointers from user_roles table
       Card.where(:extension_type=> 'User').each do |usercard|
-        roles = usercard.extension.roles.map {|r|
+        roles = User.where(:card_id=>usercard.id).first.roles.map {|r|
           ((rcard=r.card).id!=Card::Codename.code2id('Anonymous')) ?
               rcard.name : nil
         }.compact
@@ -63,7 +65,7 @@ class RolesUsers < ActiveRecord::Migration
   end
 
   def down
-    Card.as Card::WagbotID do
+    Card.as :wagbot do
       Card.search(:right => '*roles').each &:delete
 
       (c=Card['Role+*users+*type plus right+*content']) && c.delete

@@ -134,7 +134,7 @@ module Wagn::Model::Permissions
     #warn "AR #{name} #{Card.always_ok?}"
     return true if Card.always_ok?
     @read_rule_id ||= permission_rule_card(:read).first.id.to_i
-    #warn "AR #{name} #{@read_rule_id}, #{Card.read_rules.inspect}>"
+    warn Rails.logger.warn("AR #{name} #{@read_rule_id}, #{Card.read_rules.inspect}>")
     unless Card.read_rules.member?(@read_rule_id.to_i) 
       deny_because you_cant("read this card")
     end

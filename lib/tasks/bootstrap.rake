@@ -1,4 +1,4 @@
-WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references cardtypes }
+WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references }
 
 namespace :wagn do
 
@@ -64,7 +64,7 @@ namespace :wagn do
       require 'active_record/fixtures'                         
       require 'time'
 
-      ActiveRecord::Fixtures.create_fixtures 'db/bootstrap', WAGN_BOOTSTRAP_TABLES + %w{ roles roles_users users}
+      #ActiveRecord::Fixtures.create_fixtures 'db/bootstrap', WAGN_BOOTSTRAP_TABLES + %w{ roles roles_users users}
       # note, those three tables are hand-coded, not dumped
     
       # Correct time and user stamps

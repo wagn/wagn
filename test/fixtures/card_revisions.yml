@@ -12,7 +12,6 @@ card_revisions_002:
   card_id: '583'
   creator_id: '1'
   content: ! '[[Anyone Signed In]]'
-  creator_id: 
 card_revisions_003:
   id: '6035'
   created_at: '2012-01-29 15:24:38'
@@ -3622,91 +3621,78 @@ card_revisions_397:
   card_id: '584'
   creator_id: '1'
   content: I'm number two
-  creator_id: 
 card_revisions_398:
   id: '6043'
   created_at: '2012-01-29 21:24:49.685004'
   card_id: '585'
   creator_id: '1'
   content: I'm number one
-  creator_id: 
 card_revisions_399:
   id: '6044'
   created_at: '2012-01-29 21:24:50.024043'
   card_id: '586'
   creator_id: '1'
   content: ! '[[Administrator]]'
-  creator_id: 
 card_revisions_400:
   id: '6045'
   created_at: '2012-01-29 21:24:50.243013'
   card_id: '587'
   creator_id: '1'
   content: Mr. Buttz
-  creator_id: 
 card_revisions_401:
   id: '6046'
   created_at: '2012-01-29 21:24:50.364616'
   card_id: '588'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_402:
   id: '6047'
   created_at: '2012-01-29 21:24:50.434642'
   card_id: '589'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_403:
   id: '6048'
   created_at: '2012-01-29 21:24:50.504674'
   card_id: '590'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_404:
   id: '6049'
   created_at: '2012-01-29 21:24:50.724769'
   card_id: '591'
   creator_id: '1'
   content: I got no account
-  creator_id: 
 card_revisions_405:
   id: '6050'
   created_at: '2012-01-29 21:24:50.777921'
   card_id: '592'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_406:
   id: '6051'
   created_at: '2012-01-29 21:24:50.845839'
   card_id: '593'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_407:
   id: '6052'
   created_at: '2012-01-29 21:24:50.953079'
   card_id: '594'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_408:
   id: '6053'
   created_at: '2012-01-29 21:24:51.093916'
   card_id: '595'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_409:
   id: '6054'
   created_at: '2012-01-29 21:24:51.176936'
   card_id: '596'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_410:
   id: '6055'
   created_at: '2012-01-29 21:24:51.320197'
@@ -3723,70 +3709,60 @@ card_revisions_410:
     <p>{{+*members}}</p>
 
     </blockquote>'
-  creator_id: 
 card_revisions_411:
   id: '6056'
   created_at: '2012-01-29 21:24:51.441205'
   card_id: '598'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_412:
   id: '6057'
   created_at: '2012-01-29 21:24:51.50246'
   card_id: '599'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_413:
   id: '6058'
   created_at: '2012-01-29 21:24:51.633503'
   card_id: '600'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_414:
   id: '6059'
   created_at: '2012-01-29 21:24:51.700431'
   card_id: '601'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_415:
   id: '6060'
   created_at: '2012-01-29 21:24:51.774968'
   card_id: '602'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_416:
   id: '6061'
   created_at: '2012-01-29 21:24:51.918995'
   card_id: '603'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_417:
   id: '6062'
   created_at: '2012-01-29 21:24:51.996146'
   card_id: '604'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_418:
   id: '6063'
   created_at: '2012-01-29 21:24:52.07014'
   card_id: '605'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_419:
   id: '6064'
   created_at: '2012-01-29 21:24:52.13662'
   card_id: '606'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_420:
   id: '6065'
   created_at: '2012-01-29 21:24:52.265592'
@@ -3807,28 +3783,24 @@ card_revisions_420:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-  creator_id: 
 card_revisions_421:
   id: '6066'
   created_at: '2012-01-29 21:24:52.393406'
   card_id: '608'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_422:
   id: '6067'
   created_at: '2012-01-29 21:24:52.439164'
   card_id: '609'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_423:
   id: '6068'
   created_at: '2012-01-29 21:24:52.549471'
   card_id: '610'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_424:
   id: '6069'
   created_at: '2012-01-29 21:24:52.755706'
@@ -3845,7 +3817,6 @@ card_revisions_424:
     <p>{{+*members}}</p>
 
     </blockquote>'
-  creator_id: 
 card_revisions_425:
   id: '6070'
   created_at: '2012-01-29 21:24:52.828955'
@@ -3862,7 +3833,6 @@ card_revisions_425:
     <p>{{+*members}}</p>
 
     </blockquote>'
-  creator_id: 
 card_revisions_426:
   id: '6071'
   created_at: '2012-01-29 21:24:52.902507'
@@ -3879,7 +3849,6 @@ card_revisions_426:
     <p>{{+*members}}</p>
 
     </blockquote>'
-  creator_id: 
 card_revisions_427:
   id: '6072'
   created_at: '2012-01-29 21:24:52.976104'
@@ -3896,14 +3865,12 @@ card_revisions_427:
     <p>{{+*members}}</p>
 
     </blockquote>'
-  creator_id: 
 card_revisions_428:
   id: '6073'
   created_at: '2012-01-29 21:24:53.141548'
   card_id: '615'
   creator_id: '1'
   content: ! '[[r1]]'
-  creator_id: 
 card_revisions_429:
   id: '6074'
   created_at: '2012-01-29 21:24:53.208321'
@@ -3912,7 +3879,6 @@ card_revisions_429:
   content: ! '[[r1]]
 
     [[r2]]'
-  creator_id: 
 card_revisions_430:
   id: '6075'
   created_at: '2012-01-29 21:24:53.274421'
@@ -3923,14 +3889,12 @@ card_revisions_430:
     [[r2]]
 
     [[r3]]'
-  creator_id: 
 card_revisions_431:
   id: '6076'
   created_at: '2012-01-29 21:24:53.356937'
   card_id: '616'
   creator_id: '1'
   content: ! '[[r1]]'
-  creator_id: 
 card_revisions_432:
   id: '6077'
   created_at: '2012-01-29 21:24:53.412897'
@@ -3939,7 +3903,6 @@ card_revisions_432:
   content: ! '[[r1]]
 
     [[r2]]'
-  creator_id: 
 card_revisions_433:
   id: '6078'
   created_at: '2012-01-29 21:24:53.469985'
@@ -3950,14 +3913,12 @@ card_revisions_433:
     [[r2]]
 
     [[r4]]'
-  creator_id: 
 card_revisions_434:
   id: '6079'
   created_at: '2012-01-29 21:24:53.550293'
   card_id: '617'
   creator_id: '1'
   content: ! '[[r1]]'
-  creator_id: 
 card_revisions_435:
   id: '6080'
   created_at: '2012-01-29 21:24:53.609396'
@@ -3966,7 +3927,6 @@ card_revisions_435:
   content: ! '[[r1]]
 
     [[r4]]'
-  creator_id: 
 card_revisions_436:
   id: '6081'
   created_at: '2012-01-29 21:24:53.668514'
@@ -3977,217 +3937,186 @@ card_revisions_436:
     [[r4]]
 
     [[Administrator]]'
-  creator_id: 
 card_revisions_437:
   id: '6082'
   created_at: '2012-01-29 21:24:53.734487'
   card_id: '618'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_438:
   id: '6083'
   created_at: '2012-01-29 21:24:53.848393'
   card_id: '619'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_439:
   id: '6084'
   created_at: '2012-01-29 21:24:53.896842'
   card_id: '620'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_440:
   id: '6085'
   created_at: '2012-01-29 21:24:53.946237'
   card_id: '621'
   creator_id: '1'
   content: I'm here to be referenced to
-  creator_id: 
 card_revisions_441:
   id: '6086'
   created_at: '2012-01-29 21:24:53.996091'
   card_id: '622'
   creator_id: '1'
   content: Alpha [[Z]]
-  creator_id: 
 card_revisions_442:
   id: '6087'
   created_at: '2012-01-29 21:24:54.051875'
   card_id: '623'
   creator_id: '1'
   content: Beta {{Z}}
-  creator_id: 
 card_revisions_443:
   id: '6088'
   created_at: '2012-01-29 21:24:54.101199'
   card_id: '624'
   creator_id: '1'
   content: Theta
-  creator_id: 
 card_revisions_444:
   id: '6089'
   created_at: '2012-01-29 21:24:54.150466'
   card_id: '625'
   creator_id: '1'
   content: ! '[[A]] [[A+B]] [[T]]'
-  creator_id: 
 card_revisions_445:
   id: '6090'
   created_at: '2012-01-29 21:24:54.290392'
   card_id: '626'
   creator_id: '1'
   content: ! '{{B}} {{A+B}} {{A}} {{T}}'
-  creator_id: 
 card_revisions_446:
   id: '6091'
   created_at: '2012-01-29 21:24:54.360249'
   card_id: '627'
   creator_id: '1'
   content: AlphaBeta
-  creator_id: 
 card_revisions_447:
   id: '6092'
   created_at: '2012-01-29 21:24:54.464196'
   card_id: '628'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_448:
   id: '6093'
   created_at: '2012-01-29 21:24:54.511418'
   card_id: '629'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_449:
   id: '6094'
   created_at: '2012-01-29 21:24:54.544818'
   card_id: '630'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_450:
   id: '6095'
   created_at: '2012-01-29 21:24:54.663075'
   card_id: '631'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_451:
   id: '6096'
   created_at: '2012-01-29 21:24:54.699554'
   card_id: '632'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_452:
   id: '6097'
   created_at: '2012-01-29 21:24:54.808331'
   card_id: '633'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_453:
   id: '6098'
   created_at: '2012-01-29 21:24:54.841532'
   card_id: '634'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_454:
   id: '6099'
   created_at: '2012-01-29 21:24:54.899782'
   card_id: '635'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_455:
   id: '6100'
   created_at: '2012-01-29 21:24:54.932765'
   card_id: '636'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_456:
   id: '6101'
   created_at: '2012-01-29 21:24:55.083219'
   card_id: '637'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_457:
   id: '6102'
   created_at: '2012-01-29 21:24:55.117503'
   card_id: '638'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_458:
   id: '6103'
   created_at: '2012-01-29 21:24:55.196018'
   card_id: '639'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_459:
   id: '6104'
   created_at: '2012-01-29 21:24:55.229143'
   card_id: '640'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_460:
   id: '6105'
   created_at: '2012-01-29 21:24:55.310543'
   card_id: '641'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_461:
   id: '6106'
   created_at: '2012-01-29 21:24:55.345789'
   card_id: '642'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_462:
   id: '6107'
   created_at: '2012-01-29 21:24:55.47945'
   card_id: '643'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_463:
   id: '6108'
   created_at: '2012-01-29 21:24:55.543381'
   card_id: '644'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_464:
   id: '6109'
   created_at: '2012-01-29 21:24:55.613136'
   card_id: '645'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_465:
   id: '6110'
   created_at: '2012-01-29 21:24:55.648867'
   card_id: '646'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_466:
   id: '6111'
   created_at: '2012-01-29 21:24:55.773959'
   card_id: '647'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_467:
   id: '6112'
   created_at: '2012-01-29 21:24:55.833225'
@@ -4208,7 +4137,6 @@ card_revisions_467:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-  creator_id: 
 card_revisions_468:
   id: '6113'
   created_at: '2012-01-29 21:24:55.988756'
@@ -4229,7 +4157,6 @@ card_revisions_468:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-  creator_id: 
 card_revisions_469:
   id: '6114'
   created_at: '2012-01-29 21:24:56.083559'
@@ -4250,7 +4177,6 @@ card_revisions_469:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-  creator_id: 
 card_revisions_470:
   id: '6115'
   created_at: '2012-01-29 21:24:56.181966'
@@ -4271,7 +4197,6 @@ card_revisions_470:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-  creator_id: 
 card_revisions_471:
   id: '6116'
   created_at: '2012-01-29 21:24:56.289573'
@@ -4292,7 +4217,6 @@ card_revisions_471:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-  creator_id: 
 card_revisions_472:
   id: '6117'
   created_at: '2012-01-29 21:24:56.452404'
@@ -4313,77 +4237,66 @@ card_revisions_472:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-  creator_id: 
 card_revisions_473:
   id: '6118'
   created_at: '2012-01-29 21:24:56.54683'
   card_id: '654'
   creator_id: '1'
   content: basiccontent
-  creator_id: 
 card_revisions_474:
   id: '6119'
   created_at: '2012-01-29 21:24:56.609417'
   card_id: '655'
   creator_id: '1'
   content: type_a_content
-  creator_id: 
 card_revisions_475:
   id: '6120'
   created_at: '2012-01-29 21:24:56.687462'
   card_id: '656'
   creator_id: '1'
   content: type_b_content
-  creator_id: 
 card_revisions_476:
   id: '6121'
   created_at: '2012-01-29 21:24:56.827058'
   card_id: '657'
   creator_id: '1'
   content: type_c_content
-  creator_id: 
 card_revisions_477:
   id: '6122'
   created_at: '2012-01-29 21:24:56.899919'
   card_id: '658'
   creator_id: '1'
   content: type_d_content
-  creator_id: 
 card_revisions_478:
   id: '6123'
   created_at: '2012-01-29 21:24:56.973456'
   card_id: '659'
   creator_id: '1'
   content: type_e_content
-  creator_id: 
 card_revisions_479:
   id: '6124'
   created_at: '2012-01-29 21:24:57.048441'
   card_id: '660'
   creator_id: '1'
   content: type_f_content
-  creator_id: 
 card_revisions_480:
   id: '6125'
   created_at: '2012-01-29 21:24:57.179908'
   card_id: '661'
   creator_id: '1'
   content: first
-  creator_id: 
 card_revisions_481:
   id: '6126'
   created_at: '2012-01-29 21:24:57.226833'
   card_id: '661'
   creator_id: '1'
   content: second
-  creator_id: 
 card_revisions_482:
   id: '6127'
   created_at: '2012-01-29 21:24:57.27593'
   card_id: '661'
   creator_id: '1'
   content: third
-  creator_id: 
 card_revisions_483:
   id: '6128'
   created_at: '2012-01-29 21:24:57.333109'
@@ -4404,56 +4317,48 @@ card_revisions_483:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-  creator_id: 
 card_revisions_484:
   id: '6129'
   created_at: '2012-01-29 21:24:57.560961'
   card_id: '663'
   creator_id: '1'
   content: ! '{"type":"_self"}'
-  creator_id: 
 card_revisions_485:
   id: '6130'
   created_at: '2012-01-29 21:24:57.634911'
   card_id: '664'
   creator_id: '1'
   content: ! '{{+name}} {{+age}} {{+description}}'
-  creator_id: 
 card_revisions_486:
   id: '6131'
   created_at: '2012-01-29 21:24:57.881681'
   card_id: '665'
   creator_id: '584'
   content: test
-  creator_id: 
 card_revisions_487:
   id: '6132'
   created_at: '2012-01-29 21:24:57.937249'
   card_id: '666'
   creator_id: '584'
   content: test
-  creator_id: 
 card_revisions_488:
   id: '6133'
   created_at: '2012-01-29 21:24:58.003991'
   card_id: '667'
   creator_id: '1'
   content: test
-  creator_id: 
 card_revisions_489:
   id: '6134'
   created_at: '2012-01-29 21:24:58.089823'
   card_id: '668'
   creator_id: '1'
   content: ! '{"type":"_self"}'
-  creator_id: 
 card_revisions_490:
   id: '6135'
   created_at: '2012-01-29 21:24:58.205365'
   card_id: '669'
   creator_id: '1'
   content: ! '[[r1]]'
-  creator_id: 
 card_revisions_491:
   id: '6136'
   created_at: '2012-01-29 21:24:58.289706'
@@ -4474,63 +4379,54 @@ card_revisions_491:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-  creator_id: 
 card_revisions_492:
   id: '6137'
   created_at: '2012-01-29 21:24:58.401073'
   card_id: '671'
   creator_id: '1'
   content: ! '{"type":"_self"}'
-  creator_id: 
 card_revisions_493:
   id: '6138'
   created_at: '2012-01-29 21:24:58.441865'
   card_id: '672'
   creator_id: '1'
   content: by {{+author}}, design by {{+illustrator}}
-  creator_id: 
 card_revisions_494:
   id: '6139'
   created_at: '2012-01-29 21:24:58.629813'
   card_id: '673'
   creator_id: '1'
   content: by {{+author}}, design by {{+illustrator}}
-  creator_id: 
 card_revisions_495:
   id: '6140'
   created_at: '2019-12-31 06:00:00'
   card_id: '674'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_496:
   id: '6141'
   created_at: '2019-12-31 06:00:00'
   card_id: '675'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_497:
   id: '6142'
   created_at: '2019-12-31 06:00:00'
   card_id: '676'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_498:
   id: '6143'
   created_at: '2019-12-31 06:00:00'
   card_id: '677'
   creator_id: '1'
   content: ! '[[Sara]]'
-  creator_id: 
 card_revisions_499:
   id: '6144'
   created_at: '2019-12-31 06:00:00'
   card_id: '678'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_500:
   id: '6145'
   created_at: '2019-12-31 06:00:00'
@@ -4539,42 +4435,36 @@ card_revisions_500:
   content: ! '[[Sara]]
 
     [[John]]'
-  creator_id: 
 card_revisions_501:
   id: '6146'
   created_at: '2019-12-31 06:00:00'
   card_id: '680'
   creator_id: '1'
   content: ! '{{+her}}'
-  creator_id: 
 card_revisions_502:
   id: '6147'
   created_at: '2019-12-31 06:00:00'
   card_id: '681'
   creator_id: '1'
   content: ! '[[John]]'
-  creator_id: 
 card_revisions_503:
   id: '6148'
   created_at: '2019-12-31 06:00:00'
   card_id: '682'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_504:
   id: '6149'
   created_at: '2019-12-31 06:00:00'
   card_id: '683'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_505:
   id: '6150'
   created_at: '2019-12-31 06:00:00'
   card_id: '684'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_506:
   id: '6151'
   created_at: '2019-12-31 06:00:00'
@@ -4595,49 +4485,42 @@ card_revisions_506:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-  creator_id: 
 card_revisions_507:
   id: '6152'
   created_at: '2019-12-31 06:00:00'
   card_id: '686'
   creator_id: '1'
   content: ! '[[Sara]]'
-  creator_id: 
 card_revisions_508:
   id: '6153'
   created_at: '2019-12-31 06:00:00'
   card_id: '687'
   creator_id: '1'
   content: ! '{{+tint}}'
-  creator_id: 
 card_revisions_509:
   id: '6154'
   created_at: '2019-12-31 06:00:00'
   card_id: '688'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_510:
   id: '6155'
   created_at: '2019-12-31 06:00:00'
   card_id: '689'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_511:
   id: '6156'
   created_at: '2012-01-29 21:25:02.244646'
   card_id: '690'
   creator_id: '1'
   content: ! '{"type":"_self"}'
-  creator_id: 
 card_revisions_512:
   id: '6157'
   created_at: '2012-01-29 21:25:02.307122'
   card_id: '691'
   creator_id: '1'
   content: ''
-  creator_id: 
 card_revisions_513:
   id: '6158'
   created_at: '2012-01-29 21:25:02.375451'
@@ -4658,35 +4541,30 @@ card_revisions_513:
     <p>{{+*type+by name}}</p>
 
     </blockquote>'
-  creator_id: 
 card_revisions_514:
   id: '6159'
   created_at: '2012-01-29 21:25:02.563129'
   card_id: '693'
   creator_id: '1'
   content: ! '{"type":"_self"}'
-  creator_id: 
 card_revisions_515:
   id: '6160'
   created_at: '2012-01-29 21:25:02.601753'
   card_id: '694'
   creator_id: '1'
   content: ! '[[Anyone]]'
-  creator_id: 
 card_revisions_516:
   id: '6161'
   created_at: '2012-01-29 21:25:02.709928'
   card_id: '695'
   creator_id: '1'
   content: ! '[[Administrator]]'
-  creator_id: 
 card_revisions_517:
   id: '6162'
   created_at: '2012-01-29 21:25:02.798324'
   card_id: '696'
   creator_id: '1'
   content: ! "<h1>This is one heading</h1>\r\n<p>and some text</p>"
-  creator_id: 
 card_revisions_518:
   id: '6163'
   created_at: '2012-01-29 21:25:02.845617'
@@ -4694,7 +4572,6 @@ card_revisions_518:
   creator_id: '1'
   content: ! "<h1>One Heading</h1>\r\n<p>and some text</p>\r\n<h2>And a Subheading</h2>\r\n<p>and
     more text</p>"
-  creator_id: 
 card_revisions_519:
   id: '6164'
   created_at: '2012-01-29 21:25:02.961133'
@@ -4702,18 +4579,15 @@ card_revisions_519:
   creator_id: '1'
   content: ! "<h1>A Heading</h1>\r\n<p>and text</p>\r\n<h2>And Subhead</h2>\r\n<p>text</p>\r\n<h1>And
     another top Heading</h1>"
-  creator_id: 
 card_revisions_520:
   id: '6165'
   created_at: '2012-01-29 21:25:03.050824'
   card_id: '699'
   creator_id: '1'
   content: ! '{"type":"_self"}'
-  creator_id: 
 card_revisions_521:
   id: '6166'
   created_at: '2012-01-29 21:25:03.104923'
   card_id: '700'
   creator_id: '1'
   content: '2'
-  creator_id: 

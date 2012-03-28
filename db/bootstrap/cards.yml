@@ -21,8 +21,6 @@ cards_001:
   references_expired: 
   trash: false
   type_id: 47
-  creator_id: 
-  updater_id: 
 cards_002: 
   id: 577
   name: Role+*users
@@ -45,8 +43,6 @@ cards_002:
   references_expired: 
   trash: false
   type_id: 
-  creator_id: 1
-  updater_id: 1
 cards_003: 
   id: 578
   name: Role+*users+*type plus right

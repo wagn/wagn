@@ -107,7 +107,7 @@ class Card < ActiveRecord::Base
   class << self
     def const_missing(const)
       code=CODE_CONST[const]
-      #warn "const_missing #{const}, #{code}, #{constants.member? const}"
+      #warn "const_missing #{const}, #{code}, #{caller[0..8]*"\n"}"
       code and newval=const_set(const, code2id(code)) or newval.nil? && super
     end
   end
@@ -155,15 +155,14 @@ class Card < ActiveRecord::Base
         when Card; user.id
         when Integer; user
         else Card::Codename.code2id(user) || cd=Card[user.to_s] and cd.id
-        #|| User.from_login(user.to_s).card_id
       end
     end
 
     def as(given_user)
-      #warn "as #{given_user.inspect}"
+      #warn Rails.logger.warn("as #{given_user.inspect}")
       tmp_user = @@as_user_id
       @@as_user_id = user2id(given_user)
-      #warn "as user is #{@@as_user_id} (#{tmp_user})"
+      #warn Rails.logger.warn("as user is #{@@as_user_id} (#{tmp_user})")
       @@user_id = @@as_user_id if @@user_id.nil?
 
       if block_given?
@@ -175,6 +174,8 @@ class Card < ActiveRecord::Base
       end
     end
 
+    @@read_rules = nil
+
     def among?(authzed) Card[as_user_id].among?(authzed) end
     def as_user_id()    @@as_user_id || @@user_id        end
     def read_rules()    load_as_rules; @@read_rules      end
@@ -183,7 +184,7 @@ class Card < ActiveRecord::Base
       if as_user_id != @@rules_uid
         if rules_user_card = as_user_id && Card[as_user_id]
           @@user_roles = rules_user_card.all_roles
-          @@read_rules = rules_user_card.read_rules
+          @@read_rules = rules_user_card.read_rules || [1]
           @@rules_uid = rules_user_card.id
         else
           @@user_roles = @@read_rules = @@rules_uid = nil
@@ -199,10 +200,9 @@ class Card < ActiveRecord::Base
     end
 
     def always_ok?
-      #warn "aok? #{as_user_id&&Card[as_user_id].id}"
+      #warn Rails.logger.warn("aok? #{as_user_id}, #{as_user_id&&Card[as_user_id].id} #{Card::WagbotID}")
       return false unless usr_id = as_user_id
       return true if usr_id == Card::WagbotID #cannot disable
-      #warn "aok? #{usr_id}, #{@@user_id}"
 
       always = Card.cache.read('ALWAYS') || {}
       #warn(Rails.logger.warn "always_ok? #{usr_id}")
@@ -212,6 +212,7 @@ class Card < ActiveRecord::Base
         #warn(Rails.logger.warn "update always hash #{always[usr_id]}, #{always.inspect}")
         Card.cache.write 'ALWAYS', always
       end
+      #warn Rails.logger.warn("aok? #{usr_id}, #{always[usr_id]}")
       always[usr_id]
     end
     # PERMISSIONS
@@ -241,8 +242,10 @@ class Card < ActiveRecord::Base
   public
 
     def code2id(code)
-      r=Card::Codename.card_attr(code, :id)
-      raise "no code? #{code.inspect}" unless r; r
+      unless card_id=Card::Codename.card_attr(code, :id)
+        return 1 if code.to_s == 'wagbot' # to bootstrapping codenames
+        warn "no code? #{Card::Codename.code2name(code)}: #{code.inspect}"
+      else card_id end
     end
     def find_configurables
       @roles = Card.search(:type => Card::RoleID).reject{|r| r.id != Card::AdminID}
@@ -331,8 +334,10 @@ class Card < ActiveRecord::Base
   end
 
   def all_roles
-    ids=(cr=star_rule(:roles)).item_cards.map(&:id)
-    #warn "all_roles #{inspect}: #{cr.inspect}, #{ids.inspect}"
+    ids = Card.as Card::WagbotID do
+      r=(cr=star_rule(:roles)).item_cards(:limit=>0).map(&:id)
+      #warn "all_roles #{inspect}: #{cr.inspect}, #{r.inspect} #{caller[0..10]*"\n"}"; r
+    end
     @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
       #[Card::AuthID] + star_rule(:roles).item_cards.map(&:id))
   end

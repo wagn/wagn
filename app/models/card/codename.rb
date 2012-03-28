@@ -2,7 +2,46 @@ class Card::Codename < ActiveRecord::Base
   cattr_accessor :cache
   @@pre_cache = {}
 
+
+  # helpers for migrations, remove when migrations are obsolete (1.9)
+  @@code2name = nil
+  RENAMES = {
+      "AccountRequest"   => "InvitationRequest",
+      "wagn_bot"         => "wagbot",
+    }
+  CODENAMES = %w{
+      *account *accountable *account_link *add_help *alert *all *all_plu
+      *attach *autoname *bcc *captcha *cc *comment *community *content *count
+      *create *created *creator *css *default *delete *edit_help *editing
+      *editor *email *foot *from *head *home *includer *inclusion *incoming
+      *input *invite *last_edited *layout *link *linker *logo *member
+      *missing_link *navbox *now *option *option_label *outgoing *plu_card
+      *plu_part *pluss *read *recent *referred_to_by *refer_to *related
+      *request *right *role *rstar *search *self *send *session *sidebar
+      *signup *star *subject *table_of_content *tagged *thank *tiny_mce
+      *title *to *type *watching *type_plu_right *update *user *version
+      *watcher *when_created *when_last_edited
+
+      anyone_signed_in anyone administrator anonymous wagn_bot
+
+      Basic Cardtype Date File Html Image AccountRequest Number Phrase
+      PlainText Pointer Role Search Set Setting Toggle User
+    }
+
   class <<self
+    def name2code(name)
+      code = ?* == name[0] ? name[1..-1] : name
+      code = RENAMES[code] if RENAMES[code]
+      warn Rails.logger.warn("name2code: #{name}, #{code}, #{RENAMES[code]}"); code
+    end
+    def code2name(code)
+      if @@code2name.nil?
+        @@code2name = {}
+        CODENAMES.each { |name| @@code2name[name2code name] = name }
+      end
+      @@code2name[code] || "Not code[#{code}]"
+    end
+    # end migration helpers
 
     def [](code)           card_attr(code, :name)      end
     def codename(key)      code_attr(key, :codename)   end
@@ -27,11 +66,13 @@ class Card::Codename < ActiveRecord::Base
 
     def code_attr(key, attr=nil?)
       #warn "miss #{key} #{card2code.map(&:inspect)*"\n"}" unless card2code.has_key?(key)
+      card2code &&
       card2code.has_key?(key) && (attr ? card2code[key][attr] : true)
     end
 
     def card_attr(key, attr=nil?)
       #warn "miss card #{key} #{code2card.map(&:inspect)*"\n"}" unless code2card.has_key?(key)
+      code2card &&
       code2card.has_key?(key) && (attr ? code2card[key][attr] : true)
     end
 

@@ -28,7 +28,7 @@ class AccountCreationTest < ActionController::TestCase
     @response   = ActionController::TestResponse.new
     #login_as :joe_admin
     integration_login_as :joe_admin, true
-    Wagn::Cache.reset_for_tests
+    Wagn::Cache.restore
   end
 
 # this is working in interface but I can't get it to work here:

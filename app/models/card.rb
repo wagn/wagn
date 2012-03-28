@@ -242,10 +242,10 @@ class Card < ActiveRecord::Base
 
   public
 
-    def code2id(code)
+    def code2id code
       unless card_id=Card::Codename.card_attr(code, :id)
         return 1 if code.to_s == 'wagbot' # to bootstrapping codenames
-        warn "no code? #{Card::Codename.code2name(code)}: #{code.inspect}"
+        warn "unknown codename: #{code}"
       else card_id end
     end
     def find_configurables

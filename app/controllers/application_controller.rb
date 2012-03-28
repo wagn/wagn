@@ -36,7 +36,7 @@ class ApplicationController < ActionController::Base
       Wagn::Renderer.ajax_call = ajax?
       Wagn::Renderer.current_slot = nil
     
-      Wagn::Cache.re_initialize_for_new_request
+      Wagn::Cache.renew
     
       #warn "set curent_user (app-cont) #{self.session_user}, U.cu:#{Card.user_id}"
       Card.user = session_user || Card::AnonID

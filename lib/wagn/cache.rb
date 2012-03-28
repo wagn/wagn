@@ -22,51 +22,41 @@ module Wagn
   end
 
   class Cache
+    Klasses = [Card, User, Card::Revision]
+    
+    @@prepopulating     = Rails.env == 'cucumber'
+    @@using_rails_cache = Rails.env =~ /^cucumber|test$/
+    @@prefix_root       = Wagn::Application.config.database_configuration[Rails.env]['database']
     
     class << self
-      def cache_classes
-        [Card, User, Card::Revision]
-      end
-            
-      def initialize_on_startup
-        store = Rails.env =~ /^cucumber|test$/ ? nil : Rails.cache
-        cache_classes.each do |cc|
+      def new_all
+        store = @@using_rails_cache ? nil : Rails.cache
+        Klasses.each do |cc|
           cc.cache = new :class=>cc, :store=>store
         end
-        preload_cache_for_tests if preload_cache?
-      end
-      
-      def preload_cache?
-        Rails.env=='cucumber'
-      end
-      
-      def preload_cache_for_tests
-        return unless preload_cache?
-        set_keys = ['*all','*all plus','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
-        set_keys.map{|k| [k,"#{k}+*content", "#{k}+*default", "#{k}+*read", ]}.flatten.each do |key|        
-          Card[key]
-        end
-        @@frozen = Marshal.dump(Card.cache)
-      end
-      
-      def system_prefix(klass)
-        "#{Wagn::Application.config.database_configuration[Rails.env]['database']}/#{klass}"
+        prepopulate if @@prepopulating
       end
 
-      def re_initialize_for_new_request
-        cache_classes.each do |cc|
+      def renew
+        Klasses.each do |cc|
           if cc.cache
               cc.cache.system_prefix = system_prefix(cc)
           else
-            warn "cache nil? #{cc}"
+            raise "renewing nil cache: #{cc}"
           end
         end
-        reset_local unless preload_cache?
+        reset_local unless @@prepopulating
+      end
+      
+      def system_prefix klass
+        "#{ @@prefix_root }/#{ klass }"
       end
 
-      def reset_for_tests
+      def restore
         reset_local
-        Card.cache = Marshal.load(@@frozen) if preload_cache?
+        if @@prepopulating
+          Card.cache = Marshal.load @@frozen
+        end
       end
 
       def generate_cache_id
@@ -74,18 +64,32 @@ module Wagn
       end
 
       def expire_card(key)
+        #FIXME - this should all be done on Card object.
         Card.cache and
         Card.cache.delete key
       end
 
       def reset_global
-        cache_classes.each{ |cc| cc.cache.reset if cc.cache }
+        Klasses.each do |cc|
+          next unless cache = cc.cache
+          cache.reset hard=true
+        end
       end
 
       private
+      
+      
+      def prepopulate
+        set_keys = ['*all','*all plus','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
+        set_keys.map{|k| [k,"#{k}+*content", "#{k}+*default", "#{k}+*read", ]}.flatten.each do |key|        
+          Card[key]
+        end
+        @@frozen = Marshal.dump(Card.cache)
+      end
+      
       def reset_local
         Card.reset_id_cache
-        cache_classes.each{ |cc|
+        Klasses.each{ |cc|
           if Wagn::Cache===cc.cache
           cc.cache && cc.cache.reset_local
           else warn "reset class #{cc}, #{cc.cache.class} #{caller[0..8]*"\n"} ???" end
@@ -160,10 +164,16 @@ module Wagn
       @local = {}
     end
 
-    def reset
+    def reset hard=false
       reset_local
       @cache_id = self.class.generate_cache_id
-      @store.write(@system_prefix + "cache_id", @cache_id)  if @store
+      if @store
+        if hard
+          @store.clear
+        else
+          @store.write @system_prefix + "cache_id", @cache_id
+        end
+      end
       @prefix = @system_prefix + @cache_id + "/"
     end
 

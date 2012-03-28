@@ -48,7 +48,7 @@ unless defined? TEST_ROOT
       super
       # let the cache stick accross test-runs while profiling
       unless ActionController.const_defined?("PerformanceTest") and self.class.superclass == ActionController::PerformanceTest
-        Wagn::Cache.reset_for_tests
+        Wagn::Cache.restore
       end
     end
 

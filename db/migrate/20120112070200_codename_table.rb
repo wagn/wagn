@@ -12,7 +12,7 @@ class CodenameTable < ActiveRecord::Migration
         if card = Card[name] # || Card.create!(:name=>name)
           card or raise "Missing codename #{name} card"
         
-          warn Rails.logger.warn("codename for #{name}, #{name2code(name)}")
+          warn Rails.logger.warn("codename for #{name}, #{Card::Codename.name2code(name)}")
           Card::Codename.create :card_id=>card.id,
                                 :codename=>Card::Codename.name2code(name)
 

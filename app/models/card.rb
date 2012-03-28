@@ -242,8 +242,8 @@ class Card < ActiveRecord::Base
 
     def code2id(code)
       unless card_id=Card::Codename.card_attr(code, :id)
-        warn "no code? #{code.inspect}"
         return 1 if code.to_s == 'wagbot' # to bootstrapping codenames
+        raise "no code? #{code.inspect}"
       else card_id end
     end
     def find_configurables
@@ -333,8 +333,10 @@ class Card < ActiveRecord::Base
   end
 
   def all_roles
-    ids=(cr=star_rule(:roles)).item_cards(:limit=>0).map(&:id)
-    #warn "all_roles #{inspect}: #{cr.inspect}, #{ids.inspect}"
+    ids = Card.as Card::WagbotID do
+      r=(cr=star_rule(:roles)).item_cards(:limit=>0).map(&:id)
+      #warn "all_roles #{inspect}: #{cr.inspect}, #{r.inspect} #{caller[0..10]*"\n"}"; r
+    end
     @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
       #[Card::AuthID] + star_rule(:roles).item_cards.map(&:id))
   end

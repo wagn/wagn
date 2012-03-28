@@ -33,16 +33,12 @@ class CodenameTable < ActiveRecord::Migration
 
     Card.as :wagbot do
       codecards.each do |name|
-        if c = Card[name]
-        warn Rails.logger.warn("add codenames: #{name}, #{c}, #{renames[name]}, #{c&&c.id}")
-        c ||= Card.create! :name=>name
+        c = Card[name] || Card.create!(:name=>name)
         c or raise "Missing codename #{name} card"
-        name = name[1..-1] if name[0] == '*'
+        name = name[1..-1] if ?* == name[0]
         name = renames[name] if renames[name]
+        warn Rails.logger.warn("add codenames: #{name}, #{c}, #{renames[name]}, #{c&&c.id}")
         Card::Codename.create :card_id=>c.id, :codename=>name
-        else 
-        warn Rails.logger.warn("no_card codename: #{name}, #{renames[name]}")
-        end
       end
     end
 

@@ -29,41 +29,42 @@ class RolesUsers < ActiveRecord::Migration
       # Add username->*roles pointers from user_roles table
       Card.where(:extension_type=> 'User').each do |usercard|
         uid = User.where(:card_id=>usercard.id).first.id
-        roles = RolesUser.where(:user_id=>uid).map {|ru|
-          ((rcard=Card.where(:id=>ru.role_id).first).id!=Card::Codename.code2id('Anonymous')) ?
-              rcard.name : nil
-        }.compact
+        roles = RolesUser.where(:user_id=>uid).map do |role_user|
+            (rcard=Card.where(:id=>role_user.role_id).first and
+               rcard.id != Card::AnonID) ?  rcard.name : nil
+          end.compact
+
         unless roles.empty?
           Card.create! :name    => usercard.cardname.star_rule(:roles),
-                       :type_id => Card::Codename.code2id('Pointer'),
+                       :type_id => Card::PointerID,
                        :content => "[[#{roles*']][['}]]"
         end
       end
 
       # Add Role+*users+*type plus right+*content (edit_user_roles task)
       Card.create! :name => "Role+*users+*type plus right+*content",
-                   :type_id => Card::Codename.code2id('Pointer'),
+                   :type_id => Card::PointerID,
                    :content => "{'type':'User';'refer_to':'_left'}"
 
       # Add *account+*right+*create (create_accounts task)
       c=Card['*account+*right+*create'] and c << '_left' or
           Card.create(:name => "*account+*right+*create",
-                      :type_id => Card::Codename.code2id('Pointer'),
+                      :type_id => Card::PointerID,
                       :content => "[[_left]]")
 
       # Add *account+*right+*update (administrate_users)
       Card['*account+*right+*update'] or
       Card.create!(:name => "*account+*right+*update",
-                   :type_id => Card::Codename.code2id('Pointer'),
+                   :type_id => Card::PointerID,
                    :content => "[[_left]]")
 
       # Add *roles+*right+*update   (edit_user_roles)
       Card.create! :name => "*roles+*right+*update",
-                   :type_id => Card::Codename.code2id('Pointer'),
+                   :type_id => Card::PointerID,
                    :content => "[[_left]]"
 
       Card.create! :name => '*roles+*right+*default',
-                   :type_id => Card::Codename.code2id('Pointer')
+                   :type_id => Card::PointerID
     end
   end
 

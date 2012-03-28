@@ -5,7 +5,7 @@ users_001:
   email: noreply@wagn.org
   crypted_password: 
   salt: 
-  created_at: 2012-01-29 15:31:40
+  created_at: 2012-01-29 15:21:31
   updated_at: 2012-01-29 00:00:00
   password_reset_code: 
   status: system
@@ -18,7 +18,7 @@ users_002:
   email: noreply@wagn.org
   crypted_password: 
   salt: 
-  created_at: 2012-01-29 15:31:40
+  created_at: 2012-01-29 15:21:31
   updated_at: 2012-01-29 00:00:00
   password_reset_code: 
   status: system

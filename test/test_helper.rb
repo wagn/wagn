@@ -106,7 +106,7 @@ unless defined? TEST_ROOT
         args[:users] ||= { :anonymous=>200 }
         args[:cardtypes] ||= ['Basic']
         if args[:cardtypes]==:all
-          args[:cardtypes] = YAML.load_file('test/fixtures/codename.yml').find_all{|p| p[1]['codename']=~/^[A-Z]/}.collect {|k,v| v['codename']}
+          args[:cardtypes] = YAML.load_file('test/fixtures/card_codenames.yml').find_all{|p| p[1]['codename']=~/^[A-Z]/}.collect {|k,v| v['codename']}
         end
 
         args[:users].each_pair do |user,status|

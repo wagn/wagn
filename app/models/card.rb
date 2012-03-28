@@ -105,9 +105,11 @@ class Card < ActiveRecord::Base
 
   class << self
     def const_missing(const)
-      code=CODE_CONST[const]
-      #warn "const_missing #{const}, #{code}, #{caller[0..8]*"\n"}"
-      code and newval=const_set(const, code2id(code)) or newval.nil? && super
+      if code=CODE_CONST[const] and val=code2id(code)
+        const_set const, val
+      else
+        super
+      end
     end
   end
 

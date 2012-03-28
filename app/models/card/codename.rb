@@ -88,13 +88,15 @@ class Card::Codename < ActiveRecord::Base
 
     def get_cache(key)
       if self.cache
-        return c if c = self.cache.read(key)
-        load_cache
-        return self.cache.read(key)
+        self.cache.fetch key do
+          load_cache
+          self.cache.read key
+        end
       else
-        return c if c = @@pre_cache[key.to_s]
-        load_cache
-        @@pre_cache[key.to_s]
+        @@pre_cache[key.to_s] or begin
+          load_cache
+          @@pre_cache[key.to_s]
+        end
       end
     end
 

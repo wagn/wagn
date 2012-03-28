@@ -10,16 +10,18 @@ class CodenameTable < ActiveRecord::Migration
     Card.as Card::WagbotID do
       Card::Codename::CODENAMES.each do |name|
         if card = Card[name] # || Card.create!(:name=>name)
-          card or raise "Missing codename #{name} card"
-        
-          warn Rails.logger.warn("codename for #{name}, #{Card::Codename.name2code(name)}")
+          #puts "codename for #{name}, #{Card::Codename.name2code(name)}"
           Card::Codename.create :card_id=>card.id,
                                 :codename=>Card::Codename.name2code(name)
 
-        else warn Rails.logger.warn("missing card for #{name}")
+        else
+          raise "Missing codename #{name} card"
+          #puts "missing card for #{name}"
         end
       end
     end
+    Wagn::Cache.reset_global
+    Card::Codename.reset_cache
 
     Card.reset_column_information
   end

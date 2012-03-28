@@ -8,15 +8,16 @@ class CodenameTable < ActiveRecord::Migration
     change_column "cards", "typecode", :string, :null=>true
 
     Card.as Card::WagbotID do
-      Card::Codenames::CODENAMES.each do |name|
-        card = Card[name] || Card.create!(:name=>name)
-        card or raise "Missing codename #{name} card"
+      Card::Codename::CODENAMES.each do |name|
+        if card = Card[name] # || Card.create!(:name=>name)
+          card or raise "Missing codename #{name} card"
         
-        Card::Codename.create :card_id=>card.id,
-                              :codename=>Card::Codename.name2code(name)
+          warn Rails.logger.warn("codename for #{name}, #{name2code(name)}")
+          Card::Codename.create :card_id=>card.id,
+                                :codename=>Card::Codename.name2code(name)
 
-        #else warn Rails.logger.warn("missing card for #{name}")
-        #end
+        else warn Rails.logger.warn("missing card for #{name}")
+        end
       end
     end
 

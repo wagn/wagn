@@ -2,33 +2,33 @@ class Card::Codename < ActiveRecord::Base
   cattr_accessor :cache
   @@pre_cache = {}
 
-  class <<self
 
-    # helpers for migrations, remove when migrations are obsolete (1.9)
-    RENAMES = {
-        "AccountRequest"   => "InvitationRequest",
-        "wagn_bot"         => "wagbot",
-      }
-    CODENAMES = %w{
-        *account *accountable *account_link *add_help *alert *all *all_plu
-        *attach *autoname *bcc *captcha *cc *comment *community *content *count
-        *create *created *creator *css *default *delete *edit_help *editing
-        *editor *email *foot *from *head *home *includer *inclusion *incoming
-        *input *invite *last_edited *layout *link *linker *logo *member
-        *missing_link *navbox *now *option *option_label *outgoing *plu_card
-        *plu_part *pluss *read *recent *referred_to_by *refer_to *related
-        *request *right *role *rstar *search *self *send *session *sidebar
-        *signup *star *subject *table_of_content *tagged *thank *tiny_mce
-        *title *to *type *watching *type_plu_right *update *user *version
-        *watcher *when_created *when_last_edited
-
-        anyone_signed_in anyone administrator anonymous wagn_bot
-
-        Basic Cardtype Date File Html Image AccountRequest Number Phrase
-        PlainText Pointer Role Search Set Setting Toggle User
+  # helpers for migrations, remove when migrations are obsolete (1.9)
+  @@code2name = nil
+  RENAMES = {
+      "AccountRequest"   => "InvitationRequest",
+      "wagn_bot"         => "wagbot",
     }
-    @@code2name = nil
+  CODENAMES = %w{
+      *account *accountable *account_link *add_help *alert *all *all_plu
+      *attach *autoname *bcc *captcha *cc *comment *community *content *count
+      *create *created *creator *css *default *delete *edit_help *editing
+      *editor *email *foot *from *head *home *includer *inclusion *incoming
+      *input *invite *last_edited *layout *link *linker *logo *member
+      *missing_link *navbox *now *option *option_label *outgoing *plu_card
+      *plu_part *pluss *read *recent *referred_to_by *refer_to *related
+      *request *right *role *rstar *search *self *send *session *sidebar
+      *signup *star *subject *table_of_content *tagged *thank *tiny_mce
+      *title *to *type *watching *type_plu_right *update *user *version
+      *watcher *when_created *when_last_edited
 
+      anyone_signed_in anyone administrator anonymous wagn_bot
+
+      Basic Cardtype Date File Html Image AccountRequest Number Phrase
+      PlainText Pointer Role Search Set Setting Toggle User
+    }
+
+  class <<self
     def name2code(name)
       code = ?* == name[0] ? name[1..-1] : name
       code = RENAMES[code] if RENAMES[code]
@@ -41,6 +41,7 @@ class Card::Codename < ActiveRecord::Base
       end
       @@code2name[code] || "Not code[#{code}]"
     end
+    # end migration helpers
 
     def [](code)           card_attr(code, :name)      end
     def codename(key)      code_attr(key, :codename)   end

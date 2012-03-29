@@ -106,9 +106,11 @@ class Card < ActiveRecord::Base
 
   class << self
     def const_missing(const)
-      code=CODE_CONST[const]
-      #warn "const_missing #{const}, #{code}, #{caller[0..8]*"\n"}"
-      code and newval=const_set(const, code2id(code)) or newval.nil? && super
+      if code=CODE_CONST[const] and val=code2id(code)
+        const_set const, val
+      else
+        super
+      end
     end
   end
 
@@ -243,11 +245,11 @@ class Card < ActiveRecord::Base
 
   public
 
-    def code2id(code)
+    def code2id code
       code = code.to_s
       unless card_id=Card::Codename.card_attr(code, :id)
         return 1 if code.to_s == 'wagbot' # to bootstrapping codenames
-        warn "no code? #{Card::Codename.code2name(code)}: #{code.inspect}"
+        warn "unknown codename: #{code}"
       else card_id end
     end
     def find_configurables

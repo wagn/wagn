@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120326192041) do
+ActiveRecord::Schema.define(:version => 20120327100000) do
 
   create_table "card_codenames", :id => false, :force => true do |t|
     t.integer "card_id",  :null => false
@@ -74,6 +74,14 @@ ActiveRecord::Schema.define(:version => 20120326192041) do
   add_index "cards", ["tag_id"], :name => "index_cards_on_tag_id"
   add_index "cards", ["trunk_id"], :name => "index_cards_on_trunk_id"
   add_index "cards", ["typecode"], :name => "card_type_index"
+
+  create_table "cardtypes", :force => true do |t|
+    t.string  "class_name"
+    t.boolean "system"
+    t.integer "card_id"
+  end
+
+  add_index "cardtypes", ["class_name"], :name => "cardtypes_class_name_uniq", :unique => true
 
   create_table "multihost_mappings", :force => true do |t|
     t.string   "requested_host"

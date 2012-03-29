@@ -343,29 +343,31 @@ class Card < ActiveRecord::Base
       #[Card::AuthID] + star_rule(:roles).item_cards.map(&:id))
   end
 
-  def star_rule(rule)
-    rule_card = Card.fetch_or_new cardname.star_rule(rule)
+  def star_rule rule
+    Card.fetch_or_new cardname.star_rule(rule)
   end
 
-  def get_type_id(type_args={})
+  def get_type_id(args={})
+    return if args[:type_id]
 
-    ti, tc, tp = type_args[:type_id], type_args[:typecode], type_args[:type]
-    return if ti
-    if tc || tp
-      unless (tc && ti=Card.type_id_from_code(tc)) ||
-             (tp && ti=Card.type_id_from_name(tp))
-        @broken_type=tp||tc||"Basic"
-        #warn "get_type_id bt[#{@broken_type}], #{ti}"
+    type_id = case
+      when args[:typecode] ;  Card.type_id_from_code args[:typecode]
+      when args[:type]     ;  Card.type_id_from_name args[:type]
+      else :noop
       end
-      return ti || Card::DefaultID
+    
+    case type_id
+    when :noop  ; 
+    when nil    ; @broken_type = args[:type] || args[:typecode]
+    else        ; return type_id
     end
-
+    
     if name && t=template
       reset_patterns
-      ti = t.type_id
+      t.type_id
+    else
+      Card::DefaultID #bad name.  DefaultTypeID ?
     end
-    raise "NoType" if tc == '$NoType' || ti==0
-    ti || Card::DefaultID
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

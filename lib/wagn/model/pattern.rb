@@ -27,10 +27,6 @@ module Wagn::Model
         @set_names = @template = @virtual = nil
     end
     def set_names()      @set_names ||= patterns.map(&:set_name)     end
-    def method_keys()    @method_keys ||= patterns.map(&:method_key) end
-    def css_names()      patterns.map(&:css_name).reverse*" "        end
-    def real_set_names() set_names.find_all &Card.method(:exists?)   end
-    def set_names()      @set_names ||= patterns.map(&:set_name)     end
     def real_set_names()
       set_names.find_all { |set_name| Card.exists? set_name }
     end

@@ -116,8 +116,10 @@ module Wagn
     def star?()       simple? and !!(s=~/^\*/)                         end
     def tag_star?()   junction? and ?* == parts[-1][0]                 end
     alias rstar? tag_star?
-    def star_rule(star)
-      [s, (star = star.to_s) =~ /^\*/ ? star : '*'+star].to_cardname end
+    def star_rule(sstar)
+      star = Card::Codename[sstar]
+      [self, star].to_cardname
+    end
 
     def empty?()      parts && parts.empty? or s && s.blank?           end
     alias blank?      empty?

@@ -22,6 +22,7 @@ module Wagn::Model
         instance.pattern_applies? ? instance : nil
       end.compact
     end
+
     def reset_patterns()
       @set_mods_loaded = @junction_only = @patterns = @method_keys =
         @set_names = @template = @virtual = nil
@@ -41,8 +42,10 @@ module Wagn::Model
     class << self
       def register key, opt_keys, opts={}
         Wagn::Model::Pattern.register_class self
-        cattr_accessor :key, :opt_keys, :junction_only, :method_key, :trunkless
-        self.key = Card::Codename[key[1..-1]] || key # failsafe for loading/migration
+        cattr_accessor :key, :opt_keys, :junction_only, :method_key, :trunkless, :key_name
+        self.key_name = Card::Codename[key ] || ?*+key+??
+        self.key = key
+        #warn "Register pat #{self.key}, #{self.key_name} #{opt_keys.inspect} #{opts.inspect}"
         self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]
         opts.each { |key, val| self.send "#{key}=", val }
         self.trunkless = !!self.method_key
@@ -70,7 +73,7 @@ module Wagn::Model
 
 
   class AllPattern < SetBase
-    register '*all', [], :method_key=>''
+    register 'all', [], :method_key=>''
     def self.label(name)           'All Cards'    end
     def self.prototype_args(base)  {}             end
   end
@@ -92,14 +95,14 @@ module Wagn::Model
   end
 
   class StarPattern < SetBase
-    register '*star', :star, :method_key=>'star'
+    register 'star', :star, :method_key=>'star'
     def self.label(name)               'Star Cards'            end
     def self.prototype_args(base)      {:name=>'*dummy'}       end
     def pattern_applies?()             card.cardname.star?     end
   end
 
   class RstarPattern < SetBase
-    register '*rstar', :rstar, :method_key=>'rstar', :junction_only=>true
+    register 'rstar', :rstar, :method_key=>'rstar', :junction_only=>true
     def self.label(name)           "Cards ending in +(Star Card)"            end
     def self.prototype_args(base)  {:name=>'*dummy+*dummy'}                  end
     def pattern_applies?()    n=card.cardname and n.junction? && n.tag_star? end

@@ -80,7 +80,7 @@ class Wagn::Renderer::Html
 
 
   define_view :new do |args|
-    @help_card = card.rule_card('add help', 'edit help')
+    @help_card = card.rule_card(:add_help, :edit_help)
     if ajax_call?
       new_content :cancel_href=>path(:view, :view=>:missing), :cancel_class=>'slotter'
     else
@@ -127,7 +127,7 @@ class Wagn::Renderer::Html
 
   define_view :edit_content do |args|
     %{#{
-      if inst = card.rule_card('edit help')
+      if inst = card.rule_card(:edit_help)
         %{<div class="instruction">#{ raw subrenderer(inst).render_core }</div>}
       end}#{
       if card.hard_template and card.hard_template.ok? :read
@@ -230,7 +230,7 @@ class Wagn::Renderer::Html
 
   define_view :edit_in_form do |args|
     instruction = ''
-    if instruction_card = (card.new_card? ? card.rule_card('add help', 'edit help') : card.rule_card('edit help'))
+    if instruction_card = (card.new_card? ? card.rule_card(:add_help, :edit_help) : card.rule_card(:edit_help))
       ss = self.subrenderer(instruction_card)
       instruction = %{<div class="instruction">} +
       ss.with_inclusion_mode(:main) { ss.render :core } +
@@ -346,7 +346,7 @@ class Wagn::Renderer::Html
           #{ raw( subrenderer(Card.fetch current_set).render_content ) }
         </div>
   #{
-        if !card.star_rule(:account) && Card.toggle(card.rule('accountable')) && Card['*account'].ok?(:create) && card.ok?(:update)
+        if !card.star_rule(:account) && Card.toggle(card.rule(:accountable)) && Card['*account'].ok?(:create) && card.ok?(:update)
           %{<div class="new-account-link">
           #{ link_to %{Add a sign-in account for "#{card.name}"},
               path(:options, :attrib=>:new_account),
@@ -650,7 +650,7 @@ class Wagn::Renderer::Html
     url = path(url) if Symbol===url
     opts = { :url=>url, :remote=>true, :html=>other_html }
     opts[:html][:class] = classes + ' slotter'
-    opts[:html][:recaptcha] = 'on' if Wagn::Conf[:recaptcha_on] && Card.toggle( card.rule('captcha') )
+    opts[:html][:recaptcha] = 'on' if Wagn::Conf[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
     opts
   end
   
@@ -691,7 +691,7 @@ class Wagn::Renderer::Html
       card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
         @form = form
 
-        %{ #{ hidden_field_tag :success, card.rule('thanks') || 'TO-CARD' }
+        %{ #{ hidden_field_tag :success, card.rule(:thanks) || 'TO-CARD' }
 
         <div class="card-header">
           #{
@@ -708,7 +708,7 @@ class Wagn::Renderer::Html
 
             #{
             if card.cardname.blank? || Card.exists?(card.cardname)
-              card.rule_card('autoname') ? '&nbsp;' : %{<label>name:</label> <span class="name-area">#{ raw name_field(form) }</span>}
+              card.rule_card(:autoname) ? '&nbsp;' : %{<label>name:</label> <span class="name-area">#{ raw name_field(form) }</span>}
             else
               %{#{hidden_field_tag 'card[name]', card.name} <label>name:</label> <span class="title">#{ raw fancy_title(card.name) }</span>}
             end

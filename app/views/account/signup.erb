@@ -9,9 +9,9 @@
   <%= wrap_slot do |slot| %>
 
     <div class="instruction">
-      <% if inst = card.rule_card('add help', 'edit help') %> 
+      <% if inst = card.rule_card(:add_help, :edit_help) %> 
         <%= raw( slot.subrenderer(inst).render :core ) %>
-      <% elsif !Card['*account'].ok?(:create) %>
+      <% elsif !Card[Card::Codename[:account]].ok?(:create) %>
         <p><strong>All Account Requests are subject to review.</strong></p><%#ENGLISH%>
       <% else %>
         <p><strong>Send us the following, and we'll send you a password.</strong></p><%#ENGLISH%>

@@ -98,9 +98,10 @@ module Wagn
   end
 
   def layout_from_card
-    return unless setting_card = (card.setting_card('layout') or Card.default_setting_card('layout'))
-    return unless setting_card.typecode == 'Pointer'           and
-      layout_name=setting_card.item_names.first                and
+    return unless rule_card = (card.rule_card(:layout) or Card.default_rule_card(:layout))
+    rule_card.include_set_modules
+    return unless rule_card.typecode == 'Pointer'           and
+      layout_name=rule_card.item_names.first                and
       !layout_name.nil?                                        and
       lo_card = Card.fetch(layout_name, :skip_virtual => true) and
       lo_card.ok?(:read)

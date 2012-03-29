@@ -10,8 +10,8 @@ module Wagn::Model::Templating
     @template = reset ? get_template : (@template || get_template)
   end
   
-  def get_template
-    t = rule_card('content','default')
+  def get_template(skip_module_loading=false)
+    t = rule_card(:content, :default, :skip_module_loading=>skip_module_loading)
     @virtual = (new_card? && t && t.hard_template?)
     t
   end

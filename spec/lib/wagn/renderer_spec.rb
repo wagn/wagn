@@ -93,6 +93,7 @@ describe Wagn::Renderer, "" do
 
     it "content" do
       result = render_card(:content, :name=>'A+B')
+      warn "result #{result}"
       assert_view_select result, 'div[class="card-slot content-view ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]' do 
         assert_select 'span[class~="content-content content"]'
       end
@@ -312,22 +313,15 @@ describe Wagn::Renderer, "" do
       Wagn::Renderer.new(template).render(:core).should == '[[link]] {{inclusion}}'
     end
 
-    it "is used in new card forms when soft" do
-      Card.as Card['joe_admin'].id
-      content_card = Card["Cardtype E+*type+*default"]
-      content_card.content= "{{+Yoruba}}"
-      content_card.save!
-      
-      help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
-      card = Card.new(:type=>'Cardtype E')
-      card.should_receive(:rule_card).with("add help","edit help").and_return(help_card)
-      card.should_receive(:rule_card).with("thanks", nil, {:skip_modules=>true}).and_return(nil)
-      card.should_receive(:rule_card).with("autoname").and_return(nil)
-      card.should_receive(:rule_card).with("content","default").twice.and_return(content_card) # why twice?
-      
-      assert_view_select Wagn::Renderer::Html.new(card).render_new, 'div[class="content-editor"]' do
-        assert_select 'textarea[class="tinymce-textarea card-content"]', :text => '{{+Yoruba}}'
-      end
+    it "uses content setting" do
+      pending
+      @card = Card.new( :name=>"templated", :content => "bar" )
+      config_card = Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
+      mock(@card).rule_card(:content,:default).returns(config_card)
+      Wagn::Renderer.new(@card).render_raw.should == "Yoruba"
+      mock(@card).rule_card(:content,:default).returns(config_card)
+      mock(@card).rule_card(:add_help,:edit_help)
+      assert_view_select Wagn::Renderer.new(@card).render_new, 'div[class="unknown-class-name"]'
     end
 
     it "is used in new card forms when hard" do

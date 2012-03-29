@@ -74,8 +74,8 @@ class Card::Codename < ActiveRecord::Base
     end
 
     def card_attr(key, attr=nil?)
+      return unless code2card
       warn "miss card #{key} #{caller[0..10]*"\n"}" unless code2card.has_key?(key) or %w{joe_user joe_admin u1 u2 u3 john}.member?(key.to_s)
-      code2card &&
       code2card.has_key?(key) && (attr ? code2card[key][attr] : true)
     end
 

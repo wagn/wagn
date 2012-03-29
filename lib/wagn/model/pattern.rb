@@ -42,8 +42,7 @@ module Wagn::Model
     class << self
       def register key, opt_keys, opts={}
         Wagn::Model::Pattern.register_class self
-        cattr_accessor :key, :opt_keys, :junction_only, :method_key, :trunkless, :key_name
-        self.key_name = Card::Codename[key ] || ?*+key+??
+        cattr_accessor :key, :opt_keys, :junction_only, :method_key, :trunkless
         self.key = key
         #warn "Register pat #{self.key}, #{self.key_name} #{opt_keys.inspect} #{opts.inspect}"
         self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]

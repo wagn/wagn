@@ -93,6 +93,7 @@ describe Wagn::Renderer, "" do
 
     it "content" do
       result = render_card(:content, :name=>'A+B')
+      warn "result #{result}"
       assert_view_select result, 'div[class="card-slot content-view ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]' do 
         assert_select 'span[class~="content-content content"]'
       end
@@ -317,10 +318,10 @@ describe Wagn::Renderer, "" do
       pending
       @card = Card.new( :name=>"templated", :content => "bar" )
       config_card = Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
-      mock(@card).rule_card("content","default").returns(config_card)
+      mock(@card).rule_card(:content,:default).returns(config_card)
       Wagn::Renderer.new(@card).render_raw.should == "Yoruba"
-      mock(@card).rule_card("content","default").returns(config_card)
-      mock(@card).rule_card("add help","edit help")
+      mock(@card).rule_card(:content,:default).returns(config_card)
+      mock(@card).rule_card(:add_help,:edit_help)
       assert_view_select Wagn::Renderer.new(@card).render_new, 'div[class="unknown-class-name"]'
     end
 
@@ -329,10 +330,10 @@ describe Wagn::Renderer, "" do
       content_card = Card.create!(:name=>"Cardtype E+*type+*content",  :content=>"{{+Yoruba}}" )
       help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
       card = Card.new(:type=>'Cardtype E')
-      mock(card).rule_card("thanks", nil, {:skip_modules=>true}).returns(nil)
-      mock(card).rule_card("autoname").returns(nil)
-      mock(card).rule_card("content","default",:skip_module_loading=>false).returns(content_card)
-      mock(card).rule_card("add help","edit help").returns(help_card)
+      mock(card).rule_card(:thanks, nil, {:skip_modules=>true}).returns(nil)
+      mock(card).rule_card(:autoname).returns(nil)
+      mock(card).rule_card(:content,:default,:skip_module_loading=>false).returns(content_card)
+      mock(card).rule_card(:add_help,:edit_help).returns(help_card)
       assert_view_select Wagn::Renderer::Html.new(card).render_new, 'div[class="field-in-multi"]' do
         assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', "card[cards][~plus~Yoruba][content]"
       end

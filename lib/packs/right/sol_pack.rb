@@ -8,7 +8,7 @@ class Wagn::Renderer::Html
         %{<div>#{
           slot.form = form
           trait_submenu(:declare, (card.attribute||=:declare))}#{
-          #(args[:view] != 'setting' && inst = card.rule_card('declare help') ?
+          #(args[:view] != 'setting' && inst = card.rule_card(:declare_help) ?
              #%{<div class="instruction">#{slot.subslot(inst).render :naked }</div>} : '') +
           hidden_field_tag( :multi_edit, true)}#{
           hidden_field_tag( :attribute, card.attribute )}#{

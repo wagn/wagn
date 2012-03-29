@@ -9,7 +9,7 @@ describe Card do
       (@c2 = Card['Twwo Heading']).should be
       (@c3 = Card['Three Heading']).should be
       @c1.type_id.should == Card::BasicID
-      (@rule_card = @c1.rule_card('*table of contents')).should be
+      (@rule_card = @c1.rule_card(:table_of_contents)).should be
     end
 
     describe ".rule" do
@@ -64,7 +64,7 @@ describe Card do
       (@c1 = Card["Onne Heading"]).should be
       (@c2 = Card["Twwo Heading"]).should be
       @c1.type_id.should == Card::BasicID
-      (@rule_card = @c1.rule_card("*table_of_contents")).should be
+      (@rule_card = @c1.rule_card(:table_of_contents)).should be
       @rule_card.content = "1"
     end
 
@@ -101,7 +101,7 @@ describe Card do
       @c3 = Card.create :name=>'toc3', :type=>"CardtypeE",
         :content=>Card['Three Heading'].content
       @c1.typename.should == 'Cardtype E'
-      @rule_card = @c1.rule_card('*table of contents')
+      @rule_card = @c1.rule_card(:table_of_contents)
 
       @c1.should be
       @c2.should be
@@ -158,7 +158,7 @@ describe Card do
       @c3 = Card.create :name=>'toc3', #:type=>"CardtypeE",
         :content=>Card['Three Heading'].content
       @c1.typename.should == 'Cardtype E'
-      @rule_card = @c1.rule_card('*table of contents')
+      @rule_card = @c1.rule_card(:table_of_contents)
 
       @c1.should be
       @c2.should be
@@ -200,7 +200,7 @@ describe Card do
       #@c2 = Card.create :name=>'toc2', :type=>"CardtypeE", :content=>Card['Twwo Heading'].content
       (@c2 = Card["Twwo Heading"]).should be
       @c1.type_id.should == Card::BasicID
-      (@rule_card = @c1.rule_card("*table_of_contents")).should be
+      (@rule_card = @c1.rule_card(:table_of_contents)).should be
       @rule_card.content = "1"
     end
 

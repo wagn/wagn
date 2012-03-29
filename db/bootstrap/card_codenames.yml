@@ -1,310 +1,310 @@
 --- 
 card_codenames_001: 
   card_id: "259"
-  codename: Set
+  codename: "Set"
 card_codenames_002: 
   card_id: "15"
-  codename: anonymous
+  codename: "anonymous"
 card_codenames_003: 
   card_id: "100"
-  codename: "*account"
+  codename: "account"
 card_codenames_004: 
   card_id: "481"
-  codename: "*delete"
+  codename: "delete"
 card_codenames_005: 
   card_id: "471"
-  codename: "*navbox"
+  codename: "navbox"
 card_codenames_006: 
   card_id: "66"
-  codename: "*signup"
+  codename: "signup"
 card_codenames_007: 
   card_id: "278"
-  codename: Setting
+  codename: "Setting"
 card_codenames_008: 
   card_id: "1"
-  codename: wagbot
+  codename: "wagbot"
 card_codenames_009: 
   card_id: "291"
-  codename: "*accountable"
+  codename: "accountable"
 card_codenames_010: 
   card_id: "82"
-  codename: "*edit_help"
+  codename: "edit_help"
 card_codenames_011: 
   card_id: "472"
-  codename: "*now"
+  codename: "now"
 card_codenames_012: 
   card_id: "476"
-  codename: "*star"
+  codename: "star"
 card_codenames_013: 
   card_id: "51"
-  codename: Toggle
+  codename: "Toggle"
 card_codenames_014: 
   card_id: "3"
-  codename: Basic
+  codename: "Basic"
 card_codenames_015: 
   card_id: "474"
-  codename: "*account_link"
+  codename: "account_link"
 card_codenames_016: 
   card_id: "138"
-  codename: "*editing"
+  codename: "editing"
 card_codenames_017: 
   card_id: "86"
-  codename: "*option"
+  codename: "option"
 card_codenames_018: 
   card_id: "384"
-  codename: "*subject"
+  codename: "subject"
 card_codenames_019: 
   card_id: "4"
-  codename: User
+  codename: "User"
 card_codenames_020: 
   card_id: "5"
-  codename: Cardtype
+  codename: "Cardtype"
 card_codenames_021: 
   card_id: "89"
-  codename: "*table_of_content"
+  codename: "table_of_contents"
 card_codenames_022: 
   card_id: "309"
-  codename: "*add_help"
+  codename: "add_help"
 card_codenames_023: 
   card_id: "92"
-  codename: "*editor"
+  codename: "editor"
 card_codenames_024: 
   card_id: "252"
-  codename: "*option_label"
+  codename: "option_label"
 card_codenames_025: 
   card_id: "18"
-  codename: File
+  codename: "File"
 card_codenames_026: 
   card_id: "17"
-  codename: Date
+  codename: "Date"
 card_codenames_027: 
   card_id: "172"
-  codename: "*tagged"
+  codename: "tagged"
 card_codenames_028: 
   card_id: "468"
-  codename: "*alert"
+  codename: "alert"
 card_codenames_029: 
   card_id: "565"
-  codename: "*email"
+  codename: "email"
 card_codenames_030: 
   card_id: "168"
-  codename: "*outgoing"
+  codename: "outgoing"
 card_codenames_031: 
   card_id: "53"
-  codename: "*tiny_mce"
+  codename: "tiny_mce"
 card_codenames_032: 
   card_id: "61"
-  codename: "*thank"
+  codename: "thank"
 card_codenames_033: 
   card_id: "274"
-  codename: "*all"
+  codename: "all"
 card_codenames_034: 
   card_id: "469"
-  codename: "*foot"
+  codename: "foot"
 card_codenames_035: 
   card_id: "33"
-  codename: "*plu_card"
+  codename: "plu_card"
 card_codenames_036: 
   card_id: "19"
-  codename: Image
+  codename: "Image"
 card_codenames_037: 
   card_id: "55"
-  codename: "*title"
+  codename: "title"
 card_codenames_038: 
   card_id: "475"
-  codename: "*all_plu"
+  codename: "all_plus"
 card_codenames_039: 
   card_id: "137"
-  codename: "*from"
+  codename: "from"
 card_codenames_040: 
   card_id: "110"
-  codename: "*pluss"
+  codename: "pluss"
 card_codenames_041: 
   card_id: "35"
-  codename: "*plu_part"
+  codename: "plu_part"
 card_codenames_042: 
   card_id: "12"
-  codename: InvitationRequest
+  codename: "InvitationRequest"
 card_codenames_043: 
   card_id: "64"
-  codename: "*to"
+  codename: "to"
 card_codenames_044: 
   card_id: "387"
-  codename: "*attach"
+  codename: "attach"
 card_codenames_045: 
   card_id: "77"
-  codename: "*home"
+  codename: "home"
 card_codenames_046: 
   card_id: "470"
-  codename: "*head"
+  codename: "head"
 card_codenames_047: 
   card_id: "479"
-  codename: "*read"
+  codename: "read"
 card_codenames_048: 
   card_id: "20"
-  codename: Number
+  codename: "Number"
 card_codenames_049: 
   card_id: "266"
-  codename: "*type"
+  codename: "type"
 card_codenames_050: 
   card_id: "465"
-  codename: "*recent"
+  codename: "recent"
 card_codenames_051: 
   card_id: "381"
-  codename: "*bcc"
+  codename: "bcc"
 card_codenames_052: 
   card_id: "247"
-  codename: "*autoname"
+  codename: "autoname"
 card_codenames_053: 
   card_id: "37"
-  codename: "*includer"
+  codename: "includer"
 card_codenames_054: 
   card_id: "52"
-  codename: Phrase
+  codename: "Phrase"
 card_codenames_055: 
   card_id: "222"
-  codename: "*watching"
+  codename: "watching"
 card_codenames_056: 
   card_id: "256"
-  codename: "*captcha"
+  codename: "captcha"
 card_codenames_057: 
   card_id: "41"
-  codename: "*inclusion"
+  codename: "inclusion"
 card_codenames_058: 
   card_id: "448"
-  codename: "*referred_to_by"
+  codename: "referred_to_by"
 card_codenames_059: 
   card_id: "22"
-  codename: PlainText
+  codename: "PlainText"
 card_codenames_060: 
   card_id: "262"
-  codename: "*type_plu_right"
+  codename: "type_plus_right"
 card_codenames_061: 
   card_id: "378"
-  codename: "*cc"
+  codename: "cc"
 card_codenames_062: 
   card_id: "170"
-  codename: "*incoming"
+  codename: "incoming"
 card_codenames_063: 
   card_id: "445"
-  codename: "*refer_to"
+  codename: "refer_to"
 card_codenames_064: 
   card_id: "47"
-  codename: Pointer
+  codename: "Pointer"
 card_codenames_065: 
   card_id: "480"
-  codename: "*update"
+  codename: "update"
 card_codenames_066: 
   card_id: "482"
-  codename: "*comment"
+  codename: "comment"
 card_codenames_067: 
   card_id: "241"
-  codename: "*input"
+  codename: "input"
 card_codenames_068: 
   card_id: "112"
-  codename: "*related"
+  codename: "related"
 card_codenames_069: 
   card_id: "7"
-  codename: Role
+  codename: "Role"
 card_codenames_070: 
   card_id: "574"
-  codename: "*user"
+  codename: "users"
 card_codenames_071: 
   card_id: "115"
-  codename: "*community"
+  codename: "community"
 card_codenames_072: 
   card_id: "56"
-  codename: "*invite"
+  codename: "invite"
 card_codenames_073: 
   card_id: "63"
-  codename: "*request"
+  codename: "request"
 card_codenames_074: 
   card_id: "30"
-  codename: Search
+  codename: "Search"
 card_codenames_075: 
   card_id: "473"
-  codename: "*version"
+  codename: "version"
 card_codenames_076: 
   card_id: "317"
-  codename: "*content"
+  codename: "content"
 card_codenames_077: 
   card_id: "425"
-  codename: "*last_edited"
+  codename: "last_edited"
 card_codenames_078: 
   card_id: "260"
-  codename: "*right"
+  codename: "right"
 card_codenames_079: 
   card_id: "435"
-  codename: "*when_created"
+  codename: "when_created"
 card_codenames_080: 
   card_id: "219"
-  codename: "*watcher"
+  codename: "watchers"
 card_codenames_081: 
   card_id: "419"
-  codename: "*count"
+  codename: "count"
 card_codenames_082: 
   card_id: "255"
-  codename: "*layout"
+  codename: "layout"
 card_codenames_083: 
   card_id: "96"
-  codename: "*role"
+  codename: "roles"
 card_codenames_084: 
   card_id: "438"
-  codename: "*when_last_edited"
+  codename: "when_last_edited"
 card_codenames_085: 
   card_id: "478"
-  codename: "*create"
+  codename: "create"
 card_codenames_086: 
   card_id: "43"
-  codename: "*link"
+  codename: "link"
 card_codenames_087: 
   card_id: "466"
-  codename: "*search"
+  codename: "search"
 card_codenames_088: 
   card_id: "477"
-  codename: "*rstar"
+  codename: "rstar"
 card_codenames_089: 
   card_id: "9"
-  codename: anyone_signed_in
+  codename: "anyone_signed_in"
 card_codenames_090: 
   card_id: "431"
-  codename: "*created"
+  codename: "created"
 card_codenames_091: 
   card_id: "79"
-  codename: "*logo"
+  codename: "logo"
 card_codenames_092: 
   card_id: "39"
-  codename: "*linker"
+  codename: "linker"
 card_codenames_093: 
   card_id: "264"
-  codename: "*self"
+  codename: "self"
 card_codenames_094: 
   card_id: "8"
-  codename: anyone
+  codename: "anyone"
 card_codenames_095: 
   card_id: "428"
-  codename: "*creator"
+  codename: "creator"
 card_codenames_096: 
   card_id: "98"
-  codename: "*member"
+  codename: "member"
 card_codenames_097: 
   card_id: "363"
-  codename: "*send"
+  codename: "send"
 card_codenames_098: 
   card_id: "198"
-  codename: "*css"
+  codename: "css"
 card_codenames_099: 
   card_id: "10"
-  codename: administrator
+  codename: "administrator"
 card_codenames_100: 
   card_id: "81"
-  codename: "*sidebar"
+  codename: "sidebar"
 card_codenames_101: 
   card_id: "318"
-  codename: "*default"
+  codename: "default"
 card_codenames_102: 
   card_id: "467"
-  codename: "*missing_link"
+  codename: "missing_link"
 card_codenames_103: 
   card_id: "50"
-  codename: HTML
+  codename: "HTML"

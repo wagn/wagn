@@ -154,7 +154,9 @@ class Card < ActiveRecord::Base
         when User; user.card_id
         when Card; user.id
         when Integer; user
-        else Card::Codename.code2id(user) || cd=Card[user.to_s] and cd.id
+        else
+          user = user.to_s
+          Card::Codename.code2id(user) or (cd=Card[user] and cd.id)
       end
     end
 
@@ -242,6 +244,7 @@ class Card < ActiveRecord::Base
   public
 
     def code2id(code)
+      code = code.to_s
       unless card_id=Card::Codename.card_attr(code, :id)
         return 1 if code.to_s == 'wagbot' # to bootstrapping codenames
         warn "no code? #{Card::Codename.code2name(code)}: #{code.inspect}"
@@ -753,7 +756,7 @@ class Card < ActiveRecord::Base
 
   validate do |rec|
     return true if @nested_edit
-    return true unless Wagn::Conf[:recaptcha_on] && Card.toggle( rec.rule('captcha') )
+    return true unless Wagn::Conf[:recaptcha_on] && Card.toggle( rec.rule(:captcha) )
     c = Wagn::Conf[:controller]
     return true if (c.recaptcha_count += 1) > 1
     c.verify_recaptcha( :model=>rec ) || rec.error_status = 449
@@ -761,7 +764,7 @@ class Card < ActiveRecord::Base
 
   validates_each :name do |rec, attr, value|
     if rec.new_card? && value.blank?
-      if autoname_card = rec.rule_card('autoname')
+      if autoname_card = rec.rule_card(:autoname)
         Card.as  Card::WagbotID do
           autoname_card = autoname_card.refresh if autoname_card.frozen?
           value = rec.name = Card.autoname(autoname_card.content)

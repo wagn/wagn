@@ -33,7 +33,7 @@ describe Card do
 
     describe ".rule_card" do
       it "get the same card without the * and singular" do
-        @c1.rule_card(:table_of_content).should == @rule_card
+        @c1.rule_card(:table_of_contents).should == @rule_card
       end
     end
 
@@ -43,7 +43,7 @@ describe Card do
     # class methods
     describe ".default_rule" do
       it 'should have default rule' do
-        Card.default_rule(:table_of_content).should == '0'
+        Card.default_rule(:table_of_contents).should == '0'
       end
     end
 
@@ -135,14 +135,14 @@ describe Card do
       end
 
       it "get the same card without the * and singular" do
-        @c1.rule_card(:table_of_content).should == @rule_card
+        @c1.rule_card(:table_of_contents).should == @rule_card
       end
     end
 
     # class methods
     describe ".default_rule" do
       it 'should have default rule' do
-        Card.default_rule(:table_of_content).should == '0'
+        Card.default_rule(:table_of_contents).should == '0'
       end
     end
 
@@ -172,7 +172,7 @@ describe Card do
 
     describe ".rule_card" do
       it "should have a different rule card" do
-        (newrc=@c1.rule_card(:table_of_content)).should_not == @rule_card
+        (newrc=@c1.rule_card(:table_of_contents)).should_not == @rule_card
         newrc.name.should == 'CardtypeE+*type+*table of content'
       end
     end

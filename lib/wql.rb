@@ -243,7 +243,7 @@ class Wql
       merge field(:right_plus) => [Card::XrolesID, {:refer_to=>val}]
     end
     def member(val)
-      merge field(:referred_to_by) => {:left=>val, :right=>Card::XrolesID }
+      merge field(:referred_to_by) => {:left=>val, :right=>Card::RolesID }
     end
     
     def revision_spec(field, linkfield, val)

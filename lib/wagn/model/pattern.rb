@@ -80,7 +80,7 @@ module Wagn::Model
   end
   
   class AllPlusPattern < SetBase
-    register '*all_plu', :all_plus, :method_key=>'all_plus', :junction_only=>true
+    register '*all_plus', :all_plus, :method_key=>'all_plus', :junction_only=>true
     def self.label(name)                  'All Plus Cards'        end
     def self.prototype_args(base)         {:name=>'+'}            end
   end
@@ -120,7 +120,7 @@ module Wagn::Model
   end
 
   class LeftTypeRightNamePattern < SetBase
-    register '*type_plu_right', [:ltype, :right], :junction_only=>true
+    register '*type_plus_right', [:ltype, :right], :junction_only=>true
     class << self
       def label(name) "Any #{name.left_name} card plus #{name.tag_name}"     end
       def prototype_args(base)

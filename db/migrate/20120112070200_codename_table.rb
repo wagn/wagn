@@ -1,5 +1,10 @@
+require 'wagn/cache'
+
 class CodenameTable < ActiveRecord::Migration
+
   def self.up
+    Wagn::Cache.new_all
+
     create_table "card_codenames", :force => true, :id => false do |t|
       t.integer  "card_id", :null => false
       t.string   "codename", :null => false

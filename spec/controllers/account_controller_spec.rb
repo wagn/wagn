@@ -27,7 +27,6 @@ describe AccountController do
         :email=> @email_args
 
       @new_user = User.where(:email=>'joe@new.com').first
-      warn "new u #{@new_user.inspect}, #{@email_args.inspect}"
 
     end
 

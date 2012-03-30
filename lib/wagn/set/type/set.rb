@@ -8,7 +8,7 @@ module Wagn::Set::Type::Set
 
   def subclass_for_set
     Wagn::Model::Pattern.subclasses.find do |sub|
-      cardname.tag_name.to_s==sub.key
+      cardname.tag_name.to_s==sub.key_name
     end
   end
 
@@ -17,9 +17,10 @@ module Wagn::Set::Type::Set
        @junction_only = subclass_for_set.junction_only
   end
 
+
   def label
     return '' unless klass = subclass_for_set
-    klass.label cardname.left_name
+    klass.label cardname.left_name.to_s
   end
 
   def prototype

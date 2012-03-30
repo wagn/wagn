@@ -48,20 +48,11 @@ module Wagn::Model
     def real_set_names() set_names.find_all &Card.method(:exists?)   end
     def css_names()      patterns.map(&:css_name).reverse*" "        end
 
-    def junction_only?()
-      !@junction_only.nil? ? @junction_only :
-         @junction_only = patterns.map(&:class).find(&:junction_only?)
-    end
-
     def set_modules()
       @set_modules ||= patterns_without_new.reverse.map(&:set_const).compact
       #warn (Rails.logger.debug "set_mods#{self.object_id}[#{name}] #{@set_modules.map(&:inspect)*", "}"); @set_modules
     end
 
-    def label
-      found = @@subclasses.find { |sub| cardname.tag_name.to_s==sub.key_name }
-      found and found.label(cardname.left_name)
-    end
     def set_names()     r= @set_names ||= patterns.map(&:to_s)               
           #warn "set_names #{r*', '}"; r
     end

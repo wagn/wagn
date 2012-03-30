@@ -18,7 +18,7 @@ class Card::Codename < ActiveRecord::Base
       *plus_part *plus *read *recent *referred_to_by *refer_to *related
       *request *right *roles *rstar *search *self *send *session *sidebar
       *signup *star *subject *table_of_contents *tagged *thanks *tiny_mce
-      *title *to *type *watching *type_plu_right *update *users *version
+      *title *to *type *watching *type_plus_right *update *users *version
       *watchers *when_created *when_last_edited
 
       *declare *declare_help *sol *pad_options
@@ -80,7 +80,7 @@ class Card::Codename < ActiveRecord::Base
         return
       end
       #warn "card_attr(#{key}, #{attr}) #{hsh.size}"
-      warn "miss card_attr(#{key}, #{attr}) code2card:#{hsh.size} #{caller[0..10]*"\n"}" unless hsh.has_key?(key) or %w{joe_user joe_admin u1 u2 u3 john}.member?(key.to_s)
+      warn "miss card_attr(#{key}, #{attr}) code2card:#{hsh.size} #{hsh.keys*?\n}" unless hsh.has_key?(key) or %w{joe_user joe_admin u1 u2 u3 john}.member?(key.to_s)
       hsh.has_key?(key) && (attr ? hsh[key][attr] : true)
     end
 
@@ -100,7 +100,7 @@ class Card::Codename < ActiveRecord::Base
         warn "load_cache(#{cname})"
         load_cache
         hsh = self.cache.read(cname)
-        warn "??? #{cname}, (loaded) #{hsh.inspect}, #{self.cache.read(cname)}"
+        warn "??? #{cname}, (loaded) #{hsh.nil? ? 0 : hsh.size}, #{self.cache.read(cname).class}"
       end
       raise "??? #{cname}, #{hsh.inspect}, #{self.cache.read cname}" unless Hash===hsh; hsh
       #raise "??? #{cname}, #{hsh.size}, #{self.cache.read cname}" if cname == 'code2card' && hsh.size > 200; hsh

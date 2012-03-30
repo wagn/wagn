@@ -101,7 +101,7 @@ module Wagn::Model
       def pattern_applies?(c)        true     end
       def pattern_name(card)         key_name end
       def key_name()
-        Rails.logger.warn "key_name #{self.key}"
+        Rails.logger.warn "key_name #{self.key} #{Card::Codename[self.key]}"
         Card::Codename[self.key] ||
           self.key end
        #    raise("no card #{self.key}") end

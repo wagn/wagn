@@ -35,7 +35,7 @@ class RolesUsers < ActiveRecord::Migration
           end.compact
 
         unless roles.empty?
-          Card.create! :name    => usercard.cardname.star_rule(:roles),
+          Card.create! :name    => usercard.cardname.trait_name(:roles),
                        :type_id => Card::PointerID,
                        :content => "[[#{roles*']][['}]]"
         end

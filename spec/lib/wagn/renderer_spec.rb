@@ -93,7 +93,6 @@ describe Wagn::Renderer, "" do
 
     it "content" do
       result = render_card(:content, :name=>'A+B')
-      warn "result #{result}"
       assert_view_select result, 'div[class="card-slot content-view ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]' do 
         assert_select 'span[class~="content-content content"]'
       end

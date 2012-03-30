@@ -4,11 +4,13 @@ module Wagn::Model::Settings
     card && card.content
   end
 
-#  def rule?
-#    return @rule unless @rule.nil?
-#    #Rails.logger.info "rule? #{name}, #{left&&"#{left.typename}:#{left.name}"}, #{right&&"#{right.typename}:#{right.name}"}" if junction?
-#    @rule = junction? ? (left&&left.typecode=='Set'&&right.typecode=='Setting') : false
-#  end
+=begin
+  def rule?
+    return @rule unless @rule.nil?
+    warn (Rails.logger.info "rule? #{name}, #{left&&"#{left.typename}:#{left.name}"}, #{right&&"#{right.typename}:#{right.name}"}") if junction?
+    @rule = junction? ? (left&&left.type_id==Card::SetID&&right.type_id==Card::SettingID) : false
+  end
+=end
 
   def rule_card setting_name, fallback=nil, extra_fetch_args={}
     #warn "rule_card #{setting_name}, #{fallback}, #{extra_fetch_args.inspect}"

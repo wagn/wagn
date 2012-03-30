@@ -16,8 +16,8 @@ module Wagn::Model
 =begin
     def before_save_rule()
       # do LTypeRightPattern need deeper checks?
-      rule? && left.reset_patterns()
-      Rails.logger.debug "before_save_rule: #{name}, #{rule?}"
+      (rl=rule?) && left.reset_patterns()
+      warn (Rails.logger.debug "before_save_rule: #{name}, #{rl&&left.name}, #{rl}")
     end
 =end
 
@@ -100,7 +100,11 @@ module Wagn::Model
 
       def pattern_applies?(c)        true     end
       def pattern_name(card)         key_name end
-      def key_name()  Card::Codename[self.key] || raise("no card #{self.key}") end
+      def key_name()
+        Rails.logger.warn "key_name #{self.key}"
+        Card::Codename[self.key] ||
+          self.key end
+       #    raise("no card #{self.key}") end
       def register key, opt_keys, opts={}
         Wagn::Model::Pattern.register_class self
         cattr_accessor :key, :opt_keys, :junction_only, :method_key, :trunkless
@@ -248,8 +252,7 @@ module Wagn::Model
         opts[:name].to_cardname.css_name+'_self'
       end
       def pattern_name(card)
-#        Rails.logger.info "pattern Solo Set recursion issue? #{name}" if cardname.tag_name == key # recursion protection ?
-#        return if cardname.tag_name == key # recursion protection ?
+        Rails.logger.info "pattern Solo Set ? #{card} #{name}"
         "#{card.name}+#{key_name}"
       end
     end

@@ -1,6 +1,6 @@
 class Card::Codename < ActiveRecord::Base
   cattr_accessor :cache
-  @@pre_cache = {}
+  #@@pre_cache = nil
 
 
   # helpers for migrations, remove when migrations are obsolete (1.9)
@@ -10,13 +10,13 @@ class Card::Codename < ActiveRecord::Base
       "wagn_bot"         => "wagbot",
     }
   CODENAMES = %w{
-      *account *accountable *account_link *add_help *alert *all *all_plu
+      *account *accountable *account_link *add_help *alert *all *all_plus
       *attach *autoname *bcc *captcha *cc *comment *community *content *count
       *create *created *creator *css *default *delete *edit_help *editing
       *editor *email *foot *from *head *home *includer *inclusion *incoming
       *input *invite *last_edited *layout *link *linker *logo *member
-      *missing_link *navbox *now *options *option_label *outgoing *plu_card
-      *plu_part *pluss *read *recent *referred_to_by *refer_to *related
+      *missing_link *navbox *now *options *option_label *outgoing *plus_card
+      *plus_part *plus *read *recent *referred_to_by *refer_to *related
       *request *right *roles *rstar *search *self *send *session *sidebar
       *signup *star *subject *table_of_contents *tagged *thanks *tiny_mce
       *title *to *type *watching *type_plu_right *update *users *version
@@ -75,9 +75,14 @@ class Card::Codename < ActiveRecord::Base
     end
 
     def card_attr(key, attr=nil?)
-      return unless code2card
-      warn "miss card #{key} #{caller[0..10]*"\n"}" unless code2card.has_key?(key) or %w{joe_user joe_admin u1 u2 u3 john}.member?(key.to_s)
-      code2card.has_key?(key) && (attr ? code2card[key][attr] : true)
+      unless hsh = code2card
+        #raise "no code2card hash #{key} #{attr}"
+        warn "no code2card hash #{key} #{attr} #{caller*?\n}"
+        return
+      end
+      #warn "card_attr(#{key}, #{attr}) #{hsh.size}"
+      warn "miss card_attr(#{key}, #{attr}) code2card:#{hsh.size} #{caller[0..10]*"\n"}" unless hsh.has_key?(key) or %w{joe_user joe_admin u1 u2 u3 john}.member?(key.to_s)
+      hsh.has_key?(key) && (attr ? hsh[key][attr] : true)
     end
 
     def reset_cache()
@@ -90,23 +95,34 @@ class Card::Codename < ActiveRecord::Base
     def card2code() get_cache('card2code') end
     def code2card() get_cache('code2card') end
 
-    def get_cache(key)
-      if self.cache
-        self.cache.fetch key do
-          load_cache
-          self.cache.read key
-        end
+    def get_cache(cname)
+      #warn "get_cache(#{cname.inspect}) #{self.cache.inspect}" if test
+      raise "cache missing (set) #{cname}" unless self.cache
+      hsh=self.cache.fetch(cname) do
+        #warn "load_cache(#{cname})"
+        load_cache
+        nil
+      end
+      load_cache unless hsh
+      hash = self.cache.read cname
+      #raise "??? #{cname}, #{hash.size}, #{self.cache.read cname}" if cname == 'code2card' && hash.size > 200; hash
+      #warn "get_cache(#{cname}) => #{hash.class}: #{hash.nil? ?  (caller*?\n) : hash.size}"; hash
+=begin
       else
         @@pre_cache[key.to_s] or begin
           load_cache
           @@pre_cache[key.to_s]
         end
       end
+=end
     end
 
-    def set_cache(key, v)
-      key = key.to_s
-      self.cache ? self.cache.write(key, v) : @@pre_cache[key] = v
+    def set_cache(cname, v)
+      cname = cname.to_s
+      #warn "set_cache(#{cname.inspect}), #{self.cache.class}, #{v ? v.size : 0}"
+      raise "cache missing (set) #{cname}" unless self.cache
+      #self.cache ? self.cache.write(cname, v) : @@pre_cache[cname] = v
+      self.cache.write(cname, v)
     end
 
     def load_cache()

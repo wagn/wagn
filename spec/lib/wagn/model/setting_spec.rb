@@ -164,7 +164,7 @@ describe Card do
       @c2.should be
       @c3.should be
       @rule_card.should be
-      Card.create :name=>'CardtypeE+*type+*table of content', :content=>'2'
+      Card.create! :name=>'CardtypeE+*type+*table of content', :content=>'2'
     end
     it "should take on new setting value" do
       @c1.rule(:table_of_contents).should == "2"

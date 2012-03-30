@@ -97,10 +97,10 @@ class Card::Codename < ActiveRecord::Base
     def get_cache(cname)
       raise "cache missing (set) #{cname}" unless self.cache
       unless hsh=self.cache.read(cname)
-        warn "load_cache(#{cname})"
+        #warn "load_cache(#{cname})"
         load_cache
         hsh = self.cache.read(cname)
-        warn "??? #{cname}, (loaded) #{hsh.nil? ? 0 : hsh.size}, #{self.cache.read(cname).class}"
+        #warn "??? #{cname}, (loaded) #{hsh.nil? ? 0 : hsh.size}, #{self.cache.read(cname).class}"
       end
       raise "??? #{cname}, #{hsh.inspect}, #{self.cache.read cname}" unless Hash===hsh; hsh
       #raise "??? #{cname}, #{hsh.size}, #{self.cache.read cname}" if cname == 'code2card' && hsh.size > 200; hsh
@@ -109,7 +109,7 @@ class Card::Codename < ActiveRecord::Base
 
     def set_cache(cname, v)
       cname = cname.to_s
-      warn "set_cache(#{cname.inspect}), #{self.cache.class}, #{v ? v.size : 0}"
+      #warn "set_cache(#{cname.inspect}), #{self.cache.class}, #{v ? v.size : 0}"
       raise "cache missing (set) #{cname}" unless self.cache
       self.cache.write(cname, v)
     end
@@ -117,7 +117,7 @@ class Card::Codename < ActiveRecord::Base
     def load_cache()
       card2code = {}; code2card = {}
 
-      warn "load_cache #{caller[0..3]*?\n}"
+      #warn "load_cache #{caller[0..3]*?\n}"
       Card.connection.select_all(%{
           select c.id, c.name, c.key, cd.codename, c.type_id
            from cards c left outer join card_codenames cd on c.id = cd.card_id

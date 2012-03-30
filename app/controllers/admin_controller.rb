@@ -14,7 +14,7 @@ class AdminController < ApplicationController
         #warn "ext id = #{@account.id}"
 
         if @account.errors.empty?
-          roles_card = Card.fetch_or_new(@card.cardname.star_rule(:roles))
+          roles_card = Card.fetch_or_new(@card.cardname.trait_name(:roles))
           roles_card.content = "[[#{Card[Card::AdminID].name}]]"
           roles_card.save
           self.session_user = @card
@@ -38,7 +38,7 @@ class AdminController < ApplicationController
     
     @roles = Card.find_configurables.sort{|a,b| a.name <=> b.name }
     @role_tasks = @roles.inject({}) do |h, rolecard|
-      h[rolecard.id] = Card[rolecard.cardname.star_rule(:tasks)].item_names
+      h[rolecard.id] = Card[rolecard.cardname.trait_name(:tasks)].item_names
     end
   end
 

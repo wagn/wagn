@@ -18,8 +18,8 @@ module Wagn::Model::Settings
     real_set_names.each do |set_name|
       #Rails.logger.debug "rule_card search #{set_name.inspect}"
       set_name=set_name.to_cardname
-      card = Card.fetch(set_name.star_rule( setting_name ), fetch_args)
-      card ||= fallback && Card.fetch(set_name.star_rule(fallback), fetch_args)
+      card = Card.fetch(set_name.trait_name( setting_name ), fetch_args)
+      card ||= fallback && Card.fetch(set_name.trait_name(fallback), fetch_args)
       #warn "rule[#{set_name}] #{card.inspect}" if card
       return card if card
     end
@@ -53,7 +53,7 @@ module Wagn::Model::Settings
     end
 
     def default_rule_card setting_name, fallback=nil
-      Card["*all".to_cardname.star_rule(setting_name)] or
+      Card["*all".to_cardname.trait_name(setting_name)] or
         fallback ? default_rule_card(fallback) : nil
     end
 

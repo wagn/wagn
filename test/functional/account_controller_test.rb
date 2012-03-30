@@ -73,7 +73,7 @@ class AccountControllerTest < ActionController::TestCase
 
   def test_signup_without_approval
     Card.as(Card::WagbotID) do  #make it so anyone can create accounts (ie, no approval needed)
-      create_accounts_rule = Card['*account+*right'].star_rule(:create)
+      create_accounts_rule = Card['*account+*right'].trait_card(:create)
       create_accounts_rule << Card::AnyoneID
       create_accounts_rule.save!
     end

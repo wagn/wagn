@@ -190,7 +190,7 @@ describe User, "Joe User" do
   end
 
   it "should not have r3 permissions" do
-    @ucard.star_rule(:roles).item_names.member?(@r3.name).should be_false
+    @ucard.trait_card(:roles).item_names.member?(@r3.name).should be_false
   end
   it "should ponder creating a card of Cardtype F, but find that he lacks create permissions" do
     Card.new(:type=>'Cardtype F').ok?(:create).should be_false

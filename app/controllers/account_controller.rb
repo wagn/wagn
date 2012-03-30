@@ -22,9 +22,9 @@ class AccountController < ApplicationController
     @user, @card = User.create_with_card( user_args, card_args )
     return render_user_errors if @user.errors.any?
 
-    sr=@card.star_rule(:account)
+    sr=@card.trait_card(:account)
     #warn "signup #{sr.inspect}, #{sr.ok?(:create)}"
-    if @card.star_rule(:account).ok?(:create)       #complete the signup now
+    if @card.trait_card(:account).ok?(:create)       #complete the signup now
       email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!",  #ENGLISH
                      :subject => Card.setting('*signup+*subject') || "Account info for #{Card.setting('*title')}!" }  #ENGLISH
       @user.accept(@card, email_args)

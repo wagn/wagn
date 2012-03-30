@@ -27,7 +27,7 @@ class Wagn::Set::Type::InvitationRequestTest < ActiveSupport::TestCase
     #Card.as(Card::WagbotID)  do
     #  auth_user_card = Card[Card::AuthID]
       # FIXME: change from task ...
-      #auth_user_card.star_rule(:tasks).content = '[[deny_invitation_requests]]'
+      #auth_user_card.trait_card(:tasks).content = '[[deny_invitation_requests]]'
     #end
     Card.as :joe_user do Card.fetch('Ron Request').destroy!  end
 

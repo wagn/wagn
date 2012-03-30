@@ -342,15 +342,15 @@ class Card < ActiveRecord::Base
 
   def all_roles
     ids = Card.as Card::WagbotID do
-      r=(cr=star_rule(:roles)).item_cards(:limit=>0).map(&:id)
+      r=(cr=trait_card(:roles)).item_cards(:limit=>0).map(&:id)
       #warn "all_roles #{inspect}: #{cr.inspect}, #{r.inspect} #{caller[0..10]*"\n"}"; r
     end
     @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
-      #[Card::AuthID] + star_rule(:roles).item_cards.map(&:id))
+      #[Card::AuthID] + trait_card(:roles).item_cards.map(&:id))
   end
 
-  def star_rule rule
-    Card.fetch_or_new cardname.star_rule(rule)
+  def trait_card tagcode
+    Card.fetch_or_new cardname.trait_name(tagcode)
   end
 
   def get_type_id(args={})

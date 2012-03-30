@@ -148,7 +148,7 @@ class CardController < ApplicationController
 
     if params[:save_roles]
       role_hash = params[:user_roles] || {}
-      Card[account.card_id].star_rule(:roles).items= role_hash.keys
+      Card[account.card_id].trait_card(:roles).items= role_hash.keys
     end
 
     if account && params[:account]
@@ -166,7 +166,7 @@ class CardController < ApplicationController
   end
 
   def create_account
-    # FIXME: or should this be @card.star_rule(:account).ok?
+    # FIXME: or should this be @card.trait_card(:account).ok?
     Card['*account'].ok?(:create) && @card.ok?(:update)
     email_args = { :subject => "Your new #{Card.setting('*title')} account.",   #ENGLISH
                    :message => "Welcome!  You now have an account on #{Card.setting('*title')}." } #ENGLISH
@@ -183,7 +183,7 @@ class CardController < ApplicationController
 
 
   def watch
-    watchers = @card.star_rule(:watchers )
+    watchers = @card.trait_card(:watchers )
     watchers = watchers.refresh if watchers.frozen?
     myname = Card[Card.user_id].name
     watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)

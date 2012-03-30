@@ -260,7 +260,7 @@ class Wagn::Renderer::Html
     sources = [card.typename,nil]
     sources.unshift '*account' if [Card::WagbotID, Card::AnonID].member?(card.id) || card.type_id=='User'
     items = sources.map do |source|
-      c = Card.fetch(source ? source.to_cardname.star_rule(:related) : '*related')
+      c = Card.fetch(source ? source.to_cardname.trait_name(:related) : '*related')
       c && c.item_names
     end.flatten.compact
 
@@ -301,7 +301,7 @@ class Wagn::Renderer::Html
        card_form :update_account do |form|
 
          %{<table class="fieldset">
-           #{if Card.as_user_id==card.id or card.star_rule(:account).ok?(:update)
+           #{if Card.as_user_id==card.id or card.start_card(:account).ok?(:update)
               raw option_header( 'Account Details' ) +
                 template.render(:partial=>'account/edit',  :locals=>locals)
            end }
@@ -346,7 +346,7 @@ class Wagn::Renderer::Html
           #{ raw( subrenderer(Card.fetch current_set).render_content ) }
         </div>
   #{
-        if !card.star_rule(:account) && Card.toggle(card.rule(:accountable)) && Card['*account'].ok?(:create) && card.ok?(:update)
+        if !card.trait_card(:account) && Card.toggle(card.rule(:accountable)) && Card['*account'].ok?(:create) && card.ok?(:update)
           %{<div class="new-account-link">
           #{ link_to %{Add a sign-in account for "#{card.name}"},
               path(:options, :attrib=>:new_account),
@@ -360,7 +360,7 @@ class Wagn::Renderer::Html
     roles = Card.search(:type=>Card::RoleID)
     # Do we want these as well?  as by type Role?
     #roles = Card.search(:refer_to => {:right=> Card::Xroles})
-    role_card = card.star_rule(:roles)
+    role_card = card.trait_card(:roles)
     user_roles = role_card.item_cards.map(&:id).
       reject{|x|x == Card::AnyoneID.to_s || x == Card::AuthID.to_s }
     #user_roles = card.extension.roles
@@ -389,7 +389,7 @@ class Wagn::Renderer::Html
        option(option_content, :name=>"roles",
       :help=>%{ <span class="small">"#{ link_to_page 'Roles' }" determine which #{ Card.always_ok? ? link_to( 'global permissions', :controller=>'admin', :action=>'tasks') : 'global permissions'} a user has access to, as well as card-specific permissions like read, view, comment, and delete.  You can only change a user's roles if you have the global "assign user roles" permission. </span>}, #ENGLISH
       :label=>"#{card.name}'s Roles",
-      :editable=>card.star_rule(:roles).ok?(:update)
+      :editable=>card.trait_card(:roles).ok?(:update)
     )}}
   end
 

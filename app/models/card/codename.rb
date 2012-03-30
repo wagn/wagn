@@ -1,6 +1,5 @@
 class Card::Codename < ActiveRecord::Base
   cattr_accessor :cache
-  #@@pre_cache = nil
 
 
   # helpers for migrations, remove when migrations are obsolete (1.9)
@@ -96,39 +95,29 @@ class Card::Codename < ActiveRecord::Base
     def code2card() get_cache('code2card') end
 
     def get_cache(cname)
-      #warn "get_cache(#{cname.inspect}) #{self.cache.inspect}" if test
       raise "cache missing (set) #{cname}" unless self.cache
-      hsh=self.cache.fetch(cname) do
-        #warn "load_cache(#{cname})"
+      unless hsh=self.cache.read(cname)
+        warn "load_cache(#{cname})"
         load_cache
-        nil
+        hsh = self.cache.read(cname)
+        warn "??? #{cname}, (loaded) #{hsh.inspect}, #{self.cache.read(cname)}"
       end
-      load_cache unless hsh
-      hash = self.cache.read cname
-      #raise "??? #{cname}, #{hash.size}, #{self.cache.read cname}" if cname == 'code2card' && hash.size > 200; hash
-      #warn "get_cache(#{cname}) => #{hash.class}: #{hash.nil? ?  (caller*?\n) : hash.size}"; hash
-=begin
-      else
-        @@pre_cache[key.to_s] or begin
-          load_cache
-          @@pre_cache[key.to_s]
-        end
-      end
-=end
+      raise "??? #{cname}, #{hsh.inspect}, #{self.cache.read cname}" unless Hash===hsh; hsh
+      #raise "??? #{cname}, #{hsh.size}, #{self.cache.read cname}" if cname == 'code2card' && hsh.size > 200; hsh
+      #warn "get_cache(#{cname}) => #{hsh.class}: #{hsh.nil? ?  (caller*?\n) : hsh.size}"; hsh
     end
 
     def set_cache(cname, v)
       cname = cname.to_s
-      #warn "set_cache(#{cname.inspect}), #{self.cache.class}, #{v ? v.size : 0}"
+      warn "set_cache(#{cname.inspect}), #{self.cache.class}, #{v ? v.size : 0}"
       raise "cache missing (set) #{cname}" unless self.cache
-      #self.cache ? self.cache.write(cname, v) : @@pre_cache[cname] = v
       self.cache.write(cname, v)
     end
 
     def load_cache()
       card2code = {}; code2card = {}
 
-      #Card.where()
+      warn "load_cache #{caller[0..3]*?\n}"
       Card.connection.select_all(%{
           select c.id, c.name, c.key, cd.codename, c.type_id
            from cards c left outer join card_codenames cd on c.id = cd.card_id

@@ -177,13 +177,13 @@ describe "Permission", ActiveSupport::TestCase do
 
 
   it "write user permissions" do
-    rc=@u1.star_rule(:roles)
+    rc=@u1.trait_card(:roles)
     rc.content = ''; rc << @r1 << @r2
     rc.save
-    rc=@u2.star_rule(:roles)
+    rc=@u2.trait_card(:roles)
     rc.content = ''; rc << @r1 << @r3
     rc.save
-    rc=@u3.star_rule(:roles)
+    rc=@u3.trait_card(:roles)
     rc.content = ''; rc << @r1 << @r2 << @r3
     rc.save
 
@@ -208,10 +208,10 @@ describe "Permission", ActiveSupport::TestCase do
   end
  
   it "read group permissions" do
-    rc=@u1.star_rule(:roles)
+    rc=@u1.trait_card(:roles)
     rc.content = ''; rc << @r1 << @r2
     rc.save
-    rc=@u2.star_rule(:roles)
+    rc=@u2.trait_card(:roles)
     rc.content = ''; rc << @r1 << @r3
     rc.save
     
@@ -235,7 +235,7 @@ describe "Permission", ActiveSupport::TestCase do
       Card.create(:name=>"c#{num}+*self+*update", :type=>'Pointer', :content=>"[[r#{num}]]")
     end
     
-    (rc=@u3.star_rule(:roles)).content =  ''
+    (rc=@u3.trait_card(:roles)).content =  ''
     rc << @r1
 
     %{        u1 u2 u3
@@ -256,11 +256,11 @@ describe "Permission", ActiveSupport::TestCase do
   end
 
   it "read user permissions" do
-    (rc=@u1.star_rule(:roles)).content = ''
+    (rc=@u1.trait_card(:roles)).content = ''
     rc << @r1 << @r2
-    (rc=@u2.star_rule(:roles)).content = ''
+    (rc=@u2.trait_card(:roles)).content = ''
     rc << @r1 << @r3
-    (rc=@u3.star_rule(:roles)).content = ''
+    (rc=@u3.trait_card(:roles)).content = ''
     rc << @r1 << @r2 << @r3
 
     Card.as(Card::WagbotID) {
@@ -299,7 +299,7 @@ describe "Permission", ActiveSupport::TestCase do
   end
 
   it "role wql" do
-    #warn "u1 roles #{Card[ @u1.id ].star_rule(:roles).item_names.inspect}"
+    #warn "u1 roles #{Card[ @u1.id ].trait_card(:roles).item_names.inspect}"
 
     # set up cards of type TestType, 2 with nil reader, 1 with role1 reader 
     Card.as(Card::WagbotID) do 

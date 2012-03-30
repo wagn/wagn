@@ -146,7 +146,7 @@ Rails.logger.debug "receive_breath, sol module ..."
   # transforms "declaration" multi-form into xml output
   def parse_fields(sig, breath_name, cards)
     prefix = "(#{Regexp.escape(name)}|#{Regexp.escape(name.trunk_name)})\\+" if name.junction?
-    unless user_sol = Card.user_card and user_sol=user_sol.star_rule(:sol)
+    unless user_sol = Card.user_card and user_sol=user_sol.trait_card(:sol)
       raise "Sending user has no sol card"
     end
     breath_attrs = {:name=>breath_name, :ctx=>sig,

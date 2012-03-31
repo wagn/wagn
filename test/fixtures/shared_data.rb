@@ -167,7 +167,7 @@ class SharedData
     Card.create :name=>'TwwoHeading', :content => "<h1>One Heading</h1>\r\n<p>and some text</p>\r\n<h2>And a Subheading</h2>\r\n<p>and more text</p>"
     Card.create :name=>'ThreeHeading', :content =>"<h1>A Heading</h1>\r\n<p>and text</p>\r\n<h2>And Subhead</h2>\r\n<p>text</p>\r\n<h1>And another top Heading</h1>"
 
-    c=Card.fetch_or_new('Basic+*type').trait_card(:table_of_contents)
+    c=Card.fetch_or_new('Basic+*type+*table of contents')
     c.content='2'
     c.save
 

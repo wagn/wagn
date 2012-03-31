@@ -29,7 +29,8 @@ module Wagn::Model
     end
     def set_names()      @set_names ||= patterns.map(&:set_name)     end
     def real_set_names()
-      set_names.find_all { |set_name| Card.exists? set_name }
+      r=(sn=set_names).find_all { |set_name| Card.exists? set_name }
+      #warn "rsn #{sn.inspect}, #{r.inspect}"; r
     end
     def method_keys()    @method_keys ||= patterns.map(&:get_method_key)     end
     def css_names()      patterns.map(&:css_name).reverse*" "                end
@@ -40,6 +41,9 @@ module Wagn::Model
     attr_accessor :card
 
     class << self
+      def key_name()
+        Rails.logger.warn "key_name #{self.key} #{Card::Codename[self.key]}"
+        Card::Codename[self.key] || self.key end
       def register key, opt_keys, opts={}
         Wagn::Model::Pattern.register_class self
         cattr_accessor :key, :opt_keys, :junction_only, :method_key, :trunkless
@@ -52,9 +56,9 @@ module Wagn::Model
       def method_key_from_opts(opts) method_key    end
     end
 
-    def initialize(card)   @card = card                           end
-    def opt_vals()         []                                     end
-    def set_name()         (opt_vals << self.class.key).join '+'  end
+    def initialize(card)  @card = card                                 end
+    def opt_vals()        []                                           end
+    def set_name() (opt_vals << self.class.key_name).to_cardname.to_s  end
     def get_method_key()
       return self.class.method_key if self.class.trunkless
       opts = {}
@@ -78,13 +82,13 @@ module Wagn::Model
   end
   
   class AllPlusPattern < SetBase
-    register '*all_plus', :all_plus, :method_key=>'all_plus', :junction_only=>true
+    register 'all_plus', :all_plus, :method_key=>'all_plus', :junction_only=>true
     def self.label(name)                  'All Plus Cards'        end
     def self.prototype_args(base)         {:name=>'+'}            end
   end
 
   class TypePattern < SetBase
-    register '*type', :type
+    register 'type', :type
     def self.label(name)                "All #{name} cards"                  end
     def self.prototype_args(base)       {:type=>base}                        end
     def self.method_key_from_opts(opts)
@@ -108,7 +112,7 @@ module Wagn::Model
   end
 
   class RightPattern < SetBase
-    register '*right', :right, :junction_only=>true
+    register 'right', :right, :junction_only=>true
     def self.label(name)                "Cards ending in +#{name}"           end
     def self.prototype_args(base)       {:name=>"*dummy+#{base}"}            end
     def self.method_key_from_opts(opts)
@@ -118,7 +122,7 @@ module Wagn::Model
   end
 
   class LeftTypeRightNamePattern < SetBase
-    register '*type_plus_right', [:ltype, :right], :junction_only=>true
+    register 'type_plus_right', [:ltype, :right], :junction_only=>true
     class << self
       def label(name) "Any #{name.left_name} card plus #{name.tag_name}"     end
       def prototype_args(base)
@@ -138,7 +142,7 @@ module Wagn::Model
   end
 
   class SelfPattern < SetBase
-    register '*self', :name
+    register 'self', :name
     def self.label(name)                %{The card "#{name}"}                end
     def self.prototype_args(base)       { :name=>base }                      end
     def self.method_key_from_opts(opts)

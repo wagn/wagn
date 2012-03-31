@@ -31,7 +31,7 @@ module CardBuilderMethods
       return User.where(:card_id=>c.id).first
     else
       if c = Card[username]
-        if c.type_id==Card::DefaultID
+        if c.type_id==Card::DefaultTypeID
           c.type_id = Card::UserID
         else
           raise "Can't create user card for #{username}: already points to different user"

@@ -1,7 +1,5 @@
 class Card::Codename < ActiveRecord::Base
   cattr_accessor :cache
-  @@pre_cache = {}
-
 
   # helpers for migrations, remove when migrations are obsolete (1.9)
   @@code2name = nil
@@ -10,16 +8,16 @@ class Card::Codename < ActiveRecord::Base
       "wagn_bot"         => "wagbot",
     }
   CODENAMES = %w{
-      *account *accountable *account_link *add_help *alert *all *all_plu
+      *account *accountable *account_link *add_help *alert *all *all_plus
       *attach *autoname *bcc *captcha *cc *comment *community *content *count
       *create *created *creator *css *default *delete *edit_help *editing
       *editor *email *foot *from *head *home *includer *inclusion *incoming
       *input *invite *last_edited *layout *link *linker *logo *member
-      *missing_link *navbox *now *options *option_label *outgoing *plu_card
-      *plu_part *pluss *read *recent *referred_to_by *refer_to *related
+      *missing_link *navbox *now *options *option_label *outgoing *plus_card
+      *plus_part *plus *read *recent *referred_to_by *refer_to *related
       *request *right *roles *rstar *search *self *send *session *sidebar
       *signup *star *subject *table_of_contents *tagged *thanks *tiny_mce
-      *title *to *type *watching *type_plu_right *update *users *version
+      *title *to *type *watching *type_plus_right *update *users *version
       *watchers *when_created *when_last_edited
 
       *declare *declare_help *sol *pad_options
@@ -46,14 +44,14 @@ class Card::Codename < ActiveRecord::Base
     end
     # end migration helpers
 
-    def [](code)           card_attr(code.to_s, :name)      end
-    def codename(key)      code_attr(key, :codename)        end
-    def code2id(code)      card_attr(code, :id)             end
-    def exists?(key)       code_attr(key)                   end
-    def name_change(key)   exists?(key) && reset_cache      end 
-    def codes()            get_cache(:code2card).each_value end
+    def [](code)          card_attr(code.to_s, :name)       end
+    def codename(key)     code_attr(key, :codename)         end
+    def code2id(code)     card_attr(code, :id)              end
+    def exists?(key)      code_attr(key)                    end
+    def name_change(key)  exists?(key) && reset_cache       end 
+    def codes()           get_cache('code2card').each_value end
     def type_codes()
-      get_cache(:code2card).values.find_all {|h| h[:type_id]==Card::CardtypeID}
+      get_cache('code2card').values.find_all {|h| h[:type_id]==Card::CardtypeID}
     end
 
     # This is a read-only cached model.  Entries must be added on bootstrap,
@@ -68,15 +66,16 @@ class Card::Codename < ActiveRecord::Base
 =end
 
     def code_attr(key, attr=nil?)
-      #warn "miss #{key} #{card2code.map(&:inspect)*"\n"}" unless card2code.has_key?(key)
+      key = Card::DefaultTypeID if key.to_i==0
+      warn Rails.logger.warn("miss code(#{key}) #{card2code.nil? ? 'nil' : (caller*"\n")}") unless !card2code || card2code.has_key?(key)
       card2code &&
       card2code.has_key?(key) && (attr ? card2code[key][attr] : true)
     end
 
     def card_attr(key, attr=nil?)
-      return unless code2card
-      warn "miss card #{key} #{caller[0..10]*"\n"}" unless code2card.has_key?(key) or %w{joe_user joe_admin u1 u2 u3 john}.member?(key.to_s)
-      code2card.has_key?(key) && (attr ? code2card[key][attr] : true)
+      return unless hsh=code2card
+      warn "miss card #{key.inspect} #{hsh.keys.map(&:inspect)*?,}\n===" unless (Hash===hsh && hsh.has_key?(key)) or %w{joe_user joe_admin u1 u2 u3 john}.member?(key.to_s)
+      hsh.has_key?(key) && (attr ? hsh[key][attr] : true)
     end
 
     def reset_cache()
@@ -90,22 +89,18 @@ class Card::Codename < ActiveRecord::Base
     def code2card() get_cache('code2card') end
 
     def get_cache(key)
-      if self.cache
-        self.cache.fetch key do
-          load_cache
-          self.cache.read key
-        end
-      else
-        @@pre_cache[key.to_s] or begin
-          load_cache
-          @@pre_cache[key.to_s]
-        end
+      raise "no cache" unless self.cache
+      hsh = self.cache.read(key) || begin
+        load_cache
+        self.cache.read key
       end
+      #warn "get_cache(#{key.inspect}) #{hsh.nil? ? 0 : hsh.size}"; hsh
     end
 
     def set_cache(key, v)
+      raise "no cache" unless self.cache
       key = key.to_s
-      self.cache ? self.cache.write(key, v) : @@pre_cache[key] = v
+      self.cache.write(key, v)
     end
 
     def load_cache()

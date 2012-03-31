@@ -77,7 +77,8 @@ module Wagn::Model::Permissions
   end
   
   def who_can(operation)
-    permission_rule_card(operation).first.item_cards.map(&:id)
+    r=(prc=permission_rule_card(operation)).first.item_cards.map(&:id)
+    #warn "who_can(#{operation.inspect}) #{prc.inspect}, #{r.inspect}"; r
   end 
   
   def permission_rule_card(operation)

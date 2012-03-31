@@ -5,12 +5,16 @@ module Wagn::Model::Settings
   end
 
   def rule_card setting_name, fallback=nil, extra_fetch_args={}
-    #warn "rule_card #{setting_name}, #{fallback}, #{extra_fetch_args.inspect}"
+=begin
+    warn "rule_card(#{setting_name}, #{fallback}) #{r=rc(setting_name,fallback,extra_fetch_args)}"; r
+  end
+  def rc setting_name, fallback=nil, extra_fetch_args={}
+=end
     fetch_args = {:skip_virtual=>true}.merge extra_fetch_args
     real_set_names.each do |set_name|
       card = Card.fetch "#{set_name}+#{setting_name.to_cardname.to_star}", fetch_args
       card ||= fallback && Card.fetch("#{set_name}+#{fallback.to_cardname.to_star}", fetch_args)
-      #warn "rule[#{set_name}] #{card}"
+      #warn "rule[#{set_name}] #{card.inspect}"
       return card if card
     end
     return nil

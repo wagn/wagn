@@ -113,7 +113,7 @@ class Card < ActiveRecord::Base
     end
   end
 
-  CODE_CONST = { :DefaultID=> 'Basic', :BasicID=> 'Basic',
+  CODE_CONST = { :DefaultTypeID=> 'Basic', :BasicID=> 'Basic',
     :CardtypeID=> 'Cardtype', :ImageID=> 'Image',
     :InvitationRequestID=>'InvitationRequest', :NumberID=> 'Number',
     :PhraseID=> 'Phrase', :PointerID=> 'Pointer', :RoleID=> 'Role',
@@ -247,8 +247,9 @@ class Card < ActiveRecord::Base
     def code2id code
       code = code.to_s
       unless card_id=Card::Codename.card_attr(code, :id)
-        return 1 if code.to_s == 'wagbot' # to bootstrapping codenames
         warn "unknown codename: #{code}"
+        return 1 if code.to_s == 'wagbot' # to bootstrapping codenames
+        raise "unknown codename: #{code}"
       else card_id end
     end
     def find_configurables
@@ -270,7 +271,7 @@ class Card < ActiveRecord::Base
     end
 
     def create_ok?( type_id )
-      Card.new( :type_id=>type_id).ok? :create
+      new( :type_id=>type_id).ok? :create
     end
 
     def create_these( *args )
@@ -299,10 +300,6 @@ class Card < ActiveRecord::Base
         !NON_CREATEABLE.member?( h[:codename] ) &&
           create_ok?( h[:id] ) && h[:name] || nil
       }.compact
-    end
-
-    def create_ok?( type_id )
-      new( :type_id=>type_id).ok? :create
     end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -347,6 +344,9 @@ class Card < ActiveRecord::Base
   end
 
   def star_rule rule
+    #srcn= cardname.star_rule(rule)
+    #warn "star_rule: #{rule}, #{srcn.inspect}"
+    #Card.fetch_or_new srcn
     Card.fetch_or_new cardname.star_rule(rule)
   end
 
@@ -369,7 +369,7 @@ class Card < ActiveRecord::Base
       reset_patterns
       t.type_id
     else
-      Card::DefaultID #bad name.  DefaultTypeID ?
+      Card::DefaultTypeID
     end
   end
 
@@ -615,7 +615,13 @@ class Card < ActiveRecord::Base
 
   def type_card() Card[typename]                                            end
   def typecode()  type_id && Card.typecode_from_id(type_id.to_i) || 'Basic' end
-  def typename()  Card.typename_from_id( type_id.to_i ) || 'Basic'          end
+  def type_id_zero()
+    (t=type_id).nil? || t.to_i==0 ? Card::DefaultTypeID : t
+  end
+  def typename()
+    type_id = type_id_zero
+    raise "zero" if type_id.to_i == 0
+    Card.typename_from_id( type_id.to_i )          end
   def type=(typename) self.type_id = Card.type_id_from_name(typename)       end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -118,7 +118,8 @@ module Wagn
     alias rstar? tag_star?
     def star_rule(sstar)
       star = Card::Codename[sstar]
-      [self, star].to_cardname
+      #warn "cn::star_rule(#{sstar}), #{star}, #{[to_s, star].to_cardname}"
+      [to_s, star].to_cardname
     end
 
     def empty?()      parts && parts.empty? or s && s.blank?           end

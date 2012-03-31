@@ -36,9 +36,9 @@ class Wagn::Renderer::Html
 
 
   # from app/view/card/declare.rhtml
-  #define_view(:declare, :trait=>'*sol') do
+  #define_view(:declare, :trait=>:sol) do
   define_view(:declare) do |args|
-    tcard = @card.trait_card('*sol')
+    tcard = @card.trait_card(:sol)
     raise "No card" unless tcard
 
     Rails.logger.info "declare (#{@card.name}) #{tcard.inspect}"

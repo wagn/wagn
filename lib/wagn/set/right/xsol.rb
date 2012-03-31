@@ -83,7 +83,7 @@
  
 Module Sol
   def self.included(base)
-    Card.register_trait('*sol', :declare)
+    Card.register_trait('sol', :declare)
   end
 end
 
@@ -111,7 +111,7 @@ module Wagn::Set::Right::Xsol
 
   def self.included(base)
     super
-    base.register_trait('*sol', :declare)
+    base.register_trait('sol', :declare)
     Rails.logger.debug "including Sol #{base}"
 =begin
     Wagn::Hook.add(:after_declare, '*all') do |card|

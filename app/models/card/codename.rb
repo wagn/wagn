@@ -51,9 +51,9 @@ class Card::Codename < ActiveRecord::Base
     def code2id(code)      card_attr(code, :id)             end
     def exists?(key)       code_attr(key)                   end
     def name_change(key)   exists?(key) && reset_cache      end 
-    def codes()            get_cache(:code2card).each_value end
+    def codes()            get_cache('code2card').each_value end
     def type_codes()
-      get_cache(:code2card).values.find_all {|h| h[:type_id]==Card::CardtypeID}
+      get_cache('code2card').values.find_all {|h| h[:type_id]==Card::CardtypeID}
     end
 
     # This is a read-only cached model.  Entries must be added on bootstrap,

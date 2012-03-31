@@ -240,7 +240,7 @@ class Wql
     end
 
     def member_of(val)
-      merge field(:right_plus) => [Card::XrolesID, {:refer_to=>val}]
+      merge field(:right_plus) => [Card::RolesID, {:refer_to=>val}]
     end
     def member(val)
       merge field(:referred_to_by) => {:left=>val, :right=>Card::RolesID }

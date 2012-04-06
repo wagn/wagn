@@ -91,7 +91,7 @@ class Card < ActiveRecord::Base
     unless @set_mods_loaded
       @set_mods_loaded=true
       #warn "include mods #{name}, #{typecode}"
-      singleton_class.include_type_module(typecode)
+      singleton_class.include_type_module typecode
     end
   end
 
@@ -256,14 +256,15 @@ class Card < ActiveRecord::Base
       @roles = Card.search(:type => Card::RoleID).reject{|r| r.id != Card::AdminID}
     end
 
-    def include_type_module(typecode)
-      #warn (Rails.logger.info "include set #{typecode} called")  #{Kernel.caller[0..4]*"\n"}"
+    def include_type_module typecode
       return unless typecode
-      raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
-      suppress(NameError) { include eval "Wagn::Set::Type::#{typecode}" }
-    rescue Exception => e
-      # eg, this was failing in 2.3.11 on typecode "Task"
-      Rails.logger.info "failed to include #{typecode}: #{e.message}"
+      root = Wagn::Set::Type
+      if  root.const_defined?(  typecode )  and
+          mod = root.const_get( typecode )  and 
+          mod.to_s=="#{root}::#{typecode}"
+
+        send :include, mod
+      end
     end
 
     def klassname_for(name)
@@ -372,6 +373,8 @@ class Card < ActiveRecord::Base
       Card::DefaultTypeID
     end
   end
+
+  
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING

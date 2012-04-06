@@ -19,7 +19,7 @@ class Card::Revision < ActiveRecord::Base
       'AutoSave'
     else
       card.revisions.each_with_index do |rev, index|
-         return "Revision ##{index + 1}"  if rev.id == id
+        return "Revision ##{index + 1}"  if rev.id == id
       end
     end
   end

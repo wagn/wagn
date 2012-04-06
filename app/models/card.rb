@@ -258,16 +258,6 @@ class Card < ActiveRecord::Base
       @roles = Card.search(:type => Card::RoleID).reject{|r| r.id != Card::AdminID}
     end
 
-    def include_type_module(typecode)
-      #warn (Rails.logger.info "include set #{typecode} called")  #{Kernel.caller[0..4]*"\n"}"
-      return unless typecode
-      raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
-      suppress(NameError) { include eval "Wagn::Set::Type::#{typecode}" }
-    rescue Exception => e
-      # eg, this was failing in 2.3.11 on typecode "Task"
-      Rails.logger.info "failed to include #{typecode}: #{e.message}"
-    end
-
     def klassname_for(name)
       name.to_s.gsub(/^\W+|\W+$/,'').gsub(/\W+/,'_').camelize
     end
@@ -375,6 +365,8 @@ class Card < ActiveRecord::Base
       ?3 #Card::DefaultTypeID
     end
   end
+
+  
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING

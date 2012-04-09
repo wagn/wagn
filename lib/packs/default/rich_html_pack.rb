@@ -86,7 +86,7 @@ class Wagn::Renderer::Html
     else
       %{
         <h1 class="page-header">
-          New #{ card.type_id == Card::DefaultID && '' || card.typename } Card
+          New #{ card.type_id == Card::DefaultTypeID && '' || card.typename } Card
         </h1>
         #{ new_instruction }
         #{ new_content :cancel_href=>Card.path_setting('/*previous'), :cancel_class=>'redirecter' }

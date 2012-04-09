@@ -20,7 +20,7 @@ describe AccountController do
         @msgs << m
         mock(m).deliver }
 
-      login_as :joe_user
+      login_as :joe_admin
 
       @email_args = {:subject=>'Hey Joe!', :message=>'Come on in.'}
       post :invite, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'},

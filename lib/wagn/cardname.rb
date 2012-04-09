@@ -113,7 +113,7 @@ module Wagn
     alias rstar? tag_star?
     def trait_name(tagcode)
       tagname = Card::Codename[tagcode]
-      warn "trait_name(#{tagcode.inspect}), #{tagname.inspect}" unless tagname
+      #warn "trait_name(#{tagcode.inspect}), #{tagname.inspect}" unless tagname
       [self, tagname].to_cardname
     end
 

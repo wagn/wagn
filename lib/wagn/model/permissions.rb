@@ -244,6 +244,7 @@ module Wagn::Model::Permissions
       # AND need to make sure @changed gets wiped after save (probably last in the sequence)
       
       User.cache.reset
+      Card.cache.reset # maybe be more surgical, just Card.user related
       #Wagn.cache.reset
       Wagn::Cache.expire_card self.key #probably shouldn't be necessary, 
       # but was sometimes getting cached version when card should be in the trash.

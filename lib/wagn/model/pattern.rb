@@ -22,17 +22,21 @@ module Wagn::Model
 =end
 
     def reset_patterns_if_rule()
-      !simple? and tag.type_id == Card::SettingID and
-          (set=trunk).type_id == Card::SetID and set.reset_patterns
-          #set.simple? ? set.reset_patterns : set.trunk.reset_patterns()
-      #warn (Rails.logger.debug "after_save_rule: #{name}, #{set.inspect}")
+      #warn (Rails.logger.debug "save_rule? #{inspect}")
+      if !simple? and (setting=tag).type_id == Card::SettingID and
+         (set=trunk).type_id == Card::SetID
+        #warn (Rails.logger.debug "reset set: #{name}, Set:#{set.object_id}, #{set.class} #{set.id}, #{set.inspect} + #{setting.inspect}")
+        set.include_set_modules
+        set.reset_set_patterns(setting)
+      end
     end
 
     def reset_patterns()
 #      Rails.logger.debug "reset_patterns[#{name}]"
+      #@set_modules = nil # this shoule not change?
       @rule_cards={}
       @real_set_names = @set_mods_loaded = @junction_only = @patterns =
-        @set_modules = @method_keys = @set_names = @template =
+        @method_keys = @set_names = @template =
         @skip_type_lookup = nil
       true
     end

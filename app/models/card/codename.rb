@@ -80,7 +80,7 @@ class Card::Codename < ActiveRecord::Base
         return
       end
       #warn "card_attr(#{key}, #{attr}) #{hsh.size}"
-      warn "miss card_attr(#{key}, #{attr}) code2card:#{hsh.size}" unless hsh.has_key?(key) or %w{joe_user joe_admin u1 u2 u3 john}.member?(key.to_s)
+      #warn "miss card_attr(#{key}, #{attr}) code2card:#{hsh.size}" unless hsh.has_key?(key) or %w{joe_user joe_admin u1 u2 u3 john}.member?(key.to_s)
       hsh.has_key?(key) && (attr ? hsh[key][attr] : true)
     end
 

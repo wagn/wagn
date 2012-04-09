@@ -20,7 +20,7 @@ class Card < ActiveRecord::Base
 
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
     :cards, :set_mods_loaded, :update_referencers, :allow_type_change,
-    :broken_type, :loaded_trunk, :nested_edit, :virtual, :attribute,
+    :loaded_trunk, :nested_edit, :virtual, :attribute,
     :error_view, :error_status, :selected_rev_id, :attachment_id
     #should build flexible handling for set-specific attributes
 
@@ -118,8 +118,8 @@ class Card < ActiveRecord::Base
     :CardtypeID=> 'Cardtype', :ImageID=> 'Image',
     :InvitationRequestID=>'InvitationRequest', :NumberID=> 'Number',
     :PhraseID=> 'Phrase', :PointerID=> 'Pointer', :RoleID=> 'Role',
-    :SetID=> 'Set', :SettingID=> 'Setting', :UserID=> 'User',
-    :WagbotID=> 'wagbot', :AnonID=> 'anonymous',
+    :SearchID=> 'Search', :SetID=> 'Set', :SettingID=> 'Setting',
+    :UserID=> 'User', :WagbotID=> 'wagbot', :AnonID=> 'anonymous',
     :AnyoneID=> 'anyone', :AuthID => 'anyone_signed_in',
     :AdminID=>'administrator',
     :CreateID=> 'create', :ReadID=> 'read', :UpdateID=> 'update',
@@ -305,7 +305,9 @@ class Card < ActiveRecord::Base
       Card::Codename.code_attr(name.to_cardname.key, :id)
     end
     def type_id_from_code(code) Card::Codename.card_attr(code, :id)     end
-    def typename_from_id(id)    Card::Codename.code_attr(id, :name)     end
+    def typename_from_id(id)
+      (tn=Card::Codename.code_attr(id, :name)) ? tn : '$NoType'
+    end
     def typecode_from_id(id)    Card::Codename.code_attr(id, :codename) end
   end
 
@@ -344,6 +346,7 @@ class Card < ActiveRecord::Base
   end
 
   def get_type_id(args={})
+    #warn "get_type_id(#{args.inspect}) bk:#{broken_type}"
     return if args[:type_id]
 
     type_id = case
@@ -352,10 +355,11 @@ class Card < ActiveRecord::Base
       else :noop
       end
     
+    #warn "get_type_id[#{type_id.inspect}](#{args.inspect}) bk:#{broken_type}"
     case type_id
-    when :noop  ; 
-    when nil    ; @broken_type = args[:type] || args[:typecode]
-    else        ; return type_id
+    when :noop      ; 
+    when false, nil ; @broken_type = args[:type] || args[:typecode]
+    else            ; return type_id
     end
     
     if name && t=template
@@ -608,10 +612,10 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # TYPE
 
-  def type_card() Card[typename]                                            end
-  def typecode()  type_id && Card.typecode_from_id(type_id.to_i) || 'Basic' end
-  def typename()  Card.typename_from_id( type_id.to_i ) || 'Basic'          end
-  def type=(typename) self.type_id = Card.type_id_from_name(typename)       end
+  def type_card() Card[typename]                                             end
+  def typecode() type_id ? Card.typecode_from_id(type_id.to_i):'DefaultType' end
+  def typename() type_id ? Card.typename_from_id(type_id.to_i) : 'Basic'     end
+  def type=(typename) self.type_id = Card.type_id_from_name(typename)        end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CONTENT / REVISIONS
@@ -727,9 +731,8 @@ class Card < ActiveRecord::Base
       @cardname = nil
       updates.add :name, newname
       reset_patterns
-    else
-      name
     end
+    newname
   end
   alias_method_chain :name=, :cardname
   def cardname() @cardname ||= name.to_cardname end

@@ -17,6 +17,16 @@ module Wagn::Set::Type::Set
        @junction_only = subclass_for_set.junction_only
   end
 
+  def reset_set_patterns(setting_card)
+    # maybe we could only reset when the trait exists?
+    read_rule = setting_card.nil? ? false : setting_card.id == Card::ReadID 
+    #warn "reset_set_patterns(#{name}), #{setting_card&&setting_card.name}, RR:#{read_rule.inspect}"
+    item_cards(:limit=>0).each do |member|
+      #warn "RRRreset member #{member.name}"
+      member.reset_patterns
+      member.update_read_rule if read_rule
+    end
+  end
 
   def label
     return '' unless klass = subclass_for_set

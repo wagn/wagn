@@ -82,7 +82,7 @@ module Wagn::Model::Permissions
   
   def permission_rule_card(operation)
     opcard = rule_card(operation.to_s)
-    unless opcard or ENV['MIGRATE_PERMISSIONS'] == 'true'
+    unless opcard
       errors.add :permission_denied, "No #{operation} setting card for #{name}"      
       raise Card::PermissionDenied.new(self) 
     end
@@ -184,7 +184,6 @@ module Wagn::Model::Permissions
   public
 
   def set_read_rule
-    return if ENV['MIGRATE_PERMISSIONS'] == 'true'
     if trash == true
       self.read_rule_id = self.read_rule_class = nil
       return
@@ -217,24 +216,19 @@ module Wagn::Model::Permissions
       :read_rule_class => rclass
     )
     
-    unless ENV['MIGRATE_PERMISSIONS'] == 'true' 
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
-      Card.as(Card::WagbotID) do
-        Card.search(:left=>self.name).each do |plus_card|
-          if plus_card.rule(:read) == '_left'
-            plus_card.update_read_rule
-          end
+    Card.as Card::WagbotID do
+      Card.search(:left=>self.name).each do |plus_card|
+        if plus_card.rule(:read) == '_left'
+          plus_card.update_read_rule
         end
       end
     end
-    Card.record_timestamps = Card.record_userstamp = true    
-  rescue
+  ensure
     Card.record_timestamps = Card.record_userstamp = true
-    raise
   end
 
   def update_ruled_cards
-    return if ENV['MIGRATE_PERMISSIONS'] == 'true'
     if cardname.junction? && cardname.tag_name=='*read' && (@name_or_content_changed || @trash_changed)
       # These instance vars are messy.  should use tracked attributes' @changed variable 
       # and get rid of @name_changed, @name_or_content_changed, and @trash_changed.

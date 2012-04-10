@@ -1,11 +1,12 @@
 # -*- encoding : utf-8 -*-
 class Card < ActiveRecord::Base
-  # FIXME:  this is ugly, but also useful sometimes... do in a more thoughtful way maybe?
-  cattr_accessor :debug, :cache, :id_cache
-  Card.debug = false
+  cattr_accessor :cache, :id_cache
 
+  # userstamp methods
   model_stamper # Card is both stamped and stamper
   stampable :stamper_class_name => :card
+
+  #FIXME - need to convert all these to WQL
 
   belongs_to :trunk, :class_name=>'Card', :foreign_key=>'trunk_id' #, :dependent=>:dependent
   has_many   :right_junctions, :class_name=>'Card', :foreign_key=>'trunk_id'#, :dependent=>:destroy
@@ -16,7 +17,6 @@ class Card < ActiveRecord::Base
   belongs_to :current_revision, :class_name => 'Revision', :foreign_key=>'current_revision_id'
   has_many   :revisions, :order => 'id', :foreign_key=>'card_id'
 
-  before_destroy :base_before_destroy
 
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
     :cards, :set_mods_loaded, :update_referencers, :allow_type_change,
@@ -25,10 +25,12 @@ class Card < ActiveRecord::Base
     #should build flexible handling for set-specific attributes
 
   attr_reader :type_args, :broken_type
-  before_save :set_stamper, :base_before_save, :set_read_rule,
-    :set_tracked_attributes
+  
+  before_destroy :base_before_destroy
+  before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
   after_save :base_after_save, :update_ruled_cards, :reset_stamper
-  cache_attributes 'name', 'type_id'
+  
+  cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
   @@junk_args = %w{ missing skip_virtual id }
 
@@ -45,8 +47,8 @@ class Card < ActiveRecord::Base
     args.delete('content') if args['attach'] # should not be handled here!
 
     if name = args['name'] and !name.blank?
-      if Card.cache                                        and
-         cc= Card.cache.read_local(name.to_cardname.key)   and
+      if  Card.cache                                       and
+          cc = Card.cache.read_local(name.to_cardname.key) and
           cc.type_args                                     and
           args['type']          == cc.type_args[:type]     and
           args['typecode']      == cc.type_args[:typecode] and
@@ -64,17 +66,14 @@ class Card < ActiveRecord::Base
     #Rails.logger.debug "initialize #{args.inspect}"
 
     args['name'] = args['name'].to_s
-    if tc=args.delete('typecode')
-      args['type_id'] = Card.type_id_from_code(tc)
-    end
-    @type_args = { :type=>args.delete('type'), :typecode=>tc, :type_id=>args['type_id'] }
+    @type_args = { :type=>args.delete('type'), :typecode=>args.delete('typecode'), :type_id=>args['type_id'] }
     #raise "type_id type ??? #{args.inspect}" if @type_args.values.compact.empty?
     skip_modules = args.delete 'skip_modules'
 
     #warn "card#initialize #{type_args.inspect}, A: #{args.inspect}" #\n#{caller*"\n"}" if args['name'] == 'Ulysses'
     super args
 
-    if tid=get_type_id(@type_args)
+    if tid = get_type_id(@type_args)
       self.type_id_without_tracking = tid
     end
 
@@ -114,6 +113,7 @@ class Card < ActiveRecord::Base
     end
   end
 
+
   CODE_CONST = { :DefaultTypeID => 'Basic', :BasicID=> 'Basic',
     :CardtypeID=> 'Cardtype', :ImageID=> 'Image',
     :InvitationRequestID=>'InvitationRequest', :NumberID=> 'Number',
@@ -122,9 +122,8 @@ class Card < ActiveRecord::Base
     :UserID=> 'User', :WagbotID=> 'wagbot', :AnonID=> 'anonymous',
     :AnyoneID=> 'anyone', :AuthID => 'anyone_signed_in',
     :AdminID=>'administrator',
-    :CreateID=> 'create', :ReadID=> 'read', :UpdateID=> 'update',
-    :DeleteID=> 'delete', :CommentID=> 'comment',
-    :RightID=> 'right', :TypeID=>'type',
+    :CreateID=> 'create', 
+    :ReadID=> 'read', :UpdateID=> 'update',
     :RolesID=> 'roles', :UsersID=>'user',
   }
 
@@ -366,7 +365,9 @@ class Card < ActiveRecord::Base
       reset_patterns
       t.type_id
     else
-      ?3 #Card::DefaultTypeID
+      #FIXME - hardcoded id.  yuck.  
+      # if we get here we have no *all+*default -- let's address that!
+      ?3 #Card::DefaultTypeID  
     end
   end
 
@@ -376,10 +377,9 @@ class Card < ActiveRecord::Base
   # SAVING
 
   def update_attributes(args={})
-    if type = (args.delete(:type) || args.delete('type'))
-      args[:type_id] = Card.type_id_from_name(type)
+    if newtype = args.delete(:type) || args.delete('type')
+      args[:type_id] = Card.type_id_from_name( newtype )
     end
-    #warn "update_attributes #{args.inspect}, #{::Card.user_id}"
     super args
   end
 

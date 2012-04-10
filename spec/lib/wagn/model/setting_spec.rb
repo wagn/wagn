@@ -172,6 +172,7 @@ describe Card do
       end
     end
     it "should take on new setting value" do
+      @c1.rule_card(:table_of_contents).name.should == 'CardtypeE+*type+*table of content'
       @c1.rule(:table_of_contents).should == "2"
     end
 

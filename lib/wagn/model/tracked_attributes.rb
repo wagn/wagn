@@ -14,27 +14,19 @@ module Wagn::Model::TrackedAttributes
   end
   
   
-  # this method conflicts with ActiveRecord since Rails 2.1.0
-  # the only references I see are in cache_spec, so removing for now
-=begin    
-  def changed?(field) 
-    #return false
-    #if updates.emtpy?
-    @changed ||={}; 
-    #warn "GET CHAGNED #{field.inspect}"    
-    !!(@changed[field] && !updates.for?(field))
-  end
-=end
   
   protected 
-  def set_name(newname)
-    if (@old_name = self.name_without_tracking) != newname.to_s
-      @cardname, name_without_tracking =
-         Wagn::Cardname===newname ? [newname, newname.to_s] :
-                                    [newname.to_cardname, newname]
-      write_attribute :key, k=cardname.to_key
-      write_attribute :name, name_without_tracking # what does this do?
-    else return end
+  def set_name newname
+    @old_name = self.name_without_tracking
+    return if @old_name == newname.to_s
+
+    @cardname, name_without_tracking = if Wagn::Cardname===newname
+      [ newname, newname.to_s]
+    else
+      [ newname.to_cardname, newname]
+    end
+    write_attribute :key, k=cardname.to_key
+    write_attribute :name, name_without_tracking # what does this do?
 
     raise "No name ???" if name.blank? # this should not pass validation.
     Wagn::Cache.expire_card(cardname.to_key)

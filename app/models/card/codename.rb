@@ -3,6 +3,10 @@ class Card::Codename < ActiveRecord::Base
 
 
   # helpers for migrations, remove when migrations are obsolete (1.9)
+  # BAD IDEA!!!
+  
+  # all this should be in the migration
+  
   @@code2name = nil
   RENAMES = {
       "AccountRequest"   => "InvitationRequest",

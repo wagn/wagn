@@ -14,18 +14,16 @@ module Wagn::Model::References
   protected   
   
   def update_references_on_create
-    return if ENV['MIGRATE_PERMISSIONS'] == 'true'
     Card::Reference.update_on_create(self)  
 
     # FIXME: bogus blank default content is set on hard_templated cards...
-    Card.as(Card::WagbotID) {
+    Card.as Card::WagbotID do
       Wagn::Renderer.new(self, :not_current=>true).update_references
-    }
+    end
     expire_templatee_references
   end
   
   def update_references_on_update
-    return if ENV['MIGRATE_PERMISSIONS'] == 'true'
     Wagn::Renderer.new(self, :not_current=>true).update_references 
     expire_templatee_references
   end
@@ -36,8 +34,7 @@ module Wagn::Model::References
   end
 
   def expire_cache
-    expire(self)
-    return if ENV['MIGRATE_PERMISSIONS'] == 'true'
+    expire self
     self.hard_templatee_names.each {|c| expire(c) } if self.hard_template?
     # FIXME really shouldn't be instantiating all the following bastards.  Just need the key.
     self.dependents.each           {|c| expire(c) }

@@ -6,8 +6,8 @@ module Wagn::Model::Templating
   def type_template?()  template? && !!(name =~ /\+\*type\+/)  end
   def right_template?() template? && !!(name =~ /\+\*right\+/) end
 
-  def template(reset=false,skip_mods=false)
-    @template = reset ? get_template(skip_mods) : (@template || get_template(skip_mods))
+  def template reset=false, skip_mods=false
+    @template = reset || !@template ? get_template( skip_mods ) : @template
   end
   
   def get_template(skip_module_loading=false)
@@ -25,6 +25,7 @@ module Wagn::Model::Templating
   end
   
   def virtual?
+    return false unless new_card?
     if @virtual.nil?
       cardname.simple? ? @virtual=false : get_template
     end
@@ -32,8 +33,10 @@ module Wagn::Model::Templating
   end
 
   def hard_templatee_names
-    if wql=hard_templatee_wql(:name)
-      Card.as(Card::WagbotID)  {  Wql.new(wql).run  }
+    if wql = hard_templatee_wql(:name)
+      Card.as Card::WagbotID do
+        Wql.new(wql).run
+      end
     else
       []
     end

@@ -68,7 +68,7 @@ module Wagn
             if final_method = view_method(view)
               with_inclusion_mode(view) { send(final_method, *a) }
             else
-              "<strong>unsupported view: <em>#{view}<em></strong>"
+              "<strong>unsupported view: <em>#{view}</em></strong>"
             end
           end
 
@@ -125,7 +125,7 @@ module Wagn
       if respond_to? method
         send method, args
       else
-        "<strong>unknown view: <em>#{view}<em></strong>"
+        "<strong>unknown view: <em>#{view}</em></strong>"
       end
     end
 

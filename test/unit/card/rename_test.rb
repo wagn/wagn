@@ -81,9 +81,7 @@ class Card::RenameTest < ActiveSupport::TestCase
   end
 
   def test_flip
-    with_debugging do
-      assert_rename card("A+B"), "B+A"
-    end
+    assert_rename card("A+B"), "B+A"
   end
 
   def test_should_error_card_exists
@@ -133,14 +131,7 @@ class Card::RenameTest < ActiveSupport::TestCase
   end
   
   private
-  
-  def with_debugging
-    Card.debug = true             
-    yield
-  ensure
-    Card.debug = nil
-  end
-  
+    
   def name_invariant_attributes( card )
     {
       :content => card.content,

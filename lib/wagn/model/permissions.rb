@@ -14,12 +14,6 @@ end
   
 module Wagn::Model::Permissions
 
-  module ClassMethods 
-    def create_ok?()
-      self.new.ok? :create
-    end
-  end
-
   def ydhpt
     "#{Card.user_card.name}, You don't have permission to"
   end
@@ -270,11 +264,6 @@ module Wagn::Model::Permissions
   
   def self.included(base)   
     super
-    base.extend(ClassMethods)
-#    base.before_save.unshift Proc.new{|rec| rec.set_read_rule }
-#    base.after_save.unshift  Proc.new{|rec| rec.update_ruled_cards }
-#    base.alias_method_chain :save, :permissions
-#    base.alias_method_chain :save!, :permissions
     base.alias_method_chain :destroy, :permissions
     base.alias_method_chain :destroy!, :permissions
     

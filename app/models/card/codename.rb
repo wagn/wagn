@@ -49,6 +49,16 @@ class Card::Codename < ActiveRecord::Base
     end
 
     # end migration helpers
+    
+    
+    def cardname from
+      case from
+      when Integer; code_attr from, :name
+      when Symbol ; card_attr from.to_s, :name
+      when String ; from
+      else; raise "Card::Codename.name does not handle class: #{from.class}"
+      end
+    end
 
     def [](code)           card_attr(code.to_s, :name)      end
     def codename(key)      code_attr(key, :codename)        end
@@ -56,9 +66,6 @@ class Card::Codename < ActiveRecord::Base
     def exists?(key)       code_attr(key)                   end
     def name_change(key)   exists?(key) && reset_cache      end 
     def codes()            get_cache('code2card').each_value end
-    def type_codes()
-      get_cache('code2card').values.find_all {|h| h[:type_id]==Card::CardtypeID}
-    end
 
     # This is a read-only cached model.  Entries must be added on bootstrap,
     # or as an administrative action when installing or upgrading wagn and

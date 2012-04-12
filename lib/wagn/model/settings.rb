@@ -74,6 +74,7 @@ module Wagn::Model::Settings
     end
 
     def setting_attrib(cardname, attrib)
+      # NOOOOOOOOOOOOOOOOOOOooooooooooooo :)
       const = eval("Wagn::Set::Self::#{cardname.module_name}")
       const.send attrib
     rescue

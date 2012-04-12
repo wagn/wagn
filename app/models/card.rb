@@ -261,9 +261,6 @@ class Card < ActiveRecord::Base
       name.to_s.gsub(/^\W+|\W+$/,'').gsub(/\W+/,'_').camelize
     end
 
-    def create_ok?( type_id )
-      Card.new( :type_id=>type_id).ok? :create
-    end
 
     def create_these( *args )
       definitions = args.size > 1 ? args : (args.first.inject([]) {|a,p| a.push({p.first=>p.last}); a })
@@ -275,26 +272,19 @@ class Card < ActiveRecord::Base
       end.flatten
     end
 
-    NON_CREATEABLE = %w{InvitationRequest Setting Set}
-
-    def createable_typecodes
-      Card::Codename.type_codes.map { |h|
-        !NON_CREATEABLE.member?( h[:codename] ) &&
-          create_ok?( h[:id] ) && h[:codename] || nil
-      }.compact
-    end
+    NON_CREATEABLE_TYPES = [ :InvitationRequest, :Setting, :Set ]
 
     def createable_types
-      #warn "createable_types #{(cds=Card::Codename.type_codes).inspect}"
-      #cds.map { |h|
-      Card::Codename.type_codes.map { |h|
-        !NON_CREATEABLE.member?( h[:codename] ) &&
-          create_ok?( h[:id] ) && h[:name] || nil
-      }.compact
-    end
-
-    def create_ok?( type_id )
-      new( :type_id=>type_id).ok? :create
+      type_names = Card.as(Card::WagbotID) do
+        Card.search :type=>Card::Codename.cardname(Card::CardtypeID), :return=>:name
+      end
+      noncreateable_names = NON_CREATEABLE_TYPES.map do |code|
+        Card::Codename.cardname code
+      end
+      puts "noncreateable_names = #{noncreateable_names}"
+      type_names.reject do |name|
+        noncreateable_names.member?(name) || !new( :type=>name ).ok?( :create )
+      end
     end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

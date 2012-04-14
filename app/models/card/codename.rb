@@ -1,56 +1,8 @@
 class Card::Codename < ActiveRecord::Base
   cattr_accessor :cache
 
-
-  # helpers for migrations, remove when migrations are obsolete (1.9)
-  # BAD IDEA!!!
-  
-  # all this should be in the migration
-  
-  @@code2name = nil
-  RENAMES = {
-      "AccountRequest"   => "InvitationRequest",
-      "wagn_bot"         => "wagbot",
-    }
-  CODENAMES = %w{
-      *account *accountable *account_link *add_help *alert *all *all_plus
-      *attach *autoname *bcc *captcha *cc *comment *community *content *count
-      *create *created *creator *css *default *delete *edit_help *editing
-      *editor *email *foot *from *head *home *includer *inclusion *incoming
-      *input *invite *last_edited *layout *link *linker *logo *member
-      *missing_link *navbox *now *options *option_label *outgoing *plus_card
-      *plus_part *plus *read *recent *referred_to_by *refer_to *related
-      *request *right *roles *rstar *search *self *send *session *sidebar
-      *signup *star *subject *table_of_contents *tagged *thanks *tiny_mce
-      *title *to *type *watching *type_plus_right *update *users *version
-      *watchers *when_created *when_last_edited
-
-      *declare *declare_help *sol *pad_options
-
-      anyone_signed_in anyone administrator anonymous wagn_bot
-
-      Basic Cardtype Date File Html Image AccountRequest Number Phrase
-      PlainText Pointer Role Search Set Setting Toggle User
-    } # FIXME: *declare, *sol ... need to be in packs
-
+    
   class <<self
-    def name2code(name)
-      code = ?* == name[0] ? name[1..-1] : name
-      code = RENAMES[code] if RENAMES[code]
-      warn Rails.logger.warn("name2code: #{name}, #{code}, #{RENAMES[code]}"); code
-    end
-    def code2name(code)
-      if @@code2name.nil?
-        @@code2name = {}
-        CODENAMES.each { |name| @@code2name[name2code name] = name }
-      end
-      name = @@code2name[code] || "Not code[#{code}]"
-      warn Rails.logger.warn("code2name: #{code}, #{name}, #{@@code2name[code]}"); name
-    end
-
-    # end migration helpers
-    
-    
     def cardname from
       case from
       when Integer; code_attr from, :name
@@ -66,17 +18,6 @@ class Card::Codename < ActiveRecord::Base
     def exists?(key)       code_attr(key)                   end
     def name_change(key)   exists?(key) && reset_cache      end 
     def codes()            get_cache('code2card').each_value end
-
-    # This is a read-only cached model.  Entries must be added on bootstrap,
-    # or as an administrative action when installing or upgrading wagn and
-    # its packs.
-=begin Use AR.create
-    def insert(card_id, codename)
-      Card.connection.insert(%{
-        insert into card_codenames (card_id, codename) values (#{card_id}, '#{codename}')
-      })
-      reset_cache
-=end
 
     def code_attr(key, attr=nil?)
       #warn "miss #{key} #{card2code.map(&:inspect)*"\n"}" unless card2code.has_key?(key)

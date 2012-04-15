@@ -71,14 +71,11 @@ class Card::Codename < ActiveRecord::Base
 
       #warn "load_cache #{caller[0..3]*?\n}"
       Card.connection.select_all(%{
-          select c.id, c.name, c.key, cd.codename, c.type_id
-           from cards c left outer join card_codenames cd on c.id = cd.card_id
-          where c.trash is false
-            and (c.type_id = 5 or cd.codename is not null)
+          select c.id, c.name, c.key, cd.codename
+           from card_codenames cd, cards c where c.id = cd.card_id
         }).map(&:symbolize_keys).each do |h|
-          h[:type_id], h[:id] = h[:type_id].to_i, h[:id].to_i
-          h[:codename] ||= Card.respond_to?(:klassname_for) ?
-                Card.klassname_for(h[:name]) : h[:name]
+          h[:id] = h[:id].to_i
+          #warn "codename #{h.inspect}"
           code2card[h[:codename]] = card2code[h[:id]] = card2code[h[:key]] = h
         end
 

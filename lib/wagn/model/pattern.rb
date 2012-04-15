@@ -169,7 +169,7 @@ module Wagn::Model
     end
     def opt_vals()                      [@pat_name.left_name]                 end
     def set_module()
-      "Type::#{Card.typecode_from_id(Card.type_id_from_name(@pat_name.left_name))}"
+      "Type::#{Card.typecode_from_name(@pat_name.left_name)}"
     end
   end
 

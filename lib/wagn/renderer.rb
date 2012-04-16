@@ -60,7 +60,7 @@ module Wagn
       def define_view view, opts={}, &final
         view_key = get_view_key(view, opts)
         define_method( "_final_#{view_key}", &final )
-        warn "defining method _final_#{view_key}"
+        #warn "defining method _final_#{view_key}"
         @@subset_views[view] = true if !opts.empty?
 
         if !method_defined? "render_#{view}"
@@ -236,7 +236,6 @@ module Wagn
     end
   
     def view_method view
-      warn "looking up view method for #{card.name} / #{view};  method keys = #{card.method_keys}"
       return "_final_#{view}" if !card || !@@subset_views[view]
       card.method_keys.each do |method_key|
         meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")

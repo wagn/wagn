@@ -289,32 +289,28 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # TYPE (Class methods)
 
-    def typename_from_id(id)
-      r=
-      id.to_s == ?0 ? '$NoType' :
-        (Card::Codename.code_attr(id, :name) || Card[id].name)
-      Rails.logger.warn "tid2name #{id}, #{r}"; r
+    def typename_from_id(id) # get rid
+      Card[id].name
     end
-    def typecode_from_id(id)
-      return nil if id.to_s == ?0
-      r=
-      Card::Codename.code_attr(id, :codename) || (c=Card[id] and c.name)
-      Rails.logger.warn "tid2code #{id}, #{r}"; r
+    
+    def type_id_from_name(name)  # get rid
+      Card[name].id
     end
 
     def typecode_from_name(name)
       typekey = name.to_cardname.key
       r=
-      Card::Codename.code_attr(typekey, :codename) || (c=Card[typekey] and c.name)
+      Codename.code_attr(typekey, :codename) || (c=Card[typekey] and c.name)
       Rails.logger.warn "name2code #{c&&c.id} #{name} #{r}"; r
     end
-
-    def type_id_from_name(name)
-      typekey = name.to_cardname.key
+    
+    def typecode_from_id(id)
+      return nil if id.to_s == ?0
       r=
-      Card::Codename.code_attr(typekey, :id) || (c=Card[typekey] and c.id)
-      Rails.logger.warn "name2tid #{r} [#{typekey}] #{name}"; r
+      Codename.code_attr(id, :codename) || (c=Card[id] and c.name)
+      Rails.logger.warn "tid2code #{id}, #{r}"; r
     end
+
     def type_id_from_code(code)
       r=
       Card::Codename.card_attr(code, :id) || (c=Card[code] and c.id)

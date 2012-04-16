@@ -40,11 +40,11 @@ describe Wagn::Model::Pattern do
 
   describe :junction_only? do
     it "should identify sets that only apply to plus cards" do
-      Card.fetch("Book+*to+*type plus right").junction_only?.should be_true
+      Card.fetch("*all").junction_only?.should be_false
+      Card.fetch("*all plus").junction_only?.should be_true
       Card.fetch("Book+*type").junction_only?.should be_false
       Card.fetch("*to+*right").junction_only?.should be_true
-      Card.fetch("*all plus").junction_only?.should be_true
-      Card.fetch("*all").junction_only?.should be_false
+      Card.fetch("Book+*to+*type plus right").junction_only?.should be_true
     end
   end
 
@@ -67,7 +67,7 @@ describe Wagn::Model::Pattern do
       card.method_keys.should == [ "basic_type", ""]
       card.save!
       card = Card.fetch("AnewCard")
-      card.method_keys.should == [ "anew_card_self","basic_type",""]
+      card.method_keys.should == [ "basic_type",""]
     end
     
   end

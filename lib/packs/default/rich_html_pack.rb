@@ -3,7 +3,7 @@ class Wagn::Renderer::Html
     @main_view = args[:view] || params[:view] || params[:home_view]
     
     if ajax_call?
-      self.render(@main_view || :open)
+      self.render( @main_view || :open )
     else
       self.render_layout
     end
@@ -19,7 +19,7 @@ class Wagn::Renderer::Html
     layout_content = get_layout_content(args)
 
     args[:params] = params
-    process_content(layout_content, args)
+    process_content layout_content, args
   end
 
 
@@ -264,8 +264,6 @@ class Wagn::Renderer::Html
       c && c.item_names
     end.flatten.compact
 
-    #warn "items = #{items.inspect}"
-#    @items << 'config'
     current = params[:attribute] || items.first.to_cardname.to_key
 
     wrap :related, args do
@@ -315,36 +313,29 @@ class Wagn::Renderer::Html
   end
 
   define_view :option_settings do |args|
-
     related_sets = card.related_sets
-    current_set = params[:current_set] || related_sets[(card.typecode=='Cardtype' ? 1 : 0)]
-
+    current_set = params[:current_set] || related_sets[(card.typecode=='Cardtype' ? 1 : 0)]  #FIXME - explicit cardtype reference
+    set_options = related_sets.map do |set_name| 
+      set_card = Card.fetch set_name
+      selected = set_card.key == current_set.to_cardname.key ? 'selected="selected"' : ''
+      %{<option value="#{ set_card.key }" #{ selected }>#{ set_card.label }</option>}
+    end.join
+    
     options_submenu(:settings) +
-      %{<div class="settings-tab">
-        #{if !related_sets.empty?
-          %{<div class="set-selection">
-          #{
-          form_tag path(:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'slotter' }
-            <label>Set:</label>
-            <select name="current_set" class="set-select">
-            #{
-            related_sets.map do |set_name|
-               set_card = Card.fetch set_name
-              %{<option value="#{ set_card.key }" #{set_card.key==current_set.to_cardname.key ? 'selected="selected"' : ''}>
-                #{ set_card.label }
-              </option>
-              }
-            end.join
-            }
-            </select>
-          </div>}
-        end
-        }
 
+    %{<div class="settings-tab">
+      #{ if !related_sets.empty?
+        %{ <div class="set-selection">
+          #{ form_tag path(:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'slotter' }
+              <label>Set:</label>
+              <select name="current_set" class="set-select">#{ set options }</select>
+          </form>
+        </div>}
+      end }
 
-        <div class="current-set">
-          #{ raw( subrenderer(Card.fetch current_set).render_content ) }
-        </div>
+      <div class="current-set">
+        #{ raw subrenderer( Card.fetch current_set).render_content }
+      </div>
   #{
         if !card.trait_card(:account) && Card.toggle(card.rule(:accountable)) && Card['*account'].ok?(:create) && card.ok?(:update)
           %{<div class="new-account-link">
@@ -354,6 +345,8 @@ class Wagn::Renderer::Html
           </div>}
          end}
       </div>}
+      
+      # should be just if !card.trait_card(:account) and Card.new( :name=>"#{card.name}+Card::Codename[:account].to_name").ok?(create)
   end
 
   define_view(:option_roles) do |args|

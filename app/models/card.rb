@@ -281,7 +281,6 @@ class Card < ActiveRecord::Base
       noncreateable_names = NON_CREATEABLE_TYPES.map do |code|
         Card::Codename.cardname code
       end
-      puts "noncreateable_names = #{noncreateable_names}"
       type_names.reject do |name|
         noncreateable_names.member?(name) || !new( :type=>name ).ok?( :create )
       end

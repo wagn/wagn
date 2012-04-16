@@ -1,15 +1,15 @@
 class Wagn::Renderer::Html
-  define_view :raw, :name=>'*navbox' do |args|
-    %{ <form action="#{Card.path_setting '/*search'}" method="get" class="navbox-form nodblclick">
+  define_view :raw, :name=>'navbox' do |args|
+    %{ <form action="#{Card.path_setting '/:search'}" method="get" class="navbox-form nodblclick">
       #{hidden_field_tag :view, 'content' }
       #{text_field_tag :_keyword, '', :class=>'navbox' }
      </form>}
   end
-  alias_view(:raw, {:name=>'*navbox'}, :core)
+  alias_view(:raw, {:name=>'navbox'}, :core)
 end
 
 class Wagn::Renderer::Json < Wagn::Renderer
-  define_view :complete, :name=>'*search' do |args|
+  define_view :complete, :name=>'search' do |args|
     term = params['_keyword']
     if term =~ /^\+/ && main = params['main']
       term = main+term

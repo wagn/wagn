@@ -63,14 +63,14 @@ class Card < ActiveRecord::Base
   end
 
   def initialize(args={})
-    #Rails.logger.debug "initialize #{args.inspect}"
+    #warn (Rails.logger.debug "initialize #{args.inspect}")
 
     args['name'] = args['name'].to_s
     @type_args = { :type=>args.delete('type'), :typecode=>args.delete('typecode'), :type_id=>args['type_id'] }
     #raise "type_id type ??? #{args.inspect}" if @type_args.values.compact.empty?
     skip_modules = args.delete 'skip_modules'
 
-    #warn "card#initialize #{type_args.inspect}, A: #{args.inspect}" #\n#{caller*"\n"}" if args['name'] == 'Ulysses'
+    #warn Rails.logger.warn("card#initialize #{type_args.inspect}, A: #{args.inspect}") #\n#{caller*"\n"}" if args['name'] == 'Ulysses'
     super args
 
     if tid = get_type_id(@type_args)
@@ -287,16 +287,38 @@ class Card < ActiveRecord::Base
     end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # TYPE
+  # TYPE (Class methods)
+
+    def typename_from_id(id)
+      r=
+      id.to_s == ?0 ? '$NoType' :
+        (Card::Codename.code_attr(id, :name) || Card[id].name)
+      Rails.logger.warn "tid2name #{id}, #{r}"; r
+    end
+    def typecode_from_id(id)
+      r=
+      Card::Codename.code_attr(id, :codename) || (c=Card[id] and c.name)
+      Rails.logger.warn "tid2code #{id}, #{r}"; r
+    end
+
+    def typecode_from_name(name)
+      typekey = name.to_cardname.key
+      r=
+      Card::Codename.code_attr(typekey, :codename) || (c=Card[typekey] and c.name)
+      Rails.logger.warn "name2code #{c&&c.id} #{name} #{r}"; r
+    end
 
     def type_id_from_name(name)
-      Card::Codename.code_attr(name.to_cardname.key, :id)
+      typekey = name.to_cardname.key
+      r=
+      Card::Codename.code_attr(typekey, :id) || (c=Card[typekey] and c.id)
+      Rails.logger.warn "name2tid #{r} [#{typekey}] #{name}"; r
     end
-    def type_id_from_code(code) Card::Codename.card_attr(code, :id)     end
-    def typename_from_id(id)
-      (tn=Card::Codename.code_attr(id, :name)) ? tn : '$NoType'
+    def type_id_from_code(code)
+      r=
+      Card::Codename.card_attr(code, :id) || (c=Card[code] and c.id)
+      Rails.logger.warn "code2tid #{r} #{code}"; r
     end
-    def typecode_from_id(id)    Card::Codename.code_attr(id, :codename) end
   end
 
 #~~~~~~~ Instance
@@ -334,7 +356,7 @@ class Card < ActiveRecord::Base
   end
 
   def get_type_id(args={})
-    #warn "get_type_id(#{args.inspect}) bk:#{broken_type}"
+    #warn Rails.logger.warn("get_type_id(#{args.inspect}) bk:#{broken_type}")
     return if args[:type_id]
 
     type_id = case
@@ -833,6 +855,7 @@ class Card < ActiveRecord::Base
 
   validates_each :type_id do |rec, attr, value|
     # validate on update
+    #warn "validate type #{rec.inspect}, #{attr}, #{value}"
     if rec.updates.for?(:type_id) and !rec.new_card?
       if !rec.validate_type_change
         rec.errors.add :type, "of #{ rec.name } can't be changed; errors changing from #{ rec.typename }"

@@ -67,16 +67,20 @@ td, th {
 }
 
 
-/*---- input --------*/
-input,
+/*---- headers --------*/
+input[type=text], 
+input[type=password],
+input[type=checkbox],
 textarea,
-select,
-body#tinymce {
+select {
   padding-left: 3px;
   border: 1px solid #aaa;
   border-top: 2px solid #666;
   border-left: 2px solid #666;
   background: #f9f9ed;
+}
+body#tinymce {
+  background: #f9f9ed;  
 }
 input:focus,
 select:focus,

@@ -133,7 +133,7 @@ module Wagn::Model
       opts = {}
       opt_keys.each_with_index do |key, index|
         return nil unless opt_vals[index]
-        opts[key] = opt_vals[index].downcase # FIXME - shouldn't need to downcase
+        opts[key] = opt_vals[index]
       end
       self.class.method_key_from_opts opts
     end

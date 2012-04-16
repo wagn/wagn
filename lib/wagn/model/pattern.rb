@@ -172,10 +172,7 @@ module Wagn::Model
         card.typecode.nil? ? 'Basic+*type' : "#{card.typename}+#{key_name}"
       end
     end
-    def opt_vals()                      [Card::Codename[@pat_name.left_name]]                 end
-#    def set_module()
-#      "Type::#{Card.typecode_from_id(Card.type_id_from_name(@pat_name.left_name))}"
-#    end
+    def opt_vals()                      [Card::Codename.codename(@pat_name.left_name.key)]                 end
   end
 
   class StarPattern < BasePattern
@@ -202,7 +199,7 @@ module Wagn::Model
         opts[:right].to_cardname.css_name+'_right'
       end
     end
-    def opt_vals()      [Card::Codename[@pat_name.left_name.to_s]]      end
+    def opt_vals()      [Card::Codename.codename(@pat_name.left_name.key)]      end
   end
 
   class LeftTypeRightNamePattern < BasePattern
@@ -225,7 +222,7 @@ module Wagn::Model
         "#{typename}+#{card.cardname.tag_name}+#{key_name}"
       end
     end
-    def opt_vals() [Card::Codename[left_type], Card::Codename[@pat_name.left_name.tag_name]] end
+    def opt_vals() [Card::Codename.codename(left_type.to_cardname.key), Card::Codename.codename(@pat_name.left_name.tag_name.to_cardname.to_key)] end
     
     private
     def left_type() @pat_name.left_name.left_name end
@@ -245,9 +242,9 @@ module Wagn::Model
         "#{card.name}+#{key_name}"
       end
     end
-    def opt_vals()                      
-      warn "@pat_name = #{@pat_name}; left_name = #{@pat_name.left_name}; codename = #{Card::Codename[@pat_name.left_name]}"
-      [Card::Codename[@pat_name.left_name]]
+    def opt_vals()  
+      #warn "@pat_name = #{@pat_name}; left_name = #{@pat_name.left_name}; codename = #{Card::Codename[@pat_name.left_name]}"
+      [Card::Codename.codename(@pat_name.left_name.key)]
     end
   end
 end

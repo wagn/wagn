@@ -92,7 +92,7 @@ describe Wagn::Model::Pattern do
   
   describe :label do
     it "returns label for name" do
-      Card.new(:name=>'address+*right').label.should== "Cards ending in +address"
+      Card.new(:name=>'address+*right').label.should== %{All "+address" cards}
     end
   end
 end
@@ -100,12 +100,6 @@ end
 describe Wagn::Model::RightPattern do
   it_generates :name => "author+*right", :from => Card.new( :name => "Iliad+author" )
   it_generates :name => "author+*right", :from => Card.new( :name => "+author" )
-  
-  describe :label do
-    it "returns label for name" do
-      Card.new(:name=>'address+*right').label.should== "Cards ending in +address"
-    end
-  end
 end
                               
 describe Wagn::Model::TypePattern do

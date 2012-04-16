@@ -40,7 +40,7 @@ module Wagn::Model
     def real_set_names() set_names.find_all &Card.method(:exists?)                              end
     def css_names()      patterns.map(&:css_name).reverse*" "                                   end
     def set_modules()    @set_modules ||= patterns_without_new.reverse.map(&:set_const).compact end
-    def set_names()      r= @set_names ||= patterns.map(&:to_s)                                 end
+    def set_names()      @set_names   ||= patterns.map(&:to_s)                                  end
     def method_keys()    @method_keys ||= patterns.map(&:get_method_key).compact                end
   end
 

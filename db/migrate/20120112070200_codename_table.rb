@@ -3,11 +3,6 @@ require 'wagn/cache'
 class CodenameTable < ActiveRecord::Migration
 
 
-  # helpers for migrations, remove when migrations are obsolete (1.9)
-  # BAD IDEA!!!
-  
-  # all this should be in the migration
-  
   RENAMES = {
       "AccountRequest"   => "InvitationRequest",
       "wagn_bot"         => "wagbot",
@@ -38,7 +33,6 @@ class CodenameTable < ActiveRecord::Migration
     code = RENAMES[code] if RENAMES[code]
     warn Rails.logger.warn("name2code: #{name}, #{code}, #{RENAMES[code]}"); code
   end
-    # end migration helpers
     
   def self.up
     Wagn::Cache.new_all

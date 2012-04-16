@@ -296,6 +296,7 @@ class Card < ActiveRecord::Base
       Rails.logger.warn "tid2name #{id}, #{r}"; r
     end
     def typecode_from_id(id)
+      return nil if id.to_s == ?0
       r=
       Card::Codename.code_attr(id, :codename) || (c=Card[id] and c.name)
       Rails.logger.warn "tid2code #{id}, #{r}"; r

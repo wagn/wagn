@@ -33,9 +33,9 @@ describe "Card (Cardtype)" do
   
   it "cardtype creation and dynamic cardtype" do
     
-    assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).type_id == Card.type_id_from_name('Cardtype')
+    assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).type_id == Card.type_id_from_code('Cardtype')
     assert_instance_of Card, c=Card.fetch("BananaPudding")
-    assert Integer===(tid=Card.type_id_from_name("BananaPudding"))
+    assert Integer===(tid=Card.type_id_from_code("BananaPudding"))
 
     # you have to have a module to include or it's just a Basic (typecode fielde excepted)
     assert Card.create(:type=>'BananaPudding',:name=>"figgy" ).typename == 'BananaPudding'
@@ -52,7 +52,7 @@ describe "Card (Cardtype)" do
       @card.type_id = Card.type_id_from_code('Cookie')
       @card.save!
       @card.typecode.should == 'Cookie'
-      Card.typename_from_id(Card.type_id_from_code('Cookie')).should == 'Cookie'
+      Card.typecode_from_name('Cookie').should == 'Cookie'
       @card=Card['Cookie']
       assert_instance_of Card, @card
       @card.typecode.should == "Cookie"
@@ -117,7 +117,7 @@ describe Card, "Normal card with junctions" do
     Card['A'].typecode.should== 'Number'
   end
   it "should still have its junctions after changing type" do
-    assert type_id = Card.type_id_from_name('CardtypeE')
+    assert type_id = Card.type_id_from_code('CardtypeE')
     @a.type_id = type_id; @a.save!
     Card['A'].junctions.length.should > 0
   end

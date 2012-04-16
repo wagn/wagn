@@ -86,7 +86,6 @@ module Wagn::Model::TrackedAttributes
         tee.save!
       end
     end
-    #self.typecode=Card.typecode_from_id(new_type_id) || raise("Bad type id #{new_type_id}")
     #warn "setting typeid(#{new_type_id}) and code (#{self.typecode})"
     
     # do we need to "undo" and loaded modules?  Maybe reload defaults?

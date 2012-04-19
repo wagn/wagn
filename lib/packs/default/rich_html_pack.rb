@@ -717,10 +717,7 @@ class Wagn::Renderer::Html
        #{@help_card ? %{<div class="instruction">#{ raw subrenderer(@help_card).render_core }</div>} : '' }
     
        <div class="edit-area">
-         <div class="card-editor editor">
-           #{ edit_slot(args) }
-         </div>
-    
+         <div class="card-editor editor">#{ edit_slot args }</div>
          <div class="edit-button-area">
            #{ submit_tag 'Submit', :class=>'create-submit-button' }
            #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{args[:cancel_class]}", :href=>args[:cancel_href] }

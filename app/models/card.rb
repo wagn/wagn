@@ -293,8 +293,11 @@ class Card < ActiveRecord::Base
       Card[id].name
     end
     
-    def type_id_from_name(name)  # get rid
-      Card[name].id
+    def type_id_from_name(name)
+      c=Card.fetch(name, :skip_virtual=>true)
+      warn (Rails.logger.warn "name2tid #{name} C:#{c}") if c.nil?
+      r= (c.nil? ? 0 : c.id)
+      Rails.logger.warn "name2tid #{name} #{r}"; r
     end
 
     def typecode_from_name(name)
@@ -344,6 +347,7 @@ class Card < ActiveRecord::Base
       r=(cr=trait_card(:roles)).item_cards(:limit=>0).map(&:id)
       #warn "all_roles #{inspect}: #{cr.inspect}, #{r.inspect} #{caller[0..10]*"\n"}"; r
     end
+    warn "ids string #{ids.inspect} " unless Array === ids
     @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
       #[Card::AuthID] + trait_card(:roles).item_cards.map(&:id))
   end
@@ -713,9 +717,9 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # MISCELLANEOUS
 
-  def to_s()  "#<#{self.class.name}[#{self.typename.to_s}:#{self.type_id}]#{self.attributes['name']}>" end
+  def to_s()  "#<#{self.class.name}[#{self.type_id}]#{self.attributes['name']}>" end
   #def inspect()  "#<#{self.class.name}##{self.id}[#{self.typename}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}}:#{@set_names.inspect}>" end
-  def inspect()  "#<#{self.class.name}##{self.id}[#{self.typename}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}} U:#{updater_id} C:#{creator_id}>" end
+  def inspect()  "#<#{self.class.name}##{self.id}[#{self.type_id}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}} U:#{updater_id} C:#{creator_id}>" end
   def mocha_inspect()     to_s                                   end
 
 #  def trash

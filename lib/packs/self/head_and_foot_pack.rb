@@ -6,7 +6,7 @@ class Wagn::Renderer
     title = params[:action] if [nil, '', '*placeholder'].member? title
     bits = ["<title>#{title ? "#{title} - " : ''}#{ Card.setting('*title') }</title>"]
 
-    if (favicon_card = Card['*favicon'] || Card['*logo']) and favicon_card.typecode == 'Image'
+    if (favicon_card = Card['*favicon'] || Card['*logo']) and favicon_card.type_id == Card::ImageID
       bits << %{<link rel="shortcut icon" href="#{ subrenderer(favicon_card)._render_source :size=>:icon }" />}
     end
     
@@ -17,7 +17,7 @@ class Wagn::Renderer
       end
       
       # RSS # move to packs!
-      if root.card.typecode == 'Search'
+      if root.card.type_id == Card::SearchID
         opts = { :format => :rss }
         root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
         rss_href = url_for_page root.card.name, opts

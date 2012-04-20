@@ -4,7 +4,7 @@ module Wagn
     require 'htmlentities'
 
 
-    JOINT = ?+
+    JOINT = '+'
     BANNED_ARRAY = [ ?/, ?~, ?| ]
     BANNED_RE = /#{ ([?[] + BANNED_ARRAY << JOINT )*?\\ }#{ ?] }/
     CARDNAME_BANNED_CHARACTERS = BANNED_ARRAY * ' '
@@ -120,7 +120,7 @@ module Wagn
     alias empty? blank?
 
     def pre_cgi()       parts * '~plus~'                                   end
-    def escape()        gsub(' ','_')                                      end
+    def escape()        gsub(' ','_').to_s                                 end
 
     def to_url_key()
       @url_key ||= decode_html.gsub(/[^\*#{WORD_RE}\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')

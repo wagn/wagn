@@ -7,7 +7,10 @@ class AccountController < ApplicationController
 
   def signup
     raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?  #ENGLISH
-    raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card.new(:typecode=>:InvitationRequest).ok? :create #ENGLISH
+    c=Card.new(:type_id=>Card::InvitationRequestID)
+    warn "signup ok? #{c.inspect}, #{c.ok? :create}" #ENGLISH
+    raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless c.ok? :create #ENGLISH
+    #raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card.new(:typecode=>:InvitationRequest).ok? :create #ENGLISH
 
     user_args = (params[:user]||{}).merge(:status=>'pending').symbolize_keys
     @user = User.new( user_args ) #does not validate password
@@ -77,9 +80,9 @@ class AccountController < ApplicationController
       redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
     end
     #warn "invite errors #{@user.errors} C:#{@card.errors}"
-    unless @user.errors.empty?
-      @user.errors.each do |k,e| warn "user error #{k}, #{e}" end
-    end
+    #unless @user.errors.empty?
+    #  @user.errors.each do |k,e| warn "user error #{k}, #{e}" end
+    #end
   end
 
 

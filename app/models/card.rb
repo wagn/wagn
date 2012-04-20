@@ -353,7 +353,7 @@ class Card < ActiveRecord::Base
   end
 
   def get_type_id(args={})
-    #warn Rails.logger.warn("get_type_id(#{args.inspect}) bk:#{broken_type}")
+    #warn("get_type_id(#{args.inspect})")
     return if args[:type_id]
 
     type_id = case
@@ -362,12 +362,15 @@ class Card < ActiveRecord::Base
       else :noop
       end
     
+    #warn "get_type_id after case 1"
     #warn "get_type_id[#{type_id.inspect}](#{args.inspect}) bk:#{broken_type}"
     case type_id
     when :noop      ; 
     when false, nil ; @broken_type = args[:type] || args[:typecode]
     else            ; return type_id
     end
+    
+    #warn "get_type_id after case 2"
     
     if name && t=template
       reset_patterns
@@ -622,7 +625,9 @@ class Card < ActiveRecord::Base
 
   def type_card() Card[typename]                                             end
   def typecode() type_id ? Card.typecode_from_id(type_id.to_i):'DefaultType' end
-  def typename() type_id ? Card.typename_from_id(type_id.to_i) : 'Basic'     end
+  def typename()
+    type_id ? Card.fetch(type_id.to_i, :skip_modules=>true).name : 'Basic'
+  end
   def type=(typename) self.type_id = Card.type_id_from_name(typename)        end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

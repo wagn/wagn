@@ -11,8 +11,6 @@ class Wagn::Renderer
             }
       wql[:left][ (set_class.trunkless ? :name : :right )] = set_class.key
 
-      #warn "WQL = #{wql}"
-
       search_card = Card.new :type =>'Search', :content=>wql.to_json
       next if search_card.count == 0
 

@@ -160,9 +160,9 @@ module Wagn::Model
 
   class TypePattern < BasePattern
     register 'type', :type
-    def self.label(name)              %{All "#{name}" cards}                          end
-    def self.prototype_args(base)     {:type=>base}                                   end
-    def self.trunk_name(card)         card.typecode.nil? ? 'Basic' : card.typename    end
+    def self.label(name)              %{All "#{name}" cards}     end
+    def self.prototype_args(base)     {:type=>base}              end
+    def self.trunk_name(card)         card.typename              end
   end
 
   class StarPattern < BasePattern

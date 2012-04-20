@@ -201,7 +201,9 @@ describe Card, "types" do
   
   it "should raise a validation error if a bogus type is given" do
     ct = Card.create! :name=>"DFoo", :type=>'Cardtype'
+    warn "card created"
     c = Card.new(:type=>"$d_foo#adfa",:name=>"more testy")
+    warn "card newed"
     c.valid?.should be_false
     c.errors_on(:type).should_not be_empty
   end

@@ -15,45 +15,48 @@ module Wagn::Model::Fetch
     #   - database
     #   - virtual cards
 
-    def fetch cardname, opts = {}
+    def fetch mark, opts = {}
 #      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{cardname}" do
+      opts[:skip_virtual] = true if opts[:loaded_trunk]
+      card = cardname = nil
       
-        card_from_id = card_id = nil
-        if Integer===cardname
-          card_id = cardname
-          if card_from_id = Card.id_cache[card_id]
-            return card_from_id
-          elsif card_from_id = Card.find_by_id_and_trash(card_id, false)
-            cardname = card_from_id.cardname
-          else raise "fetch of missing card_id #{cardname}"
-          end
-        else
-          cardname = cardname.to_cardname
-          opts[:skip_virtual] = true if opts[:loaded_trunk]
+      if Integer===mark
+        card_id = mark
+        card = Card.id_cache[ card_id ]
+        unless card
+          needs_caching = true
+          card = Card.find_by_id_and_trash card_id, false
+          raise "fetch of missing card_id #{cardname}" unless card
         end
-
+      else
+        cardname = mark.to_cardname
         card = Card.cache.read( cardname.key ) if Card.cache
         return nil if card && opts[:skip_virtual] && card.new_card?
-
-        needs_caching = !Card.cache.nil? && card.nil?
-        card ||= card_from_id
-        card ||= find_by_key_and_trash( cardname.key, false )
-      
+        
+        unless card
+          needs_caching = true
+          card = find_by_key_and_trash cardname.key, false
+        end
+        
         if card.nil? || (!opts[:skip_virtual] && card.type_id==0)
-          # The 0 type_id allows us to skip all the type lookup and flag the need for reinitialization later
-          needs_caching = !Card.cache.nil?
-          card = new((opts[:skip_virtual] ? {:type_id=>0} : {}).merge(:name=>cardname, :skip_modules=>true))
+          needs_caching = true
+          new_args = { :name=>cardname, :skip_modules=>true }
+          new_args[:type_id] = 0 if opts[:skip_virtual]
+          card = new new_args
         end
+      end
+      
     
-        if Card.cache && needs_caching
-          Card.id_cache[card_id]= card if card_id
-          Card.cache.write( cardname.key, card )
-        end
-        return nil if card.new_card? and opts[:skip_virtual] || !card.virtual?
+      if Card.cache && needs_caching
+        Card.id_cache[ card.id ] = card
+        Card.cache.write card.key, card
+      end
+      
+      return nil if card.new_card? and opts[:skip_virtual] || !card.virtual?
 
-        #warn "fetch returning #{card.inspect}"
-        card.include_set_modules unless opts[:skip_modules]
-        card
+      #warn "fetch returning #{card.inspect}"
+      card.include_set_modules unless opts[:skip_modules]
+      card
 #      end
     end
 

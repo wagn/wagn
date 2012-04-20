@@ -623,11 +623,19 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # TYPE
 
-  def type_card() Card[typename]                                             end
-  def typecode() type_id ? Card.typecode_from_id(type_id.to_i):'DefaultType' end
-  def typename()
-    type_id ? Card.fetch(type_id.to_i, :skip_modules=>true).name : 'Basic'
+  def type_card() Card[typename]                                               end
+  def typecode() type_id ? Card.typecode_from_id(type_id.to_i) : 'DefaultType' end
+
+  def typename
+    tid = type_id.to_i
+    if tid == 0
+      '$NoType'
+    else
+      Card.fetch( tid, :skip_modules=>true ).name
+    end
   end
+
+
   def type=(typename) self.type_id = Card.type_id_from_name(typename)        end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

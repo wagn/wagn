@@ -45,7 +45,7 @@ class CodenameTable < ActiveRecord::Migration
     change_column "cards", "typecode", :string, :null=>true
 
     Card.as Card::WagbotID do
-      Card::Codename::CODENAMES.each do |name|
+      CodenameTable::CODENAMES.each do |name|
         if card = Card[name] # || Card.create!(:name=>name)
           card or raise "Missing codename #{name} card"
         

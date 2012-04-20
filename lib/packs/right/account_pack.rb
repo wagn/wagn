@@ -1,6 +1,6 @@
 class Wagn::Renderer::Html
   # from app/view/card/_declare.rhtml
-  define_view(:account_form, :right=>'*account') do |args|
+  define_view(:account_form, :right=>'account') do |args|
   end
 
   define_view(:account) do |args|

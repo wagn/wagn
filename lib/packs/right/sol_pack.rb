@@ -1,6 +1,6 @@
 class Wagn::Renderer::Html
   # from app/view/card/_declare.rhtml
-  define_view(:declare_form, :right=>'*sol') do |args|
+  define_view(:declare_form, :right=>'sol') do |args|
     @form = form_for_multi
     @state=:edit
     %{<div id="declar-area" class="declaror declar-area #{card.hard_template ? :templated : ''}"> #{

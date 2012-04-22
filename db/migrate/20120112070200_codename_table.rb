@@ -43,6 +43,7 @@ class CodenameTable < ActiveRecord::Migration
     end
 
     change_column "cards", "typecode", :string, :null=>true
+    change_column "cards", "type_id", :integer, :null=>false
 
     Card.as Card::WagbotID do
       CodenameTable::CODENAMES.each do |name|
@@ -69,6 +70,7 @@ class CodenameTable < ActiveRecord::Migration
       }
 
     change_column "cards", "typecode", :string, :null=>false
+    change_column "cards", "type_id", :integer, :null=>true
 
     drop_table "card_codenames"
   end

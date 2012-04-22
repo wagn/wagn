@@ -86,7 +86,7 @@ input:focus,
 select:focus,
 textarea:focus,
 body#tinymce:focus {
-  background: #fffff2;
+  background: #ffffee;
 }
 input[type=submit]:focus, 
 input[type=button]:focus {

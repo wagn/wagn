@@ -519,7 +519,7 @@ describe Wagn::Renderer, "" do
       it "should have a 'my card' link" do
         User.as :joe_user do
           assert_view_select render_card(:raw, :name=>'*account links'), 'span[id="logging"]' do
-            assert_select 'a[id="my-card-link"]', :text => 'My Card: Joe User'
+            assert_select 'a[id="my-card-link"]', :text => 'Joe User'
           end
         end
       end

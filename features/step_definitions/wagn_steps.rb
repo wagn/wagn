@@ -9,13 +9,13 @@ Given /^I log in as (.+)$/ do |user_card_name|
   fill_in("login", :with=> @current_user.email )
   fill_in("password", :with=> @current_user.login.split("_")[0]+"_pass")
   click_button("Sign me in")
-  page.should have_content("My Card: #{user_card_name}")
+  page.should have_content(user_card_name)
 end
 
 Given /^I log out/ do
   visit "/"
   click_link("Sign out")
-  page.should_not have_content("My Card")
+  page.should have_content("Sign in")
 end
 
 Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|

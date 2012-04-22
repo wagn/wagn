@@ -289,15 +289,11 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # TYPE (Class methods)
 
-    def typename_from_id(id) # get rid
-      Card[id].name
-    end
-    
     def type_id_from_name(name)
-      c=Card.fetch(name, :skip_virtual=>true)
+      c=Card.fetch(name, :skip_virtual=>true, :skip_modules=>true)
       warn (Rails.logger.warn "name2tid #{name} C:#{c}") if c.nil?
-      r= (c.nil? ? 0 : c.id)
-      Rails.logger.warn "name2tid #{name} #{r}"; r
+      r= (c.nil? ? nil : c.id)
+      #r= (c.nil? ? nil : c.id)
     end
 
     def typecode_from_name(name)
@@ -307,12 +303,13 @@ class Card < ActiveRecord::Base
       Rails.logger.warn "name2code #{c&&c.id} #{name} #{r}"; r
     end
     
+=begin
     def typecode_from_id(id)
       return nil if id.to_s == ?0
       r=
       Codename.code_attr(id, :codename) || (c=Card[id] and c.name)
       Rails.logger.warn "tid2code #{id}, #{r}"; r
-    end
+=end
 
     def type_id_from_code(code)
       r=
@@ -627,9 +624,28 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # TYPE
 
-  def type_card() Card[typename]                                               end
-  def typecode() type_id ? Card.typecode_from_id(type_id.to_i) : 'DefaultType' end
+  #def type_card() Card[typename]                                               end
+  def type_card()
+    r=(type_id == 0 ? nil : Card[type_id])
+    warn "type_card[#{type_id}, #{name}], #{r}"; r
+  end
+  def typecode()
+    nt= type_id == 0 ? '$NoType' : nil
+    #warn "tc 1 #{nt}"; return nt if nt
+    cn=Codename.code_attr(type_id, :codename)
+    #warn "tc 2 #{cn}"; return cn if cn
+    r=typename
+    #warn "tc 3 #{r}"; return r
+    #r= no_type || (cn=Codename.code_attr(type_id, :codename)) || typename
+    #warn "typecode #{name}, #{cn}, #{r}"; r
+  end
 
+  def typename()  nt=type_id == 0 ? '$NoType' : nil 
+    #warn "tn 1 #{nt}, #{type_id.inspect}"; return nt if nt
+    c=Card.fetch( type_id, :skip_modules=>true, :skip_virtual=>true )
+    warn "tn 2 #{type_id.inspect}" unless !c.nil? || type_id.nil?; return if c.nil?
+    c.name end
+=begin
   def typename
     tid = type_id.to_i
     if tid == 0
@@ -637,8 +653,7 @@ class Card < ActiveRecord::Base
     else
       Card.fetch( tid, :skip_modules=>true ).name
     end
-  end
-
+=end
 
   def type=(typename) self.type_id = Card.type_id_from_name(typename)        end
 
@@ -717,9 +732,9 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # MISCELLANEOUS
 
-  def to_s()  "#<#{self.class.name}[#{self.type_id}]#{self.attributes['name']}>" end
+  def to_s()  "#<#{self.class.name}[#{typecode}:#{self.type_id}]#{self.attributes['name']}>" end
   #def inspect()  "#<#{self.class.name}##{self.id}[#{self.typename}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}}:#{@set_names.inspect}>" end
-  def inspect()  "#<#{self.class.name}##{self.id}[#{self.type_id}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}} U:#{updater_id} C:#{creator_id}>" end
+  def inspect()  "#<#{self.class.name}##{self.id}[#{typecode}:#{self.type_id}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}} U:#{updater_id} C:#{creator_id}>" end
   def mocha_inspect()     to_s                                   end
 
 #  def trash

@@ -1,12 +1,12 @@
 # -*- encoding : utf-8 -*-
 module Wagn
-  class Cardname < String
+  class Cardname < Object
     require 'htmlentities'
 
 
     JOINT = '+'
-    BANNED_ARRAY = [ ?/, ?~, ?| ]
-    BANNED_RE = /#{ ([?[] + BANNED_ARRAY << JOINT )*?\\ }#{ ?] }/
+    BANNED_ARRAY = [ '/', '~', '|' ]
+    BANNED_RE = /#{ (['['] + BANNED_ARRAY << JOINT )*'\\' }]/
     CARDNAME_BANNED_CHARACTERS = BANNED_ARRAY * ' '
 
     FORMAL_JOINT = " <span class=\"wiki-joint\">#{JOINT}</span> "
@@ -25,13 +25,14 @@ module Wagn
     end
 
 
-    attr_reader :simple, :parts, :key
+    attr_reader :simple, :parts, :key, :s
     alias to_key key
+    alias to_s s
 
 
     def initialize str
-      super str
-      @key = if index JOINT
+      @s = str
+      @key = if str.index JOINT
           @parts = str.split(/\s*#{Regexp.escape(JOINT)}\s*/)
           @parts << '' if str.last == JOINT
           @simple = false
@@ -39,7 +40,7 @@ module Wagn
         else
           @parts = [str]
           @simple = true
-          blank? ? '' : generate_simple_key
+          str.blank? ? '' : generate_simple_key
         end
       @@name2cardname[str] = self
     end
@@ -49,7 +50,7 @@ module Wagn
     end
     
     def decode_html
-      @decoded ||= (index(?&) ?  HTMLEntities.new.decode(to_s) : to_s)
+      @decoded ||= (s.index('&') ?  HTMLEntities.new.decode(s) : s)
     end
     
     alias simple? simple
@@ -72,6 +73,7 @@ module Wagn
                obj.respond_to?(:to_cardname) ? obj.to_cardname.key : obj.to_s)
     end
 
+    def blank?()      s.blank?                                  end
     def size()        parts.size                                end
     def to_cardname() self                                      end
     def valid?()      not parts.find {|pt| pt.match(BANNED_RE)} end
@@ -86,7 +88,7 @@ module Wagn
       newpart = newpart.to_cardname unless Cardname===newpart
       if oldpart.simple?
         simple? ? (self == oldpart ? newpart : self) :
-                    parts.map{ |p| oldpart == p ? newpart : p }.to_cardname
+                    parts.map{ |p| oldpart == p ? newpart.to_s : p }.to_cardname
       elsif simple?
         self
       else
@@ -107,9 +109,9 @@ module Wagn
     def module_name()   gsub(/^\*/,'X_').gsub(/[\b\s]+/,'_').camelcase     end
     def css_name()      @css_name ||= key.gsub('*','X').gsub('+','-')      end
 
-    def to_star()       star? ? self : ?*+self                             end
-    def star?()         simple? and ?* == self[0]                          end
-    def tag_star?()     junction? and ?* == parts[-1][0]                   end
+    def to_star()       star? ? self : '*'+s                               end
+    def star?()         simple? and '*' == s[0]                            end
+    def tag_star?()     junction? and '*' == parts[-1][0]                  end
     alias rstar? tag_star?
     def trait_name(tagcode)
       tagname = Card::Codename[tagcode]
@@ -120,7 +122,7 @@ module Wagn
     alias empty? blank?
 
     def pre_cgi()       parts * '~plus~'                                   end
-    def escape()        gsub(' ','_').to_s                                 end
+    def escape()        s.gsub(' ','_')                                    end
 
     def to_url_key()
       @url_key ||= decode_html.gsub(/[^\*#{WORD_RE}\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')

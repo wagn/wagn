@@ -10,7 +10,8 @@ Feature: Seeing a card
   Scenario: Home page visit 
     When I go to the homepage
     Then I should see "Home"
-    And I should see "My Card: Joe User"
+    And I should see "Joe User"
+    And I should see "Sign out"
     And In the main card header I should see "Edit"
     Then In the main card header I click "close Home"
     And In the main card header I should not see "Edit"

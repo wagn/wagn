@@ -14,7 +14,7 @@ wagn.prepUrl = (url, slot)->
     item      = slot.attr 'item' 
     xtra['home_view'] = home_view if home_view?
     xtra['item']      = item      if item?
-    xtra['is_main']   = true      if slot.isMain
+    xtra['is_main']   = true      if slot.isMain()
   url + ( (if url.match /\?/ then '&' else '?') + $.param(xtra) )
 
 jQuery.fn.extend {

@@ -119,7 +119,7 @@ module Wagn
 
 
     attr_reader :card, :root, :showname #should be able to factor out showname
-    attr_accessor :form, :main_content, :main_card
+    attr_accessor :form, :main_content
 
     def render view = :view, args={}
       method = "render_#{canonicalize_view view}"
@@ -195,7 +195,7 @@ module Wagn
       @card = subcard
       @char_count = 0
       @depth += 1
-      @item_view = @main_content = @main_card = @showname = nil
+      @item_view = @main_content = @showname = nil
       opts.each { |key, value| instance_variable_set "@#{key}", value }
       self
     end
@@ -276,17 +276,16 @@ module Wagn
     end
   
     def expand_main opts
-      return wrap_main( @root.main_content ) if @root.main_content
+      return wrap_main( @main_content ) if @main_content
       [:item, :view, :size].each do |key|
         if val=params[key] and val.to_s.present?
           opts[key] = val.to_sym
         end
       end
-      opts[:tname] = @root.main_card.cardname # is this used?
       opts[:view] = @main_view || opts[:view] || :open
-      opts[:showname] = @root.main_card.name
-      with_inclusion_mode(:main) do
-        wrap_main process_inclusion(@root.main_card, opts)
+      opts[:showname] = root.card.name
+      with_inclusion_mode :main do
+        wrap_main process_inclusion( root.card, opts )
       end
     end
   

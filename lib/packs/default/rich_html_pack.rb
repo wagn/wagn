@@ -10,23 +10,21 @@ class Wagn::Renderer::Html
   end
 
   define_view :layout do |args|
-    if @main_content = args.delete(:main_content)
+    if @main_content = args.delete( :main_content )
       @card = Card.fetch_or_new '*placeholder'
-    else
-      @main_card = card
     end
 
-    layout_content = get_layout_content(args)
+    layout_content = get_layout_content args
 
-    args[:params] = params
+    args[:params] = params # EXPLAIN why this is needed
     process_content layout_content, args
   end
 
 
   define_view :content do |args|
-    c = _render_core(args)
-    c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
-    wrap(:content, args) { wrap_content(:content, c) }
+    wrap :content, args do
+      wrap_content :content, _render_core(args)
+    end
   end
 
   define_view :titled do |args|
@@ -86,7 +84,7 @@ class Wagn::Renderer::Html
     else
       %{
         <h1 class="page-header">
-          New #{ card.type_id == Card::DefaultTypeID && '' || card.typename } Card
+          New #{ card.type_id == Card::DefaultTypeID ? 'Card' : card.typename }
         </h1>
         #{ new_instruction }
         #{ new_content :cancel_href=>Card.path_setting('/*previous'), :cancel_class=>'redirecter' }
@@ -713,7 +711,6 @@ class Wagn::Renderer::Html
 
        <div class="edit-area">
          <div class="card-editor editor">#{ edit_slot args }</div>
-
          <div class="edit-button-area">
            #{ submit_tag 'Submit', :class=>'create-submit-button' }
            #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{args[:cancel_class]}", :href=>args[:cancel_href] }

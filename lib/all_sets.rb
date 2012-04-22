@@ -1,7 +1,7 @@
 module AllSets
   Wagn::Set::Right::Xaccount
   Wagn::Set::Right::Xsol
-  Wagn::Set::Type::Image
+  #Wagn::Set::Type::Image
   Wagn::Set::Type::Etherpad
   Wagn::Set::Type::Layout
   Wagn::Set::Type::Role
@@ -11,7 +11,7 @@ module AllSets
   Wagn::Set::Type::Search
   Wagn::Set::Type::Number
   Wagn::Set::Type::Basic
-  Wagn::Set::Type::Phrase
+  #Wagn::Set::Type::Phrase
   Wagn::Set::Type::HTML
   Wagn::Set::Type::Pointer
   Wagn::Set::Type::Cardtype

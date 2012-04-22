@@ -380,11 +380,11 @@ module Wagn
       
     def build_link href, text, known_card = nil
       #Rails.logger.warn "bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}"
-      klass = case href
+      klass = case href.to_s
         when /^https?:/; 'external-link'
         when /^mailto:/; 'email-link'
         when /^\//
-          href = full_uri href
+          href = full_uri href.to_s
           'internal-link'
         else
           known_card = !!Card.fetch(href, :skip_modules=>true) if known_card.nil?
@@ -394,7 +394,8 @@ module Wagn
           
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
           cardname = Cardname===href ? href : href.to_cardname
-          href = full_uri known_card ? cardname.to_url_key : CGI.escape(cardname.escape)
+          href = known_card ? cardname.to_url_key : CGI.escape(cardname.escape)
+          href = full_uri href.to_s
           known_card ? 'known-card' : 'wanted-card'
           
       end

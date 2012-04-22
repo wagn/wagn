@@ -26,7 +26,7 @@ module Wagn::Model::Fetch
         unless card
           needs_caching = true
           card = Card.find_by_id_and_trash card_id, false
-          raise "fetch of missing card_id #{cardname}" unless card
+          raise "fetch of missing card_id #{card_id}" unless card
         end
       else
         cardname = mark.to_cardname
@@ -40,7 +40,7 @@ module Wagn::Model::Fetch
         
         if card.nil? || (!opts[:skip_virtual] && card.type_id==0)
           needs_caching = true
-          new_args = { :name=>cardname, :skip_modules=>true }
+          new_args = { :name=>cardname.to_s, :skip_modules=>true }
           new_args[:type_id] = 0 if opts[:skip_virtual]
           card = new new_args
         end

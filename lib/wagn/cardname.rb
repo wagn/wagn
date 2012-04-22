@@ -110,8 +110,8 @@ module Wagn
     def css_name()      @css_name ||= key.gsub('*','X').gsub('+','-')      end
 
     def to_star()       star? ? self : '*'+s                               end
-    def star?()         simple? and '*' == s[0]                            end
-    def tag_star?()     junction? and '*' == parts[-1][0]                  end
+    def star?()         simple? and '*'[0] == s[0]                         end
+    def tag_star?()     junction? and '*'[0] == parts[-1][0]               end
     alias rstar? tag_star?
     def trait_name(tagcode)
       tagname = Card::Codename[tagcode]

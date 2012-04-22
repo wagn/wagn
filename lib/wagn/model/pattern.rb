@@ -89,7 +89,7 @@ module Wagn::Model
       def method_key_from_opts opts            
         method_key || begin
           parts = opt_keys.map do |opt_key|
-            opts[opt_key].to_cardname.css_name
+            opts[opt_key].to_s.gsub('+', '-')
           end << key
           parts.join '_'
         end
@@ -162,6 +162,7 @@ module Wagn::Model
     register 'type', :type
     def self.label(name)              %{All "#{name}" cards}     end
     def self.prototype_args(base)     {:type=>base}              end
+    def self.pattern_applies?(card)   card.type_id.to_i!=0       end
     def self.trunk_name(card)         card.typename              end
   end
 

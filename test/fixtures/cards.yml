@@ -1452,7 +1452,7 @@ cards_066:
   read_rule_id: '500'
   references_expired: 
   trash: f
-  type_id: 
+  type_id: 3
   creator_id: '1'
   updater_id: '1'
 cards_067:
@@ -1476,7 +1476,7 @@ cards_067:
   read_rule_id: '500'
   references_expired: 
   trash: f
-  type_id: 
+  type_id: 259
   creator_id: '1'
   updater_id: '1'
 cards_068:
@@ -1500,7 +1500,7 @@ cards_068:
   read_rule_id: '500'
   references_expired: 
   trash: f
-  type_id: 
+  type_id: 3
   creator_id: '1'
   updater_id: '1'
 cards_069:
@@ -1644,7 +1644,7 @@ cards_074:
   read_rule_id: '500'
   references_expired: 
   trash: f
-  type_id: 
+  type_id: '47'
   creator_id: '1'
   updater_id: '1'
 cards_075:

@@ -42,7 +42,7 @@ cards_002:
   read_rule_id: 500
   references_expired: 
   trash: false
-  type_id: 
+  type_id: 3
 cards_003: 
   id: 578
   name: Role+*users+*type plus right
@@ -64,7 +64,7 @@ cards_003:
   read_rule_id: 500
   references_expired: 
   trash: false
-  type_id: 
+  type_id: 259
   creator_id: 1
   updater_id: 1
 cards_004: 
@@ -88,7 +88,7 @@ cards_004:
   read_rule_id: 500
   references_expired: 
   trash: false
-  type_id: 
+  type_id: 3
   creator_id: 1
   updater_id: 1
 cards_005: 
@@ -232,7 +232,7 @@ cards_010:
   read_rule_id: 500
   references_expired: 
   trash: false
-  type_id: 
+  type_id: 47
   creator_id: 1
   updater_id: 1
 cards_011: 

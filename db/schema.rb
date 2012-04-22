@@ -62,7 +62,7 @@ ActiveRecord::Schema.define(:version => 20120327100000) do
     t.integer  "read_rule_id"
     t.integer  "references_expired"
     t.boolean  "trash",               :null => false
-    t.integer  "type_id"
+    t.integer  "type_id",             :null => false
     t.integer  "created_by"
     t.integer  "updated_by"
   end
@@ -73,7 +73,7 @@ ActiveRecord::Schema.define(:version => 20120327100000) do
   add_index "cards", ["read_rule_id"], :name => "index_cards_on_read_rule_id"
   add_index "cards", ["tag_id"], :name => "index_cards_on_tag_id"
   add_index "cards", ["trunk_id"], :name => "index_cards_on_trunk_id"
-  add_index "cards", ["typecode"], :name => "card_type_index"
+  add_index "cards", ["type_id"], :name => "card_type_index"
 
   create_table "cardtypes", :force => true do |t|
     t.string  "class_name"

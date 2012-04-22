@@ -290,27 +290,16 @@ class Card < ActiveRecord::Base
   # TYPE (Class methods)
 
     def type_id_from_name(name)
-      c=Card.fetch(name, :skip_virtual=>true, :skip_modules=>true)
-      warn (Rails.logger.warn "name2tid #{name} C:#{c}") if c.nil?
-      r= (c.nil? ? nil : c.id)
-      #r= (c.nil? ? nil : c.id)
+      c=Card.fetch(name, :skip_virtual=>true, :skip_modules=>true) and c.id
     end
 
     def typecode_from_name(name)
-      typekey = name.to_cardname.key
+      return nil if (tid = type_id_from_name name) == 0
       r=
-      Codename.code_attr(typekey, :codename) || (c=Card[typekey] and c.name)
-      Rails.logger.warn "name2code #{c&&c.id} #{name} #{r}"; r
+      Codename.code_attr(tid, :codename)
+      Rails.logger.warn "name2code #{tid}, #{name} #{r}"; r
     end
     
-=begin
-    def typecode_from_id(id)
-      return nil if id.to_s == ?0
-      r=
-      Codename.code_attr(id, :codename) || (c=Card[id] and c.name)
-      Rails.logger.warn "tid2code #{id}, #{r}"; r
-=end
-
     def type_id_from_code(code)
       r=
       Card::Codename.card_attr(code, :id) || (c=Card[code] and c.id)
@@ -490,7 +479,7 @@ class Card < ActiveRecord::Base
 
   def rescue_save(e, method)
     expire_pieces
-    Rails.logger.info "Model exception #{method}:#{e.message} #{name}"
+    warn (Rails.logger.info "Model exception #{method}:#{e.message} #{name}")
     Rails.logger.debug e.backtrace*"\n"
     raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
   end
@@ -624,36 +613,14 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # TYPE
 
-  #def type_card() Card[typename]                                               end
-  def type_card()
-    r=(type_id == 0 ? nil : Card[type_id])
-    warn "type_card[#{type_id}, #{name}], #{r}"; r
-  end
+  def type_card() type_id == 0 ? nil : Card[type_id] end
   def typecode()
-    nt= type_id == 0 ? '$NoType' : nil
-    #warn "tc 1 #{nt}"; return nt if nt
-    cn=Codename.code_attr(type_id, :codename)
-    #warn "tc 2 #{cn}"; return cn if cn
-    r=typename
-    #warn "tc 3 #{r}"; return r
-    #r= no_type || (cn=Codename.code_attr(type_id, :codename)) || typename
-    #warn "typecode #{name}, #{cn}, #{r}"; r
+    type_id==0 ? nil : Codename.code_attr( type_id,:codename ) || typename
   end
-
-  def typename()  nt=type_id == 0 ? '$NoType' : nil 
-    #warn "tn 1 #{nt}, #{type_id.inspect}"; return nt if nt
-    c=Card.fetch( type_id, :skip_modules=>true, :skip_virtual=>true )
-    warn "tn 2 #{type_id.inspect}" unless !c.nil? || type_id.nil?; return if c.nil?
-    c.name end
-=begin
-  def typename
-    tid = type_id.to_i
-    if tid == 0
-      '$NoType'
-    else
-      Card.fetch( tid, :skip_modules=>true ).name
-    end
-=end
+  def typename()
+    type_id.to_i==0 ? nil :
+      c=Card.fetch(type_id, :skip_modules=>true, :skip_virtual=>true) and c.name
+  end
 
   def type=(typename) self.type_id = Card.type_id_from_name(typename)        end
 

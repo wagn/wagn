@@ -8,7 +8,7 @@ class AccountController < ApplicationController
   def signup
     raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?  #ENGLISH
     c=Card.new(:type_id=>Card::InvitationRequestID)
-    warn "signup ok? #{c.inspect}, #{c.ok? :create}" #ENGLISH
+    #warn "signup ok? #{c.inspect}, #{c.ok? :create}" #ENGLISH
     raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless c.ok? :create #ENGLISH
     #raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card.new(:typecode=>:InvitationRequest).ok? :create #ENGLISH
 

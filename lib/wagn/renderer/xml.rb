@@ -35,11 +35,11 @@ module Wagn
 
   def build_link href, text, known_card=nil
     #Rails.logger.warn "bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}"
-    klass = case href
+    klass = case href.to_s
       when /^https?:/; 'external-link'
       when /^mailto:/; 'email-link'
       when /^\//
-        href = full_uri(href)
+        href = full_uri href.to_s
         'internal-link'
       else
         known_card = !!Card.fetch(href, :skip_modules=>true) if known_card.nil?
@@ -51,7 +51,7 @@ module Wagn
 
         return %{<cardlink class="#{
                     known_card ? 'known-card' : 'wanted-card'
-                  }" card="#{href.to_s}">#{text}</cardlink>}
+                  }" card="#{href}">#{text}</cardlink>}
       end
     %{<link class="#{klass}" href="#{href}">#{text}</link>}
   end   

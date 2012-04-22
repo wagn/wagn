@@ -3,30 +3,28 @@ class Wagn::Renderer::Html
     @main_view = args[:view] || params[:view] || params[:home_view]
     
     if ajax_call?
-      self.render(@main_view || :open)
+      self.render( @main_view || :open )
     else
       self.render_layout
     end
   end
 
   define_view :layout do |args|
-    if @main_content = args.delete(:main_content)
+    if @main_content = args.delete( :main_content )
       @card = Card.fetch_or_new '*placeholder'
-    else
-      @main_card = card
     end
 
-    layout_content = get_layout_content(args)
+    layout_content = get_layout_content args
     
-    args[:params] = params 
-    process_content(layout_content, args)
+    args[:params] = params # EXPLAIN why this is needed
+    process_content layout_content, args
   end
 
 
   define_view :content do |args|
-    c = _render_core(args)
-    c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
-    wrap(:content, args) { wrap_content(:content, c) }
+    wrap :content, args do
+      wrap_content :content, _render_core(args)
+    end
   end
 
   define_view :titled do |args|
@@ -86,7 +84,7 @@ class Wagn::Renderer::Html
     else
       %{
         <h1 class="page-header">
-          New #{ card.typecode == 'Basic' && '' || card.typename } Card
+          New #{ card.typecode == 'Basic' ? 'Card' : card.typename }
         </h1>
         #{ new_instruction }
         #{ new_content :cancel_href=>Card.path_setting('/*previous'), :cancel_class=>'redirecter' }

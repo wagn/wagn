@@ -24,8 +24,8 @@ class CodenameTable < ActiveRecord::Migration
 
       anyone_signed_in anyone administrator anonymous wagn_bot
 
-      Basic Cardtype Date File Html Image AccountRequest Number Phrase
-      PlainText Pointer Role Search Set Setting Toggle User
+      basic cardtype date file html image account_request number phrase
+      plain_text pointer role search set setting toggle user
     } # FIXME: *declare, *sol ... need to be in packs
 
   def self.name2code(name)

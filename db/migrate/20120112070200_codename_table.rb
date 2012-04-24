@@ -20,9 +20,11 @@ class CodenameTable < ActiveRecord::Migration
       *title *to *type *watching *type_plus_right *update *users *version
       *watchers *when_created *when_last_edited
 
-      *declare *declare_help *sol *pad_options
+      *declare *declare_help *sol *pad_options etherpad
 
       anyone_signed_in anyone administrator anonymous wagn_bot
+
+      *double_click *favicon
 
       basic cardtype date file html image account_request number phrase
       plain_text pointer role search set setting toggle user
@@ -47,7 +49,7 @@ class CodenameTable < ActiveRecord::Migration
 
     Card.as Card::WagbotID do
       CodenameTable::CODENAMES.each do |name|
-        if card = Card[name] # || Card.create!(:name=>name)
+        if card = Card[name] || Card.create!(:name=>name)
           card or raise "Missing codename #{name} card"
         
           warn Rails.logger.warn("codename for #{name}, #{CodenameTable.name2code(name)}")

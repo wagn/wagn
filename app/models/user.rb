@@ -64,18 +64,13 @@ class User < ActiveRecord::Base
     def [](key)
       #warn (Rails.logger.info "Looking up USER[ #{key}]")
 
-      key = case key
+      @card, key = case key
         when Integer
-          card_id = key
-          @card = Card[card_id]
-          "##{key}"
+          [Card[key], "##{key}"]
         when Card;
-          @card = key
-          key.key
+          [key, key.key]
         else
-          @card = (card_id = Card::Codename.code2id(key.to_s)) ?
-                    Card[card_id] : @card = Card[key.to_s]
-          key.to_s
+          [Card[(card_id=Card::Codename[key.to_s]) ? card_id : key.to_s], key.to_s]
         end
 
       usr = self.cache.read(key.to_s)

@@ -10,7 +10,7 @@ class AccountController < ApplicationController
     c=Card.new(:type_id=>Card::InvitationRequestID)
     #warn "signup ok? #{c.inspect}, #{c.ok? :create}" #ENGLISH
     raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless c.ok? :create #ENGLISH
-    #raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card.new(:typecode=>:InvitationRequest).ok? :create #ENGLISH
+    #raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card.new(:typecode=>:invitation_request).ok? :create #ENGLISH
 
     user_args = (params[:user]||{}).merge(:status=>'pending').symbolize_keys
     @user = User.new( user_args ) #does not validate password

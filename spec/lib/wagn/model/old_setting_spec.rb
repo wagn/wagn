@@ -8,7 +8,7 @@ describe Card do
   describe "setting data setup" do
     it "should make Set of +*type" do
       Card.create! :name=>"SpeciForm", :type=>'Cardtype'
-      Card.create!( :name=>"SpeciForm+*type" ).typecode.should == "Set"
+      Card.create!( :name=>"SpeciForm+*type" ).typecode.should == "set"
     end
   end
 

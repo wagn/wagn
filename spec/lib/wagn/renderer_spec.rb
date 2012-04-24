@@ -148,6 +148,7 @@ describe Wagn::Renderer, "" do
         Card.as(Card::WagbotID) do
           card = Card['A+B']
           @simple_page = Wagn::Renderer::Html.new(card).render(:layout)
+          #warn "render sp: #{card.inspect} :: #{@simple_page}"
         end
       end
 
@@ -194,9 +195,12 @@ describe Wagn::Renderer, "" do
       before do
         Card.as(Card::WagbotID) do
           @layout_card = Card.create(:name=>'tmp layout', :type=>'Layout')
+          warn "layout #{@layout_card.inspect}"
         end
+        @layout_card.should be
         c = Card['*all+*layout'] and c.content = '[[tmp layout]]'
         @main_card = Card.fetch('Joe User')
+        warn "lay #{@layout_card.inspect}, #{@main_card.inspect}"
       end
 
       it "should default to core view for non-main inclusions when context is layout_0" do
@@ -331,7 +335,7 @@ describe Wagn::Renderer, "" do
       card = Card.new(:type=>'Cardtype E')
       mock(card).rule_card(:thanks, nil, {:skip_modules=>true}).returns(nil)
       mock(card).rule_card(:autoname).returns(nil)
-      mock(card).rule_card(:content,:default,:skip_module_loading=>false).returns(content_card)
+      mock(card).rule_card(:content,:default,:skip_modules=>false).returns(content_card)
       mock(card).rule_card(:add_help,:edit_help).returns(help_card)
       assert_view_select Wagn::Renderer::Html.new(card).render_new, 'div[class="field-in-multi"]' do
         assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', "card[cards][~plus~Yoruba][content]"

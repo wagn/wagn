@@ -39,7 +39,7 @@ class AccountRequestTest < ActionController::TestCase
     @card =  Card.find_by_name("Word Third")   
     @user = User.where(:card_id=>@card.id).first
     
-    @card.typecode.should == 'InvitationRequest'
+    @card.typecode.should == 'invitation_request'
 
     # this now happens only when created via account controller
     

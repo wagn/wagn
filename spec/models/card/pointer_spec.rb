@@ -56,7 +56,7 @@ describe Wagn::Set::Type::Pointer do
   context "watching" do
     it "not break on permissions" do
       watchers = Card.fetch_or_new "Home+*watchers"
-      watchers.typecode.should == 'Pointer'
+      watchers.typecode.should == 'pointer'
       watchers << Card.user_id
       assert_equal '[[Joe User]]', watchers.content
     end

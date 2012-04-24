@@ -105,7 +105,15 @@ class Card < ActiveRecord::Base
 
   class << self
     def const_missing(const)
-      if code=CODE_CONST[const] and val=code2id(code)
+      #if const.to_s =~ /^([A-Z]\S*)ID$/ and cn=$1.underscore
+      #  code = CODE_ALIAS[cn] || cn
+      #  if card_id = Card::Codename[code]
+      #    const_set const, card_id
+      #  else raise "Missing codename #{code} (#{const})"
+      #  end
+
+      if code=CODE_CONST[const] and val=Card::Codename[code]
+        #warn "cm #{const}, #{code}, #{val}"
         const_set const, val
       else
         super
@@ -113,18 +121,19 @@ class Card < ActiveRecord::Base
     end
   end
 
+  #CODE_ALIAS 'default_type => 'basic', 'anon'=> 'anonymous',
+  # 'auth' => 'anyone_signed_in', 'admin'=>'administrator' }
 
-  CODE_CONST = { :DefaultTypeID => 'Basic', :BasicID=> 'Basic',
-    :CardtypeID=> 'Cardtype', :ImageID=> 'Image',
-    :InvitationRequestID=>'InvitationRequest', :NumberID=> 'Number',
-    :PhraseID=> 'Phrase', :PointerID=> 'Pointer', :RoleID=> 'Role',
-    :SearchID=> 'Search', :SetID=> 'Set', :SettingID=> 'Setting',
-    :UserID=> 'User', :WagbotID=> 'wagbot', :AnonID=> 'anonymous',
-    :AnyoneID=> 'anyone', :AuthID => 'anyone_signed_in',
-    :AdminID=>'administrator',
-    :CreateID=> 'create', 
-    :ReadID=> 'read', :UpdateID=> 'update',
-    :RolesID=> 'roles', :UsersID=>'user',
+  CODE_CONST = { :DefaultTypeID => 'basic', :BasicID=> 'basic',
+    :CardtypeID=> 'cardtype', :ImageID=> 'image',
+    :InvitationRequestID=>'invitation_request', :NumberID=> 'number',
+    :PhraseID=> 'phrase', :PointerID=> 'pointer', :RoleID=> 'role',
+    :SearchID=> 'search', :SetID=> 'set', :SettingID=> 'setting',
+    :UserID=> 'user', :WagbotID=> 'wagbot', :AnonID=> 'anonymous',
+    :AnyoneID=> 'anyone', :AuthID => 'anyone_signed_in', :RecentID => 'recent',
+    :RelatedID=> 'related',
+    :AdminID=>'administrator', :CreateID=> 'create', :DateID=>'date',
+    :ReadID=> 'read', :UpdateID=> 'update', :RolesID=> 'roles'
   }
 
   public
@@ -138,26 +147,26 @@ class Card < ActiveRecord::Base
   class << self
     def user_id() @@user_id ||= Card::AnonID end
     def user_card()
-      @@user_card && @@user_card.id == user_id ?
-        @@user_card : @@user_card = Card[user_id]
+      (uc=@@user_card and uc.id == user_id) ? uc : @@user_card = Card[user_id]
     end
     def user
-      @@user && @@user.card_id == user_id ?
-        @@user : @@user = user_card.to_user
+      (u=@@user and u.card_id == user_id) ? u : @@user = user_card.to_user
     end
 
     def user=(user) @@as_user_id=nil; @@user_id = user2id(user)
       #warn "user=#{user.inspect}, As:#{@@as_user_id}, C:#{@@user_id}"; @@user_id
     end
+
     def user2id(user)
       case user
-        when NilClass; nil
-        when User; user.card_id
-        when Card; user.id
-        when Integer; user
+        when NilClass;   nil
+        when User    ;   user.card_id
+        when Card    ;   user.id
+        when Integer ;   user
         else
           user = user.to_s
-          Card::Codename.code2id(user) or (cd=Card[user] and cd.id)
+          #warn "u2id #{user}, #{Card::Codename[user]}"
+          Card::Codename[user] or (cd=Card[user] and cd.id)
       end
     end
 
@@ -248,7 +257,7 @@ class Card < ActiveRecord::Base
 
     def code2id code
       code = code.to_s
-      unless card_id=Card::Codename.card_attr(code, :id)
+      unless card_id=Card::Codename[code]
         return 1 if code.to_s == 'wagbot' # to bootstrapping codenames
         warn "unknown codename: #{code}"
       else card_id end
@@ -272,11 +281,11 @@ class Card < ActiveRecord::Base
       end.flatten
     end
 
-    NON_CREATEABLE_TYPES = [ :InvitationRequest, :Setting, :Set ]
+    NON_CREATEABLE_TYPES = %w{ invitation_request setting set }
 
     def createable_types
       type_names = Card.as(Card::WagbotID) do
-        Card.search :type=>Card::Codename.cardname(Card::CardtypeID), :return=>:name
+        Card.search :type=>Card::CardtypeID, :return=>:name
       end
       noncreateable_names = NON_CREATEABLE_TYPES.map do |code|
         Card::Codename.cardname code
@@ -294,15 +303,16 @@ class Card < ActiveRecord::Base
     end
 
     def typecode_from_name(name)
-      return nil if (tid = type_id_from_name name) == 0
+      raise "zero type_id" if (tid = type_id_from_name name) == 0
+      return nil if tid.nil?
       r=
-      Codename.code_attr(tid, :codename)
+      Codename.codename(tid)
       Rails.logger.warn "name2code #{tid}, #{name} #{r}"; r
     end
     
     def type_id_from_code(code)
       r=
-      Card::Codename.card_attr(code, :id) || (c=Card[code] and c.id)
+      Card::Codename[code] || (c=Card[code] and c.id)
       Rails.logger.warn "code2tid #{r} #{code}"; r
     end
   end
@@ -406,7 +416,6 @@ class Card < ActiveRecord::Base
     @from_trash = false
     Wagn::Hook.call :after_create, self if @was_new_card
     send_notifications
-    Card::Codename.reset_cache if type_id == Card::CardtypeID
     true
   rescue Exception=>e
     @subcards.each{ |card| card.expire_pieces }
@@ -479,8 +488,9 @@ class Card < ActiveRecord::Base
 
   def rescue_save(e, method)
     expire_pieces
-    warn (Rails.logger.info "Model exception #{method}:#{e.message} #{name}")
-    Rails.logger.debug e.backtrace*"\n"
+    #warn "Model exception #{method}:#{e.message} #{name}"
+    Rails.logger.info "Model exception #{method}:#{e.message} #{name}"
+    Rails.logger.debug "BT [[[\n#{ e.backtrace*"\n"} \n]]]"
     raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
   end
 
@@ -613,13 +623,20 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # TYPE
 
-  def type_card() type_id == 0 ? nil : Card[type_id] end
+  def type_card()
+    raise "type_id zero" if type_id == 0
+    raise "type_id nil" if type_id.nil?
+    Card[type_id] end
   def typecode()
-    type_id==0 ? nil : Codename.code_attr( type_id,:codename ) || typename
+    raise "type_id zero" if type_id == 0
+    raise "type_id nil" if type_id.nil?
+    Codename.codename( type_id ) || type_card.key # Should we fallback to key?
   end
   def typename()
-    type_id.to_i==0 ? nil :
-      c=Card.fetch(type_id, :skip_modules=>true, :skip_virtual=>true) and c.name
+    raise "type_id zero" if type_id == 0
+    warn "type_id nil" if type_id.nil?
+    return if type_id.nil?
+    c=Card.fetch(type_id, :skip_modules=>true, :skip_virtual=>true) and c.name
   end
 
   def type=(typename) self.type_id = Card.type_id_from_name(typename)        end
@@ -650,7 +667,7 @@ class Card < ActiveRecord::Base
     rev_index = revisions.each_with_index do |rev, index|
       rev.id == revision.id ? (break index) : nil
     end
-    (rev_index.nil? || rev_index==0) ? nil : revisions[rev_index - 1]
+    (rev_index.to_i==0) ? nil : revisions[rev_index - 1]
   end
 
   def revised_at
@@ -699,9 +716,8 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # MISCELLANEOUS
 
-  def to_s()  "#<#{self.class.name}[#{typecode}:#{self.type_id}]#{self.attributes['name']}>" end
-  #def inspect()  "#<#{self.class.name}##{self.id}[#{self.typename}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}}:#{@set_names.inspect}>" end
-  def inspect()  "#<#{self.class.name}##{self.id}[#{typecode}:#{self.type_id}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}} U:#{updater_id} C:#{creator_id}>" end
+  def to_s()  "#<#{self.class.name}[#{typename}:#{self.type_id}]#{self.attributes['name']}>" end
+  def inspect()  "#<#{self.class.name}##{self.id}[#{typename}:#{self.type_id}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}} U:#{updater_id} C:#{creator_id}>" end
   def mocha_inspect()     to_s                                   end
 
 #  def trash

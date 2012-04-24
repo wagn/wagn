@@ -1,7 +1,7 @@
 --- 
 card_codenames_001: 
   card_id: "259"
-  codename: "Set"
+  codename: "set"
 card_codenames_002: 
   card_id: "15"
   codename: "anonymous"
@@ -19,7 +19,7 @@ card_codenames_006:
   codename: "signup"
 card_codenames_007: 
   card_id: "278"
-  codename: "Setting"
+  codename: "setting"
 card_codenames_008: 
   card_id: "1"
   codename: "wagbot"
@@ -37,10 +37,10 @@ card_codenames_012:
   codename: "star"
 card_codenames_013: 
   card_id: "51"
-  codename: "Toggle"
+  codename: "toggle"
 card_codenames_014: 
   card_id: "3"
-  codename: "Basic"
+  codename: "basic"
 card_codenames_015: 
   card_id: "474"
   codename: "account_link"
@@ -55,10 +55,10 @@ card_codenames_018:
   codename: "subject"
 card_codenames_019: 
   card_id: "4"
-  codename: "User"
+  codename: "user"
 card_codenames_020: 
   card_id: "5"
-  codename: "Cardtype"
+  codename: "cardtype"
 card_codenames_021: 
   card_id: "89"
   codename: "table_of_contents"
@@ -73,10 +73,10 @@ card_codenames_024:
   codename: "option_label"
 card_codenames_025: 
   card_id: "18"
-  codename: "File"
+  codename: "file"
 card_codenames_026: 
   card_id: "17"
-  codename: "Date"
+  codename: "date"
 card_codenames_027: 
   card_id: "172"
   codename: "tagged"
@@ -106,7 +106,7 @@ card_codenames_035:
   codename: "plu_card"
 card_codenames_036: 
   card_id: "19"
-  codename: "Image"
+  codename: "image"
 card_codenames_037: 
   card_id: "55"
   codename: "title"
@@ -124,7 +124,7 @@ card_codenames_041:
   codename: "plu_part"
 card_codenames_042: 
   card_id: "12"
-  codename: "InvitationRequest"
+  codename: "invitation_request"
 card_codenames_043: 
   card_id: "64"
   codename: "to"
@@ -142,7 +142,7 @@ card_codenames_047:
   codename: "read"
 card_codenames_048: 
   card_id: "20"
-  codename: "Number"
+  codename: "number"
 card_codenames_049: 
   card_id: "266"
   codename: "type"
@@ -160,7 +160,7 @@ card_codenames_053:
   codename: "includer"
 card_codenames_054: 
   card_id: "52"
-  codename: "Phrase"
+  codename: "phrase"
 card_codenames_055: 
   card_id: "222"
   codename: "watching"
@@ -175,7 +175,7 @@ card_codenames_058:
   codename: "referred_to_by"
 card_codenames_059: 
   card_id: "22"
-  codename: "PlainText"
+  codename: "plain_text"
 card_codenames_060: 
   card_id: "262"
   codename: "type_plus_right"
@@ -190,7 +190,7 @@ card_codenames_063:
   codename: "refer_to"
 card_codenames_064: 
   card_id: "47"
-  codename: "Pointer"
+  codename: "pointer"
 card_codenames_065: 
   card_id: "480"
   codename: "update"
@@ -205,7 +205,7 @@ card_codenames_068:
   codename: "related"
 card_codenames_069: 
   card_id: "7"
-  codename: "Role"
+  codename: "role"
 card_codenames_070: 
   card_id: "574"
   codename: "users"
@@ -220,7 +220,7 @@ card_codenames_073:
   codename: "request"
 card_codenames_074: 
   card_id: "30"
-  codename: "Search"
+  codename: "search"
 card_codenames_075: 
   card_id: "473"
   codename: "version"
@@ -307,4 +307,4 @@ card_codenames_102:
   codename: "missing_link"
 card_codenames_103: 
   card_id: "50"
-  codename: "HTML"
+  codename: "html"

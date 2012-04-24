@@ -4,9 +4,9 @@ class Wagn::Renderer
     
     title = root.card && root.card.name
     title = params[:action] if [nil, '', '*placeholder'].member? title
-    bits = ["<title>#{title ? "#{title} - " : ''}#{ Card.setting('*title') }</title>"]
+    bits = ["<title>#{title ? "#{title} - " : ''}#{ Card.setting('title') }</title>"]
 
-    if (favicon_card = Card['*favicon'] || Card['*logo']) and favicon_card.type_id == Card::ImageID
+    if (favicon_card = Card[Card::Codename[:favicon]] || Card[Card::Codename[:logo]]) and favicon_card.type_id == Card::ImageID
       bits << %{<link rel="shortcut icon" href="#{ subrenderer(favicon_card)._render_source :size=>:icon }" />}
     end
     
@@ -29,7 +29,7 @@ class Wagn::Renderer
     
     bits << stylesheet_link_tag('application-all')
     bits << stylesheet_link_tag('application-print', :media=>'print')
-    if css_card = Card['*css']
+    if css_card = Card[Card::Codename[:css]]
       local_css_path = wagn_path "*css.css?#{ css_card.current_revision_id }"
       bits << stylesheet_link_tag(local_css_path)
     end
@@ -41,11 +41,11 @@ class Wagn::Renderer
       wagn.rootPath = '#{Wagn::Conf[:root_path]}';
       window.tinyMCEPreInit = {base:"#{wagn_path 'assets/tinymce'}",query:"3.4.7",suffix:""}; 
       #{ Wagn::Conf[:recaptcha_on] ? %{wagn.recaptchaKey = "#{Wagn::Conf[:recaptcha_public_key]}";} : '' }
-      #{ (c=Card['*double click'] and !Card.toggle(c.content)) ? 'wagn.noDoubleClick = true' : '' }      
+      #{ (c=Card[Card::Codename[:double_click]] and !Card.toggle(c.content)) ? 'wagn.noDoubleClick = true' : '' }      
       #{ local_css_path ? %{ wagn.local_css_path = '#{local_css_path}'; } : '' }
       ) +
       #  TEMPORARY we probably want this back once we have fingerprinting on this file - EFM
-      %( wagn.tinyMCEConfig = { #{Card.setting('*tiny mce')} };
+      %( wagn.tinyMCEConfig = { #{Card.setting('tiny_mce')} };
     </script>      
           )
     bits << javascript_include_tag('application')

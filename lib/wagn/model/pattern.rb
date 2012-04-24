@@ -8,6 +8,7 @@ module Wagn::Model
     def self.method_key(opts)
       @@subclasses.each do |pclass|
         if !pclass.opt_keys.map(&opts.method(:has_key?)).member? false; 
+          #warn "mk[#{pclass}] #{opts.inspect}"
           return pclass.method_key_from_opts(opts) 
         end
       end
@@ -40,8 +41,14 @@ module Wagn::Model
     def real_set_names() set_names.find_all &Card.method(:exists?)                              end
     def css_names()      patterns.map(&:css_name).reverse*" "                                   end
     def set_modules()    @set_modules ||= patterns_without_new.reverse.map(&:set_const).compact end
-    def set_names()      @set_names   ||= patterns.map(&:to_s)                                  end
-    def method_keys()    @method_keys ||= patterns.map(&:get_method_key).compact                end
+    def set_names()      @set_names   ||= patterns.map(&:to_s)
+      #warn "sn #{@set_names.inspect}"; @set_names
+    end
+    def method_keys()
+      rr =
+      @method_keys ||= patterns.map(&:get_method_key).compact
+      #warn "mks[#{inspect}] #{rr.inspect}"; rr
+    end
   end
 
 
@@ -76,7 +83,13 @@ module Wagn::Model
       def junction_only?()  !!self.junction_only                   end
       def trunkless?()      !!self.method_key                      end # method key determined by class only when no trunk involved
       def new(card)         super(card) if pattern_applies?(card)  end
-      def key_name()        Card::Codename[self.key] || self.key   end
+      def key_name()
+        @key_name ||= begin
+                        r=(cn=Card::Codename[self.key] and c=Card[cn] and c.name)
+
+        #warn "kn sk:#{self.key}, cn: #{cn.inspect}, C:#{c.inspect}, kn:#{r.inspect}"; r
+                      end
+      end
 
       def register key, opt_keys, opts={}
         Wagn::Model::Pattern.register_class self
@@ -84,15 +97,18 @@ module Wagn::Model
         self.key = key
         self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]
         opts.each { |key, val| self.send "#{key}=", val }
+        #warn "reg K:#{self}[#{self.key}] OK:[#{opt_keys.inspect}] jo:#{junction_only.inspect}, mk:#{method_key.inspect}"
       end
       
       def method_key_from_opts opts            
+        r=
         method_key || begin
           parts = opt_keys.map do |opt_key|
             opts[opt_key].to_s.gsub('+', '-')
           end << key
           parts.join '_'
         end
+        #warn "mkfo #{opts.inspect} #{r}"; r
       end
       
       def pattern_applies?(card)
@@ -118,21 +134,33 @@ module Wagn::Model
     end
     
     def get_method_key()
+      tkls_key = self.class.method_key
+      #warn "tkls[#{@trunk_name}] #{tkls_key.inspect}" if tkls_key
+      return tkls_key if tkls_key
       return self.class.method_key if self.class.trunkless?
       opts = {}
+      ov = opt_vals
+      #warn "gmkey [#{@trunk_name.inspect}] ov:#{ov.inspect}, ok:#{opt_keys.inspect}"
       opt_keys.each_with_index do |key, index|
         return nil unless opt_vals[index]
         opts[key] = opt_vals[index]
       end
-      self.class.method_key_from_opts opts
+      r=self.class.method_key_from_opts opts
+      #warn "gmkey[#{@trunk_name}] #{opt_keys.inspect}, #{opts.inspect}, R:#{r}";r
     end
     
     def inspect()       "<#{self.class} #{to_s.to_cardname.inspect}>" end
 
     def opt_vals
-      self.class.trunkless? ? [] : @trunk_name.parts.map do |part|
-        Card::Codename.codename part.to_cardname.key
+      if @opt_vals.nil?
+        @opt_vals = self.class.trunkless? ? [] : @trunk_name.parts.map do |part|
+          r=(card=Card.fetch(part, :skip_virtual=>true, :skip_modules=>true) and
+            Card::Codename.codename(card.id.to_i))
+          #warn "ovx[#{card.nil? ? 'no card' : card.id.inspect}] #{r.inspect}"; r
+        end
+        #warn "calc ov[#{to_s}] #{@opt_vals.inspect}"
       end
+      @opt_vals
     end
 
     def to_s()
@@ -162,7 +190,10 @@ module Wagn::Model
     register 'type', :type
     def self.label(name)              %{All "#{name}" cards}     end
     def self.prototype_args(base)     {:type=>base}              end
-    def self.pattern_applies?(card)   card.type_id.to_i!=0       end
+    def self.pattern_applies?(card)
+      raise "zero type" if card.type_id == 0
+      return false if card.type_id.nil?
+      true       end
     def self.trunk_name(card)         card.typename              end
   end
 

@@ -13,10 +13,10 @@ module Wagn::Model::Settings
 =end
 
   def rule_card setting_name, fallback=nil, extra_fetch_args={}
-    #warn "rule_card #{setting_name}, #{fallback}, #{extra_fetch_args.inspect}"
+    #warn "rule_card #{setting_name}, #{fallback}, #{extra_fetch_args.inspect} RSN:#{real_set_names.inspect}"
     fetch_args = {:skip_virtual=>true}.merge extra_fetch_args
     real_set_names.each do |set_name|
-      #Rails.logger.debug "rule_card search #{set_name.inspect}"
+      Rails.logger.debug "rule_card search #{set_name.inspect}"
       set_name=set_name.to_cardname
       card = Card.fetch(set_name.trait_name( setting_name ), fetch_args)
       card ||= fallback && Card.fetch(set_name.trait_name(fallback), fetch_args)

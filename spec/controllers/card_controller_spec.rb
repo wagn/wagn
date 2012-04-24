@@ -67,7 +67,7 @@ describe CardController do
       }
       assert_response 302
       c=Card.find_by_name("NewCardFoo")
-      assert c.typecode == 'Basic'
+      c.typecode.should == 'basic'
       c.content.should == "Bananas"
     end
 
@@ -77,7 +77,7 @@ describe CardController do
       assigns['card'].should_not be_nil
       assert_response 200
       c=Card.find_by_name("Editor")
-      assert c.typecode == 'Cardtype'
+      c.typecode.should == 'cardtype'
     end
     
     it "pulls deleted cards from trash" do
@@ -86,7 +86,7 @@ describe CardController do
       post :create, :card=>{"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
       assert_response 302
       c=Card.find_by_name("Problem")
-      assert c.typecode == 'Phrase'
+      c.typecode.should == 'phrase'
     end
 
     context "multi-create" do
@@ -218,13 +218,13 @@ describe CardController do
     it "new without typecode" do
       post :new   
       assert_response :success, "response should succeed"                     
-      assert_equal 'Basic', assigns['card'].typecode, "@card type should == Basic"
+      assert_equal Card::BasicID, assigns['card'].type_id, "@card type should == Basic"
     end
 
     it "new with typecode" do
       post :new, :card => {:type=>'Date'}   
       assert_response :success, "response should succeed"                     
-      assert_equal 'Date', assigns['card'].typecode, "@card type should == Date"
+      assert_equal Card::DateID, assigns['card'].type_id, "@card type should == Date"
     end        
 
     it "remove" do
@@ -263,7 +263,7 @@ describe CardController do
       Card.as :joe_user   
       xhr :post, :update, :id=>"~#{@simple_card.id}", :card=>{ :type=>"Date" }
       assert_response :success, "changed card type"
-      Card['Sample Basic'].typecode.should == "Date"
+      Card['Sample Basic'].typecode.should == "date"
     end
 
 

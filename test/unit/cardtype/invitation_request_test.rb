@@ -18,7 +18,7 @@ class Wagn::Set::Type::InvitationRequestTest < ActiveSupport::TestCase
 
 
   def test_should_require_unique_name
-    @card = Card.create :typecode=>'InvitationRequest', :name=>"Joe User", :content=>"Let me in!"# :account=>{ :email=>"jamaster@jay.net" }
+    @card = Card.create :typecode=>'invitation_request', :name=>"Joe User", :content=>"Let me in!"# :account=>{ :email=>"jamaster@jay.net" }
     assert @card.errors[:name]
   end
 

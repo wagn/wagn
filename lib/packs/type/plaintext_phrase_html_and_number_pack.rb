@@ -1,11 +1,11 @@
 class Wagn::Renderer
   class Html
-    define_view :core, :type=>'PlainText' do |args|
+    define_view :core, :type=>'plain_text' do |args|
       process_content( CGI.escapeHTML _render_raw )
     end
   end
   
-  define_view :editor, :type=>'PlainText' do |args|
+  define_view :editor, :type=>'plain_text' do |args|
     form.text_area :content, :rows=>3, :class=>'card-content'
   end
   

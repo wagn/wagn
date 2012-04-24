@@ -1,7 +1,7 @@
 ---
 codename_001:
   card_id: '259'
-  codename: Set
+  codename: set
 codename_002:
   card_id: '15'
   codename: anonymous
@@ -19,7 +19,7 @@ codename_006:
   codename: ! 'signup'
 codename_007:
   card_id: '278'
-  codename: Setting
+  codename: setting
 codename_008:
   card_id: '1'
   codename: wagbot
@@ -37,10 +37,10 @@ codename_012:
   codename: ! 'star'
 codename_013:
   card_id: '51'
-  codename: Toggle
+  codename: toggle
 codename_014:
   card_id: '3'
-  codename: Basic
+  codename: basic
 codename_015:
   card_id: '474'
   codename: ! 'account_link'
@@ -55,10 +55,10 @@ codename_018:
   codename: ! 'subject'
 codename_019:
   card_id: '4'
-  codename: User
+  codename: user
 codename_020:
   card_id: '5'
-  codename: Cardtype
+  codename: cardtype
 codename_021:
   card_id: '89'
   codename: ! 'table_of_contents'
@@ -73,10 +73,10 @@ codename_024:
   codename: ! 'option_label'
 codename_025:
   card_id: '18'
-  codename: File
+  codename: file
 codename_026:
   card_id: '17'
-  codename: Date
+  codename: date
 codename_027:
   card_id: '172'
   codename: ! 'tagged'
@@ -106,7 +106,7 @@ codename_035:
   codename: ! 'plu_card'
 codename_036:
   card_id: '19'
-  codename: Image
+  codename: image
 codename_037:
   card_id: '55'
   codename: ! 'title'
@@ -124,7 +124,7 @@ codename_041:
   codename: ! 'plu_part'
 codename_042:
   card_id: '12'
-  codename: InvitationRequest
+  codename: invitation_request
 codename_043:
   card_id: '64'
   codename: ! 'to'
@@ -142,7 +142,7 @@ codename_047:
   codename: ! 'read'
 codename_048:
   card_id: '20'
-  codename: Number
+  codename: number
 codename_049:
   card_id: '266'
   codename: ! 'type'
@@ -160,7 +160,7 @@ codename_053:
   codename: ! 'includer'
 codename_054:
   card_id: '52'
-  codename: Phrase
+  codename: phrase
 codename_055:
   card_id: '222'
   codename: ! 'watching'
@@ -175,7 +175,7 @@ codename_058:
   codename: ! 'referred_to_by'
 codename_059:
   card_id: '22'
-  codename: PlainText
+  codename: plain_text
 codename_060:
   card_id: '262'
   codename: ! 'type_plus_right'
@@ -190,7 +190,7 @@ codename_063:
   codename: ! 'refer_to'
 codename_064:
   card_id: '47'
-  codename: Pointer
+  codename: pointer
 codename_065:
   card_id: '480'
   codename: ! 'update'
@@ -205,7 +205,7 @@ codename_068:
   codename: ! 'related'
 codename_069:
   card_id: '7'
-  codename: Role
+  codename: role
 codename_070:
   card_id: '574'
   codename: ! 'users'
@@ -220,7 +220,7 @@ codename_073:
   codename: ! 'request'
 codename_074:
   card_id: '30'
-  codename: Search
+  codename: search
 codename_075:
   card_id: '473'
   codename: ! 'version'
@@ -307,4 +307,4 @@ codename_102:
   codename: ! 'missing_link'
 codename_103:
   card_id: '50'
-  codename: HTML
+  codename: html

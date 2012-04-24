@@ -12,7 +12,7 @@ describe "Card (Cardtype)" do
 
   it "should not allow cardtype remove when instances present" do
     Card.create :name=>'City', :type=>'Cardtype'
-    Card::Codename.reset_cache
+    #Card::Codename.reset_cache
     city = Card.fetch('City')
     c1=Card.create :name=>'Sparta', :type=>'City'
     c2=Card.create :name=>'Eugene', :type=>'City'
@@ -51,11 +51,10 @@ describe "Card (Cardtype)" do
     it "creates cardtype model and permission" do
       @card.type_id = Card.type_id_from_code('Cookie')
       @card.save!
-      @card.typecode.should == 'Cookie'
-      Card.typecode_from_name('Cookie').should == 'Cookie'
+      @card.typename.should == 'Cookie'
       @card=Card['Cookie']
       assert_instance_of Card, @card
-      @card.typecode.should == "Cookie"
+      @card.typecode.should == "cookie"
       assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).typename
     end
   end
@@ -114,7 +113,7 @@ describe Card, "Normal card with junctions" do
   it "should successfull have its type changed" do
     @a.type_id = Card::NumberID;
     @a.save!
-    Card['A'].typecode.should== 'Number'
+    Card['A'].typecode.should== 'number'
   end
   it "should still have its junctions after changing type" do
     assert type_id = Card.type_id_from_code('CardtypeE')
@@ -164,7 +163,7 @@ describe Card, "Wannabe Cardtype Card" do
     
   end
   it "should successfully change its type to a Cardtype" do
-    Card['convertible'].typecode.should=='Cardtype'
+    Card['convertible'].typecode.should=='cardtype'
   end
   #it "should have an extension" do
   #  Card['convertible'].extension.should_not== nil
@@ -184,7 +183,7 @@ describe User, "Joe User" do
     Card.as :joe_user
     @user = User.user
     @ucard = Card[@user.card_id]
-    Card::Codename.reset_cache
+    #Card::Codename.reset_cache
     @typenames = Card.createable_types
     #@typenames = Card.createable_types.map{ |ct| ct[:name] }
   end
@@ -201,6 +200,7 @@ describe User, "Joe User" do
   end
   it "should find Basic on its list of createable cardtypes" do
     #pending "createable_types"
+    warn "crtble tps #{@typenames.inspect}"
     @typenames.member?('Basic').should be_true
   end
   
@@ -233,7 +233,7 @@ describe Wagn::Set::Type::Cardtype do
     ctg.type_id = Card::BasicID
     ctg.save!
     ctg = Card["CardtypeG"]
-    ctg.typecode.should == 'Basic'
+    ctg.typecode.should == 'basic'
     #ctg.extension.should == nil
   end
 end

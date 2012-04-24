@@ -53,7 +53,7 @@ describe Card, "with right default template" do
   end
                
   it "should have default cardtype" do
-    @jb.typecode.should == 'Date'
+    @jb.typecode.should == 'date'
   end
   
   it "should have default content" do

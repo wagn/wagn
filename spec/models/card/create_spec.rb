@@ -6,7 +6,7 @@ describe Wagn::Set::Type::Cardtype, ".create with :codename" do
     Card.as :joe_user
   end
   it "should work" do
-    Card.create!(:name=>"Foo Type", :codename=>"foo", :type=>'Cardtype').typecode.should=='Cardtype'
+    Card.create!(:name=>"Foo Type", :codename=>"foo", :type=>'Cardtype').typecode.should=='cardtype'
   end
 end
 
@@ -29,7 +29,7 @@ describe Card, ".create_these" do
 
   it 'should create cards of a given type' do
     Card.create_these "Cardtype:Footype" => "" 
-    Card["Footype"].typecode.should == "Cardtype"
+    Card["Footype"].typecode.should == "cardtype"
   end   
   
   it 'should take a hash of type:name=>content pairs' do
@@ -156,26 +156,26 @@ describe Card, "types" do
   
   it "should accept cardtype name and casespace variant as type" do
     ct = Card.create! :name=>"AFoo", :type=>'Cardtype'
-    ct.typecode.should == 'Cardtype'
+    ct.typecode.should == 'cardtype'
     ct = Card.fetch('AFoo')
     Card.klassname_for(ct.name).should == 'AFoo'
-    Card::Codename.create! :card_id=>ct.id, :codename=>Card.klassname_for(ct.name)
+    Card::Codename.create! :card_id=>ct.id, :codename=>ct.key
     Card::Codename.reset_cache
 
     ct.update_attributes! :name=>"FooRenamed", :confirm_rename=>true
-    (ct=Card.fetch('FooRenamed')).typecode.should == 'Cardtype'
+    (ct=Card.fetch('FooRenamed')).typecode.should == 'cardtype'
     # now the classname changes if it doesn't have a codename in the table
     ncd = Card.create(:type=>'FooRenamed', :name=>'testy1')
     ncd.typename.should == 'FooRenamed'
-    ncd.typecode.should == 'AFoo'
+    ncd.typecode.should == 'a_foo'
    
     Card::Codename.reset_cache
-    Card.create!(:type=>"FooRenamed",:name=>"testy").typecode.should == 'AFoo'
-    Card.create!(:type=>"foo_renamed",:name=>"so testy").typecode.should == 'AFoo'
+    Card.create!(:type=>"FooRenamed",:name=>"testy").typecode.should == 'a_foo'
+    Card.create!(:type=>"foo_renamed",:name=>"so testy").typecode.should == 'a_foo'
   end
   it "should accept classname as typecode" do
     ct = Card.create! :name=>"BFoo", :type=>'Cardtype'
-    Card::Codename.create! :card_id=>ct.id, :codename=>Card.klassname_for(ct.name)
+    Card::Codename.create! :card_id=>ct.id, :codename=>ct.key
     Card::Codename.reset_cache
 
     ct.update_attributes! :name=>"BFooRenamed"
@@ -184,26 +184,24 @@ describe Card, "types" do
     # now the classname changes if it doesn't have a codename in the table
     ncd = Card.create(:type=>'BFooRenamed', :name=>'testy2')
     ncd.typename.should == 'BFooRenamed'
-    ncd.typecode.should == 'BFoo'
+    ncd.typecode.should == 'b_foo'
   end
   
   it "should accept cardtype name first when both are present" do
     #we don't detect this collision now, .typecode should be nil in the case that none is assigned, but that would break a lot of stuff now
     pending "we don't detect collision now, .typecode should be nil"
     ct = Card.create! :name=>"CFoo", :type=>'Cardtype'
-    Card::Codename.create! :card_id=>ct.id, :codename=>Card.klassname_for(ct.name)
+    Card::Codename.create! :card_id=>ct.id, :codename=>ct.key
     Card::Codename.reset_cache
 
     ct.update_attributes! :name=>"CFooRenamed"
     Card.create! :name=>"CFoo", :type=>'Cardtype'
-    Card.create!(:type=>"CFoo",:name=>"testy").typecode.should_not == 'CFoo'
+    Card.create!(:type=>"CFoo",:name=>"testy").typecode.should_not == 'c_foo'
   end
   
   it "should raise a validation error if a bogus type is given" do
     ct = Card.create! :name=>"DFoo", :type=>'Cardtype'
-    warn "card created"
     c = Card.new(:type=>"$d_foo#adfa",:name=>"more testy")
-    warn "card newed"
     c.valid?.should be_false
     c.errors_on(:type).should_not be_empty
   end

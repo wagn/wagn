@@ -237,8 +237,10 @@ module Wagn
   
     def view_method view
       return "_final_#{view}" if !card || !@@subset_views[view]
+      #warn "vmeth #{card}, #{view}, #{card.method_keys.inspect}"
       card.method_keys.each do |method_key|
         meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
+        #warn "view meth is #{meth.inspect}, #{view.inspect} #{method_key.inspect} #{respond_to?(meth.to_sym)}"
         return meth if respond_to?(meth.to_sym)
       end
       nil
@@ -257,6 +259,7 @@ module Wagn
       return opts[:comment] if opts.has_key?(:comment)
       # Don't bother processing inclusion if we're already out of view
       return '' if @mode == :closed && @char_count > @@max_char_count
+      #warn "exp_inc #{opts.inspect}, #{card.inspect}"
       return expand_main(opts) if opts[:tname]=='_main' && !ajax_call? && @depth==0
       
       opts[:view] = canonicalize_view opts[:view]

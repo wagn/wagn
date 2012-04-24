@@ -256,9 +256,10 @@ class Wagn::Renderer::Html
 
   define_view :related do |args|
     sources = [card.typename,nil]
+    # FIXME codename *account
     sources.unshift '*account' if [Card::WagbotID, Card::AnonID].member?(card.id) || card.type_id=='User'
     items = sources.map do |source|
-      c = Card.fetch(source ? source.to_cardname.trait_name(:related) : '*related')
+      c = Card.fetch(source ? source.to_cardname.trait_name(:related) : Card::RelatedID)
       c && c.item_names
     end.flatten.compact
 
@@ -335,7 +336,7 @@ class Wagn::Renderer::Html
         #{ raw subrenderer( Card.fetch current_set).render_content }
       </div>
   #{
-        if !card.trait_card(:account) && Card.toggle(card.rule(:accountable)) && Card['*account'].ok?(:create) && card.ok?(:update)
+        if !card.trait_card(:account) && Card.toggle(card.rule(:accountable)) && Card[Card::Codename[:account]].ok?(:create) && card.ok?(:update)
           %{<div class="new-account-link">
           #{ link_to %{Add a sign-in account for "#{card.name}"},
               path(:options, :attrib=>:new_account),

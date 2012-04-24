@@ -38,7 +38,7 @@ class SharedData
     basic = Card.create! :name=>"Basic Card"
 
     # data for testing users and invitation requests
-    ron_request = Card.create! :typecode=>'InvitationRequest', :name=>"Ron Request"  #, :email=>"ron@request.com"
+    ron_request = Card.create! :typecode=>'invitation_request', :name=>"Ron Request"  #, :email=>"ron@request.com"
 
     User.create_with_card({:email=>'ron@request.com', :password=>'ron_pass', :password_confirmation=>'ron_pass'}, ron_request)
 

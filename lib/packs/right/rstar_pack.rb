@@ -185,7 +185,7 @@ class Wagn::Renderer::Html
     # This generates a prototypical member of the POTENTIAL rule's set
     # and returns that member's ACTUAL rule for the POTENTIAL rule's setting
     set_prototype = Card.fetch( card.cardname.trunk_name ).prototype
-    rule_card = card.new_card? ? set_prototype.name + card.cardname.tag_name : card
+    rule_card = card.new_card? ? Card.fetch_or_new(set_prototype.name + card.cardname.tag_name) : card
     [ rule_card, set_prototype ]
   end
 

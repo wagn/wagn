@@ -153,7 +153,7 @@ def change_card_to_type(name, type, use_type_name=false)
   Card.as :joe_user do
     card = Card.fetch(name)
     card.type_id = use_type_name ? Card[type].id : Card.type_id_from_code(type)
-    warn "card[#{name}, #{type}, #{use_type_name}] is #{card}, #{use_type_name ? Card[type].id : Card.type_id_from_code(type)}"
+    #warn "card[#{name}, #{type}, #{use_type_name}] is #{card}, #{use_type_name ? Card[type].id : Card.type_id_from_code(type)}"
     card.save
     card
   end

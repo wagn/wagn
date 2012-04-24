@@ -14,10 +14,10 @@ class Card::Codename < ActiveRecord::Base
     end
 
     def [](code)
-      warn "no code #{code} #{caller[0..8]*"\n"}" unless code =~ /^joe_/ or code2id.has_key? code.to_s
+      #warn "no code #{code} #{caller[0..8]*"\n"}" unless code =~ /^joe_/ or code2id.has_key? code.to_s
       code2id[code.to_s]      end
     def codename(id)
-      Rails.logger.warn "deprecate id2code #{caller[0..8]*"\n"}"
+      #Rails.logger.warn "deprecate id2code #{caller[0..8]*"\n"}"
       code2id.each { |c, i| return c if i == id }
       #warn "no code for id #{id.inspect}"
       nil

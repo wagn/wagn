@@ -327,7 +327,7 @@ class Wagn::Renderer::Html
         %{ <div class="set-selection">
           #{ form_tag path(:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'slotter' }
               <label>Set:</label>
-              <select name="current_set" class="set-select">#{ set options }</select>
+              <select name="current_set" class="set-select">#{ set_options }</select>
           </form>
         </div>}
       end }

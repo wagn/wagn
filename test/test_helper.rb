@@ -66,8 +66,9 @@ unless defined? TEST_ROOT
     def prepare_url(url, cardtype)
       if url =~ /:id/
         # find by naming convention in test data:
-        card = Card["Sample #{cardtype}"] or puts "ERROR finding 'Sample #{cardtype}'"
-        url.gsub!(/:id/,"~#{card.id.to_s}")
+        if card = Card["Sample #{cardtype}"]
+          url.gsub!(/:id/,"~#{card.id.to_s}")
+        else puts("ERROR finding 'Sample #{cardtype}'") end
       end
       url
     end
@@ -106,12 +107,16 @@ unless defined? TEST_ROOT
         args[:users] ||= { :anonymous=>200 }
         args[:cardtypes] ||= ['Basic']
         if args[:cardtypes]==:all
-          args[:cardtypes] = YAML.load_file('test/fixtures/card_codenames.yml').find_all{|p| p[1]['codename']=~/^[A-Z]/}.collect {|k,v| v['codename']}
+          args[:cardtypes] = YAML.load_file('test/fixtures/card_codenames.yml').
+            find_all do |p|
+              !%w{set setting}.member?( p[1]['codename'] ) and
+                 card=Card[ p[1]['card_id'].to_i ] and
+                 card.type_id == Card::CardtypeID
+            end.collect { |k,v| v['codename'] }
         end
 
         args[:users].each_pair do |user,status|
           user = user.to_s
-          #warn "test user: #{user}, #{Card[user]}"
           user_card_id = Integer===user ? user : Card[user].id
 
           args[:cardtypes].each do |cardtype|

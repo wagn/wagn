@@ -25,6 +25,9 @@ class Card::Codename < ActiveRecord::Base
     def name_change(key)                           end
     def codes()            code2id.each_key        end
 
+    # FIXME: some tests need to use this because they add codenames, fix tests
+    def reset_cache() self.cache.write('code2id', nil) end
+
   private
 
     def code2id

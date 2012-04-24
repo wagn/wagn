@@ -195,12 +195,11 @@ describe Wagn::Renderer, "" do
       before do
         Card.as(Card::WagbotID) do
           @layout_card = Card.create(:name=>'tmp layout', :type=>'Layout')
-          warn "layout #{@layout_card.inspect}"
+          #warn "layout #{@layout_card.inspect}"
         end
-        @layout_card.should be
         c = Card['*all+*layout'] and c.content = '[[tmp layout]]'
         @main_card = Card.fetch('Joe User')
-        warn "lay #{@layout_card.inspect}, #{@main_card.inspect}"
+        #warn "lay #{@layout_card.inspect}, #{@main_card.inspect}"
       end
 
       it "should default to core view for non-main inclusions when context is layout_0" do

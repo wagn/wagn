@@ -200,7 +200,7 @@ describe User, "Joe User" do
   end
   it "should find Basic on its list of createable cardtypes" do
     #pending "createable_types"
-    warn "crtble tps #{@typenames.inspect}"
+    #warn "crtble tps #{@typenames.inspect}"
     @typenames.member?('Basic').should be_true
   end
   

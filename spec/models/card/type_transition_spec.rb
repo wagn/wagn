@@ -54,7 +54,7 @@ end
 describe Card, "with account" do
   before do
     Card.as(Card::WagbotID) 
-    @joe = change_card_to_type('Joe User', 'Basic')
+    @joe = change_card_to_type('Joe User', 'basic')
   end
   
   it "should not have errors" do
@@ -79,18 +79,18 @@ describe Card, "type transition approve create" do
   
   it "should have errors" do
       Rails.logger.info "testing point 2"
-    lambda { change_card_to_type("basicname", "CardtypeB") }.should raise_error(Wagn::PermissionDenied)
+    lambda { change_card_to_type("basicname", "cardtype_b", true) }.should raise_error(Wagn::PermissionDenied)
   end
 
   it "should be the original type" do
-    lambda { change_card_to_type("basicname", "CardtypeB") }
+    lambda { change_card_to_type("basicname", "cardtype_b") }
     Card.find_by_name("basicname").typecode.should == 'basic'
   end
 end
 
 
 describe Card, "type transition validate_destroy" do  
-  before do @c = change_card_to_type("type-c-card", 'Basic') end
+  before do @c = change_card_to_type("type-c-card", 'basic') end
   
   it "should have errors" do
     @c.errors[:destroy_error].first.should == "card c is indestructible"
@@ -102,23 +102,26 @@ describe Card, "type transition validate_destroy" do
 end
 
 describe Card, "type transition validate_create" do
-  before do @c = change_card_to_type("basicname", "CardtypeD") end
+  before do @c = change_card_to_type("basicname", "cardtype_d", true) end
   
   it "should have errors" do
+    pending "CardtypeD does not have a codename, so this is an invalid test"
     @c.errors[:type].first.match(/card d always has errors/).should be_true
   end
   
   it "should retain original type" do
+    pending "CardtypeD does not have a codename, so this is an invalid test"
     Card.find_by_name("basicname").typecode.should == 'basic'
   end
 end
 
 describe Card, "type transition destroy callback" do
   before do
-    @c = change_card_to_type("type-e-card", "Basic") 
+    @c = change_card_to_type("type-e-card", "basic") 
   end
   
   it "should decrement counter in before destroy" do
+    pending "no trigger for this test anymore"
     Card.count.should == 1
   end
   
@@ -132,7 +135,7 @@ describe Card, "type transition create callback" do
     Card.as(Card::WagbotID) do
       Card.create(:name=>'Basic+*type+*delete', :type=>'Pointer', :content=>"[[Anyone Signed in]]")
     end
-    @c = change_card_to_type("basicname", 'CardtypeF') 
+    @c = change_card_to_type("basicname", 'cardtype_f') 
   end
     
   it "should increment counter"  do
@@ -146,11 +149,11 @@ describe Card, "type transition create callback" do
 end                
 
 
-def change_card_to_type(name, typecode)
+def change_card_to_type(name, type, use_type_name=false)
   Card.as :joe_user do
     card = Card.fetch(name)
-   #warn "card[#{name}] is #{card.inspect}, #{Card.type_id_from_code(typecode)}"
-    card.type_id = Card.type_id_from_code typecode
+    card.type_id = use_type_name ? Card[type].id : Card.type_id_from_code(type)
+    warn "card[#{name}, #{type}, #{use_type_name}] is #{card}, #{use_type_name ? Card[type].id : Card.type_id_from_code(type)}"
     card.save
     card
   end

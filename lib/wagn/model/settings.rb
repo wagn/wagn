@@ -60,7 +60,7 @@ module Wagn::Model::Settings
     def universal_setting_names_by_group
       @@universal_setting_names_by_group ||= begin
         Card.as(Card::WagbotID) do
-          setting_names = Card.search(:type=>'Setting', :return=>'name', :limit=>'0')
+          setting_names = Card.search(:type=>Card::SettingID, :return=>'name', :limit=>'0')
           grouped = {:perms=>[], :look=>[], :com=>[], :other=>[]}
           setting_names.map(&:to_cardname).each do |cardname|
             next unless group = Card.setting_attrib(cardname, :setting_group)
@@ -71,6 +71,7 @@ module Wagn::Model::Settings
           end
         end
       end
+      #warn "usnbg #{@@universal_setting_names_by_group.inspect}"; @@universal_setting_names_by_group
     end
 
     def setting_attrib(cardname, attrib)

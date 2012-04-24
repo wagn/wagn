@@ -106,7 +106,10 @@ module Wagn
       #Rails.logger.info "trunk_name(#{to_str})[#{to_s}] #{r.to_s}"; r
     alias particle_names parts
 
-    def module_name()   gsub(/^\*/,'X_').gsub(/[\b\s]+/,'_').camelcase     end
+    def module_name()
+      r=s.gsub(/^\*/,'X_').gsub(/[\b\s]+/,'_').camelcase 
+      #warn "mn #{inspect}: #{r}"; r
+    end
     def css_name()      @css_name ||= key.gsub('*','X').gsub('+','-')      end
 
     def to_star()       star? ? self : '*'+s                               end

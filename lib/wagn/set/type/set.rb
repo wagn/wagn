@@ -41,15 +41,20 @@ module Wagn::Set::Type::Set
   def setting_names_by_group
     groups = Card.universal_setting_names_by_group.clone
     # Generalize Me!
-    pointer_test = (
-      (templt = (Card[name+'+*content'] || Card[name+'+*default']) and
-                 templt.typecode) or case cardname.tag_name.to_s
-                   when '*type'; cardname.trunk_name
-                   when '*self'; tk=Card[cardname.trunk_name] and tk.typecode
-                   end).to_s
+    #warn "ptr? #{tag.id.inspect} && #{trunk.id.inspect}" if junction? and !new_card?
+    pointer_test = if type_id == Card::SetID and
+            templt = trait_card?(:content) || trait_card?(:default)
+          templt.type_id
+        elsif !new_card? && junction?
+          case tag.id
+            when Card::TypeID; trunk.id
+            when Card::SelfID; trunk.type_id
+          end
+        end
+    #warn "ptr tst #{self.inspect} :: #{templt.inspect}, #{self.tag_id}, #{junction? && "#{trunk.inspect} + #{tag.inspect}"}, #{pointer_test}"
     #Rails.logger.debug "setting_names_by_group #{cardname.to_s}, #{cardname.tag_name.to_s}, #{pointer_test}"
 
-    groups[:pointer] = ['*options','*options label','*input'] if pointer_test=='Pointer'
+    groups[:pointer] = ['*options','*options label','*input'] if pointer_test==Card::PointerID
     groups
   end
 

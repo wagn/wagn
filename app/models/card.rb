@@ -131,7 +131,7 @@ class Card < ActiveRecord::Base
     :SearchID=> 'search', :SetID=> 'set', :SettingID=> 'setting',
     :UserID=> 'user', :WagbotID=> 'wagbot', :AnonID=> 'anonymous',
     :AnyoneID=> 'anyone', :AuthID => 'anyone_signed_in', :RecentID => 'recent',
-    :RelatedID=> 'related',
+    :RelatedID=> 'related', :TypeID => 'type', :SelfID => 'self',
     :AdminID=>'administrator', :CreateID=> 'create', :DateID=>'date',
     :ReadID=> 'read', :UpdateID=> 'update', :RolesID=> 'roles'
   }
@@ -346,6 +346,10 @@ class Card < ActiveRecord::Base
     warn "ids string #{ids.inspect} " unless Array === ids
     @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
       #[Card::AuthID] + trait_card(:roles).item_cards.map(&:id))
+  end
+
+  def trait_card? tagcode
+    Card.fetch cardname.trait_name(tagcode), :skip_modules=>true
   end
 
   def trait_card tagcode

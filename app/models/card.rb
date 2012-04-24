@@ -630,7 +630,9 @@ class Card < ActiveRecord::Base
   def type_card()
     raise "type_id zero" if type_id == 0
     raise "type_id nil" if type_id.nil?
-    Card[type_id] end
+    c=Card[type_id.to_i]
+    #raise "no typecard #{inspect} #{type_id.inspect}" unless c; c
+  end
   def typecode()
     raise "type_id zero" if type_id == 0
     raise "type_id nil" if type_id.nil?

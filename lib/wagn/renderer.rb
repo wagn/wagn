@@ -304,7 +304,9 @@ module Wagn
 
         when (UNDENIABLE_VIEWS + [ :new, :closed_rule, :open_rule ]).member?(requested_view)  ; requested_view
         when @mode == :edit
-         tcard.virtual? ? :edit_virtual : :edit_in_form
+         tcard.virtual? ? :edit_virtual : :edit_in_form 
+         # FIXME should be concerned about templateness, not virtualness per se
+         # needs to handle real cards that are hard templated much better
         when new_card
           case
           when requested_view == :raw ; :blank

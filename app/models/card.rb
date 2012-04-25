@@ -461,6 +461,7 @@ class Card < ActiveRecord::Base
     self.trash = !!trash
     save_without_trash(*args)#(perform_checking)
   rescue Exception => e
+    warn (Rails.logger.warn "exception #{e}")
     raise e
   end
   alias_method_chain :save, :trash
@@ -722,8 +723,8 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # MISCELLANEOUS
 
-  def to_s()  "#<#{self.class.name}[#{typename}:#{self.type_id}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}##{self.id}[#{typename}:#{self.type_id}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}} U:#{updater_id} C:#{creator_id}>" end
+  def to_s()  "#<#{self.class.name}[#{type_id==0 ? 'zero': typename}:#{type_id}]#{self.attributes['name']}>" end
+  def inspect()  "#<#{self.class.name}##{self.id}[#{type_id==0 ? 'zero': typename}:#{type_id}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}} U:#{updater_id} C:#{creator_id}>" end
   def mocha_inspect()     to_s                                   end
 
 #  def trash

@@ -31,17 +31,18 @@ class CodenameTable < ActiveRecord::Migration
       plain_text pointer role search set setting toggle user
     } # FIXME: *declare, *sol ... need to be in packs
 
-  def self.name2code(name)
+  def self.name2code name
     code = RENAMES[code] if RENAMES[code]
     code = ?* == name[0] ? name[1..-1] : name
     warn (Rails.logger.warn"name2code: #{name}, #{code}, #{RENAMES[code]}"); code
   end
     
-  def self.check_codename(name)
+  def self.check_codename name
     card = Card[name] and card.id == Card::Codename[CodenameTable.name2code(name)]
   end
 
-  def self.add_codename(name)
+  def self.add_codename name
+    return if check_codename name
     if card = Card[name] || Card.create!(:name=>name)
       card or raise "Missing codename #{name} card"
     

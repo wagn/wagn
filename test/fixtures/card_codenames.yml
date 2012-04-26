@@ -101,9 +101,6 @@ card_codenames_033:
 card_codenames_034: 
   card_id: "469"
   codename: foot
-card_codenames_035: 
-  card_id: "33"
-  codename: plu_card
 card_codenames_036: 
   card_id: "19"
   codename: image
@@ -119,9 +116,6 @@ card_codenames_039:
 card_codenames_040: 
   card_id: "110"
   codename: pluss
-card_codenames_041: 
-  card_id: "35"
-  codename: plu_part
 card_codenames_042: 
   card_id: "12"
   codename: invitation_request
@@ -308,351 +302,60 @@ card_codenames_102:
 card_codenames_103: 
   card_id: "50"
   codename: html
-card_codenames_104: 
-  card_id: "100"
-  codename: account
 card_codenames_105: 
-  card_id: "291"
-  codename: accountable
-card_codenames_106: 
-  card_id: "474"
-  codename: account_link
-card_codenames_107: 
-  card_id: "309"
-  codename: add_help
-card_codenames_108: 
-  card_id: "468"
-  codename: alert
-card_codenames_109: 
-  card_id: "274"
-  codename: all
-card_codenames_110: 
-  card_id: "475"
-  codename: all_plus
-card_codenames_111: 
-  card_id: "387"
-  codename: attach
-card_codenames_112: 
-  card_id: "247"
-  codename: autoname
-card_codenames_113: 
-  card_id: "381"
-  codename: bcc
-card_codenames_114: 
-  card_id: "256"
-  codename: captcha
-card_codenames_115: 
-  card_id: "378"
-  codename: cc
-card_codenames_116: 
-  card_id: "482"
-  codename: comment
-card_codenames_117: 
-  card_id: "115"
-  codename: community
-card_codenames_118: 
-  card_id: "317"
-  codename: content
-card_codenames_119: 
-  card_id: "419"
-  codename: count
-card_codenames_120: 
-  card_id: "478"
-  codename: create
-card_codenames_121: 
-  card_id: "431"
-  codename: created
-card_codenames_122: 
-  card_id: "428"
-  codename: creator
-card_codenames_123: 
-  card_id: "198"
-  codename: css
-card_codenames_124: 
-  card_id: "318"
-  codename: default
-card_codenames_125: 
-  card_id: "481"
-  codename: delete
-card_codenames_126: 
-  card_id: "82"
-  codename: edit_help
-card_codenames_127: 
-  card_id: "138"
-  codename: editing
-card_codenames_128: 
-  card_id: "92"
-  codename: editor
-card_codenames_129: 
-  card_id: "565"
-  codename: email
-card_codenames_130: 
-  card_id: "469"
-  codename: foot
-card_codenames_131: 
-  card_id: "137"
-  codename: from
-card_codenames_132: 
-  card_id: "470"
-  codename: head
-card_codenames_133: 
-  card_id: "77"
-  codename: home
-card_codenames_134: 
-  card_id: "37"
-  codename: includer
-card_codenames_135: 
-  card_id: "41"
-  codename: inclusion
-card_codenames_136: 
-  card_id: "170"
-  codename: incoming
-card_codenames_137: 
-  card_id: "241"
-  codename: input
-card_codenames_138: 
-  card_id: "56"
-  codename: invite
-card_codenames_139: 
-  card_id: "425"
-  codename: last_edited
-card_codenames_140: 
-  card_id: "255"
-  codename: layout
-card_codenames_141: 
-  card_id: "43"
-  codename: link
-card_codenames_142: 
-  card_id: "39"
-  codename: linker
-card_codenames_143: 
-  card_id: "79"
-  codename: logo
-card_codenames_144: 
-  card_id: "98"
-  codename: member
-card_codenames_145: 
-  card_id: "467"
-  codename: missing_link
-card_codenames_146: 
-  card_id: "471"
-  codename: navbox
-card_codenames_147: 
-  card_id: "472"
-  codename: now
-card_codenames_148: 
-  card_id: "86"
-  codename: options
-card_codenames_149: 
-  card_id: "252"
-  codename: option_label
-card_codenames_150: 
-  card_id: "168"
-  codename: outgoing
-card_codenames_151: 
   card_id: "33"
   codename: plus_card
-card_codenames_152: 
+card_codenames_106: 
   card_id: "35"
   codename: plus_part
-card_codenames_153: 
+card_codenames_107: 
   card_id: "588"
   codename: plus
-card_codenames_154: 
-  card_id: "479"
-  codename: read
-card_codenames_155: 
-  card_id: "465"
-  codename: recent
-card_codenames_156: 
-  card_id: "448"
-  codename: referred_to_by
-card_codenames_157: 
-  card_id: "445"
-  codename: refer_to
-card_codenames_158: 
-  card_id: "112"
-  codename: related
-card_codenames_159: 
-  card_id: "63"
-  codename: request
-card_codenames_160: 
-  card_id: "260"
-  codename: right
-card_codenames_161: 
-  card_id: "96"
-  codename: roles
-card_codenames_162: 
-  card_id: "477"
-  codename: rstar
-card_codenames_163: 
+card_codenames_108: 
   card_id: "466"
   codename: search
-card_codenames_164: 
-  card_id: "264"
-  codename: self
-card_codenames_165: 
-  card_id: "363"
-  codename: send
-card_codenames_166: 
+card_codenames_109: 
   card_id: "589"
   codename: session
-card_codenames_167: 
-  card_id: "81"
-  codename: sidebar
-card_codenames_168: 
-  card_id: "66"
-  codename: signup
-card_codenames_169: 
-  card_id: "476"
-  codename: star
-card_codenames_170: 
-  card_id: "384"
-  codename: subject
-card_codenames_171: 
-  card_id: "89"
-  codename: table_of_contents
-card_codenames_172: 
-  card_id: "172"
-  codename: tagged
-card_codenames_173: 
-  card_id: "61"
-  codename: thanks
-card_codenames_174: 
-  card_id: "53"
-  codename: tiny_mce
-card_codenames_175: 
-  card_id: "55"
-  codename: title
-card_codenames_176: 
-  card_id: "64"
-  codename: to
-card_codenames_177: 
-  card_id: "266"
-  codename: type
-card_codenames_178: 
-  card_id: "222"
-  codename: watching
-card_codenames_179: 
-  card_id: "262"
-  codename: type_plus_right
-card_codenames_180: 
-  card_id: "480"
-  codename: update
-card_codenames_181: 
+card_codenames_110: 
   card_id: "576"
   codename: users
-card_codenames_182: 
-  card_id: "473"
-  codename: version
-card_codenames_183: 
-  card_id: "219"
-  codename: watchers
-card_codenames_184: 
-  card_id: "435"
-  codename: when_created
-card_codenames_185: 
-  card_id: "438"
-  codename: when_last_edited
-card_codenames_186: 
+card_codenames_111: 
   card_id: "590"
   codename: declare
-card_codenames_187: 
+card_codenames_112: 
   card_id: "591"
   codename: declare_help
-card_codenames_188: 
+card_codenames_113: 
   card_id: "592"
   codename: sol
-card_codenames_189: 
+card_codenames_114: 
   card_id: "593"
   codename: pad_options
-card_codenames_190: 
+card_codenames_115: 
   card_id: "594"
   codename: etherpad
-card_codenames_191: 
-  card_id: "9"
-  codename: anyone_signed_in
-card_codenames_192: 
-  card_id: "8"
-  codename: anyone
-card_codenames_193: 
-  card_id: "10"
-  codename: administrator
-card_codenames_194: 
-  card_id: "15"
-  codename: anonymous
-card_codenames_195: 
-  card_id: "1"
-  codename: wagn_bot
-card_codenames_196: 
+card_codenames_117: 
   card_id: "595"
   codename: double_click
-card_codenames_197: 
+card_codenames_118: 
   card_id: "596"
   codename: favicon
-card_codenames_198: 
-  card_id: "3"
-  codename: basic
-card_codenames_199: 
-  card_id: "5"
-  codename: cardtype
-card_codenames_200: 
-  card_id: "17"
-  codename: date
-card_codenames_201: 
-  card_id: "18"
-  codename: file
-card_codenames_202: 
-  card_id: "50"
-  codename: html
-card_codenames_203: 
-  card_id: "19"
-  codename: image
-card_codenames_205: 
-  card_id: "20"
-  codename: number
-card_codenames_206: 
-  card_id: "52"
-  codename: phrase
-card_codenames_207: 
-  card_id: "22"
-  codename: plain_text
-card_codenames_208: 
-  card_id: "47"
-  codename: pointer
-card_codenames_209: 
-  card_id: "7"
-  codename: role
-card_codenames_210: 
-  card_id: "30"
-  codename: search
-card_codenames_211: 
-  card_id: "259"
-  codename: set
-card_codenames_212: 
-  card_id: "278"
-  codename: setting
-card_codenames_213: 
-  card_id: "51"
-  codename: toggle
-card_codenames_214: 
-  card_id: "4"
-  codename: user
-card_codenames_215: 
+card_codenames_120: 
   card_id: "659"
   codename: cardtype_a
-card_codenames_216: 
+card_codenames_121: 
   card_id: "660"
   codename: cardtype_b
-card_codenames_217: 
+card_codenames_122: 
   card_id: "661"
   codename: cardtype_c
-card_codenames_218: 
+card_codenames_123: 
   card_id: "662"
   codename: cardtype_d
-card_codenames_219: 
+card_codenames_124: 
   card_id: "663"
   codename: cardtype_e
-card_codenames_220: 
+card_codenames_125: 
   card_id: "664"
   codename: cardtype_f

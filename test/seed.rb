@@ -105,7 +105,7 @@ class SharedData
     %w{ A+C A+D A+E C+A D+A F+A A+B+C }.each do |name| Card.create!(:name=>name)  end
     c=Card.create! :typecode=>'cardtype', :name=>"Cardtype A"
     Card::Codename.create! :card_id=>c.id, :codename=>"cardtype_a"
-    c=bt = Card.create! :typecode=>'cardtype', :name=>"Cardtype B"
+    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype B"
     Card::Codename.create! :card_id=>c.id, :codename=>"cardtype_b"
     c=Card.create! :typecode=>'cardtype', :name=>"Cardtype C"
     Card::Codename.create! :card_id=>c.id, :codename=>"cardtype_c"

@@ -66,6 +66,7 @@ class Card < ActiveRecord::Base
     #warn (Rails.logger.debug "initialize #{args.inspect}")
 
     args['name'] = args['name'].to_s
+    args['type_id'] = args['type_id'].to_i unless args['type_id'].nil?
     @type_args = { :type=>args.delete('type'), :typecode=>args.delete('typecode'), :type_id=>args['type_id'] }
     #raise "type_id type ??? #{args.inspect}" if @type_args.values.compact.empty?
     skip_modules = args.delete 'skip_modules'
@@ -320,8 +321,9 @@ class Card < ActiveRecord::Base
 #~~~~~~~ Instance
 
   def among? authzed
+    #warn (Rails.logger.warn "among? #{name}, #{authzed.inspect} #{caller[0..4]*"\n"}") if authzed.empty?
     prties = parties
-    #warn(Rails.logger.info "among called.  user = #{self.login}, parties = #{prties.inspect}, authzed = #{authzed.inspect}")
+    #warn(Rails.logger.info "among called.  user = #{name}, parties = #{prties.inspect}, authzed = #{Card::AnyoneID.inspect}")
     authzed.each { |auth| return true if prties.member? auth }
     authzed.member? Card::AnyoneID
   end
@@ -343,7 +345,7 @@ class Card < ActiveRecord::Base
       r=(cr=trait_card(:roles)).item_cards(:limit=>0).map(&:id)
       #warn "all_roles #{inspect}: #{cr.inspect}, #{r.inspect} #{caller[0..10]*"\n"}"; r
     end
-    warn "ids string #{ids.inspect} " unless Array === ids
+    #warn "ids string #{ids.inspect} " unless Array === ids
     @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
       #[Card::AuthID] + trait_card(:roles).item_cards.map(&:id))
   end
@@ -461,7 +463,7 @@ class Card < ActiveRecord::Base
     self.trash = !!trash
     save_without_trash(*args)#(perform_checking)
   rescue Exception => e
-    warn (Rails.logger.warn "exception #{e}")
+    Rails.logger.warn "exception #{e} #{caller[0..1]*', '}"
     raise e
   end
   alias_method_chain :save, :trash
@@ -628,20 +630,9 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # TYPE
 
-  def type_card()
-    raise "type_id zero" if type_id == 0
-    raise "type_id nil" if type_id.nil?
-    c=Card[type_id.to_i]
-    #raise "no typecard #{inspect} #{type_id.inspect}" unless c; c
-  end
-  def typecode()
-    raise "type_id zero" if type_id == 0
-    raise "type_id nil" if type_id.nil?
-    Codename.codename( type_id ) || type_card.key # Should we fallback to key?
-  end
+  def type_card() c=Card[type_id.to_i] end
+  def typecode() Codename.codename( type_id ) || type_card.key end # Should we fallback to key?
   def typename()
-    raise "type_id zero" if type_id == 0
-    warn "type_id nil" if type_id.nil?
     return if type_id.nil?
     c=Card.fetch(type_id, :skip_modules=>true, :skip_virtual=>true) and c.name
   end

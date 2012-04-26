@@ -1,7 +1,8 @@
 module Wagn::Model::Settings
   def rule setting_name, fallback=nil
     card = rule_card setting_name, fallback, :skip_modules=>true
-    card && card.content
+    r=card && card.content
+    #warn (Rails.logger.warn "rule[#{name}] #{setting_name}, #{card.inspect}, R:#{r}"); r
   end
 
 =begin
@@ -13,17 +14,17 @@ module Wagn::Model::Settings
 =end
 
   def rule_card setting_name, fallback=nil, extra_fetch_args={}
-    #warn "rule_card #{setting_name}, #{fallback}, #{extra_fetch_args.inspect} RSN:#{real_set_names.inspect}"
+    #warn (Rails.logger.warn "rule_card[#{name}] #{setting_name}, #{fallback}, #{extra_fetch_args.inspect} RSN:#{real_set_names.inspect}")
     fetch_args = {:skip_virtual=>true}.merge extra_fetch_args
     real_set_names.each do |set_name|
-      Rails.logger.debug "rule_card search #{set_name.inspect}"
+      #warn (Rails.logger.debug "rule_card search #{set_name.inspect}")
       set_name=set_name.to_cardname
       card = Card.fetch(set_name.trait_name( setting_name ), fetch_args)
       card ||= fallback && Card.fetch(set_name.trait_name(fallback), fetch_args)
-      #warn "rule[#{set_name}] #{card.inspect}" if card
+      #warn (Rails.logger.warn "rule[#{set_name}] #{card.inspect}") if card
       return card if card
     end
-    #warn "rc nothing #{setting_name}, #{name}"
+    #warn (Rails.logger.warn "rc nothing #{setting_name}, #{name}")
     nil
   end
   def rule_card_with_cache setting_name, fallback=nil, extra_fetch_args={}

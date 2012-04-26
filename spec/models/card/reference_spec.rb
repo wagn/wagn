@@ -50,7 +50,7 @@ describe "Card::Reference" do
     newcard("Yellow")
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
     y=Card["Yellow"];  
-    y.type_id= Card.type_id_from_code "UserForm"; 
+    y.type_id= Card.type_id_from_name "UserForm"; 
     y.save!
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
   end

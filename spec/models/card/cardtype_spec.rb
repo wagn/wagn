@@ -1,6 +1,8 @@
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
-class Card # this is used by some type based modules on CardtypeE from type_transition
+class Card
+  # REVIEW: hooks api will do this differently, probably should remove and add new tests elsewhere
+  # this is used by some type based modules on CardtypeE from type_transition
   cattr_accessor :count
 end
 
@@ -28,17 +30,17 @@ describe "Card (Cardtype)" do
     Card.create! :name=>'County', :type=>'Cardtype'
     c = Card.find_by_name('County')
     c.destroy
-    Card.find_by_type_id(Card.type_id_from_code('County')).should == nil
+    Card.type_id_from_code('county').should == nil
   end
   
   it "cardtype creation and dynamic cardtype" do
     
     assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).type_id == Card.type_id_from_code('Cardtype')
     assert_instance_of Card, c=Card.fetch("BananaPudding")
-    assert Integer===(tid=Card.type_id_from_code("BananaPudding"))
+    assert Integer===(tid=Card.type_id_from_code("banana_pudding"))
 
     # you have to have a module to include or it's just a Basic (typecode fielde excepted)
-    assert Card.create(:type=>'BananaPudding',:name=>"figgy" ).typename == 'BananaPudding'
+    assert Card.create(:typecode=>'banana_pudding',:name=>"figgy" ).typename == 'BananaPudding'
     assert Card.find_by_type_id(tid)
   end
 
@@ -49,7 +51,7 @@ describe "Card (Cardtype)" do
     end
     
     it "creates cardtype model and permission" do
-      @card.type_id = Card.type_id_from_code('Cookie')
+      @card.type_id = Card.type_id_from_code('cookie')
       @card.save!
       @card.typename.should == 'Cookie'
       @card=Card['Cookie']
@@ -116,7 +118,7 @@ describe Card, "Normal card with junctions" do
     Card['A'].typecode.should== 'number'
   end
   it "should still have its junctions after changing type" do
-    assert type_id = Card.type_id_from_code('CardtypeE')
+    assert type_id = Card.type_id_from_code('cardtype_e')
     @a.type_id = type_id; @a.save!
     Card['A'].junctions.length.should > 0
   end

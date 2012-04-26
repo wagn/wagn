@@ -13,41 +13,48 @@ class Card::Codename < ActiveRecord::Base
       name
     end
 
+
     def [](code)
-      #warn "no code #{code} #{caller[0..8]*"\n"}" unless code =~ /^joe_/ or code2id.has_key? code.to_s
-      code2id[code.to_s]      end
+      raise "no codehash" if codehash.nil?
+      warn "no code #{code} #{caller[0..8]*"\n"}" unless code =~ /^joe_/ or codehash.has_key? code.to_s
+      codehash[code.to_s]      end
     def codename(id)
       #Rails.logger.warn "deprecate id2code #{caller[0..8]*"\n"}"
-      code2id.each { |c, i| return c if i == id }
-      #warn "no code for id #{id.inspect}"
-      nil
+      #r=
+      codehash[id]
+      #warn "no code for id #{id.inspect}" if r.nil?; r
     end
     def name_change(key)                           end
-    def codes()            code2id.each_key        end
+    def codes()            codehash.each_key        end
 
     # FIXME: some tests need to use this because they add codenames, fix tests
-    def reset_cache() self.cache.write('code2id', nil) end
+    def reset_cache() self.cache.write('codehash', nil) end
 
   private
 
-    def code2id
+    def codehash()
       #r=
-      self.cache.read('code2id') || begin
+      self.cache.read('codehash') || begin
           load_cache
-          self.cache.read('code2id')
+          self.cache.read('codehash')
         end
       #warn "c2id #{r.inspect}"; r
     end
 
     def load_cache()
-      code2id = {}
+      codehash = {}
 
       #warn "load_cache #{caller[0..3]*?\n}"
       Card.connection.select_all(%{ select card_id, codename from card_codenames
-        }).each { |h| code2id[h['codename']] = h['card_id'].to_i }
+        }).each do |h|
+          code = h['codename']; cid =  h['card_id'].to_i
+          raise "no hash " if codehash.nil?
+          raise "dup code #{cid} #{codehash[cid]}, #{code} #{codehash[code]}" if codehash.has_key?(code) or codehash.has_key?(cid)
+          codehash[code] = cid; codehash[cid] = code
+        end
 
-      #warn "setting cache: #{code2id.inspect}\n"
-      self.cache.write 'code2id', code2id
+      #warn "setting cache: #{codehash.inspect}\n"
+      self.cache.write 'codehash', codehash
     rescue Exception => e
       warn(Rails.logger.info "Error loading codenames #{e.inspect}, #{e.backtrace*"\n"}")
     end

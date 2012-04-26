@@ -313,7 +313,7 @@ class Wagn::Renderer::Html
 
   define_view :option_settings do |args|
     related_sets = card.related_sets
-    current_set = params[:current_set] || related_sets[(card.typecode=='Cardtype' ? 1 : 0)]  #FIXME - explicit cardtype reference
+    current_set = params[:current_set] || related_sets[(card.type_id==Card::CardtypeID ? 1 : 0)]  #FIXME - explicit cardtype reference
     set_options = related_sets.map do |set_name| 
       set_card = Card.fetch set_name
       selected = set_card.key == current_set.to_cardname.key ? 'selected="selected"' : ''

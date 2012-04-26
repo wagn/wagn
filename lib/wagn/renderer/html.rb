@@ -153,8 +153,8 @@ module Wagn
         [ :content, :name, :type ].map do |attr|
           next if attr == :type and # this should be a set callback
             card.type_template? ||  
-            (card.typecode=='Set' && card.hard_template?) || #
-            (card.typecode=='Cardtype' && card.cards_of_type_exist?)
+            (card.type_id==Card::SetID && card.hard_template?) || #
+            (card.type_id==Card::CardtypeID && card.cards_of_type_exist?)
         
           link_to attr, path(:edit, :attrib=>attr), :remote=>true,
             :class => %{slotter edit-#{ attr }-link #{'current-subtab' if attr==current.to_sym}}

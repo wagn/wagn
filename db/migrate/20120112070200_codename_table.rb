@@ -34,9 +34,25 @@ class CodenameTable < ActiveRecord::Migration
   def self.name2code(name)
     code = RENAMES[code] if RENAMES[code]
     code = ?* == name[0] ? name[1..-1] : name
-    warn Rails.logger.warn("name2code: #{name}, #{code}, #{RENAMES[code]}"); code
+    warn (Rails.logger.warn"name2code: #{name}, #{code}, #{RENAMES[code]}"); code
   end
     
+  def self.check_codename(name)
+    card = Card[name] and card.id == Card::Codename[CodenameTable.name2code(name)]
+  end
+
+  def self.add_codename(name)
+    if card = Card[name] || Card.create!(:name=>name)
+      card or raise "Missing codename #{name} card"
+    
+      warn Rails.logger.warn("codename for #{name}, #{CodenameTable.name2code(name)}")
+      Card::Codename.create :card_id=>card.id,
+                            :codename=>CodenameTable.name2code(name)
+
+    else warn Rails.logger.warn("missing card for #{name}")
+    end
+  end
+
   def self.up
     Wagn::Cache.new_all
 
@@ -49,17 +65,7 @@ class CodenameTable < ActiveRecord::Migration
     change_column "cards", "type_id", :integer, :null=>false
 
     Card.as Card::WagbotID do
-      CodenameTable::CODENAMES.each do |name|
-        if card = Card[name] || Card.create!(:name=>name)
-          card or raise "Missing codename #{name} card"
-        
-          warn Rails.logger.warn("codename for #{name}, #{CodenameTable.name2code(name)}")
-          Card::Codename.create :card_id=>card.id,
-                                :codename=>CodenameTable.name2code(name)
-
-        else warn Rails.logger.warn("missing card for #{name}")
-        end
-      end
+      CodenameTable::CODENAMES.each(&:add_codename)
     end
 
     Card.reset_column_information

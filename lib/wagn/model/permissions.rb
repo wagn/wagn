@@ -76,6 +76,7 @@ module Wagn::Model::Permissions
   
   def permission_rule_card(operation)
     opcard = rule_card(operation.to_s)
+    #warn "prc#{operation} #{opcard.inspect}"
     unless opcard
       errors.add :permission_denied, "No #{operation} setting card for #{name}"      
       raise Card::PermissionDenied.new(self) 
@@ -83,7 +84,7 @@ module Wagn::Model::Permissions
     
     rcard = begin
       Card.as(Card::WagbotID) do
-        #Rails.logger.debug "in permission_rule_card #{opcard&&opcard.name} #{operation}"
+        #warn (Rails.logger.debug "in permission_rule_card #{opcard&&opcard.name} #{operation}")
         if opcard.content == '_left' && self.junction?
           lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_modules=>true) 
           lcard.permission_rule_card(operation).first
@@ -92,7 +93,7 @@ module Wagn::Model::Permissions
         end
       end
     end
-    #Rails.logger.debug "permission_rule_card #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}"
+    #warn (Rails.logger.debug "permission_rule_card #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}")
     return rcard, opcard.cardname.trunk_name.tag_name.to_s
   end
   

@@ -75,7 +75,7 @@ module Wagn::Model
         end
       rescue Exception => e
         return nil if NameError===e
-        warn "exception #{e.inspect} #{e.backtrace*"\n"}"
+        warn "exception #{e.inspect} #{e.backtrace[0..8]*"\n"}"
         raise e
       end
 

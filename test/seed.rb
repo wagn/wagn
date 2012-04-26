@@ -1,3 +1,4 @@
+require File.expand_path('../db/migrate/20120112070200_codename_table', File.dirname(__FILE__))
 require 'timecop'
 
 Dir["#{Rails.root}/app/models/card/*.rb"].sort.each do |cardtype|
@@ -33,6 +34,8 @@ class SharedData
 
     #bt = Card.find_by_name 'Basic+*type+*default'
 
+    # check for missing codenames:
+    CodenameTable::CODENAMES.each do |code| CodenameTable.add_codename code end
 
     # generic, shared attribute card
     color = Card.create! :name=>"color"
@@ -95,8 +98,8 @@ class SharedData
     y = Card.create! :name=>"Y", :content=>"{{B}} {{A+B}} {{A}} {{T}}"
     ab = Card.create! :name => "A+B", :content => "AlphaBeta"
 
-    c12345 = Card.create:name=>"One+Two+Three"
-    c12345 = Card.create:name=>"Four+One+Five"
+    Card.create! :name=>"One+Two+Three"
+    Card.create! :name=>"Four+One+Five"
 
     # for wql & permissions
     %w{ A+C A+D A+E C+A D+A F+A A+B+C }.each do |name| Card.create!(:name=>name)  end
@@ -120,7 +123,7 @@ class SharedData
     Card.create! :typecode=>'cardtype_d', :name=>"type-d-card", :content=>"type_d_content"
     Card.create! :typecode=>'cardtype_e', :name=>"type-e-card", :content=>"type_e_content"
     Card.create! :typecode=>'cardtype_f', :name=>"type-f-card", :content=>"type_f_content"
-    Card::Codename.reset_cache
+    #Card::Codename.reset_cache
 
     #warn "current user #{User.session_user.inspect}.  always ok?  #{Card.always_ok?}"
     c = Card.create! :name=>'revtest', :content=>'first'

@@ -41,14 +41,19 @@ module Wagn::Set::Type::Set
   def setting_names_by_group
     groups = Card.universal_setting_names_by_group.clone
     # Generalize Me!
-    #warn "ptr? #{tag.id.inspect} && #{trunk.id.inspect}" if junction? and !new_card?
+    #warn "ptr? #{tag.id || cardname.tag} && #{trunk.id || cardname.trunk}" if junction? and !new_card?
     pointer_test = if type_id == Card::SetID and
             templt = trait_card?(:content) || trait_card?(:default)
           templt.type_id
         elsif !new_card? && junction?
-          case tag.id
-            when Card::TypeID; trunk.id
-            when Card::SelfID; trunk.type_id
+        #elsif !new_card? && junction? and tg = tag || Card[cardname.tag] and
+        tg = tag || Card[cardname.tag]
+        tk = trunk || Card[cardname.trunk]
+        raise "missing tk #{cardname.trunk}" unless tk
+        raise "missing tg #{cardname.tag}" unless tg
+          case tg.id
+            when Card::TypeID; tk.id
+            when Card::SelfID; tk.type_id
           end
         end
     #warn "ptr tst #{self.inspect} :: #{templt.inspect}, #{self.tag_id}, #{junction? && "#{trunk.inspect} + #{tag.inspect}"}, #{pointer_test}"

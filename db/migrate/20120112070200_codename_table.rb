@@ -4,8 +4,9 @@ class CodenameTable < ActiveRecord::Migration
 
 
   RENAMES = {
-      "AccountRequest"   => "InvitationRequest",
-      "wagn_bot"         => "wagbot",
+      "account_request"   => "invitation_request",
+      "wagn_bot"          => "wagbot",
+      "*search"           => "xsearch"
     }
   CODENAMES = %w{
       *account *accountable *account_link *add_help *alert *all *all_plus
@@ -31,8 +32,8 @@ class CodenameTable < ActiveRecord::Migration
     } # FIXME: *declare, *sol ... need to be in packs
 
   def self.name2code(name)
-    code = ?* == name[0] ? name[1..-1] : name
     code = RENAMES[code] if RENAMES[code]
+    code = ?* == name[0] ? name[1..-1] : name
     warn Rails.logger.warn("name2code: #{name}, #{code}, #{RENAMES[code]}"); code
   end
     

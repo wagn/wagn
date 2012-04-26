@@ -13,10 +13,10 @@ class SharedData
     Card.as(Card::WagbotID)
     Wagn::Cache.reset_global
 
-    joe_card = Card.create! :typecode=>'User', :name=>"Joe User", :content => "I'm number two"
+    joe_card = Card.create! :typecode=>'user', :name=>"Joe User", :content => "I'm number two"
     joe_user = User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>joe_card.id
 
-    ja_card = Card.create! :typecode=>'User', :name=>"Joe Admin", :content => "I'm number one"
+    ja_card = Card.create! :typecode=>'user', :name=>"Joe Admin", :content => "I'm number one"
     joe_admin = User.create! :login=>"joe_admin",:email=>'joe@admin.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>ja_card.id
     roles_card = ja_card.trait_card(:roles)
     #warn "roles card for #{ja_card.name} is #{roles_card.inspect}"
@@ -28,10 +28,11 @@ class SharedData
     #jc_card.trait_card(:roles) << joe_admin
     #Role[:admin].users<< [ joe_admin ]
 
-    jc_card = Card.create! :typecode=>'User', :name=>"Joe Camel", :content => "Mr. Buttz"
+    jc_card = Card.create! :typecode=>'user', :name=>"Joe Camel", :content => "Mr. Buttz"
     joe_camel = User.create! :login=>"joe_camel",:email=>'joe@camel.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>jc_card.id
 
     #bt = Card.find_by_name 'Basic+*type+*default'
+
 
     # generic, shared attribute card
     color = Card.create! :name=>"color"
@@ -42,31 +43,32 @@ class SharedData
 
     User.create_with_card({:email=>'ron@request.com', :password=>'ron_pass', :password_confirmation=>'ron_pass'}, ron_request)
 
-    no_count = Card.create! :typecode=>'User', :name=>"No Count", :content=>"I got no account"
+    no_count = Card.create! :typecode=>'user', :name=>"No Count", :content=>"I got no account"
 
     # CREATE A CARD OF EACH TYPE
-    user_card = Card.create! :typecode=>'User', :name=>"Sample User"
+    user_card = Card.create! :typecode=>'user', :name=>"Sample User"
     user_user = User.create! :login=>"sample_user",:email=>'sample@user.com', :status => 'active', :password=>'sample_pass', :password_confirmation=>'sample_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>user_card.id
 
-    request_card = Card.create! :typecode=>'InvitationRequest', :name=>"Sample InvitationRequest" #, :email=>"invitation@request.com"
-    Card.createable_typecodes.each do |typecode|
+    request_card = Card.create! :typecode=>'invitation_request', :name=>"Sample InvitationRequest" #, :email=>"invitation@request.com"
+    Card.createable_types.each do |typecode|
       next if %w{User InvitationRequest Set}.include? typecode
       Card.create! :type=>typecode, :name=>"Sample #{typecode}"
     end
+
     # data for role_test.rb
-    u1 = Card.create! :typecode=>'User', :name=>"u1"
-    u2 = Card.create! :typecode=>'User', :name=>"u2"
-    u3 = Card.create! :typecode=>'User', :name=>"u3"
+    u1 = Card.create! :typecode=>'user', :name=>"u1"
+    u2 = Card.create! :typecode=>'user', :name=>"u2"
+    u3 = Card.create! :typecode=>'user', :name=>"u3"
 
     User.create! :login=>"u1",:email=>'u1@user.com', :status => 'active', :password=>'u1_pass', :password_confirmation=>'u1_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>u1.id
     User.create! :login=>"u2",:email=>'u2@user.com', :status => 'active', :password=>'u2_pass', :password_confirmation=>'u2_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>u2.id
     User.create! :login=>"u3",:email=>'u3@user.com', :status => 'active', :password=>'u3_pass', :password_confirmation=>'u3_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>u3.id
 
 
-    r1 = Card.create!( :typecode=>'Role', :name=>'r1' )
-    r2 = Card.create!( :typecode=>'Role', :name=>'r2' )
-    r3 = Card.create!( :typecode=>'Role', :name=>'r3' )
-    r4 = Card.create!( :typecode=>'Role', :name=>'r4' )
+    r1 = Card.create!( :typecode=>'role', :name=>'r1' )
+    r2 = Card.create!( :typecode=>'role', :name=>'r2' )
+    r3 = Card.create!( :typecode=>'role', :name=>'r3' )
+    r4 = Card.create!( :typecode=>'role', :name=>'r4' )
 
     u1.trait_card(:roles) << r1 << r2 << r3
     u2.trait_card(:roles) << r1 << r2 << r4
@@ -98,27 +100,33 @@ class SharedData
 
     # for wql & permissions
     %w{ A+C A+D A+E C+A D+A F+A A+B+C }.each do |name| Card.create!(:name=>name)  end
-
-    Card.create! :typecode=>'Cardtype', :name=>"Cardtype A", :codename=>"CardtypeA"
-    bt = Card.create! :typecode=>'Cardtype', :name=>"Cardtype B", :codename=>"CardtypeB"
-    Card.create! :typecode=>'Cardtype', :name=>"Cardtype C", :codename=>"CardtypeC"
-    Card.create! :typecode=>'Cardtype', :name=>"Cardtype D", :codename=>"CardtypeD"
-    Card.create! :typecode=>'Cardtype', :name=>"Cardtype E", :codename=>"CardtypeE"
-    Card.create! :typecode=>'Cardtype', :name=>"Cardtype F", :codename=>"CardtypeF"
+    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype A"
+    Card::Codename.create! :card_id=>c.id, :codename=>"cardtype_a"
+    c=bt = Card.create! :typecode=>'cardtype', :name=>"Cardtype B"
+    Card::Codename.create! :card_id=>c.id, :codename=>"cardtype_b"
+    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype C"
+    Card::Codename.create! :card_id=>c.id, :codename=>"cardtype_c"
+    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype D"
+    Card::Codename.create! :card_id=>c.id, :codename=>"cardtype_d"
+    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype E"
+    Card::Codename.create! :card_id=>c.id, :codename=>"cardtype_e"
+    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype F"
+    Card::Codename.create! :card_id=>c.id, :codename=>"cardtype_f"
 
     Card.create! :name=>'basicname', :content=>'basiccontent'
-    Card.create! :typecode=>'CardtypeA', :name=>"type-a-card", :content=>"type_a_content"
-    Card.create! :typecode=>'CardtypeB', :name=>"type-b-card", :content=>"type_b_content"
-    Card.create! :typecode=>'CardtypeC', :name=>"type-c-card", :content=>"type_c_content"
-    Card.create! :typecode=>'CardtypeD', :name=>"type-d-card", :content=>"type_d_content"
-    Card.create! :typecode=>'CardtypeE', :name=>"type-e-card", :content=>"type_e_content"
-    Card.create! :typecode=>'CardtypeF', :name=>"type-f-card", :content=>"type_f_content"
+    Card.create! :typecode=>'cardtype_a', :name=>"type-a-card", :content=>"type_a_content"
+    Card.create! :typecode=>'cardtype_b', :name=>"type-b-card", :content=>"type_b_content"
+    Card.create! :typecode=>'cardtype_c', :name=>"type-c-card", :content=>"type_c_content"
+    Card.create! :typecode=>'cardtype_d', :name=>"type-d-card", :content=>"type_d_content"
+    Card.create! :typecode=>'cardtype_e', :name=>"type-e-card", :content=>"type_e_content"
+    Card.create! :typecode=>'cardtype_f', :name=>"type-f-card", :content=>"type_f_content"
+    Card::Codename.reset_cache
 
     #warn "current user #{User.session_user.inspect}.  always ok?  #{Card.always_ok?}"
     c = Card.create! :name=>'revtest', :content=>'first'
     c.update_attributes! :content=>'second'
     c.update_attributes! :content=>'third'
-    #Card.create! :typecode=>'Cardtype', :name=>'*priority'
+    #Card.create! :typecode=>'cardtype', :name=>'*priority'
 
     # for template stuff
     Card.create! :type_id=>Card::CardtypeID, :name=> "UserForm"

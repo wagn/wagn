@@ -85,6 +85,8 @@ describe Card do
     end
 
     it "returns pointer-specific setting names for pointer card (*self)" do
+      c = Card.fetch_or_new('*account+*related+*self')
+      c.save if c.new_card?
       snbg = Card.fetch_or_new('*account+*related+*self').setting_names_by_group
       snbg[:pointer].map(&:to_s).should == @pointer_settings
     end
@@ -98,12 +100,14 @@ describe Card do
 
     it "returns list of card names for search" do
       c = Card.new( :name=>"foo", :type=>"Search", :content => %[{"name":"Z"}])
+      #warn "card is #{c.inspect}"
       c.item_names.should == ["Z"]
     end
     
     it "handles searches relative to context card" do
       # note: A refers to 'Z'
       c = Card.new :name=>"foo", :type=>"Search", :content => %[{"referred_to_by":"_self"}]
+      #warn "card is #{c.inspect}"
       c.item_names( :context=>'A' ).should == ["Z"]
     end
   end

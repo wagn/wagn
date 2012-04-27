@@ -11,7 +11,8 @@ module Wagn
 
     FORMAL_JOINT = " <span class=\"wiki-joint\">#{JOINT}</span> "
 
-    WORD_RE = RUBY_VERSION =~ /^1\.9/ ? '\p{Word}/' : '/\w/'
+    RUBY19 = RUBY_VERSION =~ /^1\.9/
+    WORD_RE = RUBY19 ? '\p{Word}/' : '/\w/'
 
     @@name2cardname = {}
 
@@ -30,11 +31,12 @@ module Wagn
     alias to_s s
 
 
-    def initialize str
-      @s = str
-      @key = if str.index JOINT
-          @parts = str.split(/\s*#{Regexp.escape(JOINT)}\s*/)
-          @parts << '' if str.last == JOINT
+    def initialize(str)
+      @s = str.to_s.strip
+#      @s = @s.encode('UTF-8') if RUBY19
+      @key = if @s.index(JOINT)
+          @parts = @s.split(/\s*#{Regexp.escape(JOINT)}\s*/)
+          @parts << '' if @s.last == JOINT
           @simple = false
           @parts.map{|p| p.to_cardname.key } * JOINT  
         else

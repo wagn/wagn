@@ -47,9 +47,12 @@ module Wagn::Model::References
     #if card.changed?(:content)
   end
   
-  def expire(card)
-    key = String===card ? card : card.key
-    Wagn::Cache.expire_card key
+  def expire card
+    if String===card
+      Card.clear_cache card
+    else
+      card.clear_cache
+    end    
   end
   
   def self.included(base)   

@@ -220,7 +220,7 @@ class Card < ActiveRecord::Base
 
   def expire_pieces
     cardname.piece_names.each do |piece|
-      Wagn::Cache.expire_card piece.to_cardname.key
+      Card.clear_cache piece
     end
   end
 

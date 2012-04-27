@@ -73,10 +73,6 @@ module Wagn
         ((Time.now.to_f * 100).to_i).to_s + ('a'..'z').to_a[rand(26)] + ('a'..'z').to_a[rand(26)]
       end
 
-      def expire_card(key)
-        Card.cache.delete key
-      end
-
       def reset_global
         cache_classes.each{ |cc| cc.cache.reset if cc.cache }
       end

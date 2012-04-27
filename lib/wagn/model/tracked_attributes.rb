@@ -37,7 +37,7 @@ module Wagn::Model::TrackedAttributes
     else return end
 
     raise "No name ???" if name.blank? # this should not pass validation.
-    Wagn::Cache.expire_card(cardname.to_key)
+    Card.clear_cache cardname
 
     if @cardname.junction?
       [:trunk, :tag].each do |side|
@@ -64,7 +64,7 @@ module Wagn::Model::TrackedAttributes
     end
           
     Cardtype.cache.reset if typecode=='Cardtype'
-    Wagn::Cache.expire_card(@old_name.to_cardname.key)
+    Card.clear_cache @old_name
     @name_changed = true          
     @name_or_content_changed=true
   end
@@ -73,7 +73,7 @@ module Wagn::Model::TrackedAttributes
   def suspend_name(name)
     # move the current card out of the way, in case the new name will require
     # re-creating a card with the current name, ie.  A -> A+B
-    Wagn::Cache.expire_card(name.to_cardname.to_key)
+    Card.clear_cache name
     tmp_name = "tmp:" + UUID.new.generate      
     connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"'#{tmp_name}'",:key=>"'#{tmp_name}'"})} where id=#{self.id}}    
   end

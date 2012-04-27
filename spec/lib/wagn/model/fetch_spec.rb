@@ -61,9 +61,11 @@ describe Card do
 
       # expires the saved card
       Card.cache.should_receive(:delete).with('a')
+      Card.cache.should_receive(:delete).at_least(12).times.with(/~\d+/)
 
       # expires plus cards
       Card.cache.should_receive(:delete).with('c+a')
+#      Card.cache.should_receive(:delete).with(/~\d+/)
       Card.cache.should_receive(:delete).with('d+a')
       Card.cache.should_receive(:delete).with('f+a')
       Card.cache.should_receive(:delete).with('a+b')

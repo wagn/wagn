@@ -49,8 +49,8 @@ class AccountControllerTest < ActionController::TestCase
   end
  
   def test_create_successful   
-    integration_login_as :joe_user, true
-    #login_as :joe_user
+    integration_login_as 'joe_user', true
+    #login_as 'joe_user'
     assert_difference ActionMailer::Base.deliveries, :size do 
       assert_new_account do 
         post_invite
@@ -65,7 +65,7 @@ class AccountControllerTest < ActionController::TestCase
     assert Card['Newby Dooby'], "should create User card"
     assert_status @newby_email, 'pending'
     
-    integration_login_as :joe_admin, true
+    integration_login_as 'joe_admin', true
     post :accept, :card=>{:key=>'newby_dooby'}, :email=>{:subject=>'hello', :message=>'world'}
     assert_response :redirect
     assert_status @newby_email, 'active'

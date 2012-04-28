@@ -159,7 +159,7 @@ describe Card do
     it "takes a second hash of options as new card options" do
       new_card = Card.fetch_or_new("Never Before", :type => "Image")
       new_card.should be_instance_of(Card)
-      new_card.typecode.should == 'image'
+      new_card.typecode.should == :image
       new_card.new_record?.should be_true
     end
   end
@@ -173,7 +173,7 @@ describe Card do
       end
       c = Card.fetch("A+testsearch".to_cardname)
       assert c.virtual?
-      c.typecode.should == 'search'
+      c.typecode.should == :search
       c.content.should ==  "{\"plus\":\"_self\"}"
     end
   end

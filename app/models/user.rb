@@ -70,6 +70,7 @@ class User < ActiveRecord::Base
         when Card;
           [key, key.key]
         else
+          raise "int string" if key =~ /^\d+$/
           [Card[(card_id=Card::Codename[key.to_s]) ? card_id : key.to_s], key.to_s]
         end
 
@@ -79,7 +80,7 @@ class User < ActiveRecord::Base
       
       card_id ||= @card && @card.id
       self.cache.write(key.to_s, usr)
-      code = Card::Codename.codename(card_id.to_s) and self.cache.write(code, usr)
+      code = Card::Codename[card_id] and self.cache.write(code, usr)
       usr
     end
   end

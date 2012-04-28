@@ -6,7 +6,7 @@ class Wagn::Renderer
       if Card.logged_in?
         ucard = Card.user_card
         link_to( ucard.name, "#{Wagn::Conf[:root_path]}/#{ucard.cardname.to_url_key}", :id=>'my-card-link') +
-        (Card[Card::Codename[:account]].ok?(:create) ? link_to('Invite a Friend', "#{prefix}/invite", :id=>'invite-a-friend-link') : '') +
+        (Card[:account].ok?(:create) ? link_to('Invite a Friend', "#{prefix}/invite", :id=>'invite-a-friend-link') : '') +
         link_to('Sign out', "#{prefix}/signout", :id=>'signout-link')
       else
         (Card.new(:typecode=>'invitation_request').ok?(:create) ? link_to( 'Sign up', "#{prefix}/signup",   :id=>'signup-link' ) : '') +

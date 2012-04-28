@@ -35,7 +35,7 @@ describe "Card (Cardtype)" do
   
   it "cardtype creation and dynamic cardtype" do
     
-    assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).type_id == Card.type_id_from_code('Cardtype')
+    assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).type_id == Card::Codename[:cardtype]
     assert_instance_of Card, c=Card.fetch("BananaPudding")
     assert Integer===(tid=Card.type_id_from_code("banana_pudding"))
 
@@ -56,7 +56,7 @@ describe "Card (Cardtype)" do
       @card.typename.should == 'Cookie'
       @card=Card['Cookie']
       assert_instance_of Card, @card
-      @card.typecode.should == "cookie"
+      @card.typecode.should == nil # :cookie
       assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).typename
     end
   end
@@ -101,7 +101,7 @@ describe Card, "Normal card with junctions" do
   it "should successfull have its type changed" do
     @a.type_id = Card::NumberID;
     @a.save!
-    Card['A'].typecode.should== 'number'
+    Card['A'].typecode.should== :number
   end
   it "should still have its junctions after changing type" do
     assert type_id = Card.type_id_from_code('cardtype_e')
@@ -151,7 +151,7 @@ describe Card, "Wannabe Cardtype Card" do
     
   end
   it "should successfully change its type to a Cardtype" do
-    Card['convertible'].typecode.should=='cardtype'
+    Card['convertible'].typecode.should==:cardtype
   end
   #it "should have an extension" do
   #  Card['convertible'].extension.should_not== nil
@@ -221,7 +221,7 @@ describe Wagn::Set::Type::Cardtype do
     ctg.type_id = Card::BasicID
     ctg.save!
     ctg = Card["CardtypeG"]
-    ctg.typecode.should == 'basic'
+    ctg.typecode.should == :basic
     #ctg.extension.should == nil
   end
 end

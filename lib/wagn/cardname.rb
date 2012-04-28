@@ -119,7 +119,7 @@ module Wagn
     def tag_star?()     junction? and '*'[0] == parts[-1][0]               end
     alias rstar? tag_star?
     def trait_name(tagcode)
-      tagname = Card[Card::Codename[tagcode]] and tagname = tagname.name
+      tagname = Card[tagcode] and tagname = tagname.name
       #warn "trait_name(#{tagcode.inspect}), #{tagname.inspect}" unless tagname
       [self, tagname].to_cardname
     end

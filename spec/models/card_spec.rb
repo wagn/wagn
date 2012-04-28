@@ -84,12 +84,12 @@ describe Card do
   
       it "c should have cardtype basic" do
         Rails.logger.info "testing point #{@c} #{@c.inspect}"
-        @c.typecode.should == 'basic'
+        @c.typecode.should == :basic
       end
   
       it "d should have cardtype Date" do
         Rails.logger.info "testing point #{@d} #{@d.inspect}"
-        @d.typecode.should == 'date'
+        @d.typecode.should == :date
       end
     end
 

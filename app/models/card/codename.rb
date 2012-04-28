@@ -19,7 +19,7 @@ class Card::Codename < ActiveRecord::Base
       @codehash = {}
 
       Card.connection.select_all(%{ select card_id, codename from card_codenames }).each do |h|
-          code = h['codename']; cid =  h['card_id'].to_i
+          code = h['codename'].to_sym; cid =  h['card_id'].to_i
           warn "dup code ID:#{cid} (#{@codehash[code]}), CD:#{code} (#{@codehash[cid]})" if @codehash.has_key?(code) or @codehash.has_key?(cid)
           @codehash[code] = cid; @codehash[cid] = code
         end
@@ -32,13 +32,15 @@ class Card::Codename < ActiveRecord::Base
 
  public
 
-    def [](code)
-      #warn "no code #{code} #{caller[0..8]*"\n"}" unless %w{joe_user joe_admin john u1}.member?(code) or codehash.has_key? code.to_s
-      codehash[code.to_s]
+    def [](key)
+      key = key.to_sym unless Integer===key
+      #warn "no key #{key.inspect} #{caller[0..8]*"\n"}" unless Integer===key or [:banana_pudding, :county, :cookie, :joe_user, :joe_admin, :john, :u1].member?(key) or codehash.has_key? key
+      codehash[key]
     end
-    def codename(id)       codehash[id]             end
-    def name_change(key)                            end
-    def codes()            codehash.each_key        end
+    alias codename []
+    #def codename(id)       codehash[id]                        end
+    def name_change(key)                                       end
+    def codes()          codehash.each_key.find{|k|Symbol===k} end
 
     # FIXME: some tests need to use this because they add codenames, fix tests
     def reset_cache() @codehash = nil end

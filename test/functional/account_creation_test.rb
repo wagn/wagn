@@ -26,8 +26,8 @@ class AccountCreationTest < ActionController::TestCase
     @controller = AccountController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
-    #login_as :joe_admin
-    integration_login_as :joe_admin, true
+    #login_as 'joe_admin'
+    integration_login_as 'joe_admin', true
     Wagn::Cache.restore
   end
 
@@ -42,19 +42,19 @@ class AccountCreationTest < ActionController::TestCase
 =end
 
   def test_should_create_account_from_invitation_request
-    assert_equal 'invitation_request', (c=Card.fetch('Ron Request')).typecode
+    assert_equal :invitation_request, (c=Card.fetch('Ron Request')).typecode
     post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
     c=Card.fetch('Ron Request')
-    assert_equal 'user', c.typecode
+    assert_equal :user, c.typecode
     assert_equal "active", User.find_by_email("ron@request.com").status
   end
 
   def test_should_create_account_from_invitation_request_when_user_hard_templated
     Card.as(Card::WagbotID) { Card.create :name=>'User+*type+*content', :content=>"like this" }
-    assert_equal 'invitation_request', (c=Card.fetch('Ron Request')).typecode
+    assert_equal :invitation_request, (c=Card.fetch('Ron Request')).typecode
     post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
     c=Card.fetch('Ron Request')
-    assert_equal 'user', c.typecode
+    assert_equal :user, c.typecode
     assert_equal "active", User.find_by_email("ron@request.com").status
   end
 

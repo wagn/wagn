@@ -20,6 +20,8 @@ module Wagn::Model::Fetch
       opts[:skip_virtual] = true if opts[:loaded_trunk]
       card = cardname = nil
       
+      #warn "fetch[#{mark.inspect}"
+      mark = Card::Codename[mark] || raise("Missing codename for #{mark.inspect}") if Symbol===mark
       if Integer===mark
         card_id = mark
         card = Card.id_cache[ card_id ]

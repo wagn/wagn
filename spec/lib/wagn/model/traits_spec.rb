@@ -9,7 +9,8 @@ describe Card do
     # if we have to create the typecard here, that seems like a bug
     Card.create!( :name=>'Sol', :type=>'Cardtype' )
     Card.create!( :name=>"*sol+*right+*default", :type=>'Sol' )
-    Card.create!( :name=>"B+*sol" ).typecode.should == "sol"
+    (c=Card.create!( :name=>"B+*sol" )).typename.should == 'Sol'
+    c.typecode.should == nil
   end
   
 =begin

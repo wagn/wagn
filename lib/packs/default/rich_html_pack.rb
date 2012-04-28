@@ -336,7 +336,7 @@ class Wagn::Renderer::Html
         #{ raw subrenderer( Card.fetch current_set).render_content }
       </div>
   #{
-        if !card.trait_card(:account) && Card.toggle(card.rule(:accountable)) && Card[Card::Codename[:account]].ok?(:create) && card.ok?(:update)
+        if !card.trait_card(:account) && Card.toggle(card.rule(:accountable)) && Card[:account].ok?(:create) && card.ok?(:update)
           %{<div class="new-account-link">
           #{ link_to %{Add a sign-in account for "#{card.name}"},
               path(:options, :attrib=>:new_account),

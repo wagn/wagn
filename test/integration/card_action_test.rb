@@ -14,7 +14,7 @@ class CardActionTest < ActionController::IntegrationTest
   def setup
     super
     setup_default_user
-    integration_login_as :joe_user
+    integration_login_as 'joe_user'
   end    
 
   # Has Test
@@ -39,7 +39,7 @@ class CardActionTest < ActionController::IntegrationTest
   end
 
   def test_create_role_card   
-    integration_login_as :joe_admin
+    integration_login_as 'joe_admin'
     post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
     assert_response 302
 
@@ -50,7 +50,7 @@ class CardActionTest < ActionController::IntegrationTest
     Card.as(Card::WagbotID) {
       post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"} )}
     assert_response 302
-    assert Card.find_by_name('Editor2').typecode == 'cardtype'
+    assert Card.find_by_name('Editor2').typecode == :cardtype
   end
 
   def test_create                   

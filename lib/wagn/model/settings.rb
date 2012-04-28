@@ -77,8 +77,10 @@ module Wagn::Model::Settings
 
     def setting_attrib(cardname, attrib)
       # NOOOOOOOOOOOOOOOOOOOooooooooooooo :)
-      const = eval("Wagn::Set::Self::#{cardname.module_name}")
-      const.send attrib
+      if cardname.simple? and !new_card? and Card::Codename[id.to_i]
+        const = eval("Wagn::Set::Self::#{cardname.module_name}")
+        const.send attrib
+      end
     rescue
       Rails.logger.info "nothing found for #{cardname.module_name}, #{attrib}"
       nil

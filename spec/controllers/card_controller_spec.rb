@@ -67,7 +67,7 @@ describe CardController do
       }
       assert_response 302
       c=Card.find_by_name("NewCardFoo")
-      c.typecode.should == 'basic'
+      c.typecode.should == :basic
       c.content.should == "Bananas"
     end
 
@@ -77,7 +77,7 @@ describe CardController do
       assigns['card'].should_not be_nil
       assert_response 200
       c=Card.find_by_name("Editor")
-      c.typecode.should == 'cardtype'
+      c.typecode.should == :cardtype
     end
     
     it "pulls deleted cards from trash" do
@@ -86,7 +86,7 @@ describe CardController do
       post :create, :card=>{"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
       assert_response 302
       c=Card.find_by_name("Problem")
-      c.typecode.should == 'phrase'
+      c.typecode.should == :phrase
     end
 
     context "multi-create" do
@@ -263,7 +263,7 @@ describe CardController do
       Card.as :joe_user   
       xhr :post, :update, :id=>"~#{@simple_card.id}", :card=>{ :type=>"Date" }
       assert_response :success, "changed card type"
-      Card['Sample Basic'].typecode.should == "date"
+      Card['Sample Basic'].typecode.should == :date
     end
 
 

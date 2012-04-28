@@ -598,7 +598,9 @@ class Card < ActiveRecord::Base
   # TYPE
 
   def type_card() c=Card[type_id.to_i] end
-  def typecode() Codename.codename( type_id ) || type_card.key end # Should we fallback to key?
+  #def typecode() Codename.codename( type_id ) || type_card.key.to_sym end # Should we fallback to key (symbol)?
+  #def typecode() Codename.codename( type_id ) || type_card.key end # Should we fallback to key (string)?
+  def typecode() Codename.codename( type_id ) end # Should we not fallback to key?
   def typename()
     return if type_id.nil?
     c=Card.fetch(type_id, :skip_modules=>true, :skip_virtual=>true) and c.name

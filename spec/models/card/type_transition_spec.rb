@@ -62,7 +62,7 @@ describe Card, "with account" do
   end
 
   it "should allow type changes" do
-    @joe.typecode.should == 'basic'
+    @joe.typecode.should == :basic
   end
 
 end
@@ -73,7 +73,7 @@ describe Card, "type transition approve create" do
       # this card/content is in the test DB, and this causes a duplicate id error
       #Card.create :name=>'Cardtype B+*type+*create', :content=>'[[r1]]'
       (c=Card.fetch('Cardtype B+*type+*create')).content.should == '[[r1]]'
-      c.typecode.should == 'pointer'
+      c.typecode.should == :pointer
     end
   end
   
@@ -84,7 +84,7 @@ describe Card, "type transition approve create" do
 
   it "should be the original type" do
     lambda { change_card_to_type("basicname", "cardtype_b") }
-    Card.find_by_name("basicname").typecode.should == 'basic'
+    Card.find_by_name("basicname").typecode.should == :basic
   end
 end
 
@@ -97,7 +97,7 @@ describe Card, "type transition validate_destroy" do
   end
   
   it "should retain original type" do
-    Card.find_by_name("type_c_card").typecode.should == 'cardtype_c'
+    Card.find_by_name("type_c_card").typecode.should == :cardtype_c
   end
 end
 
@@ -111,7 +111,7 @@ describe Card, "type transition validate_create" do
   
   it "should retain original type" do
     pending "CardtypeD does not have a codename, so this is an invalid test"
-    Card.find_by_name("basicname").typecode.should == 'basic'
+    Card.find_by_name("basicname").typecode.should == :basic
   end
 end
 
@@ -126,7 +126,7 @@ describe Card, "type transition destroy callback" do
   end
   
   it "should change type of the card" do
-    Card.find_by_name("type-e-card").typecode.should == 'basic'
+    Card.find_by_name("type-e-card").typecode.should == :basic
   end
 end
 
@@ -144,7 +144,7 @@ describe Card, "type transition create callback" do
   end
   
   it "should change type of card" do
-    Card.find_by_name("basicname").typecode.should == 'cardtype_f'
+    Card.find_by_name("basicname").typecode.should == :cardtype_f
   end
 end                
 

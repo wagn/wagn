@@ -63,10 +63,12 @@ class Card < ActiveRecord::Base
   end
 
   def initialize(args={})
-    #warn (Rails.logger.debug "initialize #{args.inspect}")
 
     args['name'] = args['name'].to_s
+    
+    args.delete('type_id') if args['type_id'] == ''
     args['type_id'] = args['type_id'].to_i unless args['type_id'].nil?
+    #warn (Rails.logger.debug "initialize #{args.inspect}") if [0, nil, ''].member? args['type_id']
     @type_args = { :type=>args.delete('type'), :typecode=>args.delete('typecode'), :type_id=>args['type_id'] }
     #raise "type_id type ??? #{args.inspect}" if @type_args.values.compact.empty?
     skip_modules = args.delete 'skip_modules'
@@ -598,8 +600,6 @@ class Card < ActiveRecord::Base
   # TYPE
 
   def type_card() c=Card[type_id.to_i] end
-  #def typecode() Codename.codename( type_id ) || type_card.key.to_sym end # Should we fallback to key (symbol)?
-  #def typecode() Codename.codename( type_id ) || type_card.key end # Should we fallback to key (string)?
   def typecode() Codename.codename( type_id ) end # Should we not fallback to key?
   def typename()
     return if type_id.nil?

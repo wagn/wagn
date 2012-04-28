@@ -61,6 +61,7 @@ describe Card do
 
       # expires the saved card
       mock(Card.cache).delete('a')
+      mock(Card.cache).delete(/~\d+/).at_least(12)
 
       # expires plus cards
       mock(Card.cache).delete('c+a')

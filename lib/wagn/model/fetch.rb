@@ -16,45 +16,57 @@ module Wagn::Model::Fetch
     #   - virtual cards
 
     def fetch mark, opts = {}
+      # "mark" here means a generic identifier -- can be a numeric id, a name, a string name, etc.
 #      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{cardname}" do
-      opts[:skip_virtual] = true if opts[:loaded_trunk]
-      card = cardname = nil
-      
-      #warn "fetch[#{mark.inspect}"
+
+      #warn "fetch #{mark.inspect}"
+      # Symbol (codename) handling
       mark = Card::Codename[mark] || raise("Missing codename for #{mark.inspect}") if Symbol===mark
-      if Integer===mark
-        card_id = mark
-        card = Card.id_cache[ card_id ]
-        unless card
-          needs_caching = true
-          card = Card.find_by_id_and_trash card_id, false
-          raise "fetch of missing card_id #{card_id}" unless card
-        end
+
+      opts[:skip_virtual] = true if opts[:loaded_trunk]
+      
+      cache_key, method, val = if Integer===mark 
+        [ "~#{mark}", :find_by_id_and_trash, mark ]
       else
-        cardname = mark.to_cardname
-        card = Card.cache.read( cardname.key ) if Card.cache
+        key = mark.to_cardname.key
+        [ key, :find_by_key_and_trash, key ]
+      end
+      
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      # lookup card
+      
+      #Cache lookup
+      card = Card.cache.read cache_key if Card.cache 
+
+      unless card
+        # DB lookup
+        needs_caching = true
+        card = Card.send method, val, false
+      end
+      
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if Integer===mark
+        raise "fetch of missing card_id #{card_id}" if card.nil?
+      else
         return nil if card && opts[:skip_virtual] && card.new_card?
-        
-        unless card
+
+        # NEW card -- (either virtual or missing)
+        if card.nil? or ( !opts[:skip_virtual] && card.type_id==0 )
+          # The zero type_id allows us to skip all the type lookup and flag the need for
+          # reinitialization later.  *** It should NEVER be seen elsewhere ***
           needs_caching = true
-          card = find_by_key_and_trash cardname.key, false
-        end
-        
-        if card.nil? || (!opts[:skip_virtual] && card.type_id==0)
-          needs_caching = true
-          new_args = { :name=>cardname.to_s, :skip_modules=>true }
+          new_args = { :name=>mark.to_s, :skip_modules=>true }
           new_args[:type_id] = 0 if opts[:skip_virtual]
           card = new new_args
         end
       end
-      
-    
+          
       if Card.cache && needs_caching
-        Card.id_cache[ card.id ] = card
         Card.cache.write card.key, card
+        Card.cache.write "~#{card.id}", card if card.id
       end
       
-      return nil if card.new_card? and opts[:skip_virtual] || !card.virtual?
+      return nil if card.new_card? and ( opts[:skip_virtual] || !card.virtual? )
 
       #warn "fetch returning #{card.inspect}"
       card.include_set_modules unless opts[:skip_modules]
@@ -72,15 +84,32 @@ module Wagn::Model::Fetch
       fetch( cardname, opts ) || create( opts.merge(:name=>cardname) )
     end
 
-    def exists?(cardname)
-      fetch(cardname, :skip_virtual=>true, :skip_modules=>true).present?
+    def exists? cardname
+      card = fetch cardname, :skip_virtual=>true, :skip_modules=>true
+      card.present?
     end
     
     def autoname(name)
-      exists?(name) ? autoname(name.next) : name
+      if exists? name
+        autoname name.next
+      else
+        name
+      end
     end
+    
+    def clear_cache name
+      if card = Card.cache.read( name.to_cardname.to_key )
+        card.clear_cache
+      end
+    end
+    
   end
 
+  def clear_cache
+    Card.cache.delete key
+    Card.cache.delete "~#{id}" if id
+  end
+  
   def refresh
     fresh_card = self.class.find(self.id)
     fresh_card.include_set_modules

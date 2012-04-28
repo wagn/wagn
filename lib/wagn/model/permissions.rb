@@ -235,7 +235,7 @@ module Wagn::Model::Permissions
       User.cache.reset
       Card.cache.reset # maybe be more surgical, just Card.user related
       #Wagn.cache.reset
-      Wagn::Cache.expire_card self.key #probably shouldn't be necessary, 
+      clear_cache #probably shouldn't be necessary, 
       # but was sometimes getting cached version when card should be in the trash.
       # could be related to other bugs?
       in_set = {}

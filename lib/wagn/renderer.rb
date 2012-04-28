@@ -482,7 +482,7 @@ module Wagn
       return unless card && card.id
       Card::Reference.delete_all ['card_id = ?', card.id]
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
-      Wagn::Cache.expire_card( card.key ) if refresh
+      card.clear_cache if refresh
       rendering_result ||= WikiContent.new(card, _render_refs, self)
       rendering_result.find_chunks(Chunk::Reference).each do |chunk|
         reference_type =

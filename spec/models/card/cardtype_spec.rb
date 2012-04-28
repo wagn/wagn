@@ -70,20 +70,6 @@ describe "Card (Cardtype)" do
 end
 
 
-
-describe Card, "classname_validation" do
-  it "should create valid classnames" do
-    Card.klassname_for("$SBJgg%%od").should == "SBJggOd"
-  end
-  
-  it "should create incremented classnames when first choice is taken" do
-    #Card.klassname_for("User").should thow an error
-    #Card.klassname_for("Basic").should thow an error
-    Card.klassname_for("Novelicious").should == "Novelicious"
-#    Card.klassname_for('Process').should == 'Process1'
-  end
-end                  
-
 describe Card, "created without permission" do
   before do
     Card.user= Card::AnonID

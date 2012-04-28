@@ -256,22 +256,6 @@ class Card < ActiveRecord::Base
 
   public
 
-    def code2id code
-      code = code.to_s
-      unless card_id=Card::Codename[code]
-        return 1 if code.to_s == 'wagbot' # to bootstrapping codenames
-        warn "unknown codename: #{code}"
-      else card_id end
-    end
-    def find_configurables
-      @roles = Card.search(:type => Card::RoleID).reject{|r| r.id != Card::AdminID}
-    end
-
-    def klassname_for(name)
-      name.to_s.gsub(/^\W+|\W+$/,'').gsub(/\W+/,'_').camelize
-    end
-
-
     def create_these( *args )
       definitions = args.size > 1 ? args : (args.first.inject([]) {|a,p| a.push({p.first=>p.last}); a })
       definitions.map do |input|
@@ -295,6 +279,10 @@ class Card < ActiveRecord::Base
         noncreateable_names.member?(name) || !new( :type=>name ).ok?( :create )
       end
     end
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # CODENAME
+    def codename() id && Card::Codename.codename(id) end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # TYPE (Class methods)
@@ -580,7 +568,7 @@ class Card < ActiveRecord::Base
   def left()      Card[cardname.left_name]  end
   def right()     Card[cardname.tag_name]   end
   def pieces()  simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq end
-  def particles() cardname.particle_names.map(&Card.method(:fetch))          end
+  def particles() cardname.particle_names.map {|part| Card.fetch(part) }     end
   def key()       cardname.key                                               end
 
   def junctions(args={})

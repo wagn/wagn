@@ -158,7 +158,6 @@ describe Card, "types" do
     ct = Card.create! :name=>"AFoo", :type=>'Cardtype'
     ct.typecode.should == 'cardtype'
     ct = Card.fetch('AFoo')
-    Card.klassname_for(ct.name).should == 'AFoo'
     Card::Codename.create! :card_id=>ct.id, :codename=>ct.key
     Card::Codename.reset_cache
 

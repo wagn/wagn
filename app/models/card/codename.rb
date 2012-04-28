@@ -35,8 +35,7 @@ class Card::Codename < ActiveRecord::Base
  public
 
     def [](code)
-      #warn "no code #{code} #{caller[0..8]*"\n"}" unless %w{joe_user joe_admin john u1}.
-                                           member?(code) or codehash.has_key? code.to_s
+      #warn "no code #{code} #{caller[0..8]*"\n"}" unless %w{joe_user joe_admin john u1}.member?(code) or codehash.has_key? code.to_s
       codehash[code.to_s]
     end
     def codename(id)       codehash[id]             end

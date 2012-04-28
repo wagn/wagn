@@ -100,44 +100,28 @@ class Card < ActiveRecord::Base
 
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # CLASS METHODS
+  # CODENAME
 
-
+  def codename() id && Card::Codename.codename(id) end
 
   class << self
     def const_missing(const)
-      #if const.to_s =~ /^([A-Z]\S*)ID$/ and cn=$1.underscore
-      #  code = CODE_ALIAS[cn] || cn
-      #  if card_id = Card::Codename[code]
-      #    const_set const, card_id
-      #  else raise "Missing codename #{code} (#{const})"
-      #  end
-
-      if code=CODE_CONST[const] and val=Card::Codename[code]
-        #warn "cm #{const}, #{code}, #{val}"
-        const_set const, val
-      else
-        super
-      end
+      if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore
+        if card_id = Card::Codename[code]
+          const_set const, card_id
+        else raise "Missing codename #{code} (#{const})"
+        end
+      else super end
     end
   end
 
-  #CODE_ALIAS 'default_type => 'basic', 'anon'=> 'anonymous',
-  # 'auth' => 'anyone_signed_in', 'admin'=>'administrator' }
+  DefaultTypeID = BasicID
+  AnonID        = AnonymousID
+  AuthID        = AnyoneSignedInID
+  AdminID       = AdministratorID
 
-  CODE_CONST = { :DefaultTypeID => 'basic', :BasicID=> 'basic',
-    :CardtypeID=> 'cardtype', :ImageID=> 'image',
-    :InvitationRequestID=>'invitation_request', :NumberID=> 'number',
-    :PhraseID=> 'phrase', :PointerID=> 'pointer', :RoleID=> 'role',
-    :SearchID=> 'search', :SetID=> 'set', :SettingID=> 'setting',
-    :UserID=> 'user', :WagbotID=> 'wagbot', :AnonID=> 'anonymous',
-    :AnyoneID=> 'anyone', :AuthID => 'anyone_signed_in', :RecentID => 'recent',
-    :RelatedID=> 'related', :TypeID => 'type', :SelfID => 'self',
-    :AdminID=>'administrator', :CreateID=> 'create', :DateID=>'date',
-    :ReadID=> 'read', :UpdateID=> 'update', :RolesID=> 'roles'
-  }
-
-  public
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # CURRENT USER
 
   @@as_user_id = @@rules_uid = @@user_id = @@user_card = @@user = nil
   cattr_accessor :user_id   # the card id of the current user
@@ -166,7 +150,6 @@ class Card < ActiveRecord::Base
         when Integer ;   user
         else
           user = user.to_s
-          #warn "u2id #{user}, #{Card::Codename[user]}"
           Card::Codename[user] or (cd=Card[user] and cd.id)
       end
     end
@@ -279,10 +262,6 @@ class Card < ActiveRecord::Base
         noncreateable_names.member?(name) || !new( :type=>name ).ok?( :create )
       end
     end
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # CODENAME
-    def codename() id && Card::Codename.codename(id) end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # TYPE (Class methods)

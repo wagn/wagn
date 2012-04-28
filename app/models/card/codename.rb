@@ -1,6 +1,4 @@
 class Card::Codename < ActiveRecord::Base
-  cattr_accessor :cache
-
 
   class <<self
     def cardname from
@@ -17,7 +15,7 @@ class Card::Codename < ActiveRecord::Base
     def codehash() @codehash || load_cache end
 
     def load_cache()
-      return @codehash unless (@codehash = self.cache.read 'codehash').nil?
+      return @codehash unless @codehash.nil?
       @codehash = {}
 
       Card.connection.select_all(%{ select card_id, codename from card_codenames }).each do |h|
@@ -27,7 +25,7 @@ class Card::Codename < ActiveRecord::Base
         end
 
       #warn "setting cache: #{@codehash.inspect}\n"
-      self.cache.write 'codehash', @codehash
+      @codehash
     rescue Exception => e
       warn(Rails.logger.info "Error loading codenames #{e.inspect}, #{e.backtrace*"\n"}")
     end
@@ -43,6 +41,6 @@ class Card::Codename < ActiveRecord::Base
     def codes()            codehash.each_key        end
 
     # FIXME: some tests need to use this because they add codenames, fix tests
-    def reset_cache() @codehash = self.cache.write('codehash', nil) end
+    def reset_cache() @codehash = nil end
   end
 end

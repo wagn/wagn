@@ -22,7 +22,7 @@ module Wagn
   end
 
   class Cache
-    Klasses = [Card, User, Card::Revision, Card::Codename]
+    Klasses = [Card, User, Card::Revision ]
     
     @@prepopulating     = Rails.env == 'cucumber'
     @@using_rails_cache = Rails.env =~ /^cucumber|test$/

@@ -61,7 +61,7 @@ module Wagn::Model
     class << self
       def find_module(mod)
         set, name = *(mod.split('::'))
-        #warn "find_mod #{set}, #{name}, #{@@ruby19}"
+        warn "find_mod #{set}, #{name}, #{@@ruby19}"
         return nil unless name
         setm = find_real_module(@@setmodroot, set) or return nil
         find_real_module(setm, name)
@@ -70,6 +70,7 @@ module Wagn::Model
       def find_real_module(base, part)
         if @@ruby19
           base.const_defined?(part, false) ? base.const_get(part, false) : nil
+          #warn "1.9#{base}, #{part}: #{r.inspect}"; r
         else
           #warn "1.8#{base}, #{part}: #{base.const_defined?(part)} ? #{base.const_get(part)}"
           base.const_defined?(part)        ? base.const_get(part)        : nil
@@ -232,7 +233,7 @@ module Wagn::Model
       end
       def trunk_name card
         lft = card.loaded_trunk || card.left
-        typename = (lft && lft.typename) || 'Basic'
+        typename = (lft && lft.typename) || Card::DefaultTypename
         "#{typename}+#{card.cardname.tag_name}"
       end
     end

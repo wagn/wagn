@@ -122,6 +122,8 @@ class Card < ActiveRecord::Base
   AuthID        = AnyoneSignedInID
   AdminID       = AdministratorID
 
+  DefaultTypename = 'Basic'
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CURRENT USER
 
@@ -472,7 +474,7 @@ class Card < ActiveRecord::Base
 
   def expire_pieces
     cardname.piece_names.each do |piece|
-      warn "clearing for #{piece.inspect}"
+      #warn "clearing for #{piece.inspect}"
       Card.clear_cache piece
     end
   end

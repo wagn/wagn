@@ -61,7 +61,7 @@ module Wagn::Model
     class << self
       def find_module(mod)
         set, name = *(mod.split('::'))
-        warn "find_mod #{set}, #{name}, #{@@ruby19}"
+        #warn "find_mod #{set}, #{name}, #{@@ruby19}"
         return nil unless name
         setm = find_real_module(@@setmodroot, set) or return nil
         find_real_module(setm, name)

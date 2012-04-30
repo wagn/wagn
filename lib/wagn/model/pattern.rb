@@ -15,11 +15,13 @@ module Wagn::Model
     end
 
     def reset_patterns_if_rule()
-      #warn "reset p ifr[#{name}]"
-      if !simple? and (setting=tag).type_id == Card::SettingID and
+      return if name.blank?
+      #warn "reset p ifr[#{inspect}], #{name_without_tracking}"
+      if !simple? and !new_card? and setting=tag and setting.type_id == Card::SettingID and
          (set=trunk).type_id == Card::SetID
-        #warn (Rails.logger.debug "reset set: #{name}, Set:#{set.object_id}, #{set.class} #{set.id}, #{set.inspect} + #{setting.inspect}")
+        #warn (Rails.logger.debug "reset set: #{name}, Set:#{set.inspect} + Setting:#{setting.inspect}")
         set.include_set_modules
+        set.reset_patterns
         set.reset_set_patterns(setting)
       end
     end

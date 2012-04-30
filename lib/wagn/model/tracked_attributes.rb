@@ -1,5 +1,11 @@
 module Wagn::Model::TrackedAttributes 
-   
+
+  def before_tracked_attributes
+    if newname = updates_for[:name] and newname != self.name_without_tracking
+      reset_patterns_if_rule # reset the old name patterns
+    end
+  end
+
   def set_tracked_attributes
     #Rails.logger.debug "Card(#{name})#set_tracked_attributes begin"
     @was_new_card = self.new_card?
@@ -26,7 +32,9 @@ module Wagn::Model::TrackedAttributes
       [ newname.to_cardname, newname]
     end
     write_attribute :key, k=cardname.to_key
-    write_attribute :name, name_without_tracking # what does this do?
+    write_attribute :name, name_without_tracking # what does this do?  Not sure, maybe comment it out and see
+
+    reset_patterns_if_rule # reset the new name
 
     raise "No name ???" if name.blank? # this should not pass validation.
     Card.clear_cache cardname

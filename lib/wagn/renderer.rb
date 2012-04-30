@@ -483,8 +483,12 @@ module Wagn
       Card::Reference.delete_all ['card_id = ?', card.id]
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
       card.clear_cache if refresh
-      rendering_result ||= WikiContent.new(card, _render_refs, self)
-      rendering_result.find_chunks(Chunk::Reference).each do |chunk|
+      if (rr= _render_refs).nil?
+        warn "refs nil #{card&&card.name}"
+      elsif (rendering_result ||= WikiContent.new(card, rr, self)).nil?
+        warn "rendered_result nil #{card&&card.name}"
+      else
+       rendering_result.find_chunks(Chunk::Reference).each do |chunk|
         reference_type =
           case chunk
             when Chunk::Link;       chunk.refcard ? LINK : WANTED_LINK
@@ -499,6 +503,7 @@ module Wagn
           :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
           :link_type=>reference_type
          )
+       end
       end
     end
   end

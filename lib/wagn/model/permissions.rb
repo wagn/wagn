@@ -75,8 +75,8 @@ module Wagn::Model::Permissions
   end 
   
   def permission_rule_card(operation)
-    opcard = rule_card(operation.to_s)
-    #warn "prc#{operation} #{opcard.inspect}"
+    opcard = rule_card(operation)
+    #warn (Rails.logger.warn "prc[#{name}]#{operation} #{opcard.inspect}") if operation.to_sym == :read
     unless opcard
       errors.add :permission_denied, "No #{operation} setting card for #{name}"      
       raise Card::PermissionDenied.new(self) 
@@ -206,6 +206,7 @@ module Wagn::Model::Permissions
     reset_patterns
     rcard, rclass = permission_rule_card(:read)
     copy = self.frozen? ? self.refresh : self
+    #warn (Rails.logger.info "update_read_rule #{rcard.inspect}, #{rclass}")
     copy.update_attributes!(
       :read_rule_id => rcard.id,
       :read_rule_class => rclass

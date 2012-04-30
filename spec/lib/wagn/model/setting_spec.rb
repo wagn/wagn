@@ -163,17 +163,18 @@ describe Card do
       @c1.should be
       @c2.should be
       @c3.should be
-      @rule_card.should be
+      @rule_card.name.should == '*all+*table of contents'
       if c=Card['CardtypeE+*type+*table of content']
         c.content = '2'
         c.save!
       else
-        Card.create! :name=>'CardtypeE+*type+*table of content', :content=>'2'
+        c=Card.create! :name=>'CardtypeE+*type+*table of content', :content=>'2'
       end
     end
     it "should take on new setting value" do
-      @c1.rule_card(:table_of_contents).name.should == 'CardtypeE+*type+*table of content'
-      @c1.rule(:table_of_contents).should == "2"
+      c = Card['toc1']
+      c.rule_card(:table_of_contents).name.should == 'CardtypeE+*type+*table of content'
+      c.rule(:table_of_contents).should == "2"
     end
 
     describe "renders with/without toc" do

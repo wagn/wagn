@@ -16,9 +16,13 @@ describe "reader rules" do
   
   it "should update to role ('Anyone Signed In')" do
 
+    name = @perm_card.name
     Card.as(Card::WagbotID) { @perm_card.save! }
-    card = Card.fetch('Home')
-    card.read_rule_id.should == @perm_card.id
+    pc = Card[name]
+    card = Card['Home']
+    #warn "card #{name}, #{card.inspect}, #{pc.inspect}"
+    pc.should be
+    card.read_rule_id.should == pc.id
     card.who_can(:read).should == [Card::AuthID]
     Card.as(:anonymous){ card.ok?(:read).should be_false }
   end
@@ -47,9 +51,11 @@ describe "reader rules" do
   end
 
   it "should revert to more general rule when more specific (right) rule is deleted" do
-    pc = Card.as(Card::WagbotID) do
-      Card.create(:name=>'B+*right+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
+    pc = nil
+    Card.as(Card::WagbotID) do
+      pc=Card.create(:name=>'B+*right+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
     end
+    pc.should be
     card = Card.fetch('A+B')
     card.read_rule_id.should == pc.id
     pc = Card.fetch(pc.name) #important to re-fetch to catch issues with detecting change in trash status.
@@ -61,12 +67,14 @@ describe "reader rules" do
   it "should revert to more general rule when more specific rule is renamed" do
     Card.as(Card::WagbotID) do
       @perm_card.save!
+      @perm_card = Card[@perm_card.name]
       @perm_card.name = 'Something else+*self+*read'
       @perm_card.confirm_rename = true
       @perm_card.save!
     end
     
     card = Card.fetch('Home')
+    #warn "card is #{card.inspect}, #{card.read_rule_id.inspect}, #{card.rule_card(:read).inspect}"
     card.read_rule_id.should == Card.fetch('*all+*read').id
   end
 

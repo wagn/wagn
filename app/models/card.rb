@@ -687,7 +687,11 @@ class Card < ActiveRecord::Base
   # MISCELLANEOUS
 
   def to_s()  "#<#{self.class.name}[#{type_id==0 ? 'zero': typename}:#{type_id}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}##{self.id}[#{type_id==0 ? 'zero': typename}:#{type_id}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}} U:#{updater_id} C:#{creator_id}>" end
+  #def inspect()  "#<#{self.class.name}##{self.id}[#{type_id==0 ? 'zero': typename}:#{type_id}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}} U:#{updater_id} C:#{creator_id}>" end
+  def inspect()  "#<#{self.class.name}(#{object_id})##{self.id}[#{type_id==0 ? 'zero': typename}:#{type_id}]!#{
+     self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}: R:#{
+      @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}>"
+  end
   def mocha_inspect()     to_s                                   end
 
 #  def trash
@@ -721,6 +725,9 @@ class Card < ActiveRecord::Base
   def name_with_cardname=(newname)
     newname = newname.to_s
     if name != newname
+    #warn "name_change (reset if rule) #{name_without_tracking}, #{newname}, #{inspect}" unless name_without_tracking.blank?
+    #reset_patterns_if_rule # reset the old name
+
       @cardname = nil
       updates.add :name, newname
       reset_patterns

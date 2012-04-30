@@ -20,11 +20,13 @@ module Wagn::Set::Type::Set
   def reset_set_patterns(setting_card)
     # maybe we could only reset when the trait exists?
     read_rule = setting_card.nil? ? false : setting_card.id == Card::ReadID 
-    #warn "reset_set_patterns(#{name}), #{setting_card&&setting_card.name}, RR:#{read_rule.inspect}"
+    #warn "reset_set_patterns(#{inspect}), #{setting_card&&setting_card.name}"
     item_cards(:limit=>0).each do |member|
-      #warn "RRRreset member #{member.name}"
+      #warn (Rails.logger.warn "RRRreset member #{member.inspect} #{read_rule ? "update_read_rule" : ''}") if read_rule
       member.reset_patterns
+      #warn (Rails.logger.warn "RRRreset member #{member.inspect} #{read_rule ? "update_read_rule" : ''}") if read_rule
       member.update_read_rule if read_rule
+      #warn (Rails.logger.warn "RRRreset member #{member.inspect} #{read_rule ? "update_read_rule" : ''}") if read_rule
     end
   end
 

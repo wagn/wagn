@@ -12,18 +12,30 @@ class Card::Codename < ActiveRecord::Base
 
   private
 
-    def codehash() @codehash || load_cache end
+    YML_CODE_FILE = 'test/fixtures/card_codenames.yml'
+    def codehash() @codehash || load_hash end
 
-    def load_cache()
+    def hash_entry(rec)
+      code = rec['codename'].to_sym; cid =  rec['card_id'].to_i
+      if @codehash.has_key?(code) or @codehash.has_key?(cid)
+        warn "dup code ID:#{cid} (#{@codehash[code]}), CD:#{code} (#{@codehash[cid]})"
+      end
+      @codehash[code] = cid; @codehash[cid] = code
+    end
+
+    def load_hash()
       return @codehash unless @codehash.nil?
       @codehash = {}
 
-      Card.connection.select_all(%{ select card_id, codename from card_codenames }).each do |h|
-          code = h['codename'].to_sym; cid =  h['card_id'].to_i
-          warn "dup code ID:#{cid} (#{@codehash[code]}), CD:#{code} (#{@codehash[cid]})" if @codehash.has_key?(code) or @codehash.has_key?(cid)
-          @codehash[code] = cid; @codehash[cid] = code
-        end
+      Card.connection.select_all(%{
+        select card_id, codename from card_codenames }).each {|h| hash_entry(h) }
 
+      if @codehash.empty? # ugh, we seem to need this to load test fixtures
+        if File.exists?( YML_CODE_FILE ) and yml = YAML.load_file( YML_CODE_FILE )
+          yml.each { |p| hash_entry(p[1]) }
+        else warn "no file? #{YML_CODE_FILE}"
+        end
+      end
       #warn "setting cache: #{@codehash.inspect}\n"
       @codehash
     rescue Exception => e

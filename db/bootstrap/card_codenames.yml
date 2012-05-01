@@ -101,9 +101,6 @@ card_codenames_033:
 card_codenames_034: 
   card_id: "469"
   codename: "foot"
-card_codenames_035: 
-  card_id: "33"
-  codename: "plu_card"
 card_codenames_036: 
   card_id: "19"
   codename: "image"
@@ -119,9 +116,6 @@ card_codenames_039:
 card_codenames_040: 
   card_id: "110"
   codename: "pluss"
-card_codenames_041: 
-  card_id: "35"
-  codename: "plu_part"
 card_codenames_042: 
   card_id: "12"
   codename: "invitation_request"

@@ -200,9 +200,6 @@ card_codenames_068:
 card_codenames_069: 
   card_id: "7"
   codename: role
-card_codenames_070: 
-  card_id: "574"
-  codename: users
 card_codenames_071: 
   card_id: "115"
   codename: community
@@ -302,63 +299,42 @@ card_codenames_102:
 card_codenames_103: 
   card_id: "50"
   codename: html
-card_codenames_105: 
-  card_id: "33"
-  codename: plus_card
-card_codenames_106: 
-  card_id: "35"
-  codename: plus_part
-card_codenames_107: 
-  card_id: "588"
-  codename: plus
-card_codenames_108: 
-  card_id: "466"
-  codename: search
-card_codenames_109: 
-  card_id: "589"
-  codename: session
-card_codenames_110: 
-  card_id: "576"
-  codename: users
-card_codenames_111: 
-  card_id: "590"
-  codename: declare
-card_codenames_112: 
-  card_id: "591"
-  codename: declare_help
-card_codenames_113: 
-  card_id: "592"
-  codename: sol
-card_codenames_114: 
-  card_id: "593"
-  codename: pad_options
-card_codenames_115: 
-  card_id: "594"
-  codename: etherpad
-card_codenames_117: 
-  card_id: "595"
-  codename: double_click
-card_codenames_118: 
-  card_id: "596"
-  codename: favicon
-card_codenames_120: 
-  card_id: "659"
-  codename: cardtype_a
-card_codenames_121: 
-  card_id: "660"
-  codename: cardtype_b
-card_codenames_122: 
-  card_id: "661"
-  codename: cardtype_c
-card_codenames_123: 
-  card_id: "662"
-  codename: cardtype_d
-card_codenames_124: 
-  card_id: "663"
-  codename: cardtype_e
-card_codenames_125: 
-  card_id: "664"
-  codename: cardtype_f
-card_codenames_126: 
+card_codenames_104: 
   card_id: "569"
   codename: layout_type
+card_codenames_106: 
+  card_id: "33"
+  codename: plus_card
+card_codenames_107: 
+  card_id: "35"
+  codename: plus_part
+card_codenames_108: 
+  card_id: "588"
+  codename: plus
+card_codenames_110: 
+  card_id: "589"
+  codename: session
+card_codenames_111: 
+  card_id: "576"
+  codename: users
+card_codenames_112: 
+  card_id: "590"
+  codename: declare
+card_codenames_113: 
+  card_id: "591"
+  codename: declare_help
+card_codenames_114: 
+  card_id: "592"
+  codename: sol
+card_codenames_115: 
+  card_id: "593"
+  codename: pad_options
+card_codenames_116: 
+  card_id: "594"
+  codename: etherpad
+card_codenames_118: 
+  card_id: "595"
+  codename: double_click
+card_codenames_119: 
+  card_id: "596"
+  codename: favicon

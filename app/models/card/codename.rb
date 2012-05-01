@@ -1,5 +1,7 @@
 class Card::Codename < ActiveRecord::Base
 
+  @@codehash=nil
+
   cattr_accessor :no_db
 
   class <<self

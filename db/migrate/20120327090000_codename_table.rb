@@ -70,7 +70,7 @@ class CodenameTable < ActiveRecord::Migration
       t.string   "codename", :null => false
     end
 
-    drop_index "cards", "card_type_index"
+    remove_index "cards", :name=>"card_type_index"
     change_column "cards", "typecode", :string, :null=>true
     change_column "cards", "type_id", :integer, :null=>false
     add_index "cards", ["type_id"], :name=>"card_type_index"
@@ -89,7 +89,7 @@ class CodenameTable < ActiveRecord::Migration
                 where c.type_id = code.card_id
       }
 
-    drop_index "cards", "card_type_index"
+    remove_index "cards", :name=>"card_type_index"
     change_column "cards", "type_id", :integer, :null=>true
     change_column "cards", "typecode", :string, :null=>false
     add_index "cards", ["typecode"], :name=>"card_type_index"

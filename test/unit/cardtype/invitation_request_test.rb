@@ -29,10 +29,13 @@ class Wagn::Set::Type::InvitationRequestTest < ActiveSupport::TestCase
       # FIXME: change from task ...
       #auth_user_card.trait_card(:tasks).content = '[[deny_invitation_requests]]'
     #end
-    Card.as :joe_user do Card.fetch('Ron Request').destroy!  end
+    c=Card.fetch('Ron Request')
+    #warn Rails.logger.warn("destroy card (#{c.inspect}) #{User.where(:email=>'ron@request.com').first.inspect}")
+    Card.as :joe_user do c.destroy!  end
+    #warn Rails.logger.warn("destroyed card (#{c.inspect}) #{User.where(:email=>'ron@request.com').first.inspect}")
 
     assert_equal nil, Card.fetch('Ron Request')
-    assert_equal 'blocked', User.find_by_email('ron@request.com').status
+    assert_equal 'blocked', User.where(:email=>'ron@request.com').first.status
   end
 
 

@@ -93,7 +93,7 @@ class Card < ActiveRecord::Base
     #warn "including set modules for #{name}"
     unless @set_mods_loaded
       sm=set_modules
-      #warn "set modules: #{sm.inspect} #{sm.map(&:class)*', '}"
+      #warn "set modules[#{name}] #{sm.inspect} #{sm.map(&:class)*', '}"
       sm.each {|m| singleton_class.send :include, m }
       @set_mods_loaded=true
     end

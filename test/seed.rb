@@ -42,10 +42,10 @@ class SharedData
     basic = Card.create! :name=>"Basic Card"
 
     # data for testing users and invitation requests
+
     ron_request = Card.create! :typecode=>'invitation_request', :name=>"Ron Request"  #, :email=>"ron@request.com"
 
-    User.create_with_card({:email=>'ron@request.com', :password=>'ron_pass', :password_confirmation=>'ron_pass'}, ron_request)
-
+    User.create(:email=>'ron@request.com', :password=>'ron_pass', :password_confirmation=>'ron_pass', :card_id=> ron_request.id)
     no_count = Card.create! :typecode=>'user', :name=>"No Count", :content=>"I got no account"
 
     # CREATE A CARD OF EACH TYPE
@@ -53,10 +53,15 @@ class SharedData
     user_user = User.create! :login=>"sample_user",:email=>'sample@user.com', :status => 'active', :password=>'sample_pass', :password_confirmation=>'sample_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>user_card.id
 
     request_card = Card.create! :typecode=>'invitation_request', :name=>"Sample InvitationRequest" #, :email=>"invitation@request.com"
-    Card.createable_types.each do |typecode|
-      next if %w{User InvitationRequest Set}.include? typecode
-      Card.create! :type=>typecode, :name=>"Sample #{typecode}"
+
+    #Card.cache.reset
+
+    Card.createable_types.each do |type|
+      next if ['User', 'Account Request', 'Set'].include? type
+      Card.create! :type=>type, :name=>"Sample #{type}"
     end
+
+    #Card.cache.reset
 
     # data for role_test.rb
     u1 = Card.create! :typecode=>'user', :name=>"u1"
@@ -72,6 +77,8 @@ class SharedData
     r2 = Card.create!( :typecode=>'role', :name=>'r2' )
     r3 = Card.create!( :typecode=>'role', :name=>'r3' )
     r4 = Card.create!( :typecode=>'role', :name=>'r4' )
+
+    #Card.cache.reset
 
     u1.trait_card(:roles) << r1 << r2 << r3
     u2.trait_card(:roles) << r1 << r2 << r4
@@ -96,11 +103,15 @@ class SharedData
     t = Card.create! :name=>"T", :content=>"Theta"
     x = Card.create! :name=>"X", :content=>"[[A]] [[A+B]] [[T]]"
     y = Card.create! :name=>"Y", :content=>"{{B}} {{A+B}} {{A}} {{T}}"
-    Card.cache.reset
+    #Card.cache.reset
     ab = Card.create! :name => "A+B", :content => "AlphaBeta"
+
+    #Card.cache.reset
 
     Card.create! :name=>"One+Two+Three"
     Card.create! :name=>"Four+One+Five"
+
+    #Card.cache.reset
 
     # for wql & permissions
     %w{ A+C A+D A+E C+A D+A F+A A+B+C }.each do |name| Card.create!(:name=>name)  end

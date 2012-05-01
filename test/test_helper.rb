@@ -66,7 +66,7 @@ unless defined? TEST_ROOT
     def prepare_url(url, cardtype)
       if url =~ /:id/
         # find by naming convention in test data:
-        if card = Card["Sample #{cardtype}"]
+        if card = cardtype == 'layout_type' ? Card["Sample Layout"] : Card["Sample #{cardtype}"]
           url.gsub!(/:id/,"~#{card.id.to_s}")
         else puts("ERROR finding 'Sample #{cardtype}'") end
       end

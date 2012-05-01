@@ -14,7 +14,7 @@ class CodenameTable < ActiveRecord::Migration
       *create *created *creator *css *default *delete *edit_help *editing
       *editor *email *foot *from *head *home *includer *inclusion *incoming
       *input *invite *last_edited *layout *link *linker *logo *member
-      *missing_link *navbox *now *options *option_label *outgoing *plus_card
+      *missing_link *navbox *now *option *option_label *outgoing *plus_card
       *plus_part *plus *read *recent *referred_to_by *refer_to *related
       *request *right *roles *rstar *search *self *send *session *sidebar
       *signup *star *subject *table_of_contents *tagged *thanks *tiny_mce
@@ -32,9 +32,10 @@ class CodenameTable < ActiveRecord::Migration
     } # FIXME: *declare, *sol ... need to be in packs
 
   def self.name2code name
-    code = RENAMES[code] if RENAMES[code]
-    code = ?* == name[0] ? name[1..-1] : name
-    warn (Rails.logger.warn"name2code: #{name}, #{code}, #{RENAMES[code]}"); code
+    code = if RENAMES[name];  RENAMES[name]
+       elsif '*' == name[0];  name[1..-1]
+       else                   name end
+    Rails.logger.warn("name2code: #{name}, #{code}, #{RENAMES[code]}"); code
   end
     
   def self.check_codename name
@@ -42,13 +43,20 @@ class CodenameTable < ActiveRecord::Migration
   end
 
   def self.add_codename name
-    return if check_codename name
+    if check_codename name
+      Rails.logger.warn("good code #{name}, #{c=Card[name] and c.id}")
+      return
+    end
     if card = Card[name] || Card.create!(:name=>name)
       card or raise "Missing codename #{name} card"
-    
-      warn Rails.logger.warn("codename for #{name}, #{CodenameTable.name2code(name)}")
-      Card::Codename.create :card_id=>card.id,
-                            :codename=>CodenameTable.name2code(name)
+
+      # clear any duplicate on name or id
+      newname = CodenameTable.name2code(name)
+      Card::Codename.where(:card_id=>card.id).delete_all
+      Card::Codename.where(:codename=>newname).delete_all
+
+      Rails.logger.warn("codename for [#{card.id}] #{name}, #{newname}")
+      Card::Codename.create :card_id=>card.id, :codename=>newname
 
     else warn Rails.logger.warn("missing card for #{name}")
     end

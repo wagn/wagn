@@ -27,16 +27,22 @@ class Card::Codename < ActiveRecord::Base
       return @codehash unless @codehash.nil?
       @codehash = {}
 
-      Card.connection.select_all(%{
-        select card_id, codename from card_codenames }).each {|h| hash_entry(h) }
+      begin
+        if Card::Codename.connection
+          Card::Codename.connection.all {|h| hash_entry(h) }
+        end
+      rescue
+        warn Rails.logger.warn("codnames db error")
+      end
 
       if @codehash.empty? # ugh, we seem to need this to load test fixtures
+        warn Rails.logger.warn("yml load")
         if File.exists?( YML_CODE_FILE ) and yml = YAML.load_file( YML_CODE_FILE )
           yml.each { |p| hash_entry(p[1]) }
-        else warn "no file? #{YML_CODE_FILE}"
+        else warn Rails.logger.warn("no file? #{YML_CODE_FILE}")
         end
       end
-      #warn "setting cache: #{@codehash.inspect}\n"
+      warn Rails.logger.warn("setting cache: #{@codehash.inspect}\n")
       @codehash
     rescue Exception => e
       warn(Rails.logger.info "Error loading codenames #{e.inspect}, #{e.backtrace*"\n"}")
@@ -46,6 +52,7 @@ class Card::Codename < ActiveRecord::Base
 
     def [](key)
       key = key.to_sym unless Integer===key
+      warn "no codenames" if codehash.nil?
       #warn "no key #{key.inspect} #{caller[0..8]*"\n"}" unless Integer===key or [:banana_pudding, :county, :cookie, :joe_user, :joe_admin, :john, :u1].member?(key) or codehash.has_key? key
       codehash[key]
     end

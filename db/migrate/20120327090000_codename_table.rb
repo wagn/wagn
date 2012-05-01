@@ -1,4 +1,4 @@
-require 'wagn/cache'
+#require 'wagn/cache'
 
 class CodenameTable < ActiveRecord::Migration
 
@@ -70,11 +70,13 @@ class CodenameTable < ActiveRecord::Migration
       t.string   "codename", :null => false
     end
 
+    drop_index "cards", "card_type_index"
     change_column "cards", "typecode", :string, :null=>true
     change_column "cards", "type_id", :integer, :null=>false
+    add_index "cards", ["type_id"], :name=>"card_type_index"
 
     Card.as Card::WagbotID do
-      CodenameTable::CODENAMES.each(&:add_codename)
+      CodenameTable::CODENAMES.each { |name| CodenameTable.add_codename name }
     end
 
     Card.reset_column_information
@@ -87,8 +89,10 @@ class CodenameTable < ActiveRecord::Migration
                 where c.type_id = code.card_id
       }
 
-    change_column "cards", "typecode", :string, :null=>false
+    drop_index "cards", "card_type_index"
     change_column "cards", "type_id", :integer, :null=>true
+    change_column "cards", "typecode", :string, :null=>false
+    add_index "cards", ["typecode"], :name=>"card_type_index"
 
     drop_table "card_codenames"
   end

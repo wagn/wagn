@@ -43,7 +43,7 @@ class CodenameTable < ActiveRecord::Migration
   end
 
   def self.add_codename name
-    if Card::Codename.no_db || check_codename name
+    if Card::Codename.no_db || check_codename(name)
       Rails.logger.warn("good code #{name}, #{c=Card[name] and c.id}")
       return
     end

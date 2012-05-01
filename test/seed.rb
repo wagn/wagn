@@ -96,6 +96,7 @@ class SharedData
     t = Card.create! :name=>"T", :content=>"Theta"
     x = Card.create! :name=>"X", :content=>"[[A]] [[A+B]] [[T]]"
     y = Card.create! :name=>"Y", :content=>"{{B}} {{A+B}} {{A}} {{T}}"
+    Card.cache.reset
     ab = Card.create! :name => "A+B", :content => "AlphaBeta"
 
     Card.create! :name=>"One+Two+Three"

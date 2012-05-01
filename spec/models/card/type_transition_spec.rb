@@ -68,17 +68,12 @@ describe Card, "with account" do
 end
 
 describe Card, "type transition approve create" do
-  before do
-    Card.as(Card::WagbotID) do
-      # this card/content is in the test DB, and this causes a duplicate id error
-      #Card.create :name=>'Cardtype B+*type+*create', :content=>'[[r1]]'
-      (c=Card.fetch('Cardtype B+*type+*create')).content.should == '[[r1]]'
-      c.typecode.should == :pointer
-    end
+  it 'should have cardtype b create role r1' do
+    (c=Card.fetch('Cardtype B+*type+*create')).content.should == '[[r1]]'
+    c.typecode.should == :pointer
   end
   
   it "should have errors" do
-      Rails.logger.info "testing point 2"
     lambda { change_card_to_type("basicname", "cardtype_b", true) }.should raise_error(Wagn::PermissionDenied)
   end
 
@@ -153,8 +148,9 @@ def change_card_to_type(name, type, use_type_name=false)
   Card.as :joe_user do
     card = Card.fetch(name)
     tid=card.type_id = use_type_name ? Card[type].id : Card.type_id_from_code(type)
-    warn "card[#{name}, T:#{type}, #{use_type_name}] is #{card.inspect}, TID:#{tid}"
-    card.save
+    #warn "card[#{name}, T:#{type}, #{use_type_name}] is #{card.inspect}, TID:#{tid}"
+    r=card.save
+    #warn "saved #{card.inspect} R#{r}"
     card
   end
 end

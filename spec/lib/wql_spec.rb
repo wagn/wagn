@@ -276,6 +276,9 @@ describe Wql do
         c = Card.fetch('Setting+*self+*table of contents')
         c.content = '10'
         c.save
+        c = Card['Basic+*type+*table of contents']
+        c.content = '3'
+        c.save
       
         w = Wql.new( :right_plus=>'*table of contents', :sort=>{ :right=>'*table_of_contents'}, :sort_as=>'integer'  ) # FIXME: codename
         #warn "sql from new wql = #{w.sql}"

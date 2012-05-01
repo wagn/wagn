@@ -11,8 +11,7 @@ describe "Card::Reference" do
   describe "references on hard templated cards should get updated" do
     it "on templatee creation" do
       Card.create! :name=>"JoeForm", :type=>'UserForm'
-      r=Wagn::Renderer.new(Card["JoeForm"]).render(:core)
-      warn "joe form : #{r}"
+      Wagn::Renderer.new(Card["JoeForm"]).render(:core)
       assert_equal ["joe_form+age", "joe_form+description", "joe_form+name"],
         Card["JoeForm"].out_references.plot(:referenced_name).sort
       Card["JoeForm"].references_expired.should_not == true

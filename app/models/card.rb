@@ -28,7 +28,7 @@ class Card < ActiveRecord::Base
   
   before_destroy :base_before_destroy
   before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
-  after_save :base_after_save, :update_ruled_cards, :reset_stamper
+  after_save :base_after_save, :update_ruled_cards, :update_queue, :reset_stamper
   
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
@@ -725,8 +725,8 @@ class Card < ActiveRecord::Base
   def name_with_cardname=(newname)
     newname = newname.to_s
     if name != newname
-    #warn "name_change (reset if rule) #{name_without_tracking}, #{newname}, #{inspect}" unless name_without_tracking.blank?
-    #reset_patterns_if_rule # reset the old name
+      #warn "name_change (reset if rule) #{name_without_tracking}, #{newname}, #{inspect}" unless name_without_tracking.blank?
+      reset_patterns_if_rule() # reset the old name
 
       @cardname = nil
       updates.add :name, newname

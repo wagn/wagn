@@ -65,6 +65,7 @@ describe "reader rules" do
   end
 
   it "should revert to more general rule when more specific rule is renamed" do
+
     Card.as(Card::WagbotID) do
       @perm_card.save!
       @perm_card = Card[@perm_card.name]
@@ -74,7 +75,6 @@ describe "reader rules" do
     end
     
     card = Card.fetch('Home')
-    #warn "card is #{card.inspect}, #{card.read_rule_id.inspect}, #{card.rule_card(:read).inspect}"
     card.read_rule_id.should == Card.fetch('*all+*read').id
   end
 

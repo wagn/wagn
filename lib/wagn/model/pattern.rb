@@ -22,7 +22,7 @@ module Wagn::Model
         #warn (Rails.logger.debug "reset set: #{name}, Set:#{set.inspect} + Setting:#{setting.inspect}")
         set.include_set_modules
         set.reset_patterns
-        set.reset_set_patterns(setting)
+        self.update_read_rule_list = self.update_read_rule_list.concat set.reset_set_patterns(setting)
       end
     end
 

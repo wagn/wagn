@@ -14,17 +14,17 @@ module Wagn::Model::Settings
 =end
 
   def rule_card setting_name, fallback=nil, extra_fetch_args={}
-    #warn (Rails.logger.warn "rule_card[#{name}] #{setting_name}, #{fallback}, #{extra_fetch_args.inspect} RSN:#{real_set_names.inspect}") if setting_name == :content
+    #warn (Rails.logger.warn "rule_card[#{name}] #{setting_name}, #{fallback}, #{extra_fetch_args.inspect} RSN:#{real_set_names.inspect}") if setting_name == :read
     fetch_args = {:skip_virtual=>true}.merge extra_fetch_args
     real_set_names.each do |set_name|
-      #warn (Rails.logger.debug "rule_card search #{set_name.inspect}") if setting_name == :content
+      #warn (Rails.logger.debug "rule_card search #{set_name.inspect}") if setting_name == :read
       set_name=set_name.to_cardname
       card = Card.fetch(set_name.trait_name( setting_name ), fetch_args)
       card ||= fallback && Card.fetch(set_name.trait_name(fallback), fetch_args)
-      #warn (Rails.logger.warn "rule[#{set_name}] #{card.inspect}") if setting_name == :content
+      #warn (Rails.logger.warn "rule #{name} [#{set_name}] #{card.inspect}") if setting_name == :read
       return card if card
     end
-    #warn (Rails.logger.warn "rc nothing #{setting_name}, #{name}") if setting_name == :content
+    #warn (Rails.logger.warn "rc nothing #{setting_name}, #{name}") if setting_name == :read
     nil
   end
   def rule_card_with_cache setting_name, fallback=nil, extra_fetch_args={}
@@ -32,7 +32,7 @@ module Wagn::Model::Settings
     @rule_cards ||= {}  # FIXME: initialize this when creating card
     rcwc = (@rule_cards[setting_name] ||= 
       rule_card_without_cache setting_name, fallback, extra_fetch_args)
-    #warn (Rails.logger.warn "rcwc #{rcwc.inspect}") if setting_name == :content; rcwc
+    #warn (Rails.logger.warn "rcwc #{rcwc.inspect}") if setting_name == :read; rcwc
   end
   alias_method_chain :rule_card, :cache
 

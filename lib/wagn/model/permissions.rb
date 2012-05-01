@@ -93,7 +93,7 @@ module Wagn::Model::Permissions
         end
       end
     end
-    #warn (Rails.logger.debug "permission_rule_card #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}")
+    #warn (Rails.logger.debug "permission_rule_card[#{name}] #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}")
     return rcard, opcard.cardname.trunk_name.tag_name.to_s
   end
   
@@ -200,7 +200,7 @@ module Wagn::Model::Permissions
     end
   end
   
-  def update_read_rule
+  def update_read_rule()
     Card.record_timestamps = Card.record_userstamp = false
 
     reset_patterns
@@ -224,7 +224,18 @@ module Wagn::Model::Permissions
     Card.record_timestamps = Card.record_userstamp = true
   end
 
+  # fifo of cards that need read rules updated
+  def update_read_rule_list() @update_read_rule_list ||= [] end
+
+  def update_queue
+    #warn (Rails.logger.warn "update queue[#{inspect}] Q[#{self.update_read_rule_list.inspect}]")
+
+    self.update_read_rule_list.each { |card| card.update_read_rule }
+    self.update_read_rule_list = []
+  end
+
   def update_ruled_cards
+    # FIXME: codename
     if cardname.junction? && cardname.tag_name=='*read' && (@name_or_content_changed || @trash_changed)
       # These instance vars are messy.  should use tracked attributes' @changed variable 
       # and get rid of @name_changed, @name_or_content_changed, and @trash_changed.
@@ -271,6 +282,7 @@ module Wagn::Model::Permissions
     
     base.class_eval do           
       attr_accessor :operation_approved, :permission_errors
+      attr_writer :update_read_rule_list
     end
   end
 end

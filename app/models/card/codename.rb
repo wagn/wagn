@@ -1,5 +1,7 @@
 class Card::Codename < ActiveRecord::Base
 
+  cattr_accessor :no_db
+
   class <<self
     def cardname from
       name = (card = case from
@@ -13,19 +15,19 @@ class Card::Codename < ActiveRecord::Base
   private
 
     YML_CODE_FILE = 'test/fixtures/card_codenames.yml'
-    def codehash() @codehash || load_hash end
+    def codehash() @@codehash || load_hash end
 
     def hash_entry(rec)
       code = rec['codename'].to_sym; cid =  rec['card_id'].to_i
-      if @codehash.has_key?(code) or @codehash.has_key?(cid)
-        warn "dup code ID:#{cid} (#{@codehash[code]}), CD:#{code} (#{@codehash[cid]})"
+      if @@codehash.has_key?(code) or @@codehash.has_key?(cid)
+        warn "dup code ID:#{cid} (#{@@codehash[code]}), CD:#{code} (#{@@codehash[cid]})"
       end
-      @codehash[code] = cid; @codehash[cid] = code
+      @@codehash[code] = cid; @@codehash[cid] = code
     end
 
     def load_hash()
-      return @codehash unless @codehash.nil?
-      @codehash = {}
+      return @@codehash unless @@codehash.nil?
+      @@codehash = {}
 
       begin
         if Card::Codename.connection
@@ -35,15 +37,15 @@ class Card::Codename < ActiveRecord::Base
         warn Rails.logger.warn("codnames db error")
       end
 
-      if @codehash.empty? # ugh, we seem to need this to load test fixtures
+      if @@no_db = @@codehash.empty? # ugh, we seem to need this to load test fixtures
         warn Rails.logger.warn("yml load")
         if File.exists?( YML_CODE_FILE ) and yml = YAML.load_file( YML_CODE_FILE )
           yml.each { |p| hash_entry(p[1]) }
         else warn Rails.logger.warn("no file? #{YML_CODE_FILE}")
         end
       end
-      warn Rails.logger.warn("setting cache: #{@codehash.inspect}\n")
-      @codehash
+      warn Rails.logger.warn("setting cache: #{@@codehash.inspect}\n")
+      @@codehash
     rescue Exception => e
       warn(Rails.logger.info "Error loading codenames #{e.inspect}, #{e.backtrace*"\n"}")
     end
@@ -62,6 +64,6 @@ class Card::Codename < ActiveRecord::Base
     def codes()          codehash.each_key.find{|k|Symbol===k} end
 
     # FIXME: some tests need to use this because they add codenames, fix tests
-    def reset_cache() @codehash = nil end
+    def reset_cache() @@codehash = nil end
   end
 end

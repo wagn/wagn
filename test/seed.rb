@@ -1,4 +1,4 @@
-require File.expand_path('../db/migrate/20120112070200_codename_table', File.dirname(__FILE__))
+require File.expand_path('../db/migrate/20120327090000_codename_table', File.dirname(__FILE__))
 require 'timecop'
 
 Dir["#{Rails.root}/app/models/card/*.rb"].sort.each do |cardtype|

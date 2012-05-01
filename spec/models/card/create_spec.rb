@@ -12,42 +12,6 @@ end
 
 
 
-describe Card, ".create_these" do
-  before do
-    Card.as :joe_user
-  end
-
-  it 'should create basic cards given name and content' do 
-    Card.create_these "testing_name" => "testing_content" 
-    Card["testing_name"].content.should == "testing_content"
-  end
-
-  it 'should return the cards it creates' do 
-    c = Card.create_these "testing_name" => "testing_content" 
-    c.first.content.should == "testing_content"
-  end
-
-  it 'should create cards of a given type' do
-    Card.create_these "Cardtype:Footype" => "" 
-    Card["Footype"].typecode.should == :cardtype
-  end   
-  
-  it 'should take a hash of type:name=>content pairs' do
-    Card.create_these 'AA'=>'aa', 'BB'=>'bb'      
-    Card['AA'].content.should == 'aa'
-    Card['BB'].content.should == 'bb'
-  end
-  
-  it 'should take an array of {type:name=>content},{type:name=>content} hashes' do
-    Card.create_these( {'AA'=>'aa'}, {'AA+BB'=>'ab'} )
-    Card['AA'].content.should == 'aa'
-    Card['AA+BB'].content.should == 'ab'
-  end
-end
-
-
-
-
 
 describe Card, "created by Card.new " do
   before(:each) do     

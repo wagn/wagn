@@ -7,7 +7,7 @@ class SaneDataTest < ActiveSupport::TestCase
     assert Card.createable_types.size >= 3 
     
     Card.find(:all).each do |ct|
-      if ct.codename == 'Cardtype'
+      if ct.codename == :cardtype
         assert ct.card.class.include?(Wagn::Set::Type::Cardtype), "#{ct.class_name} has card"
       end
     end

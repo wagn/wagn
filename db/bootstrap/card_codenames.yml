@@ -308,3 +308,6 @@ card_codenames_102:
 card_codenames_103: 
   card_id: "50"
   codename: "html"
+card_codenames_104: 
+  card_id: "569"
+  codename: "layout_type"

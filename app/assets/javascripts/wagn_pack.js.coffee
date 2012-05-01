@@ -14,6 +14,8 @@ wagn.editorInitFunctionMap = {
   '.date-editor'           : -> @datepicker { dateFormat: 'yy-mm-dd' }
   '.tinymce-textarea'      : -> wagn.initTinyMCE(@[0].id)
   '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
+  '.file-upload'           : -> @fileupload( add: wagn.chooseFile )#, forceIframeTransport: true )
+  '.etherpad-textarea'     : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
 }
 
 wagn.initPointerList = (input)-> 

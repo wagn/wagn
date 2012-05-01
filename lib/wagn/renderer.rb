@@ -483,12 +483,8 @@ module Wagn
       Card::Reference.delete_all ['card_id = ?', card.id]
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
       card.clear_cache if refresh
-      if (rr= _render_refs).nil?
-        warn "refs nil #{card&&card.name}"
-      elsif (rendering_result ||= WikiContent.new(card, rr, self)).nil?
-        warn "rendered_result nil #{card&&card.name}"
-      else
-       rendering_result.find_chunks(Chunk::Reference).each do |chunk|
+      rendering_result ||= WikiContent.new(card, _render_refs, self)
+      rendering_result.find_chunks(Chunk::Reference).each do |chunk|
         reference_type =
           case chunk
             when Chunk::Link;       chunk.refcard ? LINK : WANTED_LINK
@@ -496,14 +492,11 @@ module Wagn
             else raise "Unknown chunk reference class #{chunk.class}"
           end
 
-       #ref_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
-        #raise "No name to ref? #{card.name}, #{chunk.inspect}" unless chunk.refcardname()
         Card::Reference.create!( :card_id=>card.id,
           :referenced_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
           :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
           :link_type=>reference_type
          )
-       end
       end
     end
   end

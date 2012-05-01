@@ -136,8 +136,13 @@ class AccountController < ApplicationController
       redirect_to previous_location
     else
       usr=User.where(:email=>params[:login].strip.downcase).first
-      failed_login(usr.nil? ? "Unrecognized email." : usr.blocked? ?
-            "Sorry, that account is blocked." : "Wrong password")
+      failed_login(
+        case
+        when usr.nil?     ; "Unrecognized email."
+        when usr.blocked? ; "Sorry, that account is blocked."
+        else              ; "Wrong password"
+        end
+      )
     end
   end
 

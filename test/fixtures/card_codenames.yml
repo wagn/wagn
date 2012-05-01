@@ -359,3 +359,6 @@ card_codenames_124:
 card_codenames_125: 
   card_id: "664"
   codename: cardtype_f
+card_codenames_126: 
+  card_id: "569"
+  codename: layout_type

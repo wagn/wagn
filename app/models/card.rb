@@ -241,16 +241,6 @@ class Card < ActiveRecord::Base
 
   public
 
-    def create_these( *args )
-      definitions = args.size > 1 ? args : (args.first.inject([]) {|a,p| a.push({p.first=>p.last}); a })
-      definitions.map do |input|
-        input.map do |key, content|
-          type, name = (key =~ /\:/ ? key.split(':') : ['Basic',key])
-          Card.create! :name=>name, :type=>type, :content=>content
-        end
-      end.flatten
-    end
-
     NON_CREATEABLE_TYPES = %w{ invitation_request setting set }
 
     def createable_types
@@ -273,26 +263,18 @@ class Card < ActiveRecord::Base
     end
 
     def typecode_from_name(name)
-      raise "zero type_id" if (tid = type_id_from_name name) == 0
-      return nil if tid.nil?
-      r=
-      Codename.codename(tid)
-      Rails.logger.warn "name2code #{tid}, #{name} #{r}"; r
+      (tid = type_id_from_name name).nil? ? nil : Codename.codename(tid)
     end
     
-    def type_id_from_code(code)
-      r=
+    def type_id_from_code(code) # _or_name
       Card::Codename[code] || (c=Card[code] and c.id)
-      Rails.logger.warn "code2tid #{r} #{code}"; r
     end
   end
 
 #~~~~~~~ Instance
 
   def among? authzed
-    #warn (Rails.logger.warn "among? #{name}, #{authzed.inspect} #{caller[0..4]*"\n"}") if authzed.empty?
     prties = parties
-    #warn(Rails.logger.info "among called.  user = #{name}, parties = #{prties.inspect}, authzed = #{Card::AnyoneID.inspect}")
     authzed.each { |auth| return true if prties.member? auth }
     authzed.member? Card::AnyoneID
   end
@@ -312,11 +294,8 @@ class Card < ActiveRecord::Base
   def all_roles
     ids = Card.as Card::WagbotID do
       r=(cr=trait_card(:roles)).item_cards(:limit=>0).map(&:id)
-      #warn "all_roles #{inspect}: #{cr.inspect}, #{r.inspect} #{caller[0..10]*"\n"}"; r
     end
-    #warn "ids string #{ids.inspect} " unless Array === ids
     @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
-      #[Card::AuthID] + trait_card(:roles).item_cards.map(&:id))
   end
 
   def trait_card? tagcode
@@ -337,23 +316,18 @@ class Card < ActiveRecord::Base
       else :noop
       end
     
-    #warn "get_type_id after case 1"
-    #warn "get_type_id[#{type_id.inspect}](#{args.inspect}) bk:#{broken_type}"
     case type_id
     when :noop      ; 
     when false, nil ; @broken_type = args[:type] || args[:typecode]
     else            ; return type_id
     end
     
-    #warn "get_type_id after case 2"
-    
     if name && t=template
       reset_patterns
       t.type_id
     else
-      #FIXME - hardcoded id.  yuck.  
       # if we get here we have no *all+*default -- let's address that!
-      ?3 #Card::DefaultTypeID  
+      Card::DefaultTypeID  
     end
   end
 
@@ -549,9 +523,9 @@ class Card < ActiveRecord::Base
 
   def left()      Card[cardname.left_name]  end
   def right()     Card[cardname.tag_name]   end
-  def pieces()  simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq end
-  def particles() cardname.particle_names.map {|part| Card.fetch(part) }     end
-  def key()       cardname.key                                               end
+  def pieces()    simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq end
+  def particles() cardname.particle_names.map {|part| Card.fetch(part) }       end
+  def key()       cardname.key                                                 end
 
   def junctions(args={})
     return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.

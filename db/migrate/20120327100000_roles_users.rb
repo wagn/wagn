@@ -28,7 +28,7 @@ class RolesUsers < ActiveRecord::Migration
                 when :administrate_users; "*account+*right+*update"
                 when :assign_user_roles;  "*roles+*right+*update"
               end ))
-            warn Rails.logger.warn("tasks ? #{task.inspect}[#{rollcard.name}] >> #{c.inspect}")
+            warn Rails.logger.warn("tasks ? #{task.inspect}[#{rolecard.name}] >> #{c.inspect}")
             c.add_item(rolecard.name)
             c.save
           end
@@ -36,10 +36,10 @@ class RolesUsers < ActiveRecord::Migration
 
       # Add username->*roles pointers from user_roles table
       Card.where(:extension_type=> 'User').each do |usercard|
-        uid = User.where(:card_id=>usercard.id).first.id
-        roles = RolesUser.where(:user_id=>uid).map do |role_user|
-            rcard=Card.where(:id=>role_user.role_id).first
-            warn Rails.logger.warn("user rold ? #{usercard.inspect}[#{rcard}, #{role_user.name}] >> #{c.inspect}")
+        user = User.where(:card_id=>usercard.id).first
+        roles = RolesUser.where(:user_id=>user.id).map do |role_user|
+            rcard=Card.where(:extension_id=>role_user.role_id, :extension_type => 'Role').first
+            warn Rails.logger.warn("user rold ? #{usercard.inspect}[#{rcard}, #{role_user.inspect}] >> #{c.inspect}")
             (rcard and rcard.id != Card::AnonID) ?  rcard.name : nil
           end.compact
 

@@ -19,51 +19,49 @@ module CardBuilderMethods
   end
   
   def create_roles( role_names )
-    role_names.collect {|name| Card.create( :typecode=>'Role', :name=>name ) }
+    role_names.collect {|name| Card.create( :typecode=>'Role', :name=>name ).extension }
   end
 
   def create_user( username )
     #username = separate_wikiword(username)
     raise( "invalid username" ) if username.nil? or username.empty?
-    if u = User.where(:card_id=>Card[username].id).first
+    if u = User.find_by_login(username) 
       return u      
-    elsif c = Card[username]
-      return User.where(:card_id=>c.id).first
+    elsif c = Card::User.find_by_name(username)
+      return c.extension
     else
-      if c = Card[username]
-        if c.type_id==Card::DefaultTypeID
-          c.type_id = Card::UserID
-        else
-          raise "Can't create user card for #{username}: already points to different user"
-        end
-      else 
-        c = Card.create!( :name=>username, :type_id=>Card::UserID )
-      end
-      c.save
-
       u = User.create!(
         :password=>'foofoo',
         :password_confirmation=>'foofoo',
         :email=>"#{username.gsub(/\s+/,'')}@grasscommons.org",
         :login=>username, 
         :blocked => true,
-        :invite_sender_id=>WAGBOT_ID,
-        :card_id=>c.id
+        :invite_sender_id=>WAGBOT_ID  
       )
 
+      if c = Card.find_by_name(username)
+        if c.typecode=='Basic'
+          c.typecode='User'
+        else
+          raise "Can't create user card for #{username}: already points to different user"
+        end
+      else 
+        c = Card::User.create!( :name=>username )
+      end
+      c.extension = u
+      c.save
       return u
     end
   end      
     
   def admin
-    User.admin
+    User[:wagbot]
   end
   
   def as(admin)
-    tmpuser = Card.user_id
-    Card.user= admin
+    tmpuser, User.current_user = User.current_user, admin
     yield
-    Card.user= tmpuser
+    User.current_user = tmpuser
   end
 end
 

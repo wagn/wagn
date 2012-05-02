@@ -14,34 +14,21 @@ module Wagn
     
     def dump(method)
       @data={'revisions'=>[]}
-      last_revision_hash do |data|
+      each_revision_hash do |data|
         @data['revisions'] << data
       end 
       @fh.write( @data.send("to_#{method}") )
     end
 
-    def last_revision_hash
-      ::Revision.find(:all, :select => "cards.name, cards.type, card_id, created_by, content, revisions.created_at, max(date(created_at))",
-                      :group => "card_id HAVING date(revisions.created_at) = max(date(revisions.created_at))", :include=>['card']).each do |rev|
-       if rev.card
-        yield( rev_to_hash(rev) )
-       end
-      end
-    end
-      
     def each_revision_hash
-      Card::Revision.find(:all, :include=>['card']).each do |rev|
-       if rev.card
+      ::Revision.find(:all, :include=>['card']).each do |rev|
         yield( rev_to_hash(rev) )
-       end
       end
     end
       
     def rev_to_hash( rev )
-      c = rev.card
       {
-        'name'=> c.name,
-        'type'=> c.type,
+        'name'=>rev.card.name,
         'content'=>rev.content,
         'date'=>rev.created_at,
         'author'=>get_user(rev)
@@ -57,9 +44,9 @@ module Wagn
     end
 
     def get_user(rev)
-      id = rev.attributes['creator_id']
+      id = rev.attributes['created_by']
       if !@author_names[id]
-        @author_names[id] = rev.author.name
+        @author_names[id] = rev.author.card.name
       end
       @author_names[id]
     end

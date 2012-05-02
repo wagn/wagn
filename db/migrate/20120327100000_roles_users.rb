@@ -6,10 +6,16 @@ class RolesUsers < ActiveRecord::Migration
     Card.as Card::WagbotID do
       # Delete the old *roles template
       (c = Card['*assign_user_roles'] and c=c.refresh) && c.delete
+      warn Rails.logger.warn("deleted #{c.inspect}")
       (c = Card['*role+*right+*content'] and c=c.refresh) && c.delete
+      warn Rails.logger.warn("deleted #{c.inspect}")
       (c = Card['*role+*right+*default'] and c=c.refresh) && c.delete
+      warn Rails.logger.warn("deleted #{c.inspect}")
       (c = Card['*tasks+*right+*default'] and c=c.refresh) && c.delete
-      Card.search(:right=>"*tasks").map(&:refresh).each(&:delete)
+      warn Rails.logger.warn("deleted #{c.inspect}")
+      tsks =Card.search(:right=>"*tasks").map(&:refresh)
+      warn Rails.logger.warn("delete lst #{tsks.inspect}")
+      tsks.each(&:delete)
       Wagn::Cache.reset_global
 
       # Add rolename->*tasks pointers from roles.tasks
@@ -21,7 +27,9 @@ class RolesUsers < ActiveRecord::Migration
                 when :create_accounts;    "*account+*right+*create"
                 when :administrate_users; "*account+*right+*update"
                 when :assign_user_roles;  "*roles+*right+*update"
-              end )).add_item(rolecard.name)
+              end ))
+            warn Rails.logger.warn("tasks ? #{task.inspect}[#{rollcard.name}] >> #{c.inspect}")
+            c.add_item(rolecard.name)
             c.save
           end
       end
@@ -30,8 +38,9 @@ class RolesUsers < ActiveRecord::Migration
       Card.where(:extension_type=> 'User').each do |usercard|
         uid = User.where(:card_id=>usercard.id).first.id
         roles = RolesUser.where(:user_id=>uid).map do |role_user|
-            (rcard=Card.where(:id=>role_user.role_id).first and
-               rcard.id != Card::AnonID) ?  rcard.name : nil
+            rcard=Card.where(:id=>role_user.role_id).first
+            warn Rails.logger.warn("user rold ? #{usercard.inspect}[#{rcard}, #{role_user.name}] >> #{c.inspect}")
+            (rcard and rcard.id != Card::AnonID) ?  rcard.name : nil
           end.compact
 
         unless roles.empty?

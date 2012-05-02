@@ -32,21 +32,19 @@ class Card::Codename < ActiveRecord::Base
       @@codehash = {}
 
       begin
-        if Card::Codename.connection
-          Card::Codename.connection.all {|h| hash_entry(h) }
-        end
-      rescue
-        warn Rails.logger.warn("codnames db error")
+        Card::Codename.all.each {|h| hash_entry(h) }
+      rescue Exception => e
+        warn Rails.logger.warn("codnames db error #{e.inspect}")
       end
 
       if @@no_db = @@codehash.empty? # ugh, we seem to need this to load test fixtures
-        warn Rails.logger.warn("yml load")
+        #warn Rails.logger.warn("yml load")
         if File.exists?( YML_CODE_FILE ) and yml = YAML.load_file( YML_CODE_FILE )
           yml.each { |p| hash_entry(p[1]) }
         else warn Rails.logger.warn("no file? #{YML_CODE_FILE}")
         end
       end
-      warn Rails.logger.warn("setting cache: #{@@codehash.inspect}\n")
+      #warn Rails.logger.warn("setting cache: #{@@codehash.inspect}\n")
       @@codehash
     rescue Exception => e
       warn(Rails.logger.info "Error loading codenames #{e.inspect}, #{e.backtrace*"\n"}")
@@ -66,6 +64,8 @@ class Card::Codename < ActiveRecord::Base
     def codes()          codehash.each_key.find{|k|Symbol===k} end
 
     # FIXME: some tests need to use this because they add codenames, fix tests
-    def reset_cache() @@codehash = nil end
+    def reset_cache()
+      #warn Rails.logger.warn("reset deprecated, codename creating tests only #{caller*"\n"}")
+      @@codehash = nil end
   end
 end

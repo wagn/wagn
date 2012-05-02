@@ -61,7 +61,7 @@ class CodenameTable < ActiveRecord::Migration
       Rails.logger.warn("codename for [#{card.id}] #{name}, #{newname}")
       Card::Codename.create :card_id=>card.id, :codename=>newname
 
-    elsif (!opt) warn(Rails.logger.warn "missing card for #{name}")
+    elsif !opt; warn(Rails.logger.warn "missing card for #{name}")
     end
   end
 
@@ -81,9 +81,10 @@ class CodenameTable < ActiveRecord::Migration
 
     Card.as Card::WagbotID do
       CodenameTable::CODENAMES.each { |name| CodenameTable.add_codename name }
-      if Rails.environment == 'test'
+      warn Rails.logger.warn("#{Rails.configuration.inspect}")
+      if Rails.configuration == 'test'
         CodenameTable::OPT_CODENAMES.each { |name| CodenameTable.add_codename name, true }
-      else warn Rails.logger.warn("skip optionals #{Rails.environment.inspect}") end
+      else warn Rails.logger.warn("skip optionals #{Rails.configuration.inspect}") end
     end
   end
 

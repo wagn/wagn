@@ -52,8 +52,8 @@ class RolesUsers < ActiveRecord::Migration
 
       # Add Role+*users+*type plus right+*content (edit_user_roles task)
       Card.create! :name => "Role+*users+*type plus right+*content",
-                   :type_id => Card::PointerID,
-                   :content => %[{"type":"User","refere to":"_left"}]
+                   :type_id => Card::SearchID,
+                   :content => %[{"type":"User","refer to":"_left"}]
 
       # Add *account+*right+*create (create_accounts task)
       c=Card['*account+*right+*create'] and c << '_left' or

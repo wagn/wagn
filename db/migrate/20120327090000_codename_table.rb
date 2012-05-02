@@ -63,8 +63,6 @@ class CodenameTable < ActiveRecord::Migration
   end
 
   def self.up
-    Wagn::Cache.new_all
-
     create_table "card_codenames", :force => true, :id => false do |t|
       t.integer  "card_id", :null => false
       t.string   "codename", :null => false
@@ -75,11 +73,12 @@ class CodenameTable < ActiveRecord::Migration
     change_column "cards", "type_id", :integer, :null=>false
     add_index "cards", ["type_id"], :name=>"card_type_index"
 
+    Card.reset_column_information
+    Wagn::Cache.new_all
+
     Card.as Card::WagbotID do
       CodenameTable::CODENAMES.each { |name| CodenameTable.add_codename name }
     end
-
-    Card.reset_column_information
   end
 
 

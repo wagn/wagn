@@ -34,7 +34,7 @@ class Card::Codename < ActiveRecord::Base
       begin
         Card::Codename.all.each {|h| hash_entry(h) }
       rescue Exception => e
-        warn Rails.logger.warn("codnames db error #{e.inspect}")
+        warn Rails.logger.warn("codenames db error #{e.inspect} #{e.backtrack[0..8]*"\n"}")
       end
 
       if @@no_db = @@codehash.empty? # ugh, we seem to need this to load test fixtures

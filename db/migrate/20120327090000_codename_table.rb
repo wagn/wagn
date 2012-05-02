@@ -6,7 +6,8 @@ class CodenameTable < ActiveRecord::Migration
   RENAMES = {
       "account_request"   => "invitation_request",
       "wagn_bot"          => "wagbot",
-      "*search"           => "xsearch"
+      "*search"           => "xsearch",
+      "layout"            => "layout_type"
     }
   CODENAMES = %w{
       *account *accountable *account_link *add_help *alert *all *all_plus
@@ -28,8 +29,10 @@ class CodenameTable < ActiveRecord::Migration
       *double_click *favicon
 
       basic cardtype date file html image account_request number phrase
-      plain_text pointer role search set setting toggle user
+      plain_text pointer role search set setting toggle user layout
     } # FIXME: *declare, *sol ... need to be in packs
+
+  OPT_CODENAMES = %w{cardtype_a cardtype_b cardtype_c cardtype_d cardtype_e cardtype_f}
 
   def self.name2code name
     code = if RENAMES[name];  RENAMES[name]
@@ -42,12 +45,12 @@ class CodenameTable < ActiveRecord::Migration
     card = Card[name] and card.id == Card::Codename[CodenameTable.name2code(name)]
   end
 
-  def self.add_codename name
+  def self.add_codename name, opt=false
     unless Card::Codename.no_db || !check_codename(name)
       Rails.logger.warn("good code #{name}, #{c=Card[name] and c.id}")
       return
     end
-    if card = Card[name] || Card.create!(:name=>name)
+    if card = Card[name] || (!opt && Card.create!(:name=>name))
       card or raise "Missing codename #{name} card"
 
       # clear any duplicate on name or id
@@ -58,7 +61,7 @@ class CodenameTable < ActiveRecord::Migration
       Rails.logger.warn("codename for [#{card.id}] #{name}, #{newname}")
       Card::Codename.create :card_id=>card.id, :codename=>newname
 
-    else warn Rails.logger.warn("missing card for #{name}")
+    elsif (!opt) warn(Rails.logger.warn "missing card for #{name}")
     end
   end
 
@@ -78,6 +81,9 @@ class CodenameTable < ActiveRecord::Migration
 
     Card.as Card::WagbotID do
       CodenameTable::CODENAMES.each { |name| CodenameTable.add_codename name }
+      if Rails.environment == 'test'
+        CodenameTable::OPT_CODENAMES.each { |name| CodenameTable.add_codename name, true }
+      else warn Rails.logger.warn("skip optionals #{Rails.environment.inspect}") end
     end
   end
 

@@ -46,7 +46,7 @@ class RolesUsers < ActiveRecord::Migration
         unless roles.empty?
           Card.create! :name    => usercard.cardname.trait_name(:roles),
                        :type_id => Card::PointerID,
-                       :content => "[[#{roles*']][['}]]"
+                       :content => "[[#{roles*']]\n[['}]]"
         end
       end
 

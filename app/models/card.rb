@@ -282,7 +282,7 @@ class Card < ActiveRecord::Base
     @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
   end
 
-  def trait_card? tagcode
+  def existing_trait_card tagcode
     Card.fetch cardname.trait_name(tagcode), :skip_modules=>true
   end
 

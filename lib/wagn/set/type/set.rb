@@ -40,7 +40,7 @@ module Wagn::Set::Type::Set
     # Generalize Me!
     #warn "ptr? #{tag.id || cardname.tag} && #{trunk.id || cardname.trunk}" if junction? and !new_card?
     pointer_test = if type_id == Card::SetID and
-            templt = trait_card?(:content) || trait_card?(:default)
+            templt = existing_trait_card(:content) || existing_trait_card(:default)
           templt.type_id
         elsif !new_card? && junction?
         #elsif !new_card? && junction? and tg = tag || Card[cardname.tag] and

@@ -54,7 +54,7 @@ end
 describe Card, "with account" do
   before do
     Card.as(Card::WagbotID) 
-    @joe = change_card_to_type('Joe User', 'basic')
+    @joe = change_card_to_type('Joe User', :basic)
   end
   
   it "should not have errors" do
@@ -74,7 +74,7 @@ describe Card, "type transition approve create" do
   end
   
   it "should have errors" do
-    lambda { change_card_to_type("basicname", "cardtype_b", true) }.should raise_error(Wagn::PermissionDenied)
+    lambda { change_card_to_type("basicname", "cardtype_b") }.should raise_error(Wagn::PermissionDenied)
   end
 
   it "should be the original type" do
@@ -85,7 +85,7 @@ end
 
 
 describe Card, "type transition validate_destroy" do  
-  before do @c = change_card_to_type("type-c-card", 'basic') end
+  before do @c = change_card_to_type("type-c-card", :basic) end
   
   it "should have errors" do
     @c.errors[:destroy_error].first.should == "card c is indestructible"
@@ -97,7 +97,7 @@ describe Card, "type transition validate_destroy" do
 end
 
 describe Card, "type transition validate_create" do
-  before do @c = change_card_to_type("basicname", "cardtype_d", true) end
+  before do @c = change_card_to_type("basicname", "cardtype_d") end
   
   it "should have errors" do
     pending "CardtypeD does not have a codename, so this is an invalid test"
@@ -112,7 +112,7 @@ end
 
 describe Card, "type transition destroy callback" do
   before do
-    @c = change_card_to_type("type-e-card", "basic") 
+    @c = change_card_to_type("type-e-card", :basic) 
   end
   
   it "should decrement counter in before destroy" do
@@ -130,7 +130,7 @@ describe Card, "type transition create callback" do
     Card.as(Card::WagbotID) do
       Card.create(:name=>'Basic+*type+*delete', :type=>'Pointer', :content=>"[[Anyone Signed in]]")
     end
-    @c = change_card_to_type("basicname", 'cardtype_f') 
+    @c = change_card_to_type("basicname", :cardtype_f) 
   end
     
   it "should increment counter"  do
@@ -144,11 +144,11 @@ describe Card, "type transition create callback" do
 end                
 
 
-def change_card_to_type(name, type, use_type_name=false)
+def change_card_to_type(name, type)
   Card.as :joe_user do
     card = Card.fetch(name)
-    tid=card.type_id = use_type_name ? Card[type].id : Card.type_id_from_code(type)
-    #warn "card[#{name}, T:#{type}, #{use_type_name}] is #{card.inspect}, TID:#{tid}"
+    tid=card.type_id = Symbol===type ? Card::Codename[type] : Card.fetch_id(type)
+    #warn "card[#{name.inspect}, T:#{type.inspect}] is #{card.inspect}, TID:#{tid}"
     r=card.save
     #warn "saved #{card.inspect} R#{r}"
     card

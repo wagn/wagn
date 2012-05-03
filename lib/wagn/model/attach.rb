@@ -81,7 +81,7 @@ module Wagn::Model::Attach
     at=self.attach
     at.instance_write :file_name, at.original_filename
 
-    Card::ImageID == (type_id || Card.type_id_from_name( @type_args[:type] ) )
+    Card::ImageID == (type_id || Card.fetch_id( @type_args[:type] ) )
     # returning true enables thumnail creation
   end
 

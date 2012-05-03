@@ -84,6 +84,10 @@ module Wagn::Model::Fetch
       fetch( cardname, opts ) || create( opts.merge(:name=>cardname) )
     end
 
+    def fetch_id mark
+      c=Card.fetch(mark, :skip_virtual=>true, :skip_modules=>true) and c.id
+    end
+
     def exists? cardname
       card = fetch cardname, :skip_virtual=>true, :skip_modules=>true
       card.present?

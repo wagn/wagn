@@ -500,7 +500,7 @@ class Wql
         when "cond";     return "(#{sqlize(v)})"
         when "name";     ["#{table}.key",      [v].flatten.map(&:to_cardname).map(&:to_key)]
         
-        when "type";     ["#{table}.type_id", [v].flatten.map{ |val| Card.type_id_from_name( val )||0 }]
+        when "type";     ["#{table}.type_id", [v].flatten.map{ |val| Card.fetch_id( val )||0 }]
         when "content";   join_alias = @cardspec.add_revision_join
                          ["#{join_alias}.content", v]
         else;            ["#{table}.#{safe_sql(field)}", v]

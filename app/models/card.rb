@@ -253,21 +253,6 @@ class Card < ActiveRecord::Base
         noncreateable_names.member?(name) || !new( :type=>name ).ok?( :create )
       end
     end
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # TYPE (Class methods)
-
-    def type_id_from_name(name)
-      c=Card.fetch(name, :skip_virtual=>true, :skip_modules=>true) and c.id
-    end
-
-    def typecode_from_name(name)
-      (tid = type_id_from_name name).nil? ? nil : Codename[tid.to_i]
-    end
-    
-    def type_id_from_code(code) # _or_name
-      Codename[code] || (c=Card[code] and c.id)
-    end
   end
 
 #~~~~~~~ Instance
@@ -310,8 +295,9 @@ class Card < ActiveRecord::Base
     return if args[:type_id]
 
     type_id = case
-      when args[:typecode] ;  Card.type_id_from_code args[:typecode]
-      when args[:type]     ;  Card.type_id_from_name args[:type]
+      when args[:typecode] ;  code=args[:typecode] and (
+                              Codename[code] || (c=Card[code] and c.id))
+      when args[:type]     ;  Card.fetch_id args[:type]
       else :noop
       end
     
@@ -337,7 +323,7 @@ class Card < ActiveRecord::Base
 
   def update_attributes(args={})
     if newtype = args.delete(:type) || args.delete('type')
-      args[:type_id] = Card.type_id_from_name( newtype )
+      args[:type_id] = Card.fetch_id( newtype )
     end
     super args
   end
@@ -580,7 +566,7 @@ class Card < ActiveRecord::Base
     card=Card.fetch(type_id, :skip_modules=>true, :skip_virtual=>true) and card.name
   end
 
-  def type=(typename) self.type_id = Card.type_id_from_name(typename)        end
+  def type=(typename) self.type_id = Card.fetch_id(typename)        end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CONTENT / REVISIONS
@@ -833,7 +819,7 @@ class Card < ActiveRecord::Base
       end
       # invalid to change type when type is hard_templated
       if (rt = rec.right_template and rt.hard_template? and
-        value != Card.type_id_from_name(rt.typename) and !rec.allow_type_change)
+        value != Card.fetch_id(rt.typename) and !rec.allow_type_change)
         rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rt.typename}"
       end
     end

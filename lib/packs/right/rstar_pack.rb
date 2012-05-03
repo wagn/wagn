@@ -33,7 +33,7 @@ class Wagn::Renderer::Html
 
     if args=params[:card]
       current_rule = current_rule.refresh if current_rule.frozen?
-      args[:type_id] = Card.type_id_from_name(args.delete(:type)) if args[:type]
+      args[:type_id] = Card.fetch_id(args.delete(:type)) if args[:type]
       current_rule.assign_attributes args
       current_rule.reset_mods
       current_rule.include_set_modules

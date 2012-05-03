@@ -3,7 +3,15 @@ class Card::Revision < ActiveRecord::Base
   belongs_to :card, :class_name=>"Card", :foreign_key=>'card_id'
   
   cattr_accessor :cache
+
+  # userstamp methods
   stampable :stamper_class_name => :card
+  before_save :set_stamper
+  after_save :reset_stamper
+
+  def set_stamper()   self.creator_id = Card.user_id end
+  def reset_stamper()                                end
+
   
   def author
     c=Card[creator_id]

@@ -330,12 +330,11 @@ class Card < ActiveRecord::Base
 
   def set_stamper()
     #warn "set stamper[#{name}] #{Card.user_id}, #{Card.as_user_id}" #{caller*"\n"}"
-    #Card.stamper = #Card.user_id
     self.updater_id = Card.user_id
     self.creator_id = self.updater_id if new_card?
     #warn "set stamper[#{name}] #{self.creator_id}, #{self.updater_id}, #{Card.user_id}, #{Card.as_user_id}" #{caller*"\n"}"
   end
-  def reset_stamper() end #Card.reset_stamper end
+  def reset_stamper() end
 
   def base_before_save
     if self.respond_to?(:before_save) and self.before_save == false
@@ -582,8 +581,7 @@ class Card < ActiveRecord::Base
        @cached_revision=Card::Revision.cache.read("#{cardname.css_name}-content") and
        @cached_revision.id==current_revision_id )
     else
-      rev = current_revision_id ? Card::Revision.find(current_revision_id) :
-                    Card::Revision.new(:creator_id => Card.user_id)
+      rev = current_revision_id ? Card::Revision.find(current_revision_id) : Card::Revision.new()
       @cached_revision = Card::Revision.cache ?
         Card::Revision.cache.write("#{cardname.css_name}-content", rev) : rev
     end
@@ -618,7 +616,7 @@ class Card < ActiveRecord::Base
 
   def save_draft( content )
     clear_drafts
-    revisions.create(:content=>content, :creator_id=>Card.user_id)
+    revisions.create(:content=>content)
   end
 
   protected

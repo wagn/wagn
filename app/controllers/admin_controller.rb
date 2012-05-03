@@ -47,6 +47,7 @@ class AdminController < ApplicationController
       role.tasks = tasks.keys.join(',')
       role.save
     end
+    User.cache.reset
     Role.cache.reset
 
     flash[:notice] = 'permissions saved'

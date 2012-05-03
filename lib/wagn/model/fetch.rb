@@ -32,7 +32,8 @@ module Wagn::Model::Fetch
       # lookup card
       
       #Cache lookup
-      card = Card.cache.read cache_key if Card.cache 
+      result = Card.cache.read cache_key if Card.cache
+      card = (result && Integer===mark) ? Card.cache.read(result) : result
 
       unless card
         # DB lookup
@@ -59,7 +60,7 @@ module Wagn::Model::Fetch
           
       if Card.cache && needs_caching
         Card.cache.write card.key, card
-        Card.cache.write "~#{card.id}", card if card.id
+        Card.cache.write "~#{card.id}", card.key if card.id
       end
       
       return nil if card.new_card? and ( opts[:skip_virtual] || !card.virtual? )

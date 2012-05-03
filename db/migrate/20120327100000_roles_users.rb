@@ -1,6 +1,8 @@
 class RolesUsers < ActiveRecord::Migration
   class RolesUser < ActiveRecord::Base
   end
+  class Role << ActiveRecored::Base
+  end
   
   def up
     Card.as Card::WagbotID do

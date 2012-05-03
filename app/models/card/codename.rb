@@ -56,9 +56,8 @@ class Card::Codename < ActiveRecord::Base
       key = key.to_sym unless Integer===key
       codehash[key]
     end
-    #alias codename []
-    def name_change(key)                                       end
-    def codes()          codehash.each_key.find{|k|Symbol===k} end
+    def name_change(key)                                        end
+    def codes()       codehash.each_key.find_all{|k|Symbol===k} end
 
     # FIXME: some tests need to use this because they add codenames, fix tests
     def reset_cache() @@codehash = nil end

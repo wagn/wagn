@@ -353,7 +353,8 @@ class Wagn::Renderer::Html
     # Do we want these as well?  as by type Role?
     #roles = Card.search(:refer_to => {:right=> Card::Xroles})
     role_card = card.trait_card(:roles)
-    user_roles = role_card.item_cards.map(&:id).
+    # FIXME: probably should have a limit (and paging)
+    user_roles = role_card.item_cards(:limit=>0).map(&:id).
       reject{|x|x == Card::AnyoneID.to_s || x == Card::AuthID.to_s }
     #user_roles = card.extension.roles
 

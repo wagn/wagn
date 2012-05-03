@@ -65,6 +65,7 @@ class User < ActiveRecord::Base
     def [](key)
       #warn (Rails.logger.info "Looking up USER[ #{key}]")
 
+      key = 3 if key == :first
       @card = Card===key ? key : Card[key]
       key = case key
         when Integer; "##{key}"

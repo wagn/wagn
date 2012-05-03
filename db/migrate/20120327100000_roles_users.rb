@@ -1,7 +1,7 @@
 class RolesUsers < ActiveRecord::Migration
   class RolesUser < ActiveRecord::Base
   end
-  class Role << ActiveRecored::Base
+  class Role < ActiveRecord::Base
   end
   
   def up

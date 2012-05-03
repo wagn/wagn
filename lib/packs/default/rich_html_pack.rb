@@ -345,7 +345,7 @@ class Wagn::Renderer::Html
          end}
       </div>}
       
-      # should be just if !card.trait_card(:account) and Card.new( :name=>"#{card.name}+Card::Codename[:account].to_name").ok?(create)
+      # should be just if !card.trait_card(:account) and Card.new( :name=>"#{card.name}+Card[:account].name").ok?(create)
   end
 
   define_view(:option_roles) do |args|

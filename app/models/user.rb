@@ -61,26 +61,26 @@ class User < ActiveRecord::Base
       Digest::SHA1.hexdigest("#{salt}--#{password}--")
     end
 
+    # User caching, needs work
     def [](key)
       #warn (Rails.logger.info "Looking up USER[ #{key}]")
 
-      @card, key = case key
-        when Integer
-          [Card[key], "##{key}"]
-        when Card;
-          [key, key.key]
-        else
-          raise "int string" if key =~ /^\d+$/
-          [Card[(card_id=Card::Codename[key.to_s]) ? card_id : key.to_s], key.to_s]
+      @card = Card===key ? key : Card[key]
+      key = case key
+        when Integer; "##{key}"
+        when Card   ; key.key
+        when Symbol ; key.to_s
+        when String ; key
+        else raise "bad class for user key #{key.class}"
         end
 
-      usr = self.cache.read(key.to_s)
+      usr = self.cache.read(key)
       return usr if usr
 
-      
+      # cache it (on codename too if there is one)
       card_id ||= @card && @card.id
-      self.cache.write(key.to_s, usr)
-      code = Card::Codename[card_id] and self.cache.write(code, usr)
+      self.cache.write(key, usr)
+      code = Card::Codename[card_id].to_s and code != key and self.cache.write(code.to_s, usr)
       usr
     end
   end

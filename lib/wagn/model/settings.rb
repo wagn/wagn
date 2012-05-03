@@ -73,11 +73,10 @@ module Wagn::Model::Settings
           end
         end
       end
-      #warn "usnbg #{@@universal_setting_names_by_group.inspect}"; @@universal_setting_names_by_group
     end
 
     def setting_attrib(cardname, attrib)
-      # NOOOOOOOOOOOOOOOOOOOooooooooooooo :)
+      # NOOOOOOOOOOOOOOOOOOOooooooooooooo :) Better?
       if cardname.simple? and !new_card? and Card::Codename[id.to_i]
         const = eval("Wagn::Set::Self::#{cardname.module_name}")
         const.send attrib
@@ -91,7 +90,6 @@ module Wagn::Model::Settings
   def self.included(base)
     super
     base.extend(ClassMethods)
-    #base.class_eval { attr_accessor :rule }
   end
 
 end

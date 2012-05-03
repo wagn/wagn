@@ -32,7 +32,7 @@ class Card::Codename < ActiveRecord::Base
       @@codehash = {}
 
       begin
-        Card::Codename.all.each {|h| hash_entry(h) }
+        all.each {|h| hash_entry(h) }
       rescue Exception => e
         warn Rails.logger.warn("codenames db error #{e.inspect} #{e.backtrack[0..8]*"\n"}")
       end
@@ -54,18 +54,13 @@ class Card::Codename < ActiveRecord::Base
 
     def [](key)
       key = key.to_sym unless Integer===key
-      warn "no codenames" if codehash.nil?
-      #warn "no key #{key.inspect} #{caller[0..8]*"\n"}" unless Integer===key or [:banana_pudding, :county, :cookie, :joe_user, :joe_admin, :john, :u1].member?(key) or codehash.has_key? key
       codehash[key]
     end
-    alias codename []
-    #def codename(id)       codehash[id]                        end
+    #alias codename []
     def name_change(key)                                       end
     def codes()          codehash.each_key.find{|k|Symbol===k} end
 
     # FIXME: some tests need to use this because they add codenames, fix tests
-    def reset_cache()
-      #warn Rails.logger.warn("reset deprecated, codename creating tests only #{caller*"\n"}")
-      @@codehash = nil end
+    def reset_cache() @@codehash = nil end
   end
 end

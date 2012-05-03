@@ -1,7 +1,8 @@
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
+#FIXME: all this belongs someplace else (or delete it)
 
-describe Role, "Authenticated User" do
+describe Card, "Authenticated User" do
   before do
     @auth = Card[Card::AuthID]
   end

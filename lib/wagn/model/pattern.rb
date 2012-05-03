@@ -88,11 +88,7 @@ module Wagn::Model
       def trunkless?()      !!self.method_key                      end # method key determined by class only when no trunk involved
       def new(card)         super(card) if pattern_applies?(card)  end
       def key_name()
-        @key_name ||= begin
-                        r=(cn=Card::Codename[self.key] and c=Card[cn] and c.name)
-
-        #warn "kn sk:#{self.key}, cn: #{cn.inspect}, C:#{c.inspect}, kn:#{r.inspect}"; r
-                      end
+        @key_name ||= (cn=Card::Codename[self.key] and c=Card[cn] and c.name)
       end
 
       def register key, opt_keys, opts={}
@@ -105,14 +101,12 @@ module Wagn::Model
       end
       
       def method_key_from_opts opts            
-        r=
         method_key || begin
           parts = opt_keys.map do |opt_key|
             opts[opt_key].to_s.gsub('+', '-')
           end << key
           parts.join '_'
         end
-        #warn "mkfo #{opts.inspect} #{r}"; r
       end
       
       def pattern_applies?(card)
@@ -158,11 +152,9 @@ module Wagn::Model
     def opt_vals
       if @opt_vals.nil?
         @opt_vals = self.class.trunkless? ? [] : @trunk_name.parts.map do |part|
-          r=(card=Card.fetch(part, :skip_virtual=>true, :skip_modules=>true) and
-            Card::Codename.codename(card.id.to_i))
-          #warn "ovx[#{card.nil? ? 'no card' : card.id.inspect}] #{r.inspect}"; r
+          card=Card.fetch(part, :skip_virtual=>true, :skip_modules=>true) and
+               Card::Codename[card.id.to_i]
         end
-        #warn "calc ov[#{to_s}] #{@opt_vals.inspect}"
       end
       @opt_vals
     end

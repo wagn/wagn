@@ -52,7 +52,7 @@ describe CardController do
 
   describe "#create" do
     before do
-      login_as :joe_user
+      login_as 'joe_user'
     end
 
     # FIXME: several of these tests go all the way to DB,
@@ -102,7 +102,7 @@ describe CardController do
       end
 
       it "creates card with subcards" do
-        login_as :joe_admin
+        login_as 'joe_admin'
         xhr :post, :create, :success=>'REDIRECT: /', :card=>{
           :name  => "Gala", 
           :type  => "Fruit",
@@ -124,13 +124,13 @@ describe CardController do
     end
    
     it "redirects to thanks if present" do
-      login_as :joe_admin
+      login_as 'joe_admin'
       xhr :post, :create, :success => 'REDIRECT: /thank_you', :card => { "name" => "Wombly" }
       assert_response 303, "/thank_you"
     end
 
     it "redirects to card if thanks is blank" do
-      login_as :joe_admin
+      login_as 'joe_admin'
       post :create, :success => 'REDIRECT: TO-CARD', "card" => { "name" => "Joe+boop" }
       assert_redirected_to "/Joe+boop"
     end
@@ -145,7 +145,7 @@ describe CardController do
 
   describe "#new" do
     before do
-      login_as :joe_user
+      login_as 'joe_user'
     end
     
     it "new should work for creatable nonviewable cardtype" do
@@ -164,14 +164,14 @@ describe CardController do
     include AuthenticatedTestHelper
 
     before do
-      Card.as :joe_user
-      @user = User[:joe_user]
+      Card.as 'joe_user'
+      @user = User['joe_user']
       @request    = ActionController::TestRequest.new
       @response   = ActionController::TestResponse.new                                
       @controller = CardController.new
       @simple_card = Card['Sample Basic']
       @combo_card = Card['A+B']
-      login_as(:joe_user)
+      login_as('joe_user')
     end
 
     it "new with name" do
@@ -235,7 +235,7 @@ describe CardController do
     end
 
     it "should watch" do
-      login_as(:joe_user)
+      login_as('joe_user')
       post :watch, :id=>"Home", :toggle=>'on'
       assert c=Card["Home+*watchers"]
       c.content.should == "[[Joe User]]"
@@ -247,7 +247,7 @@ describe CardController do
 
 
     it "rename without update references should work" do
-      Card.as :joe_user
+      Card.as 'joe_user'
       f = Card.create! :type=>"Cardtype", :name=>"Apple"
       xhr :post, :update, :id => "~#{f.id}", :card => {
         :confirm_rename => true,
@@ -260,7 +260,7 @@ describe CardController do
     end
 
     it "update typecode" do
-      Card.as :joe_user   
+      Card.as 'joe_user'   
       xhr :post, :update, :id=>"~#{@simple_card.id}", :card=>{ :type=>"Date" }
       assert_response :success, "changed card type"
       Card['Sample Basic'].typecode.should == :date
@@ -273,7 +273,7 @@ describe CardController do
     #  for now.
     # 
     #  def test_update_cardtype_no_stripping
-    #    Card.as :joe_user                                               
+    #    Card.as 'joe_user'                                               
     #    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
     #    #assert_equal "boo", assigns['card'].content
     #    assert_equal "<br/>", assigns['card'].content

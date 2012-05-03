@@ -4,7 +4,7 @@ module AllSets
   #Wagn::Set::Type::Image
   Wagn::Set::Type::Etherpad
   Wagn::Set::Type::Layout
-  Wagn::Set::Type::Role
+  #Wagn::Set::Type::Role
   Wagn::Set::Type::File
   Wagn::Set::Type::User
   Wagn::Set::Type::InvitationRequest

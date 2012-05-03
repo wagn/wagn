@@ -57,7 +57,6 @@ module Wagn::Model::TrackedAttributes
       end
     end
           
-    #Card::Codename.reset_cache if type_id==Card::CardtypeID
     Card.clear_cache @old_name
     @name_changed = true          
     @name_or_content_changed=true

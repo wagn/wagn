@@ -33,10 +33,6 @@ module Enumerable
       o.send(method_name, *args)
     end
   end
-  
-  def first_value()
-    find {|o| v=yield(o); return v if v; }
-  end
 end
 
 class Class

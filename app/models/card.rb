@@ -104,7 +104,7 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CODENAME
 
-  def codename() id && Card::Codename.codename(id) end
+  def codename() id && Codename[id.to_i] end
 
   class << self
     def const_missing(const)
@@ -154,7 +154,7 @@ class Card < ActiveRecord::Base
         when Integer ;   user
         else
           user = user.to_s
-          Card::Codename[user] or (cd=Card[user] and cd.id)
+          Codename[user] or (cd=Card[user] and cd.id)
       end
     end
 
@@ -228,7 +228,6 @@ class Card < ActiveRecord::Base
         ok_hash[usr_id] = begin
             Card[usr_id].all_roles.inject({:role_ids => {}}) do |ok,role_id|
               ok[:role_ids][role_id] = true
-              Role[role_id].task_list.each { |t| ok[t] = 1 }
               ok
             end
           end || false
@@ -248,7 +247,7 @@ class Card < ActiveRecord::Base
         Card.search :type=>Card::CardtypeID, :return=>:name
       end
       noncreateable_names = NON_CREATEABLE_TYPES.map do |code|
-        Card::Codename.cardname code
+        Codename.cardname code
       end
       type_names.reject do |name|
         noncreateable_names.member?(name) || !new( :type=>name ).ok?( :create )
@@ -263,11 +262,11 @@ class Card < ActiveRecord::Base
     end
 
     def typecode_from_name(name)
-      (tid = type_id_from_name name).nil? ? nil : Codename.codename(tid)
+      (tid = type_id_from_name name).nil? ? nil : Codename[tid.to_i]
     end
     
     def type_id_from_code(code) # _or_name
-      Card::Codename[code] || (c=Card[code] and c.id)
+      Codename[code] || (c=Card[code] and c.id)
     end
   end
 
@@ -574,11 +573,11 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # TYPE
 
-  def type_card() c=Card[type_id.to_i] end
-  def typecode() Codename.codename( type_id ) end # Should we not fallback to key?
+  def type_card() Card[type_id.to_i]     end
+  def typecode()  Codename[type_id.to_i] end # Should we not fallback to key?
   def typename()
     return if type_id.nil?
-    c=Card.fetch(type_id, :skip_modules=>true, :skip_virtual=>true) and c.name
+    card=Card.fetch(type_id, :skip_modules=>true, :skip_virtual=>true) and card.name
   end
 
   def type=(typename) self.type_id = Card.type_id_from_name(typename)        end
@@ -586,7 +585,7 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CONTENT / REVISIONS
 
-  def content() new_card? ? template(true).content : cached_revision.content end
+  def content() new_card? ? template(reset=true).content : cached_revision.content end
   def raw_content()     templated_content || content                         end
   def selected_rev_id() @selected_rev_id || (cr=cached_revision)&&cr.id || 0 end
 
@@ -714,8 +713,8 @@ class Card < ActiveRecord::Base
 
   def validate_destroy
     # FIXME: need to make all codenamed card indestructable
-    if self.id ==  Card::WagbotID or self.id ==  Card::AnonID
-      errors.add :destroy, "#{name}'s is a system card.<br>  Deleting this card would mess up our revision records."
+    if code=self.codename
+      errors.add :destroy, "#{name}'s is a system card. (#{code})<br>  Deleting this card would mess up our revision records."
       return false
     elsif type_id== Card::UserID and Card::Revision.find_by_creator_id( self.id )
       errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."

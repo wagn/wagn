@@ -135,6 +135,8 @@ describe Card, "types" do
     Card::Codename.reset_cache
     Card.create!(:type=>"FooRenamed",:name=>"testy").typecode.should == :a_foo
     Card.create!(:type=>"foo_renamed",:name=>"so testy").typecode.should == :a_foo
+
+    Card::Codename.reset_cache
   end
   it "should accept classname as typecode" do
     ct = Card.create! :name=>"BFoo", :type=>'Cardtype'
@@ -148,18 +150,8 @@ describe Card, "types" do
     ncd = Card.create(:type=>'BFooRenamed', :name=>'testy2')
     ncd.typename.should == 'BFooRenamed'
     ncd.typecode.should == :b_foo
-  end
-  
-  it "should accept cardtype name first when both are present" do
-    #we don't detect this collision now, .typecode should be nil in the case that none is assigned, but that would break a lot of stuff now
-    pending "we don't detect collision now, .typecode should be nil"
-    ct = Card.create! :name=>"CFoo", :type=>'Cardtype'
-    Card::Codename.create! :card_id=>ct.id, :codename=>ct.key
-    Card::Codename.reset_cache
 
-    ct.update_attributes! :name=>"CFooRenamed"
-    Card.create! :name=>"CFoo", :type=>'Cardtype'
-    Card.create!(:type=>"CFoo",:name=>"testy").typecode.should_not == :c_foo
+    Card::Codename.reset_cache
   end
   
   it "should raise a validation error if a bogus type is given" do

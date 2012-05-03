@@ -14,7 +14,6 @@ describe "Card (Cardtype)" do
 
   it "should not allow cardtype remove when instances present" do
     Card.create :name=>'City', :type=>'Cardtype'
-    #Card::Codename.reset_cache
     city = Card.fetch('City')
     c1=Card.create :name=>'Sparta', :type=>'City'
     c2=Card.create :name=>'Eugene', :type=>'City'
@@ -151,9 +150,6 @@ describe Card, "Wannabe Cardtype Card" do
   it "should successfully change its type to a Cardtype" do
     Card['convertible'].typecode.should==:cardtype
   end
-  #it "should have an extension" do
-  #  Card['convertible'].extension.should_not== nil
-  #end
 end
 
 describe User, "Joe User" do
@@ -163,15 +159,10 @@ describe User, "Joe User" do
 
     Card.create :name=>'Cardtype F+*type+*create', :type=>'Pointer', :content=>'[[r3]]'
     
-#    @ctf.permit(:create, @r3)
-#    @ctf.save!
-
     Card.as :joe_user
     @user = User.user
     @ucard = Card[@user.card_id]
-    #Card::Codename.reset_cache
     @typenames = Card.createable_types
-    #@typenames = Card.createable_types.map{ |ct| ct[:name] }
   end
 
   it "should not have r3 permissions" do
@@ -181,12 +172,9 @@ describe User, "Joe User" do
     Card.new(:type=>'Cardtype F').ok?(:create).should be_false
   end
   it "should not find Cardtype F on its list of createable cardtypes" do
-    #pending "createable_types"
     @typenames.member?('Cardtype F').should be_false
   end
   it "should find Basic on its list of createable cardtypes" do
-    #pending "createable_types"
-    #warn "crtble tps #{@typenames.inspect}"
     @typenames.member?('Basic').should be_true
   end
   

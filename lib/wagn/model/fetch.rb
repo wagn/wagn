@@ -46,7 +46,7 @@ module Wagn::Model::Fetch
       
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if Integer===mark
-        raise "fetch of missing card_id #{card_id}" if card.nil?
+        raise "fetch of missing card_id #{mark}" if card.nil?
       else
         return nil if card && opts[:skip_virtual] && card.new_card?
 

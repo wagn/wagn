@@ -38,7 +38,7 @@ class CodenameTable < ActiveRecord::Migration
     code = if RENAMES[name];  RENAMES[name]
        elsif '*' == name[0];  name[1..-1]
        else                   name end
-    Rails.logger.warn("name2code: #{name}, #{code}, #{RENAMES[code]}"); code
+    Rails.logger.warn("migr name2code: #{name}, #{code}, #{RENAMES[code]}"); code
   end
     
   def self.check_codename name
@@ -47,7 +47,7 @@ class CodenameTable < ActiveRecord::Migration
 
   def self.add_codename name, opt=false
     unless Card::Codename.no_db || !check_codename(name)
-      Rails.logger.warn("good code #{name}, #{c=Card[name] and c.id}")
+      Rails.logger.warn("migr good code #{name}, #{c=Card[name] and c.id}")
       return
     end
     if card = Card[name] || (!opt && Card.create!(:name=>name))
@@ -58,7 +58,7 @@ class CodenameTable < ActiveRecord::Migration
       Card::Codename.where(:card_id=>card.id).delete_all
       Card::Codename.where(:codename=>newname).delete_all
 
-      Rails.logger.warn("codename for [#{card.id}] #{name}, #{newname}")
+      Rails.logger.warn("migr codename for [#{card.id}] #{name}, #{newname}")
       Card::Codename.create :card_id=>card.id, :codename=>newname
 
     elsif !opt; warn(Rails.logger.warn "missing card for #{name}")
@@ -81,10 +81,10 @@ class CodenameTable < ActiveRecord::Migration
 
     Card.as Card::WagbotID do
       CodenameTable::CODENAMES.each { |name| CodenameTable.add_codename name }
-      warn Rails.logger.warn("#{Rails.configuration.inspect}")
+      warn Rails.logger.warn("migr #{Rails.configuration.inspect}")
       if Rails.configuration == 'test'
         CodenameTable::OPT_CODENAMES.each { |name| CodenameTable.add_codename name, true }
-      else warn Rails.logger.warn("skip optionals #{Rails.configuration.inspect}") end
+      else warn Rails.logger.warn("migr skip optionals #{Rails.configuration.inspect}") end
     end
   end
 

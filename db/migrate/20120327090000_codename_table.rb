@@ -84,7 +84,7 @@ class CodenameTable < ActiveRecord::Migration
       warn Rails.logger.warn("migr opt test #{Card['cardtype_a']}")
       if Card['cardtype_a']
         CodenameTable::OPT_CODENAMES.each { |name| CodenameTable.add_codename name, true }
-      else warn Rails.logger.warn("migr skip optionals #{Rails.configuration.inspect}") end
+      else warn Rails.logger.warn("migr skip optionals") end
     end
   end
 

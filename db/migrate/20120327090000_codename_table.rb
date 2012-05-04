@@ -65,11 +65,6 @@ class CodenameTable < ActiveRecord::Migration
   end
 
   def self.up
-    create_table "card_codenames", :force => true, :id => false do |t|
-      t.integer  "card_id", :null => false
-      t.string   "codename", :null => false
-    end
-
     remove_index "cards", :name=>"card_type_index"
     change_column "cards", "typecode", :string, :null=>true
     change_column "cards", "type_id", :integer, :null=>false
@@ -98,7 +93,5 @@ class CodenameTable < ActiveRecord::Migration
     change_column "cards", "type_id", :integer, :null=>true
     change_column "cards", "typecode", :string, :null=>false
     add_index "cards", ["typecode"], :name=>"card_type_index"
-
-    drop_table "card_codenames"
   end
 end

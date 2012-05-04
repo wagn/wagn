@@ -119,10 +119,9 @@ describe Card, "types" do
   end
   
   it "should accept cardtype name and casespace variant as type" do
-    ct = Card.create! :name=>"AFoo", :type=>'Cardtype'
+    ct = Card.create! :name=>"AFoo", :type=>'Cardtype', :codename=>'a_foo'
     ct.typecode.should == :cardtype
     ct = Card.fetch('AFoo')
-    Card::Codename.create! :card_id=>ct.id, :codename=>ct.key
     Card::Codename.reset_cache
 
     ct.update_attributes! :name=>"FooRenamed", :confirm_rename=>true
@@ -139,8 +138,7 @@ describe Card, "types" do
     Card::Codename.reset_cache
   end
   it "should accept classname as typecode" do
-    ct = Card.create! :name=>"BFoo", :type=>'Cardtype'
-    Card::Codename.create! :card_id=>ct.id, :codename=>ct.key
+    ct = Card.create! :name=>"BFoo", :type=>'Cardtype', :codename=>'b_foo'
     Card::Codename.reset_cache
 
     ct.update_attributes! :name=>"BFooRenamed"

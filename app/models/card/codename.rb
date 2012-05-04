@@ -19,8 +19,8 @@ class Card::Codename < ActiveRecord::Base
     YML_CODE_FILE = 'test/fixtures/card_codenames.yml'
     def codehash() @@codehash || load_hash end
 
-    def hash_entry(rec)
-      code = rec['codename'].to_sym; cid =  rec['card_id'].to_i
+    def hash_entry(cid, code)
+      code = code.to_sym; cid =  cid.to_i
       if @@codehash.has_key?(code) or @@codehash.has_key?(cid)
         warn "dup code ID:#{cid} (#{@@codehash[code]}), CD:#{code} (#{@@codehash[cid]})"
       end
@@ -31,16 +31,12 @@ class Card::Codename < ActiveRecord::Base
       return @@codehash unless @@codehash.nil?
       @@codehash = {}
 
-      begin
-        all.each {|h| hash_entry(h) }
-      rescue Exception => e
-        warn Rails.logger.warn("codenames db error #{e.inspect} #{e.backtrack[0..8]*"\n"}")
-      end
+      Card.where('codename is not NULL').each {|r| hash_entry(r.id, r.codename) }
 
       if @@no_db = @@codehash.empty? # ugh, we seem to need this to load test fixtures
-        #warn Rails.logger.warn("yml load")
+        warn Rails.logger.warn("yml load")
         if File.exists?( YML_CODE_FILE ) and yml = YAML.load_file( YML_CODE_FILE )
-          yml.each { |p| hash_entry(p[1]) }
+          yml.each { |p| hash_entry(p[1]['card_id'], p[1]['codename']) }
         else warn Rails.logger.warn("no file? #{YML_CODE_FILE}")
         end
       end
@@ -56,7 +52,7 @@ class Card::Codename < ActiveRecord::Base
       key = key.to_sym unless Integer===key
       codehash[key]
     end
-    def name_change(key)                                        end
+    #def name_change(key)                                        end
     def codes()       codehash.each_key.find_all{|k|Symbol===k} end
 
     # FIXME: some tests need to use this because they add codenames, fix tests

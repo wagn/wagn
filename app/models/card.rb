@@ -104,7 +104,7 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CODENAME
 
-  def codename() id && Codename[id.to_i] end
+  #def codename() id && Codename[id.to_i] end
 
   class << self
     def const_missing(const)

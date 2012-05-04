@@ -77,7 +77,7 @@ module Wagn::Model::Settings
 
     def setting_attrib(cardname, attrib)
       # NOOOOOOOOOOOOOOOOOOOooooooooooooo :) Better?
-      if cardname.simple? and !new_card? and Card::Codename[id.to_i]
+      if cardname.simple? and !new_card? and Wagn::Codename[id.to_i]
         const = eval("Wagn::Set::Self::#{cardname.module_name}")
         const.send attrib
       end

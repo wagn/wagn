@@ -88,7 +88,7 @@ module Wagn::Model
       def trunkless?()      !!self.method_key                      end # method key determined by class only when no trunk involved
       def new(card)         super(card) if pattern_applies?(card)  end
       def key_name()
-        @key_name ||= (cn=Card::Codename[self.key] and c=Card[cn] and c.name)
+        @key_name ||= (cn=Wagn::Codename[self.key] and c=Card[cn] and c.name)
       end
 
       def register key, opt_keys, opts={}
@@ -153,7 +153,7 @@ module Wagn::Model
       if @opt_vals.nil?
         @opt_vals = self.class.trunkless? ? [] : @trunk_name.parts.map do |part|
           card=Card.fetch(part, :skip_virtual=>true, :skip_modules=>true) and
-               Card::Codename[card.id.to_i]
+               Wagn::Codename[card.id.to_i]
         end
       end
       @opt_vals

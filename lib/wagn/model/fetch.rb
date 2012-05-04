@@ -21,7 +21,7 @@ module Wagn::Model::Fetch
 
       #warn "fetch #{mark.inspect}"
       # Symbol (codename) handling
-      mark = Card::Codename[mark] || raise("Missing codename for #{mark.inspect}") if Symbol===mark
+      mark = Wagn::Codename[mark] || raise("Missing codename for #{mark.inspect}") if Symbol===mark
 
       opts[:skip_virtual] = true if opts[:loaded_trunk]
       

@@ -42,11 +42,11 @@ class CodenameTable < ActiveRecord::Migration
   end
     
   def self.check_codename name
-    card = Card[name] and card.id == Card::Codename[CodenameTable.name2code(name)]
+    card = Card[name] and card.id == Wagn::Codename[CodenameTable.name2code(name)]
   end
 
   def self.add_codename name, opt=false
-    unless Card::Codename.no_db || !check_codename(name)
+    unless Wagn::Codename.no_db || !check_codename(name)
       Rails.logger.warn("migr good code #{name}, #{c=Card[name] and c.id}")
       return
     end
@@ -55,11 +55,10 @@ class CodenameTable < ActiveRecord::Migration
 
       # clear any duplicate on name or id
       newname = CodenameTable.name2code(name)
-      Card::Codename.where(:card_id=>card.id).delete_all
-      Card::Codename.where(:codename=>newname).delete_all
+      Card.where(:id=>card.id).update_all(:codname=>nil)
 
       Rails.logger.warn("migr codename for [#{card.id}] #{name}, #{newname}")
-      Card::Codename.create :card_id=>card.id, :codename=>newname
+      Card.where(:id=>card.id).update_all(:codname=>newname)
 
     elsif !opt; warn(Rails.logger.warn "missing card for #{name}")
     end

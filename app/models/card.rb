@@ -101,15 +101,10 @@ class Card < ActiveRecord::Base
   end
 
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # CODENAME
-
-  #def codename() id && Codename[id.to_i] end
-
   class << self
     def const_missing(const)
       if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore
-        if card_id = Card::Codename[code]
+        if card_id = Wagn::Codename[code]
           const_set const, card_id
         else raise "Missing codename #{code} (#{const})"
         end
@@ -154,7 +149,7 @@ class Card < ActiveRecord::Base
         when Integer ;   user
         else
           user = user.to_s
-          Codename[user] or (cd=Card[user] and cd.id)
+          Wagn::Codename[user] or (cd=Card[user] and cd.id)
       end
     end
 
@@ -247,7 +242,7 @@ class Card < ActiveRecord::Base
         Card.search :type=>Card::CardtypeID, :return=>:name
       end
       noncreateable_names = NON_CREATEABLE_TYPES.map do |code|
-        Codename.cardname code
+        Wagn::Codename.cardname code
       end
       type_names.reject do |name|
         noncreateable_names.member?(name) || !new( :type=>name ).ok?( :create )
@@ -296,7 +291,7 @@ class Card < ActiveRecord::Base
 
     type_id = case
       when args[:typecode] ;  code=args[:typecode] and (
-                              Codename[code] || (c=Card[code] and c.id))
+                              Wagn::Codename[code] || (c=Card[code] and c.id))
       when args[:type]     ;  Card.fetch_id args[:type]
       else :noop
       end
@@ -558,7 +553,7 @@ class Card < ActiveRecord::Base
   # TYPE
 
   def type_card() Card[type_id.to_i]     end
-  def typecode()  Codename[type_id.to_i] end # Should we not fallback to key?
+  def typecode()  Wagn::Codename[type_id.to_i] end # Should we not fallback to key?
   def typename()
     return if type_id.nil?
     card=Card.fetch(type_id, :skip_modules=>true, :skip_virtual=>true) and card.name

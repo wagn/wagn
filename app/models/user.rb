@@ -81,7 +81,7 @@ class User < ActiveRecord::Base
       # cache it (on codename too if there is one)
       card_id ||= @card && @card.id
       self.cache.write(key, usr)
-      code = Card::Codename[card_id].to_s and code != key and self.cache.write(code.to_s, usr)
+      code = Wagn::Codename[card_id].to_s and code != key and self.cache.write(code.to_s, usr)
       usr
     end
   end

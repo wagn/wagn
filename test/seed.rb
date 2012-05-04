@@ -54,14 +54,10 @@ class SharedData
 
     request_card = Card.create! :typecode=>'invitation_request', :name=>"Sample InvitationRequest" #, :email=>"invitation@request.com"
 
-    #Card.cache.reset
-
     Card.createable_types.each do |type|
       next if ['User', 'Account Request', 'Set'].include? type
       Card.create! :type=>type, :name=>"Sample #{type}"
     end
-
-    #Card.cache.reset
 
     # data for role_test.rb
     u1 = Card.create! :typecode=>'user', :name=>"u1"
@@ -77,8 +73,6 @@ class SharedData
     r2 = Card.create!( :typecode=>'role', :name=>'r2' )
     r3 = Card.create!( :typecode=>'role', :name=>'r3' )
     r4 = Card.create!( :typecode=>'role', :name=>'r4' )
-
-    #Card.cache.reset
 
     u1.trait_card(:roles) << r1 << r2 << r3
     u2.trait_card(:roles) << r1 << r2 << r4
@@ -103,30 +97,19 @@ class SharedData
     t = Card.create! :name=>"T", :content=>"Theta"
     x = Card.create! :name=>"X", :content=>"[[A]] [[A+B]] [[T]]"
     y = Card.create! :name=>"Y", :content=>"{{B}} {{A+B}} {{A}} {{T}}"
-    #Card.cache.reset
     ab = Card.create! :name => "A+B", :content => "AlphaBeta"
-
-    #Card.cache.reset
 
     Card.create! :name=>"One+Two+Three"
     Card.create! :name=>"Four+One+Five"
 
-    #Card.cache.reset
-
     # for wql & permissions
     %w{ A+C A+D A+E C+A D+A F+A A+B+C }.each do |name| Card.create!(:name=>name)  end
-    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype A"
-    Card::Codename.create! :card_id=>c.id, :codename=>"cardtype_a"
-    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype B"
-    Card::Codename.create! :card_id=>c.id, :codename=>"cardtype_b"
-    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype C"
-    Card::Codename.create! :card_id=>c.id, :codename=>"cardtype_c"
-    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype D"
-    Card::Codename.create! :card_id=>c.id, :codename=>"cardtype_d"
-    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype E"
-    Card::Codename.create! :card_id=>c.id, :codename=>"cardtype_e"
-    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype F"
-    Card::Codename.create! :card_id=>c.id, :codename=>"cardtype_f"
+    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype A", :codename=>"cardtype_a"
+    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype B", :codename=>"cardtype_b"
+    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype C", :codename=>"cardtype_c"
+    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype D", :codename=>"cardtype_d"
+    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype E", :codename=>"cardtype_e"
+    c=Card.create! :typecode=>'cardtype', :name=>"Cardtype F", :codename=>"cardtype_f"
 
     Card.create! :name=>'basicname', :content=>'basiccontent'
     Card.create! :typecode=>'cardtype_a', :name=>"type-a-card", :content=>"type_a_content"
@@ -135,7 +118,6 @@ class SharedData
     Card.create! :typecode=>'cardtype_d', :name=>"type-d-card", :content=>"type_d_content"
     Card.create! :typecode=>'cardtype_e', :name=>"type-e-card", :content=>"type_e_content"
     Card.create! :typecode=>'cardtype_f', :name=>"type-f-card", :content=>"type_f_content"
-    #Card::Codename.reset_cache
 
     #warn "current user #{User.session_user.inspect}.  always ok?  #{Card.always_ok?}"
     c = Card.create! :name=>'revtest', :content=>'first'

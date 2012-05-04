@@ -34,8 +34,12 @@ module Wagn
     def load_hash()
       @@codehash = {}
 
-      # load from the card database table
-      Card.where('codename is not NULL').each {|r| hash_entry(r.id, r.codename) }
+      begin
+        # load from the card database table
+        Card.where('codename is not NULL').each {|r| hash_entry(r.id, r.codename) }
+      rescue Exception => e
+        warn Rails.logger.warn("codename db error: #{e.inspect}, #{e.backtrace*"\n"}")
+      end
 
       # seed the codehash so that we can bootstrap
       if @@no_db = @@codehash.empty?

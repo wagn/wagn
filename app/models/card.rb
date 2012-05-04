@@ -28,7 +28,7 @@ class Card < ActiveRecord::Base
   
   before_destroy :base_before_destroy
   before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
-  after_save :base_after_save, :update_ruled_cards, :update_queue, :reset_stamper
+  after_save :base_after_save, :update_ruled_cards, :update_queue
   
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
@@ -334,7 +334,6 @@ class Card < ActiveRecord::Base
     self.creator_id = self.updater_id if new_card?
     #warn "set stamper[#{name}] #{self.creator_id}, #{self.updater_id}, #{Card.user_id}, #{Card.as_user_id}" #{caller*"\n"}"
   end
-  def reset_stamper() end
 
   def base_before_save
     if self.respond_to?(:before_save) and self.before_save == false

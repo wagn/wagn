@@ -7,18 +7,15 @@ class Card::Revision < ActiveRecord::Base
   # userstamp methods
   stampable :stamper_class_name => :card
   before_save :set_stamper
-  after_save :reset_stamper
 
-  def set_stamper()   self.creator_id = Card.user_id end
-  def reset_stamper()                                end
-
+  def set_stamper() self.creator_id = Card.user_id end
   
   def author
     c=Card[creator_id]
     #warn "author #{creator_id}, #{c}, #{self}"; c
   end
-  
-  
+
+
   def title
     current_id = card.cached_revision.id
     if id == current_id

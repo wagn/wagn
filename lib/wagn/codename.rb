@@ -18,7 +18,7 @@ module Wagn
   private
 
     # FIXME: need a better source for bootstrap codenames
-    YML_CODE_FILE = 'test/fixtures/card_codenames.yml'
+    YML_CODE_FILE = 'db/bootstrap/card_codenames.yml'
 
     def codehash() @@codehash || load_hash end
 

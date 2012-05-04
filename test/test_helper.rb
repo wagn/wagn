@@ -107,9 +107,10 @@ unless defined? TEST_ROOT
         args[:users] ||= { :anonymous=>200 }
         args[:cardtypes] ||= ['Basic']
         if args[:cardtypes]==:all
-          args[:cardtypes] = YAML.load_file('test/fixtures/card_codenames.yml').
+          # FIXME: need a better data source for this?
+          args[:cardtypes] = YAML.load_file('db/bootstrap/card_codenames.yml').
             find_all do |p|
-              !%w{cardtype_a cardtype_c cardtype_d cardtype_e cardtype_f cardtype_b set setting}.member?( p[1]['codename'] ) and
+              !%w{set setting}.member?( p[1]['codename'] ) and
                  card=Card[ p[1]['card_id'].to_i ] and
                  card.type_id == Card::CardtypeID
             end.collect { |k,v| v['codename'] }

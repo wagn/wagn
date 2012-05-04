@@ -1,5 +1,5 @@
 
-WAGN_BOOTSTRAP_TABLES = %w{ cards card_codenames card_revisions card_references }
+WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references }
 
 namespace :wagn do
 

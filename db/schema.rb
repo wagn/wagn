@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120504111425) do
+ActiveRecord::Schema.define(:version => 20120327100000) do
 
   create_table "card_references", :force => true do |t|
     t.datetime "created_at",                                      :null => false

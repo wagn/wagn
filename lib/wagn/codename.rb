@@ -34,16 +34,12 @@ module Wagn
     def load_hash()
       @@codehash = {}
 
-      begin
-        # load from the card database table
-        Card.where('codename is not NULL').each {|r| hash_entry(r.id, r.codename) }
-      rescue Exception => e
-        warn Rails.logger.warn("codename db error: #{e.inspect}, #{e.backtrace*"\n"}")
-      end
+      # load from the card database table
+      Card.where('codename is not NULL').each {|r| hash_entry(r.id, r.codename) }
 
       # seed the codehash so that we can bootstrap
-      if @@no_db = @@codehash.empty?
-        warn Rails.logger.warn("yml load")
+      if @@no_db = @@codehash[:basic].nil?
+        #warn Rails.logger.warn("yml load")
         if File.exists?( YML_CODE_FILE ) and yml = YAML.load_file( YML_CODE_FILE )
           yml.each { |p| hash_entry(p[1]['card_id'], p[1]['codename']) }
         else warn Rails.logger.warn("no file? #{YML_CODE_FILE}")

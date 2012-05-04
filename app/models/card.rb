@@ -1,4 +1,7 @@
 # -*- encoding : utf-8 -*-
+
+require 'wagn/codename'
+
 class Card < ActiveRecord::Base
   cattr_accessor :cache, :id_cache
 
@@ -106,7 +109,7 @@ class Card < ActiveRecord::Base
       if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore
         if card_id = Wagn::Codename[code]
           const_set const, card_id
-        else raise "Missing codename #{code} (#{const})"
+        else raise "Missing codename #{code} (#{const}) #{caller*"\n"}"
         end
       else super end
     end

@@ -55,10 +55,10 @@ class CodenameTable < ActiveRecord::Migration
 
       # clear any duplicate on name or id
       newname = CodenameTable.name2code(name)
-      Card.where(:id=>card.id).update_all(:codname=>nil)
+      Card.where(:id=>card.id).update_all(:codename=>nil)
 
       Rails.logger.warn("migr codename for [#{card.id}] #{name}, #{newname}")
-      Card.where(:id=>card.id).update_all(:codname=>newname)
+      Card.where(:id=>card.id).update_all(:codename=>newname)
 
     elsif !opt; warn(Rails.logger.warn "missing card for #{name}")
     end

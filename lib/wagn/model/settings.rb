@@ -5,14 +5,6 @@ module Wagn::Model::Settings
     #warn (Rails.logger.warn "rule[#{name}] #{setting_name}, #{card.inspect}, R:#{r}"); r
   end
 
-=begin
-  def rule?
-    return @rule unless @rule.nil?
-    warn (Rails.logger.info "rule? #{name}, #{left&&"#{left.typename}:#{left.name}"}, #{right&&"#{right.typename}:#{right.name}"}") if junction?
-    @rule = junction? ? (left&&left.type_id==Card::SetID&&right.type_id==Card::SettingID) : false
-  end
-=end
-
   def rule_card setting_name, fallback=nil, extra_fetch_args={}
     #warn (Rails.logger.warn "rule_card[#{name}] #{setting_name}, #{fallback}, #{extra_fetch_args.inspect} RSN:#{real_set_names.inspect}") if setting_name == :read
     fetch_args = {:skip_virtual=>true}.merge extra_fetch_args
@@ -64,15 +56,15 @@ module Wagn::Model::Settings
         Card.as(Card::WagbotID) do
           setting_ids = Card.search(:type=>Card::SettingID, :return=>'id', :limit=>'0')
           grouped = {:perms=>[], :look=>[], :com=>[], :other=>[]}
-          warn Rails.logger.warn("setng ids #{setting_ids.inspect}")
           setting_ids.map do |setting_id|
             setting_code = Wagn::Codename[setting_id.to_i]
-          warn Rails.logger.warn("setng id #{setting_code.inspect}")
             next unless group = Card.setting_group(setting_code)
             grouped[group] << setting_code
           end
           grouped.each_value do |name_list|
-            name_list.sort!{ |x,y| Card.setting_seq(x) <=> Card.setting_seq(y)}
+            name_list.sort!{ |x,y| Card.setting_seq(x) <=> Card.setting_seq(y)}.map do |setting_code|
+               (setting_card=Card[setting_code]).nil? ? 'no setting?' : setting_card.name
+            end
           end
         end
       end
@@ -102,13 +94,11 @@ module Wagn::Model::Settings
 
     def setting_group(codename)
       load_setting_groups if @@setting_groups.nil?
-      r=@@setting_groups[codename]
-      warn Rails.logger.warn("setting group #{codename}, #{r}"); r
+      @@setting_groups[codename]
     end
     def setting_seq(codename)
       load_setting_groups if @@setting_seqs.nil?
-      r=@@setting_seqs[codename]
-      warn Rails.logger.warn("setting seq #{codename}, #{r}"); r
+      @@setting_seqs[codename]
     end
 
   end

@@ -5,7 +5,7 @@ class Wagn::Renderer::Html
 
     cells = [
       ["rule-setting",
-        link_to( card.cardname.tag_name, path(:view, :view=>:open_rule),
+        link_to( card.cardname.tag_name.sub(/^\*/,''), path(:view, :view=>:open_rule),
           :class => 'edit-rule-link slotter', :remote => true )
       ],
       ["rule-content",
@@ -96,7 +96,7 @@ class Wagn::Renderer::Html
       <div class="card-editor">
         <div class="rule-column-1">
           <div class="rule-setting">
-            #{ link_to( setting_name, path(:view, :card=>open_rule, :view=>:closed_rule),
+            #{ link_to( setting_name.sub(/^\*/,''), path(:view, :card=>open_rule, :view=>:closed_rule),
                 :remote => true, :class => 'close-rule-link slotter') }
           </div>
           <ul class="set-editor">

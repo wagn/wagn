@@ -60,6 +60,8 @@ class AdminController < ApplicationController
       rulecard.content = content
       rulecard.save
     end
+    User.cache.reset
+    Role.cache.reset
 
     flash[:notice] = 'permissions saved'
     redirect_to :action=>'tasks'

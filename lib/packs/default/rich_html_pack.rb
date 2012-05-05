@@ -351,20 +351,21 @@ class Wagn::Renderer::Html
   define_view(:option_roles) do |args|
     roles = Card.search(:type=>Card::RoleID)
     # Do we want these as well?  as by type Role?
-    #roles = Card.search(:refer_to => {:right=> Card::Xroles})
+    #roles = Card.search(:refer_to => {:right=> Card::RolesID})
     role_card = card.trait_card(:roles)
     # FIXME: probably should have a limit (and paging)
     user_roles = role_card.item_cards(:limit=>0).map(&:id).
       reject{|x|x == Card::AnyoneID.to_s || x == Card::AuthID.to_s }
-    #user_roles = card.extension.roles
+    #warn Rails.logger.warn("option_roles #{user_roles.inspect}")
 
     option_content = if role_card.ok? :update
       hidden_field_tag(:save_roles, true) +
-      (roles.map do |role|
-        if role.card && !role.card.trash
+      (roles.map do |rolecard|
+        #warn Rails.logger.warn("option_roles #{rolecard.inspect}")
+        if rolecard && !rolecard.trash
          %{<div style="white-space: nowrap">
-           #{ check_box_tag "user_roles[%s]" % role.id, 1, user_roles.member?(role) ? true : false }
-           #{ link_to_page role.card.name }
+           #{ check_box_tag "user_roles[%s]" % rolecard.id, 1, user_roles.member?(rolecard) ? true : false }
+           #{ link_to_page rolecard.name }
          </div>}
         end
       end.compact * "\n").html_safe
@@ -373,7 +374,7 @@ class Wagn::Renderer::Html
         'No roles assigned'  # #ENGLISH
       else
         (user_roles.map do |role|
-          %{ <div>#{ link_to_page role.card.name }</div>}
+          %{ <div>#{ link_to_page rolecard.name }</div>}
         end * "\n").html_safe
       end
     end

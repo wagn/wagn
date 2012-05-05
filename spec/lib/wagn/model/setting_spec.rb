@@ -1,6 +1,77 @@
 require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
 
 describe Card do
+  context 'when there is a general toc setting of 2' do
+     
+    before do
+      (@c1 = Card['Onne Heading']).should be
+      (@c2 = Card['Twwo Heading']).should be
+      (@c3 = Card['Three Heading']).should be
+      @c1.typecode.should == 'Basic'
+      (@rule_card = @c1.rule_card(:table_of_contents)).should be
+    end
+
+    describe ".rule" do
+      it "should have a value of 2" do
+        @rule_card.content.should == "2"
+        @c1.rule(:table_of_contents).should == "2"
+      end
+    end
+
+    describe "renders with/without toc" do
+      it "should not render for 'Onne Heading'" do
+        Wagn::Renderer.new(@c1).render.should_not match /Table of Contents/
+      end
+      it "should render for 'Twwo Heading'" do
+        Wagn::Renderer.new(@c2).render.should match /Table of Contents/
+      end
+      it "should render for 'Three Heading'" do
+        Wagn::Renderer.new(@c3).render.should match /Table of Contents/
+      end
+    end
+
+    describe ".rule_card" do
+      it "get the same card without the * and singular" do
+        @c1.rule_card(:table_of_contents).should == @rule_card
+      end
+    end
+
+    describe ".related_sets" do
+      it "should have sets for a simple card" do
+        sets = Card['A'].related_sets
+        sets.size.should == 2
+      end
+      it "should have sets for a cardtype card" do
+        sets = Card['Cardtype A'].related_sets
+        sets.size.should == 3
+      end
+      it "should show type plus right sets when they exist" do
+        Card.create :name=>'Basic+B+*type plus right', :content=>''
+        sets = Card['A+B'].related_sets
+        sets.size.should == 3
+      end
+      it "should have sets for a cardtype card" do
+        Card.create :name=>'Cardtype A+B', :content=>''
+        Card.create :name=>'Cardtype+B+*type plus right', :content=>''
+        sets = Card['Cardtype A+B'].related_sets
+        sets.size.should == 4
+      end
+    end
+
+    # class methods
+    describe ".default_rule" do
+      it 'should have default rule' do
+        Card.default_rule(:table_of_contents).should == '0'
+      end
+    end
+
+    describe ".default_rule_card" do
+    end
+
+    describe ".universal_setting_names_by_group" do
+    end
+  end
+
   before do
     User.as(:wagbot)
   end

@@ -1,7 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-require 'wagn/codename'
-
 class Card < ActiveRecord::Base
   cattr_accessor :cache, :id_cache
 

@@ -218,7 +218,7 @@ module Wagn::Model
     register 'type_plus_right', [:ltype, :right], :junction_only=>true
     class << self
       def label name
-        %{All "+#{name.tag_name}" cards on "#{name.left_name}" cards}
+        %{All "+#{name.to_cardname.tag_name}" cards on "#{name.to_cardname.left_name}" cards}
       end
       def prototype_args base
         { :name=>"*dummy+#{base.tag_name}", 

@@ -62,29 +62,55 @@ module Wagn::Model::Settings
     def universal_setting_names_by_group
       @@universal_setting_names_by_group ||= begin
         Card.as(Card::WagbotID) do
-          setting_names = Card.search(:type=>Card::SettingID, :return=>'name', :limit=>'0')
+          setting_ids = Card.search(:type=>Card::SettingID, :return=>'id', :limit=>'0')
           grouped = {:perms=>[], :look=>[], :com=>[], :other=>[]}
-          setting_names.map(&:to_cardname).each do |cardname|
-            next unless group = Card.setting_attrib(cardname, :setting_group)
-            grouped[group] << cardname
+          warn Rails.logger.warn("setng ids #{setting_ids.inspect}")
+          setting_ids.map do |setting_id|
+            setting_code = Wagn::Codename[setting_id.to_i]
+          warn Rails.logger.warn("setng id #{setting_code.inspect}")
+            next unless group = Card.setting_group(setting_code)
+            grouped[group] << setting_code
           end
           grouped.each_value do |name_list|
-            name_list.sort!{ |x,y| Card.setting_attrib(x, :setting_seq) <=> Card.setting_attrib(y, :setting_seq)}
+            name_list.sort!{ |x,y| Card.setting_seq(x) <=> Card.setting_seq(y)}
           end
         end
       end
     end
 
-    def setting_attrib(cardname, attrib)
-      # NOOOOOOOOOOOOOOOOOOOooooooooooooo :) Better?
-      if cardname.simple? and !new_card? and Wagn::Codename[id.to_i]
-        const = eval("Wagn::Set::Self::#{cardname.module_name}")
-        const.send attrib
+  
+    SETTING_ATTRIBUTES = {
+      :perms => [ :create, :read, :update, :delete, :comment ], 
+      :look  => [ :default, :content, :layout, :table_of_content ], 
+      :com   => [ :add_help, :edit_help, :send, :thanks ],
+      :other => [ :autoname, :accountable, :captcha ]
+    }
+
+    @@setting_groups = @@setting_seqs = nil
+    def load_setting_groups()
+      @@setting_groups = {}
+      @@setting_seqs = {}
+      SETTING_ATTRIBUTES.each do |group, list|
+        i=0
+        list.each do |setting|
+          i += 1
+          @@setting_groups[setting]=group
+          @@setting_seqs[setting]=i
+        end
       end
-    rescue
-      Rails.logger.info "nothing found for #{cardname.module_name}, #{attrib}"
-      nil
     end
+
+    def setting_group(codename)
+      load_setting_groups if @@setting_groups.nil?
+      r=@@setting_groups[codename]
+      warn Rails.logger.warn("setting group #{codename}, #{r}"); r
+    end
+    def setting_seq(codename)
+      load_setting_groups if @@setting_seqs.nil?
+      r=@@setting_seqs[codename]
+      warn Rails.logger.warn("setting seq #{codename}, #{r}"); r
+    end
+
   end
 
   def self.included(base)

@@ -285,7 +285,7 @@ class Wagn::Renderer::Html
 
   define_view :options do |args|
     attribute = params[:attribute]
-    attribute ||= (card.type_id==Card::UserID ? 'account' : 'settings')
+    attribute ||= ([Card::WagbotID, Card::AnonID].member?(card.id) || card.type_id==Card::UserID ? 'account' : 'settings')
     wrap :options, args do
       %{ #{ _render_header } <div class="options-body"> #{ render "option_#{attribute}" } </div> #{ notice } }
     end

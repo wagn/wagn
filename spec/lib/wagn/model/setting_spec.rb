@@ -46,15 +46,18 @@ describe Card do
         sets.size.should == 3
       end
       it "should show type plus right sets when they exist" do
-        Card.create :name=>'Basic+B+*type plus right', :content=>''
-        sets = Card['A+B'].related_sets
+        Card.create :name=>'Basic+A+*type plus right', :content=>''
+        sets = Card['A'].related_sets
         sets.size.should == 3
       end
-      it "should have sets for a cardtype card" do
-        Card.create :name=>'Cardtype A+B', :content=>''
-        Card.create :name=>'Cardtype+B+*type plus right', :content=>''
-        sets = Card['Cardtype A+B'].related_sets
+      it "should show type plus right sets when they exist, and type" do
+        Card.create :name=>'Basic+Cardtype A+*type plus right', :content=>''
+        sets = Card['Cardtype A'].related_sets
         sets.size.should == 4
+      end
+      it "should have sets for a non-simple card" do
+        sets = Card['A+B'].related_sets
+        sets.size.should == 1
       end
     end
 

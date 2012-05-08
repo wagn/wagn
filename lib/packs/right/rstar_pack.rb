@@ -58,7 +58,8 @@ class Wagn::Renderer::Html
           opts[:fallback_set] = set_name if Card.exists?("#{set_name}+#{opts[:setting_name]}")
         end
       end
-      last = set_options.index{|s| s.to_cardname.key == card.cardname.trunk_name.key} or raise("set for #{card.name} not found in prototype set names")
+      last = set_options.index{|s| s.to_cardname.key == card.cardname.trunk_name.key} || -1 
+      # note, the -1 can happen with virtual cards because the self set doesn't show up in the set_names.  FIXME!!
       opts[:set_options] = set_options[first..last]
 
       # The above is about creating the options for the sets to which the user can apply the rule.

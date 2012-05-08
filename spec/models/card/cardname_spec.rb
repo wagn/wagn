@@ -30,9 +30,7 @@ describe Wagn::Cardname, "changing from plus card to simple" do
     @c.name = 'nine'
     @c.confirm_rename = true
     @c.save
-  end
-    
-    
+  end  
   
   it "should erase trunk and tag ids" do
     @c.trunk_id.should== nil

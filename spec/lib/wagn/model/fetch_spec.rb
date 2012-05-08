@@ -44,6 +44,13 @@ describe Card do
       Card['A+*self'].should be_nil
       Card.fetch( 'A+*self' ).should_not be_nil
     end
+    
+    it "fetches newly virtual cards" do
+      pending
+      Card.fetch( 'A+virtual').should be_nil
+      Card.create :name=>'virtual+*right+*content'
+      Card.fetch( 'A+virtual').should_not be_nil
+    end
 
     it "does not recurse infinitely on template templates" do
       Card.fetch("*content+*right+*content").should be_nil

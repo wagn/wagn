@@ -123,7 +123,7 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CURRENT USER
 
-  @@as_user_id = @@rules_uid = @@user_id = @@user_card = @@user = nil
+  @@as_card = @@as_id = @@rules_uid = @@user_id = @@user_card = @@user = nil
   cattr_accessor :user_id   # the card id of the current user
 
 
@@ -138,8 +138,8 @@ class Card < ActiveRecord::Base
       (u=@@user and u.card_id == user_id) ? u : @@user = user_card.to_user
     end
 
-    def user=(user) @@as_user_id=nil; @@user_id = user2id(user)
-      #warn "user=#{user.inspect}, As:#{@@as_user_id}, C:#{@@user_id}"; @@user_id
+    def user=(user) @@as_id=nil; @@user_id = user2id(user)
+      #warn "user=#{user.inspect}, As:#{@@as_id}, C:#{@@user_id}"; @@user_id
     end
 
     def user2id(user)
@@ -156,36 +156,35 @@ class Card < ActiveRecord::Base
 
     def as(given_user)
       #warn Rails.logger.warn("as #{given_user.inspect}")
-      tmp_user = @@as_user_id
-      @@as_user_id = user2id(given_user)
-      #warn Rails.logger.warn("as user is #{@@as_user_id} (#{tmp_user})")
-      @@user_id = @@as_user_id if @@user_id.nil?
+      tmp_id = @@as_id
+      @@as_id = user2id(given_user)
+      #warn Rails.logger.warn("as user is #{@@as_id} (#{tmp_id})")
+      @@user_id = @@as_id if @@user_id.nil?
 
       if block_given?
         value = yield
-        @@as_user_id = tmp_user
+        @@as_id = tmp_id
         return value
       else
         #fail "BLOCK REQUIRED with Card#as"
       end
     end
 
-    @@read_rules = nil
+    def as_bot
+      #raise "need block" unless block_given?
+      tmp_id, @@as_id = @@as_id, Card::WagbotID
+      @@user_id = @@as_id if @@user_id.nil?
 
-    def among?(authzed) Card[as_user_id].among?(authzed) end
-    def as_user_id()    @@as_user_id || @@user_id        end
-    def read_rules()    load_as_rules; @@read_rules      end
-    def user_roles()    load_as_rules; @@user_roles      end
-    def load_as_rules
-      if as_user_id != @@rules_uid
-        if rules_user_card = as_user_id && Card[as_user_id]
-          @@user_roles = rules_user_card.all_roles
-          @@read_rules = rules_user_card.read_rules || [1]
-          @@rules_uid = rules_user_card.id
-        else
-          @@user_roles = @@read_rules = @@rules_uid = nil
-        end
-      end
+      value = yield
+      @@as_id = tmp_id
+      return value
+    end
+
+    def among?(authzed) Card[as_id].among?(authzed) end
+    def as_id()         @@as_id || user_id          end
+    def as_card()
+      warn "ac #{@@as_id.inspect}" if as_id.nil?
+      (ac=@@as_card and ac.id == as_id) ? ac : @@as_card = Card[as_id]
     end
 
     def logged_in?() user_id != Card::AnonID end
@@ -196,8 +195,8 @@ class Card < ActiveRecord::Base
     end
 
     def always_ok?
-      #warn Rails.logger.warn("aok? #{as_user_id}, #{as_user_id&&Card[as_user_id].id} #{Card::WagbotID}")
-      return false unless usr_id = as_user_id
+      #warn Rails.logger.warn("aok? #{as_id}, #{as_id&&Card[as_id].id}")
+      return false unless usr_id = as_id
       return true if usr_id == Card::WagbotID #cannot disable
 
       always = Card.cache.read('ALWAYS') || {}
@@ -216,7 +215,7 @@ class Card < ActiveRecord::Base
   protected
     # FIXME stick this in session? cache it somehow??
     def ok_hash
-      usr_id = Card.as_user_id
+      usr_id = Card.as_id
       ok_hash = Card.cache.read('OK') || {}
       #warn(Rails.logger.warn "ok_hash #{usr_id}")
       if ok_hash[usr_id].nil?
@@ -271,10 +270,21 @@ class Card < ActiveRecord::Base
     end
   end
 
-  def all_roles
-    ids = Card.as Card::WagbotID do
-      r=(cr=trait_card(:roles)).item_cards(:limit=>0).map(&:id)
+  def read_rules_with_cache
+    if @read_rules.nil?
+      @read_rules = read_rules_without_cache
     end
+    #warn"rr wc #{name} > #{@read_rules.inspect}"
+    @read_rules
+  end
+  alias_method_chain :read_rules, :cache
+
+  def reset_roles
+    @read_rules = nil
+  end
+
+  def all_roles
+    ids = Card.as_bot { trait_card(:roles).item_cards(:limit=>0).map(&:id) }
     @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
   end
 
@@ -325,10 +335,10 @@ class Card < ActiveRecord::Base
   end
 
   def set_stamper()
-    #warn "set stamper[#{name}] #{Card.user_id}, #{Card.as_user_id}" #{caller*"\n"}"
+    #warn "set stamper[#{name}] #{Card.user_id}, #{Card.as_id}" #{caller*"\n"}"
     self.updater_id = Card.user_id
     self.creator_id = self.updater_id if new_card?
-    #warn "set stamper[#{name}] #{self.creator_id}, #{self.updater_id}, #{Card.user_id}, #{Card.as_user_id}" #{caller*"\n"}"
+    #warn "set stamper[#{name}] #{self.creator_id}, #{self.updater_id}, #{Card.user_id}, #{Card.as_id}" #{caller*"\n"}"
   end
 
   def base_before_save

@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
 
   class << self
     def admin()          User.where(:card_id=>Card::WagbotID).first  end
-    def as_user()        User.where(:card_id=>Card.as_user_id).first end
+    def as_user()        User.where(:card_id=>Card.as_id).first end
     def user()           User.where(:card_id=>Card.user_id).first    end
     def from_id(card_id) User.where(:card_id=>card_id).first         end
 
@@ -39,7 +39,7 @@ class User < ActiveRecord::Base
       @card = (Hash===card_args ? Card.fetch_or_new(card_args[:name],{:type_id=>Card::UserID}.merge(card_args)) : card_args)
       #warn "create with >>>#{Card.user_card.name}"
       #warn "create with args= #{({:invite_sender=>Card.user_card, :status=>'active'}.merge(user_args)).inspect}"
-      Card.as Card::WagbotID do
+      Card.as_bot do
         #warn "cwa #{user_args.inspect}, #{card_args.inspect}"
         @user = User.new({:invite_sender=>Card.user_card, :status=>'active'}.merge(user_args))
         #warn "user is #{@user.inspect}" unless @user.email
@@ -118,7 +118,7 @@ class User < ActiveRecord::Base
   end
 
   def accept(card, email_args)
-    Card.as(Card::WagbotID) do #what permissions does approver lack?  Should we check for them?
+    Card.as_bot do #what permissions does approver lack?  Should we check for them?
       card.type_id = Card::UserID # Invite Request -> User
       self.status='active'
       self.invite_sender = Card.user_card

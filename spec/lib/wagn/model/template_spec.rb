@@ -2,16 +2,15 @@ require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
    
 
 describe Card do
-  before do 
-    Card.as(Card::WagbotID)
-  end
   
   describe "#hard_templatees" do
     it "for User+*type+*content should return all Users" do
-      c=Card.create(:name=>'User+*type+*content')
-      c.hard_templatee_names.sort.should == [
-        "Joe Admin", "Joe Camel", "Joe User", "John", "No Count", "Sample User", "Sara", "u1", "u2", "u3"
-      ]
+      Card.as_bot do
+        c=Card.create(:name=>'User+*type+*content')
+        c.hard_templatee_names.sort.should == [
+          "Joe Admin", "Joe Camel", "Joe User", "John", "No Count", "Sample User", "Sara", "u1", "u2", "u3"
+        ]
+      end
     end
   end
     
@@ -24,7 +23,7 @@ end
 
 describe Card, "with right content template" do
   before do
-    Card.as(Card::WagbotID) do
+    Card.as_bot do
       @bt = Card.create! :name=>"birthday+*right+*content", :type=>'Date', :content=>"Today!"
     end
     Card.as :joe_user
@@ -36,7 +35,7 @@ describe Card, "with right content template" do
   end        
   
   it "should change content with template" do
-    Card.as(Card::WagbotID) do
+    Card.as_bot do
       @bt.content = "Tomorrow"; @bt.save!
     end
     Wagn::Renderer.new( Card['Jim+birthday']).render(:raw).should == 'Tomorrow'
@@ -46,7 +45,7 @@ end
 
 describe Card, "with right default template" do
   before do 
-    Card.as(Card::WagbotID)  do
+    Card.as_bot  do
       @bt = Card.create! :name=>"birthday+*right+*default", :type=>'Date', :content=>"Today!"
     end
     Card.as :joe_user                                         
@@ -64,7 +63,7 @@ end
 
 describe Card, "templating" do
   before do
-    Card.as(Card::WagbotID) do
+    Card.as_bot do
       @dt = Card.create! :name=>"Date+*type+*content", :type=>'Basic', :content=>'Tomorrow'
       @bt = Card.create! :name=>"birthday+*right+*content", :type=>'Date', :content=>"Today!"      
     end
@@ -79,7 +78,7 @@ end
 
 describe Card, "with type content template" do
   before do
-    Card.as(Card::WagbotID) do
+    Card.as_bot do
       @dt = Card.create! :name=>"Date+*type+*content", :type=>'Basic', :content=>'Tomorrow'
     end
   end       

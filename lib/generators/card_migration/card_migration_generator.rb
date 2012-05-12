@@ -77,7 +77,7 @@ end
 # end
 # 
 # def card
-#   Card.as(Card::WagbotID)
+#   Card.as_bot
 #   @card||=Card[file_name]
 # end
 # 

@@ -153,7 +153,7 @@ module Wagn::Model::TrackedAttributes
         Card::Reference.update_on_destroy(dep, @old_name) 
       end
     else
-      Card.as(Card::WagbotID) do
+      Card.as_bot do
         [self.name_referencers(@old_name)+(deps.map &:referencers)].flatten.uniq.each do |card|
           # FIXME  using "name_referencers" instead of plain "referencers" for self because there are cases where trunk and tag
           # have already been saved via association by this point and therefore referencers misses things

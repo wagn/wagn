@@ -16,11 +16,12 @@ describe Card do
     end
 
     it "returns nil and caches trash cards" do
-      Card.as(Card::WagbotID)
-      Card.fetch("A").destroy!
-      Card.fetch("A").should be_nil
-      mock.dont_allow(Card).find_by_key
-      Card.fetch("A").should be_nil
+      Card.as_bot do
+        Card.fetch("A").destroy!
+        Card.fetch("A").should be_nil
+        mock.dont_allow(Card).find_by_key
+        Card.fetch("A").should be_nil
+      end
     end
 
     it "returns and caches builtin cards" do
@@ -29,11 +30,12 @@ describe Card do
     end
 
     it "returns virtual cards and caches them as missing" do
-      Card.as(Card::WagbotID)
-      card = Card.fetch("Joe User+*email")
-      card.should be_instance_of(Card)
-      card.name.should == "Joe User+*email"
-      Wagn::Renderer.new(card).render_raw.should == 'joe@user.com'
+      Card.as_bot do
+        card = Card.fetch("Joe User+*email")
+        card.should be_instance_of(Card)
+        card.name.should == "Joe User+*email"
+        Wagn::Renderer.new(card).render_raw.should == 'joe@user.com'
+      end
       #card.raw_content.should == 'joe@user.com'
       #cached_card = Card.cache.read("joe_user+*email")
       #cached_card.missing?.should be_true
@@ -54,34 +56,35 @@ describe Card do
       Card.cache.reset_local
       Card.cache.local.keys.should == []
 
-      Card.as(Card::WagbotID)
+      Card.as_bot do
 
-      a = Card.fetch("A")
-      a.should be_instance_of(Card)
+        a = Card.fetch("A")
+        a.should be_instance_of(Card)
 
-      # expires the saved card
-      mock(Card.cache).delete('a')
-      mock(Card.cache).delete(/~\d+/).at_least(12)
+        # expires the saved card
+        mock(Card.cache).delete('a')
+        mock(Card.cache).delete(/~\d+/).at_least(12)
 
-      # expires plus cards
-      mock(Card.cache).delete('c+a')
-      mock(Card.cache).delete('d+a')
-      mock(Card.cache).delete('f+a')
-      mock(Card.cache).delete('a+b')
-      mock(Card.cache).delete('a+c')
-      mock(Card.cache).delete('a+d')
-      mock(Card.cache).delete('a+e')
-      mock(Card.cache).delete('a+b+c')
+        # expires plus cards
+        mock(Card.cache).delete('c+a')
+        mock(Card.cache).delete('d+a')
+        mock(Card.cache).delete('f+a')
+        mock(Card.cache).delete('a+b')
+        mock(Card.cache).delete('a+c')
+        mock(Card.cache).delete('a+d')
+        mock(Card.cache).delete('a+e')
+        mock(Card.cache).delete('a+b+c')
 
-      # expired including? cards
-      mock(Card.cache).delete('x').times(2)
-      mock(Card.cache).delete('y').times(2)
-      a.save!
+        # expired including? cards
+        mock(Card.cache).delete('x').times(2)
+        mock(Card.cache).delete('y').times(2)
+        a.save!
+      end
     end
 
     describe "preferences" do
       before do
-        Card.as(Card::WagbotID)
+        Card.as(Card::WagbotID) # FIXME: as without a block is deprecated
       end
 
       it "prefers db cards to pattern virtual cards" do
@@ -169,7 +172,7 @@ describe Card do
     before { Card.as :joe_user }
 
     it "should find cards with *right+*content specified" do
-      Card.as(Card::WagbotID) do
+      Card.as_bot do
         Card.create! :name=>"testsearch+*right+*content", :content=>'{"plus":"_self"}', :type => 'Search'
       end
       c = Card.fetch("A+testsearch".to_cardname)

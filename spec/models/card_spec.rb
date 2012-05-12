@@ -63,7 +63,7 @@ describe Card do
       #[:before_save, :before_create, :after_save, :after_create].each do |hookname|
       pending "mock rr seems to be broken, maybe 'call' collides with internal methode"
       mock(Wagn::Hook).call(:after_create, instance_of(Card))
-      Card.as(Card::WagbotID) do
+      Card.as_bot do
         Card.create :name => "testit"
       end
     end
@@ -101,9 +101,10 @@ describe Card do
                             
   describe "creation" do
     before(:each) do           
-      Card.as(Card::WagbotID) 
-      @b = Card.create! :name=>"New Card", :content=>"Great Content"
-      @c = Card.find(@b.id)
+      Card.as_bot do
+        @b = Card.create! :name=>"New Card", :content=>"Great Content"
+        @c = Card.find(@b.id)
+      end
     end
   
     it "should not have errors"        do @b.errors.size.should == 0        end
@@ -124,8 +125,9 @@ describe Card do
 
   describe "attribute tracking for new card" do
     before(:each) do
-      Card.as(Card::WagbotID) 
-      @c = Card.new :name=>"New Card", :content=>"Great Content"
+      Card.as_bot do
+        @c = Card.new :name=>"New Card", :content=>"Great Content"
+      end
     end
   
     it "should have updates" do
@@ -150,9 +152,10 @@ describe Card do
 
   describe "content change should create new revision" do
     before do
-      Card.as(Card::WagbotID) 
-      @c = Card.find_by_name('basicname')
-      @c.update_attributes! :content=>'foo'
+      Card.as_bot do
+        @c = Card.find_by_name('basicname')
+        @c.update_attributes! :content=>'foo'
+      end
     end
   
     it "should have 2 revisions"  do
@@ -167,10 +170,11 @@ describe Card do
 
   describe "content change should create new revision" do
     before do
-      Card.as(Card::WagbotID) 
-      @c = Card.find_by_name('basicname')
-      @c.content = "foo"
-      @c.save!
+      Card.as_bot do
+        @c = Card.find_by_name('basicname')
+        @c.content = "foo"
+        @c.save!
+      end
     end
   
     it "should have 2 revisions"  do

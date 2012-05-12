@@ -10,7 +10,7 @@ class Card::RenameTest < ActiveSupport::TestCase
   
   def setup
     super
-    Card.as(Card::WagbotID) do
+    Card.as_bot do
       Card.create! :name => "chuck_wagn+chuck"   
       Card.create! :name => "Blue" 
       

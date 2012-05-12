@@ -166,7 +166,7 @@ describe Wql do
 
   describe "permissions" do
     it "should not find cards not in group" do
-      Card.as(Card::WagbotID)  do
+      Card.as_bot  do
         Card.create :name=>"C+*self+*read", :type=>'Pointer', :content=>"[[R1]]"
       end
       Wql.new( :plus=>"A" ).run.plot(:name).sort.should == %w{ B D E F }
@@ -272,7 +272,7 @@ describe Wql do
     end
     
     it "should sort by plus card content" do
-      Card.as(Card::WagbotID) do
+      Card.as_bot do
         c = Card.fetch('Setting+*self+*table of contents')
         c.content = '10'
         c.save
@@ -287,7 +287,7 @@ describe Wql do
     end
     
     it "should sort by count" do
-      Card.as(Card::WagbotID) do
+      Card.as_bot do
         w = Wql.new( :name=>[:in,'Sara','John','Joe User'], :sort=>{ :right=>'*watcher', :item=>'referred_to', :return=>'count' } )
         w.run.plot(:name).should == ['Joe User','John','Sara']
       end

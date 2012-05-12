@@ -62,11 +62,11 @@ describe User, 'Joe User' do
     @roles_card.item_names.length.should==0
   end
   it "should immediately set new roles and return auth, anon, and the new one" do
-    Card.as(Card::WagbotID) { @roles_card << @r1 }
+    Card.as_bot { @roles_card << @r1 }
     @roles_card.item_names.length.should==1
   end
   it "should save new roles and reload correctly" do
-    Card.as(Card::WagbotID) {
+    Card.as_bot {
       @roles_card.content=''
       @roles_card << @r1;
     }

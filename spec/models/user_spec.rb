@@ -3,7 +3,7 @@ require File.expand_path('../spec_helper', File.dirname(__FILE__))
 describe "User" do
   describe "#read_rules" do
     before(:all) do
-      @read_rules = Card.as(:joe_user) { Card.read_rules }
+      @read_rules = Card['joe_user'].read_rules
     end
 
     
@@ -13,7 +13,7 @@ describe "User" do
     
     it "3 more should apply to Joe Admin" do
       Card.as(:joe_admin) do
-        ids = Card.read_rules
+        ids = Card.as_card.read_rules
         #warn "rules = #{ids.map(&Card.method(:find)).map(&:name) * ', '}"
         ids.length.should == @read_rules.size+3
       end

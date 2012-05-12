@@ -89,21 +89,24 @@ end
 
 describe Card, "Normal card with junctions" do
   before do
-    Card.as(Card::WagbotID) 
     @a = Card['A']
   end
   it "should confirm that it has junctions" do
     @a.junctions.length.should > 0
   end
   it "should successfull have its type changed" do
-    @a.type_id = Card::NumberID;
-    @a.save!
-    Card['A'].typecode.should== :number
+    Card.as_bot do
+      @a.type_id = Card::NumberID;
+      @a.save!
+      Card['A'].typecode.should== :number
+    end
   end
   it "should still have its junctions after changing type" do
-    assert type_id = Card.fetch_id('cardtype_e')
-    @a.type_id = type_id; @a.save!
-    Card['A'].junctions.length.should > 0
+    Card.as_bot do
+      assert type_id = Card.fetch_id('cardtype_e')
+      @a.type_id = type_id; @a.save!
+      Card['A'].junctions.length.should > 0
+    end
   end
 end
 
@@ -111,10 +114,11 @@ end
 =begin No extension any more, is there a modified version of this we need?
 describe Card, "Recreated Card" do
   before do
-    Card.as(Card::WagbotID) 
+    Card.as_bot do
     @ct = Card.create! :name=>'Species', :type=>'Cardtype'
     @ct.destroy!
     @ct = Card.create! :name=>'Species', :type=>'Cardtype'
+    end
   end
   
   it "should have a cardtype extension" do
@@ -126,8 +130,9 @@ end
 
 describe Card, "New Cardtype" do
   before do
-    Card.as(Card::WagbotID) 
-    @ct = Card.create! :name=>'Animal', :type=>'Cardtype'
+    Card.as_bot do
+      @ct = Card.create! :name=>'Animal', :type=>'Cardtype'
+    end
   end
   
   it "should have create permissions" do
@@ -141,10 +146,11 @@ end
 
 describe Card, "Wannabe Cardtype Card" do
   before do
-    Card.as(Card::WagbotID) 
-    @card = Card.create! :name=> 'convertible'
-    @card.type_id=Card::CardtypeID
-    @card.save!
+    Card.as_bot do
+      @card = Card.create! :name=> 'convertible'
+      @card.type_id=Card::CardtypeID
+      @card.save!
+    end
     
   end
   it "should successfully change its type to a Cardtype" do
@@ -154,10 +160,11 @@ end
 
 describe User, "Joe User" do
   before do
-    Card.as(Card::WagbotID) 
-    @r3 = Card['r3']
+    Card.as_bot do
+      @r3 = Card['r3']
 
-    Card.create :name=>'Cardtype F+*type+*create', :type=>'Pointer', :content=>'[[r3]]'
+      Card.create :name=>'Cardtype F+*type+*create', :type=>'Pointer', :content=>'[[r3]]'
+    end
     
     Card.as :joe_user
     @user = User.user
@@ -183,7 +190,6 @@ end
 
 describe Card, "Cardtype with Existing Cards" do
   before do
-    Card.as(Card::WagbotID) 
     @ct = Card['Basic']
   end
   it "should have existing cards of that type" do
@@ -191,24 +197,25 @@ describe Card, "Cardtype with Existing Cards" do
   end
 
   it "should raise an error when you try to delete it" do
-    @ct.destroy
-    @ct.errors[:cardtype].should_not be_empty
+    Card.as_bot do
+      @ct.destroy
+      @ct.errors[:cardtype].should_not be_empty
+    end
   end
 end
 
 
 describe Wagn::Set::Type::Cardtype do
-  before do
-    Card.as(Card::WagbotID)
-  end
   
   it "should handle changing away from Cardtype" do
-    ctg = Card.create! :name=>"CardtypeG", :type=>"Cardtype"
-    ctg.type_id = Card::BasicID
-    ctg.save!
-    ctg = Card["CardtypeG"]
-    ctg.typecode.should == :basic
-    #ctg.extension.should == nil
+    Card.as_bot do
+      ctg = Card.create! :name=>"CardtypeG", :type=>"Cardtype"
+      ctg.type_id = Card::BasicID
+      ctg.save!
+      ctg = Card["CardtypeG"]
+      ctg.typecode.should == :basic
+      #ctg.extension.should == nil
+    end
   end
 end
 

@@ -14,7 +14,7 @@ class AccountRequestTest < ActionController::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     
-    Card.as(Card::WagbotID) do 
+    Card.as_bot do 
       Card.create(:name=>'Account Request+*type+*captcha', :content=>'0')
     end
   end

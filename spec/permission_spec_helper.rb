@@ -39,7 +39,7 @@ RSpec::Core::ExampleGroup.send :include, PermissionSpecHelper
 class Card
   def writeable_by(user)
     Card.as(user.id) do
-    #warn "writeable #{Card.as_user_id}, #{user.inspect}"
+    #warn "writeable #{Card.as_id}, #{user.inspect}"
       ok? :update
     end
   end

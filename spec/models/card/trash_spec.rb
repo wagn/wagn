@@ -1,18 +1,21 @@
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Card, "deleted card" do
-  before do Card.as(Card::WagbotID)
-    @c = Card['A']
-    @c.destroy!
+  before do
+    Card.as_bot do
+      @c = Card['A']
+      @c.destroy!
+    end
   end
   it "should be in the trash" do
     @c.trash.should be_true
   end
   it "should come out of the trash when a plus card is created" do
-    #pending
-    Card.create(:name=>'A+*acct')
-    c = Card['A']
-    c.trash.should be_false
+    Card.as_bot do
+      Card.create(:name=>'A+*acct')
+      c = Card['A']
+      c.trash.should be_false
+    end
   end
 end 
 
@@ -28,7 +31,7 @@ end
 
 # FIXME: these user tests should probably be in a set of cardtype specific tests somewhere..   
 describe User, "with revisions" do
-  before do Card.as(Card::WagbotID) ; @c = Card.find_by_name("Wagn Bot"); end
+  before do Card.as_bot { @c = Card.find_by_name("Wagn Bot") } end
   it "should not be removable" do
     @c.destroy.should_not be_true
   end
@@ -36,8 +39,9 @@ end
 
 describe User, "without revisions" do
   before do 
-    Card.as(Card::WagbotID)
-    @c = Card.create! :name=>'User Must Die', :type=>'User'
+    Card.as_bot do
+      @c = Card.create! :name=>'User Must Die', :type=>'User'
+    end
   end
   it "should be removable" do
     @c.destroy!.should be_true
@@ -80,11 +84,12 @@ end
                        
 describe Card, "rename to trashed name" do
   before do
-    Card.as(Card::WagbotID) 
-    @a = Card.find_by_name("A")
-    @b = Card.find_by_name("B")
-    @a.destroy!  #trash
-    @b.update_attributes! :name=>"A", :confirm_rename=>true, :update_referencers=>true
+    Card.as_bot do
+      @a = Card.find_by_name("A")
+      @b = Card.find_by_name("B")
+      @a.destroy!  #trash
+      @b.update_attributes! :name=>"A", :confirm_rename=>true, :update_referencers=>true
+    end
   end
   
   it "should rename b to a" do
@@ -101,9 +106,10 @@ end
 
 describe Card, "sent to trash" do
   before do
-    Card.as(Card::WagbotID) 
-    @c = Card.find_by_name("basicname")
-    @c.destroy!
+    Card.as_bot do
+      @c = Card.find_by_name("basicname")
+      @c.destroy!
+    end
   end
   
   it "should be trash" do
@@ -122,9 +128,10 @@ end
 
 describe Card, "revived from trash" do
   before do
-    Card.as(Card::WagbotID) 
-    Card.find_by_name("basicname").destroy!
-    @c = Card.create! :name=>'basicname', :content=>'revived content'
+    Card.as_bot do
+      Card.find_by_name("basicname").destroy!
+      @c = Card.create! :name=>'basicname', :content=>'revived content'
+    end
   end
   
   it "should not be trash" do
@@ -146,10 +153,10 @@ describe Card, "revived from trash" do
 end
         
 describe Card, "recreate trashed card via new" do
-  before do
-    Card.as(Card::WagbotID) 
-    @c = Card.create! :type=>'Basic', :name=>"BasicMe"
-  end
+#  before do
+#    Card.as(Card::WagbotID) 
+#    @c = Card.create! :type=>'Basic', :name=>"BasicMe"
+#  end
 
 #  this test is known to be broken; we've worked around it for now  
 #  it "should delete and recreate with a different cardtype" do
@@ -162,10 +169,11 @@ end
 
 describe Card, "junction revival" do
   before do
-    Card.as(Card::WagbotID) 
-    @c = Card.create! :name=>"basicname+woot", :content=>"basiccontent"
-    @c.destroy!
-    @c = Card.create! :name=>"basicname+woot", :content=>"revived content"
+    Card.as_bot do
+      @c = Card.create! :name=>"basicname+woot", :content=>"basiccontent"
+      @c.destroy!
+      @c = Card.create! :name=>"basicname+woot", :content=>"revived content"
+    end
   end
      
   it "should not be trash" do

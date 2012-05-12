@@ -17,7 +17,7 @@ describe "reader rules" do
   it "should update to role ('Anyone Signed In')" do
 
     name = @perm_card.name
-    Card.as(Card::WagbotID) { @perm_card.save! }
+    Card.as_bot { @perm_card.save! }
     pc = Card[name]
     card = Card['Home']
     #warn "card #{name}, #{card.inspect}, #{pc.inspect}"
@@ -28,21 +28,21 @@ describe "reader rules" do
   end
   
   it "should update to user ('Joe Admin')" do
-    Card.as(Card::WagbotID) do
+    Card.as_bot do
       card = Card.fetch('Home')
       @perm_card.content = '[[Joe Admin]]'
-      Card.as(Card::WagbotID) { @perm_card.save! }
+      Card.as_bot { @perm_card.save! }
       card.read_rule_id.should == @perm_card.id
       card.who_can(:read).should == [Card['joe_admin'].id]
       Card.as(:anonymous)      { card.ok?(:read).should be_false }
       Card.as(:joe_user)  { card.ok?(:read).should be_false }
       Card.as(:joe_admin) { card.ok?(:read).should be_true }
-      Card.as(Card::WagbotID)    { card.ok?(:read).should be_true }
+      Card.as_bot    { card.ok?(:read).should be_true }
     end
   end
   
   it "should revert to more general rule when more specific (self) rule is deleted" do
-    Card.as(Card::WagbotID) do 
+    Card.as_bot do 
       @perm_card.save!
       @perm_card.destroy!
     end
@@ -52,21 +52,21 @@ describe "reader rules" do
 
   it "should revert to more general rule when more specific (right) rule is deleted" do
     pc = nil
-    Card.as(Card::WagbotID) do
+    Card.as_bot do
       pc=Card.create(:name=>'B+*right+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
     end
     pc.should be
     card = Card.fetch('A+B')
     card.read_rule_id.should == pc.id
     pc = Card.fetch(pc.name) #important to re-fetch to catch issues with detecting change in trash status.
-    Card.as(Card::WagbotID) { pc.destroy }
+    Card.as_bot { pc.destroy }
     card = Card.fetch('A+B')
     card.read_rule_id.should == Card.fetch('*all+*read').id
   end
 
   it "should revert to more general rule when more specific rule is renamed" do
 
-    Card.as(Card::WagbotID) do
+    Card.as_bot do
       @perm_card.save!
       @perm_card = Card[@perm_card.name]
       @perm_card.name = 'Something else+*self+*read'
@@ -79,7 +79,7 @@ describe "reader rules" do
   end
 
   it "should not be overruled by a more general rule added later" do
-    Card.as(Card::WagbotID) do
+    Card.as_bot do
       @perm_card.save!
       c= Card.fetch('Home')
       c.type_id = Card::PhraseID
@@ -93,7 +93,7 @@ describe "reader rules" do
   
   it "should get updated when trunk type change makes type-plus-right apply / unapply" do
     @perm_card.name = "Phrase+B+*type plus right+*read"
-    Card.as(Card::WagbotID) { @perm_card.save! }
+    Card.as_bot { @perm_card.save! }
     Card.fetch('A+B').read_rule_id.should == Card.fetch('*all+*read').id
     c = Card.fetch('A')
     c.type_id = Card::PhraseID
@@ -102,7 +102,7 @@ describe "reader rules" do
   end
   
   it "should work with relative settings" do
-    Card.as(Card::WagbotID) { @perm_card.save! }
+    Card.as_bot { @perm_card.save! }
     all_plus = Card.fetch_or_create('*all plus+*read', :content=>'_left')
     c = Card.new(:name=>'Home+Heart')
     c.who_can(:read).should == [Card::AuthID]
@@ -118,20 +118,20 @@ describe "reader rules" do
     c.permission_rule_card(:read).first.id.should == Card.fetch('*all+*read').id
     c.save
     c.read_rule_id.should == Card.fetch('*all+*read').id
-    Card.as(Card::WagbotID) { @perm_card.save! }
+    Card.as_bot { @perm_card.save! }
     c2 = Card.fetch('Home+Heart')
     c2.who_can(:read).should == [Card::AuthID]
     c2.read_rule_id.should == @perm_card.id
     Card.fetch('Home+Heart').read_rule_id.should == @perm_card.id
-    Card.as(Card::WagbotID){ @perm_card.destroy }
+    Card.as_bot{ @perm_card.destroy }
     Card.fetch('Home').read_rule_id.should == Card.fetch('*all+*read').id
     Card.fetch('Home+Heart').read_rule_id.should == Card.fetch('*all+*read').id
   end
   
   it "should insure that class overrides work with relative settings" do
-    Card.as(Card::WagbotID) do
+    Card.as_bot do
       all_plus = Card.fetch_or_create('*all plus+*read', :content=>'_left')
-      Card.as(Card::WagbotID) { @perm_card.save! }
+      Card.as_bot { @perm_card.save! }
       c = Card.create(:name=>'Home+Heart')
       c.read_rule_id.should == @perm_card.id
       r = Card.create(:name=>'Heart+*right+*read', :type=>'Pointer', :content=>'[[Administrator]]')
@@ -150,15 +150,16 @@ end
 
 describe "Permission", ActiveSupport::TestCase do
   before do
-    Card.as(Card::WagbotID)
-    User.cache.reset
-    @u1, @u2, @u3, @r1, @r2, @r3, @c1, @c2, @c3 =
-      %w( u1 u2 u3 r1 r2 r3 c1 c2 c3 ).map do |x| Card[x] end
+    Card.as_bot do
+      User.cache.reset
+      @u1, @u2, @u3, @r1, @r2, @r3, @c1, @c2, @c3 =
+        %w( u1 u2 u3 r1 r2 r3 c1 c2 c3 ).map do |x| Card[x] end
+    end
   end      
 
 
   it "checking ok read should not add to errors" do
-    Card.as(Card::WagbotID) do
+    Card.as_bot do
       Card.always_ok?.should == true
     end
     Card.as(:joe_user) do
@@ -195,7 +196,7 @@ describe "Permission", ActiveSupport::TestCase do
     rc.content = ''; rc << @r1 << @r2 << @r3
     rc.save
 
-    Card.as(Card::WagbotID) {
+    Card.as_bot {
       cards=[1,2,3].map do |num|
         Card.create(:name=>"c#{num}+*self+*update", :type=>'Pointer', :content=>"[[u#{num}]]")
       end 
@@ -223,7 +224,7 @@ describe "Permission", ActiveSupport::TestCase do
     rc.content = ''; rc << @r1 << @r3
     rc.save
     
-    Card.as(Card::WagbotID) do
+    Card.as_bot do
       [1,2,3].each do |num|
         Card.create(:name=>"c#{num}+*self+*read", :type=>'Pointer', :content=>"[[r#{num}]]")
       end
@@ -271,7 +272,7 @@ describe "Permission", ActiveSupport::TestCase do
     (rc=@u3.trait_card(:roles)).content = ''
     rc << @r1 << @r2 << @r3
 
-    Card.as(Card::WagbotID) {
+    Card.as_bot {
       [1,2,3].each do |num|
         Card.create(:name=>"c#{num}+*self+*read", :type=>'Pointer', :content=>"[[u#{num}]]")
       end
@@ -291,7 +292,7 @@ describe "Permission", ActiveSupport::TestCase do
 
   it "private wql" do
     # set up cards of type TestType, 2 with nil reader, 1 with role1 reader 
-     Card.as(Card::WagbotID) do 
+     Card.as_bot do 
        [@c1,@c2,@c3].each do |c| 
          c.update_attribute(:content, 'WeirdWord')
        end
@@ -310,7 +311,7 @@ describe "Permission", ActiveSupport::TestCase do
     #warn "u1 roles #{Card[ @u1.id ].trait_card(:roles).item_names.inspect}"
 
     # set up cards of type TestType, 2 with nil reader, 1 with role1 reader 
-    Card.as(Card::WagbotID) do 
+    Card.as_bot do 
       [@c1,@c2,@c3].each do |c| 
         c.update_attribute(:content, 'WeirdWord')
       end
@@ -392,24 +393,29 @@ end
 
 describe Card, "settings based permissions" do
   before do
-    Card.as(Card::WagbotID)
-    @delete_rule_card = Card.fetch_or_new '*all+*delete'
-    @delete_rule_card.type_id = Card::PointerID
-    @delete_rule_card.content = '[[Joe_User]]'
-    @delete_rule_card.save!
+    Card.as_bot do
+      @delete_rule_card = Card.fetch_or_new '*all+*delete'
+      @delete_rule_card.type_id = Card::PointerID
+      @delete_rule_card.content = '[[Joe_User]]'
+      @delete_rule_card.save!
+    end
   end
   
   it "should handle delete as a setting" do
     c = Card.new :name=>'whatever'
     c.who_can(:delete).should == [Card['joe_user'].id]
-    Card.as :joe_user
-    c.ok?(:delete).should == true
-    Card.as :u1
-    c.ok?(:delete).should == false
-    Card.as :anonymous
-    c.ok?(:delete).should == false
-    Card.as(Card::WagbotID)
-    c.ok?(:delete).should == true #because administrator
+    Card.as(:joe_user) do
+      c.ok?(:delete).should == true
+    end
+    Card.as(:u1) do
+      c.ok?(:delete).should == false
+    end
+    Card.as(:anonymous) do
+      c.ok?(:delete).should == false
+    end
+    Card.as_bot do
+      c.ok?(:delete).should == true #because administrator
+    end
   end
 end
 

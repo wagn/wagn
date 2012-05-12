@@ -11,10 +11,10 @@ describe Wagn::Renderer::Xml, "" do
 #~~~~~~~~~~~~ special syntax ~~~~~~~~~~~#
 
   context "special syntax handling should render" do
-    before do
-      Card.as(Card::WagbotID) do
-      end
-    end
+    #before do
+    #  Card.as_bot do
+    #  end
+    #end
 
     it "simple card links" do
       xml_render_content("[[A]]").should=="<cardlink class=\"known-card\" card=\"/A\">A</cardlink>"
@@ -70,7 +70,7 @@ describe Wagn::Renderer::Xml, "" do
 
     it "renders deny for unpermitted cards" do
       pending "with html"
-      Card.as(Card::WagbotID) do
+      Card.as_bot do
         Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
         Card.create(:name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]')
       end
@@ -248,7 +248,7 @@ describe Wagn::Renderer::Xml, "" do
     it "skips *content if narrower *default is present" do  #this seems more like a settings test
       pending
       content_card = default_card = nil
-      Card.as(Card::WagbotID) do
+      Card.as_bot do
         content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"Content Foo" )
         default_card = Card.create!(:name=>"templated+*right+*default", :content=>"Default Bar" )
       end

@@ -15,8 +15,9 @@ end
 
 describe Card, "created by Card.new " do
   before(:each) do     
-    Card.as(Card::WagbotID) 
-    @c = Card.new :name=>"New Card", :content=>"Great Content"
+    Card.as_bot do 
+      @c = Card.new :name=>"New Card", :content=>"Great Content"
+    end
   end
   
   it "should have attribute_tracking updates" do
@@ -33,9 +34,11 @@ describe Card, "created by Card.new " do
   end
   
   it "should not override explicit content with default content" do
-    Card.create! :name => "blue+*right+*default", :content => "joe", :type=>"Pointer"
-    c = Card.new :name => "Lady+blue", :content => "[[Jimmy]]"
-    c.content.should == "[[Jimmy]]"
+    Card.as_bot do 
+      Card.create! :name => "blue+*right+*default", :content => "joe", :type=>"Pointer"
+      c = Card.new :name => "Lady+blue", :content => "[[Jimmy]]"
+      c.content.should == "[[Jimmy]]"
+    end
   end
 end
                   
@@ -43,9 +46,10 @@ end
 
 describe Card, "created by Card.create with valid attributes" do
   before(:each) do
-    Card.as(Card::WagbotID) 
-    @b = Card.create :name=>"New Card", :content=>"Great Content"
-    @c = Card.find(@b.id)
+    Card.as_bot do
+      @b = Card.create :name=>"New Card", :content=>"Great Content"
+      @c = Card.find(@b.id)
+    end
   end
 
   it "should not have errors"        do @b.errors.size.should == 0        end
@@ -65,7 +69,7 @@ end
 
 describe Card, "created with autoname" do
   before do
-    Card.as(Card::WagbotID) do
+    Card.as_bot do
       Card.create :name=>'Book+*type+*autoname', :content=>'b1'
     end
   end
@@ -111,7 +115,7 @@ end
 
 describe Card, "types" do
   before do
-    Card.as(Card::WagbotID)  
+    Card.as(Card::WagbotID)  # FIXME: as without a block is deprecated
     # NOTE: it looks like these tests aren't DRY- but you can't pull the cardtype creation up here because:
     #  creating cardtypes creates constants in the namespace, and those aren't removed 
     #  when the db is rolled back, so you're not starting in the original state.

@@ -32,7 +32,7 @@ class AccountController < ApplicationController
       @user.accept(@card, email_args)
       return wagn_redirect Card.path_setting(Card.setting('*signup+*thanks'))
     else
-      Card.as(Card::WagbotID) do
+      Card.as_bot do
         Mailer.signup_alert(@card).deliver if Card.setting('*request+*to')
       end
       return wagn_redirect Card.path_setting(Card.setting('*request+*thanks'))

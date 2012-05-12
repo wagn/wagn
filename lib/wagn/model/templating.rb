@@ -36,7 +36,7 @@ module Wagn::Model::Templating
     wql = hard_templatee_wql(:name)
     #warn (Rails.logger.warn "ht_wql #{wql.inspect}")
     if wql
-      Card.as Card::WagbotID do
+      Card.as_bot do
         Wql.new(wql).run
       end
     else
@@ -54,7 +54,7 @@ module Wagn::Model::Templating
     wql=hard_templatee_wql(:condition)
     #warn "expire_t_refs #{name}, #{wql.inspect}"
     if wql
-      condition = Card.as(Card::WagbotID) { Wql::CardSpec.build(wql).to_sql }
+      condition = Card.as_bot { Wql::CardSpec.build(wql).to_sql }
       card_ids_to_update = connection.select_rows("select id from cards t where #{condition}").map(&:first)
       card_ids_to_update.each_slice(100) do |id_batch|
         connection.execute "update cards set references_expired=1 where id in (#{id_batch.join(',')})"

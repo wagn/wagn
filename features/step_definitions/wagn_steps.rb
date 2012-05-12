@@ -20,7 +20,7 @@ Given /^I log out/ do
 end
 
 Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
-  Card.as(Card::WagbotID) do
+  Card.as_bot do
     card = Card.fetch_or_create cardname
     card.content = content
     card.save!

@@ -298,7 +298,7 @@ class Wagn::Renderer::Html
        card_form :update_account do |form|
 
          %{<table class="fieldset">
-           #{if Card.as_user_id==card.id or card.trait_card(:account).ok?(:update)
+           #{if Card.as_id==card.id or card.trait_card(:account).ok?(:update)
               raw option_header( 'Account Details' ) +
                 template.render(:partial=>'account/edit',  :locals=>locals)
            end }

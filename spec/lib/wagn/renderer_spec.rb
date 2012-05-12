@@ -62,7 +62,7 @@ describe Wagn::Renderer, "" do
     end
 
     it "renders deny for unpermitted cards" do
-      Card.as(Card::WagbotID) do
+      Card.as_bot do
         Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
         Card.create(:name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]')
       end
@@ -145,7 +145,7 @@ describe Wagn::Renderer, "" do
 
     context "Simple page with Default Layout" do
       before do
-        Card.as(Card::WagbotID) do
+        Card.as_bot do
           card = Card['A+B']
           @simple_page = Wagn::Renderer::Html.new(card).render(:layout)
           #warn "render sp: #{card.inspect} :: #{@simple_page}"
@@ -193,7 +193,7 @@ describe Wagn::Renderer, "" do
 
     context "layout" do
       before do
-        Card.as(Card::WagbotID) do
+        Card.as_bot do
           @layout_card = Card.create(:name=>'tmp layout', :type=>'Layout')
           #warn "layout #{@layout_card.inspect}"
         end
@@ -204,14 +204,14 @@ describe Wagn::Renderer, "" do
 
       it "should default to core view for non-main inclusions when context is layout_0" do
         @layout_card.content = "Hi {{A}}"
-        Card.as(Card::WagbotID) { @layout_card.save }
+        Card.as_bot { @layout_card.save }
 
         Wagn::Renderer.new(@main_card).render(:layout).should match('Hi Alpha')
       end
 
       it "should default to open view for main card" do
         @layout_card.content='Open up {{_main}}'
-        Card.as(Card::WagbotID) { @layout_card.save }
+        Card.as_bot { @layout_card.save }
 
         result = Wagn::Renderer.new(@main_card).render_layout
         result.should match(/Open up/)
@@ -221,7 +221,7 @@ describe Wagn::Renderer, "" do
 
       it "should render custom view of main" do
         @layout_card.content='Hey {{_main|name}}'
-        Card.as(Card::WagbotID) { @layout_card.save }
+        Card.as_bot { @layout_card.save }
 
         result = Wagn::Renderer.new(@main_card).render_layout
         result.should match(/Hey.*div.*Joe User/)
@@ -230,14 +230,14 @@ describe Wagn::Renderer, "" do
 
       it "shouldn't recurse" do
         @layout_card.content="Mainly {{_main|core}}"
-        Card.as(Card::WagbotID) { @layout_card.save }
+        Card.as_bot { @layout_card.save }
 
         Wagn::Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main">Mainly {{_main|core}}</div>}
       end
 
       it "should handle non-card content" do
         @layout_card.content='Hello {{_main}}'
-        Card.as(Card::WagbotID) { @layout_card.save }
+        Card.as_bot { @layout_card.save }
 
         result = Wagn::Renderer.new(nil).render(:layout, :main_content=>'and Goodbye')
         result.should match(/Hello.*and Goodbye/)
@@ -342,7 +342,7 @@ describe Wagn::Renderer, "" do
     end
 
     it "skips *content if narrower *default is present" do  #this seems more like a settings test
-      Card.as(Card::WagbotID) do
+      Card.as_bot do
         content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"Content Foo" )
         default_card = Card.create!(:name=>"templated+*right+*default", :content=>"Default Bar" )
       end
@@ -352,7 +352,7 @@ describe Wagn::Renderer, "" do
 
 
     it "should be used in edit forms" do
-      Card.as(Card::WagbotID) do
+      Card.as_bot do
         config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
       end
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
@@ -364,7 +364,7 @@ describe Wagn::Renderer, "" do
     end
 
     it "work on type-plus-right sets edit calls" do
-      Card.as(Card::WagbotID) do
+      Card.as_bot do
         Card.create(:name=>'Book+author+*type plus right+*default', :type=>'Phrase', :content=>'Zamma Flamma')
       end
       c = Card.new :name=>'Yo Buddddy', :type=>'Book'

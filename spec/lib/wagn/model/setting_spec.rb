@@ -46,12 +46,12 @@ describe Card do
         sets.should == ['Cardtype A+*self', 'Cardtype A+*type', 'Cardtype A+*right']
       end
       it "should show type plus right sets when they exist" do
-        Card.create :name=>'Basic+A+*type plus right', :content=>''
+        Card.as_bot { Card.create :name=>'Basic+A+*type plus right', :content=>'' }
         sets = Card['A'].related_sets
         sets.should == ['A+*self', 'A+*right', 'Basic+A+*type plus right']
       end
       it "should show type plus right sets when they exist, and type" do
-        Card.create :name=>'Basic+Cardtype A+*type plus right', :content=>''
+        Card.as_bot { Card.create :name=>'Basic+Cardtype A+*type plus right', :content=>'' }
         sets = Card['Cardtype A'].related_sets
         sets.should == ['Cardtype A+*self', 'Cardtype A+*type', 'Cardtype A+*right', 'Basic+Cardtype A+*type plus right']
       end
@@ -115,12 +115,14 @@ describe Card do
   context 'when I use CardtypeE cards' do
      
     before do
-      @c1 = Card.create :name=>'toc1', :type=>"CardtypeE",
-        :content=>Card['Onne Heading'].content
-      @c2 = Card.create :name=>'toc2', :type=>"CardtypeE",
-        :content=>Card['Twwo Heading'].content
-      @c3 = Card.create :name=>'toc3', :type=>"CardtypeE",
-        :content=>Card['Three Heading'].content
+      Card.as_bot do
+        @c1 = Card.create :name=>'toc1', :type=>"CardtypeE",
+          :content=>Card['Onne Heading'].content
+        @c2 = Card.create :name=>'toc2', :type=>"CardtypeE",
+          :content=>Card['Twwo Heading'].content
+        @c3 = Card.create :name=>'toc3', :type=>"CardtypeE",
+          :content=>Card['Three Heading'].content
+      end
       @c1.typename.should == 'Cardtype E'
       @rule_card = @c1.rule_card(:table_of_contents)
 
@@ -171,25 +173,27 @@ describe Card do
 
   context "when I create a new rule" do
     before do
-      @c1 = Card.create :name=>'toc1', :type=>"CardtypeE",
-        :content=>Card['Onne Heading'].content
-      # FIXME: CardtypeE should inherit from *default => Basic
-      @c2 = Card.create :name=>'toc2', #:type=>"CardtypeE",
-        :content=>Card['Twwo Heading'].content
-      @c3 = Card.create :name=>'toc3', #:type=>"CardtypeE",
-        :content=>Card['Three Heading'].content
-      @c1.typename.should == 'Cardtype E'
-      @rule_card = @c1.rule_card(:table_of_contents)
+      Card.as_bot do
+        @c1 = Card.create :name=>'toc1', :type=>"CardtypeE",
+          :content=>Card['Onne Heading'].content
+        # FIXME: CardtypeE should inherit from *default => Basic
+        @c2 = Card.create :name=>'toc2', #:type=>"CardtypeE",
+          :content=>Card['Twwo Heading'].content
+        @c3 = Card.create :name=>'toc3', #:type=>"CardtypeE",
+          :content=>Card['Three Heading'].content
+        @c1.typename.should == 'Cardtype E'
+        @rule_card = @c1.rule_card(:table_of_contents)
 
-      @c1.should be
-      @c2.should be
-      @c3.should be
-      @rule_card.name.should == '*all+*table of contents'
-      if c=Card['CardtypeE+*type+*table of content']
-        c.content = '2'
-        c.save!
-      else
-        c=Card.create! :name=>'CardtypeE+*type+*table of content', :content=>'2'
+        @c1.should be
+        @c2.should be
+        @c3.should be
+        @rule_card.name.should == '*all+*table of contents'
+        if c=Card['CardtypeE+*type+*table of content']
+          c.content = '2'
+          c.save!
+        else
+          c=Card.create! :name=>'CardtypeE+*type+*table of content', :content=>'2'
+        end
       end
     end
     it "should take on new setting value" do

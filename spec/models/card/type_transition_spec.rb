@@ -40,8 +40,9 @@ end
 
 describe Card, "with role" do
   before do
-    Card.as(Card::WagbotID) 
-    @role = Card.search(:type=>'Role')[0]
+    Card.as_bot do
+      @role = Card.search(:type=>'Role')[0]
+    end
   end
   
   it "should have a role type" do
@@ -53,8 +54,9 @@ end
 
 describe Card, "with account" do
   before do
-    Card.as(Card::WagbotID) 
-    @joe = change_card_to_type('Joe User', :basic)
+    Card.as_bot do
+      @joe = change_card_to_type('Joe User', :basic)
+    end
   end
   
   it "should not have errors" do
@@ -127,7 +129,7 @@ end
 
 describe Card, "type transition create callback" do
   before do 
-    Card.as(Card::WagbotID) do
+    Card.as_bot do
       Card.create(:name=>'Basic+*type+*delete', :type=>'Pointer', :content=>"[[Anyone Signed in]]")
     end
     @c = change_card_to_type("basicname", :cardtype_f) 

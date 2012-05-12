@@ -27,11 +27,12 @@ end
 
 describe Card, "comment addition" do
   before do
-    Card.as(Card::WagbotID) 
-    Card.create :name => 'basicname+*self+*comment', :content=>'[[Anyone Signed In]]'
-    @c = Card.fetch "basicname"
-    @c.comment = " and more"
-    @c.save!
+    Card.as_bot do 
+      Card.create :name => 'basicname+*self+*comment', :content=>'[[Anyone Signed In]]'
+      @c = Card.fetch "basicname"
+      @c.comment = " and more"
+      @c.save!
+    end
   end
   
   it "should combine content immediately" do

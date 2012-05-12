@@ -24,7 +24,7 @@ class Wagn::Set::Type::InvitationRequestTest < ActiveSupport::TestCase
 
 
   def test_should_block_user
-    #Card.as(Card::WagbotID)  do
+    #Card.as_bot  do
     #  auth_user_card = Card[Card::AuthID]
       # FIXME: change from task ...
       #auth_user_card.trait_card(:tasks).content = '[[deny_invitation_requests]]'

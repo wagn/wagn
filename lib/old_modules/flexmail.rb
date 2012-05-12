@@ -31,7 +31,7 @@ class Flexmail
       #warn "card is #{card.inspect}"
       event_card = card.rule_card(:send)
       return [] unless event_card
-      Card.as(Card::WagbotID) { event_card.item_names }
+      Card.as_bot { event_card.item_names }
     end
     
     def mail_for card

@@ -3,14 +3,15 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../packs/pack_spec_hel
 
 describe Card do
   before do
-    Card.as(Card::WagbotID)
-    # FIXME:pack needs to add type
-    # Note I added this manually to the test db, and it works, but it fails
-    # if we have to create the typecard here, that seems like a bug
-    Card.create!( :name=>'Sol', :type=>'Cardtype' )
-    Card.create!( :name=>"*sol+*right+*default", :type=>'Sol' )
-    (c=Card.create!( :name=>"B+*sol" )).typename.should == 'Sol'
-    c.typecode.should == nil
+    Card.as_bot do
+      # FIXME:pack needs to add type
+      # Note I added this manually to the test db, and it works, but it fails
+      # if we have to create the typecard here, that seems like a bug
+      Card.create!( :name=>'Sol', :type=>'Cardtype' )
+      Card.create!( :name=>"*sol+*right+*default", :type=>'Sol' )
+      (c=Card.create!( :name=>"B+*sol" )).typename.should == 'Sol'
+      c.typecode.should == nil
+    end
   end
   
 =begin

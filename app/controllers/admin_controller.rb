@@ -7,7 +7,7 @@ class AdminController < ApplicationController
     Wagn::Conf[:recaptcha_on] = false
     if request.post?
       #Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
-      Card.as(Card::WagbotID) do
+      Card.as_bot do
         @account, @card = User.create_with_card( params[:account].merge({:login=>'first'}), params[:card] )
         set_default_request_recipient
 

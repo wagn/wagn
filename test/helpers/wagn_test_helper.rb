@@ -29,7 +29,7 @@ module WagnTestHelper
   end
 
   def given_card( *card_args )
-    Card.as(Card::WagbotID) do
+    Card.as_bot do
       Card.create *card_args
     end
   end

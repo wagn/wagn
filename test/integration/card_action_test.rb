@@ -31,7 +31,7 @@ class CardActionTest < ActionController::IntegrationTest
   # connection/remove ??
 
   def test_comment      
-    Card.as(Card::WagbotID)  do
+    Card.as_bot  do
       Card.create :name=>'A+*self+*comment', :type=>'Pointer', :content=>'[[Anyone]]'
     end
     post "card/comment/A", :card => { :comment=>"how come" }
@@ -47,14 +47,14 @@ class CardActionTest < ActionController::IntegrationTest
   end
 
   def test_create_cardtype_card
-    Card.as(Card::WagbotID) {
+    Card.as_bot {
       post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"} )}
     assert_response 302
     assert Card.find_by_name('Editor2').typecode == :cardtype
   end
 
   def test_create                   
-    Card.as(Card::WagbotID) {
+    Card.as_bot {
      post 'card/create', :card=>{
       :type=>'Basic', 
       :name=>"Editor",
@@ -90,7 +90,7 @@ class CardActionTest < ActionController::IntegrationTest
   # FIXME: this should probably be files in the spot for a remove test
   def test_removal_and_return_to_previous_undeleted_card_after_deletion
     t1 = t2 = nil
-    Card.as(Card::WagbotID) do 
+    Card.as_bot do 
       t1 = Card.create! :name => "Testable1", :content => "hello"
       t2 = Card.create! :name => "Testable1+bandana", :content => "world"
     end

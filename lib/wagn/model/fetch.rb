@@ -64,7 +64,7 @@ module Wagn::Model::Fetch
           
       if Card.cache && needs_caching
         Card.cache.write card.key, card
-        Card.cache.write "~#{card.id}", card.key if card.id
+        Card.cache.write "~#{card.id}", card.key if card.id and card.id != 0
       end
       
       return nil if card.new_card? and ( opts[:skip_virtual] || !card.virtual? )

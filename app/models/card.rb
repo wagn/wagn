@@ -183,7 +183,6 @@ class Card < ActiveRecord::Base
     def among?(authzed) Card[as_id].among?(authzed) end
     def as_id()         @@as_id || user_id          end
     def as_card()
-      warn "ac #{@@as_id.inspect}" if as_id.nil?
       (ac=@@as_card and ac.id == as_id) ? ac : @@as_card = Card[as_id]
     end
 

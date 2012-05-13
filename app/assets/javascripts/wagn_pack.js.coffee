@@ -100,6 +100,10 @@ $(window).ready ->
     slot.find('.perm-group input:checked').attr('checked', false)
     slot.find('.perm-indiv input').val('')
 
+  #wagn_org pack (for now)
+  $('.shade-view h1').live 'click', ->
+    $(this).slot().find('.shade-content').slideToggle 1000
+
   # rstar pack
   $('body').delegate '.rule-submit-button', 'click', ->
     f = $(this).closest('form')

@@ -173,10 +173,11 @@ module Wagn
     end
 
     def menu
-      if card && card.virtual?
-        return %{<span class="card-menu faint">Virtual</span>\n}
+      menu_options = if card && card.virtual?
+        [:view,:options,:virtual]
+      else
+        [:view,:changes,:options,:related,:edit]
       end
-      menu_options = [:view,:changes,:options,:related,:edit]
       top_option = menu_options.pop
       menu = %{<span class="card-menu">\n}
         menu << %{<span class="card-menu-left">\n}
@@ -184,7 +185,11 @@ module Wagn
             menu << link_to_menu_action(opt)
           end
         menu << "</span>"
-        menu << link_to_menu_action(top_option)
+        menu << if top_option == :virtual
+          %{<li class="virtual-edit">Virtual</li>\n}
+        else
+          link_to_menu_action(top_option)
+        end
       menu << "</span>"
       menu.html_safe
       menu

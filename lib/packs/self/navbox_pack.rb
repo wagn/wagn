@@ -23,7 +23,7 @@ class Wagn::Renderer::Json < Wagn::Renderer
       :search => true, # card.ok?( :read ),
       :add    => (exact.new_card? && exact.cardname.valid? && !exact.virtual? && exact.ok?( :create )),
       :new    => (exact.type_id==Card::CardtypeID && 
-                  Card.new(:typecode=>exact.typecode).ok?(:create) && 
+                  Card.new(:type_id=>exact.type_id).ok?(:create) && 
                   [exact.name, exact.cardname.to_url_key]
                  ),
       :goto   => goto_cards.map { |name| [name, highlight(name, term), name.to_cardname.to_url_key] }

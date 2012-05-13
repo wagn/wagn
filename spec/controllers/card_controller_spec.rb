@@ -278,7 +278,7 @@ describe CardController do
     #    #assert_equal "boo", assigns['card'].content
     #    assert_equal "<br/>", assigns['card'].content
     #    assert_response :success, "changed card type"   
-    #    assert_equal "CardtypeA", Card['Sample Basic'].typecode
+    #    assert_equal :cardtype_a", Card['Sample Basic'].typecode
     #  end 
     # 
   end

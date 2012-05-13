@@ -293,7 +293,7 @@ class Card < ActiveRecord::Base
   end
 
   def trait_card tagcode
-    Card.fetch_or_new cardname.trait_name(tagcode)
+    Card.fetch_or_new cardname.trait_name(tagcode), :skip_virtual=>true
   end
 
   def get_type_id(args={})

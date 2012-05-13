@@ -508,7 +508,7 @@ class Wagn::Renderer::Html
             :class => "line-link title down-arrow slotter", 
             :remote => true 
           }
-         #{ card.typecode=='Basic' ? '' : %{<span class="cardtype">#{ link_to_page card.typename }</span>} }
+         #{ card.type_id==Card::BasicID ? '' : %{<span class="cardtype">#{ link_to_page card.typename }</span>} }
          #{ page_icon(card.name) } &nbsp;
        </div>
        #{ name_styler }

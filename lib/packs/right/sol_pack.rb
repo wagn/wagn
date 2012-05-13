@@ -74,7 +74,7 @@ class Wagn::Renderer::Html
 
   def trait_forms(menu_name)
     if formcard = card.rule_card(menu_name) and
-       (formtype = formcard.typecode) == 'Pointer'
+       (formtype = formcard.type_id) == Card::PointerID
       #warn (Rails.logger.debug "trait_forms(#{menu_name}) #{card&&card.name}, #{formcard&&formcard.name}")
       # is this names or cards? new api?
       if block_given?

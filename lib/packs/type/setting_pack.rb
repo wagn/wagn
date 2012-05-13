@@ -11,7 +11,6 @@ class Wagn::Renderer
             }
       wql[:left][ (set_class.trunkless? ? :name : :right )] = set_class.key_name
 
-      warn Rails.logger.warn("core_setting #{wql.inspect}")
       search_card = Card.new :type =>Card::SearchID, :content=>wql.to_json
       next if search_card.count == 0
 

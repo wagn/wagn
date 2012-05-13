@@ -97,7 +97,7 @@ module Wagn::Model::Attach
       before_post_process :before_post_attach
       
       validates_each :attach do |rec, attr, value|
-        if ['File', 'Image'].member? rec.typecode
+        if [Card::FileID, Card::ImageID].member? rec.type_id
           max_size = 5 #this should eventually be a wagn configuration choice
           if value.size.to_i > max_size.megabytes
             rec.errors.add :file_size, "File cannot be larger than #{max_size} megabytes"
@@ -121,7 +121,7 @@ module Paperclip::Interpolations
   end
 
   def size(at, style_name)
-    at.instance.typecode=='File' || style_name.blank? ? '' : "#{style_name}-"
+    at.instance.type_id==Card::FileID || style_name.blank? ? '' : "#{style_name}-"
   end
 
   def revision_id(at, style_name) at.instance.selected_rev_id end

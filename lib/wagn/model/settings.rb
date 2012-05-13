@@ -20,7 +20,7 @@ module Wagn::Model::Settings
     nil
   end
   def rule_card_with_cache setting_name, fallback=nil, extra_fetch_args={}
-    setting_name=setting_name.to_sym
+    setting_name = (sc=Card[setting_name] and (sc.codename || sc.name).to_sym) unless Symbol===setting_name
     @rule_cards ||= {}  # FIXME: initialize this when creating card
     rcwc = (@rule_cards[setting_name] ||= 
       rule_card_without_cache setting_name, fallback, extra_fetch_args)

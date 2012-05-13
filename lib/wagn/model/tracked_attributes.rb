@@ -85,7 +85,7 @@ module Wagn::Model::TrackedAttributes
         tee.save!
       end
     end
-    #warn "setting typeid(#{new_type_id}) and code (#{self.typecode})"
+    #warn "setting typeid(#{new_type_id}) and code (#{self.type_id})"
     
     # do we need to "undo" and loaded modules?  Maybe reload defaults?
     reset_patterns

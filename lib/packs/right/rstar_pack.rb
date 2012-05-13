@@ -29,6 +29,7 @@ class Wagn::Renderer::Html
   define_view :open_rule do |args|
     current_rule, prototype = find_current_rule_card
     setting_name = card.cardname.tag_name
+    #warn Rails.logger.warn("open_rule #{card.inspect}, cr:#{current_rule.inspect}, sn:#{setting_name}, p:#{params.inspect}")
     current_rule ||= Card.new :name=> "*all+#{setting_name}"
 
     if args=params[:card]
@@ -68,7 +69,6 @@ class Wagn::Renderer::Html
       # have the option to create rules based on arbitrary narrower sets, though narrower sets will always apply to whatever prototype we create
     end
 
-
     %{
       <tr class="card-slot open-rule">
         <td class="rule-cell" colspan="3">
@@ -83,7 +83,7 @@ class Wagn::Renderer::Html
   define_view :edit_rule do |args|
     edit_mode       = args[:edit_mode]
     setting_name    = args[:setting_name]
-    current_set_key = args[:current_set_key]
+    current_set_key = args[:current_set_key] || '*all' # Card[:all].name (should have a constant for this?)
     open_rule       = args[:open_rule]
     @item_view ||= :link
 
@@ -137,7 +137,7 @@ class Wagn::Renderer::Html
           <div class="type-editor"> }+
 
       if edit_mode
-        %{<label>type:</label>}+ 
+        %{<label>type:</label>}+
         raw(typecode_field( :class =>'type-field rule-type-field live-type-field', 'data-remote'=>true,
           :href => path(:view, :card=>open_rule, :view=>:open_rule, :type_reload=>true) ) )
       elsif current_set_key
@@ -147,7 +147,7 @@ class Wagn::Renderer::Html
 
 
           %{</div>
-          <div class="rule-content">#{ edit_mode ? content_field(form, :skip_rev_id=>true) : (current_set_key ? render_core : '') }</div> 
+          <div class="rule-content">#{ edit_mode ? content_field(form, :skip_rev_id=>true) : (current_set_key ? render_core : '') }</div>
         </div>
        </div> }.html_safe +
 
@@ -184,8 +184,8 @@ class Wagn::Renderer::Html
     # self.card is a POTENTIAL rule; it quacks like a rule but may or may not exist.
     # This generates a prototypical member of the POTENTIAL rule's set
     # and returns that member's ACTUAL rule for the POTENTIAL rule's setting
-    set_prototype = Card.fetch( card.cardname.trunk_name ).prototype
-    rule_card = card.new_card? ? Card.fetch_or_new(set_prototype.name + card.cardname.tag_name) : card
+    set_prototype = (proto_set=Card.fetch( card.cardname.trunk_name )).prototype
+    rule_card = card.new_card? ? set_prototype.rule_card( card.cardname.tag_name ) : card
     [ rule_card, set_prototype ]
   end
 

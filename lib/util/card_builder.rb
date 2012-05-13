@@ -40,8 +40,8 @@ module CardBuilderMethods
       )
 
       if c = Card.find_by_name(username)
-        if c.typecode=='Basic'
-          c.typecode='User'
+        if c.type_id==Card::BasicID
+          c.type_id=Card::UserID
         else
           raise "Can't create user card for #{username}: already points to different user"
         end

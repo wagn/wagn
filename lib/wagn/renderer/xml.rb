@@ -67,9 +67,9 @@ module Wagn
     css_class << " view-#{view}" if view
     
     attributes = {
-      :name => card.cardname.tag_name,
+      :name     => card.cardname.tag_name,
       :cardId   => (card && card.id),
-      :type     => card.typecode,
+      :type_id  => card.type_id,
       :class    => css_class,
     }
     [:style, :home_view, :item, :base].each { |key| attributes[key] = args[key] }
@@ -100,7 +100,7 @@ module Wagn
   def layout_from_card
     return unless rule_card = (card.rule_card(:layout) or Card.default_rule_card(:layout))
     rule_card.include_set_modules
-    return unless rule_card.typecode == 'Pointer'           and
+    return unless rule_card.type_id == Card::PointerID           and
       layout_name=rule_card.item_names.first                and
       !layout_name.nil?                                        and
       lo_card = Card.fetch(layout_name, :skip_virtual => true) and
@@ -172,7 +172,7 @@ module Wagn
   end
 
   def update_cardtype_function(options={})
-    fn = ['File','Image'].include?(card.typecode) ?
+    fn = [ Card::FileID, Card::ImageID ].include?(card.type_id) ?
             "Wagn.onSaveQueue['#{context}']=[];" :
             "Wagn.runQueue(Wagn.onSaveQueue['#{context}']); "
     fn << remote_function( options )

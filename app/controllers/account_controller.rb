@@ -8,24 +8,25 @@ class AccountController < ApplicationController
   def signup
     raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?  #ENGLISH
     c=Card.new(:type_id=>Card::InvitationRequestID)
-    #warn "signup ok? #{c.inspect}, #{c.ok? :create}" #ENGLISH
+    #warn Rails.logger.warn("signup ok? #{c.inspect}, #{c.ok? :create}")
     raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless c.ok? :create #ENGLISH
     #raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card.new(:typecode=>:invitation_request).ok? :create #ENGLISH
 
     user_args = (params[:user]||{}).merge(:status=>'pending').symbolize_keys
     @user = User.new( user_args ) #does not validate password
     card_args = (params[:card]||{}).merge(:type_id=>Card::InvitationRequestID)
-    #warn "signup UA:#{user_args.inspect}, CA:#{card_args.inspect}"
-    @card = Card.new( card_args )
 
-    return unless request.post?
+    unless request.post?
+      @card = Card.new( card_args )
+      return
+    end
 
     return render_user_errors if @user.errors.any?
+    #warn Rails.logger.warn("signup UA:#{user_args.inspect}, CA:#{card_args.inspect}")
     @user, @card = User.create_with_card( user_args, card_args )
+    #warn Rails.logger.warn("signup UA:#{@user.inspect}, CA:#{@card.inspect}")
     return render_user_errors if @user.errors.any?
 
-    sr=@card.trait_card(:account)
-    #warn "signup #{sr.inspect}, #{sr.ok?(:create)}"
     if @card.trait_card(:account).ok?(:create)       #complete the signup now
       email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!",  #ENGLISH
                      :subject => Card.setting('*signup+*subject') || "Account info for #{Card.setting('*title')}!" }  #ENGLISH
@@ -47,10 +48,10 @@ class AccountController < ApplicationController
 
 
   def accept
-    ckey=params[:card][:key]
-    #warn "accept #{ckey.inspect}, #{Card[ckey]}, #{params.inspect}"
+    card_key=params[:card][:key]
+    #warn "accept #{card_key.inspect}, #{Card[card_key]}, #{params.inspect}"
     raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
-    @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
+    @card = Card[card_key] or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
     #warn "accept #{Card.user_id}, #{@card.inspect}"
     @user = @card.to_user or raise(Wagn::Oops, "This card doesn't have an account to approve")  #ENGLISH
     #warn "accept #{@user.inspect}"

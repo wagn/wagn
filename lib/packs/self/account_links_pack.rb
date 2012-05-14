@@ -7,7 +7,7 @@ class Wagn::Renderer
         ucard = Card.user_card
         %{ 
           #{ link_to ucard.name, "#{Wagn::Conf[:root_path]}/#{ucard.cardname.to_url_key}", :id=>'my-card-link' }
-          #{ if User.ok? :create_accounts
+          #{ if Card[:account].ok? :create
                link_to 'Invite a Friend', "#{prefix}/invite", :id=>'invite-a-friend-link'
              end }
           #{ link_to 'Sign out', "#{prefix}/signout",                                      :id=>'signout-link' }

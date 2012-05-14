@@ -27,14 +27,47 @@ describe AccountController do
         :email=> @email_args
 
       @new_user = User.where(:email=>'joe@new.com').first
+      @user_card = Card['Joe New']
 
     end
 
     it 'should create a user' do
       @new_user.should be
+      @new_user.card_id.should == @user_card.id
+      @user_card.type_id.should == Card::UserID
     end
 
     it 'should send email' do
+      @msgs.size.should == 1
+      @msgs[0].should be_a Mail::Message
+    end
+  end
+
+  describe "#signup" do
+    before do
+      @msgs=[]
+      mock.proxy(Mailer).account_info.with_any_args.times(any_times) { |m|
+        @msgs << m
+        mock(m).deliver }
+
+      post :signup, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}
+
+      @new_user = User.where(:email=>'joe@new.com').first
+      @user_card = Card['Joe New']
+
+    end
+
+    it 'should create a user' do
+      @new_user.should be
+      @new_user.card_id.should == @user_card.id
+      @user_card.type_id.should == Card::InvitationRequestID
+    end
+
+    it 'should send email' do
+      login_as :joe_admin
+
+      post :accept, :card=>{:key=>'joe_new'}, :email=>{:subject=>'Hey Joe!', :message=>'Can I Come on in?'}
+
       @msgs.size.should == 1
       @msgs[0].should be_a Mail::Message
     end

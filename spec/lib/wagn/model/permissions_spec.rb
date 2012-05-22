@@ -28,17 +28,15 @@ describe "reader rules" do
   end
   
   it "should update to user ('Joe Admin')" do
-    Card.as_bot do
-      card = Card.fetch('Home')
-      @perm_card.content = '[[Joe Admin]]'
-      Card.as_bot { @perm_card.save! }
-      card.read_rule_id.should == @perm_card.id
-      card.who_can(:read).should == [Card['joe_admin'].id]
-      Card.as(:anonymous)      { card.ok?(:read).should be_false }
-      Card.as(:joe_user)  { card.ok?(:read).should be_false }
-      Card.as(:joe_admin) { card.ok?(:read).should be_true }
-      Card.as_bot    { card.ok?(:read).should be_true }
-    end
+    card = Card.fetch('Home')
+    @perm_card.content = '[[Joe Admin]]'
+    Card.as_bot { @perm_card.save! }
+    card.read_rule_id.should == @perm_card.id
+    card.who_can(:read).should == [Card['joe_admin'].id]
+    Card.as(:anonymous) { card.ok?(:read).should be_false }
+    Card.as(:joe_user)  { card.ok?(:read).should be_false }
+    Card.as(:joe_admin) { card.ok?(:read).should be_true  }
+    Card.as_bot         { card.ok?(:read).should be_true  }
   end
   
   it "should revert to more general rule when more specific (self) rule is deleted" do
@@ -186,21 +184,20 @@ describe "Permission", ActiveSupport::TestCase do
 
 
   it "write user permissions" do
-    rc=@u1.trait_card(:roles)
-    rc.content = ''; rc << @r1 << @r2
-    rc.save
-    rc=@u2.trait_card(:roles)
-    rc.content = ''; rc << @r1 << @r3
-    rc.save
-    rc=@u3.trait_card(:roles)
-    rc.content = ''; rc << @r1 << @r2 << @r3
-    rc.save
-
     Card.as_bot {
+      rc=@u1.trait_card(:roles)
+      rc.content = ''; rc << @r1 << @r2
+      rc.save
+      rc=@u2.trait_card(:roles)
+      rc.content = ''; rc << @r1 << @r3
+      rc.save
+      rc=@u3.trait_card(:roles)
+      rc.content = ''; rc << @r1 << @r2 << @r3
+      rc.save
+
       cards=[1,2,3].map do |num|
         Card.create(:name=>"c#{num}+*self+*update", :type=>'Pointer', :content=>"[[u#{num}]]")
       end 
-      Rails.logger.info "testing point 0 #{cards.inspect}"
     }
  
     @c1 = Card['c1']
@@ -217,14 +214,14 @@ describe "Permission", ActiveSupport::TestCase do
   end
  
   it "read group permissions" do
-    rc=@u1.trait_card(:roles)
-    rc.content = ''; rc << @r1 << @r2
-    rc.save
-    rc=@u2.trait_card(:roles)
-    rc.content = ''; rc << @r1 << @r3
-    rc.save
-    
     Card.as_bot do
+      rc=@u1.trait_card(:roles)
+      rc.content = ''; rc << @r1 << @r2
+      rc.save
+      rc=@u2.trait_card(:roles)
+      rc.content = ''; rc << @r1 << @r3
+      rc.save
+    
       [1,2,3].each do |num|
         Card.create(:name=>"c#{num}+*self+*read", :type=>'Pointer', :content=>"[[r#{num}]]")
       end
@@ -240,12 +237,14 @@ describe "Permission", ActiveSupport::TestCase do
   end
 
   it "write group permissions" do
-    [1,2,3].each do |num|
-      Card.create(:name=>"c#{num}+*self+*update", :type=>'Pointer', :content=>"[[r#{num}]]")
-    end
+    Card.as_bot do
+      [1,2,3].each do |num|
+        Card.create(:name=>"c#{num}+*self+*update", :type=>'Pointer', :content=>"[[r#{num}]]")
+      end
     
-    (rc=@u3.trait_card(:roles)).content =  ''
-    rc << @r1
+      (rc=@u3.trait_card(:roles)).content =  ''
+      rc << @r1
+    end
 
     %{        u1 u2 u3
       c1(r1)  T  T  T
@@ -265,14 +264,14 @@ describe "Permission", ActiveSupport::TestCase do
   end
 
   it "read user permissions" do
-    (rc=@u1.trait_card(:roles)).content = ''
-    rc << @r1 << @r2
-    (rc=@u2.trait_card(:roles)).content = ''
-    rc << @r1 << @r3
-    (rc=@u3.trait_card(:roles)).content = ''
-    rc << @r1 << @r2 << @r3
-
     Card.as_bot {
+      (rc=@u1.trait_card(:roles)).content = ''
+      rc << @r1 << @r2
+      (rc=@u2.trait_card(:roles)).content = ''
+      rc << @r1 << @r3
+      (rc=@u3.trait_card(:roles)).content = ''
+      rc << @r1 << @r2 << @r3
+
       [1,2,3].each do |num|
         Card.create(:name=>"c#{num}+*self+*read", :type=>'Pointer', :content=>"[[u#{num}]]")
       end

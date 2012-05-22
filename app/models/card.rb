@@ -790,6 +790,7 @@ class Card < ActiveRecord::Base
     end
 
     if rec.updates.for? :content
+      rec.reset_patterns_if_rule
       rec.send :validate_content, value
     end
   end

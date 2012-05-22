@@ -96,11 +96,12 @@ module Wagn::Model::TrackedAttributes
   end
   
   def set_content(new_content)  
+    #warn Rails.logger.info("set_content #{name} #{new_content}")
     return false unless self.id 
     new_content ||= '' 
     new_content = WikiContent.clean_html!(new_content) if clean_html?
     clear_drafts if current_revision_id
-    #warn Rails.logger.info("set_content #{name} #{Card.user_id}, #{new_content} #{caller*"\n"}")
+    #warn Rails.logger.info("set_content #{name} #{Card.user_id}, #{new_content}")
     self.current_revision = Card::Revision.create(:card_id=>self.id,
            :content=>new_content, :creator_id =>Card.user_id)
     reset_patterns_if_rule

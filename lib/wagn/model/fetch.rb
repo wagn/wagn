@@ -115,7 +115,7 @@ module Wagn::Model::Fetch
 
     def set_members(set_names, key)
       #warn Rails.logger.warn("set_members #{set_names.inspect}, #{key}")
-      set_names.compact.map(&:to_cardname).map(&:key).each do |set_key|
+      set_names.compact.map(&:to_cardname).map(&:key).map do |set_key|
         skey = "$#{set_key}"
         h = Card.cache.read skey
         if h.nil?; h = {}

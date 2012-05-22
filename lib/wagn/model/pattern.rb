@@ -21,9 +21,11 @@ module Wagn::Model
          (set=trunk).type_id == Card::SetID
         #warn (Rails.logger.debug "reset set: #{name}, Set:#{set.inspect} + Setting:#{setting.inspect}")
         set.include_set_modules
+        #warn (Rails.logger.debug "reset RR [#{set.name}]? #{self.update_read_rule_list.inspect}")
+        self.update_read_rule_list = self.update_read_rule_list.concat( set.item_cards(:limit=>0) ) if setting.id == Card::ReadID
+        #warn (Rails.logger.debug "reset RR> #{self.update_read_rule_list.inspect}")
         set.reset_patterns
         set.reset_set_patterns
-        self.update_read_rule_list = self.update_read_rule_list.concat( set.item_cards(:limit=>0) ) if setting.id == Card::ReadID
       end
     end
 

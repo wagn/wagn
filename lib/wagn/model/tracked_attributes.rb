@@ -138,10 +138,17 @@ module Wagn::Model::TrackedAttributes
       ActiveRecord::Base.logger.info("---------------------- DEP #{dep.name}  -------------------------------------")  
       cxn = ActiveRecord::Base.connection
       depname = dep.cardname.replace_part(@old_name, name)
-      depkey = depname.to_key    
-      #Rails.logger.debug "cascade D:#{dep} > #{depname.to_s}, #{depkey} Part: #{@old_name} > #{name}"
+      depkey = depname.to_key
       # here we specifically want NOT to invoke recursive cascades on these cards, have to go this 
-      # low level to avoid callbacks.                                                               
+      # low level to avoid callbacks.
+      
+      # FIXME! in response to the old comment above: um.... why not?
+      # I think we need the validations and the updates to recurse.
+      # it may be that we want to send certain args along to prevent certain callbacks, but this is too hacky, and it's
+      # tied to at least one bug: if any of the names in the update below are in the trash, the whole thing explodes.
+      # would be surprised if there weren't also caching bugs stemming from this.
+      # I trust the above actually avoided some issues, but we need to nail those down, test, and fix them
+      # EFM - 5/21/12
       Card.update_all("name=#{cxn.quote(depname.to_s)}, #{cxn.quote_column_name("key")}=#{cxn.quote(depkey)}", "id = #{dep.id}")
       dep.expire(dep)
     end 

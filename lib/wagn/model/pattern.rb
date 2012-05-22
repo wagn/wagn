@@ -16,13 +16,14 @@ module Wagn::Model
 
     def reset_patterns_if_rule()
       return if name.blank?
-      #warn "reset p ifr[#{inspect}], #{name_without_tracking}"
+      #warn Rails.logger.warn("reset p ifr[#{inspect}], #{name_without_tracking}")
       if !simple? and !new_card? and setting=tag and setting.type_id == Card::SettingID and
          (set=trunk).type_id == Card::SetID
         #warn (Rails.logger.debug "reset set: #{name}, Set:#{set.inspect} + Setting:#{setting.inspect}")
         set.include_set_modules
         set.reset_patterns
-        self.update_read_rule_list = self.update_read_rule_list.concat set.reset_set_patterns(setting)
+        set.reset_set_patterns
+        self.update_read_rule_list = self.update_read_rule_list.concat( set.item_cards(:limit=>0) ) if setting.id == Card::ReadID
       end
     end
 
@@ -44,8 +45,10 @@ module Wagn::Model
     def real_set_names() set_names.find_all &Card.method(:exists?)                              end
     def css_names()      patterns.map(&:css_name).reverse*" "                                   end
     def set_modules()    @set_modules ||= patterns_without_new.reverse.map(&:set_const).compact end
-    def set_names()      @set_names   ||= patterns.map(&:to_s)
-      #warn "sn #{@set_names.inspect}"; @set_names
+    def set_names()
+      Card.set_members(@set_names = patterns.map(&:to_s), key) if @set_names.nil?
+      #warn Rails.logger.warn("sn #{@set_names.inspect}")
+      @set_names
     end
     def method_keys()
       rr =

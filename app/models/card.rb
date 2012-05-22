@@ -36,6 +36,7 @@ class Card < ActiveRecord::Base
   @@junk_args = %w{ missing skip_virtual id }
 
   @@id_cache = {}
+
   def self.reset_id_cache() @@id_cache = {} end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -312,6 +313,7 @@ class Card < ActiveRecord::Base
     else            ; return type_id
     end
     
+    #warn Rails.logger.warn("get_type_id templ #{name} (#{args.inspect})")
     if name && t=template
       reset_patterns
       t.type_id

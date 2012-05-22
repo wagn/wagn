@@ -108,6 +108,25 @@ module Wagn::Model::Fetch
       end
     end
     
+    # set_names reverse map (cached)
+    def members(key)
+      (v=Card.cache.read "$#{key}").nil? ? [] : v.keys
+    end
+
+    def set_members(set_names, key)
+      #warn Rails.logger.warn("set_members #{set_names.inspect}, #{key}")
+      set_names.compact.map(&:to_cardname).map(&:key).each do |set_key|
+        skey = "$#{set_key}"
+        h = Card.cache.read skey
+        if h.nil?; h = {}
+        elsif h[key]; next
+        end
+        h[key] = true
+        #warn Rails.logger.warn("set_members w #{h.inspect}, #{skey.inspect}")
+        Card.cache.write skey, h
+      end
+    end
+
   end
 
   def clear_cache

@@ -17,12 +17,9 @@ module Wagn::Set::Type::Set
        @junction_only = subclass_for_set.junction_only
   end
 
-  def reset_set_patterns(setting_card)
-    # maybe we could only reset when the trait exists?
-    #warn "reset_set_patterns(#{inspect}), #{setting_card&&setting_card.name}"
-    list=item_cards(:limit=>0)
-    list.each(&:reset_patterns)
-    (setting_card && setting_card.id == Card::ReadID ) ? list : []
+  def reset_set_patterns
+    (list = Card.members(key).map{|name| Card[name]}.compact).each(&:reset_patterns)
+    #warn Rails.logger.warn("reset_sp #{name}, #{list.inspect}")
   end
 
   def label

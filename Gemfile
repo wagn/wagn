@@ -3,14 +3,14 @@ source 'http://rubygems.org'
 
 # DEFAULT
 
-gem 'rails', '~> 3.1'
+gem 'rails', '~> 3.2'
 gem 'htmlentities', '~>4.3.0'
 gem 'uuid', '~>2.3.4'
 gem 'paperclip', '~>2.4'
 gem 'warden'
 gem 'rmagick', '~>2.13.1'
 gem "recaptcha", "~> 0.3.4"
-gem 'userstamp', '~> 2.0'
+gem 'userstamp' #, '~> 2.0'
 gem 'xmlscan', '~>0.3.0'
 
 # DATABASE
@@ -38,8 +38,8 @@ gem 'dalli', :group => :memcache
 
 # These should only be needed if you're developing new JS / CSS.  It's all pre-compiled for production
 group :assets do
-  gem 'sass-rails',   "~> 3.1.0"               # pretty code; compiles to CSS
-  gem 'coffee-rails', "~> 3.1.0"               # pretty code; compiles to JS
+  gem 'sass-rails' #,   "~> 3.1.0"               # pretty code; compiles to CSS
+  gem 'coffee-rails' #, "~> 3.1.0"               # pretty code; compiles to JS
   gem 'uglifier'                               # makes pretty code ugly again.  compresses js/css for fast loading
 
   gem 'jquery-rails', '~> 1.0.17'              # main js framework, along with rails-specific unobtrusive lib
@@ -53,7 +53,7 @@ end
 group :test, :development do
   gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
   gem 'ruby-prof'                              # profiling
-  gem 'rails-dev-tweaks', '~> 0.5.1'           # dramatic speeds up asset loading, among other tweaks
+  gem 'rails-dev-tweaks' #, '~> 0.5.1'           # dramatic speeds up asset loading, among other tweaks
 
 #  gem 'jasmine-rails'
 end

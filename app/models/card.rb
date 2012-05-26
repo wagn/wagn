@@ -238,7 +238,7 @@ class Card < ActiveRecord::Base
     NON_CREATEABLE_TYPES = %w{ invitation_request setting set }
 
     def createable_types
-      type_names = Card.as(Card::WagbotID) do
+      type_names = Card.as_bot do
         Card.search :type=>Card::CardtypeID, :return=>:name
       end
       noncreateable_names = NON_CREATEABLE_TYPES.map do |code|
@@ -265,7 +265,7 @@ class Card < ActiveRecord::Base
   def read_rules
     return [] if id==Card::WagbotID  # avoids infinite loop
     party_keys = ['in', Card::AnyoneID] + parties
-    Card.as Card::WagbotID do
+    Card.as_bot do
       Card.search(:right=>'*read', :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
     end
   end
@@ -534,7 +534,7 @@ class Card < ActiveRecord::Base
   end
 
   def repair_key
-    Card.as  Card::WagbotID do
+    Card.as_bot do
       correct_key = cardname.to_key
       current_key = key
       return self if current_key==correct_key
@@ -727,7 +727,7 @@ class Card < ActiveRecord::Base
   validates_each :name do |rec, attr, value|
     if rec.new_card? && value.blank?
       if autoname_card = rec.rule_card(:autoname)
-        Card.as  Card::WagbotID do
+        Card.as_bot do
           autoname_card = autoname_card.refresh if autoname_card.frozen?
           value = rec.name = Card.autoname(autoname_card.content)
           autoname_card.content = value  #fixme, should give placeholder on new, do next and save on create
@@ -840,7 +840,7 @@ class Card < ActiveRecord::Base
 
   class << self
     def setting name
-      Card.as Card::WagbotID  do
+      Card.as_bot  do
         card=Card[name] and !card.content.strip.empty? and card.content
       end
     end

@@ -15,7 +15,7 @@ gem "recaptcha", "~> 0.3.4"
 # need at least one of the following
 
 group :mysql do
-  gem "mysql2", "~> 0.3.11"
+  #gem"mysql2", "~> 0.3.11"
   gem 'mysql', '~>2.8.1'
 end
 

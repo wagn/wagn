@@ -205,6 +205,7 @@ DEPENDENCIES
   htmlentities (~> 4.3.0)
   jquery-rails (~> 1.0.17)
   launchy
+  linecache19 (~> 0.5)
   mysql (~> 2.8.1)
   paperclip (~> 2.4)
   pg (~> 0.12.2)

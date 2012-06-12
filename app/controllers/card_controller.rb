@@ -106,7 +106,7 @@ class CardController < ApplicationController
     author = User.current_user.anonymous? ?
         "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" :
         "[[#{User.current_user.card.name}]]"
-    comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
+    comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.strip.empty? ? '&nbsp;' : c}</p>"}.join("\n")
     @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
     
     if @card.save

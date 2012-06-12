@@ -106,23 +106,23 @@ class ApplicationController < ActionController::Base
     render_show view, status
   end
 
-  def render_show(view = nil, status = 200)
-#    ActiveSupport::Notifications.instrument 'wagn.render_show', :message=>"view: #{view}" do
-      extension = request.parameters[:format]
-      if FORMATS.split('|').member?( extension )
-        render(:status=>status, :text=> begin
-          respond_to do |format|
-            format.send(extension) do
-              renderer = Wagn::Renderer.new(@card, :format=>extension, :controller=>self)
-              renderer.render_show( :view=>view )
-            end
-          end
-        end)
-      elsif render_show_file
-      else
-        render :text=>"unknown format: #{extension}", :status=>404
-      end
-#    end
+  def render_show view = nil, status = 200
+    ext = request.parameters[:format]
+    known = FORMATS.split('|').member? ext 
+    
+    if !known && @card && @card.error_view
+      ext, known = 'txt', true
+      # render simple text for errors on unknown formats; without this, file/image permissions checks are meaningless
+    end
+
+    case
+    when known                # renderers can handle it
+      r = Wagn::Renderer.new @card, :format=>ext, :controller=>self
+      render :text=>r.render_show( :view => view ), :status=>status
+    when render_show_file     # send_file can handle it
+    else                      # dunno how to handle it
+      render :text=>"unknown format: #{extension}", :status=>404
+    end
   end
   
   def render_show_file

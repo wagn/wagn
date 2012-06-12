@@ -13,7 +13,7 @@ class Wagn::Renderer::Html
     if @main_content = args.delete( :main_content )
       @card = Card.fetch_or_new '*placeholder'
     end
-
+    
     layout_content = get_layout_content args
 
     args[:params] = params # EXPLAIN why this is needed

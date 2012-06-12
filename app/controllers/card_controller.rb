@@ -104,9 +104,8 @@ class CardController < ApplicationController
     @card = @card.refresh if @card.frozen?
 
     author = Card.user_id == Card::AnonID ?
-        "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" :
-        "[[#{Card[Card.user_id].name}]]"
-    comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
+        "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" : "[[#{Card.user.name}]]"
+    comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.strip.empty? ? '&nbsp;' : c}</p>"} * "\n"
     @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
     
     if @card.save

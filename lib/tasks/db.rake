@@ -44,4 +44,15 @@ namespace :db do
       end
     end
   end
+
+  desc 'Run migrations and then write the version to a file'
+  task :migrate_and_stamp_version => :environment do
+    Rake::Task['db:migrate'].invoke
+    stamp_file = Wagn::Application.config.paths['config/database'].first.sub(/[^\/]*$/,'version.txt')
+    version = ActiveRecord::Migrator.current_version
+    puts ">>  writing version: #{version} to #{stamp_file}"
+    if file = open(stamp_file, 'w')
+      file.puts version
+    end
+  end
 end

@@ -15,8 +15,8 @@ class Wagn::Renderer::Json < Wagn::Renderer
       term = main+term
     end
     
-    exact = Card.fetch_or_new(term)
-    goto_cards = Card.search( goto_wql(term) )
+    exact = Card.fetch_or_new term
+    goto_cards = Card.search goto_wql(term)
     goto_cards.unshift term if exact.virtual?
     
     JSON({ 

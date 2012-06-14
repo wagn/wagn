@@ -215,6 +215,7 @@ DEPENDENCIES
   htmlentities (~> 4.3.0)
   jquery-rails (~> 1.0.17)
   launchy
+  linecache19 (~> 0.5)
   mysql (~> 2.8.1)
   mysql2 (~> 0.3.11)
   paperclip (~> 2.4)
@@ -226,6 +227,7 @@ DEPENDENCIES
   rmagick (~> 2.13.1)
   rr
   rspec-rails (~> 2.6)
+  ruby-debug-base19x (~> 0.11.30.pre4)
   ruby-debug19
   ruby-prof
   sass-rails

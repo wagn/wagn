@@ -15,6 +15,7 @@ module Wagn::Model::Settings
   end
 
   def related_sets
+    # refers to sets that users may configure from the current card - NOT to sets to which the current card belongs
     sets = ["#{name}+*self"]
     sets<< "#{name}+*type" if typecode=='Cardtype'
     if cardname.simple?

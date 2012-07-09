@@ -13,7 +13,7 @@ Feature: Layouts
   Scenario: I visit a Basic card with the simple layout
     When I go to card "*account links"
     Then I should see "Simple Header"
-    And I should see "Invite a Friend"
+    And I should see "Joe Admin"
   
   Scenario: I visit a User card with the user layout
     When I go to card "Joe User"

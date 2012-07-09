@@ -59,14 +59,16 @@ module Wagn
 
       def define_view view, opts={}, &final
         view_key = get_view_key(view, opts)
-        define_method( "_final_#{view_key}", &final )
+        define_method "_final_#{view_key}", &final
         @@subset_views[view] = true if !opts.empty?
 
         if !method_defined? "render_#{view}"
           define_method( "_render_#{view}" ) do |*a|
             a = [{}] if a.empty?
             if final_method = view_method(view)
-              with_inclusion_mode(view) { send(final_method, *a) }
+              with_inclusion_mode view do
+                send final_method, *a
+              end
             else
               "<strong>unsupported view: <em>#{view}</em></strong>"
             end

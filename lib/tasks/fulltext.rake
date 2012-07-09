@@ -1,3 +1,5 @@
+# NO LONGER SUPPORTED!
+
 namespace :fulltext do  
   desc "setup tsearch in postgres"
   task :prepare => :environment do

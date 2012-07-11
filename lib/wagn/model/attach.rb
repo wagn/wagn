@@ -96,7 +96,7 @@ module Wagn::Model::Attach
       
       validates_each :attach do |rec, attr, value|
         if ['File', 'Image'].member? rec.typecode
-          max_size = 5 #this should eventually be a wagn configuration choice
+          max_size = (max = Card['*upload max']) ? max.content.to_i : 5
           if value.size.to_i > max_size.megabytes
             rec.errors.add :file_size, "File cannot be larger than #{max_size} megabytes"
           end

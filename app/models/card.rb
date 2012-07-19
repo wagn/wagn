@@ -99,14 +99,18 @@ class Card < ActiveRecord::Base
     end
   end
   
-  
+  Wagn::Set::Type::HTML # this hack is needed in 1.8.1 because following is finding wrong constant (HTML, not Wagn::Set::Type::Html).
+  #I believe this is fixed in traits branch
   def self.include_type_module typecode
     return unless typecode
+    
     root = Wagn::Set::Type
+    puts "include type module.  typecode = #{typecode}; const get = #{root.const_get(  typecode ) }"
+    
     if  root.const_defined?(  typecode )  and
         mod = root.const_get( typecode )  and 
         mod.to_s=="#{root}::#{typecode}"
-      
+      puts "sending include to #{mod}"
       send :include, mod
     end
     

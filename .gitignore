@@ -7,10 +7,8 @@ coverage
 .jhw-cache
 log/*
 pkg
-public/card_files
-public/card_images
-public/file
-public/image
+public/files
+public/assets/.htaccess
 public/javascripts/inline-console.js
 local*
 script/local

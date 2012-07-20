@@ -54,7 +54,7 @@ class Wagn::Renderer
   end
 
   define_view :denial do |args|
-    'Permission Denied'
+    args[:denied_view] ? '' : 'Permission Denied' 
   end
   
   define_view :bad_address do |args|
@@ -64,9 +64,6 @@ class Wagn::Renderer
 
   # The below have HTML!?  should not be any html in the base renderer
 
-  define_view :deny_view do |args|
-    %{<span class="denied"><!-- Sorry, you don't have permission for this card --></span>}
-  end
 
   define_view :edit_virtual do |args|
     %{ <div class="faint"><em>#{ @showname || card.name } is a Virtual card</em></div> }

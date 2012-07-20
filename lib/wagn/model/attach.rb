@@ -89,7 +89,7 @@ module Wagn::Model::Attach
       has_attached_file :attach, :preserve_files=>true,
         :url => ":base_url/:basename-:size:revision_id.:extension",
         :path => ":local/:card_id/:size:revision_id.:extension",
-        :styles => { :icon   => '16x16#', :small  => '75x75#',
+        :styles => { :icon   => '16x16#', :small  => '75x75',
                    :medium => '200x200>', :large  => '500x500>' } 
 
       before_post_process :before_post_attach

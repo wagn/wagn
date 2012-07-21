@@ -67,7 +67,6 @@ module Wagn
             a = [{}] if a.empty?
             if final_method = view_method(view)
               with_inclusion_mode view do
-                puts "sending final method: #{final_method}"
                 send final_method, *a
               end
             else

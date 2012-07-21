@@ -16,9 +16,10 @@ class Wagn::Renderer
   define_view :show     do |args|  render( args[:view] || params[:view] || :core )                  end
   define_view :name     do |args|  card.name                                                        end
   define_view :key      do |args|  card.key                                                         end
+  define_view :id       do |args|  card.id                                                          end
   define_view :linkname do |args|  card.cardname.to_url_key                                         end
   define_view :link     do |args|  name=card.name; build_link(name, name, card.known?)              end
-  define_view :url      do |args|  wagn_url _render_linkname                                        end
+  define_view :url      do |args|  wagn_url _render_linkname                                        end    
 
   define_view :open_content do |args|
     pre_render = _render_core(args) { yield args }

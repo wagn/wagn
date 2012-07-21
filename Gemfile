@@ -10,6 +10,8 @@ gem 'paperclip', '~>2.4'
 gem 'rmagick', '~>2.13.1'
 gem "recaptcha", "~> 0.3.4"
 
+gem "rubyzip", "~> 0.9.9" # only required in module.  should be separated out.
+
 # DATABASE
 
 # need at least one of the following

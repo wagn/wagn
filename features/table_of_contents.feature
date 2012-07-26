@@ -9,19 +9,19 @@ Feature: Table of Contents
     And I create Basic card "Three Headers" with content "<h1>I'm a header</h1><h2>Me too</h2><h1>same here</h1>"
     
  Scenario: always on setting
-   When I create Phrase card "Basic+*type+*table of contents" with content "1"
+   When I edit "Basic+*type+*table of contents" setting content to "1"
    When I go to card "One Header"
    Then I should see "Table of Contents"
    
  Scenario: minimum setting
-   When I create Phrase card "Basic+*type+*table of contents" with content "2"
+   When I edit "Basic+*type+*table of contents" setting content to "2"
    And I go to card "One Header"
    Then I should not see "Table of Contents"
    When I go to card "Three Headers"
    Then I should see "Table of Contents"
  
  Scenario: always off setting
-   When I create Phrase card "Basic+*type+*table of contents" with content "0"
+   When I edit "Basic+*type+*table of contents" setting content to "0"
    And I go to card "One Header"
    Then I should not see "Table of Contents"
   

@@ -1,6 +1,6 @@
 # basic installation commands
 
-# once
+# once - in /opt/ by convention
 git clone https://github.com/thoughtworks/cruisecontrol.rb.git
 cd cruisecontrol.rb
 bundle install
@@ -11,8 +11,8 @@ bundle install
 export WCC_BRANCH=develop
 export WCC_PROJECT="wagn-$WCC_BRANCH"
 
-./cruise add $WAGN_CRUISE_PROJECT -r git://github.com/wagn/wagn.git -b $WCC_BRANCH -s git
-cd ~/.cruise/projects/$WAGN_CRUISE_PROJECT/
+./cruise add $WCC_PROJECT -r git://github.com/wagn/wagn.git -b $WCC_BRANCH -s git
+cd ~/.cruise/projects/$WCC_PROJECT/
 cp work/config/cruise/cruise_config.rb cruise_config.rb
 
 # By default databases aren't regenerated from scratch each time.  To trigger re-creation, remove config/wagn.yml
@@ -33,7 +33,7 @@ gem install bundler
 
 locale-gen en_US.UTF-8
 update-locale LANG=en_US.UTF-8
-apt-get install postgresql g++ libpq-dev # for postgres
+apt-get install postgresql g++ libpq-dev 
 sudo -u postgres psql postgres # set password with \password postgres.  default config expects pw "postgres"
 
 

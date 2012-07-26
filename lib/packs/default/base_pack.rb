@@ -16,9 +16,10 @@ class Wagn::Renderer
   define_view :show     do |args|  render( args[:view] || params[:view] || :core )                  end
   define_view :name     do |args|  card.name                                                        end
   define_view :key      do |args|  card.key                                                         end
+  define_view :id       do |args|  card.id                                                          end
   define_view :linkname do |args|  card.cardname.to_url_key                                         end
   define_view :link     do |args|  name=card.name; build_link(name, name, card.known?)              end
-  define_view :url      do |args|  wagn_url _render_linkname                                        end
+  define_view :url      do |args|  wagn_url _render_linkname                                        end    
 
   define_view :open_content do |args|
     pre_render = _render_core(args) { yield args }
@@ -54,7 +55,7 @@ class Wagn::Renderer
   end
 
   define_view :denial do |args|
-    'Permission Denied'
+    args[:denied_view] ? '' : 'Permission Denied' 
   end
   
   define_view :bad_address do |args|
@@ -64,9 +65,6 @@ class Wagn::Renderer
 
   # The below have HTML!?  should not be any html in the base renderer
 
-  define_view :deny_view do |args|
-    %{<span class="denied"><!-- Sorry, you don't have permission for this card --></span>}
-  end
 
   define_view :edit_virtual do |args|
     %{ <div class="faint"><em>#{ @showname || card.name } is a Virtual card</em></div> }

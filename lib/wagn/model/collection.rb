@@ -46,21 +46,20 @@ module Wagn::Model::Collection
     )
   end
   
-  def update_search_index     
-    return unless @name_or_content_changed && Wagn::Conf[:enable_postgres_fulltext]
-    
-    connection.execute %{
-      update cards set indexed_content = concat( setweight( to_tsvector( name ), 'A' ), 
-      to_tsvector( (select content from revisions where id=cards.current_revision_id) ) ),
-      indexed_name = to_tsvector( name ) where id=#{self.id}
-    }
-    @name_or_content_changed = false
-    true
-  end
+#  def update_search_index     
+#    return unless @name_or_content_changed && Wagn::Conf[:enable_postgres_fulltext]
+#    
+#    connection.execute %{
+#      update cards set indexed_content = concat( setweight( to_tsvector( name ), 'A' ), 
+#      to_tsvector( (select content from revisions where id=cards.current_revision_id) ) ),
+#      indexed_name = to_tsvector( name ) where id=#{self.id}
+#    }
+#    @name_or_content_changed = false
+#    true
+#  end
 
-  def self.included(base)   
+  def self.included base
     super
-    Card.extend(ClassMethods)
-    base.after_save :update_search_index
+    Card.extend ClassMethods
   end
 end

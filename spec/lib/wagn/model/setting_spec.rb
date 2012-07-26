@@ -37,11 +37,11 @@ describe Card do
     end
 
     describe ".related_sets" do
-      it "should have sets for a simple card" do
+      it "should have 2 sets (self and right) for a simple card" do
         sets = Card['A'].related_sets
         sets.should == ['A+*self', 'A+*right']
       end
-      it "should have sets for a cardtype card" do
+      it "should have 3 sets (self, type, and right) for a cardtype card" do
         sets = Card['Cardtype A'].related_sets
         sets.should == ['Cardtype A+*self', 'Cardtype A+*type', 'Cardtype A+*right']
       end

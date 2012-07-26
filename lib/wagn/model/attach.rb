@@ -91,14 +91,14 @@ module Wagn::Model::Attach
       has_attached_file :attach, :preserve_files=>true,
         :url => ":base_url/:basename-:size:revision_id.:extension",
         :path => ":local/:card_id/:size:revision_id.:extension",
-        :styles => { :icon   => '16x16#', :small  => '75x75#',
+        :styles => { :icon   => '16x16#', :small  => '75x75',
                    :medium => '200x200>', :large  => '500x500>' } 
 
       before_post_process :before_post_attach
       
       validates_each :attach do |rec, attr, value|
         if [Card::FileID, Card::ImageID].member? rec.type_id
-          max_size = 5 #this should eventually be a wagn configuration choice
+          max_size = (max = Card['*upload max']) ? max.content.to_i : 5
           if value.size.to_i > max_size.megabytes
             rec.errors.add :file_size, "File cannot be larger than #{max_size} megabytes"
           end

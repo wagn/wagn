@@ -29,6 +29,7 @@ module Wagn::Model::Settings
   alias_method_chain :rule_card, :cache
 
   def related_sets
+    # refers to sets that users may configure from the current card - NOT to sets to which the current card belongs
     sets = ["#{name}+*self"]
     sets<< "#{name}+*type" if type_id==Card::CardtypeID
     if cardname.simple?

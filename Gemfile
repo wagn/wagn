@@ -13,6 +13,8 @@ gem "recaptcha", "~> 0.3.4"
 gem 'userstamp' #, '~> 2.0'
 gem 'xmlscan', '~>0.3.0'
 
+gem "rubyzip", "~> 0.9.9" # only required in module.  should be separated out.
+
 # DATABASE
 
 # need at least one of the following

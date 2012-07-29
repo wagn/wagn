@@ -9,10 +9,10 @@ module WagnTestHelper
     User.cache.reset
 
     user_card = Card['joe user'] #Card[Card::WagbotID]
-    user_card = Card['wagn_bot']
+    user_card = Card[:wagbot]
     Card.user= user_card.id
     @user = Card.user
-    #STDERR << "user #{@user.inspect}\n"
+    #STDERR << "user #{user_card.inspect}\n"
 
     @user.update_attribute('crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c')
     #user_card.trait_card(:roles) << Card::AdminID
@@ -22,6 +22,7 @@ module WagnTestHelper
 
     #@admin_card.trait_card(:roles) << Card::AdminID
     Card.user = 'joe_user'
+    nil
   end
 
   def get_renderer()

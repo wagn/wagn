@@ -105,13 +105,12 @@ class Card < ActiveRecord::Base
 
   class << self
     def const_missing(const)
-      if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore
-        code = code.to_sym
+      if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore.to_sym
         code = ID_CONST_ALIAS[code] || code
-        
-        warn Rails.logger.warn("const_miss #{const.inspect}, #{code.inspect}, #{caller[0..8]*"\n"}")
+
+        #warn Rails.logger.warn("const_miss #{const.inspect}, #{code.inspect}, #{caller[0..8]*"\n"}")
         if card_id = Wagn::Codename[code]
-          warn Rails.logger.warn("const_miss #{const.inspect}, #{code}, #{card_id}")
+          #warn Rails.logger.warn("const_miss #{const.inspect}, #{code}, #{card_id}")
           const_set const, card_id
         else raise "Missing codename #{code} (#{const}) #{caller*"\n"}"
         end

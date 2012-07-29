@@ -9,8 +9,8 @@ module WagnTestHelper
     User.cache.reset
 
     user_card = Card['joe user'] #Card[Card::WagbotID]
-    user_card = Card[Card::WagbotID]
-    Card.user= Card::WagbotID
+    user_card = Card['wagn_bot']
+    Card.user= user_card.id
     @user = Card.user
     #STDERR << "user #{@user.inspect}\n"
 

@@ -3,8 +3,6 @@ module Wagn
 
   @@codehash=nil
 
-  cattr_accessor :no_db
-
   class <<self
     def cardname from
       name = (card = case from
@@ -15,40 +13,25 @@ module Wagn
       name
     end
 
+    def bootdata(hash) @@codehash = hash end
+
   private
 
-    # FIXME: need a better source for bootstrap codenames
-    YML_CODE_FILE = 'db/bootstrap/card_codenames.yml'
-
     def codehash() @@codehash || load_hash end
-
-    # add a new entry, forward and reverse to the hash, checking for duplicates
-    def hash_entry(cid, code)
-      code = code.to_sym; cid =  cid.to_i
-      if @@codehash.has_key?(code) or @@codehash.has_key?(cid)
-        warn "dup code ID:#{cid} (#{@@codehash[code]}), CD:#{code} (#{@@codehash[cid]})"
-      end
-      @@codehash[code] = cid; @@codehash[cid] = code
-    end
 
     def load_hash()
       @@codehash = {}
 
-      # load from the card database table
-      Card.where('codename is not NULL').each {|r| hash_entry(r.id, r.codename) }
-
-      # seed the codehash so that we can bootstrap
-      if @@no_db = @@codehash[:basic].nil?
-        #warn Rails.logger.warn("yml load")
-        if File.exists?( YML_CODE_FILE ) and yml = YAML.load_file( YML_CODE_FILE )
-          yml.each { |p| hash_entry(p[1]['card_id'], p[1]['codename']) }
-        else warn Rails.logger.warn("no file? #{YML_CODE_FILE}")
+      Card.where('codename is not NULL').each do |r|
+        #FIXME: remove duplicate checks, put them in other tools
+        code, cid = r.codename.to_sym, r.id.to_i
+        if @@codehash.has_key?(code) or @@codehash.has_key?(cid)
+          warn "dup code ID:#{cid} (#{@@codehash[code]}), CD:#{code} (#{@@codehash[cid]})"
         end
+        @@codehash[code] = cid; @@codehash[cid] = code
       end
-      #warn Rails.logger.warn("setting cache: #{@@codehash.inspect}\n")
+
       @@codehash
-    rescue Exception => e
-      warn(Rails.logger.info "Error loading codenames #{e.inspect}, #{e.backtrace*"\n"}")
     end
 
  public

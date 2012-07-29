@@ -106,7 +106,12 @@ class Card < ActiveRecord::Base
   class << self
     def const_missing(const)
       if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore
+        code = code.to_sym
+        code = ID_CONST_ALIAS[code] || code
+        
+        warn Rails.logger.warn("const_miss #{const.inspect}, #{code.inspect}, #{caller[0..8]*"\n"}")
         if card_id = Wagn::Codename[code]
+          warn Rails.logger.warn("const_miss #{const.inspect}, #{code}, #{card_id}")
           const_set const, card_id
         else raise "Missing codename #{code} (#{const}) #{caller*"\n"}"
         end
@@ -114,10 +119,12 @@ class Card < ActiveRecord::Base
     end
   end
 
-  DefaultTypeID = BasicID
-  AnonID        = AnonymousID
-  AuthID        = AnyoneSignedInID
-  AdminID       = AdministratorID
+  ID_CONST_ALIAS = {
+    :default_type => :basic,
+    :anon        => :anonymous,
+    :auth        => :anyone_signed_in,
+    :admin       => :administrator
+  }
 
   DefaultTypename = 'Basic'
 
@@ -459,7 +466,7 @@ class Card < ActiveRecord::Base
       deps = self.dependents
       @trash_changed = true
 
-      self.update_attribute(:trash, true)
+      self.update_attribute(:trash, true) #FIXME: update_attribute is deprecated in future
       deps.each do |dep|
         next if dep.trash #shouldn't be getting trashed cards
         dep.confirm_destroy = true

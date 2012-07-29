@@ -228,9 +228,9 @@ module Wagn
       altered_view = case
         when @depth >= @@max_depth ; :too_deep
         when !card                 ; false
-        when action == :watch
+        when view == :watch
           :blank if !Card.logged_in? || card.virtual?
-        when [:new, :edit, :edit_in_form].member?(action)
+        when [:new, :edit, :edit_in_form].member?(view)
           allowed = card.ok?(card.new_card? ? :create : :update)
           !allowed && :denial
         else

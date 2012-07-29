@@ -1,4 +1,5 @@
 module Wagn
+=begin
   require 'tempfile'
 
   Tempfile.class_eval do
@@ -8,7 +9,7 @@ module Wagn
       n = 0 if n.nil?
       sprintf("%s%d-%d%s", basename.to_s.gsub(/\.\w+$/) { |s| ext = s; '' }, $$, n, ext)
     end
-  end
+=end
 
   ActiveSupport::Cache::FileStore.class_eval do
     # escape special symbols \*"<>| additionaly to :?.

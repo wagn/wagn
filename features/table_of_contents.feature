@@ -10,19 +10,19 @@ Feature: Table of Contents
     
  Scenario: always on setting
    When I edit "Basic+*type+*table of contents" setting content to "1"
-   When I go to card "One Header"
+   When I go to card "Onne Heading"
    Then I should see "Table of Contents"
    
  Scenario: minimum setting
    When I edit "Basic+*type+*table of contents" setting content to "2"
-   And I go to card "One Header"
+   And I go to card "Onne Heading"
    Then I should not see "Table of Contents"
-   When I go to card "Three Headers"
+   When I go to card "Three Heading"
    Then I should see "Table of Contents"
  
  Scenario: always off setting
    When I edit "Basic+*type+*table of contents" setting content to "0"
-   And I go to card "One Header"
+   And I go to card "Onne Heading"
    Then I should not see "Table of Contents"
   
 #  Scenario: header with unwanted html

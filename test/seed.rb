@@ -8,9 +8,10 @@ end
 class SharedData
   FUTURE = Time.local(2020,1,1,0,0,0)
 
-
   def self.add_test_data
     #Card.current_id = Card::WagbotID
+    CodenameTable.load_bootcodes unless !Wagn::Codename[:wagbot].nil?
+
     Card.as(Card::WagbotID)
     Wagn::Cache.reset_global
 

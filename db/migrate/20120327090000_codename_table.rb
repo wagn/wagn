@@ -2,7 +2,6 @@
 
 class CodenameTable < ActiveRecord::Migration
 
-
   RENAMES = {
       "account_request"   => "invitation_request",
       "wagn_bot"          => "wagbot",
@@ -35,16 +34,16 @@ class CodenameTable < ActiveRecord::Migration
   OPT_CODENAMES = %w{cardtype_a cardtype_b cardtype_c cardtype_d cardtype_e cardtype_f}
 
   # still a bit of a wart, but at least it is mostly here in migrations
-  #YML_CODE_FILE = 'db/bootstrap/cards.yml'
-  YML_CODE_FILE = 'db/bootstrap/card_codenames.yml'
+  @@have_codes = nil
+
+  YML_CODE_FILE = 'db/bootstrap/cards.yml'
   def self.load_bootcodes
     codehash = {}
     # seed the codehash so that we can bootstrap
     warn Rails.logger.warn("yml load, #{caller*"\n"}")
     if File.exists?( YML_CODE_FILE ) and yml = YAML.load_file( YML_CODE_FILE )
       yml.each do |p|
-        code, id = p[1]['codename'].to_sym, p[1]['card_id'].to_i
-        #code, id = p[1]['codename'].to_sym, p[1]['id'].to_i
+        code, id = p[1]['codename'].to_sym, p[1]['id'].to_i
         codehash[code.to_sym] = id.to_i; codehash[id.to_i] = code.to_sym
       end
     else warn Rails.logger.warn("no file? #{YML_CODE_FILE}") end

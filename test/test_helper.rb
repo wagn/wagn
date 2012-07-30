@@ -108,9 +108,11 @@ unless defined? TEST_ROOT
         args[:cardtypes] ||= ['Basic']
         if args[:cardtypes]==:all
           # FIXME: need a better data source for this?
-          args[:cardtypes] = YAML.load_file('db/bootstrap/card_codenames.yml').
+          #args[:cardtypes] = YAML.load_file('db/bootstrap/card_codenames.yml').
+          args[:cardtypes] = YAML.load_file('db/bootstrap/cards.yml').
             find_all do |p|
               !%w{set setting}.member?( p[1]['codename'] ) and
+                 #card=Card[ p[1]['id'].to_i ] and
                  card=Card[ p[1]['card_id'].to_i ] and
                  card.type_id == Card::CardtypeID
             end.collect { |k,v| v['codename'] }

@@ -17,8 +17,8 @@ gem "rubyzip", "~> 0.9.9" # only required in module.  should be separated out.
 # need at least one of the following
 
 group :mysql do
-  #gem"mysql2", "~> 0.3.11"
-  gem 'mysql', '~>2.8.1'
+  gem "mysql2", "~> 0.3.11"
+  #gem 'mysql', '~>2.8.1'
 end
 
 group :postgres do

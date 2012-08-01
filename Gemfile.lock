@@ -93,7 +93,6 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.17.2)
     multi_json (1.0.4)
-    mysql (2.8.1)
     mysql2 (0.3.11)
     nokogiri (1.5.0)
     paperclip (2.5.2)
@@ -206,7 +205,6 @@ DEPENDENCIES
   htmlentities (~> 4.3.0)
   jquery-rails (~> 1.0.17)
   launchy
-  mysql (~> 2.8.1)
   mysql2 (~> 0.3.11)
   paperclip (~> 2.4)
   pg (~> 0.12.2)

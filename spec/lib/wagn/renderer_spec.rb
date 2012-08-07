@@ -66,12 +66,14 @@ describe Wagn::Renderer, "" do
     end
 
     it "renders deny for unpermitted cards" do
-      User.as( :wagbot ) do
-        Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
-        Card.create(:name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]')
+      User.as :wagbot  do
+        Card.create :name=>'Joe no see me', :type=>'Html', :content=>'secret'
+        Card.create :name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]'
       end
       User.as :joe_user do
-        assert_view_select Wagn::Renderer.new(Card.fetch('Joe no see me')).render(:core), 'span[class="denied"]'
+        card = Card.fetch 'Joe no see me'
+        denial = Wagn::Renderer.new(card).render :core
+        assert_view_select denial, 'span[class="denied"]'
       end
     end
   end

@@ -4,7 +4,7 @@ module Wagn
     include LocationHelper
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
-    UNDENIABLE_VIEWS = [ :deny_view, :denial, :errors, :edit_virtual,
+    UNDENIABLE_VIEWS = [ :denial, :errors, :edit_virtual,
       :too_slow, :too_deep, :missing, :not_found, :closed_missing, :name,
       :link, :linkname, :url, :show, :layout, :bad_address, :server_error ]
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
@@ -123,13 +123,19 @@ module Wagn
     attr_accessor :form, :main_content
 
     def render view = :view, args={}
-      method = "render_#{canonicalize_view view}"
+      prefix = args[:allowed] ? '_' : ''
+      method = "#{prefix}render_#{canonicalize_view view}"
       if respond_to? method
         send method, args
       else
         "<strong>unknown view: <em>#{view}</em></strong>"
       end
     end
+    
+    def _render view, args={}
+      args[:allowed] = true
+      render view, args
+    end 
 
     #should also be a #optional_render that checks perms
     def _optional_render view, args, default_hidden=false
@@ -216,20 +222,23 @@ module Wagn
     alias expand_inclusions process_content
   
   
-    def deny_render action, args={}
-      return false if UNDENIABLE_VIEWS.member?(action)
-      ch_action = case
+    def deny_render view, args={}
+      return false if UNDENIABLE_VIEWS.member? view
+      altered_view = case
         when @depth >= @@max_depth ; :too_deep
         when !card                 ; false
-        when action == :watch
-          :blank if !User.logged_in? || card.virtual?
-        when [:new, :edit, :edit_in_form].member?(action)
-          allowed = card.ok?(card.new_card? ? :create : :update)
-          !allowed && :deny_view #should be deny_create or deny_update...
+        when view == :watch
+          :blank if !User.logged_in? || card.virtual?    #should be handled by watch view
+        when [:new, :edit, :edit_in_form].member?( view ) # need better way to relate views to CRUD perms
+          allowed = card.ok?( card.new_card? ? :create : :update )
+          !allowed && :denial
         else
-          !card.ok?(:read) and :deny_view #should be deny_read
+          !card.ok?(:read) and :denial
       end
-      ch_action and render(ch_action, args)
+      return false unless altered_view
+
+      args[:denied_view] = view
+      render altered_view, args
     end
     
     def canonicalize_view view

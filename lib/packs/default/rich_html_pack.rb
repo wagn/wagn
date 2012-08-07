@@ -13,7 +13,7 @@ class Wagn::Renderer::Html
     if @main_content = args.delete( :main_content )
       @card = Card.fetch_or_new '*placeholder'
     end
-
+    
     layout_content = get_layout_content args
     
     args[:params] = params # EXPLAIN why this is needed
@@ -588,34 +588,39 @@ class Wagn::Renderer::Html
   end
   
   define_view :denial do |args|
-    wrap :denial, args do #ENGLISH below
-      %{#{ _render_header } 
-        <div id="denied" class="instruction open-content">
-          <h1>Ooo.  Sorry, but...</h1>
+    
+    if args[:denied_view] # inclusion, so we just want a quiet, hidden denial..
+      %{<span class="denied"><!-- Sorry, you don't have permission for this card --></span>}
+    else
+      wrap :denial, args do #ENGLISH below
+        %{#{ _render_header } 
+          <div id="denied" class="instruction open-content">
+            <h1>Ooo.  Sorry, but...</h1>
   
         
-       #{ if params[:action] != 'view' && Wagn::Conf[:read_only]
-            "<div>We are currently in read-only mode.  Please try again later.</div>"
-          else
-            %{<div>#{
-            
-            if User.current_user.anonymous?
-             %{You have to #{ link_to "sign in", :controller=>'account', :action=>'signin' }}
+         #{ if params[:action] != 'view' && Wagn::Conf[:read_only]
+              "<div>We are currently in read-only mode.  Please try again later.</div>"
             else
-             "You need permission"
-            end} to #{params[:action]} this card#{": <strong>#{fancy_title(card)}</strong>" if card.name && !card.name.blank? }.
-            </div>
+              %{<div>#{
+            
+              if User.current_user.anonymous?
+               %{You have to #{ link_to "sign in", :controller=>'account', :action=>'signin' }}
+              else
+               "You need permission"
+              end} to #{params[:action]} this card#{": <strong>#{fancy_title(card)}</strong>" if card.name && !card.name.blank? }.
+              </div>
   
-            #{unless @skip_slot_header or @deny=='view'
-              %{<p>#{ link_to 'See permission settings', path(:options, :attrib=>'settings'), :class=>'slotter', :remote=>true  }.</p>}
-            end} #{
+              #{unless @skip_slot_header or @deny=='view'
+                %{<p>#{ link_to 'See permission settings', path(:options, :attrib=>'settings'), :class=>'slotter', :remote=>true  }.</p>}
+              end} #{
   
-            if User.current_user.anonymous? && Card.new(:typecode=>'InvitationRequest').ok?(:create)
-              %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}
-            end }}
-          end   }
-        </div>
-        #{ _render_footer  }}
+              if User.current_user.anonymous? && Card.new(:typecode=>'InvitationRequest').ok?(:create)
+                %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}
+              end }}
+            end   }
+          </div>
+          #{ _render_footer  }}
+      end
     end
   end
   

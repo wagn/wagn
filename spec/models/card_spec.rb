@@ -57,7 +57,7 @@ describe Card do
     it "calls :after_create hooks" do
       # We disabled these for the most part, what replaces them?
       #[:before_save, :before_create, :after_save, :after_create].each do |hookname|
-      Wagn::Hook.should_receive(:call).with(:after_create, instance_of(Card))
+      Wagn::Hook.should_receive(:call).twice #with(:after_create, instance_of(Card))
       User.as :wagbot do
         Card.create :name => "testit"
       end

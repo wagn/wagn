@@ -167,7 +167,7 @@ describe "WikiReference" do
   it "pickup new transclusions on create" do
     @l = Card.create! :name=>"woof", :content=>"{{Lewdog}}"  # no Lewdog card yet...
     @e = Card.new(:name=>"Lewdog", :content=>"grrr")              # now there is
-    @e.name_references.plot(:referencer).plot(:name).include?("woof").should_not == nil
+    @e.name_referencers.plot(:name).include?("woof").should_not == nil
   end
 
 =begin  

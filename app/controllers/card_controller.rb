@@ -17,7 +17,6 @@ class CardController < ApplicationController
   before_filter :remove_ok, :only=>[ :remove ]
 
 
-
   #----------( CREATE )
   
   def create

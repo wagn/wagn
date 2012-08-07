@@ -154,7 +154,7 @@ class ApplicationController < ActionController::Base
       [ :not_found, 404 ]                                                 
     when Wagn::PermissionDenied, Card::PermissionDenied
       [ :denial, 403]
-    when Wagn::BadAddress, ActionController::UnknownController, ActionController::UnknownAction  
+    when Wagn::BadAddress, ActionController::UnknownController, AbstractController::ActionNotFound  
       [ :bad_address, 404 ]
     else
       if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) && @card && @card.errors.any?

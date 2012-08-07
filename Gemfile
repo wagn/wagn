@@ -3,14 +3,15 @@ source 'http://rubygems.org'
 
 # DEFAULT
 
-gem 'rails', '~> 3.2'
+gem 'rails',        '~> 3.2'
 gem 'htmlentities', '~>4.3'
-gem 'uuid', '~>2.3'
-gem 'paperclip', '~>2.4'
-gem 'rmagick', '~>2.13'
-gem "recaptcha", "~> 0.3"
+gem 'uuid',         '~>2.3'
+gem 'paperclip',    '~>2.4'
+gem 'rmagick',      '~>2.13'
+gem "recaptcha",    "~> 0.3"
 
-gem "rubyzip", "~> 0.9" # only required in module.  should be separated out.
+gem "rubyzip",      "~> 0.9" # only required in module.  should be separated out.
+gem "airbrake",     "~> 3.1"
 
 # DATABASE
 
@@ -38,7 +39,7 @@ group :assets do
   gem 'coffee-rails', "~> 3.1"                 # pretty code; compiles to JS
   gem 'uglifier'                               # makes pretty code ugly again.  compresses js/css for fast loading
 
-  gem 'jquery-rails', '~> 1.0'                 # main js framework, along with rails-specific unobtrusive lib
+  gem 'jquery-rails',  '~> 1.0'                # main js framework, along with rails-specific unobtrusive lib
   gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor
   
   gem 'therubyracer'                           # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one
@@ -57,7 +58,9 @@ end
 group :test do
   gem 'cucumber-rails', '~> 1.2'               # feature-driven-development suite
   gem 'launchy'                                # lets cucumber launch browser windows
-  gem 'timecop', '=0.3.5'                      # not clear on use/need.  referred to in shared_data.rb
+  gem 'timecop', '=0.3.5'                      # not clear on use/need.  referred to in shared_data.rb 
+                                               # NOTE: had weird errors with timecop 0.4.4.  would like to update when possible
+  
   gem 'spork'                                  #
                                                
   gem 'email_spec'                             # 

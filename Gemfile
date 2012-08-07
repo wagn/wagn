@@ -10,6 +10,8 @@ gem 'paperclip',    '~>2.4'
 gem 'rmagick',      '~>2.13'
 gem "recaptcha",    "~> 0.3"
 
+# the following two could be safely excluded on a local install (but are not known to cause problems)
+
 gem "rubyzip",      "~> 0.9" # only required in module.  should be separated out.
 gem "airbrake",     "~> 3.1"
 

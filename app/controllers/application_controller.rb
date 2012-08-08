@@ -99,7 +99,7 @@ class ApplicationController < ActionController::Base
     render_errors
   end
 
-  def render_errors(options={})
+  def render_errors options={}
     @card ||= Card.new
     view   = options[:view]   || (@card && @card.error_view  ) || :errors
     status = options[:status] || (@card && @card.error_status) || 422
@@ -148,6 +148,7 @@ class ApplicationController < ActionController::Base
   
   
   rescue_from Exception do |exception|
+    notify_airbrake options[:exception] if Airbrake.configuration.api_key
         
     view, status = case exception
     when Wagn::NotFound, ActiveRecord::RecordNotFound

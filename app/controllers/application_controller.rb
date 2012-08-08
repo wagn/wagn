@@ -148,7 +148,7 @@ class ApplicationController < ActionController::Base
   
   
   rescue_from Exception do |exception|
-    notify_airbrake options[:exception] if Airbrake.configuration.api_key
+    notify_airbrake exception if Airbrake.configuration.api_key
         
     view, status = case exception
     when Wagn::NotFound, ActiveRecord::RecordNotFound

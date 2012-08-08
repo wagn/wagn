@@ -74,8 +74,8 @@ module Wagn::Model::TrackedAttributes
     # move the current card out of the way, in case the new name will require
     # re-creating a card with the current name, ie.  A -> A+B
     Wagn::Cache.expire_card(name.to_cardname.to_key)
-    tmp_name = "tmp:" + UUID.new.generate      
-    connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"'#{tmp_name}'",:key=>"'#{tmp_name}'"})} where id=#{self.id}}    
+    tmp_name = "tmp:" + UUID.new.generate
+    connection.update %{update cards set `name`="#{tmp_name}", `key`="#{tmp_name}" where id=#{self.id}}    
   end
 
   def set_typecode(new_typecode)

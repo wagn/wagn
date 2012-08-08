@@ -36,7 +36,11 @@ module Notification
           Mailer.change_notice( watcher, self.trunk, 'updated', watched, [[name, action]], self ).deliver
         end
       end
-    end  
+    rescue Exception=>e
+      notify_airbrake e if Airbrake.configuration.api_key
+      Rails.logger.info "\nController exception: #{e.message}"
+      Rails.logger.debug e.backtrace*"\n"
+    end
     
     def trunk_watcher_watched_pairs
       # do the watchers lookup before the transcluder test since it's faster.

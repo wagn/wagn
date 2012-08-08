@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
   end
 
   def bad_address
-    raise Wagn::BadAddress
+    raise Wagn::BadAddress, "could not find a route to match this address"
   end
 
   protected
@@ -148,7 +148,7 @@ class ApplicationController < ActionController::Base
   
   
   rescue_from Exception do |exception|
-    notify_airbrake exception if Airbrake.configuration.api_key
+    Rails.logger.info "exception = #{exception.class}: #{exception.message}"
         
     view, status = case exception
     when Wagn::NotFound, ActiveRecord::RecordNotFound
@@ -158,6 +158,8 @@ class ApplicationController < ActionController::Base
     when Wagn::BadAddress, ActionController::UnknownController, AbstractController::ActionNotFound  
       [ :bad_address, 404 ]
     else
+      notify_airbrake exception if Airbrake.configuration.api_key
+      
       if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) && @card && @card.errors.any?
         [ :errors, 422]
       else

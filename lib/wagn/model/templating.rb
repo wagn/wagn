@@ -5,6 +5,8 @@ module Wagn::Model::Templating
   def type_template?()  template? && !!(name =~ /\+\*type\+/)   end
 
   def template
+    # currently applicable templating card.
+    # note that a *default template is never returned for an existing card.
     @template ||= begin
       @virtual = false
       if new_card?

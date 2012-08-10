@@ -167,10 +167,8 @@ module Wagn::Model::Permissions
   end
 
   def approve_content
-    unless new_card?
-      if tmpl = hard_template
-        deny_because you_cant("change the content of this card -- it is hard templated by #{tmpl.name}")
-      end
+    if !new_card? && hard_template
+      deny_because you_cant("change the content of this card -- it is hard templated by #{template.name}")
     end
   end
   

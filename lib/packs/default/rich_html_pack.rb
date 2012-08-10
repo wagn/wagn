@@ -128,8 +128,8 @@ class Wagn::Renderer::Html
       if inst = card.rule_card('edit help')
         %{<div class="instruction">#{ raw subrenderer(inst).render_core }</div>}
       end}#{
-      if card.hard_template and card.hard_template.ok? :read
-       %{<div class="instruction">Formatted by a #{ link_to_page 'form card', card.hard_template.name }</div>}
+      if card.hard_template and card.template.ok? :read
+       %{<div class="instruction">Formatted by a #{ link_to_page 'form card', card.template.name }</div>}
       end}
 
       <div class="card-editor edit-area #{card.hard_template ? :templated : ''}">

@@ -60,7 +60,7 @@ class Card < ActiveRecord::Base
     super args
     
     if !args['typecode']
-      self.typecode_without_tracking = get_typecode(@type_args[:type]) 
+      self.typecode_without_tracking = get_typecode @type_args[:type]
     end
     
     include_set_modules unless skip_modules
@@ -199,7 +199,7 @@ class Card < ActiveRecord::Base
   end 
   alias_method_chain :save!, :permissions
   
-  def run_checked_save(method)#, *args)
+  def run_checked_save method
     if approved?
       begin
         self.send(method)
@@ -373,14 +373,12 @@ class Card < ActiveRecord::Base
   # CONTENT / REVISIONS
 
   def content
-    new_card? ? template(reset=true).content : cached_revision.content
+    #warn "content called for #{name}"
+    #new_card? ? template(reset=true).content : cached_revision.content
+    new_card? ? template.content : cached_revision.content
   end
   
-  def raw_content
-    r = (t=templated_content) || (c=content)
-    raise "???, #{name}, #{t}, #{c}" if r.nil? or r==false
-    r
-  end
+  def raw_content() hard_template ? template.content : content        end
 
   def selected_rev_id() @selected_rev_id || (cr=cached_revision)&&cr.id || 0 end
 
@@ -620,10 +618,10 @@ class Card < ActiveRecord::Base
       if rec.broken_type
         rec.errors.add :type, "won't work.  There's no cardtype named '#{rec.broken_type}'"
       end
-      # invalid to change type when type is hard_templated
-      if (rt = rec.right_template and rt.hard_template? and 
-        value!=rt.typecode and !rec.allow_type_change)
-        rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rt.typename}"
+      
+            # invalid to change type when type is hard_templated
+      if rt = rec.template and rt.hard_template? and !rt.type_template? and value!=rt.typecode and !rec.allow_type_change
+        rec.errors.add :type, "can't be changed to #{value} because #{rec.name} is hard templated to #{rt.typename}"
       end        
     end
   end

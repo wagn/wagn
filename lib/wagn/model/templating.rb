@@ -1,32 +1,36 @@
 module Wagn::Model::Templating  
 
-  def template?()       cardname.template_name?        end
-  def hard_template?()  !!(name =~ /\+\*content$/)     end
-  def soft_template?()  !!(name =~ /\+\*default$/)     end
-  def type_template?()  template? && !!(name =~ /\+\*type\+/)  end
-  def right_template?() template? && !!(name =~ /\+\*right\+/) end
+  def template?()       cardname.template_name?                 end
+  def hard_template?()  !!(name =~ /\+\*content$/)              end
+  def type_template?()  template? && !!(name =~ /\+\*type\+/)   end
 
-  def template(reset = false)
-    @template = reset ? get_template : (@template || get_template)
-  end
-  
-  def get_template
-    t = rule_card('content','default')
-    @virtual = (new_card? && t && t.hard_template?)
-    t
-  end
-  
-  def right_template()   (template && template.right_template?) ? template : nil  end
-  def hard_template()    (template && template.hard_template?)  ? template : nil  end
+  def template
+    @template ||= begin
+      @virtual = false
+      if new_card?
+        default_card = rule_card( 'default' )
+        dup_card = self.dup
+        dup_card.typecode_without_tracking = default_card.typecode
 
-  def templated_content
-    return unless template && template.hard_template?
-    template.content
+        if content_card = dup_card.rule_card( 'content' )
+          @virtual = true
+          content_card
+        else
+          default_card
+        end
+      else
+        rule_card 'content'
+      end
+    end
+  end
+
+  def hard_template()
+    template if template && template.hard_template?
   end
   
   def virtual?
     if @virtual.nil?
-      cardname.simple? ? @virtual=false : get_template
+      cardname.simple? ? @virtual=false : template
     end
     @virtual
   end

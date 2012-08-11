@@ -14,8 +14,13 @@ namespace :wagn do
     puts "loading schema"
     Rake::Task['db:schema:load'].invoke
     
-    puts "loading bootstrap"
-    Rake::Task['wagn:bootstrap:load'].invoke
+    if Rails.env == 'test'
+      puts "loading test fixtures"
+      Rake::Task['db:fixtures:load'].invoke
+    else
+      puts "loading bootstrap"
+      Rake::Task['wagn:bootstrap:load'].invoke
+    end
   end
   
   

@@ -208,7 +208,7 @@ module Wagn::Model::Permissions
     self.read_rule_id = rcard.id #these two are just to make sure vals are correct on current object
     self.read_rule_class = rclass
     connection.update %{update cards set read_rule_id=#{rcard.id}, read_rule_class="#{rclass}" where id=#{self.id}}
-    Wagn::Cache.expire_card self.key
+    Card.clear_cache self.key
     
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
     Card.as_bot do

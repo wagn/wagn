@@ -147,7 +147,6 @@ class User < ActiveRecord::Base
   def blocked?()  status=='blocked' end
   def built_in?() status=='system'  end
   def pending?()  status=='pending' end
-  def anonymous?() card_id == Card::AnonID end
 
   # blocked methods for legacy boolean status
   def blocked=(block)

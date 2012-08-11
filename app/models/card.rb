@@ -136,11 +136,17 @@ class Card < ActiveRecord::Base
 
   def to_user() User.where(:card_id=>id).first end
 
+  def anonymous?() id == Card::AnonID end
+
+
   class << self
     def user_id() @@user_id ||= Card::AnonID end
     def user_card()
       (uc=@@user_card and uc.id == user_id) ? uc : @@user_card = Card[user_id]
     end
+    
+    
+    
     def user
       (u=@@user and u.card_id == user_id) ? u : @@user = user_card.to_user
     end

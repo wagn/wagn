@@ -3,7 +3,7 @@ source 'http://rubygems.org'
 
 # DEFAULT
 
-gem 'rails',        '~> 3.2'
+gem 'rails',        '~> 3.1.0'
 gem 'htmlentities', '~> 4.3'
 gem 'uuid',         '~> 2.3'
 gem 'paperclip',    '~> 2.4'
@@ -17,18 +17,14 @@ gem 'warden'
 # the following two could be safely excluded on a local install (but are not known to cause problems)
 
 gem "rubyzip",      "~> 0.9" # only required in module.  should be separated out.
-gem "airbrake",     "~> 3.1"
+gem "airbrake"     #, "~> 3.1"
 
 # DATABASE
 
 # need at least one of the following
 
-group :mysql2 do
-  gem "mysql2", "~> 0.3.11"
-end
 group :mysql do
   gem "mysql2", "~> 0.3"
-  #gem 'mysql', '~>2.8.1'
 end
 
 group :postgres do

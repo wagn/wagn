@@ -25,7 +25,7 @@ class Mailer < ActionMailer::Base
     set_from_args args, ( Card.setting('*invite+*from') || begin
       curr = Card.user_card
       from_user = curr.anonymous? || curr.id == user.id ? User.admin : curr
-      from_user.card ? "#{from_user.card.name} <#{from_user.email}>" : '' #how could there not be a card??
+      from_user ? "#{from_user.name} <#{from_user.email}>" : '' #how could there not be a card??
     end ) #FIXME - might want different from settings for different contexts?
     mail args
   end

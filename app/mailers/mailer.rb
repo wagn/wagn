@@ -2,16 +2,15 @@
 require 'open-uri'
 
 class Mailer < ActionMailer::Base
+  @@defaults = Wagn::Conf[:email_defaults] || {}
+  @@defaults.symbolize_keys!
+  @@defaults[:return_path] ||= @@defaults[:from] if @@defaults[:from]
+  @@defaults[:charset] ||= 'utf-8'
+  default @@defaults
+  
   include LocationHelper
 
-  CHARSET = "utf-8"
-  default :charset => CHARSET
-
   def account_info(user, subject, message)
-    #warn "account_info (#{user}, #{subject}, #{message})"
-    from_card = Card.user_card
-    from_name = from_card.nil? ? '' : from_card.name
-    from_user = from_card.to_user || User.admin
     url_key = Card[user.card_id].cardname.to_url_key
 
     @email    = (user.email    or raise Wagn::Oops.new("Oops didn't have user email"))
@@ -21,14 +20,17 @@ class Mailer < ActionMailer::Base
     @login_url= wagn_url "/account/signin"
     @message  = message.clone
 
-    mail( {
-      :to       => @email,
-      :from     => (Card.setting('*invite+*from') || "#{from_name} <#{from_user.email}>"), #FIXME - might want different from settings for different emails?
-      :subject  => subject
-    } )
+
+    args =  { :to => @email, :subject  => subject }
+    set_from_args args, ( Card.setting('*invite+*from') || begin
+      curr = Card.user_card
+      from_user = curr.anonymous? || curr.id == user.id ? User.admin : curr
+      from_user.card ? "#{from_user.card.name} <#{from_user.email}>" : '' #how could there not be a card??
+    end ) #FIXME - might want different from settings for different contexts?
+    mail args
   end
 
-  def signup_alert(invite_request)
+  def signup_alert invite_request
     @site = Card.setting('*title')
     @card = invite_request
     @email= invite_request.to_user.email
@@ -37,19 +39,20 @@ class Mailer < ActionMailer::Base
     @request_url  = wagn_url invite_request
     @requests_url = wagn_url Card['Account Request']
 
-    mail( {
-      :to      => Card.setting('*request+*to'),
-      :from    => Card.setting('*request+*from') || @email,
-      :subject => "#{invite_request.name} signed up for #{@site}",
+    args = { 
+      :to           => Card.setting('*request+*to'),
+      :subject      => "#{invite_request.name} signed up for #{@site}",
       :content_type => 'text/html',
-    } )
-  end
+    }
+    set_from_args args, Card.setting('*request+*from') || "#{@name} <#{@email}"
+    mail args
+  end         
 
-
-  def change_notice(user, card, action, watched, subedits=[], updated_card=nil)
+  
+  def change_notice user, card, action, watched, subedits=[], updated_card=nil
     return unless user = User===user ? user : User.from_id(user)
-
     #warn "change_notice( #{user.email}, #{card.inspect}, #{action.inspect}, #{watched.inspect} Uc:#{updated_card.inspect}...)"
+
     updated_card ||= card
     @card = card
     @updater = updated_card.updater.name
@@ -61,12 +64,13 @@ class Mailer < ActionMailer::Base
     @udpater_url = wagn_url card.updater
     @watched = (watched == card.cardname ? "#{watched}" : "#{watched} cards")
 
-    mail( {
+    args = {
       :to           => "#{user.email}",
-      :from         => User.admin.email,
       :subject      => "[#{Card.setting('*title')} notice] #{@updater} #{action} \"#{card.name}\"" ,
       :content_type => 'text/html',
-    } )
+    }
+    set_from_args args, User.admin.email    
+    mail args
   end
 
   def flexmail config
@@ -80,8 +84,25 @@ class Mailer < ActionMailer::Base
       end
     end
     
+    set_from_args config, config[:from]
     mail config
   end
-
+  
+  private
+  
+  def set_from_args args, from
+    from_name, from_email = parse_address( from )
+    if default_from=@@defaults[:from]
+      args[:from] = !from_email ? default_from : "#{from_name || from_email} <#{default_from}>"
+      args[:reply_to] ||= from
+    else
+      args[:from] = from
+    end
+  end
+  
+  def parse_address addr
+    name, email = (addr =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, addr]
+  end
+  
 end
 

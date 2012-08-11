@@ -407,13 +407,13 @@ class Card < ActiveRecord::Base
   end
   alias_method_chain :save, :trash
 
-  def save_with_permissions(*args)  #checking is needed for update_attribute, evidently.  not sure I like it...
-    #warn (Rails.logger.debug "Card#save_with_permissions![#{inspect}]")
+  def save_with_permissions *args
+    Rails.logger.debug "Card#save_with_permissions:"
     run_checked_save :save_without_permissions
   end
   alias_method_chain :save, :permissions
-
-  def save_with_permissions!(*args)
+   
+  def save_with_permissions! *args
     Rails.logger.debug "Card#save_with_permissions!"
     run_checked_save :save_without_permissions!
   end
@@ -464,8 +464,7 @@ class Card < ActiveRecord::Base
     run_callbacks( :destroy ) do
       deps = self.dependents
       @trash_changed = true
-
-      self.update_attribute(:trash, true) #FIXME: update_attribute is deprecated in future
+      self.update_attributes :trash => true
       deps.each do |dep|
         next if dep.trash #shouldn't be getting trashed cards
         dep.confirm_destroy = true

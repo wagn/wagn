@@ -61,7 +61,8 @@ jQuery.fn.extend {
     
     $.ajax wagn.rootPath + '/card/save_draft/~' + id, {
       data : { 'card[content]' : @val() },
-      complete: (xhr) -> slot.report 'draft saved' + reportee
+      type : 'POST',
+      success: () -> slot.report 'draft saved' + reportee
     }
 
   setContentFieldsFromMap: (map) ->

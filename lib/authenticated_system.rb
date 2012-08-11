@@ -8,7 +8,7 @@ module AuthenticatedSystem
   rescue Exception => e
     #warn "except #{e.inspect}, #{e.backtrace*"\n"}"
     session[:user] = nil
-    raise
+    raise e
   end
 
   # Store the given user in the session.

@@ -23,6 +23,19 @@
 # defaults to file_store
 # memcache is highly recommended for production
 
+# email_defaults:
+#   from:
+# used to set ActionMailer defaults.  if a "from" value is specified, this 
+
+# smtp:
+# used to set Rails config.action_mailer.smtp_settings
+
+# pack_dirs:
+# customize pack directories
+# defaults to RAILS_ROOT/lib/packs, RAILS_ROOT/local/packs
+
+# mem_cache_servers
+# IP address for mem cache server
 
 # IMPORTANT: please be sure to register for your own recaptcha keys before deploying a live site
 # It's quick and easy.  Just follow instructions at https://www.google.com/recaptcha/admin/create

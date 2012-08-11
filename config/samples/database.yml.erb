@@ -8,7 +8,7 @@ else
   %>production:
   database: wagn_production<% 
 end %>
-  adapter: <%= @engine == :postgres ? :postgresql : :mysql %>
+  adapter: <%= @engine == :postgres ? :postgresql : :mysql2 %>
   username: root
   password:
   pool: 5

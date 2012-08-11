@@ -203,14 +203,12 @@ module Wagn::Model::Permissions
   def update_read_rule()
     Card.record_timestamps = Card.record_userstamp = false
 
-    reset_patterns
-    rcard, rclass = permission_rule_card(:read)
-    copy = self.frozen? ? self.refresh : self
-    #warn (Rails.logger.info "update_read_rule #{rcard.inspect}, #{rclass}")
-    copy.update_attributes!(
-      :read_rule_id => rcard.id,
-      :read_rule_class => rclass
-    )
+    reset_patterns # why is this needed?
+    rcard, rclass = permission_rule_card :read
+    self.read_rule_id = rcard.id #these two are just to make sure vals are correct on current object
+    self.read_rule_class = rclass
+    connection.update %{update cards set read_rule_id=#{rcard.id}, read_rule_class="#{rclass}" where id=#{self.id}}
+    Wagn::Cache.expire_card self.key
     
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
     Card.as_bot do
@@ -220,6 +218,7 @@ module Wagn::Model::Permissions
         end
       end
     end
+
   ensure
     Card.record_timestamps = Card.record_userstamp = true
   end

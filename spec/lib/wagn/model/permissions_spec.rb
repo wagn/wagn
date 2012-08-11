@@ -293,7 +293,7 @@ describe "Permission", ActiveSupport::TestCase do
     # set up cards of type TestType, 2 with nil reader, 1 with role1 reader 
      Card.as_bot do 
        [@c1,@c2,@c3].each do |c| 
-         c.update_attribute(:content, 'WeirdWord')
+         c.update_attributes :content => 'WeirdWord'
        end
        Card.create(:name=>"c1+*self+*read", :type=>'Pointer', :content=>"[[u1]]")
      end
@@ -312,7 +312,7 @@ describe "Permission", ActiveSupport::TestCase do
     # set up cards of type TestType, 2 with nil reader, 1 with role1 reader 
     Card.as_bot do 
       [@c1,@c2,@c3].each do |c| 
-        c.update_attribute(:content, 'WeirdWord')
+        c.update_attributes :content => 'WeirdWord'
       end
       Card.create(:name=>"c1+*self+*read", :type=>'Pointer', :content=>"[[r3]]")
     end

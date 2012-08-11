@@ -68,7 +68,6 @@ module Wagn::Model::TrackedAttributes
     # re-creating a card with the current name, ie.  A -> A+B
     Card.clear_cache name
     tmp_name = "tmp:" + UUID.new.generate      
-    #connection.update %{update cards set cards.name="#{tmp_name}", cards.key="#{tmp_name}" where id=#{self.id}}    
     Card.where(:id=>self.id).update_all(:name=>tmp_name, :key=>tmp_name)    
   end
 

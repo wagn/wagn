@@ -143,6 +143,8 @@ class User < ActiveRecord::Base
     end
   end
 
+  def anonymous?() card_id == Card::AnonID end
+
   def active?()   status=='active'  end
   def blocked?()  status=='blocked' end
   def built_in?() status=='system'  end
@@ -184,7 +186,7 @@ class User < ActiveRecord::Base
   end 
    
   def card()
-    raise "deprecate user.card #{card_id}, #{@card&&@card.id} #{caller*"\n"}"
+#    raise "deprecate user.card #{card_id}, #{@card&&@card.id} #{caller*"\n"}"
     @card && @card.id == card_id ? @card : @card = Card[card_id]
   end
 

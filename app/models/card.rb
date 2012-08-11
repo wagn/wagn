@@ -136,9 +136,6 @@ class Card < ActiveRecord::Base
 
   def to_user() User.where(:card_id=>id).first end
 
-  def anonymous?() id == Card::AnonID end
-
-
   class << self
     def user_id() @@user_id ||= Card::AnonID end
     def user_card()
@@ -509,6 +506,19 @@ class Card < ActiveRecord::Base
 
   def base_before_destroy
     self.before_destroy if respond_to? :before_destroy
+  end
+
+  def destroy_with_permissions
+    ok! :delete
+    # FIXME this is not tested and the error will be confusing
+    dependents.each do |dep| dep.ok! :delete end
+    destroy_without_permissions
+  end
+  
+  def destroy_with_permissions!
+    ok! :delete
+    dependents.each do |dep| dep.ok! :delete end
+    destroy_without_permissions!
   end
 
 

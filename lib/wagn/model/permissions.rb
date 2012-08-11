@@ -18,21 +18,6 @@ module Wagn::Model::Permissions
     "#{Card.user_card.name}, You don't have permission to"
   end
   
-  def destroy_with_permissions
-    ok! :delete
-    # FIXME this is not tested and the error will be confusing
-    dependents.each do |dep| dep.ok! :delete end
-    destroy_without_permissions
-  end
-  
-  def destroy_with_permissions!
-    ok! :delete
-    dependents.each do |dep| dep.ok! :delete end
-    destroy_without_permissions!
-  end
-
-
-  
   def approved?
     self.operation_approved = true    
     self.permission_errors = []

@@ -10,15 +10,17 @@ describe Wagn::Codename, "Codename" do
   end
 
   it "cards should exist and be indestructable" do
-    Wagn::Codename.codes.each do |code|
-      (card=Card[code]).confirm_destroy = true
-      card.destroy
-      if err = card.errors[:cardtype].first
-        err.should match "can't be altered because"
-      elsif err = card.errors[:destroy].first
-        err.should match 'is a system card'
+    Card.as_bot do
+      Wagn::Codename.codes.each do |code|
+        (card=Card[code]).confirm_destroy = true
+        card.destroy
+        if err = card.errors[:cardtype].first
+          err.should match "can't be altered because"
+        elsif err = card.errors[:destroy].first
+          err.should match 'is a system card'
+        end
+        Card[code].should be
       end
-      Card[code].should be
     end
   end
 end

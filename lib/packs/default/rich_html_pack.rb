@@ -78,7 +78,7 @@ class Wagn::Renderer::Html
 
 
   define_view :new do |args|
-    @help_card = card.rule_card(:add_help, :edit_help)
+    @help_card = card.rule_card(:add_help, :fallback=>:edit_help)
     if ajax_call?
       new_content :cancel_href=>path(:view, :view=>:missing), :cancel_class=>'slotter'
     else
@@ -228,7 +228,7 @@ class Wagn::Renderer::Html
 
   define_view :edit_in_form do |args|
     instruction = ''
-    if instruction_card = (card.new_card? ? card.rule_card(:add_help, :edit_help) : card.rule_card(:edit_help))
+    if instruction_card = (card.new_card? ? card.rule_card(:add_help, :fallback => :edit_help) : card.rule_card(:edit_help))
       ss = self.subrenderer(instruction_card)
       instruction = %{<div class="instruction">} +
       ss.with_inclusion_mode(:main) { ss.render :core } +

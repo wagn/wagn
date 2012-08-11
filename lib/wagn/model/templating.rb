@@ -10,24 +10,25 @@ module Wagn::Model::Templating
     @template ||= begin
       @virtual = false
       if new_card?
-        default_card = rule_card( :default, :skip_modules=>true )
+        default_card = rule_card :default, :skip_modules=>true
 
         dup_card = self.dup
         dup_card.type_id_without_tracking = default_card.type_id
 
-        if content_card = dup_card.rule_card( :content, :skip_modules=>true )
+        if content_card = dup_card.content_rule_card
           @virtual = true
           content_card
         else
           default_card
         end
       else
-        rule_card :content, :skip_modules=>true
+        content_rule_card
       end
     end
   end
 
-  def hard_template()
+
+  def hard_template
     template if template && template.hard_template?
   end
   
@@ -69,7 +70,13 @@ module Wagn::Model::Templating
     end
   end
 
+
   private
+
+  def content_rule_card
+    card = rule_card :content, :skip_modules=>true
+    crc = card && card.content == '_self' ? nil : card
+  end
 
   def hard_templatee_wql return_field
     #warn "htwql #{name} #{hard_template?}, #{cardname.trunk_name}, #{Card.fetch(cardname.trunk_name)}"

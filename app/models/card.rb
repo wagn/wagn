@@ -739,7 +739,6 @@ class Card < ActiveRecord::Base
   # VALIDATIONS
 
   def validate_destroy
-    # FIXME: need to make all codenamed card indestructable
     if code=self.codename
       errors.add :destroy, "#{name}'s is a system card. (#{code})<br>  Deleting this card would mess up our revision records."
       return false

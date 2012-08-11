@@ -316,34 +316,17 @@ describe Wagn::Renderer, "" do
     end
 
     it "is used in new card forms when soft" do
-      User.as :joe_admin
+      Card.as :joe_admin
       content_card = Card["Cardtype E+*type+*default"]
       content_card.content= "{{+Yoruba}}"
       content_card.save!
       
       help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
       card = Card.new(:type=>'Cardtype E')
-#      warn "card.template = #{card.template.inspect}"
-      
-      card.should_receive(:rule_card).with("add help","edit help").and_return(help_card)
-      card.should_receive(:rule_card).with("thanks", nil, {:skip_modules=>true}).and_return(nil)
-      card.should_receive(:rule_card).with("autoname").and_return(nil)
-#      card.should_receive(:rule_card).with("content","default").twice.and_return(content_card) # why twice?
-      
+
       assert_view_select Wagn::Renderer::Html.new(card).render_new, 'div[class="content-editor"]' do
         assert_select 'textarea[class="tinymce-textarea card-content"]', :text => '{{+Yoruba}}'
       end
-    end
-
-    it "uses content setting" do
-      pending
-      @card = Card.new( :name=>"templated", :content => "bar" )
-      config_card = Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
-      mock(@card).rule_card(:content,:default).returns(config_card)
-      Wagn::Renderer.new(@card).render_raw.should == "Yoruba"
-      mock(@card).rule_card(:content,:default).returns(config_card)
-      mock(@card).rule_card(:add_help,:edit_help)
-      assert_view_select Wagn::Renderer.new(@card).render_new, 'div[class="unknown-class-name"]'
     end
 
     it "is used in new card forms when hard" do
@@ -352,23 +335,18 @@ describe Wagn::Renderer, "" do
       help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
       card = Card.new(:type=>'Cardtype E')
 
-      mock(card).rule_card(:thanks, nil, {:skip_modules=>true}).returns(nil)
+      mock(card).rule_card(:thanks, {:skip_modules=>true}).returns(nil)
       mock(card).rule_card(:autoname).returns(nil)
-#      mock(card).rule_card(:content,:default,:skip_modules=>false).returns(content_card)
-      mock(card).rule_card(:add_help,:edit_help).returns(help_card)
-      assert_view_select Wagn::Renderer::Html.new(card).render_new, 'div[class="field-in-multi"]' do
+      mock(card).rule_card(:default,  {:skip_modules=>true}   ).returns(Card['*all+*default'])
+      mock(card).rule_card(:add_help, {:fallback=>:edit_help} ).returns(help_card)
+      rendered = Wagn::Renderer::Html.new(card).render_new
+      warn "rendered = #{rendered}"
+      assert_view_select rendered, 'div[class="field-in-multi"]' do
         assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', "card[cards][~plus~Yoruba][content]"
       end
     end
 
-    it "skips *content if narrower *default is present" do  #this seems more like a settings test
-      Card.as_bot do
-        content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"Content Foo" )
-        default_card = Card.create!(:name=>"templated+*right+*default", :content=>"Default Bar" )
-      end
-      @card = Card.new( :name=>"test+templated", :type=>'Phrase' )
-      Wagn::Renderer.new(@card).render(:raw).should == "Default Bar"
-    end
+
 
 
     it "should be used in edit forms" do

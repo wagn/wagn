@@ -15,14 +15,14 @@ describe Card do
   describe "#settings" do
     it "retrieves Set based value" do
       Card.create :name => "Book+*type+*add help", :content => "authorize"
-      Card.new( :type => "Book" ).rule(:add_help, :edit_help).should == "authorize"
+      Card.new( :type => "Book" ).rule(:add_help, :fallback=>:edit_help).should == "authorize"
     end                                          
     
     it "retrieves default values" do
       #Card.create :name => "all Basic cards", :type => "Set", :content => "{\"type\": \"Basic\"}"  #defaults should work when other Sets are present
       assert c=Card.create(:name => "*all+*add help", :content => "lobotomize")
-      Card.default_rule(:add_help, :edit_help).should == "lobotomize"
-      Card.new( :type => "Basic" ).rule(:add_help, :edit_help).should == "lobotomize"
+      Card.default_rule(:add_help, :fallback=>:edit_help).should == "lobotomize"
+      Card.new( :type => "Basic" ).rule(:add_help, :fallback=>:edit_help).should == "lobotomize"
     end                                                                 
     
     it "retrieves single values" do
@@ -38,18 +38,18 @@ describe Card do
     end
     
     it "retrieves default setting" do
-      Card.new( :type => "Book" ).rule(:add_help, :edit_help).should == "edit any kind of card"
+      Card.new( :type => "Book" ).rule(:add_help, :fallback=>:edit_help).should == "edit any kind of card"
     end
     
     it "retrieves primary setting" do
       Card.create :name => "*all+*add help", :content => "add any kind of card"
-      Card.new( :type => "Book" ).rule(:add_help, :edit_help).should == "add any kind of card"
+      Card.new( :type => "Book" ).rule(:add_help, :fallback=>:edit_help).should == "add any kind of card"
     end
     
     it "retrieves more specific default setting" do
       Card.create :name => "*all+*add help", :content => "add any kind of card"
       Card.create :name => "*Book+*type+*edit help", :content => "edit a Book"
-      Card.new( :type => "Book" ).rule(:add_help, :edit_help).should == "add any kind of card"
+      Card.new( :type => "Book" ).rule(:add_help, :fallback=>:edit_help).should == "add any kind of card"
     end
   end
 

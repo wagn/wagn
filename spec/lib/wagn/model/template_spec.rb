@@ -21,6 +21,9 @@ describe Card do
 end
 
 
+
+
+
 describe Card, "with right content template" do
   before do
     Card.as_bot do
@@ -64,15 +67,19 @@ end
 describe Card, "templating" do
   before do
     Card.as_bot do
+      Card.create :name=>"Jim+birthday", :content=>'Yesterday'
       @dt = Card.create! :name=>"Date+*type+*content", :type=>'Basic', :content=>'Tomorrow'
-      @bt = Card.create! :name=>"birthday+*right+*content", :type=>'Date', :content=>"Today!"      
+      @bt = Card.create! :name=>"birthday+*right+*content", :type=>'Date', :content=>"Today"      
     end
-    Card.as :joe_user
-    @jb =  Card.new :name=>"Jim+birthday"
   end       
   
   it "*right setting should override *type setting" do
-    Wagn::Renderer.new(@jb).render(:raw).should == 'Today!'
+    Card['Jim+birthday'].raw_content.should == 'Today'
+  end
+  
+  it "should defer to normal content when *content rule's content is (exactly) '_self'" do
+    Card.as_bot { Card.create! :name=>'Jim+birthday+*self+*content', :content=>'_self' }
+    Card['Jim+birthday'].raw_content.should == 'Yesterday'
   end
 end
 

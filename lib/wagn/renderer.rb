@@ -60,6 +60,7 @@ module Wagn
       def define_view view, opts={}, &final
         view_key = get_view_key(view, opts)
         define_method "_final_#{view_key}", &final
+        #warn "defining method _final_#{view_key}"
         @@subset_views[view] = true if !opts.empty?
 
         if !method_defined? "render_#{view}"
@@ -229,9 +230,9 @@ module Wagn
         when @depth >= @@max_depth ; :too_deep
         when !card                 ; false
         when view == :watch
-          :blank if !User.logged_in? || card.virtual?    #should be handled by watch view
-        when [:new, :edit, :edit_in_form].member?( view ) # need better way to relate views to CRUD perms
-          allowed = card.ok?( card.new_card? ? :create : :update )
+          :blank if !Card.logged_in? || card.virtual?
+        when [:new, :edit, :edit_in_form].member?(view)
+          allowed = card.ok?(card.new_card? ? :create : :update)
           !allowed && :denial
         else
           !card.ok?(:read) and :denial
@@ -248,8 +249,10 @@ module Wagn
   
     def view_method view
       return "_final_#{view}" if !card || !@@subset_views[view]
+      #warn "vmeth #{card}, #{view}, #{card.method_keys.inspect}"
       card.method_keys.each do |method_key|
         meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
+        #warn "view meth is #{meth.inspect}, #{view.inspect} #{method_key.inspect} #{respond_to?(meth.to_sym)}"
         return meth if respond_to?(meth.to_sym)
       end
       nil
@@ -268,6 +271,7 @@ module Wagn
       return opts[:comment] if opts.has_key?(:comment)
       # Don't bother processing inclusion if we're already out of view
       return '' if @mode == :closed && @char_count > @@max_char_count
+      #warn "exp_inc #{opts.inspect}, #{card.inspect}"
       return expand_main(opts) if opts[:tname]=='_main' && !ajax_call? && @depth==0
       
       opts[:view] = canonicalize_view opts[:view]
@@ -275,7 +279,7 @@ module Wagn
       
       tcardname = opts[:tname].to_cardname
       fullname = tcardname.to_absolute(card.cardname, params)
-      opts[:showname] = tcardname.to_show(card.cardname)
+      opts[:showname] = tcardname.to_show(card.cardname).to_s
       
       included_card = Card.fetch_or_new fullname, ( @mode==:edit ? new_inclusion_card_args(opts) : {} )
   
@@ -305,7 +309,12 @@ module Wagn
     end
   
     def process_inclusion tcard, options
-      sub = subrenderer tcard, :item_view=>options[:item], :showname=>options[:showname]
+      sub = subrenderer( tcard, 
+        :item_view =>options[:item], 
+        :type      =>options[:type],
+#        :size      =>options[:size],
+        :showname  =>(options[:showname] || tcard.name)
+      )
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub  #don't like depending on this global var switch
   
       new_card = tcard.new_card? && !tcard.virtual?
@@ -386,26 +395,27 @@ module Wagn
     end
       
     def build_link href, text, known_card = nil
-      klass = case href
+      #Rails.logger.warn "bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}"
+      klass = case href.to_s
         when /^https?:/; 'external-link'
         when /^mailto:/; 'email-link'
         when /^\//
-          href = full_uri href.to_s      
+          href = full_uri href.to_s
           'internal-link'
         else
           known_card = !!Card.fetch(href, :skip_modules=>true) if known_card.nil?
           if card
             text = text.to_cardname.to_show card.name
           end
-          href = href.to_cardname
-          href = known_card ? href.to_url_key : CGI.escape(href.escape)
           
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
+          cardname = Cardname===href ? href : href.to_cardname
+          href = known_card ? cardname.to_url_key : CGI.escape(cardname.escape)
           href = full_uri href.to_s
           known_card ? 'known-card' : 'wanted-card'
           
       end
-      %{<a class="#{klass}" href="#{href.to_s}">#{text.to_s}</a>}
+      %{<a class="#{klass}" href="#{href}">#{text.to_s}</a>}
     end
     
     def unique_id() "#{card.key}-#{Time.now.to_i}-#{rand(3)}" end
@@ -439,8 +449,8 @@ module Wagn
 
     ## ----- for Linkers ------------------
     def typecode_options
-      Cardtype.createable_types.map do |type|
-        [type[:name], type[:name]]
+      Card.createable_types.map do |type_id|
+        type=Card[type_id] and type=type.name and [type, type]
       end.compact
     end
 
@@ -457,7 +467,7 @@ module Wagn
     end
   
 
-     ### FIXME -- this should not be here!   probably in WikiReference model?
+     ### FIXME -- this should not be here!   probably in Card::Reference model?
     def replace_references old_name, new_name
       #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
       wiki_content = WikiContent.new(card, card.content, self)
@@ -482,9 +492,9 @@ module Wagn
     #FIXME -- should not be here.
     def update_references rendering_result = nil, refresh = false
       return unless card && card.id
-      WikiReference.delete_all ['card_id = ?', card.id]
+      Card::Reference.delete_all ['card_id = ?', card.id]
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
-      Wagn::Cache.expire_card( card.key ) if refresh
+      card.clear_cache if refresh
       rendering_result ||= WikiContent.new(card, _render_refs, self)
       rendering_result.find_chunks(Chunk::Reference).each do |chunk|
         reference_type =
@@ -494,9 +504,7 @@ module Wagn
             else raise "Unknown chunk reference class #{chunk.class}"
           end
 
-       #ref_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
-        #raise "No name to ref? #{card.name}, #{chunk.inspect}" unless chunk.refcardname()
-        WikiReference.create!( :card_id=>card.id,
+        Card::Reference.create!( :card_id=>card.id,
           :referenced_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
           :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
           :link_type=>reference_type
@@ -524,7 +532,7 @@ module Wagn
   pack_dirs.split(/,\s*/).each do |dir|
     Wagn::Pack.dir File.expand_path( "#{dir}/**/*_pack.rb",__FILE__)
   end
-  Wagn::Pack.dir File.expand_path( "#{Rails.root}/lib/wagn/set/type/*.rb", __FILE__ )
+  #Wagn::Pack.dir File.expand_path( "#{Rails.root}/lib/wagn/set/*/*.rb", __FILE__ )
   Wagn::Pack.load_all
   
 end

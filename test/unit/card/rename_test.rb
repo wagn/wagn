@@ -10,7 +10,7 @@ class Card::RenameTest < ActiveSupport::TestCase
   
   def setup
     super
-    ::User.as(:wagbot) do
+    Card.as_bot do
       Card.create! :name => "chuck_wagn+chuck"   
       Card.create! :name => "Blue" 
       
@@ -21,6 +21,9 @@ class Card::RenameTest < ActiveSupport::TestCase
       Card.create! :name => "blue linker 2", :content => "[[blue]]"      
       
       Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
+
+      c3, c4 = Card["chuck_wagn+chuck"], Card["chuck"]
+      Rails.logger.info "testing point 0 #{c3.right}, #{c3}, #{c4}"
     end
     setup_default_user      
     super           
@@ -32,6 +35,7 @@ class Card::RenameTest < ActiveSupport::TestCase
   
   def test_rename_name_substitution
     c1, c2 = Card["chuck_wagn+chuck"], Card["chuck"]
+    Rails.logger.info "testing point #{c1}, #{c2}"
     assert_rename c2, "buck"
     assert_equal "chuck_wagn+buck", Card.find(c1.id).name
   end      
@@ -77,9 +81,7 @@ class Card::RenameTest < ActiveSupport::TestCase
   end
 
   def test_flip
-    with_debugging do
-      assert_rename card("A+B"), "B+A"
-    end
+    assert_rename card("A+B"), "B+A"
   end
 
   def test_should_error_card_exists
@@ -129,14 +131,7 @@ class Card::RenameTest < ActiveSupport::TestCase
   end
   
   private
-  
-  def with_debugging
-    Card.debug = true             
-    yield
-  ensure
-    Card.debug = nil
-  end
-  
+    
   def name_invariant_attributes( card )
     {
       :content => card.content,
@@ -144,7 +139,6 @@ class Card::RenameTest < ActiveSupport::TestCase
       :revisions => card.revisions.length,
       :referencers => card.referencers.plot(:name).sort,
       :referencees => card.referencees.plot(:name).sort,
-      :extension => card.extension,
       :dependents => card.dependents.length
     }
   end
@@ -181,7 +175,7 @@ class Card::RenameTest < ActiveSupport::TestCase
 
   def test_rename_should_not_fail_when_updating_inaccessible_referencer
     Card.create! :name => "Joe Card", :content => "Whattup"
-    User.as(:joe_admin) { 
+    Card.as(:joe_admin) { 
       c = Card.create! :name => "Admin Card", :content => "[[Joe Card]]" 
 #      c.permit :edit, Role[:admin]
       c.save!

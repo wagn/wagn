@@ -7,7 +7,7 @@ class CardController < ApplicationController
 
   before_filter :index_preload, :only=> [ :index ]
   before_filter :show_file_preload, :only=> [ :show_file ]
-  
+
   before_filter :load_card!, :only=>LOAD_ACTIONS
   before_filter :set_main
 
@@ -18,13 +18,13 @@ class CardController < ApplicationController
 
 
   #----------( CREATE )
-  
+
   def create
     @card = Card.new params[:card]
     if @card.save
       render_success
     else
-      render_errors      
+      render_errors
     end
   end
 
@@ -38,8 +38,9 @@ class CardController < ApplicationController
 
 
   #----------( READ )
-  
+
   def show
+    #warn Rails.logger.info("show me")
     save_location if params[:format].nil? || params[:format].to_sym==:html
     render_show
   end
@@ -62,7 +63,7 @@ class CardController < ApplicationController
     args[:type] ||= params[:type] # for /new/:type shortcut
 
     @card = Card.new args
-    
+
     if @card.ok? :create
       render_show :new
     else
@@ -101,11 +102,10 @@ class CardController < ApplicationController
     # and error should be 405 Method Not Allowed
 
     @card = @card.refresh if @card.frozen?
-    
-    author = User.current_user.anonymous? ?
-        "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" :
-        "[[#{User.current_user.card.name}]]"
-    comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.strip.empty? ? '&nbsp;' : c}</p>"}.join("\n")
+
+    author = Card.user_id == Card::AnonID ?
+        "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" : "[[#{Card.user.name}]]"
+    comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.strip.empty? ? '&nbsp;' : c}</p>"} * "\n"
     @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
     
     if @card.save
@@ -131,32 +131,31 @@ class CardController < ApplicationController
     @card = @card.refresh if @card.frozen?
     @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
-    
-    return render_show(:remove) if @card.errors[:confirmation_required].any? 
 
-    discard_locations_for(@card) 
+    return render_show(:remove) if @card.errors[:confirmation_required].any?
+
+    discard_locations_for(@card)
 
     render_success 'REDIRECT: TO-PREVIOUS'
   end
 
 
   #-------- ( ACCOUNT METHODS )
-  
+
   def update_account
-    extension = @card.extension 
-    
+    account = @card.to_user
+
     if params[:save_roles]
-      User.ok! :assign_user_roles
       role_hash = params[:user_roles] || {}
-      extension.roles = Role.find role_hash.keys
+      Card[account.card_id].trait_card(:roles).items= role_hash.keys
     end
 
-    if extension && params[:extension]
-      extension.update_attributes(params[:extension])
+    if account && params[:account]
+      account.update_attributes(params[:account])
     end
 
-    if extension && extension.errors.any?
-      extension.errors.each do |field, err|
+    if account && account.errors.any?
+      account.errors.each do |field, err|
         @card.errors.add field, err
       end
       render_errors
@@ -166,33 +165,35 @@ class CardController < ApplicationController
   end
 
   def create_account
-    User.ok!(:create_accounts) && @card.ok?(:update)
+    # FIXME: or should this be @card.trait_card(:account).ok?
+    Card['*account'].ok?(:create) && @card.ok?(:update)
     email_args = { :subject => "Your new #{Card.setting('*title')} account.",   #ENGLISH
                    :message => "Welcome!  You now have an account on #{Card.setting('*title')}." } #ENGLISH
     @user, @card = User.create_with_card(params[:user],@card, email_args)
     raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
-    @extension = User.new(:email=>@user.email)
+    #@account = User.new(:email=>@user.email)
 #    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
     params[:attribute] = :account
     render_show :options
   end
 
-  
+
   #-------- ( MISFIT METHODS )
-  
-  
+
+
   def watch
-    watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
+    watchers = @card.trait_card(:watchers )
     watchers = watchers.refresh if watchers.frozen?
-    watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), User.current_user.card.name)
+    myname = Card[Card.user_id].name
+    watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
     ajax? ? render_show(:watch) : view
   end
 
 
   private
-  
+
   #-------( FILTERS )
-  
+
   def show_file_preload
     #warn "show preload #{params.inspect}"
     params[:id] = params[:id].sub(/(-(#{Card::STYLES*'|'}))?(-\d+)?(\.[^\.]*)?$/) do
@@ -202,22 +203,23 @@ class CardController < ApplicationController
       ''
     end
   end
-  
-  
+
+
   def index_preload
-    User.no_logins? ? 
-      redirect_to( Card.path_setting '/admin/setup' ) : 
+    Card.no_logins? ?
+      redirect_to( Card.path_setting '/admin/setup' ) :
       params[:id] = (Card.setting('*home') || 'Home').to_cardname.to_url_key
   end
-  
+
   def set_main
     Wagn::Conf[:main_name] = params[:main] || (@card && @card.name) || '' # will be wagn.main ?
   end
-  
-  
+
+
   # --------------( LOADING ) ----------
   def load_card!
     load_card
+    #warn Rails.logger.info("load_card! #{@card}")
     case
     when @card == '*previous'
       wagn_redirect previous_location
@@ -226,8 +228,8 @@ class CardController < ApplicationController
     when @card.known? # default case
       @card
     when params[:view] =~ /rule|missing/
-      # FIXME this is a hack so that you can view load rules that don't exist.  need better approach 
-      # (but this is not tested; please don't delete without adding a test) 
+      # FIXME this is a hack so that you can view load rules that don't exist.  need better approach
+      # (but this is not tested; please don't delete without adding a test)
       @card
     when [nil, 'html'].member?(params[:format]) && @card.ok?(:create) 
       params[:card] = { :name=>@card.name, :type=>params[:type] }
@@ -239,6 +241,7 @@ class CardController < ApplicationController
   end
 
   def load_card
+    #warn Rails.logger.info("load_card #{params.inspect}")
     return @card=nil unless id = params[:id]
 #    ActiveSupport::Notifications.instrument 'wagn.load_card', :message=>"load #{id}" do
       case id
@@ -258,8 +261,8 @@ class CardController < ApplicationController
 
 
   #---------( RENDERING )
-  
-  
+
+
   def render_success(default_target='TO-CARD')
     target = params[:success] || default_target
     redirect = !ajax?
@@ -267,7 +270,7 @@ class CardController < ApplicationController
     if target =~ /^REDIRECT:\s*(.+)/
       redirect, target = true, $1
     end
-    
+
     target = case target
       when 'TO-PREVIOUS'   ;  previous_location
       when 'TO-CARD'       ;  @card
@@ -275,10 +278,10 @@ class CardController < ApplicationController
       when /^TEXT:\s*(.+)/ ;  $1
       else                 ;  Card.fetch_or_new(target)
       end
-    
+
     case
     when  redirect        ; wagn_redirect ( Card===target ? wagn_path(target) : target )
-    when  String===target ; render :text => target 
+    when  String===target ; render :text => target
     else  @card = target  ; render_show
     end
   end

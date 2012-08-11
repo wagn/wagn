@@ -4,7 +4,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 describe Wagn::Cache do
   describe "with nil store" do
     before do
-      Wagn::Cache.should_receive("generate_cache_id").twice.and_return("cache_id")
+      mock(Wagn::Cache).generate_cache_id.times(2).returns("cache_id")
       @cache = Wagn::Cache.new :prefix=>"prefix"
     end
 
@@ -22,42 +22,42 @@ describe Wagn::Cache do
   describe "with same cache_id" do
     before :each do
       @store = ActiveSupport::Cache::MemoryStore.new
-      Wagn::Cache.should_receive("generate_cache_id").and_return("cache_id")
+      mock(Wagn::Cache).generate_cache_id().returns("cache_id")
       @cache = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
     end
 
     it "#read" do
-      @store.should_receive(:read).with("prefix/cache_id/foo")
+      mock(@store).read("prefix/cache_id/foo")
       @cache.read("foo")
     end
 
     it "#write" do
-      @store.should_receive(:write).with("prefix/cache_id/foo", "val")
+      mock(@store).write("prefix/cache_id/foo", "val")
       @cache.write("foo", "val")
       @cache.read('foo').should == "val"
     end
 
     it "#fetch" do
       block = Proc.new { "hi" }
-      @store.should_receive(:fetch).with("prefix/cache_id/foo", &block)
+      mock(@store).fetch("prefix/cache_id/foo", &block)
       @cache.fetch("foo", &block)
     end
 
     it "#delete" do
-      @store.should_receive(:delete).with("prefix/cache_id/foo")
+      mock(@store).delete("prefix/cache_id/foo")
       @cache.delete "foo"
     end
 
     it "#write_local" do
       @cache.write_local('a', 'foo')
       @cache.read("a").should == 'foo'
-      @store.should_not_receive(:write)
+      mock.dont_allow(@store).write
       @cache.store.read("a").should == nil
     end
   end
 
   it "#reset" do
-    Wagn::Cache.should_receive("generate_cache_id").and_return("cache_id1")
+    mock(Wagn::Cache).generate_cache_id.returns("cache_id1")
     @store = ActiveSupport::Cache::MemoryStore.new
     @cache = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
     @cache.prefix.should == "prefix/cache_id1/"
@@ -65,7 +65,7 @@ describe Wagn::Cache do
     @cache.read("foo").should == "bar"
 
     # reset
-    Wagn::Cache.should_receive("generate_cache_id").and_return("cache_id2")
+    mock(Wagn::Cache).generate_cache_id.returns("cache_id2")
     @cache.reset
     @cache.prefix.should == "prefix/cache_id2/"
     @cache.store.read("prefix/cache_id").should == "cache_id2"
@@ -89,7 +89,7 @@ describe Wagn::Cache do
       #files_to_remove = root_dirs.collect{|f| File.join(cache_path, f)}
       #FileUtils.rm_r(files_to_remove)
       
-      Wagn::Cache.should_receive("generate_cache_id").twice.and_return("cache_id1")
+      mock(Wagn::Cache).generate_cache_id.times(2).returns("cache_id1")
       @cache = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
     end
 

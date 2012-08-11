@@ -65,7 +65,7 @@ module LocationHelper
   end
 
   def wagn_url( rel ) #should be in cardname?
-    Wagn::Conf[:base_url].to_s + wagn_path(rel)
+    "#{Wagn::Conf[:base_url]}#{wagn_path(rel)}"
   end
   
 

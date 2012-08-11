@@ -123,7 +123,7 @@ module Wagn
     
     if database_ready
 #      ActiveSupport::Notifications.instrument 'wagn.init_cache', :message=>'' do
-        Wagn::Cache.initialize_on_startup if database_ready
+        Wagn::Cache.new_all
 #      end
     end
   end  

@@ -13,7 +13,7 @@ module Wagn::Pack
     end
 
     def load_all 
-      #Rails.logger.debug "load_all available_modules = #{@@dirs.inspect}\n"
+      Rails.logger.debug "load_all available_modules = #{@@dirs.inspect}\n"
       dirs.each do |dir|
         Dir[dir].each do |file|
           begin

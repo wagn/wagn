@@ -70,7 +70,7 @@ module Wagn
 
 
     def get_layout_content(args)
-      User.as(:wagbot) do
+      Card.as_bot do
         case
           when (params[:layout] || args[:layout]) ;  layout_from_name
           when card                               ;  layout_from_card
@@ -90,12 +90,13 @@ module Wagn
     end
 
     def layout_from_card
-      return unless rule_card = (card.rule_card('layout') or Card.default_rule_card('layout'))
-      return unless rule_card.is_a?(Wagn::Set::Type::Pointer) and  # type check throwing lots of warnings under cucumber: rule_card.typecode == 'Pointer'        and
-        layout_name=rule_card.item_names.first                and
-        !layout_name.nil?                                        and
-        lo_card = Card.fetch( layout_name, :skip_virtual => true, :skip_modules=>true )    and
-        lo_card.ok?(:read)
+      return unless rule_card = (card.rule_card(:layout) or Card.default_rule_card(:layout))
+      #return unless rule_card.is_a?(Wagn::Set::Type::Pointer) and  # type check throwing lots of warnings under cucumber: rule_card.type_id == Card::PointerID        and
+      return unless rule_card.type_id == Card::PointerID        and
+          layout_name=rule_card.item_names.first                and
+          !layout_name.nil?                                     and
+          lo_card = Card.fetch( layout_name, :skip_virtual => true, :skip_modules=>true ) and
+          lo_card.ok?(:read)
       lo_card.content
     end
 
@@ -157,8 +158,8 @@ module Wagn
         [ :content, :name, :type ].map do |attr|
           next if attr == :type and # this should be a set callback
             card.type_template? ||  
-            (card.typecode=='Set' && card.hard_template?) || #
-            (card.typecode=='Cardtype' && card.cards_of_type_exist?)
+            (card.type_id==Card::SetID && card.hard_template?) || #
+            (card.type_id==Card::CardtypeID && card.cards_of_type_exist?)
         
           link_to attr, path(:edit, :attrib=>attr), :remote=>true,
             :class => %{slotter edit-#{ attr }-link #{'current-subtab' if attr==current.to_sym}}
@@ -167,7 +168,7 @@ module Wagn
     end
 
     def options_submenu(current)
-      return '' if card && card.extension_type != 'User'
+      return '' unless !card || [Card::WagbotID, Card::AnonID].member?(card.id) || card.type_id == Card::UserID
       wrap_submenu do
         [:account, :settings].map do |key|
           link_to key, path(:options, :attrib=>key), :remote=>true,

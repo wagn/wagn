@@ -36,12 +36,14 @@ class ApplicationController < ActionController::Base
       Wagn::Renderer.ajax_call = ajax?
       Wagn::Renderer.current_slot = nil
     
-      Wagn::Cache.re_initialize_for_new_request
+      Wagn::Cache.renew
     
-      User.current_user = current_user || User[:anon]
+      #warn "set curent_user (app-cont) #{self.session_user}, U.cu:#{Card.user_id}"
+      Card.user = session_user || Card::AnonID
+      #warn "set curent_user a #{session_user}, U.cu:#{Card.user_id}"
     
       # RECAPTCHA HACKS
-      Wagn::Conf[:recaptcha_on] = !User.logged_in? &&     # this too 
+      Wagn::Conf[:recaptcha_on] = !Card.logged_in? &&     # this too 
         !!( Wagn::Conf[:recaptcha_public_key] && Wagn::Conf[:recaptcha_private_key] )
       @recaptcha_count = 0
     
@@ -72,6 +74,7 @@ class ApplicationController < ActionController::Base
   def view_ok()    @card.ok?(:read)   || render_denied('view')    end
   def update_ok()  @card.ok?(:update) || render_denied('edit')    end
   def remove_ok()  @card.ok!(:delete) || render_denied('delete')  end
+    #warn "rok #{@card.ok?(:delete)}"
 
  #def create_ok
  #  @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
@@ -80,7 +83,6 @@ class ApplicationController < ActionController::Base
  #  t = Card.class_for(@type, :cardname) || Card::Basic
  #  t.create_ok? || render_denied('create')
  #end
-
 
   # ----------( rendering methods ) -------------
 
@@ -117,8 +119,8 @@ class ApplicationController < ActionController::Base
 
     case
     when known                # renderers can handle it
-      r = Wagn::Renderer.new @card, :format=>ext, :controller=>self
-      render :text=>r.render_show( :view => view ), :status=>status
+      renderer = Wagn::Renderer.new @card, :format=>ext, :controller=>self
+      render :text=>renderer.render_show( :view => view ), :status=>status
     when render_show_file     # send_file can handle it
     else                      # dunno how to handle it
       render :text=>"unknown format: #{extension}", :status=>404
@@ -126,6 +128,7 @@ class ApplicationController < ActionController::Base
   end
   
   def render_show_file
+    #warn "render_show_file #{@card}"
     return fast_404 if !@card
     @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
   

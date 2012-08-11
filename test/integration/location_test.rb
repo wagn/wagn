@@ -14,7 +14,7 @@ class LocationTest < ActionController::IntegrationTest
   def setup
     super
     setup_default_user
-    integration_login_as :joe_user
+    integration_login_as 'joe_user'
   end         
   
   def test_previous_location_should_be_assigned_after_viewing

@@ -1,5 +1,5 @@
 module Wagn::Set::Type::Search
-  def before_save
+  def before_save_search
     escape_content
   end
 
@@ -18,7 +18,7 @@ module Wagn::Set::Type::Search
     ## FIXME - this should just alter the spec to have it return name rather than instantiating all the cards!!  
     ## (but need to handle prepend/append)
     #Rails.logger.debug "search item_names #{params.inspect}"
-    Card.search(spec(params)).map{ |card| card.cardname}
+    Card.search(spec(params)).map(&:cardname)
   end
 
   def item_type
@@ -35,7 +35,7 @@ module Wagn::Set::Type::Search
   end
 
   def get_spec(params={})
-    spec = ::User.as(:wagbot) do ## why is this a wagbot thing?  can't deny search content??
+    spec = Card.as_bot do ## why is this a wagbot thing?  can't deny search content??
       spec_content = raw_content
       raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
       JSON.parse( spec_content )

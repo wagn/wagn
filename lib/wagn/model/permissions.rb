@@ -14,30 +14,9 @@ end
   
 module Wagn::Model::Permissions
 
-  module ClassMethods 
-    def create_ok?()
-      self.new.ok? :create
-    end
-  end
-
   def ydhpt
-    "#{::User.current_user.name}, You don't have permission to"
+    "#{Card.user_card.name}, You don't have permission to"
   end
-  
-  def destroy_with_permissions
-    ok! :delete
-    # FIXME this is not tested and the error will be confusing
-    dependents.each do |dep| dep.ok! :delete end
-    destroy_without_permissions
-  end
-  
-  def destroy_with_permissions!
-    ok! :delete
-    dependents.each do |dep| dep.ok! :delete end
-    destroy_without_permissions!
-  end
-
-
   
   def approved?
     self.operation_approved = true    
@@ -58,7 +37,7 @@ module Wagn::Model::Permissions
   
   # ok? and ok! are public facing methods to approve one operation at a time
   def ok?(operation)
-    #warn "ok? #{operation}"
+    #warn Rails.logger.warn("ok? #{operation}")
     self.operation_approved = true    
     self.permission_errors = []
     
@@ -77,19 +56,20 @@ module Wagn::Model::Permissions
   end
   
   def who_can(operation)
-    permission_rule_card(operation).first.content.split(/[,\n]/).map{|i| i.to_cardname.to_key}
+    permission_rule_card(operation).first.item_cards.map(&:id)
   end 
   
   def permission_rule_card(operation)
-    opcard = rule_card(operation.to_s)
-    unless opcard or ENV['MIGRATE_PERMISSIONS'] == 'true'
+    opcard = rule_card(operation)
+    #warn (Rails.logger.warn "prc[#{name}]#{operation} #{opcard.inspect}") if operation.to_sym == :read
+    unless opcard
       errors.add :permission_denied, "No #{operation} setting card for #{name}"      
       raise Card::PermissionDenied.new(self) 
     end
     
     rcard = begin
-      User.as :wagbot do
-        #Rails.logger.debug "in permission_rule_card #{opcard&&opcard.name} #{operation}"
+      Card.as_bot do
+        #warn (Rails.logger.debug "in permission_rule_card #{opcard&&opcard.name} #{operation}")
         if opcard.content == '_left' && self.junction?
           lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_modules=>true) 
           lcard.permission_rule_card(operation).first
@@ -98,7 +78,7 @@ module Wagn::Model::Permissions
         end
       end
     end
-    #Rails.logger.debug "permission_rule_card #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}"
+    #warn (Rails.logger.debug "permission_rule_card[#{name}] #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}")
     return rcard, opcard.cardname.trunk_name.tag_name.to_s
   end
   
@@ -114,13 +94,17 @@ module Wagn::Model::Permissions
 
   def lets_user(operation)
     return false if operation != :read    and Wagn::Conf[:read_only]
-    return true  if operation != :comment and User.always_ok?
-    User.as_user.among?( who_can(operation) )
+    return true  if operation != :comment and Card.always_ok?
+    #warn Rails.logger.warn("lets_user(#{operation})#{Card.as_id}")
+    #warn Rails.logger.warn("lets_user(#{operation})#{Card.as_id} #{who_can(operation).inspect}")
+    Card.among?( who_can(operation) )
   end
 
-  def approve_task(operation, verb=nil)
+  def approve_task(operation, verb=nil)           
     deny_because "Currently in read-only mode" if operation != :read && Wagn::Conf[:read_only]
-    deny_because you_cant("#{verb || operation} this card") unless self.lets_user( operation ) 
+    verb ||= operation.to_s
+    #warn "approve_task(#{operation}, #{verb})"
+    deny_because you_cant("#{verb} this card") unless self.lets_user( operation ) 
   end
 
   def approve_create
@@ -128,11 +112,13 @@ module Wagn::Model::Permissions
   end
 
   def approve_read
-    #warn "AR #{User.always_ok?}"
-    return true if User.always_ok?
-    @read_rule_id ||= permission_rule_card(:read).first.id
-    ok = User.as_user.read_rule_ids.member?(@read_rule_id.to_i) 
-    deny_because you_cant("read this card") unless ok
+    #warn "AR #{name} #{Card.always_ok?}"
+    return true if Card.always_ok?
+    @read_rule_id ||= permission_rule_card(:read).first.id.to_i
+    #warn Rails.logger.warn("AR #{name} #{@read_rule_id}, #{Card.as_card.inspect}>")
+    unless Card.as_card.read_rules.member?(@read_rule_id.to_i) 
+      deny_because you_cant("read this card")
+    end
   end
   
   def approve_update
@@ -152,11 +138,11 @@ module Wagn::Model::Permissions
     end
   end
   
-  def approve_typecode
+  def approve_type_id
     case
     when !typename
       deny_because("No such type")
-    when !new_card? && !lets_user(:create)
+    when !new_card? && reset_patterns && !lets_user(:create)
       deny_because you_cant("change to this type (need create permission)"  )
     end
     #NOTE: we used to check for delete permissions on previous type, but this would really need to happen before the name gets changes 
@@ -176,17 +162,19 @@ module Wagn::Model::Permissions
   public
 
   def set_read_rule
-    return if ENV['MIGRATE_PERMISSIONS'] == 'true'
+    if trash == true
+      self.read_rule_id = self.read_rule_class = nil
+      return
+    end  
     # avoid doing this on simple content saves?
     rcard, rclass = permission_rule_card(:read)
     self.read_rule_id = rcard.id
     self.read_rule_class = rclass
-    
     #find all cards with me as trunk and update their read_rule (because of *type plus right)
     # skip if name is updated because will already be resaved
     
-    if !new_card? && updates.for(:typecode)
-      User.as :wagbot do
+    if !new_card? && updates.for(:type_id)
+      Card.as_bot do
         Card.search(:left=>self.name).each do |plus_card|
           plus_card = plus_card.refresh if plus_card.frozen?
           plus_card.update_read_rule
@@ -195,34 +183,42 @@ module Wagn::Model::Permissions
     end
   end
   
-  def update_read_rule
-    Card.record_timestamps = Card.record_userstamps = false
+  def update_read_rule()
+    Card.record_timestamps = Card.record_userstamp = false
 
+    reset_patterns # why is this needed?
     rcard, rclass = permission_rule_card :read
     self.read_rule_id = rcard.id #these two are just to make sure vals are correct on current object
     self.read_rule_class = rclass
     connection.update %{update cards set read_rule_id=#{rcard.id}, read_rule_class="#{rclass}" where id=#{self.id}}
-    Wagn::Cache.expire_card self.key
+    Card.clear_cache self.key
     
-    unless ENV['MIGRATE_PERMISSIONS'] == 'true' 
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
-      User.as :wagbot do
-        Card.search(:left=>self.name).each do |plus_card|
-          if plus_card.rule(:read) == '_left'
-            plus_card.update_read_rule
-          end
+    Card.as_bot do
+      Card.search(:left=>self.name).each do |plus_card|
+        if plus_card.rule(:read) == '_left'
+          plus_card.update_read_rule
         end
       end
     end
-  
+
   ensure
-    Card.record_timestamps = Card.record_userstamps = true
+    Card.record_timestamps = Card.record_userstamp = true
+  end
+
+  # fifo of cards that need read rules updated
+  def update_read_rule_list() @update_read_rule_list ||= [] end
+
+  def update_queue
+    #warn (Rails.logger.warn "update queue[#{inspect}] Q[#{self.update_read_rule_list.inspect}]")
+
+    self.update_read_rule_list.each { |card| card.update_read_rule }
+    self.update_read_rule_list = []
   end
 
   def update_ruled_cards
-    return if ENV['MIGRATE_PERMISSIONS'] == 'true'
+    # FIXME: codename
     if cardname.junction? && cardname.tag_name=='*read' && (@name_or_content_changed || @trash_changed)
-      
       # These instance vars are messy.  should use tracked attributes' @changed variable 
       # and get rid of @name_changed, @name_or_content_changed, and @trash_changed.
       # Above should look like [:name, :content, :trash].member?( @changed.keys ).
@@ -231,18 +227,19 @@ module Wagn::Model::Permissions
       # AND need to make sure @changed gets wiped after save (probably last in the sequence)
       
       User.cache.reset
+      Card.cache.reset # maybe be more surgical, just Card.user related
       #Wagn.cache.reset
-      Wagn::Cache.expire_card self.key #probably shouldn't be necessary, 
+      clear_cache #probably shouldn't be necessary, 
       # but was sometimes getting cached version when card should be in the trash.
       # could be related to other bugs?
       in_set = {}
       if !(self.trash)
-        rule_classes = Wagn::Model::Pattern.pattern_subclasses.map &:key
+        rule_classes = Wagn::Model::Pattern.subclasses.map &:key
         rule_class_index = rule_classes.index self.cardname.trunk_name.tag_name.to_s
         return 'not a proper rule card' unless rule_class_index
 
         #first update all cards in set that aren't governed by narrower rule
-        User.as :wagbot do
+        Card.as_bot do
           Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
             in_set[item_card.key] = true
             #Rails.logger.debug "rule_classes[#{rule_class_index}] #{rule_classes.inspect} This:#{item_card.read_rule_class.inspect} idx:#{rule_classes.index(item_card.read_rule_class)}"
@@ -254,26 +251,20 @@ module Wagn::Model::Permissions
 
       #then find all cards with me as read_rule_id that were not just updated and regenerate their read_rules
       if !new_record?
-        Card.find_all_by_read_rule_id_and_trash(self.id, false).each do |was_ruled|  #optimize with WQL / fetch?
-          next if in_set[was_ruled.key]
-          was_ruled.update_read_rule
-        end
+        Card.where(:read_rule_id=>self.id, :trash=>false).
+          reject{|w|in_set[w.key]}.each(&:update_read_rule)
       end
     end
   end
   
   def self.included(base)   
     super
-    base.extend(ClassMethods)
-#    base.before_save.unshift Proc.new{|rec| rec.set_read_rule }
-#    base.after_save.unshift  Proc.new{|rec| rec.update_ruled_cards }
-#    base.alias_method_chain :save, :permissions
-#    base.alias_method_chain :save!, :permissions
     base.alias_method_chain :destroy, :permissions
     base.alias_method_chain :destroy!, :permissions
     
     base.class_eval do           
       attr_accessor :operation_approved, :permission_errors
+      attr_writer :update_read_rule_list
     end
   end
 end

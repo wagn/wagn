@@ -52,7 +52,7 @@ describe CardController do
 
   describe "#create" do
     before do
-      login_as :joe_user
+      login_as 'joe_user'
     end
 
     # FIXME: several of these tests go all the way to DB,
@@ -67,7 +67,7 @@ describe CardController do
       }
       assert_response 302
       c=Card.find_by_name("NewCardFoo")
-      assert c.typecode == 'Basic'
+      c.typecode.should == :basic
       c.content.should == "Bananas"
     end
 
@@ -77,7 +77,7 @@ describe CardController do
       assigns['card'].should_not be_nil
       assert_response 200
       c=Card.find_by_name("Editor")
-      assert c.typecode == 'Cardtype'
+      c.typecode.should == :cardtype
     end
     
     it "pulls deleted cards from trash" do
@@ -86,7 +86,7 @@ describe CardController do
       post :create, :card=>{"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
       assert_response 302
       c=Card.find_by_name("Problem")
-      assert c.typecode == 'Phrase'
+      c.typecode.should == :phrase
     end
 
     context "multi-create" do
@@ -102,7 +102,7 @@ describe CardController do
       end
 
       it "creates card with subcards" do
-        login_as :wagbot
+        login_as 'joe_admin'
         xhr :post, :create, :success=>'REDIRECT: /', :card=>{
           :name  => "Gala", 
           :type  => "Fruit",
@@ -124,20 +124,20 @@ describe CardController do
     end
    
     it "redirects to thanks if present" do
-      login_as :wagbot
+      login_as 'joe_admin'
       xhr :post, :create, :success => 'REDIRECT: /thank_you', :card => { "name" => "Wombly" }
       assert_response 303, "/thank_you"
     end
 
     it "redirects to card if thanks is blank" do
-      login_as :wagbot
+      login_as 'joe_admin'
       post :create, :success => 'REDIRECT: TO-CARD', "card" => { "name" => "Joe+boop" }
       assert_redirected_to "/Joe+boop"
     end
    
     it "redirects to previous" do
       # Fruits (from shared_data) are anon creatable but not readable
-      login_as :anon
+      login_as :anonymous
       post :create, { :success=>'REDIRECT: TO-PREVIOUS', "card" => { "type"=>"Fruit", :name=>"papaya" } }, :history=>['/blam']
       assert_redirected_to "/blam"
     end    
@@ -145,11 +145,11 @@ describe CardController do
 
   describe "#new" do
     before do
-      login_as :joe_user
+      login_as 'joe_user'
     end
     
     it "new should work for creatable nonviewable cardtype" do
-      login_as(:anon)     
+      login_as(:anonymous)     
       get :new, :type=>"Fruit"
       assert_response :success
     end
@@ -164,14 +164,14 @@ describe CardController do
     include AuthenticatedTestHelper
 
     before do
-      User.as :joe_user
-      @user = User[:joe_user]
+      Card.as 'joe_user'
+      @user = User['joe_user']
       @request    = ActionController::TestRequest.new
       @response   = ActionController::TestResponse.new                                
       @controller = CardController.new
       @simple_card = Card['Sample Basic']
       @combo_card = Card['A+B']
-      login_as(:joe_user)
+      login_as('joe_user')
     end
 
     it "new with name" do
@@ -194,7 +194,7 @@ describe CardController do
       end
 
       it "handles nonexistent card without create permissions" do
-        login_as :anon
+        login_as :anonymous
         get :show, {:id=>'Sample_Fako'}
         assert_response 404
       end
@@ -218,13 +218,13 @@ describe CardController do
     it "new without typecode" do
       post :new   
       assert_response :success, "response should succeed"                     
-      assert_equal 'Basic', assigns['card'].typecode, "@card type should == Basic"
+      assert_equal Card::BasicID, assigns['card'].type_id, "@card type should == Basic"
     end
 
     it "new with typecode" do
       post :new, :card => {:type=>'Date'}   
       assert_response :success, "response should succeed"                     
-      assert_equal 'Date', assigns['card'].typecode, "@card type should == Date"
+      assert_equal Card::DateID, assigns['card'].type_id, "@card type should == Date"
     end        
 
     it "remove" do
@@ -235,7 +235,7 @@ describe CardController do
     end
 
     it "should watch" do
-      login_as(:joe_user)
+      login_as('joe_user')
       post :watch, :id=>"Home", :toggle=>'on'
       assert c=Card["Home+*watchers"]
       c.content.should == "[[Joe User]]"
@@ -247,7 +247,7 @@ describe CardController do
 
 
     it "rename without update references should work" do
-      User.as :joe_user
+      Card.as 'joe_user'
       f = Card.create! :type=>"Cardtype", :name=>"Apple"
       xhr :post, :update, :id => "~#{f.id}", :card => {
         :confirm_rename => true,
@@ -260,10 +260,10 @@ describe CardController do
     end
 
     it "update typecode" do
-      User.as :joe_user   
+      Card.as 'joe_user'   
       xhr :post, :update, :id=>"~#{@simple_card.id}", :card=>{ :type=>"Date" }
       assert_response :success, "changed card type"
-      Card['Sample Basic'].typecode.should == "Date"
+      Card['Sample Basic'].typecode.should == :date
     end
 
 
@@ -273,12 +273,12 @@ describe CardController do
     #  for now.
     # 
     #  def test_update_cardtype_no_stripping
-    #    User.as :joe_user                                               
+    #    Card.as 'joe_user'                                               
     #    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
     #    #assert_equal "boo", assigns['card'].content
     #    assert_equal "<br/>", assigns['card'].content
     #    assert_response :success, "changed card type"   
-    #    assert_equal "CardtypeA", Card['Sample Basic'].typecode
+    #    assert_equal :cardtype_a", Card['Sample Basic'].typecode
     #  end 
     # 
   end

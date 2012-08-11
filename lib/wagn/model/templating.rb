@@ -10,18 +10,19 @@ module Wagn::Model::Templating
     @template ||= begin
       @virtual = false
       if new_card?
-        default_card = rule_card( 'default' )
-        dup_card = self.dup
-        dup_card.typecode_without_tracking = default_card.typecode
+        default_card = rule_card( :default, :skip_modules=>true )
 
-        if content_card = dup_card.rule_card( 'content' )
+        dup_card = self.dup
+        dup_card.type_id_without_tracking = default_card.type_id
+
+        if content_card = dup_card.rule_card( :content, :skip_modules=>true )
           @virtual = true
           content_card
         else
           default_card
         end
       else
-        rule_card 'content'
+        rule_card :content, :skip_modules=>true
       end
     end
   end
@@ -31,6 +32,7 @@ module Wagn::Model::Templating
   end
   
   def virtual?
+    return false unless new_card?
     if @virtual.nil?
       cardname.simple? ? @virtual=false : template
     end
@@ -38,8 +40,12 @@ module Wagn::Model::Templating
   end
 
   def hard_templatee_names
-    if wql = hard_templatee_wql(:name)
-      User.as(:wagbot)  {  Wql.new(wql).run  }
+    wql = hard_templatee_wql(:name)
+    #warn (Rails.logger.warn "ht_wql #{wql.inspect}")
+    if wql
+      Card.as_bot do
+        Wql.new(wql).run
+      end
     else
       []
     end
@@ -52,8 +58,10 @@ module Wagn::Model::Templating
   #
   # ps.  I think this code should be wiki references.
   def expire_templatee_references
-    if wql = hard_templatee_wql(:condition)
-      condition = User.as(:wagbot) { Wql::CardSpec.build(wql).to_sql }
+    wql=hard_templatee_wql(:condition)
+    #warn "expire_t_refs #{name}, #{wql.inspect}"
+    if wql
+      condition = Card.as_bot { Wql::CardSpec.build(wql).to_sql }
       card_ids_to_update = connection.select_rows("select id from cards t where #{condition}").map(&:first)
       card_ids_to_update.each_slice(100) do |id_batch|
         connection.execute "update cards set references_expired=1 where id in (#{id_batch.join(',')})"
@@ -64,7 +72,8 @@ module Wagn::Model::Templating
   private
 
   def hard_templatee_wql return_field
-    if hard_template? and c=Card.fetch(cardname.trunk_name) and c.typecode == 'Set'
+    #warn "htwql #{name} #{hard_template?}, #{cardname.trunk_name}, #{Card.fetch(cardname.trunk_name)}"
+    if hard_template? and c=Card.fetch(cardname.trunk_name) and c.type_id == Card::SetID
       c.get_spec.merge :return => return_field
     end
   end

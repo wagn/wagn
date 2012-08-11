@@ -11,7 +11,7 @@ module WagnTestHelper
     # FIXME: should login as joe_user by default-- see what havoc it creates...
     @user = User.current_user = User.find_by_login('wagbot')
 
-    @user.update_attribute('crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c')
+    @user.update_column 'crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c'
     @user.roles << Role.find_by_codename('admin')
     
     # setup admin while we're at it

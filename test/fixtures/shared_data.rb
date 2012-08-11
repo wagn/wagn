@@ -1,4 +1,4 @@
-require 'timecop'    
+#require 'timecop'    
 
 Dir["#{Rails.root}/app/models/card/*.rb"].sort.each do |cardtype|
   require_dependency cardtype

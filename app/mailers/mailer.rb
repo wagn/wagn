@@ -23,9 +23,9 @@ class Mailer < ActionMailer::Base
 
     args =  { :to => @email, :subject  => subject }
     set_from_args args, ( Card.setting('*invite+*from') || begin
-      curr = Card.user_card
+      curr = Card.user
       from_user = curr.anonymous? || curr.id == user.id ? User.admin : curr
-      from_user ? "#{from_user.name} <#{from_user.email}>" : '' #how could there not be a card??
+      "#{from_user.card.name} <#{from_user.email}>"
     end ) #FIXME - might want different from settings for different contexts?
     mail args
   end
@@ -35,7 +35,7 @@ class Mailer < ActionMailer::Base
     @card = invite_request
     @email= invite_request.to_user.email
     @name = invite_request.name
-    @content = invite_request.content
+    @content = invite_request.content 
     @request_url  = wagn_url invite_request
     @requests_url = wagn_url Card['Account Request']
 

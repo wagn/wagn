@@ -77,7 +77,7 @@ end
 # end
 # 
 # def card
-#   Card.as_bot
+#   Session.as_bot
 #   @card||=Card[file_name]
 # end
 # 

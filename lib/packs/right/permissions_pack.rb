@@ -4,7 +4,7 @@ class Wagn::Renderer
     set_card = Card.fetch(set_name)
     return "#{set_name} is not a Set" unless set_card and set_card.type_id==Card::SetID
 
-    group_options = Card.as_bot { Card.search(:type=>Card::RoleID, :sort=>'name') }
+    group_options = Session.as_bot { Card.search(:type=>Card::RoleID, :sort=>'name') }
 
     inheritable = set_card.inheritable?
     inheriting = inheritable && card.content=='_left'

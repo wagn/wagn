@@ -15,7 +15,7 @@ end
 module Wagn::Model::Permissions
 
   def ydhpt
-    "#{Card.user_card.name}, You don't have permission to"
+    "#{Session.user_card.name}, You don't have permission to"
   end
   
   def approved?
@@ -68,7 +68,7 @@ module Wagn::Model::Permissions
     end
     
     rcard = begin
-      Card.as_bot do
+      Session.as_bot do
         #warn (Rails.logger.debug "in permission_rule_card #{opcard&&opcard.name} #{operation}")
         if opcard.content == '_left' && self.junction?
           lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_modules=>true) 
@@ -94,10 +94,10 @@ module Wagn::Model::Permissions
 
   def lets_user(operation)
     return false if operation != :read    and Wagn::Conf[:read_only]
-    return true  if operation != :comment and Card.always_ok?
-    #warn Rails.logger.warn("lets_user(#{operation})#{Card.as_id}")
-    #warn Rails.logger.warn("lets_user(#{operation})#{Card.as_id} #{who_can(operation).inspect}")
-    Card.among?( who_can(operation) )
+    return true  if operation != :comment and Session.always_ok?
+    #warn Rails.logger.warn("lets_user(#{operation})#{Session.as_id}")
+    #warn Rails.logger.warn("lets_user(#{operation})#{Session.as_id} #{who_can(operation).inspect}")
+    Session.among?( who_can(operation) )
   end
 
   def approve_task(operation, verb=nil)           
@@ -112,11 +112,11 @@ module Wagn::Model::Permissions
   end
 
   def approve_read
-    #warn "AR #{name} #{Card.always_ok?}"
-    return true if Card.always_ok?
+    #warn "AR #{name} #{Session.always_ok?}"
+    return true if Session.always_ok?
     @read_rule_id ||= permission_rule_card(:read).first.id.to_i
-    #warn Rails.logger.warn("AR #{name} #{@read_rule_id}, #{Card.as_card.inspect}>")
-    unless Card.as_card.read_rules.member?(@read_rule_id.to_i) 
+    #warn Rails.logger.warn("AR #{name} #{@read_rule_id}, #{Session.as_card.inspect}>")
+    unless Session.as_card.read_rules.member?(@read_rule_id.to_i) 
       deny_because you_cant("read this card")
     end
   end
@@ -153,10 +153,8 @@ module Wagn::Model::Permissions
   end
 
   def approve_content
-    unless new_card?
-      if tmpl = hard_template
-        deny_because you_cant("change the content of this card -- it is hard templated by #{tmpl.name}")
-      end
+    if !new_card? && hard_template
+      deny_because you_cant("change the content of this card -- it is hard templated by #{template.name}")
     end
   end
   
@@ -176,7 +174,7 @@ module Wagn::Model::Permissions
     # skip if name is updated because will already be resaved
     
     if !new_card? && updates.for(:type_id)
-      Card.as_bot do
+      Session.as_bot do
         Card.search(:left=>self.name).each do |plus_card|
           plus_card = plus_card.refresh if plus_card.frozen?
           plus_card.update_read_rule
@@ -196,7 +194,7 @@ module Wagn::Model::Permissions
     Card.clear_cache self.key
     
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
-    Card.as_bot do
+    Session.as_bot do
       Card.search(:left=>self.name).each do |plus_card|
         if plus_card.rule(:read) == '_left'
           plus_card.update_read_rule
@@ -229,7 +227,7 @@ module Wagn::Model::Permissions
       # AND need to make sure @changed gets wiped after save (probably last in the sequence)
       
       User.cache.reset
-      Card.cache.reset # maybe be more surgical, just Card.user related
+      Card.cache.reset # maybe be more surgical, just Session.user related
       #Wagn.cache.reset
       clear_cache #probably shouldn't be necessary, 
       # but was sometimes getting cached version when card should be in the trash.
@@ -241,7 +239,7 @@ module Wagn::Model::Permissions
         return 'not a proper rule card' unless rule_class_index
 
         #first update all cards in set that aren't governed by narrower rule
-        Card.as_bot do
+        Session.as_bot do
           Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
             in_set[item_card.key] = true
             #Rails.logger.debug "rule_classes[#{rule_class_index}] #{rule_classes.inspect} This:#{item_card.read_rule_class.inspect} idx:#{rule_classes.index(item_card.read_rule_class)}"

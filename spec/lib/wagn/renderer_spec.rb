@@ -5,7 +5,7 @@ require File.expand_path('../../packs/pack_spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Renderer, "" do
   before do
-    Card.user= :joe_user
+    Session.user= :joe_user
     Wagn::Renderer.current_slot = nil
     Wagn::Renderer.ajax_call = false
   end
@@ -62,11 +62,11 @@ describe Wagn::Renderer, "" do
     end
 
     it "renders deny for unpermitted cards" do
-      Card.as_bot do
+      Session.as_bot do
         Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
         Card.create(:name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]')
       end
-      Card.as :joe_user do
+      Session.as :joe_user do
         assert_view_select Wagn::Renderer.new(Card.fetch('Joe no see me')).render(:core), 'span[class="denied"]'
       end
     end
@@ -145,7 +145,7 @@ describe Wagn::Renderer, "" do
 
     context "Simple page with Default Layout" do
       before do
-        Card.as_bot do
+        Session.as_bot do
           card = Card['A+B']
           @simple_page = Wagn::Renderer::Html.new(card).render(:layout)
           #warn "render sp: #{card.inspect} :: #{@simple_page}"
@@ -193,7 +193,7 @@ describe Wagn::Renderer, "" do
 
     context "layout" do
       before do
-        Card.as_bot do
+        Session.as_bot do
           @layout_card = Card.create(:name=>'tmp layout', :type=>'Layout')
           #warn "layout #{@layout_card.inspect}"
         end
@@ -204,14 +204,14 @@ describe Wagn::Renderer, "" do
 
       it "should default to core view for non-main inclusions when context is layout_0" do
         @layout_card.content = "Hi {{A}}"
-        Card.as_bot { @layout_card.save }
+        Session.as_bot { @layout_card.save }
 
         Wagn::Renderer.new(@main_card).render(:layout).should match('Hi Alpha')
       end
 
       it "should default to open view for main card" do
         @layout_card.content='Open up {{_main}}'
-        Card.as_bot { @layout_card.save }
+        Session.as_bot { @layout_card.save }
 
         result = Wagn::Renderer.new(@main_card).render_layout
         result.should match(/Open up/)
@@ -221,7 +221,7 @@ describe Wagn::Renderer, "" do
 
       it "should render custom view of main" do
         @layout_card.content='Hey {{_main|name}}'
-        Card.as_bot { @layout_card.save }
+        Session.as_bot { @layout_card.save }
 
         result = Wagn::Renderer.new(@main_card).render_layout
         result.should match(/Hey.*div.*Joe User/)
@@ -230,14 +230,14 @@ describe Wagn::Renderer, "" do
 
       it "shouldn't recurse" do
         @layout_card.content="Mainly {{_main|core}}"
-        Card.as_bot { @layout_card.save }
+        Session.as_bot { @layout_card.save }
 
         Wagn::Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main">Mainly {{_main|core}}</div>}
       end
 
       it "should handle non-card content" do
         @layout_card.content='Hello {{_main}}'
-        Card.as_bot { @layout_card.save }
+        Session.as_bot { @layout_card.save }
 
         result = Wagn::Renderer.new(nil).render(:layout, :main_content=>'and Goodbye')
         result.should match(/Hello.*and Goodbye/)
@@ -315,44 +315,44 @@ describe Wagn::Renderer, "" do
       Wagn::Renderer.new(template).render(:core).should == '[[link]] {{inclusion}}'
     end
 
+    it "is used in new card forms when soft" do
+      Session.as :joe_admin do
+        content_card = Card["Cardtype E+*type+*default"]
+        content_card.content= "{{+Yoruba}}"
+        content_card.save!
+      
+        help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
+        card = Card.new(:type=>'Cardtype E')
 
-    it "uses content setting" do
-      pending
-      @card = Card.new( :name=>"templated", :content => "bar" )
-      config_card = Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
-      mock(@card).rule_card(:content,:default).returns(config_card)
-      Wagn::Renderer.new(@card).render_raw.should == "Yoruba"
-      mock(@card).rule_card(:content,:default).returns(config_card)
-      mock(@card).rule_card(:add_help,:edit_help)
-      assert_view_select Wagn::Renderer.new(@card).render_new, 'div[class="unknown-class-name"]'
+        assert_view_select Wagn::Renderer::Html.new(card).render_new, 'div[class="content-editor"]' do
+          assert_select 'textarea[class="tinymce-textarea card-content"]', :text => '{{+Yoruba}}'
+        end
+      end
     end
 
     it "is used in new card forms when hard" do
-      Card.as :joe_admin
-      content_card = Card.create!(:name=>"Cardtype E+*type+*content",  :content=>"{{+Yoruba}}" )
-      help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
-      card = Card.new(:type=>'Cardtype E')
-      mock(card).rule_card(:thanks, nil, {:skip_modules=>true}).returns(nil)
-      mock(card).rule_card(:autoname).returns(nil)
-      mock(card).rule_card(:content,:default,:skip_modules=>false).returns(content_card)
-      mock(card).rule_card(:add_help,:edit_help).returns(help_card)
-      assert_view_select Wagn::Renderer::Html.new(card).render_new, 'div[class="field-in-multi"]' do
-        assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', "card[cards][~plus~Yoruba][content]"
+      Session.as :joe_admin do
+        content_card = Card.create!(:name=>"Cardtype E+*type+*content",  :content=>"{{+Yoruba}}" )
+        help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
+        card = Card.new(:type=>'Cardtype E')
+
+        mock(card).rule_card(:thanks, {:skip_modules=>true}).returns(nil)
+        mock(card).rule_card(:autoname).returns(nil)
+        mock(card).rule_card(:default,  {:skip_modules=>true}   ).returns(Card['*all+*default'])
+        mock(card).rule_card(:add_help, {:fallback=>:edit_help} ).returns(help_card)
+        rendered = Wagn::Renderer::Html.new(card).render_new
+        #warn "rendered = #{rendered}"
+        assert_view_select rendered, 'div[class="field-in-multi"]' do
+          assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', "card[cards][~plus~Yoruba][content]"
+        end
       end
     end
 
-    it "skips *content if narrower *default is present" do  #this seems more like a settings test
-      Card.as_bot do
-        content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"Content Foo" )
-        default_card = Card.create!(:name=>"templated+*right+*default", :content=>"Default Bar" )
-      end
-      @card = Card.new( :name=>"test+templated", :type=>'Phrase' )
-      Wagn::Renderer.new(@card).render(:raw).should == "Default Bar"
-    end
+
 
 
     it "should be used in edit forms" do
-      Card.as_bot do
+      Session.as_bot do
         config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
       end
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
@@ -364,7 +364,7 @@ describe Wagn::Renderer, "" do
     end
 
     it "work on type-plus-right sets edit calls" do
-      Card.as_bot do
+      Session.as_bot do
         Card.create(:name=>'Book+author+*type plus right+*default', :type=>'Phrase', :content=>'Zamma Flamma')
       end
       c = Card.new :name=>'Yo Buddddy', :type=>'Book'
@@ -408,7 +408,7 @@ describe Wagn::Renderer, "" do
 
     context "HTML" do
       before do
-        Card.user= Card::WagbotID
+        Session.user= Card::WagbotID
       end
 
       it "should have special editor" do
@@ -509,7 +509,7 @@ describe Wagn::Renderer, "" do
 
     context "*account link" do
       it "should have a 'my card' link" do
-        Card.as :joe_user do
+        Session.as :joe_user do
           assert_view_select render_card(:raw, :name=>'*account links'), 'span[id="logging"]' do
             assert_select 'a[id="my-card-link"]', :text => 'Joe User'
           end
@@ -532,7 +532,7 @@ describe Wagn::Renderer, "" do
 
   context "replace refs" do
     before do
-      Card.user= Card::WagbotID
+      Session.user= Card::WagbotID
     end
 
     it "replace references should work on inclusions inside links" do

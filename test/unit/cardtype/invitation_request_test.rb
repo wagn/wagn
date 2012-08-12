@@ -6,7 +6,7 @@ class Wagn::Set::Type::InvitationRequestTest < ActiveSupport::TestCase
     super
     setup_default_user
     # make sure all this stuff works as anonymous user
-    Card.user = Card::AnonID
+    Session.user = Card::AnonID
   end
 
 
@@ -24,14 +24,14 @@ class Wagn::Set::Type::InvitationRequestTest < ActiveSupport::TestCase
 
 
   def test_should_block_user
-    #Card.as_bot  do
+    #Session.as_bot  do
     #  auth_user_card = Card[Card::AuthID]
       # FIXME: change from task ...
       #auth_user_card.trait_card(:tasks).content = '[[deny_invitation_requests]]'
     #end
     c=Card.fetch('Ron Request')
     #warn Rails.logger.warn("destroy card (#{c.inspect}) #{User.where(:email=>'ron@request.com').first.inspect}")
-    Card.as :joe_user do c.destroy!  end
+    Session.as :joe_user do c.destroy!  end
     #warn Rails.logger.warn("destroyed card (#{c.inspect}) #{User.where(:email=>'ron@request.com').first.inspect}")
 
     assert_equal nil, Card.fetch('Ron Request')

@@ -70,7 +70,7 @@ module Wagn
 
 
     def get_layout_content(args)
-      Card.as_bot do
+      Session.as_bot do
         case
           when (params[:layout] || args[:layout]) ;  layout_from_name
           when card                               ;  layout_from_card
@@ -129,8 +129,12 @@ module Wagn
       }<div id="main">#{content}</div>}
     end
 
-    def edit_slot(args={})
-      card.hard_template ? raw(_render_core(args)) : content_field(form)
+    def edit_slot args={}
+      if card.hard_template
+        raw _render_core(args)
+      else
+        content_field form
+      end
     end
  
     #### --------------------  additional helpers ---------------- ###

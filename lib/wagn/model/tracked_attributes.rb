@@ -39,7 +39,13 @@ module Wagn::Model::TrackedAttributes
         sidecard = Card[sidename]
         old_name_in_way = (sidecard && sidecard.id==self.id) # eg, renaming A to A+B
         suspend_name(sidename) if old_name_in_way
-        self.send "#{side}=", (!sidecard || old_name_in_way ? Card.create!(:name=>sidename) : sidecard)
+        self.send "#{side}=", begin
+          if !sidecard || old_name_in_way
+            Card.create! :name=>sidename
+          else
+            sidecard
+          end
+        end
       end
     else
       self.trunk = self.tag = nil
@@ -101,9 +107,9 @@ module Wagn::Model::TrackedAttributes
     new_content ||= '' 
     new_content = WikiContent.clean_html!(new_content) if clean_html?
     clear_drafts if current_revision_id
-    #warn Rails.logger.info("set_content #{name} #{Card.user_id}, #{new_content}")
+    #warn Rails.logger.info("set_content #{name} #{Session.user_id}, #{new_content}")
     self.current_revision = Card::Revision.create(:card_id=>self.id,
-           :content=>new_content, :creator_id =>Card.user_id)
+           :content=>new_content, :creator_id =>Session.user_id)
     reset_patterns_if_rule
     @name_or_content_changed = true
   end
@@ -161,7 +167,7 @@ module Wagn::Model::TrackedAttributes
         Card::Reference.update_on_destroy(dep, @old_name) 
       end
     else
-      Card.as_bot do
+      Session.as_bot do
         [self.name_referencers(@old_name)+(deps.map &:referencers)].flatten.uniq.each do |card|
           # FIXME  using "name_referencers" instead of plain "referencers" for self because there are cases where trunk and tag
           # have already been saved via association by this point and therefore referencers misses things

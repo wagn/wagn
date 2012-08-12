@@ -9,7 +9,7 @@ describe AccountController do
   describe "#accept" do
     before do
       login_as :joe_user
-      @user = Card.user
+      @user = Session.user
     end
 
   end

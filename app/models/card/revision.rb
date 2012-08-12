@@ -8,7 +8,7 @@ class Card::Revision < ActiveRecord::Base
   stampable :stamper_class_name => :card
   before_save :set_stamper
 
-  def set_stamper() self.creator_id = Card.user_id end
+  def set_stamper() self.creator_id = Session.user_id end
   
   def author
     c=Card[creator_id]

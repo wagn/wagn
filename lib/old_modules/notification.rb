@@ -55,20 +55,20 @@ module Notification
       []
     end
 
-    def watching_type?() watcher_pairs(false, :type).member?(Card.user_id) end
-    def watching?()      watcher_pairs(false).member?(Card.user_id)        end
+    def watching_type?() watcher_pairs(false, :type).member?(Session.user_id) end
+    def watching?()      watcher_pairs(false).member?(Session.user_id)        end
     def watchers()       watcher_watched_pairs(false)                      end
     def watcher_watched_pairs(pairs=true)
       ( watcher_pairs(pairs) + watcher_pairs(pairs, :type) )
     end
 
     def watcher_pairs(pairs=true, kind=:name)
-      #warn "wp #{pairs}, #{kind}, #{Card.user_id}"
+      #warn "wp #{pairs}, #{kind}, #{Session.user_id}"
       namep, rc = (kind == :type) ?  [lambda { self.typename },
                (self.type_card.trait_card(:watchers))] :
             [lambda { self.cardname }, trait_card(:watchers)]
       watchers = rc.nil? ? [] : rc.item_cards.map(&:id)
-      pairs ? watchers.except(Card.user_id).map {|w| [w, namep.call] } : watchers
+      pairs ? watchers.except(Session.user_id).map {|w| [w, namep.call] } : watchers
     end
   end
 

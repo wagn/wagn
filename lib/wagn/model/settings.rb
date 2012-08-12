@@ -1,13 +1,14 @@
 module Wagn::Model::Settings
-  def rule setting_name, fallback=nil
-    card = rule_card setting_name, fallback, :skip_modules=>true
-    r=card && card.content
-    #warn (Rails.logger.warn "rule[#{name}] #{setting_name}, #{card.inspect}, R:#{r}"); r
+  def rule setting_name, options={}
+    options[:skip_modules] = true
+    card = rule_card setting_name, options
+    card && card.content
   end
 
-  def rule_card setting_name, fallback=nil, extra_fetch_args={}
-    #warn (Rails.logger.warn "rule_card[#{name}] #{setting_name}, #{fallback}, #{extra_fetch_args.inspect} RSN:#{real_set_names.inspect}") if setting_name == :read
-    fetch_args = {:skip_virtual=>true}.merge extra_fetch_args
+  def rule_card setting_name, options={}
+    fallback = options.delete( :fallback )
+    #warn (Rails.logger.warn "rule_card[#{name}] #{setting_name}, #{extra_fetch_args.inspect} RSN:#{real_set_names.inspect}") if setting_name == :read
+    fetch_args = {:skip_virtual=>true}.merge options
     real_set_names.each do |set_name|
       #warn (Rails.logger.debug "rule_card search #{set_name.inspect}") if setting_name == :read
       set_name=set_name.to_cardname
@@ -19,11 +20,11 @@ module Wagn::Model::Settings
     #warn (Rails.logger.warn "rc nothing #{setting_name}, #{name}") #if setting_name == :read
     nil
   end
-  def rule_card_with_cache setting_name, fallback=nil, extra_fetch_args={}
+  def rule_card_with_cache setting_name, options={}
     setting_name = (sc=Card[setting_name] and (sc.codename || sc.name).to_sym) unless Symbol===setting_name
     @rule_cards ||= {}  # FIXME: initialize this when creating card
     rcwc = (@rule_cards[setting_name] ||= 
-      rule_card_without_cache setting_name, fallback, extra_fetch_args)
+      rule_card_without_cache setting_name, options)
     #warn (Rails.logger.warn "rcwc #{rcwc.inspect}"); rcwc #if setting_name == :read; rcwc
   end
   alias_method_chain :rule_card, :cache
@@ -54,7 +55,7 @@ module Wagn::Model::Settings
 
     def universal_setting_names_by_group
       @@universal_setting_names_by_group ||= begin
-        Card.as_bot do
+        Session.as_bot do
           setting_ids = Card.search(:type=>Card::SettingID, :return=>'id', :limit=>'0')
           grouped = {:perms=>[], :look=>[], :com=>[], :other=>[]}
           setting_ids.map do |setting_id|

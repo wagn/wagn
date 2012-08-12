@@ -10,7 +10,7 @@ class Card::RenameTest < ActiveSupport::TestCase
   
   def setup
     super
-    Card.as_bot do
+    Session.as_bot do
       Card.create! :name => "chuck_wagn+chuck"   
       Card.create! :name => "Blue" 
       
@@ -175,7 +175,7 @@ class Card::RenameTest < ActiveSupport::TestCase
 
   def test_rename_should_not_fail_when_updating_inaccessible_referencer
     Card.create! :name => "Joe Card", :content => "Whattup"
-    Card.as(:joe_admin) { 
+    Session.as(:joe_admin) { 
       c = Card.create! :name => "Admin Card", :content => "[[Joe Card]]" 
 #      c.permit :edit, Role[:admin]
       c.save!

@@ -12,7 +12,7 @@ class SharedData
     #Card.current_id = Card::WagbotID
     CodenameTable.load_bootcodes unless !Wagn::Codename[:wagbot].nil?
 
-    Card.as(Card::WagbotID)
+    Session.as(Card::WagbotID)
     Wagn::Cache.reset_global
 
     joe_card = Card.create! :typecode=>'user', :name=>"Joe User", :content => "I'm number two"
@@ -55,7 +55,7 @@ class SharedData
 
     request_card = Card.create! :typecode=>'invitation_request', :name=>"Sample InvitationRequest" #, :email=>"invitation@request.com"
 
-    Card.createable_types.each do |type|
+    Session.createable_types.each do |type|
       next if ['User', 'Account Request', 'Set'].include? type
       Card.create! :type=>type, :name=>"Sample #{type}"
     end
@@ -120,7 +120,7 @@ class SharedData
     Card.create! :typecode=>'cardtype_e', :name=>"type-e-card", :content=>"type_e_content"
     Card.create! :typecode=>'cardtype_f', :name=>"type-f-card", :content=>"type_f_content"
 
-    #warn "current user #{User.session_user.inspect}.  always ok?  #{Card.always_ok?}"
+    #warn "current user #{User.session_user.inspect}.  always ok?  #{Session.always_ok?}"
     c = Card.create! :name=>'revtest', :content=>'first'
     c.update_attributes! :content=>'second'
     c.update_attributes! :content=>'third'
@@ -130,11 +130,11 @@ class SharedData
     Card.create! :type_id=>Card::CardtypeID, :name=> "UserForm"
     Card.create! :name=>"UserForm+*type+*content", :content=>"{{+name}} {{+age}} {{+description}}"
 
-    Card.user = :joe_user
+    Session.user = :joe_user
     Card.create!( :name=>"JoeLater", :content=>"test")
     Card.create!( :name=>"JoeNow", :content=>"test")
 
-    Card.user = :wagbot
+    Session.user = :wagbot
     Card.create!(:name=>"AdminNow", :content=>"test")
 
     Card.create :name=>'Cardtype B+*type+*create', :type=>'Pointer', :content=>'[[r1]]'

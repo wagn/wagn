@@ -10,8 +10,8 @@ module WagnTestHelper
 
     user_card = Card['joe user'] #Card[Card::WagbotID]
     user_card = Card[:wagbot]
-    Card.user= user_card.id
-    @user = Card.user
+    Session.user= user_card.id
+    @user = Session.user
     #STDERR << "user #{user_card.inspect}\n"
 
     @user.update_column 'crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c'
@@ -21,7 +21,7 @@ module WagnTestHelper
     #@admin_card = Card[Card::WagbotID]
 
     #@admin_card.trait_card(:roles) << Card::AdminID
-    Card.user = 'joe_user'
+    Session.user = 'joe_user'
     nil
   end
 
@@ -30,7 +30,7 @@ module WagnTestHelper
   end
 
   def given_card( *card_args )
-    Card.as_bot do
+    Session.as_bot do
       Card.create *card_args
     end
   end

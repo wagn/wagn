@@ -10,7 +10,7 @@ describe Wagn::Codename, "Codename" do
   end
 
   it "cards should exist and be indestructable" do
-    Card.as_bot do
+    Session.as_bot do
       Wagn::Codename.codes.each do |code|
         (card=Card[code]).confirm_destroy = true
         card.destroy

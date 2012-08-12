@@ -97,6 +97,7 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.19)
+    minitest (3.3.0)
     multi_json (1.2.0)
     mysql2 (0.3.11)
     nokogiri (1.5.5)
@@ -220,6 +221,7 @@ DEPENDENCIES
   htmlentities (~> 4.3)
   jquery-rails (~> 1.0)
   launchy
+  minitest
   mysql2 (~> 0.3)
   paperclip (~> 2.4)
   pg (~> 0.12.2)

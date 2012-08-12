@@ -100,7 +100,7 @@ class CodenameTable < ActiveRecord::Migration
     warn Rails.logger.warn("have_codes #{@@have_codes}")
     CodenameTable.load_bootcodes unless @@have_codes
 
-    Card.as_bot do
+    Session.as_bot do
       CodenameTable::CODENAMES.each { |name| CodenameTable.add_codename name }
       warn Rails.logger.warn("migr opt test #{Card['cardtype_a']}")
       if Card['cardtype_a']

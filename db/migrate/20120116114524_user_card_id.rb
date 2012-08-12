@@ -15,7 +15,7 @@ class UserCardId < ActiveRecord::Migration
     execute %{update card_revisions set created_by = creator_id}
     execute %{update cards set created_by=creator_id, updated_by = updater_id}
 
-    if dbtype.to_s == 'mysql'
+    if dbtype.to_s =~ /mysql/
       # populate the new column with card_id of the user extension
       execute %{update users u, cards c set u.card_id = c.id
                  where c.extension_type = 'User' and c.extension_id = u.id }

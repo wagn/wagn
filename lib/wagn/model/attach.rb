@@ -34,11 +34,16 @@ module Wagn::Model::Attach
 
   STYLES = %w{ icon small medium large original }
 
-  def attachment_style(typecode, style)
-    case typecode
-    when 'File'; ''
-    when 'Image'
-      style.nil? || style.to_sym == :full ? :original : style
+  def attachment_style type_id, style
+    case type_id
+    when Card::TypeID
+      ''
+    when Card::ImageID
+      if style.nil? || style.to_sym == :full
+        :original
+      else
+        style
+      end
     end
   end
 

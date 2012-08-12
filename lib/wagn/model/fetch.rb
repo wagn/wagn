@@ -113,14 +113,18 @@ module Wagn::Model::Fetch
       (v=Card.cache.read "$#{key}").nil? ? [] : v.keys
     end
 
-    def set_members(set_names, key)
+    def set_members set_names, key
+      
       #warn Rails.logger.warn("set_members #{set_names.inspect}, #{key}")
       set_names.compact.map(&:to_cardname).map(&:key).map do |set_key|
-        skey = "$#{set_key}"
+        skey = "$#{set_key}" # dollar sign avoids conflict with card keys
         h = Card.cache.read skey
-        if h.nil?; h = {}
-        elsif h[key]; next
+        if h.nil?
+          h = {}
+        elsif h[key]
+          next
         end
+        h = h.dup if h.frozen?
         h[key] = true
         #warn Rails.logger.warn("set_members w #{h.inspect}, #{skey.inspect}")
         Card.cache.write skey, h

@@ -39,6 +39,7 @@ class RolesUsers < ActiveRecord::Migration
       # Add username->*roles pointers from user_roles table
       Card.where(:extension_type=> 'User').each do |usercard|
         user = User.where(:card_id=>usercard.id).first
+        next unless user
         roles = RolesUser.where(:user_id=>user.id).map do |role_user|
             rcard=Card.where(:extension_id=>role_user.role_id, :extension_type => 'Role').first
             warn Rails.logger.warn("user rold ? #{usercard.inspect}[#{rcard}, #{role_user.inspect}] >> #{c.inspect}")

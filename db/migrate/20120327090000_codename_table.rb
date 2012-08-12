@@ -40,10 +40,11 @@ class CodenameTable < ActiveRecord::Migration
   def self.load_bootcodes
     codehash = {}
     # seed the codehash so that we can bootstrap
-    warn Rails.logger.warn("yml load, #{caller*"\n"}")
+    #puts "yml load, #{caller*"\n"}"
     if File.exists?( YML_CODE_FILE ) and yml = YAML.load_file( YML_CODE_FILE )
       yml.each do |p|
-        code, id = p[1]['codename'].to_sym, p[1]['id'].to_i
+        next unless codename = p[1]['codename']
+        code, id = codename.to_sym, p[1]['id'].to_i
         codehash[code.to_sym] = id.to_i; codehash[id.to_i] = code.to_sym
       end
     else warn Rails.logger.warn("no file? #{YML_CODE_FILE}") end

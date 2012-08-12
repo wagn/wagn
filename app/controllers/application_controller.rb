@@ -128,18 +128,22 @@ class ApplicationController < ActionController::Base
   end
   
   def render_show_file
-    #warn "render_show_file #{@card}"
+    Rails.logger.debug "render_show_file #{@card}"
     return fast_404 if !@card
+    
+    
     @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
   
     format = @card.attachment_format(params[:format])
+
     return fast_404 if !format
 
     if ![format, 'file'].member?( params[:format] )
       return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) ) 
     end
 
-    style = @card.attachment_style( @card.typecode, params[:size] || @style )
+    style = @card.attachment_style( @card.type_id, params[:size] || @style )
+    
     return fast_404 if !style
 
     send_file @card.attach.path(style), 

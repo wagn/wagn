@@ -1,4 +1,4 @@
-class RequireEarlierMigrations < ActiveRecord::Migration
+class Require18Migrations < ActiveRecord::Migration
   def self.up
     fail %{
 Your database is not ready to be migrated to #{Wagn::Version.full}.

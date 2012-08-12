@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120327100000) do
+ActiveRecord::Schema.define(:version => 20120812183334) do
 
   create_table "card_references", :force => true do |t|
     t.datetime "created_at",                                      :null => false
@@ -38,25 +38,25 @@ ActiveRecord::Schema.define(:version => 20120327100000) do
   add_index "card_revisions", ["creator_id"], :name => "revisions_created_by_index"
 
   create_table "cards", :force => true do |t|
-    t.string   "name",                :null => false
-    t.string   "key",                 :null => false
-    t.string   "codename"
-    t.string   "typecode"
     t.integer  "trunk_id"
-    t.integer  "tag_id"
-    t.integer  "current_revision_id"
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
-    t.integer  "creator_id",          :null => false
-    t.integer  "updater_id"
+    t.integer  "current_revision_id"
+    t.string   "name",                :null => false
+    t.string   "typecode"
     t.integer  "extension_id"
     t.string   "extension_type"
+    t.integer  "creator_id",          :null => false
+    t.integer  "updater_id"
+    t.integer  "tag_id"
+    t.string   "key",                 :null => false
+    t.boolean  "trash",               :null => false
+    t.integer  "references_expired"
     t.text     "indexed_name"
     t.text     "indexed_content"
+    t.string   "codename"
     t.string   "read_rule_class"
     t.integer  "read_rule_id"
-    t.integer  "references_expired"
-    t.boolean  "trash",               :null => false
     t.integer  "type_id",             :null => false
     t.integer  "created_by"
     t.integer  "updated_by"

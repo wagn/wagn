@@ -6,7 +6,7 @@ You will need to do incremental upgrades.
 Please first install version 1.6.1 and run `rake db:migrate`.
 Then install version 1.8.0 and run `rake db:migrate`.
 
-Sorry about this; we're working to prevent this problem in the future.
+Sorry about this! We're working to minimize these hassles in the future.
 }
   end
 

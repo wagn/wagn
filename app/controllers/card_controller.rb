@@ -52,10 +52,10 @@ class CardController < ApplicationController
 
   def index()    show                  end
   def view()     render_show           end
-  def changes()  render_show :changes  end
-  def options()  render_show :options  end
-  def related()  render_show :related  end
-  def edit()     render_show :edit     end
+#  def changes()  render_show :changes  end
+#  def options()  render_show :options  end
+#  def related()  render_show :related  end
+#  def edit()     render_show :edit     end
 
 
   def new
@@ -124,6 +124,15 @@ class CardController < ApplicationController
   end
 
 
+  def watch
+    watchers = @card.trait_card(:watchers )
+    watchers = watchers.refresh if watchers.frozen?
+    myname = Card[Session.user_id].name
+    watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
+    ajax? ? render_show(:watch) : view
+  end
+
+
 
   #------------( DELETE )
 
@@ -178,16 +187,6 @@ class CardController < ApplicationController
   end
 
 
-  #-------- ( MISFIT METHODS )
-
-
-  def watch
-    watchers = @card.trait_card(:watchers )
-    watchers = watchers.refresh if watchers.frozen?
-    myname = Card[Session.user_id].name
-    watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
-    ajax? ? render_show(:watch) : view
-  end
 
 
   private

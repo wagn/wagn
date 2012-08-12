@@ -35,26 +35,21 @@ module Wagn::Set::Type::Set
 
   def setting_names_by_group
     groups = Card.universal_setting_names_by_group.clone
-    # Generalize Me!
-    #warn "ptr? #{tag.id || cardname.tag} && #{trunk.id || cardname.trunk}" if junction? and !new_card?
-    pointer_test = if type_id == Card::SetID and
-            templt = existing_trait_card(:content) || existing_trait_card(:default)
-          templt.type_id
-        elsif !new_card? && junction?
-        #elsif !new_card? && junction? and tg = tag || Card[cardname.tag] and
-        tg = tag || Card[cardname.tag]
-        tk = trunk || Card[cardname.trunk]
-        raise "missing tk #{cardname.trunk}" unless tk
-        raise "missing tg #{cardname.tag}" unless tg
-          case tg.id
-            when Card::TypeID; tk.id
-            when Card::SelfID; tk.type_id
-          end
-        end
-    #warn "ptr tst #{self.inspect} :: #{templt.inspect}, #{self.tag_id}, #{junction? && "#{trunk.inspect} + #{tag.inspect}"}, #{pointer_test}"
-    #Rails.logger.debug "setting_names_by_group #{cardname.to_s}, #{cardname.tag_name.to_s}, #{pointer_test}"
 
-    groups[:pointer] = ['*options','*options label','*input'] if pointer_test==Card::PointerID
+    raise "#setting_names_by_group called on non-set" if type_id != Card::SetID
+    
+    member_type_id = 
+      if templt = existing_trait_card(:content) || existing_trait_card(:default)
+        templt.type_id
+      elsif junction?
+        method = case right.id #this is the set class
+          when Card::TypeID; :id
+          when Card::SelfID; :type_id
+          end
+        left.send method if method
+      end
+
+    groups[:pointer] = ['*options','*options label','*input'] if member_type_id==Card::PointerID
     groups
   end
 

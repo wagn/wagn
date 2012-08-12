@@ -159,7 +159,7 @@ class Card < ActiveRecord::Base
 
 
   def existing_trait_card tagcode
-    Card.fetch cardname.trait_name(tagcode), :skip_modules=>true
+    Card.fetch cardname.trait_name(tagcode), :skip_modules=>true, :skip_virtual=>true
   end
 
   def trait_card tagcode

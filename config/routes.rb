@@ -1,5 +1,4 @@
 FORMATS = 'html|json|xml|rss|kml|css|txt|text' unless defined? FORMATS
-FORMAT_PATTERN = /#{FORMATS}/ unless defined? FORMAT_PATTERN
 
 Wagn::Application.routes.draw do
 
@@ -21,6 +20,9 @@ Wagn::Application.routes.draw do
   match '/files/(*id)' => 'card#show_file'
 
   match 'new/:type' => 'card#new'
+  
+  match 'card/:view(/:id(.:format)(/:attribute))' => 'card#show', :constraints =>
+    { :view=> /changes|options|related|edit/ }
 
   match ':controller/:action(/:id(.:format)(/:attribute))'
 

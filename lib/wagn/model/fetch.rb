@@ -52,12 +52,12 @@ module Wagn::Model::Fetch
         return nil if card && opts[:skip_virtual] && card.new_card?
 
         # NEW card -- (either virtual or missing)
-        if card.nil? or ( !opts[:skip_virtual] && card.type_id==0 )
-          # The zero type_id allows us to skip all the type lookup and flag the need for
+        if card.nil? or ( !opts[:skip_virtual] && card.type_id==-1 )
+          # The -1 type_id allows us to skip all the type lookup and flag the need for
           # reinitialization later.  *** It should NEVER be seen elsewhere ***
           needs_caching = true
           new_args = { :name=>mark.to_s, :skip_modules=>true }
-          new_args[:type_id] = 0 if opts[:skip_virtual]
+          new_args[:type_id] = -1 if opts[:skip_virtual]
           card = new new_args
         end
       end

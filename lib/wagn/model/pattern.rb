@@ -192,8 +192,8 @@ module Wagn::Model
     def self.label(name)              %{All "#{name}" cards}     end
     def self.prototype_args(base)     {:type=>base}              end
     def self.pattern_applies?(card)
-      raise "zero type" if card.type_id == 0
       return false if card.type_id.nil?
+      raise "bogus type id" if card.type_id < 1
       true       end
     def self.trunk_name(card)         card.typename              end
   end

@@ -29,8 +29,8 @@ class User < ActiveRecord::Base
 
   class << self
     def admin()          User.where(:card_id=>Card::WagbotID).first  end
-    def as_user()        User.where(:card_id=>Card.as_id).first end
-    def user()           User.where(:card_id=>Card.user_id).first    end
+    def as_user()        User.where(:card_id=>Session.as_id).first end
+    def user()           User.where(:card_id=>Session.user_id).first    end
     def from_id(card_id) User.where(:card_id=>card_id).first         end
 
     # FIXME: args=params.  should be less coupled..
@@ -38,11 +38,11 @@ class User < ActiveRecord::Base
       #warn  "create with(#{user_args.inspect}, #{card_args.inspect}, #{email_args.inspect})"
       card_args[:type_id] ||= Card::UserID
       @card = Card.fetch_or_new(card_args[:name], card_args)
-      #warn "create with >>#{Card.user_card.name}"
-      #warn "create with args= #{({:invite_sender=>Card.user_card, :status=>'active'}.merge(user_args)).inspect}"
-      Card.as_bot do
+      #warn "create with >>#{Session.user_card.name}"
+      #warn "create with args= #{({:invite_sender=>Session.user_card, :status=>'active'}.merge(user_args)).inspect}"
+      Session.as_bot do
         #warn "cwa #{user_args.inspect}, #{card_args.inspect}"
-        @user = User.new({:invite_sender=>Card.user_card, :status=>'active'}.merge(user_args))
+        @user = User.new({:invite_sender=>Session.user_card, :status=>'active'}.merge(user_args))
         #warn "user is #{@user.inspect}" unless @user.email
         @user.generate_password if @user.password.blank?
         @user.save_with_card(@card)
@@ -119,10 +119,10 @@ class User < ActiveRecord::Base
   end
 
   def accept(card, email_args)
-    Card.as_bot do #what permissions does approver lack?  Should we check for them?
+    Session.as_bot do #what permissions does approver lack?  Should we check for them?
       card.type_id = Card::UserID # Invite Request -> User
       self.status='active'
-      self.invite_sender = Card.user_card
+      self.invite_sender = Session.user_card
       generate_password
       r=save_with_card(card)
     end

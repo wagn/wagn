@@ -42,7 +42,7 @@ namespace :wagn do
         File.open("#{Rails.root}/db/bootstrap/#{table}.yml", 'w') do |file|
           data = 
             if table=='cards'
-              Card.as_bot do
+              Session.as_bot do
                 Card.search({:not=>{:referred_to_by=>'*ignore'}}).map &:attributes
               end
             else

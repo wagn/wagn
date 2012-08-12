@@ -63,7 +63,7 @@ describe Card do
       #[:before_save, :before_create, :after_save, :after_create].each do |hookname|
       pending "mock rr seems to be broken, maybe 'call' collides with internal methode"
       mock(Wagn::Hook).call(:after_create, instance_of(Card))
-      Card.as_bot do
+      Session.as_bot do
         Card.create :name => "testit"
       end
     end
@@ -101,7 +101,7 @@ describe Card do
                             
   describe "creation" do
     before(:each) do           
-      Card.as_bot do
+      Session.as_bot do
         @b = Card.create! :name=>"New Card", :content=>"Great Content"
         @c = Card.find(@b.id)
       end
@@ -125,7 +125,7 @@ describe Card do
 
   describe "attribute tracking for new card" do
     before(:each) do
-      Card.as_bot do
+      Session.as_bot do
         @c = Card.new :name=>"New Card", :content=>"Great Content"
       end
     end
@@ -152,7 +152,7 @@ describe Card do
 
   describe "content change should create new revision" do
     before do
-      Card.as_bot do
+      Session.as_bot do
         @c = Card.find_by_name('basicname')
         @c.update_attributes! :content=>'foo'
       end
@@ -170,7 +170,7 @@ describe Card do
 
   describe "content change should create new revision" do
     before do
-      Card.as_bot do
+      Session.as_bot do
         @c = Card.find_by_name('basicname')
         @c.content = "foo"
         @c.save!

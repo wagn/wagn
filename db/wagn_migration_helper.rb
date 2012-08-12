@@ -10,7 +10,7 @@ module WagnMigrationHelper
   end
   
   def create_or_update(card, typecode, content)
-    Card.as(Card::WagbotID) do
+    Session.as(Card::WagbotID) do
       card = card.refresh if card.frozen?
       card.typecode = typecode
       card.content = content

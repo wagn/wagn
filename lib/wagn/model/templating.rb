@@ -27,7 +27,6 @@ module Wagn::Model::Templating
     end
   end
 
-
   def hard_template
     template if template && template.hard_template?
   end
@@ -40,11 +39,16 @@ module Wagn::Model::Templating
     @virtual
   end
 
+  def content_rule_card
+    card = rule_card :content, :skip_modules=>true
+    crc = card && card.content == '_self' ? nil : card
+  end
+
   def hard_templatee_names
     wql = hard_templatee_wql(:name)
     #warn (Rails.logger.warn "ht_wql #{wql.inspect}")
     if wql
-      Card.as_bot do
+      Session.as_bot do
         Wql.new(wql).run
       end
     else
@@ -62,7 +66,7 @@ module Wagn::Model::Templating
     wql=hard_templatee_wql(:condition)
     #warn "expire_t_refs #{name}, #{wql.inspect}"
     if wql
-      condition = Card.as_bot { Wql::CardSpec.build(wql).to_sql }
+      condition = Session.as_bot { Wql::CardSpec.build(wql).to_sql }
       card_ids_to_update = connection.select_rows("select id from cards t where #{condition}").map(&:first)
       card_ids_to_update.each_slice(100) do |id_batch|
         connection.execute "update cards set references_expired=1 where id in (#{id_batch.join(',')})"
@@ -72,11 +76,6 @@ module Wagn::Model::Templating
 
 
   private
-
-  def content_rule_card
-    card = rule_card :content, :skip_modules=>true
-    crc = card && card.content == '_self' ? nil : card
-  end
 
   def hard_templatee_wql return_field
     #warn "htwql #{name} #{hard_template?}, #{cardname.trunk_name}, #{Card.fetch(cardname.trunk_name)}"

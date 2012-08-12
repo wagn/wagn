@@ -3,8 +3,8 @@ class Wagn::Renderer
     #ENGLISH
     prefix = Wagn::Conf[:root_path] + '/account'
     %{<span id="logging">#{
-      if Card.logged_in?
-        ucard = Card.user_card
+      if Session.logged_in?
+        ucard = Session.user_card
         %{ 
           #{ link_to ucard.name, "#{Wagn::Conf[:root_path]}/#{ucard.cardname.to_url_key}", :id=>'my-card-link' }
           #{ if Card[:account].ok? :create

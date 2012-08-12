@@ -5,7 +5,7 @@ class Wagn::Renderer
     if Card[:account].ok?(:create)
       links << link_to( "Invite #{card.name}", Card.path_setting("/account/accept?card[key]=#{card.cardname.to_url_key}"), :class=>'invitation-link')
     end
-    if Card.logged_in? && card.ok?(:delete)
+    if Session.logged_in? && card.ok?(:delete)
       links << link_to( "Deny #{card.name}", path(:remove), :class=>'slotter standard-delete', :remote=>true )
     end
     

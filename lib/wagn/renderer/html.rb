@@ -70,7 +70,7 @@ module Wagn
 
 
     def get_layout_content(args)
-      Card.as_bot do
+      Session.as_bot do
         case
           when (params[:layout] || args[:layout]) ;  layout_from_name
           when card                               ;  layout_from_card

@@ -1,6 +1,6 @@
 module AuthenticatedSystem
   protected
-  def logged_in?() Card.user_id && Card.logged_in? end
+  def logged_in?() Session.user_id && Session.logged_in? end
 
   # Accesses the current user from the session.
   def session_user

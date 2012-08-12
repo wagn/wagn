@@ -230,7 +230,7 @@ module Wagn
         when @depth >= @@max_depth ; :too_deep
         when !card                 ; false
         when view == :watch
-          :blank if !Card.logged_in? || card.virtual?
+          :blank if !Session.logged_in? || card.virtual?
         when [:new, :edit, :edit_in_form].member?(view)
           allowed = card.ok?(card.new_card? ? :create : :update)
           !allowed && :denial
@@ -449,7 +449,7 @@ module Wagn
 
     ## ----- for Linkers ------------------
     def typecode_options
-      Card.createable_types.map do |type_id|
+      Session.createable_types.map do |type_id|
         type=Card[type_id] and type=type.name and [type, type]
       end.compact
     end

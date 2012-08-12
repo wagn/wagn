@@ -51,7 +51,7 @@ class Wagn::Renderer::Html
     %{<div class="comment-box nodblclick"> #{
       card_form :comment do |f|
         %{#{f.text_area :comment, :rows=>3 }<br/> #{
-        unless Card.logged_in?
+        unless Session.logged_in?
           card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH
           %{<label>My Name is:</label> #{ f.text_field :comment_author }}
         end}
@@ -298,7 +298,7 @@ class Wagn::Renderer::Html
        card_form :update_account do |form|
 
          %{<table class="fieldset">
-           #{if Card.as_id==card.id or card.trait_card(:account).ok?(:update)
+           #{if Session.as_id==card.id or card.trait_card(:account).ok?(:update)
               raw option_header( 'Account Details' ) +
                 template.render(:partial=>'account/edit',  :locals=>locals)
            end }
@@ -381,7 +381,7 @@ class Wagn::Renderer::Html
 
     %{#{ raw option_header( 'User Roles' ) }#{
        option(option_content, :name=>"roles",
-      :help=>%{ <span class="small">"#{ link_to_page 'Roles' }" determine which #{ Card.always_ok? ? link_to( 'global permissions', :controller=>'admin', :action=>'tasks') : 'global permissions'} a user has access to, as well as card-specific permissions like read, view, comment, and delete.  You can only change a user's roles if you have the global "assign user roles" permission. </span>}, #ENGLISH
+      :help=>%{ <span class="small">"#{ link_to_page 'Roles' }" determine which #{ Session.always_ok? ? link_to( 'global permissions', :controller=>'admin', :action=>'tasks') : 'global permissions'} a user has access to, as well as card-specific permissions like read, view, comment, and delete.  You can only change a user's roles if you have the global "assign user roles" permission. </span>}, #ENGLISH
       :label=>"#{card.name}'s Roles",
       :editable=>card.trait_card(:roles).ok?(:update)
     )}}
@@ -547,7 +547,7 @@ class Wagn::Renderer::Html
 
   define_view :not_found do |args| #ug.  bad name.
 
-    sign_in_or_up_links = Card.logged_in? ? '' :
+    sign_in_or_up_links = Session.logged_in? ? '' :
       %{
       <div>
         #{link_to "Sign In", :controller=>'account', :action=>'signin'} or
@@ -604,7 +604,7 @@ class Wagn::Renderer::Html
             else
               %{<div>#{
             
-              if !Card.logged_in?
+              if !Session.logged_in?
                %{You have to #{ link_to "sign in", :controller=>'account', :action=>'signin' }}
               else
                "You need permission"
@@ -615,7 +615,7 @@ class Wagn::Renderer::Html
                 %{<p>#{ link_to 'See permission settings', path(:options, :attrib=>'settings'), :class=>'slotter', :remote=>true  }.</p>}
               end} #{
   
-              if !Card.logged_in? && Card.new(:type_id=>Card::InvitationRequestID).ok?(:create)
+              if !Session.logged_in? && Card.new(:type_id=>Card::InvitationRequestID).ok?(:create)
                 %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}
               end }}
             end   }

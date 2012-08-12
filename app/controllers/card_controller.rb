@@ -103,8 +103,8 @@ class CardController < ApplicationController
 
     @card = @card.refresh if @card.frozen?
 
-    author = Card.user_id == Card::AnonID ?
-        "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" : "[[#{Card.user.name}]]"
+    author = Session.user_id == Card::AnonID ?
+        "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" : "[[#{Session.user.name}]]"
     comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.strip.empty? ? '&nbsp;' : c}</p>"} * "\n"
     @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
     
@@ -184,7 +184,7 @@ class CardController < ApplicationController
   def watch
     watchers = @card.trait_card(:watchers )
     watchers = watchers.refresh if watchers.frozen?
-    myname = Card[Card.user_id].name
+    myname = Card[Session.user_id].name
     watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
     ajax? ? render_show(:watch) : view
   end
@@ -206,7 +206,7 @@ class CardController < ApplicationController
 
 
   def index_preload
-    Card.no_logins? ?
+    Session.no_logins? ?
       redirect_to( Card.path_setting '/admin/setup' ) :
       params[:id] = (Card.setting('*home') || 'Home').to_cardname.to_url_key
   end

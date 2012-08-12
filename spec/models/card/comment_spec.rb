@@ -5,7 +5,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 =begin
 describe Card, "record appender" do
   before do
-    Card.as(Card::WagbotID) 
+    Session.as(Card::WagbotID) 
     @r = Role.find(:first)
     @c = Card.find(:first)
     @c.permit(:comment,@r)
@@ -13,12 +13,12 @@ describe Card, "record appender" do
   end
 
   it "should have appender immediately" do
-    Card.as(Card::WagbotID) 
+    Session.as(Card::WagbotID) 
     @c.ok?(:comment).should be_true
   end
   
   it "should have appender after save" do
-    Card.as(Card::WagbotID) 
+    Session.as(Card::WagbotID) 
     Card.find(@c.id).ok?(:comment).should be_true
   end         
 end
@@ -27,7 +27,7 @@ end
 
 describe Card, "comment addition" do
   before do
-    Card.as_bot do 
+    Session.as_bot do 
       Card.create :name => 'basicname+*self+*comment', :content=>'[[Anyone Signed In]]'
       @c = Card.fetch "basicname"
       @c.comment = " and more"

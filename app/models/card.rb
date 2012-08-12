@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 class Card < ActiveRecord::Base
-  cattr_accessor :cache, :id_cache
+  cattr_accessor :cache
 
   # userstamp methods
   model_stamper # Card is both stamped and stamper
@@ -34,10 +34,6 @@ class Card < ActiveRecord::Base
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
   @@junk_args = %w{ missing skip_virtual id }
-
-  @@id_cache = {}
-
-  def self.reset_id_cache() @@id_cache = {} end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INITIALIZATION METHODS
@@ -126,139 +122,8 @@ class Card < ActiveRecord::Base
 
   DefaultTypename = 'Basic'
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # CURRENT USER
-
-  @@as_card = @@as_id = @@rules_uid = @@user_id = @@user_card = @@user = nil
-  cattr_accessor :user_id   # the card id of the current user
-
 
   def to_user() User.where(:card_id=>id).first end
-
-  class << self
-    def user_id() @@user_id ||= Card::AnonID end
-    def user_card()
-      (uc=@@user_card and uc.id == user_id) ? uc : @@user_card = Card[user_id]
-    end
-    
-    
-    
-    def user
-      (u=@@user and u.card_id == user_id) ? u : @@user = user_card.to_user
-    end
-
-    def user=(user) @@as_id=nil; @@user_id = user2id(user)
-      #warn "user=#{user.inspect}, As:#{@@as_id}, C:#{@@user_id}"; @@user_id
-    end
-
-    def user2id(user)
-      case user
-        when NilClass;   nil
-        when User    ;   user.card_id
-        when Card    ;   user.id
-        when Integer ;   user
-        else
-          user = user.to_s
-          Wagn::Codename[user] or (cd=Card[user] and cd.id)
-      end
-    end
-
-    def as(given_user)
-      #warn Rails.logger.warn("as #{given_user.inspect}")
-      tmp_id = @@as_id
-      @@as_id = user2id(given_user)
-      #warn Rails.logger.warn("as user is #{@@as_id} (#{tmp_id})")
-      @@user_id = @@as_id if @@user_id.nil?
-
-      if block_given?
-        value = yield
-        @@as_id = tmp_id
-        return value
-      else
-        #fail "BLOCK REQUIRED with Card#as"
-      end
-    end
-
-    def as_bot
-      #raise "need block" unless block_given?
-      tmp_id, @@as_id = @@as_id, Card::WagbotID
-      @@user_id = @@as_id if @@user_id.nil?
-
-      value = yield
-      @@as_id = tmp_id
-      return value
-    end
-
-    def among?(authzed) Card[as_id].among?(authzed) end
-    def as_id()         @@as_id || user_id          end
-    def as_card()
-      (ac=@@as_card and ac.id == as_id) ? ac : @@as_card = Card[as_id]
-    end
-
-    def logged_in?() user_id != Card::AnonID end
-
-    def no_logins?()
-      c = self.cache
-      !c.read('no_logins').nil? ? c.read('no_logins') : c.write('no_logins', (User.count < 3))
-    end
-
-    def always_ok?
-      #warn Rails.logger.warn("aok? #{as_id}, #{as_id&&Card[as_id].id}")
-      return false unless usr_id = as_id
-      return true if usr_id == Card::WagbotID #cannot disable
-
-      always = Card.cache.read('ALWAYS') || {}
-      #warn(Rails.logger.warn "always_ok? #{usr_id}")
-      if always[usr_id].nil?
-        always = always.dup if always.frozen?
-        always[usr_id] = !!Card[usr_id].all_roles.detect{|r|r==Card::AdminID}
-        #warn(Rails.logger.warn "update always hash #{always[usr_id]}, #{always.inspect}")
-        Card.cache.write 'ALWAYS', always
-      end
-      #warn Rails.logger.warn("aok? #{usr_id}, #{always[usr_id]}")
-      always[usr_id]
-    end
-    # PERMISSIONS
-
-  protected
-    # FIXME stick this in session? cache it somehow??
-    def ok_hash
-      usr_id = Card.as_id
-      ok_hash = Card.cache.read('OK') || {}
-      #warn(Rails.logger.warn "ok_hash #{usr_id}")
-      if ok_hash[usr_id].nil?
-        ok_hash = ok_hash.dup if ok_hash.frozen?
-        ok_hash[usr_id] = begin
-            Card[usr_id].all_roles.inject({:role_ids => {}}) do |ok,role_id|
-              ok[:role_ids][role_id] = true
-              ok
-            end
-          end || false
-        #warn(Rails.logger.warn "update ok_hash(#{usr_id}) #{ok_hash.inspect}")
-        Card.cache.write 'OK', ok_hash
-      end
-      r=ok_hash[usr_id]
-      #warn "ok_h #{r}, #{usr_id}, #{ok_hash.inspect}";
-    end
-
-  public
-
-    NON_CREATEABLE_TYPES = %w{ invitation_request setting set }
-
-    def createable_types
-      type_names = Card.as_bot do
-        Card.search :type=>Card::CardtypeID, :return=>:name
-      end
-      noncreateable_names = NON_CREATEABLE_TYPES.map do |code|
-        Wagn::Codename.cardname code
-      end
-      type_names.reject do |name|
-        noncreateable_names.member?(name) || !new( :type=>name ).ok?( :create )
-      end
-    end
-  end
-
-#~~~~~~~ Instance
 
   def among? authzed
     prties = parties
@@ -273,7 +138,7 @@ class Card < ActiveRecord::Base
   def read_rules
     return [] if id==Card::WagbotID  # avoids infinite loop
     party_keys = ['in', Card::AnyoneID] + parties
-    Card.as_bot do
+    Session.as_bot do
       Card.search(:right=>'*read', :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
     end
   end
@@ -292,9 +157,11 @@ class Card < ActiveRecord::Base
   end
 
   def all_roles
-    ids = Card.as_bot { trait_card(:roles).item_cards(:limit=>0).map(&:id) }
+    ids = Session.as_bot { trait_card(:roles).item_cards(:limit=>0).map(&:id) }
     @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
   end
+
+
 
   def existing_trait_card tagcode
     Card.fetch cardname.trait_name(tagcode), :skip_modules=>true
@@ -344,10 +211,10 @@ class Card < ActiveRecord::Base
   end
 
   def set_stamper()
-    #warn "set stamper[#{name}] #{Card.user_id}, #{Card.as_id}" #{caller*"\n"}"
-    self.updater_id = Card.user_id
+    #warn "set stamper[#{name}] #{Session.user_id}, #{Session.as_id}" #{caller*"\n"}"
+    self.updater_id = Session.user_id
     self.creator_id = self.updater_id if new_card?
-    #warn "set stamper[#{name}] #{self.creator_id}, #{self.updater_id}, #{Card.user_id}, #{Card.as_id}" #{caller*"\n"}"
+    #warn "set stamper[#{name}] #{self.creator_id}, #{self.updater_id}, #{Session.user_id}, #{Session.as_id}" #{caller*"\n"}"
   end
 
   def base_before_save
@@ -554,7 +421,7 @@ class Card < ActiveRecord::Base
   end
 
   def repair_key
-    Card.as_bot do
+    Session.as_bot do
       correct_key = cardname.to_key
       current_key = key
       return self if current_key==correct_key
@@ -763,7 +630,7 @@ class Card < ActiveRecord::Base
   validates_each :name do |rec, attr, value|
     if rec.new_card? && value.blank?
       if autoname_card = rec.rule_card(:autoname)
-        Card.as_bot do
+        Session.as_bot do
           autoname_card = autoname_card.refresh if autoname_card.frozen?
           value = rec.name = Card.autoname(autoname_card.content)
           autoname_card.content = value  #fixme, should give placeholder on new, do next and save on create
@@ -876,7 +743,7 @@ class Card < ActiveRecord::Base
 
   class << self
     def setting name
-      Card.as_bot  do
+      Session.as_bot  do
         card=Card[name] and !card.content.strip.empty? and card.content
       end
     end

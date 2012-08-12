@@ -9,7 +9,7 @@ describe Wagn::Model::Pattern do
   
   describe :set_names do
     it "returns self, type, all for simple cards" do
-      Card.as_bot do
+      Session.as_bot do
         card = Card.new( :name => "AnewCard" )
         card.set_names.should == [ "Basic+*type","*all"]
         card.save!
@@ -19,7 +19,7 @@ describe Wagn::Model::Pattern do
     end
 
     it "returns set names for simple star cards" do
-      Card.as_bot do
+      Session.as_bot do
         Card.fetch('*update').set_names.should == [ 
           "*update+*self","*star","Setting+*type","*all"
         ]
@@ -27,7 +27,7 @@ describe Wagn::Model::Pattern do
     end
     
     it "returns set names for junction cards" do
-      Card.as_bot do
+      Session.as_bot do
         Card.new( :name=>"Iliad+author" ).set_names.should == [
           "Book+author+*type plus right","author+*right","Basic+*type","*all plus","*all"
         ]
@@ -35,7 +35,7 @@ describe Wagn::Model::Pattern do
     end
 
     it "returns set names for compound star cards" do
-      Card.as_bot do
+      Session.as_bot do
         Card.new( :name=>"Iliad+*to" ).set_names.should == [
           "Book+*to+*type plus right","*to+*right","*rstar","Phrase+*type","*all plus","*all"
         ]
@@ -79,7 +79,7 @@ describe Wagn::Model::Pattern do
   
   describe :css_names do
     it "returns css names for simple star cards" do
-      Card.as_bot do
+      Session.as_bot do
         card = Card.new( :name => "*AnewCard")
         card.css_names.should == "ALL TYPE-basic STAR"
         card.save!

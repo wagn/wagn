@@ -19,6 +19,21 @@ class CardController < ApplicationController
 
   #----------( CREATE )
 
+  # this should be handled by #read
+  def new
+    args = params[:card] || {}
+    args[:type] ||= params[:type] # for /new/:type shortcut
+
+    @card = Card.new args
+
+    if @card.ok? :create
+      render_show :new
+    else
+      render_denied 'create'
+    end
+  end
+
+
   def create
     @card = Card.new params[:card]
     if @card.save
@@ -52,25 +67,6 @@ class CardController < ApplicationController
 
   def index()    show                  end
   def view()     render_show           end
-#  def changes()  render_show :changes  end
-#  def options()  render_show :options  end
-#  def related()  render_show :related  end
-#  def edit()     render_show :edit     end
-
-
-  def new
-    args = params[:card] || {}
-    args[:type] ||= params[:type] # for /new/:type shortcut
-
-    @card = Card.new args
-
-    if @card.ok? :create
-      render_show :new
-    else
-      render_denied 'create'
-    end
-  end
-
 
   #--------------( UPDATE )
 

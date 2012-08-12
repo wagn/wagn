@@ -482,11 +482,11 @@ class Card < ActiveRecord::Base
     @cached_revision
   end
 
-  def previous_revision(revision)
-    rev_index = revisions.each_with_index do |rev, index|
-      rev.id == revision.id ? (break index) : nil
+  def previous_revision revision
+    if !new_card?
+      rev_index = revisions.find_index { |rev| rev.id == revision.id }
+      revisions[rev_index - 1] if rev_index.to_i != 0
     end
-    (rev_index.to_i==0) ? nil : revisions[rev_index - 1]
   end
 
   def revised_at

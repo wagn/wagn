@@ -60,19 +60,22 @@ class Card < ActiveRecord::Base
     super args
   end
 
-  def initialize(args={})
-
-    args['name'] = args['name'].to_s
+  def initialize args={}
+    args['name']    = args['name'   ].to_s
+    args['type_id'] = args['type_id'].to_i
     
-    args.delete('type_id') if args['type_id'] == ''
-    args['type_id'] = args['type_id'].to_i unless args['type_id'].nil?
-    #warn (Rails.logger.debug "initialize #{args.inspect}") if [0, nil, ''].member? args['type_id']
-    @type_args = { :type=>args.delete('type'), :typecode=>args.delete('typecode'), :type_id=>args['type_id'] }
-    #raise "type_id type ??? #{args.inspect}" if @type_args.values.compact.empty?
+    args.delete('type_id') if args['type_id'] == 0 # can come in as 0, '', or nil
+    
+    @type_args = { # these are cached to optimize #new
+      :type     => args.delete('type'    ),
+      :typecode => args.delete('typecode'),
+      :type_id  => args[       'type_id' ]
+    }
+
     skip_modules = args.delete 'skip_modules'
 
-    #warn Rails.logger.warn("card#initialize #{type_args.inspect}, A: #{args.inspect}") #\n#{caller*"\n"}" if args['name'] == 'Ulysses'
     super args
+    
     if tid = get_type_id(@type_args)
       self.type_id_without_tracking = tid
     end
@@ -136,24 +139,16 @@ class Card < ActiveRecord::Base
   end
 
   def read_rules
-    return [] if id==Card::WagbotID  # avoids infinite loop
-    party_keys = ['in', Card::AnyoneID] + parties
-    Session.as_bot do
-      Card.search(:right=>'*read', :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
+    @read_rules ||= begin
+      if id==Card::WagbotID
+        [] # avoids infinite loop
+      else
+        party_keys = ['in', Card::AnyoneID] + parties
+        Session.as_bot do
+          Card.search(:right=>'*read', :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
+        end
+      end
     end
-  end
-
-  def read_rules_with_cache
-    if @read_rules.nil?
-      @read_rules = read_rules_without_cache
-    end
-    #warn"rr wc #{name} > #{@read_rules.inspect}"
-    @read_rules
-  end
-  alias_method_chain :read_rules, :cache
-
-  def reset_roles
-    @read_rules = nil
   end
 
   def all_roles
@@ -540,9 +535,9 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # MISCELLANEOUS
 
-  def to_s()  "#<#{self.class.name}[#{type_id==0 ? 'zero': typename}:#{type_id}]#{self.attributes['name']}>" end
-  #def inspect()  "#<#{self.class.name}##{self.id}[#{type_id==0 ? 'zero': typename}:#{type_id}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}} U:#{updater_id} C:#{creator_id}>" end
-  def inspect()  "#<#{self.class.name}(#{object_id})##{self.id}[#{type_id==0 ? 'zero': typename}:#{type_id}]!#{
+  def to_s()  "#<#{self.class.name}[#{type_id < 1 ? 'bogus': typename}:#{type_id}]#{self.attributes['name']}>" end
+  #def inspect()  "#<#{self.class.name}##{self.id}[#{type_id < 1 ? 'bogus': typename}:#{type_id}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}} U:#{updater_id} C:#{creator_id}>" end
+  def inspect()  "#<#{self.class.name}(#{object_id})##{self.id}[#{type_id < 1 ? 'bogus': typename}:#{type_id}]!#{
      self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}} R:#{
       @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}>"
   end

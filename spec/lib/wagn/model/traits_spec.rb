@@ -35,6 +35,7 @@ describe Card do
     end                                          
 
     it "verifies that the extension's menu_option is added after Edit" do
+      pending
       c = Card.fetch('B')
       #warn "renders #{Wagn::Renderer::Html.new(c).render}"
       assert_view_select Wagn::Renderer::Html.new(c).render, 'span[class="card-menu"]' do
@@ -52,6 +53,7 @@ describe Card do
     end
 
     it "Error for setting card wrong type for form" do
+      pending
       Card.create!( :name=>"*sol+*right+*declare" )
       c = Card.fetch('B')
       (r=Wagn::Renderer::Html.new(c).render(:declare)).should_not match(/Missing setting/)
@@ -59,6 +61,7 @@ describe Card do
     end
 
     it "Error for no setting form pointee" do
+      pending
       Card.create!( :name=>"*sol+*right+*declare", :type=>'Pointer' )
       c = Card.fetch('B')
       (r=Wagn::Renderer::Html.new(c).render(:declare)).should_not match(/Missing setting/)
@@ -67,6 +70,7 @@ describe Card do
     end
 
     it "Renders a declaration form" do
+      pending
       Card.create!( :name=>"*sol+*right+*declare", :type=>'Pointer', :content=>"[[*sol+declare]]\n[[*sol+special]]" )
       Card.create!( :name=>"*sol+declare", :content=>"{{+foo}}\n{{+bar}}\n{{Foobar+foo}}" )
       c = Card.fetch('B')

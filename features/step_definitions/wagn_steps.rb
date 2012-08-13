@@ -86,7 +86,7 @@ end
    
 When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
   logged_in_as(username) do
-    visit "/card/remove/#{cardname.to_cardname.to_url_key}?confirm_destroy=true"
+    visit "/card/delete/#{cardname.to_cardname.to_url_key}?confirm_destroy=true"
   end
 end
 

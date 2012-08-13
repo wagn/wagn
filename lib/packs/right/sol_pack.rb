@@ -18,7 +18,7 @@ class Wagn::Renderer::Html
           <div class="declare-button-area">#{
           hidden_field_tag(:attribute, card.attribute )}#{
           button_tag "Declare", :class=>'edit-submit-button'}#{
-          button_tag 'Cancel', :class=>'edit-cancel-button slotter', :href=>path(:view)
+          button_tag 'Cancel', :class=>'edit-cancel-button slotter', :href=>path(:read)
           }</div>
         }
       end}

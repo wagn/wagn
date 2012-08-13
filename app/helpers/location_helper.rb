@@ -21,6 +21,8 @@ module LocationHelper
   end
 
   def save_location
+    return if ajax? || !html?
+    
     discard_locations_for(@card)
     @previous_location = wagn_path(@card)
     location_history.push @previous_location

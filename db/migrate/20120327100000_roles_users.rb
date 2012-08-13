@@ -72,13 +72,13 @@ class RolesUsers < ActiveRecord::Migration
       c=Card['*account+*right+*create'] and c << '_left' or
           Card.create(:name => "*account+*right+*create",
                       :type_id => Card::PointerID,
-                      :content => "[[_left]]")
+                      :content => "_left")
 
       # Add *account+*right+*update (administrate_users)
       Card['*account+*right+*update'] or
       Card.create!(:name => "*account+*right+*update",
                    :type_id => Card::PointerID,
-                   :content => "[[_left]]")
+                   :content => "_left")
 
       # Add *roles+*right+*update   (edit_user_roles)
       roles_update_rule_name = "*roles+*right+*update"
@@ -87,11 +87,12 @@ class RolesUsers < ActiveRecord::Migration
       else
         Card.create! :name => roles_update_rule_name,
                      :type_id => Card::PointerID,
-                     :content => "[[_left]]"
+                     :content => "_left"
       end
 
       roles_default_name = '*roles+*right+*default'
       if Card[roles_default_name]
+        puts "WARNING: #{roles_default_name} already exists!"
       else
         Card.create! :name => roles_default_name,
                      :type_id => Card::PointerID

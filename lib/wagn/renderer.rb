@@ -4,12 +4,16 @@ module Wagn
     include LocationHelper
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
-    UNDENIABLE_VIEWS = [ :denial, :errors, :edit_virtual,
-      :too_slow, :too_deep, :missing, :not_found, :closed_missing, :name,
-      :link, :linkname, :url, :show, :layout, :bad_address, :server_error ]
+    @@perms = {}
+#    UNDENIABLE_VIEWS = [ :denial, :errors, :edit_virtual,
+#      :too_slow, :too_deep, 
+#:missing, :not_found, :closed_missing, :name,
+#      :link, :linkname, :url, 
+
+#:show, :layout, :bad_address, :server_error ]
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
-      :layout=>:layout, :new=>:edit }
-    DEFAULT_ITEM_VIEW = :link
+      :layout=>:layout, :new=>:edit } #should be set in views
+    DEFAULT_ITEM_VIEW = :link #should be set in card
   
     RENDERERS = {
       :html => :Html,
@@ -58,6 +62,7 @@ module Wagn
 
 
       def define_view view, opts={}, &final
+        @@perms[view] = opts.delete(:perms) if opts[:perms]
         view_key = get_view_key(view, opts)
         define_method "_final_#{view_key}", &final
         #warn "defining method _final_#{view_key}"
@@ -225,18 +230,29 @@ module Wagn
   
   
     def deny_render view, args={}
-      return false if UNDENIABLE_VIEWS.member? view
+      return false if @@perms[view] == :none
+      
       altered_view = case
         when @depth >= @@max_depth ; :too_deep
         when !card                 ; false
-        when view == :watch
+        when view == :watch #need to represent this in view somehow....
           :blank if !Session.logged_in? || card.virtual?
-        when [:new, :edit, :edit_in_form].member?(view)
-          allowed = card.ok?(card.new_card? ? :create : :update)
-          !allowed && :denial
         else
-          !card.ok?(:read) and :denial
-      end
+          #warn "deny_render #{view}, #{args.inspect}"
+          av = false
+          [ ( @@perms[view] || :read ) ].flatten.each do |task|
+            !card.ok?( task ) and break( av = :denial)
+          end
+          av
+        end  
+          
+          
+#        when [:new, :edit, :edit_in_form].member?(view)
+#          allowed = card.ok?(card.new_card? ? :create : :update)
+#          !allowed && :denial
+#        else
+#          !card.ok?(:read) and :denial
+#      end
       return false unless altered_view
 
       args[:denied_view] = view
@@ -319,21 +335,31 @@ module Wagn
   
       new_card = tcard.new_card? && !tcard.virtual?
   
+      # FIXME! get rid of all these hardcoded view rules by representing these ideas in the view definitions
+  
       requested_view = (options[:view] || :content).to_sym
       options[:home_view] = [:closed, :edit].member?(requested_view) ? :open : requested_view
+      
       approved_view = case
 
-        when (UNDENIABLE_VIEWS + [ :new, :closed_rule, :open_rule ]).member?(requested_view)  ; requested_view
+        when @@perms[requested_view] == :none
+          requested_view
+          
+        when [ :new, :closed_rule, :open_rule ].member?( requested_view )
+          requested_view
+          
         when @mode == :edit
          tcard.virtual? ? :edit_virtual : :edit_in_form 
          # FIXME should be concerned about templateness, not virtualness per se
          # needs to handle real cards that are hard templated much better
+         
         when new_card
           case
           when requested_view == :raw ; :blank
           when @mode == :closed       ; :closed_missing
           else                        ; :missing
           end
+          
         when @mode==:closed     ; :closed_content
         else                    ; requested_view
         end
@@ -366,15 +392,15 @@ module Wagn
       pcard = opts.delete(:card) || card
       base = action==:read ? '' : "/card/#{action}" 
       
-      if pcard && ![:new, :create, :create_or_update].member?( action )
-        base += '/' + (opts[:id] ? "~#{opts.delete(:id)}" : pcard.cardname.to_url_key)
+      if pcard && action != :create #might be some issues with new?
+        base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.to_url_key )
       end
       if attrib = opts.delete( :attrib )
         base += "/#{attrib}"
       end
       query =''
       if !opts.empty?
-        query = '?' + (opts.map{ |k,v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&') )
+        query = '?' + ( opts.map{ |k,v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&') )
       end
       wagn_path( base + query )
     end

@@ -9,7 +9,7 @@ class Wagn::Renderer::Html
     end
   end
 
-  define_view :layout do |args|
+  define_view :layout, :perms=>:none do |args|
     if @main_content = args.delete( :main_content )
       @card = Card.fetch_or_new '*placeholder'
     end
@@ -46,8 +46,7 @@ class Wagn::Renderer::Html
     end
   end
 
-  define_view :comment_box do |args|
-    return '' unless card && card.ok?(:comment) #move into deny_render??
+  define_view :comment_box, :perms=>:comment do |args|
     %{<div class="comment-box nodblclick"> #{
       card_form :comment do |f|
         %{#{f.text_area :comment, :rows=>3 }<br/> #{
@@ -77,7 +76,7 @@ class Wagn::Renderer::Html
   end
 
 
-  define_view :new do |args|
+  define_view :new, :perms=>:create do |args|
     @help_card = card.rule_card(:add_help, :fallback=>:edit_help)
     if ajax_call?
       new_content :cancel_href=>path(:read, :view=>:missing), :cancel_class=>'slotter'
@@ -109,7 +108,7 @@ class Wagn::Renderer::Html
   end
 
 ###---(  EDIT VIEWS )
-  define_view :edit do |args|
+  define_view :edit, :perms=>:update do |args|
     attrib = params[:attribute] || 'content'
     attrib = 'name' if params[:card] && params[:card][:name]
     wrap :edit, args do
@@ -123,7 +122,7 @@ class Wagn::Renderer::Html
     end
   end
 
-  define_view :edit_content do |args|
+  define_view :edit_content, :perms=>:update do |args|
     %{#{
       if inst = card.rule_card(:edit_help)
         %{<div class="instruction">#{ raw subrenderer(inst).render_core }</div>}
@@ -151,7 +150,7 @@ class Wagn::Renderer::Html
       }
   end
 
-  define_view :edit_name do |args|
+  define_view :edit_name, :perms=>:update do |args|
     %{
       <div class="edit-area edit-name">
        <h2>Change Name</h2>
@@ -205,7 +204,7 @@ class Wagn::Renderer::Html
     </div>}
   end
 
-  define_view :edit_type do |args|
+  define_view :edit_type, :perms=>:update do |args|
     %{
     <div class="edit-area edit-type">
     <h2>Change Type</h2> #{
@@ -226,7 +225,7 @@ class Wagn::Renderer::Html
     </div>}
   end
 
-  define_view :edit_in_form do |args|
+  define_view :edit_in_form do |args|  #, :perms=>:update
     instruction = ''
     if instruction_card = (card.new_card? ? card.rule_card(:add_help, :fallback => :edit_help) : card.rule_card(:edit_help))
       ss = self.subrenderer(instruction_card)
@@ -537,7 +536,7 @@ class Wagn::Renderer::Html
   end
 
 
-  define_view :errors do |args|
+  define_view :errors, :perms=>:none do |args|
     wrap :errors, args do
       %{ <h2>Can't save "#{card.name}".</h2> } +
       card.errors.map { |attr, msg| "<div>#{attr}: #{msg}</div>" } * ''
@@ -599,7 +598,7 @@ class Wagn::Renderer::Html
             <h1>Ooo.  Sorry, but...</h1>
   
         
-         #{ if params[:action] != 'read' && Wagn::Conf[:read_only]
+         #{ if params[:action] != :read && Wagn::Conf[:read_only]
               "<div>We are currently in read-only mode.  Please try again later.</div>"
             else
               %{<div>#{
@@ -611,7 +610,7 @@ class Wagn::Renderer::Html
               end} to #{params[:action]} this card#{": <strong>#{fancy_title(card)}</strong>" if card.name && !card.name.blank? }.
               </div>
   
-              #{unless @skip_slot_header or params[:action]=='read'
+              #{unless @skip_slot_header or params[:action] == :read
                 %{<p>#{ link_to 'See permission settings', path(:options, :attrib=>'settings'), :class=>'slotter', :remote=>true  }.</p>}
               end} #{
   

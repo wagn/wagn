@@ -12,7 +12,7 @@ describe CardController do
 #    end
 
     it "should recognize type" do
-      { :get => "/new/Phrase" }.should route_to( :controller => 'card', :action=>'new', :type=>'Phrase' )
+      { :get => "/new/Phrase" }.should route_to( :controller => 'card', :action=>'read', :type=>'Phrase', :view=>'new' )
     end
     
     it "should recognize .rss on /recent" do
@@ -143,19 +143,19 @@ describe CardController do
     end    
   end
 
-  describe "#new" do
+  describe "view = new" do
     before do
       login_as 'joe_user'
     end
     
     it "new should work for creatable nonviewable cardtype" do
       login_as(:anonymous)     
-      get :new, :type=>"Fruit"
+      get :read, :type=>"Fruit", :view=>'new'
       assert_response :success
     end
 
     it "new with existing card" do
-      get :new, :card=>{:name=>"A"}
+      get :read, :card=>{:name=>"A"}, :view=>'new'
       assert_response :success, "response should succeed"
     end
   end
@@ -175,7 +175,7 @@ describe CardController do
     end
 
     it "new with name" do
-      post :new, :card=>{:name=>"BananaBread"}
+      post :read, :card=>{:name=>"BananaBread"}, :view=>'new'
       assert_response :success, "response should succeed"                     
       assert_equal 'BananaBread', assigns['card'].name, "@card.name should == BananaBread"
     end        
@@ -216,13 +216,13 @@ describe CardController do
     end
     
     it "new without typecode" do
-      post :new   
+      post :read, :view=>'new'
       assert_response :success, "response should succeed"                     
       assert_equal Card::BasicID, assigns['card'].type_id, "@card type should == Basic"
     end
 
     it "new with typecode" do
-      post :new, :card => {:type=>'Date'}   
+      post :read, :card => {:type=>'Date'}, :view=>'new'
       assert_response :success, "response should succeed"                     
       assert_equal Card::DateID, assigns['card'].type_id, "@card type should == Date"
     end        

@@ -51,13 +51,6 @@ class ApplicationController < ActionController::Base
 #    end
   end
   
-  def canonicalize_domain
-    if Rails.env=="production" and request.raw_host_with_port != Wagn::Conf[:host]
-      query_string = request.query_string.empty? ? '' : "?#{request.query_string}"
-      return redirect_to("http://#{Wagn::Conf[:host]}#{request.path}#{query_string}")
-    end
-  end
-
   def wagn_layout
     layout = nil
     respond_to do |format|
@@ -74,9 +67,11 @@ class ApplicationController < ActionController::Base
     [nil, 'html'].member?(params[:format])
   end
   # ------------------( permission filters ) -------
-  def read_ok()    @card.ok?(:read)   || deny('view')    end
-  def update_ok()  @card.ok?(:update) || deny('edit')    end
-  def delete_ok()  @card.ok!(:delete) || deny('delete')  end
+  def read_ok()    @card.ok?(:read)   || deny(:read)    end
+    
+    
+#  def update_ok()  @card.ok?(:update) || deny(:update)  end
+#  def delete_ok()  @card.ok!(:delete) || deny(:delete)  end
     #warn "rok #{@card.ok?(:delete)}"
 
  #def create_ok

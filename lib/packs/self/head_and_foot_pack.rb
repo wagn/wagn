@@ -45,7 +45,7 @@ class Wagn::Renderer
       #{ local_css_path ? %{ wagn.local_css_path = '#{local_css_path}'; } : '' }
       ) +
       #  TEMPORARY we probably want this back once we have fingerprinting on this file - EFM
-      %( wagn.tinyMCEConfig = { #{Card.setting('tiny_mce')} };
+      %( wagn.tinyMCEConfig = { #{ Card.setting :tiny_mce } };
     </script>      
           )
     bits << javascript_include_tag('application')

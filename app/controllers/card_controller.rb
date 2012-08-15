@@ -170,10 +170,18 @@ class CardController < ApplicationController
       when /^\:(\w+)$/   ; Card.fetch $1.to_sym
       else
         opts = params[:card] ? params[:card].clone : {}
-        opts[:type] ||= params[:type] # for /new/:type shortcut
+        opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
         name = params[:id] ? Wagn::Cardname.unescape( params[:id] ) : opts[:name]
         
-        Card.fetch_or_new name, opts
+        if @action == 'create'
+          # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
+          # I think we may need to create a "#create" instance method that handles this checking.
+          # that would let us get rid of this...
+          opts[:name] ||= name
+          Card.new opts
+        else
+          Card.fetch_or_new name, opts
+        end
       end
       
     Wagn::Conf[:main_name] = params[:main] || (@card && @card.name) || ''

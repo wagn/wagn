@@ -49,7 +49,7 @@ class Wagn::Renderer
   define_view :blank, :perms=>:none do |args| "" end
 
 
-  define_view :not_found, :perms=>:none do |args|
+  define_view :not_found, :perms=>:none, :error_code=>404 do |args|
     %{ There's no card named "#{card.name}" }
   end
 
@@ -59,8 +59,8 @@ class Wagn::Renderer
     %{ To tell us more and follow the fix, add a support ticket at http://wagn.org/new/Support_Ticket }
   end
 
-  define_view :denial, :perms=>:none do |args|
-    args[:denied_view] ? '' : 'Permission Denied' 
+  define_view :denial, :perms=>:none, :error_code=>403 do |args|
+    main? ? 'Permission Denied' : ''
   end
   
   define_view :bad_address, :perms=>:none do |args|

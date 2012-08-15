@@ -1,6 +1,6 @@
 class Wagn::Renderer::Html
 
-  define_view :closed_rule do |args|
+  define_view :closed_rule, :tags=>:unknown_ok do |args|
     rule_card = card.new_card? ? find_current_rule_card[0] : card
 
     cells = [
@@ -26,7 +26,7 @@ class Wagn::Renderer::Html
 
 
 
-  define_view :open_rule do |args|
+  define_view :open_rule, :tags=>:unknown_ok do |args|
     current_rule, prototype = find_current_rule_card
     setting_name = card.cardname.tag_name
     #warn Rails.logger.warn("open_rule #{card.inspect}, cr:#{current_rule.inspect}, sn:#{setting_name}, p:#{params.inspect}")
@@ -80,15 +80,14 @@ class Wagn::Renderer::Html
 
   end
 
-  # THIS SHOULD NOT BE A VIEW
-  define_view :edit_rule do |args|
+  define_view :edit_rule, :tags=>:unknown_ok do |args|
     edit_mode       = args[:edit_mode]
     setting_name    = args[:setting_name]
     current_set_key = args[:current_set_key] || '*all' # Card[:all].name (should have a constant for this?)
     open_rule       = args[:open_rule]
     @item_view ||= :link
 
-    form_for card, :url=>path(:create_or_update), :remote=>true, :html=>
+    form_for card, :url=>path(:update), :remote=>true, :html=>
         {:class=>"card-form card-rule-form #{edit_mode && 'slotter'}" } do |form|
 
       %{

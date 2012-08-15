@@ -16,7 +16,7 @@ describe CardController do
     end
     
     it "should recognize .rss on /recent" do
-      {:get => "/recent.rss"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
+      {:get => "/recent.rss"}.should route_to(:controller=>"card", :view=>"content", :action=>"read", 
         :id=>"*recent", :format=>"rss"
       )
     end
@@ -25,25 +25,25 @@ describe CardController do
       describe "routes prefixed with '#{prefix}'" do
         it "should recognize .rss format" do
           {:get => "#{prefix}/*recent.rss"}.should route_to(
-            :controller=>"card", :action=>"show", :id=>"*recent", :format=>"rss"
+            :controller=>"card", :action=>"read", :id=>"*recent", :format=>"rss"
           )
         end           
     
         it "should recognize .xml format" do
           {:get => "#{prefix}/*recent.xml"}.should route_to(
-            :controller=>"card", :action=>"show", :id=>"*recent", :format=>"xml"
+            :controller=>"card", :action=>"read", :id=>"*recent", :format=>"xml"
           )
         end           
 
 #        it "should accept cards with dot sections that don't match extensions" do
 #          {:get => "#{prefix}/random.card"}.should route_to(
-#            :controller=>"card",:action=>"show",:id=>"random.card"
+#            :controller=>"card",:action=>"read",:id=>"random.card"
 #          )
 #        end
     
         it "should accept cards without dots" do
           {:get => "#{prefix}/random"}.should route_to(
-            :controller=>"card",:action=>"show",:id=>"random"
+            :controller=>"card",:action=>"read",:id=>"random"
           )
         end    
       end
@@ -180,28 +180,28 @@ describe CardController do
       assert_equal 'BananaBread', assigns['card'].name, "@card.name should == BananaBread"
     end        
     
-    describe "#show" do
+    describe "#read" do
       it "works for basic request" do
-        get :show, {:id=>'Sample_Basic'}
+        get :read, {:id=>'Sample_Basic'}
         response.should have_selector('body')
         assert_response :success
         'Sample Basic'.should == assigns['card'].name
       end
 
       it "handles nonexistent card" do
-        get :show, {:id=>'Sample_Fako'}
+        get :read, {:id=>'Sample_Fako'}
         assert_response :success   
       end
 
       it "handles nonexistent card without create permissions" do
         login_as :anonymous
-        get :show, {:id=>'Sample_Fako'}
+        get :read, {:id=>'Sample_Fako'}
         assert_response 404
       end
       
-      #it "invokes before_show hook" do
-      #  Wagn::Hook.should_receive(:call).with(:before_show, "*all", instance_of(CardController))
-      #  get :show, {:id=>'Sample_Basic'}
+      #it "invokes before_read hook" do
+      #  Wagn::Hook.should_receive(:call).with(:before_read, "*all", instance_of(CardController))
+      #  get :read, {:id=>'Sample_Basic'}
       #end
     end
     
@@ -227,9 +227,9 @@ describe CardController do
       assert_equal Card::DateID, assigns['card'].type_id, "@card type should == Date"
     end        
 
-    it "remove" do
+    it "delete" do
       c = Card.create( :name=>"Boo", :content=>"booya")
-      post :remove, :id=>"~#{c.id}"
+      post :delete, :id=>"~#{c.id}"
       assert_response :redirect
       Card.find_by_name("Boo").should == nil
     end

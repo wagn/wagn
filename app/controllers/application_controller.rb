@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
 
   def per_request_setup
 #    ActiveSupport::Notifications.instrument 'wagn.per_request_setup', :message=>"" do
-      request.format = :html if !params[:format]
+      request.format = :html if !params[:format] #is this used??
 
       # these should not be Wagn::Conf, but more like wagn.env
       Wagn::Conf[:host] = host = request.env['HTTP_HOST']
@@ -69,11 +69,14 @@ class ApplicationController < ActionController::Base
   def ajax?
     request.xhr? || params[:simulate_xhr]
   end
-
+  
+  def html?
+    [nil, 'html'].member?(params[:format])
+  end
   # ------------------( permission filters ) -------
-  def view_ok()    @card.ok?(:read)   || render_denied('view')    end
-  def update_ok()  @card.ok?(:update) || render_denied('edit')    end
-  def remove_ok()  @card.ok!(:delete) || render_denied('delete')  end
+  def read_ok()    @card.ok?(:read)   || deny('view')    end
+  def update_ok()  @card.ok?(:update) || deny('edit')    end
+  def delete_ok()  @card.ok!(:delete) || deny('delete')  end
     #warn "rok #{@card.ok?(:delete)}"
 
  #def create_ok
@@ -81,7 +84,7 @@ class ApplicationController < ActionController::Base
  #  @skip_slot_header = true
  #  #p "CREATE OK: #{@type}"
  #  t = Card.class_for(@type, :cardname) || Card::Basic
- #  t.create_ok? || render_denied('create')
+ #  t.create_ok? || deny('create')
  #end
 
   # ----------( rendering methods ) -------------
@@ -94,21 +97,21 @@ class ApplicationController < ActionController::Base
     end 
   end
 
-  def render_denied(action = nil)
+  def deny action=nil
     params[:action] = action if action
     @card.error_view = :denial
     @card.error_status = 403
-    render_errors
+    errors
   end
 
-  def render_errors options={}
+  def errors options={}
     @card ||= Card.new
     view   = options[:view]   || (@card && @card.error_view  ) || :errors
     status = options[:status] || (@card && @card.error_status) || 422
-    render_show view, status
+    show view, status
   end
 
-  def render_show view = nil, status = 200
+  def show view = nil, status = 200
     ext = request.parameters[:format]
     known = FORMATS.split('|').member? ext 
     
@@ -121,29 +124,25 @@ class ApplicationController < ActionController::Base
     when known                # renderers can handle it
       renderer = Wagn::Renderer.new @card, :format=>ext, :controller=>self
       render :text=>renderer.render_show( :view => view ), :status=>status
-    when render_show_file     # send_file can handle it
+    when show_file            # send_file can handle it
     else                      # dunno how to handle it
       render :text=>"unknown format: #{extension}", :status=>404
     end
   end
   
-  def render_show_file
-    Rails.logger.debug "render_show_file #{@card}"
+  def show_file
+    #Rails.logger.debug "show_file #{@card}"
     return fast_404 if !@card
     
-    
     @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
-  
     format = @card.attachment_format(params[:format])
-
     return fast_404 if !format
 
     if ![format, 'file'].member?( params[:format] )
       return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) ) 
     end
 
-    style = @card.attachment_style( @card.type_id, params[:size] || @style )
-    
+    style = @card.attachment_style( @card.type_id, params[:size] || @style )    
     return fast_404 if !style
 
     send_file @card.attach.path(style), 
@@ -176,7 +175,7 @@ class ApplicationController < ActionController::Base
       end
     end
     
-    render_errors :view=>view, :status=>status
+    errors :view=>view, :status=>status
   end
      
 end

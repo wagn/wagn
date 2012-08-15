@@ -19,7 +19,7 @@ class CardActionTest < ActionController::IntegrationTest
 
   # Has Test
   # ---------                                                                                   
-  # card/remove
+  # card/delete
   # card/create
   # connection/create
   # card/comment 
@@ -28,7 +28,7 @@ class CardActionTest < ActionController::IntegrationTest
   # -----------
   # card/rollback
   # card/save_draft
-  # connection/remove ??
+  # connection/delete ??
 
   def test_comment      
     Session.as_bot  do
@@ -87,7 +87,7 @@ class CardActionTest < ActionController::IntegrationTest
     assert_tag :tag=>'div', :attributes=>{:class=>'error', :id=>'no-cardtype-error'}
   end
 
-  # FIXME: this should probably be files in the spot for a remove test
+  # FIXME: this should probably be files in the spot for a delete test
   def test_removal_and_return_to_previous_undeleted_card_after_deletion
     t1 = t2 = nil
     Session.as_bot do 
@@ -98,11 +98,11 @@ class CardActionTest < ActionController::IntegrationTest
     get url_for_page( t1.name )
     get url_for_page( t2.name )
     
-    post 'card/remove/~' + t2.id.to_s
+    post 'card/delete/~' + t2.id.to_s
     assert_redirected_to url_for_page( t1.name )   
     assert_nil Card.find_by_name( t2.name )
     
-    post 'card/remove/~' + t1.id.to_s
+    post 'card/delete/~' + t1.id.to_s
     assert_redirected_to '/'
     assert_nil Card.find_by_name( t1.name )
   end

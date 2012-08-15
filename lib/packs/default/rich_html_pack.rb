@@ -66,7 +66,7 @@ class Wagn::Renderer::Html
       %{
         <div class="card-header">
           <div class="title-menu">
-            #{ link_to( fancy_title(card), path(:view, :view=>:open), :title=>"open #{card.name}",
+            #{ link_to( fancy_title(card), path(:read, :view=>:open), :title=>"open #{card.name}",
               :class=>'title right-arrow slotter', :remote=>true ) }
             #{ page_icon(card.name) } &nbsp;
           </div>
@@ -80,7 +80,7 @@ class Wagn::Renderer::Html
   define_view :new do |args|
     @help_card = card.rule_card(:add_help, :fallback=>:edit_help)
     if ajax_call?
-      new_content :cancel_href=>path(:view, :view=>:missing), :cancel_class=>'slotter'
+      new_content :cancel_href=>path(:read, :view=>:missing), :cancel_class=>'slotter'
     else
       %{
         <h1 class="page-header">
@@ -139,12 +139,12 @@ class Wagn::Renderer::Html
 
         <div class="edit-button-area"> #{
           if !card.new_card?
-            button_tag "Delete", :href=>path(:remove), :type=>'button', 'data-type'=>'html',
+            button_tag "Delete", :href=>path(:delete), :type=>'button', 'data-type'=>'html',
               :class=>'edit-delete-button delete-button slotter standard-delete'
 
           end}#{
           submit_tag 'Submit', :class=>'edit-submit-button'}#{
-          button_tag 'Cancel', :class=>'edit-cancel-button slotter', :href=>path(:view), :type=>'button'}
+          button_tag 'Cancel', :class=>'edit-cancel-button slotter', :href=>path(:read), :type=>'button'}
         </div>}
        end}
     </div>
@@ -421,7 +421,7 @@ class Wagn::Renderer::Html
         %{<p class="revision-diff-header">
           <small>
             Showing changes from revision ##{ @revision_number - 1 }:
-            <ins class="diffins">Added</ins> | <del class="diffmod">Removed</del>
+            <ins class="diffins">Added</ins> | <del class="diffmod">Deleted</del>
           </small>
         </p>}
       end}
@@ -449,16 +449,16 @@ class Wagn::Renderer::Html
     end
   end
 
-  define_view :remove do |args|
-    wrap :remove, args do
+  define_view :delete do |args|
+    wrap :delete, args do
     %{#{ _render_header}
-    #{card_form :remove, '', 'data-type'=>'html', 'main-success'=>'REDIRECT: TO-PREVIOUS' do |f|
+    #{card_form :delete, '', 'data-type'=>'html', 'main-success'=>'REDIRECT: TO-PREVIOUS' do |f|
     
       %{#{ hidden_field_tag 'confirm_destroy', 'true' }#{
-        hidden_field_tag 'success', "TEXT: #{card.name} removed" }
+        hidden_field_tag 'success', "TEXT: #{card.name} deleted" }
 
     <div class="content open-content">
-      <p>Really remove #{ link_to_page formal_title(card), card.name }?</p>#{
+      <p>Really delete #{ link_to_page formal_title(card), card.name }?</p>#{
        if dependents = card.dependents and !dependents.empty? #ENGLISH ^
         %{<p>That would mean removing all these cards, too:</p>
         <ul>
@@ -468,8 +468,8 @@ class Wagn::Renderer::Html
         </ul>}
        end}
        #{ error_messages_for card }
-       #{ submit_tag 'Yes do it', :class=>'remove-submit-button' }
-       #{ button_tag 'Cancel', :class=>'remove-cancel-button slotter', :type=>'button', :href=>path(:view) }
+       #{ submit_tag 'Yes do it', :class=>'delete-submit-button' }
+       #{ button_tag 'Cancel', :class=>'delete-cancel-button slotter', :type=>'button', :href=>path(:read) }
        #{ notice }
     </div>
       }
@@ -503,7 +503,7 @@ class Wagn::Renderer::Html
     %{<div class="card-header">
        #{ menu }
        <div class="title-menu">
-         #{ link_to fancy_title(card), path(:view, :view=>:closed),
+         #{ link_to fancy_title(card), path(:read, :view=>:closed),
             :title => "close #{card.name}", 
             :class => "line-link title down-arrow slotter", 
             :remote => true 
@@ -599,7 +599,7 @@ class Wagn::Renderer::Html
             <h1>Ooo.  Sorry, but...</h1>
   
         
-         #{ if params[:action] != 'view' && Wagn::Conf[:read_only]
+         #{ if params[:action] != 'read' && Wagn::Conf[:read_only]
               "<div>We are currently in read-only mode.  Please try again later.</div>"
             else
               %{<div>#{
@@ -611,7 +611,7 @@ class Wagn::Renderer::Html
               end} to #{params[:action]} this card#{": <strong>#{fancy_title(card)}</strong>" if card.name && !card.name.blank? }.
               </div>
   
-              #{unless @skip_slot_header or @deny=='view'
+              #{unless @skip_slot_header or params[:action]=='read'
                 %{<p>#{ link_to 'See permission settings', path(:options, :attrib=>'settings'), :class=>'slotter', :remote=>true  }.</p>}
               end} #{
   

@@ -209,9 +209,10 @@ module Wagn
       )
     end
 
-    def link_to_action( text, to_action, html_opts={})
+    def link_to_action text, to_action, html_opts={}
       html_opts[:remote] = true
-      link_to text, path(to_action), html_opts
+      path_options = to_action == :view ? {} : { :view => to_action}
+      link_to text, path(:read, path_options), html_opts
     end
 
     def name_field(form, options={})

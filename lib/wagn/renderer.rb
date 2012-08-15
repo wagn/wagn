@@ -364,7 +364,8 @@ module Wagn
     
     def path action, opts={}
       pcard = opts.delete(:card) || card
-      base = wagn_path "/card/#{action}"
+      base = action==:read ? '' : "/card/#{action}" 
+      
       if pcard && ![:new, :create, :create_or_update].member?( action )
         base += '/' + (opts[:id] ? "~#{opts.delete(:id)}" : pcard.cardname.to_url_key)
       end
@@ -375,7 +376,7 @@ module Wagn
       if !opts.empty?
         query = '?' + (opts.map{ |k,v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&') )
       end
-      base + query
+      wagn_path( base + query )
     end
 
     def search_params

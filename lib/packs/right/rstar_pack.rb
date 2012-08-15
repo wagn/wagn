@@ -5,7 +5,7 @@ class Wagn::Renderer::Html
 
     cells = [
       ["rule-setting",
-        link_to( card.cardname.tag_name.sub(/^\*/,''), path(:view, :view=>:open_rule),
+        link_to( card.cardname.tag_name.sub(/^\*/,''), path(:read, :view=>:open_rule),
           :class => 'edit-rule-link slotter', :remote => true )
       ],
       ["rule-content",
@@ -97,7 +97,7 @@ class Wagn::Renderer::Html
       <div class="card-editor">
         <div class="rule-column-1">
           <div class="rule-setting">
-            #{ link_to( setting_name.sub(/^\*/,''), path(:view, :card=>open_rule, :view=>:closed_rule),
+            #{ link_to( setting_name.sub(/^\*/,''), path(:read, :card=>open_rule, :view=>:closed_rule),
                 :remote => true, :class => 'close-rule-link slotter') }
           </div>
           <ul class="set-editor">
@@ -140,7 +140,7 @@ class Wagn::Renderer::Html
       if edit_mode
         %{<label>type:</label>}+
         raw(typecode_field( :class =>'type-field rule-type-field live-type-field', 'data-remote'=>true,
-          :href => path(:view, :card=>open_rule, :view=>:open_rule, :type_reload=>true) ) )
+          :href => path(:read, :card=>open_rule, :view=>:open_rule, :type_reload=>true) ) )
       elsif current_set_key
         '<label>type:</label>'+
         %{<span class="rule-type">#{ current_set_key ? card.typename : '' }</span>}
@@ -156,12 +156,12 @@ class Wagn::Renderer::Html
          ('<div class="edit-button-area">' +
            if params[:success]
              (button_tag( 'Edit', :class=>'rule-edit-button slotter', :type=>'button',
-               :href => path(:view, :card=>open_rule, :view=>:open_rule), :remote=>true ) +
+               :href => path(:read, :card=>open_rule, :view=>:open_rule), :remote=>true ) +
              button_tag( 'Close', :class=>'rule-cancel-button', :type=>'button' )).html_safe
            else
              (if !card.new_card?
                b_args = { :remote=>true, :class=>'rule-delete-button slotter', :type=>'button' }
-               b_args[:href] = path :remove, :view=>:open_rule, :success=>open_rule.cardname.to_url_key
+               b_args[:href] = path :delete, :view=>:open_rule, :success=>open_rule.cardname.to_url_key
                if fset = args[:fallback_set]
                  b_args['data-confirm']="Deleting will revert to #{setting_name} rule for #{Card.fetch(fset).label }"
                end

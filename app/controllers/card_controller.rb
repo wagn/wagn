@@ -2,19 +2,19 @@
 class CardController < ApplicationController
   helper :wagn
 
-  EDIT_ACTIONS = [ :edit, :update, :rollback, :save_draft, :watch, :create_account, :update_account ]
-  LOAD_ACTIONS =  EDIT_ACTIONS + [ :show_file, :show, :index, :comment, :remove, :view, :changes, :options, :related ]
+  EDIT_ACTIONS = [ :update, :rollback, :save_draft, :watch, :create_account, :update_account ]
+  LOAD_ACTIONS =  EDIT_ACTIONS + [ :read_file, :read, :index, :comment, :delete ]
 
   before_filter :index_preload, :only=> [ :index ]
-  before_filter :show_file_preload, :only=> [ :show_file ]
+  before_filter :read_file_preload, :only=> [ :read_file ]
 
   before_filter :load_card!, :only=>LOAD_ACTIONS
   before_filter :set_main
 
-  before_filter :view_ok,   :only=> LOAD_ACTIONS
-#  before_filter :create_ok, :only=>[ :new, :create ]
+  #  before_filter :create_ok, :only=>[ :new, :create ]
+  before_filter :read_ok,   :only=> LOAD_ACTIONS
   before_filter :update_ok, :only=> EDIT_ACTIONS
-  before_filter :remove_ok, :only=>[ :remove ]
+  before_filter :delete_ok, :only=>[ :delete ]
 
 
   #----------( CREATE )
@@ -27,9 +27,9 @@ class CardController < ApplicationController
     @card = Card.new args
 
     if @card.ok? :create
-      render_show :new
+      show :new
     else
-      render_denied 'create'
+      deny 'create'
     end
   end
 
@@ -37,9 +37,9 @@ class CardController < ApplicationController
   def create
     @card = Card.new params[:card]
     if @card.save
-      render_success
+      success
     else
-      render_errors
+      errors
     end
   end
 
@@ -54,19 +54,13 @@ class CardController < ApplicationController
 
   #----------( READ )
 
-  def show
-    #warn Rails.logger.info("show me")
-    save_location if params[:format].nil? || params[:format].to_sym==:html
-    render_show
+  def read
+    save_location # should be an event!
+    show
   end
 
-
-  def show_file
-    render_show_file
-  end
-
-  def index()    show                  end
-  def view()     render_show           end
+  def read_file()  show_file         end
+  def index()      read              end
 
   #--------------( UPDATE )
 
@@ -74,9 +68,9 @@ class CardController < ApplicationController
   def update
     @card = @card.refresh if @card.frozen?
     if @card.update_attributes params[:card]
-      render_success
+      success
     else
-      render_errors
+      errors
     end
   end
 
@@ -87,7 +81,7 @@ class CardController < ApplicationController
     if @card.save_draft params[:card][:content]
       render :nothing=>true
     else
-      render_errors
+      errors
     end
   end
 
@@ -105,9 +99,9 @@ class CardController < ApplicationController
     @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
     
     if @card.save
-      render_show
+      show
     else
-      render_errors
+      errors
     end
   end
 
@@ -116,7 +110,7 @@ class CardController < ApplicationController
     revision = @card.revisions[params[:rev].to_i - 1]
     @card.update_attributes! :content=>revision.content
     @card.attachment_link revision.id
-    render_show
+    show
   end
 
 
@@ -125,23 +119,23 @@ class CardController < ApplicationController
     watchers = watchers.refresh if watchers.frozen?
     myname = Card[Session.user_id].name
     watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
-    ajax? ? render_show(:watch) : view
+    ajax? ? show(:watch) : read
   end
 
 
 
   #------------( DELETE )
 
-  def remove
+  def delete
     @card = @card.refresh if @card.frozen?
     @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
 
-    return render_show(:remove) if @card.errors[:confirmation_required].any?
+    return show(:delete) if @card.errors[:confirmation_required].any?
 
     discard_locations_for(@card)
 
-    render_success 'REDIRECT: TO-PREVIOUS'
+    success 'REDIRECT: TO-PREVIOUS'
   end
 
 
@@ -163,9 +157,9 @@ class CardController < ApplicationController
       account.errors.each do |field, err|
         @card.errors.add field, err
       end
-      render_errors
+      errors
     else
-      render_show
+      show
     end
   end
 
@@ -179,7 +173,7 @@ class CardController < ApplicationController
     #@account = User.new(:email=>@user.email)
 #    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
     params[:attribute] = :account
-    render_show :options
+    show :options
   end
 
 
@@ -189,7 +183,7 @@ class CardController < ApplicationController
 
   #-------( FILTERS )
 
-  def show_file_preload
+  def read_file_preload
     #warn "show preload #{params.inspect}"
     params[:id] = params[:id].sub(/(-(#{Card::STYLES*'|'}))?(-\d+)?(\.[^\.]*)?$/) do
       @style = $1.nil? ? 'original' : $2
@@ -198,7 +192,6 @@ class CardController < ApplicationController
       ''
     end
   end
-
 
   def index_preload
     Session.no_logins? ?
@@ -216,49 +209,48 @@ class CardController < ApplicationController
     load_card
     #warn Rails.logger.info("load_card! #{@card}")
     case
-    when @card == '*previous'
-      wagn_redirect previous_location
-    when !@card || @card.name.nil? || @card.name.empty?  #no card or no name -- bogus request, deserves error
-      raise Wagn::NotFound, "requested card without identifier"
-    when @card.known? # default case
-      @card
-    when params[:view] =~ /rule|missing/
-      # FIXME this is a hack so that you can view load rules that don't exist.  need better approach
-      # (but this is not tested; please don't delete without adding a test)
-      @card
-    when [nil, 'html'].member?(params[:format]) && @card.ok?(:create) 
-      params[:card] = { :name=>@card.name, :type=>params[:type] }
-      self.new
-      false
-    else
-      raise Wagn::NotFound, "unknown card: #{@card.name}"
+      when @card == '*previous'
+        wagn_redirect previous_location
+      
+      when !@card || @card.name.nil? || @card.name.empty?  #no card or no name -- bogus request, deserves error
+        raise Wagn::BadAddress, "requested card without identifier"
+      
+      when @card.known? # default case
+        @card
+      
+      when params[:view] =~ /rule|missing/
+        # FIXME this is a hack so that you can view load rules that don't exist.  need better approach
+        # (but this is not tested; please don't delete without adding a test)
+        @card
+      
+      when html? && @card.ok?(:create) 
+        params[:card] = { :name=>@card.name, :type=>params[:type] }
+        self.new
+        false
+      
+      else
+        raise Wagn::NotFound, "unknown card: #{@card.name}"
     end
   end
 
   def load_card
-    #warn Rails.logger.info("load_card #{params.inspect}")
-    return @card=nil unless id = params[:id]
-#    ActiveSupport::Notifications.instrument 'wagn.load_card', :message=>"load #{id}" do
-      case id
-      when /^\~(\d+)$/
-        @card=Card.find($1)
-        @card.include_set_modules
-        return @card
-      when '*previous'
-        @card = '*previous'
+    @card = case params[:id]
+      when nil           ; nil
+      when /^\~(\d+)$/   ; Card.fetch $1.to_i
+      when /^\:(\w+)$/   ; Card.fetch $1.to_sym    
+      when '*previous'   ; '*previous' # flag for redirect
       else
-        @card = Card.fetch_or_new( Wagn::Cardname.unescape(id), 
-          (params[:card] ? params[:card].clone : {} )
-        )
+        name = Wagn::Cardname.unescape params[:id]
+        opts = params[:card] ? params[:card].clone : {}
+        Card.fetch_or_new name, opts
       end
-#    end
   end
 
 
   #---------( RENDERING )
 
 
-  def render_success(default_target='TO-CARD')
+  def success(default_target='TO-CARD')
     target = params[:success] || default_target
     redirect = !ajax?
 
@@ -277,7 +269,7 @@ class CardController < ApplicationController
     case
     when  redirect        ; wagn_redirect ( Card===target ? wagn_path(target) : target )
     when  String===target ; render :text => target
-    else  @card = target  ; render_show
+    else  @card = target  ; show
     end
   end
 

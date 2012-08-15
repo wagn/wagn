@@ -42,7 +42,7 @@ class AccountController < ApplicationController
 
   def render_user_errors
     @card.errors += @user.errors
-    render_errors
+    errors
   end
 
 
@@ -127,7 +127,7 @@ class AccountController < ApplicationController
     @user.errors.each do |field, err|
       @card.errors.add field, err
     end
-    render_errors
+    errors
   end
   
   def password_authentication(login, password)

@@ -17,7 +17,8 @@ Wagn::Application.routes.draw do
   match '(/wagn)/:id(.:format)' => 'card#read'
   match '/files/(*id)' => 'card#read_file'
 
-  match 'new/:type' => 'card#new'
+  match 'new/:type' => 'card#read', :view => 'new'
+  match 'card/new'  => 'card#read', :view => 'new'
   
   match 'card/:view(/:id(.:format)(/:attribute))' => 'card#read', :constraints =>
     { :view=> /changes|options|related|edit/ }

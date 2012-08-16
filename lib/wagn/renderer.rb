@@ -4,14 +4,11 @@ module Wagn
     include LocationHelper
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
-    UNDENIABLE_VIEWS = [ :denial, :errors, :edit_virtual,
-      :too_slow, :too_deep, :missing, :not_found, :closed_missing, :name,
-      :link, :linkname, :url, :show, :layout, :bad_address, :server_error ]
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
-      :layout=>:layout, :new=>:edit }
-    DEFAULT_ITEM_VIEW = :link
-  
-    RENDERERS = {
+      :layout=>:layout, :new=>:edit, :normal=>:normal } #should be set in views
+    DEFAULT_ITEM_VIEW = :link  # should be set in card?
+   
+    RENDERERS = { #should be defined in renderer
       :html => :Html,
       :css  => :Text,
       :txt  => :Text
@@ -19,14 +16,17 @@ module Wagn
     
     cattr_accessor :current_slot, :ajax_call
 
-    @@max_char_count = 200
-    @@max_depth = 10
-    @@subset_views = {}
+    @@max_char_count = 200 #should come from Wagn::Conf
+    @@max_depth      = 10 # ditto
+    @@perms          = {}
+    @@subset_views   = {}
+    @@error_codes    = {}
+    @@view_tags      = {}
 
     class << self
       def new card, opts={}
         if self==Renderer
-          fmt = (opts[:format] ? opts[:format].to_sym : :html)
+          fmt = opts[:format] = (opts[:format] ? opts[:format].to_sym : :html)
           renderer = (RENDERERS.has_key?(fmt) ? RENDERERS[fmt] : fmt.to_s.camelize).to_sym
           if Renderer.const_defined?(renderer)
             return Renderer.const_get(renderer).new(card, opts) 
@@ -58,6 +58,15 @@ module Wagn
 
 
       def define_view view, opts={}, &final
+        @@perms[view]       = opts.delete(:perms)      if opts[:perms]
+        @@error_codes[view] = opts.delete(:error_code) if opts[:error_code]
+        if opts[:tags]
+          [opts[:tags]].flatten.each do |tag| 
+            @@view_tags[view] ||= {}
+            @@view_tags[view][tag] = true
+          end
+        end
+        
         view_key = get_view_key(view, opts)
         define_method "_final_#{view_key}", &final
         #warn "defining method _final_#{view_key}"
@@ -77,11 +86,7 @@ module Wagn
 
           define_method( "render_#{view}" ) do |*a|
             begin
-              denial=deny_render(view.to_sym, *a) and return denial
-#              msg = "render #{view} #{ card && card.name.present? ? "called for #{card.name}" : '' }"
-#              ActiveSupport::Notifications.instrument 'wagn.render', :message=>msg do
-                send( "_render_#{view}", *a)
-#              end
+              send( "_render_#{ ok_view view, *a }", *a )
             rescue Exception=>e
               notify_airbrake e if Airbrake.configuration.api_key
               Rails.logger.info "\nRender Error: #{e.message}"
@@ -121,8 +126,8 @@ module Wagn
     end
 
 
-    attr_reader :card, :root, :showname #should be able to factor out showname
-    attr_accessor :form, :main_content
+    attr_reader :format, :card, :root, :showname #should be able to factor out showname
+    attr_accessor :form, :main_content, :error_status
 
     def render view = :view, args={}
       prefix = args[:allowed] ? '_' : ''
@@ -159,6 +164,7 @@ module Wagn
       @format ||= :html
       @char_count = @depth = 0
       @root = self
+      @cli_mode = @controller.nil?
       
       if card && card.collection? && params[:item] && !params[:item].blank?
         @item_view = params[:item]
@@ -224,23 +230,65 @@ module Wagn
     alias expand_inclusions process_content
   
   
-    def deny_render view, args={}
-      return false if UNDENIABLE_VIEWS.member? view
-      altered_view = case
-        when @depth >= @@max_depth ; :too_deep
-        when !card                 ; false
-        when view == :watch
-          :blank if !Session.logged_in? || card.virtual?
-        when [:new, :edit, :edit_in_form].member?(view)
-          allowed = card.ok?(card.new_card? ? :create : :update)
-          !allowed && :denial
-        else
-          !card.ok?(:read) and :denial
-      end
-      return false unless altered_view
+    def tagged view, tag
+      @@view_tags[view] && @@view_tags[view][tag]
+    end
+  
+    def ok_view view, args={}
+      original_view = view
+      
+      view = case
 
-      args[:denied_view] = view
-      render altered_view, args
+        when @depth >= @@max_depth   ; :too_deep
+          
+        when @@perms[view] == :none  ; view
+        # This may currently be overloaded.  always allowed = never modified.  not sure that's right.
+          
+        when !card                   ; view
+        # This should disappear when we get rid of admin and account controllers and all renderers always have cards
+
+        when view == :watch #need to represent this in view somehow.  lambda?
+          !Session.logged_in? || card.virtual? ? :blank : :watch
+
+
+        when @mode == :edit && view != :edit_in_form
+          card.virtual? ? :edit_virtual : ok_view( :edit_in_form )
+          # FIXME should be concerned about templateness, not virtualness per se
+          # needs to handle real cards that are hard templated much better       
+        
+        when @mode == :closed && view != :closed_content
+          !card.known? ? :closed_missing : ok_view( :closed_content )
+                      
+
+        when !card.known? && !tagged(view, :unknown_ok) && !( @cli_mode && @depth == 0 )
+          # FIXME this last test is ugly and not well named.
+          # right now we need to be able to render new cards in most situations that call Renderer.new (eg tests / scripts...) 
+          # but not in page requests
+          
+          if main?
+            @format == :html && card.ok?( :create ) ? :new : :not_found
+          else
+            :missing
+          end
+                
+        else
+          permissions_required = [ ( @@perms[view] || :read ) ].flatten
+          args[:denied_task] = permissions_required.find do |task|
+            task = :create if task == :update && card.new_card?
+            !card.ok? task
+          end
+          args[:denied_task] ? :denial : view
+        end
+      
+      
+      if view != original_view
+        args[:denied_view] = original_view
+        
+        if main? && error_code = @@error_codes[view] 
+          root.error_status = error_code
+        end
+      end
+      view
     end
     
     def canonicalize_view view
@@ -249,10 +297,8 @@ module Wagn
   
     def view_method view
       return "_final_#{view}" if !card || !@@subset_views[view]
-      #warn "vmeth #{card}, #{view}, #{card.method_keys.inspect}"
       card.method_keys.each do |method_key|
         meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
-        #warn "view meth is #{meth.inspect}, #{view.inspect} #{method_key.inspect} #{respond_to?(meth.to_sym)}"
         return meth if respond_to?(meth.to_sym)
       end
       nil
@@ -268,10 +314,11 @@ module Wagn
     end
   
     def expand_inclusion opts
-      return opts[:comment] if opts.has_key?(:comment)
-      # Don't bother processing inclusion if we're already out of view
+      return opts[:comment] if opts.has_key?(:comment) # as in commented code
+      
       return '' if @mode == :closed && @char_count > @@max_char_count
-      #warn "exp_inc #{opts.inspect}, #{card.inspect}"
+      # Don't bother processing inclusion if we're already out of view
+      
       return expand_main(opts) if opts[:tname]=='_main' && !ajax_call? && @depth==0
       
       opts[:view] = canonicalize_view opts[:view]
@@ -315,30 +362,17 @@ module Wagn
 #        :size      =>options[:size],
         :showname  =>(options[:showname] || tcard.name)
       )
-      oldrenderer, Renderer.current_slot = Renderer.current_slot, sub  #don't like depending on this global var switch
+      oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
+      #don't like depending on this global var switch
+      # explain here what exactly this does!
   
-      new_card = tcard.new_card? && !tcard.virtual?
   
-      requested_view = (options[:view] || :content).to_sym
-      options[:home_view] = [:closed, :edit].member?(requested_view) ? :open : requested_view
-      approved_view = case
-
-        when (UNDENIABLE_VIEWS + [ :new, :closed_rule, :open_rule ]).member?(requested_view)  ; requested_view
-        when @mode == :edit
-         tcard.virtual? ? :edit_virtual : :edit_in_form 
-         # FIXME should be concerned about templateness, not virtualness per se
-         # needs to handle real cards that are hard templated much better
-        when new_card
-          case
-          when requested_view == :raw ; :blank
-          when @mode == :closed       ; :closed_missing
-          else                        ; :missing
-          end
-        when @mode==:closed     ; :closed_content
-        else                    ; requested_view
-        end
-      #warn "rendering #{approved_view} for #{card.name}"
-      result = raw( sub.render(approved_view, options) )
+      view = (options[:view] || :content).to_sym
+      
+      options[:home_view] = [:closed, :edit].member?(view) ? :open : view 
+      # FIXME: this should be represented in view definitions
+        
+      result = raw( sub.render(view, options) )
       Renderer.current_slot = oldrenderer
       result
     end
@@ -366,15 +400,15 @@ module Wagn
       pcard = opts.delete(:card) || card
       base = action==:read ? '' : "/card/#{action}" 
       
-      if pcard && ![:new, :create, :create_or_update].member?( action )
-        base += '/' + (opts[:id] ? "~#{opts.delete(:id)}" : pcard.cardname.to_url_key)
+      if pcard && action != :create #might be some issues with new?
+        base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.to_url_key )
       end
       if attrib = opts.delete( :attrib )
         base += "/#{attrib}"
       end
       query =''
       if !opts.empty?
-        query = '?' + (opts.map{ |k,v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&') )
+        query = '?' + ( opts.map{ |k,v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&') )
       end
       wagn_path( base + query )
     end

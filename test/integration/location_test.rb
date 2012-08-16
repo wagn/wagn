@@ -26,7 +26,6 @@ class LocationTest < ActionController::IntegrationTest
     get "Joe_User"     
     get "Not_Me"
     get '*previous'
-    assert_equal '*previous', assigns['card']
     assert_redirected_to '/Joe_User'
   end
   

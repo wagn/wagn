@@ -235,52 +235,60 @@ module Wagn
     end
   
     def ok_view view, args={}
-
-      return view if @@perms[view] == :none
+      original_view = view
       
-      altered_view = case
+      view = case
 
-        when @depth >= @@max_depth ; :too_deep
-        when !card                 ; view #really??  hack!
+        when @depth >= @@max_depth   ; :too_deep
+          
+        when @@perms[view] == :none  ; view
+        # This may currently be overloaded.  always allowed = never modified.  not sure that's right.
+          
+        when !card                   ; view
+        # This should disappear when we get rid of admin and account controllers and all renderers always have cards
+
+        when view == :watch #need to represent this in view somehow.  lambda?
+          !Session.logged_in? || card.virtual? ? :blank : :watch
+
 
         when @mode == :edit && view != :edit_in_form
-          card.virtual? ? :edit_virtual : ok_view(:edit_in_form)
+          card.virtual? ? :edit_virtual : ok_view( :edit_in_form )
           # FIXME should be concerned about templateness, not virtualness per se
           # needs to handle real cards that are hard templated much better       
+        
+        when @mode == :closed && view != :closed_content
+          !card.known? ? :closed_missing : ok_view( :closed_content )
                       
-        when view == :watch #need to represent this in view somehow.  lambda?
-          :blank if !Session.logged_in? || card.virtual?
 
         when !card.known? && !tagged(view, :unknown_ok) && !( @cli_mode && @depth == 0 )
-          # FIXME this is ugly.  right now we need to be able to render new cards in tests but not in page requests
+          # FIXME this last test is ugly and not well named.
+          # right now we need to be able to render new cards in most situations that call Renderer.new (eg tests / scripts...) 
+          # but not in page requests
           
-          case
-          when main?
+          if main?
             @format == :html && card.ok?( :create ) ? :new : :not_found
-          when @mode == :closed    ; :closed_missing
-          else                     ; :missing
+          else
+            :missing
           end
-        
-        when @mode == :closed
-          ok_view :closed_content
-        
+                
         else
           permissions_required = [ ( @@perms[view] || :read ) ].flatten
-          args[:denied_task] = permissions_required.find { |task| !card.ok? task }
+          args[:denied_task] = permissions_required.find do |task|
+            task = :create if task == :update && card.new_card?
+            !card.ok? task
+          end
           args[:denied_task] ? :denial : view
         end
       
-#      warn Rails.logger.info( "card = #{card.name}. original view #{view}.  altered_view = #{altered_view}.  main? = #{main?} " ) 
-
-      return view unless altered_view      
-#        warn "main = #{main?}, altered_view = #{altered_view}, error code = #{@@error_codes[altered_view] }"
       
-      if main? && error_code = @@error_codes[altered_view] 
-        root.error_status = error_code
+      if view != original_view
+        args[:denied_view] = original_view
+        
+        if main? && error_code = @@error_codes[view] 
+          root.error_status = error_code
+        end
       end
-
-      args[:denied_view] = view
-      altered_view
+      view
     end
     
     def canonicalize_view view
@@ -306,10 +314,11 @@ module Wagn
     end
   
     def expand_inclusion opts
-      return opts[:comment] if opts.has_key?(:comment)
-      # Don't bother processing inclusion if we're already out of view
+      return opts[:comment] if opts.has_key?(:comment) # as in commented code
+      
       return '' if @mode == :closed && @char_count > @@max_char_count
-      #warn "exp_inc #{opts.inspect}, #{card.inspect}"
+      # Don't bother processing inclusion if we're already out of view
+      
       return expand_main(opts) if opts[:tname]=='_main' && !ajax_call? && @depth==0
       
       opts[:view] = canonicalize_view opts[:view]

@@ -716,7 +716,7 @@ class Wagn::Renderer::Html
           </span>
         </div>
 
-       #{@help_card ? %{<div class="instruction">#{ raw subrenderer(@help_card).render_core }</div>} : '' }
+       #{@help_card ? %{<div class="instruction">#{ raw( with_inclusion_mode(:normal) { subrenderer(@help_card).render_core } ) }</div>} : '' }
 
        <div class="edit-area">
          <div class="card-editor editor">#{ edit_slot args }</div>

@@ -5,7 +5,7 @@ module Wagn
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
-      :layout=>:layout, :new=>:edit } #should be set in views
+      :layout=>:layout, :new=>:edit, :normal=>:normal } #should be set in views
     DEFAULT_ITEM_VIEW = :link  # should be set in card?
    
     RENDERERS = { #should be defined in renderer
@@ -270,7 +270,7 @@ module Wagn
           args[:denied_task] ? :denial : view
         end
       
-#      warn Rails.logger.info( "card = #{card.name}. original view #{original_view}.  altered_view = #{altered_view}.  main? = #{main?} " ) 
+#      warn Rails.logger.info( "card = #{card.name}. original view #{view}.  altered_view = #{altered_view}.  main? = #{main?} " ) 
 
       return view unless altered_view      
 #        warn "main = #{main?}, altered_view = #{altered_view}, error code = #{@@error_codes[altered_view] }"

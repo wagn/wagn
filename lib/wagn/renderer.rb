@@ -14,6 +14,7 @@ module Wagn
     RENDERERS = {
       :html => :Html,
       :css  => :Text,
+      :csv  => :Text,
       :txt  => :Text
     }
     
@@ -371,7 +372,7 @@ module Wagn
 
     def search_params
       @search_params ||= begin
-        p = self.respond_to?(:paging_params) ? paging_params : {}
+        p = self.respond_to?(:paging_params) ? paging_params : { :default_limit=> 100 }
         p[:vars] = {}
         if self == @root
           params.each do |key,val|

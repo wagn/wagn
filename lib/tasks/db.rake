@@ -33,15 +33,23 @@ namespace :db do
   namespace :test do
     desc 'Prepare the test database and load the schema'
     Rake::Task.redefine_task( :prepare => :environment ) do        
-      if ENV['RELOAD_TEST_DATA'] == 'true' || ENV['RUN_CODE_RUN']           
-        ENV['RAILS_ENV'] = 'development'
-        puts ">> loading db:test structure"    
-        puts `rake db:test:clone`
-        puts ">> loading test fixtures"
-        puts `rake db:fixtures:load RAILS_ENV=test --trace`
+      if ENV['RELOAD_TEST_DATA'] == 'true' || ENV['RUN_CODE_RUN']
+        puts "recreating test databas"
+        puts `env RAILS_ENV=test rake wagn:create`
       else
         puts "skipping loading test data.  to force, run  env RELOAD_TEST_DATA=true rake db:test:prepare"
       end
+    end
+  end
+
+  desc 'Run migrations and then write the version to a file'
+  task :migrate_and_stamp_version => :environment do
+    Rake::Task['db:migrate'].invoke
+    stamp_file = Wagn::Application.config.paths['config/database'].first.sub(/[^\/]*$/,'version.txt')
+    version = ActiveRecord::Migrator.current_version
+    puts ">>  writing version: #{version} to #{stamp_file}"
+    if file = open(stamp_file, 'w')
+      file.puts version
     end
   end
 end

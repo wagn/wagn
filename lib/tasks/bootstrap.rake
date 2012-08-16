@@ -2,9 +2,13 @@ WAGN_BOOTSTRAP_TABLES = %w{ cards revisions wiki_references cardtypes }
 
 namespace :wagn do
   desc "create a wagn database from scratch"
-  task :create => :environment do
+  task :create do
     puts "dropping"
-    Rake::Task['db:drop'].invoke
+    begin
+      Rake::Task['db:drop'].invoke
+    rescue
+      puts "not dropped"
+    end
     
     puts "creating"
     Rake::Task['db:create'].invoke
@@ -12,8 +16,13 @@ namespace :wagn do
     puts "loading schema"
     Rake::Task['db:schema:load'].invoke
     
-    puts "loading bootstrap"
-    Rake::Task['wagn:bootstrap:load'].invoke
+    if Rails.env == 'test'
+      puts "loading test fixtures"
+      Rake::Task['db:fixtures:load'].invoke
+    else
+      puts "loading bootstrap"
+      Rake::Task['wagn:bootstrap:load'].invoke
+    end
   end
   
   

@@ -18,6 +18,21 @@ class Wagn::Renderer
     end
   end
   
+  define_view :card_list, :type=>'search' do |args|
+    @item_view ||= (card.spec[:view]) || :name
+
+    if args[:results].empty?
+      'no results'
+    else
+      args[:results].map do |c|
+        process_inclusion c, :view=>@item_view
+      end.join "\n"
+    end
+  end
+  
+end
+
+class Wagn::Renderer::Html  
   define_view :editor, :type=>'search' do |args|
     form.text_area :content, :rows=>10
   end

@@ -2,13 +2,15 @@ class Wql
   include ActiveRecord::QuotingAndMatching
   
   ATTRIBUTES = {
+
     :basic      =>  %w{ name type content id key updater_id trunk_id tag_id creator_id updater_id },
     :custom     =>  %w{ edited_by editor_of edited last_editor_of extension_type
        last_edited_by creator_of created_by member_of member role found_by sort
        part left right plus left_plus right_plus or match complete not and },
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include
        included_by },
-    :ignore      => %w{ prepend append view params vars }
+    :ignore      => %w{ prepend append view params vars size }
+
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
 
   MODIFIERS = {};  %w{ conj return sort sort_as group dir limit offset }.each{|key| MODIFIERS[key.to_sym] = nil }

@@ -85,7 +85,7 @@ class Wagn::Renderer
       when Array  ; ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
       else ""
     end
-    expand_inclusions card.content.gsub(/\[\[/,"<div class=\"pointer-item item-#{@item_view}\">{{").gsub(/\]\]/,"|#{@item_view}#{typeparam}}}</div>")
+    process_content card.content.gsub(/\[\[/,"<div class=\"pointer-item item-#{@item_view}\">{{").gsub(/\]\]/,"|#{@item_view}#{typeparam}}}</div>")
   end
   
 end

@@ -107,7 +107,7 @@ class User < ActiveRecord::Base
       self.card_id = card.id
       save
       if newcard && errors.any?
-        card.delete
+        card.delete #won't the rollback take care of this?  if not, should wagbot do it?
         self.card_id=nil
         save
         raise ActiveRecord::Rollback

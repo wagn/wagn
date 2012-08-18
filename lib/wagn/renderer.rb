@@ -11,6 +11,7 @@ module Wagn
     RENDERERS = { #should be defined in renderer
       :html => :Html,
       :css  => :Text,
+      :csv  => :Text,
       :txt  => :Text
     }
     
@@ -88,7 +89,7 @@ module Wagn
             begin
               send( "_render_#{ ok_view view, *a }", *a )
             rescue Exception=>e
-              notify_airbrake e if Airbrake.configuration.api_key
+              controller.send :notify_airbrake, e if Airbrake.configuration.api_key
               Rails.logger.info "\nRender Error: #{e.message}"
               Rails.logger.debug "  #{e.backtrace*"\n  "}"
               rendering_error e, (card && card.name.present? ? card.name : 'unknown card')
@@ -227,7 +228,6 @@ module Wagn
         expand_inclusion(opts) { yield }
       end
     end
-    alias expand_inclusions process_content
   
   
     def tagged view, tag
@@ -415,7 +415,7 @@ module Wagn
 
     def search_params
       @search_params ||= begin
-        p = self.respond_to?(:paging_params) ? paging_params : {}
+        p = self.respond_to?(:paging_params) ? paging_params : { :default_limit=> 100 }
         p[:vars] = {}
         if self == @root
           params.each do |key,val|

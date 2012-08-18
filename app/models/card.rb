@@ -251,7 +251,7 @@ class Card < ActiveRecord::Base
         card.errors.each do |field, err|
           self.errors.add card.name, err
         end
-        raise ActiveRecord::Rollback
+        raise ActiveRecord::Rollback, "broke save_subcards"
       end
     end
   end

@@ -11,9 +11,8 @@ class ApplicationController < ActionController::Base
   
   attr_accessor :recaptcha_count
 
-  def fast_404(host=nil)
+  def fast_404
     message = "<h1>404 Page Not Found</h1>"
-    message += "Unknown host: #{host}" if host
     render :text=>message, :layout=>false, :status=>404
   end
 
@@ -27,7 +26,7 @@ class ApplicationController < ActionController::Base
 #    ActiveSupport::Notifications.instrument 'wagn.per_request_setup', :message=>"" do
       request.format = :html if !params[:format] #is this used??
 
-      # these should not be Wagn::Conf, but more like wagn.env
+      # these should not be Wagn::Conf, but more like WagnEnv
       Wagn::Conf[:host] = host = request.env['HTTP_HOST']
       Wagn::Conf[:base_url] = 'http://' + host
       Wagn::Conf[:main_name] = nil
@@ -69,18 +68,7 @@ class ApplicationController < ActionController::Base
   # ------------------( permission filters ) -------
   def read_ok()    @card.ok?(:read)   || deny(:read)    end
     
-    
-#  def update_ok()  @card.ok?(:update) || deny(:update)  end
-#  def delete_ok()  @card.ok!(:delete) || deny(:delete)  end
-    #warn "rok #{@card.ok?(:delete)}"
 
- #def create_ok
- #  @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
- #  @skip_slot_header = true
- #  #p "CREATE OK: #{@type}"
- #  t = Card.class_for(@type, :cardname) || Card::Basic
- #  t.create_ok? || deny('create')
- #end
 
   # ----------( rendering methods ) -------------
 
@@ -140,6 +128,9 @@ class ApplicationController < ActionController::Base
 
     style = @card.attachment_style( @card.type_id, params[:size] || @style )    
     return fast_404 if !style
+    
+    # check file existence?  or just rescue MissingFile errors and raise NotFound?
+    # we do see some errors from not having this, though I think they're mostly from legacy issues....
 
     send_file @card.attach.path(style), 
       :type => @card.attach_content_type,

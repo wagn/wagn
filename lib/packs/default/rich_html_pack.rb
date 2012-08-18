@@ -438,7 +438,7 @@ class Wagn::Renderer::Html
     end
   end
 
-  define_view :conflict do |args|
+  define_view :conflict, :error_code=>409 do |args|
     load_revisions
     wrap :errors do |args|
       %{<strong>Conflict!</strong><span class="new-current-revision-id">#{@revision.id}</span>

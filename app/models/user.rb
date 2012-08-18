@@ -207,7 +207,7 @@ class User < ActiveRecord::Base
             next if key.to_s.downcase=='extension'
             self.errors.add key,err
           end
-          destroy
+          raise ActiveRecord::Rollback
         end
       end
     end

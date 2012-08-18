@@ -221,7 +221,6 @@ module Wagn
         expand_inclusion(opts) { yield }
       end
     end
-    alias expand_inclusions process_content
   
   
     def deny_render view, args={}

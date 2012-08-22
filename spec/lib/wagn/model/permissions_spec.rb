@@ -359,11 +359,6 @@ describe Card, "new permissions" do
     @c.ok?(:read).should be_true
   end
 
-  it "should let joe render content of new cards" do
-    @c = Card.new
-    assert_view_select Wagn::Renderer.new(@c).render, 'span[class="open-content content"]'
-  end
-
 end
 
 

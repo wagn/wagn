@@ -28,19 +28,19 @@ describe Wagn::Renderer, "" do
 
     it "css in inclusion syntax in wrapper" do
       c = Card.new :name => 'Afloatright', :content => "{{A|float:right}}"
-      assert_view_select Wagn::Renderer.new(c).render( :core ), 'div[style="float:right;"]'
+      assert_view_select Wagn::Renderer.new(c)._render( :core ), 'div[style="float:right;"]'
     end
 
     it "HTML in inclusion syntax as escaped" do
       c =Card.new :name => 'Afloat', :type => 'Html', :content => '{{A|float:<object class="subject">}}'
-      result = Wagn::Renderer.new(c).render( :core )
+      result = Wagn::Renderer.new(c)._render( :core )
       assert_view_select result, 'div[style="float:&amp;lt;object class=&amp;quot;subject&amp;quot;&amp;gt;;"]'
     end
 
     context "CGI variables" do
       it "substituted when present" do
         c = Card.new :name => 'cardcore', :content => "{{_card+B|core}}"
-        result = Wagn::Renderer.new(c, :params=>{'_card' => "A"}).render_core
+        result = Wagn::Renderer.new(c, :params=>{'_card' => "A"})._render_core
         result.should == "AlphaBeta"
       end
     end
@@ -53,12 +53,12 @@ describe Wagn::Renderer, "" do
     it "prevents infinite loops" do
       Card.create! :name => "n+a", :content=>"{{n+a|array}}"
       c = Card.new :name => 'naArray', :content => "{{n+a|array}}"
-      Wagn::Renderer.new(c).render( :core ).should =~ /too deep/
+      Wagn::Renderer.new(c)._render( :core ).should =~ /too deep/
     end
 
     it "missing relative inclusion is relative" do
       c = Card.new :name => 'bad_include', :content => "{{+bad name missing}}"
-      Wagn::Renderer.new(c).render(:core).match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
+      Wagn::Renderer.new(c)._render(:core).match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
     end
 
     it "renders deny for unpermitted cards" do
@@ -248,7 +248,7 @@ describe Wagn::Renderer, "" do
 
     it "raw content" do
       @a = Card.new(:name=>'t', :content=>"{{A}}")
-      Wagn::Renderer.new(@a).render(:raw).should == "{{A}}"
+      Wagn::Renderer.new(@a)._render(:raw).should == "{{A}}"
     end
 
     it "array (basic card)" do
@@ -259,13 +259,13 @@ describe Wagn::Renderer, "" do
   describe "cgi params" do
     it "renders params in card inclusions" do
       c = Card.new :name => 'cardcore', :content => "{{_card+B|core}}"
-      result = Wagn::Renderer.new(c, :params=>{'_card' => "A"}).render_core
+      result = Wagn::Renderer.new(c, :params=>{'_card' => "A"})._render_core
       result.should == "AlphaBeta"
     end
 
     it "should not change name if variable isn't present" do
       c = Card.new :name => 'cardBname', :content => "{{_card+B|name}}"
-      Wagn::Renderer.new(c).render( :core ).should == "_card+B"
+      Wagn::Renderer.new(c)._render( :core ).should == "_card+B"
     end
 
     it "array (search card)" do
@@ -273,7 +273,7 @@ describe Wagn::Renderer, "" do
       Card.create! :name => "n+b", :type=>"Phrase", :content=>"say:\"what\""
       Card.create! :name => "n+c", :type=>"Number", :content=>"30"
       c = Card.new :name => 'nplusarray', :content => "{{n+*plus cards+by create|array}}"
-      Wagn::Renderer.new(c).render( :core ).should == %{["10", "say:\\"what\\"", "30"]}
+      Wagn::Renderer.new(c)._render( :core ).should == %{["10", "say:\\"what\\"", "30"]}
     end
 
     it "array (pointer card)" do
@@ -282,7 +282,7 @@ describe Wagn::Renderer, "" do
       Card.create! :name => "n+c", :type=>"Number", :content=>"30"
       Card.create! :name => "npoint", :type=>"Pointer", :content => "[[n+a]]\n[[n+b]]\n[[n+c]]"
       c = Card.new :name => 'npointArray', :content => "{{npoint|array}}"
-      Wagn::Renderer.new(c).render( :core ).should == %q{["10", "20", "30"]}
+      Wagn::Renderer.new(c)._render( :core ).should == %q{["10", "20", "30"]}
     end
 
 =begin
@@ -313,7 +313,7 @@ describe Wagn::Renderer, "" do
   context "Content rule" do
     it "is rendered as raw" do
       template = Card.new(:name=>'A+*right+*content', :content=>'[[link]] {{inclusion}}')
-      Wagn::Renderer.new(template).render(:core).should == '[[link]] {{inclusion}}'
+      Wagn::Renderer.new(template)._render(:core).should == '[[link]] {{inclusion}}'
     end
 
     it "is used in new card forms when soft" do
@@ -402,7 +402,7 @@ describe Wagn::Renderer, "" do
       it "should handle size argument in inclusion syntax" do
         image_card = Card.create! :name => "TestImage", :type=>"Image", :content => %{TestImage.jpg\nimage/jpeg\n12345}
         including_card = Card.new :name => 'Image1', :content => "{{TestImage | core; size:small }}"
-        rendered = Wagn::Renderer.new(including_card).render :core
+        rendered = Wagn::Renderer.new(including_card)._render :core
         assert_view_select rendered, 'img[src=?]', "/files/TestImage-small-#{image_card.current_revision_id}.jpg"
       end
     end

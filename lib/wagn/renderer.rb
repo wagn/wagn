@@ -165,7 +165,6 @@ module Wagn
       @format ||= :html
       @char_count = @depth = 0
       @root = self
-      @cli_mode = @controller.nil?
       
       if card && card.collection? && params[:item] && !params[:item].blank?
         @item_view = params[:item]
@@ -184,6 +183,14 @@ module Wagn
       else
         @depth == 1 && @mode == :main
       end                            
+    end
+    
+    def focal? # meaning the current card is the requested card
+      if ajax_call?
+        @depth == 0
+      else
+        main?
+      end
     end
       
     def template
@@ -238,46 +245,34 @@ module Wagn
       original_view = view
       
       view = case
-
         when @depth >= @@max_depth   ; :too_deep
-          
+        # prevent recursion.  @depth tracks subrenderers (view within views)  
         when @@perms[view] == :none  ; view
         # This may currently be overloaded.  always allowed = never modified.  not sure that's right.
-          
-        when !card                   ; view
+        when !card                   ; :no_card
         # This should disappear when we get rid of admin and account controllers and all renderers always have cards
 
-        when view == :watch #need to represent this in view somehow.  lambda?
-          !Session.logged_in? || card.virtual? ? :blank : :watch
-
-
-        when @mode == :edit && view != :edit_in_form
-          card.virtual? ? :edit_virtual : ok_view( :edit_in_form )
-          # FIXME should be concerned about templateness, not virtualness per se
-          # needs to handle real cards that are hard templated much better       
-        
-        when @mode == :closed && view != :closed_content
-          !card.known? ? :closed_missing : ok_view( :closed_content )
-                      
-
-        when !card.known? && !tagged(view, :unknown_ok) && !( @cli_mode && @depth == 0 )
-          # FIXME this last test is ugly and not well named.
-          # right now we need to be able to render new cards in most situations that call Renderer.new (eg tests / scripts...) 
-          # but not in page requests
-          
-          if main?
-            @format == :html && card.ok?( :create ) ? :new : :not_found
-          else
-            :missing
+        # HANDLE UNKNOWN CARDS ~~~~~~~~~~~~
+        when !card.known? && !tagged( view, :unknown_ok )
+          if focal?
+            if @format==:html && card.ok?(:create) ;  :new
+            else                                   ;  :not_found
+            end                                     
+          else                                     ;  :missing
           end
                 
+        # CHECK PERMISSIONS  ~~~~~~~~~~~~~~~~
         else
-          permissions_required = [ ( @@perms[view] || :read ) ].flatten
-          args[:denied_task] = permissions_required.find do |task|
-            task = :create if task == :update && card.new_card?
-            !card.ok? task
+          perms_required = @@perms[view] || :read
+          if Proc === perms_required
+            perms_required.call self
+          else
+            args[:denied_task] = [perms_required].flatten.find do |task|
+              task = :create if task == :update && card.new_card?
+              !card.ok? task
+            end
+            args[:denied_task] ? :denial : view
           end
-          args[:denied_task] ? :denial : view
         end
       
       
@@ -363,15 +358,23 @@ module Wagn
         :showname  =>(options[:showname] || tcard.name)
       )
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
-      #don't like depending on this global var switch
-      # explain here what exactly this does!
-  
+      # don't like depending on this global var switch
+      # I think we can get rid of it as soon as we get rid of the remaining rails views?
   
       view = (options[:view] || :content).to_sym
       
       options[:home_view] = [:closed, :edit].member?(view) ? :open : view 
-      # FIXME: this should be represented in view definitions
+      # FIXME: special views should be represented in view definitions
+      
+      view = case @mode
+        when :closed;    !tcard.known?  ? :closed_missing : :closed_content
+        when :edit  ;    tcard.virtual? ? :edit_virtual   : :edit_in_form
+        # FIXME should be concerned about templateness, not virtualness per se
+        # needs to handle real cards that are hard templated much better       
         
+        else        ;    view
+        end
+      
       result = raw( sub.render(view, options) )
       Renderer.current_slot = oldrenderer
       result
@@ -400,7 +403,7 @@ module Wagn
       pcard = opts.delete(:card) || card
       base = action==:read ? '' : "/card/#{action}" 
       
-      if pcard && action != :create #might be some issues with new?
+      if pcard && !pcard.name.empty? && action != :create #might be some issues with new?
         base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.to_url_key )
       end
       if attrib = opts.delete( :attrib )

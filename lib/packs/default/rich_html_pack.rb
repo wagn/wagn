@@ -563,7 +563,7 @@ class Wagn::Renderer::Html
   end
 
 
-  define_view :watch do |args|
+  define_view :watch, :perms=> lambda { |r| !Session.logged_in? || r.card.new_card? ? :blank : :watch } do |args|
     wrap :watch do
       if card.watching_type?
         watching_type_cards
@@ -590,7 +590,7 @@ class Wagn::Renderer::Html
   define_view :denial do |args|
     task = args[:denied_task] || params[:action]
     if !main?
-      %{<span class="denied"><!-- Sorry, you don't have permission for this card --></span>}
+      %{<span class="denied"><!-- Sorry, you don't have permission to #{task} this card --></span>}
     else
       wrap :denial, args do #ENGLISH below
         %{#{ _render_header } 

@@ -91,7 +91,7 @@ describe Card, "with type content template" do
   end       
   
   it "should return templated content even if content is passed in" do
-    Wagn::Renderer.new(Card.new(:type=>'Date', :content=>'')).render(:raw).should == 'Tomorrow'
+    Wagn::Renderer.new(Card.new(:type=>'Date', :content=>''))._render(:raw).should == 'Tomorrow'
   end
 end
 

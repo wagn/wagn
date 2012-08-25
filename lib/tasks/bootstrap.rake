@@ -4,9 +4,13 @@ WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references }
 namespace :wagn do
 
   desc "create a wagn database from scratch"
-  task :create => :environment do
+  task :create do
     puts "dropping"
-    Rake::Task['db:drop'].invoke
+    begin
+      Rake::Task['db:drop'].invoke
+    rescue
+      puts "not dropped"
+    end
     
     puts "creating"
     Rake::Task['db:create'].invoke

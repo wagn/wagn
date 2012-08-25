@@ -67,6 +67,10 @@ class Wagn::Renderer
     %{ Bad Address }
   end
 
+  define_view :no_card, :perms=>:none do |args|
+    %{ No Card! }
+  end
+
   # The below have HTML!?  should not be any html in the base renderer
 
 

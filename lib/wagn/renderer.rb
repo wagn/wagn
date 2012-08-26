@@ -84,7 +84,7 @@ module Wagn
 #              end
             rescue Exception=>e
               controller.send :notify_airbrake, e if Airbrake.configuration.api_key
-              Rails.logger.info "\nRender Error: #{e.message}"
+              Rails.logger.info "\nRender Error: #{e.class} : #{e.message}"
               Rails.logger.debug "  #{e.backtrace*"\n  "}"
               rendering_error e, (card && card.name.present? ? card.name : 'unknown card')
             end

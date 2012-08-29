@@ -76,7 +76,7 @@ class Wagn::Renderer::Html
       <div class="search-result-list"> #{
       args[:results].map do |c|
         %{<div class="search-result-item item-#{ @item_view }">
-          #{ process_inclusion c, :view=>@item_view }
+          #{ process_inclusion c, :view=>@item_view, :size=>@item_size }
         </div>}
       end.join }
       </div>

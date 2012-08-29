@@ -305,7 +305,7 @@ module Wagn
     end
   
     def process_inclusion tcard, options
-      sub = subrenderer tcard, :item_view=>options[:item], :showname=>options[:showname]
+      sub = subrenderer tcard, :item_view=>options[:item], :showname=>options[:showname], :size=>options[:size]
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub  #don't like depending on this global var switch
   
       new_card = tcard.new_card? && !tcard.virtual?

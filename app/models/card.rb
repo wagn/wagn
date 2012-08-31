@@ -9,21 +9,21 @@ class Card < ActiveRecord::Base
 
   #FIXME - need to convert all these to WQL
 
-  belongs_to :trunk, :class_name=>'Card', :foreign_key=>'trunk_id' #, :dependent=>:dependent
+#  belongs_to :trunk, :class_name=>'Card', :foreign_key=>'trunk_id' #, :dependent=>:dependent
   has_many   :right_junctions, :class_name=>'Card', :foreign_key=>'trunk_id'#, :dependent=>:destroy
+  has_many   :left_junctions,  :class_name=>'Card', :foreign_key=>'tag_id'  #, :dependent=>:destroy
 
-  belongs_to :tag, :class_name=>'Card', :foreign_key=>'tag_id' #, :dependent=>:destroy
-  has_many   :left_junctions, :class_name=>'Card', :foreign_key=>'tag_id'  #, :dependent=>:destroy
+#  belongs_to :tag, :class_name=>'Card', :foreign_key=>'tag_id' #, :dependent=>:destroy
 
   belongs_to :current_revision, :class_name => 'Revision', :foreign_key=>'current_revision_id'
   has_many   :revisions, :order => 'id', :foreign_key=>'card_id'
 
 
-  attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
-    :cards, :set_mods_loaded, :update_referencers, :allow_type_change,
-    :loaded_trunk, :nested_edit, :virtual, :attribute,
-    :error_view, :error_status, :selected_rev_id, :attachment_id
-    #should build flexible handling for set-specific attributes
+  attr_accessor :comment, :comment_author, :selected_rev_id,
+    :confirm_rename, :confirm_destroy, :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
+    :cards, :loaded_trunk, :nested_edit, # should be possible to merge these concepts
+    :error_view, :error_status, #yuck
+    :attachment_id #should build flexible handling for set-specific attributes
 
   attr_reader :type_args, :broken_type
   
@@ -33,32 +33,75 @@ class Card < ActiveRecord::Base
   
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
-  @@junk_args = %w{ missing skip_virtual id }
+  #~~~~~~  CLASS METHODS ~~~~~~~~~~~~~~~~~~~~~  
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # INITIALIZATION METHODS
+  class << self
+    JUNK_INIT_ARGS = %w{ missing skip_virtual id }    
 
-  def self.new args={}, options={}
-    args = (args || {}).stringify_keys
-    @@junk_args.each { |a| args.delete(a) }
-    %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
-    args.delete('content') if args['attach'] # should not be handled here!
+    def new args={}, options={}
+      args = (args || {}).stringify_keys
+      JUNK_INIT_ARGS.each { |a| args.delete(a) }
+      %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
+      args.delete('content') if args['attach'] # should not be handled here!
 
-    if name = args['name'] and !name.blank?
-      if  Card.cache                                       and
-          cc = Card.cache.read_local(name.to_cardname.key) and
-          cc.type_args                                     and
-          args['type']          == cc.type_args[:type]     and
-          args['typecode']      == cc.type_args[:typecode] and
-          args['type_id']       == cc.type_args[:type_id]  and
-          args['loaded_trunk']  == cc.loaded_trunk
+      if name = args['name'] and !name.blank?
+        if  Card.cache                                        and
+            cc = Card.cache.read_local(name.to_cardname.key)  and
+            cc.type_args                                      and
+            args['type']          == cc.type_args[:type]      and
+            args['typecode']      == cc.type_args[:typecode]  and
+            args['type_id']       == cc.type_args[:type_id]   and
+            args['loaded_trunk']  == cc.loaded_trunk
 
-        args['type_id'] = cc.type_id
-        return cc.send( :initialize, args )
+          args['type_id'] = cc.type_id
+          return cc.send( :initialize, args )
+        end
+      end
+      super args
+    end
+    
+    ID_CONST_ALIAS = {
+      :default_type => :basic,
+      :anon         => :anonymous,
+      :auth         => :anyone_signed_in,
+      :admin        => :administrator
+    }
+    
+    def const_missing(const)
+      if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore.to_sym
+        code = ID_CONST_ALIAS[code] || code
+        if card_id = Wagn::Codename[code]
+          const_set const, card_id
+        else
+          raise "Missing codename #{code} (#{const}) #{caller*"\n"}"
+        end
+      else
+        super
       end
     end
-    super args
+    
+    def setting name
+      Session.as_bot do
+        card=Card[name] and !card.content.strip.empty? and card.content
+      end
+    end
+
+    def path_setting name
+      name ||= '/'
+      return name if name =~ /^(http|mailto)/
+      Wagn::Conf[:root_path] + name
+    end
+
+    def toggle val
+      val == '1'
+    end
   end
+
+
+  # ~~~~~~ INSTANCE METHODS ~~~~~~~~~~~~~~~~~~~~~
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # INITIALIZATION
 
   def initialize args={}
     args['name']    = args['name'   ].to_s
@@ -74,7 +117,7 @@ class Card < ActiveRecord::Base
 
     skip_modules = args.delete 'skip_modules'
 
-    super args
+    super args # ActiveRecord #initialize
     
     if tid = get_type_id(@type_args)
       self.type_id_without_tracking = tid
@@ -84,91 +127,8 @@ class Card < ActiveRecord::Base
     self
   end
 
-  def new_card?() new_record? || @from_trash  end
-  def known?()    real? || virtual?           end
-  def real?()     !new_card?                  end
-
-  def reset_mods() @set_mods_loaded=false     end
-  def include_set_modules
-    #warn "including set modules for #{name}"
-    unless @set_mods_loaded
-      sm=set_modules
-      #warn "set modules[#{name}] #{sm.inspect} #{sm.map(&:class)*', '}"
-      sm.each {|m| singleton_class.send :include, m }
-      @set_mods_loaded=true
-    end
-    self
-  end
-
-
-  class << self
-    def const_missing(const)
-      if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore.to_sym
-        code = ID_CONST_ALIAS[code] || code
-
-        #warn Rails.logger.warn("const_miss #{const.inspect}, #{code.inspect}, #{caller[0..8]*"\n"}")
-        if card_id = Wagn::Codename[code]
-          #warn Rails.logger.warn("const_miss #{const.inspect}, #{code}, #{card_id}")
-          const_set const, card_id
-        else raise "Missing codename #{code} (#{const}) #{caller*"\n"}"
-        end
-      else super end
-    end
-  end
-
-  ID_CONST_ALIAS = {
-    :default_type => :basic,
-    :anon        => :anonymous,
-    :auth        => :anyone_signed_in,
-    :admin       => :administrator
-  }
-
-  DefaultTypename = 'Basic'
-
-
-  def to_user() User.where(:card_id=>id).first end
-
-  def among? authzed
-    prties = parties
-    authzed.each { |auth| return true if prties.member? auth }
-    authzed.member? Card::AnyoneID
-  end
-
-  def parties
-    @parties ||=  (all_roles << self.id).flatten.reject(&:blank?)
-  end
-
-  def read_rules
-    @read_rules ||= begin
-      if id==Card::WagbotID
-        [] # avoids infinite loop
-      else
-        party_keys = ['in', Card::AnyoneID] + parties
-        Session.as_bot do
-          Card.search(:right=>'*read', :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
-        end
-      end
-    end
-  end
-
-  def all_roles
-    ids = Session.as_bot { trait_card(:roles).item_cards(:limit=>0).map(&:id) }
-    @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
-  end
-
-
-
-  def existing_trait_card tagcode
-    Card.fetch cardname.trait_name(tagcode), :skip_modules=>true, :skip_virtual=>true
-  end
-
-  def trait_card tagcode
-    Card.fetch_or_new cardname.trait_name(tagcode), :skip_virtual=>true
-  end
-
-  def get_type_id(args={})
-    #warn("get_type_id(#{args.inspect})")
-    return if args[:type_id]
+  def get_type_id args={}
+    return if args[:type_id] # type_id was set explicitly.  no need to set again.
 
     type_id = case
       when args[:typecode] ;  code=args[:typecode] and (
@@ -183,15 +143,36 @@ class Card < ActiveRecord::Base
     else            ; return type_id
     end
     
-    #warn Rails.logger.warn("get_type_id templ #{name} (#{args.inspect})")
     if name && t=template
-      reset_patterns
+      reset_patterns #still necessary even with new template handling?
       t.type_id
     else
       # if we get here we have no *all+*default -- let's address that!
-      Card::DefaultTypeID  
+      DefaultTypeID  
     end
   end
+
+
+  def include_set_modules
+    unless @set_mods_loaded
+      set_modules.each do |m|
+        singleton_class.send :include, m
+      end
+      @set_mods_loaded=true
+    end
+    self
+  end
+
+
+  def reset_mods
+    @set_mods_loaded=false
+  end
+
+
+  def new_card?() new_record? || @from_trash  end
+  def known?()    real? || virtual?           end
+  def real?()     !new_card?                  end
+
 
   
 
@@ -206,10 +187,8 @@ class Card < ActiveRecord::Base
   end
 
   def set_stamper()
-    #warn "set stamper[#{name}] #{Session.user_id}, #{Session.as_id}" #{caller*"\n"}"
     self.updater_id = Session.user_id
     self.creator_id = self.updater_id if new_card?
-    #warn "set stamper[#{name}] #{self.creator_id}, #{self.updater_id}, #{Session.user_id}, #{Session.as_id}" #{caller*"\n"}"
   end
 
   def base_before_save
@@ -221,7 +200,7 @@ class Card < ActiveRecord::Base
 
   def base_after_save
     save_subcards
-    self.virtual = false
+    @virtual    = false
     @from_trash = false
     Wagn::Hook.call :after_create, self if @was_new_card
     send_notifications
@@ -388,16 +367,13 @@ class Card < ActiveRecord::Base
 
 
   # FIXME: use delegations and include all cardname functions
-  def simple?()     cardname.simple?       end
-  def junction?()   cardname.junction?     end
-  def key()         cardname.key           end
-  def css_name()    cardname.css_name      end
+  def simple?()     cardname.simple?              end
+  def junction?()   cardname.junction?            end
+  def css_name()    cardname.css_name             end
 
-  def left()      Card[cardname.left_name]  end
-  def right()     Card[cardname.tag_name]   end
-  def pieces()    simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq end
-  def particles() cardname.particle_names.map {|part| Card.fetch(part) }       end
-  def key()       cardname.key                                                 end
+  def left()      Card.fetch cardname.left_name   end
+  def right()     Card.fetch cardname.tag_name    end
+  def key()       cardname.key                    end # DISLIKE - how do we access db key?
 
   def junctions(args={})
     return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.
@@ -415,7 +391,7 @@ class Card < ActiveRecord::Base
     jcts.map { |r| [r ] + r.dependents(*args) }.flatten
   end
 
-  def repair_key
+  def repair_key # this will not work unless we have access to the db key
     Session.as_bot do
       correct_key = cardname.to_key
       current_key = key
@@ -446,7 +422,7 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # TYPE
 
-  def type_card() Card[type_id.to_i]     end
+  def type_card() Card[type_id.to_i]           end
   def typecode()  Wagn::Codename[type_id.to_i] end # Should we not fallback to key?
   def typename()
     return if type_id.nil?
@@ -494,14 +470,11 @@ class Card < ActiveRecord::Base
   end
 
   def author
-    c=Card[creator_id]
-    #warn "c author #{creator_id}, #{c}, #{self}"; c
+    Card[ creator_id ]
   end
 
   def updater
-    #warn "updater #{updater_id}, #{updater_id}"
-    c=Card[updater_id|| Card::AnonID]
-    #warn "c upd #{updater_id}, #{c}, #{self}"; c
+    Card[ updater_id || Card::AnonID ]
   end
 
   def drafts
@@ -510,21 +483,71 @@ class Card < ActiveRecord::Base
 
   def save_draft( content )
     clear_drafts
-    revisions.create(:content=>content)
+    revisions.create :content=>content
   end
 
   protected
-  def clear_drafts
+  
+  def clear_drafts # yuck!
     connection.execute(%{delete from card_revisions where card_id=#{id} and id > #{current_revision_id} })
   end
 
   public
 
+  #~~~~~~~~~~~~~~ USER-ISH methods ~~~~~~~~~~~~~~#
+  # these should be done in a set module when we have the capacity to address the set of "cards with accounts"
+
+  def to_user() User.where(:card_id=>id).first end
+
+  def among? authzed
+    prties = parties
+    authzed.each { |auth| return true if prties.member? auth }
+    authzed.member? Card::AnyoneID
+  end
+
+  def parties
+    @parties ||= (all_roles << self.id).flatten.reject(&:blank?)
+  end
+
+  def read_rules
+    @read_rules ||= begin
+      if id==Card::WagbotID
+        [] # avoids infinite loop
+      else
+        party_keys = ['in', Card::AnyoneID] + parties
+        Session.as_bot do
+          Card.search(:right=>'*read', :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
+        end
+      end
+    end
+  end
+
+  def all_roles
+    ids = Session.as_bot { trait_card(:roles).item_cards(:limit=>0).map(&:id) }
+    @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
+  end
+
+
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # TRAIT METHODS
+
+  def existing_trait_card tagcode
+    self.class.fetch cardname.trait_name(tagcode), :skip_modules=>true, :skip_virtual=>true
+  end
+
+  def trait_card tagcode
+    self.class.fetch_or_new cardname.trait_name(tagcode), :skip_virtual=>true
+  end
+
+
+
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # METHODS FOR OVERRIDE
+  # all of these should be done differently -efm
 
-  def post_render( content )     content  end
+  def post_render( content )     content  end  
   def clean_html?()                 true  end
   def collection?()                false  end
   def on_type_change()                    end
@@ -536,20 +559,11 @@ class Card < ActiveRecord::Base
   # MISCELLANEOUS
 
   def to_s()  "#<#{self.class.name}[#{type_id < 1 ? 'bogus': typename}:#{type_id}]#{self.attributes['name']}>" end
-  #def inspect()  "#<#{self.class.name}##{self.id}[#{type_id < 1 ? 'bogus': typename}:#{type_id}]!#{self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}:O##{object_id}:rv#{current_revision_id}} U:#{updater_id} C:#{creator_id}>" end
   def inspect()  "#<#{self.class.name}(#{object_id})##{self.id}[#{type_id < 1 ? 'bogus': typename}:#{type_id}]!#{
-     self.name}!{n:#{new_card?}:v:#{virtual}:I:#{@set_mods_loaded}} R:#{
+     self.name}!{n:#{new_card?}:v:#{virtual?}:I:#{@set_mods_loaded}} R:#{
       @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}>"
   end
   def mocha_inspect()     to_s                                   end
-
-#  def trash
-    # needs special handling because default rails cache lookup uses `@attributes_cache['trash'] ||=`, which fails on "false" every time
-#    ac= @attributes_cache
-#    ac['trash'].nil? ? (ac['trash'] = read_attribute('trash')) : ac['trash']
-#  end
-
-
 
 
 
@@ -579,8 +593,6 @@ class Card < ActiveRecord::Base
   # must therefore be defined after the #tracks call
 
 
-  def cardname() @cardname ||= name_without_cardname.to_cardname end
-
   alias cardname= name=
   def name_with_cardname=(newname)
     newname = newname.to_s
@@ -602,10 +614,10 @@ class Card < ActiveRecord::Base
 
   def validate_destroy
     if code=self.codename
-      errors.add :destroy, "#{name}'s is a system card. (#{code})<br>  Deleting this card would mess up our revision records."
+      errors.add :destroy, "#{name} is is a system card. (#{code})\n  Deleting this card would mess up our revision records."
       return false
     elsif type_id== Card::UserID and Card::Revision.find_by_creator_id( self.id )
-      errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
+      errors.add :destroy, "Edits have been made with #{name}'s user account.\n  Deleting this card would mess up our revision records."
       return false
     end
     #should collect errors from dependent destroys here.
@@ -736,21 +748,7 @@ class Card < ActiveRecord::Base
     end
   end
 
-  class << self
-    def setting name
-      Session.as_bot  do
-        card=Card[name] and !card.content.strip.empty? and card.content
-      end
-    end
 
-    def path_setting name
-      name ||= '/'
-      return name if name =~ /^(http|mailto)/
-      Wagn::Conf[:root_path] + name
-    end
-
-    def toggle(val) val == '1' end
-  end
 
 
   # these old_modules should be refactored out

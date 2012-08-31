@@ -39,16 +39,16 @@ module Wagn::Model::TrackedAttributes
         sidecard = Card[sidename]
         old_name_in_way = (sidecard && sidecard.id==self.id) # eg, renaming A to A+B
         suspend_name(sidename) if old_name_in_way
-        self.send "#{side}=", begin
+        self.send "#{side}_id=", begin
           if !sidecard || old_name_in_way
             Card.create! :name=>sidename
           else
             sidecard
-          end
+          end.id
         end
       end
     else
-      self.trunk = self.tag = nil
+      self.trunk_id = self.tag_id = nil
     end   
 
     return if new_card?
@@ -91,13 +91,10 @@ module Wagn::Model::TrackedAttributes
         tee.save!
       end
     end
-    #warn "setting typeid(#{new_type_id}) and code (#{self.type_id})"
     
     # do we need to "undo" and loaded modules?  Maybe reload defaults?
     reset_patterns
     include_set_modules
-    #self.before_validation_on_create
-    #Cardtype.cache.reset
     true
   end
   

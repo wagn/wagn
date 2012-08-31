@@ -389,7 +389,7 @@ module Wagn
       if p = params['cards'] and card_params = p[cardname.pre_cgi]
         content = card_params['content']
       end
-      content if content.present?  #not sure I get why this is necessary - efm
+      content if content.present?  # why is this necessary? - efm
     end
   
     def new_inclusion_card_args options

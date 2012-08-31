@@ -33,7 +33,7 @@ module Notification
       else
         @trunk_watcher_watched_pairs.compact.each do |watcher, watched|
           next unless watcher
-          Mailer.change_notice( watcher, self.trunk, 'updated', watched.to_s, [[name, action]], self ).deliver
+          Mailer.change_notice( watcher, self.left, 'updated', watched.to_s, [[name, action]], self ).deliver
         end
       end
     rescue Exception=>e

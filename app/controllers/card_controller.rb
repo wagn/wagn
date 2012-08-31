@@ -129,8 +129,8 @@ class CardController < ApplicationController
   def create_account
     # FIXME: or should this be @card.trait_card(:account).ok?
     Card['*account'].ok?(:create) && @card.ok?(:update)
-    email_args = { :subject => "Your new #{Card.setting('*title')} account.",   #ENGLISH
-                   :message => "Welcome!  You now have an account on #{Card.setting('*title')}." } #ENGLISH
+    email_args = { :subject => "Your new #{Card.setting :title} account.",   #ENGLISH
+                   :message => "Welcome!  You now have an account on #{Card.setting :title}." } #ENGLISH
     @user, @card = User.create_with_card(params[:user],@card, email_args)
     raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
     #@account = User.new(:email=>@user.email)
@@ -159,7 +159,7 @@ class CardController < ApplicationController
   def index_preload
     Session.no_logins? ?
       redirect_to( Card.path_setting '/admin/setup' ) :
-      params[:id] = (Card.setting('*home') || 'Home').to_cardname.to_url_key
+      params[:id] = (Card.setting(:home) || 'Home').to_cardname.to_url_key
   end
 
 

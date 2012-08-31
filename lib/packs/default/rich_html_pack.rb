@@ -609,10 +609,7 @@ class Wagn::Renderer::Html
                "You need permission"
               end} to #{task} this card#{": <strong>#{fancy_title(card)}</strong>" if card.name && !card.name.blank? }.
               </div>
-  
-              #{unless @skip_slot_header or task == :read
-                %{<p>#{ link_to 'See permission settings', path(:options, :attrib=>'settings'), :class=>'slotter', :remote=>true  }.</p>}
-              end} #{
+             #{
   
               if !Session.logged_in? && Card.new(:type_id=>Card::InvitationRequestID).ok?(:create)
                 %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}

@@ -90,7 +90,7 @@ module Wagn
               send( "_render_#{ ok_view view, *a }", *a )
             rescue Exception=>e
               controller.send :notify_airbrake, e if Airbrake.configuration.api_key
-              Rails.logger.info "\nRender Error: #{e.message}"
+              Rails.logger.info "\nRender Error: #{e.class} : #{e.message}"
               Rails.logger.debug "  #{e.backtrace*"\n  "}"
               rendering_error e, (card && card.name.present? ? card.name : 'unknown card')
             end
@@ -354,7 +354,7 @@ module Wagn
       sub = subrenderer( tcard, 
         :item_view =>options[:item], 
         :type      =>options[:type],
-#        :size      =>options[:size],
+        :size      =>options[:size],
         :showname  =>(options[:showname] || tcard.name)
       )
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
@@ -370,8 +370,7 @@ module Wagn
         when :closed;    !tcard.known?  ? :closed_missing : :closed_content
         when :edit  ;    tcard.virtual? ? :edit_virtual   : :edit_in_form
         # FIXME should be concerned about templateness, not virtualness per se
-        # needs to handle real cards that are hard templated much better       
-        
+        # needs to handle real cards that are hard templated much better               
         else        ;    view
         end
       

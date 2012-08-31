@@ -37,7 +37,7 @@ module Notification
         end
       end
     rescue Exception=>e
-      notify_airbrake e if Airbrake.configuration.api_key
+      Airbrake.notify e if Airbrake.configuration.api_key
       Rails.logger.info "\nController exception: #{e.message}"
       Rails.logger.debug e.backtrace*"\n"
     end

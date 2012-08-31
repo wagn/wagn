@@ -563,7 +563,10 @@ class Wagn::Renderer::Html
   end
 
 
-  define_view :watch, :perms=> lambda { |r| !Session.logged_in? || r.card.new_card? ? :blank : :watch } do |args|
+  define_view :watch, :tags=>:unknown_ok, :perms=> lambda { |r| 
+        !Session.logged_in? || r.card.new_card? ? :blank : :watch 
+      } do |args|
+        
     wrap :watch do
       if card.watching_type?
         watching_type_cards

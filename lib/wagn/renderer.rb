@@ -248,7 +248,7 @@ module Wagn
         when @depth >= @@max_depth   ; :too_deep
         # prevent recursion.  @depth tracks subrenderers (view within views)  
         when @@perms[view] == :none  ; view
-        # This may currently be overloaded.  always allowed = never modified.  not sure that's right.
+        # This may currently be overloaded.  always allowed = skip moodes = never modified.  not sure that's right.
         when !card                   ; :no_card
         # This should disappear when we get rid of admin and account controllers and all renderers always have cards
 
@@ -366,13 +366,16 @@ module Wagn
       options[:home_view] = [:closed, :edit].member?(view) ? :open : view 
       # FIXME: special views should be represented in view definitions
       
-      view = case @mode
-        when :closed;    !tcard.known?  ? :closed_missing : :closed_content
-        when :edit  ;    tcard.virtual? ? :edit_virtual   : :edit_in_form
-        # FIXME should be concerned about templateness, not virtualness per se
-        # needs to handle real cards that are hard templated much better               
-        else        ;    view
-        end
+      if @@perms[view] != :none
+        view = case @mode
+        
+          when :closed;    !tcard.known?  ? :closed_missing : :closed_content
+          when :edit  ;    tcard.virtual? ? :edit_virtual   : :edit_in_form
+          # FIXME should be concerned about templateness, not virtualness per se
+          # needs to handle real cards that are hard templated much better               
+          else        ;    view
+          end
+      end
       
       result = raw( sub.render(view, options) )
       Renderer.current_slot = oldrenderer

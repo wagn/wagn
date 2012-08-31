@@ -109,7 +109,7 @@ describe Wagn::Cardname do
     end
     
     context "mismatched requests" do
-      it "returns _self for _left or _right on non-junctions" do
+      it "returns _self for _left or _right on simple cards" do
         "_left+Z".to_cardname.to_absolute("A").should == "A+Z"
         "_right+Z".to_cardname.to_absolute("A").should == "A+Z"
       end

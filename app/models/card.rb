@@ -7,17 +7,8 @@ class Card < ActiveRecord::Base
   model_stamper # Card is both stamped and stamper
   stampable :stamper_class_name => :card
 
-  #FIXME - need to convert all these to WQL
-
-#  belongs_to :trunk, :class_name=>'Card', :foreign_key=>'trunk_id' #, :dependent=>:dependent
-  has_many   :right_junctions, :class_name=>'Card', :foreign_key=>'trunk_id'#, :dependent=>:destroy
-  has_many   :left_junctions,  :class_name=>'Card', :foreign_key=>'tag_id'  #, :dependent=>:destroy
-
-#  belongs_to :tag, :class_name=>'Card', :foreign_key=>'tag_id' #, :dependent=>:destroy
-
-  belongs_to :current_revision, :class_name => 'Revision', :foreign_key=>'current_revision_id'
+  belongs_to :current_revision, :class_name => 'Revision', :foreign_key=>'current_revision_id' #FIXME - use revision cache
   has_many   :revisions, :order => 'id', :foreign_key=>'card_id'
-
 
   attr_accessor :comment, :comment_author, :selected_rev_id,
     :confirm_rename, :confirm_destroy, :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
@@ -167,6 +158,12 @@ class Card < ActiveRecord::Base
   def reset_mods
     @set_mods_loaded=false
   end
+
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # STATES
+
+
 
 
   def new_card?() new_record? || @from_trash  end
@@ -375,20 +372,13 @@ class Card < ActiveRecord::Base
   def right()     Card.fetch cardname.tag_name    end
   def key()       cardname.key                    end # DISLIKE - how do we access db key?
 
-  def junctions(args={})
-    return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.
-    args[:conditions] = ["trash=?", false] unless args.has_key?(:conditions)
-    args[:order] = 'id' unless args.has_key?(:order)
-    # aparently find f***s up your args. if you don't clone them, the next find is busted.
-    left_junctions.find(:all, args.clone) + right_junctions.find(:all, args.clone)
-  end
-
-  def dependents(*args)
-    # all plus cards, plusses of plus cards, etc
-    jcts = junctions(*args)
-    jcts.delete(self) if jcts.include?(self)
-    return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.
-    jcts.map { |r| [r ] + r.dependents(*args) }.flatten
+  def dependents
+    return [] if new_card?
+    Session.as_bot do
+      Card.search( :part=>name ).map do |c|
+        [c] + c.dependents
+      end.flatten
+    end
   end
 
   def repair_key # this will not work unless we have access to the db key
@@ -497,8 +487,6 @@ class Card < ActiveRecord::Base
   #~~~~~~~~~~~~~~ USER-ISH methods ~~~~~~~~~~~~~~#
   # these should be done in a set module when we have the capacity to address the set of "cards with accounts"
 
-  def to_user() User.where(:card_id=>id).first end
-
   def among? authzed
     prties = parties
     authzed.each { |auth| return true if prties.member? auth }
@@ -527,17 +515,18 @@ class Card < ActiveRecord::Base
     @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
   end
 
+  def to_user() User.where(:card_id=>id).first end # should be obsolete soon.
 
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # TRAIT METHODS
 
   def existing_trait_card tagcode
-    self.class.fetch cardname.trait_name(tagcode), :skip_modules=>true, :skip_virtual=>true
+    Card.fetch cardname.trait_name(tagcode), :skip_modules=>true, :skip_virtual=>true
   end
 
   def trait_card tagcode
-    self.class.fetch_or_new cardname.trait_name(tagcode), :skip_virtual=>true
+    Card.fetch_or_new cardname.trait_name(tagcode), :skip_virtual=>true
   end
 
 
@@ -545,7 +534,7 @@ class Card < ActiveRecord::Base
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # METHODS FOR OVERRIDE
-  # all of these should be done differently -efm
+  # pretty much all of these should be done differently -efm
 
   def post_render( content )     content  end  
   def clean_html?()                 true  end
@@ -558,11 +547,20 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # MISCELLANEOUS
 
-  def to_s()  "#<#{self.class.name}[#{type_id < 1 ? 'bogus': typename}:#{type_id}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}(#{object_id})##{self.id}[#{type_id < 1 ? 'bogus': typename}:#{type_id}]!#{
-     self.name}!{n:#{new_card?}:v:#{virtual?}:I:#{@set_mods_loaded}} R:#{
+  def to_s
+    "#<#{self.class.name}[#{type_id < 1 ? 'bogus': typename}:#{type_id}]#{self.attributes['name']}>"
+  end
+  
+  def inspect
+    "#<#{self.class.name}"+
+    "(#{object_id})" +
+    "##{self.id}" +
+    "[#{type_id < 1 ? 'bogus': typename}:#{type_id}]" +
+    "!#{self.name}!{n:#{new_card?}:v:#{virtual?}:I:#{@set_mods_loaded}} R:#{
       @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}>"
   end
+
+  # what is this??
   def mocha_inspect()     to_s                                   end
 
 
@@ -657,8 +655,8 @@ class Card < ActiveRecord::Base
           "may not contain any of the following characters: #{
           Wagn::Cardname::CARDNAME_BANNED_CHARACTERS}"
       end
-      # this is to protect against using a junction card as a tag-- although it is technically possible now.
-      if (cdname.junction? and rec.simple? and rec.left_junctions.size>0)
+      # this is to protect against using a plus card as a tag
+      if cdname.junction? and rec.simple? and Card.where(:tag_id=>rec.id).size > 0
         rec.errors.add :name, "#{value} in use as a tag"
       end
 

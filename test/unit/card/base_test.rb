@@ -128,7 +128,7 @@ class Card::BaseTest < ActiveSupport::TestCase
 
   def assert_samecard( card1, card2 )
     assert_equal card1.current_revision, card2.current_revision
-    assert_equal card1.tag, card2.tag
+    assert_equal card1.right, card2.right
   end
 
   def assert_stable( card1 )

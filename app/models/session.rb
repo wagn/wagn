@@ -2,8 +2,6 @@ class Session
   @@as_card = @@as_id = @@user_id = @@user_card = @@user = nil
   cattr_accessor :user_id   # the card id of the current user
 
-
-
   class << self
     def user_id
       @@user_id ||= Card::AnonID

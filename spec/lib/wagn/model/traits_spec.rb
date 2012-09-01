@@ -48,6 +48,7 @@ describe Card do
     end
 
     it "Error for missing setting card for form" do
+      pending
       c = Card.fetch('B')
       (r=Wagn::Renderer::Html.new(c).render(:declare)).should match(/Missing setting/)
     end

@@ -87,12 +87,12 @@ describe Card, "created without permission" do
 end
 
 
-describe Card, "Normal card with junctions" do
+describe Card, "Normal card with dependents" do
   before do
     @a = Card['A']
   end
-  it "should confirm that it has junctions" do
-    @a.junctions.length.should > 0
+  it "should confirm that it has dependents" do
+    @a.dependents.length.should > 0
   end
   it "should successfull have its type changed" do
     Session.as_bot do
@@ -101,11 +101,11 @@ describe Card, "Normal card with junctions" do
       Card['A'].typecode.should== :number
     end
   end
-  it "should still have its junctions after changing type" do
+  it "should still have its dependents after changing type" do
     Session.as_bot do
       assert type_id = Card.fetch_id('cardtype_e')
       @a.type_id = type_id; @a.save!
-      Card['A'].junctions.length.should > 0
+      Card['A'].dependents.length.should > 0
     end
   end
 end

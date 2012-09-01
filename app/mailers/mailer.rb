@@ -30,7 +30,7 @@ class Mailer < ActionMailer::Base
   end
 
   def signup_alert invite_request
-    @site = Card.setting('*title')
+    @site = Card.setting :title
     @card = invite_request
     @email= invite_request.to_user.email
     @name = invite_request.name
@@ -65,7 +65,7 @@ class Mailer < ActionMailer::Base
 
     args = {
       :to           => "#{user.email}",
-      :subject      => "[#{Card.setting('*title')} notice] #{@updater} #{action} \"#{card.name}\"" ,
+      :subject      => "[#{Card.setting :title} notice] #{@updater} #{action} \"#{card.name}\"" ,
       :content_type => 'text/html',
     }
     set_from_args args, User.admin.email    

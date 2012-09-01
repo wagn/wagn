@@ -8,6 +8,6 @@ class Wagn::Renderer
   end
 
   define_view :editor, :type=>'toggle' do |args|
-    form.check_box(:content)
+    form.check_box :content
   end
 end

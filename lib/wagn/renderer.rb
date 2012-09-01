@@ -90,7 +90,7 @@ module Wagn
               send( "_render_#{ ok_view view, *a }", *a )
             rescue Exception=>e
               controller.send :notify_airbrake, e if Airbrake.configuration.api_key
-              Rails.logger.info "\nRender Error: #{e.message}"
+              Rails.logger.info "\nRender Error: #{e.class} : #{e.message}"
               Rails.logger.debug "  #{e.backtrace*"\n  "}"
               rendering_error e, (card && card.name.present? ? card.name : 'unknown card')
             end
@@ -248,7 +248,7 @@ module Wagn
         when @depth >= @@max_depth   ; :too_deep
         # prevent recursion.  @depth tracks subrenderers (view within views)  
         when @@perms[view] == :none  ; view
-        # This may currently be overloaded.  always allowed = never modified.  not sure that's right.
+        # This may currently be overloaded.  always allowed = skip moodes = never modified.  not sure that's right.
         when !card                   ; :no_card
         # This should disappear when we get rid of admin and account controllers and all renderers always have cards
 
@@ -354,7 +354,7 @@ module Wagn
       sub = subrenderer( tcard, 
         :item_view =>options[:item], 
         :type      =>options[:type],
-#        :size      =>options[:size],
+        :size      =>options[:size],
         :showname  =>(options[:showname] || tcard.name)
       )
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
@@ -366,14 +366,16 @@ module Wagn
       options[:home_view] = [:closed, :edit].member?(view) ? :open : view 
       # FIXME: special views should be represented in view definitions
       
-      view = case @mode
-        when :closed;    !tcard.known?  ? :closed_missing : :closed_content
-        when :edit  ;    tcard.virtual? ? :edit_virtual   : :edit_in_form
-        # FIXME should be concerned about templateness, not virtualness per se
-        # needs to handle real cards that are hard templated much better       
+      if @@perms[view] != :none
+        view = case @mode
         
-        else        ;    view
-        end
+          when :closed;    !tcard.known?  ? :closed_missing : :closed_content
+          when :edit  ;    tcard.virtual? ? :edit_virtual   : :edit_in_form
+          # FIXME should be concerned about templateness, not virtualness per se
+          # needs to handle real cards that are hard templated much better               
+          else        ;    view
+          end
+      end
       
       result = raw( sub.render(view, options) )
       Renderer.current_slot = oldrenderer
@@ -387,7 +389,7 @@ module Wagn
       if p = params['cards'] and card_params = p[cardname.pre_cgi]
         content = card_params['content']
       end
-      content if content.present?  #not sure I get why this is necessary - efm
+      content if content.present?  # why is this necessary? - efm
     end
   
     def new_inclusion_card_args options

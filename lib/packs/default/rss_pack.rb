@@ -9,7 +9,7 @@ class Wagn::Renderer::Rss
 
     xml.rss :version => "2.0" do
       xml.channel do
-        xml.title  Card.setting('title') + " : " + card.name.gsub(/^\*/,'')
+        xml.title  Card.setting(:title) + " : " + card.name.gsub(/^\*/,'')
         xml.description ""
         xml.link wagn_url(card)
         begin

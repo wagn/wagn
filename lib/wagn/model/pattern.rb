@@ -17,8 +17,8 @@ module Wagn::Model
     def reset_patterns_if_rule()
       return if name.blank?
       #warn Rails.logger.warn("reset p ifr[#{inspect}], #{name_without_tracking}")
-      if !simple? and !new_card? and setting=tag and setting.type_id == Card::SettingID and
-         (set=trunk).type_id == Card::SetID
+      if !simple? and !new_card? and setting=right and setting.type_id == Card::SettingID and
+         (set=left).type_id == Card::SetID
         #warn (Rails.logger.debug "reset set: #{name}, Set:#{set.inspect} + Setting:#{setting.inspect}")
         set.include_set_modules
         #warn (Rails.logger.debug "reset RR [#{set.name}]? #{self.update_read_rule_list.inspect}")
@@ -232,7 +232,7 @@ module Wagn::Model
       end
       def trunk_name card
         lft = card.loaded_trunk || card.left
-        typename = (lft && lft.typename) || Card::DefaultTypename
+        typename = (lft && lft.typename) || Card[ Card::DefaultTypeID ].name
         "#{typename}+#{card.cardname.tag_name}"
       end
     end

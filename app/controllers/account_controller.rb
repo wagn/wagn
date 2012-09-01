@@ -101,7 +101,8 @@ class AccountController < ApplicationController
   
   def render_user_errors
     @user.errors.each do |field, err|
-      @card.errors.add field, err
+      @card.errors.add field, err unless @card.errors[field]
+      # needed to prevent duplicates because User adds them in the other direction in user.rb
     end
     render_errors
   end

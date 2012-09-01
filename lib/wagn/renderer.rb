@@ -84,7 +84,7 @@ module Wagn
 #              end
             rescue Exception=>e
               controller.send :notify_airbrake, e if Airbrake.configuration.api_key
-              Rails.logger.info "\nRender Error: #{e.message}"
+              Rails.logger.info "\nRender Error: #{e.class} : #{e.message}"
               Rails.logger.debug "  #{e.backtrace*"\n  "}"
               rendering_error e, (card && card.name.present? ? card.name : 'unknown card')
             end
@@ -221,7 +221,6 @@ module Wagn
         expand_inclusion(opts) { yield }
       end
     end
-    alias expand_inclusions process_content
   
   
     def deny_render view, args={}
@@ -306,7 +305,7 @@ module Wagn
     end
   
     def process_inclusion tcard, options
-      sub = subrenderer tcard, :item_view=>options[:item], :showname=>options[:showname]
+      sub = subrenderer tcard, :item_view=>options[:item], :showname=>options[:showname], :size=>options[:size]
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub  #don't like depending on this global var switch
   
       new_card = tcard.new_card? && !tcard.virtual?

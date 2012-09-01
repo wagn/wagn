@@ -20,7 +20,7 @@ class Wagn::Renderer
   
   define_view :card_list, :type=>'search' do |args|
     @item_view ||= (card.spec[:view]) || :name
-
+    
     if args[:results].empty?
       'no results'
     else
@@ -63,6 +63,8 @@ class Wagn::Renderer::Html
 
   define_view :card_list, :type=>'search' do |args|
     @item_view ||= (card.spec[:view]) || :closed
+    @item_size ||= (card.spec[:size]) || nil
+    
     paging = _optional_render :paging, args
 
     _render_search_header +
@@ -74,7 +76,7 @@ class Wagn::Renderer::Html
       <div class="search-result-list"> #{
       args[:results].map do |c|
         %{<div class="search-result-item item-#{ @item_view }">
-          #{ process_inclusion c, :view=>@item_view }
+          #{ process_inclusion c, :view=>@item_view, :size=>@item_size }
         </div>}
       end.join }
       </div>

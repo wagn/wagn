@@ -1,11 +1,15 @@
 class Wagn::Renderer
   
   define_view :core, :type=>'image' do |args|
-    (source = _render_source( args )) ? image_tag( source ) : ''
+    handle_source args do |source|
+      image_tag source
+    end
   end
 
   define_view :core, :type=>'file' do |args|
-    (source = _render_source) ?  "<a href=\"#{source}\">Download #{card.name}</a>" : ''
+    handle_source args do |source|
+      "<a href=\"#{source}\">Download #{card.name}</a>"
+    end
   end
 
   define_view :closed_content, :type=>'image' do |args|
@@ -13,21 +17,22 @@ class Wagn::Renderer
   end
   
   define_view :source, :type=>'image' do |args|
-    attach_url( @mode==:closed ? :icon : ( args[:size] || :medium ) )
+    style = @mode==:closed ? :icon : ( args[:size] || :medium )
+    style = :original if style.to_sym == :full 
+    card.attach.url style
   end
 
   define_view :source, :type=>'file' do |args|
-    attach_url
+    card.attach.url
   end
   
   private
-
-  def attach_url(style=nil)
-    return nil if card.content.blank?
-    style = :original if style && style.to_sym == :full 
-    card.attach.url style
+  
+  def handle_source args
+    source = _render_source args
+    source ? yield( source ) : ''
   rescue
-    nil #not wild about this, but attach raises errors when the content is not proper attachment data
+    'File Error'
   end
   
 end
@@ -37,7 +42,7 @@ end
 
 class Wagn::Renderer::Html
   define_view :editor, :type=>'file' do |args|
-    Rails.logger.debug "editor for file #{card.inspect}"
+    #Rails.logger.debug "editor for file #{card.inspect}"
     out = '<div class="choose-file">'
     if !card.new_card?
       out << %{<div class="attachment-preview", :id="#{card.attach_file_name}-preview"> #{_render_core(args)} </div> }

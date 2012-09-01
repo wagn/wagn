@@ -609,10 +609,7 @@ class Wagn::Renderer::Html
                "You need permission"
               end} to #{params[:action]} this card#{": <strong>#{fancy_title(card)}</strong>" if card.name && !card.name.blank? }.
               </div>
-  
-              #{unless @skip_slot_header or @deny=='view'
-                %{<p>#{ link_to 'See permission settings', path(:options, :attrib=>'settings'), :class=>'slotter', :remote=>true  }.</p>}
-              end} #{
+             #{
   
               if User.current_user.anonymous? && Card.new(:typecode=>'InvitationRequest').ok?(:create)
                 %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}

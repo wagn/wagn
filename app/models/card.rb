@@ -1,13 +1,20 @@
 # -*- encoding : utf-8 -*-
 
 class Card < ActiveRecord::Base
+  #Revision
+  #Reference
+  require 'card/revision'
+  require 'card/reference'
+end
+class Card < ActiveRecord::Base
+
   cattr_accessor :cache
 
   # userstamp methods
   model_stamper # Card is both stamped and stamper
   stampable :stamper_class_name => :card
 
-  belongs_to :current_revision, :class_name => 'Revision', :foreign_key=>'current_revision_id' #FIXME - use revision cache
+  belongs_to :current_revision, :class_name => 'Card::Revision', :foreign_key=>'current_revision_id' #FIXME - use revision cache
   has_many   :revisions, :order => 'id', :foreign_key=>'card_id'
 
   attr_accessor :comment, :comment_author, :selected_rev_id,
@@ -67,6 +74,7 @@ class Card < ActiveRecord::Base
           raise "Missing codename #{code} (#{const}) #{caller*"\n"}"
         end
       else
+        Rails.logger.warn "need to load #{const.inspect}?"
         super
       end
     end

@@ -1,5 +1,11 @@
 module Wagn::Model
+  class BasePattern
+    @@pattern_class = nil
+
+    def self.pattern_class=(pc) @@pattern_class=pc end
+  end
   module Pattern
+    Wagn::Model::BasePattern.pattern_class= self
 
     mattr_accessor :subclasses
     @@subclasses = []
@@ -58,10 +64,13 @@ module Wagn::Model
       #warn "mks[#{inspect}] #{rr.inspect}"; rr
     end
   end
+end
 
-
+module Wagn::Model
   class BasePattern
     include AllSets
+    #include Pattern
+
     @@ruby19 = !!(RUBY_VERSION =~ /^1\.9/)
     @@setmodroot = Wagn::Set
 
@@ -76,13 +85,14 @@ module Wagn::Model
 
       def find_real_module(base, part)
         if @@ruby19
-          base.const_defined?(part, false) ? base.const_get(part, false) : nil
-          #warn "1.9#{base}, #{part}: #{r.inspect}"; r
+          r=base.const_defined?(part, false) ? base.const_get(part, false) : nil
+          #Rails.logger.warn "1.9#{base}, #{part}: #{r.inspect}"; r
         else
           #warn "1.8#{base}, #{part}: #{base.const_defined?(part)} ? #{base.const_get(part)}"
           base.const_defined?(part)        ? base.const_get(part)        : nil
         end
       rescue Exception => e
+        Rails.logger.warn "frm exception #{e.inspect} #{e.backtrace[0..8]*"\n"}"
         return nil if NameError===e
         warn "exception #{e.inspect} #{e.backtrace[0..8]*"\n"}"
         raise e
@@ -97,7 +107,7 @@ module Wagn::Model
       end
 
       def register key, opt_keys, opts={}
-        Wagn::Model::Pattern.register_class self
+        @@pattern_class.register_class self
         cattr_accessor :key, :opt_keys, :junction_only, :method_key
         self.key = key
         self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]
@@ -245,4 +255,3 @@ module Wagn::Model
     def self.trunk_name(card)         card.name                  end
   end
 end
-

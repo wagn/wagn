@@ -1,16 +1,11 @@
 module AllSets
-  Wagn::Set::Right::Xaccount
-  Wagn::Set::Right::Xsol
-  Wagn::Set::Type::Etherpad
-  Wagn::Set::Type::Layout
-  Wagn::Set::Type::File
-  Wagn::Set::Type::User
-  Wagn::Set::Type::InvitationRequest
-  Wagn::Set::Type::Search
-  Wagn::Set::Type::Number
-  Wagn::Set::Type::Basic
-  Wagn::Set::Type::HTML
-  Wagn::Set::Type::Pointer
-  Wagn::Set::Type::Cardtype
-  Wagn::Set::Type::Set
+  Dir.glob('lib/wagn/set/**/*.rb').each do |f|
+    if f =~ /lib\/(wagn\/set\/.*)\.rb$/
+      klass = $1.split('/').map{|s| s.camelize}*'::' #.inject(Module) {|k,m|
+      #Rails.logger.warn "alls: #{k.inspect}.const_get(#{m.inspect})"
+      #k.const_get(m) }
+      k=class_eval(klass)
+      Rails.logger.warn "all sets: #{klass.inspect}, #{k}"
+    end
+  end
 end

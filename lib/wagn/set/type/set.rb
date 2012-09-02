@@ -18,9 +18,9 @@ module Wagn::Set::Type::Set
   end
 
   def reset_set_patterns
-    #(list = Card.members(key).map{|name| Card.fetch(name)}).compact.each(&:reset_patterns)
-    (list = Card.members(key)).each{|k| Card.clear_cache(k) }
-    #warn Rails.logger.warn("reset_sp #{name}, #{list.inspect}")
+    Card.members( key ).each do |mem|
+      Card.expire mem
+    end
   end
 
   def label

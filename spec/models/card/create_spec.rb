@@ -63,7 +63,7 @@ describe Card, "created by Card.create with valid attributes" do
   end
 
   it "should be findable by name" do
-    Card.find_by_name("New Card").class.should == Card
+    Card["New Card"].class.should == Card
   end  
 end
 
@@ -99,15 +99,15 @@ describe Card, "create junction" do
   end
 
   it "should create junction card" do
-    Card.find_by_name("Peach+Pear").class.should == Card
+    Card["Peach+Pear"].class.should == Card
   end
 
   it "should create trunk card" do
-    Card.find_by_name("Peach").class.should == Card
+    Card["Peach"].class.should == Card
   end
 
   it "should create tag card" do
-    Card.find_by_name("Pear").class.should == Card
+    Card["Pear"].class.should == Card
   end
 end
 

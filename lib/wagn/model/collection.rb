@@ -4,17 +4,11 @@ module Wagn::Model::Collection
       ::Wql.new(spec).run
     end
 
-    def [](name) 
-       Card.fetch(name, :skip_virtual=>true)
-    end             
+       
 
     def count_by_wql(spec)       
       spec.delete(:offset)
       search spec.merge(:return=>'count')
-    end
-
-    def find_by_name( name, opts={} ) 
-      self.find_by_key_and_trash( name.to_cardname.to_key, false, opts.merge( :include=>:current_revision ))
     end
   end
 

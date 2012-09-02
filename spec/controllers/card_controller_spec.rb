@@ -66,7 +66,7 @@ describe CardController do
         :content=>"Bananas"
       }
       assert_response 302
-      c=Card.find_by_name("NewCardFoo")
+      c=Card["NewCardFoo"]
       c.typecode.should == :basic
       c.content.should == "Bananas"
     end
@@ -76,7 +76,7 @@ describe CardController do
       xhr :post, :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
       assigns['card'].should_not be_nil
       assert_response 200
-      c=Card.find_by_name("Editor")
+      c=Card["Editor"]
       c.typecode.should == :cardtype
     end
     
@@ -85,7 +85,7 @@ describe CardController do
       @c.destroy!
       post :create, :card=>{"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
       assert_response 302
-      c=Card.find_by_name("Problem")
+      c=Card["Problem"]
       c.typecode.should == :phrase
     end
 
@@ -231,7 +231,7 @@ describe CardController do
       c = Card.create( :name=>"Boo", :content=>"booya")
       post :delete, :id=>"~#{c.id}"
       assert_response :redirect
-      Card.find_by_name("Boo").should == nil
+      Card["Boo"].should == nil
     end
 
     it "should watch" do

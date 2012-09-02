@@ -81,7 +81,7 @@ describe Card, "type transition approve create" do
 
   it "should be the original type" do
     lambda { change_card_to_type("basicname", "cardtype_b") }
-    Card.find_by_name("basicname").typecode.should == :basic
+    Card["basicname"].typecode.should == :basic
   end
 end
 
@@ -94,7 +94,7 @@ describe Card, "type transition validate_destroy" do
   end
   
   it "should retain original type" do
-    Card.find_by_name("type_c_card").typecode.should == :cardtype_c
+    Card["type_c_card"].typecode.should == :cardtype_c
   end
 end
 
@@ -108,7 +108,7 @@ describe Card, "type transition validate_create" do
   
   it "should retain original type" do
     pending "CardtypeD does not have a codename, so this is an invalid test"
-    Card.find_by_name("basicname").typecode.should == :basic
+    Card["basicname"].typecode.should == :basic
   end
 end
 
@@ -123,7 +123,7 @@ describe Card, "type transition destroy callback" do
   end
   
   it "should change type of the card" do
-    Card.find_by_name("type-e-card").typecode.should == :basic
+    Card["type-e-card"].typecode.should == :basic
   end
 end
 
@@ -141,7 +141,7 @@ describe Card, "type transition create callback" do
   end
   
   it "should change type of card" do
-    Card.find_by_name("basicname").typecode.should == :cardtype_f
+    Card["basicname"].typecode.should == :cardtype_f
   end
 end                
 

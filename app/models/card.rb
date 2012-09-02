@@ -7,8 +7,7 @@ class Card < ActiveRecord::Base
   model_stamper # Card is both stamped and stamper
   stampable :stamper_class_name => :card
 
-  belongs_to :current_revision, :class_name => 'Revision', :foreign_key=>'current_revision_id' #FIXME - use revision cache
-  has_many   :revisions, :order => 'id', :foreign_key=>'card_id'
+  has_many :revisions, :order => 'id', :foreign_key=>'card_id'
 
   attr_accessor :comment, :comment_author, :selected_rev_id,
     :confirm_rename, :confirm_destroy, :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
@@ -21,6 +20,7 @@ class Card < ActiveRecord::Base
   before_destroy :base_before_destroy
   before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
   after_save :base_after_save, :update_ruled_cards, :update_queue
+  after_validation :reset_failed_validation
   
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
@@ -143,7 +143,6 @@ class Card < ActiveRecord::Base
     end
   end
 
-
   def include_set_modules
     unless @set_mods_loaded
       set_modules.each do |m|
@@ -154,15 +153,12 @@ class Card < ActiveRecord::Base
     self
   end
 
-
   def reset_mods
     @set_mods_loaded=false
   end
 
-
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # STATES
-
 
   def new_card?
     new_record? || @from_trash
@@ -175,7 +171,6 @@ class Card < ActiveRecord::Base
   def real?
     !new_card?
   end
-
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING
@@ -245,9 +240,9 @@ class Card < ActiveRecord::Base
     pull_from_trash if new_record?
     self.trash = !!trash
     save_without_trash(*args)#(perform_checking)
-  rescue Exception => e
-    Rails.logger.warn "exception #{e} #{caller[0..1]*', '}"
-    raise e
+#  rescue Exception => e
+#    Rails.logger.warn "exception #{e} #{caller[0..1]*', '}"
+#    raise e
   end
   alias_method_chain :save, :trash
 
@@ -267,9 +262,9 @@ class Card < ActiveRecord::Base
     if approved?
       begin
         #warn "run_checked_save #{method}, tc:#{typecode.inspect}, #{type_id.inspect}"
-        self.send(method)
+        self.send method
       rescue Exception => e
-        rescue_save(e, method)
+        rescue_save e, method
       end
     else
       raise PermissionDenied.new(self)
@@ -284,11 +279,8 @@ class Card < ActiveRecord::Base
     raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
   end
 
-  def expire_pieces
-    cardname.piece_names.each do |piece|
-      #warn "clearing for #{piece.inspect}"
-      Card.clear_cache piece
-    end
+  def reset_failed_validation
+    expire if errors.any?
   end
 
   def pull_from_trash
@@ -442,16 +434,18 @@ class Card < ActiveRecord::Base
   # CONTENT / REVISIONS
 
   def content
-    #warn "content called for #{name}"
-    #new_card? ? template(reset=true).content : cached_revision.content
-    new_card? ? template.content : cached_revision.content
+    new_card? ? template.content : current_revision.content
   end
   
-  def raw_content() hard_template ? template.content : content        end
+  def raw_content
+    hard_template ? template.content : content
+  end
 
-  def selected_rev_id() @selected_rev_id || (cr=cached_revision)&&cr.id || 0 end
+  def selected_rev_id
+    @selected_rev_id or ( ( cr = current_revision ) ? cr.id : 0 )
+  end
 
-  def cached_revision
+  def current_revision
     #return current_revision || Card::Revision.new
     if @cached_revision and @cached_revision.id==current_revision_id
     elsif ( Card::Revision.cache &&
@@ -473,7 +467,7 @@ class Card < ActiveRecord::Base
   end
 
   def revised_at
-    (cached_revision && cached_revision.created_at) || Time.now
+    (current_revision && current_revision.created_at) || Time.now
   end
 
   def author

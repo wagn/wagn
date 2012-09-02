@@ -40,6 +40,6 @@ describe Card, "comment addition" do
   end
   
   it "should combine content after save" do
-    Card.find_by_name("basicname").content.should == "basiccontent and more"
+    Card["basicname"].content.should == "basiccontent and more"
   end
 end

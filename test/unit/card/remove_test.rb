@@ -5,7 +5,7 @@ class Card::RemoveTest < ActiveSupport::TestCase
   def setup
     super
     setup_default_user
-    @a = Card.find_by_name("A")
+    @a = Card["A"]
   end
 
      
@@ -14,7 +14,7 @@ class Card::RemoveTest < ActiveSupport::TestCase
   # trash.  
   def test_remove
     assert @a.destroy!, "card should be destroyable"
-    assert_nil Card.find_by_name("A")
+    assert_nil Card["A"]
   end
          
   def test_recreate_plus_card_name_variant

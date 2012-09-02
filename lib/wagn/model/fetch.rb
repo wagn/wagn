@@ -85,11 +85,15 @@ module Wagn::Model::Fetch
       fetch( cardname, opts ) || create( opts.merge(:name=>cardname) )
     end
 
-    def fetch_id mark  #should optimize this.  what if mark is int?  or codename?
-      card = Card.fetch mark, :skip_virtual=>true, :skip_modules=>true
+    def fetch_id mark #should optimize this.  what if mark is int?  or codename?
+      card = fetch mark, :skip_virtual=>true, :skip_modules=>true
       card and card.id
     end
 
+    def [](name) 
+      fetch name, :skip_virtual=>true
+    end
+    
     def exists? cardname
       card = fetch cardname, :skip_virtual=>true, :skip_modules=>true
       card.present?
@@ -103,9 +107,9 @@ module Wagn::Model::Fetch
       end
     end
     
-    def clear_cache name
+    def expire name
       if card = Card.cache.read( name.to_cardname.to_key )
-        card.clear_cache
+        card.expire
       end
     end
     
@@ -134,7 +138,30 @@ module Wagn::Model::Fetch
 
   end
 
-  def clear_cache
+  def expire_pieces
+    cardname.piece_names.each do |piece|
+      #warn "clearing for #{piece.inspect}"
+      Card.expire piece
+    end
+  end
+
+  def expire_related
+    self.expire
+    
+    if self.hard_template?
+      self.hard_templatee_names.each do |name|
+        Card.expire name
+      end
+    end
+    # FIXME really shouldn't be instantiating all the following bastards.  Just need the key.
+    self.dependents.each           { |c| c.expire }
+    self.referencers.each          { |c| c.expire }
+    self.name_referencers.each     { |c| c.expire }
+    # FIXME: this will need review when we do the new defaults/templating system
+    #if card.changed?(:content)
+  end
+
+  def expire
     Card.cache.delete key
     Card.cache.delete "~#{id}" if id
   end

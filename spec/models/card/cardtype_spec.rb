@@ -22,12 +22,12 @@ describe "Card (Cardtype)" do
       city.destroy!
     end                             
     # make sure it wasn't destroyed / trashed
-    Card.find_by_name('City').should_not be_nil
+    Card['City'].should_not be_nil
   end
   
   it "remove cardtype" do
     Card.create! :name=>'County', :type=>'Cardtype'
-    c = Card.find_by_name('County')
+    c = Card['County']
     c.destroy
   end
   

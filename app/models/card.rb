@@ -7,7 +7,7 @@ class Card < ActiveRecord::Base
   model_stamper # Card is both stamped and stamper
   stampable :stamper_class_name => :card
 
-  has_many :revisions, :order => 'id', :foreign_key=>'card_id'
+  has_many :revisions, :order => :id #, :foreign_key=>'card_id'
 
   attr_accessor :comment, :comment_author, :selected_rev_id,
     :confirm_rename, :confirm_destroy, :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
@@ -20,7 +20,6 @@ class Card < ActiveRecord::Base
   before_destroy :base_before_destroy
   before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
   after_save :base_after_save, :update_ruled_cards, :update_queue
-  after_validation :reset_failed_validation
   
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
@@ -187,6 +186,22 @@ class Card < ActiveRecord::Base
     self.creator_id = self.updater_id if new_card?
   end
 
+  before_validation do 
+    pull_from_trash if new_record?
+    self.trash = !!trash
+    true
+  end
+  
+  after_validation do
+    return if name == '*validation dummy'
+    expire if errors.any?
+    raise PermissionDenied.new(self) unless approved?
+    true
+  rescue
+    e
+  end
+  
+
   def base_before_save
     if self.respond_to?(:before_save) and self.before_save == false
       errors.add(:save, "could not prepare card for destruction")
@@ -206,6 +221,20 @@ class Card < ActiveRecord::Base
     Rails.logger.info "after save issue: #{e.message}"
     raise e
   end
+
+
+  
+  def rescue_save(e, method)
+    expire_pieces
+    #warn "Model exception #{method}:#{e.message} #{name}"
+    Rails.logger.info "Model exception #{method}:#{e.message} #{name}"
+    Rails.logger.debug "BT [[[\n#{ e.backtrace*"\n"} \n]]]"
+    raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
+  end
+
+
+
+  #private
 
   def save_subcards
     @subcards = []
@@ -231,58 +260,6 @@ class Card < ActiveRecord::Base
     end
   end
 
-  def save_with_trash!
-    save || raise(errors.full_messages.join('. '))
-  end
-  alias_method_chain :save!, :trash
-
-  def save_with_trash(*args)#(perform_checking=true)
-    pull_from_trash if new_record?
-    self.trash = !!trash
-    save_without_trash(*args)#(perform_checking)
-  rescue Exception => e
-    Rails.logger.warn "exception #{e} #{caller[0..1]*', '}"
-    raise e
-  end
-  alias_method_chain :save, :trash
-
-  def save_with_permissions *args
-    Rails.logger.debug "Card#save_with_permissions:"
-    run_checked_save :save_without_permissions
-  end
-  alias_method_chain :save, :permissions
-   
-  def save_with_permissions! *args
-    Rails.logger.debug "Card#save_with_permissions!"
-    run_checked_save :save_without_permissions!
-  end
-  alias_method_chain :save!, :permissions
-  
-  def run_checked_save method
-    if approved?
-      begin
-        #warn "run_checked_save #{method}, tc:#{typecode.inspect}, #{type_id.inspect}"
-        self.send method
-      rescue Exception => e
-        rescue_save e, method
-      end
-    else
-      raise PermissionDenied.new(self)
-    end
-  end
-
-  def rescue_save(e, method)
-    expire_pieces
-    #warn "Model exception #{method}:#{e.message} #{name}"
-    Rails.logger.info "Model exception #{method}:#{e.message} #{name}"
-    Rails.logger.debug "BT [[[\n#{ e.backtrace*"\n"} \n]]]"
-    raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
-  end
-
-  def reset_failed_validation
-    expire if errors.any?
-  end
-
   def pull_from_trash
     return unless key
     return unless trashed_card = Card.find_by_key_and_trash(key, true)
@@ -292,6 +269,8 @@ class Card < ActiveRecord::Base
     @from_trash = self.confirm_rename = @trash_changed = true
     @new_record = false
   end
+
+  #public
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # DESTROY

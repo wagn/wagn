@@ -240,9 +240,9 @@ class Card < ActiveRecord::Base
     pull_from_trash if new_record?
     self.trash = !!trash
     save_without_trash(*args)#(perform_checking)
-#  rescue Exception => e
-#    Rails.logger.warn "exception #{e} #{caller[0..1]*', '}"
-#    raise e
+  rescue Exception => e
+    Rails.logger.warn "exception #{e} #{caller[0..1]*', '}"
+    raise e
   end
   alias_method_chain :save, :trash
 

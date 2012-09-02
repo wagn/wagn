@@ -157,7 +157,7 @@ class Card::RenameTest < ActiveSupport::TestCase
   end    
   
   def card(name)
-    Card[name] or raise "Couldn't find card named #{name}"
+    Card[name].refresh or raise "Couldn't find card named #{name}"
   end                          
 
   def test_renaming_card_with_self_link_should_not_hang

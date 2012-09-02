@@ -105,8 +105,8 @@ module Wagn::Model::TrackedAttributes
     new_content = WikiContent.clean_html!(new_content) if clean_html?
     clear_drafts if current_revision_id
     #warn Rails.logger.info("set_content #{name} #{Session.user_id}, #{new_content}")
-    self.current_revision = Card::Revision.create(:card_id=>self.id,
-           :content=>new_content, :creator_id =>Session.user_id)
+    new_rev = Card::Revision.create :card_id=>self.id, :content=>new_content, :creator_id =>Session.user_id
+    self.current_revision_id = new_rev.id
     reset_patterns_if_rule
     @name_or_content_changed = true
   end

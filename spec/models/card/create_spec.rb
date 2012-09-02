@@ -132,7 +132,7 @@ describe Card, "types" do
     (ct=Card.fetch('FooRenamed')).typecode.should == :cardtype
     # now the classname changes if it doesn't have a codename in the table
     ncd = Card.create(:type=>'FooRenamed', :name=>'testy1')
-    ncd.typename.should == 'FooRenamed'
+    ncd.type_name.should == 'FooRenamed'
     ncd.typecode.should == :a_foo
    
     Wagn::Codename.reset_cache
@@ -150,7 +150,7 @@ describe Card, "types" do
     # give it a codename entry
     # now the classname changes if it doesn't have a codename in the table
     ncd = Card.create(:type=>'BFooRenamed', :name=>'testy2')
-    ncd.typename.should == 'BFooRenamed'
+    ncd.type_name.should == 'BFooRenamed'
     ncd.typecode.should == :b_foo
 
     Wagn::Codename.reset_cache

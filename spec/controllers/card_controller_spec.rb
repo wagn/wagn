@@ -114,7 +114,7 @@ describe CardController do
         assert_response 303    
         Card["Gala"].should_not be_nil
         Card["Gala+kind"].content.should == 'apple'
-        Card["Gala+color"].typename.should == 'Phrase'
+        Card["Gala+color"].type_name.should == 'Phrase'
       end
     end
    

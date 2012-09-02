@@ -13,6 +13,7 @@ describe Card do
   
   describe "module inclusion" do
     before do
+      Session.as :joe_user
       @c = Card.new :type=>'Search', :name=>'Module Inclusion Test Card'
     end
     

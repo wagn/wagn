@@ -12,7 +12,7 @@ class Wagn::Renderer::Html
         %{<div class="rule-content-container">
            <span class="closed-content content">#{rule_card ? subrenderer(rule_card).render_closed_content : ''}</span>
          </div> } ],
-      ["rule-type", (rule_card ? rule_card.typename : '') ],
+      ["rule-type", (rule_card ? rule_card.type_name : '') ],
     ]
 
     extra_css_class = rule_card && !rule_card.new_card? ? 'known-rule' : 'missing-rule'
@@ -142,7 +142,7 @@ class Wagn::Renderer::Html
           :href => path(:read, :card=>open_rule, :view=>:open_rule, :type_reload=>true) ) )
       elsif current_set_key
         '<label>type:</label>'+
-        %{<span class="rule-type">#{ current_set_key ? card.typename : '' }</span>}
+        %{<span class="rule-type">#{ current_set_key ? card.type_name : '' }</span>}
       else; ''; end.html_safe +
 
 

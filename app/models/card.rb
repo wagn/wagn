@@ -164,14 +164,18 @@ class Card < ActiveRecord::Base
   # STATES
 
 
+  def new_card?
+    new_record? || @from_trash
+  end
 
-
-  def new_card?() new_record? || @from_trash  end
-  def known?()    real? || virtual?           end
-  def real?()     !new_card?                  end
-
-
+  def known?
+    real? || virtual?
+  end
   
+  def real?
+    !new_card?
+  end
+
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING
@@ -370,13 +374,17 @@ class Card < ActiveRecord::Base
 
   def left()      Card.fetch cardname.left_name   end
   def right()     Card.fetch cardname.tag_name    end
-  def key()       cardname.key                    end # DISLIKE - how do we access db key?
+    
+  def key 
+    cardname.key                    
+  end
+  # DISLIKE - how do we access db key?
 
   def dependents
     return [] if new_card?
     Session.as_bot do
       Card.search( :part=>name ).map do |c|
-        [c] + c.dependents
+        [ c ] + c.dependents
       end.flatten
     end
   end
@@ -412,14 +420,23 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # TYPE
 
-  def type_card() Card[type_id.to_i]           end
-  def typecode()  Wagn::Codename[type_id.to_i] end # Should we not fallback to key?
-  def typename()
-    return if type_id.nil?
-    card=Card.fetch(type_id, :skip_modules=>true, :skip_virtual=>true) and card.name
+  def type_card
+    Card[ type_id.to_i ]
+  end
+  
+  def typecode
+    Wagn::Codename[ type_id.to_i ]
   end
 
-  def type=(typename) self.type_id = Card.fetch_id(typename)        end
+  def type_name
+    return if type_id.nil?
+    card = Card.fetch type_id, :skip_modules=>true, :skip_virtual=>true
+    card and card.name
+  end
+
+  def type= type_name
+    self.type_id = Card.fetch_id type_name
+  end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CONTENT / REVISIONS
@@ -548,14 +565,14 @@ class Card < ActiveRecord::Base
   # MISCELLANEOUS
 
   def to_s
-    "#<#{self.class.name}[#{type_id < 1 ? 'bogus': typename}:#{type_id}]#{self.attributes['name']}>"
+    "#<#{self.class.name}[#{type_id < 1 ? 'bogus': type_name}:#{type_id}]#{self.attributes['name']}>"
   end
   
   def inspect
     "#<#{self.class.name}"+
     "(#{object_id})" +
     "##{self.id}" +
-    "[#{type_id < 1 ? 'bogus': typename}:#{type_id}]" +
+    "[#{type_id < 1 ? 'bogus': type_name}:#{type_id}]" +
     "!#{self.name}!{n:#{new_card?}:v:#{virtual?}:I:#{@set_mods_loaded}} R:#{
       @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}>"
   end
@@ -592,7 +609,7 @@ class Card < ActiveRecord::Base
 
 
   alias cardname= name=
-  def name_with_cardname=(newname)
+  def name_with_cardname= newname
     newname = newname.to_s
     if name != newname
       #warn "name_change (reset if rule) #{name_without_tracking}, #{newname}, #{inspect}" unless name_without_tracking.blank?
@@ -717,7 +734,7 @@ class Card < ActiveRecord::Base
     #warn "validate type #{rec.inspect}, #{attr}, #{value}"
     if rec.updates.for?(:type_id) and !rec.new_card?
       if !rec.validate_type_change
-        rec.errors.add :type, "of #{ rec.name } can't be changed; errors changing from #{ rec.typename }"
+        rec.errors.add :type, "of #{ rec.name } can't be changed; errors changing from #{ rec.type_name }"
       end
       if c = Card.new(:name=>'*validation dummy', :type_id=>value, :content=>'') and !c.valid?
         rec.errors.add :type, "of #{ rec.name } can't be changed; errors creating new #{ value }: #{ c.errors.full_messages * ', ' }"
@@ -733,7 +750,7 @@ class Card < ActiveRecord::Base
       
       # invalid to change type when type is hard_templated
       if rt = rec.hard_template and !rt.type_template? and value!=rt.type_id and !rec.allow_type_change
-        rec.errors.add :type, "can't be changed because #{rec.name} is hard templated to #{rt.typename}"
+        rec.errors.add :type, "can't be changed because #{rec.name} is hard templated to #{rt.type_name}"
       end        
     end
   end

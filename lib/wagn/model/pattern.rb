@@ -195,7 +195,7 @@ module Wagn::Model
       return false if card.type_id.nil?
       raise "bogus type id" if card.type_id < 1
       true       end
-    def self.trunk_name(card)         card.typename              end
+    def self.trunk_name(card)         card.type_name              end
   end
 
   class StarPattern < BasePattern
@@ -232,8 +232,8 @@ module Wagn::Model
       end
       def trunk_name card
         lft = card.loaded_trunk || card.left
-        typename = (lft && lft.typename) || Card[ Card::DefaultTypeID ].name
-        "#{typename}+#{card.cardname.tag_name}"
+        type_name = (lft && lft.type_name) || Card[ Card::DefaultTypeID ].name
+        "#{type_name}+#{card.cardname.tag_name}"
       end
     end
   end

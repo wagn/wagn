@@ -123,7 +123,7 @@ describe Card do
         @c3 = Card.create :name=>'toc3', :type=>"CardtypeE",
           :content=>Card['Three Heading'].content
       end
-      @c1.typename.should == 'Cardtype E'
+      @c1.type_name.should == 'Cardtype E'
       @rule_card = @c1.rule_card(:table_of_contents)
 
       @c1.should be
@@ -181,7 +181,7 @@ describe Card do
           :content=>Card['Twwo Heading'].content
         @c3 = Card.create :name=>'toc3', #:type=>"CardtypeE",
           :content=>Card['Three Heading'].content
-        @c1.typename.should == 'Cardtype E'
+        @c1.type_name.should == 'Cardtype E'
         @rule_card = @c1.rule_card(:table_of_contents)
 
         @c1.should be

@@ -85,8 +85,9 @@ module Wagn::Model::Fetch
       fetch( cardname, opts ) || create( opts.merge(:name=>cardname) )
     end
 
-    def fetch_id mark
-      c=Card.fetch(mark, :skip_virtual=>true, :skip_modules=>true) and c.id
+    def fetch_id mark  #should optimize this.  what if mark is int?  or codename?
+      card = Card.fetch mark, :skip_virtual=>true, :skip_modules=>true
+      card and card.id
     end
 
     def exists? cardname

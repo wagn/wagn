@@ -224,8 +224,8 @@ module Wagn
     end
 
     def typecode_field(options={})
-      typename = card ? card.typename : ''
-      template.select_tag('card[type]', typecode_options_for_select( typename ), options)
+      type_name = card ? card.type_name : ''
+      template.select_tag('card[type]', typecode_options_for_select( type_name ), options)
     end
 
     def content_field(form, options={})

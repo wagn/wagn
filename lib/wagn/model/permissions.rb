@@ -140,7 +140,7 @@ module Wagn::Model::Permissions
   
   def approve_type_id
     case
-    when !typename
+    when !type_name
       deny_because("No such type")
     when !new_card? && reset_patterns && !lets_user(:create)
       deny_because you_cant("change to this type (need create permission)"  )

@@ -224,8 +224,8 @@ module Wagn
     end
 
     def typecode_field(options={})
-      typename = card ? card.typename : ''
-      template.select_tag('card[type]', typecode_options_for_select( typename ), options)
+      type_name = card ? card.type_name : ''
+      template.select_tag('card[type]', typecode_options_for_select( type_name ), options)
     end
 
     def content_field(form, options={})
@@ -276,7 +276,7 @@ module Wagn
 
     def rollback(to_rev=nil)
       to_rev ||= @revision_number
-      if card.ok?(:update) && !(card.cached_revision==@revision)
+      if card.ok?(:update) && !(card.current_revision==@revision)
         link_to 'Save as current', path(:rollback, :rev=>to_rev),
           :class=>'slotter', :remote=>true
       end

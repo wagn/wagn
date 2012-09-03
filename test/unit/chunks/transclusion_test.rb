@@ -23,7 +23,7 @@ class TransclusionTest < ActiveSupport::TestCase
  def test_circular_transclusion_should_be_invalid
     oak = Card.create! :name=>'Oak', :content=>'{{Quentin}}'
     qnt = Card.create! :name=>'Quentin', :content=>'{{Admin}}'
-    adm = Card.find_by_name('Wagn Bot')
+    adm = Card['Wagn Bot']
     adm.update_attributes :content => "{{Oak}}"
     #warn "circles: " + render(adm)
     assert_match /Circular transclusion/, adm.errors[:content]

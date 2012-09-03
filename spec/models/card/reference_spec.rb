@@ -20,12 +20,12 @@ describe "Card::Reference" do
     it "on template creation" do
       Card.create! :name=>"SpecialForm", :type=>'Cardtype'
       Card.create! :name=>"Form1", :type=>'SpecialForm', :content=>"foo"
-      c = Card.find_by_name("Form1")
+      c = Card["Form1"]
       c.references_expired.should be_nil
       Card.create! :name=>"SpecialForm+*type+*content", :content=>"{{+bar}}"
       Card["Form1"].references_expired.should be_true
       Wagn::Renderer.new(Card["Form1"]).render(:core)
-      c = Card.find_by_name("Form1")
+      c = Card["Form1"]
       c.references_expired.should be_nil
       Card["Form1"].out_references.plot(:referenced_name).should == ["form1+bar"]
     end
@@ -102,17 +102,17 @@ describe "Card::Reference" do
   end
 
   it "update referencing content on rename junction card" do
-    @ab = Card.find_by_name("A+B") #linked to from X, transcluded by Y
+    @ab = Card["A+B"] #linked to from X, transcluded by Y
     @ab.update_attributes! :name=>'Peanut+Butter', :confirm_rename => true, :update_referencers => true
-    @x = Card.find_by_name('X')
+    @x = Card['X']
     @x.content.should == "[[A]] [[Peanut+Butter]] [[T]]"
   end
 
   it "update referencing content on rename junction card" do
-    @ab = Card.find_by_name("A+B") #linked to from X, transcluded by Y
+    @ab = Card["A+B"] #linked to from X, transcluded by Y
     @ab.confirm_rename = true
     @ab.update_attributes! :name=>'Peanut+Butter', :update_referencers=>false
-    @x = Card.find_by_name('X')
+    @x = Card['X']
     @x.content.should == "[[A]] [[A+B]] [[T]]"
   end
     

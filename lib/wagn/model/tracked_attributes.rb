@@ -31,7 +31,7 @@ module Wagn::Model::TrackedAttributes
     reset_patterns_if_rule # reset the new name
 
     raise "No name ???" if name.blank? # this should not pass validation.
-    Card.clear_cache cardname
+    Card.expire cardname
 
     if @cardname.junction?
       [:trunk, :tag].each do |side|
@@ -63,7 +63,7 @@ module Wagn::Model::TrackedAttributes
       end
     end
           
-    Card.clear_cache @old_name
+    Card.expire @old_name
     @name_changed = true          
     @name_or_content_changed=true
   end
@@ -72,7 +72,7 @@ module Wagn::Model::TrackedAttributes
   def suspend_name(name)
     # move the current card out of the way, in case the new name will require
     # re-creating a card with the current name, ie.  A -> A+B
-    Card.clear_cache name
+    Card.expire name
     tmp_name = "tmp:" + UUID.new.generate      
     Card.where(:id=>self.id).update_all(:name=>tmp_name, :key=>tmp_name)    
   end
@@ -105,8 +105,8 @@ module Wagn::Model::TrackedAttributes
     new_content = WikiContent.clean_html!(new_content) if clean_html?
     clear_drafts if current_revision_id
     #warn Rails.logger.info("set_content #{name} #{Session.user_id}, #{new_content}")
-    self.current_revision = Card::Revision.create(:card_id=>self.id,
-           :content=>new_content, :creator_id =>Session.user_id)
+    new_rev = Card::Revision.create :card_id=>self.id, :content=>new_content, :creator_id =>Session.user_id
+    self.current_revision_id = new_rev.id
     reset_patterns_if_rule
     @name_or_content_changed = true
   end
@@ -154,7 +154,7 @@ module Wagn::Model::TrackedAttributes
       # I trust the above actually avoided some issues, but we need to nail those down, test, and fix them
       # EFM - 5/21/12
       Card.update_all("name=#{cxn.quote(depname.to_s)}, #{cxn.quote_column_name("key")}=#{cxn.quote(depkey)}", "id = #{dep.id}")
-      dep.expire(dep)
+      dep.expire
     end 
 
     if !update_referencers || update_referencers == 'false'  # FIXME doing the string check because the radio button is sending an actual "false" string

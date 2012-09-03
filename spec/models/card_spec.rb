@@ -13,6 +13,7 @@ describe Card do
   
   describe "module inclusion" do
     before do
+      Session.as :joe_user
       @c = Card.new :type=>'Search', :name=>'Module Inclusion Test Card'
     end
     
@@ -27,7 +28,7 @@ describe Card do
     
 #    it "gets needed methods after find" do
 #      @c.save!
-#      c = Card.find_by_name(@c.name)
+#      c = Card[@c.name]
 #      c.respond_to?( :get_spec ).should be_true
 #    end
     
@@ -71,7 +72,7 @@ describe Card do
   
   describe "test data" do
     it "should be findable by name" do
-      Card.find_by_name("Wagn Bot").class.should == Card
+      Card["Wagn Bot"].class.should == Card
     end
   end
 
@@ -118,7 +119,7 @@ describe Card do
     end
 
     it "should be findable by name" do
-      Card.find_by_name("New Card").class.should == Card
+      Card["New Card"].class.should == Card
     end  
   end
 
@@ -146,14 +147,14 @@ describe Card do
 
   describe "attribute tracking for existing card" do
     before(:each) do
-      @c = Card.find_by_name("Joe User")
+      @c = Card["Joe User"]
     end
   end                    
 
   describe "content change should create new revision" do
     before do
       Session.as_bot do
-        @c = Card.find_by_name('basicname')
+        @c = Card['basicname']
         @c.update_attributes! :content=>'foo'
       end
     end
@@ -171,7 +172,7 @@ describe Card do
   describe "content change should create new revision" do
     before do
       Session.as_bot do
-        @c = Card.find_by_name('basicname')
+        @c = Card['basicname']
         @c.content = "foo"
         @c.save!
       end

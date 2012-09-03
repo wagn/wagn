@@ -83,7 +83,7 @@ class Wagn::Renderer::Html
     else
       %{
         <h1 class="page-header">
-          New #{ card.type_id == Card::DefaultTypeID ? 'Card' : card.typename }
+          New #{ card.type_id == Card::DefaultTypeID ? 'Card' : card.type_name }
         </h1>
         #{ new_instruction }
         #{ new_content :cancel_href=>Card.path_setting('/*previous'), :cancel_class=>'redirecter' }
@@ -254,7 +254,7 @@ class Wagn::Renderer::Html
   end
 
   define_view :related do |args|
-    sources = [card.typename,nil]
+    sources = [card.type_name,nil]
     # FIXME codename *account
     sources.unshift '*account' if [Card::WagbotID, Card::AnonID].member?(card.id) || card.type_id=='User'
     items = sources.map do |source|
@@ -479,7 +479,7 @@ class Wagn::Renderer::Html
   define_view :change do |args|
     wrap :change, args do
       %{#{link_to_page card.name, nil, :class=>'change-card'} #{
-       if rev = card.cached_revision and !rev.new_record?
+       if rev = card.current_revision and !rev.new_record?
          # this check should be unnecessary once we fix search result bug
          %{<span class="last-update"> #{
 
@@ -507,7 +507,7 @@ class Wagn::Renderer::Html
             :class => "line-link title down-arrow slotter", 
             :remote => true 
           }
-         #{ card.type_id==Card::BasicID ? '' : %{<span class="cardtype">#{ link_to_page card.typename }</span>} }
+         #{ card.type_id==Card::BasicID ? '' : %{<span class="cardtype">#{ link_to_page card.type_name }</span>} }
          #{ page_icon(card.name) } &nbsp;
        </div>
        #{ name_styler }
@@ -523,11 +523,11 @@ class Wagn::Renderer::Html
           #{raw card.cardname.piece_names.map {|c| link_to_page c}.join(', ') }
         </span>
         #{
-         if !card.cached_revision.new_record?
+         if !card.current_revision.new_record?
            %{
           <span class="last-editor">
             <label>Last Editor:</label>
-            #{ raw link_to_page card.cached_revision.author.name }
+            #{ raw link_to_page card.current_revision.author.name }
           </span>}
          end
         }
@@ -582,7 +582,7 @@ class Wagn::Renderer::Html
   end
   
   def watching_type_cards
-    "watching #{ link_to_page card.typename } cards"
+    "watching #{ link_to_page card.type_name } cards"
   end
 
   def watch_link text, toggle, title, extra={}

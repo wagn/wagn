@@ -31,7 +31,7 @@ end
 
 # FIXME: these user tests should probably be in a set of cardtype specific tests somewhere..   
 describe User, "with revisions" do
-  before do Session.as_bot { @c = Card.find_by_name("Wagn Bot") } end
+  before do Session.as_bot { @c = Card["Wagn Bot"] } end
   it "should not be removable" do
     @c.destroy.should_not be_true
   end
@@ -78,15 +78,15 @@ describe Card, "dependent removal" do
   end
 
   it "should not be findable by name" do
-    Card.find_by_name("A+B+C").should == nil
+    Card["A+B+C"].should == nil
   end                                           
 end
                        
 describe Card, "rename to trashed name" do
   before do
     Session.as_bot do
-      @a = Card.find_by_name("A")
-      @b = Card.find_by_name("B")
+      @a = Card["A"]
+      @b = Card["B"]
       @a.destroy!  #trash
       @b.update_attributes! :name=>"A", :confirm_rename=>true, :update_referencers=>true
     end
@@ -107,7 +107,7 @@ end
 describe Card, "sent to trash" do
   before do
     Session.as_bot do
-      @c = Card.find_by_name("basicname")
+      @c = Card["basicname"]
       @c.destroy!
     end
   end
@@ -117,7 +117,7 @@ describe Card, "sent to trash" do
   end
   
   it "should not be findable by name" do
-    Card.find_by_name("basicname").should == nil
+    Card["basicname"].should == nil
   end                                           
   
   it "should still have revision" do
@@ -129,7 +129,7 @@ end
 describe Card, "revived from trash" do
   before do
     Session.as_bot do
-      Card.find_by_name("basicname").destroy!
+      Card["basicname"].destroy!
       @c = Card.create! :name=>'basicname', :content=>'revived content'
     end
   end

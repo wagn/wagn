@@ -18,10 +18,10 @@ class Card::BaseTest < ActiveSupport::TestCase
 
     forba.reload #hmmm
     Card['Forba'].destroy!
-    assert_nil Card.find_by_name("Forba")
-    assert_nil Card.find_by_name("Forba+TorgA")
-    assert_nil Card.find_by_name("TorgB+Forba")
-    assert_nil Card.find_by_name("Forba+TorgA+TorgC")
+    assert_nil Card["Forba"]
+    assert_nil Card["Forba+TorgA"]
+    assert_nil Card["TorgB+Forba"]
+    assert_nil Card["Forba+TorgA+TorgC"]
 
     # FIXME: this is a pretty dumb test and it takes a loooooooong time
     #while card = Card.find(:first,:conditions=>["type not in (?,?,?) and trash=?", 'InvitationRequest','User','Cardtype',false] )
@@ -56,13 +56,13 @@ class Card::BaseTest < ActiveSupport::TestCase
 
   test 'find_by_name' do
     card = Card.create( :name=>"ThisMyCard", :content=>"Contentification is cool" )
-    assert_equal card, Card.find_by_name("ThisMyCard")
+    assert_equal card, Card["ThisMyCard"]
   end
 
 
   test 'find_nonexistent' do
-    assert !Card.find_by_name('no such card+no such tag')
-    assert !Card.find_by_name('HomeCard+no such tag')
+    assert !Card['no such card+no such tag']
+    assert !Card['HomeCard+no such tag']
   end
 
 
@@ -132,7 +132,7 @@ class Card::BaseTest < ActiveSupport::TestCase
   end
 
   def assert_stable( card1 )
-    card2 = Card.find_by_name(card1.name)
+    card2 = Card[card1.name]
     assert_simple_card( card1 )
     assert_simple_card( card2 )
     assert_samecard( card1, card2 )

@@ -140,7 +140,7 @@ module Wagn::Model::Permissions
   
   def approve_type_id
     case
-    when !typename
+    when !type_name
       deny_because("No such type")
     when !new_card? && reset_patterns && !lets_user(:create)
       deny_because you_cant("change to this type (need create permission)"  )
@@ -191,7 +191,7 @@ module Wagn::Model::Permissions
     self.read_rule_id = rcard.id #these two are just to make sure vals are correct on current object
     self.read_rule_class = rclass
     Card.where(:id=>self.id).update_all(:read_rule_id=>rcard.id, :read_rule_class=>rclass)
-    Card.clear_cache self.key
+    Card.expire self.key
     
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
     Session.as_bot do
@@ -229,7 +229,7 @@ module Wagn::Model::Permissions
       User.cache.reset
       Card.cache.reset # maybe be more surgical, just Session.user related
       #Wagn.cache.reset
-      clear_cache #probably shouldn't be necessary, 
+      expire #probably shouldn't be necessary, 
       # but was sometimes getting cached version when card should be in the trash.
       # could be related to other bugs?
       in_set = {}

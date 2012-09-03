@@ -9,7 +9,7 @@ module Wagn::Model::Attach
   end
 
   def attach_array_set(i, v)
-    c = attach_array((cr=cached_revision)&&cr.id)
+    c = attach_array((cr=current_revision)&&cr.id)
     if c[i] != v
       c[i] = v
       self.content = c*"\n"

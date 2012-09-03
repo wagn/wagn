@@ -23,7 +23,7 @@ class CardController < ApplicationController
   end
 
   def update
-    @card = @card.refresh if @card.frozen?  #filter
+    @card = @card.refresh if @card.frozen? # put in model
     case
     when @card.new_card?                          ;  create
     when @card.update_attributes( params[:card] ) ;  success
@@ -33,7 +33,7 @@ class CardController < ApplicationController
 
 
   def delete
-    @card = @card.refresh if @card.frozen? #filter
+    @card = @card.refresh if @card.frozen? # put in model
     @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
 
@@ -45,8 +45,15 @@ class CardController < ApplicationController
   end
   
 
-  def read_file()  show_file         end #FIXME!  move to pack
-  def index()      read              end
+  def index
+    read
+  end # handle in load card?
+
+
+  def read_file
+    show_file
+  end #FIXME!  move to pack
+  
 
 
 

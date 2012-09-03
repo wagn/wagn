@@ -15,7 +15,7 @@ class Card::CreateTest < ActiveSupport::TestCase
   def test_simple
     assert_difference Card, :count do 
       assert_instance_of Card, Card.create(:name=>"Boo!")
-      assert Card.find_by_name("Boo!")
+      assert Card["Boo!"]
     end
   end
   
@@ -36,9 +36,9 @@ class Card::CreateTest < ActiveSupport::TestCase
       assert_instance_of Card, c=Card.create(:name=>"Peach+Pear", :content=>"juicy")
     Rails.logger.info "testing point c #{c}, #{c.cardname.inspect}"
     end
-    assert_instance_of Card, Card.find_by_name("Peach")
-    assert_instance_of Card, Card.find_by_name("Pear")
-    assert_equal "juicy", Card.find_by_name("Peach+Pear").content
+    assert_instance_of Card, Card["Peach"]
+    assert_instance_of Card, Card["Pear"]
+    assert_equal "juicy", Card["Peach+Pear"].content
   end
 end
 

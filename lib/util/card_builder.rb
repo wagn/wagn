@@ -7,7 +7,7 @@ module CardBuilderMethods
   end
   
   def card_content( cardname )
-    render(Card.find_by_name(cardname))
+    render(Card[cardname])
   end      
 
   def create_cards( card_names )
@@ -27,7 +27,7 @@ module CardBuilderMethods
     raise( "invalid username" ) if username.nil? or username.empty?
     if u = User.find_by_login(username) 
       return u      
-    elsif c = Card::User.find_by_name(username)
+    elsif c = Card::User[username]
       return c.extension
     else
       u = User.create!(
@@ -39,7 +39,7 @@ module CardBuilderMethods
         :invite_sender_id=>WAGBOT_ID  
       )
 
-      if c = Card.find_by_name(username)
+      if c = Card[username]
         if c.type_id==Card::BasicID
           c.type_id=Card::UserID
         else

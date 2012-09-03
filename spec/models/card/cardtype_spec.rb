@@ -22,12 +22,12 @@ describe "Card (Cardtype)" do
       city.destroy!
     end                             
     # make sure it wasn't destroyed / trashed
-    Card.find_by_name('City').should_not be_nil
+    Card['City'].should_not be_nil
   end
   
   it "remove cardtype" do
     Card.create! :name=>'County', :type=>'Cardtype'
-    c = Card.find_by_name('County')
+    c = Card['County']
     c.destroy
   end
   
@@ -37,24 +37,24 @@ describe "Card (Cardtype)" do
     assert_instance_of Card, c=Card.fetch("BananaPudding")
 
     # you have to have a module to include or it's just a Basic (typecode fielde excepted)
-    assert Card.create(:typecode=>'banana_pudding',:name=>"figgy" ).typename == 'BananaPudding'
+    assert Card.create(:typecode=>'banana_pudding',:name=>"figgy" ).type_name == 'BananaPudding'
     assert Card.find_by_type_id(c.id)
   end
 
   describe "conversion to cardtype" do
     before do
       @card = Card.create!(:type=>'Cardtype', :name=>'Cookie')
-      @card.typename.should == 'Cardtype'
+      @card.type_name.should == 'Cardtype'
     end
     
     it "creates cardtype model and permission" do
       @card.type_id = Card.fetch_id('cookie')
       @card.save!
-      @card.typename.should == 'Cookie'
+      @card.type_name.should == 'Cookie'
       @card=Card['Cookie']
       assert_instance_of Card, @card
       @card.typecode.should == nil # :cookie
-      assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).typename
+      assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).type_name
     end
   end
   
@@ -169,7 +169,7 @@ describe User, "Joe User" do
     Session.as :joe_user
     @user = User.user
     @ucard = Card[@user.card_id]
-    @typenames = Session.createable_types
+    @type_names = Session.createable_types
   end
 
   it "should not have r3 permissions" do
@@ -179,10 +179,10 @@ describe User, "Joe User" do
     Card.new(:type=>'Cardtype F').ok?(:create).should be_false
   end
   it "should not find Cardtype F on its list of createable cardtypes" do
-    @typenames.member?('Cardtype F').should be_false
+    @type_names.member?('Cardtype F').should be_false
   end
   it "should find Basic on its list of createable cardtypes" do
-    @typenames.member?('Basic').should be_true
+    @type_names.member?('Basic').should be_true
   end
   
 end

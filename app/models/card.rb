@@ -14,8 +14,7 @@ class Card < ActiveRecord::Base
   model_stamper # Card is both stamped and stamper
   stampable :stamper_class_name => :card
 
-  belongs_to :current_revision, :class_name => 'Card::Revision', :foreign_key=>'current_revision_id' #FIXME - use revision cache
-  has_many   :revisions, :order => 'id', :foreign_key=>'card_id'
+  has_many :revisions, :order => 'id', :foreign_key=>'card_id'
 
   attr_accessor :comment, :comment_author, :selected_rev_id,
     :confirm_rename, :confirm_destroy, :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
@@ -28,6 +27,7 @@ class Card < ActiveRecord::Base
   before_destroy :base_before_destroy
   before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
   after_save :base_after_save, :update_ruled_cards, :update_queue
+  after_validation :reset_failed_validation
   
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
@@ -151,7 +151,6 @@ class Card < ActiveRecord::Base
     end
   end
 
-
   def include_set_modules
     unless @set_mods_loaded
       set_modules.each do |m|
@@ -162,24 +161,24 @@ class Card < ActiveRecord::Base
     self
   end
 
-
   def reset_mods
     @set_mods_loaded=false
   end
 
-
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # STATES
 
+  def new_card?
+    new_record? || @from_trash
+  end
 
-
-
-  def new_card?() new_record? || @from_trash  end
-  def known?()    real? || virtual?           end
-  def real?()     !new_card?                  end
-
-
+  def known?
+    real? || virtual?
+  end
   
+  def real?
+    !new_card?
+  end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING
@@ -271,9 +270,9 @@ class Card < ActiveRecord::Base
     if approved?
       begin
         #warn "run_checked_save #{method}, tc:#{typecode.inspect}, #{type_id.inspect}"
-        self.send(method)
+        self.send method
       rescue Exception => e
-        rescue_save(e, method)
+        rescue_save e, method
       end
     else
       raise PermissionDenied.new(self)
@@ -288,11 +287,8 @@ class Card < ActiveRecord::Base
     raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
   end
 
-  def expire_pieces
-    cardname.piece_names.each do |piece|
-      #warn "clearing for #{piece.inspect}"
-      Card.clear_cache piece
-    end
+  def reset_failed_validation
+    expire if errors.any?
   end
 
   def pull_from_trash
@@ -378,13 +374,17 @@ class Card < ActiveRecord::Base
 
   def left()      Card.fetch cardname.left_name   end
   def right()     Card.fetch cardname.tag_name    end
-  def key()       cardname.key                    end # DISLIKE - how do we access db key?
+    
+  def key 
+    cardname.key                    
+  end
+  # DISLIKE - how do we access db key?
 
   def dependents
     return [] if new_card?
     Session.as_bot do
       Card.search( :part=>name ).map do |c|
-        [c] + c.dependents
+        [ c ] + c.dependents
       end.flatten
     end
   end
@@ -420,29 +420,40 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # TYPE
 
-  def type_card() Card[type_id.to_i]           end
-  def typecode()  Wagn::Codename[type_id.to_i] end # Should we not fallback to key?
-  def typename()
-    return if type_id.nil?
-    card=Card.fetch(type_id, :skip_modules=>true, :skip_virtual=>true) and card.name
+  def type_card
+    Card[ type_id.to_i ]
+  end
+  
+  def typecode
+    Wagn::Codename[ type_id.to_i ]
   end
 
-  def type=(typename) self.type_id = Card.fetch_id(typename)        end
+  def type_name
+    return if type_id.nil?
+    card = Card.fetch type_id, :skip_modules=>true, :skip_virtual=>true
+    card and card.name
+  end
+
+  def type= type_name
+    self.type_id = Card.fetch_id type_name
+  end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CONTENT / REVISIONS
 
   def content
-    #warn "content called for #{name}"
-    #new_card? ? template(reset=true).content : cached_revision.content
-    new_card? ? template.content : cached_revision.content
+    new_card? ? template.content : current_revision.content
   end
   
-  def raw_content() hard_template ? template.content : content        end
+  def raw_content
+    hard_template ? template.content : content
+  end
 
-  def selected_rev_id() @selected_rev_id || (cr=cached_revision)&&cr.id || 0 end
+  def selected_rev_id
+    @selected_rev_id or ( ( cr = current_revision ) ? cr.id : 0 )
+  end
 
-  def cached_revision
+  def current_revision
     #return current_revision || Card::Revision.new
     if @cached_revision and @cached_revision.id==current_revision_id
     elsif ( Card::Revision.cache &&
@@ -464,7 +475,7 @@ class Card < ActiveRecord::Base
   end
 
   def revised_at
-    (cached_revision && cached_revision.created_at) || Time.now
+    (current_revision && current_revision.created_at) || Time.now
   end
 
   def author
@@ -556,14 +567,14 @@ class Card < ActiveRecord::Base
   # MISCELLANEOUS
 
   def to_s
-    "#<#{self.class.name}[#{type_id < 1 ? 'bogus': typename}:#{type_id}]#{self.attributes['name']}>"
+    "#<#{self.class.name}[#{type_id < 1 ? 'bogus': type_name}:#{type_id}]#{self.attributes['name']}>"
   end
   
   def inspect
     "#<#{self.class.name}"+
     "(#{object_id})" +
     "##{self.id}" +
-    "[#{type_id < 1 ? 'bogus': typename}:#{type_id}]" +
+    "[#{type_id < 1 ? 'bogus': type_name}:#{type_id}]" +
     "!#{self.name}!{n:#{new_card?}:v:#{virtual?}:I:#{@set_mods_loaded}} R:#{
       @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}>"
   end
@@ -600,7 +611,7 @@ class Card < ActiveRecord::Base
 
 
   alias cardname= name=
-  def name_with_cardname=(newname)
+  def name_with_cardname= newname
     newname = newname.to_s
     if name != newname
       #warn "name_change (reset if rule) #{name_without_tracking}, #{newname}, #{inspect}" unless name_without_tracking.blank?
@@ -725,7 +736,7 @@ class Card < ActiveRecord::Base
     #warn "validate type #{rec.inspect}, #{attr}, #{value}"
     if rec.updates.for?(:type_id) and !rec.new_card?
       if !rec.validate_type_change
-        rec.errors.add :type, "of #{ rec.name } can't be changed; errors changing from #{ rec.typename }"
+        rec.errors.add :type, "of #{ rec.name } can't be changed; errors changing from #{ rec.type_name }"
       end
       if c = Card.new(:name=>'*validation dummy', :type_id=>value, :content=>'') and !c.valid?
         rec.errors.add :type, "of #{ rec.name } can't be changed; errors creating new #{ value }: #{ c.errors.full_messages * ', ' }"
@@ -741,7 +752,7 @@ class Card < ActiveRecord::Base
       
       # invalid to change type when type is hard_templated
       if rt = rec.hard_template and !rt.type_template? and value!=rt.type_id and !rec.allow_type_change
-        rec.errors.add :type, "can't be changed because #{rec.name} is hard templated to #{rt.typename}"
+        rec.errors.add :type, "can't be changed because #{rec.name} is hard templated to #{rt.type_name}"
       end        
     end
   end

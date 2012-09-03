@@ -33,24 +33,7 @@ module Wagn::Model::References
     expire_templatee_references
   end
 
-  def expire_cache
-    expire self
-    self.hard_templatee_names.each {|c| expire(c) } if self.hard_template?
-    # FIXME really shouldn't be instantiating all the following bastards.  Just need the key.
-    self.dependents.each           {|c| expire(c) }
-    self.referencers.each          {|c| expire(c) }
-    self.name_referencers.each     {|c| expire(c) }
-    # FIXME: this will need review when we do the new defaults/templating system
-    #if card.changed?(:content)
-  end
-  
-  def expire card
-    if String===card
-      Card.clear_cache card
-    else
-      card.clear_cache
-    end    
-  end
+
   
   def self.included(base)   
     super
@@ -72,7 +55,7 @@ module Wagn::Model::References
       after_destroy :update_references_on_destroy
       after_update :update_references_on_update
       
-      after_save :expire_cache
+      after_save :expire_related
     end
     
   end

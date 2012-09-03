@@ -63,7 +63,7 @@ describe Card, "created by Card.create with valid attributes" do
   end
 
   it "should be findable by name" do
-    Card.find_by_name("New Card").class.should == Card
+    Card["New Card"].class.should == Card
   end  
 end
 
@@ -99,15 +99,15 @@ describe Card, "create junction" do
   end
 
   it "should create junction card" do
-    Card.find_by_name("Peach+Pear").class.should == Card
+    Card["Peach+Pear"].class.should == Card
   end
 
   it "should create trunk card" do
-    Card.find_by_name("Peach").class.should == Card
+    Card["Peach"].class.should == Card
   end
 
   it "should create tag card" do
-    Card.find_by_name("Pear").class.should == Card
+    Card["Pear"].class.should == Card
   end
 end
 
@@ -132,7 +132,7 @@ describe Card, "types" do
     (ct=Card.fetch('FooRenamed')).typecode.should == :cardtype
     # now the classname changes if it doesn't have a codename in the table
     ncd = Card.create(:type=>'FooRenamed', :name=>'testy1')
-    ncd.typename.should == 'FooRenamed'
+    ncd.type_name.should == 'FooRenamed'
     ncd.typecode.should == :a_foo
    
     Wagn::Codename.reset_cache
@@ -150,7 +150,7 @@ describe Card, "types" do
     # give it a codename entry
     # now the classname changes if it doesn't have a codename in the table
     ncd = Card.create(:type=>'BFooRenamed', :name=>'testy2')
-    ncd.typename.should == 'BFooRenamed'
+    ncd.type_name.should == 'BFooRenamed'
     ncd.typecode.should == :b_foo
 
     Wagn::Codename.reset_cache

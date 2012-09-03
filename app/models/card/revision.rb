@@ -17,7 +17,7 @@ class Card::Revision < ActiveRecord::Base
 
 
   def title
-    current_id = card.cached_revision.id
+    current_id = card.cache_revision.id
     if id == current_id
       'Current Revision'
     elsif id > current_id

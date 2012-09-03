@@ -50,7 +50,7 @@ class CardActionTest < ActionController::IntegrationTest
     Session.as_bot {
       post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"} )}
     assert_response 302
-    assert Card.find_by_name('Editor2').typecode == :cardtype
+    assert Card['Editor2'].typecode == :cardtype
   end
 
   def test_create                   
@@ -100,11 +100,11 @@ class CardActionTest < ActionController::IntegrationTest
     
     post 'card/delete/~' + t2.id.to_s
     assert_redirected_to url_for_page( t1.name )   
-    assert_nil Card.find_by_name( t2.name )
+    assert_nil Card[ t2.name ]
     
     post 'card/delete/~' + t1.id.to_s
     assert_redirected_to '/'
-    assert_nil Card.find_by_name( t1.name )
+    assert_nil Card[ t1.name ]
   end
 
 

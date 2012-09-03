@@ -36,7 +36,7 @@ class AccountRequestTest < ActionController::TestCase
       :content=>"Let me in!"
     }
 
-    @card =  Card.find_by_name("Word Third")   
+    @card =  Card["Word Third"]   
     @user = User.where(:card_id=>@card.id).first
     
     @card.typecode.should == :invitation_request

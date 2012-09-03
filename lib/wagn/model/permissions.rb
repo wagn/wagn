@@ -19,8 +19,8 @@ module Wagn::Model::Permissions
   end
   
   def approved?
-    self.operation_approved = true    
-    self.permission_errors = []
+    @operation_approved = true    
+    @permission_errors = []
 
     unless updates.keys == ['comment'] # if only updating comment, next section will handle
       new_card? ? ok?(:create) : ok?(:update)
@@ -28,18 +28,18 @@ module Wagn::Model::Permissions
     updates.each_pair do |attr,value|
 
       send("approve_#{attr}")
-    end         
-    permission_errors.each do |err|
+    end
+    @permission_errors.each do |err|
       errors.add :permission_denied, err
     end
-    operation_approved
+    @operation_approved
   end
   
   # ok? and ok! are public facing methods to approve one operation at a time
   def ok?(operation)
     #warn Rails.logger.warn("ok? #{operation}")
-    self.operation_approved = true    
-    self.permission_errors = []
+    @operation_approved = true    
+    @permission_errors = []
     
     send("approve_#{operation}")     
     # approve_* methods set errors on the card.
@@ -48,7 +48,7 @@ module Wagn::Model::Permissions
     # so we hack around the errors added in approve_* by clearing them here.    
     # self.errors.clear 
 
-    operation_approved
+    @operation_approved
   end  
   
   def ok!(operation)
@@ -88,8 +88,8 @@ module Wagn::Model::Permissions
   end
       
   def deny_because(why)    
-    [why].flatten.each {|err| permission_errors << err }
-    self.operation_approved = false
+    [why].flatten.each {|err| @permission_errors << err }
+    @operation_approved = false
   end
 
   def lets_user(operation)
@@ -123,7 +123,7 @@ module Wagn::Model::Permissions
   
   def approve_update
     approve_task(:update)
-    approve_read if operation_approved
+    approve_read if @operation_approved
   end
   
   def approve_delete
@@ -132,7 +132,7 @@ module Wagn::Model::Permissions
 
   def approve_comment
     approve_task :comment, 'comment on'
-    if operation_approved
+    if @operation_approved
       deny_because "No comments allowed on template cards" if template?
       deny_because "No comments allowed on hard templated cards" if hard_template
     end
@@ -164,23 +164,23 @@ module Wagn::Model::Permissions
   def set_read_rule
     if trash == true
       self.read_rule_id = self.read_rule_class = nil
-      return
-    end  
-    # avoid doing this on simple content saves?
-    rcard, rclass = permission_rule_card(:read)
-    self.read_rule_id = rcard.id
-    self.read_rule_class = rclass
-    #find all cards with me as trunk and update their read_rule (because of *type plus right)
-    # skip if name is updated because will already be resaved
-    
-    if !new_card? && updates.for(:type_id)
-      Session.as_bot do
-        Card.search(:left=>self.name).each do |plus_card|
-          plus_card = plus_card.refresh if plus_card.frozen?
-          plus_card.update_read_rule
+    else
+      # avoid doing this on simple content saves?
+      rcard, rclass = permission_rule_card(:read)
+      self.read_rule_id = rcard.id
+      self.read_rule_class = rclass
+      #find all cards with me as trunk and update their read_rule (because of *type plus right)
+      # skip if name is updated because will already be resaved
+
+      if !new_card? && updates.for(:type_id)
+        Session.as_bot do
+          Card.search(:left=>self.name).each do |plus_card|
+            plus_card = plus_card.refresh if plus_card.frozen?
+            plus_card.update_read_rule
+          end
         end
       end
-    end
+    end  
   end
   
   def update_read_rule()
@@ -189,9 +189,12 @@ module Wagn::Model::Permissions
     reset_patterns # why is this needed?
     rcard, rclass = permission_rule_card :read
     self.read_rule_id = rcard.id #these two are just to make sure vals are correct on current object
+#    warn "updating read rule for #{name} to #{rcard.id}"
+    
     self.read_rule_class = rclass
     Card.where(:id=>self.id).update_all(:read_rule_id=>rcard.id, :read_rule_class=>rclass)
-    Card.expire self.key
+    expire
+  
     
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
     Session.as_bot do
@@ -257,14 +260,4 @@ module Wagn::Model::Permissions
     end
   end
   
-  def self.included(base)   
-    super
-    base.alias_method_chain :destroy, :permissions
-    base.alias_method_chain :destroy!, :permissions
-    
-    base.class_eval do           
-      attr_accessor :operation_approved, :permission_errors
-      attr_writer :update_read_rule_list
-    end
-  end
 end

@@ -28,9 +28,10 @@ describe "reader rules" do
   end
   
   it "should update to user ('Joe Admin')" do
-    card = Card.fetch('Home')
     @perm_card.content = '[[Joe Admin]]'
     Session.as_bot { @perm_card.save! }
+
+    card = Card.fetch('Home')    
     card.read_rule_id.should == @perm_card.id
     card.who_can(:read).should == [Card['joe_admin'].id]
     Session.as(:anonymous) { card.ok?(:read).should be_false }

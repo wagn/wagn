@@ -14,20 +14,20 @@ class Card < ActiveRecord::Base
   model_stamper # Card is both stamped and stamper
   stampable :stamper_class_name => :card
 
-  has_many :revisions, :order => 'id', :foreign_key=>'card_id'
+  has_many :revisions, :order => :id #, :foreign_key=>'card_id'
 
   attr_accessor :comment, :comment_author, :selected_rev_id,
     :confirm_rename, :confirm_destroy, :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
     :cards, :loaded_trunk, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status, #yuck
     :attachment_id #should build flexible handling for set-specific attributes
-
+      
+  attr_writer :update_read_rule_list
   attr_reader :type_args, :broken_type
   
   before_destroy :base_before_destroy
   before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
-  after_save :base_after_save, :update_ruled_cards, :update_queue
-  after_validation :reset_failed_validation
+  after_save :base_after_save, :update_ruled_cards, :update_queue, :expire_related
   
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
@@ -195,6 +195,32 @@ class Card < ActiveRecord::Base
     self.creator_id = self.updater_id if new_card?
   end
 
+  before_validation do 
+    pull_from_trash if new_record?
+    self.trash = !!trash
+    true
+  end
+  
+  after_validation do
+    begin
+#      return if name == '*validation dummy'
+      raise PermissionDenied.new(self) unless approved?
+      expire_pieces if errors.any?
+      true
+    rescue Exception => e
+      expire_pieces
+      raise e
+    end
+  end
+  
+  def save
+    super
+  rescue Exception => e
+    expire_pieces
+    raise e
+  end
+  
+
   def base_before_save
     if self.respond_to?(:before_save) and self.before_save == false
       errors.add(:save, "could not prepare card for destruction")
@@ -210,10 +236,13 @@ class Card < ActiveRecord::Base
     send_notifications
     true
   rescue Exception=>e
+    expire_pieces
     @subcards.each{ |card| card.expire_pieces }
     Rails.logger.info "after save issue: #{e.message}"
     raise e
   end
+
+  #private
 
   def save_subcards
     @subcards = []
@@ -239,58 +268,6 @@ class Card < ActiveRecord::Base
     end
   end
 
-  def save_with_trash!
-    save || raise(errors.full_messages.join('. '))
-  end
-  alias_method_chain :save!, :trash
-
-  def save_with_trash(*args)#(perform_checking=true)
-    pull_from_trash if new_record?
-    self.trash = !!trash
-    save_without_trash(*args)#(perform_checking)
-  rescue Exception => e
-    Rails.logger.warn "exception #{e} #{caller[0..1]*', '}"
-    raise e
-  end
-  alias_method_chain :save, :trash
-
-  def save_with_permissions *args
-    Rails.logger.debug "Card#save_with_permissions:"
-    run_checked_save :save_without_permissions
-  end
-  alias_method_chain :save, :permissions
-   
-  def save_with_permissions! *args
-    Rails.logger.debug "Card#save_with_permissions!"
-    run_checked_save :save_without_permissions!
-  end
-  alias_method_chain :save!, :permissions
-  
-  def run_checked_save method
-    if approved?
-      begin
-        #warn "run_checked_save #{method}, tc:#{typecode.inspect}, #{type_id.inspect}"
-        self.send method
-      rescue Exception => e
-        rescue_save e, method
-      end
-    else
-      raise PermissionDenied.new(self)
-    end
-  end
-
-  def rescue_save(e, method)
-    expire_pieces
-    #warn "Model exception #{method}:#{e.message} #{name}"
-    Rails.logger.info "Model exception #{method}:#{e.message} #{name}"
-    Rails.logger.debug "BT [[[\n#{ e.backtrace*"\n"} \n]]]"
-    raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
-  end
-
-  def reset_failed_validation
-    expire if errors.any?
-  end
-
   def pull_from_trash
     return unless key
     return unless trashed_card = Card.find_by_key_and_trash(key, true)
@@ -300,6 +277,8 @@ class Card < ActiveRecord::Base
     @from_trash = self.confirm_rename = @trash_changed = true
     @new_record = false
   end
+
+  #public
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # DESTROY
@@ -355,12 +334,17 @@ class Card < ActiveRecord::Base
     dependents.each do |dep| dep.ok! :delete end
     destroy_without_permissions
   end
+  alias_method_chain :destroy, :permissions
   
   def destroy_with_permissions!
     ok! :delete
     dependents.each do |dep| dep.ok! :delete end
     destroy_without_permissions!
   end
+  alias_method_chain :destroy!, :permissions
+
+
+
 
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -738,7 +722,8 @@ class Card < ActiveRecord::Base
       if !rec.validate_type_change
         rec.errors.add :type, "of #{ rec.name } can't be changed; errors changing from #{ rec.type_name }"
       end
-      if c = Card.new(:name=>'*validation dummy', :type_id=>value, :content=>'') and !c.valid?
+#      if c = Card.new(:name=>'*validation dummy', :type_id=>value, :content=>'') and !c.valid?
+      if c = rec.dup and c.type_id_without_tracking = value and c.id = nil and !c.valid?
         rec.errors.add :type, "of #{ rec.name } can't be changed; errors creating new #{ value }: #{ c.errors.full_messages * ', ' }"
       end
     end

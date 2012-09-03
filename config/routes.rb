@@ -27,7 +27,7 @@ Wagn::Application.routes.draw do
 
 
   
-  match '*id' => 'application#bad_address'
+  match '*id' => 'card#read', :view => 'bad_address'
 
 end
 

@@ -31,7 +31,6 @@ class CardController < ApplicationController
     end
   end
 
-
   def delete
     @card = @card.refresh if @card.frozen? # put in model
     @card.confirm_destroy = params[:confirm_destroy]

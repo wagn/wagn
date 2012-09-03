@@ -22,7 +22,7 @@ module Wagn::Model
 
     def reset_patterns_if_rule()
       return if name.blank?
-      #warn Rails.logger.warn("reset p ifr[#{inspect}], #{name_without_tracking}")
+#      warn Rails.logger.warn("reset p ifr[#{inspect}], #{name_without_tracking}")
       if !simple? and !new_card? and setting=right and setting.type_id == Card::SettingID and
          (set=left).type_id == Card::SetID
         #warn (Rails.logger.debug "reset set: #{name}, Set:#{set.inspect} + Setting:#{setting.inspect}")
@@ -50,7 +50,9 @@ module Wagn::Model
     end
     alias_method_chain :patterns, :new
 
-    def real_set_names() set_names.find_all &Card.method(:exists?)                              end
+    def real_set_names
+      set_names.find_all &Card.method(:exists?)
+    end
     def css_names()      patterns.map(&:css_name).reverse*" "                                   end
     def set_modules()    @set_modules ||= patterns_without_new.reverse.map(&:set_const).compact end
     def set_names()

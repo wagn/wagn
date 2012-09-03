@@ -63,11 +63,11 @@ class Wagn::Renderer
     main? ? 'Permission Denied' : ''
   end
   
-  define_view :bad_address, :perms=>:none do |args|
+  define_view :bad_address, :perms=>:none, :error_code=>404 do |args|
     %{ Bad Address }
   end
 
-  define_view :no_card, :perms=>:none do |args|
+  define_view :no_card, :perms=>:none, :error_code=>404 do |args|
     %{ No Card! }
   end
 

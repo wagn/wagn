@@ -16,10 +16,6 @@ class ApplicationController < ActionController::Base
     render :text=>message, :layout=>false, :status=>404
   end
 
-  def bad_address
-    raise Wagn::BadAddress, "could not find a route to match this address"
-  end
-
   protected
 
   def per_request_setup
@@ -65,9 +61,11 @@ class ApplicationController < ActionController::Base
   def html?
     [nil, 'html'].member?(params[:format])
   end
+
   # ------------------( permission filters ) -------
-  def read_ok()    @card.ok?(:read)   || deny(:read)    end
-    
+  def read_ok
+    @card.ok?(:read) || deny(:read)
+  end
 
 
   # ----------( rendering methods ) -------------

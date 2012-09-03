@@ -73,7 +73,7 @@ module Wagn::Model::TrackedAttributes
     # move the current card out of the way, in case the new name will require
     # re-creating a card with the current name, ie.  A -> A+B
     Card.expire name
-    tmp_name = "tmp:" + UUID.new.generate      
+    tmp_name = "tmp:" + UUID.new.generate
     Card.where(:id=>self.id).update_all(:name=>tmp_name, :key=>tmp_name)    
   end
 

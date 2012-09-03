@@ -55,7 +55,6 @@ module Wagn::Model::References
       after_destroy :update_references_on_destroy
       after_update :update_references_on_update
       
-      after_save :expire_related
     end
     
   end

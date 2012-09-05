@@ -46,10 +46,10 @@ module Wagn::Model::References
       has_many :out_transclusions,:class_name=>'Card::Reference', :foreign_key=>'card_id',           :conditions=>["link_type in (?,?)",Card::Reference::TRANSCLUSION, Card::Reference::WANTED_TRANSCLUSION]
 
       has_many :referencers, :through=>:in_references
-      has_many :referencees, :through=>:out_references
-
       has_many :transcluders, :through=>:in_transclusions, :source=>:referencer
-      has_many :transcludees, :through=>:out_transclusions, :source=>:referencee      
+
+      has_many :referencees, :through=>:out_references
+      has_many :transcludees, :through=>:out_transclusions, :source=>:referencee # used in tests only
       
       after_create :update_references_on_create
       after_destroy :update_references_on_destroy

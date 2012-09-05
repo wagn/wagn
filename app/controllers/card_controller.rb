@@ -5,7 +5,7 @@ class CardController < ApplicationController
   before_filter :index_preload, :only=> [ :index ]
   before_filter :read_file_preload, :only=> [ :read_file ]
 
-  before_filter :load_card   #!, :only=>LOAD_ACTIONS
+  before_filter :load_card
   before_filter :read_ok,   :only=> [ :read_file ]
 
 

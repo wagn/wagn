@@ -190,7 +190,7 @@ end
 
 describe Card, "Cardtype with Existing Cards" do
   before do
-    @ct = Card['Basic']
+    @ct = Card['Cardtype F']
   end
   it "should have existing cards of that type" do
     Card.search(:type=>@ct.name).should_not be_empty
@@ -198,6 +198,7 @@ describe Card, "Cardtype with Existing Cards" do
 
   it "should raise an error when you try to delete it" do
     Session.as_bot do
+      @ct.confirm_destroy = true
       @ct.destroy
       @ct.errors[:cardtype].should_not be_empty
     end

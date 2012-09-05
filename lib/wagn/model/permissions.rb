@@ -22,13 +22,17 @@ module Wagn::Model::Permissions
     @operation_approved = true    
     @permission_errors = []
 
-    unless updates.keys == ['comment'] # if only updating comment, next section will handle
-      new_card? ? ok?(:create) : ok?(:update)
+    if trash
+      ok? :delete
+    else
+      unless updates.keys == ['comment'] # if only updating comment, next section will handle
+        new_card? ? ok?(:create) : ok?(:update)
+      end
+      updates.each_pair do |attr,value|
+        send("approve_#{attr}")
+      end
     end
-    updates.each_pair do |attr,value|
-
-      send("approve_#{attr}")
-    end
+    
     @permission_errors.each do |err|
       errors.add :permission_denied, err
     end

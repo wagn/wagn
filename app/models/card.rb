@@ -25,7 +25,6 @@ class Card < ActiveRecord::Base
   attr_writer :update_read_rule_list
   attr_reader :type_args, :broken_type
   
-  before_destroy :base_before_destroy
   before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
   after_save :base_after_save, :update_ruled_cards, :update_queue, :expire_related
   
@@ -65,7 +64,7 @@ class Card < ActiveRecord::Base
       :admin        => :administrator
     }
     
-    def const_missing(const)
+    def const_missing const
       if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore.to_sym
         code = ID_CONST_ALIAS[code] || code
         if card_id = Wagn::Codename[code]
@@ -183,19 +182,19 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING
 
-  def update_attributes(args={})
+  def update_attributes args={}
     if newtype = args.delete(:type) || args.delete('type')
       args[:type_id] = Card.fetch_id( newtype )
     end
     super args
   end
 
-  def set_stamper()
+  def set_stamper
     self.updater_id = Session.user_id
     self.creator_id = self.updater_id if new_card?
   end
 
-  before_validation do 
+  before_validation :on => :create do 
     pull_from_trash if new_record?
     self.trash = !!trash
     true
@@ -203,7 +202,6 @@ class Card < ActiveRecord::Base
   
   after_validation do
     begin
-#      return if name == '*validation dummy'
       raise PermissionDenied.new(self) unless approved?
       expire_pieces if errors.any?
       true
@@ -220,6 +218,12 @@ class Card < ActiveRecord::Base
     raise e
   end
   
+  def save!
+    super
+  rescue Exception => e
+    expire_pieces
+    raise e
+  end
 
   def base_before_save
     if self.respond_to?(:before_save) and self.before_save == false
@@ -241,8 +245,6 @@ class Card < ActiveRecord::Base
     Rails.logger.info "after save issue: #{e.message}"
     raise e
   end
-
-  #private
 
   def save_subcards
     @subcards = []
@@ -278,74 +280,62 @@ class Card < ActiveRecord::Base
     @new_record = false
   end
 
-  #public
-
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # DESTROY
-
-  def destroy_with_trash(caller="")
+  
+  def destroy
     run_callbacks( :destroy ) do
-      deps = self.dependents
+      deps = self.dependents # already called once.  reuse?
       @trash_changed = true
       self.update_attributes :trash => true
       deps.each do |dep|
-        next if dep.trash #shouldn't be getting trashed cards
         dep.confirm_destroy = true
-        dep.destroy_with_trash("#{caller} -> #{name}")
+        dep.destroy
       end
       true
     end
-  end
-  alias_method_chain :destroy, :trash
+  end    
 
-  def destroy_with_validation
+  before_destroy do
     errors.clear
     validate_destroy
 
-    if !dependents.empty? && !confirm_destroy
-      errors.add(:confirmation_required, "because #{name} has #{dependents.size} dependents")
-    end
-
     dependents.each do |dep|
       dep.send :validate_destroy
-      if !dep.errors[:destroy].empty?
+      if dep.errors[:destroy].any?
         errors.add(:destroy, "can't destroy dependent card #{dep.name}: #{dep.errors[:destroy]}")
       end
     end
 
-    errors.empty? ? destroy_without_validation : false
+    if errors.any?
+      return false
+    else
+      self.before_destroy if respond_to? :before_destroy
+    end
   end
-  alias_method_chain :destroy, :validation
 
   def destroy!
     # FIXME: do we want to overide confirmation by setting confirm_destroy=true here?
-    # This is aliased in Permissions, which could be related to the above comment
     self.confirm_destroy = true
     destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
   end
 
-  def base_before_destroy
-    self.before_destroy if respond_to? :before_destroy
+  def validate_destroy    
+    if !dependents.empty? && !confirm_destroy
+      errors.add(:confirmation_required, "because #{name} has #{dependents.size} dependents")
+    else
+      if code=self.codename
+        errors.add :destroy, "#{name} is is a system card. (#{code})\n  Deleting this card would mess up our revision records."
+      end
+      if type_id== Card::UserID && Card::Revision.find_by_creator_id( self.id )
+        errors.add :destroy, "Edits have been made with #{name}'s user account.\n  Deleting this card would mess up our revision records."
+      end
+      if respond_to? :custom_validate_destroy
+        self.custom_validate_destroy
+      end
+    end
+    errors.empty?
   end
-
-  def destroy_with_permissions
-    ok! :delete
-    # FIXME this is not tested and the error will be confusing
-    dependents.each do |dep| dep.ok! :delete end
-    destroy_without_permissions
-  end
-  alias_method_chain :destroy, :permissions
-  
-  def destroy_with_permissions!
-    ok! :delete
-    dependents.each do |dep| dep.ok! :delete end
-    destroy_without_permissions!
-  end
-  alias_method_chain :destroy!, :permissions
-
-
-
-
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # NAME / RELATED NAMES
@@ -408,7 +398,7 @@ class Card < ActiveRecord::Base
     Card[ type_id.to_i ]
   end
   
-  def typecode
+  def typecode # FIXME - change to "type_code"
     Wagn::Codename[ type_id.to_i ]
   end
 
@@ -489,6 +479,7 @@ class Card < ActiveRecord::Base
 
   #~~~~~~~~~~~~~~ USER-ISH methods ~~~~~~~~~~~~~~#
   # these should be done in a set module when we have the capacity to address the set of "cards with accounts"
+  # in the meantime, they should probably be in a module.
 
   def among? authzed
     prties = parties
@@ -518,7 +509,9 @@ class Card < ActiveRecord::Base
     @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
   end
 
-  def to_user() User.where(:card_id=>id).first end # should be obsolete soon.
+  def to_user
+    User.where( :card_id => id ).first
+  end # should be obsolete soon.
 
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -531,8 +524,6 @@ class Card < ActiveRecord::Base
   def trait_card tagcode
     Card.fetch_or_new cardname.trait_name(tagcode), :skip_virtual=>true
   end
-
-
 
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -555,18 +546,11 @@ class Card < ActiveRecord::Base
   end
   
   def inspect
-    "#<#{self.class.name}"+
-    "(#{object_id})" +
-    "##{self.id}" +
+    "#<#{self.class.name}" + "(#{object_id})" + "##{self.id}" +
     "[#{type_id < 1 ? 'bogus': type_name}:#{type_id}]" +
-    "!#{self.name}!{n:#{new_card?}:v:#{virtual?}:I:#{@set_mods_loaded}} R:#{
-      @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}>"
+    "!#{self.name}!{n:#{new_card?}:v:#{virtual?}:I:#{@set_mods_loaded}} " + 
+    "R:#{ @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}>"
   end
-
-  # what is this??
-  def mocha_inspect()     to_s                                   end
-
-
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INCLUDED MODULES
@@ -592,8 +576,6 @@ class Card < ActiveRecord::Base
 
   # this method piggybacks on the name tracking method and
   # must therefore be defined after the #tracks call
-
-
   alias cardname= name=
   def name_with_cardname= newname
     newname = newname.to_s
@@ -613,17 +595,7 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # VALIDATIONS
 
-  def validate_destroy
-    if code=self.codename
-      errors.add :destroy, "#{name} is is a system card. (#{code})\n  Deleting this card would mess up our revision records."
-      return false
-    elsif type_id== Card::UserID and Card::Revision.find_by_creator_id( self.id )
-      errors.add :destroy, "Edits have been made with #{name}'s user account.\n  Deleting this card would mess up our revision records."
-      return false
-    end
-    #should collect errors from dependent destroys here.
-    true
-  end
+
 
   protected
 
@@ -659,7 +631,7 @@ class Card < ActiveRecord::Base
           Wagn::Cardname::CARDNAME_BANNED_CHARACTERS}"
       end
       # this is to protect against using a plus card as a tag
-      if cdname.junction? and rec.simple? and Card.where(:tag_id=>rec.id).size > 0
+      if cdname.junction? and rec.simple? and Session.as_bot { Card.count_by_wql :tag_id=>rec.id } > 0
         rec.errors.add :name, "#{value} in use as a tag"
       end
 
@@ -750,12 +722,8 @@ class Card < ActiveRecord::Base
     end
   end
 
-
-
-
   # these old_modules should be refactored out
   require_dependency 'flexmail.rb'
   require_dependency 'google_maps_addon.rb'
   require_dependency 'notification.rb'
 end
-

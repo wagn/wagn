@@ -154,11 +154,6 @@ GEM
       columnize (>= 0.3.1)
       linecache19 (>= 0.5.11)
       ruby_core_source (>= 0.1.4)
-    ruby-debug-base19x (0.11.29)
-      columnize (>= 0.3.1)
-      linecache19 (>= 0.5.11)
-      rake (>= 0.8.1)
-      ruby_core_source (>= 0.1.4)
     ruby-debug19 (0.11.6)
       columnize (>= 0.3.1)
       linecache19 (>= 0.5.11)
@@ -217,7 +212,6 @@ DEPENDENCIES
   htmlentities (~> 4.3)
   jquery-rails (~> 1.0)
   launchy
-  linecache19 (~> 0.5)
   mysql2 (~> 0.3)
   paperclip (~> 2.4)
   pg (~> 0.12.2)
@@ -227,7 +221,6 @@ DEPENDENCIES
   recaptcha (~> 0.3)
   rmagick (~> 2.13)
   rspec-rails (~> 2.6)
-  ruby-debug-base19x (~> 0.11)
   ruby-debug19
   ruby-prof
   rubyzip (~> 0.9)

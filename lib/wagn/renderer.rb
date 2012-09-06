@@ -94,6 +94,7 @@ module Wagn
 
       def alias_view view, opts={}, *aliases
         view_key = get_view_key(view, opts)
+        @@subset_views[view] = true if !opts.empty?
         aliases.each do |aview|
           aview_key = case aview
             when String; aview
@@ -250,6 +251,7 @@ module Wagn
       return "_final_#{view}" if !card || !@@subset_views[view]
       card.method_keys.each do |method_key|
         meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
+        #Rails.logger.info "looking up #{meth} for #{card.name}"
         return meth if respond_to?(meth.to_sym)
       end
       nil

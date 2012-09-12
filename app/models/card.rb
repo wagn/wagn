@@ -1,6 +1,13 @@
 # -*- encoding : utf-8 -*-
 
 class Card < ActiveRecord::Base
+  #Revision
+  #Reference
+  require 'card/revision'
+  require 'card/reference'
+end
+class Card < ActiveRecord::Base
+
   cattr_accessor :cache
 
   # userstamp methods
@@ -66,6 +73,7 @@ class Card < ActiveRecord::Base
           raise "Missing codename #{code} (#{const}) #{caller*"\n"}"
         end
       else
+        Rails.logger.warn "need to load #{const.inspect}?"
         super
       end
     end

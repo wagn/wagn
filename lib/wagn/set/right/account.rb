@@ -1,4 +1,4 @@
-module Wagn::Set::Right::Xaccount
+module Wagn::Set::Right::Account
 
   def self.included(base)
     super

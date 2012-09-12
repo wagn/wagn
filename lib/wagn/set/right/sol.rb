@@ -1,5 +1,5 @@
 =begin
-  module Wagn::Set::Right::Xsol -- Metacurrency flows for Wagn
+  module Wagn::Set::Right::Sol -- Metacurrency flows for Wagn
 
   This can be generalized just a little and be suitable for adding to almost
   any content management system with user editable content.
@@ -107,7 +107,7 @@ end
   provide this function.
 =end
 
-module Wagn::Set::Right::Xsol
+module Wagn::Set::Right::Sol
 
   def self.included(base)
     super

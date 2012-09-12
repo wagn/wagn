@@ -8,15 +8,15 @@ class RolesUsers < ActiveRecord::Migration
     Session.as Card::WagbotID do
       # Delete the old *roles template
       (c = Card['*assign_user_roles'] and c=c.refresh) && c.delete
-      warn Rails.logger.warn("deleted #{c.inspect}")
+      #puts "deleted #{c.inspect}"
       (c = Card['*role+*right+*content'] and c=c.refresh) && c.delete
-      warn Rails.logger.warn("deleted #{c.inspect}")
+      #puts "deleted #{c.inspect}"
       (c = Card['*role+*right+*default'] and c=c.refresh) && c.delete
-      warn Rails.logger.warn("deleted #{c.inspect}")
+      #puts "deleted #{c.inspect}"
       (c = Card['*tasks+*right+*default'] and c=c.refresh) && c.delete
-      warn Rails.logger.warn("deleted #{c.inspect}")
+      #puts "deleted #{c.inspect}"
       tsks =Card.search(:right=>"*tasks").map(&:refresh)
-      warn Rails.logger.warn("delete lst #{tsks.inspect}")
+      #puts "delete lst #{tsks.inspect}"
       tsks.each(&:delete)
       Wagn::Cache.reset_global
 
@@ -30,7 +30,7 @@ class RolesUsers < ActiveRecord::Migration
                 when :administrate_users; "*account+*right+*update"
                 when :assign_user_roles;  "*roles+*right+*update"
               end ))
-            warn Rails.logger.warn("tasks ? #{task.inspect}[#{rolecard.name}] >> #{c.inspect}")
+            #puts "tasks ? #{task.inspect}[#{rolecard.name}] >> #{c.inspect}"
             c.add_item(rolecard.name)
             c.save
           end
@@ -42,41 +42,61 @@ class RolesUsers < ActiveRecord::Migration
         next unless user
         roles = RolesUser.where(:user_id=>user.id).map do |role_user|
             rcard=Card.where(:extension_id=>role_user.role_id, :extension_type => 'Role').first
-            warn Rails.logger.warn("user rold ? #{usercard.inspect}[#{rcard}, #{role_user.inspect}] >> #{c.inspect}")
+            #puts "user rold ? #{usercard.inspect}[#{rcard}, #{role_user.inspect}] >> #{c.inspect}"
             (rcard and rcard.id != Card::AnonID) ?  rcard.name : nil
           end.compact
 
         unless roles.empty?
-          Card.create! :name    => usercard.cardname.trait_name(:roles),
-                       :type_id => Card::PointerID,
-                       :content => "[[#{roles*"]]\n[["}]]"
+          roles_name =  usercard.cardname.trait_name(:roles)
+          if c=Card[roles_name]
+            puts "WARNING: #{roles_name} already exists!"
+          else
+            Card.create! :name    => roles_name,
+                         :type_id => Card::PointerID,
+                         :content => "[[#{roles*"]]\n[["}]]"
+          end
         end
       end
 
       # Add Role+*users+*type plus right+*content (edit_user_roles task)
-      Card.create! :name => "Role+*users+*type plus right+*content",
-                   :type_id => Card::SearchID,
-                   :content => %[{"type":"User","refer to":"_left"}]
+      users_template_name = "Role+*users+*type plus right+*content"
+      if Card[users_template_name]
+        puts "WARNING: #{users_template_name} already exists!"
+      else
+        Card.create! :name => users_template_name,
+                     :type_id => Card::SearchID,
+                     :content => %[{"type":"User","refer to":"_left"}]
+      end
 
       # Add *account+*right+*create (create_accounts task)
       c=Card['*account+*right+*create'] and c << '_left' or
           Card.create(:name => "*account+*right+*create",
                       :type_id => Card::PointerID,
-                      :content => "[[_left]]")
+                      :content => "_left")
 
       # Add *account+*right+*update (administrate_users)
       Card['*account+*right+*update'] or
       Card.create!(:name => "*account+*right+*update",
                    :type_id => Card::PointerID,
-                   :content => "[[_left]]")
+                   :content => "_left")
 
       # Add *roles+*right+*update   (edit_user_roles)
-      Card.create! :name => "*roles+*right+*update",
-                   :type_id => Card::PointerID,
-                   :content => "[[_left]]"
+      roles_update_rule_name = "*roles+*right+*update"
+      if Card[roles_update_rule_name]
+        puts "WARNING: #{roles_update_rule_name} already exists!"
+      else
+        Card.create! :name => roles_update_rule_name,
+                     :type_id => Card::PointerID,
+                     :content => "_left"
+      end
 
-      Card.create! :name => '*roles+*right+*default',
-                   :type_id => Card::PointerID
+      roles_default_name = '*roles+*right+*default'
+      if Card[roles_default_name]
+        puts "WARNING: #{roles_default_name} already exists!"
+      else
+        Card.create! :name => roles_default_name,
+                     :type_id => Card::PointerID
+      end
     end
   end
 

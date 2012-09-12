@@ -457,7 +457,7 @@ class Wagn::Renderer::Html
         hidden_field_tag 'success', "TEXT: #{card.name} deleted" }
 
     <div class="content open-content">
-      <p>Really delete #{ link_to_page formal_title(card), card.name }?</p>#{
+      <p>Really remove #{ raw link_to_page( formal_title(card), card.name ) }?</p>#{
        if dependents = card.dependents and !dependents.empty? #ENGLISH ^
         %{<p>That would mean removing all these cards, too:</p>
         <ul>

@@ -95,8 +95,8 @@ class CodenameTable < ActiveRecord::Migration
     add_index "cards", ["type_id"], :name=>"card_type_index"
 
     Card.reset_column_information
-    Wagn::Cache.new_all
- 
+    Wagn::Cache.reset_global 
+
     @@have_codes = !Wagn::Codename[:wagbot].nil?
     warn Rails.logger.warn("have_codes #{@@have_codes}")
     CodenameTable.load_bootcodes unless @@have_codes

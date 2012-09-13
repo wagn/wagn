@@ -1,5 +1,5 @@
 common: &common
-  adapter: mysql
+  adapter: mysql2
   username: root
   encoding: utf8
   host: localhost

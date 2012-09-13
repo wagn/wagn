@@ -14,6 +14,7 @@ module Wagn
     RENDERERS = {
       :html => :Html,
       :css  => :Text,
+      :csv  => :Text,
       :txt  => :Text
     }
     
@@ -82,7 +83,8 @@ module Wagn
                 send( "_render_#{view}", *a)
 #              end
             rescue Exception=>e
-              Rails.logger.info "\nRender Error: #{e.message}"
+              controller.send :notify_airbrake, e if Airbrake.configuration.api_key
+              Rails.logger.info "\nRender Error: #{e.class} : #{e.message}"
               Rails.logger.debug "  #{e.backtrace*"\n  "}"
               rendering_error e, (card && card.name.present? ? card.name : 'unknown card')
             end
@@ -92,6 +94,7 @@ module Wagn
 
       def alias_view view, opts={}, *aliases
         view_key = get_view_key(view, opts)
+        @@subset_views[view] = true if !opts.empty?
         aliases.each do |aview|
           aview_key = case aview
             when String; aview
@@ -219,7 +222,6 @@ module Wagn
         expand_inclusion(opts) { yield }
       end
     end
-    alias expand_inclusions process_content
   
   
     def deny_render view, args={}
@@ -249,6 +251,7 @@ module Wagn
       return "_final_#{view}" if !card || !@@subset_views[view]
       card.method_keys.each do |method_key|
         meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
+        #Rails.logger.info "looking up #{meth} for #{card.name}"
         return meth if respond_to?(meth.to_sym)
       end
       nil
@@ -304,7 +307,7 @@ module Wagn
     end
   
     def process_inclusion tcard, options
-      sub = subrenderer tcard, :item_view=>options[:item], :showname=>options[:showname]
+      sub = subrenderer tcard, :item_view=>options[:item], :showname=>options[:showname], :size=>options[:size]
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub  #don't like depending on this global var switch
   
       new_card = tcard.new_card? && !tcard.virtual?
@@ -370,7 +373,7 @@ module Wagn
 
     def search_params
       @search_params ||= begin
-        p = self.respond_to?(:paging_params) ? paging_params : {}
+        p = self.respond_to?(:paging_params) ? paging_params : { :default_limit=> 100 }
         p[:vars] = {}
         if self == @root
           params.each do |key,val|

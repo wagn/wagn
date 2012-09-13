@@ -200,12 +200,11 @@ module Wagn::Model::Permissions
   def update_read_rule
     Card.record_timestamps = Card.record_userstamps = false
 
-    rcard, rclass = permission_rule_card(:read)
-    copy = self.frozen? ? self.refresh : self
-    copy.update_attributes!(
-      :read_rule_id => rcard.id,
-      :read_rule_class => rclass
-    )
+    rcard, rclass = permission_rule_card :read
+    self.read_rule_id = rcard.id #these two are just to make sure vals are correct on current object
+    self.read_rule_class = rclass
+    connection.update %{update cards set read_rule_id=#{rcard.id}, read_rule_class="#{rclass}" where id=#{self.id}}
+    Wagn::Cache.expire_card self.key
     
     unless ENV['MIGRATE_PERMISSIONS'] == 'true' 
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
@@ -217,10 +216,9 @@ module Wagn::Model::Permissions
         end
       end
     end
-    Card.record_timestamps = Card.record_userstamps = true    
-  rescue
+  
+  ensure
     Card.record_timestamps = Card.record_userstamps = true
-    raise
   end
 
   def update_ruled_cards

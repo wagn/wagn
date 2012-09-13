@@ -457,7 +457,7 @@ class Wagn::Renderer::Html
         hidden_field_tag 'success', "TEXT: #{card.name} removed" }
     
     <div class="content open-content">
-      <p>Really remove #{ link_to_page formal_title(card), card.name }?</p>#{
+      <p>Really remove #{ raw link_to_page( formal_title(card), card.name ) }?</p>#{
        if dependents = card.dependents and !dependents.empty? #ENGLISH ^
         %{<p>That would mean removing all these cards, too:</p>
         <ul>
@@ -609,10 +609,7 @@ class Wagn::Renderer::Html
                "You need permission"
               end} to #{params[:action]} this card#{": <strong>#{fancy_title(card)}</strong>" if card.name && !card.name.blank? }.
               </div>
-  
-              #{unless @skip_slot_header or @deny=='view'
-                %{<p>#{ link_to 'See permission settings', path(:options, :attrib=>'settings'), :class=>'slotter', :remote=>true  }.</p>}
-              end} #{
+             #{
   
               if User.current_user.anonymous? && Card.new(:typecode=>'InvitationRequest').ok?(:create)
                 %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}

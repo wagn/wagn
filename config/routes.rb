@@ -1,4 +1,4 @@
-FORMATS = 'html|json|xml|rss|kml|css|txt|text' unless defined? FORMATS
+FORMATS = 'html|json|xml|rss|kml|css|txt|text|csv' unless defined? FORMATS
 FORMAT_PATTERN = /#{FORMATS}/ unless defined? FORMAT_PATTERN
 
 Wagn::Application.routes.draw do

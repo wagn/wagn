@@ -18,6 +18,21 @@ class Wagn::Renderer
     end
   end
   
+  define_view :card_list, :type=>'search' do |args|
+    @item_view ||= (card.spec[:view]) || :name
+    
+    if args[:results].empty?
+      'no results'
+    else
+      args[:results].map do |c|
+        process_inclusion c, :view=>@item_view
+      end.join "\n"
+    end
+  end
+  
+end
+
+class Wagn::Renderer::Html  
   define_view :editor, :type=>'search' do |args|
     form.text_area :content, :rows=>10
   end
@@ -48,6 +63,8 @@ class Wagn::Renderer
 
   define_view :card_list, :type=>'search' do |args|
     @item_view ||= (card.spec[:view]) || :closed
+    @item_size ||= (card.spec[:size]) || nil
+    
     paging = _optional_render :paging, args
 
     _render_search_header +
@@ -59,7 +76,7 @@ class Wagn::Renderer
       <div class="search-result-list"> #{
       args[:results].map do |c|
         %{<div class="search-result-item item-#{ @item_view }">
-          #{ process_inclusion c, :view=>@item_view }
+          #{ process_inclusion c, :view=>@item_view, :size=>@item_size }
         </div>}
       end.join }
       </div>

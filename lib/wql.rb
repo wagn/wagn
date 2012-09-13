@@ -7,7 +7,7 @@ class Wql
                     %w{ member_of member role found_by part left right plus left_plus right_plus } + 
                     %w{ or match complete not and sort },
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
-    :ignore      => %w{ prepend append view params vars }
+    :ignore      => %w{ prepend append view params vars size }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
 
   MODIFIERS = {};  %w{ conj return sort sort_as group dir limit offset }.each{|key| MODIFIERS[key.to_sym] = nil }

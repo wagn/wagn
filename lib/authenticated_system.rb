@@ -7,9 +7,9 @@ module AuthenticatedSystem
   # Accesses the current user from the session.
   def current_user
     @current_user ||= session[:user] ? User[session[:user]] : nil
-  rescue
+  rescue Exception=>e
     session[:user] = nil
-    raise
+    raise e
   end
 
   # Store the given user in the session.

@@ -17,7 +17,6 @@ class CardController < ApplicationController
   before_filter :remove_ok, :only=>[ :remove ]
 
 
-
   #----------( CREATE )
   
   def create
@@ -96,7 +95,7 @@ class CardController < ApplicationController
   end
 
   def comment
-    raise Wagn::BadAddress unless params[:card]
+    raise Wagn::BadAddress, "comment without card" unless params[:card]
     # this previously failed unless request.post?, but it is now (properly) a PUT.
     # if we enforce RESTful http methods, we should do it consistently,
     # and error should be 405 Method Not Allowed
@@ -223,7 +222,7 @@ class CardController < ApplicationController
     when @card == '*previous'
       wagn_redirect previous_location
     when !@card || @card.name.nil? || @card.name.empty?  #no card or no name -- bogus request, deserves error
-      raise Wagn::NotFound
+      raise Wagn::NotFound, "requested card without identifier"
     when @card.known? # default case
       @card
     when params[:view] =~ /rule|missing/
@@ -235,7 +234,7 @@ class CardController < ApplicationController
       self.new
       false
     else
-      raise Wagn::NotFound
+      raise Wagn::NotFound, "unknown card: #{@card.name}"
     end
   end
 

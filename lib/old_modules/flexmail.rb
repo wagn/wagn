@@ -7,7 +7,7 @@ class Flexmail
         [:to, :from, :cc, :bcc, :attach].each do |field|
           config[field] = if_card("#{email_config}+*#{field}") do |c|
             # configuration can be anything visible to configurer
-            User.as( c.updater ) do
+            Session.as( c.updater ) do
               x = c.extended_list(card)
               field == :attach ? x : x.join(",")
             end
@@ -16,7 +16,7 @@ class Flexmail
         
         [:subject, :message].each do |field|
           config[field] = if_card("#{email_config}+*#{field}") do |c|
-            User.as( c.updater ) do
+            Session.as( c.updater ) do
               c.contextual_content(card, :format=>'email_html')
             end
           end.else("")
@@ -28,9 +28,10 @@ class Flexmail
     end
     
     def email_config_cardnames card
-      event_card = card.rule_card('send')
+      #warn "card is #{card.inspect}"
+      event_card = card.rule_card(:send)
       return [] unless event_card
-      User.as(:wagbot){ event_card.item_names }
+      Session.as_bot { event_card.item_names }
     end
     
     def mail_for card

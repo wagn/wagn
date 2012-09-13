@@ -12,9 +12,9 @@ class Wagn::Renderer
   end
 
   define_view :editor, :type=>'pointer' do |args|
-    part_view = (c = card.rule('input')) ? c.gsub(/[\[\]]/,'') : :list
+    part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/,'') : :list
     form.hidden_field( :content, :class=>'card-content') +
-    raw(render(part_view))
+    raw(_render(part_view))
   end
 
   define_view :list, :type=>'pointer' do |args|

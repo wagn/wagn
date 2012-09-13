@@ -89,12 +89,12 @@ class Wagn::Renderer::Html
     ''
   end
 
-  define_view :search_header, :name=>'*search' do |args|
+  define_view :search_header, :name=>:result do |args|
     return '' unless vars = search_params[:vars] and keyword = vars[:keyword]
     %{<h1 class="page-header search-result-header">Search results for: <em>#{keyword}</em></h1>}
   end
 
-  define_view :card_list, :name=>'*recent' do |args|
+  define_view :card_list, :name=>'recent' do |args|
     cards = args[:results]
     @item_view ||= (card.spec[:view]) || :change
 
@@ -189,7 +189,7 @@ class Wagn::Renderer::Html
   
   def page_link text, page
     @paging_path_args[:offset] = page * @paging_limit
-    " #{link_to raw(text), path(:view, @paging_path_args), :class=>'card-paging-link slotter', :remote => true} "
+    " #{link_to raw(text), path(:read, @paging_path_args), :class=>'card-paging-link slotter', :remote => true} "
   end
 
   def paging_params

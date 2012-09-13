@@ -4,15 +4,17 @@ class SaneDataTest < ActiveSupport::TestCase
   
   
   def test_cardtypes
-    assert ::Cardtype.count >= 3 
+    assert Session.createable_types.size >= 3 
     
-    Cardtype.find(:all).each do |ct|
-      assert ct.card.class.include?(Wagn::Set::Type::Cardtype), "#{ct.class_name} has card"
+    Card.find(:all).each do |ct|
+      if ct.codename == :cardtype
+        assert ct.card.class.include?(Wagn::Set::Type::Cardtype), "#{ct.class_name} has card"
+      end
     end
-    Card.find(:all).each do |c|
-      assert ct.cardtype.class.include?(Wagn::Set::Type::Cardtype), "#{c.cardtype} #{c.name} has cardtype card"
-      assert_instance_of Cardtype, c.cardtype.extension, "#{c.cardtype} #{c.name} cardtype card has extension"
-    end
+    #Card.find(:all).each do |c|
+    #  assert ct.cardtype.class.include?(Wagn::Set::Type::Cardtype), "#{c.cardtype} #{c.name} has cardtype card"
+    #  assert_instance_of Cardtype, c.cardtype.extension, "#{c.cardtype} #{c.name} cardtype card has extension"
+    #end
     Role.find(:all).each do |r|
       assert r.card.cardtype.class.include?(Wagn::Set::Type::Role), "Role #{r.codename} has extension"
     end

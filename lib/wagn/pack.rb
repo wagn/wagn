@@ -1,5 +1,3 @@
-
-
 module Wagn::Pack
   mattr_accessor :dirs
 

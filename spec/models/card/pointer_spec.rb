@@ -2,7 +2,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Set::Type::Pointer do
   before do
-    User.current_user = :joe_user
+    Session.user= :joe_user
   end
   
   context "item_names" do
@@ -35,11 +35,8 @@ describe Wagn::Set::Type::Pointer do
   
   context "drop_item" do
     it "remove the link" do
-      Rails.logger.info "testing point 0"
       @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]\n[[John]]"
-      Rails.logger.info "testing point 1 #{@pointer.inspect}"
       @pointer.drop_item "Jane" 
-      Rails.logger.info "testing point 2 #{@pointer.inspect}"
       assert_equal "[[John]]", @pointer.content
     end                                
     
@@ -59,8 +56,8 @@ describe Wagn::Set::Type::Pointer do
   context "watching" do
     it "not break on permissions" do
       watchers = Card.fetch_or_new "Home+*watchers"
-      watchers.typecode.should == 'Pointer'
-      watchers.add_item User.current_user.card.name
+      watchers.typecode.should == :pointer
+      watchers << Session.user_id
       assert_equal '[[Joe User]]', watchers.content
     end
   end

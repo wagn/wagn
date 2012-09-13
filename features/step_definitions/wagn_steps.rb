@@ -4,10 +4,11 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "pat
 
 Given /^I log in as (.+)$/ do |user_card_name|
   # FIXME: define a faster simulate method ("I am logged in as")
-  @current_user = Card[user_card_name].extension
+  @session_user = ucid = Card[user_card_name].id
+  user_object = User.where(:card_id=>ucid).first
   visit "/account/signin"
-  fill_in("login", :with=> @current_user.email )
-  fill_in("password", :with=> @current_user.login.split("_")[0]+"_pass")
+  fill_in("login", :with=> user_object.email )
+  fill_in("password", :with=> user_object.login.split("_")[0]+"_pass")
   click_button("Sign me in")
   page.should have_content(user_card_name)
 end
@@ -19,7 +20,7 @@ Given /^I log out/ do
 end
 
 Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
-  User.as(:wagbot) do
+  Session.as_bot do
     card = Card.fetch_or_create cardname
     card.content = content
     card.save!
@@ -85,7 +86,7 @@ end
    
 When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
   logged_in_as(username) do
-    visit "/card/remove/#{cardname.to_cardname.to_url_key}?confirm_destroy=true"
+    visit "/card/delete/#{cardname.to_cardname.to_url_key}?confirm_destroy=true"
   end
 end
 
@@ -115,14 +116,14 @@ def create_card(username,cardtype,cardname,content="")
 end
 
 def logged_in_as(username)
-  sameuser = (username == "I" or @current_user && @current_user.card.name == username)
+  sameuser = (username == "I" or @session_user && Card[@session_user].name == username)
   unless sameuser
-    @saved_user = @current_user
+    @saved_user = @session_user
     step "I log in as #{username}"
   end
   yield
   unless sameuser
-    step( @saved_user ? "I log in as #{@saved_user.card.name}" : "I log out" )
+    step( @saved_user ? "I log in as #{Card[@saved_user].name}" : "I log out" )
   end
 end
                    

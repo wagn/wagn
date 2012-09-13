@@ -2,7 +2,6 @@ require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
 describe Mailer do
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
-  CHARSET = "utf-8"
   #include ActionMailer::Quoting
 
   before do
@@ -10,7 +9,7 @@ describe Mailer do
     ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries = []
 
-    @expected = Mail.new( { :charset => CHARSET } )
+    @expected = Mail.new
   end  
 
   #
@@ -19,7 +18,7 @@ describe Mailer do
   #  (ie try renamed change notice below to change_notice) then *notify+*from gets stuck on.
   context "change notice" do
     before do
-      user =  ::User.find_by_login('sara')
+      user =  Card['sara'].id
       card =  Card["Sunglasses"]
       action = "edited"  
       Mailer.change_notice( user, card, action, card.name ).deliver
@@ -37,7 +36,7 @@ describe Mailer do
         assert_equal ["sara@user.com"],  @mail.to
       end    
       it "is from Wag bot email" do
-        assert_equal [User.find_by_login('wagbot').email], @mail.from
+        assert_equal [User.admin.email], @mail.from
       end     
     end     
   end
@@ -52,7 +51,7 @@ describe Mailer do
     end
 
     def encode(subject)
-      quoted_printable(subject, CHARSET)
+      quoted_printable(subject, Mailer::CHARSET)
     end
 
 end

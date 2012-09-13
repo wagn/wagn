@@ -1,11 +1,13 @@
 module Wagn::Set::Type::Search
-  def before_save
-    escape_content
+  #def before_save_search
+  #  escape_content
+  #end
+
+  def collection?
+    true
   end
 
-  def collection?() true end
-
-  def item_cards(params={})
+  def item_cards params={}
     s = spec(params)
     raise("OH NO.. no limit") unless s[:limit]
     # forces explicit limiting
@@ -14,28 +16,28 @@ module Wagn::Set::Type::Search
     Card.search( s )
   end
 
-  def item_names(params={})
+  def item_names params={}
     ## FIXME - this should just alter the spec to have it return name rather than instantiating all the cards!!  
     ## (but need to handle prepend/append)
     #Rails.logger.debug "search item_names #{params.inspect}"
-    Card.search(spec(params)).map{ |card| card.cardname}
+    Card.search(spec(params)).map(&:cardname)
   end
 
   def item_type
     spec[:type]
   end
 
-  def count(params={})
-    Card.count_by_wql( spec(params) )
+  def count params={}
+    Card.count_by_wql spec( params )
   end
 
-  def spec(params={})
+  def spec params={}
     @spec ||= {}
     @spec[params.to_s] ||= get_spec(params.clone)
   end
 
-  def get_spec(params={})
-    spec = ::User.as(:wagbot) do ## why is this a wagbot thing?  can't deny search content??
+  def get_spec params={}
+    spec = Session.as_bot do ## why is this a wagbot thing?  can't deny search content??
       spec_content = raw_content
       raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
       JSON.parse( spec_content )
@@ -48,8 +50,8 @@ module Wagn::Set::Type::Search
     spec
   end
   
-  def escape_content
-    self.content = CGI.unescapeHTML( URI.unescape(content) )
-  end
+  #def escape_content
+  #  self.content = CGI.unescapeHTML( URI.unescape(content) )
+  #end
   
 end

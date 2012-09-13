@@ -75,9 +75,6 @@ jQuery.fn.extend {
       $(this).setContentField(fn)     
   setContentField: (fn)->
     field = @closest('.card-editor').find('.card-content')
-    wagn.fn = fn
-    wagn.field = field
-    wagn.arg = this
     init_val = field.val() # tinymce-jquery overrides val(); that's why we're not using it.
     new_val = fn.call this
     field.val new_val
@@ -92,7 +89,7 @@ $(window).ready ->
   $.ajaxSetup cache: false
   
   setTimeout (-> wagn.initializeEditors $('body')), 10
-  #  dislike the timeout, but without this
+  #  dislike the timeout, but without this forms with multiple TinyMCE editors were failing to load properly
   
   $('body').delegate '.slotter', "ajax:success", (event, data) ->
     newslot = $(this).setSlotContent data

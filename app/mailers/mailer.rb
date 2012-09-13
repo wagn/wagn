@@ -2,36 +2,39 @@
 require 'open-uri'
 
 class Mailer < ActionMailer::Base
-  @@email_defaults = Wagn::Conf[:email_defaults] || {}
-  @@email_defaults.symbolize_keys!
-  @@email_defaults[:return_path] ||= @@email_defaults[:from] if @@email_defaults[:from]
-  default @@email_defaults
+  @@defaults = Wagn::Conf[:email_defaults] || {}
+  @@defaults.symbolize_keys!
+  @@defaults[:return_path] ||= @@defaults[:from] if @@defaults[:from]
+  @@defaults[:charset] ||= 'utf-8'
+  default @@defaults
   
   include LocationHelper
+
   def account_info(user, subject, message)
-    url_key = user.card.cardname.to_url_key
+    url_key = Card[user.card_id].cardname.to_url_key
+
     @email    = (user.email    or raise Wagn::Oops.new("Oops didn't have user email"))
     @password = (user.password or raise Wagn::Oops.new("Oops didn't have user password"))
-    @card_url = wagn_url user.card
+    @card_url = wagn_url Card[user.card_id]
     @pw_url   = wagn_url "/card/options/#{url_key}"
     @login_url= wagn_url "/account/signin"
     @message  = message.clone
 
     args =  { :to => @email, :subject  => subject }
     set_from_args args, ( Card.setting('*invite+*from') || begin
-      curr = User.current_user
-      from_user = curr.anonymous? || curr.id == user.id ? User[:wagbot] : curr
-      from_user.card ? "#{from_user.card.name} <#{from_user.email}>" : '' #how could there not be a card??
-    end ) #FIXME - might want different from settings for different contexts?
+      curr = Session.user
+      from_user = curr.anonymous? || curr.id == user.id ? User.admin : curr
+      "#{from_user.card.name} <#{from_user.email}>"
+    end ) #FIXME - might want different "from" settings for different contexts?
     mail args
-  end                 
-  
+  end
+
   def signup_alert invite_request
-    @site = Card.setting('*title')
+    @site = Card.setting :title
     @card = invite_request
-    @email= invite_request.extension.email
+    @email= invite_request.to_user.email
     @name = invite_request.name
-    @content = invite_request.content
+    @content = invite_request.content 
     @request_url  = wagn_url invite_request
     @requests_url = wagn_url Card['Account Request']
 
@@ -42,31 +45,33 @@ class Mailer < ActionMailer::Base
     }
     set_from_args args, Card.setting('*request+*from') || "#{@name} <#{@email}"
     mail args
-  end               
+  end         
 
   
   def change_notice user, card, action, watched, subedits=[], updated_card=nil
-    #warn "change_notice( #{user}, #{card.inspect}, #{action}, #{watched} ...)"
+    return unless user = User===user ? user : User.from_id(user)
+    #warn "change_notice( #{user.email}, #{card.inspect}, #{action.inspect}, #{watched.inspect} Uc:#{updated_card.inspect}...)"
+
     updated_card ||= card
     @card = card
-    @updater = updated_card.updater.card.name
+    @updater = updated_card.updater.name
     @action = action
     @subedits = subedits
     @card_url = wagn_url card
     @change_url = wagn_url "/card/changes/#{card.cardname.to_url_key}"
     @unwatch_url = wagn_url "/card/watch/#{watched.to_cardname.to_url_key}?toggle=off"
-    @udpater_url = wagn_url card.updater.card
+    @udpater_url = wagn_url card.updater
     @watched = (watched == card.cardname ? "#{watched}" : "#{watched} cards")
 
     args = {
       :to           => "#{user.email}",
-      :subject      => "[#{Card.setting('*title')} notice] #{@updater} #{action} \"#{card.name}\"" ,
+      :subject      => "[#{Card.setting :title} notice] #{@updater} #{action} \"#{card.name}\"" ,
       :content_type => 'text/html',
     }
-    set_from_args args, User[:wagbot].email    
+    set_from_args args, User.admin.email    
     mail args
   end
-  
+
   def flexmail config
     @message = config.delete(:message)
     
@@ -86,7 +91,7 @@ class Mailer < ActionMailer::Base
   
   def set_from_args args, from
     from_name, from_email = parse_address( from )
-    if default_from=@@email_defaults[:from]
+    if default_from=@@defaults[:from]
       args[:from] = !from_email ? default_from : "#{from_name || from_email} <#{default_from}>"
       args[:reply_to] ||= from
     else

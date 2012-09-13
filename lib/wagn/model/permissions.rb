@@ -1,6 +1,6 @@
 class Card::PermissionDenied < Wagn::PermissionDenied
   attr_reader :card
-  def initialize(card)
+  def initialize card
     @card = card
     super build_message 
   end    
@@ -29,7 +29,7 @@ module Wagn::Model::Permissions
         new_card? ? ok?(:create) : ok?(:update)
       end
       updates.each_pair do |attr,value|
-        send("approve_#{attr}")
+        send "approve_#{attr}"
       end
     end
     
@@ -40,12 +40,12 @@ module Wagn::Model::Permissions
   end
   
   # ok? and ok! are public facing methods to approve one operation at a time
-  def ok?(operation)
+  def ok? operation
     #warn Rails.logger.warn("ok? #{operation}")
     @operation_approved = true    
     @permission_errors = []
     
-    send("approve_#{operation}")     
+    send "approve_#{operation}"
     # approve_* methods set errors on the card.
     # that's what we want when doing approve? on save and checking each attribute
     # but we don't want just checking ok? to set errors. 
@@ -55,8 +55,12 @@ module Wagn::Model::Permissions
     @operation_approved
   end  
   
-  def ok!(operation)
-    raise Card::PermissionDenied.new(self) unless ok?(operation);  true
+  def ok! operation
+    if ok? operation
+      true
+    else
+      raise Card::PermissionDenied.new self
+    end
   end
   
   def who_can(operation)
@@ -91,20 +95,26 @@ module Wagn::Model::Permissions
     "#{ydhpt} #{what}"
   end
       
-  def deny_because(why)    
+  def deny_because why
     [why].flatten.each {|err| @permission_errors << err }
     @operation_approved = false
   end
 
-  def lets_user(operation)
+  def lets_user operation
     return false if operation != :read    and Wagn::Conf[:read_only]
     return true  if operation != :comment and Session.always_ok?
-    #warn Rails.logger.warn("lets_user(#{operation})#{Session.as_id}")
-    #warn Rails.logger.warn("lets_user(#{operation})#{Session.as_id} #{who_can(operation).inspect}")
-    Session.among?( who_can(operation) )
+
+    permitted_ids = who_can operation
+    
+    if operation == :comment && Session.always_ok?
+      # admin can comment if anyone can
+      !permitted_ids.empty?
+    else
+      Session.among? permitted_ids
+    end
   end
 
-  def approve_task(operation, verb=nil)           
+  def approve_task operation, verb=nil
     deny_because "Currently in read-only mode" if operation != :read && Wagn::Conf[:read_only]
     verb ||= operation.to_s
     #warn "approve_task(#{operation}, #{verb})"
@@ -112,7 +122,7 @@ module Wagn::Model::Permissions
   end
 
   def approve_create
-    approve_task(:create)
+    approve_task :create
   end
 
   def approve_read
@@ -126,12 +136,12 @@ module Wagn::Model::Permissions
   end
   
   def approve_update
-    approve_task(:update)
+    approve_task :update
     approve_read if @operation_approved
   end
   
   def approve_delete
-    approve_task(:delete)
+    approve_task :delete
   end
 
   def approve_comment
@@ -187,7 +197,7 @@ module Wagn::Model::Permissions
     end  
   end
   
-  def update_read_rule()
+  def update_read_rule
     Card.record_timestamps = Card.record_userstamp = false
 
     reset_patterns # why is this needed?

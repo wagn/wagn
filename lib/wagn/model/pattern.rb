@@ -1,12 +1,5 @@
 module Wagn::Model
-  class BasePattern
-    @@pattern_class = nil
-
-    def self.pattern_class=(pc) @@pattern_class=pc end
-  end
   module Pattern
-    Wagn::Model::BasePattern.pattern_class= self
-
     mattr_accessor :subclasses
     @@subclasses = []
 
@@ -66,12 +59,9 @@ module Wagn::Model
       #warn "mks[#{inspect}] #{rr.inspect}"; rr
     end
   end
-end
 
-module Wagn::Model
   class BasePattern
     include AllSets
-    #include Pattern
 
     @@ruby19 = !!(RUBY_VERSION =~ /^1\.9/)
     @@setmodroot = Wagn::Set
@@ -109,7 +99,8 @@ module Wagn::Model
       end
 
       def register key, opt_keys, opts={}
-        @@pattern_class.register_class self
+        Wagn::Model::Pattern.register_class self
+        #@@pattern_class.register_class self
         cattr_accessor :key, :opt_keys, :junction_only, :method_key
         self.key = key
         self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]

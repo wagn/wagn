@@ -177,6 +177,15 @@ describe "Permission", ActiveSupport::TestCase do
     end
   end   
 
+  it "should be granted to admin if to anybody" do
+    Session.as_bot do
+      c1 = Card['c1']
+      Card.create! :name=>'c1+*self+*comment', :type=>'Pointer', :content=>'[[r1]]'
+      c1.who_can( :comment ).should == [Card['r1'].id]
+      c1.ok?(:comment).should be_true
+    end
+  end
+
   it "reader setting" do
     Card.find(:all).each do |c|
       c.permission_rule_card(:read).first.id.should == c.read_rule_id

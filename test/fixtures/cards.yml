@@ -4609,9 +4609,9 @@ cards_192:
   updated_by: "1"
 cards_193: 
   id: "466"
-  name: "*search"
-  key: "*search"
-  codename: xsearch
+  name: "*result"
+  key: "*result"
+  codename: result
   typecode: Search
   trunk_id: 
   tag_id: 

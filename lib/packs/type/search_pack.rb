@@ -89,7 +89,7 @@ class Wagn::Renderer::Html
     ''
   end
 
-  define_view :search_header, :name=>'search' do |args|
+  define_view :search_header, :name=>:result do |args|
     return '' unless vars = search_params[:vars] and keyword = vars[:keyword]
     %{<h1 class="page-header search-result-header">Search results for: <em>#{keyword}</em></h1>}
   end

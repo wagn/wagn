@@ -20,12 +20,14 @@ class Card
   after_save :update_geocode
   
   def update_geocode
-    User.as :wagbot do
+    Session.as_bot do
       if conf = Card['*geocode']
         if self.junction? && conf.item_names.include?( self.cardname.tag_name )
-          address = conf.item_names.map{|p| (c=Card.fetch_or_new(self.cardname.trunk_name.to_s+"+#{p}")) && c.content}.select(&:present?).join(', ')
+          address = conf.item_names.map{ |p|
+            c=Card.fetch_or_new(self.cardname.trunk_name.to_s+"+#{p}") and
+              c.content }.select(&:present?) * ', '
           if (geocode = GoogleMapsAddon.geocode(address))
-            c = Card.fetch_or_create("#{self.cardname.trunk_name}+*geocode", :type=>'Phrase')
+            c = Card.fetch_or_create("#{self.cardname.trunk_name.to_s}+*geocode", :type_id=>Card::PhraseID)
             c.update_attributes( :content => geocode )
           end
         end

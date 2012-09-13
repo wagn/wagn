@@ -47,9 +47,9 @@ namespace :test do
     end
          
     abcs = ActiveRecord::Base.configurations    
-    config = ::Rails.env || 'development'  
+    config = ENV['RAILS_ENV'] || 'development'  
     olddb = abcs[config]["database"]
-    #abcs[config]["database"] = "wagn_test_template"
+    abcs[config]["database"] = "wagn_test_template"
 
   #=begin  
     begin
@@ -79,18 +79,19 @@ namespace :test do
       puts ">>populating test data"
       puts `rake test:populate_template_database --trace`      
       puts ">>extracting to fixtures"
-      puts `rake test:extract_fixtures`
+      puts `rake test:extract_fixtures --trace`
       set_database olddb 
     rescue Exception=>e
+      warn "exception #{e.inspect} #{olddb}"
       set_database olddb 
       raise e
     end
     # go ahead and load the fixtures into the test database
     
     puts ">> preparing test database"
-    puts `rake db:test:load`
+    puts `rake db:test:load --trace`
     puts ">> loading test fixtures"
-    puts `rake db:fixtures:load RAILS_ENV=test`
+    puts `rake db:fixtures:load RAILS_ENV=test --trace`
     
     #Rake::Task['db:test:prepare'].invoke
   #=end
@@ -123,7 +124,7 @@ namespace :test do
     # additional test data auto-loaded from Test classes    
     # when I load these I don't want them to run as is the default; this is somewhat brutal..
               
-    load 'test/fixtures/shared_data.rb'
+    load 'test/seed.rb'
     SharedData.add_test_data
 
     ## FIXME: this was an attempt to automate loading data from the test files.

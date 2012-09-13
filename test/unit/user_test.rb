@@ -63,14 +63,14 @@ class UserTest < ActiveSupport::TestCase
   end
 
 #  def test_should_authenticate_user_with_same_email_as_wagbot
-#    u1 = User[:wagbot]
+#    u1 = User.admin
 #  end
   
   protected
   def create_user(options = {})
     User.create({ :login => 'quire', :email => 'quire@example.com', 
       :password => 'quire', :password_confirmation => 'quire',
-      :invite_sender_id=>1
+      :invite_sender_id=>1, :card_id=>0
     }.merge(options))
   end
 end

@@ -6,13 +6,10 @@ module Wagn::Set::Type::InvitationRequest
   private
  
   def block_user
-    if extension
-      extension.update_attributes :status=>'blocked'
+    account = User.where(:card_id=>self.id).first
+    if account
+      account.update_attributes :status=>'blocked'
     end
-  end
-  
-  def destroy_extension
-    #do nothing - we want to keep these accounts around to know they're blocked.
   end
   
 end

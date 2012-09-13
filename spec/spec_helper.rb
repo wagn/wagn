@@ -4,6 +4,8 @@ ENV["RAILS_ENV"] ||= 'test'
 Spork.prefork do
   require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
   require File.expand_path(File.dirname(__FILE__) + "/../lib/authenticated_test_helper.rb")
+  #require File.expand_path(File.dirname(__FILE__) + "/custom_matchers.rb")
+  #require File.expand_path(File.dirname(__FILE__) + "/controller_macros.rb")
   require 'rspec/rails' 
 
 
@@ -16,6 +18,8 @@ Spork.prefork do
     config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => { 
       :file_path => /\bspec\/controllers\// }
     
+    #config.include CustomMatchers
+    #config.include ControllerMacros, :type=>:controllers
     config.include AuthenticatedTestHelper, :type=>:controllers
     #config.include(EmailSpec::Helpers)
     #config.include(EmailSpec::Matchers)
@@ -24,13 +28,14 @@ Spork.prefork do
     # If you prefer to mock with mocha, flexmock or RR, uncomment the appropriate symbol:
     # :mocha, :flexmock, :rr
 
-    config.mock_with :rspec
+    config.mock_with :rr
+
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
   
     config.before(:each) do
-      Wagn::Cache.reset_for_tests
+      Wagn::Cache.restore
     end
     config.after(:each) do
       Timecop.return

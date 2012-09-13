@@ -1,51 +1,69 @@
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
-require File.expand_path('../../test/fixtures/shared_data', File.dirname(__FILE__))   
+require File.expand_path('../../test/seed', File.dirname(__FILE__))   
 FUTURE = SharedData::FUTURE
 
 
 describe "Card" do
   before do
     Timecop.travel(FUTURE)  # make sure we're ahead of all the test data
+    @just_s = [Card["Sara"].id]
+    @s_and_j= [Card["Sara"].id, Card["John"].id]
   end 
   
   describe "#watchers" do
     it "returns users watching this card specifically" do
-      Card["All Eyes On Me"].watchers.should == ["Sara", "John"]
+      Card["All Eyes On Me"].watchers.should == @s_and_j
+    end
+  
+    it "returns users watching cards of this type" do
+      Card["Sunglasses"].watchers.should == @just_s
+    end
+  end
+  
+  describe "#card_watchers" do
+    it "returns users watching this card specifically" do
+      Card["All Eyes On Me"].watcher_pairs(false).should == @s_and_j
     end
   end
   
   describe "#type_watchers" do
     it "returns users watching cards of this type" do
-      Card["Sunglasses"].type_watchers.should == ["Sara"]
+      Card["Sunglasses"].watcher_pairs(false, :type).should == @just_s
     end
   end    
 end   
   
 describe "On Card Changes" do
   before do
-    User.current_user = :john           
+    Session.user= :john           
     Timecop.travel(FUTURE)  # make sure we're ahead of all the test data
   end
   
   it "sends notifications of edits" do
-    Mailer.should_receive(:change_notice).with( User.find_by_login('sara'), Card["Sara Watching"], "edited", "Sara Watching", nil )
+    mock(Mailer).change_notice( Card['Sara'].id, Card["Sara Watching"], "edited", "Sara Watching", nil )
     Card["Sara Watching"].update_attributes :content => "A new change"
   end
                                   
   it "sends notifications of additions" do
     new_card = Card.new :name => "Microscope", :type => "Optic"
-    Mailer.should_receive(:change_notice).with( User.find_by_login('sara'), new_card,"added", "Optic", nil  )
+    mock(Mailer).change_notice( Card['Sara'].id, new_card,"added", "Optic", nil  )
     new_card.save!
   end 
   
   it "sends notification of updates" do
-    Mailer.should_receive(:change_notice).with( User.find_by_login('sara'), Card["Sunglasses"], "updated", "Optic", nil)
-    Card["Sunglasses"].update_attributes :codename => "SUNGLASSES"
+    mock(Mailer).change_notice( is_a(Integer), Card["Sunglasses"], "edited", "Optic", nil)
+    Card["Sunglasses"].update_attributes :content => 'updated content'
   end
   
   it "does not send notification to author of change" do
-    Mailer.should_receive(:change_notice).with( User.find_by_login('sara'), Card["All Eyes On Me"],"edited", "All Eyes On Me", nil)
+    mock(Mailer).change_notice.with_any_args.times(any_times) do
+      |*a| a[0].should_not == Session.user_id
+    end
+
     Card["All Eyes On Me"].update_attributes :content => "edit by John"
-    # note no message to John
+  end
+
+  it "does include author in wathers" do
+     Card["All Eyes On Me"].watchers.member?(Session.user_id).should be_true
   end
 end

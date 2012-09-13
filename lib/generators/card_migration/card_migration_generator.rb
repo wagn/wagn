@@ -77,7 +77,7 @@ end
 # end
 # 
 # def card
-#   User.as(:wagbot)
+#   Session.as_bot
 #   @card||=Card[file_name]
 # end
 # 

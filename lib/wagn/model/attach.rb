@@ -3,13 +3,13 @@ module Wagn::Model::Attach
     c=if rev_id || self.new_card? || selected_rev_id==current_revision_id
         self.content
       else
-        Revision.find_by_id(selected_rev_id).content
+        Card::Revision.find_by_id(selected_rev_id).content
       end
     !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/) 
   end
 
   def attach_array_set(i, v)
-    c = attach_array((cr=cached_revision)&&cr.id)
+    c = attach_array((cr=current_revision)&&cr.id)
     if c[i] != v
       c[i] = v
       self.content = c*"\n"
@@ -34,11 +34,16 @@ module Wagn::Model::Attach
 
   STYLES = %w{ icon small medium large original }
 
-  def attachment_style(typecode, style)
-    case typecode
-    when 'File'; ''
-    when 'Image'
-      style.nil? || style.to_sym == :full ? :original : style
+  def attachment_style type_id, style
+    case type_id
+    when Card::TypeID
+      ''
+    when Card::ImageID
+      if style.nil? || style.to_sym == :full
+        :original
+      else
+        style
+      end
     end
   end
 
@@ -78,9 +83,11 @@ module Wagn::Model::Attach
   end
 
   def before_post_attach
-    self.attach.instance_write :file_name, self.attach.original_filename
-    'Image' == (typecode || @type_args[:typecode] || Cardtype.classname_for( @type_args[:type] ) )
-    # returning true enables thumbnail creation
+    at=self.attach
+    at.instance_write :file_name, at.original_filename
+
+    Card::ImageID == (type_id || Card.fetch_id( @type_args[:type] ) )
+    # returning true enables thumnail creation
   end
 
 
@@ -95,7 +102,7 @@ module Wagn::Model::Attach
       before_post_process :before_post_attach
       
       validates_each :attach do |rec, attr, value|
-        if ['File', 'Image'].member? rec.typecode
+        if [Card::FileID, Card::ImageID].member? rec.type_id
           max_size = (max = Card['*upload max']) ? max.content.to_i : 5
           if value.size.to_i > max_size.megabytes
             rec.errors.add :file_size, "File cannot be larger than #{max_size} megabytes"
@@ -119,7 +126,7 @@ module Paperclip::Interpolations
   end
 
   def size(at, style_name)
-    at.instance.typecode=='File' || style_name.blank? ? '' : "#{style_name}-"
+    at.instance.type_id==Card::FileID || style_name.blank? ? '' : "#{style_name}-"
   end
 
   def revision_id(at, style_name) at.instance.selected_rev_id end

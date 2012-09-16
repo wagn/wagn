@@ -39,14 +39,16 @@ class Wagn::Renderer::Html
       %{ 
          #{ _render_header }
          #{ wrap_content :open, _render_open_content(args) } 
-         #{ _render_comment_box }
+         #{ render_comment_box }
          #{ notice }
          #{ _render_footer }
       }
     end
   end
 
-  define_view :comment_box, :perms=>:comment do |args|
+  define_view :comment_box, :perms=>lambda { |r| 
+        r.card.ok?(:comment) ? :comment_box : :blank
+      } do |args|
     %{<div class="comment-box nodblclick"> #{
       card_form :comment do |f|
         %{#{f.text_area :comment, :rows=>3 }<br/> #{

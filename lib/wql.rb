@@ -232,6 +232,8 @@ class Wql
     end
 
     def extension_type(val) add_join(:usr, :users, :id, :card_id)            end
+    # this appears to be hacked so that it will only work with users?  
+      
     def created_by(val)     merge field(:creator_id) => subspec(val)         end
     def last_edited_by(val) merge field(:updater_id) => subspec(val)         end
     def creator_of(val) merge field(:id)=>subspec(val,:return=>'creator_id') end

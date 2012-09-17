@@ -357,15 +357,15 @@ class Wagn::Renderer::Html
     # FIXME: probably should have a limit (and paging)
     user_roles = role_card.item_cards(:limit=>0).map(&:id).
       reject{|x|x == Card::AnyoneID.to_s || x == Card::AuthID.to_s }
-    #warn Rails.logger.warn("option_roles #{user_roles.inspect}")
+#    warn Rails.logger.info("option_roles #{user_roles.inspect}")
 
     option_content = if role_card.ok? :update
       hidden_field_tag(:save_roles, true) +
       (roles.map do |rolecard|
-        #warn Rails.logger.warn("option_roles #{rolecard.inspect}")
+#        warn Rails.logger.info("option_roles: #{rolecard.inspect}")
         if rolecard && !rolecard.trash
          %{<div style="white-space: nowrap">
-           #{ check_box_tag "user_roles[%s]" % rolecard.id, 1, user_roles.member?(rolecard) ? true : false }
+           #{ check_box_tag "user_roles[%s]" % rolecard.id, 1, user_roles.member?(rolecard.id) ? true : false }
            #{ link_to_page rolecard.name }
          </div>}
         end

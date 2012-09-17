@@ -17,18 +17,14 @@ module Wagn::Model::Traits
     def trait_options()  @@trait_options ||= {}; end
   end
 
-  def trait_card(trait_name)
-    if (trait_card=trait_cards[trait_name.to_sym]).nil?
-      trait_cards[trait_name.to_sym] = f = Card.fetch([name, trait_name].to_cardname)
-      Rails.logger.debug "trait_card(#{trait_name}, #{name}) #{f}"; f
-    else trait_card end
-  end
-#r= Rails.logger.info("trait_card #{self}, #{trait_name} = #{r}"); r
-  # A card has a 'trait' if card+trait_name exists
-  def has_trait?(trait_name)
-    (tc=trait_card(trait_name)) ? (tc.real?) : false
-  end
-  def trait_cards()    @trait_cards ||= {}; end
+#  def trait_card(trait_name)
+#    if (trait_card=trait_cards[trait_name.to_sym]).nil?
+#      trait_cards[trait_name.to_sym] = f = Card.fetch([name, trait_name].to_cardname)
+#      Rails.logger.debug "trait_card(#{trait_name}, #{name}) #{f}"; f
+#    else trait_card end
+#  end
+#
+#  def trait_cards()    @trait_cards ||= {}; end
      
   def traits
     trait_options.keys.map do |trait_name|

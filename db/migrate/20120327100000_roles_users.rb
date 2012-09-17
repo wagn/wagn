@@ -7,14 +7,17 @@ class RolesUsers < ActiveRecord::Migration
   def up
     Session.as Card::WagbotID do
       # Delete the old *roles cards
-      ['*roles', '*tasks'].each do |name|
+      (Card.search(:right=>'*roles', :return=>'name') + 
+        ['*roles+*right', '*roles+*right+*content', '*roles+*right+*default', '*tasks']).each do |name|
+          
         if c = Card[name]
           c = c.refresh
           c.confirm_destroy = true
-          c.destroy
+          c.destroy!
         end
       end
       Wagn::Cache.reset_global
+      
 
       Card.create! :name => '*roles+*right+*default', :type_id => Card::PointerID
 
@@ -51,12 +54,14 @@ class RolesUsers < ActiveRecord::Migration
         end
       end
 
+
     end
   end
 
   def down
     Session.as :wagbot do
-      ['*roles', '*tasks'].each do |name|
+      (Card.search(:right=>'*roles', :return=>'name') + 
+        ['*roles+*right', '*roles+*right+*content', '*roles+*right+*default', '*tasks']).each do |name|
         if c = Card[name]
           c = c.refresh
           c.confirm_destroy = true

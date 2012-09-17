@@ -111,11 +111,15 @@ class CardController < ApplicationController
   #-------- ( ACCOUNT METHODS )
 
   def update_account
+    @card.trait_card(:account).ok!(:update)
+    
     account = @card.to_user
 
     if params[:save_roles]
       role_hash = params[:user_roles] || {}
-      Card[account.card_id].trait_card(:roles).items= role_hash.keys
+      role_card = Card[account.card_id].trait_card(:roles)
+      role_card = role_card.refresh if role_card.frozen?
+      role_card.items= role_hash.keys.map &:to_i
     end
 
     if account && params[:account]
@@ -128,13 +132,13 @@ class CardController < ApplicationController
       end
       errors
     else
+      flash
       show
     end
   end
 
   def create_account
-    # FIXME: or should this be @card.trait_card(:account).ok?
-    Card['*account'].ok?(:create) && @card.ok?(:update)
+    @card.trait_card(:account).ok!(:update)
     email_args = { :subject => "Your new #{Card.setting :title} account.",   #ENGLISH
                    :message => "Welcome!  You now have an account on #{Card.setting :title}." } #ENGLISH
     @user, @card = User.create_with_card(params[:user],@card, email_args)

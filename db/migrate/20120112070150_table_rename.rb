@@ -5,7 +5,7 @@ class TableRename < ActiveRecord::Migration
   end
 
   def down
-    rename_table  :card_references, :wiki_references
+    rename_table :card_references, :wiki_references
     rename_table :card_revisions, :revisions
   end
 end

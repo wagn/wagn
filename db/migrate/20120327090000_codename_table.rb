@@ -18,7 +18,9 @@ class CodenameTable < ActiveRecord::Migration
       *add_help *accountable *autoname *captcha *comment *content *create *default *delete
       *edit_help *option *option_label *input *layout *read  *send *table_of_contents *thanks *update 
       
-      *account *users *roles *email
+      anyone_signed_in anyone administrator anonymous wagn_bot
+      
+      *account *roles *email
       
       *home *title *tiny_mce
       
@@ -32,8 +34,6 @@ class CodenameTable < ActiveRecord::Migration
       
       *invite *signup *request 
 
-      anyone_signed_in anyone administrator anonymous wagn_bot
-
       *double_click *favicon *logo
 
     } 
@@ -41,13 +41,10 @@ class CodenameTable < ActiveRecord::Migration
 #not referred to in code:
 # *incoming *tagged *community *count *editing *editor *outgoing *plus_part *refer_to *member *sidebar
 # *created *creator *includer   *inclusion  *last_edited *missing_link *session *link *linker 
-# *referred_to_by *plus_card *plus *watching
-
+# *referred_to_by *plus_card *plus *watching *users 
 
 #   need to be in packs    
 #    *declare *declare_help *sol *pad_options etherpad
-    
-    # FIXME: *declare, *sol ... need to be in packs
 
   OPT_CODENAMES = %w{cardtype_a cardtype_b cardtype_c cardtype_d cardtype_e cardtype_f}
 
@@ -83,10 +80,10 @@ class CodenameTable < ActiveRecord::Migration
 
 
   def self.down
-    execute %{update cards as c set typecode = code.codename
+    execute %{update cards as c 
+                 set typecode = code.codename
                 from codename code
-                where c.type_id = code.card_id
-      }
+               where c.type_id = code.card_id }
 
     remove_index "cards", :name=>"card_type_index"
     change_column "cards", "type_id", :integer, :null=>true
@@ -140,7 +137,11 @@ class CodenameTable < ActiveRecord::Migration
         Wagn::Codename.reset_cache
         return false if opt
         puts Rails.logger.warn "adding card for codename #{name}"
-        card = Card.create! :name=>name
+        card = if name=='*double_click'
+          Card.create! :name=>'*double click', :type=>'Toggle', :content=>'1'
+        else
+          Card.create! :name=>name
+        end
         card or raise "Missing codename #{name} card"
       end
 

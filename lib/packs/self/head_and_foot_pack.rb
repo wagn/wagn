@@ -7,7 +7,7 @@ class Wagn::Renderer
     title = params[:action] if title=='*placeholder'
     bits = ["<title>#{title ? "#{title} - " : ''}#{ Card.setting :title }</title>"]
 
-    if (favicon_card = Card[:favicon] || Card[:logo]) and favicon_card.type_id == Card::ImageID
+    if favicon_card = Card[:favicon] and favicon_card.type_id == Card::ImageID
       bits << %{<link rel="shortcut icon" href="#{ subrenderer(favicon_card)._render_source :size=>:icon }" />}
     end
     

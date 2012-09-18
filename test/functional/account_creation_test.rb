@@ -41,17 +41,17 @@ class AccountCreationTest < ActionController::TestCase
   end
 =end
 
-  def test_should_create_account_from_invitation_request
-    assert_equal :invitation_request, (c=Card.fetch('Ron Request')).typecode
+  def test_should_create_account_from_account_request
+    assert_equal :account_request, (c=Card.fetch('Ron Request')).typecode
     post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
     c=Card.fetch('Ron Request')
     assert_equal :user, c.typecode
     assert_equal "active", User.find_by_email("ron@request.com").status
   end
 
-  def test_should_create_account_from_invitation_request_when_user_hard_templated
+  def test_should_create_account_from_account_request_when_user_hard_templated
     Session.as_bot { Card.create :name=>'User+*type+*content', :content=>"like this" }
-    assert_equal :invitation_request, (c=Card.fetch('Ron Request')).typecode
+    assert_equal :account_request, (c=Card.fetch('Ron Request')).typecode
     post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
     c=Card.fetch('Ron Request')
     assert_equal :user, c.typecode

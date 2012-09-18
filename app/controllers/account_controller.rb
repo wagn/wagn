@@ -7,14 +7,14 @@ class AccountController < ApplicationController
 
   def signup
     raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?  #ENGLISH
-    c=Card.new(:type_id=>Card::InvitationRequestID)
+    c=Card.new(:type_id=>Card::AccountRequestID)
     #warn Rails.logger.warn("signup ok? #{c.inspect}, #{c.ok? :create}")
     raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless c.ok? :create #ENGLISH
-    #raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card.new(:typecode=>:invitation_request).ok? :create #ENGLISH
+    #raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card.new(:typecode=>:account_request).ok? :create #ENGLISH
 
     user_args = (params[:user]||{}).merge(:status=>'pending').symbolize_keys
     @user = User.new( user_args ) #does not validate password
-    card_args = (params[:card]||{}).merge(:type_id=>Card::InvitationRequestID)
+    card_args = (params[:card]||{}).merge(:type_id=>Card::AccountRequestID)
 
     unless request.post?
       @card = Card.new( card_args )

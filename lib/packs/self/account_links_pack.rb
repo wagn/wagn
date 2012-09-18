@@ -14,7 +14,7 @@ class Wagn::Renderer
         }
       else
         %{
-          #{ if Card.new(:typecode=>'invitation_request').ok? :create
+          #{ if Card.new(:typecode=>'account_request').ok? :create
                link_to 'Sign up', "#{prefix}/signup", :id=>'signup-link'
              end }
           #{ link_to 'Sign in', "#{prefix}/signin", :id=>'signin-link' }

@@ -121,8 +121,8 @@ cards_005:
   updated_by: "1"
 cards_006: 
   id: "601"
-  name: Sample InvitationRequest
-  key: sample_invitation_request
+  name: Sample AccountRequest
+  key: sample_account_request
   codename: 
   typecode: 
   trunk_id: 
@@ -5811,7 +5811,7 @@ cards_243:
   id: "12"
   name: Account Request
   key: account_request
-  codename: invitation_request
+  codename: account_request
   typecode: Cardtype
   trunk_id: 
   tag_id: 

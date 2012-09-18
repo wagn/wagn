@@ -127,7 +127,7 @@ class Session
 
   public
 
-    NON_CREATEABLE_TYPES = %w{ invitation_request setting set }
+    NON_CREATEABLE_TYPES = %w{ account_request setting set }
 
     def createable_types
       type_names = Session.as_bot do

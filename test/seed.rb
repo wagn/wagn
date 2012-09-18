@@ -44,7 +44,7 @@ class SharedData
 
     # data for testing users and invitation requests
 
-    ron_request = Card.create! :typecode=>'invitation_request', :name=>"Ron Request"  #, :email=>"ron@request.com"
+    ron_request = Card.create! :typecode=>'account_request', :name=>"Ron Request"  #, :email=>"ron@request.com"
 
     User.create(:email=>'ron@request.com', :password=>'ron_pass', :password_confirmation=>'ron_pass', :card_id=> ron_request.id)
     no_count = Card.create! :typecode=>'user', :name=>"No Count", :content=>"I got no account"
@@ -53,7 +53,7 @@ class SharedData
     user_card = Card.create! :typecode=>'user', :name=>"Sample User"
     user_user = User.create! :login=>"sample_user",:email=>'sample@user.com', :status => 'active', :password=>'sample_pass', :password_confirmation=>'sample_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>user_card.id
 
-    request_card = Card.create! :typecode=>'invitation_request', :name=>"Sample InvitationRequest" #, :email=>"invitation@request.com"
+    request_card = Card.create! :typecode=>'account_request', :name=>"Sample AccountRequest" #, :email=>"invitation@request.com"
 
     Session.createable_types.each do |type|
       next if ['User', 'Account Request', 'Set'].include? type

@@ -75,7 +75,7 @@ namespace :wagn do
       require 'time'
 
       ActiveRecord::Fixtures.create_fixtures 'db/bootstrap', WAGN_BOOTSTRAP_TABLES + %w{ users}
-      # note, those three tables are hand-coded, not dumped (now just users)
+      # note: users table is hand-coded, not dumped
     
       # Correct time and user stamps
       extra_sql = { :cards =>',created_by=1, updated_by=1',  :card_revisions=>',created_by=1' }

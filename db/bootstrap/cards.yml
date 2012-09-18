@@ -4323,7 +4323,7 @@ cards_181:
   id: 12
   name: Account Request
   key: account_request
-  codename: invitation_request
+  codename: account_request
   typecode: Cardtype
   trunk_id: 
   tag_id: 

@@ -616,7 +616,7 @@ class Wagn::Renderer::Html
               </div>
              #{
   
-              if !Session.logged_in? && Card.new(:type_id=>Card::InvitationRequestID).ok?(:create)
+              if !Session.logged_in? && Card.new(:type_id=>Card::AccountRequestID).ok?(:create)
                 %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}
               end }}
             end   }

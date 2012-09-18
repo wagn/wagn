@@ -3,9 +3,9 @@
 class CodenameTable < ActiveRecord::Migration
 
   RENAMES = {
-      "account_request"   => "invitation_request",
-      "wagn_bot"          => "wagbot",
-      "*search"           => "result",
+#      "account_request"   => "account_request",
+#      "wagn_bot"          => "wagbot",
+      "search"            => "search_type",
       "layout"            => "layout_type"
     }
   CODENAMES = %w{

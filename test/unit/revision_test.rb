@@ -12,7 +12,7 @@ class RevisionTest < ActiveSupport::TestCase
     author_cd1 = Card[author1.card_id]
     author_cd2 = Card[author2.card_id]
     #author1, author2 = User.find(:all, :limit=>2)
-    Session.user = Card::WagbotID
+    Session.user = Card::WagnBotID
     rc1=author_cd1.trait_card(:roles)
     rc1 << Card::AdminID
     rc2 = author_cd2.trait_card(:roles)

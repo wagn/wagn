@@ -352,7 +352,7 @@ describe Wql do
   #=end
   describe "found_by" do
     before do
-      Session.user= Card::WagbotID
+      Session.user= Card::WagnBotID
       c = Card.create(:name=>'Simple Search', :type=>'Search', :content=>'{"name":"A"}')
     end 
 

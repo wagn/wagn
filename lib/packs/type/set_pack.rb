@@ -35,6 +35,6 @@ class Wagn::Renderer
     'Cannot currently edit Sets' #ENGLISH
   end
 
-  alias_view(:closed_content , {:type=>:search}, {:type=>:set})
+  alias_view(:closed_content , {:type=>:search_type}, {:type=>:set})
 
 end

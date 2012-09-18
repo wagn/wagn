@@ -62,7 +62,7 @@ class UserTest < ActiveSupport::TestCase
     assert User.authenticate('JOE@user.com', 'joe_pass')
   end
 
-#  def test_should_authenticate_user_with_same_email_as_wagbot
+#  def test_should_authenticate_user_with_same_email_as_wagn_bot
 #    u1 = User.admin
 #  end
   

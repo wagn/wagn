@@ -158,7 +158,7 @@ describe Wagn::Renderer, "" do
         assert_view_select @simple_page, 'div[id="menu"]' do
           assert_select 'a[class="internal-link"][href="/"]', 'Home'
           assert_select 'a[class="internal-link"][href="/recent"]', 'Recent'
-          assert_select 'form.navbox-form[action="/:result"]' do
+          assert_select 'form.navbox-form[action="/:search"]' do
             assert_select 'input[name="_keyword"]'
           end
         end
@@ -409,7 +409,7 @@ describe Wagn::Renderer, "" do
 
     context "HTML" do
       before do
-        Session.user= Card::WagbotID
+        Session.user= Card::WagnBotID
       end
 
       it "should have special editor" do
@@ -533,7 +533,7 @@ describe Wagn::Renderer, "" do
 
   context "replace refs" do
     before do
-      Session.user= Card::WagbotID
+      Session.user= Card::WagnBotID
     end
 
     it "replace references should work on inclusions inside links" do

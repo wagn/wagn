@@ -59,7 +59,7 @@ class Session
 
     def as_bot
       #raise "need block" unless block_given?
-      tmp_id, @@as_id = @@as_id, Card::WagbotID
+      tmp_id, @@as_id = @@as_id, Card::WagnBotID
       @@user_id = @@as_id if @@user_id.nil?
 
       value = yield
@@ -88,7 +88,7 @@ class Session
     def always_ok?
       #warn Rails.logger.warn("aok? #{as_id}, #{as_id&&Card[as_id].id}")
       return false unless usr_id = as_id
-      return true if usr_id == Card::WagbotID #cannot disable
+      return true if usr_id == Card::WagnBotID #cannot disable
 
       always = Card.cache.read('ALWAYS') || {}
       #warn(Rails.logger.warn "Session.always_ok? #{usr_id}")

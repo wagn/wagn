@@ -18,7 +18,7 @@ class Wagn::Renderer
       end
       
       # RSS # move to packs!
-      if root.card.type_id == Card::SearchID
+      if root.card.type_id == Card::SearchTypeID
         opts = { :format => :rss }
         root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
         rss_href = url_for_page root.card.name, opts

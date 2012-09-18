@@ -8,8 +8,8 @@ module WagnTestHelper
   def setup_default_user
     User.cache.reset
 
-    user_card = Card['joe user'] #Card[Card::WagbotID]
-    user_card = Card[:wagbot]
+    user_card = Card['joe user'] #Card[Card::WagnBotID]
+    user_card = Card[:wagn_bot]
     Session.user= user_card.id
     @user = Session.user
     #STDERR << "user #{user_card.inspect}\n"
@@ -18,7 +18,7 @@ module WagnTestHelper
     #user_card.trait_card(:roles) << Card::AdminID
 
     # setup admin while we're at it
-    #@admin_card = Card[Card::WagbotID]
+    #@admin_card = Card[Card::WagnBotID]
 
     #@admin_card.trait_card(:roles) << Card::AdminID
     Session.user = 'joe_user'

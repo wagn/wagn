@@ -258,7 +258,7 @@ class Wagn::Renderer::Html
   define_view :related do |args|
     sources = [card.type_name,nil]
     # FIXME codename *account
-    sources.unshift '*account' if [Card::WagbotID, Card::AnonID].member?(card.id) || card.type_id=='User'
+    sources.unshift '*account' if [Card::WagnBotID, Card::AnonID].member?(card.id) || card.type_id=='User'
     items = sources.map do |source|
       c = Card.fetch(source ? source.to_cardname.trait_name(:related) : Card::RelatedID)
       c && c.item_names
@@ -286,7 +286,7 @@ class Wagn::Renderer::Html
 
   define_view :options do |args|
     attribute = params[:attribute]
-    attribute ||= ([Card::WagbotID, Card::AnonID].member?(card.id) || card.type_id==Card::UserID ? 'account' : 'settings')
+    attribute ||= ([Card::WagnBotID, Card::AnonID].member?(card.id) || card.type_id==Card::UserID ? 'account' : 'settings')
     wrap :options, args do
       %{ #{ _render_header } <div class="options-body"> #{ render "option_#{attribute}" } </div> #{ notice } }
     end

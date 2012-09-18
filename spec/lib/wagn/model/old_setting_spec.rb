@@ -2,7 +2,7 @@ require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
 
 describe Card do
   before do
-    Session.as(Card::WagbotID) # FIXME: as without a block is deprecated
+    Session.as(Card::WagnBotID) # FIXME: as without a block is deprecated
   end
   
   describe "setting data setup" do

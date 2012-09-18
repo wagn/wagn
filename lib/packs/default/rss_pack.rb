@@ -13,7 +13,7 @@ class Wagn::Renderer::Rss
         xml.description ""
         xml.link wagn_url(card)
         begin
-          cards = if card.type_id == Card::SearchID
+          cards = if card.type_id == Card::SearchTypeID
             card.item_cards( search_params.merge(:default_limit => 25) )
           else
             [card]

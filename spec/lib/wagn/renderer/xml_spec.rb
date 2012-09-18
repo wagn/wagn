@@ -299,7 +299,7 @@ describe Wagn::Renderer::Xml, "" do
 
     context "HTML" do
       before do
-        Session.user= Card::WagbotID
+        Session.user= Card::WagnBotID
       end
 
       it "should have special editor" do
@@ -434,7 +434,7 @@ describe Wagn::Renderer::Xml, "" do
 
   context "replace refs" do
     before do
-      Session.user= Card::WagbotID
+      Session.user= Card::WagnBotID
     end
   
     it "replace references should work on inclusions inside links" do       

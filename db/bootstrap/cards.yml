@@ -6651,7 +6651,7 @@ cards_278:
   id: 1
   name: Wagn Bot
   key: wagn_bot
-  codename: wagbot
+  codename: wagn_bot
   typecode: Basic
   trunk_id: 
   tag_id: 

@@ -79,7 +79,7 @@ class Card::BaseTest < ActiveSupport::TestCase
     end
   end
 
-  test 'update_should_create_subcards_as_wagbot_if_missing_subcard_permissions' do
+  test 'update_should_create_subcards_as_wagn_bot_if_missing_subcard_permissions' do
     Card.create(:name=>'peel')
     Session.user = :anonymous
     #warn Rails.logger.info("check #{Session.user_id}")

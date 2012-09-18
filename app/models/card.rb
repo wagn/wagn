@@ -493,7 +493,7 @@ class Card < ActiveRecord::Base
 
   def read_rules
     @read_rules ||= begin
-      if id==Card::WagbotID
+      if id==Card::WagnBotID
         [] # avoids infinite loop
       else
         party_keys = ['in', Card::AnyoneID] + parties

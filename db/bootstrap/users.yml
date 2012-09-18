@@ -1,7 +1,7 @@
 --- 
 users_001: 
   id: "1"
-  login: wagbot
+  login: wagn_bot
   email: noreply@wagn.org
   crypted_password: 
   salt: 

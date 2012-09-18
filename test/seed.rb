@@ -9,17 +9,17 @@ class SharedData
   FUTURE = Time.local(2020,1,1,0,0,0)
 
   def self.add_test_data
-    #Card.current_id = Card::WagbotID
-    CodenameTable.load_bootcodes unless !Wagn::Codename[:wagbot].nil?
+    #Card.current_id = Card::WagnBotID
+    CodenameTable.load_bootcodes unless !Wagn::Codename[:wagn_bot].nil?
 
-    Session.as(Card::WagbotID)
+    Session.as(Card::WagnBotID)
     Wagn::Cache.reset_global
 
     joe_card = Card.create! :typecode=>'user', :name=>"Joe User", :content => "I'm number two"
-    joe_user = User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>joe_card.id
+    joe_user = User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>Card[Card::WagnBotID], :card_id=>joe_card.id
 
     ja_card = Card.create! :typecode=>'user', :name=>"Joe Admin", :content => "I'm number one"
-    joe_admin = User.create! :login=>"joe_admin",:email=>'joe@admin.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>ja_card.id
+    joe_admin = User.create! :login=>"joe_admin",:email=>'joe@admin.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>Card[Card::WagnBotID], :card_id=>ja_card.id
     roles_card = ja_card.trait_card(:roles)
     #warn "roles card for #{ja_card.name} is #{roles_card.inspect}"
     roles_card << Card::AdminID
@@ -31,7 +31,7 @@ class SharedData
     #Role[:admin].users<< [ joe_admin ]
 
     jc_card = Card.create! :typecode=>'user', :name=>"Joe Camel", :content => "Mr. Buttz"
-    joe_camel = User.create! :login=>"joe_camel",:email=>'joe@camel.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>jc_card.id
+    joe_camel = User.create! :login=>"joe_camel",:email=>'joe@camel.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>Card[Card::WagnBotID], :card_id=>jc_card.id
 
     #bt = Card.find_by_name 'Basic+*type+*default'
 
@@ -42,7 +42,7 @@ class SharedData
     color = Card.create! :name=>"color"
     basic = Card.create! :name=>"Basic Card"
 
-    # data for testing users and invitation requests
+    # data for testing users and account requests
 
     ron_request = Card.create! :typecode=>'account_request', :name=>"Ron Request"  #, :email=>"ron@request.com"
 
@@ -51,7 +51,7 @@ class SharedData
 
     # CREATE A CARD OF EACH TYPE
     user_card = Card.create! :typecode=>'user', :name=>"Sample User"
-    user_user = User.create! :login=>"sample_user",:email=>'sample@user.com', :status => 'active', :password=>'sample_pass', :password_confirmation=>'sample_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>user_card.id
+    user_user = User.create! :login=>"sample_user",:email=>'sample@user.com', :status => 'active', :password=>'sample_pass', :password_confirmation=>'sample_pass', :invite_sender=>Card[Card::WagnBotID], :card_id=>user_card.id
 
     request_card = Card.create! :typecode=>'account_request', :name=>"Sample AccountRequest" #, :email=>"invitation@request.com"
 
@@ -65,9 +65,9 @@ class SharedData
     u2 = Card.create! :typecode=>'user', :name=>"u2"
     u3 = Card.create! :typecode=>'user', :name=>"u3"
 
-    User.create! :login=>"u1",:email=>'u1@user.com', :status => 'active', :password=>'u1_pass', :password_confirmation=>'u1_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>u1.id
-    User.create! :login=>"u2",:email=>'u2@user.com', :status => 'active', :password=>'u2_pass', :password_confirmation=>'u2_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>u2.id
-    User.create! :login=>"u3",:email=>'u3@user.com', :status => 'active', :password=>'u3_pass', :password_confirmation=>'u3_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>u3.id
+    User.create! :login=>"u1",:email=>'u1@user.com', :status => 'active', :password=>'u1_pass', :password_confirmation=>'u1_pass', :invite_sender=>Card[Card::WagnBotID], :card_id=>u1.id
+    User.create! :login=>"u2",:email=>'u2@user.com', :status => 'active', :password=>'u2_pass', :password_confirmation=>'u2_pass', :invite_sender=>Card[Card::WagnBotID], :card_id=>u2.id
+    User.create! :login=>"u3",:email=>'u3@user.com', :status => 'active', :password=>'u3_pass', :password_confirmation=>'u3_pass', :invite_sender=>Card[Card::WagnBotID], :card_id=>u3.id
 
 
     r1 = Card.create!( :typecode=>'role', :name=>'r1' )
@@ -134,7 +134,7 @@ class SharedData
     Card.create!( :name=>"JoeLater", :content=>"test")
     Card.create!( :name=>"JoeNow", :content=>"test")
 
-    Session.user = :wagbot
+    Session.user = :wagn_bot
     Card.create!(:name=>"AdminNow", :content=>"test")
 
     Card.create :name=>'Cardtype B+*type+*create', :type=>'Pointer', :content=>'[[r1]]'
@@ -150,10 +150,10 @@ class SharedData
       #  whereas DateTime can represent all dates.
 
       john_card = Card.create! :name=>"John", :type=> "User"
-      User.create! :login=>"john",:email=>'john@user.com', :status => 'active', :password=>'john_pass', :password_confirmation=>'john_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>john_card.id
+      User.create! :login=>"john",:email=>'john@user.com', :status => 'active', :password=>'john_pass', :password_confirmation=>'john_pass', :invite_sender=>Card[Card::WagnBotID], :card_id=>john_card.id
 
       sara_card = Card.create! :name=>"Sara", :type=> "User"
-      User.create! :login=>"sara",:email=>'sara@user.com', :status => 'active', :password=>'sara_pass', :password_confirmation=>'sara_pass', :invite_sender=>Card[Card::WagbotID], :card_id=>sara_card.id
+      User.create! :login=>"sara",:email=>'sara@user.com', :status => 'active', :password=>'sara_pass', :password_confirmation=>'sara_pass', :invite_sender=>Card[Card::WagnBotID], :card_id=>sara_card.id
 
 
       Card.create! :name => "Sara Watching+*watchers",  :content => "[[Sara]]"

@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
   after_save :reset_instance_cache
 
   class << self
-    def admin()          User.where(:card_id=>Card::WagbotID).first  end
+    def admin()          User.where(:card_id=>Card::WagnBotID).first  end
     def as_user()        User.where(:card_id=>Session.as_id).first end
     def user()           User.where(:card_id=>Session.user_id).first    end
     def from_id(card_id) User.where(:card_id=>card_id).first         end
@@ -107,7 +107,7 @@ class User < ActiveRecord::Base
       self.card_id = card.id
       save
       if newcard && errors.any?
-        card.delete #won't the rollback take care of this?  if not, should wagbot do it?
+        card.delete #won't the rollback take care of this?  if not, should Wagn Bot do it?
         self.card_id=nil
         save
         raise ActiveRecord::Rollback

@@ -157,7 +157,7 @@ navbox_results = (request, response) ->
   view_field.val orig_view
       
   this.xhr = $.ajax {
-		url: wagn.prepUrl wagn.rootPath + '/:result.json'
+		url: wagn.prepUrl wagn.rootPath + '/:search.json'
 		data: formData
 		dataType: "json"
 		wagReq: ++reqIndex

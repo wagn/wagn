@@ -115,7 +115,7 @@ end
 
 describe Card, "types" do
   before do
-    Session.as(Card::WagbotID)  # FIXME: as without a block is deprecated
+    Session.as(Card::WagnBotID)  # FIXME: as without a block is deprecated
     # NOTE: it looks like these tests aren't DRY- but you can't pull the cardtype creation up here because:
     #  creating cardtypes creates constants in the namespace, and those aren't removed 
     #  when the db is rolled back, so you're not starting in the original state.

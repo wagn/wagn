@@ -115,29 +115,8 @@ namespace :test do
   
   desc "create sample data for testing"
   task :populate_template_database => :environment do        
-    # setup test data here
-    # additional test data auto-loaded from Test classes    
-    # when I load these I don't want them to run as is the default; this is somewhat brutal..
-              
     load 'test/seed.rb'
     SharedData.add_test_data
-
-    ## FIXME: this was an attempt to automate loading data from the test files.
-    #  I think it was maybe a little misguided.  anyway it breaks under rails 2.3 so 
-    # not using it for now.
-    
-    #require 'test/unit'    
-    #Test::Unit::AutoRunner.class_eval {  def self.run() 1 end }
-
-    # Dir["#{Rails.root.to_s}/test/**/*.rb"].each {|f| load "#{f}"}  
-    # ActiveSupport::TestCase.descendents.each do |c|
-    #   if c.respond_to? :add_test_data 
-    #     c.add_test_data
-    #   end
-    # end
   end
  
 end
-        
-
-#end

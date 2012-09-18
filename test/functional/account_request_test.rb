@@ -3,7 +3,7 @@ require 'card_controller'
 
 # Re-raise errors caught by the controller.
 class CardController; def rescue_action(e) raise e end; end
-class AccountRequestTest < ActionController::TestCase    
+class InvitationRequestTest < ActionController::TestCase    
   
   include AuthenticatedTestHelper
   

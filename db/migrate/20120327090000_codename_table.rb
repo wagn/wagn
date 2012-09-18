@@ -131,7 +131,7 @@ class CodenameTable < ActiveRecord::Migration
   # opt=true is: don't create when missing, default is to create it
   def self.add_codename name, opt=false
     if check_codename(name)
-      puts Rails.logger.warn("migr good code #{name}, #{c=Card[name] and c.id}")
+      Rails.logger.warn("migr good code #{name}, #{c=Card[name] and c.id}")
     else
       card = Card[name]
       

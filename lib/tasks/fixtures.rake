@@ -49,25 +49,10 @@ namespace :test do
   #=begin  
     begin
       # assume we have a good database, ie. just migrated dev db.
-      puts "migrating database #{olddb}"
-      puts `echo $RAILS_ENV; rake db:migrate`
-      puts "dumping schema"
-      puts `rake db:schema:dump`
       puts "setting database to wagn_test_template"
       set_database 'wagn_test_template'
-      # Rake::Task['db:drop'].invoke
-      # Rake::Task['db:create'].invoke
-      # Rake::Task['db:schema:load'].invoke
-      # Rake::Task['wagn:bootstrap:load'].invoke
-      puts "dropping database"
-      puts `rake db:drop`
-      puts "creating database"
-      puts `rake db:create`
-      puts "loading schema"
-      puts `rake db:schema:load --trace`
-      puts "loading bootstrap data"
-      puts `rake wagn:bootstrap:load --trace`       
-  
+      Rake::Task['wagn:create'].invoke
+   
       # I spent waay to long trying to do this in a less hacky way--  
       # Basically initial database setup/migration breaks your models and you really 
       # need to start rails over to get things going again I tried ActiveRecord::Base.reset_subclasses etc. to no avail. -LWH
@@ -75,11 +60,8 @@ namespace :test do
       puts `rake test:populate_template_database --trace`      
       puts ">>extracting to fixtures"
       puts `rake test:extract_fixtures --trace`
+    ensure
       set_database olddb 
-    rescue Exception=>e
-      warn "exception #{e.inspect} #{olddb}"
-      set_database olddb 
-      raise e
     end
     # go ahead and load the fixtures into the test database
     
@@ -87,10 +69,9 @@ namespace :test do
     puts `rake db:test:load --trace`
     puts ">> loading test fixtures"
     puts `rake db:fixtures:load RAILS_ENV=test --trace`
-    
-    #Rake::Task['db:test:prepare'].invoke
-  #=end
   end
+
+
 
   desc "dump current db to test fixtures"
   task :extract_fixtures => :environment do

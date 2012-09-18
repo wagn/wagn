@@ -33,7 +33,8 @@ module Wagn::Set::Type::Pointer
     self.content=''
     array.each {|i| self << i }
   end
-
+  # FIXME.  this is horribly inefficient.  If there are 10 items in the array the card will get saved 10 times!
+  
   def << card
     add_item case card
                when Card; card.name

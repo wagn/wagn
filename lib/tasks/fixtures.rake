@@ -31,11 +31,11 @@ namespace :db do
   end
 end
         
-namespace :test do                            
+namespace :test do
   ## FIXME: this generates an "Adminstrator links" card with the wrong reader_id, I have been 
   ##  setting it by hand after fixture generation.  
   desc "recreate test fixtures from fresh db"
-  task :generate_fixtures => :environment do  
+  task :generate_fixtures => :environment do
     Rake::Task['cache:clear']
     # env gets auto-set to 'test' somehow.
     # but we need development to get the right schema dumped. 

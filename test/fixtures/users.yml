@@ -1,157 +1,157 @@
 --- 
 users_001: 
-  id: "1"
+  id: 1
   login: wagn_bot
   email: noreply@wagn.org
   crypted_password: 
   salt: 
-  created_at: 2012-07-29 19:53:24
-  updated_at: 2012-01-29 00:00:00
+  created_at: 2012-09-18 12:06:26 Z
+  updated_at: 2012-01-29 00:00:00 Z
   password_reset_code: 
   status: system
-  invite_sender_id: "1"
+  invite_sender_id: 1
   identity_url: 
-  card_id: "1"
+  card_id: 1
 users_002: 
-  id: "2"
+  id: 2
   login: anon
   email: noreply@wagn.org
   crypted_password: 
   salt: 
-  created_at: 2012-07-29 19:53:24
-  updated_at: 2012-01-29 00:00:00
+  created_at: 2012-09-18 12:06:26 Z
+  updated_at: 2012-01-29 00:00:00 Z
   password_reset_code: 
   status: system
-  invite_sender_id: "1"
+  invite_sender_id: 1
   identity_url: 
-  card_id: "15"
+  card_id: 15
 users_003: 
-  id: "3"
+  id: 3
   login: joe_user
   email: joe@user.com
-  crypted_password: 085da1ba72446fe93b540ea2cf8217f9dd0f5397
-  salt: a3c27eebf3245a183f3b4db60edfab6de5204de6
-  created_at: 2012-07-30 00:53:34.780169
-  updated_at: 2012-07-30 00:53:34.780169
+  crypted_password: ebd54b828af56d26e90b95ab6c05e3699cd71629
+  salt: d816f6b6653332d6c64549d7295ab6b661c78dcb
+  created_at: 2012-09-18 18:06:37 Z
+  updated_at: 2012-09-18 18:06:37 Z
   password_reset_code: 
   status: active
-  invite_sender_id: "1"
+  invite_sender_id: 1
   identity_url: 
-  card_id: "592"
+  card_id: 593
 users_004: 
-  id: "4"
+  id: 4
   login: joe_admin
   email: joe@admin.com
-  crypted_password: ba7ce98261856a5467c7a754f4121f8146a196d2
-  salt: 0077b0f8162ff3cfed684c116f7f78b4e9a2d2b1
-  created_at: 2012-07-30 00:53:34.868955
-  updated_at: 2012-07-30 00:53:34.868955
+  crypted_password: 67e83469257260ddbdb3c19a2f62f5794e70258f
+  salt: ca550b36b0ff97bb1b68ad5518e69df4a9b1527c
+  created_at: 2012-09-18 18:06:37 Z
+  updated_at: 2012-09-18 18:06:37 Z
   password_reset_code: 
   status: active
-  invite_sender_id: "1"
+  invite_sender_id: 1
   identity_url: 
-  card_id: "593"
+  card_id: 594
 users_005: 
-  id: "5"
+  id: 5
   login: joe_camel
   email: joe@camel.com
-  crypted_password: 5f91bf526ef66bee9bc96a82d9a844165de6de86
-  salt: ee9b09fede3d75334891deac7a43173adde78825
-  created_at: 2012-07-30 00:53:35.478311
-  updated_at: 2012-07-30 00:53:35.478311
+  crypted_password: cbeb3bc03dd7eac83a2acc5e9e34962c7ce1daf5
+  salt: bd3487e963f42ff6cad9f59298f5978ff4f967c5
+  created_at: 2012-09-18 18:06:37 Z
+  updated_at: 2012-09-18 18:06:37 Z
   password_reset_code: 
   status: active
-  invite_sender_id: "1"
+  invite_sender_id: 1
   identity_url: 
-  card_id: "595"
+  card_id: 596
 users_006: 
-  id: "6"
+  id: 6
   login: 
   email: ron@request.com
-  crypted_password: 02b3fe29f3c79cbca678526a79a4e9d33d1a0f47
-  salt: ce5f2b49263612fe903faae225ac806f8c59cc17
-  created_at: 2012-07-30 00:53:36.712849
-  updated_at: 2012-07-30 00:53:36.712849
+  crypted_password: fc7a4219daf62cd0add3b4c1e5873319282b4db9
+  salt: 73c70af5f7c824d700f3c093a471d0fc121d71e3
+  created_at: 2012-09-18 18:06:38 Z
+  updated_at: 2012-09-18 18:06:38 Z
   password_reset_code: 
   status: request
   invite_sender_id: 
   identity_url: 
-  card_id: "598"
+  card_id: 599
 users_007: 
-  id: "7"
+  id: 7
   login: sample_user
   email: sample@user.com
-  crypted_password: 85575db6b3f681a388d15d6edf2f11f0437110d3
-  salt: 1a5d5d9c1ccbcb16b7816223fbd95d8b90ef7e72
-  created_at: 2012-07-30 00:53:36.900649
-  updated_at: 2012-07-30 00:53:36.900649
+  crypted_password: 84fd9979ad0fa18156de972f70e40aa8d44b65aa
+  salt: 4ab2423a998a12606425a03dcc53ed3bf95c630a
+  created_at: 2012-09-18 18:06:38 Z
+  updated_at: 2012-09-18 18:06:38 Z
   password_reset_code: 
   status: active
-  invite_sender_id: "1"
+  invite_sender_id: 1
   identity_url: 
-  card_id: "600"
+  card_id: 601
 users_008: 
-  id: "8"
+  id: 8
   login: u1
   email: u1@user.com
-  crypted_password: 19f46a62a43fbc9636076bb4ef4e4762aff8be07
-  salt: 9a462156cb20def6b2909121ea86bd29035b793e
-  created_at: 2012-07-30 00:53:39.428509
-  updated_at: 2012-07-30 00:53:39.428509
+  crypted_password: 67959d05d38deec31c2fe9f09e026dbea1afc7e3
+  salt: 6cf887ca4e97b85105006a109ee0a4997cfd32a3
+  created_at: 2012-09-18 18:06:39 Z
+  updated_at: 2012-09-18 18:06:39 Z
   password_reset_code: 
   status: active
-  invite_sender_id: "1"
+  invite_sender_id: 1
   identity_url: 
-  card_id: "617"
+  card_id: 618
 users_009: 
-  id: "9"
+  id: 9
   login: u2
   email: u2@user.com
-  crypted_password: c9e1d41cc2d5aafcf5b599abe61d674964354bb1
-  salt: 14f730232c08b65f1e310e6134b5bdd6dc8634f6
-  created_at: 2012-07-30 00:53:39.444257
-  updated_at: 2012-07-30 00:53:39.444257
+  crypted_password: 383d87fcff319704380a820359eae99bb6976c38
+  salt: bc36f9a32c2bd09ac554999f1a1ff28bab750e8c
+  created_at: 2012-09-18 18:06:39 Z
+  updated_at: 2012-09-18 18:06:39 Z
   password_reset_code: 
   status: active
-  invite_sender_id: "1"
+  invite_sender_id: 1
   identity_url: 
-  card_id: "618"
+  card_id: 619
 users_010: 
-  id: "10"
+  id: 10
   login: u3
   email: u3@user.com
-  crypted_password: 017cd9392c8004b0a23801b522637569bd2fb140
-  salt: 240792ec6848311ab53f70428b6aeda960dfff3e
-  created_at: 2012-07-30 00:53:39.460883
-  updated_at: 2012-07-30 00:53:39.460883
+  crypted_password: 1b4e798d6ecae6e22ddd13b2ece7c8cc4f109fa7
+  salt: 4c810c37d437e44d5c8f202d893dc2bcba118353
+  created_at: 2012-09-18 18:06:39 Z
+  updated_at: 2012-09-18 18:06:39 Z
   password_reset_code: 
   status: active
-  invite_sender_id: "1"
+  invite_sender_id: 1
   identity_url: 
-  card_id: "619"
+  card_id: 620
 users_011: 
-  id: "11"
+  id: 11
   login: john
   email: john@user.com
-  crypted_password: 98a92f881fd1f440469e1bdb2a41477b8d1c3c10
-  salt: 9410ce63d325bd6d7966dc38fa3c4318be80e4d8
-  created_at: 2019-12-31 06:00:00
-  updated_at: 2019-12-31 06:00:00
+  crypted_password: 0af3bda8731d59498d6dbb7f7aaa5e1623273f5c
+  salt: e4f09f311fba60f6845b19f45c4b4699aba81edc
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
   password_reset_code: 
   status: active
-  invite_sender_id: "1"
+  invite_sender_id: 1
   identity_url: 
-  card_id: "683"
+  card_id: 684
 users_012: 
-  id: "12"
+  id: 12
   login: sara
   email: sara@user.com
-  crypted_password: e10b6613f2568103814651d68c1d2d5bd80b7c96
-  salt: 56793db80e3751d885e2ac6c2bb1e3a4120a2514
-  created_at: 2019-12-31 06:00:00
-  updated_at: 2019-12-31 06:00:00
+  crypted_password: 27183d747ef807aa18ce58aba8cb54b5fef861fd
+  salt: 95cf1a71a132935e86586627b4828e1500599979
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
   password_reset_code: 
   status: active
-  invite_sender_id: "1"
+  invite_sender_id: 1
   identity_url: 
-  card_id: "684"
+  card_id: 685

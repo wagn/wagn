@@ -16,7 +16,7 @@ class CodenameTable < ActiveRecord::Migration
       *all_plus *star *rstar *type *type_plus_right *right *self
       
       *add_help *accountable *autoname *captcha *comment *content *create *default *delete
-      *edit_help *option *option_label *input *layout *read  *send *table_of_contents *thanks *update 
+      *edit_help *option *option_label *input *layout *read *send *table_of_contents *thanks *update 
       
       anyone_signed_in anyone administrator anonymous wagn_bot
       
@@ -24,7 +24,7 @@ class CodenameTable < ActiveRecord::Migration
       
       *home *title *tiny_mce
       
-      *account_link *alert *version *foot *head *when_created *when_last_edited *navbox
+      *account_links *alert *version *foot *head *when_created *when_last_edited *navbox
       
       *attach *bcc *cc *from *subject *to 
       

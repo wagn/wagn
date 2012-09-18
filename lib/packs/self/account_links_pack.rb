@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view :raw, :name=>:account_link do |args|
+  define_view :raw, :name=>:account_links do |args|
     #ENGLISH
     prefix = Wagn::Conf[:root_path] + '/account'
     %{<span id="logging">#{

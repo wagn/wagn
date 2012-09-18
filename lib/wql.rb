@@ -274,23 +274,16 @@ class Wql
       return nil if v.empty?
       v.gsub!(/\W+/,' ')
       
-      cond =
-#        if Wagn::Conf[:enable_postgres_fulltext]
-#          v = v.strip.gsub(/\s+/, '&')
-#          sql.relevance_fields << "rank(indexed_name, to_tsquery(#{quote(v)}), 1) AS name_rank"
-#          sql.relevance_fields << "rank(indexed_content, to_tsquery(#{quote(v)}), 1) AS content_rank"
-#          "indexed_content @@ to_tsquery(#{quote(v)})" 
-#        else
-        begin
-          join_alias = add_revision_join
-          # FIXME: OMFG this is ugly
-          '(' + 
-          ["replace(#{self.table_alias}.name,'+',' ')","#{join_alias}.content"].collect do |f|
-            v.split(/\s+/).map{ |x| %{#{f} #{cxn.match(quote("[[:<:]]#{x}[[:>:]]"))}} }.join(" AND ")
-          end.join(" OR ") + 
-          ')'
-        end
-#        end
+      cond = begin
+        join_alias = add_revision_join
+        # FIXME: OMFG this is ugly
+        '(' + 
+        ["replace(#{self.table_alias}.name,'+',' ')","#{join_alias}.content"].collect do |f|
+          v.split(/\s+/).map{ |x| %{#{f} #{cxn.match(quote("[[:<:]]#{x}[[:>:]]"))}} }.join(" AND ")
+        end.join(" OR ") + 
+        ')'
+      end
+
       merge field(:cond)=>SqlCond.new(cond)
     end
     

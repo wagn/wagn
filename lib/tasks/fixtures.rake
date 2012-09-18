@@ -27,7 +27,6 @@ namespace :db do
       (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : Dir.glob(File.join(Rails.root.to_s, 'test', 'fixtures', '*.{yml,csv}'))).each do |fixture_file|
         ActiveRecord::Fixtures.create_fixtures('test/fixtures', File.basename(fixture_file, '.*'))
       end  
-      Rake::Task['fulltext:prepare'].invoke
     end
   end
 end
@@ -42,10 +41,6 @@ namespace :test do
     # but we need development to get the right schema dumped. 
     ENV['RAILS_ENV'] = 'development'
     
-    if Wagn::Conf[:enable_postgres_fulltext]
-      raise("Oops!  you need to disable postgres_fulltext in wagn.rb before generating fixtures")
-    end
-         
     abcs = ActiveRecord::Base.configurations    
     config = ENV['RAILS_ENV'] || 'development'  
     olddb = abcs[config]["database"]

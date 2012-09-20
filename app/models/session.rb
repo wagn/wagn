@@ -131,14 +131,11 @@ class Session
 
     def createable_types
       type_names = Session.as_bot do
-        Card.search :type=>Card::CardtypeID, :return=>:name
-      end
-      noncreateable_names = NON_CREATEABLE_TYPES.map do |code|
-        Wagn::Codename.cardname code
+        Card.search :type=>Card::CardtypeID, :return=>:name, :not => { :codename => ['in'] + NON_CREATEABLE_TYPES }
       end
       type_names.reject do |name|
-        noncreateable_names.member?(name) || !Card.new( :type=>name ).ok?( :create )
-      end
+        !Card.new( :type=>name ).ok? :create
+      end.sort
     end
   end
 

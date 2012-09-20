@@ -111,29 +111,31 @@ class CardController < ApplicationController
   #-------- ( ACCOUNT METHODS )
 
   def update_account
-    account = @card.to_user
 
     if params[:save_roles]
-      @card.trait_card(:roles).ok! :update
+      role_card = @card.trait_card :roles
+      role_card.ok! :update
       
       role_hash = params[:user_roles] || {}
-      role_card = Card[account.card_id].trait_card :roles
       role_card = role_card.refresh if role_card.frozen?
       role_card.items= role_hash.keys.map &:to_i
     end
 
-    if account && account_args = params[:account]
-      (Session.as_id == @card.id && !account_args[:blocked]) or @card.trait_card(:account).ok! :update
-          
+    account = @card.to_user
+    if account and account_args = params[:account]
+      unless Session.as_id == @card.id and !account_args[:blocked]
+        @card.trait_card(:account).ok! :update
+      end 
       account.update_attributes account_args
-      if account && account.errors.any?
-        account.errors.each do |field, err|
-          @card.errors.add field, err
-        end
-        errors
-      else
-        show
+    end
+
+    if account && account.errors.any?
+      account.errors.each do |field, err|
+        @card.errors.add field, err
       end
+      errors
+    else
+      show
     end
   end
 

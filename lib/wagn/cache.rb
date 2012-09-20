@@ -1,15 +1,5 @@
 module Wagn
-=begin
-  require 'tempfile'
 
-  Tempfile.class_eval do
-    # overwrite tempfiles implementation of attachment_fu. FIXME: why n is nil?
-    def make_tmpname(basename, n)
-      ext = nil
-      n = 0 if n.nil?
-      sprintf("%s%d-%d%s", basename.to_s.gsub(/\.\w+$/) { |s| ext = s; '' }, $$, n, ext)
-    end
-=end
 
   ActiveSupport::Cache::FileStore.class_eval do
     # escape special symbols \*"<>| additionaly to :?.
@@ -69,6 +59,7 @@ module Wagn
           next unless cache = cc.cache
           cache.reset hard=true
         end
+        Wagn::Codename.reset_cache
       end
 
       private

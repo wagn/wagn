@@ -29,10 +29,10 @@ users_003:
   id: 3
   login: joe_user
   email: joe@user.com
-  crypted_password: fb3233f83e8602b52779aed04444e32e4d1df12a
-  salt: 9be462f9ac9f6d2bfb42c7653f01876b5b8412f6
-  created_at: 2012-09-18 20:04:53 Z
-  updated_at: 2012-09-18 20:04:53 Z
+  crypted_password: d31f45d174cff9740bfccf8188b0f7513681b205
+  salt: 443c3d9f46a56d2005cb5c6203162f7aac4bf660
+  created_at: 2012-09-19 21:10:25 Z
+  updated_at: 2012-09-19 21:10:25 Z
   password_reset_code: 
   status: active
   invite_sender_id: 1
@@ -42,10 +42,10 @@ users_004:
   id: 4
   login: joe_admin
   email: joe@admin.com
-  crypted_password: b6cfc6fb8b41fe5804aca496421fb3069d56f34d
-  salt: 391889110086e819c406b193cc3e8b51392b83ec
-  created_at: 2012-09-18 20:04:53 Z
-  updated_at: 2012-09-18 20:04:53 Z
+  crypted_password: 86b88df9d0281121aef86d442c2aab751e982531
+  salt: 43f18eaed612df15956b8948a5ca98a9c420cb1e
+  created_at: 2012-09-19 21:10:25 Z
+  updated_at: 2012-09-19 21:10:25 Z
   password_reset_code: 
   status: active
   invite_sender_id: 1
@@ -55,10 +55,10 @@ users_005:
   id: 5
   login: joe_camel
   email: joe@camel.com
-  crypted_password: fc38bdb86d10caa93de27d955ade1a886a8d7237
-  salt: f5be2bf10bfd1c7fb114a35371b583f0d38264fa
-  created_at: 2012-09-18 20:04:54 Z
-  updated_at: 2012-09-18 20:04:54 Z
+  crypted_password: 5bbe2342bfef871acf47e09b93163f1996daa0f5
+  salt: 00902b0c6dba2246fdbcf604b3a035225a2ca3c3
+  created_at: 2012-09-19 21:10:25 Z
+  updated_at: 2012-09-19 21:10:25 Z
   password_reset_code: 
   status: active
   invite_sender_id: 1
@@ -68,10 +68,10 @@ users_006:
   id: 6
   login: 
   email: ron@request.com
-  crypted_password: 484af8b0bdc8dea9e8446c35e6e2d08243bf04e9
-  salt: 6404438da7c54d376aa9fea515584f43c942e61d
-  created_at: 2012-09-18 20:04:54 Z
-  updated_at: 2012-09-18 20:04:54 Z
+  crypted_password: cc15a63473147e3f312ba473b49c15985e4b2978
+  salt: d6a9f9043a95d731aad7362b9f4722918240e4bb
+  created_at: 2012-09-19 21:10:26 Z
+  updated_at: 2012-09-19 21:10:26 Z
   password_reset_code: 
   status: request
   invite_sender_id: 
@@ -81,10 +81,10 @@ users_007:
   id: 7
   login: sample_user
   email: sample@user.com
-  crypted_password: 719110c1b9c3bef83a0cfc0747c2ca32c7fdaad4
-  salt: 1f127fb8780603f1fbb636f6679eb5dbbf3a1c47
-  created_at: 2012-09-18 20:04:54 Z
-  updated_at: 2012-09-18 20:04:54 Z
+  crypted_password: 3e1a4e053474664a65355c1f3f5eb452b4e5b7dd
+  salt: 116b83aa6486b1dfa63354ab12e331ff95f1076d
+  created_at: 2012-09-19 21:10:26 Z
+  updated_at: 2012-09-19 21:10:26 Z
   password_reset_code: 
   status: active
   invite_sender_id: 1
@@ -94,10 +94,10 @@ users_008:
   id: 8
   login: u1
   email: u1@user.com
-  crypted_password: 70955f1f919d5abb187e83d459ac9b91a7b368b7
-  salt: e3deb00a9c040f897f960d8fff492d6791db7fdb
-  created_at: 2012-09-18 20:04:58 Z
-  updated_at: 2012-09-18 20:04:58 Z
+  crypted_password: 489943ad3957fdc040c6dcd7e691e09bdbc3b048
+  salt: 6dff9abe6ccc959a69e739c7f496c3d580a20cc9
+  created_at: 2012-09-19 21:10:28 Z
+  updated_at: 2012-09-19 21:10:28 Z
   password_reset_code: 
   status: active
   invite_sender_id: 1
@@ -107,10 +107,10 @@ users_009:
   id: 9
   login: u2
   email: u2@user.com
-  crypted_password: 7f0ce7ec998d93623b341f5d262b0891ebf98b8b
-  salt: 8072803eb18fc6b353e6546012cabe92ca0e79d1
-  created_at: 2012-09-18 20:04:58 Z
-  updated_at: 2012-09-18 20:04:58 Z
+  crypted_password: b3390273a3a68d9e59e9679f79ce14a182eb0eaf
+  salt: b2b5a7f3b94644999392c1f2ed272aa6d5a3a20e
+  created_at: 2012-09-19 21:10:28 Z
+  updated_at: 2012-09-19 21:10:28 Z
   password_reset_code: 
   status: active
   invite_sender_id: 1
@@ -120,10 +120,10 @@ users_010:
   id: 10
   login: u3
   email: u3@user.com
-  crypted_password: 5977468bd39d4450cd0b3cd29e2928045795a67b
-  salt: 64937444fe736613155e2ad67f319387eff0f246
-  created_at: 2012-09-18 20:04:58 Z
-  updated_at: 2012-09-18 20:04:58 Z
+  crypted_password: 20dcf0f2262feaa0599c5dce40bbf887ac6e7195
+  salt: cc8361607da1410be55f3faa50f919638fe29bbe
+  created_at: 2012-09-19 21:10:28 Z
+  updated_at: 2012-09-19 21:10:28 Z
   password_reset_code: 
   status: active
   invite_sender_id: 1

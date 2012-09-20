@@ -3,23 +3,30 @@ module Wagn
 
   @@codehash=nil
 
-  class <<self
-    def cardname from
-      name = (card = case from
-          when Integer; from
-          when Symbol ; self[from.to_s]
-        end and card.name or from)
-      raise "Wagn::Codename.cardname class error: #{from.class} (#{from.inspect})" unless String === name
-      name
+  class << self
+    # returns codename for id and vice versa.  not in love with this api --efm
+    def [] key
+      key = key.to_sym unless Integer===key
+      codehash[key]
     end
 
-    def bootdata(hash) @@codehash = hash end
+    def codehash
+      @@codehash || load_hash
+    end
 
-  private
+    def reset_cache
+      @@codehash = nil
+    end
 
-    def codehash() @@codehash || load_hash end
+    #only used in migration
+    def bootdata hash
+      @@codehash = hash
+    end
+    
+      
+    private
 
-    def load_hash()
+    def load_hash
       @@codehash = {}
 
       Card.where('codename is not NULL').each do |r|
@@ -33,18 +40,6 @@ module Wagn
 
       @@codehash
     end
-
- public
-
-    def [](key)
-      key = key.to_sym unless Integer===key
-      codehash[key]
-    end
-    #def name_change(key)                                        end
-    def codes()       codehash.each_key.find_all{|k|Symbol===k} end
-
-    # FIXME: some tests need to use this because they add codenames, fix tests
-    def reset_cache() @@codehash = nil end
   end
  end
 end

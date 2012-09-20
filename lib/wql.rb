@@ -3,7 +3,7 @@ class Wql
   
   ATTRIBUTES = {
 
-    :basic      =>  %w{ name type type_id content id key updater_id trunk_id tag_id creator_id updater_id },
+    :basic      =>  %w{ name type type_id content id key updater_id trunk_id tag_id creator_id updater_id codename },
     :custom     =>  %w{ edited_by editor_of edited last_editor_of extension_type
        last_edited_by creator_of created_by member_of member role found_by sort
        part left right plus left_plus right_plus or match complete not and },

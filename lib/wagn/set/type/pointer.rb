@@ -61,7 +61,7 @@ module Wagn::Set::Type::Pointer
   end
 
   def options_card
-    card = self.rule_card(:option)
+    card = self.rule_card :options
     (card && card.collection?) ? card : nil
   end
 
@@ -70,7 +70,7 @@ module Wagn::Set::Type::Pointer
   end
 
   def option_text(option)
-    name = self.rule(:option_label) || 'description'
+    name = self.rule(:options_label) || 'description'
     textcard = Card["#{option}+#{name}"]
     textcard ? textcard.content : nil
   end

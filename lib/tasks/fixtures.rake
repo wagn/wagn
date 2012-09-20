@@ -63,14 +63,10 @@ namespace :test do
     ensure
       set_database olddb 
     end
-    # go ahead and load the fixtures into the test database
-    
+    # go ahead and load the fixtures into the test database    
     puts ">> preparing test database"
-    puts `rake db:test:load --trace`
-    puts ">> loading test fixtures"
-    puts `rake db:fixtures:load RAILS_ENV=test --trace`
+    puts `env RELOAD_TEST_DATA=true rake db:test:prepare --trace`
   end
-
 
 
   desc "dump current db to test fixtures"

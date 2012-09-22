@@ -27,9 +27,10 @@ class RolesUsers < ActiveRecord::Migration
           tasks = oldrole.tasks and tasks.split(',').each do |task|
             # mapping old task names to rule cardnames to use
             cardname = case task.to_sym
-              when :create_accounts;    "*account+*right+*create"
-              when :administrate_users; "*account+*right+*update"
-              when :assign_user_roles;  "*roles+*right+*update"
+              when :create_accounts    ;  "*account+*right+*create"
+              when :administrate_users ;  "*account+*right+*update"
+              when :assign_user_roles  ;  "*roles+*right+*update"
+              else                     ;   next
               end
             #puts "tasks ? #{task.inspect}[#{rolecard.name}] >> #{c.inspect}"
             c = Card.fetch_or_new cardname

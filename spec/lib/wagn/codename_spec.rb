@@ -1,8 +1,15 @@
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Codename, "Codename" do
+  
+  before do
+    @codes = Wagn::Codename.codehash.each_key.find_all do |key|
+      Symbol===key
+    end
+  end  
+  
   it "should have sane codename data" do
-    Wagn::Codename.codes.each do |code|
+    @codes.each do |code|
       code.                      should be_instance_of Symbol
       (i = Wagn::Codename[code]).should be_a_kind_of Integer
       Wagn::Codename[i].         should == code
@@ -11,7 +18,7 @@ describe Wagn::Codename, "Codename" do
 
   it "cards should exist and be indestructable" do
     Session.as_bot do
-      Wagn::Codename.codes.each do |code|
+      @codes.each do |code|
         (card=Card[code]).confirm_destroy = true
         card.destroy
         if err = card.errors[:cardtype].first

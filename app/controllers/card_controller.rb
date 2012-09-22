@@ -111,15 +111,22 @@ class CardController < ApplicationController
   #-------- ( ACCOUNT METHODS )
 
   def update_account
-    account = @card.to_user
 
     if params[:save_roles]
+      role_card = @card.trait_card :roles
+      role_card.ok! :update
+      
       role_hash = params[:user_roles] || {}
-      Card[account.card_id].trait_card(:roles).items= role_hash.keys
+      role_card = role_card.refresh if role_card.frozen?
+      role_card.items= role_hash.keys.map &:to_i
     end
 
-    if account && params[:account]
-      account.update_attributes(params[:account])
+    account = @card.to_user
+    if account and account_args = params[:account]
+      unless Session.as_id == @card.id and !account_args[:blocked]
+        @card.trait_card(:account).ok! :update
+      end 
+      account.update_attributes account_args
     end
 
     if account && account.errors.any?
@@ -133,8 +140,7 @@ class CardController < ApplicationController
   end
 
   def create_account
-    # FIXME: or should this be @card.trait_card(:account).ok?
-    Card['*account'].ok?(:create) && @card.ok?(:update)
+    @card.trait_card(:account).ok! :create
     email_args = { :subject => "Your new #{Card.setting :title} account.",   #ENGLISH
                    :message => "Welcome!  You now have an account on #{Card.setting :title}." } #ENGLISH
     @user, @card = User.create_with_card(params[:user],@card, email_args)

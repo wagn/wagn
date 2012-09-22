@@ -3,7 +3,7 @@ class Wql
   
   ATTRIBUTES = {
 
-    :basic      =>  %w{ name type type_id content id key updater_id trunk_id tag_id creator_id updater_id },
+    :basic      =>  %w{ name type type_id content id key updater_id trunk_id tag_id creator_id updater_id codename },
     :custom     =>  %w{ edited_by editor_of edited last_editor_of extension_type
        last_edited_by creator_of created_by member_of member role found_by sort
        part left right plus left_plus right_plus or match complete not and },
@@ -232,6 +232,8 @@ class Wql
     end
 
     def extension_type(val) add_join(:usr, :users, :id, :card_id)            end
+    # this appears to be hacked so that it will only work with users?  
+      
     def created_by(val)     merge field(:creator_id) => subspec(val)         end
     def last_edited_by(val) merge field(:updater_id) => subspec(val)         end
     def creator_of(val) merge field(:id)=>subspec(val,:return=>'creator_id') end
@@ -256,7 +258,7 @@ class Wql
     def found_by(val)
       cards = (String===val ? [Card.fetch_or_new(absolute_name(val))] : Wql.new(val).run)
       cards.each do |c|
-        raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && [Card::SearchID,Card::SetID].include?(c.type_id)
+        raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && [Card::SearchTypeID,Card::SetID].include?(c.type_id)
         found_by_spec = CardSpec.new(c.get_spec).rawspec
         merge(field(:id) => subspec(found_by_spec))
       end
@@ -272,23 +274,16 @@ class Wql
       return nil if v.empty?
       v.gsub!(/\W+/,' ')
       
-      cond =
-#        if Wagn::Conf[:enable_postgres_fulltext]
-#          v = v.strip.gsub(/\s+/, '&')
-#          sql.relevance_fields << "rank(indexed_name, to_tsquery(#{quote(v)}), 1) AS name_rank"
-#          sql.relevance_fields << "rank(indexed_content, to_tsquery(#{quote(v)}), 1) AS content_rank"
-#          "indexed_content @@ to_tsquery(#{quote(v)})" 
-#        else
-        begin
-          join_alias = add_revision_join
-          # FIXME: OMFG this is ugly
-          '(' + 
-          ["replace(#{self.table_alias}.name,'+',' ')","#{join_alias}.content"].collect do |f|
-            v.split(/\s+/).map{ |x| %{#{f} #{cxn.match(quote("[[:<:]]#{x}[[:>:]]"))}} }.join(" AND ")
-          end.join(" OR ") + 
-          ')'
-        end
-#        end
+      cond = begin
+        join_alias = add_revision_join
+        # FIXME: OMFG this is ugly
+        '(' + 
+        ["replace(#{self.table_alias}.name,'+',' ')","#{join_alias}.content"].collect do |f|
+          v.split(/\s+/).map{ |x| %{#{f} #{cxn.match(quote("[[:<:]]#{x}[[:>:]]"))}} }.join(" AND ")
+        end.join(" OR ") + 
+        ')'
+      end
+
       merge field(:cond)=>SqlCond.new(cond)
     end
     

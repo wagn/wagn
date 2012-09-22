@@ -55,7 +55,7 @@ module CardBuilderMethods
   end      
     
   def admin
-    User[:wagbot]
+    User[:wagn_bot]
   end
   
   def as(admin)

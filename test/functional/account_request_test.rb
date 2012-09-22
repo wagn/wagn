@@ -3,7 +3,7 @@ require 'card_controller'
 
 # Re-raise errors caught by the controller.
 class CardController; def rescue_action(e) raise e end; end
-class AccountRequestTest < ActionController::TestCase    
+class InvitationRequestTest < ActionController::TestCase    
   
   include AuthenticatedTestHelper
   
@@ -19,17 +19,17 @@ class AccountRequestTest < ActionController::TestCase
     end
   end
   
-  def test_should_redirect_to_invitation_request_landing_card 
+  def test_should_redirect_to_account_request_landing_card 
     post :create, :user=>{:email=>"jamaster@jay.net"}, :card=>{
       :type=>"Account Request",
       :name=>"Word Third",
       :content=>"Let me in!"
     }  
     assert_response 302
-    #assert_redirected_to @controller.url_for_page(::Setting.find_by_codename('invitation_request_landing').card.name)
+    #assert_redirected_to @controller.url_for_page(::Setting.find_by_codename('account_request_landing').card.name)
   end
   
-  def test_should_create_invitation_request  
+  def test_should_create_account_request  
     post :create, :user=>{:email=>"jamaster@jay.net"}, :card=>{
       :type=>"Account Request", 
       :name=>"Word Third", 
@@ -39,7 +39,7 @@ class AccountRequestTest < ActionController::TestCase
     @card =  Card["Word Third"]   
     @user = User.where(:card_id=>@card.id).first
     
-    @card.typecode.should == :invitation_request
+    @card.typecode.should == :account_request
 
     # this now happens only when created via account controller
     

@@ -20,7 +20,7 @@
   <% end %>
   <p>&nbsp;</p>
   
-  <% if Card.new(:typecode=>'invitation_request').ok?(:create) %>
+  <% if Card.new(:typecode=>'account_request').ok?(:create) %>
     <h2 class="page-header">Need an Account?</h2><%#ENGLISH%>
     <p><%= link_to 'Sign Up!', :action=>'signup' %></p>
   <% end %>

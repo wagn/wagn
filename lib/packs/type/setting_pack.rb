@@ -11,7 +11,7 @@ class Wagn::Renderer
             }
       wql[:left][ (set_class.trunkless? ? :name : :right )] = set_class.key_name
 
-      search_card = Card.new :type =>Card::SearchID, :content=>wql.to_json
+      search_card = Card.new :type =>Card::SearchTypeID, :content=>wql.to_json
       next if search_card.count == 0
 
       content_tag( :h2, 

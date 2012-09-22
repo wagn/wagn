@@ -59,7 +59,7 @@ class Session
 
     def as_bot
       #raise "need block" unless block_given?
-      tmp_id, @@as_id = @@as_id, Card::WagbotID
+      tmp_id, @@as_id = @@as_id, Card::WagnBotID
       @@user_id = @@as_id if @@user_id.nil?
 
       value = yield
@@ -88,7 +88,7 @@ class Session
     def always_ok?
       #warn Rails.logger.warn("aok? #{as_id}, #{as_id&&Card[as_id].id}")
       return false unless usr_id = as_id
-      return true if usr_id == Card::WagbotID #cannot disable
+      return true if usr_id == Card::WagnBotID #cannot disable
 
       always = Card.cache.read('ALWAYS') || {}
       #warn(Rails.logger.warn "Session.always_ok? #{usr_id}")
@@ -127,18 +127,15 @@ class Session
 
   public
 
-    NON_CREATEABLE_TYPES = %w{ invitation_request setting set }
+    NON_CREATEABLE_TYPES = %w{ account_request setting set }
 
     def createable_types
       type_names = Session.as_bot do
-        Card.search :type=>Card::CardtypeID, :return=>:name
-      end
-      noncreateable_names = NON_CREATEABLE_TYPES.map do |code|
-        Wagn::Codename.cardname code
+        Card.search :type=>Card::CardtypeID, :return=>:name, :not => { :codename => ['in'] + NON_CREATEABLE_TYPES }
       end
       type_names.reject do |name|
-        noncreateable_names.member?(name) || !Card.new( :type=>name ).ok?( :create )
-      end
+        !Card.new( :type=>name ).ok? :create
+      end.sort
     end
   end
 

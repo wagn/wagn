@@ -7,7 +7,7 @@ module Wagn::Model
     base.send :include, Wagn::Model::Collection
     base.send :include, Wagn::Model::Exceptions
     base.send :include, Wagn::Model::Fetch
-    base.send :include, Wagn::Model::Traits
+#    base.send :include, Wagn::Model::Traits
     base.send :include, Wagn::Model::Templating
     base.send :include, Wagn::Model::TrackedAttributes
     base.send :include, Wagn::Model::Permissions

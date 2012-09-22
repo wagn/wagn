@@ -14,10 +14,10 @@ module Wagn
         xml.Document do
         
           cardnames = Session.as_bot do
-            # Note: we use wagbot to find all the applicable cards, but not for the geocode or description cards
+            # Note: we use wagn_bot to find all the applicable cards, but not for the geocode or description cards
             # This is a workaround so that folks can have maps so long as their geocode cards are publicly viewable.
             # needs deeper redesign
-            if card.type_id==Card::SearchID
+            if card.type_id==Card::SearchTypeID
               card.item_cards( search_params.merge(:return=>:name, :limit=>1000) )
             else
               [card.name]

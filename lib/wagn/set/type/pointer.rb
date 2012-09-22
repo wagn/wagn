@@ -33,7 +33,8 @@ module Wagn::Set::Type::Pointer
     self.content=''
     array.each {|i| self << i }
   end
-
+  # FIXME.  this is horribly inefficient.  If there are 10 items in the array the card will get saved 10 times!
+  
   def << card
     add_item case card
                when Card; card.name
@@ -60,7 +61,7 @@ module Wagn::Set::Type::Pointer
   end
 
   def options_card
-    card = self.rule_card(:option)
+    card = self.rule_card :options
     (card && card.collection?) ? card : nil
   end
 
@@ -69,7 +70,7 @@ module Wagn::Set::Type::Pointer
   end
 
   def option_text(option)
-    name = self.rule(:option_label) || 'description'
+    name = self.rule(:options_label) || 'description'
     textcard = Card["#{option}+#{name}"]
     textcard ? textcard.content : nil
   end

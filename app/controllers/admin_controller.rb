@@ -30,42 +30,6 @@ class AdminController < ApplicationController
       @account = User.new( params[:user] || {} )
     end
   end
-
-  def tasks
-    raise Wagn::PermissionDenied.new('Only Administrators can view tasks') unless Session.always_ok?
-    @tasks = Wagn::Conf[:role_tasks]
-    #role.cache.reset
-    
-    @roles = Card.find_configurables.sort{|a,b| a.name <=> b.name }
-    @role_tasks = @roles.inject({}) do |h, rolecard|
-      h[rolecard.id] = Card[rolecard.cardname.trait_name(:tasks)].item_names
-    end
-  end
-
-  def save_tasks
-    raise Wagn::PermissionDenied.new('Only Administrators can change task permissions') unless Session.always_ok?
-    role_tasks = params[:role_task] || {}
-    rule_update = {}
-    Card.find(:type_id => Card::RoleID ).each do |role|
-
-      if tasks = role_tasks[role_id.to__s]
-        tasks.keys.each do |task|
-          rule_update[Card.task_rule(task)] = "#{rule_update[rulename]}[[#{role.name}]]"
-        end
-      end
-    end
-
-    rule_update.each do |rulename, content|
-      rulecard = Card.fetch_or_new(rulename)
-      rulecard.content = content
-      rulecard.save
-    end
-    User.cache.reset
-    Role.cache.reset
-
-    flash[:notice] = 'permissions saved'
-    redirect_to :action=>'tasks'
-  end
   
   def show_cache
     key = params[:id].to_cardname.to_key

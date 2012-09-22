@@ -21,9 +21,10 @@ module Wagn::Model::Fetch
 
       #warn "fetch #{mark.inspect}"
       # Symbol (codename) handling
-      mark = Wagn::Codename[mark] || raise("Missing codename for #{mark.inspect}") if Symbol===mark
+      if Symbol===mark
+        mark = Wagn::Codename[mark] || raise("Missing codename for #{mark.inspect}")
+      end
 
-      opts[:skip_virtual] = true if opts[:loaded_trunk]
       
       cache_key, method, val = if Integer===mark 
         [ "~#{mark}", :find_by_id_and_trash, mark ]
@@ -46,6 +47,8 @@ module Wagn::Model::Fetch
       end
       
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      opts[:skip_virtual] = true if opts[:loaded_trunk]
+      
       if Integer===mark
         raise "fetch of missing card_id #{mark}" if card.nil?
       else

@@ -258,7 +258,7 @@ class Wagn::Renderer::Html
   define_view :related do |args|
     sources = [card.type_name,nil]
     # FIXME codename *account
-    sources.unshift '*account' if [Card::WagbotID, Card::AnonID].member?(card.id) || card.type_id=='User'
+    sources.unshift '*account' if [Card::WagnBotID, Card::AnonID].member?(card.id) || card.type_id=='User'
     items = sources.map do |source|
       c = Card.fetch(source ? source.to_cardname.trait_name(:related) : Card::RelatedID)
       c && c.item_names
@@ -286,7 +286,7 @@ class Wagn::Renderer::Html
 
   define_view :options do |args|
     attribute = params[:attribute]
-    attribute ||= ([Card::WagbotID, Card::AnonID].member?(card.id) || card.type_id==Card::UserID ? 'account' : 'settings')
+    attribute ||= ([Card::WagnBotID, Card::AnonID].member?(card.id) || card.type_id==Card::UserID ? 'account' : 'settings')
     wrap :options, args do
       %{ #{ _render_header } <div class="options-body"> #{ render "option_#{attribute}" } </div> #{ notice } }
     end
@@ -337,7 +337,7 @@ class Wagn::Renderer::Html
         #{ raw subrenderer( Card.fetch current_set).render_content }
       </div>
   #{
-        if !card.trait_card(:account) && Card.toggle(card.rule(:accountable)) && Card[:account].ok?(:create) && card.ok?(:update)
+        if Card.toggle(card.rule(:accountable)) && card.trait_card(:account).ok?(:create)
           %{<div class="new-account-link">
           #{ link_to %{Add a sign-in account for "#{card.name}"},
               path(:options, :attrib=>:new_account),
@@ -357,15 +357,15 @@ class Wagn::Renderer::Html
     # FIXME: probably should have a limit (and paging)
     user_roles = role_card.item_cards(:limit=>0).map(&:id).
       reject{|x|x == Card::AnyoneID.to_s || x == Card::AuthID.to_s }
-    #warn Rails.logger.warn("option_roles #{user_roles.inspect}")
+#    warn Rails.logger.info("option_roles #{user_roles.inspect}")
 
     option_content = if role_card.ok? :update
       hidden_field_tag(:save_roles, true) +
       (roles.map do |rolecard|
-        #warn Rails.logger.warn("option_roles #{rolecard.inspect}")
+#        warn Rails.logger.info("option_roles: #{rolecard.inspect}")
         if rolecard && !rolecard.trash
          %{<div style="white-space: nowrap">
-           #{ check_box_tag "user_roles[%s]" % rolecard.id, 1, user_roles.member?(rolecard) ? true : false }
+           #{ check_box_tag "user_roles[%s]" % rolecard.id, 1, user_roles.member?(rolecard.id) ? true : false }
            #{ link_to_page rolecard.name }
          </div>}
         end
@@ -616,7 +616,7 @@ class Wagn::Renderer::Html
               </div>
              #{
   
-              if !Session.logged_in? && Card.new(:type_id=>Card::InvitationRequestID).ok?(:create)
+              if !Session.logged_in? && Card.new(:type_id=>Card::AccountRequestID).ok?(:create)
                 %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}
               end }}
             end   }

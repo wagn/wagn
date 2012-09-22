@@ -60,7 +60,7 @@ describe AccountController do
     it 'should create a user' do
       @new_user.should be
       @new_user.card_id.should == @user_card.id
-      @user_card.type_id.should == Card::InvitationRequestID
+      @user_card.type_id.should == Card::AccountRequestID
     end
 
     it 'should send email' do

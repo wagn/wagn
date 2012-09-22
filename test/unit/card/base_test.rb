@@ -24,7 +24,7 @@ class Card::BaseTest < ActiveSupport::TestCase
     assert_nil Card["Forba+TorgA+TorgC"]
 
     # FIXME: this is a pretty dumb test and it takes a loooooooong time
-    #while card = Card.find(:first,:conditions=>["type not in (?,?,?) and trash=?", 'InvitationRequest','User','Cardtype',false] )
+    #while card = Card.find(:first,:conditions=>["type not in (?,?,?) and trash=?", 'AccountRequest','User','Cardtype',false] )
     #  card.destroy!
     #end
     #assert_equal 0, Card.find_all_by_trash(false).size
@@ -79,7 +79,7 @@ class Card::BaseTest < ActiveSupport::TestCase
     end
   end
 
-  test 'update_should_create_subcards_as_wagbot_if_missing_subcard_permissions' do
+  test 'update_should_create_subcards_as_wagn_bot_if_missing_subcard_permissions' do
     Card.create(:name=>'peel')
     Session.user = :anonymous
     #warn Rails.logger.info("check #{Session.user_id}")

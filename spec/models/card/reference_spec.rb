@@ -5,7 +5,7 @@ describe "Card::Reference" do
   
   before do
     #setup_default_user  
-    Session.as(Card::WagbotID) # FIXME: as without a block deprecated
+    Session.as(Card::WagnBotID) # FIXME: as without a block deprecated
   end
   
   describe "references on hard templated cards should get updated" do

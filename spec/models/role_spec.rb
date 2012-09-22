@@ -35,12 +35,12 @@ end
 
 describe User, "Admin User" do
   before do
-    Session.user= Card::WagbotID
+    Session.user= Card::WagnBotID
   end
 #  it "should ok admin role" do Wagn.role_ok?(Role['admin'].id).should be_true end
   
   it "should have correct parties" do
-    Session.user_card.parties.sort.should == [Card::WagbotID, Card::AuthID, Card::AdminID]
+    Session.user_card.parties.sort.should == [Card::WagnBotID, Card::AuthID, Card::AdminID]
   end
     
 end

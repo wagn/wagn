@@ -1,4 +1,4 @@
-module Wagn::Set::Type::InvitationRequest
+module Wagn::Set::Type::AccountRequest
   def before_destroy
     block_user
   end

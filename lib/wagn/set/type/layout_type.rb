@@ -1,4 +1,4 @@
-module Wagn::Set::Type::Layout
+module Wagn::Set::Type::LayoutType
   def clean_html?
     false
   end

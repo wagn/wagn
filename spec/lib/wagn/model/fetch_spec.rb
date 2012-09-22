@@ -91,7 +91,7 @@ describe Card do
 
     describe "preferences" do
       before do
-        Session.as(Card::WagbotID) # FIXME: as without a block is deprecated
+        Session.as(Card::WagnBotID) # FIXME: as without a block is deprecated
       end
 
       it "prefers db cards to pattern virtual cards" do
@@ -184,7 +184,7 @@ describe Card do
       end
       c = Card.fetch("A+testsearch".to_cardname)
       assert c.virtual?
-      c.typecode.should == :search
+      c.typecode.should == :search_type
       c.content.should ==  "{\"plus\":\"_self\"}"
     end
   end

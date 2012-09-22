@@ -1,5 +1,5 @@
 module Wagn::Set::Type::Set
-  include Wagn::Set::Type::Search
+  include Wagn::Set::Type::SearchType
 
   def inheritable?
     return true if junction_only?

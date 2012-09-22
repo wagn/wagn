@@ -1,4 +1,4 @@
-module Wagn::Set::Type::Search
+module Wagn::Set::Type::SearchType
   #def before_save_search
   #  escape_content
   #end
@@ -37,7 +37,7 @@ module Wagn::Set::Type::Search
   end
 
   def get_spec params={}
-    spec = Session.as_bot do ## why is this a wagbot thing?  can't deny search content??
+    spec = Session.as_bot do ## why is this a wagn_bot thing?  can't deny search content??
       spec_content = raw_content
       raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
       JSON.parse( spec_content )

@@ -54,7 +54,7 @@ end
 #NOT WORKING, BUT IT SHOULD
 #describe Card, "a part of an unremovable card" do
 #  before do
-#     Session.as(Card::WagbotID)                                     
+#     Session.as(Card::WagnBotID)                                     
 #     # this ugly setup makes it so A+Admin is the actual user with edits..
 #     Card["Wagn Bot"].update_attributes! :name=>"A+Wagn Bot"  
 #  end
@@ -154,7 +154,7 @@ end
         
 describe Card, "recreate trashed card via new" do
 #  before do
-#    Session.as(Card::WagbotID) 
+#    Session.as(Card::WagnBotID) 
 #    @c = Card.create! :type=>'Basic', :name=>"BasicMe"
 #  end
 

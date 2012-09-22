@@ -3,20 +3,20 @@
 class CodenameTable < ActiveRecord::Migration
 
   RENAMES = {
-      "account_request"   => "invitation_request",
-      "wagn_bot"          => "wagbot",
-      "*search"           => "result",
+      "search"            => "search_type",
       "layout"            => "layout_type"
     }
   CODENAMES = %w{
+    
+      *all *default basic
         
-      basic cardtype date file html image account_request number phrase
+      cardtype date file html image account_request number phrase
       plain_text pointer role search set setting toggle user layout
     
-      *all *all_plus *star *rstar *type *type_plus_right *right *self
+      *all_plus *star *rstar *type *type_plus_right *right *self
       
       *add_help *accountable *autoname *captcha *comment *content *create *default *delete
-      *edit_help *option *option_label *input *layout *read  *send *table_of_contents *thanks *update 
+      *edit_help *options *options_label *input *layout *read *send *table_of_contents *thanks *update 
       
       anyone_signed_in anyone administrator anonymous wagn_bot
       
@@ -24,7 +24,7 @@ class CodenameTable < ActiveRecord::Migration
       
       *home *title *tiny_mce
       
-      *account_link *alert *version *foot *head *when_created *when_last_edited *navbox
+      *account_links *alerts *version *foot *head *when_created *when_last_edited *navbox
       
       *attach *bcc *cc *from *subject *to 
       
@@ -38,18 +38,18 @@ class CodenameTable < ActiveRecord::Migration
 
     } 
 
-#not referred to in code:
-# *incoming *tagged *community *count *editing *editor *outgoing *plus_part *refer_to *member *sidebar
-# *created *creator *includer   *inclusion  *last_edited *missing_link *session *link *linker 
-# *referred_to_by *plus_card *plus *watching *users 
+# not referred to in code:
+#  *incoming *tagged *community *count *editing *editor *outgoing *plus_part *refer_to *member *sidebar
+#  *created *creator *includer   *inclusion  *last_edited *missing_link *session *link *linker 
+#  *referred_to_by *plus_card *plus *watching *users 
 
-#   need to be in packs    
-#    *declare *declare_help *sol *pad_options etherpad
+# need to be in packs    
+#  *declare *declare_help *sol *pad_options etherpad
 
-  OPT_CODENAMES = %w{cardtype_a cardtype_b cardtype_c cardtype_d cardtype_e cardtype_f}
 
   # still a bit of a wart, but at least it is mostly here in migrations
   @@have_codes = nil
+  # I don't understand why this is needed.  At this point they shouldn't have codes.  -efm
 
   YML_CODE_FILE = 'db/bootstrap/cards.yml'
   
@@ -64,16 +64,18 @@ class CodenameTable < ActiveRecord::Migration
     Card.reset_column_information
     Wagn::Cache.reset_global 
 
-    @@have_codes = !Wagn::Codename[:wagbot].nil?
+    @@have_codes = !Wagn::Codename[:wagn_bot].nil?
     warn Rails.logger.warn("have_codes #{@@have_codes}")
     CodenameTable.load_bootcodes unless @@have_codes
 
     Session.as_bot do
-      CodenameTable::CODENAMES.each { |name| CodenameTable.add_codename name }
-      warn Rails.logger.warn("migr opt test #{Card['cardtype_a']}")
-      if Card['cardtype_a']
-        CodenameTable::OPT_CODENAMES.each { |name| CodenameTable.add_codename name, true }
-      else warn Rails.logger.warn("migr skip optionals") end
+      CodenameTable::CODENAMES.each do |name|
+        CodenameTable.add_codename name
+      end
+#      warn Rails.logger.warn("migr opt test #{Card['cardtype_a']}")
+#      if Card['cardtype_a']
+#        CodenameTable::OPT_CODENAMES.each { |name| CodenameTable.add_codename name, true }
+#      else warn Rails.logger.warn("migr skip optionals") end
     end
     Wagn::Codename.reset_cache
   end
@@ -121,7 +123,7 @@ class CodenameTable < ActiveRecord::Migration
     if @@have_codes == false
       false
     else
-      @@have_codes = !Wagn::Codename[:wagbot].nil? and
+      @@have_codes = !Wagn::Codename[:wagn_bot].nil? and
         card = Card[name] and card.id == Wagn::Codename[CodenameTable.name2code(name)]
     end
   end
@@ -135,7 +137,7 @@ class CodenameTable < ActiveRecord::Migration
       
       if !card
         Wagn::Codename.reset_cache
-        return false if opt
+#        return false if opt
         puts Rails.logger.warn "adding card for codename #{name}"
         card = if name=='*double_click'
           Card.create! :name=>'*double click', :type=>'Toggle', :content=>'1'

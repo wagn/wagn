@@ -4,8 +4,8 @@ class Card::Revision < ActiveRecord::Base
   
   cattr_accessor :cache
 
-  # userstamp methods
-  stampable :stamper_class_name => :card
+  belongs_to :card, :class_name => 'Card', :foreign_key => :creator_id
+
   before_save :set_stamper
 
   def set_stamper

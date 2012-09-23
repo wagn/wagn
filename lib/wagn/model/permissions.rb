@@ -198,7 +198,7 @@ module Wagn::Model::Permissions
   end
   
   def update_read_rule
-    Card.record_timestamps = Card.record_userstamp = false
+    Card.record_timestamps = false
 
     reset_patterns # why is this needed?
     rcard, rclass = permission_rule_card :read
@@ -220,7 +220,7 @@ module Wagn::Model::Permissions
     end
 
   ensure
-    Card.record_timestamps = Card.record_userstamp = true
+    Card.record_timestamps = true
   end
 
   # fifo of cards that need read rules updated

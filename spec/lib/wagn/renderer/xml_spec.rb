@@ -100,11 +100,8 @@ describe Wagn::Renderer::Xml, "" do
 
     describe "css classes" do
       it "are correct for open view" do
-        pending "with html"
         c = Card.new :name => 'Aopen', :content => "{{A|open}}"
-        Wagn::Renderer::Xml.new(c)._render(:core).should be_html_with do
-          card( :class => "card-slot paragraph ALL TYPE-basic SELF-a") {}
-        end
+        Wagn::Renderer::Xml.new(c)._render(:core).should match /<card cardId="\d+" class="card-slot paragraph ALL TYPE-basic SELF-a view-open" home_view="open" name="A" style="" type_id="3">Alpha <cardlink class="known-card" card="\/Z">Z<\/cardlink><\/card>/
       end
     end
 

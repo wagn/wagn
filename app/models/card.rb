@@ -10,10 +10,6 @@ class Card < ActiveRecord::Base
 
   cattr_accessor :cache
 
-  # userstamp methods
-  model_stamper # Card is both stamped and stamper
-  stampable :stamper_class_name => :card
-
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
 
   attr_accessor :comment, :comment_author, :selected_rev_id,
@@ -25,6 +21,9 @@ class Card < ActiveRecord::Base
   attr_writer :update_read_rule_list
   attr_reader :type_args, :broken_type
   
+  belongs_to :card, :class_name => 'Card', :foreign_key => :creator_id
+  belongs_to :card, :class_name => 'Card', :foreign_key => :updater_id
+
   before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
   after_save :base_after_save, :update_ruled_cards, :update_queue, :expire_related
   
@@ -564,10 +563,6 @@ class Card < ActiveRecord::Base
   def after_save_hooks # don't move unless you know what you're doing, see above.
     Wagn::Hook.call :after_save, self
   end
-
-  #bail out when not recording userstamps (eg updating read rule)
-  #skip_callback :save, :after, :after_save_hooks, :save_attached_files,
-  # :if => lambda { !Card.record_userstamps }
 
   # Because of the way it chains methods, 'tracks' needs to come after
   # all the basic method definitions, and validations have to come after

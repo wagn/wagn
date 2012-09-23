@@ -10,7 +10,6 @@ gem 'paperclip',    '~> 2.4'
 gem 'rmagick',      '~> 2.13'
 gem "recaptcha",    "~> 0.3"
 
-gem 'userstamp' #, '~> 2.0'
 gem 'xmlscan',      '~> 0.3'
 gem 'warden'
 

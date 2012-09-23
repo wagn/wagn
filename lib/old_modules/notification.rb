@@ -6,7 +6,7 @@ module Notification
     end
 
     def send_notifications
-      return false if Card.record_userstamp==false
+      return false if Card.record_timestamps==false
       # userstamps and timestamps are turned off in cases like updating read_rules that are automated and
       # generally not of enough interest to warrant notification
 

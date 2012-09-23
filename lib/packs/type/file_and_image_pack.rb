@@ -2,7 +2,7 @@ class Wagn::Renderer
   
   define_view :core, :type=>'image' do |args|
     handle_source args do |source|
-      image_tag source
+      source == 'missing' ? "<!-- image missing #{@card.name} -->" : image_tag(source)
     end
   end
 

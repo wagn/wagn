@@ -94,6 +94,7 @@ module Wagn::Model::Attach
   def self.included(base)
     base.class_eval do
       has_attached_file :attach, :preserve_files=>true,
+        :default_url => "missing",
         :url => ":base_url/:basename-:size:revision_id.:extension",
         :path => ":local/:card_id/:size:revision_id.:extension",
         :styles => { :icon   => '16x16#', :small  => '75x75',

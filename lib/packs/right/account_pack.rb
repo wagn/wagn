@@ -4,7 +4,8 @@ class Wagn::Renderer::Html
   end
 
   define_view(:account) do |args|
-    tcard = @card.trait_card(:sol)
+    #tcard = @card.trait_card(:sol)
+    tcard = @card.trait_card(:account)
     raise "No card" unless tcard
 
     wrap( args ) do

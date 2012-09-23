@@ -43,9 +43,6 @@ class CodenameTable < ActiveRecord::Migration
 #  *created *creator *includer   *inclusion  *last_edited *missing_link *session *link *linker 
 #  *referred_to_by *plus_card *plus *watching *users 
 
-# need to be in packs    
-#  *declare *declare_help *sol *pad_options etherpad
-
 
   # still a bit of a wart, but at least it is mostly here in migrations
   @@have_codes = nil

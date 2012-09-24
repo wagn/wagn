@@ -31,9 +31,9 @@ module Wagn
     alias to_s s
 
 
-    def initialize(str)
+    def initialize str
       @s = str.to_s.strip
-#      @s = @s.encode('UTF-8') if RUBY19
+      @s = @s.encode('UTF-8') if RUBY19
       @key = if @s.index(JOINT)
           @parts = @s.split(/\s*#{Regexp.escape(JOINT)}\s*/)
           @parts << '' if @s.last == JOINT

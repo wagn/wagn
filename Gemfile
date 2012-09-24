@@ -3,7 +3,7 @@ source 'http://rubygems.org'
 
 # DEFAULT
 
-gem 'rails',        '~> 3.1.0'
+gem 'rails',        '~> 3.2'
 gem 'htmlentities', '~> 4.3'
 gem 'uuid',         '~> 2.3'
 gem 'paperclip',    '~> 2.4'
@@ -11,8 +11,6 @@ gem 'rmagick',      '~> 2.13'
 gem "recaptcha",    "~> 0.3"
 
 gem 'xmlscan',      '~> 0.3'
-gem 'warden'
-
 # the following two could be safely excluded on a local install (but are not known to cause problems)
 
 gem "rubyzip",      "~> 0.9" # only required in module.  should be separated out.

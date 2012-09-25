@@ -3,6 +3,8 @@ class AdminController < ApplicationController
   layout 'application'
 
   def setup
+    Wagn::Cardname #loading oddity made this necessary in dev.  pls don't remove without testing setup.
+    
     raise(Wagn::Oops, "Already setup") unless Session.no_logins? && !User[:first]
     Wagn::Conf[:recaptcha_on] = false
     if request.post?

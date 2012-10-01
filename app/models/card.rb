@@ -440,9 +440,11 @@ class Card < ActiveRecord::Base
     @cached_revision
   end
 
-  def previous_revision revision
-    if !new_card?
-      rev_index = revisions.find_index { |rev| rev.id == revision.id }
+  def previous_revision revision_id
+    if revision_id
+      rev_index = revisions.find_index do |rev|
+        rev.id == revision_id
+      end
       revisions[rev_index - 1] if rev_index.to_i != 0
     end
   end

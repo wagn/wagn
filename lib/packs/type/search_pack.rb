@@ -19,7 +19,7 @@ class Wagn::Renderer
   end
   
   define_view :card_list, :type=>:search_type do |args|
-    @item_view ||= (card.spec[:view]) || :name
+    @item_view ||= card.spec[:view] || :name
     
     if args[:results].empty?
       'no results'

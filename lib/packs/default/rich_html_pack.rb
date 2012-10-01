@@ -406,30 +406,32 @@ class Wagn::Renderer::Html
 
   define_view :changes do |args| 
     load_revisions
-    wrap :changes, args do
-      %{#{ _render_header unless params['no_changes_header'] }
-      <div class="revision-navigation">#{ revision_menu }</div>
+    if @revision
+      wrap :changes, args do
+        %{#{ _render_header unless params['no_changes_header'] }
+        <div class="revision-navigation">#{ revision_menu }</div>
 
-      <div class="revision-header">
-        <span class="revision-title">#{ @revision.title }</span>
-        posted by #{ link_to_page @revision.author.name }
-      on #{ format_date(@revision.created_at) } #{
-      if !card.drafts.empty?
-        %{<p class="autosave-alert">
-          This card has an #{ autosave_revision }
-        </p>}
-      end}#{
-      if @show_diff and @revision_number > 1  #ENGLISH
-        %{<p class="revision-diff-header">
-          <small>
-            Showing changes from revision ##{ @revision_number - 1 }:
-            <ins class="diffins">Added</ins> | <del class="diffmod">Deleted</del>
-          </small>
-        </p>}
-      end}
-      </div>
-      <div class="revision content">#{_render_diff}</div>
-      <div class="revision-navigation card-footer">#{ revision_menu }</div>}
+        <div class="revision-header">
+          <span class="revision-title">#{ @revision.title }</span>
+          posted by #{ link_to_page @revision.author.name }
+        on #{ format_date(@revision.created_at) } #{
+        if !card.drafts.empty?
+          %{<p class="autosave-alert">
+            This card has an #{ autosave_revision }
+          </p>}
+        end}#{
+        if @show_diff and @revision_number > 1  #ENGLISH
+          %{<p class="revision-diff-header">
+            <small>
+              Showing changes from revision ##{ @revision_number - 1 }:
+              <ins class="diffins">Added</ins> | <del class="diffmod">Deleted</del>
+            </small>
+          </p>}
+        end}
+        </div>
+        <div class="revision content">#{_render_diff}</div>
+        <div class="revision-navigation card-footer">#{ revision_menu }</div>}
+      end
     end
   end
 
@@ -663,8 +665,8 @@ class Wagn::Renderer::Html
   def load_revisions
     @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i
     @revision = card.revisions[@revision_number - 1]
+    @previous_revision = card.previous_revision @revision.id
     @show_diff = (params[:mode] != 'false')
-    @previous_revision = card.previous_revision(@revision)
   end
 
   def new_instruction

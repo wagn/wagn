@@ -1,7 +1,14 @@
 class Wagn::Renderer
+  define_view :core, :type=>'pointer' do |args|
+    card.item_names.join ', '
+  end
+end
+
+
+class Wagn::Renderer::Html
   
   define_view :core, :type=>'pointer' do |args|
-    @item_view ||= :closed
+    @item_view ||= DEFAULT_ITEM_VIEW
     %{<div class="pointer-list">#{pointer_items}</div>} 
     #+ link_to( 'add/edit', path(action), :remote=>true, :class=>'slotter add-edit-item' ) #ENGLISH 
   end

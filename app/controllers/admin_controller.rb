@@ -50,6 +50,18 @@ class AdminController < ApplicationController
     render :text =>response, :layout=> true  
   end
 
+  def tasks
+    response = %{
+      <h1>Global Permissions - REMOVED</h1>
+      <p>&nbsp;</p>
+      <p>After moving so much configuration power into cards, the old, weaker global system is no longer needed.</p>
+      <p>&nbsp;</p>
+      <p>Account permissions are now controlled through +*account cards and role permissions through +*role cards.</p>
+    }
+    render :text =>response, :layout=> true  
+    
+  end
+
   private
   
   def set_default_request_recipient

@@ -14,10 +14,8 @@ class Wagn::Renderer
       search_card = Card.new :type =>Card::SearchTypeID, :content=>wql.to_json
       next if search_card.count == 0
 
-      content_tag( :h2, 
-        raw( (set_class.trunkless? ? '' : '+') + set_class.key_name), 
-        :class=>'values-for-setting') + 
-      raw( subrenderer(search_card).render_content )
+      raw( content_tag( :h2, (set_class.trunkless? ? '' : '+') + set_class.key_name, :class=>'values-for-setting') ) + 
+      subrenderer(search_card)._render_content
     end.compact * "\n"
   
   end

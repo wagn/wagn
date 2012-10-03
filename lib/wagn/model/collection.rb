@@ -4,8 +4,6 @@ module Wagn::Model::Collection
       ::Wql.new(spec).run
     end
 
-       
-
     def count_by_wql(spec)       
       spec.delete(:offset)
       search spec.merge(:return=>'count')

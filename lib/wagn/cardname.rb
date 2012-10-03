@@ -137,10 +137,13 @@ module Wagn
       simple? ? [self] : ([self] + trunk_name.piece_names + [tag_name]).uniq
     end
 
-    def to_show(context)
-      # FIXME this is not quite right.  distinction is that is leaves blank parts blank.
-      (self =~/\b_(left|right|whole|self|user|main|\d+|L*R?)\b/) ?
-         to_absolute(context) : self
+    def to_show context
+      # FIXME this is not quite right.  distinction from absolute is that it leaves blank parts blank.
+      if s =~/\b_(left|right|whole|self|user|main|\d+|L*R?)\b/
+        to_absolute context
+      else
+        s
+      end
     end
 
     def escapeHTML(args)

@@ -54,6 +54,9 @@ class RolesUsers < ActiveRecord::Migration
           Card.create! :name => roles_name, :content => "[[#{ roles.join "]]\n[[" }]]"
         end
       end
+      
+      execute "delete from sessions"
+      # because old sessions have old account ids and no longer make sense.
 
 
     end

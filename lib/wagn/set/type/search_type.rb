@@ -1,7 +1,4 @@
 module Wagn::Set::Type::SearchType
-  #def before_save_search
-  #  escape_content
-  #end
 
   def collection?
     true
@@ -49,9 +46,5 @@ module Wagn::Set::Type::SearchType
     spec[:context] ||= (cardname.junction? ? cardname.left_name : cardname)
     spec
   end
-  
-  #def escape_content
-  #  self.content = CGI.unescapeHTML( URI.unescape(content) )
-  #end
-  
+
 end

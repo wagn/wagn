@@ -258,7 +258,7 @@ class Wagn::Renderer::Html
   define_view :related do |args|
     sources = [card.type_name,nil]
     # FIXME codename *account
-    sources.unshift '*account' if [Card::WagnBotID, Card::AnonID].member?(card.id) || card.type_id=='User'
+    sources.unshift '*account' if [Card::WagnBotID, Card::AnonID].member?(card.id) || card.typecode==:user
     items = sources.map do |source|
       c = Card.fetch(source ? source.to_cardname.trait_name(:related) : Card::RelatedID)
       c && c.item_names

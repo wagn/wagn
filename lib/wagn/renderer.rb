@@ -436,7 +436,7 @@ module Wagn
     end
       
     def build_link href, text, known_card = nil
-      #Rails.logger.warn "bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}"
+      #Rails.logger.info "bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}"
       klass = case href.to_s
         when /^https?:/; 'external-link'
         when /^mailto:/; 'email-link'

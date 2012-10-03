@@ -228,7 +228,7 @@ class Wql
     end                                                                                                
     
     def plus(val)
-      subcondition( { :left_plus=>val, :right_plus=>val.clone }, :conj=>:or )
+      subcondition( { :left_plus=>val, :right_plus=>val.deep_clone }, :conj=>:or )
     end
 
     def extension_type(val) add_join(:usr, :users, :id, :card_id)            end

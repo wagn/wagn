@@ -31,8 +31,8 @@ describe Card, "validate name" do
   it "should not allow mismatched name and key" do
     @c = Card.new :name=>"Test"
     @c.key="foo"  
-    @c.key.should == 'test'
-    #@c.valid?.should == false
+    #@c.key.should == 'test'
+    @c.valid?.should == false
     #@c.errors[:key].should_not be_blank
   end
 

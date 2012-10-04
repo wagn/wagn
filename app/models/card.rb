@@ -348,9 +348,9 @@ class Card < ActiveRecord::Base
   def left()      Card.fetch cardname.left_name   end
   def right()     Card.fetch cardname.tag_name    end
     
-  def key 
-    cardname.key                    
-  end
+#  def key 
+#    cardname.key                    
+#  end
   # DISLIKE - how do we access db key?
 
   def dependents
@@ -573,21 +573,25 @@ class Card < ActiveRecord::Base
 
   # this method piggybacks on the name tracking method and
   # must therefore be defined after the #tracks call
-  alias cardname= name=
-  def name_with_cardname= newname
-    newname = newname.to_s
-    if name != newname
-      #warn "name_change (reset if rule) #{name_without_tracking}, #{newname}, #{inspect}" unless name_without_tracking.blank?
-      reset_patterns_if_rule() # reset the old name
 
-      @cardname = nil
-      updates.add :name, newname
+  def name= newname
+    newkey = newname.to_cardname.key
+    if key != newkey
+      self.key = newkey 
+      reset_patterns_if_rule # reset the old name
       reset_patterns
+    end
+    if name != newname.to_s
+      @cardname = nil
+      updates.add :name, newname.to_s
     end
     newname
   end
-  alias_method_chain :name=, :cardname
-  def cardname() @cardname ||= name.to_cardname end
+  alias cardname= name=
+
+  def cardname
+    @cardname ||= name.to_cardname
+  end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # VALIDATIONS

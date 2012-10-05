@@ -574,19 +574,17 @@ class Card < ActiveRecord::Base
   # this method piggybacks on the name tracking method and
   # must therefore be defined after the #tracks call
 
-  def name= newname
+  def name_with_resets= newname
     newkey = newname.to_cardname.key
     if key != newkey
       self.key = newkey 
       reset_patterns_if_rule # reset the old name
       reset_patterns
     end
-    if name != newname.to_s
-      @cardname = nil
-      updates.add :name, newname.to_s
-    end
-    newname
+    @cardname = nil if name != newname.to_s
+    self.name_without_resets = newname.to_s
   end
+  alias_method_chain :name=, :resets
   alias cardname= name=
 
   def cardname

@@ -16,7 +16,7 @@ module Wagn::Model
     def reset_patterns_if_rule()
       return if name.blank?
 #      warn Rails.logger.warn("reset p ifr[#{inspect}], #{name_without_tracking}")
-      if !simple? and !new_card? and (setting=right).type_id==Card::SettingID and (set=left).type_id == Card::SetID
+      if !simple? and !new_card? and setting=right and setting.type_id==Card::SettingID and set=left and set.type_id==Card::SetID
         #warn (Rails.logger.debug "reset set: #{name}, Set:#{set.inspect} + Setting:#{setting.inspect}")
         set.include_set_modules
         #warn (Rails.logger.debug "reset RR [#{set.name}]? #{self.update_read_rule_list.inspect}")

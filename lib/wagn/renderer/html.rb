@@ -269,12 +269,12 @@ module Wagn
     # navigation for revisions -
     # --------------------------------------------------
     # some of this should be in rich_html, maybe most
-    def revision_link( text, revision, name, accesskey='', mode=nil )
+    def revision_link text, revision, name, accesskey='', mode=nil
       link_to text, path(:changes, :rev=>revision, :mode=>(mode || params[:mode] || true) ), 
         :class=>"slotter", :remote=>true
     end
 
-    def rollback(to_rev=nil)
+    def rollback to_rev=nil
       to_rev ||= @revision_number
       if card.ok?(:update) && !(card.current_revision==@revision)
         link_to 'Save as current', path(:rollback, :rev=>to_rev),
@@ -297,7 +297,7 @@ module Wagn
     def forward
       if @revision_number < card.revisions.length
         revision_link('Newer', @revision_number +1, 'to_next_revision', 'F' ) +
-          raw(" <small>(#{raw(@revision.card.revisions.length - @revision_number)})</small> ")
+          raw(" <small>(#{card.revisions.length - @revision_number})</small>")
       else
         'Newer <small>(0)</small>'
       end

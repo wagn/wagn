@@ -415,7 +415,11 @@ class Card < ActiveRecord::Base
   # CONTENT / REVISIONS
 
   def content
-    new_card? ? template.content : current_revision.content
+    if new_card?
+      template ? template.content : ''
+    else
+      current_revision.content
+    end
   end
   
   def raw_content
@@ -578,7 +582,7 @@ class Card < ActiveRecord::Base
     newkey = newname.to_cardname.key
     if key != newkey
       self.key = newkey 
-      reset_patterns_if_rule # reset the old name
+      reset_patterns_if_rule # reset the old name - should be handled in tracked_attributes!!
       reset_patterns
     end
     @cardname = nil if name != newname.to_s

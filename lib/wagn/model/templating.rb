@@ -13,7 +13,9 @@ module Wagn::Model::Templating
         default_card = rule_card :default, :skip_modules=>true
 
         dup_card = self.dup
-        dup_card.type_id_without_tracking = default_card.type_id
+#        dup_card.type_id_without_tracking = default_card.type_id
+        dup_card.type_id_without_tracking = default_card ? default_card.type_id : Card::DefaultTypeID
+
 
         if content_card = dup_card.content_rule_card
           @virtual = true

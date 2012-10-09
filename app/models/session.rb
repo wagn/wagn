@@ -29,7 +29,7 @@ class Session
       #warn "user=#{user.inspect}, As:#{@@as_id}, C:#{@@user_id}"; @@user_id
     end
 
-    def get_user_id user
+    def get_user_id user  #FIXME - should handle codenames
       case user
         when NilClass;   nil
         when User    ;   user.card_id

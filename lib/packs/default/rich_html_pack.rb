@@ -383,7 +383,7 @@ class Wagn::Renderer::Html
 
     %{#{ raw option_header( 'User Roles' ) }#{
        option(option_content, :name=>"roles",
-      :help=>%{ <span class="small">"#{ link_to_page 'Roles' }" determine which #{ Session.always_ok? ? link_to( 'global permissions', :controller=>'admin', :action=>'tasks') : 'global permissions'} a user has access to, as well as card-specific permissions like read, view, comment, and delete.  You can only change a user's roles if you have the global "assign user roles" permission. </span>}, #ENGLISH
+      :help=>%{ <span class="small">"#{ link_to_page 'Roles' }" are used to set user permissions</span>}, #ENGLISH
       :label=>"#{card.name}'s Roles",
       :editable=>card.trait_card(:roles).ok?(:update)
     )}}

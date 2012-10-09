@@ -46,7 +46,7 @@ module Wagn::Set::Type::Set
           when Card::TypeID; :id
           when Card::SelfID; :type_id
           end
-        left.send method if method
+        left.send method if method #FIXME - this fails when left is nil
       end
 
     groups[:pointer] = ['*options','*options label','*input'] if member_type_id==Card::PointerID

@@ -162,7 +162,7 @@ module Wagn
       context = context.to_cardname
       parts.map do |part|
         new_part = case part
-          when /^_user$/i;            (user=Session.user_id) ? user : part
+          when /^_user$/i;            (user=Session.user_card) ? user.name : part
           when /^_main$/i;            Wagn::Conf[:main_name]
           when /^(_self|_whole|_)$/i; context
           when /^_left$/i;            context.trunk_name

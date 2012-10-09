@@ -36,7 +36,7 @@ module Wagn::Model::Attach
 
   def attachment_style type_id, style
     case type_id
-    when Card::TypeID
+    when Card::FileID
       ''
     when Card::ImageID
       if style.nil? || style.to_sym == :full

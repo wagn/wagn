@@ -60,7 +60,7 @@ class Wagn::Renderer
   end
 
   define_view :denial, :perms=>:none, :error_code=>403 do |args|
-    main? ? 'Permission Denied' : ''
+    focal? ? 'Permission Denied' : ''
   end
   
   define_view :bad_address, :perms=>:none, :error_code=>404 do |args|

@@ -597,7 +597,7 @@ class Wagn::Renderer::Html
   
   define_view :denial do |args|
     task = args[:denied_task] || params[:action]
-    if !main?
+    if !focal?
       %{<span class="denied"><!-- Sorry, you don't have permission to #{task} this card --></span>}
     else
       wrap :denial, args do #ENGLISH below

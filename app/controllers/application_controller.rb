@@ -113,7 +113,6 @@ class ApplicationController < ActionController::Base
   end
   
   def show_file
-    #Rails.logger.debug "show_file #{@card}"
     return fast_404 if !@card
     
     @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
@@ -124,7 +123,7 @@ class ApplicationController < ActionController::Base
       return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) ) 
     end
 
-    style = @card.attachment_style( @card.type_id, params[:size] || @style )    
+    style = @card.attachment_style @card.type_id, ( params[:size] || @style )    
     return fast_404 if !style
     
     # check file existence?  or just rescue MissingFile errors and raise NotFound?

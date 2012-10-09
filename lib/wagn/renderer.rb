@@ -279,7 +279,7 @@ module Wagn
       if view != original_view
         args[:denied_view] = original_view
         
-        if main? && error_code = @@error_codes[view] 
+        if focal? && error_code = @@error_codes[view] 
           root.error_status = error_code
         end
       end

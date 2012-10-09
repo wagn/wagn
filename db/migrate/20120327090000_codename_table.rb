@@ -7,36 +7,36 @@ class CodenameTable < ActiveRecord::Migration
       "layout"            => "layout_type"
     }
   CODENAMES = %w{
-    
-      *all *default basic
-        
+
+      *all *default *content basic *read *send
+
       cardtype date file html image account_request number phrase
       plain_text pointer role search set setting toggle user layout
-    
+
       *all_plus *star *rstar *type *type_plus_right *right *self
-      
-      *add_help *accountable *autoname *captcha *comment *content *create *default *delete
-      *edit_help *options *options_label *input *layout *read *send *table_of_contents *thanks *update 
-      
+
+      *add_help *accountable *autoname *captcha *comment *create *delete
+      *edit_help *options *options_label *input *layout *table_of_contents *thanks *update 
+
       anyone_signed_in anyone administrator anonymous wagn_bot
-      
+
       *account *roles *email
-      
+
       *home *title *tiny_mce
-      
+
       *account_links *alerts *version *foot *head *when_created *when_last_edited *navbox
-      
+
       *attach *bcc *cc *from *subject *to 
-      
+
       *css *now *recent *related
-      
+
       *watchers *search
-      
+
       *invite *signup *request 
 
       *double_click *favicon *logo
 
-    } 
+    }
 
 # not referred to in code:
 #  *incoming *tagged *community *count *editing *editor *outgoing *plus_part *refer_to *member *sidebar

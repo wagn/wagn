@@ -503,7 +503,7 @@ class Card < ActiveRecord::Base
       else
         party_keys = ['in', Card::AnyoneID] + parties
         Session.as_bot do
-          Card.search(:right=>'*read', :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
+          Card.search(:right=>{:codename=>'read'}, :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
         end
       end
     end

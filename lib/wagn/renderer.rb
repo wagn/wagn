@@ -406,7 +406,7 @@ module Wagn
       pcard = opts.delete(:card) || card
       base = action==:read ? '' : "/card/#{action}" 
       
-      if pcard && !pcard.name.empty? && action != :create #might be some issues with new?
+      if pcard && !pcard.name.empty? && !opts.delete(:no_id) && action != :create #might be some issues with new?
         base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.to_url_key )
       end
       if attrib = opts.delete( :attrib )

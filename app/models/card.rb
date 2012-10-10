@@ -182,7 +182,7 @@ class Card < ActiveRecord::Base
   # SAVING
 
   def update_attributes args={}
-    if newtype = args.delete(:type) || args.delete('type')
+    if args and newtype = args.delete(:type) || args.delete('type')
       args[:type_id] = Card.fetch_id( newtype )
     end
     super args

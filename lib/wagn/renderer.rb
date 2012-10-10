@@ -489,15 +489,8 @@ module Wagn
     end
 
     ## ----- for Linkers ------------------
-    def typecode_options
-      Session.createable_types.map do |type_id|
-        type=Card[type_id] and type=type.name and [type, type]
-      end.compact
-    end
 
-    def typecode_options_for_select selected=Card.default_typecode_key
-      options_from_collection_for_select(typecode_options, :first, :last, selected)
-    end
+
 
     def card_title_span title
       %{<span class="namepart-#{title.to_cardname.css_name}">#{title}</span>}

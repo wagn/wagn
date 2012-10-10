@@ -98,7 +98,7 @@ class Wagn::Renderer::Html
   end
 
   define_view :missing do |args|
-    return '' unless card.ok? :create  #this should be moved into ok_view!!
+    return '' unless card.ok? :create  #this should be moved into ok_view
     #warn "missing #{args.inspect} #{caller[0..10]*"\n"}"
     new_args = { 'card[name]'=>card.name }
     new_args['card[type]'] = args[:type] if args[:type]
@@ -217,7 +217,7 @@ class Wagn::Renderer::Html
         #{if card.type_id == Card::CardtypeID and !Card.search(:type=>card.cardname).empty? #ENGLISH
           %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
         else
-          %{<div>to #{ raw typecode_field :class=>'type-field edit-type-field' }</div>}
+          %{<div>to #{ raw type_field :class=>'type-field edit-type-field' }</div>}
         end}
         <div>
           #{ submit_tag 'Submit', :disable_with=>'Submitting' }
@@ -661,11 +661,10 @@ class Wagn::Renderer::Html
   
   private
 
-
   def load_revisions
     @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i
     @revision = card.revisions[@revision_number - 1]
-    @previous_revision = card.previous_revision @revision.id
+    @previous_revision = @revision ? card.previous_revision( @revision.id ) : nil
     @show_diff = (params[:mode] != 'false')
   end
 
@@ -705,7 +704,7 @@ class Wagn::Renderer::Html
           else
             %{<span class="new-type">
               <label>type:</label>
-              #{ typecode_field :class=>'type-field new-type-field live-type-field', :href=>path(:new), 'data-remote'=>true}
+              #{ type_field :class=>'type-field new-type-field live-type-field', :href=>path(:new), 'data-remote'=>true}
             </span>}
           end}
 

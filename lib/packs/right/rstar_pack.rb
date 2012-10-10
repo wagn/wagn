@@ -138,7 +138,7 @@ class Wagn::Renderer::Html
 
       if edit_mode
         %{<label>type:</label>}+
-        raw(typecode_field( :class =>'type-field rule-type-field live-type-field', 'data-remote'=>true,
+        raw(type_field( :class =>'type-field rule-type-field live-type-field', 'data-remote'=>true,
           :href => path(:read, :card=>open_rule, :view=>:open_rule, :type_reload=>true) ) )
       elsif current_set_key
         '<label>type:</label>'+

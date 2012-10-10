@@ -223,9 +223,15 @@ module Wagn
       }.merge(options))
     end
 
-    def typecode_field(options={})
-      type_name = card ? card.type_name : ''
-      template.select_tag('card[type]', typecode_options_for_select( type_name ), options)
+    def type_field args={}
+      typelist = Session.createable_types
+      typelist << card.type_name if !card.new_card?
+      # current type should be an option on existing cards, regardless of create perms
+
+      options = options_from_collection_for_select(
+        typelist.uniq.sort.map { |name| [ name, name ] },
+        :first, :last, Card[ card ? card.type_id : Card::DefaultTypeID ].name )
+      template.select_tag 'card[type]', options, args
     end
 
     def content_field(form, options={})

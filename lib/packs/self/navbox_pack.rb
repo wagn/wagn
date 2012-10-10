@@ -1,15 +1,15 @@
 class Wagn::Renderer::Html
-  define_view :raw, :name=>'*navbox' do |args|
-    %{ <form action="#{Card.path_setting '/*search'}" method="get" class="navbox-form nodblclick">
+  define_view :raw, :name=>'navbox' do |args|
+    %{ <form action="#{Card.path_setting '/:search'}" method="get" class="navbox-form nodblclick">
       #{hidden_field_tag :view, 'content' }
       #{text_field_tag :_keyword, '', :class=>'navbox' }
      </form>}
   end
-  alias_view(:raw, {:name=>'*navbox'}, :core)
+  alias_view(:raw, {:name=>'navbox'}, :core)
 end
 
 class Wagn::Renderer::Json < Wagn::Renderer
-  define_view :complete, :name=>'*search' do |args|
+  define_view :complete, :name=>:search do |args|
     term = params['_keyword']
     if term =~ /^\+/ && main = params['main']
       term = main+term
@@ -22,8 +22,8 @@ class Wagn::Renderer::Json < Wagn::Renderer
     JSON({ 
       :search => true, # card.ok?( :read ),
       :add    => (exact.new_card? && exact.cardname.valid? && !exact.virtual? && exact.ok?( :create )),
-      :new    => (exact.typecode=='Cardtype' && 
-                  Card.new(:typecode=>exact.codename).ok?(:create) && 
+      :new    => (exact.type_id==Card::CardtypeID && 
+                  Card.new(:type_id=>exact.type_id).ok?(:create) && 
                   [exact.name, exact.cardname.to_url_key]
                  ),
       :goto   => goto_cards.map { |name| [name, highlight(name, term), name.to_cardname.to_url_key] }

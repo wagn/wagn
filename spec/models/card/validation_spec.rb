@@ -2,7 +2,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
     
 describe Card, "validate name" do
   before(:each) do
-    ::User.as :joe_user
+    Session.as :joe_user
   end
   
   it "should error on name with /" do
@@ -31,8 +31,8 @@ describe Card, "validate name" do
   it "should not allow mismatched name and key" do
     @c = Card.new :name=>"Test"
     @c.key="foo"  
-    @c.key.should == 'test'
-    #@c.valid?.should == false
+    #@c.key.should == 'test'
+    @c.valid?.should == false
     #@c.errors[:key].should_not be_blank
   end
 

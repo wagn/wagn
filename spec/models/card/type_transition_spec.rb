@@ -32,6 +32,7 @@ end
 
 module Wagn::Set::Type::CardtypeF
   def self.included(base) Card.count = 2   end
+  # FIXME: create_extension doesn't exist anymore, need another hook
   def create_extension()  increment_count  end
   def increment_count()   Card.count += 1  end
 end
@@ -39,20 +40,13 @@ end
 
 describe Card, "with role" do
   before do
-    User.as :wagbot 
-    @role = Card.search(:type=>'Role')[0]
+    Session.as_bot do
+      @role = Card.search(:type=>'Role')[0]
+    end
   end
   
-  it "should have a role extension" do
-    @role.extension_type.should=='Role'
-  end
-
-  it "should lose role extension upon changing type" do
-    # this test fails on a permission error in Mysql
-    pending "actually broken? probably irrelevant in 1.8.2 anyway..."
-    @role.typecode = 'Basic'
-    @role.save
-    @role.extension.should == nil
+  it "should have a role type" do
+    @role.type_id.should== Card::RoleID
   end
 end
 
@@ -60,8 +54,9 @@ end
 
 describe Card, "with account" do
   before do
-    User.as :wagbot 
-    @joe = change_card_to_type('Joe User', 'Basic')
+    Session.as_bot do
+      @joe = change_card_to_type('Joe User', :basic)
+    end
   end
   
   it "should not have errors" do
@@ -69,97 +64,95 @@ describe Card, "with account" do
   end
 
   it "should allow type changes" do
-    @joe.typecode.should == 'Basic'
+    @joe.typecode.should == :basic
   end
 
-  it "should not lose account on card change" do
-    @joe.extension.should_not == nil
-  end
 end
 
 describe Card, "type transition approve create" do
-  before do
-    User.as :wagbot do
-      # this card/content is in the test DB, and this causes a duplicate id error
-      #Card.create :name=>'Cardtype B+*type+*create', :content=>'[[r1]]'
-      (c=Card.fetch('Cardtype B+*type+*create')).content.should == '[[r1]]'
-      c.typecode.should == 'Pointer'
-    end
+  it 'should have cardtype b create role r1' do
+    (c=Card.fetch('Cardtype B+*type+*create')).content.should == '[[r1]]'
+    c.typecode.should == :pointer
   end
   
   it "should have errors" do
-      Rails.logger.info "testing point 2"
-    lambda { change_card_to_type("basicname", "CardtypeB") }.should raise_error(Wagn::PermissionDenied)
+    lambda { change_card_to_type("basicname", "cardtype_b") }.should raise_error(Wagn::PermissionDenied)
   end
 
   it "should be the original type" do
-    lambda { change_card_to_type("basicname", "CardtypeB") }
-    Card.find_by_name("basicname").typecode.should == 'Basic'
+    lambda { change_card_to_type("basicname", "cardtype_b") }
+    Card["basicname"].typecode.should == :basic
   end
 end
 
 
 describe Card, "type transition validate_destroy" do  
-  before do @c = change_card_to_type("type-c-card", 'Basic') end
+  before do @c = change_card_to_type("type-c-card", :basic) end
   
   it "should have errors" do
     @c.errors[:destroy_error].first.should == "card c is indestructible"
   end
   
   it "should retain original type" do
-    Card.find_by_name("type_c_card").typecode.should == 'CardtypeC'
+    Card["type_c_card"].typecode.should == :cardtype_c
   end
 end
 
 describe Card, "type transition validate_create" do
-  before do @c = change_card_to_type("basicname", "CardtypeD") end
+  before do @c = change_card_to_type("basicname", "cardtype_d") end
   
   it "should have errors" do
+    pending "CardtypeD does not have a codename, so this is an invalid test"
     @c.errors[:type].first.match(/card d always has errors/).should be_true
   end
   
   it "should retain original type" do
-    Card.find_by_name("basicname").typecode.should == 'Basic'
+    pending "CardtypeD does not have a codename, so this is an invalid test"
+    Card["basicname"].typecode.should == :basic
   end
 end
 
 describe Card, "type transition destroy callback" do
   before do
-    @c = change_card_to_type("type-e-card", "Basic") 
+    @c = change_card_to_type("type-e-card", :basic) 
   end
   
   it "should decrement counter in before destroy" do
+    pending "no trigger for this test anymore"
     Card.count.should == 1
   end
   
   it "should change type of the card" do
-    Card.find_by_name("type-e-card").typecode.should == 'Basic'
+    Card["type-e-card"].typecode.should == :basic
   end
 end
 
 describe Card, "type transition create callback" do
   before do 
-    User.as :wagbot do
+    Session.as_bot do
       Card.create(:name=>'Basic+*type+*delete', :type=>'Pointer', :content=>"[[Anyone Signed in]]")
     end
-    @c = change_card_to_type("basicname", 'CardtypeF') 
+    @c = change_card_to_type("basicname", :cardtype_f) 
   end
     
   it "should increment counter"  do
+    pending "No extensions, so no hooks for this now"
     Card.count.should == 3
   end
   
   it "should change type of card" do
-    Card.find_by_name("basicname").typecode.should == 'CardtypeF'
+    Card["basicname"].typecode.should == :cardtype_f
   end
 end                
 
 
-def change_card_to_type(name, typecode)
-  User.as :joe_user do
+def change_card_to_type(name, type)
+  Session.as :joe_user do
     card = Card.fetch(name)
-    card.typecode = typecode;
-    card.save
+    tid=card.type_id = Symbol===type ? Wagn::Codename[type] : Card.fetch_id(type)
+    #warn "card[#{name.inspect}, T:#{type.inspect}] is #{card.inspect}, TID:#{tid}"
+    r=card.save
+    #warn "saved #{card.inspect} R#{r}"
     card
   end
 end

@@ -4,17 +4,9 @@ module Wagn::Model::Collection
       ::Wql.new(spec).run
     end
 
-    def [](name) 
-       Card.fetch(name, :skip_virtual=>true)
-    end             
-
     def count_by_wql(spec)       
       spec.delete(:offset)
       search spec.merge(:return=>'count')
-    end
-
-    def find_by_name( name, opts={} ) 
-      self.find_by_key_and_trash( name.to_cardname.to_key, false, opts.merge( :include=>:current_revision ))
     end
   end
 
@@ -45,18 +37,6 @@ module Wagn::Model::Collection
       Wagn::Renderer.new(self, :not_current=>true)._render_raw
     )
   end
-  
-#  def update_search_index     
-#    return unless @name_or_content_changed && Wagn::Conf[:enable_postgres_fulltext]
-#    
-#    connection.execute %{
-#      update cards set indexed_content = concat( setweight( to_tsvector( name ), 'A' ), 
-#      to_tsvector( (select content from revisions where id=cards.current_revision_id) ) ),
-#      indexed_name = to_tsvector( name ) where id=#{self.id}
-#    }
-#    @name_or_content_changed = false
-#    true
-#  end
 
   def self.included base
     super

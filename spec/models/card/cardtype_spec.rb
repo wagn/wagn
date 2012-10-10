@@ -1,57 +1,60 @@
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
-class Card # this is used by some type based modules on CardtypeE from type_transition
+class Card
+  # REVIEW: hooks api will do this differently, probably should remove and add new tests elsewhere
+  # this is used by some type based modules on CardtypeE from type_transition
   cattr_accessor :count
 end
 
 describe "Card (Cardtype)" do
   
   before do
-    User.as :joe_user
+    Session.as :joe_user
   end
 
   it "should not allow cardtype remove when instances present" do
     Card.create :name=>'City', :type=>'Cardtype'
     city = Card.fetch('City')
-    Card.create :name=>'Sparta', :type=>'City'
-    Card.create :name=>'Eugene', :type=>'City'
+    c1=Card.create :name=>'Sparta', :type=>'City'
+    c2=Card.create :name=>'Eugene', :type=>'City'
     assert_equal ['Eugene','Sparta'], Card.search(:type=>'City').plot(:name).sort
     assert_raises Wagn::Oops do
       city.destroy!
     end                             
     # make sure it wasn't destroyed / trashed
-    Card.find_by_name('City').should_not be_nil
+    Card['City'].should_not be_nil
   end
   
   it "remove cardtype" do
     Card.create! :name=>'County', :type=>'Cardtype'
-    c = Card.find_by_name('County')
+    c = Card['County']
     c.destroy
-    Cardtype.find_by_class_name('County').should == nil
   end
   
   it "cardtype creation and dynamic cardtype" do
-    assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).typecode == 'Cardtype'
-    assert_instance_of Cardtype, Card.fetch("BananaPudding").extension
-    assert_instance_of Cardtype, Cardtype.find_by_class_name("BananaPudding")    
+    
+    assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).type_id == Wagn::Codename[:cardtype]
+    assert_instance_of Card, c=Card.fetch("BananaPudding")
+
     # you have to have a module to include or it's just a Basic (typecode fielde excepted)
-    #assert_instance_of Card::BananaPudding, Card::BananaPudding.create( :name=>"figgy" )
+    assert Card.create(:typecode=>'banana_pudding',:name=>"figgy" ).type_name == 'BananaPudding'
+    assert Card.find_by_type_id(c.id)
   end
 
   describe "conversion to cardtype" do
     before do
-      @card = Card.create!(:name=>'Cookie')
-      @card.typecode.should == 'Basic'      
+      @card = Card.create!(:type=>'Cardtype', :name=>'Cookie')
+      @card.type_name.should == 'Cardtype'
     end
     
     it "creates cardtype model and permission" do
-      @card.typecode = 'Cardtype'
+      @card.type_id = Card.fetch_id('cookie')
       @card.save!
-      @card.extension.class_name.should == 'Cookie'
-      Cardtype.name_for('Cookie').should == 'Cookie'
+      @card.type_name.should == 'Cookie'
       @card=Card['Cookie']
-      assert_instance_of Cardtype, @card.extension
-      assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).typecode
+      assert_instance_of Card, @card
+      @card.typecode.should == nil # :cookie
+      assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).type_name
     end
   end
   
@@ -64,23 +67,9 @@ describe "Card (Cardtype)" do
 end
 
 
-
-describe Card, "codename_generation" do
-  it "should create valid classnames" do
-    Card.generate_codename_for("$SBJgg%%od").should == "SBJggOd"
-  end
-  
-  it "should create incremented classnames when first choice is taken" do
-    Card.generate_codename_for("User").should == "User1"
-    Card.generate_codename_for("Basic").should == "Basic1"
-    Card.generate_codename_for("Novelicious").should == "Novelicious"
-#    Card.generate_codename_for('Process').should == 'Process1'
-  end
-end                  
-
 describe Card, "created without permission" do
   before do
-    User.current_user = :anon
+    Session.user= Card::AnonID
   end
    
   # FIXME:  this one should pass.  unfortunately when I tried to fix it it started looking like the clean solution 
@@ -93,36 +82,43 @@ describe Card, "created without permission" do
   it "should not create a new cardtype until saved" do
     lambda {
       Card.new( :name=>'foo', :type=>'Cardtype')
-    }.should_not change(Cardtype, :count) 
+    }.should_not change(Card, :count) 
   end
 end
 
 
-describe Card, "Normal card with junctions" do
+describe Card, "Normal card with dependents" do
   before do
-    User.as :wagbot 
     @a = Card['A']
   end
-  it "should confirm that it has junctions" do
-    @a.junctions.length.should > 0
+  it "should confirm that it has dependents" do
+    @a.dependents.length.should > 0
   end
   it "should successfull have its type changed" do
-    @a.typecode = 'Number'; @a.save!
-    Card['A'].typecode.should== 'Number'
+    Session.as_bot do
+      @a.type_id = Card::NumberID;
+      @a.save!
+      Card['A'].typecode.should== :number
+    end
   end
-  it "should still have its junctions after changing type" do
-    @a.typecode = 'CardtypeE'; @a.save!
-    Card['A'].junctions.length.should > 0
+  it "should still have its dependents after changing type" do
+    Session.as_bot do
+      assert type_id = Card.fetch_id('cardtype_e')
+      @a.type_id = type_id; @a.save!
+      Card['A'].dependents.length.should > 0
+    end
   end
 end
 
 
+=begin No extension any more, is there a modified version of this we need?
 describe Card, "Recreated Card" do
   before do
-    User.as :wagbot 
+    Session.as_bot do
     @ct = Card.create! :name=>'Species', :type=>'Cardtype'
     @ct.destroy!
     @ct = Card.create! :name=>'Species', :type=>'Cardtype'
+    end
   end
   
   it "should have a cardtype extension" do
@@ -130,11 +126,13 @@ describe Card, "Recreated Card" do
   end
   
 end
+=end
 
 describe Card, "New Cardtype" do
   before do
-    User.as :wagbot 
-    @ct = Card.create! :name=>'Animal', :type=>'Cardtype'
+    Session.as_bot do
+      @ct = Card.create! :name=>'Animal', :type=>'Cardtype'
+    end
   end
   
   it "should have create permissions" do
@@ -148,47 +146,43 @@ end
 
 describe Card, "Wannabe Cardtype Card" do
   before do
-    User.as :wagbot 
-    @card = Card.create! :name=> 'convertible'
-    @card.typecode='Cardtype'
-    @card.save!
+    Session.as_bot do
+      @card = Card.create! :name=> 'convertible'
+      @card.type_id=Card::CardtypeID
+      @card.save!
+    end
     
   end
   it "should successfully change its type to a Cardtype" do
-    Card['convertible'].typecode.should=='Cardtype'
-  end
-  it "should have an extension" do
-    Card['convertible'].extension.should_not== nil
+    Card['convertible'].typecode.should==:cardtype
   end
 end
 
 describe User, "Joe User" do
   before do
-    User.as :wagbot 
-    @r3 = Role[:r3]
+    Session.as_bot do
+      @r3 = Card['r3']
 
-    Card.create :name=>'Cardtype F+*type+*create', :type=>'Pointer', :content=>'[[r3]]'
+      Card.create :name=>'Cardtype F+*type+*create', :type=>'Pointer', :content=>'[[r3]]'
+    end
     
-#    @ctf.permit(:create, @r3)
-#    @ctf.save!
-
-    User.as :joe_user
-    @user = User[:joe_user]
-    Cardtype.cache.reset
-    @typenames = Cardtype.createable_types.map{ |ct| ct[:name] }
+    Session.as :joe_user
+    @user = User.user
+    @ucard = Card[@user.card_id]
+    @type_names = Session.createable_types
   end
 
   it "should not have r3 permissions" do
-    @user.roles.member?(@r3).should be_false
+    @ucard.trait_card(:roles).item_names.member?(@r3.name).should be_false
   end
   it "should ponder creating a card of Cardtype F, but find that he lacks create permissions" do
     Card.new(:type=>'Cardtype F').ok?(:create).should be_false
   end
   it "should not find Cardtype F on its list of createable cardtypes" do
-    @typenames.member?('Cardtype F').should be_false
+    @type_names.member?('Cardtype F').should be_false
   end
   it "should find Basic on its list of createable cardtypes" do
-    @typenames.member?('Basic').should be_true
+    @type_names.member?('Basic').should be_true
   end
   
 end
@@ -196,32 +190,33 @@ end
 
 describe Card, "Cardtype with Existing Cards" do
   before do
-    User.as :wagbot 
-    @ct = Card['Basic']
+    @ct = Card['Cardtype F']
   end
   it "should have existing cards of that type" do
     Card.search(:type=>@ct.name).should_not be_empty
   end
 
   it "should raise an error when you try to delete it" do
-    @ct.destroy
-    @ct.errors[:cardtype].should_not be_empty
+    Session.as_bot do
+      @ct.confirm_destroy = true
+      @ct.destroy
+      @ct.errors[:cardtype].should_not be_empty
+    end
   end
 end
 
 
 describe Wagn::Set::Type::Cardtype do
-  before do
-    User.as :wagbot
-  end
   
   it "should handle changing away from Cardtype" do
-    ctg = Card.create! :name=>"CardtypeG", :type=>"Cardtype"
-    ctg.typecode = 'Basic'
-    ctg.save!
-    ctg = Card["CardtypeG"]
-    ctg.typecode.should == 'Basic'
-    ctg.extension.should == nil
+    Session.as_bot do
+      ctg = Card.create! :name=>"CardtypeG", :type=>"Cardtype"
+      ctg.type_id = Card::BasicID
+      ctg.save!
+      ctg = Card["CardtypeG"]
+      ctg.typecode.should == :basic
+      #ctg.extension.should == nil
+    end
   end
 end
 

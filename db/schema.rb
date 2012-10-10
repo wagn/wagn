@@ -11,20 +11,44 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120111201744) do
+ActiveRecord::Schema.define(:version => 20120812183334) do
+
+  create_table "card_references", :force => true do |t|
+    t.datetime "created_at",                                      :null => false
+    t.datetime "updated_at",                                      :null => false
+    t.integer  "card_id",                         :default => 0,  :null => false
+    t.string   "referenced_name",                 :default => "", :null => false
+    t.integer  "referenced_card_id"
+    t.string   "link_type",          :limit => 1, :default => "", :null => false
+  end
+
+  add_index "card_references", ["card_id"], :name => "wiki_references_card_id"
+  add_index "card_references", ["referenced_card_id"], :name => "wiki_references_referenced_card_id"
+  add_index "card_references", ["referenced_name"], :name => "wiki_references_referenced_name"
+
+  create_table "card_revisions", :force => true do |t|
+    t.datetime "created_at", :null => false
+    t.integer  "card_id",    :null => false
+    t.integer  "creator_id", :null => false
+    t.text     "content",    :null => false
+    t.integer  "created_by"
+  end
+
+  add_index "card_revisions", ["card_id"], :name => "revisions_card_id_index"
+  add_index "card_revisions", ["creator_id"], :name => "revisions_created_by_index"
 
   create_table "cards", :force => true do |t|
     t.string   "name",                :null => false
     t.string   "key",                 :null => false
     t.string   "codename"
-    t.string   "typecode",            :null => false
+    t.string   "typecode"
     t.integer  "trunk_id"
     t.integer  "tag_id"
     t.integer  "current_revision_id"
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
-    t.integer  "created_by"
-    t.integer  "updated_by"
+    t.integer  "creator_id",          :null => false
+    t.integer  "updater_id",          :null => false
     t.integer  "extension_id"
     t.string   "extension_type"
     t.text     "indexed_name"
@@ -33,6 +57,9 @@ ActiveRecord::Schema.define(:version => 20120111201744) do
     t.integer  "read_rule_id"
     t.integer  "references_expired"
     t.boolean  "trash",               :null => false
+    t.integer  "type_id",             :null => false
+    t.integer  "created_by"
+    t.integer  "updated_by"
   end
 
   add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_index"
@@ -41,11 +68,12 @@ ActiveRecord::Schema.define(:version => 20120111201744) do
   add_index "cards", ["read_rule_id"], :name => "index_cards_on_read_rule_id"
   add_index "cards", ["tag_id"], :name => "index_cards_on_tag_id"
   add_index "cards", ["trunk_id"], :name => "index_cards_on_trunk_id"
-  add_index "cards", ["typecode"], :name => "card_type_index"
+  add_index "cards", ["type_id"], :name => "card_type_index"
 
   create_table "cardtypes", :force => true do |t|
     t.string  "class_name"
     t.boolean "system"
+    t.integer "card_id"
   end
 
   add_index "cardtypes", ["class_name"], :name => "cardtypes_class_name_uniq", :unique => true
@@ -59,16 +87,6 @@ ActiveRecord::Schema.define(:version => 20120111201744) do
   end
 
   add_index "multihost_mappings", ["requested_host"], :name => "index_multihost_mappings_on_requested_host", :unique => true
-
-  create_table "revisions", :force => true do |t|
-    t.datetime "created_at", :null => false
-    t.integer  "card_id",    :null => false
-    t.integer  "created_by", :null => false
-    t.text     "content",    :null => false
-  end
-
-  add_index "revisions", ["card_id"], :name => "revisions_card_id_index"
-  add_index "revisions", ["created_by"], :name => "revisions_created_by_index"
 
   create_table "roles", :force => true do |t|
     t.string "codename"
@@ -102,19 +120,7 @@ ActiveRecord::Schema.define(:version => 20120111201744) do
     t.string   "status",                             :default => "request"
     t.integer  "invite_sender_id"
     t.string   "identity_url"
+    t.integer  "card_id",                                                   :null => false
   end
-
-  create_table "wiki_references", :force => true do |t|
-    t.datetime "created_at",                                      :null => false
-    t.datetime "updated_at",                                      :null => false
-    t.integer  "card_id",                         :default => 0,  :null => false
-    t.string   "referenced_name",                 :default => "", :null => false
-    t.integer  "referenced_card_id"
-    t.string   "link_type",          :limit => 1, :default => "", :null => false
-  end
-
-  add_index "wiki_references", ["card_id"], :name => "wiki_references_card_id"
-  add_index "wiki_references", ["referenced_card_id"], :name => "wiki_references_referenced_card_id"
-  add_index "wiki_references", ["referenced_name"], :name => "wiki_references_referenced_name"
 
 end

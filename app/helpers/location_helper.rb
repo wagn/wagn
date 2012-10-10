@@ -21,6 +21,8 @@ module LocationHelper
   end
 
   def save_location
+    return if ajax? || !html? || !@card.known?
+    
     discard_locations_for(@card)
     @previous_location = wagn_path(@card)
     location_history.push @previous_location
@@ -65,7 +67,7 @@ module LocationHelper
   end
 
   def wagn_url( rel ) #should be in cardname?
-    Wagn::Conf[:base_url].to_s + wagn_path(rel)
+    "#{Wagn::Conf[:base_url]}#{wagn_path(rel)}"
   end
   
 

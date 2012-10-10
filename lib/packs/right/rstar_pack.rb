@@ -1,18 +1,18 @@
 class Wagn::Renderer::Html
 
-  define_view :closed_rule do |args|
+  define_view :closed_rule, :tags=>:unknown_ok do |args|
     rule_card = card.new_card? ? find_current_rule_card[0] : card
 
     cells = [
       ["rule-setting",
-        link_to( card.cardname.tag_name, path(:view, :view=>:open_rule),
+        link_to( card.cardname.tag_name.sub(/^\*/,''), path(:read, :view=>:open_rule),
           :class => 'edit-rule-link slotter', :remote => true )
       ],
       ["rule-content",
         %{<div class="rule-content-container">
            <span class="closed-content content">#{rule_card ? subrenderer(rule_card).render_closed_content : ''}</span>
          </div> } ],
-      ["rule-type", (rule_card ? rule_card.typename : '') ],
+      ["rule-type", (rule_card ? rule_card.type_name : '') ],
     ]
 
     extra_css_class = rule_card && !rule_card.new_card? ? 'known-rule' : 'missing-rule'
@@ -26,14 +26,15 @@ class Wagn::Renderer::Html
 
 
 
-  define_view :open_rule do |args|
+  define_view :open_rule, :tags=>:unknown_ok do |args|
     current_rule, prototype = find_current_rule_card
     setting_name = card.cardname.tag_name
+    #warn Rails.logger.warn("open_rule #{card.inspect}, cr:#{current_rule.inspect}, sn:#{setting_name}, p:#{params.inspect}")
     current_rule ||= Card.new :name=> "*all+#{setting_name}"
 
     if args=params[:card]
       current_rule = current_rule.refresh if current_rule.frozen?
-      args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type]
+      args[:type_id] = Card.fetch_id(args.delete(:type)) if args[:type]
       current_rule.assign_attributes args
       current_rule.reset_mods
       current_rule.include_set_modules
@@ -69,7 +70,6 @@ class Wagn::Renderer::Html
       # have the option to create rules based on arbitrary narrower sets, though narrower sets will always apply to whatever prototype we create
     end
 
-
     %{
       <tr class="card-slot open-rule">
         <td class="rule-cell" colspan="3">
@@ -80,15 +80,14 @@ class Wagn::Renderer::Html
 
   end
 
-  # THIS SHOULD NOT BE A VIEW
-  define_view :edit_rule do |args|
+  define_view :edit_rule, :tags=>:unknown_ok do |args|
     edit_mode       = args[:edit_mode]
     setting_name    = args[:setting_name]
-    current_set_key = args[:current_set_key]
+    current_set_key = args[:current_set_key] || '*all' # Card[:all].name (should have a constant for this?)
     open_rule       = args[:open_rule]
     @item_view ||= :link
 
-    form_for card, :url=>path(:create_or_update), :remote=>true, :html=>
+    form_for card, :url=>path(:update, :no_id=>true), :remote=>true, :html=>
         {:class=>"card-form card-rule-form #{edit_mode && 'slotter'}" } do |form|
 
       %{
@@ -97,7 +96,7 @@ class Wagn::Renderer::Html
       <div class="card-editor">
         <div class="rule-column-1">
           <div class="rule-setting">
-            #{ link_to( setting_name, path(:view, :card=>open_rule, :view=>:closed_rule),
+            #{ link_to( setting_name.sub(/^\*/,''), path(:read, :card=>open_rule, :view=>:closed_rule),
                 :remote => true, :class => 'close-rule-link slotter') }
           </div>
           <ul class="set-editor">
@@ -138,17 +137,17 @@ class Wagn::Renderer::Html
           <div class="type-editor"> }+
 
       if edit_mode
-        %{<label>type:</label>}+ 
-        raw(typecode_field( :class =>'type-field rule-type-field live-type-field', 'data-remote'=>true,
-          :href => path(:view, :card=>open_rule, :view=>:open_rule, :type_reload=>true) ) )
+        %{<label>type:</label>}+
+        raw(type_field( :class =>'type-field rule-type-field live-type-field', 'data-remote'=>true,
+          :href => path(:read, :card=>open_rule, :view=>:open_rule, :type_reload=>true) ) )
       elsif current_set_key
         '<label>type:</label>'+
-        %{<span class="rule-type">#{ current_set_key ? card.typename : '' }</span>}
+        %{<span class="rule-type">#{ current_set_key ? card.type_name : '' }</span>}
       else; ''; end.html_safe +
 
 
           %{</div>
-          <div class="rule-content">#{ edit_mode ? content_field(form, :skip_rev_id=>true) : (current_set_key ? render_core : '') }</div> 
+          <div class="rule-content">#{ edit_mode ? content_field(form, :skip_rev_id=>true) : (current_set_key ? render_core : '') }</div>
         </div>
        </div> }.html_safe +
 
@@ -156,12 +155,12 @@ class Wagn::Renderer::Html
          ('<div class="edit-button-area">' +
            if params[:success]
              (button_tag( 'Edit', :class=>'rule-edit-button slotter', :type=>'button',
-               :href => path(:view, :card=>open_rule, :view=>:open_rule), :remote=>true ) +
+               :href => path(:read, :card=>open_rule, :view=>:open_rule), :remote=>true ) +
              button_tag( 'Close', :class=>'rule-cancel-button', :type=>'button' )).html_safe
            else
              (if !card.new_card?
                b_args = { :remote=>true, :class=>'rule-delete-button slotter', :type=>'button' }
-               b_args[:href] = path :remove, :view=>:open_rule, :success=>open_rule.cardname.to_url_key
+               b_args[:href] = path :delete, :view=>:open_rule, :success=>open_rule.cardname.to_url_key
                if fset = args[:fallback_set]
                  b_args['data-confirm']="Deleting will revert to #{setting_name} rule for #{Card.fetch(fset).label }"
                end
@@ -185,7 +184,7 @@ class Wagn::Renderer::Html
     # self.card is a POTENTIAL rule; it quacks like a rule but may or may not exist.
     # This generates a prototypical member of the POTENTIAL rule's set
     # and returns that member's ACTUAL rule for the POTENTIAL rule's setting
-    set_prototype = Card.fetch( card.cardname.trunk_name ).prototype
+    set_prototype = (proto_set=Card.fetch( card.cardname.trunk_name )).prototype
     rule_card = card.new_card? ? set_prototype.rule_card( card.cardname.tag_name ) : card
     [ rule_card, set_prototype ]
   end

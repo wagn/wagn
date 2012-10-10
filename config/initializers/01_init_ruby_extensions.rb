@@ -33,7 +33,6 @@ module Enumerable
       o.send(method_name, *args)
     end
   end
-  
 end
 
 class Class

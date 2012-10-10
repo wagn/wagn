@@ -9,16 +9,16 @@ class Wagn::Renderer::Rss
 
     xml.rss :version => "2.0" do
       xml.channel do
-        xml.title  Card.setting('*title') + " : " + card.name.gsub(/^\*/,'')
+        xml.title  Card.setting(:title) + " : " + card.name.gsub(/^\*/,'')
         xml.description ""
         xml.link wagn_url(card)
         begin
-          cards = if card.typecode == 'Search'
+          cards = if card.type_id == Card::SearchTypeID
             card.item_cards( search_params.merge(:default_limit => 25) )
           else
             [card]
           end
-          view_changes = (card.name=='*recent')
+          view_changes = (card.id==Card::RecentID)
 
           cards.each do |item|
             xml.item do

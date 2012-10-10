@@ -4,7 +4,7 @@ require 'rails/test_help'
 require 'pathname'
 
 unless defined? TEST_ROOT
-  TEST_ROOT = Pathname.new(File.expand_path(File.dirname(__FILE__))).cleanpath(true).to_s  
+  TEST_ROOT = Pathname.new(File.expand_path(File.dirname(__FILE__))).cleanpath(true).to_s
   load TEST_ROOT + '/helpers/wagn_test_helper.rb'
   load TEST_ROOT + '/helpers/permission_test_helper.rb'
   load TEST_ROOT + '/helpers/chunk_test_helper.rb'  # FIXME-- should only be in certain tests
@@ -17,11 +17,11 @@ unless defined? TEST_ROOT
     #fixtures :all
 
     # Add more helper methods to be used by all tests here...
-    
-    
-    
-    
-    
+
+
+
+
+
     include AuthenticatedTestHelper
     # Transactional fixtures accelerate your tests by wrapping each test method
     # in a transaction that's rolled back on completion.  This ensures that the
@@ -36,7 +36,7 @@ unless defined? TEST_ROOT
     # don't care one way or the other, switching from MyISAM to InnoDB tables
     # is recommended.
     self.use_transactional_fixtures = true
-  
+
     # Instantiated fixtures are slow, but give you @david where otherwise you
     # would need people(:david).  If you don't want to migrate your existing
     # test cases which use the @david style and don't mind the speed hit (each
@@ -48,17 +48,17 @@ unless defined? TEST_ROOT
       super
       # let the cache stick accross test-runs while profiling
       unless ActionController.const_defined?("PerformanceTest") and self.class.superclass == ActionController::PerformanceTest
-        Wagn::Cache.reset_for_tests
+        Wagn::Cache.restore
       end
     end
-    
-    
+
+
   end
 
 
 
 
-  class ActiveSupport::TestCase      
+  class ActiveSupport::TestCase
     include AuthenticatedTestHelper
     include WagnTestHelper
     include ChunkTestHelper
@@ -66,14 +66,16 @@ unless defined? TEST_ROOT
     def prepare_url(url, cardtype)
       if url =~ /:id/
         # find by naming convention in test data:
-        card = Card["Sample #{cardtype}"] or puts "ERROR finding 'Sample #{cardtype}'"
-        url.gsub!(/:id/,"~#{card.id.to_s}")
+        renames = { 'layout_type'=> 'Layout', 'search_type' => 'Search' }
+        if card = Card["Sample #{renames[cardtype] || cardtype}"]
+          url.gsub!(/:id/,"~#{card.id.to_s}")
+        else puts("ERROR finding 'Sample #{cardtype}'") end
       end
       url
     end
 
-    class << self      
-      def test_render(url,*args)  
+    class << self
+      def test_render(url,*args)
         RenderTest.new(self,url,*args)
       end
 
@@ -94,7 +96,7 @@ unless defined? TEST_ROOT
             retry
           end
         end
-      end    
+      end
       alias :test_helpers :test_helper
     end
 
@@ -103,35 +105,40 @@ unless defined? TEST_ROOT
       def initialize(test_class,url,args={})
         @test_class,@url = test_class,url
 
-        args[:users] ||= { :anon=>200 }
+        args[:users] ||= { :anonymous=>200 }
         args[:cardtypes] ||= ['Basic']
-        if args[:cardtypes]==:all 
-          args[:cardtypes] = YAML.load_file('test/fixtures/cardtypes.yml').collect {|k,v| v['class_name']}                   
-#Rails.logger.info "render_test all types: #{args[:cardtypes].inspect}"
+        if args[:cardtypes]==:all
+          # FIXME: need a better data source for this?
+          #args[:cardtypes] = YAML.load_file('db/bootstrap/card_codenames.yml').
+          args[:cardtypes] = YAML.load_file('db/bootstrap/cards.yml').find_all do |p|
+            !%w{set setting}.member?( p[1]['codename'] ) and
+              card=Card[ p[1]['id'].to_i ] and card.type_id == Card::CardtypeID
+          end.collect { |k,v| v['codename'] }
         end
 
         args[:users].each_pair do |user,status|
           user = user.to_s
+          user_card_id = Integer===user ? user : Card[user].id
 
-          args[:cardtypes].each do |cardtype|    
+          args[:cardtypes].each do |cardtype|
             next if cardtype=~ /Cardtype|UserForm|Set|Fruit|Optic|Book/
 
             title = url.gsub(/:id/,'').gsub(/\//,'_') + "_#{cardtype}"
-            login = (user=='anon' ? '' : "integration_login_as '#{user}'")
+            login = (user_card_id==Card::AnonID ? '' : "integration_login_as '#{user}'")
             test_def = %{
-              def test_render_#{title}_#{user}_#{status} 
+              def test_render_#{title}_#{user}_#{status}
                 #{login}
                 url = prepare_url('#{url}', '#{cardtype}')
-                Rails.logger.warn "TR GET \#\{url\}"
                 get url
                 assert_response #{status}, "\#\{url\} as #{user} should have status #{status}"
               end
             }
+
             @test_class.class_eval test_def
             #puts test_def
           end
         end
-      end                     
+      end
     end
 
   end

@@ -9,19 +9,26 @@ class RevisionTest < ActiveSupport::TestCase
   def test_revise
     author1 = User.find_by_email('joe@user.com')
     author2 = User.find_by_email('sara@user.com')
+    author_cd1 = Card[author1.card_id]
+    author_cd2 = Card[author2.card_id]
     #author1, author2 = User.find(:all, :limit=>2)
-    User.current_user = author1
-    author1.roles << Role.find_by_codename('admin')
-    author2.roles << Role.find_by_codename('admin')
+    Session.user = Card::WagnBotID
+    rc1=author_cd1.trait_card(:roles)
+    rc1 << Card::AdminID
+    rc2 = author_cd2.trait_card(:roles)
+    rc2 << Card::AdminID
+    author_cd1.save
+    author_cd2.save
+    Session.user = author1
     card = newcard( 'alpha', 'stuff')
-    User.current_user = author2
+    Session.user = author2
     card.content = 'boogy'
     card.save
     card.reload
     
     assert_equal 2, card.revisions.length, 'Should have two revisions'
-    assert_equal author2.card.name, card.current_revision.author.card.name, 'current author'
-    assert_equal author1.card.name, card.revisions.first.author.card.name,  'first author'
+    assert_equal author_cd2.name, card.current_revision.author.name, 'current author'
+    assert_equal author_cd1.name, card.revisions.first.author.name,  'first author'
   end
 
 =begin 
@@ -42,7 +49,7 @@ class RevisionTest < ActiveSupport::TestCase
 =begin #FIXME - don't think this is used by any controller. we'll see what breaks
   def test_rollback
     @card = newcard("alhpa", "some test content")
-    @user = User.find_by_login('quentin')
+    @user = User.where(:card_id=>Card['quentin'].id).first
     @card.content = "spot two"; @card.save
     @card.content = "spot three"; @card.save
     assert_equal 3, @card.revisions(true).length, "Should have three revisions"

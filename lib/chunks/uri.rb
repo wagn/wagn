@@ -73,8 +73,8 @@ class URIChunk < Chunk::Abstract
 
     SUSPICIOUS_PRECEDING_CHARACTER = '(!|\"\:|\"|\\\'|\]\()?'  # any of !, ":, ", ', ](
   
-    INTERNET_URI_REGEXP = 
-        Regexp.new(SUSPICIOUS_PRECEDING_CHARACTER + INTERNET_URI, Regexp::EXTENDED, 'N')
+    INTERNET_URI_REGEXP = Regexp.new(SUSPICIOUS_PRECEDING_CHARACTER + INTERNET_URI, Regexp::EXTENDED)
+    #        Regexp.new(SUSPICIOUS_PRECEDING_CHARACTER + INTERNET_URI, Regexp::EXTENDED, 'N')
 
   end
 
@@ -88,7 +88,7 @@ class URIChunk < Chunk::Abstract
     content.gsub!( self.pattern ) do |matched_text|
       chunk = self.new($~, content)                    
       card = chunk.card
-      if chunk.avoid_autolinking? || (card && card.typecode=='Html')
+      if chunk.avoid_autolinking? || (card && card.type_id==Card::HtmlID)
         # do not substitute nor register the chunk
         matched_text
       else
@@ -179,7 +179,8 @@ class LocalURIChunk < URIChunk
         '(?=\.?(?:\s|\)|\z|\<))'         # ends only with optional dot + space or ")" 
                                       # or end of the string
   
-    LOCAL_URI_REGEXP = Regexp.new(SUSPICIOUS_PRECEDING_CHARACTER + LOCAL_URI, Regexp::EXTENDED, 'N')
+#    LOCAL_URI_REGEXP = Regexp.new(SUSPICIOUS_PRECEDING_CHARACTER + LOCAL_URI, Regexp::EXTENDED, 'N')
+    LOCAL_URI_REGEXP = Regexp.new(SUSPICIOUS_PRECEDING_CHARACTER + LOCAL_URI, Regexp::EXTENDED)
   end
 
   def LocalURIChunk.pattern

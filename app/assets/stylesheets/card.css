@@ -276,6 +276,8 @@ a.email-link {
   background: #e3e3e3;
   padding: 1 0px;
   margin: 1px;
+  float: none !important;
+  display:block;
 }
 .new-type .cardtype {
   font-size: 14px;
@@ -708,7 +710,7 @@ div.search-result-list .search-result-item {
   white-space: pre-wrap
 }
 
-/*----------- (Invitation Request)--------------*/
+/*----------- (Account Request)--------------*/
 
 .invite-links {
   padding: 10px;

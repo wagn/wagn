@@ -3,7 +3,7 @@ module PatternExampleGroupMethods
     name = opts[:name]
     card = opts[:from]
     it "generates name '#{name}' for card '#{card.name}'" do
-      described_class.new(card).set_name.should == name
+      described_class.new(card).to_s.should == name
     end
   end
 end

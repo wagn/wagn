@@ -20,7 +20,7 @@ module Wagn::Set::Type::Etherpad
   end
 
   def get_pad_options(params={})
-    pad_options = rule('*pad_options') || {}
+    pad_options = rule(:pad_options) || {}
     warn(Rails.logger.debug "get_pad_options #{params.inspect}, #{pad_options}")
     pad_options = pad_options.blank? ? PAD_DEFAULTS :
          PAD_DEFAULTS.merge(JSON.parse(pad_options).symbolize_keys)

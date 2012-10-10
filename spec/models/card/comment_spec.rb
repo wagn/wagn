@@ -5,7 +5,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 =begin
 describe Card, "record appender" do
   before do
-    User.as :wagbot 
+    Session.as(Card::WagnBotID) 
     @r = Role.find(:first)
     @c = Card.find(:first)
     @c.permit(:comment,@r)
@@ -13,12 +13,12 @@ describe Card, "record appender" do
   end
 
   it "should have appender immediately" do
-    User.as :wagbot 
+    Session.as(Card::WagnBotID) 
     @c.ok?(:comment).should be_true
   end
   
   it "should have appender after save" do
-    User.as :wagbot 
+    Session.as(Card::WagnBotID) 
     Card.find(@c.id).ok?(:comment).should be_true
   end         
 end
@@ -27,11 +27,12 @@ end
 
 describe Card, "comment addition" do
   before do
-    User.as :wagbot 
-    Card.create :name => 'basicname+*self+*comment', :content=>'[[Anyone Signed In]]'
-    @c = Card.fetch "basicname"
-    @c.comment = " and more"
-    @c.save!
+    Session.as_bot do 
+      Card.create :name => 'basicname+*self+*comment', :content=>'[[Anyone Signed In]]'
+      @c = Card.fetch "basicname"
+      @c.comment = " and more"
+      @c.save!
+    end
   end
   
   it "should combine content immediately" do
@@ -39,6 +40,6 @@ describe Card, "comment addition" do
   end
   
   it "should combine content after save" do
-    Card.find_by_name("basicname").content.should == "basiccontent and more"
+    Card["basicname"].content.should == "basiccontent and more"
   end
 end

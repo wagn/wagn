@@ -1,5 +1,5 @@
 module Wagn::Model::TrackedAttributes 
-   
+
   def set_tracked_attributes
     #Rails.logger.debug "Card(#{name})#set_tracked_attributes begin"
     @was_new_card = self.new_card?
@@ -14,30 +14,24 @@ module Wagn::Model::TrackedAttributes
   end
   
   
-  # this method conflicts with ActiveRecord since Rails 2.1.0
-  # the only references I see are in cache_spec, so removing for now
-=begin    
-  def changed?(field) 
-    #return false
-    #if updates.emtpy?
-    @changed ||={}; 
-    #warn "GET CHAGNED #{field.inspect}"    
-    !!(@changed[field] && !updates.for?(field))
-  end
-=end
   
   protected 
-  def set_name(newname)
-    if (@old_name = self.name_without_tracking) != newname.to_s
-      @cardname, name_without_tracking =
-         Wagn::Cardname===newname ? [newname, newname.to_s] :
-                                    [newname.to_cardname, newname]
-      write_attribute :key, k=cardname.to_key
-      write_attribute :name, name_without_tracking # what does this do?
-    else return end
+  def set_name newname
+    @old_name = self.name_without_tracking
+    return if @old_name == newname.to_s
+
+    @cardname, name_without_tracking = if Wagn::Cardname===newname
+      [ newname, newname.to_s]
+    else
+      [ newname.to_cardname, newname]
+    end
+    write_attribute :key, k=cardname.to_key
+    write_attribute :name, name_without_tracking # what does this do?  Not sure, maybe comment it out and see
+
+    reset_patterns_if_rule # reset the new name
 
     raise "No name ???" if name.blank? # this should not pass validation.
-    Wagn::Cache.expire_card(cardname.to_key)
+    Card.expire cardname
 
     if @cardname.junction?
       [:trunk, :tag].each do |side|
@@ -45,10 +39,16 @@ module Wagn::Model::TrackedAttributes
         sidecard = Card[sidename]
         old_name_in_way = (sidecard && sidecard.id==self.id) # eg, renaming A to A+B
         suspend_name(sidename) if old_name_in_way
-        self.send "#{side}=", (!sidecard || old_name_in_way ? Card.create!(:name=>sidename) : sidecard)
+        self.send "#{side}_id=", begin
+          if !sidecard || old_name_in_way
+            Card.create! :name=>sidename
+          else
+            sidecard
+          end.id
+        end
       end
     else
-      self.trunk = self.tag = nil
+      self.trunk_id = self.tag_id = nil
     end   
 
     return if new_card?
@@ -63,8 +63,7 @@ module Wagn::Model::TrackedAttributes
       end
     end
           
-    Cardtype.cache.reset if typecode=='Cardtype'
-    Wagn::Cache.expire_card(@old_name.to_cardname.key)
+    Card.expire @old_name
     @name_changed = true          
     @name_or_content_changed=true
   end
@@ -73,37 +72,42 @@ module Wagn::Model::TrackedAttributes
   def suspend_name(name)
     # move the current card out of the way, in case the new name will require
     # re-creating a card with the current name, ie.  A -> A+B
-    Wagn::Cache.expire_card(name.to_cardname.to_key)
+    Card.expire name
     tmp_name = "tmp:" + UUID.new.generate
-    connection.update %{update cards set `name`="#{tmp_name}", `key`="#{tmp_name}" where id=#{self.id}}    
+    Card.where(:id=>self.id).update_all(:name=>tmp_name, :key=>tmp_name)    
   end
 
-  def set_typecode(new_typecode)
-#    Rails.logger.debug "set_typecde No type code for #{name}, #{typecode}" unless new_typecode
-    self.typecode_without_tracking = new_typecode
+  def set_type_id(new_type_id)
+#    Rails.logger.debug "set_typecde No type code for #{name}, #{type_id}" unless new_type_id
+    #warn "set_type_id(#{new_type_id}) #{self.type_id_without_tracking}"
+    self.type_id_without_tracking= new_type_id 
     return true if new_card?
     on_type_change # FIXME this should be a callback
     if hard_template? && !type_template?
       hard_templatee_names.each do |templatee_name|
         tee = Card[templatee_name]
         tee.allow_type_change = true  #FIXME? this is a hacky way around the standard validation
-        tee.typecode = new_typecode
+        tee.type_id = new_type_id
         tee.save!
       end
     end
     
     # do we need to "undo" and loaded modules?  Maybe reload defaults?
-    singleton_class.include_type_module(typecode)
     reset_patterns
+    include_set_modules
     true
   end
   
   def set_content(new_content)  
+    #warn Rails.logger.info("set_content #{name} #{new_content}")
     return false unless self.id 
     new_content ||= '' 
     new_content = WikiContent.clean_html!(new_content) if clean_html?
     clear_drafts if current_revision_id
-    self.current_revision = Revision.create :card_id=>self.id, :content=>new_content
+    #warn Rails.logger.info("set_content #{name} #{Session.user_id}, #{new_content}")
+    new_rev = Card::Revision.create :card_id=>self.id, :content=>new_content, :creator_id =>Session.user_id
+    self.current_revision_id = new_rev.id
+    reset_patterns_if_rule
     @name_or_content_changed = true
   end
            
@@ -150,17 +154,17 @@ module Wagn::Model::TrackedAttributes
       # I trust the above actually avoided some issues, but we need to nail those down, test, and fix them
       # EFM - 5/21/12
       Card.update_all("name=#{cxn.quote(depname.to_s)}, #{cxn.quote_column_name("key")}=#{cxn.quote(depkey)}", "id = #{dep.id}")
-      dep.expire(dep)
+      dep.expire
     end 
 
     if !update_referencers || update_referencers == 'false'  # FIXME doing the string check because the radio button is sending an actual "false" string
       #warn "no updating.."
       ([self]+deps).each do |dep|
         ActiveRecord::Base.logger.info("--------------- NOUPDATE REFERRER #{dep.name}  ---------------------------")
-        WikiReference.update_on_destroy(dep, @old_name) 
+        Card::Reference.update_on_destroy(dep, @old_name) 
       end
     else
-      User.as(:wagbot) do
+      Session.as_bot do
         [self.name_referencers(@old_name)+(deps.map &:referencers)].flatten.uniq.each do |card|
           # FIXME  using "name_referencers" instead of plain "referencers" for self because there are cases where trunk and tag
           # have already been saved via association by this point and therefore referencers misses things
@@ -177,7 +181,7 @@ module Wagn::Model::TrackedAttributes
       end
     end
 
-    WikiReference.update_on_create( self )
+    Card::Reference.update_on_create( self )
     @name_changed = false   
     true
   end

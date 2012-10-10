@@ -68,9 +68,11 @@ $(window).ready ->
   #navbox pack
   $('.navbox').autocomplete {
     html: 'html',
-    autoFocus: true,
     source: navbox_results,
     select: navbox_select
+    # autoFocus: true,  
+    # this makes it so the first option ("search") is pre-selected.
+    # sadly, it also causes odd navbox behavior, resetting the search term
   }
 
   #pointer pack
@@ -153,9 +155,9 @@ navbox_results = (request, response) ->
   view_field.val 'complete'
   formData = f.serialize()
   view_field.val orig_view
-  
+      
   this.xhr = $.ajax {
-		url: wagn.prepUrl wagn.rootPath + '/*search.json'
+		url: wagn.prepUrl wagn.rootPath + '/:search.json'
 		data: formData
 		dataType: "json"
 		wagReq: ++reqIndex

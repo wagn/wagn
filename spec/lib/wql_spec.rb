@@ -6,7 +6,7 @@ CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User","*plusses+*righ
 
 describe Wql do
   before do
-    User.current_user = :joe_user
+    Session.user= :joe_user
   end
   
   
@@ -77,7 +77,7 @@ describe Wql do
     end
   
     it "should not give duplicate results for multiple edits" do
-      User.as(:joe_user){ c=Card["JoeNow"]; c.content="testagagin"; c.save!; c.content="test3"; c.save! }
+      Session.as(:joe_user){ c=Card["JoeNow"]; c.content="testagagin"; c.save!; c.content="test3"; c.save! }
       Wql.new(:edited_by=>"Joe User").run.map(&:name).sort.should == ["JoeLater","JoeNow"]
     end
   
@@ -88,7 +88,7 @@ describe Wql do
 
   describe "created_by/creator_of" do
     before do
-      User.as :joe_user do
+      Session.as :joe_user do
         Card.create :name=>'Create Test', :content=>'sufficiently distinctive'
       end
     end
@@ -105,7 +105,7 @@ describe Wql do
 
   describe "last_edited_by/last_editor_of" do
     before do
-      User.current_user = User[:joe_user]
+      Session.user= :joe_user
       c=Card.fetch('A'); c.content='peculicious'; c.save!
     end
     
@@ -166,8 +166,8 @@ describe Wql do
 
   describe "permissions" do
     it "should not find cards not in group" do
-      User.as :wagbot  do
-        Card.create :name=>"C+*self+*read", :type=>'Pointer', :content=>"[[#{Role[:r1].card.name}]]"
+      Session.as_bot  do
+        Card.create :name=>"C+*self+*read", :type=>'Pointer', :content=>"[[R1]]"
       end
       Wql.new( :plus=>"A" ).run.plot(:name).sort.should == %w{ B D E F }
     end
@@ -257,7 +257,7 @@ describe Wql do
     end  
 
     it "should sort by name" do
-      #Wql.new( :name=> %w{ in B Z A Y C X }, :sort=>"alpha", :dir=>"desc" ).run.map(&:name).should ==  %w{ Z Y X C B A }
+      Wql.new( :name=> %w{ in B Z A Y C X }, :sort=>"alpha", :dir=>"desc" ).run.map(&:name).should ==  %w{ Z Y X C B A }
       Wql.new( :name=> %w{ in B Z A Y C X }, :sort=>"name", :dir=>"desc"  ).run.map(&:name).should ==  %w{ Z Y X C B A }
       #Card.create! :name => 'the alphabet'
       #Wql.new( :name=>["in", "B", "C", "the alphabet"], :sort=>"name").run.map(&:name).should ==  ["the alphabet", "B", "C"]
@@ -272,19 +272,22 @@ describe Wql do
     end
     
     it "should sort by plus card content" do
-      User.as :wagbot do
+      Session.as_bot do
         c = Card.fetch('Setting+*self+*table of contents')
         c.content = '10'
         c.save
+        c = Card['Basic+*type+*table of contents']
+        c.content = '3'
+        c.save
       
-        w = Wql.new( :right_plus=>'*table of contents', :sort=>{ :right=>'*table_of_contents'}, :sort_as=>'integer'  )
+        w = Wql.new( :right_plus=>'*table of contents', :sort=>{ :right=>'*table_of_contents'}, :sort_as=>'integer'  ) # FIXME: codename
         #warn "sql from new wql = #{w.sql}"
         w.run.plot(:name).should == %w{ *all *account+*right Basic+*type Config+*self Setting+*self }
       end      
     end
     
     it "should sort by count" do
-      User.as :wagbot do
+      Session.as_bot do
         w = Wql.new( :name=>[:in,'Sara','John','Joe User'], :sort=>{ :right=>'*watcher', :item=>'referred_to', :return=>'count' } )
         w.run.plot(:name).should == ['Joe User','John','Sara']
       end
@@ -349,7 +352,7 @@ describe Wql do
   #=end
   describe "found_by" do
     before do
-      User.current_user = :wagbot 
+      Session.user= Card::WagnBotID
       c = Card.create(:name=>'Simple Search', :type=>'Search', :content=>'{"name":"A"}')
     end 
 

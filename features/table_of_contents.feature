@@ -5,24 +5,24 @@ Feature: Table of Contents
   
   Background:
     Given I log in as Joe Admin
-    And I create Basic card "One Header" with content "<h1>I'm a header</h1>"
+    And I create Basic card "Two Header" with content "<h1>I'm a header</h1><h1>me too</h1>"
     And I create Basic card "Three Headers" with content "<h1>I'm a header</h1><h2>Me too</h2><h1>same here</h1>"
     
  Scenario: always on setting
    When I edit "Basic+*type+*table of contents" setting content to "1"
-   When I go to card "One Header"
+   When I go to card "Onne Heading"
    Then I should see "Table of Contents"
    
  Scenario: minimum setting
    When I edit "Basic+*type+*table of contents" setting content to "2"
-   And I go to card "One Header"
+   And I go to card "Onne Heading"
    Then I should not see "Table of Contents"
-   When I go to card "Three Headers"
+   When I go to card "Three Heading"
    Then I should see "Table of Contents"
  
  Scenario: always off setting
    When I edit "Basic+*type+*table of contents" setting content to "0"
-   And I go to card "One Header"
+   And I go to card "Onne Heading"
    Then I should not see "Table of Contents"
   
 #  Scenario: header with unwanted html

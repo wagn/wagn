@@ -5,7 +5,15 @@ describe Wagn::Cardname do
   
   describe "#to_key" do
     it "should remove spaces" do
+      "this    Name".to_cardname.to_key.should == "this_name"
+    end
+  
+    it "should have initial _ for initial cap" do
       "This Name".to_cardname.to_key.should == "this_name"
+    end
+  
+    it "should have initial _ for initial cap" do
+      "_This Name".to_cardname.to_key.should == "this_name"
     end
   
     it "should singularize" do
@@ -101,7 +109,7 @@ describe Wagn::Cardname do
     end
     
     context "mismatched requests" do
-      it "returns _self for _left or _right on non-junctions" do
+      it "returns _self for _left or _right on simple cards" do
         "_left+Z".to_cardname.to_absolute("A").should == "A+Z"
         "_right+Z".to_cardname.to_absolute("A").should == "A+Z"
       end
@@ -128,12 +136,13 @@ describe Wagn::Cardname do
 
 
   describe "#to_url_key" do
-    cardnames = ["GrassCommons.org", 'Oh you @##', "Alice's Restaurant!", "PB &amp; J", "Mañana"]
+    cardnames = ["GrassCommons.org", 'Oh you @##', "Alice's Restaurant!", "PB &amp; J", "Mañana"].map(&:to_cardname)
   
-    cardnames.each do |name| 
+    cardnames.each do |cardname| 
       it "should have the same key as the name" do
-        name.to_cardname.to_key.should ==
-          name.to_cardname.to_url_key.to_cardname.to_key
+        k, k2 = cardname.to_key, cardname.to_url_key
+        #warn "cn tok #{cardname.inspect}, #{k.inspect}, #{k2.inspect}"
+        k.should == k2.to_cardname.to_key
       end
     end
   end       
@@ -177,11 +186,39 @@ describe Wagn::Cardname do
   end
 
   describe "#replace_part" do
-    it "replaces name parts" do
+    it "replaces first name part" do
       'a+b'.to_cardname.replace_part('a','x').to_s.should == 'x+b'
+    end
+    it "replaces second name part" do
       'a+b'.to_cardname.replace_part('b','x').to_s.should == 'a+x'
+    end
+    it "replaces two name parts" do
       'a+b+c'.to_cardname.replace_part('a+b','x').to_s.should == 'x+c'
+    end
+    it "doesn't replace two part tag" do
       'a+b+c'.to_cardname.replace_part('b+c','x').to_s.should == 'a+b+c'
     end
   end  
+
+  describe "Card sets" do
+    it "recognizes star cards" do
+      '*a'.to_cardname.star?.should be_true
+    end
+
+    it "doesn't recognize star cards with plusses" do
+      '*a+*b'.to_cardname.star?.should be_false
+    end
+
+    it "recognizes rstar cards" do
+      'a+*a'.to_cardname.rstar?.should be_true
+    end
+
+    it "doesn't recognize star cards as rstar" do
+      '*a'.to_cardname.rstar?.should be_false
+    end
+
+    it "doesn't recognize non-star or star left" do
+      '*a+a'.to_cardname.rstar?.should be_false
+    end
+  end
 end

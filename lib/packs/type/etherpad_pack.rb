@@ -38,7 +38,7 @@ class Wagn::Renderer::Html
       }&showChat=#{pad_opts[:showChat]
       }&showLineNumbers=#{pad_opts[:showLineNumbers]
       }&useMonospaceFont=#{pad_opts[:useMonospaceFont]
-      }&userName=#{User.current_user.card.name
+      }&userName=#{Session.user_card.name
       }&noColors=#{pad_opts[:noColors]}"></iframe>
     }
   end

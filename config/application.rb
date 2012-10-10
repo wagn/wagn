@@ -14,11 +14,10 @@ module Wagn
       def [](key)         @@hash[key.to_sym]            end
       def []=(key, value) @@hash[key.to_sym]=value      end
       
-      WAGN_CONFIG_DEFAULTS = { :role_tasks => %w[administrate_users create_accounts assign_user_roles] }    
       WAGN_CONFIG_FILE = ENV['WAGN_CONFIG_FILE'] || File.expand_path('../wagn.yml', __FILE__)
 
       def load
-        @@hash = h = WAGN_CONFIG_DEFAULTS
+        @@hash = h = {}
         f = WAGN_CONFIG_FILE
         if File.exists?( f ) and y = YAML.load_file( f ) and Hash === y
           h.merge! y
@@ -123,7 +122,7 @@ module Wagn
     
     if database_ready
 #      ActiveSupport::Notifications.instrument 'wagn.init_cache', :message=>'' do
-        Wagn::Cache.initialize_on_startup if database_ready
+        Wagn::Cache.new_all
 #      end
     end
   end  

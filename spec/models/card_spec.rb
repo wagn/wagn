@@ -13,6 +13,7 @@ describe Card do
   
   describe "module inclusion" do
     before do
+      Session.as :joe_user
       @c = Card.new :type=>'Search', :name=>'Module Inclusion Test Card'
     end
     
@@ -27,7 +28,7 @@ describe Card do
     
 #    it "gets needed methods after find" do
 #      @c.save!
-#      c = Card.find_by_name(@c.name)
+#      c = Card[@c.name]
 #      c.respond_to?( :get_spec ).should be_true
 #    end
     
@@ -44,11 +45,15 @@ describe Card do
     end
     
     it "gets needed methods with explicit pointer setting" do
-      Card.new(@c_args.merge(:type=>'Pointer')).respond_to?(:add_item).should be_true
+      Rails.logger.info "testing point"
+      Card.new(@c_args.merge(:type=>'Pointer')).
+               respond_to?(:add_item).should be_true
     end
     
     it "gets needed methods with implicit pointer setting (from template)" do
-      Card.new(@c_args).respond_to?(:add_item).should be_true
+      c=Card.new(@c_args)
+      Rails.logger.info "testing point #{c.inspect} N:#{c.name}"
+      c.respond_to?(:add_item).should be_true
     end
   end
 
@@ -57,8 +62,9 @@ describe Card do
     it "calls :after_create hooks" do
       # We disabled these for the most part, what replaces them?
       #[:before_save, :before_create, :after_save, :after_create].each do |hookname|
-      Wagn::Hook.should_receive(:call).twice #with(:after_create, instance_of(Card))
-      User.as :wagbot do
+      pending "mock rr seems to be broken, maybe 'call' collides with internal methode"
+      mock(Wagn::Hook).call(:after_create, instance_of(Card))
+      Session.as_bot do
         Card.create :name => "testit"
       end
     end
@@ -66,7 +72,7 @@ describe Card do
   
   describe "test data" do
     it "should be findable by name" do
-      Card.find_by_name("Wagn Bot").class.should == Card
+      Card["Wagn Bot"].class.should == Card
     end
   end
 
@@ -79,12 +85,12 @@ describe Card do
   
       it "c should have cardtype basic" do
         Rails.logger.info "testing point #{@c} #{@c.inspect}"
-        @c.typecode.should == 'Basic'
+        @c.typecode.should == :basic
       end
   
       it "d should have cardtype Date" do
         Rails.logger.info "testing point #{@d} #{@d.inspect}"
-        @d.typecode.should == 'Date'
+        @d.typecode.should == :date
       end
     end
 
@@ -96,9 +102,10 @@ describe Card do
                             
   describe "creation" do
     before(:each) do           
-      User.as :wagbot 
-      @b = Card.create! :name=>"New Card", :content=>"Great Content"
-      @c = Card.find(@b.id)
+      Session.as_bot do
+        @b = Card.create! :name=>"New Card", :content=>"Great Content"
+        @c = Card.find(@b.id)
+      end
     end
   
     it "should not have errors"        do @b.errors.size.should == 0        end
@@ -112,15 +119,16 @@ describe Card do
     end
 
     it "should be findable by name" do
-      Card.find_by_name("New Card").class.should == Card
+      Card["New Card"].class.should == Card
     end  
   end
 
 
   describe "attribute tracking for new card" do
     before(:each) do
-      User.as :wagbot 
-      @c = Card.new :name=>"New Card", :content=>"Great Content"
+      Session.as_bot do
+        @c = Card.new :name=>"New Card", :content=>"Great Content"
+      end
     end
   
     it "should have updates" do
@@ -139,15 +147,16 @@ describe Card do
 
   describe "attribute tracking for existing card" do
     before(:each) do
-      @c = Card.find_by_name("Joe User")
+      @c = Card["Joe User"]
     end
   end                    
 
   describe "content change should create new revision" do
     before do
-      User.as :wagbot 
-      @c = Card.find_by_name('basicname')
-      @c.update_attributes! :content=>'foo'
+      Session.as_bot do
+        @c = Card['basicname']
+        @c.update_attributes! :content=>'foo'
+      end
     end
   
     it "should have 2 revisions"  do
@@ -162,10 +171,11 @@ describe Card do
 
   describe "content change should create new revision" do
     before do
-      User.as :wagbot 
-      @c = Card.find_by_name('basicname')
-      @c.content = "foo"
-      @c.save!
+      Session.as_bot do
+        @c = Card['basicname']
+        @c.content = "foo"
+        @c.save!
+      end
     end
   
     it "should have 2 revisions"  do

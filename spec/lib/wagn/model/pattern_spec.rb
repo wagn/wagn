@@ -6,45 +6,50 @@ describe Wagn::Model::Pattern do
     Wagn::Model::Pattern.should be_true
   end    
   
-  before do
-    User.as :wagbot
-  end
   
   describe :set_names do
     it "returns self, type, all for simple cards" do
-      card = Card.new( :name => "AnewCard" )
-      card.set_names.should == [ "Basic+*type","*all"]
-      card.save!
-      card = Card.fetch("AnewCard")
-      card.set_names.should == [ "AnewCard+*self","Basic+*type","*all"]
+      Session.as_bot do
+        card = Card.new( :name => "AnewCard" )
+        card.set_names.should == [ "Basic+*type","*all"]
+        card.save!
+        card = Card.fetch("AnewCard")
+        card.set_names.should == [ "AnewCard+*self","Basic+*type","*all"]
+      end
     end
 
     it "returns set names for simple star cards" do
-      Card.fetch('*update').set_names.should == [ 
-        "*update+*self","*star","Setting+*type","*all"
-      ]
+      Session.as_bot do
+        Card.fetch('*update').set_names.should == [ 
+          "*update+*self","*star","Setting+*type","*all"
+        ]
+      end
     end
     
     it "returns set names for junction cards" do
-      Card.new( :name=>"Iliad+author" ).set_names.should == [
-        "Book+author+*type plus right","author+*right","Basic+*type","*all plus","*all"
-      ]
+      Session.as_bot do
+        Card.new( :name=>"Iliad+author" ).set_names.should == [
+          "Book+author+*type plus right","author+*right","Basic+*type","*all plus","*all"
+        ]
+      end
     end
 
     it "returns set names for compound star cards" do
-      Card.new( :name=>"Iliad+*to" ).set_names.should == [
-        "Book+*to+*type plus right","*to+*right","*rstar","Phrase+*type","*all plus","*all"
-      ]
+      Session.as_bot do
+        Card.new( :name=>"Iliad+*to" ).set_names.should == [
+          "Book+*to+*type plus right","*to+*right","*rstar","Phrase+*type","*all plus","*all"
+        ]
+      end
     end
   end
 
   describe :junction_only? do
     it "should identify sets that only apply to plus cards" do
-      Card.fetch("Book+*to+*type plus right").junction_only?.should be_true
+      Card.fetch("*all").junction_only?.should be_false
+      Card.fetch("*all plus").junction_only?.should be_true
       Card.fetch("Book+*type").junction_only?.should be_false
       Card.fetch("*to+*right").junction_only?.should be_true
-      Card.fetch("*all plus").junction_only?.should be_true
-      Card.fetch("*all").junction_only?.should be_false
+      Card.fetch("Book+*to+*type plus right").junction_only?.should be_true
     end
   end
 
@@ -67,18 +72,20 @@ describe Wagn::Model::Pattern do
       card.method_keys.should == [ "basic_type", ""]
       card.save!
       card = Card.fetch("AnewCard")
-      card.method_keys.should == [ "anew_card_self","basic_type",""]
+      card.method_keys.should == [ "basic_type",""]
     end
     
   end
   
   describe :css_names do
     it "returns css names for simple star cards" do
-      card = Card.new( :name => "*AnewCard")
-      card.css_names.should == "ALL TYPE-basic STAR"
-      card.save!
-      card = Card.fetch("*AnewCard")
-      card.css_names.should == "ALL TYPE-basic STAR SELF-Xanew_card"
+      Session.as_bot do
+        card = Card.new( :name => "*AnewCard")
+        card.css_names.should == "ALL TYPE-basic STAR"
+        card.save!
+        card = Card.fetch("*AnewCard")
+        card.css_names.should == "ALL TYPE-basic STAR SELF-Xanew_card"
+      end
     end
 
     it "returns set names for junction cards" do

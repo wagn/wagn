@@ -14,12 +14,12 @@ class CardActionTest < ActionController::IntegrationTest
   def setup
     super
     setup_default_user
-    integration_login_as :joe_user
+    integration_login_as 'joe_user'
   end    
 
   # Has Test
   # ---------                                                                                   
-  # card/remove
+  # card/delete
   # card/create
   # connection/create
   # card/comment 
@@ -28,10 +28,10 @@ class CardActionTest < ActionController::IntegrationTest
   # -----------
   # card/rollback
   # card/save_draft
-  # connection/remove ??
+  # connection/delete ??
 
   def test_comment      
-    User.as(:wagbot)  do
+    Session.as_bot  do
       Card.create :name=>'A+*self+*comment', :type=>'Pointer', :content=>'[[Anyone]]'
     end
     post "card/comment/A", :card => { :comment=>"how come" }
@@ -39,43 +39,41 @@ class CardActionTest < ActionController::IntegrationTest
   end
 
   def test_create_role_card   
-    integration_login_as :admin
+    integration_login_as 'joe_admin'
     post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
     assert_response 302
 
-    assert Card.find_by_name('Editor').typecode == 'Role'
-    assert_instance_of Role, Role.find_by_codename('Editor')
+    assert Card['Editor'].type_id == Card::RoleID
   end
 
   def test_create_cardtype_card
-    post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"} )
+    Session.as_bot {
+      post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"} )}
     assert_response 302
-    assert Card.find_by_name('Editor2').typecode == 'Cardtype'
-    assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor2')
+    assert Card['Editor2'].typecode == :cardtype
   end
 
   def test_create                   
-    post 'card/create', :card=>{
+    Session.as_bot {
+     post 'card/create', :card=>{
       :type=>'Basic', 
       :name=>"Editor",
       :content=>"testcontent2"
-    }
+    }}
     assert_response 302
     assert_equal "testcontent2", Card["Editor"].content
   end
 
   def test_newcard_shows_edit_instructions
-    given_cards( 
-      {"Cardtype:YFoo" => ""},
-      {"YFoo+*type+*edit help"  => "instruct-me"}
-    )
+    given_card( {:type=>'cardtype', :name=>"YFoo", :content => ""} )
+    given_card( {:name=>"YFoo+*type+*edit help", :content => "instruct-me"} )
     get 'card/new', :card => {:type=>'YFoo'}
     assert_tag :tag=>'div', :attributes=>{ :class=>"instruction" },  :content=>/instruct-me/ 
   end
 
   def test_newcard_works_with_fuzzy_renamed_cardtype
-    given_cards "Cardtype:ZFoo" => ""
-    User.as(:joe_user) do
+    given_card({:typecode=>:cardtype, :name=>"ZFoo", :content => ""})
+    Session.as(:joe_user) do
       Card["ZFoo"].update_attributes! :name=>"ZFooRenamed", :update_referencers=>true
     end
     
@@ -89,10 +87,10 @@ class CardActionTest < ActionController::IntegrationTest
     assert_tag :tag=>'div', :attributes=>{:class=>'error', :id=>'no-cardtype-error'}
   end
 
-  # FIXME: this should probably be files in the spot for a remove test
+  # FIXME: this should probably be files in the spot for a delete test
   def test_removal_and_return_to_previous_undeleted_card_after_deletion
     t1 = t2 = nil
-    User.as(:wagbot) do 
+    Session.as_bot do 
       t1 = Card.create! :name => "Testable1", :content => "hello"
       t2 = Card.create! :name => "Testable1+bandana", :content => "world"
     end
@@ -100,33 +98,38 @@ class CardActionTest < ActionController::IntegrationTest
     get url_for_page( t1.name )
     get url_for_page( t2.name )
     
-    post 'card/remove/~' + t2.id.to_s
+    post 'card/delete/~' + t2.id.to_s
     assert_redirected_to url_for_page( t1.name )   
-    assert_nil Card.find_by_name( t2.name )
+    assert_nil Card[ t2.name ]
     
-    post 'card/remove/~' + t1.id.to_s
+    post 'card/delete/~' + t1.id.to_s
     assert_redirected_to '/'
-    assert_nil Card.find_by_name( t1.name )
+    assert_nil Card[ t1.name ]
   end
 
-
   def test_should_create_account_from_scratch
+#     integration_login_as 'joe_admin'
     assert_difference ActionMailer::Base.deliveries, :size do 
       post '/card/create_account/', :id=>'a', :user=>{:email=>'foo@bar.com'}
       assert_response 200
     end
     email = ActionMailer::Base.deliveries[-1]
     # emails should be 'from' inviting user
-    #assert_equal User.current_user.email, email.from[0]  
+    #assert_equal Session.user.email, email.from[0]  
     #assert_equal 'active', User.find_by_email('new@user.com').status
     #assert_equal 'active', User.find_by_email('new@user.com').status
   end
-
-  def test_update_user_extension_blocked_status
-    assert !User.find_by_login('joe_user').blocked?
-    post '/card/update_account', :id=>"Joe User".to_cardname.to_key, :extension => { :blocked => '1' }
-    assert User.find_by_login('joe_user').blocked?
-    post '/card/update_account', :id=>"Joe User".to_cardname.to_key, :extension => { :blocked => '0' }
-    assert !User.find_by_login('joe_user').blocked?
+  
+  def test_update_user_account_email
+    post '/card/update_account', :id=>"Joe User".to_cardname.to_key, :account => { :email => 'joe@user.co.uk' }
+    assert User.where(:card_id=>Card['joe_user'].id).first.email == 'joe@user.co.uk'
   end
+  
+  def test_user_cant_block_self
+    post '/card/update_account', :id=>"Joe User".to_cardname.to_key, :account => { :blocked => '1' }
+    assert !User.where(:card_id=>Card['joe_user'].id).first.blocked?
+  end
+#=end
 end
+
+

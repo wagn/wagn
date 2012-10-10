@@ -4,30 +4,29 @@ module Wagn
     include LocationHelper
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
-    UNDENIABLE_VIEWS = [ :denial, :errors, :edit_virtual,
-      :too_slow, :too_deep, :missing, :not_found, :closed_missing, :name,
-      :link, :linkname, :url, :show, :layout, :bad_address, :server_error ]
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
-      :layout=>:layout, :new=>:edit }
-    DEFAULT_ITEM_VIEW = :link
-  
-    RENDERERS = {
+      :layout=>:layout, :new=>:edit, :normal=>:normal } #should be set in views
+    DEFAULT_ITEM_VIEW = :link  # should be set in card?
+   
+    RENDERERS = { #should be defined in renderer
       :html => :Html,
       :css  => :Text,
-      :csv  => :Text,
       :txt  => :Text
     }
     
     cattr_accessor :current_slot, :ajax_call
 
-    @@max_char_count = 200
-    @@max_depth = 10
-    @@subset_views = {}
+    @@max_char_count = 200 #should come from Wagn::Conf
+    @@max_depth      = 10 # ditto
+    @@perms          = {}
+    @@subset_views   = {}
+    @@error_codes    = {}
+    @@view_tags      = {}
 
     class << self
       def new card, opts={}
         if self==Renderer
-          fmt = (opts[:format] ? opts[:format].to_sym : :html)
+          fmt = opts[:format] = (opts[:format] ? opts[:format].to_sym : :html)
           renderer = (RENDERERS.has_key?(fmt) ? RENDERERS[fmt] : fmt.to_s.camelize).to_sym
           if Renderer.const_defined?(renderer)
             return Renderer.const_get(renderer).new(card, opts) 
@@ -59,8 +58,18 @@ module Wagn
 
 
       def define_view view, opts={}, &final
+        @@perms[view]       = opts.delete(:perms)      if opts[:perms]
+        @@error_codes[view] = opts.delete(:error_code) if opts[:error_code]
+        if opts[:tags]
+          [opts[:tags]].flatten.each do |tag| 
+            @@view_tags[view] ||= {}
+            @@view_tags[view][tag] = true
+          end
+        end
+        
         view_key = get_view_key(view, opts)
         define_method "_final_#{view_key}", &final
+        #warn "defining method _final_#{view_key}"
         @@subset_views[view] = true if !opts.empty?
 
         if !method_defined? "render_#{view}"
@@ -77,11 +86,7 @@ module Wagn
 
           define_method( "render_#{view}" ) do |*a|
             begin
-              denial=deny_render(view.to_sym, *a) and return denial
-#              msg = "render #{view} #{ card && card.name.present? ? "called for #{card.name}" : '' }"
-#              ActiveSupport::Notifications.instrument 'wagn.render', :message=>msg do
-                send( "_render_#{view}", *a)
-#              end
+              send( "_render_#{ ok_view view, *a }", *a )
             rescue Exception=>e
               controller.send :notify_airbrake, e if Airbrake.configuration.api_key
               Rails.logger.info "\nRender Error: #{e.class} : #{e.message}"
@@ -122,8 +127,8 @@ module Wagn
     end
 
 
-    attr_reader :card, :root, :showname #should be able to factor out showname
-    attr_accessor :form, :main_content
+    attr_reader :format, :card, :root, :showname #should be able to factor out showname
+    attr_accessor :form, :main_content, :error_status
 
     def render view = :view, args={}
       prefix = args[:allowed] ? '_' : ''
@@ -179,6 +184,14 @@ module Wagn
         @depth == 1 && @mode == :main
       end                            
     end
+    
+    def focal? # meaning the current card is the requested card
+      if ajax_call?
+        @depth == 0
+      else
+        main?
+      end
+    end
       
     def template
       @template ||= begin
@@ -224,23 +237,53 @@ module Wagn
     end
   
   
-    def deny_render view, args={}
-      return false if UNDENIABLE_VIEWS.member? view
-      altered_view = case
-        when @depth >= @@max_depth ; :too_deep
-        when !card                 ; false
-        when view == :watch
-          :blank if !User.logged_in? || card.virtual?    #should be handled by watch view
-        when [:new, :edit, :edit_in_form].member?( view ) # need better way to relate views to CRUD perms
-          allowed = card.ok?( card.new_card? ? :create : :update )
-          !allowed && :denial
-        else
-          !card.ok?(:read) and :denial
-      end
-      return false unless altered_view
+    def tagged view, tag
+      @@view_tags[view] && @@view_tags[view][tag]
+    end
+  
+    def ok_view view, args={}
+      original_view = view
+      
+      view = case
+        when @depth >= @@max_depth   ; :too_deep
+        # prevent recursion.  @depth tracks subrenderers (view within views)  
+        when @@perms[view] == :none  ; view
+        # This may currently be overloaded.  always allowed = skip moodes = never modified.  not sure that's right.
+        when !card                   ; :no_card
+        # This should disappear when we get rid of admin and account controllers and all renderers always have cards
 
-      args[:denied_view] = view
-      render altered_view, args
+        # HANDLE UNKNOWN CARDS ~~~~~~~~~~~~
+        when !card.known? && !tagged( view, :unknown_ok )
+          if focal?
+            if @format==:html && card.ok?(:create) ;  :new
+            else                                   ;  :not_found
+            end                                     
+          else                                     ;  :missing
+          end
+                
+        # CHECK PERMISSIONS  ~~~~~~~~~~~~~~~~
+        else
+          perms_required = @@perms[view] || :read
+          if Proc === perms_required
+            perms_required.call self
+          else
+            args[:denied_task] = [perms_required].flatten.find do |task|
+              task = :create if task == :update && card.new_card?
+              !card.ok? task
+            end
+            args[:denied_task] ? :denial : view
+          end
+        end
+      
+      
+      if view != original_view
+        args[:denied_view] = original_view
+        
+        if focal? && error_code = @@error_codes[view] 
+          root.error_status = error_code
+        end
+      end
+      view
     end
     
     def canonicalize_view view
@@ -267,9 +310,11 @@ module Wagn
     end
   
     def expand_inclusion opts
-      return opts[:comment] if opts.has_key?(:comment)
-      # Don't bother processing inclusion if we're already out of view
+      return opts[:comment] if opts.has_key?(:comment) # as in commented code
+      
       return '' if @mode == :closed && @char_count > @@max_char_count
+      # Don't bother processing inclusion if we're already out of view
+      
       return expand_main(opts) if opts[:tname]=='_main' && !ajax_call? && @depth==0
       
       opts[:view] = canonicalize_view opts[:view]
@@ -277,7 +322,7 @@ module Wagn
       
       tcardname = opts[:tname].to_cardname
       fullname = tcardname.to_absolute(card.cardname, params)
-      opts[:showname] = tcardname.to_show(card.cardname)
+      opts[:showname] = tcardname.to_show(card.cardname).to_s
       
       included_card = Card.fetch_or_new fullname, ( @mode==:edit ? new_inclusion_card_args(opts) : {} )
   
@@ -307,31 +352,33 @@ module Wagn
     end
   
     def process_inclusion tcard, options
-      sub = subrenderer tcard, :item_view=>options[:item], :showname=>options[:showname], :size=>options[:size]
-      oldrenderer, Renderer.current_slot = Renderer.current_slot, sub  #don't like depending on this global var switch
+      sub = subrenderer( tcard, 
+        :item_view =>options[:item], 
+        :type      =>options[:type],
+        :size      =>options[:size],
+        :showname  =>(options[:showname] || tcard.name)
+      )
+      oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
+      # don't like depending on this global var switch
+      # I think we can get rid of it as soon as we get rid of the remaining rails views?
   
-      new_card = tcard.new_card? && !tcard.virtual?
-  
-      requested_view = (options[:view] || :content).to_sym
-      options[:home_view] = [:closed, :edit].member?(requested_view) ? :open : requested_view
-      approved_view = case
-
-        when (UNDENIABLE_VIEWS + [ :new, :closed_rule, :open_rule ]).member?(requested_view)  ; requested_view
-        when @mode == :edit
-         tcard.virtual? ? :edit_virtual : :edit_in_form 
-         # FIXME should be concerned about templateness, not virtualness per se
-         # needs to handle real cards that are hard templated much better
-        when new_card
-          case
-          when requested_view == :raw ; :blank
-          when @mode == :closed       ; :closed_missing
-          else                        ; :missing
+      view = (options[:view] || :content).to_sym
+      
+      options[:home_view] = [:closed, :edit].member?(view) ? :open : view 
+      # FIXME: special views should be represented in view definitions
+      
+      if @@perms[view] != :none
+        view = case @mode
+        
+          when :closed  ;  !tcard.known?  ? :closed_missing : :closed_content
+          when :edit    ;  tcard.virtual? ? :edit_virtual   : :edit_in_form
+          # FIXME should be concerned about templateness, not virtualness per se
+          # needs to handle real cards that are hard templated much better               
+          else          ;  view
           end
-        when @mode==:closed     ; :closed_content
-        else                    ; requested_view
-        end
-      #warn "rendering #{approved_view} for #{card.name}"
-      result = raw( sub.render(approved_view, options) )
+      end
+      
+      result = raw sub.render( view, options )
       Renderer.current_slot = oldrenderer
       result
     end
@@ -343,7 +390,7 @@ module Wagn
       if p = params['cards'] and card_params = p[cardname.pre_cgi]
         content = card_params['content']
       end
-      content if content.present?  #not sure I get why this is necessary - efm
+      content if content.present?  # why is this necessary? - efm
     end
   
     def new_inclusion_card_args options
@@ -357,18 +404,19 @@ module Wagn
     
     def path action, opts={}
       pcard = opts.delete(:card) || card
-      base = wagn_path "/card/#{action}"
-      if pcard && ![:new, :create, :create_or_update].member?( action )
-        base += '/' + (opts[:id] ? "~#{opts.delete(:id)}" : pcard.cardname.to_url_key)
+      base = action==:read ? '' : "/card/#{action}" 
+      
+      if pcard && !pcard.name.empty? && !opts.delete(:no_id) && action != :create #might be some issues with new?
+        base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.to_url_key )
       end
       if attrib = opts.delete( :attrib )
         base += "/#{attrib}"
       end
       query =''
       if !opts.empty?
-        query = '?' + (opts.map{ |k,v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&') )
+        query = '?' + ( opts.map{ |k,v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&') )
       end
-      base + query
+      wagn_path( base + query )
     end
 
     def search_params
@@ -388,26 +436,27 @@ module Wagn
     end
       
     def build_link href, text, known_card = nil
-      klass = case href
+      #Rails.logger.info "bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}"
+      klass = case href.to_s
         when /^https?:/; 'external-link'
         when /^mailto:/; 'email-link'
         when /^\//
-          href = full_uri href.to_s      
+          href = full_uri href.to_s
           'internal-link'
         else
           known_card = !!Card.fetch(href, :skip_modules=>true) if known_card.nil?
           if card
             text = text.to_cardname.to_show card.name
           end
-          href = href.to_cardname
-          href = known_card ? href.to_url_key : CGI.escape(href.escape)
           
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
+          cardname = Cardname===href ? href : href.to_cardname
+          href = known_card ? cardname.to_url_key : CGI.escape(cardname.escape)
           href = full_uri href.to_s
           known_card ? 'known-card' : 'wanted-card'
           
       end
-      %{<a class="#{klass}" href="#{href.to_s}">#{text.to_s}</a>}
+      %{<a class="#{klass}" href="#{href}">#{text.to_s}</a>}
     end
     
     def unique_id() "#{card.key}-#{Time.now.to_i}-#{rand(3)}" end
@@ -440,15 +489,8 @@ module Wagn
     end
 
     ## ----- for Linkers ------------------
-    def typecode_options
-      Cardtype.createable_types.map do |type|
-        [type[:name], type[:name]]
-      end.compact
-    end
 
-    def typecode_options_for_select selected=Card.default_typecode_key
-      options_from_collection_for_select(typecode_options, :first, :last, selected)
-    end
+
 
     def card_title_span title
       %{<span class="namepart-#{title.to_cardname.css_name}">#{title}</span>}
@@ -459,7 +501,7 @@ module Wagn
     end
   
 
-     ### FIXME -- this should not be here!   probably in WikiReference model?
+     ### FIXME -- this should not be here!   probably in Card::Reference model?
     def replace_references old_name, new_name
       #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
       wiki_content = WikiContent.new(card, card.content, self)
@@ -484,9 +526,9 @@ module Wagn
     #FIXME -- should not be here.
     def update_references rendering_result = nil, refresh = false
       return unless card && card.id
-      WikiReference.delete_all ['card_id = ?', card.id]
+      Card::Reference.delete_all ['card_id = ?', card.id]
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
-      Wagn::Cache.expire_card( card.key ) if refresh
+      card.expire if refresh
       rendering_result ||= WikiContent.new(card, _render_refs, self)
       rendering_result.find_chunks(Chunk::Reference).each do |chunk|
         reference_type =
@@ -496,9 +538,7 @@ module Wagn
             else raise "Unknown chunk reference class #{chunk.class}"
           end
 
-       #ref_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
-        #raise "No name to ref? #{card.name}, #{chunk.inspect}" unless chunk.refcardname()
-        WikiReference.create!( :card_id=>card.id,
+        Card::Reference.create!( :card_id=>card.id,
           :referenced_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
           :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
           :link_type=>reference_type
@@ -514,6 +554,9 @@ module Wagn
     end
   end
   
+  class Renderer::Csv < Renderer::Text
+  end
+  
   # automate
   Wagn::Renderer::EmailHtml
   Wagn::Renderer::Html
@@ -526,7 +569,7 @@ module Wagn
   pack_dirs.split(/,\s*/).each do |dir|
     Wagn::Pack.dir File.expand_path( "#{dir}/**/*_pack.rb",__FILE__)
   end
-  Wagn::Pack.dir File.expand_path( "#{Rails.root}/lib/wagn/set/type/*.rb", __FILE__ )
+  #Wagn::Pack.dir File.expand_path( "#{Rails.root}/lib/wagn/set/*/*.rb", __FILE__ )
   Wagn::Pack.load_all
   
 end

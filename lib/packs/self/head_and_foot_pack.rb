@@ -1,12 +1,13 @@
 class Wagn::Renderer
-  define_view :raw, :name=>'*head' do |args|
+  define_view :raw, :name=>'head' do |args|
     #rcard = card  # should probably be more explicit that this is really the *main* card.
     
     title = root.card && root.card.name
-    title = params[:action] if [nil, '', '*placeholder'].member? title
-    bits = ["<title>#{title ? "#{title} - " : ''}#{ Card.setting('*title') }</title>"]
+    title = nil if title.blank?
+    title = params[:action] if title=='*placeholder'
+    bits = ["<title>#{title ? "#{title} - " : ''}#{ Card.setting :title }</title>"]
 
-    if (favicon_card = Card['*favicon'] || Card['*logo']) and favicon_card.typecode == 'Image'
+    if favicon_card = Card[:favicon] and favicon_card.type_id == Card::ImageID
       bits << %{<link rel="shortcut icon" href="#{ subrenderer(favicon_card)._render_source :size=>:icon }" />}
     end
     
@@ -17,7 +18,7 @@ class Wagn::Renderer
       end
       
       # RSS # move to packs!
-      if root.card.typecode == 'Search'
+      if root.card.type_id == Card::SearchTypeID
         opts = { :format => :rss }
         root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
         rss_href = url_for_page root.card.name, opts
@@ -29,7 +30,7 @@ class Wagn::Renderer
     
     bits << stylesheet_link_tag('application-all')
     bits << stylesheet_link_tag('application-print', :media=>'print')
-    if css_card = Card['*css']
+    if css_card = Card[:css]
       local_css_path = wagn_path "*css.css?#{ css_card.current_revision_id }"
       bits << stylesheet_link_tag(local_css_path)
     end
@@ -41,11 +42,11 @@ class Wagn::Renderer
       wagn.rootPath = '#{Wagn::Conf[:root_path]}';
       window.tinyMCEPreInit = {base:"#{wagn_path 'assets/tinymce'}",query:"3.4.7",suffix:""}; 
       #{ Wagn::Conf[:recaptcha_on] ? %{wagn.recaptchaKey = "#{Wagn::Conf[:recaptcha_public_key]}";} : '' }
-      #{ (c=Card['*double click'] and !Card.toggle(c.content)) ? 'wagn.noDoubleClick = true' : '' }      
+      #{ (c=Card[:double_click] and !Card.toggle(c.content)) ? 'wagn.noDoubleClick = true' : '' }      
       #{ local_css_path ? %{ wagn.local_css_path = '#{local_css_path}'; } : '' }
       ) +
       #  TEMPORARY we probably want this back once we have fingerprinting on this file - EFM
-      %( wagn.tinyMCEConfig = { #{Card.setting('*tiny mce')} };
+      %( wagn.tinyMCEConfig = { #{ Card.setting :tiny_mce } };
     </script>      
           )
     bits << javascript_include_tag('application')
@@ -69,14 +70,14 @@ class Wagn::Renderer
 
     bits.join("\n")
   end
-  alias_view(:raw, {:name=>'*head'}, :core)
+  alias_view(:raw, {:name=>'head'}, :core)
   
   
   
   
-  define_view :raw, :name=>'*foot' do |args|
+  define_view :raw, :name=>'foot' do |args|
     '<!-- *foot is deprecated. please remove from layout -->'
   end
-  alias_view(:raw, {:name=>'*foot'}, :core)
+  alias_view(:raw, {:name=>'foot'}, :core)
 
 end

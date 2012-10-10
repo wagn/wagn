@@ -1,22 +1,19 @@
 module AuthenticatedSystem
   protected
-  def logged_in?
-    current_user && current_user.login != 'anon'
-  end
+  def logged_in?() Session.user_id && Session.logged_in? end
 
   # Accesses the current user from the session.
-  def current_user
-    @current_user ||= session[:user] ? User[session[:user]] : nil
-  rescue Exception=>e
+  def session_user
+    @session_user ||= session[:user]
+  rescue Exception => e
+    #warn "except #{e.inspect}, #{e.backtrace*"\n"}"
     session[:user] = nil
     raise e
   end
 
   # Store the given user in the session.
-  def current_user=(new_user)
-    #session[:user] = new_user
-    session[:user] = new_user.nil? ? nil : new_user.id
-    @current_user = new_user
+  def session_user=(new_user)
+    @session_user = session[:user] = Card==new_user ? card.id : new_user
   end
 
   # Check if the user is authorized.
@@ -73,7 +70,7 @@ module AuthenticatedSystem
     return true unless protect?(action_name)
 
     # Check if user is logged in and authorized
-    return true if logged_in? and authorized?(current_user)
+    return true if logged_in? and authorized?(session_user)
 
     # Store current location so that we can redirect back after login
     store_location
@@ -111,10 +108,10 @@ module AuthenticatedSystem
     session[:return_to] = nil
   end
 
-  # Inclusion hook to make #current_user and #logged_in?
+  # Inclusion hook to make #session_user and #logged_in?
   # available as ActionView helper methods.
   def self.included(base)
     super
-    base.send :helper_method, :current_user, :logged_in?
+    base.send :helper_method, :session_user, :logged_in?
   end
 end

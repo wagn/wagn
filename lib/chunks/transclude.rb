@@ -73,18 +73,5 @@ module Chunk
       super
     end
     
-    private
-    def base_card 
-      case options[:base]
-      when 'self'  ; card
-      when 'parent'; card.trunk
-      else           base || invalid_option(:base)
-      end
-    end
-    
-    def invalid_option(key)
-      raise Wagn::Oops, "Invalid argument {'#{key}': '#{options[key]}'} in transclusion syntax"
-    end
-
   end
 end

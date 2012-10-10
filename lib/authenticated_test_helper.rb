@@ -1,13 +1,12 @@
 module AuthenticatedTestHelper
   # Sets the current user in the session from the user fixtures.
   def login_as(user)
-    @request.session[:user] = User.find_by_login(user.to_s).id
-    User.current_user = User.find(@request.session[:user])
+    Session.user = @request.session[:user] = (uc=Card[user.to_s] and uc.id)
+    #warn "(ath)login_as #{user.inspect}, #{Session.user_id}, #{@request.session[:user]}"
   end
                  
   def signout
-    @request.session[:user] = nil
-    User.current_user = @request.session[:user]
+    Session.user = @request.session[:user] = nil
   end
   
   
@@ -48,13 +47,13 @@ module AuthenticatedTestHelper
   
   def assert_new_account(&block)
     assert_difference(User, :count, 1) do 
-      assert_difference Card, :count, 1, &block
+      assert_difference Card.where(:type_id=>Card::UserID), :count, 1, &block
     end
   end
   
   def assert_no_new_account(&block) 
     assert_no_difference(User, :count) do 
-      assert_no_difference Card, :count, &block
+      assert_no_difference Card.where(:type_id=>Card::UserID), :count, &block
     end
   end   
   

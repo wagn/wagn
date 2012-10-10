@@ -4,5 +4,5 @@ require 'email_spec/cucumber'
 #Capybara.default_driver = :selenium  #runs all tests in js
 
 Before do
-  Wagn::Cache.reset_for_tests
+  Wagn::Cache.restore
 end

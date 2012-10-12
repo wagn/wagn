@@ -163,11 +163,18 @@ class Card < ActiveRecord::Base
     @set_mods_loaded=false
   end
 
+  def clone
+    tmp_persisted = @persisted
+    @persisted = false
+    klone = super
+    @persisted = tmp_persisted
+    klone
+  end
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # STATES
 
   def new_card?
-    new_record? || @from_trash
+    new_record? || !!@from_trash
   end
 
   def known?
@@ -181,11 +188,13 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING
 
-  def update_attributes args={}
+  def assign_attributes args={}, options={}
     if args and newtype = args.delete(:type) || args.delete('type')
       args[:type_id] = Card.fetch_id( newtype )
     end
-    super args
+    reset_patterns
+    
+    super args, options
   end
 
   def set_stamper

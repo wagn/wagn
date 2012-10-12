@@ -29,26 +29,28 @@ class Wagn::Renderer::Html
   define_view :open_rule, :tags=>:unknown_ok do |args|
     current_rule, prototype = find_current_rule_card
     setting_name = card.cardname.tag_name
-    #warn Rails.logger.warn("open_rule #{card.inspect}, cr:#{current_rule.inspect}, sn:#{setting_name}, p:#{params.inspect}")
     current_rule ||= Card.new :name=> "*all+#{setting_name}"
-
-    if args=params[:card]
-      current_rule = current_rule.refresh if current_rule.frozen?
-      args[:type_id] = Card.fetch_id(args.delete(:type)) if args[:type]
-      current_rule.assign_attributes args
-      current_rule.reset_mods
+    set_selected = false
+    
+    if params[:type_reload] && card_args=params[:card]
+      params.delete :success # otherwise updating the editor looks like a successful post
+      if card_args[:name] && card_args[:name].to_cardname.key != current_rule.key
+        current_rule = Card.new card_args
+      else
+        current_rule = current_rule.refresh if current_rule.frozen?
+        current_rule.assign_attributes card_args
+      end
       current_rule.include_set_modules
+      set_selected = card_args[:name].to_cardname.left_name.to_s
     end
-
-    params.delete(:success) if params[:type_reload] # otherwise updating the editor looks like a successful post
-    # should this be in "if" above?
-
+    
     opts = {
       :fallback_set    => false,
       :open_rule       => card,
       :edit_mode       => (card.ok?(card.new_card? ? :create : :update) && !params[:success]),
       :setting_name    => setting_name,
-      :current_set_key => (current_rule.new_card? ? nil : current_rule.cardname.trunk_name.key)
+      :current_set_key => (current_rule.new_card? ? nil : current_rule.cardname.trunk_name.key),
+      :set_selected    => set_selected
     }
 
     if !opts[:read_only]
@@ -104,12 +106,12 @@ class Wagn::Renderer::Html
 
 
       if edit_mode
-#        '<label>apply to:</label> ' +
         raw( args[:set_options].map do |set_name|
           set_label =Card.fetch(set_name).label
+          checked = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
 
           '<li>' +
-            raw( form.radio_button( :name, "#{set_name}+#{setting_name}", :checked=>(current_set_key && args[:set_options].length==1) ) ) +
+            raw( form.radio_button( :name, "#{set_name}+#{setting_name}", :checked=> checked ) ) +
             if set_name.to_cardname.to_key == current_set_key
               %{<span class="set-label current-set-label">#{ set_label } <em>(current)</em></span>}
             else

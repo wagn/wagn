@@ -29,7 +29,7 @@ module Wagn::Model
 
     def reset_patterns
       @rule_cards={}
-      @real_set_names = @set_mods_loaded = @junction_only = @patterns =
+      @real_set_names = @set_mods_loaded = @junction_only = @patterns = @set_modules =
         @method_keys = @set_names = @template = @skip_type_lookup = nil
       true
     end

@@ -30,8 +30,8 @@ module Wagn::Model::TrackedAttributes
 
     reset_patterns_if_rule # reset the new name
 
-    raise "No name ???" if name.blank? # this should not pass validation.
     Card.expire cardname
+    Rails.logger.info "just expired #{cardname}"
 
     if @cardname.junction?
       [:trunk, :tag].each do |side|
@@ -134,34 +134,25 @@ module Wagn::Model::TrackedAttributes
   
   def cascade_name_changes 
     return true unless @name_changed
-    ActiveRecord::Base.logger.info("----------------------- CASCADE #{self.name}  -------------------------------------")  
+    ActiveRecord::Base.logger.debug "----------------------- CASCADE #{self.name}  -------------------------------------"
     
     deps = self.dependents
                                           
     deps.each do |dep|
-      ActiveRecord::Base.logger.info("---------------------- DEP #{dep.name}  -------------------------------------")  
-      cxn = ActiveRecord::Base.connection
-      depname = dep.cardname.replace_part(@old_name, name)
-      depkey = depname.to_key
-      # here we specifically want NOT to invoke recursive cascades on these cards, have to go this 
-      # low level to avoid callbacks.
-      
-      # FIXME! in response to the old comment above: um.... why not?
-      # I think we need the validations and the updates to recurse.
-      # it may be that we want to send certain args along to prevent certain callbacks, but this is too hacky, and it's
-      # tied to at least one bug: if any of the names in the update below are in the trash, the whole thing explodes.
-      # would be surprised if there weren't also caching bugs stemming from this.
-      # I trust the above actually avoided some issues, but we need to nail those down, test, and fix them
-      # EFM - 5/21/12
-      Card.update_all("name=#{cxn.quote(depname.to_s)}, #{cxn.quote_column_name("key")}=#{cxn.quote(depkey)}", "id = #{dep.id}")
-      dep.expire
+      # here we specifically want NOT to invoke recursive cascades on these cards, have to go this low level to avoid callbacks.
+      ActiveRecord::Base.logger.debug "---------------------- DEP #{dep.name}  -------------------------------------"
+      newname = dep.cardname.replace_part @old_name, name
+      cxn = connection
+      Card.update_all "name=#{cxn.quote newname.s}, #{cxn.quote_column_name 'key'}=#{cxn.quote newname.key}", "id = #{dep.id}"
+      Card.expire dep.name #expire old name
+      Card.expire newname
     end 
 
     if !update_referencers || update_referencers == 'false'  # FIXME doing the string check because the radio button is sending an actual "false" string
       #warn "no updating.."
       ([self]+deps).each do |dep|
-        ActiveRecord::Base.logger.info("--------------- NOUPDATE REFERRER #{dep.name}  ---------------------------")
-        Card::Reference.update_on_destroy(dep, @old_name) 
+        ActiveRecord::Base.logger.debug "--------------- NOUPDATE REFERER #{dep.name}  ---------------------------"
+        Card::Reference.update_on_destroy dep, @old_name
       end
     else
       Session.as_bot do
@@ -173,7 +164,7 @@ module Wagn::Model::TrackedAttributes
           # some even more complicated scenario probably breaks on the dependents, so this probably needs a more thoughtful refactor
           # aligning the dependent saving with the name cascading
           
-          ActiveRecord::Base.logger.info("------------------ UPDATE REFERRER #{card.name}  ------------------------")
+          ActiveRecord::Base.logger.debug "------------------ UPDATE REFERER #{card.name}  ------------------------"
           next if card.hard_template
           card.content = Wagn::Renderer.new(card, :not_current=>true).replace_references( @old_name, name )
           card.save! unless card==self

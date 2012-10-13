@@ -66,7 +66,7 @@ module Wagn::Model
     @@setmodroot = Wagn::Set
 
     class << self
-      def find_module(mod)
+      def find_module mod
         set, name = *(mod.split('::'))
         #warn "find_mod #{set}, #{name}, #{@@ruby19}"
         return nil unless name
@@ -74,12 +74,10 @@ module Wagn::Model
         find_real_module(setm, name)
       end
 
-      def find_real_module(base, part)
+      def find_real_module base, part
         if @@ruby19
-          r=base.const_defined?(part, false) ? base.const_get(part, false) : nil
-          #Rails.logger.warn "1.9#{base}, #{part}: #{r.inspect}"; r
+          base.const_defined?(part, false) ? base.const_get(part, false) : nil
         else
-          #warn "1.8#{base}, #{part}: #{base.const_defined?(part)} ? #{base.const_get(part)}"
           base.const_defined?(part)        ? base.const_get(part)        : nil
         end
       rescue Exception => e

@@ -102,14 +102,6 @@ module Wagn::Model::Fetch
       card.present?
     end
     
-    def autoname(name)
-      if exists? name
-        autoname name.next
-      else
-        name
-      end
-    end
-    
     def expire name
       if card = Card.cache.read( name.to_cardname.to_key )
         card.expire

@@ -333,6 +333,9 @@ ul.pointer {
   width: 70%;
   padding: 3px;
 }
+.field-in-multi > .content-editor > input {
+  margin-left: 0;
+}
 .edit-button-area {
   margin-top: 7px;
 }
@@ -629,12 +632,11 @@ body#wagn .card-slot.recent-changes h2 {
   padding: 0px;
 }
 .pointer-list-editor input {
+  margin-right: 10px;
   width: 60%;
 }
-.add-another-div,
 .pointer-list-editor li {
   list-style: none;
-  padding: 0 10px;
 }
 .pointer-list-editor .pointer-item-delete {
   margin-left: 4px;

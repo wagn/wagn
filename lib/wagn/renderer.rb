@@ -287,7 +287,9 @@ module Wagn
     end
     
     def canonicalize_view view
-      (v=!view.blank? && DEPRECATED_VIEWS[view.to_sym]) ? v : view
+      unless view.blank?
+        DEPRECATED_VIEWS[view.to_sym] || view.to_sym
+      end
     end
   
     def view_method view
@@ -316,9 +318,6 @@ module Wagn
       # Don't bother processing inclusion if we're already out of view
       
       return expand_main(opts) if opts[:tname]=='_main' && !ajax_call? && @depth==0
-      
-      opts[:view] = canonicalize_view opts[:view]
-      opts[:view] ||= ( @mode == :layout ? :core : :content )
       
       tcardname = opts[:tname].to_cardname
       fullname = tcardname.to_absolute(card.cardname, params)
@@ -361,13 +360,14 @@ module Wagn
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
       # don't like depending on this global var switch
       # I think we can get rid of it as soon as we get rid of the remaining rails views?
-  
-      view = (options[:view] || :content).to_sym
+
+      view = canonicalize_view options.delete :view
+      view ||= ( @mode == :layout ? :core : :content )  
       
       options[:home_view] = [:closed, :edit].member?(view) ? :open : view 
       # FIXME: special views should be represented in view definitions
       
-      if @@perms[view] != :none
+      unless @@perms[view] == :none
         view = case @mode
         
           when :closed  ;  !tcard.known?  ? :closed_missing : :closed_content

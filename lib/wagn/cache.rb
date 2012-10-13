@@ -169,6 +169,7 @@ module Wagn
       else
         val = yield
         val.reset_mods if val.respond_to?(:reset_mods)
+        #why does this happen here?
         @local[key] = val
       end
     end

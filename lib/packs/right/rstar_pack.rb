@@ -39,8 +39,9 @@ class Wagn::Renderer::Html
       else
         current_rule = current_rule.refresh if current_rule.frozen?
         current_rule.assign_attributes card_args
+        current_rule.include_set_modules
       end
-      current_rule.include_set_modules
+      
       set_selected = card_args[:name].to_cardname.left_name.to_s
     end
     
@@ -149,7 +150,15 @@ class Wagn::Renderer::Html
 
 
           %{</div>
-          <div class="rule-content">#{ edit_mode ? content_field(form, :skip_rev_id=>true) : (current_set_key ? render_core : '') }</div>
+          <div class="rule-content">
+            #{ 
+            case
+            when edit_mode       ; content_field form, :skip_rev_id=>true
+            when current_set_key ; render_core
+            else ''
+            end
+            }
+          </div>
         </div>
        </div> }.html_safe +
 

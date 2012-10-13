@@ -162,14 +162,7 @@ class Card < ActiveRecord::Base
   def reset_mods
     @set_mods_loaded=false
   end
-
-  def clone
-    tmp_persisted = @persisted
-    @persisted = false
-    klone = super
-    @persisted = tmp_persisted
-    klone
-  end
+  
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # STATES
 
@@ -235,7 +228,7 @@ class Card < ActiveRecord::Base
 
   def base_before_save
     if self.respond_to?(:before_save) and self.before_save == false
-      errors.add(:save, "could not prepare card for destruction")
+      errors.add(:save, "could not prepare card for destruction") #fixme - screwy error handling!!  
       return false
     end
   end

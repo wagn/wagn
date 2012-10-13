@@ -595,7 +595,7 @@ class Card < ActiveRecord::Base
   end
   
   def autoname name
-    if exists? name
+    if Card.exists? name
       autoname name.next
     else
       name

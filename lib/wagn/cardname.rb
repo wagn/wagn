@@ -13,6 +13,7 @@ module Wagn
 
     RUBY19 = RUBY_VERSION =~ /^1\.9/
     WORD_RE = RUBY19 ? '\p{Word}/' : '/\w/'
+    RELATIVE_RE = /\b_(left|right|whole|self|user|main|\d+|L*R?)\b/
 
     @@name2cardname = {}
 
@@ -57,17 +58,13 @@ module Wagn
     
     alias simple? simple
     
-    def inspect() "<CardName key=#{key}[#{self}, #{@parts ? @parts.size : 'no size?'}]>" end
+    def inspect
+      "<CardName key=#{key}[#{self}, #{@parts ? @parts.size : 'no size?'}]>"
+    end
 
     def self.unescape(uri) uri.gsub(' ','+').gsub('_',' ')             end
 
-    # This probably doesn't belong here, but I wouldn't put it in string either
-    def self.substitute!( str, hash )
-      hash.keys.each do |var|
-        str.gsub!(/\{(#{var})\}/) {|x| hash[var.to_sym]}
-      end
-      str
-    end   
+
 
     def ==(obj)
       obj.nil? ? false :
@@ -139,7 +136,7 @@ module Wagn
 
     def to_show context
       # FIXME this is not quite right.  distinction from absolute is that it leaves blank parts blank.
-      if s =~/\b_(left|right|whole|self|user|main|\d+|L*R?)\b/
+      if s =~ RELATIVE_RE
         to_absolute context
       else
         s
@@ -182,6 +179,14 @@ module Wagn
         #Rails.logger.warn "to_abs#{context}, #{part}, #{new_part}, #{new_part.blank? ? context.to_s : new_part}"
         new_part.blank? ? context.to_s : new_part
       end * JOINT
+    end
+    
+    # This probably doesn't belong here, but I wouldn't put it in string either
+    def self.substitute!( str, hash )
+      hash.keys.each do |var|
+        str.gsub!(/\{(#{var})\}/) {|x| hash[var.to_sym]}
+      end
+      str
     end
 
   end

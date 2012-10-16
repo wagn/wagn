@@ -5,7 +5,7 @@ module Wagn
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
-      :layout=>:layout, :new=>:edit, :normal=>:normal } #should be set in views
+      :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     DEFAULT_ITEM_VIEW = :link  # should be set in card?
    
     RENDERERS = { #should be defined in renderer
@@ -127,7 +127,7 @@ module Wagn
     end
 
 
-    attr_reader :format, :card, :root, :showname #should be able to factor out showname
+    attr_reader :format, :card, :root, :parent, :showname #should be able to factor out showname
     attr_accessor :form, :main_content, :error_status
 
     def render view = :view, args={}
@@ -208,13 +208,14 @@ module Wagn
       String===response ? template.raw( response ) : response
     end
   
-    def subrenderer(subcard, opts={})
+    def subrenderer subcard, opts={}
       subcard = Card.fetch_or_new(subcard) if String===subcard
       sub = self.clone
-      sub.initialize_subrenderer(subcard, opts)
+      sub.initialize_subrenderer subcard, self, opts
     end
     
-    def initialize_subrenderer subcard, opts
+    def initialize_subrenderer subcard, parent, opts
+      @parent=parent
       @card = subcard
       @char_count = 0
       @depth += 1
@@ -370,13 +371,15 @@ module Wagn
       unless @@perms[view] == :none
         view = case @mode
         
-          when :closed  ;  !tcard.known?  ? :closed_missing : :closed_content
-          when :edit    ;  tcard.virtual? ? :edit_virtual   : :edit_in_form
+          when :closed   ;  !tcard.known?  ? :closed_missing : :closed_content
+          when :edit     ;  tcard.virtual? ? :edit_virtual   : :edit_in_form
+          when :template ;  :template_rule
           # FIXME should be concerned about templateness, not virtualness per se
           # needs to handle real cards that are hard templated much better               
-          else          ;  view
+          else           ;  view
           end
       end
+      Rails.logger.info "@mode = #{@mode}.  rendering view: #{view}"
       
       result = raw sub.render( view, options )
       Renderer.current_slot = oldrenderer

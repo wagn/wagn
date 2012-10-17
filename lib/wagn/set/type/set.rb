@@ -25,9 +25,11 @@ module Wagn::Set::Type::Set
   end
 
   def label
-    return '' unless klass = subclass_for_set
-    puts "label:  cardname = #{cardname}; left = #{cardname.left}; tag = #{cardname.tag}"
-    klass.label cardname.left
+    if klass = subclass_for_set
+      klass.label cardname.left
+    else
+      ''
+    end
   end
 
   def prototype

@@ -47,7 +47,7 @@ module Wagn
         text = cardname.to_show(card.name) unless text
         #href+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
         href = full_uri Wagn::Conf[:root_path] + '/' +
-          (known_card ? cardname.url_key : CGI.escape(cardname.escape))
+          (known_card ? cardname.url_key : CGI.escape(cardname.s))
 
         return %{<cardlink class="#{
                     known_card ? 'known-card' : 'wanted-card'
@@ -63,7 +63,7 @@ module Wagn
       when 'closed'   ;  'card-slot line'
       else            ;  'card-slot paragraph'
     end 
-    css_class << " " + card.css_names if card
+    css_class << " " + card.safe_keys if card
     css_class << " view-#{view}" if view
     
     attributes = {

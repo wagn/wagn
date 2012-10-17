@@ -45,7 +45,7 @@ module Wagn::Model
     def real_set_names
       set_names.find_all &Card.method(:exists?)
     end
-    def css_names()      patterns.map(&:css_name).reverse*" "                                   end
+    def safe_keys()      patterns.map(&:safe_key).reverse*" "                                   end
     def set_modules()    @set_modules ||= patterns_without_new.reverse.map(&:set_const).compact end
     def set_names()
       Card.set_members(@set_names = patterns.map(&:to_s), key) if @set_names.nil?
@@ -169,9 +169,9 @@ module Wagn::Model
       self.class.trunkless? ? k : "#{@trunk_name}+#{k}"
     end
     
-    def css_name()
+    def safe_key()
       caps_part = self.class.key.gsub(' ','_').upcase
-      self.class.trunkless? ? caps_part : "#{caps_part}-#{@trunk_name.css_name}"
+      self.class.trunkless? ? caps_part : "#{caps_part}-#{@trunk_name.safe_key}"
     end
   end
 

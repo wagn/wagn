@@ -18,7 +18,7 @@ module Wagn::Model::Fetch
     def fetch mark, opts = {}
       # "mark" here means a generic identifier -- can be a numeric id, a name, a string name, etc.
 #      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{cardname}" do
-
+      return nil if mark.nil?
       #warn "fetch #{mark.inspect}"
       # Symbol (codename) handling
       if Symbol===mark

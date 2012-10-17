@@ -179,9 +179,9 @@ describe Wagn::Cardname do
     end
   end
 
-  describe "#css_name" do
+  describe "#safe_key" do
     it "subs pluses & stars" do
-      "Alpha?+*be-ta".to_cardname.css_name.should == "alpha-Xbe_tum"
+      "Alpha?+*be-ta".to_cardname.safe_key.should == "alpha-Xbe_tum"
     end
   end
 

@@ -6,9 +6,6 @@ module Wagn
     JOINT = '+'
     BANNED_ARRAY = [ '/', '~', '|' ]
     BANNED_RE = /#{ (['['] + BANNED_ARRAY << JOINT )*'\\' }]/
-    CARDNAME_BANNED_CHARACTERS = BANNED_ARRAY * ' '
-
-    FORMAL_JOINT = " <span class=\"wiki-joint\">#{JOINT}</span> "
 
     RUBY19 = RUBY_VERSION =~ /^1\.9/
     WORD_RE = RUBY19 ? '\p{Word}/' : '/\w/'
@@ -20,13 +17,15 @@ module Wagn
       def new obj
         return obj if Cardname===obj
         str = Array===obj ? obj*JOINT : obj.to_s
-        return obj if obj = @@name2cardname[str]
-        super str.strip
+        if known_name = @@name2cardname[str]
+          known_name
+        else
+          super str.strip
+        end
       end
       
       def unescape uri
-        # key doesn't resolve correctly in unescaped form 
-        # dislike this unescaping anyway.
+        # can't instantiate because key doesn't resolve correctly in unescaped form 
         uri.gsub(' ','+').gsub '_',' '
       end
       
@@ -43,7 +42,6 @@ module Wagn
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #~~~~~~~~~~~~~~~~~~~~~~ INSTANCE ~~~~~~~~~~~~~~~~~~~~~~~~~
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     attr_reader :simple, :parts, :key, :s
     alias to_key key
@@ -95,22 +93,22 @@ module Wagn
       @url_key ||= decoded.gsub(/[^\*#{WORD_RE}\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
     end
     
-    def css_name
-      @css_name ||= key.gsub('*','X').gsub '+','-'
-    end
-    
-    def pre_cgi
-      parts.join '~plus~'
-    end
-    
-    def escape
-      s.gsub ' ', '_'
+    def safe_key
+      @safe_key ||= key.gsub('*','X').gsub JOINT, '-'
     end
     
     def decoded
       @decoded ||= (s.index('&') ?  HTMLEntities.new.decode(s) : s)
     end
-        
+    
+    def pre_cgi
+      #why is this necessary?? doesn't real CGI escaping handle this??
+      @pre_cgi ||= parts.join '~plus~'
+    end
+    
+    def post_cgi
+      @post_cgi ||= s.gsub '~plus~', JOINT
+    end
 
     #~~~~~~~~~~~~~~~~~~~ PARTS ~~~~~~~~~~~~~~~~~~~
     
@@ -138,13 +136,7 @@ module Wagn
 
     def star?()         simple?   and '*' == s[0]               end
     def rstar?()        junction? and '*' == parts[-1][0]       end
-      
-    def trait_name tag_code
-      if tag_card = Card[ tag_code ]
-        [ self, tag_card.name ].to_cardname
-      end
-    end
-    
+
     def template_name?()     is_trait? [:content, :default]     end
     def email_config_name?() is_trait? [:subject, :message]     end
 
@@ -154,15 +146,26 @@ module Wagn
       else
         right_key = right_name.key
         !!traitlist.find do |codename|
-          Card[codename].cardname.key==right_key
+          Card[codename].cardname.key == right_key
         end
       end
     end
+      
+    def trait_name tag_code
+      if tag_card = Card[ tag_code ]
+        [ self, tag_card.name ].to_cardname
+      end
+    end
+    
+    def trait tag_code
+      trait_name( tag_code ).s
+    end
+
 
 
     #~~~~~~~~~~~~~~~~~~~~ SHOW / ABSOLUTE ~~~~~~~~~~~~~~~~~~~~
 
-    def to_show context
+    def to_show context, params=nil, ignore=[]
       # FIXME this is not quite right.  distinction from absolute is that it leaves blank parts blank.
       if s =~ RELATIVE_RE
         to_absolute context
@@ -171,38 +174,40 @@ module Wagn
       end
     end
 
-    def to_absolute_name rel_name=nil
-      (rel_name || self).to_cardname.to_absolute self
-    end
 
-    def to_absolute(context, params=nil)
+    def to_absolute context, params=nil
       context = context.to_cardname
       parts.map do |part|
         new_part = case part
           when /^_user$/i;            (user=Session.user_card) ? user.name : part
           when /^_main$/i;            Wagn::Conf[:main_name]
           when /^(_self|_whole|_)$/i; context
-          when /^_left$/i;            context.trunk_name
+          when /^_left$/i;            context.trunk #note - inconsistent use of left v. trunk
           when /^_right$/i;           context.tag
-          when /^_(\d+)$/i;
+          when /^_(\d+)$/i
             pos = $~[1].to_i
             pos = context.size if pos > context.size
             context.parts[pos-1]
           when /^_(L*)(R?)$/i
             l_s, r_s = $~[1].size, $~[2].blank?
-            trunk = context.nth_left(l_s)
-            r= r_s ? trunk.to_s : trunk.tag
+            l_part = context.nth_left l_s
+            r_s ? l_part.s : l_part.tag
           when /^_/
             (params && ppart = params[part]) ? CGI.escapeHTML( ppart ) : part
-          else                     part
-        end.to_s.strip
-        #Rails.logger.warn "to_abs#{context}, #{part}, #{new_part}, #{new_part.blank? ? context.to_s : new_part}"
+          else
+            part
+          end.to_s.strip
         new_part.blank? ? context.to_s : new_part
       end * JOINT
     end
+    
+    def to_absolute_name context, params=nil
+      self.class.new to_absolute( context, params )
+    end
 
     def nth_left n
-      (n >= size ? parts[0] : parts[0..-n-1]).to_cardname
+      # 1 = left; 2= left of left; 3 = left of left of left....
+      ( n >= size ? parts[0] : parts[0..-n-1] ).to_cardname
     end
     
     

@@ -103,7 +103,7 @@ module Wagn
 
     def wrap(view, args = {})
       classes = ['card-slot', "#{view}-view"]
-      classes << card.css_names if card
+      classes << card.safe_keys if card
     
       attributes = { :class => classes.join(' ') }
       [:style, :home_view, :item].each { |key| attributes[key] = args[key] }

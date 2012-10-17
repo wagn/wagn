@@ -454,7 +454,7 @@ module Wagn
           
           #href+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
           cardname = Cardname===href ? href : href.to_cardname
-          href = known_card ? cardname.url_key : CGI.escape(cardname.escape)
+          href = known_card ? cardname.url_key : CGI.escape(cardname.s)
           href = full_uri href.to_s
           known_card ? 'known-card' : 'wanted-card'
           
@@ -476,7 +476,7 @@ module Wagn
 
 
     def card_title_span title
-      %{<span class="namepart-#{title.to_cardname.css_name}">#{title}</span>}
+      %{<span class="namepart-#{title.to_cardname.safe_key}">#{title}</span>}
     end
 
     def format_date date, include_time = true

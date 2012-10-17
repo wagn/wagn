@@ -10,9 +10,9 @@ class Wagn::Renderer::Html
 
     wrap( args ) do
       %{#{#slot.header  I don't understand why this doesn't work here?
-      }<style>.SELF-#{tcard.key.css_name
+      }<style>.SELF-#{tcard.safe_key
       } .account-area .title-#{
-        tcard.name.css_name
+        tcard.cardname.safe_key
       } { display: none; }</style>} +
 
       div( :id=>id('card-body'), :class=>'card-body') do

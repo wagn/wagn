@@ -238,7 +238,7 @@ class Wagn::Renderer::Html
     eform = form_for_multi
 
     %{
-<div class="edit-area in-multi card-editor RIGHT-#{ card.cardname.tag.to_cardname.css_name }">
+<div class="edit-area in-multi card-editor RIGHT-#{ card.cardname.tag.to_cardname.safe_key }">
   <div class="label-in-multi">
     <span class="title">
       #{ link_to_page raw(fancy_title(self.showname || card)), (card.new_card? ? card.cardname.tag : card.name) }
@@ -644,7 +644,7 @@ class Wagn::Renderer::Html
   end
   
   def name_styler subsection='.content'
-    %{ <style type="text/css">.SELF-#{card.cardname.css_name} #{subsection} .namepart-#{card.cardname.css_name} { display: none; }</style> }    
+    %{ <style type="text/css">.SELF-#{card.cardname.safe_key} #{subsection} .namepart-#{card.cardname.safe_key} { display: none; }</style> }    
   end
   
   def card_form *opts

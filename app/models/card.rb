@@ -349,7 +349,7 @@ class Card < ActiveRecord::Base
   def css_name()    cardname.css_name             end
 
   def left()      Card.fetch cardname.left_name   end
-  def right()     Card.fetch cardname.tag_name    end
+  def right()     Card.fetch cardname.tag    end
     
 
   def dependents

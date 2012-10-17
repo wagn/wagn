@@ -39,7 +39,7 @@ class Wagn::Renderer
         if inheritable
           content_tag(:td, :class=>'perm-inherit') do
             check_box_tag( 'inherit', 'inherit', inheriting ) +
-            content_tag(:a, :title=>"use #{card.cardname.tag_name} rule for left card") { '?' }
+            content_tag(:a, :title=>"use #{card.cardname.tag} rule for left card") { '?' }
           end
         else; ''; end
       end

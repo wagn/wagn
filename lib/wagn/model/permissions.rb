@@ -87,7 +87,7 @@ module Wagn::Model::Permissions
       end
     end
     #warn (Rails.logger.debug "permission_rule_card[#{name}] #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}")
-    return rcard, opcard.cardname.trunk_name.tag_name.to_s
+    return rcard, opcard.cardname.trunk_name.tag
   end
   
   protected
@@ -235,7 +235,7 @@ module Wagn::Model::Permissions
 
   def update_ruled_cards
     # FIXME: codename
-    if cardname.junction? && cardname.tag_name=='*read' && (@name_or_content_changed || @trash_changed)
+    if cardname.junction? && cardname.tag=='*read' && (@name_or_content_changed || @trash_changed)
       # These instance vars are messy.  should use tracked attributes' @changed variable 
       # and get rid of @name_changed, @name_or_content_changed, and @trash_changed.
       # Above should look like [:name, :content, :trash].member?( @changed.keys ).
@@ -252,7 +252,7 @@ module Wagn::Model::Permissions
       in_set = {}
       if !(self.trash)
         rule_classes = Wagn::Model::Pattern.subclasses.map &:key
-        rule_class_index = rule_classes.index self.cardname.trunk_name.tag_name.to_s
+        rule_class_index = rule_classes.index self.cardname.trunk_name.tag
         return 'not a proper rule card' unless rule_class_index
 
         #first update all cards in set that aren't governed by narrower rule

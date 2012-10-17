@@ -216,24 +216,24 @@ module Wagn::Model
     register 'right', :right, :junction_only=>true
     def self.label(name)              %{All "+#{name}" cards}    end
     def self.prototype_args(base)     {:name=>"*dummy+#{base}"}  end
-    def self.trunk_name(card)         card.cardname.tag_name     end
+    def self.trunk_name(card)         card.cardname.tag     end
   end
 
   class LeftTypeRightNamePattern < BasePattern
     register 'type_plus_right', [:ltype, :right], :junction_only=>true
     class << self
       def label name
-        %{All "+#{name.to_cardname.tag_name}" cards on "#{name.to_cardname.left_name}" cards}
+        %{All "+#{name.to_cardname.tag}" cards on "#{name.to_cardname.left_name}" cards}
       end
       def prototype_args base
-        { :name=>"*dummy+#{base.tag_name}", 
+        { :name=>"*dummy+#{base.tag}", 
           :loaded_trunk=> Card.new( :name=>'*dummy', :type=>base.trunk_name )
         }
       end
       def trunk_name card
         lft = card.loaded_trunk || card.left
         type_name = (lft && lft.type_name) || Card[ Card::DefaultTypeID ].name
-        "#{type_name}+#{card.cardname.tag_name}"
+        "#{type_name}+#{card.cardname.tag}"
       end
     end
   end

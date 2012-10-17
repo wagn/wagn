@@ -41,6 +41,10 @@ module Wagn
     end
 
 
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #~~~~~~~~~~~~~~~~~~~~~~ INSTANCE ~~~~~~~~~~~~~~~~~~~~~~~~~
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     attr_reader :simple, :parts, :key, :s
     alias to_key key
     alias to_s s
@@ -52,23 +56,21 @@ module Wagn
           @parts = @s.split(/\s*#{Regexp.escape(JOINT)}\s*/)
           @parts << '' if @s.last == JOINT
           @simple = false
-          @parts.map{|p| p.to_cardname.key } * JOINT  
+          @parts.map { |p| p.to_cardname.key } * JOINT  
         else
           @parts = [str]
           @simple = true
-          str.blank? ? '' : generate_simple_key
+          str.blank? ? '' : simple_key
         end
       @@name2cardname[str] = self
     end
     
-    def generate_simple_key
-      decode_html.underscore.gsub(/[^#{WORD_RE}\*]+/,'_').split(/_+/).reject(&:blank?).map(&:singularize)*'_'
-    end
-    
-    def decode_html
-      @decoded ||= (s.index('&') ?  HTMLEntities.new.decode(s) : s)
-    end
-        
+    def to_cardname()    self                                           end
+    def valid?()         not parts.find { |pt| pt.match BANNED_RE }     end
+    def size()           parts.size                                     end # size of name = number of parts??  not intuitive.    
+    def blank?()         s.blank?                                       end
+    alias empty? blank?
+
     def inspect
       "<CardName key=#{key}[#{self}, #{@parts ? @parts.size : 'no size?'}]>"
     end
@@ -82,13 +84,67 @@ module Wagn
       object_key == key        
     end
 
-    def to_cardname() self                                      end
-    def blank?()      s.blank?                                  end
-    alias empty? blank?
-      
-    def size()        parts.size                                end
-    def valid?()      not parts.find {|pt| pt.match(BANNED_RE)} end
 
+    #~~~~~~~~~~~~~~~~~~~ VARIANTS ~~~~~~~~~~~~~~~~~~~
+    
+    def simple_key
+      decoded.underscore.gsub(/[^#{WORD_RE}\*]+/,'_').split(/_+/).reject(&:blank?).map(&:singularize)*'_'
+    end
+    
+    def url_key
+      @url_key ||= decoded.gsub(/[^\*#{WORD_RE}\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
+    end
+    
+    def css_name
+      @css_name ||= key.gsub('*','X').gsub '+','-'
+    end
+    
+    def pre_cgi
+      parts.join '~plus~'
+    end
+    
+    def escape
+      s.gsub ' ', '_'
+    end
+    
+    def decoded
+      @decoded ||= (s.index('&') ?  HTMLEntities.new.decode(s) : s)
+    end
+        
+
+    #~~~~~~~~~~~~~~~~~~~ PARTS ~~~~~~~~~~~~~~~~~~~
+    
+    alias simple? simple
+    def junction?()     not simple?                                        end
+                                                                          
+    def left()          @left  ||= simple? ? nil : parts[0..-2]*JOINT      end
+    def right()         @right ||= simple? ? nil : parts[-1]               end            
+
+    def left_name()     @left_name  ||= left  && self.class.new( left  )   end
+    def right_name()    @right_name ||= right && self.class.new( right )   end
+                                                                           
+    def trunk()         @trunk ||= simple? ? s : left                      end
+    def tag()           @tag   ||= simple? ? s : right                     end            
+                                                                                       
+    def trunk_name()    @trunk_name ||= simple? ? self : left_name         end
+    def tag_name()      @tag_name   ||= simple? ? self : right_name        end 
+
+    def pieces
+      @pieces ||= simple? ? [self] : trunk_name.pieces << tag_name
+    end
+
+
+    #~~~~~~~~~~~~~~~~~~~ TRAITS / STARS ~~~~~~~~~~~~~~~~~~~    
+
+    def star?()         simple?   and '*' == s[0]               end
+    def rstar?()        junction? and '*' == parts[-1][0]       end
+      
+    def trait_name tag_code
+      if tag_card = Card[ tag_code ]
+        [ self, tag_card.name ].to_cardname
+      end
+    end
+    
     def template_name?()     is_trait? [:content, :default]     end
     def email_config_name?() is_trait? [:subject, :message]     end
 
@@ -102,48 +158,9 @@ module Wagn
         end
       end
     end
-    
-    alias simple? simple
-    def junction?()     not simple?                                        end
-      
-    def left()          @left  ||= simple? ? nil : parts[0..-2]            end
-    def right()         @right ||= simple? ? nil : parts[-1]               end            
-
-    def left_name()     left  && self.class.new(left)                      end
-    def right_name()    right && self.class.new(right)                     end
-      
-    def trunk()         @trunk ||= simple? ? self : parts[0..-2]           end
-    def tag()           @tag   ||= simple? ? self : parts[-1]              end            
-    
-    def trunk_name()    self.class.new trunk                               end
-    def tag_name()      self.class.new tag                                 end 
-
-    def pieces
-      if simple?
-        [self]
-      else
-        ([self] + trunk_name.pieces + [tag_name]).uniq
-      end
-    end
 
 
-    def to_star()       star? ? self : '*'+s                               end #no longer used?
-    def star?()         simple? and '*'[0] == s[0]                         end
-    def rstar?()        junction? and '*'[0] == parts[-1][0]               end
-      
-    def trait_name(tagcode)
-      tagname = Card[tagcode] and tagname = tagname.name
-      [self, tagname].to_cardname
-    end
-
-    
-    def pre_cgi()       parts * '~plus~'                                   end
-    def escape()        s.gsub ' ', '_'                                    end
-    def css_name()      @css_name ||= key.gsub('*','X').gsub('+','-')      end
-
-    def to_url_key
-      @url_key ||= decode_html.gsub(/[^\*#{WORD_RE}\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
-    end
+    #~~~~~~~~~~~~~~~~~~~~ SHOW / ABSOLUTE ~~~~~~~~~~~~~~~~~~~~
 
     def to_show context
       # FIXME this is not quite right.  distinction from absolute is that it leaves blank parts blank.
@@ -166,7 +183,7 @@ module Wagn
           when /^_main$/i;            Wagn::Conf[:main_name]
           when /^(_self|_whole|_)$/i; context
           when /^_left$/i;            context.trunk_name
-          when /^_right$/i;           context.tag_name
+          when /^_right$/i;           context.tag
           when /^_(\d+)$/i;
             pos = $~[1].to_i
             pos = context.size if pos > context.size
@@ -174,7 +191,7 @@ module Wagn
           when /^_(L*)(R?)$/i
             l_s, r_s = $~[1].size, $~[2].blank?
             trunk = context.nth_left(l_s)
-            r= r_s ? trunk.to_s : trunk.tag_name
+            r= r_s ? trunk.to_s : trunk.tag
           when /^_/
             (params && ppart = params[part]) ? CGI.escapeHTML( ppart ) : part
           else                     part
@@ -187,7 +204,10 @@ module Wagn
     def nth_left n
       (n >= size ? parts[0] : parts[0..-n-1]).to_cardname
     end
-
+    
+    
+    #~~~~~~~~~~~~~~~~~~~~ MISC ~~~~~~~~~~~~~~~~~~~~  
+    
     def replace_part oldpart, newpart
       oldpart = oldpart.to_cardname
       newpart = newpart.to_cardname

@@ -131,7 +131,7 @@ class ApplicationController < ActionController::Base
 
     send_file @card.attach.path(style), 
       :type => @card.attach_content_type,
-      :filename =>  "#{@card.cardname.to_url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
+      :filename =>  "#{@card.cardname.url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
       :x_sendfile => true,
       :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
   end

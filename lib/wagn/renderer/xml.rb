@@ -45,9 +45,9 @@ module Wagn
         known_card = !!Card.fetch(href, :skip_modules=>true) if known_card.nil?
         cardname = Cardname===href ? href : href.to_cardname
         text = cardname.to_show(card.name) unless text
-        #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
+        #href+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
         href = full_uri Wagn::Conf[:root_path] + '/' +
-          (known_card ? cardname.to_url_key : CGI.escape(cardname.escape))
+          (known_card ? cardname.url_key : CGI.escape(cardname.escape))
 
         return %{<cardlink class="#{
                     known_card ? 'known-card' : 'wanted-card'
@@ -67,7 +67,7 @@ module Wagn
     css_class << " view-#{view}" if view
     
     attributes = {
-      :name     => card.cardname.tag_name,
+      :name     => card.cardname.tag,
       :cardId   => (card && card.id),
       :type_id  => card.type_id,
       :class    => css_class,

@@ -42,8 +42,8 @@ class Wagn::Renderer::Html
     return forms if String === forms
     #Rails.logger.info "trait_form(#{action.inspect}) #{forms.inspect}"
     if form = forms.find { |k|
-      #Rails.logger.info "trait_search(#{action.inspect}) #{card.attribute.inspect}, #{k.tag_name.inspect} #{forms.inspect}"
-      k.tag_name == action } and form = Card.fetch(form)
+      #Rails.logger.info "trait_search(#{action.inspect}) #{card.attribute.inspect}, #{k.tag.inspect} #{forms.inspect}"
+      k.tag == action } and form = Card.fetch(form)
       form.content
     else
       "No form card #{@state} #{card&&card.name}"

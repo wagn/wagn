@@ -18,7 +18,7 @@ class Wagn::Renderer
   define_view :name,     :perms=>:none  do |args|  card.name                                        end
   define_view :key,      :perms=>:none  do |args|  card.key                                         end
   define_view :id,       :perms=>:none  do |args|  card.id                                          end
-  define_view :linkname, :perms=>:none  do |args|  card.cardname.to_url_key                         end
+  define_view :linkname, :perms=>:none  do |args|  card.cardname.url_key                         end
   define_view :url,      :perms=>:none  do |args|  wagn_url _render_linkname                        end
 
   define_view :link, :perms=>:none  do |args|                                                   

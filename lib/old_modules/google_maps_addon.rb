@@ -22,7 +22,7 @@ class Card
   def update_geocode
     Session.as_bot do
       if conf = Card['*geocode']
-        if self.junction? && conf.item_names.include?( self.cardname.tag_name )
+        if self.junction? && conf.item_names.include?( self.cardname.tag )
           address = conf.item_names.map{ |p|
             c=Card.fetch_or_new(self.cardname.trunk_name.to_s+"+#{p}") and
               c.content }.select(&:present?) * ', '

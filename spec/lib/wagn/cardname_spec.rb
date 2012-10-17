@@ -135,12 +135,12 @@ describe Wagn::Cardname do
   
 
 
-  describe "#to_url_key" do
+  describe "#url_key" do
     cardnames = ["GrassCommons.org", 'Oh you @##', "Alice's Restaurant!", "PB &amp; J", "Mañana"].map(&:to_cardname)
   
     cardnames.each do |cardname| 
       it "should have the same key as the name" do
-        k, k2 = cardname.to_key, cardname.to_url_key
+        k, k2 = cardname.to_key, cardname.url_key
         #warn "cn tok #{cardname.inspect}, #{k.inspect}, #{k2.inspect}"
         k.should == k2.to_cardname.to_key
       end
@@ -171,11 +171,11 @@ describe Wagn::Cardname do
 
   describe "#tag_name" do
     it "returns last part of plus card" do
-      "a+b+c".to_cardname.tag_name.should == "c"  
+      "a+b+c".to_cardname.tag.should == "c"  
     end
     
     it "returns name of simple card" do
-      "a".to_cardname.tag_name.should == "a"
+      "a".to_cardname.tag.should == "a"
     end
   end
 

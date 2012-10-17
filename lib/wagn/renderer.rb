@@ -410,7 +410,7 @@ module Wagn
       base = action==:read ? '' : "/card/#{action}" 
       
       if pcard && !pcard.name.empty? && !opts.delete(:no_id) && action != :create #might be some issues with new?
-        base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.to_url_key )
+        base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
       end
       if attrib = opts.delete( :attrib )
         base += "/#{attrib}"
@@ -452,9 +452,9 @@ module Wagn
             text = text.to_cardname.to_show card.name
           end
           
-          #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
+          #href+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
           cardname = Cardname===href ? href : href.to_cardname
-          href = known_card ? cardname.to_url_key : CGI.escape(cardname.escape)
+          href = known_card ? cardname.url_key : CGI.escape(cardname.escape)
           href = full_uri href.to_s
           known_card ? 'known-card' : 'wanted-card'
           
@@ -471,7 +471,7 @@ module Wagn
     def fancy_title card
       cardname = (Card===card ? card.cardname : card.to_cardname)
       return cardname if cardname.simple?
-      raw( card_title_span(cardname.left_name) + %{<span class="joint">+</span>} + card_title_span(cardname.tag_name))
+      raw( card_title_span(cardname.left_name) + %{<span class="joint">+</span>} + card_title_span(cardname.tag))
     end
 
 

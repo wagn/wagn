@@ -5,7 +5,7 @@ class Wagn::Renderer::Html
 
     cells = [
       ["rule-setting",
-        link_to( card.cardname.tag_name.sub(/^\*/,''), path(:read, :view=>:open_rule),
+        link_to( card.cardname.tag.sub(/^\*/,''), path(:read, :view=>:open_rule),
           :class => 'edit-rule-link slotter', :remote => true )
       ],
       ["rule-content",
@@ -28,7 +28,7 @@ class Wagn::Renderer::Html
 
   define_view :open_rule, :tags=>:unknown_ok do |args|
     current_rule, prototype = find_current_rule_card
-    setting_name = card.cardname.tag_name
+    setting_name = card.cardname.tag
     current_rule ||= Card.new :name=> "*all+#{setting_name}"
     set_selected = false
     
@@ -171,7 +171,7 @@ class Wagn::Renderer::Html
            else
              (if !card.new_card?
                b_args = { :remote=>true, :class=>'rule-delete-button slotter', :type=>'button' }
-               b_args[:href] = path :delete, :view=>:open_rule, :success=>open_rule.cardname.to_url_key
+               b_args[:href] = path :delete, :view=>:open_rule, :success=>open_rule.cardname.url_key
                if fset = args[:fallback_set]
                  b_args['data-confirm']="Deleting will revert to #{setting_name} rule for #{Card.fetch(fset).label }"
                end
@@ -196,7 +196,7 @@ class Wagn::Renderer::Html
     # This generates a prototypical member of the POTENTIAL rule's set
     # and returns that member's ACTUAL rule for the POTENTIAL rule's setting
     set_prototype = (proto_set=Card.fetch( card.cardname.trunk_name )).prototype
-    rule_card = card.new_card? ? set_prototype.rule_card( card.cardname.tag_name ) : card
+    rule_card = card.new_card? ? set_prototype.rule_card( card.cardname.tag ) : card
     [ rule_card, set_prototype ]
   end
 

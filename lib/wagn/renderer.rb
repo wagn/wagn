@@ -468,18 +468,15 @@ module Wagn
       wagn_path relative_uri
     end
   
-  
-    # moved in from wagn_helper
-    
-
-    def formal_title card
-      card.cardname.parts.join " <span class=\"wiki-joint\">+</span> "
-    end
-
     def fancy_title card
       cardname = (Card===card ? card.cardname : card.to_cardname)
       return cardname if cardname.simple?
       raw( card_title_span(cardname.left_name) + %{<span class="joint">+</span>} + card_title_span(cardname.tag_name))
+    end
+
+
+    def card_title_span title
+      %{<span class="namepart-#{title.to_cardname.css_name}">#{title}</span>}
     end
 
     def format_date date, include_time = true
@@ -491,17 +488,7 @@ module Wagn
       end
     end
 
-    ## ----- for Linkers ------------------
 
-
-
-    def card_title_span title
-      %{<span class="namepart-#{title.to_cardname.css_name}">#{title}</span>}
-    end
-
-    def page_icon cardname
-      link_to_page '&nbsp;'.html_safe, cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
-    end
   
 
      ### FIXME -- this should not be here!   probably in Card::Reference model?

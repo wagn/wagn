@@ -43,7 +43,7 @@ module Wagn::Model::Templating
 
   def content_rule_card
     card = rule_card :content, :skip_modules=>true
-    crc = card && card.content == '_self' ? nil : card
+    crc = card && card.content.strip == '_self' ? nil : card
   end
 
   def hard_templatee_names

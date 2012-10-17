@@ -207,9 +207,9 @@ module Wagn::Model
 
   class RstarPattern < BasePattern
     register 'rstar', :rstar, :method_key=>'rstar', :junction_only=>true
-    def self.label(name)              'All "+*" cards'                                end
-    def self.prototype_args(base)     { :name=>'*dummy+*dummy'}                       end
-    def self.pattern_applies?(card)   n=card.cardname and n.junction? && n.tag_star?  end
+    def self.label(name)              'All "+*" cards'           end
+    def self.prototype_args(base)     { :name=>'*dummy+*dummy'}  end
+    def self.pattern_applies?(card)   card.cardname.rstar?       end
   end
 
   class RightPattern < BasePattern

@@ -171,7 +171,7 @@ class Wagn::Renderer::Html
           <div>This will change the names of these cards, too:</div>
           <ul>#{
             dependents.map do |dep|
-              %{<li>#{ link_to_page raw(formal_title dep), dep.name }</li>}
+              %{<li>#{ link_to_page dep.name }</li>}
             end.join }
           </ul>
         </div>}
@@ -183,7 +183,7 @@ class Wagn::Renderer::Html
           <div>Renaming could break old links and inclusions on these cards:</div>
           <ul>
             #{children.map do |child|
-              %{<li>#{ link_to_page raw(formal_title child), child.name }</li>}
+              %{<li>#{ link_to_page child.name }</li>}
               end.join}
           </ul>
           <div>You can...
@@ -462,7 +462,7 @@ class Wagn::Renderer::Html
         hidden_field_tag 'success', "TEXT: #{card.name} deleted" }
 
     <div class="content open-content">
-      <p>Really remove #{ raw link_to_page( formal_title(card), card.name ) }?</p>#{
+      <p>Really remove #{ raw link_to_page( card.name ) }?</p>#{
        if dependents = card.dependents and !dependents.empty? #ENGLISH ^
         %{<p>That would mean removing all these cards, too:</p>
         <ul>
@@ -525,7 +525,7 @@ class Wagn::Renderer::Html
         <span class="watch-link">#{ render_watch }</span>
         <span class="footer-links">
           <label>Cards:</label>
-          #{raw card.cardname.piece_names.map {|c| link_to_page c}.join(', ') }
+          #{raw card.cardname.pieces.map {|c| link_to_page c}.join(', ') }
         </span>
         #{
          if !card.current_revision.new_record?
@@ -660,6 +660,10 @@ class Wagn::Renderer::Html
   end
   
   private
+
+  def page_icon cardname
+    link_to_page '&nbsp;'.html_safe, cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
+  end
 
   def load_revisions
     @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i

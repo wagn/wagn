@@ -264,13 +264,13 @@ class Wagn::Renderer::Html
       c && c.item_names
     end.flatten.compact
 
-    current = params[:attribute] || items.first.to_cardname.to_key
+    current = params[:attribute] || items.first.to_cardname.key
 
     wrap :related, args do
       %{#{ _render_header }
         <div class="submenu"> #{
           items.map do |item|
-            key = item.to_cardname.to_key
+            key = item.to_cardname.key
             text = item.gsub('*','').gsub('subtab','').strip
             link_to text, path(:related, :attrib=>key), :remote=>true,
               :class=>"slotter #{key==current ? 'current-subtab' : ''}"

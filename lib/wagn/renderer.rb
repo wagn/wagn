@@ -321,7 +321,7 @@ module Wagn
       return expand_main(opts) if opts[:tname]=='_main' && !ajax_call? && @depth==0
       
       tcardname = opts[:tname].to_cardname
-      fullname = tcardname.to_absolute(card.cardname, params)
+      fullname = tcardname.to_absolute(card.cardname, :params=>params)
       opts[:showname] = tcardname.to_show(card.cardname).to_s
       
       included_card = Card.fetch_or_new fullname, ( @mode==:edit ? new_inclusion_card_args(opts) : {} )
@@ -529,7 +529,7 @@ module Wagn
           end
 
         Card::Reference.create!( :card_id=>card.id,
-          :referenced_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
+          :referenced_name=> (rc=chunk.refcardname()) && rc.key() || '',
           :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
           :link_type=>reference_type
          )

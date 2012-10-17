@@ -34,7 +34,7 @@ class AdminController < ApplicationController
   end
   
   def show_cache
-    key = params[:id].to_cardname.to_key
+    key = params[:id].to_cardname.key
     @cache_card = Card.fetch(key)
     @db_card = Card.find_by_key(key)
   end

@@ -364,7 +364,7 @@ class Card < ActiveRecord::Base
 
   def repair_key
     Session.as_bot do
-      correct_key = cardname.to_key
+      correct_key = cardname.key
       current_key = key
       return self if current_key==correct_key
 
@@ -647,7 +647,7 @@ class Card < ActiveRecord::Base
 
       # validate uniqueness of name
       condition_sql = "cards.key = ? and trash=?"
-      condition_params = [ cdname.to_key, false ]
+      condition_params = [ cdname.key, false ]
       unless rec.new_record?
         condition_sql << " AND cards.id <> ?"
         condition_params << rec.id
@@ -728,7 +728,7 @@ class Card < ActiveRecord::Base
   validates_each :key do |rec, attr, value|
     if value.empty?
       rec.errors.add :key, "cannot be blank"
-    elsif value != rec.cardname.to_key
+    elsif value != rec.cardname.key
       rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
     end
   end

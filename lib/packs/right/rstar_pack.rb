@@ -113,7 +113,7 @@ class Wagn::Renderer::Html
 
           '<li>' +
             raw( form.radio_button( :name, "#{set_name}+#{setting_name}", :checked=> checked ) ) +
-            if set_name.to_cardname.to_key == current_set_key
+            if set_name.to_cardname.key == current_set_key
               %{<span class="set-label current-set-label">#{ set_label } <em>(current)</em></span>}
             else
               %{<span class="set-label">#{ set_label }</span>}

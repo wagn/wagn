@@ -103,7 +103,7 @@ module Wagn::Model::Fetch
     end
     
     def expire name
-      if card = Card.cache.read( name.to_cardname.to_key )
+      if card = Card.cache.read( name.to_cardname.key )
         card.expire
       end
     end

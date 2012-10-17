@@ -9,7 +9,6 @@ module Wagn
 
     RUBY19 = RUBY_VERSION =~ /^1\.9/
     WORD_RE = RUBY19 ? '\p{Word}/' : '/\w/'
-    RELATIVE_RE = /\b_(left|right|whole|self|user|main|\d+|L*R?)\b/
 
     @@name2cardname = {}
 
@@ -25,17 +24,10 @@ module Wagn
       end
       
       def unescape uri
-        # can't instantiate because key doesn't resolve correctly in unescaped form 
+        # can't instantiate because key doesn't resolve correctly in unescaped form
+        # issue is peculiar to plus sign (+), which are interpreted as a space.
+        # if we could make that not happen, we could avoid this (and handle spaces in urls)
         uri.gsub(' ','+').gsub '_',' '
-      end
-      
-      def substitute! str, hash
-        # This probably doesn't belong here, but I wouldn't put it in string either
-        ## shouldn't thus use inclusions???
-        hash.keys.each do |var|
-          str.gsub!(/\{(#{var})\}/) {|x| hash[var.to_sym]}
-        end
-        str
       end
     end
 
@@ -44,7 +36,6 @@ module Wagn
     #~~~~~~~~~~~~~~~~~~~~~~ INSTANCE ~~~~~~~~~~~~~~~~~~~~~~~~~
 
     attr_reader :simple, :parts, :key, :s
-    alias to_key key
     alias to_s s
 
     def initialize str
@@ -65,7 +56,7 @@ module Wagn
     
     def to_cardname()    self                                           end
     def valid?()         not parts.find { |pt| pt.match BANNED_RE }     end
-    def size()           parts.size                                     end # size of name = number of parts??  not intuitive.    
+    def size()           parts.size                                     end # size of name = number of parts??  not intuitive.    maybe depth?
     def blank?()         s.blank?                                       end
     alias empty? blank?
 
@@ -75,7 +66,7 @@ module Wagn
 
     def == obj
       object_key = case
-        when obj.respond_to?(:to_key)      ; obj.to_key
+        when obj.respond_to?(:key)      ; obj.key
         when obj.respond_to?(:to_cardname) ; obj.to_cardname.key
         else                               ; obj.to_s
         end
@@ -120,6 +111,8 @@ module Wagn
 
     def left_name()     @left_name  ||= left  && self.class.new( left  )   end
     def right_name()    @right_name ||= right && self.class.new( right )   end
+      
+    # Note that all names have a trunk and tag, but only junctions have left and right
                                                                            
     def trunk()         @trunk ||= simple? ? s : left                      end
     def tag()           @tag   ||= simple? ? s : right                     end            
@@ -135,18 +128,15 @@ module Wagn
     #~~~~~~~~~~~~~~~~~~~ TRAITS / STARS ~~~~~~~~~~~~~~~~~~~    
 
     def star?()         simple?   and '*' == s[0]               end
-    def rstar?()        junction? and '*' == parts[-1][0]       end
+    def rstar?()        right     and '*' == right[0]           end
 
-    def template_name?()     is_trait? [:content, :default]     end
-    def email_config_name?() is_trait? [:subject, :message]     end
-
-    def is_trait? traitlist
+    def trait_name? *traitlist
       if simple?
         false
       else
         right_key = right_name.key
         !!traitlist.find do |codename|
-          Card[codename].cardname.key == right_key
+          Card[ codename ].cardname.key == right_key
         end
       end
     end
@@ -165,17 +155,24 @@ module Wagn
 
     #~~~~~~~~~~~~~~~~~~~~ SHOW / ABSOLUTE ~~~~~~~~~~~~~~~~~~~~
 
-    def to_show context, params=nil, ignore=[]
-      # FIXME this is not quite right.  distinction from absolute is that it leaves blank parts blank.
-      if s =~ RELATIVE_RE
-        to_absolute context
-      else
-        s
+    def to_show context, args={}
+#      ignore = [ args[:ignore], context.to_cardname.parts ].flatten.compact.map &:to_cardname
+      ignore = [ args[:ignore] ].flatten.map &:to_cardname
+      fullname = parts.to_cardname.to_absolute_name context, args
+      
+      show_parts = fullname.parts.map do |part|
+        reject = ( part.blank? or part =~ /^_/ or ignore.member? part.to_cardname )
+        reject ? nil : part
       end
+
+      initial_blank = show_parts[0].nil?
+      show_name = show_parts.compact.to_cardname.s
+      
+      initial_blank ? JOINT + show_name : show_name
     end
 
 
-    def to_absolute context, params=nil
+    def to_absolute context, args={}
       context = context.to_cardname
       parts.map do |part|
         new_part = case part
@@ -193,7 +190,8 @@ module Wagn
             l_part = context.nth_left l_s
             r_s ? l_part.s : l_part.tag
           when /^_/
-            (params && ppart = params[part]) ? CGI.escapeHTML( ppart ) : part
+            custom = args[:params] ? args[:params][part] : nil
+            custom ? CGI.escapeHTML(ppart) : part
           else
             part
           end.to_s.strip
@@ -201,8 +199,8 @@ module Wagn
       end * JOINT
     end
     
-    def to_absolute_name context, params=nil
-      self.class.new to_absolute( context, params )
+    def to_absolute_name *args
+      self.class.new to_absolute(*args)
     end
 
     def nth_left n
@@ -239,6 +237,14 @@ module Wagn
       end
     end
 
+    def self.substitute! str, hash
+      # HACK. This doesn't belong here.
+      # shouldn't thus use inclusions???
+      hash.keys.each do |var|
+        str.gsub!(/\{(#{var})\}/) {|x| hash[var.to_sym]}
+      end
+      str
+    end
 
   end
 end

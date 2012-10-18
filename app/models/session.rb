@@ -1,6 +1,5 @@
 class Session
   @@as_card = @@as_id = @@user_id = @@user_card = @@user = nil
-  cattr_accessor :user_id   # the card id of the current user
 
   class << self
     def user_id
@@ -24,51 +23,51 @@ class Session
     end
 
     def user= user
-      @@as_id = nil
-      @@user_id = get_user_id( user )
-      #warn "user=#{user.inspect}, As:#{@@as_id}, C:#{@@user_id}"; @@user_id
+      Rails.logger.info "\n\n~~~~~~~~~SETTING NEW USER #{user.inspect}~~~~~~~~~\n\n"
+      
+      @@user = @@user_card = @@as_id = @@as_card = nil
+      @@user_id = get_user_id user
+      
     end
 
     def get_user_id user  #FIXME - should handle codenames
       case user
-        when NilClass;   nil
-        when User    ;   user.card_id
-        when Card    ;   user.id
-        when Integer ;   user
-        else
-          user = user.to_s
-          Wagn::Codename[user] or (cd=Card[user] and cd.id)
+      when NilClass;   nil
+      when User    ;   user.card_id
+      when Card    ;   user.id
+      when Integer ;   user
+      else
+        user = user.to_s
+        Wagn::Codename[user] or (cd=Card[user] and cd.id)
       end
     end
 
-    def as(given_user)
-      #warn Rails.logger.warn("as #{given_user.inspect}")
-      tmp_id = @@as_id
-      @@as_id = get_user_id(given_user)
-      #warn Rails.logger.warn("as user is #{@@as_id} (#{tmp_id})")
+    def as given_user
+      tmp_id, tmp_card = @@as_id, @@as_card
+      @@as_id, @@as_card = get_user_id( given_user ), nil  # we could go ahead and set as_card if given a card...
+
       @@user_id = @@as_id if @@user_id.nil?
 
       if block_given?
         value = yield
-        @@as_id = tmp_id
+        @@as_id, @@as_card = tmp_id, tmp_card
         return value
       else
         #fail "BLOCK REQUIRED with Card#as"
       end
     end
 
-    def as_bot
-      #raise "need block" unless block_given?
-      tmp_id, @@as_id = @@as_id, Card::WagnBotID
-      @@user_id = @@as_id if @@user_id.nil?
-
-      value = yield
-      @@as_id = tmp_id
-      return value
+    def as_bot &block
+      as Card::WagnBotID, &block
     end
 
-    def among?(authzed) Card[as_id].among?(authzed) end
-    def as_id()         @@as_id || user_id          end
+    def among? authzed
+      as_card.among? authzed
+    end
+
+    def as_id
+      @@as_id || user_id
+    end
     
     def as_card
       if @@as_card and @@as_card.id == as_id

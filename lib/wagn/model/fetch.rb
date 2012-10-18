@@ -18,7 +18,7 @@ module Wagn::Model::Fetch
     def fetch mark, opts = {}
       # "mark" here means a generic identifier -- can be a numeric id, a name, a string name, etc.
 #      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{cardname}" do
-
+      return nil if mark.nil?
       #warn "fetch #{mark.inspect}"
       # Symbol (codename) handling
       if Symbol===mark
@@ -103,7 +103,7 @@ module Wagn::Model::Fetch
     end
     
     def expire name
-      if card = Card.cache.read( name.to_cardname.to_key )
+      if card = Card.cache.read( name.to_cardname.key )
         card.expire
       end
     end
@@ -134,7 +134,7 @@ module Wagn::Model::Fetch
   end
 
   def expire_pieces
-    cardname.piece_names.each do |piece|
+    cardname.pieces.each do |piece|
       #warn "clearing for #{piece.inspect}"
       Card.expire piece
     end

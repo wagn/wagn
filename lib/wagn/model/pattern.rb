@@ -45,7 +45,7 @@ module Wagn::Model
     def real_set_names
       set_names.find_all &Card.method(:exists?)
     end
-    def css_names()      patterns.map(&:css_name).reverse*" "                                   end
+    def safe_keys()      patterns.map(&:safe_key).reverse*" "                                   end
     def set_modules()    @set_modules ||= patterns_without_new.reverse.map(&:set_const).compact end
     def set_names()
       Card.set_members(@set_names = patterns.map(&:to_s), key) if @set_names.nil?
@@ -169,9 +169,9 @@ module Wagn::Model
       self.class.trunkless? ? k : "#{@trunk_name}+#{k}"
     end
     
-    def css_name()
+    def safe_key()
       caps_part = self.class.key.gsub(' ','_').upcase
-      self.class.trunkless? ? caps_part : "#{caps_part}-#{@trunk_name.css_name}"
+      self.class.trunkless? ? caps_part : "#{caps_part}-#{@trunk_name.safe_key}"
     end
   end
 
@@ -207,33 +207,33 @@ module Wagn::Model
 
   class RstarPattern < BasePattern
     register 'rstar', :rstar, :method_key=>'rstar', :junction_only=>true
-    def self.label(name)              'All "+*" cards'                                end
-    def self.prototype_args(base)     { :name=>'*dummy+*dummy'}                       end
-    def self.pattern_applies?(card)   n=card.cardname and n.junction? && n.tag_star?  end
+    def self.label(name)              'All "+*" cards'           end
+    def self.prototype_args(base)     { :name=>'*dummy+*dummy'}  end
+    def self.pattern_applies?(card)   card.cardname.rstar?       end
   end
 
   class RightPattern < BasePattern
     register 'right', :right, :junction_only=>true
     def self.label(name)              %{All "+#{name}" cards}    end
     def self.prototype_args(base)     {:name=>"*dummy+#{base}"}  end
-    def self.trunk_name(card)         card.cardname.tag_name     end
+    def self.trunk_name(card)         card.cardname.tag     end
   end
 
   class LeftTypeRightNamePattern < BasePattern
     register 'type_plus_right', [:ltype, :right], :junction_only=>true
     class << self
       def label name
-        %{All "+#{name.to_cardname.tag_name}" cards on "#{name.to_cardname.left_name}" cards}
+        %{All "+#{name.to_cardname.tag}" cards on "#{name.to_cardname.left_name}" cards}
       end
       def prototype_args base
-        { :name=>"*dummy+#{base.tag_name}", 
+        { :name=>"*dummy+#{base.tag}", 
           :loaded_trunk=> Card.new( :name=>'*dummy', :type=>base.trunk_name )
         }
       end
       def trunk_name card
         lft = card.loaded_trunk || card.left
         type_name = (lft && lft.type_name) || Card[ Card::DefaultTypeID ].name
-        "#{type_name}+#{card.cardname.tag_name}"
+        "#{type_name}+#{card.cardname.tag}"
       end
     end
   end

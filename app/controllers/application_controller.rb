@@ -34,7 +34,7 @@ class ApplicationController < ActionController::Base
       Wagn::Cache.renew
     
       #warn "set curent_user (app-cont) #{self.session_user}, U.cu:#{Session.user_id}"
-      Session.user = session_user || Card::AnonID
+      Session.user = self.session_user || Card::AnonID
       #warn "set curent_user a #{session_user}, U.cu:#{Session.user_id}"
     
       # RECAPTCHA HACKS
@@ -131,7 +131,7 @@ class ApplicationController < ActionController::Base
 
     send_file @card.attach.path(style), 
       :type => @card.attach_content_type,
-      :filename =>  "#{@card.cardname.to_url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
+      :filename =>  "#{@card.cardname.url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
       :x_sendfile => true,
       :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
   end

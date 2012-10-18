@@ -18,22 +18,22 @@ module NavigationHelpers
     #     user_profile_path(User.where(:card_id($1))
 
     when /card (.*) with (.*) layout$/
-      "/#{$1.to_cardname.to_url_key}?layout=$2"
+      "/#{$1.to_cardname.url_key}?layout=$2"
 
     when /card (.*)$/
-      "/#{$1.to_cardname.to_url_key}"
+      "/#{$1.to_cardname.url_key}"
 
     when /new (.*) presetting name to "(.*)" and author to "(.*)"/
-      url = "/new/#{$1}?card[name]=#{$2.to_cardname.to_url_key}&_author=#{CGI.escape($3)}"
+      url = "/new/#{$1}?card[name]=#{$2.to_cardname.url_key}&_author=#{CGI.escape($3)}"
 
     when /new card named (.*)$/
       "/card/new?card[name]=#{CGI.escape($1)}"
 
     when /edit (.*)$/
-   "/card/edit/#{$1.to_cardname.to_url_key}"  
+   "/card/edit/#{$1.to_cardname.url_key}"  
 
     when /new (.*)$/
-      "/new/#{$1.to_cardname.to_url_key}"
+      "/new/#{$1.to_cardname.url_key}"
       
     when /kml source/
        "/House+*type+by_name.kml"

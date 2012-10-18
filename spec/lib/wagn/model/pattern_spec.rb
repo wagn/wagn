@@ -77,23 +77,23 @@ describe Wagn::Model::Pattern do
     
   end
   
-  describe :css_names do
+  describe :safe_keys do
     it "returns css names for simple star cards" do
       Session.as_bot do
         card = Card.new( :name => "*AnewCard")
-        card.css_names.should == "ALL TYPE-basic STAR"
+        card.safe_keys.should == "ALL TYPE-basic STAR"
         card.save!
         card = Card.fetch("*AnewCard")
-        card.css_names.should == "ALL TYPE-basic STAR SELF-Xanew_card"
+        card.safe_keys.should == "ALL TYPE-basic STAR SELF-Xanew_card"
       end
     end
 
     it "returns set names for junction cards" do
       card=Card.new( :name=>"Iliad+author" )
-      card.css_names.should == "ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author"
+      card.safe_keys.should == "ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author"
       card.save!
       card = Card.fetch("Iliad+author")      
-      card.css_names.should == "ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author SELF-iliad-author"
+      card.safe_keys.should == "ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author SELF-iliad-author"
     end
   end
   

@@ -11,7 +11,7 @@ class Mailer < ActionMailer::Base
   include LocationHelper
 
   def account_info(user, subject, message)
-    url_key = Card[user.card_id].cardname.to_url_key
+    url_key = Card[user.card_id].cardname.url_key
 
     @email    = (user.email    or raise Wagn::Oops.new("Oops didn't have user email"))
     @password = (user.password or raise Wagn::Oops.new("Oops didn't have user password"))
@@ -58,8 +58,8 @@ class Mailer < ActionMailer::Base
     @action = action
     @subedits = subedits
     @card_url = wagn_url card
-    @change_url = wagn_url "/card/changes/#{card.cardname.to_url_key}"
-    @unwatch_url = wagn_url "/card/watch/#{watched.to_cardname.to_url_key}?toggle=off"
+    @change_url = wagn_url "/card/changes/#{card.cardname.url_key}"
+    @unwatch_url = wagn_url "/card/watch/#{watched.to_cardname.url_key}?toggle=off"
     @udpater_url = wagn_url card.updater
     @watched = (watched == card.cardname ? "#{watched}" : "#{watched} cards")
 

@@ -198,12 +198,14 @@ module Wagn::Model::Permissions
   end
   
   def update_read_rule
+    #warn "uprr #{name}"
     Card.record_timestamps = false
 
     reset_patterns # why is this needed?
     rcard, rclass = permission_rule_card :read
     self.read_rule_id = rcard.id #these two are just to make sure vals are correct on current object
-#    warn "updating read rule for #{name} to #{rcard.id}"
+    warn "updating read rule for #{name} to #{rcard.id}, #{rcard.name}, #{rclass}"
+    Rails.logger.warn "updating read rule for #{name} to #{rcard.id}, #{rcard.name}, #{caller*"\n"}"
     
     self.read_rule_class = rclass
     Card.where(:id=>self.id).update_all(:read_rule_id=>rcard.id, :read_rule_class=>rclass)
@@ -253,7 +255,12 @@ module Wagn::Model::Permissions
       if !(self.trash)
         rule_classes = Wagn::Model::Pattern.subclasses.map &:key
         rule_class_index = rule_classes.index self.cardname.trunk_name.tag_name.to_s
-        return 'not a proper rule card' unless rule_class_index
+        Rails.logger.warn "uprr #{rule_class_index}, #{rule_classes.inspect}, #{self.cardname.trunk_name.tag_name.to_s}"
+        if rule_class_index.nil?
+          notify_airbrake 'not a proper rule card' if Airbrake.configuration.api_key
+          warn "not a proper rule card #{name} not in #{rule_classes.inspect}"
+          return false
+        end
 
         #first update all cards in set that aren't governed by narrower rule
         Session.as_bot do

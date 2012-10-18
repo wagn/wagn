@@ -227,6 +227,12 @@ module Wagn::Model::Permissions
 
   # fifo of cards that need read rules updated
   def update_read_rule_list() @update_read_rule_list ||= [] end
+  def read_rule_updates updates
+    Rails.logger.warn "rrups #{updates.inspect}"
+    warn "rrups #{updates.inspect}"
+    @update_read_rule_list = update_read_rule_list.concat updates
+    # to short circuite the queue mechanism, just each the new list here and update
+  end
 
   def update_queue
     #warn (Rails.logger.warn "update queue[#{inspect}] Q[#{self.update_read_rule_list.inspect}]")
@@ -237,7 +243,9 @@ module Wagn::Model::Permissions
 
   def update_ruled_cards
     # FIXME: codename
-    if cardname.junction? && cardname.tag_name=='*read' && (@name_or_content_changed || @trash_changed)
+    warn "uprc #{name} #{junction?}, #{Card::ReadID}, #{tag_id}" if junction?
+    if junction? && tag_id==Card::ReadID && (@name_or_content_changed || @trash_changed)
+    warn "uprc #{name} #{junction?}, #{tag_id}"
       # These instance vars are messy.  should use tracked attributes' @changed variable 
       # and get rid of @name_changed, @name_or_content_changed, and @trash_changed.
       # Above should look like [:name, :content, :trash].member?( @changed.keys ).
@@ -247,18 +255,19 @@ module Wagn::Model::Permissions
       
       User.cache.reset
       Card.cache.reset # maybe be more surgical, just Session.user related
-      #Wagn.cache.reset
       expire #probably shouldn't be necessary, 
       # but was sometimes getting cached version when card should be in the trash.
       # could be related to other bugs?
       in_set = {}
       if !(self.trash)
-        rule_classes = Wagn::Model::Pattern.subclasses.map &:key
-        rule_class_index = rule_classes.index self.cardname.trunk_name.tag_name.to_s
-        Rails.logger.warn "uprr #{rule_class_index}, #{rule_classes.inspect}, #{self.cardname.trunk_name.tag_name.to_s}"
+        rule_class_ids = Wagn::Model::Pattern.subclasses.map &:key_id
+        raise "no tag_id" if (key_id = Card[trunk_id].tag_id).nil?
+        rule_class_index = rule_class_ids.index key_id
         if rule_class_index.nil?
           notify_airbrake 'not a proper rule card' if Airbrake.configuration.api_key
           warn "not a proper rule card #{name} not in #{rule_classes.inspect}"
+          warn "up rld cds #{name} tk.tid:#{key_id}"
+          warn "not a proper rule card #{name}, #{Card[key_id].name} is not in rc:#{rule_class_ids.map{|x|Card[x].name}*', '}"
           return false
         end
 
@@ -266,8 +275,8 @@ module Wagn::Model::Permissions
         Session.as_bot do
           Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
             in_set[item_card.key] = true
-            #Rails.logger.debug "rule_classes[#{rule_class_index}] #{rule_classes.inspect} This:#{item_card.read_rule_class.inspect} idx:#{rule_classes.index(item_card.read_rule_class)}"
-            next if rule_classes.index(item_card.read_rule_class) < rule_class_index
+            #Rails.logger.debug "rule_class_ids[#{rule_class_index}] #{rule_class_ids.inspect} This:#{item_card.read_rule_class.inspect} idx:#{rule_class_ids.index(item_card.read_rule_class)}"
+            next if rule_class_ids.index(item_card.read_rule_class) < rule_class_index
             item_card.update_read_rule
           end
         end

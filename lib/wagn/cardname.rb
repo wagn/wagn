@@ -61,7 +61,7 @@ module Wagn
     alias empty? blank?
 
     def inspect
-      "<CardName key=#{key}[#{self}, #{@parts ? @parts.size : 'no size?'}]>"
+      "<CardName key=#{key}[#{self}]>"
     end
 
     def == obj
@@ -131,9 +131,7 @@ module Wagn
     def rstar?()        right     and '*' == right[0]           end
 
     def trait_name? *traitlist
-      if simple?
-        false
-      else
+      junction? && begin
         right_key = right_name.key
         !!traitlist.find do |codename|
           Card[ codename ].cardname.key == right_key
@@ -142,9 +140,7 @@ module Wagn
     end
       
     def trait_name tag_code
-      if tag_card = Card[ tag_code ]
-        [ self, tag_card.name ].to_cardname
-      end
+      [ self, Card[ tag_code ].name ].to_cardname
     end
     
     def trait tag_code
@@ -178,7 +174,7 @@ module Wagn
         new_part = case part
           when /^_user$/i;            (user=Session.user_card) ? user.name : part
           when /^_main$/i;            Wagn::Conf[:main_name]
-          when /^(_self|_whole|_)$/i; context
+          when /^(_self|_whole|_)$/i; context.s
           when /^_left$/i;            context.trunk #note - inconsistent use of left v. trunk
           when /^_right$/i;           context.tag
           when /^_(\d+)$/i
@@ -186,12 +182,12 @@ module Wagn
             pos = context.size if pos > context.size
             context.parts[pos-1]
           when /^_(L*)(R?)$/i
-            l_s, r_s = $~[1].size, $~[2].blank?
+            l_s, r_s = $~[1].size, !$~[2].blank?
             l_part = context.nth_left l_s
-            r_s ? l_part.s : l_part.tag
+            r_s ? l_part.tag : l_part.s
           when /^_/
             custom = args[:params] ? args[:params][part] : nil
-            custom ? CGI.escapeHTML(ppart) : part
+            custom ? CGI.escapeHTML(custom) : part #why are we escaping HTML here?
           else
             part
           end.to_s.strip

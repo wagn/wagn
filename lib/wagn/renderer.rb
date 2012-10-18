@@ -127,7 +127,7 @@ module Wagn
     end
 
 
-    attr_reader :format, :card, :root, :parent, :showname #should be able to factor out showname
+    attr_reader :format, :card, :root, :parent
     attr_accessor :form, :main_content, :error_status
 
     def render view = :view, args={}
@@ -162,6 +162,7 @@ module Wagn
       @card = card
       opts.each { |key, value| instance_variable_set "@#{key}", value }
   
+      @context_names = []
       @format ||= :html
       @char_count = @depth = 0
       @root = self
@@ -176,6 +177,7 @@ module Wagn
     def controller()   @controller ||= StubCardController.new                     end
     def session()      CardController===controller ? controller.session : {}      end
     def ajax_call?()   @@ajax_call                                                end
+    def showname()     @showname   ||= card.name                                  end
 
     def main?
       if ajax_call?
@@ -313,35 +315,29 @@ module Wagn
     end
   
     def expand_inclusion opts
-      return opts[:comment] if opts.has_key?(:comment) # as in commented code
-      
-      return '' if @mode == :closed && @char_count > @@max_char_count
-      # Don't bother processing inclusion if we're already out of view
-      
-      return expand_main(opts) if opts[:tname]=='_main' && !ajax_call? && @depth==0
-      
-      tcardname = opts[:tname].to_cardname
-      fullname = tcardname.to_absolute(card.cardname, :params=>params)
-      opts[:showname] = tcardname.to_show(card.cardname).to_s
-      
-      included_card = Card.fetch_or_new fullname, ( @mode==:edit ? new_inclusion_card_args(opts) : {} )
+      case
+      when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
+      when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
+      when opts[:tname]=='_main' && !ajax_call? && @depth==0    ; expand_main opts   
+      else      
+        fullname = opts[:tname].to_cardname.to_absolute card.cardname, :params=>params      
+        included_card = Card.fetch_or_new fullname, ( @mode==:edit ? new_inclusion_card_args(opts) : {} )
   
-      result = process_inclusion included_card, opts
-      @char_count += (result ? result.length : 0)
-      result
-    rescue Card::PermissionDenied
-      ''
+        result = process_inclusion included_card, opts
+        @char_count += result.length if result
+        result
+      end
     end
   
     def expand_main opts
       return wrap_main( @main_content ) if @main_content
       [:item, :view, :size].each do |key|
         if val=params[key] and val.to_s.present?
-          opts[key] = val.to_sym
+          opts[key] = val.to_sym   #to sym??  why??
         end
       end
-      opts[:view] = @main_view || opts[:view] || :open
-      opts[:showname] = root.card.name
+      opts[:view] = @main_view || opts[:view] || :open #FIXME configure elsewhere
+      opts[:tname] = root.card.name
       with_inclusion_mode :main do
         wrap_main process_inclusion( root.card, opts )
       end
@@ -351,21 +347,26 @@ module Wagn
       content  #no wrapping in base renderer
     end
   
-    def process_inclusion tcard, options
-      sub = subrenderer( tcard, 
-        :item_view =>options[:item], 
-        :type      =>options[:type],
-        :size      =>options[:size],
-        :showname  =>(options[:showname] || tcard.name)
-      )
+    def process_inclusion tcard, opts
+      opts[:showname] = if opts[:tname]
+        opts[:tname].to_cardname.to_show card.cardname, :ignore=>@context_names, :params=>params
+      else
+        tcard.name
+      end
+      
+      sub_opts = { :item_view =>opts[:item] }
+      [:type, :size, :showname ].each { |key| sub_opts[key] = opts[key] }  
+      sub = subrenderer tcard, sub_opts 
+
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
       # don't like depending on this global var switch
       # I think we can get rid of it as soon as we get rid of the remaining rails views?
 
-      view = canonicalize_view options.delete :view
-      view ||= ( @mode == :layout ? :core : :content )  
       
-      options[:home_view] = [:closed, :edit].member?(view) ? :open : view 
+      view = canonicalize_view opts.delete :view
+      view ||= ( @mode == :layout ? :core : :content )  #set defaults elsewhere!! 
+      
+      opts[:home_view] = [:closed, :edit].member?(view) ? :open : view 
       # FIXME: special views should be represented in view definitions
       
       unless @@perms[view] == :none
@@ -379,9 +380,8 @@ module Wagn
           else           ;  view
           end
       end
-      Rails.logger.info "@mode = #{@mode}.  rendering view: #{view}"
       
-      result = raw sub.render( view, options )
+      result = raw sub.render( view, opts )
       Renderer.current_slot = oldrenderer
       result
     end
@@ -466,17 +466,6 @@ module Wagn
 
     def full_uri relative_uri
       wagn_path relative_uri
-    end
-  
-    def fancy_title card
-      cardname = (Card===card ? card.cardname : card.to_cardname)
-      return cardname if cardname.simple?
-      raw( card_title_span(cardname.left_name) + %{<span class="joint">+</span>} + card_title_span(cardname.tag))
-    end
-
-
-    def card_title_span title
-      %{<span class="namepart-#{title.to_cardname.safe_key}">#{title}</span>}
     end
 
     def format_date date, include_time = true

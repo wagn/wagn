@@ -38,7 +38,7 @@ class Wagn::Renderer::Rss
   
   define_view :titled do |args|
     # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-    content_tag( :h2, fancy_title(card.name) ) + self._render_open_content(args) { yield }
+    content_tag( :h2, showname ) + self._render_open_content(args) { yield }
   end
   alias_view(:titled,      {}, :open)
   alias_view(:open_content,{}, :content)

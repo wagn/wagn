@@ -28,9 +28,9 @@ class Wagn::Renderer::Html
   end
 
   define_view :titled do |args|
+    add_name_context
     wrap :titled, args do
-      name_styler +
-      content_tag( :h1, fancy_title(card.name)) + wrap_content(:titled, _render_core(args))
+      content_tag( :h1, fancy_title ) + wrap_content(:titled, _render_core(args))
     end
   end
 
@@ -67,7 +67,7 @@ class Wagn::Renderer::Html
       %{
         <div class="card-header">
           <div class="title-menu">
-            #{ link_to( fancy_title(card), path(:read, :view=>:open), :title=>"open #{card.name}",
+            #{ link_to( fancy_title, path(:read, :view=>:open), :title=>"open #{card.name}",
               :class=>'title right-arrow slotter', :remote=>true ) }
             #{ page_icon(card.name) } &nbsp;
           </div>
@@ -104,18 +104,18 @@ class Wagn::Renderer::Html
     new_args['card[type]'] = args[:type] if args[:type]
 
     wrap :missing, args do
-      link_to raw("Add <strong>#{ @showname || card.name }</strong>"), path(:new, new_args),
+      link_to raw("Add <strong>#{ showname }</strong>"), path(:new, new_args),
         :class=>'slotter', :remote=>true
     end
   end
 
 ###---(  EDIT VIEWS )
   define_view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
+    add_name_context
     attrib = params[:attribute] || 'content'
     attrib = 'name' if params[:card] && params[:card][:name]
     wrap :edit, args do
       %{#{ _render_header }
-        #{ name_styler '.edit-area' }
        <div class="card-body">
          #{ edit_submenu attrib}
          #{ _render "edit_#{attrib}" }
@@ -241,7 +241,7 @@ class Wagn::Renderer::Html
 <div class="edit-area in-multi card-editor RIGHT-#{ card.cardname.tag.to_cardname.safe_key }">
   <div class="label-in-multi">
     <span class="title">
-      #{ link_to_page raw(fancy_title(self.showname || card)), (card.new_card? ? card.cardname.tag : card.name) }
+      #{ link_to_page fancy_title, (card.new_card? ? card.cardname.tag : card.name) }
     </span>
   </div>     
   
@@ -504,10 +504,11 @@ class Wagn::Renderer::Html
 
 
   define_view :header do |args|
+    add_name_context
     %{<div class="card-header">
        #{ menu }
        <div class="title-menu">
-         #{ link_to fancy_title(card), path(:read, :view=>:closed),
+         #{ link_to fancy_title, path(:read, :view=>:closed),
             :title => "close #{card.name}", 
             :class => "line-link title down-arrow slotter", 
             :remote => true 
@@ -515,7 +516,6 @@ class Wagn::Renderer::Html
          #{ card.type_id==Card::BasicID ? '' : %{<span class="cardtype">#{ link_to_page card.type_name }</span>} }
          #{ page_icon(card.name) } &nbsp;
        </div>
-       #{ name_styler }
     </div>}
   end
 
@@ -615,7 +615,7 @@ class Wagn::Renderer::Html
                %{You have to #{ link_to "sign in", :controller=>'account', :action=>'signin' }}
               else
                "You need permission"
-              end} to #{task} this card#{": <strong>#{fancy_title(card)}</strong>" if card.name && !card.name.blank? }.
+              end} to #{task} this card#{": <strong>#{card.name}</strong>" if card.name && !card.name.blank? }.
               </div>
              #{
   
@@ -643,8 +643,10 @@ class Wagn::Renderer::Html
     }
   end
   
-  def name_styler subsection='.content'
-    %{ <style type="text/css">.SELF-#{card.cardname.safe_key} #{subsection} .namepart-#{card.cardname.safe_key} { display: none; }</style> }    
+  def add_name_context
+    @context_names += card.cardname.parts
+    @context_names.uniq!
+#    %{ <style type="text/css">.SELF-#{card.cardname.safe_key} #{subsection} .namepart-#{card.cardname.safe_key} { display: none; }</style> }    
   end
   
   def card_form *opts
@@ -660,6 +662,12 @@ class Wagn::Renderer::Html
   end
   
   private
+
+  def fancy_title name=nil
+    name ||= showname
+    title = name.to_cardname.parts.join %{<span class="joint">+</span>}
+    raw title
+  end
 
   def page_icon cardname
     link_to_page '&nbsp;'.html_safe, cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
@@ -718,7 +726,7 @@ class Wagn::Renderer::Html
             if card.cardname.blank? || Card.exists?(card.cardname)
               card.rule_card(:autoname) ? '&nbsp;' : %{<label>name:</label> <span class="name-area">#{ raw name_field(form) }</span>}
             else
-              %{#{hidden_field_tag 'card[name]', card.name} <label>name:</label> <span class="title">#{ raw fancy_title(card.name) }</span>}
+              %{#{hidden_field_tag 'card[name]', card.name} <label>name:</label> <span class="title">#{ fancy_title }</span>}
             end
             }
           </span>

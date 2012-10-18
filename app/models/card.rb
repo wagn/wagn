@@ -160,6 +160,7 @@ class Card < ActiveRecord::Base
   end
 
   def reset_mods
+    #does this really do anything if it doesn't reset @set_modules???  can we get rid of this?
     @set_mods_loaded=false
   end
   
@@ -594,7 +595,7 @@ class Card < ActiveRecord::Base
   end
   
   def autoname name
-    if exists? name
+    if Card.exists? name
       autoname name.next
     else
       name
@@ -655,7 +656,8 @@ class Card < ActiveRecord::Base
         rec.errors.add :name, "must be unique-- A card named '#{c.name}' already exists"
       end
 
-      # require confirmation for renaming multiple cards
+      # require confirmation for renaming multiple cards  
+      # FIXME - none of this should happen in the model.
       if !rec.confirm_rename
         pass = true
         if !rec.dependents.empty?

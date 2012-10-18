@@ -23,11 +23,8 @@ class Session
     end
 
     def user= user
-      Rails.logger.info "\n\n~~~~~~~~~SETTING NEW USER #{user.inspect}~~~~~~~~~\n\n"
-      
       @@user = @@user_card = @@as_id = @@as_card = nil
-      @@user_id = get_user_id user
-      
+      @@user_id = get_user_id user      
     end
 
     def get_user_id user  #FIXME - should handle codenames
@@ -77,7 +74,9 @@ class Session
       end
     end
 
-    def logged_in?() user_id != Card::AnonID end
+    def logged_in?
+      user_id != Card::AnonID
+    end
 
     def no_logins?()
       c = Card.cache

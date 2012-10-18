@@ -34,7 +34,7 @@ class ApplicationController < ActionController::Base
       Wagn::Cache.renew
     
       #warn "set curent_user (app-cont) #{self.session_user}, U.cu:#{Session.user_id}"
-      Session.user = session_user || Card::AnonID
+      Session.user = self.session_user || Card::AnonID
       #warn "set curent_user a #{session_user}, U.cu:#{Session.user_id}"
     
       # RECAPTCHA HACKS

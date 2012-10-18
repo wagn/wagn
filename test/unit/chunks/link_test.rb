@@ -28,7 +28,7 @@ class LinkTest < ActiveSupport::TestCase
     assert_equal('<a class="wanted-card" href="/Kennedy%2BMonroe">+Monroe</a>', render_test_card(cardA) )
 
     cardB = newcard('Clinton', '[[Lewinsky+]]')
-    assert_equal('<a class="wanted-card" href="/Lewinsky%2BClinton">Lewinsky+</a>', render_test_card(cardB) )
+    assert_equal('<a class="wanted-card" href="/Lewinsky%2BClinton">Lewinsky</a>', render_test_card(cardB) )
   end
 
 

@@ -21,7 +21,7 @@ class Wagn::Renderer::Html
   end
 
 
-  define_view :content do |args|
+  define_view :content do |args| 
     wrap :content, args do
       wrap_content :content, _render_core(args)
     end
@@ -643,11 +643,7 @@ class Wagn::Renderer::Html
     }
   end
   
-  def add_name_context
-    @context_names += card.cardname.parts
-    @context_names.uniq!
-#    %{ <style type="text/css">.SELF-#{card.cardname.safe_key} #{subsection} .namepart-#{card.cardname.safe_key} { display: none; }</style> }    
-  end
+
   
   def card_form *opts
     form_for( card, form_opts(*opts) ) { |form| yield form }

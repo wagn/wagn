@@ -31,7 +31,6 @@ module Wagn::Model::TrackedAttributes
     reset_patterns_if_rule # reset the new name
 
     Card.expire cardname
-    Rails.logger.info "just expired #{cardname}"
 
     if @cardname.junction?
       [:trunk, :tag].each do |side|

@@ -439,7 +439,7 @@ module Wagn
     end
       
     def build_link href, text, known_card = nil
-      #Rails.logger.info "bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}"
+      # Rails.logger.info( "~~~~~~~~~~~~~~~ bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}" )
       klass = case href.to_s
         when /^https?:/; 'external-link'
         when /^mailto:/; 'email-link'
@@ -449,7 +449,7 @@ module Wagn
         else
           known_card = !!Card.fetch(href, :skip_modules=>true) if known_card.nil?
           if card
-            text = text.to_cardname.to_show card.name
+            text = text.to_cardname.to_show card.name, :ignore=>@context_names
           end
           
           #href+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
@@ -477,7 +477,11 @@ module Wagn
       end
     end
 
-
+    def add_name_context name=nil
+      name ||= card.name
+      @context_names += name.to_cardname.parts
+      @context_names.uniq! 
+    end
   
 
      ### FIXME -- this should not be here!   probably in Card::Reference model?

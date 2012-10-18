@@ -1,8 +1,8 @@
 module Wagn::Model::Templating  
 
-  def template?()       cardname.template_name?                 end
-  def hard_template?()  !!(name =~ /\+\*content$/)              end
-  def type_template?()  template? && !!(name =~ /\+\*type\+/)   end
+  def template?()       cardname.trait_name? :content, :default              end
+  def hard_template?()  cardname.trait_name? :content                        end
+  def type_template?()  template? && cardname.trunk_name.trait_name?(:type)  end
 
   def template
     # currently applicable templating card.
@@ -43,7 +43,7 @@ module Wagn::Model::Templating
 
   def content_rule_card
     card = rule_card :content, :skip_modules=>true
-    crc = card && card.content == '_self' ? nil : card
+    card && card.content.strip == '_self' ? nil : card
   end
 
   def hard_templatee_names

@@ -58,7 +58,7 @@ describe Wagn::Renderer, "" do
 
     it "missing relative inclusion is relative" do
       c = Card.new :name => 'bad_include', :content => "{{+bad name missing}}"
-      Wagn::Renderer.new(c)._render(:core).match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
+      Wagn::Renderer.new(c)._render(:titled).match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
     end
 
     it "renders deny for unpermitted cards" do
@@ -113,7 +113,7 @@ describe Wagn::Renderer, "" do
       result = render_card(:titled, :name=>'A+B')
       assert_view_select result, 'div[class~="titled-view"]' do
         assert_select 'h1' do
-          assert_select 'span', 3
+          assert_select 'span'
         end
         assert_select 'span[class~="titled-content"]', 'AlphaBeta'
       end
@@ -284,26 +284,6 @@ describe Wagn::Renderer, "" do
       c = Card.new :name => 'npointArray', :content => "{{npoint|array}}"
       Wagn::Renderer.new(c)._render( :core ).should == %q{["10", "20", "30"]}
     end
-
-=begin
-    it "should use inclusion view overrides" do
-      # FIXME love to have these in a scenario so they don't load every time.
-      t = Card.create! :name=>'t1', :content=>"{{t2|card}}"
-      Card.create! :name => "t2", :content => "{{t3|view}}"
-      Card.create! :name => "t3", :content => "boo"
-
-      # a little weird that we need :open_content  to get the version without
-      # slot divs wrapped around it.
-      s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :name } )
-      s.render( :core ).should == "t2"
-
-      # similar to above, but use link
-      s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :link } )
-      s.render( :core ).should == "<a class=\"known-card\" href=\"/t2\">t2</a>"
-      s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :core } )
-      s.render( :core ).should == "boo"
-    end
-=end
   end
 
 #~~~~~~~~~~~~~  content views
@@ -524,9 +504,9 @@ describe Wagn::Renderer, "" do
 
 #~~~~~~~~~ special views
 
-  context "open missing" do
-    it "should use the showname" do
-      render_content('{{+cardipoo|open}}').match(/Add \<strong\>\+cardipoo/ ).should_not be_nil
+  context "missing" do
+    it "should prompt to add" do
+      render_content('{{+cardipoo|open}}').match(/Add \<strong\>/ ).should_not be_nil
     end
   end
 

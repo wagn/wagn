@@ -253,8 +253,7 @@ class Card < ActiveRecord::Base
     return unless cards
     cards.each_pair do |sub_name, opts|
       opts[:nested_edit] = self
-      sub_name = sub_name.gsub('~plus~','+')
-      absolute_name = cardname.to_absolute_name(sub_name)
+      absolute_name = sub_name.to_cardname.post_cgi.to_cardname.to_absolute cardname
       if card = Card[absolute_name]
         card = card.refresh if card.frozen?
         card.update_attributes opts
@@ -346,10 +345,12 @@ class Card < ActiveRecord::Base
   # FIXME: use delegations and include all cardname functions
   def simple?()     cardname.simple?              end
   def junction?()   cardname.junction?            end
-  def css_name()    cardname.css_name             end
 
-  def left()      Card.fetch cardname.left_name   end
-  def right()     Card.fetch cardname.tag_name    end
+  def left()      Card.fetch cardname.left        end
+  def right()     Card.fetch cardname.right       end
+  
+  def trunk()     Card.fetch cardname.trunk       end
+  def tag()       Card.fetch cardname.tag         end
     
 
   def dependents
@@ -363,7 +364,7 @@ class Card < ActiveRecord::Base
 
   def repair_key
     Session.as_bot do
-      correct_key = cardname.to_key
+      correct_key = cardname.key
       current_key = key
       return self if current_key==correct_key
 
@@ -433,12 +434,12 @@ class Card < ActiveRecord::Base
     #return current_revision || Card::Revision.new
     if @cached_revision and @cached_revision.id==current_revision_id
     elsif ( Card::Revision.cache &&
-       @cached_revision=Card::Revision.cache.read("#{cardname.css_name}-content") and
+       @cached_revision=Card::Revision.cache.read("#{cardname.safe_key}-content") and
        @cached_revision.id==current_revision_id )
     else
       rev = current_revision_id ? Card::Revision.find(current_revision_id) : Card::Revision.new()
       @cached_revision = Card::Revision.cache ?
-        Card::Revision.cache.write("#{cardname.css_name}-content", rev) : rev
+        Card::Revision.cache.write("#{cardname.safe_key}-content", rev) : rev
     end
     @cached_revision
   end
@@ -637,8 +638,7 @@ class Card < ActiveRecord::Base
 
       unless cdname.valid?
         rec.errors.add :name,
-          "may not contain any of the following characters: #{
-          Wagn::Cardname::CARDNAME_BANNED_CHARACTERS}"
+          "may not contain any of the following characters: #{ Wagn::Cardname::BANNED_ARRAY.join ' ' }"
       end
       # this is to protect against using a plus card as a tag
       if cdname.junction? and rec.simple? and Session.as_bot { Card.count_by_wql :tag_id=>rec.id } > 0
@@ -647,7 +647,7 @@ class Card < ActiveRecord::Base
 
       # validate uniqueness of name
       condition_sql = "cards.key = ? and trash=?"
-      condition_params = [ cdname.to_key, false ]
+      condition_params = [ cdname.key, false ]
       unless rec.new_record?
         condition_sql << " AND cards.id <> ?"
         condition_params << rec.id
@@ -728,7 +728,7 @@ class Card < ActiveRecord::Base
   validates_each :key do |rec, attr, value|
     if value.empty?
       rec.errors.add :key, "cannot be blank"
-    elsif value != rec.cardname.to_key
+    elsif value != rec.cardname.key
       rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
     end
   end

@@ -58,11 +58,11 @@ module LocationHelper
       opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
       vars = '?' + pairs.join('&')
     end
-    wagn_path "/#{title.to_cardname.to_url_key}#{format}#{vars}"
+    wagn_path "/#{title.to_cardname.url_key}#{format}#{vars}"
   end
 
   def wagn_path( rel ) #should be in cardname?
-    rel_path = Card===rel ? rel.cardname.to_url_key : rel
+    rel_path = Card===rel ? rel.cardname.url_key : rel
     Wagn::Conf[:root_path].to_s + ( rel_path =~ /^\// ? '' : '/' ) + rel_path
   end
 

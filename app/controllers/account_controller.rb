@@ -90,7 +90,7 @@ class AccountController < ApplicationController
   def signin
     #warn Rails.logger.info("signin #{params[:login]}")
     if params[:login]
-      password_authentication(params[:login], params[:password])
+      password_authentication params[:login], params[:password]
     end
   end
 
@@ -132,7 +132,7 @@ class AccountController < ApplicationController
   end
   
   def password_authentication(login, password)
-    if self.session_user = User.authenticate(params[:login], params[:password])
+    if self.session_user = User.authenticate( params[:login], params[:password] )
       flash[:notice] = "Successfully signed in"  #ENGLISH
       #warn Rails.logger.info("to prev #{previous_location}")
       redirect_to previous_location

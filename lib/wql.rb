@@ -170,7 +170,7 @@ class Wql
     def merge(spec)
 #      spec = spec.clone
       spec = case spec
-        when String;   { :key => spec.to_cardname.to_key }
+        when String;   { :key => spec.to_cardname.key }
         when Integer;  { :id  => spec                    }  
         when Hash;     spec
         else raise("Invalid cardspec args #{spec.inspect}")
@@ -497,7 +497,7 @@ class Wql
       #warn "to_sql #{field}, #{v} (#{op})"
       field, v = case field
         when "cond";     return "(#{sqlize(v)})"
-        when "name";     ["#{table}.key",      [v].flatten.map(&:to_cardname).map(&:to_key)]
+        when "name";     ["#{table}.key",      [v].flatten.map(&:to_cardname).map(&:key)]
         
         when "type";     ["#{table}.type_id", [v].flatten.map{ |val| Card.fetch_id( val )||0 }]
         when "content";   join_alias = @cardspec.add_revision_join

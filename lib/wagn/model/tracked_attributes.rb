@@ -25,13 +25,12 @@ module Wagn::Model::TrackedAttributes
     else
       [ newname.to_cardname, newname]
     end
-    write_attribute :key, k=cardname.to_key
+    write_attribute :key, k=cardname.key
     write_attribute :name, name_without_tracking # what does this do?  Not sure, maybe comment it out and see
 
     reset_patterns_if_rule # reset the new name
 
     Card.expire cardname
-    Rails.logger.info "just expired #{cardname}"
 
     if @cardname.junction?
       [:trunk, :tag].each do |side|
@@ -52,7 +51,7 @@ module Wagn::Model::TrackedAttributes
     end   
 
     return if new_card?
-    if existing_card = Card.find_by_key(@cardname.to_key) and existing_card != self
+    if existing_card = Card.find_by_key(@cardname.key) and existing_card != self
       if existing_card.trash  
         existing_card.name = tr_name = existing_card.name+'*trash'
         existing_card.instance_variable_set :@cardname, tr_name.to_cardname

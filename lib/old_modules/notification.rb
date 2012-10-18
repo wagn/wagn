@@ -48,7 +48,7 @@ module Notification
         #Rails.logger.debug "trunk_watcher_pairs #{name}, #{name.trunk_name.inspect}"
         if tcard = Card[tname=cardname.trunk_name] and
           pairs = tcard.watcher_watched_pairs and
-          transcluders.map(&:key).member?(tname.to_key)
+          transcluders.map(&:key).member?(tname.key)
           return pairs
         end
       end

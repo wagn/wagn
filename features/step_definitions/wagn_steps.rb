@@ -29,13 +29,13 @@ end
 
 When /^(.*) edits? "([^\"]*)"$/ do |username, cardname|
   logged_in_as(username) do
-    visit "/card/edit/#{cardname.to_cardname.to_url_key}"
+    visit "/card/edit/#{cardname.to_cardname.url_key}"
   end
 end
 
 When /^(.*) edits? "([^\"]*)" entering "([^\"]*)" into wysiwyg$/ do |username, cardname, content|
   logged_in_as(username) do
-    visit "/card/edit/#{cardname.to_cardname.to_url_key}"
+    visit "/card/edit/#{cardname.to_cardname.url_key}"
     page.execute_script "$('#main .card-content').val('#{content}')"
     click_button("Submit")    
   end
@@ -44,7 +44,7 @@ end
   
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
   logged_in_as(username) do 
-    visit "/card/edit/#{cardname.to_cardname.to_url_key}"
+    visit "/card/edit/#{cardname.to_cardname.url_key}"
     fill_in 'card[content]', :with=>content 
     click_button("Submit")
   end
@@ -52,7 +52,7 @@ end
                    
 When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
   logged_in_as(username) do  
-    visit "/card/edit/#{cardname.to_cardname.to_url_key}"
+    visit "/card/edit/#{cardname.to_cardname.url_key}"
     plusses.hashes.first.each do |name, content|
       fill_in "card[cards][#{(cardname+'+'+name).to_cardname.pre_cgi}][content]", :with=>content
     end
@@ -86,7 +86,7 @@ end
    
 When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
   logged_in_as(username) do
-    visit "/card/delete/#{cardname.to_cardname.to_url_key}?confirm_destroy=true"
+    visit "/card/delete/#{cardname.to_cardname.url_key}?confirm_destroy=true"
   end
 end
 

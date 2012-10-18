@@ -26,8 +26,10 @@ class Wagn::RendererTest < ActiveSupport::TestCase
     @controller
   end
 
-  def slot_link(card, format=:html)
-    result = Wagn::Renderer.new(card, :format=>format).render(:content)
+  def slot_link card, format=:html
+    renderer = Wagn::Renderer.new card, :format=>format
+    renderer.add_name_context
+    result = renderer.render :content
     m = result.match(/<(cardlink|link|a) class.*<\/(cardlink|link|a)>/)
     (m.to_s != "") ? m.to_s : result
   end
@@ -64,7 +66,7 @@ class Wagn::RendererTest < ActiveSupport::TestCase
     assert_equal '<a class="wanted-card" href="/Kennedy%2BMonroe">+Monroe</a>', slot_link(cardA)
 
     cardB = newcard('Clinton', '[[Lewinsky+]]')
-    assert_equal '<a class="wanted-card" href="/Lewinsky%2BClinton">Lewinsky+</a>', slot_link(cardB)
+    assert_equal '<a class="wanted-card" href="/Lewinsky%2BClinton">Lewinsky</a>', slot_link(cardB)
   end
 
   def test_slot_relative_card_xml

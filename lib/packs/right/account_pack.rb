@@ -10,9 +10,9 @@ class Wagn::Renderer::Html
 
     wrap( args ) do
       %{#{#slot.header  I don't understand why this doesn't work here?
-      }<style>.SELF-#{tcard.key.css_name
+      }<style>.SELF-#{tcard.safe_key
       } .account-area .title-#{
-        tcard.name.css_name
+        tcard.cardname.safe_key
       } { display: none; }</style>} +
 
       div( :id=>id('card-body'), :class=>'card-body') do
@@ -42,8 +42,8 @@ class Wagn::Renderer::Html
     return forms if String === forms
     #Rails.logger.info "trait_form(#{action.inspect}) #{forms.inspect}"
     if form = forms.find { |k|
-      #Rails.logger.info "trait_search(#{action.inspect}) #{card.attribute.inspect}, #{k.tag_name.inspect} #{forms.inspect}"
-      k.tag_name == action } and form = Card.fetch(form)
+      #Rails.logger.info "trait_search(#{action.inspect}) #{card.attribute.inspect}, #{k.tag.inspect} #{forms.inspect}"
+      k.tag == action } and form = Card.fetch(form)
       form.content
     else
       "No form card #{@state} #{card&&card.name}"

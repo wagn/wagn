@@ -27,12 +27,13 @@ class Session
       @@user_id = get_user_id user      
     end
 
-    def get_user_id user  #FIXME - should handle codenames
+    def get_user_id user
       case user
       when NilClass;   nil
       when User    ;   user.card_id
       when Card    ;   user.id
       when Integer ;   user
+      when Symbol  ;   Card[user].id
       else
         user = user.to_s
         Wagn::Codename[user] or (cd=Card[user] and cd.id)

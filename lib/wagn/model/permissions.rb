@@ -204,7 +204,7 @@ module Wagn::Model::Permissions
     reset_patterns # why is this needed?
     rcard, rclass = permission_rule_card :read
     self.read_rule_id = rcard.id #these two are just to make sure vals are correct on current object
-    warn "updating read rule for #{name} to #{rcard.id}, #{rcard.name}, #{rclass}"
+    #warn "updating read rule for #{name} to #{rcard.id}, #{rcard.name}, #{rclass}"
     Rails.logger.warn "updating read rule for #{name} to #{rcard.id}, #{rcard.name}, #{caller*"\n"}"
     
     self.read_rule_class = rclass
@@ -229,7 +229,7 @@ module Wagn::Model::Permissions
   def update_read_rule_list() @update_read_rule_list ||= [] end
   def read_rule_updates updates
     Rails.logger.warn "rrups #{updates.inspect}"
-    warn "rrups #{updates.inspect}"
+    #warn "rrups #{updates.inspect}"
     @update_read_rule_list = update_read_rule_list.concat updates
     # to short circuite the queue mechanism, just each the new list here and update
   end
@@ -243,9 +243,9 @@ module Wagn::Model::Permissions
 
   def update_ruled_cards
     # FIXME: codename
-    warn "uprc #{name} #{junction?}, #{Card::ReadID}, #{tag_id}" if junction?
+    #warn "uprc #{name} #{junction?}, #{Card::ReadID}, #{tag_id}" if junction?
     if junction? && tag_id==Card::ReadID && (@name_or_content_changed || @trash_changed)
-    warn "uprc #{name} #{junction?}, #{tag_id}"
+    #warn "uprc #{name} #{junction?}, #{tag_id}"
       # These instance vars are messy.  should use tracked attributes' @changed variable 
       # and get rid of @name_changed, @name_or_content_changed, and @trash_changed.
       # Above should look like [:name, :content, :trash].member?( @changed.keys ).
@@ -266,7 +266,7 @@ module Wagn::Model::Permissions
         if rule_class_index.nil?
           notify_airbrake 'not a proper rule card' if Airbrake.configuration.api_key
           warn "not a proper rule card #{name} not in #{rule_classes.inspect}"
-          warn "up rld cds #{name} tk.tid:#{key_id}"
+          #warn "up rld cds #{name} tk.tid:#{key_id}"
           warn "not a proper rule card #{name}, #{Card[key_id].name} is not in rc:#{rule_class_ids.map{|x|Card[x].name}*', '}"
           return false
         end
@@ -276,7 +276,9 @@ module Wagn::Model::Permissions
           Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
             in_set[item_card.key] = true
             #Rails.logger.debug "rule_class_ids[#{rule_class_index}] #{rule_class_ids.inspect} This:#{item_card.read_rule_class.inspect} idx:#{rule_class_ids.index(item_card.read_rule_class)}"
-            next if rule_class_ids.index(item_card.read_rule_class) < rule_class_index
+            rc_index = rule_class_ids.index Card[item_card.read_rule_class].id # FIXME: migrate rr_class to rr_id
+            warn "not a proper class, #{item_card.read_rule_class}" if rc_index.nil? # should not happen
+            next if rc_index < rule_class_index
             item_card.update_read_rule
           end
         end

@@ -121,7 +121,11 @@ module Wagn
     def tag_name()      @tag_name   ||= simple? ? self : right_name        end 
 
     def pieces
-      @pieces ||= simple? ? [self] : trunk_name.pieces << tag_name
+      @pieces ||= if simple?
+        [ self ]
+      else
+        trunk_name.pieces + [ tag_name ]
+      end
     end
 
 

@@ -20,7 +20,7 @@ module Wagn::Model
         #warn (Rails.logger.debug "reset set: #{name}, Set:#{set.inspect} + Setting:#{setting.inspect}")
         set.include_set_modules
         #warn (Rails.logger.debug "reset RR [#{set.name}]? #{self.update_read_rule_list.inspect}")
-        self.update_read_rule_list = self.update_read_rule_list.concat( set.item_cards(:limit=>0) ) if setting.id == Card::ReadID
+        self.read_rule_updates( set.item_cards :limit=>0 ) if setting.id == Card::ReadID
         #warn (Rails.logger.debug "reset RR> #{self.update_read_rule_list.inspect}")
         set.reset_patterns
         set.reset_set_patterns
@@ -98,8 +98,9 @@ module Wagn::Model
       def register key, opt_keys, opts={}
         Wagn::Model::Pattern.register_class self
         #@@pattern_class.register_class self
-        cattr_accessor :key, :opt_keys, :junction_only, :method_key
+        cattr_accessor :key, :key_id, :opt_keys, :junction_only, :method_key
         self.key = key
+        self.key_id = Wagn::Codename[key]
         self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]
         opts.each { |key, val| self.send "#{key}=", val }
         #warn "reg K:#{self}[#{self.key}] OK:[#{opt_keys.inspect}] jo:#{junction_only.inspect}, mk:#{method_key.inspect}"

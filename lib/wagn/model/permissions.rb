@@ -198,12 +198,14 @@ module Wagn::Model::Permissions
   end
   
   def update_read_rule
+    #warn "uprr #{name}"
     Card.record_timestamps = false
 
     reset_patterns # why is this needed?
     rcard, rclass = permission_rule_card :read
     self.read_rule_id = rcard.id #these two are just to make sure vals are correct on current object
-#    warn "updating read rule for #{name} to #{rcard.id}"
+    #warn "updating read rule for #{name} to #{rcard.id}, #{rcard.name}, #{rclass}"
+    Rails.logger.warn "updating read rule for #{name} to #{rcard.id}, #{rcard.name}, #{caller*"\n"}"
     
     self.read_rule_class = rclass
     Card.where(:id=>self.id).update_all(:read_rule_id=>rcard.id, :read_rule_class=>rclass)
@@ -225,6 +227,12 @@ module Wagn::Model::Permissions
 
   # fifo of cards that need read rules updated
   def update_read_rule_list() @update_read_rule_list ||= [] end
+  def read_rule_updates updates
+    Rails.logger.warn "rrups #{updates.inspect}"
+    #warn "rrups #{updates.inspect}"
+    @update_read_rule_list = update_read_rule_list.concat updates
+    # to short circuite the queue mechanism, just each the new list here and update
+  end
 
   def update_queue
     #warn (Rails.logger.warn "update queue[#{inspect}] Q[#{self.update_read_rule_list.inspect}]")
@@ -235,7 +243,7 @@ module Wagn::Model::Permissions
 
   def update_ruled_cards
     # FIXME: codename
-    if cardname.junction? && cardname.tag=='*read' && (@name_or_content_changed || @trash_changed)
+    if junction? && tag_id==Card::ReadID && (@name_or_content_changed || @trash_changed)
       # These instance vars are messy.  should use tracked attributes' @changed variable 
       # and get rid of @name_changed, @name_or_content_changed, and @trash_changed.
       # Above should look like [:name, :content, :trash].member?( @changed.keys ).
@@ -245,31 +253,39 @@ module Wagn::Model::Permissions
       
       User.cache.reset
       Card.cache.reset # maybe be more surgical, just Session.user related
-      #Wagn.cache.reset
       expire #probably shouldn't be necessary, 
       # but was sometimes getting cached version when card should be in the trash.
       # could be related to other bugs?
       in_set = {}
       if !(self.trash)
-        rule_classes = Wagn::Model::Pattern.subclasses.map &:key
-        rule_class_index = rule_classes.index self.cardname.trunk_name.tag
-        return 'not a proper rule card' unless rule_class_index
+        if class_id = (set=left and set_class=set.tag and set_class.id)
+          rule_class_ids = Wagn::Model::Pattern.subclasses.map &:key_id
+          if rule_class_index = rule_class_ids.index( class_id )
 
-        #first update all cards in set that aren't governed by narrower rule
-        Session.as_bot do
-          Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
-            in_set[item_card.key] = true
-            #Rails.logger.debug "rule_classes[#{rule_class_index}] #{rule_classes.inspect} This:#{item_card.read_rule_class.inspect} idx:#{rule_classes.index(item_card.read_rule_class)}"
-            next if rule_classes.index(item_card.read_rule_class) < rule_class_index
-            item_card.update_read_rule
+            #first update all cards in set that aren't governed by narrower rule
+            Session.as_bot do
+              Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
+                in_set[item_card.key] = true
+                #Rails.logger.debug "rule_class_ids[#{rule_class_index}] #{rule_class_ids.inspect} This:#{item_card.read_rule_class.inspect} idx:#{rule_class_ids.index(item_card.read_rule_class)}"
+                rc_index = rule_class_ids.index Card[item_card.read_rule_class].id # FIXME: migrate rr_class to rr_class_id
+                next if rc_index < rule_class_index
+                item_card.update_read_rule
+              end
+            end
+
+          else
+            Airbrake.notify 'improper rule card' if Airbrake.configuration.api_key
+            warn "not a proper rule card #{name}, #{Card[key_id].name} is not in rc:#{rule_class_ids.map{|x|Card[x].name}*', '}"
+            return false
           end
         end
       end
 
       #then find all cards with me as read_rule_id that were not just updated and regenerate their read_rules
       if !new_record?
-        Card.where(:read_rule_id=>self.id, :trash=>false).
-          reject{|w|in_set[w.key]}.each(&:update_read_rule)
+        Card.where( :read_rule_id=>self.id, :trash=>false ).reject do |w|
+          in_set[ w.key ]
+        end.each &:update_read_rule
       end
     end
   end

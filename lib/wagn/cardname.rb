@@ -94,10 +94,12 @@ module Wagn
     
     def pre_cgi
       #why is this necessary?? doesn't real CGI escaping handle this??
+      # hmmm.  is this to prevent absolutizing
       @pre_cgi ||= parts.join '~plus~'
     end
     
     def post_cgi
+      #hmm.  this could resolve to the key of some other card.  move to class method?
       @post_cgi ||= s.gsub '~plus~', JOINT
     end
 

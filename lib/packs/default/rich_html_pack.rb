@@ -286,14 +286,14 @@ class Wagn::Renderer::Html
 
   define_view :options do |args|
     attribute = params[:attribute]
-    attribute ||= ([Card::WagnBotID, Card::AnonID].member?(card.id) || card.type_id==Card::UserID ? 'account' : 'settings')
+    attribute ||= (card.to_user ? 'account' : 'settings')
     wrap :options, args do
       %{ #{ _render_header } <div class="options-body"> #{ render "option_#{attribute}" } </div> #{ notice } }
     end
   end
 
   define_view :option_account do |args|
-    locals = {:slot=>self, :card=>card, :account=>User.where(:card_id=>card.id).first }
+    locals = {:slot=>self, :card=>card, :account=>card.to_user }
     %{#{raw( options_submenu(:account) ) }#{
 
        card_form :update_account do |form|

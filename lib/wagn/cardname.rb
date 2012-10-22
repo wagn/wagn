@@ -4,11 +4,12 @@ module Wagn
     require 'htmlentities'
 
     JOINT = '+'
+    JOINT_RE = Regexp.escape JOINT
     BANNED_ARRAY = [ '/', '~', '|' ]
     BANNED_RE = /#{ (['['] + BANNED_ARRAY << JOINT )*'\\' }]/
 
     RUBY19 = RUBY_VERSION =~ /^1\.9/
-    WORD_RE = RUBY19 ? '\p{Word}/' : '/\w/'
+    OK4KEY_RE = RUBY19 ? '\p{Word}\*' : '\w\*'
 
     @@name2cardname = {}
 
@@ -42,7 +43,7 @@ module Wagn
       @s = str.to_s.strip
       @s = @s.encode('UTF-8') if RUBY19
       @key = if @s.index(JOINT)
-          @parts = @s.split(/\s*#{Regexp.escape(JOINT)}\s*/)
+          @parts = @s.split(/\s*#{JOINT_RE}\s*/)
           @parts << '' if @s.last == JOINT
           @simple = false
           @parts.map { |p| p.to_cardname.key } * JOINT  
@@ -56,7 +57,7 @@ module Wagn
     
     def to_cardname()    self                                           end
     def valid?()         not parts.find { |pt| pt.match BANNED_RE }     end
-    def size()           parts.size                                     end # size of name = number of parts??  not intuitive.    maybe depth?
+    def size()           parts.size                                     end # size of name = number of parts??  not intuitive.    maybe depth? psize?
     def blank?()         s.blank?                                       end
     alias empty? blank?
 
@@ -77,11 +78,11 @@ module Wagn
     #~~~~~~~~~~~~~~~~~~~ VARIANTS ~~~~~~~~~~~~~~~~~~~
     
     def simple_key
-      decoded.underscore.gsub(/[^#{WORD_RE}\*]+/,'_').split(/_+/).reject(&:blank?).map(&:singularize)*'_'
+      decoded.underscore.gsub(/[^#{OK4KEY_RE}]+/,'_').split(/_+/).reject(&:blank?).map(&:singularize)*'_'
     end
     
     def url_key
-      @url_key ||= decoded.gsub(/[^\*#{WORD_RE}\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
+      @url_key ||= decoded.gsub(/[^#{OK4KEY_RE}#{JOINT_RE}]+/,' ').strip.gsub /[\s\_]+/, '_'
     end
     
     def safe_key
@@ -167,10 +168,15 @@ module Wagn
         reject ? nil : part
       end
 
+
       initial_blank = show_parts[0].nil?
-      show_name = show_parts.compact.to_cardname.s
-      
-      initial_blank ? JOINT + show_name : show_name
+      show_parts.compact!      
+      if show_parts.empty?
+        fullname.s
+      else
+        show_name = show_parts.to_cardname.s
+        initial_blank ? JOINT + show_name : show_name
+      end
     end
 
 

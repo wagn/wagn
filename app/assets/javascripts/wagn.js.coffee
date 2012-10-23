@@ -49,7 +49,7 @@ jQuery.fn.extend {
   autosave: ->
     slot = @slot()
     return if @attr 'no-autosave'
-    multi = @closest '.field-in-multi'
+    multi = @closest 'fieldset'
     if multi[0]
       return unless id = multi.attr 'card-id'
       reportee = ': ' + multi.attr 'card-name'

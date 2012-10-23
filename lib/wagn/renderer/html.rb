@@ -101,7 +101,7 @@ module Wagn
     end
 
 
-    def wrap(view, args = {})
+    def wrap view, args = {}
       classes = ['card-slot', "#{view}-view"]
       classes << card.safe_keys if card
     
@@ -131,7 +131,12 @@ module Wagn
 
     def edit_slot args={}
       if card.hard_template
-        raw _render_core(args)
+        _render_raw.scan( /{{[^}]*}}/ ).map do |inc|
+          process_content( inc ).strip
+        end.join
+#        raw _render_core(args)
+      elsif card.new_card?
+        fieldset 'content', content_field( form )
       else
         content_field form
       end
@@ -215,9 +220,8 @@ module Wagn
       link_to text, path(:read, path_options), html_opts
     end
 
-    def name_field(form, options={})
+    def name_field form, options={}
       form.text_field( :name, { 
-        :class=>'field card-name-field',
         :value=>card.name, #needed because otherwise gets wrong value if there are updates
         :autocomplete=>'off'
       }.merge(options))
@@ -237,7 +241,7 @@ module Wagn
     def content_field(form, options={})
       @form = form
       @nested = options[:nested]
-      raw(%{ <div class="content-editor">} +
+      raw(%{ <div class="editor content-editor">} +
       ((card && !card.new_card? && !options[:skip_rev_id]) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : '') +
       self._render_editor +
       '</div>')

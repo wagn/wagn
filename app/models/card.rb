@@ -13,7 +13,7 @@ class Card < ActiveRecord::Base
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
 
   attr_accessor :comment, :comment_author, :selected_rev_id,
-    :confirm_rename, :confirm_destroy, :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
+    :confirm_destroy, :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
     :cards, :loaded_trunk, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status, #yuck
     :attachment_id #should build flexible handling for set-specific attributes
@@ -277,7 +277,7 @@ class Card < ActiveRecord::Base
     #could optimize to use fetch if we add :include_trashed_cards or something.
     #likely low ROI, but would be nice to have interface to retrieve cards from trash...
     self.id = trashed_card.id
-    @from_trash = self.confirm_rename = @trash_changed = true
+    @from_trash = @trash_changed = true
     @new_record = false
   end
 
@@ -653,27 +653,7 @@ class Card < ActiveRecord::Base
         condition_params << rec.id
       end
       if c = Card.find(:first, :conditions=>[condition_sql, *condition_params])
-        rec.errors.add :name, "must be unique-- A card named '#{c.name}' already exists"
-      end
-
-      # require confirmation for renaming multiple cards  
-      # FIXME - none of this should happen in the model.
-      if !rec.confirm_rename
-        pass = true
-        if !rec.dependents.empty?
-          pass = false
-          rec.errors.add :confirmation_required, "#{rec.name} has #{rec.dependents.size} dependents"
-        end
-
-        if rec.update_referencers.nil? and !rec.extended_referencers.empty?
-          pass = false
-          rec.errors.add :confirmation_required, "#{rec.name} has #{rec.extended_referencers.size} referencers"
-        end
-
-        if !pass
-          rec.error_view = :edit
-          rec.error_status = 200 #I like 401 better, but would need special processing
-        end
+        rec.errors.add :name, "must be unique; '#{c.name}' already exists."
       end
     end
   end

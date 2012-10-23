@@ -242,128 +242,46 @@ a.email-link {
 
 /* ---------- edit tab / new / inline editing--------*/
 
-.new-name,
-.new-type {
-  white-space: nowrap;
-}
-.new-name .title {
-  padding-left: 2px;
-}
-.new-name .card-name-field {
-  width: 50%;
-}
-.new-type {
-  float: right;
-}
+.new-current-revision-id,
 .editor .revision-navigation,
 .editor .autosave-alert {
   display: none
 }
-.card-name-field {
-  background: #eef;
-  font-weight: bold;
-  color: #448;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-  padding: 1px 5px;
-}
-.edit-area {
-  background: #f9f9f9;
-  border: 0px;
-  padding: 4px;
-}
-.in-multi {
-  background: #e3e3e3;
+fieldset {
   padding: 1 0px;
-  margin: 1px;
+  margin: 10px 1px;
+  clear: both;
   float: none !important;
   display:block;
+  border: 0;
 }
-.new-type .cardtype {
-  font-size: 14px;
-  float:right;
-}
-.edit-area p {
-  padding: 2px;
-}
-ul.pointer {
-  margin: 0px;
-  padding: 0px;
-}
-.edit-area .label {
-/* not(.fieldset)  did not compile */
-  display: block;
-  margin: 2px;
-  font-size: 12px;
-}
-.edit-area .field {
-/* not(.fieldset)  did not compile */
-  display: block;
-  margin: 4px;
-}
-.edit-area table {
-  width: 98%;
-  margin-bottom: 5px;
-}
-.edit-area .mceEditor table,
-.edit-area .mceEditor table td{
-  margin: 0px;
-  padding:0px 1px;
-  border: 0px;
-}
-.edit-area td {
-  vertical-align: middle;
-}
-.edit-area .title,
-.content-view .edit-area .title {
-  display: block;
-  font-size: 11px;
-}
-
-.label-in-multi {
-  float: left;
-  width: 25%;
-}
-.label-in-multi .title {
-  white-space: inherit;
-  padding: 1px 5px;
-}
-.field-in-multi {
+fieldset > .editor {
   float: right;
   width: 70%;
   padding: 3px;
 }
-.field-in-multi > .content-editor > input {
+fieldset > .editor > input {
   margin-left: 0;
+}
+fieldset > legend {
+  white-space: inherit;  
+  float:left;
+  text-align:right;
+  width: 25%;
+  padding: 3px;
+  margin: 0;
+}
+fieldset > legend > .instruction {
+  text-align: right;
+  padding: 3px 0;
 }
 .edit-button-area {
   margin-top: 7px;
 }
-.in-multi .instruction,
-.in-multi .instruction p{
-  clear:left;
-  border: 0px;
-  background-color: #e3e3e3; /*hard-coded because inherit wasn't working right in IE */
-  text-align: left;
-  padding: 0 3px;
-}
+
 /* for IE */
 div.content-view {
   display: inline;
-}
-.edit-name input,
-.edit-type select {
-  margin: 10px 0px;
-}
-.edit-name .instruction {
-  text-align: left;
-  margin: 10px;
-}
-.edit-name .radio {
-  padding-left: 20px;
-}
-.edit-name .field_with_errors {
-  display: inline-block;
 }
 .edit-area .delete-button {
   float: right;
@@ -374,9 +292,6 @@ div.content-view {
   border: 1px solid grey;
   padding: 10px;
   margin-top: 12px;
-}
-.new-current-revision-id {
-  display:none;
 }
 
 /* ---------- changes tab -------*/
@@ -464,12 +379,10 @@ del.diffmod,
   display: block;
   padding: 5px 15px 10px 15px;
 }
-
 .instruction {
   border-left: 0px;
   border-right: 0px;
 }
-
 .denied {
   display: none;
 }
@@ -627,6 +540,10 @@ body#wagn .card-slot.recent-changes h2 {
 }
 
 /*-------------( Pointer )--------*/
+ul.pointer {
+  margin: 0px;
+  padding: 0px;
+}
 .pointer-list-editor {
   margin: 0px;
   padding: 0px;

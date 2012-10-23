@@ -77,7 +77,7 @@ class Wagn::Renderer
 
 
   define_view :edit_virtual, :perms=>:none do |args|
-    %{ <div class="faint"><em>#{ showname } is a Virtual card</em></div> }
+    ''
   end
 
   define_view :closed_missing, :perms=>:none do |args|

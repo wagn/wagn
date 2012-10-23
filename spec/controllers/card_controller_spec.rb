@@ -250,7 +250,6 @@ describe CardController do
       Session.as 'joe_user'
       f = Card.create! :type=>"Cardtype", :name=>"Apple"
       xhr :post, :update, :id => "~#{f.id}", :card => {
-        :confirm_rename => true,
         :name => "Newt",
         :update_referencers => "false",
       }                   

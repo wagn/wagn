@@ -105,15 +105,12 @@
 /* -- instructions ---*/
 
 .help, .instruction {
-  background: #e3e3e3;
   color: #440;
   font-style: italic;
   text-align: center;
   padding: 4px 10px;
 }
-.new-instruction {
-  margin-bottom: 20px;
-}
+
 
 /*--- errors -----*/
 

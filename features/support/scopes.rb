@@ -4,10 +4,7 @@ module ScopeHelpers
     
     when /the main card content/
       '#main .card-slot .content'
-    
-    when /the main card footer/
-      '#main .card-slot .card-footer'
-     
+         
     when /the main card header/
       '#main .card-slot .card-header'
         

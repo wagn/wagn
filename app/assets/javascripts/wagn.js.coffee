@@ -11,10 +11,13 @@ wagn.prepUrl = (url, slot)->
   xtra['main'] = main if main?
   if slot
     home_view = slot.attr 'home_view'
-    item      = slot.attr 'item' 
+    item      = slot.attr 'item'
+    title     = slot.children '.card-title'
     xtra['home_view'] = home_view if home_view?
     xtra['item']      = item      if item?
     xtra['is_main']   = true      if slot.isMain()
+    if title?
+      xtra['name_context'] = $(title[0]).attr 'name_context'
   url + ( (if url.match /\?/ then '&' else '?') + $.param(xtra) )
 
 jQuery.fn.extend {
@@ -155,6 +158,33 @@ $(window).ready ->
     $(this).setContentFieldsFromMap()
     $(this).find('.card-content').attr('no-autosave','true')
     true
+    
+  $('body').delegate '.card-name-form', 'submit', ->
+    $(this).find('.confirm-rename').dialog {
+      autoOpen: false,
+      buttons: {
+        "Do it"  : ()-> true,
+        "Cancel" : ()-> false
+      }
+    }
+      
+#         "Delete all items": function() {
+#                     $( this ).dialog( "close" );
+#                 },
+#                 Cancel: function() {
+      #                   $( this ).dialog( "close" );
+      #               }
+      #           }
+#     modal: true,
+#     buttons: {
+#       "Delete all items": function() {
+#                   $( this ).dialog( "close" );
+#               },
+#               Cancel: function() {
+#                   $( this ).dialog( "close" );
+#               }
+#           }
+  
     
   $('body').delegate 'button.redirecter', 'click', ->
     window.location = $(this).attr('href')

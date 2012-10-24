@@ -8,8 +8,7 @@
 .card-menu,
 .cardtype,
 .open-missing,
-.add-edit-item,
-.card-footer {
+.add-edit-item {
   display: none !important;
 }
 .title {

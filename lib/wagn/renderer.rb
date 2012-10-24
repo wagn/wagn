@@ -162,10 +162,13 @@ module Wagn
       @card = card
       opts.each { |key, value| instance_variable_set "@#{key}", value }
   
-      @context_names = []
       @format ||= :html
       @char_count = @depth = 0
       @root = self
+
+      @context_names ||= if context_name_list = params[:name_context]
+        context_name_list.split(',').map &:to_cardname
+      else [] end
       
       if card && card.collection? && params[:item] && !params[:item].blank?
         @item_view = params[:item]
@@ -177,7 +180,11 @@ module Wagn
     def controller()   @controller ||= StubCardController.new                     end
     def session()      CardController===controller ? controller.session : {}      end
     def ajax_call?()   @@ajax_call                                                end
-    def showname()     @showname   ||= card.name                                  end
+      
+    def showname
+      @showname ||=
+        card.cardname.to_show card.cardname, :ignore=>@context_names, :params=>params
+    end
 
     def main?
       if ajax_call?
@@ -348,14 +355,9 @@ module Wagn
     end
   
     def process_inclusion tcard, opts
-      opts[:showname] = if opts[:tname]
-        opts[:tname].to_cardname.to_show card.cardname, :ignore=>@context_names, :params=>params
-      else
-        tcard.name
-      end
       
       sub_opts = { :item_view =>opts[:item] }
-      [:type, :size, :showname ].each { |key| sub_opts[key] = opts[key] }  
+      [ :type, :size ].each { |key| sub_opts[key] = opts[key] }  
       sub = subrenderer tcard, sub_opts 
 
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
@@ -479,7 +481,7 @@ module Wagn
 
     def add_name_context name=nil
       name ||= card.name
-      @context_names += name.to_cardname.parts
+      @context_names += name.to_cardname.part_names
       @context_names.uniq! 
     end
   

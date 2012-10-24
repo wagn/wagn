@@ -159,38 +159,6 @@ div:hover.card-header .card-menu-left {
 
 
 
-/* card footer-------------------------------*/
-.card-footer,
-.revision-navigation {
-  padding: 0px 10px;
-  font-size: 9px;
-  text-align: left;
-}
-.card-footer,
-.revision-navigation {
-   background: #bbb;
-}
-.card-footer {
-  clear: both;
-  -moz-border-radius: 0px 0px 6px 6px;
-  border-radius: 0px 0px 6px 6px;
-}
-html>body  .card-footer .footer-content {
-  display: none; 
-}
-div:hover.card-footer .footer-content {
-  display: inline;
-} 
-.card-footer .footer-content {
-  width: 100%; 
-}        
-.card-footer .watch-view {
-  float: right;
-  text-align: right;
-  white-space: nowrap;
-}        
-
-
 /*-------------  TABS -------*/
 
 /* -------- view tab / content ----------------- */
@@ -255,6 +223,7 @@ fieldset {
   display:block;
   border: 0;
 }
+fieldset > .button-area,
 fieldset > .editor {
   float: right;
   width: 70%;
@@ -275,16 +244,15 @@ fieldset > legend > .instruction {
   text-align: right;
   padding: 3px 0;
 }
-.edit-button-area {
-  margin-top: 7px;
+.button-area input,
+.button-area button {
+  margin-right: 2%;
 }
+
 
 /* for IE */
 div.content-view {
   display: inline;
-}
-.edit-area .delete-button {
-  float: right;
 }
 .conflict-view {
   text-align: left;

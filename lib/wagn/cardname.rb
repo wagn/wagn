@@ -123,13 +123,17 @@ module Wagn
     def trunk_name()    @trunk_name ||= simple? ? self : left_name         end
     def tag_name()      @tag_name   ||= simple? ? self : right_name        end 
 
-    def pieces
-      @pieces ||= if simple?
+    def part_names()    @part_names ||= parts.map &:to_cardname            end
+    def pieces()        @pieces     ||= piece_names.map &:s                end    
+
+    def piece_names
+      @piece_names ||= if simple?
         [ self ]
       else
-        trunk_name.pieces + [ tag_name ]
+        trunk_name.piece_names + [ tag_name ]
       end
     end
+      
 
 
     #~~~~~~~~~~~~~~~~~~~ TRAITS / STARS ~~~~~~~~~~~~~~~~~~~    

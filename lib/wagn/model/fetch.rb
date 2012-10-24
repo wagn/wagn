@@ -75,7 +75,6 @@ module Wagn::Model::Fetch
       #warn "fetch returning #{card.inspect}"
       card.include_set_modules unless opts[:skip_modules]
       card
-#      end
     end
 
     def fetch_or_new cardname, opts={}
@@ -109,7 +108,7 @@ module Wagn::Model::Fetch
     end
     
     # set_names reverse map (cached)
-    def members(key)
+    def members key
       (v=Card.cache.read "$#{key}").nil? ? [] : v.keys
     end
 
@@ -134,7 +133,7 @@ module Wagn::Model::Fetch
   end
 
   def expire_pieces
-    cardname.pieces.each do |piece|
+    cardname.piece_names.each do |piece|
       #warn "clearing for #{piece.inspect}"
       Card.expire piece
     end

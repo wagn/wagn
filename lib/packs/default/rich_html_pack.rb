@@ -28,24 +28,25 @@ class Wagn::Renderer::Html
   end
 
   define_view :titled do |args|
-    add_name_context
     wrap :titled, args do
       _render_title + wrap_content(:titled, _render_core(args))
     end
   end
   
   define_view :title do |args|
-    content_tag :h1, fancy_title, :class=>'card-title'
+    Rails.logger.info "context names = #{@context}"
+    t = content_tag :h1, fancy_title, :class=>'card-title', :name_context=>"#{ @context_names.map(&:key)*',' }"
+    add_name_context
+    t
   end
 
   define_view :open do |args|
     wrap :open, args do
       %{ 
-         #{ _render_header }
+         #{ _render_title }
          #{ wrap_content :open, _render_open_content(args) } 
          #{ render_comment_box }
          #{ notice }
-         #{ _render_footer }
       }
     end
   end
@@ -65,7 +66,6 @@ class Wagn::Renderer::Html
     </div>}
   end
 
-
   define_view :closed do |args|
     wrap :closed, args do
       %{
@@ -81,18 +81,47 @@ class Wagn::Renderer::Html
     end
   end
 
-
   define_view :new, :perms=>:create, :tags=>:unknown_ok do |args|
-    if ajax_call?
-      new_content :cancel_href=>path(:read, :view=>:missing), :cancel_class=>'slotter'
+    type_ready = params[:type] && !card.broken_type
+    name_ready = !( card.cardname.blank? || Card.exists?( card.cardname ) )
+
+    cancel = if ajax_call?
+      { :class=>'slotter',    :href=>path(:read, :view=>:missing)    }
     else
-      %{
-        <h1 class="page-header">
-          New #{ card.type_id == Card::DefaultTypeID ? 'Card' : card.type_name }
-        </h1>
-        #{ new_content :cancel_href=>Card.path_setting('/*previous'), :cancel_class=>'redirecter' }
-      }
+      { :class=>'redirecter', :href=>Card.path_setting('/*previous') }
     end
+
+    if ajax_call? 
+      header_text = card.type_id == Card::DefaultTypeID ? 'Card' : card.type_name
+      %{ <h1 class="page-header">New #{header_text}</h1>}
+    else '' end +
+       
+    (wrap :new, args do  
+      card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
+        @form = form
+        %{
+          <div class="edit-area">          
+            #{ hidden_field_tag :success, card.rule(:thanks) || 'TO-CARD' }
+            #{ help_text :add_help, :fallback=>:edit_help }
+            #{
+            case
+            when name_ready                  ; _render_title + hidden_field_tag( 'card[name]', card.name )
+            when card.rule_card( :autoname ) ; ''
+            else                             ; _render_name_editor
+            end
+            }
+            #{ type_ready ? form.hidden_field( :type_id) : _render_type_editor }
+            <div class="card-editor editor">#{ edit_slot args }</div>
+            <div class="edit-button-area">
+              #{ submit_tag 'Submit', :class=>'create-submit-button' }
+              #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
+            </div>
+          </div>
+          #{ notice }
+        }
+      end
+    end)
+    
   end
 
   define_view :editor do |args|
@@ -113,42 +142,34 @@ class Wagn::Renderer::Html
 
 ###---(  EDIT VIEWS )
   define_view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
-    add_name_context
-    attrib = params[:attribute] || 'content'
-    attrib = 'name' if params[:card] && params[:card][:name]
     wrap :edit, args do
-      %{#{ _render_header }
-       <div class="card-body">
-         #{ edit_submenu attrib}
-         #{ _render "edit_#{attrib}" }
-         #{ notice }
-       </div>}
-    end
-  end
-
-  define_view :edit_content, :perms=>:update do |args|
-    %{#{
-      if inst = card.rule_card(:edit_help)
-        %{<div class="instruction">#{ raw subrenderer(inst).render_core }</div>}
-      end}
-
+      %{ 
+      #{_render_title }
+      #{ help_text :edit_help }
       <div class="card-editor edit-area">
-      
-      #{ card_form :update, 'card-form card-edit-form autosave' do |f|
-        %{<div>#{ @form= f; edit_slot(args) }</div>
-
-        <div class="edit-button-area"> #{
-          if !card.new_card?
-            button_tag "Delete", :href=>path(:delete), :type=>'button', 'data-type'=>'html',
-              :class=>'edit-delete-button delete-button slotter standard-delete'
-
-          end}#{
-          submit_tag 'Submit', :class=>'edit-submit-button'}#{
-          button_tag 'Cancel', :class=>'edit-cancel-button slotter', :href=>path(:read), :type=>'button'}
-        </div>}
-       end}
-    </div>
+        #{ card_form :update, 'card-form card-edit-form autosave' do |f|
+          @form= f
+          %{
+          <div>#{ edit_slot args }</div>
+          <fieldset>
+            <div class="button-area">
+              #{ submit_tag 'Submit', :class=>'submit-button' }
+              #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path(:read), :type=>'button'}
+              #{ 
+              if !card.new_card?
+                #why do we need the data=type here?
+                button_tag "Delete", :href=>path(:delete), :type=>'button', 'data-type'=>'html',
+                  :class=>'delete-button slotter standard-delete'
+              end
+              }            
+            </div>
+          </fieldset>
+          }
+        end}
+      </div>
+      #{ notice }
       }
+    end
   end
 
   define_view :name_editor do |args|
@@ -163,24 +184,25 @@ class Wagn::Renderer::Html
     end)
   end
   
-  def editor_wrap type
-    content_tag( :div, :class=>"editor #{type}-editor" ) { yield }
-  end
-
   define_view :edit_name, :perms=>:update do |args|
     wrap :edit_name do
-      card_form path(:update, :id=>card.id), 'card-edit-name-form', 'main-success'=>'REDIRECT' do |f|
+      card_form path(:update, :id=>card.id), 'card-name-form', 'main-success'=>'REDIRECT' do |f|
         %{  
           #{ _render_name_editor}
           #{ hidden_field_tag :success, 'TO-CARD' }
-    
-          #{ submit_tag 'Rename', :class=>'edit-name-submit-button'}
+          <div class="confirm-rename">
+            WOWSERS?
+          </div>
+          #{ submit_tag 'Rename', :class=>'edit-name-submit-button' }
           #{ button_tag 'Cancel', :class=>'edit-name-cancel-button slotter', :type=>'button', :href=>path(:edit, :id=>card.id)}
         }
       end
     end
   end
   
+  define_view :confirm_rename do |args|
+    'WOWSERS!'
+  end
   
   #     if !card.errors[:confirmation_required].empty?
   #       card.confirm_rename = card.update_referencers = true
@@ -243,65 +265,18 @@ class Wagn::Renderer::Html
   end
 
   define_view :edit_in_form, :tags=>:unknown_ok do |args|  #, :perms=>:update
-    help = if help_card = (card.new_card? ? card.rule_card(:add_help, :fallback => :edit_help) : card.rule_card(:edit_help))
-      ss = subrenderer(help_card)
-      ss.with_inclusion_mode(:main) { ss.render_core }
-    end
-
     eform = form_for_multi
-    title = link_to_page fancy_title, (card.new_card? ? card.cardname.tag : card.name) 
-    content = "#{ content_field eform, :nested=>true } #{ eform.hidden_field(:type_id) if card.new_card? }"
-    attribs = %{ class="card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" #{ %{card-id="#{card.id}" card-name="#{h card.name}"} if card.id } }
-    fieldset title, content, :help=>help, :attribs=>attribs
-  end
-  
-  def fieldset title, content, opts={}
-    %{
-      <fieldset #{ opts[:attribs] }>
-        <legend>
-          <h2>#{ title }</h2>
-          #{ %{<div class="instruction">#{ opts[:help] }</div>} if opts[:help] }
-        </legend>
-        #{ content }
-      </fieldset>
-    }
-  end
-
-  define_view :related do |args|
-    sources = [card.type_name,nil]
-    # FIXME codename *account
-    sources.unshift '*account' if card.to_user
-    items = sources.map do |source|
-      c = Card.fetch(source ? source.to_cardname.trait_name(:related) : Card::RelatedID)
-      c && c.item_names
-    end.flatten.compact
-
-    current = params[:attribute] || items.first.to_cardname.key
-
-    wrap :related, args do
-      %{#{ _render_header }
-        <div class="submenu"> #{
-          items.map do |item|
-            key = item.to_cardname.key
-            text = item.gsub('*','').gsub('subtab','').strip
-            link_to text, path(:related, :attrib=>key), :remote=>true,
-              :class=>"slotter #{key==current ? 'current-subtab' : ''}"
-          end * "\n"}
-         </div> #{
-         notice }
-
-        <div class="open-content related"> #{
-          raw subrenderer(Card.fetch_or_new "#{card.name}+#{current}").render_content }
-        </div>}
+    content = content_field eform, :nested=>true
+    attribs = %{ class="card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" }
+    link_target, help_settings = if card.new_card?
+      content += raw( "\n #{ eform.hidden_field :type_id }" )
+      [ card.cardname.tag, [:add_help, :fallback => :edit_help] ]
+    else
+      attribs += %{ card-id="#{card.id}" card-name="#{h card.name}" }
+      [ card.name, :edit_help ]
     end
-  end
-
-  define_view :options do |args|
-    attribute = params[:attribute]
-    attribute ||= (card.to_user ? 'account' : 'settings')
-    wrap :options, args do
-      %{ #{ _render_header } <div class="options-body"> #{ render "option_#{attribute}" } </div> #{ notice } }
-    end
+    label = link_to_page fancy_title, link_target
+    fieldset label, content, :help=>help_settings, :attribs=>attribs
   end
 
   define_view :option_account do |args|
@@ -442,7 +417,7 @@ class Wagn::Renderer::Html
         end}
         </div>
         <div class="revision content">#{_render_diff}</div>
-        <div class="revision-navigation card-footer">#{ revision_menu }</div>}
+        <div class="revision-navigation">#{ revision_menu }</div>}
       end
     end
   end
@@ -513,7 +488,6 @@ class Wagn::Renderer::Html
     end
   end
 
-
   define_view :header do |args|
     add_name_context
     %{<div class="card-header">
@@ -530,35 +504,12 @@ class Wagn::Renderer::Html
     </div>}
   end
 
-  define_view :footer do |args|
-    %{<div class="card-footer">
-      <span class="footer-content">
-        <span class="watch-link">#{ render_watch }</span>
-        <span class="footer-links">
-          <label>Cards:</label>
-          #{raw card.cardname.pieces.map {|c| link_to_page c}.join(', ') }
-        </span>
-        #{
-         if !card.current_revision.new_record?
-           %{
-          <span class="last-editor">
-            <label>Last Editor:</label>
-            #{ raw link_to_page card.current_revision.author.name }
-          </span>}
-         end
-        }
-      </span>&nbsp;
-    </div>}
-  end
-
-
   define_view :errors, :perms=>:none do |args|
     wrap :errors, args do
       %{ <h2>Can't save "#{card.name}".</h2> } +
       card.errors.map { |attrib, msg| "<div>#{attrib.upcase}: #{msg}</div>" } * ''
     end
   end
-
 
   define_view :not_found do |args| #ug.  bad name.
 
@@ -635,7 +586,7 @@ class Wagn::Renderer::Html
               end }}
             end   }
           </div>
-          #{ _render_footer  }}
+          }
       end
     end
   end
@@ -669,6 +620,37 @@ class Wagn::Renderer::Html
   end
   
   private
+  
+  def editor_wrap type
+    content_tag( :div, :class=>"editor #{type}-editor" ) { yield }
+  end
+    
+  def fieldset title, content, opts={}
+    %{
+      <fieldset #{ opts[:attribs] }>
+        <legend>
+          <h2>#{ title }</h2>
+          #{ help_text *opts[:help] }
+        </legend>
+        #{ content }
+      </fieldset>
+    }
+  end
+  
+  def help_text *opts
+    Rails.logger.info "help text called with args #{opts} for #{card.name}"
+    text = case opts[0]
+      when Symbol
+        if help_card = card.rule_card( *opts )
+          with_inclusion_mode :normal do
+            subrenderer( help_card ).render_core
+          end
+        end
+      when String
+        opts[0]
+      end
+    %{<div class="instruction">#{raw text}</div>} if text
+  end
 
   def fancy_title name=nil
     name ||= showname
@@ -698,53 +680,6 @@ class Wagn::Renderer::Html
 #    i.blank? ? '' : %{<div class="instruction new-instruction"> #{ i } </div>}
 #  end
 
-  def new_content(args)
-    type_ready = params[:type] && !card.broken_type
-    name_ready = !( card.cardname.blank? || Card.exists?( card.cardname ) )
-    
-    
-    wrap :new, args do  
-      card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
-        @form = form
-
-        %{
-          #{ hidden_field_tag :success, card.rule(:thanks) || 'TO-CARD' }
-          #{
-          #~~~~ HELP
-          if help_card = card.rule_card( :add_help, :fallback=>:edit_help )
-            %{<div class="instruction">
-              #{ raw( with_inclusion_mode(:normal) { subrenderer(help_card).render_core } ) }
-            </div>}
-          end
-          }
-          #{
-          #~~~~ NAME
-          case
-          when name_ready                  ; _render_title + hidden_field_tag( 'card[name]', card.name )
-          when card.rule_card( :autoname ) ; ''
-          else                             ; _render_name_editor
-          end
-          }
-          #{
-          #~~~~ TYPE
-          if type_ready                    ; form.hidden_field :type_id
-          else                             ; _render_type_editor
-          end
-          }
-          #{ #~~~~CONTENT 
-          }
-          <div class="edit-area">
-            <div class="card-editor editor">#{ edit_slot args }</div>
-            <div class="edit-button-area">
-              #{ submit_tag 'Submit', :class=>'create-submit-button' }
-              #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{args[:cancel_class]}", :href=>args[:cancel_href] }
-            </div>
-          </div>
-          #{ notice }
-        }
-      end
-    end
-  end
 
 end
 

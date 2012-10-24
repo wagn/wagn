@@ -238,13 +238,18 @@ module Wagn
       template.select_tag 'card[type]', options, args
     end
 
-    def content_field(form, options={})
+    def content_field form, options={}
       @form = form
       @nested = options[:nested]
-      raw(%{ <div class="editor content-editor">} +
-      ((card && !card.new_card? && !options[:skip_rev_id]) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : '') +
-      self._render_editor +
-      '</div>')
+      revision_tracking = if card && !card.new_card? && !options[:skip_rev_id]
+        form.hidden_field :current_revision_id, :class=>'current_revision_id'
+      end
+      editor_wrap :content do
+        %{
+        #{ revision_tracking }
+        #{ _render_editor    }
+        }
+      end
     end
     
     def form_for_multi
@@ -258,7 +263,7 @@ module Wagn
       @form ||= form_for_multi
     end
 
-    def option( content, args )
+    def option content, args
       args[:label] ||= args[:name]
       args[:editable]= true unless args.has_key?(:editable)
       self.options_need_save = true if args[:editable]

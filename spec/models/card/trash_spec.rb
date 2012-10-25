@@ -60,7 +60,6 @@ end
 #  end
 #  it "should not be removable" do
 #    @a = Card['A']
-#    @a.confirm_destroy = true
 #    @a.destroy.should_not be_true
 #  end
 #end

@@ -198,7 +198,6 @@ describe Card, "Cardtype with Existing Cards" do
 
   it "should raise an error when you try to delete it" do
     Session.as_bot do
-      @ct.confirm_destroy = true
       @ct.destroy
       @ct.errors[:cardtype].should_not be_empty
     end

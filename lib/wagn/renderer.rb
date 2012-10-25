@@ -239,6 +239,7 @@ module Wagn
       content = card.content if content.blank?
   
       wiki_content = WikiContent.new(card, content, self)
+      Rails.logger.info "processing content for #{card.name}"
       update_references( wiki_content, true ) if card.references_expired
   
       wiki_content.render! do |opts|
@@ -515,6 +516,7 @@ module Wagn
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
       card.expire if refresh
       rendering_result ||= WikiContent.new(card, _render_refs, self)
+      
       rendering_result.find_chunks(Chunk::Reference).each do |chunk|
         reference_type =
           case chunk

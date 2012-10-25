@@ -351,6 +351,7 @@ del.diffmod,
   border-left: 0px;
   border-right: 0px;
 }
+.hidden,
 .denied {
   display: none;
 }

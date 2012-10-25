@@ -33,13 +33,8 @@ class CardController < ApplicationController
 
   def delete
     @card = @card.refresh if @card.frozen? # put in model
-    @card.confirm_destroy = params[:confirm_destroy]
-    @card.destroy
-
-    return show(:delete) if @card.errors[:confirmation_required].any?
-
-    discard_locations_for(@card)
-
+    #@card.destroy
+    discard_locations_for @card
     success 'REDIRECT: TO-PREVIOUS'
   end
   
@@ -201,7 +196,7 @@ class CardController < ApplicationController
   end
 
 
-  def success(default_target='TO-CARD')
+  def success default_target='TO-CARD'
     target = params[:success] || default_target
     redirect = !ajax?
 
@@ -216,6 +211,8 @@ class CardController < ApplicationController
       when /^TEXT:\s*(.+)/ ;  $1
       else                 ;  Card.fetch_or_new(target)
       end
+
+    Rails.logger.info "redirect = #{redirect} / target = #{target}"
 
     case
     when  redirect        ; wagn_redirect ( Card===target ? wagn_path(target) : target )

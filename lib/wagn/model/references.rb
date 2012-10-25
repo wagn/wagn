@@ -8,12 +8,14 @@ module Wagn::Model::References
   end
   
   def extended_referencers
+    #fixme .. we really just need a number here.
     (dependents + [self]).plot(:referencers).flatten.uniq
   end
   
   protected   
   
   def update_references_on_create
+    Rails.logger.info "update_references_on_create #{name}"
     Card::Reference.update_on_create(self)  
 
     # FIXME: bogus blank default content is set on hard_templated cards...
@@ -24,6 +26,7 @@ module Wagn::Model::References
   end
   
   def update_references_on_update
+    Rails.logger.info "update_references_on_update #{name}"
     Wagn::Renderer.new(self, :not_current=>true).update_references 
     expire_templatee_references
   end

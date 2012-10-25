@@ -11,14 +11,9 @@ end
 
 describe Card, "destroy with dependents" do
   before do Session.as(:joe_user); @c = Card["A"] end
-  
-  it "should fail with errors if confirm_destroy not set" do
-    @c.destroy.should_not be_true
-    @c.errors[:confirmation_required].should_not be_nil
-  end
-  
-  it "should succeed if confirm_destroy is set" do
-    @c.confirm_destroy = true
+    
+  it "should succeed" do
+    #should test for destruction of dependents!
     @c.destroy.should be_true
   end
 end

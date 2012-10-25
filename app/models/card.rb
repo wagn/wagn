@@ -13,7 +13,7 @@ class Card < ActiveRecord::Base
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
 
   attr_accessor :comment, :comment_author, :selected_rev_id,
-    :confirm_destroy, :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
+    :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
     :cards, :loaded_trunk, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status, #yuck
     :attachment_id #should build flexible handling for set-specific attributes
@@ -72,7 +72,7 @@ class Card < ActiveRecord::Base
           raise "Missing codename #{code} (#{const}) #{caller*"\n"}"
         end
       else
-        Rails.logger.debug "need to load #{const.inspect}?"
+#        Rails.logger.debug "need to load #{const.inspect}?"
         super
       end
     end
@@ -290,7 +290,6 @@ class Card < ActiveRecord::Base
       @trash_changed = true
       self.update_attributes :trash => true
       deps.each do |dep|
-        dep.confirm_destroy = true
         dep.destroy
       end
       true
@@ -316,24 +315,18 @@ class Card < ActiveRecord::Base
   end
 
   def destroy!
-    # FIXME: do we want to overide confirmation by setting confirm_destroy=true here?
-    self.confirm_destroy = true
     destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
   end
 
-  def validate_destroy    
-    if !dependents.empty? && !confirm_destroy
-      errors.add(:confirmation_required, "because #{name} has #{dependents.size} dependents")
-    else
-      if code=self.codename
-        errors.add :destroy, "#{name} is is a system card. (#{code})\n  Deleting this card would mess up our revision records."
-      end
-      if type_id== Card::UserID && Card::Revision.find_by_creator_id( self.id )
-        errors.add :destroy, "Edits have been made with #{name}'s user account.\n  Deleting this card would mess up our revision records."
-      end
-      if respond_to? :custom_validate_destroy
-        self.custom_validate_destroy
-      end
+  def validate_destroy
+    if code=self.codename
+      errors.add :destroy, "#{name} is is a system card. (#{code})\n  Deleting this card would mess up our revision records."
+    end
+    if type_id== Card::UserID && Card::Revision.find_by_creator_id( self.id )
+      errors.add :destroy, "Edits have been made with #{name}'s user account.\n  Deleting this card would mess up our revision records."
+    end
+    if respond_to? :custom_validate_destroy
+      self.custom_validate_destroy
     end
     errors.empty?
   end

@@ -142,6 +142,11 @@ class Wagn::Renderer::Html
 
 ###---(  EDIT VIEWS )
   define_view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
+    confirm_delete = "Are you sure you want to delete #{card.name}?"
+    if dependents = card.dependents and dependents.any?
+      confirm_delete +=  %{ \n\nThat would mean removing #{dependents.size} related pieces of information. }
+    end
+    
     wrap :edit, args do
       %{ 
       #{_render_title }
@@ -157,9 +162,8 @@ class Wagn::Renderer::Html
               #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path(:read), :type=>'button'}
               #{ 
               if !card.new_card?
-                #why do we need the data=type here?
-                button_tag "Delete", :href=>path(:delete), :type=>'button', 'data-type'=>'html',
-                  :class=>'delete-button slotter standard-delete'
+                button_tag "Delete", :href=>path(:delete), :type=>'button',
+                  :class=>'delete-button slotter standard-delete', :'data-confirm'=>confirm_delete
               end
               }            
             </div>
@@ -171,6 +175,30 @@ class Wagn::Renderer::Html
       }
     end
   end
+
+
+# define_view :delete do |args|
+#
+#     
+#   wrap :delete, args do
+#   %{
+#     #{ _render_title }
+#     #{ card_form :delete, 'delete-form', 'data-type'=>'html', 'main-success'=>'REDIRECT: TO-PREVIOUS' do |f|
+#   
+#       %{
+#         #{hidden_field_tag 'success', "TEXT: #{card.name} deleted" }
+#
+#         <div class="content open-content">
+#     <p>#{
+#
+#      #{ submit_tag 'Yes do it', :class=>'delete-submit-button' }
+#      #{ button_tag 'Cancel', :class=>'delete-cancel-button slotter', :type=>'button', :href=>path(:read) }
+#      #{ notice }
+#   </div>
+#     }
+#   end}}
+#   end
+# end
 
   define_view :name_editor do |args|
     fieldset 'name', (editor_wrap :name do
@@ -185,13 +213,29 @@ class Wagn::Renderer::Html
   end
   
   define_view :edit_name, :perms=>:update do |args|
+    card.update_referencers = false
+    referers = card.extended_referencers
+    dependents = card.dependents
+    
     wrap :edit_name do
       card_form path(:update, :id=>card.id), 'card-name-form', 'main-success'=>'REDIRECT' do |f|
+        @form = f
         %{  
           #{ _render_name_editor}
-          #{ hidden_field_tag :success, 'TO-CARD' }
-          <div class="confirm-rename">
-            WOWSERS?
+          
+          #{ f.hidden_field :update_referencers, :class=>'update_referencers'   }
+          #{ hidden_field_tag :success, 'TO-CARD'  }
+          #{ hidden_field_tag :old_name, card.name }
+          #{ hidden_field_tag :confirmed, 'false'  }
+          #{ hidden_field_tag :referers, referers.size }
+          <div class="confirm-rename hidden">
+            <h1>Are you sure you want to rename <em>#{card.name}</em>?</h1>
+            #{ %{ <h2>This change will...</h2> } if referers.any? || dependents.any? }
+            <ul>
+              #{ %{<li>automatically alter #{ dependents.size } related name(s). } if dependents.any? }
+              #{ %{<li>break at least #{referers.size} reference(s) to this name.} if referers.any? }
+            </ul>
+            #{ %{<p>You may choose to <em>ignore or fix</em> the references. Fixing will update references to use the new name.</p>} if referers.any? }  
           </div>
           #{ submit_tag 'Rename', :class=>'edit-name-submit-button' }
           #{ button_tag 'Cancel', :class=>'edit-name-cancel-button slotter', :type=>'button', :href=>path(:edit, :id=>card.id)}
@@ -199,49 +243,8 @@ class Wagn::Renderer::Html
       end
     end
   end
+
   
-  define_view :confirm_rename do |args|
-    'WOWSERS!'
-  end
-  
-  #     if !card.errors[:confirmation_required].empty?
-  #       card.confirm_rename = card.update_referencers = true
-  #       params[:attribute] = 'name'
-  #
-  #      %{#{if dependents = card.dependents and !dependents.empty?  #ENGLISH below
-  #        %{<div class="instruction">
-  #          <div>This will change the names of these cards, too:</div>
-  #          <ul>#{
-  #            dependents.map do |dep|
-  #              %{<li>#{ link_to_page dep.name }</li>}
-  #            end.join }
-  #          </ul>
-  #        </div>}
-  #      end}#{
-  #
-  #      if children = card.extended_referencers and !children.empty? #ENGLISH below
-  #        %{<h2>References</h2>
-  #        <div class="instruction">
-  #          <div>Renaming could break old links and inclusions on these cards:</div>
-  #          <ul>
-  #            #{children.map do |child|
-  #              %{<li>#{ link_to_page child.name }</li>}
-  #              end.join}
-  #          </ul>
-  #          <div>You can...
-  #            <div class="radio">#{ f.radio_button :update_referencers, 'true' }
-  #              <strong>Fix them</strong>: update old references with new name
-  #            </div>
-  #            <div class="radio">#{ f.radio_button :update_referencers, 'false' }
-  #              <strong>Leave them</strong>: let old references point to old name
-  #            </div>
-  #          </div>
-  #        </div>}
-  #      end
-  #      
-  #      }#{
-  #      f.hidden_field 'confirm_rename' }}
-  #    end
 
   define_view :edit_type, :perms=>:update do |args|
     %{
@@ -440,32 +443,7 @@ class Wagn::Renderer::Html
     end
   end
 
-  define_view :delete do |args|
-    wrap :delete, args do
-    %{#{ _render_header}
-    #{card_form :delete, '', 'data-type'=>'html', 'main-success'=>'REDIRECT: TO-PREVIOUS' do |f|
-    
-      %{#{ hidden_field_tag 'confirm_destroy', 'true' }#{
-        hidden_field_tag 'success', "TEXT: #{card.name} deleted" }
 
-    <div class="content open-content">
-      <p>Really remove #{ raw link_to_page( card.name ) }?</p>#{
-       if dependents = card.dependents and !dependents.empty? #ENGLISH ^
-        %{<p>That would mean removing all these cards, too:</p>
-        <ul>
-          #{ dependents.map do |dep|
-            %{<li>#{ link_to_page dep.name }</li>}
-          end.join }
-        </ul>}
-       end}
-       #{ submit_tag 'Yes do it', :class=>'delete-submit-button' }
-       #{ button_tag 'Cancel', :class=>'delete-cancel-button slotter', :type=>'button', :href=>path(:read) }
-       #{ notice }
-    </div>
-      }
-    end}}
-    end
-  end
 
   define_view :change do |args|
     wrap :change, args do

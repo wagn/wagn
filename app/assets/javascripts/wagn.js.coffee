@@ -26,8 +26,11 @@ jQuery.fn.extend {
   setSlotContent: (val) ->
     s = @slot()
     v = $(val)
-    v.attr 'home_view', s.attr 'home_view'
-    v.attr 'item',      s.attr 'item'
+    if val[0]
+      v.attr 'home_view', s.attr 'home_view'
+      v.attr 'item',      s.attr 'item'
+    else #simple string
+      v = val
     s.replaceWith v
     v
   
@@ -95,6 +98,8 @@ $(window).ready ->
   #  dislike the timeout, but without this forms with multiple TinyMCE editors were failing to load properly
   
   $('body').delegate '.slotter', "ajax:success", (event, data) ->
+    wagn.e = event
+    wagn.d = data
     newslot = $(this).setSlotContent data
     wagn.initializeEditors newslot
 
@@ -106,18 +111,15 @@ $(window).ready ->
       $(this).setSlotContent result
     else
       $(this).notify result
-    
       s = $(this).slot()
       if xhr.status == 409 #edit conflict
         s.find('.current_revision_id').val s.find('.new-current-revision-id').text()
       else if xhr.status == 449
         s.find('.recaptcha-box').loadCaptcha()
 
-      
-    
   $('body').delegate 'button.slotter', 'click', (event)->
     return false if !$.rails.allowAction $(this)
-    $.rails.handleRemote($(this))
+    $.rails.handleRemote $(this)
 
   $('.slotter').live 'ajax:beforeSend', (event, xhr, opt)->
     return if opt.skip_before_send
@@ -160,31 +162,63 @@ $(window).ready ->
     true
     
   $('body').delegate '.card-name-form', 'submit', ->
-    $(this).find('.confirm-rename').dialog {
-      autoOpen: false,
-      buttons: {
-        "Do it"  : ()-> true,
-        "Cancel" : ()-> false
+    form = $(this)
+    confirmed = form.find '#confirmed'
+    renamer = form.find '.confirm-rename'
+    if renamer[0]? #dialog gets moved after initiation. potential bug if there are multiple rename cancellations...
+      args = {
+        modal : true
+        buttons : {}
       }
-    }
-      
-#         "Delete all items": function() {
-#                     $( this ).dialog( "close" );
-#                 },
-#                 Cancel: function() {
-      #                   $( this ).dialog( "close" );
-      #               }
-      #           }
-#     modal: true,
-#     buttons: {
-#       "Delete all items": function() {
-#                   $( this ).dialog( "close" );
-#               },
-#               Cancel: function() {
-#                   $( this ).dialog( "close" );
-#               }
-#           }
-  
+      if form.find('#referers').val() > 0
+        args.width = 500
+        args.buttons["Rename and Fix"] = ->
+          confirmed.val 'true'
+          renamer.dialog 'close'
+          form.find( '.update_referencers').val 'true'
+          form.submit()
+        args.buttons["Rename and Ignore"] = ->
+          confirmed.val 'true'
+          renamer.dialog 'close'
+          form.submit()
+      else        
+        args.width = 300
+        args.buttons['Rename'] = ->
+          confirmed.val 'true'
+          renamer.dialog 'close'
+          form.submit()
+
+      args.buttons["Cancel"] = ->
+        renamer.attr 'ready', 'true'
+        renamer.dialog 'close'
+
+      renamer.dialog args
+#      renamer.dialog {
+#        modal : true,
+#        width : 500,
+#        buttons: {
+#          "Rename and Fix" : ->
+#            confirmed.val 'true'
+#            renamer.dialog 'close'
+#            form.find( '.update_referencers').val 'true'
+#            form.submit()
+#          "Rename and Ignore" : ->
+#            confirmed.val 'true'
+#            renamer.dialog 'close'
+#            form.submit()
+#          "Cancel" : ->
+#            renamer.attr 'ready', 'true'
+#            renamer.dialog 'close'
+#        }
+#      }
+      false
+    else
+      if confirmed.val() == 'false' 
+        $('.confirm-rename').dialog 'open'
+        false
+      else
+        true
+
     
   $('body').delegate 'button.redirecter', 'click', ->
     window.location = $(this).attr('href')
@@ -246,7 +280,5 @@ newCaptcha = (form)->
   recapDiv = $('<div class="recaptcha-box"></div>')
   $(form).children().last().after recapDiv
   $.getScript recapUri, -> recapDiv.loadCaptcha()
-
-
   
 warn = (stuff) -> console.log stuff if console?

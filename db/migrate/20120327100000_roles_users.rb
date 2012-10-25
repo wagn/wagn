@@ -12,7 +12,6 @@ class RolesUsers < ActiveRecord::Migration
           
         if c = Card[name]
           c = c.refresh
-          c.confirm_destroy = true
           c.destroy!
         end
       end
@@ -68,7 +67,6 @@ class RolesUsers < ActiveRecord::Migration
         ['*roles+*right', '*roles+*right+*content', '*roles+*right+*default', '*tasks']).each do |name|
         if c = Card[name]
           c = c.refresh
-          c.confirm_destroy = true
           c.destroy
         end
       end

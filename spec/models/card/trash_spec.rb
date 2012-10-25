@@ -87,7 +87,7 @@ describe Card, "rename to trashed name" do
       @a = Card["A"]
       @b = Card["B"]
       @a.destroy!  #trash
-      @b.update_attributes! :name=>"A", :confirm_rename=>true, :update_referencers=>true
+      @b.update_attributes! :name=>"A", :update_referencers=>true
     end
   end
   

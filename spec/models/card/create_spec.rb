@@ -128,7 +128,7 @@ describe Card, "types" do
     ct = Card.fetch('AFoo')
     Wagn::Codename.reset_cache
 
-    ct.update_attributes! :name=>"FooRenamed", :confirm_rename=>true
+    ct.update_attributes! :name=>"FooRenamed"
     (ct=Card.fetch('FooRenamed')).typecode.should == :cardtype
     # now the classname changes if it doesn't have a codename in the table
     ncd = Card.create(:type=>'FooRenamed', :name=>'testy1')
@@ -159,8 +159,9 @@ describe Card, "types" do
   it "should raise a validation error if a bogus type is given" do
     ct = Card.create! :name=>"DFoo", :type=>'Cardtype'
     c = Card.new(:type=>"$d_foo#adfa",:name=>"more testy")
+    c.errors[:type].should_not be_empty
     c.valid?.should be_false
-    c.errors_on(:type).should_not be_empty
+
   end
 end          
 

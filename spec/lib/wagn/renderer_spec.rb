@@ -103,7 +103,7 @@ describe Wagn::Renderer, "" do
         c = Card.new :name => 'ABook', :type => 'Book'
         rendered =  Wagn::Renderer.new(c).render( :edit )
 #        warn "rendered = #{rendered}"
-        assert_view_select rendered, 'div[class="field-in-multi"]' do
+        assert_view_select rendered, 'fieldset' do
           assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][~plus~illustrator][content]'
         end
       end
@@ -297,7 +297,7 @@ describe Wagn::Renderer, "" do
         help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
         card = Card.new(:type=>'Cardtype E')
 
-        assert_view_select Wagn::Renderer::Html.new(card).render_new, 'div[class="content-editor"]' do
+        assert_view_select Wagn::Renderer::Html.new(card).render_new, 'div[class~="content-editor"]' do
           assert_select 'textarea[class="tinymce-textarea card-content"]', :text => '{{+Yoruba}}'
         end
       end
@@ -315,7 +315,7 @@ describe Wagn::Renderer, "" do
         mock(card).rule_card(:add_help, {:fallback=>:edit_help} ).returns(help_card)
         rendered = Wagn::Renderer::Html.new(card).render_new
         #warn "rendered = #{rendered}"
-        assert_view_select rendered, 'div[class="field-in-multi"]' do
+        assert_view_select rendered, 'fieldset' do
           assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', "card[cards][~plus~Yoruba][content]"
         end
       end
@@ -331,7 +331,7 @@ describe Wagn::Renderer, "" do
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
       @card.content = 'Bar'
       result = Wagn::Renderer.new(@card).render(:edit)
-      assert_view_select result, 'div[class="field-in-multi"]' do
+      assert_view_select result, 'fieldset' do
         assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][templated~plus~alpha][content]'
       end
     end
@@ -342,7 +342,7 @@ describe Wagn::Renderer, "" do
       end
       c = Card.new :name=>'Yo Buddddy', :type=>'Book'
       result = Wagn::Renderer::Html.new(c).render( :edit )
-      assert_view_select result, 'div[class="field-in-multi"]' do
+      assert_view_select result, 'fieldset' do
         assert_select 'input[name=?][type="text"][value="Zamma Flamma"]', 'card[cards][~plus~author][content]'
         assert_select %{input[name=?][type="hidden"][value="#{Card::PhraseID}"]},     'card[cards][~plus~author][type_id]'
       end

@@ -1,25 +1,21 @@
 # -*- encoding : utf-8 -*-
 
 class Card < ActiveRecord::Base
-  #Revision
-  #Reference
   require 'card/revision'
   require 'card/reference'
-end
-class Card < ActiveRecord::Base
 
   cattr_accessor :cache
 
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
 
   attr_accessor :comment, :comment_author, :selected_rev_id,
-    :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
+    :broken_type, :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
     :cards, :loaded_trunk, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status, #yuck
     :attachment_id #should build flexible handling for set-specific attributes
       
   attr_writer :update_read_rule_list
-  attr_reader :type_args, :broken_type
+  attr_reader :type_args
   
   belongs_to :card, :class_name => 'Card', :foreign_key => :creator_id
   belongs_to :card, :class_name => 'Card', :foreign_key => :updater_id
@@ -135,9 +131,12 @@ class Card < ActiveRecord::Base
       end
     
     case type_id
-    when :noop      ; 
-    when false, nil ; @broken_type = args[:type] || args[:typecode]
-    else            ; return type_id
+    when :noop 
+    when false, nil
+      @broken_type = args[:type] || args[:typecode]
+      errors.add :type, "#{broken_type} is not a known type."
+    else
+      return type_id
     end
     
     if name && t=template
@@ -470,7 +469,7 @@ class Card < ActiveRecord::Base
   protected
   
   def clear_drafts # yuck!
-    connection.execute(%{delete from card_revisions where card_id=#{id} and id > #{current_revision_id} })
+    connection.execute %{delete from card_revisions where card_id=#{id} and id > #{current_revision_id} }
   end
 
   public
@@ -667,18 +666,15 @@ class Card < ActiveRecord::Base
       rec.current_revision_id = rec.current_revision_id_was
       rec.errors.add :conflict, "changes not based on latest revision"
       rec.error_view = :conflict
-      rec.error_status = 409
     end
   end
 
   validates_each :type_id do |rec, attr, value|
     # validate on update
-    #warn "validate type #{rec.inspect}, #{attr}, #{value}"
     if rec.updates.for?(:type_id) and !rec.new_card?
       if !rec.validate_type_change
         rec.errors.add :type, "of #{ rec.name } can't be changed; errors changing from #{ rec.type_name }"
       end
-#      if c = Card.new(:name=>'*validation dummy', :type_id=>value, :content=>'') and !c.valid?
       if c = rec.dup and c.type_id_without_tracking = value and c.id = nil and !c.valid?
         rec.errors.add :type, "of #{ rec.name } can't be changed; errors creating new #{ value }: #{ c.errors.full_messages * ', ' }"
       end
@@ -689,7 +685,7 @@ class Card < ActiveRecord::Base
       # invalid type recorded on create
       if rec.broken_type
         rec.errors.add :type, "won't work.  There's no cardtype named '#{rec.broken_type}'"
-      end      
+      end
       
       # invalid to change type when type is hard_templated
       if rt = rec.hard_template and !rt.type_template? and value!=rt.type_id and !rec.allow_type_change

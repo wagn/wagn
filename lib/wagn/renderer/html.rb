@@ -147,72 +147,32 @@ module Wagn
       %{<div class="card-notice"></div>}
     end
 
-    def wrap_submenu
-      %{<div class="submenu">
-          <span class="submenu-left card-report"></span>
-          <span class="submenu-right">#{yield}</span>
-        </div> }
-    end
-
     def rendering_error exception, cardname
       %{<span class="render-error">error rendering #{link_to_page(cardname, nil, :title=>CGI.escapeHTML(exception.message))}</span>}
     end
 
-    def edit_submenu(current)
-      wrap_submenu do
-        [ :content, :name, :type ].map do |attr|
-          next if attr == :type and # this should be a set callback
-            card.type_template? ||  
-            (card.type_id==Card::SetID && card.hard_template?) || #
-            (card.type_id==Card::CardtypeID && card.cards_of_type_exist?)
-        
-          link_to attr, path(:edit, :attrib=>attr), :remote=>true,
-            :class => %{slotter edit-#{ attr }-link #{'current-subtab' if attr==current.to_sym}}
-        end.compact * "\n"
-      end
-    end
-
-    def options_submenu(current)
-      return '' unless !card || [Card::WagnBotID, Card::AnonID].member?(card.id) || card.type_id == Card::UserID
-      wrap_submenu do
-        [:account, :settings].map do |key|
-          link_to key, path(:options, :attrib=>key), :remote=>true,
-            :class=> %{slotter#{' current-subtab' if key==current}}
-        end * "\n"
-      end
-    end
-
-    def menu
-      menu_options = if card && card.virtual?
-        [:view,:options,:virtual]
-      else
-        [:view,:changes,:options,:related,:edit]
-      end
-      top_option = menu_options.pop
-      menu = %{<span class="card-menu">\n}
-        menu << %{<span class="card-menu-left">\n}
-          menu_options.each do |opt|
-            menu << link_to_menu_action(opt)
-          end
-        menu << "</span>"
-        menu << if top_option == :virtual
-          %{<li class="virtual-edit">Virtual</li>\n}
-        else
-          link_to_menu_action(top_option)
-        end
-      menu << "</span>"
-      menu.html_safe
-      menu
-    end
+#    def edit_submenu(current)
+#      wrap_submenu do
+#        [ :content, :name, :type ].map do |attr|
+#          next if attr == :type and # this should be a set callback
+#            card.type_template? ||  
+#            (card.type_id==Card::SetID && card.hard_template?) || #
+#            (card.type_id==Card::CardtypeID && card.cards_of_type_exist?)
+#        
+#          link_to attr, path(:edit, :attrib=>attr), :remote=>true,
+#            :class => %{slotter edit-#{ attr }-link #{'current-subtab' if attr==current.to_sym}}
+#        end.compact * "\n"
+#      end
+#    end
 
 
 
-    def link_to_menu_action( to_action)
-      klass = { :edit => 'edit-content-link'}
-      content_tag :li, link_to_action( to_action.to_s.capitalize, to_action,
-        :class=> "slotter #{klass[to_action]}" #{}" #{menu_action==to_action ? ' current' : ''}"
-      )
-    end
+#    def link_to_menu_action( to_action)
+#      klass = { :edit => 'edit-content-link'}
+#      content_tag :li, link_to_action( to_action.to_s.capitalize, to_action,
+#        :class=> "slotter #{klass[to_action]}" #{}" #{menu_action==to_action ? ' current' : ''}"
+#      )
+#    end
 
     def link_to_action text, to_action, html_opts={}
       html_opts[:remote] = true

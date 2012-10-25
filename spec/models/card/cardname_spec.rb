@@ -28,7 +28,6 @@ describe Wagn::Cardname, "changing from plus card to simple" do
     Session.as :joe_user
     @c = Card.create! :name=>'four+five'
     @c.name = 'nine'
-    @c.confirm_rename = true
     @c.save
   end  
   

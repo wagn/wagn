@@ -82,8 +82,7 @@ class Wagn::Renderer::Html
   end
 
   define_view :new, :perms=>:create, :tags=>:unknown_ok do |args|
-    type_ready = params[:type] && !card.broken_type
-    name_ready = !( card.cardname.blank? || Card.exists?( card.cardname ) )
+    name_ready = !card.cardname.blank? && !Card.exists?( card.cardname )
 
     cancel = if ajax_call?
       { :class=>'slotter',    :href=>path(:read, :view=>:missing)    }
@@ -110,7 +109,7 @@ class Wagn::Renderer::Html
             else                             ; _render_name_editor
             end
             }
-            #{ type_ready ? form.hidden_field( :type_id) : _render_type_editor }
+            #{ params[:type] ? form.hidden_field( :type_id ) : _render_type_editor }
             <div class="card-editor editor">#{ edit_slot args }</div>
             <div class="edit-button-area">
               #{ submit_tag 'Submit', :class=>'create-submit-button' }
@@ -176,29 +175,6 @@ class Wagn::Renderer::Html
     end
   end
 
-
-# define_view :delete do |args|
-#
-#     
-#   wrap :delete, args do
-#   %{
-#     #{ _render_title }
-#     #{ card_form :delete, 'delete-form', 'data-type'=>'html', 'main-success'=>'REDIRECT: TO-PREVIOUS' do |f|
-#   
-#       %{
-#         #{hidden_field_tag 'success', "TEXT: #{card.name} deleted" }
-#
-#         <div class="content open-content">
-#     <p>#{
-#
-#      #{ submit_tag 'Yes do it', :class=>'delete-submit-button' }
-#      #{ button_tag 'Cancel', :class=>'delete-cancel-button slotter', :type=>'button', :href=>path(:read) }
-#      #{ notice }
-#   </div>
-#     }
-#   end}}
-#   end
-# end
 
   define_view :name_editor do |args|
     fieldset 'name', (editor_wrap :name do
@@ -284,22 +260,20 @@ class Wagn::Renderer::Html
 
   define_view :option_account do |args|
     locals = {:slot=>self, :card=>card, :account=>card.to_user }
-    %{#{raw( options_submenu(:account) ) }#{
-
-       card_form :update_account do |form|
-
-         %{<table class="fieldset">
-           #{if Session.as_id==card.id or card.trait_card(:account).ok?(:update)
-              raw option_header( 'Account Details' ) +
-                template.render(:partial=>'account/edit',  :locals=>locals)
-           end }
+      card_form :update_account do |form|
+        %{<table class="fieldset">
+          #{if Session.as_id==card.id or card.trait_card(:account).ok?(:update)
+             raw option_header( 'Account Details' ) +
+               template.render(:partial=>'account/edit',  :locals=>locals)
+          end }
         #{ render_option_roles } #{
-
-           if options_need_save
-             %{<tr><td colspan="3">#{ submit_tag 'Save Changes' }</td></tr>}
-           end}
-         </table>}
-    end }}
+       
+          if options_need_save
+            %{<tr><td colspan="3">#{ submit_tag 'Save Changes' }</td></tr>}
+          end}
+        </table>}
+      end
+    end 
   end
 
   define_view :option_settings do |args|
@@ -311,8 +285,6 @@ class Wagn::Renderer::Html
       %{<option value="#{ set_card.key }" #{ selected }>#{ set_card.label }</option>}
     end.join
     
-    options_submenu(:settings) +
-
     %{<div class="settings-tab">
       #{ if !related_sets.empty?
         %{ <div class="set-selection">
@@ -380,7 +352,7 @@ class Wagn::Renderer::Html
   end
 
   define_view :option_new_account do |args|
-    %{#{raw( options_submenu(:account) ) }#{
+    %{#{
       card_form :create_account do |form|
       #ENGLISH below
 
@@ -484,7 +456,7 @@ class Wagn::Renderer::Html
 
   define_view :errors, :perms=>:none do |args|
     wrap :errors, args do
-      %{ <h2>Can't save "#{card.name}".</h2> } +
+      %{ <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
       card.errors.map { |attrib, msg| "<div>#{attrib.upcase}: #{msg}</div>" } * ''
     end
   end
@@ -583,7 +555,6 @@ class Wagn::Renderer::Html
     }
   end
   
-
   
   def card_form *opts
     form_for( card, form_opts(*opts) ) { |form| yield form }
@@ -646,18 +617,5 @@ class Wagn::Renderer::Html
     @previous_revision = @revision ? card.previous_revision( @revision.id ) : nil
     @show_diff = (params[:mode] != 'false')
   end
-
-  #FIXME - don't delete until broken type errors are handled!
-
-#  def new_instruction
-#    if card.broken_type
-#            %{<div class="error" id="no-cardtype-error">
-#              Oops! There's no <strong>card type</strong> called "<strong>#{ card.broken_type }</strong>".
-#            </div>}
-#          end }
-#    i.blank? ? '' : %{<div class="instruction new-instruction"> #{ i } </div>}
-#  end
-
-
 end
 

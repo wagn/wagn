@@ -69,7 +69,6 @@ describe "reader rules" do
       @perm_card.save!
       @perm_card = Card[@perm_card.name]
       @perm_card.name = 'Something else+*self+*read'
-      @perm_card.confirm_rename = true
       @perm_card.save!
     end
     

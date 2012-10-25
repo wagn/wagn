@@ -18,8 +18,12 @@ class CardController < ApplicationController
   end
 
   def read
-    save_location # should be an event!
-    show
+    if @card.errors.any?
+      errors
+    else
+      save_location # should be an event!
+      show
+    end
   end
 
   def update
@@ -33,7 +37,7 @@ class CardController < ApplicationController
 
   def delete
     @card = @card.refresh if @card.frozen? # put in model
-    #@card.destroy
+    @card.destroy
     discard_locations_for @card
     success 'REDIRECT: TO-PREVIOUS'
   end

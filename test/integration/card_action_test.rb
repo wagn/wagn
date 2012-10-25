@@ -82,9 +82,11 @@ class CardActionTest < ActionController::IntegrationTest
   end                                        
   
   def test_newcard_gives_reasonable_error_for_invalid_cardtype
-    get 'card/new', :card => { :type=>'bananamorph' }       
-    assert_response :success
-    assert_tag :tag=>'div', :attributes=>{:class=>'error', :id=>'no-cardtype-error'}
+    Session.as_bot do
+      get 'card/new', :card => { :type=>'bananamorph' }  
+      assert_response 422
+      assert_tag :tag=>'div', :attributes=>{:class=>/errors-view/}, :content=>/not a known type/
+    end
   end
 
   # FIXME: this should probably be files in the spot for a delete test

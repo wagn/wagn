@@ -33,7 +33,7 @@ class Card::RenameTest < ActiveSupport::TestCase
     assert_rename card("A+B"), "A+B+T"  # re-uses the parent card: A+B
   end
   
-=begin
+
   
   def test_rename_name_substitution
     c1, c2 = Card["chuck_wagn+chuck"], Card["chuck"]
@@ -60,7 +60,7 @@ class Card::RenameTest < ActiveSupport::TestCase
   
   def test_updates_inclusions_when_renaming    
     c1,c2,c3 = Card["Blue"], Card["blue includer 1"], Card["blue includer 2"]
-    c1.update_attributes :name => "Red", :confirm_rename => true, :update_referencers => true
+    c1.update_attributes :name => "Red", :update_referencers => true
     assert_equal "{{Red}}", Card.find(c2.id).content                     
     # NOTE these attrs pass through a hash stage that may not preserve order
     assert_equal "{{Red|closed;other:stuff}}", Card.find(c3.id).content  
@@ -68,14 +68,13 @@ class Card::RenameTest < ActiveSupport::TestCase
   
   def test_updates_inclusions_when_renaming_to_plus    
     c1,c2 = Card["Blue"], Card["blue includer 1"]
-    c1.update_attributes :name => "blue includer 1+color", :confirm_rename => true, :update_referencers => true
+    c1.update_attributes :name => "blue includer 1+color", :update_referencers => true
     assert_equal "{{blue includer 1+color}}", Card.find(c2.id).content                     
   end
     
   def test_reference_updates_on_case_variants
     c1,c2,c3 = Card["Blue"], Card["blue linker 1"], Card["blue linker 2"]
     c1.reload.name = "Red"
-    c1.confirm_rename = true
     c1.update_referencers = true
     c1.save!
     assert_equal "[[Red]]", Card.find(c2.id).content
@@ -106,7 +105,6 @@ class Card::RenameTest < ActiveSupport::TestCase
 
     assert_equal ["One+Two","One+Two+Three","Four+One","Four+One+Five"], [c12,c123,c41,c415].plot(:name)
     c1.name="Uno"
-    c1.confirm_rename = true
     c1.save!
     assert_equal ["Uno+Two","Uno+Two+Three","Four+Uno","Four+Uno+Five"], [c12,c123,c41,c415].plot(:reload).plot(:name)
   end     
@@ -131,7 +129,7 @@ class Card::RenameTest < ActiveSupport::TestCase
     assert_equal 'banana_card', c.key
     assert Card["Banana Card"] != nil
   end
-=end  
+ 
   private
     
   def name_invariant_attributes( card )
@@ -149,7 +147,6 @@ class Card::RenameTest < ActiveSupport::TestCase
     attrs_before = name_invariant_attributes( card )
     card.name=new_name
     card.update_referencers = true
-    card.confirm_rename = true
     card.save!
     assert_equal attrs_before, name_invariant_attributes(card)
     assert_equal new_name, card.name
@@ -164,14 +161,13 @@ class Card::RenameTest < ActiveSupport::TestCase
     c = Card["Dairy"]
     c.name = "Buttah"
     c.update_referencers = true
-    c.confirm_rename = true
     c.save!
     assert_equal "[[/new/{{_self|name}}|new]]", Card["Buttah"].content
   end
 
   def test_renaming_card_without_updating_references_should_not_have_errors
     c = Card["Dairy"]
-    c.update_attributes "name"=>"Newt", "update_referencers"=>'false', "confirm_rename"=>true 
+    c.update_attributes "name"=>"Newt", "update_referencers"=>'false'
     assert_equal "[[/new/{{_self|name}}|new]]", Card["Newt"].content
   end
 

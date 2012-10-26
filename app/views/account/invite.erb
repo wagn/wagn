@@ -2,7 +2,7 @@
 email = params[:email] || {}
 subject = email[:subject] || Card.setting('*invite+*subject') || ''
 message = email[:message] || Card.setting('*invite+*message') || ''
-Wagn::Cardname.substitute!( message, {
+NameLogic.substitute!( message, {
   :invitor => Session.user_card.name + " (#{Session.user.email})",
   :invitee => card.name || ''}
 )

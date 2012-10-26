@@ -19,7 +19,7 @@ module Wagn::Model::Traits
 
 #  def trait_card(trait_name)
 #    if (trait_card=trait_cards[trait_name.to_sym]).nil?
-#      trait_cards[trait_name.to_sym] = f = Card.fetch([name, trait_name].to_cardname)
+#      trait_cards[trait_name.to_sym] = f = Card.fetch([name, trait_name].to_name)
 #      Rails.logger.debug "trait_card(#{trait_name}, #{name}) #{f}"; f
 #    else trait_card end
 #  end

@@ -1,5 +1,9 @@
 # -*- encoding : utf-8 -*-
 
+require 'name_logic'
+NameLogic.code_hash= Wagn::Codename
+NameLogic.main_hash= Wagn::Conf
+
 class Card < ActiveRecord::Base
   #Revision
   #Reference
@@ -42,7 +46,7 @@ class Card < ActiveRecord::Base
 
       if name = args['name'] and !name.blank?
         if  Card.cache                                        and
-            cc = Card.cache.read_local(name.to_cardname.key)  and
+            cc = Card.cache.read_local(name.to_name.key)  and
             cc.type_args                                      and
             args['type']          == cc.type_args[:type]      and
             args['typecode']      == cc.type_args[:typecode]  and
@@ -253,7 +257,7 @@ class Card < ActiveRecord::Base
     return unless cards
     cards.each_pair do |sub_name, opts|
       opts[:nested_edit] = self
-      absolute_name = sub_name.to_cardname.post_cgi.to_cardname.to_absolute cardname
+      absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute cardname
       if card = Card[absolute_name]
         card = card.refresh if card.frozen?
         card.update_attributes opts
@@ -579,7 +583,7 @@ class Card < ActiveRecord::Base
   # must therefore be defined after the #tracks call
 
   def name_with_resets= newname
-    newkey = newname.to_cardname.key
+    newkey = newname.to_name.key
     if key != newkey
       self.key = newkey 
       reset_patterns_if_rule # reset the old name - should be handled in tracked_attributes!!
@@ -592,7 +596,7 @@ class Card < ActiveRecord::Base
   alias cardname= name=
 
   def cardname
-    @cardname ||= name.to_cardname
+    @cardname ||= name.to_name
   end
   
   def autoname name
@@ -630,7 +634,7 @@ class Card < ActiveRecord::Base
       end
     end
 
-    cdname = value.to_cardname
+    cdname = value.to_name
     if cdname.blank?
       rec.errors.add :name, "can't be blank"
     elsif rec.updates.for?(:name)
@@ -638,7 +642,7 @@ class Card < ActiveRecord::Base
 
       unless cdname.valid?
         rec.errors.add :name,
-          "may not contain any of the following characters: #{ Wagn::Cardname::BANNED_ARRAY.join ' ' }"
+          "may not contain any of the following characters: #{ NameLogic.banned_array * ' ' }"
       end
       # this is to protect against using a plus card as a tag
       if cdname.junction? and rec.simple? and Session.as_bot { Card.count_by_wql :tag_id=>rec.id } > 0

@@ -14,16 +14,16 @@ describe Card, "Case Variant" do
 end
 
 
-describe Wagn::Cardname, "Underscores" do
+describe NameLogic, "Underscores" do
   it "should be treated like spaces when making keys" do
-    'weird_ combo'.to_cardname.key.should == 'weird  combo'.to_cardname.key
+    'weird_ combo'.to_name.key.should == 'weird  combo'.to_name.key
   end
   it "should not impede pluralization checks" do
-    'Mamas_and_Papas'.to_cardname.key.should == "Mamas and Papas".to_cardname.key
+    'Mamas_and_Papas'.to_name.key.should == "Mamas and Papas".to_name.key
   end
 end
 =end
-describe Wagn::Cardname, "changing from plus card to simple" do
+describe NameLogic, "changing from plus card to simple" do
   before do
     Session.as :joe_user
     @c = Card.create! :name=>'four+five'

@@ -320,7 +320,7 @@ module Wagn
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
       when opts[:tname]=='_main' && !ajax_call? && @depth==0    ; expand_main opts   
       else      
-        fullname = opts[:tname].to_cardname.to_absolute card.cardname, :params=>params      
+        fullname = opts[:tname].to_name.to_absolute card.cardname, :params=>params      
         included_card = Card.fetch_or_new fullname, ( @mode==:edit ? new_inclusion_card_args(opts) : {} )
   
         result = process_inclusion included_card, opts
@@ -349,7 +349,7 @@ module Wagn
   
     def process_inclusion tcard, opts
       opts[:showname] = if opts[:tname]
-        opts[:tname].to_cardname.to_show card.cardname, :ignore=>@context_names, :params=>params
+        opts[:tname].to_name.to_show card.cardname, :ignore=>@context_names, :params=>params
       else
         tcard.name
       end
@@ -449,11 +449,11 @@ module Wagn
         else
           known_card = !!Card.fetch(href, :skip_modules=>true) if known_card.nil?
           if card
-            text = text.to_cardname.to_show card.name, :ignore=>@context_names
+            text = text.to_name.to_show card.name, :ignore=>@context_names
           end
           
           #href+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
-          cardname = Cardname===href ? href : href.to_cardname
+          cardname = href.to_name
           href = known_card ? cardname.url_key : CGI.escape(cardname.s)
           href = full_uri href.to_s
           known_card ? 'known-card' : 'wanted-card'
@@ -479,7 +479,7 @@ module Wagn
 
     def add_name_context name=nil
       name ||= card.name
-      @context_names += name.to_cardname.parts
+      @context_names += name.to_name.parts
       @context_names.uniq! 
     end
   

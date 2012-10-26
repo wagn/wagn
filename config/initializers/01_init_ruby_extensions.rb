@@ -93,5 +93,3 @@ class Object
   end
   
 end
-
-class Object; def to_cardname() Wagn::Cardname.new(self) end end

@@ -70,7 +70,7 @@ describe Card, "dependent removal" do
     Session.as :joe_user
     @a = Card['A']
     @a.destroy!
-    @c = Card.find_by_key "A+B+C".to_cardname.key
+    @c = Card.find_by_key "A+B+C".to_name.key
   end
 
   it "should be trash" do

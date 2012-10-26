@@ -34,7 +34,7 @@ class Wagn::Renderer::Html
     
     if params[:type_reload] && card_args=params[:card]
       params.delete :success # otherwise updating the editor looks like a successful post
-      if card_args[:name] && card_args[:name].to_cardname.key != current_rule.key
+      if card_args[:name] && card_args[:name].to_name.key != current_rule.key
         current_rule = Card.new card_args
       else
         current_rule = current_rule.refresh if current_rule.frozen?
@@ -42,7 +42,7 @@ class Wagn::Renderer::Html
         current_rule.include_set_modules
       end
       
-      set_selected = card_args[:name].to_cardname.left_name.to_s
+      set_selected = card_args[:name].to_name.left_name.to_s
     end
     
     opts = {
@@ -56,13 +56,13 @@ class Wagn::Renderer::Html
 
     if !opts[:read_only]
       set_options = prototype.set_names.reverse
-      first = (csk=opts[:current_set_key]) ? set_options.index{|s| s.to_cardname.key == csk} : 0
+      first = (csk=opts[:current_set_key]) ? set_options.index{|s| s.to_name.key == csk} : 0
       if first > 0
         set_options[0..(first-1)].reverse.each do |set_name|
           opts[:fallback_set] = set_name if Card.exists?("#{set_name}+#{opts[:setting_name]}")
         end
       end
-      last = set_options.index{|s| s.to_cardname.key == card.cardname.trunk_name.key} || -1 
+      last = set_options.index{|s| s.to_name.key == card.cardname.trunk_name.key} || -1 
       # note, the -1 can happen with virtual cards because the self set doesn't show up in the set_names.  FIXME!!
       opts[:set_options] = set_options[first..last]
 
@@ -113,7 +113,7 @@ class Wagn::Renderer::Html
 
           '<li>' +
             raw( form.radio_button( :name, "#{set_name}+#{setting_name}", :checked=> checked ) ) +
-            if set_name.to_cardname.key == current_set_key
+            if set_name.to_name.key == current_set_key
               %{<span class="set-label current-set-label">#{ set_label } <em>(current)</em></span>}
             else
               %{<span class="set-label">#{ set_label }</span>}

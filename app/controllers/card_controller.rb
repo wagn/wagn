@@ -171,7 +171,7 @@ class CardController < ApplicationController
   def index_preload
     Session.no_logins? ?
       redirect_to( Card.path_setting '/admin/setup' ) :
-      params[:id] = (Card.setting(:home) || 'Home').to_cardname.url_key
+      params[:id] = (Card.setting(:home) || 'Home').to_name.url_key
   end
 
 
@@ -183,7 +183,7 @@ class CardController < ApplicationController
       else
         opts = params[:card] ? params[:card].clone : {}
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
-        name = params[:id] ? Wagn::Cardname.unescape( params[:id] ) : opts[:name]
+        name = params[:id] ? NameLogic.unescape( params[:id] ) : opts[:name]
         
         if @action == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)

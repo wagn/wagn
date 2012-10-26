@@ -3,7 +3,8 @@ class AdminController < ApplicationController
   layout 'application'
 
   def setup
-    Wagn::Cardname #loading oddity made this necessary in dev.  pls don't remove without testing setup.
+    NameLogic #loading oddity made this necessary in dev.  pls don't remove without testing setup.
+    # Wagn::Cardname
     
     raise(Wagn::Oops, "Already setup") unless Session.no_logins? && !User[:first]
     Wagn::Conf[:recaptcha_on] = false
@@ -34,7 +35,7 @@ class AdminController < ApplicationController
   end
   
   def show_cache
-    key = params[:id].to_cardname.key
+    key = params[:id].to_name.key
     @cache_card = Card.fetch(key)
     @db_card = Card.find_by_key(key)
   end

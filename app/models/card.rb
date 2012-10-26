@@ -1,15 +1,17 @@
 # -*- encoding : utf-8 -*-
 
-require 'name_logic'
-NameLogic.code_hash= Wagn::Codename
-NameLogic.main_hash= Wagn::Conf
-
 class Card < ActiveRecord::Base
   #Revision
   #Reference
   require 'card/revision'
   require 'card/reference'
 end
+
+require 'name_logic'
+NameLogic.code_hash= Wagn::Codename
+NameLogic.main_hash= Wagn::Conf
+NameLogic.fetch= Card
+
 class Card < ActiveRecord::Base
 
   cattr_accessor :cache

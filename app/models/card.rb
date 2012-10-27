@@ -8,9 +8,9 @@ class Card < ActiveRecord::Base
 end
 
 require 'name_logic'
-NameLogic.config.codes= Wagn::Codename
-NameLogic.config.params= Wagn::Conf
-NameLogic.config.lookup= Card
+NameLogic.codes= Wagn::Codename
+NameLogic.params= Wagn::Conf
+NameLogic.lookup= Card
 
 class Card < ActiveRecord::Base
 

@@ -11,7 +11,7 @@ gem 'rmagick',      '~> 2.13'
 gem "recaptcha",    "~> 0.3"
 
 gem 'xmlscan',      '~> 0.3'
-gem 'namelogic',   '~> 0.0.8'
+gem 'namelogic',   '~> 0.0.9'
 # the following two could be safely excluded on a local install (but are not known to cause problems)
 
 gem "rubyzip",      "~> 0.9" # only required in module.  should be separated out.

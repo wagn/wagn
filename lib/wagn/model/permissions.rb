@@ -259,8 +259,8 @@ module Wagn::Model::Permissions
       in_set = {}
       if !(self.trash)
         if class_id = (set=left and set_class=set.tag and set_class.id)
-        rule_class_ids = Wagn::Model::Pattern.subclasses.map &:key_id
-        if rule_class_index = rule_class_ids.index( class_id )
+          rule_class_ids = Wagn::Model::Pattern.subclasses.map &:key_id
+          if rule_class_index = rule_class_ids.index( class_id )
 
             #first update all cards in set that aren't governed by narrower rule
             Session.as_bot do

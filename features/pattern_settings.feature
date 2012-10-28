@@ -33,7 +33,7 @@ Feature: Set settings
     Then I should see "your favorite"
 
   Scenario: Solo Set
-    Given I create Pointer card "cereal+*self+*layout" with content "[[cereal layout]]" 
+    Given I create Pointer card "cereal+*layout" with content "[[cereal layout]]" 
     And I log in as Joe User
     And I create card "cereal layout" with content "My very own header"
     When I go to card "cereal"

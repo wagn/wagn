@@ -32,7 +32,7 @@ class CardActionTest < ActionController::IntegrationTest
 
   def test_comment      
     Session.as_bot  do
-      Card.create :name=>'A+*self+*comment', :type=>'Pointer', :content=>'[[Anyone]]'
+      Card.create :name=>'A+*comment', :type=>'Pointer', :content=>'[[Anyone]]'
     end
     post "card/comment/A", :card => { :comment=>"how come" }
     assert_response :success

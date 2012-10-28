@@ -78,7 +78,7 @@ describe Card, "templating" do
   end
   
   it "should defer to normal content when *content rule's content is (exactly) '_self'" do
-    Session.as_bot { Card.create! :name=>'Jim+birthday+*self+*content', :content=>'_self' }
+    Session.as_bot { Card.create! :name=>'Jim+birthday+*content', :content=>'_self' }
     Card['Jim+birthday'].raw_content.should == 'Yesterday'
   end
 end

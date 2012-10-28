@@ -3,7 +3,8 @@ module Wagn::Set::Type::Set
 
   def inheritable?
     return true if junction_only?
-    cardname.tag=='*self' && cardname.trunk_name.junction? 
+    #cardname.tag=='*self' && cardname.trunk_name.junction? 
+    cardname.junction?
   end
 
   def subclass_for_set
@@ -35,26 +36,6 @@ module Wagn::Set::Type::Set
   def prototype
     opts = subclass_for_set.prototype_args(self.cardname.trunk_name)
     Card.fetch_or_new opts[:name], opts
-  end
-
-  def setting_names_by_group
-    groups = Card.universal_setting_names_by_group.clone
-
-    raise "#setting_names_by_group called on non-set" if type_id != Card::SetID
-    
-    member_type_id = 
-      if templt = existing_trait_card(:content) || existing_trait_card(:default)
-        templt.type_id
-      elsif junction?
-        method = case right.id #this is the set class
-          when Card::TypeID; :id
-          when Card::SelfID; :type_id
-          end
-        left.send method if method #FIXME - this fails when left is nil
-      end
-
-    groups[:pointer] = ['*options','*options label','*input'] if member_type_id==Card::PointerID
-    groups
   end
 
 end

@@ -72,7 +72,7 @@ describe CardController, "with captcha enabled requires captcha on" do
       #FIXME it would be nice if there were a simpler idiom for this     
       Card.create :name=>'Basic+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
       %w{ update delete }.each do |op| 
-        Card.create :name=>"A+*self+*#{op}", :type=>'Pointer', :content=>'[[Anyone]]'
+        Card.create :name=>"A+*#{op}", :type=>'Pointer', :content=>'[[Anyone]]'
       end
     end
   end

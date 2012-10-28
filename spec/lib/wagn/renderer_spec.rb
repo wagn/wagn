@@ -64,7 +64,7 @@ describe Wagn::Renderer, "" do
     it "renders deny for unpermitted cards" do
       Session.as_bot do
         Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
-        Card.create(:name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]')
+        Card.create(:name=>'Joe no see me+*read', :type=>'Pointer', :content=>'[[Administrator]]')
       end
       Session.as :joe_user do
         assert_view_select Wagn::Renderer.new(Card.fetch('Joe no see me')).render(:core), 'span[class="denied"]'
@@ -334,7 +334,7 @@ describe Wagn::Renderer, "" do
 
     it "should be used in edit forms" do
       Session.as_bot do
-        config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
+        config_card = Card.create!(:name=>"templated+*content", :content=>"{{+alpha}}" )
       end
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
       @card.content = 'Bar'
@@ -460,7 +460,7 @@ describe Wagn::Renderer, "" do
 
 
   # ~~~~~~~~~~~~~~~~~ Builtins Views ~~~~~~~~~~~~~~~~~~~
-  # ( *self sets )
+  # ( Solo sets )
 
 
   context "builtin card" do

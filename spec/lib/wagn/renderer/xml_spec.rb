@@ -72,7 +72,7 @@ describe Wagn::Renderer::Xml, "" do
       pending "with html"
       Session.as_bot do
         Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
-        Card.create(:name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]')
+        Card.create(:name=>'Joe no see me+*read', :type=>'Pointer', :content=>'[[Administrator]]')
       end
       Session.as :joe_user do
         Wagn::Renderer::Xml.new(Card.fetch('Joe no see me')).render(:core).should be_html_with { no_card(:status=>"deny view") }
@@ -365,7 +365,7 @@ describe Wagn::Renderer::Xml, "" do
 
 
   # ~~~~~~~~~~~~~~~~~ Builtins Views ~~~~~~~~~~~~~~~~~~~
-  # ( *self sets )
+  # ( Solo sets )
 
 
   context "builtin card" do

@@ -14,14 +14,14 @@ describe Wagn::Model::Pattern do
         card.set_names.should == [ "Basic+*type","*all"]
         card.save!
         card = Card.fetch("AnewCard")
-        card.set_names.should == [ "AnewCard+*self","Basic+*type","*all"]
+        card.set_names.should == [ "AnewCard","Basic+*type","*all"]
       end
     end
 
     it "returns set names for simple star cards" do
       Session.as_bot do
         Card.fetch('*update').set_names.should == [ 
-          "*update+*self","*star","Setting+*type","*all"
+          "*update","*star","Setting+*type","*all"
         ]
       end
     end
@@ -55,8 +55,8 @@ describe Wagn::Model::Pattern do
 
   describe :inheritable? do
     it "should identify sets that can inherit rules" do
-      Card.fetch("A+*self").inheritable?.should be_false
-      Card.fetch("A+B+*self").inheritable?.should be_true
+      Card.fetch("A").inheritable?.should be_false
+      Card.fetch("A+B").inheritable?.should be_true
       Card.fetch("Book+*to+*type plus right").inheritable?.should be_true
       Card.fetch("Book+*type").inheritable?.should be_false
       Card.fetch("*to+*right").inheritable?.should be_true

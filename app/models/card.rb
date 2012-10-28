@@ -552,7 +552,7 @@ class Card < ActiveRecord::Base
   
   def inspect
     "#<#{self.class.name}" + "(#{object_id})" + "##{self.id}" +
-    "[#{type_id < 1 ? 'bogus': type_name}:#{type_id}]" +
+    "[#{type_id}]" +
     "!#{self.name}!{n:#{new_card?}:v:#{virtual?}:I:#{@set_mods_loaded}} " + 
     "R:#{ @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}>"
   end

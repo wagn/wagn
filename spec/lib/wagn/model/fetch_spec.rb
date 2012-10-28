@@ -43,8 +43,10 @@ describe Card do
     end
     
     it "fetches virtual cards after skipping them" do
-      Card['A+*self'].should be_nil
-      Card.fetch( 'A+*self' ).should_not be_nil
+      c=Card['A']
+      warn "C: #{c.inspect}"
+      c.should be_nil
+      Card.fetch( 'A' ).should_not be_nil
     end
     
     it "fetches newly virtual cards" do

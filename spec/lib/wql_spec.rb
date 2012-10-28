@@ -167,7 +167,7 @@ describe Wql do
   describe "permissions" do
     it "should not find cards not in group" do
       Session.as_bot  do
-        Card.create :name=>"C+*self+*read", :type=>'Pointer', :content=>"[[R1]]"
+        Card.create :name=>"C+*read", :type=>'Pointer', :content=>"[[R1]]"
       end
       Wql.new( :plus=>"A" ).run.plot(:name).sort.should == %w{ B D E F }
     end
@@ -273,7 +273,7 @@ describe Wql do
     
     it "should sort by plus card content" do
       Session.as_bot do
-        c = Card.fetch('Setting+*self+*table of contents')
+        c = Card.fetch('Setting+*table of contents')
         c.content = '10'
         c.save
         c = Card['Basic+*type+*table of contents']
@@ -282,7 +282,7 @@ describe Wql do
       
         w = Wql.new( :right_plus=>'*table of contents', :sort=>{ :right=>'*table_of_contents'}, :sort_as=>'integer'  ) # FIXME: codename
         #warn "sql from new wql = #{w.sql}"
-        w.run.plot(:name).should == %w{ *all *account+*right Basic+*type Config+*self Setting+*self }
+        w.run.plot(:name).should == %w{ *all *account+*right Basic+*type Config Setting }
       end      
     end
     

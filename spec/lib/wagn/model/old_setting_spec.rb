@@ -26,7 +26,7 @@ describe Card do
     end                                                                 
     
     it "retrieves single values" do
-      Card.create! :name => "banana+*self+*edit help", :content => "pebbles"
+      Card.create! :name => "banana+*edit help", :content => "pebbles"
       Card["banana"].rule(:edit_help).should == "pebbles"
     end
   end
@@ -84,10 +84,11 @@ describe Card do
       snbg[:pointer].map(&:to_s).should == @pointer_settings
     end
 
-    it "returns pointer-specific setting names for pointer card (*self)" do
-      c = Card.fetch_or_new('*account+*related+*self')
+    it "returns pointer-specific setting names for pointer card (self)" do
+      c = Card.fetch_or_new('*account+*related')
       c.save if c.new_card?
-      snbg = Card.fetch_or_new('*account+*related+*self').setting_names_by_group
+      c = Card.fetch_or_new('*account+*related')
+      snbg = c.setting_names_by_group
       snbg[:pointer].map(&:to_s).should == @pointer_settings
     end
 
@@ -132,7 +133,7 @@ describe Card do
     
     it "returns content even when context card is hard templated" do
       context_card = Card["A"] # refers to 'Z'
-      c1=Card.create! :name => "A+*self+*content", :content => "Banana"
+      c1=Card.create! :name => "A+*content", :content => "Banana"
       c = Card.new( :name => "foo", :content => "{{_self+B|core}}" )
       c.contextual_content( context_card ).should == "AlphaBeta"
     end

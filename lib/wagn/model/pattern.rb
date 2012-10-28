@@ -15,7 +15,7 @@ module Wagn::Model
 
     def reset_patterns_if_rule()
       return if name.blank?
-#      warn Rails.logger.warn("reset p ifr[#{inspect}], #{name_without_tracking}")
+      #warn Rails.logger.warn("reset p ifr[#{inspect}], #{name_without_tracking}")
       if !simple? and !new_card? and setting=right and setting.type_id==Card::SettingID and set=left and set.type_id==Card::SetID
         #warn (Rails.logger.debug "reset set: #{name}, Set:#{set.inspect} + Setting:#{setting.inspect}")
         set.include_set_modules
@@ -49,7 +49,7 @@ module Wagn::Model
     def set_modules()    @set_modules ||= patterns_without_new.reverse.map(&:set_const).compact end
     def set_names()
       Card.set_members(@set_names = patterns.map(&:to_s), key) if @set_names.nil?
-      #warn Rails.logger.warn("sn #{@set_names.inspect}")
+      #warn "sn #{@set_names.inspect}"
       @set_names
     end
     def method_keys()
@@ -99,8 +99,9 @@ module Wagn::Model
         Wagn::Model::Pattern.register_class self
         #@@pattern_class.register_class self
         cattr_accessor :key, :key_id, :opt_keys, :junction_only, :method_key
+        #warn "reg K#{key.inspect},:[#{self.key}] OK:[#{opt_keys.inspect}]"
         self.key = key
-        self.key_id = Wagn::Codename[key]
+        self.key_id = (key == 'self') ? 0 : Wagn::Codename[key]
         self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]
         opts.each { |key, val| self.send "#{key}=", val }
         #warn "reg K:#{self}[#{self.key}] OK:[#{opt_keys.inspect}] jo:#{junction_only.inspect}, mk:#{method_key.inspect}"
@@ -157,7 +158,8 @@ module Wagn::Model
 
     def opt_vals
       if @opt_vals.nil?
-        @opt_vals = self.class.trunkless? ? [] : @trunk_name.parts.map do |part|
+        warn "opt_vals #{self.class}, #{@trunk_name}"
+        @opt_vals = self.class.trunkless? || SelfPattern===self ? [] : @trunk_name.parts.map do |part|
           card=Card.fetch(part, :skip_virtual=>true, :skip_modules=>true) and
                Wagn::Codename[card.id.to_i]
         end
@@ -166,8 +168,12 @@ module Wagn::Model
     end
 
     def to_s()
-      k = self.class.key_name
-      self.class.trunkless? ? k : "#{@trunk_name}+#{k}"
+      if self.class.key_id == 0
+        @trunk_name
+      else
+        kn = self.class.key_name
+        self.class.trunkless? ? kn : "#{@trunk_name}+#{kn}"
+      end
     end
     
     def safe_key()

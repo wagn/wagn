@@ -77,7 +77,7 @@ module Wagn::Model::Permissions
 
     rcard = begin
       Session.as_bot do
-        #warn (Rails.logger.debug "in permission_rule_card #{opcard&&opcard.name} #{operation}")
+        #warn "in permission_rule_card #{opcard&&opcard.name} #{operation}"
         if opcard.content == '_left' && self.junction?
           lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_modules=>true)
           lcard.permission_rule_card(operation).first
@@ -87,7 +87,11 @@ module Wagn::Model::Permissions
       end
     end
     #warn (Rails.logger.debug "permission_rule_card[#{name}] #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}")
-    return rcard, opcard.cardname.trunk_name.tag
+    return rcard, opcard.rule_name
+  end
+
+  def rule_name
+    trunk.type_id == Card::SetID ? cardname.trunk_name.tag : Wagn::Model::SelfPattern.key_name
   end
 
   protected
@@ -241,6 +245,8 @@ module Wagn::Model::Permissions
     self.update_read_rule_list = []
   end
 
+ protected
+
   def update_ruled_cards
     # FIXME: codename
     if junction? && tag_id==Card::ReadID && (@name_or_content_changed || @trash_changed)
@@ -258,28 +264,32 @@ module Wagn::Model::Permissions
       # could be related to other bugs?
       in_set = {}
       if !(self.trash)
-        if class_id = (set=left and set_class=set.tag and set_class.id)
-        rule_class_ids = Wagn::Model::Pattern.subclasses.map &:key_id
-        if rule_class_index = rule_class_ids.index( class_id )
+        if class_id = set=left and set_class=set.tag and set_class.id
+          rule_class_ids = Wagn::Model::Pattern.subclasses.map &:key_id
+          #warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
 
-            #first update all cards in set that aren't governed by narrower rule
-            Session.as_bot do
-              Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
-                in_set[item_card.key] = true
-                #Rails.logger.debug "rule_class_ids[#{rule_class_index}] #{rule_class_ids.inspect} This:#{item_card.read_rule_class.inspect} idx:#{rule_class_ids.index(item_card.read_rule_class)}"
-                rc_index = rule_class_ids.index Card[item_card.read_rule_class].id # FIXME: migrate rr_class to rr_class_id
-                next if rc_index < rule_class_index
-                item_card.update_read_rule
-              end
-            end
-
-          else
-            Airbrake.notify 'improper rule card' if Airbrake.configuration.api_key
-            warn "not a proper rule card #{name}, #{Card[key_id].name} is not in rc:#{rule_class_ids.map{|x|Card[x].name}*', '}"
-            return false
+          #first update all cards in set that aren't governed by narrower rule
+           Session.as_bot do
+             cur_index = rule_class_ids.index Card[read_rule_class].id
+             if rule_class_index = rule_class_ids.index( class_id )
+                # Why isn't this just 'trunk', do we need the fetch?
+                Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
+                  in_set[item_card.key] = true
+                  item_card.update_if_narrow rule_class_index
+                  next if cur_index > rule_class_index
+                  item_card.update_read_rule
+                end
+             elsif rule_class_index = rule_class_ids.index( 0 )
+               in_set[trunk.key] = true
+               #warn "self rule update: #{trunk.inspect}, #{rule_class_index}, #{cur_index}"
+               trunk.update_read_rule if cur_index > rule_class_index
+             else warn "No current rule index #{rule_class_ids.inspect}"
+             end
           end
+
         end
       end
+    #warn "rule_class_ids[#{rule_class_index}] #{rule_class_ids.inspect} This:#{read_rule_class.inspect} idx:#{rule_class_ids.index(read_rule_class)}"
 
       #then find all cards with me as read_rule_id that were not just updated and regenerate their read_rules
       if !new_record?

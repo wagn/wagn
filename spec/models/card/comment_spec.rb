@@ -28,7 +28,7 @@ end
 describe Card, "comment addition" do
   before do
     Session.as_bot do 
-      Card.create :name => 'basicname+*self+*comment', :content=>'[[Anyone Signed In]]'
+      Card.create :name => 'basicname+*comment', :content=>'[[Anyone Signed In]]'
       @c = Card.fetch "basicname"
       @c.comment = " and more"
       @c.save!

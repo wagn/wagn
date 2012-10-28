@@ -19,7 +19,7 @@ module Wagn::Model::Fetch
       # "mark" here means a generic identifier -- can be a numeric id, a name, a string name, etc.
 #      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{cardname}" do
       return nil if mark.nil?
-      #warn "fetch #{mark.inspect}"
+      warn "fetch #{mark.inspect}, #{opts.inspect}"
       # Symbol (codename) handling
       if Symbol===mark
         mark = Wagn::Codename[mark] || raise("Missing codename for #{mark.inspect}")
@@ -39,6 +39,7 @@ module Wagn::Model::Fetch
       #Cache lookup
       result = Card.cache.read cache_key if Card.cache
       card = (result && Integer===mark) ? Card.cache.read(result) : result
+      warn "fetch R #{cache_key}, #{method}, R:#{result}, c:#{card&&card.name}"
 
       unless card
         # DB lookup
@@ -72,7 +73,7 @@ module Wagn::Model::Fetch
       
       return nil if card.new_card? and ( opts[:skip_virtual] || !card.virtual? )
 
-      #warn "fetch returning #{card.inspect}"
+      warn "fetch returning #{card.inspect}"
       card.include_set_modules unless opts[:skip_modules]
       card
 #      end

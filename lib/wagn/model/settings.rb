@@ -7,10 +7,10 @@ module Wagn::Model::Settings
 
   def rule_card setting_name, options={}
     fallback = options.delete( :fallback )
-    #warn (Rails.logger.warn "rule_card[#{name}] #{setting_name}, #{extra_fetch_args.inspect} RSN:#{real_set_names.inspect}") if setting_name == :read
+    #warn "rule_card[#{name}] #{setting_name}, #{options.inspect} RSN:#{real_set_names.inspect}" if setting_name == :edit_help
     fetch_args = {:skip_virtual=>true}.merge options
     real_set_names.each do |set_name|
-      #warn (Rails.logger.debug "rule_card search #{set_name.inspect}") if setting_name == :read
+      #warn "rule_card search #{set_name.inspect}" if setting_name == :edit_help
       set_name=set_name.to_cardname
       card = Card.fetch(set_name.trait_name( setting_name ), fetch_args)
       card ||= fallback && Card.fetch(set_name.trait_name(fallback), fetch_args)
@@ -23,7 +23,7 @@ module Wagn::Model::Settings
   def rule_card_with_cache setting_name, options={}
     setting_name = (sc=Card[setting_name] and (sc.codename || sc.name).to_sym) unless Symbol===setting_name
     @rule_cards ||= {}  # FIXME: initialize this when creating card
-    rcwc = (@rule_cards[setting_name] ||= 
+    rcwc = (@rule_cards[setting_name] ||=
       rule_card_without_cache setting_name, options)
     #warn (Rails.logger.warn "rcwc #{rcwc.inspect}"); rcwc #if setting_name == :read; rcwc
   end
@@ -31,7 +31,7 @@ module Wagn::Model::Settings
 
   def related_sets
     # refers to sets that users may configure from the current card - NOT to sets to which the current card belongs
-    sets = ["#{name}+*self"]
+    sets = ["#{name}"]
     sets << "#{name}+*type" if type_id==Card::CardtypeID
     if cardname.simple?
       sets<< "#{name}+*right"
@@ -72,10 +72,10 @@ module Wagn::Model::Settings
       end
     end
 
-  
+
     SETTING_ATTRIBUTES = {
-      :perms => [ :create, :read, :update, :delete, :comment ], 
-      :look  => [ :default, :content, :layout, :table_of_content ], 
+      :perms => [ :create, :read, :update, :delete, :comment ],
+      :look  => [ :default, :content, :layout, :table_of_content ],
       :com   => [ :add_help, :edit_help, :send, :thanks ],
       :other => [ :autoname, :accountable, :captcha ]
     }
@@ -103,6 +103,22 @@ module Wagn::Model::Settings
       @@setting_seqs[codename]
     end
 
+  end
+
+  def setting_names_by_group
+    Card.universal_setting_names_by_group.clone.merge(
+      if Card::PointerID == ( if type_id != Card::SetID
+            # Self, either the hard template type or self type
+            (templt=Card[cardname.trait_name :content] and tmplt.type_id or type_id)
+          elsif templt = existing_trait_card(:content) || existing_trait_card(:default)
+            templt.type_id # template's type
+          else
+            # If this is a *type set, the trunk is the typecard, otherwise self's type
+            tag.id == Card::TypeID ? trunk.id : type_id
+          end )
+       {:pointer => ['*options','*options label','*input']}
+      else {} end
+    )
   end
 
   def self.included(base)

@@ -55,6 +55,13 @@ describe "Card::Reference" do
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
   end
 
+  it "references should survive name change" do
+    card = Card['Administrator links+*self+*read']
+    refs = Card::Reference.where(:referenced_card_id => Card::AdminID).map(&:card_id)
+    card.name='Administrator links+*read'
+    card.save
+    Card::Reference.where(:referenced_card_id => Card::AdminID).map(&:card_id).should == refs
+  end
   
   it "container transclusion" do
     Card.create :name=>'bob+city' 

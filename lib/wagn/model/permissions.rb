@@ -275,7 +275,7 @@ module Wagn::Model::Permissions
 
           else
             Airbrake.notify 'improper rule card' if Airbrake.configuration.api_key
-            warn "not a proper rule card #{name}, #{Card[key_id].name} is not in rc:#{rule_class_ids.map{|x|Card[x].name}*', '}"
+            warn "not a proper rule card #{name}, #{Card[class_id].name} is not in rc:#{rule_class_ids.map{|x|Card[x].name}*', '}"
             return false
           end
         end

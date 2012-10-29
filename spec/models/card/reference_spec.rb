@@ -55,7 +55,6 @@ describe "Card::Reference" do
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
   end
 
-  
   it "container transclusion" do
     Card.create :name=>'bob+city' 
     Card.create :name=>'address+*right+*default',:content=>"{{_L+city}}"
@@ -84,6 +83,15 @@ describe "Card::Reference" do
     watermelon.name="grapefruit"
     watermelon.save!
     lew.reload.content.should == "likes [[grapefruit]] and [[grapefruit+seeds|seeds]]"
+  end
+  
+  it "should update referencers on rename when requested (case 2)" do
+    card = Card['Administrator links+*self+*read']
+    refs = Card::Reference.where(:referenced_card_id => Card::AdminID).map(&:card_id).sort
+    card.update_referencers = true
+    card.name='Administrator links+*type+*read'
+    card.save
+    Card::Reference.where(:referenced_card_id => Card::AdminID).map(&:card_id).sort.should == refs
   end
   
   it "should not update references when not requested" do

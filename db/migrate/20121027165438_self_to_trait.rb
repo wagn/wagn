@@ -2,7 +2,7 @@ class SelfToTrait < ActiveRecord::Migration
   def up
     Card.where(Card.arel_table[:name].matches("%+*self+%")).each do |card|
       card.name = card.name.sub(/\+\*self\+/,'+')
-      prc = card.permission_rule_card :read
+      card.update_referencers = true
       card.save
     end
     Card.where(Card.arel_table[:name].matches("%+*self%")).each do |card|

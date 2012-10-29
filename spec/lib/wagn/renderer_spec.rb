@@ -127,7 +127,7 @@ describe Wagn::Renderer, "" do
       it "should have the appropriate attributes on open" do
         assert_view_select @ocslot.render(:open), 'div[class="card-slot open-view ALL TYPE-basic SELF-a"]' do
           assert_select 'div[class="card-header"]' do
-            assert_select 'div[class="title-menu"]'
+            assert_select 'h1[class="card-title"]'
           end
           assert_select 'span[class~="open-content content"]'
         end
@@ -137,7 +137,7 @@ describe Wagn::Renderer, "" do
         v = @ocslot.render(:closed)
         assert_view_select v, 'div[class="card-slot closed-view ALL TYPE-basic SELF-a"]' do
           assert_select 'div[class="card-header"]' do
-            assert_select 'div[class="title-menu"]'
+            assert_select 'h1[class="card-title"]'
           end
           assert_select 'span[class~="closed-content content"]'
         end
@@ -165,7 +165,10 @@ describe Wagn::Renderer, "" do
       end
 
       it "renders card header" do
-        assert_view_select @simple_page, 'a[href="/A+B"][class="page-icon"][title="Go to: A+B"]'
+        # lots of duplication here...
+        assert_view_select @simple_page, 'div[class="card-header"]' do
+          assert_select 'h1[class="card-title"]'
+        end
       end
 
       it "renders card content" do

@@ -24,7 +24,7 @@ class Wagn::Renderer::Xml < Wagn::Renderer
   define_view(:content) do |args|
     c = _render_core(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
-    wrap(:content, args) { wrap_content(:content, c) }
+    wrap(:content, args) { wrap_content(:content) { c } }
   end
 
   define_view(:content) do |args|

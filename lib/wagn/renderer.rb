@@ -131,7 +131,7 @@ module Wagn
     attr_accessor :form, :main_content, :error_status
 
     def render view = :view, args={}
-      prefix = args[:allowed] ? '_' : ''
+      prefix = args.delete(:allowed) ? '_' : ''
       method = "#{prefix}render_#{canonicalize_view view}"
       if respond_to? method
         send method, args
@@ -145,12 +145,16 @@ module Wagn
       render view, args
     end 
 
-    #should also be a #optional_render that checks perms
-    def _optional_render view, args, default_hidden=false
+    def optional_render view, args, default_hidden=false
       test = default_hidden ? :show : :hide
       override = args[test] && args[test].member?(view.to_s)
       return nil if default_hidden ? !override : override
-      send "_render_#{ view }", args
+      render view, args
+    end
+
+    def _optional_render view, args, default_hidden=false
+      args[:allowed] = true
+      optional_render view, args, default_hidden
     end
 
     def rendering_error exception, cardname

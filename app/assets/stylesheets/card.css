@@ -39,34 +39,18 @@ html>body .open-view {
   border-radius: 6px 6px 0 0;
   text-align: left;
 }
-.title-menu {
-  line-height: 18px;
+.card-header h1 {
+  display: inline;
 }
-.title { 
+h1.card-title { 
   margin: 0px 2px;
   font-weight: bold;
   font-size: 13px;
   padding: 2px 0px 2px 25px;
   white-space: nowrap;
 }
-.card-header a.right-arrow {
-  background: url(arrow_right.gif) no-repeat left;
-}
-html>body .card-header a.right-arrow {
-  background-image: url(arrow_right.png);
-}
-.card-header a.down-arrow {
-  background: url(arrow_down.gif) no-repeat left;
-}
-html>body .card-header a.down-arrow {
-  background-image: url(arrow_down.png);
-}
-.card-header a.page-icon {
-  padding: 2px 7px;
-  background: url(page.gif) no-repeat right;
-}
-html>body .card-header a.page-icon {
-  background-image: url(page.png);
+.card-header .card-menu {
+  float: right;
 }
 
                                           
@@ -98,63 +82,9 @@ html>body .card-header a.page-icon {
 .card-header a {
   color: #fff 
 }
-html>body .card-menu-left,
-html>body .page-icon {
-  display: none;
-}
-
-
-div:hover.setting .page-icon,
-div:hover.card-header .page-icon,
-div:hover.card-header .card-menu-left {
-  display:inline;
-}
-
-.card-menu {
-   float:right;
-   white-space: nowrap;
-   position: relative;
-   right: 0px;
-   z-index: 1;
-}
-.card-menu li { 
-  padding: 1px 5px;
-  margin: 0px;
-  -moz-border-radius: 4px 4px 0 0;
-  border-radius: 4px 4px 0 0;
-}
 .current {
   background: #bbb;
   padding-bottom: 5px !important;
-}
-
-.submenu {
-  background: #bbb;
-  padding: 0px 10px;
-  text-align: right;
-}
-.submenu-left {
-  float: left;
-  display: none;
-  white-space: nowrap;
-  text-align: left;
-  font-style: italic;
-  width: 30%;
-}
-.submenu a {
-  padding: 0px 5px;
-  color: #005800
-}
-.submenu a.current-subtab {
-  background: #fff;
-  color: #777;
-  padding-bottom: 3px;
-  -moz-border-radius: 4px 4px 0 0;
-  border-radius: 4px 4px 0 0;
-}
-
-.card-header li {
-  display:inline;
 }
 
 
@@ -359,14 +289,6 @@ del.diffmod,
 
 /* -----   CONTEXTS  -------------------------------*/
 
-
-/*----- Secondary (sidebar) ----------------*/
-
-
-#secondary .card-menu {
-  display: none; 
-  float:none;  /* necessary for IE */
-}
 
 /*----------recent changes -----------*/
 

@@ -116,8 +116,8 @@ module Wagn
       content_tag(:div, attributes ) { yield }
     end
 
-    def wrap_content( view, content="" )
-      raw %{<span class="#{view}-content content">#{content}</span>}
+    def wrap_content view
+      raw %{<span class="#{view}-content content">#{ yield }</span>}
     end
 
     def wrap_main(content)
@@ -180,7 +180,8 @@ module Wagn
       link_to text, path(:read, path_options), html_opts
     end
 
-    def name_field form, options={}
+    def name_field form=nil, options={}
+      form ||= self.form
       form.text_field( :name, { 
         :value=>card.name, #needed because otherwise gets wrong value if there are updates
         :autocomplete=>'off'
@@ -223,6 +224,18 @@ module Wagn
       @form ||= form_for_multi
     end
 
+    def card_form *opts
+      form_for( card, form_opts(*opts) ) { |form| yield form }
+    end
+
+    def form_opts url, classes='', other_html={}
+      url = path(url) if Symbol===url
+      opts = { :url=>url, :remote=>true, :html=>other_html }
+      opts[:html][:class] = classes + ' slotter'
+      opts[:html][:recaptcha] = 'on' if Wagn::Conf[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
+      opts
+    end
+
     def option content, args
       args[:label] ||= args[:name]
       args[:editable]= true unless args.has_key?(:editable)
@@ -240,6 +253,53 @@ module Wagn
     def option_header(title)
       %{<tr><th colspan="3" class="option-header"><h2>#{title}</h2></th></tr>}
     end
+
+
+    def editor_wrap type
+      content_tag( :div, :class=>"editor #{type}-editor" ) { yield }
+    end
+
+    def fieldset title, content, opts={}
+      %{
+        <fieldset #{ opts[:attribs] }>
+          <legend>
+            <h2>#{ title }</h2>
+            #{ help_text *opts[:help] }
+          </legend>
+          #{ content }
+        </fieldset>
+      }
+    end
+
+    private
+
+    def help_text *opts
+      text = case opts[0]
+        when Symbol
+          if help_card = card.rule_card( *opts )
+            with_inclusion_mode :normal do
+              subrenderer( help_card ).render_core
+            end
+          end
+        when String
+          opts[0]
+        end
+      %{<div class="instruction">#{raw text}</div>} if text
+    end
+
+    def fancy_title name=nil
+      name ||= showname
+      title = name.to_cardname.parts.join %{<span class="joint">+</span>}
+      raw title
+    end
+
+    def load_revisions
+      @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i
+      @revision = card.revisions[@revision_number - 1]
+      @previous_revision = @revision ? card.previous_revision( @revision.id ) : nil
+      @show_diff = (params[:mode] != 'false')
+    end
+
     
     # navigation for revisions -
     # --------------------------------------------------

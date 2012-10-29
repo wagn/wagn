@@ -1,9 +1,7 @@
 #primary {
   width: 100%
 }
-#topmenu,
 #secondary,
-#alerts,
 #menu,
 .card-menu,
 .cardtype,
@@ -16,9 +14,6 @@
 }
 .card-slot.paragraph .content {
   overflow: visible !important;
-}
-div.transcluded {
-  display: inline;
 }
 body#wagn {
   color: #444;

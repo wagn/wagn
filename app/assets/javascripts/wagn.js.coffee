@@ -12,7 +12,7 @@ wagn.prepUrl = (url, slot)->
   if slot
     home_view = slot.attr 'home_view'
     item      = slot.attr 'item'
-    title     = slot.children '.card-title'
+    title     = slot.children('.card-header').children '.card-title'
     xtra['home_view'] = home_view if home_view?
     xtra['item']      = item      if item?
     xtra['is_main']   = true      if slot.isMain()

@@ -5,7 +5,7 @@ class Wagn::Renderer::Html
     if ajax_call?
       self.render( @main_view || :open )
     else
-      self.render_layout
+      self.render_layout args
     end
   end
 
@@ -16,25 +16,26 @@ class Wagn::Renderer::Html
     
     layout_content = get_layout_content args
 
-    args[:params] = params # EXPLAIN why this is needed
+    args[:params] = params # this is to pass params to inclusions.  let's find a cleaner way!
     process_content layout_content, args
   end
-
-
+  
   define_view :content do |args| 
     wrap :content, args do
-      wrap_content :content, _render_core(args)
+      wrap_content( :content ) { _render_core args }
     end
   end
 
   define_view :titled do |args|
+
     wrap :titled, args do
-      _render_title + wrap_content(:titled, _render_core(args))
+      %{ #{ _render_header args.merge( { :default_hidden => {:menu=>true, :type=>true} } ) }
+         #{ wrap_content( :titled ) { _render_core args } }   
+      }
     end
   end
   
   define_view :title do |args|
-    Rails.logger.info "context names = #{@context}"
     t = content_tag :h1, fancy_title, :class=>'card-title', :name_context=>"#{ @context_names.map(&:key)*',' }"
     add_name_context
     t
@@ -43,14 +44,85 @@ class Wagn::Renderer::Html
   define_view :open do |args|
     wrap :open, args do
       %{ 
-         #{ _render_title }
-         #{ wrap_content :open, _render_open_content(args) } 
+         #{ _render_header args }
+         #{ wrap_content( :open ) { _render_open_content args } } 
          #{ render_comment_box }
          #{ notice }
       }
     end
   end
 
+  define_view :header do |args|
+    hidden = args.delete(:default_hidden) || {}
+    %{
+    <div class="card-header">
+      #{ _optional_render :menu, args, hidden[:menu] }
+      #{ _render_title }
+      #{ _optional_render :type, args, hidden[:type] }
+      #{ link_to 'close', path(:read, :view=>:closed), :title => "close #{card.name}", :class => "title slotter", :remote => true } 
+    </div>
+    
+     
+    #{ _render_menu_options }
+    }
+  end
+  
+  define_view :menu do |args|
+    %{<span class="card-menu-link">menu</span>}
+  end
+  
+  define_view :menu_options do |args|
+    options = [
+      { :text => 'view', :view=>:titled },
+      { :text =>  'edit' },
+      { :text => 'admin' }
+    ]
+    
+    option_html = %{
+      
+      <style>
+      .ui-menu {
+          width: 200px;
+      }
+      </style>
+      <ul class="cardMenu">
+          <li>#{ link_to_action 'edit', :edit, :class=>'slotter' }
+            <ul>
+                <li><a href="#">Item 3-1</a></li>
+                <li><a href="#">Item 3-2</a></li>
+                <li><a href="#">Item 3-3</a></li>
+                <li><a href="#">Item 3-4</a></li>
+                <li><a href="#">Item 3-5</a></li>
+            </ul>
+          </li>
+          <li>#{ link_to_action 'view', :view, :class=>'slotter' }</li>
+          <li>#{ link_to_action 'admin', :admin, :class=>'slotter' }</li>
+
+      </ul>
+      
+      
+    }
+  end
+  
+  define_view :type do |args|
+    klasses = ['cardtype']
+    klasses << 'default-type' if card.type_id==Card::DefaultTypeID ? " default-type" : ''
+    link_to_page card.type_name, nil, :class=>klasses
+  end
+
+  define_view :closed do |args|
+    wrap :closed, args do
+      %{
+        <div class="card-header">
+          #{ _render_title }
+          #{ link_to 'open', path(:read, :view=>:open), :title => "open #{card.name}", :class => "title slotter", :remote => true }         
+        </div>
+        #{ wrap_content( :closed ) { _render_closed_content } }
+      }
+    end
+  end
+  
+  
   define_view :comment_box, :perms=>lambda { |r| 
         r.card.ok?(:comment) ? :comment_box : :blank
       } do |args|
@@ -66,20 +138,7 @@ class Wagn::Renderer::Html
     </div>}
   end
 
-  define_view :closed do |args|
-    wrap :closed, args do
-      %{
-        <div class="card-header">
-          <div class="title-menu">
-            #{ link_to( fancy_title, path(:read, :view=>:open), :title=>"open #{card.name}",
-              :class=>'title right-arrow slotter', :remote=>true ) }
-            #{ page_icon(card.name) } &nbsp;
-          </div>
-        </div>
-        #{ wrap_content :closed, render_closed_content }
-      }
-    end
-  end
+
 
   define_view :new, :perms=>:create, :tags=>:unknown_ok do |args|
     name_ready = !card.cardname.blank? && !Card.exists?( card.cardname )
@@ -104,7 +163,7 @@ class Wagn::Renderer::Html
             #{ help_text :add_help, :fallback=>:edit_help }
             #{
             case
-            when name_ready                  ; _render_title + hidden_field_tag( 'card[name]', card.name )
+            when name_ready                  ; _render_header + hidden_field_tag( 'card[name]', card.name )
             when card.rule_card( :autoname ) ; ''
             else                             ; _render_name_editor
             end
@@ -120,7 +179,6 @@ class Wagn::Renderer::Html
         }
       end
     end)
-    
   end
 
   define_view :editor do |args|
@@ -129,7 +187,6 @@ class Wagn::Renderer::Html
 
   define_view :missing do |args|
     return '' unless card.ok? :create  #this should be moved into ok_view
-    #warn "missing #{args.inspect} #{caller[0..10]*"\n"}"
     new_args = { 'card[name]'=>card.name }
     new_args['card[type]'] = args[:type] if args[:type]
 
@@ -148,7 +205,7 @@ class Wagn::Renderer::Html
     
     wrap :edit, args do
       %{ 
-      #{_render_title }
+      #{_render_header }
       #{ help_text :edit_help }
       <div class="card-editor edit-area">
         #{ card_form :update, 'card-form card-edit-form autosave' do |f|
@@ -174,7 +231,6 @@ class Wagn::Renderer::Html
       }
     end
   end
-
 
   define_view :name_editor do |args|
     fieldset 'name', (editor_wrap :name do
@@ -260,23 +316,24 @@ class Wagn::Renderer::Html
 
   define_view :option_account do |args|
     locals = {:slot=>self, :card=>card, :account=>card.to_user }
-      card_form :update_account do |form|
-        %{<table class="fieldset">
-          #{if Session.as_id==card.id or card.trait_card(:account).ok?(:update)
-             raw option_header( 'Account Details' ) +
-               template.render(:partial=>'account/edit',  :locals=>locals)
-          end }
-        #{ render_option_roles } #{
-       
-          if options_need_save
-            %{<tr><td colspan="3">#{ submit_tag 'Save Changes' }</td></tr>}
-          end}
-        </table>}
-      end
-    end 
+    card_form :update_account do |form|
+      %{<table class="fieldset">
+        #{if Session.as_id==card.id or card.trait_card(:account).ok?(:update)
+           raw option_header( 'Account Details' ) +
+             template.render(:partial=>'account/edit',  :locals=>locals)
+        end }
+      #{ render_option_roles } #{
+     
+        if options_need_save
+          %{<tr><td colspan="3">#{ submit_tag 'Save Changes' }</td></tr>}
+        end}
+      </table>}
+    end
   end
 
-  define_view :option_settings do |args|
+
+
+  define_view :admin do |args|
     related_sets = card.related_sets
     current_set = params[:current_set] || related_sets[(card.type_id==Card::CardtypeID ? 1 : 0)]  #FIXME - explicit cardtype reference
     set_options = related_sets.map do |set_name| 
@@ -285,29 +342,32 @@ class Wagn::Renderer::Html
       %{<option value="#{ set_card.key }" #{ selected }>#{ set_card.label }</option>}
     end.join
     
-    %{<div class="settings-tab">
-      #{ if !related_sets.empty?
-        %{ <div class="set-selection">
-          #{ form_tag path(:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'slotter' }
-              <label>Set:</label>
-              <select name="current_set" class="set-select">#{ set_options }</select>
-          </form>
-        </div>}
-      end }
-
-      <div class="current-set">
-        #{ raw subrenderer( Card.fetch current_set).render_content }
-      </div>
-  #{
-        if Card.toggle(card.rule(:accountable)) && card.trait_card(:account).ok?(:create)
-          %{<div class="new-account-link">
-          #{ link_to %{Add a sign-in account for "#{card.name}"},
-              path(:options, :attrib=>:new_account),
-            :class=>'slotter new-account-link', :remote=>true }
+    wrap :admin do
+      %{
+        #{_render_header}
+        <div class="settings-tab">
+        #{ if !related_sets.empty?
+          %{ <div class="set-selection">
+            #{ form_tag path(:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'slotter' }
+                <label>Set:</label>
+                <select name="current_set" class="set-select">#{ set_options }</select>
+            </form>
           </div>}
-         end}
-      </div>}
-      
+        end }
+
+        <div class="current-set">
+          #{ raw subrenderer( Card.fetch current_set).render_content }
+        </div>
+    #{
+          if Card.toggle(card.rule(:accountable)) && card.trait_card(:account).ok?(:create)
+            %{<div class="new-account-link">
+            #{ link_to %{Add a sign-in account for "#{card.name}"},
+                path(:options, :attrib=>:new_account),
+              :class=>'slotter new-account-link', :remote=>true }
+            </div>}
+           end}
+        </div>}
+    end  
       # should be just if !card.trait_card(:account) and Card.new( :name=>"#{card.name}+Card[:account].name").ok?(create)
   end
 
@@ -319,13 +379,11 @@ class Wagn::Renderer::Html
     user_roles = traitc.item_cards(:limit=>0).reject do |x|
       [Card::AnyoneID, Card::AuthID].member? x.id.to_i
     end
-#    warn Rails.logger.info("option_roles #{user_roles.inspect}")
 
     option_content = if traitc.ok? :update
       user_role_ids = user_roles.map &:id
       hidden_field_tag(:save_roles, true) +
       (roles.map do |rolecard|
-#        warn Rails.logger.info("option_roles: #{rolecard.inspect}")
         if rolecard && !rolecard.trash
          %{<div style="white-space: nowrap">
            #{ check_box_tag "user_roles[%s]" % rolecard.id, 1, user_role_ids.member?(rolecard.id) ? true : false }
@@ -354,8 +412,7 @@ class Wagn::Renderer::Html
   define_view :option_new_account do |args|
     %{#{
       card_form :create_account do |form|
-      #ENGLISH below
-
+        #ENGLISH 
         %{<table class="fieldset">
         #{render :partial=>'account/email' }
            <tr><td colspan="3" style><p>
@@ -416,7 +473,6 @@ class Wagn::Renderer::Html
   end
 
 
-
   define_view :change do |args|
     wrap :change, args do
       %{#{link_to_page card.name, nil, :class=>'change-card'} #{
@@ -438,21 +494,7 @@ class Wagn::Renderer::Html
     end
   end
 
-  define_view :header do |args|
-    add_name_context
-    %{<div class="card-header">
-       #{ menu }
-       <div class="title-menu">
-         #{ link_to fancy_title, path(:read, :view=>:closed),
-            :title => "close #{card.name}", 
-            :class => "line-link title down-arrow slotter", 
-            :remote => true 
-          }
-         #{ card.type_id==Card::BasicID ? '' : %{<span class="cardtype">#{ link_to_page card.type_name }</span>} }
-         #{ page_icon(card.name) } &nbsp;
-       </div>
-    </div>}
-  end
+
 
   define_view :errors, :perms=>:none do |args|
     wrap :errors, args do
@@ -462,14 +504,13 @@ class Wagn::Renderer::Html
   end
 
   define_view :not_found do |args| #ug.  bad name.
-
-    sign_in_or_up_links = Session.logged_in? ? '' :
-      %{
-      <div>
+    sign_in_or_up_links = if Session.logged_in?
+      %{<div>
         #{link_to "Sign In", :controller=>'account', :action=>'signin'} or
         #{link_to 'Sign Up', :controller=>'account', :action=>'signup'} to create it.
-      </div>
-      }
+       </div>}
+    end
+    
     %{ <h1 class="page-header">Missing Card</h1> } +
     wrap( :not_found, args ) do # ENGLISH 
       %{<div class="content instruction">
@@ -479,7 +520,54 @@ class Wagn::Renderer::Html
     end
   end
 
+  
+  define_view :denial do |args|
+    task = args[:denied_task] || params[:action]
+    to_task = %{to #{task} this card#{ ": <strong>#{card.name}</strong>" if card.name && !card.name.blank? }.}
+    if !focal?
+      %{<span class="denied"><!-- Sorry, you don't have permission #{to_task} --></span>}
+    else
+      wrap :denial, args do #ENGLISH below
+        %{
+        #{ _render_header }
+        <div id="denied" class="instruction open-content">
+          <h1>Ooo.  Sorry, but...</h1>
+          #{
+          if task != :read && Wagn::Conf[:read_only]
+            "<div>We are currently in read-only mode.  Please try again later.</div>"
+          else
+            if Session.logged_in?
+              %{<div>You need permission #{to_task}</div> }
+            else
+              %{<div>You have to #{ link_to "sign in", wagn_url("/account/signin") } #{to_task}</div> 
+              #{ 
+              if Card.new(:type_id=>Card::AccountRequestID).ok? :create
+                %{<div>#{ link_to 'Sign up for a new account', wagn_url("/account/signup") }.</div>}                    
+              end 
+              }}
+            end
+          end}
+        </div>}
 
+      end
+    end
+  end
+  
+  
+  define_view :server_error do |args|
+    %{
+    <body>
+      <div class="dialog">
+        <h1>Wagn Hitch :(</h1>
+        <p>Server Error. Yuck, sorry about that.</p>
+        <p><a href="http://www.wagn.org/new/Support_Ticket">Add a support ticket</a>
+            to tell us more and follow the fix.</p>
+      </div>
+    </body>
+    }
+  end
+  
+  
   define_view :watch, :tags=>:unknown_ok, :perms=> lambda { |r| 
         !Session.logged_in? || r.card.new_card? ? :blank : :watch 
       } do |args|
@@ -507,115 +595,6 @@ class Wagn::Renderer::Html
       {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :title=>title, :remote=>true, :method=>'post'}.merge(extra)
   end
   
-  define_view :denial do |args|
-    task = args[:denied_task] || params[:action]
-    if !focal?
-      %{<span class="denied"><!-- Sorry, you don't have permission to #{task} this card --></span>}
-    else
-      wrap :denial, args do #ENGLISH below
-        %{#{ _render_header } 
-          <div id="denied" class="instruction open-content">
-            <h1>Ooo.  Sorry, but...</h1>
-  
-        
-         #{ if task != :read && Wagn::Conf[:read_only]
-              "<div>We are currently in read-only mode.  Please try again later.</div>"
-            else
-              %{<div>#{
-            
-              if !Session.logged_in?
-               %{You have to #{ link_to "sign in", :controller=>'account', :action=>'signin' }}
-              else
-               "You need permission"
-              end} to #{task} this card#{": <strong>#{card.name}</strong>" if card.name && !card.name.blank? }.
-              </div>
-             #{
-  
-              if !Session.logged_in? && Card.new(:type_id=>Card::AccountRequestID).ok?(:create)
-                %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}
-              end }}
-            end   }
-          </div>
-          }
-      end
-    end
-  end
-  
-  
-  define_view :server_error do |args|
-    %{
-    <body>
-      <div class="dialog">
-        <h1>Wagn Hitch :(</h1>
-        <p>Server Error. Yuck, sorry about that.</p>
-        <p><a href="http://www.wagn.org/new/Support_Ticket">Add a support ticket</a>
-            to tell us more and follow the fix.</p>
-      </div>
-    </body>
-    }
-  end
-  
-  
-  def card_form *opts
-    form_for( card, form_opts(*opts) ) { |form| yield form }
-  end
 
-  def form_opts url, classes='', other_html={}
-    url = path(url) if Symbol===url
-    opts = { :url=>url, :remote=>true, :html=>other_html }
-    opts[:html][:class] = classes + ' slotter'
-    opts[:html][:recaptcha] = 'on' if Wagn::Conf[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
-    opts
-  end
-  
-  private
-  
-  def editor_wrap type
-    content_tag( :div, :class=>"editor #{type}-editor" ) { yield }
-  end
-    
-  def fieldset title, content, opts={}
-    %{
-      <fieldset #{ opts[:attribs] }>
-        <legend>
-          <h2>#{ title }</h2>
-          #{ help_text *opts[:help] }
-        </legend>
-        #{ content }
-      </fieldset>
-    }
-  end
-  
-  def help_text *opts
-    Rails.logger.info "help text called with args #{opts} for #{card.name}"
-    text = case opts[0]
-      when Symbol
-        if help_card = card.rule_card( *opts )
-          with_inclusion_mode :normal do
-            subrenderer( help_card ).render_core
-          end
-        end
-      when String
-        opts[0]
-      end
-    %{<div class="instruction">#{raw text}</div>} if text
-  end
-
-  def fancy_title name=nil
-    name ||= showname
-    title = name.to_cardname.parts.join %{<span class="joint">+</span>}
-    raw title
-  end
-
-  def page_icon cardname
-    link_to_page '&nbsp;'.html_safe, cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
-  end
-
-  def load_revisions
-    @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i
-    @revision = card.revisions[@revision_number - 1]
-    @previous_revision = @revision ? card.previous_revision( @revision.id ) : nil
-    @show_diff = (params[:mode] != 'false')
-  end
 end
 

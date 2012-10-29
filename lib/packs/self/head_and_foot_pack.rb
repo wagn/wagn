@@ -49,7 +49,10 @@ class Wagn::Renderer
       %( wagn.tinyMCEConfig = { #{ Card.setting :tiny_mce } };
     </script>      
           )
+    bits << javascript_include_tag('http://code.jquery.com/jquery-1.8.2.js')
+    bits << javascript_include_tag('http://code.jquery.com/ui/1.9.1/jquery-ui.js')
     bits << javascript_include_tag('application')
+    
 
     if ga_key=Card.setting("*google analytics key")
       bits << %(

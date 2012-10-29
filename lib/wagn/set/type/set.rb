@@ -3,7 +3,6 @@ module Wagn::Set::Type::Set
 
   def inheritable?
     return true if junction_only?
-    #cardname.tag=='*self' && cardname.trunk_name.junction? 
     cardname.junction?
   end
 

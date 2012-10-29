@@ -18,6 +18,10 @@ module Wagn::Model::Permissions
     "#{Session.user_card.name}, You don't have permission to"
   end
 
+  def inheritable?
+    junction?
+  end
+
   def approved?
     @operation_approved = true
     @permission_errors = []

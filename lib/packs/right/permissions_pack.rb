@@ -2,11 +2,11 @@ class Wagn::Renderer
   define_view :editor, :right=>'create' do |args|
     set_name = card.cardname.trunk_name
     set_card = Card.fetch(set_name)
-    return "#{set_name} is not a Set" unless set_card and set_card.type_id==Card::SetID
+    not_set = set_card && set_card.type_id==Card::SetID
 
     group_options = Session.as_bot { Card.search(:type=>Card::RoleID, :sort=>'name') }
 
-    inheritable = set_card.inheritable?
+    inheritable = not_set ? false : set_card.inheritable?
     inheriting = inheritable && card.content=='_left'
 
     item_names = inheriting ? [] : card.item_names

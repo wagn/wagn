@@ -55,7 +55,7 @@ module Wagn::Model
     def method_keys()
       rr =
       @method_keys ||= patterns.map(&:get_method_key).compact
-      #warn "mks[#{inspect}] #{rr.inspect}"; rr
+      #warn "mks[#{patterns.inspect}] #{rr.inspect}"; rr
     end
   end
 
@@ -139,14 +139,17 @@ module Wagn::Model
     end
     
     def get_method_key()
+      #warn "gmk #{self}"
       tkls_key = self.class.method_key
-      #warn "tkls[#{@trunk_name}] #{tkls_key.inspect}" if tkls_key
+      #warn "tkls #{self.class.key}, #{self.class.key_id}, [#{@trunk_name}] #{tkls_key.inspect}" if tkls_key
       return tkls_key if tkls_key
+      #warn "gmkey #{self.class.method_key.inspect}" if self.class.trunkless?
       return self.class.method_key if self.class.trunkless?
       opts = {}
       ov = opt_vals
       #warn "gmkey [#{@trunk_name.inspect}] ov:#{ov.inspect}, ok:#{opt_keys.inspect}"
       opt_keys.each_with_index do |key, index|
+        #warn "nil #{index}, bool:#{!!opt_vals[index]}, #{opt_vals.inspect}" unless opt_vals[index]
         return nil unless opt_vals[index]
         opts[key] = opt_vals[index]
       end
@@ -158,11 +161,10 @@ module Wagn::Model
 
     def opt_vals
       if @opt_vals.nil?
-        warn "opt_vals #{self.class}, #{@trunk_name}"
-        @opt_vals = self.class.trunkless? || SelfPattern===self ? [] : @trunk_name.parts.map do |part|
-          card=Card.fetch(part, :skip_virtual=>true, :skip_modules=>true) and
-               Wagn::Codename[card.id.to_i]
-        end
+        @opt_vals = self.class.trunkless? ? [] :
+          @trunk_name.parts.map do |part|
+            card=Card.fetch(part, :skip_virtual=>true, :skip_modules=>true) and Wagn::Codename[card.id.to_i]
+          end
       end
       @opt_vals
     end

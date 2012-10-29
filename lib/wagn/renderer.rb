@@ -73,6 +73,7 @@ module Wagn
         @@subset_views[view] = true if !opts.empty?
 
         if !method_defined? "render_#{view}"
+          #warn "defining method render_#{view}"
           define_method( "_render_#{view}" ) do |*a|
             a = [{}] if a.empty?
             if final_method = view_method(view)
@@ -80,12 +81,13 @@ module Wagn
                 send final_method, *a
               end
             else
-              "<strong>unsupported view: <em>#{view}</em></strong>"
+              raise "<strong>unsupported view: <em>#{view}</em></strong>"
             end
           end
 
           define_method( "render_#{view}" ) do |*a|
             begin
+              #warn "r #{view} #{a.inspect}, #{ok_view view, *a}"
               send( "_render_#{ ok_view view, *a }", *a )
             rescue Exception=>e
               controller.send :notify_airbrake, e if Airbrake.configuration.api_key
@@ -108,6 +110,7 @@ module Wagn
             else; raise "Bad view #{aview.inspect}"
             end
 
+          #warn "def final_alias #{aview_key}, #{view_key}"
           define_method( "_final_#{aview_key}".to_sym ) do |*a|
             send("_final_#{view_key}", *a)
           end
@@ -299,7 +302,7 @@ module Wagn
       return "_final_#{view}" if !card || !@@subset_views[view]
       card.method_keys.each do |method_key|
         meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
-        #Rails.logger.info "looking up #{meth} for #{card.name}"
+        #warn "looking up #{method_key}, M:#{meth} for #{card.name}"
         return meth if respond_to?(meth.to_sym)
       end
       nil

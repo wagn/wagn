@@ -69,7 +69,7 @@ module Wagn::Model::Permissions
 
   def permission_rule_card(operation)
     opcard = rule_card(operation)
-    #warn (Rails.logger.warn "prc[#{name}]#{operation} #{opcard.inspect}") if operation.to_sym == :read
+    #warn "prc[#{name}]#{operation} #{opcard.inspect}" if operation.to_sym == :read and card.name == '*logo+*read'
     unless opcard
       errors.add :permission_denied, "No #{operation} setting card for #{name}"
       raise Card::PermissionDenied.new(self)
@@ -77,7 +77,7 @@ module Wagn::Model::Permissions
 
     rcard = begin
       Session.as_bot do
-        #warn "in permission_rule_card #{opcard&&opcard.name} #{operation}"
+        #warn "in permission_rule_card #{opcard&&opcard.name} #{operation}" if card.name == '*logo+*read'
         if opcard.content == '_left' && self.junction?
           lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_modules=>true)
           lcard.permission_rule_card(operation).first
@@ -86,7 +86,7 @@ module Wagn::Model::Permissions
         end
       end
     end
-    #warn (Rails.logger.debug "permission_rule_card[#{name}] #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}")
+    #warn "permission_rule_card[#{name}] #{rcard&&rcard.name}, #{opcard.rule_name.inspect}, #{opcard.inspect}" if card.name == '*logo+*read'
     return rcard, opcard.rule_name
   end
 

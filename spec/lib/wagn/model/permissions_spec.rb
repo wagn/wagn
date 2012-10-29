@@ -189,7 +189,7 @@ describe "Permission", ActiveSupport::TestCase do
   it "reader setting" do
     Card.find(:all).each do |c|
       prc = c.permission_rule_card(:read)
-      warn "C #{c}, #{c.read_rule_id}, #{prc.first.id}, #{c.read_rule_class}, #{prc.second}, #{prc.first.inspect}"
+      #warn "C #{c}, #{c.read_rule_id}, #{prc.first.id}, #{c.read_rule_class}, #{prc.second}, #{prc.first.inspect}" if prc.first.id.to_i != 500 or c.read_rule_id.to_i != 500
       prc.last.should == c.read_rule_class
       prc.first.id.should == c.read_rule_id
     end

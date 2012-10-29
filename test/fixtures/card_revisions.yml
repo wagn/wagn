@@ -860,13 +860,6 @@ card_revisions_112:
       </body>
     </html>
   created_by: 4
-card_revisions_113: 
-  id: 3177
-  created_at: 2012-09-19 15:02:27 Z
-  card_id: 315
-  creator_id: 1
-  content: "{\"name\":\"_self\"}"
-  created_by: 4
 card_revisions_114: 
   id: 3178
   created_at: 2012-09-19 15:02:27 Z

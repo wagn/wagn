@@ -547,13 +547,13 @@ class Card < ActiveRecord::Base
   # MISCELLANEOUS
 
   def to_s
-    "#<#{self.class.name}[#{type_id < 1 ? 'bogus': type_name}:#{type_id}]#{self.attributes['name']}>"
+    "#<#{self.class.name}[#{type_id}]#{self.attributes['name']}>"
   end
   
   def inspect
     "#<#{self.class.name}" + "(#{object_id})" + "##{self.id}" +
     "[#{type_id}]" +
-    "!#{self.name}!{n:#{new_card?}:v:#{virtual?}:I:#{@set_mods_loaded}} " + 
+    "!#{self.name}!{tr:#{trash}:n:#{new_card?}:v:#{virtual?}:I:#{@set_mods_loaded}} " + 
     "R:#{ @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}>"
   end
 

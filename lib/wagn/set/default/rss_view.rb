@@ -1,4 +1,5 @@
-class Wagn::Renderer::Rss
+module Wagn::Set::Default
+ class Wagn::Renderer::Rss
   define_view :show do |args|
     render(args[:view] || params[:view] || :feed)
   end
@@ -44,4 +45,5 @@ class Wagn::Renderer::Rss
   alias_view(:open_content,{}, :content)
   alias_view(:link,        {}, :closed)
   
+ end
 end

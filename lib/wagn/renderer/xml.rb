@@ -1,5 +1,5 @@
 module Wagn
- class Renderer::Xml < Renderer
+ class Renderer::Xml < Wagn::Renderer
 
   LAYOUTS = { 'default' => %{
 <carddoc>

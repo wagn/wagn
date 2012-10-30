@@ -1,6 +1,6 @@
-Wagn::Renderer::Xml
 
-class Wagn::Renderer::Xml < Wagn::Renderer
+module Wagn::Set::Default
+ class Wagn::Renderer::Xml < Wagn::Renderer
   define_view(:layout) do |args|
     if @main_content = args.delete(:main_content)
       @card = Card.fetch_or_new('*placeholder',{},:skip_defaults=>true)
@@ -54,4 +54,5 @@ class Wagn::Renderer::Xml < Wagn::Renderer
     end
   end
 
+ end
 end

@@ -41,7 +41,7 @@ module Wagn
         h[:attachment_web_dir]     ||= h[:root_path] + '/files'
         h[:attachment_storage_dir] ||= "#{Rails.root}/local/files"
 
-        h[:pack_dirs] ||= "#{Rails.root}/lib/packs, #{Rails.root}/local/packs"
+        h[:load_dirs] ||= "#{Rails.root}/lib/wagn/set/"
 
         h[:read_only] ||= (ro=ENV['WAGN_READ_ONLY']) && ro != 'false'
         # this means config overrides env var.  is that what we want?

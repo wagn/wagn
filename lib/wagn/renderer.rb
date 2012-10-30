@@ -11,6 +11,7 @@ module Wagn
     RENDERERS = { #should be defined in renderer
       :html => :Html,
       :css  => :Text,
+      :xml => :Xml,
       :txt  => :Text
     }
     
@@ -546,16 +547,10 @@ module Wagn
   # automate
   Wagn::Renderer::EmailHtml
   Wagn::Renderer::Html
+  Wagn::Renderer::Xml
   Wagn::Renderer::Kml
   Wagn::Renderer::Rss
   Wagn::Renderer::Text
-  
-  pack_dirs = Rails.env =~ /^cucumber|test$/ ? "#{Rails.root}/lib/packs" : Wagn::Conf[:pack_dirs]
-  #pack_dirs += "#{Rails.root}/lib/wagn/set/type"
-  pack_dirs.split(/,\s*/).each do |dir|
-    Wagn::Pack.dir File.expand_path( "#{dir}/**/*_pack.rb",__FILE__)
-  end
-  #Wagn::Pack.dir File.expand_path( "#{Rails.root}/lib/wagn/set/*/*.rb", __FILE__ )
-  Wagn::Pack.load_all
-  
+
+  Wagn::Set::Views.load_all
 end

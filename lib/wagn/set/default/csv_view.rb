@@ -1,6 +1,7 @@
 require 'csv'
 
-class Wagn::Renderer::Csv
+module Wagn::Set::Default
+ class Wagn::Renderer::Csv
   define_view :show do |args|
     if !card.collection?
       "CSV format only works on collections (searches, pointers, etc)"
@@ -21,4 +22,5 @@ class Wagn::Renderer::Csv
     ''
   end
 
+ end
 end

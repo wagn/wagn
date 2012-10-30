@@ -29,6 +29,7 @@ class Wagn::RendererTest < ActiveSupport::TestCase
   def slot_link card, format=:html
     renderer = Wagn::Renderer.new card, :format=>format
     renderer.add_name_context
+    Rails.logger.warn "slat lk #{card.name},#{renderer}, #{format}"
     result = renderer.render :content
     m = result.match(/<(cardlink|link|a) class.*<\/(cardlink|link|a)>/)
     (m.to_s != "") ? m.to_s : result

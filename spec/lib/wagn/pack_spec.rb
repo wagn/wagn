@@ -1,6 +1,6 @@
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
-describe Wagn::Pack do
+describe Wagn::Set::Views do
   context "load_all" do
     it "loads files in the modules directory" do
       pending 'needs further isolation; generates broader dependency issues'
@@ -13,8 +13,8 @@ describe Wagn::Pack do
             end
           EOF
         end
-        Wagn::Pack.dirs << file
-        Wagn::Pack.load_all
+        Wagn::Set::Views.dirs << file
+        Wagn::Set::Views.load_all
         JBob.foo.should == "bar"
       ensure
         `rm #{file}`  #PLATFORM SPECIFIC

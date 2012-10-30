@@ -4,7 +4,7 @@ class Card
   cattr_accessor :count
 end
 
-module Wagn::Set::Type::CardtypeA 
+module Wagn::Set::Type::CardtypeA
   def approve_delete 
     deny_because("not allowed to delete card a")
   end

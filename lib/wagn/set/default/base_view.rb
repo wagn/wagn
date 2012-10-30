@@ -1,4 +1,5 @@
-class Wagn::Renderer
+module Wagn::Set::Default
+ class Wagn::Renderer
   ### ---- Core renders --- Keep these on top for dependencies
 
   # update_references based on _render_refs, which is the same as
@@ -91,4 +92,5 @@ class Wagn::Renderer
   define_view :too_slow, :perms=>:none do |args|
     %{<span class="too-slow">Timed out! #{ showname } took too long to load.</span>}
   end
+ end
 end

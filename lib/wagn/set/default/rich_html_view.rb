@@ -1,4 +1,5 @@
-class Wagn::Renderer::Html
+module Wagn::Set::Default
+ class Wagn::Renderer::Html
   define_view :show do |args|
     @main_view = args[:view] || params[:view] || params[:home_view]
     
@@ -743,5 +744,7 @@ class Wagn::Renderer::Html
    end
   end
 
+ end
 end
+
 

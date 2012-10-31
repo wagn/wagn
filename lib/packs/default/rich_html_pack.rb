@@ -1,6 +1,6 @@
 class Wagn::Renderer::Html
   define_view :show do |args|
-    @main_view = args[:view] || params[:view] || params[:home_view]
+    @main_view = args[:view] || params[:home_view]
     
     if ajax_call?
       self.render( @main_view || :open )

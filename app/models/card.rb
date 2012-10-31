@@ -1,24 +1,21 @@
 # -*- encoding : utf-8 -*-
-
 class Card < ActiveRecord::Base
   require 'card/revision'
   require 'card/reference'
 
-  cattr_accessor :cache
-
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
+  belongs_to :card, :class_name => 'Card', :foreign_key => :creator_id
+  belongs_to :card, :class_name => 'Card', :foreign_key => :updater_id
 
+  cattr_accessor :cache  
   attr_accessor :comment, :comment_author, :selected_rev_id,
     :broken_type, :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
     :cards, :loaded_trunk, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status, #yuck
-    :attachment_id #should build flexible handling for set-specific attributes
       
   attr_writer :update_read_rule_list
   attr_reader :type_args
-  
-  belongs_to :card, :class_name => 'Card', :foreign_key => :creator_id
-  belongs_to :card, :class_name => 'Card', :foreign_key => :updater_id
+
 
   before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
   after_save :base_after_save, :update_ruled_cards, :update_queue, :expire_related

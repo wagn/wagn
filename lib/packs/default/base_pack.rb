@@ -6,6 +6,11 @@ class Wagn::Renderer
   # speeding up the process when there can't be any reference changes
   # (builtins, etc.)
 
+  define_view :show, :perms=>:none  do |args|
+    render( args[:view] || :core )
+  end
+
+
   define_view :raw      do |args|  card ? card.raw_content : _render_blank                          end
   define_view :refs     do |args|  card.respond_to?('references_expired') ? card.raw_content : ''   end
   define_view :core     do |args|  process_content _render_raw                                      end
@@ -14,7 +19,6 @@ class Wagn::Renderer
     # and base renderer doesn't know "content" at this point
   define_view :titled   do |args|  card.name + "\n\n" + _render_core                                end
 
-  define_view :show,     :perms=>:none  do |args|  render( args[:view] || params[:view] || :core )  end    
   define_view :name,     :perms=>:none  do |args|  card.name                                        end
   define_view :key,      :perms=>:none  do |args|  card.key                                         end
   define_view :id,       :perms=>:none  do |args|  card.id                                          end

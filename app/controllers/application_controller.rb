@@ -94,7 +94,7 @@ class ApplicationController < ActionController::Base
 
   def show view = nil, status = 200
     ext = request.parameters[:format]
-    known = FORMATS.split('|').member? ext 
+    known = FORMATS.split('|').member? ext
     
     if !known && @card && @card.error_view
       ext, known = 'txt', true
@@ -104,7 +104,7 @@ class ApplicationController < ActionController::Base
     case
     when known                # renderers can handle it
       renderer = Wagn::Renderer.new @card, :format=>ext, :controller=>self
-      render :text=>renderer.render_show( :view => view ),
+      render :text=>renderer.render_show( :view => view || params[:view] ),
         :status=>(renderer.error_status || status)
     when show_file            # send_file can handle it
     else                      # dunno how to handle it

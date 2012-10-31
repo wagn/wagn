@@ -1,4 +1,5 @@
-class Shellbox
+module Wagn::Set::Type::RubyAndScript
+ class Shellbox
   def run(cmd)
     Dir.chdir( Rails.root + '/public_scripts')
     IO.popen("/usr/bin/env PATH='.' /bin/bash --restricted", "w+") do |p|
@@ -7,9 +8,9 @@ class Shellbox
       p.read
     end
   end
-end
+ end
 
-class Wagn::Renderer
+ class Wagn::Renderer
   define_view :core, :type=>'script' do |args|
     command = process_content( card.content )
     begin
@@ -25,4 +26,5 @@ class Wagn::Renderer
   
   alias_view( :editor, {:type=>'plain_text'},  {:type=>'script'} )
 
+ end
 end

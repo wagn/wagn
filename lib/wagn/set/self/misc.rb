@@ -1,4 +1,5 @@
-class Wagn::Renderer
+module Wagn::Set::Self::Misc
+ class Wagn::Renderer
   define_view :raw, :name=>'now' do |args|
     Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z')
   end
@@ -15,4 +16,5 @@ class Wagn::Renderer
     '<!-- *alerts is deprecated. please remove from layout -->'
   end
   alias_view(:raw, {:name=>'alerts'}, :core)
+ end
 end

@@ -1,4 +1,4 @@
-module Wagn::Set::Default
+module Wagn::Set::Default::Base
  class Wagn::Renderer
   ### ---- Core renders --- Keep these on top for dependencies
 
@@ -9,7 +9,9 @@ module Wagn::Set::Default
 
   define_view :raw      do |args|  card ? card.raw_content : _render_blank                          end
   define_view :refs     do |args|  card.respond_to?('references_expired') ? card.raw_content : ''   end
-  define_view :core     do |args|  process_content _render_raw                                      end
+  define_view :core     do |args|
+    #warn "base core:#{card.name}, #{args.inspect}, #{_render_raw}"
+    process_content _render_raw                                      end
   define_view :content  do |args|  _render_core                                                     end
     # this should be done as an alias, but you can't make an alias with an unknown view, 
     # and base renderer doesn't know "content" at this point

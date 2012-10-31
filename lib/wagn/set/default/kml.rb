@@ -1,6 +1,6 @@
 require 'active_support/builder' unless defined?(Builder)
 
-module Wagn::Set::Default
+module Wagn::Set::Default::Kml
   class Wagn::Renderer::Kml
     define_view :show do |args|
       render(args[:view] || params[:view] || :search)

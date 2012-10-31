@@ -1,4 +1,5 @@
-class Wagn::Renderer
+module Wagn::Set::Right::Permissions
+ class Wagn::Renderer
   define_view :editor, :right=>'create' do |args|
     set_name = card.cardname.trunk_name
     set_card = Card.fetch(set_name)
@@ -66,4 +67,5 @@ class Wagn::Renderer
   def core_inherit_content
     %{<div class="inherit-perm"> (Inherit from left card) </div>}
   end
+ end
 end

@@ -1,6 +1,6 @@
 require 'csv'
 
-module Wagn::Set::Default
+module Wagn::Set::Default::Csv
  class Wagn::Renderer::Csv
   define_view :show do |args|
     if !card.collection?

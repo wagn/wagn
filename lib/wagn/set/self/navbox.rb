@@ -1,4 +1,5 @@
-class Wagn::Renderer::Html
+module Wagn::Set::Self::Navbox
+ class Wagn::Renderer::Html
   define_view :raw, :name=>'navbox' do |args|
     %{ <form action="#{Card.path_setting '/:search'}" method="get" class="navbox-form nodblclick">
       #{hidden_field_tag :view, 'content' }
@@ -6,9 +7,9 @@ class Wagn::Renderer::Html
      </form>}
   end
   alias_view(:raw, {:name=>'navbox'}, :core)
-end
+ end
 
-class Wagn::Renderer::Json < Wagn::Renderer
+ class Wagn::Renderer::Json < Wagn::Renderer
   define_view :complete, :name=>:search do |args|
     term = params['_keyword']
     if term =~ /^\+/ && main = params['main']
@@ -37,4 +38,5 @@ class Wagn::Renderer::Json < Wagn::Renderer
    { :complete=>term, :limit=>8, :sort=>'name', :return=>'name' }
   end
   
+ end
 end

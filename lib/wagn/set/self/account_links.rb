@@ -1,4 +1,5 @@
-class Wagn::Renderer
+module Wagn::Set::Self::AccountLinks
+ class Wagn::Renderer
   define_view :raw, :name=>:account_links do |args|
     #ENGLISH
     prefix = Wagn::Conf[:root_path] + '/account'
@@ -22,4 +23,5 @@ class Wagn::Renderer
       end }
     </span>}
   end
+ end
 end

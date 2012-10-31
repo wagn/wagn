@@ -1,4 +1,4 @@
-module Wagn::Set::Default
+module Wagn::Set::Default::RichHtml
  class Wagn::Renderer::Html
   define_view :show do |args|
     @main_view = args[:view] || params[:view] || params[:home_view]
@@ -50,6 +50,7 @@ module Wagn::Set::Default
   define_view :comment_box, :perms=>lambda { |r| 
         r.card.ok?(:comment) ? :comment_box : :blank
       } do |args|
+        raise "here2"
     %{<div class="comment-box nodblclick"> #{
       card_form :comment do |f|
         %{#{f.text_area :comment, :rows=>3 }<br/> #{

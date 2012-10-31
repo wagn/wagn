@@ -1,4 +1,5 @@
-class Wagn::Renderer::Html
+module Wagn::Set::Right::Rstar
+ class Wagn::Renderer::Html
 
   define_view :closed_rule, :tags=>:unknown_ok do |args|
     rule_card = card.new_card? ? find_current_rule_card[0] : card
@@ -200,4 +201,5 @@ class Wagn::Renderer::Html
     [ rule_card, set_prototype ]
   end
 
+ end
 end

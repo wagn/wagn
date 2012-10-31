@@ -1,4 +1,4 @@
-module Wagn::Set::Default
+module Wagn::Set::Default::Rss
  class Wagn::Renderer::Rss
   define_view :show do |args|
     render(args[:view] || params[:view] || :feed)

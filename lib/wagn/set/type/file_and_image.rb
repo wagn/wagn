@@ -1,46 +1,47 @@
-class Wagn::Renderer
+
+module Wagn::Set::Type::FileAndImage
+ class Wagn::Renderer::Html
+  class Wagn::Renderer
   
-  define_view :core, :type=>'image' do |args|
-    handle_source args do |source|
-      source == 'missing' ? "<!-- image missing #{@card.name} -->" : image_tag(source)
+    define_view :core, :type=>'image' do |args|
+      handle_source args do |source|
+        source == 'missing' ? "<!-- image missing #{@card.name} -->" : image_tag(source)
+      end
     end
-  end
 
-  define_view :core, :type=>'file' do |args|
-    handle_source args do |source|
-      "<a href=\"#{source}\">Download #{card.name}</a>"
+    define_view :core, :type=>'file' do |args|
+      handle_source args do |source|
+        "<a href=\"#{source}\">Download #{card.name}</a>"
+      end
     end
-  end
 
-  define_view :closed_content, :type=>'image' do |args|
-    _render_core :size=>:icon
-  end
+    define_view :closed_content, :type=>'image' do |args|
+      _render_core :size=>:icon
+    end
   
-  define_view :source, :type=>'image' do |args|
-    style = @mode==:closed ? :icon : ( args[:size] || :medium )
-    style = :original if style.to_sym == :full 
-    card.attach.url style
+    define_view :source, :type=>'image' do |args|
+      style = @mode==:closed ? :icon : ( args[:size] || :medium )
+      style = :original if style.to_sym == :full 
+      card.attach.url style
+    end
+
+    define_view :source, :type=>'file' do |args|
+      card.attach.url
+    end
+  
+    private
+  
+    def handle_source args
+      source = _render_source args
+      source ? yield( source ) : ''
+    rescue
+      'File Error'
+    end
+  
   end
 
-  define_view :source, :type=>'file' do |args|
-    card.attach.url
-  end
-  
-  private
-  
-  def handle_source args
-    source = _render_source args
-    source ? yield( source ) : ''
-  rescue
-    'File Error'
-  end
-  
-end
 
 
-
-
-class Wagn::Renderer::Html
   define_view :editor, :type=>'file' do |args|
     #Rails.logger.debug "editor for file #{card.inspect}"
     out = '<div class="choose-file">'
@@ -70,4 +71,5 @@ class Wagn::Renderer::Html
     out << _render_core
     out
   end  
+ end
 end

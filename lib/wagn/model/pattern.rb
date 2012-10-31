@@ -5,9 +5,9 @@ module Wagn::Model
 
     def self.register_class(klass) @@subclasses.unshift klass end
     def self.method_key(opts)
+      #warn "mk #{opts.inspect} #{@@subclasses.inspect}"
       @@subclasses.each do |pclass|
         if !pclass.opt_keys.map(&opts.method(:has_key?)).member? false; 
-          #warn "mk[#{pclass}] #{opts.inspect}"
           return pclass.method_key_from_opts(opts) 
         end
       end
@@ -29,46 +29,43 @@ module Wagn::Model
 
     def reset_patterns
       @rule_cards={}
-      @real_set_names = @set_mods_loaded = @junction_only = @patterns = @set_modules =
-        @method_keys = @set_names = @template = @skip_type_lookup = nil
+      @patterns = @set_modules = @method_keys = @set_names = @template = nil
       true
     end
 
     def patterns()
       @patterns ||= @@subclasses.map { |sub| sub.new(self) }.compact
+      #warn "pats nn:#{@patterns.inspect}"; @patterns
     end
     def patterns_with_new()
-      new_card? ? patterns_without_new()[1..-1] : patterns_without_new()
+      #warn "pats #{@@subclasses.inspect}, #{@patterns.inspect}, nc:#{new_card?}"
+      np = (new_card? ? patterns_without_new()[1..-1] : patterns_without_new())
+      #warn "pats R:#{np.inspect}"; np
     end
     alias_method_chain :patterns, :new
 
-    def real_set_names
-      set_names.find_all &Card.method(:exists?)
-    end
+    def real_set_names() set_names.find_all &Card.method(:exists?)                              end
     def safe_keys()      patterns.map(&:safe_key).reverse*" "                                   end
     def set_modules()    @set_modules ||= patterns_without_new.reverse.map(&:set_const).compact end
     def set_names()
       Card.set_members(@set_names = patterns.map(&:to_s), key) if @set_names.nil?
-      #warn "sn #{@set_names.inspect}"
       @set_names
     end
-    def method_keys()
-      rr =
-      @method_keys ||= patterns.map(&:get_method_key).compact
-      #warn "mks[#{patterns.inspect}] #{rr.inspect}"; rr
-    end
+    def method_keys()    @method_keys ||= patterns.map(&:get_method_key).compact                end
   end
 
   class BasePattern
-    include AllSets
 
     @@ruby19 = !!(RUBY_VERSION =~ /^1\.9/)
     @@setmodroot = Wagn::Set
 
+
     class << self
+
+      attr_accessor :key, :key_id, :opt_keys, :junction_only, :method_key
+
       def find_module mod
         set, name = *(mod.split('::'))
-        #warn "find_mod #{set}, #{name}, #{@@ruby19}"
         return nil unless name
         setm = find_real_module(@@setmodroot, set) or return nil
         find_real_module(setm, name)
@@ -87,24 +84,26 @@ module Wagn::Model
         raise e
       end
 
-      def trunk_name(card)  ''                                     end
-      def junction_only?()  !!self.junction_only                   end
-      def trunkless?()      !!self.method_key                      end # method key determined by class only when no trunk involved
-      def new(card)         super(card) if pattern_applies?(card)  end
+      def trunk_name(card)  ''               end
+      def junction_only?()  !!junction_only  end
+      def trunkless?()      !!method_key     end # method key determined by class only when no trunk involved
+      def new(card)
+        c=nil
+        c=super(card) if p=pattern_applies?(card)
+        #warn "pat new[#{self}] (#{card.inspect}) #{c.inspect}, #{p.inspect}"; c
+      end
       def key_name()
         @key_name ||= (cn=Wagn::Codename[self.key] and c=Card[cn] and c.name)
       end
 
       def register key, opt_keys, opts={}
         Wagn::Model::Pattern.register_class self
-        #@@pattern_class.register_class self
-        cattr_accessor :key, :key_id, :opt_keys, :junction_only, :method_key
-        #warn "reg K#{key.inspect},:[#{self.key}] OK:[#{opt_keys.inspect}]"
+        #warn "reg K#{key.inspect},:[#{self.key}] opts: #{opts.inspect} OK:[#{opt_keys.inspect}]"
         self.key = key
         self.key_id = (key == 'self') ? 0 : Wagn::Codename[key]
         self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]
-        opts.each { |key, val| self.send "#{key}=", val }
-        #warn "reg K:#{self}[#{self.key}] OK:[#{opt_keys.inspect}] jo:#{junction_only.inspect}, mk:#{method_key.inspect}"
+        opts.each { |key, val| send "#{key}=", val }
+        #warn "reg K:#{self}[#{key}] OK:[#{opt_keys.inspect}] jo:#{junction_only.inspect}, mk:#{method_key.inspect}"
       end
       
       def method_key_from_opts opts            
@@ -112,7 +111,7 @@ module Wagn::Model
           parts = opt_keys.map do |opt_key|
             opts[opt_key].to_s.gsub('+', '-')
           end << key
-          parts.join '_'
+          parts * '_'
         end
       end
       
@@ -128,33 +127,26 @@ module Wagn::Model
     
     def set_module
       case 
-      when  self.class.trunkless?    ; key.camelize
+      when  self.class.trunkless?    ; self.class.key.camelize
       when  opt_vals.member?( nil )  ; nil
-      else  self.key.camelize + '::' + ( opt_vals.join('_').camelize )
+      else  "#{self.class.key}/#{opt_vals * '_'}".camelize
       end
     end
 
     def set_const
-      (sm = set_module) ? BasePattern.find_module(sm) : nil
+      (sm = set_module) ? self.class.find_module(sm) : nil
     end
     
     def get_method_key()
-      #warn "gmk #{self}"
       tkls_key = self.class.method_key
-      #warn "tkls #{self.class.key}, #{self.class.key_id}, [#{@trunk_name}] #{tkls_key.inspect}" if tkls_key
       return tkls_key if tkls_key
-      #warn "gmkey #{self.class.method_key.inspect}" if self.class.trunkless?
       return self.class.method_key if self.class.trunkless?
       opts = {}
-      ov = opt_vals
-      #warn "gmkey [#{@trunk_name.inspect}] ov:#{ov.inspect}, ok:#{opt_keys.inspect}"
-      opt_keys.each_with_index do |key, index|
-        #warn "nil #{index}, bool:#{!!opt_vals[index]}, #{opt_vals.inspect}" unless opt_vals[index]
+      self.class.opt_keys.each_with_index do |key, index|
         return nil unless opt_vals[index]
         opts[key] = opt_vals[index]
       end
-      r=self.class.method_key_from_opts opts
-      #warn "gmkey[#{@trunk_name}] #{opt_keys.inspect}, #{opts.inspect}, R:#{r}";r
+      self.class.method_key_from_opts opts
     end
     
     def inspect()       "<#{self.class} #{to_s.to_cardname.inspect}>" end
@@ -182,6 +174,7 @@ module Wagn::Model
       caps_part = self.class.key.gsub(' ','_').upcase
       self.class.trunkless? ? caps_part : "#{caps_part}-#{@trunk_name.safe_key}"
     end
+
   end
 
   class AllPattern < BasePattern
@@ -252,5 +245,9 @@ module Wagn::Model
     def self.label(name)              %{The card "#{name}"}      end
     def self.prototype_args(base)     { :name=>base }            end
     def self.trunk_name(card)         card.name                  end
+  end
+
+  class BasePattern
+    include AllSets
   end
 end

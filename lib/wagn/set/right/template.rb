@@ -1,4 +1,5 @@
-class Wagn::Renderer 
+module Wagn::Set::Right::Template
+ class Wagn::Renderer 
   define_view  :core, :right=>'content' do |args|
     self._render_raw
     #with_inclusion_mode :template do
@@ -23,4 +24,5 @@ class Wagn::Renderer
     end
     
   end
+ end
 end

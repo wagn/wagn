@@ -1,4 +1,5 @@
-class Wagn::Renderer
+module Wagn::Set::Self::HeadAndFoot
+ class Wagn::Renderer
   define_view :raw, :name=>'head' do |args|
     #rcard = card  # should probably be more explicit that this is really the *main* card.
     
@@ -79,5 +80,5 @@ class Wagn::Renderer
     '<!-- *foot is deprecated. please remove from layout -->'
   end
   alias_view(:raw, {:name=>'foot'}, :core)
-
+ end
 end

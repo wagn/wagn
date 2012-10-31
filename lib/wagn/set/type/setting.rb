@@ -1,5 +1,6 @@
 require 'json'
-class Wagn::Renderer
+module Wagn::Set::Type::Setting
+ class Wagn::Renderer
   define_view :core, :type=>'setting' do |args|
     _render_closed_content(args) +
     
@@ -23,4 +24,5 @@ class Wagn::Renderer
   define_view :closed_content, :type=>'setting' do |args|
    %{<div class="instruction">#{process_content "{{+*right+*edit help}}"}</div>}
   end
+ end
 end

@@ -1199,6 +1199,30 @@ cards_050:
   type_id: 278
   created_by: 1
   updated_by: 4
+cards_051: 
+  id: 83
+  name: "*sidebar+*self+*edit help"
+  key: "*sidebar+*self+*edit_help"
+  codename: 
+  typecode: Basic
+  trunk_id: 315
+  tag_id: 82
+  current_revision_id: 5936
+  created_at: 2012-09-19 15:02:27 Z
+  updated_at: 2011-07-22 09:59:39 Z
+  creator_id: 1
+  updater_id: 1
+  extension_id: 
+  extension_type: 
+  indexed_name: "'edit':3 'help':4 'self':2 'sidebar':1"
+  indexed_content: "'/wagn/sidebar|learn':13 'appear':7 'content':5 'custom':16 'edit':3A 'help':4A 'self':2A 'sidebar':1A,10,18 'www.wagn.org':12 'www.wagn.org/wagn/sidebar':11"
+  read_rule_class: "*all plus"
+  read_rule_id: 559
+  references_expired: 
+  trash: 0
+  type_id: 3
+  created_by: 1
+  updated_by: 3
 cards_052: 
   id: 85
   name: Menu
@@ -4199,6 +4223,30 @@ cards_176:
   type_id: 569
   created_by: 4
   updated_by: 1
+cards_177: 
+  id: 315
+  name: "*sidebar+*self"
+  key: "*sidebar+*self"
+  codename: 
+  typecode: Set
+  trunk_id: 81
+  tag_id: 264
+  current_revision_id: 3177
+  created_at: 2012-09-19 15:02:27 Z
+  updated_at: 2009-12-22 08:05:08 Z
+  creator_id: 1
+  updater_id: 1
+  extension_id: 
+  extension_type: 
+  indexed_name: "'self':2 'sidebar':1"
+  indexed_content: "'name':3 'self':2A,4 'sidebar':1A"
+  read_rule_class: "*all plus"
+  read_rule_id: 559
+  references_expired: 
+  trash: 0
+  type_id: 259
+  created_by: 4
+  updated_by: 4
 cards_178: 
   id: 316
   name: "*layout+*right+*options"
@@ -8946,6 +8994,30 @@ cards_375:
   indexed_content: "'account':1A 'anyon':5 'link':2A 'read':4A 'self':3A"
   read_rule_class: "*all plus"
   read_rule_id: 558
+  references_expired: 
+  trash: 0
+  type_id: 47
+  created_by: 4
+  updated_by: 4
+cards_376: 
+  id: 559
+  name: "*sidebar+*self+*read"
+  key: "*sidebar+*self+*read"
+  codename: 
+  typecode: Pointer
+  trunk_id: 315
+  tag_id: 479
+  current_revision_id: 5962
+  created_at: 2012-09-19 15:02:27 Z
+  updated_at: 2011-08-25 09:25:30 Z
+  creator_id: 1
+  updater_id: 1
+  extension_id: 
+  extension_type: 
+  indexed_name: "'read':3 'self':2 'sidebar':1"
+  indexed_content: "'anyon':4 'read':3A 'self':2A 'sidebar':1A"
+  read_rule_class: "*all plus"
+  read_rule_id: 559
   references_expired: 
   trash: 0
   type_id: 47

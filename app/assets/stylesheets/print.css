@@ -31,25 +31,25 @@ body, p, ol, ul, td, th {
   font-weight: normal;
   line-height: 21px;
 }
-p { 
-  margin: 0px; 
-}     
-a {
-	color: #484;   
+p {
+  margin: 0px;
 }
-a:link, 
-a:visited { 
+a {
+	color: #484;
+}
+a:link,
+a:visited {
 	text-decoration: none;
 }
-a:hover, 
+a:hover,
 a:focus {
   text-decoration: underline;
 }
 h1 {
-  font-size: 15px; 
+  font-size: 15px;
 }
 h2 {
-  font-size: 13px; 
+  font-size: 13px;
 }
 h1, h2 {
   color:#644;

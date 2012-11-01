@@ -1,6 +1,8 @@
 
 module Wagn::Set::Type::Toggle
-  class Wagn::Renderer
+  class Wagn::Views
+    format :base
+
     define_view :core, :type=>'toggle' do |args|
       case card.raw_content.to_i
         when 1; 'yes'

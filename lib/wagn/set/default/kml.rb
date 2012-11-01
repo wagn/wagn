@@ -1,7 +1,8 @@
 require 'active_support/builder' unless defined?(Builder)
 
 module Wagn::Set::Default::Kml
-  class Wagn::Renderer::Kml
+  class Wagn::Views
+    format :kml
     define_view :show do |args|
       render(args[:view] || params[:view] || :search)
     end
@@ -9,10 +10,10 @@ module Wagn::Set::Default::Kml
     define_view :search do |args|
       xml = Builder::XmlMarkup.new
       xml.instruct! :xml, :version => "1.0"
-    
+
       xml.kml do
         xml.Document do
-        
+
           cardnames = Session.as_bot do
             # Note: we use wagn_bot to find all the applicable cards, but not for the geocode or description cards
             # This is a workaround so that folks can have maps so long as their geocode cards are publicly viewable.

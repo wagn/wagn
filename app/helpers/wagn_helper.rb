@@ -8,10 +8,10 @@ module WagnHelper
 
   def slot() Wagn::Renderer.current_slot end
   def card() @card ||= slot.card end
-    
+
   def params()
     if controller
-      controller.params 
+      controller.params
     else
       slot and slot.params
     end
@@ -22,7 +22,7 @@ module WagnHelper
     nil_given = card.nil?
     card ||= @card
 
-    slot = 
+    slot =
       if current = Wagn::Renderer.current_slot
         nil_given ? current : current.subrenderer(card)
       else
@@ -68,7 +68,7 @@ module WagnHelper
 
   def wrap_slot(renderer=nil, args={}, &block)
     renderer ||= (Wagn::Renderer.current_slot || get_slot)
-    content = with_output_buffer { yield(renderer) } 
+    content = with_output_buffer { yield(renderer) }
     renderer.wrap(:open, args) { content }
   end
   # ------------( helpers ) --------------

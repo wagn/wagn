@@ -5,7 +5,7 @@ class Session
     def user_id
       @@user_id ||= Card::AnonID
     end
-  
+
     def user_card
       if @@user_card && @@user_card.id == user_id
         @@user_card
@@ -13,7 +13,7 @@ class Session
         @@user_card = Card[user_id]
       end
     end
-  
+
     def user
       if @@user && @@user.card_id == user_id
         @@user
@@ -24,7 +24,7 @@ class Session
 
     def user= user
       @@user = @@user_card = @@as_id = @@as_card = nil
-      @@user_id = get_user_id user      
+      @@user_id = get_user_id user
     end
 
     def get_user_id user
@@ -67,7 +67,7 @@ class Session
     def as_id
       @@as_id || user_id
     end
-    
+
     def as_card
       if @@as_card and @@as_card.id == as_id
         @@as_card
@@ -102,7 +102,7 @@ class Session
       always[usr_id]
     end
     # PERMISSIONS
-  
+
 
   protected
     # FIXME stick this in session? cache it somehow??

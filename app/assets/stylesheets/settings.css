@@ -18,12 +18,12 @@
 .set-rules td.rule-cell {
   text-align: left;
   border-bottom: 1px solid #eee;
-  padding: 2px 5px;  
+  padding: 2px 5px;
 }
 .rule-setting {
   font-weight: bold;
 }
-td.rule-setting { 
+td.rule-setting {
   width: 30%;
 }
 .rule-type {
@@ -62,7 +62,7 @@ td.missing-rule {
   float: left;
   width: 25%;
 }
-.rule-column-2 { 
+.rule-column-2 {
   float: right;
   width: 70%;
   border: 1px solid #eee;

@@ -104,24 +104,24 @@ describe Wagn::Model::Pattern do
   end
 end
 
-describe Wagn::Model::RightPattern do
+describe Wagn::Model::Patterns::RightPattern do
   it_generates :name => "author+*right", :from => Card.new( :name => "Iliad+author" )
   it_generates :name => "author+*right", :from => Card.new( :name => "+author" )
 end
                               
-describe Wagn::Model::TypePattern do
+describe Wagn::Model::Patterns::TypePattern do
   it_generates :name => "Book+*type", :from => Card.new( :type => "Book" )
 end
 
-describe Wagn::Model::AllPlusPattern do
+describe Wagn::Model::Patterns::AllPlusPattern do
   it_generates :name => "*all plus", :from => Card.new( :name => "Book+author" )
 end
   
 
-describe Wagn::Model::AllPattern do
+describe Wagn::Model::Patterns::AllPattern do
   it_generates :name => "*all", :from => Card.new( :type => "Book" )
 end
 
-describe Wagn::Model::LeftTypeRightNamePattern do
+describe Wagn::Model::Patterns::LeftTypeRightNamePattern do
   it_generates :name => "Book+author+*type plus right", :from => Card.new( :name=>"Iliad+author" )
 end

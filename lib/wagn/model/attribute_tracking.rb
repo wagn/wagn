@@ -1,27 +1,27 @@
 module Wagn::Model::AttributeTracking
   class Updates
     include Enumerable
-    
+
     def initialize(base)
       @base, @updates, @orig = base, {}, {}
     end
-    
-    def add(attribute, new_value) 
+
+    def add(attribute, new_value)
       @updates[attribute.to_s] = new_value
     end
-    
+
     def keys
       @updates.keys
     end
-         
+
     def each
-      @updates.each { |attr| yield attr }        
+      @updates.each { |attr| yield attr }
     end
-    
+
     def each_pair
-      @updates.each_pair { |attr,value| yield attr, value }        
+      @updates.each_pair { |attr,value| yield attr, value }
     end
-    
+
     def clear(*attr_names)
       if attr_names.empty?
         @updates = {}
@@ -33,14 +33,14 @@ module Wagn::Model::AttributeTracking
     def for?(attr)
       @updates.has_key?(attr.to_s)
     end
-     
+
     def for(attr)
       @updates[attr.to_s]
     end
     alias :[] :for
   end
-  
-  module ClassMethods 
+
+  module ClassMethods
     # Important! Tracking should be declared *after* associations
     def tracks(*fields)
       #Rails.logger.debug "tracks(#{fields.inspect})"
@@ -50,17 +50,17 @@ module Wagn::Model::AttributeTracking
         end
       end
 
-      fields.each do |field|   
+      fields.each do |field|
         unless self.method_defined? field
           dbg='' #dbg = (field == 'name') ? %{Rails.logger.debug "get #{field} "+r.to_s; r;} :  ''
           access = "read_attribute('#{field}')"
-          if cache_attribute?(field.to_s) 
+          if cache_attribute?(field.to_s)
             access = "@attributes_cache['#{field}'] ||= #{access}"
           end
           #warn "def tracking #{field}; r=(#{access};) #{dbg} end"
           class_eval "def #{field}; r=(#{access};) #{dbg} end"
         end
-        
+
         unless self.method_defined? "#{field}="
           class_eval code=%{
             def #{field}=(value)
@@ -72,7 +72,7 @@ module Wagn::Model::AttributeTracking
 
              #Rails.logger.debug "#{field}= "+val.to_s
           #def #{field}_before_type_cast() #{field} end
-          
+
         class_eval (code = %{
           def #{field}_with_tracking=(val)
              return if (!self.new_record? && self.#{field} == val)
@@ -88,10 +88,10 @@ module Wagn::Model::AttributeTracking
             #Rails.logger.debug('#{field} is ' + r.to_s); r
         #warn code
       end
-      
+
     end
   end
-  
+
   def self.included(base)
     super
     base.extend(ClassMethods)

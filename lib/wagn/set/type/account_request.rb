@@ -1,6 +1,8 @@
 
 module Wagn::Set::Type::AccountRequest
-  class Wagn::Renderer
+  class Wagn::Views
+    format :base
+
     define_view :core, :type=>:account_request do |args|
       links = []
       #ENGLISH
@@ -10,9 +12,9 @@ module Wagn::Set::Type::AccountRequest
       if Session.logged_in? && card.ok?(:delete)
         links << link_to( "Deny #{card.name}", path(:delete), :class=>'slotter standard-delete', :remote=>true )
       end
-    
-      process_content(_render_raw) + 
-      if (card.new_card?); '' else 
+
+      process_content(_render_raw) +
+      if (card.new_card?); '' else
         %{<div class="invite-links help instruction">
             <div><strong>#{card.name}</strong> requested an account on #{format_date(card.created_at) }</div>
             #{%{<div>#{links.join('')}</div> } unless links.empty? }
@@ -21,17 +23,19 @@ module Wagn::Set::Type::AccountRequest
     end
   end
 
-  def before_destroy
-    block_user
-  end
+  module Model
+    def before_destroy
+      block_user
+    end
 
-  private
- 
-  def block_user
-    account = User.where(:card_id=>self.id).first
-    if account
-      account.update_attributes :status=>'blocked'
+    private
+
+    def block_user
+      account = User.where(:card_id=>self.id).first
+      if account
+        account.update_attributes :status=>'blocked'
+      end
     end
   end
-  
+
 end

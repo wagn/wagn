@@ -1,28 +1,30 @@
 module Wagn::Set::Right::Account
-  class Wagn::Renderer::Html
+  class Wagn::Views
+    format :html
+
     # from app/view/card/_declare.rhtml
     define_view(:account_form, :right=>'account') do |args|
     end
-  
+
     define_view(:account) do |args|
       #tcard = @card.trait_card(:sol)
       tcard = @card.trait_card(:account)
       raise "No card" unless tcard
-  
+
       wrap( args ) do
         %{#{#slot.header  I don't understand why this doesn't work here?
         }<style>.SELF-#{tcard.safe_key
         } .account-area .title-#{
           tcard.cardname.safe_key
         } { display: none; }</style>} +
-  
+
         div( :id=>id('card-body'), :class=>'card-body') do
           Rails.logger.debug "render account sub #{tcard&&tcard.name}"
           self.subrenderer(tcard).render(:account_form)
         end + notice
       end
     end
-  
+
     # Traits can have submenus: This is the links for differet form selections
     def trait_submenu(menu_name, on)
       menu_name = menu_name.to_s
@@ -35,7 +37,7 @@ module Wagn::Set::Right::Account
         end
       end
     end
-  
+
     def trait_forms(action)
     end
     def trait_form(action)
@@ -50,15 +52,6 @@ module Wagn::Set::Right::Account
         "No form card #{@state} #{card&&card.name}"
       end
     end
-  end
-
-  def self.included(base)
-    super
-#    base.register_trait('*account', :account)
-#    Rails.logger.debug "including +*account #{base}"
-
-#    base.class_eval { attr_accessor :attribute }
-#    base.send :before_save, :save_account
   end
 
 end

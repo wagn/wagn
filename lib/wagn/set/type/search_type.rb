@@ -1,6 +1,8 @@
 
 module Wagn::Set::Type::SearchType
-  class Wagn::Renderer
+  class Wagn::Views
+    format :base
+
     define_view :core, :type=>:search_type do |args|
       error=nil
       results = begin
@@ -19,10 +21,10 @@ module Wagn::Set::Type::SearchType
         _render_card_list args.merge( :results=>results )
       end
     end
-  
+
     define_view :card_list, :type=>:search_type do |args|
       @item_view ||= card.spec[:view] || :name
-    
+
       if args[:results].empty?
         'no results'
       else
@@ -31,10 +33,12 @@ module Wagn::Set::Type::SearchType
         end.join "\n"
       end
     end
-  
+
   end
 
-  class Wagn::Renderer::Html  
+  class Wagn::Views
+    format :html
+
     define_view :editor, :type=>:search_type do |args|
       form.text_area :content, :rows=>10
     end
@@ -66,7 +70,7 @@ module Wagn::Set::Type::SearchType
     define_view :card_list, :type=>:search_type do |args|
       @item_view ||= (card.spec[:view]) || :closed
       @item_size ||= (card.spec[:size]) || nil
-    
+
       paging = _optional_render :paging, args
 
       _render_search_header +
@@ -86,7 +90,7 @@ module Wagn::Set::Type::SearchType
         }
       end
     end
-  
+
     define_view :search_header do |args|
       ''
     end
@@ -113,14 +117,14 @@ module Wagn::Set::Type::SearchType
       end
 
       paging = _optional_render :paging, args
-    
+
 %{<h1 class="page-header">Recent Changes</h1>
 <div class="open-view recent-changes">
   <div class="open-content">
     #{ paging }
   } +
-      cards_by_day.keys.sort.reverse.map do |day| 
-      
+      cards_by_day.keys.sort.reverse.map do |day|
+
 %{  <h2>#{format_date(day, include_time = false) }</h2>
     <div class="search-result-list">} +
          cards_by_day[day].map do |card| %{
@@ -129,7 +133,7 @@ module Wagn::Set::Type::SearchType
       </div>}
          end.join(' ') + %{
     </div>
-    } end.join("\n") + %{    
+    } end.join("\n") + %{
       #{ paging }
   </div>
 </div>
@@ -142,17 +146,17 @@ module Wagn::Set::Type::SearchType
       s = card.spec search_params
       offset, limit = s[:offset].to_i, s[:limit].to_i
       return '' if limit < 1
-      return '' if offset==0 && limit > offset + args[:results].length #avoid query if we know there aren't enough results to warrant paging 
+      return '' if offset==0 && limit > offset + args[:results].length #avoid query if we know there aren't enough results to warrant paging
       total = card.count search_params
       return '' if limit >= total # should only happen if limit exactly equals the total
- 
+
       @paging_path_args = { :limit => limit, :item  => ( @item_view || args[:item] ) }
       @paging_limit = limit
-    
+
       s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }
 
       out = ['<span class="paging">' ]
-    
+
       total_pages  = ((total-1) / limit).to_i
       current_page = ( offset   / limit).to_i # should already be integer
       window = 2 # should be configurable
@@ -167,28 +171,28 @@ module Wagn::Set::Type::SearchType
       if window_min > 0
         out << page_link( 1, 0 )
         out << '...' if window_min > 1
-      end    
-    
+      end
+
       (window_min .. window_max).each do |page|
         next if page < 0 or page > total_pages
         text = page + 1
         out <<  ( page==current_page ? text : page_link( text, page ) )
       end
-    
+
       if total_pages > window_max
         out << '...' if total_pages > window_max + 1
         out << page_link( total_pages + 1, total_pages )
-      end    
+      end
       out << %{</span>}
-    
+
       if current_page < total_pages
         out << page_link( 'next &raquo;', current_page + 1 )
       end
-    
+
       out << %{<span class="search-count">(#{total})</span></span>}
       out.join
     end
-  
+
     def page_link text, page
       @paging_path_args[:offset] = page * @paging_limit
       " #{link_to raw(text), path(:read, @paging_path_args), :class=>'card-paging-link slotter', :remote => true} "
@@ -213,52 +217,54 @@ module Wagn::Set::Type::SearchType
     end
   end
 
-  def collection?
-    true
-  end
-
-  def item_cards params={}
-    s = spec(params)
-    raise("OH NO.. no limit") unless s[:limit]
-    # forces explicit limiting
-    # can be 0 or less to force no limit
-    #Rails.logger.debug "search item_cards #{params.inspect}"
-    Card.search( s )
-  end
-
-  def item_names params={}
-    ## FIXME - this should just alter the spec to have it return name rather than instantiating all the cards!!  
-    ## (but need to handle prepend/append)
-    #Rails.logger.debug "search item_names #{params.inspect}"
-    Card.search(spec(params)).map(&:cardname)
-  end
-
-  def item_type
-    spec[:type]
-  end
-
-  def count params={}
-    Card.count_by_wql spec( params )
-  end
-
-  def spec params={}
-    @spec ||= {}
-    @spec[params.to_s] ||= get_spec(params.clone)
-  end
-
-  def get_spec params={}
-    spec = Session.as_bot do ## why is this a wagn_bot thing?  can't deny search content??
-      spec_content = params.delete(:spec) || raw_content
-      #warn "get_spec #{name}, #{spec_content}, #{params.inspect}"
-      raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
-      JSON.parse( spec_content )
+  module Model
+    def collection?
+      true
     end
-    spec.symbolize_keys!.merge! params.symbolize_keys
-    if default_limit = spec.delete(:default_limit) and !spec[:limit]
-      spec[:limit] = default_limit
+
+    def item_cards params={}
+      s = spec(params)
+      raise("OH NO.. no limit") unless s[:limit]
+      # forces explicit limiting
+      # can be 0 or less to force no limit
+      #Rails.logger.debug "search item_cards #{params.inspect}"
+      Card.search( s )
     end
-    spec[:context] ||= (cardname.junction? ? cardname.left_name : cardname)
-    spec
+
+    def item_names params={}
+      ## FIXME - this should just alter the spec to have it return name rather than instantiating all the cards!!
+      ## (but need to handle prepend/append)
+      #Rails.logger.debug "search item_names #{params.inspect}"
+      Card.search(spec(params)).map(&:cardname)
+    end
+
+    def item_type
+      spec[:type]
+    end
+
+    def count params={}
+      Card.count_by_wql spec( params )
+    end
+
+    def spec params={}
+      @spec ||= {}
+      @spec[params.to_s] ||= get_spec(params.clone)
+    end
+
+    def get_spec params={}
+      spec = Session.as_bot do ## why is this a wagn_bot thing?  can't deny search content??
+        spec_content = params.delete(:spec) || raw_content
+        #warn "get_spec #{name}, #{spec_content}, #{params.inspect}"
+        raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
+        JSON.parse( spec_content )
+      end
+      spec.symbolize_keys!.merge! params.symbolize_keys
+      if default_limit = spec.delete(:default_limit) and !spec[:limit]
+        spec[:limit] = default_limit
+      end
+      spec[:context] ||= (cardname.junction? ? cardname.left_name : cardname)
+      spec
+    end
   end
 
 end

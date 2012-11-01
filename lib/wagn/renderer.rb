@@ -7,14 +7,13 @@ module Wagn
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     DEFAULT_ITEM_VIEW = :link  # should be set in card?
-   
+
     RENDERERS = { #should be defined in renderer
-      :html => :Html,
+      :email => :EmailHtml,
       :css  => :Text,
-      :xml => :Xml,
       :txt  => :Text
     }
-    
+
     cattr_accessor :current_slot, :ajax_call
 
     @@max_char_count = 200 #should come from Wagn::Conf
@@ -25,109 +24,22 @@ module Wagn
     @@view_tags      = {}
 
     class << self
+      def get_renderer fmt
+        (RENDERERS.has_key?(fmt) ? RENDERERS[fmt] : fmt.to_s.camelize).to_sym
+      end
+
       def new card, opts={}
         if self==Renderer
           fmt = opts[:format] = (opts[:format] ? opts[:format].to_sym : :html)
-          renderer = (RENDERERS.has_key?(fmt) ? RENDERERS[fmt] : fmt.to_s.camelize).to_sym
+          renderer = get_renderer fmt
           if Renderer.const_defined?(renderer)
-            return Renderer.const_get(renderer).new(card, opts) 
+            return Renderer.const_get(renderer).new(card, opts)
           end
         end
         new_renderer = self.allocate
         new_renderer.send :initialize, card, opts
         new_renderer
       end
-  
-    # View definitions
-    #
-    #   When you declare:
-    #     define_view :view_name, "<set>" do |args|
-    #
-    #   Methods are defined on the renderer
-    #
-    #   The external api with checks:
-    #     render(:viewname, args)
-    #
-    #   Roughly equivalent to:
-    #     render_viewname(args)
-    #
-    #   The internal call that skips the checks:
-    #     _render_viewname(args)
-    # 
-    #   Each of the above ultimately calls:
-    #     _final(_set_key)_viewname(args)
-
-
-      def define_view view, opts={}, &final
-        @@perms[view]       = opts.delete(:perms)      if opts[:perms]
-        @@error_codes[view] = opts.delete(:error_code) if opts[:error_code]
-        if opts[:tags]
-          [opts[:tags]].flatten.each do |tag| 
-            @@view_tags[view] ||= {}
-            @@view_tags[view][tag] = true
-          end
-        end
-        
-        view_key = get_view_key(view, opts)
-        define_method "_final_#{view_key}", &final
-        #warn "defining method _final_#{view_key}"
-        @@subset_views[view] = true if !opts.empty?
-
-        if !method_defined? "render_#{view}"
-          #warn "defining method render_#{view}"
-          define_method( "_render_#{view}" ) do |*a|
-            a = [{}] if a.empty?
-            if final_method = view_method(view)
-              with_inclusion_mode view do
-                send final_method, *a
-              end
-            else
-              raise "<strong>unsupported view: <em>#{view}</em></strong>"
-            end
-          end
-
-          define_method( "render_#{view}" ) do |*a|
-            begin
-              #warn "r #{view} #{a.inspect}, #{ok_view view, *a}"
-              send( "_render_#{ ok_view view, *a }", *a )
-            rescue Exception=>e
-              controller.send :notify_airbrake, e if Airbrake.configuration.api_key
-              Rails.logger.info "\nRender Error: #{e.class} : #{e.message}"
-              Rails.logger.debug "  #{e.backtrace*"\n  "}"
-              rendering_error e, (card && card.name.present? ? card.name : 'unknown card')
-            end
-          end
-        end
-      end
-
-      def alias_view view, opts={}, *aliases
-        view_key = get_view_key(view, opts)
-        @@subset_views[view] = true if !opts.empty?
-        aliases.each do |aview|
-          aview_key = case aview
-            when String; aview
-            when Symbol; (view_key==view ? aview.to_sym : view_key.to_s.sub(/_#{view}$/, "_#{aview}").to_sym)
-            when Hash;   get_view_key( aview[:view] || view, aview)
-            else; raise "Bad view #{aview.inspect}"
-            end
-
-          #warn "def final_alias #{aview_key}, #{view_key}"
-          define_method( "_final_#{aview_key}".to_sym ) do |*a|
-            send("_final_#{view_key}", *a)
-          end
-        end
-      end
-      
-      private
-      
-      def get_view_key view, opts
-        unless pkey = Wagn::Model::Pattern.method_key(opts) 
-          raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
-        end
-        key = pkey.blank? ? view : "#{pkey}_#{view}"
-        key.to_sym
-      end
-      
     end
 
 
@@ -143,11 +55,11 @@ module Wagn
         "<strong>unknown view: <em>#{view}</em></strong>"
       end
     end
-    
+
     def _render view, args={}
       args[:allowed] = true
       render view, args
-    end 
+    end
 
     #should also be a #optional_render that checks perms
     def _optional_render view, args, default_hidden=false
@@ -160,17 +72,17 @@ module Wagn
     def rendering_error exception, cardname
       "Error rendering: #{cardname}"
     end
-  
+
     def initialize card, opts={}
       Renderer.current_slot ||= self unless(opts[:not_current])
       @card = card
       opts.each { |key, value| instance_variable_set "@#{key}", value }
-  
+
       @context_names = []
       @format ||= :html
       @char_count = @depth = 0
       @root = self
-      
+
       if card && card.collection? && params[:item] && !params[:item].blank?
         @item_view = params[:item]
       end
@@ -188,9 +100,9 @@ module Wagn
         @depth == 0 && params[:is_main]
       else
         @depth == 1 && @mode == :main
-      end                            
+      end
     end
-    
+
     def focal? # meaning the current card is the requested card
       if ajax_call?
         @depth == 0
@@ -198,7 +110,7 @@ module Wagn
         main?
       end
     end
-      
+
     def template
       @template ||= begin
         c = controller
@@ -210,16 +122,17 @@ module Wagn
 
     def method_missing method_id, *args, &proc
       proc = proc {|*a| raw yield *a } if proc
+      #warn "mmiss #{self.class}, #{card.name}, #{method_id}"
       response = template.send method_id, *args, &proc
       String===response ? template.raw( response ) : response
     end
-  
+
     def subrenderer subcard, opts={}
       subcard = Card.fetch_or_new(subcard) if String===subcard
       sub = self.clone
       sub.initialize_subrenderer subcard, self, opts
     end
-    
+
     def initialize_subrenderer subcard, parent, opts
       @parent=parent
       @card = subcard
@@ -229,31 +142,31 @@ module Wagn
       opts.each { |key, value| instance_variable_set "@#{key}", value }
       self
     end
-    
-    
+
+
     def process_content content=nil, opts={}
       return content unless card
       content = card.content if content.blank?
-  
+
       wiki_content = WikiContent.new(card, content, self)
       update_references( wiki_content, true ) if card.references_expired
-  
+
       wiki_content.render! do |opts|
         expand_inclusion(opts) { yield }
       end
     end
-  
-  
+
+
     def tagged view, tag
       @@view_tags[view] && @@view_tags[view][tag]
     end
-  
+
     def ok_view view, args={}
       original_view = view
-      
+
       view = case
         when @depth >= @@max_depth   ; :too_deep
-        # prevent recursion.  @depth tracks subrenderers (view within views)  
+        # prevent recursion.  @depth tracks subrenderers (view within views)
         when @@perms[view] == :none  ; view
         # This may currently be overloaded.  always allowed = skip moodes = never modified.  not sure that's right.
         when !card                   ; :no_card
@@ -264,10 +177,10 @@ module Wagn
           if focal?
             if @format==:html && card.ok?(:create) ;  :new
             else                                   ;  :not_found
-            end                                     
+            end
           else                                     ;  :missing
           end
-                
+
         # CHECK PERMISSIONS  ~~~~~~~~~~~~~~~~
         else
           perms_required = @@perms[view] || :read
@@ -281,24 +194,25 @@ module Wagn
             args[:denied_task] ? :denial : view
           end
         end
-      
-      
+
+
       if view != original_view
         args[:denied_view] = original_view
-        
-        if focal? && error_code = @@error_codes[view] 
+
+        if focal? && error_code = @@error_codes[view]
           root.error_status = error_code
         end
       end
+      #warn "ok_view[#{original_view}] #{view}, #{args.inspect}, Cd:#{card.inspect} #{caller[0..20]*"\n"}"
       view
     end
-    
+
     def canonicalize_view view
       unless view.blank?
         DEPRECATED_VIEWS[view.to_sym] || view.to_sym
       end
     end
-  
+
     def view_method view
       return "_final_#{view}" if !card || !@@subset_views[view]
       card.method_keys.each do |method_key|
@@ -308,7 +222,7 @@ module Wagn
       end
       nil
     end
-  
+
     def with_inclusion_mode mode
       if switch_mode = INCLUSION_MODES[ mode ]
         old_mode, @mode = @mode, switch_mode
@@ -317,22 +231,22 @@ module Wagn
       @mode = old_mode if switch_mode
       result
     end
-  
+
     def expand_inclusion opts
       case
       when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
-      when opts[:tname]=='_main' && !ajax_call? && @depth==0    ; expand_main opts   
-      else      
-        fullname = opts[:tname].to_cardname.to_absolute card.cardname, :params=>params      
+      when opts[:tname]=='_main' && !ajax_call? && @depth==0    ; expand_main opts
+      else
+        fullname = opts[:tname].to_cardname.to_absolute card.cardname, :params=>params
         included_card = Card.fetch_or_new fullname, ( @mode==:edit ? new_inclusion_card_args(opts) : {} )
-  
+
         result = process_inclusion included_card, opts
         @char_count += result.length if result
         result
       end
     end
-  
+
     def expand_main opts
       return wrap_main( @main_content ) if @main_content
       [:item, :view, :size].each do |key|
@@ -346,60 +260,60 @@ module Wagn
         wrap_main process_inclusion( root.card, opts )
       end
     end
-  
+
     def wrap_main content
       content  #no wrapping in base renderer
     end
-  
+
     def process_inclusion tcard, opts
       opts[:showname] = if opts[:tname]
         opts[:tname].to_cardname.to_show card.cardname, :ignore=>@context_names, :params=>params
       else
         tcard.name
       end
-      
+
       sub_opts = { :item_view =>opts[:item] }
-      [:type, :size, :showname ].each { |key| sub_opts[key] = opts[key] }  
-      sub = subrenderer tcard, sub_opts 
+      [:type, :size, :showname ].each { |key| sub_opts[key] = opts[key] }
+      sub = subrenderer tcard, sub_opts
 
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
       # don't like depending on this global var switch
       # I think we can get rid of it as soon as we get rid of the remaining rails views?
 
-      
+
       view = canonicalize_view opts.delete :view
-      view ||= ( @mode == :layout ? :core : :content )  #set defaults elsewhere!! 
-      
-      opts[:home_view] = [:closed, :edit].member?(view) ? :open : view 
+      view ||= ( @mode == :layout ? :core : :content )  #set defaults elsewhere!!
+
+      opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
       # FIXME: special views should be represented in view definitions
-      
+
       unless @@perms[view] == :none
         view = case @mode
-        
+
           when :closed   ;  !tcard.known?  ? :closed_missing : :closed_content
           when :edit     ;  tcard.virtual? ? :edit_virtual   : :edit_in_form
           when :template ;  :template_rule
           # FIXME should be concerned about templateness, not virtualness per se
-          # needs to handle real cards that are hard templated much better               
+          # needs to handle real cards that are hard templated much better
           else           ;  view
           end
       end
-      
+
       result = raw sub.render( view, opts )
       Renderer.current_slot = oldrenderer
       result
     end
-  
+
     def get_inclusion_content cardname
       content = params[cardname.to_s.gsub(/\+/,'_')]
-  
+
       # CLEANME This is a hack to get it so plus cards re-populate on failed signups
       if p = params['cards'] and card_params = p[cardname.pre_cgi]
         content = card_params['content']
       end
       content if content.present?  # why is this necessary? - efm
     end
-  
+
     def new_inclusion_card_args options
       args = { :type =>options[:type] }
       args[:loaded_trunk]=card if options[:tname] =~ /^\+/
@@ -408,11 +322,11 @@ module Wagn
       end
       args
     end
-    
+
     def path action, opts={}
       pcard = opts.delete(:card) || card
-      base = action==:read ? '' : "/card/#{action}" 
-      
+      base = action==:read ? '' : "/card/#{action}"
+
       if pcard && !pcard.name.empty? && !opts.delete(:no_id) && action != :create #might be some issues with new?
         base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
       end
@@ -441,7 +355,7 @@ module Wagn
         p
       end
     end
-      
+
     def build_link href, text, known_card = nil
       # Rails.logger.info( "~~~~~~~~~~~~~~~ bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}" )
       klass = case href.to_s
@@ -455,17 +369,17 @@ module Wagn
           if card
             text = text.to_cardname.to_show card.name, :ignore=>@context_names
           end
-          
+
           #href+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
           cardname = Cardname===href ? href : href.to_cardname
           href = known_card ? cardname.url_key : CGI.escape(cardname.s)
           href = full_uri href.to_s
           known_card ? 'known-card' : 'wanted-card'
-          
+
       end
       %{<a class="#{klass}" href="#{href}">#{text.to_s}</a>}
     end
-    
+
     def unique_id() "#{card.key}-#{Time.now.to_i}-#{rand(3)}" end
 
     def full_uri relative_uri
@@ -484,15 +398,15 @@ module Wagn
     def add_name_context name=nil
       name ||= card.name
       @context_names += name.to_cardname.parts
-      @context_names.uniq! 
+      @context_names.uniq!
     end
-  
+
 
      ### FIXME -- this should not be here!   probably in Card::Reference model?
     def replace_references old_name, new_name
       #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
       wiki_content = WikiContent.new(card, card.content, self)
-    
+
       wiki_content.find_chunks(Chunk::Link).each do |chunk|
         if chunk.cardname
           link_bound = chunk.cardname == chunk.link_text
@@ -501,12 +415,12 @@ module Wagn
           #Rails.logger.info "repl ref: #{chunk.cardname.to_s}, #{link_bound}, #{chunk.link_text}"
         end
       end
-    
+
       wiki_content.find_chunks(Chunk::Transclude).each do |chunk|
         chunk.cardname =
           chunk.cardname.replace_part(old_name, new_name) if chunk.cardname
       end
-    
+
       String.new wiki_content.unrender!
     end
 
@@ -534,23 +448,116 @@ module Wagn
     end
   end
 
-  # I was getting a load error from a non-wagn file when this was in its own file (renderer/json.rb).
-  class Renderer::Json < Renderer
-    define_view :name_complete do |args|
-      JSON( card.item_cards( :complete=>params['term'], :limit=>8, :sort=>'name', :return=>'name', :context=>'' ) )
+  class Views < Renderer
+    # View definitions
+    #
+    #   When you declare:
+    #     define_view :view_name, "<set>" do |args|
+    #
+    #   Methods are defined on the renderer
+    #
+    #   The external api with checks:
+    #     render(:viewname, args)
+    #
+    #   Roughly equivalent to:
+    #     render_viewname(args)
+    #
+    #   The internal call that skips the checks:
+    #     _render_viewname(args)
+    #
+    #   Each of the above ultimately calls:
+    #     _final(_set_key)_viewname(args)
+
+    @@renderer = Renderer
+
+    class << self
+
+      def format fmt=nil
+        return @@renderer = Renderer if fmt.nil? || fmt == :base
+        renderer = get_renderer fmt
+        @@renderer = Renderer.const_defined?(renderer) ? Renderer.const_get(renderer) : raise("Bad format #{renderer}, #{fmt}")
+        #warn "set renderer #{@@renderer}"; @@renderer
+      end
+
+      def define_view view, opts={}, &final
+        @@perms[view]       = opts.delete(:perms)      if opts[:perms]
+        @@error_codes[view] = opts.delete(:error_code) if opts[:error_code]
+        if opts[:tags]
+          [opts[:tags]].flatten.each do |tag|
+            @@view_tags[view] ||= {}
+            @@view_tags[view][tag] = true
+          end
+        end
+
+        view_key = get_view_key(view, opts)
+        @@renderer.class_eval { define_method "_final_#{view_key}", &final }
+        #warn "defining method[#{@@renderer}] _final_#{view_key}"
+        @@subset_views[view] = true if !opts.empty?
+
+        if !method_defined? "render_#{view}"
+          #warn "defining method[#{@@renderer}] render_#{view}"
+          @@renderer.class_eval { define_method( "_render_#{view}" ) do |*a|
+            a = [{}] if a.empty?
+            if final_method = view_method(view)
+              with_inclusion_mode view do
+                send final_method, *a
+              end
+            else
+              raise "<strong>unsupported view: <em>#{view}</em></strong>"
+            end
+          end }
+
+          @@renderer.class_eval { define_method( "render_#{view}" ) do |*a|
+            begin
+              send( "_render_#{ ok_view view, *a }", *a )
+            rescue Exception=>e
+              controller.send :notify_airbrake, e if Airbrake.configuration.api_key
+              warn "Render Error: #{e.class} : #{e.message}"
+              Rails.logger.info "\nRender Error: #{e.class} : #{e.message}"
+              Rails.logger.debug "  #{e.backtrace*"\n  "}"
+              rendering_error e, (card && card.name.present? ? card.name : 'unknown card')
+            end
+          end }
+        end
+      end
+
+      def alias_view view, opts={}, *aliases
+        view_key = get_view_key(view, opts)
+        @@subset_views[view] = true if !opts.empty?
+        aliases.each do |aview|
+          aview_key = case aview
+            when String; aview
+            when Symbol; (view_key==view ? aview.to_sym : view_key.to_s.sub(/_#{view}$/, "_#{aview}").to_sym)
+            when Hash;   get_view_key( aview[:view] || view, aview)
+            else; raise "Bad view #{aview.inspect}"
+            end
+
+          #warn "def final_alias #{aview_key}, #{view_key}"
+          @@renderer.class_eval { define_method( "_final_#{aview_key}".to_sym ) do |*a|
+            send("_final_#{view_key}", *a)
+          end }
+        end
+      end
+
+      private
+
+      def get_view_key view, opts
+        unless pkey = Wagn::Model::Pattern.method_key(opts)
+          raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
+        end
+        key = pkey.blank? ? view : "#{pkey}_#{view}"
+        #warn "gvkey #{view}, #{opts.inspect} R:#{key}"
+        key.to_sym
+      end
+
     end
   end
-  
+
+  class Renderer::Json < Renderer
+  end
+
   class Renderer::Csv < Renderer::Text
   end
-  
-  # automate
-  Wagn::Renderer::EmailHtml
-  Wagn::Renderer::Html
-  Wagn::Renderer::Xml
-  Wagn::Renderer::Kml
-  Wagn::Renderer::Rss
-  Wagn::Renderer::Text
 
-  Wagn::Set::Views.load_all
+  Wagn::Set.load
 end

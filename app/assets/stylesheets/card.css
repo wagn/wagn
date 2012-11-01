@@ -26,14 +26,14 @@ html>body .open-view {
 .card-slot,
 .ALL {
   overflow: hidden;
-  white-space: normal;  
+  white-space: normal;
 }
 
 /*----- header ---------*/
 
 .card-header {
   background: #005800;
-  padding: 5px; 
+  padding: 5px;
   margin: 0px;
   -moz-border-radius: 6px 6px 0 0;
   border-radius: 6px 6px 0 0;
@@ -42,7 +42,7 @@ html>body .open-view {
 .title-menu {
   line-height: 18px;
 }
-.title { 
+.title {
   margin: 0px 2px;
   font-weight: bold;
   font-size: 13px;
@@ -69,7 +69,7 @@ html>body .card-header a.page-icon {
   background-image: url(page.png);
 }
 
-                                          
+
 /* FIXE: these need the IE gifs as well */
 
 
@@ -83,20 +83,20 @@ html>body .card-header a.page-icon {
   float: left;
   width: 50px;
   padding: 3px 0 3px 25px;
-  background: left no-repeat;  
+  background: left no-repeat;
 }
 .search-icon { background-image: url(search.png); }
 .add-icon    { background-image: url(plus.png);   }
 .goto-icon   { background-image: url(page.png);   }
 
 
-.cardtype { 
+.cardtype {
   font-style: italic;
   font-size: 10px;
 }
 .card-header,
 .card-header a {
-  color: #fff 
+  color: #fff
 }
 html>body .card-menu-left,
 html>body .page-icon {
@@ -117,7 +117,7 @@ div:hover.card-header .card-menu-left {
    right: 0px;
    z-index: 1;
 }
-.card-menu li { 
+.card-menu li {
   padding: 1px 5px;
   margin: 0px;
   -moz-border-radius: 4px 4px 0 0;
@@ -176,19 +176,19 @@ div:hover.card-header .card-menu-left {
   border-radius: 0px 0px 6px 6px;
 }
 html>body  .card-footer .footer-content {
-  display: none; 
+  display: none;
 }
 div:hover.card-footer .footer-content {
   display: inline;
-} 
+}
 .card-footer .footer-content {
-  width: 100%; 
-}        
+  width: 100%;
+}
 .card-footer .watch-view {
   float: right;
   text-align: right;
   white-space: nowrap;
-}        
+}
 
 
 /*-------------  TABS -------*/
@@ -198,20 +198,20 @@ div:hover.card-footer .footer-content {
 .faint {
   color: #bbc;
 }
-.joint { 
-  color: #960; 
+.joint {
+  color: #960;
 }
-a.wanted-card { 
-  color: #900 
+a.wanted-card {
+  color: #900
 }
-a.external-link, 
-.closed-content a.external-link { 
-  color: #979; 
+a.external-link,
+.closed-content a.external-link {
+  color: #979;
   background: url(external_link.png) center right no-repeat;
   padding-right: 13px !important;
 }
-a.email-link { 
-  color: #979 
+a.email-link {
+  color: #979
 }
 .missing-view a {
   color: #99b;
@@ -223,12 +223,12 @@ a.email-link {
   background: #ffc;
 }
 
-.content-view p, 
-.content-view span, 
-.content-view a, 
-.content-view ul, 
-.content-view ol, 
-.content-view h1, 
+.content-view p,
+.content-view span,
+.content-view a,
+.content-view ul,
+.content-view ol,
+.content-view h1,
 .content-view h2 {
   background-color: inherit;
   -moz-border-radius: inherit;
@@ -236,7 +236,7 @@ a.email-link {
 }
 
 
-/* note:   ".card-slot .content-view div not(.editor)" was not working properly and was breaking nested block elements.  
+/* note:   ".card-slot .content-view div not(.editor)" was not working properly and was breaking nested block elements.
    without it nested divs in content-view areas probably won't highlight  */
 
 
@@ -405,11 +405,11 @@ div.content-view {
 .revision-navigation span {
    margin: 0px 10px
 }
-ins.diffmod, 
+ins.diffmod,
 .diffins {
   background: #aea;
 }
-del.diffmod, 
+del.diffmod,
 .diffdel {
   background: #eaa;
 }
@@ -482,7 +482,7 @@ del.diffmod,
 
 
 #secondary .card-menu {
-  display: none; 
+  display: none;
   float:none;  /* necessary for IE */
 }
 
@@ -537,30 +537,30 @@ body#wagn .card-slot.recent-changes h2 {
   padding-right: 0px;
 }
 .closed-content,
-.closed-content tr, 
-.closed-content td, 
+.closed-content tr,
+.closed-content td,
 .closed-content p,
-.closed-content h1, 
-.closed-content h2, 
-.closed-content h3, 
-.closed-content h4, 
-.closed-content h5, 
-.closed-content h6, 
-.closed-content ul, 
+.closed-content h1,
+.closed-content h2,
+.closed-content h3,
+.closed-content h4,
+.closed-content h5,
+.closed-content h6,
+.closed-content ul,
 .closed-content li,
-.closed-content pre, 
-.closed-content ol, 
-.closed-content hr, 
-.closed-content div, 
+.closed-content pre,
+.closed-content ol,
+.closed-content hr,
+.closed-content div,
 .closed-content span,
 .closed-content a,
 .closed-content blockquote {
-  display: inline !important; 
-  margin: 0px 4px; 
+  display: inline !important;
+  margin: 0px 4px;
   padding: 0px !important;
   border: 0px !important;
-  font-size: 11px !important;  
-  white-space: nowrap !important;      
+  font-size: 11px !important;
+  white-space: nowrap !important;
   float: none !important;
 }
 .closed-content a {
@@ -572,7 +572,7 @@ body#wagn .card-slot.recent-changes h2 {
   float: none;
   padding: 0px;
 }
-.closed-content br,  
+.closed-content br,
 .closed-content hr,
 .closed-content input,
 .closed-content textarea,
@@ -619,11 +619,11 @@ body#wagn .card-slot.recent-changes h2 {
   margin: 0px 0px 0px 40px;
 }
 .table-of-contents ol {
-  list-style-type: upper-roman; 
+  list-style-type: upper-roman;
 }
 .table-of-contents ol ol {
   list-style-type: upper-alpha;
-  padding-left: 25px 
+  padding-left: 25px
 }
 
 /*-------------( Pointer )--------*/
@@ -656,7 +656,7 @@ body#wagn .card-slot.recent-changes h2 {
 /*---------( Search ) ---------- */
 
 .search-no-results:after {
-  content:'0 results'; 
+  content:'0 results';
 }
 .search-count {
   float: right;
@@ -687,7 +687,7 @@ div.search-result-list .search-result-item {
 }
 .radio-option-description,
 .checkbox-option-description {
-  margin-left: 40px; 
+  margin-left: 40px;
 }
 
 /*-----------( Image ) -----------*/
@@ -743,14 +743,14 @@ table.perm-editor .pointer-item-text {
 }
 
 /*---------- comment-box -------------------------------------- */
-.comment-box textarea { 
+.comment-box textarea {
     margin-bottom:5px;
-}   
+}
 .comment-box input {
   padding: 0px;
   font-size: 12px;
 }
-.comment-box { 
+.comment-box {
     background: #cce;
     padding: 8px;
     margin: 0px;

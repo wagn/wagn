@@ -14,7 +14,7 @@ unless Rake::TaskManager.methods.include?(:redefine_task)
         deps = deps.collect {|d| d.to_s }
         task = @tasks[task_name.to_s] = task_class.new(task_name, self)
         task.application = self
-        @last_comment = nil               
+        @last_comment = nil
         task.enhance(deps, &block)
         task
       end
@@ -28,11 +28,11 @@ unless Rake::TaskManager.methods.include?(:redefine_task)
     end
   end
 end
- 
+
 namespace :db do
   namespace :test do
     desc 'Prepare the test database and load the schema'
-    Rake::Task.redefine_task( :prepare => :environment ) do        
+    Rake::Task.redefine_task( :prepare => :environment ) do
       if ENV['RELOAD_TEST_DATA'] == 'true' || ENV['RUN_CODE_RUN']
         puts `env RAILS_ENV=test rake wagn:create`
       else

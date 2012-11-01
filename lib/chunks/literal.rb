@@ -42,7 +42,7 @@ module Literal
 #      PRE_BLOCKS = "a|pre|code"
 #      PRE_PATTERN = Regexp.new('<('+PRE_BLOCKS+')\b[^>]*?>.*?</\1>', Regexp::MULTILINE)
 #    end
-#  end 
+#  end
 
   # A literal chunk that protects HTML tags from wiki rendering.
   class Tags < AbstractLiteral

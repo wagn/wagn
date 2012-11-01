@@ -1,6 +1,8 @@
 module Wagn::Set::Type::User
-  include Wagn::Set::Type::Basic
+  module Model
+    include Wagn::Set::Type::Basic::Model
 
-  attr_accessor :email
+    attr_accessor :email
 
+  end
 end

@@ -10,21 +10,23 @@ module Wagn::Set::Type::RubyAndScript
   end
  end
 
- class Wagn::Renderer
-  define_view :core, :type=>'script' do |args|
-    command = process_content( card.content )
-    begin
-      if Wagn::Conf[:enable_server_cards]
-        Shellbox.new.run( command )
-      else  
-        'sorry, server cards are not enabled' #ENGLISH
-      end
-    rescue Exception=>e
-      e.message
-    end
-  end
-  
-  alias_view( :editor, {:type=>'plain_text'},  {:type=>'script'} )
+  class Wagn::Views
+    format :base
 
- end
+    define_view :core, :type=>'script' do |args|
+      command = process_content( card.content )
+      begin
+        if Wagn::Conf[:enable_server_cards]
+          Shellbox.new.run( command )
+        else
+          'sorry, server cards are not enabled' #ENGLISH
+        end
+      rescue Exception=>e
+        e.message
+      end
+    end
+
+    alias_view( :editor, {:type=>'plain_text'},  {:type=>'script'} )
+
+  end
 end

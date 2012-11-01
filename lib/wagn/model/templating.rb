@@ -66,7 +66,7 @@ module Wagn::Model::Templating
   def expire_templatee_references
     if wql = hard_templatee_spec
       wql = {:name => name} if wql == true
-        
+
       condition = Session.as_bot { Wql::CardSpec.build(wql.merge(:return => :condition)).to_sql }
       #warn "expire_t_refs #{name}, #{condition.inspect}"
       card_ids_to_update = connection.select_rows("select id from cards t where #{condition}").map(&:first)
@@ -75,7 +75,7 @@ module Wagn::Model::Templating
       end
     end
   end
-      
+
 
 
   private

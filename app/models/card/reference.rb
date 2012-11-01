@@ -6,14 +6,14 @@ module ReferenceTypes
     TRANSCLUSION = 'T'
     WANTED_TRANSCLUSION = 'M'
   end
-end  
+end
 
 
 class Card::Reference < ActiveRecord::Base
   include ReferenceTypes
   belongs_to :referencer, :class_name=>'Card', :foreign_key=>'card_id'
   belongs_to :referencee, :class_name=>'Card', :foreign_key=>"referenced_card_id"
-  
+
   validates_inclusion_of :link_type, :in => [  LINK, WANTED_LINK, TRANSCLUSION, WANTED_TRANSCLUSION ]
 
   def self.find_cards_by_reference_name_and_type_list(card_name, *type_list)
@@ -22,7 +22,7 @@ class Card::Reference < ActiveRecord::Base
       link_type in (#{sql_list}) and referenced_name=?
     },card_name]).collect {|ref| ref.referencer }
   end
-  
+
   def self.cards_that_reference(card_name)
     self.find_cards_by_reference_name_and_type_list( card_name, LINK, WANTED_LINK, TRANSCLUSION, WANTED_TRANSCLUSION )
   end
@@ -41,13 +41,13 @@ class Card::Reference < ActiveRecord::Base
       update_all("link_type = '#{LINK}', referenced_card_id=#{card.id}",  ['referenced_name = ? and link_type=?', card.key, WANTED_LINK])
       update_all("link_type = '#{TRANSCLUSION}', referenced_card_id=#{card.id}",  ['referenced_name = ? and link_type=?', card.key, WANTED_TRANSCLUSION])
     end
-    
-    def update_on_destroy( card, name=nil )   
+
+    def update_on_destroy( card, name=nil )
       name ||= card.key
       delete_all ['card_id = ?', card.id]
       update_all("link_type = '#{WANTED_LINK}',referenced_card_id=NULL",  ['(referenced_name = ? or referenced_card_id = ?) and link_type=?', name, card.id, LINK])
       update_all("link_type = '#{WANTED_TRANSCLUSION}',referenced_card_id=NULL",  ['(referenced_name = ? or referenced_card_id = ?) and link_type=?', name, card.id, TRANSCLUSION])
     end
   end
-  
+
 end

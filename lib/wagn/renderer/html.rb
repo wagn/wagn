@@ -104,15 +104,15 @@ module Wagn
     def wrap(view, args = {})
       classes = ['card-slot', "#{view}-view"]
       classes << card.safe_keys if card
-    
+
       attributes = { :class => classes.join(' ') }
       [:style, :home_view, :item].each { |key| attributes[key] = args[key] }
-      
+
       if card
         attributes['card-id']  = card.id
         attributes['card-name'] = card.name
       end
-    
+
       content_tag(:div, attributes ) { yield }
     end
 
@@ -136,7 +136,7 @@ module Wagn
         content_field form
       end
     end
- 
+
     #### --------------------  additional helpers ---------------- ###
     def notice
       %{<div class="card-notice"></div>}
@@ -157,10 +157,10 @@ module Wagn
       wrap_submenu do
         [ :content, :name, :type ].map do |attr|
           next if attr == :type and # this should be a set callback
-            card.type_template? ||  
+            card.type_template? ||
             (card.type_id==Card::SetID && card.hard_template?) || #
             (card.type_id==Card::CardtypeID && card.cards_of_type_exist?)
-        
+
           link_to attr, path(:edit, :attrib=>attr), :remote=>true,
             :class => %{slotter edit-#{ attr }-link #{'current-subtab' if attr==current.to_sym}}
         end.compact * "\n"
@@ -216,7 +216,7 @@ module Wagn
     end
 
     def name_field(form, options={})
-      form.text_field( :name, { 
+      form.text_field( :name, {
         :class=>'field card-name-field',
         :value=>card.name, #needed because otherwise gets wrong value if there are updates
         :autocomplete=>'off'
@@ -242,14 +242,14 @@ module Wagn
       self._render_editor +
       '</div>')
     end
-    
+
     def form_for_multi
       block = Proc.new {}
       builder = ActionView::Base.default_form_builder
       card.name = card.name.gsub(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_card?  ##FIXME -- need to match other relative inclusions.
       builder.new("card[cards][#{card.cardname.pre_cgi}]", card, template, {}, block)
     end
-  
+
     def form
       @form ||= form_for_multi
     end
@@ -271,12 +271,12 @@ module Wagn
     def option_header(title)
       %{<tr><th colspan="3" class="option-header"><h2>#{title}</h2></th></tr>}
     end
-    
+
     # navigation for revisions -
     # --------------------------------------------------
     # some of this should be in rich_html, maybe most
     def revision_link text, revision, name, accesskey='', mode=nil
-      link_to text, path(:changes, :rev=>revision, :mode=>(mode || params[:mode] || true) ), 
+      link_to text, path(:changes, :rev=>revision, :mode=>(mode || params[:mode] || true) ),
         :class=>"slotter", :remote=>true
     end
 
@@ -327,5 +327,5 @@ module Wagn
        revision_link("Autosaved Draft", card.revisions.count, 'to autosave')
     end
   end
-  
+
 end

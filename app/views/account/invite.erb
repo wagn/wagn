@@ -8,7 +8,7 @@ Wagn::Cardname.substitute!( message, {
 )
 
 div_id = "main-body"
--%>  
+-%>
 
 <h1 class="page-header">Invite A Friend</h1> <%#ENGLISH%>
 
@@ -21,7 +21,7 @@ div_id = "main-body"
 
 
   <%= form_for :email, :action=>@action do |f| %>
-    
+
     <%= hidden_field_tag 'element', "#{div_id}"  %>
 
     <%= raw error_messages_for( @user ) %>
@@ -40,30 +40,30 @@ div_id = "main-body"
           <td class="field"><%= text_field :user,:email %></td>
           <td class="help"><strong>To verify account</strong><br/> Not to spam</td> <%#ENGLISH%>
         </tr>
-        
+
       <% else %>
-        <tr><td colspan="3" class="accept-request-intro" style="text-align: center"> 
+        <tr><td colspan="3" class="accept-request-intro" style="text-align: center">
           <em>Accept Account Request from:<em> <strong><%= link_to_page card.name %></strong><%#ENGLISH%>
           <%= hidden_field( :card, :key ) %>
           <%= hidden_field( :user, :email ) %>
-          
+
         </td></tr>
       <% end %>
-     
+
       <tr>
         <td class="label"><label for="subject">Subject</label></td><%#ENGLISH%>
         <td class="field" colspan="2"><%= f.text_field :subject, :value=>subject,  :size=>60  %></td>
-      </tr>                  
+      </tr>
       <tr>
         <td class="label"><label for="message">Message</label></td><%#ENGLISH%>
         <td class="field" colspan="2"><%= f.text_area :message, :value=>message, :rows=>15, :cols => 60  %></td>
       </tr>
-      
+
       <tr>
         <td></td>
-        <td class="help" colspan="2">We'll create a password and attach it to the email.</td>     <%#ENGLISH%>              
+        <td class="help" colspan="2">We'll create a password and attach it to the email.</td>     <%#ENGLISH%>
       </tr>
-                    
+
       <tr>
         <td></td>
         <td colspan="2">
@@ -72,10 +72,10 @@ div_id = "main-body"
           <%= link_to 'Cancel', previous_location  %>
         </td>
       </tr>
-      
+
       <tr><td></td><td colspan="2"><%= raw( slot.notice ) %></td></tr>
-    
-    </table>    
+
+    </table>
 
   <% end %>
 <% end %>

@@ -98,10 +98,11 @@ $(window).ready ->
   #  dislike the timeout, but without this forms with multiple TinyMCE editors were failing to load properly
   
   $('body').delegate '.slotter', "ajax:success", (event, data) ->
-    wagn.e = event
-    wagn.d = data
+    notice = $(this).attr('notify-success')
     newslot = $(this).setSlotContent data
     wagn.initializeEditors newslot
+    if notice?
+      newslot.notify notice
 
   $('body').delegate '.slotter', "ajax:error", (event, xhr) ->
     result = xhr.responseText
@@ -141,7 +142,7 @@ $(window).ready ->
         widget = input.data 'fileupload' #jQuery UI widget
         
         unless widget._isXHRUpload(widget.options) # browsers that can't do ajax uploads use iframe
-          $(this).find('[name=success]').val('TO-CARD') # can't do normal redirects.
+          $(this).find('[name=success]').val('_self') # can't do normal redirects.
           # iframe response not passed back; all responses treated as success.  boo
           opt.url += '&simulate_xhr=true'
           # iframe is not xhr request, so would otherwise get full response with layout
@@ -245,7 +246,7 @@ $(window).ready ->
   #more of this info should be in views; will need to refactor for HTTP DELETE anyway...
   $('.card-slot').delegate '.standard-delete', 'click', ->
     return if $(this).attr('success-ready') == 'true' #prevent double-click weirdness
-    s = if $(this).isMain() then 'REDIRECT: TO-PREVIOUS' else 'TEXT:' + $(this).slot().attr('card-name') + ' removed'
+    s = if $(this).isMain() then 'REDIRECT: *previous' else 'TEXT:' + $(this).slot().attr('card-name') + ' removed'
     $(this).attr 'href', $(this).attr('href') + '?success=' + encodeURIComponent(s)
     $(this).attr 'success-ready', 'true'
 

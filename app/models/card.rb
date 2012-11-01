@@ -11,7 +11,7 @@ class Card < ActiveRecord::Base
   attr_accessor :comment, :comment_author, :selected_rev_id,
     :broken_type, :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
     :cards, :loaded_trunk, :nested_edit, # should be possible to merge these concepts
-    :error_view, :error_status, #yuck
+    :error_view, :error_status #yuck
       
   attr_writer :update_read_rule_list
   attr_reader :type_args

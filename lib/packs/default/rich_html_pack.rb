@@ -61,7 +61,6 @@ class Wagn::Renderer::Html
       #{ _optional_render :type, args, hidden[:type] }
       #{ link_to 'close', path(:read, :view=>:closed), :title => "close #{card.name}", :class => "title slotter", :remote => true } 
     </div>
-    
      
     #{ _render_menu_options }
     }
@@ -123,9 +122,9 @@ class Wagn::Renderer::Html
   end
   
   
-  define_view :comment_box, :perms=>lambda { |r| 
-        r.card.ok?(:comment) ? :comment_box : :blank
-      } do |args|
+  define_view :comment_box, :denial=>:blank,
+    :perms=>lambda { |r| r.card.ok? :comment } do |args|
+      
     %{<div class="comment-box nodblclick"> #{
       card_form :comment do |f|
         %{#{f.text_area :comment, :rows=>3 }<br/> #{
@@ -256,7 +255,7 @@ class Wagn::Renderer::Html
           #{ _render_name_editor}
           
           #{ f.hidden_field :update_referencers, :class=>'update_referencers'   }
-          #{ hidden_field_tag :success, 'TO-CARD'  }
+          #{ hidden_field_tag :success, '_self'  }
           #{ hidden_field_tag :old_name, card.name }
           #{ hidden_field_tag :confirmed, 'false'  }
           #{ hidden_field_tag :referers, referers.size }
@@ -314,25 +313,36 @@ class Wagn::Renderer::Html
     fieldset label, content, :help=>help_settings, :attribs=>attribs
   end
 
-  define_view :option_account do |args|
+  define_view :option_account, :perms=> lambda { |r|
+      Session.as_id==r.card.id or r.card.trait_card(:account).ok?(:update)
+    } do |args|
+      
     locals = {:slot=>self, :card=>card, :account=>card.to_user }
-    card_form :update_account do |form|
-      %{<table class="fieldset">
-        #{if Session.as_id==card.id or card.trait_card(:account).ok?(:update)
-           raw option_header( 'Account Details' ) +
-             template.render(:partial=>'account/edit',  :locals=>locals)
-        end }
-      #{ render_option_roles } #{
-     
-        if options_need_save
-          %{<tr><td colspan="3">#{ submit_tag 'Save Changes' }</td></tr>}
-        end}
-      </table>}
+    wrap :options, args do
+      %{ #{ _render_header }
+        <div class="options-body">
+          #{raw options_submenu(:account) }
+          #{ card_form :update_account, '', 'notify-success'=>'account details updated' do |form|
+            %{
+            #{ hidden_field_tag 'success[id]', '_self' }
+            #{ hidden_field_tag 'success[view]', 'options' }
+            <table class="fieldset">
+              #{ option_header 'Account Details' }
+              #{ template.render :partial=>'account/edit',  :locals=>locals }
+
+              #{ _render_option_roles }
+              #{ if options_need_save
+                  %{<tr><td colspan="3">#{ submit_tag 'Save Changes' }</td></tr>}
+                 end
+              }
+            </table>}
+          end }
+        </div>
+        #{ notice }
+      }
     end
   end
-
-
-
+  
   define_view :admin do |args|
     related_sets = card.related_sets
     current_set = params[:current_set] || related_sets[(card.type_id==Card::CardtypeID ? 1 : 0)]  #FIXME - explicit cardtype reference
@@ -341,44 +351,47 @@ class Wagn::Renderer::Html
       selected = set_card.key == current_set.to_cardname.key ? 'selected="selected"' : ''
       %{<option value="#{ set_card.key }" #{ selected }>#{ set_card.label }</option>}
     end.join
-    
-    wrap :admin do
-      %{
-        #{_render_header}
-        <div class="settings-tab">
-        #{ if !related_sets.empty?
-          %{ <div class="set-selection">
-            #{ form_tag path(:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'slotter' }
-                <label>Set:</label>
-                <select name="current_set" class="set-select">#{ set_options }</select>
-            </form>
-          </div>}
-        end }
 
-        <div class="current-set">
-          #{ raw subrenderer( Card.fetch current_set).render_content }
-        </div>
-    #{
-          if Card.toggle(card.rule(:accountable)) && card.trait_card(:account).ok?(:create)
-            %{<div class="new-account-link">
-            #{ link_to %{Add a sign-in account for "#{card.name}"},
-                path(:options, :attrib=>:new_account),
-              :class=>'slotter new-account-link', :remote=>true }
-            </div>}
-           end}
-        </div>}
-    end  
-      # should be just if !card.trait_card(:account) and Card.new( :name=>"#{card.name}+Card[:account].name").ok?(create)
+    wrap :admin do
+      %{ #{ _render_header }
+          <div class="options-body">
+            <div class="settings-tab">
+              #{ if !related_sets.empty?
+                %{ <div class="set-selection">
+                  #{ form_tag path(:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'slotter' }
+                      <label>Set:</label>
+                      <select name="current_set" class="set-select">#{ set_options }</select>
+                  </form>
+                </div>}
+              end }
+
+              <div class="current-set">
+                #{ raw subrenderer( Card.fetch current_set).render_content }
+              </div>
+             
+              #{ if Card.toggle(card.rule(:accountable)) && card.trait_card(:account).ok?(:create)
+                  %{<div class="new-account-link">
+                  #{ link_to %{Add a sign-in account for "#{card.name}"},
+                      path(:options, :attrib=>:new_account),
+                    :class=>'slotter new-account-link', :remote=>true }
+                  </div>}
+                 end
+              }
+            </div> 
+          </div>
+          #{ notice }
+        }
+     end
+    # should be just if !card.trait_card(:account) and Card.new( :name=>"#{card.name}+Card[:account].name").ok?(create)
   end
 
-  define_view(:option_roles) do |args|
-    roles = Card.search :type=>Card::RoleID
-    # Do we want these as well?  as by type Role?
-    #roles = Card.search(:refer_to => {:right=> Card::RolesID})
-    traitc = card.trait_card(:roles)
-    user_roles = traitc.item_cards(:limit=>0).reject do |x|
+  define_view :option_roles do |args|
+    roles = Card.search( :type=>Card::RoleID, :limit=>0 ).reject do |x|
       [Card::AnyoneID, Card::AuthID].member? x.id.to_i
     end
+
+    traitc = card.trait_card :roles
+    user_roles = traitc.item_cards :limit=>0
 
     option_content = if traitc.ok? :update
       user_role_ids = user_roles.map &:id
@@ -472,7 +485,6 @@ class Wagn::Renderer::Html
     end
   end
 
-
   define_view :change do |args|
     wrap :change, args do
       %{#{link_to_page card.name, nil, :class=>'change-card'} #{
@@ -493,8 +505,6 @@ class Wagn::Renderer::Html
        <br style="clear:both"/>}
     end
   end
-
-
 
   define_view :errors, :perms=>:none do |args|
     wrap :errors, args do
@@ -567,10 +577,8 @@ class Wagn::Renderer::Html
     }
   end
   
-  
-  define_view :watch, :tags=>:unknown_ok, :perms=> lambda { |r| 
-        !Session.logged_in? || r.card.new_card? ? :blank : :watch 
-      } do |args|
+  define_view :watch, :tags=>:unknown_ok, :denial=>:blank,
+    :perms=> lambda { |r| Session.logged_in? && !r.card.new_card? } do |args|
         
     wrap :watch do
       if card.watching_type?
@@ -593,8 +601,6 @@ class Wagn::Renderer::Html
   def watch_link text, toggle, title, extra={}
     link_to "#{text}", path(:watch, :toggle=>toggle), 
       {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :title=>title, :remote=>true, :method=>'post'}.merge(extra)
-  end
-  
-
+  end  
 end
 

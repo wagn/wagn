@@ -39,7 +39,7 @@ class CardController < ApplicationController
     @card = @card.refresh if @card.frozen? # put in model
     @card.destroy
     discard_locations_for @card
-    success 'REDIRECT: TO-PREVIOUS'
+    success 'REDIRECT: *previous'
   end
   
 
@@ -134,7 +134,7 @@ class CardController < ApplicationController
       end
       errors
     else
-      show
+      success
     end
   end
 
@@ -200,28 +200,35 @@ class CardController < ApplicationController
   end
 
 
-  def success default_target='TO-CARD'
+  def success default_target='_self'
     target = params[:success] || default_target
     redirect = !ajax?
-
+    new_params = {}
+    
+    if Hash === target
+      new_params = target
+      target = new_params.delete :id # should be some error handling here
+      redirect ||= !!(new_params.delete :redirect)
+    end
+      
     if target =~ /^REDIRECT:\s*(.+)/
       redirect, target = true, $1
     end
 
     target = case target
-      when 'TO-PREVIOUS'   ;  previous_location
-      when 'TO-CARD'       ;  @card
+      when '*previous'     ;  previous_location #could do as *previous
+      when '_self  '       ;  @card #could do as _self
       when /^(http|\/)/    ;  target
       when /^TEXT:\s*(.+)/ ;  $1
-      else                 ;  Card.fetch_or_new(target)
+      else                 ;  Card.fetch_or_new target.to_cardname.to_absolute(@card.cardname)
       end
 
-    Rails.logger.info "redirect = #{redirect} / target = #{target}"
-
     case
-    when  redirect        ; wagn_redirect ( Card===target ? wagn_path(target) : target )
+    when  redirect        ; wagn_redirect ( Card===target ? url_for_page(target.cardname, new_params) : target )
     when  String===target ; render :text => target
-    else  @card = target  ; show
+    else
+      @card = target
+      show new_params[:view]
     end
   end
 

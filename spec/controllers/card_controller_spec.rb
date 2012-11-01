@@ -131,14 +131,14 @@ describe CardController do
 
     it "redirects to card if thanks is blank" do
       login_as 'joe_admin'
-      post :create, :success => 'REDIRECT: TO-CARD', "card" => { "name" => "Joe+boop" }
+      post :create, :success => 'REDIRECT: _self', "card" => { "name" => "Joe+boop" }
       assert_redirected_to "/Joe+boop"
     end
    
     it "redirects to previous" do
       # Fruits (from shared_data) are anon creatable but not readable
       login_as :anonymous
-      post :create, { :success=>'REDIRECT: TO-PREVIOUS', "card" => { "type"=>"Fruit", :name=>"papaya" } }, :history=>['/blam']
+      post :create, { :success=>'REDIRECT: *previous', "card" => { "type"=>"Fruit", :name=>"papaya" } }, :history=>['/blam']
       assert_redirected_to "/blam"
     end    
   end

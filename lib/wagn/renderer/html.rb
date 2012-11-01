@@ -268,8 +268,8 @@ module Wagn
       }
     end
 
-    def option_header(title)
-      %{<tr><th colspan="3" class="option-header"><h2>#{title}</h2></th></tr>}
+    def option_header title
+      raw %{<tr><th colspan="3" class="option-header"><h2>#{title}</h2></th></tr>}
     end
     
     # navigation for revisions -

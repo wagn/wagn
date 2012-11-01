@@ -19,6 +19,7 @@ module Wagn
     @@max_char_count = 200 #should come from Wagn::Conf
     @@max_depth      = 10 # ditto
     @@perms          = {}
+    @@denial_views   = {}
     @@subset_views   = {}
     @@error_codes    = {}
     @@view_tags      = {}
@@ -60,6 +61,7 @@ module Wagn
       def define_view view, opts={}, &final
         @@perms[view]       = opts.delete(:perms)      if opts[:perms]
         @@error_codes[view] = opts.delete(:error_code) if opts[:error_code]
+        @@denial_views[view]= opts.delete(:denial)     if opts[:denial]
         if opts[:tags]
           [opts[:tags]].flatten.each do |tag| 
             @@view_tags[view] ||= {}
@@ -268,14 +270,14 @@ module Wagn
         else
           perms_required = @@perms[view] || :read
           if Proc === perms_required
-            perms_required.call self
+            args[:denied_task] = !(perms_required.call self)
           else
             args[:denied_task] = [perms_required].flatten.find do |task|
               task = :create if task == :update && card.new_card?
               !card.ok? task
             end
-            args[:denied_task] ? :denial : view
           end
+          args[:denied_task] ? (@@denial_views[view] || :denial) : view
         end
       
       

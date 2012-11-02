@@ -66,7 +66,7 @@ module Wagn
 
 
       def prepopulate
-        set_keys = ['*all','*all plus','basic+*type','html+*type','*cardtype+*type','*sidebar']
+        set_keys = ['*all','*all plus','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
         set_keys.map{|k| [k,"#{k}+*content", "#{k}+*default", "#{k}+*read", ]}.flatten.each do |key|
           Card[key]
         end

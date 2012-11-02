@@ -31,7 +31,7 @@ module Wagn::Model::Settings
 
   def related_sets
     # refers to sets that users may configure from the current card - NOT to sets to which the current card belongs
-    sets = ["#{name}"]
+    sets = ["#{name}+*self"]
     sets << "#{name}+*type" if type_id==Card::CardtypeID
     if cardname.simple?
       sets<< "#{name}+*right"
@@ -103,22 +103,6 @@ module Wagn::Model::Settings
       @@setting_seqs[codename]
     end
 
-  end
-
-  def setting_names_by_group
-    Card.universal_setting_names_by_group.clone.merge(
-      if Card::PointerID == ( if type_id != Card::SetID
-            # Self, either the hard template type or self type
-            (templt=Card[cardname.trait_name :content] and tmplt.type_id or type_id)
-          elsif templt = existing_trait_card(:content) || existing_trait_card(:default)
-            templt.type_id # template's type
-          else
-            # If this is a *type set, the trunk is the typecard, otherwise self's type
-            tag.id == Card::TypeID ? trunk.id : type_id
-          end )
-       {:pointer => ['*options','*options label','*input']}
-      else {} end
-    )
   end
 
   def self.included(base)

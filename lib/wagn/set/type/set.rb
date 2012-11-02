@@ -48,7 +48,7 @@ module Wagn::Set::Type::Set
 
     def inheritable?
       return true if junction_only?
-      cardname.junction?
+      cardname.tag==Wagn::Model::Patterns::SelfPattern.key_name and cardname.trunk_name.junction?
     end
 
     def subclass_for_set
@@ -75,6 +75,16 @@ module Wagn::Set::Type::Set
       else
         ''
       end
+    end
+
+    def setting_names_by_group
+      Card.universal_setting_names_by_group.clone.merge(
+        if Card::PointerID == ( templt = existing_trait_card(:content) || existing_trait_card(:default) and
+              templt.type_id or tag.id == Card::TypeID ? trunk.id : trunk.type_id )
+         {:pointer => ['*options','*options label','*input']}
+        else
+          {} end
+      )
     end
 
     def prototype

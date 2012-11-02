@@ -18,10 +18,6 @@ module Wagn::Model::Permissions
     "#{Session.user_card.name}, You don't have permission to"
   end
 
-  def inheritable?
-    junction?
-  end
-
   def approved?
     @operation_approved = true
     @permission_errors = []
@@ -45,7 +41,7 @@ module Wagn::Model::Permissions
 
   # ok? and ok! are public facing methods to approve one operation at a time
   def ok? operation
-    #warn Rails.logger.warn("ok? #{operation}")
+    #warn "ok? #{operation}"
     @operation_approved = true
     @permission_errors = []
 
@@ -68,13 +64,13 @@ module Wagn::Model::Permissions
   end
 
   def who_can(operation)
-    #warn "who_can #{(prc=permission_rule_card(operation)).inspect}, #{prc.first.item_cards.map(&:name)}" if operation == :create
+    #warn "who_can[#{name}] #{(prc=permission_rule_card(operation)).inspect}, #{prc.first.item_cards.map(&:name)}" if operation == :update
     permission_rule_card(operation).first.item_cards.map(&:id)
   end
 
   def permission_rule_card(operation)
     opcard = rule_card(operation)
-    #warn "prc[#{name}]#{operation} #{opcard.inspect}" if operation.to_sym == :read and card.name == '*logo+*read'
+    #warn "prc[#{name}]#{operation} #{opcard.inspect}" if operation.to_sym == :read and opcard.name == '*logo+*self+*read'
     unless opcard
       errors.add :permission_denied, "No #{operation} setting card for #{name}"
       raise Card::PermissionDenied.new(self)
@@ -82,7 +78,7 @@ module Wagn::Model::Permissions
 
     rcard = begin
       Session.as_bot do
-        #warn "in permission_rule_card #{opcard&&opcard.name} #{operation}" if card.name == '*logo+*read'
+        #warn "in permission_rule_card #{opcard&&opcard.name} #{operation}" if opcard.name == '*logo+*self+*read'
         if opcard.content == '_left' && self.junction?
           lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_modules=>true)
           lcard.permission_rule_card(operation).first
@@ -91,12 +87,12 @@ module Wagn::Model::Permissions
         end
       end
     end
-    #warn "permission_rule_card[#{name}] #{rcard&&rcard.name}, #{opcard.rule_name.inspect}, #{opcard.inspect}" if card.name == '*logo+*read'
+    #warn "permission_rule_card[#{name}] #{rcard&&rcard.name}, #{opcard.rule_name.inspect}, #{opcard.inspect}" if opcard.name == '*logo+*self+*read'
     return rcard, opcard.rule_name
   end
 
   def rule_name
-    trunk.type_id == Card::SetID ? cardname.trunk_name.tag : Wagn::Model::Patterns::SelfPattern.key_name
+    trunk.type_id == Card::SetID ? cardname.trunk_name.tag : nil
   end
 
   protected
@@ -269,7 +265,7 @@ module Wagn::Model::Permissions
       # could be related to other bugs?
       in_set = {}
       if !(self.trash)
-        if class_id = set=left and set_class=set.tag and set_class.id
+        if class_id = (set=left and set_class=set.tag and set_class.id)
           rule_class_ids = Wagn::Model::Pattern.subclasses.map &:key_id
           #warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
 
@@ -280,7 +276,6 @@ module Wagn::Model::Permissions
                 # Why isn't this just 'trunk', do we need the fetch?
                 Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
                   in_set[item_card.key] = true
-                  item_card.update_if_narrow rule_class_index
                   next if cur_index > rule_class_index
                   item_card.update_read_rule
                 end
@@ -288,7 +283,7 @@ module Wagn::Model::Permissions
                in_set[trunk.key] = true
                #warn "self rule update: #{trunk.inspect}, #{rule_class_index}, #{cur_index}"
                trunk.update_read_rule if cur_index > rule_class_index
-             else warn "No current rule index #{rule_class_ids.inspect}"
+             else warn "No current rule index #{class_id}, #{rule_class_ids.inspect}"
              end
           end
 

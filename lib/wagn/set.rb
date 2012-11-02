@@ -11,7 +11,7 @@ module Wagn::Set
         begin
           require_dependency file
         rescue Exception=>e
-          Rails.logger.warn "Error loading #{file} #{e.message}\n#{e.backtrace.join*"\n"}"
+          Rails.logger.warn "Error loading #{file} #{e.message}\n#{e.backtrace*"\n"}"
           raise e
         end
       end

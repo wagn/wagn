@@ -44,7 +44,7 @@ describe Card do
     
     it "fetches virtual cards after skipping them" do
       Card['A+*self'].should be_nil
-      Card.fetch( 'A' ).should_not be_nil
+      Card.fetch( 'A+*self' ).should_not be_nil
     end
     
     it "fetches newly virtual cards" do

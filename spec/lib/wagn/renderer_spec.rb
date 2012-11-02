@@ -65,7 +65,7 @@ describe Wagn::Renderer, "" do
     it "renders deny for unpermitted cards" do
       Session.as_bot do
         Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
-        Card.create(:name=>'Joe no see me+*read', :type=>'Pointer', :content=>'[[Administrator]]')
+        Card.create(:name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]')
       end
       Session.as :joe_user do
         assert_view_select Wagn::Renderer.new(Card.fetch('Joe no see me')).render(:core), 'span[class="denied"]'
@@ -103,7 +103,7 @@ describe Wagn::Renderer, "" do
       it "multi edit" do
         c = Card.new :name => 'ABook', :type => 'Book'
         rendered =  Wagn::Renderer.new(c).render( :edit )
-#        warn "rendered = #{rendered}"
+        #warn "rendered = #{rendered}"
         assert_view_select rendered, 'div[class="field-in-multi"]' do
           assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][~plus~illustrator][content]'
         end
@@ -335,7 +335,7 @@ describe Wagn::Renderer, "" do
 
     it "should be used in edit forms" do
       Session.as_bot do
-        config_card = Card.create!(:name=>"templated+*content", :content=>"{{+alpha}}" )
+        config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
       end
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
       @card.content = 'Bar'
@@ -461,7 +461,7 @@ describe Wagn::Renderer, "" do
 
 
   # ~~~~~~~~~~~~~~~~~ Builtins Views ~~~~~~~~~~~~~~~~~~~
-  # ( Solo sets )
+  # ( *self sets )
 
 
   context "builtin card" do

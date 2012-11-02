@@ -4,7 +4,7 @@ require File.expand_path('../../../packs/pack_spec_helper', File.dirname(__FILE_
 
 describe "reader rules" do
   before do
-    @perm_card =  Card.new(:name=>'Home+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
+    @perm_card =  Card.new(:name=>'Home+*self+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
   end
   
   it "should be *all+*read by default" do
@@ -68,7 +68,7 @@ describe "reader rules" do
     Session.as_bot do
       @perm_card.save!
       @perm_card = Card[@perm_card.name]
-      @perm_card.name = 'Something else+*read'
+      @perm_card.name = 'Something else+*self+*read'
       @perm_card.confirm_rename = true
       @perm_card.save!
     end
@@ -167,7 +167,7 @@ describe "Permission", ActiveSupport::TestCase do
     Session.as(:joe_admin) do
       Session.always_ok?.should == true
       Card.create! :name=>"Hidden"
-      Card.create(:name=>'Hidden+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
+      Card.create(:name=>'Hidden+*self+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
     end
   
     Session.as(:anonymous) do
@@ -180,7 +180,7 @@ describe "Permission", ActiveSupport::TestCase do
   it "should be granted to admin if to anybody" do
     Session.as_bot do
       c1 = Card['c1']
-      Card.create! :name=>'c1+*comment', :type=>'Pointer', :content=>'[[r1]]'
+      Card.create! :name=>'c1+*self+*comment', :type=>'Pointer', :content=>'[[r1]]'
       c1.who_can( :comment ).should == [Card['r1'].id]
       c1.ok?(:comment).should be_true
     end
@@ -209,7 +209,7 @@ describe "Permission", ActiveSupport::TestCase do
       rc.save
 
       cards=[1,2,3].map do |num|
-        Card.create(:name=>"c#{num}+*update", :type=>'Pointer', :content=>"[[u#{num}]]")
+        Card.create(:name=>"c#{num}+*self+*update", :type=>'Pointer', :content=>"[[u#{num}]]")
       end 
     }
  
@@ -236,7 +236,7 @@ describe "Permission", ActiveSupport::TestCase do
       rc.save
     
       [1,2,3].each do |num|
-        Card.create(:name=>"c#{num}+*read", :type=>'Pointer', :content=>"[[r#{num}]]")
+        Card.create(:name=>"c#{num}+*self+*read", :type=>'Pointer', :content=>"[[r#{num}]]")
       end
     end
     
@@ -252,7 +252,7 @@ describe "Permission", ActiveSupport::TestCase do
   it "write group permissions" do
     Session.as_bot do
       [1,2,3].each do |num|
-        Card.create(:name=>"c#{num}+*update", :type=>'Pointer', :content=>"[[r#{num}]]")
+        Card.create(:name=>"c#{num}+*self+*update", :type=>'Pointer', :content=>"[[r#{num}]]")
       end
     
       (rc=@u3.trait_card(:roles)).content =  ''
@@ -286,7 +286,7 @@ describe "Permission", ActiveSupport::TestCase do
       rc << @r1 << @r2 << @r3
 
       [1,2,3].each do |num|
-        Card.create(:name=>"c#{num}+*read", :type=>'Pointer', :content=>"[[u#{num}]]")
+        Card.create(:name=>"c#{num}+*self+*read", :type=>'Pointer', :content=>"[[u#{num}]]")
       end
     }
 
@@ -308,7 +308,7 @@ describe "Permission", ActiveSupport::TestCase do
        [@c1,@c2,@c3].each do |c| 
          c.update_attributes :content => 'WeirdWord'
        end
-       Card.create(:name=>"c1+*read", :type=>'Pointer', :content=>"[[u1]]")
+       Card.create(:name=>"c1+*self+*read", :type=>'Pointer', :content=>"[[u1]]")
      end
   
      Session.as(@u1) do
@@ -327,7 +327,7 @@ describe "Permission", ActiveSupport::TestCase do
       [@c1,@c2,@c3].each do |c| 
         c.update_attributes :content => 'WeirdWord'
       end
-      Card.create(:name=>"c1+*read", :type=>'Pointer', :content=>"[[r3]]")
+      Card.create(:name=>"c1+*self+*read", :type=>'Pointer', :content=>"[[r3]]")
     end
 
     Session.as(@u1) do

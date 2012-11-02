@@ -86,7 +86,8 @@ module Wagn::Model
         def register key, opt_keys, opts={}
           Wagn::Model::Pattern.register_class self
           self.key = key
-          self.key_id = (key == 'self') ? 0 : Wagn::Codename[key]
+          #self.key_id = (key == 'self') ? 0 : Wagn::Codename[key]
+          self.key_id = Wagn::Codename[key]
           self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]
           opts.each { |key, val| send "#{key}=", val }
           #warn "reg K:#{self}[#{key}] OK:[#{opt_keys.inspect}] jo:#{junction_only.inspect}, mk:#{method_key.inspect}"

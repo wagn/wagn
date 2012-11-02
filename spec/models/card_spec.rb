@@ -5,33 +5,33 @@ describe Card do
     it "gracefully handles explicit nil as parameters" do
       Card.new( nil ).should be_instance_of(Card)
     end
-    
+
     it "gracefully handles explicit nil name" do
       Card.new( :name => nil ).should be_instance_of(Card)
     end
   end
-  
+
   describe "module inclusion" do
     before do
       Session.as :joe_user
       @c = Card.new :type=>'Search', :name=>'Module Inclusion Test Card'
     end
-    
+
     it "gets needed methods after new" do
       @c.respond_to?( :get_spec ).should be_true
     end
-    
+
     it "gets needed methods after save" do
       @c.save!
       @c.respond_to?( :get_spec ).should be_true
     end
-    
+
 #    it "gets needed methods after find" do
 #      @c.save!
 #      c = Card[@c.name]
 #      c.respond_to?( :get_spec ).should be_true
 #    end
-    
+
     it "gets needed methods after fetch" do
       @c.save!
       c = Card.fetch(@c.name)
@@ -43,13 +43,13 @@ describe Card do
     before do
       @c_args = { :name=>'Home+*watchers' }
     end
-    
+
     it "gets needed methods with explicit pointer setting" do
       Rails.logger.info "testing point"
       Card.new(@c_args.merge(:type=>'Pointer')).
                respond_to?(:add_item).should be_true
     end
-    
+
     it "gets needed methods with implicit pointer setting (from template)" do
       c=Card.new(@c_args)
       Rails.logger.info "testing point #{c.inspect} N:#{c.name}"
@@ -57,8 +57,8 @@ describe Card do
     end
   end
 
-  
-  describe "#create" do 
+
+  describe "#create" do
     it "calls :after_create hooks" do
       # We disabled these for the most part, what replaces them?
       #[:before_save, :before_create, :after_save, :after_create].each do |hookname|
@@ -69,7 +69,7 @@ describe Card do
       end
     end
   end
-  
+
   describe "test data" do
     it "should be findable by name" do
       Card["Wagn Bot"].class.should == Card
@@ -82,12 +82,12 @@ describe Card do
         @c = Card.new :name=>"Ceee"
         @d = Card.new :type=>'Date'
       end
-  
+
       it "c should have cardtype basic" do
         Rails.logger.info "testing point #{@c} #{@c.inspect}"
         @c.typecode.should == :basic
       end
-  
+
       it "d should have cardtype Date" do
         Rails.logger.info "testing point #{@d} #{@d.inspect}"
         @d.typecode.should == :date
@@ -99,15 +99,15 @@ describe Card do
       Card.new( nil ).name.should == ""
     end
   end
-                            
+
   describe "creation" do
-    before(:each) do           
+    before(:each) do
       Session.as_bot do
         @b = Card.create! :name=>"New Card", :content=>"Great Content"
         @c = Card.find(@b.id)
       end
     end
-  
+
     it "should not have errors"        do @b.errors.size.should == 0        end
     it "should have the right class"   do @c.class.should    == Card        end
     it "should have the right key"     do @c.key.should      == "new_card"  end
@@ -120,7 +120,7 @@ describe Card do
 
     it "should be findable by name" do
       Card["New Card"].class.should == Card
-    end  
+    end
   end
 
 
@@ -130,15 +130,15 @@ describe Card do
         @c = Card.new :name=>"New Card", :content=>"Great Content"
       end
     end
-  
+
     it "should have updates" do
       Wagn::Model::AttributeTracking::Updates.should === @c.updates
     end
-  
+
     it "should return original value" do
       @c.name.should == 'New Card'
     end
-  
+
     it "should track changes" do
       @c.name = 'Old Card'
       @c.name.should == 'Old Card'
@@ -149,7 +149,7 @@ describe Card do
     before(:each) do
       @c = Card["Joe User"]
     end
-  end                    
+  end
 
   describe "content change should create new revision" do
     before do
@@ -158,11 +158,11 @@ describe Card do
         @c.update_attributes! :content=>'foo'
       end
     end
-  
+
     it "should have 2 revisions"  do
       @c.revisions.length.should == 2
     end
-  
+
     it "should have original revision" do
       @c.revisions[0].content.should == 'basiccontent'
     end
@@ -177,16 +177,16 @@ describe Card do
         @c.save!
       end
     end
-  
+
     it "should have 2 revisions"  do
       @c.revisions.length.should == 2
     end
-  
+
     it "should have original revision" do
       @c.revisions[0].content.should == 'basiccontent'
     end
-  end    
-     
+  end
+
 
   describe "created a virtual card when missing and has a template" do
     it "should be flagged as virtual" do

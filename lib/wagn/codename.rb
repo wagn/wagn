@@ -22,8 +22,8 @@ module Wagn
     def bootdata hash
       @@codehash = hash
     end
-    
-      
+
+
     private
 
     def load_hash

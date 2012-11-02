@@ -15,14 +15,14 @@ class Wagn::Renderer
     begin
       if Wagn::Conf[:enable_server_cards]
         Shellbox.new.run( command )
-      else  
+      else
         'sorry, server cards are not enabled' #ENGLISH
       end
     rescue Exception=>e
       e.message
     end
   end
-  
+
   alias_view( :editor, {:type=>'plain_text'},  {:type=>'script'} )
 
 end

@@ -1,4 +1,4 @@
-class Wagn::Renderer 
+class Wagn::Renderer
   define_view  :core, :right=>'content' do |args|
     self._render_raw
     #with_inclusion_mode :template do
@@ -6,7 +6,7 @@ class Wagn::Renderer
     #end
   end
   alias_view :core, {:right=>'content'}, {:right=>'default'}
-  
+
   define_view :template_rule, :tags=>:unknown_ok do |args|
     tname = args[:tname].gsub /\b_(left|right|whole|self|user|main|\d+|L*R?)\b/, ''
     if tname !~ /^\+/
@@ -21,6 +21,6 @@ class Wagn::Renderer
         end
       "<strong>{{#{args[:unmask]}}} -- #{set_name}</strong>"
     end
-    
+
   end
 end

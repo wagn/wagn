@@ -4,17 +4,17 @@ module ChunkTestHelper
   # and any the values of any fields that should be set after a match.
   class ContentStub < String
     attr_reader :renderer
-    
+
     include ChunkManager
     def initialize(str)
       super
       @renderer = Wagn::Renderer::Html.new(nil)
       init_chunk_manager
-    end             
-    
+    end
+
     def card
     end
-    
+
     def render_link(*); end
   end
 
@@ -30,7 +30,7 @@ module ChunkTestHelper
     assert_match(pattern, test_text)
     pattern =~ test_text   # Previous assertion guarantees match
     chunk = type.new($~)
-    
+
     # Test if requested parts are correct.
     for method_sym, value in expected do
       assert_respond_to(chunk, method_sym)

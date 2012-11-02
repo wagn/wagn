@@ -42,7 +42,7 @@ class CardController < ApplicationController
 
     success 'REDIRECT: *previous'
   end
-  
+
 
   def index
     read
@@ -52,7 +52,7 @@ class CardController < ApplicationController
   def read_file
     show_file
   end #FIXME!  move to pack
-  
+
 
 
 
@@ -78,7 +78,7 @@ class CardController < ApplicationController
         "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" : "[[#{Session.user.card.name}]]"
     comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.strip.empty? ? '&nbsp;' : c}</p>"} * "\n"
     @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
-    
+
     if @card.save
       show
     else
@@ -115,7 +115,7 @@ class CardController < ApplicationController
     if params[:save_roles]
       role_card = @card.trait_card :roles
       role_card.ok! :update
-      
+
       role_hash = params[:user_roles] || {}
       role_card = role_card.refresh if role_card.frozen?
       role_card.items= role_hash.keys.map &:to_i
@@ -125,7 +125,7 @@ class CardController < ApplicationController
     if account and account_args = params[:account]
       unless Session.as_id == @card.id and !account_args[:blocked]
         @card.trait_card(:account).ok! :update
-      end 
+      end
       account.update_attributes account_args
     end
 
@@ -177,14 +177,14 @@ class CardController < ApplicationController
 
   def load_card
     @card = case params[:id]
-      when '*previous'   ; return wagn_redirect( previous_location )  
+      when '*previous'   ; return wagn_redirect( previous_location )
       when /^\~(\d+)$/   ; Card.fetch $1.to_i
       when /^\:(\w+)$/   ; Card.fetch $1.to_sym
       else
         opts = params[:card] ? params[:card].clone : {}
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
         name = params[:id] ? Wagn::Cardname.unescape( params[:id] ) : opts[:name]
-        
+
         if @action == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
           # I think we may need to create a "#create" instance method that handles this checking.
@@ -195,7 +195,7 @@ class CardController < ApplicationController
           Card.fetch_or_new name, opts
         end
       end
-      
+
     Wagn::Conf[:main_name] = params[:main] || (@card && @card.name) || ''
     true
   end

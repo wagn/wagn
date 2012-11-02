@@ -7,7 +7,7 @@ module ActiveRecord
       trailer(stream)
       stream
     end
-    
+
     private
     def views(stream)
       views = @connection.select_all("SELECT viewname  FROM pg_views WHERE schemaname IN ('$user','public');")
@@ -15,20 +15,20 @@ module ActiveRecord
         view( view['viewname'], stream )
       end
     end
-    
+
     def view(viewname, stream)
       viewinfo = @connection.select_one %{
-        SELECT * from pg_views WHERE schemaname IN ('$user','public') 
+        SELECT * from pg_views WHERE schemaname IN ('$user','public')
         and viewname='#{viewname}'
       }
       stream.puts <<ENDVIEW
-  execute %{ 
+  execute %{
     CREATE VIEW #{viewname} AS
     #{viewinfo['definition']}
   }
-      
+
 ENDVIEW
     end
-    
+
   end
 end

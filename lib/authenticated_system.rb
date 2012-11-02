@@ -26,7 +26,7 @@ module AuthenticatedSystem
 
     # Store current location so that we can redirect back after login
     store_location
-    
+
 
     # Call access_denied for an appropriate redirect and stop the filter
     # chain here
@@ -43,7 +43,7 @@ module AuthenticatedSystem
   # simply close itself.
   def access_denied
     wagn_redirect( Wagn::Conf[:base_url] + url_for(:controller=>'account', :action=>'signin') )
-  end  
+  end
 
   # Store the URI of the current request in the session.
   #
@@ -55,7 +55,7 @@ module AuthenticatedSystem
   # Redirect to the URI stored by the most recent store_location call or
   # to the passed default.
   def redirect_back_or_default(default)
-    session[:return_to] ? redirect_to(session[:return_to]) : 
+    session[:return_to] ? redirect_to(session[:return_to]) :
       (default.nil? ? redirect_to('/') : redirect_to(default))
     session[:return_to] = nil
   end

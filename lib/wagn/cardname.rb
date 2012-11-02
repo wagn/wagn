@@ -23,7 +23,7 @@ module Wagn
           super str.strip
         end
       end
-      
+
       def unescape uri
         # can't instantiate because key doesn't resolve correctly in unescaped form
         # issue is peculiar to plus sign (+), which are interpreted as a space.
@@ -46,7 +46,7 @@ module Wagn
           @parts = @s.split(/\s*#{JOINT_RE}\s*/)
           @parts << '' if @s.last == JOINT
           @simple = false
-          @parts.map { |p| p.to_cardname.key } * JOINT  
+          @parts.map { |p| p.to_cardname.key } * JOINT
         else
           @parts = [str]
           @simple = true
@@ -54,7 +54,7 @@ module Wagn
         end
       @@name2cardname[str] = self
     end
-    
+
     def to_cardname()    self                                           end
     def valid?()         not parts.find { |pt| pt.match BANNED_RE }     end
     def size()           parts.size                                     end # size of name = number of parts??  not intuitive.    maybe depth? psize?
@@ -71,57 +71,57 @@ module Wagn
         when obj.respond_to?(:to_cardname) ; obj.to_cardname.key
         else                               ; obj.to_s
         end
-      object_key == key        
+      object_key == key
     end
 
 
     #~~~~~~~~~~~~~~~~~~~ VARIANTS ~~~~~~~~~~~~~~~~~~~
-    
+
     def simple_key
       decoded.underscore.gsub(/[^#{OK4KEY_RE}]+/,'_').split(/_+/).reject(&:blank?).map(&:singularize)*'_'
     end
-    
+
     def url_key
       @url_key ||= decoded.gsub(/[^#{OK4KEY_RE}#{JOINT_RE}]+/,' ').strip.gsub /[\s\_]+/, '_'
     end
-    
+
     def safe_key
       @safe_key ||= key.gsub('*','X').gsub JOINT, '-'
     end
-    
+
     def decoded
       @decoded ||= (s.index('&') ?  HTMLEntities.new.decode(s) : s)
     end
-    
+
     def pre_cgi
       #why is this necessary?? doesn't real CGI escaping handle this??
       # hmmm.  is this to prevent absolutizing
       @pre_cgi ||= parts.join '~plus~'
     end
-    
+
     def post_cgi
       #hmm.  this could resolve to the key of some other card.  move to class method?
       @post_cgi ||= s.gsub '~plus~', JOINT
     end
 
     #~~~~~~~~~~~~~~~~~~~ PARTS ~~~~~~~~~~~~~~~~~~~
-    
+
     alias simple? simple
     def junction?()     not simple?                                        end
-                                                                          
+
     def left()          @left  ||= simple? ? nil : parts[0..-2]*JOINT      end
-    def right()         @right ||= simple? ? nil : parts[-1]               end            
+    def right()         @right ||= simple? ? nil : parts[-1]               end
 
     def left_name()     @left_name  ||= left  && self.class.new( left  )   end
     def right_name()    @right_name ||= right && self.class.new( right )   end
-      
+
     # Note that all names have a trunk and tag, but only junctions have left and right
-                                                                           
+
     def trunk()         @trunk ||= simple? ? s : left                      end
-    def tag()           @tag   ||= simple? ? s : right                     end            
-                                                                                       
+    def tag()           @tag   ||= simple? ? s : right                     end
+
     def trunk_name()    @trunk_name ||= simple? ? self : left_name         end
-    def tag_name()      @tag_name   ||= simple? ? self : right_name        end 
+    def tag_name()      @tag_name   ||= simple? ? self : right_name        end
 
     def pieces
       @pieces ||= if simple?
@@ -132,7 +132,7 @@ module Wagn
     end
 
 
-    #~~~~~~~~~~~~~~~~~~~ TRAITS / STARS ~~~~~~~~~~~~~~~~~~~    
+    #~~~~~~~~~~~~~~~~~~~ TRAITS / STARS ~~~~~~~~~~~~~~~~~~~
 
     def star?()         simple?   and '*' == s[0]               end
     def rstar?()        right     and '*' == right[0]           end
@@ -145,11 +145,11 @@ module Wagn
         end
       end
     end
-      
+
     def trait_name tag_code
       [ self, Card[ tag_code ].name ].to_cardname
     end
-    
+
     def trait tag_code
       trait_name( tag_code ).s
     end
@@ -162,7 +162,7 @@ module Wagn
 #      ignore = [ args[:ignore], context.to_cardname.parts ].flatten.compact.map &:to_cardname
       ignore = [ args[:ignore] ].flatten.map &:to_cardname
       fullname = parts.to_cardname.to_absolute_name context, args
-      
+
       show_parts = fullname.parts.map do |part|
         reject = ( part.blank? or part =~ /^_/ or ignore.member? part.to_cardname )
         reject ? nil : part
@@ -170,7 +170,7 @@ module Wagn
 
 
       initial_blank = show_parts[0].nil?
-      show_parts.compact!      
+      show_parts.compact!
       if show_parts.empty?
         fullname.s
       else
@@ -206,7 +206,7 @@ module Wagn
         new_part.blank? ? context.to_s : new_part
       end * JOINT
     end
-    
+
     def to_absolute_name *args
       self.class.new to_absolute(*args)
     end
@@ -215,10 +215,10 @@ module Wagn
       # 1 = left; 2= left of left; 3 = left of left of left....
       ( n >= size ? parts[0] : parts[0..-n-1] ).to_cardname
     end
-    
-    
-    #~~~~~~~~~~~~~~~~~~~~ MISC ~~~~~~~~~~~~~~~~~~~~  
-    
+
+
+    #~~~~~~~~~~~~~~~~~~~~ MISC ~~~~~~~~~~~~~~~~~~~~
+
     def replace_part oldpart, newpart
       oldpart = oldpart.to_cardname
       newpart = newpart.to_cardname
@@ -227,7 +227,7 @@ module Wagn
           self == oldpart ? newpart : self
         else
           parts.map do |p|
-            oldpart == p ? newpart.to_s : p 
+            oldpart == p ? newpart.to_s : p
           end.to_cardname
         end
       elsif simple?

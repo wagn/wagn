@@ -10,7 +10,7 @@ module Wagn::Set::Type::Basic
     min = self.rule(:table_of_contents).to_i
     #warn "table_of #{name}, #{min}"
     return unless min and min > 0
-    
+
     toc, dep = [], 1
     content.gsub!( /<(h\d)>(.*?)<\/h\d>/i ) do |match|
       tag, value = $~[1,2]
@@ -32,7 +32,7 @@ module Wagn::Set::Type::Basic
         make_table_of_contents_list(toc) + '</div>'+ content
     end
   end
-  
+
   private
 
   def make_table_of_contents_list(items)

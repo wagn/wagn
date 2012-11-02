@@ -30,17 +30,17 @@ module NavigationHelpers
       "/card/new?card[name]=#{CGI.escape($1)}"
 
     when /edit (.*)$/
-   "/card/edit/#{$1.to_cardname.url_key}"  
+   "/card/edit/#{$1.to_cardname.url_key}"
 
     when /new (.*)$/
       "/new/#{$1.to_cardname.url_key}"
-      
+
     when /kml source/
        "/House+*type+by_name.kml"
 
     when /url "(.*)"/
       "#{$1}"
-      
+
     else
       begin
         page_name =~ /the (.*) page/

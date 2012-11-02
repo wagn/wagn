@@ -2,21 +2,21 @@ module Wagn
   class Dumper
     def initialize(fh=nil, args={})
       @fh = fh || STDOUT
-      @author_names = {}            
+      @author_names = {}
       @card_names = {}
     end
-    
+
     def dump_yaml() dump(:yaml) end
     def dump_xml()  dump(:xml) end
     def dump_json() dump(:json) end
-                
+
     private
-    
+
     def dump(method)
       @data={'revisions'=>[]}
       each_revision_hash do |data|
         @data['revisions'] << data
-      end 
+      end
       @fh.write( @data.send("to_#{method}") )
     end
 
@@ -25,7 +25,7 @@ module Wagn
         yield( rev_to_hash(rev) )
       end
     end
-      
+
     def rev_to_hash( rev )
       {
         'name'=>rev.card.name,
@@ -33,8 +33,8 @@ module Wagn
         'date'=>rev.created_at,
         'author'=>get_user(rev)
       }
-    end         
-    
+    end
+
     def get_card(rev)
       id = rev.attributes['card_id']
       unless @card_names[id]
@@ -50,6 +50,6 @@ module Wagn
       end
       @author_names[id]
     end
-    
+
   end
 end

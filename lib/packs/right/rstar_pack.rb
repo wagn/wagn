@@ -31,7 +31,7 @@ class Wagn::Renderer::Html
     setting_name = card.cardname.tag
     current_rule ||= Card.new :name=> "*all+#{setting_name}"
     set_selected = false
-    
+
     if params[:type_reload] && card_args=params[:card]
       params.delete :success # otherwise updating the editor looks like a successful post
       if card_args[:name] && card_args[:name].to_cardname.key != current_rule.key
@@ -41,10 +41,10 @@ class Wagn::Renderer::Html
         current_rule.assign_attributes card_args
         current_rule.include_set_modules
       end
-      
+
       set_selected = card_args[:name].to_cardname.left_name.to_s
     end
-    
+
     opts = {
       :fallback_set    => false,
       :open_rule       => card,
@@ -62,7 +62,7 @@ class Wagn::Renderer::Html
           opts[:fallback_set] = set_name if Card.exists?("#{set_name}+#{opts[:setting_name]}")
         end
       end
-      last = set_options.index{|s| s.to_cardname.key == card.cardname.trunk_name.key} || -1 
+      last = set_options.index{|s| s.to_cardname.key == card.cardname.trunk_name.key} || -1
       # note, the -1 can happen with virtual cards because the self set doesn't show up in the set_names.  FIXME!!
       opts[:set_options] = set_options[first..last]
 
@@ -151,7 +151,7 @@ class Wagn::Renderer::Html
 
           %{</div>
           <div class="rule-content">
-            #{ 
+            #{
             case
             when edit_mode       ; content_field form, :skip_rev_id=>true
             when current_set_key ; render_core

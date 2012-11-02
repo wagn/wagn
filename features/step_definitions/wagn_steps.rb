@@ -1,6 +1,6 @@
 require 'uri'
 require 'cgi'
-require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths")) 
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
 
 Given /^I log in as (.+)$/ do |user_card_name|
   # FIXME: define a faster simulate method ("I am logged in as")
@@ -37,21 +37,21 @@ When /^(.*) edits? "([^\"]*)" entering "([^\"]*)" into wysiwyg$/ do |username, c
   logged_in_as(username) do
     visit "/card/edit/#{cardname.to_cardname.url_key}"
     page.execute_script "$('#main .card-content').val('#{content}')"
-    click_button("Submit")    
+    click_button("Submit")
   end
 end
 
-  
+
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
-  logged_in_as(username) do 
+  logged_in_as(username) do
     visit "/card/edit/#{cardname.to_cardname.url_key}"
-    fill_in 'card[content]', :with=>content 
+    fill_in 'card[content]', :with=>content
     click_button("Submit")
   end
-end    
-                   
+end
+
 When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
-  logged_in_as(username) do  
+  logged_in_as(username) do
     visit "/card/edit/#{cardname.to_cardname.url_key}"
     plusses.hashes.first.each do |name, content|
       fill_in "card[cards][#{(cardname+'+'+name).to_cardname.pre_cgi}][content]", :with=>content
@@ -59,22 +59,22 @@ When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
     click_button("Submit")
   end
 end
-     
+
 When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |username, cardtype, cardname, content|
-  create_card(username, cardtype, cardname, content) do  
+  create_card(username, cardtype, cardname, content) do
     fill_in("card[content]", :with=>content)
   end
-end    
+end
 
 When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content$/ do |username, cardtype, cardname, content|
-  create_card(username, cardtype, cardname, content) do   
+  create_card(username, cardtype, cardname, content) do
     fill_in("card[content]", :with=>content)
   end
-end    
+end
 
 When /^(.*) creates?\s*([^\s]*) card "([^"]*)"$/ do |username, cardtype, cardname|
   create_card(username,cardtype,cardname)
-end    
+end
 
 When /^(.*) creates?\s*([^\s]*) card "([^"]*)" with plusses:$/ do |username,cardtype,cardname,plusses|
   create_card(username,cardtype,cardname) do
@@ -83,7 +83,7 @@ When /^(.*) creates?\s*([^\s]*) card "([^"]*)" with plusses:$/ do |username,card
     end
   end
 end
-   
+
 When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
   logged_in_as(username) do
     visit "/card/delete/#{cardname.to_cardname.url_key}?confirm_destroy=true"
@@ -126,7 +126,7 @@ def logged_in_as(username)
     step( @saved_user ? "I log in as #{Card[@saved_user].name}" : "I log out" )
   end
 end
-                   
+
 
 When /^In (.*) I follow "([^\"]*)"$/ do |section, link|
   within scope_of(section) do
@@ -137,9 +137,9 @@ end
 When /^In (.*) I click "(.*)"$/ do |section, link|
   within scope_of(section) do
     click_link link
-  end                                           
-end   
-     
+  end
+end
+
 Then /the card (.*) should contain "([^\"]*)"$/ do |cardname, content|
   visit path_to("card #{cardname}")
   within scope_of("the main card content") do
@@ -155,7 +155,7 @@ Then /the card (.*) should not contain "([^\"]*)"$/ do |cardname, content|
 end
 
 Then /^In (.*) I should see "([^\"]*)"$/ do |section, text|
-  within scope_of(section) do 
+  within scope_of(section) do
     page.should have_content(text)
   end
 end
@@ -180,6 +180,6 @@ Then /^I should see$/ do |text|
 end
 
 When /^I fill in "([^\"]*)" with$/ do |field, value|
-  fill_in(field, :with => value) 
+  fill_in(field, :with => value)
 end
 

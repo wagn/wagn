@@ -7,14 +7,14 @@ module CaptchaExampleGroupMethods
     ENV['RECAPTCHA_PUBLIC_KEY'] = 'not nil'
     it action.to_s do
       require_captcha!
-      post action, params    
+      post action, params
       #yield if block_given?
     end
   end
-end  
+end
 
 module CaptchaExampleMethods
-  def require_captcha!  
+  def require_captcha!
     @controller.should_receive(:verify_captcha).and_return(false)
   end
 end
@@ -29,15 +29,15 @@ describe CardController, "captcha_required?" do
     Session.as_bot do
       Card["*all+*captcha"].update_attributes! :content=>"1"
       Card.create :name=>'Book+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
-#      c=Card["Book"];c.permit(:create, Role[:anyone]);c.save! 
-      Card.create :name=>"Book+*type+*captcha", :content => "1"  
+#      c=Card["Book"];c.permit(:create, Role[:anyone]);c.save!
+      Card.create :name=>"Book+*type+*captcha", :content => "1"
     end
   end
-  
+
   it "is false for joe user" do
-    login_as :joe_user      
+    login_as :joe_user
     @controller.send(:captcha_required?).should be_false
-  end                                       
+  end
 
   context "for anonymous" do
     it "is true when global setting is true" do
@@ -63,37 +63,37 @@ describe CardController, "captcha_required?" do
       @controller.send(:captcha_required?).should be_false
     end
   end
-end  
+end
 
-describe CardController, "with captcha enabled requires captcha on" do   
+describe CardController, "with captcha enabled requires captcha on" do
   before do
     Session.as_bot do
       Card["*all+*captcha"].update_attributes! :content=>"1"
-      #FIXME it would be nice if there were a simpler idiom for this     
+      #FIXME it would be nice if there were a simpler idiom for this
       Card.create :name=>'Basic+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
-      %w{ update delete }.each do |op| 
+      %w{ update delete }.each do |op|
         Card.create :name=>"A+*self+*#{op}", :type=>'Pointer', :content=>'[[Anyone]]'
       end
     end
   end
 
-  require_captcha_on :create, :card=>{:name=>"TestA", :content=>"TestC"} 
-  require_captcha_on :remove, :id => "A"        
+  require_captcha_on :create, :card=>{:name=>"TestA", :content=>"TestC"}
+  require_captcha_on :remove, :id => "A"
   require_captcha_on :update, :id=>"A", :card=>{:name=>"Booker"}
   require_captcha_on :comment, :id=>"A", :card=>{:content=>"Yeah"}
 end
 
-describe AccountController, "with captcha enabled" do    
+describe AccountController, "with captcha enabled" do
   before do
     Session.as_bot do
       Card["*all+*captcha"].update_attributes! :content=>"1"
-      #FIXME it would be nice if there were a simpler idiom for this     
+      #FIXME it would be nice if there were a simpler idiom for this
     end
   end
 
   Session.as Card::AnonID do
-    require_captcha_on( 
-      :signup, 
+    require_captcha_on(
+      :signup,
       :card => { :name => "Bob", :type=>"Account Request" },
       :user => { :email => "bob@user.com" }
     )

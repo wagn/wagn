@@ -9,14 +9,14 @@ class Wagn::Renderer::Csv
       super args
     end
   end
-  
+
   define_view :csvrow do |args|
     _render_raw.scan( /\{\{[^\}]*\}\}/ ).map do |inc|
       process_content( inc ).strip
     end.to_csv.chop
     #chop is because search already joins with newlines
   end
-  
+
   define_view :missing do |args|
     ''
   end

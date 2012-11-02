@@ -7,20 +7,20 @@ Feature: Update Includer cards
     And I create Book card "Ulysses"
     And Joe Camel is watching "Ulysses"
     And Joe Admin is watching "Book"
-  
+
   Scenario: Watcher should be notified of updates to transcluded plus card
     When I create card "Ulysses+author" with content "James Joyce"
-    Then Joe Camel should be notified that "Joe User updated \"Ulysses\""   
+    Then Joe Camel should be notified that "Joe User updated \"Ulysses\""
     #And He should see "added Ulysses+author" in the email  -- FIXME need multiline matching
     And Joe Admin should be notified that "Joe User updated \"Ulysses\""
     When Joe Admin edits "Ulysses+author" setting content to "Jim"
     Then Joe Camel should be notified that "Joe Admin updated \"Ulysses\""
     #And Joe Admin should be notified that "Joe User updated \"Ulysses\""
-    
+
   Scenario: Should not notify of transcluded but not plussed card
     When I create card "illustrator" with content "Picasso"
-    Then No notification should be sent                                     
-    
+    Then No notification should be sent
+
   Scenario: Should not notify of plussed but not transcluded card
     When I create card "Ulysses+random" with content "boo"
     Then No notification should be sent
@@ -33,7 +33,7 @@ Feature: Update Includer cards
     When I edit "Bros Krmzv" with plusses:
       |author|illustrator|
       |Rumi|Monet|
-    Then Joe Admin should be notified that "Joe User updated \"Bros Krmzv\""    
+    Then Joe Admin should be notified that "Joe User updated \"Bros Krmzv\""
 
   Scenario: Watching a plus card on multiedit; and watching both plus card and including card on multiedit
     Given I log in as Joe Admin
@@ -47,19 +47,19 @@ Feature: Update Includer cards
     When I edit "Banana" with plusses:
       |color|flavor|
       |spotted|mushy|
-    Then Joe Camel should be notified that "Joe User edited \"Banana\+color\""    
+    Then Joe Camel should be notified that "Joe User edited \"Banana\+color\""
     When Joe Camel is watching "Banana"
     And I wait a sec
     And I edit "Banana" with plusses:
       |color|flavor|
       |spotted|mushy|
     Then Joe Camel should be notified that "Joe User updated \"Banana\""
-    
+
   Scenario: Watching a plus card & including card on regular edit
     When I create card "Ulysses+author" with content "Joyce"
     Then Joe Camel should be notified that "Joe User updated \"Ulysses\""
     When Joe Camel is watching "Ulysses+author"
     And I edit "Ulysses+author" setting content to "Jim"
     Then Joe Camel should be notified that "Joe User updated \"Ulysses\""
-      
-    
+
+

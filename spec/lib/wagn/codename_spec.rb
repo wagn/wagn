@@ -1,13 +1,13 @@
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Codename, "Codename" do
-  
+
   before do
     @codes = Wagn::Codename.codehash.each_key.find_all do |key|
       Symbol===key
     end
-  end  
-  
+  end
+
   it "should have sane codename data" do
     @codes.each do |code|
       code.                      should be_instance_of Symbol

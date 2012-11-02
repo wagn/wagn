@@ -13,7 +13,7 @@ module Wagn
     class << self
       def [](key)         @@hash[key.to_sym]            end
       def []=(key, value) @@hash[key.to_sym]=value      end
-      
+
       WAGN_CONFIG_FILE = ENV['WAGN_CONFIG_FILE'] || File.expand_path('../wagn.yml', __FILE__)
 
       def load
@@ -21,11 +21,11 @@ module Wagn
         f = WAGN_CONFIG_FILE
         if File.exists?( f ) and y = YAML.load_file( f ) and Hash === y
           h.merge! y
-        end 
+        end
         h.symbolize_keys!
       end
-      
-      def load_after_app 
+
+      def load_after_app
         #could do these at normal load time but can't use Rails.root
         h = @@hash
         if base_u = h[:base_url]
@@ -34,10 +34,10 @@ module Wagn
         end
 
         h[:root_path] = begin
-          epath = ENV['RAILS_RELATIVE_URL_ROOT'] 
+          epath = ENV['RAILS_RELATIVE_URL_ROOT']
           epath && epath != '/' ? epath : ''
         end
-      
+
         h[:attachment_web_dir]     ||= h[:root_path] + '/files'
         h[:attachment_storage_dir] ||= "#{Rails.root}/local/files"
 
@@ -48,10 +48,10 @@ module Wagn
       end
     end
   end
-  
-  
+
+
   Wagn::Conf.load
-  
+
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -83,7 +83,7 @@ module Wagn
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
-    
+
     cache_store = ( Wagn::Conf[:cache_store] || :file_store ).to_sym
     cache_args = case cache_store
       when :file_store
@@ -92,15 +92,15 @@ module Wagn
         Wagn::Conf[:mem_cache_servers] || []
       end
     config.cache_store = cache_store, *cache_args
-    
+
     if log_file = Wagn::Conf[:log_file]
       config.paths['log'] = File.join( log_file )
     end
-    
+
     if db_file = Wagn::Conf[:database_config_file]
       config.paths['config/database'] = File.join( db_file )
-    end  
-  
+    end
+
     if Wagn::Conf[:smtp]
       config.action_mailer.smtp_settings = Wagn::Conf[:smtp].symbolize_keys
     end
@@ -109,21 +109,21 @@ module Wagn
     config.autoload_paths += Dir["#{config.root}/app/models/"]
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
   end
-  
+
   Wagn::Conf.load_after_app # move this stuff to initializer?
 
   ActionDispatch::Callbacks.to_prepare do
-    # this is called per- init in production, per-request in development 
-    
+    # this is called per- init in production, per-request in development
+
     database_ready = begin; ActiveRecord::Base.connection.table_exists?( 'cards' ); rescue; false; end
-    # Note that ActiveRecord::Base.connected? does not work here, 
+    # Note that ActiveRecord::Base.connected? does not work here,
     # because it fails until the first call has been made.
     # also, without the "table_exists? call, generate_fixtures breaks"
-    
+
     if database_ready
 #      ActiveSupport::Notifications.instrument 'wagn.init_cache', :message=>'' do
         Wagn::Cache.new_all
 #      end
     end
-  end  
+  end
 end

@@ -2,19 +2,19 @@
 Feature: Pointer Inputs
   In order to offer a more user friendly interface
   Users should be able to use different input methods for pointers
-  
+
   Background:
     Given I log in as Joe Admin
     And I create Pointer card "friends+*right+*default"
     And I create Search card "friends+*right+*options" with content "{"type":"User"}"
 
-  Scenario: Creating a card with select input  
+  Scenario: Creating a card with select input
     Given I create Phrase card "friends+*right+*input" with content "select"
     When I go to card "Joe User+friends"
     And I select "Joe Camel" from "pointer_select"
     And I press "Submit"
     And I go to card "Joe User+friends"
-    Then I should see "Joe Camel"   
+    Then I should see "Joe Camel"
 
   Scenario: Creating a templated card including a select input
     Given I create Phrase card "User+*type+*content" with content "{{+friends}}"
@@ -32,7 +32,7 @@ Feature: Pointer Inputs
     And I select "Joe Camel" from "pointer_multiselect"
     And I press "Submit"
     And I go to card "Joe User+friends"
-    Then I should see "Joe Camel" 
+    Then I should see "Joe Camel"
 
   Scenario: Creating a templated card including a multiselect input
     Given I create Phrase card "User+*type+*content" with content "{{+friends}}"
@@ -43,7 +43,7 @@ Feature: Pointer Inputs
     And I press "Submit"
     And I go to card "Jill"
     And I should see "Joe Admin"
-    
+
   Scenario: Creating a card with radio input
     Given I create Phrase card "friends+*right+*input" with content "radio"
     When I go to card "Joe User+friends"
@@ -67,8 +67,8 @@ Feature: Pointer Inputs
     And I press "Submit"
     And I go to card "Joe User+friends"
     Then I should not see "Joe Camel"
-  
-# can't get fill_in to work. don't know why -efm    
+
+# can't get fill_in to work. don't know why -efm
 #  Scenario: Creating a card with list input
 #    Given I go to card "Joe User+friends"
 #    Then I fill in "pointer_item" with "Joe Camel"

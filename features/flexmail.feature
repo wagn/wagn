@@ -2,7 +2,7 @@ Feature: Flexmail
   As a Wagneer
   I want to be able to set up email configs
   So that we can create emailing forms
-  
+
   Background:
     Given I log in as Joe Admin
     And I create Cardtype card "Testimony"
@@ -20,7 +20,7 @@ Feature: Flexmail
     And I create Search card "Testemailconfig+*from" with content "{"left":"_self","right":"email"}"
     And I create Phrase card "Testemailconfig+*subject" with content "Subjectimus"
 #    And I create Phrase card "Testemailconfig+*bcc"
-    And I create Basic card "Testemailconfig+*message" with content 
+    And I create Basic card "Testemailconfig+*message" with content
       """
       Pleistocles, {{_self+name|core}} says: {{_self+Testimony|core}} {{_self+search test|core;item:name}}
       buena,
@@ -30,16 +30,16 @@ Feature: Flexmail
     And I create Phrase card "A+email" with content "argumus@test.com"
     And I create Phrase card "B+email" with content "tacitus@test.com"
     # FIXME: apparently cucumber or webrat or something can't handle saving
-    # multiple line entries. Everything I've tried so far has resulted in 
+    # multiple line entries. Everything I've tried so far has resulted in
     # truncation after the first line.  which fucking bites.
     # so for now I will eunicize our tests and only check for one email delivery.
-    And I create Pointer card "List1" with content 
+    And I create Pointer card "List1" with content
       """
       [[A+email]]
       [[B+email]]
       """
     And I log in as Joe User
-    
+
   Scenario: Submitting a new Testimony
     Given I go to new Testimony
     When I create Testimony card "MoanE" with plusses:
@@ -51,4 +51,3 @@ Feature: Flexmail
     And they should see "Pleistocles" in the email body
     And they should see "Lee" in the email body
     And they should see "This is outrageous" in the email body
-    

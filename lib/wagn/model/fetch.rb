@@ -25,17 +25,17 @@ module Wagn::Model::Fetch
         mark = Wagn::Codename[mark] || raise("Missing codename for #{mark.inspect}")
       end
 
-      
-      cache_key, method, val = if Integer===mark 
+
+      cache_key, method, val = if Integer===mark
         [ "~#{mark}", :find_by_id_and_trash, mark ]
       else
         key = mark.to_cardname.key
         [ key, :find_by_key_and_trash, key ]
       end
-      
+
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       # lookup card
-      
+
       #Cache lookup
       result = Card.cache.read cache_key if Card.cache
       card = (result && Integer===mark) ? Card.cache.read(result) : result
@@ -45,10 +45,10 @@ module Wagn::Model::Fetch
         needs_caching = true
         card = Card.send method, val, false
       end
-      
+
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       opts[:skip_virtual] = true if opts[:loaded_trunk]
-      
+
       if Integer===mark
         raise "fetch of missing card_id #{mark}" if card.nil?
       else
@@ -64,12 +64,12 @@ module Wagn::Model::Fetch
           card = new new_args
         end
       end
-          
+
       if Card.cache && needs_caching
         Card.cache.write card.key, card
         Card.cache.write "~#{card.id}", card.key if card.id and card.id != 0
       end
-      
+
       return nil if card.new_card? and ( opts[:skip_virtual] || !card.virtual? )
 
       #warn "fetch returning #{card.inspect}"
@@ -93,28 +93,28 @@ module Wagn::Model::Fetch
       card and card.id
     end
 
-    def [](name) 
+    def [](name)
       fetch name, :skip_virtual=>true
     end
-    
+
     def exists? cardname
       card = fetch cardname, :skip_virtual=>true, :skip_modules=>true
       card.present?
     end
-    
+
     def expire name
       if card = Card.cache.read( name.to_cardname.key )
         card.expire
       end
     end
-    
+
     # set_names reverse map (cached)
     def members(key)
       (v=Card.cache.read "$#{key}").nil? ? [] : v.keys
     end
 
     def set_members set_names, key
-      
+
       #warn Rails.logger.warn("set_members #{set_names.inspect}, #{key}")
       set_names.compact.map(&:to_cardname).map(&:key).map do |set_key|
         skey = "$#{set_key}" # dollar sign avoids conflict with card keys
@@ -142,7 +142,7 @@ module Wagn::Model::Fetch
 
   def expire_related
     self.expire
-    
+
     if self.hard_template?
       self.hard_templatee_names.each do |name|
         Card.expire name
@@ -160,7 +160,7 @@ module Wagn::Model::Fetch
     Card.cache.delete key
     Card.cache.delete "~#{id}" if id
   end
-  
+
   def refresh
     fresh_card = self.class.find(self.id)
     fresh_card.include_set_modules

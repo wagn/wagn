@@ -183,8 +183,8 @@ class User < ActiveRecord::Base
     if e = self.email and e != e.downcase
       self.email=e.downcase
     end
-  end 
-   
+  end
+
   def card()
 #    raise "deprecate user.card #{card_id}, #{@card&&@card.id} #{caller*"\n"}"
     @card && @card.id == card_id ? @card : @card = Card[card_id]

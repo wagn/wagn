@@ -244,16 +244,16 @@ module Wagn::Model::Permissions
   def update_ruled_cards
     # FIXME: codename
     if junction? && tag_id==Card::ReadID && (@name_or_content_changed || @trash_changed)
-      # These instance vars are messy.  should use tracked attributes' @changed variable 
+      # These instance vars are messy.  should use tracked attributes' @changed variable
       # and get rid of @name_changed, @name_or_content_changed, and @trash_changed.
       # Above should look like [:name, :content, :trash].member?( @changed.keys ).
-      # To implement that, we need to make sure @changed actually tracks trash 
+      # To implement that, we need to make sure @changed actually tracks trash
       # (though maybe not as a tracked_attribute for performance reasons?)
       # AND need to make sure @changed gets wiped after save (probably last in the sequence)
-      
+
       User.cache.reset
       Card.cache.reset # maybe be more surgical, just Session.user related
-      expire #probably shouldn't be necessary, 
+      expire #probably shouldn't be necessary,
       # but was sometimes getting cached version when card should be in the trash.
       # could be related to other bugs?
       in_set = {}

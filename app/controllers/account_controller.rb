@@ -122,7 +122,7 @@ class AccountController < ApplicationController
   end
 
   protected
-  
+
   def render_user_errors
     @user.errors.each do |field, err|
       @card.errors.add field, err unless @card.errors[field]
@@ -130,7 +130,7 @@ class AccountController < ApplicationController
     end
     errors
   end
-  
+
   def password_authentication(login, password)
     if self.session_user = User.authenticate( params[:login], params[:password] )
       flash[:notice] = "Successfully signed in"  #ENGLISH

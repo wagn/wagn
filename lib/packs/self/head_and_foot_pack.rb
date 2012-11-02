@@ -1,7 +1,7 @@
 class Wagn::Renderer
   define_view :raw, :name=>'head' do |args|
     #rcard = card  # should probably be more explicit that this is really the *main* card.
-    
+
     title = root.card && root.card.name
     title = nil if title.blank?
     title = params[:action] if title=='*placeholder'
@@ -10,13 +10,13 @@ class Wagn::Renderer
     if favicon_card = Card[:favicon] and favicon_card.type_id == Card::ImageID
       bits << %{<link rel="shortcut icon" href="#{ subrenderer(favicon_card)._render_source :size=>:icon }" />}
     end
-    
+
     #Universal Edit Button
     if root.card
       if !root.card.new_record? && root.card.ok?(:update)
         bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="#{ root.path :edit }"/>}
       end
-      
+
       # RSS # move to packs!
       if root.card.type_id == Card::SearchTypeID
         opts = { :format => :rss }
@@ -27,7 +27,7 @@ class Wagn::Renderer
     end
 
     # CSS
-    
+
     bits << stylesheet_link_tag('application-all')
     bits << stylesheet_link_tag('application-print', :media=>'print')
     if css_card = Card[:css]
@@ -40,20 +40,20 @@ class Wagn::Renderer
     <script>
       var wagn = {}; window.wagn = wagn;
       wagn.rootPath = '#{Wagn::Conf[:root_path]}';
-      window.tinyMCEPreInit = {base:"#{wagn_path 'assets/tinymce'}",query:"3.4.7",suffix:""}; 
+      window.tinyMCEPreInit = {base:"#{wagn_path 'assets/tinymce'}",query:"3.4.7",suffix:""};
       #{ Wagn::Conf[:recaptcha_on] ? %{wagn.recaptchaKey = "#{Wagn::Conf[:recaptcha_public_key]}";} : '' }
-      #{ (c=Card[:double_click] and !Card.toggle(c.content)) ? 'wagn.noDoubleClick = true' : '' }      
+      #{ (c=Card[:double_click] and !Card.toggle(c.content)) ? 'wagn.noDoubleClick = true' : '' }
       #{ local_css_path ? %{ wagn.local_css_path = '#{local_css_path}'; } : '' }
       ) +
       #  TEMPORARY we probably want this back once we have fingerprinting on this file - EFM
       %( wagn.tinyMCEConfig = { #{ Card.setting :tiny_mce } };
-    </script>      
+    </script>
           )
     bits << javascript_include_tag('application')
 
     if ga_key=Card.setting("*google analytics key")
       bits << %(
-    
+
       <script type="text/javascript">
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', '#{ga_key}']);
@@ -71,10 +71,10 @@ class Wagn::Renderer
     bits.join("\n")
   end
   alias_view(:raw, {:name=>'head'}, :core)
-  
-  
-  
-  
+
+
+
+
   define_view :raw, :name=>'foot' do |args|
     '<!-- *foot is deprecated. please remove from layout -->'
   end

@@ -17,10 +17,10 @@ class Wagn::Renderer
       _render_card_list args.merge( :results=>results )
     end
   end
-  
+
   define_view :card_list, :type=>:search_type do |args|
     @item_view ||= card.spec[:view] || :name
-    
+
     if args[:results].empty?
       'no results'
     else
@@ -29,10 +29,10 @@ class Wagn::Renderer
       end.join "\n"
     end
   end
-  
+
 end
 
-class Wagn::Renderer::Html  
+class Wagn::Renderer::Html
   define_view :editor, :type=>:search_type do |args|
     form.text_area :content, :rows=>10
   end
@@ -64,7 +64,7 @@ class Wagn::Renderer::Html
   define_view :card_list, :type=>:search_type do |args|
     @item_view ||= (card.spec[:view]) || :closed
     @item_size ||= (card.spec[:size]) || nil
-    
+
     paging = _optional_render :paging, args
 
     _render_search_header +
@@ -84,7 +84,7 @@ class Wagn::Renderer::Html
       }
     end
   end
-  
+
   define_view :search_header do |args|
     ''
   end
@@ -111,14 +111,14 @@ class Wagn::Renderer::Html
     end
 
     paging = _optional_render :paging, args
-    
+
 %{<h1 class="page-header">Recent Changes</h1>
 <div class="open-view recent-changes">
   <div class="open-content">
     #{ paging }
   } +
-    cards_by_day.keys.sort.reverse.map do |day| 
-      
+    cards_by_day.keys.sort.reverse.map do |day|
+
 %{  <h2>#{format_date(day, include_time = false) }</h2>
     <div class="search-result-list">} +
          cards_by_day[day].map do |card| %{
@@ -127,7 +127,7 @@ class Wagn::Renderer::Html
       </div>}
          end.join(' ') + %{
     </div>
-    } end.join("\n") + %{    
+    } end.join("\n") + %{
       #{ paging }
   </div>
 </div>
@@ -140,17 +140,17 @@ class Wagn::Renderer::Html
     s = card.spec search_params
     offset, limit = s[:offset].to_i, s[:limit].to_i
     return '' if limit < 1
-    return '' if offset==0 && limit > offset + args[:results].length #avoid query if we know there aren't enough results to warrant paging 
+    return '' if offset==0 && limit > offset + args[:results].length #avoid query if we know there aren't enough results to warrant paging
     total = card.count search_params
     return '' if limit >= total # should only happen if limit exactly equals the total
- 
+
     @paging_path_args = { :limit => limit, :item  => ( @item_view || args[:item] ) }
     @paging_limit = limit
-    
+
     s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }
 
     out = ['<span class="paging">' ]
-    
+
     total_pages  = ((total-1) / limit).to_i
     current_page = ( offset   / limit).to_i # should already be integer
     window = 2 # should be configurable
@@ -165,28 +165,28 @@ class Wagn::Renderer::Html
     if window_min > 0
       out << page_link( 1, 0 )
       out << '...' if window_min > 1
-    end    
-    
+    end
+
     (window_min .. window_max).each do |page|
       next if page < 0 or page > total_pages
       text = page + 1
       out <<  ( page==current_page ? text : page_link( text, page ) )
     end
-    
+
     if total_pages > window_max
       out << '...' if total_pages > window_max + 1
       out << page_link( total_pages + 1, total_pages )
-    end    
+    end
     out << %{</span>}
-    
+
     if current_page < total_pages
       out << page_link( 'next &raquo;', current_page + 1 )
     end
-    
+
     out << %{<span class="search-count">(#{total})</span></span>}
     out.join
   end
-  
+
   def page_link text, page
     @paging_path_args[:offset] = page * @paging_limit
     " #{link_to raw(text), path(:read, @paging_path_args), :class=>'card-paging-link slotter', :remote => true} "

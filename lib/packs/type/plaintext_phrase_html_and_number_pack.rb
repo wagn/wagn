@@ -4,11 +4,11 @@ class Wagn::Renderer
       process_content( CGI.escapeHTML _render_raw )
     end
   end
-  
+
   define_view :editor, :type=>'plain_text' do |args|
     form.text_area :content, :rows=>3, :class=>'card-content'
   end
-  
+
   define_view :editor, :type=>'phrase' do |args|
     form.text_field :content, :class=>'phrasebox card-content'
   end
@@ -24,5 +24,5 @@ class Wagn::Renderer
   define_view :closed_content, :type=>'html' do |args|
     ''
   end
-  
+
 end

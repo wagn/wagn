@@ -18,10 +18,10 @@ body, p, ol, ul {
 
 /*--------- headers and links --------------*/
 h1 {
-  font-size: 15px; 
+  font-size: 15px;
 }
 h2 {
-  font-size: 13px; 
+  font-size: 13px;
 }
 h1, h2 {
   color:#644;
@@ -29,20 +29,20 @@ h1, h2 {
   margin: 0px;
 }
 /* headers outside of cards */
-h1.page-header, 
-h2.page-header { 
-  color: #22d; 
-  font-weight: normal; 
+h1.page-header,
+h2.page-header {
+  color: #22d;
+  font-weight: normal;
   margin: 0 0 10px 0;
 }
 a {
-  color: #484; 
-} 
-a:link, 
-a:visited { 
+  color: #484;
+}
+a:link,
+a:visited {
 	text-decoration: none;
 }
-a:hover, 
+a:hover,
 a:focus {
   text-decoration: underline;
 }
@@ -68,7 +68,7 @@ td, th {
 
 
 /*---- headers --------*/
-input[type=text], 
+input[type=text],
 input[type=password],
 input[type=checkbox],
 textarea,
@@ -80,7 +80,7 @@ select {
   background: #f9f9ed;
 }
 body#tinymce {
-  background: #f9f9ed;  
+  background: #f9f9ed;
 }
 input:focus,
 select:focus,
@@ -88,34 +88,34 @@ textarea:focus,
 body#tinymce:focus {
   background: #ffffee;
 }
-input[type=submit]:focus, 
+input[type=submit]:focus,
 input[type=button]:focus {
   color: #000
 }
 textarea {
-  width: 98%;    
+  width: 98%;
 }
-body.mceContentBody {  
+body.mceContentBody {
   margin: 4px;
 }
 
 
 /*-- miscellaneous --*/
-form { 
-  margin: 0px; 
+form {
+  margin: 0px;
   padding: 0px;
   display: inline;
 }
-p { 
-  margin: 0px; 
-}   
+p {
+  margin: 0px;
+}
 hr {
   margin: 10px
-}    
+}
 img {
   border: 0px;
   vertical-align: middle;
-}  
+}
 li {
   margin-bottom: 2px;
 }

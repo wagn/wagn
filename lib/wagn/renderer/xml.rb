@@ -54,18 +54,18 @@ module Wagn
                   }" card="#{href}">#{text}</cardlink>}
       end
     %{<link class="#{klass}" href="#{href}">#{text}</link>}
-  end   
-          
+  end
+
   def wrap(view=nil, args = {})
     css_class = case args[:action].to_s
       when 'content'  ;  'transcluded'
       when 'exception';  'exception'
       when 'closed'   ;  'card-slot line'
       else            ;  'card-slot paragraph'
-    end 
+    end
     css_class << " " + card.safe_keys if card
     css_class << " view-#{view}" if view
-    
+
     attributes = {
       :name     => card.cardname.tag,
       :cardId   => (card && card.id),
@@ -73,7 +73,7 @@ module Wagn
       :class    => css_class,
     }
     [:style, :home_view, :item, :base].each { |key| attributes[key] = args[key] }
-    
+
     content_tag(:card, attributes ) { yield }
   end
 
@@ -253,7 +253,7 @@ module Wagn
   def captcha_tags(opts={})
     return unless controller && controller.captcha_required?
     return "Captcha turned on but no RECAPTCHA key configured" unless recaptcha_key = ENV['RECAPTCHA_PUBLIC_KEY']
-    
+
     js_lib_uri = "http://api.recaptcha.net/js/recaptcha_ajax.js"
     card_key = card.new_record? ? "new" : card.key
     recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>card_key) +

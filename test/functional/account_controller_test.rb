@@ -8,10 +8,10 @@ class AccountControllerTest < ActionController::TestCase
   # Be sure to include AuthenticatedTestHelper in test/test_helper.rb instead
   # Then, you can remove it from this and the units test.
   include AuthenticatedTestHelper
-  
+
   # Note-- account creation is handled in it's own file account_creation_test
 
-  
+
 
   def setup
     super
@@ -19,11 +19,11 @@ class AccountControllerTest < ActionController::TestCase
     @controller = AccountController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
-    
+
     @newby_email = 'newby@wagn.net'
     @newby_args =  {:user=>{ :email=>@newby_email },
                     :card=>{ :name=>'Newby Dooby' }}
-    Session.as_bot do 
+    Session.as_bot do
       Card.create(:name=>'Account Request+*type+*captcha', :content=>'0')
     end
     signout
@@ -41,18 +41,18 @@ class AccountControllerTest < ActionController::TestCase
     assert_nil session[:user]
     assert_response 403
   end
- 
+
   def test_should_signout
     get :signout
     assert_nil session[:user]
     assert_response :redirect
   end
- 
-  def test_create_successful   
+
+  def test_create_successful
     integration_login_as 'joe_user', true
     #login_as 'joe_user'
-    assert_difference ActionMailer::Base.deliveries, :size do 
-      assert_new_account do 
+    assert_difference ActionMailer::Base.deliveries, :size do
+      assert_new_account do
         post_invite
       end
     end
@@ -64,7 +64,7 @@ class AccountControllerTest < ActionController::TestCase
     assert_response :redirect
     assert Card['Newby Dooby'], "should create User card"
     assert_status @newby_email, 'pending'
-    
+
     integration_login_as 'joe_admin', true
     post :accept, :card=>{:key=>'newby_dooby'}, :email=>{:subject=>'hello', :message=>'world'}
     assert_response :redirect
@@ -87,20 +87,20 @@ class AccountControllerTest < ActionController::TestCase
     u.blocked = true
     u.save
     post :signin, :login => 'u3@user.com', :password => 'u3_pass'
-    assert_response 403 
+    assert_response 403
     assert_template ('signin')
   end
 
   def test_forgot_password
     post :forgot_password, :email=>'u3@user.com'
     assert_response :redirect
-  end 
+  end
 
   def test_forgot_password_not_found
     post :forgot_password, :email=>'nosuchuser@user.com'
     assert_response 404
-  end                        
-   
+  end
+
   def test_forgot_password_blocked
     email = 'u3@user.com'
     Session.as_bot do
@@ -110,6 +110,6 @@ class AccountControllerTest < ActionController::TestCase
     end
     post :forgot_password, :email=>email
     assert_response 403
-  end                        
+  end
 
 end

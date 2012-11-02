@@ -3,7 +3,7 @@ class Flexmail
     def configs_for card
       email_config_cardnames(card).map do |email_config|
         config = {}
-        
+
         [:to, :from, :cc, :bcc, :attach].each do |field|
           config[field] = if_card("#{email_config}+*#{field}") do |c|
             # configuration can be anything visible to configurer
@@ -13,7 +13,7 @@ class Flexmail
             end
           end.else("")
         end
-        
+
         [:subject, :message].each do |field|
           config[field] = if_card("#{email_config}+*#{field}") do |c|
             Session.as( c.updater ) do
@@ -21,29 +21,29 @@ class Flexmail
             end
           end.else("")
         end
-        
+
         config[:subject] = strip_html(config[:subject]).strip
         config
       end
     end
-    
+
     def email_config_cardnames card
       #warn "card is #{card.inspect}"
       event_card = card.rule_card(:send)
       return [] unless event_card
       Session.as_bot { event_card.item_names }
     end
-    
+
     def mail_for card
       configs_for(card).map do |config|
         Mailer.flexmail config
       end.compact.each(&:deliver)
     end
-    
+
     def strip_html string
       string.gsub(/<\/?[^>]*>/, "")
     end
-  end  
+  end
 
   Wagn::Hook.add :after_create, '*all' do |card|
     Flexmail.mail_for(card)
@@ -51,5 +51,5 @@ class Flexmail
 
   # The Mailer method and mail template are defined in the standard rails locations
   # They can/should be brought out to more modular space if/when modules support adding
-  # view/mail templates. 
+  # view/mail templates.
 end

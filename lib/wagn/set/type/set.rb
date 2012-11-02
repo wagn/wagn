@@ -3,7 +3,7 @@ module Wagn::Set::Type::Set
 
   def inheritable?
     return true if junction_only?
-    cardname.tag=='*self' && cardname.trunk_name.junction? 
+    cardname.tag=='*self' && cardname.trunk_name.junction?
   end
 
   def subclass_for_set
@@ -41,8 +41,8 @@ module Wagn::Set::Type::Set
     groups = Card.universal_setting_names_by_group.clone
 
     raise "#setting_names_by_group called on non-set" if type_id != Card::SetID
-    
-    member_type_id = 
+
+    member_type_id =
       if templt = existing_trait_card(:content) || existing_trait_card(:default)
         templt.type_id
       elsif junction?

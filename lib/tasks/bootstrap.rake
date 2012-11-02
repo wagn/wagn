@@ -11,13 +11,13 @@ namespace :wagn do
     rescue
       puts "not dropped"
     end
-    
+
     puts "creating"
     Rake::Task['db:create'].invoke
 
     puts "loading schema"
     Rake::Task['db:schema:load'].invoke
-    
+
     if Rails.env == 'test'
       puts "loading test fixtures"
       Rake::Task['db:fixtures:load'].invoke
@@ -26,13 +26,13 @@ namespace :wagn do
       Rake::Task['wagn:bootstrap:load'].invoke
     end
   end
-  
-  
+
+
   namespace :bootstrap do
     desc "rid template of unneeded cards, revisions, and references"
     task :clean => :environment do
       Wagn::Cache.reset_global
-      
+
       # Correct time and user stamps
       botid = Card::WagnBotID
       extra_sql = {
@@ -50,7 +50,7 @@ namespace :wagn do
           card.destroy!
         end
       end
-      
+
       # delete unwanted rows ( will need to revise if we ever add db-level data integrity checks )
       ActiveRecord::Base.connection.delete( "delete from cards where trash is true" )
       ActiveRecord::Base.connection.delete( "delete from card_revisions where not exists " +
@@ -59,10 +59,10 @@ namespace :wagn do
       ActiveRecord::Base.connection.delete( "delete from card_references where" +
         " (referenced_card_id is not null and not exists (select * from cards where cards.id = card_references.referenced_card_id)) or " +
         " (           card_id is not null and not exists (select * from cards where cards.id = card_references.card_id));"
-      )      
-      
+      )
+
     end
-  
+
     desc "dump db to bootstrap fixtures"
     #note: users, roles, and role_users have been manually edited
     task :dump => :environment do
@@ -71,9 +71,9 @@ namespace :wagn do
       YAML::ENGINE.yamler = 'syck'
       rescue
       end
-      # use old engine while we're supporting ruby 1.8.7 because it can't support Psych, 
+      # use old engine while we're supporting ruby 1.8.7 because it can't support Psych,
       # which dumps with slashes that syck can't understand
-      
+
       WAGN_BOOTSTRAP_TABLES.each do |table|
         i = "000"
         File.open("#{Rails.root}/db/bootstrap/#{table}.yml", 'w') do |file|
@@ -85,8 +85,8 @@ namespace :wagn do
         end
       end
     end
-  
-  
+
+
     desc "load bootstrap fixtures into db"
     task :load => :environment do
       Rake.application.options.trace = true
@@ -96,7 +96,7 @@ namespace :wagn do
 
       ActiveRecord::Fixtures.create_fixtures 'db/bootstrap', WAGN_BOOTSTRAP_TABLES << 'users'
       # note: users table is hand-coded, not dumped
-    
+
     end
   end
 end

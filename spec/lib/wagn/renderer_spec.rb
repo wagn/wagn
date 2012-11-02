@@ -81,10 +81,10 @@ describe Wagn::Renderer, "" do
     it("name"    ) { render_card(:name).should      == 'Tempo Rary' }
     it("key"     ) { render_card(:key).should       == 'tempo_rary' }
     it("linkname") { render_card(:linkname).should  == 'Tempo_Rary' }
-    
+
     it "url" do
       Wagn::Conf[:base_url] = 'http://eric.skippy.com'
-      render_card(:url).should == 'http://eric.skippy.com/Tempo_Rary' 
+      render_card(:url).should == 'http://eric.skippy.com/Tempo_Rary'
     end
 
     it "core" do
@@ -93,7 +93,7 @@ describe Wagn::Renderer, "" do
 
     it "content" do
       result = render_card(:content, :name=>'A+B')
-      assert_view_select result, 'div[class="card-slot content-view ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]' do 
+      assert_view_select result, 'div[class="card-slot content-view ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]' do
         assert_select 'span[class~="content-content content"]'
       end
     end
@@ -301,7 +301,7 @@ describe Wagn::Renderer, "" do
         content_card = Card["Cardtype E+*type+*default"]
         content_card.content= "{{+Yoruba}}"
         content_card.save!
-      
+
         help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
         card = Card.new(:type=>'Cardtype E')
 
@@ -371,7 +371,7 @@ describe Wagn::Renderer, "" do
       #image calls the file partial, so in a way this tests both
       it "should have special editor" do
 #        pending "getting html_document error.  paperclip integration issue?"
-        
+
         assert_view_select render_editor('Image'), 'div[class="choose-file"]' do
           assert_select 'input[class="file-upload slotter"]'
         end
@@ -521,5 +521,5 @@ describe Wagn::Renderer, "" do
       assert_equal "[[test{{best}}]]", Wagn::Renderer.new(card).replace_references("test", "best" )
     end
   end
-  
+
 end

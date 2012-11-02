@@ -9,4 +9,4 @@ Feature: Presetting content
     And I press "Submit"
     When I go to card "Harry Potter+author"
     Then I should see "JK Rowling"
-  
+

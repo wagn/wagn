@@ -3,7 +3,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 describe Wagn::Hook do
   it "module exists and autoloads" do
     Wagn::Hook.should be_true
-  end                      
+  end
 
   describe ".ephemerally" do
     it "restores registry to original state after running block" do
@@ -25,21 +25,21 @@ describe Wagn::Hook do
     end
 
     it "invokes hooks on matching cards" do
-      Wagn::Hook.call :save, Card.new(:type => "Book", :name=>"Hitchhikers Guide")    
+      Wagn::Hook.call :save, Card.new(:type => "Book", :name=>"Hitchhikers Guide")
       @fish.should == 1
     end
-  
+
     it "does note invoke hooks on non-matching cards" do
-      Wagn::Hook.call :save, Card.new(:type => "Basic", :name=>"button")    
+      Wagn::Hook.call :save, Card.new(:type => "Basic", :name=>"button")
       @fish.should == 0
     end
 
     it "invokes hooks for set names" do
-      
+
     end
 
     it "invokes multiple registered hooks with arguments" do
-      #ug.  
+      #ug.
       pending "commented this out because I think we're phasing out hooks.  these tests got borked in moving to rails3"
       @shark = 10
       Wagn::Hook.add(:save, '*all') do |card, arg|

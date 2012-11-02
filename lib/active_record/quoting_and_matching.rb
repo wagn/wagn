@@ -2,21 +2,21 @@ module ActiveRecord
   module QuotingAndMatching
     # dummy module to trigger loading code below
   end
-  
+
   module ConnectionAdapters
     class AbstractAdapter
       def quote_interval(string)
         raise "quote_interval not implemented"
       end
-      
+
       def match(string)
         raise "match not implemented"
       end
-      
+
       def cast_types
         native_database_types.merge custom_cast_types
       end
-      
+
       def custom_cast_types
         {}
       end
@@ -26,17 +26,17 @@ module ActiveRecord
       def quote_interval(string)
         "interval '#{string}'"
       end
-      
+
       def match(string)
         "~* #{string}"
       end
     end
-    
+
     module MysqlCommon
       def quote_interval(string)
         "interval #{string}"
       end
-      
+
       def match(string)
         "REGEXP #{string}"
       end
@@ -48,24 +48,24 @@ module ActiveRecord
           :float   => { :name=>'decimal' },
           :binary  => { :name=>'binary'  }  }
       end
-    end   
+    end
 
     class MysqlAdapter
       include MysqlCommon
-    end   
-    
+    end
+
     class Mysql2Adapter
       include MysqlCommon
-    end   
-    
+    end
+
     class SQLiteAdapter
       def quote_interval(string)
         "interval #{string}"
       end
-      
+
       def match(string)
         "REGEXP #{string}"
       end
-    end   
+    end
   end
 end

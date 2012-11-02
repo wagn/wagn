@@ -5,7 +5,7 @@ module Wagn::Model::Attach
       else
         Card::Revision.find_by_id(selected_rev_id).content
       end
-    !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/) 
+    !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/)
   end
 
   def attach_array_set(i, v)
@@ -18,7 +18,7 @@ module Wagn::Model::Attach
   def attach_file_name()    attach_array[0] end
   def attach_content_type() attach_array[1] end
   def attach_file_size()    attach_array[2] end
-    
+
   def attach_extension()    attach.send( :interpolate, ':extension' )  end
 
   def attach_file_name=(v)
@@ -59,11 +59,11 @@ module Wagn::Model::Attach
     Rails.logger.info "attachment_format issue: #{e.message}"
     nil
   end
-    
+
   # FIXME: test extension matches content type
 
 
-  
+
   def attachment_link(rev_id) # create filesystem links to previous revision
     if styles = case typecode
           when 'File'; ['']
@@ -71,13 +71,13 @@ module Wagn::Model::Attach
         end
       save_rev_id = selected_rev_id
       links = {}
-      
+
       self.selected_rev_id = rev_id
       styles.each { |style|  links[style] = attach.path(style)          }
-      
+
       self.selected_rev_id = current_revision_id
       styles.each { |style|  File.link links[style], attach.path(style) }
-      
+
       self.selected_rev_id = save_rev_id
     end
   end
@@ -98,10 +98,10 @@ module Wagn::Model::Attach
         :url => ":base_url/:basename-:size:revision_id.:extension",
         :path => ":local/:card_id/:size:revision_id.:extension",
         :styles => { :icon   => '16x16#', :small  => '75x75',
-                   :medium => '200x200>', :large  => '500x500>' } 
+                   :medium => '200x200>', :large  => '500x500>' }
 
       before_post_process :before_post_attach
-      
+
       validates_each :attach do |rec, attr, value|
         if [Card::FileID, Card::ImageID].member? rec.type_id
           max_size = (max = Card['*upload max']) ? max.content.to_i : 5
@@ -109,7 +109,7 @@ module Wagn::Model::Attach
             rec.errors.add :file_size, "File cannot be larger than #{max_size} megabytes"
           end
         end
-      end      
+      end
     end
   end
 end
@@ -117,7 +117,7 @@ end
 
 
 module Paperclip::Interpolations
-  
+
   def local(    at, style_name )  Wagn::Conf[:attachment_storage_dir]  end
   def base_url( at, style_name )  Wagn::Conf[:attachment_web_dir]      end
   def card_id(  at, style_name )  at.instance.id                       end

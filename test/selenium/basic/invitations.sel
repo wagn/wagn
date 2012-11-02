@@ -1,2 +1,2 @@
-|open|/selenium/setup?fixtures=all||    
+|open|/selenium/setup?fixtures=all||
 |includePartial|login|email=joe@user.com|password=joe_pass|

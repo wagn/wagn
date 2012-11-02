@@ -88,7 +88,7 @@ describe Wagn::Cache do
       #root_dirs = Dir.entries(cache_path).reject{|f| ['.', '..'].include?(f)}
       #files_to_remove = root_dirs.collect{|f| File.join(cache_path, f)}
       #FileUtils.rm_r(files_to_remove)
-      
+
       mock(Wagn::Cache).generate_cache_id.times(2).returns("cache_id1")
       @cache = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
     end

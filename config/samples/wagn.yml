@@ -7,7 +7,7 @@
 # log_file:
 # defaults to RAILS_ROOT/log/<environment>.log
 
-# database_config_file:  
+# database_config_file:
 # defaults to RAILS_ROOT/config/database.yml
 
 # attachment_storage_dir:
@@ -16,16 +16,16 @@
 
 # attachment_web_dir:
 # this is the base of the uri path that users see when downloading files
-# defaults to "/files"  
+# defaults to "/files"
 
 # cache_store:
-# determines caching mechanism.  options include: file_store, memory_store, mem_cache_store, dalli_store... 
+# determines caching mechanism.  options include: file_store, memory_store, mem_cache_store, dalli_store...
 # defaults to file_store
 # memcache is highly recommended for production
 
 # email_defaults:
 #   from:
-# used to set ActionMailer defaults.  if a "from" value is specified, this 
+# used to set ActionMailer defaults.  if a "from" value is specified, this
 
 # smtp:
 # used to set Rails config.action_mailer.smtp_settings

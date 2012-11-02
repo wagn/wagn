@@ -1,11 +1,11 @@
 require File.expand_path('../test_helper', File.dirname(__FILE__))
 class RevisionTest < ActiveSupport::TestCase
-  
+
   def setup
     super
     setup_default_user
   end
-  
+
   def test_revise
     author1 = User.find_by_email('joe@user.com')
     author2 = User.find_by_email('sara@user.com')
@@ -25,26 +25,26 @@ class RevisionTest < ActiveSupport::TestCase
     card.content = 'boogy'
     card.save
     card.reload
-    
+
     assert_equal 2, card.revisions.length, 'Should have two revisions'
     assert_equal author_cd2.name, card.current_revision.author.name, 'current author'
     assert_equal author_cd1.name, card.revisions.first.author.name,  'first author'
   end
 
-=begin 
+=begin
   # FIXME- should revisit what we want to have happen here; for now keep saving unchanged revisions..
   def test_revise_content_unchanged
     @card = newcard('alpha', 'banana')
     last_revision_before = @card.current_revision
     revisions_number_before = @card.revisions.size
-  
+
     @card.content = (@card.current_revision.content)
     @card.save
 
     assert_equal last_revision_before, @card.current_revision(true)
     assert_equal revisions_number_before, @card.revisions.size
   end
-=end  
+=end
 
 =begin #FIXME - don't think this is used by any controller. we'll see what breaks
   def test_rollback
@@ -67,5 +67,5 @@ class RevisionTest < ActiveSupport::TestCase
     assert_equal 1, @card.drafts.length
     assert_equal "booboo", @card.drafts[0].content
   end
-  
+
 end

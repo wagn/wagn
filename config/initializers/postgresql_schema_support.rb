@@ -6,7 +6,7 @@
 #
 # See https://rails.lighthouseapp.com/projects/8994/tickets/390
 # for original patch.
- 
+
 class ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
   def quote_table_name(name)
     schema, name_part = extract_pg_identifier_from_name(name.to_s)
@@ -14,7 +14,7 @@ class ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
     table_name, name_part = extract_pg_identifier_from_name(name_part)
     "#{quote_column_name(schema)}.#{quote_column_name(table_name)}"
   end
- 
+
   # Quotes column names for use in SQL queries.
   def quote_column_name(name) #:nodoc:
     PGconn.quote_ident(name.to_s)
@@ -26,9 +26,9 @@ class ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
       @schema_search_path = schema_csv
     end
   end
- 
+
   private
- 
+
   def extract_pg_identifier_from_name(name)
     if name[0,1] == '"'
       match_data = name.match(/\"([^\"]+)\"/)
@@ -42,5 +42,5 @@ class ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
     end
     return nil, nil
   end
-end               
+end
 

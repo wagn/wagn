@@ -9,7 +9,7 @@
 #   - lib/source1.js
 #   - lib/source2.js
 #   - dist/**/*.js
-# 
+#
 src_files:
   - "app/**/application.{js,coffee}"
 # stylesheets

@@ -15,7 +15,7 @@ describe Mailer do
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries = []
-  end  
+  end
 
   #
   ## see notifier test for data used in these tests
@@ -34,12 +34,12 @@ describe Mailer do
     context "new password message" do
       it "is addressed to users email" do
         @email.should deliver_to(@user.email)
-      end    
+      end
 
       it "is from Wag bot email" do
         #warn "test from #{User.admin.inspect}, #{User.admin.email}"
         @email.should deliver_from("Wagn Bot <noreply@wagn.org>")
-      end     
+      end
 
       it "has subject" do
         @email.should have_subject /^New password subject$/
@@ -49,9 +49,9 @@ describe Mailer do
         #@email.should have_body_text /Account Details\b.*\bPassword: *[0-9A-Za-z]{9}$/m
         @email.should have_body_text /Account Details.*\bPassword: *[0-9A-Za-z]{9}$/m
       end
-    end     
+    end
   end
-  
+
   describe "flexmail" do
     # FIXME: at least two tests should be here, with & w/o attachment.
   end

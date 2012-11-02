@@ -1,13 +1,13 @@
-require File.expand_path('../../spec_helper', File.dirname(__FILE__)) 
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 
 describe "Card::Reference" do
-  
+
   before do
-    #setup_default_user  
+    #setup_default_user
     Session.as(Card::WagnBotID) # FIXME: as without a block deprecated
   end
-  
+
   describe "references on hard templated cards should get updated" do
     it "on templatee creation" do
       Card.create! :name=>"JoeForm", :type=>'UserForm'
@@ -15,7 +15,7 @@ describe "Card::Reference" do
       assert_equal ["joe_form+age", "joe_form+description", "joe_form+name"],
         Card["JoeForm"].out_references.plot(:referenced_name).sort
       Card["JoeForm"].references_expired.should_not == true
-    end         
+    end
 
     it "on template creation" do
       Card.create! :name=>"SpecialForm", :type=>'Cardtype'
@@ -33,30 +33,30 @@ describe "Card::Reference" do
     it "on template update" do
       Card.create! :name=>"JoeForm", :type=>'UserForm'
       tmpl = Card["UserForm+*type+*content"]
-      tmpl.content = "{{+monkey}} {{+banana}} {{+fruit}}"; 
+      tmpl.content = "{{+monkey}} {{+banana}} {{+fruit}}";
       tmpl.save!
       Card["JoeForm"].references_expired.should be_true
       Wagn::Renderer.new(Card["JoeForm"]).render(:core)
       assert_equal ["joe_form+monkey", "joe_form+banana", "joe_form+fruit"].sort,
-        Card["JoeForm"].out_references.plot(:referenced_name).sort     
+        Card["JoeForm"].out_references.plot(:referenced_name).sort
       Card["JoeForm"].references_expired.should_not == true
-    end                                                         
+    end
   end
-  
+
   it "in references should survive cardtype change" do
     newcard("Banana","[[Yellow]]")
     newcard("Submarine","[[Yellow]]")
     newcard("Sun","[[Yellow]]")
     newcard("Yellow")
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
-    y=Card["Yellow"];  
-    y.type_id= Card.fetch_id "UserForm"; 
+    y=Card["Yellow"];
+    y.type_id= Card.fetch_id "UserForm";
     y.save!
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
   end
 
   it "container transclusion" do
-    Card.create :name=>'bob+city' 
+    Card.create :name=>'bob+city'
     Card.create :name=>'address+*right+*default',:content=>"{{_L+city}}"
     Card.create :name=>'bob+address'
     Card.fetch('bob+address').transcludees.plot(:name).should == ["bob+city"]
@@ -71,7 +71,7 @@ describe "Card::Reference" do
     #  do we need the links to be caught before reloading the card?
     Card["Ethan"].referencers.plot(:name).include?("L").should_not == nil
   end
-                  
+
   it "should update references on rename when requested" do
     watermelon = newcard('watermelon', 'mmmm')
     watermelon_seeds = newcard('watermelon+seeds', 'black')
@@ -84,7 +84,7 @@ describe "Card::Reference" do
     watermelon.save!
     lew.reload.content.should == "likes [[grapefruit]] and [[grapefruit+seeds|seeds]]"
   end
-  
+
   it "should update referencers on rename when requested (case 2)" do
     card = Card['Administrator links+*self+*read']
     refs = Card::Reference.where(:referenced_card_id => Card::AdminID).map(&:card_id).sort
@@ -93,7 +93,7 @@ describe "Card::Reference" do
     card.save
     Card::Reference.where(:referenced_card_id => Card::AdminID).map(&:card_id).sort.should == refs
   end
-  
+
   it "should not update references when not requested" do
     watermelon = newcard('watermelon', 'mmmm')
     watermelon_seeds = newcard('watermelon+seeds', 'black')
@@ -123,18 +123,18 @@ describe "Card::Reference" do
     @x = Card['X']
     @x.content.should == "[[A]] [[A+B]] [[T]]"
   end
-    
+
   it "template transclusion" do
     cardtype = Card.create! :name=>"ColorType", :type=>'Cardtype', :content=>""
     Card.create! :name=>"ColorType+*type+*content", :content=>"{{+rgb}}"
     green = Card.create! :name=>"green", :type=>'ColorType'
     rgb = newcard 'rgb'
     green_rgb = Card.create! :name => "green+rgb", :content=>"#00ff00"
-    
+
     green.reload.transcludees.plot(:name).should == ["green+rgb"]
     green_rgb.reload.transcluders.plot(:name).should == ['green']
   end
-  
+
   it "simple link" do
     alpha = Card.create :name=>'alpha'
     beta = Card.create :name=>'beta', :content=>"I link to [[alpha]]"
@@ -163,7 +163,7 @@ describe "Card::Reference" do
     Card['beta'].referencees.plot(:name).should == ['alpha']
     Card['alpha'].referencers.plot(:name).should == ['beta']
   end
-  
+
 
   it "pickup new links on create" do
     @l = newcard("woof", "[[Lewdog]]")  # no Lewdog card yet...
@@ -171,21 +171,21 @@ describe "Card::Reference" do
     # NOTE @e.referencers does not work, you have to reload
     @e.reload.referencers.plot(:name).include?("woof").should_not == nil
   end
-  
+
   it "pickup new transclusions on create" do
     @l = Card.create! :name=>"woof", :content=>"{{Lewdog}}"  # no Lewdog card yet...
     @e = Card.new(:name=>"Lewdog", :content=>"grrr")              # now there is
     @e.name_referencers.plot(:name).include?("woof").should_not == nil
   end
 
-=begin  
+=begin
 
   # This test doesn't make much sense to me... LWH
   it "revise changes references from wanted to linked for new cards" do
     new_card = Card.create(:name=>'NewCard')
-    new_card.revise('Reference to [[WantedCard]], and to [[WantedCard2]]', Time.now, Card['quentin'].to_user), 
+    new_card.revise('Reference to [[WantedCard]], and to [[WantedCard2]]', Time.now, Card['quentin'].to_user),
         get_renderer)
-    
+
     references = new_card.card_references(true)
     references.size.should == 2
     references[0].referenced_name.should == 'WantedCard'

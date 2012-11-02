@@ -3,7 +3,7 @@ module PackSpecHelper
 include ActionDispatch::Assertions::SelectorAssertions
 #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
 
-  
+
   def assert_view_select(view_html, *args, &block)
     node = HTML::Document.new(view_html).root
     if block_given?

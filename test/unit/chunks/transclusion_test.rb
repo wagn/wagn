@@ -1,5 +1,5 @@
 require File.expand_path('../../test_helper', File.dirname(__FILE__))
-  
+
 #FIXME: None of these work now, since transclusion is handled at the slot/cache
 # level, but these cases should still be covered by tests
 
@@ -7,16 +7,16 @@ require File.expand_path('../../test_helper', File.dirname(__FILE__))
 class TransclusionTest < ActiveSupport::TestCase
   include ChunkTestHelper
   include ActionView::Helpers::TextHelper
-  
+
   def setup
     super
     setup_default_user
-  end  
-              
+  end
+
   def test_truth
     assert true
   end
-  
+
 =begin
 
 
@@ -33,18 +33,18 @@ class TransclusionTest < ActiveSupport::TestCase
     @a = Card.create :name=>'boo', :content=>"hey {{+there}}"
     assert_text_equal "hey Click to create boo+there", render(@a)
   end
-  
+
   def test_absolute_transclude
     alpha = newcard 'Alpha', "Pooey"
     beta = newcard 'Beta', "{{Alpha}}"
     assert_text_equal "Pooey", render(beta)
-  end                                                                  
+  end
 
   def test_template_transclusion
      age, template = newcard('age'), Card['*template']
      specialtype = Card.create :typecode=>'Cardtype', :name=>'SpecialType'
 
-     specialtype_template = specialtype.connect template, "{{#{JOINT}age}}" 
+     specialtype_template = specialtype.connect template, "{{#{JOINT}age}}"
      assert_equal "{{#{JOINT}age}}", render_test_card(specialtype_template)
      wooga = Card::SpecialType.create :name=>'Wooga'
      # card = card('Wooga')  #wtf?
@@ -53,14 +53,14 @@ class TransclusionTest < ActiveSupport::TestCase
      assert_text_equal ['Wooga'], wooga_age.transcluders.plot(:name)
    end
 
-  def test_relative_transclude                                         
+  def test_relative_transclude
     alpha = newcard 'Alpha', "{{#{JOINT}Beta}}"
     beta = newcard 'Beta'
-    alpha_beta = alpha.connect beta, "Woot" 
+    alpha_beta = alpha.connect beta, "Woot"
     assert_text_equal "Woot", render(alpha)
-  end           
+  end
 
-  
+
   def test_shade_option
     alpha = newcard 'Alpha', "Pooey"
     beta = newcard 'Beta', "{{Alpha|shade:off}}"
@@ -70,36 +70,36 @@ class TransclusionTest < ActiveSupport::TestCase
     assert_text_equal "Pooey", render(newcard('Eee', "{{Alpha| shade:on }}" ))
   end
 
-                          
+
   # this tests container templating and transclusion syntax 'base:parent'
   def test_container_transclusion
-    bob_city = Card.create! :name=>'bob+city', :content=> "Sparta" 
+    bob_city = Card.create! :name=>'bob+city', :content=> "Sparta"
     address_tmpl = Card.create! :name=>'address+*template', :content =>"{{+city|base:parent}}"
-    bob_address = Card.create! :name=>'bob+address' 
+    bob_address = Card.create! :name=>'bob+address'
     #FIXME -- does not work retroactively if template is created later.
 
-    assert_text_equal span(bob_city, "Sparta"), render(bob_address.reload), "include" 
+    assert_text_equal span(bob_city, "Sparta"), render(bob_address.reload), "include"
     assert_equal ["bob#{JOINT}address"], bob_city.transcluders.plot(:name)
   end
 
-   
+
   def test_nested_transclude
     alpha = newcard 'Alpha', "{{Beta}}"
     beta = newcard 'Beta', "{{Delta}}"
     delta = newcard 'Delta', "Booya"
     assert_text_equal "Booya", render( alpha )
-  end                                                                  
-                                                                         
-                                                                       
-  private  
+  end
+
+
+  private
   def assert_text_equal(left, right, desc="")
     assert_equal strip_tags(left), strip_tags(right), desc
   end
-    
+
   def span(card, text)
     %{<span class="transcluded" cardId="#{card.id}" inPopup="true">} +
       %{<span class="content transcludedContent" cardId="#{card.id}">#{text}</span></span>}
-  end     
+  end
 =end
-  
+
 end

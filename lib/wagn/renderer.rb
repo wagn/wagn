@@ -41,98 +41,6 @@ module Wagn
         new_renderer.send :initialize, card, opts
         new_renderer
       end
-<<<<<<< HEAD
-=======
-
-    # View definitions
-    #
-    #   When you declare:
-    #     define_view :view_name, "<set>" do |args|
-    #
-    #   Methods are defined on the renderer
-    #
-    #   The external api with checks:
-    #     render(:viewname, args)
-    #
-    #   Roughly equivalent to:
-    #     render_viewname(args)
-    #
-    #   The internal call that skips the checks:
-    #     _render_viewname(args)
-    #
-    #   Each of the above ultimately calls:
-    #     _final(_set_key)_viewname(args)
-
-
-      def define_view view, opts={}, &final
-        @@perms[view]       = opts.delete(:perms)      if opts[:perms]
-        @@error_codes[view] = opts.delete(:error_code) if opts[:error_code]
-        @@denial_views[view]= opts.delete(:denial)     if opts[:denial]
-        if opts[:tags]
-          [opts[:tags]].flatten.each do |tag|
-            @@view_tags[view] ||= {}
-            @@view_tags[view][tag] = true
-          end
-        end
-
-        view_key = get_view_key(view, opts)
-        define_method "_final_#{view_key}", &final
-        #warn "defining method _final_#{view_key}"
-        @@subset_views[view] = true if !opts.empty?
-
-        if !method_defined? "render_#{view}"
-          define_method( "_render_#{view}" ) do |*a|
-            a = [{}] if a.empty?
-            if final_method = view_method(view)
-              with_inclusion_mode view do
-                send final_method, *a
-              end
-            else
-              "<strong>unsupported view: <em>#{view}</em></strong>"
-            end
-          end
-
-          define_method( "render_#{view}" ) do |*a|
-            begin
-              send( "_render_#{ ok_view view, *a }", *a )
-            rescue Exception=>e
-              controller.send :notify_airbrake, e if Airbrake.configuration.api_key
-              Rails.logger.info "\nRender Error: #{e.class} : #{e.message}"
-              Rails.logger.debug "  #{e.backtrace*"\n  "}"
-              rendering_error e, (card && card.name.present? ? card.name : 'unknown card')
-            end
-          end
-        end
-      end
-
-      def alias_view view, opts={}, *aliases
-        view_key = get_view_key(view, opts)
-        @@subset_views[view] = true if !opts.empty?
-        aliases.each do |aview|
-          aview_key = case aview
-            when String; aview
-            when Symbol; (view_key==view ? aview.to_sym : view_key.to_s.sub(/_#{view}$/, "_#{aview}").to_sym)
-            when Hash;   get_view_key( aview[:view] || view, aview)
-            else; raise "Bad view #{aview.inspect}"
-            end
-
-          define_method( "_final_#{aview_key}".to_sym ) do |*a|
-            send("_final_#{view_key}", *a)
-          end
-        end
-      end
-
-      private
-
-      def get_view_key view, opts
-        unless pkey = Wagn::Model::Pattern.method_key(opts)
-          raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
-        end
-        key = pkey.blank? ? view : "#{pkey}_#{view}"
-        key.to_sym
-      end
-
->>>>>>> develop
     end
 
 
@@ -542,6 +450,7 @@ module Wagn
   end
 
   class Views < Renderer
+
     # View definitions
     #
     #   When you declare:
@@ -575,6 +484,7 @@ module Wagn
       def define_view view, opts={}, &final
         @@perms[view]       = opts.delete(:perms)      if opts[:perms]
         @@error_codes[view] = opts.delete(:error_code) if opts[:error_code]
+        @@denial_views[view]= opts.delete(:denial)     if opts[:denial]
         if opts[:tags]
           [opts[:tags]].flatten.each do |tag|
             @@view_tags[view] ||= {}

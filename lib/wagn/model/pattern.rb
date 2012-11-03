@@ -68,7 +68,7 @@ module Wagn::Model
                   base.const_defined?(part)        ? base.const_get(part)        : nil
                 end
           end
-        rescue NameError, LoadError
+        rescue NameError
           warn "lookup error #{base} #{e.inspect}"
           nil
         end

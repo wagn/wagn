@@ -210,12 +210,10 @@ module Wagn::Model::Permissions
     rcard, rclass = permission_rule_card :read
     self.read_rule_id = rcard.id #these two are just to make sure vals are correct on current object
     #warn "updating read rule for #{name} to #{rcard.id}, #{rcard.name}, #{rclass}"
-    Rails.logger.warn "updating read rule for #{name} to #{rcard.id}, #{rcard.name}, #{caller*"\n"}"
 
     self.read_rule_class = rclass
     Card.where(:id=>self.id).update_all(:read_rule_id=>rcard.id, :read_rule_class=>rclass)
     expire
-
 
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
     Session.as_bot do

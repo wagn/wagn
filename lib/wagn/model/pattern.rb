@@ -7,10 +7,6 @@ module Wagn::Model
     def self.method_key(opts)
       @@subclasses.each do |pclass|
         if !pclass.opt_keys.map(&opts.method(:has_key?)).member? false;
-<<<<<<< HEAD
-=======
-          #warn "mk[#{pclass}] #{opts.inspect}"
->>>>>>> develop
           return pclass.method_key_from_opts(opts)
         end
       end

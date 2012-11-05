@@ -1,5 +1,5 @@
 module Wagn
-  module Set::Default::Json
+  module Set::All::Json
     include Sets
 
     format :json

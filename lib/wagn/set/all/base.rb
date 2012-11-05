@@ -1,6 +1,6 @@
 
 module Wagn
-  module Set::Default::Base
+  module Set::All::Base
     include Sets
 
     format :base

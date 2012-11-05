@@ -1,5 +1,5 @@
 module Wagn
-  module Set::Default::Text
+  module Set::All::Text
     include Sets
 
     format :text

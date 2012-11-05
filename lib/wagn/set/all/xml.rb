@@ -1,6 +1,6 @@
 
 module Wagn
-  module Set::Default::Xml
+  module Set::All::Xml
     include Sets
 
     format :xml

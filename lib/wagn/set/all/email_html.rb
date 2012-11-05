@@ -1,5 +1,5 @@
 module Wagn
-  module Set::Default::EmailHtml
+  module Set::All::EmailHtml
     include Sets
 
     format :email

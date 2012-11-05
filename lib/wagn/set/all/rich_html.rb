@@ -1,5 +1,5 @@
 module Wagn
-  module Set::Default::RichHtml
+  module Set::All::RichHtml
     include Sets
 
     format :html

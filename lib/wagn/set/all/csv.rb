@@ -1,7 +1,7 @@
 require 'csv'
 
 module Wagn
-  module Set::Default::Csv
+  module Set::All::Csv
     include Sets
 
     format :csv

@@ -1,5 +1,5 @@
 module Wagn
-  module Set::Default::Rss
+  module Set::All::Rss
     include Sets
 
     format :rss

@@ -1,7 +1,7 @@
 require 'active_support/builder' unless defined?(Builder)
 
 module Wagn
-  module Set::Default::Kml
+  module Set::All::Kml
     include Sets
 
     format :kml

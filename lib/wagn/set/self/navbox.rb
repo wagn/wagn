@@ -1,5 +1,7 @@
-module Wagn::Set::Self::Navbox
-  class Wagn::Views
+module Wagn
+  module Set::Self::Navbox
+    include Sets
+
     format :html
 
     define_view :raw, :name=>'navbox' do |args|

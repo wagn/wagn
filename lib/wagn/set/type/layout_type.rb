@@ -1,5 +1,7 @@
-module Wagn::Set::Type::LayoutType
-  class Wagn::Views
+module Wagn
+  module Set::Type::LayoutType
+    include Sets
+
     format :base
 
     define_view :editor, :type=>:layout_type do |args|
@@ -9,9 +11,11 @@ module Wagn::Set::Type::LayoutType
     define_view :core, :type=>:layout_type do |args|
       h _render_raw
     end
-  end
 
-  def clean_html?
-    false
+    module Model
+      def clean_html?
+        false
+      end
+    end
   end
 end

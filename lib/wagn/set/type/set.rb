@@ -1,6 +1,8 @@
 
-module Wagn::Set::Type::Set
-  class Wagn::Views
+module Wagn
+  module Set::Type::Set
+    include Sets
+
     format :base
 
     @@setting_group_title = {
@@ -41,56 +43,56 @@ module Wagn::Set::Type::Set
 
     alias_view(:closed_content , {:type=>:search_type}, {:type=>:set})
 
-  end
 
-  module Model
-    include Wagn::Set::Type::SearchType::Model
+    module Model
+      include Wagn::Set::Type::SearchType::Model
 
-    def inheritable?
-      return true if junction_only?
-      cardname.tag==Wagn::Model::Patterns::SelfPattern.key_name and cardname.trunk_name.junction?
-    end
-
-    def subclass_for_set
-      #FIXME - use codename??
-      Wagn::Model::Pattern.subclasses.find do |sub|
-        cardname.tag==sub.key_name
+      def inheritable?
+        return true if junction_only?
+        cardname.tag==Wagn::Model::Patterns::SelfPattern.key_name and cardname.trunk_name.junction?
       end
-    end
 
-    def junction_only?()
-      !@junction_only.nil? ? @junction_only :
-         @junction_only = subclass_for_set.junction_only
-    end
-
-    def reset_set_patterns
-      Card.members( key ).each do |mem|
-        Card.expire mem
+      def subclass_for_set
+        #FIXME - use codename??
+        Wagn::Model::Pattern.subclasses.find do |sub|
+          cardname.tag==sub.key_name
+        end
       end
-    end
 
-    def label
-      if klass = subclass_for_set
-        klass.label cardname.left
-      else
-        ''
+      def junction_only?()
+        !@junction_only.nil? ? @junction_only :
+           @junction_only = subclass_for_set.junction_only
       end
-    end
 
-    def setting_names_by_group
-      Card.universal_setting_names_by_group.clone.merge(
-        if Card::PointerID == ( templt = existing_trait_card(:content) || existing_trait_card(:default) and
-              templt.type_id or tag.id == Card::TypeID ? trunk.id : trunk.type_id )
-         {:pointer => ['*options','*options label','*input']}
+      def reset_set_patterns
+        Card.members( key ).each do |mem|
+          Card.expire mem
+        end
+      end
+
+      def label
+        if klass = subclass_for_set
+          klass.label cardname.left
         else
-          {} end
-      )
-    end
+          ''
+        end
+      end
 
-    def prototype
-      opts = subclass_for_set.prototype_args(self.cardname.trunk_name)
-      Card.fetch_or_new opts[:name], opts
-    end
+      def setting_names_by_group
+        Card.universal_setting_names_by_group.clone.merge(
+          if Card::PointerID == ( templt = existing_trait_card(:content) || existing_trait_card(:default) and
+                templt.type_id or tag.id == Card::TypeID ? trunk.id : trunk.type_id )
+           {:pointer => ['*options','*options label','*input']}
+          else
+            {} end
+        )
+      end
 
+      def prototype
+        opts = subclass_for_set.prototype_args(self.cardname.trunk_name)
+        Card.fetch_or_new opts[:name], opts
+      end
+
+    end
   end
 end

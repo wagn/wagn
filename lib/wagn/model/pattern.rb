@@ -58,6 +58,7 @@ module Wagn::Model
         attr_accessor :key, :key_id, :opt_keys, :junction_only, :method_key
 
         def find_module mod
+          #Rails.logger.warn "find_mod #{mod}"
           return if mod.nil?
           (mod.split('/') << 'model').inject(BASE_MODULE) do |base, part|
             return if base.nil?
@@ -68,8 +69,9 @@ module Wagn::Model
                   base.const_defined?(part)        ? base.const_get(part)        : nil
                 end
           end
-        rescue NameError, LoadError
-          warn "lookup error #{base} #{e.inspect}"
+        #rescue Exception => e
+          #warn "lookup error #{mod} #{e.inspect}"
+        rescue NameError
           nil
         end
 
@@ -232,7 +234,7 @@ module Wagn::Model
     end
 
     class BasePattern
-      include AllSets
+      include Wagn::Sets::AllSets
     end
   end
 end

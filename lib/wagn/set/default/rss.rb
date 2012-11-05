@@ -1,5 +1,7 @@
-module Wagn::Set::Default::Rss
-  class Wagn::Views
+module Wagn
+  module Set::Default::Rss
+    include Sets
+
     format :rss
 
     define_view :show do |args|

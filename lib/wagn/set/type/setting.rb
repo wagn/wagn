@@ -1,7 +1,9 @@
 require 'json'
 
-module Wagn::Set::Type::Setting
-  class Wagn::Views
+module Wagn
+  module Set::Type::Setting
+    include Wagn::Sets
+
     format :base
 
     define_view :core, :type=>'setting' do |args|

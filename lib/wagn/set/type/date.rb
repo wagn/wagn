@@ -1,5 +1,7 @@
-module Wagn::Set::Type::Date
-  class Wagn::Views
+module Wagn
+  module Set::Type::Date
+    include Sets
+
     format :base
 
     define_view :editor, :type=>'date' do |args|

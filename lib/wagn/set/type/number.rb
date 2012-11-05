@@ -1,4 +1,6 @@
 module Wagn::Set::Type::Number
+  #include Wagn::Sets
+
   module Model
     def validate_content( content )
       return if content.blank? and new_card?

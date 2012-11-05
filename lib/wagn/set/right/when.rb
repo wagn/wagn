@@ -1,5 +1,7 @@
-module Wagn::Set::Right::When
-  class Wagn::Views
+module Wagn
+  module Set::Right::When
+  include Sets
+
     format :base
 
     define_view :raw, :right=>'when_created' do |args|

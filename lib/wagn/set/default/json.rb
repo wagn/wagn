@@ -1,5 +1,7 @@
-module Wagn::Set::Default::Json
-  class Wagn::Views
+module Wagn
+  module Set::Default::Json
+    include Sets
+
     format :json
 
     define_view :name_complete do |args|

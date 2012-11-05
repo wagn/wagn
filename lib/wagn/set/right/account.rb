@@ -1,7 +1,11 @@
-module Wagn::Set::Right::Account
-  class Wagn::Views
+module Wagn
+  module Set::Right::Account
+
+    include Sets
+
     format :html
 
+=begin how is this used now?  I think this may be buggy, or related to model/traits stuff which is not in now
     # from app/view/card/_declare.rhtml
     define_view(:account_form, :right=>'account') do |args|
     end
@@ -52,6 +56,7 @@ module Wagn::Set::Right::Account
         "No form card #{@state} #{card&&card.name}"
       end
     end
+=end
   end
 
 end

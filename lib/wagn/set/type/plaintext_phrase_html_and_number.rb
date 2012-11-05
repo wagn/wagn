@@ -1,5 +1,7 @@
-module Wagn::Set::Type::PlaintextPhraseHtmlAndNumber
-  class Wagn::Views
+module Wagn
+  module Set::Type::PlaintextPhraseHtmlAndNumber
+    include Sets
+
     format :base
 
     define_view :editor, :type=>'plain_text' do |args|

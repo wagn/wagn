@@ -6,7 +6,6 @@ class User < ActiveRecord::Base
 
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :name
-  cattr_accessor :cache
 
   has_and_belongs_to_many :roles
   belongs_to :invite_sender, :class_name=>'Card', :foreign_key=>'invite_sender_id'
@@ -28,10 +27,11 @@ class User < ActiveRecord::Base
   after_save :reset_instance_cache
 
   class << self
-    def admin()          User.where(:card_id=>Card::WagnBotID).first  end
-    def as_user()        User.where(:card_id=>Session.as_id).first end
-    def user()           User.where(:card_id=>Session.user_id).first    end
+    def admin()          User.where(:card_id=>Card::WagnBotID).first end
+    def as_user()        User.where(:card_id=>Session.as_id).first   end
+    def user()           User.where(:card_id=>Session.user_id).first end
     def from_id(card_id) User.where(:card_id=>card_id).first         end
+    def cache()          Wagn::Cache[User]                           end
 
     # FIXME: args=params.  should be less coupled..
     def create_with_card(user_args, card_args, email_args={})

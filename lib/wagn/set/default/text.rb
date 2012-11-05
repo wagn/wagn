@@ -1,5 +1,7 @@
-module Wagn::Set::Default::Text
-  class Wagn::Views
+module Wagn
+  module Set::Default::Text
+    include Sets
+
     format :text
 
     define_view :core, :format=>:text do |args|

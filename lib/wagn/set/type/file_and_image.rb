@@ -1,6 +1,8 @@
 
-module Wagn::Set::Type::FileAndImage
-  class Wagn::Views
+module Wagn
+  module Set::Type::FileAndImage
+    include Sets
+
     format :base
 
 

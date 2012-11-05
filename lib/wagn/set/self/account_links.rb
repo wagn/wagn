@@ -1,5 +1,7 @@
-module Wagn::Set::Self::AccountLinks
-  class Wagn::Views
+module Wagn
+  module Set::Self::AccountLinks
+    include Wagn::Sets
+
     format :base
 
     define_view :raw, :name=>:account_links do |args|

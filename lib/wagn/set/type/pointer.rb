@@ -14,7 +14,7 @@ module Wagn
     format :html
 
     define_view :core, :type=>'pointer' do |args|
-      @item_view ||= DEFAULT_ITEM_VIEW
+      @item_view ||= Wagn::Renderer::DEFAULT_ITEM_VIEW  #FIXME: this needs work, it won't subclass as intended
       %{<div class="pointer-list">#{card.pointer_items self, @item_view}</div>}
       #+ link_to( 'add/edit', path(action), :remote=>true, :class=>'slotter add-edit-item' ) #ENGLISH
     end

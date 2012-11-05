@@ -8,7 +8,7 @@ module Wagn
     define_view :current_naked do |args| _render_naked end
 
     define_view :current, :fallback=>:raw, :type=>'Etherpad' do |args|
-      warn Rails.logger.debug("current_pad view #{card}, #{card.inspect}")
+      #warn "current_pad view #{card}, #{card.inspect}"
       card.include_set_modules
       card.get_pad_content
     end
@@ -71,7 +71,7 @@ module Wagn
 
       def get_pad_options(params={})
         pad_options = rule(:pad_options) || {}
-        warn(Rails.logger.debug "get_pad_options #{params.inspect}, #{pad_options}")
+        #warn "get_pad_options #{params.inspect}, #{pad_options}"
         pad_options = pad_options.blank? ? PAD_DEFAULTS :
              PAD_DEFAULTS.merge(JSON.parse(pad_options).symbolize_keys)
         pad_options.merge params.symbolize_keys

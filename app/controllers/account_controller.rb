@@ -28,7 +28,7 @@ class AccountController < ApplicationController
     return render_user_errors if @user.errors.any?
 
     tr_card = @card.trait_card :account
-    warn "check for account #{@card.name} #{tr_card.inspect}"
+    #warn "check for account #{@card.name} #{tr_card.inspect}"
     if tr_card.ok?(:create)       #complete the signup now
       email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!",  #ENGLISH
                      :subject => Card.setting('*signup+*subject') || "Account info for #{Card.setting('*title')}!" }  #ENGLISH

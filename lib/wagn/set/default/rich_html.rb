@@ -379,7 +379,7 @@ module Wagn
         user_role_ids = user_roles.map &:id
         hidden_field_tag(:save_roles, true) +
         (roles.map do |rolecard|
-#        warn Rails.logger.info("option_roles: #{rolecard.inspect}")
+          #warn Rails.logger.info("option_roles: #{rolecard.inspect}")
           if rolecard && !rolecard.trash
            %{<div style="white-space: nowrap">
              #{ check_box_tag "user_roles[%s]" % rolecard.id, 1, user_role_ids.member?(rolecard.id) ? true : false }

@@ -108,8 +108,6 @@ class Card < ActiveRecord::Base
     args['name']    = args['name'   ].to_s
     args['type_id'] = args['type_id'].to_i
 
-    warn "new card? #{args.inspect}, #{caller*"\n"}" if args['name']=~/^TO.CARD$/
-
     args.delete('type_id') if args['type_id'] == 0 # can come in as 0, '', or nil
 
     @type_args = { # these are cached to optimize #new

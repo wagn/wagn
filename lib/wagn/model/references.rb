@@ -8,7 +8,6 @@ module Wagn::Model::References
   end
 
   def extended_referencers
-    warn "eref #{self}"
     (dependents + [self]).plot(:referencers).flatten.uniq
   end
 

@@ -13,7 +13,6 @@ class CardController < ApplicationController
 
 
   def create
-    warn "create #{@card.inspect}"
     if @card.save
       success
     else

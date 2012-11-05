@@ -73,8 +73,6 @@ class Card < ActiveRecord::Base
           raise "Missing codename #{code} (#{const}) #{caller*"\n"}"
         end
       else
-#        Rails.logger.debug "need to load #{const.inspect}?"
-        warn "ne: const_miss #{e.inspect}, #{const_name}\n#{caller*"\n"}" if const_name.to_sym==:Card
         super
       end
     rescue NameError

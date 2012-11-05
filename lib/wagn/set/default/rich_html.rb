@@ -585,7 +585,7 @@ module Wagn
 
 
     define_view :watch, :tags=>:unknown_ok, :denial=>:blank,
-      :perms=> lambda { |r| !Session.logged_in? || r.card.new_card? } do |args|
+      :perms=> lambda { |r| Session.logged_in? && !r.card.new_card? } do |args|
 
       wrap :watch do
         if card.watching_type?

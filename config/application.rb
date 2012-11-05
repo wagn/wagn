@@ -42,6 +42,7 @@ module Wagn
         h[:attachment_storage_dir] ||= "#{Rails.root}/local/files"
 
         h[:load_dirs] ||= "#{Rails.root}/lib/wagn/set/"
+        h[:load_dirs] += ", #{Rails.root}/local/packs" unless Rails.env == 'test' || Rails.env == 'cucumber'
 
         h[:read_only] ||= (ro=ENV['WAGN_READ_ONLY']) && ro != 'false'
         # this means config overrides env var.  is that what we want?

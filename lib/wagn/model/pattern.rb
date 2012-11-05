@@ -14,7 +14,9 @@ module Wagn::Model
 
     def reset_patterns_if_rule()
       return if name.blank?
+      #warn "rpatIrule if #{!simple?} and #{!new_card?} and #{setting=right and setting.type_id==Card::SettingID} and #{set=left and set.type_id==Card::SetID}"
       if !simple? and !new_card? and setting=right and setting.type_id==Card::SettingID and set=left and set.type_id==Card::SetID
+        #warn "rpatIrule #{inspect}, #{set.inspect}, #{setting.inspect}"
         set.include_set_modules
         self.read_rule_updates( set.item_cards :limit=>0 ) if setting.id == Card::ReadID
         set.reset_patterns
@@ -69,8 +71,6 @@ module Wagn::Model
                   base.const_defined?(part)        ? base.const_get(part)        : nil
                 end
           end
-        #rescue Exception => e
-          #warn "lookup error #{mod} #{e.inspect}"
         rescue NameError
           nil
         end

@@ -14,10 +14,10 @@ Feature: Layouts
     When I go to card "*account links"
     Then I should see "Simple Header"
     And I should see "Joe Admin"
-  
+
   Scenario: I visit a User card with the user layout
     When I go to card "Joe User"
     Then I should see "User Header"
-  
+
 
 

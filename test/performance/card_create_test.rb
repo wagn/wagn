@@ -12,8 +12,8 @@ class CardCreateTest < ActionController::PerformanceTest
   def test_card_create_simple
     Card.create :name =>@name, :content=>"test content"
     @name = @name.next
-  end               
-  
+  end
+
   def test_card_create_links
     Card.create :name =>@name, :content=>"test [[CardA]]"
     @name = @name.next

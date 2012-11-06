@@ -4,18 +4,18 @@ module Chunk
     unless defined? TRANSCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
       TRANSCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(\|([^\}]+?))?)\}\}/
-    end         
-    
+    end
+
     def self.pattern() TRANSCLUDE_PATTERN end
-  
+
     def initialize(match_data, content)
-      super   
+      super
       #Rails.logger.warn "FOUND TRANSCLUDE #{match_data} #{content}"
       self.cardname, @options, @configs = a = self.class.parse(match_data)
       #Rails.logger.info "Chunk::transclude #{a.inspect}"
       @base, @renderer = content.card, content.renderer
     end
-  
+
     def self.parse(match)
       name = match[2].strip
       case name
@@ -25,16 +25,16 @@ module Chunk
       end
       options = {
         :tname   =>name,  # this "t" is for transclusion.  should rename
-        
+
         :view  => nil,
         :item  => nil,
         :type  => nil,
         :size  => nil,
-        
+
         :hide  => nil,
         :show  => nil,
         :wild  => nil,
-        
+
         :unmask => match[1] # is this used?
       }
       style = {}
@@ -52,9 +52,9 @@ module Chunk
         end
       end
       options[:style] = style.map{|k,v| CGI.escapeHTML("#{k}:#{v};")}.join
-      [name, options, configs]  
-    end                        
-    
+      [name, options, configs]
+    end
+
     def unmask_text(&block)
       return @unmask_text if @unmask_text
       comment = @options[:comment]
@@ -66,12 +66,12 @@ module Chunk
       yield options
     end
 
-    def revert                             
-      configs = @configs.to_semicolon_attr_list;  
+    def revert
+      configs = @configs.to_semicolon_attr_list;
       configs = "|#{configs}" unless configs.blank?
       @text = "{{#{cardname.to_s}#{configs}}}"
       super
     end
-    
+
   end
 end

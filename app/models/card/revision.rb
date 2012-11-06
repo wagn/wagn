@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Card::Revision < ActiveRecord::Base
   belongs_to :card, :class_name=>"Card", :foreign_key=>'card_id'
-  
+
   cattr_accessor :cache
 
   belongs_to :card, :class_name => 'Card', :foreign_key => :creator_id
@@ -11,7 +11,7 @@ class Card::Revision < ActiveRecord::Base
   def set_stamper
     self.creator_id = Session.user_id
   end
-  
+
   def author
     Card[ creator_id ]
   end
@@ -28,5 +28,5 @@ class Card::Revision < ActiveRecord::Base
       end
     end
   end
-  
+
 end

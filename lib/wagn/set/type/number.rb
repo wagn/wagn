@@ -3,7 +3,7 @@ module Wagn::Set::Type::Number
     return if content.blank? and new_card?
     self.errors.add :content, "'#{content}' is not numeric" unless valid_number?( content )
   end
-  
+
   def valid_number?( string )
     valid = true
     begin
@@ -11,6 +11,6 @@ module Wagn::Set::Type::Number
     rescue ArgumentError, TypeError
       valid = false
     end
-    valid    
+    valid
   end
 end

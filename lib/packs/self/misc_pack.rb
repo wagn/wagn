@@ -10,7 +10,7 @@ class Wagn::Renderer
   end
   alias_view(:raw, {:name=>'version'}, :core)
 
-  
+
   define_view :raw, :name=>'alerts' do |args|
     '<!-- *alerts is deprecated. please remove from layout -->'
   end

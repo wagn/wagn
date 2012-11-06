@@ -15,8 +15,8 @@
 //= require wagn
 
 
-/* 
-Note: I attempted to get tinymce up with tinymce-jquery, 
+/*
+Note: I attempted to get tinymce up with tinymce-jquery,
 but it overrode val() in ways that broke our filed updating / autosave
 */
 

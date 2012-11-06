@@ -91,7 +91,7 @@ class CodenameTable < ActiveRecord::Migration
   end
   
   
-  def self.load_bootcodes
+  def self.tfcodes
     codehash = {}
     # seed the codehash so that we can bootstrap
     #puts "yml load, #{caller*"\n"}"
@@ -134,8 +134,9 @@ class CodenameTable < ActiveRecord::Migration
       
       if !card
         Wagn::Codename.reset_cache
+        Wagn::Cache.reset_global
         
-        puts Rails.logger.info( ":read card = #{Card[:read].name}, :all card = #{Card[:all].name}, *all+*read = #{Card['*all+*read'].content}" )
+        puts Rails.logger.info( ":read card = #{Card['*read'].codename}, :all card = #{Card[:all].name}, *all+*read = #{Card['*all+*read'].content}" )
         puts Rails.logger.warn( "adding card for codename #{name}" )
         card = if name=='*double_click'
           Card.create! :name=>'*double click', :type=>'Toggle', :content=>'1'

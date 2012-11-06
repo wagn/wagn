@@ -54,10 +54,10 @@ class DiffTest < ActiveSupport::TestCase
         ['<p>', 'foo', ' ', 'bar', '</p>'],
         @builder.convert_html_to_list_of_words("<p>foo bar</p>"))
   end
-  
+
   def test_convert_html_to_list_of_words_interesting
     assert_equal(
-        ['<p>', 'this', ' ', 'is', '</p>', "\r\n", '<p>', 'the', ' ', 'new', ' ', 'string', 
+        ['<p>', 'this', ' ', 'is', '</p>', "\r\n", '<p>', 'the', ' ', 'new', ' ', 'string',
          '</p>', "\r\n", '<p>', 'around', ' ', 'the', ' ', 'world', '</p>'],
         @builder.convert_html_to_list_of_words(
             "<p>this is</p>\r\n<p>the new string</p>\r\n<p>around the world</p>"))
@@ -75,7 +75,7 @@ class DiffTest < ActiveSupport::TestCase
     a = "<p>this was the original string</p>"
     b = "<p>this is</p>\r\n<p> the new string</p>\r\n<p>around the world</p>"
 
-    # Some of this expected result is accidental to implementation. 
+    # Some of this expected result is accidental to implementation.
     # At least it's well-formed and more or less correct.
     assert_equal(
         "<p>this <del class=\"diffmod\">was</del><ins class=\"diffmod\">is</ins></p>"+
@@ -94,13 +94,13 @@ class DiffTest < ActiveSupport::TestCase
         "<pre>\n<del class=\"diffdel\">a\nb\nc\n</del></pre>",
         diff(a, b))
   end
-  
+
   def test_html_diff_with_tags
     a = ""
     b = "<div>foo</div>"
     assert_equal '<div><ins class="diffins">foo</ins></div>', diff(a, b)
   end
-  
+
   def test_diff_for_tag_change
     a = "<a>x</a>"
     b = "<b>x</b>"

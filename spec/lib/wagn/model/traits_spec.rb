@@ -13,7 +13,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../packs/pack_spec_hel
 #      c.typecode.should == nil
 #    end
 #  end
-#  
+#
 #=begin
 #  describe "trait data setup" do
 #    it "should make Sol of +*type" do
@@ -32,7 +32,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../packs/pack_spec_hel
 #        end
 #        assert_select('li', "Edit")
 #      end
-#    end                                          
+#    end
 #
 #    it "verifies that the extension's menu_option is added after Edit" do
 #      pending
@@ -88,5 +88,5 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../packs/pack_spec_hel
 #      end
 #    end
 #  end
-#  
+#
 #end

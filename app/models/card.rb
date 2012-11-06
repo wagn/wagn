@@ -16,16 +16,15 @@ class Card < ActiveRecord::Base
   attr_writer :update_read_rule_list
   attr_reader :type_args
 
-
   before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
   after_save :base_after_save, :update_ruled_cards, :update_queue, :expire_related
-  
+
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
-  #~~~~~~  CLASS METHODS ~~~~~~~~~~~~~~~~~~~~~  
+  #~~~~~~  CLASS METHODS ~~~~~~~~~~~~~~~~~~~~~
 
   class << self
-    JUNK_INIT_ARGS = %w{ missing skip_virtual id }    
+    JUNK_INIT_ARGS = %w{ missing skip_virtual id }
 
     def new args={}, options={}
       args = (args || {}).stringify_keys
@@ -48,14 +47,14 @@ class Card < ActiveRecord::Base
       end
       super args
     end
-    
+
     ID_CONST_ALIAS = {
       :default_type => :basic,
       :anon         => :anonymous,
       :auth         => :anyone_signed_in,
       :admin        => :administrator
     }
-    
+
     def const_missing const
       if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore.to_sym
         code = ID_CONST_ALIAS[code] || code
@@ -69,7 +68,7 @@ class Card < ActiveRecord::Base
         super
       end
     end
-    
+
     def setting name
       Session.as_bot do
         card=Card[name] and !card.content.strip.empty? and card.content
@@ -96,9 +95,9 @@ class Card < ActiveRecord::Base
   def initialize args={}
     args['name']    = args['name'   ].to_s
     args['type_id'] = args['type_id'].to_i
-    
+
     args.delete('type_id') if args['type_id'] == 0 # can come in as 0, '', or nil
-    
+
     @type_args = { # these are cached to optimize #new
       :type     => args.delete('type'    ),
       :typecode => args.delete('typecode'),
@@ -108,7 +107,7 @@ class Card < ActiveRecord::Base
     skip_modules = args.delete 'skip_modules'
 
     super args # ActiveRecord #initialize
-    
+
     if tid = get_type_id(@type_args)
       self.type_id_without_tracking = tid
     end
@@ -126,7 +125,7 @@ class Card < ActiveRecord::Base
       when args[:type]     ;  Card.fetch_id args[:type]
       else :noop
       end
-    
+
     case type_id
     when :noop 
     when false, nil
@@ -135,13 +134,13 @@ class Card < ActiveRecord::Base
     else
       return type_id
     end
-    
+
     if name && t=template
       reset_patterns #still necessary even with new template handling?
       t.type_id
     else
       # if we get here we have no *all+*default -- let's address that!
-      DefaultTypeID  
+      DefaultTypeID
     end
   end
 
@@ -159,7 +158,7 @@ class Card < ActiveRecord::Base
     #does this really do anything if it doesn't reset @set_modules???  can we get rid of this?
     @set_mods_loaded=false
   end
-  
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # STATES
 
@@ -170,7 +169,7 @@ class Card < ActiveRecord::Base
   def known?
     real? || virtual?
   end
-  
+
   def real?
     !new_card?
   end
@@ -183,7 +182,7 @@ class Card < ActiveRecord::Base
       args[:type_id] = Card.fetch_id( newtype )
     end
     reset_patterns
-    
+
     super args, options
   end
 
@@ -192,12 +191,12 @@ class Card < ActiveRecord::Base
     self.creator_id = self.updater_id if new_card?
   end
 
-  before_validation :on => :create do 
+  before_validation :on => :create do
     pull_from_trash if new_record?
     self.trash = !!trash
     true
   end
-  
+
   after_validation do
     begin
       raise PermissionDenied.new(self) unless approved?
@@ -208,14 +207,14 @@ class Card < ActiveRecord::Base
       raise e
     end
   end
-  
+
   def save
     super
   rescue Exception => e
     expire_pieces
     raise e
   end
-  
+
   def save!
     super
   rescue Exception => e
@@ -225,7 +224,7 @@ class Card < ActiveRecord::Base
 
   def base_before_save
     if self.respond_to?(:before_save) and self.before_save == false
-      errors.add(:save, "could not prepare card for destruction") #fixme - screwy error handling!!  
+      errors.add(:save, "could not prepare card for destruction") #fixme - screwy error handling!!
       return false
     end
   end
@@ -279,7 +278,7 @@ class Card < ActiveRecord::Base
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # DESTROY
-  
+
   def destroy
     run_callbacks( :destroy ) do
       deps = self.dependents # already called once.  reuse?
@@ -290,7 +289,7 @@ class Card < ActiveRecord::Base
       end
       true
     end
-  end    
+  end
 
   before_destroy do
     errors.clear
@@ -337,10 +336,10 @@ class Card < ActiveRecord::Base
 
   def left()      Card.fetch cardname.left        end
   def right()     Card.fetch cardname.right       end
-  
+
   def trunk()     Card.fetch cardname.trunk       end
   def tag()       Card.fetch cardname.tag         end
-    
+
 
   def dependents
     return [] if new_card?
@@ -385,7 +384,7 @@ class Card < ActiveRecord::Base
   def type_card
     Card[ type_id.to_i ]
   end
-  
+
   def typecode # FIXME - change to "type_code"
     Wagn::Codename[ type_id.to_i ]
   end
@@ -410,7 +409,7 @@ class Card < ActiveRecord::Base
       current_revision.content
     end
   end
-  
+
   def raw_content
     hard_template ? template.content : content
   end
@@ -464,7 +463,7 @@ class Card < ActiveRecord::Base
   end
 
   protected
-  
+
   def clear_drafts # yuck!
     connection.execute %{delete from card_revisions where card_id=#{id} and id > #{current_revision_id} }
   end
@@ -524,7 +523,7 @@ class Card < ActiveRecord::Base
   # METHODS FOR OVERRIDE
   # pretty much all of these should be done differently -efm
 
-  def post_render( content )     content  end  
+  def post_render( content )     content  end
   def clean_html?()                 true  end
   def collection?()                false  end
   def on_type_change()                    end
@@ -538,11 +537,11 @@ class Card < ActiveRecord::Base
   def to_s
     "#<#{self.class.name}[#{type_id < 1 ? 'bogus': type_name}:#{type_id}]#{self.attributes['name']}>"
   end
-  
+
   def inspect
     "#<#{self.class.name}" + "(#{object_id})" + "##{self.id}" +
     "[#{type_id < 1 ? 'bogus': type_name}:#{type_id}]" +
-    "!#{self.name}!{n:#{new_card?}:v:#{virtual?}:I:#{@set_mods_loaded}} " + 
+    "!#{self.name}!{n:#{new_card?}:v:#{virtual?}:I:#{@set_mods_loaded}} " +
     "R:#{ @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}>"
   end
 
@@ -570,7 +569,7 @@ class Card < ActiveRecord::Base
   def name_with_resets= newname
     newkey = newname.to_cardname.key
     if key != newkey
-      self.key = newkey 
+      self.key = newkey
       reset_patterns_if_rule # reset the old name - should be handled in tracked_attributes!!
       reset_patterns
     end
@@ -583,7 +582,7 @@ class Card < ActiveRecord::Base
   def cardname
     @cardname ||= name.to_cardname
   end
-  
+
   def autoname name
     if Card.exists? name
       autoname name.next
@@ -683,11 +682,11 @@ class Card < ActiveRecord::Base
       if rec.broken_type
         rec.errors.add :type, "won't work.  There's no cardtype named '#{rec.broken_type}'"
       end
-      
+
       # invalid to change type when type is hard_templated
       if rt = rec.hard_template and !rt.type_template? and value!=rt.type_id and !rec.allow_type_change
         rec.errors.add :type, "can't be changed because #{rec.name} is hard templated to #{rt.type_name}"
-      end        
+      end
     end
   end
 

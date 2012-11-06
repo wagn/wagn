@@ -4,8 +4,8 @@ describe Card, "Case Variant" do
   before do
     Session.as :joe_user
     @c = Card.create! :name=>'chump'
-  end             
-  
+  end
+
   it "should be able to change to a capitalization" do
     @c.name = 'Chump'
     @c.save!
@@ -29,11 +29,11 @@ describe Wagn::Cardname, "changing from plus card to simple" do
     @c = Card.create! :name=>'four+five'
     @c.name = 'nine'
     @c.save
-  end  
-  
+  end
+
   it "should erase trunk and tag ids" do
     @c.trunk_id.should== nil
     @c.tag_id.should== nil
   end
-  
+
 end

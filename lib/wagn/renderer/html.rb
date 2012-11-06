@@ -104,15 +104,15 @@ module Wagn
     def wrap view, args = {}
       classes = ['card-slot', "#{view}-view"]
       classes << card.safe_keys if card
-    
+
       attributes = { :class => classes.join(' ') }
       [:style, :home_view, :item].each { |key| attributes[key] = args[key] }
-      
+
       if card
         attributes['card-id']  = card.id
         attributes['card-name'] = card.name
       end
-    
+
       content_tag(:div, attributes ) { yield }
     end
 
@@ -141,7 +141,7 @@ module Wagn
         content_field form
       end
     end
- 
+
     #### --------------------  additional helpers ---------------- ###
     def notice
       %{<div class="card-notice"></div>}
@@ -182,7 +182,7 @@ module Wagn
 
     def name_field form=nil, options={}
       form ||= self.form
-      form.text_field( :name, { 
+      form.text_field( :name, {
         :value=>card.name, #needed because otherwise gets wrong value if there are updates
         :autocomplete=>'off'
       }.merge(options))
@@ -212,14 +212,14 @@ module Wagn
         }
       end
     end
-    
+
     def form_for_multi
       block = Proc.new {}
       builder = ActionView::Base.default_form_builder
       card.name = card.name.gsub(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_card?  ##FIXME -- need to match other relative inclusions.
       builder.new("card[cards][#{card.cardname.pre_cgi}]", card, template, {}, block)
     end
-  
+
     def form
       @form ||= form_for_multi
     end
@@ -253,7 +253,6 @@ module Wagn
     def option_header title
       raw %{<tr><th colspan="3" class="option-header"><h2>#{title}</h2></th></tr>}
     end
-
 
     def editor_wrap type
       content_tag( :div, :class=>"editor #{type}-editor" ) { yield }
@@ -305,7 +304,7 @@ module Wagn
     # --------------------------------------------------
     # some of this should be in rich_html, maybe most
     def revision_link text, revision, name, accesskey='', mode=nil
-      link_to text, path(:changes, :rev=>revision, :mode=>(mode || params[:mode] || true) ), 
+      link_to text, path(:changes, :rev=>revision, :mode=>(mode || params[:mode] || true) ),
         :class=>"slotter", :remote=>true
     end
 
@@ -356,5 +355,5 @@ module Wagn
        revision_link("Autosaved Draft", card.revisions.count, 'to autosave')
     end
   end
-  
+
 end

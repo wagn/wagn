@@ -12,7 +12,7 @@ module Wagn::Model::Traits
       trait_options[trait_name] = options
       Rails.logger.debug "register_trait(#{trait_name}, #{options.inspect})"
     end
-  
+
     def trait_options()  @@trait_options ||= {}; end
   end
 
@@ -24,7 +24,7 @@ module Wagn::Model::Traits
 #  end
 #
 #  def trait_cards()    @trait_cards ||= {}; end
-     
+
   def traits
     trait_options.keys.map do |trait_name|
       if tc=trait_card(trait_name) and tc.real?

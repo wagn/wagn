@@ -2,7 +2,7 @@ require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
 
 describe Card do
   context 'when there is a general toc setting of 2' do
-     
+
     before do
       (@c1 = Card['Onne Heading']).should be
       (@c2 = Card['Twwo Heading']).should be
@@ -80,7 +80,7 @@ describe Card do
   end
 
   context "when I change the general toc setting to 1" do
-     
+
     before do
       (@c1 = Card["Onne Heading"]).should be
       (@c2 = Card["Twwo Heading"]).should be
@@ -113,7 +113,7 @@ describe Card do
   end
 
   context 'when I use CardtypeE cards' do
-     
+
     before do
       Session.as_bot do
         @c1 = Card.create :name=>'toc1', :type=>"CardtypeE",
@@ -218,7 +218,7 @@ describe Card do
 #end
 
   context "when I change the general toc setting to 1" do
-     
+
     before do
       (@c1 = Card["Onne Heading"]).should be
       # FIXME: CardtypeE should inherit from *default => Basic

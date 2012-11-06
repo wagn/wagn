@@ -1,26 +1,26 @@
 <%- @account ||= account %>
 <% email_content = capture do %><%= text_field :account, :email %><% end %>
 <%= raw slot.option( raw(email_content),
-    :name=>"email", 
+    :name=>"email",
     :help=>"email address for account", #ENGLISH
     :label=>"Email") %>
-    
+
 <% password_content = capture do %><%= password_field :account, :password %><% end %>
 <%= raw slot.option( password_content,
-    :name=>"password", 
+    :name=>"password",
     :help=> card.type_id==Card::UserID ? "If left blank, password will remain the same" : '', #ENGLISH
     :label=>"Password") %>
 
 <% password_conf_content = capture do %><%= password_field :account, :password_confirmation %><% end %>
 <%= raw slot.option( password_conf_content,
-    :name=>"password_confirm", 
+    :name=>"password_confirm",
     :help=>"", #ENGLISH
-    :label=>"Confirm password") %> 
+    :label=>"Confirm password") %>
 
 <% if card.to_user and card.trait_card(:account).ok?(:update)  %>
   <% blocked_content = capture do %><%= check_box :account, :blocked? %><% end %>
   <%= raw slot.option( blocked_content,
-     :name=>"block_user", 
+     :name=>"block_user",
      :help=>"Blocking a user prevents them from signing in", #ENGLISH
      :label=>"Block") %>
 <% end %>

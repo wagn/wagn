@@ -2,7 +2,7 @@ Feature: Set settings
   In order to control settings in an efficient way
   As a Wagneer
   I want to be able to control settings for sets of cards
-  
+
   Background:
     Given I log in as Joe Admin
     And I create card "*all+*edit help" with content "say something spicy"
@@ -12,9 +12,9 @@ Feature: Set settings
     And I log in as Joe User
     When I go to new card "Test"
     Then I should see "spicy"
-    When I go to new card "Test+color"      
+    When I go to new card "Test+color"
     Then I should see "colorblind"
-  
+
   Scenario: *right Set
     Given I create Phrase card "cereal+*right+*add help" with content "I go poopoo for poco puffs"
     And I log in as Joe User
@@ -33,11 +33,11 @@ Feature: Set settings
     Then I should see "your favorite"
 
   Scenario: Solo Set
-    Given I create Pointer card "cereal+*self+*layout" with content "[[cereal layout]]" 
+    Given I create Pointer card "cereal+*self+*layout" with content "[[cereal layout]]"
     And I log in as Joe User
     And I create card "cereal layout" with content "My very own header"
     When I go to card "cereal"
     Then I should see "My very own"
 
 
-  
+

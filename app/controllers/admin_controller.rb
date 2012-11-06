@@ -4,7 +4,7 @@ class AdminController < ApplicationController
 
   def setup
     Wagn::Cardname #loading oddity made this necessary in dev.  pls don't remove without testing setup.
-    
+
     raise(Wagn::Oops, "Already setup") unless Session.no_logins? && !User[:first]
     Wagn::Conf[:recaptcha_on] = false
     if request.post?
@@ -32,22 +32,22 @@ class AdminController < ApplicationController
       @account = User.new( params[:user] || {} )
     end
   end
-  
+
   def show_cache
     key = params[:id].to_cardname.key
     @cache_card = Card.fetch(key)
     @db_card = Card.find_by_key(key)
   end
-  
+
   def clear_cache
-    response = 
+    response =
       if Session.always_ok?
         Wagn::Cache.reset_global
         'Cache cleared'
       else
         "You don't have permission to clear the cache"
       end
-    render :text =>response, :layout=> true  
+    render :text =>response, :layout=> true
   end
 
   def tasks
@@ -58,12 +58,12 @@ class AdminController < ApplicationController
       <p>&nbsp;</p>
       <p>Account permissions are now controlled through +*account cards and role permissions through +*role cards.</p>
     }
-    render :text =>response, :layout=> true  
-    
+    render :text =>response, :layout=> true
+
   end
 
   private
-  
+
   def set_default_request_recipient
     to_card = Card.fetch_or_new('*request+*to')
     to_card.content=params[:account][:email]

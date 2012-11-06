@@ -2,7 +2,7 @@
 class Hash
   def pull(key)
     has_key?(key) && !(v = delete(key)).to_s.empty? ? v : false
-  end    
+  end
 
   # FIXME: ? damn, this is ugly.  use JSON instead?
   class << self
@@ -15,9 +15,9 @@ class Hash
         result[key.to_sym] = value
         result
       end
-    end      
+    end
   end
-  
+
   def to_semicolon_attr_list
     self.map {|key,value| key.to_s == 'view' ? value : "#{key}:#{value}" }.sort_by(&:length).join(";")
   end
@@ -26,7 +26,7 @@ end
 
 
 module Enumerable
-  # instead of objects.map {|x| x.foo(blah)} 
+  # instead of objects.map {|x| x.foo(blah)}
   # do objects.plot(:foo,blah)
   def plot(method_name, *args)
     map do |o|
@@ -86,12 +86,12 @@ class Object
     }
     klone
   end
-  
+
   def m
     time = Benchmark.measure { yield }
     sprintf("%.2f",time.real * 1000) + 'ms'
   end
-  
+
 end
 
 class Object; def to_cardname() Wagn::Cardname.new(self) end end

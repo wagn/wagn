@@ -18,5 +18,5 @@ describe Card, "anonymous create permissions" do
     c.ok?(:create).should_not be_true
   end
 end
-        
+
 

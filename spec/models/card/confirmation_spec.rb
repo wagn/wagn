@@ -3,7 +3,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Card, "destroy without dependents" do
   before do Session.as(:joe_user); @c = Card["Basic Card"] end
-  
+
   it "should succeed" do
     @c.destroy.should be_true
   end

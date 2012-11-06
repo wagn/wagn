@@ -1,7 +1,7 @@
 class Wagn::Renderer::Html
   define_view :show do |args|
     @main_view = args[:view] || params[:home_view]
-    
+
     if ajax_call?
       self.render( @main_view || :open )
     else
@@ -13,14 +13,14 @@ class Wagn::Renderer::Html
     if @main_content = args.delete( :main_content )
       @card = Card.fetch_or_new '*placeholder'
     end
-    
+
     layout_content = get_layout_content args
 
     args[:params] = params # this is to pass params to inclusions.  let's find a cleaner way!
     process_content layout_content, args
   end
   
-  define_view :content do |args| 
+  define_view :content do |args|
     wrap :content, args do
       wrap_content( :content ) { _render_core args }
     end
@@ -43,9 +43,9 @@ class Wagn::Renderer::Html
 
   define_view :open do |args|
     wrap :open, args do
-      %{ 
+      %{
          #{ _render_header args }
-         #{ wrap_content( :open ) { _render_open_content args } } 
+         #{ wrap_content( :open ) { _render_open_content args } }
          #{ render_comment_box }
          #{ notice }
       }
@@ -346,7 +346,7 @@ class Wagn::Renderer::Html
   define_view :admin do |args|
     related_sets = card.related_sets
     current_set = params[:current_set] || related_sets[(card.type_id==Card::CardtypeID ? 1 : 0)]  #FIXME - explicit cardtype reference
-    set_options = related_sets.map do |set_name| 
+    set_options = related_sets.map do |set_name|
       set_card = Card.fetch set_name
       selected = set_card.key == current_set.to_cardname.key ? 'selected="selected"' : ''
       %{<option value="#{ set_card.key }" #{ selected }>#{ set_card.label }</option>}
@@ -436,7 +436,7 @@ class Wagn::Renderer::Html
      end}}
   end
 
-  define_view :changes do |args| 
+  define_view :changes do |args|
     load_revisions
     if @revision
       wrap :changes, args do
@@ -506,6 +506,7 @@ class Wagn::Renderer::Html
     end
   end
 
+
   define_view :errors, :perms=>:none do |args|
     wrap :errors, args do
       %{ <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
@@ -522,7 +523,7 @@ class Wagn::Renderer::Html
     end
     
     %{ <h1 class="page-header">Missing Card</h1> } +
-    wrap( :not_found, args ) do # ENGLISH 
+    wrap( :not_found, args ) do # ENGLISH
       %{<div class="content instruction">
           <div>There's no card named <strong>#{card.name}</strong>.</div>
           #{sign_in_or_up_links}
@@ -530,7 +531,7 @@ class Wagn::Renderer::Html
     end
   end
 
-  
+
   define_view :denial do |args|
     task = args[:denied_task] || params[:action]
     to_task = %{to #{task} this card#{ ": <strong>#{card.name}</strong>" if card.name && !card.name.blank? }.}
@@ -558,12 +559,11 @@ class Wagn::Renderer::Html
             end
           end}
         </div>}
-
       end
     end
   end
-  
-  
+
+
   define_view :server_error do |args|
     %{
     <body>

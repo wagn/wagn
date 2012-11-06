@@ -22,7 +22,7 @@ wagn.prepUrl = (url, slot)->
 
 jQuery.fn.extend {
   slot: -> @closest '.card-slot'
-  
+
   setSlotContent: (val) ->
     s = @slot()
     v = $(val)
@@ -33,8 +33,8 @@ jQuery.fn.extend {
       v = val
     s.replaceWith v
     v
-  
-  notify: (message) -> 
+
+  notify: (message) ->
     notice = @slot().find '.card-notice'
     return false unless notice[0]
     notice.html message
@@ -47,9 +47,9 @@ jQuery.fn.extend {
     report.html message
     report.show 'drop', 750
     setTimeout (->report.hide 'drop', 750), 3000
-    
+
   isMain: -> @slot().parent('#main')[0]
-  
+
   loadCaptcha: -> Recaptcha.create wagn.recaptchaKey, this[0]
 
   autosave: ->
@@ -64,7 +64,7 @@ jQuery.fn.extend {
       reportee = ''
 
     #might be better to put this href base in the html
-    
+
     $.ajax wagn.rootPath + '/card/save_draft/~' + id, {
       data : { 'card[content]' : @val() },
       type : 'POST',
@@ -74,17 +74,17 @@ jQuery.fn.extend {
   setContentFieldsFromMap: (map) ->
     map = wagn.editorContentFunctionMap unless map?
     this_form = $(this)
-    $.each map, (selector, fn)-> 
+    $.each map, (selector, fn)->
       this_form.setContentFields(selector, fn)
   setContentFields: (selector, fn) ->
     $.each @find(selector), ->
-      $(this).setContentField(fn)     
+      $(this).setContentField(fn)
   setContentField: (fn)->
     field = @closest('.card-editor').find('.card-content')
     init_val = field.val() # tinymce-jquery overrides val(); that's why we're not using it.
     new_val = fn.call this
     field.val new_val
-    field.change() if init_val != new_val  
+    field.change() if init_val != new_val
 }
 
 #~~~~~ ( EVENTS )
@@ -93,10 +93,10 @@ setInterval (-> $('.card-form').setContentFieldsFromMap()), 20000
 
 $(window).ready ->
   $.ajaxSetup cache: false
-  
+
   setTimeout (-> wagn.initializeEditors $('body')), 10
   #  dislike the timeout, but without this forms with multiple TinyMCE editors were failing to load properly
-  
+
   $('body').delegate '.slotter', "ajax:success", (event, data) ->
     notice = $(this).attr('notify-success')
     newslot = $(this).setSlotContent data
@@ -124,15 +124,15 @@ $(window).ready ->
 
   $('.slotter').live 'ajax:beforeSend', (event, xhr, opt)->
     return if opt.skip_before_send
-    
+
     unless opt.url.match /home_view/ #avoiding duplication.  could be better test?
       opt.url = wagn.prepUrl opt.url, $(this).slot()
-    
+
     if $(this).is('form')
       if wagn.recaptchaKey and $(this).attr('recaptcha')=='on' and !($(this).find('.recaptcha-box')[0])
          newCaptcha(this)
          return false
-      
+
       if data = $(this).data 'file-data'
         # NOTE - this entire solution is temporary.
         input = $(this).find '.file-upload'
@@ -140,7 +140,7 @@ $(window).ready ->
           $(this).notify "Wagn does not yet support multiple files in a single form."
           return false
         widget = input.data 'fileupload' #jQuery UI widget
-        
+
         unless widget._isXHRUpload(widget.options) # browsers that can't do ajax uploads use iframe
           $(this).find('[name=success]').val('_self') # can't do normal redirects.
           # iframe response not passed back; all responses treated as success.  boo
@@ -149,11 +149,11 @@ $(window).ready ->
           iframeUploadFilter = (data)-> data.find('body').html()
           opt.dataFilter = iframeUploadFilter
           # gets rid of default html and body tags
-            
+
         args = $.extend opt, (widget._getAJAXSettings data), url: opt.url
-        # combines settings from wagn's slotter and jQuery UI's upload widget        
+        # combines settings from wagn's slotter and jQuery UI's upload widget
         args.skip_before_send = true #avoid looping through this method again
-                
+
         $.ajax( args )
         false
 
@@ -223,7 +223,7 @@ $(window).ready ->
     
   $('body').delegate 'button.redirecter', 'click', ->
     window.location = $(this).attr('href')
-  
+
   unless wagn.noDoubleClick
     $('.card-slot').live 'dblclick', (event)->
       s = $(this)
@@ -242,7 +242,7 @@ $(window).ready ->
       input = $(this).find '[name=success]'
       if input and !(input.val().match /^REDIRECT/)
         input.val ( if target == 'REDIRECT' then target + ': ' + input.val() else target )
-        
+
   #more of this info should be in views; will need to refactor for HTTP DELETE anyway...
   $('.card-slot').delegate '.standard-delete', 'click', ->
     return if $(this).attr('success-ready') == 'true' #prevent double-click weirdness
@@ -264,12 +264,12 @@ $(window).ready ->
   $('.autosave .card-content').live 'change', ->
     content_field = $(this)
     setTimeout ( -> content_field.autosave() ), 500
-  
+
   $('.go-to-selected select').live 'change', ->
-    val = $(this).val() 
+    val = $(this).val()
     if val != ''
       window.location = wagn.rootPath + escape( val )
-  
+
   $('[hover_content]').live 'mouseenter', ->
     $(this).attr 'hover_restore', $(this).html()
     $(this).html $(this).attr( 'hover_content' )
@@ -281,5 +281,6 @@ newCaptcha = (form)->
   recapDiv = $('<div class="recaptcha-box"></div>')
   $(form).children().last().after recapDiv
   $.getScript recapUri, -> recapDiv.loadCaptcha()
-  
+
+
 warn = (stuff) -> console.log stuff if console?

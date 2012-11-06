@@ -14,11 +14,11 @@ module Wagn
 
   class Cache
     Klasses = [Card, User, Card::Revision ]
-    
+
     @@prepopulating     = Rails.env == 'cucumber'
     @@using_rails_cache = Rails.env =~ /^cucumber|test$/
     @@prefix_root       = Wagn::Application.config.database_configuration[Rails.env]['database']
-    
+
     class << self
       def new_all
         store = @@using_rails_cache ? nil : Rails.cache
@@ -38,7 +38,7 @@ module Wagn
         end
         reset_local unless @@prepopulating
       end
-      
+
       def system_prefix klass
         "#{ @@prefix_root }/#{ klass }"
       end
@@ -63,16 +63,16 @@ module Wagn
       end
 
       private
-      
-      
+
+
       def prepopulate
         set_keys = ['*all','*all plus','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
-        set_keys.map{|k| [k,"#{k}+*content", "#{k}+*default", "#{k}+*read", ]}.flatten.each do |key|        
+        set_keys.map{|k| [k,"#{k}+*content", "#{k}+*default", "#{k}+*read", ]}.flatten.each do |key|
           Card[key]
         end
         @@frozen = Marshal.dump(Card.cache)
       end
-      
+
       def reset_local
         Klasses.each{ |cc|
           if Wagn::Cache===cc.cache
@@ -119,7 +119,7 @@ module Wagn
       @store.write(@prefix + key, value) if @store
       value
     end
-    
+
     def write_local(key, value) @local[key] = value end
     def read_local(key)         @local[key]         end
 

@@ -6,7 +6,7 @@ Spork.prefork do
   require File.expand_path(File.dirname(__FILE__) + "/../lib/authenticated_test_helper.rb")
   #require File.expand_path(File.dirname(__FILE__) + "/custom_matchers.rb")
   #require File.expand_path(File.dirname(__FILE__) + "/controller_macros.rb")
-  require 'rspec/rails' 
+  require 'rspec/rails'
 
 
   # Requires supporting ruby files with custom matchers and macros, etc,
@@ -14,16 +14,16 @@ Spork.prefork do
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
   RSpec.configure do |config|
-    
-    config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => { 
+
+    config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => {
       :file_path => /\bspec\/controllers\// }
-    
+
     #config.include CustomMatchers
     #config.include ControllerMacros, :type=>:controllers
     config.include AuthenticatedTestHelper, :type=>:controllers
     #config.include(EmailSpec::Helpers)
     #config.include(EmailSpec::Matchers)
-    
+
     # == Mock Framework
     # If you prefer to mock with mocha, flexmock or RR, uncomment the appropriate symbol:
     # :mocha, :flexmock, :rr
@@ -33,7 +33,7 @@ Spork.prefork do
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
-  
+
     config.before(:each) do
       Wagn::Cache.restore
     end
@@ -44,6 +44,6 @@ Spork.prefork do
 end
 
 
-Spork.each_run do     
+Spork.each_run do
   # This code will be run each time you run your specs.
 end

@@ -41,12 +41,12 @@ describe Card do
       #cached_card.missing?.should be_true
       #cached_card.virtual?.should be_true
     end
-    
+
     it "fetches virtual cards after skipping them" do
       Card['A+*self'].should be_nil
       Card.fetch( 'A+*self' ).should_not be_nil
     end
-    
+
     it "fetches newly virtual cards" do
       pending "needs new cache clearing"
       Card.fetch( 'A+virtual').should be_nil
@@ -136,7 +136,7 @@ describe Card do
         card = Card.fetch("a+y")
         card.virtual?.should be_true
         card.content.should == "Right Content"
-        
+
       end
 
       it "should not hit the database for every fetch_virtual lookup" do
@@ -145,7 +145,7 @@ describe Card do
         mock.dont_allow(Card).find_by_key
         Card.fetch("a+y")
       end
-      
+
       it "should not be a new_record after being saved" do
         Card.create!(:name=>'growing up')
         card = Card.fetch('growing up')

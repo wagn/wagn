@@ -6,14 +6,14 @@ class Wagn::Renderer::Xml < Wagn::Renderer
       @card = Card.fetch_or_new('*placeholder',{},:skip_defaults=>true)
     else
       @main_card = card
-    end  
+    end
 
     layout_content = get_layout_content(args)
-    
+
     args[:context] = self.context = "layout_0"
-    args[:action]="view"  
-    args[:relative_content] = args[:params] = params 
-    
+    args[:action]="view"
+    args[:relative_content] = args[:params] = params
+
     process_content(layout_content, args)
   end
 

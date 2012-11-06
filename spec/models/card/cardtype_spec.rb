@@ -7,7 +7,7 @@ class Card
 end
 
 describe "Card (Cardtype)" do
-  
+
   before do
     Session.as :joe_user
   end
@@ -20,19 +20,19 @@ describe "Card (Cardtype)" do
     assert_equal ['Eugene','Sparta'], Card.search(:type=>'City').plot(:name).sort
     assert_raises Wagn::Oops do
       city.destroy!
-    end                             
+    end
     # make sure it wasn't destroyed / trashed
     Card['City'].should_not be_nil
   end
-  
+
   it "remove cardtype" do
     Card.create! :name=>'County', :type=>'Cardtype'
     c = Card['County']
     c.destroy
   end
-  
+
   it "cardtype creation and dynamic cardtype" do
-    
+
     assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).type_id == Wagn::Codename[:cardtype]
     assert_instance_of Card, c=Card.fetch("BananaPudding")
 
@@ -46,7 +46,7 @@ describe "Card (Cardtype)" do
       @card = Card.create!(:type=>'Cardtype', :name=>'Cookie')
       @card.type_name.should == 'Cardtype'
     end
-    
+
     it "creates cardtype model and permission" do
       @card.type_id = Card.fetch_id('cookie')
       @card.save!
@@ -57,13 +57,13 @@ describe "Card (Cardtype)" do
       assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).type_name
     end
   end
-  
+
   it "cardtype" do
     Card.find(:all).each do |card|
       assert !card.type_card.nil?
     end
   end
-  
+
 end
 
 
@@ -71,18 +71,18 @@ describe Card, "created without permission" do
   before do
     Session.user= Card::AnonID
   end
-   
-  # FIXME:  this one should pass.  unfortunately when I tried to fix it it started looking like the clean solution 
+
+  # FIXME:  this one should pass.  unfortunately when I tried to fix it it started looking like the clean solution
   #  was to rewrite most of the permissions section as simple validations and i decided not to go down that rabbit hole.
   #
   #it "should not be valid" do
   #  Card.new( :name=>'foo', :type=>'Cardtype').valid?.should_not be_true
-  #end        
-  
+  #end
+
   it "should not create a new cardtype until saved" do
     lambda {
       Card.new( :name=>'foo', :type=>'Cardtype')
-    }.should_not change(Card, :count) 
+    }.should_not change(Card, :count)
   end
 end
 
@@ -120,11 +120,11 @@ describe Card, "Recreated Card" do
     @ct = Card.create! :name=>'Species', :type=>'Cardtype'
     end
   end
-  
+
   it "should have a cardtype extension" do
     @ct.extension.should_not be_nil
   end
-  
+
 end
 =end
 
@@ -134,11 +134,11 @@ describe Card, "New Cardtype" do
       @ct = Card.create! :name=>'Animal', :type=>'Cardtype'
     end
   end
-  
+
   it "should have create permissions" do
     @ct.who_can(:create).should_not be_nil
   end
-  
+
   it "its create permissions should be based on Basic" do
     @ct.who_can(:create).should == Card['Basic'].who_can(:create)
   end
@@ -151,7 +151,7 @@ describe Card, "Wannabe Cardtype Card" do
       @card.type_id=Card::CardtypeID
       @card.save!
     end
-    
+
   end
   it "should successfully change its type to a Cardtype" do
     Card['convertible'].typecode.should==:cardtype
@@ -165,7 +165,7 @@ describe User, "Joe User" do
 
       Card.create :name=>'Cardtype F+*type+*create', :type=>'Pointer', :content=>'[[r3]]'
     end
-    
+
     Session.as :joe_user
     @user = User.user
     @ucard = Card[@user.card_id]
@@ -184,7 +184,7 @@ describe User, "Joe User" do
   it "should find Basic on its list of createable cardtypes" do
     @type_names.member?('Basic').should be_true
   end
-  
+
 end
 
 
@@ -206,7 +206,7 @@ end
 
 
 describe Wagn::Set::Type::Cardtype do
-  
+
   it "should handle changing away from Cardtype" do
     Session.as_bot do
       ctg = Card.create! :name=>"CardtypeG", :type=>"Cardtype"

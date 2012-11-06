@@ -10,7 +10,7 @@ describe Mailer do
     ActionMailer::Base.deliveries = []
 
     @expected = Mail.new
-  end  
+  end
 
   #
   ## see notifier test for data used in these tests
@@ -20,27 +20,27 @@ describe Mailer do
     before do
       user =  Card['sara'].id
       card =  Card["Sunglasses"]
-      action = "edited"  
+      action = "edited"
       Mailer.change_notice( user, card, action, card.name ).deliver
     end
 
     it "deliver a message" do
       assert_equal 1, ActionMailer::Base.deliveries.size
     end
-    
+
     context "change notice message" do
-      before do  
+      before do
         @mail = ActionMailer::Base.deliveries[0]
       end
       it "is addressed to users email" do
         assert_equal ["sara@user.com"],  @mail.to
-      end    
+      end
       it "is from Wag bot email" do
         assert_equal [User.admin.email], @mail.from
-      end     
-    end     
+      end
+    end
   end
-  
+
   describe "flexmail" do
     # FIXME: at least two tests should be here, with & w/o attachment.
   end

@@ -4,7 +4,7 @@ describe Wagn::Set::Type::Pointer do
   before do
     Session.user= :joe_user
   end
-  
+
   context "item_names" do
     it "should return array of names of items referred to by a pointer" do
       p = Card.new(:name=>'foo', :type=>'Pointer', :content=>"[[Busy]]\n[[Body]]")
@@ -12,7 +12,7 @@ describe Wagn::Set::Type::Pointer do
       names.should == ['Busy', 'Body']
     end
   end
-  
+
   context "add_item" do
     it "add to empty ref list" do
       @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>""
@@ -25,24 +25,24 @@ describe Wagn::Set::Type::Pointer do
       @pointer.add_item "John"
       assert_equal "[[Jane]]\n[[John]]", @pointer.content
     end
-    
+
     it "not add duplicate entries" do
       @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]"
       @pointer.add_item "Jane"
       assert_equal "[[Jane]]", @pointer.content
     end
-  end       
-  
+  end
+
   context "drop_item" do
     it "remove the link" do
       @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]\n[[John]]"
-      @pointer.drop_item "Jane" 
+      @pointer.drop_item "Jane"
       assert_equal "[[John]]", @pointer.content
-    end                                
-    
+    end
+
     it "not fail on non-existent reference" do
       @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]\n[[John]]"
-      @pointer.drop_item "Bigfoot" 
+      @pointer.drop_item "Bigfoot"
       assert_equal "[[Jane]]\n[[John]]", @pointer.content
     end
 
@@ -52,7 +52,7 @@ describe Wagn::Set::Type::Pointer do
       assert_equal "", @pointer.content
     end
   end
-     
+
   context "watching" do
     it "not break on permissions" do
       watchers = Card.fetch_or_new "Home+*watchers"

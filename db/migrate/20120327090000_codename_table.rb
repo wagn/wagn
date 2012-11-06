@@ -91,7 +91,7 @@ class CodenameTable < ActiveRecord::Migration
   end
   
   
-  def self.tfcodes
+  def self.load_bootcodes
     codehash = {}
     # seed the codehash so that we can bootstrap
     #puts "yml load, #{caller*"\n"}"

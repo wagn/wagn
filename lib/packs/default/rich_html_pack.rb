@@ -158,7 +158,7 @@ class Wagn::Renderer::Html
         @form = form
         %{
           <div class="edit-area">          
-            #{ hidden_field_tag :success, card.rule(:thanks) || 'TO-CARD' }
+            #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
             #{ help_text :add_help, :fallback=>:edit_help }
             #{
             case
@@ -282,7 +282,7 @@ class Wagn::Renderer::Html
     <div class="edit-area edit-type">
       <h2>Change Type</h2> #{
         card_form :update, 'card-edit-type-form' do |f|
-          #'main-success'=>'REDIRECT: TO-CARD', # adding this back in would make main cards redirect on cardtype changes
+          #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
        
           %{ #{ hidden_field_tag :view, :edit }
           #{if card.type_id == Card::CardtypeID and !Card.search(:type_id=>card.card.id).empty? #ENGLISH

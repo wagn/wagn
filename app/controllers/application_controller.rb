@@ -124,12 +124,12 @@ class ApplicationController < ActionController::Base
     end
 
     style = @card.attachment_style @card.type_id, ( params[:size] || @style )
-    return fast_404 if !style
+    return fast_404 if style == :error
 
     # check file existence?  or just rescue MissingFile errors and raise NotFound?
     # we do see some errors from not having this, though I think they're mostly from legacy issues....
 
-    send_file @card.attach.path(style),
+    send_file @card.attach.path( *[style].compact ), #nil or empty arg breaks 1.8.7
       :type => @card.attach_content_type,
       :filename =>  "#{@card.cardname.url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
       :x_sendfile => true,

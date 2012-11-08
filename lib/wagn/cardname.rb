@@ -134,8 +134,8 @@ module Wagn
 
     #~~~~~~~~~~~~~~~~~~~ TRAITS / STARS ~~~~~~~~~~~~~~~~~~~
 
-    def star?()         simple?   and '*' == s[0]               end
-    def rstar?()        right     and '*' == right[0]           end
+    def star?()         simple?   and '*' == s[0,1]               end
+    def rstar?()        right     and '*' == right[0,1]           end
 
     def trait_name? *traitlist
       junction? && begin

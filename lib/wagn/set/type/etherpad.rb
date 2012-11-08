@@ -26,7 +26,7 @@ module Wagn::Set::Type::Etherpad
          PAD_DEFAULTS.merge(JSON.parse(pad_options).symbolize_keys)
     pad_options.merge params.symbolize_keys
   end
-  
+
 
   def get_pad_content
     pad_opts = pad_options

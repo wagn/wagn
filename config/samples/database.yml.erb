@@ -1,12 +1,12 @@
-<% 
+<%
 # note - this file is used by rake wagn:install to generate the initial database.yml file.
 # See more in the README.
 
-if @mode==:dev 
-  %>common: &common<% 
-else 
+if @mode==:dev
+  %>common: &common<%
+else
   %>production:
-  database: wagn_production<% 
+  database: wagn_production<%
 end %>
   adapter: <%= @engine == :postgres ? :postgresql : :mysql2 %>
   username: root
@@ -14,11 +14,11 @@ end %>
   pool: 5
   encoding: utf8
   host: localhost
-#  socket: /tmp/mysql.sock  
+#  socket: /tmp/mysql.sock
 <% if @mode==:dev %>
 production:
   database: wagn_production
-  <<: *common  
+  <<: *common
 
 development:
   database: wagn_development

@@ -20,7 +20,7 @@
   background: #005800;
   margin-bottom: 20px;
   padding: 2px;
-} 
+}
 #menu a {
   color: white;
   padding: 0px 4px;
@@ -46,15 +46,15 @@
 #logo {
   text-align: center;
   padding: 10px 0px;
-  background: #fff; 
-  border: 1px solid #777; 
-  -moz-border-radius: 8px; 
-  border-radius: 8px; 
+  background: #fff;
+  border: 1px solid #777;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
 }
-#logo a, 
+#logo a,
 #logo a:link,
-#logo a:visited { 
-  color: #448; 
+#logo a:visited {
+  color: #448;
   text-decoration: none;
   text-align: center;
 }
@@ -70,30 +70,30 @@
 
 /*----- fieldset tables --------*/
 
-.fieldset { 
-  width: 100%; 
+.fieldset {
+  width: 100%;
 }
-.fieldset td     { 
-  padding: 5px 3px 5px 3px; 
-  border-bottom: 1px solid #ddd; 
+.fieldset td     {
+  padding: 5px 3px 5px 3px;
+  border-bottom: 1px solid #ddd;
 }
 .fieldset th {
   text-align: center;
   padding: 8px;
   font-style: normal;
 }
-.fieldset .label { 
-  text-align: right;  
+.fieldset .label {
+  text-align: right;
   white-space: nowrap;
   padding-right: 6px;
   vertical-align: middle;
 }
-.fieldset .field { 
+.fieldset .field {
   width: 25%;
   vertical-align: middle;
   padding: 7px
 }
-.fieldset .help { 
+.fieldset .help {
   padding-left: 6px;
   width: 50%;
 }

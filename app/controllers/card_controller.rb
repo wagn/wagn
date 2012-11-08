@@ -40,9 +40,9 @@ class CardController < ApplicationController
 
     discard_locations_for(@card)
 
-    success 'REDIRECT: TO-PREVIOUS'
+    success 'REDIRECT: *previous'
   end
-  
+
 
   def index
     read
@@ -52,7 +52,7 @@ class CardController < ApplicationController
   def read_file
     show_file
   end #FIXME!  move to pack
-  
+
 
 
 
@@ -78,7 +78,7 @@ class CardController < ApplicationController
         "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" : "[[#{Session.user.card.name}]]"
     comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.strip.empty? ? '&nbsp;' : c}</p>"} * "\n"
     @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
-    
+
     if @card.save
       show
     else
@@ -115,7 +115,7 @@ class CardController < ApplicationController
     if params[:save_roles]
       role_card = @card.trait_card :roles
       role_card.ok! :update
-      
+
       role_hash = params[:user_roles] || {}
       role_card = role_card.refresh if role_card.frozen?
       role_card.items= role_hash.keys.map &:to_i
@@ -125,7 +125,7 @@ class CardController < ApplicationController
     if account and account_args = params[:account]
       unless Session.as_id == @card.id and !account_args[:blocked]
         @card.trait_card(:account).ok! :update
-      end 
+      end
       account.update_attributes account_args
     end
 
@@ -135,7 +135,7 @@ class CardController < ApplicationController
       end
       errors
     else
-      show
+      success
     end
   end
 
@@ -171,20 +171,20 @@ class CardController < ApplicationController
   def index_preload
     Session.no_logins? ?
       redirect_to( Card.path_setting '/admin/setup' ) :
-      params[:id] = (Card.setting(:home) || 'Home').to_cardname.to_url_key
+      params[:id] = (Card.setting(:home) || 'Home').to_cardname.url_key
   end
 
 
   def load_card
     @card = case params[:id]
-      when '*previous'   ; return wagn_redirect( previous_location )  
+      when '*previous'   ; return wagn_redirect( previous_location )
       when /^\~(\d+)$/   ; Card.fetch $1.to_i
       when /^\:(\w+)$/   ; Card.fetch $1.to_sym
       else
         opts = params[:card] ? params[:card].clone : {}
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
         name = params[:id] ? Wagn::Cardname.unescape( params[:id] ) : opts[:name]
-        
+
         if @action == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
           # I think we may need to create a "#create" instance method that handles this checking.
@@ -195,32 +195,43 @@ class CardController < ApplicationController
           Card.fetch_or_new name, opts
         end
       end
-      
+
     Wagn::Conf[:main_name] = params[:main] || (@card && @card.name) || ''
     true
   end
 
 
-  def success(default_target='TO-CARD')
+  def success default_target='_self'
     target = params[:success] || default_target
     redirect = !ajax?
-
+    new_params = {}
+    
+    if Hash === target
+      new_params = target
+      target = new_params.delete :id # should be some error handling here
+      redirect ||= !!(new_params.delete :redirect)
+    end
+      
     if target =~ /^REDIRECT:\s*(.+)/
       redirect, target = true, $1
     end
 
     target = case target
-      when 'TO-PREVIOUS'   ;  previous_location
-      when 'TO-CARD'       ;  @card
+      when '*previous'     ;  previous_location #could do as *previous
+      when '_self  '       ;  @card #could do as _self
       when /^(http|\/)/    ;  target
       when /^TEXT:\s*(.+)/ ;  $1
-      else                 ;  Card.fetch_or_new(target)
+      else                 ;  Card.fetch_or_new target.to_cardname.to_absolute(@card.cardname)
       end
 
+    Rails.logger.info "redirect = #{redirect}, target = #{target}, new_params = #{new_params}"
     case
-    when  redirect        ; wagn_redirect ( Card===target ? wagn_path(target) : target )
+    when  redirect        ; wagn_redirect ( Card===target ? url_for_page(target.cardname, new_params) : target )
     when  String===target ; render :text => target
-    else  @card = target  ; show
+    else
+      @card = target
+      Rails.logger.info "view = #{new_params[:view]}"
+      show new_params[:view]
     end
   end
 

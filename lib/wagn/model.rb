@@ -1,7 +1,7 @@
 Wagn.send :include, Wagn::Exceptions
 
 module Wagn::Model
-  
+
   def self.included(base)
     base.send :include, Wagn::Model::AttributeTracking
     base.send :include, Wagn::Model::Collection

@@ -4,13 +4,13 @@ class Card
   cattr_accessor :count
 end
 
-module Wagn::Set::Type::CardtypeA 
-  def approve_delete 
+module Wagn::Set::Type::CardtypeA
+  def approve_delete
     deny_because("not allowed to delete card a")
   end
 end
 
-  
+
 module Wagn::Set::Type::CardtypeC
   def validate_type_change
     errors.add :destroy_error, "card c is indestructible"
@@ -44,7 +44,7 @@ describe Card, "with role" do
       @role = Card.search(:type=>'Role')[0]
     end
   end
-  
+
   it "should have a role type" do
     @role.type_id.should== Card::RoleID
   end
@@ -58,7 +58,7 @@ describe Card, "with account" do
       @joe = change_card_to_type('Joe User', :basic)
     end
   end
-  
+
   it "should not have errors" do
     @joe.errors.empty?.should == true
   end
@@ -74,7 +74,7 @@ describe Card, "type transition approve create" do
     (c=Card.fetch('Cardtype B+*type+*create')).content.should == '[[r1]]'
     c.typecode.should == :pointer
   end
-  
+
   it "should have errors" do
     lambda { change_card_to_type("basicname", "cardtype_b") }.should raise_error(Wagn::PermissionDenied)
   end
@@ -86,13 +86,13 @@ describe Card, "type transition approve create" do
 end
 
 
-describe Card, "type transition validate_destroy" do  
+describe Card, "type transition validate_destroy" do
   before do @c = change_card_to_type("type-c-card", :basic) end
-  
+
   it "should have errors" do
     @c.errors[:destroy_error].first.should == "card c is indestructible"
   end
-  
+
   it "should retain original type" do
     Card["type_c_card"].typecode.should == :cardtype_c
   end
@@ -100,12 +100,12 @@ end
 
 describe Card, "type transition validate_create" do
   before do @c = change_card_to_type("basicname", "cardtype_d") end
-  
+
   it "should have errors" do
     pending "CardtypeD does not have a codename, so this is an invalid test"
     @c.errors[:type].first.match(/card d always has errors/).should be_true
   end
-  
+
   it "should retain original type" do
     pending "CardtypeD does not have a codename, so this is an invalid test"
     Card["basicname"].typecode.should == :basic
@@ -114,36 +114,36 @@ end
 
 describe Card, "type transition destroy callback" do
   before do
-    @c = change_card_to_type("type-e-card", :basic) 
+    @c = change_card_to_type("type-e-card", :basic)
   end
-  
+
   it "should decrement counter in before destroy" do
     pending "no trigger for this test anymore"
     Card.count.should == 1
   end
-  
+
   it "should change type of the card" do
     Card["type-e-card"].typecode.should == :basic
   end
 end
 
 describe Card, "type transition create callback" do
-  before do 
+  before do
     Session.as_bot do
       Card.create(:name=>'Basic+*type+*delete', :type=>'Pointer', :content=>"[[Anyone Signed in]]")
     end
-    @c = change_card_to_type("basicname", :cardtype_f) 
+    @c = change_card_to_type("basicname", :cardtype_f)
   end
-    
+
   it "should increment counter"  do
     pending "No extensions, so no hooks for this now"
     Card.count.should == 3
   end
-  
+
   it "should change type of card" do
     Card["basicname"].typecode.should == :cardtype_f
   end
-end                
+end
 
 
 def change_card_to_type(name, type)

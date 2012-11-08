@@ -111,7 +111,7 @@ class CodenameTable < ActiveRecord::Migration
 
   def self.name2code name
     code = if RENAMES[name];  RENAMES[name]
-       elsif '*' == name[0];  name[1..-1]
+       elsif name =~ /^\*/ ;  name[1..-1]
        else                   name end
     Rails.logger.warn("migr name2code: #{name}, #{code}, #{RENAMES[code]}"); code
   end
@@ -134,8 +134,9 @@ class CodenameTable < ActiveRecord::Migration
       
       if !card
         Wagn::Codename.reset_cache
-#        return false if opt
-        puts Rails.logger.warn "adding card for codename #{name}"
+        
+        puts Rails.logger.info( ":read card = #{Card[:read].name}, :all card = #{Card[:all].name}, *all+*read = #{Card['*all+*read'].content}" )
+        puts Rails.logger.warn( "adding card for codename #{name}" )
         card = if name=='*double_click'
           Card.create! :name=>'*double click', :type=>'Toggle', :content=>'1'
         else

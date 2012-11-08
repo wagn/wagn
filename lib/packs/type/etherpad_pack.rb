@@ -8,7 +8,7 @@ class Wagn::Renderer::Html
     card.include_set_modules
     card.get_pad_content
   end
-  
+
   define_view :current_naked, :fallback=>:naked, :type=>'Etherpad' do |args|
     process_content _render_current
   end

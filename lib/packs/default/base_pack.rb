@@ -10,18 +10,18 @@ class Wagn::Renderer
   define_view :refs     do |args|  card.respond_to?('references_expired') ? card.raw_content : ''   end
   define_view :core     do |args|  process_content _render_raw                                      end
   define_view :content  do |args|  _render_core                                                     end
-    # this should be done as an alias, but you can't make an alias with an unknown view, 
+    # this should be done as an alias, but you can't make an alias with an unknown view,
     # and base renderer doesn't know "content" at this point
   define_view :titled   do |args|  card.name + "\n\n" + _render_core                                end
 
-  define_view :show,     :perms=>:none  do |args|  render( args[:view] || params[:view] || :core )  end    
+  define_view :show,     :perms=>:none  do |args|  render( args[:view] || params[:view] || :core )  end
   define_view :name,     :perms=>:none  do |args|  card.name                                        end
   define_view :key,      :perms=>:none  do |args|  card.key                                         end
   define_view :id,       :perms=>:none  do |args|  card.id                                          end
-  define_view :linkname, :perms=>:none  do |args|  card.cardname.to_url_key                         end
+  define_view :linkname, :perms=>:none  do |args|  card.cardname.url_key                         end
   define_view :url,      :perms=>:none  do |args|  wagn_url _render_linkname                        end
 
-  define_view :link, :perms=>:none  do |args|                                                   
+  define_view :link, :perms=>:none  do |args|
     name=card.name
     build_link(name, name, card.known?)
   end
@@ -48,11 +48,9 @@ class Wagn::Renderer
 
   define_view :blank, :perms=>:none do |args| "" end
 
-
   define_view :not_found, :perms=>:none, :error_code=>404 do |args|
     %{ There's no card named "#{card.name}" }
   end
-
 
   define_view :server_error, :perms=>:none do |args|
     %{ Wagn Hitch!  Server Error. Yuck, sorry about that.\n}+
@@ -62,7 +60,7 @@ class Wagn::Renderer
   define_view :denial, :perms=>:none, :error_code=>403 do |args|
     focal? ? 'Permission Denied' : ''
   end
-  
+
   define_view :bad_address, :perms=>:none, :error_code=>404 do |args|
     %{ Bad Address }
   end
@@ -71,26 +69,26 @@ class Wagn::Renderer
     %{ No Card! }
   end
 
+  define_view :too_deep, :perms=>:none do |args|
+    %{ Man, you're too deep.  (Too many levels of inclusions at a time) }
+  end
+
   # The below have HTML!?  should not be any html in the base renderer
 
 
   define_view :edit_virtual, :perms=>:none do |args|
-    %{ <div class="faint"><em>#{ @showname || card.name } is a Virtual card</em></div> }
+    %{ <div class="faint"><em>#{ showname } is a Virtual card</em></div> }
   end
 
   define_view :closed_missing, :perms=>:none do |args|
-    %{<span class="faint"> #{ @showname || card.name } </span>}
+    %{<span class="faint"> #{ showname } </span>}
   end
 
   define_view :missing, :perms=>:none do |args|
-    %{<span class="faint"> #{ @showname || card.name } </span>}
-  end
-
-  define_view :too_deep, :perms=>:none do |args|
-    %{Man, you're too deep.  (Too many levels of inclusions at a time)}
+    %{<span class="faint"> #{ showname } </span>}
   end
 
   define_view :too_slow, :perms=>:none do |args|
-    %{<span class="too-slow">Timed out! #{ card.name } took too long to load.</span>}
+    %{<span class="too-slow">Timed out! #{ showname } took too long to load.</span>}
   end
 end

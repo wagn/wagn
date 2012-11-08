@@ -3,12 +3,13 @@ module Wagn::Set::Type::Set
 
   def inheritable?
     return true if junction_only?
-    cardname.tag_name=='*self' && cardname.trunk_name.junction? 
+    cardname.tag=='*self' && cardname.trunk_name.junction?
   end
 
   def subclass_for_set
+    #FIXME - use codename??
     Wagn::Model::Pattern.subclasses.find do |sub|
-      cardname.tag_name.to_s==sub.key_name
+      cardname.tag==sub.key_name
     end
   end
 
@@ -24,8 +25,11 @@ module Wagn::Set::Type::Set
   end
 
   def label
-    return '' unless klass = subclass_for_set
-    klass.label cardname.left_name.to_s
+    if klass = subclass_for_set
+      klass.label cardname.left
+    else
+      ''
+    end
   end
 
   def prototype
@@ -37,8 +41,8 @@ module Wagn::Set::Type::Set
     groups = Card.universal_setting_names_by_group.clone
 
     raise "#setting_names_by_group called on non-set" if type_id != Card::SetID
-    
-    member_type_id = 
+
+    member_type_id =
       if templt = existing_trait_card(:content) || existing_trait_card(:default)
         templt.type_id
       elsif junction?

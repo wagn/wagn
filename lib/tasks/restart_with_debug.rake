@@ -3,7 +3,7 @@ task :restart do
   system("touch tmp/debug.txt") if ENV["DEBUG"] == 'true'
 end
 
-# to debug:  
+# to debug:
 #  restart passenger in development, single server.
 #  rake restart DEBUG=true
 #  rdebug -c

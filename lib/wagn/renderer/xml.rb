@@ -45,35 +45,35 @@ module Wagn
         known_card = !!Card.fetch(href, :skip_modules=>true) if known_card.nil?
         cardname = Cardname===href ? href : href.to_cardname
         text = cardname.to_show(card.name) unless text
-        #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
+        #href+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
         href = full_uri Wagn::Conf[:root_path] + '/' +
-          (known_card ? cardname.to_url_key : CGI.escape(cardname.escape))
+          (known_card ? cardname.url_key : CGI.escape(cardname.s))
 
         return %{<cardlink class="#{
                     known_card ? 'known-card' : 'wanted-card'
                   }" card="#{href}">#{text}</cardlink>}
       end
     %{<link class="#{klass}" href="#{href}">#{text}</link>}
-  end   
-          
+  end
+
   def wrap(view=nil, args = {})
     css_class = case args[:action].to_s
       when 'content'  ;  'transcluded'
       when 'exception';  'exception'
       when 'closed'   ;  'card-slot line'
       else            ;  'card-slot paragraph'
-    end 
-    css_class << " " + card.css_names if card
+    end
+    css_class << " " + card.safe_keys if card
     css_class << " view-#{view}" if view
-    
+
     attributes = {
-      :name     => card.cardname.tag_name,
+      :name     => card.cardname.tag,
       :cardId   => (card && card.id),
       :type_id  => card.type_id,
       :class    => css_class,
     }
     [:style, :home_view, :item, :base].each { |key| attributes[key] = args[key] }
-    
+
     content_tag(:card, attributes ) { yield }
   end
 
@@ -253,7 +253,7 @@ module Wagn
   def captcha_tags(opts={})
     return unless controller && controller.captcha_required?
     return "Captcha turned on but no RECAPTCHA key configured" unless recaptcha_key = ENV['RECAPTCHA_PUBLIC_KEY']
-    
+
     js_lib_uri = "http://api.recaptcha.net/js/recaptcha_ajax.js"
     card_key = card.new_record? ? "new" : card.key
     recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>card_key) +

@@ -23,7 +23,7 @@ module Wagn::Model::Settings
   def rule_card_with_cache setting_name, options={}
     setting_name = (sc=Card[setting_name] and (sc.codename || sc.name).to_sym) unless Symbol===setting_name
     @rule_cards ||= {}  # FIXME: initialize this when creating card
-    rcwc = (@rule_cards[setting_name] ||= 
+    rcwc = (@rule_cards[setting_name] ||=
       rule_card_without_cache setting_name, options)
     #warn (Rails.logger.warn "rcwc #{rcwc.inspect}"); rcwc #if setting_name == :read; rcwc
   end
@@ -72,10 +72,10 @@ module Wagn::Model::Settings
       end
     end
 
-  
+
     SETTING_ATTRIBUTES = {
-      :perms => [ :create, :read, :update, :delete, :comment ], 
-      :look  => [ :default, :content, :layout, :table_of_content ], 
+      :perms => [ :create, :read, :update, :delete, :comment ],
+      :look  => [ :default, :content, :layout, :table_of_content ],
       :com   => [ :add_help, :edit_help, :send, :thanks ],
       :other => [ :autoname, :accountable, :captcha ]
     }

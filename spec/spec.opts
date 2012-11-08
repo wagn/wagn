@@ -1,6 +1,6 @@
 --colour
 --format profile
 --loadby mtime
---reverse     
+--reverse
 --drb
 

@@ -3,7 +3,7 @@ module PackSpecHelper
 include ActionDispatch::Assertions::SelectorAssertions
 #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
 
-  
+
   def assert_view_select(view_html, *args, &block)
     node = HTML::Document.new(view_html).root
     if block_given?
@@ -19,9 +19,11 @@ include ActionDispatch::Assertions::SelectorAssertions
   end
 
   def render_content(content, args={})
-    @card ||= Card.new(:name=>"Tempo Rary 2")
+    @card ||= Card.new :name=>"Tempo Rary 2"
     @card.content=content
-    Wagn::Renderer.new(@card,args)._render(:core)
+    r = Wagn::Renderer.new @card,args
+    #r.add_name_context "Tempo Rary 2"
+    r._render(:core)
   end
 
   def xml_render_content(content, args={})

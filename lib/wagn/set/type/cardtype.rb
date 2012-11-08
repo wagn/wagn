@@ -10,7 +10,7 @@ module Wagn::Set::Type::Cardtype
   end
 
   def cards_of_type_exist?
-    Session.as_bot { Card.count_by_wql :type_id=>id } > 0 
+    Session.as_bot { Card.count_by_wql :type_id=>id } > 0
   end
 
   def custom_validate_destroy

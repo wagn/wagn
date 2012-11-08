@@ -33,7 +33,7 @@ gem install bundler
 
 locale-gen en_US.UTF-8
 update-locale LANG=en_US.UTF-8
-apt-get install postgresql g++ libpq-dev 
+apt-get install postgresql g++ libpq-dev
 sudo -u postgres psql postgres # set password with \password postgres.  default config expects pw "postgres"
 
 
@@ -44,7 +44,7 @@ apt-get install ri1.8 rdoc1.8 irb1.8 libreadline-ruby1.8 libruby1.8 libopenssl-r
 
 # to get javascript working in cucumber (see http://www.sarahmei.com/blog/2010/12/17/cucumber-without-a-display/)
 
-apt-get install xubuntu-desktop exaile gconf2 xvfb firefox 
+apt-get install xubuntu-desktop exaile gconf2 xvfb firefox
 Xvfb :99 -ac -screen 0 1024x768x16
 
 

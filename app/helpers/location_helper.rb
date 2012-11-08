@@ -22,7 +22,7 @@ module LocationHelper
 
   def save_location
     return if ajax? || !html? || !@card.known?
-    
+
     discard_locations_for(@card)
     @previous_location = wagn_path(@card)
     location_history.push @previous_location
@@ -41,7 +41,7 @@ module LocationHelper
     end.compact
     @previous_location = nil
   end
-  
+
   def url_key_for_location(location)
     location.match( /\/([^\/]*$)/ ) ? $1 : nil
   end
@@ -58,18 +58,18 @@ module LocationHelper
       opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
       vars = '?' + pairs.join('&')
     end
-    wagn_path "/#{title.to_cardname.to_url_key}#{format}#{vars}"
+    wagn_path "/#{title.to_cardname.url_key}#{format}#{vars}"
   end
 
   def wagn_path( rel ) #should be in cardname?
-    rel_path = Card===rel ? rel.cardname.to_url_key : rel
+    rel_path = Card===rel ? rel.cardname.url_key : rel
     Wagn::Conf[:root_path].to_s + ( rel_path =~ /^\// ? '' : '/' ) + rel_path
   end
 
   def wagn_url( rel ) #should be in cardname?
     "#{Wagn::Conf[:base_url]}#{wagn_path(rel)}"
   end
-  
+
 
   # Links ----------------------------------------------------------------------
 

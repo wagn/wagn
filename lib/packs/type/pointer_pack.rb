@@ -6,11 +6,11 @@ end
 
 
 class Wagn::Renderer::Html
-  
+
   define_view :core, :type=>'pointer' do |args|
     @item_view ||= DEFAULT_ITEM_VIEW
-    %{<div class="pointer-list">#{pointer_items}</div>} 
-    #+ link_to( 'add/edit', path(action), :remote=>true, :class=>'slotter add-edit-item' ) #ENGLISH 
+    %{<div class="pointer-list">#{pointer_items}</div>}
+    #+ link_to( 'add/edit', path(action), :remote=>true, :class=>'slotter add-edit-item' ) #ENGLISH
   end
 
   define_view :closed_content, :type=>'pointer' do |args|
@@ -28,8 +28,8 @@ class Wagn::Renderer::Html
     args ||= {}
     items = args[:items] || card.item_names(:context=>:raw)
     items = [''] if items.empty?
-    options_card_name = ((oc = card.options_card) ? oc.name : '*all').to_cardname.to_url_key
-    
+    options_card_name = ((oc = card.options_card) ? oc.name : '*all').to_cardname.url_key
+
     extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
 
     %{<ul class="pointer-list-editor #{extra_css_class}" options-card="#{options_card_name}"> } +
@@ -40,7 +40,7 @@ class Wagn::Renderer::Html
       '</li>'
     end.join("\n") +
     %{</ul><div class="add-another-div">#{link_to 'Add another','#', :class=>'pointer-item-add'}</div>}
-    
+
   end
 
   define_view :checkbox, :type=>'pointer' do |args|
@@ -51,11 +51,11 @@ class Wagn::Renderer::Html
       %{<div class="pointer-checkbox"> } +
         check_box_tag( "pointer_checkbox", option.name, checked, :id=>id, :class=>'pointer-checkbox-button' ) +
         %{<label for="#{id}">#{option.name}</label> } +
-        ((description = card.option_text(option.name)) ?  
+        ((description = card.option_text(option.name)) ?
           %{<div class="checkbox-option-description">#{ description }</div>} : '' ) +
       "</div>"
     end.join("\n") +
-    '</div>' 
+    '</div>'
   end
 
   define_view :multiselect, :type=>'pointer' do |args|
@@ -75,17 +75,17 @@ class Wagn::Renderer::Html
         (description ? %{<div class="radio-option-description">#{ description }</div>} : '') +
       '</div>'
     end.join("\n")
-    
+
     %{ <div class="pointer-radio-list">#{options}</div> }
   end
 
   define_view :select, :type=>'pointer' do |args|
-    options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]} 
+    options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]}
     select_tag("pointer_select", options_for_select(options, card.item_names.first), :class=>'pointer-select')
   end
-  
+
   private
-  
+
   def pointer_items
     typeparam = case (type=card.item_type)
       when String ; ";type:#{type}"
@@ -94,5 +94,5 @@ class Wagn::Renderer::Html
     end
     process_content card.content.gsub(/\[\[/,"<div class=\"pointer-item item-#{@item_view}\">{{").gsub(/\]\]/,"|#{@item_view}#{typeparam}}}</div>")
   end
-  
+
 end

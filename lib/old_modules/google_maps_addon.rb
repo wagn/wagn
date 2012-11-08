@@ -1,6 +1,6 @@
 require 'net/http'
-class GoogleMapsAddon    
-  def self.geocode(address) 
+class GoogleMapsAddon
+  def self.geocode(address)
     opts = {
       :q => address,
       :key => "ABQIAAAA5yO06x91IBr9oKK57xU-kRSWPodhC6wLLpV6xYzSog0legcbhhT0-N3OKUWSa2v_LV_VnVPbd3zgKg",
@@ -14,15 +14,15 @@ class GoogleMapsAddon
     # since we don't have access to code when referencing the static maps address, we store them that way.
     result["Placemark"][0]["Point"]["coordinates"][0..1].reverse.join(",")
   end
-end                     
+end
 
 class Card
   after_save :update_geocode
-  
+
   def update_geocode
     Session.as_bot do
       if conf = Card['*geocode']
-        if self.junction? && conf.item_names.include?( self.cardname.tag_name )
+        if self.junction? && conf.item_names.include?( self.cardname.tag )
           address = conf.item_names.map{ |p|
             c=Card.fetch_or_new(self.cardname.trunk_name.to_s+"+#{p}") and
               c.content }.select(&:present?) * ', '

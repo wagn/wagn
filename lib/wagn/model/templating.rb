@@ -1,8 +1,8 @@
-module Wagn::Model::Templating  
+module Wagn::Model::Templating
 
-  def template?()       cardname.template_name?                 end
-  def hard_template?()  !!(name =~ /\+\*content$/)              end
-  def type_template?()  template? && !!(name =~ /\+\*type\+/)   end
+  def template?()       cardname.trait_name? :content, :default              end
+  def hard_template?()  cardname.trait_name? :content                        end
+  def type_template?()  template? && cardname.trunk_name.trait_name?(:type)  end
 
   def template
     # currently applicable templating card.
@@ -32,7 +32,7 @@ module Wagn::Model::Templating
   def hard_template
     template if template && template.hard_template?
   end
-  
+
   def virtual?
     return false unless new_card?
     if @virtual.nil?
@@ -43,7 +43,7 @@ module Wagn::Model::Templating
 
   def content_rule_card
     card = rule_card :content, :skip_modules=>true
-    crc = card && card.content == '_self' ? nil : card
+    card && card.content.strip == '_self' ? nil : card
   end
 
   def hard_templatee_names
@@ -56,11 +56,11 @@ module Wagn::Model::Templating
     else
       []
     end
-  end    
+  end
 
   # FIXME: content settings -- do we really need the reference expiration system?
   #
-  # I kind of think so.  otherwise how do we handled patterned references in hard-templated cards?  
+  # I kind of think so.  otherwise how do we handled patterned references in hard-templated cards?
   # I'll leave the FIXME here until the need is well documented.  -efm
   #
   # ps.  I think this code should be wiki references.

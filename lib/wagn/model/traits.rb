@@ -13,7 +13,7 @@ module Wagn::Model::Traits
       Rails.logger.debug "register_trait(#{trait_name}, #{options.inspect})"
       @menu_options=nil
     end
-  
+
     def trait_options()  @@trait_options ||= {}; end
   end
 
@@ -25,7 +25,7 @@ module Wagn::Model::Traits
 #  end
 #
 #  def trait_cards()    @trait_cards ||= {}; end
-     
+
   def traits
     trait_options.keys.map do |trait_name|
       if tc=trait_card(trait_name) and tc.real?
@@ -33,8 +33,8 @@ module Wagn::Model::Traits
         block_given? ? yield(trait_name, tc) : trait_name
       end
     end.compact
-  end  
-        
+  end
+
   # adds options to right-menu for traits
   def menu_options(options=nil)
     options = options.clone || []

@@ -2,7 +2,7 @@ class Wagn::Renderer::Rss
   define_view :show do |args|
     render(args[:view] || params[:view] || :feed)
   end
-    
+
   define_view :feed do |args|
     xml = Builder::XmlMarkup.new
     xml.instruct! :xml, :version => "1.0"
@@ -35,13 +35,13 @@ class Wagn::Renderer::Rss
       end
     end
   end
-  
+
   define_view :titled do |args|
     # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-    content_tag( :h2, fancy_title(card.name) ) + self._render_open_content(args) { yield }
+    content_tag( :h2, showname ) + self._render_open_content(args) { yield }
   end
   alias_view(:titled,      {}, :open)
   alias_view(:open_content,{}, :content)
   alias_view(:link,        {}, :closed)
-  
+
 end

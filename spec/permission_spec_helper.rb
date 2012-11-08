@@ -15,19 +15,19 @@ module PermissionSpecHelper
   def assert_not_locked_from( user, card, msg='')
     Session.as(user.id) { assert_not_locked( card, msg ) }
   end
-  
+
   def assert_hidden( card, msg='' )
-    assert_equal [], Card.search(:id=>card.id).plot(:name), msg  
+    assert_equal [], Card.search(:id=>card.id).plot(:name), msg
   end
-  
+
   def assert_not_hidden( card, msg='' )
     assert_equal [card.name], Card.search(:id=>card.id).plot(:name), msg
   end
-  
+
   def assert_locked( card, msg='' )
     assert_equal false, card.ok?(:update), msg
   end
-  
+
   def assert_not_locked( card, msg='' )
     assert_equal true, card.ok?(:update), msg
   end
@@ -43,17 +43,17 @@ class Card
       ok? :update
     end
   end
-    
+
   def readable_by(user)
     Session.as(user.id) do
       ok? :read
     end
   end
-    
+
   def appendable_by(user)
     Session.as(user.id) do
       ok? :append
     end
-  end 
+  end
 end
- 
+

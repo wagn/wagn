@@ -18,29 +18,29 @@ wagn.editorInitFunctionMap = {
   '.etherpad-textarea'     : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
 }
 
-wagn.initPointerList = (input)-> 
+wagn.initPointerList = (input)->
   optionsCard = input.closest('ul').attr('options-card')
   input.autocomplete { source: wagn.prepUrl wagn.rootPath + '/' + optionsCard + '.json?view=name_complete' }
 
 wagn.initTinyMCE = (el_id) ->
   # verify_html: false -- note: this option needed for empty paragraphs to add space.
-  
+
   conf = if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {}
-  $.extend conf, { 
+  $.extend conf, {
     mode: 'exact'
     plugins: 'autoresize'
     autoresize_max_height: 500 #probably want to make several of these overridable....
-    elements: el_id 
+    elements: el_id
     content_css: wagn.rootPath + '/assets/application-all.css' + ',' + wagn.rootPath + wagn.local_css_path
     entity_encoding: 'raw'
-  }    
+  }
   tinyMCE.init conf
 
 wagn.chooseFile = (e, data) ->
   file = data.files[0]
   $(this).fileupload '_normalizeFile', 0, file # so file objects have same fields in all browsers
   $(this).closest('form').data 'file-data', data # stores data on form for use at submission time
-  
+
   if name_field = $(this).slot().find( '.card-name-field' )
     # populates card name if blank
     if name_field[0] and name_field.val() == ''
@@ -50,11 +50,11 @@ wagn.chooseFile = (e, data) ->
   editor.find('.choose-file').hide()
   editor.find('.chosen-filename').text file.name
   editor.find('.chosen-file').show()
-  
+
   contentFieldName = this.name.replace( /attach\]$/, 'content]' )
   editor.append '<input type="hidden" value="CHOSEN" class="upload-card-content" name="' + contentFieldName + '">'
-  # we add and remove the contentField to insure that nothing is added / updated when nothing is chosen. 
-  
+  # we add and remove the contentField to insure that nothing is added / updated when nothing is chosen.
+
 
 $(window).ready ->
 
@@ -70,7 +70,7 @@ $(window).ready ->
     html: 'html',
     source: navbox_results,
     select: navbox_select
-    # autoFocus: true,  
+    # autoFocus: true,
     # this makes it so the first option ("search") is pre-selected.
     # sadly, it also causes odd navbox behavior, resetting the search term
   }
@@ -82,7 +82,7 @@ $(window).ready ->
     input = new_item.find('input')
     input.val ''
     last_item.after new_item
-    wagn.initPointerList(input)    
+    wagn.initPointerList(input)
     event.preventDefault() # Prevent link from following its href
 
   $('.pointer-item-delete').live 'click', ->
@@ -96,7 +96,7 @@ $(window).ready ->
   # permissions pack
   $('.perm-vals input').live 'click', ->
     $(this).slot().find('#inherit').attr('checked',false)
-  
+
   $('.perm-editor #inherit').live 'click', ->
     slot = $(this).slot()
     slot.find('.perm-group input:checked').attr('checked', false)
@@ -134,7 +134,7 @@ $(window).ready ->
        $(wagn.padform)[0].submit()
     false
 
-  
+
 permissionsContent = (ed) ->
   return '_left' if ed.find('#inherit').attr('checked')
   groups = ed.find('.perm-group input:checked').map( -> $(this).val() )
@@ -155,7 +155,7 @@ navbox_results = (request, response) ->
   view_field.val 'complete'
   formData = f.serialize()
   view_field.val orig_view
-      
+
   this.xhr = $.ajax {
 		url: wagn.prepUrl wagn.rootPath + '/:search.json'
 		data: formData
@@ -184,10 +184,10 @@ navboxize = (term, results)->
       items.push i
 
   $.each results['goto'], (index, val) ->
-    items.push { type: 'goto', prefix: 'go to', value: val[0], label: val[1], href: '/' + val[2] } 
+    items.push { type: 'goto', prefix: 'go to', value: val[0], label: val[1], href: '/' + val[2] }
 
   $.each items, (index, i) ->
-    i.label = 
+    i.label =
       '<span class="navbox-item-label '+ i.type + '-icon">' + i.prefix + ':</span> ' +
       '<span class="navbox-item-value">' + i.label + '</span>'
 
@@ -198,6 +198,5 @@ navbox_select = (event, ui) ->
     $(this).closest('form').submit()
   else
     window.location = wagn.rootPath + ui.item.href
-    
+
   $(this).attr('disabled', 'disabled')
-  

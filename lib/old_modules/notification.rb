@@ -41,14 +41,14 @@ module Notification
       Rails.logger.info "\nController exception: #{e.message}"
       Rails.logger.debug e.backtrace*"\n"
     end
-    
+
     def trunk_watcher_watched_pairs
       # do the watchers lookup before the transcluder test since it's faster.
       if cardname.junction?
         #Rails.logger.debug "trunk_watcher_pairs #{name}, #{name.trunk_name.inspect}"
         if tcard = Card[tname=cardname.trunk_name] and
           pairs = tcard.watcher_watched_pairs and
-          transcluders.map(&:key).member?(tname.to_key)
+          transcluders.map(&:key).member?(tname.key)
           return pairs
         end
       end

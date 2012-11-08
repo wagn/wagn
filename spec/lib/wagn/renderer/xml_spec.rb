@@ -7,7 +7,7 @@ describe Wagn::Renderer::Xml, "" do
     Session.user= :joe_user
     Wagn::Renderer::Xml.current_slot = nil
   end
-    
+
 #~~~~~~~~~~~~ special syntax ~~~~~~~~~~~#
 
   context "special syntax handling should render" do
@@ -77,7 +77,7 @@ describe Wagn::Renderer::Xml, "" do
       Session.as :joe_user do
         Wagn::Renderer::Xml.new(Card.fetch('Joe no see me')).render(:core).should be_html_with { no_card(:status=>"deny view") }
       end
-    end      
+    end
   end
 
 #~~~~~~~~~~~~~ Standard views ~~~~~~~~~~~~~~~~#
@@ -121,10 +121,10 @@ describe Wagn::Renderer::Xml, "" do
     it "titled" do
       pending "with html"
       render_card(:titled, :name=>'A+B').should be_html_with do
-        div( :home_view=>'titled') { 
+        div( :home_view=>'titled') {
           [ h1 { [ span{'A'}, span{'+'}, span{'B'} ] },
             span(:class=>'titled-content'){'AlphaBeta'}
-          ] 
+          ]
         }
       end
     end
@@ -200,7 +200,7 @@ describe Wagn::Renderer::Xml, "" do
       s.render( :core ).should == "boo"
     end
 =end
- 
+
     it "should render internal builtins" do
       pending "with html"
       render_card( :core, :content=>%{
@@ -232,8 +232,8 @@ describe Wagn::Renderer::Xml, "" do
     end
   end
 
-#~~~~~~~~~~~~~  content views 
-# includes some *right stuff 
+#~~~~~~~~~~~~~  content views
+# includes some *right stuff
 
 
   context "Content settings" do
@@ -337,7 +337,7 @@ describe Wagn::Renderer::Xml, "" do
     context "Search" do
       it "should wrap search items with correct view class" do
         pending "this is not yet default behavior"
-        Card.create :type=>'Search', :name=>'Asearch', :content=>%{{"type":"User"}}        
+        Card.create :type=>'Search', :name=>'Asearch', :content=>%{{"type":"User"}}
 
         c=xml_render_content("{{Asearch|naked;item:name}}")
         c.should match('search-result-item item-name')
@@ -360,7 +360,7 @@ describe Wagn::Renderer::Xml, "" do
         render_card(:core, :type=>'Toggle', :content=>"0").should == 'no'
         render_card(:closed_content, :type=>'Toggle', :content=>"1").should == 'yes'
       end
-    end    
+    end
   end
 
 
@@ -417,7 +417,7 @@ describe Wagn::Renderer::Xml, "" do
     end
 
     # also need one for *alerts
-  end  
+  end
 
 
 #~~~~~~~~~ special views
@@ -433,11 +433,11 @@ describe Wagn::Renderer::Xml, "" do
     before do
       Session.user= Card::WagnBotID
     end
-  
-    it "replace references should work on inclusions inside links" do       
-      card = Card.create!(:name=>"test", :content=>"[[test{{test}}]]"  )    
+
+    it "replace references should work on inclusions inside links" do
+      card = Card.create!(:name=>"test", :content=>"[[test{{test}}]]"  )
       assert_equal "[[test{{best}}]]", Wagn::Renderer::Xml.new(card).replace_references("test", "best" )
-    end                                                                                                
+    end
   end
 
 end

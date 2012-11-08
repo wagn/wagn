@@ -5,7 +5,7 @@ class Wagn::Renderer::Html
 
     cells = [
       ["rule-setting",
-        link_to( card.cardname.tag_name.sub(/^\*/,''), path(:read, :view=>:open_rule),
+        link_to( card.cardname.tag.sub(/^\*/,''), path(:read, :view=>:open_rule),
           :class => 'edit-rule-link slotter', :remote => true )
       ],
       ["rule-content",
@@ -28,10 +28,10 @@ class Wagn::Renderer::Html
 
   define_view :open_rule, :tags=>:unknown_ok do |args|
     current_rule, prototype = find_current_rule_card
-    setting_name = card.cardname.tag_name
+    setting_name = card.cardname.tag
     current_rule ||= Card.new :name=> "*all+#{setting_name}"
     set_selected = false
-    
+
     if params[:type_reload] && card_args=params[:card]
       params.delete :success # otherwise updating the editor looks like a successful post
       if card_args[:name] && card_args[:name].to_cardname.key != current_rule.key
@@ -41,10 +41,10 @@ class Wagn::Renderer::Html
         current_rule.assign_attributes card_args
         current_rule.include_set_modules
       end
-      
+
       set_selected = card_args[:name].to_cardname.left_name.to_s
     end
-    
+
     opts = {
       :fallback_set    => false,
       :open_rule       => card,
@@ -62,7 +62,7 @@ class Wagn::Renderer::Html
           opts[:fallback_set] = set_name if Card.exists?("#{set_name}+#{opts[:setting_name]}")
         end
       end
-      last = set_options.index{|s| s.to_cardname.key == card.cardname.trunk_name.key} || -1 
+      last = set_options.index{|s| s.to_cardname.key == card.cardname.trunk_name.key} || -1
       # note, the -1 can happen with virtual cards because the self set doesn't show up in the set_names.  FIXME!!
       opts[:set_options] = set_options[first..last]
 
@@ -113,7 +113,7 @@ class Wagn::Renderer::Html
 
           '<li>' +
             raw( form.radio_button( :name, "#{set_name}+#{setting_name}", :checked=> checked ) ) +
-            if set_name.to_cardname.to_key == current_set_key
+            if set_name.to_cardname.key == current_set_key
               %{<span class="set-label current-set-label">#{ set_label } <em>(current)</em></span>}
             else
               %{<span class="set-label">#{ set_label }</span>}
@@ -151,7 +151,7 @@ class Wagn::Renderer::Html
 
           %{</div>
           <div class="rule-content">
-            #{ 
+            #{
             case
             when edit_mode       ; content_field form, :skip_rev_id=>true
             when current_set_key ; render_core
@@ -171,7 +171,7 @@ class Wagn::Renderer::Html
            else
              (if !card.new_card?
                b_args = { :remote=>true, :class=>'rule-delete-button slotter', :type=>'button' }
-               b_args[:href] = path :delete, :view=>:open_rule, :success=>open_rule.cardname.to_url_key
+               b_args[:href] = path :delete, :view=>:open_rule, :success=>open_rule.cardname.url_key
                if fset = args[:fallback_set]
                  b_args['data-confirm']="Deleting will revert to #{setting_name} rule for #{Card.fetch(fset).label }"
                end
@@ -196,7 +196,7 @@ class Wagn::Renderer::Html
     # This generates a prototypical member of the POTENTIAL rule's set
     # and returns that member's ACTUAL rule for the POTENTIAL rule's setting
     set_prototype = (proto_set=Card.fetch( card.cardname.trunk_name )).prototype
-    rule_card = card.new_card? ? set_prototype.rule_card( card.cardname.tag_name ) : card
+    rule_card = card.new_card? ? set_prototype.rule_card( card.cardname.tag ) : card
     [ rule_card, set_prototype ]
   end
 

@@ -110,7 +110,7 @@ class CardActionTest < ActionController::IntegrationTest
   end
 
   def test_should_create_account_from_scratch
-#     integration_login_as 'joe_admin'
+    integration_login_as 'joe_admin'
     assert_difference ActionMailer::Base.deliveries, :size do
       post '/card/create_account/', :id=>'a', :user=>{:email=>'foo@bar.com'}
       assert_response 200

@@ -122,8 +122,7 @@ class Wagn::Renderer::Html
   end
   
   
-  define_view :comment_box, :denial=>:blank,
-    :perms=>lambda { |r| r.card.ok? :comment } do |args|
+  define_view( :comment_box, :denial=>:blank, :perms=>lambda { |r| r.card.ok? :comment } ) do |args|
       
     %{<div class="comment-box nodblclick"> #{
       card_form :comment do |f|

@@ -29,7 +29,7 @@ class Wagn::Renderer::Html
   define_view :titled do |args|
 
     wrap :titled, args do
-      %{ #{ _render_header args.merge( { :default_hidden => {:menu=>true, :type=>true} } ) }
+      %{ #{ _render_header args.merge( { :default_hidden => {:menu_link=>true, :type=>true} } ) }
          #{ wrap_content( :titled ) { _render_core args } }   
       }
     end
@@ -56,21 +56,21 @@ class Wagn::Renderer::Html
     hidden = args.delete(:default_hidden) || {}
     %{
     <div class="card-header">
-      #{ _optional_render :menu, args, hidden[:menu] }
+      #{ _optional_render :menu_link, args, hidden[:menu_link] }
       #{ _render_title }
       #{ _optional_render :type, args, hidden[:type] }
       #{ link_to 'close', path(:read, :view=>:closed), :title => "close #{card.name}", :class => "title slotter", :remote => true } 
     </div>
      
-    #{ _render_menu_options }
+    #{ _render_menu }
     }
   end
   
-  define_view :menu do |args|
+  define_view :menu_link do |args|
     %{<span class="card-menu-link">menu</span>}
   end
   
-  define_view :menu_options do |args|
+  define_view :menu do |args|
     options = [
       { :text => 'view', :view=>:titled },
       { :text =>  'edit' },
@@ -321,7 +321,6 @@ class Wagn::Renderer::Html
     wrap :options, args do
       %{ #{ _render_header }
         <div class="options-body">
-          #{raw options_submenu(:account) }
           #{ card_form :update_account, '', 'notify-success'=>'account details updated' do |form|
             %{
             #{ hidden_field_tag 'success[id]', '_self' }

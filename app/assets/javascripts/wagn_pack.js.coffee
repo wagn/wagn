@@ -75,6 +75,19 @@ $(window).ready ->
     # sadly, it also causes odd navbox behavior, resetting the search term
   }
 
+
+  $('.card-menu-link').live 'click', ->
+    # if card menu already exists
+    #   show it
+    # else
+    #   get the template menu
+    #   make a copy right after menu link (or associate if necessary)
+    #   do simple substitutions?
+    cm = $(this).slot().find '.cardMenu'
+    cm.menu()
+    cm.show()
+    #   do a request to flesh out remaining menu parts
+
   #pointer pack
   $('.pointer-item-add').live 'click', (event)->
     last_item = $(this).closest('.content-editor').find '.pointer-li:last'

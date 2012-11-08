@@ -49,8 +49,11 @@ h1.card-title {
   padding: 2px 0px 2px 25px;
   white-space: nowrap;
 }
-.card-header .card-menu {
+.card-header .card-menu-link {
   float: right;
+}
+.cardMenu {
+  display:none;
 }
 
 

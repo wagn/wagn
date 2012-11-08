@@ -194,24 +194,6 @@ $(window).ready ->
         renamer.dialog 'close'
 
       renamer.dialog args
-#      renamer.dialog {
-#        modal : true,
-#        width : 500,
-#        buttons: {
-#          "Rename and Fix" : ->
-#            confirmed.val 'true'
-#            renamer.dialog 'close'
-#            form.find( '.update_referencers').val 'true'
-#            form.submit()
-#          "Rename and Ignore" : ->
-#            confirmed.val 'true'
-#            renamer.dialog 'close'
-#            form.submit()
-#          "Cancel" : ->
-#            renamer.attr 'ready', 'true'
-#            renamer.dialog 'close'
-#        }
-#      }
       false
     else
       if confirmed.val() == 'false' 

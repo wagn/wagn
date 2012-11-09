@@ -19,7 +19,7 @@ cards_001:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -43,7 +43,7 @@ cards_002:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -67,7 +67,7 @@ cards_003:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -91,7 +91,7 @@ cards_004:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -115,7 +115,7 @@ cards_005:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -139,7 +139,7 @@ cards_006:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 7
   created_by: 1
   updated_by: 1
@@ -163,7 +163,7 @@ cards_007:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 7
   created_by: 1
   updated_by: 1
@@ -187,7 +187,7 @@ cards_008:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 7
   created_by: 1
   updated_by: 1
@@ -211,7 +211,7 @@ cards_009:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -235,7 +235,7 @@ cards_010:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 4
@@ -259,7 +259,7 @@ cards_011:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -283,7 +283,7 @@ cards_012:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -307,7 +307,7 @@ cards_013:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -331,7 +331,7 @@ cards_014:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -355,7 +355,7 @@ cards_015:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -379,7 +379,7 @@ cards_016:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -403,7 +403,7 @@ cards_017:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -427,7 +427,7 @@ cards_018:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -451,7 +451,7 @@ cards_019:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 1
   updated_by: 4
@@ -475,7 +475,7 @@ cards_020:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -499,7 +499,7 @@ cards_021:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 1
   updated_by: 4
@@ -523,7 +523,7 @@ cards_022:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -547,7 +547,7 @@ cards_023:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 1
   updated_by: 4
@@ -571,7 +571,7 @@ cards_024:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -595,7 +595,7 @@ cards_025:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 1
   updated_by: 4
@@ -619,7 +619,7 @@ cards_026:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -643,7 +643,7 @@ cards_027:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 1
   updated_by: 4
@@ -667,7 +667,7 @@ cards_028:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -691,7 +691,7 @@ cards_029:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 1
   updated_by: 4
@@ -715,7 +715,7 @@ cards_030:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -739,7 +739,7 @@ cards_031:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -763,7 +763,7 @@ cards_032:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -787,7 +787,7 @@ cards_033:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -811,7 +811,7 @@ cards_034:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 22
   created_by: 1
   updated_by: 1
@@ -835,7 +835,7 @@ cards_035:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 1
   updated_by: 3
@@ -859,7 +859,7 @@ cards_036:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -883,7 +883,7 @@ cards_037:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 1
   updated_by: 3
@@ -907,7 +907,7 @@ cards_038:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 1
   updated_by: 1
@@ -931,7 +931,7 @@ cards_039:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -955,7 +955,7 @@ cards_040:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -979,7 +979,7 @@ cards_041:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -1003,7 +1003,7 @@ cards_042:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 1
   updated_by: 1
@@ -1027,7 +1027,7 @@ cards_043:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 4
@@ -1051,7 +1051,7 @@ cards_044:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -1075,7 +1075,7 @@ cards_045:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -1099,7 +1099,7 @@ cards_046:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 1
   updated_by: 4
@@ -1123,7 +1123,7 @@ cards_047:
   read_rule_class: "*self"
   read_rule_id: 556
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 19
   created_by: 1
   updated_by: 3
@@ -1147,7 +1147,7 @@ cards_048:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 4
@@ -1171,7 +1171,7 @@ cards_049:
   read_rule_class: "*self"
   read_rule_id: 559
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -1195,7 +1195,7 @@ cards_050:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 1
   updated_by: 4
@@ -1219,7 +1219,7 @@ cards_051:
   read_rule_class: "*all plus"
   read_rule_id: 559
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -1243,7 +1243,7 @@ cards_052:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -1267,7 +1267,7 @@ cards_053:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 1
   updated_by: 1
@@ -1291,7 +1291,7 @@ cards_054:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 4
@@ -1315,7 +1315,7 @@ cards_055:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 4
@@ -1339,7 +1339,7 @@ cards_056:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 1
   updated_by: 3
@@ -1363,7 +1363,7 @@ cards_057:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -1387,7 +1387,7 @@ cards_058:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 20
   created_by: 1
   updated_by: 1
@@ -1411,7 +1411,7 @@ cards_059:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -1435,7 +1435,7 @@ cards_060:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 1
   updated_by: 3
@@ -1459,7 +1459,7 @@ cards_061:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 1
   updated_by: 4
@@ -1483,7 +1483,7 @@ cards_062:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -1507,7 +1507,7 @@ cards_063:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -1531,7 +1531,7 @@ cards_064:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 1
   updated_by: 1
@@ -1555,7 +1555,7 @@ cards_065:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -1579,7 +1579,7 @@ cards_066:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 1
   updated_by: 4
@@ -1603,7 +1603,7 @@ cards_067:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -1627,7 +1627,7 @@ cards_068:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 1
   updated_by: 1
@@ -1651,7 +1651,7 @@ cards_069:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 4
@@ -1675,7 +1675,7 @@ cards_070:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -1699,7 +1699,7 @@ cards_071:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -1723,7 +1723,7 @@ cards_072:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -1747,7 +1747,7 @@ cards_073:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -1771,7 +1771,7 @@ cards_074:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 4
@@ -1795,7 +1795,7 @@ cards_075:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -1819,7 +1819,7 @@ cards_076:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 3
@@ -1843,7 +1843,7 @@ cards_077:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 4
@@ -1867,7 +1867,7 @@ cards_078:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -1891,7 +1891,7 @@ cards_079:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -1915,7 +1915,7 @@ cards_080:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -1939,7 +1939,7 @@ cards_081:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -1963,7 +1963,7 @@ cards_082:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -1987,7 +1987,7 @@ cards_083:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -2011,7 +2011,7 @@ cards_084:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -2035,7 +2035,7 @@ cards_085:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -2059,7 +2059,7 @@ cards_086:
   read_rule_class: "*self"
   read_rule_id: 518
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 3
@@ -2083,7 +2083,7 @@ cards_087:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -2107,7 +2107,7 @@ cards_088:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 1
@@ -2131,7 +2131,7 @@ cards_089:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -2155,7 +2155,7 @@ cards_090:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 1
@@ -2179,7 +2179,7 @@ cards_091:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 3
@@ -2203,7 +2203,7 @@ cards_092:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 3
   updated_by: 1
@@ -2227,7 +2227,7 @@ cards_093:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 3
@@ -2251,7 +2251,7 @@ cards_094:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 4
   updated_by: 1
@@ -2275,7 +2275,7 @@ cards_095:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 1
@@ -2299,7 +2299,7 @@ cards_096:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 1
@@ -2323,7 +2323,7 @@ cards_097:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 3
@@ -2347,7 +2347,7 @@ cards_098:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -2371,7 +2371,7 @@ cards_099:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 4
   updated_by: 1
@@ -2395,7 +2395,7 @@ cards_100:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -2419,7 +2419,7 @@ cards_101:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 4
   updated_by: 1
@@ -2443,7 +2443,7 @@ cards_102:
   read_rule_class: "*self"
   read_rule_id: 552
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 22
   created_by: 4
   updated_by: 3
@@ -2467,7 +2467,7 @@ cards_103:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -2491,7 +2491,7 @@ cards_104:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 1
@@ -2515,7 +2515,7 @@ cards_105:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 1
@@ -2539,7 +2539,7 @@ cards_106:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 4
   updated_by: 1
@@ -2563,7 +2563,7 @@ cards_107:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 1
@@ -2587,7 +2587,7 @@ cards_108:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 1
@@ -2611,7 +2611,7 @@ cards_109:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 1
@@ -2635,7 +2635,7 @@ cards_110:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -2659,7 +2659,7 @@ cards_111:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 1
@@ -2683,7 +2683,7 @@ cards_112:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 3
@@ -2707,7 +2707,7 @@ cards_113:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 1
@@ -2731,7 +2731,7 @@ cards_114:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 19
   created_by: 4
   updated_by: 1
@@ -2755,7 +2755,7 @@ cards_115:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 5
   updated_by: 1
@@ -2779,7 +2779,7 @@ cards_116:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 5
   updated_by: 1
@@ -2803,7 +2803,7 @@ cards_117:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 4
   updated_by: 3
@@ -2827,7 +2827,7 @@ cards_118:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -2851,7 +2851,7 @@ cards_119:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 4
   updated_by: 4
@@ -2875,7 +2875,7 @@ cards_120:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 1
@@ -2899,7 +2899,7 @@ cards_121:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 4
   updated_by: 1
@@ -2923,7 +2923,7 @@ cards_122:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 4
   updated_by: 4
@@ -2947,7 +2947,7 @@ cards_123:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 4
   updated_by: 1
@@ -2971,7 +2971,7 @@ cards_124:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 4
   updated_by: 1
@@ -2995,7 +2995,7 @@ cards_125:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 3
@@ -3019,7 +3019,7 @@ cards_126:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 1
@@ -3043,7 +3043,7 @@ cards_127:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 4
   updated_by: 1
@@ -3067,7 +3067,7 @@ cards_128:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 4
   updated_by: 1
@@ -3091,7 +3091,7 @@ cards_129:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 3
@@ -3115,7 +3115,7 @@ cards_130:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 1
   updated_by: 1
@@ -3139,7 +3139,7 @@ cards_131:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 5
   updated_by: 1
@@ -3163,7 +3163,7 @@ cards_132:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 51
   created_by: 4
   updated_by: 1
@@ -3187,7 +3187,7 @@ cards_133:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -3211,7 +3211,7 @@ cards_134:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 3
@@ -3235,7 +3235,7 @@ cards_135:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -3259,7 +3259,7 @@ cards_136:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -3283,7 +3283,7 @@ cards_137:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -3307,7 +3307,7 @@ cards_138:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -3331,7 +3331,7 @@ cards_139:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -3355,7 +3355,7 @@ cards_140:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -3379,7 +3379,7 @@ cards_141:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -3403,7 +3403,7 @@ cards_142:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -3427,7 +3427,7 @@ cards_143:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -3451,7 +3451,7 @@ cards_144:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -3475,7 +3475,7 @@ cards_145:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -3499,7 +3499,7 @@ cards_146:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 51
   created_by: 1
   updated_by: 3
@@ -3523,7 +3523,7 @@ cards_147:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 1
   updated_by: 1
@@ -3547,7 +3547,7 @@ cards_148:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 3
@@ -3571,7 +3571,7 @@ cards_149:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 20
   created_by: 4
   updated_by: 4
@@ -3595,7 +3595,7 @@ cards_150:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 4
   updated_by: 1
@@ -3619,7 +3619,7 @@ cards_151:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 3
@@ -3643,7 +3643,7 @@ cards_152:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -3667,7 +3667,7 @@ cards_153:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -3691,7 +3691,7 @@ cards_154:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -3715,7 +3715,7 @@ cards_155:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -3739,7 +3739,7 @@ cards_156:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -3763,7 +3763,7 @@ cards_157:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 4
   updated_by: 1
@@ -3787,7 +3787,7 @@ cards_158:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 51
   created_by: 4
   updated_by: 1
@@ -3811,7 +3811,7 @@ cards_159:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 51
   created_by: 4
   updated_by: 4
@@ -3835,7 +3835,7 @@ cards_160:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -3859,7 +3859,7 @@ cards_161:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 51
   created_by: 4
   updated_by: 1
@@ -3883,7 +3883,7 @@ cards_162:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 3
@@ -3907,7 +3907,7 @@ cards_163:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -3931,7 +3931,7 @@ cards_164:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 4
@@ -3955,7 +3955,7 @@ cards_165:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 1
@@ -3979,7 +3979,7 @@ cards_166:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 4
@@ -4003,7 +4003,7 @@ cards_167:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 1
@@ -4027,7 +4027,7 @@ cards_168:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 3
@@ -4051,7 +4051,7 @@ cards_169:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 3
@@ -4075,7 +4075,7 @@ cards_170:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 1
@@ -4099,7 +4099,7 @@ cards_171:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 1
@@ -4123,7 +4123,7 @@ cards_172:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 1
@@ -4147,7 +4147,7 @@ cards_173:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 1
   updated_by: 1
@@ -4171,7 +4171,7 @@ cards_174:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -4195,7 +4195,7 @@ cards_175:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 1
@@ -4219,7 +4219,7 @@ cards_176:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 569
   created_by: 4
   updated_by: 1
@@ -4243,7 +4243,7 @@ cards_177:
   read_rule_class: "*all plus"
   read_rule_id: 559
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -4267,7 +4267,7 @@ cards_178:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 4
   updated_by: 4
@@ -4291,7 +4291,7 @@ cards_179:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 1
   updated_by: 1
@@ -4315,7 +4315,7 @@ cards_180:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 1
   updated_by: 1
@@ -4339,7 +4339,7 @@ cards_181:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4363,7 +4363,7 @@ cards_182:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4387,7 +4387,7 @@ cards_183:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4411,7 +4411,7 @@ cards_184:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -4435,7 +4435,7 @@ cards_185:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 3
@@ -4459,7 +4459,7 @@ cards_186:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4483,7 +4483,7 @@ cards_187:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4507,7 +4507,7 @@ cards_188:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4531,7 +4531,7 @@ cards_189:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4555,7 +4555,7 @@ cards_190:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4579,7 +4579,7 @@ cards_191:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4603,7 +4603,7 @@ cards_192:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4627,7 +4627,7 @@ cards_193:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4651,7 +4651,7 @@ cards_194:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4675,7 +4675,7 @@ cards_195:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4699,7 +4699,7 @@ cards_196:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4723,7 +4723,7 @@ cards_197:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4747,7 +4747,7 @@ cards_198:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4771,7 +4771,7 @@ cards_199:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4795,7 +4795,7 @@ cards_200:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4819,7 +4819,7 @@ cards_201:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4843,7 +4843,7 @@ cards_202:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4867,7 +4867,7 @@ cards_203:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4891,7 +4891,7 @@ cards_204:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4915,7 +4915,7 @@ cards_205:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4939,7 +4939,7 @@ cards_206:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4963,7 +4963,7 @@ cards_207:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -4987,7 +4987,7 @@ cards_208:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -5011,7 +5011,7 @@ cards_209:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -5035,7 +5035,7 @@ cards_210:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -5059,7 +5059,7 @@ cards_211:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -5083,7 +5083,7 @@ cards_212:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -5107,7 +5107,7 @@ cards_213:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -5131,7 +5131,7 @@ cards_214:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -5155,7 +5155,7 @@ cards_215:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 3
@@ -5179,7 +5179,7 @@ cards_216:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -5203,7 +5203,7 @@ cards_217:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 1
@@ -5227,7 +5227,7 @@ cards_218:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 3
   updated_by: 1
@@ -5251,7 +5251,7 @@ cards_219:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 3
@@ -5275,7 +5275,7 @@ cards_220:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 4
@@ -5299,7 +5299,7 @@ cards_221:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -5323,7 +5323,7 @@ cards_222:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 20
   created_by: 4
   updated_by: 1
@@ -5347,7 +5347,7 @@ cards_223:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 3
   updated_by: 4
@@ -5371,7 +5371,7 @@ cards_224:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 3
@@ -5395,7 +5395,7 @@ cards_225:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 3
@@ -5419,7 +5419,7 @@ cards_226:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 4
@@ -5443,7 +5443,7 @@ cards_227:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 4
@@ -5467,7 +5467,7 @@ cards_228:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 3
   updated_by: 4
@@ -5491,7 +5491,7 @@ cards_229:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 4
@@ -5515,7 +5515,7 @@ cards_230:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 3
   updated_by: 4
@@ -5539,7 +5539,7 @@ cards_231:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 3
@@ -5563,7 +5563,7 @@ cards_232:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 4
@@ -5587,7 +5587,7 @@ cards_233:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 3
   updated_by: 4
@@ -5611,7 +5611,7 @@ cards_234:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 3
@@ -5635,7 +5635,7 @@ cards_235:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 4
@@ -5659,7 +5659,7 @@ cards_236:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 3
   updated_by: 4
@@ -5683,7 +5683,7 @@ cards_237:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 3
@@ -5707,7 +5707,7 @@ cards_238:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 3
@@ -5731,7 +5731,7 @@ cards_239:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 4
@@ -5755,7 +5755,7 @@ cards_240:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 3
   updated_by: 4
@@ -5779,7 +5779,7 @@ cards_241:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 3
@@ -5803,7 +5803,7 @@ cards_242:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 3
   updated_by: 4
@@ -5827,7 +5827,7 @@ cards_243:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 4
@@ -5851,7 +5851,7 @@ cards_244:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 4
   updated_by: 4
@@ -5875,7 +5875,7 @@ cards_245:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 3
@@ -5899,7 +5899,7 @@ cards_246:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 4
   updated_by: 3
@@ -5923,7 +5923,7 @@ cards_247:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -5947,7 +5947,7 @@ cards_248:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 4
   updated_by: 1
@@ -5971,7 +5971,7 @@ cards_249:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -5995,7 +5995,7 @@ cards_250:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 4
   updated_by: 1
@@ -6019,7 +6019,7 @@ cards_251:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 3
@@ -6043,7 +6043,7 @@ cards_252:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -6067,7 +6067,7 @@ cards_253:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 3
@@ -6091,7 +6091,7 @@ cards_254:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 3
@@ -6115,7 +6115,7 @@ cards_255:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -6139,7 +6139,7 @@ cards_256:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -6163,7 +6163,7 @@ cards_257:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -6187,7 +6187,7 @@ cards_258:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 4
   updated_by: 4
@@ -6211,7 +6211,7 @@ cards_259:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -6235,7 +6235,7 @@ cards_260:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -6259,7 +6259,7 @@ cards_261:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 4
   updated_by: 4
@@ -6283,7 +6283,7 @@ cards_262:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -6307,7 +6307,7 @@ cards_263:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -6331,7 +6331,7 @@ cards_264:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 4
   updated_by: 4
@@ -6355,7 +6355,7 @@ cards_265:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -6379,7 +6379,7 @@ cards_266:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -6403,7 +6403,7 @@ cards_267:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 4
   updated_by: 4
@@ -6427,7 +6427,7 @@ cards_268:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -6451,7 +6451,7 @@ cards_269:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -6475,7 +6475,7 @@ cards_270:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 4
   updated_by: 3
@@ -6499,7 +6499,7 @@ cards_271:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -6523,7 +6523,7 @@ cards_272:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -6547,7 +6547,7 @@ cards_273:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 4
   updated_by: 3
@@ -6571,7 +6571,7 @@ cards_274:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -6595,7 +6595,7 @@ cards_275:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 20
   created_by: 4
   updated_by: 4
@@ -6619,7 +6619,7 @@ cards_276:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -6643,7 +6643,7 @@ cards_277:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -6667,7 +6667,7 @@ cards_278:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 4
   updated_by: 4
@@ -6691,7 +6691,7 @@ cards_279:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -6715,7 +6715,7 @@ cards_280:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -6739,7 +6739,7 @@ cards_281:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 4
   updated_by: 4
@@ -6763,7 +6763,7 @@ cards_282:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -6787,7 +6787,7 @@ cards_283:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -6811,7 +6811,7 @@ cards_284:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -6835,7 +6835,7 @@ cards_285:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -6859,7 +6859,7 @@ cards_286:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 20
   created_by: 4
   updated_by: 4
@@ -6883,7 +6883,7 @@ cards_287:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 4
   updated_by: 4
@@ -6907,7 +6907,7 @@ cards_288:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 52
   created_by: 4
   updated_by: 4
@@ -6931,7 +6931,7 @@ cards_289:
   read_rule_class: "*self"
   read_rule_id: 561
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 1
   updated_by: 1
@@ -6955,7 +6955,7 @@ cards_290:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 1
   updated_by: 3
@@ -6979,7 +6979,7 @@ cards_291:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 1
   updated_by: 1
@@ -7003,7 +7003,7 @@ cards_292:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -7027,7 +7027,7 @@ cards_293:
   read_rule_class: "*self"
   read_rule_id: 551
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -7051,7 +7051,7 @@ cards_294:
   read_rule_class: "*self"
   read_rule_id: 549
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -7075,7 +7075,7 @@ cards_295:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -7099,7 +7099,7 @@ cards_296:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -7123,7 +7123,7 @@ cards_297:
   read_rule_class: "*self"
   read_rule_id: 554
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -7147,7 +7147,7 @@ cards_298:
   read_rule_class: "*self"
   read_rule_id: 558
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -7171,7 +7171,7 @@ cards_299:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -7195,7 +7195,7 @@ cards_300:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -7219,7 +7219,7 @@ cards_301:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -7243,7 +7243,7 @@ cards_302:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 1
   updated_by: 1
@@ -7267,7 +7267,7 @@ cards_303:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 1
   updated_by: 1
@@ -7291,7 +7291,7 @@ cards_304:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 1
   updated_by: 1
@@ -7315,7 +7315,7 @@ cards_305:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 1
   updated_by: 1
@@ -7339,7 +7339,7 @@ cards_306:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 278
   created_by: 1
   updated_by: 1
@@ -7363,7 +7363,7 @@ cards_307:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7387,7 +7387,7 @@ cards_308:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7411,7 +7411,7 @@ cards_309:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7435,7 +7435,7 @@ cards_310:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -7459,7 +7459,7 @@ cards_311:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7483,7 +7483,7 @@ cards_312:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7507,7 +7507,7 @@ cards_313:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7531,7 +7531,7 @@ cards_314:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7555,7 +7555,7 @@ cards_315:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7579,7 +7579,7 @@ cards_316:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7603,7 +7603,7 @@ cards_317:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7627,7 +7627,7 @@ cards_318:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7651,7 +7651,7 @@ cards_319:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7675,7 +7675,7 @@ cards_320:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7699,7 +7699,7 @@ cards_321:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7723,7 +7723,7 @@ cards_322:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7747,7 +7747,7 @@ cards_323:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7771,7 +7771,7 @@ cards_324:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7795,7 +7795,7 @@ cards_325:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7819,7 +7819,7 @@ cards_326:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7843,7 +7843,7 @@ cards_327:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7867,7 +7867,7 @@ cards_328:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7891,7 +7891,7 @@ cards_329:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7915,7 +7915,7 @@ cards_330:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7939,7 +7939,7 @@ cards_331:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -7963,7 +7963,7 @@ cards_332:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -7987,7 +7987,7 @@ cards_333:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -8011,7 +8011,7 @@ cards_334:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -8035,7 +8035,7 @@ cards_335:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -8059,7 +8059,7 @@ cards_336:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -8083,7 +8083,7 @@ cards_337:
   read_rule_class: "*all plus"
   read_rule_id: 518
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -8107,7 +8107,7 @@ cards_338:
   read_rule_class: "*all plus"
   read_rule_id: 518
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -8131,7 +8131,7 @@ cards_339:
   read_rule_class: "*all plus"
   read_rule_id: 518
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -8155,7 +8155,7 @@ cards_340:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 3
   updated_by: 3
@@ -8179,7 +8179,7 @@ cards_341:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 3
@@ -8203,7 +8203,7 @@ cards_342:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 1
@@ -8227,7 +8227,7 @@ cards_343:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 3
@@ -8251,7 +8251,7 @@ cards_344:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 1
@@ -8275,7 +8275,7 @@ cards_345:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 3
@@ -8299,7 +8299,7 @@ cards_346:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 1
@@ -8323,7 +8323,7 @@ cards_347:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 3
@@ -8347,7 +8347,7 @@ cards_348:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 1
@@ -8371,7 +8371,7 @@ cards_349:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 3
@@ -8395,7 +8395,7 @@ cards_350:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 1
@@ -8419,7 +8419,7 @@ cards_351:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 3
   updated_by: 1
@@ -8443,7 +8443,7 @@ cards_352:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 3
   updated_by: 1
@@ -8467,7 +8467,7 @@ cards_353:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 3
   updated_by: 1
@@ -8491,7 +8491,7 @@ cards_354:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 3
   updated_by: 1
@@ -8515,7 +8515,7 @@ cards_355:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 3
   updated_by: 1
@@ -8539,7 +8539,7 @@ cards_356:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 3
   updated_by: 1
@@ -8563,7 +8563,7 @@ cards_357:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 3
   updated_by: 1
@@ -8587,7 +8587,7 @@ cards_358:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 3
   updated_by: 1
@@ -8611,7 +8611,7 @@ cards_359:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 3
   updated_by: 1
@@ -8635,7 +8635,7 @@ cards_360:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 30
   created_by: 3
   updated_by: 1
@@ -8659,7 +8659,7 @@ cards_361:
   read_rule_class: "*all plus"
   read_rule_id: 552
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 3
@@ -8683,7 +8683,7 @@ cards_362:
   read_rule_class: "*all plus"
   read_rule_id: 552
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 3
@@ -8707,7 +8707,7 @@ cards_363:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 3
   updated_by: 3
@@ -8731,7 +8731,7 @@ cards_364:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 3
   updated_by: 3
@@ -8755,7 +8755,7 @@ cards_365:
   read_rule_class: "*all plus"
   read_rule_id: 549
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -8779,7 +8779,7 @@ cards_366:
   read_rule_class: "*all plus"
   read_rule_id: 549
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 4
   updated_by: 4
@@ -8803,7 +8803,7 @@ cards_367:
   read_rule_class: "*all plus"
   read_rule_id: 551
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -8827,7 +8827,7 @@ cards_368:
   read_rule_class: "*all plus"
   read_rule_id: 551
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 4
   updated_by: 4
@@ -8851,7 +8851,7 @@ cards_369:
   read_rule_class: "*all plus"
   read_rule_id: 552
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 4
   updated_by: 4
@@ -8875,7 +8875,7 @@ cards_370:
   read_rule_class: "*all plus"
   read_rule_id: 554
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -8899,7 +8899,7 @@ cards_371:
   read_rule_class: "*all plus"
   read_rule_id: 554
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 4
   updated_by: 4
@@ -8923,7 +8923,7 @@ cards_372:
   read_rule_class: "*all plus"
   read_rule_id: 556
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -8947,7 +8947,7 @@ cards_373:
   read_rule_class: "*all plus"
   read_rule_id: 556
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 4
   updated_by: 4
@@ -8971,7 +8971,7 @@ cards_374:
   read_rule_class: "*all plus"
   read_rule_id: 558
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -8995,7 +8995,7 @@ cards_375:
   read_rule_class: "*all plus"
   read_rule_id: 558
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 4
   updated_by: 4
@@ -9019,7 +9019,7 @@ cards_376:
   read_rule_class: "*all plus"
   read_rule_id: 559
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 4
   updated_by: 4
@@ -9043,7 +9043,7 @@ cards_377:
   read_rule_class: "*all plus"
   read_rule_id: 561
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 4
   updated_by: 4
@@ -9067,7 +9067,7 @@ cards_378:
   read_rule_class: "*all plus"
   read_rule_id: 561
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 4
   updated_by: 4
@@ -9091,7 +9091,7 @@ cards_379:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -9115,7 +9115,7 @@ cards_380:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -9139,7 +9139,7 @@ cards_381:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 1
   updated_by: 1
@@ -9163,7 +9163,7 @@ cards_382:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -9187,7 +9187,7 @@ cards_383:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 5
   created_by: 1
   updated_by: 1
@@ -9211,7 +9211,7 @@ cards_384:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 259
   created_by: 1
   updated_by: 1
@@ -9235,7 +9235,7 @@ cards_385:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -9259,7 +9259,7 @@ cards_386:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -9283,7 +9283,7 @@ cards_387:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 1
   updated_by: 1
@@ -9307,7 +9307,7 @@ cards_388:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 3
   created_by: 4
   updated_by: 4
@@ -9331,7 +9331,7 @@ cards_389:
   read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 51
   created_by: 
   updated_by: 
@@ -9355,7 +9355,7 @@ cards_390:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 
   updated_by: 
@@ -9379,7 +9379,7 @@ cards_391:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 
   updated_by: 
@@ -9403,7 +9403,7 @@ cards_392:
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
-  trash: 0
+  trash: false
   type_id: 47
   created_by: 
   updated_by: 

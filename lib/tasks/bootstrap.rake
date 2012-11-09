@@ -1,5 +1,5 @@
-
 WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references }
+#note: users, roles, and role_users have been manually edited
 
 namespace :wagn do
 
@@ -63,7 +63,6 @@ namespace :wagn do
     end
 
     desc "dump db to bootstrap fixtures"
-    #note: users, roles, and role_users have been manually edited
     task :dump => :environment do
       Wagn::Cache.reset_global
       begin

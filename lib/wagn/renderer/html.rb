@@ -131,7 +131,7 @@ module Wagn
 
     def edit_slot args={}
       if card.hard_template
-        _render_raw.scan( /{{[^}]*}}/ ).map do |inc|
+        _render_raw.scan( /\{\{[^\}]*\}\}/ ).map do |inc|
           process_content( inc ).strip
         end.join
 #        raw _render_core(args)

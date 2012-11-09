@@ -303,7 +303,7 @@ class Wagn::Renderer::Html
     attribs = %{ class="card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" }
     link_target, help_settings = if card.new_card?
       content += raw( "\n #{ eform.hidden_field :type_id }" )
-      [ card.cardname.tag, [:add_help, :fallback => :edit_help] ]
+      [ card.cardname.tag, [:add_help, { :fallback => :edit_help } ] ]
     else
       attribs += %{ card-id="#{card.id}" card-name="#{h card.name}" }
       [ card.name, :edit_help ]

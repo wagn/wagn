@@ -445,7 +445,7 @@ class Card < ActiveRecord::Base
     (current_revision && current_revision.created_at) || Time.now
   end
 
-  def author
+  def creator
     Card[ creator_id ]
   end
 

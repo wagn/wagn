@@ -1,5 +1,7 @@
-module Wagn::Set::Default::EmailHtml
-  class Wagn::Views
+module Wagn
+  module Set::All::EmailHtml
+    include Sets
+
     format :email
 
     define_view :missing        do |args| '' end

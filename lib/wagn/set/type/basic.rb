@@ -1,4 +1,5 @@
 module Wagn::Set::Type::Basic
+  #include Wagn::Sets
 
   module Model
     def post_render(content)

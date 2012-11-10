@@ -1,5 +1,7 @@
-module Wagn::Set::Default::RichHtml
-  class Wagn::Views
+module Wagn
+  module Set::All::RichHtml
+    include Sets
+
     format :html
 
     define_view :show do |args|
@@ -49,9 +51,8 @@ module Wagn::Set::Default::RichHtml
       end
     end
 
-    define_view :comment_box, :perms=>lambda { |r|
-          r.card.ok?(:comment) ? :comment_box : :blank
-        } do |args|
+    define_view :comment_box, :denial=>:blank,
+          :perms=>lambda { |r| r.card.ok?(:comment) } do |args|
       %{<div class="comment-box nodblclick"> #{
         card_form :comment do |f|
           %{#{f.text_area :comment, :rows=>3 }<br/> #{
@@ -161,7 +162,7 @@ module Wagn::Set::Default::RichHtml
         #{ card_form path(:update, :id=>card.id), 'card-edit-name-form', 'main-success'=>'REDIRECT' do |f|
 
         %{<div>to #{ raw f.text_field( :name, :class=>'card-name-field', :value=>card.name, :autocomplete=>'off' ) } </div>
-        #{ hidden_field_tag :success, 'TO-CARD' }
+        #{ hidden_field_tag :success, '_self' }
         #{
 
      if !card.errors[:confirmation_required].empty?
@@ -213,7 +214,7 @@ module Wagn::Set::Default::RichHtml
       <div class="edit-area edit-type">
       <h2>Change Type</h2> #{
         card_form :update, 'card-edit-type-form' do |f|
-          #'main-success'=>'REDIRECT: TO-CARD', # adding this back in would make main cards redirect on cardtype changes
+          #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
 
           %{ #{ hidden_field_tag :view, :edit }
           #{if card.type_id == Card::CardtypeID and !Card.search(:type=>card.cardname).empty? #ENGLISH
@@ -229,7 +230,7 @@ module Wagn::Set::Default::RichHtml
       </div>}
     end
 
-    define_view :edit_in_form, :tags=>:unknown_ok do |args|  #, :perms=>:update
+    define_view :edit_in_form, :tags=>:unknown_ok, :perms=>:update do |args|
       instruction = ''
       if instruction_card = (card.new_card? ? card.rule_card(:add_help, :fallback => :edit_help) : card.rule_card(:edit_help))
         ss = self.subrenderer(instruction_card)
@@ -286,32 +287,42 @@ module Wagn::Set::Default::RichHtml
       end
     end
 
-    define_view :options do |args|
+    define_view :options, :perms=>:none do |args|
       attribute = params[:attribute]
-      attribute ||= ([Card::WagnBotID, Card::AnonID].member?(card.id) || card.type_id==Card::UserID ? 'account' : 'settings')
-      wrap :options, args do
-        %{ #{ _render_header } <div class="options-body"> #{ render "option_#{attribute}" } </div> #{ notice } }
-      end
+
+      attribute ||= if card.to_user and ( Session.as_id==card.id or card.trait_card(:account).ok?(:update) )
+        'account'; else; 'settings'; end
+      render "option_#{attribute}"
     end
 
-    define_view :option_account do |args|
+    define_view :option_account, :perms=> lambda { |r|
+        Session.as_id==r.card.id or r.card.trait_card(:account).ok?(:update)
+      } do |args|
+    
       locals = {:slot=>self, :card=>card, :account=>User.where(:card_id=>card.id).first }
-      %{#{raw( options_submenu(:account) ) }#{
-
-         card_form :update_account do |form|
-
-           %{<table class="fieldset">
-             #{if Session.as_id==card.id or card.trait_card(:account).ok?(:update)
-                raw option_header( 'Account Details' ) +
-                  template.render(:partial=>'account/edit',  :locals=>locals)
-             end }
-          #{ render_option_roles } #{
-
-             if options_need_save
-               %{<tr><td colspan="3">#{ submit_tag 'Save Changes' }</td></tr>}
-             end}
-           </table>}
-      end }}
+      wrap :options, args do
+        %{ #{ _render_header }
+          <div class="options-body">
+            #{raw options_submenu(:account) }
+            #{ card_form :update_account, '', 'notify-success'=>'account details updated' do |form|
+              %{
+              #{ hidden_field_tag 'success[id]', '_self' }
+              #{ hidden_field_tag 'success[view]', 'options' }
+              <table class="fieldset">
+                #{ option_header 'Account Details' }
+                #{ template.render :partial=>'account/edit',  :locals=>locals }
+                
+                #{ _render_option_roles }
+                #{ if options_need_save
+                    %{<tr><td colspan="3">#{ submit_tag 'Save Changes' }</td></tr>}
+                   end
+                }
+              </table>}
+            end }
+          </div>
+          #{ notice }
+        }
+      end
     end
 
     define_view :option_settings do |args|
@@ -322,50 +333,53 @@ module Wagn::Set::Default::RichHtml
         selected = set_card.key == current_set.to_cardname.key ? 'selected="selected"' : ''
         %{<option value="#{ set_card.key }" #{ selected }>#{ set_card.label }</option>}
       end.join
+      wrap :options, args do
+        %{ #{ _render_header }
+            #{raw options_submenu(:settings) }
+            <div class="options-body">
+              <div class="settings-tab">
+                #{ if !related_sets.empty?
+                  %{ <div class="set-selection">
+                    #{ form_tag path(:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'slotter' }
+                        <label>Set:</label>
+                        <select name="current_set" class="set-select">#{ set_options }</select>
+                    </form>
+                  </div>}
+                end }
 
-      options_submenu(:settings) +
-
-      %{<div class="settings-tab">
-        #{ if !related_sets.empty?
-          %{ <div class="set-selection">
-            #{ form_tag path(:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'slotter' }
-                <label>Set:</label>
-                <select name="current_set" class="set-select">#{ set_options }</select>
-            </form>
-          </div>}
-        end }
-
-        <div class="current-set">
-          #{ raw subrenderer( Card.fetch current_set).render_content }
-        </div>
-    #{
-          if Card.toggle(card.rule(:accountable)) && card.trait_card(:account).ok?(:create)
-            %{<div class="new-account-link">
-            #{ link_to %{Add a sign-in account for "#{card.name}"},
-                path(:options, :attrib=>:new_account),
-              :class=>'slotter new-account-link', :remote=>true }
-            </div>}
-           end}
-        </div>}
-
-        # should be just if !card.trait_card(:account) and Card.new( :name=>"#{card.name}+Card[:account].name").ok?(create)
+                <div class="current-set">
+                  #{ raw subrenderer( Card.fetch current_set).render_content }
+                </div>
+             
+                #{ if Card.toggle(card.rule(:accountable)) && card.trait_card(:account).ok?(:create)
+                    %{<div class="new-account-link">
+                    #{ link_to %{Add a sign-in account for "#{card.name}"},
+                        path(:options, :attrib=>:new_account),
+                      :class=>'slotter new-account-link', :remote=>true }
+                    </div>}
+                   end
+                }
+              </div> 
+            </div>
+            #{ notice }
+         }
+       end
+       # should be just if !card.trait_card(:account) and Card.new( :name=>"#{card.name}+Card[:account].name").ok?(create)
     end
 
-    define_view(:option_roles) do |args|
-      roles = Card.search :type=>Card::RoleID
-      # Do we want these as well?  as by type Role?
-      #roles = Card.search(:refer_to => {:right=> Card::RolesID})
-      traitc = card.trait_card(:roles)
-      user_roles = traitc.item_cards(:limit=>0).reject do |x|
+    define_view :option_roles do |args|
+      roles = Card.search( :type=>Card::RoleID, :limit=>0 ).reject do |x|
         [Card::AnyoneID, Card::AuthID].member? x.id.to_i
       end
-#    warn Rails.logger.info("option_roles #{user_roles.inspect}")
+
+      traitc = card.trait_card :roles
+     user_roles = traitc.item_cards :limit=>0
 
       option_content = if traitc.ok? :update
         user_role_ids = user_roles.map &:id
         hidden_field_tag(:save_roles, true) +
         (roles.map do |rolecard|
-#        warn Rails.logger.info("option_roles: #{rolecard.inspect}")
+          #warn Rails.logger.info("option_roles: #{rolecard.inspect}")
           if rolecard && !rolecard.trash
            %{<div style="white-space: nowrap">
              #{ check_box_tag "user_roles[%s]" % rolecard.id, 1, user_role_ids.member?(rolecard.id) ? true : false }
@@ -570,9 +584,8 @@ module Wagn::Set::Default::RichHtml
     end
 
 
-    define_view :watch, :tags=>:unknown_ok, :perms=> lambda { |r|
-          !Session.logged_in? || r.card.new_card? ? :blank : :watch
-        } do |args|
+    define_view :watch, :tags=>:unknown_ok, :denial=>:blank,
+      :perms=> lambda { |r| Session.logged_in? && !r.card.new_card? } do |args|
 
       wrap :watch do
         if card.watching_type?
@@ -708,7 +721,7 @@ class Wagn::Renderer::Html < Wagn::Renderer
       card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
         @form = form
 
-        %{ #{ hidden_field_tag :success, card.rule(:thanks) || 'TO-CARD' }
+        %{ #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
 
         <div class="card-header">
           #{
@@ -750,5 +763,3 @@ class Wagn::Renderer::Html < Wagn::Renderer
 
   end
 end
-
-

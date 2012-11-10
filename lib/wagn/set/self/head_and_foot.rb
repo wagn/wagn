@@ -1,5 +1,7 @@
-module Wagn::Set::Self::HeadAndFoot
-  class Wagn::Views
+module Wagn
+  module Set::Self::HeadAndFoot
+    include Sets
+
     format :base
 
     define_view :raw, :name=>'head' do |args|

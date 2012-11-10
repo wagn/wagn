@@ -1,73 +1,73 @@
 module Wagn::Set::Right::Permissions
-  class Wagn::Views
-    format :base
+  include Wagn::Sets
 
-    define_view :editor, :right=>'create' do |args|
-      set_name = card.cardname.trunk_name
-      set_card = Card.fetch(set_name)
-      not_set = set_card && set_card.type_id==Card::SetID
+  format :base
 
-      group_options = Session.as_bot { Card.search(:type=>Card::RoleID, :sort=>'name') }
+  define_view :editor, :right=>'create' do |args|
+    set_name = card.cardname.trunk_name
+    set_card = Card.fetch(set_name)
+    not_set = set_card && set_card.type_id==Card::SetID
 
-      inheritable = not_set ? false : set_card.inheritable?
-      inheriting = inheritable && card.content=='_left'
+    group_options = Session.as_bot { Card.search(:type=>Card::RoleID, :sort=>'name') }
 
-      item_names = inheriting ? [] : card.item_names
+    inheritable = not_set ? false : set_card.inheritable?
+    inheriting = inheritable && card.content=='_left'
 
-      form.hidden_field( :content, :class=>'card-content') +
+    item_names = inheriting ? [] : card.item_names
 
-      content_tag(:table, :class=>'perm-editor') do
+    form.hidden_field( :content, :class=>'card-content') +
 
-        content_tag(:tr, :class=>'perm-labels') do
-          content_tag(:th) { 'Groups'} +
-          content_tag(:th) { 'Individuals'} +
-          (inheritable ? content_tag(:th) { 'Inherit'} : '')
+    content_tag(:table, :class=>'perm-editor') do
+
+      content_tag(:tr, :class=>'perm-labels') do
+        content_tag(:th) { 'Groups'} +
+        content_tag(:th) { 'Individuals'} +
+        (inheritable ? content_tag(:th) { 'Inherit'} : '')
+      end +
+
+      content_tag(:tr, :class=>'perm-options') do
+        content_tag(:td, :class=>'perm-group perm-vals') do
+          group_options.map do |option|
+            checked = !!item_names.delete(option.name)
+            %{<div class="group-option">
+              #{ check_box_tag( "#{option.key}-perm-checkbox", option.name, checked, :class=>'perm-checkbox-button'  ) }
+              <label>#{ link_to_page option.name }</label>
+            </div>}
+          end * "\n"
         end +
 
-        content_tag(:tr, :class=>'perm-options') do
-          content_tag(:td, :class=>'perm-group perm-vals') do
-            group_options.map do |option|
-              checked = !!item_names.delete(option.name)
-              %{<div class="group-option">
-                #{ check_box_tag( "#{option.key}-perm-checkbox", option.name, checked, :class=>'perm-checkbox-button'  ) }
-                <label>#{ link_to_page option.name }</label>
-              </div>}
-            end * "\n"
-          end +
+        content_tag(:td, :class=>'perm-indiv perm-vals') do
+          _render_list :items=>item_names, :extra_css_class=>'perm-indiv-ul'
+        end +
 
-          content_tag(:td, :class=>'perm-indiv perm-vals') do
-            _render_list :items=>item_names, :extra_css_class=>'perm-indiv-ul'
-          end +
-
-          if inheritable
-            content_tag(:td, :class=>'perm-inherit') do
-              check_box_tag( 'inherit', 'inherit', inheriting ) +
-              content_tag(:a, :title=>"use #{card.cardname.tag} rule for left card") { '?' }
-            end
-          else; ''; end
-        end
+        if inheritable
+          content_tag(:td, :class=>'perm-inherit') do
+            check_box_tag( 'inherit', 'inherit', inheriting ) +
+            content_tag(:a, :title=>"use #{card.cardname.tag} rule for left card") { '?' }
+          end
+        else; ''; end
       end
-
-
     end
 
-    define_view :core, { :right=>'create'} do |args|
-      @item_view ||= :link
-      card.content=='_left' ? core_inherit_content : _final_pointer_type_core(args)
-    end
 
-    define_view :closed_content, { :right=>'create'} do |args|
-      card.content=='_left' ? core_inherit_content : _final_pointer_type_closed_content(args)
-    end
+  end
 
-    alias_view :core,           { :right=>'create' }, { :right=>'read' }, { :right=>'update' }, { :right=>'delete' }, { :right=>'comment' }
-    alias_view :editor,         { :right=>'create' }, { :right=>'read' }, { :right=>'update' }, { :right=>'delete' }, { :right=>'comment' }
-    alias_view :closed_content, { :right=>'create' }, { :right=>'read' }, { :right=>'update' }, { :right=>'delete' }, { :right=>'comment' }
+  define_view :core, { :right=>'create'} do |args|
+    @item_view ||= :link
+    card.content=='_left' ? core_inherit_content : _final_pointer_type_core(args)
+  end
 
-    private
+  define_view :closed_content, { :right=>'create'} do |args|
+    card.content=='_left' ? core_inherit_content : _final_pointer_type_closed_content(args)
+  end
 
-    def core_inherit_content
-      %{<div class="inherit-perm"> (Inherit from left card) </div>}
-    end
+  alias_view :core,           { :right=>'create' }, { :right=>'read' }, { :right=>'update' }, { :right=>'delete' }, { :right=>'comment' }
+  alias_view :editor,         { :right=>'create' }, { :right=>'read' }, { :right=>'update' }, { :right=>'delete' }, { :right=>'comment' }
+  alias_view :closed_content, { :right=>'create' }, { :right=>'read' }, { :right=>'update' }, { :right=>'delete' }, { :right=>'comment' }
+
+  private
+
+  def core_inherit_content
+    %{<div class="inherit-perm"> (Inherit from left card) </div>}
   end
 end

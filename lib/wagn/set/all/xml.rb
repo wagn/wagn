@@ -1,6 +1,8 @@
 
-module Wagn::Set::Default::Xml
-  class Wagn::Views
+module Wagn
+  module Set::All::Xml
+    include Sets
+
     format :xml
 
     define_view(:layout) do |args|

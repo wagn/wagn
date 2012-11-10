@@ -1,5 +1,7 @@
-module Wagn::Set::Self::Misc
-  class Wagn::Views
+module Wagn
+  module Set::Self::Misc
+    include Wagn::Sets
+
     format :base
 
     define_view :raw, :name=>'now' do |args|

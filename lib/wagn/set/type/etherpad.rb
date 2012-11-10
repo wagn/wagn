@@ -1,12 +1,14 @@
-module Wagn::Set::Type::Etherpad
-  class Wagn::Views
+module Wagn
+  module Set::Type::Etherpad
+    include Sets
+
     format :html
 
     define_view :current do |args| _render_raw end
     define_view :current_naked do |args| _render_naked end
 
     define_view :current, :fallback=>:raw, :type=>'Etherpad' do |args|
-      warn Rails.logger.debug("current_pad view #{card}, #{card.inspect}")
+      #warn "current_pad view #{card}, #{card.inspect}"
       card.include_set_modules
       card.get_pad_content
     end
@@ -45,44 +47,44 @@ module Wagn::Set::Type::Etherpad
       }
     end
 
-  end
 
-  module Model
-    def before_save
-      # this seems like more that we need, maybe ?
-      self.content = CGI::unescapeHTML( URI.unescape(content) )
-    end
+    module Model
+      def before_save
+        # this seems like more that we need, maybe ?
+        self.content = CGI::unescapeHTML( URI.unescape(content) )
+      end
 
-    # This needs to be part of configs
-    PAD_DEFAULTS = {
-      :url              => 'http://brain.private.com/epad/p/',
-      :apiurl           => '/api/1/',
-      :showControls     => true,
-      :showChat         => false,
-      :showLineNumbers  => true,
-      :useMonospaceFont => false,
-      :noColors         => false
-    }
+      # This needs to be part of configs
+      PAD_DEFAULTS = {
+        :url              => 'http://brain.private.com/epad/p/',
+        :apiurl           => '/api/1/',
+        :showControls     => true,
+        :showChat         => false,
+        :showLineNumbers  => true,
+        :useMonospaceFont => false,
+        :noColors         => false
+      }
 
-    def pad_options(params={})
-      get_pad_options(params)
-    end
+      def pad_options(params={})
+        get_pad_options(params)
+      end
 
-    def get_pad_options(params={})
-      pad_options = rule(:pad_options) || {}
-      warn(Rails.logger.debug "get_pad_options #{params.inspect}, #{pad_options}")
-      pad_options = pad_options.blank? ? PAD_DEFAULTS :
-           PAD_DEFAULTS.merge(JSON.parse(pad_options).symbolize_keys)
-      pad_options.merge params.symbolize_keys
-    end
+      def get_pad_options(params={})
+        pad_options = rule(:pad_options) || {}
+        #warn "get_pad_options #{params.inspect}, #{pad_options}"
+        pad_options = pad_options.blank? ? PAD_DEFAULTS :
+             PAD_DEFAULTS.merge(JSON.parse(pad_options).symbolize_keys)
+        pad_options.merge params.symbolize_keys
+      end
 
 
-    def get_pad_content
-      pad_opts = pad_options
-      resp = Net::HTTP.get_response(
-        URI.parse( "#{pad_opts[:url]}#{key}/export/html") )
-      # probably should do more with errors here
-      Net::HTTPSuccess === resp ? resp.body : nil
+      def get_pad_content
+        pad_opts = pad_options
+        resp = Net::HTTP.get_response(
+          URI.parse( "#{pad_opts[:url]}#{key}/export/html") )
+        # probably should do more with errors here
+        Net::HTTPSuccess === resp ? resp.body : nil
+      end
     end
   end
 end

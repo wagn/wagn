@@ -106,17 +106,21 @@ module Wagn::Model::Permissions
   end
 
   def lets_user operation
+    #warn "creating *account ??? #{caller[0..25]*"\n"}" if name == '*account' && operation==:create
+    #warn "lets_user[#{operation}]#{name}" if name=='Buffalo'
     return false if operation != :read    and Wagn::Conf[:read_only]
     return true  if operation != :comment and Session.always_ok?
 
     permitted_ids = who_can operation
 
+    #r=
     if operation == :comment && Session.always_ok?
       # admin can comment if anyone can
       !permitted_ids.empty?
     else
       Session.among? permitted_ids
     end
+    #warn "lets_user[#{operation}]#{name} #{Session.as_card.name}, #{permitted_ids.map {|id|Card[id].name}*', '} R:#{r}" if name=='Buffalo'; r
   end
 
   def approve_task operation, verb=nil
@@ -210,12 +214,10 @@ module Wagn::Model::Permissions
     rcard, rclass = permission_rule_card :read
     self.read_rule_id = rcard.id #these two are just to make sure vals are correct on current object
     #warn "updating read rule for #{name} to #{rcard.id}, #{rcard.name}, #{rclass}"
-    Rails.logger.warn "updating read rule for #{name} to #{rcard.id}, #{rcard.name}, #{caller*"\n"}"
 
     self.read_rule_class = rclass
     Card.where(:id=>self.id).update_all(:read_rule_id=>rcard.id, :read_rule_class=>rclass)
     expire
-
 
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
     Session.as_bot do

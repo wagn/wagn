@@ -1,5 +1,7 @@
-module Wagn::Set::Right::Template
-  class Wagn::Views
+module Wagn
+  module Set::Right::Template
+    include Wagn::Sets
+
     format :base
 
     define_view  :core, :right=>'content' do |args|

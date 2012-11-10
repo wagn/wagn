@@ -14,7 +14,9 @@ module Wagn::Model
 
     def reset_patterns_if_rule()
       return if name.blank?
+      #warn "rpatIrule if #{!simple?} and #{!new_card?} and #{setting=right and setting.type_id==Card::SettingID} and #{set=left and set.type_id==Card::SetID}"
       if !simple? and !new_card? and setting=right and setting.type_id==Card::SettingID and set=left and set.type_id==Card::SetID
+        #warn "rpatIrule #{inspect}, #{set.inspect}, #{setting.inspect}"
         set.include_set_modules
         self.read_rule_updates( set.item_cards :limit=>0 ) if setting.id == Card::ReadID
         set.reset_patterns
@@ -58,6 +60,7 @@ module Wagn::Model
         attr_accessor :key, :key_id, :opt_keys, :junction_only, :method_key
 
         def find_module mod
+          #Rails.logger.warn "find_mod #{mod}"
           return if mod.nil?
           (mod.split('/') << 'model').inject(BASE_MODULE) do |base, part|
             return if base.nil?
@@ -69,7 +72,6 @@ module Wagn::Model
                 end
           end
         rescue NameError
-          warn "lookup error #{base} #{e.inspect}"
           nil
         end
 
@@ -232,7 +234,7 @@ module Wagn::Model
     end
 
     class BasePattern
-      include AllSets
+      include Wagn::Sets::AllSets
     end
   end
 end

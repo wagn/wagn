@@ -1,16 +1,18 @@
-module Wagn::Set::Type::RubyAndScript
- class Shellbox
-  def run(cmd)
-    Dir.chdir( Rails.root + '/public_scripts')
-    IO.popen("/usr/bin/env PATH='.' /bin/bash --restricted", "w+") do |p|
-      p.puts cmd
-      p.close_write
-      p.read
-    end
-  end
- end
+module Wagn
+  module Set::Type::RubyAndScript
+    include Sets
 
-  class Wagn::Views
+    class Shellbox
+      def run(cmd)
+        Dir.chdir( Rails.root + '/public_scripts')
+        IO.popen("/usr/bin/env PATH='.' /bin/bash --restricted", "w+") do |p|
+          p.puts cmd
+          p.close_write
+          p.read
+        end
+      end
+    end
+
     format :base
 
     define_view :core, :type=>'script' do |args|

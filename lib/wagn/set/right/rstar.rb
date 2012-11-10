@@ -1,6 +1,8 @@
-module Wagn::Set::Right::Rstar
-  class Wagn::Views
-     format :html
+module Wagn
+  module Set::Right::Rstar
+    include Sets
+
+    format :html
 
     define_view :closed_rule, :tags=>:unknown_ok do |args|
       rule_card = card.new_card? ? find_current_rule_card[0] : card
@@ -189,8 +191,9 @@ module Wagn::Set::Right::Rstar
       end.html_safe
     end
 
+  end
 
-
+  class Renderer::Html
     private
 
     def find_current_rule_card
@@ -201,6 +204,6 @@ module Wagn::Set::Right::Rstar
       rule_card = card.new_card? ? set_prototype.rule_card( card.cardname.tag ) : card
       [ rule_card, set_prototype ]
     end
-
   end
+
 end

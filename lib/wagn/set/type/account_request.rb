@@ -1,6 +1,8 @@
 
-module Wagn::Set::Type::AccountRequest
-  class Wagn::Views
+module Wagn
+  module Set::Type::AccountRequest
+    include Sets
+
     format :base
 
     define_view :core, :type=>:account_request do |args|
@@ -21,21 +23,20 @@ module Wagn::Set::Type::AccountRequest
         </div>}
       end
     end
-  end
 
-  module Model
-    def before_destroy
-      block_user
-    end
+    module Model
+      def before_destroy
+        block_user
+      end
 
-    private
+      private
 
-    def block_user
-      account = User.where(:card_id=>self.id).first
-      if account
-        account.update_attributes :status=>'blocked'
+      def block_user
+        account = User.where(:card_id=>self.id).first
+        if account
+          account.update_attributes :status=>'blocked'
+        end
       end
     end
   end
-
 end

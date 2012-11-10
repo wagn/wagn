@@ -1,5 +1,7 @@
-module Wagn::Set::Right::Email
-  class Wagn::Views
+module Wagn
+  module Set::Right::Email
+    include Sets
+
     format :base
 
     define_view  :raw, :right=>'email'  do |args|

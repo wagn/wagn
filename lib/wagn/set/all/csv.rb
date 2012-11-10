@@ -1,7 +1,9 @@
 require 'csv'
 
-module Wagn::Set::Default::Csv
-  class Wagn::Views
+module Wagn
+  module Set::All::Csv
+    include Sets
+
     format :csv
 
     define_view :show do |args|

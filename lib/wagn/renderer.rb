@@ -14,11 +14,12 @@ module Wagn
       :txt  => :Text
     }
 
-    cattr_accessor :current_slot, :ajax_call
+    cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags
 
     @@max_char_count = 200 #should come from Wagn::Conf
     @@max_depth      = 10 # ditto
     @@perms          = {}
+    @@denial_views   = {}
     @@subset_views   = {}
     @@error_codes    = {}
     @@view_tags      = {}
@@ -185,14 +186,14 @@ module Wagn
         else
           perms_required = @@perms[view] || :read
           if Proc === perms_required
-            perms_required.call self
+            args[:denied_task] = !(perms_required.call self)
           else
             args[:denied_task] = [perms_required].flatten.find do |task|
               task = :create if task == :update && card.new_card?
               !card.ok? task
             end
-            args[:denied_task] ? :denial : view
           end
+          args[:denied_task] ? (@@denial_views[view] || :denial) : view
         end
 
 
@@ -203,7 +204,7 @@ module Wagn
           root.error_status = error_code
         end
       end
-      #warn "ok_view[#{original_view}] #{view}, #{args.inspect}, Cd:#{card.inspect} #{caller[0..20]*"\n"}"
+      #warn "ok_view[#{original_view}] #{view}, #{args.inspect}, Cd:#{card.inspect}" #{caller[0..20]*"\n"}"
       view
     end
 
@@ -214,7 +215,7 @@ module Wagn
     end
 
     def view_method view
-      return "_final_#{view}" if !card || !@@subset_views[view]
+      return "_final_#{view}" unless card && @@subset_views[view]
       card.method_keys.each do |method_key|
         meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
         #warn "looking up #{method_key}, M:#{meth} for #{card.name}"
@@ -448,116 +449,14 @@ module Wagn
     end
   end
 
-  class Views < Renderer
-    # View definitions
-    #
-    #   When you declare:
-    #     define_view :view_name, "<set>" do |args|
-    #
-    #   Methods are defined on the renderer
-    #
-    #   The external api with checks:
-    #     render(:viewname, args)
-    #
-    #   Roughly equivalent to:
-    #     render_viewname(args)
-    #
-    #   The internal call that skips the checks:
-    #     _render_viewname(args)
-    #
-    #   Each of the above ultimately calls:
-    #     _final(_set_key)_viewname(args)
-
-    @@renderer = Renderer
-
-    class << self
-
-      def format fmt=nil
-        return @@renderer = Renderer if fmt.nil? || fmt == :base
-        renderer = get_renderer fmt
-        @@renderer = Renderer.const_defined?(renderer) ? Renderer.const_get(renderer) : raise("Bad format #{renderer}, #{fmt}")
-        #warn "set renderer #{@@renderer}"; @@renderer
-      end
-
-      def define_view view, opts={}, &final
-        @@perms[view]       = opts.delete(:perms)      if opts[:perms]
-        @@error_codes[view] = opts.delete(:error_code) if opts[:error_code]
-        if opts[:tags]
-          [opts[:tags]].flatten.each do |tag|
-            @@view_tags[view] ||= {}
-            @@view_tags[view][tag] = true
-          end
-        end
-
-        view_key = get_view_key(view, opts)
-        @@renderer.class_eval { define_method "_final_#{view_key}", &final }
-        #warn "defining method[#{@@renderer}] _final_#{view_key}"
-        @@subset_views[view] = true if !opts.empty?
-
-        if !method_defined? "render_#{view}"
-          #warn "defining method[#{@@renderer}] render_#{view}"
-          @@renderer.class_eval { define_method( "_render_#{view}" ) do |*a|
-            a = [{}] if a.empty?
-            if final_method = view_method(view)
-              with_inclusion_mode view do
-                send final_method, *a
-              end
-            else
-              raise "<strong>unsupported view: <em>#{view}</em></strong>"
-            end
-          end }
-
-          @@renderer.class_eval { define_method( "render_#{view}" ) do |*a|
-            begin
-              send( "_render_#{ ok_view view, *a }", *a )
-            rescue Exception=>e
-              controller.send :notify_airbrake, e if Airbrake.configuration.api_key
-              warn "Render Error: #{e.class} : #{e.message}"
-              Rails.logger.info "\nRender Error: #{e.class} : #{e.message}"
-              Rails.logger.debug "  #{e.backtrace*"\n  "}"
-              rendering_error e, (card && card.name.present? ? card.name : 'unknown card')
-            end
-          end }
-        end
-      end
-
-      def alias_view view, opts={}, *aliases
-        view_key = get_view_key(view, opts)
-        @@subset_views[view] = true if !opts.empty?
-        aliases.each do |aview|
-          aview_key = case aview
-            when String; aview
-            when Symbol; (view_key==view ? aview.to_sym : view_key.to_s.sub(/_#{view}$/, "_#{aview}").to_sym)
-            when Hash;   get_view_key( aview[:view] || view, aview)
-            else; raise "Bad view #{aview.inspect}"
-            end
-
-          #warn "def final_alias #{aview_key}, #{view_key}"
-          @@renderer.class_eval { define_method( "_final_#{aview_key}".to_sym ) do |*a|
-            send("_final_#{view_key}", *a)
-          end }
-        end
-      end
-
-      private
-
-      def get_view_key view, opts
-        unless pkey = Wagn::Model::Pattern.method_key(opts)
-          raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
-        end
-        key = pkey.blank? ? view : "#{pkey}_#{view}"
-        #warn "gvkey #{view}, #{opts.inspect} R:#{key}"
-        key.to_sym
-      end
-
-    end
+  class Renderer::Json < Renderer
   end
 
-  class Renderer::Json < Renderer
+  class Renderer::Text < Renderer
   end
 
   class Renderer::Csv < Renderer::Text
   end
 
-  Wagn::Set.load
 end
+

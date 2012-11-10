@@ -1,6 +1,8 @@
 
-module Wagn::Set::Type::Toggle
-  class Wagn::Views
+module Wagn
+  module Set::Type::Toggle
+    include Sets
+
     format :base
 
     define_view :core, :type=>'toggle' do |args|

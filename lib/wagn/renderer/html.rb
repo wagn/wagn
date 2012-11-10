@@ -2,7 +2,7 @@ module Wagn
   class Renderer::Html < Renderer
 
     attr_accessor  :options_need_save, :start_time, :skip_autosave
-    DEFAULT_ITEM_VIEW = :closed
+    DEFAULT_ITEM_VIEW = :closed  #FIXME: It can't access this default
 
     # these initialize the content of missing builtin layouts
     LAYOUTS = { 'default' => %{
@@ -268,8 +268,8 @@ module Wagn
       }
     end
 
-    def option_header(title)
-      %{<tr><th colspan="3" class="option-header"><h2>#{title}</h2></th></tr>}
+    def option_header title
+      raw %{<tr><th colspan="3" class="option-header"><h2>#{title}</h2></th></tr>}
     end
 
     # navigation for revisions -

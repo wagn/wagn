@@ -14,7 +14,7 @@ describe Card, "Case Variant" do
 end
 
 
-describe NameLogic, "Underscores" do
+describe SmartName, "Underscores" do
   it "should be treated like spaces when making keys" do
     'weird_ combo'.to_name.key.should == 'weird  combo'.to_name.key
   end
@@ -23,7 +23,7 @@ describe NameLogic, "Underscores" do
   end
 end
 =end
-describe NameLogic, "changing from plus card to simple" do
+describe SmartName, "changing from plus card to simple" do
   before do
     Session.as :joe_user
     @c = Card.create! :name=>'four+five'

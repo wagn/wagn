@@ -1,7 +1,7 @@
 # encoding: utf-8
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
-describe NameLogic do
+describe SmartName do
   
   describe "#key" do
     it "should remove spaces" do

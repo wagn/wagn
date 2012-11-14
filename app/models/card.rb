@@ -7,10 +7,10 @@ class Card < ActiveRecord::Base
   require 'card/reference'
 end
 
-require 'name_logic'
-NameLogic.codes= Wagn::Codename
-NameLogic.params= Wagn::Conf
-NameLogic.lookup= Card
+require 'smart_name'
+SmartName.codes= Wagn::Codename
+SmartName.params= Wagn::Conf
+SmartName.lookup= Card
 
 class Card < ActiveRecord::Base
 
@@ -644,7 +644,7 @@ class Card < ActiveRecord::Base
 
       unless cdname.valid?
         rec.errors.add :name,
-          "may not contain any of the following characters: #{ NameLogic.banned_array * ' ' }"
+          "may not contain any of the following characters: #{ SmartName.banned_array * ' ' }"
       end
       # this is to protect against using a plus card as a tag
       if cdname.junction? and rec.simple? and Session.as_bot { Card.count_by_wql :tag_id=>rec.id } > 0

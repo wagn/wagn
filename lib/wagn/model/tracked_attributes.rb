@@ -20,7 +20,7 @@ module Wagn::Model::TrackedAttributes
     @old_name = self.name_without_tracking
     return if @old_name == newname.to_s
 
-    @cardname, name_without_tracking = if NameLogic===newname
+    @cardname, name_without_tracking = if SmartName===newname
       [ newname, newname.to_s]
     else
       [ newname.to_name, newname]

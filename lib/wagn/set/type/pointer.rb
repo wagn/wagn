@@ -10,7 +10,6 @@ module Wagn
     end
 
 
-
     format :html
 
     define_view :core, :type=>'pointer' do |args|

@@ -107,7 +107,7 @@ module Wagn::Model
       end
 
       def initialize(card)
-        @trunk_name = self.class.trunk_name(card).to_cardname
+        @trunk_name = self.class.trunk_name(card).to_name
         self
       end
 
@@ -135,7 +135,7 @@ module Wagn::Model
         self.class.method_key_from_opts opts
       end
 
-      def inspect()       "<#{self.class} #{to_s.to_cardname.inspect}>" end
+      def inspect()       "<#{self.class} #{to_s.to_name.inspect}>" end
 
       def opt_vals
         if @opt_vals.nil?
@@ -211,7 +211,7 @@ module Wagn::Model
       register 'type_plus_right', [:ltype, :right], :junction_only=>true
       class << self
         def label name
-          %{All "+#{name.to_cardname.tag}" cards on "#{name.to_cardname.left_name}" cards}
+          %{All "+#{name.to_name.tag}" cards on "#{name.to_name.left_name}" cards}
         end
         def prototype_args base
           { :name=>"*dummy+#{base.tag}",

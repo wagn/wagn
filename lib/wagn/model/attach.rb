@@ -123,7 +123,7 @@ module Paperclip::Interpolations
   def card_id(  at, style_name )  at.instance.id                       end
 
   def basename(at, style_name)
-    at.instance.name.to_cardname.url_key
+    at.instance.name.to_name.url_key
   end
 
   def size(at, style_name)

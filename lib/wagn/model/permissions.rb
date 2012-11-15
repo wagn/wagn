@@ -70,7 +70,6 @@ module Wagn::Model::Permissions
 
   def permission_rule_card(operation)
     opcard = rule_card(operation)
-    #warn "prc[#{name}]#{operation} #{opcard.inspect}" if operation.to_sym == :read and opcard.name == '*logo+*self+*read'
     unless opcard
       errors.add :permission_denied, "No #{operation} setting card for #{name}"
       raise Card::PermissionDenied.new(self)
@@ -78,9 +77,9 @@ module Wagn::Model::Permissions
 
     rcard = begin
       Session.as_bot do
-        #warn "in permission_rule_card #{opcard&&opcard.name} #{operation}" if opcard.name == '*logo+*self+*read'
-        if opcard.content == '_left' && self.junction?
-          lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_modules=>true)
+        #warn (Rails.logger.debug "in permission_rule_card #{opcard&&opcard.name} #{operation}")
+        if opcard.content == '_left' && self.junction? && (cardname.trunk_name.key != read_attribute(:key))
+          lcard = loaded_trunk || Card.fetch_or_new(trunk_id||cardname.trunk, :skip_virtual=>true, :skip_modules=>true)
           lcard.permission_rule_card(operation).first
         else
           opcard
@@ -126,7 +125,6 @@ module Wagn::Model::Permissions
   def approve_task operation, verb=nil
     deny_because "Currently in read-only mode" if operation != :read && Wagn::Conf[:read_only]
     verb ||= operation.to_s
-    #warn "approve_task(#{operation}, #{verb})"
     deny_because you_cant("#{verb} this card") unless self.lets_user( operation )
   end
 
@@ -198,7 +196,7 @@ module Wagn::Model::Permissions
       if !new_card? && updates.for(:type_id)
         Session.as_bot do
           Card.search(:left=>self.name).each do |plus_card|
-            plus_card = plus_card.refresh if plus_card.frozen?
+            plus_card = plus_card.refresh
             plus_card.update_read_rule
           end
         end
@@ -213,7 +211,7 @@ module Wagn::Model::Permissions
     reset_patterns # why is this needed?
     rcard, rclass = permission_rule_card :read
     self.read_rule_id = rcard.id #these two are just to make sure vals are correct on current object
-    #warn "updating read rule for #{name} to #{rcard.id}, #{rcard.name}, #{rclass}"
+    Rails.logger.warn "updating read rule for #{inspect} to #{rcard.inspect}, #{rclass}"
 
     self.read_rule_class = rclass
     Card.where(:id=>self.id).update_all(:read_rule_id=>rcard.id, :read_rule_class=>rclass)
@@ -235,7 +233,6 @@ module Wagn::Model::Permissions
   # fifo of cards that need read rules updated
   def update_read_rule_list() @update_read_rule_list ||= [] end
   def read_rule_updates updates
-    Rails.logger.warn "rrups #{updates.inspect}"
     #warn "rrups #{updates.inspect}"
     @update_read_rule_list = update_read_rule_list.concat updates
     # to short circuite the queue mechanism, just each the new list here and update

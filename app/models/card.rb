@@ -260,7 +260,7 @@ class Card < ActiveRecord::Base
       opts[:nested_edit] = self
       absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute cardname
       if card = Card[absolute_name]
-        card = card.refresh if card.frozen?
+        card = card.refresh
         card.update_attributes opts
       elsif opts[:content].present? and opts[:content].strip.present?
         opts[:name] = absolute_name
@@ -560,10 +560,12 @@ class Card < ActiveRecord::Base
   end
 
   def inspect
-    "#<#{self.class.name}" + "##{self.id}" +
+    "#<#{self.class.name}" + "##{id}" +
+    "###{object_id}" + #"k#{tag_id}g#{tag_id}" +
     "[#{debug_type}]" + "(#{self.name})" + #"#{object_id}" +
-    "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{virtual? &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }} " +
-    "Rules:#{ @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}>"
+    "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{virtual? &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }}" +
+    #" Rules:#{ @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}" +
+    '>'
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -631,7 +633,7 @@ class Card < ActiveRecord::Base
     if rec.new_card? && value.blank?
       if autoname_card = rec.rule_card(:autoname)
         Session.as_bot do
-          autoname_card = autoname_card.refresh if autoname_card.frozen?
+          autoname_card = autoname_card.refresh
           value = rec.name = rec.autoname( autoname_card.content )
           autoname_card.content = value  #fixme, should give placeholder on new, do next and save on create
           autoname_card.save!

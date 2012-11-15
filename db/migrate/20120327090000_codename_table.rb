@@ -111,7 +111,7 @@ class CodenameTable < ActiveRecord::Migration
 
   def self.name2code name
     code = if RENAMES[name];  RENAMES[name]
-       elsif '*' == name[0];  name[1..-1]
+       elsif name =~ /^\*/ ;  name[1..-1]
        else                   name end
     Rails.logger.warn("migr name2code: #{name}, #{code}, #{RENAMES[code]}"); code
   end

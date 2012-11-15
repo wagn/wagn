@@ -43,7 +43,7 @@ class Mailer < ActionMailer::Base
       :subject      => "#{invite_request.name} signed up for #{@site}",
       :content_type => 'text/html',
     }
-    set_from_args args, Card.setting('*request+*from') || "#{@name} <#{@email}"
+    set_from_args args, Card.setting('*request+*from') || "#{@name} <#{@email}>"
     mail args
   end
 

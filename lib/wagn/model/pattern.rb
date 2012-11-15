@@ -219,7 +219,7 @@ module Wagn::Model
           }
         end
         def trunk_name card
-          lft = card.loaded_trunk || card.left
+          lft = card.loaded_trunk || (tkid=card.trunk_id ? Card[tkid] : card.left)
           type_name = (lft && lft.type_name) || Card[ Card::DefaultTypeID ].name
           "#{type_name}+#{card.cardname.tag}"
         end

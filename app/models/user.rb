@@ -97,7 +97,7 @@ class User < ActiveRecord::Base
   def save_with_card(card)
     #warn(Rails.logger.info "save with card #{card.inspect}, #{self.inspect}")
     User.transaction do
-      card = card.refresh if card.frozen?
+      card = card.refresh
       newcard = card.new_card?
       card.save
       #warn "save with_card #{User.count}, #{card.id}, #{card.inspect}"

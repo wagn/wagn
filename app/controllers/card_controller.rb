@@ -6,7 +6,8 @@ class CardController < ApplicationController
   before_filter :read_file_preload, :only=> [ :read_file ]
 
   before_filter :load_card
-  before_filter :read_ok,   :only=> [ :read_file ]
+  before_filter :refresh_card, :only=> [ :create, :update, :delete, :comment, :rollback ]
+  before_filter :read_ok,      :only=> [ :read_file ]
 
 
   def create
@@ -23,7 +24,6 @@ class CardController < ApplicationController
   end
 
   def update
-    @card = @card.refresh if @card.frozen? # put in model
     case
     when @card.new_card?                          ;  create
     when @card.update_attributes( params[:card] ) ;  success
@@ -32,7 +32,6 @@ class CardController < ApplicationController
   end
 
   def delete
-    @card = @card.refresh if @card.frozen? # put in model
     @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
 
@@ -72,8 +71,6 @@ class CardController < ApplicationController
     # if we enforce RESTful http methods, we should do it consistently,
     # and error should be 405 Method Not Allowed
 
-    @card = @card.refresh if @card.frozen?
-
     author = Session.user_id == Card::AnonID ?
         "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" : "[[#{Session.user.card.name}]]"
     comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.strip.empty? ? '&nbsp;' : c}</p>"} * "\n"
@@ -87,7 +84,6 @@ class CardController < ApplicationController
   end
 
   def rollback
-    @card = @card.refresh if @card.frozen?
     revision = @card.revisions[params[:rev].to_i - 1]
     @card.update_attributes! :content=>revision.content
     @card.attachment_link revision.id
@@ -97,7 +93,7 @@ class CardController < ApplicationController
 
   def watch
     watchers = @card.trait_card(:watchers )
-    watchers = watchers.refresh if watchers.frozen?
+    watchers = watchers.refresh
     myname = Card[Session.user_id].name
     watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
     ajax? ? show(:watch) : read
@@ -117,7 +113,7 @@ class CardController < ApplicationController
       role_card.ok! :update
 
       role_hash = params[:user_roles] || {}
-      role_card = role_card.refresh if role_card.frozen?
+      role_card = role_card.refresh
       role_card.items= role_hash.keys.map &:to_i
     end
 
@@ -198,6 +194,10 @@ class CardController < ApplicationController
 
     Wagn::Conf[:main_name] = params[:main] || (@card && @card.name) || ''
     true
+  end
+
+  def refresh_card
+    @card = @card.refresh
   end
 
 

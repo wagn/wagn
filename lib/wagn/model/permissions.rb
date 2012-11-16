@@ -63,27 +63,24 @@ module Wagn::Model::Permissions
     end
   end
 
-  def who_can(operation)
+  def who_can operation
     #warn "who_can[#{name}] #{(prc=permission_rule_card(operation)).inspect}, #{prc.first.item_cards.map(&:name)}" if operation == :update
     permission_rule_card(operation).first.item_cards.map(&:id)
   end
 
-  def permission_rule_card(operation)
-    opcard = rule_card(operation)
+  def permission_rule_card operation
+    opcard = rule_card operation
     unless opcard
       errors.add :permission_denied, "No #{operation} setting card for #{name}"
       raise Card::PermissionDenied.new(self)
     end
 
-    rcard = begin
-      Session.as_bot do
-        #warn (Rails.logger.debug "in permission_rule_card #{opcard&&opcard.name} #{operation}")
-        if opcard.content == '_left' && self.junction? && (cardname.trunk_name.key != read_attribute(:key))
-          lcard = loaded_trunk || Card.fetch_or_new(trunk_id||cardname.trunk, :skip_virtual=>true, :skip_modules=>true)
-          lcard.permission_rule_card(operation).first
-        else
-          opcard
-        end
+    rcard = Session.as_bot do
+      if opcard.content == '_left' && self.junction?
+        lcard = loaded_trunk || left_or_new( :skip_virtual=>true, :skip_modules=>true )
+        lcard.permission_rule_card(operation).first
+      else
+        opcard
       end
     end
     #warn "permission_rule_card[#{name}] #{rcard&&rcard.name}, #{opcard.rule_name.inspect}, #{opcard.inspect}" if opcard.name == '*logo+*self+*read'
@@ -95,7 +92,7 @@ module Wagn::Model::Permissions
   end
 
   protected
-  def you_cant(what)
+  def you_cant what
     "#{ydhpt} #{what}"
   end
 

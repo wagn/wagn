@@ -348,14 +348,24 @@ class Card < ActiveRecord::Base
 
 
   # FIXME: use delegations and include all cardname functions
-  def simple?()     cardname.simple?              end
-  def junction?()   cardname.junction?            end
+  def simple?()        cardname.simple?                     end
+  def junction?()      cardname.junction?                   end
 
-  def left()      Card.fetch cardname.left        end
-  def right()     Card.fetch cardname.right       end
+  def left *args
+    unless updates.for? :name and name_without_tracking.to_name.key == cardname.left_name.key
+      #the ugly code above is to prevent recursion when, eg, renaming A+B to A+B+C
+      #it should really be testing for any trunk
+      Card.fetch cardname.left, *args
+    end
+  end
+  def right(*args)     Card.fetch cardname.right, *args     end
 
-  def trunk()     Card.fetch cardname.trunk       end
-  def tag()       Card.fetch cardname.tag         end
+  def trunk(*args)     Card.fetch cardname.trunk, *args     end
+  def tag(*args)       Card.fetch cardname.tag,   *args     end
+
+  def left_or_new args={}
+    left args or Card.new args.merge(:name=>cardname.left)
+  end
 
 
   def dependents

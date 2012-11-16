@@ -63,34 +63,30 @@ module Wagn::Model::Permissions
     end
   end
 
-  def who_can(operation)
+  def who_can operation
     permission_rule_card(operation).first.item_cards.map(&:id)
   end
 
-  def permission_rule_card(operation)
-    opcard = rule_card(operation)
+  def permission_rule_card operation
+    opcard = rule_card operation
     unless opcard
       errors.add :permission_denied, "No #{operation} setting card for #{name}"
       raise Card::PermissionDenied.new(self)
     end
 
-    rcard = begin
-      Session.as_bot do
-        #warn (Rails.logger.debug "in permission_rule_card #{opcard&&opcard.name} #{operation}")
-        if opcard.content == '_left' && self.junction? && (cardname.trunk_name.key != read_attribute(:key))
-          lcard = loaded_trunk || Card.fetch_or_new(trunk_id||cardname.trunk, :skip_virtual=>true, :skip_modules=>true)
-          lcard.permission_rule_card(operation).first
-        else
-          opcard
-        end
+    rcard = Session.as_bot do
+      if opcard.content == '_left' && self.junction?
+        lcard = loaded_trunk || left_or_new( :skip_virtual=>true, :skip_modules=>true )
+        lcard.permission_rule_card(operation).first
+      else
+        opcard
       end
-    end
-    #warn (Rails.logger.debug "permission_rule_card[#{name}] #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}")
+    end    
     return rcard, opcard.cardname.trunk_name.tag
   end
 
   protected
-  def you_cant(what)
+  def you_cant what
     "#{ydhpt} #{what}"
   end
 

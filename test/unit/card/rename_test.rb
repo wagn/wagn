@@ -11,19 +11,19 @@ class Card::RenameTest < ActiveSupport::TestCase
   def setup
     super
     Session.as_bot do
-      Card.create! :name => "chuck_wagn+chuck"
-      Card.create! :name => "Blue"
-
-      Card.create! :name => "blue includer 1", :content => "{{Blue}}"
-      Card.create! :name => "blue includer 2", :content => "{{blue|closed;other:stuff}}"
-
-      Card.create! :name => "blue linker 1", :content => "[[Blue]]"
-      Card.create! :name => "blue linker 2", :content => "[[blue]]"
-
-      Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
-
-      c3, c4 = Card["chuck_wagn+chuck"], Card["chuck"]
-      Rails.logger.info "testing point 0 #{c3.right}, #{c3}, #{c4}"
+     Card.create! :name => "chuck_wagn+chuck"
+     Card.create! :name => "Blue"
+     
+     Card.create! :name => "blue includer 1", :content => "{{Blue}}"
+     Card.create! :name => "blue includer 2", :content => "{{blue|closed;other:stuff}}"
+     
+     Card.create! :name => "blue linker 1", :content => "[[Blue]]"
+     Card.create! :name => "blue linker 2", :content => "[[blue]]"
+     
+     Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
+     
+     c3, c4 = Card["chuck_wagn+chuck"], Card["chuck"]
+     Rails.logger.info "testing point 0 #{c3.right}, #{c3}, #{c4}"
     end
     setup_default_user
     super
@@ -33,7 +33,6 @@ class Card::RenameTest < ActiveSupport::TestCase
     assert_rename card("A+B"), "A+B+T"  # re-uses the parent card: A+B
   end
 
-=begin
 
   def test_rename_name_substitution
     c1, c2 = Card["chuck_wagn+chuck"], Card["chuck"]
@@ -131,7 +130,7 @@ class Card::RenameTest < ActiveSupport::TestCase
     assert_equal 'banana_card', c.key
     assert Card["Banana Card"] != nil
   end
-=end
+
   private
 
   def name_invariant_attributes( card )

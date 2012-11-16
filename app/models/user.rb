@@ -92,7 +92,7 @@ class User < ActiveRecord::Base
 
   def save_with_card card
     User.transaction do
-      card = card.refresh if card.frozen?
+      card = card.refresh
       if card.save
         self.card_id = card.id
         save

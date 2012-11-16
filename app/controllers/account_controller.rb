@@ -21,11 +21,9 @@ class AccountController < ApplicationController
       return
     end
 
-    return render_user_errors if @user.errors.any?
-    #warn Rails.logger.warn("signup UA:#{user_args.inspect}, CA:#{card_args.inspect}")
+    return user_errors if @user.errors.any?
     @user, @card = User.create_with_card( user_args, card_args )
-    #warn Rails.logger.warn("signup UA:#{@user.inspect}, CA:#{@card.inspect}")
-    return render_user_errors if @user.errors.any?
+    return user_errors if @user.errors.any?
 
     if @card.trait_card(:account).ok?(:create)       #complete the signup now
       email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!",  #ENGLISH
@@ -39,13 +37,6 @@ class AccountController < ApplicationController
       return wagn_redirect Card.path_setting(Card.setting('*request+*thanks'))
     end
   end
-
-  def render_user_errors
-    @card.errors += @user.errors
-    errors
-  end
-
-
 
   def accept
     card_key=params[:card][:key]
@@ -123,9 +114,9 @@ class AccountController < ApplicationController
 
   protected
 
-  def render_user_errors
+  def user_errors
     @user.errors.each do |field, err|
-      @card.errors.add field, err unless @card.errors[field]
+      @card.errors.add field, err unless @card.errors[field].any?
       # needed to prevent duplicates because User adds them in the other direction in user.rb
     end
     errors

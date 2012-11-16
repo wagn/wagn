@@ -46,30 +46,40 @@ describe AccountController do
   describe "#signup" do
     before do
       @msgs=[]
-      mock.proxy(Mailer).account_info.with_any_args.times(any_times) { |m|
+      mock.proxy(Mailer).account_info.with_any_args.times(any_times) do |m|
         @msgs << m
-        mock(m).deliver }
-
-      post :signup, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}
-
-      @new_user = User.where(:email=>'joe@new.com').first
-      @user_card = Card['Joe New']
-
+        mock(m).deliver
+      end
     end
 
+    #FIXME: tests needed : signup without approval, signup alert emails
+    
+
     it 'should create a user' do
-      @new_user.should be
-      @new_user.card_id.should == @user_card.id
-      @user_card.type_id.should == Card::AccountRequestID
+      post :signup, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}
+      new_user = User.where(:email=>'joe@new.com').first
+      user_card = Card['Joe New']
+      new_user.should be
+      new_user.card_id.should == user_card.id
+      user_card.type_id.should == Card::AccountRequestID
     end
 
     it 'should send email' do
+      post :signup, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}
       login_as :joe_admin
 
       post :accept, :card=>{:key=>'joe_new'}, :email=>{:subject=>'Hey Joe!', :message=>'Can I Come on in?'}
 
       @msgs.size.should == 1
       @msgs[0].should be_a Mail::Message
+      #puts "msg looks like #{@msgs[0].inspect}"
+    end
+    
+    it 'should detect duplicates' do
+      post :signup, :user=>{:email=>'joe@user.com'}, :card=>{:name=>'Joe Scope'}
+      post :signup, :user=>{:email=>'joe@user.com'}, :card=>{:name=>'Joe Duplicate'}
+      
+      Card['Joe Duplicate'].should be_nil
     end
   end
 

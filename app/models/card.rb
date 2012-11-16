@@ -72,7 +72,6 @@ class Card < ActiveRecord::Base
           raise "Missing codename #{code} (#{const}) #{caller*"\n"}"
         end
       else
-#        Rails.logger.debug "need to load #{const.inspect}?"
         super
       end
     end

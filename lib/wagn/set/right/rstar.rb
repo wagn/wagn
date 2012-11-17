@@ -41,7 +41,7 @@ module Wagn
         if card_args[:name] && card_args[:name].to_name.key != current_rule.key
           current_rule = Card.new card_args
         else
-          current_rule = current_rule.refresh if current_rule.frozen?
+          current_rule = current_rule.refresh
           current_rule.assign_attributes card_args
           current_rule.include_set_modules
         end

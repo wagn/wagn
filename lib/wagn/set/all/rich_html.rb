@@ -51,8 +51,8 @@ module Wagn
       end
     end
 
-    define_view :comment_box, :denial=>:blank,
-          :perms=>lambda { |r| r.card.ok?(:comment) } do |args|
+    define_view( :comment_box, :denial=>:blank,
+          :perms=>lambda { |r| r.card.ok? :comment } ) do |args|
       %{<div class="comment-box nodblclick"> #{
         card_form :comment do |f|
           %{#{f.text_area :comment, :rows=>3 }<br/> #{
@@ -299,7 +299,7 @@ module Wagn
         Session.as_id==r.card.id or r.card.trait_card(:account).ok?(:update)
       } do |args|
     
-      locals = {:slot=>self, :card=>card, :account=>User.where(:card_id=>card.id).first }
+      locals = {:slot=>self, :card=>card, :account=>card.to_user }
       wrap :options, args do
         %{ #{ _render_header }
           <div class="options-body">
@@ -472,7 +472,7 @@ module Wagn
     define_view :delete do |args|
       wrap :delete, args do
       %{#{ _render_header}
-      #{card_form :delete, '', 'data-type'=>'html', 'main-success'=>'REDIRECT: TO-PREVIOUS' do |f|
+      #{card_form :delete, '', 'data-type'=>'html', 'main-success'=>'REDIRECT: *previous' do |f|
 
         %{#{ hidden_field_tag 'confirm_destroy', 'true' }#{
           hidden_field_tag 'success', "TEXT: #{card.name} deleted" }

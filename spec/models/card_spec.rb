@@ -18,8 +18,6 @@ describe Card do
     end
 
     it "gets needed methods after new" do
-      Rails.logger.warn "Card: #{@c.inspect}"
-      warn "Card: #{@c.inspect}"
       @c.respond_to?( :get_spec ).should be_true
     end
 

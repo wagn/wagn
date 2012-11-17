@@ -171,13 +171,9 @@ module Wagn
 
 
       initial_blank = show_parts[0].nil?
-      show_parts.compact!
-      if show_parts.empty?
-        fullname.s
-      else
-        show_name = show_parts.to_cardname.s
-        initial_blank ? JOINT + show_name : show_name
-      end
+      show_name = show_parts.compact.to_cardname.s
+
+      initial_blank ? JOINT + show_name : show_name
     end
 
 

@@ -7,10 +7,10 @@ module Wagn::Model::Settings
 
   def rule_card setting_name, options={}
     fallback = options.delete( :fallback )
-    #warn (Rails.logger.warn "rule_card[#{name}] #{setting_name}, #{extra_fetch_args.inspect} RSN:#{real_set_names.inspect}") if setting_name == :read
+    #warn "rule_card[#{name}] #{setting_name}, #{options.inspect} RSN:#{real_set_names.inspect}" if setting_name == :edit_help
     fetch_args = {:skip_virtual=>true}.merge options
     real_set_names.each do |set_name|
-      #warn (Rails.logger.debug "rule_card search #{set_name.inspect}") if setting_name == :read
+      #warn "rule_card search #{set_name.inspect}" if setting_name == :edit_help
       set_name=set_name.to_cardname
       card = Card.fetch(set_name.trait_name( setting_name ), fetch_args)
       card ||= fallback && Card.fetch(set_name.trait_name(fallback), fetch_args)

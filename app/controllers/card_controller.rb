@@ -1,5 +1,8 @@
 # -*- encoding : utf-8 -*-
+
+
 class CardController < ApplicationController
+  Card
   helper :wagn
 
   before_filter :index_preload, :only=> [ :index ]

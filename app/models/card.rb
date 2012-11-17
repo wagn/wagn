@@ -6,9 +6,8 @@ class Card < ActiveRecord::Base
   require 'card/revision'
   require 'card/reference'
 end
-class Card < ActiveRecord::Base
 
-  cattr_accessor :cache
+class Card < ActiveRecord::Base
 
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
 
@@ -33,6 +32,8 @@ class Card < ActiveRecord::Base
 
   class << self
     JUNK_INIT_ARGS = %w{ missing skip_virtual id }
+
+    def cache()          Wagn::Cache[Card]                           end
 
     def new args={}, options={}
       args = (args || {}).stringify_keys
@@ -74,6 +75,8 @@ class Card < ActiveRecord::Base
       else
         super
       end
+    rescue NameError
+        warn "ne: const_miss #{e.inspect}, #{const_name} R:#{x}\n#{caller*"\n"}" if const_name.to_sym==:Card; x
     end
 
     def setting name
@@ -151,6 +154,7 @@ class Card < ActiveRecord::Base
   def include_set_modules
     unless @set_mods_loaded
       set_modules.each do |m|
+        #warn "ism #{m}"
         singleton_class.send :include, m
       end
       @set_mods_loaded=true
@@ -158,10 +162,7 @@ class Card < ActiveRecord::Base
     self
   end
 
-  def reset_mods
-    #does this really do anything if it doesn't reset @set_modules???  can we get rid of this?
-    @set_mods_loaded=false
-  end
+  # reset_mods: resets with patterns in model/pattern
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # STATES

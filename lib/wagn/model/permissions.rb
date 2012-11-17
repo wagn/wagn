@@ -41,7 +41,7 @@ module Wagn::Model::Permissions
 
   # ok? and ok! are public facing methods to approve one operation at a time
   def ok? operation
-    #warn Rails.logger.warn("ok? #{operation}")
+    #warn "ok? #{operation}"
     @operation_approved = true
     @permission_errors = []
 
@@ -96,17 +96,21 @@ module Wagn::Model::Permissions
   end
 
   def lets_user operation
+    #warn "creating *account ??? #{caller[0..25]*"\n"}" if name == '*account' && operation==:create
+    #warn "lets_user[#{operation}]#{name}" if name=='Buffalo'
     return false if operation != :read    and Wagn::Conf[:read_only]
     return true  if operation != :comment and Session.always_ok?
 
     permitted_ids = who_can operation
 
+    #r=
     if operation == :comment && Session.always_ok?
       # admin can comment if anyone can
       !permitted_ids.empty?
     else
       Session.among? permitted_ids
     end
+    #warn "lets_user[#{operation}]#{name} #{Session.as_card.name}, #{permitted_ids.map {|id|Card[id].name}*', '} R:#{r}" if name=='Buffalo'; r
   end
 
   def approve_task operation, verb=nil
@@ -232,6 +236,8 @@ module Wagn::Model::Permissions
     self.update_read_rule_list = []
   end
 
+ protected
+
   def update_ruled_cards
     # FIXME: codename
     if junction? && tag_id==Card::ReadID && (@name_or_content_changed || @trash_changed)
@@ -250,27 +256,30 @@ module Wagn::Model::Permissions
       in_set = {}
       if !(self.trash)
         if class_id = (set=left and set_class=set.tag and set_class.id)
-        rule_class_ids = Wagn::Model::Pattern.subclasses.map &:key_id
-        if rule_class_index = rule_class_ids.index( class_id )
+          rule_class_ids = Wagn::Model::Pattern.subclasses.map &:key_id
+          #warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
 
-            #first update all cards in set that aren't governed by narrower rule
-            Session.as_bot do
-              Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
-                in_set[item_card.key] = true
-                #Rails.logger.debug "rule_class_ids[#{rule_class_index}] #{rule_class_ids.inspect} This:#{item_card.read_rule_class.inspect} idx:#{rule_class_ids.index(item_card.read_rule_class)}"
-                rc_index = rule_class_ids.index Card[item_card.read_rule_class].id # FIXME: migrate rr_class to rr_class_id
-                next if rc_index < rule_class_index
-                item_card.update_read_rule
-              end
-            end
-
-          else
-            Airbrake.notify 'improper rule card' if Airbrake.configuration.api_key
-            warn "not a proper rule card #{name}, #{Card[class_id].name} is not in rc:#{rule_class_ids.map{|x|Card[x].name}*', '}"
-            return false
+          #first update all cards in set that aren't governed by narrower rule
+           Session.as_bot do
+             cur_index = rule_class_ids.index Card[read_rule_class].id
+             if rule_class_index = rule_class_ids.index( class_id )
+                # Why isn't this just 'trunk', do we need the fetch?
+                Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
+                  in_set[item_card.key] = true
+                  next if cur_index > rule_class_index
+                  item_card.update_read_rule
+                end
+             elsif rule_class_index = rule_class_ids.index( 0 )
+               in_set[trunk.key] = true
+               #warn "self rule update: #{trunk.inspect}, #{rule_class_index}, #{cur_index}"
+               trunk.update_read_rule if cur_index > rule_class_index
+             else warn "No current rule index #{class_id}, #{rule_class_ids.inspect}"
+             end
           end
+
         end
       end
+    #warn "rule_class_ids[#{rule_class_index}] #{rule_class_ids.inspect} This:#{read_rule_class.inspect} idx:#{rule_class_ids.index(read_rule_class)}"
 
       #then find all cards with me as read_rule_id that were not just updated and regenerate their read_rules
       if !new_record?

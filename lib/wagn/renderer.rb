@@ -9,12 +9,12 @@ module Wagn
     DEFAULT_ITEM_VIEW = :link  # should be set in card?
 
     RENDERERS = { #should be defined in renderer
-      :html => :Html,
+      :email => :EmailHtml,
       :css  => :Text,
       :txt  => :Text
     }
 
-    cattr_accessor :current_slot, :ajax_call
+    cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags
 
     @@max_char_count = 200 #should come from Wagn::Conf
     @@max_depth      = 10 # ditto
@@ -25,10 +25,14 @@ module Wagn
     @@view_tags      = {}
 
     class << self
+      def get_renderer fmt
+        (RENDERERS.has_key?(fmt) ? RENDERERS[fmt] : fmt.to_s.camelize).to_sym
+      end
+
       def new card, opts={}
         if self==Renderer
           fmt = opts[:format] = (opts[:format] ? opts[:format].to_sym : :html)
-          renderer = (RENDERERS.has_key?(fmt) ? RENDERERS[fmt] : fmt.to_s.camelize).to_sym
+          renderer = get_renderer fmt
           if Renderer.const_defined?(renderer)
             return Renderer.const_get(renderer).new(card, opts)
           end
@@ -37,95 +41,6 @@ module Wagn
         new_renderer.send :initialize, card, opts
         new_renderer
       end
-
-    # View definitions
-    #
-    #   When you declare:
-    #     define_view :view_name, "<set>" do |args|
-    #
-    #   Methods are defined on the renderer
-    #
-    #   The external api with checks:
-    #     render(:viewname, args)
-    #
-    #   Roughly equivalent to:
-    #     render_viewname(args)
-    #
-    #   The internal call that skips the checks:
-    #     _render_viewname(args)
-    #
-    #   Each of the above ultimately calls:
-    #     _final(_set_key)_viewname(args)
-
-
-      def define_view view, opts={}, &final
-        @@perms[view]       = opts.delete(:perms)      if opts[:perms]
-        @@error_codes[view] = opts.delete(:error_code) if opts[:error_code]
-        @@denial_views[view]= opts.delete(:denial)     if opts[:denial]
-        if opts[:tags]
-          [opts[:tags]].flatten.each do |tag|
-            @@view_tags[view] ||= {}
-            @@view_tags[view][tag] = true
-          end
-        end
-
-        view_key = get_view_key(view, opts)
-        define_method "_final_#{view_key}", &final
-        #warn "defining method _final_#{view_key}"
-        @@subset_views[view] = true if !opts.empty?
-
-        if !method_defined? "render_#{view}"
-          define_method( "_render_#{view}" ) do |*a|
-            a = [{}] if a.empty?
-            if final_method = view_method(view)
-              with_inclusion_mode view do
-                send final_method, *a
-              end
-            else
-              "<strong>unsupported view: <em>#{view}</em></strong>"
-            end
-          end
-
-          define_method( "render_#{view}" ) do |*a|
-            begin
-              send( "_render_#{ ok_view view, *a }", *a )
-            rescue Exception=>e
-              controller.send :notify_airbrake, e if Airbrake.configuration.api_key
-              Rails.logger.info "\nRender Error: #{e.class} : #{e.message}"
-              Rails.logger.debug "  #{e.backtrace*"\n  "}"
-              rendering_error e, (card && card.name.present? ? card.name : 'unknown card')
-            end
-          end
-        end
-      end
-
-      def alias_view view, opts={}, *aliases
-        view_key = get_view_key(view, opts)
-        @@subset_views[view] = true if !opts.empty?
-        aliases.each do |aview|
-          aview_key = case aview
-            when String; aview
-            when Symbol; (view_key==view ? aview.to_sym : view_key.to_s.sub(/_#{view}$/, "_#{aview}").to_sym)
-            when Hash;   get_view_key( aview[:view] || view, aview)
-            else; raise "Bad view #{aview.inspect}"
-            end
-
-          define_method( "_final_#{aview_key}".to_sym ) do |*a|
-            send("_final_#{view_key}", *a)
-          end
-        end
-      end
-
-      private
-
-      def get_view_key view, opts
-        unless pkey = Wagn::Model::Pattern.method_key(opts)
-          raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
-        end
-        key = pkey.blank? ? view : "#{pkey}_#{view}"
-        key.to_sym
-      end
-
     end
 
 
@@ -208,6 +123,7 @@ module Wagn
 
     def method_missing method_id, *args, &proc
       proc = proc {|*a| raw yield *a } if proc
+      #warn "mmiss #{self.class}, #{card.name}, #{method_id}"
       response = template.send method_id, *args, &proc
       String===response ? template.raw( response ) : response
     end
@@ -288,6 +204,7 @@ module Wagn
           root.error_status = error_code
         end
       end
+      #warn "ok_view[#{original_view}] #{view}, #{args.inspect}, Cd:#{card.inspect}" #{caller[0..20]*"\n"}"
       view
     end
 
@@ -298,10 +215,10 @@ module Wagn
     end
 
     def view_method view
-      return "_final_#{view}" if !card || !@@subset_views[view]
+      return "_final_#{view}" unless card && @@subset_views[view]
       card.method_keys.each do |method_key|
         meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
-        #Rails.logger.info "looking up #{meth} for #{card.name}"
+        #warn "looking up #{method_key}, M:#{meth} for #{card.name}"
         return meth if respond_to?(meth.to_sym)
       end
       nil
@@ -532,29 +449,14 @@ module Wagn
     end
   end
 
-  # I was getting a load error from a non-wagn file when this was in its own file (renderer/json.rb).
   class Renderer::Json < Renderer
-    define_view :name_complete do |args|
-      JSON( card.item_cards( :complete=>params['term'], :limit=>8, :sort=>'name', :return=>'name', :context=>'' ) )
-    end
+  end
+
+  class Renderer::Text < Renderer
   end
 
   class Renderer::Csv < Renderer::Text
   end
 
-  # automate
-  Wagn::Renderer::EmailHtml
-  Wagn::Renderer::Html
-  Wagn::Renderer::Kml
-  Wagn::Renderer::Rss
-  Wagn::Renderer::Text
-
-  pack_dirs = Rails.env =~ /^cucumber|test$/ ? "#{Rails.root}/lib/packs" : Wagn::Conf[:pack_dirs]
-  #pack_dirs += "#{Rails.root}/lib/wagn/set/type"
-  pack_dirs.split(/,\s*/).each do |dir|
-    Wagn::Pack.dir File.expand_path( "#{dir}/**/*_pack.rb",__FILE__)
-  end
-  #Wagn::Pack.dir File.expand_path( "#{Rails.root}/lib/wagn/set/*/*.rb", __FILE__ )
-  Wagn::Pack.load_all
-
 end
+

@@ -112,7 +112,7 @@ unless defined? TEST_ROOT
           #args[:cardtypes] = YAML.load_file('db/bootstrap/card_codenames.yml').
           args[:cardtypes] = YAML.load_file('db/bootstrap/cards.yml').find_all do |p|
             !%w{set setting}.member?( p[1]['codename'] ) and
-              card=Card[ p[1]['id'].to_i ] and card.type_id == Card::CardtypeID
+              card=Card[ p[1]['name'] ] and card.type_id == Card::CardtypeID
           end.collect { |k,v| v['codename'] }
         end
 

@@ -87,7 +87,9 @@ describe Card do
     it "returns pointer-specific setting names for pointer card (*self)" do
       c = Card.fetch_or_new('*account+*related+*self')
       c.save if c.new_card?
-      snbg = Card.fetch_or_new('*account+*related+*self').setting_names_by_group
+      c = Card.fetch_or_new('*account+*related+*self')
+      snbg = c.setting_names_by_group
+      #warn "snbg #{snbg}, #{c.inspect}"
       snbg[:pointer].map(&:to_s).should == @pointer_settings
     end
 

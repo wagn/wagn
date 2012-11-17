@@ -255,7 +255,7 @@ class Card < ActiveRecord::Base
       opts[:nested_edit] = self
       absolute_name = sub_name.to_cardname.post_cgi.to_cardname.to_absolute cardname
       if card = Card[absolute_name]
-        card = card.refresh if card.frozen?
+        card = card.refresh
         card.update_attributes opts
       elsif opts[:content].present? and opts[:content].strip.present?
         opts[:name] = absolute_name
@@ -343,14 +343,24 @@ class Card < ActiveRecord::Base
 
 
   # FIXME: use delegations and include all cardname functions
-  def simple?()     cardname.simple?              end
-  def junction?()   cardname.junction?            end
+  def simple?()        cardname.simple?                     end
+  def junction?()      cardname.junction?                   end
 
-  def left()      Card.fetch cardname.left        end
-  def right()     Card.fetch cardname.right       end
+  def left *args
+    unless updates.for? :name and name_without_tracking.to_cardname.key == cardname.left_name.key
+      #the ugly code above is to prevent recursion when, eg, renaming A+B to A+B+C
+      #it should really be testing for any trunk
+      Card.fetch cardname.left, *args
+    end
+  end
+  def right(*args)     Card.fetch cardname.right, *args     end
 
-  def trunk()     Card.fetch cardname.trunk       end
-  def tag()       Card.fetch cardname.tag         end
+  def trunk(*args)     Card.fetch cardname.trunk, *args     end
+  def tag(*args)       Card.fetch cardname.tag,   *args     end
+
+  def left_or_new args={}
+    left args or Card.new args.merge(:name=>cardname.left)
+  end
 
 
   def dependents
@@ -555,10 +565,12 @@ class Card < ActiveRecord::Base
   end
 
   def inspect
-    "#<#{self.class.name}" + "##{self.id}" +
+    "#<#{self.class.name}" + "##{id}" +
+    "###{object_id}" + #"k#{tag_id}g#{tag_id}" +
     "[#{debug_type}]" + "(#{self.name})" + #"#{object_id}" +
-    "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{virtual? &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }} " +
-    "Rules:#{ @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}>"
+    "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{virtual? &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }}" +
+    #" Rules:#{ @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}" +
+    '>'
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -626,7 +638,7 @@ class Card < ActiveRecord::Base
     if rec.new_card? && value.blank?
       if autoname_card = rec.rule_card(:autoname)
         Session.as_bot do
-          autoname_card = autoname_card.refresh if autoname_card.frozen?
+          autoname_card = autoname_card.refresh
           value = rec.name = rec.autoname( autoname_card.content )
           autoname_card.content = value  #fixme, should give placeholder on new, do next and save on create
           autoname_card.save!

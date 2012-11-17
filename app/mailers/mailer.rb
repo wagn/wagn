@@ -10,7 +10,7 @@ class Mailer < ActionMailer::Base
 
   include LocationHelper
 
-  def account_info(user, subject, message)
+  def account_info user, subject, message
     url_key = Card[user.card_id].cardname.url_key
 
     @email    = (user.email    or raise Wagn::Oops.new("Oops didn't have user email"))
@@ -43,7 +43,7 @@ class Mailer < ActionMailer::Base
       :subject      => "#{invite_request.name} signed up for #{@site}",
       :content_type => 'text/html',
     }
-    set_from_args args, Card.setting('*request+*from') || "#{@name} <#{@email}"
+    set_from_args args, Card.setting('*request+*from') || "#{@name} <#{@email}>"
     mail args
   end
 

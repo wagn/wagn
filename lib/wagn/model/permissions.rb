@@ -63,40 +63,30 @@ module Wagn::Model::Permissions
     end
   end
 
-  def who_can(operation)
-    #warn "who_can[#{name}] #{(prc=permission_rule_card(operation)).inspect}, #{prc.first.item_cards.map(&:name)}" if operation == :update
+  def who_can operation
     permission_rule_card(operation).first.item_cards.map(&:id)
   end
 
-  def permission_rule_card(operation)
-    opcard = rule_card(operation)
-    #warn "prc[#{name}]#{operation} #{opcard.inspect}" if operation.to_sym == :read and opcard.name == '*logo+*self+*read'
+  def permission_rule_card operation
+    opcard = rule_card operation
     unless opcard
       errors.add :permission_denied, "No #{operation} setting card for #{name}"
       raise Card::PermissionDenied.new(self)
     end
 
-    rcard = begin
-      Session.as_bot do
-        #warn "in permission_rule_card #{opcard&&opcard.name} #{operation}" if opcard.name == '*logo+*self+*read'
-        if opcard.content == '_left' && self.junction?
-          lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_modules=>true)
-          lcard.permission_rule_card(operation).first
-        else
-          opcard
-        end
+    rcard = Session.as_bot do
+      if opcard.content == '_left' && self.junction?
+        lcard = loaded_trunk || left_or_new( :skip_virtual=>true, :skip_modules=>true )
+        lcard.permission_rule_card(operation).first
+      else
+        opcard
       end
-    end
-    #warn "permission_rule_card[#{name}] #{rcard&&rcard.name}, #{opcard.rule_name.inspect}, #{opcard.inspect}" if opcard.name == '*logo+*self+*read'
-    return rcard, opcard.rule_name
-  end
-
-  def rule_name
-    trunk.type_id == Card::SetID ? cardname.trunk_name.tag : nil
+    end    
+    return rcard, opcard.cardname.trunk_name.tag
   end
 
   protected
-  def you_cant(what)
+  def you_cant what
     "#{ydhpt} #{what}"
   end
 
@@ -126,7 +116,6 @@ module Wagn::Model::Permissions
   def approve_task operation, verb=nil
     deny_because "Currently in read-only mode" if operation != :read && Wagn::Conf[:read_only]
     verb ||= operation.to_s
-    #warn "approve_task(#{operation}, #{verb})"
     deny_because you_cant("#{verb} this card") unless self.lets_user( operation )
   end
 
@@ -198,7 +187,7 @@ module Wagn::Model::Permissions
       if !new_card? && updates.for(:type_id)
         Session.as_bot do
           Card.search(:left=>self.name).each do |plus_card|
-            plus_card = plus_card.refresh if plus_card.frozen?
+            plus_card = plus_card.refresh
             plus_card.update_read_rule
           end
         end
@@ -213,7 +202,7 @@ module Wagn::Model::Permissions
     reset_patterns # why is this needed?
     rcard, rclass = permission_rule_card :read
     self.read_rule_id = rcard.id #these two are just to make sure vals are correct on current object
-    #warn "updating read rule for #{name} to #{rcard.id}, #{rcard.name}, #{rclass}"
+    Rails.logger.warn "updating read rule for #{inspect} to #{rcard.inspect}, #{rclass}"
 
     self.read_rule_class = rclass
     Card.where(:id=>self.id).update_all(:read_rule_id=>rcard.id, :read_rule_class=>rclass)
@@ -235,7 +224,6 @@ module Wagn::Model::Permissions
   # fifo of cards that need read rules updated
   def update_read_rule_list() @update_read_rule_list ||= [] end
   def read_rule_updates updates
-    Rails.logger.warn "rrups #{updates.inspect}"
     #warn "rrups #{updates.inspect}"
     @update_read_rule_list = update_read_rule_list.concat updates
     # to short circuite the queue mechanism, just each the new list here and update

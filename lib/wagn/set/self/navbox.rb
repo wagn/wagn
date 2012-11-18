@@ -34,7 +34,9 @@ module Wagn
         :goto   => goto_cards.map { |name| [name, highlight(name, term), name.to_name.url_key] }
       })
     end
-
+  end
+  
+  class Renderer
     private
 
     #hacky.  here for override

@@ -43,17 +43,17 @@ module Wagn
       #Javscript
       bits << %(
       <script>
-        var wagn = {}; window.wagn = wagn;
+        var wagn = {};
+        window.wagn = wagn;
         wagn.rootPath = '#{Wagn::Conf[:root_path]}';
-        window.tinyMCEPreInit = {base:"#{wagn_path 'assets/tinymce'}",query:"3.4.7",suffix:""};
         #{ Wagn::Conf[:recaptcha_on] ? %{wagn.recaptchaKey = "#{Wagn::Conf[:recaptcha_public_key]}";} : '' }
         #{ (c=Card[:double_click] and !Card.toggle(c.content)) ? 'wagn.noDoubleClick = true' : '' }
         #{ local_css_path ? %{ wagn.local_css_path = '#{local_css_path}'; } : '' }
-        ) +
-        #  TEMPORARY we probably want this back once we have fingerprinting on this file - EFM
-        %( wagn.tinyMCEConfig = { #{ Card.setting :tiny_mce } };
+        window.tinyMCEPreInit = {base:"#{wagn_path 'assets/tinymce'}",query:"3.5.6",suffix:""};
+        wagn.tinyMCEConfig = { #{ Card.setting :tiny_mce } };
       </script>
-            )
+      )
+      # tinyMCE doesn't load on non-root wagns w/o preinit line above
       bits << javascript_include_tag('application')
 
       if ga_key=Card.setting("*google analytics key")

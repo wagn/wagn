@@ -411,7 +411,7 @@ module Wagn
         #ENGLISH below
 
           %{<table class="fieldset">
-          #{render :partial=>'account/email' }
+          #{template.render :partial=>'account/email' }
              <tr><td colspan="3" style><p>
          A password for a new sign-in account will be sent to the above address.
              #{ submit_tag 'Create Account' }

@@ -40,6 +40,12 @@ module Wagn
 
         h[:attachment_web_dir]     ||= h[:root_path] + '/files'
         h[:attachment_storage_dir] ||= "#{Rails.root}/local/files"
+        
+        h[:pack_dirs] = if %w{ test cucumber }.include? Rails.env
+          ''
+        else
+          h[:pack_dirs] || "#{Rails.root}/local/packs"
+        end
 
         h[:load_dirs] ||= "#{Rails.root}/lib/wagn/set/"
         h[:load_dirs] += ", #{Rails.root}/local/packs" unless Rails.env == 'test' || Rails.env == 'cucumber'

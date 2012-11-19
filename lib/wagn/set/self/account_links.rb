@@ -2,7 +2,7 @@ module Wagn
   module Set::Self::AccountLinks
     include Wagn::Sets
 
-    format :base
+    format :html
 
     define_view :raw, :name=>:account_links do |args|
       #ENGLISH

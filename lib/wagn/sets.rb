@@ -9,10 +9,15 @@ module Wagn
 
       def load
         load_dir File.expand_path( "#{Rails.root}/lib/wagn/renderer/*.rb", __FILE__ )
-
-        load_dir File.expand_path( "#{Rails.root}/lib/wagn/set/**/*.rb", __FILE__ )
-
+#        [ :renderer, :model ].each do |dirname|
+#          load_dir( File.expand_path "#{Rails.root}/lib/wagn/#{dirname}/*.rb", __FILE__ )
+#        end
+        [ "#{Rails.root}/lib/wagn/set/", Wagn::Conf[:pack_dirs].split( /,\s*/ ) ].flatten.each do |dirname|
+          load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
+        end
+        
         load_dir File.expand_path( "#{Rails.root}/lib/wagn/model/*.rb", __FILE__ )
+    
       end
 
       def all_constants base

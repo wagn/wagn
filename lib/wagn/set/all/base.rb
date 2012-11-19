@@ -28,8 +28,8 @@ module Wagn
     define_view :url,      :perms=>:none  do |args|  wagn_url _render_linkname                        end
 
     define_view :link, :perms=>:none  do |args|
-      name=card.name
-      build_link(name, name, card.known?)
+      name = card.name
+      build_link name, name, card.known?
     end
 
     define_view :open_content do |args|

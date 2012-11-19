@@ -169,11 +169,13 @@ module Wagn
         reject ? nil : part
       end
 
-
-      initial_blank = show_parts[0].nil?
       show_name = show_parts.compact.to_cardname.s
-
-      initial_blank ? JOINT + show_name : show_name
+      
+      case
+      when show_parts.compact.empty?;  fullname
+      when show_parts[0].nil?       ;  JOINT + show_name
+      else show_name
+      end
     end
 
 

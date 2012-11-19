@@ -24,16 +24,19 @@ wagn.initPointerList = (input)->
 
 wagn.initTinyMCE = (el_id) ->
   # verify_html: false -- note: this option needed for empty paragraphs to add space.
-
-  conf = if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {}
-  $.extend conf, {
-    mode: 'exact'
+  conf = {
     plugins: 'autoresize'
-    autoresize_max_height: 500 #probably want to make several of these overridable....
+    autoresize_max_height: 500
+  }
+  user_conf = if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {}
+  hard_conf = {
+    mode: 'exact'
     elements: el_id
+    #the two below should probably be made optional, but it may involve migrating old legacy *tinyMCE settings to get rid of stale stuff.    
     content_css: wagn.rootPath + '/assets/application-all.css' + ',' + wagn.rootPath + wagn.local_css_path
     entity_encoding: 'raw'
   }
+  $.extend conf, user_conf, hard_conf
   tinyMCE.init conf
 
 wagn.chooseFile = (e, data) ->

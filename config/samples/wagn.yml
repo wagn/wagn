@@ -30,9 +30,9 @@
 # smtp:
 # used to set Rails config.action_mailer.smtp_settings
 
-# load_dirs:
+# pack_dirs:
 # customize pack directories
-# defaults to RAILS_ROOT/lib/wagn/set
+# defaults to RAILS_ROOT/local/packs
 
 # mem_cache_servers
 # IP address for mem cache server

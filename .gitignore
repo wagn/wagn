@@ -7,6 +7,7 @@ coverage
 .jhw-cache
 log/*
 pkg
+public/test
 public/files
 public/assets/.htaccess
 public/javascripts/inline-console.js

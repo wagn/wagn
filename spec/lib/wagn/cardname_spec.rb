@@ -1,4 +1,4 @@
-# encoding: utf-8
+  # encoding: utf-8
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe SmartName do
@@ -242,6 +242,7 @@ describe SmartName do
     it "ignores ignorables" do
                'you+awe'.to_name.to_show('A', :ignore=>'you'        ).should == '+awe'
             'me+you+awe'.to_name.to_show('A', :ignore=>'you'        ).should == 'me+awe' #HMMM..... what should this do?
+            'me+you'.to_cardname.to_show('A', :ignore=>['me','you'] ).should == 'me+you'
             'me+you+awe'.to_name.to_show('A', :ignore=>['me','you'] ).should == '+awe'
       '_left+_right+awe'.to_name.to_show('A+B', :ignore=>'A'        ).should == '+B+awe'
                '?a?+awe'.to_name.to_show('B', :ignore=>'A'          ).should == '+awe'

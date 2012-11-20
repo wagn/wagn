@@ -159,7 +159,7 @@ class Wql
           val = @vars[$1.to_sym].to_s.strip
         end
         absolute_name val
-      when SmartName         ; clean_val val.s
+      when SmartName              ; clean_val val.s
       when Hash                   ; clean val
       when Array                  ; val.map { |v| clean_val v }
       when Integer, Float, Symbol ; val

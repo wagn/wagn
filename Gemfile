@@ -2,20 +2,20 @@ source 'http://rubygems.org'
 #source "http://gems.github.com"
 
 # DEFAULT
+gem 'smartname',    '0.1.3'
 
-gem 'rails',        '~> 3.2'
+gem 'rails',        '~> 3.2.9'
 gem 'htmlentities', '~> 4.3'
 gem 'uuid',         '~> 2.3'
-gem 'paperclip',    '~> 2.4'
+gem 'paperclip',    '~> 2.8'
 gem 'rmagick',      '~> 2.13'
 gem "recaptcha",    "~> 0.3"
 
 gem 'xmlscan',      '~> 0.3'
-gem 'smartname',    '~> 0.1.2'
 # the following two could be safely excluded on a local install (but are not known to cause problems)
 
 gem "rubyzip",      "~> 0.9" # only required in module.  should be separated out.
-gem "airbrake"     #, "~> 3.1"
+gem "airbrake",     "~> 3.1"
 
 # DATABASE
 
@@ -59,7 +59,7 @@ group :test, :development do
 end
 
 group :test do
-  gem 'cucumber-rails', '~> 1.2'               # feature-driven-development suite
+  gem 'cucumber-rails', '~> 1.3'               # feature-driven-development suite
   gem 'launchy'                                # lets cucumber launch browser windows
 
   gem 'timecop', '=0.3.5'                      # not clear on use/need.  referred to in shared_data.rb 

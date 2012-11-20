@@ -2,7 +2,7 @@ module Wagn
   module Set::Self::HeadAndFoot
     include Sets
 
-    format :base
+    format :html
 
     define_view :raw, :name=>'head' do |args|
       #rcard = card  # should probably be more explicit that this is really the *main* card.

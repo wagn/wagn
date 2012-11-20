@@ -1,6 +1,6 @@
 module Wagn
   module Set::Right::When
-  include Sets
+    include Sets
 
     format :base
 

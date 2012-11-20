@@ -182,7 +182,7 @@ describe Card do
       Session.as_bot do
         Card.create! :name=>"testsearch+*right+*content", :content=>'{"plus":"_self"}', :type => 'Search'
       end
-      c = Card.fetch("A+testsearch".to_cardname)
+      c = Card.fetch("A+testsearch".to_name)
       assert c.virtual?
       c.typecode.should == :search_type
       c.content.should ==  "{\"plus\":\"_self\"}"

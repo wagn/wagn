@@ -10,7 +10,6 @@ module Wagn
     end
 
 
-
     format :html
 
     define_view :core, :type=>'pointer' do |args|
@@ -34,7 +33,7 @@ module Wagn
       args ||= {}
       items = args[:items] || card.item_names(:context=>:raw)
       items = [''] if items.empty?
-      options_card_name = ((oc = card.options_card) ? oc.name : '*all').to_cardname.url_key
+      options_card_name = ((oc = card.options_card) ? oc.name : '*all').to_name.url_key
 
       extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
 
@@ -121,7 +120,7 @@ module Wagn
         cc=self.content
         self.content.split(/\n+/).map{ |line|
           line.gsub(/\[\[|\]\]/,'')
-        }.map{ |link| context==:raw ? link : link.to_cardname.to_absolute(context) }
+        }.map{ |link| context==:raw ? link : link.to_name.to_absolute(context) }
       end
 
       def item_type

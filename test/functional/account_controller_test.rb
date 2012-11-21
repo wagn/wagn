@@ -58,6 +58,11 @@ class AccountControllerTest < ActionController::TestCase
     end
   end
 
+  def test_signup_form
+    get :signup
+    assert_response 200
+  end
+
   def test_signup_with_approval
     post :signup, @newby_args
 

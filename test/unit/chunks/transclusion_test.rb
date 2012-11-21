@@ -44,8 +44,8 @@ class TransclusionTest < ActiveSupport::TestCase
      age, template = newcard('age'), Card['*template']
      specialtype = Card.create :typecode=>'Cardtype', :name=>'SpecialType'
 
-     specialtype_template = specialtype.connect template, "{{#{JOINT}age}}"
-     assert_equal "{{#{JOINT}age}}", render_test_card(specialtype_template)
+     specialtype_template = specialtype.connect template, "{{#{SmartName.joint}age}}"
+     assert_equal "{{#{SmartName.joint}age}}", render_test_card(specialtype_template)
      wooga = Card::SpecialType.create :name=>'Wooga'
      # card = card('Wooga')  #wtf?
      wooga_age = wooga.connect( age, "39" )
@@ -54,7 +54,7 @@ class TransclusionTest < ActiveSupport::TestCase
    end
 
   def test_relative_transclude
-    alpha = newcard 'Alpha', "{{#{JOINT}Beta}}"
+    alpha = newcard 'Alpha', "{{#{SmartName.joint}Beta}}"
     beta = newcard 'Beta'
     alpha_beta = alpha.connect beta, "Woot"
     assert_text_equal "Woot", render(alpha)
@@ -79,7 +79,7 @@ class TransclusionTest < ActiveSupport::TestCase
     #FIXME -- does not work retroactively if template is created later.
 
     assert_text_equal span(bob_city, "Sparta"), render(bob_address.reload), "include"
-    assert_equal ["bob#{JOINT}address"], bob_city.transcluders.plot(:name)
+    assert_equal ["bob#{SmartName.joint}address"], bob_city.transcluders.plot(:name)
   end
 
 

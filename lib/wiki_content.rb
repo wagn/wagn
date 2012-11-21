@@ -20,6 +20,7 @@ class WikiContent < String
       'pre'=> [],
       'code' => ['lang'],
       'cite'=> [],
+      'caption'=> [],
       'strong'=> [],
       'em'  => [],
       'ins' => [],
@@ -52,6 +53,10 @@ class WikiContent < String
     BASIC_TAGS.each_key do |k| 
       BASIC_TAGS[k] << 'class'
       BASIC_TAGS[k] << 'style' if Wagn::Conf[:allow_inline_styles]
+    end
+    
+    if Wagn::Conf[:allow_inline_styles]
+      BASIC_TAGS['table'] += %w[ cellpadding align border cellspacing ]
     end
 
       ## Method which cleans the String of HTML tags

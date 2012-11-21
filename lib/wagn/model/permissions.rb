@@ -83,11 +83,10 @@ module Wagn::Model::Permissions
         opcard
       end
     end
-    #warn "permission_rule_card[#{name}] #{rcard&&rcard.name}, #{opcard.rule_name.inspect}, #{opcard.inspect}" if opcard.name == '*logo+*self+*read'
-    return rcard, opcard.rule_name
+    return rcard, opcard.rule_class_name
   end
 
-  def rule_name
+  def rule_class_name
     trunk.type_id == Card::SetID ? cardname.trunk_name.tag : nil
   end
 

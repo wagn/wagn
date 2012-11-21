@@ -53,7 +53,6 @@ describe AccountController do
     end
 
     #FIXME: tests needed : signup without approval, signup alert emails
-    
 
     it 'should create a user' do
       post :signup, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}

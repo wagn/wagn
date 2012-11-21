@@ -12,7 +12,6 @@ class AccountControllerTest < ActionController::TestCase
   # Note-- account creation is handled in it's own file account_creation_test
 
 
-
   def setup
     super
     get_renderer
@@ -28,7 +27,6 @@ class AccountControllerTest < ActionController::TestCase
     end
     signout
   end
-
 
   def test_should_login_and_redirect
     post :signin, :login => 'u3@user.com', :password => 'u3_pass'

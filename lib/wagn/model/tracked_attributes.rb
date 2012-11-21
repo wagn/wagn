@@ -21,10 +21,10 @@ module Wagn::Model::TrackedAttributes
     @old_name = self.name_without_tracking
     return if @old_name == newname.to_s
 
-    @cardname, name_without_tracking = if Wagn::Cardname===newname
+    @cardname, name_without_tracking = if SmartName===newname
       [ newname, newname.to_s]
     else
-      [ newname.to_cardname, newname]
+      [ newname.to_name, newname]
     end
     write_attribute :key, k=cardname.key
     write_attribute :name, name_without_tracking # what does this do?  Not sure, maybe comment it out and see
@@ -55,7 +55,7 @@ module Wagn::Model::TrackedAttributes
     if existing_card = Card.find_by_key(@cardname.key) and existing_card != self
       if existing_card.trash
         existing_card.name = tr_name = existing_card.name+'*trash'
-        existing_card.instance_variable_set :@cardname, tr_name.to_cardname
+        existing_card.instance_variable_set :@cardname, tr_name.to_name
         existing_card.set_tracked_attributes
         Rails.logger.debug "trash renamed collision: #{tr_name}, #{existing_card.name}, #{existing_card.cardname.key}"
         existing_card.update_attributes! :confirm_rename=>true

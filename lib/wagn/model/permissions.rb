@@ -64,6 +64,7 @@ module Wagn::Model::Permissions
   end
 
   def who_can operation
+    #warn "who_can[#{name}] #{(prc=permission_rule_card(operation)).inspect}, #{prc.first.item_cards.map(&:name)}" if operation == :update
     permission_rule_card(operation).first.item_cards.map(&:id)
   end
 
@@ -81,8 +82,12 @@ module Wagn::Model::Permissions
       else
         opcard
       end
-    end    
-    return rcard, opcard.cardname.trunk_name.tag
+    end
+    return rcard, opcard.rule_class_name
+  end
+
+  def rule_class_name
+    trunk.type_id == Card::SetID ? cardname.trunk_name.tag : nil
   end
 
   protected

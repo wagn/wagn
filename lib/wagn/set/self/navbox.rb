@@ -31,7 +31,7 @@ module Wagn
                     Card.new(:type_id=>exact.type_id).ok?(:create) &&
                     [exact.name, exact.cardname.url_key]
                    ),
-        :goto   => goto_cards.map { |name| [name, highlight(name, term), name.to_cardname.url_key] }
+        :goto   => goto_cards.map { |name| [name, highlight(name, term), name.to_name.url_key] }
       })
     end
   end

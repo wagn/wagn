@@ -55,7 +55,7 @@ describe Card do
 
   describe "#setting_names" do
     before do
-      @pointer_settings = ['*options','*options label','*input']
+      @pointer_settings = [:options, :options_label, :input]
     end
     it "returns universal setting names for non-pointer set" do
       snbg = Card.fetch('*star').setting_names_by_group
@@ -77,11 +77,11 @@ describe Card do
       #warn(Rails.logger.info "testing point 2 #{c2.inspect}")
       snbg = c2.setting_names_by_group
       #warn "snbg #{snbg.class}, #{snbg.inspect}"
-      snbg[:pointer].map(&:to_s).should == @pointer_settings
+      snbg[:pointer].should == @pointer_settings
       c3 = Card.fetch('Pointer+*type')
       #warn(Rails.logger.info "testing point 3 #{c3.inspect}")
       snbg = c3.setting_names_by_group
-      snbg[:pointer].map(&:to_s).should == @pointer_settings
+      snbg[:pointer].should == @pointer_settings
     end
 
     it "returns pointer-specific setting names for pointer card (*self)" do
@@ -90,7 +90,7 @@ describe Card do
       c = Card.fetch_or_new('*account+*related+*self')
       snbg = c.setting_names_by_group
       #warn "snbg #{snbg}, #{c.inspect}"
-      snbg[:pointer].map(&:to_s).should == @pointer_settings
+      snbg[:pointer].should == @pointer_settings
     end
 
   end

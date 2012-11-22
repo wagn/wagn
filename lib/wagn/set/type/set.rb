@@ -79,13 +79,15 @@ module Wagn
       end
 
       def setting_names_by_group
-        Card.universal_setting_names_by_group.clone.merge(
-          if Card::PointerID == ( templt = existing_trait_card(:content) || existing_trait_card(:default) and
-                templt.type_id or tag.id == Card::TypeID ? trunk.id : trunk.type_id )
-           {:pointer => ['*options','*options label','*input']}
-          else
-            {} end
-        )
+        Card.universal_setting_names_by_group.clone.merge begin
+          templt = existing_trait_card(:content) || existing_trait_card(:default)
+          type_id = case
+          when templt                 ; templt.type_id
+          when tag.id == Card::TypeID ; trunk.id
+          when trunk                  ; trunk.type_id
+          end
+          type_id == Card::PointerID ? {:pointer => ['*options','*options label','*input']} : {}
+        end
       end
 
       def prototype

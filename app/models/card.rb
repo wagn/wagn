@@ -358,10 +358,18 @@ class Card < ActiveRecord::Base
       Card.fetch cardname.left, *args
     end
   end
-  def right(*args)     Card.fetch cardname.right, *args     end
+  
+  def right *args
+    Card.fetch cardname.right, *args
+  end
 
-  def trunk(*args)     Card.fetch cardname.trunk, *args     end
-  def tag(*args)       Card.fetch cardname.tag,   *args     end
+  def trunk *args
+    simple? ? self : left( *args )
+  end
+
+  def tag *args
+    simple? ? self : right( *args )
+  end
 
   def left_or_new args={}
     left args or Card.new args.merge(:name=>cardname.left)

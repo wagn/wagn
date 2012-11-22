@@ -19,7 +19,7 @@ module Wagn::Model::Fetch
       # "mark" here means a generic identifier -- can be a numeric id, a name, a string name, etc.
 #      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{cardname}" do
       return nil if mark.nil?
-      #warn "fetch #{mark.inspect}"
+      #warn "fetch #{mark.inspect}, #{opts.inspect}"
       # Symbol (codename) handling
       if Symbol===mark
         mark = Wagn::Codename[mark] || raise("Missing codename for #{mark.inspect}")
@@ -29,7 +29,7 @@ module Wagn::Model::Fetch
       cache_key, method, val = if Integer===mark
         [ "~#{mark}", :find_by_id_and_trash, mark ]
       else
-        key = mark.to_cardname.key
+        key = mark.to_name.key
         [ key, :find_by_key_and_trash, key ]
       end
 
@@ -39,6 +39,7 @@ module Wagn::Model::Fetch
       #Cache lookup
       result = Card.cache.read cache_key if Card.cache
       card = (result && Integer===mark) ? Card.cache.read(result) : result
+      #warn "fetch R #{cache_key}, #{method}, R:#{result}, c:#{card&&card.name}"
 
       unless card
         # DB lookup
@@ -51,6 +52,10 @@ module Wagn::Model::Fetch
 
       if Integer===mark
         raise "fetch of missing card_id #{mark}" if card.nil?
+        #if card.nil?
+        #  warn "fetch of missing card_id #{mark}"
+        #  return nil # we can get a fetch for a trashed card, this is fixed allready in forward branch
+        #end
       else
         return nil if card && opts[:skip_virtual] && card.new_card?
 
@@ -79,7 +84,7 @@ module Wagn::Model::Fetch
 
     def fetch_or_new cardname, opts={}
       #warn "fetch_or_new #{cardname.inspect}, #{opts.inspect}"
-      fetch( cardname, opts ) || new( opts.merge(:name=>cardname) )
+      fetch cardname, opts or new opts.merge(:name=>cardname)
     end
 
     def fetch_or_create cardname, opts={}
@@ -93,7 +98,8 @@ module Wagn::Model::Fetch
     end
 
     def [](name)
-      fetch name, :skip_virtual=>true
+      c=fetch name, :skip_virtual=>true
+      #warn "[] returning #{c.inspect}"; c
     end
 
     def exists? cardname
@@ -102,7 +108,7 @@ module Wagn::Model::Fetch
     end
 
     def expire name
-      if card = Card.cache.read( name.to_cardname.key )
+      if card = Card.cache.read( name.to_name.key )
         card.expire
       end
     end
@@ -115,7 +121,7 @@ module Wagn::Model::Fetch
     def set_members set_names, key
 
       #warn Rails.logger.warn("set_members #{set_names.inspect}, #{key}")
-      set_names.compact.map(&:to_cardname).map(&:key).map do |set_key|
+      set_names.compact.map(&:to_name).map(&:key).map do |set_key|
         skey = "$#{set_key}" # dollar sign avoids conflict with card keys
         h = Card.cache.read skey
         if h.nil?
@@ -161,9 +167,13 @@ module Wagn::Model::Fetch
   end
 
   def refresh
-    fresh_card = self.class.find(self.id)
-    fresh_card.include_set_modules
-    fresh_card
+    if self.frozen?
+      fresh_card = self.class.find id
+      fresh_card.include_set_modules
+      fresh_card
+    else
+      self
+    end
   end
 
   def self.included(base)

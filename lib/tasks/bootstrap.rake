@@ -77,6 +77,8 @@ namespace :wagn do
         File.open("#{Rails.root}/db/bootstrap/#{table}.yml", 'w') do |file|
           data = ActiveRecord::Base.connection.select_all( "select * from #{table}" )
           file.write YAML::dump( data.inject({}) { |hash, record|
+            fail "UNTESTED CODE. pls make sure trash is actually showing up as false (not '0')\n....and pls REMOVE THIS MSG from bootstrap.rake!\n\n"
+            hash['trash'] = false
             hash["#{table}_#{i.succ!}"] = record
             hash
           })

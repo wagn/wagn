@@ -3,7 +3,7 @@ module Wagn::Model::References
   def name_referencers(rname = key)
     Card.find_by_sql(
       "SELECT DISTINCT c.* FROM cards c JOIN card_references r ON c.id = r.card_id "+
-      "WHERE (r.referenced_name = #{ActiveRecord::Base.connection.quote(rname.to_cardname.key)})"
+      "WHERE (r.referenced_name = #{ActiveRecord::Base.connection.quote(rname.to_name.key)})"
     )
   end
 

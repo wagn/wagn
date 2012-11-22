@@ -15,7 +15,7 @@ class Card::Revision < ActiveRecord::Base
     Card[ card_id ]
   end
 
-  def title
+  def title #ENGLISH
     current_id = card.current_revision_id
     if id == current_id
       'Current Revision'
@@ -25,6 +25,7 @@ class Card::Revision < ActiveRecord::Base
       card.revisions.each_with_index do |rev, index|
         return "Revision ##{index + 1}" if rev.id == id
       end
+      '[Revisions Missing]'
     end
   end
 

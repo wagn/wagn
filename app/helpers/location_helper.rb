@@ -12,7 +12,7 @@ module LocationHelper
 
   #
   def location_history
-#    warn "sess #{session.class}, #{session.object_id}"
+    #warn "sess #{session.class}, #{session.object_id}"
     session[:history] ||= [wagn_path('')]
     if session[:history]
       session[:history].shift if session[:history].size > 5
@@ -36,7 +36,7 @@ module LocationHelper
     # quoting necessary because cards have things like "+*" in the names..
     session[:history] = location_history.reject do |loc|
       if url_key = url_key_for_location(loc)
-        url_key.to_cardname.key == card.key
+        url_key.to_name.key == card.key
       end
     end.compact
     @previous_location = nil
@@ -58,7 +58,7 @@ module LocationHelper
       opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
       vars = '?' + pairs.join('&')
     end
-    wagn_path "/#{title.to_cardname.url_key}#{format}#{vars}"
+    wagn_path "/#{title.to_name.url_key}#{format}#{vars}"
   end
 
   def wagn_path( rel ) #should be in cardname?

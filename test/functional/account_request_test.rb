@@ -39,7 +39,7 @@ class InvitationRequestTest < ActionController::TestCase
     @card =  Card["Word Third"]
     @user = User.where(:card_id=>@card.id).first
 
-    @card.typecode.should == :account_request
+    assert_equal @card.typecode, :account_request
 
     # this now happens only when created via account controller
 

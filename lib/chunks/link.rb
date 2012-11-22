@@ -13,12 +13,12 @@ module Chunk
       super
       link_type = :show
       if name=match_data[1]
-        self.cardname = name.to_cardname
+        self.cardname = name.to_name
         # matched the [[..(|..)?]]  case, 1=first slot, 3=sencond
         @link_text = match_data[  match_data[2] ? 3 : 1 ]
       else
         # matched [..][..] case, 4=first slot, 5=second
-        @link_text, self.cardname = match_data[4], match_data[5].to_cardname #.gsub(/_/,' ')
+        @link_text, self.cardname = match_data[4], match_data[5].to_name #.gsub(/_/,' ')
       end
       self
     end

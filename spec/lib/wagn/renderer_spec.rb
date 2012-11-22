@@ -58,7 +58,8 @@ describe Wagn::Renderer, "" do
 
     it "missing relative inclusion is relative" do
       c = Card.new :name => 'bad_include', :content => "{{+bad name missing}}"
-      Wagn::Renderer.new(c)._render(:titled).match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
+      rr=(r=Wagn::Renderer.new(c))._render(:titled)
+      rr.match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
     end
 
     it "renders deny for unpermitted cards" do
@@ -102,7 +103,7 @@ describe Wagn::Renderer, "" do
       it "multi edit" do
         c = Card.new :name => 'ABook', :type => 'Book'
         rendered =  Wagn::Renderer.new(c).render( :edit )
-#        warn "rendered = #{rendered}"
+
         assert_view_select rendered, 'fieldset' do
           assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][~plus~illustrator][content]'
         end

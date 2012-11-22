@@ -1,16 +1,20 @@
 module Wagn::Set::Type::Number
-  def validate_content( content )
-    return if content.blank? and new_card?
-    self.errors.add :content, "'#{content}' is not numeric" unless valid_number?( content )
-  end
+  #include Wagn::Sets
 
-  def valid_number?( string )
-    valid = true
-    begin
-      Kernel.Float( string )
-    rescue ArgumentError, TypeError
-      valid = false
+  module Model
+    def validate_content( content )
+      return if content.blank? and new_card?
+      self.errors.add :content, "'#{content}' is not numeric" unless valid_number?( content )
     end
-    valid
+
+    def valid_number?( string )
+      valid = true
+      begin
+        Kernel.Float( string )
+      rescue ArgumentError, TypeError
+        valid = false
+      end
+      valid
+    end
   end
 end

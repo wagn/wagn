@@ -29,6 +29,7 @@ class Wagn::RendererTest < ActiveSupport::TestCase
   def slot_link card, format=:html
     renderer = Wagn::Renderer.new card, :format=>format
     renderer.add_name_context
+    Rails.logger.warn "slat lk #{card.name},#{renderer}, #{format}"
     result = renderer.render :content
     m = result.match(/<(cardlink|link|a) class.*<\/(cardlink|link|a)>/)
     (m.to_s != "") ? m.to_s : result
@@ -104,17 +105,17 @@ class Wagn::RendererTest < ActiveSupport::TestCase
   end
 
 #  def test_relative_link
-#    dude,job = newcard('Harvey',"[[#{JOINT}business]]"), newcard('business')
+#    dude,job = newcard('Harvey',"[[#{SmartName.joint}business]]"), newcard('business')
 #ActionController::Base.logger.info("ERROR:INFO:newcard is nil: Harvey") unless dude
 #ActionController::Base.logger.info("ERROR:INFO:newcard is nil: +business") unless job
 #    card = dude.connect job, "icepicker"
 #ActionController::Base.logger.info("ERROR:INFO:newcard is nil: Harvey+business") unless card
-#    assert_equal "<a class=\"known-card\" href=\"/Harvey+business\">#{JOINT}business</a>", slot_link(dude)
+#    assert_equal "<a class=\"known-card\" href=\"/Harvey+business\">#{SmartName.joint}business</a>", slot_link(dude)
 #  end
 
 #  def test_relative_link_xml
-#    dude,job = newcard('Harvey',"[[#{JOINT}business]]"), newcard('business')
+#    dude,job = newcard('Harvey',"[[#{SmartName.joint}business]]"), newcard('business')
 #    card = dude.connect job, "icepicker"
-#    assert_equal "<cardref class=\"known-card\" card=\"Harvey+business\">#{JOINT}business</cardref>", slot_link(dude,:xml)
+#    assert_equal "<cardref class=\"known-card\" card=\"Harvey+business\">#{SmartName.joint}business</cardref>", slot_link(dude,:xml)
 #  end
 end

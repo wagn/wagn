@@ -32,7 +32,7 @@
 
 # pack_dirs:
 # customize pack directories
-# defaults to RAILS_ROOT/lib/packs, RAILS_ROOT/local/packs
+# defaults to RAILS_ROOT/local/packs
 
 # mem_cache_servers
 # IP address for mem cache server

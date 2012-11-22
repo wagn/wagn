@@ -103,7 +103,7 @@ describe "Card::Reference" do
     watermelon.name="grapefruit"
     watermelon.save!
     lew.reload.content.should == "likes [[watermelon]] and [[watermelon+seeds|seeds]]"
-    w = ReferenceTypes::WANTED_LINK
+    w = Wagn::ReferenceTypes::WANTED_LINK
     assert_equal [w,w], lew.out_references.plot(:link_type), "links should be Wanted"
   end
 

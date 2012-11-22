@@ -12,7 +12,7 @@ class WikiContent < String
   ## Dictionary describing allowable HTML
   ## tags and attributes.
     BASIC_TAGS = {
-      'a' => ['href' ],
+      'a' => ['href', 'title', 'target' ],
       'img' => ['src', 'alt', 'title'],
       'br' => [],
       'i'  => [],
@@ -20,6 +20,7 @@ class WikiContent < String
       'pre'=> [],
       'code' => ['lang'],
       'cite'=> [],
+      'caption'=> [],
       'strong'=> [],
       'em'  => [],
       'ins' => [],
@@ -49,14 +50,21 @@ class WikiContent < String
       'tfoot'=>[]
     }
 
-    BASIC_TAGS.each_key {|k| BASIC_TAGS[k] << 'class' }
+    BASIC_TAGS.each_key do |k| 
+      BASIC_TAGS[k] << 'class'
+      BASIC_TAGS[k] << 'style' if Wagn::Conf[:allow_inline_styles]
+    end
+    
+    if Wagn::Conf[:allow_inline_styles]
+      BASIC_TAGS['table'] += %w[ cellpadding align border cellspacing ]
+    end
 
       ## Method which cleans the String of HTML tags
       ## and attributes outside of the allowed list.
 
       # this has been hacked for wagn to allow classes in spans if
-      # the class begins with "w-"
-    def clean_html!( string, tags = BASIC_TAGS )
+      # the class begins with "w-" or "ui-"
+    def clean_html! string, tags = BASIC_TAGS
       string.gsub!( /<(\/*)(\w+)([^>]*)>/ ) do
         raw = $~
         tag = raw[2].downcase
@@ -66,7 +74,7 @@ class WikiContent < String
             ['"', "'", ''].each do |q|
               q2 = ( q != '' ? q : '\s' )
               if prop=='class'
-                if raw[3] =~ /#{prop}\s*=\s*#{q}(w-[^#{q2}]+)#{q}/i
+                if raw[3] =~ /#{prop}\s*=\s*#{q}((w|ui)-[^#{q2}]+)#{q}/i
                   pcs << "#{prop}=\"#{$1.gsub('"', '\\"')}\""
                   break
                 end
@@ -81,7 +89,7 @@ class WikiContent < String
           " "
         end
       end
-      string.gsub!(/<\!--.*?-->/, '')
+      string.gsub! /<\!--.*?-->/m, ''
       string
     end
   end

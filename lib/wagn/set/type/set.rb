@@ -86,7 +86,7 @@ module Wagn
           when tag.id == Card::TypeID ; trunk.id
           when trunk                  ; trunk.type_id
           end
-          type_id == Card::PointerID ? {:pointer => ['*options','*options label','*input']} : {}
+          type_id == Card::PointerID ? { :pointer => [:options, :options_label, :input ] } : {}
         end
       end
 

@@ -46,7 +46,7 @@ module Wagn
     def get_user(rev)
       id = rev.attributes['created_by']
       if !@author_names[id]
-        @author_names[id] = rev.author.card.name
+        @author_names[id] = rev.creator.card.name
       end
       @author_names[id]
     end

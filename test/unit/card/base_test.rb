@@ -122,8 +122,8 @@ class Card::BaseTest < ActiveSupport::TestCase
     assert !card.name.empty?, "name not empty"
     rev = card.current_revision
     assert_instance_of Card::Revision, rev
-    #warn "revision #{rev.inspect}, #{rev.author}"
-    assert_instance_of Card, rev.author
+    #warn "revision #{rev.inspect}, #{rev.creator}"
+    assert_instance_of Card, rev.creator
   end
 
   def assert_samecard( card1, card2 )

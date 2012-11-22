@@ -33,10 +33,6 @@ class Card::RenameTest < ActiveSupport::TestCase
     assert_rename card("A+B"), "A+B+T"  # re-uses the parent card: A+B
   end
 
-<<<<<<< HEAD
-=======
-
->>>>>>> develop
   def test_rename_name_substitution
     c1, c2 = Card["chuck_wagn+chuck"], Card["chuck"]
     Rails.logger.info "testing point #{c1}, #{c2}"

@@ -5,12 +5,12 @@ module Wagn
     format :html
 
     define_view :show do |args|
-      @main_view = args[:view] || params[:view] || params[:home_view]
+      @main_view = args[:view] || params[:home_view]
 
       if ajax_call?
         self.render( @main_view || :open )
       else
-        self.render_layout
+        self.render_layout args
       end
     end
 
@@ -21,38 +21,114 @@ module Wagn
 
       layout_content = get_layout_content args
 
-      args[:params] = params # EXPLAIN why this is needed
+      args[:params] = params # this is to pass params to inclusions.  let's find a cleaner way!
       process_content layout_content, args
     end
-
-
+  
     define_view :content do |args|
       wrap :content, args do
-        wrap_content :content, _render_core(args)
+        wrap_content( :content ) { _render_core args }
       end
     end
 
     define_view :titled do |args|
-      add_name_context
+
       wrap :titled, args do
-        content_tag( :h1, fancy_title ) + wrap_content(:titled, _render_core(args))
+        %{ #{ _render_header args.merge( { :default_hidden => {:menu_link=>true, :type=>true} } ) }
+           #{ wrap_content( :titled ) { _render_core args } }   
+        }
       end
+    end
+  
+    define_view :title do |args|
+      t = content_tag :h1, fancy_title, :class=>'card-title', :name_context=>"#{ @context_names.map(&:key)*',' }"
+      add_name_context
+      t
     end
 
     define_view :open do |args|
       wrap :open, args do
         %{
-           #{ _render_header }
-           #{ wrap_content :open, _render_open_content(args) }
+           #{ _render_header args }
+           #{ wrap_content( :open ) { _render_open_content args } }
            #{ render_comment_box }
            #{ notice }
-           #{ _render_footer }
         }
       end
     end
 
-    define_view( :comment_box, :denial=>:blank,
-          :perms=>lambda { |r| r.card.ok? :comment } ) do |args|
+    define_view :header do |args|
+      hidden = args.delete(:default_hidden) || {}
+      %{
+      <div class="card-header">
+        #{ _optional_render :menu_link, args, hidden[:menu_link] }
+        #{ _render_title }
+        #{ _optional_render :type, args, hidden[:type] }
+        #{ link_to 'close', path(:read, :view=>:closed), :title => "close #{card.name}", :class => "title slotter", :remote => true } 
+      </div>
+     
+      #{ _render_menu }
+      }
+    end
+  
+    define_view :menu_link do |args|
+      %{<span class="card-menu-link">menu</span>}
+    end
+  
+    define_view :menu do |args|
+      options = [
+        { :text => 'view', :view=>:titled },
+        { :text =>  'edit' },
+        { :text => 'admin' }
+      ]
+    
+      option_html = %{
+      
+        <style>
+        .ui-menu {
+            width: 200px;
+        }
+        </style>
+        <ul class="cardMenu">
+            <li>#{ link_to_action 'edit', :edit, :class=>'slotter' }
+              <ul>
+                  <li><a href="#">Item 3-1</a></li>
+                  <li><a href="#">Item 3-2</a></li>
+                  <li><a href="#">Item 3-3</a></li>
+                  <li><a href="#">Item 3-4</a></li>
+                  <li><a href="#">Item 3-5</a></li>
+              </ul>
+            </li>
+            <li>#{ link_to_action 'view', :view, :class=>'slotter' }</li>
+            <li>#{ link_to_action 'admin', :admin, :class=>'slotter' }</li>
+
+        </ul>
+      
+      
+      }
+    end
+  
+    define_view :type do |args|
+      klasses = ['cardtype']
+      klasses << 'default-type' if card.type_id==Card::DefaultTypeID ? " default-type" : ''
+      link_to_page card.type_name, nil, :class=>klasses
+    end
+
+    define_view :closed do |args|
+      wrap :closed, args do
+        %{
+          <div class="card-header">
+            #{ _render_title }
+            #{ link_to 'open', path(:read, :view=>:open), :title => "open #{card.name}", :class => "title slotter", :remote => true }         
+          </div>
+          #{ wrap_content( :closed ) { _render_closed_content } }
+        }
+      end
+    end
+  
+  
+    define_view( :comment_box, :denial=>:blank, :perms=>lambda { |r| r.card.ok? :comment } ) do |args|
+      
       %{<div class="comment-box nodblclick"> #{
         card_form :comment do |f|
           %{#{f.text_area :comment, :rows=>3 }<br/> #{
@@ -66,35 +142,46 @@ module Wagn
     end
 
 
-    define_view :closed do |args|
-      wrap :closed, args do
-        %{
-          <div class="card-header">
-            <div class="title-menu">
-              #{ link_to( fancy_title, path(:read, :view=>:open), :title=>"open #{card.name}",
-                :class=>'title right-arrow slotter', :remote=>true ) }
-              #{ page_icon(card.name) } &nbsp;
-            </div>
-          </div>
-          #{ wrap_content :closed, render_closed_content }
-        }
-      end
-    end
-
 
     define_view :new, :perms=>:create, :tags=>:unknown_ok do |args|
-      @help_card = card.rule_card(:add_help, :fallback=>:edit_help)
-      if ajax_call?
-        new_content :cancel_href=>path(:read, :view=>:missing), :cancel_class=>'slotter'
+      name_ready = !card.cardname.blank? && !Card.exists?( card.cardname )
+
+      cancel = if ajax_call?
+        { :class=>'slotter',    :href=>path(:read, :view=>:missing)    }
       else
-        %{
-          <h1 class="page-header">
-            New #{ card.type_id == Card::DefaultTypeID ? 'Card' : card.type_name }
-          </h1>
-          #{ new_instruction }
-          #{ new_content :cancel_href=>Card.path_setting('/*previous'), :cancel_class=>'redirecter' }
-        }
+        { :class=>'redirecter', :href=>Card.path_setting('/*previous') }
       end
+
+      if ajax_call? 
+        header_text = card.type_id == Card::DefaultTypeID ? 'Card' : card.type_name
+        %{ <h1 class="page-header">New #{header_text}</h1>}
+      else '' end +
+       
+      (wrap :new, args do  
+        card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
+          @form = form
+          %{
+            <div class="edit-area">          
+              #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
+              #{ help_text :add_help, :fallback=>:edit_help }
+              #{
+              case
+              when name_ready                  ; _render_header + hidden_field_tag( 'card[name]', card.name )
+              when card.rule_card( :autoname ) ; ''
+              else                             ; _render_name_editor
+              end
+              }
+              #{ params[:type] ? form.hidden_field( :type_id ) : _render_type_editor }
+              <div class="card-editor editor">#{ edit_slot args }</div>
+              <div class="edit-button-area">
+                #{ submit_tag 'Submit', :class=>'create-submit-button' }
+                #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
+              </div>
+            </div>
+            #{ notice }
+          }
+        end
+      end)
     end
 
     define_view :editor do |args|
@@ -112,198 +199,132 @@ module Wagn
       end
     end
 
-###---(  EDIT VIEWS )
+  ###---(  EDIT VIEWS )
     define_view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
-      add_name_context
-      attrib = params[:attribute] || 'content'
-      attrib = 'name' if params[:card] && params[:card][:name]
+      confirm_delete = "Are you sure you want to delete #{card.name}?"
+      if dependents = card.dependents and dependents.any?
+        confirm_delete +=  %{ \n\nThat would mean removing #{dependents.size} related pieces of information. }
+      end
+    
       wrap :edit, args do
-        %{#{ _render_header }
-         <div class="card-body">
-           #{ edit_submenu attrib}
-           #{ _render "edit_#{attrib}" }
-           #{ notice }
-         </div>}
-      end
-    end
-
-    define_view :edit_content, :perms=>:update do |args|
-      %{#{
-        if inst = card.rule_card(:edit_help)
-          %{<div class="instruction">#{ raw subrenderer(inst).render_core }</div>}
-        end}#{
-        if card.hard_template and card.template.ok? :read
-         %{<div class="instruction">Formatted by a #{ link_to_page 'form card', card.template.name }</div>}
-        end}
-
-        <div class="card-editor edit-area #{card.hard_template ? :templated : ''}">
-
-        #{ card_form :update, 'card-form card-edit-form autosave' do |f|
-          %{<div>#{ @form= f; edit_slot(args) }</div>
-
-          <div class="edit-button-area"> #{
-            if !card.new_card?
-              button_tag "Delete", :href=>path(:delete), :type=>'button', 'data-type'=>'html',
-                :class=>'edit-delete-button delete-button slotter standard-delete'
-
-            end}#{
-            submit_tag 'Submit', :class=>'edit-submit-button'}#{
-            button_tag 'Cancel', :class=>'edit-cancel-button slotter', :href=>path(:read), :type=>'button'}
-          </div>}
-         end}
-      </div>
+        %{ 
+        #{_render_header }
+        #{ help_text :edit_help }
+        <div class="card-editor edit-area">
+          #{ card_form :update, 'card-form card-edit-form autosave' do |f|
+            @form= f
+            %{
+            <div>#{ edit_slot args }</div>
+            <fieldset>
+              <div class="button-area">
+                #{ submit_tag 'Submit', :class=>'submit-button' }
+                #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path(:read), :type=>'button'}
+                #{ 
+                if !card.new_card?
+                  button_tag "Delete", :href=>path(:delete), :type=>'button',
+                    :class=>'delete-button slotter standard-delete', :'data-confirm'=>confirm_delete
+                end
+                }            
+              </div>
+            </fieldset>
+            }
+          end}
+        </div>
+        #{ notice }
         }
-    end
-
-    define_view :edit_name, :perms=>:update do |args|
-      %{
-        <div class="edit-area edit-name">
-         <h2>Change Name</h2>
-        #{ card_form path(:update, :id=>card.id), 'card-edit-name-form', 'main-success'=>'REDIRECT' do |f|
-
-        %{<div>to #{ raw f.text_field( :name, :class=>'card-name-field', :value=>card.name, :autocomplete=>'off' ) } </div>
-        #{ hidden_field_tag :success, '_self' }
-        #{
-
-     if !card.errors[:confirmation_required].empty?
-       card.confirm_rename = card.update_referencers = true
-       params[:attribute] = 'name'
-
-      %{#{if dependents = card.dependents and !dependents.empty?  #ENGLISH below
-        %{<div class="instruction">
-          <div>This will change the names of these cards, too:</div>
-          <ul>#{
-            dependents.map do |dep|
-              %{<li>#{ link_to_page dep.name }</li>}
-            end.join }
-          </ul>
-        </div>}
-      end}#{
-
-      if children = card.extended_referencers and !children.empty? #ENGLISH below
-        %{<h2>References</h2>
-        <div class="instruction">
-          <div>Renaming could break old links and inclusions on these cards:</div>
-            <ul>
-              #{children.map do |child|
-                %{<li>#{ link_to_page child.name }</li>}
-                end.join}
-            </ul>
-            <div>You can...
-              <div class="radio">#{ f.radio_button :update_referencers, 'true' }
-                <strong>Fix them</strong>: update old references with new name
-              </div>
-              <div class="radio">#{ f.radio_button :update_referencers, 'false' }
-                <strong>Leave them</strong>: let old references point to old name
-              </div>
-            </div>
-          </div>}
-        end}#{
-        f.hidden_field 'confirm_rename' }}
       end
-      }
-      #{ submit_tag 'Rename', :class=>'edit-name-submit-button'}
-      #{ button_tag 'Cancel', :class=>'edit-name-cancel-button slotter', :type=>'button', :href=>path(:edit, :id=>card.id)}
-      }
-      end}
-      </div>}
     end
+
+    define_view :name_editor do |args|
+      fieldset 'name', (editor_wrap :name do
+         raw( name_field form )
+      end)
+    end
+
+    define_view :type_editor do |args|
+      fieldset 'type', (editor_wrap :type do
+        type_field :class=>'type-field live-type-field', :href=>path(:new), 'data-remote'=>true
+      end)
+    end
+  
+    define_view :edit_name, :perms=>:update do |args|
+      card.update_referencers = false
+      referers = card.extended_referencers
+      dependents = card.dependents
+    
+      wrap :edit_name do
+        card_form path(:update, :id=>card.id), 'card-name-form', 'main-success'=>'REDIRECT' do |f|
+          @form = f
+          %{  
+            #{ _render_name_editor}
+          
+            #{ f.hidden_field :update_referencers, :class=>'update_referencers'   }
+            #{ hidden_field_tag :success, '_self'  }
+            #{ hidden_field_tag :old_name, card.name }
+            #{ hidden_field_tag :confirmed, 'false'  }
+            #{ hidden_field_tag :referers, referers.size }
+            <div class="confirm-rename hidden">
+              <h1>Are you sure you want to rename <em>#{card.name}</em>?</h1>
+              #{ %{ <h2>This change will...</h2> } if referers.any? || dependents.any? }
+              <ul>
+                #{ %{<li>automatically alter #{ dependents.size } related name(s). } if dependents.any? }
+                #{ %{<li>break at least #{referers.size} reference(s) to this name.} if referers.any? }
+              </ul>
+              #{ %{<p>You may choose to <em>ignore or fix</em> the references. Fixing will update references to use the new name.</p>} if referers.any? }  
+            </div>
+            #{ submit_tag 'Rename', :class=>'edit-name-submit-button' }
+            #{ button_tag 'Cancel', :class=>'edit-name-cancel-button slotter', :type=>'button', :href=>path(:edit, :id=>card.id)}
+          }
+        end
+      end
+    end
+
+  
 
     define_view :edit_type, :perms=>:update do |args|
       %{
       <div class="edit-area edit-type">
-      <h2>Change Type</h2> #{
-        card_form :update, 'card-edit-type-form' do |f|
-          #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
-
-          %{ #{ hidden_field_tag :view, :edit }
-          #{if card.type_id == Card::CardtypeID and !Card.search(:type=>card.cardname).empty? #ENGLISH
-            %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
-          else
-            %{<div>to #{ raw type_field :class=>'type-field edit-type-field' }</div>}
-          end}
-          <div>
-            #{ submit_tag 'Submit', :disable_with=>'Submitting' }
-            #{ button_tag 'Cancel', :href=>path(:edit), :type=>'button', :class=>'edit-type-cancel-button slotter' }
-          </div>}
-       end}
+        <h2>Change Type</h2> #{
+          card_form :update, 'card-edit-type-form' do |f|
+            #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
+       
+            %{ #{ hidden_field_tag :view, :edit }
+            #{if card.type_id == Card::CardtypeID and !Card.search(:type_id=>card.card.id).empty? #ENGLISH
+              %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
+            else
+              %{<div>to #{ raw type_field :class=>'type-field edit-type-field' }</div>}
+            end}
+            <div>
+              #{ submit_tag 'Submit', :disable_with=>'Submitting' }
+              #{ button_tag 'Cancel', :href=>path(:edit), :type=>'button', :class=>'edit-type-cancel-button slotter' }
+            </div>}
+         end}
       </div>}
     end
 
-    define_view :edit_in_form, :tags=>:unknown_ok, :perms=>:update do |args|
-      instruction = ''
-      if instruction_card = (card.new_card? ? card.rule_card(:add_help, :fallback => :edit_help) : card.rule_card(:edit_help))
-        ss = self.subrenderer(instruction_card)
-        instruction = %{<div class="instruction">} +
-        ss.with_inclusion_mode(:main) { ss.render :core } +
-        '</div>'
-      end
+    define_view :edit_in_form, :tags=>:unknown_ok do |args|
       eform = form_for_multi
-
-      %{
-<div class="edit-area in-multi card-editor RIGHT-#{ card.cardname.tag.to_name.safe_key }">
-  <div class="label-in-multi">
-    <span class="title">
-      #{ link_to_page fancy_title, (card.new_card? ? card.cardname.tag : card.name) }
-    </span>
-  </div>
-
-  <div class="field-in-multi" #{ %{card-id="#{card.id}" card-name="#{h card.name}"} if card.id }>
-    #{ self.content_field( eform, :nested=>true ) }
-    #{ card.new_card? ? eform.hidden_field(:type_id) : '' }
-  </div>
-  #{instruction}
-  <div style="clear:both"></div>
-</div>
-      }
-    end
-
-    define_view :related do |args|
-      sources = [card.type_name,nil]
-      # FIXME codename *account
-      sources.unshift '*account' if [Card::WagnBotID, Card::AnonID].member?(card.id) || card.typecode==:user
-      items = sources.map do |source|
-        c = Card.fetch(source ? source.to_name.trait_name(:related) : Card::RelatedID)
-        c && c.item_names
-      end.flatten.compact
-
-      current = params[:attribute] || items.first.to_name.key
-
-      wrap :related, args do
-        %{#{ _render_header }
-          <div class="submenu"> #{
-            items.map do |item|
-              key = item.to_name.key
-              text = item.gsub('*','').gsub('subtab','').strip
-              link_to text, path(:related, :attrib=>key), :remote=>true,
-                :class=>"slotter #{key==current ? 'current-subtab' : ''}"
-            end * "\n"}
-           </div> #{
-           notice }
-
-          <div class="open-content related"> #{
-            raw subrenderer(Card.fetch_or_new "#{card.name}+#{current}").render_content }
-          </div>}
+      content = content_field eform, :nested=>true
+      attribs = %{ class="card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" }
+      link_target, help_settings = if card.new_card?
+        content += raw( "\n #{ eform.hidden_field :type_id }" )
+        [ card.cardname.tag, [:add_help, { :fallback => :edit_help } ] ]
+      else
+        attribs += %{ card-id="#{card.id}" card-name="#{h card.name}" }
+        [ card.name, :edit_help ]
       end
-    end
-
-    define_view :options, :perms=>:none do |args|
-      attribute = params[:attribute]
-
-      attribute ||= if card.to_user and ( Session.as_id==card.id or card.trait_card(:account).ok?(:update) )
-        'account'; else; 'settings'; end
-      render "option_#{attribute}"
+      label = link_to_page fancy_title, link_target
+      fieldset label, content, :help=>help_settings, :attribs=>attribs
     end
 
     define_view :option_account, :perms=> lambda { |r|
         Session.as_id==r.card.id or r.card.trait_card(:account).ok?(:update)
       } do |args|
-    
+      
       locals = {:slot=>self, :card=>card, :account=>card.to_user }
       wrap :options, args do
         %{ #{ _render_header }
           <div class="options-body">
-            #{raw options_submenu(:account) }
             #{ card_form :update_account, '', 'notify-success'=>'account details updated' do |form|
               %{
               #{ hidden_field_tag 'success[id]', '_self' }
@@ -311,7 +332,7 @@ module Wagn
               <table class="fieldset">
                 #{ option_header 'Account Details' }
                 #{ template.render :partial=>'account/edit',  :locals=>locals }
-                
+
                 #{ _render_option_roles }
                 #{ if options_need_save
                     %{<tr><td colspan="3">#{ submit_tag 'Save Changes' }</td></tr>}
@@ -324,8 +345,8 @@ module Wagn
         }
       end
     end
-
-    define_view :option_settings do |args|
+  
+    define_view :admin do |args|
       related_sets = card.related_sets
       current_set = params[:current_set] || related_sets[(card.type_id==Card::CardtypeID ? 1 : 0)]  #FIXME - explicit cardtype reference
       set_options = related_sets.map do |set_name|
@@ -333,9 +354,9 @@ module Wagn
         selected = set_card.key == current_set.to_name.key ? 'selected="selected"' : ''
         %{<option value="#{ set_card.key }" #{ selected }>#{ set_card.label }</option>}
       end.join
-      wrap :options, args do
+
+      wrap :admin do
         %{ #{ _render_header }
-            #{raw options_submenu(:settings) }
             <div class="options-body">
               <div class="settings-tab">
                 #{ if !related_sets.empty?
@@ -362,9 +383,9 @@ module Wagn
               </div> 
             </div>
             #{ notice }
-         }
+          }
        end
-       # should be just if !card.trait_card(:account) and Card.new( :name=>"#{card.name}+Card[:account].name").ok?(create)
+      # should be just if !card.trait_card(:account) and Card.new( :name=>"#{card.name}+Card[:account].name").ok?(create)
     end
 
     define_view :option_roles do |args|
@@ -373,13 +394,12 @@ module Wagn
       end
 
       traitc = card.trait_card :roles
-     user_roles = traitc.item_cards :limit=>0
+      user_roles = traitc.item_cards :limit=>0
 
       option_content = if traitc.ok? :update
         user_role_ids = user_roles.map &:id
         hidden_field_tag(:save_roles, true) +
         (roles.map do |rolecard|
-          #warn Rails.logger.info("option_roles: #{rolecard.inspect}")
           if rolecard && !rolecard.trash
            %{<div style="white-space: nowrap">
              #{ check_box_tag "user_roles[%s]" % rolecard.id, 1, user_role_ids.member?(rolecard.id) ? true : false }
@@ -406,12 +426,11 @@ module Wagn
     end
 
     define_view :option_new_account do |args|
-      %{#{raw( options_submenu(:account) ) }#{
+      %{#{
         card_form :create_account do |form|
-        #ENGLISH below
-
+          #ENGLISH 
           %{<table class="fieldset">
-          #{template.render :partial=>'account/email' }
+          #{ template.render :partial=>'account/email' }
              <tr><td colspan="3" style><p>
          A password for a new sign-in account will be sent to the above address.
              #{ submit_tag 'Create Account' }
@@ -446,7 +465,7 @@ module Wagn
           end}
           </div>
           <div class="revision content">#{_render_diff}</div>
-          <div class="revision-navigation card-footer">#{ revision_menu }</div>}
+          <div class="revision-navigation">#{ revision_menu }</div>}
         end
       end
     end
@@ -466,34 +485,6 @@ module Wagn
           <div>#{ link_to_page @revision.author.card.name } has also been making changes.</div>
           <div>Please examine below, resolve above, and re-submit.</div>
           #{wrap(:conflict) { |args| _render_diff } } }
-      end
-    end
-
-    define_view :delete do |args|
-      wrap :delete, args do
-      %{#{ _render_header}
-      #{card_form :delete, '', 'data-type'=>'html', 'main-success'=>'REDIRECT: *previous' do |f|
-
-        %{#{ hidden_field_tag 'confirm_destroy', 'true' }#{
-          hidden_field_tag 'success', "TEXT: #{card.name} deleted" }
-
-      <div class="content open-content">
-        <p>Really remove #{ raw link_to_page( card.name ) }?</p>#{
-         if dependents = card.dependents and !dependents.empty? #ENGLISH ^
-          %{<p>That would mean removing all these cards, too:</p>
-          <ul>
-            #{ dependents.map do |dep|
-              %{<li>#{ link_to_page dep.name }</li>}
-            end.join }
-          </ul>}
-         end}
-         #{ error_messages_for card }
-         #{ submit_tag 'Yes do it', :class=>'delete-submit-button' }
-         #{ button_tag 'Cancel', :class=>'delete-cancel-button slotter', :type=>'button', :href=>path(:read) }
-         #{ notice }
-      </div>
-        }
-      end}}
       end
     end
 
@@ -519,61 +510,21 @@ module Wagn
     end
 
 
-    define_view :header do |args|
-      add_name_context
-      %{<div class="card-header">
-         #{ menu }
-         <div class="title-menu">
-           #{ link_to fancy_title, path(:read, :view=>:closed),
-              :title => "close #{card.name}",
-              :class => "line-link title down-arrow slotter",
-              :remote => true
-            }
-           #{ card.type_id==Card::BasicID ? '' : %{<span class="cardtype">#{ link_to_page card.type_name }</span>} }
-           #{ page_icon(card.name) } &nbsp;
-         </div>
-      </div>}
-    end
-
-    define_view :footer do |args|
-      %{<div class="card-footer">
-        <span class="footer-content">
-          <span class="watch-link">#{ render_watch }</span>
-          <span class="footer-links">
-            <label>Cards:</label>
-            #{raw card.cardname.pieces.map {|c| link_to_page c}.join(', ') }
-          </span>
-          #{
-           if !card.current_revision.new_record?
-             %{
-            <span class="last-editor">
-              <label>Last Editor:</label>
-              #{ raw link_to_page card.current_revision.author.name }
-            </span>}
-           end
-          }
-        </span>&nbsp;
-      </div>}
-    end
-
-
     define_view :errors, :perms=>:none do |args|
       wrap :errors, args do
-        %{ <h2>Can't save "#{card.name}".</h2> } +
-        card.errors.map { |attr, msg| "<div>#{attr}: #{msg}</div>" } * ''
+        %{ <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
+        card.errors.map { |attrib, msg| "<div>#{attrib.upcase}: #{msg}</div>" } * ''
       end
     end
 
-
     define_view :not_found do |args| #ug.  bad name.
-
-      sign_in_or_up_links = Session.logged_in? ? '' :
-        %{
-        <div>
+      sign_in_or_up_links = if Session.logged_in?
+        %{<div>
           #{link_to "Sign In", :controller=>'account', :action=>'signin'} or
           #{link_to 'Sign Up', :controller=>'account', :action=>'signup'} to create it.
-        </div>
-        }
+         </div>}
+      end
+    
       %{ <h1 class="page-header">Missing Card</h1> } +
       wrap( :not_found, args ) do # ENGLISH
         %{<div class="content instruction">
@@ -584,9 +535,54 @@ module Wagn
     end
 
 
+    define_view :denial do |args|
+      task = args[:denied_task] || params[:action]
+      to_task = %{to #{task} this card#{ ": <strong>#{card.name}</strong>" if card.name && !card.name.blank? }.}
+      if !focal?
+        %{<span class="denied"><!-- Sorry, you don't have permission #{to_task} --></span>}
+      else
+        wrap :denial, args do #ENGLISH below
+          %{
+          #{ _render_header }
+          <div id="denied" class="instruction open-content">
+            <h1>Ooo.  Sorry, but...</h1>
+            #{
+            if task != :read && Wagn::Conf[:read_only]
+              "<div>We are currently in read-only mode.  Please try again later.</div>"
+            else
+              if Session.logged_in?
+                %{<div>You need permission #{to_task}</div> }
+              else
+                %{<div>You have to #{ link_to "sign in", wagn_url("/account/signin") } #{to_task}</div> 
+                #{ 
+                if Card.new(:type_id=>Card::AccountRequestID).ok? :create
+                  %{<div>#{ link_to 'Sign up for a new account', wagn_url("/account/signup") }.</div>}                    
+                end 
+                }}
+              end
+            end}
+          </div>}
+        end
+      end
+    end
+
+
+    define_view :server_error do |args|
+      %{
+      <body>
+        <div class="dialog">
+          <h1>Wagn Hitch :(</h1>
+          <p>Server Error. Yuck, sorry about that.</p>
+          <p><a href="http://www.wagn.org/new/Support_Ticket">Add a support ticket</a>
+              to tell us more and follow the fix.</p>
+        </div>
+      </body>
+      }
+    end
+  
     define_view :watch, :tags=>:unknown_ok, :denial=>:blank,
       :perms=> lambda { |r| Session.logged_in? && !r.card.new_card? } do |args|
-
+        
       wrap :watch do
         if card.watching_type?
           watching_type_cards
@@ -600,166 +596,18 @@ module Wagn
         end
       end
     end
-
-    define_view :denial do |args|
-      task = args[:denied_task] || params[:action]
-      if !focal?
-        %{<span class="denied"><!-- Sorry, you don't have permission to #{task} this card --></span>}
-      else
-        wrap :denial, args do #ENGLISH below
-          %{#{ _render_header }
-            <div id="denied" class="instruction open-content">
-              <h1>Ooo.  Sorry, but...</h1>
-
-
-           #{ if task != :read && Wagn::Conf[:read_only]
-                "<div>We are currently in read-only mode.  Please try again later.</div>"
-              else
-                %{<div>#{
-
-                if !Session.logged_in?
-                 %{You have to #{ link_to "sign in", :controller=>'account', :action=>'signin' }}
-                else
-                 "You need permission"
-                end} to #{task} this card#{": <strong>#{card.name}</strong>" if card.name && !card.name.blank? }.
-                </div>
-               #{
-
-                if !Session.logged_in? && Card.new(:type_id=>Card::AccountRequestID).ok?(:create)
-                  %{<p>#{ link_to 'Sign up for a new account', :controller=>'account', :action=>'signup' }.</p>}
-                end }}
-              end   }
-            </div>
-            #{ _render_footer  }}
-        end
-      end
-    end
-
-
-    define_view :server_error do |args|
-      %{
-<body>
-  <div class="dialog">
-    <h1>Wagn Hitch :(</h1>
-    <p>Server Error. Yuck, sorry about that.</p>
-    <p><a href="http://www.wagn.org/new/Support_Ticket">Add a support ticket</a>
-        to tell us more and follow the fix.</p>
-  </div>
-</body>
-      }
-    end
-
-  end
-
-end
-
-class Wagn::Renderer::Html < Wagn::Renderer
+    
+  end  
+end  
+  
+class Wagn::Renderer::Html
   def watching_type_cards
     "watching #{ link_to_page card.type_name } cards"
   end
 
   def watch_link text, toggle, title, extra={}
-    link_to "#{text}", path(:watch, :toggle=>toggle),
+    link_to "#{text}", path(:watch, :toggle=>toggle), 
       {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :title=>title, :remote=>true, :method=>'post'}.merge(extra)
-  end
-
-  def card_form *opts
-    form_for( card, form_opts(*opts) ) { |form| yield form }
-  end
-
-  def form_opts url, classes='', other_html={}
-    url = path(url) if Symbol===url
-    opts = { :url=>url, :remote=>true, :html=>other_html }
-    opts[:html][:class] = classes + ' slotter'
-    opts[:html][:recaptcha] = 'on' if Wagn::Conf[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
-    opts
-  end
-
-  private
-
-  def fancy_title name=nil
-    name ||= showname
-    title = name.to_name.parts.join %{<span class="joint">+</span>}
-    raw title
-  end
-
-  def page_icon cardname
-    link_to_page '&nbsp;'.html_safe, cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
-  end
-
-  def load_revisions
-    @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i
-    @revision = card.revisions[@revision_number - 1]
-    @previous_revision = @revision ? card.previous_revision( @revision.id ) : nil
-    @show_diff = (params[:mode] != 'false')
-  end
-
-  def new_instruction
-    i=%{#{if card.broken_type
-            %{<div class="error" id="no-cardtype-error">
-              Oops! There's no <strong>card type</strong> called "<strong>#{ card.broken_type }</strong>".
-            </div>}
-          end }
-       #{
-       if @help_card
-         ''  # they'll go inside the card
-       elsif !card.cardname.blank? #ENGLISH
-         %{<div>Currently, there is no card named "<strong>#{ card.name
-                 }</strong>", but you're welcomed to create it.</div>}
-       else
-         %{<div>Creating a new card is easy; you just need a unique name.</div>}
-       end}}
-    i.blank? ? '' : %{<div class="instruction new-instruction"> #{ i } </div>}
-  end
-
-  def new_content(args)
-    hide_type = params[:type] && !card.broken_type
-
-    wrap :new, args do
-      %{#{error_messages_for card}#{
-
-      card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
-        @form = form
-
-        %{ #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
-
-        <div class="card-header">
-          #{
-          if hide_type
-            form.hidden_field :type_id
-          else
-            %{<span class="new-type">
-              <label>type:</label>
-              #{ type_field :class=>'type-field new-type-field live-type-field', :href=>path(:new), 'data-remote'=>true}
-            </span>}
-          end}
-
-            <span class="new-name">
-
-              #{ if card.cardname.blank? || Card.exists?(card.cardname)
-                  card.rule_card(:autoname) ? '&nbsp;' :
-                    %{<label>name:</label> <span class="name-area">#{ raw name_field(form) }</span>}
-                else
-                  %{#{hidden_field_tag 'card[name]', card.name} <label>name:</label>
-                    <span class="title">#{ fancy_title }</span>}
-                end }
-              </span>
-            </div>
-
-           #{@help_card ? %{<div class="instruction">#{
-             raw( with_inclusion_mode(:normal) { subrenderer(@help_card).render_core } ) }</div>} : '' }
-
-           <div class="edit-area">
-             <div class="card-editor editor">#{ edit_slot args }</div>
-             <div class="edit-button-area">
-               #{ submit_tag 'Submit', :class=>'create-submit-button' }
-               #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{args[:cancel_class]}", :href=>args[:cancel_href] }
-             </div>
-           </div>}
-         end }#{
-
-       notice}}
-    end
-
-  end
+  end  
 end
+

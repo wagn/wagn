@@ -87,7 +87,7 @@ module Wagn
       @root = self
 
       @context_names ||= if context_name_list = params[:name_context]
-        context_name_list.split(',').map &:to_cardname
+        context_name_list.split(',').map &:to_name
       else [] end
 
       if card && card.collection? && params[:item] && !params[:item].blank?

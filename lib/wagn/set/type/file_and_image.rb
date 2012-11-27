@@ -14,7 +14,7 @@ module Wagn
 
     define_view :core, :type=>'file' do |args|
       handle_source args do |source|
-        "<a href=\"#{source}\">Download #{card.name}</a>"
+        "<a href=\"#{source}\">Download #{ showname }</a>"
       end
     end
 

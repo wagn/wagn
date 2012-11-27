@@ -1,6 +1,6 @@
 class AccountTrait < ActiveRecord::Migration
   def up
-    Sesson.as_bot do
+    Session.as_bot do
       User.all.each do |user|
         #next if user.card_id == Card::WagnBotID || user.card_id == Card::AnonID
         card = Card.find user.card_id

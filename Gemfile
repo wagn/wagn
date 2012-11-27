@@ -42,7 +42,7 @@ group :assets do
   gem 'coffee-rails', "~> 3.1"                 # pretty code; compiles to JS
   gem 'uglifier'                               # makes pretty code ugly again.  compresses js/css for fast loading
 
-  gem 'jquery-rails',  '~> 2.0'                # main js framework, along with rails-specific unobtrusive lib
+  gem 'jquery-rails',  '~> 2.1.4'                # main js framework, along with rails-specific unobtrusive lib
   gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor
   
   gem 'therubyracer'                           # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one

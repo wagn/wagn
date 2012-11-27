@@ -41,7 +41,7 @@ wagn.initTinyMCE = (el_id) ->
 
 wagn.chooseFile = (e, data) ->
   file = data.files[0]
-  $(this).fileupload '_normalizeFile', 0, file # so file objects have same fields in all browsers
+#  $(this).fileupload '_normalizeFile', 0, file # so file objects have same fields in all browsers
   $(this).closest('form').data 'file-data', data # stores data on form for use at submission time
 
   if name_field = $(this).slot().find( '.card-name-field' )

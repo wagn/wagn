@@ -1,7 +1,7 @@
 /**
  * application-all.css
  *
- *= XXXrequire jquery-ui-smoothness
+ *= require jquery-ui-smoothness
  *= require page
  *= require defaults
  *= require card

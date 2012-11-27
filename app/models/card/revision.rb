@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Card::Revision < ActiveRecord::Base
   cattr_accessor :cache
+
   before_save :set_stamper
 
   def set_stamper

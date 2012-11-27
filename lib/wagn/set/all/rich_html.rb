@@ -448,7 +448,7 @@ module Wagn
 
           <div class="revision-header">
             <span class="revision-title">#{ @revision.title }</span>
-            posted by #{ link_to_page @revision.author.name }
+            posted by #{ link_to_page @revision.creator.name }
           on #{ format_date(@revision.created_at) } #{
           if !card.drafts.empty?
             %{<p class="autosave-alert">
@@ -482,7 +482,7 @@ module Wagn
       load_revisions
       wrap :errors do |args|
         %{<strong>Conflict!</strong><span class="new-current-revision-id">#{@revision.id}</span>
-          <div>#{ link_to_page @revision.author.card.name } has also been making changes.</div>
+          <div>#{ link_to_page @revision.creator.card.name } has also been making changes.</div>
           <div>Please examine below, resolve above, and re-submit.</div>
           #{wrap(:conflict) { |args| _render_diff } } }
       end
@@ -508,7 +508,6 @@ module Wagn
          <br style="clear:both"/>}
       end
     end
-
 
     define_view :errors, :perms=>:none do |args|
       wrap :errors, args do

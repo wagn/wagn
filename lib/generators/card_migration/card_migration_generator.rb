@@ -73,7 +73,7 @@ end
 # end
 #
 # def sanitized_name
-#   file_name.to_cardname.key.gsub(/\*/,'star_').gsub(/\+/,'_plus_')
+#   file_name.to_name.key.gsub(/\*/,'star_').gsub(/\+/,'_plus_')
 # end
 #
 # def card

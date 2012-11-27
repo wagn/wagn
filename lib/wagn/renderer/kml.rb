@@ -1,4 +1,4 @@
 module Wagn
-  class Renderer::Kml < Renderer
+  class Renderer::Kml < Wagn::Renderer
   end
 end

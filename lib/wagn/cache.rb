@@ -1,6 +1,5 @@
 module Wagn
 
-
   ActiveSupport::Cache::FileStore.class_eval do
     # escape special symbols \*"<>| additionaly to :?.
     # All of them not allowed to use in ms windows file system
@@ -12,42 +11,42 @@ module Wagn
     end
   end
 
-  class Cache
-    Klasses = [Card, User, Card::Revision ]
 
-    @@prepopulating     = Rails.env == 'cucumber'
+  class Cache
+    @@prepopulating     = (Rails.env == 'cucumber') ? { Card => true } : {}
     @@using_rails_cache = Rails.env =~ /^cucumber|test$/
     @@prefix_root       = Wagn::Application.config.database_configuration[Rails.env]['database']
+    @@frozen            = {}
+    @@cache_by_class    = {}
+
+    cattr_reader :cache_by_class, :prepopulating, :frozen, :prefix_root
 
     class << self
-      def new_all
-        store = @@using_rails_cache ? nil : Rails.cache
-        Klasses.each do |cc|
-          cc.cache = new :class=>cc, :store=>store
-        end
-        prepopulate if @@prepopulating
+      def [] klass
+        raise "nil klass" if klass.nil?
+        cache_by_class[klass] ||= new :class=>klass, :store=>(@@using_rails_cache ? nil : Rails.cache)
       end
 
       def renew
-        Klasses.each do |cc|
-          if cc.cache
-              cc.cache.system_prefix = system_prefix(cc)
+        cache_by_class.keys do |klass|
+          if klass.cache
+            cache_by_class[klass].system_prefix = system_prefix(klass)
           else
-            raise "renewing nil cache: #{cc}"
+            raise "renewing nil cache: #{klass}"
           end
         end
-        reset_local unless @@prepopulating
+        reset_local if prepopulating.empty?
       end
 
       def system_prefix klass
-        "#{ @@prefix_root }/#{ klass }"
+        "#{ prefix_root }/#{ klass }"
       end
 
-      def restore
+      def restore klass=nil
+        klass=Card if klass.nil?
+        raise "no klass" if klass.nil?
         reset_local
-        if @@prepopulating
-          Card.cache = Marshal.load @@frozen
-        end
+        cache_by_class[klass] = Marshal.load(frozen[klass]) if cache_by_class[klass] and prepopulating[klass]
       end
 
       def generate_cache_id
@@ -55,8 +54,8 @@ module Wagn
       end
 
       def reset_global
-        Klasses.each do |cc|
-          next unless cache = cc.cache
+        cache_by_class.keys.each do |klass|
+          next unless cache = klass.cache
           cache.reset hard=true
         end
         Wagn::Codename.reset_cache
@@ -65,32 +64,36 @@ module Wagn
       private
 
 
-      def prepopulate
-        set_keys = ['*all','*all plus','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
-        set_keys.map{|k| [k,"#{k}+*content", "#{k}+*default", "#{k}+*read", ]}.flatten.each do |key|
-          Card[key]
-        end
-        @@frozen = Marshal.dump(Card.cache)
-      end
-
       def reset_local
-        Klasses.each{ |cc|
-          if Wagn::Cache===cc.cache
-          cc.cache && cc.cache.reset_local
-          else warn "reset class #{cc}, #{cc.cache.class} #{caller[0..8]*"\n"} ???" end
+        #warn "reset local #{cache_by_class.map{|k,v|k.to_s+' '+v.to_s}*", "}"
+        cache_by_class.each{ |cc, cache|
+          if Wagn::Cache===cache
+            cache.reset_local
+          else warn "reset class #{cc}, #{cache.class} #{caller[0..8]*"\n"} ???" end
         }
       end
 
     end
 
-    attr_reader :prefix, :store
+    attr_reader :prefix, :store, :klass
     attr_accessor :local
 
     def initialize(opts={})
-      #@klass = opts[:class]
+      #warn "new cache #{opts.inspect}"
+      @klass = opts[:class]
       @store = opts[:store]
       @local = Hash.new
       self.system_prefix = opts[:prefix] || self.class.system_prefix(opts[:class])
+      Rails.logger.warn "nil class for cache #{caller*"\n"}" if klass.nil?
+      cache_by_class[klass] = self
+      prepopulate klass if prepopulating[klass]
+    end
+
+    def prepopulate klass
+      ['*all','*all plus','basic+*type','html+*type','*cardtype+*type','*sidebar+*self'].each do |k|
+        [k,"#{k}+*content", "#{k}+*default", "#{k}+*read" ].each { |k| klass[k] }
+      end
+      frozen[klass] = Marshal.dump Cache[klass]
     end
 
     def system_prefix=(system_prefix)
@@ -173,6 +176,6 @@ module Wagn
         @local[key] = val
       end
     end
-  end
+end
 end
 

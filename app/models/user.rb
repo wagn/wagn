@@ -6,7 +6,6 @@ class User < ActiveRecord::Base
 
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :name
-  cattr_accessor :cache
 
   has_and_belongs_to_many :roles
   belongs_to :invite_sender, :class_name=>'Card', :foreign_key=>'invite_sender_id'
@@ -20,7 +19,7 @@ class User < ActiveRecord::Base
   validates_presence_of     :password_confirmation,      :if => :password_required?
   validates_length_of       :password, :within => 5..40, :if => :password_required?
   validates_confirmation_of :password,                   :if => :password_required?
-  validates_presence_of     :invite_sender,              :if => :active?
+#  validates_presence_of     :invite_sender,              :if => :active?
 #  validates_uniqueness_of   :salt, :allow_nil => true
 
   before_validation :downcase_email!
@@ -28,20 +27,17 @@ class User < ActiveRecord::Base
   after_save :reset_instance_cache
 
   class << self
-    def admin()          User.where(:card_id=>Card::WagnBotID).first  end
-    def as_user()        User.where(:card_id=>Session.as_id).first end
-    def user()           User.where(:card_id=>Session.user_id).first    end
+    def admin()          User.where(:card_id=>Card::WagnBotID).first end
+    def as_user()        User.where(:card_id=>Session.as_id).first   end
+    def user()           User.where(:card_id=>Session.user_id).first end
     def from_id(card_id) User.where(:card_id=>card_id).first         end
+    def cache()          Wagn::Cache[User]                           end
 
     # FIXME: args=params.  should be less coupled..
-    def create_with_card(user_args, card_args, email_args={})
-      #warn  "create with(#{user_args.inspect}, #{card_args.inspect}, #{email_args.inspect})"
+    def create_with_card user_args, card_args, email_args={}
       card_args[:type_id] ||= Card::UserID
       @card = Card.fetch_or_new(card_args[:name], card_args)
-      #warn "create with >>#{Session.user_card.name}"
-      #warn "create with args= #{({:invite_sender=>Session.user_card, :status=>'active'}.merge(user_args)).inspect}"
       Session.as_bot do
-        #warn "cwa #{user_args.inspect}, #{card_args.inspect}"
         @user = User.new({:invite_sender=>Session.user_card, :status=>'active'}.merge(user_args))
         #warn "user is #{@user.inspect}" unless @user.email
         @user.generate_password if @user.password.blank?
@@ -94,28 +90,21 @@ class User < ActiveRecord::Base
     self.class.cache.write(login, nil) if login
   end
 
-  def save_with_card(card)
-    #warn(Rails.logger.info "save with card #{card.inspect}, #{self.inspect}")
+  def save_with_card card
     User.transaction do
-      card = card.refresh if card.frozen?
-      newcard = card.new_card?
-      card.save
-      #warn "save with_card #{User.count}, #{card.id}, #{card.inspect}"
+      card = card.refresh
+      if card.save
+        self.card_id = card.id
+        save
+      else
+        valid?
+      end
       card.errors.each do |key,err|
         self.errors.add key,err
       end
-      self.card_id = card.id
-      save
-      if newcard && errors.any?
-        card.delete #won't the rollback take care of this?  if not, should Wagn Bot do it?
-        self.card_id=nil
-        save
-        raise ActiveRecord::Rollback
-      end
+      raise ActiveRecord::Rollback if errors.any?
       true
     end
-  rescue Exception => e
-    warn (Rails.logger.info "save with card failed. #{e.inspect},  #{card.inspect} Bt:#{e.backtrace*"\n"}")
   end
 
   def accept(card, email_args)

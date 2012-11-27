@@ -1,16 +1,7 @@
 # -*- encoding : utf-8 -*-
-module ReferenceTypes
-  unless defined? LINK
-    LINK = 'L'
-    WANTED_LINK = 'W'
-    TRANSCLUSION = 'T'
-    WANTED_TRANSCLUSION = 'M'
-  end
-end
-
 
 class Card::Reference < ActiveRecord::Base
-  include ReferenceTypes
+  include Wagn::ReferenceTypes
   belongs_to :referencer, :class_name=>'Card', :foreign_key=>'card_id'
   belongs_to :referencee, :class_name=>'Card', :foreign_key=>"referenced_card_id"
 
@@ -36,7 +27,7 @@ class Card::Reference < ActiveRecord::Base
   end
 
   class << self
-    include ReferenceTypes
+    include Wagn::ReferenceTypes
     def update_on_create( card )
       update_all("link_type = '#{LINK}', referenced_card_id=#{card.id}",  ['referenced_name = ? and link_type=?', card.key, WANTED_LINK])
       update_all("link_type = '#{TRANSCLUSION}', referenced_card_id=#{card.id}",  ['referenced_name = ? and link_type=?', card.key, WANTED_TRANSCLUSION])

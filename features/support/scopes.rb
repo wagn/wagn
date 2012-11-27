@@ -1,15 +1,15 @@
 module ScopeHelpers
-  def scope_of(section)
+  def scope_of section
     case section
 
     when /the main card content/
-      '#main .card-slot .content'
+      '#main > .card-slot > .content'
 
     when /the main card footer/
-      '#main .card-slot .card-footer'
+      '#main > .card-slot  > .card-footer'
 
     when /the main card header/
-      '#main .card-slot .card-header'
+      '#main > .card-slot > .card-header'
 
     else
       raise "Can't find mapping from \"#{section}\" to a scope.\n" +

@@ -13,9 +13,9 @@ class RevisionTest < ActiveSupport::TestCase
     author_cd2 = Card[author2.card_id]
     #author1, author2 = User.find(:all, :limit=>2)
     Session.user = Card::WagnBotID
-    rc1=author_cd1.trait_card(:roles)
+    rc1=author_cd1.fetch(:new=>{}, :trait=>:roles)
     rc1 << Card::AdminID
-    rc2 = author_cd2.trait_card(:roles)
+    rc2 = author_cd2.fetch(:new=>{}, :trait=>:roles)
     rc2 << Card::AdminID
     author_cd1.save
     author_cd2.save

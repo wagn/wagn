@@ -290,13 +290,13 @@ module Wagn
     define_view :options, :perms=>:none do |args|
       attribute = params[:attribute]
 
-      attribute ||= if card.to_user and ( Session.as_id==card.id or card.trait_card(:account).ok?(:update) )
+      attribute ||= if card.to_user and ( Session.as_id==card.id or card.fetch(:trait=>:account).ok?(:update) )
         'account'; else; 'settings'; end
       render "option_#{attribute}"
     end
 
     define_view :option_account, :perms=> lambda { |r|
-        Session.as_id==r.card.id or r.card.trait_card(:account).ok?(:update)
+        Session.as_id==r.card.id or r.card.fetch(:trait=>:account).ok?(:update)
       } do |args|
     
       locals = {:slot=>self, :card=>card, :account=>card.to_user }
@@ -351,7 +351,7 @@ module Wagn
                   #{ raw subrenderer( Card.fetch current_set).render_content }
                 </div>
              
-                #{ if Card.toggle(card.rule(:accountable)) && card.trait_card(:account).ok?(:create)
+                #{ if Card.toggle(card.rule(:accountable)) && card.fetch(:trait=>:account).ok?(:create)
                     %{<div class="new-account-link">
                     #{ link_to %{Add a sign-in account for "#{card.name}"},
                         path(:options, :attrib=>:new_account),
@@ -364,7 +364,7 @@ module Wagn
             #{ notice }
          }
        end
-       # should be just if !card.trait_card(:account) and Card.new( :name=>"#{card.name}+Card[:account].name").ok?(create)
+       # should be just if !card.fetch(:trait=>:account) and Card.new( :name=>"#{card.name}+Card[:account].name").ok?(create)
     end
 
     define_view :option_roles do |args|
@@ -372,7 +372,7 @@ module Wagn
         [Card::AnyoneID, Card::AuthID].member? x.id.to_i
       end
 
-      traitc = card.trait_card :roles
+      traitc = card.fetch :trait => :roles, :new=>{}
      user_roles = traitc.item_cards :limit=>0
 
       option_content = if traitc.ok? :update
@@ -401,7 +401,7 @@ module Wagn
          option(option_content, :name=>"roles",
         :help=>%{ <span class="small">"#{ link_to_page 'Roles' }" are used to set user permissions</span>}, #ENGLISH
         :label=>"#{card.name}'s Roles",
-        :editable=>card.trait_card(:roles).ok?(:update)
+        :editable=>card.fetch(:trait=>:roles).ok?(:update)
       )}}
     end
 

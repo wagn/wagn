@@ -15,12 +15,12 @@ module WagnTestHelper
     #STDERR << "user #{user_card.inspect}\n"
 
     @user.update_column 'crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c'
-    #user_card.trait_card(:roles) << Card::AdminID
+    #user_card.fetch(:trait=>:roles) << Card::AdminID
 
     # setup admin while we're at it
     #@admin_card = Card[Card::WagnBotID]
 
-    #@admin_card.trait_card(:roles) << Card::AdminID
+    #@admin_card.fetch(:trait=>:roles) << Card::AdminID
     Session.user = 'joe_user'
     nil
   end

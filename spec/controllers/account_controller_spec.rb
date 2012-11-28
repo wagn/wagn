@@ -53,11 +53,13 @@ describe AccountController do
     #FIXME: tests needed : signup without approval, signup alert emails
 
     it 'should create a user' do
+      #warn "who #{Session.user_card.inspect}"
       post :signup, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}
       new_user = User.where(:email=>'joe@new.com').first
       user_card = Card['Joe New']
       new_user.should be
       new_user.card_id.should == user_card.id
+      new_user.pending?.should be_true
       user_card.type_id.should == Card::AccountRequestID
     end
 

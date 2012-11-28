@@ -477,7 +477,7 @@ class Card < ActiveRecord::Base
     (current_revision && current_revision.created_at) || Time.now
   end
 
-  def author
+  def creator
     Card[ creator_id ]
   end
 
@@ -530,25 +530,13 @@ class Card < ActiveRecord::Base
   end
 
   def all_roles
-    ids = Session.as_bot { trait_card(:roles).item_cards(:limit=>0).map(&:id) }
+    ids = Session.as_bot { fetch(:new=>{}, :trait=>:roles).item_cards(:limit=>0).map(&:id) }
     @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
   end
 
   def to_user
     User.where( :card_id => id ).first
   end # should be obsolete soon.
-
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # TRAIT METHODS
-
-  def existing_trait_card tagcode
-    Card.fetch cardname.trait_name(tagcode), :skip_modules=>true, :skip_virtual=>true
-  end
-
-  def trait_card tagcode
-    Card.fetch_or_new cardname.trait_name(tagcode), :skip_virtual=>true
-  end
 
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

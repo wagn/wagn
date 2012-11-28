@@ -65,8 +65,8 @@ module Notification
     def watcher_pairs(pairs=true, kind=:name)
       #warn "wp #{pairs}, #{kind}, #{Session.user_id}"
       namep, rc = (kind == :type) ?  [lambda { self.type_name },
-               (self.type_card.trait_card(:watchers))] :
-            [lambda { self.cardname }, trait_card(:watchers)]
+               (self.type_card.fetch(:trait=>:watchers))] :
+            [lambda { self.cardname }, fetch(:trait=>:watchers)]
       watchers = rc.nil? ? [] : rc.item_cards.map(&:id)
       pairs ? watchers.except(Session.user_id).map {|w| [w, namep.call] } : watchers
     end

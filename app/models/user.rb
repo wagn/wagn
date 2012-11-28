@@ -39,7 +39,6 @@ class User < ActiveRecord::Base
       @card = Card.fetch_or_new(card_args[:name], card_args)
       Session.as_bot do
         @user = User.new({:invite_sender=>Session.user_card, :status=>'active'}.merge(user_args))
-        #warn "user is #{@user.inspect}" unless @user.email
         @user.generate_password if @user.password.blank?
         @user.save_with_card(@card)
         @user.send_account_info(email_args) if @user.errors.empty? && !email_args.empty?

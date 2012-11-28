@@ -24,7 +24,7 @@ class AccountController < ApplicationController
       if @user.errors.any?
         user_errors 
       else
-        if @card.trait_card(:account).ok? :create       # automated approval
+        if @card.ok?(:create, :new=>{}, :trait=>:account)      # automated approval
           email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!",
                          :subject => Card.setting('*signup+*subject') || "Account info for #{Card.setting('*title')}!" }
           @user.accept @card, email_args

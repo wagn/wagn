@@ -94,7 +94,7 @@ class CardController < ApplicationController
 
 
   def watch
-    watchers = @card.trait_card(:watchers )
+    watchers = @card.fetch :trait=>:watchers, :new=>{}
     watchers = watchers.refresh
     myname = Card[Session.user_id].name
     watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
@@ -111,7 +111,7 @@ class CardController < ApplicationController
   def update_account
 
     if params[:save_roles]
-      role_card = @card.trait_card :roles
+      role_card = @card.fetch :trait=>:roles, :new=>{}
       role_card.ok! :update
 
       role_hash = params[:user_roles] || {}
@@ -122,7 +122,7 @@ class CardController < ApplicationController
     account = @card.to_user
     if account and account_args = params[:account]
       unless Session.as_id == @card.id and !account_args[:blocked]
-        @card.trait_card(:account).ok! :update
+        @card.fetch(:trait=>:account).ok! :update
       end
       account.update_attributes account_args
     end
@@ -138,7 +138,7 @@ class CardController < ApplicationController
   end
 
   def create_account
-    @card.trait_card(:account).ok! :create
+    @card.ok!(:create, :new=>{}, :trait=>:account)
     email_args = { :subject => "Your new #{Card.setting :title} account.",   #ENGLISH
                    :message => "Welcome!  You now have an account on #{Card.setting :title}." } #ENGLISH
     @user, @card = User.create_with_card(params[:user],@card, email_args)

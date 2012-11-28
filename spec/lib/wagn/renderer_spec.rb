@@ -334,7 +334,7 @@ describe Wagn::Renderer, "" do
       end
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
       @card.content = 'Bar'
-      result = Wagn::Renderer.new(@card).render(:edit)
+      result = Wagn::Renderer.new(@card).render :edit
       assert_view_select result, 'fieldset' do
         assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][templated~plus~alpha][content]'
       end

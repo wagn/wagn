@@ -197,13 +197,13 @@ describe "Permission", ActiveSupport::TestCase do
 
   it "write user permissions" do
     Session.as_bot {
-      rc=@u1.trait_card(:roles)
+      rc=@u1.fetch(:trait=>:roles, :new=>{})
       rc.content = ''; rc << @r1 << @r2
       rc.save
-      rc=@u2.trait_card(:roles)
+      rc=@u2.fetch(:trait=>:roles, :new=>{})
       rc.content = ''; rc << @r1 << @r3
       rc.save
-      rc=@u3.trait_card(:roles)
+      rc=@u3.fetch(:trait=>:roles, :new=>{})
       rc.content = ''; rc << @r1 << @r2 << @r3
       rc.save
 
@@ -227,10 +227,10 @@ describe "Permission", ActiveSupport::TestCase do
 
   it "read group permissions" do
     Session.as_bot do
-      rc=@u1.trait_card(:roles)
+      rc=@u1.fetch(:trait=>:roles)
       rc.content = ''; rc << @r1 << @r2
       rc.save
-      rc=@u2.trait_card(:roles)
+      rc=@u2.fetch(:trait=>:roles)
       rc.content = ''; rc << @r1 << @r3
       rc.save
 
@@ -254,7 +254,7 @@ describe "Permission", ActiveSupport::TestCase do
         Card.create(:name=>"c#{num}+*self+*update", :type=>'Pointer', :content=>"[[r#{num}]]")
       end
 
-      (rc=@u3.trait_card(:roles)).content =  ''
+      (rc=@u3.fetch(:trait=>:roles, :new=>{})).content =  ''
       rc << @r1
     end
 
@@ -277,11 +277,11 @@ describe "Permission", ActiveSupport::TestCase do
 
   it "read user permissions" do
     Session.as_bot {
-      (rc=@u1.trait_card(:roles)).content = ''
+      (rc=@u1.fetch(:trait=>:roles, :new=>{})).content = ''
       rc << @r1 << @r2
-      (rc=@u2.trait_card(:roles)).content = ''
+      (rc=@u2.fetch(:trait=>:roles, :new=>{})).content = ''
       rc << @r1 << @r3
-      (rc=@u3.trait_card(:roles)).content = ''
+      (rc=@u3.fetch(:trait=>:roles, :new=>{})).content = ''
       rc << @r1 << @r2 << @r3
 
       [1,2,3].each do |num|
@@ -319,7 +319,7 @@ describe "Permission", ActiveSupport::TestCase do
   end
 
   it "role wql" do
-    #warn "u1 roles #{Card[ @u1.id ].trait_card(:roles).item_names.inspect}"
+    #warn "u1 roles #{Card[ @u1.id ].fetch(:trait=>:roles).item_names.inspect}"
 
     # set up cards of type TestType, 2 with nil reader, 1 with role1 reader
     Session.as_bot do

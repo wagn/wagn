@@ -27,7 +27,7 @@ class Wagn::Set::Type::AccountRequestTest < ActiveSupport::TestCase
     #Session.as_bot  do
     #  auth_user_card = Card[Card::AuthID]
       # FIXME: change from task ...
-      #auth_user_card.trait_card(:tasks).content = '[[deny_account_requests]]'
+      #auth_user_card.fetch(:trait=>:tasks).content = '[[deny_account_requests]]'
     #end
     c=Card.fetch('Ron Request')
     #warn Rails.logger.warn("destroy card (#{c.inspect}) #{User.where(:email=>'ron@request.com').first.inspect}")

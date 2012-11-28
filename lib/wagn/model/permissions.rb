@@ -39,7 +39,15 @@ module Wagn::Model::Permissions
     @operation_approved
   end
 
+
   # ok? and ok! are public facing methods to approve one operation at a time
+  def ok_with_fetch? operation, opts={}
+    #warn "ok? #{operation}, #{opts.inspect}, #{caller[0..4]*", "}"
+    card = opts[:trait].nil? ? self : fetch(opts)
+
+    card.ok_without_fetch? operation
+  end
+
   def ok? operation
     #warn "ok? #{operation}"
     @operation_approved = true
@@ -54,9 +62,10 @@ module Wagn::Model::Permissions
 
     @operation_approved
   end
+  alias_method_chain :ok?, :fetch
 
-  def ok! operation
-    if ok? operation
+  def ok! operation, opts={}
+    if ok? operation, opts
       true
     else
       raise Card::PermissionDenied.new self
@@ -64,7 +73,7 @@ module Wagn::Model::Permissions
   end
 
   def who_can operation
-    #warn "who_can[#{name}] #{(prc=permission_rule_card(operation)).inspect}, #{prc.first.item_cards.map(&:name)}" if operation == :update
+    #warn "who_can[#{name}] #{(prc=permission_rule_card(operation)).inspect}, #{prc.first.item_cards.map(&:name)}" #if operation == :update
     permission_rule_card(operation).first.item_cards.map(&:id)
   end
 

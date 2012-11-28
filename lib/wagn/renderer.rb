@@ -160,7 +160,7 @@ module Wagn
       content = card.content if content.blank?
 
       wiki_content = WikiContent.new(card, content, self)
-      Rails.logger.info "processing content for #{card.name}"
+      #Rails.logger.info "processing content for #{card.name}"
       update_references( wiki_content, true ) if card.references_expired
 
       wiki_content.render! do |opts|

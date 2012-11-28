@@ -183,7 +183,9 @@ describe CardController do
     describe "#read" do
       it "works for basic request" do
         get :read, {:id=>'Sample_Basic'}
-        response.should have_selector('body')
+        response.body.match(/\<body[^>]*\>/im).should be_true
+        # have_selector broke in commit 8d3bf2380eb8197410e962304c5e640fced684b9, presumably because of a gem (like capybara?)
+        #response.should have_selector('body')
         assert_response :success
         'Sample Basic'.should == assigns['card'].name
       end

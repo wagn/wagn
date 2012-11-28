@@ -33,6 +33,7 @@ module Wagn
 
       def block_user
         account = User.where(:card_id=>self.id).first
+        Rails.logger.warn "areq #{inspect} #{account.inspect}"
         if account
           account.update_attributes :status=>'blocked'
         end

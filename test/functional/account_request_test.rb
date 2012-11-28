@@ -3,7 +3,7 @@ require 'card_controller'
 
 # Re-raise errors caught by the controller.
 class CardController; def rescue_action(e) raise e end; end
-class InvitationRequestTest < ActionController::TestCase
+class AccountRequestTest < ActionController::TestCase
 
   include AuthenticatedTestHelper
 
@@ -50,9 +50,10 @@ class InvitationRequestTest < ActionController::TestCase
   end
 
   def test_should_destroy_and_block_user
-    login_as :joe_user
+    login_as 'joe_admin'
     # FIXME: should test agains mocks here, instead of re-testing the model...
-    post :delete, :id=>"~#{Card.fetch('Ron Request').id}"
+    Rails.logger.warn "test point #{Session.as_card.inspect}"
+    post :delete, :id=>"~#{Card.fetch('Ron Request').id}", :confirm_destroy=>true
     assert_equal nil, Card.fetch('Ron Request')
     assert_equal 'blocked', User.find_by_email('ron@request.com').status
   end

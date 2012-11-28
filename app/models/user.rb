@@ -92,16 +92,24 @@ class User < ActiveRecord::Base
   def save_with_card card
     User.transaction do
       card = card.refresh
+      account = card.fetch :trait=>:account, :new=>{}
       if card.save
+        valid? and account.save
+        self.account_id = account.id
         self.card_id = card.id
         save
       else
         valid?
       end
+      #warn "c errs #{card.errors.full_messages*", "} #{self.errors.full_messages*", "}"
+      account.errors.each do |key,err|
+        self.errors.add key,err
+      end
       card.errors.each do |key,err|
         self.errors.add key,err
       end
-      raise ActiveRecord::Rollback if errors.any?
+      #warn "u errs #{errors.any?}, #{self.errors.full_messages*", "}"
+      raise ActiveRecord::Rollback if self.errors.any?
       true
     end
   end

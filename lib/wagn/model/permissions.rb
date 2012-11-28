@@ -41,6 +41,13 @@ module Wagn::Model::Permissions
 
 
   # ok? and ok! are public facing methods to approve one operation at a time
+  #
+  #   fetching: if the optional :trait parameter is supplied, it is passed
+  #      to fetch and the test is perfomed on the fetched card, therefore:
+  #
+  #      :trait=>:account         would fetch this card plus a tag codenamed :account
+  #      :trait=>:roles, :new=>{} would be a fetch_or_new_trait
+
   def ok_with_fetch? operation, opts={}
     #warn "ok? #{operation}, #{opts.inspect}, #{caller[0..4]*", "}"
     card = opts[:trait].nil? ? self : fetch(opts)

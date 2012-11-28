@@ -50,7 +50,7 @@ class AccountCreationTest < ActionController::TestCase
   end
 
   def test_should_create_account_from_account_request_when_user_hard_templated
-    Session.as_bot { Card.create :name=>'User+*type+*content', :content=>"like this" }
+    Account.as_bot { Card.create :name=>'User+*type+*content', :content=>"like this" }
     assert_equal :account_request, (c=Card.fetch('Ron Request')).typecode
     post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
     c=Card.fetch('Ron Request')
@@ -79,13 +79,13 @@ class AccountCreationTest < ActionController::TestCase
     end
     email = ActionMailer::Base.deliveries[-1]
     # emails should be 'from' inviting user
-    assert_equal Session.user.email, email.from[0]
+    assert_equal Account.user.email, email.from[0]
     assert_equal 'active', User.find_by_email('new@user.com').status
     assert_equal 'active', User.find_by_email('new@user.com').status
   end
 
   def test_should_create_account_when_user_cards_are_templated   ##FIXME -- I don't think this actually catches the bug I saw.
-    Session.as_bot { Card.create! :name=> 'User+*type+*content'}
+    Account.as_bot { Card.create! :name=> 'User+*type+*content'}
     assert_new_account do
       post_invite
       assert_response 302

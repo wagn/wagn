@@ -7,10 +7,6 @@ class User < ActiveRecord::Base
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :name
 
-  has_and_belongs_to_many :roles
-  belongs_to :invite_sender, :class_name=>'Card', :foreign_key=>'invite_sender_id'
-  has_many :invite_recipients, :class_name=>'Card', :foreign_key=>'invite_sender_id'
-
   validates_presence_of     :email, :if => :email_required?
   validates_format_of       :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i  , :if => :email_required?
   validates_length_of       :email, :within => 3..100,   :if => :email_required?
@@ -19,8 +15,6 @@ class User < ActiveRecord::Base
   validates_presence_of     :password_confirmation,      :if => :password_required?
   validates_length_of       :password, :within => 5..40, :if => :password_required?
   validates_confirmation_of :password,                   :if => :password_required?
-#  validates_presence_of     :invite_sender,              :if => :active?
-#  validates_uniqueness_of   :salt, :allow_nil => true
 
   before_validation :downcase_email!
   before_save :encrypt_password
@@ -28,8 +22,8 @@ class User < ActiveRecord::Base
 
   class << self
     def admin()          User.where(:card_id=>Card::WagnBotID).first end
-    def as_user()        User.where(:card_id=>Session.as_id).first   end
-    def user()           User.where(:card_id=>Session.user_id).first end
+    def as_user()        User.where(:card_id=>Account.as_id).first   end
+    def user()           User.where(:card_id=>Account.user_id).first end
     def from_id(card_id) User.where(:card_id=>card_id).first         end
     def cache()          Wagn::Cache[User]                           end
 
@@ -37,8 +31,10 @@ class User < ActiveRecord::Base
     def create_with_card user_args, card_args, email_args={}
       card_args[:type_id] ||= Card::UserID
       @card = Card.fetch_or_new(card_args[:name], card_args)
-      Session.as_bot do
-        @user = User.new({:invite_sender=>Session.user_card, :status=>'active'}.merge(user_args))
+      Account.as_bot do
+        @user = User.new(user_args)
+        @user.status = 'active' unless user_args.has_key? :status
+        Rails.logger.warn "create_wcard #{@user.inspect}, #{user_args.inspect}"
         @user.generate_password if @user.password.blank?
         @user.save_with_card(@card)
         @user.send_account_info(email_args) if @user.errors.empty? && !email_args.empty?
@@ -93,6 +89,7 @@ class User < ActiveRecord::Base
     User.transaction do
       card = card.refresh
       account = card.fetch :trait=>:account, :new=>{}
+      card.confirm_rename=true  # otherwise it thinks this is rename with dependents because of the account card
       if card.save
         valid? and account.save
         self.account_id = account.id
@@ -115,12 +112,12 @@ class User < ActiveRecord::Base
   end
 
   def accept(card, email_args)
-    Session.as_bot do #what permissions does approver lack?  Should we check for them?
+    Account.as_bot do #what permissions does approver lack?  Should we check for them?
       card.type_id = Card::UserID # Invite Request -> User
       self.status='active'
-      self.invite_sender = Session.user_card
       generate_password
       r=save_with_card(card)
+      Rails.logger.warn "accept #{inspect}, #{card.inspect}, #{self.errors.full_messages*", "} R:#{r}"; r
     end
     #card.save #hack to make it so last editor is current user.
     self.send_account_info(email_args) if self.errors.empty?

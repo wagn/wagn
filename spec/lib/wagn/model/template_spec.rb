@@ -5,7 +5,7 @@ describe Card do
 
   describe "#hard_templatees" do
     it "for User+*type+*content should return all Users" do
-      Session.as_bot do
+      Account.as_bot do
         c=Card.create(:name=>'User+*type+*content')
         c.hard_templatee_names.sort.should == [
           "Joe Admin", "Joe Camel", "Joe User", "John", "No Count", "Sample User", "Sara", "u1", "u2", "u3"
@@ -26,10 +26,10 @@ end
 
 describe Card, "with right content template" do
   before do
-    Session.as_bot do
+    Account.as_bot do
       @bt = Card.create! :name=>"birthday+*right+*content", :type=>'Date', :content=>"Today!"
     end
-    Session.as :joe_user
+    Account.as :joe_user
     @jb = Card.create! :name=>"Jim+birthday"
   end
 
@@ -38,7 +38,7 @@ describe Card, "with right content template" do
   end
 
   it "should change content with template" do
-    Session.as_bot do
+    Account.as_bot do
       @bt.content = "Tomorrow"; @bt.save!
     end
     Wagn::Renderer.new( Card['Jim+birthday']).render(:raw).should == 'Tomorrow'
@@ -48,10 +48,10 @@ end
 
 describe Card, "with right default template" do
   before do
-    Session.as_bot  do
+    Account.as_bot  do
       @bt = Card.create! :name=>"birthday+*right+*default", :type=>'Date', :content=>"Today!"
     end
-    Session.as :joe_user
+    Account.as :joe_user
     @jb = Card.create! :name=>"Jim+birthday"
   end
 
@@ -66,7 +66,7 @@ end
 
 describe Card, "templating" do
   before do
-    Session.as_bot do
+    Account.as_bot do
       Card.create :name=>"Jim+birthday", :content=>'Yesterday'
       @dt = Card.create! :name=>"Date+*type+*content", :type=>'Basic', :content=>'Tomorrow'
       @bt = Card.create! :name=>"birthday+*right+*content", :type=>'Date', :content=>"Today"
@@ -78,14 +78,14 @@ describe Card, "templating" do
   end
 
   it "should defer to normal content when *content rule's content is (exactly) '_self'" do
-    Session.as_bot { Card.create! :name=>'Jim+birthday+*self+*content', :content=>'_self' }
+    Account.as_bot { Card.create! :name=>'Jim+birthday+*self+*content', :content=>'_self' }
     Card['Jim+birthday'].raw_content.should == 'Yesterday'
   end
 end
 
 describe Card, "with type content template" do
   before do
-    Session.as_bot do
+    Account.as_bot do
       @dt = Card.create! :name=>"Date+*type+*content", :type=>'Basic', :content=>'Tomorrow'
     end
   end

@@ -50,7 +50,7 @@ end
 
 describe Card, "with role" do
   before do
-    Session.as_bot do
+    Account.as_bot do
       @role = Card.search(:type=>'Role')[0]
     end
   end
@@ -64,7 +64,7 @@ end
 
 describe Card, "with account" do
   before do
-    Session.as_bot do
+    Account.as_bot do
       @joe = change_card_to_type('Joe User', :basic)
     end
   end
@@ -139,7 +139,7 @@ end
 
 describe Card, "type transition create callback" do
   before do
-    Session.as_bot do
+    Account.as_bot do
       Card.create(:name=>'Basic+*type+*delete', :type=>'Pointer', :content=>"[[Anyone Signed in]]")
     end
     @c = change_card_to_type("basicname", :cardtype_f)
@@ -157,7 +157,7 @@ end
 
 
 def change_card_to_type(name, type)
-  Session.as :joe_user do
+  Account.as :joe_user do
     card = Card.fetch(name)
     tid=card.type_id = Symbol===type ? Wagn::Codename[type] : Card.fetch_id(type)
     #warn "card[#{name.inspect}, T:#{type.inspect}] is #{card.inspect}, TID:#{tid}"

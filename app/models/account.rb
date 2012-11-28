@@ -1,4 +1,4 @@
-class Session
+class Account
   @@as_card = @@as_id = @@user_id = @@user_card = @@user = nil
 
   class << self
@@ -89,7 +89,7 @@ class Session
       return true if usr_id == Card::WagnBotID #cannot disable
 
       always = Card.cache.read('ALWAYS') || {}
-      #warn(Rails.logger.warn "Session.always_ok? #{usr_id}")
+      #warn(Rails.logger.warn "Account.always_ok? #{usr_id}")
       if always[usr_id].nil?
         always = always.dup if always.frozen?
         always[usr_id] = !!Card[usr_id].all_roles.detect{|r|r==Card::AdminID}
@@ -105,7 +105,7 @@ class Session
   protected
     # FIXME stick this in session? cache it somehow??
     def ok_hash
-      usr_id = Session.as_id
+      usr_id = Account.as_id
       ok_hash = Card.cache.read('OK') || {}
       #warn(Rails.logger.warn "ok_hash #{usr_id}")
       if ok_hash[usr_id].nil?
@@ -128,7 +128,7 @@ class Session
     NON_CREATEABLE_TYPES = %w{ account_request setting set }
 
     def createable_types
-      type_names = Session.as_bot do
+      type_names = Account.as_bot do
         Card.search :type=>Card::CardtypeID, :return=>:name, :not => { :codename => ['in'] + NON_CREATEABLE_TYPES }
       end
       type_names.reject do |name|

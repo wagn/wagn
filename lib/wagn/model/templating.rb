@@ -51,7 +51,7 @@ module Wagn::Model::Templating
   def hard_templatee_names
     if wql = hard_templatee_spec
       #warn "ht_names_wql #{wql.inspect}"
-      Session.as_bot do
+      Account.as_bot do
         wql == true ? [name] : Wql.new(wql.merge :return=>:name).run
       end
     else [] end
@@ -67,7 +67,7 @@ module Wagn::Model::Templating
     if wql = hard_templatee_spec
       wql = {:name => name} if wql == true
 
-      condition = Session.as_bot { Wql::CardSpec.build(wql.merge(:return => :condition)).to_sql }
+      condition = Account.as_bot { Wql::CardSpec.build(wql.merge(:return => :condition)).to_sql }
       #warn "expire_t_refs #{name}, #{condition.inspect}"
       card_ids_to_update = connection.select_rows("select id from cards t where #{condition}").map(&:first)
       card_ids_to_update.each_slice(100) do |id_batch|

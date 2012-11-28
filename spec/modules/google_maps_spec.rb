@@ -3,7 +3,7 @@ require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
 describe GoogleMapsAddon do
   before(:each) do
-    Session.as :joe_user
+    Account.as :joe_user
     @geotest = Card.new(:name=>"Geotest")
   end
 
@@ -14,14 +14,14 @@ describe GoogleMapsAddon do
 
   context "given a *geocode configuration" do
     before(:each) do
-      Session.as_bot do
+      Account.as_bot do
         Card.create! :name=>"*geocode", :content => "[[street address]]\n[[zip]]", :type=>'Pointer'
       end
     end
 
     it "should save geocoding to +*geocode when configured cards card are present" do
       mock(GoogleMapsAddon).geocode("519 Peterson St 80524").returns('40.581144, -105.071947')
-      Session.as_bot do
+      Account.as_bot do
         # FIXME: rules for this should be standard?
         Card.create :name=>"*geocode+*right+*update", :content=>'[[Anyone Signed In]]'
         Card.create :name=>"*geocode+*right+*create", :content=>'[[Anyone Signed In]]'

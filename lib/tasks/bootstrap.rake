@@ -44,7 +44,7 @@ namespace :wagn do
       end
 
       # trash ignored cards
-      Session.as_bot do
+      Account.as_bot do
         Card.search( {:referred_to_by=>'*ignore'} ).each do |card|
           card.confirm_destroy = true
           card.destroy!

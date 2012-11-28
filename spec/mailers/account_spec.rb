@@ -9,9 +9,9 @@ describe Mailer do
   #include ActionMailer::Quoting
 
   before do
-    #FIXME: from addresses are really Session.user, not Session.as_user based, but
-    # these tests are pretty much all using the Session.as, not logging in.
-    Session.user=nil # this is needed to clear logins from other test run before
+    #FIXME: from addresses are really Account.user, not Account.as_user based, but
+    # these tests are pretty much all using the Account.as, not logging in.
+    Account.user=nil # this is needed to clear logins from other test run before
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries = []
@@ -24,7 +24,7 @@ describe Mailer do
   context "account info, new password" do # forgot password
     before do
       user_id =  Card['sara'].id
-      Session.as_bot do
+      Account.as_bot do
         @user = User.where(:card_id=>user_id).first
         @user.generate_password
         @email = Mailer.account_info(@user, "New password subject", "Forgot my password")

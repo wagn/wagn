@@ -9,7 +9,7 @@ end
 describe "Card (Cardtype)" do
 
   before do
-    Session.as :joe_user
+    Account.as :joe_user
   end
 
   it "should not allow cardtype remove when instances present" do
@@ -69,7 +69,7 @@ end
 
 describe Card, "created without permission" do
   before do
-    Session.user= Card::AnonID
+    Account.user= Card::AnonID
   end
 
   # FIXME:  this one should pass.  unfortunately when I tried to fix it it started looking like the clean solution
@@ -95,14 +95,14 @@ describe Card, "Normal card with dependents" do
     @a.dependents.length.should > 0
   end
   it "should successfull have its type changed" do
-    Session.as_bot do
+    Account.as_bot do
       @a.type_id = Card::NumberID;
       @a.save!
       Card['A'].typecode.should== :number
     end
   end
   it "should still have its dependents after changing type" do
-    Session.as_bot do
+    Account.as_bot do
       assert type_id = Card.fetch_id('cardtype_e')
       @a.type_id = type_id; @a.save!
       Card['A'].dependents.length.should > 0
@@ -114,7 +114,7 @@ end
 =begin No extension any more, is there a modified version of this we need?
 describe Card, "Recreated Card" do
   before do
-    Session.as_bot do
+    Account.as_bot do
     @ct = Card.create! :name=>'Species', :type=>'Cardtype'
     @ct.destroy!
     @ct = Card.create! :name=>'Species', :type=>'Cardtype'
@@ -130,7 +130,7 @@ end
 
 describe Card, "New Cardtype" do
   before do
-    Session.as_bot do
+    Account.as_bot do
       @ct = Card.create! :name=>'Animal', :type=>'Cardtype'
     end
   end
@@ -146,7 +146,7 @@ end
 
 describe Card, "Wannabe Cardtype Card" do
   before do
-    Session.as_bot do
+    Account.as_bot do
       @card = Card.create! :name=> 'convertible'
       @card.type_id=Card::CardtypeID
       @card.save!
@@ -160,16 +160,16 @@ end
 
 describe User, "Joe User" do
   before do
-    Session.as_bot do
+    Account.as_bot do
       @r3 = Card['r3']
 
       Card.create :name=>'Cardtype F+*type+*create', :type=>'Pointer', :content=>'[[r3]]'
     end
 
-    Session.as :joe_user
+    Account.as :joe_user
     @user = User.user
     @ucard = Card[@user.card_id]
-    @type_names = Session.createable_types
+    @type_names = Account.createable_types
   end
 
   it "should not have r3 permissions" do
@@ -197,7 +197,7 @@ describe Card, "Cardtype with Existing Cards" do
   end
 
   it "should raise an error when you try to delete it" do
-    Session.as_bot do
+    Account.as_bot do
       @ct.confirm_destroy = true
       @ct.destroy
       @ct.errors[:cardtype].should_not be_empty
@@ -209,7 +209,7 @@ end
 describe Wagn::Set::Type::Cardtype do
 
   it "should handle changing away from Cardtype" do
-    Session.as_bot do
+    Account.as_bot do
       ctg = Card.create! :name=>"CardtypeG", :type=>"Cardtype"
       ctg.type_id = Card::BasicID
       ctg.save!

@@ -2,7 +2,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 =begin
 describe Card, "Case Variant" do
   before do
-    Session.as :joe_user
+    Account.as :joe_user
     @c = Card.create! :name=>'chump'
   end
 
@@ -25,7 +25,7 @@ end
 =end
 describe SmartName, "changing from plus card to simple" do
   before do
-    Session.as :joe_user
+    Account.as :joe_user
     @c = Card.create! :name=>'four+five'
     @c.name = 'nine'
     @c.confirm_rename = true

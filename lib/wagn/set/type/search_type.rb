@@ -227,7 +227,7 @@ module Wagn
       end
 
       def get_spec params={}
-        spec = Session.as_bot do ## why is this a wagn_bot thing?  can't deny search content??
+        spec = Account.as_bot do ## why is this a wagn_bot thing?  can't deny search content??
           spec_content = params.delete(:spec) || raw_content
           #warn "get_spec #{name}, #{spec_content}, #{params.inspect}"
           raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?

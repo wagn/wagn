@@ -6,7 +6,7 @@ CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User","*plusses+*righ
 
 describe Wql do
   before do
-    Session.user= :joe_user
+    Account.user= :joe_user
   end
 
 
@@ -77,7 +77,7 @@ describe Wql do
     end
 
     it "should not give duplicate results for multiple edits" do
-      Session.as(:joe_user){ c=Card["JoeNow"]; c.content="testagagin"; c.save!; c.content="test3"; c.save! }
+      Account.as(:joe_user){ c=Card["JoeNow"]; c.content="testagagin"; c.save!; c.content="test3"; c.save! }
       Wql.new(:edited_by=>"Joe User").run.map(&:name).sort.should == ["JoeLater","JoeNow"]
     end
 
@@ -88,7 +88,7 @@ describe Wql do
 
   describe "created_by/creator_of" do
     before do
-      Session.as :joe_user do
+      Account.as :joe_user do
         Card.create :name=>'Create Test', :content=>'sufficiently distinctive'
       end
     end
@@ -105,7 +105,7 @@ describe Wql do
 
   describe "last_edited_by/last_editor_of" do
     before do
-      Session.user= :joe_user
+      Account.user= :joe_user
       c=Card.fetch('A'); c.content='peculicious'; c.save!
     end
 
@@ -166,7 +166,7 @@ describe Wql do
 
   describe "permissions" do
     it "should not find cards not in group" do
-      Session.as_bot  do
+      Account.as_bot  do
         Card.create :name=>"C+*self+*read", :type=>'Pointer', :content=>"[[R1]]"
       end
       Wql.new( :plus=>"A" ).run.plot(:name).sort.should == %w{ B D E F }
@@ -272,7 +272,7 @@ describe Wql do
     end
 
     it "should sort by plus card content" do
-      Session.as_bot do
+      Account.as_bot do
         c = Card.fetch('Setting+*self+*table of contents')
         c.content = '10'
         c.save
@@ -287,7 +287,7 @@ describe Wql do
     end
 
     it "should sort by count" do
-      Session.as_bot do
+      Account.as_bot do
         w = Wql.new( :name=>[:in,'Sara','John','Joe User'], :sort=>{ :right=>'*watcher', :item=>'referred_to', :return=>'count' } )
         w.run.plot(:name).should == ['Joe User','John','Sara']
       end
@@ -352,7 +352,7 @@ describe Wql do
   #=end
   describe "found_by" do
     before do
-      Session.user= Card::WagnBotID
+      Account.user= Card::WagnBotID
       c = Card.create(:name=>'Simple Search', :type=>'Search', :content=>'{"name":"A"}')
     end
 

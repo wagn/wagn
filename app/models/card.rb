@@ -82,7 +82,7 @@ class Card < ActiveRecord::Base
     end
 
     def setting name
-      Session.as_bot do
+      Account.as_bot do
         card=Card[name] and !card.content.strip.empty? and card.content
       end
     end
@@ -194,7 +194,7 @@ class Card < ActiveRecord::Base
   end
 
   def set_stamper
-    self.updater_id = Session.user_id
+    self.updater_id = Account.user_id
     self.creator_id = self.updater_id if new_card?
   end
 
@@ -375,7 +375,7 @@ class Card < ActiveRecord::Base
 
   def dependents
     return [] if new_card?
-    Session.as_bot do
+    Account.as_bot do
       Card.search( :part=>name ).map do |c|
         [ c ] + c.dependents
       end.flatten
@@ -383,7 +383,7 @@ class Card < ActiveRecord::Base
   end
 
   def repair_key
-    Session.as_bot do
+    Account.as_bot do
       correct_key = cardname.key
       current_key = key
       return self if current_key==correct_key
@@ -522,7 +522,7 @@ class Card < ActiveRecord::Base
         [] # avoids infinite loop
       else
         party_keys = ['in', Card::AnyoneID] + parties
-        Session.as_bot do
+        Account.as_bot do
           Card.search(:right=>{:codename=>'read'}, :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
         end
       end
@@ -530,7 +530,7 @@ class Card < ActiveRecord::Base
   end
 
   def all_roles
-    ids = Session.as_bot { fetch(:new=>{}, :trait=>:roles).item_cards(:limit=>0).map(&:id) }
+    ids = Account.as_bot { fetch(:new=>{}, :trait=>:roles).item_cards(:limit=>0).map(&:id) }
     @all_roles ||= (id==Card::AnonID ? [] : [Card::AuthID] + ids)
   end
 
@@ -635,7 +635,7 @@ class Card < ActiveRecord::Base
   validates_each :name do |rec, attr, value|
     if rec.new_card? && value.blank?
       if autoname_card = rec.rule_card(:autoname)
-        Session.as_bot do
+        Account.as_bot do
           autoname_card = autoname_card.refresh
           value = rec.name = rec.autoname( autoname_card.content )
           autoname_card.content = value  #fixme, should give placeholder on new, do next and save on create
@@ -655,7 +655,7 @@ class Card < ActiveRecord::Base
           "may not contain any of the following characters: #{ SmartName.banned_array * ' ' }"
       end
       # this is to protect against using a plus card as a tag
-      if cdname.junction? and rec.simple? and Session.as_bot { Card.count_by_wql :tag_id=>rec.id } > 0
+      if cdname.junction? and rec.simple? and Account.as_bot { Card.count_by_wql :tag_id=>rec.id } > 0
         rec.errors.add :name, "#{value} in use as a tag"
       end
 

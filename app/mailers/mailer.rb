@@ -22,7 +22,7 @@ class Mailer < ActionMailer::Base
 
     args =  { :to => @email, :subject  => subject }
     set_from_args args, ( Card.setting('*invite+*from') || begin
-      curr = Session.user
+      curr = Account.user
       from_user = curr.anonymous? || curr.id == user.id ? User.admin : curr
       "#{from_user.card.name} <#{from_user.email}>"
     end ) #FIXME - might want different "from" settings for different contexts?

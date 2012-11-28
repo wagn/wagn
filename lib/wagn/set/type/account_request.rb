@@ -11,7 +11,7 @@ module Wagn
       if Card[:account].ok?(:create)
         links << link_to( "Invite #{card.name}", Card.path_setting("/account/accept?card[key]=#{card.cardname.url_key}"), :class=>'invitation-link')
       end
-      if Session.logged_in? && card.ok?(:delete)
+      if Account.logged_in? && card.ok?(:delete)
         links << link_to( "Deny #{card.name}", path(:delete), :class=>'slotter standard-delete', :remote=>true )
       end
 

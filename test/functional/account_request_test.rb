@@ -14,7 +14,7 @@ class AccountRequestTest < ActionController::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
 
-    Session.as_bot do
+    Account.as_bot do
       Card.create(:name=>'Account Request+*type+*captcha', :content=>'0')
     end
   end
@@ -52,7 +52,7 @@ class AccountRequestTest < ActionController::TestCase
   def test_should_destroy_and_block_user
     login_as 'joe_admin'
     # FIXME: should test agains mocks here, instead of re-testing the model...
-    Rails.logger.warn "test point #{Session.as_card.inspect}"
+    Rails.logger.warn "test point #{Account.as_card.inspect}"
     post :delete, :id=>"~#{Card.fetch('Ron Request').id}", :confirm_destroy=>true
     assert_equal nil, Card.fetch('Ron Request')
     assert_equal 'blocked', User.find_by_email('ron@request.com').status

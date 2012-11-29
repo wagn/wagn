@@ -67,8 +67,6 @@ module Wagn
         #{ _optional_render :type, args, hidden[:type] }
         
       </div>
-     
-      #{ _render_menu }
       }
     end
 
@@ -77,7 +75,10 @@ module Wagn
     end
   
     define_view :menu_link do |args|
-      %{<span class="card-menu-link">&equiv;</span>}
+      %{<div class="card-menu-link">
+          #{ _render_menu }
+          &equiv;
+        </div>}
     end
   
     define_view :menu do |args|
@@ -88,13 +89,7 @@ module Wagn
       ]
     
       option_html = %{
-      
-        <style>
-        .ui-menu {
-            width: 200px;
-        }
-        </style>
-        <ul class="cardMenu">
+        <ul class="card-menu">
             <li>#{ link_to_action 'edit', :edit, :class=>'slotter' }
               <ul>
                   <li><a href="#">Item 3-1</a></li>

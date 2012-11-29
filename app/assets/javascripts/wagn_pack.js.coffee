@@ -86,9 +86,11 @@ $(window).ready ->
     #   get the template menu
     #   make a copy right after menu link (or associate if necessary)
     #   do simple substitutions?
-    cm = $(this).slot().find '.cardMenu'
-    cm.menu()
+    cm = $(this).slot().find '.card-menu'
+    cm.menu position: { my:'right top', at:'left top' }, 
+      icons:{ submenu:'ui-icon-carat-1-w' }
     cm.show()
+    
     #   do a request to flesh out remaining menu parts
 
   #pointer pack

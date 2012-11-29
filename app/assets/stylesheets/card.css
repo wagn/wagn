@@ -54,10 +54,18 @@ h1.card-title {
 .card-header .card-menu-link {
   float: right;
 }
-.cardMenu {
+.card-menu {
   display:none;
   position:absolute;
   z-index: 1;
+}
+.card-menu .ui-menu-icon {
+  float: left;
+  margin-right: 15px;
+}
+.card-menu .ui-menu-item {
+  text-align: right;
+  white-space: nowrap;
 }
 .card-header .toggler {
   font-size: 1.5em;

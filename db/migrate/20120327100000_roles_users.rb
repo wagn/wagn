@@ -19,24 +19,23 @@ class RolesUsers < ActiveRecord::Migration
       Wagn::Cache.reset_global
       
 
-      roles_card = Card[:roles].fetch! :trait=>:right, :new=>{}
-      roles_card.fetch! :trait=>:default, :new=>{:type_id => Card::PointerID}
+      Card.create! :name => '*roles+*right+*default', :type_id => Card::PointerID
 
       # Add rolename->*tasks pointers from roles.tasks
       Card.where( :extension_type => 'Role', :trash => false ).each do |rolecard|
         if oldrole=Role.where(:id=>rolecard.extension_id).first
-          account_card = Card[:account]
           tasks = oldrole.tasks and tasks.split(',').each do |task|
             # mapping old task names to rule cardnames to use
             cardname = case task.to_sym
-              when :create_accounts    ;  account_card.fetch! :trait=>[:right, :create], :new=>{:content=>"[[#{rolecard.name}]]"}
-              when :administrate_users ;  account_card.fetch! :trait=>[:right, :update], :new=>{:content=>"[[#{rolecard.name}]]"}
-                                          # "*account+*right+*update"
-              when :assign_user_roles  ;  roles_card.fetch! :trait=>:update, :new=>{:content=>"[[#{rolecard.name}]]"}
-                                          # "*roles+*right+*update"
+              when :create_accounts    ;  "*account+*right+*create"
+              when :administrate_users ;  "*account+*right+*update"
+              when :assign_user_roles  ;  "*roles+*right+*update"
               else                     ;   next
               end
             #puts "tasks ? #{task.inspect}[#{rolecard.name}] >> #{c.inspect}"
+            c = Card.fetch_or_new cardname
+            c.add_item rolecard.name
+            c.save
           end
         end
       end

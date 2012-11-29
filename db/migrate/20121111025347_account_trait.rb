@@ -4,7 +4,8 @@ class AccountTrait < ActiveRecord::Migration
       User.all.each do |user|
         #next if user.card_id == Card::WagnBotID || user.card_id == Card::AnonID
         card = Card.find user.card_id
-        if account = card.fetch!(:trait=>:account, :new=>{})
+        if account = card.fetch(:trait=>:account, :new=>{})
+          account.save!
           user.account_id = account.id
           user.save!
         end

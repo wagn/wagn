@@ -2,6 +2,8 @@
 .denial-view,
 .not_found-view,
 */
+
+
  
 .card-frame {
   margin: 1px 0px;
@@ -169,9 +171,10 @@ fieldset > .button-area,
 fieldset > .editor {
   float: right;
   width: 70%;
-}
-fieldset > .editor {
   padding: 3px;
+}
+fieldset > .button-area {
+  padding: 0 3px;
 }
 fieldset > .editor > input {
   margin-left: 0;
@@ -289,6 +292,7 @@ del.diffmod,
 .card-body {
   display: block;
   padding: 5px 12px;
+  min-height: 25px;
 }
 .instruction {
   border-left: 0px;

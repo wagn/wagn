@@ -32,7 +32,7 @@ module Wagn
     end
 
     define_view :titled do |args|
-      hidden = {:menu_link=>true, :type=>true, :closed_link=>true }
+      hidden = { :menu_link=>true, :type=>true, :closed_link=>true }
       wrap :titled, args do
         %{ #{ _render_header args.merge( { :default_hidden => hidden } ) }
            #{ wrap_content( :titled ) { _render_core args } }   
@@ -240,11 +240,7 @@ module Wagn
       end)
     end
 
-    define_view :type_editor do |args|
-      fieldset 'type', (editor_wrap :type do
-        type_field :class=>'type-field live-type-field', :href=>path(:new), 'data-remote'=>true
-      end)
-    end
+
   
     define_view :edit_name, :perms=>:update do |args|
       card.update_referencers = false
@@ -253,55 +249,70 @@ module Wagn
     
       wrap :edit_name, args.merge(:framed=>true) do
         _render_header +
-        card_form( path(:update, :id=>card.id), 'card-name-form', 'main-success'=>'REDIRECT' ) do |f|
-          @form = f
-          %{  
-            #{ _render_name_editor}
+        wrap_content( :edit_name, :body=>true, :class=>'card-editor' ) do
+          card_form( path(:update, :id=>card.id), 'card-name-form', 'main-success'=>'REDIRECT' ) do |f|
+            @form = f
+            %{  
+              #{ _render_name_editor}
           
-            #{ f.hidden_field :update_referencers, :class=>'update_referencers'   }
-            #{ hidden_field_tag :success, '_self'  }
-            #{ hidden_field_tag :old_name, card.name }
-            #{ hidden_field_tag :confirmed, 'false'  }
-            #{ hidden_field_tag :referers, referers.size }
-            <div class="confirm-rename hidden">
-              <h1>Are you sure you want to rename <em>#{card.name}</em>?</h1>
-              #{ %{ <h2>This change will...</h2> } if referers.any? || dependents.any? }
-              <ul>
-                #{ %{<li>automatically alter #{ dependents.size } related name(s). } if dependents.any? }
-                #{ %{<li>break at least #{referers.size} reference(s) to this name.} if referers.any? }
-              </ul>
-              #{ %{<p>You may choose to <em>ignore or fix</em> the references. Fixing will update references to use the new name.</p>} if referers.any? }  
-            </div>
-            #{ submit_tag 'Rename', :class=>'edit-name-submit-button' }
-            #{ button_tag 'Cancel', :class=>'edit-name-cancel-button slotter', :type=>'button', :href=>path(:edit, :id=>card.id)}
-          }
+              #{ f.hidden_field :update_referencers, :class=>'update_referencers'   }
+              #{ hidden_field_tag :success, '_self'  }
+              #{ hidden_field_tag :old_name, card.name }
+              #{ hidden_field_tag :confirmed, 'false'  }
+              #{ hidden_field_tag :referers, referers.size }
+              <div class="confirm-rename hidden">
+                <h1>Are you sure you want to rename <em>#{card.name}</em>?</h1>
+                #{ %{ <h2>This change will...</h2> } if referers.any? || dependents.any? }
+                <ul>
+                  #{ %{<li>automatically alter #{ dependents.size } related name(s). } if dependents.any? }
+                  #{ %{<li>break at least #{referers.size} reference(s) to this name.} if referers.any? }
+                </ul>
+                #{ %{<p>You may choose to <em>ignore or fix</em> the references. Fixing will update references to use the new name.</p>} if referers.any? }  
+              </div>
+              <fieldset>
+                <div class="button-area">
+                  #{ submit_tag 'Rename', :class=>'edit-name-submit-button' }
+                  #{ button_tag 'Cancel', :class=>'edit-name-cancel-button slotter', :type=>'button', :href=>path(:edit, :id=>card.id)}
+                </div>
+              </fieldset>
+            }
+          end
         end
       end
     end
 
-  
+    define_view :type_editor do |args|
+      fieldset 'type', (editor_wrap :type do
+        if args[:variety] == :edit
+          type_field :class=>'type-field edit-type-field'
+        else
+          type_field :class=>"type-field live-type-field", :href=>path(:new), 'data-remote'=>true
+        end
+      end)
+    end
 
     define_view :edit_type, :perms=>:update do |args|
       wrap :edit_type, args.merge(:framed=>true) do
-        %{
-        #{ _render_header }
-        <div class="edit-area edit-type">
-          <h2>Change Type</h2> #{
-            card_form :update, 'card-edit-type-form' do |f|
-              #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
-       
-              %{ #{ hidden_field_tag :view, :edit }
+        _render_header +
+        wrap_content( :edit_type, :body=>true, :class=>'card-editor' ) do
+          card_form( :update, 'card-edit-type-form' ) do |f|
+            #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
+            %{ 
+              #{ hidden_field_tag :view, :edit }
               #{if card.type_id == Card::CardtypeID and !Card.search(:type_id=>card.card.id).empty? #ENGLISH
                 %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
               else
-                %{<div>to #{ raw type_field :class=>'type-field edit-type-field' }</div>}
+                _render_type_editor :variety=>:edit #FIXME dislike this api -ef
               end}
-              <div>
-                #{ submit_tag 'Submit', :disable_with=>'Submitting' }
-                #{ button_tag 'Cancel', :href=>path(:edit), :type=>'button', :class=>'edit-type-cancel-button slotter' }
-              </div>}
-           end}
-        </div>}
+              <fieldset>
+                <div class="button-area">              
+                  #{ submit_tag 'Submit', :disable_with=>'Submitting' }
+                  #{ button_tag 'Cancel', :href=>path(:edit), :type=>'button', :class=>'edit-type-cancel-button slotter' }
+                </div>
+              </fieldset>
+            }
+          end
+        end
       end
     end
 

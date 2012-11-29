@@ -47,7 +47,7 @@ module Wagn
     end
 
     define_view :open do |args|
-      wrap :open, args.merge(:framed=>true) do
+      wrap :open, args.merge(:frame=>true) do
         %{
            #{ _render_header args }
            #{ wrap_content( :open, :body=>true ) { _render_open_content args } }
@@ -82,11 +82,11 @@ module Wagn
     end
   
     define_view :menu do |args|
-      options = [
-        { :text => 'view', :view=>:titled },
-        { :text =>  'edit' },
-        { :text => 'admin' }
-      ]
+     # options = [
+     #   { :text => 'view', :view=>:titled },
+     #   { :text =>  'edit' },
+     #   { :text => 'admin' }
+     # ]
     
       option_html = %{
         <ul class="card-menu">
@@ -98,7 +98,7 @@ module Wagn
               </ul>
             </li>
             <li>#{ link_to_action 'view', :view, :class=>'slotter' }</li>
-            <li>#{ link_to_action 'admin', :admin, :class=>'slotter' }</li>
+            <li>#{ link_to_action 'admin', :options, :class=>'slotter' }</li>
 
         </ul>
       
@@ -156,7 +156,7 @@ module Wagn
       else '' end +
       
       
-      (wrap :new, args.merge(:framed=>true) do  
+      (wrap :new, args.merge(:frame=>true) do  
         card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
           @form = form
           %{
@@ -205,7 +205,7 @@ module Wagn
         confirm_delete +=  %{ \n\nThat would mean removing #{dependents.size} related pieces of information. }
       end
       
-      wrap :edit, args.merge(:framed=>true) do
+      wrap :edit, args.merge(:frame=>true) do
         %{ 
         #{_render_header }
         #{ help_text :edit_help }
@@ -247,7 +247,7 @@ module Wagn
       referers = card.extended_referencers
       dependents = card.dependents
     
-      wrap :edit_name, args.merge(:framed=>true) do
+      wrap :edit_name, args.merge(:frame=>true) do
         _render_header +
         wrap_content( :edit_name, :body=>true, :class=>'card-editor' ) do
           card_form( path(:update, :id=>card.id), 'card-name-form', 'main-success'=>'REDIRECT' ) do |f|
@@ -292,7 +292,7 @@ module Wagn
     end
 
     define_view :edit_type, :perms=>:update do |args|
-      wrap :edit_type, args.merge(:framed=>true) do
+      wrap :edit_type, args.merge(:frame=>true) do
         _render_header +
         wrap_content( :edit_type, :body=>true, :class=>'card-editor' ) do
           card_form( :update, 'card-edit-type-form' ) do |f|
@@ -360,7 +360,7 @@ module Wagn
       end
     end
   
-    define_view :admin do |args|
+    define_view :options do |args|
       related_sets = card.related_sets
       current_set = params[:current_set] || related_sets[(card.type_id==Card::CardtypeID ? 1 : 0)]  #FIXME - explicit cardtype reference
       set_options = related_sets.map do |set_name|
@@ -369,7 +369,7 @@ module Wagn
         %{<option value="#{ set_card.key }" #{ selected }>#{ set_card.label }</option>}
       end.join
 
-      wrap :admin do
+      wrap :options, args.merge(:frame=>true) do
         %{ #{ _render_header }
             <div class="options-body">
               <div class="settings-tab">
@@ -401,7 +401,7 @@ module Wagn
        end
       # should be just if !card.fetch(:trait=>:account) and Card.new( :name=>"#{card.name}+Card[:account].name").ok?(create)
     end
-
+    
     define_view :option_roles do |args|
       roles = Card.search( :type=>Card::RoleID, :limit=>0 ).reject do |x|
         [Card::AnyoneID, Card::AuthID].member? x.id.to_i
@@ -457,7 +457,7 @@ module Wagn
     define_view :changes do |args|
       load_revisions
       if @revision
-        wrap :changes, args.merge(:framed=>true) do
+        wrap :changes, args.merge(:frame=>true) do
           %{#{ _render_header unless params['no_changes_header'] }
           <div class="revision-navigation">#{ revision_menu }</div>
 
@@ -540,7 +540,7 @@ module Wagn
       end
     
       %{ <h1 class="page-header">Missing Card</h1> } +
-      wrap( :not_found, args.merge(:framed=>true) ) do # ENGLISH
+      wrap( :not_found, args.merge(:frame=>true) ) do # ENGLISH
         %{<div class="content instruction">
             <div>There's no card named <strong>#{card.name}</strong>.</div>
             #{sign_in_or_up_links}
@@ -555,7 +555,7 @@ module Wagn
       if !focal?
         %{<span class="denied"><!-- Sorry, you don't have permission #{to_task} --></span>}
       else
-        wrap :denial, args.merge(:framed=>true) do #ENGLISH below
+        wrap :denial, args.merge(:frame=>true) do #ENGLISH below
           %{
           #{ _render_header }
           <div id="denied" class="instruction card-body">

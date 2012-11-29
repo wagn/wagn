@@ -48,7 +48,7 @@ describe Card do
     end
 
     it "fetches newly virtual cards" do
-      pending "needs new cache clearing"
+      #pending "needs new cache clearing"
       Card.fetch( 'A+virtual').should be_nil
       Account.as_bot { Card.create :name=>'virtual+*right+*content' }
       Card.fetch( 'A+virtual').should_not be_nil

@@ -130,7 +130,7 @@ describe Wagn::Renderer, "" do
           assert_select 'div[class="card-header"]' do
             assert_select 'h1[class="card-title"]'
           end
-          assert_select 'span[class~="open-content content"]'
+          assert_select 'span[class~="card-body content"]'
         end
       end
 
@@ -174,7 +174,7 @@ describe Wagn::Renderer, "" do
 
       it "renders card content" do
         #warn "simple page = #{@simple_page}"
-        assert_view_select @simple_page, 'span[class="open-content content"]', 'AlphaBeta'
+        assert_view_select @simple_page, 'span[class="card-body content"]', 'AlphaBeta'
       end
 
       it "renders notice info" do

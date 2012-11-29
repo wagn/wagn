@@ -1,12 +1,9 @@
-.open-view,
-.changes-view,
-.options-view,
-.related-view,
-.remove-view,
-.new-view,
+/*
 .denial-view,
 .not_found-view,
-.edit-view {
+*/
+ 
+.card-frame {
   margin: 1px 0px;
   padding: 0px !important;
   -moz-border-radius: 8px;
@@ -33,7 +30,7 @@ html>body .open-view {
 
 .card-header {
   background: #8AB;
-  padding: 5px 15px;
+  padding: 5px 12px;
   margin: 0px;
   -moz-border-radius: 6px 6px 0 0;
   border-radius: 6px 6px 0 0;
@@ -50,6 +47,7 @@ html>body .open-view {
 h1.card-title { 
   padding: 2px 0;
   white-space: nowrap;
+  margin-right: 5px;
 }
 .card-header .card-menu-link {
   float: right;
@@ -171,6 +169,8 @@ fieldset > .button-area,
 fieldset > .editor {
   float: right;
   width: 70%;
+}
+fieldset > .editor {
   padding: 3px;
 }
 fieldset > .editor > input {
@@ -286,10 +286,9 @@ del.diffmod,
   margin-top: 5px;
   color: #444;
 }
-.open-content,
-.revision {
+.card-body {
   display: block;
-  padding: 5px 15px 10px 15px;
+  padding: 5px 12px;
 }
 .instruction {
   border-left: 0px;
@@ -349,7 +348,7 @@ body#wagn .card-slot.recent-changes h2 {
   margin: 1px 0 0 0;
 }
 .closed-view .card-header {
-  padding: auto 15px;
+  padding: auto 12px;
   vertical-align: middle;
   display: inline-block;
   line-height: 15px;

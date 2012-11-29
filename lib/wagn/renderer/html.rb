@@ -104,6 +104,7 @@ module Wagn
     def wrap view, args = {}
       classes = ['card-slot', "#{view}-view"]
       classes << card.safe_keys if card
+      classes << 'card-frame' if args[:framed]
 
       attributes = { :class => classes.join(' ') }
       [:style, :home_view, :item].each { |key| attributes[key] = args[key] }
@@ -116,8 +117,8 @@ module Wagn
       content_tag(:div, attributes ) { yield }
     end
 
-    def wrap_content view
-      raw %{<span class="#{view}-content content">#{ yield }</span>}
+    def wrap_content view, args={}
+      raw %{<span class="#{view}-content content #{'card-body' if args[:body] } #{args[:class]}">#{ yield }</span>}
     end
 
     def wrap_main(content)

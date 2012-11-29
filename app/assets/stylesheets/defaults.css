@@ -1,10 +1,8 @@
 body {
+  background: #ccc;
   color: #444;
   font-style: normal;
   margin: 0px;
-}
-body#wagn {
-  background: url(body-bg.bmp) repeat-x #cdb;
 }
 body, p, ol, ul, td, th, input, textarea {
   font-family: verdana, arial, helvetica, sans-serif;
@@ -18,25 +16,23 @@ body, p, ol, ul {
 
 /*--------- headers and links --------------*/
 h1 {
-  font-size: 15px;
+  font-size: 1.2em;
 }
 h2 {
-  font-size: 13px;
+  font-size: 1.1em;
 }
 h1, h2 {
-  color:#644;
   font-weight: bold;
   margin: 0px;
 }
 /* headers outside of cards */
 h1.page-header,
 h2.page-header {
-  color: #22d;
   font-weight: normal;
   margin: 0 0 10px 0;
 }
 a {
-  color: #484;
+  color: #279;
 }
 a:link,
 a:visited {

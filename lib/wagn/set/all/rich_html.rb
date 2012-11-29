@@ -32,9 +32,9 @@ module Wagn
     end
 
     define_view :titled do |args|
-
+      hidden = {:menu_link=>true, :type=>true, :closed_link=>true }
       wrap :titled, args do
-        %{ #{ _render_header args.merge( { :default_hidden => {:menu_link=>true, :type=>true} } ) }
+        %{ #{ _render_header args.merge( { :default_hidden => hidden } ) }
            #{ wrap_content( :titled ) { _render_core args } }   
         }
       end
@@ -62,17 +62,22 @@ module Wagn
       %{
       <div class="card-header">
         #{ _optional_render :menu_link, args, hidden[:menu_link] }
+        #{ _optional_render :closed_link, args, hidden[:closed_link] }        
         #{ _render_title }
         #{ _optional_render :type, args, hidden[:type] }
-        #{ link_to 'close', path(:read, :view=>:closed), :title => "close #{card.name}", :class => "title slotter", :remote => true } 
+        
       </div>
      
       #{ _render_menu }
       }
     end
+
+    define_view :closed_link do |args|
+      link_to raw('&otimes;'), path(:read, :view=>:closed), :title => "close #{card.name}", :class => "toggler slotter", :remote => true
+    end
   
     define_view :menu_link do |args|
-      %{<span class="card-menu-link">menu</span>}
+      %{<span class="card-menu-link">&equiv;</span>}
     end
   
     define_view :menu do |args|
@@ -118,8 +123,8 @@ module Wagn
       wrap :closed, args do
         %{
           <div class="card-header">
+            #{ link_to raw('&oplus;'), path(:read, :view=>:open), :title => "open #{card.name}", :class => "toggler slotter", :remote => true }
             #{ _render_title }
-            #{ link_to 'open', path(:read, :view=>:open), :title => "open #{card.name}", :class => "title slotter", :remote => true }         
           </div>
           #{ wrap_content( :closed ) { _render_closed_content } }
         }

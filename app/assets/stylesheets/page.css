@@ -17,12 +17,12 @@
 #menu {
   display: block;
   font-size: 14px;
-  background: #005800;
+  background: #8AB;
   margin-bottom: 20px;
   padding: 2px;
 }
 #menu a {
-  color: white;
+  color: #000;
   padding: 0px 4px;
 }
 #menu div {

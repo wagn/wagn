@@ -147,7 +147,8 @@ class CardController < ApplicationController
     #@account = User.new(:email=>@user.email)
 #    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
     params[:attribute] = :account
-    show :options
+
+    wagn_redirect( previous_location )
   end
 
 

@@ -325,9 +325,6 @@ describe Wagn::Renderer, "" do
       end
     end
 
-
-
-
     it "should be used in edit forms" do
       Session.as_bot do
         config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )

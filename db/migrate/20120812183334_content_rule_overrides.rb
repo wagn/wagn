@@ -1,6 +1,6 @@
 class ContentRuleOverrides < ActiveRecord::Migration
   def up
-    Session.as_bot do
+    Account.as_bot do
       Card.search( :right=>'*default', :left=>{:right=>'*self'} ).each do |override|
         next if Card.exists? "#{override.cardname.trunk_name}+*content"
         override = override.refresh if override.frozen?

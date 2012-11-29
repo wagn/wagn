@@ -65,7 +65,7 @@ class CodenameTable < ActiveRecord::Migration
     warn Rails.logger.warn("have_codes #{@@have_codes}")
     CodenameTable.load_bootcodes unless @@have_codes
 
-    Session.as_bot do
+    Account.as_bot do
       CodenameTable::CODENAMES.each do |name|
         CodenameTable.add_codename name
       end

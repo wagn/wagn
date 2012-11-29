@@ -1,6 +1,6 @@
 class AccountTrait < ActiveRecord::Migration
   def up
-    Session.as_bot do
+    Account.as_bot do
       User.all.each do |user|
         #next if user.card_id == Card::WagnBotID || user.card_id == Card::AnonID
         card = Card.find user.card_id
@@ -15,7 +15,7 @@ class AccountTrait < ActiveRecord::Migration
   end
 
   def down
-    Session.as_bot do
+    Account.as_bot do
       Card.search(:right=>Card::AccountID).items { |c| c.delete; }
     end
   end

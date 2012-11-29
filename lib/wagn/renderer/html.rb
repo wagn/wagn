@@ -169,7 +169,10 @@ module Wagn
 
     def options_submenu(current)
       #return '' unless !card || [Card::WagnBotID, Card::AnonID].member?(card.id) || card.type_id == Card::UserID
-      return '' unless card.to_user && card.ok?(:update, :trait=>:account)
+      my_card = card.id == Account.as_id
+      warn "==osub======== attr #{my_card}, #{card.to_user && (my_card || card.ok?(:update, :trait=>:account))}, #{card.inspect}, #{Account.as_id}"
+      Rails.logger.warn "==osub======== attr #{my_card}, #{card.to_user && (my_card || card.ok?(:update, :trait=>:account))}, #{card.inspect}, #{Account.as_id}"
+      return '' unless card.to_user && (my_card || card.ok?(:update, :trait=>:account))
       wrap_submenu do
         [:account, :settings].map do |key|
           link_to key, path(:options, :attrib=>key), :remote=>true,

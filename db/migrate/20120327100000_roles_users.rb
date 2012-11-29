@@ -5,7 +5,7 @@ class RolesUsers < ActiveRecord::Migration
   end
   
   def up
-    Session.as Card::WagnBotID do
+    Account.as Card::WagnBotID do
       # Delete the old *roles cards
       (Card.search(:right=>'*roles', :return=>'name') + 
         ['*roles+*right', '*roles+*right+*content', '*roles+*right+*default', '*tasks']).each do |name|
@@ -63,7 +63,7 @@ class RolesUsers < ActiveRecord::Migration
   end
 
   def down
-    Session.as :wagn_bot do
+    Account.as :wagn_bot do
       (Card.search(:right=>'*roles', :return=>'name') + 
         ['*roles+*right', '*roles+*right+*content', '*roles+*right+*default', '*tasks']).each do |name|
         if c = Card[name]

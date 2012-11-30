@@ -288,16 +288,13 @@ module Wagn
     end
 
     define_view :options, :perms=>:none do |args|
-      attribute = params[:attribute]
-
-      attribute ||= if card.to_user and ( Session.as_id==card.id or card.fetch(:trait=>:account).ok?(:update) )
-        'account'; else; 'settings'; end
+      attribute = params[:attribute] 
+      attribute ||= card && card.update_account_ok? ? 'account' : 'settings'
+        #FIXME.  do we want to require update permissions?  what if you just want to read the roles...
       render "option_#{attribute}"
     end
 
-    define_view :option_account, :perms=> lambda { |r|
-        Session.as_id==r.card.id or r.card.fetch(:trait=>:account).ok?(:update)
-      } do |args|
+    define_view :option_account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
     
       locals = {:slot=>self, :card=>card, :account=>card.to_user }
       wrap :options, args do
@@ -373,7 +370,7 @@ module Wagn
       end
 
       traitc = card.fetch :trait => :roles, :new=>{}
-     user_roles = traitc.item_cards :limit=>0
+      user_roles = traitc.item_cards :limit=>0
 
       option_content = if traitc.ok? :update
         user_role_ids = user_roles.map &:id
@@ -401,7 +398,7 @@ module Wagn
          option(option_content, :name=>"roles",
         :help=>%{ <span class="small">"#{ link_to_page 'Roles' }" are used to set user permissions</span>}, #ENGLISH
         :label=>"#{card.name}'s Roles",
-        :editable=>card.fetch(:trait=>:roles).ok?(:update)
+        :editable=>card.fetch(:trait=>:roles, :new=>{}).ok?(:update)
       )}}
     end
 

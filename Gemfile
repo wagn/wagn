@@ -42,7 +42,7 @@ group :assets do
   gem 'coffee-rails', "~> 3.1"                 # pretty code; compiles to JS
   gem 'uglifier'                               # makes pretty code ugly again.  compresses js/css for fast loading
 
-  gem 'jquery-rails',  '~> 2.1.4'                # main js framework, along with rails-specific unobtrusive lib
+  gem 'jquery-rails',  '~> 2.1.4'              # main js framework, along with rails-specific unobtrusive lib
   gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor
   
   gem 'therubyracer'                           # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one
@@ -60,6 +60,7 @@ end
 
 group :test do
   gem 'cucumber-rails', '~> 1.3'               # feature-driven-development suite
+  gem 'capybara', '~> 1.1'                     # note, selectors were breaking when we used 2.0.1
   gem 'launchy'                                # lets cucumber launch browser windows
 
   gem 'timecop', '=0.3.5'                      # not clear on use/need.  referred to in shared_data.rb 

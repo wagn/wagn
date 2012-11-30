@@ -12,11 +12,12 @@ Feature: Seeing a card
     Then I should see "Home"
     And I should see "Joe User"
     And I should see "Sign out"
-    And In the main card header I should see "Edit"
+    And In the main card header I should see "≡"
+#this is the unicode version of the html entity to open the menu
     Then In the main card header I click "close Home"
-    And In the main card header I should not see "Edit"
+    And In the main card header I should not see "≡"
     Then In the main card header I click "open Home"
-    And In the main card header I should see "Edit"
+    And In the main card header I should see "≡"
 
   Scenario: Create a Card
     Given I log in as Joe User

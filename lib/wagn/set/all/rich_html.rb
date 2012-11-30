@@ -111,7 +111,9 @@ module Wagn
             end
             }
           </li>
-          <li>#{ render_watch }</li>
+          #{ if Session.logged_in? && !card.new_card? 
+              "<li>#{ render_watch }</li>"
+             end }
         </ul>      
       }
       #fixme - many of these (including watch) need permission checks for activation

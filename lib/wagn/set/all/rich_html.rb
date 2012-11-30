@@ -84,7 +84,15 @@ module Wagn
      #   { :text =>  'edit' },
      #   { :text => 'admin' }
      # ]
-    
+     
+      admin_items = if card && card.update_account_ok?
+        [ link_to_action( 'rules', :options, :class=>'slotter' ),
+          link_to_action( 'account', :option_account, :class=>'slotter')
+        ]
+      else
+        []
+      end
+      
       option_html = %{
         <ul class="card-menu">
           <li>#{ link_to_action 'edit', :edit, :class=>'slotter' }
@@ -101,7 +109,13 @@ module Wagn
               <li>#{ link_to 'as main', path(:read) }</li>
             </ul>
           </li>
-          <li>#{ link_to_action 'admin', :options, :class=>'slotter' }</li>
+          <li>#{ link_to_action 'admin', :options, :class=>'slotter' }
+            #{
+            if !admin_items.empty?
+              %{<ul>#{ admin_items.map do |i| "<li>#{i}</li>" end.join } </ul>}
+            end
+            }
+          </li>
           <li>#{ render_watch }</li>
         </ul>      
       }
@@ -339,7 +353,7 @@ module Wagn
 
     define_view :option_account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
       locals = {:slot=>self, :card=>card, :account=>card.to_user }
-      wrap :options, args do
+      wrap :options, args.merge(:frame=>true) do
         %{ #{ _render_header }
           <div class="options-body">
             #{ card_form :update_account, '', 'notify-success'=>'account details updated' do |form|
@@ -603,9 +617,9 @@ module Wagn
           watching_type_cards
         else
           link_args = if card.watching?
-            ["unfollow", :off, "stop sending emails about changes to #{card.cardname}"]
+            ["following", :off, "stop sending emails about changes to #{card.cardname}", { :hover_content=> 'unfollow' } ]
           else
-            ["follow", :on, "send emails about changes to #{card.cardname}"]
+            ["follow", :on, "send emails about changes to #{card.cardname}" ]
           end
           watch_link *link_args
         end
@@ -617,7 +631,7 @@ end
   
 class Wagn::Renderer::Html
   def watching_type_cards
-    %{<div class="faint">following</div>} #yuck
+    %{<div class="faint">(following)</div>} #yuck
   end
 
   def watch_link text, toggle, title, extra={}

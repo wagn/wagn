@@ -47,7 +47,7 @@ module Wagn
         #{ Wagn::Conf[:recaptcha_on] ? %{wagn.recaptchaKey = "#{Wagn::Conf[:recaptcha_public_key]}";} : '' }
         #{ (c=Card[:double_click] and !Card.toggle(c.content)) ? 'wagn.noDoubleClick = true' : '' }
         #{ local_css_path ? %{ wagn.local_css_path = '#{local_css_path}'; } : '' }
-        window.tinyMCEPreInit = {base:"#{wagn_path 'assets/tinymce'}",query:"3.5.6",suffix:""};
+        window.tinyMCEPreInit = {base:"#{wagn_path 'assets/tinymce'}",query:"3.5.8",suffix:""};
         wagn.tinyMCEConfig = { #{ Card.setting :tiny_mce } };
       </script>
       )

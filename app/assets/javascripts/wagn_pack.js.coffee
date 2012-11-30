@@ -79,7 +79,7 @@ $(window).ready ->
   }
 
 
-  $('.card-menu-link').live 'click', ->
+  $('.card-menu-link').live 'mouseenter', ->
     # if card menu already exists
     #   show it
     # else
@@ -90,8 +90,12 @@ $(window).ready ->
     cm.menu position: { my:'right top', at:'left top' }, 
       icons:{ submenu:'ui-icon-carat-1-w' }
     cm.show()
-    
     #   do a request to flesh out remaining menu parts
+    
+  $('.card-menu').live 'mouseleave', ->
+    $(this).hide()
+  
+
 
   #pointer pack
   $('.pointer-item-add').live 'click', (event)->

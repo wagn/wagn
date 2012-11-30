@@ -4,6 +4,8 @@
 */
 
 
+
+
  
 .card-frame {
   margin: 1px 0px;
@@ -51,8 +53,10 @@ h1.card-title {
   white-space: nowrap;
   margin-right: 5px;
 }
-.card-header .card-menu-link {
+.card-menu-link {
   float: right;
+  width: 60px;
+  text-align: right;
 }
 .card-menu {
   display:none;
@@ -213,24 +217,22 @@ div.content-view {
 
 
 .revision-header {
-  background: #ddf;
   padding: 4px;
-  border-bottom: 1px solid silver;
   text-align: center;
 }
 .revision-title {
   font-weight: bold;
 }
-.revision-header p {
-  margin: 2px;
-}
-.revision {
+.revision-content {
   margin: 0px 1px;
   padding: 10px 5px;
   background: #ffd;
 }
 .autosave-alert {
   font-weight: bold;
+}
+.revision-navigation {
+  border-bottom: 1px solid silver;
 }
 .revision-navigation span {
    margin: 0px 10px
@@ -332,7 +334,7 @@ body#wagn .card-slot.recent-changes h2 {
 }
 
 
-.titled-view .card-header {
+.titled-view > .card-header {
    background: inherit;
    padding: 0;
 }

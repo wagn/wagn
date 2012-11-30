@@ -103,8 +103,8 @@ module Wagn
 
     def wrap view, args = {}
       classes = ['card-slot', "#{view}-view"]
-      classes << card.safe_keys if card
       classes << 'card-frame' if args[:frame]
+      classes << card.safe_keys if card
 
       attributes = { :class => classes.join(' ') }
       [:style, :home_view, :item].each { |key| attributes[key] = args[key] }
@@ -177,7 +177,7 @@ module Wagn
 
     def link_to_action text, to_action, html_opts={}
       html_opts[:remote] = true
-      path_options = to_action == :view ? {} : { :view => to_action}
+      path_options = to_action == :read ? {} : { :view => to_action}
       link_to text, path(:read, path_options), html_opts
     end
 

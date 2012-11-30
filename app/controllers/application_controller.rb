@@ -148,10 +148,13 @@ class ApplicationController < ActionController::Base
     when Wagn::BadAddress, ActionController::UnknownController, AbstractController::ActionNotFound
       [ :bad_address, 404 ]
     else
+
       notify_airbrake exception if Airbrake.configuration.api_key
 
       if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) && @card && @card.errors.any?
         [ :errors, 422]
+      elsif Wagn::Conf[:migration]
+        raise exception
       else
         Rails.logger.info "\n\nController exception: #{exception.message}"
         Rails.logger.debug exception.backtrace*"\n"

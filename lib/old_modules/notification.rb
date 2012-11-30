@@ -37,6 +37,7 @@ module Notification
         end
       end
     rescue Exception=>e
+      raise e if Wagn::Conf[:migration]
       Airbrake.notify e if Airbrake.configuration.api_key
       Rails.logger.info "\nController exception: #{e.message}"
       Rails.logger.debug e.backtrace*"\n"

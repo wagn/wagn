@@ -87,26 +87,25 @@ module Wagn
     
       option_html = %{
         <ul class="card-menu">
-            <li>#{ link_to_action 'edit', :edit, :class=>'slotter' }
-              <ul>
-                  <li>#{ link_to_action 'content', :edit, :class=>'slotter' }</li>
-                  <li>#{ link_to_action 'name', :edit_name, :class=>'slotter' }</li>
-                  <li>#{ link_to_action 'type', :edit_type, :class=>'slotter' }</li>
-                  <li>#{ link_to_action 'history', :changes, :class=>'slotter' }</li>
-              </ul>
-            </li>
-            <li>#{ link_to_action 'view', :read, :class=>'slotter' }            
-              <ul>
-                <li>#{ link_to_action 'refresh', :read, :class=>'slotter' }</li>
-                <li>#{ link_to 'as main', path(:read) }</li>
-              </ul>
-            </li>
-            <li>#{ link_to_action 'admin', :options, :class=>'slotter' }</li>
-
-        </ul>
-      
-      
+          <li>#{ link_to_action 'edit', :edit, :class=>'slotter' }
+            <ul>
+                <li>#{ link_to_action 'content', :edit, :class=>'slotter' }</li>
+                <li>#{ link_to_action 'name', :edit_name, :class=>'slotter' }</li>
+                <li>#{ link_to_action 'type', :edit_type, :class=>'slotter' }</li>
+                <li>#{ link_to_action 'history', :changes, :class=>'slotter' }</li>
+            </ul>
+          </li>
+          <li>#{ link_to_action 'view', :read, :class=>'slotter' }            
+            <ul>
+              <li>#{ link_to_action 'refresh', :read, :class=>'slotter' }</li>
+              <li>#{ link_to 'as main', path(:read) }</li>
+            </ul>
+          </li>
+          <li>#{ link_to_action 'admin', :options, :class=>'slotter' }</li>
+          <li>#{ render_watch }</li>
+        </ul>      
       }
+      #fixme - many of these (including watch) need permission checks for activation
     end
   
     define_view :type do |args|
@@ -153,7 +152,7 @@ module Wagn
         { :class=>'redirecter', :href=>Card.path_setting('/*previous') }
       end
 
-      if ajax_call? 
+      if !ajax_call? 
         header_text = card.type_id == Card::DefaultTypeID ? 'Card' : card.type_name
         %{ <h1 class="page-header">New #{header_text}</h1>}
       else '' end +
@@ -608,9 +607,9 @@ module Wagn
           watching_type_cards
         else
           link_args = if card.watching?
-            ["unwatch", :off, "stop sending emails about changes to #{card.cardname}"]
+            ["unfollow", :off, "stop sending emails about changes to #{card.cardname}"]
           else
-            ["watch", :on, "send emails about changes to #{card.cardname}"]
+            ["follow", :on, "send emails about changes to #{card.cardname}"]
           end
           watch_link *link_args
         end
@@ -622,7 +621,7 @@ end
   
 class Wagn::Renderer::Html
   def watching_type_cards
-    "watching #{ link_to_page card.type_name } cards"
+    %{<div class="faint">following</div>} #yuck
   end
 
   def watch_link text, toggle, title, extra={}

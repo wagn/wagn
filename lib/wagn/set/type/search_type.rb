@@ -118,7 +118,7 @@ module Wagn
       paging = _optional_render :paging, args
 
 %{<h1 class="page-header">Recent Changes</h1>
-<div class="open-view recent-changes">
+<div class="card-frame recent-changes">
   <div class="card-body">
     #{ paging }
   } +

@@ -32,7 +32,8 @@ module Wagn
     end
 
     define_view :titled do |args|
-      hidden = { :menu_link=>true, :type=>true, :closed_link=>true }
+      hidden = { :menu_link=>true, :closed_link=>true }
+#      hidden = { :menu_link=>true, :type=>true, :closed_link=>true }
       wrap :titled, args do
         _render_header( args.merge :default_hidden => hidden ) +
         wrap_content( :titled ) do
@@ -65,9 +66,10 @@ module Wagn
         #{ _optional_render :menu_link, args, hidden[:menu_link] }
         #{ _optional_render :closed_link, args, hidden[:closed_link] }        
         #{ _render_title }
-        #{ _optional_render :type, args, hidden[:type] }
       </div>
       }
+      
+      #{ _optional_render :type, args, hidden[:type] }
     end
 
     define_view :closed_link do |args|
@@ -102,6 +104,7 @@ module Wagn
             <ul>
               <li>#{ link_to_action 'refresh', :read, :class=>'slotter' }</li>
               <li>#{ link_to 'as main', path(:read) }</li>
+              <li>#{ link_to_page "type: #{card.type_name}", card.type_name }</li>
             </ul>
           </li>
           <li>#{ link_to_action 'admin', :options, :class=>'slotter' }

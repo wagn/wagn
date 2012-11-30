@@ -32,10 +32,10 @@ html>body .open-view {
   text-align: left;
 }
 .card-header,
-.card-header a {
+.card-header a,
+.card-header h1 {
   color: #333
 }
-
 .card-header h1 {
   display: inline;
 }

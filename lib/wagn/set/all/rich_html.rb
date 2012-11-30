@@ -163,7 +163,7 @@ module Wagn
         card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
           @form = form
           %{
-            <div class="edit-area">          
+            <div class="card-header">          
               #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
               #{ help_text :add_help, :fallback=>:edit_help }
               #{
@@ -174,11 +174,15 @@ module Wagn
               end
               }
               #{ params[:type] ? form.hidden_field( :type_id ) : _render_type_editor }
+            </div>
+            <div class="card-body">
               <div class="card-editor editor">#{ edit_slot args }</div>
-              <div class="edit-button-area">
-                #{ submit_tag 'Submit', :class=>'create-submit-button' }
-                #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
-              </div>
+              <fieldset>
+                <div class="button-area">
+                  #{ submit_tag 'Submit', :class=>'create-submit-button' }
+                  #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
+                </div>
+              </fieldset>
             </div>
             #{ notice }
           }

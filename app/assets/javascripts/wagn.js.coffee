@@ -209,7 +209,7 @@ $(window).ready ->
   unless wagn.noDoubleClick
     $('.card-slot').live 'dblclick', (event)->
       s = $(this)
-      return false if s.find( '.edit-area' )[0]
+      return false if s.find( '.card-editor' )[0]
       return false if s.closest( '.card-header' )[0]
       return false unless s.attr('card-id')
       s.addClass 'slotter'

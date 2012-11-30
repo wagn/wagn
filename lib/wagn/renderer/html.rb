@@ -152,29 +152,6 @@ module Wagn
       %{<span class="render-error">error rendering #{link_to_page(cardname, nil, :title=>CGI.escapeHTML(exception.message))}</span>}
     end
 
-#    def edit_submenu(current)
-#      wrap_submenu do
-#        [ :content, :name, :type ].map do |attr|
-#          next if attr == :type and # this should be a set callback
-#            card.type_template? ||  
-#            (card.type_id==Card::SetID && card.hard_template?) || #
-#            (card.type_id==Card::CardtypeID && card.cards_of_type_exist?)
-#        
-#          link_to attr, path(:edit, :attrib=>attr), :remote=>true,
-#            :class => %{slotter edit-#{ attr }-link #{'current-subtab' if attr==current.to_sym}}
-#        end.compact * "\n"
-#      end
-#    end
-
-
-
-#    def link_to_menu_action( to_action)
-#      klass = { :edit => 'edit-content-link'}
-#      content_tag :li, link_to_action( to_action.to_s.capitalize, to_action,
-#        :class=> "slotter #{klass[to_action]}" #{}" #{menu_action==to_action ? ' current' : ''}"
-#      )
-#    end
-
     def link_to_action text, to_action, html_opts={}
       html_opts[:remote] = true
       path_options = to_action == :read ? {} : { :view => to_action}
@@ -185,7 +162,8 @@ module Wagn
       form ||= self.form
       form.text_field( :name, {
         :value=>card.name, #needed because otherwise gets wrong value if there are updates
-        :autocomplete=>'off'
+        :autocomplete=>'off',
+        :size=>'100%'
       }.merge(options))
     end
 

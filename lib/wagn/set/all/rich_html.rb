@@ -79,13 +79,8 @@ module Wagn
     end
   
     define_view :menu do |args|
-     # options = [
-     #   { :text => 'view', :view=>:titled },
-     #   { :text =>  'edit' },
-     #   { :text => 'admin' }
-     # ]
-     
-      admin_items = if card && card.update_account_ok?
+
+      admin_items = if card && card.update_account_ok? #sigh.  very inefficient to do this with every header!!
         [ link_to_action( 'rules', :options, :class=>'slotter' ),
           link_to_action( 'account', :option_account, :class=>'slotter')
         ]

@@ -337,10 +337,7 @@ module Wagn
       fieldset label, content, :help=>help_settings, :attribs=>attribs
     end
 
-    define_view :option_account, :perms=> lambda { |r|
-        Session.as_id==r.card.id or r.card.fetch(:trait=>:account).ok?(:update)
-      } do |args|
-      
+    define_view :option_account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
       locals = {:slot=>self, :card=>card, :account=>card.to_user }
       wrap :options, args do
         %{ #{ _render_header }
@@ -416,7 +413,6 @@ module Wagn
       traitc = card.fetch :trait => :roles, :new=>{}
       user_roles = traitc.item_cards :limit=>0
 
-
       option_content = if traitc.ok? :update
         user_role_ids = user_roles.map &:id
         hidden_field_tag(:save_roles, true) +
@@ -442,7 +438,7 @@ module Wagn
          option(option_content, :name=>"roles",
         :help=>%{ <span class="small">"#{ link_to_page 'Roles' }" are used to set user permissions</span>}, #ENGLISH
         :label=>"#{card.name}'s Roles",
-        :editable=>card.fetch(:trait=>:roles).ok?(:update)
+        :editable=>card.fetch(:trait=>:roles, :new=>{}).ok?(:update)
       )}}
     end
 

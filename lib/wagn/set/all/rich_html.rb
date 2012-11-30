@@ -298,7 +298,7 @@ module Wagn
     define_view :option_account, :perms=> lambda { |r|
         Account.as_id==r.card.id or r.card.fetch(:trait=>:account).ok?(:update)
       } do |args|
-    
+
       locals = {:slot=>self, :card=>card, :account=>card.to_user }
       wrap :options, args do
         %{ #{ _render_header }
@@ -311,7 +311,7 @@ module Wagn
               <table class="fieldset">
                 #{ option_header 'Account Details' }
                 #{ template.render :partial=>'account/edit',  :locals=>locals }
-                
+
                 #{ _render_option_roles }
                 #{ if options_need_save
                     %{<tr><td colspan="3">#{ submit_tag 'Save Changes' }</td></tr>}
@@ -350,7 +350,7 @@ module Wagn
                 <div class="current-set">
                   #{ raw subrenderer( Card.fetch current_set).render_content }
                 </div>
-             
+
                 #{ if Card.toggle(card.rule(:accountable)) && card.fetch(:trait=>:account).ok?(:create)
                     %{<div class="new-account-link">
                     #{ link_to %{Add a sign-in account for "#{card.name}"},
@@ -359,7 +359,7 @@ module Wagn
                     </div>}
                    end
                 }
-              </div> 
+              </div>
             </div>
             #{ notice }
          }
@@ -373,7 +373,7 @@ module Wagn
       end
 
       traitc = card.fetch :trait => :roles, :new=>{}
-     user_roles = traitc.item_cards :limit=>0
+      user_roles = traitc.item_cards :limit=>0
 
       option_content = if traitc.ok? :update
         user_role_ids = user_roles.map &:id
@@ -401,7 +401,7 @@ module Wagn
          option(option_content, :name=>"roles",
         :help=>%{ <span class="small">"#{ link_to_page 'Roles' }" are used to set user permissions</span>}, #ENGLISH
         :label=>"#{card.name}'s Roles",
-        :editable=>card.fetch(:trait=>:roles,:new=>{}).ok?(:update)
+        :editable=>card.fetch(:trait=>:roles, :new=>{}).ok?(:update)
       )}}
     end
 

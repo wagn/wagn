@@ -1,5 +1,5 @@
 
-WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references }
+WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references users }
 
 namespace :wagn do
 
@@ -33,22 +33,22 @@ namespace :wagn do
     task :clean => :environment do
       Wagn::Cache.reset_global
 
-      # Correct time and user stamps
-      botid = Card::WagnBotID
-      extra_sql = {
-        :cards          =>", creator_id=#{botid}, updater_id=#{botid}",
-        :card_revisions =>", creator_id=#{botid}"
-      }
-      %w{ users cards card_references card_revisions }.each do |table|
-        ActiveRecord::Base.connection.update("update #{table} set created_at=now() #{extra_sql[table.to_sym] || ''};")
-      end
-
       # trash ignored cards
       Account.as_bot do
         Card.search( {:referred_to_by=>'*ignore'} ).each do |card|
           card.confirm_destroy = true
           card.destroy!
         end
+      end
+
+      # Correct time and user stamps
+      botid = Card::WagnBotID
+      extra_sql = {
+        :cards          =>", creator_id=#{botid}, updater_id=#{botid}",
+        :card_revisions =>", creator_id=#{botid}"
+      }
+      WAGN_BOOTSTRAP_TABLES.each do |table|
+        ActiveRecord::Base.connection.update("update #{table} set created_at=now() #{extra_sql[table.to_sym] || ''};")
       end
 
       # delete unwanted rows ( will need to revise if we ever add db-level data integrity checks )
@@ -60,17 +60,17 @@ namespace :wagn do
         " (referenced_card_id is not null and not exists (select * from cards where cards.id = card_references.referenced_card_id)) or " +
         " (           card_id is not null and not exists (select * from cards where cards.id = card_references.card_id));"
       )
-
+      ActiveRecord::Base.connection.delete( "delete from users where id > 2" ) #leave only anon and wagn bot
     end
 
     desc "dump db to bootstrap fixtures"
     #note: users, roles, and role_users have been manually edited
     task :dump => :environment do
       Wagn::Cache.reset_global
-      begin
+#      begin
       YAML::ENGINE.yamler = 'syck'
-      rescue
-      end
+#      rescue
+#      end
       # use old engine while we're supporting ruby 1.8.7 because it can't support Psych,
       # which dumps with slashes that syck can't understand
 
@@ -78,12 +78,11 @@ namespace :wagn do
         i = "000"
         File.open("#{Rails.root}/db/bootstrap/#{table}.yml", 'w') do |file|
           data = ActiveRecord::Base.connection.select_all( "select * from #{table}" )
-          file.write YAML::dump( data.inject({}) { |hash, record|
-            fail "UNTESTED CODE. pls make sure trash is actually showing up as false (not '0')\n....and pls REMOVE THIS MSG from bootstrap.rake!\n\n"
-            hash['trash'] = false
+          file.write YAML::dump( data.inject({}) do |hash, record|
+            record['trash'] = false if record.has_key? 'trash'
             hash["#{table}_#{i.succ!}"] = record
             hash
-          })
+          end)
         end
       end
     end
@@ -96,8 +95,7 @@ namespace :wagn do
       require 'active_record/fixtures'
 #      require 'time'
 
-      ActiveRecord::Fixtures.create_fixtures 'db/bootstrap', WAGN_BOOTSTRAP_TABLES << 'users'
-      # note: users table is hand-coded, not dumped
+      ActiveRecord::Fixtures.create_fixtures 'db/bootstrap', WAGN_BOOTSTRAP_TABLES
 
     end
   end

@@ -261,7 +261,6 @@ module Wagn
     define_view :related do |args|
       sources = [card.type_name,nil]
       # FIXME codename *account
-      sources.unshift '*account' if [Card::WagnBotID, Card::AnonID].member?(card.id) || card.typecode==:user
       items = sources.map do |source|
         c = Card.fetch(source ? source.to_name.trait_name(:related) : Card::RelatedID)
         c && c.item_names
@@ -288,10 +287,9 @@ module Wagn
     end
 
     define_view :options, :perms=>:none do |args|
-      attribute = params[:attribute]
-
-      my_card = card.id == Account.as_id
-      attribute ||= card.to_user && (my_card || card.ok?(:update, :trait=>:account)) ?  'account' : 'settings'
+      attribute = params[:attribute] 
+      attribute ||= card && card.update_account_ok? ? 'account' : 'settings'
+        #FIXME.  do we want to require update permissions?  what if you just want to read the roles...
       render "option_#{attribute}"
     end
 

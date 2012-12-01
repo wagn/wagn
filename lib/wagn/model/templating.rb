@@ -83,7 +83,7 @@ module Wagn::Model::Templating
   def hard_templatee_spec
     #warn "htwql #{name} #{hard_template?}, #{cardname.trunk_name}, #{Card.fetch(cardname.trunk_name)}"
     if hard_template? and c=Card.fetch(cardname.trunk_name)
-      c.type_id == Card::SetID ? c.get_spec(:spec=>c.content) : true
+      c.type_id == Card::SetID ? c.get_spec : true
     end
   end
 

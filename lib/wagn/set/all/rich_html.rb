@@ -295,9 +295,7 @@ module Wagn
       render "option_#{attribute}"
     end
 
-    define_view :option_account, :perms=> lambda { |r|
-        Account.as_id==r.card.id or r.card.fetch(:trait=>:account).ok?(:update)
-      } do |args|
+    define_view :option_account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
 
       locals = {:slot=>self, :card=>card, :account=>card.to_user }
       wrap :options, args do

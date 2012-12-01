@@ -58,7 +58,7 @@ module Wagn::Model::Permissions
   end
   
   def update_account_ok? #FIXME - temporary API
-    to_user and Session.as_id==id || fetch(:trait=>:account, :new=>{}).ok?( :update )
+    to_user and Account.as_id==id || fetch(:trait=>:account, :new=>{}).ok?( :update )
   end
 
   def who_can operation

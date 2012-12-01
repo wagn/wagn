@@ -83,7 +83,15 @@ module Wagn::Model::Templating
   def hard_templatee_spec
     #warn "htwql #{name} #{hard_template?}, #{cardname.trunk_name}, #{Card.fetch(cardname.trunk_name)}"
     if hard_template? and c=Card.fetch(cardname.trunk_name)
-      c.type_id == Card::SetID ? c.get_spec(:spec=>c.content) : true
+      if !trash && c.type_id == Card::SetID
+        spec=c.content
+        #Rails.logger.warn "spec blank #{inspect}, #{c.raw_content}, #{c.content}, #{c.content_without_tracking}" if spec.blank?
+        #spec.blank? ? false : c.get_spec(:spec=>spec)
+        c.get_spec(:spec=>spec)
+      else
+        true
+      end
+      #c.type_id == Card::SetID ? c.get_spec(:spec=>c.raw_content) : true
     end
   end
 

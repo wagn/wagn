@@ -65,13 +65,13 @@ module Wagn::Model::Templating
   # ps.  I think this code should be wiki references.
   def expire_templatee_references
     if wql = hard_templatee_spec
-      wql = {:name => name} if wql == true
 
-      condition = Account.as_bot { Wql::CardSpec.build(wql.merge(:return => :condition)).to_sql }
-      #warn "expire_t_refs #{name}, #{condition.inspect}"
-      card_ids_to_update = connection.select_rows("select id from cards t where #{condition}").map(&:first)
-      card_ids_to_update.each_slice(100) do |id_batch|
-        connection.execute "update cards set references_expired=1 where id in (#{id_batch.join(',')})" #FIXME:not ARec
+      wql = Account.as_bot do
+        Wql.new (wql == true ? {:name => name} :  wql).merge(:return => :id)
+      end
+
+      wql.run.each_slice(100) do |id_batch|
+        Card.where( :id => id_batch ).update_all :references_expired=>1
       end
     end
   end
@@ -81,17 +81,8 @@ module Wagn::Model::Templating
   private
 
   def hard_templatee_spec
-    #warn "htwql #{name} #{hard_template?}, #{cardname.trunk_name}, #{Card.fetch(cardname.trunk_name)}"
     if hard_template? and c=Card.fetch(cardname.trunk_name)
-      if !trash && c.type_id == Card::SetID
-        spec=c.content
-        #Rails.logger.warn "spec blank #{inspect}, #{c.raw_content}, #{c.content}, #{c.content_without_tracking}" if spec.blank?
-        #spec.blank? ? false : c.get_spec(:spec=>spec)
-        c.get_spec(:spec=>spec)
-      else
-        true
-      end
-      #c.type_id == Card::SetID ? c.get_spec(:spec=>c.raw_content) : true
+      c.type_id == Card::SetID ?  c.get_spec : true
     end
   end
 

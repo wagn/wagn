@@ -9,7 +9,7 @@ class AccountTrait < ActiveRecord::Migration
         related_rule.destroy!
       end
 
-      User.where(:status=>'active').each do |user|
+      User.where("status <> 'blocked'").each do |user|
         #next if user.card_id == Card::WagnBotID || user.card_id == Card::AnonID
         if card = Card.where( :id=>user.card_id, :trash=>false ).first and
              account = card.fetch(:trait=>:account, :new=>{})

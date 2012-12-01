@@ -3,10 +3,11 @@ class AccountTrait < ActiveRecord::Migration
     Wagn::Conf[:migration]=true
 
     Account.as_bot do
+
       if related_rule = Card[:account].fetch(:trait=>[:right, :content])
         Rails.logger.warn "delete related rule #{related_rule.inspect}"
         related_rule.confirm_destroy=true
-        related_rule.destroy!
+        related_rule.destroy
       end
 
       User.where("status <> 'blocked'").each do |user|

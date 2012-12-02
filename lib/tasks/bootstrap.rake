@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references }
-#note: users, roles, and role_users have been manually edited
-=======
-
 WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references users }
->>>>>>> develop
 
 namespace :wagn do
 
@@ -71,10 +65,7 @@ namespace :wagn do
     desc "dump db to bootstrap fixtures"
     task :dump => :environment do
       Wagn::Cache.reset_global
-#      begin
       YAML::ENGINE.yamler = 'syck'
-#      rescue
-#      end
       # use old engine while we're supporting ruby 1.8.7 because it can't support Psych,
       # which dumps with slashes that syck can't understand
 

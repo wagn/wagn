@@ -69,7 +69,7 @@ module WagnHelper
   def wrap_slot(renderer=nil, args={}, &block)
     renderer ||= (Wagn::Renderer.current_slot || get_slot)
     content = with_output_buffer { yield(renderer) }
-    renderer.wrap(:open, args) { content }
+    renderer.wrap(:open, args.merge(:frame=>true)) { content }
   end
   # ------------( helpers ) --------------
 

@@ -32,12 +32,7 @@ namespace :wagn do
     task :clean => :environment do
       Wagn::Cache.reset_global
 
-      # trash ignored cards
-      Account.as_bot do
-        Card.search( {:referred_to_by=>'*ignore'} ).each do |card|
-          card.destroy!
-        end
-      end
+
 
       # Correct time and user stamps
       botid = Card::WagnBotID
@@ -49,7 +44,14 @@ namespace :wagn do
         ActiveRecord::Base.connection.update("update #{table} set created_at=now() #{extra_sql[table.to_sym] || ''};")
       end
 
-
+      # trash ignored cards
+      Account.as_bot do
+        Card.search( {:referred_to_by=>'*ignore'} ).each do |card|
+          card.destroy!
+        end
+      end
+      
+      
       # delete unwanted rows ( will need to revise if we ever add db-level data integrity checks )
       ActiveRecord::Base.connection.delete( "delete from cards where trash is true" )
       ActiveRecord::Base.connection.delete( "delete from card_revisions where not exists " +

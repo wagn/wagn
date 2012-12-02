@@ -1,4 +1,5 @@
 module Wagn::Model::References
+  include Wagn::ReferenceTypes
 
   def name_referencers(rname = key)
     Card.find_by_sql(
@@ -15,6 +16,7 @@ module Wagn::Model::References
   protected
 
   def update_references_on_create
+    warn "update on create #{inspect}"
     Card::Reference.update_on_create self
 
     # FIXME: bogus blank default content is set on hard_templated cards...
@@ -25,11 +27,13 @@ module Wagn::Model::References
   end
 
   def update_references_on_update
+    warn "update on update #{inspect}"
     Wagn::Renderer.new(self, :not_current=>true).update_references
     expire_templatee_references
   end
 
   def update_references_on_destroy
+    warn "update on dest #{inspect}"
     Card::Reference.update_on_destroy(self)
     expire_templatee_references
   end
@@ -43,8 +47,10 @@ module Wagn::Model::References
       has_many :in_references,:class_name=>'Card::Reference', :foreign_key=>'referenced_card_id'
       has_many :out_references,:class_name=>'Card::Reference', :foreign_key=>'card_id', :dependent=>:destroy
 
-      has_many :in_transclusions, :class_name=>'Card::Reference', :foreign_key=>'referenced_card_id',:conditions=>["link_type in (?,?)",Card::Reference::TRANSCLUSION, Card::Reference::WANTED_TRANSCLUSION]
-      has_many :out_transclusions,:class_name=>'Card::Reference', :foreign_key=>'card_id',           :conditions=>["link_type in (?,?)",Card::Reference::TRANSCLUSION, Card::Reference::WANTED_TRANSCLUSION]
+      has_many :in_transclusions, :class_name=>'Card::Reference', :foreign_key=>'referenced_card_id',
+               :conditions=>["link_type in (?)", TRANSCLUDE_TYPES ]
+      has_many :out_transclusions,:class_name=>'Card::Reference', :foreign_key=>'card_id',
+               :conditions=>["link_type in (?)", TRANSCLUDE_TYPES ]
 
       has_many :referencers, :through=>:in_references
       has_many :transcluders, :through=>:in_transclusions, :source=>:referencer

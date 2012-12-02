@@ -73,8 +73,8 @@ class CardController < ApplicationController
     # if we enforce RESTful http methods, we should do it consistently,
     # and error should be 405 Method Not Allowed
 
-    author = Session.user_id == Card::AnonID ?
-        "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" : "[[#{Session.user.card.name}]]"
+    author = Account.user_id == Card::AnonID ?
+        "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" : "[[#{Account.user.card.name}]]"
     comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.strip.empty? ? '&nbsp;' : c}</p>"} * "\n"
     @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
 
@@ -96,7 +96,7 @@ class CardController < ApplicationController
   def watch
     watchers = @card.fetch :trait=>:watchers, :new=>{}
     watchers = watchers.refresh
-    myname = Card[Session.user_id].name
+    myname = Card[Account.user_id].name
     watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
     ajax? ? show(:watch) : read
   end
@@ -121,7 +121,7 @@ class CardController < ApplicationController
 
     account = @card.to_user
     if account and account_args = params[:account]
-      unless Session.as_id == @card.id and !account_args[:blocked]
+      unless Account.as_id == @card.id and !account_args[:blocked]
         @card.fetch(:trait=>:account).ok! :update
       end
       account.update_attributes account_args
@@ -146,7 +146,8 @@ class CardController < ApplicationController
     #@account = User.new(:email=>@user.email)
 #    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
     params[:attribute] = :account
-    show :options
+
+    wagn_redirect( previous_location )
   end
 
 
@@ -167,7 +168,7 @@ class CardController < ApplicationController
   end
 
   def index_preload
-    Session.no_logins? ?
+    Account.no_logins? ?
       redirect_to( Card.path_setting '/admin/setup' ) :
       params[:id] = (Card.setting(:home) || 'Home').to_name.url_key
   end

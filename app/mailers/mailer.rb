@@ -21,12 +21,11 @@ class Mailer < ActionMailer::Base
     @message  = message.clone
 
     args =  { :to => @email, :subject  => subject }
-    set_from_args args, ( Card.setting('*invite+*from') || begin
-      curr = Session.user
+    mail_from args, ( Card.setting('*invite+*from') || begin
+      curr = Account.user
       from_user = curr.anonymous? || curr.id == user.id ? User.admin : curr
       "#{from_user.card.name} <#{from_user.email}>"
     end ) #FIXME - might want different "from" settings for different contexts?
-    mail args
   end
 
   def signup_alert invite_request
@@ -43,8 +42,7 @@ class Mailer < ActionMailer::Base
       :subject      => "#{invite_request.name} signed up for #{@site}",
       :content_type => 'text/html',
     }
-    set_from_args args, Card.setting('*request+*from') || "#{@name} <#{@email}>"
-    mail args
+    mail_from args, Card.setting('*request+*from') || "#{@name} <#{@email}>"
   end
 
 
@@ -68,8 +66,7 @@ class Mailer < ActionMailer::Base
       :subject      => "[#{Card.setting :title} notice] #{@updater} #{action} \"#{card.name}\"" ,
       :content_type => 'text/html',
     }
-    set_from_args args, User.admin.email
-    mail args
+    mail_from args, User.admin.email
   end
 
   def flexmail config
@@ -83,13 +80,12 @@ class Mailer < ActionMailer::Base
       end
     end
 
-    set_from_args config, config[:from]
-    mail config
+    mail_from config, config[:from]
   end
 
   private
 
-  def set_from_args args, from
+  def mail_from args, from
     from_name, from_email = parse_address( from )
     if default_from=@@defaults[:from]
       args[:from] = !from_email ? default_from : "#{from_name || from_email} <#{default_from}>"
@@ -97,6 +93,7 @@ class Mailer < ActionMailer::Base
     else
       args[:from] = from
     end
+    mail args unless Wagn::Conf[:migration]
   end
 
   def parse_address addr

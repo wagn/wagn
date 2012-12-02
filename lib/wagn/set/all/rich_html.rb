@@ -114,7 +114,7 @@ module Wagn
             end
             }
           </li>
-          #{ if Session.logged_in? && !card.new_card? 
+          #{ if Account.logged_in? && !card.new_card? 
               "<li>#{ render_watch }</li>"
              end }
         </ul>      
@@ -146,7 +146,7 @@ module Wagn
       %{<div class="comment-box nodblclick"> #{
         card_form :comment do |f|
           %{#{f.text_area :comment, :rows=>3 }<br/> #{
-          unless Session.logged_in?
+          unless Account.logged_in?
             card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH
             %{<label>My Name is:</label> #{ f.text_field :comment_author }}
           end}
@@ -346,12 +346,14 @@ module Wagn
       else
         attribs += %{ card-id="#{card.id}" card-name="#{h card.name}" }
         [ card.name, :edit_help ]
+
       end
       label = link_to_page fancy_title, link_target
       fieldset label, content, :help=>help_settings, :attribs=>attribs
     end
 
     define_view :option_account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
+
       locals = {:slot=>self, :card=>card, :account=>card.to_user }
       wrap :options, args.merge(:frame=>true) do
         %{ #{ _render_header }
@@ -402,7 +404,7 @@ module Wagn
                 <div class="current-set">
                   #{ raw subrenderer( Card.fetch current_set).render_content }
                 </div>
-             
+
                 #{ if Card.toggle(card.rule(:accountable)) && card.fetch(:trait=>:account).ok?(:create)
                     %{<div class="new-account-link">
                     #{ link_to %{Add a sign-in account for "#{card.name}"},
@@ -411,7 +413,7 @@ module Wagn
                     </div>}
                    end
                 }
-              </div> 
+              </div>
             </div>
             #{ notice }
           }
@@ -547,7 +549,7 @@ module Wagn
     end
 
     define_view :not_found do |args| #ug.  bad name.
-      sign_in_or_up_links = if Session.logged_in?
+      sign_in_or_up_links = if Account.logged_in?
         %{<div>
           #{link_to "Sign In", :controller=>'account', :action=>'signin'} or
           #{link_to 'Sign Up', :controller=>'account', :action=>'signup'} to create it.
@@ -562,7 +564,6 @@ module Wagn
           </div>}
       end
     end
-
 
     define_view :denial do |args|
       task = args[:denied_task] || params[:action]
@@ -579,7 +580,7 @@ module Wagn
             if task != :read && Wagn::Conf[:read_only]
               "<div>We are currently in read-only mode.  Please try again later.</div>"
             else
-              if Session.logged_in?
+              if Account.logged_in?
                 %{<div>You need permission #{to_task}</div> }
               else
                 %{<div>You have to #{ link_to "sign in", wagn_url("/account/signin") } #{to_task}</div> 
@@ -610,7 +611,7 @@ module Wagn
     end
   
     define_view :watch, :tags=>:unknown_ok, :denial=>:blank,
-      :perms=> lambda { |r| Session.logged_in? && !r.card.new_card? } do |args|
+      :perms=> lambda { |r| Account.logged_in? && !r.card.new_card? } do |args|
         
       wrap :watch do
         if card.watching_type?

@@ -7,7 +7,7 @@ describe AccountController do
   describe "#accept" do
     before do
       login_as :joe_user
-      @user = Session.user
+      @user = Account.user
     end
   end
   
@@ -24,8 +24,8 @@ describe AccountController do
       post :invite, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'},
         :email=> @email_args
 
-      @new_user = User.where(:email=>'joe@new.com').first
       @user_card = Card['Joe New']
+      @new_user = User.where(:email=>'joe@new.com').first
 
     end
 
@@ -53,7 +53,7 @@ describe AccountController do
     #FIXME: tests needed : signup without approval, signup alert emails
 
     it 'should create a user' do
-      #warn "who #{Session.user_card.inspect}"
+      #warn "who #{Account.user_card.inspect}"
       post :signup, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}
       new_user = User.where(:email=>'joe@new.com').first
       user_card = Card['Joe New']
@@ -78,7 +78,9 @@ describe AccountController do
       post :signup, :user=>{:email=>'joe@user.com'}, :card=>{:name=>'Joe Scope'}
       post :signup, :user=>{:email=>'joe@user.com'}, :card=>{:name=>'Joe Duplicate'}
       
-      Card['Joe Duplicate'].should be_nil
+      #s=Card['joe scope']
+      c=Card['Joe Duplicate']
+      c.should be_nil
     end
   end
 

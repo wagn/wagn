@@ -33,12 +33,12 @@ class ApplicationController < ActionController::Base
 
       Wagn::Cache.renew
 
-      #warn "set curent_user (app-cont) #{self.session_user}, U.cu:#{Session.user_id}"
-      Session.user = self.session_user || Card::AnonID
-      #warn "set curent_user a #{session_user}, U.cu:#{Session.user_id}"
+      #warn "set curent_user (app-cont) #{self.session_user}, U.cu:#{Account.user_id}"
+      Account.user = self.session_user || Card::AnonID
+      #warn "set curent_user a #{session_user}, U.cu:#{Account.user_id}"
 
       # RECAPTCHA HACKS
-      Wagn::Conf[:recaptcha_on] = !Session.logged_in? &&     # this too
+      Wagn::Conf[:recaptcha_on] = !Account.logged_in? &&     # this too
         !!( Wagn::Conf[:recaptcha_public_key] && Wagn::Conf[:recaptcha_private_key] )
       @recaptcha_count = 0
 
@@ -148,10 +148,13 @@ class ApplicationController < ActionController::Base
     when Wagn::BadAddress, ActionController::UnknownController, AbstractController::ActionNotFound
       [ :bad_address, 404 ]
     else
+
       notify_airbrake exception if Airbrake.configuration.api_key
 
       if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) && @card && @card.errors.any?
         [ :errors, 422]
+      elsif Wagn::Conf[:migration]
+        raise exception
       else
         Rails.logger.info "\n\nController exception: #{exception.message}"
         Rails.logger.debug exception.backtrace*"\n"

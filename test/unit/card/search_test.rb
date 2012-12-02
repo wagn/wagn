@@ -3,7 +3,7 @@ class Card::BaseTest < ActiveSupport::TestCase
 
   def setup
     super
-    Session.as(cid=Card['u3'].id)  # FIXME!!! wtf?  this works and :admin doesn't
+    Account.as(cid=Card['u3'].id)  # FIXME!!! wtf?  this works and :admin doesn't
   end
 
   def test_autocard_should_not_respond_to_tform
@@ -22,7 +22,7 @@ class Card::BaseTest < ActiveSupport::TestCase
 
   def test_should_not_show_card_to_joe_user
     # FIXME: this needs some permission rules
-    Session.as(:joe_user)
+    Account.as(:joe_user)
     assert c=Card.fetch("u1+*email")
     assert_equal false, c.ok?(:read)
   end

@@ -70,7 +70,7 @@ module Wagn
 
 
     def get_layout_content(args)
-      Session.as_bot do
+      Account.as_bot do
         case
           when (params[:layout] || args[:layout]) ;  layout_from_name
           when card                               ;  layout_from_card
@@ -168,7 +168,7 @@ module Wagn
     end
 
     def type_field args={}
-      typelist = Session.createable_types
+      typelist = Account.createable_types
       typelist << card.type_name if !card.new_card?
       # current type should be an option on existing cards, regardless of create perms
 

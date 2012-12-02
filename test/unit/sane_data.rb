@@ -4,7 +4,7 @@ class SaneDataTest < ActiveSupport::TestCase
 
 
   def test_cardtypes
-    assert Session.createable_types.size >= 3
+    assert Account.createable_types.size >= 3
 
     Card.find(:all).each do |ct|
       if ct.codename == :cardtype

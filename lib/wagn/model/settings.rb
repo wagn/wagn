@@ -55,7 +55,7 @@ module Wagn::Model::Settings
 
     def universal_setting_names_by_group
       @@universal_setting_names_by_group ||= begin
-        Session.as_bot do
+        Account.as_bot do
           setting_ids = Card.search(:type=>Card::SettingID, :return=>'id', :limit=>'0')
           grouped = {:perms=>[], :look=>[], :com=>[], :other=>[]}
           setting_ids.map do |setting_id|

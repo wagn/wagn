@@ -7,7 +7,7 @@ namespace :db do
       ActiveRecord::Base.connection.execute %{update cards set references_expired=1}
       expired_cards_remain = true
       batchsize, count_updated = 100, 0
-      Session.as_bot
+      Account.as_bot
       while expired_cards_remain
         batch = Card.find_all_by_references_expired(1, :order=>"name ASC", :limit=>batchsize)
         if batch.empty?

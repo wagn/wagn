@@ -22,7 +22,7 @@ class AccountControllerTest < ActionController::TestCase
     @newby_email = 'newby@wagn.net'
     @newby_args =  {:user=>{ :email=>@newby_email },
                     :card=>{ :name=>'Newby Dooby' }}
-    Session.as_bot do
+    Account.as_bot do
       Card.create(:name=>'Account Request+*type+*captcha', :content=>'0')
     end
     signout
@@ -75,7 +75,7 @@ class AccountControllerTest < ActionController::TestCase
   end
 
   def test_signup_without_approval
-    Session.as_bot do  #make it so anyone can create accounts (ie, no approval needed)
+    Account.as_bot do  #make it so anyone can create accounts (ie, no approval needed)
       create_accounts_rule = Card['*account+*right'].fetch(:trait=>:create)
       create_accounts_rule << Card::AnyoneID
       create_accounts_rule.save!
@@ -106,7 +106,7 @@ class AccountControllerTest < ActionController::TestCase
 
   def test_forgot_password_blocked
     email = 'u3@user.com'
-    Session.as_bot do
+    Account.as_bot do
       u = User.find_by_email(email)
       u.status = 'blocked'
       u.save!

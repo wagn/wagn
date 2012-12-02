@@ -6,7 +6,7 @@ class CardCreateTest < ActionController::PerformanceTest
   def initialize(*args)
     @name = 'CardA'
     super(*args)
-    #Session.as_bot { # this must have a block now }
+    #Account.as_bot { # this must have a block now }
   end
 
   def test_card_create_simple

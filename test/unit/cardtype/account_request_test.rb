@@ -6,7 +6,7 @@ class Wagn::Set::Type::AccountRequestTest < ActiveSupport::TestCase
     super
     setup_default_user
     # make sure all this stuff works as anonymous user
-    Session.user = Card::AnonID
+    Account.user = Card::AnonID
   end
 
 
@@ -24,15 +24,9 @@ class Wagn::Set::Type::AccountRequestTest < ActiveSupport::TestCase
 
 
   def test_should_block_user
-    #Session.as_bot  do
-    #  auth_user_card = Card[Card::AuthID]
-      # FIXME: change from task ...
-      #auth_user_card.fetch(:trait=>:tasks).content = '[[deny_account_requests]]'
-    #end
     c=Card.fetch('Ron Request')
-    #warn Rails.logger.warn("destroy card (#{c.inspect}) #{User.where(:email=>'ron@request.com').first.inspect}")
-    Session.as :joe_user do c.destroy!  end
-    #warn Rails.logger.warn("destroyed card (#{c.inspect}) #{User.where(:email=>'ron@request.com').first.inspect}")
+    Account.as 'joe_admin' do c.destroy!  end
+    warn "destroyed card (#{c.inspect}) #{User.where(:email=>'ron@request.com').first.inspect}"
 
     assert_equal nil, Card.fetch('Ron Request')
     assert_equal 'blocked', User.where(:email=>'ron@request.com').first.status

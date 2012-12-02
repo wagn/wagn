@@ -18,7 +18,7 @@ module Wagn::Model::References
     Card::Reference.update_on_create self
 
     # FIXME: bogus blank default content is set on hard_templated cards...
-    Session.as_bot do
+    Account.as_bot do
       Wagn::Renderer.new(self, :not_current=>true).update_references
     end
     expire_templatee_references

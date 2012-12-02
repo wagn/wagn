@@ -1,7 +1,7 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
 
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
-  user = Session.user_card.name if user == "I"
+  user = Account.user_card.name if user == "I"
   step "the card #{cardname}+*watchers contains \"[[#{user}]]\""
 end
 

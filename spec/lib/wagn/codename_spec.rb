@@ -17,7 +17,7 @@ describe Wagn::Codename, "Codename" do
   end
 
   it "cards should exist and be indestructable" do
-    Session.as_bot do
+    Account.as_bot do
       @codes.each do |code|
         card = Card[code]
         card.destroy

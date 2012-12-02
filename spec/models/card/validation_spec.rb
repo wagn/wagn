@@ -2,7 +2,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Card, "validate name" do
   before(:each) do
-    Session.as :joe_user
+    Account.as :joe_user
   end
 
   it "should error on name with /" do

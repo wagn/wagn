@@ -37,6 +37,7 @@ module Notification
         end
       end
     rescue Exception=>e
+      raise e if Wagn::Conf[:migration]
       Airbrake.notify e if Airbrake.configuration.api_key
       Rails.logger.info "\nController exception: #{e.message}"
       Rails.logger.debug e.backtrace*"\n"
@@ -55,20 +56,20 @@ module Notification
       []
     end
 
-    def watching_type?() watcher_pairs(false, :type).member?(Session.user_id) end
-    def watching?()      watcher_pairs(false).member?(Session.user_id)        end
+    def watching_type?() watcher_pairs(false, :type).member?(Account.user_id) end
+    def watching?()      watcher_pairs(false).member?(Account.user_id)        end
     def watchers()       watcher_watched_pairs(false)                      end
     def watcher_watched_pairs(pairs=true)
       ( watcher_pairs(pairs) + watcher_pairs(pairs, :type) )
     end
 
     def watcher_pairs(pairs=true, kind=:name)
-      #warn "wp #{pairs}, #{kind}, #{Session.user_id}"
+      #warn "wp #{pairs}, #{kind}, #{Account.user_id}"
       namep, rc = (kind == :type) ?  [lambda { self.type_name },
                (self.type_card.fetch(:trait=>:watchers))] :
             [lambda { self.cardname }, fetch(:trait=>:watchers)]
       watchers = rc.nil? ? [] : rc.item_cards.map(&:id)
-      pairs ? watchers.except(Session.user_id).map {|w| [w, namep.call] } : watchers
+      pairs ? watchers.except(Account.user_id).map {|w| [w, namep.call] } : watchers
     end
   end
 

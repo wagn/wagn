@@ -16,7 +16,7 @@ module Wagn::Model::References
   protected
 
   def update_references_on_create
-    warn "update on create #{inspect}"
+    Rails.logger.warn "update on create #{inspect}"
     Card::Reference.update_on_create self
 
     # FIXME: bogus blank default content is set on hard_templated cards...
@@ -27,13 +27,13 @@ module Wagn::Model::References
   end
 
   def update_references_on_update
-    warn "update on update #{inspect}"
+    Rails.logger.warn "update on update #{inspect}"
     Wagn::Renderer.new(self, :not_current=>true).update_references
     expire_templatee_references
   end
 
   def update_references_on_destroy
-    warn "update on dest #{inspect}"
+    Rails.logger.warn "update on dest #{inspect}"
     Card::Reference.update_on_destroy(self)
     expire_templatee_references
   end

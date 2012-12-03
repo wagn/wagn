@@ -23,7 +23,7 @@ class Card::Reference < ActiveRecord::Base
     include Wagn::ReferenceTypes
 
     def update_on_create card
-      warn "up on create #{card.inspect}"
+      Rails.logger.debug "u create #{card.inspect}"
       where( :link_type=>LINK_TYPES.last,         :referenced_name => card.key ).
         update_all :link_type => LINK_TYPES.first,       :referenced_card_id => card.id
 
@@ -32,8 +32,8 @@ class Card::Reference < ActiveRecord::Base
     end
 
     def update_on_destroy card, name=nil
+      Rails.logger.debug "u dest #{card.inspect}, N:#{name}"
       name ||= card.key
-      warn "up on create #{card.inspect}, #{name}"
       delete_all :card_id => card.id
 
       where( :link_type => LINK_TYPES.first,        :referenced_card_id=>card.id, :referenced_name => name ).

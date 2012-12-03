@@ -643,7 +643,7 @@ class Card < ActiveRecord::Base
     if cdname.blank?
       rec.errors.add :name, "can't be blank"
     elsif rec.updates.for?(:name)
-      warn "valid name #{rec.name.inspect} New #{value.inspect}"
+      Rails.logger.warn "valid name #{rec.name.inspect} New #{value.inspect}"
 
       unless cdname.valid?
         rec.errors.add :name,

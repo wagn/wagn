@@ -1,3 +1,10 @@
+PATH
+  remote: /home/gerry/work/smartname
+  specs:
+    smartname (0.1.5)
+      activesupport
+      htmlentities (~> 4.3.0)
+
 GEM
   remote: http://rubygems.org/
   specs:

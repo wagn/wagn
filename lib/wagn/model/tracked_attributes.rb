@@ -17,7 +17,6 @@ module Wagn::Model::TrackedAttributes
 
   protected
   def set_name newname
-    Rails.logger.debug "set_name #{newname}"
     @old_name = self.name_without_tracking
     return if @old_name == newname.to_s
 
@@ -57,7 +56,7 @@ module Wagn::Model::TrackedAttributes
         existing_card.name = tr_name = existing_card.name+'*trash'
         existing_card.instance_variable_set :@cardname, tr_name.to_name
         existing_card.set_tracked_attributes
-        Rails.logger.debug "trash renamed collision: #{tr_name}, #{existing_card.name}, #{existing_card.cardname.key}"
+        #Rails.logger.debug "trash renamed collision: #{tr_name}, #{existing_card.name}, #{existing_card.cardname.key}"
         existing_card.save!
       #else note -- else case happens when changing to a name variant.  any special handling needed?
       end
@@ -78,7 +77,7 @@ module Wagn::Model::TrackedAttributes
   end
 
   def set_type_id(new_type_id)
-#    Rails.logger.debug "set_typecde No type code for #{name}, #{type_id}" unless new_type_id
+    #Rails.logger.debug "set_typecde No type code for #{name}, #{type_id}" unless new_type_id
     #warn "set_type_id(#{new_type_id}) #{self.type_id_without_tracking}"
     self.type_id_without_tracking= new_type_id
     return true if new_card?
@@ -134,15 +133,16 @@ module Wagn::Model::TrackedAttributes
 
   def cascade_name_changes
     return true unless @name_changed
-    Rails.logger.debug "----------------------- CASCADE #{self.name}  -------------------------------------"
 
     deps = self.dependents
+
+    Rails.logger.debug "----------------------- CASCADE #{self.name} -------------------------------------"
+    #Rails.logger.debug "----------------------- CASCADE #{self.name} -> #{deps.map(&:name)*", "} -------------------------------------"
 
     deps.each do |dep|
       # here we specifically want NOT to invoke recursive cascades on these cards, have to go this low level to avoid callbacks.
       Rails.logger.debug "---------------------- DEP #{dep.name}  -------------------------------------"
       newname = dep.cardname.replace_part @old_name, name
-      Rails.logger.warn "nn #{newname} o:#{@old_name} #{name}"
       cxn = connection
       Card.update_all "name=#{cxn.quote newname.s}, #{cxn.quote_column_name 'key'}=#{cxn.quote newname.key}", "id = #{dep.id}"
       Card.expire dep.name #expire old name

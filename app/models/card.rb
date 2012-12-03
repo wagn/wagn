@@ -249,7 +249,6 @@ class Card < ActiveRecord::Base
   rescue Exception=>e
     expire_pieces
     @subcards.each{ |card| card.expire_pieces }
-    Rails.logger.info "after save issue: #{e.message}"
     raise e
   end
 

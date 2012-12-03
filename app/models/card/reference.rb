@@ -52,10 +52,10 @@ class Card
         name ||= card.key
         delete_all :card_id => card.id
 
-        where( :link_type => LINK.first,        :referenced_card_id=>card.id, :referenced_name => name ).
+        where( "link_type = ? and (referenced_card_id = ? or referenced_name = ?)", LINK.first, card.id, name ).
           update_all :link_type=>LINK.last,       :referenced_card_id => nil
 
-        where( :link_type => TRANSCLUDE.first, :referenced_card_id=>card.id, :referenced_name => name ).
+        where( "link_type = ? and (referenced_card_id = ? or referenced_name = ?)", TRANSCLUDE.first, card.id, name ).
           update_all :link_type=>TRANSCLUDE.last, :referenced_card_id => nil
       end
     end

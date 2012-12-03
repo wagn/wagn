@@ -93,15 +93,11 @@ describe "Card::Reference" do
     Card::Reference.where(:referenced_card_id => Card::AdminID).map(&:card_id).sort.should == refs
   end
 
-  W = Wagn::ReferenceTypes::WANTED_LINK
-  L = Wagn::ReferenceTypes::LINK
-
   it "should not update references when not requested" do
     watermelon = newcard('watermelon', 'mmmm')
     watermelon_seeds = newcard('watermelon+seeds', 'black')
     lew = newcard('Lew', "likes [[watermelon]] and [[watermelon+seeds|seeds]]")
 
-    assert_equal [L,L], lew.out_references.plot(:link_type), "links should be Wanted"
     watermelon = Card['watermelon']
     watermelon.update_referencers = false
     watermelon.name="grapefruit"

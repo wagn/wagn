@@ -236,6 +236,13 @@ describe SmartName do
         "_LLLL".to_name.to_absolute("A").should == "A"
       end
     end
+
+    it "does session user substitution" do
+      "_user".to_name.to_absolute("A").should == Account.as_card.name
+      Account.as_bot do
+        "_user".to_name.to_absolute("A").should == Account.as_card.name
+      end
+    end
   end
 
   describe "#to_show" do

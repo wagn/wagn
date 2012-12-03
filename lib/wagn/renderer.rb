@@ -1,6 +1,6 @@
 module Wagn
   class Renderer
-    include ReferenceTypes
+    include Card::ReferenceTypes
     include LocationHelper
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
@@ -440,12 +440,8 @@ module Wagn
       rendering_result ||= WikiContent.new(card, _render_refs, self)
       
       rendering_result.find_chunks(Chunk::Reference).each do |chunk|
-        reference_type =
-          case chunk
-            when Chunk::Link;       chunk.refcard ? LINK : WANTED_LINK
-            when Chunk::Transclude; chunk.refcard ? TRANSCLUSION : WANTED_TRANSCLUSION
-            else raise "Unknown chunk reference class #{chunk.class}"
-          end
+        reference_type = reference_type = TYPE_MAP[chunk.class][chunk.refcard.nil?]
+        raise "Unknown chunk reference class #{chunk.class}" if reference_type.nil?
 
         Card::Reference.create!( :card_id=>card.id,
           :referenced_name=> (rc=chunk.refcardname()) && rc.key() || '',

@@ -93,8 +93,8 @@ describe "Card::Reference" do
     Card::Reference.where(:referenced_card_id => Card::AdminID).map(&:card_id).sort.should == refs
   end
 
-  W = Wagn::ReferenceTypes::WANTED_LINK
-  L = Wagn::ReferenceTypes::LINK
+  L = Card::ReferenceTypes::LINK.first
+  W = Card::ReferenceTypes::LINK.last
 
   it "should not update references when not requested" do
     watermelon = newcard('watermelon', 'mmmm')

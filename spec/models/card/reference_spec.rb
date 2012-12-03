@@ -107,7 +107,7 @@ describe "Card::Reference" do
     watermelon.name="grapefruit"
     watermelon.save!
     lew.reload.content.should == "likes [[watermelon]] and [[watermelon+seeds|seeds]]"
-    assert_equal [W,W], lew.out_references.plot(:link_type), "links should be Wanted"
+    assert_equal [W,L], lew.out_references.plot(:link_type), "links should be Wanted"
   end
 
   it "update referencing content on rename junction card" do

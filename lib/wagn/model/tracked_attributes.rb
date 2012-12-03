@@ -17,7 +17,7 @@ module Wagn::Model::TrackedAttributes
 
   protected
   def set_name newname
-    Rails.logger.info "set_name #{newname}"
+    Rails.logger.debug "set_name #{newname}"
     @old_name = self.name_without_tracking
     return if @old_name == newname.to_s
 
@@ -134,14 +134,15 @@ module Wagn::Model::TrackedAttributes
 
   def cascade_name_changes
     return true unless @name_changed
-    ActiveRecord::Base.logger.debug "----------------------- CASCADE #{self.name}  -------------------------------------"
+    Rails.logger.debug "----------------------- CASCADE #{self.name}  -------------------------------------"
 
     deps = self.dependents
 
     deps.each do |dep|
       # here we specifically want NOT to invoke recursive cascades on these cards, have to go this low level to avoid callbacks.
-      ActiveRecord::Base.logger.debug "---------------------- DEP #{dep.name}  -------------------------------------"
+      Rails.logger.debug "---------------------- DEP #{dep.name}  -------------------------------------"
       newname = dep.cardname.replace_part @old_name, name
+      Rails.logger.warn "nn #{newname} o:#{@old_name} #{name}"
       cxn = connection
       Card.update_all "name=#{cxn.quote newname.s}, #{cxn.quote_column_name 'key'}=#{cxn.quote newname.key}", "id = #{dep.id}"
       Card.expire dep.name #expire old name
@@ -151,7 +152,7 @@ module Wagn::Model::TrackedAttributes
     if !update_referencers || update_referencers == 'false'  # FIXME doing the string check because the radio button is sending an actual "false" string
       #warn "no updating.."
       ([self]+deps).each do |dep|
-        ActiveRecord::Base.logger.debug "--------------- NOUPDATE REFERER #{dep.name}  ---------------------------"
+        Rails.logger.debug "--------------- NOUPDATE REFERER #{dep.name} ---------------------------"
         Card::Reference.update_on_destroy dep, @old_name
       end
     else
@@ -164,7 +165,7 @@ module Wagn::Model::TrackedAttributes
           # some even more complicated scenario probably breaks on the dependents, so this probably needs a more thoughtful refactor
           # aligning the dependent saving with the name cascading
 
-          ActiveRecord::Base.logger.debug "------------------ UPDATE REFERER #{card.name}  ------------------------"
+          Rails.logger.debug "------------------ UPDATE REFERER #{card.name}  ------------------------"
           next if card.hard_template
           card.content = Wagn::Renderer.new(card, :not_current=>true).replace_references( @old_name, name )
           card.save! unless card==self

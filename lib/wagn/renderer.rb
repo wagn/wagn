@@ -410,7 +410,7 @@ module Wagn
 
      ### FIXME -- this should not be here!   probably in Card::Reference model?
     def replace_references old_name, new_name
-      #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
+      Rails.logger.warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
       wiki_content = WikiContent.new(card, card.content, self)
 
       wiki_content.find_chunks(Chunk::Link).each do |chunk|
@@ -418,7 +418,7 @@ module Wagn
           link_bound = chunk.cardname == chunk.link_text
           chunk.cardname = chunk.cardname.replace_part(old_name, new_name)
           chunk.link_text=chunk.cardname.to_s if link_bound
-          #Rails.logger.info "repl ref: #{chunk.cardname.to_s}, #{link_bound}, #{chunk.link_text}"
+          Rails.logger.warn "repl ref: #{chunk.cardname.to_s}, #{link_bound}, #{chunk.link_text}"
         end
       end
 
@@ -432,6 +432,7 @@ module Wagn
 
     #FIXME -- should not be here.
     def update_references rendering_result = nil, refresh = false
+      Rails.logger.warn "update references...card name: #{card.name}, rr: #{rendering_result}, refresh: #{refresh}"
       return unless card && card.id
       Card::Reference.delete_all ['card_id = ?', card.id]
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")

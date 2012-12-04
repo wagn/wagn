@@ -233,12 +233,12 @@ module Wagn::Model
         end
         def prototype_args base
           { :name=>"*dummy+#{base.tag}",
-            :loaded_trunk=> Card.new( :name=>'*dummy', :type=>base.trunk_name )
+            :loaded_left=> Card.new( :name=>'*dummy', :type=>base.trunk_name )
           }
         end
         def trunk_name card
-          left = card.loaded_trunk || card.left
-          #left = card.loaded_trunk || (tkid=card.left_id ? Card[tkid] : card.left)
+          left = card.loaded_left || card.left
+          #left = card.loaded_left || (tkid=card.left_id ? Card[tkid] : card.left)
           type_name = (left && left.type_name) || Card[ Card::DefaultTypeID ].name
           "#{type_name}+#{card.cardname.tag}"
         end

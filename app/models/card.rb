@@ -18,7 +18,7 @@ class Card < ActiveRecord::Base
   cattr_accessor :cache  
   attr_accessor :comment, :comment_author, :selected_rev_id,
     :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
-    :cards, :loaded_trunk, :nested_edit, # should be possible to merge these concepts
+    :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status #yuck
       
   attr_writer :update_read_rule_list
@@ -49,7 +49,7 @@ class Card < ActiveRecord::Base
             args['type']          == cc.type_args[:type]      and
             args['typecode']      == cc.type_args[:typecode]  and
             args['type_id']       == cc.type_args[:type_id]   and
-            args['loaded_trunk']  == cc.loaded_trunk
+            args['loaded_left']  == cc.loaded_left
 
           args['type_id'] = cc.type_id
           return cc.send( :initialize, args )

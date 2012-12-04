@@ -322,7 +322,7 @@ module Wagn
 
     def new_inclusion_card_args options
       args = { :type =>options[:type] }
-      args[:loaded_trunk]=card if options[:tname] =~ /^\+/
+      args[:loaded_left]=card if options[:tname] =~ /^\+/
       if content=get_inclusion_content(options[:tname])
         args[:content]=content
       end

@@ -1,4 +1,4 @@
-module ChunkTestHelper
+module ChunkSpecHelper
   # This module is to be included in unit tests that involve matching chunks.
   # It provides a easy way to test whether a chunk matches a particular string
   # and any the values of any fields that should be set after a match.

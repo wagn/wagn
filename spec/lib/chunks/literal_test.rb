@@ -1,7 +1,7 @@
 require File.expand_path('../../test_helper', File.dirname(__FILE__))
 
 class LiteralTest < ActiveSupport::TestCase
-  include ChunkTestHelper
+  include ChunkSpecHelper
 
 
   def setup

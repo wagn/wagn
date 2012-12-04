@@ -529,7 +529,7 @@ describe Wagn::Renderer, "" do
   #attr_accessor :controller
 
   def setup
-    setup_default_user
+    setup_user 'joe_user'
   end
 
   def test_replace_references_should_work_on_inclusions_inside_links

@@ -21,14 +21,17 @@ html>body .open-view {
   white-space: normal;
 }
 
+.card-slot > form >.instruction,
+.card-slot > .instruction {
+  background: #eee;
+}
+
 /*----- header ---------*/
 
 .card-header {
   background: #8AB;
   padding: 5px 12px;
   margin: 0px;
-  -moz-border-radius: 6px 6px 0 0;
-  border-radius: 6px 6px 0 0;
   text-align: left;
 }
 .card-header,
@@ -68,10 +71,9 @@ h1.card-title {
 .card-header .toggler {
   font-size: 1.5em;
 }
-
-
-/* FIXE: these need the IE gifs as well */
-
+.name-editor input {
+  width: 100%;
+}
 
 .ui-menu .ui-menu-item {
   padding: 2px 0;
@@ -88,13 +90,10 @@ h1.card-title {
 .search-icon { background-image: url(search.png); }
 .add-icon    { background-image: url(plus.png);   }
 .goto-icon   { background-image: url(page.png);   }
-
-
 .cardtype {
   font-style: italic;
   font-size: 10px;
 }
-
 .current {
   background: #bbb;
   padding-bottom: 5px !important;
@@ -584,5 +583,3 @@ table.perm-editor .pointer-item-text {
     padding: 8px;
     margin: 0px;
 }
-
-

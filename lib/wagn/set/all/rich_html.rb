@@ -405,7 +405,7 @@ module Wagn
                   #{ raw subrenderer( Card.fetch current_set).render_content }
                 </div>
 
-                #{ if Card.toggle(card.rule(:accountable)) && card.fetch(:trait=>:account).ok?(:create)
+                #{ if Card.toggle(card.rule(:accountable)) && card.fetch(:trait=>:account, :new=>{}).ok?(:create)
                     %{<div class="new-account-link">
                     #{ link_to %{Add a sign-in account for "#{card.name}"},
                         path(:options, :attrib=>:new_account),

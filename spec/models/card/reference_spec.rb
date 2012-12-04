@@ -93,15 +93,15 @@ describe "Card::Reference" do
     Card::Reference.where(:referenced_card_id => Card::AdminID).map(&:card_id).sort.should == refs
   end
 
-  L = Card::ReferenceTypes::LINK.first
-  W = Card::ReferenceTypes::LINK.last
+  LINK = Card::ReferenceTypes::LINK
 
   it "should not update references when not requested" do
+
     watermelon = newcard('watermelon', 'mmmm')
     watermelon_seeds = newcard('watermelon+seeds', 'black')
     lew = newcard('Lew', "likes [[watermelon]] and [[watermelon+seeds|seeds]]")
 
-    assert_equal [L,L], lew.out_references.plot(:link_type), "links should not be Wanted before"
+    assert_equal [1,1], lew.out_references.plot(:present), "links should not be Wanted before"
     Rails.logger.warn "tesging #{(pseeds = Card['watermelon+seeds']).inspect}, #{pseeds.dependents.inspect}"
     Rails.logger.warn "tesging #{(melon = Card['watermelon']).inspect}, deps: #{melon.dependents.inspect}"
     watermelon = Card['watermelon']
@@ -109,7 +109,8 @@ describe "Card::Reference" do
     watermelon.name="grapefruit"
     watermelon.save!
     lew.reload.content.should == "likes [[watermelon]] and [[watermelon+seeds|seeds]]"
-    assert_equal [W,W], lew.out_references.plot(:link_type), "links should be Wanted"
+    assert_equal [ LINK, LINK ], lew.out_references.plot(:link_type), "links should be a LINK"
+    assert_equal [ 0, 0 ], lew.out_references.plot(:present), "links should not be present"
   end
 
   it "update referencing content on rename junction card" do

@@ -4,15 +4,18 @@ class Card
  
   module ReferenceTypes
 
-    LINK       = [ 'L', 'W' ]
-    TRANSCLUDE = [ 'T', 'M' ]
+    # New stuff
+    LINK       = 'L'
+    TRANSCLUDE = 'T'
 
-    TYPES      = [ *LINK,  *TRANSCLUDE]
+    TYPES      = [ LINK, TRANSCLUDE ]
 
-    TYPE_MAP = {
-      Chunk::Link       => { false => LINK.first,       true => LINK.last       },
-      Chunk::Transclude => { false => TRANSCLUDE.first, true => TRANSCLUDE.last },
-    }
+    # Needed for migration
+    LINK_TYPES       = [ 'L', 'W' ]
+    TRANSCLUDE_TYPES = [ 'T', 'M' ]
+
+    MISSING    = [ LINK_TYPES.last,  TRANSCLUDE.last  ]
+    PRESENT    = [ LINK_TYPES.first, TRANSCLUDE.first ]
 
   end
 
@@ -27,36 +30,28 @@ class Card
       include ReferenceTypes
 
       def cards_that_reference name
-        where( :link_type => TYPES,        :referenced_name=>name ).collect &:referencer
+        where( :referenced_name=>name                           ).collect &:referencer
       end
 
       def cards_that_link_to name
-        where( :link_type => LINK,       :referenced_name=>name ).collect &:referencer
+        where( :referenced_name=>name, :link_type => LINK       ).collect &:referencer
       end
 
       def cards_that_transclude name
-        where( :link_type => TRANSCLUDE, :referenced_name=>name ).collect &:referencer
+        where( :referenced_name=>name, :link_type => TRANSCLUDE ).collect &:referencer
       end
 
       def update_on_create card
-        Rails.logger.debug "u create #{card.inspect}"
-        where( :link_type=>LINK.last,         :referenced_name => card.key ).
-          update_all :link_type => LINK.first,       :referenced_card_id => card.id
-
-        where( :link_type => TRANSCLUDE.last, :referenced_name => card.key ).
-          update_all :link_type => TRANSCLUDE.first, :referenced_card_id => card.id
+        where( :referenced_name => card.key ).
+          update_all :present => 1, :referenced_card_id => card.id
       end
 
       def update_on_destroy card, name=nil
-        Rails.logger.debug "u dest #{card.inspect}, N:#{name}"
         name ||= card.key
         delete_all :card_id => card.id
 
-        where( "link_type = ? and (referenced_card_id = ? or referenced_name = ?)", LINK.first, card.id, name ).
-          update_all :link_type=>LINK.last,       :referenced_card_id => nil
-
-        where( "link_type = ? and (referenced_card_id = ? or referenced_name = ?)", TRANSCLUDE.first, card.id, name ).
-          update_all :link_type=>TRANSCLUDE.last, :referenced_card_id => nil
+        where( "referenced_card_id = ? or referenced_name = ?", card.id, name ).
+          update_all :present=>0, :referenced_card_id => nil
       end
     end
 

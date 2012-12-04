@@ -439,13 +439,12 @@ module Wagn
       rendering_result ||= WikiContent.new(card, _render_refs, self)
       
       rendering_result.find_chunks(Chunk::Reference).each do |chunk|
-        reference_type = reference_type = TYPE_MAP[chunk.class][chunk.refcard.nil?]
-        raise "Unknown chunk reference class #{chunk.class}" if reference_type.nil?
 
         Card::Reference.create!( :card_id=>card.id,
           :referenced_name=> (rc=chunk.refcardname()) && rc.key() || '',
           :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
-          :link_type=>reference_type
+          :link_type=> Chunk::Link===chunk ? LINK : TRANSCLUDE,
+          :present => chunk.refcard.nil? ? 0 : 1
          )
       end
     end

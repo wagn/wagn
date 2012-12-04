@@ -48,7 +48,7 @@ ActiveRecord::Schema.define(:version => 20121111025347) do
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
     t.integer  "creator_id",          :null => false
-    t.integer  "updater_id"
+    t.integer  "updater_id",          :null => false
     t.integer  "extension_id"
     t.string   "extension_type"
     t.text     "indexed_name"

@@ -371,8 +371,9 @@ class Card < ActiveRecord::Base
 
   def dependents
     return [] if new_card?
+    wql_key = simple? ? :part : :left
     Account.as_bot do
-      Card.search( :part=>name ).map do |c|
+      Card.search( wql_key=>name ).map do |c|
         [ c ] + c.dependents
       end.flatten
     end

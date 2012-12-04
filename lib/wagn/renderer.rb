@@ -292,18 +292,14 @@ module Wagn
 
       opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
       # FIXME: special views should be represented in view definitions
-
-      unless @@perms[view] == :none
-        view = case @mode
-
-          when :closed   ;  !tcard.known?  ? :closed_missing : :closed_content
-          when :edit     ;  tcard.virtual? ? :edit_virtual   : :edit_in_form
-          when :template ;  :template_rule
-          # FIXME should be concerned about templateness, not virtualness per se
-          # needs to handle real cards that are hard templated much better
-          else           ;  view
-          end
-      end
+      
+      view = case
+      when @mode == :edit       ; @@perms[view]==:none || tcard.hard_template ? :blank : :edit_in_form
+      when @@perms[view]==:none ; view
+      when @mode == :closed     ; !tcard.known?  ? :closed_missing : :closed_content
+      when @mode == :template   ; :template_rule
+      else                      ; view
+      end  
 
       result = raw sub.render( view, opts )
       Renderer.current_slot = oldrenderer

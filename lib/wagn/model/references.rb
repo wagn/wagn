@@ -14,6 +14,18 @@ module Wagn
     (dependents + [self]).plot(:referencers).flatten.uniq
   end
 
+  def referencers
+    Card::Reference.where( :referenced_card_id => id ).map(&:card_id ).map &Card.method( :fetch )
+  end
+
+  def referencees
+    Card::Reference.where( :card_id => id ).map(&:referenced_name ).map &Card.method( :fetch )
+  end
+
+  def transcluders
+    Card::Reference.where( :referenced_card_id => id, :ref_type => TRANSCLUDE ).map(&:card_id ).map &Card.method( :fetch )
+  end
+
   protected
 
   def update_references_on_create
@@ -39,27 +51,13 @@ module Wagn
 
 
   def self.included(base)
+
     super
+
     base.class_eval do
-
-      has_many :in_references,:class_name=>'Card::Reference', :foreign_key=>'referenced_card_id'
-      has_many :out_references,:class_name=>'Card::Reference', :foreign_key=>'card_id', :dependent=>:destroy
-
-      has_many :in_transclusions, :class_name=>'Card::Reference', :foreign_key=>'referenced_card_id',
-               :conditions=>{ :link_type => TRANSCLUDE }
-      has_many :out_transclusions,:class_name=>'Card::Reference', :foreign_key=>'card_id',
-               :conditions=>{ :link_type => TRANSCLUDE }
-
-      has_many :referencers, :through=>:in_references
-      has_many :transcluders, :through=>:in_transclusions, :source=>:referencer
-
-      has_many :referencees, :through=>:out_references
-      has_many :transcludees, :through=>:out_transclusions, :source=>:referencee # used in tests only
-
       after_create :update_references_on_create
       after_destroy :update_references_on_destroy
       after_update :update_references_on_update
-
     end
 
   end

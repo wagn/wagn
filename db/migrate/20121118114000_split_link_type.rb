@@ -13,14 +13,16 @@ class SplitLinkType < ActiveRecord::Migration
 
   def up
     add_column :card_references, :present, :integer
-    Card::Reference.where(:link_type=>LINK_TYPES.last).      update_all(:present=>0, :link_type=>LINK_TYPES.first)
-    Card::Reference.where(:link_type=>TRANSCLUDE_TYPES.last).update_all(:present=>0, :link_type=>TRANSCLUDE_TYPES.first)
-    Card::Reference.where(:link_type=>PRESENT).              update_all(:present=>1)
+    rename_column :card_references, :link_type, :ref_type
+    Card::Reference.where(:ref_type=>LINK_TYPES.last).      update_all(:present=>0, :ref_type=>LINK_TYPES.first)
+    Card::Reference.where(:ref_type=>TRANSCLUDE_TYPES.last).update_all(:present=>0, :ref_type=>TRANSCLUDE_TYPES.first)
+    Card::Reference.where(:ref_type=>PRESENT).              update_all(:present=>1)
   end
 
   def down
-    Card::Reference.where(:present=>0, :link_type=>LINK_TYPES.first).      update_all(:link_type=>LINK_TYPES.last)
-    Card::Reference.where(:present=>0, :link_type=>TRANSCLUDE_TYPES.first).update_all(:link_type=>TRANSCLUDE_TYPES.last)
+    Card::Reference.where(:present=>0, :ref_type=>LINK_TYPES.first).      update_all(:ref_type=>LINK_TYPES.last)
+    Card::Reference.where(:present=>0, :ref_type=>TRANSCLUDE_TYPES.first).update_all(:ref_type=>TRANSCLUDE_TYPES.last)
     remove_column :card_references, :present
+    rename_column :card_references, :ref_type, :link_type
   end
 end

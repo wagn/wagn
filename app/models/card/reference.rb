@@ -14,10 +14,19 @@ class Card
 
 
   class Reference < ActiveRecord::Base
-    belongs_to :referencer, :class_name=>'Card', :foreign_key=>'card_id'
-    belongs_to :referencee, :class_name=>'Card', :foreign_key=>"referenced_card_id"
+    def referencer
+      Card[card_id]
+    end
 
-    validates_inclusion_of :link_type, :in => ReferenceTypes::TYPES
+    def referencee
+      Card[referenced_card_id]
+    end
+
+    def missing_referencee
+      Card.fetch referenced_card_id
+    end
+
+    validates_inclusion_of :ref_type, :in => ReferenceTypes::TYPES
 
     class << self
       include ReferenceTypes
@@ -27,11 +36,11 @@ class Card
       end
 
       def cards_that_link_to name
-        where( :referenced_name=>name, :link_type => LINK       ).collect &:referencer
+        where( :referenced_name=>name, :ref_type => LINK       ).collect &:referencer
       end
 
       def cards_that_transclude name
-        where( :referenced_name=>name, :link_type => TRANSCLUDE ).collect &:referencer
+        where( :referenced_name=>name, :ref_type => TRANSCLUDE ).collect &:referencer
       end
 
       def update_on_create card

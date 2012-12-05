@@ -31,8 +31,6 @@ describe Chunk::Link, "link chunk tests" do
     assert_equal('<a class="wanted-card" href="/Lewinsky%2BClinton">Lewinsky</a>', render_test_card(cardB) )
   end
 
-
-
   it "should test relative url" do
     card3 = newcard('recent changes', '[[/recent]]')
     assert_equal('<a class="internal-link" href="/recent">/recent</a>', render_test_card(card3) )
@@ -43,7 +41,7 @@ describe Chunk::Link, "link chunk tests" do
     assert_equal('<a class="external-link" href="http://google.com">http://google.com</a>', render_test_card(card4) )
   end
 
-  it "should internal needs escaping" do
+  it "should escape spaces %20 (not +)" do
     card5 = newcard('userlink', '[Marie][Marie "Mad Dog" Deatherage]')
     assert_equal('<a class="wanted-card" href="/Marie%20%22Mad%20Dog%22%20Deatherage">Marie</a>', render_test_card(card5) )
   end
@@ -58,9 +56,6 @@ describe Chunk::Link, "link chunk tests" do
     card = Card.create! :name => "#{dude.name}+#{job.name}", :content => "icepicker"
     assert_equal("<a class=\"known-card\" href=\"/Harvey+business\">#{SmartName.joint}business</a>", render_test_card(dude) )
   end
-
-
-
 
 end
 

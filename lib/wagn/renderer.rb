@@ -374,7 +374,7 @@ module Wagn
           #href+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
           cardname = href.to_name
           href = known_card ? cardname.url_key : ERB::Util.url_encode( cardname.to_s )
-          #href = known_card ? cardname.url_key : CGI.escape( cardname.to_s.gsub ' ', '%20%' )
+          #note - CGI.escape uses '+' to escape space.  that won't work for us.
           href = full_uri href.to_s
           known_card ? 'known-card' : 'wanted-card'
 

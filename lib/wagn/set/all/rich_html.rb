@@ -176,9 +176,9 @@ module Wagn
         card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
           @form = form
           %{
-            <div class="card-header">          
+            #{ help_text :add_help, :fallback=>:edit_help }
+            <div class="card-header">
               #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
-              #{ help_text :add_help, :fallback=>:edit_help }
               #{
               case
               when name_ready                  ; _render_header + hidden_field_tag( 'card[name]', card.name )
@@ -226,9 +226,9 @@ module Wagn
       end
       
       wrap :edit, args.merge(:frame=>true) do
-        %{ 
-        #{_render_header }
+        %{
         #{ help_text :edit_help }
+        #{_render_header }
         #{ wrap_content :edit, :body=>true, :class=>'card-editor' do
            card_form :update, 'card-form card-edit-form autosave' do |f|
             @form= f

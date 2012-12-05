@@ -45,12 +45,12 @@ describe Chunk::Link, "link chunk tests" do
 
   it "should internal needs escaping" do
     card5 = newcard('userlink', '[Marie][Marie "Mad Dog" Deatherage]')
-    assert_equal('<a class="wanted-card" href="/Marie_%22Mad_Dog%22_Deatherage">Marie</a>', render_test_card(card5) )
+    assert_equal('<a class="wanted-card" href="/Marie%20%22Mad%20Dog%22%20Deatherage">Marie</a>', render_test_card(card5) )
   end
 
   it "should external needs not escaped" do
     card6 = newcard('google link2', 'wgw&nbsp; [google][http://www.google.com] &nbsp;  <br>')
-    assert_equal "wgw&nbsp; <a class=\"wanted-card\" href=\"http://www.google.com\">google</a> &nbsp;  <br>", render_test_card(card6)
+    assert_equal "wgw&nbsp; <a class=\"external-link\" href=\"http://www.google.com\">google</a> &nbsp;  <br>", render_test_card(card6)
   end
 
   it "should test relative link" do

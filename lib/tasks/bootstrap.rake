@@ -77,6 +77,10 @@ namespace :wagn do
           data = ActiveRecord::Base.connection.select_all( "select * from #{table}" )
           file.write YAML::dump( data.inject({}) do |hash, record|
             record['trash'] = false if record.has_key? 'trash'
+            if record.has_key? 'content'
+              record['content'] = record['content'].gsub /\u00A0/, '&nbsp;'
+              # sych was handling nonbreaking spaces oddly.  would not be needed with psych.
+            end
             hash["#{table}_#{i.succ!}"] = record
             hash
           end)

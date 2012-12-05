@@ -182,7 +182,7 @@ class CardController < ApplicationController
       else
         opts = params[:card] ? params[:card].clone : {}
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
-        name = params[:id] ? SmartName.unescape( params[:id] ) : opts[:name]
+        name = params[:id] || opts[:name]
         
         if @action == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)

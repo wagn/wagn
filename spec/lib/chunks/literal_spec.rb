@@ -1,21 +1,19 @@
-require File.expand_path('../../test_helper', File.dirname(__FILE__))
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+include ChunkSpecHelper
 
-class LiteralTest < ActiveSupport::TestCase
-  include ChunkTestHelper
+describe Literal::Escape, "literal chunk tests" do
 
-
-  def setup
-    super
-    setup_default_user
+  before do
+    setup_user 'joe_user'
   end
 
-  def test_escape_link
+  it "should test_escape_link" do
     card = newcard('link howto', 'write this: \[[text]]')
     assert_equal('write this: <span>[</span>[text]]', render_test_card(card) )
 
   end
 
-  def test_escape_inclusion
+  it "should test_escape_inclusion" do
     card = newcard('inclusion howto', 'write this: \{{cardname}}')
     assert_equal('write this: <span>{</span>{cardname}}', render_test_card(card) )
   end

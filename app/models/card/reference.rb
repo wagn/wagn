@@ -10,13 +10,6 @@ class Card
 
     TYPES      = [ LINK, TRANSCLUDE ]
 
-    # Needed for migration
-    LINK_TYPES       = [ 'L', 'W' ]
-    TRANSCLUDE_TYPES = [ 'T', 'M' ]
-
-    MISSING    = [ LINK_TYPES.last,  TRANSCLUDE.last  ]
-    PRESENT    = [ LINK_TYPES.first, TRANSCLUDE.first ]
-
   end
 
 

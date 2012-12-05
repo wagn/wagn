@@ -4,6 +4,13 @@ require_dependency 'chunk_manager'
 class SplitLinkType < ActiveRecord::Migration
   include Card::ReferenceTypes
 
+  # Needed for migration
+  LINK_TYPES       = [ 'L', 'W' ]
+  TRANSCLUDE_TYPES = [ 'T', 'M' ]
+
+  MISSING    = [ LINK_TYPES.last,  TRANSCLUDE.last  ]
+  PRESENT    = [ LINK_TYPES.first, TRANSCLUDE.first ]
+
   def up
     add_column :card_references, :present, :integer
     Card::Reference.where(:link_type=>LINK_TYPES.last).      update_all(:present=>0, :link_type=>LINK_TYPES.first)

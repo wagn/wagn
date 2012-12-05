@@ -102,8 +102,7 @@ module Wagn
     def ajax_call?()   @@ajax_call                                                end
       
     def showname
-      @showname ||=
-        card.cardname.to_show card.cardname, :ignore=>@context_names, :params=>params
+      @showname ||= card.cardname.to_show *@context_names
     end
 
     def main?
@@ -292,18 +291,14 @@ module Wagn
 
       opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
       # FIXME: special views should be represented in view definitions
-
-      unless @@perms[view] == :none
-        view = case @mode
-
-          when :closed   ;  !tcard.known?  ? :closed_missing : :closed_content
-          when :edit     ;  tcard.virtual? ? :edit_virtual   : :edit_in_form
-          when :template ;  :template_rule
-          # FIXME should be concerned about templateness, not virtualness per se
-          # needs to handle real cards that are hard templated much better
-          else           ;  view
-          end
-      end
+      
+      view = case
+      when @mode == :edit       ; @@perms[view]==:none || tcard.hard_template ? :blank : :edit_in_form
+      when @@perms[view]==:none ; view
+      when @mode == :closed     ; !tcard.known?  ? :closed_missing : :closed_content
+      when @mode == :template   ; :template_rule
+      else                      ; view
+      end  
 
       result = raw sub.render( view, opts )
       Renderer.current_slot = oldrenderer
@@ -373,7 +368,7 @@ module Wagn
         else
           known_card = !!Card.fetch(href, :skip_modules=>true) if known_card.nil?
           if card
-            text = text.to_name.to_show card.name, :ignore=>@context_names
+            text = text.to_name.to_absolute_name(card.name).to_show *@context_names
           end
 
           #href+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST

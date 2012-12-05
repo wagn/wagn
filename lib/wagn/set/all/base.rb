@@ -85,10 +85,6 @@ module Wagn
     # The below have HTML!?  should not be any html in the base renderer
 
 
-    define_view :edit_virtual, :perms=>:none do |args|
-      ''
-    end
-
     define_view :closed_missing, :perms=>:none do |args|
       %{<span class="faint"> #{ showname } </span>}
     end

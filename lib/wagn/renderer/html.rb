@@ -162,8 +162,7 @@ module Wagn
       form ||= self.form
       form.text_field( :name, {
         :value=>card.name, #needed because otherwise gets wrong value if there are updates
-        :autocomplete=>'off',
-        :size=>'100%'
+        :autocomplete=>'off'
       }.merge(options))
     end
 

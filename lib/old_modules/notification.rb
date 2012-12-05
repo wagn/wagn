@@ -6,7 +6,7 @@ module Notification
     end
 
     def send_notifications
-      return false if Card.record_timestamps==false
+      return false if Card.record_timestamps==false || Wagn::Conf[:migration]
       # userstamps and timestamps are turned off in cases like updating read_rules that are automated and
       # generally not of enough interest to warrant notification
 
@@ -37,7 +37,6 @@ module Notification
         end
       end
     rescue Exception=>e
-      raise e if Wagn::Conf[:migration]
       Airbrake.notify e if Airbrake.configuration.api_key
       Rails.logger.info "\nController exception: #{e.message}"
       Rails.logger.debug e.backtrace*"\n"

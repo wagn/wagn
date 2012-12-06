@@ -14,9 +14,9 @@ class SplitLinkType < ActiveRecord::Migration
   def up
     add_column :card_references, :present, :integer
     rename_column :card_references, :link_type, :ref_type
+    Card::Reference.update_all(:present=>1)
     Card::Reference.where(:ref_type=>LINK_TYPES.last).      update_all(:present=>0, :ref_type=>LINK_TYPES.first)
     Card::Reference.where(:ref_type=>TRANSCLUDE_TYPES.last).update_all(:present=>0, :ref_type=>TRANSCLUDE_TYPES.first)
-    Card::Reference.where(:ref_type=>PRESENT).              update_all(:present=>1)
   end
 
   def down

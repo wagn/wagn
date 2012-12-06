@@ -176,6 +176,6 @@ module Wagn
         @local[key] = val
       end
     end
-end
+  end
 end
 

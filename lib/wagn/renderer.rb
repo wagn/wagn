@@ -1,5 +1,6 @@
 module Wagn
   class Renderer
+    Card::Reference
     include Card::ReferenceTypes
     include LocationHelper
 

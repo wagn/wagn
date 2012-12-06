@@ -178,9 +178,12 @@ module Wagn::Model::Fetch
       end
     end
     # FIXME really shouldn't be instantiating all the following bastards.  Just need the key.
-    self.dependents.reject(&:trash).each       { |c| c.expire }
-    self.referencers.reject(&:trash).each      { |c| c.expire }
-    self.name_referencers.reject(&:trash).each { |c| c.expire }
+    #self.dependents.reject(&:trash).each       { |c| c.expire }
+    #self.referencers.reject(&:trash).each      { |c| c.expire }
+    #self.name_referencers.reject(&:trash).each { |c| c.expire }
+    self.dependents.each       { |c| c.expire }
+    self.referencers.each      { |c| c.expire }
+    self.name_referencers.each { |c| c.expire }
     # FIXME: this will need review when we do the new defaults/templating system
     #if card.changed?(:content)
   end

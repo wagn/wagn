@@ -15,15 +15,19 @@ module Wagn
   end
 
   def referencers
-    Card::Reference.where( :referenced_card_id => id ).map(&:card_id ).map &Card.method( :fetch )
+    Card::Reference.where( :referenced_card_id => id ).map(&:card_id ).map &Card.method( :[] )
   end
 
   def referencees
-    Card::Reference.where( :card_id => id ).map(&:referenced_name ).map &Card.method( :fetch )
+    Card::Reference.where( :card_id => id ).map(&:referenced_name ).map &Card.method( :[] )
   end
 
   def transcluders
-    Card::Reference.where( :referenced_card_id => id, :ref_type => TRANSCLUDE ).map(&:card_id ).map &Card.method( :fetch )
+    Card::Reference.where( :referenced_card_id => id, :ref_type => TRANSCLUDE ).map(&:card_id ).map &Card.method( :[] )
+  end
+
+  def transcludees
+    Card::Reference.where( :card_id => id, :ref_type => TRANSCLUDE ).map(&:referenced_name ).map &Card.method( :[] )
   end
 
   protected

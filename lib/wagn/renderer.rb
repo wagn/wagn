@@ -160,7 +160,7 @@ module Wagn
       content = card.content if content.blank?
 
       wiki_content = WikiContent.new(card, content, self)
-      #Rails.logger.info "processing content for #{card.name}"
+
       update_references( wiki_content, true ) if card.references_expired
 
       wiki_content.render! do |opts|
@@ -245,6 +245,7 @@ module Wagn
     end
 
     def expand_inclusion opts
+      #warn "ex inc #{card.inspect}, #{opts.inspect}"
       case
       when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
@@ -428,21 +429,33 @@ module Wagn
 
     #FIXME -- should not be here.
     def update_references rendering_result = nil, refresh = false
-      #Rails.logger.warn "update references...card name: #{card.name}, rr: #{rendering_result}, refresh: #{refresh}"
+      Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}"
+      #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller[0..2]*", "}"
       return unless card && card.id
       Card::Reference.delete_all ['card_id = ?', card.id]
+      # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
       card.expire if refresh
-      rendering_result ||= WikiContent.new(card, _render_refs, self)
-      
+      if rendering_result.nil?
+         rendering_result = WikiContent.new(card, _render_refs, self).render! do |opts|
+           expand_inclusion(opts) { yield }
+         end
+      end
+
       rendering_result.find_chunks(Chunk::Reference).each do |chunk|
 
-        Card::Reference.create!( :card_id=>card.id,
-          :referenced_name=> (rc=chunk.refcardname()) && rc.key() || '',
-          :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
-          :ref_type=> Chunk::Link===chunk ? LINK : TRANSCLUDE,
-          :present => chunk.refcard.nil? ? 0 : 1
-         )
+        Rails.logger.warn "up refes #{chunk.inspect}, n[#{chunk.refcardname.send_if(:key) || ''}] #{ chunk.refcard ? chunk.refcard.id : nil}"
+        #warn "up refs n[#{rc=chunk.refcardname()} ) && #{rc && rc.key() || ''}] rcid:#{ chunk.refcard ? chunk.refcard.id : nil}, cid:#{card.id} p:#{chunk.refcard.nil? ? 0 : 1}, #{chunk.inspect}"
+
+       next if ( card_id = card.id )       ==
+               ( referenced_card_id = chunk.refcard.send_if :id )
+
+        Card::Reference.create! :card_id => card_id,
+          :referenced_card_id => referenced_card_id,
+          :referenced_name    => chunk.refcardname.send_if(:key),
+          :ref_type           => Chunk::Link===chunk ? LINK : TRANSCLUDE,
+          :present            => chunk.refcard.nil?  ?   0  :   1
+
       end
     end
   end

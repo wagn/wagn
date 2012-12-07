@@ -97,37 +97,39 @@ class WikiContent < String
   include ChunkManager
   attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card
 
-  def initialize(card, content, renderer)
+  def initialize card, content, renderer
     @not_rendered = @pre_rendered = nil
     @renderer = renderer
     @card = card or raise "No Card in Content!!"
-    super(content)
-    init_chunk_manager()
+    super content
+    init_chunk_manager
     ACTIVE_CHUNKS.each{|chunk_type| chunk_type.apply_to(self)}
 #Rails.logger.debug "wiki content init #{card.name}, C:#{content}" #\nTrace #{Kernel.caller.slice(0,6).join("\n")}"
-    @not_rendered = String.new(self)
+    @not_rendered = String.new self
   end
 
   def pre_render!
     unless @pre_rendered
-      @pre_rendered = String.new(self)
+      @pre_rendered = String.new self
     end
     @pre_rendered
   end
 
-  def render!( revert = false, &block)
+  def render! revert = false, &block
     pre_render!
-    while (gsub!(MASK_RE[ACTIVE_CHUNKS]) do
-       chunk = @chunks_by_id[$~[1].to_i]
-       chunk.nil? ? $~[0] : ( revert ? chunk.revert : chunk.unmask_text(&block) )
-      end)
+    Rails.logger.warn "render trashed: #{@card.inspect} render!" if @card.trash
+    #warn "wiki render! #{@card.inspect}\nTrace #{caller[0..5]*"\n"}" unless revert
+    while ( gsub!(MASK_RE[ACTIVE_CHUNKS]) do
+        chunk = @chunks_by_id[$~[1].to_i]
+        chunk.nil? ? $~[0] : ( revert ? chunk.revert : chunk.unmask_text(&block) )
+      end )
     end
-#Rails.logger.debug "wiki render! #{@card.name} #{self.slice(0,80)}\nTrace #{Kernel.caller.slice(0,5).join("\n")}" unless revert
+    #warn "wiki render! C:#{self[0,80]} #{@card.inspect}" unless revert
     self
   end
 
   def unrender!
-    render!( revert = true )
+    render! revert = true
   end
 
 end

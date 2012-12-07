@@ -291,6 +291,7 @@ class Card < ActiveRecord::Base
   def destroy
     run_callbacks( :destroy ) do
       deps = self.dependents # already called once.  reuse?
+      #warn "destroy #{inspect}"
       @trash_changed = true
       self.update_attributes :trash => true
       deps.each do |dep|
@@ -372,9 +373,10 @@ class Card < ActiveRecord::Base
     return [] if new_card?
     wql_key = simple? ? :part : :left
     Account.as_bot do
-      Card.search( wql_key=>name ).map do |c|
-        [ c ] + c.dependents
-      end.flatten
+      Card.search( wql_key=>name ).inject([]) do |a, c|
+        raise "self dep #{c.inspect}" if c.id == id
+        c.dependents
+      end
     end
   end
 

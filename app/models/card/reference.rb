@@ -4,12 +4,10 @@ class Card
  
   module ReferenceTypes
 
-    # New stuff
     LINK       = 'L'
     TRANSCLUDE = 'T'
 
     TYPES      = [ LINK, TRANSCLUDE ]
-
   end
 
 

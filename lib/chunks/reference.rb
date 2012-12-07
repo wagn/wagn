@@ -8,6 +8,7 @@ module Chunk
     end
 
     def refcardname()
+      #warn "rercardname #{inspect}, #{cardname.to_absolute(card.cardname)}"
       cardname && self.cardname = cardname.to_absolute(card.cardname).to_name
     end
 

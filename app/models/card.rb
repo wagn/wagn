@@ -375,7 +375,7 @@ class Card < ActiveRecord::Base
     Account.as_bot do
       Card.search( wql_key=>name ).inject([]) do |a, c|
         raise "self dep #{c.inspect}" if c.id == id
-        c.dependents
+        a + c.dependents
       end
     end
   end

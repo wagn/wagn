@@ -134,7 +134,7 @@ module Wagn::Model::TrackedAttributes
   def cascade_name_changes
     return true unless @name_changed
 
-    deps = self.dependents
+    deps = [self] + self.dependents
 
     Rails.logger.debug "----------------------- CASCADE #{self.name} -------------------------------------"
     #Rails.logger.debug "----------------------- CASCADE #{self.name} -> #{deps.map(&:name)*", "} -------------------------------------"
@@ -151,7 +151,7 @@ module Wagn::Model::TrackedAttributes
 
     if !update_referencers || update_referencers == 'false'  # FIXME doing the string check because the radio button is sending an actual "false" string
       #warn "no updating.."
-      ([self]+deps).each do |dep|
+      deps.each do |dep|
         Rails.logger.debug "--------------- NOUPDATE REFERER #{dep.name} ---------------------------"
         Card::Reference.update_on_destroy dep, @old_name
       end

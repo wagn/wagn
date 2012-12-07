@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 class ApplicationController < ActionController::Base
+  Card
   include AuthenticatedSystem
   include LocationHelper
   include Recaptcha::Verify

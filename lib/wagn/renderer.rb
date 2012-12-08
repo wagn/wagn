@@ -408,29 +408,27 @@ module Wagn
 
      ### FIXME -- this should not be here!   probably in Card::Reference model?
     def replace_references old_name, new_name
-      #Rails.logger.warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
+      #Rails.logger.warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
+      #warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
       wiki_content = WikiContent.new(card, card.content, self)
 
-      wiki_content.find_chunks(Chunk::Link).each do |chunk|
-        if chunk.cardname
-          link_bound = chunk.cardname == chunk.ref_text
-          chunk.cardname = chunk.cardname.replace_part(old_name, new_name)
+      wiki_content.find_chunks(Chunk::Reference).each do |chunk|
+        
+        if was_name = chunk.cardname and new_cardname = was_name.replace_part(old_name, new_name) and
+             was_name != new_cardname
+          Chunk::Link===chunk and link_bound = chunk.cardname == chunk.ref_text
+          chunk.cardname = new_cardname
+          Card::Reference.where(:referenced_name => was_name.key).update_all( :referenced_name=> new_cardname.key )
           chunk.ref_text=chunk.cardname.to_s if link_bound
         end
-      end
-
-      wiki_content.find_chunks(Chunk::Transclude).each do |chunk|
-        chunk.cardname =
-          chunk.cardname.replace_part(old_name, new_name) if chunk.cardname
       end
 
       String.new wiki_content.unrender!
     end
 
-    #FIXME -- should not be here.
     def update_references rendering_result = nil, refresh = false
-      Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}"
-      #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller[0..2]*", "}"
+      #Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh} where:#{caller[0..6]*', '}"
+      #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller*"\n"}"
       return unless card && card_id = card.id
       Card::Reference.where( :card_id => card_id ).delete_all
       # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
@@ -441,29 +439,25 @@ module Wagn
          rendering_result = WikiContent.new(card, _render_refs, self).render! do |opts|
            expand_inclusion(opts) { yield }
          end
-         Rails.logger.warn "new result: #{rendering_result.inspect}"
       end
 
       hash = rendering_result.find_chunks(Chunk::Reference).inject({}) do |h, chunk|
 
-        Rails.logger.warn "up refes #{chunk.inspect}, n[#{chunk.refcardname.send_if(:key) || ''}] #{ chunk.refcard ? chunk.refcard.id : nil}"
+        if card_id == ( ref_id = chunk.refcard.send_if :id ); h
 
-        if card_id == ( ref_id = chunk.refcard.send_if :id )
-          h
         else
           ref_name = chunk.refcardname.send_if :key
-          h.merge( (ref_id || ref_name) => {
-            :ref_id => ref_id,
-            :name => ref_name,
-            :ref_type => Chunk::Link===chunk ? LINK : TRANSCLUDE,
-            :present => chunk.refcard.nil?  ?   0  :   1
-          } )
+          h.merge (ref_id || ref_name) => { :ref_id => ref_id, :name => ref_name,
+              :ref_type => Chunk::Link===chunk ? LINK : TRANSCLUDE,
+              :present => chunk.refcard.nil?  ?   0  :   1
+            }
         end
       end
-      Rails.logger.warn "update refs hash #{hash.inspect}"
+      #Rails.logger.warn "update refs hash #{hash.inspect}"
+ 
       hash.each do |ref_id, v|
         #warn "card ref #{v.inspect}"
-        Rails.logger.warn "card ref #{v.inspect}"
+        #Rails.logger.warn "card ref #{v.inspect}"
         Card::Reference.create! :card_id => card_id,
           :referenced_card_id => v[:ref_id], :referenced_name => v[:name],
           :ref_type => v[:ref_type], :present => v[:present]

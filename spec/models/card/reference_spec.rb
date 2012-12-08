@@ -101,14 +101,14 @@ describe "Card::Reference" do
     watermelon_seeds = newcard('watermelon+seeds', 'black')
     lew = newcard('Lew', "likes [[watermelon]] and [[watermelon+seeds|seeds]]")
 
-    assert_equal [1,1], lew.transcludees.map(&:present), "links should not be Wanted before"
+    assert_equal [1,1], lew.references.map(&:present), "links should not be Wanted before"
     watermelon = Card['watermelon']
     watermelon.update_referencers = false
     watermelon.name="grapefruit"
     watermelon.save!
     lew.reload.content.should == "likes [[watermelon]] and [[watermelon+seeds|seeds]]"
-    assert_equal [ LINK, LINK ], lew.transcludees.map(&:ref_type), "links should be a LINK"
-    assert_equal [ 0, 0 ], lew.transcludees.map(&:present), "links should not be present"
+    assert_equal [ LINK, LINK ], lew.references.map(&:ref_type), "links should be a LINK"
+    assert_equal [ 0, 0 ], lew.references.map(&:present), "links should not be present"
   end
 
   it "update referencing content on rename junction card" do
@@ -139,8 +139,10 @@ describe "Card::Reference" do
   it "simple link" do
     alpha = Card.create :name=>'alpha'
     beta = Card.create :name=>'beta', :content=>"I link to [[alpha]]"
-    Card['beta'].referencees.map(&:name).should == ['alpha']
+    warn "ers #{Card['alpha'].referencers.map(&:name)* ", "}"
+    warn "ees #{Card['beta'].referencees.map(&:name)* ", "}"
     Card['alpha'].referencers.map(&:name).should == ['beta']
+    Card['beta'].referencees.map(&:name).should == ['alpha']
   end
 
   it "link with spaces" do

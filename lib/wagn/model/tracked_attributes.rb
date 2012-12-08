@@ -168,6 +168,8 @@ module Wagn::Model::TrackedAttributes
           Rails.logger.debug "------------------ UPDATE REFERER #{card.name}  ------------------------"
           next if card.hard_template
           card.content = Wagn::Renderer.new(card, :not_current=>true).replace_references( @old_name, name )
+          warn "saving deps? [#{inspect}]  #{card.readonly?}, #{card.frozen?}, #{card.inspect}"
+          card = card.refresh if card.readonly?
           card.save! unless card==self
         end
       end

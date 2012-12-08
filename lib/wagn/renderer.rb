@@ -441,11 +441,12 @@ module Wagn
          rendering_result = WikiContent.new(card, _render_refs, self).render! do |opts|
            expand_inclusion(opts) { yield }
          end
+         Rails.logger.warn "new result: #{rendering_result.inspect}"
       end
 
       hash = rendering_result.find_chunks(Chunk::Reference).inject({}) do |h, chunk|
 
-        #Rails.logger.warn "up refes #{chunk.inspect}, n[#{chunk.refcardname.send_if(:key) || ''}] #{ chunk.refcard ? chunk.refcard.id : nil}"
+        Rails.logger.warn "up refes #{chunk.inspect}, n[#{chunk.refcardname.send_if(:key) || ''}] #{ chunk.refcard ? chunk.refcard.id : nil}"
 
         if card_id == ( ref_id = chunk.refcard.send_if :id )
           h
@@ -459,7 +460,7 @@ module Wagn
           } )
         end
       end
-      #warn "update refs hash #{hash.inspect}"
+      Rails.logger.warn "update refs hash #{hash.inspect}"
       hash.each do |ref_id, v|
         #warn "card ref #{v.inspect}"
         Rails.logger.warn "card ref #{v.inspect}"

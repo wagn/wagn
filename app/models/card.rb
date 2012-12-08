@@ -368,16 +368,18 @@ class Card < ActiveRecord::Base
 
 
   def dependents
-    if new_card?; []
+    return [] if new_card?
 
-    else
-      Account.as_bot do
-        deps = Card.search( { (simple? ? :part : :left) => name } )
-        deps.inject(deps) do |array, card|
-          array +  card.dependents
+    if @dependents.nil?
+      @dependents = 
+        Account.as_bot do
+          deps = Card.search( { (simple? ? :part : :left) => name } ).to_a
+          deps.inject(deps) do |array, card|
+            array +  card.dependents
+          end
         end
-      end
     end
+    @dependents
   end
 
   def repair_key

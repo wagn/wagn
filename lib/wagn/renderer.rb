@@ -429,11 +429,12 @@ module Wagn
 
     #FIXME -- should not be here.
     def update_references rendering_result = nil, refresh = false
-      #Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}"
+      Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}"
       #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller[0..2]*", "}"
-      return unless card && card.id
-      Card::Reference.delete_all ['card_id = ?', card.id]
+      return unless card && card_id = card.id
+      Card::Reference.where( :card_id => card_id ).delete_all
       # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
+      #Card.where( :id => card_id ).update_all( :references_expired=>nil )
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
       card.expire if refresh
       if rendering_result.nil?
@@ -442,19 +443,29 @@ module Wagn
          end
       end
 
-      rendering_result.find_chunks(Chunk::Reference).each do |chunk|
+      hash = rendering_result.find_chunks(Chunk::Reference).inject({}) do |h, chunk|
 
         #Rails.logger.warn "up refes #{chunk.inspect}, n[#{chunk.refcardname.send_if(:key) || ''}] #{ chunk.refcard ? chunk.refcard.id : nil}"
 
-       next if ( card_id = card.id )       ==
-               ( referenced_card_id = chunk.refcard.send_if :id )
-
+        if card_id == ( ref_id = chunk.refcard.send_if :id )
+          h
+        else
+          ref_name = chunk.refcardname.send_if :key
+          h.merge( (ref_id || ref_name) => {
+            :ref_id => ref_id,
+            :name => ref_name,
+            :ref_type => Chunk::Link===chunk ? LINK : TRANSCLUDE,
+            :present => chunk.refcard.nil?  ?   0  :   1
+          } )
+        end
+      end
+      #warn "update refs hash #{hash.inspect}"
+      hash.each do |ref_id, v|
+        #warn "card ref #{v.inspect}"
+        Rails.logger.warn "card ref #{v.inspect}"
         Card::Reference.create! :card_id => card_id,
-          :referenced_card_id => referenced_card_id,
-          :referenced_name    => chunk.refcardname.send_if(:key),
-          :ref_type           => Chunk::Link===chunk ? LINK : TRANSCLUDE,
-          :present            => chunk.refcard.nil?  ?   0  :   1
-
+          :referenced_card_id => v[:ref_id], :referenced_name => v[:name],
+          :ref_type => v[:ref_type], :present => v[:present]
       end
     end
   end

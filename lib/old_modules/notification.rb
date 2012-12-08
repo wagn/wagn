@@ -18,6 +18,7 @@ module Notification
         else; 'updated'
       end
 
+      #warn "send note #{inspect}, #{action}, #{watcher_watched_pairs.inspect}"
       @trunk_watcher_watched_pairs = trunk_watcher_watched_pairs
       @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)
 

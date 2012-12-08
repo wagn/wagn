@@ -188,7 +188,7 @@ describe "Permission", ActiveSupport::TestCase do
   it "reader setting" do
     Card.where(:trash=>false).each do |c|
       prc = c.permission_rule_card(:read)
-      warn "C #{c.inspect}, #{c.read_rule_id}, #{prc.first.id}, #{c.read_rule_class}, #{prc.second}, #{prc.first.inspect}" unless prc.last == c.read_rule_class && prc.first.id == c.read_rule_id
+      #warn "C #{c.inspect}, #{c.read_rule_id}, #{prc.first.id}, #{c.read_rule_class}, #{prc.second}, #{prc.first.inspect}" unless prc.last == c.read_rule_class && prc.first.id == c.read_rule_id
       prc.last.should == c.read_rule_class
       prc.first.id.should == c.read_rule_id
     end
@@ -214,12 +214,10 @@ describe "Permission", ActiveSupport::TestCase do
 
     @c1 = Card['c1']
     assert_not_locked_from( @u1, @c1 )
-    Rails.logger.info "testing point 1 #{@u2.inspect}, #{@c1.inspect}"
     assert_locked_from( @u2, @c1 )
     assert_locked_from( @u3, @c1 )
 
     @c2 = Card['c2']
-    Rails.logger.info "testing point 2 #{@u1.inspect}, #{@c2.inspect}"
     assert_locked_from( @u1, @c2 )
     assert_not_locked_from( @u2, @c2 )
     assert_locked_from( @u3, @c2 )

@@ -10,24 +10,40 @@ module Wagn
   end
 
   def extended_referencers
-    #fixme .. we really just need a number here.
+    # FIXME .. we really just need a number here.
     (dependents + [self]).plot(:referencers).flatten.uniq
   end
 
   def referencers
-    Card::Reference.where( :referenced_card_id => id ).map(&:card_id ).map &Card.method( :[] )
-  end
-
-  def referencees
-    Card::Reference.where( :card_id => id ).map(&:referenced_name ).map &Card.method( :[] )
+    Card::Reference.where( :referenced_card_id => id ).
+      map(&:card_id).map( &Card.method(:fetch) )
   end
 
   def transcluders
-    Card::Reference.where( :referenced_card_id => id, :ref_type => TRANSCLUDE ).map(&:card_id ).map &Card.method( :[] )
+    Card::Reference.where( :referenced_card_id => id, :ref_type => TRANSCLUDE ).
+      map(&:card_id).map( &Card.method(:fetch) )
+  end
+
+  def referencees
+    Card::Reference.where( :card_id => id ).map do |ref|
+      Card.fetch( ref.referenced_name, :new=>{} )
+    end
   end
 
   def transcludees
-    Card::Reference.where( :card_id => id, :ref_type => TRANSCLUDE ).map(&:referenced_name ).map &Card.method( :[] )
+    Card::Reference.where( :card_id => id, :ref_type => TRANSCLUDE ).map do |ref|
+      Card.fetch( ref.referenced_name, :new=>{} )
+    end
+  end
+
+  def existing_referencers
+    Card::Reference.where( :referenced_card_id => id ).
+      map(&:card_id).map( &Card.method(:fetch) ).compact
+  end
+
+  def existing_transcluders
+    Card::Reference.where( :referenced_card_id => id, :ref_type => TRANSCLUDE ).
+      map(&:card_id).map( &Card.method(:fetch) ).compact
   end
 
   protected

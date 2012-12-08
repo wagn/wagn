@@ -13,7 +13,7 @@ describe "Card::Reference" do
       Card.create! :name=>"JoeForm", :type=>'UserForm'
       Wagn::Renderer.new(Card["JoeForm"]).render(:core)
       assert_equal ["joe_form+age", "joe_form+description", "joe_form+name"],
-        Card["JoeForm"].out_references.plot(:referenced_name).sort
+        Card["JoeForm"].transcludees.map(&:key).sort
       Card["JoeForm"].references_expired.should_not == true
     end
 
@@ -27,7 +27,7 @@ describe "Card::Reference" do
       Wagn::Renderer.new(Card["Form1"]).render(:core)
       c = Card["Form1"]
       c.references_expired.should be_nil
-      Card["Form1"].out_references.plot(:referenced_name).should == ["form1+bar"]
+      Card["Form1"].transcludees.map(&:key).should == ["form1+bar"]
     end
 
     it "on template update" do
@@ -38,7 +38,7 @@ describe "Card::Reference" do
       Card["JoeForm"].references_expired.should be_true
       Wagn::Renderer.new(Card["JoeForm"]).render(:core)
       assert_equal ["joe_form+monkey", "joe_form+banana", "joe_form+fruit"].sort,
-        Card["JoeForm"].out_references.plot(:referenced_name).sort
+        Card["JoeForm"].transcludees.map(&:key).sort
       Card["JoeForm"].references_expired.should_not == true
     end
   end
@@ -48,28 +48,28 @@ describe "Card::Reference" do
     newcard("Submarine","[[Yellow]]")
     newcard("Sun","[[Yellow]]")
     newcard("Yellow")
-    Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
+    Card["Yellow"].referencers.map(&:name).sort.should == %w{ Banana Submarine Sun }
     y=Card["Yellow"];
     y.type_id= Card.fetch_id "UserForm";
     y.save!
-    Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
+    Card["Yellow"].referencers.map(&:name).sort.should == %w{ Banana Submarine Sun }
   end
 
   it "container transclusion" do
     Card.create :name=>'bob+city'
     Card.create :name=>'address+*right+*default',:content=>"{{_L+city}}"
     Card.create :name=>'bob+address'
-    Card.fetch('bob+address').transcludees.plot(:name).should == ["bob+city"]
-    Card.fetch('bob+city').transcluders.plot(:name).should == ["bob+address"]
+    Card.fetch('bob+address').transcludees.map(&:name).should == ["bob+city"]
+    Card.fetch('bob+city').transcluders.map(&:name).should == ["bob+address"]
   end
 
   it "pickup new links on rename" do
     @l = newcard("L", "[[Ethan]]")  # no Ethan card yet...
     @e = newcard("Earthman")
     @e.update_attributes! :name => "Ethan"  # NOW there is an Ethan card
-    # @e.referencers.plot(:name).include("L")  as the test was originally written, fails
+    # @e.referencers.map(&:name).include("L")  as the test was originally written, fails
     #  do we need the links to be caught before reloading the card?
-    Card["Ethan"].referencers.plot(:name).include?("L").should_not == nil
+    Card["Ethan"].referencers.map(&:name).include?("L").should_not == nil
   end
 
   it "should update references on rename when requested" do
@@ -101,16 +101,14 @@ describe "Card::Reference" do
     watermelon_seeds = newcard('watermelon+seeds', 'black')
     lew = newcard('Lew', "likes [[watermelon]] and [[watermelon+seeds|seeds]]")
 
-    assert_equal [1,1], lew.out_references.plot(:present), "links should not be Wanted before"
-    Rails.logger.warn "tesging #{(pseeds = Card['watermelon+seeds']).inspect}, #{pseeds.dependents.inspect}"
-    Rails.logger.warn "tesging #{(melon = Card['watermelon']).inspect}, deps: #{melon.dependents.inspect}"
+    assert_equal [1,1], lew.transcludees.map(&:present), "links should not be Wanted before"
     watermelon = Card['watermelon']
     watermelon.update_referencers = false
     watermelon.name="grapefruit"
     watermelon.save!
     lew.reload.content.should == "likes [[watermelon]] and [[watermelon+seeds|seeds]]"
-    assert_equal [ LINK, LINK ], lew.out_references.plot(:ref_type), "links should be a LINK"
-    assert_equal [ 0, 0 ], lew.out_references.plot(:present), "links should not be present"
+    assert_equal [ LINK, LINK ], lew.transcludees.map(&:ref_type), "links should be a LINK"
+    assert_equal [ 0, 0 ], lew.transcludees.map(&:present), "links should not be present"
   end
 
   it "update referencing content on rename junction card" do
@@ -134,37 +132,37 @@ describe "Card::Reference" do
     rgb = newcard 'rgb'
     green_rgb = Card.create! :name => "green+rgb", :content=>"#00ff00"
 
-    green.reload.transcludees.plot(:name).should == ["green+rgb"]
-    green_rgb.reload.transcluders.plot(:name).should == ['green']
+    green.reload.transcludees.map(&:name).should == ["green+rgb"]
+    green_rgb.reload.transcluders.map(&:name).should == ['green']
   end
 
   it "simple link" do
     alpha = Card.create :name=>'alpha'
     beta = Card.create :name=>'beta', :content=>"I link to [[alpha]]"
-    Card['beta'].referencees.plot(:name).should == ['alpha']
-    Card['alpha'].referencers.plot(:name).should == ['beta']
+    Card['beta'].referencees.map(&:name).should == ['alpha']
+    Card['alpha'].referencers.map(&:name).should == ['beta']
   end
 
   it "link with spaces" do
     alpha = Card.create! :name=>'alpha card'
     beta =  Card.create! :name=>'beta card', :content=>"I link to [[alpha_card|ALPHA CARD]]"
-    Card['beta card'].referencees.plot(:name).should == ['alpha card']
-    Card['alpha card'].referencers.plot(:name).should == ['beta card']
+    Card['beta card'].referencees.map(&:name).should == ['alpha card']
+    Card['alpha card'].referencers.map(&:name).should == ['beta card']
   end
 
 
   it "simple transclusion" do
     alpha = Card.create :name=>'alpha'
     beta = Card.create :name=>'beta', :content=>"I transclude to {{alpha}}"
-    Card['beta'].transcludees.plot(:name).should == ['alpha']
-    Card['alpha'].transcluders.plot(:name).should == ['beta']
+    Card['beta'].transcludees.map(&:name).should == ['alpha']
+    Card['alpha'].transcluders.map(&:name).should == ['beta']
   end
 
   it "non simple link" do
     alpha = Card.create :name=>'alpha'
     beta = Card.create :name=>'beta', :content=>"I link to [[alpha|ALPHA]]"
-    Card['beta'].referencees.plot(:name).should == ['alpha']
-    Card['alpha'].referencers.plot(:name).should == ['beta']
+    Card['beta'].referencees.map(&:name).should == ['alpha']
+    Card['alpha'].referencers.map(&:name).should == ['beta']
   end
 
 
@@ -172,13 +170,13 @@ describe "Card::Reference" do
     @l = newcard("woof", "[[Lewdog]]")  # no Lewdog card yet...
     @e = newcard("Lewdog")              # now there is
     # NOTE @e.referencers does not work, you have to reload
-    @e.reload.referencers.plot(:name).include?("woof").should_not == nil
+    @e.reload.referencers.map(&:name).include?("woof").should_not == nil
   end
 
   it "pickup new transclusions on create" do
     @l = Card.create! :name=>"woof", :content=>"{{Lewdog}}"  # no Lewdog card yet...
     @e = Card.new(:name=>"Lewdog", :content=>"grrr")              # now there is
-    @e.name_referencers.plot(:name).include?("woof").should_not == nil
+    @e.name_referencers.map(&:name).include?("woof").should_not == nil
   end
 
 =begin

@@ -23,7 +23,6 @@ class Card::RenameTest < ActiveSupport::TestCase
      Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
      
      c3, c4 = Card["chuck_wagn+chuck"], Card["chuck"]
-     Rails.logger.info "testing point 0 #{c3.right}, #{c3}, #{c4}"
     end
     setup_default_user
     super
@@ -35,7 +34,6 @@ class Card::RenameTest < ActiveSupport::TestCase
 
   def test_rename_name_substitution
     c1, c2 = Card["chuck_wagn+chuck"], Card["chuck"]
-    Rails.logger.info "testing point #{c1}, #{c2}"
     assert_rename c2, "buck"
     assert_equal "chuck_wagn+buck", Card.find(c1.id).name
   end

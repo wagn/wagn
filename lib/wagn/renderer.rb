@@ -429,7 +429,7 @@ module Wagn
 
     #FIXME -- should not be here.
     def update_references rendering_result = nil, refresh = false
-      Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}"
+      #Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}"
       #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller[0..2]*", "}"
       return unless card && card.id
       Card::Reference.delete_all ['card_id = ?', card.id]
@@ -444,8 +444,7 @@ module Wagn
 
       rendering_result.find_chunks(Chunk::Reference).each do |chunk|
 
-        Rails.logger.warn "up refes #{chunk.inspect}, n[#{chunk.refcardname.send_if(:key) || ''}] #{ chunk.refcard ? chunk.refcard.id : nil}"
-        #warn "up refs n[#{rc=chunk.refcardname()} ) && #{rc && rc.key() || ''}] rcid:#{ chunk.refcard ? chunk.refcard.id : nil}, cid:#{card.id} p:#{chunk.refcard.nil? ? 0 : 1}, #{chunk.inspect}"
+        #Rails.logger.warn "up refes #{chunk.inspect}, n[#{chunk.refcardname.send_if(:key) || ''}] #{ chunk.refcard ? chunk.refcard.id : nil}"
 
        next if ( card_id = card.id )       ==
                ( referenced_card_id = chunk.refcard.send_if :id )

@@ -91,14 +91,12 @@ describe Flexmail do
       Account.as_bot do
         Wagn::Conf[:base_url] = 'http://a.com'
         c = Card.create(:name => "Banana Trigger", :content => "data content [[A]]", :type=>'Trigger')
-        Rails.logger.info "testing point #{c.inspect}"
         assert c.id
         Card.update(c.id,
               :cards=> {'~plus~email'=>{:content=>'gary@gary.com'},
               '~plus~subject'=>{:type=>'Pointer', :content=>'[[default subject]]'},
               '~plus~attachment' => {:type=>'File', :content=>"notreally.txt" } })
         conf = Flexmail.configs_for(c).first
-        Rails.logger.info "testing point #{c.inspect}, #{conf.inspect}"
 
         conf[:to     ].should == "bob@bob.com"
         conf[:from   ].should == "gary@gary.com"

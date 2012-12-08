@@ -291,10 +291,10 @@ class Card < ActiveRecord::Base
   def destroy
     run_callbacks( :destroy ) do
       @trash_changed = true
+      self.update_attributes :trash => true
       dependents.each do |dep|
         dep.destroy
       end
-      self.update_attributes :trash => true
       true
     end
   end

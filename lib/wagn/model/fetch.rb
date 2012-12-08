@@ -193,9 +193,10 @@ module Wagn::Model::Fetch
   end
 
   def refresh
-    if self.frozen?
+    if self.frozen? || readonly?
       fresh_card = self.class.find id
       fresh_card.include_set_modules
+      #warn "refresh card #{fresh_card.inspect} :: #{inspect}"
       fresh_card
     else
       self

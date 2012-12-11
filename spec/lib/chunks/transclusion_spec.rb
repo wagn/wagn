@@ -45,7 +45,7 @@ describe Chunk::Transclude, "transclude chunk tests" do
      # card = card('Wooga')  #wtf?
      wooga_age = wooga.connect( age, "39" )
      assert_text_equal  span(wooga_age, "39"), render_test_card(wooga)
-     assert_text_equal ['Wooga'], wooga_age.transcluders.plot(:name)
+     assert_text_equal ['Wooga'], wooga_age.transcluders.map(&:name)
    end
 
   it "should test_relative_transclude" do
@@ -74,7 +74,7 @@ describe Chunk::Transclude, "transclude chunk tests" do
     #FIXME -- does not work retroactively if template is created later.
 
     assert_text_equal span(bob_city, "Sparta"), render(bob_address.reload), "include"
-    assert_equal ["bob#{SmartName.joint}address"], bob_city.transcluders.plot(:name)
+    assert_equal ["bob#{SmartName.joint}address"], bob_city.transcluders.map(&:name)
   end
 
 

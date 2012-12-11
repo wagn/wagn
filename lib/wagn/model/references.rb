@@ -12,7 +12,7 @@ module Wagn
 
   def extended_referencers
     # FIXME .. we really just need a number here.
-    (dependents + [self]).plot(:referencers).flatten.uniq
+    (dependents + [self]).map(&:referencers).flatten.uniq
   end
 
   # ---------- Referenced cards --------------

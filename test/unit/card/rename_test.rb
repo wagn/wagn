@@ -99,10 +99,10 @@ class Card::RenameTest < ActiveSupport::TestCase
     c41 =  Card["Four+One"]
     c415 = Card["Four+One+Five"]
 
-    assert_equal ["One+Two","One+Two+Three","Four+One","Four+One+Five"], [c12,c123,c41,c415].plot(:name)
+    assert_equal ["One+Two","One+Two+Three","Four+One","Four+One+Five"], [c12,c123,c41,c415].map(&:name)
     c1.name="Uno"
     c1.save!
-    assert_equal ["Uno+Two","Uno+Two+Three","Four+Uno","Four+Uno+Five"], [c12,c123,c41,c415].plot(:reload).plot(:name)
+    assert_equal ["Uno+Two","Uno+Two+Three","Four+Uno","Four+Uno+Five"], [c12,c123,c41,c415].map(&:reload).map(&:name)
   end
 
   def test_should_error_invalid_name
@@ -133,8 +133,8 @@ class Card::RenameTest < ActiveSupport::TestCase
       :content => card.content,
 #      :writer => card.writer,
       :revisions => card.revisions.length,
-      :referencers => card.referencers.plot(:name).sort,
-      :referencees => card.referencees.plot(:name).sort,
+      :referencers => card.referencers.map(&:name).sort,
+      :referencees => card.referencees.map(&:name).sort,
       :dependents => card.dependents.length
     }
   end

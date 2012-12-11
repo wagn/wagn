@@ -21,25 +21,13 @@ class Card
     end
 
     def missing_referencee
-      Card.fetch referenced_card_id
+      Card.fetch referenced_card_name
     end
 
     validates_inclusion_of :ref_type, :in => ReferenceTypes::TYPES
 
     class << self
       include ReferenceTypes
-
-      def cards_that_reference name
-        where( :referenced_name=>name                           ).collect &:referencer
-      end
-
-      def cards_that_link_to name
-        where( :referenced_name=>name, :ref_type => LINK       ).collect &:referencer
-      end
-
-      def cards_that_transclude name
-        where( :referenced_name=>name, :ref_type => TRANSCLUDE ).collect &:referencer
-      end
 
       def update_on_create card
         where( :referenced_name => card.key ).

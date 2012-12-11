@@ -2,6 +2,10 @@
 class InvitationError < StandardError; end
 
 class AccountController < ApplicationController
+  # This is often needed for the controllers to work right
+  # FIXME: figure out when/why this is needed and why the tests don't fail
+  Card
+
   before_filter :login_required, :only => [ :invite, :update ]
   helper :wagn
 

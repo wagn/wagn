@@ -2,6 +2,10 @@
 
 
 class CardController < ApplicationController
+  # This is often needed for the controllers to work right
+  # FIXME: figure out when/why this is needed and why the tests don't fail
+  Card
+
   helper :wagn
 
   before_filter :index_preload, :only=> [ :index ]

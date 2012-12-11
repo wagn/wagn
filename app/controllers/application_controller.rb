@@ -1,6 +1,9 @@
 # -*- encoding : utf-8 -*-
 class ApplicationController < ActionController::Base
+  # This is often needed for the controllers to work right
+  # FIXME: figure out when/why this is needed and why the tests don't fail
   Card
+
   include AuthenticatedSystem
   include LocationHelper
   include Recaptcha::Verify

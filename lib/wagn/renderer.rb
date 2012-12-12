@@ -418,7 +418,7 @@ module Wagn
              was_name != new_cardname
           Chunk::Link===chunk and link_bound = chunk.cardname == chunk.ref_text
           chunk.cardname = new_cardname
-          Card::Reference.where(:referee_key => was_name.key).update_all( :referenced_name=> new_cardname.key )
+          Card::Reference.where(:referee_key => was_name.key).update_all( :referee_key => new_cardname.key )
           chunk.ref_text=chunk.cardname.to_s if link_bound
         end
       end
@@ -430,7 +430,7 @@ module Wagn
       #Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh} where:#{caller[0..6]*', '}"
       #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller*"\n"}"
       return unless card && referer_id = card.id
-      Card::Reference.where( :referer_id => card_id ).delete_all
+      Card::Reference.where( :referer_id => referer_id ).delete_all
       # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
       #Card.where( :id => referer_id ).update_all( :references_expired=>nil )
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
@@ -443,24 +443,24 @@ module Wagn
 
       hash = rendering_result.find_chunks(Chunk::Reference).inject({}) do |h, chunk|
 
-        if referer_id == ( ref_id = chunk.refcard.send_if :id ); h
+        if referer_id == ( referee_id = chunk.refcard.send_if :id ); h
 
         else
           ref_name = chunk.refcardname.send_if :key
-          h.merge (ref_id || ref_name) => { :ref_id => ref_id, :name => ref_name,
-              :ref_type => Chunk::Link===chunk ? LINK : INCLUDE,
+          h.merge (referee_id || ref_name) => { :referee_id => referee_id, :name => ref_name,
+              :link_type => Chunk::Link===chunk ? LINK : INCLUDE,
               :present => chunk.refcard.nil?  ?   0  :   1
             }
         end
       end
       #Rails.logger.warn "update refs hash #{hash.inspect}"
  
-      hash.each do |ref_id, v|
+      hash.each do |referee_kid, v|
         #warn "card ref #{v.inspect}"
         #Rails.logger.warn "card ref #{v.inspect}"
-        Card::Reference.create! :referer_id => card_id,
-          :referee_id => v[:ref_id], :referee_key => v[:name],
-          :ref_type => v[:ref_type], :present => v[:present]
+        Card::Reference.create! :referer_id => referer_id,
+          :referee_id => v[:referee_id], :referee_key => v[:name],
+          :link_type => v[:link_type], :present => v[:present]
       end
     end
   end

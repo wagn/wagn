@@ -231,14 +231,14 @@ class Wql
       subcondition( { :left_plus=>val, :right_plus=>val.deep_clone }, :conj=>:or )
     end
 
-    def extension_type(val) add_join(:usr, :users, :id, :referer_id)            end
+    def extension_type(val) add_join(:usr, :users, :id, :card_id)            end
     # this appears to be hacked so that it will only work with users?
 
     def created_by(val)     merge field(:creator_id) => subspec(val)         end
     def last_edited_by(val) merge field(:updater_id) => subspec(val)         end
     def creator_of(val) merge field(:id)=>subspec(val,:return=>'creator_id') end
-    def editor_of(val)      revision_spec(:creator_id, :referer_id, val)        end
-    def edited_by(val)      revision_spec(:referer_id, :creator_id, val)        end
+    def editor_of(val)      revision_spec(:creator_id, :card_id, val)        end
+    def edited_by(val)      revision_spec(:card_id, :creator_id, val)        end
     def last_editor_of(val)
       merge field(:id) => subspec(val, :return=>'updater_id')
     end
@@ -436,12 +436,12 @@ class Wql
       # FIXME: Use RefernceTypes here
       @refspecs = {
         :refer_to       => ['referer_id','referee_id',''],
-        :link_to        => ['referer_id','referee_id',"ref_type='#{LINK}' AND"],
-        :include        => ['referer_id','referee_id',"ref_type='#{INCLUDE}' AND"],
-        :link_to_missing=> ['referer_id','referee_id',"present = 0 AND ref_type='#{LINK}'"],
+        :link_to        => ['referer_id','referee_id',"link_type='#{LINK}' AND"],
+        :include        => ['referer_id','referee_id',"link_type='#{INCLUDE}' AND"],
+        :link_to_missing=> ['referer_id','referee_id',"present = 0 AND link_type='#{LINK}'"],
         :referred_to_by => ['referee_id','referer_id',''],
-        :linked_to_by   => ['referee_id','referer_id',"ref_type='#{LINK}' AND"],
-        :included_by    => ['referee_id','referer_id',"ref_type='#{INCLUDE}' AND"]
+        :linked_to_by   => ['referee_id','referer_id',"link_type='#{LINK}' AND"],
+        :included_by    => ['referee_id','referer_id',"link_type='#{INCLUDE}' AND"]
       }
     end
 

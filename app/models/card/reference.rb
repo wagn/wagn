@@ -20,7 +20,7 @@ class Card
       Card[referee_id]
     end
 
-    validates_inclusion_of :ref_type, :in => ReferenceTypes::TYPES
+    validates_inclusion_of :link_type, :in => ReferenceTypes::TYPES
 
     class << self
       include ReferenceTypes

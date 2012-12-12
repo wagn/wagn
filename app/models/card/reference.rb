@@ -4,10 +4,10 @@ class Card
  
   module ReferenceTypes
 
-    LINK       = 'L'
-    TRANSCLUDE = 'T'
+    LINK    = 'L'
+    INCLUDE = 'T'
 
-    TYPES      = [ LINK, TRANSCLUDE ]
+    TYPES   = [ LINK, INCLUDE ]
   end
 
 
@@ -18,10 +18,6 @@ class Card
 
     def referencee
       Card[referenced_card_id]
-    end
-
-    def missing_referencee
-      Card.fetch referenced_card_name
     end
 
     validates_inclusion_of :ref_type, :in => ReferenceTypes::TYPES

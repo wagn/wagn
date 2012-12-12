@@ -448,7 +448,7 @@ module Wagn
         else
           ref_name = chunk.refcardname.send_if :key
           h.merge (ref_id || ref_name) => { :ref_id => ref_id, :name => ref_name,
-              :ref_type => Chunk::Link===chunk ? LINK : TRANSCLUDE,
+              :ref_type => Chunk::Link===chunk ? LINK : INCLUDE,
               :present => chunk.refcard.nil?  ?   0  :   1
             }
         end

@@ -437,11 +437,11 @@ class Wql
       @refspecs = {
         :refer_to       => ['card_id','referenced_card_id',''],
         :link_to        => ['card_id','referenced_card_id',"ref_type='#{LINK}' AND"],
-        :include        => ['card_id','referenced_card_id',"ref_type='#{TRANSCLUDE}' AND"],
+        :include        => ['card_id','referenced_card_id',"ref_type='#{INCLUDE}' AND"],
         :link_to_missing=> ['card_id','referenced_card_id',"present = 0 AND ref_type='#{LINK}'"],
         :referred_to_by => ['referenced_card_id','card_id',''],
         :linked_to_by   => ['referenced_card_id','card_id',"ref_type='#{LINK}' AND"],
-        :included_by    => ['referenced_card_id','card_id',"ref_type='#{TRANSCLUDE}' AND"]
+        :included_by    => ['referenced_card_id','card_id',"ref_type='#{INCLUDE}' AND"]
       }
     end
 

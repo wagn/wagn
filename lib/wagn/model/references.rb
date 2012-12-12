@@ -24,23 +24,25 @@ module Wagn
     refs.map(&:card_id).map( &Card.method(:fetch) )
   end
 
-  def transcluders
-    return [] unless refs = transcludes
+  def includers
+    return [] unless refs = includes
     #warn "clders #{inspect} :: #{refs.inspect}"
     refs.map(&:card_id).map( &Card.method(:fetch) )
   end
 
+=begin
   def existing_referencers
     return [] unless refs = references
     #warn "e ncers #{inspect} :: #{refs.inspect}"
     refs.map(&:referenced_name).map( &Card.method(:fetch) ).compact
   end
 
-  def existing_transcluders
-    return [] unless refs = transcludes
+  def existing_includers
+    return [] unless refs = includes
     #warn "e clders #{inspect} :: #{refs.inspect}"
     refs.map(&:referenced_name).map( &Card.method(:fetch) ).compact
   end
+=end
 
   # ---------- Referencing cards --------------
 
@@ -50,8 +52,8 @@ module Wagn
     refs. map { |ref| Card.fetch ref.referenced_name, :new=>{} }
   end
 
-  def transcludees
-    return [] unless refs = out_transcludes
+  def includees
+    return [] unless refs = out_includes
     #warn "cldees #{inspect} :: #{refs.inspect}"
     refs.map { |ref| Card.fetch ref.referenced_name, :new=>{} }
   end
@@ -88,11 +90,11 @@ module Wagn
 
       # ---------- Reference associations -----------
       has_many :references,  :class_name => :Reference, :foreign_key => :referenced_card_id
-      has_many :transcludes, :class_name => :Reference, :foreign_key => :referenced_card_id,
-        :conditions => { :ref_type => TRANSCLUDE }
+      has_many :includes, :class_name => :Reference, :foreign_key => :referenced_card_id,
+        :conditions => { :ref_type => INCLUDE }
 
       has_many :out_references,  :class_name => :Reference, :foreign_key => :card_id
-      has_many :out_transcludes, :class_name => :Reference, :foreign_key => :card_id, :conditions => { :ref_type => TRANSCLUDE }
+      has_many :out_includes, :class_name => :Reference, :foreign_key => :card_id, :conditions => { :ref_type => INCLUDE }
 
       after_create  :update_references_on_create
       after_destroy :update_references_on_destroy

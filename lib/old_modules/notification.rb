@@ -44,12 +44,12 @@ module Notification
     end
 
     def trunk_watcher_watched_pairs
-      # do the watchers lookup before the transcluder test since it's faster.
+      # do the watchers lookup before the includer test since it's faster.
       if cardname.junction?
         #Rails.logger.debug "trunk_watcher_pairs #{name}, #{name.trunk_name.inspect}"
         if tcard = Card[tname=cardname.trunk_name] and
           pairs = tcard.watcher_watched_pairs and
-          transcluders.map(&:key).member?(tname.key)
+          includers.map(&:key).member?(tname.key)
           return pairs
         end
       end
@@ -74,7 +74,7 @@ module Notification
                    
           [] 
         elsif pairs
-          watcher_ids.reject {|i| id ==Account.user_id }.map {|i| [i, namep.call] }
+          watcher_ids.reject {|id| id == Account.user_id }.map {|i| [i, namep.call] }
         else
           watcher_ids
         end

@@ -86,11 +86,11 @@ describe "Card::Reference" do
 
   it "should update referencers on rename when requested (case 2)" do
     card = Card['Administrator links+*self+*read']
-    refs = Card::Reference.where(:referenced_card_id => Card::AdminID).map(&:card_id).sort
+    refs = Card::Reference.where(:referee_id => Card::AdminID).map(&:referer_id).sort
     card.update_referencers = true
     card.name='Administrator links+*type+*read'
     card.save
-    Card::Reference.where(:referenced_card_id => Card::AdminID).map(&:card_id).sort.should == refs
+    Card::Reference.where(:referee_id => Card::AdminID).map(&:referer_id).sort.should == refs
   end
 
   LINK = Card::ReferenceTypes::LINK
@@ -189,9 +189,9 @@ describe "Card::Reference" do
 
     references = new_card.card_references(true)
     references.size.should == 2
-    references[0].referenced_name.should == 'WantedCard'
+    references[0].referee_key.should == 'WantedCard'
     references[0].ref_type.should == Card::Reference::WANTED_PAGE
-    references[1].referenced_name.should == 'WantedCard2'
+    references[1].referee_key.should == 'WantedCard2'
     references[1].ref_type.should == Card::Reference::WANTED_PAGE
 
     wanted_card = Card.create(:name=>'WantedCard')
@@ -201,9 +201,9 @@ describe "Card::Reference" do
     # reference NewCard -> WantedCard2 should remain the same
     references = new_card.card_references(true)
     references.size.should == 2
-    references[0].referenced_name.should == 'WantedCard'
+    references[0].referee_key.should == 'WantedCard'
     references[0].ref_type.should == Card::Reference::LINKED_PAGE
-    references[1].referenced_name.should == 'WantedCard2'
+    references[1].referee_key.should == 'WantedCard2'
     references[1].ref_type.should == Card::Reference::WANTED_PAGE
   end
 =end

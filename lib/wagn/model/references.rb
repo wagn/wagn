@@ -6,7 +6,7 @@ module Wagn
     ref_name = ref_name.nil? ? key : ref_name.to_name.key
     
     #warn "name refs for #{ref_name.inspect}"
-    r=Card.all( :joins => :out_references, :conditions => { :card_references => { :referenced_name => ref_name } } )
+    r=Card.all( :joins => :out_references, :conditions => { :card_references => { :referee_key => ref_name } } )
     #warn "name refs #{inspect} ::  #{r.map(&:inspect)*', '}"; r
   end
 
@@ -21,26 +21,26 @@ module Wagn
     #warn "ncers #{inspect} :: #{references.inspect}"
     return [] unless refs = references
     #warn "ncers 2 #{inspect} :: #{refs.inspect}"
-    refs.map(&:card_id).map( &Card.method(:fetch) )
+    refs.map(&:referer_id).map( &Card.method(:fetch) )
   end
 
   def includers
     return [] unless refs = includes
     #warn "clders #{inspect} :: #{refs.inspect}"
-    refs.map(&:card_id).map( &Card.method(:fetch) )
+    refs.map(&:referer_id).map( &Card.method(:fetch) )
   end
 
 =begin
   def existing_referencers
     return [] unless refs = references
     #warn "e ncers #{inspect} :: #{refs.inspect}"
-    refs.map(&:referenced_name).map( &Card.method(:fetch) ).compact
+    refs.map(&:referee_key).map( &Card.method(:fetch) ).compact
   end
 
   def existing_includers
     return [] unless refs = includes
     #warn "e clders #{inspect} :: #{refs.inspect}"
-    refs.map(&:referenced_name).map( &Card.method(:fetch) ).compact
+    refs.map(&:referee_key).map( &Card.method(:fetch) ).compact
   end
 =end
 
@@ -49,13 +49,13 @@ module Wagn
   def referencees
     return [] unless refs = out_references
     #warn "cees #{inspect} :: #{refs.inspect}"
-    refs. map { |ref| Card.fetch ref.referenced_name, :new=>{} }
+    refs. map { |ref| Card.fetch ref.referee_key, :new=>{} }
   end
 
   def includees
     return [] unless refs = out_includes
     #warn "cldees #{inspect} :: #{refs.inspect}"
-    refs.map { |ref| Card.fetch ref.referenced_name, :new=>{} }
+    refs.map { |ref| Card.fetch ref.referee_key, :new=>{} }
   end
 
   protected
@@ -89,12 +89,12 @@ module Wagn
     base.class_eval do
 
       # ---------- Reference associations -----------
-      has_many :references,  :class_name => :Reference, :foreign_key => :referenced_card_id
-      has_many :includes, :class_name => :Reference, :foreign_key => :referenced_card_id,
+      has_many :references,  :class_name => :Reference, :foreign_key => :referee_id
+      has_many :includes, :class_name => :Reference, :foreign_key => :referee_id,
         :conditions => { :ref_type => INCLUDE }
 
-      has_many :out_references,  :class_name => :Reference, :foreign_key => :card_id
-      has_many :out_includes, :class_name => :Reference, :foreign_key => :card_id, :conditions => { :ref_type => INCLUDE }
+      has_many :out_references,  :class_name => :Reference, :foreign_key => :referer_id
+      has_many :out_includes, :class_name => :Reference, :foreign_key => :referer_id, :conditions => { :ref_type => INCLUDE }
 
       after_create  :update_references_on_create
       after_destroy :update_references_on_destroy

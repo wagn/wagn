@@ -15,8 +15,37 @@ class CardController < ApplicationController
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :comment, :rollback ]
   before_filter :read_ok,      :only=> [ :read_file ]
 
+  attr_reader :card
+  cattr_reader :subset_actions
+  @@subset_actions = {}
+
+  METHODS = {
+    'POST'   => :create,  # C
+    'GET'    => :read,    # R
+    'PUT'    => :update,  # U
+    'DELETE' => :delete,  # D
+    'INDEX'  => :index
+  }
+
+  def action
+    @action = METHODS[request.method]
+    Rails.logger.warn "action #{request.method}, #{@action} #{params.inspect}"
+    warn "action #{request.method}, #{@action} #{params.inspect}"
+    if send "perform_#{@action}"
+    end
+  end
+
+  def action_method event
+    return "_final_#{event}" unless card && subset_actions[event]
+    card.method_keys.each do |method_key|
+      meth = "_final_"+(method_key.blank? ? "#{event}" : "#{method_key}_#{event}")
+      #warn "looking up #{method_key}, M:#{meth} for #{card.name}"
+      return meth if respond_to?(meth.to_sym)
+    end
+  end
 
   def create
+    warn "create #{params.inspect}, #{card.inspect} #{@card}"
     if @card.save
       success
     else

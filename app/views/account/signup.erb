@@ -33,7 +33,7 @@
               :help=>"<strong>Unique name for your card</strong><br/>usually first and last name",
               :label=>"Name") %>
 
-          <%= subrenderer( Card[:account].fetch :trait=>:signup ).render_edit %>
+          <%= subrenderer( Card[:signup] ).render_edit %>
           <%= raw( slot.option_header 'About You' ) %>
         </table>
 

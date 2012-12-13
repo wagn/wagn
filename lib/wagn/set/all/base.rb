@@ -18,23 +18,19 @@ module Wagn
     end
 
     action :update do |*a|
-      case
-      when @card.new_card?
-        action_create
-      when @card.update_attributes( params[:card] )
-        @card.save
-      end
+      #warn "update #{card.inspect}, #{params[:card].inspect}"
+      card.update_attributes params[:card]
+      card.save
+      render_errors
     end
 
     action :delete do |*a|
-      if @card.destroy
-        warn "destroyed? #{@card.inspect}"
+      card.destroy
+      render_errors || begin
+        #warn "destroyed? #{card.inspect}"
 
-        discard_locations_for @card
+        discard_locations_for card
         success 'REDIRECT: *previous'
-      else
-        warn "destroyed? false #{@card.inspect}"
-        false
       end
     end
 

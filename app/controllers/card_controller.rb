@@ -59,16 +59,17 @@ class CardController < ApplicationController
   end
 
   def update
-    if card.new_card?; create
-    elsif               render_errors
-    else                success
+    if card.new_card?; process_create
+    elsif              process_update
+    else               success
     end
   end
 
   def delete
-    card.destroy
-    discard_locations_for card
-    success 'REDIRECT: *previous'
+    process_delete || begin
+      discard_locations_for card
+      success 'REDIRECT: *previous'
+    end
   end
 
 

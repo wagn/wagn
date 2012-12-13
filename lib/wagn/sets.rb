@@ -86,11 +86,11 @@ module Wagn
 
         view_key = get_set_key(view, opts)
         @@renderer.class_eval { define_method "_final_#{view_key}", &final }
-        #warn "defining method[#{@@renderer}] _final_#{view_key}"
+        warn "defining view method[#{@@renderer}] _final_#{view_key}"
         Renderer.subset_views[view] = true if !opts.empty?
 
         if !method_defined? "render_#{view}"
-          #warn "defining method[#{@@renderer}] render_#{view}"
+          warn "defining view method[#{@@renderer}] render_#{view}"
           @@renderer.class_eval do
             define_method( "_render_#{view}" ) do |*a|
               a = [{}] if a.empty?
@@ -131,7 +131,7 @@ module Wagn
             else; raise "Bad view #{alias_view.inspect}"
             end
 
-          #warn "def final_alias #{alias_view_key}, #{view_key}"
+          warn "def view final_alias #{alias_view_key}, #{view_key}"
           @@renderer.class_eval { define_method( "_final_#{alias_view_key}".to_sym ) do |*a|
             send "_final_#{view_key}", *a
           end }
@@ -148,11 +148,11 @@ module Wagn
 
         CardController.subset_actions[event] = true if !opts.empty?
 
-        if !method_defined? "action_#{event}"
-          #warn "defining method: action_#{event}"
+        if !method_defined? "process_#{event}"
+          #warn "defining method: process_#{event}"
           CardController.class_eval do
 
-            define_method( "_action_#{event}" ) do |*a|
+            define_method( "_process_#{event}" ) do |*a|
               a = [{}] if a.empty?
               if final_method = action_method(event)
                 #warn "final action #{final_method}"
@@ -167,11 +167,12 @@ module Wagn
 
           CardController.class_eval do
 
-            define_method( "action_#{event}" ) do |*a|
+            warn "define action process_#{event}"
+            define_method( "process_#{event}" ) do |*a|
               begin
 
-                #warn "send _action_#{event}"
-                send "_action_#{event}", *a
+                warn "send _process_#{event}"
+                send "_process_#{event}", *a
 
               rescue Exception=>e
                 controller.send :notify_airbrake, e if Airbrake.configuration.api_key
@@ -196,7 +197,7 @@ module Wagn
             else; raise "Bad event #{alias_event.inspect}"
             end
 
-          #warn "def final_alias #{alias_event_key}, #{event_key}"
+          warn "def final_alias action #{alias_event_key}, #{event_key}"
           @@renderer.class_eval { define_method( "_final_#{alias_event_key}".to_sym ) do |*a|
             send "_final_#{event_key}", *a
           end }

@@ -91,11 +91,13 @@ describe CardController do
 
     context "multi-create" do
       it "catches missing name error" do
+        Rails.logger.warn "testing"
         post :create, "card"=>{
             "name"=>"",
             "type"=>"Fruit",
             "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}
           }, "view"=>"open"
+        Rails.logger.warn "testing a"
         assigns['card'].errors[:key].first.should == "cannot be blank"
         assigns['card'].errors[:name].first.should == "can't be blank"
         assert_response 422
@@ -119,9 +121,7 @@ describe CardController do
     end
 
     it "renders errors if create fails" do
-      Rails.logger.warn "testing #{Card['Joe User'].inspect}"
       post :create, "card"=>{"name"=>"Joe User"}
-      Rails.logger.warn "testing a #{Card['Joe User'].inspect}"
       assert_response 422
     end
 

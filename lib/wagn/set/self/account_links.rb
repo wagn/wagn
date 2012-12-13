@@ -17,7 +17,7 @@ module Wagn
              }#{ link_to 'Sign out', Card[:session].key, :method=>'DELETE',           :id=>'signout-link'
            }}
          else
-           %{#{ if (signup_card = Card[:account].fetch :trait=>:signup).ok? :create
+           %{#{ if (signup_card = Card[:account].fetch :trait=>:signup).send_if :ok?, :create
                  link_to 'Sign up', signup_card.key, :id=>'signup-link'
                 end
             }#{ link_to 'Sign in', Card[:session].key, :id=>'signin-link'

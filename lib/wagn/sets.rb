@@ -144,7 +144,7 @@ module Wagn
         action_key = get_set_key event, opts
 
         CardController.class_eval {
-        warn "define action[#{self}] e:#{event.inspect}, ak:_final_#{action_key}, O:#{opts.inspect}" if event == :read
+        #warn "define action[#{self}] e:#{event.inspect}, ak:_final_#{action_key}, O:#{opts.inspect}" if event == :read
           define_method "_final_#{action_key}", &final_action }
 
         CardController.subset_actions[event] = true if !opts.empty?
@@ -152,7 +152,7 @@ module Wagn
         if !method_defined? "process_#{event}"
           CardController.class_eval do
 
-            warn "defining method[#{to_s}] _process_#{event}" if event == :read
+            #warn "defining method[#{to_s}] _process_#{event}" if event == :read
             define_method( "_process_#{event}" ) do |*a|
               a = [{}] if a.empty?
               if final_method = action_method(event)
@@ -165,11 +165,11 @@ module Wagn
               end
             end
 
-            warn "define action[#{self}] process_#{event}" if event == :read
+            #warn "define action[#{self}] process_#{event}" if event == :read
             define_method( "process_#{event}" ) do |*a|
               begin
 
-                warn "send _process_#{event}" if event.to_sym == :read
+                #warn "send _process_#{event}" if event.to_sym == :read
                 send "_process_#{event}", *a
 
               rescue Exception=>e
@@ -177,7 +177,7 @@ module Wagn
                 warn "Card Action Error: #{e.class} : #{e.message}"
                 Rails.logger.info "\nCard Action Error: #{e.class} : #{e.message}"
                 Rails.logger.debug "  #{e.backtrace*"\n  "}"
-                rendering_error e, (card && card.name.present? ? card.name : 'unknown card')
+                action_error e, (card && card.name.present? ? card.name : 'unknown card')
               end
             end
           end
@@ -195,7 +195,7 @@ module Wagn
             else; raise "Bad event #{alias_event.inspect}"
             end
 
-          warn "def final_alias action #{alias_event_key}, #{event_key}"
+          #warn "def final_alias action #{alias_event_key}, #{event_key}"
           @@renderer.class_eval { define_method( "_final_#{alias_event_key}".to_sym ) do |*a|
             send "_final_#{event_key}", *a
           end }

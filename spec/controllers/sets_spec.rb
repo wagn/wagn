@@ -1,6 +1,6 @@
 
-require File.expand_path('../../spec_helper', File.dirname(__FILE__))
-include AuthenticatedTestHelper
+require File.expand_path('../spec_helper', File.dirname(__FILE__))
+#include AuthenticatedTestHelper
 
 describe CardController do
   it "module exists and autoloads" do
@@ -10,7 +10,7 @@ describe CardController do
   describe "read all set" do
     it "gets data" do
       get :read, :id=>'a'
-      process_read.should be
+      #controller.process_read.should be
     end
   end
 

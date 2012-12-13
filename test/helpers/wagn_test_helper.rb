@@ -63,14 +63,14 @@ module WagnTestHelper
 
     raise "Don't know email & password for #{user}" unless uc=Card[user] and
         u=User.where(:card_id=>uc.id).first and
-        email = u.email and pass = USERS[login]
+        email = u.email and pass = USERS[email]
 
     if functional
-      #warn "functional login #{login}, #{pass}"
-      post :signin, :login=>login, :password=>pass, :controller=>:account
+      #warn "functional login #{email}, #{pass}"
+      post :signin, :login=>email, :password=>pass, :controller=>:account
     else
-      #warn "integration login #{login}, #{pass}"
-      post 'account/signin', :login=>login, :password=>pass, :controller=>:account
+      #warn "integration login #{email}, #{pass}"
+      post 'account/signin', :login=>email, :password=>pass, :controller=>:account
     end
     assert_response :redirect
 

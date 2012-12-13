@@ -6,11 +6,8 @@ module Wagn
     ### --- Core actions -----
 
     action :create do |*a|
-      if @card.save
-        success
-      else
-        errors!
-      end
+      card.errors.add(:name, "must be unique; '#{card.name}' already exists.") unless card.new_card?
+      render_errors || !card.save && render_errors
     end
 
     action :read do |*a|

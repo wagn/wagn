@@ -48,13 +48,11 @@ class CardController < ApplicationController
   def create
     #warn "create #{params.inspect}, #{card.inspect} if #{card && !card.new_card?}, nc:#{card.new_card?}"
 
-    card.errors.add(:name, "must be unique; '#{card.name}' already exists.") unless card.new_card?
-    render_errors || card.save || render_errors || success
-
+    process_create || success
   end
 
   def read
-    render_errors || begin
+    process_read || begin
       save_location # should be an event!
       show
     end
@@ -84,6 +82,9 @@ class CardController < ApplicationController
   end #FIXME!  move to pack
 
 
+  def action_error *a
+    warn "action_error #{a.inspect}"
+  end
 
 
   ## the following methods need to be merged into #update
@@ -234,6 +235,7 @@ class CardController < ApplicationController
 
 
   def success default_target='_self'
+    #warn "success #{card.inspect}"
     target = params[:success] || default_target
     redirect = !ajax?
     new_params = {}

@@ -86,11 +86,11 @@ module Wagn
 
         view_key = get_set_key(view, opts)
         @@renderer.class_eval { define_method "_final_#{view_key}", &final }
-        warn "defining view method[#{@@renderer}] _final_#{view_key}"
+        #warn "defining view method[#{@@renderer}] _final_#{view_key}"
         Renderer.subset_views[view] = true if !opts.empty?
 
         if !method_defined? "render_#{view}"
-          warn "defining view method[#{@@renderer}] render_#{view}"
+          #warn "defining view method[#{@@renderer}] render_#{view}"
           @@renderer.class_eval do
             define_method( "_render_#{view}" ) do |*a|
               a = [{}] if a.empty?
@@ -131,7 +131,7 @@ module Wagn
             else; raise "Bad view #{alias_view.inspect}"
             end
 
-          warn "def view final_alias #{alias_view_key}, #{view_key}"
+          #warn "def view final_alias #{alias_view_key}, #{view_key}"
           @@renderer.class_eval { define_method( "_final_#{alias_view_key}".to_sym ) do |*a|
             send "_final_#{view_key}", *a
           end }
@@ -142,16 +142,17 @@ module Wagn
 
       def action event, opts={}, &final_action
         action_key = get_set_key event, opts
-        #warn "define action #{event.inspect}, #{action_key}, O:#{opts.inspect}"
 
-        CardController.class_eval { define_method "_final_#{action_key}", &final_action }
+        CardController.class_eval {
+        warn "define action[#{self}] e:#{event.inspect}, ak:_final_#{action_key}, O:#{opts.inspect}" if event == :read
+          define_method "_final_#{action_key}", &final_action }
 
         CardController.subset_actions[event] = true if !opts.empty?
 
         if !method_defined? "process_#{event}"
-          #warn "defining method: process_#{event}"
           CardController.class_eval do
 
+            warn "defining method[#{to_s}] _process_#{event}" if event == :read
             define_method( "_process_#{event}" ) do |*a|
               a = [{}] if a.empty?
               if final_method = action_method(event)
@@ -163,15 +164,12 @@ module Wagn
                 raise "<strong>unsupported event: <em>#{event}</em></strong>"
               end
             end
-          end
 
-          CardController.class_eval do
-
-            warn "define action process_#{event}"
+            warn "define action[#{self}] process_#{event}" if event == :read
             define_method( "process_#{event}" ) do |*a|
               begin
 
-                warn "send _process_#{event}"
+                warn "send _process_#{event}" if event.to_sym == :read
                 send "_process_#{event}", *a
 
               rescue Exception=>e

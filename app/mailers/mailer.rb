@@ -17,7 +17,7 @@ class Mailer < ActionMailer::Base
     @password = (user.password or raise Wagn::Oops.new("Oops didn't have user password"))
     @card_url = wagn_url Card[user.card_id]
     @pw_url   = wagn_url "/card/options/#{url_key}"
-    @login_url= wagn_url "/account/signin"
+    @login_url= wagn_url "/Session"
     @message  = message.clone
 
     args =  { :to => @email, :subject  => subject }

@@ -9,7 +9,8 @@ describe CardController do
 
   describe "read all set" do
     it "gets data" do
-      CardController.process_read.should be
+      get :read, :id=>'a'
+      process_read.should be
     end
   end
 

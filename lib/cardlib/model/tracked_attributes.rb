@@ -30,6 +30,7 @@ module Wagn::Model::TrackedAttributes
     write_attribute :name, name_without_tracking # what does this do?  Not sure, maybe comment it out and see
 
     reset_patterns_if_rule # reset the new name
+    @dependents = nil
 
     Card.expire cardname
 

@@ -82,7 +82,7 @@ class URIChunk < Chunk::Abstract
     INTERNET_URI_REGEXP
   end
 
-  attr_reader :user, :host, :port, :path, :query, :fragment, :ref_text
+  attr_reader :user, :host, :port, :path, :query, :fragment, :link_text
 
   def self.apply_to(content)
     content.gsub!( self.pattern ) do |matched_text|
@@ -100,12 +100,12 @@ class URIChunk < Chunk::Abstract
 
   def initialize(match_data, content)
     super
-    @ref_text = match_data[0]
+    @link_text = match_data[0]
     @suspicious_preceding_character = match_data[1]
     @original_scheme, @user, @host, @port, @path, @query, @fragment = match_data[2..-1]
     treat_trailing_character
-    #Rails.logger.debug "uri_link #{@ref_text} U:#{self.uri}"
-    @unmask_text = "#{@content.renderer.build_link(self.uri,@ref_text)}#{@trailing_punctuation}"
+    #Rails.logger.debug "uri_link #{@link_text} U:#{self.uri}"
+    @unmask_text = "#{@content.renderer.build_link(self.uri,@link_text)}#{@trailing_punctuation}"
   end
 
   def avoid_autolinking?
@@ -116,15 +116,15 @@ class URIChunk < Chunk::Abstract
     # If the last character matched by URI pattern is in ! or ), this may be part of the markup,
     # not a URL. We should handle it as such. It is possible to do it by a regexp, but
     # much easier to do programmatically
-    [@original_scheme, @user, @host, @port, @path, @query, @fragment, @ref_text].compact.map do |section|
+    [@original_scheme, @user, @host, @port, @path, @query, @fragment, @link_text].compact.map do |section|
       section.gsub! /(&nbsp;)*$/, ''
     end
-    last_char = @ref_text[-1..-1]
+    last_char = @link_text[-1..-1]
 
 #    if last_char == ')' or last_char == '!'
     if %w{ . ) ! ? : }.member?(last_char)
       @trailing_punctuation = last_char
-      @ref_text.chop!
+      @link_text.chop!
       [@original_scheme, @user, @host, @port, @path, @query, @fragment].compact.last.chop!
     else
       @trailing_punctuation = nil

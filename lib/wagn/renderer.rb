@@ -416,10 +416,10 @@ module Wagn
         
         if was_name = chunk.cardname and new_cardname = was_name.replace_part(old_name, new_name) and
              was_name != new_cardname
-          Chunk::Link===chunk and link_bound = chunk.cardname == chunk.ref_text
+          Chunk::Link===chunk and link_bound = chunk.cardname == chunk.link_text
           chunk.cardname = new_cardname
           Card::Reference.where(:referee_key => was_name.key).update_all( :referee_key => new_cardname.key )
-          chunk.ref_text=chunk.cardname.to_s if link_bound
+          chunk.link_text=chunk.cardname.to_s if link_bound
         end
       end
 

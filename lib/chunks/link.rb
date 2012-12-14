@@ -1,6 +1,6 @@
 module Chunk
   class Link < Reference
-    attr_accessor :ref_text, :link_type
+    attr_accessor :link_text, :link_type
 
 #    unless defined? WIKI_LINK
       word = /\s*([^\]\|]+)\s*/
@@ -15,10 +15,10 @@ module Chunk
       if name=match_data[1]
         self.cardname = name.to_name
         # matched the [[..(|..)?]]  case, 1=first slot, 3=sencond
-        @ref_text = match_data[  match_data[2] ? 3 : 1 ]
+        @link_text = match_data[  match_data[2] ? 3 : 1 ]
       else
         # matched [..][..] case, 4=first slot, 5=second
-        @ref_text, self.cardname = match_data[4], match_data[5].to_name #.gsub(/_/,' ')
+        @link_text, self.cardname = match_data[4], match_data[5].to_name #.gsub(/_/,' ')
       end
       self
     end
@@ -28,7 +28,7 @@ module Chunk
     end
 
     def revert
-      @text = cardname == ref_text ? "[[#{cardname.to_s}]]" : "[[#{cardname.to_s}|#{ref_text}]]"
+      @text = cardname == link_text ? "[[#{cardname.to_s}]]" : "[[#{cardname.to_s}|#{link_text}]]"
       super
     end
 

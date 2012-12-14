@@ -16,12 +16,12 @@ module Chunk
       @refcard ||= refcardname && Card.fetch(refcardname)
     end
 
-    def ref_text()
+    def link_text()
       refcardname.to_s
     end
 
     def render_link()
-      @content.renderer.build_link(refcardname, self.ref_text)
+      @content.renderer.build_link(refcardname, self.link_text)
     end
 
   end

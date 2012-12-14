@@ -195,3 +195,136 @@ describe Card do
   end
 end
 
+describe "basic card tests" do
+
+
+  def assert_simple_card card
+    card.name.should be, "name not null"
+    card.name.empty?.should be_false, "name not empty"
+    rev = card.current_revision
+    rev.should be_instance_of Card::Revision
+    rev.creator.should be_instance_of Card
+  end
+
+  def assert_samecard card1, card2
+    assert_equal card1.current_revision, card2.current_revision
+  end
+
+  def assert_stable card1
+    card2 = Card[card1.name]
+    assert_simple_card card1
+    assert_simple_card card2
+    assert_samecard card1, card2
+    assert_equal card1.right, card2.right
+  end
+
+  it 'should remove cards' do
+    forba = Card.create! :name=>"Forba"
+    torga = Card.create! :name=>"TorgA"
+    torgb = Card.create! :name=>"TorgB"
+    torgc = Card.create! :name=>"TorgC"
+
+    forba_torga = Card.create! :name=>"Forba+TorgA";
+    torgb_forba = Card.create! :name=>"TorgB+Forba";
+    forba_torga_torgc = Card.create! :name=>"Forba+TorgA+TorgC";
+
+    Card['Forba'].destroy!
+
+    Card["Forba"].should be_nil
+    Card["Forba+TorgA"].should be_nil
+    Card["TorgB+Forba"].should be_nil
+    Card["Forba+TorgA+TorgC"].should be_nil
+
+    # FIXME: this is a pretty dumb test and it takes a loooooooong time
+    #while card = Card.find(:first,:conditions=>["type not in (?,?,?) and trash=?", 'AccountRequest','User','Cardtype',false] )
+    #  card.destroy!
+    #end
+    #assert_equal 0, Card.find_all_by_trash(false).size
+  end
+
+  #test test_attribute_card
+  #  alpha, beta = Card.create(:name=>'alpha'), Card.create(:name=>'beta')
+  #  assert_nil alpha.attribute_card('beta')
+  #  Card.create :name=>'alpha+beta'
+  #   alpha.attribute_card('beta').should be_instance_of(Card)
+  #end
+
+  it 'should create cards' do
+    alpha = Card.new :name=>'alpha', :content=>'alpha'
+    alpha.content.should == 'alpha'
+    alpha.save
+    alpha.name.should == 'alpha'
+    assert_stable alpha
+  end
+
+
+  # just a sanity check that we don't have broken data to start with
+  it 'should find cards in database' do
+    Card.find(:all).each do |p|
+       p.should be_instance_of Card
+    end
+  end
+
+  it 'should find_by_name' do
+    card = Card.create( :name=>"ThisMyCard", :content=>"Contentification is cool" )
+    Card["ThisMyCard"].should == card
+  end
+
+
+  it 'should not find nonexistent' do
+    Card['no such card+no such tag'].should be_nil
+    Card['HomeCard+no such tag'].should be_nil
+  end
+
+
+  it 'update_should_create_subcards' do
+    Account.user = 'joe_user'
+    Account.as 'joe_user' do
+
+      Card.update (Card.create! :name=>'Banana').id, :cards=>{ "+peel" => { :content => "yellow" }}
+
+      peel = Card['Banana+peel']
+      peel.content.       should == "yellow"
+      Card['joe_user'].id.should == peel.creator_id
+    end
+  end
+
+  it 'update_should_create_subcards_as_wagn_bot_if_missing_subcard_permissions' do
+    Card.create :name=>'peel'
+    Account.user = :anonymous
+
+    Card['Banana'].should_not be
+    Card['Basic'].ok?(:create).should be_false, "anon can't creat"
+
+    Card.create! :type=>"Fruit", :name=>'Banana', :cards=>{ "+peel" => { :content => "yellow" }}
+    Card['Banana'].should be
+    peel = Card["Banana+peel"]
+
+    peel.current_revision.content.should == "yellow"
+    peel.creator_id.should == Card::AnonID
+  end
+
+  it 'update_should_not_create_subcards_if_missing_main_card_permissions' do
+    b = nil
+    Account.as(:joe_user) do
+      b = Card.create!( :name=>'Banana' )
+      #warn "created #{b.inspect}"
+    end
+    Account.as Card::AnonID do
+      assert_raises( Card::PermissionDenied ) do
+        Card.update(b.id, :cards=>{ "+peel" => { :content => "yellow" }})
+      end
+    end
+  end
+
+
+  it 'create_without_read_permission' do
+    c = Card.create!({:name=>"Banana", :type=>"Fruit", :content=>"mush"})
+    Account.as Card::AnonID do
+      assert_raises Card::PermissionDenied do
+        c.ok! :read
+      end
+    end
+  end
+
+end

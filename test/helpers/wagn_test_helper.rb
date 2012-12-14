@@ -8,19 +8,13 @@ module WagnTestHelper
   def setup_default_user
     User.cache.reset
 
-    user_card = Card['joe user'] #Card[Card::WagnBotID]
+    user_card = Card['joe user']
     user_card = Card[:wagn_bot]
     Account.user= user_card.id
     @user = Account.user
-    #STDERR << "user #{user_card.inspect}\n"
 
     @user.update_column 'crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c'
-    #user_card.fetch(:trait=>:roles) << Card::AdminID
 
-    # setup admin while we're at it
-    #@admin_card = Card[Card::WagnBotID]
-
-    #@admin_card.fetch(:trait=>:roles) << Card::AdminID
     Account.user = 'joe_user'
     nil
   end

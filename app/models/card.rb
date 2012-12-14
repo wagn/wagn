@@ -20,13 +20,12 @@ class Card
   belongs_to :card, :class_name => 'Card', :foreign_key => :creator_id
   belongs_to :card, :class_name => 'Card', :foreign_key => :updater_id
 
-  cattr_accessor :cache  
   attr_accessor :comment, :comment_author, :selected_rev_id,
     :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
     :cards, :loaded_trunk, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status #yuck
       
-  attr_writer :update_read_rule_list
+  attr_writer :update_read_rule_list, :dependents
   attr_reader :type_args, :broken_type
 
   before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
@@ -375,11 +374,16 @@ class Card
 
   def dependents
     return [] if new_card?
-    wql_key = simple? ? :part : :left
-    Account.as_bot do
-      Card.search( wql_key=>name ).map do |c|
-        [ c ] + c.dependents
-      end.flatten
+
+    if @dependents.nil?
+      @dependents = 
+        Account.as_bot do
+          deps = Card.search( { (simple? ? :part : :left) => name } ).to_a
+          deps.inject(deps) do |array, card|
+            array + card.dependents
+          end
+        end
+      #Rails.logger.warn "dependents[#{inspect}] #{@dependents.inspect}"
     end
   end
 

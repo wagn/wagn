@@ -75,7 +75,7 @@ module Wagn::Model::Permissions
 
     rcard = Account.as_bot do
       if opcard.content == '_left' && self.junction?
-        lcard = loaded_trunk || left_or_new( :skip_virtual=>true, :skip_modules=>true )
+        lcard = loaded_left || left_or_new( :skip_virtual=>true, :skip_modules=>true )
         lcard.permission_rule_card(operation).first
       else
         opcard

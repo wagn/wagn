@@ -35,7 +35,7 @@ module Wagn
       })
     end
   end
-  
+
   class Renderer
     private
 

@@ -32,14 +32,12 @@ module Wagn::Model::TrackedAttributes
 
     Card.expire cardname
 
-    Rails.logger.warn "set_name[#{inspect}] #{@old_name}, #{newname}"
     if @cardname.junction?
       [:trunk, :tag].each do |side|
         sidename = @cardname.send "#{side}_name"
         sidecard = Card[sidename]
         old_name_in_way = (sidecard && sidecard.id==self.id) # eg, renaming A to A+B
         suspend_name(sidename) if old_name_in_way
-    Rails.logger.warn "set_name side #{side}, #{sidecard.inspect}, #{sidename}"
         self.send "#{side}_id=", begin
           if !sidecard || old_name_in_way
             Card.create! :name=>sidename
@@ -80,7 +78,6 @@ module Wagn::Model::TrackedAttributes
 
   def set_type_id(new_type_id)
     #Rails.logger.debug "set_typecde No type code for #{name}, #{type_id}" unless new_type_id
-    #warn "set_type_id(#{new_type_id}) #{self.type_id_without_tracking}"
     self.type_id_without_tracking= new_type_id
     return true if new_card?
     on_type_change # FIXME this should be a callback
@@ -100,12 +97,10 @@ module Wagn::Model::TrackedAttributes
   end
 
   def set_content(new_content)
-    #warn Rails.logger.info("set_content #{name} #{new_content}")
     return false unless self.id
-    new_content ||= ''
-    new_content = WikiContent.clean_html!(new_content) if clean_html?
+    new_content ||= (tmpl = template).nil? ? '' : tmpl.content
+    new_content = CleanHtml.clean!(new_content) if clean_html?
     clear_drafts if current_revision_id
-    #warn Rails.logger.info("set_content #{name} #{Account.user_id}, #{new_content}")
     new_rev = Card::Revision.create :card_id=>self.id, :content=>new_content, :creator_id =>Account.user_id
     self.current_revision_id = new_rev.id
     reset_patterns_if_rule
@@ -141,7 +136,7 @@ module Wagn::Model::TrackedAttributes
 
     raise "recursion?" if self.name == 'A+B+T+T'
     Rails.logger.debug "-------------------#{@old_name}- CASCADE #{self.name} -------------------------------------"
-    #Rails.logger.debug "-------------------#{@old_name}---- CASCADE #{self.name} -> deps: #{deps.map(&:name)*", "} -------------------------------------"
+    #warn "-------------------#{@old_name}---- CASCADE #{self.name} -> deps: #{deps.map(&:name)*", "} -------------------------------------"
 
     deps.each do |dep|
       # here we specifically want NOT to invoke recursive cascades on these cards, have to go this low level to avoid callbacks.
@@ -154,7 +149,6 @@ module Wagn::Model::TrackedAttributes
     end
 
     if !update_referencers || update_referencers == 'false'  # FIXME doing the string check because the radio button is sending an actual "false" string
-      #warn "no updating.."
       deps.each do |dep|
         Rails.logger.debug "--------------- NOUPDATE REFERER #{dep.name} ---------------------------"
         Card::Reference.update_on_destroy dep, @old_name
@@ -173,7 +167,7 @@ module Wagn::Model::TrackedAttributes
           next if card.hard_template
           unless card==self
             card = card.refresh
-            card.content = Wagn::Renderer.new(card, :not_current=>true).replace_references( @old_name, name )
+            card.content = card.replace_references( @old_name, name )
             card.save!
           end
         end

@@ -43,9 +43,9 @@ end
 
 
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
-  logged_in_as(username) do 
+  logged_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
-    fill_in 'card[content]', :with=>content 
+    fill_in 'card[content]', :with=>content
     click_button("Submit")
   end
 end

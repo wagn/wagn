@@ -14,22 +14,12 @@ module Wagn
     end
 
     define_view :current_naked, :fallback=>:naked, :type=>'Etherpad' do |args|
-      process_content _render_current
+      process_content_s _render_current
     end
 
     define_view :open_content, :type=>'Etherpad' do |args|
       card.post_render(_render_current_naked { yield })
     end
-
-  # edit views
-=begin not sure anymore why we want/need this
-    define_view :edit, :type=>'Etherpad' do |args|
-      @state=:edit
-      wrap :edit, args do
-        self._render_editor
-      end
-    end
-=end
 
     define_view :editor, :type=>'Etherpad' do |args|
       pad_opts = card.pad_options

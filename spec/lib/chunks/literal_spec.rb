@@ -1,10 +1,10 @@
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
-include ChunkSpecHelper
 
 describe Literal::Escape, "literal chunk tests" do
+  include MySpecHelpers
 
   before do
-    setup_user 'joe_user'
+    Account.user= 'joe_user'
   end
 
   it "should test_escape_link" do

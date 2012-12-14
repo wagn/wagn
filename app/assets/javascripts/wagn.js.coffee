@@ -161,7 +161,7 @@ $(window).ready ->
     $(this).setContentFieldsFromMap()
     $(this).find('.card-content').attr('no-autosave','true')
     true
-    
+
   $('body').delegate '.card-name-form', 'submit', ->
     form = $(this)
     confirmed = form.find '#confirmed'
@@ -182,7 +182,7 @@ $(window).ready ->
           confirmed.val 'true'
           renamer.dialog 'close'
           form.submit()
-      else        
+      else
         args.width = 300
         args.buttons['Rename'] = ->
           confirmed.val 'true'
@@ -196,13 +196,13 @@ $(window).ready ->
       renamer.dialog args
       false
     else
-      if confirmed.val() == 'false' 
+      if confirmed.val() == 'false'
         $('.confirm-rename').dialog 'open'
         false
       else
         true
 
-    
+
   $('body').delegate 'button.redirecter', 'click', ->
     window.location = $(this).attr('href')
 

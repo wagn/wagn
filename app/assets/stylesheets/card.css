@@ -42,7 +42,7 @@ html>body .open-view {
 .card-header h1 {
   display: inline;
 }
-h1.card-title { 
+h1.card-title {
   padding: 2px 0;
   white-space: nowrap;
   margin-right: 5px;
@@ -177,7 +177,7 @@ fieldset > .editor > input {
   margin-left: 0;
 }
 fieldset > legend {
-  white-space: inherit;  
+  white-space: inherit;
   float:left;
   text-align:right;
   width: 25%;

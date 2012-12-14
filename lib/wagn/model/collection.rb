@@ -33,7 +33,7 @@ module Wagn::Model::Collection
 
   def contextual_content(context_card=nil, renderer_args={})
     renderer_args[:not_current] = true
-    Wagn::Renderer.new(context_card, renderer_args).process_content(
+    Wagn::Renderer.new(context_card, renderer_args).process_content_s(
       Wagn::Renderer.new(self, :not_current=>true)._render_raw
     )
   end

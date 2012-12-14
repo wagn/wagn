@@ -11,7 +11,7 @@ class Card::Revision < ActiveRecord::Base
   def creator
     Card[ creator_id ]
   end
-  
+
   def card
     Card[ card_id ]
   end

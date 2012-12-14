@@ -215,7 +215,7 @@ class Wql
 
     def left(val)  merge field(:trunk_id) => subspec(val)                           end
     def right(val) merge field(:tag_id  ) => subspec(val)                           end
-    def part(val)  subcondition({ :left => val, :right => val.clone }, :conj=>:or)  end
+    def part(val)  subcondition({ :left => val, :right => (Integer===val) ? val : val.clone }, :conj=>:or)  end
 
     def left_plus(val)
       part_spec, junc_spec = val.is_a?(Array) ? val : [ val, {} ]

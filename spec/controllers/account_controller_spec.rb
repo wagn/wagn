@@ -73,7 +73,7 @@ describe AccountController do
       @msgs[0].should be_a Mail::Message
       #puts "msg looks like #{@msgs[0].inspect}"
     end
-    
+
     it 'should detect duplicates' do
       post :signup, :user=>{:email=>'joe@user.com'}, :card=>{:name=>'Joe Scope'}
       post :signup, :user=>{:email=>'joe@user.com'}, :card=>{:name=>'Joe Duplicate'}

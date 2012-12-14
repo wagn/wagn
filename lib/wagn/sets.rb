@@ -15,9 +15,9 @@ module Wagn
         [ "#{Rails.root}/lib/wagn/set/", Wagn::Conf[:pack_dirs].split( /,\s*/ ) ].flatten.each do |dirname|
           load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
         end
-        
+
         load_dir File.expand_path( "#{Rails.root}/lib/wagn/model/*.rb", __FILE__ )
-    
+
       end
 
       def all_constants base

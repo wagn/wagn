@@ -28,7 +28,6 @@ class SharedData
 
     roles_card = Card['Joe Admin'].fetch(:trait=>:roles, :new=>{})
     roles_card << Card::AdminID
-    # FIXME: improve API: roles_card = jc_card.fetch(:trait=>:roles) << ja_card
 
     User.create_with_card(
       { :login=>"joe_camel",:email=>'joe@camel.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass' },

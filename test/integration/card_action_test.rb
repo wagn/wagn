@@ -83,7 +83,7 @@ class CardActionTest < ActionController::IntegrationTest
 
   def test_newcard_gives_reasonable_error_for_invalid_cardtype
     Account.as_bot do
-      get 'card/new', :card => { :type=>'bananamorph' }  
+      get 'card/new', :card => { :type=>'bananamorph' }
       assert_response 422
       assert_tag :tag=>'div', :attributes=>{:class=>/errors-view/}, :content=>/not a known type/
     end

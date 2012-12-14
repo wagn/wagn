@@ -76,7 +76,9 @@ module Wagn::Model::Templating
         Wql.new (wql == true ? {:name => name} :  wql).merge(:return => :id)
       end
 
+      Rails.logger.warn "expire tee refs #{wql.inspect}"
       wql.run.each_slice(100) do |id_batch|
+        Rails.logger.warn "batch #{id_batch.inspect}"
         Card.where( :id => id_batch ).update_all :references_expired=>1
       end
     end

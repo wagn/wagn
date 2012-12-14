@@ -139,7 +139,7 @@ module Wagn
 
           <div class="rule-column-2">
             <div class="instruction rule-instruction">
-              #{ raw process_content( "{{#{setting_name}+*right+*edit help}}" ).html_safe  }
+              #{ raw process_content_s( "{{#{setting_name}+*right+*edit help}}" ).html_safe  }
             </div>
             <div class="type-editor"> }+
 

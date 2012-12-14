@@ -1,9 +1,7 @@
 # -*- encoding : utf-8 -*-
-#require_dependency 'rich_html_renderer'
 require 'diff'
 
 module WagnHelper
-  require_dependency 'wiki_content'
   include HTMLDiff
 
   def slot() Wagn::Renderer.current_slot end

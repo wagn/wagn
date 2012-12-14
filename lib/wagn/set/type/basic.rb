@@ -1,5 +1,4 @@
 module Wagn::Set::Type::Basic
-  #include Wagn::Sets
 
   module Model
     def post_render(content)
@@ -29,6 +28,7 @@ module Wagn::Set::Type::Basic
         %{<a name="#{item[:uri]}"></a>#{match}}
       end
 
+      #warn "table_of #{name}, #{toc.inspect}"
       if toc.flatten.length >= min
         content.replace %{ <div class="table-of-contents"> <h5>Table of Contents</h5> } +
           make_table_of_contents_list(toc) + '</div>'+ content

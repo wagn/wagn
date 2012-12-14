@@ -191,3 +191,40 @@ describe Card, "junction revival" do
     @c.content.should == 'revived content'
   end
 end
+
+describe "remove tests" do
+
+  before do
+    Account.user = 'joe_user'
+    @a = Card["A"]
+  end
+
+
+  # I believe this is here to test a bug where cards with certain kinds of references
+  # would fail to delete.  probably less of an issue now that delete is done through
+  # trash.
+  it "test_remove" do
+    assert @a.destroy!, "card should be destroyable"
+    assert_nil Card["A"]
+  end
+
+  it "test_recreate_plus_card_name_variant" do
+    Card.create( :name => "rta+rtb" ).destroy
+    Card["rta"].update_attributes :name=> "rta!"
+    c = Card.create! :name=>"rta!+rtb"
+    assert Card["rta!+rtb"]
+    assert !Card["rta!+rtb"].trash
+    assert Card.find_by_key('rtb*trash').nil?
+  end
+
+  it "test_multiple_trash_collision" do
+    Card.create( :name => "alpha" ).destroy
+    3.times do
+      b = Card.create( :name => "beta" )
+      b.name = "alpha"
+      assert b.save!
+      b.destroy
+    end
+  end
+end
+

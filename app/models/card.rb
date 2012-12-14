@@ -25,7 +25,7 @@ class Card
     :cards, :loaded_trunk, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status #yuck
       
-  attr_writer :update_read_rule_list, :dependents
+  attr_writer :update_read_rule_list
   attr_reader :type_args, :broken_type
 
   before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes

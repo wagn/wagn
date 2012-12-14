@@ -55,17 +55,19 @@ describe Card do
 
   describe "#setting_names" do
     before do
-      @pointer_settings = [:options, :options_label, :input]
+      @pointer_settings =  %w[ options options_label input ]
     end
     it "returns universal setting names for non-pointer set" do
-      snbg = Card.fetch('*star').setting_names_by_group
+      pending "Different api, we should just put the tests in a new spec for that"
+      snbg = Card.fetch('*star').setting_cards_by_group
       #warn "snbg #{snbg.class} #{snbg.inspect}"
       snbg.keys.length.should == 4
       snbg.keys.first.should be_a Symbol
-      snbg.keys.member?( :pointer ).should_not be_true
+      snbg.keys.member?( :pointer_group ).should_not be_true
     end
 
     it "returns pointer-specific setting names for pointer card (*type)" do
+      pending "Different api, we should just put the tests in a new spec for that"
       # was this test wrong before?  What made Fruit a pointer without this?
       Account.as_bot do
         c1=Card.create! :name=>'Fruit+*type+*default', :type=>'Pointer'
@@ -83,9 +85,8 @@ describe Card do
       c = Card.fetch_or_new('*account+*related+*self')
       c.save if c.new_card?
       c = Card.fetch_or_new('*account+*related+*self')
-      snbg = c.setting_names_by_group
-      #warn "snbg #{snbg}, #{c.inspect}"
-      snbg[:pointer].should == @pointer_settings
+      snbg = c.setting_cards_by_group
+      snbg[:pointer_group].map(&:codename).should == @pointer_settings
     end
 
   end
@@ -97,7 +98,6 @@ describe Card do
 
     it "returns list of card names for search" do
       c = Card.new( :name=>"foo", :type=>"Search", :content => %[{"name":"Z"}])
-      #warn "card is #{c.inspect}"
       c.item_names.should == ["Z"]
     end
 

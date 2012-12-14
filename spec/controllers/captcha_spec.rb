@@ -83,7 +83,7 @@ describe CardController, "with captcha enabled requires captcha on" do
   require_captcha_on :comment, :id=>"A", :card=>{:content=>"Yeah"}
 end
 
-describe AccountController, "with captcha enabled" do
+describe CardController, "with captcha enabled" do
   before do
     Account.as_bot do
       Card["*all+*captcha"].update_attributes! :content=>"1"

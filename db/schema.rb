@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121118114000) do
+ActiveRecord::Schema.define(:version => 20121111025347) do
 
   create_table "card_references", :force => true do |t|
     t.datetime "created_at",                                      :null => false
@@ -19,8 +19,7 @@ ActiveRecord::Schema.define(:version => 20121118114000) do
     t.integer  "card_id",                         :default => 0,  :null => false
     t.string   "referenced_name",                 :default => "", :null => false
     t.integer  "referenced_card_id"
-    t.string   "ref_type",           :limit => 1, :default => "", :null => false
-    t.integer  "present"
+    t.string   "link_type",          :limit => 1, :default => "", :null => false
   end
 
   add_index "card_references", ["card_id"], :name => "wiki_references_card_id"

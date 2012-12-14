@@ -441,27 +441,22 @@ module Wagn
          end
       end
 
-      hash = rendering_result.find_chunks(Chunk::Reference).inject({}) do |h, chunk|
+      rendering_result.find_chunks(Chunk::Reference).inject({}) do |hash, chunk|
 
-        if referer_id == ( referee_id = chunk.refcard.send_if :id ); h
+        if referer_id != ( referee_id = chunk.refcard.send_if :id ) &&
+           !hash.has_key?( referee_key = referee_id || chunk.refcardname.key )
 
-        else
-          ref_name = chunk.refcardname.send_if :key
-          h.merge (referee_id || ref_name) => { :referee_id => referee_id, :name => ref_name,
-              :link_type => Chunk::Link===chunk ? LINK : INCLUDE,
-              :present => chunk.refcard.nil?  ?   0  :   1
+          hash[ referee_key ] = {
+              :referee_id  => referee_id,
+              :referee_key => chunk.refcardname.send_if( :key ),
+              :link_type   => Chunk::Link===chunk ? LINK : INCLUDE,
+              :present     => chunk.refcard.nil?  ?   0  :   1
             }
         end
-      end
-      #Rails.logger.warn "update refs hash #{hash.inspect}"
- 
-      hash.each do |referee_kid, v|
-        #warn "card ref #{v.inspect}"
-        #Rails.logger.warn "card ref #{v.inspect}"
-        Card::Reference.create! :referer_id => referer_id,
-          :referee_id => v[:referee_id], :referee_key => v[:name],
-          :link_type => v[:link_type], :present => v[:present]
-      end
+
+        hash
+      end.each_value { |update| Card::Reference.create! update.merge( :referer_id => referer_id ) }
+
     end
   end
 

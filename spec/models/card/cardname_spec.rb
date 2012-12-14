@@ -38,27 +38,28 @@ describe SmartName, "changing from plus card to simple" do
 
   it "test_fetch_or_create_when_present" do
     Card.create!(:name=>"Carrots")
-    assert_difference Card, :count, 0 do
+    cards_should_be_added 0 do
       Card.fetch_or_create("Carrots").should be_instance_of(Card)
     end
   end
 
   it "test_simple" do
-    assert_difference Card, :count do
-      Card.create(:name=>"Boo!").should be_instance_of(Card).should be_instance_of(Card)
-      Card["Boo!"].should be
+    cards_should_be_added 1 do
+      Card['Boo!'].should be_nil
+      Card.create(:name=>"Boo!").should be_instance_of(Card)
+      Card['Boo!'].should be_instance_of(Card)
     end
   end
 
 
   it "test_fetch_or_create_when_not_present" do
-    assert_difference Card, :count do
+    cards_should_be_added 1 do
       Card.fetch_or_create("Tomatoes").should be_instance_of(Card)
     end
   end
 
   it "test_create_junction" do
-    assert_difference(Card, :count, 3) do
+    cards_should_be_added 3 do
       Card.create(:name=>"Peach+Pear", :content=>"juicy").should be_instance_of(Card)
     end
     Card["Peach"].should be_instance_of(Card)
@@ -66,144 +67,142 @@ describe SmartName, "changing from plus card to simple" do
     assert_equal "juicy", Card["Peach+Pear"].content
   end
 
-  def assert_difference object, method, number=1
-    number += object.send(method)
+  def cards_should_be_added number
+    number += Card.all.count
     yield
-    object.send(method).should == number
+    Card.all.count.should == number
   end
 
+
+=begin
+  test 'remove' do
+    forba = Card.create! :name=>"Forba"
+    torga = Card.create! :name=>"TorgA"
+    torgb = Card.create! :name=>"TorgB"
+    torgc = Card.create! :name=>"TorgC"
+
+    forba_torga = Card.create! :name=>"Forba+TorgA";
+    torgb_forba = Card.create! :name=>"TorgB+Forba";
+    forba_torga_torgc = Card.create! :name=>"Forba+TorgA+TorgC";
+
+    forba.reload #hmmm
+    Card['Forba'].destroy!
+    assert_nil Card["Forba"]
+    assert_nil Card["Forba+TorgA"]
+    assert_nil Card["TorgB+Forba"]
+    assert_nil Card["Forba+TorgA+TorgC"]
+
+    # FIXME: this is a pretty dumb test and it takes a loooooooong time
+    #while card = Card.find(:first,:conditions=>["type not in (?,?,?) and trash=?", 'AccountRequest','User','Cardtype',false] )
+    #  card.destroy!
+    #end
+    #assert_equal 0, Card.find_all_by_trash(false).size
+  end
+
+  #test test_attribute_card
+  #  alpha, beta = Card.create(:name=>'alpha'), Card.create(:name=>'beta')
+  #  assert_nil alpha.attribute_card('beta')
+  #  Card.create :name=>'alpha+beta'
+  #   alpha.attribute_card('beta').should be_instance_of(Card)
+  #end
+
+  test 'create' do
+    alpha = Card.new :name=>'alpha', :content=>'alpha'
+    assert_equal 'alpha', alpha.content
+    #warn "About to save #{alpha.inspect}"
+    alpha.save
+    assert alpha.name
+    assert_stable(alpha)
+  end
+
+
+  # just a sanity check that we don't have broken data to start with
+  test 'fixtures' do
+    Card.find(:all).each do |p|
+       p.name.should be_instance_of(Card)
+    end
+  end
+
+  test 'find_by_name' do
+    card = Card.create( :name=>"ThisMyCard", :content=>"Contentification is cool" )
+    assert_equal card, Card["ThisMyCard"]
+  end
+
+
+  test 'find_nonexistent' do
+    assert !Card['no such card+no such tag']
+    assert !Card['HomeCard+no such tag']
+  end
+
+
+  test 'update_should_create_subcards' do
+    Account.user = 'joe_user'
+    Account.as(:joe_user) do
+      c=Card.create!( :name=>'Banana' )
+      #warn "created #{c.inspect}"
+      Card.update(c.id, :cards=>{ "+peel" => { :content => "yellow" }})
+      p = Card['Banana+peel']
+      assert_equal "yellow", p.content
+      #warn "creator_id #{p.creator_id}, #{p.updater_id}, #{p.created_at}"
+      assert_equal Card['joe_user'].id, p.creator_id
+    end
+  end
+
+  test 'update_should_create_subcards_as_wagn_bot_if_missing_subcard_permissions' do
+    Card.create(:name=>'peel')
+    Account.user = :anonymous
+    #warn Rails.logger.info("check #{Account.user_id}")
+    assert_equal false, Card['Basic'].ok?(:create), "anon can't creat"
+    Card.create!( :type=>"Fruit", :name=>'Banana', :cards=>{ "+peel" => { :content => "yellow" }})
+    peel= Card["Banana+peel"]
+    #warn "peel #{peel.creator_id}, #{peel.updater_id}, #{peel.created_at}"
+    assert_equal "yellow", peel.current_revision.content
+    assert_equal Card::AnonID, peel.creator_id
+  end
+
+  test 'update_should_not_create_subcards_if_missing_main_card_permissions' do
+    b = nil
+    Account.as(:joe_user) do
+      b = Card.create!( :name=>'Banana' )
+      #warn "created #{b.inspect}"
+    end
+    Account.as Card::AnonID do
+      assert_raises( Card::PermissionDenied ) do
+        Card.update(b.id, :cards=>{ "+peel" => { :content => "yellow" }})
+      end
+    end
+  end
+
+
+  test 'create_without_read_permission' do
+    c = Card.create!({:name=>"Banana", :type=>"Fruit", :content=>"mush"})
+    Account.as Card::AnonID do
+      assert_raises Card::PermissionDenied do
+        c.ok! :read
+      end
+    end
+  end
+=end
+
+
+  private
+
+=begin
+  def assert_simple_card( card ) do
+    assert !card.name.nil?, "name not null"
+    assert !card.name.empty?, "name not empty"
+    rev = card.current_revision
+     rev.should be_instance_of(Card)
+     rev.creator.should be_instance_of(Card)
+  end
+
+  def assert_samecard( card1, card2 ) do
+    assert_equal card1.current_revision, card2.current_revision
+  end
+=end
 end
 
 =begin
-test/unit/card/base_test.rb:require File.expand_path('../../test_helper', File.dirname(__FILE__))
-test/unit/card/base_test.rb:class Card::BaseTest < ActiveSupport::TestCase
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:  def setup
-test/unit/card/base_test.rb:    super
-test/unit/card/base_test.rb:    setup_default_user
-test/unit/card/base_test.rb:  end
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:  test 'remove' do
-test/unit/card/base_test.rb:    forba = Card.create! :name=>"Forba"
-test/unit/card/base_test.rb:    torga = Card.create! :name=>"TorgA"
-test/unit/card/base_test.rb:    torgb = Card.create! :name=>"TorgB"
-test/unit/card/base_test.rb:    torgc = Card.create! :name=>"TorgC"
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:    forba_torga = Card.create! :name=>"Forba+TorgA";
-test/unit/card/base_test.rb:    torgb_forba = Card.create! :name=>"TorgB+Forba";
-test/unit/card/base_test.rb:    forba_torga_torgc = Card.create! :name=>"Forba+TorgA+TorgC";
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:    forba.reload #hmmm
-test/unit/card/base_test.rb:    Card['Forba'].destroy!
-test/unit/card/base_test.rb:    assert_nil Card["Forba"]
-test/unit/card/base_test.rb:    assert_nil Card["Forba+TorgA"]
-test/unit/card/base_test.rb:    assert_nil Card["TorgB+Forba"]
-test/unit/card/base_test.rb:    assert_nil Card["Forba+TorgA+TorgC"]
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:    # FIXME: this is a pretty dumb test and it takes a loooooooong time
-test/unit/card/base_test.rb:    #while card = Card.find(:first,:conditions=>["type not in (?,?,?) and trash=?", 'AccountRequest','User','Cardtype',false] )
-test/unit/card/base_test.rb:    #  card.destroy!
-test/unit/card/base_test.rb:    #end
-test/unit/card/base_test.rb:    #assert_equal 0, Card.find_all_by_trash(false).size
-test/unit/card/base_test.rb:  end
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:  #test test_attribute_card
-test/unit/card/base_test.rb:  #  alpha, beta = Card.create(:name=>'alpha'), Card.create(:name=>'beta')
-test/unit/card/base_test.rb:  #  assert_nil alpha.attribute_card('beta')
-test/unit/card/base_test.rb:  #  Card.create :name=>'alpha+beta'
-test/unit/card/base_test.rb:  #   alpha.attribute_card('beta').should be_instance_of(Card)
-test/unit/card/base_test.rb:  #end
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:  test 'create' do
-test/unit/card/base_test.rb:    alpha = Card.new :name=>'alpha', :content=>'alpha'
-test/unit/card/base_test.rb:    assert_equal 'alpha', alpha.content
-test/unit/card/base_test.rb:    #warn "About to save #{alpha.inspect}"
-test/unit/card/base_test.rb:    alpha.save
-test/unit/card/base_test.rb:    assert alpha.name
-test/unit/card/base_test.rb:    assert_stable(alpha)
-test/unit/card/base_test.rb:  end
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:  # just a sanity check that we don't have broken data to start with
-test/unit/card/base_test.rb:  test 'fixtures' do
-test/unit/card/base_test.rb:    Card.find(:all).each do |p|
-test/unit/card/base_test.rb:       p.name.should be_instance_of(Card)
-test/unit/card/base_test.rb:    end
-test/unit/card/base_test.rb:  end
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:  test 'find_by_name' do
-test/unit/card/base_test.rb:    card = Card.create( :name=>"ThisMyCard", :content=>"Contentification is cool" )
-test/unit/card/base_test.rb:    assert_equal card, Card["ThisMyCard"]
-test/unit/card/base_test.rb:  end
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:  test 'find_nonexistent' do
-test/unit/card/base_test.rb:    assert !Card['no such card+no such tag']
-test/unit/card/base_test.rb:    assert !Card['HomeCard+no such tag']
-test/unit/card/base_test.rb:  end
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:  test 'update_should_create_subcards' do
-test/unit/card/base_test.rb:    Account.user = 'joe_user'
-test/unit/card/base_test.rb:    Account.as(:joe_user) do
-test/unit/card/base_test.rb:      c=Card.create!( :name=>'Banana' )
-test/unit/card/base_test.rb:      #warn "created #{c.inspect}"
-test/unit/card/base_test.rb:      Card.update(c.id, :cards=>{ "+peel" => { :content => "yellow" }})
-test/unit/card/base_test.rb:      p = Card['Banana+peel']
-test/unit/card/base_test.rb:      assert_equal "yellow", p.content
-test/unit/card/base_test.rb:      #warn "creator_id #{p.creator_id}, #{p.updater_id}, #{p.created_at}"
-test/unit/card/base_test.rb:      assert_equal Card['joe_user'].id, p.creator_id
-test/unit/card/base_test.rb:    end
-test/unit/card/base_test.rb:  end
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:  test 'update_should_create_subcards_as_wagn_bot_if_missing_subcard_permissions' do
-test/unit/card/base_test.rb:    Card.create(:name=>'peel')
-test/unit/card/base_test.rb:    Account.user = :anonymous
-test/unit/card/base_test.rb:    #warn Rails.logger.info("check #{Account.user_id}")
-test/unit/card/base_test.rb:    assert_equal false, Card['Basic'].ok?(:create), "anon can't creat"
-test/unit/card/base_test.rb:    Card.create!( :type=>"Fruit", :name=>'Banana', :cards=>{ "+peel" => { :content => "yellow" }})
-test/unit/card/base_test.rb:    peel= Card["Banana+peel"]
-test/unit/card/base_test.rb:    #warn "peel #{peel.creator_id}, #{peel.updater_id}, #{peel.created_at}"
-test/unit/card/base_test.rb:    assert_equal "yellow", peel.current_revision.content
-test/unit/card/base_test.rb:    assert_equal Card::AnonID, peel.creator_id
-test/unit/card/base_test.rb:  end
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:  test 'update_should_not_create_subcards_if_missing_main_card_permissions' do
-test/unit/card/base_test.rb:    b = nil
-test/unit/card/base_test.rb:    Account.as(:joe_user) do
-test/unit/card/base_test.rb:      b = Card.create!( :name=>'Banana' )
-test/unit/card/base_test.rb:      #warn "created #{b.inspect}"
-test/unit/card/base_test.rb:    end
-test/unit/card/base_test.rb:    Account.as Card::AnonID do
-test/unit/card/base_test.rb:      assert_raises( Card::PermissionDenied ) do
-test/unit/card/base_test.rb:        Card.update(b.id, :cards=>{ "+peel" => { :content => "yellow" }})
-test/unit/card/base_test.rb:      end
-test/unit/card/base_test.rb:    end
-test/unit/card/base_test.rb:  end
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:  test 'create_without_read_permission' do
-test/unit/card/base_test.rb:    c = Card.create!({:name=>"Banana", :type=>"Fruit", :content=>"mush"})
-test/unit/card/base_test.rb:    Account.as Card::AnonID do
-test/unit/card/base_test.rb:      assert_raises Card::PermissionDenied do
-test/unit/card/base_test.rb:        c.ok! :read
-test/unit/card/base_test.rb:      end
-test/unit/card/base_test.rb:    end
-test/unit/card/base_test.rb:  end
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:  private
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:  def assert_simple_card( card )
-test/unit/card/base_test.rb:    assert !card.name.nil?, "name not null"
-test/unit/card/base_test.rb:    assert !card.name.empty?, "name not empty"
-test/unit/card/base_test.rb:    rev = card.current_revision
-test/unit/card/base_test.rb:     rev.should be_instance_of(Card)
-test/unit/card/base_test.rb:     rev.creator.should be_instance_of(Card)
-test/unit/card/base_test.rb:  end
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:  def assert_samecard( card1, card2 )
-test/unit/card/base_test.rb:    assert_equal card1.current_revision, card2.current_revision
 test/unit/card/base_test.rb:    assert_equal card1.right, card2.right
 test/unit/card/base_test.rb:  end
 test/unit/card/base_test.rb:

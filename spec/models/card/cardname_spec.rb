@@ -1,4 +1,32 @@
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+
+module RenameMethods
+  def name_invariant_attributes card
+    {
+      :content => card.content,
+#      :writer => card.writer,
+      :revisions => card.revisions.length,
+      :referencers => card.referencers.map(&:name).sort,
+      :referencees => card.referencees.map(&:name).sort,
+      :dependents => card.dependents.map(&:id)
+    }
+  end
+
+  def assert_rename card, new_name
+    attrs_before = name_invariant_attributes( card )
+    card.name=new_name
+    card.update_referencers = true
+    card.save!
+    assert_equal attrs_before, name_invariant_attributes(card)
+    assert_equal new_name, card.name
+    assert Card[new_name]
+  end
+
+  def card name
+    Card[name].refresh or raise "Couldn't find card named #{name}"
+  end
+end
+
 describe Card, "Case Variant" do
   before do
     Account.as :joe_user
@@ -74,8 +102,27 @@ describe SmartName, "changing from plus card to simple" do
   end
 
 
-=begin
-  test 'remove' do
+  def assert_simple_card card
+    card.name.should be, "name not null"
+    card.name.empty?.should be_false, "name not empty"
+    rev = card.current_revision
+    rev.should be_instance_of Card::Revision
+    rev.creator.should be_instance_of Card
+  end
+
+  def assert_samecard card1, card2
+    assert_equal card1.current_revision, card2.current_revision
+  end
+
+  def assert_stable card1
+    card2 = Card[card1.name]
+    assert_simple_card card1
+    assert_simple_card card2
+    assert_samecard card1, card2
+    assert_equal card1.right, card2.right
+  end
+
+  it 'should remove cards' do
     forba = Card.create! :name=>"Forba"
     torga = Card.create! :name=>"TorgA"
     torgb = Card.create! :name=>"TorgB"
@@ -85,12 +132,12 @@ describe SmartName, "changing from plus card to simple" do
     torgb_forba = Card.create! :name=>"TorgB+Forba";
     forba_torga_torgc = Card.create! :name=>"Forba+TorgA+TorgC";
 
-    forba.reload #hmmm
     Card['Forba'].destroy!
-    assert_nil Card["Forba"]
-    assert_nil Card["Forba+TorgA"]
-    assert_nil Card["TorgB+Forba"]
-    assert_nil Card["Forba+TorgA+TorgC"]
+
+    Card["Forba"].should be_nil
+    Card["Forba+TorgA"].should be_nil
+    Card["TorgB+Forba"].should be_nil
+    Card["Forba+TorgA+TorgC"].should be_nil
 
     # FIXME: this is a pretty dumb test and it takes a loooooooong time
     #while card = Card.find(:first,:conditions=>["type not in (?,?,?) and trash=?", 'AccountRequest','User','Cardtype',false] )
@@ -106,61 +153,62 @@ describe SmartName, "changing from plus card to simple" do
   #   alpha.attribute_card('beta').should be_instance_of(Card)
   #end
 
-  test 'create' do
+  it 'should create cards' do
     alpha = Card.new :name=>'alpha', :content=>'alpha'
-    assert_equal 'alpha', alpha.content
-    #warn "About to save #{alpha.inspect}"
+    alpha.content.should == 'alpha'
     alpha.save
-    assert alpha.name
-    assert_stable(alpha)
+    alpha.name.should == 'alpha'
+    assert_stable alpha
   end
 
 
   # just a sanity check that we don't have broken data to start with
-  test 'fixtures' do
+  it 'should find cards in database' do
     Card.find(:all).each do |p|
-       p.name.should be_instance_of(Card)
+       p.should be_instance_of Card
     end
   end
 
-  test 'find_by_name' do
+  it 'should find_by_name' do
     card = Card.create( :name=>"ThisMyCard", :content=>"Contentification is cool" )
-    assert_equal card, Card["ThisMyCard"]
+    Card["ThisMyCard"].should == card
   end
 
 
-  test 'find_nonexistent' do
-    assert !Card['no such card+no such tag']
-    assert !Card['HomeCard+no such tag']
+  it 'should not find nonexistent' do
+    Card['no such card+no such tag'].should be_nil
+    Card['HomeCard+no such tag'].should be_nil
   end
 
 
-  test 'update_should_create_subcards' do
+  it 'update_should_create_subcards' do
     Account.user = 'joe_user'
-    Account.as(:joe_user) do
-      c=Card.create!( :name=>'Banana' )
-      #warn "created #{c.inspect}"
-      Card.update(c.id, :cards=>{ "+peel" => { :content => "yellow" }})
-      p = Card['Banana+peel']
-      assert_equal "yellow", p.content
-      #warn "creator_id #{p.creator_id}, #{p.updater_id}, #{p.created_at}"
-      assert_equal Card['joe_user'].id, p.creator_id
+    Account.as 'joe_user' do
+
+      Card.update (Card.create! :name=>'Banana').id, :cards=>{ "+peel" => { :content => "yellow" }}
+
+      peel = Card['Banana+peel']
+      peel.content.       should == "yellow"
+      Card['joe_user'].id.should == peel.creator_id
     end
   end
 
-  test 'update_should_create_subcards_as_wagn_bot_if_missing_subcard_permissions' do
-    Card.create(:name=>'peel')
+  it 'update_should_create_subcards_as_wagn_bot_if_missing_subcard_permissions' do
+    Card.create :name=>'peel'
     Account.user = :anonymous
-    #warn Rails.logger.info("check #{Account.user_id}")
-    assert_equal false, Card['Basic'].ok?(:create), "anon can't creat"
-    Card.create!( :type=>"Fruit", :name=>'Banana', :cards=>{ "+peel" => { :content => "yellow" }})
-    peel= Card["Banana+peel"]
-    #warn "peel #{peel.creator_id}, #{peel.updater_id}, #{peel.created_at}"
-    assert_equal "yellow", peel.current_revision.content
-    assert_equal Card::AnonID, peel.creator_id
+
+    Card['Banana'].should_not be
+    Card['Basic'].ok?(:create).should be_false, "anon can't creat"
+
+    Card.create! :type=>"Fruit", :name=>'Banana', :cards=>{ "+peel" => { :content => "yellow" }}
+    Card['Banana'].should be
+    peel = Card["Banana+peel"]
+
+    peel.current_revision.content.should == "yellow"
+    peel.creator_id.should == Card::AnonID
   end
 
-  test 'update_should_not_create_subcards_if_missing_main_card_permissions' do
+  it 'update_should_not_create_subcards_if_missing_main_card_permissions' do
     b = nil
     Account.as(:joe_user) do
       b = Card.create!( :name=>'Banana' )
@@ -174,7 +222,7 @@ describe SmartName, "changing from plus card to simple" do
   end
 
 
-  test 'create_without_read_permission' do
+  it 'create_without_read_permission' do
     c = Card.create!({:name=>"Banana", :type=>"Fruit", :content=>"mush"})
     Account.as Card::AnonID do
       assert_raises Card::PermissionDenied do
@@ -182,268 +230,206 @@ describe SmartName, "changing from plus card to simple" do
       end
     end
   end
-=end
 
 
-  private
+end
 
-=begin
-  def assert_simple_card( card ) do
-    assert !card.name.nil?, "name not null"
-    assert !card.name.empty?, "name not empty"
-    rev = card.current_revision
-     rev.should be_instance_of(Card)
-     rev.creator.should be_instance_of(Card)
+describe "remove tests" do
+
+  before do
+    Account.user = 'joe_user'
+    @a = Card["A"]
   end
 
-  def assert_samecard( card1, card2 ) do
-    assert_equal card1.current_revision, card2.current_revision
+
+  # I believe this is here to test a bug where cards with certain kinds of references
+  # would fail to delete.  probably less of an issue now that delete is done through
+  # trash.
+  it "test_remove" do
+    assert @a.destroy!, "card should be destroyable"
+    assert_nil Card["A"]
   end
-=end
+
+  it "test_recreate_plus_card_name_variant" do
+    Card.create( :name => "rta+rtb" ).destroy
+    Card["rta"].update_attributes :name=> "rta!"
+    c = Card.create! :name=>"rta!+rtb"
+    assert Card["rta!+rtb"]
+    assert !Card["rta!+rtb"].trash
+    assert Card.find_by_key('rtb*trash').nil?
+  end
+
+  it "test_multiple_trash_collision" do
+    Card.create( :name => "alpha" ).destroy
+    3.times do
+      b = Card.create( :name => "beta" )
+      b.name = "alpha"
+      assert b.save!
+      b.destroy
+    end
+  end
+end
+
+describe "rename tests" do
+  include RenameMethods
+
+
+  # FIXME: these tests are TOO SLOW!  8s against server, 12s from command line.
+  # not sure if it's the card creation or the actual renaming process.
+  # Card#save needs optimized in general.
+  # Can't we just move this data to fixtures?
+  before do
+    Account.as_bot do
+     Card.create! :name => "chuck_wagn+chuck"
+     Card.create! :name => "Blue"
+     
+     Card.create! :name => "blue includer 1", :content => "{{Blue}}"
+     Card.create! :name => "blue includer 2", :content => "{{blue|closed;other:stuff}}"
+     
+     Card.create! :name => "blue linker 1", :content => "[[Blue]]"
+     Card.create! :name => "blue linker 2", :content => "[[blue]]"
+     
+     Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
+     
+     c3, c4 = Card["chuck_wagn+chuck"], Card["chuck"]
+    end
+    Account.user = 'joe_user'
+  end
+
+  it "test_subdivision" do
+    assert_rename card("A+B"), "A+B+T"  # re-uses the parent card: A+B
+  end
+
+  it "test_rename_name_substitution" do
+    c1, c2 = Card["chuck_wagn+chuck"], Card["chuck"]
+    assert_rename c2, "buck"
+    assert_equal "chuck_wagn+buck", Card.find(c1.id).name
+  end
+
+  it "test_rename_same_key_with_dependents" do
+    assert_rename card("B"), "b"
+  end
+
+  it "test_junction_to_simple" do
+    assert_rename card("A+B"), "K"
+  end
+
+  it "test_reference_updates_plus_to_simple" do
+     c1, c2 = Card['Blue'], Card["chuck_wagn+chuck"]
+     c1.content = "[[chuck wagn+chuck]]"
+     c1.save!
+     assert_rename c2, 'schmuck'
+     assert_equal '[[schmuck]]', Card.find(c1.id).content
+  end
+
+  it "test_updates_inclusions_when_renaming" do
+    c1,c2,c3 = Card["Blue"], Card["blue includer 1"], Card["blue includer 2"]
+    c1.update_attributes :name => "Red", :update_referencers => true
+    assert_equal "{{Red}}", Card.find(c2.id).content                     
+    # NOTE these attrs pass through a hash stage that may not preserve order
+    assert_equal "{{Red|closed;other:stuff}}", Card.find(c3.id).content
+  end
+
+  it "test_updates_inclusions_when_renaming_to_plus" do
+    c1,c2 = Card["Blue"], Card["blue includer 1"]
+    c1.update_attributes :name => "blue includer 1+color", :update_referencers => true
+    assert_equal "{{blue includer 1+color}}", Card.find(c2.id).content                     
+  end
+
+  it "test_reference_updates_on_case_variants" do
+    c1,c2,c3 = Card["Blue"], Card["blue linker 1"], Card["blue linker 2"]
+    c1.reload.name = "Red"
+    c1.update_referencers = true
+    c1.save!
+    assert_equal "[[Red]]", Card.find(c2.id).content
+    assert_equal "[[Red]]", Card.find(c3.id).content
+  end
+
+  it "test_flip" do
+    assert_rename card("A+B"), "B+A"
+  end
+
+  it "test_should_error_card_exists" do
+    @t=card("T"); @t.name="A+B";
+    assert !@t.save, "save should fail"
+    assert @t.errors[:name], "should have errors on key"
+  end
+
+  it "test_used_as_tag" do
+    @b=card("B"); @b.name='A+D'; @b.save
+    assert @b.errors[:name]
+  end
+
+  it "test_update_dependents" do
+    c1 =   Card["One"]
+    c12 =  Card["One+Two"]
+    c123 = Card["One+Two+Three"]
+    c41 =  Card["Four+One"]
+    c415 = Card["Four+One+Five"]
+
+    assert_equal ["One+Two","One+Two+Three","Four+One","Four+One+Five"], [c12,c123,c41,c415].map(&:name)
+    c1.name="Uno"
+    c1.save!
+    assert_equal ["Uno+Two","Uno+Two+Three","Four+Uno","Four+Uno+Five"], [c12,c123,c41,c415].map(&:reload).map(&:name)
+  end
+
+  it "test_should_error_invalid_name" do
+    @t=card("T"); @t.name="YT_o~Yo"; @t.save
+    assert @t.errors[:name]
+  end
+
+  it "test_simple_to_simple" do
+    assert_rename card("A"), "Alephant"
+  end
+
+  it "test_simple_to_junction_with_create" do
+    assert_rename card("T"), "C+J"
+  end
+
+  it "test_reset_key" do
+    c = Card["Basic Card"]
+    c.name="banana card"
+    c.save!
+    assert_equal 'banana_card', c.key
+    assert Card["Banana Card"] != nil
+  end
+
+  it "test_renaming_card_with_self_link_should_not_hang" do
+    c = Card["Dairy"]
+    c.name = "Buttah"
+    c.update_referencers = true
+    c.save!
+    assert_equal "[[/new/{{_self|name}}|new]]", Card["Buttah"].content
+  end
+
+  it "test_renaming_card_without_updating_references_should_not_have_errors" do
+    c = Card["Dairy"]
+    c.update_attributes "name"=>"Newt", "update_referencers"=>'false'
+    assert_equal "[[/new/{{_self|name}}|new]]", Card["Newt"].content
+  end
+
+  it "test_rename_should_not_fail_when_updating_inaccessible_referencer" do
+    Card.create! :name => "Joe Card", :content => "Whattup"
+    Account.as :joe_admin do
+      Card.create! :name => "Admin Card", :content => "[[Joe Card]]"
+    end
+    c = Card["Joe Card"]
+    c.update_attributes! :name => "Card of Joe", :update_referencers => true
+    assert_equal "[[Card of Joe]]", Card["Admin Card"].content
+  end
+
+  it "test_rename_should_not_fail_when_updating_hard_templated_referencer" do
+    c=Card.create! :name => "Pit"
+    Card.create! :name => "Orange", :type=>"Fruit", :content => "[[Pit]]"
+    Card["Fruit+*type+*default"].update_attributes(:content=>"this [[Pit]]")
+
+    assert_equal "this [[Pit]]", Card["Orange"].content
+    c.update_attributes! :name => "Seed", :update_referencers => true
+    assert true  # just make sure nothing exploded
+  end
 end
 
 =begin
-test/unit/card/base_test.rb:    assert_equal card1.right, card2.right
-test/unit/card/base_test.rb:  end
-test/unit/card/base_test.rb:
-test/unit/card/base_test.rb:  def assert_stable( card1 )
-test/unit/card/base_test.rb:    card2 = Card[card1.name]
-test/unit/card/base_test.rb:    assert_simple_card( card1 )
-test/unit/card/base_test.rb:    assert_simple_card( card2 )
-test/unit/card/base_test.rb:    assert_samecard( card1, card2 )
-test/unit/card/base_test.rb:  end
-test/unit/card/base_test.rb:end
-test/unit/card/base_test.rb:
-test/unit/card/create_test.rb:
-test/unit/card/remove_test.rb:require File.expand_path('../../test_helper', File.dirname(__FILE__))
-test/unit/card/remove_test.rb:class Card::RemoveTest < ActiveSupport::TestCase
-test/unit/card/remove_test.rb:
-test/unit/card/remove_test.rb:
-test/unit/card/remove_test.rb:  def setup
-test/unit/card/remove_test.rb:    super
-test/unit/card/remove_test.rb:    setup_default_user
-test/unit/card/remove_test.rb:    @a = Card["A"]
-test/unit/card/remove_test.rb:  end
-test/unit/card/remove_test.rb:
-test/unit/card/remove_test.rb:
-test/unit/card/remove_test.rb:  # I believe this is here to test a bug where cards with certain kinds of references
-test/unit/card/remove_test.rb:  # would fail to delete.  probably less of an issue now that delete is done through
-test/unit/card/remove_test.rb:  # trash.
-test/unit/card/remove_test.rb:  def test_remove
-test/unit/card/remove_test.rb:    assert @a.destroy!, "card should be destroyable"
-test/unit/card/remove_test.rb:    assert_nil Card["A"]
-test/unit/card/remove_test.rb:  end
-test/unit/card/remove_test.rb:
-test/unit/card/remove_test.rb:  def test_recreate_plus_card_name_variant
-test/unit/card/remove_test.rb:    Card.create( :name => "rta+rtb" ).destroy
-test/unit/card/remove_test.rb:    Card["rta"].update_attributes :name=> "rta!"
-test/unit/card/remove_test.rb:    c = Card.create! :name=>"rta!+rtb"
-test/unit/card/remove_test.rb:    assert Card["rta!+rtb"]
-test/unit/card/remove_test.rb:    assert !Card["rta!+rtb"].trash
-test/unit/card/remove_test.rb:    assert Card.find_by_key('rtb*trash').nil?
-test/unit/card/remove_test.rb:end
-test/unit/card/remove_test.rb:
-test/unit/card/remove_test.rb:  def test_multiple_trash_collision
-test/unit/card/remove_test.rb:    Card.create( :name => "alpha" ).destroy
-test/unit/card/remove_test.rb:    3.times do
-test/unit/card/remove_test.rb:      b = Card.create( :name => "beta" )
-test/unit/card/remove_test.rb:      b.name = "alpha"
-test/unit/card/remove_test.rb:      assert b.save!
-test/unit/card/remove_test.rb:      b.destroy
-test/unit/card/remove_test.rb:    end
-test/unit/card/remove_test.rb:  end
-test/unit/card/remove_test.rb:
-test/unit/card/remove_test.rb:end
-test/unit/card/remove_test.rb:
-test/unit/card/rename_test.rb:require File.expand_path('../../test_helper', File.dirname(__FILE__))
-test/unit/card/rename_test.rb:class Card::RenameTest < ActiveSupport::TestCase
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  # FIXME: these tests are TOO SLOW!  8s against server, 12s from command line.
-test/unit/card/rename_test.rb:  # not sure if it's the card creation or the actual renaming process.
-test/unit/card/rename_test.rb:  # Card#save needs optimized in general.
-test/unit/card/rename_test.rb:  def self.add_test_data
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def setup
-test/unit/card/rename_test.rb:    super
-test/unit/card/rename_test.rb:    Account.as_bot do
-test/unit/card/rename_test.rb:     Card.create! :name => "chuck_wagn+chuck"
-test/unit/card/rename_test.rb:     Card.create! :name => "Blue"
-test/unit/card/rename_test.rb:     
-test/unit/card/rename_test.rb:     Card.create! :name => "blue includer 1", :content => "{{Blue}}"
-test/unit/card/rename_test.rb:     Card.create! :name => "blue includer 2", :content => "{{blue|closed;other:stuff}}"
-test/unit/card/rename_test.rb:     
-test/unit/card/rename_test.rb:     Card.create! :name => "blue linker 1", :content => "[[Blue]]"
-test/unit/card/rename_test.rb:     Card.create! :name => "blue linker 2", :content => "[[blue]]"
-test/unit/card/rename_test.rb:     
-test/unit/card/rename_test.rb:     Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
-test/unit/card/rename_test.rb:     
-test/unit/card/rename_test.rb:     c3, c4 = Card["chuck_wagn+chuck"], Card["chuck"]
-test/unit/card/rename_test.rb:    end
-test/unit/card/rename_test.rb:    setup_default_user
-test/unit/card/rename_test.rb:    super
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_subdivision
-test/unit/card/rename_test.rb:    assert_rename card("A+B"), "A+B+T"  # re-uses the parent card: A+B
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_rename_name_substitution
-test/unit/card/rename_test.rb:    c1, c2 = Card["chuck_wagn+chuck"], Card["chuck"]
-test/unit/card/rename_test.rb:    assert_rename c2, "buck"
-test/unit/card/rename_test.rb:    assert_equal "chuck_wagn+buck", Card.find(c1.id).name
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_rename_same_key_with_dependents
-test/unit/card/rename_test.rb:    assert_rename card("B"), "b"
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_junction_to_simple
-test/unit/card/rename_test.rb:    assert_rename card("A+B"), "K"
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_reference_updates_plus_to_simple
-test/unit/card/rename_test.rb:     c1, c2 = Card['Blue'], Card["chuck_wagn+chuck"]
-test/unit/card/rename_test.rb:     c1.content = "[[chuck wagn+chuck]]"
-test/unit/card/rename_test.rb:     c1.save!
-test/unit/card/rename_test.rb:     assert_rename c2, 'schmuck'
-test/unit/card/rename_test.rb:     assert_equal '[[schmuck]]', Card.find(c1.id).content
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_updates_inclusions_when_renaming
-test/unit/card/rename_test.rb:    c1,c2,c3 = Card["Blue"], Card["blue includer 1"], Card["blue includer 2"]
-test/unit/card/rename_test.rb:    c1.update_attributes :name => "Red", :update_referencers => true
-test/unit/card/rename_test.rb:    assert_equal "{{Red}}", Card.find(c2.id).content                     
-test/unit/card/rename_test.rb:    # NOTE these attrs pass through a hash stage that may not preserve order
-test/unit/card/rename_test.rb:    assert_equal "{{Red|closed;other:stuff}}", Card.find(c3.id).content
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_updates_inclusions_when_renaming_to_plus
-test/unit/card/rename_test.rb:    c1,c2 = Card["Blue"], Card["blue includer 1"]
-test/unit/card/rename_test.rb:    c1.update_attributes :name => "blue includer 1+color", :update_referencers => true
-test/unit/card/rename_test.rb:    assert_equal "{{blue includer 1+color}}", Card.find(c2.id).content                     
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_reference_updates_on_case_variants
-test/unit/card/rename_test.rb:    c1,c2,c3 = Card["Blue"], Card["blue linker 1"], Card["blue linker 2"]
-test/unit/card/rename_test.rb:    c1.reload.name = "Red"
-test/unit/card/rename_test.rb:    c1.update_referencers = true
-test/unit/card/rename_test.rb:    c1.save!
-test/unit/card/rename_test.rb:    assert_equal "[[Red]]", Card.find(c2.id).content
-test/unit/card/rename_test.rb:    assert_equal "[[Red]]", Card.find(c3.id).content
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_flip
-test/unit/card/rename_test.rb:    assert_rename card("A+B"), "B+A"
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_should_error_card_exists
-test/unit/card/rename_test.rb:    @t=card("T"); @t.name="A+B";
-test/unit/card/rename_test.rb:    assert !@t.save, "save should fail"
-test/unit/card/rename_test.rb:    assert @t.errors[:name], "should have errors on key"
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_used_as_tag
-test/unit/card/rename_test.rb:    @b=card("B"); @b.name='A+D'; @b.save
-test/unit/card/rename_test.rb:    assert @b.errors[:name]
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_update_dependents
-test/unit/card/rename_test.rb:    c1 =   Card["One"]
-test/unit/card/rename_test.rb:    c12 =  Card["One+Two"]
-test/unit/card/rename_test.rb:    c123 = Card["One+Two+Three"]
-test/unit/card/rename_test.rb:    c41 =  Card["Four+One"]
-test/unit/card/rename_test.rb:    c415 = Card["Four+One+Five"]
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:    assert_equal ["One+Two","One+Two+Three","Four+One","Four+One+Five"], [c12,c123,c41,c415].map(&:name)
-test/unit/card/rename_test.rb:    c1.name="Uno"
-test/unit/card/rename_test.rb:    c1.save!
-test/unit/card/rename_test.rb:    assert_equal ["Uno+Two","Uno+Two+Three","Four+Uno","Four+Uno+Five"], [c12,c123,c41,c415].map(&:reload).map(&:name)
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_should_error_invalid_name
-test/unit/card/rename_test.rb:    @t=card("T"); @t.name="YT_o~Yo"; @t.save
-test/unit/card/rename_test.rb:    assert @t.errors[:name]
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_simple_to_simple
-test/unit/card/rename_test.rb:    assert_rename card("A"), "Alephant"
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_simple_to_junction_with_create
-test/unit/card/rename_test.rb:    assert_rename card("T"), "C+J"
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_reset_key
-test/unit/card/rename_test.rb:    c = Card["Basic Card"]
-test/unit/card/rename_test.rb:    c.name="banana card"
-test/unit/card/rename_test.rb:    c.save!
-test/unit/card/rename_test.rb:    assert_equal 'banana_card', c.key
-test/unit/card/rename_test.rb:    assert Card["Banana Card"] != nil
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  private
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def name_invariant_attributes( card )
-test/unit/card/rename_test.rb:    {
-test/unit/card/rename_test.rb:      :content => card.content,
-test/unit/card/rename_test.rb:#      :writer => card.writer,
-test/unit/card/rename_test.rb:      :revisions => card.revisions.length,
-test/unit/card/rename_test.rb:      :referencers => card.referencers.map(&:name).sort,
-test/unit/card/rename_test.rb:      :referencees => card.referencees.map(&:name).sort,
-test/unit/card/rename_test.rb:      :dependents => card.dependents.length
-test/unit/card/rename_test.rb:    }
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def assert_rename( card, new_name )
-test/unit/card/rename_test.rb:    attrs_before = name_invariant_attributes( card )
-test/unit/card/rename_test.rb:    card.name=new_name
-test/unit/card/rename_test.rb:    card.update_referencers = true
-test/unit/card/rename_test.rb:    card.save!
-test/unit/card/rename_test.rb:    assert_equal attrs_before, name_invariant_attributes(card)
-test/unit/card/rename_test.rb:    assert_equal new_name, card.name
-test/unit/card/rename_test.rb:    assert Card[new_name]
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def card(name)
-test/unit/card/rename_test.rb:    Card[name].refresh or raise "Couldn't find card named #{name}"
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_renaming_card_with_self_link_should_not_hang
-test/unit/card/rename_test.rb:    c = Card["Dairy"]
-test/unit/card/rename_test.rb:    c.name = "Buttah"
-test/unit/card/rename_test.rb:    c.update_referencers = true
-test/unit/card/rename_test.rb:    c.save!
-test/unit/card/rename_test.rb:    assert_equal "[[/new/{{_self|name}}|new]]", Card["Buttah"].content
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_renaming_card_without_updating_references_should_not_have_errors
-test/unit/card/rename_test.rb:    c = Card["Dairy"]
-test/unit/card/rename_test.rb:    c.update_attributes "name"=>"Newt", "update_referencers"=>'false'
-test/unit/card/rename_test.rb:    assert_equal "[[/new/{{_self|name}}|new]]", Card["Newt"].content
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_rename_should_not_fail_when_updating_inaccessible_referencer
-test/unit/card/rename_test.rb:    Card.create! :name => "Joe Card", :content => "Whattup"
-test/unit/card/rename_test.rb:    Account.as :joe_admin do
-test/unit/card/rename_test.rb:      Card.create! :name => "Admin Card", :content => "[[Joe Card]]"
-test/unit/card/rename_test.rb:    end
-test/unit/card/rename_test.rb:    c = Card["Joe Card"]
-test/unit/card/rename_test.rb:    c.update_attributes! :name => "Card of Joe", :update_referencers => true
-test/unit/card/rename_test.rb:    assert_equal "[[Card of Joe]]", Card["Admin Card"].content
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:  def test_rename_should_not_fail_when_updating_hard_templated_referencer
-test/unit/card/rename_test.rb:    c=Card.create! :name => "Pit"
-test/unit/card/rename_test.rb:    Card.create! :name => "Orange", :type=>"Fruit", :content => "[[Pit]]"
-test/unit/card/rename_test.rb:    Card["Fruit+*type+*default"].update_attributes(:content=>"this [[Pit]]")
-test/unit/card/rename_test.rb:
-test/unit/card/rename_test.rb:    assert_equal "this [[Pit]]", Card["Orange"].content
-test/unit/card/rename_test.rb:    c.update_attributes! :name => "Seed", :update_referencers => true
-test/unit/card/rename_test.rb:    assert true  # just make sure nothing exploded
-test/unit/card/rename_test.rb:  end
-test/unit/card/rename_test.rb:end
 test/unit/card/search_test.rb:require File.expand_path('../../test_helper', File.dirname(__FILE__))
 test/unit/card/search_test.rb:class Card::BaseTest < ActiveSupport::TestCase
 test/unit/card/search_test.rb:

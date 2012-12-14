@@ -29,16 +29,17 @@ module Wagn::Model::TrackedAttributes
     write_attribute :name, name_without_tracking # what does this do?  Not sure, maybe comment it out and see
 
     reset_patterns_if_rule # reset the new name
-    @dependents = nil
 
     Card.expire cardname
 
+    Rails.logger.warn "set_name[#{inspect}] #{@old_name}, #{newname}"
     if @cardname.junction?
       [:trunk, :tag].each do |side|
         sidename = @cardname.send "#{side}_name"
         sidecard = Card[sidename]
         old_name_in_way = (sidecard && sidecard.id==self.id) # eg, renaming A to A+B
         suspend_name(sidename) if old_name_in_way
+    Rails.logger.warn "set_name side #{side}, #{sidecard.inspect}, #{sidename}"
         self.send "#{side}_id=", begin
           if !sidecard || old_name_in_way
             Card.create! :name=>sidename
@@ -135,17 +136,19 @@ module Wagn::Model::TrackedAttributes
   def cascade_name_changes
     return true unless @name_changed
 
-    deps = [self] + self.dependents
+    deps = self.dependents
+    @dependents = nil
 
-    Rails.logger.debug "----------------------- CASCADE #{self.name} -------------------------------------"
-    #Rails.logger.debug "----------------------- CASCADE #{self.name} -> #{deps.map(&:name)*", "} -------------------------------------"
+    raise "recursion?" if self.name == 'A+B+T+T'
+    Rails.logger.debug "-------------------#{@old_name}- CASCADE #{self.name} -------------------------------------"
+    #Rails.logger.debug "-------------------#{@old_name}---- CASCADE #{self.name} -> deps: #{deps.map(&:name)*", "} -------------------------------------"
 
     deps.each do |dep|
       # here we specifically want NOT to invoke recursive cascades on these cards, have to go this low level to avoid callbacks.
-      Rails.logger.debug "---------------------- DEP #{dep.name}  -------------------------------------"
       newname = dep.cardname.replace_part @old_name, name
-      cxn = connection
-      Card.update_all "name=#{cxn.quote newname.s}, #{cxn.quote_column_name 'key'}=#{cxn.quote newname.key}", "id = #{dep.id}"
+      Rails.logger.debug "---------------------- DEP #{name} -------------------------------------"
+      Card.           where( :id=> dep.id        ).update_all :name => newname.to_s, :key => newname.key
+      Card::Reference.where( :referee_id=>dep.id ).update_all :referee_key => newname.key
       Card.expire dep.name #expire old name
       Card.expire newname
     end

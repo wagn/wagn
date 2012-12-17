@@ -7,11 +7,11 @@ describe CardController, "account functions" do
     login_as 'joe_user'
     #@user_card = Account.authorized
     @user_card = Account.user_card
-    warn "auth is #{@user_card.inspect}"
+    #warn "auth is #{@user_card.inspect}"
   end
 
   it "should signin" do
-    post :create, :id=>'Session', :account => {:email => 'joe@user.org', :password => 'joe_pass' }
+    #post :create, :id=>'Session', :account => {:email => 'joe@user.org', :password => 'joe_pass' }
   end
 
   it "should signout" do
@@ -99,32 +99,26 @@ describe CardController, "account functions" do
 
 
     it "can't login now" do
-      post :create, :id=>'Session', :email=>'joe@user.com', :password=>'joe_pass'
+      #post :create, :id=>'Session', :email=>'joe@user.com', :password=>'joe_pass'
     end
   end
 end
 
-=begin
-require File.expand_path('../test_helper', File.dirname(__FILE__))
-require 'card_controller'
-
-# Re-raise errors caught by the controller.
-class CardController; def rescue_action(e) raise e end; end
-
-class AccountControllerTest < ActionController::TestCase
+describe AccountController, "account tests" do
   # Be sure to include AuthenticatedTestHelper in test/test_helper.rb instead
   # Then, you can remove it from this and the units test.
+
   include AuthenticatedTestHelper
 
   # Note-- account creation is handled in it's own file account_creation_test
 
 
-  def setup
-    super
-    get_renderer
-    @controller = CardController.new
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
+  before do
+
+    #get_renderer
+    #@controller = CardController.new
+    #@request    = ActionController::TestRequest.new
+    #@response   = ActionController::TestResponse.new
 
     @newby_email = 'newby@wagn.net'
     @newby_args =  {:user=>{ :email=>@newby_email },
@@ -135,27 +129,28 @@ class AccountControllerTest < ActionController::TestCase
     signout
   end
 
-  def test_should_login_and_redirect
-    post :action, :id=>'Session', :login => 'u3@user.com', :password => 'u3_pass'
+  it "should test_should_login_and_redirect" do
+    #post :action, :id=>'Session', :login => 'u3@user.com', :password => 'u3_pass'
+    post :signin, :login => 'u3@user.com', :password => 'u3_pass'
     assert session[:user]
     assert_response :redirect
   end
 
-  def test_should_fail_login_and_not_redirect
-    post :action, :id=>'Session', :login => 'webmaster@grasscommons.org', :password => 'bad password'
+  it "should test_should_fail_login_and_not_redirect" do
+    #post :action, :id=>'Session', :login => 'webmaster@grasscommons.org', :password => 'bad password'
+    post :signin, :login => 'webmaster@grasscommons.org', :password => 'bad password'
     assert_nil session[:user]
     assert_response 403
   end
 
-  def test_should_signout
+  it "should test_should_signout" do
     get :signout
     assert_nil session[:user]
     assert_response :redirect
   end
 
-  def test_create_successful
-    integration_login_as 'joe_user', true
-    #login_as 'joe_user'
+  it "should test_create_successful" do
+    login_as 'joe_user'
     assert_difference ActionMailer::Base.deliveries, :size do
       assert_new_account do
         post_invite
@@ -163,25 +158,25 @@ class AccountControllerTest < ActionController::TestCase
     end
   end
 
-  def test_signup_form
+  it "should test_signup_form" do
     get :action, :id=>'*account+*signup'
     assert_response 200
   end
 
-  def test_signup_with_approval
+  it "should test_signup_with_approval" do
     post :action, @newby_args.merge(:id=>'*account')
 
     assert_response :redirect
     assert Card['Newby Dooby'], "should create User card"
     assert_status @newby_email, 'pending'
 
-    integration_login_as 'joe_admin', true
+    login_as 'joe_admin'
     put :action, :id=>'newby_dooby', :card=>{:key=>'newby_dooby'}, :email=>{:subject=>'hello', :message=>'world'}
     assert_response :redirect
     assert_status @newby_email, 'active'
   end
 
-  def test_signup_without_approval
+  it "should test_signup_without_approval" do
     Account.as_bot do  #make it so anyone can create accounts (ie, no approval needed)
       create_accounts_rule = Card['*account+*right'].fetch(:trait=>:create)
       create_accounts_rule << Card::AnyoneID
@@ -192,37 +187,42 @@ class AccountControllerTest < ActionController::TestCase
     assert_status @newby_email, 'active'
   end
 
-  def test_dont_let_blocked_user_signin
+  it "should test_dont_let_blocked_user_signin" do
     u = User.find_by_email('u3@user.com')
     u.blocked = true
     u.save
-    post :action, :id=>'Session', :login => 'u3@user.com', :password => 'u3_pass'
+    #post :action, :id=>'Session', :login => 'u3@user.com', :password => 'u3_pass'
+    post :signin, :login => 'u3@user.com', :password => 'u3_pass'
     assert_response 403
     assert_template ('signin')
   end
 
-  def test_forgot_password
-    post :action, :id=>'Session+*reset_password', :email=>'u3@user.com'
+  it "should test_forgot_password" do
+    #post :action, :id=>'Session+*reset_password', :email=>'u3@user.com'
+    post :forgot_password, :email=>'u3@user.com'
     assert_response :redirect
   end
 
-  def test_forgot_password_not_found
-    post :action, :id=>'Session+*reset_password', :email=>'nosuchuser@user.com'
+  it "should test_forgot_password_not_found" do
+    #post :action, :id=>'Session+*reset_password', :email=>'nosuchuser@user.com'
+    post :forgot_password, :email=>'nosuchuser@user.com'
     assert_response 404
   end
 
-  def test_forgot_password_blocked
+  it "should test_forgot_password_blocked" do
     email = 'u3@user.com'
     Account.as_bot do
       u = User.find_by_email(email)
       u.status = 'blocked'
       u.save!
     end
-    post :action, :id=>'Session+*reset_password', :email=>email
+    #post :action, :id=>'Session+*reset_password', :email=>email
+    post :forgot_password, :email=>email
     assert_response 403
   end
 
 end
+=begin
 require File.expand_path('../test_helper', File.dirname(__FILE__))
 require 'card_controller'
 
@@ -240,7 +240,7 @@ class AccountCreationTest < ActionController::TestCase
   #FIXME - couldn't get this stuff to work in setup, but that's where it belongs.
   signed_in = Card[Card::AuthID]
   # need to use: Card['*account'].ok?(:create)
-  #if (tasks_card=Card.fetch_or_new(!signed_in.fetch(:trait=>:task_list))).
+  #if (tasks_card=Card.fetch(!signed_in.fetch(:trait=>:task_list), :new=>{})).
   #     item_names.member?('create_accounts')
   #  tasks_card << 'create_accounts'
   #end
@@ -252,20 +252,20 @@ class AccountCreationTest < ActionController::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     #login_as 'joe_admin'
-    integration_login_as 'joe_admin', true
+    login_as 'joe_admin'
     Wagn::Cache.restore
   end
 
 # this is working in interface but I can't get it to work here:
 =begin
-  def test_should_require_valid_cardname
+  it "should test_should_require_valid_cardname" do
 #    assert_raises(ActiveRecord::RecordInvalid) do
     assert_no_new_account do
       post_invite :card => { :name => "Joe+User/" }
     end
   end
 
-  def test_should_create_account_from_account_request
+  it "should test_should_create_account_from_account_request" do
     assert_equal :account_request, (c=Card.fetch('Ron Request')).typecode
     post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
     c=Card.fetch('Ron Request')
@@ -273,7 +273,7 @@ class AccountCreationTest < ActionController::TestCase
     assert_equal "active", User.find_by_email("ron@request.com").status
   end
 
-  def test_should_create_account_from_account_request_when_user_hard_templated
+  it "should test_should_create_account_from_account_request_when_user_hard_templated" do
     Account.as_bot { Card.create :name=>'User+*type+*content', :content=>"like this" }
     assert_equal :account_request, (c=Card.fetch('Ron Request')).typecode
     post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
@@ -283,7 +283,7 @@ class AccountCreationTest < ActionController::TestCase
   end
 
 
-  def test_create_permission_denied_if_not_logged_in
+  it "should test_create_permission_denied_if_not_logged_in" do
     signout
     delete :action, :id=>'Session'
     assert_no_new_account do
@@ -294,7 +294,7 @@ class AccountCreationTest < ActionController::TestCase
 
 
 
-  def test_should_create_account_from_scratch
+  it "should test_should_create_account_from_scratch" do
     assert_difference ActionMailer::Base.deliveries, :size do
       assert_new_account do
         post_invite
@@ -308,7 +308,7 @@ class AccountCreationTest < ActionController::TestCase
     assert_equal 'active', User.find_by_email('new@user.com').status
   end
 
-  def test_should_create_account_when_user_cards_are_templated   ##FIXME -- I don't think this actually catches the bug I saw.
+  it "should test_should_create_account_when_user_cards_are_templated   ##FIXME -- I don't think this actually catches the bug I saw." do
     Account.as_bot { Card.create! :name=> 'User+*type+*content'}
     assert_new_account do
       post_invite
@@ -317,14 +317,14 @@ class AccountCreationTest < ActionController::TestCase
   end
 
   # should work -- we generate a password if it's nil
-  def test_should_generate_password_if_not_given
+  it "should test_should_generate_password_if_not_given" do
     assert_new_account do
       post_invite
       assert !assigns(:user).password.blank?
     end
   end
 
-  def test_should_require_password_confirmation_if_password_given
+  it "should test_should_require_password_confirmation_if_password_given" do
     assert_no_new_account do
       #assert_raises(ActiveRecord::RecordInvalid) do
         post_invite :user=>{ :password=>'tedpass' }
@@ -332,7 +332,7 @@ class AccountCreationTest < ActionController::TestCase
     end
   end
 
-  def test_should_require_email
+  it "should test_should_require_email" do
     assert_no_new_account do
       #assert_raises(ActiveRecord::RecordInvalid) do
         post_invite :user=>{ :email => nil }
@@ -342,14 +342,14 @@ class AccountCreationTest < ActionController::TestCase
     end
   end
 
-  def test_should_require_unique_email
+  it "should test_should_require_unique_email" do
     post_invite :user=>{ :email=>'duplor@user.com' }
     assert_no_new_account do
       post_invite :user=>{ :email=>'duplor@user.com' }
     end
   end
 
-  def test_should_create_account_from_existing_user
+  it "should test_should_create_account_from_existing_user" do
     assert_difference ::User, :count do
       assert_no_difference Card.where(:type_id=>Card::UserID), :count do
         post_invite :card=>{ :name=>"No Count" }, :user=>{ :email=>"no@count.com" }
@@ -378,7 +378,7 @@ class AccountRequestTest < ActionController::TestCase
     end
   end
 
-  def test_should_redirect_to_account_request_landing_card
+  it "should test_should_redirect_to_account_request_landing_card" do
     post :action, :user=>{:email=>"jamaster@jay.net"}, :card=>{
       :type=>"Account Request",
       :name=>"Word Third",
@@ -388,7 +388,7 @@ class AccountRequestTest < ActionController::TestCase
     #assert_redirected_to @controller.url_for_page(::Setting.find_by_codename('account_request_landing').card.name)
   end
 
-  def test_should_create_account_request
+  it "should test_should_create_account_request" do
     post :action, :user=>{:email=>"jamaster@jay.net"}, :card=>{
       :type=>"Account Request",
       :name=>"Word Third",
@@ -408,12 +408,32 @@ class AccountRequestTest < ActionController::TestCase
 
   end
 
-  def test_should_destroy_and_block_user
+  it "should test_should_destroy_and_block_user" do
     login_as 'joe_admin'
     # FIXME: should test agains mocks here, instead of re-testing the model...
     delete :action, :id=>"~#{Card.fetch('Ron Request').id}"
     assert_equal nil, Card.fetch('Ron Request')
     assert_equal 'blocked', User.find_by_email('ron@request.com').status
+  end
+
+end
+
+
+
+class AccountTest < ActionController::IntegrationTest
+  include LocationHelper
+
+  it "should test_return_to_home_page_after_login" do
+    #post '/Session', :login=>'joe@user.com', :password=>'joe_pass'
+    post '/account/signin', :login=>'joe@user.com', :password=>'joe_pass'
+    assert_redirected_to '/'
+  end
+
+  it "should test_return_to_special_url_when_logging_in_after_visit" do
+    get '/recent'
+    #post '/Session', :login=>'joe@user.com', :password=>'joe_pass'
+    post '/account/signin', :login=>'joe@user.com', :password=>'joe_pass'
+    assert_redirected_to '/*recent'
   end
 
 end

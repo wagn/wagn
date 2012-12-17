@@ -31,9 +31,8 @@ class CardController < ApplicationController
   def action
     @action = METHODS[request.method]
     Rails.logger.warn "action #{request.method}, #{@action} #{params.inspect}"
-    warn "action #{request.method}, #{@action} #{params.inspect}"
-    send "perform_#{@action}"
-    render_errors || success
+    #warn "action method #{request.method}, #{@action} #{params.inspect}"
+    send "process_#{@action}"
   end
 
   def action_method event
@@ -48,14 +47,11 @@ class CardController < ApplicationController
   def create
     #warn "create #{params.inspect}, #{card.inspect} if #{card && !card.new_card?}, nc:#{card.new_card?}"
 
-    process_create || success
+    process_create
   end
 
   def read
-    process_read || begin
-      save_location # should be an event!
-      show
-    end
+    process_read
   end
 
   def update
@@ -66,10 +62,7 @@ class CardController < ApplicationController
   end
 
   def delete
-    process_delete || begin
-      discard_locations_for card
-      success 'REDIRECT: *previous'
-    end
+    process_delete
   end
 
 
@@ -206,6 +199,7 @@ class CardController < ApplicationController
 
 
   def load_card
+    #warn "load card #{params.inspect}"
     @card = case params[:id]
       when '*previous'   ; return wagn_redirect( previous_location )
       when /^\~(\d+)$/   ; Card.fetch $1.to_i
@@ -215,6 +209,7 @@ class CardController < ApplicationController
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
         name = params[:id] || opts[:name]
         
+        #warn "load card #{name.inspect}, #{@action}, #{opts.inspect}"
         if @action == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
           # I think we may need to create a "#create" instance method that handles this checking.
@@ -222,7 +217,7 @@ class CardController < ApplicationController
           opts[:name] ||= name
           Card.new opts
         else
-          Card.fetch_or_new name, opts
+          Card.fetch name =~ /^\d+$/ ? name.to_i : name, :new=>opts
         end
       end
 
@@ -236,7 +231,7 @@ class CardController < ApplicationController
 
 
   def success default_target='_self'
-    #warn "success #{card.inspect}"
+    #warn "success #{default_target}, #{card.inspect}"
     target = params[:success] || default_target
     redirect = !ajax?
     new_params = {}
@@ -256,7 +251,7 @@ class CardController < ApplicationController
       when '_self  '       ;  card #could do as _self
       when /^(http|\/)/    ;  target
       when /^TEXT:\s*(.+)/ ;  $1
-      else                 ;  Card.fetch_or_new target.to_name.to_absolute(card.cardname)
+      else                 ;  Card.fetch target.to_name.to_absolute(card.cardname), :new=>{}
       end
 
     case
@@ -266,6 +261,7 @@ class CardController < ApplicationController
       @card = target
       show new_params[:view]
     end
+    true
   end
 
 end

@@ -20,10 +20,12 @@ describe Card, "deleted card" do
 end
 
 describe Card, "in trash" do
-  it "should be retrieved by fetch_or_create" do
+  it "should be retrieved by fetch or create" do
     Account.as :joe_user do
       Card.create(:name=>"Betty").destroy
-      Card.fetch_or_create "Betty"
+      card = Card.fetch "Betty", :new => {}
+      card.save if card.new_card?
+
       Card["Betty"].should be_instance_of(Card)
     end
   end

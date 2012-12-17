@@ -90,12 +90,13 @@ class ApplicationController < ActionController::Base
   end
 
   def render_errors options={}
-    #warn "render_errors #{@card.inspect}"
-    return false if @card && @card.errors.empty?
-    @card ||= Card.new
-    view = options[:view] || (@card && @card.error_view  ) || :errors
+    #warn "render_errors #{card.inspect}"
+    return false if card && card.errors.empty?
+    @card = Card.new if card.nil?
+    view = options[:view] || card.error_view || :errors
     #warn "422 status ? os:#{options[:status]} || cs:#{(@card && @card.error_status)}"
-    status = options[:status] || (@card && @card.error_status) || 422
+    status = options[:status] || card.error_status || 422
+    #warn "render errors #{card.inspect}, show status and view #{status}, #{view}"
     show view, status
     true
   end

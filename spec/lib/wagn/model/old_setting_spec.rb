@@ -82,9 +82,9 @@ describe Card do
     end
 
     it "returns pointer-specific setting names for pointer card (*self)" do
-      c = Card.fetch_or_new('*account+*related+*self')
+      c = Card.fetch '*account+*related+*self', :new => {}
       c.save if c.new_card?
-      c = Card.fetch_or_new('*account+*related+*self')
+      c = Card.fetch '*account+*related+*self', :new => {}
       snbg = c.setting_cards_by_group
       snbg[:pointer_group].map(&:codename).should == @pointer_settings
     end

@@ -63,6 +63,7 @@ module Wagn::Model::Fetch
       else
         return card.fetch_new(opts) if card && opts[:skip_virtual] && card.new_card?
 
+        #warn "new card? #{card.inspect}"
         # NEW card -- (either virtual or missing)
         if card.nil? or ( !opts[:skip_virtual] && card.type_id==-1 )
           # The -1 type_id allows us to skip all the type lookup and flag the need for
@@ -84,15 +85,6 @@ module Wagn::Model::Fetch
       #warn "fetch returning #{card.inspect}"
       card.include_set_modules unless opts[:skip_modules]
       card
-    end
-
-    def fetch_or_new cardname, opts={}
-      fetch cardname, opts or new opts.merge(:name=>cardname)
-    end
-
-    def fetch_or_create cardname, opts={}
-      opts[:skip_virtual] ||= true
-      fetch( cardname, opts ) || create( opts.merge(:name=>cardname) )
     end
 
     def fetch_id mark #should optimize this.  what if mark is int?  or codename?

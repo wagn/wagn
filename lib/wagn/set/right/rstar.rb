@@ -200,7 +200,8 @@ module Wagn
       # self.card is a POTENTIAL rule; it quacks like a rule but may or may not exist.
       # This generates a prototypical member of the POTENTIAL rule's set
       # and returns that member's ACTUAL rule for the POTENTIAL rule's setting
-      set_prototype = (proto_set=Card.fetch( card.cardname.trunk_name )).prototype
+      set_prototype = Card.fetch( card.cardname.trunk_name ).prototype
+      #warn "f c rcard #{card.inspect}, #{set_prototype.inspect}, #{card.cardname.trunk_name}"
       rule_card = card.new_card? ? set_prototype.rule_card( card.cardname.tag ) : card
       [ rule_card, set_prototype ]
     end

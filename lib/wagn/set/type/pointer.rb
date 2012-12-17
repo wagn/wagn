@@ -109,8 +109,7 @@ module Wagn
         else
           #warn "item_card[#{inspect}], :complete"
           item_names(args).map do |name|
-            c=Card.fetch_or_new(name)
-            #warn "item_card #{name}, #{c}"; c
+            Card.fetch name, :new=>{}
           end.compact
         end
       end

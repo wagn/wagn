@@ -29,14 +29,14 @@ class User < ActiveRecord::Base
     # FIXME: args=params.  should be less coupled..
     def create_with_card user_args, card_args, email_args={}
       card_args[:type_id] ||= Card::UserID
-      @card = Card.fetch_or_new(card_args[:name], card_args)
+      @card = Card.fetch card_args[:name], :new => card_args
       Account.as_bot do
-        @user = User.new(user_args)
+        @user = User.new user_args
         @user.status = 'active' unless user_args.has_key? :status
         Rails.logger.warn "create_wcard #{@user.inspect}, #{user_args.inspect}"
         @user.generate_password if @user.password.blank?
-        @user.save_with_card(@card)
-        @user.send_account_info(email_args) if @user.errors.empty? && !email_args.empty?
+        @user.save_with_card @card
+        @user.send_account_info email_args if @user.errors.empty? && !email_args.empty?
       end
       [@user, @card]
     end

@@ -24,11 +24,12 @@ class Card
       if conf = Card['*geocode']
         if self.junction? && conf.item_names.include?( self.cardname.tag )
           address = conf.item_names.map{ |p|
-            c=Card.fetch_or_new(self.cardname.trunk_name.to_s+"+#{p}") and
-              c.content }.select(&:present?) * ', '
-          if (geocode = GoogleMapsAddon.geocode(address))
-            c = Card.fetch_or_create("#{self.cardname.trunk_name.to_s}+*geocode", :type_id=>Card::PhraseID)
-            c.update_attributes( :content => geocode )
+            card=Card.fetch( self.cardname.trunk_name.to_s+"+#{p}", :new=>{} ) and
+              card.content }.select(&:present?) * ', '
+          if geocode = GoogleMapsAddon.geocode(address)
+            card = Card.fetch "#{self.cardname.trunk_name.to_s}+*geocode", :new=>{:type_id=>Card::PhraseID}
+            card.content = geocode
+            card.save
           end
         end
       end

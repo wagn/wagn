@@ -12,11 +12,11 @@ describe CardController do
 #    end
 
     it "should recognize type" do
-      { :get => "/new/Phrase" }.should route_to( :controller => 'card', :action=>'action', :type=>'Phrase', :view=>'new' )
+      { :get => "/new/Phrase" }.should route_to( :controller => 'card', :action=>'read', :type=>'Phrase', :view=>'new' )
     end
 
     it "should recognize .rss on /recent" do
-      {:get => "/recent.rss"}.should route_to(:controller=>"card", :view=>"content", :action=>"action",
+      {:get => "/recent.rss"}.should route_to(:controller=>"card", :view=>"content", :action=>"read",
         :id=>"*recent", :format=>"rss"
       )
     end
@@ -25,13 +25,13 @@ describe CardController do
       describe "routes prefixed with '#{prefix}'" do
         it "should recognize .rss format" do
           {:get => "#{prefix}/*recent.rss"}.should route_to(
-            :controller=>"card", :action=>"action", :id=>"*recent", :format=>"rss"
+            :controller=>"card", :action=>"read", :id=>"*recent", :format=>"rss"
           )
         end
 
         it "should recognize .xml format" do
           {:get => "#{prefix}/*recent.xml"}.should route_to(
-            :controller=>"card", :action=>"action", :id=>"*recent", :format=>"xml"
+            :controller=>"card", :action=>"read", :id=>"*recent", :format=>"xml"
           )
         end
 
@@ -43,7 +43,7 @@ describe CardController do
 
         it "should accept cards without dots" do
           {:get => "#{prefix}/random"}.should route_to(
-            :controller=>"card",:action=>"action",:id=>"random"
+            :controller=>"card",:action=>"read",:id=>"random"
           )
         end
       end
@@ -274,7 +274,7 @@ describe CardController do
     #  seems less urgent that a lot of the other bugs on the list, so I'm leaving this test out
     #  for now.
     #
-    #  def test_update_cardtype_no_stripping
+    #  it "should test_update_cardtype_no_stripping" do
     #    Account.as 'joe_user'
     #    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
     #    #assert_equal "boo", assigns['card'].content
@@ -285,3 +285,130 @@ describe CardController do
     #
   end
 end
+
+describe CardController, "test/integration card action tests" do
+
+  #include LocationHelper
+
+  before do
+    login_as 'joe_user'
+  end
+
+  # Has Test
+  # ---------
+  # card/delete
+  # card/create
+  # connection/create
+  # card/comment
+  #
+  # FIXME: Needs Test
+  # -----------
+  # card/rollback
+  # card/save_draft
+  # connection/delete ??
+
+  it "should test_comment" do
+    Account.as_bot  do
+      Card.create :name=>'A+*self+*comment', :type=>'Pointer', :content=>'[[Anyone]]'
+    end
+    post "card/comment/A", :card => { :comment=>"how come" }
+    assert_response :success
+  end
+
+  it "should test_create_role_card" do
+    integration_login_as 'joe_admin'
+    post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
+    assert_response 302
+
+    assert Card['Editor'].type_id == Card::RoleID
+  end
+
+  it "should test_create_cardtype_card" do
+    Account.as_bot {
+      post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"} )}
+    assert_response 302
+    assert Card['Editor2'].typecode == :cardtype
+  end
+
+  it "should test_create" do
+    Account.as_bot {
+     post 'card/create', :card=>{
+      :type=>'Basic',
+      :name=>"Editor",
+      :content=>"testcontent2"
+    }}
+    assert_response 302
+    assert_equal "testcontent2", Card["Editor"].content
+  end
+
+  it "should test_newcard_shows_edit_instructions" do
+    given_card( {:type=>'cardtype', :name=>"YFoo", :content => ""} )
+    given_card( {:name=>"YFoo+*type+*edit help", :content => "instruct-me"} )
+    get 'card/new', :card => {:type=>'YFoo'}
+    assert_tag :tag=>'div', :attributes=>{ :class=>"instruction" },  :content=>/instruct-me/
+  end
+
+  it "should test_newcard_works_with_fuzzy_renamed_cardtype" do
+    given_card({:typecode=>:cardtype, :name=>"ZFoo", :content => ""})
+    Account.as(:joe_user) do
+      Card["ZFoo"].update_attributes! :name=>"ZFooRenamed", :update_referencers=>true
+    end
+
+    get 'card/new', :card => { :type=>'z_foo_renamed' }
+    assert_response :success
+  end
+
+  it "should test_newcard_gives_reasonable_error_for_invalid_cardtype" do
+    Account.as_bot do
+      get 'card/new', :card => { :type=>'bananamorph' }  
+      assert_response 422
+      assert_tag :tag=>'div', :attributes=>{:class=>/errors-view/}, :content=>/not a known type/
+    end
+  end
+
+  # FIXME: this should probably be files in the spot for a delete test
+  it "should test_removal_and_return_to_previous_undeleted_card_after_deletion" do
+    t1 = t2 = nil
+    Account.as_bot do
+      t1 = Card.create! :name => "Testable1", :content => "hello"
+      t2 = Card.create! :name => "Testable1+bandana", :content => "world"
+    end
+
+    get url_for_page( t1.name )
+    get url_for_page( t2.name )
+
+    post 'card/delete/~' + t2.id.to_s
+    assert_redirected_to url_for_page( t1.name )
+    assert_nil Card[ t2.name ]
+
+    post 'card/delete/~' + t1.id.to_s
+    assert_redirected_to '/'
+    assert_nil Card[ t1.name ]
+  end
+
+  it "should test_should_create_account_from_scratch" do
+    integration_login_as 'joe_admin'
+    assert_difference ActionMailer::Base.deliveries, :size do
+      post '/card/create_account/', :id=>'a', :user=>{:email=>'foo@bar.com'}
+      assert_response :redirect  # this now redirects, and I think that is correct
+    end
+    email = ActionMailer::Base.deliveries[-1]
+    # emails should be 'from' inviting user
+    #assert_equal Account.user.email, email.from[0]
+    #assert_equal 'active', User.find_by_email('new@user.com').status
+    #assert_equal 'active', User.find_by_email('new@user.com').status
+  end
+
+  it "should test_update_user_account_email" do
+    post '/card/update_account', :id=>"Joe User".to_name.key, :account => { :email => 'joe@user.co.uk' }
+    assert User.where(:card_id=>Card['joe_user'].id).first.email == 'joe@user.co.uk'
+  end
+
+  it "should test_user_cant_block_self" do
+    post '/card/update_account', :id=>"Joe User".to_name.key, :account => { :blocked => '1' }
+    assert !User.where(:card_id=>Card['joe_user'].id).first.blocked?
+  end
+#=end
+end
+
+

@@ -6,8 +6,8 @@ module Wagn
     format :xml
 
     define_view(:layout) do |args|
-      if @main_content = args.delete(:main_content)
-        @card = Card.fetch_or_new('*placeholder',{},:skip_defaults=>true)
+      if @main_content = args.delete( :main_content )
+        @card = Card.fetch '*placeholder',:new=>{}, :skip_defaults=>true
       else
         @main_card = card
       end

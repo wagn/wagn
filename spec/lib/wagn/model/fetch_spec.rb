@@ -147,21 +147,21 @@ describe Card do
     end
   end
 
-  describe "#fetch_or_new" do
+  describe "#fetch :new=>{ ... }" do
     it "returns a new card if it doesn't find one" do
-      new_card = Card.fetch_or_new("Never Seen Me Before")
+      new_card = Card.fetch "Never Seen Me Before", :new=>{}
       new_card.should be_instance_of(Card)
       new_card.new_record?.should be_true
     end
 
     it "returns a card if it finds one" do
-      new_card = Card.fetch_or_new("A+B")
+      new_card = Card.fetch "A+B", :new=>{}
       new_card.should be_instance_of(Card)
       new_card.new_record?.should be_false
     end
 
     it "takes a second hash of options as new card options" do
-      new_card = Card.fetch_or_new("Never Before", :type => "Image")
+      new_card = Card.fetch "Never Before", :type => "Image", :new=>{}
       new_card.should be_instance_of(Card)
       new_card.typecode.should == :image
       new_card.new_record?.should be_true

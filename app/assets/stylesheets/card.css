@@ -162,8 +162,7 @@ a.email-link {
   display: none
 }
 fieldset {
-  padding: 1 0px;
-  margin: 10px 1px;
+  margin: 5px 1px;
   clear: both;
   float: none !important;
   display:block;

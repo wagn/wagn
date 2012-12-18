@@ -89,11 +89,11 @@ h1.card-title {
   float: left;
   width: 50px;
   padding: 3px 0 3px 25px;
-  background: left no-repeat;
+  position: relative;  
 }
-.search-icon { background-image: url(search.png); }
-.add-icon    { background-image: url(plus.png);   }
-.goto-icon   { background-image: url(page.png);   }
+.navbox-item-label > a.ui-icon {
+  padding: 0;  
+}
 .cardtype {
   font-style: italic;
   font-size: 10px;
@@ -587,3 +587,7 @@ table.perm-editor .pointer-item-text {
     padding: 8px;
     margin: 0px;
 }
+.ui-icon {
+  background-image: url('images/ui-icons_454545_256x240.png')
+}
+

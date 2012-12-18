@@ -85,8 +85,8 @@ describe Card do
       c = Card.fetch '*account+*related+*self', :new => {}
       c.save if c.new_card?
       c = Card.fetch '*account+*related+*self', :new => {}
-      snbg = c.setting_cards_by_group
-      snbg[:pointer_group].map(&:codename).should == @pointer_settings
+      snbg = c.setting_names_by_group
+      snbg[:pointer].map(&:to_s).should == @pointer_settings
     end
 
   end

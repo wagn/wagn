@@ -15,7 +15,6 @@ class CardController < ApplicationController
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :comment, :rollback ]
   before_filter :read_ok,      :only=> [ :read_file ]
 
-  attr_reader :card
   cattr_reader :subset_actions
   @@subset_actions = {}
 
@@ -55,10 +54,7 @@ class CardController < ApplicationController
   end
 
   def update
-    if card.new_card?; process_create
-    elsif              process_update
-    else               success
-    end
+    process_update
   end
 
   def delete
@@ -199,25 +195,24 @@ class CardController < ApplicationController
 
 
   def load_card
-    #warn "load card #{params.inspect}"
+    #Rails.logger.warn "load card 1 #{params.inspect}"
     @card = case params[:id]
       when '*previous'   ; return wagn_redirect( previous_location )
       when /^\~(\d+)$/   ; Card.fetch $1.to_i
       when /^\:(\w+)$/   ; Card.fetch $1.to_sym
       else
         opts = params[:card] ? params[:card].clone : {}
-        opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
+        opts[:type] ||= params['type'] # for /new/:type shortcut.  we should fix and deprecate this.
         name = params[:id] || opts[:name]
         
-        #warn "load card #{name.inspect}, #{@action}, #{opts.inspect}"
         if @action == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
           # I think we may need to create a "#create" instance method that handles this checking.
-          # that would let us get rid of this...
+          # that would let us get rid of this...  I think we can do this right with events
           opts[:name] ||= name
           Card.new opts
         else
-          Card.fetch name =~ /^\d+$/ ? name.to_i : name, :new=>opts
+          Card.fetch ( name =~ /^\d+$/ ? name.to_i : name ), :new=>opts
         end
       end
 

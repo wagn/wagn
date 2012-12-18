@@ -36,7 +36,7 @@ end
 describe CardController, "Basic rendering tests" do
 
   before do
-    @sample_cards = Card.where("cards.key like 'sample_%'")
+    @sample_cards = Card.where("cards.key like 'sample_%' and cards.key not like '%+%'")
   end
 
   #these tests are increasingly lame.
@@ -107,7 +107,13 @@ describe CardController, "Basic rendering tests" do
 
     it "should get edit form for all types" do
       @sample_cards.each do |sample|
-        get :read, :id => sample.id, :view=>'edit'
+        if %w{sample_html sample_layout}.member? sample.key
+          login_as 'Joe Admin' do
+            get :read, :id => sample.id, :view=>'edit'
+          end
+        else
+          get :read, :id => sample.id, :view=>'edit'
+        end
         response.should be_success, "Getting #{sample.inspect}"
       end
     end

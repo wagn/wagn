@@ -22,10 +22,15 @@ module Wagn
     end
 
     action :update do |*a|
-      #warn "update #{card.inspect}, #{params[:card].inspect}"
-      card.update_attributes params[:card]
-      card.save
-      render_errors || success
+      if card.new_card?; process_create
+      elsif card.update_attributes params[:card]
+        #warn "update #{card.inspect}, #{params[:card].inspect}"
+        #card.save
+        render_errors || success
+
+      elsif render_errors
+      else  success
+      end
     end
 
     action :delete do |*a|

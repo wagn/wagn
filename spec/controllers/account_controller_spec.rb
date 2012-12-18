@@ -2,9 +2,8 @@ require File.expand_path('../spec_helper', File.dirname(__FILE__))
 include AuthenticatedTestHelper
 require 'rr'
 
-describe CardController, "account functions" do
-  before(:each) do
-    login_as 'joe_user'
+describe AccountController, "account functions" do
+  before do
     #@user_card = Account.authorized
     @user_card = Account.user_card
     #warn "auth is #{@user_card.inspect}"
@@ -12,10 +11,15 @@ describe CardController, "account functions" do
 
   it "should signin" do
     #post :create, :id=>'Session', :account => {:email => 'joe@user.org', :password => 'joe_pass' }
+    post :signin, :account => {:email => 'joe@user.org', :password => 'joe_pass' }
   end
 
   it "should signout" do
-    delete :delete, :id=>'Session'
+    login_as 'joe_user'
+    Account.user.id.should == Card['joe user'].id
+    
+    signout
+    Account.user.id.should == Card::AnonID
     Card[:session].should be
   end
 
@@ -26,10 +30,9 @@ describe CardController, "account functions" do
         @msgs << m
         mock(m).deliver }
 
-      login_as 'joe_admin'
-
       @email_args = {:subject=>'Hey Joe!', :message=>'Come on in.'}
-      post :create, :id=>'*account', :account=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}, :email=> @email_args
+      #post :create, :id=>'*account', :account=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}, :email=> @email_args
+      post :signup, :account=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}, :email=> @email_args
 
       @user_card = Card['Joe New']
       @new_user = User.where(:email=>'joe@new.com').first
@@ -38,6 +41,7 @@ describe CardController, "account functions" do
 
     it "should invite" do
       @user_card.should be
+      @user_card.id.should be
     end
 
   end
@@ -50,10 +54,9 @@ describe CardController, "account functions" do
         mock(m).deliver
       end
 
-      delete :delete, :id=>'Session'
-
       Account.user_id.should == Card::AnonID
-      post :create, :id=>'*account', :card => {:name => "Joe New"}, :account=>{:email=>"joe_new@user.org", :password=>'new_pass', :password_confirmation=>'new_pass'}
+      #post :create, :id=>'*account', :card => {:name => "Joe New"}, :account=>{:email=>"joe_new@user.org", :password=>'new_pass', :password_confirmation=>'new_pass'}
+      post :signup, :card => {:name => "Joe New"}, :account=>{:email=>"joe_new@user.org", :password=>'new_pass', :password_confirmation=>'new_pass'}
     end
 
     it 'should send email' do
@@ -63,13 +66,14 @@ describe CardController, "account functions" do
     end
 
     it "should create an account request" do
-      c = Carc['Joe New'].should be
+      c = Card['Joe New'].should be
       c.type_id.should == Card::AccountRequestID
       c.to_user.blocked?.should be_true
     end
 
     it "should accept" do
-      put :update, :id=>"Joe New", :account=>{:status=>'active'}
+      #put :update, :id=>"Joe New", :account=>{:status=>'active'}
+      put :accept, :card=>{:key => "joe_new"}, :account=>{:status=>'active'}
 
       @user_card = Card['Joe New'].should be
       @new_user = @user_user.to_user.should be
@@ -78,6 +82,21 @@ describe CardController, "account functions" do
       @msgs.size.should == 2
     end
   end
+
+private
+
+  def signout
+    #delete :delete, :id=>'Session'
+    delete :signout
+  end
+
+end
+
+describe AccountController, "account tests" do
+  # Be sure to include AuthenticatedTestHelper in test/test_helper.rb instead
+  # Then, you can remove it from this and the units test.
+
+  include AuthenticatedTestHelper
 
   describe "#forgot_password" do
     before do
@@ -89,7 +108,8 @@ describe CardController, "account functions" do
 
       @email='joe@user.com'
       @juser=User.where(:email=>@email).first
-      put :update, :id=>'*account', :email=>@email
+      #put :update, :id=>'*account', :email=>@email
+      post :forgot_password, :email=>@email, :controller=>:account
     end
 
     it 'should send an email to user' do
@@ -100,32 +120,21 @@ describe CardController, "account functions" do
 
     it "can't login now" do
       #post :create, :id=>'Session', :email=>'joe@user.com', :password=>'joe_pass'
+      post :signin, :email=>'joe@user.com', :password=>'joe_pass'
     end
   end
-end
-
-describe AccountController, "account tests" do
-  # Be sure to include AuthenticatedTestHelper in test/test_helper.rb instead
-  # Then, you can remove it from this and the units test.
-
-  include AuthenticatedTestHelper
 
   # Note-- account creation is handled in it's own file account_creation_test
 
 
   before do
-
-    #get_renderer
-    #@controller = CardController.new
-    #@request    = ActionController::TestRequest.new
-    #@response   = ActionController::TestResponse.new
-
     @newby_email = 'newby@wagn.net'
     @newby_args =  {:user=>{ :email=>@newby_email },
                     :card=>{ :name=>'Newby Dooby' }}
     Account.as_bot do
       Card.create(:name=>'Account Request+*type+*captcha', :content=>'0')
     end
+
     signout
   end
 
@@ -159,19 +168,23 @@ describe AccountController, "account tests" do
   end
 
   it "should test_signup_form" do
-    get :action, :id=>'*account+*signup'
+    #get :action, :id=>'*account+*signup'
+    #get :read, :id=>'*signup'
+    get :signup
     assert_response 200
   end
 
   it "should test_signup_with_approval" do
-    post :action, @newby_args.merge(:id=>'*account')
+    #post :action, @newby_args.merge(:id=>'*account')
+    post :signup, @newby_args.merge(:id=>'*account')
 
     assert_response :redirect
     assert Card['Newby Dooby'], "should create User card"
     assert_status @newby_email, 'pending'
 
-    login_as 'joe_admin'
-    put :action, :id=>'newby_dooby', :card=>{:key=>'newby_dooby'}, :email=>{:subject=>'hello', :message=>'world'}
+    #put :action, :id=>'newby_dooby', :card=>{:key=>'newby_dooby'}, :email=>{:subject=>'hello', :message=>'world'}
+    #put :update, :id=>'newby_dooby', :card=>{:key=>'newby_dooby'}, :email=>{:subject=>'hello', :message=>'world'}
+    put :signup, :card=>{:key=>'newby_dooby'}, :email=>{:subject=>'hello', :message=>'world'}
     assert_response :redirect
     assert_status @newby_email, 'active'
   end
@@ -182,7 +195,8 @@ describe AccountController, "account tests" do
       create_accounts_rule << Card::AnyoneID
       create_accounts_rule.save!
     end
-    post :action,  @newby_args.merge(:status=>'active',:id=>'*account+*signup')
+    #post :action,  @newby_args.merge(:status=>'active',:id=>'*account+*signup')
+    post :signup,  @newby_args.merge(:status=>'active',:id=>'*signup')
     assert_response :redirect
     assert_status @newby_email, 'active'
   end
@@ -285,7 +299,8 @@ class AccountCreationTest < ActionController::TestCase
 
   it "should test_create_permission_denied_if_not_logged_in" do
     signout
-    delete :action, :id=>'Session'
+    #delete :action, :id=>'Session'
+    delete :delete, :id=>'Session'
     assert_no_new_account do
 #    assert_raises(Card::PermissionDenied) do
       post_invite
@@ -379,17 +394,8 @@ class AccountRequestTest < ActionController::TestCase
   end
 
   it "should test_should_redirect_to_account_request_landing_card" do
-    post :action, :user=>{:email=>"jamaster@jay.net"}, :card=>{
-      :type=>"Account Request",
-      :name=>"Word Third",
-      :content=>"Let me in!"
-    }
-    assert_response 302
-    #assert_redirected_to @controller.url_for_page(::Setting.find_by_codename('account_request_landing').card.name)
-  end
-
-  it "should test_should_create_account_request" do
-    post :action, :user=>{:email=>"jamaster@jay.net"}, :card=>{
+    #post :action, :user=>{:email=>"jamaster@jay.net"}, :card=>{
+    post :create, :user=>{:email=>"jamaster@jay.net"}, :card=>{
       :type=>"Account Request",
       :name=>"Word Third",
       :content=>"Let me in!"
@@ -399,6 +405,8 @@ class AccountRequestTest < ActionController::TestCase
     @user = User.where(:card_id=>@card.id).first
 
     assert_equal @card.typecode, :account_request
+
+    assert_response 302
 
     # this now happens only when created via account controller
 
@@ -411,7 +419,8 @@ class AccountRequestTest < ActionController::TestCase
   it "should test_should_destroy_and_block_user" do
     login_as 'joe_admin'
     # FIXME: should test agains mocks here, instead of re-testing the model...
-    delete :action, :id=>"~#{Card.fetch('Ron Request').id}"
+    #delete :action, :id=>"~#{Card.fetch('Ron Request').id}"
+    delete :delete, :id=>"~#{Card.fetch('Ron Request').id}"
     assert_equal nil, Card.fetch('Ron Request')
     assert_equal 'blocked', User.find_by_email('ron@request.com').status
   end

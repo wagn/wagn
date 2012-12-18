@@ -13,6 +13,7 @@ class ApplicationController < ActionController::Base
   before_filter :per_request_setup, :except=>[:fast_404]
   layout :wagn_layout, :except=>[:fast_404]
 
+  attr_reader :card
   attr_accessor :recaptcha_count
 
   def fast_404

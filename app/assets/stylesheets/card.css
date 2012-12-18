@@ -49,8 +49,11 @@ h1.card-title {
 }
 .card-menu-link {
   float: right;
-  width: 60px;
+  min-width: 70px;
   text-align: right;
+}
+.card-menu-link a {
+  display: inline-block;
 }
 .card-menu {
   display:none;
@@ -70,6 +73,7 @@ h1.card-title {
 }
 .card-header .toggler {
   font-size: 1.5em;
+  display: inline-block;
 }
 .name-editor input {
   width: 100%;

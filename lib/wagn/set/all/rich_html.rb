@@ -32,10 +32,9 @@ module Wagn
     end
 
     define_view :titled do |args|
-      hidden = { :menu_link=>true, :closed_link=>true }
-#      hidden = { :menu_link=>true, :type=>true, :closed_link=>true }
+      args[:hide] ||= ['menu_link']
       wrap :titled, args do
-        _render_header( args.merge :default_hidden => hidden ) +
+        _render_header( args ) +
         wrap_content( :titled ) do
           _render_core args
         end
@@ -49,6 +48,7 @@ module Wagn
     end
 
     define_view :open do |args|
+      args[:show] ||= ['closer']
       wrap :open, args.merge(:frame=>true) do
         %{
            #{ _render_header args }
@@ -60,35 +60,25 @@ module Wagn
     end
 
     define_view :header do |args|
-      hidden = args.delete(:default_hidden) || {}
       %{
-      <div class="card-header">
-        #{ _optional_render :menu_link, args, hidden[:menu_link] }
-        #{ _optional_render :closed_link, args, hidden[:closed_link] }        
-        #{ _render_title }
-      </div>
+        <div class="card-header">
+          #{ _optional_render :menu_link, args }
+          #{ _optional_render :closer, args, default_hidden=true }        
+          #{ _render_title }
+        </div>
       }
-      
-      #{ _optional_render :type, args, hidden[:type] }
     end
 
-    define_view :closed_link do |args|
-      link_to raw('&otimes;'), path(:read, :view=>:closed), :title => "close #{card.name}", :class => "toggler slotter", :remote => true
+    define_view :closer do |args|
+      link_to '', path(:read, :view=>:closed), :title => "close #{card.name}", :remote => true,
+        :class => "ui-icon ui-icon-circle-triangle-s toggler slotter"
     end
   
     define_view :menu_link do |args|
-      %{<div class="card-menu-link">#{ _render_menu }&equiv;</div>}
+      %{<div class="card-menu-link">#{ _render_menu }<a class="ui-icon ui-icon-gear"></a></div>}
     end
   
     define_view :menu do |args|
-
-      admin_items = if card && card.update_account_ok? #sigh.  very inefficient to do this with every header!!
-        [ link_to_action( 'rules', :options, :class=>'slotter' ),
-          link_to_action( 'account', :option_account, :class=>'slotter')
-        ]
-      else
-        []
-      end
       
       option_html = %{
         <ul class="card-menu">
@@ -107,12 +97,11 @@ module Wagn
               <li>#{ link_to_page "type: #{card.type_name}", card.type_name }</li>
             </ul>
           </li>
-          <li>#{ link_to_action 'admin', :options, :class=>'slotter' }
-            #{
-            if !admin_items.empty?
-              %{<ul>#{ admin_items.map do |i| "<li>#{i}</li>" end.join } </ul>}
-            end
-            }
+          #{ if card && card.update_account_ok? 
+            "<li>#{ link_to_action 'account', :account, :class=>'slotter' }</li>"
+          end
+          }
+          <li>#{ link_to_action 'advanced', :options, :class=>'slotter' }
           </li>
           #{ if Account.logged_in? && !card.new_card? 
               "<li>#{ render_watch }</li>"
@@ -132,7 +121,8 @@ module Wagn
       wrap :closed, args do
         %{
           <div class="card-header">
-            #{ link_to raw('&oplus;'), path(:read, :view=>:open), :title => "open #{card.name}", :class => "toggler slotter", :remote => true }
+            #{ link_to '', path(:read, :view=>:open), :title => "open #{card.name}", :remote => true,
+              :class => "ui-icon ui-icon-circle-triangle-e toggler slotter" }
             #{ _render_title }
           </div>
           #{ wrap_content( :closed ) { _render_closed_content } }
@@ -352,7 +342,7 @@ module Wagn
       fieldset label, content, :help=>help_settings, :attribs=>attribs
     end
 
-    define_view :option_account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
+    define_view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
 
       locals = {:slot=>self, :card=>card, :account=>card.to_user }
       wrap :options, args.merge(:frame=>true) do

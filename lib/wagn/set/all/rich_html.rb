@@ -79,6 +79,7 @@ module Wagn
     end
   
     define_view :menu do |args|
+      #goto_icon = %{<a class="ui-icon ui-icon-arrowreturnthick-1-e"></a>}
       
       option_html = %{
         <ul class="card-menu">
@@ -90,22 +91,36 @@ module Wagn
                 <li>#{ link_to_action 'history', :changes, :class=>'slotter' }</li>
             </ul>
           </li>
-          <li>#{ link_to_action 'view', :read, :class=>'slotter' }            
+          <li>#{ link_to_action 'view', :read, :class=>'slotter' }   
             <ul>
-              <li>#{ link_to_action 'refresh', :read, :class=>'slotter' }</li>
-              <li>#{ link_to 'as main', path(:read) }</li>
-              <li>#{ link_to_page "type: #{card.type_name}", card.type_name }</li>
-            </ul>
+            #{ 
+              %w{ titled open closed content }.map do |view|
+                "<li>#{ link_to_action view, view, :class=>'slotter' }</li>"
+              end.join "\n"
+            }
+            </ul>         
           </li>
           #{ if card && card.update_account_ok? 
             "<li>#{ link_to_action 'account', :account, :class=>'slotter' }</li>"
           end
           }
           <li>#{ link_to_action 'advanced', :options, :class=>'slotter' }
+            <ul>
+              <li>#{ link_to_action 'rules', :options, :class=>'slotter' }
+              <li>#{ link_to_page raw("#{card.type_name} &crarr;"), card.type_name }</li>
+              #{
+                card.cardname.piece_names.map do |piece|
+                  #"<li>#{ link_to_page raw("#{goto_icon} #{piece}"), piece }</li>"
+                  "<li>#{ link_to_page raw("#{piece} &crarr;"), piece }</li>"
+                end.join "\n"
+              }
+            </ul>    
           </li>
-          #{ if Account.logged_in? && !card.new_card? 
+          #{ 
+            if Account.logged_in? && !card.new_card? 
               "<li>#{ render_watch }</li>"
-             end }
+            end
+          }
         </ul>      
       }
       #fixme - many of these (including watch) need permission checks for activation

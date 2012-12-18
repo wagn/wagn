@@ -49,20 +49,20 @@ h1.card-title {
 }
 .card-menu-link {
   float: right;
-  min-width: 70px;
+  min-width: 90px;
   text-align: right;
 }
 .card-menu-link a {
   display: inline-block;
 }
 .card-menu {
-  display:none;
+  display: none;
   position:absolute;
   z-index: 1;
 }
 .card-menu .ui-menu-icon {
   float: left;
-  margin-right: 15px;
+  margin-right: 5px;
 }
 .card-menu .ui-menu-item {
   text-align: right;
@@ -72,8 +72,9 @@ h1.card-title {
   color: #333;
 }
 .card-header .toggler {
-  font-size: 1.5em;
   display: inline-block;
+  position: relative;
+  top: 2px;
 }
 .name-editor input {
   width: 100%;

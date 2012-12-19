@@ -84,6 +84,7 @@ class ApplicationController
   # ----------( rendering methods ) -------------
 
   def wagn_redirect url
+    url = wagn_url url #make sure we have absolute url
     if ajax?
       render :text => url, :status => 303
     else

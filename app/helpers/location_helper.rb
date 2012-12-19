@@ -23,8 +23,8 @@ module LocationHelper
   def save_location
     return if ajax? || !html? || !@card.known?
 
-    discard_locations_for(@card)
-    @previous_location = wagn_path(@card)
+    discard_locations_for @card
+    @previous_location = wagn_path @card
     location_history.push @previous_location
   end
 
@@ -50,7 +50,7 @@ module LocationHelper
 
 
   # FIXME: missing test
-  def url_for_page( title, opts={} )
+  def path_for_page( title, opts={} )
     format = (opts[:format] ? ".#{opts.delete(:format)}"  : "")
     vars = ''
     if !opts.empty?
@@ -61,13 +61,13 @@ module LocationHelper
     wagn_path "/#{title.to_name.url_key}#{format}#{vars}"
   end
 
-  def wagn_path( rel ) #should be in cardname?
+  def wagn_path( rel ) #should be in smartname?
     rel_path = Card===rel ? rel.cardname.url_key : rel
     Wagn::Conf[:root_path].to_s + ( rel_path =~ /^\// ? '' : '/' ) + rel_path
   end
 
-  def wagn_url( rel ) #should be in cardname?
-    "#{Wagn::Conf[:base_url]}#{wagn_path(rel)}"
+  def wagn_url rel #should be in smartname?
+    rel =~ /^http\:/ ? rel : "#{Wagn::Conf[:base_url]}#{wagn_path(rel)}"
   end
 
 
@@ -76,7 +76,7 @@ module LocationHelper
   def link_to_page( text, title=nil, options={})
     title ||= text
     url_options = (options[:type]) ? {:type=>options[:type]} : {}
-    url = url_for_page(title, url_options)
+    url = path_for_page(title, url_options)
     link_to text, url, options
   end
 

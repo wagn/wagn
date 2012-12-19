@@ -6,6 +6,9 @@ class InvitationError < StandardError; end
 require 'card/reference'
 
 class AccountController < CardController
+class AccountController < ApplicationController
+  # This is often needed for the controllers to work right
+  # FIXME: figure out when/why this is needed and why the tests don't fail
   Card
   Card::Reference
 

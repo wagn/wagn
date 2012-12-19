@@ -23,10 +23,17 @@ module Chunk
     attr_accessor :text, :unmask_text, :unmask_mode, :revision, :card
 
     def initialize match_data, content
+      #raise inspect if self.cardname == 'address+*right+city'
       @text = match_data[0]
       @content = content
       @unmask_mode = :normal
       @card = content.card
+      #warn "init chunk #{inspect}" if @card.name == 'address+*right+city'
+      self
+    end
+
+    def inspect
+      "#<#{self.class}##{object_id} Txu:#{@unmask_text} t:#{@text}: C:#{@content.gsub("\n", '\\n')[0,40]}:#{@unmask_mode}:Card:#{@card.inspect} #{@cardname.nil? ? '' : " :ref:#{@cardname}::#{@link_text}"}>"
     end
 
     # Find all the chunks of the given type in content

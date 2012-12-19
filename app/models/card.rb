@@ -20,7 +20,6 @@ class Card
   belongs_to :card, :class_name => 'Card', :foreign_key => :creator_id
   belongs_to :card, :class_name => 'Card', :foreign_key => :updater_id
 
-  cattr_accessor :cache  
   attr_accessor :comment, :comment_author, :selected_rev_id,
     :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
     :cards, :loaded_trunk, :nested_edit, # should be possible to merge these concepts
@@ -253,7 +252,6 @@ class Card
   rescue Exception=>e
     expire_pieces
     @subcards.each{ |card| card.expire_pieces }
-    Rails.logger.info "after save issue: #{e.message}"
     raise e
   end
 
@@ -295,10 +293,9 @@ class Card
 
   def destroy
     run_callbacks( :destroy ) do
-      deps = self.dependents # already called once.  reuse?
       @trash_changed = true
       self.update_attributes :trash => true
-      deps.each do |dep|
+      dependents.each do |dep|
         dep.destroy
       end
       true
@@ -375,12 +372,18 @@ class Card
 
   def dependents
     return [] if new_card?
-    wql_key = simple? ? :part : :left
-    Account.as_bot do
-      Card.search( wql_key=>name ).map do |c|
-        [ c ] + c.dependents
-      end.flatten
+
+    if @dependents.nil?
+      @dependents = 
+        Account.as_bot do
+          deps = Card.search( { (simple? ? :part : :left) => name } ).to_a
+          deps.inject(deps) do |array, card|
+            array + card.dependents
+          end
+        end
+      Rails.logger.warn "dependents[#{inspect}] #{@dependents.inspect}"
     end
+    @dependents
   end
 
   def repair_key
@@ -567,7 +570,8 @@ class Card
     "#<#{self.class.name}" + "##{id}" +
     "###{object_id}" + #"k#{tag_id}g#{tag_id}" +
     "[#{debug_type}]" + "(#{self.name})" + #"#{object_id}" +
-    "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{virtual? &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }}" +
+    "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{frozen? ? 'Fz' : readonly? ? 'RdO' : ''}" +
+    "#{@virtual &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }}" +
     #" Rules:#{ @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}" +
     '>'
   end

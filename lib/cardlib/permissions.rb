@@ -205,7 +205,7 @@ module Cardlib::Permissions
     reset_patterns # why is this needed?
     rcard, rclass = permission_rule_card :read
     self.read_rule_id = rcard.id #these two are just to make sure vals are correct on current object
-    Rails.logger.warn "updating read rule for #{inspect} to #{rcard.inspect}, #{rclass}"
+    #Rails.logger.warn "updating read rule for #{inspect} to #{rcard.inspect}, #{rclass}"
 
     self.read_rule_class = rclass
     Card.where(:id=>self.id).update_all(:read_rule_id=>rcard.id, :read_rule_class=>rclass)

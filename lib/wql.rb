@@ -315,8 +315,8 @@ class Wql
         case item
         when 'referred_to'
           join_field = 'id'
-          cs = CardSpec.build cs_args.merge( field(:cond)=>SqlCond.new("card_id in #{CardSpec.build( val.merge(:return=>'id')).to_sql}") )
-          cs.add_join :wr, :card_references, :id, :referenced_card_id
+          cs = CardSpec.build cs_args.merge( field(:cond)=>SqlCond.new("referer_id in #{CardSpec.build( val.merge(:return=>'id')).to_sql}") )
+          cs.add_join :wr, :card_references, :id, :referee_id
         else;  raise "count with item: #{item} not yet implemented"
         end
       else
@@ -429,16 +429,19 @@ class Wql
 
 
   class RefSpec < Spec
+    include Card::ReferenceTypes
+
     def initialize(spec)
       @spec = spec
+      # FIXME: Use RefernceTypes here
       @refspecs = {
-        :refer_to       => ['card_id','referenced_card_id',''],
-        :link_to        => ['card_id','referenced_card_id',"link_type='#{Card::Reference::LINK}' AND"],
-        :include        => ['card_id','referenced_card_id',"link_type='#{Card::Reference::TRANSCLUSION}' AND"],
-        :link_to_missing=> ['card_id','referenced_card_id',"link_type='#{Card::Reference::WANTED_LINK}'"],
-        :referred_to_by => ['referenced_card_id','card_id',''],
-        :linked_to_by   => ['referenced_card_id','card_id',"link_type='#{Card::Reference::LINK}' AND"],
-        :included_by    => ['referenced_card_id','card_id',"link_type='#{Card::Reference::TRANSCLUSION}' AND"]
+        :refer_to       => ['referer_id','referee_id',''],
+        :link_to        => ['referer_id','referee_id',"link_type='#{LINK}' AND"],
+        :include        => ['referer_id','referee_id',"link_type='#{INCLUDE}' AND"],
+        :link_to_missing=> ['referer_id','referee_id',"present = 0 AND link_type='#{LINK}'"],
+        :referred_to_by => ['referee_id','referer_id',''],
+        :linked_to_by   => ['referee_id','referer_id',"link_type='#{LINK}' AND"],
+        :included_by    => ['referee_id','referer_id',"link_type='#{INCLUDE}' AND"]
       }
     end
 

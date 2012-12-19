@@ -34,7 +34,7 @@ class CardController
   end
 
   def read
-    if @card.nil? || @card.errors.any?
+    if @card.errors.any?
       render_errors
     else
       save_location # should be an event!

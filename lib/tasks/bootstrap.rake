@@ -58,8 +58,8 @@ namespace :wagn do
         "( select name from cards where current_revision_id = card_revisions.id )"
       )
       ActiveRecord::Base.connection.delete( "delete from card_references where" +
-        " (referenced_card_id is not null and not exists (select * from cards where cards.id = card_references.referenced_card_id)) or " +
-        " (           card_id is not null and not exists (select * from cards where cards.id = card_references.card_id));"
+        " (referee_id is not null and not exists (select * from cards where cards.id = card_references.referee_id)) or " +
+        " (           referer_id is not null and not exists (select * from cards where cards.id = card_references.referer_id));"
       )
       ActiveRecord::Base.connection.delete( "delete from users where id > 2" ) #leave only anon and wagn bot
     end

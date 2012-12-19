@@ -18,6 +18,7 @@ module Notification
         else; 'updated'
       end
 
+      #warn "send note #{inspect}, #{action}, #{watcher_watched_pairs.inspect}"
       @trunk_watcher_watched_pairs = trunk_watcher_watched_pairs
       @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)
 
@@ -68,11 +69,19 @@ module Notification
 
     def watcher_pairs pairs=true, kind=:name
       #warn "wp #{pairs}, #{kind}, #{Account.user_id}"
+      #
       namep, rc = (kind == :type) ?  [lambda { self.type_name },
                (self.type_card.fetch(:trait=>:watchers))] :
             [lambda { self.cardname }, fetch(:trait=>:watchers)]
-      watchers = rc.nil? ? [] : rc.item_cards.map(&:id)
-      pairs ? watchers.except(Account.user_id).map {|w| [w, namep.call] } : watchers
+
+      watchers = if rc.nil? or (watcher_ids = rc.item_cards.map(&:id)).empty?
+                   
+          [] 
+        elsif pairs
+          watcher_ids.reject {|id| id == Account.user_id }.map {|i| [i, namep.call] }
+        else
+          watcher_ids
+        end
     end
   end
 

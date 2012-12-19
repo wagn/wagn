@@ -86,7 +86,7 @@ $(window).ready ->
     #   get the template menu
     #   make a copy right after menu link (or associate if necessary)
     #   do simple substitutions?
-    cm = $(this).slot().find '.card-menu'
+    cm = $(this).find '.card-menu'
     cm.menu position: { my:'right top', at:'left top' }, 
       icons:{ submenu:'ui-icon-carat-1-w' }
     cm.show()
@@ -194,8 +194,9 @@ navboxize = (term, results)->
 
   $.each ['search', 'add', 'new'], (index, key)->
     if val = results[key]
-      i = { type: key, value: term, prefix: key, label: '<strong class="highlight">' + term + '</strong>' }
+      i = { value: term, prefix: key, icon: 'plus', label: '<strong class="highlight">' + term + '</strong>' }
       if key == 'search'
+        i.icon = key
         i.term = term
       else if key == 'add'
         i.href = '/card/new?card[name]=' + encodeURIComponent(term)
@@ -206,11 +207,11 @@ navboxize = (term, results)->
       items.push i
 
   $.each results['goto'], (index, val) ->
-    items.push { type: 'goto', prefix: 'go to', value: val[0], label: val[1], href: '/' + val[2] }
+    items.push { icon: 'arrowreturnthick-1-e', prefix: 'go to', value: val[0], label: val[1], href: '/' + val[2] }
 
   $.each items, (index, i) ->
     i.label =
-      '<span class="navbox-item-label '+ i.type + '-icon">' + i.prefix + ':</span> ' +
+      '<span class="navbox-item-label"><a class="ui-icon ui-icon-'+ i.icon + '"></a>' + i.prefix + ':</span> ' +
       '<span class="navbox-item-value">' + i.label + '</span>'
 
   items

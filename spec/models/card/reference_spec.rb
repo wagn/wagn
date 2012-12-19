@@ -55,12 +55,12 @@ describe "Card::Reference" do
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
   end
 
-  it "container transclusion" do
+  it "container inclusion" do
     Card.create :name=>'bob+city'
     Card.create :name=>'address+*right+*default',:content=>"{{_L+city}}"
     Card.create :name=>'bob+address'
-    Card.fetch('bob+address').transcludees.plot(:name).should == ["bob+city"]
-    Card.fetch('bob+city').transcluders.plot(:name).should == ["bob+address"]
+    Card.fetch('bob+address').includees.plot(:name).should == ["bob+city"]
+    Card.fetch('bob+city').includers.plot(:name).should == ["bob+address"]
   end
 
   it "pickup new links on rename" do
@@ -108,28 +108,28 @@ describe "Card::Reference" do
   end
 
   it "update referencing content on rename junction card" do
-    @ab = Card["A+B"] #linked to from X, transcluded by Y
+    @ab = Card["A+B"] #linked to from X, included by Y
     @ab.update_attributes! :name=>'Peanut+Butter', :update_referencers => true
     @x = Card['X']
     @x.content.should == "[[A]] [[Peanut+Butter]] [[T]]"
   end
 
   it "update referencing content on rename junction card" do
-    @ab = Card["A+B"] #linked to from X, transcluded by Y
+    @ab = Card["A+B"] #linked to from X, included by Y
     @ab.update_attributes! :name=>'Peanut+Butter', :update_referencers=>false
     @x = Card['X']
     @x.content.should == "[[A]] [[A+B]] [[T]]"
   end
 
-  it "template transclusion" do
+  it "template inclusion" do
     cardtype = Card.create! :name=>"ColorType", :type=>'Cardtype', :content=>""
     Card.create! :name=>"ColorType+*type+*content", :content=>"{{+rgb}}"
     green = Card.create! :name=>"green", :type=>'ColorType'
     rgb = newcard 'rgb'
     green_rgb = Card.create! :name => "green+rgb", :content=>"#00ff00"
 
-    green.reload.transcludees.plot(:name).should == ["green+rgb"]
-    green_rgb.reload.transcluders.plot(:name).should == ['green']
+    green.reload.includees.plot(:name).should == ["green+rgb"]
+    green_rgb.reload.includers.plot(:name).should == ['green']
   end
 
   it "simple link" do
@@ -147,11 +147,11 @@ describe "Card::Reference" do
   end
 
 
-  it "simple transclusion" do
+  it "simple inclusion" do
     alpha = Card.create :name=>'alpha'
-    beta = Card.create :name=>'beta', :content=>"I transclude to {{alpha}}"
-    Card['beta'].transcludees.plot(:name).should == ['alpha']
-    Card['alpha'].transcluders.plot(:name).should == ['beta']
+    beta = Card.create :name=>'beta', :content=>"I include to {{alpha}}"
+    Card['beta'].includees.plot(:name).should == ['alpha']
+    Card['alpha'].includers.plot(:name).should == ['beta']
   end
 
   it "non simple link" do
@@ -169,7 +169,7 @@ describe "Card::Reference" do
     @e.reload.referencers.plot(:name).include?("woof").should_not == nil
   end
 
-  it "pickup new transclusions on create" do
+  it "pickup new inclusions on create" do
     @l = Card.create! :name=>"woof", :content=>"{{Lewdog}}"  # no Lewdog card yet...
     @e = Card.new(:name=>"Lewdog", :content=>"grrr")              # now there is
     @e.name_referencers.plot(:name).include?("woof").should_not == nil

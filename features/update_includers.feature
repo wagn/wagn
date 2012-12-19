@@ -1,6 +1,6 @@
 Feature: Update Includer cards
   In order for Notifications to be more user friendly
-  Users should be notified when transcluded plus cards of a card they are watching change.
+  Users should be notified when included plus cards of a card they are watching change.
 
   Background:
     Given I log in as Joe User
@@ -8,7 +8,7 @@ Feature: Update Includer cards
     And Joe Camel is watching "Ulysses"
     And Joe Admin is watching "Book"
 
-  Scenario: Watcher should be notified of updates to transcluded plus card
+  Scenario: Watcher should be notified of updates to included plus card
     When I create card "Ulysses+author" with content "James Joyce"
     Then Joe Camel should be notified that "Joe User updated \"Ulysses\""
     #And He should see "added Ulysses+author" in the email  -- FIXME need multiline matching
@@ -17,11 +17,11 @@ Feature: Update Includer cards
     Then Joe Camel should be notified that "Joe Admin updated \"Ulysses\""
     #And Joe Admin should be notified that "Joe User updated \"Ulysses\""
 
-  Scenario: Should not notify of transcluded but not plussed card
+  Scenario: Should not notify of included but not plussed card
     When I create card "illustrator" with content "Picasso"
     Then No notification should be sent
 
-  Scenario: Should not notify of plussed but not transcluded card
+  Scenario: Should not notify of plussed but not included card
     When I create card "Ulysses+random" with content "boo"
     Then No notification should be sent
 

@@ -1,7 +1,14 @@
 # -*- encoding : utf-8 -*-
 class InvitationError < StandardError; end
 
-class AccountController < ApplicationController
+#require 'wagn/sets'
+#require 'card'
+require 'card/reference'
+
+class AccountController < CardController
+  Card
+  Card::Reference
+
   before_filter :login_required, :only => [ :invite, :update ]
   helper :wagn
 
@@ -86,7 +93,8 @@ class AccountController < ApplicationController
   end
 
   def signout
-    self.session_user = nil
+    #self.session_user = nil
+    self.session_user = Card::AnonID
     flash[:notice] = "Successfully signed out"
     redirect_to Card.path_setting('/')  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
   end
@@ -119,7 +127,7 @@ class AccountController < ApplicationController
       @card.errors.add field, err unless @card.errors[field].any?
       # needed to prevent duplicates because User adds them in the other direction in user.rb
     end
-    errors
+    render_errors
   end
 
   def password_authentication(login, password)

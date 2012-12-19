@@ -87,9 +87,11 @@ class Object
     klone
   end
 
-  def m
-    time = Benchmark.measure { yield }
-    sprintf("%.2f",time.real * 1000) + 'ms'
+  def send_unless method, *args, &block
+    ( block_given? ? yield : self ) or  send method, *args
+   end
+ 
+  def send_if     method, *args, &block
+    ( block_given? ? yield : self ) and send method, *args
   end
-
 end

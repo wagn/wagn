@@ -112,6 +112,7 @@ module Wagn
     def read key
       return @local[key] unless @store
       fetch_local(key) do
+        warn "cach read #{key}, #{@store}, #{@prefix}"
         @store.read(@prefix + key)
       end
     end

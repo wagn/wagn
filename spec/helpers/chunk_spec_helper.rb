@@ -12,7 +12,7 @@ module ChunkSpecHelper
 
     def initialize str
       super
-      @renderer = Wagn::Renderer::Html.new nil
+      @renderer = Wagn::Renderer::HtmlRenderer.new nil
       init_chunk_manager
     end
 

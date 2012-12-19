@@ -1,4 +1,4 @@
-module Wagn::Model::References
+module Cardlib::References
 
   def name_referencers(rname = key)
     Card.find_by_sql(
@@ -43,14 +43,14 @@ module Wagn::Model::References
       has_many :in_references,:class_name=>'Card::Reference', :foreign_key=>'referenced_card_id'
       has_many :out_references,:class_name=>'Card::Reference', :foreign_key=>'card_id', :dependent=>:destroy
 
-      has_many :in_transclusions, :class_name=>'Card::Reference', :foreign_key=>'referenced_card_id',:conditions=>["link_type in (?,?)",Card::Reference::TRANSCLUSION, Card::Reference::WANTED_TRANSCLUSION]
-      has_many :out_transclusions,:class_name=>'Card::Reference', :foreign_key=>'card_id',           :conditions=>["link_type in (?,?)",Card::Reference::TRANSCLUSION, Card::Reference::WANTED_TRANSCLUSION]
+      has_many :in_inclusions, :class_name=>'Card::Reference', :foreign_key=>'referenced_card_id',:conditions=>["link_type in (?,?)",Card::Reference::INCLUSION, Card::Reference::WANTED_INCLUSION]
+      has_many :out_inclusions,:class_name=>'Card::Reference', :foreign_key=>'card_id',           :conditions=>["link_type in (?,?)",Card::Reference::INCLUSION, Card::Reference::WANTED_INCLUSION]
 
       has_many :referencers, :through=>:in_references
-      has_many :transcluders, :through=>:in_transclusions, :source=>:referencer
+      has_many :includers, :through=>:in_inclusions, :source=>:referencer
 
       has_many :referencees, :through=>:out_references
-      has_many :transcludees, :through=>:out_transclusions, :source=>:referencee # used in tests only
+      has_many :includees, :through=>:out_inclusions, :source=>:referencee # used in tests only
 
       after_create :update_references_on_create
       after_destroy :update_references_on_destroy

@@ -1,4 +1,4 @@
-module Wagn::Model::Attach
+module Cardlib::Attach
   def attach_array(rev_id=nil)
     c=if rev_id || self.new_card? || selected_rev_id==current_revision_id
         self.content

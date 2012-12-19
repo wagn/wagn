@@ -67,7 +67,7 @@ module Wagn
     alias_view :closed_content, { :right=>'create' }, { :right=>'read' }, { :right=>'update' }, { :right=>'delete' }, { :right=>'comment' }
   end
   
-  class Renderer::Html
+  class Renderer::HtmlRenderer
 
     private
 

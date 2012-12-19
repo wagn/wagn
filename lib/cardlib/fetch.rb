@@ -3,7 +3,7 @@
 # A multipurpose retrieval operator that incorporates caching, "virtual" card retrieval
 
 
-module Wagn::Model::Fetch
+module Cardlib::Fetch
   mattr_accessor :cache
 
   module ClassMethods
@@ -26,33 +26,39 @@ module Wagn::Model::Fetch
     def fetch mark, opts = {}
       # "mark" here means a generic identifier -- can be a numeric id, a name, a string name, etc.
 #      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{cardname}" do
-      return nil if mark.nil?
-      #warn "fetch #{mark.inspect}, #{opts.inspect}"
-      # Symbol (codename) handling
-      if Symbol===mark
-        mark = Wagn::Codename[mark] || raise("Missing codename for #{mark.inspect}")
-      end
+      if mark.nil?
+        return if opts[:new].nil?
 
-
-      cache_key, method, val = if Integer===mark
-        [ "~#{mark}", :find_by_id_and_trash, mark ]
       else
-        key = mark.to_name.key
-        [ key, :find_by_key_and_trash, key ]
-      end
+        # don't need a mar
 
-      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      # lookup card
+        #warn "fetch #{mark.inspect}, #{opts.inspect}"
+        # Symbol (codename) handling
+        if Symbol===mark
+          mark = Wagn::Codename[mark] || raise("Missing codename for #{mark.inspect}")
+        end
 
-      #Cache lookup
-      result = Card.cache.read cache_key if Card.cache
-      card = (result && Integer===mark) ? Card.cache.read(result) : result
-      #warn "fetch R #{cache_key}, #{method}, R:#{result}, c:#{card&&card.name}"
 
-      unless card
-        # DB lookup
-        needs_caching = true
-        card = Card.send method, val, false
+        cache_key, method, val = if Integer===mark
+          [ "~#{mark}", :find_by_id_and_trash, mark ]
+        else
+          key = mark.to_name.key
+          [ key, :find_by_key_and_trash, key ]
+        end
+
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # lookup card
+
+        #Cache lookup
+        result = Card.cache.read cache_key if Card.cache
+        card = (result && Integer===mark) ? Card.cache.read(result) : result
+        #warn "fetch R #{cache_key}, #{method}, R:#{result}, c:#{card&&card.name}"
+
+        unless card
+          # DB lookup
+          needs_caching = true
+          card = Card.send method, val, false
+        end
       end
 
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -201,7 +207,7 @@ module Wagn::Model::Fetch
 
   def self.included(base)
     super
-    base.extend Wagn::Model::Fetch::ClassMethods
+    base.extend Cardlib::Fetch::ClassMethods
   end
 end
 

@@ -1,13 +1,15 @@
 module Wagn
-  module Set::Right::Email
-    include Sets
+  module Set
+    module Right::Email
+      include Sets
 
-    format :base
+      format :base
 
-    define_view  :raw, :right=>'email'  do |args|
-      account=User.where(:card_id=>card.left.id).first
-      account ? account.send('email') : ''
+      define_view  :raw, :right=>'email'  do |args|
+        account=User.where(:card_id=>card.left.id).first
+        account ? account.send('email') : ''
+      end
+      alias_view :raw, {:right=>'email'}, :core
     end
-    alias_view :raw, {:right=>'email'}, :core
   end
 end

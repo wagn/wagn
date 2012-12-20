@@ -137,7 +137,7 @@ a.email-link {
   color: #069;
   background: #ffc;
 }
-
+/*
 .content-view p,
 .content-view span,
 .content-view a,
@@ -149,7 +149,7 @@ a.email-link {
   -moz-border-radius: inherit;
   border-radius: inherit;
 }
-
+*/
 
 /* note:   ".card-slot .content-view div not(.editor)" was not working properly and was breaking nested block elements.
    without it nested divs in content-view areas probably won't highlight  */

@@ -62,9 +62,9 @@ module Wagn
     define_view :header do |args|
       %{
         <div class="card-header">
-          #{ _optional_render :menu_link, args }
           #{ _optional_render :closer, args, default_hidden=true }        
           #{ _render_title }
+          #{ _optional_render :menu_link, args }
         </div>
       }
     end
@@ -100,13 +100,9 @@ module Wagn
             }
             </ul>         
           </li>
-          #{ if card && card.update_account_ok? 
-            "<li>#{ link_to_action 'account', :account, :class=>'slotter' }</li>"
-          end
-          }
           <li>#{ link_to_action 'advanced', :options, :class=>'slotter' }
             <ul>
-              <li>#{ link_to_action 'rules', :options, :class=>'slotter' }
+              <li>#{ link_to_action 'rules', :options, :class=>'slotter' }</li>
               <li>#{ link_to_page raw("#{card.type_name} &crarr;"), card.type_name }</li>
               #{
                 card.cardname.piece_names.map do |piece|
@@ -119,6 +115,11 @@ module Wagn
           #{ 
             if Account.logged_in? && !card.new_card? 
               "<li>#{ render_watch }</li>"
+            end
+          }
+          #{
+            if card && card.update_account_ok? 
+              "<li>#{ link_to_action 'account', :account, :class=>'slotter' }</li>"
             end
           }
         </ul>      

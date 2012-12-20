@@ -94,13 +94,13 @@ describe URIChunk, "URI chunk tests" do
         :scheme =>'http', :host =>'www.example.com.tw', :port => '80', :path => '/HelpOnNavigation',
         :query => 'arg=val&arg2=val2',
         :link_text => 'http://www.example.com.tw:80/HelpOnNavigation?arg=val&arg2=val2')
-  # with an anchor
-  match_chunk(URIChunk, 'irc://irc.freenode.net#recentchangescamp',
+    # with an anchor
+    match_chunk(URIChunk, 'irc://irc.freenode.net#recentchangescamp',
         :scheme =>'irc', :host =>'irc.freenode.net',
         :fragment => '#recentchangescamp',
         :link_text => 'irc://irc.freenode.net#recentchangescamp')
 
-  # HTTPS
+    # HTTPS
     match_chunk(URIChunk, 'https://www.example.com',
         :scheme =>'https', :host =>'www.example.com', :port => nil, :path => nil, :query => nil,
         :link_text => 'https://www.example.com')
@@ -131,12 +131,13 @@ describe URIChunk, "URI chunk tests" do
     match_chunk(URIChunk, 'http://support.microsoft.com/default.aspx?scid=kb;en-us;234562',
         :scheme =>'http', :host => 'support.microsoft.com', :path => '/default.aspx',
         :query => 'scid=kb;en-us;234562')
+
   end
 
   it "should test_email_uri" do
-  match_chunk(URIChunk, 'mail@example.com',
-    :user => 'mail', :host => 'example.com', :link_text => 'mail@example.com'
-  )
+    match_chunk(URIChunk, 'mail@example.com',
+      :user => 'mail', :host => 'example.com', :link_text => 'mail@example.com'
+    )
   end
 
   it "should test_non_email" do

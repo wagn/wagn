@@ -57,7 +57,7 @@ module ChunkManager
     text.scan(MASK_RE[ACTIVE_CHUNKS]){|a| yield a[0] }
   end
 
-  def find_chunks(chunk_type)
+  def find_chunks chunk_type=Chunk::Abstract
     @chunks.select { |chunk| chunk.kind_of?(chunk_type) and chunk.rendered? }
   end
 

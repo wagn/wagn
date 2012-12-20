@@ -78,7 +78,7 @@ class Card < ActiveRecord::Base
         super
       end
     rescue NameError
-        warn "ne: const_miss #{e.inspect}, #{const_name} R:#{x}\n#{caller*"\n"}" if const_name.to_sym==:Card; x
+        warn "ne: const_miss #{e.inspect}, #{const}" if const.to_sym==:Card
     end
 
     def setting name

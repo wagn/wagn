@@ -1,15 +1,15 @@
 .card-frame {
-  margin: 1px 0px;
-  padding: 0px !important;
+  margin: 1px 0;
+  padding: 0 !important;
   -moz-border-radius: 8px;
   border-radius: 8px;
   border: 1px solid #aaa;
   border-bottom: 2px solid #ccc;
   border-right: 2px solid #ccc;
   width: 100%;  /*needed for ie6, or..?*/
-  margin: 0px;
+  margin: 0;
   background: #fff;
-  padding: 0px;
+  padding: 0;
 }
 
 html>body .open-view {
@@ -31,8 +31,9 @@ html>body .open-view {
 .card-header {
   background: #8AB;
   padding: 5px 12px;
-  margin: 0px;
+  margin: 0;
   text-align: left;
+  overflow: hidden;
 }
 .card-header,
 .card-header a,

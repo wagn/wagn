@@ -97,11 +97,11 @@ class CardActionTest < ActionController::IntegrationTest
       t2 = Card.create! :name => "Testable1+bandana", :content => "world"
     end
 
-    get url_for_page( t1.name )
-    get url_for_page( t2.name )
+    get path_for_page( t1.name )
+    get path_for_page( t2.name )
 
     post 'card/delete/~' + t2.id.to_s
-    assert_redirected_to url_for_page( t1.name )
+    assert_redirected_to path_for_page( t1.name )
     assert_nil Card[ t2.name ]
 
     post 'card/delete/~' + t1.id.to_s

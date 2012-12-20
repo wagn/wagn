@@ -26,7 +26,7 @@ RSpec::Core::ExampleGroup.send :include, CaptchaExampleMethods
 
 describe CardController, "captcha_required?" do
   before do
-    Session.as_bot do
+    Account.as_bot do
       Card["*all+*captcha"].update_attributes! :content=>"1"
       Card.create :name=>'Book+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
 #      c=Card["Book"];c.permit(:create, Role[:anyone]);c.save!
@@ -45,18 +45,18 @@ describe CardController, "captcha_required?" do
     end
 
     it "is false when global setting is off" do
-      Session.as_bot { c= Card['*all+*captcha']; c.content='0'; c.save! }
+      Account.as_bot { c= Card['*all+*captcha']; c.content='0'; c.save! }
       @controller.send(:captcha_required?).should be_false
     end
 
     it "is true when type card setting is on and global setting is off" do
-      Session.as_bot { c= Card['*all+*captcha']; c.content='0'; c.save! }
+      Account.as_bot { c= Card['*all+*captcha']; c.content='0'; c.save! }
       get :new, :type=>"Book"
       @controller.send(:captcha_required?).should be_true
     end
 
     it "is false when type card setting is off and global setting is on" do
-      Session.as_bot do
+      Account.as_bot do
         c= Card['Book+*type+*captcha']; c.content='0'; c.save!
       end
       get :new, :type=>"Book"
@@ -67,7 +67,7 @@ end
 
 describe CardController, "with captcha enabled requires captcha on" do
   before do
-    Session.as_bot do
+    Account.as_bot do
       Card["*all+*captcha"].update_attributes! :content=>"1"
       #FIXME it would be nice if there were a simpler idiom for this
       Card.create :name=>'Basic+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
@@ -85,13 +85,13 @@ end
 
 describe AccountController, "with captcha enabled" do
   before do
-    Session.as_bot do
+    Account.as_bot do
       Card["*all+*captcha"].update_attributes! :content=>"1"
       #FIXME it would be nice if there were a simpler idiom for this
     end
   end
 
-  Session.as Card::AnonID do
+  Account.as Card::AnonID do
     require_captcha_on(
       :signup,
       :card => { :name => "Bob", :type=>"Account Request" },

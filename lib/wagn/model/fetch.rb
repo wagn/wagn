@@ -14,6 +14,14 @@ module Wagn::Model::Fetch
     #   - cache
     #   - database
     #   - virtual cards
+    #
+    #   Options:
+    #     :skip_vitual                Real cards only
+    #     :skip_modules               Don't load Set modules
+    #     :loaded_trunk => card       Loads the card's trunk
+    #     :new => {  card opts }      Return a new card when not found
+    #     :trait => :code (or [:c1, :c2] maybe?)  Fetches base card + tag(s)
+    #
 
     def fetch mark, opts = {}
       # "mark" here means a generic identifier -- can be a numeric id, a name, a string name, etc.
@@ -57,7 +65,7 @@ module Wagn::Model::Fetch
         #  return nil # we can get a fetch for a trashed card, this is fixed allready in forward branch
         #end
       else
-        return nil if card && opts[:skip_virtual] && card.new_card?
+        return card.fetch_new(opts) if card && opts[:skip_virtual] && card.new_card?
 
         # NEW card -- (either virtual or missing)
         if card.nil? or ( !opts[:skip_virtual] && card.type_id==-1 )
@@ -75,12 +83,11 @@ module Wagn::Model::Fetch
         Card.cache.write "~#{card.id}", card.key if card.id and card.id != 0
       end
 
-      return nil if card.new_card? and ( opts[:skip_virtual] || !card.virtual? )
+      return card.fetch_new(opts) if card.new_card? and ( opts[:skip_virtual] || !card.virtual? )
 
       #warn "fetch returning #{card.inspect}"
       card.include_set_modules unless opts[:skip_modules]
       card
-#      end
     end
 
     def fetch_or_new cardname, opts={}
@@ -115,7 +122,7 @@ module Wagn::Model::Fetch
     end
 
     # set_names reverse map (cached)
-    def members(key)
+    def members key
       (v=Card.cache.read "$#{key}").nil? ? [] : v.keys
     end
 
@@ -139,8 +146,23 @@ module Wagn::Model::Fetch
 
   end
 
+  # ~~~~~~~~~~ Instance ~~~~~~~~~~~~~
+  
+  def fetch opts={}
+    #warn "fetch_new #{cardname.inspect}, #{opts.inspect}"
+    if traits = opts.delete(:trait)
+       traits = [traits] unless Array===traits
+       traits.inject(self) { |card, trait| Card.fetch( card.cardname.trait(trait), opts ) }
+    end
+  end
+
+  def fetch_new opts={}
+    #warn "fetch_new #{cardname.inspect}, #{opts.inspect}"
+    opts = opts[:new] and Card.new opts.merge(:name=>cardname)
+  end
+
   def expire_pieces
-    cardname.pieces.each do |piece|
+    cardname.piece_names.each do |piece|
       #warn "clearing for #{piece.inspect}"
       Card.expire piece
     end

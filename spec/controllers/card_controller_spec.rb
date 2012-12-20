@@ -164,7 +164,7 @@ describe CardController do
     include AuthenticatedTestHelper
 
     before do
-      Session.as 'joe_user'
+      Account.as 'joe_user'
       @user = User['joe_user']
       @request    = ActionController::TestRequest.new
       @response   = ActionController::TestResponse.new
@@ -183,7 +183,9 @@ describe CardController do
     describe "#read" do
       it "works for basic request" do
         get :read, {:id=>'Sample_Basic'}
-        response.should have_selector('body')
+        response.body.match(/\<body[^>]*\>/im).should be_true
+        # have_selector broke in commit 8d3bf2380eb8197410e962304c5e640fced684b9, presumably because of a gem (like capybara?)
+        #response.should have_selector('body')
         assert_response :success
         'Sample Basic'.should == assigns['card'].name
       end
@@ -247,10 +249,9 @@ describe CardController do
 
 
     it "rename without update references should work" do
-      Session.as 'joe_user'
+      Account.as 'joe_user'
       f = Card.create! :type=>"Cardtype", :name=>"Apple"
       xhr :post, :update, :id => "~#{f.id}", :card => {
-        :confirm_rename => true,
         :name => "Newt",
         :update_referencers => "false",
       }
@@ -260,7 +261,7 @@ describe CardController do
     end
 
     it "update typecode" do
-      Session.as 'joe_user'
+      Account.as 'joe_user'
       xhr :post, :update, :id=>"~#{@simple_card.id}", :card=>{ :type=>"Date" }
       assert_response :success, "changed card type"
       Card['Sample Basic'].typecode.should == :date
@@ -273,7 +274,7 @@ describe CardController do
     #  for now.
     #
     #  def test_update_cardtype_no_stripping
-    #    Session.as 'joe_user'
+    #    Account.as 'joe_user'
     #    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
     #    #assert_equal "boo", assigns['card'].content
     #    assert_equal "<br/>", assigns['card'].content

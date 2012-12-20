@@ -17,9 +17,9 @@ describe Wagn::Codename, "Codename" do
   end
 
   it "cards should exist and be indestructable" do
-    Session.as_bot do
+    Account.as_bot do
       @codes.each do |code|
-        (card=Card[code]).confirm_destroy = true
+        card = Card[code]
         card.destroy
         if err = card.errors[:cardtype].first
           err.should match "can't be altered because"

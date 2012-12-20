@@ -70,7 +70,7 @@ module Wagn
 
 
     def get_layout_content(args)
-      Session.as_bot do
+      Account.as_bot do
         case
           when (params[:layout] || args[:layout]) ;  layout_from_name
           when card                               ;  layout_from_card
@@ -101,8 +101,9 @@ module Wagn
     end
 
 
-    def wrap(view, args = {})
+    def wrap view, args = {}
       classes = ['card-slot', "#{view}-view"]
+      classes << 'card-frame' if args[:frame]
       classes << card.safe_keys if card
 
       attributes = { :class => classes.join(' ') }
@@ -116,8 +117,8 @@ module Wagn
       content_tag(:div, attributes ) { yield }
     end
 
-    def wrap_content( view, content="" )
-      raw %{<span class="#{view}-content content">#{content}</span>}
+    def wrap_content view, args={}
+      raw %{<span class="#{view}-content content #{'card-body' if args[:body] } #{args[:class]}">#{ yield }</span>}
     end
 
     def wrap_main(content)
@@ -131,7 +132,12 @@ module Wagn
 
     def edit_slot args={}
       if card.hard_template
-        raw _render_core(args)
+        _render_raw.scan( /\{\{[^\}]*\}\}/ ).map do |inc|
+          process_content( inc ).strip
+        end.join
+#        raw _render_core(args)
+      elsif card.new_card?
+        fieldset '', content_field( form )
       else
         content_field form
       end
@@ -142,89 +148,26 @@ module Wagn
       %{<div class="card-notice"></div>}
     end
 
-    def wrap_submenu
-      %{<div class="submenu">
-          <span class="submenu-left card-report"></span>
-          <span class="submenu-right">#{yield}</span>
-        </div> }
-    end
-
     def rendering_error exception, cardname
       %{<span class="render-error">error rendering #{link_to_page(cardname, nil, :title=>CGI.escapeHTML(exception.message))}</span>}
     end
 
-    def edit_submenu(current)
-      wrap_submenu do
-        [ :content, :name, :type ].map do |attr|
-          next if attr == :type and # this should be a set callback
-            card.type_template? ||
-            (card.type_id==Card::SetID && card.hard_template?) || #
-            (card.type_id==Card::CardtypeID && card.cards_of_type_exist?)
-
-          link_to attr, path(:edit, :attrib=>attr), :remote=>true,
-            :class => %{slotter edit-#{ attr }-link #{'current-subtab' if attr==current.to_sym}}
-        end.compact * "\n"
-      end
-    end
-
-    def options_submenu(current)
-      return '' unless !card || [Card::WagnBotID, Card::AnonID].member?(card.id) || card.type_id == Card::UserID
-      wrap_submenu do
-        [:account, :settings].map do |key|
-          link_to key, path(:options, :attrib=>key), :remote=>true,
-            :class=> %{slotter#{' current-subtab' if key==current}}
-        end * "\n"
-      end
-    end
-
-    def menu
-      menu_options = if card && card.virtual?
-        [:view,:options,:virtual]
-      else
-        [:view,:changes,:options,:related,:edit]
-      end
-      top_option = menu_options.pop
-      menu = %{<span class="card-menu">\n}
-        menu << %{<span class="card-menu-left">\n}
-          menu_options.each do |opt|
-            menu << link_to_menu_action(opt)
-          end
-        menu << "</span>"
-        menu << if top_option == :virtual
-          %{<li class="virtual-edit">Virtual</li>\n}
-        else
-          link_to_menu_action(top_option)
-        end
-      menu << "</span>"
-      menu.html_safe
-      menu
-    end
-
-
-
-    def link_to_menu_action( to_action)
-      klass = { :edit => 'edit-content-link'}
-      content_tag :li, link_to_action( to_action.to_s.capitalize, to_action,
-        :class=> "slotter #{klass[to_action]}" #{}" #{menu_action==to_action ? ' current' : ''}"
-      )
-    end
-
     def link_to_action text, to_action, html_opts={}
       html_opts[:remote] = true
-      path_options = to_action == :view ? {} : { :view => to_action}
+      path_options = to_action == :read ? {} : { :view => to_action}
       link_to text, path(:read, path_options), html_opts
     end
 
-    def name_field(form, options={})
+    def name_field form=nil, options={}
+      form ||= self.form
       form.text_field( :name, {
-        :class=>'field card-name-field',
         :value=>card.name, #needed because otherwise gets wrong value if there are updates
         :autocomplete=>'off'
       }.merge(options))
     end
 
     def type_field args={}
-      typelist = Session.createable_types
+      typelist = Account.createable_types
       typelist << card.type_name if !card.new_card?
       # current type should be an option on existing cards, regardless of create perms
 
@@ -234,13 +177,18 @@ module Wagn
       template.select_tag 'card[type]', options, args
     end
 
-    def content_field(form, options={})
+    def content_field form, options={}
       @form = form
       @nested = options[:nested]
-      raw(%{ <div class="content-editor">} +
-      ((card && !card.new_card? && !options[:skip_rev_id]) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : '') +
-      self._render_editor +
-      '</div>')
+      revision_tracking = if card && !card.new_card? && !options[:skip_rev_id]
+        form.hidden_field :current_revision_id, :class=>'current_revision_id'
+      end
+      editor_wrap :content do
+        %{
+        #{ revision_tracking }
+        #{ _render_editor    }
+        }
+      end
     end
 
     def form_for_multi
@@ -254,7 +202,19 @@ module Wagn
       @form ||= form_for_multi
     end
 
-    def option( content, args )
+    def card_form *opts
+      form_for( card, form_opts(*opts) ) { |form| yield form }
+    end
+
+    def form_opts url, classes='', other_html={}
+      url = path(url) if Symbol===url
+      opts = { :url=>url, :remote=>true, :html=>other_html }
+      opts[:html][:class] = classes + ' slotter'
+      opts[:html][:recaptcha] = 'on' if Wagn::Conf[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
+      opts
+    end
+
+    def option content, args
       args[:label] ||= args[:name]
       args[:editable]= true unless args.has_key?(:editable)
       self.options_need_save = true if args[:editable]
@@ -272,6 +232,52 @@ module Wagn
       raw %{<tr><th colspan="3" class="option-header"><h2>#{title}</h2></th></tr>}
     end
 
+    def editor_wrap type
+      content_tag( :div, :class=>"editor #{type}-editor" ) { yield }
+    end
+
+    def fieldset title, content, opts={}
+      %{
+        <fieldset #{ opts[:attribs] }>
+          <legend>
+            <h2>#{ title }</h2>
+            #{ help_text *opts[:help] }
+          </legend>
+          #{ content }
+        </fieldset>
+      }
+    end
+
+    private
+
+    def help_text *opts
+      text = case opts[0]
+        when Symbol
+          if help_card = card.rule_card( *opts )
+            with_inclusion_mode :normal do
+              subrenderer( help_card ).render_core
+            end
+          end
+        when String
+          opts[0]
+        end
+      %{<div class="instruction">#{raw text}</div>} if text
+    end
+
+    def fancy_title name=nil
+      name ||= showname
+      title = name.to_name.parts.join %{<span class="joint">+</span>}
+      raw title
+    end
+
+    def load_revisions
+      @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i
+      @revision = card.revisions[@revision_number - 1]
+      @previous_revision = @revision ? card.previous_revision( @revision.id ) : nil
+      @show_diff = (params[:mode] != 'false')
+    end
+
+    
     # navigation for revisions -
     # --------------------------------------------------
     # some of this should be in rich_html, maybe most

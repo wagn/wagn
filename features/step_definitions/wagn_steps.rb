@@ -20,7 +20,7 @@ Given /^I log out/ do
 end
 
 Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
-  Session.as_bot do
+  Account.as_bot do
     card = Card.fetch_or_create cardname
     card.content = content
     card.save!
@@ -86,7 +86,7 @@ end
 
 When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
   logged_in_as(username) do
-    visit "/card/delete/#{cardname.to_name.url_key}?confirm_destroy=true"
+    visit "/card/delete/#{cardname.to_name.url_key}"
   end
 end
 
@@ -140,6 +140,10 @@ When /^In (.*) I click "(.*)"$/ do |section, link|
   end
 end
 
+When /^I hover over the main menu$/ do
+  page.execute_script "$('#main > .card-slot .card-header > .card-menu-link').trigger('mouseenter')"
+end
+
 Then /the card (.*) should contain "([^\"]*)"$/ do |cardname, content|
   visit path_to("card #{cardname}")
   within scope_of("the main card content") do
@@ -163,6 +167,14 @@ end
 Then /^In (.*) I should not see "([^\"]*)"$/ do |section, text|
   within scope_of(section) do
     page.should_not have_content(text)
+  end
+end
+
+Then /^In (.*) I should (not )?see a ([^\"]*) with class "([^\"]*)"$/ do |selection, neg, element, selector|
+  # checks for existence of a element with a class in a selection context
+  element = 'a' if element == 'link'
+  within scope_of(selection) do
+    page.send ( neg ? :should_not : :should ), have_css( [ element, selector ] * '.' )
   end
 end
 

@@ -46,12 +46,12 @@ describe Card do
         sets.should == ['Cardtype A+*self', 'Cardtype A+*type', 'Cardtype A+*right']
       end
       it "should show type plus right sets when they exist" do
-        Session.as_bot { Card.create :name=>'Basic+A+*type plus right', :content=>'' }
+        Account.as_bot { Card.create :name=>'Basic+A+*type plus right', :content=>'' }
         sets = Card['A'].related_sets
         sets.should == ['A+*self', 'A+*right', 'Basic+A+*type plus right']
       end
       it "should show type plus right sets when they exist, and type" do
-        Session.as_bot { Card.create :name=>'Basic+Cardtype A+*type plus right', :content=>'' }
+        Account.as_bot { Card.create :name=>'Basic+Cardtype A+*type plus right', :content=>'' }
         sets = Card['Cardtype A'].related_sets
         sets.should == ['Cardtype A+*self', 'Cardtype A+*type', 'Cardtype A+*right', 'Basic+Cardtype A+*type plus right']
       end
@@ -115,7 +115,7 @@ describe Card do
   context 'when I use CardtypeE cards' do
 
     before do
-      Session.as_bot do
+      Account.as_bot do
         @c1 = Card.create :name=>'toc1', :type=>"CardtypeE",
           :content=>Card['Onne Heading'].content
         @c2 = Card.create :name=>'toc2', :type=>"CardtypeE",
@@ -173,7 +173,7 @@ describe Card do
 
   context "when I create a new rule" do
     before do
-      Session.as_bot do
+      Account.as_bot do
         @c1 = Card.create :name=>'toc1', :type=>"CardtypeE",
           :content=>Card['Onne Heading'].content
         # FIXME: CardtypeE should inherit from *default => Basic

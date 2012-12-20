@@ -118,8 +118,8 @@ module Wagn
       paging = _optional_render :paging, args
 
 %{<h1 class="page-header">Recent Changes</h1>
-<div class="open-view recent-changes">
-  <div class="open-content">
+<div class="card-frame recent-changes">
+  <div class="card-body">
     #{ paging }
   } +
       cards_by_day.keys.sort.reverse.map do |day|
@@ -227,7 +227,7 @@ module Wagn
       end
 
       def get_spec params={}
-        spec = Session.as_bot do ## why is this a wagn_bot thing?  can't deny search content??
+        spec = Account.as_bot do ## why is this a wagn_bot thing?  can't deny search content??
           spec_content = params.delete(:spec) || raw_content
           #warn "get_spec #{name}, #{spec_content}, #{params.inspect}"
           raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?

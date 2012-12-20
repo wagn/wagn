@@ -5,7 +5,8 @@ module Wagn
     format :rss
 
     define_view :show do |args|
-      render(args[:view] || params[:view] || :feed)
+    #    render( args[:view] || :feed )
+      render_feed
     end
 
     define_view :feed do |args|

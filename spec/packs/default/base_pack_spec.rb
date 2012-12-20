@@ -5,7 +5,7 @@ describe Wagn::Renderer do
   it "should render denial when user lacks read permissions" do
     c = Card.fetch('Administrator links')
     c.who_can(:read).should == [Card::AdminID]
-    Session.as(:anonymous) do
+    Account.as(:anonymous) do
       c.ok?(:read).should == false
       Wagn::Renderer.new(c).render(:core).match('denied').should_not be_nil
     end

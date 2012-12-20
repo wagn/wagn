@@ -1,7 +1,7 @@
 module AuthenticatedSystem
   protected
   def logged_in?
-    Session.logged_in?
+    Account.logged_in?
   end
 
   # Accesses the current user from the session.

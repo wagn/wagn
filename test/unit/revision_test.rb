@@ -12,23 +12,23 @@ class RevisionTest < ActiveSupport::TestCase
     author_cd1 = Card[author1.card_id]
     author_cd2 = Card[author2.card_id]
     #author1, author2 = User.find(:all, :limit=>2)
-    Session.user = Card::WagnBotID
-    rc1=author_cd1.trait_card(:roles)
+    Account.user = Card::WagnBotID
+    rc1=author_cd1.fetch(:new=>{}, :trait=>:roles)
     rc1 << Card::AdminID
-    rc2 = author_cd2.trait_card(:roles)
+    rc2 = author_cd2.fetch(:new=>{}, :trait=>:roles)
     rc2 << Card::AdminID
     author_cd1.save
     author_cd2.save
-    Session.user = author1
+    Account.user = author1
     card = newcard( 'alpha', 'stuff')
-    Session.user = author2
+    Account.user = author2
     card.content = 'boogy'
     card.save
     card.reload
 
     assert_equal 2, card.revisions.length, 'Should have two revisions'
-    assert_equal author_cd2.name, card.current_revision.author.name, 'current author'
-    assert_equal author_cd1.name, card.revisions.first.author.name,  'first author'
+    assert_equal author_cd2.name, card.current_revision.creator.name, 'current author'
+    assert_equal author_cd1.name, card.revisions.first.creator.name,  'first author'
   end
 
 =begin

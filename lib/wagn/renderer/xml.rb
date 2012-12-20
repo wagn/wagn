@@ -44,7 +44,7 @@ module Wagn
       else
         known_card = !!Card.fetch(href, :skip_modules=>true) if known_card.nil?
         cardname = href.to_name
-        text = cardname.to_show(card.name) unless text
+        text ||= showname
         #href+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
         href = full_uri Wagn::Conf[:root_path] + '/' +
           (known_card ? cardname.url_key : CGI.escape(cardname.s))
@@ -78,7 +78,7 @@ module Wagn
   end
 
   def get_layout_content(args)
-    Session.as_bot do
+    Account.as_bot do
       case
         when (params[:layout] || args[:layout]) ;  layout_from_name
         when card                               ;  layout_from_card
@@ -141,11 +141,6 @@ module Wagn
     %{<tr><td colspan="3" class="option-header"><h2>#{title}</h2></td></tr>}
   end
 
-  def link_to_menu_action( to_action)
-    menu_action = (%w{ show update }.member?(action) ? 'view' : action)
-    content_tag( :li, link_to_action( to_action.capitalize, to_action, {} ),
-      :class=> (menu_action==to_action ? 'current' : ''))
-  end
 
   def link_to_action( text, to_action, remote_opts={}, html_opts={})
     link_to_remote text, {
@@ -186,30 +181,9 @@ module Wagn
     self.form = form
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
-    Session.as_bot do
+    Account.as_bot do
       pre_content + clear_queues + self.render_editor + setup_autosave
     end
-  end
-
-  def clear_queues
-    queue_context = get_queue_context
-
-    return '' if root.js_queue_initialized.has_key?(queue_context)
-    root.js_queue_initialized[queue_context]=true
-
-    javascript_tag(
-      "Wagn.onSaveQueue['#{queue_context}']=[];\n"+
-      "Wagn.onCancelQueue['#{queue_context}']=[];"
-    )
-  end
-
-
-  def save_function
-    "if(ds=Wagn.draftSavers['#{context}']){ds.stop()}; if (Wagn.runQueue(Wagn.onSaveQueue['#{context}'])) { } else {return false}"
-  end
-
-  def cancel_function
-    "if(ds=Wagn.draftSavers['#{context}']){ds.stop()}; Wagn.runQueue(Wagn.onCancelQueue['#{context}']);"
   end
 
   def get_queue_context
@@ -217,55 +191,10 @@ module Wagn
     @nested ? context.split('_')[0..-2].join('_') : context
   end
 
-  def editor_hooks(hooks)
-    # it seems as though code executed inline on ajax requests works fine
-    # to initialize the editor, but when loading a full page it fails-- so
-    # we run it in an onLoad queue.  the rest of this code we always run
-    # inline-- at least until that causes problems.
-
-    queue_context = get_queue_context
-    code = ""
-    if hooks[:setup]
-      code << "Wagn.onLoadQueue.push(function(){\n" unless ajax_call?
-      code << hooks[:setup]
-      code << "});\n" unless ajax_call?
-    end
-    if hooks[:save]
-      code << "Wagn.onSaveQueue['#{queue_context}'].push(function(){\n #{hooks[:save]} \n });\n"
-    end
-    if hooks[:cancel]
-      code << "Wagn.onCancelQueue['#{queue_context}'].push(function(){\n #{hooks[:cancel]} \n });\n"
-    end
-    javascript_tag code
-  end
-
-  def open_close_js(js_method)
-    return '' if !ajax_call? || @depth!=0
-    javascript_tag %{Wagn.#{js_method}(getSlotFromContext('#{params[:context]}'))}
-  end
-
   def setup_autosave
     return '' if @nested or @skip_autosave
     javascript_tag "Wagn.setupAutosave('#{card.id}', '#{context}');\n"
   end
 
-
-  def captcha_tags(opts={})
-    return unless controller && controller.captcha_required?
-    return "Captcha turned on but no RECAPTCHA key configured" unless recaptcha_key = ENV['RECAPTCHA_PUBLIC_KEY']
-
-    js_lib_uri = "http://api.recaptcha.net/js/recaptcha_ajax.js"
-    card_key = card.new_record? ? "new" : card.key
-    recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>card_key) +
-    javascript_tag(
-      opts[:full] ?
-        %{jQuery.getScript("#{js_lib_uri}", function(){
-            document.getElementById('dynamic_recaptcha-#{card_key}').innerHTML='<span class="faint">loading captcha</span>';
-            Recaptcha.create('#{recaptcha_key}', document.getElementById('dynamic_recaptcha-#{card_key}'),RecaptchaOptions);
-          });
-        } :
-        %{loadScript("#{js_lib_uri}")}
-    )
-  end
  end
 end

@@ -20,7 +20,7 @@ class Card
   after_save :update_geocode
 
   def update_geocode
-    Session.as_bot do
+    Account.as_bot do
       if conf = Card['*geocode']
         if self.junction? && conf.item_names.include?( self.cardname.tag )
           address = conf.item_names.map{ |p|

@@ -1,11 +1,12 @@
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 require File.expand_path('../../packs/pack_spec_helper', File.dirname(__FILE__))
+require File.expand_path('../../helpers/chunk_spec_helper', File.dirname(__FILE__))
 
 
 
 describe Wagn::Renderer, "" do
   before do
-    Session.user= :joe_user
+    Account.user= :joe_user
     Wagn::Renderer.current_slot = nil
     Wagn::Renderer.ajax_call = false
   end
@@ -63,11 +64,11 @@ describe Wagn::Renderer, "" do
     end
 
     it "renders deny for unpermitted cards" do
-      Session.as_bot do
+      Account.as_bot do
         Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
         Card.create(:name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]')
       end
-      Session.as :joe_user do
+      Account.as :joe_user do
         assert_view_select Wagn::Renderer.new(Card.fetch('Joe no see me')).render(:core), 'span[class="denied"]'
       end
     end
@@ -103,8 +104,8 @@ describe Wagn::Renderer, "" do
       it "multi edit" do
         c = Card.new :name => 'ABook', :type => 'Book'
         rendered =  Wagn::Renderer.new(c).render( :edit )
-        #warn "rendered = #{rendered}"
-        assert_view_select rendered, 'div[class="field-in-multi"]' do
+
+        assert_view_select rendered, 'fieldset' do
           assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][~plus~illustrator][content]'
         end
       end
@@ -126,11 +127,11 @@ describe Wagn::Renderer, "" do
       end
 
       it "should have the appropriate attributes on open" do
-        assert_view_select @ocslot.render(:open), 'div[class="card-slot open-view ALL TYPE-basic SELF-a"]' do
+        assert_view_select @ocslot.render(:open), 'div[class="card-slot open-view card-frame ALL TYPE-basic SELF-a"]' do
           assert_select 'div[class="card-header"]' do
-            assert_select 'div[class="title-menu"]'
+            assert_select 'h1[class="card-title"]'
           end
-          assert_select 'span[class~="open-content content"]'
+          assert_select 'span[class~="card-body"]'
         end
       end
 
@@ -138,7 +139,7 @@ describe Wagn::Renderer, "" do
         v = @ocslot.render(:closed)
         assert_view_select v, 'div[class="card-slot closed-view ALL TYPE-basic SELF-a"]' do
           assert_select 'div[class="card-header"]' do
-            assert_select 'div[class="title-menu"]'
+            assert_select 'h1[class="card-title"]'
           end
           assert_select 'span[class~="closed-content content"]'
         end
@@ -147,7 +148,7 @@ describe Wagn::Renderer, "" do
 
     context "Simple page with Default Layout" do
       before do
-        Session.as_bot do
+        Account.as_bot do
           card = Card['A+B']
           @simple_page = Wagn::Renderer::Html.new(card).render(:layout)
           #warn "render sp: #{card.inspect} :: #{@simple_page}"
@@ -166,24 +167,19 @@ describe Wagn::Renderer, "" do
       end
 
       it "renders card header" do
-        assert_view_select @simple_page, 'a[href="/A+B"][class="page-icon"][title="Go to: A+B"]'
+        # lots of duplication here...
+        assert_view_select @simple_page, 'div[class="card-header"]' do
+          assert_select 'h1[class="card-title"]'
+        end
       end
 
       it "renders card content" do
         #warn "simple page = #{@simple_page}"
-        assert_view_select @simple_page, 'span[class="open-content content"]', 'AlphaBeta'
+        assert_view_select @simple_page, 'span[class="open-content content card-body "]', 'AlphaBeta'
       end
 
       it "renders notice info" do
         assert_view_select @simple_page, 'div[class="card-notice"]'
-      end
-
-      it "renders card footer" do
-        assert_view_select @simple_page, 'div[class="card-footer"]' do
-          assert_select 'span[class="watch-link"]' do
-            assert_select 'a[title="send emails about changes to A+B"]', "watch"
-          end
-        end
       end
 
       it "renders card credit" do
@@ -195,7 +191,7 @@ describe Wagn::Renderer, "" do
 
     context "layout" do
       before do
-        Session.as_bot do
+        Account.as_bot do
           @layout_card = Card.create(:name=>'tmp layout', :type=>'Layout')
           #warn "layout #{@layout_card.inspect}"
         end
@@ -206,14 +202,14 @@ describe Wagn::Renderer, "" do
 
       it "should default to core view for non-main inclusions when context is layout_0" do
         @layout_card.content = "Hi {{A}}"
-        Session.as_bot { @layout_card.save }
+        Account.as_bot { @layout_card.save }
 
         Wagn::Renderer.new(@main_card).render(:layout).should match('Hi Alpha')
       end
 
       it "should default to open view for main card" do
         @layout_card.content='Open up {{_main}}'
-        Session.as_bot { @layout_card.save }
+        Account.as_bot { @layout_card.save }
 
         result = Wagn::Renderer.new(@main_card).render_layout
         result.should match(/Open up/)
@@ -223,7 +219,7 @@ describe Wagn::Renderer, "" do
 
       it "should render custom view of main" do
         @layout_card.content='Hey {{_main|name}}'
-        Session.as_bot { @layout_card.save }
+        Account.as_bot { @layout_card.save }
 
         result = Wagn::Renderer.new(@main_card).render_layout
         result.should match(/Hey.*div.*Joe User/)
@@ -232,14 +228,14 @@ describe Wagn::Renderer, "" do
 
       it "shouldn't recurse" do
         @layout_card.content="Mainly {{_main|core}}"
-        Session.as_bot { @layout_card.save }
+        Account.as_bot { @layout_card.save }
 
         Wagn::Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main">Mainly {{_main|core}}</div>}
       end
 
       it "should handle non-card content" do
         @layout_card.content='Hello {{_main}}'
-        Session.as_bot { @layout_card.save }
+        Account.as_bot { @layout_card.save }
 
         result = Wagn::Renderer.new(nil).render(:layout, :main_content=>'and Goodbye')
         result.should match(/Hello.*and Goodbye/)
@@ -298,7 +294,7 @@ describe Wagn::Renderer, "" do
     end
 
     it "is used in new card forms when soft" do
-      Session.as :joe_admin do
+      Account.as :joe_admin do
         content_card = Card["Cardtype E+*type+*default"]
         content_card.content= "{{+Yoruba}}"
         content_card.save!
@@ -306,14 +302,14 @@ describe Wagn::Renderer, "" do
         help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
         card = Card.new(:type=>'Cardtype E')
 
-        assert_view_select Wagn::Renderer::Html.new(card).render_new, 'div[class="content-editor"]' do
+        assert_view_select Wagn::Renderer::Html.new(card).render_new, 'div[class~="content-editor"]' do
           assert_select 'textarea[class="tinymce-textarea card-content"]', :text => '{{+Yoruba}}'
         end
       end
     end
 
     it "is used in new card forms when hard" do
-      Session.as :joe_admin do
+      Account.as :joe_admin do
         content_card = Card.create!(:name=>"Cardtype E+*type+*content",  :content=>"{{+Yoruba}}" )
         help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
         card = Card.new(:type=>'Cardtype E')
@@ -324,34 +320,31 @@ describe Wagn::Renderer, "" do
         mock(card).rule_card(:add_help, {:fallback=>:edit_help} ).returns(help_card)
         rendered = Wagn::Renderer::Html.new(card).render_new
         #warn "rendered = #{rendered}"
-        assert_view_select rendered, 'div[class="field-in-multi"]' do
+        assert_view_select rendered, 'fieldset' do
           assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', "card[cards][~plus~Yoruba][content]"
         end
       end
     end
 
-
-
-
     it "should be used in edit forms" do
-      Session.as_bot do
+      Account.as_bot do
         config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
       end
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
       @card.content = 'Bar'
-      result = Wagn::Renderer.new(@card).render(:edit)
-      assert_view_select result, 'div[class="field-in-multi"]' do
+      result = Wagn::Renderer.new(@card).render :edit
+      assert_view_select result, 'fieldset' do
         assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][templated~plus~alpha][content]'
       end
     end
 
     it "work on type-plus-right sets edit calls" do
-      Session.as_bot do
+      Account.as_bot do
         Card.create(:name=>'Book+author+*type plus right+*default', :type=>'Phrase', :content=>'Zamma Flamma')
       end
       c = Card.new :name=>'Yo Buddddy', :type=>'Book'
       result = Wagn::Renderer::Html.new(c).render( :edit )
-      assert_view_select result, 'div[class="field-in-multi"]' do
+      assert_view_select result, 'fieldset' do
         assert_select 'input[name=?][type="text"][value="Zamma Flamma"]', 'card[cards][~plus~author][content]'
         assert_select %{input[name=?][type="hidden"][value="#{Card::PhraseID}"]},     'card[cards][~plus~author][type_id]'
       end
@@ -390,7 +383,7 @@ describe Wagn::Renderer, "" do
 
     context "HTML" do
       before do
-        Session.user= Card::WagnBotID
+        Account.user= Card::WagnBotID
       end
 
       it "should have special editor" do
@@ -473,7 +466,7 @@ describe Wagn::Renderer, "" do
 
     context "*version" do
       it "should have an X.X.X version" do
-        (render_card(:raw, :name=>'*version') =~ (/\d\.\d\.\w+/ )).should be_true
+        (render_card(:raw, :name=>'*version') =~ (/\d\.\d+\.\w+/ )).should be_true
       end
     end
 
@@ -491,7 +484,7 @@ describe Wagn::Renderer, "" do
 
     context "*account link" do
       it "should have a 'my card' link" do
-        Session.as :joe_user do
+        Account.as :joe_user do
           assert_view_select render_card(:raw, :name=>'*account links'), 'span[id="logging"]' do
             assert_select 'a[id="my-card-link"]', :text => 'Joe User'
           end
@@ -514,7 +507,7 @@ describe Wagn::Renderer, "" do
 
   context "replace refs" do
     before do
-      Session.user= Card::WagnBotID
+      Account.user= Card::WagnBotID
     end
 
     it "replace references should work on inclusions inside links" do
@@ -523,4 +516,124 @@ describe Wagn::Renderer, "" do
     end
   end
 
+
+#
+# Note that we are using stub rendering here to get links.  This isn't really a very good
+# test because it has a very special code path that is really very limited.  It gets
+# internal links expanded in html or xml style, and prety much ignores any other output.
+#
+# this should be short-lived now: moving these tests over from test/unit/renderer_test.rb and adapting as specs
+
+  include ChunkSpecHelper
+
+  #attr_accessor :controller
+
+  def setup
+    setup_user 'joe_user'
+  end
+
+  def test_replace_references_should_work_on_inclusions_inside_links
+    card = Card.create!(:name=>"test", :content=>"[[test{{test}}]]"  )
+    assert_equal "[[test{{best}}]]", Wagn::Renderer.new(card).replace_references( "test", "best" )
+  end
+
+  def controller
+    return @controller if @controller
+    @controller = CardController.new()
+#raise "App controller not created" unless @controller
+    @controller
+  end
+
+  def slot_link card, format=:html
+    renderer = Wagn::Renderer.new card, :format=>format
+    renderer.add_name_context
+    Rails.logger.warn "slat lk #{card.name},#{renderer}, #{format}"
+    result = renderer.render :content
+    m = result.match(/<(cardlink|link|a) class.*<\/(cardlink|link|a)>/)
+    (m.to_s != "") ? m.to_s : result
+  end
+
+  def test_slot_render
+    card = newcard('Baines', '[[Nixon]]')
+    assert_equal '<a class="wanted-card" href="/Nixon">Nixon</a>', slot_link(card)
+
+    lbj_link = '<a class="known-card" href="/Baines">Lyndon</a>'
+
+    card2 = newcard('Johnson', '[Lyndon][Baines]')
+    assert_equal(lbj_link, slot_link(card2))
+
+    card2.content = '[[Baines|Lyndon]]'; card2.save
+    assert_equal(lbj_link, slot_link(card2))
+
+  end
+
+  def test_slot_render_xml
+    card = newcard('Baines', '[[Nixon]]')
+    assert_equal %{<cardlink class="wanted-card" card="/Nixon">Nixon</cardlink>}, slot_link(card,:xml)
+
+    card2 = newcard('Johnson', '[Lyndon][Baines]')
+    lbj_link = %{<cardlink class=\"known-card\" card=\"/Baines\">Lyndon</cardlink>}
+    assert_equal(lbj_link, slot_link(card2,:xml))
+
+    card2.content = '[[Baines|Lyndon]]'; card2.save
+    assert_equal(lbj_link, slot_link(card2,:xml))
+
+  end
+
+  def test_slot_relative_card
+    cardA = newcard('Kennedy', '[[+Monroe]]')
+    assert_equal '<a class="wanted-card" href="/Kennedy%2BMonroe">+Monroe</a>', slot_link(cardA)
+
+    cardB = newcard('Clinton', '[[Lewinsky+]]')
+    assert_equal '<a class="wanted-card" href="/Lewinsky%2BClinton">Lewinsky</a>', slot_link(cardB)
+  end
+
+  def test_slot_relative_card_xml
+    cardA = newcard('Kennedy', '[[+Monroe]]')
+    assert_equal %{<cardlink class="wanted-card" card="/Kennedy%2BMonroe">+Monroe</cardlink>}, slot_link(cardA,:xml)
+
+    cardB = newcard('Clinton', '[[Lewinsky+]]')
+    assert_equal %{<cardlink class="wanted-card" card="/Lewinsky%2BClinton">Lewinsky+</cardlink>}, slot_link(cardB,:xml)
+  end
+
+  def test_slot_relative_url
+    card3 = newcard('recent changes', '[[/recent|Recent]]')
+    assert_equal '<a class="internal-link" href="/recent">Recent</a>', slot_link(card3)
+    card3 = newcard('rc2', '[[/recent]]')
+  end
+
+  def test_slot_external
+    card4 = newcard('google link', '[[http://google.com]]')
+    assert_equal '<a class="external-link" href="http://google.com">http://google.com</a>', slot_link(card4)
+  end
+
+  def test_slot_external_xml
+    card4 = newcard('google link', '[[http://google.com]]')
+    assert_equal '<link class="external-link" href="http://google.com">http://google.com</link>', slot_link(card4,:xml)
+  end
+
+  def internal_needs_escaping
+    card5 = newcard('userlink', '[Marie][Marie "Mad Dog" Deatherage]')
+    assert_equal '<a class="wanted-card" href="/Marie_%22Mad_Dog%22_Deatherage">Marie</a>', slot_link(card5)
+  end
+
+  def external_needs_not_escaped
+    card6 = newcard('google link2', 'wgw&nbsp; [google][http://www.google.com] &nbsp;  <br>')
+    assert_equal "wgw&nbsp; <a class=\"wanted-card\" href=\"http://www.google.com\">google</a> &nbsp;  <br>", slot_link(card6)
+  end
+
+#  def test_relative_link
+#    dude,job = newcard('Harvey',"[[#{SmartName.joint}business]]"), newcard('business')
+#ActionController::Base.logger.info("ERROR:INFO:newcard is nil: Harvey") unless dude
+#ActionController::Base.logger.info("ERROR:INFO:newcard is nil: +business") unless job
+#    card = dude.connect job, "icepicker"
+#ActionController::Base.logger.info("ERROR:INFO:newcard is nil: Harvey+business") unless card
+#    assert_equal "<a class=\"known-card\" href=\"/Harvey+business\">#{SmartName.joint}business</a>", slot_link(dude)
+#  end
+
+#  def test_relative_link_xml
+#    dude,job = newcard('Harvey',"[[#{SmartName.joint}business]]"), newcard('business')
+#    card = dude.connect job, "icepicker"
+#    assert_equal "<cardref class=\"known-card\" card=\"Harvey+business\">#{SmartName.joint}business</cardref>", slot_link(dude,:xml)
+#  end
 end

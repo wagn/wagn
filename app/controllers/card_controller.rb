@@ -22,8 +22,12 @@ class CardController < ApplicationController
   end
 
   def read
-    save_location # should be an event!
-    show
+    if @card.errors.any?
+      errors
+    else
+      save_location # should be an event!
+      show
+    end
   end
 
   def update
@@ -35,13 +39,8 @@ class CardController < ApplicationController
   end
 
   def delete
-    @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
-
-    return show(:delete) if @card.errors[:confirmation_required].any?
-
-    discard_locations_for(@card)
-
+    discard_locations_for @card
     success 'REDIRECT: *previous'
   end
 
@@ -74,8 +73,8 @@ class CardController < ApplicationController
     # if we enforce RESTful http methods, we should do it consistently,
     # and error should be 405 Method Not Allowed
 
-    author = Session.user_id == Card::AnonID ?
-        "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" : "[[#{Session.user.card.name}]]"
+    author = Account.user_id == Card::AnonID ?
+        "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" : "[[#{Account.user.card.name}]]"
     comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.strip.empty? ? '&nbsp;' : c}</p>"} * "\n"
     @card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
 
@@ -95,9 +94,9 @@ class CardController < ApplicationController
 
 
   def watch
-    watchers = @card.trait_card(:watchers )
+    watchers = @card.fetch :trait=>:watchers, :new=>{}
     watchers = watchers.refresh
-    myname = Card[Session.user_id].name
+    myname = Card[Account.user_id].name
     watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
     ajax? ? show(:watch) : read
   end
@@ -112,7 +111,7 @@ class CardController < ApplicationController
   def update_account
 
     if params[:save_roles]
-      role_card = @card.trait_card :roles
+      role_card = @card.fetch :trait=>:roles, :new=>{}
       role_card.ok! :update
 
       role_hash = params[:user_roles] || {}
@@ -122,8 +121,8 @@ class CardController < ApplicationController
 
     account = @card.to_user
     if account and account_args = params[:account]
-      unless Session.as_id == @card.id and !account_args[:blocked]
-        @card.trait_card(:account).ok! :update
+      unless Account.as_id == @card.id and !account_args[:blocked]
+        @card.fetch(:trait=>:account).ok! :update
       end
       account.update_attributes account_args
     end
@@ -139,7 +138,7 @@ class CardController < ApplicationController
   end
 
   def create_account
-    @card.trait_card(:account).ok! :create
+    @card.ok!(:create, :new=>{}, :trait=>:account)
     email_args = { :subject => "Your new #{Card.setting :title} account.",   #ENGLISH
                    :message => "Welcome!  You now have an account on #{Card.setting :title}." } #ENGLISH
     @user, @card = User.create_with_card(params[:user],@card, email_args)
@@ -147,7 +146,8 @@ class CardController < ApplicationController
     #@account = User.new(:email=>@user.email)
 #    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
     params[:attribute] = :account
-    show :options
+
+    wagn_redirect( previous_location )
   end
 
 
@@ -168,7 +168,7 @@ class CardController < ApplicationController
   end
 
   def index_preload
-    Session.no_logins? ?
+    Account.no_logins? ?
       redirect_to( Card.path_setting '/admin/setup' ) :
       params[:id] = (Card.setting(:home) || 'Home').to_name.url_key
   end
@@ -182,7 +182,7 @@ class CardController < ApplicationController
       else
         opts = params[:card] ? params[:card].clone : {}
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
-        name = params[:id] ? SmartName.unescape( params[:id] ) : opts[:name]
+        name = params[:id] || opts[:name]
         
         if @action == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
@@ -227,13 +227,11 @@ class CardController < ApplicationController
       else                 ;  Card.fetch_or_new target.to_name.to_absolute(@card.cardname)
       end
 
-    Rails.logger.info "redirect = #{redirect}, target = #{target}, new_params = #{new_params}"
     case
-    when  redirect        ; wagn_redirect ( Card===target ? url_for_page(target.cardname, new_params) : target )
+    when  redirect        ; wagn_redirect ( Card===target ? path_for_page( target.cardname, new_params ) : target )
     when  String===target ; render :text => target
     else
       @card = target
-      Rails.logger.info "view = #{new_params[:view]}"
       show new_params[:view]
     end
   end

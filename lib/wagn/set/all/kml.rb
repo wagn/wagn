@@ -6,7 +6,7 @@ module Wagn
 
     format :kml
     define_view :show do |args|
-      render(args[:view] || params[:view] || :search)
+      render( args[:view] || :search)
     end
 
     define_view :search do |args|
@@ -16,7 +16,7 @@ module Wagn
       xml.kml do
         xml.Document do
 
-          cardnames = Session.as_bot do
+          cardnames = Account.as_bot do
             # Note: we use wagn_bot to find all the applicable cards, but not for the geocode or description cards
             # This is a workaround so that folks can have maps so long as their geocode cards are publicly viewable.
             # needs deeper redesign

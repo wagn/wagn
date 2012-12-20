@@ -11,13 +11,14 @@ end
 module Wagn
   class Conf
     class << self
-      def [](key)         @@hash[key.to_sym]            end
-      def []=(key, value) @@hash[key.to_sym]=value      end
+      def [](key)         @@config[key.to_sym]          end
+      def []=(key, value) @@config[key.to_sym]=value    end
+      def config;         @@config.inspect              end
 
       WAGN_CONFIG_FILE = ENV['WAGN_CONFIG_FILE'] || File.expand_path('../wagn.yml', __FILE__)
 
       def load
-        @@hash = h = {}
+        @@config = h = {}
         f = WAGN_CONFIG_FILE
         if File.exists?( f ) and y = YAML.load_file( f ) and Hash === y
           h.merge! y
@@ -27,7 +28,7 @@ module Wagn
 
       def load_after_app
         #could do these at normal load time but can't use Rails.root
-        h = @@hash
+        h = @@config
         if base_u = h[:base_url]
           h[:base_url] = base_u.gsub!(/\/$/,'')
           h[:host] = base_u.gsub(/^https?:\/\//,'') unless h[:host]

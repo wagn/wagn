@@ -1,21 +1,8 @@
-class Card::PermissionDenied < Wagn::PermissionDenied
-  attr_reader :card
-  def initialize card
-    @card = card
-    super build_message
-  end
-
-  def build_message
-    "for card #{@card.name}: #{@card.errors[:permission_denied]}"
-  end
-end
-
-
 
 module Wagn::Model::Permissions
 
   def ydhpt
-    "#{Session.user_card.name}, You don't have permission to"
+    "#{Account.user_card.name}, You don't have permission to"
   end
 
   def approved?
@@ -39,32 +26,43 @@ module Wagn::Model::Permissions
     @operation_approved
   end
 
+
   # ok? and ok! are public facing methods to approve one operation at a time
+  #
+  #   fetching: if the optional :trait parameter is supplied, it is passed
+  #      to fetch and the test is perfomed on the fetched card, therefore:
+  #
+  #      :trait=>:account         would fetch this card plus a tag codenamed :account
+  #      :trait=>:roles, :new=>{} would be a fetch_or_new_trait
+
+  def ok_with_fetch? operation, opts={}
+    card = opts[:trait].nil? ? self : fetch(opts)
+    card.ok_without_fetch? operation
+  end
+
   def ok? operation
-    #warn "ok? #{operation}"
     @operation_approved = true
     @permission_errors = []
 
     send "approve_#{operation}"
-    # approve_* methods set errors on the card.
-    # that's what we want when doing approve? on save and checking each attribute
-    # but we don't want just checking ok? to set errors.
-    # so we hack around the errors added in approve_* by clearing them here.
-    # self.errors.clear
-
     @operation_approved
   end
+  alias_method_chain :ok?, :fetch # note: method is chained so that we can return the instance variable @operation_approved
 
-  def ok! operation
-    if ok? operation
+  def ok! operation, opts={}
+    if ok? operation, opts
       true
     else
       raise Card::PermissionDenied.new self
     end
   end
+  
+  def update_account_ok? #FIXME - temporary API
+    to_user and Account.as_id==id || fetch(:trait=>:account, :new=>{}).ok?( :update )
+  end
 
   def who_can operation
-    #warn "who_can[#{name}] #{(prc=permission_rule_card(operation)).inspect}, #{prc.first.item_cards.map(&:name)}" if operation == :update
+    #warn "who_can[#{name}] #{(prc=permission_rule_card(operation)).inspect}, #{prc.first.item_cards.map(&:name)}" #if operation == :update
     permission_rule_card(operation).first.item_cards.map(&:id)
   end
 
@@ -75,7 +73,7 @@ module Wagn::Model::Permissions
       raise Card::PermissionDenied.new(self)
     end
 
-    rcard = Session.as_bot do
+    rcard = Account.as_bot do
       if opcard.content == '_left' && self.junction?
         lcard = loaded_trunk || left_or_new( :skip_virtual=>true, :skip_modules=>true )
         lcard.permission_rule_card(operation).first
@@ -104,18 +102,18 @@ module Wagn::Model::Permissions
     #warn "creating *account ??? #{caller[0..25]*"\n"}" if name == '*account' && operation==:create
     #warn "lets_user[#{operation}]#{name}" if name=='Buffalo'
     return false if operation != :read    and Wagn::Conf[:read_only]
-    return true  if operation != :comment and Session.always_ok?
+    return true  if operation != :comment and Account.always_ok?
 
     permitted_ids = who_can operation
 
     #r=
-    if operation == :comment && Session.always_ok?
+    if operation == :comment && Account.always_ok?
       # admin can comment if anyone can
       !permitted_ids.empty?
     else
-      Session.among? permitted_ids
+      Account.among? permitted_ids
     end
-    #warn "lets_user[#{operation}]#{name} #{Session.as_card.name}, #{permitted_ids.map {|id|Card[id].name}*', '} R:#{r}" if name=='Buffalo'; r
+    #warn "lets_user[#{operation}]#{name} #{Account.as_card.name}, #{permitted_ids.map {|id|Card[id].name}*', '} R:#{r}" if name=='Buffalo'; r
   end
 
   def approve_task operation, verb=nil
@@ -129,11 +127,11 @@ module Wagn::Model::Permissions
   end
 
   def approve_read
-    #warn "AR #{name} #{Session.always_ok?}"
-    return true if Session.always_ok?
+    #warn "AR #{name} #{Account.always_ok?}"
+    return true if Account.always_ok?
     @read_rule_id ||= permission_rule_card(:read).first.id.to_i
-    #warn Rails.logger.warn("AR #{name} #{@read_rule_id}, #{Session.as_card.inspect}>")
-    unless Session.as_card.read_rules.member?(@read_rule_id.to_i)
+    #warn Rails.logger.warn("AR #{name} #{@read_rule_id}, #{Account.as_card.inspect}>")
+    unless Account.as_card.read_rules.member?(@read_rule_id.to_i)
       deny_because you_cant("read this card")
     end
   end
@@ -190,7 +188,7 @@ module Wagn::Model::Permissions
       # skip if name is updated because will already be resaved
 
       if !new_card? && updates.for(:type_id)
-        Session.as_bot do
+        Account.as_bot do
           Card.search(:left=>self.name).each do |plus_card|
             plus_card = plus_card.refresh
             plus_card.update_read_rule
@@ -214,7 +212,7 @@ module Wagn::Model::Permissions
     expire
 
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
-    Session.as_bot do
+    Account.as_bot do
       Card.search(:left=>self.name).each do |plus_card|
         if plus_card.rule(:read) == '_left'
           plus_card.update_read_rule
@@ -254,7 +252,7 @@ module Wagn::Model::Permissions
       # AND need to make sure @changed gets wiped after save (probably last in the sequence)
 
       User.cache.reset
-      Card.cache.reset # maybe be more surgical, just Session.user related
+      Card.cache.reset # maybe be more surgical, just Account.user related
       expire #probably shouldn't be necessary,
       # but was sometimes getting cached version when card should be in the trash.
       # could be related to other bugs?
@@ -265,7 +263,7 @@ module Wagn::Model::Permissions
           #warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
 
           #first update all cards in set that aren't governed by narrower rule
-           Session.as_bot do
+           Account.as_bot do
              cur_index = rule_class_ids.index Card[read_rule_class].id
              if rule_class_index = rule_class_ids.index( class_id )
                 # Why isn't this just 'trunk', do we need the fetch?

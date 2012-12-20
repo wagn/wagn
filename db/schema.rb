@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120812183334) do
+ActiveRecord::Schema.define(:version => 20121111025347) do
 
   create_table "card_references", :force => true do |t|
     t.datetime "created_at",                                      :null => false
@@ -121,6 +121,7 @@ ActiveRecord::Schema.define(:version => 20120812183334) do
     t.integer  "invite_sender_id"
     t.string   "identity_url"
     t.integer  "card_id",                                                   :null => false
+    t.integer  "account_id",                                                :null => false
   end
 
 end

@@ -16,7 +16,7 @@ describe Card do
     end
 
     it "returns nil and caches trash cards" do
-      Session.as_bot do
+      Account.as_bot do
         Card.fetch("A").destroy!
         Card.fetch("A").should be_nil
         mock.dont_allow(Card).find_by_key
@@ -30,7 +30,7 @@ describe Card do
     end
 
     it "returns virtual cards and caches them as missing" do
-      Session.as_bot do
+      Account.as_bot do
         card = Card.fetch("Joe User+*email")
         card.should be_instance_of(Card)
         card.name.should == "Joe User+*email"
@@ -48,9 +48,9 @@ describe Card do
     end
 
     it "fetches newly virtual cards" do
-      pending "needs new cache clearing"
+      #pending "needs new cache clearing"
       Card.fetch( 'A+virtual').should be_nil
-      Session.as_bot { Card.create :name=>'virtual+*right+*content' }
+      Account.as_bot { Card.create :name=>'virtual+*right+*content' }
       Card.fetch( 'A+virtual').should_not be_nil
     end
 
@@ -63,7 +63,7 @@ describe Card do
       Card.cache.reset_local
       Card.cache.local.keys.should == []
 
-      Session.as_bot do
+      Account.as_bot do
 
         a = Card.fetch("A")
         a.should be_instance_of(Card)
@@ -91,7 +91,7 @@ describe Card do
 
     describe "preferences" do
       before do
-        Session.as(Card::WagnBotID) # FIXME: as without a block is deprecated
+        Account.as(Card::WagnBotID) # FIXME: as without a block is deprecated
       end
 
       it "prefers db cards to pattern virtual cards" do
@@ -176,10 +176,10 @@ describe Card do
   end
 
   describe "#fetch_virtual" do
-    before { Session.as :joe_user }
+    before { Account.as :joe_user }
 
     it "should find cards with *right+*content specified" do
-      Session.as_bot do
+      Account.as_bot do
         Card.create! :name=>"testsearch+*right+*content", :content=>'{"plus":"_self"}', :type => 'Search'
       end
       c = Card.fetch("A+testsearch".to_name)

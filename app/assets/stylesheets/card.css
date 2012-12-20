@@ -1,23 +1,15 @@
-.open-view,
-.changes-view,
-.options-view,
-.related-view,
-.remove-view,
-.new-view,
-.denial-view,
-.not_found-view,
-.edit-view {
-  margin: 1px 0px;
-  padding: 0px !important;
+.card-frame {
+  margin: 1px 0;
+  padding: 0 !important;
   -moz-border-radius: 8px;
   border-radius: 8px;
   border: 1px solid #aaa;
   border-bottom: 2px solid #ccc;
   border-right: 2px solid #ccc;
   width: 100%;  /*needed for ie6, or..?*/
-  margin: 0px;
+  margin: 0;
   background: #fff;
-  padding: 0px;
+  padding: 0;
 }
 
 html>body .open-view {
@@ -29,49 +21,65 @@ html>body .open-view {
   white-space: normal;
 }
 
+.card-slot > form >.instruction,
+.card-slot > .instruction {
+  background: #eee;
+}
+
 /*----- header ---------*/
 
 .card-header {
-  background: #005800;
-  padding: 5px;
-  margin: 0px;
-  -moz-border-radius: 6px 6px 0 0;
-  border-radius: 6px 6px 0 0;
+  background: #8AB;
+  padding: 5px 12px;
+  margin: 0;
   text-align: left;
+  overflow: hidden;
 }
-.title-menu {
-  line-height: 18px;
+.card-header,
+.card-header a,
+.card-header h1 {
+  color: #333
 }
-.title {
-  margin: 0px 2px;
-  font-weight: bold;
-  font-size: 13px;
-  padding: 2px 0px 2px 25px;
+.card-header h1 {
+  display: inline;
+}
+h1.card-title { 
+  padding: 2px 0;
+  white-space: nowrap;
+  margin-right: 5px;
+}
+.card-menu-link {
+  float: right;
+  min-width: 90px;
+  text-align: right;
+}
+.card-menu-link a {
+  display: inline-block;
+}
+.card-menu {
+  display: none;
+  position:absolute;
+  z-index: 1;
+}
+.card-menu .ui-menu-icon {
+  float: left;
+  margin-right: 5px;
+}
+.card-menu .ui-menu-item {
+  text-align: right;
   white-space: nowrap;
 }
-.card-header a.right-arrow {
-  background: url(arrow_right.gif) no-repeat left;
+.card-menu .ui-menu-item a {
+  color: #333;
 }
-html>body .card-header a.right-arrow {
-  background-image: url(arrow_right.png);
+.card-header .toggler {
+  display: inline-block;
+  position: relative;
+  top: 2px;
 }
-.card-header a.down-arrow {
-  background: url(arrow_down.gif) no-repeat left;
+.name-editor input {
+  width: 100%;
 }
-html>body .card-header a.down-arrow {
-  background-image: url(arrow_down.png);
-}
-.card-header a.page-icon {
-  padding: 2px 7px;
-  background: url(page.gif) no-repeat right;
-}
-html>body .card-header a.page-icon {
-  background-image: url(page.png);
-}
-
-
-/* FIXE: these need the IE gifs as well */
-
 
 .ui-menu .ui-menu-item {
   padding: 2px 0;
@@ -83,111 +91,18 @@ html>body .card-header a.page-icon {
   float: left;
   width: 50px;
   padding: 3px 0 3px 25px;
-  background: left no-repeat;
+  position: relative;  
 }
-.search-icon { background-image: url(search.png); }
-.add-icon    { background-image: url(plus.png);   }
-.goto-icon   { background-image: url(page.png);   }
-
-
+.navbox-item-label > a.ui-icon {
+  padding: 0;  
+}
 .cardtype {
   font-style: italic;
   font-size: 10px;
 }
-.card-header,
-.card-header a {
-  color: #fff
-}
-html>body .card-menu-left,
-html>body .page-icon {
-  display: none;
-}
-
-
-div:hover.setting .page-icon,
-div:hover.card-header .page-icon,
-div:hover.card-header .card-menu-left {
-  display:inline;
-}
-
-.card-menu {
-   float:right;
-   white-space: nowrap;
-   position: relative;
-   right: 0px;
-   z-index: 1;
-}
-.card-menu li {
-  padding: 1px 5px;
-  margin: 0px;
-  -moz-border-radius: 4px 4px 0 0;
-  border-radius: 4px 4px 0 0;
-}
 .current {
   background: #bbb;
   padding-bottom: 5px !important;
-}
-
-.submenu {
-  background: #bbb;
-  padding: 0px 10px;
-  text-align: right;
-}
-.submenu-left {
-  float: left;
-  display: none;
-  white-space: nowrap;
-  text-align: left;
-  font-style: italic;
-  width: 30%;
-}
-.submenu a {
-  padding: 0px 5px;
-  color: #005800
-}
-.submenu a.current-subtab {
-  background: #fff;
-  color: #777;
-  padding-bottom: 3px;
-  -moz-border-radius: 4px 4px 0 0;
-  border-radius: 4px 4px 0 0;
-}
-
-.card-header li {
-  display:inline;
-}
-
-
-
-/* card footer-------------------------------*/
-.card-footer,
-.revision-navigation {
-  padding: 0px 10px;
-  font-size: 9px;
-  text-align: left;
-}
-.card-footer,
-.revision-navigation {
-   background: #bbb;
-}
-.card-footer {
-  clear: both;
-  -moz-border-radius: 0px 0px 6px 6px;
-  border-radius: 0px 0px 6px 6px;
-}
-html>body  .card-footer .footer-content {
-  display: none;
-}
-div:hover.card-footer .footer-content {
-  display: inline;
-}
-.card-footer .footer-content {
-  width: 100%;
-}
-.card-footer .watch-view {
-  float: right;
-  text-align: right;
-  white-space: nowrap;
 }
 
 
@@ -206,7 +121,7 @@ a.wanted-card {
 }
 a.external-link,
 .closed-content a.external-link {
-  color: #979;
+  color: #729;
   background: url(external_link.png) center right no-repeat;
   padding-right: 13px !important;
 }
@@ -222,7 +137,7 @@ a.email-link {
   color: #069;
   background: #ffc;
 }
-
+/*
 .content-view p,
 .content-view span,
 .content-view a,
@@ -234,7 +149,7 @@ a.email-link {
   -moz-border-radius: inherit;
   border-radius: inherit;
 }
-
+*/
 
 /* note:   ".card-slot .content-view div not(.editor)" was not working properly and was breaking nested block elements.
    without it nested divs in content-view areas probably won't highlight  */
@@ -242,131 +157,51 @@ a.email-link {
 
 /* ---------- edit tab / new / inline editing--------*/
 
-.new-name,
-.new-type {
-  white-space: nowrap;
-}
-.new-name .title {
-  padding-left: 2px;
-}
-.new-name .card-name-field {
-  width: 50%;
-}
-.new-type {
-  float: right;
-}
+.new-current-revision-id,
 .editor .revision-navigation,
 .editor .autosave-alert {
   display: none
 }
-.card-name-field {
-  background: #eef;
-  font-weight: bold;
-  color: #448;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-  padding: 1px 5px;
-}
-.edit-area {
-  background: #f9f9f9;
-  border: 0px;
-  padding: 4px;
-}
-.in-multi {
-  background: #e3e3e3;
-  padding: 1 0px;
-  margin: 1px;
+fieldset {
+  margin: 5px 1px;
+  clear: both;
   float: none !important;
   display:block;
+  border: 0;
 }
-.new-type .cardtype {
-  font-size: 14px;
-  float:right;
-}
-.edit-area p {
-  padding: 2px;
-}
-ul.pointer {
-  margin: 0px;
-  padding: 0px;
-}
-.edit-area .label {
-/* not(.fieldset)  did not compile */
-  display: block;
-  margin: 2px;
-  font-size: 12px;
-}
-.edit-area .field {
-/* not(.fieldset)  did not compile */
-  display: block;
-  margin: 4px;
-}
-.edit-area table {
-  width: 98%;
-  margin-bottom: 5px;
-}
-.edit-area .mceEditor table,
-.edit-area .mceEditor table td{
-  margin: 0px;
-  padding:0px 1px;
-  border: 0px;
-}
-.edit-area td {
-  vertical-align: middle;
-}
-.edit-area .title,
-.content-view .edit-area .title {
-  display: block;
-  font-size: 11px;
-}
-
-.label-in-multi {
-  float: left;
-  width: 25%;
-}
-.label-in-multi .title {
-  white-space: inherit;
-  padding: 1px 5px;
-}
-.field-in-multi {
+fieldset > .button-area,
+fieldset > .editor {
   float: right;
   width: 70%;
   padding: 3px;
 }
-.field-in-multi > .content-editor > input {
-  margin-left: 0;
-}
-.edit-button-area {
-  margin-top: 7px;
-}
-.in-multi .instruction,
-.in-multi .instruction p{
-  clear:left;
-  border: 0px;
-  background-color: #e3e3e3; /*hard-coded because inherit wasn't working right in IE */
-  text-align: left;
+fieldset > .button-area {
   padding: 0 3px;
 }
+fieldset > .editor > input {
+  margin-left: 0;
+}
+fieldset > legend {
+  white-space: inherit;  
+  float:left;
+  text-align:right;
+  width: 25%;
+  padding: 3px;
+  margin: 0;
+}
+fieldset > legend > .instruction {
+  text-align: right;
+  padding: 3px 0;
+}
+.button-area input,
+.button-area button {
+  margin-right: 2%;
+}
+
+
 /* for IE */
 div.content-view {
   display: inline;
-}
-.edit-name input,
-.edit-type select {
-  margin: 10px 0px;
-}
-.edit-name .instruction {
-  text-align: left;
-  margin: 10px;
-}
-.edit-name .radio {
-  padding-left: 20px;
-}
-.edit-name .field_with_errors {
-  display: inline-block;
-}
-.edit-area .delete-button {
-  float: right;
 }
 .conflict-view {
   text-align: left;
@@ -375,32 +210,27 @@ div.content-view {
   padding: 10px;
   margin-top: 12px;
 }
-.new-current-revision-id {
-  display:none;
-}
 
 /* ---------- changes tab -------*/
 
 
 .revision-header {
-  background: #ddf;
   padding: 4px;
-  border-bottom: 1px solid silver;
   text-align: center;
 }
 .revision-title {
   font-weight: bold;
 }
-.revision-header p {
-  margin: 2px;
-}
-.revision {
+.revision-content {
   margin: 0px 1px;
   padding: 10px 5px;
   background: #ffd;
 }
 .autosave-alert {
   font-weight: bold;
+}
+.revision-navigation {
+  border-bottom: 1px solid silver;
 }
 .revision-navigation span {
    margin: 0px 10px
@@ -459,17 +289,16 @@ del.diffmod,
   margin-top: 5px;
   color: #444;
 }
-.open-content,
-.revision {
+.card-body {
   display: block;
-  padding: 5px 15px 10px 15px;
+  padding: 5px 12px;
+  min-height: 25px;
 }
-
 .instruction {
   border-left: 0px;
   border-right: 0px;
 }
-
+.hidden,
 .denied {
   display: none;
 }
@@ -477,14 +306,6 @@ del.diffmod,
 
 /* -----   CONTEXTS  -------------------------------*/
 
-
-/*----- Secondary (sidebar) ----------------*/
-
-
-#secondary .card-menu {
-  display: none;
-  float:none;  /* necessary for IE */
-}
 
 /*----------recent changes -----------*/
 
@@ -510,6 +331,12 @@ body#wagn .card-slot.recent-changes h2 {
   margin: 0px 5px 0px 0px;
 }
 
+
+.titled-view > .card-header {
+   background: inherit;
+   padding: 0;
+}
+
 /*------------- closed cards -------*/
 
 .closed-view {
@@ -525,16 +352,13 @@ body#wagn .card-slot.recent-changes h2 {
   margin: 1px 0 0 0;
 }
 .closed-view .card-header {
-  padding: 3px 22px 3px 3px;
+  padding: auto 12px;
   vertical-align: middle;
   display: inline-block;
   line-height: 15px;
   -moz-border-radius: 0px 6px 6px 0px;
   border-radius: 0px 6px 6px 0px;
   margin-right: 4px;
-}
-.closed-view div:hover.card-header {
-  padding-right: 0px;
 }
 .closed-content,
 .closed-content tr,
@@ -627,6 +451,10 @@ body#wagn .card-slot.recent-changes h2 {
 }
 
 /*-------------( Pointer )--------*/
+ul.pointer {
+  margin: 0px;
+  padding: 0px;
+}
 .pointer-list-editor {
   margin: 0px;
   padding: 0px;
@@ -712,6 +540,11 @@ div.search-result-list .search-result-item {
   white-space: pre-wrap
 }
 
+.TYPE-layout > .card-editor,
+.TYPE-plain_text > .card-editor {
+  white-space: normal;
+}
+
 /*----------- (Account Request)--------------*/
 
 .invite-links {
@@ -755,5 +588,10 @@ table.perm-editor .pointer-item-text {
     padding: 8px;
     margin: 0px;
 }
-
+.ui-icon {
+  background-image: url('images/ui-icons_454545_256x240.png')
+}
+.ui-loader {
+  display: none;
+}
 

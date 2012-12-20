@@ -1,26 +1,21 @@
-require File.expand_path('../../test_helper', File.dirname(__FILE__))
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+include ChunkSpecHelper
 
 #FIXME: None of these work now, since transclusion is handled at the slot/cache
 # level, but these cases should still be covered by tests
 
 
-class TransclusionTest < ActiveSupport::TestCase
-  include ChunkTestHelper
+describe Chunk::Transclude, "transclude chunk tests" do
   include ActionView::Helpers::TextHelper
 
-  def setup
-    super
-    setup_default_user
-  end
-
-  def test_truth
+  it "should test_truth" do
     assert true
   end
 
 =begin
 
 
- def test_circular_transclusion_should_be_invalid
+ it "should test_circular_transclusion_should_be_invalid" do
     oak = Card.create! :name=>'Oak', :content=>'{{Quentin}}'
     qnt = Card.create! :name=>'Quentin', :content=>'{{Admin}}'
     adm = Card['Wagn Bot']
@@ -29,18 +24,18 @@ class TransclusionTest < ActiveSupport::TestCase
     assert_match /Circular transclusion/, adm.errors[:content]
   end
 
-  def test_missing_transclude
+  it "should test_missing_transclude" do
     @a = Card.create :name=>'boo', :content=>"hey {{+there}}"
     assert_text_equal "hey Click to create boo+there", render(@a)
   end
 
-  def test_absolute_transclude
+  it "should test_absolute_transclude" do
     alpha = newcard 'Alpha', "Pooey"
     beta = newcard 'Beta', "{{Alpha}}"
     assert_text_equal "Pooey", render(beta)
   end
 
-  def test_template_transclusion
+  it "should test_template_transclusion" do
      age, template = newcard('age'), Card['*template']
      specialtype = Card.create :typecode=>'Cardtype', :name=>'SpecialType'
 
@@ -53,7 +48,7 @@ class TransclusionTest < ActiveSupport::TestCase
      assert_text_equal ['Wooga'], wooga_age.transcluders.plot(:name)
    end
 
-  def test_relative_transclude
+  it "should test_relative_transclude" do
     alpha = newcard 'Alpha', "{{#{SmartName.joint}Beta}}"
     beta = newcard 'Beta'
     alpha_beta = alpha.connect beta, "Woot"
@@ -61,7 +56,7 @@ class TransclusionTest < ActiveSupport::TestCase
   end
 
 
-  def test_shade_option
+  it "should test_shade_option" do
     alpha = newcard 'Alpha', "Pooey"
     beta = newcard 'Beta', "{{Alpha|shade:off}}"
     assert_text_equal "Pooey", render(newcard('Bee', "{{Alpha|shade:off}}" ))
@@ -72,7 +67,7 @@ class TransclusionTest < ActiveSupport::TestCase
 
 
   # this tests container templating and transclusion syntax 'base:parent'
-  def test_container_transclusion
+  it "should test_container_transclusion" do
     bob_city = Card.create! :name=>'bob+city', :content=> "Sparta"
     address_tmpl = Card.create! :name=>'address+*template', :content =>"{{+city|base:parent}}"
     bob_address = Card.create! :name=>'bob+address'
@@ -83,7 +78,7 @@ class TransclusionTest < ActiveSupport::TestCase
   end
 
 
-  def test_nested_transclude
+  it "should test_nested_transclude" do
     alpha = newcard 'Alpha', "{{Beta}}"
     beta = newcard 'Beta', "{{Delta}}"
     delta = newcard 'Delta', "Booya"
@@ -92,7 +87,7 @@ class TransclusionTest < ActiveSupport::TestCase
 
 
   private
-  def assert_text_equal(left, right, desc="")
+  assert_text_equal(left, right, desc="")
     assert_equal strip_tags(left), strip_tags(right), desc
   end
 

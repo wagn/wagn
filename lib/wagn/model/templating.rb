@@ -1,10 +1,16 @@
 module Wagn::Model::Templating
 
-  def template?()       cardname.trait_name? :content, :default              end
-  def hard_template?()
-    #warn "ht? #{name}, #{cardname.trait_name? :content}"
-    cardname.trait_name? :content                        end
-  def type_template?()  template? && cardname.trunk_name.trait_name?(:type)  end
+  def template?
+    cardname.trait_name? :content, :default
+  end
+  
+  def hard_template?
+    cardname.trait_name? :content
+  end
+  
+  def type_template?
+    template? and cardname.trunk_name.trait_name? :type
+  end
 
   def template
     # currently applicable templating card.
@@ -51,7 +57,7 @@ module Wagn::Model::Templating
   def hard_templatee_names
     if wql = hard_templatee_spec
       #warn "ht_names_wql #{wql.inspect}"
-      Session.as_bot do
+      Account.as_bot do
         wql == true ? [name] : Wql.new(wql.merge :return=>:name).run
       end
     else [] end
@@ -65,13 +71,13 @@ module Wagn::Model::Templating
   # ps.  I think this code should be wiki references.
   def expire_templatee_references
     if wql = hard_templatee_spec
-      wql = {:name => name} if wql == true
 
-      condition = Session.as_bot { Wql::CardSpec.build(wql.merge(:return => :condition)).to_sql }
-      #warn "expire_t_refs #{name}, #{condition.inspect}"
-      card_ids_to_update = connection.select_rows("select id from cards t where #{condition}").map(&:first)
-      card_ids_to_update.each_slice(100) do |id_batch|
-        connection.execute "update cards set references_expired=1 where id in (#{id_batch.join(',')})" #FIXME:not ARec
+      wql = Account.as_bot do
+        Wql.new (wql == true ? {:name => name} :  wql).merge(:return => :id)
+      end
+
+      wql.run.each_slice(100) do |id_batch|
+        Card.where( :id => id_batch ).update_all :references_expired=>1
       end
     end
   end
@@ -81,9 +87,8 @@ module Wagn::Model::Templating
   private
 
   def hard_templatee_spec
-    #warn "htwql #{name} #{hard_template?}, #{cardname.trunk_name}, #{Card.fetch(cardname.trunk_name)}"
     if hard_template? and c=Card.fetch(cardname.trunk_name)
-      c.type_id == Card::SetID ? c.get_spec(:spec=>c.content) : true
+      c.type_id == Card::SetID ? c.get_spec : true
     end
   end
 

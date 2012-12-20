@@ -3,7 +3,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 # FIXME this shouldn't be here
 describe Wagn::Set::Type::Cardtype, ".create with :codename" do
   before do
-    Session.as :joe_user
+    Account.as :joe_user
   end
   it "should work" do
     Card.create!(:name=>"Foo Type", :codename=>"foo", :type=>'Cardtype').typecode.should==:cardtype
@@ -15,7 +15,7 @@ end
 
 describe Card, "created by Card.new " do
   before(:each) do
-    Session.as_bot do
+    Account.as_bot do
       @c = Card.new :name=>"New Card", :content=>"Great Content"
     end
   end
@@ -34,7 +34,7 @@ describe Card, "created by Card.new " do
   end
 
   it "should not override explicit content with default content" do
-    Session.as_bot do
+    Account.as_bot do
       Card.create! :name => "blue+*right+*default", :content => "joe", :type=>"Pointer"
       c = Card.new :name => "Lady+blue", :content => "[[Jimmy]]"
       c.content.should == "[[Jimmy]]"
@@ -46,7 +46,7 @@ end
 
 describe Card, "created by Card.create with valid attributes" do
   before(:each) do
-    Session.as_bot do
+    Account.as_bot do
       @b = Card.create :name=>"New Card", :content=>"Great Content"
       @c = Card.find(@b.id)
     end
@@ -69,7 +69,7 @@ end
 
 describe Card, "created with autoname" do
   before do
-    Session.as_bot do
+    Account.as_bot do
       Card.create :name=>'Book+*type+*autoname', :content=>'b1'
     end
   end
@@ -90,7 +90,7 @@ end
 
 describe Card, "create junction" do
   before(:each) do
-    Session.as :joe_user
+    Account.as :joe_user
     @c = Card.create! :name=>"Peach+Pear", :content=>"juicy"
   end
 
@@ -115,7 +115,7 @@ end
 
 describe Card, "types" do
   before do
-    Session.as(Card::WagnBotID)  # FIXME: as without a block is deprecated
+    Account.as(Card::WagnBotID)  # FIXME: as without a block is deprecated
     # NOTE: it looks like these tests aren't DRY- but you can't pull the cardtype creation up here because:
     #  creating cardtypes creates constants in the namespace, and those aren't removed
     #  when the db is rolled back, so you're not starting in the original state.
@@ -128,7 +128,7 @@ describe Card, "types" do
     ct = Card.fetch('AFoo')
     Wagn::Codename.reset_cache
 
-    ct.update_attributes! :name=>"FooRenamed", :confirm_rename=>true
+    ct.update_attributes! :name=>"FooRenamed"
     (ct=Card.fetch('FooRenamed')).typecode.should == :cardtype
     # now the classname changes if it doesn't have a codename in the table
     ncd = Card.create(:type=>'FooRenamed', :name=>'testy1')
@@ -159,8 +159,9 @@ describe Card, "types" do
   it "should raise a validation error if a bogus type is given" do
     ct = Card.create! :name=>"DFoo", :type=>'Cardtype'
     c = Card.new(:type=>"$d_foo#adfa",:name=>"more testy")
+    c.errors[:type].should_not be_empty
     c.valid?.should be_false
-    c.errors_on(:type).should_not be_empty
+
   end
 end
 

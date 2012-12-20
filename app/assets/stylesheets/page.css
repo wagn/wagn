@@ -17,19 +17,20 @@
 #menu {
   display: block;
   font-size: 14px;
-  background: #005800;
+  background: #8AB;
   margin-bottom: 20px;
   padding: 2px;
+  overflow: hidden;
 }
 #menu a {
-  color: white;
+  color: #000;
   padding: 0px 4px;
 }
 #menu div {
   display: inline;
 }
 #menu #logging {  /* signing in and out */
-  position: absolute;
+  float:right;
   right: 0.5%;
   top: 2px;
 }
@@ -58,14 +59,7 @@
   text-decoration: none;
   text-align: center;
 }
-#credit {
-  margin: 30px 0;
-  padding: 5px;
-  text-align: center;
-  color: #333;
-  background: #bbb;
-  border: 1px solid #666;
-}
+
 
 
 /*----- fieldset tables --------*/
@@ -105,15 +99,12 @@
 /* -- instructions ---*/
 
 .help, .instruction {
-  background: #e3e3e3;
   color: #440;
   font-style: italic;
   text-align: center;
   padding: 4px 10px;
 }
-.new-instruction {
-  margin-bottom: 20px;
-}
+
 
 /*--- errors -----*/
 
@@ -150,31 +141,18 @@
 }
 
 
-/* -- permissions page -----*/
+/* -- extra boxes -----*/
 
-#role_task {
-  margin-bottom: 2em;
-  padding: 3px;
+#credit {
+  margin: 30px 0;
 }
-.role {
-  text-align: center;
-  padding: 2px 8px;
-}
-.task {
-  padding: 2px;
-}
-
-
+#credit,
 .flash-notice {
-  background: #ccc;
   color: #333;
-  font-size: 15px;
-  border: 2px solid #999;
+  font-size: 1.1em;
+  background: #fff;
+  border: 1px solid #888;
   margin-bottom: 15px;
+  padding: 5px;
   text-align: center;
 }
-
-
-
-
-

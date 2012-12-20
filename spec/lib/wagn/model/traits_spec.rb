@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../packs/pack_spec_hel
 
 #describe Card do
 #  before do
-#    Session.as_bot do
+#    Account.as_bot do
 #      # FIXME:pack needs to add type
 #      # Note I added this manually to the test db, and it works, but it fails
 #      # if we have to create the typecard here, that seems like a bug

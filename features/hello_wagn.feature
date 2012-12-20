@@ -12,11 +12,11 @@ Feature: Seeing a card
     Then I should see "Home"
     And I should see "Joe User"
     And I should see "Sign out"
-    And In the main card header I should see "Edit"
+    Then In the main card header I should see a link with class "ui-icon-gear"
     Then In the main card header I click "close Home"
-    And In the main card header I should not see "Edit"
+    Then In the main card header I should not see a link with class "ui-icon-gear"
     Then In the main card header I click "open Home"
-    And In the main card header I should see "Edit"
+    Then In the main card header I should see a link with class "ui-icon-gear"
 
   Scenario: Create a Card
     Given I log in as Joe User

@@ -3,7 +3,10 @@ module Wagn::Model
     mattr_accessor :subclasses
     @@subclasses = []
 
-    def self.register_class(klass) @@subclasses.unshift klass end
+    def self.register_class klass
+      @@subclasses.unshift klass
+    end
+    
     def self.method_key(opts)
       @@subclasses.each do |pclass|
         if !pclass.opt_keys.map(&opts.method(:has_key?)).member? false;
@@ -30,22 +33,35 @@ module Wagn::Model
       true
     end
 
-    def patterns()
+    def patterns
       @patterns ||= @@subclasses.map { |sub| sub.new(self) }.compact
     end
+    
     def patterns_with_new()
       new_card? ? patterns_without_new()[1..-1] : patterns_without_new()
     end
     alias_method_chain :patterns, :new
 
-    def real_set_names() set_names.find_all &Card.method(:exists?)                              end
-    def safe_keys()      patterns.map(&:safe_key).reverse*" "                                   end
-    def set_modules()    @set_modules ||= patterns_without_new.reverse.map(&:set_const).compact end
-    def set_names()
+    def real_set_names
+      set_names.find_all &Card.method(:exists?)
+    end
+    
+    def safe_keys
+      patterns.map(&:safe_key).reverse*" "
+    end
+    
+    def set_modules
+      @set_modules ||= patterns_without_new.reverse.map(&:set_const).compact
+    end
+    
+    def set_names
       Card.set_members(@set_names = patterns.map(&:to_s), key) if @set_names.nil?
       @set_names
     end
-    def method_keys()    @method_keys ||= patterns.map(&:get_method_key).compact                end
+    
+    def method_keys
+      @method_keys ||= patterns.map(&:get_method_key).compact
+    end
   end
 
   module Patterns
@@ -60,16 +76,17 @@ module Wagn::Model
         attr_accessor :key, :key_id, :opt_keys, :junction_only, :method_key
 
         def find_module mod
-          #Rails.logger.warn "find_mod #{mod}"
-          return if mod.nil?
-          (mod.split('/') << 'model').inject(BASE_MODULE) do |base, part|
+          module_name_parts = mod.split('/') << 'model'
+          module_name_parts.inject BASE_MODULE do |base, part|
             return if base.nil?
-            part = part.camelize; key = base.to_s + '::' + part
-            MODULES.has_key?(key) ? MODULES[key] : MODULES[key] = if @@ruby19
-                  base.const_defined?(part, false) ? base.const_get(part, false) : nil
-                else
-                  base.const_defined?(part)        ? base.const_get(part)        : nil
-                end
+            part = part.camelize
+            key = "#{base}::#{part}"
+            if MODULES.has_key?(key)
+              MODULES[key]
+            else
+              args = @@ruby19 ? [part, false] : [part]
+              MODULES[key] = base.const_defined?(*args) ? base.const_get(*args) : nil
+            end
           end
         rescue NameError
           nil
@@ -78,10 +95,11 @@ module Wagn::Model
         def trunk_name(card)  ''               end
         def junction_only?()  !!junction_only  end
         def trunkless?()      !!method_key     end # method key determined by class only when no trunk involved
-        def new(card)
+        def new card
           super(card) if pattern_applies?(card)
         end
-        def key_name()
+        
+        def key_name
           @key_name ||= (code=Wagn::Codename[self.key] and card=Card[code] and card.name)
         end
 

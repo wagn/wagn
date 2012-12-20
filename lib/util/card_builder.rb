@@ -36,7 +36,6 @@ module CardBuilderMethods
         :email=>"#{username.gsub(/\s+/,'')}@grasscommons.org",
         :login=>username,
         :blocked => true,
-        :invite_sender_id=>WAGBOT_ID
       )
 
       if c = Card[username]

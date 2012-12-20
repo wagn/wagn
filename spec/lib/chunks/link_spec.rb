@@ -1,14 +1,14 @@
-require File.expand_path('../../test_helper', File.dirname(__FILE__))
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+include ChunkManager
+include ChunkSpecHelper
 
-class LinkTest < ActiveSupport::TestCase
-  include ChunkTestHelper
+describe Chunk::Link, "link chunk tests" do
 
-  def setup
-    super
-    setup_default_user
+  before do
+    setup_user 'joe_user'
   end
 
-  def test_basic
+  it "should test basic" do
     card = newcard('Baines', '[[Nixon]]')
     assert_equal('<a class="wanted-card" href="/Nixon">Nixon</a>', render_test_card(card) )
 
@@ -23,7 +23,7 @@ class LinkTest < ActiveSupport::TestCase
 
   end
 
-  def test_relative_card
+  it "should test relative card" do
     cardA = newcard('Kennedy', '[[+Monroe]]')
     assert_equal('<a class="wanted-card" href="/Kennedy%2BMonroe">+Monroe</a>', render_test_card(cardA) )
 
@@ -31,36 +31,31 @@ class LinkTest < ActiveSupport::TestCase
     assert_equal('<a class="wanted-card" href="/Lewinsky%2BClinton">Lewinsky</a>', render_test_card(cardB) )
   end
 
-
-
-  def test_relative_url
+  it "should test relative url" do
     card3 = newcard('recent changes', '[[/recent]]')
     assert_equal('<a class="internal-link" href="/recent">/recent</a>', render_test_card(card3) )
   end
 
-  def test_external
+  it "should test external" do
     card4 = newcard('google link', '[[http://google.com]]')
     assert_equal('<a class="external-link" href="http://google.com">http://google.com</a>', render_test_card(card4) )
   end
 
-  def internal_needs_escaping
+  it "should escape spaces %20 (not +)" do
     card5 = newcard('userlink', '[Marie][Marie "Mad Dog" Deatherage]')
-    assert_equal('<a class="wanted-card" href="/Marie_%22Mad_Dog%22_Deatherage">Marie</a>', render_test_card(card5) )
+    assert_equal('<a class="wanted-card" href="/Marie%20%22Mad%20Dog%22%20Deatherage">Marie</a>', render_test_card(card5) )
   end
 
-  def external_needs_not_escaped
+  it "should external needs not escaped" do
     card6 = newcard('google link2', 'wgw&nbsp; [google][http://www.google.com] &nbsp;  <br>')
-    assert_equal "wgw&nbsp; <a class=\"wanted-card\" href=\"http://www.google.com\">google</a> &nbsp;  <br>", render_test_card(card6)
+    assert_equal "wgw&nbsp; <a class=\"external-link\" href=\"http://www.google.com\">google</a> &nbsp;  <br>", render_test_card(card6)
   end
 
-  def test_relative_link
+  it "should test relative link" do
     dude,job = newcard('Harvey',"[[#{SmartName.joint}business]]"), newcard('business')
     card = Card.create! :name => "#{dude.name}+#{job.name}", :content => "icepicker"
     assert_equal("<a class=\"known-card\" href=\"/Harvey+business\">#{SmartName.joint}business</a>", render_test_card(dude) )
   end
-
-
-
 
 end
 

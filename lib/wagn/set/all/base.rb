@@ -11,6 +11,10 @@ module Wagn
     # _render_raw, except that you don't need to alias :refs as often
     # speeding up the process when there can't be any reference changes
     # (builtins, etc.)
+    
+    define_view :show, :perms=>:none  do |args|
+      render( args[:view] || :core )
+    end
 
     define_view :raw      do |args|  card ? card.raw_content : _render_blank                          end
     define_view :refs     do |args|  card.respond_to?('references_expired') ? card.raw_content : ''   end
@@ -20,7 +24,6 @@ module Wagn
       # and base renderer doesn't know "content" at this point
     define_view :titled   do |args|  card.name + "\n\n" + _render_core                                end
 
-    define_view :show,     :perms=>:none  do |args|  render( args[:view] || params[:view] || :core )  end
     define_view :name,     :perms=>:none  do |args|  card.name                                        end
     define_view :key,      :perms=>:none  do |args|  card.key                                         end
     define_view :id,       :perms=>:none  do |args|  card.id                                          end
@@ -81,10 +84,6 @@ module Wagn
 
     # The below have HTML!?  should not be any html in the base renderer
 
-
-    define_view :edit_virtual, :perms=>:none do |args|
-      %{ <div class="faint"><em>#{ showname } is a Virtual card</em></div> }
-    end
 
     define_view :closed_missing, :perms=>:none do |args|
       %{<span class="faint"> #{ showname } </span>}

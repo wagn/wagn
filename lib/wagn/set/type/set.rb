@@ -27,7 +27,7 @@ module Wagn
         end +
         raw( setting_groups[group].map do |setting_code|
           setting_name = (setting_card=Card[setting_code]).nil? ? "no setting ?" : setting_card.name
-          rule_card = card.trait_card(setting_code)
+          rule_card = card.fetch(:trait=>setting_code, :new=>{})
           process_inclusion(rule_card, :view=>:closed_rule)
         end.join("\n"))
       end.compact.join
@@ -80,7 +80,7 @@ module Wagn
 
       def setting_names_by_group
         Card.universal_setting_names_by_group.clone.merge begin
-          templt = existing_trait_card(:content) || existing_trait_card(:default)
+          templt = fetch(:trait=>:content) || fetch(:trait=>:default)
           type_id = case
           when templt                 ; templt.type_id
           when tag.id == Card::TypeID ; trunk.id

@@ -378,7 +378,7 @@ describe Wagn::Renderer::Xml, "" do
     context "*version" do
       it "should have an X.X.X version" do
         render_card(:raw, :name=>'*version').
-          match(/\d\.\d\.\w+/ ).should_not be_nil
+          match(/\d\.\d+\.\w+/ ).should_not be_nil
       end
     end
 

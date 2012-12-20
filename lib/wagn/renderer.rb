@@ -179,7 +179,7 @@ module Wagn
         when @depth >= @@max_depth   ; :too_deep
         # prevent recursion.  @depth tracks subrenderers (view within views)
         when @@perms[view] == :none  ; view
-        # This may currently be overloaded.  always allowed = skip moodes = never modified.  not sure that's right.
+        # This may currently be overloaded.  always allowed = skip modes = never modified.  not sure that's right.
         when !card                   ; :no_card
         # This should disappear when we get rid of admin and account controllers and all renderers always have cards
 

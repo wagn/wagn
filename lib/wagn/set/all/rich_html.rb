@@ -32,7 +32,10 @@ module Wagn
     end
 
     define_view :titled do |args|
-      args[:hide] ||= ['menu_link']
+      unless args[:show] and args[:show].member? 'menu_link'  #need to simplify this pattern
+        args[:hide] ||= ['menu_link']
+      end
+      
       wrap :titled, args do
         _render_header( args ) +
         wrap_content( :titled ) do
@@ -48,7 +51,10 @@ module Wagn
     end
 
     define_view :open do |args|
-      args[:show] ||= ['closer']
+      unless args[:hide] and args[:hide].member? 'closer'
+        args[:show] ||= ['closer']
+      end
+      
       wrap :open, args.merge(:frame=>true) do
         %{
            #{ _render_header args }

@@ -32,7 +32,10 @@ module Wagn
     end
 
     define_view :titled do |args|
-      args[:hide] ||= ['menu_link']
+      unless args[:show] and args[:show].member? 'menu_link'  #need to simplify this pattern
+        args[:hide] ||= ['menu_link']
+      end
+      
       wrap :titled, args do
         _render_header( args ) +
         wrap_content( :titled ) do
@@ -48,7 +51,10 @@ module Wagn
     end
 
     define_view :open do |args|
-      args[:show] ||= ['closer']
+      unless args[:hide] and args[:hide].member? 'closer'
+        args[:show] ||= ['closer']
+      end
+      
       wrap :open, args.merge(:frame=>true) do
         %{
            #{ _render_header args }
@@ -62,9 +68,9 @@ module Wagn
     define_view :header do |args|
       %{
         <div class="card-header">
-          #{ _optional_render :menu_link, args }
           #{ _optional_render :closer, args, default_hidden=true }        
           #{ _render_title }
+          #{ _optional_render :menu_link, args }
         </div>
       }
     end
@@ -100,13 +106,9 @@ module Wagn
             }
             </ul>         
           </li>
-          #{ if card && card.update_account_ok? 
-            "<li>#{ link_to_action 'account', :account, :class=>'slotter' }</li>"
-          end
-          }
           <li>#{ link_to_action 'advanced', :options, :class=>'slotter' }
             <ul>
-              <li>#{ link_to_action 'rules', :options, :class=>'slotter' }
+              <li>#{ link_to_action 'rules', :options, :class=>'slotter' }</li>
               <li>#{ link_to_page raw("#{card.type_name} &crarr;"), card.type_name }</li>
               #{
                 card.cardname.piece_names.map do |piece|
@@ -119,6 +121,11 @@ module Wagn
           #{ 
             if Account.logged_in? && !card.new_card? 
               "<li>#{ render_watch }</li>"
+            end
+          }
+          #{
+            if card && card.update_account_ok? 
+              "<li>#{ link_to_action 'account', :account, :class=>'slotter' }</li>"
             end
           }
         </ul>      
@@ -186,7 +193,7 @@ module Wagn
               #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
               #{
               case
-              when name_ready                  ; _render_header + hidden_field_tag( 'card[name]', card.name )
+              when name_ready                  ; _render_title + hidden_field_tag( 'card[name]', card.name )
               when card.rule_card( :autoname ) ; ''
               else                             ; _render_name_editor
               end

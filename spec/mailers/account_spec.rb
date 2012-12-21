@@ -4,7 +4,6 @@ include EmailSpec::Helpers
 include EmailSpec::Matchers
 
 describe Mailer do
-  FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
   CHARSET = "utf-8"
   #include ActionMailer::Quoting
 

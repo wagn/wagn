@@ -137,7 +137,7 @@ module Wagn
         end.join
 #        raw _render_core(args)
       elsif card.new_card?
-        fieldset 'content', content_field( form )
+        fieldset '', content_field( form )
       else
         content_field form
       end

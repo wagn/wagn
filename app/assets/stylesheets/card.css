@@ -1,15 +1,15 @@
 .card-frame {
-  margin: 1px 0px;
-  padding: 0px !important;
+  margin: 1px 0;
+  padding: 0 !important;
   -moz-border-radius: 8px;
   border-radius: 8px;
   border: 1px solid #aaa;
   border-bottom: 2px solid #ccc;
   border-right: 2px solid #ccc;
   width: 100%;  /*needed for ie6, or..?*/
-  margin: 0px;
+  margin: 0;
   background: #fff;
-  padding: 0px;
+  padding: 0;
 }
 
 html>body .open-view {
@@ -31,8 +31,9 @@ html>body .open-view {
 .card-header {
   background: #8AB;
   padding: 5px 12px;
-  margin: 0px;
+  margin: 0;
   text-align: left;
+  overflow: hidden;
 }
 .card-header,
 .card-header a,
@@ -136,7 +137,7 @@ a.email-link {
   color: #069;
   background: #ffc;
 }
-
+/*
 .content-view p,
 .content-view span,
 .content-view a,
@@ -148,7 +149,7 @@ a.email-link {
   -moz-border-radius: inherit;
   border-radius: inherit;
 }
-
+*/
 
 /* note:   ".card-slot .content-view div not(.editor)" was not working properly and was breaking nested block elements.
    without it nested divs in content-view areas probably won't highlight  */
@@ -162,8 +163,7 @@ a.email-link {
   display: none
 }
 fieldset {
-  padding: 1 0px;
-  margin: 10px 1px;
+  margin: 5px 1px;
   clear: both;
   float: none !important;
   display:block;
@@ -590,5 +590,8 @@ table.perm-editor .pointer-item-text {
 }
 .ui-icon {
   background-image: url('images/ui-icons_454545_256x240.png')
+}
+.ui-loader {
+  display: none;
 }
 

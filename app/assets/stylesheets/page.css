@@ -20,6 +20,7 @@
   background: #8AB;
   margin-bottom: 20px;
   padding: 2px;
+  overflow: hidden;
 }
 #menu a {
   color: #000;
@@ -29,7 +30,7 @@
   display: inline;
 }
 #menu #logging {  /* signing in and out */
-  position: absolute;
+  float:right;
   right: 0.5%;
   top: 2px;
 }

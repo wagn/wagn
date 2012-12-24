@@ -46,15 +46,13 @@ module ChunkSpecHelper
 
   # Asserts that test_text doesn't match the chunk_type
   def no_match chunk_type, test_text
-    if chunk_type.respond_to? :pattern
-      assert_no_match chunk_type.pattern, test_text
-    end
+    chunk_type.pattern.should_not match test_text
   end
 
   def assert_conversion_does_not_apply chunk_type, str
     processed_str = ContentStub.new str.dup
-    chunk_type.apply_to processed_str
-    assert_equal str, processed_str
+    chunk_type.apply_to( processed_str )
+    processed_str.find_chunks.count.should == 0
   end
 
   private

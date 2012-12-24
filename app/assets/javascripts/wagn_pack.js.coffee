@@ -58,6 +58,18 @@ wagn.chooseFile = (e, data) ->
   editor.append '<input type="hidden" value="CHOSEN" class="upload-card-content" name="' + contentFieldName + '">'
   # we add and remove the contentField to insure that nothing is added / updated when nothing is chosen.
 
+wagn.openMenu = (link) ->
+  # if card menu already exists
+  #   show it
+  # else
+  #   get the template menu
+  #   make a copy right after menu link (or associate if necessary)
+  #   do simple substitutions?
+  cm = $(link).find '.card-menu'
+  cm.menu position: { my:'right top', at:'left top' }, 
+    icons:{ submenu:'ui-icon-carat-1-w' }
+  cm.show()
+  
 
 $(window).ready ->
 
@@ -78,23 +90,33 @@ $(window).ready ->
     # sadly, it also causes odd navbox behavior, resetting the search term
   }
 
-
   $('.card-menu-link').live 'mouseenter', ->
-    # if card menu already exists
-    #   show it
-    # else
-    #   get the template menu
-    #   make a copy right after menu link (or associate if necessary)
-    #   do simple substitutions?
-    cm = $(this).find '.card-menu'
-    cm.menu position: { my:'right top', at:'left top' }, 
-      icons:{ submenu:'ui-icon-carat-1-w' }
-    cm.show()
-    #   do a request to flesh out remaining menu parts
+    wagn.openMenu this
     
   $('.card-menu').live 'mouseleave', ->
     $(this).hide()
+
+  $('.card-menu').live 'swipe', ->
+    $(this).hide()
   
+  $('.card-menu-link').live 'tap', (event) ->
+    initiated_menu = $(this).find('.ui-menu')[0]
+    if initiated_menu
+      if $(initiated_menu).is ':hidden'
+        $(initiated_menu).show()
+        event.preventDefault()
+    else
+      wagn.openMenu this
+      event.preventDefault()
+
+  $('.ui-menu-icon').live 'tap', (event)->
+    $(this).closest('li').trigger('mouseenter')
+    event.preventDefault()
+  
+
+    
+#    alert('prevented?')
+    #wagn.openMenu this
 
 
   #pointer pack
@@ -156,6 +178,10 @@ $(window).ready ->
        $(wagn.padform)[0].submit()
     false
 
+$(document).bind 'mobileinit', ->
+  $.mobile.autoInitializePage = false
+  $.mobile.ajaxEnabled = false
+  
 
 permissionsContent = (ed) ->
   return '_left' if ed.find('#inherit').attr('checked')

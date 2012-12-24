@@ -1,7 +1,6 @@
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
 describe Mailer do
-  FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
   #include ActionMailer::Quoting
 
   before do

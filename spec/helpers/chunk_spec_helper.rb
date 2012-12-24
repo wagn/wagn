@@ -12,7 +12,7 @@ module ChunkSpecHelper
 
     def initialize str
       super
-      @renderer = Wagn::Renderer::Html.new nil
+      @renderer = Wagn::Renderer::HtmlRenderer.new nil
       init_chunk_manager
     end
 
@@ -46,15 +46,15 @@ module ChunkSpecHelper
 
   # Asserts that test_text doesn't match the chunk_type
   def no_match chunk_type, test_text
-    if chunk_type.respond_to? :pattern
-      assert_no_match chunk_type.pattern, test_text
-    end
+    #warn "no match #{chunk_type}, #{test_text}"
+    chunk_type.pattern.should_not match test_text
   end
 
   def assert_conversion_does_not_apply chunk_type, str
+    #warn "c dna #{chunk_type}, #{str}"
     processed_str = ContentStub.new str.dup
     chunk_type.apply_to processed_str
-    assert_equal str, processed_str
+    processed_str.find_chunks.count.should == 0
   end
 
   private
@@ -62,21 +62,19 @@ module ChunkSpecHelper
   # Asserts a number of tests for the given type and text.
   # Asserts a number of tests for the given type and text.
   def match_chunk chunk_type, test_text, expected_chunk_state
-    if chunk_type.respond_to? :pattern
-      assert_match chunk_type.pattern, test_text
-    end
+    chunk_type.pattern.should match test_text
 
     content = ContentStub.new test_text
       chunk_type.apply_to content
 
     # Test if requested parts are correct.
     expected_chunk_state.each_pair do |a_method, expected_value|
-      assert content.chunks.last.kind_of? chunk_type
-      assert_respond_to content.chunks.last, a_method
-      assert_equal expected_value, content.chunks.last.send(a_method.to_sym),
-        "Wrong #{a_method} value"
+      content.chunks.last.should be_instance_of chunk_type
+      content.chunks.last.should respond_to a_method
+      content.chunks.last.send(a_method.to_sym).should == expected_value # "Wrong #{a_method} value"
     end
   end
+
 =begin
   def match_chunk type, test_text, expected
     pattern = type.pattern

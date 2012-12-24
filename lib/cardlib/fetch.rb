@@ -3,7 +3,7 @@
 # A multipurpose retrieval operator that incorporates caching, "virtual" card retrieval
 
 
-module Wagn::Model::Fetch
+module Cardlib::Fetch
   mattr_accessor :cache
 
   module ClassMethods
@@ -58,6 +58,7 @@ module Wagn::Model::Fetch
           needs_caching = true
           card = Card.send method, val, false
         end
+      end
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         opts[:skip_virtual] = true if opts[:loaded_trunk]
@@ -191,7 +192,7 @@ module Wagn::Model::Fetch
 
   def self.included(base)
     super
-    base.extend Wagn::Model::Fetch::ClassMethods
+    base.extend Cardlib::Fetch::ClassMethods
   end
 end
 

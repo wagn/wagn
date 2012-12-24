@@ -1,3 +1,4 @@
+
 module Wagn
   class Renderer
     Card::Reference
@@ -11,11 +12,10 @@ module Wagn
 
     RENDERERS = { #should be defined in renderer
       :email => :EmailHtml,
+      :html => :HtmlRenderer,
       :css  => :Text,
       :txt  => :Text
     }
-
-    cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags
 
     @@max_char_count = 200 #should come from Wagn::Conf
     @@max_depth      = 10 # ditto
@@ -25,58 +25,100 @@ module Wagn
     @@error_codes    = {}
     @@view_tags      = {}
 
-    class << self
-      def get_renderer fmt
-        (RENDERERS.has_key?(fmt) ? RENDERERS[fmt] : fmt.to_s.camelize).to_sym
-      end
-
-      def new card, opts={}
-        if self==Renderer
-          fmt = opts[:format] = (opts[:format] ? opts[:format].to_sym : :html)
-          renderer = get_renderer fmt
-          if Renderer.const_defined?(renderer)
-            return Renderer.const_get(renderer).new(card, opts)
-          end
-        end
-        new_renderer = self.allocate
-        new_renderer.send :initialize, card, opts
-        new_renderer
-      end
+    def self.get_renderer format
+      const_get( if RENDERERS.has_key? format
+          RENDERERS[ format ]
+        else
+          format.to_s.camelize.to_sym
+        end )
     end
-
 
     attr_reader :format, :card, :root, :parent
     attr_accessor :form, :main_content, :error_status
 
-    def render view = :view, args={}
-      prefix = args.delete(:allowed) ? '_' : ''
-      method = "#{prefix}render_#{canonicalize_view view}"
-      if respond_to? method
-        send method, args
-      else
-        "<strong>unknown view: <em>#{view}</em></strong>"
+    Card
+    Card::Reference
+    include LocationHelper
+
+  end
+
+  class Renderer
+
+    include Card::ReferenceTypes
+
+    # these won't be here for long, but I moved them up in dealing with loading order issues relating so subclass renderers
+    def replace_references old_name, new_name
+      #Rails.logger.warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
+      #warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
+      wiki_content = WikiContent.new(card, card.content, self)
+
+      wiki_content.find_chunks(Chunk::Reference).each do |chunk|
+        
+        if was_name = chunk.cardname and new_cardname = was_name.replace_part(old_name, new_name) and
+             was_name != new_cardname
+          Chunk::Link===chunk and link_bound = chunk.cardname == chunk.link_text
+          chunk.cardname = new_cardname
+          Card::Reference.where(:referenced_name => was_name.key).update_all( :referenced_name => new_cardname.key )
+          chunk.link_text=chunk.cardname.to_s if link_bound
+        end
       end
+
+      String.new wiki_content.unrender!
     end
 
-    def _render view, args={}
-      args[:allowed] = true
-      render view, args
+    def update_references rendering_result = nil, refresh = false
+      Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh} where:#{caller[0..6]*', '}"
+      #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller*"\n"}"
+      return unless card && referer_id = card.id
+      Card::Reference.where( :card_id => referer_id ).delete_all
+      # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
+      Card.where( :id => referer_id ).update_all( :references_expired=>nil )
+      #card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
+      card.expire if refresh
+      if rendering_result.nil?
+         rendering_result = WikiContent.new(card, _render_refs, self).render! do |opts|
+           expand_inclusion(opts) { yield }
+         end
+      end
+
+      h=
+        rendering_result.find_chunks(Chunk::Reference).inject({}) do |hash, chunk|
+
+        if referer_id != ( referee_id = chunk.refcard.send_if :id ) &&
+           !hash.has_key?( hash_key = referee_id || chunk.refcardname.key )
+
+          ltype = Chunk::Link===chunk
+          hash[ hash_key ] = {
+              :referenced_card_id  => referee_id,
+              :referenced_name => chunk.refcardname.send_if( :key ),
+              :link_type   => chunk.refcard.nil? ? ( ltype ? WANTED_LINK : WANTED_INCLUSION ) : 
+                                                   ( ltype ? LINK : INCLUSION )
+            }
+        end
+
+        hash
+      end
+      Rails.logger.warn "update refs: #{h.inspect}"
+      h.each_value { |update| Card::Reference.create! update.merge( :card_id => referer_id ) }
+
     end
 
-    def optional_render view, args, default_hidden=false
-      test = default_hidden ? :show : :hide
-      override = args[test] && args[test].member?(view.to_s)
-      return nil if default_hidden ? !override : override
-      render view, args
-    end
+    class << self
 
-    def _optional_render view, args, default_hidden=false
-      args[:allowed] = true
-      optional_render view, args, default_hidden
-    end
+      def new card, opts={}
 
-    def rendering_error exception, cardname
-      "Error rendering: #{cardname}"
+        format = ( opts[:format].send_if :to_sym ) || :html
+        renderer = if self!=Renderer or format.nil? or format == :base
+              self
+            else
+              get_renderer format
+            end
+
+        opts[:format] = format
+        new_renderer = renderer.allocate
+        new_renderer.send :initialize, card, opts
+        new_renderer
+      end
     end
 
     def initialize card, opts={}
@@ -138,6 +180,45 @@ module Wagn
       String===response ? template.raw( response ) : response
     end
 
+    #
+    # ---------- Rendering ------------
+    #
+
+    def render view = :view, args={}
+      prefix = args.delete(:allowed) ? '_' : ''
+      method = "#{prefix}render_#{canonicalize_view view}"
+      if respond_to? method
+        send method, args
+      else
+        "<strong>unknown view: <em>#{view}</em></strong>"
+      end
+    end
+
+    def _render view, args={}
+      args[:allowed] = true
+      render view, args
+    end
+
+    def optional_render view, args, default_hidden=false
+      test = default_hidden ? :show : :hide
+      override = args[test] && args[test].member?(view.to_s)
+      return nil if default_hidden ? !override : override
+      render view, args
+    end
+
+    def _optional_render view, args, default_hidden=false
+      args[:allowed] = true
+      optional_render view, args, default_hidden
+    end
+
+    def rendering_error exception, cardname
+      "Error rendering: #{cardname}"
+    end
+
+    #
+    # ------------- Sub Renderer and Inclusion Processing ------------
+    #
+
     def subrenderer subcard, opts={}
       subcard = Card.fetch(subcard, :new=>{}) if String===subcard
       sub = self.clone
@@ -180,7 +261,7 @@ module Wagn
         when @depth >= @@max_depth   ; :too_deep
         # prevent recursion.  @depth tracks subrenderers (view within views)
         when @@perms[view] == :none  ; view
-        # This may currently be overloaded.  always allowed = skip moodes = never modified.  not sure that's right.
+        # This may currently be overloaded.  always allowed = skip modes = never modified.  not sure that's right.
         when !card                   ; :no_card
         # This should disappear when we get rid of admin and account controllers and all renderers always have cards
 
@@ -359,6 +440,10 @@ module Wagn
       end
     end
 
+    #
+    # ------------ LINKS ---------------
+    #
+
     def build_link href, text, known_card = nil
       # Rails.logger.info( "~~~~~~~~~~~~~~~ bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}" )
       klass = case href.to_s
@@ -406,64 +491,15 @@ module Wagn
     end
 
 
-     ### FIXME -- this should not be here!   probably in Card::Reference model?
-    def replace_references old_name, new_name
-      #Rails.logger.warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
-      #warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
-      wiki_content = WikiContent.new(card, card.content, self)
-
-      wiki_content.find_chunks(Chunk::Reference).each do |chunk|
-        
-        if was_name = chunk.cardname and new_cardname = was_name.replace_part(old_name, new_name) and
-             was_name != new_cardname
-          Chunk::Link===chunk and link_bound = chunk.cardname == chunk.link_text
-          chunk.cardname = new_cardname
-          Card::Reference.where(:referee_key => was_name.key).update_all( :referee_key => new_cardname.key )
-          chunk.link_text=chunk.cardname.to_s if link_bound
-        end
-      end
-
-      String.new wiki_content.unrender!
-    end
-
-    def update_references rendering_result = nil, refresh = false
-      #Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh} where:#{caller[0..6]*', '}"
-      #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller*"\n"}"
-      return unless card && referer_id = card.id
-      Card::Reference.where( :referer_id => referer_id ).delete_all
-      # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
-      #Card.where( :id => referer_id ).update_all( :references_expired=>nil )
-      card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
-      card.expire if refresh
-      if rendering_result.nil?
-         rendering_result = WikiContent.new(card, _render_refs, self).render! do |opts|
-           expand_inclusion(opts) { yield }
-         end
-      end
-
-      rendering_result.find_chunks(Chunk::Reference).inject({}) do |hash, chunk|
-
-        if referer_id != ( referee_id = chunk.refcard.send_if :id ) &&
-           !hash.has_key?( referee_key = referee_id || chunk.refcardname.key )
-
-          hash[ referee_key ] = {
-              :referee_id  => referee_id,
-              :referee_key => chunk.refcardname.send_if( :key ),
-              :link_type   => Chunk::Link===chunk ? LINK : INCLUDE,
-              :present     => chunk.refcard.nil?  ?   0  :   1
-            }
-        end
-
-        hash
-      end.each_value { |update| Card::Reference.create! update.merge( :referer_id => referer_id ) }
-
-    end
   end
 
   class Renderer::Json < Renderer
   end
 
   class Renderer::Text < Renderer
+  end
+
+  class Renderer::HtmlRenderer < Renderer
   end
 
   class Renderer::Csv < Renderer::Text

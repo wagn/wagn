@@ -1,4 +1,4 @@
-module Wagn::Model
+module Cardlib
   module Pattern
     mattr_accessor :subclasses
     @@subclasses = []
@@ -68,7 +68,12 @@ module Wagn::Model
     class BasePattern
 
       @@ruby19 = !!(RUBY_VERSION =~ /^1\.9/)
-      BASE_MODULE = Wagn::Set
+      @@base_module = Wagn::Set
+    end
+  end
+
+  module Patterns
+    class BasePattern
       MODULES={}
 
       class << self
@@ -77,7 +82,7 @@ module Wagn::Model
 
         def find_module mod
           module_name_parts = mod.split('/') << 'model'
-          module_name_parts.inject BASE_MODULE do |base, part|
+          module_name_parts.inject @@base_module do |base, part|
             return if base.nil?
             part = part.camelize
             key = "#{base}::#{part}"
@@ -104,7 +109,7 @@ module Wagn::Model
         end
 
         def register key, opt_keys, opts={}
-          Wagn::Model::Pattern.register_class self
+          Cardlib::Pattern.register_class self
           self.key = key
           #self.key_id = (key == 'self') ? 0 : Wagn::Codename[key]
           self.key_id = Wagn::Codename[key]

@@ -1,10 +1,19 @@
 # -*- encoding : utf-8 -*-
 
+require 'wagn/sets'
+require 'card'
+
 
 class CardController < ApplicationController
   # This is often needed for the controllers to work right
   # FIXME: figure out when/why this is needed and why the tests don't fail
+  Card::Reference
   Card
+end
+
+  #include Wagn::Sets::CardControllerMethods
+
+class CardController
 
   helper :wagn
 
@@ -194,6 +203,7 @@ class CardController < ApplicationController
   end
 
 
+  # FIXME: make me an event
   def load_card
     #Rails.logger.warn "load card 1 #{params.inspect}"
     @card = case params[:id]
@@ -208,11 +218,14 @@ class CardController < ApplicationController
         if @action == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
           # I think we may need to create a "#create" instance method that handles this checking.
-          # that would let us get rid of this...  I think we can do this right with events
+          # that would let us get rid of this...
+          Rails.logger.warn "load create card #{name.inspect}, #{opts.inspect}"
           opts[:name] ||= name
           Card.new opts
         else
-          Card.fetch ( name =~ /^\d+$/ ? name.to_i : name ), :new=>opts
+          name = $1.to_i if name =~ /^~(\d+)$/
+          Rails.logger.warn "load card #{name.inspect}, #{opts.inspect}"
+          Card.fetch name, :new=>opts
         end
       end
 
@@ -220,6 +233,7 @@ class CardController < ApplicationController
     true
   end
 
+  # FIXME: event
   def refresh_card
     @card = card.refresh
   end
@@ -250,7 +264,7 @@ class CardController < ApplicationController
       end
 
     case
-    when  redirect        ; wagn_redirect ( Card===target ? url_for_page(target.cardname, new_params) : target )
+    when  redirect        ; wagn_redirect ( Card===target ? path_for_page( target.cardname, new_params ) : target )
     when  String===target ; render :text => target
     else
       @card = target

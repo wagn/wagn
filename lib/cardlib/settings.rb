@@ -1,4 +1,4 @@
-module Wagn::Model::Settings
+module Cardlib::Settings
   def rule setting_name, options={}
     options[:skip_modules] = true
     card = rule_card setting_name, options

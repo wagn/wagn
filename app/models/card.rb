@@ -1,8 +1,12 @@
 # -*- encoding : utf-8 -*-
+
 class Card < ActiveRecord::Base
-  require 'card/revision'
-  require 'card/reference'
+  class Reference < ActiveRecord::Base
+  end
 end
+
+require 'card/revision'
+require 'card/reference'
 
 require 'smart_name'
 SmartName.codes= Wagn::Codename
@@ -10,7 +14,7 @@ SmartName.params= Wagn::Conf
 SmartName.lookup= Card
 SmartName.session= proc { Account.as_card.name }
 
-class Card < ActiveRecord::Base
+class Card
 
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
   belongs_to :card, :class_name => 'Card', :foreign_key => :creator_id
@@ -580,10 +584,10 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INCLUDED MODULES
 
-  include Wagn::Model
+  include Cardlib
 
   after_save :after_save_hooks
-  # moved this after Wagn::Model inclusions because aikido module needs to come after Paperclip triggers,
+  # moved this after Cardlib inclusions because aikido module needs to come after Paperclip triggers,
   # which are set up in attach model.  CLEAN THIS UP!!!
 
   def after_save_hooks # don't move unless you know what you're doing, see above.

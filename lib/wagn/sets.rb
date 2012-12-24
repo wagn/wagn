@@ -1,24 +1,45 @@
 
 require 'wagn/renderer'
 require 'card_controller'
+require 'card/reference'
 
 module Wagn
 
   module Sets
     @@dirs = []
+  end
+
+  module Sets
+
+    module SharedMethods
+      private
+      def get_set_key selection_key, opts
+        unless pkey = Cardlib::Pattern.method_key(opts)
+          raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
+        end
+        key = pkey.blank? ? selection_key : "#{pkey}_#{selection_key}"
+        #warn "gvkey #{selection_key}, #{opts.inspect} R:#{key}"
+        key.to_sym
+      end
+    end
+
     class << self
 
-      def load
-        load_dir File.expand_path( "#{Rails.root}/lib/wagn/renderer/*.rb", __FILE__ )
-#        [ :renderer, :model ].each do |dirname|
-#          load_dir( File.expand_path "#{Rails.root}/lib/wagn/#{dirname}/*.rb", __FILE__ )
-#        end
+      def load_cardlib
+        Rails.logger.warn "load cardlib #{caller[0,8]*', '}"
+        load_dir File.expand_path( "#{Rails.root}/lib/cardlib/*.rb", __FILE__ )
+      end
+
+      def load_sets
+        Rails.logger.warn "load sets #{caller[0,8]*', '}"
         [ "#{Rails.root}/lib/wagn/set/", Wagn::Conf[:pack_dirs].split( /,\s*/ ) ].flatten.each do |dirname|
           load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
         end
-        
-        load_dir File.expand_path( "#{Rails.root}/lib/wagn/model/*.rb", __FILE__ )
-    
+      end
+
+      def load_renderers
+        Rails.logger.warn "load renderers #{caller[0,8]*', '}"
+        load_dir File.expand_path( "#{Rails.root}/lib/wagn/renderer/*.rb", __FILE__ )
       end
 
       def all_constants base
@@ -33,6 +54,7 @@ module Wagn
       def load_dir dir
         Dir[dir].each do |file|
           begin
+            Rails.logger.warn "load file #{file}"
             require_dependency file
           rescue Exception=>e
             Rails.logger.warn "Error loading file #{file}: #{e.message}\n#{e.backtrace*"\n"}"
@@ -67,10 +89,10 @@ module Wagn
 
     module ClassMethods
 
+      include SharedMethods
+
       def format fmt=nil
-        return @@renderer = Renderer if fmt.nil? || fmt == :base
-        renderer = Renderer.get_renderer fmt
-        @@renderer = Renderer.const_defined?(renderer) ? Renderer.const_get(renderer) : raise("Bad format #{renderer}, #{fmt}")
+        Renderer.renderer = if fmt.nil? || fmt == :base then Renderer else Renderer.get_renderer fmt end
       end
 
       def define_view view, opts={}, &final
@@ -84,14 +106,14 @@ module Wagn
           end
         end
 
-        view_key = get_set_key(view, opts)
-        @@renderer.class_eval { define_method "_final_#{view_key}", &final }
+        view_key = get_set_key view, opts
+        Renderer.renderer.class_eval { define_method "_final_#{view_key}", &final }
         #warn "defining view method[#{@@renderer}] _final_#{view_key}"
         Renderer.subset_views[view] = true if !opts.empty?
 
         if !method_defined? "render_#{view}"
           #warn "defining view method[#{@@renderer}] render_#{view}"
-          @@renderer.class_eval do
+          Renderer.renderer.class_eval do
             define_method( "_render_#{view}" ) do |*a|
               a = [{}] if a.empty?
               if final_method = view_method(view)
@@ -104,7 +126,8 @@ module Wagn
             end
           end
 
-          @@renderer.class_eval do
+          Rails.logger.warn "define_method render_#{view}"
+          Renderer.renderer.class_eval do
             define_method( "render_#{view}" ) do |*a|
               begin
                 send( "_render_#{ ok_view view, *a }", *a )
@@ -121,7 +144,7 @@ module Wagn
       end
 
       def alias_view view, opts={}, *aliases
-        view_key = get_set_key(view, opts)
+        view_key = get_set_key view, opts
         Renderer.subset_views[view] = true if !opts.empty?
         aliases.each do |alias_view|
           alias_view_key = case alias_view
@@ -131,8 +154,8 @@ module Wagn
             else; raise "Bad view #{alias_view.inspect}"
             end
 
-          #warn "def view final_alias #{alias_view_key}, #{view_key}"
-          @@renderer.class_eval { define_method( "_final_#{alias_view_key}".to_sym ) do |*a|
+            Rails.logger.warn "def view final_alias #{alias_view_key}, #{view_key}"
+            Renderer.renderer.class_eval { define_method( "_final_#{alias_view_key}".to_sym ) do |*a|
             send "_final_#{view_key}", *a
           end }
         end
@@ -224,10 +247,13 @@ module Wagn
     end
 
     def self.included base
-      super
-      CardController.extend SharedClassMethods
-      base.extend SharedClassMethods
+
+      #base.extend CardControllerMethods
+      base.extend SharedMethods
       base.extend ClassMethods
+
+      super
+
     end
   end
 end

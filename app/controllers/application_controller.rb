@@ -1,8 +1,17 @@
 # -*- encoding : utf-8 -*-
+
+require 'wagn/sets'
+require 'card'
+
 class ApplicationController < ActionController::Base
   # This is often needed for the controllers to work right
   # FIXME: figure out when/why this is needed and why the tests don't fail
+  #Card::Reference
   Card
+end
+
+class ApplicationController
+  include Wagn::Exceptions
 
   include AuthenticatedSystem
   include LocationHelper
@@ -76,6 +85,7 @@ class ApplicationController < ActionController::Base
   # ----------( rendering methods ) -------------
 
   def wagn_redirect url
+    url = wagn_url url #make sure we have absolute url
     if ajax?
       render :text => url, :status => 303
     else
@@ -91,13 +101,10 @@ class ApplicationController < ActionController::Base
   end
 
   def render_errors options={}
-    #warn "render_errors #{card.inspect}"
-    return false if card && card.errors.empty?
     @card = Card.new if card.nil?
-    view = options[:view] || card.error_view || :errors
-    #warn "422 status ? os:#{options[:status]} || cs:#{(@card && @card.error_status)}"
+    view   = options[:view]   || card.error_view   || :errors
     status = options[:status] || card.error_status || 422
-    #warn "render errors #{card.inspect}, show status and view #{status}, #{view}"
+
     show view, status
     true
   end
@@ -148,7 +155,8 @@ class ApplicationController < ActionController::Base
 
 
   rescue_from Exception do |exception|
-    Rails.logger.info "exception = #{exception.class}: #{exception.message}"
+    Rails.logger.info "exception = #{exception.class}: #{exception.message} #{exception.backtrace*"\n"}"
+
 
     view, status = case exception
     when Wagn::NotFound, ActiveRecord::RecordNotFound

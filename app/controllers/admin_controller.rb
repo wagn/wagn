@@ -1,5 +1,8 @@
 # -*- encoding : utf-8 -*-
-class AdminController < ApplicationController
+
+require 'card'
+
+class AdminController < CardController
   # This is often needed for the controllers to work right
   # FIXME: figure out when/why this is needed and why the tests don't fail
   Card

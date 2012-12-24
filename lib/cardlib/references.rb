@@ -1,5 +1,5 @@
-module Wagn
- module Model::References
+
+module Cardlib::References
   include Card::ReferenceTypes
 
   def name_referencers link_name=nil

@@ -172,6 +172,14 @@ Then /^In (.*) I should not see "([^\"]*)"$/ do |section, text|
   end
 end
 
+Then /^In (.*) I should (not )?see a ([^\"]*) with class "([^\"]*)"$/ do |selection, neg, element, selector|
+  # checks for existence of a element with a class in a selection context
+  element = 'a' if element == 'link'
+  within scope_of(selection) do
+    page.send ( neg ? :should_not : :should ), have_css( [ element, selector ] * '.' )
+  end
+end
+
 Then /^the "([^"]*)" field should contain "([^"]*)"$/ do |field, value|
   field_labeled(field).value.should =~ /#{value}/
 end

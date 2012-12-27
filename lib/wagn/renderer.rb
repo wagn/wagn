@@ -51,11 +51,11 @@ module Wagn
       #warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
       wiki_content = WikiContent.new(card, card.content, self)
 
-      wiki_content.find_chunks(Chunk::Reference).each do |chunk|
+      wiki_content.find_chunks(Chunks::Reference).each do |chunk|
         
         if was_name = chunk.cardname and new_cardname = was_name.replace_part(old_name, new_name) and
              was_name != new_cardname
-          Chunk::Link===chunk and link_bound = chunk.cardname == chunk.link_text
+          Chunks::Link===chunk and link_bound = chunk.cardname == chunk.link_text
           chunk.cardname = new_cardname
           Card::Reference.where(:referenced_name => was_name.key).update_all( :referenced_name => new_cardname.key )
           chunk.link_text=chunk.cardname.to_s if link_bound
@@ -81,12 +81,12 @@ module Wagn
       end
 
       h=
-        rendering_result.find_chunks(Chunk::Reference).inject({}) do |hash, chunk|
+        rendering_result.find_chunks(Chunks::Reference).inject({}) do |hash, chunk|
 
         if referer_id != ( referee_id = chunk.refcard.send_if :id ) &&
            !hash.has_key?( hash_key = referee_id || chunk.refcardname.key )
 
-          ltype = Chunk::Link===chunk
+          ltype = Chunks::Link===chunk
           hash[ hash_key ] = {
               :referenced_card_id  => referee_id,
               :referenced_name => chunk.refcardname.send_if( :key ),
@@ -495,13 +495,13 @@ module Wagn
       #warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
       wiki_content = WikiContent.new(card, card.content, self)
 
-      wiki_content.find_chunks(Chunk::Reference).each do |chunk|
+      wiki_content.find_chunks(Chunks::Reference).each do |chunk|
         
         if was_name = chunk.cardname and new_cardname = was_name.replace_part(old_name, new_name) and
              was_name != new_cardname
-          Chunk::Link===chunk and link_bound = chunk.cardname == chunk.link_text
+          Chunks::Link===chunk and link_bound = chunk.cardname == chunk.link_text
           chunk.cardname = new_cardname
-          Card::Reference.where(:referee_key => was_name.key).update_all( :referee_key => new_cardname.key )
+          Card::Reference.where(:referenced_name => was_name.key).update_all( :referenced_name => new_cardname.key )
           chunk.link_text=chunk.cardname.to_s if link_bound
         end
       end
@@ -513,7 +513,7 @@ module Wagn
       #Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh} where:#{caller[0..6]*', '}"
       #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller*"\n"}"
       return unless card && referer_id = card.id
-      Card::Reference.where( :referer_id => referer_id ).delete_all
+      Card::Reference.where( :card_id => referer_id ).delete_all
       # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
       #Card.where( :id => referer_id ).update_all( :references_expired=>nil )
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
@@ -524,21 +524,24 @@ module Wagn
          end
       end
 
-      rendering_result.find_chunks(Chunk::Reference).inject({}) do |hash, chunk|
+      rendering_result.find_chunks(Chunks::Reference).inject({}) do |hash, chunk|
 
         if referer_id != ( referee_id = chunk.refcard.send_if :id ) &&
            !hash.has_key?( referee_key = referee_id || chunk.refcardname.key )
 
           hash[ referee_key ] = {
-              :referee_id  => referee_id,
-              :referee_key => chunk.refcardname.send_if( :key ),
-              :link_type   => Chunk::Link===chunk ? LINK : INCLUDE,
-              :present     => chunk.refcard.nil?  ?   0  :   1
+              :referenced_card_id  => referee_id,
+              :referenced_name => chunk.refcardname.send_if( :key ),
+              :link_type   => ( case chunk
+                     when Chunks::Link;    chunk.refcard ? LINK      : WANTED_LINK
+                     when Chunks::Include; chunk.refcard ? INCLUSION : WANTED_INCLUSION
+                     else raise "Unknown chunk reference class #{chunk.class}"
+                   end )
             }
         end
 
         hash
-      end.each_value { |update| Card::Reference.create! update.merge( :referer_id => referer_id ) }
+      end.each_value { |update| Card::Reference.create! update.merge( :card_id => referer_id ) }
 
     end
   end

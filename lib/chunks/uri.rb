@@ -15,7 +15,7 @@ require 'chunks/chunk'
 # I'm using a part of the [ISO 3166-1 Standard][iso3166] for country name suffixes.
 # The generic names are from www.bnoack.com/data/countrycode2.html)
 #   [iso3166]: http://geotags.com/iso3166/
-class URIChunk < Chunk::Abstract
+class URIChunk < Chunks::Abstract
   include URI::REGEXP::PATTERN
 
   # this condition is to get rid of pesky warnings in tests

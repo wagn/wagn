@@ -4,7 +4,7 @@ module Cardlib::References
   def name_referencers link_name=nil
     link_name = link_name.nil? ? key : link_name.to_name.key
     
-    Card.all :joins => :out_references, :conditions => { :card_references => { :referee_key => link_name } }
+    Card.all :joins => :out_references, :conditions => { :card_references => { :referenced_name => link_name } }
   end
 
   def extended_referencers
@@ -16,23 +16,23 @@ module Cardlib::References
 
   def referencers
     return [] unless refs = references
-    refs.map(&:referer_id).map( &Card.method(:fetch) )
+    refs.map(&:card_id).map( &Card.method(:fetch) )
   end
 
   def includers
     return [] unless refs = inclusions
-    refs.map(&:referer_id).map( &Card.method(:fetch) )
+    refs.map(&:card_id).map( &Card.method(:fetch) )
   end
 
 =begin
   def existing_referencers
     return [] unless refs = references
-    refs.map(&:referee_key).map( &Card.method(:fetch) ).compact
+    refs.map(&:referenced_name).map( &Card.method(:fetch) ).compact
   end
 
   def existing_includers
     return [] unless refs = inclusions
-    refs.map(&:referee_key).map( &Card.method(:fetch) ).compact
+    refs.map(&:referenced_name).map( &Card.method(:fetch) ).compact
   end
 =end
 
@@ -40,12 +40,12 @@ module Cardlib::References
 
   def referencees
     return [] unless refs = out_references
-    refs. map { |ref| Card.fetch ref.referee_key, :new=>{} }
+    refs. map { |ref| Card.fetch ref.referenced_name, :new=>{} }
   end
 
   def includees
     return [] unless refs = out_inclusions
-    refs.map { |ref| Card.fetch ref.referee_key, :new=>{} }
+    refs.map { |ref| Card.fetch ref.referenced_name, :new=>{} }
   end
 
   protected
@@ -79,12 +79,12 @@ module Cardlib::References
     base.class_eval do
 
       # ---------- Reference associations -----------
-      has_many :references,  :class_name => :Reference, :foreign_key => :referee_id
-      has_many :inclusions, :class_name => :Reference, :foreign_key => :referee_id,
-        :conditions => { :link_type => INCLUDE }
+      has_many :references,  :class_name => :Reference, :foreign_key => :referenced_card_id
+      has_many :inclusions, :class_name => :Reference, :foreign_key => :referenced_card_id,
+        :conditions => { :link_type => INCLUSION }
 
-      has_many :out_references,  :class_name => :Reference, :foreign_key => :referer_id
-      has_many :out_inclusions, :class_name => :Reference, :foreign_key => :referer_id, :conditions => { :link_type => INCLUDE }
+      has_many :out_references,  :class_name => :Reference, :foreign_key => :card_id
+      has_many :out_inclusions, :class_name => :Reference, :foreign_key => :card_id, :conditions => { :link_type => INCLUSION }
 
       after_create  :update_references_on_create
       after_destroy :update_references_on_destroy

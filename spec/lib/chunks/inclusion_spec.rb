@@ -5,7 +5,7 @@ include ChunkSpecHelper
 # level, but these cases should still be covered by tests
 
 
-describe Chunk::Include, "include chunk tests" do
+describe Chunks::Include, "include chunk tests" do
   include ActionView::Helpers::TextHelper
 
   it "should test_truth" do

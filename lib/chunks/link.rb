@@ -1,4 +1,6 @@
-module Chunk
+require 'chunks/chunk'
+
+module Chunks
   class Link < Reference
     attr_accessor :link_text, :link_type
 

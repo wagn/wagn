@@ -1,4 +1,6 @@
-module Chunk
+require 'chunks/chunk'
+
+module Chunks
   class Reference < Abstract
     attr_accessor :cardname
 

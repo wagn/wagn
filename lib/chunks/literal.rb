@@ -5,7 +5,7 @@ require 'chunks/chunk'
 # occuring within literal areas such as <code> and <pre> blocks
 # and within HTML tags.
 module Literal
-  class AbstractLiteral < Chunk::Abstract
+  class AbstractLiteral < Chunks::Abstract
     def initialize(match_data, content)
       super
       @unmask_text = @text

@@ -58,6 +58,7 @@ module Cardlib::TrackedAttributes
         existing_card.instance_variable_set :@cardname, tr_name.to_name
         existing_card.set_tracked_attributes
         Rails.logger.debug "trash renamed collision: #{tr_name}, #{existing_card.name}, #{existing_card.cardname.key}"
+        existing_card = existing_card.refresh
         existing_card.save!
       #else note -- else case happens when changing to a name variant.  any special handling needed?
       end

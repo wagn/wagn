@@ -385,6 +385,7 @@ class Card
         end
       #Rails.logger.warn "dependents[#{inspect}] #{@dependents.inspect}"
     end
+    @dependents
   end
 
   def repair_key

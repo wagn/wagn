@@ -3,7 +3,7 @@ require_dependency 'chunks/uri'
 require_dependency 'chunks/literal'
 require_dependency 'chunks/reference'
 require_dependency 'chunks/link'
-require_dependency 'chunks/transclude'
+require_dependency 'chunks/include'
 
 
 module ChunkManager
@@ -12,7 +12,7 @@ module ChunkManager
     ACTIVE_CHUNKS = [
 #      Literal::Pre,
       Literal::Escape,
-      Chunk::Transclude,
+      Chunk::Include,
       Chunk::Link,
       URIChunk,
       LocalURIChunk

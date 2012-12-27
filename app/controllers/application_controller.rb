@@ -1,5 +1,18 @@
 # -*- encoding : utf-8 -*-
+
+require 'wagn/sets'
+require 'card'
+
 class ApplicationController < ActionController::Base
+  # This is often needed for the controllers to work right
+  # FIXME: figure out when/why this is needed and why the tests don't fail
+  Card #::Reference
+  Card
+end
+
+class ApplicationController
+  include Wagn::Exceptions
+
   include AuthenticatedSystem
   include LocationHelper
   include Recaptcha::Verify
@@ -83,10 +96,10 @@ class ApplicationController < ActionController::Base
     params[:action] = action if action
     @card.error_view = :denial
     @card.error_status = 403
-    errors
+    render_errors
   end
 
-  def errors options={}
+  def render_errors options={}
     @card ||= Card.new
     view   = options[:view]   || (@card && @card.error_view  ) || :errors
     status = options[:status] || (@card && @card.error_status) || 422
@@ -139,7 +152,8 @@ class ApplicationController < ActionController::Base
 
 
   rescue_from Exception do |exception|
-    Rails.logger.info "exception = #{exception.class}: #{exception.message}"
+    Rails.logger.info "exception = #{exception.class}: #{exception.message} #{exception.backtrace*"\n"}"
+
 
     view, status = case exception
     when Wagn::NotFound, ActiveRecord::RecordNotFound
@@ -163,7 +177,7 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    errors :view=>view, :status=>status
+    render_errors :view=>view, :status=>status
   end
 
 end

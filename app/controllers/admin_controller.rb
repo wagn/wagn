@@ -1,5 +1,8 @@
 # -*- encoding : utf-8 -*-
-class AdminController < ApplicationController
+
+require 'card'
+
+class AdminController < CardController
   layout 'application'
 
   def setup

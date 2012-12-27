@@ -1,4 +1,4 @@
-module Wagn::Model::References
+module Cardlib::References
 
   def name_referencers(rname = key)
     Card.find_by_sql(

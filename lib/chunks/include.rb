@@ -1,18 +1,18 @@
 module Chunk
-  class Transclude < Reference
+  class Include < Reference
     attr_reader :stars, :renderer, :options, :base
-    unless defined? TRANSCLUDE_PATTERN
+    unless defined? INCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
-      TRANSCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(\|([^\}]+?))?)\}\}/
+      INCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(\|([^\}]+?))?)\}\}/
     end
 
-    def self.pattern() TRANSCLUDE_PATTERN end
+    def self.pattern() INCLUDE_PATTERN end
 
     def initialize(match_data, content)
       super
-      #Rails.logger.warn "FOUND TRANSCLUDE #{match_data} #{content}"
+      #Rails.logger.warn "FOUND INCLUDE #{match_data} #{content}"
       self.cardname, @options, @configs = a = self.class.parse(match_data)
-      #Rails.logger.info "Chunk::transclude #{a.inspect}"
+      #Rails.logger.info "Chunk::include #{a.inspect}"
       @base, @renderer = content.card, content.renderer
     end
 
@@ -24,7 +24,7 @@ module Chunk
         return [nil, {:comment=>"<!-- #{CGI.escapeHTML match[1]} -->"}]
       end
       options = {
-        :tname   =>name,  # this "t" is for transclusion.  should rename
+        :tname   =>name,  # this "t" is for inclusion.  should rename
 
         :view  => nil,
         :item  => nil,

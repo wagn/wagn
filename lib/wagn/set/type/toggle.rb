@@ -1,20 +1,24 @@
 
 module Wagn
-  module Set::Type::Toggle
-    include Sets
+  module Set
+    module Type
+      module Toggle
+        include Sets
 
-    format :base
+        format :base
 
-    define_view :core, :type=>'toggle' do |args|
-      case card.raw_content.to_i
-        when 1; 'yes'
-        when 0; 'no'
-        else  ; '?'
+        define_view :core, :type=>'toggle' do |args|
+          case card.raw_content.to_i
+            when 1; 'yes'
+            when 0; 'no'
+            else  ; '?'
+            end
         end
-    end
 
-    define_view :editor, :type=>'toggle' do |args|
-      form.check_box :content
+        define_view :editor, :type=>'toggle' do |args|
+          form.check_box :content
+        end
+      end
     end
   end
 end

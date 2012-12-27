@@ -21,8 +21,10 @@ module Notification
       @trunk_watcher_watched_pairs = trunk_watcher_watched_pairs
       @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)
 
+      Rails.logger.warn "send notice #{action}, #{inspect} TW:#{@trunk_watchers.inspect}"
+
       watcher_watched_pairs.reject {|p| @trunk_watchers.include?(p.first) }.each do |watcher, watched|
-        #warn "wtch: Mailer.change_notice( #{watcher.inspect}, #{self.inspect}, #{action.inspect}, #{watched.inspect}, #{nested_notifications.inspect}"
+        Rails.logger.warn "wtch: Mailer.change_notice( #{watcher.inspect}, #{self.inspect}, #{action.inspect}, #{watched.inspect}, #{nested_notifications.inspect}"
         watcher and mail = Mailer.change_notice( watcher, self, action,
                         watched.to_s, nested_notifications ) and mail.deliver
       end
@@ -43,26 +45,28 @@ module Notification
     end
 
     def trunk_watcher_watched_pairs
-      # do the watchers lookup before the transcluder test since it's faster.
+      # do the watchers lookup before the includer test since it's faster.
       if cardname.junction?
-        #Rails.logger.debug "trunk_watcher_pairs #{name}, #{name.trunk_name.inspect}"
+        Rails.logger.debug "trunk_watcher_pairs #{cardname}, #{cardname.trunk_name.inspect}, #{includers.inspect}"
         if tcard = Card[tname=cardname.trunk_name] and
+          Rails.logger.debug "trunk_watcher_pairs TC:#{tcard.inspect}, #{tname}, #{tcard.watcher_watched_pairs.inspect}, #{includers.inspect}"
           pairs = tcard.watcher_watched_pairs and
-          transcluders.map(&:key).member?(tname.key)
+          includers.map(&:key).member?(tname.key)
           return pairs
         end
       end
       []
     end
 
-    def watching_type?() watcher_pairs(false, :type).member?(Account.user_id) end
-    def watching?()      watcher_pairs(false).member?(Account.user_id)        end
-    def watchers()       watcher_watched_pairs(false)                      end
-    def watcher_watched_pairs(pairs=true)
-      ( watcher_pairs(pairs) + watcher_pairs(pairs, :type) )
+    def watching_type?; watcher_pairs(false, :type).member? Account.user_id end
+    def watching?;      watcher_pairs(false).       member? Account.user_id end
+    def watchers;       watcher_watched_pairs false                         end
+    def watcher_watched_pairs pairs=true
+      r=( watcher_pairs(pairs) + watcher_pairs(pairs, :type) )
+      Rails.logger.warn "wwp #{pairs}, #{r.inspect}"; r
     end
 
-    def watcher_pairs(pairs=true, kind=:name)
+    def watcher_pairs pairs=true, kind=:name
       #warn "wp #{pairs}, #{kind}, #{Account.user_id}"
       namep, rc = (kind == :type) ?  [lambda { self.type_name },
                (self.type_card.fetch(:trait=>:watchers))] :

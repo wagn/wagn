@@ -489,6 +489,58 @@ module Wagn
     end
 
 
+     ### FIXME -- this should not be here!   probably in Card::Reference model?
+    def replace_references old_name, new_name
+      #Rails.logger.warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
+      #warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
+      wiki_content = WikiContent.new(card, card.content, self)
+
+      wiki_content.find_chunks(Chunk::Reference).each do |chunk|
+        
+        if was_name = chunk.cardname and new_cardname = was_name.replace_part(old_name, new_name) and
+             was_name != new_cardname
+          Chunk::Link===chunk and link_bound = chunk.cardname == chunk.link_text
+          chunk.cardname = new_cardname
+          Card::Reference.where(:referee_key => was_name.key).update_all( :referee_key => new_cardname.key )
+          chunk.link_text=chunk.cardname.to_s if link_bound
+        end
+      end
+
+      String.new wiki_content.unrender!
+    end
+
+    def update_references rendering_result = nil, refresh = false
+      #Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh} where:#{caller[0..6]*', '}"
+      #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller*"\n"}"
+      return unless card && referer_id = card.id
+      Card::Reference.where( :referer_id => referer_id ).delete_all
+      # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
+      #Card.where( :id => referer_id ).update_all( :references_expired=>nil )
+      card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
+      card.expire if refresh
+      if rendering_result.nil?
+         rendering_result = WikiContent.new(card, _render_refs, self).render! do |opts|
+           expand_inclusion(opts) { yield }
+         end
+      end
+
+      rendering_result.find_chunks(Chunk::Reference).inject({}) do |hash, chunk|
+
+        if referer_id != ( referee_id = chunk.refcard.send_if :id ) &&
+           !hash.has_key?( referee_key = referee_id || chunk.refcardname.key )
+
+          hash[ referee_key ] = {
+              :referee_id  => referee_id,
+              :referee_key => chunk.refcardname.send_if( :key ),
+              :link_type   => Chunk::Link===chunk ? LINK : INCLUDE,
+              :present     => chunk.refcard.nil?  ?   0  :   1
+            }
+        end
+
+        hash
+      end.each_value { |update| Card::Reference.create! update.merge( :referer_id => referer_id ) }
+
+    end
   end
 
   class Renderer::Json < Renderer

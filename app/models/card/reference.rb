@@ -9,8 +9,6 @@ class Card < ActiveRecord::Base
     INCLUDE = 'T'
     WANTED_LINK    = 'M'
     WANTED_INCLUDE = 'W'
-
-    TYPES   = [ LINK, INCLUDE ]
   end
 
   class Reference
@@ -24,8 +22,6 @@ class Card < ActiveRecord::Base
     def referencee
       Card[referenced_card_id]
     end
-
-    validates_inclusion_of :link_type, :in => ReferenceTypes::TYPES
 
     class << self
       include ReferenceTypes

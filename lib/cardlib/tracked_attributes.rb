@@ -167,6 +167,7 @@ module Cardlib::TrackedAttributes
 
           ActiveRecord::Base.logger.debug "------------------ UPDATE REFERER #{card.name}  ------------------------"
           next if card.hard_template
+          card = card.refresh
           card.content = Wagn::Renderer.new(card, :not_current=>true).replace_references( @old_name, name )
           card.save! unless card==self
         end

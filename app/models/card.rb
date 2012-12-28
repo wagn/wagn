@@ -572,7 +572,8 @@ class Card
     "#<#{self.class.name}" + "##{id}" +
     "###{object_id}" + #"k#{tag_id}g#{tag_id}" +
     "[#{debug_type}]" + "(#{self.name})" + #"#{object_id}" +
-    "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{virtual? &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }}" +
+    "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{frozen? ? 'Fz' : readonly? ? 'RdO' : ''}" +
+    "#{@virtual &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }}" +
     #" Rules:#{ @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}" +
     '>'
   end

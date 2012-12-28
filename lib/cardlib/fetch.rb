@@ -196,7 +196,7 @@ module Cardlib::Fetch
   end
 
   def refresh
-    if self.frozen? || readonly?
+    if self.frozen? || self.readonly?
       fresh_card = self.class.find id
       fresh_card.include_set_modules
       fresh_card

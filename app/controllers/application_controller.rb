@@ -6,7 +6,7 @@ require 'card'
 class ApplicationController < ActionController::Base
   # This is often needed for the controllers to work right
   # FIXME: figure out when/why this is needed and why the tests don't fail
-  Card #::Reference
+  #Card::Reference
   Card
 end
 
@@ -100,10 +100,12 @@ class ApplicationController
   end
 
   def render_errors options={}
+    return false if @card.errors.empty?
     @card ||= Card.new
     view   = options[:view]   || (@card && @card.error_view  ) || :errors
     status = options[:status] || (@card && @card.error_status) || 422
     show view, status
+    true
   end
 
   def show view = nil, status = 200

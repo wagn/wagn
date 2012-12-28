@@ -7,6 +7,8 @@ class Card < ActiveRecord::Base
   module ReferenceTypes
     LINK    = 'L'
     INCLUDE = 'T'
+    WANTED_LINK    = 'M'
+    WANTED_INCLUDE = 'W'
 
     TYPES   = [ LINK, INCLUDE ]
   end

@@ -81,10 +81,10 @@ module Cardlib::References
       # ---------- Reference associations -----------
       has_many :references,  :class_name => :Reference, :foreign_key => :referenced_card_id
       has_many :inclusions, :class_name => :Reference, :foreign_key => :referenced_card_id,
-        :conditions => { :link_type => INCLUSION }
+        :conditions => { :link_type => INCLUDE }
 
       has_many :out_references,  :class_name => :Reference, :foreign_key => :card_id
-      has_many :out_inclusions, :class_name => :Reference, :foreign_key => :card_id, :conditions => { :link_type => INCLUSION }
+      has_many :out_inclusions, :class_name => :Reference, :foreign_key => :card_id, :conditions => { :link_type => INCLUDE }
 
       after_create  :update_references_on_create
       after_destroy :update_references_on_destroy

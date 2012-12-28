@@ -90,8 +90,8 @@ module Wagn
           hash[ hash_key ] = {
               :referenced_card_id  => referee_id,
               :referenced_name => chunk.refcardname.send_if( :key ),
-              :link_type   => chunk.refcard.nil? ? ( ltype ? WANTED_LINK : WANTED_INCLUSION ) : 
-                                                   ( ltype ? LINK : INCLUSION )
+              :link_type   => chunk.refcard.nil? ? ( ltype ? WANTED_LINK : WANTED_INCLUDE ) : 
+                                                   ( ltype ? LINK        : INCLUDE )
             }
         end
 
@@ -533,8 +533,8 @@ module Wagn
               :referenced_card_id  => referee_id,
               :referenced_name => chunk.refcardname.send_if( :key ),
               :link_type   => ( case chunk
-                     when Chunks::Link;    chunk.refcard ? LINK      : WANTED_LINK
-                     when Chunks::Include; chunk.refcard ? INCLUSION : WANTED_INCLUSION
+                     when Chunks::Link;    chunk.refcard ? LINK    : WANTED_LINK
+                     when Chunks::Include; chunk.refcard ? INCLUDE : WANTED_INCLUDE
                      else raise "Unknown chunk reference class #{chunk.class}"
                    end )
             }

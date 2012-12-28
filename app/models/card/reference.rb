@@ -29,9 +29,9 @@ class Card < ActiveRecord::Base
       include ReferenceTypes
 
       def update_on_create card
-        where( "link_type (in 'L' 'M') and (referenced_card_id = ? or referenced_name = ?)", card.id, name ).
+        where( "link_type IN ('L' 'M') and (referenced_card_id = ? or referenced_name = ?)", card.id, name ).
           update_all :link_type => 'L', :referenced_card_id => card.id
-        where( "link_type (in 'T' 'W') and (referenced_card_id = ? or referenced_name = ?)", card.id, name ).
+        where( "link_type IN ('T' 'W') and (referenced_card_id = ? or referenced_name = ?)", card.id, name ).
           update_all :link_type => 'T', :referenced_card_id => card.id
       end
 
@@ -39,9 +39,9 @@ class Card < ActiveRecord::Base
         name ||= card.key
         delete_all :card_id => card.id
 
-        where( "link_type (in 'L' 'M') and (referenced_card_id = ? or referenced_name = ?)", card.id, name ).
+        where( "link_type IN ('L' 'M') and (referenced_card_id = ? or referenced_name = ?)", card.id, name ).
           update_all :link_type => 'M', :referenced_card_id => nil
-        where( "link_type (in 'T' 'W') and (referenced_card_id = ? or referenced_name = ?)", card.id, name ).
+        where( "link_type IN ('T' 'W') and (referenced_card_id = ? or referenced_name = ?)", card.id, name ).
           update_all :link_type => 'W', :referenced_card_id => nil
       end
     end

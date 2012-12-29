@@ -1,4 +1,4 @@
-module Wagn::Model::AttributeTracking
+module Cardlib::AttributeTracking
   class Updates
     include Enumerable
 

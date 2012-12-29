@@ -132,7 +132,7 @@ describe Card do
     end
 
     it "should have updates" do
-      Wagn::Model::AttributeTracking::Updates.should === @c.updates
+      Cardlib::AttributeTracking::Updates.should === @c.updates
     end
 
     it "should return original value" do

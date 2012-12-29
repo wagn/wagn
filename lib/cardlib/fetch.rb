@@ -28,9 +28,9 @@ module Cardlib::Fetch
 #      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{cardname}" do
       if mark.nil?
         return if opts[:new].nil?
+        # This is fetch_or_new now when you supply :new=>{opts}
 
       else
-        # don't need a mar
 
         #warn "fetch #{mark.inspect}, #{opts.inspect}"
         # Symbol (codename) handling

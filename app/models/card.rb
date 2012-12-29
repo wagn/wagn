@@ -296,7 +296,7 @@ class Card
     run_callbacks( :destroy ) do
       deps = self.dependents # already called once.  reuse?
       @trash_changed = true
-      self.update_attributes :trash => true
+      self.trash = true
       deps.each do |dep|
         dep.destroy
       end

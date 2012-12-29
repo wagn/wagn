@@ -72,7 +72,6 @@ module Wagn
       Card::Reference.where( :card_id => referer_id ).delete_all
       # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
       Card.where( :id => referer_id ).update_all( :references_expired=>nil )
-      #card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
       card.expire if refresh
       if rendering_result.nil?
          rendering_result = WikiContent.new(card, _render_refs, self).render! do |opts|
@@ -80,13 +79,13 @@ module Wagn
          end
       end
 
-      h=
-        rendering_result.find_chunks(Chunks::Reference).inject({}) do |hash, chunk|
+      rendering_result.find_chunks(Chunks::Reference).inject({}) do |hash, chunk|
 
         if referer_id != ( referee_id = chunk.refcard.send_if :id ) &&
            !hash.has_key?( hash_key = referee_id || chunk.refcardname.key )
 
-          ltype = Chunks::Link===chunk
+          ltype = (Chunks::Link===chunk)
+          #warn "up ref #{hash_key}, #{referee_id}, #{chunk.inspect}, lt:#{ltype}"
           hash[ hash_key ] = {
               :referenced_card_id  => referee_id,
               :referenced_name => chunk.refcardname.send_if( :key ),
@@ -96,9 +95,7 @@ module Wagn
         end
 
         hash
-      end
-      Rails.logger.warn "update refs: #{h.inspect}"
-      h.each_value { |update| Card::Reference.create! update.merge( :card_id => referer_id ) }
+      end.each_value { |update| Card::Reference.create! update.merge( :card_id => referer_id ) }
 
     end
 
@@ -488,62 +485,6 @@ module Wagn
       @context_names.uniq!
     end
 
-
-     ### FIXME -- this should not be here!   probably in Card::Reference model?
-    def replace_references old_name, new_name
-      #Rails.logger.warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
-      #warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
-      wiki_content = WikiContent.new(card, card.content, self)
-
-      wiki_content.find_chunks(Chunks::Reference).each do |chunk|
-        
-        if was_name = chunk.cardname and new_cardname = was_name.replace_part(old_name, new_name) and
-             was_name != new_cardname
-          Chunks::Link===chunk and link_bound = chunk.cardname == chunk.link_text
-          chunk.cardname = new_cardname
-          Card::Reference.where(:referenced_name => was_name.key).update_all( :referenced_name => new_cardname.key )
-          chunk.link_text=chunk.cardname.to_s if link_bound
-        end
-      end
-
-      String.new wiki_content.unrender!
-    end
-
-    def update_references rendering_result = nil, refresh = false
-      #Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh} where:#{caller[0..6]*', '}"
-      #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller*"\n"}"
-      return unless card && referer_id = card.id
-      Card::Reference.where( :card_id => referer_id ).delete_all
-      # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
-      #Card.where( :id => referer_id ).update_all( :references_expired=>nil )
-      card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
-      card.expire if refresh
-      if rendering_result.nil?
-         rendering_result = WikiContent.new(card, _render_refs, self).render! do |opts|
-           expand_inclusion(opts) { yield }
-         end
-      end
-
-      rendering_result.find_chunks(Chunks::Reference).inject({}) do |hash, chunk|
-
-        if referer_id != ( referee_id = chunk.refcard.send_if :id ) &&
-           !hash.has_key?( referee_key = referee_id || chunk.refcardname.key )
-
-          hash[ referee_key ] = {
-              :referenced_card_id  => referee_id,
-              :referenced_name => chunk.refcardname.send_if( :key ),
-              :link_type   => ( case chunk
-                     when Chunks::Link;    chunk.refcard ? LINK    : WANTED_LINK
-                     when Chunks::Include; chunk.refcard ? INCLUDE : WANTED_INCLUDE
-                     else raise "Unknown chunk reference class #{chunk.class}"
-                   end )
-            }
-        end
-
-        hash
-      end.each_value { |update| Card::Reference.create! update.merge( :card_id => referer_id ) }
-
-    end
   end
 
   class Renderer::Json < Renderer

@@ -6,6 +6,21 @@ module Wagn
     @@dirs = []
 
     module SharedMethods
+    end
+    module ClassMethods
+    end
+
+    def self.included base
+
+      #base.extend CardControllerMethods
+      base.extend SharedMethods
+      base.extend ClassMethods
+
+      super
+
+    end
+
+    module SharedMethods
       private
       def get_set_key selection_key, opts
         unless pkey = Cardlib::Pattern.method_key(opts)
@@ -66,13 +81,6 @@ module Wagn
       Wagn::Sets.all_constants(Wagn::Set)
     end
 
-  end
-end
-
-require_dependency 'wagn/renderer'
-
-module Wagn
-  module Sets
 
     # View definitions
     #
@@ -168,15 +176,6 @@ module Wagn
       end
     end
 
-    def self.included base
-
-      #base.extend CardControllerMethods
-      base.extend SharedMethods
-      base.extend ClassMethods
-
-      super
-
-    end
   end
 end
 

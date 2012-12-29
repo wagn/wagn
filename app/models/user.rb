@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-require_dependency 'digest/sha1'
+require_dependency 'digest'
 
 class User < ActiveRecord::Base
 

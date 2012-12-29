@@ -35,8 +35,8 @@ module Wagn
     attr_reader :format, :card, :root, :parent
     attr_accessor :form, :main_content, :error_status
 
-    Card
     Card::Reference
+    Card
     include LocationHelper
 
   end

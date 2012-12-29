@@ -1,13 +1,9 @@
 
-require_dependency 'wagn/renderer'
 
 module Wagn
 
   module Sets
     @@dirs = []
-  end
-
-  module Sets
 
     module SharedMethods
       private
@@ -65,6 +61,18 @@ module Wagn
         @@dirs.each do |dir| load_dir dir end
       end
     end
+
+    module AllSets
+      Wagn::Sets.all_constants(Wagn::Set)
+    end
+
+  end
+end
+
+require_dependency 'wagn/renderer'
+
+module Wagn
+  module Sets
 
     # View definitions
     #
@@ -158,10 +166,6 @@ module Wagn
           end }
         end
       end
-    end
-
-    module AllSets
-      Wagn::Sets.all_constants(Wagn::Set)
     end
 
     def self.included base

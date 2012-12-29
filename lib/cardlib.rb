@@ -1,5 +1,5 @@
 
-require 'wagn/sets'
+require_dependency 'wagn/sets'
 
 Wagn.send :include, Wagn::Exceptions
 
@@ -23,5 +23,4 @@ module Cardlib
     end
 
   end
-
 end

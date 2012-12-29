@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-require 'wagn/sets'
-require 'card'
+require_dependency 'wagn/sets'
+require_dependency 'card'
 
 class ApplicationController < ActionController::Base
   # This is often needed for the controllers to work right

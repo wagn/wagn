@@ -3,7 +3,7 @@ class InvitationError < StandardError; end
 
 #require 'wagn/sets'
 #require 'card'
-require 'card/reference'
+require_dependency 'card/reference'
 
 class AccountController < CardController
   Card

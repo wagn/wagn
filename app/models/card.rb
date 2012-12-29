@@ -5,10 +5,10 @@ class Card < ActiveRecord::Base
   end
 end
 
-require 'card/revision'
-require 'card/reference'
+require_dependency 'card/revision'
+require_dependency 'card/reference'
 
-require 'smart_name'
+require_dependency 'smart_name'
 SmartName.codes= Wagn::Codename
 SmartName.params= Wagn::Conf
 SmartName.lookup= Card

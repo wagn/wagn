@@ -1,5 +1,5 @@
 
-require 'card/reference'
+require_dependency 'wagn/renderer'
 
 module Wagn
 

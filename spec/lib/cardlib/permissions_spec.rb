@@ -1,6 +1,6 @@
-require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
-require File.expand_path('../../../permission_spec_helper', File.dirname(__FILE__))
-require File.expand_path('../../../packs/pack_spec_helper', File.dirname(__FILE__))
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+require File.expand_path('../../permission_spec_helper', File.dirname(__FILE__))
+require File.expand_path('../../packs/pack_spec_helper', File.dirname(__FILE__))
 
 describe "reader rules" do
   before do

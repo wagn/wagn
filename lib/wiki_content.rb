@@ -1,4 +1,4 @@
-require 'cgi'
+require_dependency 'cgi'
 require_dependency 'chunks/chunk'
 require_dependency 'chunk_manager'
 

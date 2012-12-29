@@ -1,4 +1,4 @@
-require 'chunks/chunk'
+require_dependency 'chunks/chunk'
 
 module Chunks
   class Reference < Abstract

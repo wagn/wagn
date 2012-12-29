@@ -1,4 +1,4 @@
-require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Card do
   context 'when there is a general toc setting of 2' do

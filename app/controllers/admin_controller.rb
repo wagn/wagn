@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require 'card'
+require_dependency 'card'
 
 class AdminController < CardController
   layout 'application'

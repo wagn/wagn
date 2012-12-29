@@ -1,4 +1,4 @@
-require 'chunks/chunk'
+require_dependency 'chunks/chunk'
 
 # These are basic chunks that have a pattern and can be protected.
 # They are used by rendering process to prevent wiki rendering

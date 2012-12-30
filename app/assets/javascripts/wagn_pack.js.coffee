@@ -112,11 +112,6 @@ $(window).ready ->
   $('.ui-menu-icon').live 'tap', (event)->
     $(this).closest('li').trigger('mouseenter')
     event.preventDefault()
-  
-
-    
-#    alert('prevented?')
-    #wagn.openMenu this
 
 
   #pointer pack
@@ -146,10 +141,6 @@ $(window).ready ->
     slot.find('.perm-group input:checked').attr('checked', false)
     slot.find('.perm-indiv input').val('')
 
-  #wagn_org pack (for now)
-  $('.shade-view h1').live 'click', ->
-    $(this).slot().find('.shade-content').slideToggle 1000
-
   # rstar pack
   $('body').delegate '.rule-submit-button', 'click', ->
     f = $(this).closest('form')
@@ -178,10 +169,25 @@ $(window).ready ->
        $(wagn.padform)[0].submit()
     false
 
+  #wagn_org pack (for now)
+  $('.shade-view h1').live 'click', ->
+    toggleThis = $(this).slot().find('.shade-content').is ':hidden'
+    toggleShade $(this).closest('.pointer-list').find('.shade-content:visible').parent()
+    if toggleThis
+      toggleShade $(this).slot()
+
+
+  if firstShade = $('.shade-view h1')[0]
+    $(firstShade).trigger 'click'
+    
+
 $(document).bind 'mobileinit', ->
   $.mobile.autoInitializePage = false
   $.mobile.ajaxEnabled = false
-  
+
+toggleShade = (shadeSlot) ->
+  shadeSlot.find('.shade-content').slideToggle 1000
+  shadeSlot.find('.ui-icon').toggleClass 'ui-icon-triangle-1-e ui-icon-triangle-1-s'  
 
 permissionsContent = (ed) ->
   return '_left' if ed.find('#inherit').attr('checked')
@@ -249,3 +255,5 @@ navbox_select = (event, ui) ->
     window.location = wagn.rootPath + ui.item.href
 
   $(this).attr('disabled', 'disabled')
+
+  

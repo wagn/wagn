@@ -1,5 +1,5 @@
 
-module Wagn::Model::Permissions
+module Cardlib::Permissions
 
   def ydhpt
     "#{Account.user_card.name}, You don't have permission to"
@@ -259,7 +259,7 @@ module Wagn::Model::Permissions
       in_set = {}
       if !(self.trash)
         if class_id = (set=left and set_class=set.tag and set_class.id)
-          rule_class_ids = Wagn::Model::Pattern.subclasses.map &:key_id
+          rule_class_ids = Cardlib::Pattern.subclasses.map &:key_id
           #warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
 
           #first update all cards in set that aren't governed by narrower rule

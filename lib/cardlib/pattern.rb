@@ -1,4 +1,4 @@
-module Wagn::Model
+module Cardlib
   module Pattern
     mattr_accessor :subclasses
     @@subclasses = []
@@ -104,7 +104,7 @@ module Wagn::Model
         end
 
         def register key, opt_keys, opts={}
-          Wagn::Model::Pattern.register_class self
+          Cardlib::Pattern.register_class self
           self.key = key
           #self.key_id = (key == 'self') ? 0 : Wagn::Codename[key]
           self.key_id = Wagn::Codename[key]

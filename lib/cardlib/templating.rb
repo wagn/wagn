@@ -1,4 +1,4 @@
-module Wagn::Model::Templating
+module Cardlib::Templating
 
   def template?
     cardname.trait_name? :content, :default

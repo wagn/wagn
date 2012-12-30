@@ -1,5 +1,5 @@
-module Wagn
- module Model::References
+module Cardlib::References
+
   def name_referencers link_name=nil
     link_name = link_name.nil? ? key : link_name.to_name.key
     

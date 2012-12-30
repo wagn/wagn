@@ -9,7 +9,7 @@ module Wagn
     define_view :core, :type=>'setting' do |args|
       _render_closed_content(args) +
 
-      Wagn::Model::Pattern.subclasses.reverse.map do |set_class|
+      Cardlib::Pattern.subclasses.reverse.map do |set_class|
         wql = { :left  => {:type =>Card::SetID},
                 :right => card.id,
                 :sort  => 'name',

@@ -1,9 +1,9 @@
-require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
-require File.expand_path('../../../pattern_spec_helper', File.dirname(__FILE__))
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+require File.expand_path('../../pattern_spec_helper', File.dirname(__FILE__))
 
-describe Wagn::Model::Pattern do
+describe Cardlib::Pattern do
   it "module exists and autoloads" do
-    Wagn::Model::Pattern.should be_true
+    Cardlib::Pattern.should be_true
   end
 
 
@@ -104,24 +104,24 @@ describe Wagn::Model::Pattern do
   end
 end
 
-describe Wagn::Model::Patterns::RightPattern do
+describe Cardlib::Patterns::RightPattern do
   it_generates :name => "author+*right", :from => Card.new( :name => "Iliad+author" )
   it_generates :name => "author+*right", :from => Card.new( :name => "+author" )
 end
 
-describe Wagn::Model::Patterns::TypePattern do
+describe Cardlib::Patterns::TypePattern do
   it_generates :name => "Book+*type", :from => Card.new( :type => "Book" )
 end
 
-describe Wagn::Model::Patterns::AllPlusPattern do
+describe Cardlib::Patterns::AllPlusPattern do
   it_generates :name => "*all plus", :from => Card.new( :name => "Book+author" )
 end
 
 
-describe Wagn::Model::Patterns::AllPattern do
+describe Cardlib::Patterns::AllPattern do
   it_generates :name => "*all", :from => Card.new( :type => "Book" )
 end
 
-describe Wagn::Model::Patterns::LeftTypeRightNamePattern do
+describe Cardlib::Patterns::LeftTypeRightNamePattern do
   it_generates :name => "Book+author+*type plus right", :from => Card.new( :name=>"Iliad+author" )
 end

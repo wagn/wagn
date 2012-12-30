@@ -93,8 +93,6 @@ describe "Card::Reference" do
     Card::Reference.where(:referee_id => Card::AdminID).map(&:referer_id).sort.should == refs
   end
 
-  LINK = Card::ReferenceTypes::LINK
-
   it "should not update references when not requested" do
 
     watermelon = newcard('watermelon', 'mmmm')
@@ -107,7 +105,7 @@ describe "Card::Reference" do
     watermelon.name="grapefruit"
     watermelon.save!
     lew.reload.content.should == "likes [[watermelon]] and [[watermelon+seeds|seeds]]"
-    assert_equal [ LINK, LINK ], lew.out_references.map(&:link_type), "links should be a LINK"
+    assert_equal [ 'L', 'L' ], lew.out_references.map(&:link_type), "links should be a LINK"
     assert_equal [ 0, 0 ], lew.out_references.map(&:present), "links should not be present"
   end
 

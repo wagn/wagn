@@ -429,19 +429,17 @@ class Wql
 
 
   class RefSpec < Spec
-    include Card::ReferenceTypes
-
     def initialize(spec)
       @spec = spec
       # FIXME: Use RefernceTypes here
       @refspecs = {
         :refer_to       => ['referer_id','referee_id',''],
-        :link_to        => ['referer_id','referee_id',"link_type='#{LINK}' AND"],
-        :include        => ['referer_id','referee_id',"link_type='#{INCLUDE}' AND"],
-        :link_to_missing=> ['referer_id','referee_id',"present = 0 AND link_type='#{LINK}'"],
+        :link_to        => ['referer_id','referee_id',"link_type='L' AND"],
+        :include        => ['referer_id','referee_id',"link_type='I' AND"],
+        :link_to_missing=> ['referer_id','referee_id',"present = 0 AND link_type='L'"],
         :referred_to_by => ['referee_id','referer_id',''],
-        :linked_to_by   => ['referee_id','referer_id',"link_type='#{LINK}' AND"],
-        :included_by    => ['referee_id','referer_id',"link_type='#{INCLUDE}' AND"]
+        :linked_to_by   => ['referee_id','referer_id',"link_type='L' AND"],
+        :included_by    => ['referee_id','referer_id',"link_type='I' AND"]
       }
     end
 

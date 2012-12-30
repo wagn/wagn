@@ -1,7 +1,5 @@
 module Wagn
  module Model::References
-  include Card::ReferenceTypes
-
   def name_referencers link_name=nil
     link_name = link_name.nil? ? key : link_name.to_name.key
     
@@ -82,10 +80,10 @@ module Wagn
       # ---------- Reference associations -----------
       has_many :references,  :class_name => :Reference, :foreign_key => :referee_id
       has_many :includes, :class_name => :Reference, :foreign_key => :referee_id,
-        :conditions => { :link_type => INCLUDE }
+        :conditions => { :link_type => 'I' }
 
       has_many :out_references,  :class_name => :Reference, :foreign_key => :referer_id
-      has_many :out_includes, :class_name => :Reference, :foreign_key => :referer_id, :conditions => { :link_type => INCLUDE }
+      has_many :out_includes, :class_name => :Reference, :foreign_key => :referer_id, :conditions => { :link_type => 'I' }
 
       after_create  :update_references_on_create
       after_destroy :update_references_on_destroy

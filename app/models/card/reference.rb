@@ -2,15 +2,6 @@
 
 class Card
  
-  module ReferenceTypes
-
-    LINK    = 'L'
-    INCLUDE = 'T'
-
-    TYPES   = [ LINK, INCLUDE ]
-  end
-
-
   class Reference < ActiveRecord::Base
     def referencer
       Card[referer_id]
@@ -20,11 +11,7 @@ class Card
       Card[referee_id]
     end
 
-    validates_inclusion_of :link_type, :in => ReferenceTypes::TYPES
-
     class << self
-      include ReferenceTypes
-
       def update_on_create card
         where( :referee_key => card.key ).
           update_all :present => 1, :referee_id => card.id

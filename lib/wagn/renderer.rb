@@ -1,7 +1,6 @@
 module Wagn
   class Renderer
     Card::Reference
-    include Card::ReferenceTypes
     include LocationHelper
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
@@ -449,8 +448,8 @@ module Wagn
           hash[ referee_key ] = {
               :referee_id  => referee_id,
               :referee_key => chunk.refcardname.send_if( :key ),
-              :link_type   => Chunk::Link===chunk ? LINK : INCLUDE,
-              :present     => chunk.refcard.nil?  ?   0  :   1
+              :link_type   => Chunk::Link===chunk ? 'L' : 'I',
+              :present     => chunk.refcard.nil?  ?  0  :  1
             }
         end
 

@@ -1,6 +1,6 @@
 module Wagn
   class Renderer
-    include ReferenceTypes
+    Card::Reference
     include LocationHelper
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
@@ -159,7 +159,7 @@ module Wagn
       content = card.content if content.blank?
 
       wiki_content = WikiContent.new(card, content, self)
-      #Rails.logger.info "processing content for #{card.name}"
+
       update_references( wiki_content, true ) if card.references_expired
 
       wiki_content.render! do |opts|
@@ -244,6 +244,7 @@ module Wagn
     end
 
     def expand_inclusion opts
+      #warn "ex inc #{card.inspect}, #{opts.inspect}"
       case
       when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
@@ -406,48 +407,55 @@ module Wagn
 
      ### FIXME -- this should not be here!   probably in Card::Reference model?
     def replace_references old_name, new_name
-      #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
+      #Rails.logger.warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
+      #warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
       wiki_content = WikiContent.new(card, card.content, self)
 
-      wiki_content.find_chunks(Chunk::Link).each do |chunk|
-        if chunk.cardname
-          link_bound = chunk.cardname == chunk.link_text
-          chunk.cardname = chunk.cardname.replace_part(old_name, new_name)
+      wiki_content.find_chunks(Chunk::Reference).each do |chunk|
+        
+        if was_name = chunk.cardname and new_cardname = was_name.replace_part(old_name, new_name) and
+             was_name != new_cardname
+          Chunk::Link===chunk and link_bound = chunk.cardname == chunk.link_text
+          chunk.cardname = new_cardname
+          Card::Reference.where(:referee_key => was_name.key).update_all( :referee_key => new_cardname.key )
           chunk.link_text=chunk.cardname.to_s if link_bound
-          #Rails.logger.info "repl ref: #{chunk.cardname.to_s}, #{link_bound}, #{chunk.link_text}"
         end
-      end
-
-      wiki_content.find_chunks(Chunk::Transclude).each do |chunk|
-        chunk.cardname =
-          chunk.cardname.replace_part(old_name, new_name) if chunk.cardname
       end
 
       String.new wiki_content.unrender!
     end
 
-    #FIXME -- should not be here.
     def update_references rendering_result = nil, refresh = false
-      return unless card && card.id
-      Card::Reference.delete_all ['card_id = ?', card.id]
+      #Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh} where:#{caller[0..6]*', '}"
+      #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller*"\n"}"
+      return unless card && referer_id = card.id
+      Card::Reference.where( :referer_id => referer_id ).delete_all
+      # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
+      #Card.where( :id => referer_id ).update_all( :references_expired=>nil )
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
       card.expire if refresh
-      rendering_result ||= WikiContent.new(card, _render_refs, self)
-      
-      rendering_result.find_chunks(Chunk::Reference).each do |chunk|
-        reference_type =
-          case chunk
-            when Chunk::Link;       chunk.refcard ? LINK : WANTED_LINK
-            when Chunk::Transclude; chunk.refcard ? TRANSCLUSION : WANTED_TRANSCLUSION
-            else raise "Unknown chunk reference class #{chunk.class}"
-          end
-
-        Card::Reference.create!( :card_id=>card.id,
-          :referenced_name=> (rc=chunk.refcardname()) && rc.key() || '',
-          :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
-          :link_type=>reference_type
-         )
+      if rendering_result.nil?
+         rendering_result = WikiContent.new(card, _render_refs, self).render! do |opts|
+           expand_inclusion(opts) { yield }
+         end
       end
+
+      rendering_result.find_chunks(Chunk::Reference).inject({}) do |hash, chunk|
+
+        if referer_id != ( referee_id = chunk.refcard.send_if :id ) &&
+           !hash.has_key?( referee_key = referee_id || chunk.refcardname.key )
+
+          hash[ referee_key ] = {
+              :referee_id  => referee_id,
+              :referee_key => chunk.refcardname.send_if( :key ),
+              :link_type   => Chunk::Link===chunk ? 'L' : 'I',
+              :present     => chunk.refcard.nil?  ?  0  :  1
+            }
+        end
+
+        hash
+      end.each_value { |update| Card::Reference.create! update.merge( :referer_id => referer_id ) }
+
     end
   end
 

@@ -58,7 +58,7 @@ module Wagn
 
   def wrap(view=nil, args = {})
     css_class = case args[:action].to_s
-      when 'content'  ;  'transcluded'
+      when 'content'  ;  'included'
       when 'exception';  'exception'
       when 'closed'   ;  'card-slot line'
       else            ;  'card-slot paragraph'

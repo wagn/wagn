@@ -1,4 +1,4 @@
-require 'uri/common'
+require_dependency 'uri/common'
 
 # A chunk is a pattern of text that can be protected
 # and interrogated by a renderer. Each Chunk class has a
@@ -23,10 +23,17 @@ module Chunk
     attr_accessor :text, :unmask_text, :unmask_mode, :revision, :card
 
     def initialize match_data, content
+      #raise inspect if self.cardname == 'address+*right+city'
       @text = match_data[0]
       @content = content
       @unmask_mode = :normal
       @card = content.card
+      #warn "init chunk #{inspect}" if @card.name == 'address+*right+city'
+      self
+    end
+
+    def inspect
+      "#<#{self.class}##{object_id} Txu:#{@unmask_text} t:#{@text}: C:#{@content.gsub("\n", '\\n')[0,40]}:#{@unmask_mode}:Card:#{@card.inspect} #{@cardname.nil? ? '' : " :ref:#{@cardname}::#{@link_text}"}>"
     end
 
     # Find all the chunks of the given type in content
@@ -70,7 +77,7 @@ require_dependency 'chunks/uri'
 require_dependency 'chunks/literal'
 require_dependency 'chunks/reference'
 require_dependency 'chunks/link'
-require_dependency 'chunks/transclude'
+require_dependency 'chunks/include'
 =end
 
 

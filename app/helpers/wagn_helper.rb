@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 #require_dependency 'rich_html_renderer'
-require 'diff'
+require_dependency 'diff'
 
 module WagnHelper
   require_dependency 'wiki_content'

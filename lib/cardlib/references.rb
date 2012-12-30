@@ -91,5 +91,4 @@ module Cardlib::References
     end
 
   end
- end
 end

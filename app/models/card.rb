@@ -571,10 +571,10 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INCLUDED MODULES
 
-  include Wagn::Model
+  include Cardlib
 
   after_save :after_save_hooks
-  # moved this after Wagn::Model inclusions because aikido module needs to come after Paperclip triggers,
+  # moved this after Cardlib inclusions because aikido module needs to come after Paperclip triggers,
   # which are set up in attach model.  CLEAN THIS UP!!!
 
   def after_save_hooks # don't move unless you know what you're doing, see above.

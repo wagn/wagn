@@ -1,5 +1,5 @@
 
-require 'wagn/renderer'
+require_dependency 'wagn/renderer'
 
 module Wagn
 
@@ -16,7 +16,7 @@ module Wagn
           load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
         end
         
-        load_dir File.expand_path( "#{Rails.root}/lib/wagn/model/*.rb", __FILE__ )
+        load_dir File.expand_path( "#{Rails.root}/lib/cardlib/*.rb", __FILE__ )
     
       end
 
@@ -140,7 +140,7 @@ module Wagn
       private
 
       def get_view_key view, opts
-        unless pkey = Wagn::Model::Pattern.method_key(opts)
+        unless pkey = Cardlib::Pattern.method_key(opts)
           raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
         end
         key = pkey.blank? ? view : "#{pkey}_#{view}"

@@ -1,5 +1,5 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper')
-require File.expand_path(File.dirname(__FILE__) + '/../../../packs/pack_spec_helper')
+require File.expand_path( '../../spec_helper', File.dirname(__FILE__))
+require File.expand_path( '../../packs/pack_spec_helper', File.dirname(__FILE__))
 
 #describe Card do
 #  before do

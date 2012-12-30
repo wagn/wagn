@@ -1,4 +1,4 @@
-module Wagn::Model::Collection
+module Cardlib::Collection
   module ClassMethods
     def search(spec)
       ::Wql.new(spec).run

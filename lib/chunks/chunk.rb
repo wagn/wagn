@@ -7,6 +7,7 @@ require_dependency 'chunks/literal'
 require_dependency 'chunks/reference'
 require_dependency 'chunks/link'
 require_dependency 'chunks/include'
+
 require_dependency 'uri/common'
 
 # A chunk is a pattern of text that can be protected

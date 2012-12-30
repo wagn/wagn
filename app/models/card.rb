@@ -1,12 +1,9 @@
 # -*- encoding : utf-8 -*-
 
 class Card < ActiveRecord::Base
-  class Reference < ActiveRecord::Base
-  end
+  require_dependency 'card/revision'
+  require_dependency 'card/reference'
 end
-
-require_dependency 'card/revision'
-require_dependency 'card/reference'
 
 require_dependency 'smart_name'
 SmartName.codes= Wagn::Codename

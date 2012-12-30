@@ -7,13 +7,7 @@ require_dependency 'card'
 class CardController < ApplicationController
   # This is often needed for the controllers to work right
   # FIXME: figure out when/why this is needed and why the tests don't fail
-  Card::Reference
   Card
-end
-
-  #include Wagn::Sets::CardControllerMethods
-
-class CardController
 
   helper :wagn
 
@@ -34,7 +28,7 @@ class CardController
   end
 
   def read
-    if @card.nil? || @card.errors.any?
+    if @card.errors.any?
       render_errors
     else
       save_location # should be an event!

@@ -13,7 +13,7 @@ describe "Card::Reference" do
       Card.create! :name=>"JoeForm", :type=>'UserForm'
       Wagn::Renderer.new(Card["JoeForm"]).render(:core)
       assert_equal ["joe_form+age", "joe_form+description", "joe_form+name"],
-        Card["JoeForm"].out_references.map(&:referenced_name).sort
+        Card["JoeForm"].includees.map(&:key).sort
       Card["JoeForm"].references_expired.should_not == true
     end
 
@@ -27,7 +27,7 @@ describe "Card::Reference" do
       Wagn::Renderer.new(Card["Form1"]).render(:core)
       c = Card["Form1"]
       c.references_expired.should be_nil
-      Card["Form1"].out_references.map(&:referenced_name).should == ["form1+bar"]
+      Card["Form1"].includees.map(&:key).should == ["form1+bar"]
     end
 
     it "on template update" do
@@ -38,7 +38,7 @@ describe "Card::Reference" do
       Card["JoeForm"].references_expired.should be_true
       Wagn::Renderer.new(Card["JoeForm"]).render(:core)
       assert_equal ["joe_form+monkey", "joe_form+banana", "joe_form+fruit"].sort,
-        Card["JoeForm"].out_references.map(&:referenced_name).sort
+        Card["JoeForm"].includees.map(&:key).sort
       Card["JoeForm"].references_expired.should_not == true
     end
   end
@@ -86,25 +86,27 @@ describe "Card::Reference" do
 
   it "should update referencers on rename when requested (case 2)" do
     card = Card['Administrator links+*self+*read']
-    refs = Card::Reference.where(:referenced_card_id => Card::AdminID).map(&:card_id).sort
+    refs = Card::Reference.where(:referee_id => Card::AdminID).map(&:referer_id).sort
     card.update_referencers = true
     card.name='Administrator links+*type+*read'
     card.save
-    Card::Reference.where(:referenced_card_id => Card::AdminID).map(&:card_id).sort.should == refs
+    Card::Reference.where(:referee_id => Card::AdminID).map(&:referer_id).sort.should == refs
   end
 
   it "should not update references when not requested" do
+
     watermelon = newcard('watermelon', 'mmmm')
     watermelon_seeds = newcard('watermelon+seeds', 'black')
     lew = newcard('Lew', "likes [[watermelon]] and [[watermelon+seeds|seeds]]")
 
+    assert_equal [1,1], lew.out_references.map(&:present), "links should not be Wanted before"
     watermelon = Card['watermelon']
     watermelon.update_referencers = false
     watermelon.name="grapefruit"
     watermelon.save!
     lew.reload.content.should == "likes [[watermelon]] and [[watermelon+seeds|seeds]]"
-    w = Card::Reference::WANTED_LINK
-    assert_equal [w,w], lew.out_references.map(&:link_type), "links should be Wanted"
+    assert_equal [ 'L', 'L' ], lew.out_references.map(&:link_type), "links should be a LINK"
+    assert_equal [ 0, 0 ], lew.out_references.map(&:present), "links should not be present"
   end
 
   it "update referencing content on rename junction card" do
@@ -135,8 +137,8 @@ describe "Card::Reference" do
   it "simple link" do
     alpha = Card.create :name=>'alpha'
     beta = Card.create :name=>'beta', :content=>"I link to [[alpha]]"
-    Card['beta'].referencees.map(&:name).should == ['alpha']
     Card['alpha'].referencers.map(&:name).should == ['beta']
+    Card['beta'].referencees.map(&:name).should == ['alpha']
   end
 
   it "link with spaces" do
@@ -185,9 +187,9 @@ describe "Card::Reference" do
 
     references = new_card.card_references(true)
     references.size.should == 2
-    references[0].referenced_name.should == 'WantedCard'
+    references[0].referee_key.should == 'WantedCard'
     references[0].link_type.should == Card::Reference::WANTED_PAGE
-    references[1].referenced_name.should == 'WantedCard2'
+    references[1].referee_key.should == 'WantedCard2'
     references[1].link_type.should == Card::Reference::WANTED_PAGE
 
     wanted_card = Card.create(:name=>'WantedCard')
@@ -197,9 +199,9 @@ describe "Card::Reference" do
     # reference NewCard -> WantedCard2 should remain the same
     references = new_card.card_references(true)
     references.size.should == 2
-    references[0].referenced_name.should == 'WantedCard'
+    references[0].referee_key.should == 'WantedCard'
     references[0].link_type.should == Card::Reference::LINKED_PAGE
-    references[1].referenced_name.should == 'WantedCard2'
+    references[1].referee_key.should == 'WantedCard2'
     references[1].link_type.should == Card::Reference::WANTED_PAGE
   end
 =end

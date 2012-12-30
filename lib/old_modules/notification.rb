@@ -18,6 +18,7 @@ module Notification
         else; 'updated'
       end
 
+      #warn "send note #{inspect}, #{action}, #{watcher_watched_pairs.inspect}"
       @trunk_watcher_watched_pairs = trunk_watcher_watched_pairs
       #warn "send note #{inspect}, #{action}, #{trunk_watcher_watched_pairs.inspect}"
       @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)
@@ -49,11 +50,10 @@ module Notification
       # do the watchers lookup before the includer test since it's faster.
       if cardname.junction?
         #warn "trunk_watcher_pairs #{cardname}, #{cardname.trunk_name.inspect}, #{includers.inspect}"
-        if tcard = Card[tname=cardname.trunk_name] and
-          pairs = tcard.watcher_watched_pairs
+        tcard = Card[tname=cardname.trunk_name]
+        tcard and pairs = tcard.watcher_watched_pairs
           #warn "trunk_watcher_pairs TC:#{tcard.inspect}, #{tname}, P:#{pairs.inspect}, k:#{tname.key} member: pr:#{pairs}, I:#{includers.inspect} test:#{pairs.nil?} or #{includers.map(&:key).member?(tname.key)}"
-          return pairs unless pairs.nil? or includers.map(&:key).member?(tname.key)
-        end
+        return pairs unless pairs.nil? and !includers.map(&:key).member?(tname.key)
         #warn "twatch empty ..."
       end
       []
@@ -75,9 +75,8 @@ module Notification
             [lambda { self.cardname }, fetch(:trait=>:watchers)]
 
       if !rc.nil? and watcher_hash = rc.item_cards.
-            inject( hash || {} ) { |h, watcher|
-        h[watcher.id] = true; h } and
-          watcher_hash.any?
+           inject( hash || {} ) { |h, watcher| h[watcher.id] = true; h } and
+           watcher_hash.any?
                    
         #warn "wp #{pairs}, #{kind}, #{watcher_hash.inspect}"
         if pairs

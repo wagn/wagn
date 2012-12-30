@@ -17,7 +17,6 @@ module Cardlib::TrackedAttributes
 
   protected
   def set_name newname
-    Rails.logger.info "set_name #{newname}"
     @old_name = self.name_without_tracking
     return if @old_name == newname.to_s
 
@@ -33,12 +32,14 @@ module Cardlib::TrackedAttributes
 
     Card.expire cardname
 
+    Rails.logger.warn "set_name[#{inspect}] #{@old_name}, #{newname}"
     if @cardname.junction?
       [:trunk, :tag].each do |side|
         sidename = @cardname.send "#{side}_name"
         sidecard = Card[sidename]
         old_name_in_way = (sidecard && sidecard.id==self.id) # eg, renaming A to A+B
         suspend_name(sidename) if old_name_in_way
+    Rails.logger.warn "set_name side #{side}, #{sidecard.inspect}, #{sidename}"
         self.send "#{side}_id=", begin
           if !sidecard || old_name_in_way
             Card.create! :name=>sidename
@@ -57,7 +58,7 @@ module Cardlib::TrackedAttributes
         existing_card.name = tr_name = existing_card.name+'*trash'
         existing_card.instance_variable_set :@cardname, tr_name.to_name
         existing_card.set_tracked_attributes
-        Rails.logger.debug "trash renamed collision: #{tr_name}, #{existing_card.name}, #{existing_card.cardname.key}"
+        #Rails.logger.debug "trash renamed collision: #{tr_name}, #{existing_card.name}, #{existing_card.cardname.key}"
         existing_card = existing_card.refresh
         existing_card.save!
       #else note -- else case happens when changing to a name variant.  any special handling needed?
@@ -79,7 +80,7 @@ module Cardlib::TrackedAttributes
   end
 
   def set_type_id(new_type_id)
-#    Rails.logger.debug "set_typecde No type code for #{name}, #{type_id}" unless new_type_id
+    #Rails.logger.debug "set_typecde No type code for #{name}, #{type_id}" unless new_type_id
     #warn "set_type_id(#{new_type_id}) #{self.type_id_without_tracking}"
     self.type_id_without_tracking= new_type_id
     return true if new_card?
@@ -135,24 +136,28 @@ module Cardlib::TrackedAttributes
 
   def cascade_name_changes
     return true unless @name_changed
-    ActiveRecord::Base.logger.debug "----------------------- CASCADE #{self.name}  -------------------------------------"
 
     deps = self.dependents
+    @dependents = nil
+
+    raise "recursion?" if self.name == 'A+B+T+T'
+    Rails.logger.debug "-------------------#{@old_name}- CASCADE #{self.name} -------------------------------------"
+    #Rails.logger.debug "-------------------#{@old_name}---- CASCADE #{self.name} -> deps: #{deps.map(&:name)*", "} -------------------------------------"
 
     deps.each do |dep|
       # here we specifically want NOT to invoke recursive cascades on these cards, have to go this low level to avoid callbacks.
-      ActiveRecord::Base.logger.debug "---------------------- DEP #{dep.name}  -------------------------------------"
       newname = dep.cardname.replace_part @old_name, name
-      cxn = connection
-      Card.update_all "name=#{cxn.quote newname.s}, #{cxn.quote_column_name 'key'}=#{cxn.quote newname.key}", "id = #{dep.id}"
+      Rails.logger.debug "---------------------- DEP #{name} -------------------------------------"
+      Card.           where( :id=> dep.id        ).update_all :name => newname.to_s, :key => newname.key
+      Card::Reference.where( :referee_id=>dep.id ).update_all :referee_key => newname.key
       Card.expire dep.name #expire old name
       Card.expire newname
     end
 
     if !update_referencers || update_referencers == 'false'  # FIXME doing the string check because the radio button is sending an actual "false" string
       #warn "no updating.."
-      ([self]+deps).each do |dep|
-        ActiveRecord::Base.logger.debug "--------------- NOUPDATE REFERER #{dep.name}  ---------------------------"
+      deps.each do |dep|
+        Rails.logger.debug "--------------- NOUPDATE REFERER #{dep.name} ---------------------------"
         Card::Reference.update_on_destroy dep, @old_name
       end
     else
@@ -165,11 +170,13 @@ module Cardlib::TrackedAttributes
           # some even more complicated scenario probably breaks on the dependents, so this probably needs a more thoughtful refactor
           # aligning the dependent saving with the name cascading
 
-          ActiveRecord::Base.logger.debug "------------------ UPDATE REFERER #{card.name}  ------------------------"
+          Rails.logger.debug "------------------ UPDATE REFERER #{card.name}  ------------------------"
           next if card.hard_template
-          card = card.refresh
-          card.content = Wagn::Renderer.new(card, :not_current=>true).replace_references( @old_name, name )
-          card.save! unless card==self
+          unless card==self
+            card = card.refresh
+            card.content = Wagn::Renderer.new(card, :not_current=>true).replace_references( @old_name, name )
+            card.save!
+          end
         end
       end
     end

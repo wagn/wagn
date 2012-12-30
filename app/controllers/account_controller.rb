@@ -1,11 +1,9 @@
 # -*- encoding : utf-8 -*-
 class InvitationError < StandardError; end
 
-#require 'wagn/sets'
-#require 'card'
-require_dependency 'card/reference'
-
 class AccountController < CardController
+  # This is often needed for the controllers to work right
+  # FIXME: figure out when/why this is needed and why the tests don't fail
   Card
   Card::Reference
 

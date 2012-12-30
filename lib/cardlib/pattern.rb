@@ -196,10 +196,9 @@ module Cardlib
       register 'type', :type
       def self.label(name)              %{All "#{name}" cards}     end
       def self.prototype_args(base)     {:type=>base}              end
-      def self.pattern_applies?(card)
-        return false if card.type_id.nil?
-        raise "bogus type id" if card.type_id < 1
-        true       end
+      def self.pattern_applies?(card)   !!card.type_id             end
+        #return false if card.type_id.nil?
+        #true       end
       def self.trunk_name(card)         card.type_name              end
     end
 
@@ -237,7 +236,7 @@ module Cardlib
         end
         def trunk_name card
           left = card.loaded_trunk || card.left
-          #left = card.loaded_trunk || (tkid=card.trunk_id ? Card[tkid] : card.left)
+          #Rails.logger.warn "trunk_name #{card.inspect}, #{left.inspect}"
           type_name = (left && left.type_name) || Card[ Card::DefaultTypeID ].name
           "#{type_name}+#{card.cardname.tag}"
         end

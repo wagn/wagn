@@ -42,9 +42,6 @@ module Wagn
   end
 
   class Renderer
-
-    include Card::ReferenceTypes
-
     # these won't be here for long, but I moved them up in dealing with loading order issues relating so subclass renderers
     def replace_references old_name, new_name
       #Rails.logger.warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
@@ -57,7 +54,7 @@ module Wagn
              was_name != new_cardname
           Chunks::Link===chunk and link_bound = chunk.cardname == chunk.link_text
           chunk.cardname = new_cardname
-          Card::Reference.where(:referenced_name => was_name.key).update_all( :referenced_name => new_cardname.key )
+          Card::Reference.where(:referee_key => was_name.key).update_all( :referee_key => new_cardname.key )
           chunk.link_text=chunk.cardname.to_s if link_bound
         end
       end
@@ -66,12 +63,13 @@ module Wagn
     end
 
     def update_references rendering_result = nil, refresh = false
-      Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh} where:#{caller[0..6]*', '}"
+      #Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh} where:#{caller[0..6]*', '}"
       #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller*"\n"}"
       return unless card && referer_id = card.id
-      Card::Reference.where( :card_id => referer_id ).delete_all
+      Card::Reference.where( :referer_id => referer_id ).delete_all
       # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
       Card.where( :id => referer_id ).update_all( :references_expired=>nil )
+      #card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
       card.expire if refresh
       if rendering_result.nil?
          rendering_result = WikiContent.new(card, _render_refs, self).render! do |opts|
@@ -82,20 +80,18 @@ module Wagn
       rendering_result.find_chunks(Chunks::Reference).inject({}) do |hash, chunk|
 
         if referer_id != ( referee_id = chunk.refcard.send_if :id ) &&
-           !hash.has_key?( hash_key = referee_id || chunk.refcardname.key )
+           !hash.has_key?( referee_key = referee_id || chunk.refcardname.key )
 
-          ltype = (Chunks::Link===chunk)
-          #warn "up ref #{hash_key}, #{referee_id}, #{chunk.inspect}, lt:#{ltype}"
-          hash[ hash_key ] = {
-              :referenced_card_id  => referee_id,
-              :referenced_name => chunk.refcardname.send_if( :key ),
-              :link_type   => chunk.refcard.nil? ? ( ltype ? WANTED_LINK : WANTED_INCLUDE ) : 
-                                                   ( ltype ? LINK        : INCLUDE )
+          hash[ referee_key ] = {
+              :referee_id  => referee_id,
+              :referee_key => chunk.refcardname.send_if( :key ),
+              :link_type   => Chunks::Link===chunk ? 'L' : 'I',
+              :present     => chunk.refcard.nil?   ?  0  :  1
             }
         end
 
         hash
-      end.each_value { |update| Card::Reference.create! update.merge( :card_id => referer_id ) }
+      end.each_value { |update| Card::Reference.create! update.merge( :referer_id => referer_id ) }
 
     end
 
@@ -237,7 +233,7 @@ module Wagn
       content = card.content if content.blank?
 
       wiki_content = WikiContent.new(card, content, self)
-      #Rails.logger.info "processing content for #{card.name}"
+
       update_references( wiki_content, true ) if card.references_expired
 
       wiki_content.render! do |opts|
@@ -322,6 +318,7 @@ module Wagn
     end
 
     def expand_inclusion opts
+      #warn "ex inc #{card.inspect}, #{opts.inspect}"
       case
       when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view

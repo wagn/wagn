@@ -19,6 +19,7 @@ module Chunks
     end
 
     def self.parse(match)
+      #warn "parse t chunk #{match.inspect}"
       name = match[2].strip
       case name
       when /^\#\#/; return [nil, {:comment=>''}] # invisible comment
@@ -54,6 +55,7 @@ module Chunks
         end
       end
       options[:style] = style.map{|k,v| CGI.escapeHTML("#{k}:#{v};")}.join
+      #warn "parsed: #{[name, options, configs].inspect}"
       [name, options, configs]
     end
 

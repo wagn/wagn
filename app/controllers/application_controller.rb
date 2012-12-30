@@ -6,12 +6,7 @@ require_dependency 'card'
 class ApplicationController < ActionController::Base
   # This is often needed for the controllers to work right
   # FIXME: figure out when/why this is needed and why the tests don't fail
-  #Card::Reference
   Card
-end
-
-class ApplicationController
-  include Wagn::Exceptions
 
   include AuthenticatedSystem
   include LocationHelper
@@ -103,6 +98,7 @@ class ApplicationController
     return false if @card.errors.empty?
     @card ||= Card.new
     view   = options[:view]   || (@card && @card.error_view  ) || :errors
+    #warn "422 status " unless options[:status] || (@card && @card.error_status)
     status = options[:status] || (@card && @card.error_status) || 422
     show view, status
     true

@@ -252,7 +252,6 @@ class Card
   rescue Exception=>e
     expire_pieces
     @subcards.each{ |card| card.expire_pieces }
-    Rails.logger.info "after save issue: #{e.message}"
     raise e
   end
 
@@ -294,10 +293,9 @@ class Card
 
   def destroy
     run_callbacks( :destroy ) do
-      deps = self.dependents # already called once.  reuse?
       @trash_changed = true
       self.update_attributes :trash => true
-      deps.each do |dep|
+      dependents.each do |dep|
         dep.destroy
       end
       true

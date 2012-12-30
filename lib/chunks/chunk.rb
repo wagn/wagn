@@ -32,6 +32,7 @@ module Chunks
     attr_accessor :text, :unmask_text, :unmask_mode, :revision, :card
 
     def initialize match_data, content
+      #raise inspect if self.cardname == 'address+*right+city'
       @text = match_data[0]
       @content = content
       @unmask_mode = :normal

@@ -4,8 +4,7 @@ require_dependency 'wagn/sets'
 require_dependency 'card'
 
 class ApplicationController < ActionController::Base
-  # This is often needed for the controllers to work right
-  # FIXME: figure out when/why this is needed and why the tests don't fail
+  # This was in all the controllers, now it is inherited here
   Card
 
   include AuthenticatedSystem

@@ -20,13 +20,13 @@ module Notification
 
       #warn "send note #{inspect}, #{action}, #{watcher_watched_pairs.inspect}"
       @trunk_watcher_watched_pairs = trunk_watcher_watched_pairs
-      #warn "send note #{inspect}, #{action}, #{trunk_watcher_watched_pairs.inspect}"
+      #warn "send note #{inspect}, #{action}, #{@trunk_watcher_watched_pairs.inspect}"
       @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)
 
       #Rails.logger.warn "send notice #{action}, #{inspect} TW:#{@trunk_watchers.inspect}"
 
       watcher_watched_pairs.reject {|p| @trunk_watchers.include?(p.first) }.each do |watcher, watched|
-        #Rails.logger.warn "wtch: Mailer.change_notice( #{watcher.inspect}, #{self.inspect}, #{action.inspect}, #{watched.inspect}, #{nested_notifications.inspect}"
+        #warn "wtch: Mailer.change_notice( #{watcher.inspect}, #{self.inspect}, #{action.inspect}, #{watched.inspect}, #{nested_notifications.inspect}"
         watcher and mail = Mailer.change_notice( watcher, self, action,
                         watched.to_s, nested_notifications ) and mail.deliver
       end
@@ -35,9 +35,10 @@ module Notification
         nested_edit.nested_notifications ||= []
         nested_edit.nested_notifications << [ name, action ]
       else
-        @trunk_watcher_watched_pairs.compact.each do |watcher, watched|
-          next unless watcher
-          Mailer.change_notice( watcher, self.left, 'updated', watched.to_s, [[name, action]], self ).deliver
+        @trunk_watcher_watched_pairs.each do |watcher, watched|
+          #warn "wp tw #{watcher.inspect}, #{watched.inspect}"
+          next if watcher.nil?
+          Mailer.change_notice( watcher, self.left, 'updated', watched.to_s, [[name, action]], self ).send_if :deliver
         end
       end
     rescue Exception=>e
@@ -52,8 +53,8 @@ module Notification
         #warn "trunk_watcher_pairs #{cardname}, #{cardname.trunk_name.inspect}, #{includers.inspect}"
         tcard = Card[tname=cardname.trunk_name]
         tcard and pairs = tcard.watcher_watched_pairs
-          #warn "trunk_watcher_pairs TC:#{tcard.inspect}, #{tname}, P:#{pairs.inspect}, k:#{tname.key} member: pr:#{pairs}, I:#{includers.inspect} test:#{pairs.nil?} or #{includers.map(&:key).member?(tname.key)}"
-        return pairs unless pairs.nil? and !includers.map(&:key).member?(tname.key)
+          #warn "trunk_watcher_pairs TC:#{tcard.inspect}, #{tname}, P:#{pairs.inspect}, k:#{tname.key} member: pr:#{!pairs.nil?}, and I:#{includers.map(&:key).member?(tname.key)}"
+        return pairs if !pairs.nil? and includers.map(&:key).member?(tname.key)
         #warn "twatch empty ..."
       end
       []
@@ -63,30 +64,30 @@ module Notification
     def watching?;      watcher_pairs(false).       member? Account.user_id end
     def watchers;       watcher_watched_pairs false                         end
     def watcher_watched_pairs pairs=true
-      watcher_pairs( pairs, :name, whash = {} )
-      watcher_pairs( pairs, :type, whash )
+      watcher_pairs pairs, :name, whash = {}
+      watcher_pairs pairs, :type, whash
     end
 
-    def watcher_pairs pairs=true, kind=:name, hash=nil
-      #warn "wp #{pairs}, #{kind}, #{Account.user_id} #{hash.inspect}, OI:#{hash.object_id}"
+    def watcher_pairs pairs=true, kind=:name, hash={}
+      #warn "wp #{inspect} P:#{pairs}, k:#{kind}, uid:#{Account.user_id} #{hash.inspect}, OI:#{hash.object_id}"
 
-      namep, rc = (kind == :type) ?  [lambda { self.type_name },
-               (self.type_card.fetch(:trait=>:watchers))] :
-            [lambda { self.cardname }, fetch(:trait=>:watchers)]
+      wname, rc = (kind == :type) ?
+           [ self.type_name, self.type_card.fetch(:trait=>:watchers) ] :
+           [ self.cardname,  fetch(:trait=>:watchers) ]
 
-      if !rc.nil? and watcher_hash = rc.item_cards.
-           inject( hash || {} ) { |h, watcher| h[watcher.id] = true; h } and
-           watcher_hash.any?
+      !rc.nil? and hash = rc.item_cards.inject( hash ) { |h, watcher| h[watcher.id] ||= wname; h } 
                    
-        #warn "wp #{pairs}, #{kind}, #{watcher_hash.inspect}"
+      if hash.any?
+        #warn "wp #{pairs}, #{kind}, #{hash.inspect}"
         if pairs
-          watcher_hash.keys.reject {|i| i == Account.user_id }.map {|i| [i, namep.call] }
+          hash.each.reject {|i,wname| i == Account.user_id }.map {|i,wname| [ i, wname ] }
         else
-          watcher_hash.keys
+          hash.keys
         end
 
       else [] 
       end
+      #warn "wp r:#{r}"; r
     end
   end
 

@@ -109,9 +109,9 @@ module Wagn
           cards.each do |card|
             begin
               stamp = card.updated_at
-              day = Date.new(stamp.year, stamp.month, stamp.day)
+              day = ::Date.new(stamp.year, stamp.month, stamp.day)
             rescue Exception=>e
-              day = Date.today
+              day = ::Date.today
               card.content = "(error getting date)"
             end
             cards_by_day[day] << card

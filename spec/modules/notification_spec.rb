@@ -35,7 +35,7 @@ end
 
 describe "On Card Changes" do
   before do
-    Account.user= :john
+    Account.user= 'john'
     Timecop.travel(FUTURE)  # make sure we're ahead of all the test data
   end
 
@@ -66,4 +66,34 @@ describe "On Card Changes" do
   it "does include author in wathers" do
      Card["All Eyes On Me"].watchers.member?(Account.user_id).should be_true
   end
+end
+
+
+describe "Trunk watcher notificatione" do
+  before do
+    Account.user= 'joe user'
+    Timecop.travel(FUTURE)  # make sure we're ahead of all the test data
+
+    Card.create :type=>'Book', :name=>'Ulysses'
+    (@ulyss =Card['Ulysses']).should be
+    watchers_card = Card.fetch "Ulysses+*watchers", :new=>{}
+    c = Card['joe camel']
+    watchers_card << c
+    @jc_id = c.id
+    watchers_card.save
+ 
+    watchers_card = Card.fetch "Book+*watchers", :new=>{}
+    c = Card['joe admin']
+    watchers_card << c
+    @ja_id = c.id
+    watchers_card.save
+  end
+
+  it "sends notification to Joe Camel" do
+    name = "Ulysses+author"
+    mock(Mailer).change_notice( @ja_id, @ulyss, "updated", 'Book' , [[name, "added"]], is_a(Card))
+    mock(Mailer).change_notice( @jc_id, @ulyss, "updated", @ulyss.name , [[name, "added"]], is_a(Card))
+    c=Card.create :name=>name, :content => "James Joyce"
+  end
+
 end

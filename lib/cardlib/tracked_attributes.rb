@@ -64,6 +64,7 @@ module Cardlib::TrackedAttributes
       end
     end
 
+warn "about to expire #{@old_name}"
     Card.expire @old_name
     @name_changed = true
     @name_or_content_changed=true

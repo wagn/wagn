@@ -161,47 +161,19 @@ $(window).ready ->
     $(this).setContentFieldsFromMap()
     $(this).find('.card-content').attr('no-autosave','true')
     true
-    
-  $('body').delegate '.card-name-form', 'submit', ->
-    form = $(this)
-    confirmed = form.find '#confirmed'
-    renamer = form.find '.confirm-rename'
-    if renamer[0]? #dialog gets moved after initiation. potential bug if there are multiple rename cancellations...
-      args = {
-        modal : true
-        buttons : {}
-      }
-      if form.find('#referers').val() > 0
-        args.width = 500
-        args.buttons["Rename and Fix"] = ->
-          confirmed.val 'true'
-          renamer.dialog 'close'
-          form.find( '.update_referencers').val 'true'
-          form.submit()
-        args.buttons["Rename and Ignore"] = ->
-          confirmed.val 'true'
-          renamer.dialog 'close'
-          form.submit()
-      else        
-        args.width = 300
-        args.buttons['Rename'] = ->
-          confirmed.val 'true'
-          renamer.dialog 'close'
-          form.submit()
 
-      args.buttons["Cancel"] = ->
-        renamer.attr 'ready', 'true'
-        renamer.dialog 'close'
-
-      renamer.dialog args
+#  $('.submitter').live 'click', ->
+#    $(this).closest('form').submit()
+        
+  $('body').delegate '.card-name-form', 'submit', (event) ->
+    confirmer = $(this).find '.confirm-rename'
+    if confirmer.is ':hidden'
+      if $(this).find('#referers').val() > 0
+        $(this).find('.renamer-updater').show()
+        
+      confirmer.show 'blind'
       false
-    else
-      if confirmed.val() == 'false' 
-        $('.confirm-rename').dialog 'open'
-        false
-      else
-        true
-
+      
     
   $('body').delegate 'button.redirecter', 'click', ->
     window.location = $(this).attr('href')

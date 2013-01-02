@@ -147,6 +147,11 @@ describe "renaming" do
     assert_rename Card['Menu'], 'manure'
     Card['Menu'].should be_nil
   end
+  
+  it "wipes old references by default" do
+    assert_rename Card['Menu'], 'manure'
+    Card['manure'].references.size.should == 0
+  end
 
   it "test_rename_same_key_with_dependents" do
     assert_rename card("B"), "b"

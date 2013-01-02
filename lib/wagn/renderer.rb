@@ -426,16 +426,14 @@ module Wagn
     end
 
     def update_references rendering_result = nil, refresh = false
-      #Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh} where:#{caller[0..6]*', '}"
-      #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller*"\n"}"
       return unless card && referer_id = card.id
-      Card::Reference.where( :referer_id => referer_id ).delete_all
+      Card::Reference.delete_all_from card
       # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
       #Card.where( :id => referer_id ).update_all( :references_expired=>nil )
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
       card.expire if refresh
       if rendering_result.nil?
-         rendering_result = WikiContent.new(card, _render_refs, self).render! do |opts|
+         rendering_result = WikiContent.new(card, card.raw_content, self).render! do |opts|
            expand_inclusion(opts) { yield }
          end
       end

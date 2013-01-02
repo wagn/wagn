@@ -32,14 +32,12 @@ module Cardlib::TrackedAttributes
 
     Card.expire cardname
 
-    Rails.logger.warn "set_name[#{inspect}] #{@old_name}, #{newname}"
     if @cardname.junction?
       [:trunk, :tag].each do |side|
         sidename = @cardname.send "#{side}_name"
         sidecard = Card[sidename]
         old_name_in_way = (sidecard && sidecard.id==self.id) # eg, renaming A to A+B
         suspend_name(sidename) if old_name_in_way
-    Rails.logger.warn "set_name side #{side}, #{sidecard.inspect}, #{sidename}"
         self.send "#{side}_id=", begin
           if !sidecard || old_name_in_way
             Card.create! :name=>sidename
@@ -135,31 +133,24 @@ module Cardlib::TrackedAttributes
 
   def cascade_name_changes
     return true unless @name_changed
+    Rails.logger.debug "-------------------#{@old_name}- CASCADE #{self.name} -------------------------------------"
+
+    self.update_referencers = false if update_referencers == 'false' #handle strings from cgi
+    Card::Reference.update_on_rename self, name, update_referencers
 
     deps = self.dependents
-    @dependents = nil
-
-    raise "recursion?" if self.name == 'A+B+T+T'
-    Rails.logger.debug "-------------------#{@old_name}- CASCADE #{self.name} -------------------------------------"
-    #Rails.logger.debug "-------------------#{@old_name}---- CASCADE #{self.name} -> deps: #{deps.map(&:name)*", "} -------------------------------------"
+    @dependents = nil #reset
 
     deps.each do |dep|
       # here we specifically want NOT to invoke recursive cascades on these cards, have to go this low level to avoid callbacks.
-      newname = dep.cardname.replace_part @old_name, name
-      Rails.logger.debug "---------------------- DEP #{name} -------------------------------------"
-      Card.           where( :id=> dep.id        ).update_all :name => newname.to_s, :key => newname.key
-      Card::Reference.where( :referee_id=>dep.id ).update_all :referee_key => newname.key
-      Card.expire dep.name #expire old name
+      Card.expire dep.name #old name
+      newname = dep.cardname.replace_part( @old_name, name )
+      Card.where( :id=> dep.id ).update_all :name => newname.to_s, :key => newname.key
+      Card::Reference.update_on_rename dep, newname, update_referencers
       Card.expire newname
     end
 
-    if !update_referencers || update_referencers == 'false'  # FIXME doing the string check because the radio button is sending an actual "false" string
-      #warn "no updating.."
-      deps.each do |dep|
-        Rails.logger.debug "--------------- NOUPDATE REFERER #{dep.name} ---------------------------"
-        Card::Reference.update_on_destroy dep, @old_name
-      end
-    else
+    if update_referencers
       Account.as_bot do
         [self.name_referencers(@old_name)+(deps.map &:referencers)].flatten.uniq.each do |card|
           # FIXME  using "name_referencers" instead of plain "referencers" for self because there are cases where trunk and tag
@@ -180,12 +171,12 @@ module Cardlib::TrackedAttributes
       end
     end
 
-    Card::Reference.update_on_create( self )
+    Card::Reference.update_on_create self
     @name_changed = false
     true
   end
 
-  def self.included(base)
+  def self.included base
     super
     base.after_create :set_initial_content
     base.after_save :cascade_name_changes

@@ -149,7 +149,9 @@ describe "renaming" do
   end
   
   it "wipes old references by default" do
-    assert_rename Card['Menu'], 'manure'
+    c = Card['Menu']
+    c.name = 'manure'
+    c.save!
     Card['manure'].references.size.should == 0
   end
 

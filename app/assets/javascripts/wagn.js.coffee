@@ -164,6 +164,9 @@ $(window).ready ->
 
 #  $('.submitter').live 'click', ->
 #    $(this).closest('form').submit()
+   
+  $('.renamer-updater').live 'click', ->
+    $(this).closest('form').find('.update_referencers').val 'true'
         
   $('body').delegate '.card-name-form', 'submit', (event) ->
     confirmer = $(this).find '.confirm-rename'
@@ -173,7 +176,6 @@ $(window).ready ->
         
       confirmer.show 'blind'
       false
-      
     
   $('body').delegate 'button.redirecter', 'click', ->
     window.location = $(this).attr('href')

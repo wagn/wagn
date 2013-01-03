@@ -20,8 +20,9 @@ class Card
         where( :referee_id => card.id ).update_all :present=>0, :referee_id => nil
       end
       
-      def update_on_create card
-        where( :referee_key => card.key ).update_all :present => 1, :referee_id => card.id
+      def update_existing_key card, name=nil
+        key = (name || card.name).to_name.key
+        where( :referee_key => key ).update_all :present => 1, :referee_id => card.id
       end
 
       def update_on_rename card, newname, update_referers=false
@@ -31,7 +32,7 @@ class Card
         else
           delete_all_to card
         end
-        where( :referee_key => newname.to_name.key ).update_all :present => 1, :referee_id => card.id
+        update_existing_key card, newname
       end
 
       def update_on_destroy card

@@ -347,7 +347,7 @@ module Wagn
       end
     end
 
-    define_view :edit_in_form, :tags=>:unknown_ok do |args|
+    define_view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
       eform = form_for_multi
       content = content_field eform, :nested=>true
       attribs = %{ class="card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" }

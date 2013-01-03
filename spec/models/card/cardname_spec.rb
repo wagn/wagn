@@ -154,6 +154,12 @@ describe "renaming" do
     c.save!
     Card['manure'].references.size.should == 0
   end
+  
+  it "picks up new references" do
+    Card.create :name=>'kinds of poop', :content=>'[[manure]]'
+    assert_rename Card['Menu'], 'manure'
+    Card['manure'].references.size.should == 2
+  end
 
   it "test_rename_same_key_with_dependents" do
     assert_rename card("B"), "b"

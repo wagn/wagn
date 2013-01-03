@@ -26,10 +26,12 @@ class Card
 
       def update_on_rename card, newname, update_referers=false
         if update_referers
+          # not currentlt needed because references are deleted and re-created in the process of adding new revision
           #where( :referee_id=>card.id ).update_all :referee_key => newname.to_name.key
         else
           delete_all_to card
         end
+        where( :referee_key => newname.to_name.key ).update_all :present => 1, :referee_id => card.id
       end
 
       def update_on_destroy card

@@ -62,7 +62,7 @@ group :test, :development do
 end
 
 group :test do
-  gem 'cucumber-rails', '~> 1.3'               # feature-driven-development suite
+  gem 'cucumber-rails', '~> 1.3', :require=>false # feature-driven-development suite
   gem 'capybara', '~> 1.1'                     # note, selectors were breaking when we used 2.0.1
   gem 'launchy'                                # lets cucumber launch browser windows
 

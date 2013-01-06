@@ -285,25 +285,24 @@ module Wagn
           card_form( path(:update, :id=>card.id), 'card-name-form', 'main-success'=>'REDIRECT' ) do |f|
             @form = f
             %{  
-              #{ _render_name_editor}
-          
+              #{ _render_name_editor}  
               #{ f.hidden_field :update_referencers, :class=>'update_referencers'   }
               #{ hidden_field_tag :success, '_self'  }
               #{ hidden_field_tag :old_name, card.name }
-              #{ hidden_field_tag :confirmed, 'false'  }
               #{ hidden_field_tag :referers, referers.size }
               <div class="confirm-rename hidden">
                 <h1>Are you sure you want to rename <em>#{card.name}</em>?</h1>
                 #{ %{ <h2>This change will...</h2> } if referers.any? || dependents.any? }
                 <ul>
                   #{ %{<li>automatically alter #{ dependents.size } related name(s). } if dependents.any? }
-                  #{ %{<li>break at least #{referers.size} reference(s) to this name.} if referers.any? }
+                  #{ %{<li>affect at least #{referers.size} reference(s) to "#{card.name}".} if referers.any? }
                 </ul>
-                #{ %{<p>You may choose to <em>ignore or fix</em> the references. Fixing will update references to use the new name.</p>} if referers.any? }  
+                #{ %{<p>You may choose to <em>ignore or update</em> the references.</p>} if referers.any? }  
               </div>
               <fieldset>
                 <div class="button-area">
-                  #{ submit_tag 'Rename', :class=>'edit-name-submit-button' }
+                  #{ submit_tag 'Rename and Update', :class=>'renamer-updater hidden' }
+                  #{ submit_tag 'Rename', :class=>'renamer' }
                   #{ button_tag 'Cancel', :class=>'edit-name-cancel-button slotter', :type=>'button', :href=>path(:edit, :id=>card.id)}
                 </div>
               </fieldset>
@@ -348,7 +347,7 @@ module Wagn
       end
     end
 
-    define_view :edit_in_form, :tags=>:unknown_ok do |args|
+    define_view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
       eform = form_for_multi
       content = content_field eform, :nested=>true
       attribs = %{ class="card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" }

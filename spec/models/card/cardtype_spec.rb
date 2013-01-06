@@ -17,7 +17,7 @@ describe "Card (Cardtype)" do
     city = Card.fetch('City')
     c1=Card.create :name=>'Sparta', :type=>'City'
     c2=Card.create :name=>'Eugene', :type=>'City'
-    assert_equal ['Eugene','Sparta'], Card.search(:type=>'City').plot(:name).sort
+    assert_equal ['Eugene','Sparta'], Card.search(:type=>'City').map(&:name).sort
     assert_raises Wagn::Oops do
       city.destroy!
     end

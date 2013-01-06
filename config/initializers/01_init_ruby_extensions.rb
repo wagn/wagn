@@ -24,48 +24,8 @@ class Hash
 
 end
 
-
-module Enumerable
-  # instead of objects.map {|x| x.foo(blah)}
-  # do objects.plot(:foo,blah)
-  def plot(method_name, *args)
-    map do |o|
-      o.send(method_name, *args)
-    end
-  end
-end
-
-class Class
-  def descendents
-    raise "descendents is deprecated: it's too slow.  find another way"
-    descendents = []
-    ObjectSpace.each_object(Class) do |klass|
-      descendents << klass if klass.ancestors.include?(self)
-    end
-    descendents
-  end
-end
-
-class Array
-  def except(*exceptions)
-    result = self.clone
-    result.delete_if { |i| exceptions.include?(i) }
-    result
-  end
-  def except!(*exceptions)
-    self.delete_if { |i| exceptions.include?(i) }
-    self
-  end
-  def each_except(*exceptions)
-    self.each do |i|
-      if exceptions.include?(i) == false
-        yield(i)
-      end
-    end
-  end
-end
-
 class Object
+  # FIXME: move this, mixin, don't extend Object
   def deep_clone
     case self
     when Fixnum,Bignum,Float,NilClass,FalseClass,TrueClass,Symbol
@@ -86,10 +46,14 @@ class Object
     }
     klone
   end
+end
 
-  def m
-    time = Benchmark.measure { yield }
-    sprintf("%.2f",time.real * 1000) + 'ms'
+class Object
+  def send_unless method, *args, &block
+    ( block_given? ? yield : self ) or  send method, *args
   end
 
+  def send_if     method, *args, &block
+    ( block_given? ? yield : self ) and send method, *args
+  end
 end

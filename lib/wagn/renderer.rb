@@ -1,7 +1,6 @@
 module Wagn
   class Renderer
     Card::Reference
-    include Card::ReferenceTypes
     include LocationHelper
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
@@ -186,7 +185,7 @@ module Wagn
         when @depth >= @@max_depth   ; :too_deep
         # prevent recursion.  @depth tracks subrenderers (view within views)
         when @@perms[view] == :none  ; view
-        # This may currently be overloaded.  always allowed = skip moodes = never modified.  not sure that's right.
+        # This may currently be overloaded.  always allowed = skip modes = never modified.  not sure that's right.
         when !card                   ; :no_card
         # This should disappear when we get rid of admin and account controllers and all renderers always have cards
 
@@ -410,7 +409,6 @@ module Wagn
       @context_names += name.to_name.part_names
       @context_names.uniq!
     end
-
   end
 
   class Renderer::JsonRenderer < Renderer

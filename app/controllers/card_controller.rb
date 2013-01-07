@@ -336,7 +336,7 @@ Done"
       end
 
     case
-    when  redirect        ; wagn_redirect ( Card===target ? url_for_page(target.cardname, new_params) : target )
+    when  redirect        ; wagn_redirect ( Card===target ? path_for_page( target.cardname, new_params ) : target )
     when  String===target ; render :text => target
     else
       @card = target

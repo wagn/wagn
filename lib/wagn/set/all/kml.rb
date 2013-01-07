@@ -1,4 +1,4 @@
-require 'active_support/builder' unless defined?(Builder)
+require_dependency 'active_support/builder' unless defined?(Builder)
 
 module Wagn
   module Set::All::Kml

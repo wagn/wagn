@@ -58,6 +58,18 @@ wagn.chooseFile = (e, data) ->
   editor.append '<input type="hidden" value="CHOSEN" class="upload-card-content" name="' + contentFieldName + '">'
   # we add and remove the contentField to insure that nothing is added / updated when nothing is chosen.
 
+wagn.openMenu = (link) ->
+  # if card menu already exists
+  #   show it
+  # else
+  #   get the template menu
+  #   make a copy right after menu link (or associate if necessary)
+  #   do simple substitutions?
+  cm = $(link).find '.card-menu'
+  cm.menu position: { my:'right top', at:'left top' }, 
+    icons:{ submenu:'ui-icon-carat-1-w' }
+  cm.show()
+  
 
 $(window).ready ->
 
@@ -78,23 +90,28 @@ $(window).ready ->
     # sadly, it also causes odd navbox behavior, resetting the search term
   }
 
-
   $('.card-menu-link').live 'mouseenter', ->
-    # if card menu already exists
-    #   show it
-    # else
-    #   get the template menu
-    #   make a copy right after menu link (or associate if necessary)
-    #   do simple substitutions?
-    cm = $(this).slot().find '.card-menu'
-    cm.menu position: { my:'right top', at:'left top' }, 
-      icons:{ submenu:'ui-icon-carat-1-w' }
-    cm.show()
-    #   do a request to flesh out remaining menu parts
+    wagn.openMenu this
     
   $('.card-menu').live 'mouseleave', ->
     $(this).hide()
+
+  $('.card-menu').live 'swipe', ->
+    $(this).hide()
   
+  $('.card-menu-link').live 'tap', (event) ->
+    initiated_menu = $(this).find('.ui-menu')[0]
+    if initiated_menu
+      if $(initiated_menu).is ':hidden'
+        $(initiated_menu).show()
+        event.preventDefault()
+    else
+      wagn.openMenu this
+      event.preventDefault()
+
+  $('.ui-menu-icon').live 'tap', (event)->
+    $(this).closest('li').trigger('mouseenter')
+    event.preventDefault()
 
 
   #pointer pack
@@ -124,10 +141,6 @@ $(window).ready ->
     slot.find('.perm-group input:checked').attr('checked', false)
     slot.find('.perm-indiv input').val('')
 
-  #wagn_org pack (for now)
-  $('.shade-view h1').live 'click', ->
-    $(this).slot().find('.shade-content').slideToggle 1000
-
   # rstar pack
   $('body').delegate '.rule-submit-button', 'click', ->
     f = $(this).closest('form')
@@ -156,6 +169,25 @@ $(window).ready ->
        $(wagn.padform)[0].submit()
     false
 
+  #wagn_org pack (for now)
+  $('.shade-view h1').live 'click', ->
+    toggleThis = $(this).slot().find('.shade-content').is ':hidden'
+    toggleShade $(this).closest('.pointer-list').find('.shade-content:visible').parent()
+    if toggleThis
+      toggleShade $(this).slot()
+
+
+  if firstShade = $('.shade-view h1')[0]
+    $(firstShade).trigger 'click'
+    
+
+$(document).bind 'mobileinit', ->
+  $.mobile.autoInitializePage = false
+  $.mobile.ajaxEnabled = false
+
+toggleShade = (shadeSlot) ->
+  shadeSlot.find('.shade-content').slideToggle 1000
+  shadeSlot.find('.ui-icon').toggleClass 'ui-icon-triangle-1-e ui-icon-triangle-1-s'  
 
 permissionsContent = (ed) ->
   return '_left' if ed.find('#inherit').attr('checked')
@@ -194,8 +226,9 @@ navboxize = (term, results)->
 
   $.each ['search', 'add', 'new'], (index, key)->
     if val = results[key]
-      i = { type: key, value: term, prefix: key, label: '<strong class="highlight">' + term + '</strong>' }
+      i = { value: term, prefix: key, icon: 'plus', label: '<strong class="highlight">' + term + '</strong>' }
       if key == 'search'
+        i.icon = key
         i.term = term
       else if key == 'add'
         i.href = '/card/new?card[name]=' + encodeURIComponent(term)
@@ -206,11 +239,11 @@ navboxize = (term, results)->
       items.push i
 
   $.each results['goto'], (index, val) ->
-    items.push { type: 'goto', prefix: 'go to', value: val[0], label: val[1], href: '/' + val[2] }
+    items.push { icon: 'arrowreturnthick-1-e', prefix: 'go to', value: val[0], label: val[1], href: '/' + val[2] }
 
   $.each items, (index, i) ->
     i.label =
-      '<span class="navbox-item-label '+ i.type + '-icon">' + i.prefix + ':</span> ' +
+      '<span class="navbox-item-label"><a class="ui-icon ui-icon-'+ i.icon + '"></a>' + i.prefix + ':</span> ' +
       '<span class="navbox-item-value">' + i.label + '</span>'
 
   items
@@ -222,3 +255,5 @@ navbox_select = (event, ui) ->
     window.location = wagn.rootPath + ui.item.href
 
   $(this).attr('disabled', 'disabled')
+
+  

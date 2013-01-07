@@ -32,8 +32,6 @@ namespace :wagn do
     task :clean => :environment do
       Wagn::Cache.reset_global
 
-
-
       # Correct time and user stamps
       botid = Card::WagnBotID
       extra_sql = {

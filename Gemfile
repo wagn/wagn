@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 #source "http://gems.github.com"
 
 # DEFAULT
-gem 'smartname',    '0.1.6'
+gem 'smartname',    '0.1.7'
 
 gem 'rails',        '~> 3.2.9'
 gem 'htmlentities', '~> 4.3'
@@ -16,6 +16,7 @@ gem 'xmlscan',      '~> 0.3'
 
 gem "rubyzip",      "~> 0.9" # only required in module.  should be separated out.
 gem "airbrake",     "~> 3.1"
+
 
 # DATABASE
 
@@ -43,6 +44,8 @@ group :assets do
   gem 'uglifier'                               # makes pretty code ugly again.  compresses js/css for fast loading
 
   gem 'jquery-rails',  '~> 2.1.4'              # main js framework, along with rails-specific unobtrusive lib
+  gem "jquerymobile-rails", "~> 0.2"
+  
   gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor
   
   gem 'therubyracer'                           # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one
@@ -59,7 +62,7 @@ group :test, :development do
 end
 
 group :test do
-  gem 'cucumber-rails', '~> 1.3'               # feature-driven-development suite
+  gem 'cucumber-rails', '~> 1.3', :require=>false # feature-driven-development suite
   gem 'capybara', '~> 1.1'                     # note, selectors were breaking when we used 2.0.1
   gem 'launchy'                                # lets cucumber launch browser windows
 

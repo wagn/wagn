@@ -1,5 +1,5 @@
-require 'json'
-require 'lib/util/card_builder'
+require_dependency 'json'
+require_dependency 'lib/util/card_builder'
 module Wagn
   class Loader
     def initialize(filename, args={})

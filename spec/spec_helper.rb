@@ -34,6 +34,8 @@ Spork.prefork do
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
+  FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
+
   RSpec.configure do |config|
 
     config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => {
@@ -42,8 +44,6 @@ Spork.prefork do
     #config.include CustomMatchers
     #config.include ControllerMacros, :type=>:controllers
     config.include AuthenticatedTestHelper, :type=>:controllers
-    #config.include(EmailSpec::Helpers)
-    #config.include(EmailSpec::Matchers)
 
     # == Mock Framework
     # If you prefer to mock with mocha, flexmock or RR, uncomment the appropriate symbol:

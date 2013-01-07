@@ -1,4 +1,4 @@
-require 'chunks/chunk'
+require_dependency 'chunks/chunk'
 
 # This wiki chunk matches arbitrary URIs, using patterns from the Ruby URI modules.
 # It parses out a variety of fields that could be used by renderers to format

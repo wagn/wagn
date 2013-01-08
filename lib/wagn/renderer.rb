@@ -72,7 +72,7 @@ module Wagn
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
       card.expire if refresh
       if rendering_result.nil?
-         rendering_result = WikiContent.new(card, _render_refs, self).render! do |opts|
+         rendering_result = WikiContent.new(card, card.raw_content, self).render! do |opts|
            expand_inclusion(opts) { yield }
          end
       end

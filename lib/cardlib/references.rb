@@ -64,12 +64,12 @@ module Cardlib::References
         # update references from link_text
         update_references chunk.link_text if ObjectContent === chunk.link_text
 
-        raise '???' unless chunk.refcardname
+        #raise '???' unless chunk.refcardname
         hash[ referee_key ] = {
           :referee_id  => referee_id,
           :referee_key => chunk.refcardname.key,
-          :link_type   => Chunk::Link===chunk ? LINK : INCLUDE,
-          :present     => chunk.reference_card.nil?  ?   0  :   1
+          :link_type   => Chunk::Link===chunk       ? 'L' : 'I',
+          :present     => chunk.reference_card.nil? ?  0  :  1
         }
       end
 

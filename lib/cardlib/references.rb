@@ -21,17 +21,6 @@ module Cardlib::References
     refs.map(&:referer_id).map( &Card.method(:fetch) )
   end
 
-=begin
-  def existing_referencers
-    return [] unless refs = references
-    refs.map(&:referee_key).map( &Card.method(:fetch) ).compact
-  end
-
-  def existing_includers
-    return [] unless refs = includes
-    refs.map(&:referee_key).map( &Card.method(:fetch) ).compact
-  end
-=end
 
   # ---------- Referencing cards --------------
 
@@ -48,7 +37,7 @@ module Cardlib::References
   protected
 
   def update_references_on_create
-    Card::Reference.update_on_create self
+    Card::Reference.update_existing_key self
 
     # FIXME: bogus blank default content is set on hard_templated cards...
     Account.as_bot do

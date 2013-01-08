@@ -98,6 +98,7 @@ class ApplicationController < ActionController::Base
       return false if @card.errors.empty?
     else
       @card = Card.new
+      @card.errors.add( :exception, options[:message] ) if options[:message]
     end
     view   = options[:view]   || @card.error_view   || :errors
     status = options[:status] || @card.error_status || 422
@@ -165,7 +166,7 @@ class ApplicationController < ActionController::Base
 
       notify_airbrake exception if Airbrake.configuration.api_key
 
-      if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) && @card && @card.errors.any?
+      if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) #&& @card && @card.errors.any?
         [ :errors, 422]
       elsif Wagn::Conf[:migration]
         raise exception
@@ -176,7 +177,7 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    render_errors :view=>view, :status=>status
+    render_errors :view=>view, :status=>status, :message=>exception.message
   end
 
 end

@@ -48,7 +48,7 @@ group :assets do
   
   gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor
   
-  gem 'therubyracer'                           # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one
+  gem 'therubyrhino'                           # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one
 end
 
 

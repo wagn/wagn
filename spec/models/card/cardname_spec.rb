@@ -107,7 +107,7 @@ end
 
 
 
-describe "rename tests" do
+describe "renaming" do
   include RenameMethods
 
 
@@ -141,6 +141,24 @@ describe "rename tests" do
     c1, c2 = Card["chuck_wagn+chuck"], Card["chuck"]
     assert_rename c2, "buck"
     assert_equal "chuck_wagn+buck", Card.find(c1.id).name
+  end
+  
+  it "clears cache for old name" do
+    assert_rename Card['Menu'], 'manure'
+    Card['Menu'].should be_nil
+  end
+  
+  it "wipes old references by default" do
+    c = Card['Menu']
+    c.name = 'manure'
+    c.save!
+    Card['manure'].references.size.should == 0
+  end
+  
+  it "picks up new references" do
+    Card.create :name=>'kinds of poop', :content=>'[[manure]]'
+    assert_rename Card['Menu'], 'manure'
+    Card['manure'].references.size.should == 2
   end
 
   it "test_rename_same_key_with_dependents" do

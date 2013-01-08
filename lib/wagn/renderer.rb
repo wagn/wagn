@@ -54,7 +54,7 @@ module Wagn
              was_name != new_cardname
           Chunks::Link===chunk and link_bound = chunk.cardname == chunk.link_text
           chunk.cardname = new_cardname
-          Card::Reference.where(:referee_key => was_name.key).update_all( :referee_key => new_cardname.key )
+          #Card::Reference.where(:referee_key => was_name.key).update_all( :referee_key => new_cardname.key )
           chunk.link_text=chunk.cardname.to_s if link_bound
         end
       end
@@ -66,10 +66,10 @@ module Wagn
       #Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh} where:#{caller[0..6]*', '}"
       #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller*"\n"}"
       return unless card && referer_id = card.id
-      Card::Reference.where( :referer_id => referer_id ).delete_all
+      Card::Reference.delete_all_from card
       # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
-      Card.where( :id => referer_id ).update_all( :references_expired=>nil )
-      #card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
+      #Card.where( :id => referer_id ).update_all( :references_expired=>nil )
+      card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
       card.expire if refresh
       if rendering_result.nil?
          rendering_result = WikiContent.new(card, _render_refs, self).render! do |opts|
@@ -481,7 +481,6 @@ module Wagn
       @context_names += name.to_name.part_names
       @context_names.uniq!
     end
-
   end
 
   class Renderer::Json < Renderer

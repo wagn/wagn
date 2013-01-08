@@ -1,7 +1,6 @@
 module Cardlib::References
   def name_referencers link_name=nil
     link_name = link_name.nil? ? key : link_name.to_name.key
-    
     Card.all :joins => :out_references, :conditions => { :card_references => { :referee_key => link_name } }
   end
 
@@ -64,10 +63,9 @@ module Cardlib::References
   end
 
   def update_references_on_destroy
-    Card::Reference.update_on_destroy(self)
+    Card::Reference.update_on_destroy self
     expire_templatee_references
   end
-
 
 
   def self.included(base)
@@ -75,14 +73,12 @@ module Cardlib::References
     super
 
     base.class_eval do
-
       # ---------- Reference associations -----------
-      has_many :references,  :class_name => :Reference, :foreign_key => :referee_id
-      has_many :includes, :class_name => :Reference, :foreign_key => :referee_id,
-        :conditions => { :link_type => 'I' }
+      has_many :references, :class_name => :Reference, :foreign_key => :referee_id
+      has_many :includes,   :class_name => :Reference, :foreign_key => :referee_id, :conditions => { :link_type => 'I' }
 
-      has_many :out_references,  :class_name => :Reference, :foreign_key => :referer_id
-      has_many :out_includes, :class_name => :Reference, :foreign_key => :referer_id, :conditions => { :link_type => 'I' }
+      has_many :out_references, :class_name => :Reference, :foreign_key => :referer_id
+      has_many :out_includes,   :class_name => :Reference, :foreign_key => :referer_id, :conditions => { :link_type => 'I' }
 
       after_create  :update_references_on_create
       after_destroy :update_references_on_destroy

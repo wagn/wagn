@@ -67,8 +67,7 @@ module Cardlib::Templating
   #
   # I kind of think so.  otherwise how do we handled patterned references in hard-templated cards?
   # I'll leave the FIXME here until the need is well documented.  -efm
-  #
-  # ps.  I think this code should be wiki references.
+
   def expire_templatee_references
     if wql = hard_templatee_spec
 

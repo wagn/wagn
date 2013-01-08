@@ -116,8 +116,11 @@ module Cardlib::Fetch
     end
 
     def expire name
-      if card = Card.cache.read( name.to_name.key )
-        card.expire
+      #note: calling instance method breaks on dirty names
+      key = name.to_name.key
+      if card = Card.cache.read( key ) 
+        Card.cache.delete key
+        Card.cache.delete "~#{card.id}" if card.id
       end
     end
 

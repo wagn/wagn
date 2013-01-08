@@ -1,10 +1,14 @@
 module Wagn
-  module Set::Type::File
+  module Set
+    module Type
+      module File
     #include Sets
 
-    module Model
-      def item_names(args={})  # needed for flexmail attachments.  hacky.
-        [self.cardname]
+        module Model
+          def item_names(args={})  # needed for flexmail attachments.  hacky.
+            [self.cardname]
+          end
+        end
       end
     end
   end

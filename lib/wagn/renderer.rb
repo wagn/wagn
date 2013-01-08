@@ -1,7 +1,9 @@
+
 module Wagn
   class Renderer
-    Card::Reference
-    include LocationHelper
+
+    cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :renderer
+    @@renderer = Renderer
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
@@ -15,8 +17,6 @@ module Wagn
       :txt  => :Text
     }
 
-    cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags
-
     @@max_char_count = 200 #should come from Wagn::Conf
     @@max_depth      = 10 # ditto
     @@perms          = {}
@@ -25,59 +25,41 @@ module Wagn
     @@error_codes    = {}
     @@view_tags      = {}
 
-    class << self
-      def get_renderer fmt
-        (RENDERERS.has_key?(fmt) ? RENDERERS[fmt] : fmt.to_s.camelize).to_sym
-      end
-
-      def new card, opts={}
-        if self==Renderer
-          fmt = opts[:format] = (opts[:format] ? opts[:format].to_sym : :html)
-          renderer = get_renderer fmt
-          if Renderer.const_defined?(renderer)
-            return Renderer.const_get(renderer).new(card, opts)
-          end
-        end
-        new_renderer = self.allocate
-        new_renderer.send :initialize, card, opts
-        new_renderer
-      end
+    def self.get_renderer format
+      const_get( if RENDERERS.has_key? format
+          RENDERERS[ format ]
+        else
+          format.to_s.camelize.to_sym
+        end )
     end
-
 
     attr_reader :format, :card, :root, :parent
     attr_accessor :form, :main_content, :error_status
 
-    def render view = :view, args={}
-      prefix = args.delete(:allowed) ? '_' : ''
-      method = "#{prefix}render_#{canonicalize_view view}"
-      if respond_to? method
-        send method, args
-      else
-        #Rails.logger.warn "bad view #{view.inspect}, #{self.class}"
-        "<strong>unknown view: <em>#{view}</em></strong>"
+    Card::Reference
+    Card
+    include LocationHelper
+
+  end
+
+  class Renderer
+
+    class << self
+
+      def new card, opts={}
+
+        format = ( opts[:format].send_if :to_sym ) || :html
+        renderer = if self!=Renderer or format.nil? or format == :base
+              self
+            else
+              get_renderer format
+            end
+
+        opts[:format] = format
+        new_renderer = renderer.allocate
+        new_renderer.send :initialize, card, opts
+        new_renderer
       end
-    end
-
-    def _render view, args={}
-      args[:allowed] = true
-      render view, args
-    end
-
-    def optional_render view, args, default_hidden=false
-      test = default_hidden ? :show : :hide
-      override = args[test] && args[test].member?(view.to_s)
-      return nil if default_hidden ? !override : override
-      render view, args
-    end
-
-    def _optional_render view, args, default_hidden=false
-      args[:allowed] = true
-      optional_render view, args, default_hidden
-    end
-
-    def rendering_error exception, cardname
-      "Error rendering: #{cardname}"
     end
 
     def initialize card, opts={}
@@ -138,6 +120,45 @@ module Wagn
       response = template.send method_id, *args, &proc
       String===response ? template.raw( response ) : response
     end
+
+    #
+    # ---------- Rendering ------------
+    #
+
+    def render view = :view, args={}
+      prefix = args.delete(:allowed) ? '_' : ''
+      method = "#{prefix}render_#{canonicalize_view view}"
+      if respond_to? method
+        send method, args
+      else
+        "<strong>unknown view: <em>#{view}</em></strong>"
+      end
+    end
+
+    def _render view, args={}
+      args[:allowed] = true
+      render view, args
+    end
+
+    def optional_render view, args, default_hidden=false
+      test = default_hidden ? :show : :hide
+      override = args[test] && args[test].member?(view.to_s)
+      return nil if default_hidden ? !override : override
+      render view, args
+    end
+
+    def _optional_render view, args, default_hidden=false
+      args[:allowed] = true
+      optional_render view, args, default_hidden
+    end
+
+    def rendering_error exception, cardname
+      "Error rendering: #{cardname}"
+    end
+
+    #
+    # ------------- Sub Renderer and Inclusion Processing ------------
+    #
 
     def subrenderer subcard, opts={}
       subcard = Card.fetch_or_new(subcard) if String===subcard
@@ -364,7 +385,10 @@ module Wagn
       end
     end
 
-    # FIXME: this is really html links, should be in html renderer
+    #
+    # ------------ LINKS ---------------
+    #
+
     def build_link href, text, known_card = nil
       # Rails.logger.info( "~~~~~~~~~~~~~~~ bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}" )
       klass = case href.to_s
@@ -415,6 +439,9 @@ module Wagn
   end
 
   class Renderer::Text < Renderer
+  end
+
+  class Renderer::Html < Renderer
   end
 
   class Renderer::Csv < Renderer::Text

@@ -1,10 +1,16 @@
-module Wagn::Set::Type::User
-  #include Wagn::Sets
+module Wagn
+  module Set
+    module Type
+      module User
+        #include Wagn::Sets
 
-  module Model
-    include Wagn::Set::Type::Basic::Model
+        module Model
+          include Wagn::Set::Type::Basic::Model
 
-    attr_accessor :email
+          attr_accessor :email
 
+        end
+      end
+    end
   end
 end

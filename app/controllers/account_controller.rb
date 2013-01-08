@@ -1,10 +1,12 @@
 # -*- encoding : utf-8 -*-
+#
 class InvitationError < StandardError; end
 
-class AccountController < ApplicationController
+class AccountController < CardController
   # This is often needed for the controllers to work right
   # FIXME: figure out when/why this is needed and why the tests don't fail
   Card
+  Card::Reference
 
   before_filter :login_required, :only => [ :invite, :update ]
   helper :wagn
@@ -90,7 +92,8 @@ class AccountController < ApplicationController
   end
 
   def signout
-    self.session_user = nil
+    #self.session_user = nil
+    self.session_user = Card::AnonID
     flash[:notice] = "Successfully signed out"
     redirect_to Card.path_setting('/')  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
   end

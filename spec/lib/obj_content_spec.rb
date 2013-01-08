@@ -16,10 +16,10 @@ CONTENT = {
 }
 
 CLASSES = {
-   :one => [String, Literal::Escape, String, Literal::Escape, String, Chunk::Include, String ],
-   :two => [String, Chunk::Link, String, Chunk::Include, Chunk::Include, String, Chunk::Link, String, Chunk::Link, Chunk::Link, Chunk::Include ],
-   :three => [String, URIChunk, String, URIChunk, String, URIChunk, String, LocalURIChunk, String, LocalURIChunk, String, Chunk::Link ],
-   :five => [Chunk::Include]
+   :one => [String, Literal::Escape, String, Literal::Escape, String, Chunks::Include, String ],
+   :two => [String, Chunks::Link, String, Chunks::Include, Chunks::Include, String, Chunks::Link, String, Chunks::Link, Chunks::Link, Chunks::Include ],
+   :three => [String, URIChunk, String, URIChunk, String, URIChunk, String, LocalURIChunk, String, LocalURIChunk, String, Chunks::Link ],
+   :five => [Chunks::Include]
 }
 
 RENDERED = {

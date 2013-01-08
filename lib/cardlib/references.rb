@@ -1,5 +1,4 @@
 module Cardlib::References
-
   def name_referencers link_name=nil
     link_name = link_name.nil? ? key : link_name.to_name.key
     Card.all :joins => :out_references, :conditions => { :card_references => { :referee_key => link_name } }
@@ -13,12 +12,13 @@ module Cardlib::References
   def replace_references old_name, new_name
     #warn "replace ref t: #{inspect},Cont:#{content}< o:#{old_name}, #{new_name}"
     obj_content = ObjectContent.new content, {:card=>self}
-    obj_content.find_chunks( Chunk::Reference ).select do |chunk|
+    obj_content.find_chunks( Chunks::Reference ).select do |chunk|
 
       #warn "replace ref test: #{chunk.cardname}, #{chunk.cardname.replace_part(old_name, new_name)} oo:#{old_name}, #{new_name}"
-      if was_name = chunk.cardname and new_cardname = was_name.replace_part(old_name, new_name)
+      if was_name = chunk.cardname and new_cardname = was_name.replace_part(old_name, new_name) and
+          was_name != new_cardname
 
-        Chunk::Link===chunk and link_bound = was_name == chunk.link_text
+        Chunks::Link===chunk and link_bound = was_name == chunk.link_text
 
         #warn "replace ref #{was_name}, #{chunk.cardname}, #{new_cardname}, oo:#{old_name}, #{new_name}"
         chunk.cardname = chunk.replace_reference old_name, new_name
@@ -30,7 +30,6 @@ module Cardlib::References
 
     obj_content.to_s
   end
-
 
   def update_references rendering_result = nil, refresh = false
 
@@ -53,10 +52,11 @@ module Cardlib::References
     Rails.logger.warn "stil exp? exp #{inspect}"
 
     if rendering_result.nil?
+      Rails.logger.warn "New OC from #{content.class} #{content}"
        rendering_result = ObjectContent.new(content, {:card=>self} )
     end
 
-    rendering_result.find_chunks(Chunk::Reference).inject({}) do |hash, chunk|
+    rendering_result.find_chunks(Chunks::Reference).inject({}) do |hash, chunk|
 
       if id != ( referee_id = chunk.reference_id ) &&
               !hash.has_key?( referee_key = referee_id || chunk.refcardname.key )
@@ -68,7 +68,7 @@ module Cardlib::References
         hash[ referee_key ] = {
           :referee_id  => referee_id,
           :referee_key => chunk.refcardname.key,
-          :link_type   => Chunk::Link===chunk       ? 'L' : 'I',
+          :link_type   => Chunks::Link===chunk       ? 'L' : 'I',
           :present     => chunk.reference_card.nil? ?  0  :  1
         }
       end

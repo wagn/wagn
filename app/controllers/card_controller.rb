@@ -1,6 +1,9 @@
 # -*- encoding : utf-8 -*-
 require 'xmlscan/processor'
 
+require_dependency 'wagn/sets'
+require_dependency 'card'
+
 class CardController < ApplicationController
   # This is often needed for the controllers to work right
   # FIXME: figure out when/why this is needed and why the tests don't fail
@@ -279,6 +282,7 @@ Done"
   end
 
 
+  # FIXME: make me an event
   def load_card
     # do content type processing, if it is an object, json or xml, parse that now and
     # params[:object] = parsed_object
@@ -290,16 +294,20 @@ Done"
       else
         opts = params[:card] ? params[:card].clone : (obj = params[:object]) ? obj : {}
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
+        Rails.logger.warn "load params: #{params.inspect}, #{opts.inspect}"
         name = params[:id] || opts[:name]
         
         if @action == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
           # I think we may need to create a "#create" instance method that handles this checking.
           # that would let us get rid of this...
+          Rails.logger.warn "load create card #{name.inspect}, #{opts.inspect}"
           opts[:name] ||= name
           Card.new opts
         else
-          Card.fetch_or_new name, opts
+          name = $1.to_i if name =~ /^~(\d+)$/
+          Rails.logger.warn "load card #{name.inspect}, #{opts.inspect}"
+          Card.fetch name, :new=>opts
         end
       end
 
@@ -307,6 +315,7 @@ Done"
     true
   end
 
+  # FIXME: event
   def refresh_card
     @card = @card.refresh
   end

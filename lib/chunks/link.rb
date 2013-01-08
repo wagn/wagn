@@ -1,4 +1,6 @@
-module Chunk
+require_dependency 'chunks/chunk'
+
+module Chunks
   class Link < Reference
     word = /\s*([^\]\|]+)\s*/
     # Groups: $1, [$2]: [[$1]] or [[$1|$2]] or $3, $4: [$3][$4]
@@ -32,7 +34,7 @@ module Chunk
     def replace_reference old_name, new_name
       @cardname=@cardname.replace_part old_name, new_name if @cardname
       if ObjectContent===self.link_text
-        self.link_text.find_chunks(Chunk::Reference).each {|chunk| chunk.replace_reference old_name, new_name}
+        self.link_text.find_chunks(Chunks::Reference).each {|chunk| chunk.replace_reference old_name, new_name}
       else
         self.link_text = new_name if old_name.to_name == self.link_text
       end

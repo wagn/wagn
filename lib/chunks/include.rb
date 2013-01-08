@@ -1,5 +1,7 @@
-module Chunk
-  class Include < Chunk::Reference
+require_dependency 'chunks/chunk'
+
+module Chunks
+  class Include < Reference
     attr_reader :stars, :renderer, :options, :base
     unless defined? INCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
@@ -15,7 +17,7 @@ module Chunk
       super
       self.cardname = parse match, params
       @base = card_params[:card]
-      #warn "Chunk::include #{inspect}"
+      #warn "Chunks::include #{inspect}"
       self
     end
 

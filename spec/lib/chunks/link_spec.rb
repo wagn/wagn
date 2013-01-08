@@ -1,6 +1,6 @@
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
-describe Chunk::Link, "link chunk tests" do
+describe Chunks::Link, "link chunk tests" do
   include MySpecHelpers
 
   before do

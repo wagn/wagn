@@ -1,3 +1,13 @@
+
+class Chunks::Abstract
+end
+
+require_dependency 'chunks/uri'
+require_dependency 'chunks/literal'
+require_dependency 'chunks/reference'
+require_dependency 'chunks/link'
+require_dependency 'chunks/include'
+
 require_dependency 'uri/common'
 
 # A chunk is a pattern of text that can be protected
@@ -6,7 +16,7 @@ require_dependency 'uri/common'
 # Chunks are initalized by passing in the result of a
 # match by its pattern.
 
-module Chunk
+module Chunks
   class Abstract
     def Abstract::re_class(index)
       @@paren_range.each do |chunk_class, range|

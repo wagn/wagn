@@ -5,7 +5,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 # level, but these cases should still be covered by tests
 
 
-describe Chunk::Include, "include chunk tests" do
+describe Chunks::Include, "include chunk tests" do
   include ActionView::Helpers::TextHelper
   include MySpecHelpers
 

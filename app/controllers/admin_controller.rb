@@ -1,9 +1,8 @@
 # -*- encoding : utf-8 -*-
-class AdminController < ApplicationController
-  # This is often needed for the controllers to work right
-  # FIXME: figure out when/why this is needed and why the tests don't fail
-  Card
 
+require_dependency 'card'
+
+class AdminController < CardController
   layout 'application'
 
   def setup

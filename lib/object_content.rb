@@ -9,8 +9,8 @@ require_dependency 'chunks/include'
 class ObjectContent < SimpleDelegator
 
   ACTIVE_CHUNKS =
-    [ Literal::Escape, Chunk::Include, Chunk::Link, URIChunk, LocalURIChunk ]
-  SCAN_RE = { ACTIVE_CHUNKS => Chunk::Abstract.unmask_re(ACTIVE_CHUNKS) }
+    [ Literal::Escape, Chunks::Include, Chunks::Link, URIChunk, LocalURIChunk ]
+  SCAN_RE = { ACTIVE_CHUNKS => Chunks::Abstract.unmask_re(ACTIVE_CHUNKS) }
 
   def initialize content, card_options
     @card_options = card_options
@@ -29,7 +29,7 @@ class ObjectContent < SimpleDelegator
       content = arr.map do |match_arr|
           pre_chunk = match_arr.shift; match = match_arr.shift
           match_index = match_arr.index {|x| !x.nil? }
-          chunk_class, range = Chunk::Abstract.re_class(match_index)
+          chunk_class, range = Chunks::Abstract.re_class(match_index)
           chunk_params = match_arr[range]
           newck = chunk_class.new match, card_params, chunk_params
           if newck.avoid_autolinking?
@@ -61,8 +61,8 @@ class ObjectContent < SimpleDelegator
   def each_chunk
     return enum_for(:each_chunk) unless block_given?
     case __getobj__
-      when Hash;   each { |k,v| yield v if Chunk::Abstract===v }
-      when Array;  each { |e|   yield e if Chunk::Abstract===e }
+      when Hash;   each { |k,v| yield v if Chunks::Abstract===v }
+      when Array;  each { |e|   yield e if Chunks::Abstract===e }
       when String; # strings are all parsed in self, so no chunks in a String
       else
         Rails.logger.warn "error self is unrecognized type #{self.class} #{self.__getobj__.class}"

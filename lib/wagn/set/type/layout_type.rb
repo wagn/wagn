@@ -1,20 +1,24 @@
 module Wagn
-  module Set::Type::LayoutType
-    include Sets
+  module Set
+    module Type
+      module LayoutType
+        include Sets
 
-    format :base
+        format :base
 
-    define_view :editor, :type=>:layout_type do |args|
-      form.text_area :content, :rows=>30, :class=>'card-content'
-    end
+        define_view :editor, :type=>:layout_type do |args|
+          form.text_area :content, :rows=>30, :class=>'card-content'
+        end
 
-    define_view :core, :type=>:layout_type do |args|
-      h _render_raw
-    end
+        define_view :core, :type=>:layout_type do |args|
+          h _render_raw
+        end
 
-    module Model
-      def clean_html?
-        false
+        module Model
+          def clean_html?
+            false
+          end
+        end
       end
     end
   end

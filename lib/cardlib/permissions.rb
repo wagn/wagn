@@ -242,7 +242,7 @@ module Cardlib::Permissions
 
   def update_ruled_cards
     # FIXME: codename
-    if junction? && tag_id==Card::ReadID && (@name_or_content_changed || @trash_changed)
+    if junction? && right_id==Card::ReadID && (@name_or_content_changed || @trash_changed)
       # These instance vars are messy.  should use tracked attributes' @changed variable
       # and get rid of @name_changed, @name_or_content_changed, and @trash_changed.
       # Above should look like [:name, :content, :trash].member?( @changed.keys ).

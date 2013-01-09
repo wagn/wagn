@@ -108,7 +108,7 @@ describe "Card::Reference" do
     watermelon.name="grapefruit"
     watermelon.save!
     lew.reload.content.should == "likes [[watermelon]] and [[watermelon+seeds|seeds]]"
-    assert_equal [ 'L', 'L' ], lew.out_references.map(&:link_type), "links should be a LINK"
+    assert_equal [ 'L', 'L' ], lew.out_references.map(&:ref_type), "links should be a LINK"
     assert_equal [ 0, 0 ], lew.out_references.map(&:present), "links should not be present"
   end
 
@@ -191,9 +191,9 @@ describe "Card::Reference" do
     references = new_card.card_references(true)
     references.size.should == 2
     references[0].referee_key.should == 'WantedCard'
-    references[0].link_type.should == Card::Reference::WANTED_PAGE
+    references[0].ref_type.should == Card::Reference::WANTED_PAGE
     references[1].referee_key.should == 'WantedCard2'
-    references[1].link_type.should == Card::Reference::WANTED_PAGE
+    references[1].ref_type.should == Card::Reference::WANTED_PAGE
 
     wanted_card = Card.create(:name=>'WantedCard')
     wanted_card.revise('And here it is!', Time.now, Card['quentin'].to_user), get_renderer)
@@ -203,9 +203,9 @@ describe "Card::Reference" do
     references = new_card.card_references(true)
     references.size.should == 2
     references[0].referee_key.should == 'WantedCard'
-    references[0].link_type.should == Card::Reference::LINKED_PAGE
+    references[0].ref_type.should == Card::Reference::LINKED_PAGE
     references[1].referee_key.should == 'WantedCard2'
-    references[1].link_type.should == Card::Reference::WANTED_PAGE
+    references[1].ref_type.should == Card::Reference::WANTED_PAGE
   end
 =end
   private

@@ -14,7 +14,6 @@ module Chunks
 
     def initialize match, card_params, params
       super
-      link_type = :show
       if name=params[0]
         self.cardname = name.to_name
         ltext=params[1]

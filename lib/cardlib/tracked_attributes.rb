@@ -33,7 +33,7 @@ module Cardlib::TrackedAttributes
     Card.expire cardname
 
     if @cardname.junction?
-      [:trunk, :tag].each do |side|
+      [:left, :right].each do |side|
         sidename = @cardname.send "#{side}_name"
         sidecard = Card[sidename]
         old_name_in_way = (sidecard && sidecard.id==self.id) # eg, renaming A to A+B
@@ -47,7 +47,7 @@ module Cardlib::TrackedAttributes
         end
       end
     else
-      self.trunk_id = self.tag_id = nil
+      self.left_id = self.right_id = nil
     end
 
     return if new_card?

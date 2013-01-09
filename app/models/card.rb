@@ -573,7 +573,7 @@ class Card
 
   def inspect
     "#<#{self.class.name}" + "##{id}" +
-    "###{object_id}" + #"k#{tag_id}g#{tag_id}" +
+    "###{object_id}" + #"k#{left_id}g#{right_id}" +
     "[#{debug_type}]" + "(#{self.name})" + #"#{object_id}" +
     "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{frozen? ? 'Fz' : readonly? ? 'RdO' : ''}" +
     "#{@virtual &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }:#{references_expired.inspect}}" +
@@ -665,7 +665,7 @@ class Card
           "may not contain any of the following characters: #{ SmartName.banned_array * ' ' }"
       end
       # this is to protect against using a plus card as a tag
-      if cdname.junction? and rec.simple? and Account.as_bot { Card.count_by_wql :tag_id=>rec.id } > 0
+      if cdname.junction? and rec.simple? and Account.as_bot { Card.count_by_wql :right_id=>rec.id } > 0
         rec.errors.add :name, "#{value} in use as a tag"
       end
 

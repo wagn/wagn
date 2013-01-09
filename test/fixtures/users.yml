@@ -5,7 +5,7 @@ users_001:
   email: no-reply@wagn.org
   crypted_password: 
   salt: 
-  created_at: 2012-12-30 18:07:26 Z
+  created_at: 2013-01-09 14:44:20 Z
   updated_at: 2012-12-02 04:06:20 Z
   password_reset_code: 
   status: system
@@ -19,7 +19,7 @@ users_002:
   email: 
   crypted_password: 
   salt: 
-  created_at: 2012-12-30 18:07:26 Z
+  created_at: 2013-01-09 14:44:20 Z
   updated_at: 2012-12-02 04:06:20 Z
   password_reset_code: 
   status: system
@@ -31,10 +31,10 @@ users_003:
   id: 3
   login: joe_user
   email: joe@user.com
-  crypted_password: 6c0f6d694a8ea2402ce8bc21f4b14593f9a7f337
-  salt: e0700f60e864d242e885dad7ec86f317148bac64
-  created_at: 2012-12-31 05:22:10 Z
-  updated_at: 2012-12-31 05:22:10 Z
+  crypted_password: 9da5afaee8995e6941363ce0700c5862a26e8f5a
+  salt: 49a42d7101f9c98f7f56cba2a4933faab1c43fcf
+  created_at: 2013-01-09 21:45:24 Z
+  updated_at: 2013-01-09 21:45:24 Z
   password_reset_code: 
   status: active
   invite_sender_id: 
@@ -45,10 +45,10 @@ users_004:
   id: 4
   login: joe_admin
   email: joe@admin.com
-  crypted_password: e9c95ab8f8d73f632f3a2996118363a2fe7a424e
-  salt: 540c8ffe362f7930052f2583a4ed30fd366e2312
-  created_at: 2012-12-31 05:22:11 Z
-  updated_at: 2012-12-31 05:22:11 Z
+  crypted_password: ae1535b571ff9abd3199a79412866a18b2a53af4
+  salt: 29ebdf7bf7084fb5cfd1df2a3ff571a11bea73d2
+  created_at: 2013-01-09 21:45:24 Z
+  updated_at: 2013-01-09 21:45:24 Z
   password_reset_code: 
   status: active
   invite_sender_id: 
@@ -59,10 +59,10 @@ users_005:
   id: 5
   login: joe_camel
   email: joe@camel.com
-  crypted_password: 833479b73ab0de8f0d7ee77fe16c924475e485e8
-  salt: 5058cf5aeb07aa98277acb1fdd3d5aa587d52d79
-  created_at: 2012-12-31 05:22:11 Z
-  updated_at: 2012-12-31 05:22:11 Z
+  crypted_password: d3bafdb4be53e87350322c8c73f564615a087796
+  salt: 7254ca8ab324845caf3c6b1f37e902d568bc8e85
+  created_at: 2013-01-09 21:45:25 Z
+  updated_at: 2013-01-09 21:45:25 Z
   password_reset_code: 
   status: active
   invite_sender_id: 
@@ -73,10 +73,10 @@ users_006:
   id: 6
   login: 
   email: ron@request.com
-  crypted_password: 2775d107b62a58924e3af32b317f8d6daaad533a
-  salt: 03b7bd15c1fafb186e4d61cf06e03042ec82f473
-  created_at: 2012-12-31 05:22:12 Z
-  updated_at: 2012-12-31 05:22:12 Z
+  crypted_password: a1f7360b3af0c5f1dbb0af2b5abbdd96c36c5e4a
+  salt: 2ac8c6cf7be233fd25a8c5bdfe0bdfb5639147a1
+  created_at: 2013-01-09 21:45:25 Z
+  updated_at: 2013-01-09 21:45:25 Z
   password_reset_code: 
   status: pending
   invite_sender_id: 
@@ -87,10 +87,10 @@ users_007:
   id: 7
   login: sample_user
   email: sample@user.com
-  crypted_password: 6fe5cdbbd703312d1da6205d9f1961966d074053
-  salt: e1d4200b8639248836dc0aa030e2e9b6f15e9c80
-  created_at: 2012-12-31 05:22:12 Z
-  updated_at: 2012-12-31 05:22:12 Z
+  crypted_password: 5e1759863c982db0e247dd0c9388104f574fb0e7
+  salt: 6ea1a524ce7266dcc408ca04634385e4e21d9d3f
+  created_at: 2013-01-09 21:45:25 Z
+  updated_at: 2013-01-09 21:45:25 Z
   password_reset_code: 
   status: active
   invite_sender_id: 
@@ -101,10 +101,10 @@ users_008:
   id: 8
   login: u1
   email: u1@user.com
-  crypted_password: 1fd28d7032ec7bb03cb2ed98c3bfac6b1fea3e63
-  salt: 3c9107356f6e82f5078f19f39c4ceae66d4fa8c8
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  crypted_password: 143b9c0bff387c6644bd2d32ed2ea4f994dce998
+  salt: df5d612c8cdb05a3ba9175678b037b4ee7be6636
+  created_at: 2013-01-09 21:45:29 Z
+  updated_at: 2013-01-09 21:45:29 Z
   password_reset_code: 
   status: active
   invite_sender_id: 
@@ -115,10 +115,10 @@ users_009:
   id: 9
   login: u2
   email: u2@user.com
-  crypted_password: 0ecc7c9a410ea2d298507e30a3ce79bc4b86ca12
-  salt: 2a1647e58d10cf54303db75265a0f110ec6d59cf
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  crypted_password: b932252389018ecc7dbdbd4773525043f5ea0fcf
+  salt: 4b2609c1c557d1ac0d522506b8bf0d4a61a35e7b
+  created_at: 2013-01-09 21:45:29 Z
+  updated_at: 2013-01-09 21:45:29 Z
   password_reset_code: 
   status: active
   invite_sender_id: 
@@ -129,10 +129,10 @@ users_010:
   id: 10
   login: u3
   email: u3@user.com
-  crypted_password: 174291db520b0de30561894c90cf27ab7547ab16
-  salt: 895eda16cadd03de299198254301cc01a7fb73b6
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  crypted_password: 3f304937b3b48b467f1665a84affedcb53a5df36
+  salt: 516c5e89465c77b07c945ee03dc9181c1769e081
+  created_at: 2013-01-09 21:45:29 Z
+  updated_at: 2013-01-09 21:45:29 Z
   password_reset_code: 
   status: active
   invite_sender_id: 

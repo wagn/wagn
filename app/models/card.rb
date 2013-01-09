@@ -18,7 +18,7 @@ class Card < ActiveRecord::Base
 
   attr_accessor :comment, :comment_author, :selected_rev_id,
     :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
-    :cards, :loaded_trunk, :nested_edit, # should be possible to merge these concepts
+    :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status #yuck
       
   attr_writer :update_read_rule_list
@@ -49,7 +49,7 @@ class Card < ActiveRecord::Base
             args['type']          == cc.type_args[:type]      and
             args['typecode']      == cc.type_args[:typecode]  and
             args['type_id']       == cc.type_args[:type_id]   and
-            args['loaded_trunk']  == cc.loaded_trunk
+            args['loaded_left']  == cc.loaded_left
 
           args['type_id'] = cc.type_id
           return cc.send( :initialize, args )
@@ -200,7 +200,7 @@ class Card < ActiveRecord::Base
     self.creator_id = self.updater_id if new_card?
   end
 
-  before_validation :on => :create do
+  after_validation :on => :create do
     pull_from_trash if new_record?
     self.trash = !!trash
     true
@@ -564,7 +564,7 @@ class Card < ActiveRecord::Base
 
   def inspect
     "#<#{self.class.name}" + "##{id}" +
-    "###{object_id}" + #"k#{tag_id}g#{tag_id}" +
+    "###{object_id}" + #"k#{left_id}g#{right_id}" +
     "[#{debug_type}]" + "(#{self.name})" + #"#{object_id}" +
     "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{frozen? ? 'Fz' : readonly? ? 'RdO' : ''}" +
     "#{@virtual &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }}" +
@@ -656,7 +656,7 @@ class Card < ActiveRecord::Base
           "may not contain any of the following characters: #{ SmartName.banned_array * ' ' }"
       end
       # this is to protect against using a plus card as a tag
-      if cdname.junction? and rec.simple? and Account.as_bot { Card.count_by_wql :tag_id=>rec.id } > 0
+      if cdname.junction? and rec.simple? and Account.as_bot { Card.count_by_wql :right_id=>rec.id } > 0
         rec.errors.add :name, "#{value} in use as a tag"
       end
 

@@ -1,0 +1,13 @@
+=Thinking about contributing to Wagn?
+Thank you!
+
+In coming months we plan to work to make the process of contributing and entering the Wagn developer community as rewarding an experience as possible.  In the meantime, please be vocal about any way we can help.
+
+==Basics
+1. The Wagn team makes heavy use of {GitHub's pull request system}[https://help.github.com/articles/using-pull-requests].  If you're not familiar with pull requests, that's the best place to start.
+2. Please make all pull requests to the wagn:develop branch.
+
+A great pull request is:
+* small - so the team can review changes incrementally
+* tested - including automatic tests that would fail without its changes
+* explained - with a clear title and comments

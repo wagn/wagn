@@ -639,16 +639,16 @@ module Wagn
     end
     
   end  
+end  
   
-  class Renderer::Html < Renderer
-    def watching_type_cards
-      %{<div class="faint">(following)</div>} #yuck
-    end
+class Wagn::Renderer::Html
+  def watching_type_cards
+    %{<div class="faint">(following)</div>} #yuck
+  end
 
-    def watch_link text, toggle, title, extra={}
-      link_to "#{text}", path(:watch, :toggle=>toggle), 
-        {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :title=>title, :remote=>true, :method=>'post'}.merge(extra)
-    end
+  def watch_link text, toggle, title, extra={}
+    link_to "#{text}", path(:watch, :toggle=>toggle), 
+      {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :title=>title, :remote=>true, :method=>'post'}.merge(extra)
   end  
 end
 

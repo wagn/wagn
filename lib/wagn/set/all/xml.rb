@@ -14,6 +14,7 @@ module Wagn
 
       layout_content = get_layout_content(args)
 
+      args[:context] = self.context = "layout_0"
       args[:action]="view"
       args[:relative_content] = args[:params] = params
 

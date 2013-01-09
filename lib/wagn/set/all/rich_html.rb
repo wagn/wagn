@@ -234,7 +234,7 @@ module Wagn
     define_view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
       confirm_delete = "Are you sure you want to delete #{card.name}?"
       if dependents = card.dependents and dependents.any?
-        confirm_delete +=  %{ \n\nThat would mean removing #{dependents.size} related pieces of information. }
+        confirm_delete +=  %{ \n\nThat would mean removing #{dependents.size} related piece(s) of information. }
       end
       
       wrap :edit, args.merge(:frame=>true) do

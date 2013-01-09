@@ -305,8 +305,7 @@ Done"
           opts[:name] ||= name
           Card.new opts
         else
-          name = $1.to_i if name =~ /^~(\d+)$/
-          Rails.logger.warn "load card #{name.inspect}, #{opts.inspect}"
+          Rails.logger.warn "load card fetch_or_new #{name.inspect}, #{opts.inspect}"
           Card.fetch name, :new=>opts
         end
       end

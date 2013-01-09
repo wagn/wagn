@@ -11,13 +11,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130106052640) do
+ActiveRecord::Schema.define(:version => 20130109015336) do
 
   create_table "card_references", :force => true do |t|
     t.integer "referer_id",               :default => 0,  :null => false
     t.string  "referee_key",              :default => "", :null => false
     t.integer "referee_id"
-    t.string  "link_type",   :limit => 1, :default => "", :null => false
+    t.string  "ref_type",    :limit => 1, :default => "", :null => false
     t.integer "present"
   end
 
@@ -39,8 +39,8 @@ ActiveRecord::Schema.define(:version => 20130106052640) do
     t.string   "name",                :null => false
     t.string   "key",                 :null => false
     t.string   "codename"
-    t.integer  "trunk_id"
-    t.integer  "tag_id"
+    t.integer  "left_id"
+    t.integer  "right_id"
     t.integer  "current_revision_id"
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
@@ -54,10 +54,10 @@ ActiveRecord::Schema.define(:version => 20130106052640) do
   end
 
   add_index "cards", ["key"], :name => "cards_key_uniq", :unique => true
+  add_index "cards", ["left_id"], :name => "index_cards_on_trunk_id"
   add_index "cards", ["name"], :name => "cards_name_index"
   add_index "cards", ["read_rule_id"], :name => "index_cards_on_read_rule_id"
-  add_index "cards", ["tag_id"], :name => "index_cards_on_tag_id"
-  add_index "cards", ["trunk_id"], :name => "index_cards_on_trunk_id"
+  add_index "cards", ["right_id"], :name => "index_cards_on_tag_id"
   add_index "cards", ["type_id"], :name => "card_type_index"
 
   create_table "sessions", :force => true do |t|

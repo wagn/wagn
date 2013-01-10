@@ -68,12 +68,6 @@ module Cardlib
     class BasePattern
 
       @@ruby19 = !!(RUBY_VERSION =~ /^1\.9/)
-      @@base_module = Wagn::Set
-    end
-  end
-
-  module Patterns
-    class BasePattern
       MODULES={}
 
       class << self
@@ -82,7 +76,7 @@ module Cardlib
 
         def find_module mod
           module_name_parts = mod.split('/') << 'model'
-          module_name_parts.inject @@base_module do |base, part|
+          module_name_parts.inject Wagn::Set do |base, part|
             return if base.nil?
             part = part.camelize
             key = "#{base}::#{part}"

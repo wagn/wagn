@@ -4,7 +4,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "pat
 
 Given /^I log in as (.+)$/ do |user_card_name|
   # FIXME: define a faster simulate method ("I am logged in as")
-  @session_user = ucid = Card[user_card_name].id
+  @session_id = ucid = Card[user_card_name].id
   user_object = User.where(:card_id=>ucid).first
   visit "/account/signin"
   fill_in("login", :with=> user_object.email )
@@ -45,9 +45,9 @@ end
 
 
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
-  logged_in_as(username) do 
+  logged_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
-    fill_in 'card[content]', :with=>content 
+    fill_in 'card[content]', :with=>content
     click_button("Submit")
   end
 end
@@ -118,9 +118,9 @@ def create_card(username,cardtype,cardname,content="")
 end
 
 def logged_in_as(username)
-  sameuser = (username == "I" or @session_user && Card[@session_user].name == username)
+  sameuser = (username == "I" or @session_id && Card[@session_id].name == username)
   unless sameuser
-    @saved_user = @session_user
+    @saved_user = @session_id
     step "I log in as #{username}"
   end
   yield

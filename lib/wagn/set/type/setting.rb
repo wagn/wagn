@@ -29,7 +29,7 @@ module Wagn
         end
 
         define_view :closed_content, :type=>'setting' do |args|
-          %{<div class="instruction">#{process_content "{{+*right+*edit help}}"}</div>}
+          %{<div class="instruction">#{process_content_s "{{+*right+*edit help}}"}</div>}
         end
       end
     end

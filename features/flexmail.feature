@@ -51,3 +51,4 @@ Feature: Flexmail
     And they should see "Pleistocles" in the email body
     And they should see "Lee" in the email body
     And they should see "This is outrageous" in the email body
+

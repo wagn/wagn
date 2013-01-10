@@ -25,3 +25,4 @@ Feature: Seeing a card
     Then In the main card header  I should see "Buffalo"
     And  In the main card header  I should see "Phrase"
     And  In the main card content I should see "Me and Me"
+

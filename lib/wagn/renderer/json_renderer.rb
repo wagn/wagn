@@ -1,11 +1,10 @@
 module Wagn
- class Renderer::Xml < Renderer
 
-  LAYOUTS = { 'default' => %{
-<carddoc>
-{{_main}}
-</carddoc>
-} }
+  LAYOUTS = { 'default' => {:status => "{{:status}}",:result => "{{_main}}"},
+              'none' => "{{_main}}"
+            }
+
+ class Renderer::JsonRenderer < Renderer
 
   cattr_accessor :set_actions
   attr_accessor  :options_need_save, :js_queue_initialized,
@@ -17,7 +16,7 @@ module Wagn
   end
 
   def set_action(key)
-    Renderer::Xml.actions[key] or super
+    Renderer::JsonRenderer.actions[key] or super
   end
 
   def initialize(card, opts=nil)
@@ -43,38 +42,32 @@ module Wagn
         'internal-link'
       else
         known_card = !!Card.fetch(href, :skip_modules=>true) if known_card.nil?
-        cardname = href.to_name
-        text ||= showname
-        #href+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
+        smartname = href.to_name
+        text = smartname.to_show(card.name) unless text
+        #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
         href = full_uri Wagn::Conf[:root_path] + '/' +
-          (known_card ? cardname.url_key : CGI.escape(cardname.s))
+          (known_card ? smartname.to_url_key : CGI.escape(smartname.escape))
 
-        return %{<cardlink class="#{
+        return %{{"cardlink":{"class":"#{
                     known_card ? 'known-card' : 'wanted-card'
-                  }" card="#{href}">#{text}</cardlink>}
+                  }", "url":"#{href}","text":"#{text}"}}}
       end
-    %{<link class="#{klass}" href="#{href}">#{text}</link>}
+    { :link => { :class => "#{klass}", :url => "#{href}",:text => "#{text}"}} # return a Hash, not a string for json
   end
 
   def wrap(view=nil, args = {})
-    css_class = case args[:action].to_s
-      when 'content'  ;  'included'
-      when 'exception';  'exception'
-      when 'closed'   ;  'card-slot line'
-      else            ;  'card-slot paragraph'
-    end
-    css_class << " " + card.safe_keys if card
-    css_class << " view-#{view}" if view
 
-    attributes = {
-      :name     => card.cardname.tag,
-      :cardId   => (card && card.id),
-      :type_id  => card.type_id,
-      :class    => css_class,
-    }
-    [:style, :home_view, :item, :base].each { |key| attributes[key] = args[key] }
+    attributes = card.nil? ? {} : {
+        :name     => card.cardname.tag_name.to_s,
+        :key      => card.key,
+        :cardId   => card.id,
+        :type     => card.type_name,
+      }
+    [:style, :home_view, :item, :base].each { |key| a = args[key] and attributes[key] = a }
 
-    content_tag(:card, attributes ) { yield }
+    cont = yield  # (Enumerable===(c=yield) ? c.to_a : c)
+    #Rails.logger.info "wrap json #{cont.class}, I#{cont.inspect}"
+    {card: { attr: attributes, content: cont }}
   end
 
   def get_layout_content(args)
@@ -93,7 +86,8 @@ module Wagn
     case
       when lcard && lcard.ok?(:read)         ; lcard.content
       when hardcoded_layout = LAYOUTS[lname] ; hardcoded_layout
-      else  ; "<h1>Unknown layout: #{lname}</h1>Built-in Layouts: #{LAYOUTS.keys.join(', ')}"
+      else  ; %{{"error":"Unknown layout: #{lname}.  Built-in Layouts: #{LAYOUTS.keys.join(', ')}}}
+
     end
   end
 

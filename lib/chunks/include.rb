@@ -1,78 +1,79 @@
-module Chunk
+require_dependency 'chunks/chunk'
+
+module Chunks
   class Include < Reference
     attr_reader :stars, :renderer, :options, :base
     unless defined? INCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
-      INCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(\|([^\}]+?))?)\}\}/
+      #  Groups: $1, everything (less {{}}), $2 name, $3 options
+      INCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(?:\|([^\}]+?))?)\}\}/
+      INCLUDE_GROUPS = 3
     end
 
     def self.pattern() INCLUDE_PATTERN end
+    def self.groups() INCLUDE_GROUPS end
 
-    def initialize(match_data, content)
+    def initialize match, card_params, params
       super
-      #Rails.logger.warn "FOUND INCLUDE #{match_data} #{content}"
-      self.cardname, @options, @configs = a = self.class.parse(match_data)
-      #Rails.logger.info "Chunk::include #{a.inspect}"
-      @base, @renderer = content.card, content.renderer
+      self.cardname = parse match, params
+      @base = card_params[:card]
+      #warn "Chunks::include #{inspect}"
+      self
     end
 
-    def self.parse(match)
-      #warn "parse t chunk #{match.inspect}"
-      name = match[2].strip
-      case name
-      when /^\#\#/; return [nil, {:comment=>''}] # invisible comment
-      when /^\#/||nil?||blank?  # visible comment
-        return [nil, {:comment=>"<!-- #{CGI.escapeHTML match[1]} -->"}]
-      end
-      options = {
-        :tname   =>name,  # this "t" is for inclusion.  should rename
+    def parse match, params
 
-        :view  => nil,
-        :item  => nil,
-        :type  => nil,
-        :size  => nil,
+      case name = params[1].strip
 
-        :hide  => nil,
-        :show  => nil,
-        :wild  => nil,
+        when /^\#\#/; @unmask_text=''; nil # invisible comment
+        when /^\#/||nil?||blank?; @unmask_text = "<!-- #{CGI.escapeHTML params[0]} -->"; nil
 
-        :unmask => match[1] # is this used?
-      }
-      style = {}
-      configs = Hash.new_from_semicolon_attr_list match[4]
-      configs.each_pair do |key, value|
-        if options.key? key.to_sym
-          options[key.to_sym] = value
         else
-          style[key] = value
-        end
+          @options = {
+            :tname   =>name,  # this "t" is for inclusion.  should rename
+            # it is sort of include, this is the name for the inclusion, should still rename
+            :view  => nil, :item  => nil, :type  => nil, :size  => nil,
+            :hide  => nil, :show  => nil, :wild  => nil,
+            :include => params[0] # is this used? yes, by including this in an attrbute
+                              # of an xml card, the xml parser can replace the subelements
+                              # with the original inclusion notation: {{options[:include]}}
+          }
+
+          @configs = Hash.new_from_semicolon_attr_list params[2]
+
+          @options[:style] = @configs.inject({}) do |styles, pair| key, value = pair
+            @options.key?(key.to_sym) ? @options[key.to_sym] = value : styles[key] = value
+            styles
+          end.
+            map { |style_name,style| CGI.escapeHTML("#{style_name}:#{style};") } * ''
+
+          [:hide, :show].each do |disp|
+            @options[disp] = @options[disp].split(/[\s\,]+/) if @options[disp]
+          end
+          name
       end
-      [:hide, :show].each do |disp|
-        if options[disp]
-          options[disp] = options[disp].split /[\s\,]+/
-        end
-      end
-      options[:style] = style.map{|k,v| CGI.escapeHTML("#{k}:#{v};")}.join
-      #warn "parsed: #{[name, options, configs].inspect}"
-      [name, options, configs]
     end
 
-    def unmask_text(&block)
+    def unmask_text
       return @unmask_text if @unmask_text
-      comment = @options[:comment]
-      return comment if comment
+
       refcardname
       if view = @options[:view]
         view = view.to_sym
       end
-      yield options
+
+      @unmask_render = yield options # this is not necessarily text, sometimes objects for json
+
+      #Rails.logger.warn "unmask txt #{@unmask_render}, #{options.inspect}"; @unmask_render
     end
 
-    def revert
-      configs = @configs.to_semicolon_attr_list;
-      configs = "|#{configs}" unless configs.blank?
-      @text = "{{#{cardname.to_s}#{configs}}}"
-      super
+    def replace_reference old_name, new_name
+
+      @cardname=@cardname.replace_part old_name, new_name
+
+      ( configs = @configs.to_semicolon_attr_list ).blank? or
+        configs = "|" + configs
+      @text = '{{' + cardname.to_s + configs + '}}'
     end
 
   end

@@ -28,7 +28,8 @@ module Cardlib::Fetch
 #      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{cardname}" do
 
       if mark.nil?
-        return nil if opts[:new].nil?
+        return if opts[:new].nil?
+        # This is fetch_or_new now when you supply :new=>{opts}
 
       else
 
@@ -37,7 +38,6 @@ module Cardlib::Fetch
         if Symbol===mark
           mark = Wagn::Codename[mark] || raise("Missing codename for #{mark.inspect}")
         end
-
 
         cache_key, method, val = if Integer===mark
           [ "~#{mark}", :find_by_id_and_trash, mark ]
@@ -113,6 +113,7 @@ module Cardlib::Fetch
         Card.cache.delete key
         Card.cache.delete "~#{card.id}" if card.id
       end
+      Rails.logger.warn "expiring #{name}, #{card.inspect}"
     end
 
     # set_names reverse map (cached)
@@ -177,12 +178,13 @@ module Cardlib::Fetch
   end
 
   def expire
+    Rails.logger.warn "expiring i:#{id}, #{inspect}"
     Card.cache.delete key
     Card.cache.delete "~#{id}" if id
   end
 
   def refresh
-    if self.frozen? || readonly?
+    if self.frozen? || self.readonly?
       fresh_card = self.class.find id
       fresh_card.include_set_modules
       fresh_card

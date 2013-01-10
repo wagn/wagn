@@ -1,12 +1,8 @@
 # -*- encoding : utf-8 -*-
 
-require 'card'
+require_dependency 'card'
 
 class AdminController < CardController
-  # This is often needed for the controllers to work right
-  # FIXME: figure out when/why this is needed and why the tests don't fail
-  Card
-
   layout 'application'
 
   def setup
@@ -24,7 +20,7 @@ class AdminController < CardController
           roles_card = @card.fetch :trait=>:roles, :new=>{}
           roles_card.content = "[[#{Card[Card::AdminID].name}]]"
           roles_card.save
-          self.session_user = @card
+          self.session = @card
           Card.cache.delete 'no_logins'
           flash[:notice] = "You're good to go!"
           redirect_to Card.path_setting('/')

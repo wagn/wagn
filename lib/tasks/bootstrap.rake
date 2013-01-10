@@ -39,6 +39,7 @@ namespace :wagn do
         :card_revisions =>", creator_id=#{botid}"
       }
       WAGN_BOOTSTRAP_TABLES.each do |table|
+        next if table == 'card_references'
         ActiveRecord::Base.connection.update("update #{table} set created_at=now() #{extra_sql[table.to_sym] || ''};")
       end
 

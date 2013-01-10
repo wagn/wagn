@@ -4,26 +4,9 @@ module Wagn
   module Sets
     @@dirs = []
 
-    module ClassMethods
-      def format fmt=nil
-        Renderer.get_renderer fmt
-      end
-    end
-  end
-end
-
-module Wagn
-  module Sets
     module SharedMethods
-      private
-      def get_set_key selection_key, opts
-        unless pkey = Cardlib::Pattern.method_key(opts)
-          raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
-        end
-        key = pkey.blank? ? selection_key : "#{pkey}_#{selection_key}"
-        #warn "gvkey #{selection_key}, #{opts.inspect} R:#{key}"
-        key.to_sym
-      end
+    end
+    module ClassMethods
     end
 
     def self.included base
@@ -36,29 +19,17 @@ module Wagn
 
     end
 
-    def self.all_constants base
-      base.constants.map {|c| c=base.const_get(c) and all_constants(c) }
-    end
-
-    module AllSets
-      Sets.all_constants(Sets)
-    end
-
-
-    module SharedClassMethods
-
+    module SharedMethods
       private
-
       def get_set_key selection_key, opts
         unless pkey = Cardlib::Pattern.method_key(opts)
           raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
         end
         key = pkey.blank? ? selection_key : "#{pkey}_#{selection_key}"
-        #warn "gvkey #{selection_key}, #{opts.inspect} p:#{pkey} R:#{key}"
+        #warn "gvkey #{selection_key}, #{opts.inspect} R:#{key}"
         key.to_sym
       end
     end
-
 
     class << self
 
@@ -69,15 +40,20 @@ module Wagn
 
       def load_sets
         Rails.logger.warn "load sets #{caller[0,8]*', '}"
-        [ "#{Rails.root}/lib/wagn/set/", Conf[:pack_dirs].split( /,\s*/ ) ].flatten.each do |dirname|
+        [ "#{Rails.root}/lib/wagn/set/", Wagn::Conf[:pack_dirs].split( /,\s*/ ) ].flatten.each do |dirname|
           load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
         end
       end
 
       def load_renderers
         Rails.logger.warn "load renderers #{caller[0,8]*', '}"
-        load_dir File.expand_path( "#{Rails.root}/lib/cardlib/*.rb", __FILE__ )
+        load_dir File.expand_path( "#{Rails.root}/lib/wagn/renderer/*.rb", __FILE__ )
       end
+
+      def all_constants base
+        base.constants.map {|c| c=base.const_get(c) and all_constants(c) }
+      end
+
 
       def dir newdir
         @@dirs << newdir
@@ -99,6 +75,11 @@ module Wagn
         @@dirs.each do |dir| load_dir dir end
       end
     end
+
+    module AllSets
+      Wagn::Sets.all_constants(Wagn::Set)
+    end
+
 
     # View definitions
     #
@@ -123,6 +104,10 @@ module Wagn
 
       include SharedMethods
 
+      def format fmt=nil
+        Renderer.renderer = if fmt.nil? || fmt == :base then Renderer else Renderer.get_renderer fmt end
+      end
+
       def define_view view, opts={}, &final
         Renderer.perms[view]       = opts.delete(:perms)      if opts[:perms]
         Renderer.error_codes[view] = opts.delete(:error_code) if opts[:error_code]
@@ -136,11 +121,11 @@ module Wagn
 
         view_key = get_set_key view, opts
         Renderer.renderer.class_eval { define_method "_final_#{view_key}", &final }
-        #warn "defining view method[#{Renderer.renderer}] _final_#{view_key}"
+        #warn "defining view method[#{Renderer.renderer.inspect}] _final_#{view_key}"
         Renderer.subset_views[view] = true if !opts.empty?
 
         if !method_defined? "render_#{view}"
-          #warn "defining view method[#{Renderer.renderer}] render_#{view}"
+          #warn "defining view method[#{Renderer.renderer}] _render_#{view}"
           Renderer.renderer.class_eval do
             define_method( "_render_#{view}" ) do |*a|
               a = [{}] if a.empty?
@@ -177,7 +162,7 @@ module Wagn
         aliases.each do |alias_view|
           alias_view_key = case alias_view
             when String; alias_view
-            when Symbol; view_key==view ? alias_view.to_sym : view_key.to_s.sub(/_#{view}$/, "_#{alias_view}").to_sym
+            when Symbol; (view_key==view ? alias_view.to_sym : view_key.to_s.sub(/_#{view}$/, "_#{alias_view}").to_sym)
             when Hash;   get_set_key alias_view[:view] || view, alias_view
             else; raise "Bad view #{alias_view.inspect}"
             end

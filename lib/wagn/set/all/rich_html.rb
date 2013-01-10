@@ -21,8 +21,8 @@ module Wagn
 
       layout_content = get_layout_content args
 
-      args[:params] = params # this is to pass params to inclusions.  let's find a cleaner way!
-      process_content layout_content, args
+      args[:params] = params # EXPLAIN why this is needed -- try without it
+      process_content_s layout_content, args
     end
   
     define_view :content do |args|
@@ -234,7 +234,7 @@ module Wagn
     define_view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
       confirm_delete = "Are you sure you want to delete #{card.name}?"
       if dependents = card.dependents and dependents.any?
-        confirm_delete +=  %{ \n\nThat would mean removing #{dependents.size} related pieces of information. }
+        confirm_delete +=  %{ \n\nThat would mean removing #{dependents.size} related piece(s) of information. }
       end
       
       wrap :edit, args.merge(:frame=>true) do

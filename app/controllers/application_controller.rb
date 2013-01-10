@@ -1,12 +1,10 @@
 # -*- encoding : utf-8 -*-
 
-#require 'wagn/sets'
-#require 'card'
+require_dependency 'wagn/sets'
+require_dependency 'card'
 
 class ApplicationController < ActionController::Base
-  # This is often needed for the controllers to work right
-  # FIXME: figure out when/why this is needed and why the tests don't fail
-  #Card::Reference
+  # This was in all the controllers, now it is inherited here
   Card
 end
 
@@ -47,9 +45,9 @@ class ApplicationController
 
       Wagn::Cache.renew
 
-      #warn "set curent_user (app-cont) #{self.session_user}, U.cu:#{Account.user_id}"
-      Account.user = self.session_user || Card::AnonID
-      #warn "set curent_user a #{session_user}, U.cu:#{Account.user_id}"
+      #warn "set curent_user (app-cont) #{self.session_id}, U.cu:#{Account.user_id}"
+      Account.user = self.session_id || Card::AnonID
+      #warn "set curent_user a #{session_id}, U.cu:#{Account.user_id}"
 
       # RECAPTCHA HACKS
       Wagn::Conf[:recaptcha_on] = !Account.logged_in? &&     # this too
@@ -109,9 +107,9 @@ class ApplicationController
       status = options[:status] || card.error_status || 422
 
       opt_message = options[:message] and card.errors.add( :exception, options[:message] )
-    show view, status
+      show view, status
+      true
     end
-    true
   end
 
   def show view = nil, status = 200
@@ -125,9 +123,15 @@ class ApplicationController
 
     case
     when known                # renderers can handle it
-      renderer = Wagn::Renderer.new card, :format=>ext, :controller=>self
-      render :text=>renderer.render_show( :view => view || params[:view] ),
-        :status=>(renderer.error_status || status)
+      renderer = Wagn::Renderer.new @card, :format=>ext, :controller=>self
+      view ||= params[:view]
+      if ext == 'json'
+        render_object = renderer.render_show( :view => view )
+        render :json=>render_object, :status=>(renderer.error_status || status)
+      else
+        render :text=>renderer.render_show( :view => view ),
+          :status=>(renderer.error_status || status)
+      end
     when show_file            # send_file can handle it
     else                      # dunno how to handle it
       render :text=>"unknown format: #{extension}", :status=>404

@@ -1,12 +1,13 @@
+
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
-include ChunkSpecHelper
 
 #FIXME: None of these work now, since inclusion is handled at the slot/cache
 # level, but these cases should still be covered by tests
 
 
-describe Chunk::Include, "include chunk tests" do
+describe Chunks::Include, "include chunk tests" do
   include ActionView::Helpers::TextHelper
+  include MySpecHelpers
 
   it "should test_truth" do
     assert true
@@ -85,8 +86,10 @@ describe Chunk::Include, "include chunk tests" do
     assert_text_equal "Booya", render( alpha )
   end
 
+=end
 
   private
+=begin
   assert_text_equal(left, right, desc="")
     assert_equal strip_tags(left), strip_tags(right), desc
   end

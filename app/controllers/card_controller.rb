@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
+require 'xmlscan/processor'
 
-require 'wagn/sets'
-require 'card'
-
+require_dependency 'wagn/sets'
+require_dependency 'card'
 
 class CardController < ApplicationController
   # This is often needed for the controllers to work right
@@ -24,6 +24,57 @@ class CardController
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :comment, :rollback ]
   before_filter :read_ok,      :only=> [ :read_file ]
 
+  # rest XML put/post
+  def read_xml(io)
+    pairs = XMLScan::XMLProcessor.process(io, {:key=>:name, :element=>:card,
+                      :substitute=>":include|{{:name}}", :extras=>[:type]})
+    return if pairs.empty?
+
+    main = pairs.shift
+    #warn "main#{main.inspect}, #{pairs.empty?}"
+    main, content, type = main[0], main[1][0]*'', main[1][2]
+
+    data = { :name=>main }
+    data[:cards] = pairs.inject({}) { |hash,p| k,v = p
+         h = {:content => v[0]*''}
+         h[:type] = v[2] if v[2]
+         hash[k.to_cardname.to_absolute(v[1])] = h
+         hash } unless pairs.empty?
+    data[:content] = content unless content.blank?
+    data[:type] = type if type
+    data
+  end
+
+  def dump_pairs(pairs)
+    warn "Result
+#{    pairs.map do |p| n,o,c,t = p
+      "#{c&&c.size>0&&"#{c}::"||''}#{n}#{t&&"[#{t}]"}=>#{o*''}"
+    end * "\n"}
+Done"
+  end
+  # Need to split off envelope code somehome
+
+=begin FIXME move to events
+  def create
+    Rails.logger.warn "create card #{params.inspect}"
+    if request.parameters['format'] == 'xml'
+      Rails.logger.warn (Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}")
+      #return render(:action=>"missing", :format=>:xml)  unless params[:card]
+      if card_create = read_xml(request.body)
+        begin
+          @card = Card.new card_create
+        #warn "POST creates are  #{card_create.inspect}"
+        rescue Exception => e
+          Rails.logger.warn "except #{e.inspect}, #{e.backtrace*"\n"}"
+        end
+      end
+
+      Rails.logger.warn "create card #{request.body.inspect}"
+    end
+
+=end
+
+  attr_reader :card
   cattr_reader :subset_actions
   @@subset_actions = {}
 
@@ -61,6 +112,29 @@ class CardController
   def read
     process_read
   end
+
+=begin FIXME move to action events
+    Rails.logger.warn "update card #{params.inspect}"
+    if request.parameters['format'] == 'xml'
+      Rails.logger.warn (Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}")
+      #return render(:action=>"missing", :format=>:xml)  unless params[:card]
+      if main_card = read_xml(request.body)
+        begin
+          @card = Card.new card_create
+        #warn "POST creates are  #{card_create.inspect}"
+        rescue Exception => e
+          Rails.logger.warn "except #{e.inspect}, #{e.backtrace*"\n"}"
+        end
+      end
+
+      Rails.logger.warn "create card #{request.body.inspect}"
+    end
+    @card = @card.refresh if @card.frozen? # put in model
+    case
+    when @card.new_card?                          ;  create
+    when @card.update_attributes( params[:card] ) ;  success
+    else                                             render_errors
+=end
 
   def update
     process_update
@@ -205,14 +279,17 @@ class CardController
 
   # FIXME: make me an event
   def load_card
-    #Rails.logger.warn "load card 1 #{params.inspect}"
+    # do content type processing, if it is an object, json or xml, parse that now and
+    # params[:object] = parsed_object
+    # looking into json parsing (apparently it is deep in rails: params_parser.rb)
     @card = case params[:id]
       when '*previous'   ; return wagn_redirect( previous_location )
       when /^\~(\d+)$/   ; Card.fetch $1.to_i
       when /^\:(\w+)$/   ; Card.fetch $1.to_sym
       else
-        opts = params[:card] ? params[:card].clone : {}
-        opts[:type] ||= params['type'] # for /new/:type shortcut.  we should fix and deprecate this.
+        opts = params[:card] ? params[:card].clone : (obj = params[:object]) ? obj : {}
+        opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
+        Rails.logger.warn "load params: #{params.inspect}, #{opts.inspect}"
         name = params[:id] || opts[:name]
         
         if @action == 'create'
@@ -223,8 +300,7 @@ class CardController
           opts[:name] ||= name
           Card.new opts
         else
-          name = $1.to_i if name =~ /^~(\d+)$/
-          Rails.logger.warn "load card #{name.inspect}, #{opts.inspect}"
+          Rails.logger.warn "load card fetch_or_new #{name.inspect}, #{opts.inspect}"
           Card.fetch name, :new=>opts
         end
       end
@@ -244,13 +320,13 @@ class CardController
     target = params[:success] || default_target
     redirect = !ajax?
     new_params = {}
-    
+
     if Hash === target
       new_params = target
       target = new_params.delete :id # should be some error handling here
       redirect ||= !!(new_params.delete :redirect)
     end
-      
+
     if target =~ /^REDIRECT:\s*(.+)/
       redirect, target = true, $1
     end

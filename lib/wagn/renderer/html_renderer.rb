@@ -133,7 +133,7 @@ module Wagn
     def edit_slot args={}
       if card.hard_template
         _render_raw.scan( /\{\{[^\}]*\}\}/ ).map do |inc|
-          process_content( inc ).strip
+          process_content_s( inc ).strip
         end.join
 #        raw _render_core(args)
       elsif card.new_card?
@@ -277,7 +277,7 @@ module Wagn
       @show_diff = (params[:mode] != 'false')
     end
 
-    
+
     # navigation for revisions -
     # --------------------------------------------------
     # some of this should be in rich_html, maybe most

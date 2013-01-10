@@ -71,6 +71,15 @@ describe AccountController, "account functions" do
       c.to_user.blocked?.should be_true
     end
 
+    it 'should detect duplicates' do
+      post :signup, :user=>{:email=>'joe@user.com'}, :card=>{:name=>'Joe Scope'}
+      post :signup, :user=>{:email=>'joe@user.com'}, :card=>{:name=>'Joe Duplicate'}
+      
+      #s=Card['joe scope']
+      c=Card['Joe Duplicate']
+      c.should be_nil
+    end
+
     it "should accept" do
       #put :update, :id=>"Joe New", :account=>{:status=>'active'}
       put :accept, :card=>{:key => "joe_new"}, :account=>{:status=>'active'}

@@ -69,7 +69,7 @@ describe Card do
         a.should be_instance_of(Card)
 
         # expires the saved card
-        mock(Card.cache).delete('a')
+        mock(Card.cache).delete('a').at_least(1)
         mock(Card.cache).delete(/~\d+/).at_least(12)
 
         # expires plus cards

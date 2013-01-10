@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class Card
- 
+class Card < ActiveRecord::Base
   class Reference < ActiveRecord::Base
     def referencer
       Card[referer_id]
@@ -32,6 +31,7 @@ class Card
         else
           delete_all_to card
         end
+        #Rails.logger.warn "update on rename #{card.inspect}, #{newname}, #{update_referers}"
         update_existing_key card, newname
       end
 
@@ -40,6 +40,6 @@ class Card
         delete_all_to card
       end
     end
-
   end
+
 end

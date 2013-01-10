@@ -11,16 +11,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121118115000) do
+ActiveRecord::Schema.define(:version => 20130109015336) do
 
   create_table "card_references", :force => true do |t|
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.integer  "referer_id",               :default => 0,  :null => false
-    t.string   "referee_key",              :default => "", :null => false
-    t.integer  "referee_id"
-    t.string   "link_type",   :limit => 1, :default => "", :null => false
-    t.integer  "present"
+    t.integer "referer_id",               :default => 0,  :null => false
+    t.string  "referee_key",              :default => "", :null => false
+    t.integer "referee_id"
+    t.string  "ref_type",    :limit => 1, :default => "", :null => false
+    t.integer "present"
   end
 
   add_index "card_references", ["referee_id"], :name => "wiki_references_referenced_card_id"
@@ -32,7 +30,6 @@ ActiveRecord::Schema.define(:version => 20121118115000) do
     t.integer  "card_id",    :null => false
     t.integer  "creator_id", :null => false
     t.text     "content",    :null => false
-    t.integer  "created_by"
   end
 
   add_index "card_revisions", ["card_id"], :name => "revisions_card_id_index"
@@ -42,65 +39,26 @@ ActiveRecord::Schema.define(:version => 20121118115000) do
     t.string   "name",                :null => false
     t.string   "key",                 :null => false
     t.string   "codename"
-    t.string   "typecode"
-    t.integer  "trunk_id"
-    t.integer  "tag_id"
+    t.integer  "left_id"
+    t.integer  "right_id"
     t.integer  "current_revision_id"
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
     t.integer  "creator_id",          :null => false
     t.integer  "updater_id",          :null => false
-    t.integer  "extension_id"
-    t.string   "extension_type"
-    t.text     "indexed_name"
-    t.text     "indexed_content"
     t.string   "read_rule_class"
     t.integer  "read_rule_id"
     t.integer  "references_expired"
     t.boolean  "trash",               :null => false
     t.integer  "type_id",             :null => false
-    t.integer  "created_by"
-    t.integer  "updated_by"
   end
 
-  add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_index"
   add_index "cards", ["key"], :name => "cards_key_uniq", :unique => true
+  add_index "cards", ["left_id"], :name => "index_cards_on_trunk_id"
   add_index "cards", ["name"], :name => "cards_name_index"
   add_index "cards", ["read_rule_id"], :name => "index_cards_on_read_rule_id"
-  add_index "cards", ["tag_id"], :name => "index_cards_on_tag_id"
-  add_index "cards", ["trunk_id"], :name => "index_cards_on_trunk_id"
+  add_index "cards", ["right_id"], :name => "index_cards_on_tag_id"
   add_index "cards", ["type_id"], :name => "card_type_index"
-
-  create_table "cardtypes", :force => true do |t|
-    t.string  "class_name"
-    t.boolean "system"
-    t.integer "card_id"
-  end
-
-  add_index "cardtypes", ["class_name"], :name => "cardtypes_class_name_uniq", :unique => true
-
-  create_table "multihost_mappings", :force => true do |t|
-    t.string   "requested_host"
-    t.string   "canonical_host"
-    t.string   "wagn_name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "multihost_mappings", ["requested_host"], :name => "index_multihost_mappings_on_requested_host", :unique => true
-
-  create_table "roles", :force => true do |t|
-    t.string "codename"
-    t.string "tasks"
-  end
-
-  create_table "roles_users", :id => false, :force => true do |t|
-    t.integer "role_id", :null => false
-    t.integer "user_id", :null => false
-  end
-
-  add_index "roles_users", ["role_id"], :name => "roles_users_role_id"
-  add_index "roles_users", ["user_id"], :name => "roles_users_user_id"
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id"

@@ -1,4006 +1,3116 @@
 --- 
 card_references_001: 
   id: 5808
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-04-09 16:11:44 Z
   referer_id: 118
   referee_key: "*account"
   referee_id: 100
-  link_type: L
+  ref_type: L
   present: 1
 card_references_002: 
   id: 6028
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-04-09 16:41:38 Z
   referer_id: 10
   referee_key: administrator+description
   referee_id: 147
-  link_type: I
+  ref_type: I
   present: 1
 card_references_003: 
   id: 6029
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-04-09 16:41:38 Z
   referer_id: 10
   referee_key: administrator
   referee_id: 10
-  link_type: I
+  ref_type: I
   present: 1
 card_references_004: 
   id: 6030
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-04-09 16:41:38 Z
   referer_id: 10
   referee_key: administrator+*member
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_005: 
   id: 6031
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-04-09 16:41:38 Z
   referer_id: 8
   referee_key: anyone+description
   referee_id: 210
-  link_type: I
+  ref_type: I
   present: 1
 card_references_006: 
   id: 6032
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-04-09 16:41:38 Z
   referer_id: 8
   referee_key: anyone
   referee_id: 8
-  link_type: I
+  ref_type: I
   present: 1
 card_references_007: 
   id: 6033
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-04-09 16:41:38 Z
   referer_id: 8
   referee_key: anyone+*member
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_008: 
   id: 6034
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-04-09 16:41:38 Z
   referer_id: 9
   referee_key: anyone_signed_in+description
   referee_id: 211
-  link_type: I
+  ref_type: I
   present: 1
 card_references_009: 
   id: 6035
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-04-09 16:41:38 Z
   referer_id: 9
   referee_key: anyone_signed_in
   referee_id: 9
-  link_type: I
+  ref_type: I
   present: 1
 card_references_010: 
   id: 6036
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-04-09 16:41:38 Z
   referer_id: 9
   referee_key: anyone_signed_in+*member
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_011: 
   id: 6650
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-04-24 15:34:53 Z
   referer_id: 112
   referee_key: "*incoming"
   referee_id: 170
-  link_type: L
+  ref_type: L
   present: 1
 card_references_012: 
   id: 6651
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-04-24 15:34:53 Z
   referer_id: 112
   referee_key: "*outgoing"
   referee_id: 168
-  link_type: L
+  ref_type: L
   present: 1
 card_references_013: 
   id: 6652
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-04-24 15:34:53 Z
   referer_id: 112
   referee_key: "*pluss"
   referee_id: 110
-  link_type: L
+  ref_type: L
   present: 1
 card_references_014: 
   id: 6653
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-04-24 15:34:53 Z
   referer_id: 112
   referee_key: "*community"
   referee_id: 115
-  link_type: L
+  ref_type: L
   present: 1
 card_references_015: 
   id: 7911
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-06-01 12:55:14 Z
   referer_id: 68
   referee_key: account_request
   referee_id: 12
-  link_type: L
+  ref_type: L
   present: 1
 card_references_016: 
   id: 8077
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-06-09 18:25:35 Z
   referer_id: 15
   referee_key: http_wagn_org_wagn_account
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_017: 
   id: 9174
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-12-02 16:28:23 Z
   referer_id: 109
   referee_key: "*title"
   referee_id: 55
-  link_type: I
+  ref_type: I
   present: 1
 card_references_018: 
   id: 9450
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2009-12-23 11:51:05 Z
   referer_id: 275
   referee_key: default_layout
   referee_id: 314
-  link_type: L
+  ref_type: L
   present: 1
 card_references_019: 
   id: 9520
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:42:37 Z
   referer_id: 322
   referee_key: role+*type+*content+description
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_020: 
   id: 9521
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:42:37 Z
   referer_id: 322
   referee_key: role+*type+*content
   referee_id: 322
-  link_type: I
+  ref_type: I
   present: 1
 card_references_021: 
   id: 9522
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:42:37 Z
   referer_id: 322
   referee_key: role+*type+*content+*member
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_022: 
   id: 9742
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:05 Z
   referer_id: 171
   referee_key: "*incoming+*right"
   referee_id: 334
-  link_type: I
+  ref_type: I
   present: 1
 card_references_023: 
   id: 9743
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:05 Z
   referer_id: 171
   referee_key: "*incoming+*right+*linker"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_024: 
   id: 9744
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:05 Z
   referer_id: 171
   referee_key: "*incoming+*right"
   referee_id: 334
-  link_type: I
+  ref_type: I
   present: 1
 card_references_025: 
   id: 9745
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:05 Z
   referer_id: 171
   referee_key: "*incoming+*right+*includer"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_026: 
   id: 9746
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:05 Z
   referer_id: 171
   referee_key: "*incoming+*right"
   referee_id: 334
-  link_type: I
+  ref_type: I
   present: 1
 card_references_027: 
   id: 9747
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:05 Z
   referer_id: 171
   referee_key: "*incoming+*right+*tagged"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_028: 
   id: 9748
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:05 Z
   referer_id: 171
   referee_key: "*incoming+*right+*linker"
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_029: 
   id: 9749
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:05 Z
   referer_id: 171
   referee_key: "*incoming+*right+*includer"
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_030: 
   id: 9750
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:05 Z
   referer_id: 171
   referee_key: "*incoming+*right+*tagged"
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_031: 
   id: 9751
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:07 Z
   referer_id: 111
   referee_key: "*pluss+*right"
   referee_id: 337
-  link_type: I
+  ref_type: I
   present: 1
 card_references_032: 
   id: 9752
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:07 Z
   referer_id: 111
   referee_key: "*pluss+*right+*plu_card"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_033: 
   id: 9753
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:07 Z
   referer_id: 111
   referee_key: "*pluss+*right+*plu_part"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_034: 
   id: 9754
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:08 Z
   referer_id: 111
   referee_key: "*pluss+*right+*plu_card"
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_035: 
   id: 9755
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:08 Z
   referer_id: 111
   referee_key: "*pluss+*right+*plu_part"
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_036: 
   id: 9773
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:10 Z
   referer_id: 169
   referee_key: "*outgoing+*right"
   referee_id: 339
-  link_type: I
+  ref_type: I
   present: 1
 card_references_037: 
   id: 9774
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:10 Z
   referer_id: 169
   referee_key: "*outgoing+*right+*link"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_038: 
   id: 9775
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:10 Z
   referer_id: 169
   referee_key: "*outgoing+*right"
   referee_id: 339
-  link_type: I
+  ref_type: I
   present: 1
 card_references_039: 
   id: 9776
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:10 Z
   referer_id: 169
   referee_key: "*outgoing+*right+*inclusion"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_040: 
   id: 9777
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:10 Z
   referer_id: 169
   referee_key: "*outgoing+*right"
   referee_id: 339
-  link_type: I
+  ref_type: I
   present: 1
 card_references_041: 
   id: 9778
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:10 Z
   referer_id: 169
   referee_key: "*outgoing+*right+tag"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_042: 
   id: 9779
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:10 Z
   referer_id: 169
   referee_key: "*outgoing+*right+*link"
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_043: 
   id: 9780
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:10 Z
   referer_id: 169
   referee_key: "*outgoing+*right+*inclusion"
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_044: 
   id: 9781
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-15 18:43:10 Z
   referer_id: 169
   referee_key: "*outgoing+*right+tag"
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_045: 
   id: 10046
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-19 12:14:00 Z
   referer_id: 69
   referee_key: "*title"
   referee_id: 55
-  link_type: I
+  ref_type: I
   present: 1
 card_references_046: 
   id: 10953
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:26:52 Z
   referer_id: 250
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
 card_references_047: 
   id: 10954
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:26:52 Z
   referer_id: 250
   referee_key: http_www_wagn_org_wagn_custom_thank_you_message_for_form
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_048: 
   id: 10955
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:26:52 Z
   referer_id: 90
   referee_key: http_www_wagn_org_wagn_table_of_content
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_049: 
   id: 10956
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:26:52 Z
   referer_id: 90
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
 card_references_050: 
   id: 10961
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:26:54 Z
   referer_id: 306
   referee_key: http_www_wagn_org_wagn_custom_help_text
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_051: 
   id: 10962
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:26:54 Z
   referer_id: 306
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
 card_references_052: 
   id: 10963
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:26:54 Z
   referer_id: 311
   referee_key: http_www_wagn_org_wagn_custom_help_text
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_053: 
   id: 10964
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:26:55 Z
   referer_id: 311
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
 card_references_054: 
   id: 10976
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:26:58 Z
   referer_id: 359
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
 card_references_055: 
   id: 10977
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:26:58 Z
   referer_id: 359
   referee_key: http_www_wagn_org_wagn_formatting
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_056: 
   id: 10992
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:27:02 Z
   referer_id: 216
   referee_key: http_wagn_org_wagn_account
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_057: 
   id: 10993
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:27:03 Z
   referer_id: 214
   referee_key: http_wagn_org_wagn_image
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_058: 
   id: 10995
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:27:04 Z
   referer_id: 212
   referee_key: http_wagn_org_wagn_toggle
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_059: 
   id: 10996
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:27:04 Z
   referer_id: 210
   referee_key: anonymous
   referee_id: 15
-  link_type: L
+  ref_type: L
   present: 1
 card_references_060: 
   id: 10997
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:27:04 Z
   referer_id: 210
   referee_key: http_wagn_org_wagn_account
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_061: 
   id: 10998
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:27:05 Z
   referer_id: 211
   referee_key: http_wagn_org_wagn_account
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_062: 
   id: 11001
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:27:06 Z
   referer_id: 202
   referee_key: http_wagn_org_wagn_html
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_063: 
   id: 11002
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:27:07 Z
   referer_id: 181
   referee_key: http_wagn_org_wagn_user
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_064: 
   id: 11003
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-04-21 16:27:07 Z
   referer_id: 180
   referee_key: http_wagn_org_wagn_card_type
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_065: 
   id: 11362
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-05-02 03:11:11 Z
   referer_id: 368
   referee_key: "*send+*right+email_config"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 1
 card_references_066: 
   id: 11363
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-05-02 03:12:57 Z
   referer_id: 373
   referee_key: email_config+*right+*content+*from
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_067: 
   id: 11364
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-05-02 03:12:57 Z
   referer_id: 373
   referee_key: email_config+*right+*content+*to
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_068: 
   id: 11365
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-05-02 03:12:57 Z
   referer_id: 373
   referee_key: email_config+*right+*content+*cc
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_069: 
   id: 11366
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-05-02 03:12:57 Z
   referer_id: 373
   referee_key: email_config+*right+*content+*bcc
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_070: 
   id: 11367
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-05-02 03:12:57 Z
   referer_id: 373
   referee_key: email_config+*right+*content+*subject
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_071: 
   id: 11368
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-05-02 03:12:57 Z
   referer_id: 373
   referee_key: email_config+*right+*content+*message
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_072: 
   id: 11369
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-05-02 03:12:57 Z
   referer_id: 373
   referee_key: email_config+*right+*content+*attach
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_073: 
   id: 11457
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-11-01 17:46:26 Z
   referer_id: 219
   referee_key: "*watcher+*right+by_name"
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_074: 
   id: 11458
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2010-11-01 17:46:26 Z
   referer_id: 219
   referee_key: http_www_wagn_org_wagn_notification
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_075: 
   id: 11526
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-01-09 14:09:53 Z
   referer_id: 365
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
 card_references_076: 
   id: 11527
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-01-09 14:09:53 Z
   referer_id: 365
   referee_key: http_wagn_org_flexible_email
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_077: 
   id: 11845
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-01-31 10:44:37 Z
   referer_id: 397
   referee_key: watcher_instruction_for_related_tab+*right+*content
   referee_id: 402
-  link_type: I
+  ref_type: I
   present: 1
 card_references_078: 
   id: 11846
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-01-31 10:44:37 Z
   referer_id: 397
   referee_key: cardtype+watcher_instruction_for_related_tab+*type_plu_right+*content
   referee_id: 400
-  link_type: I
+  ref_type: I
   present: 1
 card_references_079: 
   id: 11847
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-01-31 10:44:37 Z
   referer_id: 397
   referee_key: "*community+*right+*content"
   referee_id: 116
-  link_type: L
+  ref_type: L
   present: 1
 card_references_080: 
   id: 11914
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-09 14:29:16 Z
   referer_id: 400
   referee_key: cardtype+watcher_instruction_for_related_tab+*type_plu_right
   referee_id: 399
-  link_type: L
+  ref_type: L
   present: 1
 card_references_081: 
   id: 11915
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-09 14:29:16 Z
   referer_id: 402
   referee_key: watcher_instruction_for_related_tab+*right
   referee_id: 401
-  link_type: I
+  ref_type: I
   present: 1
 card_references_082: 
   id: 12553
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-15 22:54:16 Z
   referer_id: 215
   referee_key: http_wagn_org_wagn_file
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_083: 
   id: 13623
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-19 08:32:20 Z
   referer_id: 182
   referee_key: http_wagn_org_wagn_wql
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_084: 
   id: 13624
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-19 08:32:20 Z
   referer_id: 182
   referee_key: http_wagn_org_wagn_wql_syntax
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_085: 
   id: 13707
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-25 16:59:33 Z
   referer_id: 398
   referee_key: cardtype
   referee_id: 5
-  link_type: L
+  ref_type: L
   present: 1
 card_references_086: 
   id: 13822
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-25 22:44:53 Z
   referer_id: 116
   referee_key: "*community+*right+*creator"
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_087: 
   id: 13823
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-25 22:44:53 Z
   referer_id: 116
   referee_key: "*community+*right+*last_editor"
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_088: 
   id: 13824
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-25 22:44:53 Z
   referer_id: 116
   referee_key: "*community+*right+*editor"
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_089: 
   id: 13825
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-25 22:44:53 Z
   referer_id: 116
   referee_key: "*community+*right+watcher_instruction_for_related_tab"
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_090: 
   id: 13826
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-25 22:44:53 Z
   referer_id: 116
   referee_key: "*community+*right+*watcher"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_091: 
   id: 13827
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-25 22:44:53 Z
   referer_id: 116
   referee_key: "*community+*right+discussion"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_092: 
   id: 13828
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-25 22:44:53 Z
   referer_id: 116
   referee_key: "*community+*right"
   referee_id: 340
-  link_type: I
+  ref_type: I
   present: 1
 card_references_093: 
   id: 13829
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-25 22:44:53 Z
   referer_id: 116
   referee_key: "*community+*right+tag"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_094: 
   id: 13830
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-25 22:44:53 Z
   referer_id: 116
   referee_key: "*community+*right+*editor"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 1
 card_references_095: 
   id: 13831
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-25 22:44:53 Z
   referer_id: 116
   referee_key: "*community+*right+*watcher"
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_096: 
   id: 13832
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-25 22:44:53 Z
   referer_id: 116
   referee_key: http_wagn_org_wagn_notification
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_097: 
   id: 13833
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-25 22:44:53 Z
   referer_id: 116
   referee_key: "*community+*right+discussion"
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_098: 
   id: 13834
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-02-25 22:44:53 Z
   referer_id: 116
   referee_key: "*community+*right+tag"
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_099: 
   id: 14042
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-08 14:31:49 Z
   referer_id: 392
   referee_key: http_wagn_org_flexible_email
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_100: 
   id: 14043
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-08 14:31:49 Z
   referer_id: 392
   referee_key: http_www_wagn_org_wagn_contextual_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_101: 
   id: 14819
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:03:39 Z
   referer_id: 453
   referee_key: account_request+*self+*content+description
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_102: 
   id: 14820
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:03:39 Z
   referer_id: 453
   referee_key: account_request+*self+*content
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_103: 
   id: 14821
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:03:39 Z
   referer_id: 453
   referee_key: account_request+*self+*content+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_104: 
   id: 14933
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:06:30 Z
   referer_id: 88
   referee_key: cardtype+*type+*content+description
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_105: 
   id: 14934
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:06:30 Z
   referer_id: 88
   referee_key: cardtype+*type+*content
   referee_id: 88
-  link_type: I
+  ref_type: I
   present: 1
 card_references_106: 
   id: 14935
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:06:30 Z
   referer_id: 88
   referee_key: cardtype+*type+*content
   referee_id: 88
-  link_type: I
+  ref_type: I
   present: 1
 card_references_107: 
   id: 14936
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:06:30 Z
   referer_id: 88
   referee_key: cardtype+*type+*content
   referee_id: 88
-  link_type: I
+  ref_type: I
   present: 1
 card_references_108: 
   id: 14937
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:06:30 Z
   referer_id: 88
   referee_key: cardtype+*type+*content+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_109: 
   id: 14938
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:06:30 Z
   referer_id: 88
   referee_key: new_chunk69917097796680chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_110: 
   id: 14953
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:09:27 Z
   referer_id: 456
   referee_key: set+*self+*content+description
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_111: 
   id: 14954
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:09:27 Z
   referer_id: 456
   referee_key: set+*self+*content
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_112: 
   id: 14955
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:09:27 Z
   referer_id: 456
   referee_key: set+*self+*content+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_113: 
   id: 14956
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:09:52 Z
   referer_id: 259
   referee_key: set+description
   referee_id: 297
-  link_type: I
+  ref_type: I
   present: 1
 card_references_114: 
   id: 14957
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:09:52 Z
   referer_id: 259
   referee_key: set
   referee_id: 259
-  link_type: I
+  ref_type: I
   present: 1
 card_references_115: 
   id: 14958
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:09:52 Z
   referer_id: 259
   referee_key: set+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_116: 
   id: 15286
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:12:03 Z
   referer_id: 47
   referee_key: pointer+description
   referee_id: 213
-  link_type: I
+  ref_type: I
   present: 1
 card_references_117: 
   id: 15287
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:12:03 Z
   referer_id: 47
   referee_key: pointer
   referee_id: 47
-  link_type: I
+  ref_type: I
   present: 1
 card_references_118: 
   id: 15288
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:12:03 Z
   referer_id: 47
   referee_key: pointer
   referee_id: 47
-  link_type: I
+  ref_type: I
   present: 1
 card_references_119: 
   id: 15289
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:12:03 Z
   referer_id: 47
   referee_key: pointer
   referee_id: 47
-  link_type: I
+  ref_type: I
   present: 1
 card_references_120: 
   id: 15290
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:12:03 Z
   referer_id: 47
   referee_key: pointer+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_121: 
   id: 15291
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:12:03 Z
   referer_id: 47
   referee_key: new_chunk69917084845940chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_122: 
   id: 15319
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-19 22:15:26 Z
   referer_id: 213
   referee_key: http_wagn_org_wagn_pointer
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_123: 
   id: 15410
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:49 Z
   referer_id: 12
   referee_key: account_request+description
   referee_id: 216
-  link_type: I
+  ref_type: I
   present: 1
 card_references_124: 
   id: 15411
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:49 Z
   referer_id: 12
   referee_key: account_request
   referee_id: 12
-  link_type: I
+  ref_type: I
   present: 1
 card_references_125: 
   id: 15412
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:49 Z
   referer_id: 12
   referee_key: account_request+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_126: 
   id: 15419
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:49 Z
   referer_id: 5
   referee_key: cardtype+description
   referee_id: 180
-  link_type: I
+  ref_type: I
   present: 1
 card_references_127: 
   id: 15420
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:49 Z
   referer_id: 5
   referee_key: cardtype
   referee_id: 5
-  link_type: I
+  ref_type: I
   present: 1
 card_references_128: 
   id: 15421
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:49 Z
   referer_id: 5
   referee_key: cardtype
   referee_id: 5
-  link_type: I
+  ref_type: I
   present: 1
 card_references_129: 
   id: 15422
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:49 Z
   referer_id: 5
   referee_key: cardtype
   referee_id: 5
-  link_type: I
+  ref_type: I
   present: 1
 card_references_130: 
   id: 15423
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:49 Z
   referer_id: 5
   referee_key: cardtype+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_131: 
   id: 15424
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 5
   referee_key: new_chunk69917085884460chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_132: 
   id: 15425
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 17
   referee_key: date+description
   referee_id: 409
-  link_type: I
+  ref_type: I
   present: 1
 card_references_133: 
   id: 15426
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 17
   referee_key: date
   referee_id: 17
-  link_type: I
+  ref_type: I
   present: 1
 card_references_134: 
   id: 15427
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 17
   referee_key: date
   referee_id: 17
-  link_type: I
+  ref_type: I
   present: 1
 card_references_135: 
   id: 15428
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 17
   referee_key: date
   referee_id: 17
-  link_type: I
+  ref_type: I
   present: 1
 card_references_136: 
   id: 15429
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 17
   referee_key: date+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_137: 
   id: 15430
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 17
   referee_key: new_chunk69917085689200chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_138: 
   id: 15431
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 18
   referee_key: file+description
   referee_id: 215
-  link_type: I
+  ref_type: I
   present: 1
 card_references_139: 
   id: 15432
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 18
   referee_key: file
   referee_id: 18
-  link_type: I
+  ref_type: I
   present: 1
 card_references_140: 
   id: 15433
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 18
   referee_key: file
   referee_id: 18
-  link_type: I
+  ref_type: I
   present: 1
 card_references_141: 
   id: 15434
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 18
   referee_key: file
   referee_id: 18
-  link_type: I
+  ref_type: I
   present: 1
 card_references_142: 
   id: 15435
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 18
   referee_key: file+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_143: 
   id: 15436
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 18
   referee_key: new_chunk69917085443200chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_144: 
   id: 15437
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 50
   referee_key: html+description
   referee_id: 202
-  link_type: I
+  ref_type: I
   present: 1
 card_references_145: 
   id: 15438
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 50
   referee_key: html
   referee_id: 50
-  link_type: I
+  ref_type: I
   present: 1
 card_references_146: 
   id: 15439
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 50
   referee_key: html
   referee_id: 50
-  link_type: I
+  ref_type: I
   present: 1
 card_references_147: 
   id: 15440
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 50
   referee_key: html
   referee_id: 50
-  link_type: I
+  ref_type: I
   present: 1
 card_references_148: 
   id: 15441
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 50
   referee_key: html+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_149: 
   id: 15442
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 50
   referee_key: new_chunk69917085207900chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_150: 
   id: 15443
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 19
   referee_key: image+description
   referee_id: 214
-  link_type: I
+  ref_type: I
   present: 1
 card_references_151: 
   id: 15444
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 19
   referee_key: image
   referee_id: 19
-  link_type: I
+  ref_type: I
   present: 1
 card_references_152: 
   id: 15445
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 19
   referee_key: image
   referee_id: 19
-  link_type: I
+  ref_type: I
   present: 1
 card_references_153: 
   id: 15446
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 19
   referee_key: image
   referee_id: 19
-  link_type: I
+  ref_type: I
   present: 1
 card_references_154: 
   id: 15447
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 19
   referee_key: image+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_155: 
   id: 15448
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 19
   referee_key: new_chunk69917085918580chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_156: 
   id: 15449
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 20
   referee_key: number+description
   referee_id: 406
-  link_type: I
+  ref_type: I
   present: 1
 card_references_157: 
   id: 15450
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 20
   referee_key: number
   referee_id: 20
-  link_type: I
+  ref_type: I
   present: 1
 card_references_158: 
   id: 15451
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 20
   referee_key: number
   referee_id: 20
-  link_type: I
+  ref_type: I
   present: 1
 card_references_159: 
   id: 15452
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 20
   referee_key: number
   referee_id: 20
-  link_type: I
+  ref_type: I
   present: 1
 card_references_160: 
   id: 15453
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 20
   referee_key: number+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_161: 
   id: 15454
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 20
   referee_key: new_chunk69917085699200chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_162: 
   id: 15455
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 52
   referee_key: phrase+description
   referee_id: 408
-  link_type: I
+  ref_type: I
   present: 1
 card_references_163: 
   id: 15456
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 52
   referee_key: phrase
   referee_id: 52
-  link_type: I
+  ref_type: I
   present: 1
 card_references_164: 
   id: 15457
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 52
   referee_key: phrase
   referee_id: 52
-  link_type: I
+  ref_type: I
   present: 1
 card_references_165: 
   id: 15458
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 52
   referee_key: phrase
   referee_id: 52
-  link_type: I
+  ref_type: I
   present: 1
 card_references_166: 
   id: 15459
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 52
   referee_key: phrase+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_167: 
   id: 15460
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 52
   referee_key: new_chunk69917085443260chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_168: 
   id: 15461
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 22
   referee_key: plain_text+description
   referee_id: 407
-  link_type: I
+  ref_type: I
   present: 1
 card_references_169: 
   id: 15462
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 22
   referee_key: plain_text
   referee_id: 22
-  link_type: I
+  ref_type: I
   present: 1
 card_references_170: 
   id: 15463
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 22
   referee_key: plain_text
   referee_id: 22
-  link_type: I
+  ref_type: I
   present: 1
 card_references_171: 
   id: 15464
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 22
   referee_key: plain_text
   referee_id: 22
-  link_type: I
+  ref_type: I
   present: 1
 card_references_172: 
   id: 15465
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 22
   referee_key: plain_text+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_173: 
   id: 15466
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:50 Z
   referer_id: 22
   referee_key: new_chunk69917085179800chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_174: 
   id: 15467
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 7
   referee_key: role+description
   referee_id: 225
-  link_type: I
+  ref_type: I
   present: 1
 card_references_175: 
   id: 15468
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 7
   referee_key: role
   referee_id: 7
-  link_type: I
+  ref_type: I
   present: 1
 card_references_176: 
   id: 15469
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 7
   referee_key: role
   referee_id: 7
-  link_type: I
+  ref_type: I
   present: 1
 card_references_177: 
   id: 15470
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 7
   referee_key: role
   referee_id: 7
-  link_type: I
+  ref_type: I
   present: 1
 card_references_178: 
   id: 15471
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 7
   referee_key: role+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_179: 
   id: 15472
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 7
   referee_key: new_chunk69917085818200chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_180: 
   id: 15473
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 30
   referee_key: search+description
   referee_id: 182
-  link_type: I
+  ref_type: I
   present: 1
 card_references_181: 
   id: 15474
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 30
   referee_key: search
   referee_id: 30
-  link_type: I
+  ref_type: I
   present: 1
 card_references_182: 
   id: 15475
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 30
   referee_key: search
   referee_id: 30
-  link_type: I
+  ref_type: I
   present: 1
 card_references_183: 
   id: 15476
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 30
   referee_key: search
   referee_id: 30
-  link_type: I
+  ref_type: I
   present: 1
 card_references_184: 
   id: 15477
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 30
   referee_key: search+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_185: 
   id: 15478
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 30
   referee_key: new_chunk69917085558220chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_186: 
   id: 15482
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 51
   referee_key: toggle+description
   referee_id: 212
-  link_type: I
+  ref_type: I
   present: 1
 card_references_187: 
   id: 15483
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 51
   referee_key: toggle
   referee_id: 51
-  link_type: I
+  ref_type: I
   present: 1
 card_references_188: 
   id: 15484
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 51
   referee_key: toggle
   referee_id: 51
-  link_type: I
+  ref_type: I
   present: 1
 card_references_189: 
   id: 15485
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 51
   referee_key: toggle
   referee_id: 51
-  link_type: I
+  ref_type: I
   present: 1
 card_references_190: 
   id: 15486
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 51
   referee_key: toggle+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_191: 
   id: 15487
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 51
   referee_key: new_chunk69917085033240chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_192: 
   id: 15488
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 4
   referee_key: user+description
   referee_id: 181
-  link_type: I
+  ref_type: I
   present: 1
 card_references_193: 
   id: 15489
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 4
   referee_key: user
   referee_id: 4
-  link_type: I
+  ref_type: I
   present: 1
 card_references_194: 
   id: 15490
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 4
   referee_key: user
   referee_id: 4
-  link_type: I
+  ref_type: I
   present: 1
 card_references_195: 
   id: 15491
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 4
   referee_key: user
   referee_id: 4
-  link_type: I
+  ref_type: I
   present: 1
 card_references_196: 
   id: 15492
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 4
   referee_key: user+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_197: 
   id: 15493
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:51 Z
   referer_id: 4
   referee_key: new_chunk69917084764880chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_198: 
   id: 15494
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:59 Z
   referer_id: 3
   referee_key: basic+description
   referee_id: 405
-  link_type: I
+  ref_type: I
   present: 1
 card_references_199: 
   id: 15495
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:59 Z
   referer_id: 3
   referee_key: basic
   referee_id: 3
-  link_type: I
+  ref_type: I
   present: 1
 card_references_200: 
   id: 15496
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:59 Z
   referer_id: 3
   referee_key: basic
   referee_id: 3
-  link_type: I
+  ref_type: I
   present: 1
 card_references_201: 
   id: 15497
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:59 Z
   referer_id: 3
   referee_key: basic
   referee_id: 3
-  link_type: I
+  ref_type: I
   present: 1
 card_references_202: 
   id: 15498
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:59 Z
   referer_id: 3
   referee_key: basic+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_203: 
   id: 15499
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 04:49:59 Z
   referer_id: 3
   referee_key: new_chunk69917085343960chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_204: 
   id: 15654
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 22:38:48 Z
   referer_id: 301
   referee_key: pointer
   referee_id: 47
-  link_type: L
+  ref_type: L
   present: 1
 card_references_205: 
   id: 15655
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 22:38:48 Z
   referer_id: 301
   referee_key: search
   referee_id: 30
-  link_type: L
+  ref_type: L
   present: 1
 card_references_206: 
   id: 15656
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-20 22:38:48 Z
   referer_id: 301
   referee_key: http_wagn_org_pointer
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_207: 
   id: 15677
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-21 08:42:54 Z
   referer_id: 63
   referee_key: "*request+*to"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_208: 
   id: 15678
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-21 08:42:54 Z
   referer_id: 63
   referee_key: "*request+*thank"
   referee_id: 108
-  link_type: I
+  ref_type: I
   present: 1
 card_references_209: 
   id: 15679
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-21 08:42:54 Z
   referer_id: 63
   referee_key: card_option_account_request
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_210: 
   id: 15680
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-21 08:42:54 Z
   referer_id: 63
   referee_key: "*signup"
   referee_id: 66
-  link_type: L
+  ref_type: L
   present: 1
 card_references_211: 
   id: 15681
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-21 08:42:54 Z
   referer_id: 63
   referee_key: account_request
   referee_id: 12
-  link_type: L
+  ref_type: L
   present: 1
 card_references_212: 
   id: 15725
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-03-23 13:49:23 Z
   referer_id: 297
   referee_key: http_www_wagn_org_wagn_setting
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_213: 
   id: 15990
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-04-04 16:54:22 Z
   referer_id: 299
   referee_key: pointer
   referee_id: 47
-  link_type: L
+  ref_type: L
   present: 1
 card_references_214: 
   id: 16074
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:21 Z
   referer_id: 483
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_215: 
   id: 16075
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:21 Z
   referer_id: 484
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_216: 
   id: 16076
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:21 Z
   referer_id: 485
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_217: 
   id: 16077
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:22 Z
   referer_id: 487
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_218: 
   id: 16078
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:22 Z
   referer_id: 488
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_219: 
   id: 16079
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:22 Z
   referer_id: 489
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_220: 
   id: 16080
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:22 Z
   referer_id: 490
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_221: 
   id: 16081
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:22 Z
   referer_id: 491
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_222: 
   id: 16082
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:22 Z
   referer_id: 492
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_223: 
   id: 16083
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:22 Z
   referer_id: 493
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_224: 
   id: 16084
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:22 Z
   referer_id: 494
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_225: 
   id: 16085
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:22 Z
   referer_id: 495
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_226: 
   id: 16086
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:22 Z
   referer_id: 496
   referee_key: anyone_signed_in
   referee_id: 9
-  link_type: L
+  ref_type: L
   present: 1
 card_references_227: 
   id: 16087
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:23 Z
   referer_id: 497
   referee_key: anyone_signed_in
   referee_id: 9
-  link_type: L
+  ref_type: L
   present: 1
 card_references_228: 
   id: 16088
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:23 Z
   referer_id: 498
   referee_key: anyone_signed_in
   referee_id: 9
-  link_type: L
+  ref_type: L
   present: 1
 card_references_229: 
   id: 16089
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:23 Z
   referer_id: 500
   referee_key: anyone
   referee_id: 8
-  link_type: L
+  ref_type: L
   present: 1
 card_references_230: 
   id: 16090
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:23 Z
   referer_id: 502
   referee_key: anyone_signed_in
   referee_id: 9
-  link_type: L
+  ref_type: L
   present: 1
 card_references_231: 
   id: 16091
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:23 Z
   referer_id: 504
   referee_key: anyone_signed_in
   referee_id: 9
-  link_type: L
+  ref_type: L
   present: 1
 card_references_232: 
   id: 16092
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:25 Z
   referer_id: 508
   referee_key: anyone
   referee_id: 8
-  link_type: L
+  ref_type: L
   present: 1
 card_references_233: 
   id: 16094
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:27 Z
   referer_id: 511
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_234: 
   id: 16095
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:28 Z
   referer_id: 512
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_235: 
   id: 16097
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:28 Z
   referer_id: 515
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_236: 
   id: 16098
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:28 Z
   referer_id: 516
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_237: 
   id: 16099
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:28 Z
   referer_id: 518
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_238: 
   id: 16100
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-08 21:22:28 Z
   referer_id: 519
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_239: 
   id: 16123
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-15 15:40:20 Z
   referer_id: 523
   referee_key: anyone
   referee_id: 8
-  link_type: L
+  ref_type: L
   present: 1
 card_references_240: 
   id: 16245
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-20 10:08:39 Z
   referer_id: 527
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
 card_references_241: 
   id: 16246
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-20 10:08:40 Z
   referer_id: 531
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
 card_references_242: 
   id: 16247
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-20 10:08:40 Z
   referer_id: 533
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
 card_references_243: 
   id: 16248
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-20 10:08:41 Z
   referer_id: 529
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
 card_references_244: 
   id: 16249
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-20 10:08:41 Z
   referer_id: 525
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
 card_references_245: 
   id: 16366
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:01:36 Z
   referer_id: 547
   referee_key: basic
   referee_id: 3
-  link_type: L
+  ref_type: L
   present: 1
 card_references_246: 
   id: 16367
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:01:36 Z
   referer_id: 547
   referee_key: http_wagn_org_wagn_tiny_mce
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_247: 
   id: 16368
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:07 Z
   referer_id: 73
   referee_key: "*title"
   referee_id: 55
-  link_type: I
+  ref_type: I
   present: 1
 card_references_248: 
   id: 16369
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:07 Z
   referer_id: 73
   referee_key: "*home"
   referee_id: 77
-  link_type: I
+  ref_type: I
   present: 1
 card_references_249: 
   id: 16370
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:07 Z
   referer_id: 73
   referee_key: "*logo"
   referee_id: 79
-  link_type: I
+  ref_type: I
   present: 1
 card_references_250: 
   id: 16371
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:07 Z
   referer_id: 73
   referee_key: setting
   referee_id: 278
-  link_type: I
+  ref_type: I
   present: 1
 card_references_251: 
   id: 16372
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:07 Z
   referer_id: 73
   referee_key: set
   referee_id: 259
-  link_type: I
+  ref_type: I
   present: 1
 card_references_252: 
   id: 16373
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:07 Z
   referer_id: 73
   referee_key: "*all"
   referee_id: 274
-  link_type: I
+  ref_type: I
   present: 1
 card_references_253: 
   id: 16374
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:07 Z
   referer_id: 73
   referee_key: "*request"
   referee_id: 63
-  link_type: I
+  ref_type: I
   present: 1
 card_references_254: 
   id: 16375
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:07 Z
   referer_id: 73
   referee_key: "*signup"
   referee_id: 66
-  link_type: I
+  ref_type: I
   present: 1
 card_references_255: 
   id: 16376
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: "*invite"
   referee_id: 56
-  link_type: I
+  ref_type: I
   present: 1
 card_references_256: 
   id: 16377
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: wagn_bot
   referee_id: 1
-  link_type: I
+  ref_type: I
   present: 1
 card_references_257: 
   id: 16378
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: "*css"
   referee_id: 198
-  link_type: I
+  ref_type: I
   present: 1
 card_references_258: 
   id: 16379
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: "*sidebar"
   referee_id: 81
-  link_type: I
+  ref_type: I
   present: 1
 card_references_259: 
   id: 16380
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: "*tiny_mce"
   referee_id: 53
-  link_type: I
+  ref_type: I
   present: 1
 card_references_260: 
   id: 16381
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: "*google_analytic_key"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_261: 
   id: 16382
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: "*favicon"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_262: 
   id: 16383
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: setting
   referee_id: 278
-  link_type: L
+  ref_type: L
   present: 1
 card_references_263: 
   id: 16384
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
 card_references_264: 
   id: 16385
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: "*all"
   referee_id: 274
-  link_type: L
+  ref_type: L
   present: 1
 card_references_265: 
   id: 16386
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: card_option_wagn_bot
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_266: 
   id: 16387
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: http_www_wagn_org_wagn_custom_sign_up_information
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_267: 
   id: 16388
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: http_www_wagn_org_wagn_formatting
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_268: 
   id: 16389
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: account_request
   referee_id: 12
-  link_type: L
+  ref_type: L
   present: 1
 card_references_269: 
   id: 16390
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: user
   referee_id: 4
-  link_type: L
+  ref_type: L
   present: 1
 card_references_270: 
   id: 16391
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: http_www_wagn_org_wagn_account_administering_20account
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_271: 
   id: 16392
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: http_wagn_org_wagn_google_analytic
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_272: 
   id: 16393
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 73
   referee_key: http_www_wagn_org_wagn_favicon
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_273: 
   id: 16394
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 278
   referee_key: setting+description
   referee_id: 298
-  link_type: I
+  ref_type: I
   present: 1
 card_references_274: 
   id: 16395
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 278
   referee_key: setting
   referee_id: 278
-  link_type: I
+  ref_type: I
   present: 1
 card_references_275: 
   id: 16396
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 278
   referee_key: setting
   referee_id: 278
-  link_type: I
+  ref_type: I
   present: 1
 card_references_276: 
   id: 16397
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 278
   referee_key: setting
   referee_id: 278
-  link_type: I
+  ref_type: I
   present: 1
 card_references_277: 
   id: 16398
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 278
   referee_key: setting+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_278: 
   id: 16399
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-07-22 10:03:08 Z
   referer_id: 278
   referee_key: new_chunk69973274709860chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_279: 
   id: 16400
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-08-03 02:29:08 Z
   referer_id: 298
   referee_key: http_www_wagn_org_wagn_setting
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_280: 
   id: 16532
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-08-25 09:22:58 Z
   referer_id: 549
   referee_key: anyone
   referee_id: 8
-  link_type: L
+  ref_type: L
   present: 1
 card_references_281: 
   id: 16536
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-08-25 09:23:07 Z
   referer_id: 551
   referee_key: anyone
   referee_id: 8
-  link_type: L
+  ref_type: L
   present: 1
 card_references_282: 
   id: 16547
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-08-25 09:24:37 Z
   referer_id: 554
   referee_key: anyone
   referee_id: 8
-  link_type: L
+  ref_type: L
   present: 1
 card_references_283: 
   id: 16555
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-08-25 09:25:11 Z
   referer_id: 558
   referee_key: anyone
   referee_id: 8
-  link_type: L
+  ref_type: L
   present: 1
 card_references_284: 
   id: 16557
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-08-25 09:25:30 Z
   referer_id: 81
   referee_key: menu
   referee_id: 85
-  link_type: I
+  ref_type: I
   present: 1
 card_references_285: 
   id: 16558
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-08-25 09:25:30 Z
   referer_id: 81
   referee_key: administrator_link
   referee_id: 151
-  link_type: I
+  ref_type: I
   present: 1
 card_references_286: 
   id: 16563
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-08-25 09:25:30 Z
   referer_id: 559
   referee_key: anyone
   referee_id: 8
-  link_type: L
+  ref_type: L
   present: 1
 card_references_287: 
   id: 16564
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-08-25 09:25:31 Z
   referer_id: 83
   referee_key: http_www_wagn_org_wagn_sidebar
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_288: 
   id: 16568
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2011-08-25 09:25:40 Z
   referer_id: 561
   referee_key: anyone
   referee_id: 8
-  link_type: L
+  ref_type: L
   present: 1
 card_references_289: 
   id: 16573
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-02 13:49:04 Z
   referer_id: 100
   referee_key: account_request+*type+by_create
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_290: 
   id: 16574
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-02 13:49:04 Z
   referer_id: 100
   referee_key: card_with_account
   referee_id: 101
-  link_type: I
+  ref_type: I
   present: 1
 card_references_291: 
   id: 16575
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-02 13:49:04 Z
   referer_id: 100
   referee_key: account_invite
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_292: 
   id: 16576
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-02 13:49:04 Z
   referer_id: 100
   referee_key: user
   referee_id: 4
-  link_type: L
+  ref_type: L
   present: 1
 card_references_293: 
   id: 16577
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-02 13:49:04 Z
   referer_id: 100
   referee_key: http_wagn_org_wagn_account
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_294: 
   id: 16592
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-08 22:30:07 Z
   referer_id: 556
   referee_key: anyone
   referee_id: 8
-  link_type: L
+  ref_type: L
   present: 1
 card_references_295: 
   id: 16611
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-08 22:33:46 Z
   referer_id: 85
   referee_key: card_new
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_296: 
   id: 16625
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-08 23:12:38 Z
   referer_id: 80
   referee_key: config
   referee_id: 73
-  link_type: L
+  ref_type: L
   present: 1
 card_references_297: 
   id: 16626
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-08 23:12:38 Z
   referer_id: 80
   referee_key: http_wagn_org_wagn_configuration
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_298: 
   id: 16627
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-08 23:12:38 Z
   referer_id: 80
   referee_key: http_wagn_org_wagn_documentation
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_299: 
   id: 16628
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-08 23:12:38 Z
   referer_id: 80
   referee_key: http_wagn_org_wagn_support
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_300: 
   id: 16629
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-14 01:47:25 Z
   referer_id: 568
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_301: 
   id: 16630
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-14 01:47:26 Z
   referer_id: 569
   referee_key: layout+description
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_302: 
   id: 16631
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-14 01:47:26 Z
   referer_id: 569
   referee_key: layout
   referee_id: 569
-  link_type: I
+  ref_type: I
   present: 1
 card_references_303: 
   id: 16632
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-14 01:47:26 Z
   referer_id: 569
   referee_key: layout
   referee_id: 569
-  link_type: I
+  ref_type: I
   present: 1
 card_references_304: 
   id: 16633
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-14 01:47:26 Z
   referer_id: 569
   referee_key: layout
   referee_id: 569
-  link_type: I
+  ref_type: I
   present: 1
 card_references_305: 
   id: 16634
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-14 01:47:26 Z
   referer_id: 569
   referee_key: layout+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_306: 
   id: 16635
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-14 01:47:26 Z
   referer_id: 569
   referee_key: /new/chunk2172340060chunktranscludechunk
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_307: 
   id: 16636
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-14 01:47:26 Z
   referer_id: 571
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_308: 
   id: 16637
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-14 01:47:26 Z
   referer_id: 572
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_309: 
   id: 16638
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-14 01:47:26 Z
   referer_id: 573
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_310: 
   id: 16652
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-27 04:24:42 Z
   referer_id: 294
   referee_key: "*head"
   referee_id: 470
-  link_type: I
+  ref_type: I
   present: 1
 card_references_311: 
   id: 16653
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-27 04:24:42 Z
   referer_id: 294
   referee_key: "*navbox"
   referee_id: 471
-  link_type: I
+  ref_type: I
   present: 1
 card_references_312: 
   id: 16654
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-27 04:24:42 Z
   referer_id: 294
   referee_key: "*account_link"
   referee_id: 474
-  link_type: I
+  ref_type: I
   present: 1
 card_references_313: 
   id: 16655
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-27 04:24:42 Z
   referer_id: 294
   referee_key: user+*type
   referee_id: 294
-  link_type: I
+  ref_type: I
   present: 1
 card_references_314: 
   id: 16656
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-27 04:24:42 Z
   referer_id: 294
   referee_key: "*logo"
   referee_id: 79
-  link_type: I
+  ref_type: I
   present: 1
 card_references_315: 
   id: 16657
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-27 04:24:42 Z
   referer_id: 294
   referee_key: "*sidebar"
   referee_id: 81
-  link_type: I
+  ref_type: I
   present: 1
 card_references_316: 
   id: 16658
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-27 04:24:42 Z
   referer_id: 294
   referee_key: "*version"
   referee_id: 473
-  link_type: I
+  ref_type: I
   present: 1
 card_references_317: 
   id: 16659
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-27 04:24:42 Z
   referer_id: 294
   referee_key: "*alert"
   referee_id: 468
-  link_type: I
+  ref_type: I
   present: 1
 card_references_318: 
   id: 16660
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-27 04:24:42 Z
   referer_id: 294
   referee_key: "*foot"
   referee_id: 469
-  link_type: I
+  ref_type: I
   present: 1
 card_references_319: 
   id: 16661
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-27 04:24:42 Z
   referer_id: 294
   referee_key: /
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_320: 
   id: 16662
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-27 04:24:42 Z
   referer_id: 294
   referee_key: /recent
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_321: 
   id: 16663
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-27 04:24:42 Z
   referer_id: 294
   referee_key: /
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_322: 
   id: 16664
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-01-27 04:24:42 Z
   referer_id: 294
   referee_key: http_//www_wagn_org
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_323: 
   id: 16665
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-03-02 19:05:52 Z
   referer_id: 357
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
 card_references_324: 
   id: 16666
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-03-02 19:05:52 Z
   referer_id: 357
   referee_key: http_//www_wagn_org/wagn/formatting
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_325: 
   id: 16667
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-03-02 19:08:40 Z
   referer_id: 304
   referee_key: http_//www_wagn_org/wagn/captcha
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_326: 
   id: 16668
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-03-02 19:08:40 Z
   referer_id: 304
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
 card_references_327: 
   id: 16669
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-03-02 19:09:40 Z
   referer_id: 281
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
 card_references_328: 
   id: 16670
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-03-02 19:09:40 Z
   referer_id: 281
   referee_key: http_//wagn_org/custom_layout
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_329: 
   id: 16671
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-03-02 19:11:17 Z
   referer_id: 249
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
 card_references_330: 
   id: 16672
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-03-02 19:11:17 Z
   referer_id: 249
   referee_key: http_//wagn_org/wagn/autonaming
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_331: 
   id: 16673
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-03-02 19:14:15 Z
   referer_id: 254
   referee_key: pointer
   referee_id: 47
-  link_type: L
+  ref_type: L
   present: 1
 card_references_332: 
   id: 16674
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-03-02 19:14:15 Z
   referer_id: 254
   referee_key: http_//www_wagn_org/wagn/pointer
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_333: 
   id: 16675
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-07-27 20:52:40 Z
   referer_id: 552
   referee_key: anyone
   referee_id: 8
-  link_type: L
+  ref_type: L
   present: 1
 card_references_334: 
   id: 16676
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-07-27 20:52:40 Z
   referer_id: 545
   referee_key: http_//wagn_org/wagn/skin
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_335: 
   id: 16678
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-09-20 16:42:34 Z
   referer_id: 588
   referee_key: anyone_signed_in
   referee_id: 9
-  link_type: L
+  ref_type: L
   present: 1
 card_references_336: 
   id: 16679
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-09-20 16:42:34 Z
   referer_id: 589
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_337: 
   id: 16683
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-01 16:35:39 Z
   referer_id: 151
   referee_key: config
   referee_id: 73
-  link_type: L
+  ref_type: L
   present: 1
 card_references_338: 
   id: 16684
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-01 16:35:39 Z
   referer_id: 151
   referee_key: "*account"
   referee_id: 100
-  link_type: L
+  ref_type: L
   present: 1
 card_references_339: 
   id: 16685
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-01 16:35:39 Z
   referer_id: 151
   referee_key: /admin/clear_cache
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_340: 
   id: 16690
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-09 23:20:10 Z
   referer_id: 56
   referee_key: "*invite+*subject"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_341: 
   id: 16691
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-09 23:20:10 Z
   referer_id: 56
   referee_key: "*invite+*message"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_342: 
   id: 16692
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-09 23:20:10 Z
   referer_id: 56
   referee_key: "*invite+*from"
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_343: 
   id: 16693
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-09 23:20:10 Z
   referer_id: 56
   referee_key: "*invite+*thank"
   referee_id: 62
-  link_type: I
+  ref_type: I
   present: 1
 card_references_344: 
   id: 16694
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-09 23:20:10 Z
   referer_id: 56
   referee_key: "*account+*right"
   referee_id: 330
-  link_type: L
+  ref_type: L
   present: 1
 card_references_345: 
   id: 16695
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-09 23:22:14 Z
   referer_id: 147
   referee_key: http_//wagn_org/wagn/permission
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_346: 
   id: 16696
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-09 23:23:16 Z
   referer_id: 225
   referee_key: user
   referee_id: 4
-  link_type: L
+  ref_type: L
   present: 1
 card_references_347: 
   id: 16697
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-09 23:23:16 Z
   referer_id: 225
   referee_key: http_//wagn_org/wagn/role
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_348: 
-  id: 16698
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-09 23:25:00 Z
-  referer_id: 66
-  referee_key: "*signup+*subject"
-  referee_id: 
-  link_type: L
-  present: 0
-card_references_349: 
-  id: 16699
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-09 23:25:00 Z
-  referer_id: 66
-  referee_key: "*signup+*message"
-  referee_id: 
-  link_type: L
-  present: 0
-card_references_350: 
-  id: 16700
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-09 23:25:00 Z
-  referer_id: 66
-  referee_key: "*signup+*thank"
-  referee_id: 67
-  link_type: I
-  present: 1
-card_references_351: 
-  id: 16701
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-09 23:25:00 Z
-  referer_id: 66
-  referee_key: /card/option/account_request
-  referee_id: 
-  link_type: I
-  present: 0
-card_references_352: 
-  id: 16702
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-09 23:25:00 Z
-  referer_id: 66
-  referee_key: "*account+*right"
-  referee_id: 330
-  link_type: L
-  present: 1
-card_references_353: 
   id: 16703
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-09 23:37:22 Z
   referer_id: 308
   referee_key: "*account+*right"
   referee_id: 330
-  link_type: L
+  ref_type: L
   present: 1
-card_references_354: 
+card_references_349: 
   id: 16704
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-09 23:37:22 Z
   referer_id: 308
   referee_key: http_//www_wagn_org/wagn/account
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
-card_references_355: 
+card_references_350: 
   id: 16705
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-10-09 23:37:22 Z
   referer_id: 308
   referee_key: set
   referee_id: 259
-  link_type: L
+  ref_type: L
   present: 1
-card_references_356: 
+card_references_351: 
   id: 16707
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-11-30 05:23:45 Z
   referer_id: 314
   referee_key: "*head"
   referee_id: 470
-  link_type: I
+  ref_type: I
   present: 1
-card_references_357: 
+card_references_352: 
   id: 16708
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-11-30 05:23:45 Z
   referer_id: 314
   referee_key: "*navbox"
   referee_id: 471
-  link_type: I
+  ref_type: I
   present: 1
-card_references_358: 
+card_references_353: 
   id: 16709
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-11-30 05:23:45 Z
   referer_id: 314
   referee_key: "*account_link"
   referee_id: 474
-  link_type: I
+  ref_type: I
   present: 1
-card_references_359: 
+card_references_354: 
   id: 16710
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-11-30 05:23:45 Z
   referer_id: 314
   referee_key: default_layout
   referee_id: 314
-  link_type: I
+  ref_type: I
   present: 1
-card_references_360: 
+card_references_355: 
   id: 16711
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-11-30 05:23:45 Z
   referer_id: 314
   referee_key: "*logo"
   referee_id: 79
-  link_type: I
+  ref_type: I
   present: 1
-card_references_361: 
+card_references_356: 
   id: 16712
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-11-30 05:23:45 Z
   referer_id: 314
   referee_key: "*sidebar"
   referee_id: 81
-  link_type: I
+  ref_type: I
   present: 1
-card_references_362: 
+card_references_357: 
   id: 16713
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-11-30 05:23:45 Z
   referer_id: 314
   referee_key: "*version"
   referee_id: 473
-  link_type: I
+  ref_type: I
   present: 1
-card_references_363: 
+card_references_358: 
   id: 16714
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-11-30 05:23:45 Z
   referer_id: 314
   referee_key: ""
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
-card_references_364: 
+card_references_359: 
   id: 16715
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-11-30 05:23:45 Z
   referer_id: 314
   referee_key: recent
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
-card_references_365: 
+card_references_360: 
   id: 16716
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-11-30 05:23:45 Z
   referer_id: 314
   referee_key: ""
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
-card_references_366: 
+card_references_361: 
   id: 16717
-  created_at: 2012-12-30 18:07:26 Z
-  updated_at: 2012-11-30 05:23:45 Z
   referer_id: 314
   referee_key: http_www_wagn_org
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
-card_references_367: 
+card_references_362: 
   id: 16718
-  created_at: 2012-12-31 05:22:11 Z
-  updated_at: 2012-12-31 05:22:11 Z
+  referer_id: 66
+  referee_key: "*signup+*subject"
+  referee_id: 
+  ref_type: I
+  present: 0
+card_references_363: 
+  id: 16719
+  referer_id: 66
+  referee_key: "*signup+*message"
+  referee_id: 
+  ref_type: I
+  present: 0
+card_references_364: 
+  id: 16720
+  referer_id: 66
+  referee_key: "*signup+*thank"
+  referee_id: 67
+  ref_type: I
+  present: 1
+card_references_365: 
+  id: 16721
+  referer_id: 66
+  referee_key: account_request_view_option
+  referee_id: 
+  ref_type: L
+  present: 0
+card_references_366: 
+  id: 16722
+  referer_id: 66
+  referee_key: "*account+*right"
+  referee_id: 330
+  ref_type: L
+  present: 1
+card_references_367: 
+  id: 16723
   referer_id: 772
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_368: 
-  id: 16719
-  created_at: 2012-12-31 05:22:13 Z
-  updated_at: 2012-12-31 05:22:13 Z
+  id: 16724
   referer_id: 784
   referee_key: sample_cardtype+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_369: 
-  id: 16720
-  created_at: 2012-12-31 05:22:13 Z
-  updated_at: 2012-12-31 05:22:13 Z
+  id: 16725
   referer_id: 784
   referee_key: sample_cardtype+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_370: 
-  id: 16721
-  created_at: 2012-12-31 05:22:13 Z
-  updated_at: 2012-12-31 05:22:13 Z
+  id: 16726
   referer_id: 784
-  referee_key: new_chunk2201909800chunkincludechunk
+  referee_key: new_chunk2213298540chunkincludechunk
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_371: 
-  id: 16722
-  created_at: 2012-12-31 05:22:13 Z
-  updated_at: 2012-12-31 05:22:13 Z
+  id: 16727
   referer_id: 794
   referee_key: sample_role+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_372: 
-  id: 16723
-  created_at: 2012-12-31 05:22:13 Z
-  updated_at: 2012-12-31 05:22:13 Z
+  id: 16728
   referer_id: 794
   referee_key: sample_role+*member
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_373: 
-  id: 16724
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16729
   referer_id: 803
   referee_key: r1+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_374: 
-  id: 16725
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16730
   referer_id: 803
   referee_key: r1+*member
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_375: 
-  id: 16726
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16731
   referer_id: 804
   referee_key: r2+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_376: 
-  id: 16727
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16732
   referer_id: 804
   referee_key: r2+*member
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_377: 
-  id: 16728
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16733
   referer_id: 805
   referee_key: r3+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_378: 
-  id: 16729
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16734
   referer_id: 805
   referee_key: r3+*member
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_379: 
-  id: 16730
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16735
   referer_id: 806
   referee_key: r4+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_380: 
-  id: 16731
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16736
   referer_id: 806
   referee_key: r4+*member
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_381: 
-  id: 16735
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16740
   referer_id: 807
   referee_key: r1
   referee_id: 803
-  link_type: L
+  ref_type: L
   present: 1
 card_references_382: 
-  id: 16736
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16741
   referer_id: 807
   referee_key: r2
   referee_id: 804
-  link_type: L
+  ref_type: L
   present: 1
 card_references_383: 
-  id: 16737
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16742
   referer_id: 807
   referee_key: r3
   referee_id: 805
-  link_type: L
+  ref_type: L
   present: 1
 card_references_384: 
-  id: 16741
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16746
   referer_id: 808
   referee_key: r1
   referee_id: 803
-  link_type: L
+  ref_type: L
   present: 1
 card_references_385: 
-  id: 16742
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16747
   referer_id: 808
   referee_key: r2
   referee_id: 804
-  link_type: L
+  ref_type: L
   present: 1
 card_references_386: 
-  id: 16743
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16748
   referer_id: 808
   referee_key: r4
   referee_id: 806
-  link_type: L
+  ref_type: L
   present: 1
 card_references_387: 
-  id: 16747
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16752
   referer_id: 809
   referee_key: r1
   referee_id: 803
-  link_type: L
+  ref_type: L
   present: 1
 card_references_388: 
-  id: 16748
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16753
   referer_id: 809
   referee_key: r4
   referee_id: 806
-  link_type: L
+  ref_type: L
   present: 1
 card_references_389: 
-  id: 16749
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16754
   referer_id: 809
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1
 card_references_390: 
-  id: 16750
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16755
   referer_id: 814
   referee_key: z
   referee_id: 813
-  link_type: L
+  ref_type: L
   present: 1
 card_references_391: 
-  id: 16751
-  created_at: 2012-12-31 05:22:14 Z
-  updated_at: 2012-12-31 05:22:14 Z
+  id: 16756
   referer_id: 815
   referee_key: z
   referee_id: 813
-  link_type: I
+  ref_type: I
   present: 1
 card_references_392: 
-  id: 16752
-  created_at: 2012-12-31 05:22:15 Z
-  updated_at: 2012-12-31 05:22:15 Z
+  id: 16757
   referer_id: 817
   referee_key: a
   referee_id: 814
-  link_type: L
+  ref_type: L
   present: 1
 card_references_393: 
-  id: 16753
-  created_at: 2012-12-31 05:22:15 Z
-  updated_at: 2012-12-31 05:22:15 Z
+  id: 16758
   referer_id: 817
   referee_key: a+b
   referee_id: 819
-  link_type: L
+  ref_type: L
   present: 1
 card_references_394: 
-  id: 16754
-  created_at: 2012-12-31 05:22:15 Z
-  updated_at: 2012-12-31 05:22:15 Z
+  id: 16759
   referer_id: 817
   referee_key: t
   referee_id: 816
-  link_type: L
+  ref_type: L
   present: 1
 card_references_395: 
-  id: 16755
-  created_at: 2012-12-31 05:22:15 Z
-  updated_at: 2012-12-31 05:22:15 Z
+  id: 16760
   referer_id: 818
   referee_key: b
   referee_id: 815
-  link_type: I
+  ref_type: I
   present: 1
 card_references_396: 
-  id: 16756
-  created_at: 2012-12-31 05:22:15 Z
-  updated_at: 2012-12-31 05:22:15 Z
+  id: 16761
   referer_id: 818
   referee_key: a+b
   referee_id: 819
-  link_type: I
+  ref_type: I
   present: 1
 card_references_397: 
-  id: 16757
-  created_at: 2012-12-31 05:22:15 Z
-  updated_at: 2012-12-31 05:22:15 Z
+  id: 16762
   referer_id: 818
   referee_key: a
   referee_id: 814
-  link_type: I
+  ref_type: I
   present: 1
 card_references_398: 
-  id: 16758
-  created_at: 2012-12-31 05:22:15 Z
-  updated_at: 2012-12-31 05:22:15 Z
+  id: 16763
   referer_id: 818
   referee_key: t
   referee_id: 816
-  link_type: I
+  ref_type: I
   present: 1
 card_references_399: 
-  id: 16759
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16764
   referer_id: 840
   referee_key: cardtype_a+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_400: 
-  id: 16760
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16765
   referer_id: 840
   referee_key: cardtype_a+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_401: 
-  id: 16761
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16766
   referer_id: 840
-  referee_key: new_chunk2198266180chunkincludechunk
+  referee_key: new_chunk2172184820chunkincludechunk
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_402: 
-  id: 16762
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16767
   referer_id: 841
   referee_key: cardtype_b+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_403: 
-  id: 16763
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16768
   referer_id: 841
   referee_key: cardtype_b+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_404: 
-  id: 16764
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16769
   referer_id: 841
-  referee_key: new_chunk2172840820chunkincludechunk
+  referee_key: new_chunk2213574420chunkincludechunk
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_405: 
-  id: 16765
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16770
   referer_id: 842
   referee_key: cardtype_c+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_406: 
-  id: 16766
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16771
   referer_id: 842
   referee_key: cardtype_c+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_407: 
-  id: 16767
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16772
   referer_id: 842
-  referee_key: new_chunk2199787640chunkincludechunk
+  referee_key: new_chunk2210520520chunkincludechunk
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_408: 
-  id: 16768
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16773
   referer_id: 843
   referee_key: cardtype_d+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_409: 
-  id: 16769
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16774
   referer_id: 843
   referee_key: cardtype_d+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_410: 
-  id: 16770
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16775
   referer_id: 843
-  referee_key: new_chunk2180597700chunkincludechunk
+  referee_key: new_chunk2171534740chunkincludechunk
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_411: 
-  id: 16771
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16776
   referer_id: 844
   referee_key: cardtype_e+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_412: 
-  id: 16772
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16777
   referer_id: 844
   referee_key: cardtype_e+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_413: 
-  id: 16773
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16778
   referer_id: 844
-  referee_key: new_chunk2201905560chunkincludechunk
+  referee_key: new_chunk2213574080chunkincludechunk
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_414: 
-  id: 16774
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16779
   referer_id: 845
   referee_key: cardtype_f+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_415: 
-  id: 16775
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16780
   referer_id: 845
   referee_key: cardtype_f+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_416: 
-  id: 16776
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16781
   referer_id: 845
-  referee_key: new_chunk2198776060chunkincludechunk
+  referee_key: new_chunk2201345780chunkincludechunk
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_417: 
-  id: 16777
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16782
   referer_id: 854
   referee_key: user_form+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_418: 
-  id: 16778
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16783
   referer_id: 854
   referee_key: user_form+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_419: 
-  id: 16779
-  created_at: 2012-12-31 05:22:16 Z
-  updated_at: 2012-12-31 05:22:16 Z
+  id: 16784
   referer_id: 854
-  referee_key: new_chunk2178813640chunkincludechunk
+  referee_key: new_chunk2200592400chunkincludechunk
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_420: 
-  id: 16780
-  created_at: 2012-12-31 05:22:17 Z
-  updated_at: 2012-12-31 05:22:17 Z
+  id: 16785
   referer_id: 856
   referee_key: user_form+*type+*content+name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_421: 
-  id: 16781
-  created_at: 2012-12-31 05:22:17 Z
-  updated_at: 2012-12-31 05:22:17 Z
+  id: 16786
   referer_id: 856
   referee_key: user_form+*type+*content+age
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_422: 
-  id: 16782
-  created_at: 2012-12-31 05:22:17 Z
-  updated_at: 2012-12-31 05:22:17 Z
+  id: 16787
   referer_id: 856
   referee_key: user_form+*type+*content+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_423: 
-  id: 16783
-  created_at: 2012-12-31 05:22:17 Z
-  updated_at: 2012-12-31 05:22:17 Z
+  id: 16788
   referer_id: 861
   referee_key: r1
   referee_id: 803
-  link_type: L
+  ref_type: L
   present: 1
 card_references_424: 
-  id: 16784
-  created_at: 2012-12-31 05:22:17 Z
-  updated_at: 2012-12-31 05:22:17 Z
+  id: 16789
   referer_id: 862
   referee_key: book+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_425: 
-  id: 16785
-  created_at: 2012-12-31 05:22:17 Z
-  updated_at: 2012-12-31 05:22:17 Z
+  id: 16790
   referer_id: 862
   referee_key: book+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_426: 
-  id: 16786
-  created_at: 2012-12-31 05:22:17 Z
-  updated_at: 2012-12-31 05:22:17 Z
+  id: 16791
   referer_id: 862
-  referee_key: new_chunk2177311320chunkincludechunk
+  referee_key: new_chunk2211881880chunkincludechunk
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_427: 
-  id: 16787
-  created_at: 2012-12-31 05:22:17 Z
-  updated_at: 2012-12-31 05:22:17 Z
+  id: 16792
   referer_id: 864
   referee_key: book+*type+*content+author
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_428: 
-  id: 16788
-  created_at: 2012-12-31 05:22:17 Z
-  updated_at: 2012-12-31 05:22:17 Z
+  id: 16793
   referer_id: 864
   referee_key: book+*type+*content+illustrator
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_429: 
-  id: 16789
-  created_at: 2012-12-31 05:22:17 Z
-  updated_at: 2012-12-31 05:22:17 Z
+  id: 16794
   referer_id: 865
   referee_key: iliad+author
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_430: 
-  id: 16790
-  created_at: 2012-12-31 05:22:17 Z
-  updated_at: 2012-12-31 05:22:17 Z
+  id: 16795
   referer_id: 865
   referee_key: iliad+illustrator
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_431: 
-  id: 16791
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
+  id: 16796
   referer_id: 871
   referee_key: sara
   referee_id: 868
-  link_type: L
+  ref_type: L
   present: 1
 card_references_432: 
-  id: 16792
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
+  id: 16797
   referer_id: 873
   referee_key: sara
   referee_id: 868
-  link_type: L
+  ref_type: L
   present: 1
 card_references_433: 
-  id: 16793
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
+  id: 16798
   referer_id: 873
   referee_key: john
   referee_id: 866
-  link_type: L
+  ref_type: L
   present: 1
 card_references_434: 
-  id: 16794
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
+  id: 16799
   referer_id: 874
   referee_key: john_watching+her
   referee_id: 877
-  link_type: I
+  ref_type: I
   present: 1
 card_references_435: 
-  id: 16795
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
+  id: 16800
   referer_id: 875
   referee_key: john
   referee_id: 866
-  link_type: L
+  ref_type: L
   present: 1
 card_references_436: 
-  id: 16796
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
+  id: 16801
   referer_id: 879
   referee_key: optic+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_437: 
-  id: 16797
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
+  id: 16802
   referer_id: 879
   referee_key: optic+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_438: 
-  id: 16798
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
+  id: 16803
   referer_id: 879
-  referee_key: new_chunk2197985940chunkincludechunk
+  referee_key: new_chunk2200917300chunkincludechunk
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_439: 
-  id: 16799
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
+  id: 16804
   referer_id: 880
   referee_key: sara
   referee_id: 868
-  link_type: L
+  ref_type: L
   present: 1
 card_references_440: 
-  id: 16800
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
+  id: 16805
   referer_id: 881
   referee_key: sunglass+tint
   referee_id: 883
-  link_type: I
+  ref_type: I
   present: 1
 card_references_441: 
-  id: 16801
-  created_at: 2012-12-31 05:22:21 Z
-  updated_at: 2012-12-31 05:22:21 Z
+  id: 16806
   referer_id: 886
   referee_key: fruit+description
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 0
 card_references_442: 
-  id: 16802
-  created_at: 2012-12-31 05:22:21 Z
-  updated_at: 2012-12-31 05:22:21 Z
+  id: 16807
   referer_id: 886
   referee_key: fruit+*type+by_name
   referee_id: 
-  link_type: I
+  ref_type: I
   present: 1
 card_references_443: 
-  id: 16803
-  created_at: 2012-12-31 05:22:21 Z
-  updated_at: 2012-12-31 05:22:21 Z
+  id: 16808
   referer_id: 886
-  referee_key: new_chunk2162802620chunkincludechunk
+  referee_key: new_chunk2159487880chunkincludechunk
   referee_id: 
-  link_type: L
+  ref_type: L
   present: 0
 card_references_444: 
-  id: 16804
-  created_at: 2012-12-31 05:22:22 Z
-  updated_at: 2012-12-31 05:22:22 Z
+  id: 16809
   referer_id: 888
   referee_key: anyone
   referee_id: 8
-  link_type: L
+  ref_type: L
   present: 1
 card_references_445: 
-  id: 16805
-  created_at: 2012-12-31 05:22:22 Z
-  updated_at: 2012-12-31 05:22:22 Z
+  id: 16810
   referer_id: 889
   referee_key: administrator
   referee_id: 10
-  link_type: L
+  ref_type: L
   present: 1

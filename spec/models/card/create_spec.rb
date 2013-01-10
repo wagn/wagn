@@ -70,7 +70,7 @@ end
 describe Card, "created with autoname" do
   before do
     Account.as_bot do
-      Card.create :name=>'Book+*type+*autoname', :content=>'b1'
+      @b1 = Card.create! :name=>'Book+*type+*autoname', :content=>'b1'
     end
   end
 
@@ -80,10 +80,16 @@ describe Card, "created with autoname" do
   end
 
   it "should increment again if name already exists" do
-    Card.create :name=>'b1'
-    c = Card.create! :type=>'Book'
-    c.name.should== 'b2'
-
+    b1 = Card.create! :type=>'Book'
+    b2 = Card.create! :type=>'Book'
+    b2.name.should== 'b2'
+  end
+  
+  it "should handle trashed names" do
+    b1 = Card.create! :type=>'Book'
+    Account.as_bot { b1.destroy }
+    b1 = Card.create! :type=>'Book'
+    b1.name.should== 'b1'
   end
 end
 

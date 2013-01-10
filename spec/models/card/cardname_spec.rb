@@ -59,9 +59,9 @@ describe SmartName, "changing from plus card to simple" do
     @c.save
   end
 
-  it "should erase trunk and tag ids" do
-    @c.trunk_id.should== nil
-    @c.tag_id.should== nil
+  it "should erase left and right ids" do
+    @c.left_id.should== nil
+    @c.right_id.should== nil
   end
 
   it "test_fetch_or_create_when_present" do

@@ -85,7 +85,7 @@ module Wagn
           hash[ referee_key ] = {
               :referee_id  => referee_id,
               :referee_key => chunk.refcardname.send_if( :key ),
-              :link_type   => Chunks::Link===chunk ? 'L' : 'I',
+              :ref_type    => Chunks::Link===chunk ? 'L' : 'I',
               :present     => chunk.refcard.nil?   ?  0  :  1
             }
         end
@@ -392,7 +392,7 @@ module Wagn
 
     def new_inclusion_card_args options
       args = { :type =>options[:type] }
-      args[:loaded_trunk]=card if options[:tname] =~ /^\+/
+      args[:loaded_left]=card if options[:tname] =~ /^\+/
       if content=get_inclusion_content(options[:tname])
         args[:content]=content
       end
@@ -481,6 +481,7 @@ module Wagn
       @context_names += name.to_name.part_names
       @context_names.uniq!
     end
+
   end
 
   class Renderer::Json < Renderer

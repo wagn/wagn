@@ -432,6 +432,7 @@ module Wagn
       @context_names += name.to_name.part_names
       @context_names.uniq!
     end
+
   end
 
   class Renderer::JsonRenderer < Renderer

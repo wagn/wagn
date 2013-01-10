@@ -201,7 +201,7 @@ class Card
     self.creator_id = self.updater_id if new_card?
   end
 
-  before_validation :on => :create do
+  after_validation :on => :create do
     pull_from_trash if new_record?
     self.trash = !!trash
     true

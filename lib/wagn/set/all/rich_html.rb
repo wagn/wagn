@@ -234,7 +234,7 @@ module Wagn
     define_view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
       confirm_delete = "Are you sure you want to delete #{card.name}?"
       if dependents = card.dependents and dependents.any?
-        confirm_delete +=  %{ \n\nThat would mean removing #{dependents.size} related pieces of information. }
+        confirm_delete +=  %{ \n\nThat would mean removing #{dependents.size} related piece(s) of information. }
       end
       
       wrap :edit, args.merge(:frame=>true) do
@@ -639,16 +639,16 @@ module Wagn
     end
     
   end  
+end  
   
-  class Renderer::Html < Renderer
-    def watching_type_cards
-      %{<div class="faint">(following)</div>} #yuck
-    end
+class Wagn::Renderer::Html
+  def watching_type_cards
+    %{<div class="faint">(following)</div>} #yuck
+  end
 
-    def watch_link text, toggle, title, extra={}
-      link_to "#{text}", path(:watch, :toggle=>toggle), 
-        {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :title=>title, :remote=>true, :method=>'post'}.merge(extra)
-    end
+  def watch_link text, toggle, title, extra={}
+    link_to "#{text}", path(:watch, :toggle=>toggle), 
+      {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :title=>title, :remote=>true, :method=>'post'}.merge(extra)
   end  
 end
 

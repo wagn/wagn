@@ -213,8 +213,8 @@ class Wql
     def or(val)    subcondition(val, :conj=>:or)                                    end
     def not(val)   merge field(:id) => subspec(val, {:return=>'id'}, negate=true)   end
 
-    def left(val)  merge field(:left_id) => subspec(val)                           end
-    def right(val) merge field(:right_id  ) => subspec(val)                           end
+    def left(val)  merge field(:left_id) => subspec(val)                            end
+    def right(val) merge field(:right_id  ) => subspec(val)                         end
     def part(val)  subcondition({ :left => val, :right => (Integer===val) ? val : val.clone }, :conj=>:or)  end
 
     def left_plus(val)

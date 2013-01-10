@@ -23,9 +23,12 @@ describe "Card::Reference" do
       c = Card["Form1"]
       c.references_expired.should be_nil
       Card.create! :name=>"SpecialForm+*type+*content", :content=>"{{+bar}}"
-      Card["Form1"].references_expired.should be_true
+      c = Card["Form1"]
+      c.references_expired.should be_true
+      Rails.logger.warn "C before #{c.inspect}"
       Wagn::Renderer.new(Card["Form1"]).render(:core)
       c = Card["Form1"]
+      Rails.logger.warn "C is #{c.inspect}"
       c.references_expired.should be_nil
       Card["Form1"].includees.map(&:key).should == ["form1+bar"]
     end

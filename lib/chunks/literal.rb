@@ -6,7 +6,7 @@ require_dependency 'chunks/chunk'
 # and within HTML tags.
 module Literal
   class AbstractLiteral < Chunks::Abstract
-    def initialize(match_data, content)
+    def initialize match, card_params, params
       super
       @unmask_text = @text
     end
@@ -15,13 +15,15 @@ module Literal
   class Escape < AbstractLiteral
     unless defined? ESCAPE_PATTERN
       ESCAPE_PATTERN = /\\((\[|\{){2}[^\]\}]*[\]\}]{2})/
+      ESCAPE_GROUPS = 2
     end
     def self.pattern() ESCAPE_PATTERN end
+    def self.groups() ESCAPE_GROUPS end
 
-    def initialize(match_data, content)
+    def initialize match, card_params, params
       super
-      first = match_data[2]
-      @unmask_text = "#{match_data[1].sub(first, "<span>#{first}</span>")}"
+      first = params[1]
+      @unmask_text = "#{params[0].sub(first, "<span>#{first}</span>")}"
     end
   end
 
@@ -44,13 +46,16 @@ module Literal
 #    end
 #  end
 
+=begin
   # A literal chunk that protects HTML tags from wiki rendering.
   class Tags < AbstractLiteral
     unless defined? TAGS
       TAGS = "a|img|em|strong|div|span|table|td|th|ul|ol|li|dl|dt|dd"
-      TAGS_PATTERN = Regexp.new('<(?:'+TAGS+')[^>]*?>', Regexp::MULTILINE)
+      TAGS_PATTERN = Regexp.new('<('+TAGS+')[^>]*?>', Regexp::MULTILINE)
+      TAGS_GROUP = 1
     end
     def self.pattern() TAGS_PATTERN  end
   end
+=end
 
 end

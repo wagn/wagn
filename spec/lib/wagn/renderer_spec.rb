@@ -1,7 +1,5 @@
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 require File.expand_path('../../packs/pack_spec_helper', File.dirname(__FILE__))
-require File.expand_path('../../helpers/chunk_spec_helper', File.dirname(__FILE__))
-
 
 
 describe Wagn::Renderer, "" do
@@ -510,9 +508,10 @@ describe Wagn::Renderer, "" do
       Account.user= Card::WagnBotID
     end
 
+    # FIXME: this isn't really a renderer test now, should move it
     it "replace references should work on inclusions inside links" do
-      card = Card.create!(:name=>"test", :content=>"[[test{{test}}]]"  )
-      assert_equal "[[test{{best}}]]", Wagn::Renderer.new(card).replace_references("test", "best" )
+      card = Card.create!(:name=>"test", :content=>"[[test_card|test{{test}}]]"  )
+      assert_equal "[[test_card|test{{best}}]]", card.replace_references("test", "best" )
     end
   end
 
@@ -524,12 +523,10 @@ describe Wagn::Renderer, "" do
 #
 # this should be short-lived now: moving these tests over from test/unit/renderer_test.rb and adapting as specs
 
-  include ChunkSpecHelper
-
   #attr_accessor :controller
 
   def setup
-    setup_user 'joe_user'
+    Account.user= 'joe_user'
   end
 
   def test_replace_references_should_work_on_inclusions_inside_links

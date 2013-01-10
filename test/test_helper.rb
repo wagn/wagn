@@ -7,7 +7,6 @@ unless defined? TEST_ROOT
   TEST_ROOT = Pathname.new(File.expand_path(File.dirname(__FILE__))).cleanpath(true).to_s
   load TEST_ROOT + '/helpers/wagn_test_helper.rb'
   load TEST_ROOT + '/helpers/permission_test_helper.rb'
-  #load TEST_ROOT + '/helpers/chunk_test_helper.rb'  # FIXME-- should only be in certain tests
 
   class ActiveSupport::TestCase
     # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.

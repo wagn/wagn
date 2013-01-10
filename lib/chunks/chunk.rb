@@ -18,77 +18,44 @@ require_dependency 'uri/common'
 
 module Chunks
   class Abstract
-    # the class name part of the mask strings
-    def self.mask_string
-      self.to_s.delete(':').downcase
-    end
-
-    # a regexp that matches all chunk_types masks
-    def Abstract::mask_re chunk_types
-      chunk_classes = chunk_types.map(&:mask_string)*"|"
-      /chunk(-?\d+)(#{chunk_classes})chunk/
-    end
-
-    #attr_reader :text, :unmask_text, :unmask_mode
-    attr_accessor :text, :unmask_text, :unmask_mode, :revision, :card
-
-    def initialize match_data, content
-      #raise inspect if self.cardname == 'address+*right+city'
-      @text = match_data[0]
-      @content = content
-      @unmask_mode = :normal
-      @card = content.card
-      #warn "init chunk #{inspect}" if @card.name == 'address+*right+city'
-      self
-    end
-
-    def inspect
-      "#<#{self.class}##{object_id} Txu:#{@unmask_text} t:#{@text}: C:#{@content.gsub("\n", '\\n')[0,40]}:#{@unmask_mode}:Card:#{@card.inspect} #{@cardname.nil? ? '' : " :ref:#{@cardname}::#{@link_text}"}>"
-    end
-
-    # Find all the chunks of the given type in content
-    # Each time the pattern is matched, create a new
-    # chunk for it, and replace the occurance of the chunk
-    # in this content with its mask.
-    def self.apply_to content
-      content.gsub!( self.pattern ) do |match|
-        new_chunk = self.new($~, content)
-        content.add_chunk new_chunk
-        new_chunk.mask
+    def Abstract::re_class(index)
+      @@paren_range.each do |chunk_class, range|
+        if range.cover? index
+          return chunk_class, range
+        end
       end
+      raise "not found #{index}, #{@@paren_range.inspect}"
     end
 
-    # should contain only [a-z0-9]
-    def mask
-      @mask ||= "chunk#{self.object_id}#{self.class.mask_string}chunk"
+    def Abstract::unmask_re(chunk_types)
+      @@paren_range = {}
+      pindex = 0
+      chunk_pattern = chunk_types.map do |ch_class|
+        pend = pindex + ch_class.groups
+        @@paren_range[ch_class] = pindex..pend-1
+        pindex = pend
+        ch_class.pattern
+      end * '|'
+      /(.*?)(#{chunk_pattern})/m
     end
 
-    def unmask
-      @content.sub! mask, unmask_text
+    attr_reader :text, :unmask_text
+
+    def initialize match_string, card_params, params
+      @text = match_string
+      @unmask_render = nil
+      @card_params = card_params
+    end
+    def renderer()           @card_params[:renderer] end
+    def card()               @card_params[:card]     end
+    def avoid_autolinking?() false                   end
+
+    def to_s
+      @unmask_text || @unmask_render|| @text
     end
 
-    def rendered?
-      @unmask_mode == :normal
-    end
-
-    def escaped?
-      @unmask_mode == :escape
-    end
-
-    def revert
-      @text
+    def as_json(options={})
+      @unmask_text || @unmask_render|| "not rendered #{self.class}, #{card and card.name}"
     end
   end
-
 end
-
-=begin
-require_dependency 'chunks/uri'
-require_dependency 'chunks/literal'
-require_dependency 'chunks/reference'
-require_dependency 'chunks/link'
-require_dependency 'chunks/include'
-=end
-
-
-

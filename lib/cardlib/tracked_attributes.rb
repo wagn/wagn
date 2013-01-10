@@ -79,7 +79,6 @@ module Cardlib::TrackedAttributes
 
   def set_type_id(new_type_id)
     #Rails.logger.debug "set_typecde No type code for #{name}, #{type_id}" unless new_type_id
-    #warn "set_type_id(#{new_type_id}) #{self.type_id_without_tracking}"
     self.type_id_without_tracking= new_type_id
     return true if new_card?
     on_type_change # FIXME this should be a callback
@@ -99,12 +98,10 @@ module Cardlib::TrackedAttributes
   end
 
   def set_content(new_content)
-    #warn Rails.logger.info("set_content #{name} #{new_content}")
     return false unless self.id
-    new_content ||= ''
-    new_content = WikiContent.clean_html!(new_content) if clean_html?
+    new_content ||= (tmpl = template).nil? ? '' : tmpl.content
+    new_content = CleanHtml.clean!(new_content) if clean_html?
     clear_drafts if current_revision_id
-    #warn Rails.logger.info("set_content #{name} #{Account.user_id}, #{new_content}")
     new_rev = Card::Revision.create :card_id=>self.id, :content=>new_content, :creator_id =>Account.user_id
     self.current_revision_id = new_rev.id
     reset_patterns_if_rule
@@ -133,40 +130,40 @@ module Cardlib::TrackedAttributes
   end
 
   def cascade_name_changes
-    if @name_changed
-      Rails.logger.debug "-------------------#{@old_name}- CASCADE #{self.name} -------------------------------------"
+    return true unless @name_changed
 
-      self.update_referencers = false if update_referencers == 'false' #handle strings from cgi
-      Card::Reference.update_on_rename self, name, update_referencers
+    deps = self.dependents
+    @dependents = nil
 
-      deps = self.dependents
-      @dependents = nil #reset
+    Rails.logger.debug "-------------------#{@old_name}- CASCADE #{self.name} -------------------------------------"
+    #warn "-------------------#{@old_name}---- CASCADE #{self.name} -> deps: #{deps.map(&:name)*", "} -------------------------------------"
+
+    if !update_referencers || update_referencers == 'false'  # FIXME doing the string check because the radio button is sending an actual "false" string
 
       deps.each do |dep|
         # here we specifically want NOT to invoke recursive cascades on these cards, have to go this low level to avoid callbacks.
         Card.expire dep.name #old name
-        newname = dep.cardname.replace_part( @old_name, name )
+        newname = dep.cardname.replace_part @old_name, name
         Card.where( :id=> dep.id ).update_all :name => newname.to_s, :key => newname.key
         Card::Reference.update_on_rename dep, newname, update_referencers
         Card.expire newname
       end
+    else
+      Account.as_bot do
+        [self.name_referencers(@old_name)+(deps.map &:referencers)].flatten.uniq.each do |card|
+          # FIXME  using "name_referencers" instead of plain "referencers" for self because there are cases where trunk and tag
+          # have already been saved via association by this point and therefore referencers misses things
+          # eg.  X includes Y, and Y is renamed to X+Z.  When X+Z is saved, X is first updated as a trunk before X+Z gets to this point.
+          # so at this time X is still including Y, which does not exist.  therefore #referencers doesn't find it, but name_referencers(old_name) does.
+          # some even more complicated scenario probably breaks on the dependents, so this probably needs a more thoughtful refactor
+          # aligning the dependent saving with the name cascading
 
-      if update_referencers
-        Account.as_bot do
-          [self.name_referencers(@old_name)+(deps.map &:referencers)].flatten.uniq.each do |card|
-            # FIXME  using "name_referencers" instead of plain "referencers" for self because there are cases where trunk and tag
-            # have already been saved via association by this point and therefore referencers misses things
-            # eg.  X includes Y, and Y is renamed to X+Z.  When X+Z is saved, X is first updated as a trunk before X+Z gets to this point.
-            # so at this time X is still including Y, which does not exist.  therefore #referencers doesn't find it, but name_referencers(old_name) does.
-            # some even more complicated scenario probably breaks on the dependents, so this probably needs a more thoughtful refactor
-            # aligning the dependent saving with the name cascading
-
-            Rails.logger.debug "------------------ UPDATE REFERER #{card.name}  ------------------------"
-            unless card == self or card.hard_template
-              card = card.refresh
-              card.content = Wagn::Renderer.new(card, :not_current=>true).replace_references( @old_name, name )
-              card.save!
-            end
+          Rails.logger.debug "------------------ UPDATE REFERER #{card.name}  ------------------------"
+          next if card.hard_template
+          unless card==self
+            card = card.refresh
+            card.content = card.replace_references( @old_name, name )
+            card.save!
           end
         end
       end

@@ -435,8 +435,8 @@ describe Wagn::Renderer::Xml, "" do
     end
 
     it "replace references should work on inclusions inside links" do
-      card = Card.create!(:name=>"test", :content=>"[[test{{test}}]]"  )
-      assert_equal "[[test{{best}}]]", Wagn::Renderer::Xml.new(card).replace_references("test", "best" )
+      card = Card.create!(:name=>"test", :content=>"[[foo|test{{test}}]]"  )
+      assert_equal "[[foo|test{{best}}]]", card.replace_references("test", "best" )
     end
   end
 

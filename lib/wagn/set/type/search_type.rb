@@ -194,6 +194,27 @@ module Wagn
           out.join
         end
 
+
+        format :json
+
+        define_view :card_list, :type=>:search_type do |args|
+          @item_view ||= card.spec[:view] || :name
+
+          if args[:results].empty?
+            'no results'
+          else
+            # simpler version gives [{'card':{the card stuff}, {'card' ...} vs.
+            #  args[:results].map do |c|  process_inclusion c, :view=>@item_view end
+            # This which converts to {'cards':[{the card suff}, {another card stuff} ...]} we may want to support both ...
+            {:cards => args[:results].map do |c|
+                inc = process_inclusion c, :view=>@item_view
+                (!(String===inc) and inc.has_key?(:card)) ? inc[:card] : inc
+              end
+            }
+          end
+        end
+
+
         module Model
           def collection?
             true

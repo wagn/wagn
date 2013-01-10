@@ -44,21 +44,19 @@ module Wagn
 
   class Renderer
 
-    include Card::ReferenceTypes
-
     # these won't be here for long, but I moved them up in dealing with loading order issues relating so subclass renderers
     def replace_references old_name, new_name
       #Rails.logger.warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
       #warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
       wiki_content = WikiContent.new(card, card.content, self)
 
-      wiki_content.find_chunks(Chunk::Reference).each do |chunk|
+      wiki_content.find_chunks(Chunks::Reference).each do |chunk|
         
         if was_name = chunk.cardname and new_cardname = was_name.replace_part(old_name, new_name) and
              was_name != new_cardname
-          Chunk::Link===chunk and link_bound = chunk.cardname == chunk.link_text
+          Chunks::Link===chunk and link_bound = chunk.cardname == chunk.link_text
           chunk.cardname = new_cardname
-          Card::Reference.where(:referee_key => was_name.key).update_all( :referee_key => new_cardname.key )
+          #Card::Reference.where(:referee_key => was_name.key).update_all( :referee_key => new_cardname.key )
           chunk.link_text=chunk.cardname.to_s if link_bound
         end
       end
@@ -72,33 +70,35 @@ module Wagn
       return unless card && referer_id = card.id
 
       Card::Reference.where( :referer_id => referer_id ).delete_all
-      Card.where( :id => referer_id ).update_all( :references_expired=>nil )
+      Card::Reference.delete_all_from card
+      # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
+      #Card.where( :id => referer_id ).update_all( :references_expired=>nil )
+      card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
       card.expire if refresh
 
       if rendering_result.nil?
-         rendering_result = WikiContent.new(card, _render_refs, self).render! do |opts|
+         rendering_result = WikiContent.new(card, card.raw_content, self).render! do |opts|
            expand_inclusion(opts) { yield }
          end
       end
 
-      rendering_result.find_chunks(Chunk::Reference).inject({}) do |hash, chunk|
+      rendering_result.find_chunks(Chunks::Reference).inject({}) do |hash, chunk|
 
         if referer_id != ( referee_id = chunk.refcard.send_if :id ) &&
-           !hash.has_key?( hash_key = referee_id || chunk.refcardname.key )
+           !hash.has_key?( referee_key = referee_id || chunk.refcardname.key )
 
-          ltype = Chunk::Link===chunk
-          hash[ hash_key ] = {
+          hash[ referee_key ] = {
               :referee_id  => referee_id,
               :referee_key => chunk.refcardname.send_if( :key ),
-              :link_type   => Chunk::Link===chunk ? LINK : INCLUDE,
-              :present     => chunk.refcard.nil?  ?   0  :   1
+              :ref_type    => Chunks::Link===chunk ? 'L' : 'I',
+              :present     => chunk.refcard.nil?   ?  0  :  1
             }
         end
 
         hash
       end.each_value { |update| Card::Reference.create! update.merge( :referer_id => referer_id ) }
-    end
 
+    end
 
     class << self
 
@@ -397,7 +397,7 @@ module Wagn
 
     def new_inclusion_card_args options
       args = { :type =>options[:type] }
-      args[:loaded_trunk]=card if options[:tname] =~ /^\+/
+      args[:loaded_left]=card if options[:tname] =~ /^\+/
       if content=get_inclusion_content(options[:tname])
         args[:content]=content
       end
@@ -408,7 +408,7 @@ module Wagn
       pcard = opts.delete(:card) || card
       base = action==:read ? '' : "/card/#{action}"
 
-      if pcard && !pcard.name.empty? && !opts.delete(:no_id) && action != :create #might be some issues with new?
+      if pcard && !pcard.name.empty? && !opts.delete(:no_id) && ![:new, :create].member?(action) #dislike hardcoding views/actions here
         base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
       end
       if attrib = opts.delete( :attrib )

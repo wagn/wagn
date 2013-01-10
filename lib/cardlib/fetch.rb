@@ -18,7 +18,7 @@ module Cardlib::Fetch
     #   Options:
     #     :skip_vitual                Real cards only
     #     :skip_modules               Don't load Set modules
-    #     :loaded_trunk => card       Loads the card's trunk
+    #     :loaded_left => card       Loads the card's trunk
     #     :new => {  card opts }      Return a new card when not found
     #     :trait => :code (or [:c1, :c2] maybe?)  Fetches base card + tag(s)
     #
@@ -28,16 +28,15 @@ module Cardlib::Fetch
 #      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{cardname}" do
       if mark.nil?
         return if opts[:new].nil?
+        # This is fetch_or_new now when you supply :new=>{opts}
 
       else
-        # don't need a mar
 
         #warn "fetch #{mark.inspect}, #{opts.inspect}"
         # Symbol (codename) handling
         if Symbol===mark
           mark = Wagn::Codename[mark] || raise("Missing codename for #{mark.inspect}")
         end
-
 
         cache_key, method, val = if Integer===mark
           [ "~#{mark}", :find_by_id_and_trash, mark ]
@@ -62,7 +61,7 @@ module Cardlib::Fetch
       end
 
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      opts[:skip_virtual] = true if opts[:loaded_trunk]
+      opts[:skip_virtual] = true if opts[:loaded_left]
 
       if Integer===mark
         raise "fetch of missing card_id #{mark}" if card.nil?
@@ -116,8 +115,11 @@ module Cardlib::Fetch
     end
 
     def expire name
-      if card = Card.cache.read( name.to_name.key )
-        card.expire
+      #note: calling instance method breaks on dirty names
+      key = name.to_name.key
+      if card = Card.cache.read( key ) 
+        Card.cache.delete key
+        Card.cache.delete "~#{card.id}" if card.id
       end
     end
 
@@ -188,7 +190,7 @@ module Cardlib::Fetch
   end
 
   def refresh
-    if self.frozen? || readonly?
+    if self.frozen? || self.readonly?
       fresh_card = self.class.find id
       fresh_card.include_set_modules
       fresh_card

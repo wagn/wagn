@@ -3,7 +3,7 @@ class Wql
 
   ATTRIBUTES = {
 
-    :basic      =>  %w{ name type type_id content id key updater_id trunk_id tag_id creator_id updater_id codename },
+    :basic      =>  %w{ name type type_id content id key updater_id left_id right_id creator_id updater_id codename },
     :custom     =>  %w{ edited_by editor_of edited last_editor_of extension_type
        last_edited_by creator_of created_by member_of member role found_by sort
        part left right plus left_plus right_plus or match complete not and },
@@ -213,18 +213,18 @@ class Wql
     def or(val)    subcondition(val, :conj=>:or)                                    end
     def not(val)   merge field(:id) => subspec(val, {:return=>'id'}, negate=true)   end
 
-    def left(val)  merge field(:trunk_id) => subspec(val)                           end
-    def right(val) merge field(:tag_id  ) => subspec(val)                           end
+    def left(val)  merge field(:left_id) => subspec(val)                           end
+    def right(val) merge field(:right_id  ) => subspec(val)                           end
     def part(val)  subcondition({ :left => val, :right => val.clone }, :conj=>:or)  end
 
     def left_plus(val)
       part_spec, junc_spec = val.is_a?(Array) ? val : [ val, {} ]
-      merge( field(:id) => subspec(junc_spec, :return=>'tag_id', :left =>part_spec))
+      merge( field(:id) => subspec(junc_spec, :return=>'right_id', :left =>part_spec))
     end
 
     def right_plus(val)
       part_spec, junc_spec = val.is_a?(Array) ? val : [ val, {} ]
-      merge( field(:id) => subspec(junc_spec, :return=>'trunk_id', :right=> part_spec ))
+      merge( field(:id) => subspec(junc_spec, :return=>'left_id', :right=> part_spec ))
     end
 
     def plus(val)
@@ -265,7 +265,7 @@ class Wql
     end
 
     def complete(val)
-      no_plus_card = (val=~/\+/ ? '' : "and tag_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
+      no_plus_card = (val=~/\+/ ? '' : "and right_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
       merge field(:cond) => SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
     end
 
@@ -321,8 +321,8 @@ class Wql
         end
       else
         join_field = case item
-          when 'left'  ; 'trunk_id'
-          when 'right' ; 'tag_id'
+          when 'left'  ; 'left_id'
+          when 'right' ; 'right_id'
           else         ;  raise "sort item: #{item} not yet implemented"
         end
         cs = CardSpec.build(val)
@@ -429,19 +429,17 @@ class Wql
 
 
   class RefSpec < Spec
-    include Card::ReferenceTypes
-
     def initialize(spec)
       @spec = spec
       # FIXME: Use RefernceTypes here
       @refspecs = {
         :refer_to       => ['referer_id','referee_id',''],
-        :link_to        => ['referer_id','referee_id',"link_type='#{LINK}' AND"],
-        :include        => ['referer_id','referee_id',"link_type='#{INCLUDE}' AND"],
-        :link_to_missing=> ['referer_id','referee_id',"present = 0 AND link_type='#{LINK}'"],
+        :link_to        => ['referer_id','referee_id',"ref_type='L' AND"],
+        :include        => ['referer_id','referee_id',"ref_type='I' AND"],
+        :link_to_missing=> ['referer_id','referee_id',"present = 0 AND ref_type='L'"],
         :referred_to_by => ['referee_id','referer_id',''],
-        :linked_to_by   => ['referee_id','referer_id',"link_type='#{LINK}' AND"],
-        :included_by    => ['referee_id','referer_id',"link_type='#{INCLUDE}' AND"]
+        :linked_to_by   => ['referee_id','referer_id',"ref_type='L' AND"],
+        :included_by    => ['referee_id','referer_id',"ref_type='I' AND"]
       }
     end
 

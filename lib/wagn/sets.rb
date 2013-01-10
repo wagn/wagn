@@ -1,13 +1,23 @@
 
-require 'card/reference'
-
 module Wagn
 
   module Sets
     @@dirs = []
-  end
 
-  module Sets
+    module SharedMethods
+    end
+    module ClassMethods
+    end
+
+    def self.included base
+
+      #base.extend CardControllerMethods
+      base.extend SharedMethods
+      base.extend ClassMethods
+
+      super
+
+    end
 
     module SharedMethods
       private
@@ -65,6 +75,11 @@ module Wagn
         @@dirs.each do |dir| load_dir dir end
       end
     end
+
+    module AllSets
+      Wagn::Sets.all_constants(Wagn::Set)
+    end
+
 
     # View definitions
     #
@@ -160,19 +175,6 @@ module Wagn
       end
     end
 
-    module AllSets
-      Wagn::Sets.all_constants(Wagn::Set)
-    end
-
-    def self.included base
-
-      #base.extend CardControllerMethods
-      base.extend SharedMethods
-      base.extend ClassMethods
-
-      super
-
-    end
   end
 end
 

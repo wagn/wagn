@@ -68,12 +68,6 @@ module Cardlib
     class BasePattern
 
       @@ruby19 = !!(RUBY_VERSION =~ /^1\.9/)
-      @@base_module = Wagn::Set
-    end
-  end
-
-  module Patterns
-    class BasePattern
       MODULES={}
 
       class << self
@@ -82,7 +76,7 @@ module Cardlib
 
         def find_module mod
           module_name_parts = mod.split('/') << 'model'
-          module_name_parts.inject @@base_module do |base, part|
+          module_name_parts.inject Wagn::Set do |base, part|
             return if base.nil?
             part = part.camelize
             key = "#{base}::#{part}"
@@ -237,11 +231,11 @@ module Cardlib
         end
         def prototype_args base
           { :name=>"*dummy+#{base.tag}",
-            :loaded_trunk=> Card.new( :name=>'*dummy', :type=>base.trunk_name )
+            :loaded_left=> Card.new( :name=>'*dummy', :type=>base.trunk_name )
           }
         end
         def trunk_name card
-          left = card.loaded_trunk || card.left
+          left = card.loaded_left || card.left
           #Rails.logger.warn "trunk_name #{card.inspect}, #{left.inspect}"
           type_name = (left && left.type_name) || Card[ Card::DefaultTypeID ].name
           "#{type_name}+#{card.cardname.tag}"

@@ -1,4 +1,4 @@
-require 'json'
+require_dependency 'json'
 
 module Wagn
   module Set

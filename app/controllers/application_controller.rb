@@ -1,12 +1,10 @@
 # -*- encoding : utf-8 -*-
 
-require 'wagn/sets'
-require 'card'
+require_dependency 'wagn/sets'
+require_dependency 'card'
 
 class ApplicationController < ActionController::Base
-  # This is often needed for the controllers to work right
-  # FIXME: figure out when/why this is needed and why the tests don't fail
-  Card #::Reference
+  # This was in all the controllers, now it is inherited here
   Card
 end
 
@@ -46,9 +44,9 @@ class ApplicationController
 
       Wagn::Cache.renew
 
-      #warn "set curent_user (app-cont) #{self.session_user}, U.cu:#{Account.user_id}"
-      Account.user = self.session_user || Card::AnonID
-      #warn "set curent_user a #{session_user}, U.cu:#{Account.user_id}"
+      #warn "set curent_user (app-cont) #{self.session_id}, U.cu:#{Account.user_id}"
+      Account.user = self.session_id || Card::AnonID
+      #warn "set curent_user a #{session_id}, U.cu:#{Account.user_id}"
 
       # RECAPTCHA HACKS
       Wagn::Conf[:recaptcha_on] = !Account.logged_in? &&     # this too
@@ -100,11 +98,14 @@ class ApplicationController
   end
 
   def render_errors options={}
-    return false if @card.errors.empty?
-    @card ||= Card.new
-    view   = options[:view]   || (@card && @card.error_view  ) || :errors
-    #warn "422 status " unless options[:status] || (@card && @card.error_status)
-    status = options[:status] || (@card && @card.error_status) || 422
+    if @card
+      return false if @card.errors.empty?
+    else
+      @card = Card.new
+      @card.errors.add( :exception, options[:message] ) if options[:message]
+    end
+    view   = options[:view]   || @card.error_view   || :errors
+    status = options[:status] || @card.error_status || 422
     show view, status
     true
   end
@@ -169,7 +170,7 @@ class ApplicationController
 
       notify_airbrake exception if Airbrake.configuration.api_key
 
-      if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) && @card && @card.errors.any?
+      if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) #&& @card && @card.errors.any?
         [ :errors, 422]
       elsif Wagn::Conf[:migration]
         raise exception
@@ -180,7 +181,7 @@ class ApplicationController
       end
     end
 
-    render_errors :view=>view, :status=>status
+    render_errors :view=>view, :status=>status, :message=>exception.message
   end
 
 end

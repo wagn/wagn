@@ -2,22 +2,16 @@ require_dependency 'chunks/chunk'
 require_dependency 'chunk_manager'
 
 class UpdateLinkType < ActiveRecord::Migration
-  include Card::ReferenceTypes
-
-  LINK_TYPES    = [ 'L', 'W' ]
-  INCLUDE_TYPES = [ 'T', 'M' ]
-
-  MISSING    = [ LINK_TYPES.last,  INCLUDE.last  ]
-  PRESENT    = [ LINK_TYPES.first, INCLUDE.first ]
-
   def up
     Card::Reference.update_all(:present=>1)
-    Card::Reference.where(:link_type=>LINK_TYPES.last).      update_all(:present=>0, :link_type=>LINK_TYPES.first)
-    Card::Reference.where(:link_type=>INCLUDE_TYPES.last).update_all(:present=>0, :link_type=>INCLUDE_TYPES.first)
+    Card::Reference.where(:link_type=>'T').update_all(:link_type=>'I')
+    Card::Reference.where(:link_type=>'M').update_all(:present=>0, :link_type=>'L')
+    Card::Reference.where(:link_type=>'W').update_all(:present=>0, :link_type=>'I')
   end
 
   def down
-    Card::Reference.where(:present=>0, :link_type=>LINK_TYPES.first).      update_all(:link_type=>LINK_TYPES.last)
-    Card::Reference.where(:present=>0, :link_type=>INCLUDE_TYPES.first).update_all(:link_type=>INCLUDE_TYPES.last)
+    Card::Reference.where(:present=>0, :link_type=>'L').   update_all(:link_type=>'M')
+    Card::Reference.where(:present=>0, :link_type=>'I').update_all(:link_type=>'W')
+    Card::Reference.where(:present=>1, :link_type=>'I').update_all(:link_type=>'T')
   end
 end

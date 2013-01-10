@@ -1,8 +1,0 @@
-#!/usr/bin/env ruby
-require File.dirname(__FILE__) + '/../config/boot'
-require File.dirname(__FILE__) + '/../config/environment'
-require 'lib/util/loader'    
-usage = "Usage: import <file> <format>"
-file = ARGV[0] or raise(usage)
-format = ARGV[1] || 'xml'
-Wagn::Loader.new(file).send( "load_#{format}" )

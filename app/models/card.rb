@@ -1,14 +1,11 @@
 # -*- encoding : utf-8 -*-
 
 class Card < ActiveRecord::Base
-  class Reference < ActiveRecord::Base
-  end
+  require_dependency 'card/revision'
+  require_dependency 'card/reference'
 end
 
-require 'card/revision'
-require 'card/reference'
-
-require 'smart_name'
+require_dependency 'smart_name'
 SmartName.codes= Wagn::Codename
 SmartName.params= Wagn::Conf
 SmartName.lookup= Card
@@ -22,7 +19,7 @@ class Card
 
   attr_accessor :comment, :comment_author, :selected_rev_id,
     :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
-    :cards, :loaded_trunk, :nested_edit, # should be possible to merge these concepts
+    :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status #yuck
       
   attr_writer :update_read_rule_list
@@ -53,7 +50,7 @@ class Card
             args['type']          == cc.type_args[:type]      and
             args['typecode']      == cc.type_args[:typecode]  and
             args['type_id']       == cc.type_args[:type_id]   and
-            args['loaded_trunk']  == cc.loaded_trunk
+            args['loaded_left']  == cc.loaded_left
 
           args['type_id'] = cc.type_id
           return cc.send( :initialize, args )
@@ -570,7 +567,7 @@ class Card
 
   def inspect
     "#<#{self.class.name}" + "##{id}" +
-    #"lf:#{trunk_id}rt:#{tag_id}" +
+    "###{object_id}" + #"k#{left_id}g#{right_id}" +
     "[#{debug_type}]" + "(#{self.name})" + #"#{object_id}" +
     #(errors.any? ? '*Errors*' : 'noE') +
     (errors.any? ? "<E*#{errors.full_messages*', '}*>" : '') +
@@ -665,7 +662,7 @@ class Card
           "may not contain any of the following characters: #{ SmartName.banned_array * ' ' }"
       end
       # this is to protect against using a plus card as a tag
-      if cdname.junction? and rec.simple? and Account.as_bot { Card.count_by_wql :tag_id=>rec.id } > 0
+      if cdname.junction? and rec.simple? and Account.as_bot { Card.count_by_wql :right_id=>rec.id } > 0
         rec.errors.add :name, "#{value} in use as a tag"
       end
 

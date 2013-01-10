@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-require 'open-uri'
+require_dependency 'open-uri'
 
 class Mailer < ActionMailer::Base
   @@defaults = Wagn::Conf[:email_defaults] || {}

@@ -2,15 +2,6 @@
 
 class Card
  
-  module ReferenceTypes
-
-    LINK    = 'L'
-    INCLUDE = 'T'
-
-    TYPES   = [ LINK, INCLUDE ]
-  end
-
-
   class Reference < ActiveRecord::Base
     def referencer
       Card[referer_id]
@@ -20,22 +11,33 @@ class Card
       Card[referee_id]
     end
 
-    validates_inclusion_of :link_type, :in => ReferenceTypes::TYPES
-
     class << self
-      include ReferenceTypes
-
-      def update_on_create card
-        where( :referee_key => card.key ).
-          update_all :present => 1, :referee_id => card.id
+      def delete_all_from card
+        delete_all :referer_id => card.id
+      end
+      
+      def delete_all_to card
+        where( :referee_id => card.id ).update_all :present=>0, :referee_id => nil
+      end
+      
+      def update_existing_key card, name=nil
+        key = (name || card.name).to_name.key
+        where( :referee_key => key ).update_all :present => 1, :referee_id => card.id
       end
 
-      def update_on_destroy card, name=nil
-        name ||= card.key
-        delete_all :referer_id => card.id
+      def update_on_rename card, newname, update_referers=false
+        if update_referers
+          # not currentlt needed because references are deleted and re-created in the process of adding new revision
+          #where( :referee_id=>card.id ).update_all :referee_key => newname.to_name.key
+        else
+          delete_all_to card
+        end
+        update_existing_key card, newname
+      end
 
-        where( "referee_id = ? or referee_key = ?", card.id, name ).
-          update_all :present=>0, :referee_id => nil
+      def update_on_destroy card
+        delete_all_from card
+        delete_all_to card
       end
     end
 

@@ -11,20 +11,21 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121111025347) do
+ActiveRecord::Schema.define(:version => 20121118115000) do
 
   create_table "card_references", :force => true do |t|
-    t.datetime "created_at",                                      :null => false
-    t.datetime "updated_at",                                      :null => false
-    t.integer  "card_id",                         :default => 0,  :null => false
-    t.string   "referenced_name",                 :default => "", :null => false
-    t.integer  "referenced_card_id"
-    t.string   "link_type",          :limit => 1, :default => "", :null => false
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.integer  "referer_id",               :default => 0,  :null => false
+    t.string   "referee_key",              :default => "", :null => false
+    t.integer  "referee_id"
+    t.string   "link_type",   :limit => 1, :default => "", :null => false
+    t.integer  "present"
   end
 
-  add_index "card_references", ["card_id"], :name => "wiki_references_card_id"
-  add_index "card_references", ["referenced_card_id"], :name => "wiki_references_referenced_card_id"
-  add_index "card_references", ["referenced_name"], :name => "wiki_references_referenced_name"
+  add_index "card_references", ["referee_id"], :name => "wiki_references_referenced_card_id"
+  add_index "card_references", ["referee_key"], :name => "wiki_references_referenced_name"
+  add_index "card_references", ["referer_id"], :name => "wiki_references_card_id"
 
   create_table "card_revisions", :force => true do |t|
     t.datetime "created_at", :null => false

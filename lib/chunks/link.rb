@@ -1,6 +1,6 @@
 module Chunk
   class Link < Reference
-    attr_accessor :link_text, :link_type
+    attr_accessor :link_text, :ref_type
 
 #    unless defined? WIKI_LINK
       word = /\s*([^\]\|]+)\s*/
@@ -11,7 +11,7 @@ module Chunk
 
     def initialize(match_data, content)
       super
-      link_type = :show
+      ref_type = :show
       if name=match_data[1]
         self.cardname = name.to_name
         # matched the [[..(|..)?]]  case, 1=first slot, 3=sencond

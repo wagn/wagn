@@ -1,6 +1,6 @@
 module Wagn
   module Set::Right::Permissions
-    include Wagn::Sets
+    include Sets
 
     format :base
 

@@ -45,7 +45,7 @@ class AccountController < ApplicationController
           #Rails.logger.warn "signup with/app #{@user}, #{@card}"
           redirect_cardname = '*request+*thanks'
         end
-        wagn_redirect Card.path_setting( Card.setting redirect_cardname )
+        wagn_redirect Card.setting( redirect_cardname )
       end
     end
   end

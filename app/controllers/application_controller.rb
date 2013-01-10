@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-require 'wagn/sets'
-require 'card'
+#require 'wagn/sets'
+#require 'card'
 
 class ApplicationController < ActionController::Base
   # This is often needed for the controllers to work right
@@ -78,7 +78,7 @@ class ApplicationController
 
   # ------------------( permission filters ) -------
   def read_ok
-    @card.ok?(:read) || deny(:read)
+    card.ok?(:read) || deny(:read)
   end
 
 
@@ -95,17 +95,22 @@ class ApplicationController
 
   def deny action=nil
     params[:action] = action if action
-    @card.error_view = :denial
-    @card.error_status = 403
+    card.error_view = :denial
+    card.error_status = 403
     render_errors
   end
 
   def render_errors options={}
-    @card = Card.new if card.nil?
-    view   = options[:view]   || card.error_view   || :errors
-    status = options[:status] || card.error_status || 422
+    @card ||= Card.new
+    if card.errors.empty?
+      false
+    else
+      view   = options[:view]   || card.error_view   || :errors
+      status = options[:status] || card.error_status || 422
 
+      opt_message = options[:message] and card.errors.add( :exception, options[:message] )
     show view, status
+    end
     true
   end
 
@@ -113,14 +118,14 @@ class ApplicationController
     ext = request.parameters[:format]
     known = FORMATS.split('|').member? ext
 
-    if !known && @card && @card.error_view
+    if !known && card && card.error_view
       ext, known = 'txt', true
       # render simple text for errors on unknown formats; without this, file/image permissions checks are meaningless
     end
 
     case
     when known                # renderers can handle it
-      renderer = Wagn::Renderer.new @card, :format=>ext, :controller=>self
+      renderer = Wagn::Renderer.new card, :format=>ext, :controller=>self
       render :text=>renderer.render_show( :view => view || params[:view] ),
         :status=>(renderer.error_status || status)
     when show_file            # send_file can handle it
@@ -130,25 +135,25 @@ class ApplicationController
   end
 
   def show_file
-    return fast_404 if !@card
+    return fast_404 if !card
 
-    @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
-    format = @card.attachment_format(params[:format])
+    card.selected_rev_id = (@rev_id || card.current_revision_id).to_i
+    format = card.attachment_format(params[:format])
     return fast_404 if !format
 
     if ![format, 'file'].member?( params[:format] )
-      return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) )
+      return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #card.attach.url(style) )
     end
 
-    style = @card.attachment_style @card.type_id, ( params[:size] || @style )
+    style = card.attachment_style card.type_id, ( params[:size] || @style )
     return fast_404 if style == :error
 
     # check file existence?  or just rescue MissingFile errors and raise NotFound?
     # we do see some errors from not having this, though I think they're mostly from legacy issues....
 
-    send_file @card.attach.path( *[style].compact ), #nil or empty arg breaks 1.8.7
-      :type => @card.attach_content_type,
-      :filename =>  "#{@card.cardname.url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
+    send_file card.attach.path( *[style].compact ), #nil or empty arg breaks 1.8.7
+      :type => card.attach_content_type,
+      :filename =>  "#{card.cardname.url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
       :x_sendfile => true,
       :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
   end
@@ -169,7 +174,7 @@ class ApplicationController
 
       notify_airbrake exception if Airbrake.configuration.api_key
 
-      if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) && @card && @card.errors.any?
+      if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) #&& card && card.errors.any?
         [ :errors, 422]
       elsif Wagn::Conf[:migration]
         raise exception
@@ -180,7 +185,7 @@ class ApplicationController
       end
     end
 
-    render_errors :view=>view, :status=>status
+    render_errors :view=>view, :status=>status, :message=>exception.message
   end
 
 end

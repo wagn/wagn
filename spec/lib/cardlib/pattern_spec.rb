@@ -1,5 +1,5 @@
-require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
-require File.expand_path('../../../pattern_spec_helper', File.dirname(__FILE__))
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+require File.expand_path('../../pattern_spec_helper', File.dirname(__FILE__))
 
 describe Cardlib::Pattern do
   it "module exists and autoloads" do

@@ -1,8 +1,8 @@
+require_dependency "cardlib"
 
 module Wagn
   class Renderer
     Card::Reference
-    include Card::ReferenceTypes
     include LocationHelper
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
@@ -17,6 +17,9 @@ module Wagn
       :txt  => :Text
     }
 
+    cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags
+    cattr_reader :renderer
+
     @@max_char_count = 200 #should come from Wagn::Conf
     @@max_depth      = 10 # ditto
     @@perms          = {}
@@ -24,13 +27,15 @@ module Wagn
     @@subset_views   = {}
     @@error_codes    = {}
     @@view_tags      = {}
+    @@renderer = Renderer
 
     def self.get_renderer format
-      const_get( if RENDERERS.has_key? format
-          RENDERERS[ format ]
-        else
-          format.to_s.camelize.to_sym
-        end )
+      @@renderer = format == :base ? Renderer :
+        const_get( if RENDERERS.has_key? format
+            RENDERERS[ format ]
+          else
+            format.to_s.camelize.to_sym
+          end )
     end
 
     attr_reader :format, :card, :root, :parent
@@ -43,9 +48,6 @@ module Wagn
   end
 
   class Renderer
-
-    include Card::ReferenceTypes
-
     # these won't be here for long, but I moved them up in dealing with loading order issues relating so subclass renderers
     def replace_references old_name, new_name
       #Rails.logger.warn "replacing references...card name old name: #{old_name}, new_name: #{new_name} C> #{card.inspect}"
@@ -53,12 +55,12 @@ module Wagn
       wiki_content = WikiContent.new(card, card.content, self)
 
       wiki_content.find_chunks(Chunk::Reference).each do |chunk|
-        
+
         if was_name = chunk.cardname and new_cardname = was_name.replace_part(old_name, new_name) and
              was_name != new_cardname
           Chunk::Link===chunk and link_bound = chunk.cardname == chunk.link_text
           chunk.cardname = new_cardname
-          Card::Reference.where(:referenced_name => was_name.key).update_all( :referenced_name => new_cardname.key )
+          #Card::Reference.where(:referenced_name => was_name.key).update_all( :referenced_name => new_cardname.key )
           chunk.link_text=chunk.cardname.to_s if link_bound
         end
       end
@@ -66,14 +68,15 @@ module Wagn
       String.new wiki_content.unrender!
     end
 
+
     def update_references rendering_result = nil, refresh = false
       Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh} where:#{caller[0..6]*', '}"
       #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller*"\n"}"
       return unless card && referer_id = card.id
-      Card::Reference.where( :card_id => referer_id ).delete_all
+      Card::Reference.delete_all_from card
       # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
-      Card.where( :id => referer_id ).update_all( :references_expired=>nil )
-      #card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
+      #Card.where( :id => referer_id ).update_all( :references_expired=>nil )
+      card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
       card.expire if refresh
       if rendering_result.nil?
          rendering_result = WikiContent.new(card, _render_refs, self).render! do |opts|
@@ -81,26 +84,22 @@ module Wagn
          end
       end
 
-      h=
-        rendering_result.find_chunks(Chunk::Reference).inject({}) do |hash, chunk|
+      rendering_result.find_chunks(Chunk::Reference).inject({}) do |hash, chunk|
 
-        if referer_id != ( referee_id = chunk.refcard.send_if :id ) &&
-           !hash.has_key?( hash_key = referee_id || chunk.refcardname.key )
 
-          ltype = Chunk::Link===chunk
-          hash[ hash_key ] = {
-              :referenced_card_id  => referee_id,
-              :referenced_name => chunk.refcardname.send_if( :key ),
-              :link_type   => chunk.refcard.nil? ? ( ltype ? WANTED_LINK : WANTED_INCLUSION ) : 
-                                                   ( ltype ? LINK : INCLUSION )
+      if referer_id != ( referee_id = chunk.refcard.send_if :id ) &&
+         !hash.has_key?( referee_key = referee_id || chunk.refcardname.key )
+
+          hash[ referee_key ] = {
+              :referee_id  => referee_id,
+              :referee_key => chunk.refcardname.send_if( :key ),
+              :ref_type    => Chunk::Link===chunk ? 'L' : 'I',
+              :present     => chunk.refcard.nil?  ?  0  :  1
             }
         end
 
         hash
-      end
-      Rails.logger.warn "update refs: #{h.inspect}"
-      h.each_value { |update| Card::Reference.create! update.merge( :card_id => referer_id ) }
-
+      end.each_value { |update| Card::Reference.create! update.merge( :referer_id => referer_id ) }
     end
 
     class << self
@@ -143,7 +142,7 @@ module Wagn
     def controller()   @controller ||= StubCardController.new                     end
     def session()      CardController===controller ? controller.session : {}      end
     def ajax_call?()   @@ajax_call                                                end
-      
+
     def showname
       @showname ||= card.cardname.to_show *@context_names
     end
@@ -374,14 +373,14 @@ module Wagn
 
       opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
       # FIXME: special views should be represented in view definitions
-      
+
       view = case
       when @mode == :edit       ; @@perms[view]==:none || tcard.hard_template ? :blank : :edit_in_form
       when @@perms[view]==:none ; view
       when @mode == :closed     ; !tcard.known?  ? :closed_missing : :closed_content
       when @mode == :template   ; :template_rule
       else                      ; view
-      end  
+      end
 
       result = raw sub.render( view, opts )
       Renderer.current_slot = oldrenderer
@@ -400,7 +399,7 @@ module Wagn
 
     def new_inclusion_card_args options
       args = { :type =>options[:type] }
-      args[:loaded_trunk]=card if options[:tname] =~ /^\+/
+      args[:loaded_left]=card if options[:tname] =~ /^\+/
       if content=get_inclusion_content(options[:tname])
         args[:content]=content
       end
@@ -411,7 +410,7 @@ module Wagn
       pcard = opts.delete(:card) || card
       base = action==:read ? '' : "/card/#{action}"
 
-      if pcard && !pcard.name.empty? && !opts.delete(:no_id) && action != :create #might be some issues with new?
+      if pcard && !pcard.name.empty? && !opts.delete(:no_id) && ![:new, :create].member?(action) #dislike hardcoding views/actions here
         base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
       end
       if attrib = opts.delete( :attrib )

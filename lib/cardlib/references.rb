@@ -10,21 +10,22 @@ module Cardlib::References
   end
 
   def replace_references old_name, new_name
-    #warn "replace ref t: #{inspect},Cont:#{content}< o:#{old_name}, #{new_name}"
+    #Rails.logger.warn "replace ref t: #{inspect},Cont:#{content}< o:#{old_name}, #{new_name}"
     obj_content = ObjectContent.new content, {:card=>self}
     obj_content.find_chunks( Chunks::Reference ).select do |chunk|
 
-      #warn "replace ref test: #{chunk.cardname}, #{chunk.cardname.replace_part(old_name, new_name)} oo:#{old_name}, #{new_name}"
-      if was_name = chunk.cardname and new_cardname = was_name.replace_part(old_name, new_name) and
-          was_name != new_cardname
+      if was_name = chunk.cardname and new_cardname = was_name.replace_part(old_name, new_name)
+        #Rails.logger.warn "replace ref test: #{was_name}, #{new_cardname} oo:#{old_name}, #{new_name}"
 
         Chunks::Link===chunk and link_bound = was_name == chunk.link_text
 
-        #warn "replace ref #{was_name}, #{chunk.cardname}, #{new_cardname}, oo:#{old_name}, #{new_name}"
+        #Rails.logger.warn "replace ref #{was_name}, #{chunk.cardname}, #{new_cardname}, oo:#{old_name}, #{new_name}"
         chunk.cardname = chunk.replace_reference old_name, new_name
         Card::Reference.where( :referee_key => was_name.key ).update_all :referee_key => new_cardname.key
 
         chunk.link_text=chunk.cardname.to_s if link_bound
+      else
+Rails.logger.warn "rref? #{was_name} :#{inspect}"
       end
     end
 
@@ -33,31 +34,26 @@ module Cardlib::References
 
   def update_references rendering_result = nil, refresh = false
 
-    #warn "update references...card name: #{card.name}, rr: #{rendering_result}, refresh: #{refresh}"
+    #Rails.logger.warn "update references...card name: #{inspect}, rr: #{rendering_result}, refresh: #{refresh}"
     return if id.nil?
 
-    Rails.logger.info "update refs #{inspect} #{caller*"\n"}"
-    #raise "???" if caller.length > 500
-
-    Card::Reference.delete_all :referer_id => id
+    Card::Reference.delete_all_from self
 
     # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
     #Card.update( id, :references_expired=>nil )
     #  or just this and save it elsewhere?
     #references_expired=nil
-    Rails.logger.warn "set exp #{inspect}"
     connection.execute("update cards set references_expired=NULL where id=#{id}")
-    self.references_expired = nil
-    expire
-    Rails.logger.warn "stil exp? exp #{inspect}"
+    expire if refresh
 
     if rendering_result.nil?
-      Rails.logger.warn "New OC from #{content.class} #{content}"
+       #Rails.logger.warn "New OC from #{content.class} #{content}"
        rendering_result = ObjectContent.new(content, {:card=>self} )
     end
 
     rendering_result.find_chunks(Chunks::Reference).inject({}) do |hash, chunk|
 
+      #Rails.logger.warn "chunks #{chunk}"
       if id != ( referee_id = chunk.reference_id ) &&
               !hash.has_key?( referee_key = referee_id || chunk.refcardname.key )
 
@@ -109,8 +105,8 @@ module Cardlib::References
 
     base.class_eval do
       # ---------- Reference associations -----------
-      has_many :references, :class_name => :Reference, :foreign_key => :referee_id
-      has_many :includes,   :class_name => :Reference, :foreign_key => :referee_id, :conditions => { :ref_type => 'I' }
+      has_many :references,     :class_name => :Reference, :foreign_key => :referee_id
+      has_many :includes,       :class_name => :Reference, :foreign_key => :referee_id, :conditions => { :ref_type => 'I' }
 
       has_many :out_references, :class_name => :Reference, :foreign_key => :referer_id
       has_many :out_includes,   :class_name => :Reference, :foreign_key => :referer_id, :conditions => { :ref_type => 'I' }
@@ -144,4 +140,21 @@ module Cardlib::References
     expire_templatee_references
   end
 
+  def self.included(base)
+
+    super
+
+    base.class_eval do
+      # ---------- Reference associations -----------
+      has_many :references, :class_name => :Reference, :foreign_key => :referee_id
+      has_many :includes,   :class_name => :Reference, :foreign_key => :referee_id, :conditions => { :ref_type => 'I' }
+
+      has_many :out_references, :class_name => :Reference, :foreign_key => :referer_id
+      has_many :out_includes,   :class_name => :Reference, :foreign_key => :referer_id, :conditions => { :ref_type => 'I' }
+
+      after_create  :update_references_on_create
+      after_destroy :update_references_on_destroy
+      after_update  :update_references_on_update
+    end
+  end
 end

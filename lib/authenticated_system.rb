@@ -5,8 +5,8 @@ module AuthenticatedSystem
   end
 
   # Accesses the current user from the session.
-  def session_id
-    @session_id ||= session[:user]
+  def session_card_id
+    @session_card_id ||= session[:user]
   rescue Exception => e
     #warn "except #{e.inspect}, #{e.backtrace*"\n"}"
     session[:user] = nil
@@ -14,8 +14,8 @@ module AuthenticatedSystem
   end
 
   # Store the given user in the session.
-  def session= new_user
-    @session_id = session[:user] = ( Card==new_user ? card.id : new_user )
+  def session_card= new_user
+    @session_card_id = session[:user] = ( Card==new_user ? card.id : new_user )
   end
 
   #
@@ -60,10 +60,10 @@ module AuthenticatedSystem
     session[:return_to] = nil
   end
 
-  # Inclusion hook to make #session_id and #logged_in?
+  # Inclusion hook to make #session_card_id and #logged_in?
   # available as ActionView helper methods.
   def self.included(base)
     super
-    base.send :helper_method, :session_id, :logged_in?
+    base.send :helper_method, :session_card_id, :logged_in?
   end
 end

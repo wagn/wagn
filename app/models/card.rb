@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+
 class Card < ActiveRecord::Base
   require_dependency 'card/revision'
   require_dependency 'card/reference'
@@ -10,7 +11,7 @@ SmartName.params= Wagn::Conf
 SmartName.lookup= Card
 SmartName.session= proc { Account.as_card.name }
 
-class Card < ActiveRecord::Base
+class Card
 
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
   belongs_to :card, :class_name => 'Card', :foreign_key => :creator_id
@@ -377,7 +378,7 @@ class Card < ActiveRecord::Base
             array + card.dependents
           end
         end
-      Rails.logger.warn "dependents[#{inspect}] #{@dependents.inspect}"
+      #Rails.logger.warn "dependents[#{inspect}] #{@dependents.inspect}"
     end
     @dependents
   end

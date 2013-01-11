@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class Card
- 
+class Card < ActiveRecord::Base
   class Reference < ActiveRecord::Base
     def referencer
       Card[referer_id]
@@ -40,6 +39,5 @@ class Card
         delete_all_to card
       end
     end
-
   end
 end

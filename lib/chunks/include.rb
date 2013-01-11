@@ -1,4 +1,6 @@
-module Chunk
+require_dependency 'chunks/chunk'
+
+module Chunks
   class Include < Reference
     attr_reader :stars, :renderer, :options, :base
     unless defined? INCLUDE_PATTERN
@@ -12,7 +14,7 @@ module Chunk
       super
       #Rails.logger.warn "FOUND INCLUDE #{match_data} #{content}"
       self.cardname, @options, @configs = a = self.class.parse(match_data)
-      #Rails.logger.info "Chunk::include #{a.inspect}"
+      #Rails.logger.info "Chunks::Include #{a.inspect}"
       @base, @renderer = content.card, content.renderer
     end
 

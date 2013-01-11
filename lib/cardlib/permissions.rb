@@ -189,8 +189,7 @@ module Cardlib::Permissions
       if !new_card? && updates.for(:type_id)
         Account.as_bot do
           Card.search(:left=>self.name).each do |plus_card|
-            plus_card = plus_card.refresh
-            plus_card.update_read_rule
+            plus_card = plus_card.refresh.update_read_rule
           end
         end
       end

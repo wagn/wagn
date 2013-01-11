@@ -278,18 +278,18 @@ Done"
       else
         opts = params[:card] ? params[:card].clone : (obj = params[:object]) ? obj : {}
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
-        Rails.logger.warn "load params: #{params.inspect}, #{opts.inspect}"
+        #Rails.logger.warn "load params: #{params.inspect}, #{opts.inspect}"
         name = params[:id] || opts[:name]
         
         if @action == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
           # I think we may need to create a "#create" instance method that handles this checking.
           # that would let us get rid of this...
-          Rails.logger.warn "load create card #{name.inspect}, #{opts.inspect}"
+          #Rails.logger.warn "load create card #{name.inspect}, #{opts.inspect}"
           opts[:name] ||= name
           Card.new opts
         else
-          Rails.logger.warn "load card fetch_or_new #{name.inspect}, #{opts.inspect}"
+          #Rails.logger.warn "load card fetch_or_new #{name.inspect}, #{opts.inspect}"
           Card.fetch name, :new=>opts
         end
       end

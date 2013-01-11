@@ -117,7 +117,6 @@ class WikiContent < String
 
   def render! revert = false, &block
     pre_render!
-    Rails.logger.warn "render trashed: #{@card.inspect} render!" if @card.trash
     while ( gsub!(MASK_RE[ACTIVE_CHUNKS]) do
         chunk = @chunks_by_id[$~[1].to_i]
         chunk.nil? ? $~[0] : ( revert ? chunk.revert : chunk.unmask_text(&block) )

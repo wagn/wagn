@@ -33,7 +33,7 @@ class User < ActiveRecord::Base
       Account.as_bot do
         @user = User.new(user_args)
         @user.status = 'active' unless user_args.has_key? :status
-        Rails.logger.warn "create_wcard #{@user.inspect}, #{user_args.inspect}"
+        #Rails.logger.warn "create_wcard #{@user.inspect}, #{user_args.inspect}"
         @user.generate_password if @user.password.blank?
         @user.save_with_card(@card)
         @user.send_account_info(email_args) if @user.errors.empty? && !email_args.empty?
@@ -115,7 +115,7 @@ class User < ActiveRecord::Base
       self.status='active'
       generate_password
       r=save_with_card(card)
-      Rails.logger.warn "accept #{inspect}, #{card.inspect}, #{self.errors.full_messages*", "} R:#{r}"; r
+      #Rails.logger.warn "accept #{inspect}, #{card.inspect}, #{self.errors.full_messages*", "} R:#{r}"; r
     end
     #card.save #hack to make it so last editor is current user.
     self.send_account_info(email_args) if self.errors.empty?
@@ -177,7 +177,8 @@ class User < ActiveRecord::Base
   end
 
   def card()
-#    raise "deprecate user.card #{card_id}, #{@card&&@card.id} #{caller*"\n"}"
+    #raise "deprecate user.card #{card_id}, #{@card&&@card.id} #{caller*"\n"}"
+    Rails.logger.warn "deprecate user.card #{card_id}, #{@card&&@card.id} #{caller[0,2]*', '}"
     @card && @card.id == card_id ? @card : @card = Card[card_id]
   end
 

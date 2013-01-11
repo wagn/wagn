@@ -12,7 +12,7 @@ module Cardlib
       Wagn::Sets.load_cardlib
 
       Cardlib.constants.each do |const|
-        Rails.logger.warn "consts #{const}, #{base}"
+        #Rails.logger.warn "consts #{const}, #{base}"
         base.send :include, Cardlib.const_get( const )
       end
 

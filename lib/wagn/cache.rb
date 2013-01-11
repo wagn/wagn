@@ -84,7 +84,7 @@ module Wagn
       @store = opts[:store]
       @local = Hash.new
       self.system_prefix = opts[:prefix] || self.class.system_prefix(opts[:class])
-      Rails.logger.warn "nil class for cache #{caller*"\n"}" if klass.nil?
+      #Rails.logger.warn "nil class for cache #{caller*"\n"}" if klass.nil?
       cache_by_class[klass] = self
       prepopulate klass if prepopulating[klass]
     end

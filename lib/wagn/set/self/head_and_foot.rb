@@ -26,12 +26,12 @@ module Wagn
           root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
           rss_href = path_for_page root.card.name, opts
           bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{rss_href} />}
-       end
+        end
       end
 
       bits << %{<meta name="viewport" content="width=device-width, initial-scale=0.8">}
       # CSS
-#      bits << stylesheet_link_tag('http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css')
+      #bits << stylesheet_link_tag('http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css')
       bits << stylesheet_link_tag('application-all')
       bits << stylesheet_link_tag('application-print', :media=>'print')
       if css_card = Card[:css]

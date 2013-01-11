@@ -50,5 +50,5 @@ module Wagn
     alias_view(:open_content,{}, :content)
     alias_view(:link,        {}, :closed)
 
-   end
+  end
 end

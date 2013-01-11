@@ -17,8 +17,8 @@ module Wagn
       process_content_s(_render_raw) +
       if (card.new_card?); '' else
         %{<div class="invite-links help instruction">
-           <div><strong>#{card.name}</strong> requested an account on #{format_date(card.created_at) }</div>
-           #{%{<div>#{links.join('')}</div> } unless links.empty? }
+            <div><strong>#{card.name}</strong> requested an account on #{format_date(card.created_at) }</div>
+            #{%{<div>#{links.join('')}</div> } unless links.empty? }
         </div>}
       end
     end
@@ -31,7 +31,7 @@ module Wagn
       private
 
       def block_user
-        account = User.where(:card_id=>self.id).first
+        account = ::User.where(:card_id=>self.id).first
         #Rails.logger.warn "areq #{inspect} #{account.inspect}"
         if account
           account.update_attributes :status=>'blocked'

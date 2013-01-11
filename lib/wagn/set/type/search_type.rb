@@ -119,22 +119,22 @@ module Wagn
 
 %{<h1 class="page-header">Recent Changes</h1>
 <div class="card-frame recent-changes">
-  <div class="card-body">
-    #{ paging }
-  } +
-      cards_by_day.keys.sort.reverse.map do |day|
+      <div class="card-body">
+        #{ paging }
+      } +
+          cards_by_day.keys.sort.reverse.map do |day|
 
 %{  <h2>#{format_date(day, include_time = false) }</h2>
-    <div class="search-result-list">} +
-         cards_by_day[day].map do |card| %{
-      <div class="search-result-item item-#{ @item_view }">
-           #{process_inclusion(card, :view=>@item_view) }
-      </div>}
-         end.join(' ') + %{
-    </div>
-    } end.join("\n") + %{
-      #{ paging }
-  </div>
+        <div class="search-result-list">} +
+             cards_by_day[day].map do |card| %{
+          <div class="search-result-item item-#{ @item_view }">
+               #{process_inclusion(card, :view=>@item_view) }
+          </div>}
+             end.join(' ') + %{
+        </div>
+        } end.join("\n") + %{
+          #{ paging }
+      </div>
 </div>
 }
     end
@@ -264,7 +264,7 @@ module Wagn
     end
   end
 
-  class Renderer::Html
+  class Renderer::Html < Renderer
     def page_link text, page
       @paging_path_args[:offset] = page * @paging_limit
       " #{link_to raw(text), path(:read, @paging_path_args), :class=>'card-paging-link slotter', :remote => true} "
@@ -287,6 +287,6 @@ module Wagn
         end
       end
     end
-
   end
+
 end

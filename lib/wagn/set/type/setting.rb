@@ -2,7 +2,7 @@ require_dependency 'json'
 
 module Wagn
   module Set::Type::Setting
-    include Wagn::Sets
+    include Sets
 
     format :base
 

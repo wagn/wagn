@@ -1,19 +1,10 @@
 # -*- encoding : utf-8 -*-
 require 'xmlscan/processor'
 
-require_dependency 'wagn/sets'
-require_dependency 'card'
+require_dependency 'cardlib'
 
 class CardController < ApplicationController
-  # This is often needed for the controllers to work right
-  # FIXME: figure out when/why this is needed and why the tests don't fail
-  Card::Reference
-  Card
-end
-
-  #include Wagn::Sets::CardControllerMethods
-
-class CardController
+  include Wagn::Sets::CardActions
 
   helper :wagn
 
@@ -75,8 +66,6 @@ Done"
 =end
 
   attr_reader :card
-  cattr_reader :subset_actions
-  @@subset_actions = {}
 
   METHODS = {
     'POST'   => :create,  # C

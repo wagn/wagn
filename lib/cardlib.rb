@@ -4,7 +4,7 @@ require_dependency 'wagn/sets'
 Wagn.send :include, Wagn::Exceptions
 
 module Cardlib
-  Card
+  #Card
 
   def self.included base
 

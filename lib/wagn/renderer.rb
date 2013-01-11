@@ -31,12 +31,16 @@ module Wagn
     @@renderer = Renderer
 
     def self.get_renderer format
-      @@renderer = format == :base ? Renderer :
+      @@renderer = format.nil? || format == :base ? Renderer :
         const_get( if RENDERERS.has_key? format
             RENDERERS[ format ]
           else
             format.to_s.camelize.to_sym
           end )
+    end
+
+    def self.renderer= format
+      @@renderer = get_renderer format
     end
 
     attr_reader :format, :card, :root, :parent

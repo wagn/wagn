@@ -2,15 +2,11 @@
 #
 class InvitationError < StandardError; end
 
-#require 'wagn/sets'
-#require 'card'
-#require 'card/reference'
-
 class AccountController < CardController
   # This is often needed for the controllers to work right
   # FIXME: figure out when/why this is needed and why the tests don't fail
-  Card
-  Card::Reference
+  #Card
+  #Card::Reference
 
   before_filter :login_required, :only => [ :invite, :update ]
   helper :wagn

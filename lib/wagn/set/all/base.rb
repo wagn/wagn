@@ -43,8 +43,8 @@ module Wagn
       end
     end
 
-    alias_action :index,     {}, :read
-    alias_action :read_file, {}, :show_file
+    alias_action :read,     {}, :index
+    alias_action :show_file, {}, :read_file
 
 
 

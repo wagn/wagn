@@ -1,7 +1,5 @@
 module Wagn
   module Set::Type::Basic
-  end
-  module Basic
     #include Sets
 
     module Model

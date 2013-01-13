@@ -1,4 +1,6 @@
 # -*- encoding : utf-8 -*-
+require 'xmlscan/processor'
+
 require_dependency 'wagn/sets'
 require_dependency 'card'
 
@@ -15,6 +17,56 @@ class CardController < ApplicationController
   before_filter :load_card
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :comment, :rollback ]
   before_filter :read_ok,      :only=> [ :read_file ]
+
+  # rest XML put/post
+  def read_xml(io)
+    pairs = XMLScan::XMLProcessor.process(io, {:key=>:name, :element=>:card,
+                      :substitute=>":include|{{:name}}", :extras=>[:type]})
+    return if pairs.empty?
+
+    main = pairs.shift
+    #warn "main#{main.inspect}, #{pairs.empty?}"
+    main, content, type = main[0], main[1][0]*'', main[1][2]
+
+    data = { :name=>main }
+    data[:cards] = pairs.inject({}) { |hash,p| k,v = p
+         h = {:content => v[0]*''}
+         h[:type] = v[2] if v[2]
+         hash[k.to_cardname.to_absolute(v[1])] = h
+         hash } unless pairs.empty?
+    data[:content] = content unless content.blank?
+    data[:type] = type if type
+    data
+  end
+
+  def dump_pairs(pairs)
+    warn "Result
+#{    pairs.map do |p| n,o,c,t = p
+      "#{c&&c.size>0&&"#{c}::"||''}#{n}#{t&&"[#{t}]"}=>#{o*''}"
+    end * "\n"}
+Done"
+  end
+  # Need to split off envelope code somehome
+
+=begin FIXME move to events
+  def create
+    Rails.logger.warn "create card #{params.inspect}"
+    if request.parameters['format'] == 'xml'
+      Rails.logger.warn (Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}")
+      #return render(:action=>"missing", :format=>:xml)  unless params[:card]
+      if card_create = read_xml(request.body)
+        begin
+          @card = Card.new card_create
+        #warn "POST creates are  #{card_create.inspect}"
+        rescue Exception => e
+          Rails.logger.warn "except #{e.inspect}, #{e.backtrace*"\n"}"
+        end
+      end
+
+      Rails.logger.warn "create card #{request.body.inspect}"
+    end
+
+=end
 
   attr_reader :card
   cattr_reader :subset_actions
@@ -62,6 +114,29 @@ class CardController < ApplicationController
       show
     end
   end
+
+=begin FIXME move to action events
+    Rails.logger.warn "update card #{params.inspect}"
+    if request.parameters['format'] == 'xml'
+      Rails.logger.warn (Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}")
+      #return render(:action=>"missing", :format=>:xml)  unless params[:card]
+      if main_card = read_xml(request.body)
+        begin
+          @card = Card.new card_create
+        #warn "POST creates are  #{card_create.inspect}"
+        rescue Exception => e
+          Rails.logger.warn "except #{e.inspect}, #{e.backtrace*"\n"}"
+        end
+      end
+
+      Rails.logger.warn "create card #{request.body.inspect}"
+    end
+    @card = @card.refresh if @card.frozen? # put in model
+    case
+    when @card.new_card?                          ;  create
+    when @card.update_attributes( params[:card] ) ;  success
+    else                                             render_errors
+=end
 
   def update
     case
@@ -209,6 +284,7 @@ class CardController < ApplicationController
 
   # FIXME: make me an event
   def load_card
+    # do content type processing, if it is an object, json or xml, parse that now and
     # params[:object] = parsed_object
     # looking into json parsing (apparently it is deep in rails: params_parser.rb)
     @card = case params[:id]

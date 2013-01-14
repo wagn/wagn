@@ -17,7 +17,7 @@ module Wagn
       #Universal Edit Button
       if root.card
         if !root.card.new_record? && root.card.ok?(:update)
-          bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="#{ root.path :edit }"/>}
+          bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="#{ root.path :view=>:edit }"/>}
         end
 
         # RSS # move to packs!

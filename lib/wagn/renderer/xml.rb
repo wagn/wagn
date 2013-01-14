@@ -142,7 +142,7 @@ module Wagn
   end
 
 
-  def link_to_action( text, to_action, remote_opts={}, html_opts={})
+  def link_to_view( text, to_action, remote_opts={}, html_opts={})
     link_to_remote text, {
       :url=>url_for("card/#{to_action}", remote_opts),
       :update => id

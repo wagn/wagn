@@ -399,11 +399,10 @@ module Wagn
       args
     end
 
-    def path action, opts={}
+    def path opts={}
       pcard = opts.delete(:card) || card
-      base = action==:read ? '' : "/card/#{action}"
-
-      if pcard && !pcard.name.empty? && !opts.delete(:no_id) && ![:new, :create].member?(action) #dislike hardcoding views/actions here
+      base = opts[:action] ? "/card/#{opts[:action]}" : ''
+      if pcard && !pcard.name.empty? && !opts.delete(:no_id) && ![:new, :create].member?(opts[:action]) #generalize. dislike hardcoding views/actions here
         base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
       end
       if attrib = opts.delete( :attrib )

@@ -530,12 +530,16 @@ class Card < ActiveRecord::Base
 
   def all_roles
     if @all_roles.nil?
-      @all_roles = (id==AnonID ? [] : [AuthID])
-      Account.as_bot do
-        rcard=fetch(:trait=>:roles) and
-          items = rcard.item_cards(:limit=>0).map(&:id) and
-          @all_roles += items
-      end
+      @all_roles = if id == AnonID; []
+        else
+          Account.as_bot do
+            if get_roles = fetch(:trait=>:roles) and
+                ( get_roles = get_roles.item_cards(:limit=>0) ).any?
+              [AuthID] + get_roles.map(&:id)
+            else [AuthID]
+            end
+          end
+        end
     end
     #warn "aroles #{inspect}, #{@all_roles.inspect}"
     @all_roles

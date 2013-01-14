@@ -69,14 +69,12 @@ module Cardlib::Templating
   # I'll leave the FIXME here until the need is well documented.  -efm
 
   def expire_templatee_references
-    if wql = hard_templatee_spec
-
-      wql = Account.as_bot do
-        Wql.new (wql == true ? {:name => name} :  wql).merge(:return => :id)
-      end
-
-      wql.run.each_slice(100) do |id_batch|
-        Card.where( :id => id_batch ).update_all :references_expired=>1
+    if query = hard_templatee_spec
+      Account.as_bot do
+        query = {:name => name} if query == true
+        Wql.new( query.merge(:return => :id) ).run.each_slice(100) do |id_batch|
+          Card.where( :id => id_batch ).update_all :references_expired=>1
+        end
       end
     end
   end

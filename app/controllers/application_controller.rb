@@ -94,16 +94,11 @@ class ApplicationController < ActionController::Base
   end
 
   def render_errors options={}
-    if @card
-      return false if @card.errors.empty?
-    else
-      @card = Card.new
-      @card.errors.add( :exception, options[:message] ) if options[:message]
+    if @card.errors.any?
+      view   = options[:view]   || @card.error_view   || :errors
+      status = options[:status] || @card.error_status || 422
+      show view, status
     end
-    view   = options[:view]   || @card.error_view   || :errors
-    status = options[:status] || @card.error_status || 422
-    show view, status
-    true
   end
 
   def show view = nil, status = 200
@@ -152,9 +147,8 @@ class ApplicationController < ActionController::Base
 
 
   rescue_from Exception do |exception|
-    Rails.logger.info "exception = #{exception.class}: #{exception.message} #{exception.backtrace*"\n"}"
-
-
+    Rails.logger.info "exception = #{exception.class}: #{exception.message}"
+    
     view, status = case exception
     when Wagn::NotFound, ActiveRecord::RecordNotFound
       [ :not_found, 404 ]
@@ -163,7 +157,7 @@ class ApplicationController < ActionController::Base
     when Wagn::BadAddress, ActionController::UnknownController, AbstractController::ActionNotFound
       [ :bad_address, 404 ]
     else
-
+      Rails.logger.debug exception.backtrace*"\n"
       notify_airbrake exception if Airbrake.configuration.api_key
 
       if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) #&& @card && @card.errors.any?
@@ -171,13 +165,14 @@ class ApplicationController < ActionController::Base
       elsif Wagn::Conf[:migration]
         raise exception
       else
-        Rails.logger.info "\n\nController exception: #{exception.message}"
-        Rails.logger.debug exception.backtrace*"\n"
         Rails.logger.level == 0 ? raise( exception ) : [ :server_error, 500 ]
       end
     end
+    
+    @card ||= Card.new
+    @card.errors.add :exception, exception.message
 
-    render_errors :view=>view, :status=>status, :message=>exception.message
+    render_errors :view=>view, :status=>status
   end
 
 end

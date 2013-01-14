@@ -78,7 +78,7 @@ class Card
         super
       end
     rescue NameError
-        warn "ne: const_miss #{e.inspect}, #{const}" if const.to_sym==:Card
+      warn "ne: const_miss #{e.inspect}, #{const}" if const.to_sym==:Card
     end
 
     def setting name

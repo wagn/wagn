@@ -1,8 +1,3 @@
-require File.expand_path(File.dirname(__FILE__) + '/../util/card_builder.rb')
-#how is this used?
-
-
-
 def set_database( db )
   y = YAML.load_file("#{Rails.root.to_s}/config/database.yml")
   y["development"]["database"] = db

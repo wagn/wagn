@@ -1,7 +1,10 @@
 # -*- encoding : utf-8 -*-
+
+require_dependency 'wagn/sets'
+require_dependency 'card'
+
 class ApplicationController < ActionController::Base
-  # This is often needed for the controllers to work right
-  # FIXME: figure out when/why this is needed and why the tests don't fail
+  # This was in all the controllers, now it is inherited here
   Card
 
   include AuthenticatedSystem
@@ -37,9 +40,9 @@ class ApplicationController < ActionController::Base
 
       Wagn::Cache.renew
 
-      #warn "set curent_user (app-cont) #{self.session_user}, U.cu:#{Account.user_id}"
-      Account.user = self.session_user || Card::AnonID
-      #warn "set curent_user a #{session_user}, U.cu:#{Account.user_id}"
+      #warn "set curent_user (app-cont) #{self.session_card_id}, U.cu:#{Account.user_id}"
+      Account.user = self.session_card_id || Card::AnonID
+      #warn "set curent_user a #{session_card_id}, U.cu:#{Account.user_id}"
 
       # RECAPTCHA HACKS
       Wagn::Conf[:recaptcha_on] = !Account.logged_in? &&     # this too
@@ -149,7 +152,8 @@ class ApplicationController < ActionController::Base
 
 
   rescue_from Exception do |exception|
-    Rails.logger.info "exception = #{exception.class}: #{exception.message}"
+    Rails.logger.info "exception = #{exception.class}: #{exception.message} #{exception.backtrace*"\n"}"
+
 
     view, status = case exception
     when Wagn::NotFound, ActiveRecord::RecordNotFound

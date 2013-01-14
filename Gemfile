@@ -49,7 +49,7 @@ group :assets do
   gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor
   
   # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one
-  gem 'therubyrhino', :platform=>:ruby
+  gem 'therubyrhino', :platform=>:ruby        # :ruby is MRI rubies, so if you use a mac ruby ...
 end
 
 

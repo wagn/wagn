@@ -1,9 +1,9 @@
 module Wagn
   module Exceptions
-    Wagn::Error               = Class.new StandardError
-    Wagn::NotFound            = Class.new Error
-    Wagn::BadAddress          = Class.new Error
-    Wagn::PermissionDenied    = Class.new Error
-    Wagn::Oops                = Class.new Error
+    Error               = Class.new StandardError
+    NotFound            = Class.new Error
+    BadAddress          = Class.new Error
+    PermissionDenied    = Class.new Error
+    Oops                = Class.new Error
   end
 end

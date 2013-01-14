@@ -6,7 +6,7 @@ Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
 end
 
 Then /^(.*) should be notified that "(.*)"$/ do |username, subject|
-  user = User.where(:card_id=>(username == "I") ? @session_user : Card[username].id).first
+  user = User.where(:card_id=>(username == "I") ? @session_card_id : Card[username].id).first
   email = user.email
   begin
     step %{"#{email}" should receive 1 email}

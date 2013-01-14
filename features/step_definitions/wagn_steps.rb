@@ -4,7 +4,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "pat
 
 Given /^I log in as (.+)$/ do |user_card_name|
   # FIXME: define a faster simulate method ("I am logged in as")
-  @session_user = ucid = Card[user_card_name].id
+  @session_card_id = ucid = Card[user_card_name].id
   user_object = User.where(:card_id=>ucid).first
   visit "/account/signin"
   fill_in("login", :with=> user_object.email )
@@ -116,9 +116,9 @@ def create_card(username,cardtype,cardname,content="")
 end
 
 def logged_in_as(username)
-  sameuser = (username == "I" or @session_user && Card[@session_user].name == username)
+  sameuser = (username == "I" or @session_card_id && Card[@session_card_id].name == username)
   unless sameuser
-    @saved_user = @session_user
+    @saved_user = @session_card_id
     step "I log in as #{username}"
   end
   yield
@@ -167,6 +167,14 @@ end
 Then /^In (.*) I should not see "([^\"]*)"$/ do |section, text|
   within scope_of(section) do
     page.should_not have_content(text)
+  end
+end
+
+Then /^In (.*) I should (not )?see a ([^\"]*) with class "([^\"]*)"$/ do |selection, neg, element, selector|
+  # checks for existence of a element with a class in a selection context
+  element = 'a' if element == 'link'
+  within scope_of(selection) do
+    page.send ( neg ? :should_not : :should ), have_css( [ element, selector ] * '.' )
   end
 end
 

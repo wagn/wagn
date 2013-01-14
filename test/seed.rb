@@ -1,5 +1,7 @@
-require File.expand_path('../db/migrate/20120327090000_codename_table', File.dirname(__FILE__))
+#require File.expand_path('../db/migrate/20120327090000_codename_table', File.dirname(__FILE__))
 require 'timecop'
+
+require_dependency 'card'
 
 Dir["#{Rails.root}/app/models/card/*.rb"].sort.each do |cardtype|
   require_dependency cardtype
@@ -34,11 +36,6 @@ class SharedData
       { :login=>"joe_camel",:email=>'joe@camel.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass' },
       { :name=>"Joe Camel", :content => "Mr. Buttz" }
     )
-
-    #bt = Card.find_by_name 'Basic+*type+*default'
-
-    # check for missing codenames:
-    CodenameTable::CODENAMES.each do |code| CodenameTable.add_codename code end
 
     # generic, shared attribute card
     color = Card.create! :name=>"color"

@@ -26,7 +26,7 @@ class AccountRequestTest < ActionController::TestCase
       :content=>"Let me in!"
     }
     assert_response 302
-    #assert_redirected_to @controller.url_for_page(::Setting.find_by_codename('account_request_landing').card.name)
+    #assert_redirected_to @controller.path_for_page(::Setting.find_by_codename('account_request_landing').card.name)
   end
 
   def test_should_create_account_request
@@ -52,7 +52,6 @@ class AccountRequestTest < ActionController::TestCase
   def test_should_destroy_and_block_user
     login_as 'joe_admin'
     # FIXME: should test agains mocks here, instead of re-testing the model...
-    Rails.logger.warn "test point #{Account.as_card.inspect}"
     post :delete, :id=>"~#{Card.fetch('Ron Request').id}"
     assert_equal nil, Card.fetch('Ron Request')
     assert_equal 'blocked', User.find_by_email('ron@request.com').status

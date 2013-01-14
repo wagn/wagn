@@ -44,7 +44,7 @@ module Wagn
       else
         known_card = !!Card.fetch(href, :skip_modules=>true) if known_card.nil?
         cardname = href.to_name
-        text = cardname.to_show(card.name) unless text
+        text ||= showname
         #href+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
         href = full_uri Wagn::Conf[:root_path] + '/' +
           (known_card ? cardname.url_key : CGI.escape(cardname.s))
@@ -58,7 +58,7 @@ module Wagn
 
   def wrap(view=nil, args = {})
     css_class = case args[:action].to_s
-      when 'content'  ;  'transcluded'
+      when 'content'  ;  'included'
       when 'exception';  'exception'
       when 'closed'   ;  'card-slot line'
       else            ;  'card-slot paragraph'

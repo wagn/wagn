@@ -1,8 +1,14 @@
 # -*- encoding : utf-8 -*-
 
+require_dependency 'wagn/sets'
+require_dependency 'card'
+
 
 class CardController < ApplicationController
+  # This is often needed for the controllers to work right
+  # FIXME: figure out when/why this is needed and why the tests don't fail
   Card
+
   helper :wagn
 
   before_filter :index_preload, :only=> [ :index ]
@@ -17,13 +23,13 @@ class CardController < ApplicationController
     if @card.save
       success
     else
-      errors
+      render_errors
     end
   end
 
   def read
     if @card.errors.any?
-      errors
+      render_errors
     else
       save_location # should be an event!
       show
@@ -34,7 +40,7 @@ class CardController < ApplicationController
     case
     when @card.new_card?                          ;  create
     when @card.update_attributes( params[:card] ) ;  success
-    else                                             errors
+    else                                             render_errors
     end
   end
 
@@ -63,7 +69,7 @@ class CardController < ApplicationController
     if @card.save_draft params[:card][:content]
       render :nothing=>true
     else
-      errors
+      render_errors
     end
   end
 
@@ -81,7 +87,7 @@ class CardController < ApplicationController
     if @card.save
       show
     else
-      errors
+      render_errors
     end
   end
 
@@ -131,7 +137,7 @@ class CardController < ApplicationController
       account.errors.each do |field, err|
         @card.errors.add field, err
       end
-      errors
+      render_errors
     else
       success
     end
@@ -174,6 +180,7 @@ class CardController < ApplicationController
   end
 
 
+  # FIXME: make me an event
   def load_card
     @card = case params[:id]
       when '*previous'   ; return wagn_redirect( previous_location )
@@ -182,16 +189,19 @@ class CardController < ApplicationController
       else
         opts = params[:card] ? params[:card].clone : {}
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
-        name = params[:id] ? SmartName.unescape( params[:id] ) : opts[:name]
+        #Rails.logger.warn "load params: #{params.inspect}, #{opts.inspect}"
+        name = params[:id] || opts[:name]
         
         if @action == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
           # I think we may need to create a "#create" instance method that handles this checking.
           # that would let us get rid of this...
+          #Rails.logger.warn "load create card #{name.inspect}, #{opts.inspect}"
           opts[:name] ||= name
           Card.new opts
         else
-          Card.fetch_or_new name, opts
+          #Rails.logger.warn "load card fetch_or_new #{name.inspect}, #{opts.inspect}"
+          Card.fetch name, :new=>opts
         end
       end
 
@@ -199,6 +209,7 @@ class CardController < ApplicationController
     true
   end
 
+  # FIXME: event
   def refresh_card
     @card = @card.refresh
   end
@@ -228,7 +239,7 @@ class CardController < ApplicationController
       end
 
     case
-    when  redirect        ; wagn_redirect ( Card===target ? url_for_page(target.cardname, new_params) : target )
+    when  redirect        ; wagn_redirect ( Card===target ? path_for_page( target.cardname, new_params ) : target )
     when  String===target ; render :text => target
     else
       @card = target

@@ -1,5 +1,12 @@
 # -*- encoding : utf-8 -*-
+
+require_dependency 'wagn/sets'
+require_dependency 'card'
+
 class ApplicationController < ActionController::Base
+  # This was in all the controllers, now it is inherited here
+  Card
+
   include AuthenticatedSystem
   include LocationHelper
   include Recaptcha::Verify
@@ -33,9 +40,9 @@ class ApplicationController < ActionController::Base
 
       Wagn::Cache.renew
 
-      #warn "set curent_user (app-cont) #{self.session_user}, U.cu:#{Account.user_id}"
-      Account.user = self.session_user || Card::AnonID
-      #warn "set curent_user a #{session_user}, U.cu:#{Account.user_id}"
+      #warn "set curent_user (app-cont) #{self.session_card_id}, U.cu:#{Account.user_id}"
+      Account.user = self.session_card_id || Card::AnonID
+      #warn "set curent_user a #{session_card_id}, U.cu:#{Account.user_id}"
 
       # RECAPTCHA HACKS
       Wagn::Conf[:recaptcha_on] = !Account.logged_in? &&     # this too
@@ -71,6 +78,7 @@ class ApplicationController < ActionController::Base
   # ----------( rendering methods ) -------------
 
   def wagn_redirect url
+    url = wagn_url url #make sure we have absolute url
     if ajax?
       render :text => url, :status => 303
     else
@@ -82,14 +90,20 @@ class ApplicationController < ActionController::Base
     params[:action] = action if action
     @card.error_view = :denial
     @card.error_status = 403
-    errors
+    render_errors
   end
 
-  def errors options={}
-    @card ||= Card.new
-    view   = options[:view]   || (@card && @card.error_view  ) || :errors
-    status = options[:status] || (@card && @card.error_status) || 422
+  def render_errors options={}
+    if @card
+      return false if @card.errors.empty?
+    else
+      @card = Card.new
+      @card.errors.add( :exception, options[:message] ) if options[:message]
+    end
+    view   = options[:view]   || @card.error_view   || :errors
+    status = options[:status] || @card.error_status || 422
     show view, status
+    true
   end
 
   def show view = nil, status = 200
@@ -138,7 +152,8 @@ class ApplicationController < ActionController::Base
 
 
   rescue_from Exception do |exception|
-    Rails.logger.info "exception = #{exception.class}: #{exception.message}"
+    Rails.logger.info "exception = #{exception.class}: #{exception.message} #{exception.backtrace*"\n"}"
+
 
     view, status = case exception
     when Wagn::NotFound, ActiveRecord::RecordNotFound
@@ -151,7 +166,7 @@ class ApplicationController < ActionController::Base
 
       notify_airbrake exception if Airbrake.configuration.api_key
 
-      if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) && @card && @card.errors.any?
+      if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) #&& @card && @card.errors.any?
         [ :errors, 422]
       elsif Wagn::Conf[:migration]
         raise exception
@@ -162,7 +177,7 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    errors :view=>view, :status=>status
+    render_errors :view=>view, :status=>status, :message=>exception.message
   end
 
 end

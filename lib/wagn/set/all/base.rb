@@ -6,18 +6,12 @@ module Wagn
     format :base
 
     ### ---- Core renders --- Keep these on top for dependencies
-
-    # update_references based on _render_refs, which is the same as
-    # _render_raw, except that you don't need to alias :refs as often
-    # speeding up the process when there can't be any reference changes
-    # (builtins, etc.)
     
     define_view :show, :perms=>:none  do |args|
       render( args[:view] || :core )
     end
 
     define_view :raw      do |args|  card ? card.raw_content : _render_blank                          end
-    define_view :refs     do |args|  card.respond_to?('references_expired') ? card.raw_content : ''   end
     define_view :core     do |args|  process_content _render_raw                                      end
     define_view :content  do |args|  _render_core                                                     end
       # this should be done as an alias, but you can't make an alias with an unknown view,
@@ -84,10 +78,6 @@ module Wagn
 
     # The below have HTML!?  should not be any html in the base renderer
 
-
-    define_view :edit_virtual, :perms=>:none do |args|
-      ''
-    end
 
     define_view :closed_missing, :perms=>:none do |args|
       %{<span class="faint"> #{ showname } </span>}

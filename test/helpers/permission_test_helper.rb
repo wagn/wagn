@@ -17,11 +17,11 @@ module PermissionTestHelper
   end
 
   def assert_hidden( card, msg='' )
-    assert_equal [], Card.search(:id=>card.id).plot(:name), msg
+    assert_equal [], Card.search(:id=>card.id).map(&:name), msg
   end
 
   def assert_not_hidden( card, msg='' )
-    assert_equal [card.name], Card.search(:id=>card.id).plot(:name), msg
+    assert_equal [card.name], Card.search(:id=>card.id).map(&:name), msg
   end
 
   def assert_locked( card, msg='' )

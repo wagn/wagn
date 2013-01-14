@@ -1,4 +1,6 @@
-module Chunk
+require_dependency 'chunks/chunk'
+
+module Chunks
   class Reference < Abstract
     attr_accessor :cardname
 
@@ -8,6 +10,7 @@ module Chunk
     end
 
     def refcardname()
+      #warn "rercardname #{inspect}, #{cardname.to_absolute(card.cardname)}"
       cardname && self.cardname = cardname.to_absolute(card.cardname).to_name
     end
 

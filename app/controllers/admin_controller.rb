@@ -1,5 +1,8 @@
 # -*- encoding : utf-8 -*-
-class AdminController < ApplicationController
+
+require_dependency 'card'
+
+class AdminController < CardController
   layout 'application'
 
   def setup
@@ -17,7 +20,7 @@ class AdminController < ApplicationController
           roles_card = Card.fetch_or_new(@card.cardname.trait_name(:roles))
           roles_card.content = "[[#{Card[Card::AdminID].name}]]"
           roles_card.save
-          self.session_user = @card
+          self.session_card_id = @card.id
           Card.cache.delete 'no_logins'
           flash[:notice] = "You're good to go!"
           redirect_to Card.path_setting('/')

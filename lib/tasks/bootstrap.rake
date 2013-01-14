@@ -32,8 +32,6 @@ namespace :wagn do
     task :clean => :environment do
       Wagn::Cache.reset_global
 
-
-
       # Correct time and user stamps
       botid = Card::WagnBotID
       extra_sql = {
@@ -41,6 +39,7 @@ namespace :wagn do
         :card_revisions =>", creator_id=#{botid}"
       }
       WAGN_BOOTSTRAP_TABLES.each do |table|
+        next if table == 'card_references'
         ActiveRecord::Base.connection.update("update #{table} set created_at=now() #{extra_sql[table.to_sym] || ''};")
       end
 
@@ -58,8 +57,8 @@ namespace :wagn do
         "( select name from cards where current_revision_id = card_revisions.id )"
       )
       ActiveRecord::Base.connection.delete( "delete from card_references where" +
-        " (referenced_card_id is not null and not exists (select * from cards where cards.id = card_references.referenced_card_id)) or " +
-        " (           card_id is not null and not exists (select * from cards where cards.id = card_references.card_id));"
+        " (referee_id is not null and not exists (select * from cards where cards.id = card_references.referee_id)) or " +
+        " (           referer_id is not null and not exists (select * from cards where cards.id = card_references.referer_id));"
       )
       ActiveRecord::Base.connection.delete( "delete from users where id > 2" ) #leave only anon and wagn bot
     end
@@ -77,6 +76,10 @@ namespace :wagn do
           data = ActiveRecord::Base.connection.select_all( "select * from #{table}" )
           file.write YAML::dump( data.inject({}) do |hash, record|
             record['trash'] = false if record.has_key? 'trash'
+            if record.has_key? 'content'
+              record['content'] = record['content'].gsub /\u00A0/, '&nbsp;'
+              # sych was handling nonbreaking spaces oddly.  would not be needed with psych.
+            end
             hash["#{table}_#{i.succ!}"] = record
             hash
           end)

@@ -51,12 +51,12 @@ module Wagn
 
       def inheritable?
         return true if junction_only?
-        cardname.tag==Wagn::Model::Patterns::SelfPattern.key_name and cardname.trunk_name.junction?
+        cardname.tag==Cardlib::Patterns::SelfPattern.key_name and cardname.trunk_name.junction?
       end
 
       def subclass_for_set
         #FIXME - use codename??
-        Wagn::Model::Pattern.subclasses.find do |sub|
+        Cardlib::Pattern.subclasses.find do |sub|
           cardname.tag==sub.key_name
         end
       end

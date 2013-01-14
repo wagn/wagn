@@ -112,7 +112,7 @@ describe Wagn::Renderer::Xml, "" do
     it "content" do
       pending "with html"
       render_card(:content, :name=>'A+B').should be_html_with {
-        div( :class=>'transcluded ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b', :home_view=>'content') {
+        div( :class=>'included ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b', :home_view=>'content') {
           span( :class=>'content-content content')
         }
       }
@@ -378,7 +378,7 @@ describe Wagn::Renderer::Xml, "" do
     context "*version" do
       it "should have an X.X.X version" do
         render_card(:raw, :name=>'*version').
-          match(/\d\.\d\.\w+/ ).should_not be_nil
+          match(/\d\.\d+\.\w+/ ).should_not be_nil
       end
     end
 

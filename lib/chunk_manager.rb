@@ -1,9 +1,4 @@
 require_dependency 'chunks/chunk'
-require_dependency 'chunks/uri'
-require_dependency 'chunks/literal'
-require_dependency 'chunks/reference'
-require_dependency 'chunks/link'
-require_dependency 'chunks/transclude'
 
 
 module ChunkManager
@@ -12,8 +7,8 @@ module ChunkManager
     ACTIVE_CHUNKS = [
 #      Literal::Pre,
       Literal::Escape,
-      Chunk::Transclude,
-      Chunk::Link,
+      Chunks::Include,
+      Chunks::Link,
       URIChunk,
       LocalURIChunk
     ]
@@ -21,8 +16,8 @@ module ChunkManager
 #    HIDE_CHUNKS = [ Literal::Pre, Literal::Tags ]
 
     MASK_RE = {
-#      HIDE_CHUNKS => Chunk::Abstract.mask_re(HIDE_CHUNKS),
-      ACTIVE_CHUNKS => Chunk::Abstract.mask_re(ACTIVE_CHUNKS)
+#      HIDE_CHUNKS => Chunks::Abstract.mask_re(HIDE_CHUNKS),
+      ACTIVE_CHUNKS => Chunks::Abstract.mask_re(ACTIVE_CHUNKS)
     }
   end
 
@@ -57,7 +52,7 @@ module ChunkManager
     text.scan(MASK_RE[ACTIVE_CHUNKS]){|a| yield a[0] }
   end
 
-  def find_chunks(chunk_type)
+  def find_chunks chunk_type=Chunks::Abstract
     @chunks.select { |chunk| chunk.kind_of?(chunk_type) and chunk.rendered? }
   end
 

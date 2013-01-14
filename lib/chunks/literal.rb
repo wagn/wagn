@@ -1,11 +1,11 @@
-require 'chunks/chunk'
+require_dependency 'chunks/chunk'
 
 # These are basic chunks that have a pattern and can be protected.
 # They are used by rendering process to prevent wiki rendering
 # occuring within literal areas such as <code> and <pre> blocks
 # and within HTML tags.
 module Literal
-  class AbstractLiteral < Chunk::Abstract
+  class AbstractLiteral < Chunks::Abstract
     def initialize(match_data, content)
       super
       @unmask_text = @text

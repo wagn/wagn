@@ -1,7 +1,13 @@
 # -*- encoding : utf-8 -*-
+#
 class InvitationError < StandardError; end
 
-class AccountController < ApplicationController
+class AccountController < CardController
+  # This is often needed for the controllers to work right
+  # FIXME: figure out when/why this is needed and why the tests don't fail
+  Card
+  Card::Reference
+
   before_filter :login_required, :only => [ :invite, :update ]
   helper :wagn
 
@@ -37,7 +43,7 @@ class AccountController < ApplicationController
           #Rails.logger.warn "signup with/app #{@user}, #{@card}"
           redirect_cardname = '*request+*thanks'
         end
-        wagn_redirect Card.path_setting( Card.setting redirect_cardname )
+        wagn_redirect Card.setting( redirect_cardname )
       end
     end
   end
@@ -86,7 +92,7 @@ class AccountController < ApplicationController
   end
 
   def signout
-    self.session_user = nil
+    self.session_card_id = nil
     flash[:notice] = "Successfully signed out"
     redirect_to Card.path_setting('/')  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
   end
@@ -119,11 +125,11 @@ class AccountController < ApplicationController
       @card.errors.add field, err unless @card.errors[field].any?
       # needed to prevent duplicates because User adds them in the other direction in user.rb
     end
-    errors
+    render_errors
   end
 
   def password_authentication(login, password)
-    if self.session_user = User.authenticate( params[:login], params[:password] )
+    if self.session_card_id = User.authenticate( params[:login], params[:password] )
       flash[:notice] = "Successfully signed in"
       #warn Rails.logger.info("to prev #{previous_location}")
       redirect_to previous_location

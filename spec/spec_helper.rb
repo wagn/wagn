@@ -2,16 +2,21 @@ require 'spork'
 ENV["RAILS_ENV"] ||= 'test'
 
 Spork.prefork do
-  require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-  require File.expand_path(File.dirname(__FILE__) + "/../lib/authenticated_test_helper.rb")
-  #require File.expand_path(File.dirname(__FILE__) + "/custom_matchers.rb")
-  #require File.expand_path(File.dirname(__FILE__) + "/controller_macros.rb")
+  require File.expand_path File.dirname(__FILE__) + "/../config/environment"
+  require File.expand_path File.dirname(__FILE__) + "/../lib/authenticated_test_helper.rb"
+  require File.expand_path File.dirname(__FILE__) + "/../lib/util/card_builder.rb"
+  require File.expand_path File.dirname(__FILE__) + "/../lib/chunk_manager.rb"
+  require File.expand_path File.dirname(__FILE__) + "/./helpers/chunk_spec_helper.rb"
+  #require File.expand_path File.dirname(__FILE__) + "/custom_matchers.rb"
+  #require File.expand_path File.dirname(__FILE__) + "/controller_macros.rb"
   require 'rspec/rails'
 
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
+
+  FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
 
   RSpec.configure do |config|
 
@@ -21,8 +26,6 @@ Spork.prefork do
     #config.include CustomMatchers
     #config.include ControllerMacros, :type=>:controllers
     config.include AuthenticatedTestHelper, :type=>:controllers
-    #config.include(EmailSpec::Helpers)
-    #config.include(EmailSpec::Matchers)
 
     # == Mock Framework
     # If you prefer to mock with mocha, flexmock or RR, uncomment the appropriate symbol:

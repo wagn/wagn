@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-require 'open-uri'
+require_dependency 'open-uri'
 
 class Mailer < ActionMailer::Base
   @@defaults = Wagn::Conf[:email_defaults] || {}
@@ -47,6 +47,7 @@ class Mailer < ActionMailer::Base
 
 
   def change_notice user, card, action, watched, subedits=[], updated_card=nil
+    #warn "change_notice( #{user}, cd:#{card.inspect}, act:#{action.inspect}, wtchd:#{watched.inspect} ne#{subedits.inspect}, Uc:#{updated_card.inspect}...)"
     return unless user = User===user ? user : User.from_id(user)
     #warn "change_notice( #{user.email}, #{card.inspect}, #{action.inspect}, #{watched.inspect} Uc:#{updated_card.inspect}...)"
 

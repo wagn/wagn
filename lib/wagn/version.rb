@@ -1,6 +1,6 @@
 module Wagn::Version
     Major = '1'
-    Minor = '9'
+    Minor = '10'
     Tiny  = '2'
     Eensie = nil
 

@@ -22,14 +22,15 @@ module Wagn
              }#{ if invite_card = Card[:invite] and invite_card.ok? :create
                    link_to 'Invite a Friend', invite_card.key, :id=>'invite-a-friend-link'
                  end
-             }#{ #link_to 'Sign out', Card[:session].key, :method=>'DELETE',           :id=>'signout-link'
-                 link_to 'Sign out', '/account/signout',           :id=>'signout-link'
+             }#{ #link_to 'Sign out', Card[:session].key, :method=>'DELETE', :id=>'signout-link'
+                 link_to 'Sign out', '/account/signout', :id=>'signout-link'
            }}
          else
            %{#{ if signup_card = Card[:signup].send_if(:ok?, :create)
                  link_to 'Sign up', signup_card.key, :id=>'signup-link'
                 end
-            }#{ link_to 'Sign in', Card[:session].key, :id=>'signin-link'
+            }#{ #link_to 'Sign in', Card[:session].key, :id=>'signin-link'
+                 link_to 'Sign in', '/account/signin', :id=>'signout-link'
             }}
          end }
       </span>}

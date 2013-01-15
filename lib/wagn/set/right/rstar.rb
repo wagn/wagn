@@ -9,7 +9,7 @@ include Sets
 
       cells = [
         ["rule-setting",
-          link_to( card.cardname.tag.sub(/^\*/,''), path(:read, :view=>:open_rule),
+          link_to( card.cardname.tag.sub(/^\*/,''), path(:view=>:open_rule),
             :class => 'edit-rule-link slotter', :remote => true )
         ],
         ["rule-content",
@@ -94,7 +94,7 @@ include Sets
       open_rule       = args[:open_rule]
       @item_view ||= :link
 
-      form_for card, :url=>path(:update, :no_id=>true), :remote=>true, :html=>
+      form_for card, :url=>path(:action=>:update, :no_id=>true), :remote=>true, :html=>
           {:class=>"card-form card-rule-form #{edit_mode && 'slotter'}" } do |form|
 
         %{
@@ -103,7 +103,7 @@ include Sets
         <div class="card-editor">
           <div class="rule-column-1">
             <div class="rule-setting">
-              #{ link_to( setting_name.sub(/^\*/,''), path(:read, :card=>open_rule, :view=>:closed_rule),
+              #{ link_to( setting_name.sub(/^\*/,''), path(:card=>open_rule, :view=>:closed_rule),
                   :remote => true, :class => 'close-rule-link slotter') }
             </div>
             <ul class="set-editor">
@@ -145,7 +145,7 @@ include Sets
         if edit_mode
           %{<label>type:</label>}+
           raw(type_field( :class =>'type-field rule-type-field live-type-field', 'data-remote'=>true,
-            :href => path(:read, :card=>open_rule, :view=>:open_rule, :type_reload=>true) ) )
+            :href => path(:card=>open_rule, :view=>:open_rule, :type_reload=>true) ) )
         elsif current_set_key
           '<label>type:</label>'+
           %{<span class="rule-type">#{ current_set_key ? card.type_name : '' }</span>}
@@ -169,12 +169,12 @@ include Sets
            ('<div class="edit-button-area">' +
              if params[:success]
                (button_tag( 'Edit', :class=>'rule-edit-button slotter', :type=>'button',
-                 :href => path(:read, :card=>open_rule, :view=>:open_rule), :remote=>true ) +
+                 :href => path(:card=>open_rule, :view=>:open_rule), :remote=>true ) +
                button_tag( 'Close', :class=>'rule-cancel-button', :type=>'button' )).html_safe
              else
                (if !card.new_card?
                  b_args = { :remote=>true, :class=>'rule-delete-button slotter', :type=>'button' }
-                 b_args[:href] = path :delete, :view=>:open_rule, :success=>open_rule.cardname.url_key
+                 b_args[:href] = path :action=>:delete, :view=>:open_rule, :success=>open_rule.cardname.url_key
                  if fset = args[:fallback_set]
                    b_args['data-confirm']="Deleting will revert to #{setting_name} rule for #{Card.fetch(fset).label }"
                  end

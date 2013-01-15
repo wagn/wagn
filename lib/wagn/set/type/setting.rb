@@ -18,7 +18,7 @@ module Wagn
 
     SETTING_GROUPS = {
       :perms         => [ :create, :read, :update, :delete, :comment ],
-      :look          => [ :default, :content, :layout, :table_of_content ],
+      :look          => [ :default, :content, :layout, :table_of_contents ],
       :com           => [ :add_help, :edit_help, :send, :thanks ],
       :pointer_group => [ :options, :options_label, :input ],
       :other         => [ :autoname, :accountable, :captcha ]

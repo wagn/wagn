@@ -115,9 +115,11 @@ class ApplicationController < ActionController::Base
 
     case
     when known                # renderers can handle it
+      obj_sym = [:json, :xml].member?( ext = ext.to_sym ) ? ext : :text
       renderer = Wagn::Renderer.new @card, :format=>ext, :controller=>self
-      render_text = renderer.render_show :view => view || params[:view]
-      render :text=>render_text, :status=> renderer.error_status || status
+
+      render_obj = renderer.render_show :view => view || params[:view]
+      render obj_sym => render_obj, :status=> renderer.error_status || status
 
     when show_file            # send_file can handle it
     else                      # dunno how to handle it

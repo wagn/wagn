@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-
+require 'xmlscan/processor'
 require_dependency 'cardlib'
 
 class CardController < ApplicationController
@@ -14,7 +14,82 @@ class CardController < ApplicationController
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :comment, :rollback ]
   before_filter :read_ok,      :only=> [ :read_file ]
 
+  # rest XML put/post
+  def read_xml(io)
+    pairs = XMLScan::XMLProcessor.process(io, {:key=>:name, :element=>:card,
+                      :substitute=>":include|{{:name}}", :extras=>[:type]})
+    return if pairs.empty?
+
+    main = pairs.shift
+    #warn "main#{main.inspect}, #{pairs.empty?}"
+    main, content, type = main[0], main[1][0]*'', main[1][2]
+
+    data = { :name=>main }
+    data[:cards] = pairs.inject({}) { |hash,p| k,v = p
+         h = {:content => v[0]*''}
+         h[:type] = v[2] if v[2]
+         hash[k.to_cardname.to_absolute(v[1])] = h
+         hash } unless pairs.empty?
+    data[:content] = content unless content.blank?
+    data[:type] = type if type
+    data
+  end
+
+  def dump_pairs(pairs)
+    warn "Result
+#{    pairs.map do |p| n,o,c,t = p
+      "#{c&&c.size>0&&"#{c}::"||''}#{n}#{t&&"[#{t}]"}=>#{o*''}"
+    end * "\n"}
+Done"
+  end
+  # Need to split off envelope code somehome
+
+=begin FIXME move to events
+  def create
+    Rails.logger.warn "create card #{params.inspect}"
+    if request.parameters['format'] == 'xml'
+      Rails.logger.warn (Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}")
+      #return render(:action=>"missing", :format=>:xml)  unless params[:card]
+      if card_create = read_xml(request.body)
+        begin
+          @card = Card.new card_create
+        #warn "POST creates are  #{card_create.inspect}"
+        rescue Exception => e
+          Rails.logger.warn "except #{e.inspect}, #{e.backtrace*"\n"}"
+        end
+      end
+
+      Rails.logger.warn "create card #{request.body.inspect}"
+    end
+
+=end
+
   attr_reader :card
+
+  METHODS = {
+    'POST'   => :create,  # C
+    'GET'    => :read,    # R
+    'PUT'    => :update,  # U
+    'DELETE' => :delete,  # D
+    'INDEX'  => :index
+  }
+
+  # this form of dispatching is not used yet, write specs first, then integrate into routing
+  def action
+    @action = METHODS[request.method]
+    Rails.logger.warn "action #{request.method}, #{@action} #{params.inspect}"
+    #warn "action method #{request.method}, #{@action} #{params.inspect}"
+    send "process_#{@action}"
+  end
+
+  def action_method event
+    return "_final_#{event}" unless card && subset_actions[event]
+    card.method_keys.each do |method_key|
+      meth = "_final_"+(method_key.blank? ? "#{event}" : "#{method_key}_#{event}")
+      #warn "looking up #{method_key}, M:#{meth} for #{card.name}"
+      return meth if respond_to?(meth.to_sym)
+    end
+  end
 
   def create
     #warn "create #{params.inspect}, #{card.inspect} if #{card && !card.new_card?}, nc:#{card.new_card?}"
@@ -25,6 +100,29 @@ class CardController < ApplicationController
   def read
     process_read
   end
+
+=begin FIXME move to action events
+    Rails.logger.warn "update card #{params.inspect}"
+    if request.parameters['format'] == 'xml'
+      Rails.logger.warn (Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}")
+      #return render(:action=>"missing", :format=>:xml)  unless params[:card]
+      if main_card = read_xml(request.body)
+        begin
+          @card = Card.new card_create
+        #warn "POST creates are  #{card_create.inspect}"
+        rescue Exception => e
+          Rails.logger.warn "except #{e.inspect}, #{e.backtrace*"\n"}"
+        end
+      end
+
+      Rails.logger.warn "create card #{request.body.inspect}"
+    end
+    @card = @card.refresh if @card.frozen? # put in model
+    case
+    when @card.new_card?                          ;  create
+    when @card.update_attributes( params[:card] ) ;  success
+    else                                             render_errors
+=end
 
   def update
     process_update
@@ -169,6 +267,9 @@ class CardController < ApplicationController
 
   # FIXME: make me an event
   def load_card
+    # do content type processing, if it is an object, json or xml, parse that now and
+    # params[:object] = parsed_object
+    # looking into json parsing (apparently it is deep in rails: params_parser.rb)
     @card = case params[:id]
       when '*previous'   ; return wagn_redirect( previous_location )
       when /^\~(\d+)$/   ; Card.fetch $1.to_i

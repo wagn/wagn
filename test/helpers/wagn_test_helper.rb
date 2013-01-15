@@ -1,9 +1,9 @@
-require "#{Rails.root}/lib/util/card_builder.rb"
+#require "#{Rails.root}/lib/util/card_builder.rb"
 #require 'renderer'
 
 module WagnTestHelper
 
-  include CardBuilderMethods
+#  include CardBuilderMethods
 
   def setup_default_user
     User.cache.reset

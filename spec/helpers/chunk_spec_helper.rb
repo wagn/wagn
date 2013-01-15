@@ -1,5 +1,5 @@
 module ChunkSpecHelper
-  include CardBuilderMethods
+#  include CardBuilderMethods
   include AuthenticatedTestHelper
 
   # This module is to be included in unit tests that involve matching chunks.
@@ -73,6 +73,10 @@ module ChunkSpecHelper
       content.chunks.last.should respond_to a_method
       content.chunks.last.send(a_method.to_sym).should == expected_value # "Wrong #{a_method} value"
     end
+  end
+  
+  def newcard name, content=""
+    Card.create! :name=>name, :content=>content
   end
 
 =begin

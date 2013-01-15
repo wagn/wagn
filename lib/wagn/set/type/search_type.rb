@@ -246,7 +246,7 @@ module Wagn
   class Renderer::Html
     def page_link text, page
       @paging_path_args[:offset] = page * @paging_limit
-      " #{link_to raw(text), path(:read, @paging_path_args), :class=>'card-paging-link slotter', :remote => true} "
+      " #{link_to raw(text), path(@paging_path_args), :class=>'card-paging-link slotter', :remote => true} "
     end
 
     def paging_params

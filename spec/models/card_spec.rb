@@ -276,8 +276,8 @@ describe "basic card tests" do
   it 'update_should_create_subcards' do
     Account.user = 'joe_user'
     Account.as 'joe_user' do
-
-      Card.update (Card.create! :name=>'Banana').id, :cards=>{ "+peel" => { :content => "yellow" }}
+      banana = Card.create! :name=>'Banana'
+      Card.update banana.id, :cards=>{ "+peel" => { :content => "yellow" }}
 
       peel = Card['Banana+peel']
       peel.content.       should == "yellow"

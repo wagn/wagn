@@ -1,8 +1,20 @@
 require_dependency 'json'
 
 module Wagn
+  module Set::SettingGroups
+    include Sets
+
+    format :base
+
+    define_view( :name, :name => :perms )         do "Permission"     end
+    define_view( :name, :name => :look )          do "Look and Feel"  end
+    define_view( :name, :name => :com )           do "Communication"  end
+    define_view( :name, :name => :other )         do "Other"          end
+    define_view( :name, :name => :pointer_group ) do "Item Selection" end
+  end
+
   module Set::Type::Setting
-    include Wagn::Sets
+    include Sets
 
     format :base
 
@@ -30,10 +42,23 @@ module Wagn
       %{<div class="instruction">#{process_content "{{+*right+*edit help}}"}</div>}
     end
 
+    SETTING_GROUPS = {
+      :perms         => [ :create, :read, :update, :delete, :comment ],
+      :look          => [ :default, :content, :layout, :table_of_content ],
+      :com           => [ :add_help, :edit_help, :send, :thanks ],
+      :pointer_group => [ :options, :options_label, :input ],
+      :other         => [ :autoname, :accountable, :captcha ]
+    }
+
+    DEFAULT_CONFIG = {:seq=>9999}
+
     module Model
       def config key=nil
-        @configs||= {:seq=>9999}
-        key.nil? ? @configs : @configs[key.to_sym]
+        raise "who calls ???"
+        if @configs.nil?
+          #@configs = {}.merge( DEFAULT_CONFIGS[self.codename] || DEFAULT_CONFIG )
+        end
+        @configs
       end
     end
   end

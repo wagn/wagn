@@ -53,22 +53,6 @@ module Cardlib::Settings
       Card["*all".to_name.trait_name(setting_name)] or
         fallback ? default_rule_card(fallback) : nil
     end
-
-    def setting_cards_by_group
-      @@setting_cards_by_group ||= begin
-        Account.as_bot do
-          Card.search(:type=>Card::SettingID, :limit=>'0').inject({}) do |grouped,setting_card|
-            if group = setting_card.config(:group)
-              grouped[ group ] ||= []
-              grouped[ group ] << setting_card
-            end
-            grouped
-          end.each_value do |card_list|
-            card_list.sort!{ |x,y| x.config(:seq) <=> y.config(:seq)}.map(&:name)
-          end
-        end
-      end
-    end
   end
 
   def self.included(base)

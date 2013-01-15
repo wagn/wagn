@@ -22,15 +22,15 @@ module Wagn
     end
 
     define_view :core , :type=>:set do |args|
-      body = card.setting_cards_by_group.map do |group, data|
+      body = card.setting_codes_by_group.map do |group, data|
         next if group.nil? || data.nil?
         content_tag(:tr, :class=>"rule-group") do
           (["#{Card[group].name} Settings"]+%w{Content Type}).map do |heading|
             content_tag(:th, :class=>'rule-heading') { heading }
           end * "\n"
         end +
-        raw( data.map do |setting_card|
-          rule_card = card.fetch(:trait=>setting_card.codename, :new=>{})
+        raw( data.map do |setting_code|
+          rule_card = card.fetch(:trait=>setting_codename, :new=>{})
           process_inclusion rule_card, :view=>:closed_rule
         end * "\n" )
       end.compact * ''
@@ -80,10 +80,10 @@ module Wagn
         end
       end
 
-      def setting_cards_by_group
+      def setting_codes_by_group
         test = Card::PointerID != ( templt = templt = fetch(:trait=>:content) || fetch(:trait=>:default) and
                  templt.type_id or (right_id == Card::TypeID ? left_id : trunk.type_id) )
-        Card.setting_cards_by_group.reject {|k,v| test && k == :pointer_group }
+        Wagn::Set::Type::Setting::SETTING_GROUPS.reject {|k,v| test && k == :pointer_group }
       end
 
       def prototype

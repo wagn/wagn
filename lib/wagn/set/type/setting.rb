@@ -29,12 +29,12 @@ module Wagn
     define_view :closed_content, :type=>'setting' do |args|
       %{<div class="instruction">#{process_content "{{+*right+*edit help}}"}</div>}
     end
-  end
 
-  module Model
-    def config key=nil
-      @configs||= {:seq=>9999}
-      key.nil? ? @configs : @configs[key.to_sym]
+    module Model
+      def config key=nil
+        @configs||= {:seq=>9999}
+        key.nil? ? @configs : @configs[key.to_sym]
+      end
     end
   end
 end

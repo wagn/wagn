@@ -68,6 +68,7 @@ module Cardlib
     class BasePattern
 
       @@ruby19 = !!(RUBY_VERSION =~ /^1\.9/)
+      cattr_accessor :ruby19
       MODULES={}
 
       class << self
@@ -247,10 +248,6 @@ module Cardlib
       def self.label(name)              %{The card "#{name}"}      end
       def self.prototype_args(base)     { :name=>base }            end
       def self.trunk_name(card)         card.name                  end
-    end
-
-    class BasePattern
-      include Wagn::Sets::AllSets
     end
   end
 end

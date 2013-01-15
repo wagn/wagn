@@ -72,32 +72,6 @@ Done"
   cattr_reader :subset_actions
   @@subset_actions = {}
 
-  METHODS = {
-    'POST'   => :create,  # C
-    'GET'    => :read,    # R
-    'PUT'    => :update,  # U
-    'DELETE' => :delete,  # D
-    'INDEX'  => :index
-  }
-
-  # this form of dispatching is not used yet, write specs first, then integrate into routing
-  def action
-    @action = METHODS[request.method]
-    Rails.logger.warn "action #{request.method}, #{@action} #{params.inspect}"
-    warn "action #{request.method}, #{@action} #{params.inspect}"
-    send "perform_#{@action}"
-    render_errors || success
-  end
-
-  def action_method event
-    return "_final_#{event}" unless card && subset_actions[event]
-    card.method_keys.each do |method_key|
-      meth = "_final_"+(method_key.blank? ? "#{event}" : "#{method_key}_#{event}")
-      #warn "looking up #{method_key}, M:#{meth} for #{card.name}"
-      return meth if respond_to?(meth.to_sym)
-    end
-  end
-
   def create
     if @card.save
       success
@@ -284,28 +258,27 @@ Done"
 
   # FIXME: make me an event
   def load_card
-    # do content type processing, if it is an object, json or xml, parse that now and
-    # params[:object] = parsed_object
-    # looking into json parsing (apparently it is deep in rails: params_parser.rb)
     @card = case params[:id]
       when '*previous'   ; return wagn_redirect( previous_location )
       when /^\~(\d+)$/   ; Card.fetch $1.to_i
       when /^\:(\w+)$/   ; Card.fetch $1.to_sym
       else
-        opts = params[:card] ? params[:card].clone : (obj = params[:object]) ? obj : {}
+
+        opts = if opts = params[:card]  ; opts.clone
+            elsif opts = params[:object]; opts
+            else                        {}
+            end
+
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
-        #Rails.logger.warn "load params: #{params.inspect}, #{opts.inspect}"
         name = params[:id] || opts[:name]
         
         if @action == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
           # I think we may need to create a "#create" instance method that handles this checking.
           # that would let us get rid of this...
-          #Rails.logger.warn "load create card #{name.inspect}, #{opts.inspect}"
           opts[:name] ||= name
           Card.new opts
         else
-          #Rails.logger.warn "load card fetch_or_new #{name.inspect}, #{opts.inspect}"
           Card.fetch name, :new=>opts
         end
       end

@@ -75,7 +75,7 @@ module Cardlib::Settings
 
     SETTING_ATTRIBUTES = {
       :perms => [ :create, :read, :update, :delete, :comment ],
-      :look  => [ :default, :content, :layout, :table_of_content ],
+      :look  => [ :default, :content, :layout, :table_of_contents ],
       :com   => [ :add_help, :edit_help, :send, :thanks ],
       :other => [ :autoname, :accountable, :captcha ]
     }

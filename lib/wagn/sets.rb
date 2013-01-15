@@ -1,7 +1,4 @@
-
-
 module Wagn
-
   module Sets
     @@dirs = []
 
@@ -124,50 +121,58 @@ module Wagn
         if !method_defined? "render_#{view}"
           #warn "defining view method[#{Renderer.renderer}] _render_#{view}"
           Renderer.renderer.class_eval do
-            define_method( "_render_#{view}" ) do |*a|
-              a = [{}] if a.empty?
-              if final_method = view_method(view)
-                with_inclusion_mode view do
-                  send final_method, *a
+            define_method "_render_#{view}" do |*a|
+              begin
+                a = [{}] if a.empty?
+                if final_method = view_method(view)
+                  with_inclusion_mode view do
+                    send final_method, *a
+                  end
+                else
+                  unsupported_view view
                 end
-              else
-                raise "<strong>unsupported view: <em>#{view}</em></strong>"
+              rescue Exception=>e
+                rescue_view e, view
               end
             end
           end
 
           #Rails.logger.warn "define_method render_#{view}"
           Renderer.renderer.class_eval do
-            define_method( "render_#{view}" ) do |*a|
-              begin
-                send( "_render_#{ ok_view view, *a }", *a )
-              rescue Exception=>e
-                controller.send :notify_airbrake, e if Airbrake.configuration.api_key
-                warn "Render Error: #{e.class} : #{e.message}"
-                Rails.logger.info "\nRender Error: #{e.class} : #{e.message}"
-                Rails.logger.debug "  #{e.backtrace*"\n  "}"
-                rendering_error e, (card && card.name.present? ? card.name : 'unknown card')
-              end
+            define_method "render_#{view}" do |*a|
+              send "_render_#{ ok_view view, *a }", *a
             end
           end
         end
       end
+      
+
 
       def alias_view view, opts={}, *aliases
         view_key = get_set_key view, opts
         Renderer.subset_views[view] = true if !opts.empty?
         aliases.each do |alias_view|
           alias_view_key = case alias_view
-            when String; alias_view
-            when Symbol; (view_key==view ? alias_view.to_sym : view_key.to_s.sub(/_#{view}$/, "_#{alias_view}").to_sym)
-            when Hash;   get_set_key alias_view[:view] || view, alias_view
-            else; raise "Bad view #{alias_view.inspect}"
+            when String
+              alias_view
+            when Symbol
+              if view_key==view
+                alias_view.to_sym
+              else
+                view_key.to_s.sub( /_#{view}$/, "_#{alias_view}" ).to_sym
+              end
+            when Hash
+              get_set_key (alias_view[:view] || view), alias_view
+            else
+              raise "Bad view #{alias_view.inspect}"
             end
 
-            #Rails.logger.warn "def view final_alias #{alias_view_key}, #{view_key}"
-            Renderer.renderer.class_eval { define_method( "_final_#{alias_view_key}".to_sym ) do |*a|
-            send "_final_#{view_key}", *a
-          end }
+          #Rails.logger.warn "def view final_alias #{alias_view_key}, #{view_key}"
+          Renderer.renderer.class_eval do
+            define_method "_final_#{alias_view_key}".to_sym do |*a|
+              send "_final_#{view_key}", *a
+            end
+          end
         end
       end
     end

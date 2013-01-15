@@ -7,12 +7,12 @@ describe "Card" do
   before do
     Timecop.travel(FUTURE)  # make sure we're ahead of all the test data
     @just_s = [Card["Sara"].id]
-    @s_and_j= [Card["Sara"].id, Card["John"].id]
+    @s_and_j= [Card["Sara"].id, Card["John"].id].sort
   end
 
   describe "#watchers" do
     it "returns users watching this card specifically" do
-      Card["All Eyes On Me"].watchers.should == @s_and_j
+      Card["All Eyes On Me"].watchers.sort.should == @s_and_j
     end
 
     it "returns users watching cards of this type" do
@@ -22,7 +22,7 @@ describe "Card" do
 
   describe "#card_watchers" do
     it "returns users watching this card specifically" do
-      Card["All Eyes On Me"].watcher_pairs(false).should == @s_and_j
+      Card["All Eyes On Me"].watcher_pairs(false).sort.should == @s_and_j
     end
   end
 

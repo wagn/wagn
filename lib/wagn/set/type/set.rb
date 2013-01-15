@@ -1,6 +1,7 @@
 
 module Wagn
-  module Set::Type::Set
+  module Set::Type
+   module Set
     include Sets
 
     format :base
@@ -47,7 +48,7 @@ module Wagn
 
 
     module Model
-      include Wagn::Set::Type::SearchType::Model
+      include SearchType::Model
 
       def inheritable?
         return true if junction_only?
@@ -83,7 +84,7 @@ module Wagn
       def setting_codes_by_group
         test = Card::PointerID != ( templt = templt = fetch(:trait=>:content) || fetch(:trait=>:default) and
                  templt.type_id or (right_id == Card::TypeID ? left_id : trunk.type_id) )
-        Wagn::Set::Type::Setting::SETTING_GROUPS.reject {|k,v| test && k == :pointer_group }
+        Setting::SETTING_GROUPS.reject {|k,v| test && k == :pointer_group }
       end
 
       def prototype
@@ -92,5 +93,6 @@ module Wagn
       end
 
     end
+   end
   end
 end

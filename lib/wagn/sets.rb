@@ -35,6 +35,7 @@ module Wagn
         key.to_sym
       end
 
+=begin
       def get_module mod
         module_name_parts = mod.split('::').map(&:to_sym)
         module_name_parts.inject Wagn::Set do |base, part|
@@ -57,6 +58,7 @@ module Wagn
         #warn "namespace2: #{spc.inspect} :: #{const}"
         const.module_eval &block
       end
+=end
     end
 
     CARDLIB   = "#{Rails.root}/lib/cardlib/*.rb"

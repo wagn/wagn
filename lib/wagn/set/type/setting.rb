@@ -16,6 +16,16 @@ module Wagn
   module Set::Type::Setting
     include Sets
 
+    SETTING_GROUPS = {
+      :perms         => [ :create, :read, :update, :delete, :comment ],
+      :look          => [ :default, :content, :layout, :table_of_content ],
+      :com           => [ :add_help, :edit_help, :send, :thanks ],
+      :pointer_group => [ :options, :options_label, :input ],
+      :other         => [ :autoname, :accountable, :captcha ]
+    }
+
+    DEFAULT_CONFIG = {:seq=>9999}
+
     format :base
 
     define_view :core, :type=>'setting' do |args|
@@ -42,24 +52,5 @@ module Wagn
       %{<div class="instruction">#{process_content "{{+*right+*edit help}}"}</div>}
     end
 
-    SETTING_GROUPS = {
-      :perms         => [ :create, :read, :update, :delete, :comment ],
-      :look          => [ :default, :content, :layout, :table_of_content ],
-      :com           => [ :add_help, :edit_help, :send, :thanks ],
-      :pointer_group => [ :options, :options_label, :input ],
-      :other         => [ :autoname, :accountable, :captcha ]
-    }
-
-    DEFAULT_CONFIG = {:seq=>9999}
-
-    module Model
-      def config key=nil
-        raise "who calls ???"
-        if @configs.nil?
-          #@configs = {}.merge( DEFAULT_CONFIGS[self.codename] || DEFAULT_CONFIG )
-        end
-        @configs
-      end
-    end
   end
 end

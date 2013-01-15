@@ -72,6 +72,32 @@ Done"
   cattr_reader :subset_actions
   @@subset_actions = {}
 
+  METHODS = {
+    'POST'   => :create,  # C
+    'GET'    => :read,    # R
+    'PUT'    => :update,  # U
+    'DELETE' => :delete,  # D
+    'INDEX'  => :index
+  }
+
+  # this form of dispatching is not used yet, write specs first, then integrate into routing
+  def action
+    @action = METHODS[request.method]
+    Rails.logger.warn "action #{request.method}, #{@action} #{params.inspect}"
+    warn "action #{request.method}, #{@action} #{params.inspect}"
+    send "perform_#{@action}"
+    render_errors || success
+  end
+
+  def action_method event
+    return "_final_#{event}" unless card && subset_actions[event]
+    card.method_keys.each do |method_key|
+      meth = "_final_"+(method_key.blank? ? "#{event}" : "#{method_key}_#{event}")
+      #warn "looking up #{method_key}, M:#{meth} for #{card.name}"
+      return meth if respond_to?(meth.to_sym)
+    end
+  end
+
   def create
     if @card.save
       success

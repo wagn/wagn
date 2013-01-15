@@ -20,7 +20,7 @@ class RevisionTest < ActiveSupport::TestCase
     author_cd1.save
     author_cd2.save
     Account.user = author1
-    card = newcard( 'alpha', 'stuff')
+    card = Card.create! :name=>'alpha', :content=>'stuff'
     Account.user = author2
     card.content = 'boogy'
     card.save
@@ -60,7 +60,7 @@ class RevisionTest < ActiveSupport::TestCase
 =end
 
   def test_save_draft
-    @card = newcard("mango", "foo")
+    @card = Card.create! :name=>"mango", :content=>"foo"
     @card.save_draft("bar")
     assert_equal 1, @card.drafts.length
     @card.save_draft("booboo")

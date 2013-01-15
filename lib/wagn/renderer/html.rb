@@ -152,10 +152,11 @@ module Wagn
       %{<span class="render-error">error rendering #{link_to_page(cardname, nil, :title=>CGI.escapeHTML(exception.message))}</span>}
     end
 
-    def link_to_action text, to_action, html_opts={}
+    def link_to_view text, view, html_opts={}
       html_opts[:remote] = true
-      path_options = to_action == :read ? {} : { :view => to_action}
-      link_to text, path(:read, path_options), html_opts
+      html_opts[:rel] = 'nofollow'
+      path_opts = view==:read ? {} : { :view=>view }
+      link_to text, path( path_opts ), html_opts
     end
 
     def name_field form=nil, options={}
@@ -207,7 +208,7 @@ module Wagn
     end
 
     def form_opts url, classes='', other_html={}
-      url = path(url) if Symbol===url
+      url = path(:action=>url) if Symbol===url
       opts = { :url=>url, :remote=>true, :html=>other_html }
       opts[:html][:class] = classes + ' slotter'
       opts[:html][:recaptcha] = 'on' if Wagn::Conf[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
@@ -282,14 +283,14 @@ module Wagn
     # --------------------------------------------------
     # some of this should be in rich_html, maybe most
     def revision_link text, revision, name, accesskey='', mode=nil
-      link_to text, path(:changes, :rev=>revision, :mode=>(mode || params[:mode] || true) ),
-        :class=>"slotter", :remote=>true
+      link_to text, path(:view=>:changes, :rev=>revision, :mode=>(mode || params[:mode] || true) ),
+        :class=>"slotter", :remote=>true, :rel=>'nofollow'
     end
 
     def rollback to_rev=nil
       to_rev ||= @revision_number
       if card.ok?(:update) && !(card.current_revision==@revision)
-        link_to 'Save as current', path(:rollback, :rev=>to_rev),
+        link_to 'Save as current', path(:action=>:rollback, :rev=>to_rev),
           :class=>'slotter', :remote=>true
       end
     end

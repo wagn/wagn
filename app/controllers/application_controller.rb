@@ -93,10 +93,10 @@ class ApplicationController < ActionController::Base
     render_errors
   end
 
-  def render_errors options={}
+  def render_errors
     if @card.errors.any?
-      view   = options[:view]   || @card.error_view   || :errors
-      status = options[:status] || @card.error_status || 422
+      view   = @card.error_view   || :errors
+      status = @card.error_status || 422
       show view, status
     end
   end
@@ -172,7 +172,7 @@ class ApplicationController < ActionController::Base
     @card ||= Card.new
     @card.errors.add :exception, exception.message
 
-    render_errors :view=>view, :status=>status
+    show view, status
   end
 
 end

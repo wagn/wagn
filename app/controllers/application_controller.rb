@@ -69,12 +69,6 @@ class ApplicationController < ActionController::Base
     [nil, 'html'].member?(params[:format])
   end
 
-  # ------------------( permission filters ) -------
-  def read_ok
-    @card.ok?(:read) || deny(:read)
-  end
-
-
   # ----------( rendering methods ) -------------
 
   def wagn_redirect url
@@ -84,13 +78,6 @@ class ApplicationController < ActionController::Base
     else
       redirect_to url
     end
-  end
-
-  def deny action=nil
-    params[:action] = action if action
-    @card.error_view = :denial
-    @card.error_status = 403
-    render_errors
   end
 
   def render_errors
@@ -149,28 +136,34 @@ class ApplicationController < ActionController::Base
   rescue_from Exception do |exception|
     Rails.logger.info "exception = #{exception.class}: #{exception.message}"
     
-    view, status = case exception
-    when Wagn::NotFound, ActiveRecord::RecordNotFound
-      [ :not_found, 404 ]
-    when Wagn::PermissionDenied, Card::PermissionDenied
-      [ :denial, 403]
-    when Wagn::BadAddress, ActionController::UnknownController, AbstractController::ActionNotFound
-      [ :bad_address, 404 ]
-    else
-      Rails.logger.debug exception.backtrace*"\n"
-      notify_airbrake exception if Airbrake.configuration.api_key
-
-      if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) #&& @card && @card.errors.any?
-        [ :errors, 422]
-      elsif Wagn::Conf[:migration]
-        raise exception
-      else
-        Rails.logger.level == 0 ? raise( exception ) : [ :server_error, 500 ]
-      end
-    end
-    
     @card ||= Card.new
-    @card.errors.add :exception, exception.message
+    
+    view, status = case exception
+      ## arguably the view and status should be defined in the error class;
+      ## some are redundantly defined in view
+      when Wagn::NotFound, ActiveRecord::RecordNotFound
+        [ :not_found, 404 ]
+      when Wagn::PermissionDenied, Card::PermissionDenied
+        [ :denial, 403]
+      when Wagn::BadAddress, ActionController::UnknownController, AbstractController::ActionNotFound
+        [ :bad_address, 404 ]
+      when Wagn::Oops
+        @card.errors.add :exception, exception.message 
+        # Wagn:Oops error messages are visible to end users and are generally not treated as bugs.
+        # Probably want to rename accordingly.
+        [ :errors, 422]
+      else #the following indicate a code problem and therefore require full logging
+        Rails.logger.debug exception.backtrace*"\n"
+        notify_airbrake exception if Airbrake.configuration.api_key
+
+        if ActiveRecord::RecordInvalid === exception
+          [ :errors, 422]
+        elsif Wagn::Conf[:migration] or Rails.logger.level == 0 # could also just check non-production mode...
+          raise exception
+        else
+          [ :server_error, 500 ]
+        end
+      end
 
     show view, status
   end

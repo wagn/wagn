@@ -318,7 +318,7 @@ class Card
   end
 
   def destroy!
-    destroy or raise "Destroy failed: #{errors.full_messages.join(',')}"
+    destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
   end
 
   def validate_destroy

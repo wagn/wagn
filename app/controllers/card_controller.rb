@@ -43,8 +43,9 @@ class CardController < ApplicationController
   end
 
   def delete
+    
     @card.destroy
-    discard_locations_for @card
+    discard_locations_for @card #should be an event
     success 'REDIRECT: *previous'
   end
 
@@ -60,7 +61,7 @@ class CardController < ApplicationController
     else
       show :denial
     end
-  end #FIXME!  move to pack
+  end #FIXME!  move into renderer
 
 
 

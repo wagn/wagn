@@ -81,7 +81,7 @@ class ApplicationController < ActionController::Base
   end
 
   def render_errors
-    if @card.errors.any?
+    if @card.errors.any? #this check is currently superfluous
       view   = @card.error_view   || :errors
       status = @card.error_status || 422
       show view, status

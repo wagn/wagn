@@ -14,8 +14,6 @@ module Wagn
       "Other"         => [ :autoname, :accountable, :captcha ]
     }
 
-    DEFAULT_CONFIG = {:seq=>9999}
-
 
     format :base
 

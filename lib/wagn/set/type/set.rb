@@ -6,22 +6,6 @@ module Wagn
 
     format :base
 
-    # make these into traits of Setting cards:
-    # *content+*group => [[:code]]
-    # where below are the codenames and the cardnames (in Wagn seed DB)
-    #@@setting_group_title = {
-    #  :perms   => 'Permission',
-    #  :look    => 'Look and Feel',
-    #  :com     => 'Communication',
-    #  :other   => 'Other',
-    #  :pointer_group => 'Pointer'
-    #}
-    # should construct this from a search:
-    # to  model/settings: Card class method
-    def setting_groups
-      [:perms, :look, :com, :pointer_group, :other]
-    end
-
     define_view :core , :type=>:set do |args|
       body = card.setting_codes_by_group.map do |group_name, data|
         next if group_name.nil? || data.nil?
@@ -82,8 +66,15 @@ module Wagn
       end
 
       def setting_codes_by_group
-        test = Card::PointerID != ( templt = templt = fetch(:trait=>:content) || fetch(:trait=>:default) and
-                 templt.type_id or (right_id == Card::TypeID ? left_id : trunk.type_id) )
+        test = Card::PointerID != (
+          if templt = fetch(:trait=>:content) || fetch(:trait=>:default)
+            templt.type_id
+          elsif right_id == Card::TypeID
+            left_id
+          else
+            trunk.type_id
+          end
+        )
         Setting::SETTING_GROUPS.reject {|k,v| test && k == Setting::POINTER_KEY }
       end
 

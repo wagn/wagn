@@ -67,8 +67,7 @@ module Cardlib
   module Patterns
     class BasePattern
 
-      @@ruby19 = !!(RUBY_VERSION =~ /^1\.9/)
-      cattr_accessor :ruby19
+      RUBY19 = !!(RUBY_VERSION =~ /^1\.9/)
       MODULES={}
 
       class << self
@@ -84,7 +83,7 @@ module Cardlib
             if MODULES.has_key?(key)
               MODULES[key]
             else
-              args = @@ruby19 ? [part, false] : [part]
+              args = RUBY19 ? [part, false] : [part]
               MODULES[key] = base.const_defined?(*args) ? base.const_get(*args) : nil
             end
           end

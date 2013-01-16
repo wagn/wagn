@@ -41,7 +41,7 @@ module Wagn
         module_name_parts.inject Wagn::Set do |base, part|
           return if base.nil?
           key = "#{base}::#{part}"
-          args = Cardlib::Patterns::BasePattern.ruby19 ? [part, false] : [part]
+          args = Cardlib::Patterns::BasePattern::RUBY19 ? [part, false] : [part]
           Cardlib::Patterns::BasePattern::MODULES[key] ||= if base.const_defined?(*args)
                 base.const_get *args
               else

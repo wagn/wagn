@@ -27,19 +27,21 @@ class ObjectContent < SimpleDelegator
     if String===content and !(arr = content.to_s.scan SCAN_RE[ACTIVE_CHUNKS]).empty?
       remainder = $'
       content = arr.map do |match_arr|
-          pre_chunk = match_arr.shift; match = match_arr.shift
-          match_index = match_arr.index {|x| !x.nil? }
-          chunk_class, range = Chunks::Abstract.re_class(match_index)
-          chunk_params = match_arr[range]
-          newck = chunk_class.new match, card_params, chunk_params
-          if newck.avoid_autolinking?
-            "#{pre_chunk}#{match}"
-          elsif pre_chunk.to_s.size > 0
-            [pre_chunk, newck]
-          else
-            newck
-          end
-        end.flatten.compact
+        pre_chunk   = match_arr.shift
+        match       = match_arr.shift
+        match_index = match_arr.index { |x| !x.nil? }
+        
+        chunk_class, range = Chunks::Abstract.re_class(match_index)
+        chunk_params = match_arr[range]
+        newck = chunk_class.new match, card_params, chunk_params
+        if newck.avoid_autolinking?
+          "#{pre_chunk}#{match}"
+        elsif pre_chunk.to_s.size > 0
+          [pre_chunk, newck]
+        else
+          newck
+        end
+      end.flatten.compact
       content << remainder if remainder.to_s != ''
     end
     content

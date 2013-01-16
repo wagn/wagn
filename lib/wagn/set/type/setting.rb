@@ -4,7 +4,7 @@ module Wagn
   module Set::Type::Setting
     include Sets
 
-    POINTER_KEY = "Item Selection"
+    POINTER_KEY = "Pointer"
 
     SETTING_GROUPS = {
       "Permission"    => [ :create, :read, :update, :delete, :comment ],

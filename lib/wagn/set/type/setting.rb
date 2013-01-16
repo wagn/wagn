@@ -1,30 +1,21 @@
 require_dependency 'json'
 
 module Wagn
-  module Set::SettingGroups
-    include Sets
-
-    format :base
-
-    define_view( :name, :name => :perms )         do "Permission"     end
-    define_view( :name, :name => :look )          do "Look and Feel"  end
-    define_view( :name, :name => :com )           do "Communication"  end
-    define_view( :name, :name => :other )         do "Other"          end
-    define_view( :name, :name => :pointer_group ) do "Item Selection" end
-  end
-
   module Set::Type::Setting
     include Sets
 
+    POINTER_KEY = "Item Selection"
+
     SETTING_GROUPS = {
-      :perms         => [ :create, :read, :update, :delete, :comment ],
-      :look          => [ :default, :content, :layout, :table_of_contents ],
-      :com           => [ :add_help, :edit_help, :send, :thanks ],
-      :pointer_group => [ :options, :options_label, :input ],
-      :other         => [ :autoname, :accountable, :captcha ]
+      "Permission"    => [ :create, :read, :update, :delete, :comment ],
+      "Look and Feel" => [ :default, :content, :layout, :table_of_contents ],
+      "Communication" => [ :add_help, :edit_help, :send, :thanks ],
+      POINTER_KEY     => [ :options, :options_label, :input ],
+      "Other"         => [ :autoname, :accountable, :captcha ]
     }
 
     DEFAULT_CONFIG = {:seq=>9999}
+
 
     format :base
 

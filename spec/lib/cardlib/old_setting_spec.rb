@@ -53,6 +53,7 @@ describe Card do
     end
   end
 
+  POINTER_KEY = Wagn::Set::Type::Setting::POINTER_KEY
   describe "#setting_names" do
     before do
       @pointer_settings =  [ :options, :options_label, :input ]
@@ -63,7 +64,7 @@ describe Card do
       #warn "snbg #{snbg.class} #{snbg.inspect}"
       snbg.keys.length.should == 4
       snbg.keys.first.should be_a Symbol
-      snbg.keys.member?( :pointer_group ).should_not be_true
+      snbg.keys.member?( POINTER_KEY ).should_not be_true
     end
 
     it "returns pointer-specific setting names for pointer card (*type)" do
@@ -76,10 +77,10 @@ describe Card do
       c2 = Card.fetch('Fruit+*type')
       snbg = c2.setting_codes_by_group
       #warn "snbg #{snbg.class}, #{snbg.inspect}"
-      snbg[:pointer_group].should == @pointer_settings
+      snbg[POINTER_KEY].should == @pointer_settings
       c3 = Card.fetch('Pointer+*type')
       snbg = c3.setting_codes_by_group
-      snbg[:pointer_group].should == @pointer_settings
+      snbg[POINTER_KEY].should == @pointer_settings
     end
 
     it "returns pointer-specific setting names for pointer card (*self)" do
@@ -88,7 +89,7 @@ describe Card do
       c = Card.fetch_or_new('*account+*related+*self')
       snbg = c.setting_codes_by_group
       #warn "result #{snbg.inspect}"
-      snbg[:pointer_group].should == @pointer_settings
+      snbg[POINTER_KEY].should == @pointer_settings
     end
 
   end

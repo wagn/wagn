@@ -1,7 +1,7 @@
-
-require_dependency 'application_controller'
-
 module Wagn
+  # pre-declare the root of the Modules namespace tree
+  module Set
+  end
 
   module Sets
     @@dirs = []
@@ -16,31 +16,47 @@ module Wagn
         #warn "gvkey #{selection_key}, #{opts.inspect} R:#{key}"
         key.to_sym
       end
+
+=begin
+      def get_module mod
+        module_name_parts = mod.split('::').map(&:to_sym)
+        module_name_parts.inject Wagn::Set do |base, part|
+          return if base.nil?
+          key = "#{base}::#{part}"
+          args = Cardlib::Patterns::BasePattern::RUBY19 ? [part, false] : [part]
+          Cardlib::Patterns::BasePattern::MODULES[key] ||= if base.const_defined?(*args)
+                base.const_get *args
+              else
+                base.const_set part.to_sym, Module.new
+              end
+        end
+      rescue NameError => e
+        warn "rescue ne #{e.inspect}, #{e.backtrace*"\n"}"
+        nil
+      end
+
+      def namespace spc, &block
+        const = get_module spc
+        #warn "namespace2: #{spc.inspect} :: #{const}"
+        const.module_eval &block
+      end
+=end
     end
 
-    class << self
+    CARDLIB   = "#{Rails.root}/lib/cardlib/*.rb"
+    SETS      = "#{Rails.root}/lib/wagn/set/"
+    RENDERERS = "#{Rails.root}/lib/wagn/renderer/*.rb"
 
-      def load_cardlib
-        load_dir File.expand_path( "#{Rails.root}/lib/cardlib/*.rb", __FILE__ )
-      end
+    class << self
+      def load_cardlib  ; load_dir File.expand_path( CARDLIB, __FILE__   ) end
+      def load_renderers; load_dir File.expand_path( RENDERERS, __FILE__ ) end
+      def dir newdir    ; @@dirs << newdir                                 end
+      def load_dirs     ; @@dirs.each { |dir| load_dir dir }               end
 
       def load_sets
-        [ "#{Rails.root}/lib/wagn/set/", Wagn::Conf[:pack_dirs].split( /,\s*/ ) ].flatten.each do |dirname|
+        [ SETS, Wagn::Conf[:pack_dirs].split( /,\s*/ ) ].flatten.each do |dirname|
           load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
         end
-      end
-
-      def load_renderers
-        load_dir File.expand_path( "#{Rails.root}/lib/wagn/renderer/*.rb", __FILE__ )
-      end
-
-      def all_constants base
-        base.constants.map {|c| c=base.const_get(c) and all_constants(c) }
-      end
-
-
-      def dir newdir
-        @@dirs << newdir
       end
 
       def load_dir dir
@@ -48,19 +64,12 @@ module Wagn
           begin
             require_dependency file
           rescue Exception=>e
-            Rails.logger.warn "Error loading file #{file}: #{e.message}\n#{e.backtrace*"\n"}"
+            Rails.logger.warn "Error loading file #{file}: #{e.message}"
+            Rails.logger.debug "Error loading file #{file}: #{e.message}\n#{e.backtrace*"\n"}"
             raise e
           end
         end
       end
-
-      def load_dirs
-        @@dirs.each do |dir| load_dir dir end
-      end
-    end
-
-    module AllSets
-      Wagn::Sets.all_constants(Wagn::Set)
     end
 
     # this module also get the action definitions
@@ -119,50 +128,58 @@ module Wagn
         if !method_defined? "render_#{view}"
           #warn "defining view method[#{Renderer.renderer}] _render_#{view}"
           Renderer.renderer.class_eval do
-            define_method( "_render_#{view}" ) do |*a|
-              a = [{}] if a.empty?
-              if final_method = view_method(view)
-                with_inclusion_mode view do
-                  send final_method, *a
+            define_method "_render_#{view}" do |*a|
+              begin
+                a = [{}] if a.empty?
+                if final_method = view_method(view)
+                  with_inclusion_mode view do
+                    send final_method, *a
+                  end
+                else
+                  unsupported_view view
                 end
-              else
-                raise "<strong>unsupported view: <em>#{view}</em></strong>"
+              rescue Exception=>e
+                rescue_view e, view
               end
             end
           end
 
           #Rails.logger.warn "define_method render_#{view}"
           Renderer.renderer.class_eval do
-            define_method( "render_#{view}" ) do |*a|
-              begin
-                send( "_render_#{ ok_view view, *a }", *a )
-              rescue Exception=>e
-                controller.send :notify_airbrake, e if Airbrake.configuration.api_key
-                warn "Render Error: #{e.class} : #{e.message}"
-                Rails.logger.info "\nRender Error: #{e.class} : #{e.message}"
-                Rails.logger.debug "  #{e.backtrace*"\n  "}"
-                rendering_error e, (card && card.name.present? ? card.name : 'unknown card')
-              end
+            define_method "render_#{view}" do |*a|
+              send "_render_#{ ok_view view, *a }", *a
             end
           end
         end
       end
+      
+
 
       def alias_view view, opts={}, *aliases
         view_key = get_set_key view, opts
         Renderer.subset_views[view] = true if !opts.empty?
         aliases.each do |alias_view|
           alias_view_key = case alias_view
-            when String; alias_view
-            when Symbol; (view_key==view ? alias_view.to_sym : view_key.to_s.sub(/_#{view}$/, "_#{alias_view}").to_sym)
-            when Hash;   get_set_key alias_view[:view] || view, alias_view
-            else; raise "Bad view #{alias_view.inspect}"
+            when String
+              alias_view
+            when Symbol
+              if view_key==view
+                alias_view.to_sym
+              else
+                view_key.to_s.sub( /_#{view}$/, "_#{alias_view}" ).to_sym
+              end
+            when Hash
+              get_set_key (alias_view[:view] || view), alias_view
+            else
+              raise "Bad view #{alias_view.inspect}"
             end
 
-            #Rails.logger.warn "def view final_alias #{alias_view_key}, #{view_key}"
-            Renderer.renderer.class_eval { define_method( "_final_#{alias_view_key}".to_sym ) do |*a|
-            send "_final_#{view_key}", *a
-          end }
+          #Rails.logger.warn "def view final_alias #{alias_view_key}, #{view_key}"
+          Renderer.renderer.class_eval do
+            define_method "_final_#{alias_view_key}".to_sym do |*a|
+              send "_final_#{view_key}", *a
+            end
+          end
         end
       end
 

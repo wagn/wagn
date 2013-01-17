@@ -140,7 +140,7 @@ module Wagn
       if respond_to? method
         send method, args
       else
-        "<strong>unknown view: <em>#{view}</em></strong>"
+        unknown_view view
       end
     end
 
@@ -161,8 +161,27 @@ module Wagn
       optional_render view, args, default_hidden
     end
 
-    def rendering_error exception, cardname
-      "Error rendering: #{cardname}"
+    def rescue_view e, view
+      controller.send :notify_airbrake, e if Airbrake.configuration.api_key
+      Rails.logger.info "\nError rendering #{error_cardname} / #{view}: #{e.class} : #{e.message}"
+      Rails.logger.debug "  #{e.backtrace*"\n  "}"
+      rendering_error e, view
+    end
+
+    def error_cardname
+      card && card.name.present? ? card.name : 'unknown card'
+    end
+    
+    def unknown_view view
+      "unknown view: #{view}"
+    end
+
+    def unsupported_view view
+      "view (#{view}) not supported for #{error_cardname}"
+    end
+
+    def rendering_error exception, view
+      "Error rendering: #{error_cardname} (#{view} view)"
     end
 
     #

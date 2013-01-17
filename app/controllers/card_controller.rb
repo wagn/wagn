@@ -12,7 +12,6 @@ class CardController < ApplicationController
 
   before_filter :load_card
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :comment, :rollback ]
-  before_filter :read_ok,      :only=> [ :read_file ]
 
   # rest XML put/post
   def read_xml(io)
@@ -139,8 +138,12 @@ Done"
 
 
   def read_file
-    show_file
-  end #FIXME!  move to pack
+    if @card.ok? :read
+      show_file
+    else
+      show :denial
+    end
+  end #FIXME!  move into renderer
 
 
   def action_error *a

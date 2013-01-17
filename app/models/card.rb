@@ -74,7 +74,7 @@ class Card < ActiveRecord::Base
         super
       end
     rescue NameError
-        warn "ne: const_miss #{e.inspect}, #{const}" if const.to_sym==:Card
+      warn "ne: const_miss #{e.inspect}, #{const}" if const.to_sym==:Card
     end
 
     def setting name
@@ -364,7 +364,6 @@ class Card < ActiveRecord::Base
     left args or Card.new args.merge(:name=>cardname.left)
   end
 
-
   def dependents
     return [] if new_card?
 
@@ -575,7 +574,7 @@ class Card < ActiveRecord::Base
 
   def inspect
     "#<#{self.class.name}" + "##{id}" +
-    "###{object_id}" + #"k#{left_id}g#{right_id}" +
+    "###{object_id}" + #"l#{left_id}r#{right_id}" +
     "[#{debug_type}]" + "(#{self.name})" + #"#{object_id}" +
     #(errors.any? ? '*Errors*' : 'noE') +
     (errors.any? ? "<E*#{errors.full_messages*', '}*>" : '') +

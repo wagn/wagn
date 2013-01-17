@@ -90,7 +90,7 @@ class URIChunk < Chunks::Abstract
     @suspicious_preceding_character = params[0]
     @original_scheme, @user, @host, @port, @path, @query, @fragment, rest = params[1..-1]
     treat_trailing_character
-    @unmask_text = self.renderer ? "#{self.renderer.build_link(self.uri,@link_text)}#{@trailing_punctuation}" : @text
+    @process_chunk = self.renderer ? "#{self.renderer.build_link(self.uri,@link_text)}#{@trailing_punctuation}" : @text
   end
 
   def avoid_autolinking?

@@ -147,8 +147,9 @@ Done"
   end
 
   def delete
+    
     @card.destroy
-    discard_locations_for @card
+    discard_locations_for @card #should be an event
     success 'REDIRECT: *previous'
   end
 
@@ -159,8 +160,12 @@ Done"
 
 
   def read_file
-    show_file
-  end #FIXME!  move to pack
+    if @card.ok? :read
+      show_file
+    else
+      show :denial
+    end
+  end #FIXME!  move into renderer
 
 
 

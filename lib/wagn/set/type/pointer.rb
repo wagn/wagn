@@ -99,7 +99,7 @@ module Wagn
           when Array  ; ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
           else ""
         end
-        renderer.process_content content.gsub(/\[\[/,"<div class=\"pointer-item item-#{item_view}\">{{").gsub(/\]\]/,"|#{item_view}#{typeparam}}}</div>")
+        renderer.process_content_object content.gsub(/\[\[/,"<div class=\"pointer-item item-#{item_view}\">{{").gsub(/\]\]/,"|#{item_view}#{typeparam}}}</div>")
       end
 
       def item_cards( args={} )

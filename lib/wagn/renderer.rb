@@ -130,7 +130,7 @@ module Wagn
       if respond_to? method
         send method, args
       else
-        "<strong>unknown view: <em>#{view}</em></strong>"
+        unknown_view view
       end
     end
 
@@ -151,8 +151,27 @@ module Wagn
       optional_render view, args, default_hidden
     end
 
-    def rendering_error exception, cardname
-      "Error rendering: #{cardname}"
+    def rescue_view e, view
+      controller.send :notify_airbrake, e if Airbrake.configuration.api_key
+      Rails.logger.info "\nError rendering #{error_cardname} / #{view}: #{e.class} : #{e.message}"
+      Rails.logger.debug "  #{e.backtrace*"\n  "}"
+      rendering_error e, view
+    end
+
+    def error_cardname
+      card && card.name.present? ? card.name : 'unknown card'
+    end
+    
+    def unknown_view view
+      "unknown view: #{view}"
+    end
+
+    def unsupported_view view
+      "view (#{view}) not supported for #{error_cardname}"
+    end
+
+    def rendering_error exception, view
+      "Error rendering: #{error_cardname} (#{view} view)"
     end
 
     #
@@ -176,11 +195,11 @@ module Wagn
       self
     end
 
-    def process_content_s content=nil, opts={}
-      process_content(content, opts).to_s
+    def process_content content=nil, opts={}
+      process_content_object(content, opts).to_s
     end
 
-    def process_content content=nil, opts={}
+    def process_content_object content=nil, opts={}
       return content unless card
       content = card.content if content.blank?
 
@@ -188,7 +207,7 @@ module Wagn
 
       card.update_references( obj_content, true ) if card.references_expired # I thik we need this genralized
 
-      obj_content.process_content do |opts|
+      obj_content.process_content_object do |opts|
         expand_inclusion(opts) { yield }
       end
     end

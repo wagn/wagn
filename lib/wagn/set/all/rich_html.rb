@@ -22,7 +22,7 @@ module Wagn
       layout_content = get_layout_content args
 
       args[:params] = params # EXPLAIN why this is needed -- try without it
-      process_content_s layout_content, args
+      process_content layout_content, args
     end
   
     define_view :content do |args|
@@ -568,17 +568,17 @@ module Wagn
          </div>}
       end
     
-      %{ <h1 class="page-header">Missing Card</h1> } +
+      %{ <h1 class="page-header">Not Found</h1> } +
       wrap( :not_found, args.merge(:frame=>true) ) do # ENGLISH
         %{<div class="content instruction">
-            <div>There's no card named <strong>#{card.name}</strong>.</div>
+            <div>Could not find #{card.name.present? ? "<strong>#{card.name}</strong>" : 'the card requested'}.</div>
             #{sign_in_or_up_links}
           </div>}
       end
     end
 
     define_view :denial do |args|
-      task = args[:denied_task] || params[:action]
+      task = args[:denied_task] || :read
       to_task = %{to #{task} this card#{ ": <strong>#{card.name}</strong>" if card.name && !card.name.blank? }.}
       if !focal?
         %{<span class="denied"><!-- Sorry, you don't have permission #{to_task} --></span>}

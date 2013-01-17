@@ -114,14 +114,14 @@ describe ObjectContent do
     it "should render all includes" do
       cobj = ObjectContent.new CONTENT[:one], @card_opts
       cobj.as_json.to_s.should match /not rendered/
-      cobj.process_content &@render_block
+      cobj.process_content_object &@render_block
       (rdr=cobj.as_json.to_json).should_not match /not rendered/
       rdr.should == RENDERED[:one].to_json
     end
 
     it "should render links and inclusions" do
       cobj = ObjectContent.new CONTENT[:two], @card_opts
-      cobj.process_content &@render_block
+      cobj.process_content_object &@render_block
       (rdr=cobj.as_json.to_json).should_not match /not rendered/
       rdr.should == RENDERED[:two].to_json
     end
@@ -129,7 +129,7 @@ describe ObjectContent do
     it "should not need rendering if no inclusions" do
       cobj = ObjectContent.new CONTENT[:three], @card_opts
       (rdr=cobj.as_json.to_json).should match /not rendered/ # links are rendered too, but not with a block
-      cobj.process_content &@render_block
+      cobj.process_content_object &@render_block
       (rdr=cobj.as_json.to_json).should_not match /not rendered/
       rdr.should == RENDERED[:three].to_json
     end

@@ -239,7 +239,7 @@ class CardController < ApplicationController
       when '_self  '       ;  @card #could do as _self
       when /^(http|\/)/    ;  target
       when /^TEXT:\s*(.+)/ ;  $1
-      else                 ;  Card.fetch_or_new target.to_name.to_absolute(@card.cardname)
+      else                 ;  Card.fetch target.to_name.to_absolute(@card.cardname), :new=>{}
       end
 
     case

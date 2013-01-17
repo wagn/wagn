@@ -179,7 +179,7 @@ module Wagn
     #
 
     def subrenderer subcard, opts={}
-      subcard = Card.fetch_or_new(subcard) if String===subcard
+      subcard = Card.fetch( subcard, :new=>{} ) if String===subcard
       sub = self.clone
       sub.initialize_subrenderer subcard, self, opts
     end
@@ -296,7 +296,7 @@ module Wagn
       when opts[:tname]=='_main' && !ajax_call? && @depth==0    ; expand_main opts
       else
         fullname = opts[:tname].to_name.to_absolute card.cardname, :params=>params
-        included_card = Card.fetch_or_new fullname, ( @mode==:edit ? new_inclusion_card_args(opts) : {} )
+        included_card = Card.fetch fullname, :new=>( @mode==:edit ? new_inclusion_card_args(opts) : {} )
 
         result = process_inclusion included_card, opts
         @char_count += result.length if result

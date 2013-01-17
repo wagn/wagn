@@ -197,11 +197,11 @@ module Wagn
 
         CardActions.subset_actions[event] = true if !opts.empty?
 
-        if !method_defined? "process_#{event}"
+        if !method_defined? "perform_#{event}"
           CardActions.class_eval do
 
-            Rails.logger.warn "defining method[#{to_s}] _process_#{event}" if event == :read
-            define_method( "_process_#{event}" ) do |*a|
+            Rails.logger.warn "defining method[#{to_s}] _perform_#{event}" if event == :read
+            define_method( "_perform_#{event}" ) do |*a|
               a = [{}] if a.empty?
               if final_method = action_method(event)
                 Rails.logger.warn "final action #{final_method}"
@@ -213,12 +213,12 @@ module Wagn
               end
             end
 
-            Rails.logger.warn "define action[#{self}] process_#{event}" if event == :read
-            define_method( "process_#{event}" ) do |*a|
+            Rails.logger.warn "define action[#{self}] perform_#{event}" if event == :read
+            define_method( "perform_#{event}" ) do |*a|
               begin
 
-                Rails.logger.warn "send _process_#{event}" if event.to_sym == :read
-                send "_process_#{event}", *a
+                Rails.logger.warn "send _perform_#{event}" if event.to_sym == :read
+                send "_perform_#{event}", *a
 
               rescue Exception=>e
                 controller.send :notify_airbrake, e if Airbrake.configuration.api_key

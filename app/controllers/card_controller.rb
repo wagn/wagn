@@ -77,8 +77,9 @@ Done"
   def action
     @action = METHODS[request.method]
     Rails.logger.warn "action #{request.method}, #{@action} #{params.inspect}"
-    #warn "action method #{request.method}, #{@action} #{params.inspect}"
-    send "process_#{@action}"
+    warn "action #{request.method}, #{@action} #{params.inspect}"
+    send "perform_#{@action}"
+    render_errors || success
   end
 
   def action_method event
@@ -91,13 +92,21 @@ Done"
   end
 
   def create
+    if @card.save
+      success
+    else
+      render_errors
+    end
+  end
+
+  def create
     #warn "create #{params.inspect}, #{card.inspect} if #{card && !card.new_card?}, nc:#{card.new_card?}"
 
-    process_create
+    perform_create
   end
 
   def read
-    process_read
+    perform_read
   end
 
 =begin FIXME move to action events
@@ -124,11 +133,11 @@ Done"
 =end
 
   def update
-    process_update
+    perform_update
   end
 
   def delete
-    process_delete
+    perform_delete
   end
 
 

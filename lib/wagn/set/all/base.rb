@@ -52,7 +52,7 @@ module Wagn
     define_view :blank, :perms=>:none do |args| "" end
 
     define_view :not_found, :perms=>:none, :error_code=>404 do |args|
-      %{ There's no card named "#{card.name}" }
+      %{ Could not find #{card.name.present? ? %{"#{card.name}"} : 'the card requested'}. }
     end
 
     define_view :server_error, :perms=>:none do |args|

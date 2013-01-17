@@ -4,7 +4,7 @@ include Sets
 
     format :html
 
-    define_view :closed_rule, :tags=>:unknown_ok do |args|
+    define_view :closed_rule, :rstar=>true, :tags=>:unknown_ok do |args|
       rule_card = card.new_card? ? find_current_rule_card[0] : card
 
       cells = [
@@ -30,7 +30,7 @@ include Sets
 
 
 
-    define_view :open_rule, :tags=>:unknown_ok do |args|
+    define_view :open_rule, :rstar=>true, :tags=>:unknown_ok do |args|
       current_rule, prototype = find_current_rule_card
       setting_name = card.cardname.tag
       current_rule ||= Card.new :name=> "*all+#{setting_name}"
@@ -87,7 +87,7 @@ include Sets
 
     end
 
-    define_view :edit_rule, :tags=>:unknown_ok do |args|
+    define_view :edit_rule, :rstar=>true, :tags=>:unknown_ok do |args|
       edit_mode       = args[:edit_mode]
       setting_name    = args[:setting_name]
       current_set_key = args[:current_set_key] || '*all' # Card[:all].name (should have a constant for this?)

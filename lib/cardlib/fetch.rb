@@ -35,7 +35,7 @@ module Cardlib::Fetch
         #warn "fetch #{mark.inspect}, #{opts.inspect}"
         # Symbol (codename) handling
         if Symbol===mark
-          mark = Wagn::Codename[mark] || raise("Missing codename for #{mark.inspect}")
+          mark = Wagn::Codename[mark] or raise Wagn::NotFound, "Missing codename for #{mark.inspect}"
         end
 
 
@@ -65,7 +65,7 @@ module Cardlib::Fetch
       opts[:skip_virtual] = true if opts[:loaded_left]
 
       if Integer===mark
-        raise "fetch of missing card_id #{mark}" if card.nil?
+        raise Wagn::NotFound, "fetch of missing card_id #{mark}" if card.nil?
       else
         return card.fetch_new(opts) if card && opts[:skip_virtual] && card.new_card?
 

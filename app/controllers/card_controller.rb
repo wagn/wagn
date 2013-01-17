@@ -16,10 +16,6 @@ class CardController < ApplicationController
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :comment, :rollback ]
   before_filter :read_ok,      :only=> [ :read_file ]
 
-  attr_reader :card
-  cattr_reader :subset_actions
-  @@subset_actions = {}
-
   def create
     if @card.save
       success
@@ -46,8 +42,9 @@ class CardController < ApplicationController
   end
 
   def delete
+    
     @card.destroy
-    discard_locations_for @card
+    discard_locations_for @card #should be an event
     success 'REDIRECT: *previous'
   end
 
@@ -58,8 +55,12 @@ class CardController < ApplicationController
 
 
   def read_file
-    show_file
-  end #FIXME!  move to pack
+    if @card.ok? :read
+      show_file
+    else
+      show :denial
+    end
+  end #FIXME!  move into renderer
 
 
 

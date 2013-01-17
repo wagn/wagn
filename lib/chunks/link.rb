@@ -26,9 +26,8 @@ module Chunks
       self
     end
 
-    def unmask_text
-      @unmask_text ||= render_link
-      #warn "unmask #{@unmask_text}"; @unmask_text
+    def process_chunk
+      @process_chunk ||= render_link
     end
 
     def replace_reference old_name, new_name

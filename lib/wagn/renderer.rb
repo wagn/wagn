@@ -195,11 +195,11 @@ module Wagn
       self
     end
 
-    def process_content_s content=nil, opts={}
-      process_content(content, opts).to_s
+    def process_content content=nil, opts={}
+      process_content_object(content, opts).to_s
     end
 
-    def process_content content=nil, opts={}
+    def process_content_object content=nil, opts={}
       return content unless card
       content = card.content if content.blank?
 
@@ -207,7 +207,7 @@ module Wagn
 
       card.update_references( obj_content, true ) if card.references_expired # I thik we need this genralized
 
-      obj_content.process_content do |opts|
+      obj_content.process_content_object do |opts|
         expand_inclusion(opts) { yield }
       end
     end

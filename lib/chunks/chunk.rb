@@ -27,7 +27,7 @@ module Chunks
       raise "not found #{index}, #{@@paren_range.inspect}"
     end
 
-    def Abstract::unmask_re(chunk_types)
+    def Abstract::all_chunks_re(chunk_types)
       @@paren_range = {}
       pindex = 0
       chunk_pattern = chunk_types.map do |ch_class|
@@ -39,11 +39,11 @@ module Chunks
       /(.*?)(#{chunk_pattern})/m
     end
 
-    attr_reader :text, :unmask_text
+    attr_reader :text, :process_chunk
 
     def initialize match_string, card_params, params
       @text = match_string
-      @unmask_render = nil
+      @processed = nil
       @card_params = card_params
     end
     def renderer()           @card_params[:renderer] end
@@ -51,11 +51,11 @@ module Chunks
     def avoid_autolinking?() false                   end
 
     def to_s
-      @unmask_text || @unmask_render|| @text
+      @process_chunk || @processed|| @text
     end
 
     def as_json(options={})
-      @unmask_text || @unmask_render|| "not rendered #{self.class}, #{card and card.name}"
+      @process_chunk || @processed|| "not rendered #{self.class}, #{card and card.name}"
     end
   end
 end

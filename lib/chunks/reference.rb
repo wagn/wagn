@@ -31,7 +31,9 @@ module Chunks
     end
 
     def render_link
-      renderer.build_link refcardname, self.link_text
+      lt = self.link_text
+      lt = renderer.process_content( lt ) if ObjectContent===lt 
+      renderer.build_link refcardname, lt
     end
   end
 end

@@ -10,7 +10,7 @@ class ObjectContent < SimpleDelegator
 
   ACTIVE_CHUNKS =
     [ Literal::Escape, Chunks::Include, Chunks::Link, URIChunk, LocalURIChunk ]
-  SCAN_RE = { ACTIVE_CHUNKS => Chunks::Abstract.unmask_re(ACTIVE_CHUNKS) }
+  SCAN_RE = { ACTIVE_CHUNKS => Chunks::Abstract.all_chunks_re(ACTIVE_CHUNKS) }
 
   def initialize content, card_options
     @card_options = card_options
@@ -75,8 +75,8 @@ class ObjectContent < SimpleDelegator
     each_chunk.select { |chunk| chunk.kind_of?(chunk_type) }
   end
 
-  def process_content &block
-    each_chunk { |chunk| chunk.unmask_text &block }
+  def process_content_object &block
+    each_chunk { |chunk| chunk.process_chunk &block }
     self
   end
 

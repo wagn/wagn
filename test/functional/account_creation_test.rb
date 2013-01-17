@@ -15,7 +15,7 @@ class AccountCreationTest < ActionController::TestCase
   #FIXME - couldn't get this stuff to work in setup, but that's where it belongs.
   signed_in = Card[Card::AuthID]
   # need to use: Card['*account'].ok?(:create)
-  #if (tasks_card=Card.fetch_or_new(!signed_in.fetch(:trait=>:task_list))).
+  #if (tasks_card=Card.fetch( !signed_in.fetch(:trait=>:task_list), :new=>{} )).
   #     item_names.member?('create_accounts')
   #  tasks_card << 'create_accounts'
   #end

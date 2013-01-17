@@ -16,6 +16,7 @@ class ApplicationController < ActionController::Base
   before_filter :per_request_setup, :except=>[:fast_404]
   layout :wagn_layout, :except=>[:fast_404]
 
+  attr_reader :card
   attr_accessor :recaptcha_count
 
   def fast_404
@@ -81,9 +82,9 @@ class ApplicationController < ActionController::Base
   end
 
   def render_errors
-    if @card.errors.any? #this check is currently superfluous
-      view   = @card.error_view   || :errors
-      status = @card.error_status || 422
+    if card.errors.any? #this check is currently superfluous
+      view   = card.error_view   || :errors
+      status = card.error_status || 422
       show view, status
     end
   end
@@ -92,7 +93,7 @@ class ApplicationController < ActionController::Base
     ext = request.parameters[:format]
     known = FORMATS.split('|').member? ext
 
-    if !known && @card && @card.error_view
+    if !known && card && card.error_view
       ext, known = 'txt', true
       # render simple text for errors on unknown formats; without this, file/image permissions checks are meaningless
     end
@@ -100,7 +101,7 @@ class ApplicationController < ActionController::Base
     case
     when known                # renderers can handle it
       obj_sym = [:json, :xml].member?( ext = ext.to_sym ) ? ext : :text
-      renderer = Wagn::Renderer.new @card, :format=>ext, :controller=>self
+      renderer = Wagn::Renderer.new card, :format=>ext, :controller=>self
 
       render_obj = renderer.render_show :view => view || params[:view]
       render obj_sym => render_obj, :status=> renderer.error_status || status
@@ -112,25 +113,25 @@ class ApplicationController < ActionController::Base
   end
 
   def show_file
-    return fast_404 if !@card
+    return fast_404 if !card
 
-    @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
-    format = @card.attachment_format(params[:format])
+    card.selected_rev_id = (@rev_id || card.current_revision_id).to_i
+    format = card.attachment_format(params[:format])
     return fast_404 if !format
 
     if ![format, 'file'].member?( params[:format] )
-      return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) )
+      return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #card.attach.url(style) )
     end
 
-    style = @card.attachment_style @card.type_id, ( params[:size] || @style )
+    style = card.attachment_style card.type_id, ( params[:size] || @style )
     return fast_404 if style == :error
 
     # check file existence?  or just rescue MissingFile errors and raise NotFound?
     # we do see some errors from not having this, though I think they're mostly from legacy issues....
 
-    send_file @card.attach.path( *[style].compact ), #nil or empty arg breaks 1.8.7
-      :type => @card.attach_content_type,
-      :filename =>  "#{@card.cardname.url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
+    send_file card.attach.path( *[style].compact ), #nil or empty arg breaks 1.8.7
+      :type => card.attach_content_type,
+      :filename =>  "#{card.cardname.url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
       :x_sendfile => true,
       :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
   end
@@ -139,7 +140,7 @@ class ApplicationController < ActionController::Base
   rescue_from Exception do |exception|
     Rails.logger.info "exception = #{exception.class}: #{exception.message}"
     
-    @card ||= Card.new
+    card ||= Card.new
     
     view, status = case exception
       ## arguably the view and status should be defined in the error class;
@@ -151,7 +152,7 @@ class ApplicationController < ActionController::Base
       when Wagn::BadAddress, ActionController::UnknownController, AbstractController::ActionNotFound
         [ :bad_address, 404 ]
       when Wagn::Oops
-        @card.errors.add :exception, exception.message 
+        card.errors.add :exception, exception.message 
         # Wagn:Oops error messages are visible to end users and are generally not treated as bugs.
         # Probably want to rename accordingly.
         [ :errors, 422]

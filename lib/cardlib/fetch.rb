@@ -92,15 +92,6 @@ module Cardlib::Fetch
       card
     end
 
-    def fetch_or_new cardname, opts={}
-      fetch cardname, opts or new opts.merge(:name=>cardname)
-    end
-
-    def fetch_or_create cardname, opts={}
-      opts[:skip_virtual] ||= true
-      fetch( cardname, opts ) || create( opts.merge(:name=>cardname) )
-    end
-
     def fetch_id mark #should optimize this.  what if mark is int?  or codename?
       card = fetch mark, :skip_virtual=>true, :skip_modules=>true
       card and card.id
@@ -122,7 +113,7 @@ module Cardlib::Fetch
         Card.cache.delete key
         Card.cache.delete "~#{card.id}" if card.id
       end
-      Rails.logger.warn "expiring #{name}, #{card.inspect}"
+      #Rails.logger.warn "expiring #{name}, #{card.inspect}"
     end
 
     # set_names reverse map (cached)
@@ -187,7 +178,7 @@ module Cardlib::Fetch
   end
 
   def expire
-    Rails.logger.warn "expiring i:#{id}, #{inspect}"
+    #Rails.logger.warn "expiring i:#{id}, #{inspect}"
     Card.cache.delete key
     Card.cache.delete "~#{id}" if id
   end

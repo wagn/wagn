@@ -250,9 +250,7 @@ describe URIChunk, "URI chunk tests" do
   def aa_match(type, test_text)
     assert test_text =~ type.pattern
     params = $~.to_a; m = params.shift
-    Rails.logger.warn "aa match[#{m}] #{params.inspect}"
     chunk = type.new(m, {}, params)
-    Rails.logger.warn "aa match[#{chunk.avoid_autolinking?}] #{chunk.inspect}"
     assert chunk.avoid_autolinking?
   end
 

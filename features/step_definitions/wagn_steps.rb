@@ -22,7 +22,6 @@ end
 Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
   Account.as_bot do
     card = Card.fetch cardname, :new=>{}
-    card.save
     card.content = content
     card.save!
   end

@@ -122,7 +122,7 @@ module Cardlib::Fetch
         Card.cache.delete key
         Card.cache.delete "~#{card.id}" if card.id
       end
-      Rails.logger.warn "expiring #{name}, #{card.inspect}"
+      #Rails.logger.warn "expiring #{name}, #{card.inspect}"
     end
 
     # set_names reverse map (cached)
@@ -187,7 +187,7 @@ module Cardlib::Fetch
   end
 
   def expire
-    Rails.logger.warn "expiring i:#{id}, #{inspect}"
+    #Rails.logger.warn "expiring i:#{id}, #{inspect}"
     Card.cache.delete key
     Card.cache.delete "~#{id}" if id
   end

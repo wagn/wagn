@@ -64,6 +64,16 @@ describe SmartName, "changing from plus card to simple" do
     @c.right_id.should== nil
   end
 
+  it "test fetch with new when present" do
+    Card.create!(:name=>"Carrots")
+    cards_should_be_added 0 do
+      c=Card.fetch "Carrots", :new=>{}
+      c.save
+      c.should be_instance_of(Card)
+      Card.fetch("Carrots").should be_instance_of(Card)
+    end
+  end
+
   it "test_simple" do
     cards_should_be_added 1 do
       Card['Boo!'].should be_nil
@@ -72,6 +82,15 @@ describe SmartName, "changing from plus card to simple" do
     end
   end
 
+
+  it "test fetch with new when not present" do
+    cards_should_be_added 1 do
+      c=Card.fetch("Tomatoes", :new=>{})
+      c.save
+      c.should be_instance_of(Card)
+      Card.fetch("Tomatoes").should be_instance_of(Card)
+    end
+  end
 
   it "test_create_junction" do
     cards_should_be_added 3 do

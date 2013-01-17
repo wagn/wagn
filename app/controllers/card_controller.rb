@@ -92,7 +92,7 @@ Done"
   end
 
   def create
-    if @card.save
+    if card.save
       success
     else
       render_errors
@@ -138,8 +138,12 @@ Done"
 
   def delete
     perform_delete
+    case
+    when card.new_card?                          ;  create
+    when card.update_attributes( params[:card] ) ;  success
+    else                                             render_errors
+    end
   end
-
 
   def index
     read
@@ -147,7 +151,7 @@ Done"
 
 
   def read_file
-    if @card.ok? :read
+    if card.ok? :read
       show_file
     else
       show :denial

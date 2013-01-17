@@ -78,9 +78,9 @@ class ApplicationController < ActionController::Base
   end
 
   def render_errors
-    if @card.errors.any? #this check is currently superfluous
-      view   = @card.error_view   || :errors
-      status = @card.error_status || 422
+    if card.errors.any? #this check is currently superfluous
+      view   = card.error_view   || :errors
+      status = card.error_status || 422
       show view, status
     end
   end
@@ -97,7 +97,7 @@ class ApplicationController < ActionController::Base
     case
     when known                # renderers can handle it
       obj_sym = [:json, :xml].member?( ext = ext.to_sym ) ? ext : :text
-      renderer = Wagn::Renderer.new @card, :format=>ext, :controller=>self
+      renderer = Wagn::Renderer.new card, :format=>ext, :controller=>self
 
       render_obj = renderer.render_show :view => view || params[:view]
       render obj_sym => render_obj, :status=> renderer.error_status || status
@@ -136,7 +136,7 @@ class ApplicationController < ActionController::Base
   rescue_from Exception do |exception|
     Rails.logger.info "exception = #{exception.class}: #{exception.message}"
     
-    @card ||= Card.new
+    card ||= Card.new
     
     view, status = case exception
       ## arguably the view and status should be defined in the error class;
@@ -148,7 +148,7 @@ class ApplicationController < ActionController::Base
       when Wagn::BadAddress, ActionController::UnknownController, AbstractController::ActionNotFound
         [ :bad_address, 404 ]
       when Wagn::Oops
-        @card.errors.add :exception, exception.message 
+        card.errors.add :exception, exception.message 
         # Wagn:Oops error messages are visible to end users and are generally not treated as bugs.
         # Probably want to rename accordingly.
         [ :errors, 422]

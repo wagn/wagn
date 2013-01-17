@@ -189,7 +189,7 @@ module Wagn
     #
 
     def subrenderer subcard, opts={}
-      subcard = Card.fetch(subcard, :new=>{}) if String===subcard
+      subcard = Card.fetch( subcard, :new=>{} ) if String===subcard
       sub = self.clone
       sub.initialize_subrenderer subcard, self, opts
     end

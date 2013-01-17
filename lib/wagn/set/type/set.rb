@@ -80,7 +80,7 @@ module Wagn
 
       def prototype
         opts = subclass_for_set.prototype_args(self.cardname.trunk_name)
-        Card.fetch_or_new opts[:name], opts
+        Card.fetch opts[:name], :new=>opts
       end
 
     end

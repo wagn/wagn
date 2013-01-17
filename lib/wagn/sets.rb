@@ -79,7 +79,6 @@ module Wagn
           begin
             require_dependency file
           rescue Exception=>e
-            Rails.logger.warn "Error loading file #{file}: #{e.message}"
             Rails.logger.debug "Error loading file #{file}: #{e.message}\n#{e.backtrace*"\n"}"
             raise e
           end

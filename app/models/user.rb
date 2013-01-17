@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
     # FIXME: args=params.  should be less coupled..
     def create_with_card user_args, card_args, email_args={}
       card_args[:type_id] ||= Card::UserID
-      @card = Card.fetch_or_new(card_args[:name], card_args)
+      @card = Card.fetch(card_args[:name], :new=>card_args)
       Account.as_bot do
         @user = User.new(user_args)
         @user.status = 'active' unless user_args.has_key? :status
@@ -178,7 +178,7 @@ class User < ActiveRecord::Base
 
   def card()
     #raise "deprecate user.card #{card_id}, #{@card&&@card.id} #{caller*"\n"}"
-    Rails.logger.warn "deprecate user.card #{card_id}, #{@card&&@card.id} #{caller[0,2]*', '}"
+    Rails.logger.info "deprecate user.card #{card_id}, #{@card&&@card.id} #{caller[0,2]*', '}"
     @card && @card.id == card_id ? @card : @card = Card[card_id]
   end
 

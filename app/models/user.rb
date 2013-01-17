@@ -178,7 +178,7 @@ class User < ActiveRecord::Base
 
   def card()
     #raise "deprecate user.card #{card_id}, #{@card&&@card.id} #{caller*"\n"}"
-    Rails.logger.warn "deprecate user.card #{card_id}, #{@card&&@card.id} #{caller[0,2]*', '}"
+    Rails.logger.info "deprecate user.card #{card_id}, #{@card&&@card.id} #{caller[0,2]*', '}"
     @card && @card.id == card_id ? @card : @card = Card[card_id]
   end
 

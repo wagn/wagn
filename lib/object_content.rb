@@ -10,7 +10,7 @@ class ObjectContent < SimpleDelegator
 
   ACTIVE_CHUNKS =
     [ Literal::Escape, Chunks::Include, Chunks::Link, URIChunk, LocalURIChunk ]
-  SCAN_RE = { ACTIVE_CHUNKS => Chunks::Abstract.unmask_re(ACTIVE_CHUNKS) }
+  SCAN_RE = { ACTIVE_CHUNKS => Chunks::Abstract.all_chunks_re(ACTIVE_CHUNKS) }
 
   def initialize content, card_options
     @card_options = card_options
@@ -27,19 +27,21 @@ class ObjectContent < SimpleDelegator
     if String===content and !(arr = content.to_s.scan SCAN_RE[ACTIVE_CHUNKS]).empty?
       remainder = $'
       content = arr.map do |match_arr|
-          pre_chunk = match_arr.shift; match = match_arr.shift
-          match_index = match_arr.index {|x| !x.nil? }
-          chunk_class, range = Chunks::Abstract.re_class(match_index)
-          chunk_params = match_arr[range]
-          newck = chunk_class.new match, card_params, chunk_params
-          if newck.avoid_autolinking?
-            "#{pre_chunk}#{match}"
-          elsif pre_chunk.to_s.size > 0
-            [pre_chunk, newck]
-          else
-            newck
-          end
-        end.flatten.compact
+        pre_chunk   = match_arr.shift
+        match       = match_arr.shift
+        match_index = match_arr.index { |x| !x.nil? }
+        
+        chunk_class, range = Chunks::Abstract.re_class(match_index)
+        chunk_params = match_arr[range]
+        newck = chunk_class.new match, card_params, chunk_params
+        if newck.avoid_autolinking?
+          "#{pre_chunk}#{match}"
+        elsif pre_chunk.to_s.size > 0
+          [pre_chunk, newck]
+        else
+          newck
+        end
+      end.flatten.compact
       content << remainder if remainder.to_s != ''
     end
     content
@@ -73,8 +75,8 @@ class ObjectContent < SimpleDelegator
     each_chunk.select { |chunk| chunk.kind_of?(chunk_type) }
   end
 
-  def process_content &block
-    each_chunk { |chunk| chunk.unmask_text &block }
+  def process_content_object &block
+    each_chunk { |chunk| chunk.process_chunk &block }
     self
   end
 

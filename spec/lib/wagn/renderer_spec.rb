@@ -147,9 +147,19 @@ describe Wagn::Renderer, "" do
     context "Cards with special views" do
       it "should render setting view for a right set" do
          r = Wagn::Renderer.new(Card['*read+*right']).render
-         r.should_not match("Render Error")
+         r.should_not match(/error/i)
+         r.should_not match('No Card!')
          assert_view_select r, 'table[class="set-rules"]' do
            assert_select 'a[href~="/*read+*right+*input?view=open_rule"]', :text => 'input'
+         end
+      end
+
+      it "should render setting view for a *input rule" do
+         r = Wagn::Renderer.new(Card.fetch('*read+*right+*input',:new=>{})).render_open_rule
+         r.should_not match(/error/i)
+         r.should_not match('No Card!')
+         assert_view_select r, 'tr[class="card-slot open-rule"]' do
+           assert_select 'input[id="success"][name="success"][type="hidden"][value="*read+*right+*input"]'
          end
       end
     end
@@ -513,19 +523,6 @@ describe Wagn::Renderer, "" do
   end
 
 
-  context "replace refs" do
-    before do
-      Account.user= Card::WagnBotID
-    end
-
-    # FIXME: this isn't really a renderer test now, should move it
-    it "replace references should work on inclusions inside links" do
-      card = Card.create!(:name=>"test", :content=>"[[test_card|test{{test}}]]"  )
-      assert_equal "[[test_card|test{{best}}]]", card.replace_references("test", "best" )
-    end
-  end
-
-
 #
 # Note that we are using stub rendering here to get links.  This isn't really a very good
 # test because it has a very special code path that is really very limited.  It gets
@@ -535,13 +532,22 @@ describe Wagn::Renderer, "" do
 
   #attr_accessor :controller
 
-  def setup
-    Account.user= 'joe_user'
-  end
+  context "test/??? tests moved" do
+    before do
+      Account.user= 'joe_user'
+    end
 
-  def test_replace_references_should_work_on_inclusions_inside_links
-    card = Card.create!(:name=>"test", :content=>"[[test{{test}}]]"  )
-    assert_equal "[[test{{best}}]]", Wagn::Renderer.new(card).replace_references( "test", "best" )
+    # should this one work?  I think not ...
+    it "should replace references should work on inclusions inside links" do
+      pending "I think this one doesn't need to work delete?"
+      card = Card.create!(:name=>"test", :content=>"[[test{{test}}]]"  )
+      assert_equal "[[test{{best}}]]", card.replace_references( "test", "best" )
+    end
+
+    it "should replace references should work on inclusions inside links" do
+      card = Card.create!(:name=>"test", :content=>"[[test_card|test{{test}}]]"  )
+      assert_equal "[[test_card|test{{best}}]]", card.replace_references("test", "best" )
+    end
   end
 
   def controller

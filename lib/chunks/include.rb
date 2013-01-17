@@ -25,8 +25,8 @@ module Chunks
 
       case name = params[1].strip
 
-        when /^\#\#/; @unmask_text=''; nil # invisible comment
-        when /^\#/||nil?||blank?; @unmask_text = "<!-- #{CGI.escapeHTML params[0]} -->"; nil
+        when /^\#\#/; @process_chunk=''; nil # invisible comment
+        when /^\#/||nil?||blank?; @process_chunk = "<!-- #{CGI.escapeHTML params[0]} -->"; nil
 
         else
           @options = {
@@ -54,17 +54,15 @@ module Chunks
       end
     end
 
-    def unmask_text
-      return @unmask_text if @unmask_text
+    def process_chunk
+      return @process_chunk if @process_chunk
 
       refcardname
       if view = @options[:view]
         view = view.to_sym
       end
 
-      @unmask_render = yield options # this is not necessarily text, sometimes objects for json
-
-      #Rails.logger.warn "unmask txt #{@unmask_render}, #{options.inspect}"; @unmask_render
+      @processed = yield options # this is not necessarily text, sometimes objects for json
     end
 
     def replace_reference old_name, new_name

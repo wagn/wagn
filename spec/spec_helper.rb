@@ -5,7 +5,7 @@ module MySpecHelpers
   def render_test_card card
     renderer = Wagn::Renderer.new card
     renderer.add_name_context card.name
-    renderer.process_content_s
+    renderer.process_content
   end
 
   def newcard(name, content="")

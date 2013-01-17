@@ -27,7 +27,7 @@ module Wagn
     format :html
 
     define_view :core, :type=>'plain_text' do |args|
-      process_content( CGI.escapeHTML _render_raw )
+      process_content_object( CGI.escapeHTML _render_raw )
     end
   end
 end

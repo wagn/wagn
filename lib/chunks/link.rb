@@ -4,7 +4,7 @@ module Chunks
   class Link < Reference
     word = /\s*([^\]\|]+)\s*/
     # Groups: $1, [$2]: [[$1]] or [[$1|$2]] or $3, $4: [$3][$4]
-    WIKI_LINK = /\[\[#{word}(?:\|#{word})?\]\]|\[#{word}\]\[#{word}\]/
+    WIKI_LINK = /\[\[#{word}(?:\|([^\]]+))?\]\]|\[#{word}\]\[#{word}\]/
     WIKI_LINK_GROUPS = 4
 
     def self.pattern() WIKI_LINK end
@@ -26,8 +26,8 @@ module Chunks
       self
     end
 
-    def unmask_text
-      @unmask_text ||= render_link
+    def process_chunk
+      @process_chunk ||= render_link
     end
 
     def replace_reference old_name, new_name

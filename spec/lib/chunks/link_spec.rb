@@ -55,6 +55,11 @@ describe Chunks::Link, "link chunk tests" do
     card = Card.create! :name => "#{dude.name}+#{job.name}", :content => "icepicker"
     assert_equal("<a class=\"known-card\" href=\"/Harvey+business\">#{SmartName.joint}business</a>", render_test_card(dude) )
   end
+  
+  it "should handle inclusions as link text" do
+    c = Card.new :content=>'[[linkies|{{namies|name}}]]'
+    assert_equal '<a class="wanted-card" href="/linkies">namies</a>', render_test_card(c)
+  end
 
 end
 

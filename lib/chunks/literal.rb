@@ -8,7 +8,7 @@ module Literal
   class AbstractLiteral < Chunks::Abstract
     def initialize match, card_params, params
       super
-      @unmask_text = @text
+      @process_chunk = @text
     end
   end
 
@@ -23,7 +23,7 @@ module Literal
     def initialize match, card_params, params
       super
       first = params[1]
-      @unmask_text = "#{params[0].sub(first, "<span>#{first}</span>")}"
+      @process_chunk = "#{params[0].sub(first, "<span>#{first}</span>")}"
     end
   end
 
@@ -36,7 +36,7 @@ module Literal
   #
   #  def initialize(match_data, content)
   #    super
-  #    @unmask_text = "<code>#{match_data[1]}</code>"
+  #    @process_chunk = "<code>#{match_data[1]}</code>"
   #  end
 
 

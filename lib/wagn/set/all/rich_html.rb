@@ -52,7 +52,7 @@ module Wagn
 
     define_view :open do |args|
       args[:toggler] = link_to '', path(:view=>:closed), :title => "close #{card.name}", :remote => true,
-        :class => "ui-icon ui-icon-circle-triangle-s toggler slotter"
+        :class => "close-icon ui-icon ui-icon-circle-triangle-s toggler slotter"
       wrap :open, args.merge(:frame=>true) do
         %{
            #{ _render_header args }
@@ -137,7 +137,7 @@ module Wagn
 
     define_view :closed do |args|
       args[:toggler] = link_to '', path(:view=>:open), :title => "open #{card.name}", :remote => true,
-        :class => "ui-icon ui-icon-circle-triangle-e toggler slotter"
+        :class => "open-icon ui-icon ui-icon-circle-triangle-e toggler slotter"
       wrap :closed, args do
         %{
           #{ render_header args }

@@ -147,7 +147,18 @@ describe Wagn::Renderer, "" do
     context "Cards with special views" do
       it "should render setting view for a right set" do
          r = Wagn::Renderer.new(Card['*read+*right']).render
-         r.should_not match("Render Error")
+         r.should_not match(/error/i)
+         r.should_not match('No Card!')
+         assert_view_select r, 'table[class="set-rules"]' do
+           assert_select 'a[href~="/*read+*right+*input?view=open_rule"]', :text => 'input'
+         end
+      end
+
+      it "should render setting view for a *input rule" do
+         r = Wagn::Renderer.new(Card.fetch('*all+*input')).render
+         r.should_not match(/error/i)
+         r.should_not match('No Card!')
+         warn "RR: #{r}"
          assert_view_select r, 'table[class="set-rules"]' do
            assert_select 'a[href~="/*read+*right+*input?view=open_rule"]', :text => 'input'
          end

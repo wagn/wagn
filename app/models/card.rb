@@ -5,7 +5,7 @@ class Card < ActiveRecord::Base
   require_dependency 'card/reference'
 end
 
-require_dependency 'smart_name'
+require 'smart_name'
 SmartName.codes= Wagn::Codename
 SmartName.params= Wagn::Conf
 SmartName.lookup= Card

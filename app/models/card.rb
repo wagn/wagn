@@ -9,7 +9,7 @@ require 'smart_name'
 SmartName.codes= Wagn::Codename
 SmartName.params= Wagn::Conf
 SmartName.lookup= Card
-SmartName.session= proc { Account.as_card.name }
+SmartName.session= proc { Account.user_card.name }
 
 class Card
 

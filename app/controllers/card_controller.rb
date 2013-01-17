@@ -16,7 +16,6 @@ class CardController < ApplicationController
 
   before_filter :load_card
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :comment, :rollback ]
-  before_filter :read_ok,      :only=> [ :read_file ]
 
   # rest XML put/post
   def read_xml(io)

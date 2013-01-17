@@ -28,7 +28,7 @@ class Card
               c.content }.select(&:present?) * ', '
           if (geocode = GoogleMapsAddon.geocode(address))
             c = Card.fetch "#{self.cardname.trunk_name.to_s}+*geocode", :new=>{ :type_id=>Card::PhraseID }
-            c.save
+            c.save if c.new_card?
             c.update_attributes( :content => geocode )
           end
         end

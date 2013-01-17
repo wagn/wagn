@@ -88,7 +88,7 @@ describe SmartName, "changing from plus card to simple" do
       c=Card.fetch("Tomatoes", :new=>{})
       c.save
       c.should be_instance_of(Card)
-      Card.fetche("Tomatoes").should be_instance_of(Card)
+      Card.fetch("Tomatoes").should be_instance_of(Card)
     end
   end
 

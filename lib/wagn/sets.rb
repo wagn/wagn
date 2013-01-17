@@ -1,4 +1,8 @@
 module Wagn
+  # pre-declare the root of the Modules namespace tree
+  module Set
+  end
+
   module Sets
     @@dirs = []
 
@@ -27,31 +31,47 @@ module Wagn
         #warn "gvkey #{selection_key}, #{opts.inspect} R:#{key}"
         key.to_sym
       end
+
+=begin
+      def get_module mod
+        module_name_parts = mod.split('::').map(&:to_sym)
+        module_name_parts.inject Wagn::Set do |base, part|
+          return if base.nil?
+          key = "#{base}::#{part}"
+          args = Cardlib::Patterns::BasePattern::RUBY19 ? [part, false] : [part]
+          Cardlib::Patterns::BasePattern::MODULES[key] ||= if base.const_defined?(*args)
+                base.const_get *args
+              else
+                base.const_set part.to_sym, Module.new
+              end
+        end
+      rescue NameError => e
+        warn "rescue ne #{e.inspect}, #{e.backtrace*"\n"}"
+        nil
+      end
+
+      def namespace spc, &block
+        const = get_module spc
+        #warn "namespace2: #{spc.inspect} :: #{const}"
+        const.module_eval &block
+      end
+=end
     end
 
-    class << self
+    CARDLIB   = "#{Rails.root}/lib/cardlib/*.rb"
+    SETS      = "#{Rails.root}/lib/wagn/set/"
+    RENDERERS = "#{Rails.root}/lib/wagn/renderer/*.rb"
 
-      def load_cardlib
-        load_dir File.expand_path( "#{Rails.root}/lib/cardlib/*.rb", __FILE__ )
-      end
+    class << self
+      def load_cardlib  ; load_dir File.expand_path( CARDLIB, __FILE__   ) end
+      def load_renderers; load_dir File.expand_path( RENDERERS, __FILE__ ) end
+      def dir newdir    ; @@dirs << newdir                                 end
+      def load_dirs     ; @@dirs.each { |dir| load_dir dir }               end
 
       def load_sets
-        [ "#{Rails.root}/lib/wagn/set/", Wagn::Conf[:pack_dirs].split( /,\s*/ ) ].flatten.each do |dirname|
+        [ SETS, Wagn::Conf[:pack_dirs].split( /,\s*/ ) ].flatten.each do |dirname|
           load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
         end
-      end
-
-      def load_renderers
-        load_dir File.expand_path( "#{Rails.root}/lib/wagn/renderer/*.rb", __FILE__ )
-      end
-
-      def all_constants base
-        base.constants.map {|c| c=base.const_get(c) and all_constants(c) }
-      end
-
-
-      def dir newdir
-        @@dirs << newdir
       end
 
       def load_dir dir
@@ -59,21 +79,13 @@ module Wagn
           begin
             require_dependency file
           rescue Exception=>e
-            Rails.logger.warn "Error loading file #{file}: #{e.message}\n#{e.backtrace*"\n"}"
+            Rails.logger.warn "Error loading file #{file}: #{e.message}"
+            Rails.logger.debug "Error loading file #{file}: #{e.message}\n#{e.backtrace*"\n"}"
             raise e
           end
         end
       end
-
-      def load_dirs
-        @@dirs.each do |dir| load_dir dir end
-      end
     end
-
-    module AllSets
-      Wagn::Sets.all_constants(Wagn::Set)
-    end
-
 
     # View definitions
     #

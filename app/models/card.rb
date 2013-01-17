@@ -366,7 +366,6 @@ class Card
     left args or Card.new args.merge(:name=>cardname.left)
   end
 
-
   def dependents
     return [] if new_card?
 
@@ -565,7 +564,7 @@ class Card
 
   def inspect
     "#<#{self.class.name}" + "##{id}" +
-    "###{object_id}" + #"k#{left_id}g#{right_id}" +
+    "###{object_id}" + #"l#{left_id}r#{right_id}" +
     "[#{debug_type}]" + "(#{self.name})" + #"#{object_id}" +
     "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{frozen? ? 'Fz' : readonly? ? 'RdO' : ''}" +
     "#{@virtual &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }}" +

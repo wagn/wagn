@@ -203,7 +203,7 @@ class CardController < ApplicationController
           opts[:name] ||= name
           Card.new opts
         else
-          #Rails.logger.warn "load card fetch_or_new #{name.inspect}, #{opts.inspect}"
+          #Rails.logger.warn "load card fetch :new #{name.inspect}, #{opts.inspect}"
           Card.fetch name, :new=>opts
         end
       end
@@ -238,7 +238,7 @@ class CardController < ApplicationController
       when '_self  '       ;  @card #could do as _self
       when /^(http|\/)/    ;  target
       when /^TEXT:\s*(.+)/ ;  $1
-      else                 ;  Card.fetch_or_new target.to_name.to_absolute(@card.cardname)
+      else                 ;  Card.fetch target.to_name.to_absolute(@card.cardname), :new=>{}
       end
 
     case

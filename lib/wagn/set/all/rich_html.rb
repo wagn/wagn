@@ -16,7 +16,7 @@ module Wagn
 
     define_view :layout, :perms=>:none do |args|
       if @main_content = args.delete( :main_content )
-        @card = Card.fetch_or_new '*placeholder'
+        @card = Card.fetch '*placeholder', :new=>{}
       end
 
       layout_content = get_layout_content args

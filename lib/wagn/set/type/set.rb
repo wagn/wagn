@@ -72,7 +72,7 @@ module Wagn
           elsif right_id == Card::TypeID
             left_id
           else
-            trunk.type_id
+            trunk(:new=>{}).type_id
           end
         )
         Setting::SETTING_GROUPS.reject { |k,v| !is_pointer && k == Setting::POINTER_KEY }

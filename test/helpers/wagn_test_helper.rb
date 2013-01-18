@@ -19,7 +19,7 @@ module WagnTestHelper
     nil
   end
 
-  def get_renderer()
+  def new_renderer()
     Wagn::Renderer.new(Card.new(:name=>'dummy'))
   end
 

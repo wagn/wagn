@@ -22,7 +22,7 @@ class AccountCreationTest < ActionController::TestCase
 
   def setup
     super
-    get_renderer
+    new_renderer
     @controller = AccountController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new

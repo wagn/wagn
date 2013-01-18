@@ -1,13 +1,9 @@
 # -*- encoding : utf-8 -*-
 require 'xmlscan/processor'
 
-require_dependency 'wagn/sets'
-require_dependency 'card'
+require_dependency 'cardlib'
 
 class CardController < ApplicationController
-  # This is often needed for the controllers to work right
-  # FIXME: figure out when/why this is needed and why the tests don't fail
-  Card
 
   helper :wagn
 

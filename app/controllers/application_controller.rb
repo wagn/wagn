@@ -1,11 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency 'wagn/sets'
-require_dependency 'card'
-
 class ApplicationController < ActionController::Base
-  # This was in all the controllers, now it is inherited here
-  Card
+  include Wagn::Exceptions
 
   include AuthenticatedSystem
   include LocationHelper

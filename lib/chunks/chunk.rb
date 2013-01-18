@@ -8,7 +8,7 @@ require_dependency 'chunks/reference'
 require_dependency 'chunks/link'
 require_dependency 'chunks/include'
 
-require_dependency 'uri/common'
+require 'uri/common'
 
 # A chunk is a pattern of text that can be protected
 # and interrogated by a renderer. Each Chunk class has a

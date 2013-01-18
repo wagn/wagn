@@ -53,6 +53,11 @@ h1.card-title {
   min-width: 90px;
   text-align: right;
 }
+.closed-view .card-menu-link {
+  float: none;
+  display: inline-block;
+  min-width: auto;
+}
 .card-menu-link a {
   display: inline-block;
 }
@@ -594,4 +599,3 @@ table.perm-editor .pointer-item-text {
 .ui-loader {
   display: none;
 }
-

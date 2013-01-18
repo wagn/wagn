@@ -12,7 +12,7 @@ CARDCONTENT
       ],
     <%- end %><%# %>
     ].each do |name, typecode, content|
-      create_or_update_pristine Card.fetchw(name, :new=>{} ), typecode, content.chomp
+      create_or_update_pristine Card.fetch( name, :new=>{} ), typecode, content.chomp
     end
   end
 

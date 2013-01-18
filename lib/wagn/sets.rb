@@ -120,8 +120,8 @@ module Wagn
         end
 
         view_key = get_set_key view, opts
+        #warn "defining view method[#{Renderer.renderer}] _final_#{view_key}"
         Renderer.renderer.class_eval { define_method "_final_#{view_key}", &final }
-        #warn "defining view method[#{Renderer.renderer.inspect}] _final_#{view_key}"
         Renderer.subset_views[view] = true if !opts.empty?
 
         if !method_defined? "render_#{view}"
@@ -248,6 +248,15 @@ module Wagn
           end }
         end
       end
+    end
+
+    def self.included base
+
+      base.extend SharedMethods
+      base.extend ClassMethods
+
+      super
+
     end
 
     def self.included base

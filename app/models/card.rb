@@ -7,7 +7,7 @@ class Card < ActiveRecord::Base
   SmartName.codes= Wagn::Codename
   SmartName.params= Wagn::Conf
   SmartName.lookup= Card
-  SmartName.session= proc { Account.as_card.name }
+  SmartName.session= proc { Account.user_card.name }
 
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
   belongs_to :card, :class_name => 'Card', :foreign_key => :creator_id

@@ -1,4 +1,4 @@
-require_dependency 'net/http'
+require 'net/http'
 class GoogleMapsAddon
   def self.geocode(address)
     opts = {

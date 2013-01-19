@@ -182,7 +182,7 @@ module Wagn
       if respond_to? method
         send method, args
       else
-        "<strong>unknown view: <em>#{view}</em></strong>"
+        unknown_view view
       end
     end
 
@@ -203,8 +203,27 @@ module Wagn
       optional_render view, args, default_hidden
     end
 
-    def rendering_error exception, cardname
-      "Error rendering: #{cardname}"
+    def rescue_view e, view
+      controller.send :notify_airbrake, e if Airbrake.configuration.api_key
+      Rails.logger.info "\nError rendering #{error_cardname} / #{view}: #{e.class} : #{e.message}"
+      Rails.logger.debug "  #{e.backtrace*"\n  "}"
+      rendering_error e, view
+    end
+
+    def error_cardname
+      card && card.name.present? ? card.name : 'unknown card'
+    end
+    
+    def unknown_view view
+      "unknown view: #{view}"
+    end
+
+    def unsupported_view view
+      "view (#{view}) not supported for #{error_cardname}"
+    end
+
+    def rendering_error exception, view
+      "Error rendering: #{error_cardname} (#{view} view)"
     end
 
     #
@@ -212,7 +231,7 @@ module Wagn
     #
 
     def subrenderer subcard, opts={}
-      subcard = Card.fetch_or_new(subcard) if String===subcard
+      subcard = Card.fetch( subcard, :new=>{} ) if String===subcard
       sub = self.clone
       sub.initialize_subrenderer subcard, self, opts
     end
@@ -325,7 +344,7 @@ module Wagn
       when opts[:tname]=='_main' && !ajax_call? && @depth==0    ; expand_main opts
       else
         fullname = opts[:tname].to_name.to_absolute card.cardname, :params=>params
-        included_card = Card.fetch_or_new fullname, ( @mode==:edit ? new_inclusion_card_args(opts) : {} )
+        included_card = Card.fetch fullname, :new=>( @mode==:edit ? new_inclusion_card_args(opts) : {} )
 
         result = process_inclusion included_card, opts
         @char_count += result.length if result

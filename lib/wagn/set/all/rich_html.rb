@@ -16,7 +16,7 @@ module Wagn
 
     define_view :layout, :perms=>:none do |args|
       if @main_content = args.delete( :main_content )
-        @card = Card.fetch_or_new '*placeholder'
+        @card = Card.fetch '*placeholder', :new=>{}
       end
 
       layout_content = get_layout_content args
@@ -51,10 +51,8 @@ module Wagn
     end
 
     define_view :open do |args|
-      unless args[:hide] and args[:hide].member? 'closer'
-        args[:show] ||= ['closer']
-      end
-      
+      args[:toggler] = link_to '', path(:view=>:closed), :title => "close #{card.name}", :remote => true,
+        :class => "close-icon ui-icon ui-icon-circle-triangle-s toggler slotter"
       wrap :open, args.merge(:frame=>true) do
         %{
            #{ _render_header args }
@@ -68,16 +66,11 @@ module Wagn
     define_view :header do |args|
       %{
         <div class="card-header">
-          #{ _optional_render :closer, args, default_hidden=true }        
+          #{ args.delete :toggler }
           #{ _render_title }
           #{ _optional_render :menu_link, args }
         </div>
       }
-    end
-
-    define_view :closer do |args|
-      link_to '', path(:view=>:closed), :title => "close #{card.name}", :remote => true,
-        :class => "ui-icon ui-icon-circle-triangle-s toggler slotter"
     end
   
     define_view :menu_link do |args|
@@ -97,25 +90,28 @@ module Wagn
                 <li>#{ link_to_view 'history', :changes, :class=>'slotter' }</li>
             </ul>
           </li>
-          <li>#{ link_to_view 'view', :read, :class=>'slotter' }   
+          <li>#{ link_to_page 'view', card.name }
             <ul>
-            #{ 
-              %w{ titled open closed content }.map do |view|
-                "<li>#{ link_to_view view, view, :class=>'slotter' }</li>"
+            #{
+              card.cardname.piece_names.reverse.map do |piece|
+                "<li>#{ link_to_page raw("#{piece} &crarr;"), piece }</li>"
               end.join "\n"
             }
+              <li>#{ link_to_view 'refresh', :read }
+                <ul>
+                  #{ 
+                    %w{ titled open closed content }.map do |view|
+                      "<li>#{ link_to_view view, view, :class=>'slotter' }</li>"
+                    end.join "\n"
+                  }
+                </ul>
+              </li>
             </ul>         
           </li>
           <li>#{ link_to_view 'advanced', :options, :class=>'slotter' }
             <ul>
               <li>#{ link_to_view 'rules', :options, :class=>'slotter' }</li>
               <li>#{ link_to_page raw("#{card.type_name} &crarr;"), card.type_name }</li>
-              #{
-                card.cardname.piece_names.map do |piece|
-                  #"<li>#{ link_to_page raw("#{goto_icon} #{piece}"), piece }</li>"
-                  "<li>#{ link_to_page raw("#{piece} &crarr;"), piece }</li>"
-                end.join "\n"
-              }
             </ul>    
           </li>
           #{ 
@@ -140,13 +136,11 @@ module Wagn
     end
 
     define_view :closed do |args|
+      args[:toggler] = link_to '', path(:view=>:open), :title => "open #{card.name}", :remote => true,
+        :class => "open-icon ui-icon ui-icon-circle-triangle-e toggler slotter"
       wrap :closed, args do
         %{
-          <div class="card-header">
-            #{ link_to '', path(:view=>:open), :title => "open #{card.name}", :remote => true,
-              :class => "ui-icon ui-icon-circle-triangle-e toggler slotter" }
-            #{ _render_title }
-          </div>
+          #{ render_header args }
           #{ wrap_content( :closed ) { _render_closed_content } }
         }
       end
@@ -567,17 +561,17 @@ module Wagn
          </div>}
       end
     
-      %{ <h1 class="page-header">Missing Card</h1> } +
+      %{ <h1 class="page-header">Not Found</h1> } +
       wrap( :not_found, args.merge(:frame=>true) ) do # ENGLISH
         %{<div class="content instruction">
-            <div>There's no card named <strong>#{card.name}</strong>.</div>
+            <div>Could not find #{card.name.present? ? "<strong>#{card.name}</strong>" : 'the card requested'}.</div>
             #{sign_in_or_up_links}
           </div>}
       end
     end
 
     define_view :denial do |args|
-      task = args[:denied_task] || params[:action]
+      task = args[:denied_task] || :read
       to_task = %{to #{task} this card#{ ": <strong>#{card.name}</strong>" if card.name && !card.name.blank? }.}
       if !focal?
         %{<span class="denied"><!-- Sorry, you don't have permission #{to_task} --></span>}

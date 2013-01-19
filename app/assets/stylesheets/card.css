@@ -43,7 +43,7 @@ html>body .open-view {
 .card-header h1 {
   display: inline;
 }
-h1.card-title { 
+h1.card-title {
   padding: 2px 0;
   white-space: nowrap;
   margin-right: 5px;
@@ -52,6 +52,11 @@ h1.card-title {
   float: right;
   min-width: 90px;
   text-align: right;
+}
+.closed-view .card-menu-link {
+  float: none;
+  display: inline-block;
+  min-width: auto;
 }
 .card-menu-link a {
   display: inline-block;
@@ -182,7 +187,7 @@ fieldset > .editor > input {
   margin-left: 0;
 }
 fieldset > legend {
-  white-space: inherit;  
+  white-space: inherit;
   float:left;
   text-align:right;
   width: 25%;
@@ -594,4 +599,3 @@ table.perm-editor .pointer-item-text {
 .ui-loader {
   display: none;
 }
-

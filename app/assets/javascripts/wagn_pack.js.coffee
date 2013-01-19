@@ -32,7 +32,7 @@ wagn.initTinyMCE = (el_id) ->
   hard_conf = {
     mode: 'exact'
     elements: el_id
-    #the two below should probably be made optional, but it may involve migrating old legacy *tinyMCE settings to get rid of stale stuff.    
+    #the two below should probably be made optional, but it may involve migrating old legacy *tinyMCE settings to get rid of stale stuff.
     content_css: wagn.rootPath + '/assets/application-all.css' + ',' + wagn.rootPath + wagn.local_css_path
     entity_encoding: 'raw'
   }

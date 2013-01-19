@@ -5,11 +5,11 @@ class Card < ActiveRecord::Base
   require_dependency 'card/reference'
 end
 
-require_dependency 'smart_name'
+require 'smart_name'
 SmartName.codes= Wagn::Codename
 SmartName.params= Wagn::Conf
 SmartName.lookup= Card
-SmartName.session= proc { Account.as_card.name }
+SmartName.session= proc { Account.user_card.name }
 
 class Card
 
@@ -78,7 +78,7 @@ class Card
         super
       end
     rescue NameError
-        warn "ne: const_miss #{e.inspect}, #{const}" if const.to_sym==:Card
+      warn "ne: const_miss #{e.inspect}, #{const}" if const.to_sym==:Card
     end
 
     def setting name
@@ -366,7 +366,6 @@ class Card
     left args or Card.new args.merge(:name=>cardname.left)
   end
 
-
   def dependents
     return [] if new_card?
 
@@ -565,7 +564,7 @@ class Card
 
   def inspect
     "#<#{self.class.name}" + "##{id}" +
-    "###{object_id}" + #"k#{left_id}g#{right_id}" +
+    "###{object_id}" + #"l#{left_id}r#{right_id}" +
     "[#{debug_type}]" + "(#{self.name})" + #"#{object_id}" +
     "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{frozen? ? 'Fz' : readonly? ? 'RdO' : ''}" +
     "#{@virtual &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }}" +

@@ -16,6 +16,7 @@ class ApplicationController < ActionController::Base
   before_filter :per_request_setup, :except=>[:fast_404]
   layout :wagn_layout, :except=>[:fast_404]
 
+  attr_reader :card
   attr_accessor :recaptcha_count
 
   def fast_404
@@ -69,12 +70,6 @@ class ApplicationController < ActionController::Base
     [nil, 'html'].member?(params[:format])
   end
 
-  # ------------------( permission filters ) -------
-  def read_ok
-    @card.ok?(:read) || deny(:read)
-  end
-
-
   # ----------( rendering methods ) -------------
 
   def wagn_redirect url
@@ -86,38 +81,26 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def deny action=nil
-    params[:action] = action if action
-    @card.error_view = :denial
-    @card.error_status = 403
-    render_errors
-  end
-
-  def render_errors options={}
-    if @card
-      return false if @card.errors.empty?
-    else
-      @card = Card.new
-      @card.errors.add( :exception, options[:message] ) if options[:message]
+  def render_errors
+    if card.errors.any? #this check is currently superfluous
+      view   = card.error_view   || :errors
+      status = card.error_status || 422
+      show view, status
     end
-    view   = options[:view]   || @card.error_view   || :errors
-    status = options[:status] || @card.error_status || 422
-    show view, status
-    true
   end
 
   def show view = nil, status = 200
     ext = request.parameters[:format]
     known = FORMATS.split('|').member? ext
 
-    if !known && @card && @card.error_view
+    if !known && card && card.error_view
       ext, known = 'txt', true
       # render simple text for errors on unknown formats; without this, file/image permissions checks are meaningless
     end
 
     case
     when known                # renderers can handle it
-      renderer = Wagn::Renderer.new @card, :format=>ext, :controller=>self
+      renderer = Wagn::Renderer.new card, :format=>ext, :controller=>self
       render :text=>renderer.render_show( :view => view || params[:view] ),
         :status=>(renderer.error_status || status)
     when show_file            # send_file can handle it
@@ -127,57 +110,63 @@ class ApplicationController < ActionController::Base
   end
 
   def show_file
-    return fast_404 if !@card
+    return fast_404 if !card
 
-    @card.selected_rev_id = (@rev_id || @card.current_revision_id).to_i
-    format = @card.attachment_format(params[:format])
+    card.selected_rev_id = (@rev_id || card.current_revision_id).to_i
+    format = card.attachment_format(params[:format])
     return fast_404 if !format
 
     if ![format, 'file'].member?( params[:format] )
-      return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #@card.attach.url(style) )
+      return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #card.attach.url(style) )
     end
 
-    style = @card.attachment_style @card.type_id, ( params[:size] || @style )
+    style = card.attachment_style card.type_id, ( params[:size] || @style )
     return fast_404 if style == :error
 
     # check file existence?  or just rescue MissingFile errors and raise NotFound?
     # we do see some errors from not having this, though I think they're mostly from legacy issues....
 
-    send_file @card.attach.path( *[style].compact ), #nil or empty arg breaks 1.8.7
-      :type => @card.attach_content_type,
-      :filename =>  "#{@card.cardname.url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
+    send_file card.attach.path( *[style].compact ), #nil or empty arg breaks 1.8.7
+      :type => card.attach_content_type,
+      :filename =>  "#{card.cardname.url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
       :x_sendfile => true,
       :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
   end
 
 
   rescue_from Exception do |exception|
-    Rails.logger.info "exception = #{exception.class}: #{exception.message} #{exception.backtrace*"\n"}"
-
-
+    Rails.logger.info "exception = #{exception.class}: #{exception.message}"
+    
+    card ||= Card.new
+    
     view, status = case exception
-    when Wagn::NotFound, ActiveRecord::RecordNotFound
-      [ :not_found, 404 ]
-    when Wagn::PermissionDenied, Card::PermissionDenied
-      [ :denial, 403]
-    when Wagn::BadAddress, ActionController::UnknownController, AbstractController::ActionNotFound
-      [ :bad_address, 404 ]
-    else
-
-      notify_airbrake exception if Airbrake.configuration.api_key
-
-      if [Wagn::Oops, ActiveRecord::RecordInvalid].member?( exception.class ) #&& @card && @card.errors.any?
+      ## arguably the view and status should be defined in the error class;
+      ## some are redundantly defined in view
+      when Wagn::NotFound, ActiveRecord::RecordNotFound
+        [ :not_found, 404 ]
+      when Wagn::PermissionDenied, Card::PermissionDenied
+        [ :denial, 403]
+      when Wagn::BadAddress, ActionController::UnknownController, AbstractController::ActionNotFound
+        [ :bad_address, 404 ]
+      when Wagn::Oops
+        card.errors.add :exception, exception.message 
+        # Wagn:Oops error messages are visible to end users and are generally not treated as bugs.
+        # Probably want to rename accordingly.
         [ :errors, 422]
-      elsif Wagn::Conf[:migration]
-        raise exception
-      else
-        Rails.logger.info "\n\nController exception: #{exception.message}"
+      else #the following indicate a code problem and therefore require full logging
         Rails.logger.debug exception.backtrace*"\n"
-        Rails.logger.level == 0 ? raise( exception ) : [ :server_error, 500 ]
-      end
-    end
+        notify_airbrake exception if Airbrake.configuration.api_key
 
-    render_errors :view=>view, :status=>status, :message=>exception.message
+        if ActiveRecord::RecordInvalid === exception
+          [ :errors, 422]
+        elsif Wagn::Conf[:migration] or Rails.logger.level == 0 # could also just check non-production mode...
+          raise exception
+        else
+          [ :server_error, 500 ]
+        end
+      end
+
+    show view, status
   end
 
 end

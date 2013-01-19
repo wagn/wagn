@@ -148,8 +148,16 @@ module Wagn
       %{<div class="card-notice"></div>}
     end
 
-    def rendering_error exception, cardname
-      %{<span class="render-error">error rendering #{link_to_page(cardname, nil, :title=>CGI.escapeHTML(exception.message))}</span>}
+    def rendering_error exception, view
+      %{<span class="render-error">error rendering #{link_to_page(error_cardname, nil, :title=>CGI.escapeHTML(exception.message))} (#{view} view)</span>}
+    end
+    
+    def unknown_view view
+      "<strong>unknown view: <em>#{view}</em></strong>"
+    end
+    
+    def unsupported_view view
+      "<strong>view <em>#{view}</em> not supported for <em>#{error_cardname}</em></strong>"
     end
 
     def link_to_view text, view, html_opts={}

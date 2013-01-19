@@ -1,8 +1,10 @@
 # -*- encoding : utf-8 -*-
 class Card::Revision < ActiveRecord::Base
-  cattr_accessor :cache
-
   before_save :set_stamper
+
+  def self.cache
+    Wagn::Cache[Card::Revision]
+  end
 
   def set_stamper
     self.creator_id = Account.user_id

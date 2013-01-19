@@ -54,7 +54,7 @@ describe Card do
   end
 
   POINTER_KEY = Wagn::Set::Type::Setting::POINTER_KEY
-  describe "#setting_names" do
+  describe "#setting_codes_by_group" do
     before do
       @pointer_settings =  [ :options, :options_label, :input ]
     end

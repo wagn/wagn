@@ -25,6 +25,7 @@ module Wagn
     @@view_tags      = {}
 
     def self.get_renderer format
+      #warn "get_renderer #{format.inspect}"
       const_get( if RENDERERS.has_key? format
           RENDERERS[ format ]
         else

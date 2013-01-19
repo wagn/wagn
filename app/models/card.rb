@@ -1,17 +1,13 @@
 # -*- encoding : utf-8 -*-
 
+require_dependency 'smart_name'
+
 class Card < ActiveRecord::Base
-  require_dependency 'card/revision'
-  require_dependency 'card/reference'
-end
 
-require 'smart_name'
-SmartName.codes= Wagn::Codename
-SmartName.params= Wagn::Conf
-SmartName.lookup= Card
-SmartName.session= proc { Account.user_card.name }
-
-class Card
+  SmartName.codes= Wagn::Codename
+  SmartName.params= Wagn::Conf
+  SmartName.lookup= Card
+  SmartName.session= proc { Account.user_card.name }
 
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
   belongs_to :card, :class_name => 'Card', :foreign_key => :creator_id

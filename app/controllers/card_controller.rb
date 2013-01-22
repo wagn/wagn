@@ -187,7 +187,6 @@ class CardController < ApplicationController
       else
 
         opts = if opts = params[:card]  ; opts.clone
-            elsif opts = params[:object]; opts
             else                        {}
             end
 

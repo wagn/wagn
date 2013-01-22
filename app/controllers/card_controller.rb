@@ -177,9 +177,15 @@ class CardController < ApplicationController
   end
 
   def index_preload
-    Account.no_logins? ?
-      redirect_to( Card.path_setting '/admin/setup' ) :
-      params[:id] = (Card.setting(:home) || 'Home').to_name.url_key
+    case
+    when Account.no_logins?
+      redirect_to Card.path_setting( '/admin/setup' )
+    when params[:id]                                         #noop
+    when params[:card] && params[:card][:name]               #noop
+    when Wagn::Renderer.tagged( params[:view], :unknown_ok ) #noop
+    else  
+      params[:id] = Card.setting(:home) || 'Home'
+    end
   end
 
 

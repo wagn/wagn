@@ -172,9 +172,15 @@ class CardController < ApplicationController
   end
 
   def index_preload
-    Account.no_logins? ?
-      redirect_to( Card.path_setting '/admin/setup' ) :
-      params[:id] = (Card.setting(:home) || 'Home').to_name.url_key
+    case
+    when Account.no_logins?
+      redirect_to Card.path_setting( '/admin/setup' )
+    when params[:id]                                         #noop
+    when params[:card] && params[:card][:name]               #noop
+    when Wagn::Renderer.tagged( params[:view], :unknown_ok ) #noop
+    else  
+      params[:id] = Card.setting(:home) || 'Home'
+    end
   end
 
 
@@ -185,11 +191,8 @@ class CardController < ApplicationController
       when /^\~(\d+)$/   ; Card.fetch $1.to_i
       when /^\:(\w+)$/   ; Card.fetch $1.to_sym
       else
-
-        opts = if opts = params[:card]  ; opts.clone
-            else                        {}
-            end
-
+        opts = params[:card] || {}
+        opts = opts.clone #so that original params remain unaltered.  need deeper clone?
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
         name = params[:id] || opts[:name]
         

@@ -149,15 +149,21 @@ describe CardController do
     end
 
     it "new should work for creatable nonviewable cardtype" do
-      login_as(:anonymous)
+      login_as :anonymous
       get :read, :type=>"Fruit", :view=>'new'
       assert_response :success
+    end
+
+    it "should work on index" do
+      get :index, :view=>'new'
+      assigns['card'].name.should == ''
     end
 
     it "new with existing card" do
       get :read, :card=>{:name=>"A"}, :view=>'new'
       assert_response :success, "response should succeed"
     end
+    
   end
 
   describe "unit tests" do

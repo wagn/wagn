@@ -47,7 +47,6 @@ module Wagn
     class << self
 
       def new card, opts={}
-
         format = ( opts[:format].send_if :to_sym ) || :html
         renderer = if self!=Renderer or format.nil? or format == :base
               self
@@ -59,6 +58,11 @@ module Wagn
         new_renderer = renderer.allocate
         new_renderer.send :initialize, card, opts
         new_renderer
+      end
+      
+      
+      def tagged view, tag
+        view && tag && @@view_tags[view.to_sym] && @@view_tags[view.to_sym][tag.to_sym]
       end
     end
 
@@ -213,11 +217,6 @@ module Wagn
       end
     end
 
-
-    def tagged view, tag
-      @@view_tags[view] && @@view_tags[view][tag]
-    end
-
     def ok_view view, args={}
       original_view = view
 
@@ -230,7 +229,7 @@ module Wagn
         # This should disappear when we get rid of admin and account controllers and all renderers always have cards
 
         # HANDLE UNKNOWN CARDS ~~~~~~~~~~~~
-        when !card.known? && !tagged( view, :unknown_ok )
+        when !card.known? && !self.class.tagged( view, :unknown_ok )
           if focal?
             if @format==:html && card.ok?(:create) ;  :new
             else                                   ;  :not_found

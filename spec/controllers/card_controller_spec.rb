@@ -5,8 +5,8 @@ describe CardController do
 
   describe "- route generation" do
 #  not sure we want this.
-#    it "gets name/id from /new/xxx" do
-#      {:post=> "/new/xxx"}.should route_to(
+#    it "gets name/id from /card/new/xxx" do
+#      {:post=> "/card/new/xxx"}.should route_to(
 #        :controller=>"card", :action=>'new', :id=>"xxx"
 #      )
 #    end
@@ -37,7 +37,7 @@ describe CardController do
 
 #        it "should accept cards with dot sections that don't match extensions" do
 #          {:get => "#{prefix}/random.card"}.should route_to(
-#            :controller=>"card",:action=>"action",:id=>"random.card"
+#            :controller=>"card",:action=>"read",:id=>"random.card"
 #          )
 #        end
 
@@ -60,7 +60,7 @@ describe CardController do
     #  maybe think about refactoring to use mocks etc. to reduce
     #  test dependencies.
     it "creates cards" do
-      post :action, :card => {
+      post :create, :card => {
         :name=>"NewCardFoo",
         :type=>"Basic",
         :content=>"Bananas"
@@ -73,7 +73,7 @@ describe CardController do
 
 
     it "creates cardtype cards" do
-      xhr :post, :action, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
+      xhr :post, :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
       assigns['card'].should_not be_nil
       assert_response 200
       c=Card["Editor"]
@@ -83,7 +83,7 @@ describe CardController do
     it "pulls deleted cards from trash" do
       @c = Card.create! :name=>"Problem", :content=>"boof"
       @c.destroy!
-      post :action, :card=>{"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
+      post :create, :card=>{"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
       assert_response 302
       c=Card["Problem"]
       c.typecode.should == :phrase
@@ -91,20 +91,19 @@ describe CardController do
 
     context "multi-create" do
       it "catches missing name error" do
-        post :action, "card"=>{
+        post :create, "card"=>{
             "name"=>"",
             "type"=>"Fruit",
             "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}
           }, "view"=>"open"
-        Rails.logger.warn "testing a"
+        assert_response 422
         assigns['card'].errors[:key].first.should == "cannot be blank"
         assigns['card'].errors[:name].first.should == "can't be blank"
-        assert_response 422
       end
 
       it "creates card with subcards" do
         login_as 'joe_admin'
-        xhr :post, :action, :success=>'REDIRECT: /', :card=>{
+        xhr :post, :create, :success=>'REDIRECT: /', :card=>{
           :name  => "Gala",
           :type  => "Fruit",
           :cards => {
@@ -225,14 +224,14 @@ describe CardController do
     end
 
     it "new with typecode" do
-      get :read, :card => {:type=>'Date'}, :view=>'new'
+      post :read, :card => {:type=>'Date'}, :view=>'new'
       assert_response :success, "response should succeed"
       assert_equal Card::DateID, assigns['card'].type_id, "@card type should == Date"
     end
 
     it "delete" do
       c = Card.create( :name=>"Boo", :content=>"booya")
-      delete :delete, :id=>"~#{c.id}"
+      post :delete, :id=>"~#{c.id}"
       assert_response :redirect
       Card["Boo"].should == nil
     end
@@ -274,7 +273,7 @@ describe CardController do
     #  seems less urgent that a lot of the other bugs on the list, so I'm leaving this test out
     #  for now.
     #
-    #  it "should test_update_cardtype_no_stripping" do
+    #  def test_update_cardtype_no_stripping
     #    Account.as 'joe_user'
     #    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
     #    #assert_equal "boo", assigns['card'].content
@@ -285,119 +284,3 @@ describe CardController do
     #
   end
 end
-
-describe CardController, "test/integration card action tests" do
-
-  #include LocationHelper
-
-  before do
-    login_as 'joe_user'
-  end
-
-  # Has Test
-  # ---------
-  # card/delete
-  # card/create
-  # connection/create
-  # card/comment
-  #
-  # FIXME: Needs Test
-  # -----------
-  # card/rollback
-  # card/save_draft
-  # connection/delete ??
-
-  it "should test_comment" do
-    Account.as_bot  do
-      Card.create :name=>'A+*self+*comment', :type=>'Pointer', :content=>'[[Anyone]]'
-    end
-    post :comment, :id=>"A", :card => { :comment=>"how come" }
-    assert_response :success
-  end
-
-  it "should test_create_role_card" do
-    login_as 'joe_admin'
-    post :create, :card=>{:content=>"test", :type=>'Role', :name=>"Editor"}
-    assert_response 302
-
-    assert Card['Editor'].type_id == Card::RoleID
-  end
-
-  it "should test_create_cardtype_card" do
-    Account.as_bot do
-      post :create, 'card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"}
-    end
-    assert_response 302
-    assert Card['Editor2'].typecode == :cardtype
-  end
-
-  it "should test_create" do
-    Account.as_bot {
-     post :create, :card=>{
-      :type=>'Basic',
-      :name=>"Editor",
-      :content=>"testcontent2"
-    }}
-    assert_response 302
-    assert_equal "testcontent2", Card["Editor"].content
-  end
-
-  it "should test_newcard_shows_edit_instructions" do
-    given_card( {:type=>'cardtype', :name=>"YFoo", :content => ""} )
-    given_card( {:name=>"YFoo+*type+*edit help", :content => "instruct-me"} )
-    get :read, :view=>'new', :card => {:type=>'YFoo'}
-    assert_tag :tag=>'div', :attributes=>{ :class=>"instruction" },  :content=>/instruct-me/
-  end
-
-  it "should test_newcard_works_with_fuzzy_renamed_cardtype" do
-    given_card({:typecode=>:cardtype, :name=>"ZFoo", :content => ""})
-    Account.as(:joe_user) do
-      Card["ZFoo"].update_attributes! :name=>"ZFooRenamed", :update_referencers=>true
-    end
-
-    get :read, :view=>'new', :card => { :type=>'z_foo_renamed' }
-    assert_response :success
-  end
-
-  it "should test_newcard_gives_reasonable_error_for_invalid_cardtype" do
-    Account.as_bot do
-      get :read, :vew=>'new', :card => { :type=>'bananamorph' }  
-      assert_response 422
-      assert_tag :tag=>'div', :attributes=>{:class=>/errors-view/}, :content=>/not a known type/
-    end
-  end
-
-  it "should test_should_create_account_from_scratch" do
-    login_as 'joe_admin'
-    assert_difference ActionMailer::Base.deliveries, :size do
-      post :create_account, :id=>'a', :user=>{:email=>'foo@bar.com'}
-      assert_response :redirect  # this now redirects, and I think that is correct
-    end
-    email = ActionMailer::Base.deliveries[-1]
-    # emails should be 'from' inviting user
-    #assert_equal Account.user.email, email.from[0]
-    #assert_equal 'active', User.find_by_email('new@user.com').status
-    #assert_equal 'active', User.find_by_email('new@user.com').status
-  end
-
-  it "should test_update_user_account_email" do
-    post :update_account, :id=>"Joe User".to_name.key, :account => { :email => 'joe@user.co.uk' }
-    assert User.where(:card_id=>Card['joe_user'].id).first.email == 'joe@user.co.uk'
-  end
-
-  it "should test_user_cant_block_self" do
-    post :update_account, :id=>"Joe User".to_name.key, :account => { :blocked => '1' }
-    assert !User.where(:card_id=>Card['joe_user'].id).first.blocked?
-  end
-
-  private
-  def given_card( *card_args )
-    Account.as_bot do
-      Card.create *card_args
-    end
-  end
-
-
-end
-
-

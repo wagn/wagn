@@ -57,30 +57,26 @@ module WagnTestHelper
 
     raise "Don't know email & password for #{user}" unless uc=Card[user] and
         u=User.where(:card_id=>uc.id).first and
-        email = u.email and pass = USERS[email]
+        login = u.email and pass = USERS[login]
 
     if functional
-      #warn "functional login #{email}, #{pass}"
-      #post :action, :id=>'Session', :login=>email, :password=>pass, :controller=>:card
-      post :signin, :id=>'Session', :login=>email, :password=>pass, :controller=>:account
+      #warn "functional login #{login}, #{pass}"
+      post :signin, :login=>login, :password=>pass, :controller=>:account
     else
-      #warn "integration login #{email}, #{pass}"
-      #post '/Session', :login=>email, :password=>pass, :controller=>:card
-      post 'account/signin', :login=>email, :password=>pass, :controller=>:account
+      #warn "integration login #{login}, #{pass}"
+      post 'account/signin', :login=>login, :password=>pass, :controller=>:account
     end
     assert_response :redirect
 
     if block_given?
       yield
-      #delete :action, :id=>'/Session',:controller=>:card
       post 'account/signout',:controller=>'account'
     end
   end
 
   def post_invite(options = {})
     action = options[:action] || :invite
-    Rails.logger.warn "post invite #{options.inspect}"
-    post action,  #:id=>"*account+*invite",
+    post action,
       :user => { :email => 'new@user.com' }.merge(options[:user]||{}),
       :card => { :name => "New User" }.merge(options[:card]||{}),
       :email => { :subject => "mailit",  :message => "baby"  }

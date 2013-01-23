@@ -20,10 +20,10 @@ describe Wagn::Codename, "Codename" do
     Account.as_bot do
       @codes.each do |code|
         card = Card[code]
-        card.destroy
+        card.delete
         if err = card.errors[:cardtype].first
           err.should match "can't be altered because"
-        elsif err = card.errors[:destroy].first
+        elsif err = card.errors[:delete].first
           err.should match 'is a system card'
         end
         Card[code].should be

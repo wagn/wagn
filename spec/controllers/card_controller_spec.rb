@@ -82,7 +82,7 @@ describe CardController do
 
     it "pulls deleted cards from trash" do
       @c = Card.create! :name=>"Problem", :content=>"boof"
-      @c.destroy!
+      @c.delete!
       post :create, :card=>{"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
       assert_response 302
       c=Card["Problem"]
@@ -155,7 +155,7 @@ describe CardController do
     end
 
     it "should work on index" do
-      get :index, :view=>'new'
+      get :read, :view=>'new'
       assigns['card'].name.should == ''
     end
 

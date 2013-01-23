@@ -237,7 +237,7 @@ describe Wql do
 
   describe "trash handling" do
     it "should not find cards in the trash" do
-      Card["A+B"].destroy!
+      Card["A+B"].delete!
       Wql.new( :left=>"A" ).run.map(&:name).sort.should == ["A+C", "A+D", "A+E"]
     end
   end

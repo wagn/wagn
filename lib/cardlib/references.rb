@@ -51,8 +51,8 @@ module Cardlib::References
     expire_templatee_references
   end
 
-  def update_references_on_destroy
-    Card::Reference.update_on_destroy self
+  def update_references_on_delete
+    Card::Reference.update_on_delete self
     expire_templatee_references
   end
 
@@ -70,7 +70,6 @@ module Cardlib::References
       has_many :out_includes,   :class_name => :Reference, :foreign_key => :referer_id, :conditions => { :ref_type => 'I' }
 
       after_create  :update_references_on_create
-      after_destroy :update_references_on_destroy
       after_update  :update_references_on_update
     end
   end

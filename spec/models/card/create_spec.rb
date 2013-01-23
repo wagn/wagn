@@ -87,7 +87,7 @@ describe Card, "created with autoname" do
   
   it "should handle trashed names" do
     b1 = Card.create! :type=>'Book'
-    Account.as_bot { b1.destroy }
+    Account.as_bot { b1.delete }
     b1 = Card.create! :type=>'Book'
     b1.name.should== 'b1'
   end

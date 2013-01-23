@@ -49,7 +49,7 @@ class AccountRequestTest < ActionController::TestCase
 
   end
 
-  def test_should_destroy_and_block_user
+  def test_should_delete_and_block_user
     login_as 'joe_admin'
     # FIXME: should test agains mocks here, instead of re-testing the model...
     post :delete, :id=>"~#{Card.fetch('Ron Request').id}"

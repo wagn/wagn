@@ -44,7 +44,7 @@ class CardController < ApplicationController
 
   def delete
     
-    card.destroy
+    card.delete
     discard_locations_for card #should be an event
     success 'REDIRECT: *previous'
   end

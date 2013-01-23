@@ -34,7 +34,7 @@ class Card < ActiveRecord::Base
         update_existing_key card, newname
       end
 
-      def update_on_destroy card
+      def update_on_delete card
         delete_all_from card
         delete_all_to card
       end

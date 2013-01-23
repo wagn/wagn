@@ -25,16 +25,15 @@ module Wagn
     end
 
     module Model
-      def before_destroy
+      def before_delete
         block_user
+        true
       end
 
       private
 
       def block_user
-        account = User.where(:card_id=>self.id).first
-        #Rails.logger.warn "areq #{inspect} #{account.inspect}"
-        if account
+        if account = User.where(:card_id=>self.id).first
           account.update_attributes :status=>'blocked'
         end
       end

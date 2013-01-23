@@ -17,7 +17,7 @@ describe Card do
 
     it "returns nil and caches trash cards" do
       Account.as_bot do
-        Card.fetch("A").destroy!
+        Card.fetch("A").delete!
         Card.fetch("A").should be_nil
         mock.dont_allow(Card).find_by_key
         Card.fetch("A").should be_nil
@@ -106,7 +106,7 @@ describe Card do
       it "prefers a pattern virtual card to trash cards" do
         Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
         Card.create!(:name => "a+y", :content => "DB Content")
-        Card.fetch("a+y").destroy!
+        Card.fetch("a+y").delete!
 
         card = Card.fetch("a+y")
         card.virtual?.should be_true
@@ -124,7 +124,7 @@ describe Card do
         card.reset_patterns
         card.virtual?.should be_true
         card.content.should == "Type Plus Right Content"
-        tpr.destroy!
+        tpr.delete!
         card.reset_patterns
         card = Card.fetch("a+y")
         card.virtual?.should be_true

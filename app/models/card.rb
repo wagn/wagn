@@ -20,7 +20,7 @@ class Card
     :error_view, :error_status #yuck
       
   attr_writer :update_read_rule_list
-  attr_reader :type_args, :broken_type
+  attr_reader :type_args
 
   before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
   after_save :base_after_save, :update_ruled_cards, :update_queue, :expire_related
@@ -138,8 +138,9 @@ class Card
     case type_id
     when :noop 
     when false, nil
-      @broken_type = args[:type] || args[:typecode]
-      errors.add :type, "#{broken_type} is not a known type."
+      errors.add :type, "#{args[:type] || args[:typecode]} is not a known type."
+      @error_view = :not_found
+      @error_status = 404
     else
       return type_id
     end
@@ -285,48 +286,50 @@ class Card
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # DESTROY
 
-  def destroy
-    run_callbacks( :destroy ) do
-      @trash_changed = true
-      self.update_attributes :trash => true
-      dependents.each do |dep|
-        dep.destroy
-      end
-      true
-    end
-  end
-
-  before_destroy do
+  def delete
     errors.clear
-    validate_destroy
-
-    dependents.each do |dep|
-      dep.send :validate_destroy
-      if dep.errors[:destroy].any?
-        errors.add(:destroy, "can't destroy dependent card #{dep.name}: #{dep.errors[:destroy]}")
+    Card.transaction do
+      if validate_delete
+        delete_to_trash
+        true
       end
     end
-
-    if errors.any?
-      return false
-    else
-      self.before_destroy if respond_to? :before_destroy
+  end
+  
+  def delete_to_trash
+    if respond_to? :before_delete
+      self.before_delete
     end
+    @trash_changed = true
+    self.update_attributes :trash => true
+    dependents.each do |dep|
+      dep.delete_to_trash
+    end
+    update_references_on_delete
+    expire
   end
 
-  def destroy!
-    destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
+  def delete!
+    delete or raise Wagn::Oops, "Delete failed: #{errors.full_messages.join(',')}"
   end
-
-  def validate_destroy
-    if code=self.codename
-      errors.add :destroy, "#{name} is is a system card. (#{code})\n  Deleting this card would mess up our revision records."
+  
+ 
+  def validate_delete
+    if codename
+      errors.add :delete, "#{name} is is a system card. (#{codename})\n  Deleting this card would mess up our revision records."
     end
     if type_id== Card::UserID && Card::Revision.find_by_creator_id( self.id )
-      errors.add :destroy, "Edits have been made with #{name}'s user account.\n  Deleting this card would mess up our revision records."
+      errors.add :delete, "Edits have been made with #{name}'s user account.\n  Deleting this card would mess up our revision records."
     end
-    if respond_to? :custom_validate_destroy
-      self.custom_validate_destroy
+    if respond_to? :custom_validate_delete
+      self.custom_validate_delete
+    end
+    
+    dependents.each do |dep|
+      dep.send :validate_delete
+      if dep.errors[:delete].any?
+        errors.add(:delete, "can't delete dependent card #{dep.name}: #{dep.errors[:delete]}")
+      end
     end
     errors.empty?
   end
@@ -702,11 +705,6 @@ class Card
 
     # validate on update and create
     if rec.updates.for?(:type_id) or rec.new_record?
-      # invalid type recorded on create
-      if rec.broken_type
-        rec.errors.add :type, "won't work.  There's no cardtype named '#{rec.broken_type}'"
-      end
-
       # invalid to change type when type is hard_templated
       if rt = rec.hard_template and !rt.type_template? and value!=rt.type_id and !rec.allow_type_change
         rec.errors.add :type, "can't be changed because #{rec.name} is hard templated to #{rt.type_name}"

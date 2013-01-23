@@ -205,9 +205,9 @@ class CardController < ApplicationController
         end
       end
       
-    render_errors if @card.errors.any?
 
     Wagn::Conf[:main_name] = params[:main] || (card && card.name) || ''
+    render_errors
     true
   end
 

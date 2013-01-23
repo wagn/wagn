@@ -143,6 +143,7 @@ class Card
     when false, nil
       errors.add :type, "#{args[:type] || args[:typecode]} is not a known type."
       @error_view = :not_found
+      @error_status = 404
     else
       return type_id
     end

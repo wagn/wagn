@@ -85,7 +85,7 @@ class CardActionTest < ActionController::IntegrationTest
     Account.as_bot do
       get 'card/new', :card => { :type=>'bananamorph' }  
       assert_response 404
-#      assert_tag :tag=>'div', :attributes=>{:class=>/errors-view/}, :content=>/not a known type/
+# =>       assert_tag :tag=>'div', :attributes=>{:class=>/errors-view/}, :content=>/not a known type/
     end
   end
 

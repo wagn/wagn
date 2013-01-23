@@ -13,9 +13,9 @@ module Wagn
     end
 
     action :read do |*a|
-      #warn "read action #{@card.inspect}, #{@card.errors.map(&:to_s)*', '}"
+      #warn "read action #{@card.inspect}"
       render_errors || begin
-    #warn "save and show #{@card.inspect}"
+        #warn "save and show #{@card.inspect}"
         save_location # should be an event!
         show
       end
@@ -34,6 +34,7 @@ module Wagn
     end
 
     action :delete do |*a|
+      #warn "delete action #{card.inspect}"
       card.destroy
       discard_locations_for card #should be an event
       success 'REDIRECT: *previous'

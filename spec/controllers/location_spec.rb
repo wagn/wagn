@@ -38,11 +38,11 @@ describe CardController, "location test from old integration" do
     get :read, :id => t1.key
     get :read, :id => t2.key
 
-    post :delete, :id=>t2.id.to_s
-    assert_redirected_to url_for_page( t1.name )
+    post :delete, :id=> '~'+t2.id.to_s
     assert_nil Card[ t2.name ]
+    assert_redirected_to "/#{t1.name}"
 
-    post :delete, :id => "~" + t1.id.to_s
+    post :delete, :id => '~'+t1.id.to_s
     assert_redirected_to '/'
     assert_nil Card[ t1.name ]
   end

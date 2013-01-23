@@ -26,7 +26,7 @@ class CardController < ApplicationController
   def action
     @action = METHODS[request.method]
     Rails.logger.warn "action #{request.method}, #{@action} #{params.inspect}"
-    warn "action #{request.method}, #{@action} #{params.inspect}"
+    #warn "action #{request.method}, #{@action} #{params.inspect}"
     send "perform_#{@action}"
     render_errors || success
   end
@@ -193,6 +193,7 @@ class CardController < ApplicationController
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
         name = params[:id] || opts[:name]
         
+        #warn "load card #{@action.inspect}, p:#{params.inspect} :: #{name.inspect} #{opts.inspect}"
         if @action == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
           # I think we may need to create a "#create" instance method that handles this checking.
@@ -204,6 +205,7 @@ class CardController < ApplicationController
         end
       end
 
+    #warn "load_card #{card.inspect}"
     Wagn::Conf[:main_name] = params[:main] || (card && card.name) || ''
     true
   end

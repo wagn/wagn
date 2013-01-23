@@ -49,28 +49,28 @@ describe CardController, "Basic rendering tests" do
 
     it "should get changes for basic" do
       card = Card['Sample Basic']
-      card.should be
-      get :read, :id => card.id, :view=>'changes'
+      card.new_card?.should be_false
+      get :read, :id => "~#{card.id}", :view=>'changes'
       assert_response :success
     end
 
     it "should read all types" do
       @sample_cards.each do |sample|
-        get :read, :id => sample.id
+        get :read, :id => "~#{sample.id}"
         assert_response :success
       end
     end
 
     it "should get options for all types" do
       @sample_cards.each do |sample|
-        get :read, :id => sample.id, :view=>'options'
+        get :read, :id => "~#{sample.id}", :view=>'options'
         assert_response :success
       end
     end
 
     it "should get edit form for all types" do
       @sample_cards.each do |sample|
-        get :read, :id => sample.id, :view=>'edit'
+        get :read, :id => "~#{sample.id}", :view=>'edit'
         assert_response :forbidden
       end
     end
@@ -87,20 +87,20 @@ describe CardController, "Basic rendering tests" do
     end
 
     it "should get changes for basic" do
-      get :read, :id => Card['Sample Basic'].id, :view=>'changes'
+      get :read, :id => "~#{Card['Sample Basic'].id}", :view=>'changes'
       assert_response :success
     end
 
     it "should read all types" do
       @sample_cards.each do |sample|
-        get :read, :id => sample.id
+        get :read, :id => "~#{sample.id}"
         assert_response :success
       end
     end
 
     it "should get options for all types" do
       @sample_cards.each do |sample|
-        get :read, :id => sample.id, :view=>'options'
+        get :read, :id => "~#{sample.id}", :view=>'options'
         assert_response :success
       end
     end
@@ -109,10 +109,10 @@ describe CardController, "Basic rendering tests" do
       @sample_cards.each do |sample|
         if %w{sample_html sample_layout}.member? sample.key
           login_as 'Joe Admin' do
-            get :read, :id => sample.id, :view=>'edit'
+            get :read, :id => "~#{sample.id}", :view=>'edit'
           end
         else
-          get :read, :id => sample.id, :view=>'edit'
+          get :read, :id => "~#{sample.id}", :view=>'edit'
         end
         response.should be_success, "Getting #{sample.inspect}"
       end

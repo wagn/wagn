@@ -58,9 +58,12 @@ describe Card do
     before do
       @pointer_settings =  [ :options, :options_label, :input ]
     end
-
+    it "doesn't fail on nonexistent trunks" do
+      Card.new(:name=>'foob+*right').setting_codes_by_group.class.should == Hash
+    end
+    
     it "returns universal setting names for non-pointer set" do
-      #pending "Different api, we should just put the tests in a new spec for that"
+      pending "Different api, we should just put the tests in a new spec for that"
       snbg = Card.fetch('*star').setting_codes_by_group
       #warn "snbg #{snbg.class} #{snbg.inspect}"
       snbg.keys.length.should == 4

@@ -155,7 +155,7 @@ describe CardController do
     end
 
     it "should work on index" do
-      get :index, :view=>'new'
+      get :read, :view=>'new'
       assigns['card'].name.should == ''
     end
 

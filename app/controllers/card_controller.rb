@@ -11,7 +11,6 @@ class CardController < ApplicationController
 
   helper :wagn
 
-  before_filter :index_preload, :only=> [ :index ]
   before_filter :read_file_preload, :only=> [ :read_file ]
 
   before_filter :load_card
@@ -26,42 +25,37 @@ class CardController < ApplicationController
   end
 
   def read
-    if card.errors.any?
-      render_errors
-    else
-      save_location # should be an event!
-      show
-    end
+    save_location # should be an event!
+    show
   end
 
   def update
-    case
-    when card.new_card?                          ;  create
-    when card.update_attributes( params[:card] ) ;  success
-    else                                             render_errors
+    if card.new_card?
+      create
+    elsif card.update_attributes params[:card]
+      success
+    else
+      render_errors
     end
   end
 
   def delete
-    
-    card.delete
-    discard_locations_for card #should be an event
-    success 'REDIRECT: *previous'
+    if card.delete
+      discard_locations_for card #should be an event
+      success 'REDIRECT: *previous'
+    else
+      render_errors
+    end
   end
 
-
-  def index
-    read
-  end # handle in load card?
-
-
+  #FIXME!  move into renderer
   def read_file
     if card.ok? :read
       show_file
     else
       show :denial
     end
-  end #FIXME!  move into renderer
+  end 
 
 
 
@@ -161,7 +155,6 @@ class CardController < ApplicationController
 
 
 
-
   private
 
   #-------( FILTERS )
@@ -176,21 +169,19 @@ class CardController < ApplicationController
     end
   end
 
-  def index_preload
-    case
-    when Account.no_logins?
-      redirect_to Card.path_setting( '/admin/setup' )
-    when params[:id]                                         #noop
-    when params[:card] && params[:card][:name]               #noop
-    when Wagn::Renderer.tagged( params[:view], :unknown_ok ) #noop
-    else  
-      params[:id] = Card.setting(:home) || 'Home'
-    end
-  end
 
-
-  # FIXME: make me an event
   def load_card
+    params[:id] ||= case
+      when Account.no_logins?
+        return redirect_to( Card.path_setting '/admin/setup' )
+      when params[:card] && params[:card][:name]
+        params[:card][:name]
+      when Wagn::Renderer.tagged( params[:view], :unknown_ok )
+        ''
+      else  
+        Card.setting(:home) || 'Home'
+      end
+    
     @card = case params[:id]
       when '*previous'   ; return wagn_redirect( previous_location )
       when /^\~(\d+)$/   ; Card.fetch $1.to_i
@@ -213,6 +204,8 @@ class CardController < ApplicationController
           Card.fetch name, :new=>opts
         end
       end
+      
+    render_errors if @card.errors.any?
 
     Wagn::Conf[:main_name] = params[:main] || (card && card.name) || ''
     true

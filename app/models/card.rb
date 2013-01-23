@@ -12,10 +12,7 @@ SmartName.lookup= Card
 SmartName.session= proc { Account.user_card.name }
 
 class Card
-
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
-  belongs_to :card, :class_name => 'Card', :foreign_key => :creator_id
-  belongs_to :card, :class_name => 'Card', :foreign_key => :updater_id
 
   attr_accessor :comment, :comment_author, :selected_rev_id,
     :update_referencers, :allow_type_change, # seems like wrong mechanisms for this

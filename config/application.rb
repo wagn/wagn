@@ -8,58 +8,8 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
+
 module Wagn
-  class Conf
-    class << self
-      def [](key)         @@config[key.to_sym]          end
-      def []=(key, value) @@config[key.to_sym]=value    end
-      def config;         @@config.inspect              end
-
-      WAGN_CONFIG_FILE = ENV['WAGN_CONFIG_FILE'] || File.expand_path('../wagn.yml', __FILE__)
-
-      def load
-        @@config = h = {}
-        f = WAGN_CONFIG_FILE
-        if File.exists?( f ) and y = YAML.load_file( f ) and Hash === y
-          h.merge! y
-        end
-        h.symbolize_keys!
-      end
-
-      def load_after_app
-        #could do these at normal load time but can't use Rails.root
-        h = @@config
-        if base_u = h[:base_url]
-          h[:base_url] = base_u.gsub!(/\/$/,'')
-          h[:host] = base_u.gsub(/^https?:\/\//,'') unless h[:host]
-        end
-
-        h[:root_path] = begin
-          epath = ENV['RAILS_RELATIVE_URL_ROOT']
-          epath && epath != '/' ? epath : ''
-        end
-
-        h[:attachment_web_dir]     ||= h[:root_path] + '/files'
-        h[:attachment_storage_dir] ||= "#{Rails.root}/local/files"
-        
-        h[:pack_dirs] = if %w{ test cucumber }.include? Rails.env
-          ''
-        else
-          h[:pack_dirs] || "#{Rails.root}/local/packs"
-        end
-
-        h[:load_dirs] ||= "#{Rails.root}/lib/wagn/set/"
-        h[:load_dirs] += ", #{Rails.root}/local/packs" unless Rails.env == 'test' || Rails.env == 'cucumber'
-
-        h[:read_only] ||= (ro=ENV['WAGN_READ_ONLY']) && ro != 'false'
-        # this means config overrides env var.  is that what we want?
-      end
-    end
-  end
-
-
-  Wagn::Conf.load
-
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -117,6 +67,4 @@ module Wagn
     config.autoload_paths += Dir["#{config.root}/app/models/"]
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
   end
-
-  Wagn::Conf.load_after_app # move this stuff to initializer?
 end

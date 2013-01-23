@@ -96,6 +96,7 @@ class ApplicationController < ActionController::Base
 
     case
     when known                # renderers can handle it
+      # FIXME: generalize this so it can be overriden when registering a renderer
       obj_sym = [:json, :xml].member?( ext = ext.to_sym ) ? ext : :text
       renderer = Wagn::Renderer.new card, :format=>ext, :controller=>self
 

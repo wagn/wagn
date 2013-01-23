@@ -40,41 +40,11 @@ class CardController < ApplicationController
     end
   end
 
-  def create
-    if card.save
-      success
-    else
-      render_errors
-    end
-  end
-
-  def create
-    #warn "create #{params.inspect}, #{card.inspect} if #{card && !card.new_card?}, nc:#{card.new_card?}"
-
-    perform_create
-  end
-
-  def read
-    perform_read
-  end
-
-  def update
-    perform_update
-  end
-
-  def delete
-    perform_delete
-    case
-    when card.new_card?                          ;  create
-    when card.update_attributes( params[:card] ) ;  success
-    else                                             render_errors
-    end
-  end
-
-  def index
-    read
-  end # handle in load card?
-
+  def create; perform_create end
+  def read  ; perform_read   end
+  def update; perform_update end
+  def delete; perform_delete end
+  def index ; read           end # handle in load card?
 
   def read_file
     if card.ok? :read

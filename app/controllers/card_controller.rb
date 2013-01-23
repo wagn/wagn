@@ -191,8 +191,8 @@ class CardController < ApplicationController
       when /^\~(\d+)$/   ; Card.fetch $1.to_i
       when /^\:(\w+)$/   ; Card.fetch $1.to_sym
       else
-        opts = params[:card] || {}
-        opts = opts.clone #so that original params remain unaltered.  need deeper clone?
+        opts = params[:card]
+        opts = opts ? opts.clone : {} #clone so that original params remain unaltered.  need deeper clone?
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
         name = params[:id] || opts[:name]
         

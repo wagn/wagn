@@ -1,3 +1,5 @@
+require 'yaml'
+
 module Wagn
   class Conf
     class << self

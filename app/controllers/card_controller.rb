@@ -172,6 +172,8 @@ class CardController < ApplicationController
         params[:card][:name]
       when Wagn::Renderer.tagged( params[:view], :unknown_ok )
         ''
+      when @action == 'create'
+        ''
       else  
         Card.setting(:home) || 'Home'
       end

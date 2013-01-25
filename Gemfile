@@ -55,7 +55,7 @@ end
 
 
 group :profile do
-  gem 'ruby-prof'                              # profiling
+  gem 'ruby-prof', '~>0.12.1'                              # profiling
   gem 'test-unit'
 end
 

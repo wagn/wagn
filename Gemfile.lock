@@ -166,7 +166,7 @@ GEM
       columnize (>= 0.3.1)
       linecache19 (>= 0.5.11)
       ruby-debug-base19 (>= 0.11.19)
-    ruby-prof (0.12.0)
+    ruby-prof (0.12.1)
     ruby_core_source (0.1.5)
       archive-tar-minitar (>= 0.5.2)
     rubyzip (0.9.9)
@@ -242,7 +242,7 @@ DEPENDENCIES
   rr
   rspec-rails (~> 2.6)
   ruby-debug19
-  ruby-prof
+  ruby-prof (~> 0.12.1)
   rubyzip (~> 0.9)
   sass-rails (~> 3.1)
   smartname (= 0.1.7)

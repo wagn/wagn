@@ -5,7 +5,6 @@ Wagn::Application.configure do
   # approximation of performance.  However, it should
   # definitely not use the production databse!
 
-
   # Cache classes - otherwise your code
   # will run approximately 5 times slower and the
   # profiling results will be overwhelmed by Rails
@@ -23,4 +22,6 @@ Wagn::Application.configure do
 
   # Turn off most logging
   config.log_level = :info
+  
+  config.active_support.deprecation = :log
 end

@@ -54,10 +54,13 @@ end
 
 
 
-group :test, :development do
-  gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
+group :profile do
   gem 'ruby-prof'                              # profiling
   gem 'test-unit'
+end
+
+group :test, :development do
+  gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
   gem 'rails-dev-tweaks', '~> 0.6'             # dramatic speeds up asset loading, among other tweaks
 
 #  gem 'jasmine-rails'

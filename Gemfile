@@ -57,6 +57,7 @@ end
 group :test, :development do
   gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
   gem 'ruby-prof'                              # profiling
+  gem 'test-unit'
   gem 'rails-dev-tweaks', '~> 0.6'             # dramatic speeds up asset loading, among other tweaks
 
 #  gem 'jasmine-rails'

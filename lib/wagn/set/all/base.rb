@@ -19,21 +19,28 @@ module Wagn
 
     action :update do |*a|
       case
-      when card.new_card?                          ;  process_create
+      when card.new_card?                          ;  perform_create
       when card.update_attributes( params[:card] ) ;  success
       else                                            render_errors
       end
     end
 
     action :delete do |*a|
-      #warn "delete action #{card.inspect}"
-      card.destroy
-      discard_locations_for card #should be an event
-      success 'REDIRECT: *previous'
+      if card.delete
+        discard_locations_for card #should be an event
+        success 'REDIRECT: *previous'
+      else
+        render_errors
+      end
     end
 
-    alias_action :read,     {}, :index
-    alias_action :show_file, {}, :read_file
+    action :read_file do |*a|
+      if card.ok? :read
+        show_file
+      else
+        show :denial
+      end
+    end 
 
 
 

@@ -8,8 +8,7 @@ module Wagn
     action :create do |*a|
       #card.errors.add(:name, "must be unique; '#{card.name}' already exists.") unless card.new_card?
       card.save
-      re=render_errors
-      re || success
+      render_errors || success
     end
 
     action :read do |*a|
@@ -19,10 +18,11 @@ module Wagn
     end
 
     action :update do |*a|
-    case
-    when card.new_card?                          ;  process_create
-    when card.update_attributes( params[:card] ) ;  success
-    else                                            render_errors
+      case
+      when card.new_card?                          ;  process_create
+      when card.update_attributes( params[:card] ) ;  success
+      else                                            render_errors
+      end
     end
 
     action :delete do |*a|

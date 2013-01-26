@@ -1,5 +1,5 @@
 require 'spork'
-ENV["RAILS_ENV"] ||= 'test'
+ENV["RAILS_ENV"] = 'test'
 
 module MySpecHelpers
   def render_test_card card

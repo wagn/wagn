@@ -1,5 +1,5 @@
 require 'spork'
-ENV["RAILS_ENV"] ||= 'test'
+ENV["RAILS_ENV"] = 'test'
 
 Spork.prefork do
   require File.expand_path File.dirname(__FILE__) + "/../config/environment"

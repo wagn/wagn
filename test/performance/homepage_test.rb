@@ -1,12 +1,8 @@
-require File.expand_path('test_helper', File.dirname(__FILE__))
-require 'performance_test_help'
-
-class HomepageTest < ActionController::PerformanceTest
-  # Replace this with your real tests.
+require 'test_helper'
+require 'rails/performance_test_help'
+ 
+class HomepageTest < ActionDispatch::PerformanceTest
   def test_homepage
-    get '/Home'
-    File.open("#{Rails.root}/log/response.html","w") do |f|
-      f.puts response.body
-    end
+    get '/'
   end
 end

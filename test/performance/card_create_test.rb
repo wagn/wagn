@@ -1,12 +1,12 @@
-require File.expand_path('test_helper', File.dirname(__FILE__))
-require 'performance_test_help'
+require 'test_helper'
+require 'rails/performance_test_help'
+ 
+class CardCreateTest < ActionDispatch::PerformanceTest
 
-class CardCreateTest < ActionController::PerformanceTest
-  # Replace this with your real tests.
-  def initialize(*args)
+  def initialize *args
     @name = 'CardA'
-    super(*args)
-    #Account.as_bot { # this must have a block now }
+    super *args
+    Account.as Card::WagnBotID
   end
 
   def test_card_create_simple

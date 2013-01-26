@@ -519,7 +519,7 @@ module Wagn
       load_revisions
       wrap :errors do |args|
         %{<strong>Conflict!</strong><span class="new-current-revision-id">#{@revision.id}</span>
-          <div>#{ link_to_page @revision.creator.card.name } has also been making changes.</div>
+          <div>#{ link_to_page @revision.creator.name } has also been making changes.</div>
           <div>Please examine below, resolve above, and re-submit.</div>
           #{wrap(:conflict) { |args| _render_diff } } }
       end

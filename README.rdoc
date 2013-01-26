@@ -27,7 +27,7 @@ Platform-specific details at: http://www.wagn.org/wagn/installation_1_8+Platform
 
 ===2. Get libraries (ruby gems)
 
- bundle install --without postgres:memcache:test:debug:development:assets
+ bundle install --without postgres:memcache:test:debug:development:assets:profile
 
 The above is for a mysql installation.  If you want to use postgres, switch "postgres" to "mysql" on the without list.
 

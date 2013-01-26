@@ -46,7 +46,7 @@ namespace :wagn do
       # trash ignored cards
       Account.as_bot do
         Card.search( {:referred_to_by=>'*ignore'} ).each do |card|
-          card.destroy!
+          card.delete!
         end
       end
       

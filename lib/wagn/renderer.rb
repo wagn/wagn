@@ -56,7 +56,6 @@ module Wagn
     class << self
 
       def new card, opts={}
-
         format = ( opts[:format].send_if :to_sym ) || :html
         renderer = if self!=Renderer or format.nil? or format == :base
               self
@@ -68,6 +67,11 @@ module Wagn
         new_renderer = renderer.allocate
         new_renderer.send :initialize, card, opts
         new_renderer
+      end
+      
+      
+      def tagged view, tag
+        view && tag && @@view_tags[view.to_sym] && @@view_tags[view.to_sym][tag.to_sym]
       end
     end
 
@@ -222,11 +226,6 @@ module Wagn
       end
     end
 
-
-    def tagged view, tag
-      @@view_tags[view] && @@view_tags[view][tag]
-    end
-
     def ok_view view, args={}
       original_view = view
 
@@ -239,7 +238,7 @@ module Wagn
         # This should disappear when we get rid of admin and account controllers and all renderers always have cards
 
         # HANDLE UNKNOWN CARDS ~~~~~~~~~~~~
-        when !card.known? && !tagged( view, :unknown_ok )
+        when !card.known? && !self.class.tagged( view, :unknown_ok )
           if focal?
             if @format==:html && card.ok?(:create) ;  :new
             else                                   ;  :not_found
@@ -382,7 +381,7 @@ module Wagn
 
     def path opts={}
       pcard = opts.delete(:card) || card
-      base = opts[:action] ? "/card/#{opts[:action]}" : ''
+      base = opts[:action] ? "/card/#{ opts.delete :action }" : ''
       if pcard && !pcard.name.empty? && !opts.delete(:no_id) && ![:new, :create].member?(opts[:action]) #generalize. dislike hardcoding views/actions here
         base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
       end

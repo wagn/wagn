@@ -16,7 +16,7 @@ end
 module Wagn::Set::Type::CardtypeC
   module Model
     def validate_type_change
-      errors.add :destroy_error, "card c is indestructible"
+      errors.add :delete_error, "card c is indestructible"
     end
   end
 end
@@ -96,11 +96,11 @@ describe Card, "type transition approve create" do
 end
 
 
-describe Card, "type transition validate_destroy" do
+describe Card, "type transition validate_delete" do
   before do @c = change_card_to_type("type-c-card", :basic) end
 
   it "should have errors" do
-    @c.errors[:destroy_error].first.should == "card c is indestructible"
+    @c.errors[:delete_error].first.should == "card c is indestructible"
   end
 
   it "should retain original type" do
@@ -122,12 +122,12 @@ describe Card, "type transition validate_create" do
   end
 end
 
-describe Card, "type transition destroy callback" do
+describe Card, "type transition delete callback" do
   before do
     @c = change_card_to_type("type-e-card", :basic)
   end
 
-  it "should decrement counter in before destroy" do
+  it "should decrement counter in before delete" do
     pending "no trigger for this test anymore"
     Card.count.should == 1
   end

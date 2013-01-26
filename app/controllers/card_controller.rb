@@ -6,7 +6,6 @@ class CardController < ApplicationController
 
   helper :wagn
 
-  before_filter :index_preload, :only=> [ :index ]
   before_filter :read_file_preload, :only=> [ :read_file ]
 
   before_filter :load_card
@@ -52,7 +51,7 @@ class CardController < ApplicationController
     else
       show :denial
     end
-  end #FIXME!  move into renderer
+  end 
 
 
   def action_error *a
@@ -155,7 +154,6 @@ class CardController < ApplicationController
 
 
 
-
   private
 
   #-------( FILTERS )
@@ -170,26 +168,27 @@ class CardController < ApplicationController
     end
   end
 
-  def index_preload
-    Account.no_logins? ?
-      redirect_to( Card.path_setting '/admin/setup' ) :
-      params[:id] = (Card.setting(:home) || 'Home').to_name.url_key
-  end
-
-
-  # FIXME: make me an event
   def load_card
+    params[:id] ||= case
+      when Account.no_logins?
+        return redirect_to( Card.path_setting '/admin/setup' )
+      when params[:card] && params[:card][:name]
+        params[:card][:name]
+      when Wagn::Renderer.tagged( params[:view], :unknown_ok )
+        ''
+      when @action == 'create'
+        ''
+      else  
+        Card.setting(:home) || 'Home'
+      end
+    
     @card = case params[:id]
       when '*previous'   ; return wagn_redirect( previous_location )
       when /^\~(\d+)$/   ; Card.fetch $1.to_i
       when /^\:(\w+)$/   ; Card.fetch $1.to_sym
       else
-
-        opts = if opts = params[:card]  ; opts.clone
-            elsif opts = params[:object]; opts
-            else                        {}
-            end
-
+        opts = params[:card]
+        opts = opts ? opts.clone : {} #clone so that original params remain unaltered.  need deeper clone?
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
         name = params[:id] || opts[:name]
         
@@ -204,9 +203,11 @@ class CardController < ApplicationController
           Card.fetch name, :new=>opts
         end
       end
+      
 
     #warn "load_card #{card.inspect}"
     Wagn::Conf[:main_name] = params[:main] || (card && card.name) || ''
+    render_errors
     true
   end
 

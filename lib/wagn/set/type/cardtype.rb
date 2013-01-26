@@ -22,18 +22,18 @@ module Wagn
       include Wagn::Set::Type::Basic::Model
 
       def on_type_change
-        custom_validate_destroy
+        custom_validate_delete
       end
 
       def validate_type_change
-        custom_validate_destroy
+        custom_validate_delete
       end
 
       def cards_of_type_exist?
         Account.as_bot { Card.count_by_wql :type_id=>id } > 0
       end
 
-      def custom_validate_destroy
+      def custom_validate_delete
         if cards_of_type_exist?
           errors.add :cardtype, "can't be altered because #{name} is a Cardtype and cards of this type still exist"
           false

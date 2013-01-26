@@ -14,23 +14,15 @@ module Wagn
 
     action :read do |*a|
       #warn "read action #{@card.inspect}"
-      render_errors || begin
-        #warn "save and show #{@card.inspect}"
-        save_location # should be an event!
-        show
-      end
+      save_location # should be an event!
+      show
     end
 
     action :update do |*a|
-      if card.new_card?; process_create
-      elsif card.update_attributes params[:card]
-        #warn "update #{card.inspect}, #{params[:card].inspect}"
-        #card.save
-        render_errors || success
-
-      elsif render_errors
-      else  success
-      end
+    case
+    when card.new_card?                          ;  process_create
+    when card.update_attributes( params[:card] ) ;  success
+    else                                            render_errors
     end
 
     action :delete do |*a|

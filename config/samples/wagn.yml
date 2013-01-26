@@ -37,6 +37,9 @@
 # mem_cache_servers
 # IP address for mem cache server
 
+# rails_env:
+# defaults to production
+
 # IMPORTANT: please be sure to register for your own recaptcha keys before deploying a live site
 # It's quick and easy.  Just follow instructions at https://www.google.com/recaptcha/admin/create
 

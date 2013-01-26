@@ -4,7 +4,7 @@ describe Card, "deleted card" do
   before do
     Account.as_bot do
       @c = Card['A']
-      @c.destroy!
+      @c.delete!
     end
   end
   it "should be in the trash" do
@@ -22,10 +22,24 @@ end
 describe Card, "in trash" do
   it "should be retrieved by fetch with new" do
     Account.as :joe_user do
-      Card.create(:name=>"Betty").destroy
+      Card.create(:name=>"Betty").delete
       c=Card.fetch "Betty", :new=>{}
       c.save
       Card["Betty"].should be_instance_of(Card)
+    end
+  end
+end
+
+
+describe Card, "plus cards" do
+  it "should be deleted when root is" do
+    Account.as :joe_admin do
+      c = Card.create! :name=>'zz+top'
+      root = Card['zz']
+      root.delete
+      Rails.logger.info "ERRORS = #{root.errors.full_messages*''}"
+      Card.find(c.id).trash.should be_true
+      Card['zz'].should be_nil
     end
   end
 end
@@ -34,7 +48,7 @@ end
 describe User, "with revisions" do
   before do Account.as_bot { @c = Card["Wagn Bot"] } end
   it "should not be removable" do
-    @c.destroy.should_not be_true
+    @c.delete.should_not be_true
   end
 end
 
@@ -45,7 +59,7 @@ describe User, "without revisions" do
     end
   end
   it "should be removable" do
-    @c.destroy!.should be_true
+    @c.delete!.should be_true
   end
 end
 
@@ -61,7 +75,7 @@ end
 #  end
 #  it "should not be removable" do
 #    @a = Card['A']
-#    @a.destroy.should_not be_true
+#    @a.delete.should_not be_true
 #  end
 #end
 
@@ -69,7 +83,7 @@ describe Card, "dependent removal" do
   before do
     Account.as :joe_user
     @a = Card['A']
-    @a.destroy!
+    @a.delete!
     @c = Card.find_by_key "A+B+C".to_name.key
   end
 
@@ -87,7 +101,7 @@ describe Card, "rename to trashed name" do
     Account.as_bot do
       @a = Card["A"]
       @b = Card["B"]
-      @a.destroy!  #trash
+      @a.delete!  #trash
       @b.update_attributes! :name=>"A", :update_referencers=>true
     end
   end
@@ -108,7 +122,7 @@ describe Card, "sent to trash" do
   before do
     Account.as_bot do
       @c = Card["basicname"]
-      @c.destroy!
+      @c.delete!
     end
   end
 
@@ -129,7 +143,7 @@ end
 describe Card, "revived from trash" do
   before do
     Account.as_bot do
-      Card["basicname"].destroy!
+      Card["basicname"].delete!
       @c = Card.create! :name=>'basicname', :content=>'revived content'
     end
   end
@@ -160,7 +174,7 @@ describe Card, "recreate trashed card via new" do
 
 #  this test is known to be broken; we've worked around it for now
 #  it "should delete and recreate with a different cardtype" do
-#    @c.destroy!
+#    @c.delete!
 #    @re_c = Card.new :type=>"Phrase", :name=>"BasicMe", :content=>"Banana"
 #    @re_c.save!
 #  end
@@ -171,7 +185,7 @@ describe Card, "junction revival" do
   before do
     Account.as_bot do
       @c = Card.create! :name=>"basicname+woot", :content=>"basiccontent"
-      @c.destroy!
+      @c.delete!
       @c = Card.create! :name=>"basicname+woot", :content=>"revived content"
     end
   end
@@ -205,12 +219,12 @@ describe "remove tests" do
   # would fail to delete.  probably less of an issue now that delete is done through
   # trash.
   it "test_remove" do
-    assert @a.destroy!, "card should be destroyable"
+    assert @a.delete!, "card should be deleteable"
     assert_nil Card["A"]
   end
 
   it "test_recreate_plus_card_name_variant" do
-    Card.create( :name => "rta+rtb" ).destroy
+    Card.create( :name => "rta+rtb" ).delete
     Card["rta"].update_attributes :name=> "rta!"
     c = Card.create! :name=>"rta!+rtb"
     assert Card["rta!+rtb"]
@@ -219,12 +233,12 @@ describe "remove tests" do
   end
 
   it "test_multiple_trash_collision" do
-    Card.create( :name => "alpha" ).destroy
+    Card.create( :name => "alpha" ).delete
     3.times do
       b = Card.create( :name => "beta" )
       b.name = "alpha"
       assert b.save!
-      b.destroy
+      b.delete
     end
   end
 end

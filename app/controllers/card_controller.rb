@@ -44,15 +44,8 @@ class CardController < ApplicationController
   def read  ; perform_read   end
   def update; perform_update end
   def delete; perform_delete end
-  def index ; read           end # handle in load card?
-
-  def read_file
-    if card.ok? :read
-      show_file
-    else
-      show :denial
-    end
-  end 
+  def index ; perform_read   end
+  def read_file; perform_read_file end
 
 
   def action_error *a

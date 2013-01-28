@@ -94,23 +94,27 @@ class AccountController < CardController
   end
 
   def forgot_password
-    return unless request.post? and email = params[:email].downcase
-    @user = User.find_by_email(email)
-    if @user.nil?
-      flash[:notice] = "Unrecognized email."
-      render :action=>'signin', :status=>404
-    elsif !@user.active?
-      flash[:notice] = "That account is not active."
-      render :action=>'signin', :status=>403
+    if request.post? and email = params[:email]
+      @user = User.find_by_email email.downcase
+      case @user
+      when nil?
+        flash[:notice] = "Unrecognized email."
+        render :action=>'signin', :status=>404
+      when !@user.active?
+        flash[:notice] = "That account is not active."
+        render :action=>'signin', :status=>403
+      else
+        @user.generate_password
+        @user.save!
+        subject = "Password Reset"
+        message = "You have been given a new temporary password.  " +
+           "Please update your password once you've signed in. "
+        Mailer.account_info(@user, subject, message).deliver
+        flash[:notice] = "Check your email for your new temporary password"
+        redirect_to previous_location
+      end
     else
-      @user.generate_password
-      @user.save!
-      subject = "Password Reset"
-      message = "You have been given a new temporary password.  " +
-         "Please update your password once you've signed in. "
-      Mailer.account_info(@user, subject, message).deliver
-      flash[:notice] = "Check your email for your new temporary password"
-      redirect_to previous_location
+      raise Wagn::BadAddress
     end
   end
 

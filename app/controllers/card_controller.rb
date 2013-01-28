@@ -186,9 +186,12 @@ class CardController < ApplicationController
 
   def load_card
     @card = case params[:id]
-      when '*previous'   ; return wagn_redirect( previous_location )
-      when /^\~(\d+)$/   ; Card.fetch $1.to_i
-      when /^\:(\w+)$/   ; Card.fetch $1.to_sym
+      when '*previous'
+        return wagn_redirect( previous_location )
+      when /^\~(\d+)$/
+        Card.fetch( $1.to_i ) or raise Wagn::NotFound 
+      when /^\:(\w+)$/
+        Card.fetch $1.to_sym
       else
         opts = params[:card] ? params[:card].clone : {}
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.

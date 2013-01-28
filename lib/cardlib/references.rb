@@ -13,12 +13,12 @@ module Cardlib::References
 
   def referencers
     return [] unless refs = references
-    refs.map(&:referer_id).map( &Card.method(:fetch) )
+    refs.map(&:referer_id).map( &Card.method(:fetch) ).compact
   end
 
   def includers
     return [] unless refs = includes
-    refs.map(&:referer_id).map( &Card.method(:fetch) )
+    refs.map(&:referer_id).map( &Card.method(:fetch) ).compact
   end
 
 
@@ -26,12 +26,12 @@ module Cardlib::References
 
   def referencees
     return [] unless refs = out_references
-    refs. map { |ref| Card.fetch ref.referee_key, :new=>{} }
+    refs.map { |ref| Card.fetch ref.referee_key, :new=>{} }.compact
   end
 
   def includees
     return [] unless refs = out_includes
-    refs.map { |ref| Card.fetch ref.referee_key, :new=>{} }
+    refs.map { |ref| Card.fetch ref.referee_key, :new=>{} }.compact
   end
 
   protected

@@ -136,7 +136,7 @@ describe "renaming" do
      
      c3, c4 = Card["chuck_wagn+chuck"], Card["chuck"]
     end
-    Account.user = 'joe_user'
+    Account.authorized_id = Card['joe_user'].id
   end
 
   it "test_subdivision" do

@@ -17,7 +17,7 @@
     :help=>"", #ENGLISH
     :label=>"Confirm password") %>
 
-<% if card.to_user and card.fetch(:trait=>:account).ok?(:update)  %>
+<% if card.account and card.fetch(:trait=>:account).ok?(:update)  %>
   <% blocked_content = capture do %><%= check_box :account, :blocked? %><% end %>
   <%= raw slot.option( blocked_content,
      :name=>"block_user",

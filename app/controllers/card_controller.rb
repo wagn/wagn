@@ -72,7 +72,7 @@ class CardController < ApplicationController
     # if we enforce RESTful http methods, we should do it consistently,
     # and error should be 405 Method Not Allowed
 
-    author = Account.user_id == Card::AnonID ?
+    author = Account.authorized_id == Card::AnonID ?
         "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" : "[[#{Account.user.card.name}]]"
     comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.strip.empty? ? '&nbsp;' : c}</p>"} * "\n"
     card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
@@ -95,7 +95,7 @@ class CardController < ApplicationController
   def watch
     watchers = card.fetch :trait=>:watchers, :new=>{}
     watchers = watchers.refresh
-    myname = Card[Account.user_id].name
+    myname = Card[Account.authorized_id].name
     watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
     ajax? ? show(:watch) : read
   end
@@ -118,7 +118,7 @@ class CardController < ApplicationController
       role_card.items= role_hash.keys.map &:to_i
     end
 
-    account = card.to_user
+    account = card.account
     if account and account_args = params[:account]
       unless Account.as_id == card.id and !account_args[:blocked]
         card.fetch(:trait=>:account).ok! :update

@@ -359,7 +359,7 @@ module Wagn
 
     define_view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
 
-      locals = {:slot=>self, :card=>card, :account=>card.to_user }
+      locals = {:slot=>self, :card=>card, :account=>card.account }
       wrap :options, args.merge(:frame=>true) do
         %{ #{ _render_header }
           <div class="options-body">

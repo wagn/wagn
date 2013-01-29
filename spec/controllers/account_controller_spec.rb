@@ -24,15 +24,15 @@ describe AccountController do
       post :invite, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'},
         :email=> @email_args
 
-      @user_card = Card['Joe New']
+      @auth_card = Card['Joe New']
       @new_user = User.where(:email=>'joe@new.com').first
 
     end
 
     it 'should create a user' do
       @new_user.should be
-      @new_user.card_id.should == @user_card.id
-      @user_card.type_id.should == Card::UserID
+      @new_user.card_id.should == @auth_card.id
+      @auth_card.type_id.should == Card::UserID
     end
 
     it 'should send email' do
@@ -56,11 +56,11 @@ describe AccountController do
       #warn "who #{Account.authorized.inspect}"
       post :signup, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}
       new_user = User.where(:email=>'joe@new.com').first
-      user_card = Card['Joe New']
+      @auth_card = Card['Joe New']
       new_user.should be
-      new_user.card_id.should == user_card.id
+      new_user.card_id.should == @auth_card.id
       new_user.pending?.should be_true
-      user_card.type_id.should == Card::AccountRequestID
+      @auth_card.type_id.should == Card::AccountRequestID
     end
 
     it 'should send email' do

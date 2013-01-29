@@ -12,11 +12,11 @@ class Mailer < ActionMailer::Base
 
   EMAIL_FIELDS = [ :to, :subject, :message, :password ]
 
-  def valid_args? user_card, args
+  def valid_args? auth_card, args
     nil_args = EMAIL_FIELDS.find_all { |k| args[k].nil? }.compact
     if nil_args.any?
-      unless user_card.errors[:email].any?
-        user_card.errors[:email].add(:email, "Missing email parameters: #{nil_args.map(&:to_s)*', '}")
+      unless auth_card.errors[:email].any?
+        auth_card.errors[:email].add(:email, "Missing email parameters: #{nil_args.map(&:to_s)*', '}")
       end
       false
     else
@@ -25,9 +25,9 @@ class Mailer < ActionMailer::Base
   end
 
 
-  #def account_info user_card, args
+  #def account_info auth_card, args
   def account_info user, subject, message
-    user_card = Card===user ? user : Card[user.card_id]
+    auth_card = Card===user ? user : Card[user.card_id]
     args = { :subject => subject, :message => message, :password => user.password, :to => user.email }
 
     arg_array = EMAIL_FIELDS.map { |f| args[f] }
@@ -35,8 +35,8 @@ class Mailer < ActionMailer::Base
 
     @email, @subject, @message, @password = arg_array
 
-    @card_url = wagn_url user_card
-    @pw_url   = wagn_url "/card/options/#{user_card.cardname.url_key}"
+    @card_url = wagn_url auth_card
+    @pw_url   = wagn_url "/card/options/#{auth_card.cardname.url_key}"
     @login_url= wagn_url "/account/signin"
     @message  = @message.clone
 
@@ -62,10 +62,10 @@ class Mailer < ActionMailer::Base
   end
 
 
-  def change_notice user_card, card, action, watched, subedits=[], updated_card=nil
-    user_card = Card[user_card] unless Card===user_card
-    email = user_card.account.email
-    #warn "change_notice( #{user_card}, #{email}, #{card.inspect}, #{action.inspect}, #{watched.inspect} Uc:#{updated_card.inspect}...)"
+  def change_notice auth_card, card, action, watched, subedits=[], updated_card=nil
+    auth_card = Card[auth_card] unless Card===auth_card
+    email = auth_card.account.email
+    #warn "change_notice( #{auth_card}, #{email}, #{card.inspect}, #{action.inspect}, #{watched.inspect} Uc:#{updated_card.inspect}...)"
 
     updated_card ||= card
     @card = card

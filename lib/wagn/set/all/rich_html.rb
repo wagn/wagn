@@ -324,7 +324,7 @@ module Wagn
             #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
             %{ 
               #{ hidden_field_tag :view, :edit }
-              #{if card.type_id == Card::CardtypeID and !Card.search(:type_id=>card.card.id).empty? #ENGLISH
+              #{if card.type_id == Card::CardtypeID and !Card.search(:type_id=>card.id).empty? #ENGLISH
                 %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
               else
                 _render_type_editor :variety=>:edit #FIXME dislike this api -ef

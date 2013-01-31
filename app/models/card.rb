@@ -240,7 +240,7 @@ class Card < ActiveRecord::Base
     @virtual    = false
     @from_trash = false
     Wagn::Hook.call :after_create, self if @was_new_card
-    Rails.logger.warn "base after save #{inspect}, #{caller*"\n"}"
+    #Rails.logger.warn "base after save #{inspect}"
     send_notifications
     true
   rescue Exception=>e

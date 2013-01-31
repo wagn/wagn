@@ -1,3 +1,4 @@
+
 module Wagn
   # pre-declare the root of the Modules namespace tree
   module Set

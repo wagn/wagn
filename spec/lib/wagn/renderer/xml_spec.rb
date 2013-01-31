@@ -91,13 +91,6 @@ describe Wagn::Renderer::Xml, "" do
     it("linkname") { render_card(:linkname).should  == 'Tempo_Rary' }
     it("url"     ) { render_card(:url).should       == '/Tempo_Rary' }
 
-    it "should handle size argument in inclusion syntax" do
-      image_card = Card.create! :name => "TestImage", :type=>"Image", :content => %{TestImage.jpg\nimage/jpeg\n12345}
-      including_card = Card.new :name => 'Image1', :content => "{{TestImage | core; size:small }}"
-      rendered = Wagn::Renderer::Xml.new(including_card)._render :core
-      assert_view_select rendered, 'img[src=?]', "/files/TestImage-small-#{image_card.current_revision_id}.jpg"
-    end
-
     describe "css classes" do
       it "are correct for open view" do
         c = Card.new :name => 'Aopen', :content => "{{A|open}}"
@@ -284,15 +277,6 @@ describe Wagn::Renderer::Xml, "" do
       end
     end
 
-    context "Image" do
-      it "should handle size argument in inclusion syntax" do
-        Card.create! :name => "TestImage", :type=>"Image",
-          :content => %{TestImage.jpg\nimage/jpeg\n12345}
-        c = Card.new :name => 'Image1',
-             :content => "{{TestImage | naked; size:small }}"
-        Wagn::Renderer::Xml.new(c)._render( :core ).should match %r{^<img alt="Testimage-small-\d+" src="/files/TestImage-small-\d+\.jpg" />$}
-      end
-    end
 
     context "HTML" do
       before do

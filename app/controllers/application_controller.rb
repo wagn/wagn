@@ -137,7 +137,7 @@ class ApplicationController < ActionController::Base
   rescue_from Exception do |exception|
     Rails.logger.info "exception = #{exception.class}: #{exception.message}"
     
-    card ||= Card.new
+    @card ||= Card.new
     
     view, status = case exception
       ## arguably the view and status should be defined in the error class;

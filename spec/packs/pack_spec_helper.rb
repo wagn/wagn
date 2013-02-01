@@ -27,6 +27,7 @@ include ActionDispatch::Assertions::SelectorAssertions
     r._render(:core)
   end
 
+  #FIXME -- shouldn't these just be in the xml test?
   def xml_render_content(content, args={})
     args[:format] = :xml
     render_content(content, args)

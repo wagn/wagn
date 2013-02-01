@@ -1,7 +1,7 @@
-require_dependency 'csv'
+require 'csv'
 
 module Wagn
-  module Set::All::Csv
+  module Set::All::AllCsv
     include Sets
 
     format :csv

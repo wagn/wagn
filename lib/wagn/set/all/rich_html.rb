@@ -21,7 +21,7 @@ module Wagn
 
       layout_content = get_layout_content args
 
-      args[:params] = params # this is to pass params to inclusions.  let's find a cleaner way!
+      args[:params] = params # EXPLAIN why this is needed -- try without it
       process_content layout_content, args
     end
   
@@ -547,6 +547,7 @@ module Wagn
     end
 
     define_view :errors, :perms=>:none do |args|
+      Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller*"\n"}"
       wrap :errors, args do
         %{ <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
         card.errors.map { |attrib, msg| "<div>#{attrib.to_s.upcase}: #{msg}</div>" } * ''
@@ -633,16 +634,16 @@ module Wagn
     end
     
   end  
-end  
   
-class Wagn::Renderer::Html
-  def watching_type_cards
-    %{<div class="faint">(following)</div>} #yuck
-  end
+  class Renderer::Html < Renderer
+    def watching_type_cards
+      %{<div class="faint">(following)</div>} #yuck
+    end
 
-  def watch_link text, toggle, title, extra={}
-    link_to "#{text}", path(:action=>:watch, :toggle=>toggle), 
-      {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :title=>title, :remote=>true, :method=>'post'}.merge(extra)
+    def watch_link text, toggle, title, extra={}
+      link_to "#{text}", path(:action=>:watch, :toggle=>toggle), 
+        {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :title=>title, :remote=>true, :method=>'post'}.merge(extra)
+    end
   end  
 end
 

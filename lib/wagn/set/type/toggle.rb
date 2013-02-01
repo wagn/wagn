@@ -1,4 +1,3 @@
-
 module Wagn
   module Set::Type::Toggle
     include Sets

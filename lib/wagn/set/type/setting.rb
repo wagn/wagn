@@ -14,7 +14,6 @@ module Wagn
       "Other"         => [ :autoname, :accountable, :captcha ]
     }
 
-
     format :base
 
     define_view :core, :type=>'setting' do |args|
@@ -38,7 +37,7 @@ module Wagn
     end
 
     define_view :closed_content, :type=>'setting' do |args|
-      %{<div class="instruction">#{process_content "{{+*right+*edit help}}"}</div>}
+      %{<div class="instruction">#{process_content_object "{{+*right+*edit help}}"}</div>}
     end
 
   end

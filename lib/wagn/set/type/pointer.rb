@@ -99,7 +99,7 @@ module Wagn
           when Array  ; ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
           else ""
         end
-        renderer.process_content content.gsub(/\[\[/,"<div class=\"pointer-item item-#{item_view}\">{{").gsub(/\]\]/,"|#{item_view}#{typeparam}}}</div>")
+        renderer.process_content_object content.gsub(/\[\[/,"<div class=\"pointer-item item-#{item_view}\">{{").gsub(/\]\]/,"|#{item_view}#{typeparam}}}</div>")
       end
 
       def item_cards( args={} )
@@ -109,8 +109,7 @@ module Wagn
         else
           #warn "item_card[#{inspect}], :complete"
           item_names(args).map do |name|
-            c=Card.fetch name, :new=>{}
-            #warn "item_card #{name}, #{c}"; c
+            Card.fetch name, :new=>{}
           end.compact
         end
       end

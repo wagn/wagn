@@ -57,7 +57,6 @@ module Cardlib::TrackedAttributes
         existing_card.instance_variable_set :@cardname, tr_name.to_name
         existing_card.set_tracked_attributes
         #Rails.logger.debug "trash renamed collision: #{tr_name}, #{existing_card.name}, #{existing_card.cardname.key}"
-        existing_card = existing_card.refresh
         existing_card.save!
       #else note -- else case happens when changing to a name variant.  any special handling needed?
       end
@@ -67,7 +66,6 @@ module Cardlib::TrackedAttributes
     @name_changed = true
     @name_or_content_changed=true
   end
-
 
   def suspend_name(name)
     # move the current card out of the way, in case the new name will require
@@ -98,11 +96,11 @@ module Cardlib::TrackedAttributes
     true
   end
 
-  def set_content(new_content)
+  def set_content new_content
     #warn Rails.logger.info("set_content #{name} #{new_content}")
     return false unless self.id
     new_content ||= ''
-    new_content = WikiContent.clean_html!(new_content) if clean_html?
+    new_content = CleanHtml.clean! new_content if clean_html?
     clear_drafts if current_revision_id
     #warn Rails.logger.info("set_content #{name} #{Account.user_id}, #{new_content}")
     new_rev = Card::Revision.create :card_id=>self.id, :content=>new_content, :creator_id =>Account.user_id
@@ -135,9 +133,10 @@ module Cardlib::TrackedAttributes
   def cascade_name_changes
     if @name_changed
       Rails.logger.debug "-------------------#{@old_name}- CASCADE #{self.name} -------------------------------------"
+      #warn "-------------------#{@old_name}---- CASCADE #{self.name} -> deps: #{deps.map(&:name)*", "} -----------------------"
 
-      self.update_referencers = false if update_referencers == 'false' #handle strings from cgi
-      Card::Reference.update_on_rename self, name, update_referencers
+      self.update_referencers = false if self.update_referencers == 'false' #handle strings from cgi
+      Card::Reference.update_on_rename self, name, self.update_referencers
 
       deps = self.dependents
       @dependents = nil #reset
@@ -145,7 +144,7 @@ module Cardlib::TrackedAttributes
       deps.each do |dep|
         # here we specifically want NOT to invoke recursive cascades on these cards, have to go this low level to avoid callbacks.
         Card.expire dep.name #old name
-        newname = dep.cardname.replace_part( @old_name, name )
+        newname = dep.cardname.replace_part @old_name, name
         Card.where( :id=> dep.id ).update_all :name => newname.to_s, :key => newname.key
         Card::Reference.update_on_rename dep, newname, update_referencers
         Card.expire newname
@@ -164,7 +163,7 @@ module Cardlib::TrackedAttributes
             Rails.logger.debug "------------------ UPDATE REFERER #{card.name}  ------------------------"
             unless card == self or card.hard_template
               card = card.refresh
-              card.content = Wagn::Renderer.new(card, :not_current=>true).replace_references( @old_name, name )
+              card.content = card.replace_references @old_name, name
               card.save!
             end
           end

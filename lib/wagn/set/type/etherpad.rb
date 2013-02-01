@@ -14,7 +14,7 @@ module Wagn
     end
 
     define_view :current_naked, :fallback=>:naked, :type=>'Etherpad' do |args|
-      process_content _render_current
+      process_content_object _render_current
     end
 
     define_view :open_content, :type=>'Etherpad' do |args|

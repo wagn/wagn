@@ -286,7 +286,7 @@ module Wagn
       @show_diff = (params[:mode] != 'false')
     end
 
-    
+
     # navigation for revisions -
     # --------------------------------------------------
     # some of this should be in rich_html, maybe most

@@ -9,9 +9,9 @@ describe Card, "delete without dependents" do
   end
 end
 
-describe Card, "delete with dependents" do
-  before do Account.as(:joe_user); @c = Card["A"] end
-    
+describe Card, "destroy with dependents" do
+  before do Account.as('joe_user'); @c = Card["A"] end
+
   it "should succeed" do
     #should test for destruction of dependents!
     @c.delete.should be_true

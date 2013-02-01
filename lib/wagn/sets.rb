@@ -8,21 +8,6 @@ module Wagn
     @@dirs = []
 
     module SharedMethods
-    end
-    module ClassMethods
-    end
-
-    def self.included base
-
-      #base.extend CardControllerMethods
-      base.extend SharedMethods
-      base.extend ClassMethods
-
-      super
-
-    end
-
-    module SharedMethods
       private
       def get_set_key selection_key, opts
         unless pkey = Cardlib::Pattern.method_key(opts)
@@ -107,8 +92,11 @@ module Wagn
     #     _final(_set_key)_viewname(args)
 
     module ClassMethods
-
       include SharedMethods
+
+      #
+      # ~~~~~~~~~~  VIEW DEFINITION
+      #
 
       def format fmt=nil
         Renderer.renderer = if fmt.nil? || fmt == :base then Renderer else Renderer.get_renderer fmt end
@@ -126,8 +114,8 @@ module Wagn
         end
 
         view_key = get_set_key view, opts
+        #warn "defining view method[#{Renderer.renderer}] _final_#{view_key}"
         Renderer.renderer.class_eval { define_method "_final_#{view_key}", &final }
-        #warn "defining view method[#{Renderer.renderer.inspect}] _final_#{view_key}"
         Renderer.subset_views[view] = true if !opts.empty?
 
         if !method_defined? "render_#{view}"
@@ -187,6 +175,15 @@ module Wagn
           end
         end
       end
+    end
+
+    def self.included base
+
+      base.extend SharedMethods
+      base.extend ClassMethods
+
+      super
+
     end
 
   end

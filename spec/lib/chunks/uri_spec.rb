@@ -1,13 +1,9 @@
-#!/usr/bin/env ruby
-
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
-#require 'chunks/uri'
-include ChunkSpecHelper
 
 describe URIChunk, "URI chunk tests" do
   it "should test_non_matches" do
-    assert_conversion_does_not_apply(URIChunk, 'There is no URI here')
-    assert_conversion_does_not_apply(URIChunk,
+    no_match(URIChunk, 'There is no URI here')
+    no_match(URIChunk,
         'One gemstone is the garnet:reddish in colour, like ruby')
   end
 
@@ -146,12 +142,12 @@ describe URIChunk, "URI chunk tests" do
   end
 
   it "should test_textile_image" do
-    assert_conversion_does_not_apply(URIChunk,
+    aa_match(URIChunk,
              'This !http://hobix.com/sample.jpg! is a Textile image link.')
   end
 
   it "should test_textile_link" do
-    assert_conversion_does_not_apply(URIChunk,
+    aa_match(URIChunk,
              'This "hobix (hobix)":http://hobix.com/sample.jpg is a Textile link.')
     # just to be sure ...
     match_chunk(URIChunk, 'This http://hobix.com/sample.jpg should match',
@@ -159,24 +155,24 @@ describe URIChunk, "URI chunk tests" do
   end
 
   it "should test_inline_html" do
-    assert_conversion_does_not_apply(URIChunk, '<IMG SRC="http://hobix.com/sample.jpg">')
-    assert_conversion_does_not_apply(URIChunk, "<img src='http://hobix.com/sample.jpg'/>")
+    no_match(URIChunk, '<IMG SRC="http://hobix.com/sample.jpg">')
+    no_match(URIChunk, "<img src='http://hobix.com/sample.jpg'/>")
   end
 
   it "should test_non_uri" do
     # "so" is a valid country code; "libproxy.so" is a valid url
     match_chunk(URIChunk, 'libproxy.so', :link_text => 'libproxy.so')
 
-    assert_conversion_does_not_apply URIChunk, 'httpd.conf'
+    no_match URIChunk, 'httpd.conf'
     # THIS ONE'S BUSTED.. Ethan fix??
-    #assert_conversion_does_not_apply URIChunk, 'ld.so.conf'
-    assert_conversion_does_not_apply URIChunk, 'index.jpeg'
-    assert_conversion_does_not_apply URIChunk, 'index.jpg'
-    assert_conversion_does_not_apply URIChunk, 'file.txt'
-    assert_conversion_does_not_apply URIChunk, 'file.doc'
-    assert_conversion_does_not_apply URIChunk, 'file.pdf'
-    assert_conversion_does_not_apply URIChunk, 'file.png'
-    assert_conversion_does_not_apply URIChunk, 'file.ps'
+    #no_match URIChunk, 'ld.so.conf'
+    no_match URIChunk, 'index.jpeg'
+    no_match URIChunk, 'index.jpg'
+    no_match URIChunk, 'file.txt'
+    no_match URIChunk, 'file.doc'
+    no_match URIChunk, 'file.pdf'
+    no_match URIChunk, 'file.png'
+    no_match URIChunk, 'file.ps'
   end
 
   it "should test_uri_in_text" do
@@ -188,7 +184,7 @@ describe URIChunk, "URI chunk tests" do
     # check that trailing punctuation is not included in the hostname
     match_chunk(URIChunk, 'Hey dude, http://fake.link.com.', :scheme => 'http', :host => 'fake.link.com')
     # this is a textile link, no match please.
-    assert_conversion_does_not_apply(URIChunk, '"link":http://fake.link.com.')
+    aa_match(URIChunk, '"link":http://fake.link.com.')
    end
 
   it "should test_uri_in_parentheses" do
@@ -217,9 +213,8 @@ describe URIChunk, "URI chunk tests" do
         :scheme => 'http', :host => 'someplace.org', :port => '8080', :path => '/~person/stuff.cgi',
         :query => 'arg=val,')
   end
-end
 
-describe LocalURIChunk, "URI chunk tests" do
+ describe LocalURIChunk, "URI chunk tests" do
   it "should test_local_urls" do
     # normal
     match_chunk(LocalURIChunk, 'http://perforce:8001/toto.html',
@@ -236,6 +231,42 @@ describe LocalURIChunk, "URI chunk tests" do
           :scheme => 'http', :host => 'localhost', :path => '/wiki.cgi',
           :port => '2500', :query => 'WhatIsWiki')
   end
+ end
 
+  private
+  # Asserts a number of tests for the given type and text.
+  def no_match(type, test_text)
+    assert type.respond_to? :pattern
+    pattern = type.pattern
+    if test_text =~ pattern
+      params = $~.to_a; m = params.shift
+      chunk = type.new(m, {}, params)
+      assert( ! chunk.kind_of?(type), "Shouln't match #{type}, #{chunk.inspect}" )
+    else
+      assert true # didn't match, so we don't have to creat chunk
+    end
+  end
+
+  def aa_match(type, test_text)
+    assert test_text =~ type.pattern
+    params = $~.to_a; m = params.shift
+    chunk = type.new(m, {}, params)
+    assert chunk.avoid_autolinking?
+  end
+
+  def match_chunk(type, test_text, expected)
+    assert type.respond_to? :pattern
+    pattern = type.pattern
+    assert_match(pattern, test_text)
+    pattern =~ test_text   # Previous assertion guarantees match
+    params = $~.to_a; m = params.shift
+    chunk = type.new(m, {}, params)
+    assert chunk.kind_of?(type)
+    # Test if requested parts are correct.
+    expected.each_pair do |method_sym, value|
+      assert_respond_to(chunk, method_sym)
+      assert_equal(value, chunk.method(method_sym).call, "Checking value of '#{method_sym}'")
+    end
+  end
 
 end

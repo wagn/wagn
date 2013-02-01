@@ -23,7 +23,8 @@ describe "Card::Reference" do
       c = Card["Form1"]
       c.references_expired.should be_nil
       Card.create! :name=>"SpecialForm+*type+*content", :content=>"{{+bar}}"
-      Card["Form1"].references_expired.should be_true
+      c = Card["Form1"]
+      c.references_expired.should be_true
       Wagn::Renderer.new(Card["Form1"]).render(:core)
       c = Card["Form1"]
       c.references_expired.should be_nil
@@ -183,7 +184,7 @@ describe "Card::Reference" do
   it "revise changes references from wanted to linked for new cards" do
     new_card = Card.create(:name=>'NewCard')
     new_card.revise('Reference to [[WantedCard]], and to [[WantedCard2]]', Time.now, Card['quentin'].to_user),
-        get_renderer)
+        new_renderer)
 
     references = new_card.card_references(true)
     references.size.should == 2
@@ -193,7 +194,7 @@ describe "Card::Reference" do
     references[1].ref_type.should == Card::Reference::WANTED_PAGE
 
     wanted_card = Card.create(:name=>'WantedCard')
-    wanted_card.revise('And here it is!', Time.now, Card['quentin'].to_user), get_renderer)
+    wanted_card.revise('And here it is!', Time.now, Card['quentin'].to_user), new_renderer)
 
     # link type stored for NewCard -> WantedCard reference should change from WANTED to LINKED
     # reference NewCard -> WantedCard2 should remain the same

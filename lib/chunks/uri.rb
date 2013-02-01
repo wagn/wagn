@@ -60,6 +60,7 @@ class URIChunk < Chunks::Abstract
     # Correct a typo bug in ruby 1.8.x lib/uri/common.rb
     PORT = '\\d*'
 
+    INTERNET_URI_GROUPS = 8
     INTERNET_URI =
         "(?:(#{SCHEME}):/{0,2})?" +   # Optional scheme:        (\1)
         "(?:(#{USERINFO})@)?" +       # Optional userinfo@      (\2)
@@ -78,34 +79,18 @@ class URIChunk < Chunks::Abstract
 
   end
 
-  def URIChunk.pattern
-    INTERNET_URI_REGEXP
-  end
+  def URIChunk.pattern() INTERNET_URI_REGEXP end
+  def URIChunk.groups() INTERNET_URI_GROUPS end
 
   attr_reader :user, :host, :port, :path, :query, :fragment, :link_text
 
-  def self.apply_to(content)
-    content.gsub!( self.pattern ) do |matched_text|
-      chunk = self.new($~, content)
-      card = chunk.card
-      if chunk.avoid_autolinking? || (card && card.type_id==Card::HtmlID)
-        # do not substitute nor register the chunk
-        matched_text
-      else
-        content.add_chunk(chunk)
-        chunk.mask
-      end
-    end
-  end
-
-  def initialize(match_data, content)
+  def initialize match, card_params, params
     super
-    @link_text = match_data[0]
-    @suspicious_preceding_character = match_data[1]
-    @original_scheme, @user, @host, @port, @path, @query, @fragment = match_data[2..-1]
+    @link_text = match
+    @suspicious_preceding_character = params[0]
+    @original_scheme, @user, @host, @port, @path, @query, @fragment, rest = params[1..-1]
     treat_trailing_character
-    #Rails.logger.debug "uri_link #{@link_text} U:#{self.uri}"
-    @unmask_text = "#{@content.renderer.build_link(self.uri,@link_text)}#{@trailing_punctuation}"
+    @process_chunk = self.renderer ? "#{self.renderer.build_link(self.uri,@link_text)}#{@trailing_punctuation}" : @text
   end
 
   def avoid_autolinking?
@@ -168,6 +153,7 @@ class LocalURIChunk < URIChunk
 
     # The basic URI expression as a string
     # Scheme and hostname are mandatory
+    LOCAL_URI_GROUPS = 8
     LOCAL_URI =
         "(?:(#{SCHEME})://)+" +       # Mandatory scheme://     (\1)
         "(?:(#{USERINFO})@)?" +       # Optional userinfo@      (\2)
@@ -183,8 +169,7 @@ class LocalURIChunk < URIChunk
     LOCAL_URI_REGEXP = Regexp.new(SUSPICIOUS_PRECEDING_CHARACTER + LOCAL_URI, Regexp::EXTENDED)
   end
 
-  def LocalURIChunk.pattern
-    LOCAL_URI_REGEXP
-  end
+  def LocalURIChunk.pattern() LOCAL_URI_REGEXP end
+  def LocalURIChunk.groups() LOCAL_URI_GROUPS end
 
 end

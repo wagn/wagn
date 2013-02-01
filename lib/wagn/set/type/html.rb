@@ -1,9 +1,11 @@
-module Wagn::Set::Type::Html
-  #include Wagn::Sets
+module Wagn
+  module Set::Type::Html
+  #include Sets
 
-  module Model
-    def clean_html?
-      false
+    module Model
+      def clean_html?
+        false
+      end
     end
   end
 end

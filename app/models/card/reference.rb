@@ -31,6 +31,7 @@ class Card < ActiveRecord::Base
         else
           delete_all_to card
         end
+        #Rails.logger.warn "update on rename #{card.inspect}, #{newname}, #{update_referers}"
         update_existing_key card, newname
       end
 

@@ -1,4 +1,3 @@
-
 module Wagn
   module Set::Type::AccountRequest
     include Sets

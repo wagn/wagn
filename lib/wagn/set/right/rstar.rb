@@ -1,6 +1,6 @@
 module Wagn
   module Set::Right::Rstar
-    include Sets
+include Sets
 
     format :html
 
@@ -109,7 +109,6 @@ module Wagn
             <ul class="set-editor">
         } +
 
-
         if edit_mode
           raw( args[:set_options].map do |set_name|
             set_label =Card.fetch(set_name).label
@@ -153,7 +152,7 @@ module Wagn
         else; ''; end.html_safe +
 
 
-            %{</div>
+        %{</div>
             <div class="rule-content">
               #{
               case
@@ -190,8 +189,8 @@ module Wagn
 
       end.html_safe
     end
-
   end
+
 
   class Renderer::Html
     private
@@ -200,10 +199,10 @@ module Wagn
       # self.card is a POTENTIAL rule; it quacks like a rule but may or may not exist.
       # This generates a prototypical member of the POTENTIAL rule's set
       # and returns that member's ACTUAL rule for the POTENTIAL rule's setting
-      set_prototype = (proto_set=Card.fetch( card.cardname.trunk_name )).prototype
+      set_prototype = Card.fetch( card.cardname.trunk_name ).prototype
+      #warn "f c rcard #{card.inspect}, #{set_prototype.inspect}, #{card.cardname.trunk_name}"
       rule_card = card.new_card? ? set_prototype.rule_card( card.cardname.tag ) : card
       [ rule_card, set_prototype ]
     end
   end
-
 end

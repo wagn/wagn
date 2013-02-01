@@ -19,7 +19,7 @@ module WagnTestHelper
     nil
   end
 
-  def get_renderer()
+  def new_renderer()
     Wagn::Renderer.new(Card.new(:name=>'dummy'))
   end
 
@@ -33,7 +33,7 @@ module WagnTestHelper
   def render_test_card( card )
     r = Wagn::Renderer.new(card)
     r.add_name_context card.name
-    r.process_content()
+    r.process_content
   end
 
   def assert_difference(object, method = nil, difference = 1)

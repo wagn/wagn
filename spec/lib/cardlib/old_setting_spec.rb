@@ -110,9 +110,7 @@ describe Card do
 
     it "handles searches relative to context card" do
       # note: A refers to 'Z'
-      c = Card.new :name=>"foo", :type=>"Search", :content => %[{"referred_to_by":"_self"}]
-      #warn "card is #{c.inspect}"
-      c.item_names( :context=>'A' ).should == ["Z"]
+      Card.new(:name=>"foo", :type=>"Search", :content => %[{"referred_to_by":"_self"}]).item_names( :context=>'A' ).should == ["Z"]
     end
   end
 

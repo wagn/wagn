@@ -1,13 +1,8 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency 'wagn/sets'
-require_dependency 'card'
-
+require_dependency 'cardlib'
 
 class CardController < ApplicationController
-  # This is often needed for the controllers to work right
-  # FIXME: figure out when/why this is needed and why the tests don't fail
-  Card
 
   helper :wagn
 
@@ -193,20 +188,18 @@ class CardController < ApplicationController
       when /^\:(\w+)$/
         Card.fetch $1.to_sym
       else
-        opts = params[:card] ? params[:card].clone : {}
+        opts = params[:card]
+        opts = opts ? opts.clone : {} #clone so that original params remain unaltered.  need deeper clone?
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
-        #Rails.logger.warn "load params: #{params.inspect}, #{opts.inspect}"
         name = params[:id] || opts[:name]
         
         if @action == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
           # I think we may need to create a "#create" instance method that handles this checking.
           # that would let us get rid of this...
-          #Rails.logger.warn "load create card #{name.inspect}, #{opts.inspect}"
           opts[:name] ||= name
           Card.new opts
         else
-          #Rails.logger.warn "load card fetch :new #{name.inspect}, #{opts.inspect}"
           Card.fetch name, :new=>opts
         end
       end
@@ -226,13 +219,13 @@ class CardController < ApplicationController
     target = params[:success] || default_target
     redirect = !ajax?
     new_params = {}
-    
+
     if Hash === target
       new_params = target
       target = new_params.delete :id # should be some error handling here
       redirect ||= !!(new_params.delete :redirect)
     end
-      
+
     if target =~ /^REDIRECT:\s*(.+)/
       redirect, target = true, $1
     end

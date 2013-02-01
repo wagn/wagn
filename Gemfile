@@ -56,7 +56,7 @@ end
 
 group :profile do
   gem 'ruby-prof', '~>0.12.1'                              # profiling
-  gem 'test-unit'
+  #gem 'test-unit' #was causing errors after cucumber runs.
 end
 
 group :test, :development do

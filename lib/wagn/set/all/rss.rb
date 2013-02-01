@@ -9,6 +9,7 @@ module Wagn
       render_feed
     end
 
+    # FIXME: integrate this with common XML features when it is added
     define_view :feed do |args|
       xml = Builder::XmlMarkup.new
       xml.instruct! :xml, :version => "1.0"
@@ -50,5 +51,5 @@ module Wagn
     alias_view(:open_content,{}, :content)
     alias_view(:link,        {}, :closed)
 
-   end
+  end
 end

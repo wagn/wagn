@@ -1,11 +1,10 @@
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
-include ChunkManager
-include ChunkSpecHelper
 
 describe Chunks::Link, "link chunk tests" do
+  include MySpecHelpers
 
   before do
-    setup_user 'joe_user'
+    Account.user= 'joe_user'
   end
 
   it "should test basic" do
@@ -55,6 +54,11 @@ describe Chunks::Link, "link chunk tests" do
     dude,job = newcard('Harvey',"[[#{SmartName.joint}business]]"), newcard('business')
     card = Card.create! :name => "#{dude.name}+#{job.name}", :content => "icepicker"
     assert_equal("<a class=\"known-card\" href=\"/Harvey+business\">#{SmartName.joint}business</a>", render_test_card(dude) )
+  end
+  
+  it "should handle inclusions as link text" do
+    c = Card.new :content=>'[[linkies|{{namies|name}}]]'
+    assert_equal '<a class="wanted-card" href="/linkies">namies</a>', render_test_card(c)
   end
 
 end

@@ -9,7 +9,7 @@ class AccountRequestTest < ActionController::TestCase
 
   def setup
     super
-    get_renderer
+    new_renderer
     @controller = CardController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new

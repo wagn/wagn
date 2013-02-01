@@ -68,7 +68,7 @@ module Wagn
       if card
         Card::Reference.delete_all_from card
         # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
-        #Card.where( :id => referer_id ).update_all( :references_expired=>nil )
+        #Card.where( :id => cardid ).update_all( :references_expired=>nil )
         card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
         card.expire if refresh
         
@@ -78,13 +78,12 @@ module Wagn
 
         rendered_content.find_chunks(Chunks::Reference).each do |chunk|
           if referee_name = chunk.refcardname # name is referenced (not true of commented inclusions)
-            referee_key = referee_name.key
-            referee_id  = chunk.refcard.send_if :id
+            referee_id = chunk.refcard.send_if :id
             if card.id != referee_id          # not self reference
               Card::Reference.create!(
                 :referer_id  => card.id,
                 :referee_id  => referee_id,
-                :referee_key => referee_key,
+                :referee_key => referee_name.key,
                 :ref_type    => Chunks::Link===chunk ? 'L' : 'I',
                 :present     => chunk.refcard.nil?   ?  0  :  1
               )

@@ -348,7 +348,7 @@ class Card < ActiveRecord::Base
   end
 
   def right *args
-    Card.fetch cardname.right, *args
+    simple? ? nil : Card.fetch( cardname.right, *args )
   end
 
   def trunk *args
@@ -356,7 +356,7 @@ class Card < ActiveRecord::Base
   end
 
   def tag *args
-    simple? ? self : right( *args )
+    simple? ? self : Card.fetch( cardname.right, *args )
   end
 
   def left_or_new args={}
@@ -420,8 +420,7 @@ class Card < ActiveRecord::Base
 
   def type_name
     return if type_id.nil?
-    card = Card.fetch type_id, :skip_modules=>true, :skip_virtual=>true
-    card and card.name
+    card = Card.fetch( type_id, :skip_modules=>true, :skip_virtual=>true ) and card.name
   end
 
   def type= type_name

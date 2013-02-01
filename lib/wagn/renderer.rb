@@ -76,25 +76,20 @@ module Wagn
           expand_inclusion(opts) { yield }
         end
 
-        rendered_content.find_chunks(Chunks::Reference).inject({}) do |hash, chunk|
-          if referee_name = chunk.refcardname # name is referenced 
+        rendered_content.find_chunks(Chunks::Reference).each do |chunk|
+          if referee_name = chunk.refcardname # name is referenced (not true of commented inclusions)
             referee_key = referee_name.key
-            if !hash.has_key? referee_key     # not already tracked  !! FIXME: but what if it's a different ref_type?!
-              referee_id  = chunk.refcard.send_if :id
-              if card.id != referee_id        # not self reference
-                hash[ referee_key ] = {
-                    :referer_id  => card.id,
-                    :referee_id  => referee_id,
-                    :referee_key => referee_key,
-                    :ref_type    => Chunks::Link===chunk ? 'L' : 'I',
-                    :present     => chunk.refcard.nil?   ?  0  :  1  # more and more convince field should be boolean
-                  }
-              end
+            referee_id  = chunk.refcard.send_if :id
+            if card.id != referee_id          # not self reference
+              Card::Reference.create!(
+                :referer_id  => card.id,
+                :referee_id  => referee_id,
+                :referee_key => referee_key,
+                :ref_type    => Chunks::Link===chunk ? 'L' : 'I',
+                :present     => chunk.refcard.nil?   ?  0  :  1
+              )
             end
           end
-          hash
-        end.each_value do |reference_hash|
-          Card::Reference.create! reference_hash
         end
       end
 

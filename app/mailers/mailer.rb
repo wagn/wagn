@@ -40,8 +40,12 @@ class Mailer < ActionMailer::Base
     @login_url= wagn_url "/account/signin"
     @message  = @message.clone
 
-    mail_from args, Card.setting('*invite+*from') || "#{Account.authorized.name} <#{Account.user.email}>"
     #FIXME - might want different "from" settings for different contexts?
+    unless invite_from = Card.setting( '*invite+*from' )
+      authzd = Account.authorized
+      invite_from = "#{authzd.name} <#{authzd.account.email}>"
+    end
+    mail_from args, invite_from
   end
 
   def signup_alert invite_request

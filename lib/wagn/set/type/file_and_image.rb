@@ -5,19 +5,6 @@ module Wagn
 
     format :base
 
-
-    define_view :core, :type=>'image' do |args|
-      handle_source args do |source|
-        source == 'missing' ? "<!-- image missing #{@card.name} -->" : image_tag(source)
-      end
-    end
-
-    define_view :core, :type=>'file' do |args|
-      handle_source args do |source|
-        "<a href=\"#{source}\">Download #{ showname }</a>"
-      end
-    end
-
     define_view :closed_content, :type=>'image' do |args|
       _render_core :size=>:icon
     end
@@ -31,10 +18,28 @@ module Wagn
     define_view :source, :type=>'file' do |args|
       card.attach.url
     end
-
-    private
+    
+    define_view :core, :type=>'file' do |args|
+      handle_source args do |source|
+        wagn_url source
+      end
+    end
+    
+    alias_view :core, {:type=>:file}, {:type=>:image}
 
     format :html
+    
+    define_view :core, :type=>'image' do |args|
+      handle_source args do |source|
+        source == 'missing' ? "<!-- image missing #{@card.name} -->" : image_tag(source)
+      end
+    end
+
+    define_view :core, :type=>'file' do |args|
+      handle_source args do |source|
+        "<a href=\"#{source}\">Download #{ showname }</a>"
+      end
+    end
 
     define_view :editor, :type=>'file' do |args|
       #Rails.logger.debug "editor for file #{card.inspect}"
@@ -65,6 +70,7 @@ module Wagn
       out << _render_core
       out
     end
+
   end
 end
 

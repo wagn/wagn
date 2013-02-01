@@ -8,14 +8,14 @@ module WagnTestHelper
   def setup_default_user
     User.cache.reset
 
-    user_card = Card['joe user']
-    user_card = Card[:wagn_bot]
-    Account.user= user_card.id
+    #authorized = Card['joe user']
+    #authorized = Card[:wagn_bot]
+    Account.authorized_id = Card::WagnBotID
     @user = Account.user
 
     @user.update_column 'crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c'
 
-    Account.user = 'joe_user'
+    Account.authorized_id = Card['joe_user'].id
     nil
   end
 

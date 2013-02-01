@@ -13,7 +13,7 @@ describe Flexmail do
 
   describe ".configs_for" do
     before do
-      Account.user = Card::WagnBotID
+      Account.authorized_id = Card::WagnBotID
       Card.create! :name => "mailconfig+*to", :content => "joe@user.com"
       Card.create! :name => "mailconfig+*from", :content => "from@user.com"
       Card.create! :name => "mailconfig+*subject", :content => "Subject of the mail"

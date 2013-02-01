@@ -49,8 +49,8 @@ class AccountController < CardController
     #warn "accept #{card_key.inspect}, #{Card[card_key]}, #{params.inspect}"
     raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
     @card = Card[card_key] or raise(Wagn::NotFound, "Can't find this Account Request")
-    #warn "accept #{Account.user_id}, #{@card.inspect}"
-    @user = @card.to_user or raise(Wagn::Oops, "This card doesn't have an account to approve")
+    #warn "accept #{Account.authorized_id}, #{@card.inspect}"
+    @user = @card.account or raise(Wagn::Oops, "This card doesn't have an account to approve")
     #warn "accept #{@user.inspect}"
     @card.ok?(:create) or raise(Wagn::PermissionDenied, "You need permission to create accounts")
 

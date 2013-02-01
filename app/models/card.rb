@@ -7,7 +7,7 @@ class Card < ActiveRecord::Base
   SmartName.codes= Wagn::Codename
   SmartName.params= Wagn::Conf
   SmartName.lookup= Card
-  SmartName.session= proc { Account.user_card.name }
+  SmartName.session= proc { Account.authorized.name }
 
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
 
@@ -38,12 +38,12 @@ class Card < ActiveRecord::Base
       args.delete('content') if args['attach'] # should not be handled here!
 
       if name = args['name'] and !name.blank?
-        if  Card.cache                                        and
-            cc = Card.cache.read_local(name.to_name.key)  and
-            cc.type_args                                      and
-            args['type']          == cc.type_args[:type]      and
-            args['typecode']      == cc.type_args[:typecode]  and
-            args['type_id']       == cc.type_args[:type_id]   and
+        if  Card.cache                                       and
+            cc = Card.cache.read_local(name.to_name.key)     and
+            cc.type_args                                     and
+            args['type']          == cc.type_args[:type]     and
+            args['typecode']      == cc.type_args[:typecode] and
+            args['type_id']       == cc.type_args[:type_id]  and
             args['loaded_left']  == cc.loaded_left
 
           args['type_id'] = cc.type_id
@@ -193,7 +193,7 @@ class Card < ActiveRecord::Base
   end
 
   def set_stamper
-    self.updater_id = Account.user_id
+    self.updater_id = Account.authorized_id
     self.creator_id = self.updater_id if new_card?
   end
 
@@ -545,9 +545,9 @@ class Card < ActiveRecord::Base
     @all_roles
   end
 
-  def to_user
+  def account
     User.where( :card_id => id ).first
-  end # should be obsolete soon.
+  end
 
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -639,98 +639,98 @@ class Card < ActiveRecord::Base
 
   protected
 
-  validate do |rec|
+  validate do |card|
     return true if @nested_edit
-    return true unless Wagn::Conf[:recaptcha_on] && Card.toggle( rec.rule(:captcha) )
+    return true unless Wagn::Conf[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
     c = Wagn::Conf[:controller]
     return true if (c.recaptcha_count += 1) > 1
-    c.verify_recaptcha( :model=>rec ) || rec.error_status = 449
+    c.verify_recaptcha( :model=>card ) || card.error_status = 449
   end
 
-  validates_each :name do |rec, attr, value|
-    if rec.new_card? && value.blank?
-      if autoname_card = rec.rule_card(:autoname)
+  validates_each :name do |card, attr, name|
+    if card.new_card? && name.blank?
+      if autoname_card = card.rule_card(:autoname)
         Account.as_bot do
           autoname_card = autoname_card.refresh
-          value = rec.name = rec.autoname( autoname_card.content )
-          autoname_card.content = value  #fixme, should give placeholder on new, do next and save on create
+          name = card.name = card.autoname( autoname_card.content )
+          autoname_card.content = name  #fixme, should give placeholder on new, do next and save on create
           autoname_card.save!
         end
       end
     end
 
-    cdname = value.to_name
+    cdname = name.to_name
     if cdname.blank?
-      rec.errors.add :name, "can't be blank"
-    elsif rec.updates.for?(:name)
-      #Rails.logger.debug "valid name #{rec.name.inspect} New #{value.inspect}"
+      card.errors.add :name, "can't be blank"
+    elsif card.updates.for?(:name)
+      #Rails.logger.debug "valid name #{card.name.inspect} New #{name.inspect}"
 
       unless cdname.valid?
-        rec.errors.add :name,
+        card.errors.add :name,
           "may not contain any of the following characters: #{ SmartName.banned_array * ' ' }"
       end
       # this is to protect against using a plus card as a tag
-      if cdname.junction? and rec.simple? and Account.as_bot { Card.count_by_wql :right_id=>rec.id } > 0
-        rec.errors.add :name, "#{value} in use as a tag"
+      if cdname.junction? and card.simple? and Account.as_bot { Card.count_by_wql :right_id=>card.id } > 0
+        card.errors.add :name, "#{name} in use as a tag"
       end
 
       # validate uniqueness of name
       condition_sql = "cards.key = ? and trash=?"
       condition_params = [ cdname.key, false ]
-      unless rec.new_record?
+      unless card.new_record?
         condition_sql << " AND cards.id <> ?"
-        condition_params << rec.id
+        condition_params << card.id
       end
       if c = Card.find(:first, :conditions=>[condition_sql, *condition_params])
-        rec.errors.add :name, "must be unique; '#{c.name}' already exists."
+        card.errors.add :name, "must be unique; '#{c.name}' already exists."
       end
     end
   end
 
-  validates_each :content do |rec, attr, value|
-    if rec.new_card? && !rec.updates.for?(:content)
-      value = rec.content = rec.content #this is not really a validation.  is the double rec.content meaningful?  tracked attributes issue?
+  validates_each :content do |card, attr, content|
+    if card.new_card? && !card.updates.for?(:content)
+      content = card.content = card.content #this is not really a validation.  is the double card.content meaningful?  tracked attributes issue?
     end
 
-    if rec.updates.for? :content
-      rec.reset_patterns_if_rule
-      rec.send :validate_content, value
-    end
-  end
-
-  validates_each :current_revision_id do |rec, attrib, value|
-    if !rec.new_card? && rec.current_revision_id_changed? && value.to_i != rec.current_revision_id_was.to_i
-      rec.current_revision_id = rec.current_revision_id_was
-      rec.errors.add :conflict, "changes not based on latest revision"
-      rec.error_view = :conflict
+    if card.updates.for? :content
+      card.reset_patterns_if_rule
+      card.send :validate_content, content
     end
   end
 
-  validates_each :type_id do |rec, attr, value|
+  validates_each :current_revision_id do |card, attrib, current_rev_id|
+    if !card.new_card? && card.current_revision_id_changed? && current_rev_id.to_i != card.current_revision_id_was.to_i
+      card.current_revision_id = card.current_revision_id_was
+      card.errors.add :conflict, "changes not based on latest revision"
+      card.error_view = :conflict
+    end
+  end
+
+  validates_each :type_id do |card, attr, type_id|
     # validate on update
-    if rec.updates.for?(:type_id) and !rec.new_card?
-      if !rec.validate_type_change
-        rec.errors.add :type, "of #{ rec.name } can't be changed; errors changing from #{ rec.type_name }"
+    if card.updates.for?(:type_id) and !card.new_card?
+      if !card.validate_type_change
+        card.errors.add :type, "of #{ card.name } can't be changed; errors changing from #{ card.type_name }"
       end
-      if c = rec.dup and c.type_id_without_tracking = value and c.id = nil and !c.valid?
-        rec.errors.add :type, "of #{ rec.name } can't be changed; errors creating new #{ value }: #{ c.errors.full_messages * ', ' }"
+      if c = card.dup and c.type_id_without_tracking = type_id and c.id = nil and !c.valid?
+        card.errors.add :type, "of #{ card.name } can't be changed; errors creating new #{ type_id }: #{ c.errors.full_messages * ', ' }"
       end
     end
 
     # validate on update and create
-    if rec.updates.for?(:type_id) or rec.new_record?
+    if card.updates.for?(:type_id) or card.new_record?
       # invalid to change type when type is hard_templated
-      if rt = rec.hard_template and !rt.type_template? and value!=rt.type_id and !rec.allow_type_change
-        rec.errors.add :type, "can't be changed because #{rec.name} is hard templated to #{rt.type_name}"
+      if rt = card.hard_template and !rt.type_template? and type_id!=rt.type_id and !card.allow_type_change
+        card.errors.add :type, "can't be changed because #{card.name} is hard templated to #{rt.type_name}"
       end
     end
   end
 
-  validates_each :key do |rec, attr, value|
-    if value.empty?
-      rec.errors.add :key, "cannot be blank"
-    elsif value != rec.cardname.key
-      rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
+  validates_each :key do |card, attr, key|
+    if key.empty?
+      card.errors.add :key, "cannot be blank"
+    elsif key != card.cardname.key
+      card.errors.add :key, "wrong key '#{key}' for name #{card.name}"
     end
   end
 

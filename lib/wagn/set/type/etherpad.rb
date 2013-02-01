@@ -42,7 +42,7 @@ module Wagn
         }&showChat=#{pad_opts[:showChat]
         }&showLineNumbers=#{pad_opts[:showLineNumbers]
         }&useMonospaceFont=#{pad_opts[:useMonospaceFont]
-        }&userName=#{Account.user_card.name
+        }&userName=#{Account.authorized.name
         }&noColors=#{pad_opts[:noColors]}"></iframe>
       }
     end

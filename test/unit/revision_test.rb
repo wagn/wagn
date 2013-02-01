@@ -12,16 +12,16 @@ class RevisionTest < ActiveSupport::TestCase
     author_cd1 = Card[author1.card_id]
     author_cd2 = Card[author2.card_id]
     #author1, author2 = User.find(:all, :limit=>2)
-    Account.user = Card::WagnBotID
+    Account.authorized_id = Card::WagnBotID
     rc1=author_cd1.fetch(:new=>{}, :trait=>:roles)
     rc1 << Card::AdminID
     rc2 = author_cd2.fetch(:new=>{}, :trait=>:roles)
     rc2 << Card::AdminID
     author_cd1.save
     author_cd2.save
-    Account.user = author1
+    Account.authorized_id = author_cd1.id
     card = Card.create! :name=>'alpha', :content=>'stuff'
-    Account.user = author2
+    Account.authorized_id = author_cd2.id
     card.content = 'boogy'
     card.save
     card.reload

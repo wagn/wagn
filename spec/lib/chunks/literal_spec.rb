@@ -4,7 +4,7 @@ describe Literal::Escape, "literal chunk tests" do
   include MySpecHelpers
 
   before do
-    Account.user= 'joe_user'
+    Account.authorized_id = Card['joe_user'].id
   end
 
   it "should test_escape_link" do

@@ -238,9 +238,9 @@ describe SmartName do
     end
 
     it "does session user substitution" do
-      "_user".to_name.to_absolute("A").should == Account.user_card.name
+      "_user".to_name.to_absolute("A").should == Account.authorized.name
       Account.as_bot do
-        "_user".to_name.to_absolute("A").should == Account.user_card.name
+        "_user".to_name.to_absolute("A").should == Account.authorized.name
       end
     end
   end

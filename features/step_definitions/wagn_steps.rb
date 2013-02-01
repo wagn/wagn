@@ -2,15 +2,15 @@ require 'uri'
 require 'cgi'
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
 
-Given /^I log in as (.+)$/ do |user_card_name|
+Given /^I log in as (.+)$/ do |auth_card_name|
   # FIXME: define a faster simulate method ("I am logged in as")
-  @session_card_id = ucid = Card[user_card_name].id
+  @session_card_id = ucid = Card[auth_card_name].id
   user_object = User.where(:card_id=>ucid).first
   visit "/account/signin"
   fill_in("login", :with=> user_object.email )
   fill_in("password", :with=> user_object.login.split("_")[0]+"_pass")
   click_button("Sign me in")
-  page.should have_content(user_card_name)
+  page.should have_content(auth_card_name)
 end
 
 Given /^I log out/ do

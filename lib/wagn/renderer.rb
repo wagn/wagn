@@ -62,36 +62,41 @@ module Wagn
       String.new wiki_content.unrender!
     end
 
-    def update_references rendering_result = nil, refresh = false
-      #Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendering_result}, refresh: #{refresh} where:#{caller[0..6]*', '}"
-      #warn "update references...card: #{card.inspect}, rr: #{rendering_result}, refresh: #{refresh}, #{caller*"\n"}"
-      return unless card && referer_id = card.id
-      Card::Reference.delete_all_from card
-      # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
-      #Card.where( :id => referer_id ).update_all( :references_expired=>nil )
-      card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
-      card.expire if refresh
-      if rendering_result.nil?
-         rendering_result = WikiContent.new(card, card.raw_content, self).render! do |opts|
-           expand_inclusion(opts) { yield }
-         end
-      end
-
-      rendering_result.find_chunks(Chunks::Reference).inject({}) do |hash, chunk|
-
-        if referer_id != ( referee_id = chunk.refcard.send_if :id ) &&
-           !hash.has_key?( referee_key = referee_id || chunk.refcardname.key )
-
-          hash[ referee_key ] = {
-              :referee_id  => referee_id,
-              :referee_key => chunk.refcardname.send_if( :key ),
-              :ref_type    => Chunks::Link===chunk ? 'L' : 'I',
-              :present     => chunk.refcard.nil?   ?  0  :  1
-            }
+    def update_references rendered_content = nil, refresh = false
+      #Rails.logger.warn "update references...card:#{card.inspect}, rr: #{rendered_content}, refresh: #{refresh} where:#{caller[0..6]*', '}"
+      #warn "update references...card: #{card.inspect}, rr: #{rendered_content}, refresh: #{refresh}, #{caller*"\n"}"
+      if card
+        Card::Reference.delete_all_from card
+        # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
+        #Card.where( :id => referer_id ).update_all( :references_expired=>nil )
+        card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
+        card.expire if refresh
+        
+        rendered_content ||= WikiContent.new(card, card.raw_content, self).render! do |opts|
+          expand_inclusion(opts) { yield }
         end
 
-        hash
-      end.each_value { |update| Card::Reference.create! update.merge( :referer_id => referer_id ) }
+        rendered_content.find_chunks(Chunks::Reference).inject({}) do |hash, chunk|
+          if referee_name = chunk.refcardname # name is referenced 
+            referee_key = referee_name.key
+            if !hash.has_key? referee_key     # not already tracked  !! FIXME: but what if it's a different ref_type?!
+              referee_id  = chunk.refcard.send_if :id
+              if card.id != referee_id        # not self reference
+                hash[ referee_key ] = {
+                    :referer_id  => card.id,
+                    :referee_id  => referee_id,
+                    :referee_key => referee_key,
+                    :ref_type    => Chunks::Link===chunk ? 'L' : 'I',
+                    :present     => chunk.refcard.nil?   ?  0  :  1  # more and more convince field should be boolean
+                  }
+              end
+            end
+          end
+          hash
+        end.each_value do |reference_hash|
+          Card::Reference.create! reference_hash
+        end
+      end
 
     end
 

@@ -42,8 +42,8 @@ class Mailer < ActionMailer::Base
 
     #FIXME - might want different "from" settings for different contexts?
     unless invite_from = Card.setting( '*invite+*from' )
-      authzd = Account.current
-      invite_from = "#{authzd.name} <#{authzd.account.email}>"
+      cur_card = Account.current
+      invite_from = "#{cur_card.name} <#{cur_card.account.email}>"
     end
     mail_from args, invite_from
   end

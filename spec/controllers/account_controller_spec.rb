@@ -18,7 +18,9 @@ describe AccountController do
         @msgs << m
         mock(m).deliver }
 
-      login_as :joe_admin
+      login_as 'joe_admin'
+      @jadmin = Card['joe admin']
+      @ja_email = @jadmin.account.email
 
       @email_args = {:subject=>'Hey Joe!', :message=>'Come on in.'}
       post :invite, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'},
@@ -38,6 +40,9 @@ describe AccountController do
     it 'should send email' do
       @msgs.size.should == 1
       @msgs[0].should be_a Mail::Message
+      # FIXME: test may need updating, but we want cases that test the parsing
+      #@msgs[0].from.should == "#{@jadmin.name} <#{@ja_email}>"
+      @msgs[0].from.should == [ @ja_email ]
     end
   end
 
@@ -105,6 +110,8 @@ describe AccountController do
     it 'should send an email to user' do
       @msgs.size.should == 1
       @msgs[0].should be_a Mail::Message
+      # FIXME: shouldn't it be simpler? @msgs[0].from.should == "Anonymous"
+      @msgs[0].from.should == "Anonymous <>"
     end
 
 

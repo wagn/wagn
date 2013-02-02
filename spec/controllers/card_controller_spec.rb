@@ -242,6 +242,17 @@ describe CardController do
       Card["Boo"].should == nil
     end
 
+    it "should comment" do
+      Account.as_bot do
+        Card.create :name => 'basicname+*self+*comment', :content=>'[[Anyone Signed In]]'
+      end
+      @c = Card["basicname"]
+      post :comment, :id=>"~#{@c.id}", :card=>{:comment => " and more\n  \nsome lines\n\n"}
+      cont = Card['basicname'].content
+      part = "basiccontent<hr><p> and more</p>\n<p>&nbsp;</p>\n<p>some lines</p><p><em>&nbsp;&nbsp;--[[Joe User]]"
+      cont[0,part.length].should == part
+    end
+
     it "should watch" do
       login_as('joe_user')
       post :watch, :id=>"Home", :toggle=>'on'

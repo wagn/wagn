@@ -162,6 +162,11 @@ describe "Card::Reference" do
     Card['beta'].referencees.map(&:name).should == ['alpha']
     Card['alpha'].referencers.map(&:name).should == ['beta']
   end
+  
+  it "should handle commented inclusion" do
+    c = Card.create :name=>'inclusion comment test', :content=>'{{## hi mom }}'
+    c.errors.any?.should be_false
+  end
 
 
   it "pickup new links on create" do

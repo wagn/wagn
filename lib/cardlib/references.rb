@@ -47,34 +47,26 @@ Rails.logger.warn "rref? #{was_name} :#{inspect}"
     expire if refresh
 
     rendered_content ||= ObjectContent.new(content, {:card=>self} )
-
-    rendered_content.find_chunks(Chunks::Reference).inject({}) do |hash, chunk|
-      if referee_name = chunk.refcardname # name is referenced                     !! FIXME: this should never be false (but has been)
-        referee_key = referee_name.key
-        if !hash.has_key? referee_key     # similar reference not already tracked  !! FIXME: but what if it's a different ref_type?!
-          referee_id = chunk.refcard.send_if :id
-          if id != referee_id             # not self reference
-            
-            update_references chunk.link_text if ObjectContent === chunk.link_text
-            
-            hash[ referee_key ] = {
-                :referer_id  => id,
-                :referee_id  => referee_id,
-                :referee_key => referee_key,
-                :ref_type    => Chunks::Link===chunk ? 'L' : 'I',
-                :present     => chunk.refcard.nil?   ?  0  :  1  # more and more convince field should be boolean
-              }
-          end
+      
+    rendered_content.find_chunks(Chunks::Reference).each do |chunk|
+      if referee_name = chunk.refcardname # name is referenced (not true of commented inclusions)
+        referee_id = chunk.refcard.send_if :id
+        if card.id != referee_id          # not self reference
+          
+          update_references chunk.link_text if ObjectContent === chunk.link_text
+          
+          Card::Reference.create!(
+            :referer_id  => card.id,
+            :referee_id  => referee_id,
+            :referee_key => referee_name.key,
+            :ref_type    => Chunks::Link===chunk ? 'L' : 'I',
+            :present     => chunk.refcard.nil?   ?  0  :  1
+          )
         end
       end
-      hash
-      
-    end.each_value do |reference_hash|
-      Card::Reference.create! reference_hash
     end
-  
-
   end
+
 
   # ---------- Referenced cards --------------
 

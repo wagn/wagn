@@ -7,7 +7,7 @@ class Card::Revision < ActiveRecord::Base
   end
 
   def set_stamper
-    self.creator_id = Account.authorized_id
+    self.creator_id = Account.current_id
   end
 
   def creator

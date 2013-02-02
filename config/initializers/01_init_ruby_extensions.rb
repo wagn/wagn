@@ -55,3 +55,9 @@ class Object
     ( block_given? ? yield : self ) and send method, *args
   end
 end
+
+class String
+  def to_html
+    split(/\n/).map {|line| "<p>#{line.strip.empty? ? '&nbsp;' : line}</p>"} * "\n"
+  end
+end

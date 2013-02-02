@@ -237,7 +237,7 @@ RENDERED = {
 describe ObjectContent do
 
   before do
-    Account.authorized_id = Card['joe_user'].id
+    Account.current_id = Card['joe_user'].id
     assert card = Card["One"]
     @card_opts = {
       :card => card,

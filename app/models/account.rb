@@ -1,30 +1,30 @@
 class Account
-  @@as_card = @@as_id = @@authorized_id = @@authorized = @@user = nil
+  @@as_card = @@as_id = @@current_id = @@current = @@user = nil
 
   class << self
-    def authorized_id
-      @@authorized_id ||= Card::AnonID
+    def current_id
+      @@current_id ||= Card::AnonID
     end
 
-    def authorized
-      if @@authorized && @@authorized.id == authorized_id
-        @@authorized
+    def current
+      if @@current && @@current.id == current_id
+        @@current
       else
-        @@authorized = Card[authorized_id]
+        @@current = Card[current_id]
       end
     end
 
     def user
-      if @@user && @@user.card_id == authorized_id
+      if @@user && @@user.card_id == current_id
         @@user
       else
-        @@user = User.from_id authorized_id
+        @@user = User.from_id current_id
       end
     end
 
-    def authorized_id= card_id
-      @@user = @@authorized = @@as_id = @@as_card = nil
-      @@authorized_id = card_id
+    def current_id= card_id
+      @@user = @@current = @@as_id = @@as_card = nil
+      @@current_id = card_id
     end
 
     def get_user_id user
@@ -43,7 +43,7 @@ class Account
       tmp_id, tmp_card = @@as_id, @@as_card
       @@as_id, @@as_card = get_user_id( given_user ), nil  # we could go ahead and set as_card if given a card...
 
-      @@authorized_id = @@as_id if @@authorized_id.nil?
+      @@current_id = @@as_id if @@current_id.nil?
 
       if block_given?
         value = yield
@@ -63,7 +63,7 @@ class Account
     end
 
     def as_id
-      @@as_id || authorized_id
+      @@as_id || current_id
     end
 
     def as_card
@@ -75,7 +75,7 @@ class Account
     end
 
     def logged_in?
-      authorized_id != Card::AnonID
+      current_id != Card::AnonID
     end
 
     def no_logins?()

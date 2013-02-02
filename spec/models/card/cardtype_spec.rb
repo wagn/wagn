@@ -69,7 +69,7 @@ end
 
 describe Card, "created without permission" do
   before do
-    Account.authorized_id = Card::AnonID
+    Account.current_id = Card::AnonID
   end
 
   # FIXME:  this one should pass.  unfortunately when I tried to fix it it started looking like the clean solution

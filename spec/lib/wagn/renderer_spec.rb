@@ -4,7 +4,7 @@ require File.expand_path('../../packs/pack_spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Renderer, "" do
   before do
-    Account.authorized_id = Card['joe_user'].id
+    Account.current_id = Card['joe_user'].id
     Wagn::Renderer.current_slot = nil
     Wagn::Renderer.ajax_call = false
   end
@@ -401,7 +401,7 @@ describe Wagn::Renderer, "" do
 
     context "HTML" do
       before do
-        Account.authorized_id = Card::WagnBotID
+        Account.current_id = Card::WagnBotID
       end
 
       it "should have special editor" do
@@ -534,7 +534,7 @@ describe Wagn::Renderer, "" do
 
   context "test/??? tests moved" do
     before do
-      Account.authorized_id = Card['joe_user'].id
+      Account.current_id = Card['joe_user'].id
     end
 
     # should this one work?  I think not ...

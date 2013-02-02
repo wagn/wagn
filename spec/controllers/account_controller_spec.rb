@@ -24,15 +24,15 @@ describe AccountController do
       post :invite, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'},
         :email=> @email_args
 
-      @auth_card = Card['Joe New']
+      @cd_with_acct = Card['Joe New']
       @new_user = User.where(:email=>'joe@new.com').first
 
     end
 
     it 'should create a user' do
       @new_user.should be
-      @new_user.card_id.should == @auth_card.id
-      @auth_card.type_id.should == Card::UserID
+      @new_user.card_id.should == @cd_with_acct.id
+      @cd_with_acct.type_id.should == Card::UserID
     end
 
     it 'should send email' do
@@ -53,14 +53,14 @@ describe AccountController do
     #FIXME: tests needed : signup without approval, signup alert emails
 
     it 'should create a user' do
-      #warn "who #{Account.authorized.inspect}"
+      #warn "who #{Account.current.inspect}"
       post :signup, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}
       new_user = User.where(:email=>'joe@new.com').first
-      @auth_card = Card['Joe New']
+      @cd_with_acct = Card['Joe New']
       new_user.should be
-      new_user.card_id.should == @auth_card.id
+      new_user.card_id.should == @cd_with_acct.id
       new_user.pending?.should be_true
-      @auth_card.type_id.should == Card::AccountRequestID
+      @cd_with_acct.type_id.should == Card::AccountRequestID
     end
 
     it 'should send email' do

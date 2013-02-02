@@ -1,7 +1,7 @@
 module Cardlib::Permissions
 
   def ydhpt
-    "#{Account.authorized.name}, You don't have permission to"
+    "#{Account.current.name}, You don't have permission to"
   end
 
   def approved?

@@ -210,7 +210,7 @@ end
 describe "remove tests" do
 
   before do
-    Account.authorized_id = Card['joe_user'].id
+    Account.current_id = Card['joe_user'].id
     @a = Card["A"]
   end
 

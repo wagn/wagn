@@ -7,7 +7,7 @@ class Card < ActiveRecord::Base
   SmartName.codes= Wagn::Codename
   SmartName.params= Wagn::Conf
   SmartName.lookup= Card
-  SmartName.session= proc { Account.authorized.name }
+  SmartName.session= proc { Account.current.name }
 
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
 
@@ -192,7 +192,7 @@ class Card < ActiveRecord::Base
   end
 
   def set_stamper
-    self.updater_id = Account.authorized_id
+    self.updater_id = Account.current_id
     self.creator_id = self.updater_id if new_card?
   end
 

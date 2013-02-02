@@ -12,11 +12,11 @@ class Mailer < ActionMailer::Base
 
   EMAIL_FIELDS = [ :to, :subject, :message, :password ]
 
-  def valid_args? auth_card, args
+  def valid_args? cd_with_acct, args
     nil_args = EMAIL_FIELDS.find_all { |k| args[k].nil? }.compact
     if nil_args.any?
-      unless auth_card.errors[:email].any?
-        auth_card.errors[:email].add(:email, "Missing email parameters: #{nil_args.map(&:to_s)*', '}")
+      unless cd_with_acct.errors[:email].any?
+        cd_with_acct.errors[:email].add(:email, "Missing email parameters: #{nil_args.map(&:to_s)*', '}")
       end
       false
     else
@@ -25,9 +25,9 @@ class Mailer < ActionMailer::Base
   end
 
 
-  #def account_info auth_card, args
+  #def account_info cd_with_acct, args
   def account_info user, subject, message
-    auth_card = Card===user ? user : Card[user.card_id]
+    cd_with_acct = Card===user ? user : Card[user.card_id]
     args = { :subject => subject, :message => message, :password => user.password, :to => user.email }
 
     arg_array = EMAIL_FIELDS.map { |f| args[f] }
@@ -35,14 +35,14 @@ class Mailer < ActionMailer::Base
 
     @email, @subject, @message, @password = arg_array
 
-    @card_url = wagn_url auth_card
-    @pw_url   = wagn_url "/card/options/#{auth_card.cardname.url_key}"
+    @card_url = wagn_url cd_with_acct
+    @pw_url   = wagn_url "/card/options/#{cd_with_acct.cardname.url_key}"
     @login_url= wagn_url "/account/signin"
     @message  = @message.clone
 
     #FIXME - might want different "from" settings for different contexts?
     unless invite_from = Card.setting( '*invite+*from' )
-      authzd = Account.authorized
+      authzd = Account.current
       invite_from = "#{authzd.name} <#{authzd.account.email}>"
     end
     mail_from args, invite_from
@@ -66,10 +66,10 @@ class Mailer < ActionMailer::Base
   end
 
 
-  def change_notice auth_card, card, action, watched, subedits=[], updated_card=nil
-    auth_card = Card[auth_card] unless Card===auth_card
-    email = auth_card.account.email
-    #warn "change_notice( #{auth_card}, #{email}, #{card.inspect}, #{action.inspect}, #{watched.inspect} Uc:#{updated_card.inspect}...)"
+  def change_notice cd_with_acct, card, action, watched, subedits=[], updated_card=nil
+    cd_with_acct = Card[cd_with_acct] unless Card===cd_with_acct
+    email = cd_with_acct.account.email
+    #warn "change_notice( #{cd_with_acct}, #{email}, #{card.inspect}, #{action.inspect}, #{watched.inspect} Uc:#{updated_card.inspect}...)"
 
     updated_card ||= card
     @card = card

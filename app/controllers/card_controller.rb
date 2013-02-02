@@ -72,15 +72,10 @@ class CardController < ApplicationController
     # if we enforce RESTful http methods, we should do it consistently,
     # and error should be 405 Method Not Allowed
 
-    # FIXME: need this loaded like an inflector, this can't be the only place that would use this
-    # or maybe wrap it with the split, map, join too, and why not strip it in any case?
-    to_html = lambda {|line| "<p>#{line.strip.empty? ? '&nbsp;' : line}</p>"}
-  
-    author = Account.logged_in? ? "[[#{Account.authorized.name}]]" :
+    author = Account.logged_in? ? "[[#{Account.current.name}]]" :
              "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)"
-    comment = params[:card][:comment].split(/\n/).map(&to_html) * "\n"
 
-    card.comment = %{<hr>#{ comment }<p><em>&nbsp;&nbsp;--#{ author }.....#{Time.now}</em></p>}
+    card.comment = %{<hr>#{ params[:card][:comment].to_html }<p><em>&nbsp;&nbsp;--#{ author }.....#{Time.now}</em></p>}
 
     if card.save
       show
@@ -100,7 +95,7 @@ class CardController < ApplicationController
   def watch
     watchers = card.fetch :trait=>:watchers, :new=>{}
     watchers = watchers.refresh
-    myname = Account.authorized.name
+    myname = Account.current.name
     watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
     ajax? ? show(:watch) : read
   end

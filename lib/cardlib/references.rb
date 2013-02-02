@@ -50,17 +50,17 @@ Rails.logger.warn "rref? #{was_name} :#{inspect}"
       
     rendered_content.find_chunks(Chunks::Reference).each do |chunk|
       if referee_name = chunk.refcardname # name is referenced (not true of commented inclusions)
-        referee_id = chunk.refcard.send_if :id
-        if card.id != referee_id          # not self reference
+        referee_id = chunk.reference_id   
+        if id != referee_id               # not self reference
           
           update_references chunk.link_text if ObjectContent === chunk.link_text
           
           Card::Reference.create!(
-            :referer_id  => card.id,
+            :referer_id  => id,
             :referee_id  => referee_id,
             :referee_key => referee_name.key,
-            :ref_type    => Chunks::Link===chunk ? 'L' : 'I',
-            :present     => chunk.refcard.nil?   ?  0  :  1
+            :ref_type    => Chunks::Link===chunk      ? 'L' : 'I',
+            :present     => chunk.reference_card.nil? ?  0  :  1
           )
         end
       end

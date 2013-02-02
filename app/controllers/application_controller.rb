@@ -37,9 +37,9 @@ class ApplicationController < ActionController::Base
 
       Wagn::Cache.renew
 
-      #warn "set curent_user (app-cont) #{self.current_id}, U.cu:#{Account.current_id}"
-      Account.current_id = self.current_id || Card::AnonID
-      #warn "set curent_user a #{current_id}, U.cu:#{Account.current_id}"
+      #warn "set curent_user (app-cont) #{self.current_account_id}, U.cu:#{Account.current_id}"
+      Account.current_id = self.current_account_id || Card::AnonID
+      #warn "set curent_user a #{current_account_id}, U.cu:#{Account.current_id}"
 
       # RECAPTCHA HACKS
       Wagn::Conf[:recaptcha_on] = !Account.logged_in? &&     # this too

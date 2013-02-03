@@ -11,7 +11,7 @@ class SharedData
   FUTURE = Time.local(2020,1,1,0,0,0)
 
   def self.add_test_data
-    #Card.current_id = Card::WagnBotID
+    #Account.current_id = Card::WagnBotID
     CodenameTable.load_bootcodes unless !Wagn::Codename[:wagn_bot].nil?
 
     Wagn::Cache.reset_global

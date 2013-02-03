@@ -53,6 +53,7 @@ module Wagn
   end
 
   class Renderer
+
     class << self
 
       def new card, opts={}

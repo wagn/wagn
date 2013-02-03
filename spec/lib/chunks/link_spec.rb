@@ -4,7 +4,7 @@ describe Chunks::Link, "link chunk tests" do
   include MySpecHelpers
 
   before do
-    Account.user= 'joe_user'
+    Account.current_id = Card['joe_user'].id
   end
 
   it "should test basic" do

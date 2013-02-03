@@ -25,20 +25,13 @@ end
 
 
 describe Card, "comment addition" do
-  before do
+  it "should combine content after save" do
     Account.as_bot do
       Card.create :name => 'basicname+*self+*comment', :content=>'[[Anyone Signed In]]'
       @c = Card.fetch "basicname"
-      @c.comment = " and more"
+      @c.comment = " and more\n  \nsome lines\n\n"
       @c.save!
     end
-  end
-
-  it "should combine content immediately" do
-    @c.content.should == "basiccontent and more"
-  end
-
-  it "should combine content after save" do
-    Card["basicname"].content.should == "basiccontent and more"
+    Card["basicname"].content.should == "basiccontent and more\n  \nsome lines\n\n"
   end
 end

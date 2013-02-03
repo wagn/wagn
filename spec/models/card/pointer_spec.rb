@@ -2,7 +2,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Set::Type::Pointer do
   before do
-    Account.user= :joe_user
+    Account.current_id = Card['joe_user'].id
   end
 
   context "item_names" do
@@ -57,7 +57,7 @@ describe Wagn::Set::Type::Pointer do
     it "not break on permissions" do
       watchers = Card.fetch "Home+*watchers", :new=>{}
       watchers.typecode.should == :pointer
-      watchers << Account.user_id
+      watchers << Account.current_id
       assert_equal '[[Joe User]]', watchers.content
     end
   end

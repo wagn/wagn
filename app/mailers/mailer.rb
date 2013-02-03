@@ -10,28 +10,48 @@ class Mailer < ActionMailer::Base
 
   include LocationHelper
 
+  EMAIL_FIELDS = [ :to, :subject, :message, :password ]
+
+  def valid_args? cd_with_acct, args
+    nil_args = EMAIL_FIELDS.find_all { |k| args[k].nil? }.compact
+    if nil_args.any?
+      unless cd_with_acct.errors[:email].any?
+        cd_with_acct.errors[:email].add(:email, "Missing email parameters: #{nil_args.map(&:to_s)*', '}")
+      end
+      false
+    else
+      true
+    end
+  end
+
+
+  #def account_info cd_with_acct, args
   def account_info user, subject, message
-    url_key = Card[user.card_id].cardname.url_key
+    cd_with_acct = Card===user ? user : Card[user.card_id]
+    args = { :subject => subject, :message => message, :password => user.password, :to => user.email }
 
-    @email    = (user.email    or raise Wagn::Oops.new("Oops didn't have user email"))
-    @password = (user.password or raise Wagn::Oops.new("Oops didn't have user password"))
-    @card_url = wagn_url Card[user.card_id]
-    @pw_url   = wagn_url "/card/options/#{url_key}"
+    arg_array = EMAIL_FIELDS.map { |f| args[f] }
+    return if arg_array.find(&:nil?)
+
+    @email, @subject, @message, @password = arg_array
+
+    @card_url = wagn_url cd_with_acct
+    @pw_url   = wagn_url "/card/options/#{cd_with_acct.cardname.url_key}"
     @login_url= wagn_url "/account/signin"
-    @message  = message.clone
+    @message  = @message.clone
 
-    args =  { :to => @email, :subject  => subject }
-    mail_from args, ( Card.setting('*invite+*from') || begin
-      curr = Account.user
-      from_user = curr.anonymous? || curr.id == user.id ? User.admin : curr
-      "#{from_user.card.name} <#{from_user.email}>"
-    end ) #FIXME - might want different "from" settings for different contexts?
+    #FIXME - might want different "from" settings for different contexts?
+    unless invite_from = Card.setting( '*invite+*from' )
+      cur_card = Account.current
+      invite_from = "#{cur_card.name} <#{cur_card.account.email}>"
+    end
+    mail_from args, invite_from
   end
 
   def signup_alert invite_request
     @site = Card.setting :title
     @card = invite_request
-    @email= invite_request.to_user.email
+    @email= invite_request.account.email
     @name = invite_request.name
     @content = invite_request.content
     @request_url  = wagn_url invite_request
@@ -46,10 +66,10 @@ class Mailer < ActionMailer::Base
   end
 
 
-  def change_notice user, card, action, watched, subedits=[], updated_card=nil
-    #warn "change_notice( #{user}, cd:#{card.inspect}, act:#{action.inspect}, wtchd:#{watched.inspect} ne#{subedits.inspect}, Uc:#{updated_card.inspect}...)"
-    return unless user = User===user ? user : User.from_id(user)
-    #warn "change_notice( #{user.email}, #{card.inspect}, #{action.inspect}, #{watched.inspect} Uc:#{updated_card.inspect}...)"
+  def change_notice cd_with_acct, card, action, watched, subedits=[], updated_card=nil
+    cd_with_acct = Card[cd_with_acct] unless Card===cd_with_acct
+    email = cd_with_acct.account.email
+    #warn "change_notice( #{cd_with_acct}, #{email}, #{card.inspect}, #{action.inspect}, #{watched.inspect} Uc:#{updated_card.inspect}...)"
 
     updated_card ||= card
     @card = card
@@ -63,11 +83,11 @@ class Mailer < ActionMailer::Base
     @watched = (watched == card.cardname ? "#{watched}" : "#{watched} cards")
 
     args = {
-      :to           => "#{user.email}",
+      :to           => email,
       :subject      => "[#{Card.setting :title} notice] #{@updater} #{action} \"#{card.name}\"" ,
       :content_type => 'text/html',
     }
-    mail_from args, User.admin.email
+    mail_from args, Card[Card::WagnBotID].account.email
   end
 
   def flexmail config
@@ -87,7 +107,7 @@ class Mailer < ActionMailer::Base
   private
 
   def mail_from args, from
-    from_name, from_email = parse_address( from )
+    from_name, from_email = (from =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, from]
     if default_from=@@defaults[:from]
       args[:from] = !from_email ? default_from : "#{from_name || from_email} <#{default_from}>"
       args[:reply_to] ||= from
@@ -97,9 +117,6 @@ class Mailer < ActionMailer::Base
     mail args unless Wagn::Conf[:migration]
   end
 
-  def parse_address addr
-    name, email = (addr =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, addr]
-  end
 
 end
 

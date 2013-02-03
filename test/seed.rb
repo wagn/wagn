@@ -11,7 +11,7 @@ class SharedData
   FUTURE = Time.local(2020,1,1,0,0,0)
 
   def self.add_test_data
-    #Card.current_id = Card::WagnBotID
+    #Account.current_id = Card::WagnBotID
     CodenameTable.load_bootcodes unless !Wagn::Codename[:wagn_bot].nil?
 
     Wagn::Cache.reset_global
@@ -139,11 +139,11 @@ class SharedData
     Card.create! :type_id=>Card::CardtypeID, :name=> "UserForm"
     Card.create! :name=>"UserForm+*type+*content", :content=>"{{+name}} {{+age}} {{+description}}"
 
-    Account.user = :joe_user
+    Account.current_id = Card['joe_user'].id
     Card.create!( :name=>"JoeLater", :content=>"test")
     Card.create!( :name=>"JoeNow", :content=>"test")
 
-    Account.user = :wagn_bot
+    Account.current_id = Card::WagnBotID
     Card.create!(:name=>"AdminNow", :content=>"test")
 
     Card.create :name=>'Cardtype B+*type+*create', :type=>'Pointer', :content=>'[[r1]]'

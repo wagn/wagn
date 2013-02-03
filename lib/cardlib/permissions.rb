@@ -1,7 +1,7 @@
 module Cardlib::Permissions
 
   def ydhpt
-    "#{Account.user_card.name}, You don't have permission to"
+    "#{Account.current.name}, You don't have permission to"
   end
 
   def approved?
@@ -57,7 +57,7 @@ module Cardlib::Permissions
   end
   
   def update_account_ok? #FIXME - temporary API
-    to_user and Account.as_id==id || fetch(:trait=>:account, :new=>{}).ok?( :update )
+    self.account and Account.as_id==id || fetch(:trait=>:account, :new=>{}).ok?( :update )
   end
 
   def who_can operation

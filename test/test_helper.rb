@@ -116,13 +116,13 @@ unless defined? TEST_ROOT
 
         args[:users].each_pair do |user,status|
           user = user.to_s
-          user_card_id = Integer===user ? user : Card[user].id
+          current_id = Integer===user ? user : Card[user].id
 
           args[:cardtypes].each do |cardtype|
             next if cardtype=~ /Cardtype|UserForm|Set|Fruit|Optic|Book/
 
             title = url.gsub(/:id/,'').gsub(/\//,'_') + "_#{cardtype}"
-            login = (user_card_id==Card::AnonID ? '' : "integration_login_as '#{user}'")
+            login = (current_id==Card::AnonID ? '' : "integration_login_as '#{user}'")
             test_def = %{
               def test_render_#{title}_#{user}_#{status}
                 #{login}

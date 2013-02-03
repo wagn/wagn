@@ -60,8 +60,8 @@ module Notification
       []
     end
 
-    def watching_type?; watcher_pairs(false, :type).member? Account.user_id end
-    def watching?;      watcher_pairs(false).       member? Account.user_id end
+    def watching_type?; watcher_pairs(false, :type).member? Account.current_id end
+    def watching?;      watcher_pairs(false).       member? Account.current_id end
     def watchers;       watcher_watched_pairs false                         end
     def watcher_watched_pairs pairs=true
       watcher_pairs pairs, :name, whash = {}
@@ -69,7 +69,7 @@ module Notification
     end
 
     def watcher_pairs pairs=true, kind=:name, hash={}
-      #warn "wp #{inspect} P:#{pairs}, k:#{kind}, uid:#{Account.user_id} #{hash.inspect}, OI:#{hash.object_id}"
+      #warn "wp #{inspect} P:#{pairs}, k:#{kind}, uid:#{Account.current_id} #{hash.inspect}, OI:#{hash.object_id}"
 
       wname, rc = (kind == :type) ?
            [ self.type_name, self.type_card.fetch(:trait=>:watchers) ] :
@@ -80,7 +80,7 @@ module Notification
       if hash.any?
         #warn "wp #{pairs}, #{kind}, #{hash.inspect}"
         if pairs
-          hash.each.reject {|i,wname| i == Account.user_id }.map {|i,wname| [ i, wname ] }
+          hash.each.reject {|i,wname| i == Account.current_id }.map {|i,wname| [ i, wname ] }
         else
           hash.keys
         end

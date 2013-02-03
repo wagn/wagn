@@ -10,7 +10,7 @@ describe Mailer do
   before do
     #FIXME: from addresses are really Account.user, not Account.as_user based, but
     # these tests are pretty much all using the Account.as, not logging in.
-    Account.user=nil # this is needed to clear logins from other test run before
+    Account.current_id =nil # this is needed to clear logins from other test run before
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries = []

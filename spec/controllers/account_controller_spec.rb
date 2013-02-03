@@ -18,26 +18,31 @@ describe AccountController do
         @msgs << m
         mock(m).deliver }
 
-      login_as :joe_admin
+      login_as 'joe_admin'
+      @jadmin = Card['joe admin']
+      @ja_email = @jadmin.account.email
 
       @email_args = {:subject=>'Hey Joe!', :message=>'Come on in.'}
       post :invite, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'},
         :email=> @email_args
 
-      @user_card = Card['Joe New']
+      @cd_with_acct = Card['Joe New']
       @new_user = User.where(:email=>'joe@new.com').first
 
     end
 
     it 'should create a user' do
       @new_user.should be
-      @new_user.card_id.should == @user_card.id
-      @user_card.type_id.should == Card::UserID
+      @new_user.card_id.should == @cd_with_acct.id
+      @cd_with_acct.type_id.should == Card::UserID
     end
 
     it 'should send email' do
       @msgs.size.should == 1
       @msgs[0].should be_a Mail::Message
+      # FIXME: test may need updating, but we want cases that test the parsing
+      #@msgs[0].from.should == "#{@jadmin.name} <#{@ja_email}>"
+      @msgs[0].from.should == [ @ja_email ]
     end
   end
 
@@ -53,14 +58,14 @@ describe AccountController do
     #FIXME: tests needed : signup without approval, signup alert emails
 
     it 'should create a user' do
-      #warn "who #{Account.user_card.inspect}"
+      #warn "who #{Account.current.inspect}"
       post :signup, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}
       new_user = User.where(:email=>'joe@new.com').first
-      user_card = Card['Joe New']
+      @cd_with_acct = Card['Joe New']
       new_user.should be
-      new_user.card_id.should == user_card.id
+      new_user.card_id.should == @cd_with_acct.id
       new_user.pending?.should be_true
-      user_card.type_id.should == Card::AccountRequestID
+      @cd_with_acct.type_id.should == Card::AccountRequestID
     end
 
     it 'should send email' do
@@ -105,6 +110,8 @@ describe AccountController do
     it 'should send an email to user' do
       @msgs.size.should == 1
       @msgs[0].should be_a Mail::Message
+      # FIXME: shouldn't it be simpler? @msgs[0].from.should == "Anonymous"
+      @msgs[0].from.should == "Anonymous <>"
     end
 
 

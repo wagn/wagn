@@ -3,7 +3,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 describe "card search" do
 
   before do
-    Account.user = 'u3'
+    Account.current_id = Card['u3'].id
   end
 
   def test_autocard_should_not_respond_to_tform

@@ -72,10 +72,10 @@ class CardController < ApplicationController
     # if we enforce RESTful http methods, we should do it consistently,
     # and error should be 405 Method Not Allowed
 
-    author = Account.user_id == Card::AnonID ?
-        "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)" : "[[#{Account.user.card.name}]]"
-    comment = params[:card][:comment].split(/\n/).map{|c| "<p>#{c.strip.empty? ? '&nbsp;' : c}</p>"} * "\n"
-    card.comment = "<hr>#{comment}<p><em>&nbsp;&nbsp;--#{author}.....#{Time.now}</em></p>"
+    author = Account.logged_in? ? "[[#{Account.current.name}]]" :
+             "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)"
+
+    card.comment = %{<hr>#{ params[:card][:comment].to_html }<p><em>&nbsp;&nbsp;--#{ author }.....#{Time.now}</em></p>}
 
     if card.save
       show
@@ -95,7 +95,7 @@ class CardController < ApplicationController
   def watch
     watchers = card.fetch :trait=>:watchers, :new=>{}
     watchers = watchers.refresh
-    myname = Card[Account.user_id].name
+    myname = Account.current.name
     watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
     ajax? ? show(:watch) : read
   end
@@ -108,7 +108,6 @@ class CardController < ApplicationController
   #-------- ( ACCOUNT METHODS )
 
   def update_account
-
     if params[:save_roles]
       role_card = card.fetch :trait=>:roles, :new=>{}
       role_card.ok! :update
@@ -118,16 +117,16 @@ class CardController < ApplicationController
       role_card.items= role_hash.keys.map &:to_i
     end
 
-    account = card.to_user
-    if account and account_args = params[:account]
+    acct = card.account
+    if acct and account_args = params[:account]
       unless Account.as_id == card.id and !account_args[:blocked]
         card.fetch(:trait=>:account).ok! :update
       end
-      account.update_attributes account_args
+      acct.update_attributes account_args
     end
 
-    if account && account.errors.any?
-      account.errors.each do |field, err|
+    if acct && acct.errors.any?
+      acct.errors.each do |field, err|
         card.errors.add field, err
       end
       render_errors
@@ -211,9 +210,10 @@ class CardController < ApplicationController
 
   # FIXME: event
   def refresh_card
-    @card = card.refresh
+    @card =  card.refresh
   end
 
+  #------- REDIRECTION 
 
   def success default_target='_self'
     target = params[:success] || default_target

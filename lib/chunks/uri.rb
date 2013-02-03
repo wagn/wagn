@@ -37,6 +37,14 @@ class URIChunk < Chunks::Abstract
     @uri = URI.parse( match )
     #@process_chunk = self.renderer ? "#{self.renderer.build_link(self.uri,@link_text)}#{@trailing_punctuation}" : @text
   end
+
+  def method_missing meth, *a
+    if @uri.respond_to? meth
+       @uri.send meth, *a
+    else
+       super.send meth, *a
+    end
+  end
 end
 
 # uri with mandatory scheme but less restrictive hostname, like

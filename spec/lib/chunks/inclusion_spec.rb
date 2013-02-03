@@ -84,8 +84,9 @@ describe Chunks::Include, "include chunk tests" do
 
   # this tests container templating and inclusion syntax 'base:parent'
   it "should test_container_inclusion" do
+    #pending "base:parent not supported now, can we make a similare test with _left ?"
     bob_city = Card.create! :name=>'bob+city', :content=> "Sparta"
-    Account.as_bot { address_tmpl = Card.create! :name=>'address+*right+*content', :content =>"{{+city|base:parent}}" }
+    Account.as_bot { address_tmpl = Card.create! :name=>'address+*right+*content', :content =>"{{_left+city}}" }
     bob_address = Card.create! :name=>'bob+address'
     #FIXME -- does not work retroactively if template is created later.
 

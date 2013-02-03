@@ -9,7 +9,7 @@ require_dependency 'chunks/include'
 class ObjectContent < SimpleDelegator
 
   ACTIVE_CHUNKS =
-    [ Chunks::Link, URIChunk, LocalURIChunk, Literal::Escape, Chunks::Include ]
+    [ Literal::Escape, Chunks::Include, Chunks::Link, URIChunk ]
     #[ Literal::Escape, Chunks::Include, Chunks::Link, URIChunk, LocalURIChunk ]
   SCAN_RE = { ACTIVE_CHUNKS => Chunks::Abstract.all_chunks_re(ACTIVE_CHUNKS) }
 
@@ -31,9 +31,11 @@ class ObjectContent < SimpleDelegator
         pre_chunk   = match_arr.shift
         match       = match_arr.shift
         match_index = match_arr.index { |x| !x.nil? }
+        #warn "marr[#{match_index}], #{pre_chunk}, #{match.class}, #{match_arr.inspect}"
         
         chunk_class, range = Chunks::Abstract.re_class(match_index)
         chunk_params = match_arr[range]
+        #warn "scont #{pre_chunk}, #{match}, #{match_index}, #{chunk_params.inspect}"
         newck = chunk_class.new match, card_params, chunk_params
         if newck.avoid_autolinking?
           "#{pre_chunk}#{match}"

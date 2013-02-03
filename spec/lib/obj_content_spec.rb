@@ -11,6 +11,11 @@ CONTENT = {
         http://localhost:2020/path?cgi=foo&bar=baz  [[http://brain/Home|extra]]
         [ http://gerry.wagn.com/a/path ]
         { https://brain/more?args }),
+  :three_b => %(Some Literals: http://a.url.com
+        More urls: wagn.com/a/path/to.html
+        [ http://gerry.wagn.com/a/path ]
+        { https://brain/more?args }
+        http://localhost:2020/path?cgi=foo&bar=baz  [[http://brain/Home|extra]]),
    :four => "No chunks",
    :five => "{{one inclusion|size;large}}",
    :six  => %~
@@ -211,7 +216,8 @@ CONTENT = {
 CLASSES = {
    :one => [String, Literal::Escape, String, Literal::Escape, String, Chunks::Include, String ],
    :two => [String, Chunks::Link, String, Chunks::Include, Chunks::Include, String, Chunks::Link, String, Chunks::Link, Chunks::Link, Chunks::Include ],
-   :three => [String, URIChunk, String, URIChunk, String, LocalURIChunk, String, Chunks::Link, String, URIChunk, String, LocalURIChunk ],
+   :three => [String, URIChunk, String, URIChunk, String, URIChunk, String, Chunks::Link, String, URIChunk, String, URIChunk, String ],
+   :three_b => [String, URIChunk, String, URIChunk, String, URIChunk, String, URIChunk, String, URIChunk, String, Chunks::Link ],
    :five => [Chunks::Include]
 }
 
@@ -231,12 +237,29 @@ RENDERED = {
     "<a class=\"external-link\" href=\"http://brain/Home\">extra</a>",
     "\n        [ ","<a class=\"external-link\" href=\"http://gerry.wagn.com/a/path\">http://gerry.wagn.com/a/path</a>",
     " ]\n        { ","<a class=\"external-link\" href=\"https://brain/more?args\">https://brain/more?args</a>"," }"],
+  :three_b => ["Some Literals: ","<a class=\"external-link\" href=\"http://a.url.com\">http://a.url.com</a>","\n        More urls: ",
+    "<a class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>",
+    "\n        [ ","<a class=\"external-link\" href=\"http://gerry.wagn.com/a/path\">http://gerry.wagn.com/a/path</a>",
+    " ]\n        { ","<a class=\"external-link\" href=\"https://brain/more?args\">https://brain/more?args</a>"," }\n        ",
+     "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>", "  ",
+    "<a class=\"external-link\" href=\"http://brain/Home\">extra</a>"],
   :four => "No chunks"
 }
 
 describe ObjectContent do
 
   before do
+
+    @check_proc = Proc.new do |m, v|
+      if Array===m
+        wrong_class = m[0] != v.class
+        is_last = m.size == 1
+        warn "check M[#{is_last}]:#{wrong_class}, #{v.class}, V#{v.inspect}" if wrong_class
+        wrong_class.should be_false
+        wrong_class ? false : ( is_last ? true : m[1..-1] )
+      else false end
+    end
+
     Account.current_id = Card['joe_user'].id
     assert card = Card["One"]
     @card_opts = {
@@ -246,21 +269,15 @@ describe ObjectContent do
 
     # non-nil valued opts only ...
     @render_block =  Proc.new do |opts| {:options => opts.inject({}) {|i,v| !v[1].nil? && i[v[0]]=v[1]; i } } end
-    @check_classes = Proc.new do |m, v|
-        if Array===m
-          #warn "check M:#{m[0].inspect}, Val:#{v.class}, Vto_s:#{v.to_s}, #{v.inspect}"
-          v.should be_instance_of m[0]
-          m[0] != v.class ? false : ( m.size == 1 ? true : m[1..-1] )
-        else false end
-      end
   end
 
 
   describe 'parse' do
     it "should find all the chunks and strings" do
       # note the mixed [} that are considered matching, needs some cleanup ...
+      warn "cont? #{CONTENT[:one].inspect}"
       cobj = ObjectContent.new CONTENT[:one], @card_opts
-      cobj.inject(CLASSES[:one], &@check_classes).should == true
+      cobj.inject(CLASSES[:one], &@check_proc).should == true
     end
 
     it "should give just the chunks" do
@@ -274,14 +291,26 @@ describe ObjectContent do
 
     it "should find all the chunks links and trasclusions" do
       cobj = ObjectContent.new CONTENT[:two], @card_opts
-      cobj.inject(CLASSES[:two], &@check_classes).should == true
+      cobj.inject(CLASSES[:two], &@check_proc).should == true
     end
 
     it "should find uri chunks " do
       # tried some tougher cases that failed, don't know the spec, so hard to form better tests for URIs here
       cobj = ObjectContent.new CONTENT[:three], @card_opts
-      cobj.inject(CLASSES[:three], &@check_classes).should == true
+      cobj.inject(CLASSES[:three], &@check_proc).should == true
       clist = CLASSES[:three].find_all {|c| String != c }
+      #warn "clist #{clist.inspect}, #{cobj.inspect}"
+      cobj.each_chunk do |chk|
+        chk.should be_instance_of clist.shift
+      end
+      clist.should be_empty
+    end
+
+    it "should find uri chunks (b)" do
+      # tried some tougher cases that failed, don't know the spec, so hard to form better tests for URIs here
+      cobj = ObjectContent.new CONTENT[:three_b], @card_opts
+      cobj.inject(CLASSES[:three_b], &@check_proc).should == true
+      clist = CLASSES[:three_b].find_all {|c| String != c }
       #warn "clist #{clist.inspect}, #{cobj.inspect}"
       cobj.each_chunk do |chk|
         chk.should be_instance_of clist.shift
@@ -296,7 +325,7 @@ describe ObjectContent do
 
     it "should parse a single chunk" do
       cobj = ObjectContent.new CONTENT[:five], @card_opts
-      cobj.inject(CLASSES[:five], &@check_classes).should == true
+      cobj.inject(CLASSES[:five], &@check_proc).should == true
       clist = CLASSES[:five].find_all {|c| String != c }
       cobj.each_chunk do |chk|
         chk.should be_instance_of clist.shift
@@ -332,6 +361,14 @@ describe ObjectContent do
       cobj.process_content_object &@render_block
       (rdr=cobj.as_json.to_json).should_not match /not rendered/
       rdr.should == RENDERED[:three].to_json
+    end
+
+    it "should not need rendering if no inclusions (b)" do
+      cobj = ObjectContent.new CONTENT[:three_b], @card_opts
+      (rdr=cobj.as_json.to_json).should match /not rendered/ # links are rendered too, but not with a block
+      cobj.process_content_object &@render_block
+      (rdr=cobj.as_json.to_json).should_not match /not rendered/
+      rdr.should == RENDERED[:three_b].to_json
     end
   end
 end

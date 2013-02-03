@@ -91,8 +91,8 @@ describe Chunks::Include, "include chunk tests" do
     #FIXME -- does not work retroactively if template is created later.
 
     r=Wagn::Renderer.new(bob_address.reload).render_core
-    warn "R=#{r}"
     assert_view_select r, 'span[class~=content]', "Sparta"
+    #warn "includers=#{bob_city.includers.map(&:name)*', '}"
     bob_city.includers.map(&:name).should == ["bob#{SmartName.joint}address"]
   end
 

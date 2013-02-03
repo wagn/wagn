@@ -297,6 +297,7 @@ module Wagn
       when opts[:tname]=='_main' && !ajax_call? && @depth==0    ; expand_main opts
       else
         fullname = opts[:tname].to_name.to_absolute card.cardname, :params=>params
+        #warn "ex inc full[#{opts[:tname]}]#{fullname}, #{params.inspect}"
         included_card = Card.fetch fullname, :new=>( @mode==:edit ? new_inclusion_card_args(opts) : {} )
 
         result = process_inclusion included_card, opts

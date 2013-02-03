@@ -214,19 +214,19 @@ describe URIChunk, "URI chunk tests" do
         :query => 'arg=val,')
   end
 
- describe URIChunk, "URI chunk tests" do
+ describe LocalURIChunk, "URI chunk tests" do
   it "should test_local_urls" do
     # normal
-    match_chunk(URIChunk, 'http://perforce:8001/toto.html',
+    match_chunk(LocalURIChunk, 'http://perforce:8001/toto.html',
           :scheme => 'http', :host => 'perforce',
           :port => '8001', :link_text => 'http://perforce:8001/toto.html')
 
     # in parentheses
-    match_chunk(URIChunk, 'URI (http://localhost:2500) in brackets',
+    match_chunk(LocalURIChunk, 'URI (http://localhost:2500) in brackets',
           :host => 'localhost', :port => '2500')
-    match_chunk(URIChunk, 'because (as shown at http://perforce:8001) the results',
+    match_chunk(LocalURIChunk, 'because (as shown at http://perforce:8001) the results',
           :host => 'perforce', :port => '8001')
-    match_chunk(URIChunk,
+    match_chunk(LocalURIChunk,
       'A wiki (http://localhost:2500/wiki.cgi?WhatIsWiki) card',
           :scheme => 'http', :host => 'localhost', :path => '/wiki.cgi',
           :port => '2500', :query => 'WhatIsWiki')

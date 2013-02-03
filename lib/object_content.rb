@@ -9,7 +9,7 @@ require_dependency 'chunks/include'
 class ObjectContent < SimpleDelegator
 
   ACTIVE_CHUNKS =
-    [ Literal::Escape, Chunks::Include, Chunks::Link, URIChunk, LocalURIChunk ]
+    [ Literal::Escape, Chunks::Include, Chunks::Link, URIChunk ]
   SCAN_RE = { ACTIVE_CHUNKS => Chunks::Abstract.all_chunks_re(ACTIVE_CHUNKS) }
 
   def initialize content, card_options
@@ -24,14 +24,17 @@ class ObjectContent < SimpleDelegator
 
   # for objet_content, it uses this instead of the apply_to by chunk type
   def self.split_content card_params, content
+    #warn "splitting #{SCAN_RE[ACTIVE_CHUNKS]}, #{content}"
     if String===content and !(arr = content.to_s.scan SCAN_RE[ACTIVE_CHUNKS]).empty?
       remainder = $'
       content = arr.map do |match_arr|
+        #warn "marr #{match_arr.inspect}"
         pre_chunk   = match_arr.shift
         match       = match_arr.shift
         match_index = match_arr.index { |x| !x.nil? }
         
         chunk_class, range = Chunks::Abstract.re_class(match_index)
+        #warn "matched #{chunk_class}, #{range}, #{match} p:#{pre_chunk}"
         chunk_params = match_arr[range]
         newck = chunk_class.new match, card_params, chunk_params
         if newck.avoid_autolinking?

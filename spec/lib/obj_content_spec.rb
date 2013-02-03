@@ -211,7 +211,7 @@ CONTENT = {
 CLASSES = {
    :one => [String, Literal::Escape, String, Literal::Escape, String, Chunks::Include, String ],
    :two => [String, Chunks::Link, String, Chunks::Include, Chunks::Include, String, Chunks::Link, String, Chunks::Link, Chunks::Link, Chunks::Include ],
-   :three => [String, URIChunk, String, URIChunk, String, URIChunk, String, LocalURIChunk, String, LocalURIChunk, String, Chunks::Link ],
+   :three => [String, URIChunk, String, URIChunk, String, URIChunk, String, URIChunk, String, URIChunk, String, Chunks::Link ],
    :five => [Chunks::Include]
 }
 

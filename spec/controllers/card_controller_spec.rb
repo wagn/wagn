@@ -143,97 +143,137 @@ describe CardController do
     end
   end
 
-  describe "view = new" do
-    before do
-      login_as 'joe_user'
+
+
+  describe "#read" do
+    it "works for basic request" do
+      get :read, {:id=>'Sample_Basic'}
+      response.body.match(/\<body[^>]*\>/im).should be_true
+      # have_selector broke in commit 8d3bf2380eb8197410e962304c5e640fced684b9, presumably because of a gem (like capybara?)
+      #response.should have_selector('body')
+      assert_response :success
+      'Sample Basic'.should == assigns['card'].name
     end
 
-    it "new should work for creatable nonviewable cardtype" do
-      login_as :anonymous
-      get :read, :type=>"Fruit", :view=>'new'
+    it "handles nonexistent card with create permission" do
+      login_as 'joe_user'
+      get :read, {:id=>'Sample_Fako'}
       assert_response :success
     end
 
-    it "should work on index" do
-      get :read, :view=>'new'
-      assigns['card'].name.should == ''
-    end
-
-    it "new with existing card" do
-      get :read, :card=>{:name=>"A"}, :view=>'new'
-      assert_response :success, "response should succeed"
+    it "handles nonexistent card without create permissions" do
+      get :read, {:id=>'Sample_Fako'}
+      assert_response 404
     end
     
+    it "returns denial when no read permission" do
+      Account.as_bot do
+        Card.create! :name=>'Strawberry', :type=>'Fruit' #only admin can read
+      end
+      get :read, :id=>'Strawberry'
+      assert_response 403
+    end
+    
+    describe "view = new" do
+      before do
+        login_as 'joe_user'
+      end
+
+      it "should work on index" do
+        get :read, :view=>'new'
+        assigns['card'].name.should == ''
+        assert_response :success, "response should succeed"
+        assert_equal Card::BasicID, assigns['card'].type_id, "@card type should == Basic"
+      end
+
+      it "new with name" do
+        post :read, :card=>{:name=>"BananaBread"}, :view=>'new'
+        assert_response :success, "response should succeed"
+        assert_equal 'BananaBread', assigns['card'].name, "@card.name should == BananaBread"
+      end
+
+      it "new with existing name" do
+        get :read, :card=>{:name=>"A"}, :view=>'new'
+        assert_response :success, "response should succeed"  #really?? how come this is ok?
+      end
+      
+      it "new with typecode" do
+        post :read, :card => {:type=>'Date'}, :view=>'new'
+        assert_response :success, "response should succeed"
+        assert_equal Card::DateID, assigns['card'].type_id, "@card type should == Date"
+      end
+      
+      it "new should work for creatable nonviewable cardtype" do
+        login_as :anonymous
+        get :read, :type=>"Fruit", :view=>'new'
+        assert_response :success
+      end
+      
+    end
+  end
+  
+  describe "#read_file" do
+    before do
+      Account.as_bot do
+        Card.create :name => "mao2", :typecode=>'image', :attach=>File.new("#{Rails.root}/test/fixtures/mao2.jpg")
+        Card.create :name => 'mao2+*self+*read', :content=>'[[Administrator]]'
+      end
+    end
+    
+    it "handles image with no read permission" do
+      get :read, :id=>'mao2'
+      assert_response 403, "should deny html card view"
+      get :read_file, :id=>'mao2.jpg'
+      assert_response 302, "should redirect actual image to denial"      
+    end
+    
+    it "handles image with read permission" do
+      login_as :joe_admin
+      get :read, :id=>'mao2'
+      assert_response 200
+      get :read_file, :id=>'mao2.jpg'
+      assert_response 200
+    end
   end
 
   describe "unit tests" do
     include AuthenticatedTestHelper
 
     before do
-      Account.as 'joe_user'
-      @user = User['joe_user']
-      @request    = ActionController::TestRequest.new
-      @response   = ActionController::TestResponse.new
-      @controller = CardController.new
       @simple_card = Card['Sample Basic']
-      @combo_card = Card['A+B']
-      login_as('joe_user')
-    end
-
-    it "new with name" do
-      post :read, :card=>{:name=>"BananaBread"}, :view=>'new'
-      assert_response :success, "response should succeed"
-      assert_equal 'BananaBread', assigns['card'].name, "@card.name should == BananaBread"
-    end
-
-    describe "#read" do
-      it "works for basic request" do
-        get :read, {:id=>'Sample_Basic'}
-        response.body.match(/\<body[^>]*\>/im).should be_true
-        # have_selector broke in commit 8d3bf2380eb8197410e962304c5e640fced684b9, presumably because of a gem (like capybara?)
-        #response.should have_selector('body')
-        assert_response :success
-        'Sample Basic'.should == assigns['card'].name
-      end
-
-      it "handles nonexistent card" do
-        get :read, {:id=>'Sample_Fako'}
-        assert_response :success
-      end
-
-      it "handles nonexistent card without create permissions" do
-        login_as :anonymous
-        get :read, {:id=>'Sample_Fako'}
-        assert_response 404
-      end
-
-      #it "invokes before_read hook" do
-      #  Wagn::Hook.should_receive(:call).with(:before_read, "*all", instance_of(CardController))
-      #  get :read, {:id=>'Sample_Basic'}
-      #end
+      login_as 'joe_user'
     end
 
 
     describe "#update" do
       it "works" do
         xhr :post, :update, { :id=>"~#{@simple_card.id}",
-          :card=>{:current_revision_id=>@simple_card.current_revision.id, :content=>'brand new content' }} #, {:user=>@user.id}
+          :card=>{:current_revision_id=>@simple_card.current_revision.id, :content=>'brand new content' }}
         assert_response :success, "edited card"
         assert_equal 'brand new content', Card['Sample Basic'].content, "content was updated"
       end
+      
+      it "rename without update references should work" do
+        Account.as 'joe_user'
+        f = Card.create! :type=>"Cardtype", :name=>"Apple"
+        xhr :post, :update, :id => "~#{f.id}", :card => {
+          :name => "Newt",
+          :update_referencers => "false",
+        }
+        assigns['card'].errors.empty?.should_not be_nil
+        assert_response :success
+        Card["Newt"].should_not be_nil
+      end
+
+      it "update typecode" do
+        Account.as 'joe_user'
+        xhr :post, :update, :id=>"~#{@simple_card.id}", :card=>{ :type=>"Date" }
+        assert_response :success, "changed card type"
+        Card['Sample Basic'].typecode.should == :date
+      end
     end
 
-    it "new without typecode" do
-      post :read, :view=>'new'
-      assert_response :success, "response should succeed"
-      assert_equal Card::BasicID, assigns['card'].type_id, "@card type should == Basic"
-    end
 
-    it "new with typecode" do
-      post :read, :card => {:type=>'Date'}, :view=>'new'
-      assert_response :success, "response should succeed"
-      assert_equal Card::DateID, assigns['card'].type_id, "@card type should == Date"
-    end
 
     it "delete" do
       c = Card.create( :name=>"Boo", :content=>"booya")
@@ -265,24 +305,8 @@ describe CardController do
     end
 
 
-    it "rename without update references should work" do
-      Account.as 'joe_user'
-      f = Card.create! :type=>"Cardtype", :name=>"Apple"
-      xhr :post, :update, :id => "~#{f.id}", :card => {
-        :name => "Newt",
-        :update_referencers => "false",
-      }
-      assigns['card'].errors.empty?.should_not be_nil
-      assert_response :success
-      Card["Newt"].should_not be_nil
-    end
 
-    it "update typecode" do
-      Account.as 'joe_user'
-      xhr :post, :update, :id=>"~#{@simple_card.id}", :card=>{ :type=>"Date" }
-      assert_response :success, "changed card type"
-      Card['Sample Basic'].typecode.should == :date
-    end
+    
 
 
     #  what's happening with this test is that when changing from Basic to CardtypeA it is

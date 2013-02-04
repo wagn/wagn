@@ -54,7 +54,7 @@ class CardController < ApplicationController
     if card.ok? :read
       show_file
     else
-      show :denial
+      wagn_redirect "#{params[:id]}?view=denial"
     end
   end 
 

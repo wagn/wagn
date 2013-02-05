@@ -18,7 +18,7 @@ require_dependency 'chunks/chunk'
 #   [iso3166]: http://geotags.com/iso3166/
 class URIChunk < Chunks::Abstract
 
-  SCHEMES = %w{http https ftp ssh git sftp file}
+  SCHEMES = %w{http https ftp ssh git sftp file ldap ldaps mailto}
   STANDARD_CONFIG = {
     :class     => URIChunk,
     :prefix_re => "(?:#{SCHEMES * '|'})\\:",
@@ -28,8 +28,8 @@ class URIChunk < Chunks::Abstract
   def URIChunk.config; STANDARD_CONFIG end
 
   # FIXME: Delegate to URI class methods
-  #attr_reader :user, :host, :port, :path, :query, :fragment, :link_text
-  attr_reader :uri
+  attr_reader :uri, :link_text
+  delegate :scheme, :user, :host, :port, :path, :query, :fragment, :to => :uri
 
   def initialize match, card_params, params
     super
@@ -37,16 +37,9 @@ class URIChunk < Chunks::Abstract
 
     #warn "parsing: #{match}"
     @uri = URI.parse( match )
+    #warn "init URI:#{link_text}, #{uri.inspect}:: #{uri.scheme}, #{uri.host}, #{uri.port}, #{uri.path}, #{uri.query}"
     #@process_chunk = self.renderer ? "#{self.renderer.build_link(self.uri,@link_text)}#{@trailing_punctuation}" : @text
     self
-  end
-
-  def method_missing meth, *a
-    if @uri.respond_to? meth
-       @uri.send meth, *a
-    else
-       super.send meth, *a
-    end
   end
 end
 

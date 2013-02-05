@@ -33,7 +33,6 @@ class ObjectContent < SimpleDelegator
     if String===content
       pre_start = pos = 0
       while match = content.match( SCAN_RE[ACTIVE_CHUNKS], pos)
-        #warn "p m_st:#{pos}, st:#{pre_start}, b:#{match.begin(0)} e:#{match.end(0)}, #{match.inspect}\n#{content}\n012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
         m_str = match[0]
         first_char = m_str[0,1]
         grp_start = match.begin(0)
@@ -46,7 +45,7 @@ class ObjectContent < SimpleDelegator
             Hash===(h = match_cfg[:rest_re]) ? h[m_str[1,1]] : h
 
           else # or it uses the default pattern (URIChunk now)
-            match_st = grp_start
+            m_str = ''; match_st = grp_start
             match_cfg = PREFIX_LOOKUP[:default]
             match_cfg[:regexp]
           end
@@ -74,8 +73,9 @@ class ObjectContent < SimpleDelegator
           arr << chunk
         end
       pend = positions[-1][0]
-      #warn "arr content<#{pend} :: #{content.length} == #{content.size.inspect}> A:#{a.inspect}"
+      #warn "arr content<#{pend} :: #{content.length} == #{content.size.inspect}>"
       a << content[pend..-1] unless pend == content.size
+      #warn "arr content A:#{a.inspect}"
       a
     else
       #warn "string content:#{content}, #{content.size}"

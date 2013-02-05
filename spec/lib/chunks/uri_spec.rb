@@ -10,7 +10,7 @@ describe URIChunk, "URI chunk tests" do
   it "should test_simple_uri" do
     # Simplest case
     match_chunk(URIChunk, 'http://www.example.com',
-      :scheme =>'http', :host =>'www.example.com', :path => nil,
+      :scheme =>'http', :host =>'www.example.com', :path => '',
       :link_text => 'http://www.example.com'
     )
     # With trailing slash
@@ -23,15 +23,15 @@ describe URIChunk, "URI chunk tests" do
       :scheme =>'http', :host =>'www.example.com', :path => '/',
       :link_text => 'http://www.example.com/'
     )
-    # With trailing period
+    # With trailing period (no longer suppressed .. spec?)
     match_chunk(URIChunk, 'http://www.example.com/. ',
-      :scheme =>'http', :host =>'www.example.com', :path => '/',
-      :link_text => 'http://www.example.com/'
+      :scheme =>'http', :host =>'www.example.com', :path => '/.',
+      :link_text => 'http://www.example.com/.'
     )
-    # With trailing period inside html tags
+    # With trailing period inside html tags (dot change?)
     match_chunk(URIChunk, '<p>http://www.example.com/.</p>',
-      :scheme =>'http', :host =>'www.example.com', :path => '/',
-      :link_text => 'http://www.example.com/'
+      :scheme =>'http', :host =>'www.example.com', :path => '/.',
+      :link_text => 'http://www.example.com/.'
     )
     # With trailing &nbsp;
     match_chunk(URIChunk, 'http://www.example.com/&nbsp;',
@@ -74,20 +74,20 @@ describe URIChunk, "URI chunk tests" do
     )
     # With a port number
     match_chunk(URIChunk, 'http://www.example.com:80',
-        :scheme =>'http', :host =>'www.example.com', :port => '80', :path => nil,
+        :scheme =>'http', :host =>'www.example.com', :port => 80, :path => '',
         :link_text => 'http://www.example.com:80')
     # With a port number and a path
     match_chunk(URIChunk, 'http://www.example.com.tw:80/HelpOnNavigation',
-        :scheme =>'http', :host =>'www.example.com.tw', :port => '80', :path => '/HelpOnNavigation',
+        :scheme =>'http', :host =>'www.example.com.tw', :port => 80, :path => '/HelpOnNavigation',
         :link_text => 'http://www.example.com.tw:80/HelpOnNavigation')
     # With a query
     match_chunk(URIChunk, 'http://www.example.com.tw:80/HelpOnNavigation?arg=val',
-        :scheme =>'http', :host =>'www.example.com.tw', :port => '80', :path => '/HelpOnNavigation',
+        :scheme =>'http', :host =>'www.example.com.tw', :port => 80, :path => '/HelpOnNavigation',
         :query => 'arg=val',
         :link_text => 'http://www.example.com.tw:80/HelpOnNavigation?arg=val')
     # Query with two arguments
     match_chunk(URIChunk, 'http://www.example.com.tw:80/HelpOnNavigation?arg=val&arg2=val2',
-        :scheme =>'http', :host =>'www.example.com.tw', :port => '80', :path => '/HelpOnNavigation',
+        :scheme =>'http', :host =>'www.example.com.tw', :port => 80, :path => '/HelpOnNavigation',
         :query => 'arg=val&arg2=val2',
         :link_text => 'http://www.example.com.tw:80/HelpOnNavigation?arg=val&arg2=val2')
     # with an anchor
@@ -98,24 +98,24 @@ describe URIChunk, "URI chunk tests" do
 
     # HTTPS
     match_chunk(URIChunk, 'https://www.example.com',
-        :scheme =>'https', :host =>'www.example.com', :port => nil, :path => nil, :query => nil,
+        :scheme =>'https', :host =>'www.example.com', :port => '', :path => '', :query => '',
         :link_text => 'https://www.example.com')
     # FTP
     match_chunk(URIChunk, 'ftp://www.example.com',
-        :scheme =>'ftp', :host =>'www.example.com', :port => nil, :path => nil, :query => nil,
+        :scheme =>'ftp', :host =>'www.example.com', :port => '', :path => '', :query => '',
         :link_text => 'ftp://www.example.com')
     # mailto
     match_chunk(URIChunk, 'mailto:jdoe123@example.com',
-        :scheme =>'mailto', :host =>'example.com', :port => nil, :path => nil, :query => nil,
+        :scheme =>'mailto', :host =>'example.com', :port => '', :path => '', :query => '',
         :user => 'jdoe123', :link_text => 'mailto:jdoe123@example.com')
     # something nonexistant
     match_chunk(URIChunk, 'foobar://www.example.com',
-        :scheme =>'foobar', :host =>'www.example.com', :port => nil, :path => nil, :query => nil,
+        :scheme =>'foobar', :host =>'www.example.com', :port => '', :path => '', :query => '',
         :link_text => 'foobar://www.example.com')
 
     # Soap opera (the most complex case imaginable... well, not really, there should be more evil)
     match_chunk(URIChunk, 'http://www.example.com.tw:80/~jdoe123/Help%20Me%20?arg=val&arg2=val2',
-        :scheme =>'http', :host =>'www.example.com.tw', :port => '80',
+        :scheme =>'http', :host =>'www.example.com.tw', :port => 80,
         :path => '/~jdoe123/Help%20Me%20', :query => 'arg=val&arg2=val2',
         :link_text => 'http://www.example.com.tw:80/~jdoe123/Help%20Me%20?arg=val&arg2=val2')
 
@@ -138,7 +138,7 @@ describe URIChunk, "URI chunk tests" do
 
   it "should test_non_email" do
     # The @ is part of the normal text, but 'example.com' is marked up.
-     match_chunk(URIChunk, 'Not an email: @example.com', :user => nil, :uri => 'http://example.com')
+     match_chunk(URIChunk, 'Not an email: @example.com', :user => '', :uri => 'http://example.com')
   end
 
   it "should test_textile_image" do
@@ -210,7 +210,7 @@ describe URIChunk, "URI chunk tests" do
     match_chunk(
         URIChunk,
         "This text contains a URL http://someplace.org:8080/~person/stuff.cgi?arg=val, doesn't it?",
-        :scheme => 'http', :host => 'someplace.org', :port => '8080', :path => '/~person/stuff.cgi',
+        :scheme => 'http', :host => 'someplace.org', :port => 8080, :path => '/~person/stuff.cgi',
         :query => 'arg=val,')
   end
 
@@ -219,52 +219,42 @@ describe URIChunk, "URI chunk tests" do
     # normal
     match_chunk(URIChunk, 'http://perforce:8001/toto.html',
           :scheme => 'http', :host => 'perforce',
-          :port => '8001', :link_text => 'http://perforce:8001/toto.html')
+          :port => 8001, :link_text => 'http://perforce:8001/toto.html')
 
     # in parentheses
     match_chunk(URIChunk, 'URI (http://localhost:2500) in brackets',
-          :host => 'localhost', :port => '2500')
+          :host => 'localhost', :port => 2500)
     match_chunk(URIChunk, 'because (as shown at http://perforce:8001) the results',
-          :host => 'perforce', :port => '8001')
+          :host => 'perforce', :port => 8001)
     match_chunk(URIChunk,
       'A wiki (http://localhost:2500/wiki.cgi?WhatIsWiki) card',
           :scheme => 'http', :host => 'localhost', :path => '/wiki.cgi',
-          :port => '2500', :query => 'WhatIsWiki')
+          :port => 2500, :query => 'WhatIsWiki')
   end
  end
 
   private
+  CARD_PARMS = { :card => Card.new(:name=>'dummy') , :renderer => nil }
+
   # Asserts a number of tests for the given type and text.
   def no_match(type, test_text)
-    assert type.respond_to? :pattern
-    pattern = type.pattern
-    if test_text =~ pattern
-      params = $~.to_a; m = params.shift
-      chunk = type.new(m, {}, params)
-      assert( ! chunk.kind_of?(type), "Shouln't match #{type}, #{chunk.inspect}" )
-    else
-      assert true # didn't match, so we don't have to creat chunk
-    end
+    test_cont = ObjectContent.new(test_text, CARD_PARMS)
+    ( ((test_cont.respond_to? :each) ? test_cont : [test_cont]).find{|ck| type===ck } ).should be_nil
   end
 
   def aa_match(type, test_text)
-    assert test_text =~ type.pattern
-    params = $~.to_a; m = params.shift
-    chunk = type.new(m, {}, params)
-    assert chunk.avoid_autolinking?
+    test_cont = ObjectContent.new(test_text, CARD_PARMS)
+    ( ((test_cont.respond_to? :each) ? test_cont : [test_cont]).find{|ck| type===ck } ).should_not be_nil
   end
 
   def match_chunk(type, test_text, expected)
-    assert type.respond_to? :pattern
-    pattern = type.pattern
-    assert_match(pattern, test_text)
-    pattern =~ test_text   # Previous assertion guarantees match
-    params = $~.to_a; m = params.shift
-    chunk = type.new(m, {}, params)
-    assert chunk.kind_of?(type)
-    # Test if requested parts are correct.
+    test_cont = ObjectContent.new(test_text, CARD_PARMS)
+    chunk = ((test_cont.respond_to? :each) ? test_cont : [test_cont]).find{ |ck| type===ck }
+    #warn "chunk? #{chunk.inspect}"
+    chunk.should_not be_nil
+
     expected.each_pair do |method_sym, value|
-      assert_respond_to(chunk, method_sym)
+      #assert_respond_to(chunk, method_sym)
       assert_equal(value, chunk.method(method_sym).call, "Checking value of '#{method_sym}'")
     end
   end

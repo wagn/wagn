@@ -26,6 +26,8 @@ class ObjectContent < SimpleDelegator
   def card() @card_options[:card] end
   def renderer() @card_options[:renderer] end
 
+  DEFAULT_PREFIX = 'http:'
+
   # for objet_content, it uses this instead of the apply_to by chunk type
   def self.split_content card_params, content
     positions = []
@@ -45,7 +47,8 @@ class ObjectContent < SimpleDelegator
             Hash===(h = match_cfg[:rest_re]) ? h[m_str[1,1]] : h
 
           else # or it uses the default pattern (URIChunk now)
-            m_str = ''; match_st = grp_start
+            m_str = m_str[-1] == ':' ? '' : DEFAULT_PREFIX
+            match_st = grp_start
             match_cfg = PREFIX_LOOKUP[:default]
             match_cfg[:regexp]
           end

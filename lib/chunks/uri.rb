@@ -18,10 +18,13 @@ require_dependency 'chunks/chunk'
 #   [iso3166]: http://geotags.com/iso3166/
 class URIChunk < Chunks::Abstract
 
-  SCHEMES = %w{http https ftp ssh git sftp file ldap ldaps mailto}
+  SUSPICIOUS_PRECEDING_CHARACTER = [ '!' '":' '"|' "'" '](' ]
+
+  SCHEMES = %w{irc http https ftp ssh git sftp file ldap ldaps mailto}
+  GENERIC_TLDS = 'aero|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org'
   STANDARD_CONFIG = {
     :class     => URIChunk,
-    :prefix_re => "(?:#{SCHEMES * '|'})\\:",
+    :prefix_re => "(?:#{SCHEMES * '|'})\\:(?:|\w[\w\.]*\.(?:#{ GENERIC_TLDS }))",
     :regexp    => /^#{URI.regexp( SCHEMES )}/
   }
 
@@ -33,20 +36,19 @@ class URIChunk < Chunks::Abstract
 
   def initialize match, card_params, params
     super
-    match.sub!(/\.$/, '')
+    last_char = match[-1]
+    match = match.sub(/\.$/, '').gsub(/(?:&nbsp;)+/, '')
+
+    @trailing_punctuation = if %w{ . ) ! ? : }.member?(last_char)
+      last_char
+    end
+
     @link_text = match
 
-    #warn "parsing: #{match}"
+    warn "parsing: #{match}"
     @uri = URI.parse( match )
-    #warn "init URI:#{link_text}, #{uri.inspect}:: #{uri.scheme}, #{uri.host}, #{uri.port}, #{uri.path}, #{uri.query}"
-    #@process_chunk = self.renderer ? "#{self.renderer.build_link(self.uri,@link_text)}#{@trailing_punctuation}" : @text
+    warn "init URI:#{link_text}, #{uri.inspect}:: #{uri.scheme}, #{uri.host}, #{uri.port}, #{uri.path}, #{uri.query}"
+    @process_chunk = self.renderer ? "#{self.renderer.build_link(self.uri,@link_text)}#{@trailing_punctuation}" : @text
     self
   end
 end
-
-# uri with mandatory scheme but less restrictive hostname, like
-# http://localhost:2500/blah.html
-# FIXME: do we need this?  URIChunk should match all of them now, and tests are updated to use that only
-#class LocalURIChunk < URIChunk
-
-#end

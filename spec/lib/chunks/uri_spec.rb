@@ -25,13 +25,13 @@ describe URIChunk, "URI chunk tests" do
     )
     # With trailing period (no longer suppressed .. spec?)
     match_chunk(URIChunk, 'http://www.example.com/. ',
-      :scheme =>'http', :host =>'www.example.com', :path => '/.',
-      :link_text => 'http://www.example.com/.'
+      :scheme =>'http', :host =>'www.example.com', :path => '/',
+      :link_text => 'http://www.example.com/'
     )
     # With trailing period inside html tags (dot change?)
     match_chunk(URIChunk, '<p>http://www.example.com/.</p>',
-      :scheme =>'http', :host =>'www.example.com', :path => '/.',
-      :link_text => 'http://www.example.com/.'
+      :scheme =>'http', :host =>'www.example.com', :path => '/',
+      :link_text => 'http://www.example.com/'
     )
     # With trailing &nbsp;
     match_chunk(URIChunk, 'http://www.example.com/&nbsp;',

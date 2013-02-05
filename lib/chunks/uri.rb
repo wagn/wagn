@@ -33,6 +33,7 @@ class URIChunk < Chunks::Abstract
 
   def initialize match, card_params, params
     super
+    match.sub!(/\.$/, '')
     @link_text = match
 
     #warn "parsing: #{match}"

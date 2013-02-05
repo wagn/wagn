@@ -19,11 +19,13 @@ require_dependency 'chunks/chunk'
 class URIChunk < Chunks::Abstract
 
   SCHEMES = %w{http https ftp ssh git sftp file}
-  STANDARD_URI_REGEXP = URI.regexp( SCHEMES )
-  STANDARD_URI_GROUPS = URI.split('http://local/').length
+  STANDARD_CONFIG = {
+    :class     => URIChunk,
+    :prefix_re => "(?:#{SCHEMES * '|'})\\:",
+    :regexp    => /^#{URI.regexp( SCHEMES )}/
+  }
 
-  def URIChunk.pattern; STANDARD_URI_REGEXP end
-  def URIChunk.groups ; STANDARD_URI_GROUPS end
+  def URIChunk.config; STANDARD_CONFIG end
 
   # FIXME: Delegate to URI class methods
   #attr_reader :user, :host, :port, :path, :query, :fragment, :link_text
@@ -36,6 +38,7 @@ class URIChunk < Chunks::Abstract
     #warn "parsing: #{match}"
     @uri = URI.parse( match )
     #@process_chunk = self.renderer ? "#{self.renderer.build_link(self.uri,@link_text)}#{@trailing_punctuation}" : @text
+    self
   end
 
   def method_missing meth, *a

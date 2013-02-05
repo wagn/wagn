@@ -12,11 +12,14 @@ class ObjectContent < SimpleDelegator
     [ Literal::Escape, Chunks::Include, Chunks::Link, URIChunk ]
     #[ Literal::Escape, Chunks::Include, Chunks::Link, URIChunk, LocalURIChunk ]
   SCAN_RE = { ACTIVE_CHUNKS => Chunks::Abstract.all_chunks_re(ACTIVE_CHUNKS) }
+  PREFIX_LOOKUP = Chunks::Abstract.prefix_cfg
 
   def initialize content, card_options
     @card_options = card_options
     @card_options[:card] or raise "No Card in Content!!"
-    super ObjectContent.split_content(card_options, content)
+    splt = ObjectContent.split_content(card_options, content)
+    #warn "split: #{splt.class}, #{splt.inspect}"
+    super splt
   end
 
   attr_reader :revision, :card_options
@@ -25,29 +28,59 @@ class ObjectContent < SimpleDelegator
 
   # for objet_content, it uses this instead of the apply_to by chunk type
   def self.split_content card_params, content
-    if String===content and !(arr = content.to_s.scan SCAN_RE[ACTIVE_CHUNKS]).empty?
-      remainder = $'
-      content = arr.map do |match_arr|
-        pre_chunk   = match_arr.shift
-        match       = match_arr.shift
-        match_index = match_arr.index { |x| !x.nil? }
-        #warn "marr[#{match_index}], #{pre_chunk}, #{match.class}, #{match_arr.inspect}"
-        
-        chunk_class, range = Chunks::Abstract.re_class(match_index)
-        chunk_params = match_arr[range]
-        #warn "scont #{pre_chunk}, #{match}, #{match_index}, #{chunk_params.inspect}"
-        newck = chunk_class.new match, card_params, chunk_params
-        if newck.avoid_autolinking?
-          "#{pre_chunk}#{match}"
-        elsif pre_chunk.to_s.size > 0
-          [pre_chunk, newck]
-        else
-          newck
+    positions = []
+
+    if String===content
+      pre_start = pos = 0
+      while match = content.match( SCAN_RE[ACTIVE_CHUNKS], pos)
+        #warn "p m_st:#{pos}, st:#{pre_start}, b:#{match.begin(0)} e:#{match.end(0)}, #{match.inspect}\n#{content}\n012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
+        m_str = match[0]
+        first_char = m_str[0,1]
+        grp_start = match.begin(0)
+        this_start = pos
+        pre_str = pre_start == grp_start ? nil : content[pre_start..grp_start]
+        match_st = pos = match.end(0)
+
+        # either it is indexed by the first character of the match
+        rest_re = if match_cfg = PREFIX_LOOKUP[ first_char ]
+            Hash===(h = match_cfg[:rest_re]) ? h[m_str[1,1]] : h
+
+          else # or it uses the default pattern (URIChunk now)
+            match_st = grp_start
+            match_cfg = PREFIX_LOOKUP[:default]
+            match_cfg[:regexp]
+          end
+
+        if rest_match = content[match_st..-1].match( rest_re )
+          # save between strings and chunks indexed by position (probably should just be ordered pairs)
+          pos += rest_match.end(0)
+          m, *groups = rest_match.to_a
+          #warn "match pre_st:#{pre_start}, pos:#{pos}, gs:#{grp_start}, newp:#{first_char}, rr:#{content[grp_start..-1]}, mstr:#{m_str}, #{groups.map(&:to_s)*', '} :: m:\n#{m}, match:#{rest_match.inspect}"
+          rec = [ pos, ( pre_start == grp_start ? nil : content[pre_start..grp_start-1] ), 
+                         match_cfg[:class].new(m_str+m, card_params, [first_char, m_str] + groups) ]
+          #warn "matched #{grp_start}::#{pos} > #{rec.inspect}"
+          pre_start = pos
+          positions << rec
+        else #warn "nm #{content[match.end(0)..-1]}"
         end
-      end.flatten.compact
-      content << remainder if remainder.to_s != ''
+      end
     end
-    content
+
+    if positions.any?
+      a = positions.inject([]) do |arr, rec|
+          pos, pre, chunk = rec
+          #warn "inj[#{rec.inspect}] pos#{pos}, pr:#{pre}, c:#{chunk} a:#{arr.inspect}"
+          arr << pre if pre
+          arr << chunk
+        end
+      pend = positions[-1][0]
+      #warn "arr content<#{pend} :: #{content.length} == #{content.size.inspect}> A:#{a.inspect}"
+      a << content[pend..-1] unless pend == content.size
+      a
+    else
+      #warn "string content:#{content}, #{content.size}"
+      content
+    end
   end
 
   def to_s

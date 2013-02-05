@@ -6,16 +6,17 @@ CONTENT = {
   :two => %(Some Links and includes: [[the card|the text]], and {{This Card|Is Included}}{{this too}}
          more formats for links and includes: [the card][the text],
          and [[http://external.wagn.org/path|link text]][This Card][Is linked]{{Included|open}}),
-  :three => %(Some Literals: http://a.url.com
+   #:three => [String, URIChunk, String, URIChunk, String, Chunks::Link, String, URIChunk, String, URIChunk, String ],
+  :three => %(Some URIs and Links: http://a.url.com/
         More urls: wagn.com/a/path/to.html
-        http://localhost:2020/path?cgi=foo&bar=baz  [[http://brain/Home|extra]]
+        http://localhost:2020/path?cgi=foo&bar=baz  [[http://brain.org/Home|extra]]
         [ http://gerry.wagn.com/a/path ]
-        { https://brain/more?args }),
-  :three_b => %(Some Literals: http://a.url.com
+        { https://brain.org/more?args }),
+  :three_b => %(Some URIs and Links: http://a.url.com
         More urls: wagn.com/a/path/to.html
         [ http://gerry.wagn.com/a/path ]
-        { https://brain/more?args }
-        http://localhost:2020/path?cgi=foo&bar=baz  [[http://brain/Home|extra]]),
+        { https://brain.org/more?args }
+        http://localhost:2020/path?cgi=foo&bar=baz  [[http://brain.org/Home|extra]]),
    :four => "No chunks",
    :five => "{{one inclusion|size;large}}",
    :six  => %~
@@ -214,35 +215,35 @@ CONTENT = {
 }
 
 CLASSES = {
-   :one => [String, Literal::Escape, String, Literal::Escape, String, Chunks::Include, String ],
+   :one => [String, Literal::Escape, String, Chunks::Include, String ],
    :two => [String, Chunks::Link, String, Chunks::Include, Chunks::Include, String, Chunks::Link, String, Chunks::Link, Chunks::Link, Chunks::Include ],
-   :three => [String, URIChunk, String, URIChunk, String, URIChunk, String, Chunks::Link, String, URIChunk, String, URIChunk, String ],
-   :three_b => [String, URIChunk, String, URIChunk, String, URIChunk, String, URIChunk, String, URIChunk, String, Chunks::Link ],
+   :three => [String, URIChunk, String, URIChunk, String, Chunks::Link, String, URIChunk, String, URIChunk, String ],
+   :three_b => [String, URIChunk, String, URIChunk, String, URIChunk, String, Chunks::Link ],
    :five => [Chunks::Include]
 }
 
 RENDERED = {
-  :one => ['Some Literals: ', "[<span>{</span>I'm not| a link]}", ", and ", "<span>{</span>{This Card|Is not Included}}", ", but ",
-            {:options => {:tname=>"this is",:include=>"this is",:style=>''}}, ", and some tail" ],
+  :one => ['Some URIs and Links: ', "[<span>{</span>I'm not| a link]}", ", and ", "<span>{</span>{This Card|Is not Included}}", ", but ",
+            {:options => {:include_name=>"this is",:include=>"this is",:style=>''}}, ", and some tail" ],
   :two => ["Some Links and includes: ", "<a class=\"wanted-card\" href=\"/the%20card\">the text</a>", #"[[the card|the text]]",
-     ", and ", {:options => {:tname=>"This Card", :view => "Is Included",:include => "This Card|Is Included",:style=>""}},{
-      :options=>{:tname=>"this too",:include=>"this too",:style=>""}},
+     ", and ", {:options => {:include_name=>"This Card", :view => "Is Included",:include => "This Card|Is Included",:style=>""}},{
+      :options=>{:include_name=>"this too",:include=>"this too",:style=>""}},
     "\n         more formats for links and includes: ","<a class=\"wanted-card\" href=\"/the%20text\">the card</a>",
     ",\n         and ","<a class=\"external-link\" href=\"http://external.wagn.org/path\">link text</a>",
     "<a class=\"wanted-card\" href=\"/Is%20linked\">This Card</a>",
-    {:options=>{:tname=>"Included",:view=>"open",:include=>"Included|open",:style=>""}}],
-  :three => ["Some Literals: ","<a class=\"external-link\" href=\"http://a.url.com\">http://a.url.com</a>","\n        More urls: ",
+    {:options=>{:include_name=>"Included",:view=>"open",:include=>"Included|open",:style=>""}}],
+  :three => ["Some URIs and Links: ","<a class=\"external-link\" href=\"http://a.url.com\">http://a.url.com</a>","\n        More urls: ",
     "<a class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>","\n        ",
     "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>", "  ",
-    "<a class=\"external-link\" href=\"http://brain/Home\">extra</a>",
+    "<a class=\"external-link\" href=\"http://brain.org/Home\">extra</a>",
     "\n        [ ","<a class=\"external-link\" href=\"http://gerry.wagn.com/a/path\">http://gerry.wagn.com/a/path</a>",
-    " ]\n        { ","<a class=\"external-link\" href=\"https://brain/more?args\">https://brain/more?args</a>"," }"],
-  :three_b => ["Some Literals: ","<a class=\"external-link\" href=\"http://a.url.com\">http://a.url.com</a>","\n        More urls: ",
+    " ]\n        { ","<a class=\"external-link\" href=\"https://brain.org/more?args\">https://brain.org/more?args</a>"," }"],
+  :three_b => ["Some URIs and Links: ","<a class=\"external-link\" href=\"http://a.url.com\">http://a.url.com</a>","\n        More urls: ",
     "<a class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>",
     "\n        [ ","<a class=\"external-link\" href=\"http://gerry.wagn.com/a/path\">http://gerry.wagn.com/a/path</a>",
-    " ]\n        { ","<a class=\"external-link\" href=\"https://brain/more?args\">https://brain/more?args</a>"," }\n        ",
+    " ]\n        { ","<a class=\"external-link\" href=\"https://brain.org/more?args\">https://brain.org/more?args</a>"," }\n        ",
      "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>", "  ",
-    "<a class=\"external-link\" href=\"http://brain/Home\">extra</a>"],
+    "<a class=\"external-link\" href=\"http://brain.org/Home\">extra</a>"],
   :four => "No chunks"
 }
 
@@ -254,7 +255,7 @@ describe ObjectContent do
       if Array===m
         wrong_class = m[0] != v.class
         is_last = m.size == 1
-        warn "check M[#{is_last}]:#{wrong_class}, #{v.class}, V#{v.inspect}" if wrong_class
+        #warn "check M[#{is_last}]:#{wrong_class}, #{m[0]}, V#{v.inspect}" if wrong_class || is_last
         wrong_class.should be_false
         wrong_class ? false : ( is_last ? true : m[1..-1] )
       else false end
@@ -275,7 +276,7 @@ describe ObjectContent do
   describe 'parse' do
     it "should find all the chunks and strings" do
       # note the mixed [} that are considered matching, needs some cleanup ...
-      warn "cont? #{CONTENT[:one].inspect}"
+      #warn "cont? #{CONTENT[:one].inspect}"
       cobj = ObjectContent.new CONTENT[:one], @card_opts
       cobj.inject(CLASSES[:one], &@check_proc).should == true
     end
@@ -283,6 +284,7 @@ describe ObjectContent do
     it "should give just the chunks" do
       cobj = ObjectContent.new CONTENT[:one], @card_opts
       clist = CLASSES[:one].find_all {|c| String != c }
+      #warn "clist #{clist.inspect}"
       cobj.each_chunk do |chk|
         chk.should be_instance_of clist.shift
       end

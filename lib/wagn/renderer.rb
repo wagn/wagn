@@ -294,10 +294,10 @@ module Wagn
       case
       when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
-      when opts[:tname]=='_main' && !ajax_call? && @depth==0    ; expand_main opts
+      when opts[:include_name]=='_main' && !ajax_call? && @depth==0    ; expand_main opts
       else
-        fullname = opts[:tname].to_name.to_absolute card.cardname, :params=>params
-        #warn "ex inc full[#{opts[:tname]}]#{fullname}, #{params.inspect}"
+        fullname = opts[:include_name].to_name.to_absolute card.cardname, :params=>params
+        #warn "ex inc full[#{opts[:include_name]}]#{fullname}, #{params.inspect}"
         included_card = Card.fetch fullname, :new=>( @mode==:edit ? new_inclusion_card_args(opts) : {} )
 
         result = process_inclusion included_card, opts
@@ -314,7 +314,7 @@ module Wagn
         end
       end
       opts[:view] = @main_view || opts[:view] || :open #FIXME configure elsewhere
-      opts[:tname] = root.card.name
+      opts[:include_name] = root.card.name
       with_inclusion_mode :main do
         wrap_main process_inclusion( root.card, opts )
       end
@@ -365,8 +365,8 @@ module Wagn
 
     def new_inclusion_card_args options
       args = { :type =>options[:type] }
-      args[:loaded_left]=card if options[:tname] =~ /^\+/
-      if content=get_inclusion_content(options[:tname])
+      args[:loaded_left]=card if options[:include_name] =~ /^\+/
+      if content=get_inclusion_content(options[:include_name])
         args[:content]=content
       end
       args

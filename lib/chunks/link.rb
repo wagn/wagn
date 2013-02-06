@@ -7,8 +7,8 @@ module Chunks
     WIKI_CONFIG = {
       :class     => Link,
       :prefix_re => '\\[',
-      :rest_re   => /^\[#{word}(?:\|([^\]]+))?\]\]|#{word}\]\[#{word}\]/,
-      :prefix    => '['
+      :rest_re   => /^\[([^\]]+)\]\]|([^\]]+)\]\[([^\]]*)\]/,
+      :idx_char  => '['
     }
 
     def self.config() WIKI_CONFIG end
@@ -18,12 +18,12 @@ module Chunks
     def initialize match, card_params, params
       super
       if name=params[2]
+        name, ltext = name.split('|',2)
         self.cardname = name.to_name
-        ltext=params[3]
         self.link_text= ltext.nil? ? name :
           ltext =~ /(^|[^\\]){{/ ? ObjectContent.new(ltext, @card_params) : ltext
       else
-        self.link_text= params[4]; self.cardname = params[5].to_name #.gsub(/_/,' ')
+        self.link_text= params[3]; self.cardname = params[4].to_name #.gsub(/_/,' ')
       end
       #warn "init link #{match} .. #{params.inspect} chk #{inspect} cl:#{@link_text.class}, #{@link_text}, #{@text}, cn:#{cardname}"
       self

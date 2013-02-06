@@ -409,11 +409,11 @@ module Wagn
     #
 
     def build_link href, text, known_card = nil
-      # Rails.logger.info( "~~~~~~~~~~~~~~~ bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}" )
+      #Rails.logger.info "~~~~~~~~~~~~~~~ bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}"
       klass = case href.to_s
-        when /^https?:/                     ; 'external-link'
-        when /^mailto:/                     ; 'email-link'
-        when /^([a-zA-Z][\\-+.a-zA-Z\\d]*):/; $1 + '-link'
+        when /^https?:/                   ; 'external-link'
+        when /^mailto:/                   ; 'email-link'
+        when /^([a-zA-Z][\-+.a-zA-Z\d]*):/; $1 + '-link'
         when /^\//
           href = full_uri href.to_s
           'internal-link'

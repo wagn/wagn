@@ -21,16 +21,15 @@ module Chunks
     cattr_accessor :prefix_cfg
     @@prefix_cfg = {}
 
-    def Abstract::all_chunks_re(chunk_types)
-      r=/(?:#{
+    def Abstract::scan_re(chunk_types)
+      /(?:#{
         chunk_types.map do |chunk_cl|
           cfg = chunk_cl.config
-          prefix = cfg[:prefix] || :default
+          prefix = cfg[:idx_char] || :default
           @@prefix_cfg[prefix] = cfg
           cfg[:prefix_re]
         end * '|'
       })/mo
-      #warn "prefixed scan_re:#{r}"; r # :: #{@@prefix_cfg.inspect}"; r
     end
 
     attr_reader :text, :process_chunk

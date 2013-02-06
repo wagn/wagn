@@ -8,10 +8,8 @@ require_dependency 'chunks/include'
 
 class ObjectContent < SimpleDelegator
 
-  ACTIVE_CHUNKS =
-    [ Literal::Escape, Chunks::Include, Chunks::Link, URIChunk ]
-    #[ Literal::Escape, Chunks::Include, Chunks::Link, URIChunk, LocalURIChunk ]
-  SCAN_RE = { ACTIVE_CHUNKS => Chunks::Abstract.all_chunks_re(ACTIVE_CHUNKS) }
+  ACTIVE_CHUNKS = [ URIChunk, HostURIChunk, EmailURIChunk, Literal::Escape, Chunks::Include, Chunks::Link ]
+  SCAN_RE = { ACTIVE_CHUNKS => Chunks::Abstract.scan_re(ACTIVE_CHUNKS) }
   PREFIX_LOOKUP = Chunks::Abstract.prefix_cfg
 
   def initialize content, card_options
@@ -26,44 +24,47 @@ class ObjectContent < SimpleDelegator
   def card() @card_options[:card] end
   def renderer() @card_options[:renderer] end
 
-  DEFAULT_PREFIX = 'http:'
-
   # for objet_content, it uses this instead of the apply_to by chunk type
   def self.split_content card_params, content
     positions = []
 
     if String===content
       pre_start = pos = 0
+      #warn "scan re C:#{content[pos..-1]} re: #{SCAN_RE[ACTIVE_CHUNKS]}"
       while match = content.match( SCAN_RE[ACTIVE_CHUNKS], pos)
         m_str = match[0]
         first_char = m_str[0,1]
         grp_start = match.begin(0)
-        this_start = pos
         pre_str = pre_start == grp_start ? nil : content[pre_start..grp_start]
-        match_st = pos = match.end(0)
+        #warn "scan m:#{m_str}[#{match.begin(0)}..#{match.end(0)}] grp:#{grp_start} pos:#{pos}:#{content[pos..match.end(0)]}"
+        pos = match.end(0)
 
         # either it is indexed by the first character of the match
-        rest_re = if match_cfg = PREFIX_LOOKUP[ first_char ]
-            Hash===(h = match_cfg[:rest_re]) ? h[m_str[1,1]] : h
+        if match_cfg = PREFIX_LOOKUP[ first_char ]
+          rest_match = content[pos..-1].match( Hash===(h = match_cfg[:rest_re]) ? h[m_str[1,1]] : h )
 
-          else # or it uses the default pattern (URIChunk now)
-            m_str = m_str[-1] == ':' ? '' : DEFAULT_PREFIX
-            match_st = grp_start
-            match_cfg = PREFIX_LOOKUP[:default]
-            match_cfg[:regexp]
-          end
+        else # or it uses the default pattern (URIChunk now)
+          #warn "PREFIX_LOOKUP[#{ m_str[-1] == ':' ? m_str[-1] : :default} ]"
+          match_cfg = PREFIX_LOOKUP[ m_str[-1] == ':' ? m_str[-1] : :default ]
+          m_str = ''
+          prepend_str = match_cfg[:prepend_str]||''
+          #warn "match(#{prepend_str}<>#{content[grp_start..-1]})"
+          rest_match = ( prepend_str+content[grp_start..-1] ).match( match_cfg[:regexp] )
+          pos = grp_start - prepend_str.length if rest_match
+        end
 
-        if rest_match = content[match_st..-1].match( rest_re )
+        #warn "pre_match #{rest_match}#{rest_match && "[#{rest_match.begin(0)}..#{rest_match.end(0)}]"} #{m_str}, #{pre_start}, #{pos}, #{grp_start}, #{content[grp_start..-1]}"
+        if rest_match
           # save between strings and chunks indexed by position (probably should just be ordered pairs)
           pos += rest_match.end(0)
           m, *groups = rest_match.to_a
-          #warn "match pre_st:#{pre_start}, pos:#{pos}, gs:#{grp_start}, newp:#{first_char}, rr:#{content[grp_start..-1]}, mstr:#{m_str}, #{groups.map(&:to_s)*', '} :: m:\n#{m}, match:#{rest_match.inspect}"
+          #warn "match pre_st[#{match_cfg[:idx_char]}] -- #{pre_start}, pos:#{pos}, gs:#{grp_start}, newp:#{first_char}, rr:#{content[grp_start..-1]}, mstr:#{m_str}, #{groups.map(&:to_s)*', '} :: m:\n#{m}, match:#{rest_match.inspect}"
           rec = [ pos, ( pre_start == grp_start ? nil : content[pre_start..grp_start-1] ), 
                          match_cfg[:class].new(m_str+m, card_params, [first_char, m_str] + groups) ]
           #warn "matched #{grp_start}::#{pos} > #{rec.inspect}"
           pre_start = pos
           positions << rec
-        else #warn "nm #{content[match.end(0)..-1]}"
+        #else warn "nm #{match.end(0)} #{content[match.end(0)..-1]}"
         end
       end
     end

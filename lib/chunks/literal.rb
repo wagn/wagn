@@ -18,7 +18,7 @@ module Literal
         :class     => Literal::Escape,
         :prefix_re => '\\\\(?:\\[\\[|\\{\\{)',
         :rest_re => { '[' => /^[^\]]*\]\]/, '{' => /^[^}]*}}/ },
-        :prefix  => '\\'
+        :idx_char  => '\\'
       }
     end
 

@@ -10,7 +10,7 @@ module Chunks
         :class     => Include,
         :prefix_re => '\\{\\{',
         :rest_re   =>  /^([^\}]*)\}\}/,
-        :prefix    => '{'
+        :idx_char  => '{'
       }
     end
 

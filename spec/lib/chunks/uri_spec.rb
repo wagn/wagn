@@ -136,6 +136,7 @@ describe URIChunk, "URI chunk tests" do
   end
 
   it "should test_email_uri" do
+    pending "need to add a new URI subtype for this"
     match_chunk(URIChunk, 'mail@example.com',
       :user => 'mail', :host => 'example.com', :link_text => 'mail@example.com'
     )
@@ -183,9 +184,10 @@ describe URIChunk, "URI chunk tests" do
   it "should test_uri_in_text" do
     match_chunk(URIChunk, 'Go to: http://www.example.com/', :host => 'www.example.com', :path =>'/')
     match_chunk(URIChunk, 'http://www.example.com/ is a link.', :host => 'www.example.com')
-    match_chunk(URIChunk,
-        'Email david@loudthinking.com',
-        :scheme =>'mailto', :user =>'david', :host =>'loudthinking.com')
+    # pending subcase, re-add email support
+    #match_chunk(URIChunk,
+    #    'Email david@loudthinking.com',
+    #    :scheme =>'mailto', :user =>'david', :host =>'loudthinking.com')
     # check that trailing punctuation is not included in the hostname
     match_chunk(URIChunk, 'Hey dude, http://fake.link.com.', :scheme => 'http', :host => 'fake.link.com')
     # this is a textile link, no match please.

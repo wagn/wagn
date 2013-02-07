@@ -2,8 +2,8 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Card, "account functions" do
   before(:each) do
-    Account.authorized_id= Card['joe_user'].id
-    @auth_card = Account.authorized
+    Account.current_id= Card['joe_user'].id
+    @auth_card = Account.current
     #warn "auth is #{@auth_card.inspect}"
   end
 
@@ -17,7 +17,7 @@ describe Card, "account functions" do
   it "should not show account for link on another user's card (allready has an account)" do
     # render rules menu
     pending "test needs fixing"
-    Account.authorized_id= Card['joe_admin'].id
+    Account.current_id= Card['joe_admin'].id
     rendered = Wagn::Renderer::HtmlRenderer.new(@auth_card).render_options
     rendered.should_not match("Add a sign-in account for")
   end

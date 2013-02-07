@@ -15,7 +15,6 @@ describe Chunks::Include, "include chunk tests" do
   end
 
 
-
   it "should test_circular_inclusion_should_be_invalid" do
     oak = Card.create! :name=>'Oak', :content=>'{{Quentin}}'
     qnt = Card.create! :name=>'Quentin', :content=>'{{Admin}}'
@@ -92,8 +91,7 @@ describe Chunks::Include, "include chunk tests" do
 
     r=Wagn::Renderer.new(bob_address.reload).render_core
     assert_view_select r, 'span[class~=content]', "Sparta"
-    #warn "includers=#{bob_city.includers.map(&:name)*', '}"
-    bob_city.includers.map(&:name).should == ["bob#{SmartName.joint}address"]
+    Card.fetch("bob+address").includees.map(&:name).should == [bob_city.name]
   end
 
 

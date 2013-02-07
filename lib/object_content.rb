@@ -44,49 +44,38 @@ class ObjectContent < SimpleDelegator
           rest_match = content[pos..-1].match( Hash===(h = match_cfg[:rest_re]) ? h[m_str[1,1]] : h )
 
         else # or it uses the default pattern (URIChunk now)
-          #warn "PREFIX_LOOKUP[#{ m_str[-1] == ':' ? m_str[-1] : :default} ]"
           match_cfg = PREFIX_LOOKUP[ m_str[-1] ] || PREFIX_LOOKUP[ :default ]
           m_str = ''
           prepend_str = match_cfg[:prepend_str]||''
-          #warn "match(#{prepend_str}<>#{content[grp_start..-1]}), #{match_cfg[:idx_char]}"
           rest_match = ( prepend_str+content[grp_start..-1] ).match( match_cfg[:regexp] )
           pos = grp_start - prepend_str.length if rest_match
         end
 
-        #warn "pre_match #{rest_match}#{rest_match && "[#{rest_match.begin(0)}..#{rest_match.end(0)}]"} #{m_str}, #{pre_start}, #{pos}, #{grp_start}, #{content[grp_start..-1]}"
         chunk_class = match_cfg[:class]
         if rest_match
           pos += rest_match.end(0)
         
-          #warn "aa #{rest_match}[#{rest_match.begin(0)}..#{rest_match.end(0)}] rto?#{chunk_class.respond_to?( :avoid_autolinking )}, ps:#{pre_start}, pos:#{pos}, gs:#{grp_start}, aa_str:#{content[grp_start-2..grp_start-1]}"
           if grp_start < 1 or !chunk_class.respond_to?( :avoid_autolinking ) or !chunk_class.avoid_autolinking( content[grp_start-2..grp_start-1] )
             # save between strings and chunks indexed by position (probably should just be ordered pairs)
             m, *groups = rest_match.to_a
-            #warn "match pre_st[#{match_cfg[:idx_char]}] -- #{pre_start}, pos:#{pos}, gs:#{grp_start}, newp:#{first_char}, rr:#{content[grp_start..-1]}, mstr:#{m_str}, #{groups.map(&:to_s)*', '} :: m:\n#{m}, match:#{rest_match.inspect}"
             rec = [ pos, ( pre_start == grp_start ? nil : content[pre_start..grp_start-1] ), 
                            chunk_class.new(m_str+m, card_params, [first_char, m_str] + groups) ]
-            #warn "matched #{grp_start}::#{pos} > #{rec.inspect}"
             pre_start = pos
             positions << rec
-          #else warn "aa chunk #{match.end(0)} #{content[match.end(0)..-1]}"
           end
-        #else warn "nm #{match.end(0)} #{content[match.end(0)..-1]}"
         end
       end
     end
 
     if positions.any?
-      a = positions.inject([]) do |arr, rec|
+      result = positions.inject([]) do |arr, rec|
           pos, pre, chunk = rec
-          #warn "inj[#{rec.inspect}] pos#{pos}, pr:#{pre}, c:#{chunk} a:#{arr.inspect}"
           arr << pre if pre
           arr << chunk
         end
       pend = positions[-1][0]
-      #warn "arr content<#{pend} :: #{content.length} == #{content.size.inspect}>"
-      a << content[pend..-1] unless pend == content.size
-      #warn "arr content A:#{a.inspect}"
-      a
+      result << content[pend..-1] unless pend == content.size
+      result
     else
       #warn "string content:#{content}, #{content.size}"
       content
@@ -125,6 +114,4 @@ class ObjectContent < SimpleDelegator
     each_chunk { |chunk| chunk.process_chunk &block }
     self
   end
-
-  #def crange(call) call[0..((i=call.index{|x|x=~/gerry/}).nil? ? 4 : i>50 ? 50 : i+5)] << " N: #{i} " end # limited caller for debugging
 end

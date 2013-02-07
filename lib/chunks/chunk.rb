@@ -43,7 +43,6 @@ module Chunks
     end
     def renderer()           @card_params[:renderer] end
     def card()               @card_params[:card]     end
-    def avoid_autolinking?() false                   end
 
     def to_s
       @process_chunk || @processed|| @text

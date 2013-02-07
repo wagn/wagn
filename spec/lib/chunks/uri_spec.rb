@@ -13,110 +13,131 @@ describe URIChunk, "URI chunk tests" do
       :scheme =>'http', :host =>'www.example.com', :path => '',
       :link_text => 'http://www.example.com'
     )
-    # With trailing slash
+  end
+  it "should work with trailing slash" do
     match_chunk(URIChunk, 'http://www.example.com/',
       :scheme =>'http', :host =>'www.example.com', :path => '/',
       :link_text => 'http://www.example.com/'
     )
-    # With trailing slash inside html tags
+  end
+  it "should work with trailing slash inside html tags" do
     match_chunk(URIChunk, '<p>http://www.example.com/</p>',
       :scheme =>'http', :host =>'www.example.com', :path => '/',
       :link_text => 'http://www.example.com/'
     )
-    # With trailing period (no longer suppressed .. spec?)
+  end
+  it "should work with trailing period (no longer suppressed .. spec?)" do
     match_chunk(URIChunk, 'http://www.example.com/. ',
       :scheme =>'http', :host =>'www.example.com', :path => '/',
       :link_text => 'http://www.example.com/'
     )
-    # With trailing period inside html tags (dot change?)
+  end
+  it "should work with trailing period inside html tags (dot change?)" do
     match_chunk(URIChunk, '<p>http://www.example.com/.</p>',
       :scheme =>'http', :host =>'www.example.com', :path => '/',
       :link_text => 'http://www.example.com/'
     )
-    # With trailing &nbsp; (pending: why?)
-    #match_chunk(URIChunk, 'http://www.example.com/&nbsp;',
-    #  :scheme =>'http', :host =>'www.example.com', :path => '/',
-    #  :link_text => 'http://www.example.com/'
-    #)
-    # Without http://
-    #match_chunk(URIChunk, 'www.example.com', (pending: spec? is this a URI or not)
-    #  :scheme =>'http', :host =>'www.example.com', :link_text => 'www.example.com'
-    #)
-    # two parts (pending spec?)
-    #match_chunk(URIChunk, 'example.com',
-    #  :scheme =>'http',:host =>'example.com', :link_text => 'example.com'
-    #)
-    # "unusual" base domain (was a bug in an early version)
+  end
+  it "should work with trailing &nbsp;" do
+    match_chunk(URIChunk, 'http://www.example.com/&nbsp;',
+      :scheme =>'http', :host =>'www.example.com', :path => '/',
+      :link_text => 'http://www.example.com/'
+    )
+  end
+  it "should work without http://" do
+    match_chunk(URIChunk, 'www.example.com',
+      :scheme =>'http', :host =>'www.example.com', :text => 'www.example.com', :link_text => 'http://www.example.com'
+    )
+    match_chunk(URIChunk, 'example.com',
+      :scheme =>'http',:host =>'example.com', :text => 'example.com', :link_text => 'http://example.com'
+    )
+  end
+  it "should match \"unusual\" base domain (was a bug in an early version)" do
     match_chunk(URIChunk, 'http://example.com.au/',
       :scheme =>'http', :host =>'example.com.au', :link_text => 'http://example.com.au/'
     )
-    # "unusual" base domain without http://
-    #match_chunk(URIChunk, 'example.com.au',
-    #  :scheme =>'http', :host =>'example.com.au', :link_text => 'example.com.au'
-    #)
-    # Another "unusual" base domain
+  end
+  it 'should work with "unusual" base domain without http://' do
+    match_chunk(URIChunk, 'example.com.au',
+      :scheme =>'http', :host =>'example.com.au', :text => 'example.com.au', :link_text => 'http://example.com.au'
+    )
+  end
+  it 'should work with another "unusual" base domain' do
     match_chunk(URIChunk, 'http://www.example.co.uk/',
       :scheme =>'http', :host =>'www.example.co.uk',
       :link_text => 'http://www.example.co.uk/'
     )
-    #match_chunk(URIChunk, 'example.co.uk',
-    #  :scheme =>'http', :host =>'example.co.uk', :link_text => 'example.co.uk'
-    #)
-    # With some path at the end
+    match_chunk(URIChunk, 'example.co.uk',
+      :scheme =>'http', :host =>'example.co.uk', :link_text => 'http://example.co.uk', :text => 'example.co.uk'
+    )
+  end
+  it "should work with some path at the end" do
     match_chunk(URIChunk, 'http://moinmoin.wikiwikiweb.de/HelpOnNavigation',
       :scheme => 'http', :host => 'moinmoin.wikiwikiweb.de', :path => '/HelpOnNavigation',
       :link_text => 'http://moinmoin.wikiwikiweb.de/HelpOnNavigation'
     )
-    # With some path at the end, and withot http:// prefix
-    #match_chunk(URIChunk, 'moinmoin.wikiwikiweb.de/HelpOnNavigation',
-    #  :scheme => 'http', :host => 'moinmoin.wikiwikiweb.de', :path => '/HelpOnNavigation',
-    #  :link_text => 'moinmoin.wikiwikiweb.de/HelpOnNavigation'
-    #)
-    # With a port number
+  end
+  it "should work with some path at the end, and withot http:// prefix (@link_text has prefix added)" do
+    match_chunk(URIChunk, 'moinmoin.wikiwikiweb.de/HelpOnNavigation',
+      :scheme => 'http', :host => 'moinmoin.wikiwikiweb.de', :path => '/HelpOnNavigation',
+      :text => 'moinmoin.wikiwikiweb.de/HelpOnNavigation',
+      :link_text => 'http://moinmoin.wikiwikiweb.de/HelpOnNavigation'
+    )
+  end
+  it "should work with a port number" do
     match_chunk(URIChunk, 'http://www.example.com:80',
-        :scheme =>'http', :host =>'www.example.com', :port => 80, :path => '',
-        :link_text => 'http://www.example.com:80')
-    # With a port number and a path
+       :scheme =>'http', :host =>'www.example.com', :port => 80, :path => '',
+       :link_text => 'http://www.example.com:80')
+  end
+  it "should work with a port number and a path" do
     match_chunk(URIChunk, 'http://www.example.com.tw:80/HelpOnNavigation',
         :scheme =>'http', :host =>'www.example.com.tw', :port => 80, :path => '/HelpOnNavigation',
         :link_text => 'http://www.example.com.tw:80/HelpOnNavigation')
-    # With a query
+  end
+  it "should work with a query" do
     match_chunk(URIChunk, 'http://www.example.com.tw:80/HelpOnNavigation?arg=val',
         :scheme =>'http', :host =>'www.example.com.tw', :port => 80, :path => '/HelpOnNavigation',
         :query => 'arg=val',
         :link_text => 'http://www.example.com.tw:80/HelpOnNavigation?arg=val')
-    # Query with two arguments
+  end
+  it "should work on Query with two arguments" do
     match_chunk(URIChunk, 'http://www.example.com.tw:80/HelpOnNavigation?arg=val&arg2=val2',
         :scheme =>'http', :host =>'www.example.com.tw', :port => 80, :path => '/HelpOnNavigation',
         :query => 'arg=val&arg2=val2',
         :link_text => 'http://www.example.com.tw:80/HelpOnNavigation?arg=val&arg2=val2')
-    # with an anchor (change: fragment doesn't include delimeter now)
+  end
+  it "should work with IRC" do
     match_chunk(URIChunk, 'irc://irc.freenode.net#recentchangescamp',
         :scheme =>'irc', :host =>'irc.freenode.net',
         :fragment => 'recentchangescamp',
         :link_text => 'irc://irc.freenode.net#recentchangescamp')
+  end
 
-    # HTTPS
+  it "should see HTTPS" do
     match_chunk(URIChunk, 'https://www.example.com',
         :scheme =>'https', :host =>'www.example.com', :port => 443, :path => '', :query => nil,
         :link_text => 'https://www.example.com')
-    # FTP
+  end
+  it "should see FTP" do
     match_chunk(URIChunk, 'ftp://www.example.com',
         :scheme =>'ftp', :host =>'www.example.com', :port => 21, :path => '', :query => nil,
         :link_text => 'ftp://www.example.com')
-    # mailto: pending (Not sure URI parser handle user@ notation)
-    #match_chunk(URIChunk, 'mailto:jdoe123@example.com',
-    #    :scheme =>'mailto', :host =>'example.com', :port => '', :path => '', :query => nil,
-    #    :user => 'jdoe123', :link_text => 'mailto:jdoe123@example.com')
+  end
+  it "should handle mailto:" do
+    match_chunk(URIChunk, 'mailto:jdoe123@example.com',
+        :scheme =>'mailto', :host =>nil, :port => nil, :path => nil, :query => nil,
+        :to => 'jdoe123@example.com', :link_text => 'mailto:jdoe123@example.com')
+  end
     # something nonexistant (pending spec?  this is no longer recognized, the sheme has to be listed)
     #match_chunk(URIChunk, 'foobar://www.example.com',
     #    :scheme =>'foobar', :host =>'www.example.com', :port => '', :path => '', :query => nil,
     #    :link_text => 'foobar://www.example.com')
 
+  it "should run more basic cases" do
+
     # from *css (with () around the URI)
-    match_chunk(URIChunk, "background: url('http://dl.dropbox.com/u/4657397/wikirate/wikirate_files/wr-bg-menu-line.gif)' repeat-x;",
-        :path => '/u/4657397/wikirate/wikirate_files/wr-bg-menu-line.gif',
-        :link_text => 'http://dl.dropbox.com/u/4657397/wikirate/wikirate_files/wr-bg-menu-line.gif' )
+    # so, now this doesn't even match because I fixed the suspiciou* stuff
+    no_match(URIChunk, "background: url('http://dl.dropbox.com/u/4657397/wikirate/wikirate_files/wr-bg-menu-line.gif') repeat-x;")
 
     # Soap opera (the most complex case imaginable... well, not really, there should be more evil)
     match_chunk(URIChunk, 'http://www.example.com.tw:80/~jdoe123/Help%20Me%20?arg=val&arg2=val2',
@@ -136,24 +157,23 @@ describe URIChunk, "URI chunk tests" do
   end
 
   it "should test_email_uri" do
-    pending "need to add a new URI subtype for this"
     match_chunk(URIChunk, 'mail@example.com',
-      :user => 'mail', :host => 'example.com', :link_text => 'mail@example.com'
+      :to => 'mail@example.com', :host => nil, :text => 'mail@example.com', :link_text => 'mailto:mail@example.com'
     )
   end
 
   it "should test_non_email" do
     # The @ is part of the normal text, but 'example.com' is marked up.
-     match_chunk(URIChunk, 'Not an email: @example.com', :user => '', :uri => 'http://example.com')
+     match_chunk(URIChunk, 'Not an email: @example.com', :uri => 'http://example.com')
   end
 
   it "should test_textile_image" do
-    aa_match(URIChunk,
+    no_match(URIChunk,
              'This !http://hobix.com/sample.jpg! is a Textile image link.')
   end
 
   it "should test_textile_link" do
-    aa_match(URIChunk,
+    no_match(URIChunk,
              'This "hobix (hobix)":http://hobix.com/sample.jpg is a Textile link.')
     # just to be sure ...
     match_chunk(URIChunk, 'This http://hobix.com/sample.jpg should match',
@@ -161,13 +181,13 @@ describe URIChunk, "URI chunk tests" do
   end
 
   it "should test_inline_html" do
-    no_match(URIChunk, '<IMG SRC="http://hobix.com/sample.jpg">')
     no_match(URIChunk, "<img src='http://hobix.com/sample.jpg'/>")
+    no_match(URIChunk, '<IMG SRC="http://hobix.com/sample.jpg">')
   end
 
   it "should test_non_uri" do
     # "so" is a valid country code; "libproxy.so" is a valid url
-    match_chunk(URIChunk, 'libproxy.so', :link_text => 'libproxy.so')
+    match_chunk(URIChunk, 'libproxy.so', :host => 'libproxy.so', :text => 'libproxy.so', :link_text => 'http://libproxy.so')
 
     no_match URIChunk, 'httpd.conf'
     # THIS ONE'S BUSTED.. Ethan fix??
@@ -184,14 +204,13 @@ describe URIChunk, "URI chunk tests" do
   it "should test_uri_in_text" do
     match_chunk(URIChunk, 'Go to: http://www.example.com/', :host => 'www.example.com', :path =>'/')
     match_chunk(URIChunk, 'http://www.example.com/ is a link.', :host => 'www.example.com')
-    # pending subcase, re-add email support
-    #match_chunk(URIChunk,
-    #    'Email david@loudthinking.com',
-    #    :scheme =>'mailto', :user =>'david', :host =>'loudthinking.com')
+    match_chunk(URIChunk,
+        'Email david@loudthinking.com',
+        :scheme =>'mailto', :to =>'david@loudthinking.com', :host => nil)
     # check that trailing punctuation is not included in the hostname
     match_chunk(URIChunk, 'Hey dude, http://fake.link.com.', :scheme => 'http', :host => 'fake.link.com')
     # this is a textile link, no match please.
-    aa_match(URIChunk, '"link":http://fake.link.com.')
+    no_match(URIChunk, '"link":http://fake.link.com.')
    end
 
   it "should test_uri_in_parentheses" do
@@ -262,7 +281,9 @@ describe URIChunk, "URI chunk tests" do
 
     expected.each_pair do |method_sym, value|
       #assert_respond_to(chunk, method_sym)
-      assert_equal(value, chunk.method(method_sym).call, "Checking value of '#{method_sym}'")
+      cvalue = chunk.method(method_sym).call
+      cvalue = cvalue.to_s if method_sym == :uri
+      assert_equal(value, cvalue, "Checking value of '#{method_sym}'")
     end
   end
 

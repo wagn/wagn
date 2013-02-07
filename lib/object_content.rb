@@ -45,25 +45,31 @@ class ObjectContent < SimpleDelegator
 
         else # or it uses the default pattern (URIChunk now)
           #warn "PREFIX_LOOKUP[#{ m_str[-1] == ':' ? m_str[-1] : :default} ]"
-          match_cfg = PREFIX_LOOKUP[ m_str[-1] == ':' ? m_str[-1] : :default ]
+          match_cfg = PREFIX_LOOKUP[ m_str[-1] ] || PREFIX_LOOKUP[ :default ]
           m_str = ''
           prepend_str = match_cfg[:prepend_str]||''
-          #warn "match(#{prepend_str}<>#{content[grp_start..-1]})"
+          #warn "match(#{prepend_str}<>#{content[grp_start..-1]}), #{match_cfg[:idx_char]}"
           rest_match = ( prepend_str+content[grp_start..-1] ).match( match_cfg[:regexp] )
           pos = grp_start - prepend_str.length if rest_match
         end
 
         #warn "pre_match #{rest_match}#{rest_match && "[#{rest_match.begin(0)}..#{rest_match.end(0)}]"} #{m_str}, #{pre_start}, #{pos}, #{grp_start}, #{content[grp_start..-1]}"
+        chunk_class = match_cfg[:class]
         if rest_match
-          # save between strings and chunks indexed by position (probably should just be ordered pairs)
           pos += rest_match.end(0)
-          m, *groups = rest_match.to_a
-          #warn "match pre_st[#{match_cfg[:idx_char]}] -- #{pre_start}, pos:#{pos}, gs:#{grp_start}, newp:#{first_char}, rr:#{content[grp_start..-1]}, mstr:#{m_str}, #{groups.map(&:to_s)*', '} :: m:\n#{m}, match:#{rest_match.inspect}"
-          rec = [ pos, ( pre_start == grp_start ? nil : content[pre_start..grp_start-1] ), 
-                         match_cfg[:class].new(m_str+m, card_params, [first_char, m_str] + groups) ]
-          #warn "matched #{grp_start}::#{pos} > #{rec.inspect}"
-          pre_start = pos
-          positions << rec
+        
+          #warn "aa #{rest_match}[#{rest_match.begin(0)}..#{rest_match.end(0)}] rto?#{chunk_class.respond_to?( :avoid_autolinking )}, ps:#{pre_start}, pos:#{pos}, gs:#{grp_start}, aa_str:#{content[grp_start-2..grp_start-1]}"
+          if grp_start < 1 or !chunk_class.respond_to?( :avoid_autolinking ) or !chunk_class.avoid_autolinking( content[grp_start-2..grp_start-1] )
+            # save between strings and chunks indexed by position (probably should just be ordered pairs)
+            m, *groups = rest_match.to_a
+            #warn "match pre_st[#{match_cfg[:idx_char]}] -- #{pre_start}, pos:#{pos}, gs:#{grp_start}, newp:#{first_char}, rr:#{content[grp_start..-1]}, mstr:#{m_str}, #{groups.map(&:to_s)*', '} :: m:\n#{m}, match:#{rest_match.inspect}"
+            rec = [ pos, ( pre_start == grp_start ? nil : content[pre_start..grp_start-1] ), 
+                           chunk_class.new(m_str+m, card_params, [first_char, m_str] + groups) ]
+            #warn "matched #{grp_start}::#{pos} > #{rec.inspect}"
+            pre_start = pos
+            positions << rec
+          else warn "aa chunk #{match.end(0)} #{content[match.end(0)..-1]}"
+          end
         #else warn "nm #{match.end(0)} #{content[match.end(0)..-1]}"
         end
       end

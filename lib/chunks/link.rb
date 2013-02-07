@@ -25,7 +25,7 @@ module Chunks
       else
         self.link_text= params[3]; self.cardname = params[4].to_name #.gsub(/_/,' ')
       end
-      #warn "init link #{match} .. #{params.inspect} chk #{inspect} cl:#{@link_text.class}, #{@link_text}, #{@text}, cn:#{cardname}"
+      #warn "init link #{match} .. #{params.inspect} chk #{inspect} lclass:#{@link_text.class}, ltext:#{@link_text}, text:#{@text}, cn:#{cardname}"
       self
     end
 

@@ -430,6 +430,7 @@ module Wagn
           href = full_uri href.to_s
           known_card ? 'known-card' : 'wanted-card'
         end
+      # FIXME: shouldn't this be in the html version of this?  this should give plain-text links.
       %{<a class="#{klass}" href="#{href}">#{text.to_s}</a>}
     end
 

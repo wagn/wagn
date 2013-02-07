@@ -68,7 +68,7 @@ class ObjectContent < SimpleDelegator
             #warn "matched #{grp_start}::#{pos} > #{rec.inspect}"
             pre_start = pos
             positions << rec
-          else warn "aa chunk #{match.end(0)} #{content[match.end(0)..-1]}"
+          #else warn "aa chunk #{match.end(0)} #{content[match.end(0)..-1]}"
           end
         #else warn "nm #{match.end(0)} #{content[match.end(0)..-1]}"
         end

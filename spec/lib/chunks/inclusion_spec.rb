@@ -1,5 +1,6 @@
-
+# encoding: utf-8
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+require File.expand_path('../../packs/pack_spec_helper', File.dirname(__FILE__))
 
 #FIXME: None of these work now, since inclusion is handled at the slot/cache
 # level, but these cases should still be covered by tests
@@ -9,73 +10,90 @@ describe Chunks::Include, "include chunk tests" do
   include ActionView::Helpers::TextHelper
   include MySpecHelpers
 
-  it "should test_truth" do
-    assert true
+  before do
+    Account.current_id= Card['joe_user'].id
   end
 
-=begin
 
 
- it "should test_circular_inclusion_should_be_invalid" do
+  it "should test_circular_inclusion_should_be_invalid" do
     oak = Card.create! :name=>'Oak', :content=>'{{Quentin}}'
     qnt = Card.create! :name=>'Quentin', :content=>'{{Admin}}'
-    adm = Card['Wagn Bot']
+    adm = Card['Quentin']
     adm.update_attributes :content => "{{Oak}}"
-    #warn "circles: " + render(adm)
-    assert_match /Circular inclusion/, adm.errors[:content]
+    Wagn::Renderer.new(adm).render_core.should match('too deep')
   end
 
   it "should test_missing_include" do
     @a = Card.create :name=>'boo', :content=>"hey {{+there}}"
-    assert_text_equal "hey Click to create boo+there", render(@a)
+    r=Wagn::Renderer.new(@a).render_core
+    assert_view_select r, 'div[card-name="boo+there"][class~="missing-view"]'
   end
 
   it "should test_absolute_include" do
     alpha = newcard 'Alpha', "Pooey"
     beta = newcard 'Beta', "{{Alpha}}"
-    assert_text_equal "Pooey", render(beta)
+    assert_view_select Wagn::Renderer.new(beta).render_core, 'span[class~="content"]', "Pooey"
   end
 
   it "should test_template_inclusion" do
-     age, template = newcard('age'), Card['*template']
+     age = newcard('age')
+     template = Card['*template']
      specialtype = Card.create :typecode=>'Cardtype', :name=>'SpecialType'
 
-     specialtype_template = specialtype.connect template, "{{#{SmartName.joint}age}}"
-     assert_equal "{{#{SmartName.joint}age}}", render_test_card(specialtype_template)
-     wooga = Card::SpecialType.create :name=>'Wooga'
-     # card = card('Wooga')  #wtf?
-     wooga_age = wooga.connect( age, "39" )
-     assert_text_equal  span(wooga_age, "39"), render_test_card(wooga)
-     assert_text_equal ['Wooga'], wooga_age.includers.map(&:name)
+     specialtype_template = specialtype.fetch(:trait=>:type,:new=>{}).fetch(:trait=>:content,:new=>{})
+     specialtype_template.content = "{{#{SmartName.joint}age}}"
+     Account.as_bot { specialtype_template.save! }
+     assert_equal "{{#{SmartName.joint}age}}", Wagn::Renderer.new(specialtype_template).render_raw
+
+     wooga = Card.create! :name=>'Wooga', :type=>'SpecialType'
+     wooga_age = Card.create!( :name=>"#{wooga.name}#{SmartName.joint}age", :content=> "39" )
+     Wagn::Renderer.new(wooga_age).render_core.should == "39"
+     wooga_age.includers.map(&:name).should == ['Wooga']
    end
 
   it "should test_relative_include" do
     alpha = newcard 'Alpha', "{{#{SmartName.joint}Beta}}"
     beta = newcard 'Beta'
-    alpha_beta = alpha.connect beta, "Woot"
-    assert_text_equal "Woot", render(alpha)
+    alpha_beta = Card.create :name=>"#{alpha.name}#{SmartName.joint}Beta", :content=>"Woot"
+    assert_view_select Wagn::Renderer.new(alpha).render_core, 'span[class~=content]', "Woot"
   end
 
 
   it "should test_shade_option" do
     alpha = newcard 'Alpha', "Pooey"
     beta = newcard 'Beta', "{{Alpha|shade:off}}"
-    assert_text_equal "Pooey", render(newcard('Bee', "{{Alpha|shade:off}}" ))
-    assert_text_equal "Pooey", render(newcard('Cee', "{{Alpha| shade: off }}" ))
-    assert_text_equal "Pooey", render(newcard('Dee', "{{Alpha| shade:off }}" ))
-    assert_text_equal "Pooey", render(newcard('Eee', "{{Alpha| shade:on }}" ))
+    r=Wagn::Renderer.new(newcard('Bee', "{{Alpha|shade:off}}" )).render_core
+    assert_view_select r, 'div[style~="shade:off;"]' do
+      assert_select 'span[class~=content]', "Pooey"
+    end
+    r=Wagn::Renderer.new(newcard('Cee', "{{Alpha| shade: off }}" )).render_core
+    assert_view_select r, 'div[style~="shade:off;"]' do
+      assert_select 'span[class~=content]', "Pooey"
+    end
+    r=Wagn::Renderer.new(newcard('Dee', "{{Alpha| shade:off }}" )).render_core
+    assert_view_select r, 'div[style~="shade:off;"]' do
+      assert_select 'span[class~="content"]', "Pooey"
+    end
+    r=Wagn::Renderer.new(newcard('Eee', "{{Alpha| shade:on }}" )).render_core
+    assert_view_select r, 'div[style~="shade:on;"]' do
+      assert_select 'span[class~="content"]', "Pooey"
+    end
   end
 
 
   # this tests container templating and inclusion syntax 'base:parent'
   it "should test_container_inclusion" do
+    #pending "base:parent not supported now, can we make a similare test with _left ?"
     bob_city = Card.create! :name=>'bob+city', :content=> "Sparta"
-    address_tmpl = Card.create! :name=>'address+*template', :content =>"{{+city|base:parent}}"
+    Account.as_bot { address_tmpl = Card.create! :name=>'address+*right+*content', :content =>"{{_left+city}}" }
     bob_address = Card.create! :name=>'bob+address'
     #FIXME -- does not work retroactively if template is created later.
 
-    assert_text_equal span(bob_city, "Sparta"), render(bob_address.reload), "include"
-    assert_equal ["bob#{SmartName.joint}address"], bob_city.includers.map(&:name)
+    r=Wagn::Renderer.new(bob_address.reload).render_core
+    assert_view_select r, 'span[class~=content]', "Sparta"
+    #warn "includers=#{bob_city.includers.map(&:name)*', '}"
+    bob_city.includers.map(&:name).should == ["bob#{SmartName.joint}address"]
   end
 
 
@@ -83,21 +101,9 @@ describe Chunks::Include, "include chunk tests" do
     alpha = newcard 'Alpha', "{{Beta}}"
     beta = newcard 'Beta', "{{Delta}}"
     delta = newcard 'Delta', "Booya"
-    assert_text_equal "Booya", render( alpha )
+    r=Wagn::Renderer.new( alpha ).render_core
+    #warn "r=#{r}"
+    assert_view_select r, 'span[class~=content]', "Booya"
   end
-
-=end
-
-  private
-=begin
-  assert_text_equal(left, right, desc="")
-    assert_equal strip_tags(left), strip_tags(right), desc
-  end
-
-  def span(card, text)
-    %{<span class="included" cardId="#{card.id}" inPopup="true">} +
-      %{<span class="content includedContent" cardId="#{card.id}">#{text}</span></span>}
-  end
-=end
 
 end

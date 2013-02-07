@@ -3,15 +3,18 @@ require_dependency 'chunks/chunk'
 module Chunks
   class Include < Reference
     attr_reader :stars, :renderer, :options, :base
-    unless defined? INCLUDE_PATTERN
+    unless defined? INCLUDE_CONFIG
       #  {{+name|attr:val;attr:val;attr:val}}
       #  Groups: $1, everything (less {{}}), $2 name, $3 options
-      INCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(?:\|([^\}]+?))?)\}\}/
-      INCLUDE_GROUPS = 3
+      INCLUDE_CONFIG = {
+        :class     => Include,
+        :prefix_re => '\\{\\{',
+        :rest_re   =>  /^([^\}]*)\}\}/,
+        :idx_char  => '{'
+      }
     end
 
-    def self.pattern() INCLUDE_PATTERN end
-    def self.groups() INCLUDE_GROUPS end
+    def self.config() INCLUDE_CONFIG end
 
     def initialize match, card_params, params
       super
@@ -23,23 +26,22 @@ module Chunks
 
     def parse match, params
 
-      case name = params[1].strip
+      in_brackets = params[2]
+      #warn "parse include [#{in_brackets}] #{match}, #{params.inspect}"
+      name, opts = in_brackets.split('|',2)
+      case name = name.strip
 
         when /^\#\#/; @process_chunk=''; nil # invisible comment
-        when /^\#/||nil?||blank?; @process_chunk = "<!-- #{CGI.escapeHTML params[0]} -->"; nil
+        when /^\#/||nil?||blank?; @process_chunk = "<!-- #{CGI.escapeHTML in_brackets} -->"; nil
 
         else
           @options = {
-            :tname   =>name,  # this "t" is for inclusion.  should rename
-            # it is sort of include, this is the name for the inclusion, should still rename
+            :include_name => name,
             :view  => nil, :item  => nil, :type  => nil, :size  => nil,
-            :hide  => nil, :show  => nil, :wild  => nil,
-            :include => params[0] # is this used? yes, by including this in an attrbute
-                              # of an xml card, the xml parser can replace the subelements
-                              # with the original inclusion notation: {{options[:include]}}
+            :hide  => nil, :show  => nil, :wild  => nil, :include => in_brackets
           }
 
-          @configs = Hash.new_from_semicolon_attr_list params[2]
+          @configs = Hash.new_from_semicolon_attr_list opts
 
           @options[:style] = @configs.inject({}) do |styles, pair| key, value = pair
             @options.key?(key.to_sym) ? @options[key.to_sym] = value : styles[key] = value

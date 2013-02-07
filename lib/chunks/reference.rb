@@ -10,8 +10,8 @@ module Chunks
     end
 
     def refcardname
-      #warn "rercardname #{inspect}, #{cardname.to_absolute(card.cardname)}"
       cardname && self.cardname = cardname.to_absolute(card.cardname).to_name
+      #warn "rercardname #{inspect}, #{cardname.nil? ? 'nil' : cardname.to_absolute(card.cardname)}"; cardname
     end
 
     def reference_card

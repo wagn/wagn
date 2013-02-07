@@ -18,25 +18,18 @@ require 'uri/common'
 
 module Chunks
   class Abstract
-    def Abstract::re_class(index)
-      @@paren_range.each do |chunk_class, range|
-        if range.cover? index
-          return chunk_class, range
-        end
-      end
-      raise "not found #{index}, #{@@paren_range.inspect}"
-    end
+    cattr_accessor :prefix_cfg
+    @@prefix_cfg = {}
 
-    def Abstract::all_chunks_re(chunk_types)
-      @@paren_range = {}
-      pindex = 0
-      chunk_pattern = chunk_types.map do |ch_class|
-        pend = pindex + ch_class.groups
-        @@paren_range[ch_class] = pindex..pend-1
-        pindex = pend
-        ch_class.pattern
-      end * '|'
-      /(.*?)(#{chunk_pattern})/m
+    def Abstract::scan_re(chunk_types)
+      /(?:#{
+        chunk_types.map do |chunk_cl|
+          cfg = chunk_cl.config
+          prefix = cfg[:idx_char] || :default
+          @@prefix_cfg[prefix] = cfg
+          cfg[:prefix_re]
+        end * '|'
+      })/mo
     end
 
     attr_reader :text, :process_chunk
@@ -45,13 +38,18 @@ module Chunks
       @text = match_string
       @processed = nil
       @card_params = card_params
+      #warn "base initialize ch #{inspect}"
+      self
     end
     def renderer()           @card_params[:renderer] end
     def card()               @card_params[:card]     end
-    def avoid_autolinking?() false                   end
 
     def to_s
       @process_chunk || @processed|| @text
+    end
+
+    def inspect
+      "<##{self.class}##{to_s}>"
     end
 
     def as_json(options={})

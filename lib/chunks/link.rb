@@ -4,25 +4,28 @@ module Chunks
   class Link < Reference
     word = /\s*([^\]\|]+)\s*/
     # Groups: $1, [$2]: [[$1]] or [[$1|$2]] or $3, $4: [$3][$4]
-    WIKI_LINK = /\[\[#{word}(?:\|([^\]]+))?\]\]|\[#{word}\]\[#{word}\]/
-    WIKI_LINK_GROUPS = 4
+    WIKI_CONFIG = {
+      :class     => Link,
+      :prefix_re => '\\[',
+      :rest_re   => /^\[([^\]]+)\]\]|([^\]]+)\]\[([^\]]*)\]/,
+      :idx_char  => '['
+    }
 
-    def self.pattern() WIKI_LINK end
-    def self.groups() WIKI_LINK_GROUPS end
+    def self.config() WIKI_CONFIG end
 
     attr_accessor :link_text
 
     def initialize match, card_params, params
       super
-      if name=params[0]
+      if name=params[2]
+        name, ltext = name.split('|',2)
         self.cardname = name.to_name
-        ltext=params[1]
         self.link_text= ltext.nil? ? name :
           ltext =~ /(^|[^\\]){{/ ? ObjectContent.new(ltext, @card_params) : ltext
       else
-        self.link_text= params[2]; self.cardname = params[3].to_name #.gsub(/_/,' ')
+        self.link_text= params[3]; self.cardname = params[4].to_name #.gsub(/_/,' ')
       end
-      #warn "init link chk cl:#{@link_text.class}, #{@link_text}, #{@text}, #{cardname}"
+      #warn "init link #{match} .. #{params.inspect} chk #{inspect} lclass:#{@link_text.class}, ltext:#{@link_text}, text:#{@text}, cn:#{cardname}"
       self
     end
 

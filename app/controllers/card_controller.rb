@@ -40,14 +40,6 @@ class CardController < ApplicationController
     end
   end
 
-  def create; perform_create end
-  def read  ; perform_read   end
-  def update; perform_update end
-  def delete; perform_delete end
-  def index ; perform_read   end
-  def read_file; perform_read_file end
-
-
   def action_error *a
     warn "action_error #{a.inspect}"
   end

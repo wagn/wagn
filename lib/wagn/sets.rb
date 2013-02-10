@@ -188,6 +188,15 @@ module Wagn
       # ~~~~~~~~~~~~~~~~~~  ACTION DEFINITION ~~~~~~~~~~~~~~~~~~~
       #
 
+      DEFAULT_ALIAS = {
+        :perform_create    => :create,
+        :perform_read      => :read,
+        :perform_update    => :update,
+        :perform_delete    => :delete,
+        :perform_index     => :read,
+        :perform_read_file => :read_file,
+      }
+
       def action event, opts={}, &final_action
         action_key = get_set_key event, opts
 
@@ -197,11 +206,12 @@ module Wagn
 
         CardActions.subset_actions[event] = true if !opts.empty?
 
-        if !method_defined? "perform_#{event}"
+        if !method_defined?( core_method = "perform_#{event}".to_sym )
+          ucore_method = "_#{core_method}".to_sym
           CardActions.class_eval do
 
-            Rails.logger.warn "defining method[#{to_s}] _perform_#{event}" if event == :read
-            define_method( "_perform_#{event}" ) do |*a|
+            Rails.logger.warn "defining method[#{to_s}] #{ucore_method}" if event == :read
+            define_method( ucore_method ) do |*a|
               a = [{}] if a.empty?
               if final_method = action_method(event)
                 Rails.logger.warn "final action #{final_method}"
@@ -213,21 +223,23 @@ module Wagn
               end
             end
 
-            Rails.logger.warn "define action[#{self}] perform_#{event}" if event == :read
-            define_method( "perform_#{event}" ) do |*a|
+            Rails.logger.warn "define action[#{self}] #{core_method}" if event == :read
+            define_method( core_method ) do |*a|
               begin
 
-                Rails.logger.warn "send _perform_#{event}" if event.to_sym == :read
-                send "_perform_#{event}", *a
+                send "_#{core_method}", *a
 
               rescue Exception=>e
                 controller.send :notify_airbrake, e if Airbrake.configuration.api_key
                 warn "Card Action Error: #{e.class} : #{e.message}"
-                Rails.logger.info "\nCard Action Error: #{e.class} : #{e.message}"
+                Rails.logger.info "\nCard Action Error[#{core_method} #{e.class} : #{e.message}"
                 Rails.logger.debug "  #{e.backtrace*"\n  "}"
                 action_error e, (card && card.name.present? ? card.name : 'unknown card')
               end
             end
+
+            default_alias = DEFAULT_ALIAS[ core_method ] and
+                alias_method default_alias, core_method
           end
         end
       end

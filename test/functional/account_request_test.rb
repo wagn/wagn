@@ -20,7 +20,7 @@ class AccountRequestTest < ActionController::TestCase
   end
 
   def test_should_redirect_to_account_request_landing_card
-    post :create, :user=>{:email=>"jamaster@jay.net"}, :card=>{
+    post :create, :account=>{:email=>"jamaster@jay.net"}, :card=>{
       :type=>"Account Request",
       :name=>"Word Third",
       :content=>"Let me in!"
@@ -30,7 +30,7 @@ class AccountRequestTest < ActionController::TestCase
   end
 
   def test_should_create_account_request
-    post :create, :user=>{:email=>"jamaster@jay.net"}, :card=>{
+    post :create, :account=>{:email=>"jamaster@jay.net"}, :card=>{
       :type=>"Account Request",
       :name=>"Word Third",
       :content=>"Let me in!"

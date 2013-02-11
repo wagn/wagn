@@ -32,11 +32,11 @@ module Cardlib::Permissions
   #      to fetch and the test is perfomed on the fetched card, therefore:
   #
   #      :trait=>:account         would fetch this card plus a tag codenamed :account
-  #      :trait=>:roles, :new=>{} would be a fetch_or_new_trait
+  #      :trait=>:roles, :new=>{} would create a new card with default ({}) options.
 
   def ok_with_fetch? operation, opts={}
     card = opts[:trait].nil? ? self : fetch(opts)
-    card.ok_without_fetch? operation
+    card && card.ok_without_fetch?(operation)
   end
 
   def ok? operation
@@ -44,24 +44,21 @@ module Cardlib::Permissions
     @permission_errors = []
 
     send "approve_#{operation}"
+    #warn "ok? #{inspect}, #{operation}, #{@operation_approved}"
     @operation_approved
   end
   alias_method_chain :ok?, :fetch # note: method is chained so that we can return the instance variable @operation_approved
 
   def ok! operation, opts={}
-    if ok? operation, opts
-      true
-    else
-      raise Card::PermissionDenied.new self
-    end
+    raise Card::PermissionDenied.new self unless ok? operation, opts
   end
   
-  def update_account_ok? #FIXME - temporary API
-    self.account and Account.as_id==id || fetch(:trait=>:account, :new=>{}).ok?( :update )
+  def update_account_ok? #FIXME - temporary API, I think this is fixed, can we cache any of this for speed, this is accessed for each header
+    id == Account.current_id || ok?( :create, :trait=>:account, :new=>{} )
   end
 
   def who_can operation
-    #warn "who_can[#{name}] #{(prc=permission_rule_card(operation)).inspect}, #{prc.first.item_cards.map(&:name)}" #if operation == :update
+    #warn "who_can[#{name}] #{(prc=permission_rule_card(operation)).inspect}, #{prc.first.item_cards.map(&:id)}" if operation == :update
     permission_rule_card(operation).first.item_cards.map(&:id)
   end
 
@@ -97,28 +94,33 @@ module Cardlib::Permissions
     @operation_approved = false
   end
 
-  def lets_user operation
+  def lets_account operation
     #warn "creating *account ??? #{caller[0..25]*"\n"}" if name == '*account' && operation==:create
-    #warn "lets_user[#{operation}]#{name}" if name=='Buffalo'
+    #warn "lets_account[#{operation}]#{inspect}" #if name=='Buffalo'
     return false if operation != :read    and Wagn::Conf[:read_only]
     return true  if operation != :comment and Account.always_ok?
 
     permitted_ids = who_can operation
 
-    #r=
     if operation == :comment && Account.always_ok?
       # admin can comment if anyone can
       !permitted_ids.empty?
     else
+      #warn "lets_account[#{operation}]#{name} permitted:#{permitted_ids.map {|id|Card[id].name}*', '} " if name=='c1' and operation==:update
       Account.among? permitted_ids
     end
-    #warn "lets_user[#{operation}]#{name} #{Account.as_card.name}, #{permitted_ids.map {|id|Card[id].name}*', '} R:#{r}" if name=='Buffalo'; r
   end
 
   def approve_task operation, verb=nil
     deny_because "Currently in read-only mode" if operation != :read && Wagn::Conf[:read_only]
     verb ||= operation.to_s
-    deny_because you_cant("#{verb} this card") unless self.lets_user( operation )
+    #warn "approve_task[#{inspect}](#{operation}, #{verb})" if operation == :create
+    deny_because you_cant("#{verb} this card") unless self.lets_account( operation )
+  end
+
+  def approve_account
+    #approve_task :accountable  # maybe we want that setting as a permission task?
+    approve_task :update
   end
 
   def approve_create
@@ -126,11 +128,11 @@ module Cardlib::Permissions
   end
 
   def approve_read
-    #warn "AR #{name} #{Account.always_ok?}"
+    #Rails.logger.warn "AR #{inspect} #{Account.always_ok?}"
     return true if Account.always_ok?
-    @read_rule_id ||= permission_rule_card(:read).first.id.to_i
-    #warn Rails.logger.warn("AR #{name} #{@read_rule_id}, #{Account.as_card.inspect}>")
-    unless Account.as_card.read_rules.member?(@read_rule_id.to_i)
+    @read_rule_id ||= (rr=permission_rule_card(:read).first).id.to_i
+    #warn "AR #{name} #{@read_rule_id}, #{Account.current.inspect} #{rr&&rr.name}, RR:#{Account.current.read_rules.map{|i|c=Card[i] and c.name}*", "}"
+    unless Account.current.read_rules.member?(@read_rule_id.to_i)
       deny_because you_cant("read this card")
     end
   end
@@ -156,7 +158,7 @@ module Cardlib::Permissions
     case
     when !type_name
       deny_because("No such type")
-    when !new_card? && reset_patterns && !lets_user(:create)
+    when !new_card? && reset_patterns && !lets_account(:create)
       deny_because you_cant("change to this type (need create permission)"  )
     end
     #NOTE: we used to check for delete permissions on previous type, but this would really need to happen before the name gets changes
@@ -186,6 +188,7 @@ module Cardlib::Permissions
       #find all cards with me as trunk and update their read_rule (because of *type plus right)
       # skip if name is updated because will already be resaved
 
+      #warn "set_read_rule #{rcard.inspect}, #{rclass}"
       if !new_card? && updates.for(:type_id)
         Account.as_bot do
           Card.search(:left=>self.name).each do |plus_card|
@@ -197,13 +200,12 @@ module Cardlib::Permissions
   end
 
   def update_read_rule
-    #warn "uprr #{name}"
     Card.record_timestamps = false
 
     reset_patterns # why is this needed?
     rcard, rclass = permission_rule_card :read
     self.read_rule_id = rcard.id #these two are just to make sure vals are correct on current object
-    #Rails.logger.warn "updating read rule for #{inspect} to #{rcard.inspect}, #{rclass}"
+    #warn "updating read rule for #{inspect} to #{rcard.inspect}, #{rclass}"
 
     self.read_rule_class = rclass
     Card.where(:id=>self.id).update_all(:read_rule_id=>rcard.id, :read_rule_class=>rclass)
@@ -231,7 +233,7 @@ module Cardlib::Permissions
   end
 
   def update_queue
-    #warn (Rails.logger.warn "update queue[#{inspect}] Q[#{self.update_read_rule_list.inspect}]")
+    #warn "update queue[#{inspect}] Q[#{self.update_read_rule_list.inspect}]"
 
     self.update_read_rule_list.each { |card| card.update_read_rule }
     self.update_read_rule_list = []
@@ -249,16 +251,16 @@ module Cardlib::Permissions
       # (though maybe not as a tracked_attribute for performance reasons?)
       # AND need to make sure @changed gets wiped after save (probably last in the sequence)
 
-      User.cache.reset
-      Card.cache.reset # maybe be more surgical, just Account.user related
+      Card.cache.reset # maybe be more surgical, just Account.current related
       expire #probably shouldn't be necessary,
       # but was sometimes getting cached version when card should be in the trash.
       # could be related to other bugs?
       in_set = {}
+      read_rule_ids=rule_class_index=nil
       if !(self.trash)
         if class_id = (set=left and set_class=set.tag and set_class.id)
           rule_class_ids = Cardlib::Pattern.subclasses.map &:key_id
-          #warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
+          #warn "rule_class_id #{class_id}, #{rule_class_ids*", "}"
 
           #first update all cards in set that aren't governed by narrower rule
            Account.as_bot do
@@ -274,13 +276,13 @@ module Cardlib::Permissions
                in_set[trunk.key] = true
                #warn "self rule update: #{trunk.inspect}, #{rule_class_index}, #{cur_index}"
                trunk.update_read_rule if cur_index > rule_class_index
-             else warn "No current rule index #{class_id}, #{rule_class_ids.inspect}"
+             #else warn "No current rule index #{class_id}, #{rule_class_ids.inspect}"
              end
           end
 
         end
       end
-    #warn "rule_class_ids[#{rule_class_index}] #{rule_class_ids.inspect} This:#{read_rule_class.inspect} idx:#{rule_class_ids.index(read_rule_class)}"
+      #Rails.logger.debug "rule_class_ids[#{rule_class_index}] #{rule_class_ids.inspect} This:#{read_rule_class.inspect} idx:#{rule_class_ids.index(read_rule_class)}" if rule_class_ids
 
       #then find all cards with me as read_rule_id that were not just updated and regenerate their read_rules
       if !new_record?

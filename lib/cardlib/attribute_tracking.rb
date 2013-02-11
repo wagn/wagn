@@ -52,7 +52,7 @@ module Cardlib::AttributeTracking
 
       fields.each do |field|
         unless self.method_defined? field
-          dbg='' #dbg = (field == 'name') ? %{Rails.logger.debug "get #{field} "+r.to_s; r;} :  ''
+          #dbg = (field == 'content') ? %{warn "get #{field} "+r.to_s; r;} :  ''
           access = "read_attribute('#{field}')"
           if cache_attribute?(field.to_s)
             access = "@attributes_cache['#{field}'] ||= #{access}"
@@ -62,6 +62,9 @@ module Cardlib::AttributeTracking
         end
 
         unless self.method_defined? "#{field}="
+          #Rails.logger.warn "def tk content" if field == 'content'
+          #dbg = (field == 'content') ? %{Rails.logger.warn "write #{field}= "+value.to_s} :  ''
+          #warn "def tracking #{field}; r=(#{access};) #{dbg} end"
           class_eval code=%{
             def #{field}=(value)
               write_attribute '#{field}', value
@@ -85,7 +88,7 @@ module Cardlib::AttributeTracking
           end
           alias_method_chain :#{field}, :tracking
         })
-            #Rails.logger.debug('#{field} is ' + r.to_s); r
+            #warn '#{field} is ' + r.to_s if '#{field}' == 'content'; r
         #warn code
       end
 

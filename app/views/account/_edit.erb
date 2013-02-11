@@ -17,10 +17,10 @@
     :help=>"", #ENGLISH
     :label=>"Confirm password") %>
 
-<% if card.account and card.fetch(:trait=>:account).ok?(:update)  %>
+<% if card.account and card.ok?(:update, {:new=>{}, :trait=>:account})  %>
   <% blocked_content = capture do %><%= check_box :account, :blocked? %><% end %>
   <%= raw slot.option( blocked_content,
-     :name=>"block_user",
+     :name=>"block_account",
      :help=>"Blocking a user prevents them from signing in", #ENGLISH
      :label=>"Block") %>
 <% end %>

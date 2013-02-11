@@ -131,8 +131,8 @@ module Cardlib::Permissions
     #Rails.logger.warn "AR #{inspect} #{Account.always_ok?}"
     return true if Account.always_ok?
     @read_rule_id ||= (rr=permission_rule_card(:read).first).id.to_i
-    #warn "AR #{name} #{@read_rule_id}, #{Account.current.inspect} #{rr&&rr.name}, RR:#{Account.current.read_rules.map{|i|c=Card[i] and c.name}*", "}"
-    unless Account.current.read_rules.member?(@read_rule_id.to_i)
+    #warn "AR #{name} #{@read_rule_id}, #{Account.as_card.inspect} #{rr&&rr.name}, RR:#{Account.as_card.read_rules.map{|i|c=Card[i] and c.name}*", "}"
+    unless Account.as_card.read_rules.member?(@read_rule_id.to_i)
       deny_because you_cant("read this card")
     end
   end
@@ -251,6 +251,7 @@ module Cardlib::Permissions
       # (though maybe not as a tracked_attribute for performance reasons?)
       # AND need to make sure @changed gets wiped after save (probably last in the sequence)
 
+      User.cache.reset
       Card.cache.reset # maybe be more surgical, just Account.current related
       expire #probably shouldn't be necessary,
       # but was sometimes getting cached version when card should be in the trash.

@@ -101,13 +101,15 @@ module Cardlib::TrackedAttributes
     #warn "set_content no id #{name} #{new_content}" unless self.id
     return false unless self.id
     #warn "set_content #{name} #{new_content}"
-    #new_content ||= ''
-    new_content ||= (tmpl = template).nil? ? '' : tmpl.content
+    new_content ||= ''
+    #new_content ||= (tmpl = template).nil? ? '' : tmpl.content
     new_content = CleanHtml.clean! new_content if clean_html?
     clear_drafts if current_revision_id
     #warn "set_content #{name} #{Account.current_id}, #{new_content}"
-    srev = self.current_revision = Card::Revision.create( :card_id=>self.id, :content=>new_content, :creator_id =>Account.current_id )
-    reset_patterns_if_rule unless new_card?
+    #srev = self.current_revision = Card::Revision.create( :card_id=>self.id, :content=>new_content, :creator_id =>Account.current_id )
+    new_rev = Card::Revision.create :card_id=>self.id, :content=>new_content, :creator_id =>Account.current_id
+    self.current_revision_id = new_rev.id
+    reset_patterns_if_rule
     #warn "finish cont #{new_content}, #{inspect}, #{self.current_revision.inspect} ,sr:#{srev.inspect}"
     @name_or_content_changed = true
   end

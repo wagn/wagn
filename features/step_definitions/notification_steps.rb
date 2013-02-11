@@ -6,9 +6,8 @@ Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
 end
 
 Then /^(.*) should be notified that "(.*)"$/ do |username, subject|
-  account = username=='I' ? Account.current_id : Card[username].fetch(:trait => :account)
-  user = account.account
-  email = user.email
+  card_with_acct = username=='I' ? Account.current : Card[username]
+  email = card_with_acct.account.email
   begin
     step %{"#{email}" should receive 1 email}
   rescue RSpec::Expectations::ExpectationNotMetError=>e

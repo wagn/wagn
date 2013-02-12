@@ -161,9 +161,11 @@ module Cardlib::Fetch
     end
   end
 
-  def renew opts={}
-    opts[:name] ||= cardname
-    opts = opts[:new] and Card.new opts
+  def renew args={}
+    if opts = args[:new]
+      opts[:name] ||= cardname
+      Card.new opts
+    end
   end
 
   def expire_pieces

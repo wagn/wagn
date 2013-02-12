@@ -79,17 +79,22 @@ module Wagn
   
     define_view :menu do |args|
       #goto_icon = %{<a class="ui-icon ui-icon-arrowreturnthick-1-e"></a>}
-      
       option_html = %{
         <ul class="card-menu">
-          <li>#{ link_to_view 'edit', :edit, :class=>'slotter' }
-            <ul>
-                <li>#{ link_to_view 'content', :edit, :class=>'slotter' }</li>
-                <li>#{ link_to_view 'name', :edit_name, :class=>'slotter' }</li>
-                <li>#{ link_to_view 'type', :edit_type, :class=>'slotter' }</li>
-                <li>#{ link_to_view 'history', :changes, :class=>'slotter' }</li>
-            </ul>
-          </li>
+          #{
+            if !card.virtual?
+              %{
+                <li>#{ link_to_view 'edit', :edit, :class=>'slotter' }
+                  <ul>
+                      <li>#{ link_to_view 'content', :edit, :class=>'slotter' }</li>
+                      <li>#{ link_to_view 'name', :edit_name, :class=>'slotter' }</li>
+                      <li>#{ link_to_view 'type', :edit_type, :class=>'slotter' }</li>
+                      <li>#{ link_to_view 'history', :changes, :class=>'slotter' }</li>
+                  </ul>
+                </li>
+              }
+            end
+          }
           <li>#{ link_to_page 'view', card.name }
             <ul>
             #{
@@ -120,7 +125,7 @@ module Wagn
             end
           }
           #{
-            if card && card.update_account_ok? 
+            if card.update_account_ok? 
               "<li>#{ link_to_view 'account', :account, :class=>'slotter' }</li>"
             end
           }

@@ -2,6 +2,7 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 
 describe "Card::Reference" do
+  include MySpecHelpers
 
   before do
     #setup_default_user
@@ -211,9 +212,5 @@ describe "Card::Reference" do
     references[1].ref_type.should == Card::Reference::WANTED_PAGE
   end
 =end
-  private
-  def newcard(name, content="")
-    Card.create! :name=>name, :content=>content
-  end
 
 end

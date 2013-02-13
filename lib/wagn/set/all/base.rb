@@ -26,7 +26,7 @@ module Wagn
 
     define_view :link, :perms=>:none  do |args|
       name = card.name
-      build_link name, name, card.known?
+      card_link name, name, card.known?
     end
 
     define_view :open_content do |args|

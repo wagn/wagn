@@ -48,6 +48,7 @@ describe Chunks::Include, "include chunk tests" do
      wooga = Card.create! :name=>'Wooga', :type=>'SpecialType'
      wooga_age = Card.create!( :name=>"#{wooga.name}#{SmartName.joint}age", :content=> "39" )
      Wagn::Renderer.new(wooga_age).render_core.should == "39"
+     warn "cards #{wooga.inspect}, #{wooga_age.inspect}"
      wooga_age.includers.map(&:name).should == ['Wooga']
    end
 

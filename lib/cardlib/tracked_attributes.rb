@@ -133,12 +133,13 @@ module Cardlib::TrackedAttributes
   def cascade_name_changes
     if @name_changed
       Rails.logger.debug "-------------------#{@old_name}- CASCADE #{self.name} -------------------------------------"
-      #warn "-------------------#{@old_name}---- CASCADE #{self.name} -> deps: #{deps.map(&:name)*", "} -----------------------"
 
       self.update_referencers = false if self.update_referencers == 'false' #handle strings from cgi
       Card::Reference.update_on_rename self, name, self.update_referencers
 
       deps = self.dependents
+      #warn "-------------------#{@old_name}---- CASCADE #{self.name} -> deps: #{deps.map(&:name)*", "} -----------------------"
+
       @dependents = nil #reset
 
       deps.each do |dep|

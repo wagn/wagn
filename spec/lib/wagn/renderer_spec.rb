@@ -16,6 +16,11 @@ describe Wagn::Renderer, "" do
       render_content("[[A]]").should=="<a class=\"known-card\" href=\"/A\">A</a>"
     end
 
+    it "should allow for inclusion in links as in Cardtype" do
+       c= Account.as_bot { Card.create! :name=>"TestType", :type=>'Cardtype', :content=>' [[/new/{{_self|linkname}}|add {{_self|name}} card]]' }
+       Wagn::Renderer.new(c).render_content.should == ''
+    end
+
     it "invisible comment inclusions as blank" do
       render_content("{{## now you see nothing}}").should==''
     end

@@ -180,7 +180,8 @@ describe "renaming" do
      c1.content = "[[chuck wagn+chuck]]"
      c1.save!
      assert_rename c2, 'schmuck'
-     assert_equal '[[schmuck]]', Card.find(c1.id).content
+     c1 = Card.find(c1.id)
+     assert_equal '[[schmuck]]', c1.content
   end
 
   it "test_updates_inclusions_when_renaming" do

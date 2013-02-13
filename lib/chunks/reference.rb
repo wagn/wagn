@@ -2,38 +2,46 @@ require_dependency 'chunks/chunk'
 
 module Chunks
   class Reference < Abstract
-    attr_accessor :cardname
+    attr_accessor :reference_name, :name
 
-    def cardname= name
-      return @cardname=nil unless name
-      @cardname = name.to_name
-    end
-
-    def refcardname
-      cardname && self.cardname = cardname.to_absolute(card.cardname).to_name
-      #warn "rercardname #{inspect}, #{cardname.nil? ? 'nil' : cardname.to_absolute(card.cardname)}"; cardname
+    def reference_name
+      #warn "rercardname #{inspect}, E:#{@ext_link}, #{@name.inspect}"
+      return if name.nil?
+        
+      @reference_name ||= ( renderer.nil? || !ObjectContent===name ? name : renderer.process_content( name ) ).to_name
+      @reference_name = @reference_name.to_absolute(card.cardname).to_name
     end
 
     def reference_card
-      @refcard ||= refcardname && Card.fetch(refcardname)
+      @reference_card ||= reference_name && Card.fetch(reference_name, :new=>{})
     end
 
     def reference_id
       rc=reference_card and rc.id
     end
 
-    def reference_name
-      rc=refcardname and rc.key or ''
+    def replace_name_reference old_name, new_name
+      #warn "ref rnr #{inspect}, #{old_name}, #{new_name}"
+      @reference_card = @reference_name = nil
+      if ObjectContent===name
+        name.find_chunks(Chunks::Reference).each { |chunk| chunk.replace_reference old_name, new_name }
+      else
+        @name = name.to_name.replace_part( old_name, new_name )
+      end
     end
 
     def link_text
-      refcardname.to_s
+      reference_name.to_s
     end
 
     def render_link
-      lt = self.link_text
+      lt = link_text || @name
       lt = renderer.process_content( lt ) if ObjectContent===lt 
-      renderer.build_link refcardname, lt
+      if @name
+        renderer.card_link reference_name, lt, reference_card.known?
+      elsif @ext_link
+        renderer.build_link @ext_link, lt
+      end
     end
   end
 end

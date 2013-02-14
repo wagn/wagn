@@ -357,7 +357,6 @@ body#wagn .card-slot.recent-changes h2 {
   margin: 1px 0 0 0;
 }
 .closed-view .card-header {
-  padding: auto 12px;
   vertical-align: middle;
   display: inline-block;
   line-height: 15px;
@@ -466,10 +465,11 @@ ul.pointer {
 }
 .pointer-list-editor input {
   margin-right: 10px;
-  width: 60%;
+  width: 65%;
 }
 .pointer-list-editor li {
   list-style: none;
+  white-space: nowrap;
 }
 .pointer-list-editor .pointer-item-delete {
   margin-left: 4px;

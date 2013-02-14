@@ -441,15 +441,15 @@ module Wagn
     end
  
     def card_link name, text, known
-      #if text =~ /#{'\\'+SmartName.joint}$/o && card
-      #  text = text.to_name.to_absolute_name(card.name).to_show *@context_names
-      #end
-      warn "card_link[#{self.class}] #{card.inspect}, #{name.inspect}, #{text.inspect}, #{known.inspect}"
-
-      #name+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
-      final_link known ? 'known-card' : 'wanted-card', full_uri(
-          ( !known ? ERB::Util.url_encode( name.to_s ).gsub('.', '%2E')
-                   : name.to_name.url_key                             ).to_s ), text.to_s
+      klass = known ? 'known-card' : 'wanted-card'
+      name = name.to_name
+      text = text.to_name.to_show @context_names
+      path = known ? name.url_key : encode_path(name)
+      final_link klass, full_uri(path), text 
+    end
+    
+    def encode_path path
+      ERB::Util.url_encode( path.to_s ).gsub('.', '%2E')
     end
 
     def unique_id() "#{card.key}-#{Time.now.to_i}-#{rand(3)}" end

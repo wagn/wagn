@@ -21,7 +21,7 @@ module Chunks
         nm = nm.strip
         @link_text = nil
         if nm =~ /(^|[^\\]){{/
-          #warn "chunks? #{nm}"
+          Rails.logger.warn "chunks? #{nm}"
           @name = nm = ObjectContent.new(nm, @card_params)
           pidx = 0
           nm.find do |chk|
@@ -47,9 +47,10 @@ module Chunks
           end
         elsif nm =~ %r{/}
           @ext_link, @link_text = nm.split(/\s*\|\s*/, 2)
-          #warn "elink #{@ext_link}, #{@link_text}, #{@ext_link.class}, #{nm}"
+          Rails.logger.warn "elink #{@ext_link}, #{@link_text}, #{@ext_link.class}, #{nm}"
         else
           @name, @link_text = nm.split(/\s*\|\s*/, 2)
+          Rails.logger.warn "nlink #{@name}, #{@link_text}, #{@name.class}, #{nm}"
         end
 
       else # legacy [][] form

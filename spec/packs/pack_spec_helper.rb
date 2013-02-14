@@ -23,7 +23,7 @@ include ActionDispatch::Assertions::SelectorAssertions
     @card.content=content
     r = Wagn::Renderer.new @card,args
     #r.add_name_context "Tempo Rary 2"
-    #warn "rc core #{r}"
+    warn "rc core #{@card.inspect}, renderer:#{r}"
     r._render(:core)
   end
 

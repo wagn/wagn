@@ -45,8 +45,8 @@ module Chunks
     #def renderer; @card_params[:renderer] ||= Wagn::Renderer.new(card) end
     def renderer
       r=@card_params[:renderer] or return r
-      r=Wagn::Renderer.new(card)
-      Rails.logger.warn "new renderer #{r}: #{caller*"\n"}"; r
+      Rails.logger.warn "new renderer #{card.inspect}: "; r
+      #r=Wagn::Renderer.new(card)
     end
 
     def to_s

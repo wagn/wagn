@@ -5,10 +5,10 @@ module Chunks
     attr_accessor :reference_name, :name
 
     def reference_name
-      #warn "rercardname #{inspect}, r:#{renderer.inspect} E:#{@ext_link}, #{@name.inspect}"
       return if name.nil?
         
       @reference_name ||= ( renderer.nil? || !ObjectContent===name ? name : renderer.process_content( name ) ).to_name
+      Rails.logger.warn "rercardname #{inspect}, r:#{renderer.class} E:#{@ext_link}, #{@name.inspect} C:#{@reference_name}, #{card.inspect}"
       @reference_name = @reference_name.to_absolute(card.cardname).to_name
     end
 

@@ -71,6 +71,8 @@ module Wagn
       Renderer.current_slot ||= self unless(opts[:not_current])
       @card = card
       opts.each { |key, value| instance_variable_set "@#{key}", value }
+      #raise "opts #{opts.inspect}, #{@format}" if @format == :html
+      #warn "opts #{opts.inspect}, #{@format}"
       @format ||= :html
       @char_count = @depth = 0
       @root = self
@@ -442,7 +444,7 @@ module Wagn
       #if text =~ /#{'\\'+SmartName.joint}$/o && card
       #  text = text.to_name.to_absolute_name(card.name).to_show *@context_names
       #end
-      #warn "card_link #{card.inspect}, #{name.inspect}, #{text.inspect}, #{known.inspect}"
+      Rails.logger.warn "card_link[#{self.class}] #{card.inspect}, #{name.inspect}, #{text.inspect}, #{known.inspect}"
 
       #name+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
       final_link known ? 'known-card' : 'wanted-card', full_uri(
@@ -454,7 +456,7 @@ module Wagn
 
     def full_uri relative_uri
       f=wagn_path relative_uri
-      warn "rel:#{relative_uri} full:#{f}"; f
+      Rails.logger.warn "rel:#{relative_uri} full:#{f}"; f
     end
 
     def format_date date, include_time = true

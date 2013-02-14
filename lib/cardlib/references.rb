@@ -10,22 +10,18 @@ module Cardlib::References
   end
 
   def replace_references old_name, new_name
-    #warn "replace ref t: #{inspect},Cont:#{content}< o:#{old_name}, #{new_name}"
+    #Rails.logger.info "replace ref t: #{inspect},Cont:#{content}< o:#{old_name}, #{new_name}"
     obj_content = ObjectContent.new content, {:card=>self}
     obj_content.find_chunks( Chunks::Reference ).select do |chunk|
 
       if was_name = chunk.reference_name and new_reference_name = was_name.replace_part(old_name, new_name)
         #warn "replace ref test: #{was_name}, #{new_reference_name} oo:#{old_name}, #{new_name}"
 
-        #Chunks::Link===chunk and link_bound = was_name == chunk.link_text
-
-        #warn "replace ref #{was_name} lb:#{chunk.link_text.inspect}, curref:#{chunk.reference_name.inspect}, nfre:#{new_reference_name.inspect}, oo:#{old_name}, #{new_name}"
+        #Rails.logger.info "replace ref #{was_name} lb:#{chunk.link_text.inspect}, curref:#{chunk.reference_name.inspect}, nfre:#{new_reference_name.inspect}, oo:#{old_name}, #{new_name}"
         chunk.reference_name = chunk.replace_reference old_name, new_name
         Card::Reference.where( :referee_key => was_name.key ).update_all :referee_key => new_reference_name.key
 
-        #chunk.link_text=chunk.reference_name.to_s if link_bound
-      else
-Rails.logger.warn "rref? #{was_name} :#{inspect}"
+      else Rails.logger.info "no ref? #{was_name} :#{inspect}"
       end
     end
 
@@ -34,7 +30,7 @@ Rails.logger.warn "rref? #{was_name} :#{inspect}"
 
   def update_references rendered_content = nil, refresh = false
 
-    #Rails.logger.warn "update references...card name: #{inspect}, rr: #{rendered_content}, refresh: #{refresh}"
+    Rails.logger.warn "update references...card name: #{inspect}, rr: #{rendered_content}, refresh: #{refresh}"
     #warn "update references...card name: #{inspect}, rr:#{rendered_content.inspect}, refresh: #{refresh.inspect}"
     raise "update references should not be called on new cards" if id.nil?
 
@@ -48,12 +44,13 @@ Rails.logger.warn "rref? #{was_name} :#{inspect}"
     expire if refresh
 
     rendered_content ||= ObjectContent.new(content, {:card=>self} )
-    #Rails.logger.warn "up references:#{inspect}, rr:#{rendered_content.inspect}, refresh: #{refresh.inspect}"
+  raise "..." if rendered_content =~ /\<Card\//
+    Rails.logger.warn "up references:#{inspect}, rr[#{rendered_content.class}]#{rendered_content.inspect}, refresh: #{refresh.inspect}"
       
     rendered_content.find_chunks(Chunks::Reference).each do |chunk|
     referee_name = chunk.reference_name
     referee_id = chunk.reference_id if referee_name
-      #Rails.logger.warn "chk repl #{referee_name.inspect} #{referee_id.inspect}, #{chunk.reference_id} chin:#{chunk.inspect} in:#{inspect}"
+      Rails.logger.warn "chk repl #{referee_name.inspect} #{referee_id.inspect}, chunk:#{chunk.inspect} selfcard:#{inspect}"
       if referee_name = chunk.reference_name # name is referenced (not true of commented inclusions)
         referee_id = chunk.reference_id   
         if id != referee_id               # not self reference

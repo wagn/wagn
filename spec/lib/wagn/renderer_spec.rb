@@ -184,7 +184,7 @@ describe Wagn::Renderer, "" do
 
 
       it "renders top menu" do
-        warn "sp #{@simple_page}"
+        #warn "sp #{@simple_page}"
         assert_view_select @simple_page, 'div[id="menu"]' do
           assert_select 'a[class="internal-link"][href="/"]', 'Home'
           assert_select 'a[class="internal-link"][href="/recent"]', 'Recent'
@@ -361,6 +361,7 @@ describe Wagn::Renderer, "" do
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
       @card.content = 'Bar'
       result = Wagn::Renderer.new(@card).render :edit
+      #warn "res #{@card.inspect}\n#{result}"
       assert_view_select result, 'fieldset' do
         assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][templated~plus~alpha][content]'
       end

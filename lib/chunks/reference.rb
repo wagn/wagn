@@ -17,9 +17,7 @@ module Chunks
     end
 
     def reference_id
-      rc=reference_card
-      Rails.logger.warn "ref id #{rc.inspect}"
-      rc and rc.id
+      rc=reference_card and rc.id
     end
 
     def replace_name_reference old_name, new_name
@@ -42,7 +40,6 @@ module Chunks
       if @name
         renderer.card_link reference_name, lt, reference_card.send_if(:known?)
       elsif @ext_link
-      raise "???#{@ext_link}:" if @ext_link =~ /^</
         renderer.build_link( @ext_link, lt )
       end
     end

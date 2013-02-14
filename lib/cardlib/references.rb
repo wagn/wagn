@@ -34,8 +34,7 @@ Rails.logger.warn "rref? #{was_name} :#{inspect}"
 
   def update_references rendered_content = nil, refresh = false
 
-  raise "???" if rendered_content =~ /^\+/
-    Rails.logger.warn "update references...card name: #{inspect}, rr: #{rendered_content}, refresh: #{refresh}"
+    #Rails.logger.warn "update references...card name: #{inspect}, rr: #{rendered_content}, refresh: #{refresh}"
     #warn "update references...card name: #{inspect}, rr:#{rendered_content.inspect}, refresh: #{refresh.inspect}"
     raise "update references should not be called on new cards" if id.nil?
 
@@ -49,12 +48,12 @@ Rails.logger.warn "rref? #{was_name} :#{inspect}"
     expire if refresh
 
     rendered_content ||= ObjectContent.new(content, {:card=>self} )
-    Rails.logger.warn "up references:#{inspect}, rr:#{rendered_content.inspect}, refresh: #{refresh.inspect}"
+    #Rails.logger.warn "up references:#{inspect}, rr:#{rendered_content.inspect}, refresh: #{refresh.inspect}"
       
     rendered_content.find_chunks(Chunks::Reference).each do |chunk|
     referee_name = chunk.reference_name
     referee_id = chunk.reference_id if referee_name
-      Rails.logger.warn "chk repl #{referee_name.inspect} #{referee_id.inspect}, #{chunk.reference_id} chin:#{chunk.inspect} in:#{inspect}"
+      #Rails.logger.warn "chk repl #{referee_name.inspect} #{referee_id.inspect}, #{chunk.reference_id} chin:#{chunk.inspect} in:#{inspect}"
       if referee_name = chunk.reference_name # name is referenced (not true of commented inclusions)
         referee_id = chunk.reference_id   
         if id != referee_id               # not self reference
@@ -96,7 +95,7 @@ Rails.logger.warn "rref? #{was_name} :#{inspect}"
 
   def includees
     return [] unless refs = out_includes
-    Rails.logger.warn "refs #{refs.inspect}"
+    #Rails.logger.warn "refs #{refs.inspect}"
     refs.map { |ref| Card.fetch ref.referee_key, :new=>{} }.compact
   end
 

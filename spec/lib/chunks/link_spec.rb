@@ -58,7 +58,7 @@ describe Chunks::Link, "link chunk tests" do
   
   it "should handle inclusions as link text" do
     c = Card.new :content=>'[[linkies|{{namies|name}}]]'
-    warn "card #{c.inspect}"
+    #warn "card #{c.inspect}"
     assert_equal '<a class="wanted-card" href="/linkies">namies</a>', render_test_card(c)
   end
 

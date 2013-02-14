@@ -16,7 +16,7 @@ class ObjectContent < SimpleDelegator
     @card_options = card_options
     @card_options[:card] or raise "No Card in Content!!"
     content = ObjectContent.split_content(card_options, content) unless Array===content
-    Rails.logger.warn "oc new[#{card_options}] #{content.class}, #{content.inspect} #{caller[0..10]*', '}"
+    #Rails.logger.warn "oc new[#{card_options}] #{content.class}, #{content.inspect} #{caller[0..10]*', '}"
     super content
   end
 

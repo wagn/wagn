@@ -61,12 +61,14 @@ module LocationHelper
     wagn_path "/#{title.to_name.url_key}#{format}#{vars}"
   end
 
-  def wagn_path( rel ) #should be in smartname?
+  def wagn_path rel #should be in smartname?
     rel_path = Card===rel ? rel.cardname.url_key : rel
+    warn "wagn_path #{rel.inspect}, #{rel_path}, [#{Wagn::Conf[:root_path]}, #{Wagn::Conf[:base_uri]}]"
     Wagn::Conf[:root_path].to_s + ( rel_path =~ /^\// ? '' : '/' ) + rel_path
   end
 
   def wagn_url rel #should be in smartname?
+    warn "wagn_url #{rel}, [#{Wagn::Conf[:base_url]}]"
     rel =~ /^http\:/ ? rel : "#{Wagn::Conf[:base_url]}#{wagn_path(rel)}"
   end
 

@@ -13,7 +13,7 @@ module Chunks
 
     def self.config() WIKI_CONFIG end
 
-    attr_accessor :link_text, :ext_link
+    attr_reader :link_text, :ext_link
 
     def initialize match, card_params, params
       super
@@ -52,7 +52,14 @@ module Chunks
           @name, @link_text = nm.split(/\s*\|\s*/, 2)
           Rails.logger.warn "nlink #{@name}, #{@link_text}, #{@name.class}, #{nm}"
         end
-
+        if !renderer.nil?
+          objs = []
+          ObjectContent===@link_text and objs << @link_text
+          ObjectContent===@name      and objs << @name
+          ObjectContent===@ext_link  and objs << @ext_link
+          objs.each {|o| o.find_chunks(Chunks::Include) { |c| c.process_chunk } }
+          @text = link_text_string
+        end
       else # legacy [][] form
         if params[4] =~ /[\/:]/
           @link_text, @ext_link = params[3], params[4]
@@ -60,8 +67,12 @@ module Chunks
           @link_text, @name = params[3], params[4]
         end
       end
-      #warn "init link #{match} .. #{params.inspect} chk #{inspect} lclass:#{@link_text.class}, ltext:#{@link_text}, text:#{@text}, ext:#{@ext_link} n:#{@name}"
+      Rails.logger.warn "init link #{match} .. #{params.inspect} chk #{inspect} lclass:#{@link_text.class}, ltext:#{@link_text}, text:#{@text}, ext:#{@ext_link} n:#{@name}"
       self
+    end
+
+    def link_text_string
+      link_text.nil? ? "[[#{reference_name.to_s}]]" : "[[#{reference_name.to_s}|#{link_text}]]"
     end
 
     def process_chunk
@@ -79,9 +90,9 @@ module Chunks
       if ObjectContent===lt
         lt.find_chunks(Chunks::Reference).each { |chunk| chunk.replace_reference old_name, new_name }
       else
-        self.link_text = new_name if old_name.to_name == lt
+        @link_text = new_name if old_name.to_name == lt
       end
-      @text = link_text.nil? ? "[[#{reference_name.to_s}]]" : "[[#{reference_name.to_s}|#{self.link_text}]]"
+      @text = link_text_string
     end
   end
 end

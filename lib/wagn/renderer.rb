@@ -444,7 +444,7 @@ module Wagn
       #if text =~ /#{'\\'+SmartName.joint}$/o && card
       #  text = text.to_name.to_absolute_name(card.name).to_show *@context_names
       #end
-      Rails.logger.warn "card_link[#{self.class}] #{card.inspect}, #{name.inspect}, #{text.inspect}, #{known.inspect}"
+      warn "card_link[#{self.class}] #{card.inspect}, #{name.inspect}, #{text.inspect}, #{known.inspect}"
 
       #name+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
       final_link known ? 'known-card' : 'wanted-card', full_uri(

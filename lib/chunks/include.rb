@@ -54,6 +54,10 @@ module Chunks
       end
     end
 
+    def inspect
+      "<##{self.class}:n[#{@name}] p[#{@process_chunk}] txt:#{@text}>"
+    end
+
     def process_chunk
       return @process_chunk if @process_chunk
 

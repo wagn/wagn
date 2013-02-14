@@ -412,7 +412,7 @@ module Wagn
       href = href.to_s
       text = href if text.nil?
 
-      #Rails.logger.info "~~~~~~~~~~~~~~~ bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}"
+      #warn "~~~~~~~~~~~~~~~ bl #{href.inspect}, #{text.inspect}, #{caller*"\n"}"
       klass = case href
         when /^https?:/                      ; 'external-link'
         when /^mailto:/                      ; 'email-link'
@@ -420,7 +420,7 @@ module Wagn
         when /^\//
           href = full_uri href.to_s          ; 'internal-link'
         else                                 
- raise "???"
+          #warn "card link #{href}, #{text}"
           return card_link href, text, nil
         end
       %{<a class="#{klass}" href="#{href}">#{text.to_s}</a>}

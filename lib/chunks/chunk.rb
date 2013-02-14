@@ -41,15 +41,22 @@ module Chunks
       #warn "base initialize ch #{@card_params.inspect}, #{inspect}"
       self
     end
-    def renderer()           @card_params[:renderer] end
-    def card()               @card_params[:card]     end
+    def card    ; @card_params[:card]                                  end
+    #def renderer; @card_params[:renderer] ||= Wagn::Renderer.new(card) end
+    def renderer
+      r=@card_params[:renderer] or return r
+      r=Wagn::Renderer.new(card)
+      Rails.logger.warn "new renderer #{r}: #{caller*"\n"}"; r
+    end
 
     def to_s
+      #warn "c to_s #{@processed_chunk}, #{@processed}, #{@text}"
       @process_chunk || @processed|| @text
     end
 
     def inspect
       "<##{self.class}##{to_s}>"
+      #"<##{self.class}##{caller[0..4]*', '}#{to_s}>"
     end
 
     def as_json(options={})

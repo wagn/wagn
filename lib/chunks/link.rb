@@ -18,6 +18,7 @@ module Chunks
     def initialize match, card_params, params
       super
       if nm=params[2]
+        nm = nm.strip
         @link_text = nil
         if nm =~ /(^|[^\\]){{/
           #warn "chunks? #{nm}"
@@ -26,22 +27,29 @@ module Chunks
           nm.find do |chk|
             pidx += 1
             if String===chk && chk.index('|')
-              bef, aft = chk.split('|', 2)
-              @link_text = nm.length > pidx ? nm[pidx-1..-1] : nil
+              bef, aft = chk.split(/\s*\|\s*/, 2)
+              @link_text = nm.length > pidx ? nm[pidx..-1] : nil
               #warn "p1 #{nm.map(&:inspect)*', '}, l:#{nm.length}, pi:#{pidx}, [#{bef}::#{aft}] lt:#{@link_text.inspect}"
               if @link_text.nil?
                 @link_text = aft unless aft.blank?
               elsif !aft.blank?
-                @link_text = [aft] + @link_text
+                @link_text = ObjectContent.new([aft] + @link_text, @card_params)
               end
-              @name = pidx == 1 ? bef : ( bef.blank? ? nm[0..pidx-2] : (nm[0..pidx-2] << bef) )
+              obj = pidx == 1 ? bef : ObjectContent.new( bef.blank? ? nm[0..pidx-2] : (nm[0..pidx-2] << bef), @card_params )
+              if obj.first =~ %r{/}
+                 @name = nil
+                 @ext_link = obj
+              else
+                 @name = obj
+              end
               #warn "pipe? #{nm.map(&:inspect)*', '}, #{nm.length}, #{pidx}, [#{bef}::#{aft}] lt:#{@link_text.inspect}, n:#{@name.inspect}"; @name
             end
           end
         elsif nm =~ %r{/}
-          @ext_link, @link_text = nm.split('|', 2)
+          @ext_link, @link_text = nm.split(/\s*\|\s*/, 2)
+          #warn "elink #{@ext_link}, #{@link_text}, #{@ext_link.class}, #{nm}"
         else
-          @name, @link_text = nm.split('|', 2)
+          @name, @link_text = nm.split(/\s*\|\s*/, 2)
         end
 
       else # legacy [][] form
@@ -57,6 +65,10 @@ module Chunks
 
     def process_chunk
       @process_chunk ||= render_link
+    end
+
+    def inspect
+      "<##{self.class}:e[#{@ext_link}]n[#{@name}]l[#{@link_text}] p[#{@process_chunk}] txt:#{@text}>"
     end
 
     def replace_reference old_name, new_name

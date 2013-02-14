@@ -16,6 +16,10 @@ describe Wagn::Renderer, "" do
       render_content("[[A]]").should=="<a class=\"known-card\" href=\"/A\">A</a>"
     end
 
+    it "should handle dot (.) in missing cardlink" do
+      render_content("[[Wagn 1.10.12]]").should=='<a class="wanted-card" href="/Wagn%201%2E10%2E12">Wagn 1.10.12</a>'
+    end
+
     it "should allow for inclusion in links as in Cardtype" do
        c= Account.as_bot { Card.create! :name=>"TestType", :type=>'Cardtype', :content=>' [[/new/{{_self|linkname}}|add {{_self|name}} card]]' }
        Wagn::Renderer.new(c).render_content.should == ''
@@ -180,6 +184,7 @@ describe Wagn::Renderer, "" do
 
 
       it "renders top menu" do
+        warn "sp #{@simple_page}"
         assert_view_select @simple_page, 'div[id="menu"]' do
           assert_select 'a[class="internal-link"][href="/"]', 'Home'
           assert_select 'a[class="internal-link"][href="/recent"]', 'Recent'

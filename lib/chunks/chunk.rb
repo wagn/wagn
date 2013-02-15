@@ -41,6 +41,7 @@ module Chunks
       #warn "base initialize ch #{@card_params.inspect}, #{inspect}"
       self
     end
+    
     def card    ; @card_params[:card]                                  end
     #def renderer; @card_params[:renderer] ||= Wagn::Renderer.new(card) end
     def renderer

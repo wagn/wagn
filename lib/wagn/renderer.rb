@@ -443,6 +443,7 @@ module Wagn
     end
  
     def card_link name, text, known
+      text ||= name
       opts = {
         :class => ( known ? 'known-card' : 'wanted-card' ),
         :text  => ( text.to_name.to_show @context_names  )

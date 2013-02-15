@@ -61,7 +61,7 @@ module Chunks
     def process_chunk
       return @process_chunk if @process_chunk
 
-      reference_name
+      referee_name
       if view = @options[:view]
         view = view.to_sym
       end

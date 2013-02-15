@@ -13,66 +13,77 @@ module Chunks
 
     def self.config() WIKI_CONFIG end
 
-    attr_reader :link_text, :ext_link
+    attr_reader :link_text, :explicit_link
+
 
     def initialize match, card_params, params
       super
-      if nm=params[2]
-        nm = nm.strip
-        @link_text = nil
-        if nm =~ /(^|[^\\]){{/
-          Rails.logger.warn "chunks? #{nm}"
-          @name = nm = ObjectContent.new(nm, @card_params)
-          pidx = 0
-          nm.find do |chk|
-            pidx += 1
-            if String===chk && chk.index('|')
-              bef, aft = chk.split(/\s*\|\s*/, 2)
-              @link_text = nm.length > pidx ? nm[pidx..-1] : nil
-              #warn "p1 #{nm.map(&:inspect)*', '}, l:#{nm.length}, pi:#{pidx}, [#{bef}::#{aft}] lt:#{@link_text.inspect}"
-              if @link_text.nil?
-                @link_text = aft unless aft.blank?
-              elsif !aft.blank?
-                @link_text = ObjectContent.new([aft] + @link_text, @card_params)
-              end
-              obj = pidx == 1 ? bef : ObjectContent.new( bef.blank? ? nm[0..pidx-2] : (nm[0..pidx-2] << bef), @card_params )
-              if obj.first =~ %r{/}
-                 @name = nil
-                 @ext_link = obj
-              else
-                 @name = obj
-              end
-              #warn "pipe? #{nm.map(&:inspect)*', '}, #{nm.length}, #{pidx}, [#{bef}::#{aft}] lt:#{@link_text.inspect}, n:#{@name.inspect}"; @name
-            end
-          end
-        elsif nm =~ %r{/}
-          @ext_link, @link_text = nm.split(/\s*\|\s*/, 2)
-          Rails.logger.warn "elink #{@ext_link}, #{@link_text}, #{@ext_link.class}, #{nm}"
+      target, @link_text = if params[2] # standard [[ ]] syntax
+        raw_syntax = params[2]
+        if i = divider_index( raw_syntax )
+          [ raw_syntax[0..(i-1)], raw_syntax[(i+1)..-1] ]
         else
-          @name, @link_text = nm.split(/\s*\|\s*/, 2)
-          Rails.logger.warn "nlink #{@name}, #{@link_text}, #{@name.class}, #{nm}"
+          [ raw_syntax, nil ]
         end
-        if !renderer.nil?
-          objs = []
-          ObjectContent===@link_text and objs << @link_text
-          ObjectContent===@name      and objs << @name
-          ObjectContent===@ext_link  and objs << @ext_link
-          objs.each {|o| o.find_chunks(Chunks::Include) { |c| c.process_chunk } }
-          @text = link_text_string
-        end
-      else # legacy [][] form
-        if params[4] =~ /[\/:]/
-          @link_text, @ext_link = params[3], params[4]
-        else
-          @link_text, @name = params[3], params[4]
-        end
+      else                              # deprecated [][] syntax
+        [ params[4], params[3] ]
       end
-      Rails.logger.warn "init link #{match} .. #{params.inspect} chk #{inspect} lclass:#{@link_text.class}, ltext:#{@link_text}, text:#{@text}, ext:#{@ext_link} n:#{@name}"
+      
+      @link_text = objectify @link_text
+      if target =~ /[\/:]/
+        @explicit_link = objectify target
+      else
+        @name = target
+      end  
+      
       self
     end
 
+    def divider_index string
+      #there's probably a better way to do the following.  point is to find the first pipe that's not inside an inclusion
+      
+      if string.index '|'
+        string_copy = "#{string}" # had to do this to create new string?!
+        string.scan /\{\{[^\}]*\}\}/ do |incl|
+          string_copy.gsub! incl, ('x'*incl.length)
+        end
+        string_copy.index '|'
+      end
+    end
+
+    def objectify raw
+      if raw
+        raw.strip!
+        if raw =~ /(^|[^\\]){{/
+          ObjectContent.new raw, @card_params
+        else
+          raw
+        end
+      end
+    end
+
+
+    def render_link
+      @link_text = render_obj @link_text
+      
+      if @explicit_link
+        @explicit_link = render_obj @explicit_link
+        renderer.build_link @explicit_link, @link_text
+      elsif @name
+        renderer.card_link referee_name, @link_text, referee_card.send_if(:known?)
+      end
+    end
+    
+    def render_obj raw
+      if ObjectContent===raw
+        renderer.process_content raw
+      else
+        raw
+      end
+    end
+
     def link_text_string
-      link_text.nil? ? "[[#{reference_name.to_s}]]" : "[[#{reference_name.to_s}|#{link_text}]]"
+      link_text.nil? ? "[[#{referee_name.to_s}]]" : "[[#{referee_name.to_s}|#{link_text}]]"
     end
 
     def process_chunk
@@ -80,7 +91,7 @@ module Chunks
     end
 
     def inspect
-      "<##{self.class}:e[#{@ext_link}]n[#{@name}]l[#{@link_text}] p[#{@process_chunk}] txt:#{@text}>"
+      "<##{self.class}:e[#{@explicit_link}]n[#{@name}]l[#{@link_text}] p[#{@process_chunk}] txt:#{@text}>"
     end
 
     def replace_reference old_name, new_name

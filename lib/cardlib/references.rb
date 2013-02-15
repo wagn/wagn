@@ -14,12 +14,12 @@ module Cardlib::References
     obj_content = ObjectContent.new content, {:card=>self}
     obj_content.find_chunks( Chunks::Reference ).select do |chunk|
 
-      if was_name = chunk.reference_name and new_reference_name = was_name.replace_part(old_name, new_name)
-        #warn "replace ref test: #{was_name}, #{new_reference_name} oo:#{old_name}, #{new_name}"
+      if was_name = chunk.referee_name and new_referee_name = was_name.replace_part(old_name, new_name)
+        #warn "replace ref test: #{was_name}, #{new_referee_name} oo:#{old_name}, #{new_name}"
 
-        #Rails.logger.info "replace ref #{was_name} lb:#{chunk.link_text.inspect}, curref:#{chunk.reference_name.inspect}, nfre:#{new_reference_name.inspect}, oo:#{old_name}, #{new_name}"
-        chunk.reference_name = chunk.replace_reference old_name, new_name
-        Card::Reference.where( :referee_key => was_name.key ).update_all :referee_key => new_reference_name.key
+        #Rails.logger.info "replace ref #{was_name} lb:#{chunk.link_text.inspect}, curref:#{chunk.referee_name.inspect}, nfre:#{new_referee_name.inspect}, oo:#{old_name}, #{new_name}"
+        chunk.referee_name = chunk.replace_reference old_name, new_name
+        Card::Reference.where( :referee_key => was_name.key ).update_all :referee_key => new_referee_name.key
 
       else Rails.logger.info "no ref? #{was_name} :#{inspect}"
       end
@@ -48,11 +48,11 @@ module Cardlib::References
     Rails.logger.warn "up references:#{inspect}, rr[#{rendered_content.class}]#{rendered_content.inspect}, refresh: #{refresh.inspect}"
       
     rendered_content.find_chunks(Chunks::Reference).each do |chunk|
-    referee_name = chunk.reference_name
-    referee_id = chunk.reference_id if referee_name
+    referee_name = chunk.referee_name
+    referee_id = chunk.referee_id if referee_name
       Rails.logger.warn "chk repl #{referee_name.inspect} #{referee_id.inspect}, chunk:#{chunk.inspect} selfcard:#{inspect}"
-      if referee_name = chunk.reference_name # name is referenced (not true of commented inclusions)
-        referee_id = chunk.reference_id   
+      if referee_name = chunk.referee_name # name is referenced (not true of commented inclusions)
+        referee_id = chunk.referee_id   
         if id != referee_id               # not self reference
           
           update_references chunk.link_text if ObjectContent === chunk.link_text
@@ -62,7 +62,7 @@ module Cardlib::References
             :referee_id  => referee_id,
             :referee_key => referee_name.key,
             :ref_type    => Chunks::Link===chunk      ? 'L' : 'I',
-            :present     => chunk.reference_card.nil? ?  0  :  1
+            :present     => chunk.referee_card.nil? ?  0  :  1
           )
         end
       end

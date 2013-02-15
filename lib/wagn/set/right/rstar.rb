@@ -10,7 +10,7 @@ include Sets
       cells = [
         ["rule-setting",
           link_to( card.cardname.tag.sub(/^\*/,''), path(:view=>:open_rule),
-            :class => 'edit-rule-link slotter', :remote => true )
+            :class => 'edit-rule-link slotter', :remote => true, :rel=>'nofollow' )
         ],
         ["rule-content",
           %{<div class="rule-content-container">
@@ -104,7 +104,7 @@ include Sets
           <div class="rule-column-1">
             <div class="rule-setting">
               #{ link_to( setting_name.sub(/^\*/,''), path(:card=>open_rule, :view=>:closed_rule),
-                  :remote => true, :class => 'close-rule-link slotter') }
+                  :remote => true, :class => 'close-rule-link slotter', :rel => 'nofollow' ) }
             </div>
             <ul class="set-editor">
         } +

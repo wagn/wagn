@@ -102,7 +102,7 @@ module Wagn
                 "<li>#{ link_to_page raw("#{piece} &crarr;"), piece }</li>"
               end.join "\n"
             }
-              <li>#{ link_to_view 'refresh', :read }
+              <li>#{ link_to_view 'refresh', :read, :class=>'slotter' }
                 <ul>
                   #{ 
                     %w{ titled open closed content }.map do |view|

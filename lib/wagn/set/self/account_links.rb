@@ -9,7 +9,7 @@ module Wagn
       prefix = Wagn::Conf[:root_path] + '/account'
       %{<span id="logging">#{
         if Account.logged_in?
-          ucard = Account.user_card
+          ucard = Account.current
           %{
             #{ link_to ucard.name, "#{Wagn::Conf[:root_path]}/#{ucard.cardname.url_key}", :id=>'my-card-link' }
             #{ if Card[:account].ok? :create

@@ -21,8 +21,12 @@ describe Wagn::Renderer, "" do
     end
 
     it "should allow for inclusion in links as in Cardtype" do
-       c= Account.as_bot { Card.create! :name=>"TestType", :type=>'Cardtype', :content=>' [[/new/{{_self|linkname}}|add {{_self|name}} card]]' }
-       Wagn::Renderer.new(c).render_core.should == ''
+       Account.as_bot do
+         Card.create! :name=>"TestType", :type=>'Cardtype', :content=>'[[/new/{{_self|linkname}}|add {{_self|name}} card]]'
+         Card.create! :name=>'TestType+*self+*content', :content=>'_self' #otherwise content overwritten by *content rule
+         Wagn::Renderer.new(Card['TestType']).render_core.should == '<a class="internal-link" href="/new/TestType">add TestType card</a>'
+         
+       end
     end
 
     it "invisible comment inclusions as blank" do

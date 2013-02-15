@@ -62,8 +62,7 @@ module LocationHelper
   end
 
   def wagn_path rel #should be in smartname?
-    rel_path = Card===rel ? rel.cardname.url_key : rel
-    Rails.logger.warn "wagn_path #{rel.inspect}, #{rel_path}, [#{Wagn::Conf[:root_path]}, #{Wagn::Conf[:base_url]}]"
+    rel_path = Card===rel ? rel.cardname.url_key : rel.to_s
     Wagn::Conf[:root_path].to_s + ( rel_path =~ /^\// ? '' : '/' ) + rel_path
   end
 

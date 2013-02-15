@@ -420,32 +420,35 @@ module Wagn
     #end
 
     # and move this to the html renderer
-    def final_link klass, href, text=nil
-      %{<a class="#{klass}" href="#{href}">#{text ? text.to_s : href}</a>}
+    def final_link href, opts={}
+      text = opts[:text] || href
+      %{<a class="#{opts[:class]}" href="#{href}">#{text}</a>}
     end
 
     def build_link href, text=nil
-      href = href.to_s
+      opts = {:text => text }
 
-      #warn "~~~~~~~~~~~~~~~ bl #{href.inspect}, #{text.inspect}, #{caller*"\n"}"
-      final_link( ( case href
-            when /^https?:/                      ; 'external-link'
-            when /^mailto:/                      ; 'email-link'
-            when /^([a-zA-Z][\-+.a-zA-Z\d]*):/   ; $1 + '-link'
-            when /^\//
-              href = full_uri href.to_s          ; 'internal-link'
-            else                                 
-              raise "card link #{href}, #{text}"
-              return card_link href, text, nil
-          end ), href, text )
+      opts[:class] = case href.to_s
+        when /^https?:/                      ; 'external-link'
+        when /^mailto:/                      ; 'email-link'
+        when /^([a-zA-Z][\-+.a-zA-Z\d]*):/   ; $1 + '-link'
+        when /^\//
+          href = internal_url href           ; 'internal-link'
+        else                                 
+          raise "build_link mistakenly(?) called on #{href}, #{text}"
+          #return card_link href, text, nil
+        end
+          
+      final_link href, opts
     end
  
     def card_link name, text, known
-      klass = known ? 'known-card' : 'wanted-card'
-      name = name.to_name
-      text = text.to_name.to_show @context_names
-      path = known ? name.url_key : encode_path(name)
-      final_link klass, full_uri(path), text 
+      opts = {
+        :class => ( known ? 'known-card' : 'wanted-card' ),
+        :text  => ( text.to_name.to_show @context_names  )
+      }
+      relative_path = known ? name.to_name.url_key : encode_path(name)
+      final_link internal_url( relative_path ), opts
     end
     
     def encode_path path
@@ -454,9 +457,8 @@ module Wagn
 
     def unique_id() "#{card.key}-#{Time.now.to_i}-#{rand(3)}" end
 
-    def full_uri relative_uri
-      f=wagn_path relative_uri
-      Rails.logger.warn "rel:#{relative_uri} full:#{f}"; f
+    def internal_url relative_path
+      wagn_path relative_path
     end
 
     def format_date date, include_time = true

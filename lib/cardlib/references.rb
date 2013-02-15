@@ -29,9 +29,6 @@ module Cardlib::References
   end
 
   def update_references rendered_content = nil, refresh = false
-
-    Rails.logger.warn "update references...card name: #{inspect}, rr: #{rendered_content}, refresh: #{refresh}"
-    #warn "update references...card name: #{inspect}, rr:#{rendered_content.inspect}, refresh: #{refresh.inspect}"
     raise "update references should not be called on new cards" if id.nil?
 
     Card::Reference.delete_all_from self
@@ -44,18 +41,13 @@ module Cardlib::References
     expire if refresh
 
     rendered_content ||= ObjectContent.new(content, {:card=>self} )
-  raise "..." if rendered_content =~ /\<Card\//
-    Rails.logger.warn "up references:#{inspect}, rr[#{rendered_content.class}]#{rendered_content.inspect}, refresh: #{refresh.inspect}"
       
     rendered_content.find_chunks(Chunks::Reference).each do |chunk|
-    referee_name = chunk.referee_name
-    referee_id = chunk.referee_id if referee_name
-      Rails.logger.warn "chk repl #{referee_name.inspect} #{referee_id.inspect}, chunk:#{chunk.inspect} selfcard:#{inspect}"
       if referee_name = chunk.referee_name # name is referenced (not true of commented inclusions)
         referee_id = chunk.referee_id   
         if id != referee_id               # not self reference
           
-          update_references chunk.link_text if ObjectContent === chunk.link_text
+          #update_references chunk.referee_name if ObjectContent === chunk.referee_name
           
           Card::Reference.create!(
             :referer_id  => id,
@@ -92,7 +84,6 @@ module Cardlib::References
 
   def includees
     return [] unless refs = out_includes
-    #Rails.logger.warn "refs #{refs.inspect}"
     refs.map { |ref| Card.fetch ref.referee_key, :new=>{} }.compact
   end
 

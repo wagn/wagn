@@ -7,7 +7,7 @@ module Chunks
     def referee_name
       return if name.nil?
         
-      @referee_name ||= ( renderer.nil? || !ObjectContent===name ? name : renderer.process_content( name ) ).to_name
+      @referee_name ||= ( render_obj name ).to_name
       @referee_name = @referee_name.to_absolute(card.cardname).to_name
     end
 
@@ -28,9 +28,14 @@ module Chunks
         @name = name.to_name.replace_part( old_name, new_name )
       end
     end
-
-    def link_text
-      referee_name.to_s
+    
+    def render_obj raw
+      if renderer && ObjectContent===raw
+        renderer.card.references_expired = nil
+        renderer.process_content raw
+      else
+        raw
+      end
     end
   end
 end

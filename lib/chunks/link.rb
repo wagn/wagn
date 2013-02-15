@@ -18,14 +18,14 @@ module Chunks
 
     def initialize match, card_params, params
       super
-      target, @link_text = if params[2] # standard [[ ]] syntax
+      target, @link_text = if params[2]     # standard [[ ]] syntax
         raw_syntax = params[2]
-        if i = divider_index( raw_syntax )
+        if i = divider_index( raw_syntax )  # [[ A | B ]]
           [ raw_syntax[0..(i-1)], raw_syntax[(i+1)..-1] ]
-        else
+        else                                # [[ A ]]
           [ raw_syntax, nil ]
         end
-      else                              # deprecated [][] syntax
+      else                                  # deprecated [ B ][ A ] syntax
         [ params[4], params[3] ]
       end
       
@@ -74,13 +74,7 @@ module Chunks
       end
     end
     
-    def render_obj raw
-      if ObjectContent===raw
-        renderer.process_content raw
-      else
-        raw
-      end
-    end
+
 
     def link_text_string
       link_text.nil? ? "[[#{referee_name.to_s}]]" : "[[#{referee_name.to_s}|#{link_text}]]"

@@ -45,7 +45,7 @@ module Wagn
     end
   
     define_view :title do |args|
-      t = content_tag :h1, fancy_title, :class=>'card-title', :name_context=>"#{ @context_names.map(&:key)*',' }"
+      t = content_tag :h1, fancy_title, :class=>'card-title'
       add_name_context
       t
     end
@@ -318,7 +318,7 @@ module Wagn
         else
           type_field :class=>"type-field live-type-field", :href=>path(:view=>:new), 'data-remote'=>true
         end
-      end)
+      end), :attribs=> { :class=>'type-fieldset'}
     end
 
     define_view :edit_type, :perms=>:update do |args|
@@ -349,7 +349,7 @@ module Wagn
     define_view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
       eform = form_for_multi
       content = content_field eform, :nested=>true
-      attribs = %{ class="card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" }
+      attribs = { :class=> "card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" }
       link_target, help_settings = if card.new_card?
         content += raw( "\n #{ eform.hidden_field :type_id }" )
         [ card.cardname.tag, [:add_help, { :fallback => :edit_help } ] ]

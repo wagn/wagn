@@ -2,7 +2,7 @@ require_dependency 'chunks/chunk'
 
 module Chunks
   class Include < Reference
-    attr_reader :stars, :options
+    attr_reader :options
     unless defined? INCLUDE_CONFIG
       #  {{+name|attr:val;attr:val;attr:val}}
       #  Groups: $1, everything (less {{}}), $2 name, $3 options

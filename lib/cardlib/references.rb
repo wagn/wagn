@@ -10,18 +10,12 @@ module Cardlib::References
   end
 
   def replace_references old_name, new_name
-    #Rails.logger.info "replace ref t: #{inspect},Cont:#{content}< o:#{old_name}, #{new_name}"
     obj_content = ObjectContent.new content, {:card=>self}
+    
     obj_content.find_chunks( Chunks::Reference ).select do |chunk|
-
-      if was_name = chunk.referee_name and new_referee_name = was_name.replace_part(old_name, new_name)
-        #warn "replace ref test: #{was_name}, #{new_referee_name} oo:#{old_name}, #{new_name}"
-
-        #Rails.logger.info "replace ref #{was_name} lb:#{chunk.link_text.inspect}, curref:#{chunk.referee_name.inspect}, nfre:#{new_referee_name.inspect}, oo:#{old_name}, #{new_name}"
+      if old_ref_name = chunk.referee_name and new_ref_name = old_ref_name.replace_part(old_name, new_name)
         chunk.referee_name = chunk.replace_reference old_name, new_name
-        Card::Reference.where( :referee_key => was_name.key ).update_all :referee_key => new_referee_name.key
-
-      else Rails.logger.info "no ref? #{was_name} :#{inspect}"
+        Card::Reference.where( :referee_key => old_ref_name.key ).update_all :referee_key => new_ref_name.key
       end
     end
 
@@ -38,6 +32,7 @@ module Cardlib::References
     #  or just this and save it elsewhere?
     #references_expired=nil
     connection.execute("update cards set references_expired=NULL where id=#{id}")
+  #  references_expired = nil
     expire if refresh
 
     rendered_content ||= ObjectContent.new(content, {:card=>self} )
@@ -48,12 +43,13 @@ module Cardlib::References
         if id != referee_id               # not self reference
           
           #update_references chunk.referee_name if ObjectContent === chunk.referee_name
+          # for the above to work we will need to get past delete_all!
           
           Card::Reference.create!(
             :referer_id  => id,
             :referee_id  => referee_id,
             :referee_key => referee_name.key,
-            :ref_type    => Chunks::Link===chunk      ? 'L' : 'I',
+            :ref_type    => Chunks::Link===chunk    ? 'L' : 'I',
             :present     => chunk.referee_card.nil? ?  0  :  1
           )
         end

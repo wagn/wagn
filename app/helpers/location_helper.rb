@@ -67,7 +67,6 @@ module LocationHelper
   end
 
   def wagn_url rel #should be in smartname?
-    Rails.logger.warn "wagn_url #{rel}, [#{Wagn::Conf[:base_url]}]"
     rel =~ /^http\:/ ? rel : "#{Wagn::Conf[:base_url]}#{wagn_path(rel)}"
   end
 

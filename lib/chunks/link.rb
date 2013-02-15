@@ -13,9 +13,6 @@ module Chunks
 
     def self.config() WIKI_CONFIG end
 
-    attr_reader :link_text, :explicit_link
-
-
     def initialize match, card_params, params
       super
       target, @link_text = if params[2]     # standard [[ ]] syntax
@@ -73,12 +70,6 @@ module Chunks
         renderer.card_link referee_name, @link_text, referee_card.send_if(:known?)
       end
     end
-    
-
-
-    def link_text_string
-      link_text.nil? ? "[[#{referee_name.to_s}]]" : "[[#{referee_name.to_s}|#{link_text}]]"
-    end
 
     def process_chunk
       @process_chunk ||= render_link
@@ -91,13 +82,13 @@ module Chunks
     def replace_reference old_name, new_name
       replace_name_reference old_name, new_name
 
-      lt = link_text
-      if ObjectContent===lt
-        lt.find_chunks(Chunks::Reference).each { |chunk| chunk.replace_reference old_name, new_name }
+      if ObjectContent===@link_text
+        @link_text.find_chunks(Chunks::Reference).each { |chunk| chunk.replace_reference old_name, new_name }
       else
-        @link_text = new_name if old_name.to_name == lt
+        @link_text = new_name if old_name.to_name == @link_text
       end
-      @text = link_text_string
+      
+      @text = @link_text.nil? ? "[[#{referee_name.to_s}]]" : "[[#{referee_name.to_s}|#{@link_text}]]"
     end
   end
 end

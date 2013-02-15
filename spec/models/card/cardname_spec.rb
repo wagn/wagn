@@ -174,7 +174,7 @@ describe "renaming" do
   it "test_junction_to_simple" do
     assert_rename card("A+B"), "K"
   end
-
+  
   it "test_reference_updates_plus_to_simple" do
      c1, c2 = Card['Blue'], Card["chuck_wagn+chuck"]
      c1.content = "[[chuck wagn+chuck]]"

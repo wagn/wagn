@@ -1,7 +1,7 @@
 module Wagn::Version
     Major = '1'
     Minor = '10'
-    Tiny  = '7'
+    Tiny  = '8'
     Eensie = nil
 
     class << self

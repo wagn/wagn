@@ -30,12 +30,12 @@ module Wagn
     end
 
     define_view :open_content do |args|
-      pre_render = _render_core(args) { yield args }
+      pre_render = _render_core(args) #{ yield args }
       card ? card.post_render(pre_render) : pre_render
     end
 
     define_view :closed_content do |args|
-      truncatewords_with_closing_tags _render_core(args) { yield }
+      truncatewords_with_closing_tags _render_core(args) #{ yield }
     end
 
 ###----------------( SPECIAL )
@@ -45,7 +45,7 @@ module Wagn
           subrenderer(item_card)._render_core
         end
       else
-        [ _render_core(args) { yield } ]
+        [ _render_core(args) ]#{ yield } ]
       end.inspect
     end
 

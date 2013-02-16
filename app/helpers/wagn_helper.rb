@@ -35,7 +35,7 @@ module WagnHelper
     wordlist = input.to_s.split
     l = words.to_i - 1
     l = 0 if l < 0
-    wordstring = wordlist.length > l ? wordlist[0..l].join(" ") : input
+    wordstring = wordlist.length > l ? wordlist[0..l].join(" ") : input.to_s
     # nuke partial tags at end of snippet
     wordstring.gsub!(/(<[^\>]+)$/,'')
 

@@ -13,7 +13,7 @@ class AccountController < CardController
     raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?
     
     card_params = ( params[:card] || {} ).symbolize_keys.merge :type_id=>Card::AccountRequestID
-    user_params = ( params[:account] || {} ).symbolize_keys.merge :status=>'pending'
+    account_params = ( params[:account] || {} ).symbolize_keys.merge :status=>'pending'
     
     @card = Card.new card_params
     #FIXME - don't raise; handle it!
@@ -120,7 +120,7 @@ class AccountController < CardController
 
   protected
 
-  def user_errors
+  def account_errors
     @account.errors.each do |field, err|
       @card.errors.add field, err unless @card.errors[field].any?
       # needed to prevent duplicates because User adds them in the other direction in user.rb

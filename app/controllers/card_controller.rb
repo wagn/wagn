@@ -112,7 +112,7 @@ class CardController < ApplicationController
       role_card = card.fetch :trait=>:roles, :new=>{}
       role_card.ok! :update
 
-      role_hash = params[:user_roles] || {}
+      role_hash = params[:account_roles] || {}
       role_card = role_card.refresh
       role_card.items= role_hash.keys.map &:to_i
     end

@@ -27,16 +27,16 @@ module Chunks
       in_brackets = params[2]
       #warn "parse include [#{in_brackets}] #{match}, #{params.inspect}"
       name, opts = in_brackets.split('|',2)
-      case name = name.strip
-
-        when /^\#\#/; @process_chunk=''; nil # invisible comment
-        when /^\#/||nil?||blank?; @process_chunk = "<!-- #{CGI.escapeHTML in_brackets} -->"; nil
-
+      result = case name = name.to_s.strip
+        when /^\#\#/ ; '' # invisible comment
+        when /^\#/   ;  "<!-- #{CGI.escapeHTML in_brackets} -->"
+        when ''      ; '' # no name
         else
           @options = {
             :include_name => name,
             :view  => nil, :item  => nil, :type  => nil, :size  => nil,
-            :hide  => nil, :show  => nil, :wild  => nil, :include => in_brackets
+            :hide  => nil, :show  => nil, :wild  => nil, :include => in_brackets, #yuck, need better name (this is raw stuff)
+            
           }
 
           @configs = Hash.new_from_semicolon_attr_list opts
@@ -50,7 +50,15 @@ module Chunks
           [:hide, :show].each do |disp|
             @options[disp] = @options[disp].split(/[\s\,]+/) if @options[disp]
           end
-          name
+        
+          :standard_inclusion
+      end
+      
+      if result == :standard_inclusion
+        name
+      else
+        @process_chunk = result
+        nil
       end
     end
 

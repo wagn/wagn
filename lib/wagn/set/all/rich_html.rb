@@ -354,7 +354,7 @@ module Wagn
         content += raw( "\n #{ eform.hidden_field :type_id }" )
         [ card.cardname.tag, [:add_help, { :fallback => :edit_help } ] ]
       else
-        attribs += %{ card-id="#{card.id}" card-name="#{h card.name}" }
+        attribs.merge :card_id=>card.id, :card_name=>(h card.name)
         [ card.name, :edit_help ]
 
       end

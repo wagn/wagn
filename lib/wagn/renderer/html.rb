@@ -266,6 +266,14 @@ module Wagn
       }
     end
 
+    def main?
+      if ajax_call?
+        @depth == 0 && params[:is_main]
+      else
+        @depth == 1 && @mode == :main
+      end
+    end
+
     private
 
     def help_text *opts

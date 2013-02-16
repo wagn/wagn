@@ -28,6 +28,11 @@ describe Wagn::Renderer, "" do
          
        end
     end
+    
+    it "should ignore empty inclusions" do
+      render_content('{{}}').should == ''
+      render_content('{{ }}').should == ''
+    end
 
     it "invisible comment inclusions as blank" do
       render_content("{{## now you see nothing}}").should==''
@@ -55,6 +60,13 @@ describe Wagn::Renderer, "" do
         result = Wagn::Renderer.new(c, :params=>{'_card' => "A"})._render_core
         result.should == "AlphaBeta"
       end
+    end
+  end
+  
+  context "language quirks" do
+    it "should not fail on quirky language" do
+      render_content( 'irc: man').should == 'irc: man'
+      render_content( 'ethan@wagn.org, dude').should == '<a class="email-link" href="mailto:ethan@wagn.org">ethan@wagn.org</a>, dude'
     end
   end
 
@@ -457,6 +469,8 @@ describe Wagn::Renderer, "" do
       it "should have special content that escapes HTML" do
         render_card(:core, :type=>'Plain Text', :content=>"<b></b>").should == '&lt;b&gt;&lt;/b&gt;'
       end
+      
+      it 
     end
 
     context "Search" do

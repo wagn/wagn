@@ -96,14 +96,14 @@ class AccountCreationTest < ActionController::TestCase
   def test_should_generate_password_if_not_given
     assert_new_account do
       post_invite
-      assert !assigns(:user).password.blank?
+      assert !assigns(:account).password.blank?
     end
   end
 
   def test_should_require_password_confirmation_if_password_given
     assert_no_new_account do
       #assert_raises(ActiveRecord::RecordInvalid) do
-        post_invite :user=>{ :password=>'tedpass' }
+        post_invite :account=>{ :password=>'tedpass' }
       #end
     end
   end
@@ -111,24 +111,24 @@ class AccountCreationTest < ActionController::TestCase
   def test_should_require_email
     assert_no_new_account do
       #assert_raises(ActiveRecord::RecordInvalid) do
-        post_invite :user=>{ :email => nil }
-        assert assigns(:user).errors[:email]
+        post_invite :account=>{ :email => nil }
+        assert assigns(:account).errors[:email]
         assert_response :success
       #end
     end
   end
 
   def test_should_require_unique_email
-    post_invite :user=>{ :email=>'duplor@user.com' }
+    post_invite :account=>{ :email=>'duplor@user.com' }
     assert_no_new_account do
-      post_invite :user=>{ :email=>'duplor@user.com' }
+      post_invite :account=>{ :email=>'duplor@user.com' }
     end
   end
 
   def test_should_create_account_from_existing_user
     assert_difference ::User, :count do
       assert_no_difference Card.where(:type_id=>Card::UserID), :count do
-        post_invite :card=>{ :name=>"No Count" }, :user=>{ :email=>"no@count.com" }
+        post_invite :card=>{ :name=>"No Count" }, :account=>{ :email=>"no@count.com" }
       end
     end
   end

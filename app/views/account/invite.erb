@@ -3,7 +3,7 @@ email = params[:email] || {}
 subject = email[:subject] || Card.setting('*invite+*subject') || ''
 message = email[:message] || Card.setting('*invite+*message') || ''
 SmartName.substitute!( message, {
-  :invitor => Account.current.name + " (#{Account.user.email})",
+  :invitor => Account.current.name + " (#{Account.current.account.email})",
   :invitee => card.name || ''}
 )
 
@@ -24,7 +24,7 @@ div_id = "main-body"
 
     <%= hidden_field_tag 'element', "#{div_id}"  %>
 
-    <%= raw error_messages_for( @user ) %>
+    <%= raw error_messages_for( @account ) %>
 
     <table class="fieldset">
       <% if card.cardname.blank? %>
@@ -37,7 +37,7 @@ div_id = "main-body"
         </tr>
         <tr>
           <td class="label"><label for="email">Email</label></td>
-          <td class="field"><%= text_field :user,:email %></td>
+          <td class="field"><%= text_field :account,:email %></td>
           <td class="help"><strong>To verify account</strong><br/> Not to spam</td> <%#ENGLISH%>
         </tr>
 
@@ -45,7 +45,7 @@ div_id = "main-body"
         <tr><td colspan="3" class="accept-request-intro" style="text-align: center">
           <em>Accept Account Request from:<em> <strong><%= link_to_page card.name %></strong><%#ENGLISH%>
           <%= hidden_field( :card, :key ) %>
-          <%= hidden_field( :user, :email ) %>
+          <%= hidden_field( :account, :email ) %>
 
         </td></tr>
       <% end %>

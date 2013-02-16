@@ -172,6 +172,9 @@ describe CardController do
       end
       get :read, :id=>'Strawberry'
       assert_response 403
+      get :read, :id=>'Strawberry', :format=>'txt'
+      assert_response 403
+      
     end
     
     describe "view = new" do

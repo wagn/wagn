@@ -66,7 +66,7 @@ describe Wagn::Renderer, "" do
   context "language quirks" do
     it "should not fail on quirky language" do
       render_content( 'irc: man').should == 'irc: man'
-      render_content( 'ethan@wagn.org, dude').should == '<a href="mailto:ethan@wagn.org">ethan@wagn.org</a>, dude'
+      render_content( 'ethan@wagn.org, dude').should == '<a class="email-link" href="mailto:ethan@wagn.org">ethan@wagn.org</a>, dude'
     end
   end
 

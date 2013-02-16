@@ -40,7 +40,7 @@ class URIChunk < Chunks::Abstract
     last_char = match[-1]
     match.gsub!(/(?:&nbsp;)+/, '')
 
-    @trailing_punctuation = if %w{ . ) ! ? : }.member?(last_char)
+    @trailing_punctuation = if %w{ , . ) ! ? : }.member?(last_char)
       ch = match.chop!
       last_char
     end
@@ -48,6 +48,7 @@ class URIChunk < Chunks::Abstract
 
     @link_text = match
 
+    #warn "uri parse[#{match.inspect}]"
     @uri = URI.parse( match )
     @process_chunk = self.renderer ? "#{self.renderer.build_link(@link_text, @link_text)}#{@trailing_punctuation}" : @text
     self

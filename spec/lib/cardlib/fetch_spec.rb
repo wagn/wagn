@@ -46,12 +46,18 @@ describe Card do
       Card['A+*self'].should be_nil
       Card.fetch( 'A+*self' ).should_not be_nil
     end
+    
 
     it "fetches newly virtual cards" do
       #pending "needs new cache clearing"
       Card.fetch( 'A+virtual').should be_nil
       Account.as_bot { Card.create :name=>'virtual+*right+*content' }
       Card.fetch( 'A+virtual').should_not be_nil
+    end
+    
+    it "handles name variants of cached cards" do
+      Card.fetch('yomama+*self').name.should == 'yomama+*self'
+      Card.fetch('YOMAMA+*self').name.should == 'YOMAMA+*self'
     end
 
     it "does not recurse infinitely on template templates" do

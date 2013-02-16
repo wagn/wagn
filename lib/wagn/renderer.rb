@@ -71,6 +71,8 @@ module Wagn
       Renderer.current_slot ||= self unless(opts[:not_current])
       @card = card
       opts.each { |key, value| instance_variable_set "@#{key}", value }
+      #raise "opts #{opts.inspect}, #{@format}" if @format == :html
+      #warn "opts #{opts.inspect}, #{@format}"
       @format ||= :html
       @char_count = @depth = 0
       @root = self
@@ -211,7 +213,7 @@ module Wagn
 
       obj_content = ObjectContent===content ? content : ObjectContent.new(content, {:card=>card, :renderer=>self})
 
-      card.update_references( obj_content, true ) if card.references_expired # I thik we need this genralized
+      card.update_references( obj_content, true ) if card.references_expired  # I thik we need this genralized
 
       obj_content.process_content_object do |opts|
         expand_inclusion(opts) { yield }
@@ -408,36 +410,56 @@ module Wagn
     # ------------ LINKS ---------------
     #
 
-    def build_link href, text, known_card = nil
-      #Rails.logger.info "~~~~~~~~~~~~~~~ bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}"
-      klass = case href.to_s
-        when /^https?:/                   ; 'external-link'
-        when /^mailto:/                   ; 'email-link'
-        when /^([a-zA-Z][\-+.a-zA-Z\d]*):/; $1 + '-link'
-        when /^\//
-          href = full_uri href.to_s
-          'internal-link'
-        else
-          known_card = !!Card.fetch(href, :skip_modules=>true) if known_card.nil?
-          if card
-            text = text.to_name.to_absolute_name(card.name).to_show *@context_names
-          end
+    # FIXME: shouldn't this be in the html version of this?  this should give plain-text links.
+    # Maybe like this:
+    #def final_link klass, href, text=nil
+    #  text = href if text.nil?
+    #  %{[#{klass}]#{href}"#{text && "(#{text.to_s}_"})}
+    #  # or
+    #  %{[#{klass =~ /wanted/ && '[missing]'}#{href}"#{text && "(#{text.to_s}_"})}
+    #end
 
-          #href+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
-          cardname = href.to_name
-          href = known_card ? cardname.url_key : ERB::Util.url_encode( cardname.to_s )
-          #note - CGI.escape uses '+' to escape space.  that won't work for us.
-          href = full_uri href.to_s
-          known_card ? 'known-card' : 'wanted-card'
+    # and move this to the html renderer
+    def final_link href, opts={}
+      text = opts[:text] || href
+      %{<a class="#{opts[:class]}" href="#{href}">#{text}</a>}
+    end
+
+    def build_link href, text=nil
+      opts = {:text => text }
+
+      opts[:class] = case href.to_s
+        when /^https?:/                      ; 'external-link'
+        when /^mailto:/                      ; 'email-link'
+        when /^([a-zA-Z][\-+.a-zA-Z\d]*):/   ; $1 + '-link'
+        when /^\//
+          href = internal_url href           ; 'internal-link'
+        else                                 
+          raise "build_link mistakenly(?) called on #{href}, #{text}"
+          #return card_link href, text, nil
         end
-      # FIXME: shouldn't this be in the html version of this?  this should give plain-text links.
-      %{<a class="#{klass}" href="#{href}">#{text.to_s}</a>}
+          
+      final_link href, opts
+    end
+ 
+    def card_link name, text, known
+      text ||= name
+      opts = {
+        :class => ( known ? 'known-card' : 'wanted-card' ),
+        :text  => ( text.to_name.to_show @context_names  )
+      }
+      relative_path = known ? name.to_name.url_key : encode_path(name)
+      final_link internal_url( relative_path ), opts
+    end
+    
+    def encode_path path
+      ERB::Util.url_encode( path.to_s ).gsub('.', '%2E')
     end
 
     def unique_id() "#{card.key}-#{Time.now.to_i}-#{rand(3)}" end
 
-    def full_uri relative_uri
-      wagn_path relative_uri
+    def internal_url relative_path
+      wagn_path relative_path
     end
 
     def format_date date, include_time = true

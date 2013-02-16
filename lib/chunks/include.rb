@@ -2,7 +2,7 @@ require_dependency 'chunks/chunk'
 
 module Chunks
   class Include < Reference
-    attr_reader :stars, :renderer, :options, :base
+    attr_reader :options
     unless defined? INCLUDE_CONFIG
       #  {{+name|attr:val;attr:val;attr:val}}
       #  Groups: $1, everything (less {{}}), $2 name, $3 options
@@ -18,9 +18,7 @@ module Chunks
 
     def initialize match, card_params, params
       super
-      self.cardname = parse match, params
-      @base = card_params[:card]
-      #warn "Chunks::include #{inspect}"
+      self.name = parse match, params
       self
     end
 
@@ -56,10 +54,14 @@ module Chunks
       end
     end
 
+    def inspect
+      "<##{self.class}:n[#{@name}] p[#{@process_chunk}] txt:#{@text}>"
+    end
+
     def process_chunk
       return @process_chunk if @process_chunk
 
-      refcardname
+      referee_name
       if view = @options[:view]
         view = view.to_sym
       end
@@ -68,12 +70,11 @@ module Chunks
     end
 
     def replace_reference old_name, new_name
-
-      @cardname=@cardname.replace_part old_name, new_name
+      replace_name_reference old_name, new_name
 
       ( configs = @configs.to_semicolon_attr_list ).blank? or
         configs = "|" + configs
-      @text = '{{' + cardname.to_s + configs + '}}'
+      @text = '{{' + @name.to_s + configs + '}}'
     end
 
   end

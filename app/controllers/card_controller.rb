@@ -166,7 +166,12 @@ class CardController < ApplicationController
 
 
   def load_id
-    params[:id] ||= case
+    params[:id] = case
+      when params[:id]
+        params[:id].gsub '_', ' '
+        # with unknown cards, underscores in urls assumed to indicate spaces.
+        # with known cards, the key look makes this irrelevant
+        # (note that this is not performed on params[:card][:name])
       when Account.no_logins?
         return wagn_redirect( '/admin/setup' )
       when params[:card] && params[:card][:name]

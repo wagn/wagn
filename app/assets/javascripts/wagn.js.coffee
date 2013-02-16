@@ -10,14 +10,14 @@ wagn.prepUrl = (url, slot)->
   main = $('#main').children('.card-slot').attr 'card-name'
   xtra['main'] = main if main?
   if slot
-    home_view = slot.attr 'home_view'
-    item      = slot.attr 'item'
-    title     = slot.children('.card-header').children '.card-title'
-    xtra['home_view'] = home_view if home_view?
-    xtra['item']      = item      if item?
-    xtra['is_main']   = true      if slot.isMain()
-    if title?
-      xtra['name_context'] = $(title[0]).attr 'name_context'
+    home_view    = slot.attr 'home_view'
+    item         = slot.attr 'item'
+    name_context = slot.attr 'name_context'
+#    title     = slot.children('.card-header').children '.card-title'
+    xtra['home_view']    = home_view    if home_view?
+    xtra['item']         = item         if item?
+    xtra['name_context'] = name_context if name_context?
+    xtra['is_main']      = true         if slot.isMain()
   url + ( (if url.match /\?/ then '&' else '?') + $.param(xtra) )
 
 jQuery.fn.extend {

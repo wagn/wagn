@@ -26,6 +26,9 @@ describe Chunks::Link, "link chunk tests" do
     cardA = newcard('Kennedy', '[[+Monroe]]')
     assert_equal('<a class="wanted-card" href="/Kennedy%2BMonroe">+Monroe</a>', render_test_card(cardA) )
 
+    cardA = newcard('Roosevelt', '[[_self+Mercer]]')
+    assert_equal('<a class="wanted-card" href="/Roosevelt%2BMercer">+Mercer</a>', render_test_card(cardA) )    
+
     cardB = newcard('Clinton', '[[Lewinsky+]]')
     assert_equal('<a class="wanted-card" href="/Lewinsky%2BClinton">Lewinsky</a>', render_test_card(cardB) )
   end
@@ -58,6 +61,7 @@ describe Chunks::Link, "link chunk tests" do
   
   it "should handle inclusions as link text" do
     c = Card.new :content=>'[[linkies|{{namies|name}}]]'
+    #warn "card #{c.inspect}"
     assert_equal '<a class="wanted-card" href="/linkies">namies</a>', render_test_card(c)
   end
 

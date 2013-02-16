@@ -15,9 +15,9 @@ class ObjectContent < SimpleDelegator
   def initialize content, card_options
     @card_options = card_options
     @card_options[:card] or raise "No Card in Content!!"
-    splt = ObjectContent.split_content(card_options, content)
-    #warn "split: #{splt.class}, #{splt.inspect}"
-    super splt
+    content = ObjectContent.split_content(card_options, content) unless Array===content
+    #Rails.logger.warn "oc new[#{card_options}] #{content.class}, #{content.inspect} #{caller[0..10]*', '}"
+    super content
   end
 
   attr_reader :revision, :card_options

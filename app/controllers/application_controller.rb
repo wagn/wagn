@@ -97,7 +97,6 @@ class ApplicationController < ActionController::Base
     case
     when known                # renderers can handle it
       renderer = Wagn::Renderer.new card, :format=>ext, :controller=>self
-      Rails.logger.info "renderer = #{renderer}., c = #{card}, ext = #{ext}, view = #{view}, status = #{status}"
       render_text = renderer.render_show :view => view || params[:view]
       render :text=>render_text, :status=> renderer.error_status || status
 

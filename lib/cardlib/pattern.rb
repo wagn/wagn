@@ -90,13 +90,13 @@ module Cardlib
           end
         rescue Exception => e
         #rescue NameError => e
-          puts "error ? #{e.inspect}, #{e.backtrace*"\n"}"
-          nil
+          Rails.logger.warn "find_module error #{mod}: #{e.inspect}"
+          return nil if NameError ===e
         end
 
-        def trunk_name(card)  ''                     end
-        def junction_only?()  !!junction_only        end
-        def trunkless?()      !!method_key           end # method key determined by class only when no trunk involved
+        def trunk_name card; ''                     end
+        def junction_only?;  !!junction_only        end
+        def trunkless?;      !!method_key           end # method key determined by class only when no trunk involved
 
         def new card
           super if pattern_applies? card
@@ -146,7 +146,7 @@ module Cardlib
       rescue Exception => e; warn "exception set_const #{e.inspect}," #{e.backtrace*"\n"}"
       end
 
-      def get_method_key()
+      def get_method_key
         tkls_key = self.class.method_key
         return tkls_key if tkls_key
         return self.class.method_key if self.class.trunkless?
@@ -206,23 +206,23 @@ module Cardlib
 
     class StarPattern < BasePattern
       register 'star', :star, :method_key=>'star'
-      def self.label(name)              'All "*" cards'            end
-      def self.prototype_args(base)     {:name=>'*dummy'}          end
-      def self.pattern_applies?(card)   card.cardname.star?        end
+      def self.label            name;   'All "*" cards'            end
+      def self.prototype_args   base;   {:name=>'*dummy'}          end
+      def self.pattern_applies? card;   card.cardname.star?        end
     end
 
     class RstarPattern < BasePattern
       register 'rstar', :rstar, :method_key=>'rstar', :junction_only=>true
-      def self.label(name)              'All "+*" cards'           end
-      def self.prototype_args(base)     { :name=>'*dummy+*dummy'}  end
-      def self.pattern_applies?(card)   card.cardname.rstar?       end
+      def self.label            name;   'All "+*" cards'           end
+      def self.prototype_args   base;   { :name=>'*dummy+*dummy'}  end
+      def self.pattern_applies? card;   card.cardname.rstar?       end
     end
 
     class RightPattern < BasePattern
       register 'right', :right, :junction_only=>true
-      def self.label(name)              %{All "+#{name}" cards}    end
-      def self.prototype_args(base)     {:name=>"*dummy+#{base}"}  end
-      def self.trunk_name(card)         card.cardname.tag          end
+      def self.label            name;   %{All "+#{name}" cards}    end
+      def self.prototype_args   base;   {:name=>"*dummy+#{base}"}  end
+      def self.trunk_name       card;   card.cardname.tag          end
     end
 
     class LeftTypeRightNamePattern < BasePattern
@@ -246,9 +246,9 @@ module Cardlib
 
     class SelfPattern < BasePattern
       register 'self', :name
-      def self.label(name)              %{The card "#{name}"}      end
-      def self.prototype_args(base)     { :name=>base }            end
-      def self.trunk_name(card)         card.name                  end
+      def self.label            name;   %{The card "#{name}"}      end
+      def self.prototype_args   base;   { :name=>base }            end
+      def self.trunk_name       card;   card.name                  end
     end
   end
 end

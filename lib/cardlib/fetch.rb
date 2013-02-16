@@ -26,7 +26,7 @@ module Cardlib::Fetch
     #
 
     def fetch mark, opts = {}
-#      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{cardname}" do
+#      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{mark}" do
 
       if mark.nil?
         return if opts[:new].nil?

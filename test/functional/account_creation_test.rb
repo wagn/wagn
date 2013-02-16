@@ -113,6 +113,7 @@ class AccountCreationTest < ActionController::TestCase
       #assert_raises(ActiveRecord::RecordInvalid) do
         post_invite :account=>{ :email => nil }
         assert assigns(:card).errors[:email]
+        #assert assigns(:account).errors[:email]
         assert_response :success
       #end
     end

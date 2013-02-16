@@ -20,11 +20,11 @@ class AccountController < CardController
     raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless @card.ok? :create
 
     if !request.post? #signup form
-      @account = User.new user_params
+      @account = User.new account_params
     else
-      @account, @card = User.create_with_card user_params, card_params
+      @account, @card = User.create_with_card account_params, card_params
       if @account.errors.any?
-        user_errors 
+        account_errors 
       else
         if @card.ok?(:create, :new=>{}, :trait=>:account)      # automated approval
           email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!",

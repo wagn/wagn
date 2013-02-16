@@ -176,13 +176,8 @@ class User < ActiveRecord::Base
     end
   end
 
-  def card()
-    #raise "deprecate user.card #{card_id}, #{@card&&@card.id} #{caller*"\n"}"
-    Rails.logger.info "deprecate user.card #{card_id}, #{@card&&@card.id} #{caller[0,2]*', '}"
-    @card && @card.id == card_id ? @card : @card = Card[card_id]
-  end
-
   protected
+
   # Encrypts the password with the user salt
   def encrypt(password)
     self.class.encrypt(password, salt)

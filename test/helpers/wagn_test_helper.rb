@@ -77,7 +77,7 @@ module WagnTestHelper
   def post_invite(options = {})
     action = options[:action] || :invite
     post action,
-      :account => { :email => 'new@user.com' }.merge(options[:user]||{}),
+      :account => { :email => 'new@user.com' }.merge(options[:account]||{}),
       :card    => { :name => "New User" }.merge(options[:card]||{}),
       :email   => { :subject => "mailit",  :message => "baby"  }
   end

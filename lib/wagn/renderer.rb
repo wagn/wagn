@@ -13,7 +13,6 @@ module Wagn
     RENDERERS = { #should be defined in renderer
       :json => :JsonRenderer,
       :email => :EmailHtml,
-      :css  => :Text,
       :txt  => :Text
     }
 
@@ -95,13 +94,9 @@ module Wagn
     def showname
       @showname ||= card.cardname.to_show *@context_names
     end
-
+    
     def main?
-      if ajax_call?
-        @depth == 0 && params[:is_main]
-      else
-        @depth == 1 && @mode == :main
-      end
+      @depth == 0
     end
 
     def focal? # meaning the current card is the requested card
@@ -434,9 +429,9 @@ module Wagn
         when /^([a-zA-Z][\-+.a-zA-Z\d]*):/   ; $1 + '-link'
         when /^\//
           href = internal_url href           ; 'internal-link'
-        else                                 
-          raise "build_link mistakenly(?) called on #{href}, #{text}"
-          #return card_link href, text, nil
+        else
+          return href
+          Rails.logger.debug "build_link mistakenly(?) called on #{href}, #{text}"
         end
           
       final_link href, opts
@@ -489,6 +484,9 @@ module Wagn
   end
 
   class Renderer::Csv < Renderer::Text
+  end
+  
+  class Renderer::Css < Renderer::Text
   end
 
 end

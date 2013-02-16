@@ -89,14 +89,15 @@ class ApplicationController < ActionController::Base
     ext = request.parameters[:format]
     known = FORMATS.split('|').member? ext
 
-    if !known && card && card.error_view
+    if !known && status >= 400
       ext, known = 'txt', true
-      # render simple text for errors on unknown formats; without this, file/image permissions checks are meaningless
+      # render simple text for errors on unknown formats;
     end
 
     case
     when known                # renderers can handle it
       renderer = Wagn::Renderer.new card, :format=>ext, :controller=>self
+      Rails.logger.info "renderer = #{renderer}., c = #{card}, ext = #{ext}, view = #{view}, status = #{status}"
       render_text = renderer.render_show :view => view || params[:view]
       render :text=>render_text, :status=> renderer.error_status || status
 

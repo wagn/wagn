@@ -340,7 +340,7 @@ class Card < ActiveRecord::Base
   def junction?()      cardname.junction?                   end
 
   def left *args
-    unless updates.for? :name and name_without_tracking.to_name.key == cardname.left_name.key
+    unless !simple? and updates.for? :name and name_without_tracking.to_name.key == cardname.left_name.key
       #the ugly code above is to prevent recursion when, eg, renaming A+B to A+B+C
       #it should really be testing for any trunk
       Card.fetch cardname.left, *args
@@ -502,10 +502,10 @@ class Card < ActiveRecord::Base
   # these should be done in a set module when we have the capacity to address the set of "cards with accounts"
   # in the meantime, they should probably be in a module.
 
-  def among? authzed
+  def among? card_with_acct
     prties = parties
-    authzed.each { |auth| return true if prties.member? auth }
-    authzed.member? Card::AnyoneID
+    card_with_acct.each { |auth| return true if prties.member? auth }
+    card_with_acct.member? Card::AnyoneID
   end
 
   def parties
@@ -574,9 +574,11 @@ class Card < ActiveRecord::Base
     "#<#{self.class.name}" + "##{id}" +
     "###{object_id}" + #"l#{left_id}r#{right_id}" +
     "[#{debug_type}]" + "(#{self.name})" + #"#{object_id}" +
+    #(errors.any? ? '*Errors*' : 'noE') +
+    (errors.any? ? "<E*#{errors.full_messages*', '}*>" : '') +
+    #"{#{references_expired==1 ? 'Exp' : "noEx"}:" +
     "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{frozen? ? 'Fz' : readonly? ? 'RdO' : ''}" +
     "#{@virtual &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }:#{references_expired.inspect}}" +
-    (self.errors.any? ? self.errors.full_messages*", " : 'NoErrs') +
     #" Rules:#{ @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}" +
     '>'
   end

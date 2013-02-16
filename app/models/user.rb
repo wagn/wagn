@@ -176,7 +176,7 @@ class User < ActiveRecord::Base
     end
   end
 
-  protected
+protected
 
   # Encrypts the password with the user salt
   def encrypt(password)

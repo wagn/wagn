@@ -347,11 +347,6 @@ class Card < ActiveRecord::Base
     end
   end
 
-  def current_revision= current_rev
-    self.current_revision_id = current_rev.id
-    @cached_revison = current_rev
-  end
-
   def right *args
     simple? ? nil : Card.fetch( cardname.right, *args )
   end

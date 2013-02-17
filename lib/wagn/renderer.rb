@@ -12,7 +12,6 @@ module Wagn
 
     RENDERERS = { #should be defined in renderer
       :email => :EmailHtml,
-      :html => :HtmlRenderer,
       :css  => :Text,
       :txt  => :Text
     }
@@ -471,7 +470,7 @@ module Wagn
   class Renderer::Text < Renderer
   end
 
-  class Renderer::HtmlRenderer < Renderer
+  class Renderer::Html < Renderer
   end
 
   class Renderer::Csv < Renderer::Text

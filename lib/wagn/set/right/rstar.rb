@@ -192,7 +192,7 @@ include Sets
   end
 
 
-  class Renderer::HtmlRenderer
+  class Renderer::Html
     private
 
     def find_current_rule_card

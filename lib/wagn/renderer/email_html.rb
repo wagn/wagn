@@ -1,5 +1,5 @@
 module Wagn
-  class Renderer::EmailHtml < Renderer::HtmlRenderer
+  class Renderer::EmailHtml < Renderer::Html
     def full_uri(relative_uri)
       wagn_url relative_uri
     end

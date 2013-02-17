@@ -11,7 +11,6 @@ module Wagn
     DEFAULT_ITEM_VIEW = :link  # should be set in card?
 
     RENDERERS = { #should be defined in renderer
-      :json => :JsonRenderer,
       :email => :EmailHtml,
       :css  => :Text,
       :txt  => :Text
@@ -457,7 +456,7 @@ module Wagn
 
   end
 
-  class Renderer::JsonRenderer < Renderer
+  class Renderer::Json < Renderer
   end
 
   class Renderer::Text < Renderer

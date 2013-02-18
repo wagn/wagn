@@ -51,7 +51,7 @@ module Chunks
     def objectify raw
       if raw
         raw.strip!
-        if raw =~ /(^|[^\\]){{/
+        if raw =~ /(^|[^\\])\{\{/
           ObjectContent.new raw, @card_params
         else
           raw

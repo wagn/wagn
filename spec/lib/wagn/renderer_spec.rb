@@ -67,7 +67,11 @@ describe Wagn::Renderer, "" do
     it "should not fail on quirky language" do
       render_content( 'irc: man').should == 'irc: man'
       render_content( 'ethan@wagn.org, dude').should == '<a class="email-link" href="mailto:ethan@wagn.org">ethan@wagn.org</a>, dude'
+    end
+  
+    it "should leave alone something that quacks like a URI when URI module raises invalid uri error"
       render_content( 'git://<a href="http://github.com/wagn/wagn.git">github.com/wagn/wagn.git</a>').should_not =~ /render-error/
+      render_content( 'mailto:eat@joe.com?v=k').should == 'mailto:eat@joe.com?v=k'
     end
   end
 

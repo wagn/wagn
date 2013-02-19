@@ -12,7 +12,6 @@ module Wagn
 
     RENDERERS = { #should be defined in renderer
       :email => :EmailHtml,
-      :css  => :Text,
       :txt  => :Text
     }
 

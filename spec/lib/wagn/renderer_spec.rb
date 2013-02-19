@@ -69,9 +69,9 @@ describe Wagn::Renderer, "" do
       render_content( 'ethan@wagn.org, dude').should == '<a class="email-link" href="mailto:ethan@wagn.org">ethan@wagn.org</a>, dude'
     end
   
-    it "should leave alone something that quacks like a URI when URI module raises invalid uri error"
+    it "should leave alone something that quacks like a URI when URI module raises invalid uri error" do
       render_content( 'git://<a href="http://github.com/wagn/wagn.git">github.com/wagn/wagn.git</a>').should_not =~ /render-error/
-      render_content( 'mailto:eat@joe.com?v=k').should == 'mailto:eat@joe.com?v=k'
+      render_content( 'mailto:eat@joe.com?v=k').should == "<a class=\"email-link\" href=\"mailto:eat@joe.com?v=k\">mailto:eat@joe.com?v=k</a>"
     end
   end
 

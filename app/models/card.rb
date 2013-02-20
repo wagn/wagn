@@ -253,18 +253,15 @@ class Card < ActiveRecord::Base
     cards.each_pair do |sub_name, opts|
       opts[:nested_edit] = self
       absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute cardname
-      begin
-        if card = Card[absolute_name]
-          card = card.refresh
-          card.update_attributes opts
-        elsif opts[:content].present? and opts[:content].strip.present?
-          opts[:name] = absolute_name
-          card = Card.create opts
-        end
-      rescue PermissionDenied
-        raise "no permission denial error on card" if card.errors.empty?
-        #normally handled below
+
+      if card = Card[absolute_name]
+        card = card.refresh
+        card.update_attributes opts
+      elsif opts[:content].present? and opts[:content].strip.present?
+        opts[:name] = absolute_name
+        card = Card.create opts
       end
+
       @subcards << card if card
       if card and card.errors.any?
         card.errors.each do |field, err|

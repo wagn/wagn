@@ -197,8 +197,8 @@ module Cardlib::Fetch
     Card.cache.delete "~#{id}" if id
   end
 
-  def refresh
-    if self.frozen? || self.readonly?
+  def refresh force=false
+    if force || self.frozen? || self.readonly?
       fresh_card = self.class.find id
       fresh_card.include_set_modules
       fresh_card

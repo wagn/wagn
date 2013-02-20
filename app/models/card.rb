@@ -253,12 +253,17 @@ class Card < ActiveRecord::Base
     cards.each_pair do |sub_name, opts|
       opts[:nested_edit] = self
       absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute cardname
-      if card = Card[absolute_name]
-        card = card.refresh
-        card.update_attributes opts
-      elsif opts[:content].present? and opts[:content].strip.present?
-        opts[:name] = absolute_name
-        card = Card.create opts
+      begin
+        if card = Card[absolute_name]
+          card = card.refresh
+          card.update_attributes opts
+        elsif opts[:content].present? and opts[:content].strip.present?
+          opts[:name] = absolute_name
+          card = Card.create opts
+        end
+      rescue PermissionDenied
+        raise "no permission denial error on card" if card.errors.empty?
+        #normally handled below
       end
       @subcards << card if card
       if card and card.errors.any?
@@ -266,6 +271,9 @@ class Card < ActiveRecord::Base
           self.errors.add card.name, err
         end
         raise ActiveRecord::Rollback, "broke save_subcards"
+      else
+        cards = nil
+        true
       end
     end
   end
@@ -420,7 +428,8 @@ class Card < ActiveRecord::Base
 
   def type_name
     return if type_id.nil?
-    card = Card.fetch( type_id, :skip_modules=>true, :skip_virtual=>true ) and card.name
+    type_card = Card.fetch type_id.to_i, :skip_modules=>true, :skip_virtual=>true
+    type_card and type_card.name
   end
 
   def type= type_name
@@ -564,7 +573,7 @@ class Card < ActiveRecord::Base
 
   #def debug_type() type_id end
   def debug_type() "#{typecode||'no code'}:#{type_id}" end
-  #def debug_type() "#{typename}:#{type_id}" end # this can cause infinite recursion
+  #def debug_type() "#{type_name}:#{type_id}" end # this can cause infinite recursion
 
   def to_s
     "#<#{self.class.name}[#{debug_type}]#{self.attributes['name']}>"

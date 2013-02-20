@@ -104,12 +104,15 @@ class User < ActiveRecord::Base
         self.errors.add key,err
       end
       #warn "u errs #{errors.any?}, #{self.errors.full_messages*", "}"
-      raise ActiveRecord::Rollback if self.errors.any?
+      if self.errors.any?
+        card.expire_pieces
+        raise ActiveRecord::Rollback 
+      end
       true
     end
   end
 
-  def accept(card, email_args)
+  def accept card, email_args
     Account.as_bot do #what permissions does approver lack?  Should we check for them?
       card.type_id = Card::UserID # Invite Request -> User
       self.status='active'

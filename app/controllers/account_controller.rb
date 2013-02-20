@@ -29,8 +29,8 @@ class AccountController < CardController
         if @card.ok?(:create, :new=>{}, :trait=>:account)      # automated approval
           email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!",
                          :subject => Card.setting('*signup+*subject') || "Account info for #{Card.setting('*title')}!" }
+                         
           @user.accept @card, email_args
-          #Rails.logger.warn "signup #{@user.inspect}, #{@user.errors.full_messages*', '}, #{@card.inspect} #{@card.errors.full_messages*', '},"
           redirect_cardname = '*signup+*thanks'
         else                                            # requires further approval
           Account.as_bot do
@@ -46,12 +46,9 @@ class AccountController < CardController
 
   def accept
     card_key=params[:card][:key]
-    #warn "accept #{card_key.inspect}, #{Card[card_key]}, #{params.inspect}"
     raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
     @card = Card[card_key] or raise(Wagn::NotFound, "Can't find this Account Request")
-    #warn "accept #{Account.current_id}, #{@card.inspect}"
     @user = @card.account or raise(Wagn::Oops, "This card doesn't have an account to approve")
-    #warn "accept #{@user.inspect}"
     @card.ok?(:create) or raise(Wagn::PermissionDenied, "You need permission to create accounts")
 
     if request.post?

@@ -231,6 +231,26 @@ $(window).ready ->
     $(this).html $(this).attr( 'hover_content' )
   $('[hover_content]').live 'mouseleave', ->
     $(this).html $(this).attr( 'hover_restore' )
+    
+  $('.name-editor input').live 'keyup', ->
+    box =  $(this)
+    name = box.val()
+    wagn.pingName name, (data)->
+      return null if box.val() != name # avert race conditions
+      status = data['status']
+      ed = box.parent()
+      inst = box.closest('fieldset').find '.instruction'
+      ed.removeClass 'real-name virtual-name known-name'
+      slot_id = box.slot().attr 'card-id' # use id to avoid warning when renaming to name variant
+      if status != 'unknown' and !(slot_id && parseInt(slot_id) == data['id'])
+        ed.addClass status + '-name known-name'
+        qualifier = if status == 'virtual' #wish coffee would let me use  a ? b : c syntax here
+          'in virtual'
+        else
+          'already in'
+        inst.html '"' + name + '" ' + qualifier + ' use'
+      else
+        inst.html ''
 
 newCaptcha = (form)->
   recapUri = 'http://www.google.com/recaptcha/api/js/recaptcha_ajax.js'
@@ -238,7 +258,9 @@ newCaptcha = (form)->
   $(form).children().last().after recapDiv
   $.getScript recapUri, -> recapDiv.loadCaptcha()
 
+
+
 wagn.pingName = (name, success)->
-  $.getJSON wagn.rootPath, { format: 'json', view: 'status', 'card[name]': encodeURIComponent(name) }, success
+  $.getJSON wagn.rootPath + '/', { format: 'json', view: 'status', 'card[name]': name }, success
 
 warn = (stuff) -> console.log stuff if console?

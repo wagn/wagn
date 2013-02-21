@@ -70,8 +70,8 @@ describe Wagn::Renderer, "" do
     end
   
     it "should leave alone something that quacks like a URI when URI module raises invalid uri error" do
-      render_content( 'git://<a href="http://github.com/wagn/wagn.git">github.com/wagn/wagn.git</a>').should_not =~ /render-error/
-      render_content( 'mailto:eat@joe.com?v=k').should == "<a class=\"email-link\" href=\"mailto:eat@joe.com?v=k\">mailto:eat@joe.com?v=k</a>"
+      wack_uri = 'git://<a href="http://github.com/wagn/wagn.git">github.com/wagn/wagn.git</a>'
+      render_content( wack_uri ).should_not == wack_uri
     end
   end
 

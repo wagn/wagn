@@ -178,7 +178,7 @@ module Wagn
       end
 
       if !ajax_call? 
-        header_text = card.type_id == Card::DefaultTypeID ? 'Card' : card.type_name
+        header_text = card.type_id == Card::DefaultTypeID ? '' : card.type_name
         %{ <h1 class="page-header">New #{header_text}</h1>}
       else '' end +
       

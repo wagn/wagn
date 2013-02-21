@@ -18,7 +18,7 @@ module Wagn
       else                    ;  :wtf
       end
         
-      JSON( { :status=>status } )
+      JSON( { :key=>card.key, :status=>status } )
     end
   end
 end

@@ -238,5 +238,7 @@ newCaptcha = (form)->
   $(form).children().last().after recapDiv
   $.getScript recapUri, -> recapDiv.loadCaptcha()
 
+wagn.pingName = (name, success)->
+  $.getJSON wagn.rootPath, { format: 'json', view: 'status', 'card[name]': encodeURIComponent(name) }, success
 
 warn = (stuff) -> console.log stuff if console?

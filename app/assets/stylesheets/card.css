@@ -473,10 +473,8 @@ ul.pointer {
 }
 .pointer-list-editor .pointer-item-delete {
   margin-left: 4px;
-  font-weight: bold;
-  color: #933;
-  font-size: 15px;
   vertical-align: middle;
+  display: inline-block;
 }
 
 
@@ -541,12 +539,13 @@ div.search-result-list .search-result-item {
 /*------------( Layout, Plain Text ) ------------*/
 
 .TYPE-layout > .content,
-.TYPE-plain_text > .content {
+.TYPE-plain_text > .content,
+.RIGHT-Xcontent > .content,
+.RIGHT-Xdefault> .content {
   white-space: pre-wrap
 }
 
-.TYPE-layout > .card-editor,
-.TYPE-plain_text > .card-editor {
+.content.card-editor {
   white-space: normal;
 }
 
@@ -598,4 +597,22 @@ table.perm-editor .pointer-item-text {
 }
 .ui-loader {
   display: none;
+}
+.template-editor-main {
+  float: left;
+  width: 85%;
+}
+.template-editor-left,
+.template-editor-right {
+  float: left;
+  width: 5%;
+  text-align: center;
+  font-size: 3em;
+  line-height: 2em;
+}
+.template-editor-close {
+   float: right;
+}
+.template_link-view {
+  display: inline;
 }

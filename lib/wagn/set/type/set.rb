@@ -26,6 +26,33 @@ module Wagn
     define_view :editor, :type=>'set' do |args|
       'Cannot currently edit Sets' #ENGLISH
     end
+    
+    define_view :template_link, :type=>'set' do |args|
+      include_syntax = params[:include] || args[:include] 
+      wrap :template_link, args do
+        link = link_to_view include_syntax, :template_editor, :class=>'slotter' #, 'slot-include'=>include_syntax
+        "{{#{link}}}"
+      end
+    end
+    
+    define_view :template_editor, :type=>'set' do |args|
+      include_syntax = params[:include] || args[:include] 
+      wrap :template_editor, args do
+        %{
+          <div class="template-editor-left">{{</div> 
+          <div class="template-editor-main card-frame">
+            <div class="card-header">
+              #{content_tag :h1, card.label, :class=>'card-title'}   
+              #{link_to_view '', :template_link, :class=>'slotter ui-icon ui-icon-circle-close template-editor-close'}
+            </div>
+            <div class="card-body">
+              #{ _render_core }
+            </div>
+          </div>
+          <div class="template-editor-right">}}</div> 
+        }
+      end
+    end
 
     alias_view(:closed_content , {:type=>:search_type}, {:type=>:set})
 

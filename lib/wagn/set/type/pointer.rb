@@ -41,7 +41,7 @@ module Wagn
       items.map do |item|
         %{<li class="pointer-li"> } +
           text_field_tag( 'pointer_item', item, :class=>'pointer-item-text', :id=>'asdfsd' ) +
-          link_to( 'X', '#', :class=>'pointer-item-delete' ) +
+          link_to( '', '#', :class=>'pointer-item-delete ui-icon ui-icon-circle-close' ) +
         '</li>'
       end.join("\n") +
       %{</ul><div class="add-another-div">#{link_to 'Add another','#', :class=>'pointer-item-add'}</div>}

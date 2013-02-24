@@ -268,7 +268,7 @@ module Wagn
     define_view :name_editor do |args|
       fieldset 'name', (editor_wrap :name do
          raw( name_field form )
-      end)
+      end), :help=>''
     end
 
 

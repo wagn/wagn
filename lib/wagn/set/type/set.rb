@@ -9,7 +9,7 @@ module Wagn
       body = card.setting_codes_by_group.map do |group_name, data|
         next if group_name.nil? || data.nil?
         content_tag(:tr, :class=>"rule-group") do
-          (["#{group_name} Settings"]+%w{Content Type}).map do |heading|
+          (["#{group_name} Settings"]+%w{Content Set}).map do |heading|
             content_tag(:th, :class=>'rule-heading') { heading }
           end * "\n"
         end +
@@ -28,7 +28,7 @@ module Wagn
     end
     
     define_view :template_link, :type=>'set' do |args|
-      include_syntax = params[:include] || args[:include] 
+      include_syntax = (@depth==0 && params[:include]) || args[:include] 
       wrap :template_link, args do
         link = link_to_view include_syntax, :template_editor, :class=>'slotter' #, 'slot-include'=>include_syntax
         "{{#{link}}}"
@@ -36,7 +36,7 @@ module Wagn
     end
     
     define_view :template_editor, :type=>'set' do |args|
-      include_syntax = params[:include] || args[:include] 
+      include_syntax = (@depth==0 && params[:include]) || args[:include] 
       wrap :template_editor, args do
         %{
           <div class="template-editor-left">{{</div> 

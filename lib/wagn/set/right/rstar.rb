@@ -16,7 +16,7 @@ include Sets
           %{<div class="rule-content-container">
              <span class="closed-content content">#{rule_card ? subrenderer(rule_card).render_closed_content : ''}</span>
            </div> } ],
-        ["rule-type", (rule_card ? rule_card.type_name : '') ],
+        ["rule-set", (rule_card ? rule_card.trunk.label : '') ],
       ]
 
       extra_css_class = rule_card && !rule_card.new_card? ? 'known-rule' : 'missing-rule'

@@ -4,12 +4,17 @@ module Wagn
 
     format :base
 
-    define_view  :core, :right=>'content' do |args|
+    define_view :core, :right=>:content do |args|
       with_inclusion_mode :template do
         self._final_core args
       end
     end
-    alias_view :core, {:right=>'content'}, {:right=>'default'}
+    alias_view :core, { :right=>:content }, { :right=>:default }
+
+    define_view :closed_content, :right=>:content do |args|
+      "#{_render_type} : #{_render_raw}"
+    end
+    alias_view :closed_content, { :right=>:content }, { :right=>:default }
 
     # this view is technically defined on all cards.  should move soon.
     define_view :template_rule, :tags=>:unknown_ok do |args|

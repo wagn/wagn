@@ -478,6 +478,8 @@ ul.pointer {
   margin-left: 4px;
   vertical-align: middle;
   display: inline-block;
+  position: relative;
+  bottom: 2px;
 }
 
 
@@ -619,4 +621,3 @@ table.perm-editor .pointer-item-text {
 .template_link-view {
   display: inline;
 }
-

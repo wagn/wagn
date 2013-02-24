@@ -145,19 +145,7 @@ a.email-link {
   color: #069;
   background: #ffc;
 }
-/*
-.content-view p,
-.content-view span,
-.content-view a,
-.content-view ul,
-.content-view ol,
-.content-view h1,
-.content-view h2 {
-  background-color: inherit;
-  -moz-border-radius: inherit;
-  border-radius: inherit;
-}
-*/
+
 
 /* note:   ".card-slot .content-view div not(.editor)" was not working properly and was breaking nested block elements.
    without it nested divs in content-view areas probably won't highlight  */
@@ -529,7 +517,6 @@ div.search-result-list .search-result-item {
 /*-----------( Image ) -----------*/
 
 
-/*.open-view.type-Image, */
 .open-view .TYPE-image .content {
 /*  overflow: auto;  */
   padding: 5px;

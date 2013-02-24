@@ -7,6 +7,11 @@ include Sets
     define_view :closed_rule, :rstar=>true, :tags=>:unknown_ok do |args|
       rule_card = card.new_card? ? find_current_rule_card[0] : card
 
+      rule_content = !rule_card ? '' : begin
+        r = subrenderer rule_card
+        r.render_closed_content :set_context=>card.cardname.trunk_name
+      end
+
       cells = [
         ["rule-setting",
           link_to( card.cardname.tag.sub(/^\*/,''), path(:view=>:open_rule),
@@ -14,7 +19,7 @@ include Sets
         ],
         ["rule-content",
           %{<div class="rule-content-container">
-             <span class="closed-content content">#{rule_card ? subrenderer(rule_card).render_closed_content : ''}</span>
+             <span class="closed-content content">#{rule_content}</span>
            </div> } ],
         ["rule-type", (rule_card ? rule_card.type_name : '') ],
       ]

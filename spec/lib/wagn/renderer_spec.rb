@@ -337,9 +337,10 @@ describe Wagn::Renderer, "" do
 
 
   context "Content rule" do
-    it "is rendered as raw" do
+    it "closed_content is rendered as title + raw" do
       template = Card.new(:name=>'A+*right+*content', :content=>'[[link]] {{inclusion}}')
-      Wagn::Renderer.new(template)._render(:core).should == '[[link]] {{inclusion}}'
+      Wagn::Renderer.new(template)._render(:closed_content).should ==
+        '<a href="/Basic" class="cardtype default-type">Basic</a> : [[link]] {{inclusion}}'
     end
 
     it "is used in new card forms when soft" do

@@ -24,8 +24,8 @@ module Wagn
         if root.card.type_id == Card::SearchTypeID
           opts = { :format => :rss }
           root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
-          rss_href = path_for_page root.card.name, opts
-          bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{rss_href} />}
+          rss_href = page_path root.card.name, opts
+          bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{wagn_path rss_href} />}
         end
       end
 

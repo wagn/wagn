@@ -26,6 +26,12 @@ class User < ActiveRecord::Base
     def from_id(card_id) User.where(:card_id=>card_id).first         end
     def cache()          Wagn::Cache[User]                           end
 
+    def create_ok?
+      base  = Card.new :name=>'dummy*', :type_id=>Card::UserID
+      trait = Card.new :name=>"dummy*+#{Card[:account].name}"
+      base.ok?(:create) && trait.ok?(:create)
+    end
+
     # FIXME: args=params.  should be less coupled..
     def create_with_card user_args, card_args, email_args={}
       card_args[:type_id] ||= Card::UserID

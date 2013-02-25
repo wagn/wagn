@@ -428,7 +428,6 @@ module Wagn
             #{ notice }
           }
        end
-      # should be just if !card.fetch(:trait=>:account) and Card.new( :name=>"#{card.name}+Card[:account].name").ok?(create)
     end
     
     define_view :option_roles do |args|

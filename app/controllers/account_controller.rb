@@ -63,13 +63,10 @@ class AccountController < CardController
   end
 
   def invite
-    #warn "invite: ok? #{Card.new(:name=>'dummy+*account').ok?(:create)}"
-    cok=Card.new(:name=>'dummy+*account').ok?(:create) or raise(Wagn::PermissionDenied, "You need permission to create")
-    #warn "post invite #{cok}, #{request.post?}, #{params.inspect}"
+    User.create_ok? or raise(Wagn::PermissionDenied, "You need permission to create")
     @user, @card = request.post? ?
       User.create_with_card( params[:user], params[:card] ) :
       [User.new, Card.new()]
-    #warn "invite U:#{@user.inspect} C:#{@card.inspect}"
     if request.post? and @user.errors.empty?
       @user.send_account_info(params[:email])
       redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
@@ -78,7 +75,6 @@ class AccountController < CardController
 
 
   def signin
-    #warn Rails.logger.info("signin #{params[:login]}")
     if params[:login]
       password_authentication params[:login], params[:password]
     end

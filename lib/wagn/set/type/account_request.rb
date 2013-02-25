@@ -7,7 +7,7 @@ module Wagn
     define_view :core, :type=>:account_request do |args|
       links = []
       #ENGLISH
-      if Card[:account].ok?(:create)
+      if User.create_ok?
         links << link_to( "Invite #{card.name}", Card.path_setting("/account/accept?card[key]=#{card.cardname.url_key}"), :class=>'invitation-link')
       end
       if Account.logged_in? && card.ok?(:delete)

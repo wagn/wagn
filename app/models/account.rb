@@ -73,6 +73,7 @@ class Account
         @@as_card = Card[as_id]
       end
     end
+    
 
     def logged_in?
       current_id != Card::AnonID

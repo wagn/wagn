@@ -23,8 +23,8 @@ class AccountController < CardController
       @user = User.new user_params
     else
       @user, @card = User.create_with_card user_params, card_params
-      if @user.errors.any?
-        user_errors 
+      if card.errors.any?
+        render_errors 
       else
         if @card.ok?(:create, :new=>{}, :trait=>:account)      # automated approval
           email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!",
@@ -54,7 +54,7 @@ class AccountController < CardController
     if request.post?
       #warn "accept #{@card.inspect}, #{@user.inspect}"
       @user.accept(@card, params[:email])
-      if @user.errors.empty? #SUCCESS
+      if @card.errors.empty? #SUCCESS
         redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
         return
       end
@@ -67,7 +67,7 @@ class AccountController < CardController
     @user, @card = request.post? ?
       User.create_with_card( params[:user], params[:card] ) :
       [User.new, Card.new()]
-    if request.post? and @user.errors.empty?
+    if request.post? and @card.errors.empty?
       @user.send_account_info(params[:email])
       redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
     end
@@ -112,14 +112,6 @@ class AccountController < CardController
   end
 
   protected
-
-  def user_errors
-    @user.errors.each do |field, err|
-      @card.errors.add field, err unless @card.errors[field].any?
-      # needed to prevent duplicates because User adds them in the other direction in user.rb
-    end
-    render_errors
-  end
 
   def password_authentication(login, password)
     if self.current_account_id = User.authenticate( params[:login], params[:password] )

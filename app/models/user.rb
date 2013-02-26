@@ -6,6 +6,10 @@ class User < ActiveRecord::Base
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :name
 
+  validates_presence_of     :card_id
+  validates_uniqueness_of   :card_id
+  validates_presence_of     :account_id
+  validates_uniqueness_of   :account_id
   validates_presence_of     :email, :if => :email_required?
   validates_format_of       :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i  , :if => :email_required?
   validates_length_of       :email, :within => 3..100,   :if => :email_required?
@@ -42,7 +46,7 @@ class User < ActiveRecord::Base
         #Rails.logger.warn "create_wcard #{@user.inspect}, #{user_args.inspect}"
         @user.generate_password if @user.password.blank?
         @user.save_with_card(@card)
-        @user.send_account_info(email_args) if @user.errors.empty? && !email_args.empty?
+        @user.send_account_info(email_args) if @card.errors.empty? && !email_args.empty?
       end
       [@user, @card]
     end
@@ -95,22 +99,20 @@ class User < ActiveRecord::Base
       card = card.refresh
       account = card.fetch :trait=>:account, :new=>{}
       if card.save
-        valid? and account.save
-        self.account_id = account.id
-        self.card_id = card.id
-        save
-      else
-        valid?
+        if account.save
+          self.account_id = account.id
+          self.card_id = card.id
+          save
+        end
       end
-      #warn "c errs #{card.errors.full_messages*", "} #{self.errors.full_messages*", "}"
+
       account.errors.each do |key,err|
-        self.errors.add key,err
+        card.errors.add key,err
       end
-      card.errors.each do |key,err|
-        self.errors.add key,err
+      self.errors.each do |key,err|
+        card.errors.add key,err
       end
-      #warn "u errs #{errors.any?}, #{self.errors.full_messages*", "}"
-      if self.errors.any?
+      if card.errors.any?
         card.expire_pieces
         raise ActiveRecord::Rollback 
       end
@@ -127,7 +129,7 @@ class User < ActiveRecord::Base
       #Rails.logger.warn "accept #{inspect}, #{card.inspect}, #{self.errors.full_messages*", "} R:#{r}"; r
     end
     #card.save #hack to make it so last editor is current user.
-    self.send_account_info(email_args) if self.errors.empty?
+    self.send_account_info(email_args) if card.errors.empty?
   end
 
   def send_account_info(args)

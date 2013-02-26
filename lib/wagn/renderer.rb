@@ -239,7 +239,7 @@ module Wagn
         else
           perms_required = @@perms[view] || :read
           if Proc === perms_required
-            args[:denied_task] = !(perms_required.call self)
+            args[:denied_task] = :read if !(perms_required.call self)  # read isn't quite right
           else
             args[:denied_task] = [perms_required].flatten.find do |task|
               task = :create if task == :update && card.new_card?
@@ -374,9 +374,6 @@ module Wagn
       base = opts[:action] ? "/card/#{ opts.delete :action }" : ''
       if pcard && !pcard.name.empty? && !opts.delete(:no_id) && ![:new, :create].member?(opts[:action]) #generalize. dislike hardcoding views/actions here
         base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
-      end
-      if attrib = opts.delete( :attrib )
-        base += "/#{attrib}"
       end
       query =''
       if !opts.empty?

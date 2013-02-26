@@ -552,6 +552,11 @@ class Card < ActiveRecord::Base
     User.where( :card_id => id ).first
   end
 
+  def accountable?
+    Card.toggle(rule(:accountable)) and
+    !account and
+    fetch( :trait=>:account, :new=>{} ).ok?( :create)
+  end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # METHODS FOR OVERRIDE

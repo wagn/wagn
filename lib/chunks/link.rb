@@ -7,7 +7,7 @@ module Chunks
     WIKI_CONFIG = {
       :class     => Link,
       :prefix_re => '\\[',
-      :rest_re   => /^\[([^\]]+)\]\]|([^\]]+)\]\[([^\]]*)\]/,
+      :rest_re   => /^\[([^\]]+)\]\]/, #|([^\]\n]+)\]\[([^\]]*)\]/,
       :idx_char  => '['
     }
 

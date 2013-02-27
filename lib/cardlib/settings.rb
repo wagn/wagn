@@ -44,6 +44,28 @@ module Cardlib::Settings
   end
 
   module ClassMethods
+    def load_rules
+      hash = {}
+      Account.as_bot do
+        Card.search( :left=>{:type_id=>Card::SetID}, :right=>{:type_id=>Card::SettingID} ).each do |rule_card|
+          setting_code = Wagn::Codename[ rule_card.right_id ] or next
+          if rule_card.cardname.trunk_name.simple?
+            anchor_id = nil
+            set_class_id = rule_card.left_id
+          else
+            set_card = rule_card.left 
+            anchor_id = set_card.left_id
+            set_class_id = set_card.right_id
+          end
+        
+          set_class_code = Wagn::Codename[set_class_id] or next
+          hash_key = [ anchor_id, set_class_code, setting_code ].compact.map( &:to_s ) * '+'
+          hash[ hash_key ] = rule_card.id
+        end
+      end
+      hash
+    end
+    
     def default_rule setting_name, fallback=nil
       card = default_rule_card setting_name, fallback
       return card && card.content

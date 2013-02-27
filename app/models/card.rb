@@ -293,6 +293,7 @@ class Card < ActiveRecord::Base
     Card.transaction do
       if validate_delete
         delete_to_trash
+        reset_patterns_if_rule saving=true
         true
       end
     end

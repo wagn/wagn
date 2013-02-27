@@ -53,7 +53,10 @@ Spork.prefork do
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
 
+    ORIGINAL_RULE_CACHE = Card.rule_cache
+
     config.before(:each) do
+      Card.set_rule_cache ORIGINAL_RULE_CACHE.clone
       Wagn::Cache.restore
     end
     config.after(:each) do

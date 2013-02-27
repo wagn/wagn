@@ -15,15 +15,17 @@ module Cardlib
       end
     end
 
-    def reset_patterns_if_rule()
-      return if name.blank?
-      #warn "rpatIrule if #{!simple?} and #{!new_card?} and #{setting=right and setting.type_id==Card::SettingID} and #{set=left and set.type_id==Card::SetID}"
-      if !simple? and !new_card? and setting=right and setting.type_id==Card::SettingID and set=left and set.type_id==Card::SetID
-        #warn "rpatIrule #{inspect}, #{set.inspect}, #{setting.inspect}"
-        set.include_set_modules
-        self.read_rule_updates( set.item_cards :limit=>0 ) if setting.id == Card::ReadID
+    def reset_patterns_if_rule saving=false
+#      return if name.blank?
+      if is_rule?
+        set = left
         set.reset_patterns
-        set.reset_set_patterns
+        set.include_set_modules
+        
+        if saving
+          self.read_rule_updates( set.item_cards :limit=>0 ) if right.id == Card::ReadID
+          set.reset_set_patterns
+        end
       end
     end
 

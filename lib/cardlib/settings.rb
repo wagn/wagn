@@ -1,4 +1,13 @@
 module Cardlib::Settings
+  def is_rule?
+    !simple?   and 
+    !new_card? and 
+    l = left   and
+    l.type_id==Card::SetID and
+    r = right  and
+    r.type_id==Card::SettingID 
+  end
+  
   def rule setting_name, options={}
     #warn "rule #{setting_name.inspect}, #{options.inspect}"
     options[:skip_modules] = true
@@ -24,7 +33,7 @@ module Cardlib::Settings
           Rails.logger.info "correct rule id: #{@@correct_rules += 1}"
         else
           new_card = Card[nrcid]
-          warn "incorrect rule: old = #{card.name}, new = #{new_card && new_card.name}"
+          warn "incorrect rule for #{name}: old = #{card.name}, new = #{new_card && new_card.name}"
         end
         return card
       end
@@ -34,6 +43,7 @@ module Cardlib::Settings
   end
   
   def new_rule_card setting_code, options
+    #warn "looking up #{setting_code} rule for #{name}. rule_set_keys = #{rule_set_keys}. "
     fallback = options.delete( :fallback )
     rule_set_keys.each do |rule_set_key|
       rule_id = self.class.rule_cache["#{rule_set_key}+#{setting_code}"] or
@@ -78,7 +88,9 @@ module Cardlib::Settings
               anchor_id = nil
               set_class_id = rule_card.left_id
             else
-              set_card = rule_card.left 
+              set_card = Card[rule_card.left_id]
+#              warn "rule_card = #{rule_card.cardname}"
+              
               anchor_id = set_card.left_id
               set_class_id = set_card.right_id
             end
@@ -93,7 +105,13 @@ module Cardlib::Settings
     end
     
     def clear_rule_cache
+#      warn "clearing rule_cache"
       @@rule_cache = nil
+    end
+    
+    def set_rule_cache hash
+      #FIXME: should fail except in test envs.
+      @@rule_cache = hash
     end
     
     def default_rule setting_name, fallback=nil

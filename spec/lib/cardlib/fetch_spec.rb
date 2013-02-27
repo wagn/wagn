@@ -120,18 +120,20 @@ describe Card do
       end
 
       it "should recognize pattern overrides" do
+        #~~~ create right rule
         tc=Card.create!(:name => "y+*right+*content", :content => "Right Content")
         card = Card.fetch("a+y")
         card.virtual?.should be_true
         card.content.should == "Right Content"
+        
+        #~~~ create type plus right rule
         tpr = Card.create!(:name => "Basic+y+*type plus right+*content", :content => "Type Plus Right Content")
-        card.reset_patterns
         card = Card.fetch("a+y")
-        card.reset_patterns
         card.virtual?.should be_true
         card.content.should == "Type Plus Right Content"
+
+        #~~~ delete type plus right rule
         tpr.delete!
-        card.reset_patterns
         card = Card.fetch("a+y")
         card.virtual?.should be_true
         card.content.should == "Right Content"

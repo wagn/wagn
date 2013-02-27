@@ -197,7 +197,7 @@ module Cardlib::Permissions
   end
 
   def update_read_rule
-    #warn "uprr #{name}"
+#    warn "uprr #{name}"
     Card.record_timestamps = false
 
     reset_patterns # why is this needed?
@@ -240,7 +240,10 @@ module Cardlib::Permissions
  protected
 
   def update_ruled_cards
-    # FIXME: codename
+    if is_rule?
+      self.class.clear_rule_cache
+      
+    
     if junction? && right_id==Card::ReadID && (@name_or_content_changed || @trash_changed)
       # These instance vars are messy.  should use tracked attributes' @changed variable
       # and get rid of @name_changed, @name_or_content_changed, and @trash_changed.
@@ -288,6 +291,8 @@ module Cardlib::Permissions
           in_set[ w.key ]
         end.each &:update_read_rule
       end
+    end
+    
     end
   end
 

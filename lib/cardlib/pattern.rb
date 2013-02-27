@@ -29,7 +29,7 @@ module Cardlib
 
     def reset_patterns
       @rule_cards={}
-      @set_mods_loaded = @patterns = @set_modules = @junction_only = @method_keys = @set_names = @template = nil
+      @set_mods_loaded = @patterns = @set_modules = @junction_only = @method_keys = @set_names = @template = @rule_set_keys = nil
       true
     end
 
@@ -57,6 +57,10 @@ module Cardlib
     def set_names
       Card.set_members(@set_names = patterns.map(&:to_s), key) if @set_names.nil?
       @set_names
+    end
+    
+    def rule_set_keys
+      @rule_set_keys ||= patterns.map( &:rule_set_key ).compact
     end
     
     def method_keys
@@ -91,9 +95,10 @@ module Cardlib
           nil
         end
 
-        def trunk_name(card)  ''               end
         def junction_only?()  !!junction_only  end
-        def trunkless?()      !!method_key     end # method key determined by class only when no trunk involved
+        def anchorless?()     !!method_key     end # method key determined by class only when no trunk involved
+        def anchor_name(card) ''               end
+          
         def new card
           super(card) if pattern_applies?(card)
         end
@@ -124,13 +129,28 @@ module Cardlib
       end
 
       def initialize(card)
-        @trunk_name = self.class.trunk_name(card).to_name
+        @card = card
+        @anchor_name = self.class.anchor_name(card).to_name
+        @anchor_id = if self.class.respond_to? :anchor_id
+          self.class.anchor_id card
+        else
+          anchor_card = Card.fetch @anchor_name, :skip_virtual=>true, :skip_modules=> true
+          anchor_card && anchor_card.id
+        end
         self
+      end
+      
+      def anchor_name
+        @anchor_name #||= self.class.anchor_name(card).to_name
+      end
+      
+      def anchor_id
+        @anchor_id #||= self.class.anchor_id(card)
       end
 
       def set_module
         case
-        when  self.class.trunkless?    ; self.class.key
+        when  self.class.anchorless?    ; self.class.key
         when  opt_vals.member?( nil )  ; nil
         else  "#{self.class.key}/#{opt_vals * '_'}"
         end
@@ -143,7 +163,7 @@ module Cardlib
       def get_method_key()
         tkls_key = self.class.method_key
         return tkls_key if tkls_key
-        return self.class.method_key if self.class.trunkless?
+        return self.class.method_key if self.class.anchorless?
         opts = {}
         self.class.opt_keys.each_with_index do |key, index|
           return nil unless opt_vals[index]
@@ -156,8 +176,8 @@ module Cardlib
 
       def opt_vals
         if @opt_vals.nil?
-          @opt_vals = self.class.trunkless? ? [] :
-            @trunk_name.parts.map do |part|
+          @opt_vals = self.class.anchorless? ? [] :
+            anchor_name.parts.map do |part|
               card=Card.fetch(part, :skip_virtual=>true, :skip_modules=>true) and Wagn::Codename[card.id.to_i]
             end
         end
@@ -166,16 +186,24 @@ module Cardlib
 
       def to_s()
         if self.class.key_id == 0
-          @trunk_name
+          anchor_name
         else
           kn = self.class.key_name
-          self.class.trunkless? ? kn : "#{@trunk_name}+#{kn}"
+          self.class.anchorless? ? kn : "#{anchor_name}+#{kn}"
         end
       end
 
       def safe_key()
         caps_part = self.class.key.gsub(' ','_').upcase
-        self.class.trunkless? ? caps_part : "#{caps_part}-#{@trunk_name.safe_key}"
+        self.class.anchorless? ? caps_part : "#{caps_part}-#{@anchor_name.safe_key}"
+      end
+      
+      def rule_set_key
+        if self.class.anchorless?
+          self.class.key
+        elsif @anchor_id
+          [ @anchor_id, self.class.key ].map( &:to_s ) * '+'
+        end
       end
 
     end
@@ -197,9 +225,9 @@ module Cardlib
       def self.label(name)              %{All "#{name}" cards}     end
       def self.prototype_args(base)     {:type=>base}              end
       def self.pattern_applies?(card)   !!card.type_id             end
-        #return false if card.type_id.nil?
-        #true       end
-      def self.trunk_name(card)         card.type_name              end
+      def self.anchor_name(card)        card.type_name             end
+      def self.anchor_id(card)          card.type_id               end
+        
     end
 
     class StarPattern < BasePattern
@@ -220,7 +248,7 @@ module Cardlib
       register 'right', :right, :junction_only=>true
       def self.label(name)              %{All "+#{name}" cards}    end
       def self.prototype_args(base)     {:name=>"*dummy+#{base}"}  end
-      def self.trunk_name(card)         card.cardname.tag     end
+      def self.anchor_name(card)        card.cardname.tag          end
     end
 
     class LeftTypeRightNamePattern < BasePattern
@@ -234,7 +262,7 @@ module Cardlib
             :loaded_left=> Card.new( :name=>'*dummy', :type=>base.trunk_name )
           }
         end
-        def trunk_name card
+        def anchor_name card
           left = card.loaded_left || card.left
           type_name = (left && left.type_name) || Card[ Card::DefaultTypeID ].name
           "#{type_name}+#{card.cardname.tag}"
@@ -246,7 +274,8 @@ module Cardlib
       register 'self', :name
       def self.label(name)              %{The card "#{name}"}      end
       def self.prototype_args(base)     { :name=>base }            end
-      def self.trunk_name(card)         card.name                  end
+      def self.anchor_name(card)        card.name                  end
+      def self.anchor_id(card)          card.id                    end
     end
   end
 end

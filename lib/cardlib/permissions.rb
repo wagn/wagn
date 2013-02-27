@@ -241,7 +241,10 @@ module Cardlib::Permissions
 
   def update_ruled_cards
     if is_rule?
+#      warn "updating ruled cards for #{name}"
       self.class.clear_rule_cache
+      left.reset_set_patterns
+      
       
     
     if junction? && right_id==Card::ReadID && (@name_or_content_changed || @trash_changed)

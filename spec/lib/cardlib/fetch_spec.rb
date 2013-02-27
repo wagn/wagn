@@ -126,7 +126,7 @@ describe Card do
         card.virtual?.should be_true
         card.content.should == "Right Content"
         
-        #~~~ create type plus right rule
+#        warn "creating template"
         tpr = Card.create!(:name => "Basic+y+*type plus right+*content", :content => "Type Plus Right Content")
         card = Card.fetch("a+y")
         card.virtual?.should be_true

@@ -24,12 +24,12 @@ module Cardlib
         
         if saving
           self.read_rule_updates( set.item_cards :limit=>0 ) if right.id == Card::ReadID
-          set.reset_set_patterns
         end
       end
     end
 
     def reset_patterns
+#      warn "resetting patterns for #{name}" if name
       @rule_cards={}
       @set_mods_loaded = @patterns = @set_modules = @junction_only = @method_keys = @set_names = @template = @rule_set_keys = nil
       true
@@ -43,10 +43,6 @@ module Cardlib
       new_card? ? patterns_without_new()[1..-1] : patterns_without_new()
     end
     alias_method_chain :patterns, :new
-
-    def real_set_names
-      set_names.find_all &Card.method(:exists?)
-    end
     
     def safe_keys
       patterns.map(&:safe_key).reverse*" "
@@ -62,6 +58,7 @@ module Cardlib
     end
     
     def rule_set_keys
+      set_names #this triggers set_members cache.  need better solution!
       @rule_set_keys ||= patterns.map( &:rule_set_key ).compact
     end
     

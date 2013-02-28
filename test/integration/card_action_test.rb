@@ -125,12 +125,12 @@ class CardActionTest < ActionController::IntegrationTest
 
   def test_update_user_account_email
     post '/card/update_account', :id=>"Joe User".to_name.key, :account => { :email => 'joe@user.co.uk' }
-    assert User[ Card::JoeUserID ].email == 'joe@user.co.uk'
+    assert User[ Card['joe_user'].id ].email == 'joe@user.co.uk'
   end
 
   def test_user_cant_block_self
     post '/card/update_account', :id=>"Joe User".to_name.key, :account => { :blocked => '1' }
-    assert !User[ Card::JoeUserID ].blocked?
+    assert !User[ Card['joe_user'].id ].blocked?
   end
 
 end

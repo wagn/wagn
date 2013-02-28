@@ -36,6 +36,7 @@ class URIChunk < Chunks::Abstract
   def URIChunk.config; URI_CONFIG end
 
   def initialize match, card_params, params
+    #warn "uri parse[#{match.inspect}] #{params.inspect}, #{@link_text}, #{@text}"
     super
     last_char = match[-1]
     match.gsub!(/(?:&nbsp;)+/, '')
@@ -75,6 +76,7 @@ class EmailURIChunk < URIChunk
   def EmailURIChunk.config; EMAIL_URI_CONFIG end
 
   def initialize match, card_params, params
+    #warn "email uri #{match}, #{@text}, #{params.inspect}"
     super
     @text = @text.sub(/^mailto:/,'')  # this removes the prepended string from the unchanged match text
     @process_chunk = self.renderer ? "#{self.renderer.build_link(@link_text, @text)}#{@trailing_punctuation}" : @text
@@ -116,6 +118,7 @@ class HostURIChunk < URIChunk
   def initialize match, card_params, params
     super
     @text = @text.sub(/^http:\/\//,'')  # this removes the prepended string from the unchanged match text
+    #warn "huri t:#{@text}, #{match}, #{params.inspect}"
     @process_chunk = self.renderer ? "#{self.renderer.build_link(@link_text, @text)}#{@trailing_punctuation}" : @text
   end
 end

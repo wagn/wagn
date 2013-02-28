@@ -31,22 +31,24 @@ class ObjectContent < SimpleDelegator
     if String===content
       pre_start = pos = 0
       #warn "scan re C:#{content[pos..-1]} re: #{SCAN_RE[ACTIVE_CHUNKS]}"
-      while match = content.match( SCAN_RE[ACTIVE_CHUNKS], pos)
+      while match = content[pos..-1].match( SCAN_RE[ACTIVE_CHUNKS])
         m_str = match[0]
         first_char = m_str[0,1]
-        grp_start = match.begin(0)
+        grp_start = match.begin(0)+pos
         pre_str = pre_start == grp_start ? nil : content[pre_start..grp_start]
-        #warn "scan m:#{m_str}[#{match.begin(0)}..#{match.end(0)}] grp:#{grp_start} pos:#{pos}:#{content[pos..match.end(0)]}"
-        pos = match.end(0)
+        #warn "scan m:#{m_str}[#{first_char}, #{m_str[-1,1]}, #{match.begin(0)}..#{match.end(0)}] grp:#{grp_start} pos:#{pos}:#{content[pos..match.end(0)]}"
+        pos += match.end(0)
 
         # either it is indexed by the first character of the match
         if match_cfg = PREFIX_LOOKUP[ first_char ]
           rest_match = content[pos..-1].match( Hash===(h = match_cfg[:rest_re]) ? h[m_str[1,1]] : h )
 
         else # or it uses the default pattern (URIChunk now)
-          match_cfg = PREFIX_LOOKUP[ m_str[-1] ] || PREFIX_LOOKUP[ :default ]
+          match_cfg = PREFIX_LOOKUP[ m_str[-1,1] ] || PREFIX_LOOKUP[ :default ]
+          prepend_str = match_cfg[:prepend_str]
+          prepend_str = (m_str[-1,1] != ':' && prepend_str) ? prepend_str : ''
+          #warn "pp #{match_cfg[:class]}, #{prepend_str.inspect} [#{m_str}, #{prepend_str}]"
           m_str = ''
-          prepend_str = match_cfg[:prepend_str]||''
           rest_match = ( prepend_str+content[grp_start..-1] ).match( match_cfg[:regexp] )
           pos = grp_start - prepend_str.length if rest_match
         end
@@ -65,6 +67,7 @@ class ObjectContent < SimpleDelegator
               positions << rec
             end
           rescue URI::Error=>e
+            #warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect}"
             Rails.logger.warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect}"
           end
         end

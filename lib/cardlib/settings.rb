@@ -4,7 +4,14 @@ module Cardlib::Settings
     from cards rules join cards sets on rules.left_id = sets.id join cards settings on rules.right_id = settings.id
     where sets.type_id     = #{Card::SetID }    and sets.trash     is false
     and   settings.type_id = #{Card::SettingID} and settings.trash is false
-    and                                             rules.trash    is false; }
+    and                                             rules.trash    is false;
+  }
+  
+  ReadRuleSQL = %{
+    select refs.referee_id as party_id, read_rules.id as read_rule_id
+    from cards read_rules join card_references refs on refs.referer_id = read_rules.id join cards sets on read_rules.left_id = sets.id
+    where read_rules.right_id = #{Card::ReadID} and read_rules.trash is false and sets.type_id = #{Card::SetID};
+  }  
   
   def is_rule?
     !simple?   and 
@@ -49,16 +56,14 @@ module Cardlib::Settings
     def rule_cache
       @@rule_cache ||= Card.cache.read('RULES') || begin        
         hash = {}
-        Account.as_bot do
-          ActiveRecord::Base.connection.select_all( Cardlib::Settings::RuleSQL ).each do |row|
-            setting_code = Wagn::Codename[ row['setting_id'].to_i ] or next
-            anchor_id = row['anchor_id']
-            set_class_id = anchor_id.nil? ? row['set_id'] : row['set_tag_id']
-        
-            set_class_code = Wagn::Codename[ set_class_id.to_i ] or next
-            hash_key = [ anchor_id, set_class_code, setting_code ].compact.map( &:to_s ) * '+'
-            hash[ hash_key ] = row['rule_id'].to_i
-          end
+        ActiveRecord::Base.connection.select_all( Cardlib::Settings::RuleSQL ).each do |row|
+          setting_code = Wagn::Codename[ row['setting_id'].to_i ] or next
+          anchor_id = row['anchor_id']
+          set_class_id = anchor_id.nil? ? row['set_id'] : row['set_tag_id']
+      
+          set_class_code = Wagn::Codename[ set_class_id.to_i ] or next
+          hash_key = [ anchor_id, set_class_code, setting_code ].compact.map( &:to_s ) * '+'
+          hash[ hash_key ] = row['rule_id'].to_i
         end
         Card.cache.write 'RULES', hash
       end
@@ -73,6 +78,25 @@ module Cardlib::Settings
       #FIXME: should fail except in test envs.
       @@rule_cache = hash
     end
+    
+    def read_rule_cache
+      @@read_rule_cache ||= Card.cache.read('READRULES') || begin
+        hash = {}
+        ActiveRecord::Base.connection.select_all( Cardlib::Settings::ReadRuleSQL ).each do |row|
+          party_id, read_rule_id = row['party_id'].to_i, row['read_rule_id'].to_i
+          hash[party_id] ||= []
+          hash[party_id] << read_rule_id
+        end
+        Card.cache.write 'READRULES', hash
+      end
+    end
+    
+    def clear_read_rule_cache local_only=false
+      Card.cache.write 'READRULES', nil unless local_only
+      @@read_rule_cache = nil
+    end
+    
+
     
     def default_rule setting_code, fallback=nil
       card = default_rule_card setting_code, fallback

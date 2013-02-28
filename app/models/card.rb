@@ -521,14 +521,15 @@ class Card < ActiveRecord::Base
 
   def read_rules
     @read_rules ||= begin
-      if id==Card::WagnBotID
-        [] # avoids infinite loop
-      else
-        party_keys = ['in', Card::AnyoneID] + parties
-        Account.as_bot do
-          Card.search(:right=>{:codename=>'read'}, :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
+      rule_ids = []
+      unless id==Card::WagnBotID # always_ok, so not needed
+        ( [ Card::AnyoneID ] + parties ).each do |party_id|
+          if rule_ids_for_party = self.class.read_rule_cache[ party_id ]
+            rule_ids += rule_ids_for_party
+          end
         end
       end
+      rule_ids
     end
   end
 

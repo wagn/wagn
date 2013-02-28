@@ -15,9 +15,9 @@ module Cardlib::Settings
     r.type_id==Card::SettingID 
   end
   
-  def rule setting_name, options={}
+  def rule setting_code, options={}
     options[:skip_modules] = true
-    card = rule_card setting_name, options
+    card = rule_card setting_code, options
     card && card.content
   end
   
@@ -64,10 +64,8 @@ module Cardlib::Settings
       end
     end
     
-    
-    
-    def clear_rule_cache
-      Card.cache.write 'RULES', nil
+    def clear_rule_cache local_only=false
+      Card.cache.write 'RULES', nil unless local_only
       @@rule_cache = nil
     end
     
@@ -76,15 +74,17 @@ module Cardlib::Settings
       @@rule_cache = hash
     end
     
-    def default_rule setting_name, fallback=nil
-      card = default_rule_card setting_name, fallback
+    def default_rule setting_code, fallback=nil
+      card = default_rule_card setting_code, fallback
       return card && card.content
     end
 
-    def default_rule_card setting_name, fallback=nil
-      Card["*all".to_name.trait_name(setting_name)] or
-        fallback ? default_rule_card(fallback) : nil
+    def default_rule_card setting_code, fallback=nil
+      rule_id = rule_cache["all+#{setting_code}"]
+      rule_id ||= fallback && rule_cache["all+#{fallback}"]
+      Card[rule_id] if rule_id
     end
+
   end
 
   def self.included(base)

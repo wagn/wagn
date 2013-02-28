@@ -589,7 +589,6 @@ class Card < ActiveRecord::Base
     "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{frozen? ? 'Fz' : readonly? ? 'RdO' : ''}" +
     "#{@virtual &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }:#{references_expired.inspect}}" +
     (self.errors.any? ? self.errors.full_messages*", " : 'NoErrs') +
-    #" Rules:#{ @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}" +
     '>'
   end
 

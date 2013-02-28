@@ -36,6 +36,7 @@ class ApplicationController < ActionController::Base
       Wagn::Renderer.current_slot = nil
 
       Wagn::Cache.renew
+      Card.clear_rule_cache local_only=true
 
       #warn "set curent_user (app-cont) #{self.current_account_id}, U.cu:#{Account.current_id}"
       Account.current_id = self.current_account_id || Card::AnonID

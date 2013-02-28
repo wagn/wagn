@@ -16,7 +16,6 @@ module Cardlib
     end
 
     def reset_patterns_if_rule saving=false
-#      return if name.blank?
       if is_rule?
         set = left
         set.reset_patterns
@@ -29,8 +28,6 @@ module Cardlib
     end
 
     def reset_patterns
-#      warn "resetting patterns for #{name}" if name
-      @rule_cards={}
       @set_mods_loaded = @patterns = @set_modules = @junction_only = @method_keys = @set_names = @template = @rule_set_keys = nil
       true
     end
@@ -109,11 +106,9 @@ module Cardlib
         def register key, opt_keys, opts={}
           Cardlib::Pattern.register_class self
           self.key = key
-          #self.key_id = (key == 'self') ? 0 : Wagn::Codename[key]
           self.key_id = Wagn::Codename[key]
           self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]
           opts.each { |key, val| send "#{key}=", val }
-          #warn "reg K:#{self}[#{key}] OK:[#{opt_keys.inspect}] jo:#{junction_only.inspect}, mk:#{method_key.inspect}"
         end
 
         def method_key_from_opts opts
@@ -133,24 +128,17 @@ module Cardlib
         @anchor_id = if self.class.respond_to? :anchor_id
           self.class.anchor_id card
         else
-          anchor_card = Card.fetch @anchor_name, :skip_virtual=>true, :skip_modules=> true
+          anchor_card = Card.fetch @anchor_name, :skip_virtual=>true, :skip_modules=>true
           anchor_card && anchor_card.id
         end
         self
       end
       
-      def anchor_name
-        @anchor_name #||= self.class.anchor_name(card).to_name
-      end
-      
-      def anchor_id
-        @anchor_id #||= self.class.anchor_id(card)
-      end
 
       def set_module
         case
         when  self.class.anchorless?    ; self.class.key
-        when  opt_vals.member?( nil )  ; nil
+        when  opt_vals.member?( nil )   ; nil
         else  "#{self.class.key}/#{opt_vals * '_'}"
         end
       end
@@ -176,7 +164,7 @@ module Cardlib
       def opt_vals
         if @opt_vals.nil?
           @opt_vals = self.class.anchorless? ? [] :
-            anchor_name.parts.map do |part|
+            @anchor_name.parts.map do |part|
               card=Card.fetch(part, :skip_virtual=>true, :skip_modules=>true) and Wagn::Codename[card.id.to_i]
             end
         end
@@ -185,10 +173,10 @@ module Cardlib
 
       def to_s()
         if self.class.key_id == 0
-          anchor_name
+          @anchor_name
         else
           kn = self.class.key_name
-          self.class.anchorless? ? kn : "#{anchor_name}+#{kn}"
+          self.class.anchorless? ? kn : "#{@anchor_name}+#{kn}"
         end
       end
 

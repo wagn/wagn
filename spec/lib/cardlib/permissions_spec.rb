@@ -100,9 +100,11 @@ describe "reader rules" do
   end
 
   it "should work with relative settings" do
-    Account.as_bot { @perm_card.save! }
-    all_plus = Card.fetch '*all plus+*read', :new=>{:content=>'_left'}
-    all_plus.save
+    Account.as_bot do
+      @perm_card.save!
+      all_plus = Card.fetch '*all plus+*read', :new=>{:content=>'_left'}
+      all_plus.save
+    end
     c = Card.new(:name=>'Home+Heart')
     c.who_can(:read).should == [Card::AuthID]
     c.permission_rule_card(:read).first.id.should == @perm_card.id
@@ -111,8 +113,10 @@ describe "reader rules" do
   end
 
   it "should get updated when relative settings change" do
-    all_plus = Card.fetch '*all plus+*read', :new=>{:content=>'_left'}
-    all_plus.save
+    Account.as_bot do
+      all_plus = Card.fetch '*all plus+*read', :new=>{:content=>'_left'}
+      all_plus.save
+    end
     c = Card.new(:name=>'Home+Heart')
     c.who_can(:read).should == [Card::AnyoneID]
     c.permission_rule_card(:read).first.id.should == Card.fetch('*all+*read').id

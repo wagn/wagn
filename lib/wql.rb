@@ -52,7 +52,8 @@ class Wql
         card.nil? ? Card.find_by_name_and_trash(row['name'],false).repair_key : card
       end
     when 'count';    rows.first['count'].to_i
-    else;           rows.map { |row| row[qr] }
+    when 'raw';      rows
+    else;            rows.map { |row| row[qr] }
     end
   end
 
@@ -388,6 +389,7 @@ class Wql
     def fields_to_sql
       field = @mods[:return]
       case (field.blank? ? :card : field.to_sym)
+      when :raw;  "#{table_alias}.*"
       when :card; "#{table_alias}.name"
       when :count; "coalesce(count(*),0) as count"
       when :content

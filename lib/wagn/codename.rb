@@ -28,10 +28,10 @@ module Wagn
 
     def load_hash
       @@codehash = {}
-
-      Card.where('codename is not NULL').each do |r|
+      sql = 'select id, codename from cards where codename is not NULL'
+      ActiveRecord::Base.connection.select_all(sql).each do |row|
         #FIXME: remove duplicate checks, put them in other tools
-        code, cid = r.codename.to_sym, r.id.to_i
+        code, cid = row['codename'].to_sym, row['id'].to_i
         if @@codehash.has_key?(code) or @@codehash.has_key?(cid)
           warn "dup code ID:#{cid} (#{@@codehash[code]}), CD:#{code} (#{@@codehash[cid]})"
         end

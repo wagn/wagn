@@ -253,6 +253,7 @@ class Card < ActiveRecord::Base
     cards.each_pair do |sub_name, opts|
       opts[:nested_edit] = self
       absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute cardname
+
       if card = Card[absolute_name]
         card = card.refresh
         card.update_attributes opts
@@ -260,12 +261,16 @@ class Card < ActiveRecord::Base
         opts[:name] = absolute_name
         card = Card.create opts
       end
+
       @subcards << card if card
       if card and card.errors.any?
         card.errors.each do |field, err|
           self.errors.add card.name, err
         end
         raise ActiveRecord::Rollback, "broke save_subcards"
+      else
+        cards = nil
+        true
       end
     end
   end
@@ -288,6 +293,7 @@ class Card < ActiveRecord::Base
     Card.transaction do
       if validate_delete
         delete_to_trash
+        reset_patterns_if_rule saving=true
         true
       end
     end
@@ -420,7 +426,8 @@ class Card < ActiveRecord::Base
 
   def type_name
     return if type_id.nil?
-    card = Card.fetch( type_id, :skip_modules=>true, :skip_virtual=>true ) and card.name
+    type_card = Card.fetch type_id.to_i, :skip_modules=>true, :skip_virtual=>true
+    type_card and type_card.name
   end
 
   def type= type_name
@@ -514,14 +521,15 @@ class Card < ActiveRecord::Base
 
   def read_rules
     @read_rules ||= begin
-      if id==Card::WagnBotID
-        [] # avoids infinite loop
-      else
-        party_keys = ['in', Card::AnyoneID] + parties
-        Account.as_bot do
-          Card.search(:right=>{:codename=>'read'}, :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
+      rule_ids = []
+      unless id==Card::WagnBotID # always_ok, so not needed
+        ( [ Card::AnyoneID ] + parties ).each do |party_id|
+          if rule_ids_for_party = self.class.read_rule_cache[ party_id ]
+            rule_ids += rule_ids_for_party
+          end
         end
       end
+      rule_ids
     end
   end
 
@@ -546,6 +554,11 @@ class Card < ActiveRecord::Base
     User.where( :card_id => id ).first
   end
 
+  def accountable?
+    Card.toggle(rule(:accountable)) and
+    !account and
+    fetch( :trait=>:account, :new=>{} ).ok?( :create)
+  end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # METHODS FOR OVERRIDE
@@ -564,7 +577,7 @@ class Card < ActiveRecord::Base
 
   #def debug_type() type_id end
   def debug_type() "#{typecode||'no code'}:#{type_id}" end
-  #def debug_type() "#{typename}:#{type_id}" end # this can cause infinite recursion
+  #def debug_type() "#{type_name}:#{type_id}" end # this can cause infinite recursion
 
   def to_s
     "#<#{self.class.name}[#{debug_type}]#{self.attributes['name']}>"
@@ -577,7 +590,6 @@ class Card < ActiveRecord::Base
     "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{frozen? ? 'Fz' : readonly? ? 'RdO' : ''}" +
     "#{@virtual &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }:#{references_expired.inspect}}" +
     (self.errors.any? ? self.errors.full_messages*", " : 'NoErrs') +
-    #" Rules:#{ @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}" +
     '>'
   end
 

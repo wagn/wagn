@@ -43,11 +43,14 @@ unless defined? TEST_ROOT
     # then set this back to true.
     self.use_instantiated_fixtures  = false
 
+    ORIGINAL_RULE_CACHE = Card.rule_cache
+
     def setup
       super
       # let the cache stick accross test-runs while profiling
       unless ActionController.const_defined?("PerformanceTest") and self.class.superclass == ActionController::PerformanceTest
         Wagn::Cache.restore
+        Card.set_rule_cache ORIGINAL_RULE_CACHE.clone
       end
     end
 

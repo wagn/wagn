@@ -72,7 +72,8 @@ describe Wagn::Renderer, "" do
     end
   
     it "should leave alone something that quacks like a URI when URI module raises invalid uri error" do
-      render_content( 'git://<a href="http://github.com/wagn/wagn.git">github.com/wagn/wagn.git</a>').should_not =~ /render-error/
+      wack_uri = 'git://<a href="http://github.com/wagn/wagn.git">github.com/wagn/wagn.git</a>'
+      render_content( wack_uri ).should == wack_uri
       render_content( 'mailto:eat@joe.com?v=k').should == "<a class=\"email-link\" href=\"mailto:eat@joe.com?v=k\">mailto:eat@joe.com?v=k</a>"
       #render_content( 'mailto:eat@joe.com?v=k').should == "mailto:eat@joe.com?v=k\">mailto:eat@joe.com?Subject=Hello"
     end
@@ -340,9 +341,10 @@ describe Wagn::Renderer, "" do
 
 
   context "Content rule" do
-    it "is rendered as raw" do
+    it "closed_content is rendered as title + raw" do
       template = Card.new(:name=>'A+*right+*content', :content=>'[[link]] {{inclusion}}')
-      Wagn::Renderer.new(template)._render(:core).should == '[[link]] {{inclusion}}'
+      Wagn::Renderer.new(template)._render(:closed_content).should ==
+        '<a href="/Basic" class="cardtype default-type">Basic</a> : [[link]] {{inclusion}}'
     end
 
     it "is used in new card forms when soft" do

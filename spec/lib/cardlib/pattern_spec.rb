@@ -74,7 +74,14 @@ describe Cardlib::Pattern do
       card = Card.fetch("AnewCard")
       card.method_keys.should == [ "basic_type",""]
     end
-
+  end
+  
+  describe :rule_set_keys do
+    it "returns correct set names for new cards" do
+      card = Card.new :name => "AnewCard"
+      card.rule_set_keys.should == [ "#{Card::BasicID}+type", "all"]
+    end
+    
   end
 
   describe :safe_keys do

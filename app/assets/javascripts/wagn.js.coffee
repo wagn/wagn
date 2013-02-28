@@ -10,14 +10,11 @@ wagn.prepUrl = (url, slot)->
   main = $('#main').children('.card-slot').attr 'card-name'
   xtra['main'] = main if main?
   if slot
-    home_view    = slot.attr 'home_view'
-    item         = slot.attr 'item'
-    name_context = slot.attr 'name_context'
-#    title     = slot.children('.card-header').children '.card-title'
-    xtra['home_view']    = home_view    if home_view?
-    xtra['item']         = item         if item?
-    xtra['name_context'] = name_context if name_context?
-    xtra['is_main']      = true         if slot.isMain()
+    xtra['is_main'] = true if slot.isMain()
+    $.each slot[0].attributes, (i, att)->
+      if (m = att.name.match /^slot-(.*)$/) and att.value?
+        xtra[m[1]] = att.value
+
   url + ( (if url.match /\?/ then '&' else '?') + $.param(xtra) )
 
 jQuery.fn.extend {
@@ -27,9 +24,10 @@ jQuery.fn.extend {
     s = @slot()
     v = $(val)
     if val[0]
-      v.attr 'home_view', s.attr 'home_view'
-      v.attr 'item',      s.attr 'item'
-    else #simple string
+      $.each s[0].attributes, (i, att)->
+        if att.name.match(/^slot-.*/) && att.value?
+          v.attr att.name, att.value
+    else #simple text (not html)
       v = val
     s.replaceWith v
     v
@@ -231,6 +229,26 @@ $(window).ready ->
     $(this).html $(this).attr( 'hover_content' )
   $('[hover_content]').live 'mouseleave', ->
     $(this).html $(this).attr( 'hover_restore' )
+    
+  $('.name-editor input').live 'keyup', ->
+    box =  $(this)
+    name = box.val()
+    wagn.pingName name, (data)->
+      return null if box.val() != name # avert race conditions
+      status = data['status']
+      ed = box.parent()
+      inst = box.closest('fieldset').find '.instruction'
+      ed.removeClass 'real-name virtual-name known-name'
+      slot_id = box.slot().attr 'card-id' # use id to avoid warning when renaming to name variant
+      if status != 'unknown' and !(slot_id && parseInt(slot_id) == data['id'])
+        ed.addClass status + '-name known-name'
+        qualifier = if status == 'virtual' #wish coffee would let me use  a ? b : c syntax here
+          'in virtual'
+        else
+          'already in'
+        inst.html '"' + name + '" ' + qualifier + ' use'
+      else
+        inst.html ''
 
 newCaptcha = (form)->
   recapUri = 'http://www.google.com/recaptcha/api/js/recaptcha_ajax.js'
@@ -238,5 +256,9 @@ newCaptcha = (form)->
   $(form).children().last().after recapDiv
   $.getScript recapUri, -> recapDiv.loadCaptcha()
 
+
+
+wagn.pingName = (name, success)->
+  $.getJSON wagn.rootPath + '/', { format: 'json', view: 'status', 'card[name]': name }, success
 
 warn = (stuff) -> console.log stuff if console?

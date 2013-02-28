@@ -35,6 +35,7 @@ class ObjectContent < SimpleDelegator
         m_str = match[0]
         first_char = m_str[0,1]
         grp_start = match.begin(0)+pos
+        
         pre_str = pre_start == grp_start ? nil : content[pre_start..grp_start]
         #warn "scan m:#{m_str}[#{first_char}, #{m_str[-1,1]}, #{match.begin(0)}..#{match.end(0)}] grp:#{grp_start} pos:#{pos}:#{content[pos..match.end(0)]}"
         pos += match.end(0)
@@ -71,7 +72,9 @@ class ObjectContent < SimpleDelegator
             Rails.logger.warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect}"
           end
         end
+        #end
       end
+      #end
     end
 
     if positions.any?

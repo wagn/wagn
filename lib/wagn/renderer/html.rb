@@ -106,8 +106,14 @@ module Wagn
       classes << 'card-frame' if args[:frame]
       classes << card.safe_keys if card
 
-      attributes = { :class => classes.join(' ') }
-      [:style, :home_view, :item].each { |key| attributes[key] = args[key] }
+      attributes = { 
+        :class => classes*' ',
+        :style=>args[:style]
+      }
+      
+      [:home_view, :item, :include].each do |key|
+        attributes["slot-#{key}"] = args[key]
+      end
 
       if card
         attributes['card-id']  = card.id
@@ -115,7 +121,7 @@ module Wagn
       end
       
       if @context_names
-        attributes['name_context'] = @context_names.map( &:key ) * ','
+        attributes['slot-name_context'] = @context_names.map( &:key ) * ','
       end
       
       content_tag(:div, attributes ) { yield }

@@ -119,7 +119,7 @@ class AccountController < CardController
       #warn Rails.logger.info("to prev #{previous_location}")
       redirect_to previous_location
     else
-      usr=User.where(:email=>params[:login].strip.downcase).first
+      usr=User[ params[:login].strip.downcase ]
       failed_login(
         case
         when usr.nil?     ; "Unrecognized email."

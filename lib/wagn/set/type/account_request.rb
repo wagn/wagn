@@ -32,7 +32,7 @@ module Wagn
       private
 
       def block_user
-        if account = User.where(:card_id=>self.id).first
+        if account = User[ self.id ]
           account.update_attributes :status=>'blocked'
         end
       end

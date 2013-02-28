@@ -102,10 +102,8 @@ end
   }
 
   def integration_login_as(user, functional=nil)
-    User.cache.reset
-
     raise "Don't know email & password for #{user}" unless uc=Card[user] and
-        u=User.where(:card_id=>uc.id).first and
+        u=User[ uc.id ] and
         login = u.email and pass = USERS[login]
 
     if functional

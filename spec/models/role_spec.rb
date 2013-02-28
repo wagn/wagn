@@ -48,7 +48,7 @@ end
 describe User, 'Joe User' do
   before do
     Account.current_id = Card['joe_user'].id
-    User.cache.delete 'joe_user'
+#    User.cache.delete 'joe_user'
     @ju = Account.user
     @jucard = Account.current
     @r1 = Card['r1']

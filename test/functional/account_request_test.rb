@@ -36,7 +36,7 @@ class AccountRequestTest < ActionController::TestCase
     }
 
     @card =  Card["Word Third"]
-    @user = User.where(:card_id=>@card.id).first
+    @user = User[ @card.id ]
 
     assert_equal @card.typecode, :account_request
 

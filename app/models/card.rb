@@ -551,7 +551,7 @@ class Card < ActiveRecord::Base
   end
 
   def account
-    User.where( :card_id => id ).first
+    User[ id ]
   end
 
   def accountable?

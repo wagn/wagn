@@ -255,7 +255,7 @@ module Cardlib::Permissions
 
         self.class.clear_read_rule_cache
         
-        User.cache.reset
+#        User.cache.reset
         Card.cache.reset # maybe be more surgical, just Account.user related
         expire #probably shouldn't be necessary,
         # but was sometimes getting cached version when card should be in the trash.

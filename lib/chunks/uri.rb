@@ -38,7 +38,7 @@ class URIChunk < Chunks::Abstract
   def initialize match, card_params, params
     #warn "uri parse[#{match.inspect}] #{params.inspect}, #{@link_text}, #{@text}"
     super
-    last_char = match[-1]
+    last_char = match[-1,1]
     match.gsub!(/(?:&nbsp;)+/, '')
 
     @trailing_punctuation = if %w{ , . ) ! ? : }.member?(last_char)

@@ -68,7 +68,7 @@ class ObjectContent < SimpleDelegator
               positions << rec
             end
           rescue URI::Error=>e
-            #warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect}"
+            #warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect} #{e.backtrace*"\n"}"
             Rails.logger.warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect}"
           end
         end

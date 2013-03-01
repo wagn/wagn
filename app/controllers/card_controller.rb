@@ -112,7 +112,7 @@ class CardController < ApplicationController
       role_card = card.fetch :trait=>:roles, :new=>{}
       role_card.ok! :update
 
-      role_hash = params[:user_roles] || {}
+      role_hash = params[:account_roles] || {}
       role_card = role_card.refresh
       role_card.items= role_hash.keys.map &:to_i
     end
@@ -136,7 +136,7 @@ class CardController < ApplicationController
     raise Wagn::PermissionDenied, "can't add account to this card" unless card.accountable?
     email_args = { :subject => "Your new #{Card.setting :title} account.",   #ENGLISH
                    :message => "Welcome!  You now have an account on #{Card.setting :title}." } #ENGLISH
-    @user, @card = User.create_with_card params[:user], card, email_args
+    @account, @card = User.create_with_card params[:account], card, email_args
     if @card.errors.any?
       render_errors
     else

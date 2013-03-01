@@ -157,7 +157,7 @@ module Wagn
     def rescue_view e, view
       controller.send :notify_airbrake, e if Airbrake.configuration.api_key
       Rails.logger.info "\nError rendering #{error_cardname} / #{view}: #{e.class} : #{e.message}"
-      Rails.logger.debug "  #{e.backtrace*"\n  "}"
+      Rails.logger.debug "BT:  #{e.backtrace*"\n  "}"
       rendering_error e, view
     end
 

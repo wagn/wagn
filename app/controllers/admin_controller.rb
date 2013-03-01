@@ -30,7 +30,7 @@ class AdminController < CardController
       end
     else
       @card = Card.new( params[:card] || {} ) #should prolly skip defaults
-      @account = User.new( params[:user] || {} )
+      @account = User.new( params[:account] || {} )
     end
   end
 

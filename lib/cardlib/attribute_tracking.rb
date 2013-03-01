@@ -43,7 +43,6 @@ module Cardlib::AttributeTracking
   module ClassMethods
     # Important! Tracking should be declared *after* associations
     def tracks(*fields)
-      #Rails.logger.debug "tracks(#{fields.inspect})"
       class_eval do
         def updates
           @updates ||= Updates.new(self)
@@ -52,13 +51,11 @@ module Cardlib::AttributeTracking
 
       fields.each do |field|
         unless self.method_defined? field
-          dbg='' #dbg = (field == 'name') ? %{Rails.logger.debug "get #{field} "+r.to_s; r;} :  ''
           access = "read_attribute('#{field}')"
           if cache_attribute?(field.to_s)
             access = "@attributes_cache['#{field}'] ||= #{access}"
           end
-          #warn "def tracking #{field}; r=(#{access};) #{dbg} end"
-          class_eval "def #{field}; r=(#{access};) #{dbg} end"
+          class_eval "def #{field}; r=(#{access};) end"
         end
 
         unless self.method_defined? "#{field}="
@@ -67,11 +64,7 @@ module Cardlib::AttributeTracking
               write_attribute '#{field}', value
             end
           }
-          #warn "define= #{code}"
         end
-
-             #Rails.logger.debug "#{field}= "+val.to_s
-          #def #{field}_before_type_cast() #{field} end
 
         class_eval (code = %{
           def #{field}_with_tracking=(val)
@@ -85,8 +78,6 @@ module Cardlib::AttributeTracking
           end
           alias_method_chain :#{field}, :tracking
         })
-            #Rails.logger.debug('#{field} is ' + r.to_s); r
-        #warn code
       end
 
     end

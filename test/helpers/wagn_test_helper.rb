@@ -7,9 +7,9 @@ module WagnTestHelper
 
   def setup_default_user
     Account.current_id = Card::WagnBotID
-    @user = Account.user
+    @account = Account.current.account
 
-    @user.update_column 'crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c'
+    @account.update_column 'crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c'
 
     Account.current_id = Card['joe_user'].id
     nil
@@ -71,9 +71,9 @@ module WagnTestHelper
   def post_invite(options = {})
     action = options[:action] || :invite
     post action,
-      :user => { :email => 'new@user.com' }.merge(options[:user]||{}),
-      :card => { :name => "New User" }.merge(options[:card]||{}),
-      :email => { :subject => "mailit",  :message => "baby"  }
+      :account => { :email => 'new@user.com' }.merge(options[:account]||{}),
+      :card    => { :name => "New User" }.merge(options[:card]||{}),
+      :email   => { :subject => "mailit",  :message => "baby"  }
   end
 
 #  def test_render(url)

@@ -4,7 +4,7 @@ module Cardlib::Templating
     cardname.trait_name? :content, :default
   end
   
-  def hard_template?
+  def is_hard_template?
     cardname.trait_name? :content
   end
   
@@ -38,7 +38,7 @@ module Cardlib::Templating
   end
 
   def hard_template
-    template if template && template.hard_template?
+    template if template && template.is_hard_template?
   end
 
   def virtual?
@@ -84,7 +84,7 @@ module Cardlib::Templating
   private
 
   def hard_templatee_spec
-    if hard_template? and c=Card.fetch(cardname.trunk_name)
+    if is_hard_template? and c=Card.fetch(cardname.trunk_name)
       c.type_id == Card::SetID ? c.get_spec : true
     end
   end

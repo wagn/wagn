@@ -23,7 +23,7 @@ describe AccountController do
       @ja_email = @jadmin.account.email
 
       @email_args = {:subject=>'Hey Joe!', :message=>'Come on in.'}
-      post :invite, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'},
+      post :invite, :account=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'},
         :email=> @email_args
 
       @cd_with_acct = Card['Joe New']
@@ -59,8 +59,9 @@ describe AccountController do
 
     it 'should create a user' do
       #warn "who #{Account.current.inspect}"
-      post :signup, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}
+      post :signup, :account=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}
       new_user = User[ 'joe@new.com' ]
+      
       @cd_with_acct = Card['Joe New']
       new_user.should be
       new_user.card_id.should == @cd_with_acct.id
@@ -69,7 +70,7 @@ describe AccountController do
     end
 
     it 'should send email' do
-      post :signup, :user=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}
+      post :signup, :account=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}
       login_as :joe_admin
 
       post :accept, :card=>{:key=>'joe_new'}, :email=>{:subject=>'Hey Joe!', :message=>'Can I Come on in?'}
@@ -80,8 +81,8 @@ describe AccountController do
     end
 
     it 'should detect duplicates' do
-      post :signup, :user=>{:email=>'joe@user.com'}, :card=>{:name=>'Joe Scope'}
-      post :signup, :user=>{:email=>'joe@user.com'}, :card=>{:name=>'Joe Duplicate'}
+      post :signup, :account=>{:email=>'joe@user.com'}, :card=>{:name=>'Joe Scope'}
+      post :signup, :account=>{:email=>'joe@user.com'}, :card=>{:name=>'Joe Duplicate'}
       
       #s=Card['joe scope']
       c=Card['Joe Duplicate']

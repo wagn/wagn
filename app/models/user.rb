@@ -65,12 +65,20 @@ class User < ActiveRecord::Base
     # User caching
     def [] mark
       if mark
-        cache.read mark or cache.write mark, begin
-          if Integer === mark
+        cache_key = Integer === mark ? "~#{mark}" : mark
+        cached_val = cache.read cache_key
+        case cached_val
+        when :missing; nil
+        when nil
+          val = if Integer === mark
             find_by_card_id mark
           else
             find_by_email mark
-          end            
+          end
+          cache.write cache_key, ( val || :missing )
+          val
+        else
+          cached_val
         end
       end
     end

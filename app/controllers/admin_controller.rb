@@ -16,7 +16,7 @@ class AdminController < CardController
 
         #warn "ext id = #{@account.id}"
 
-        if @account.errors.empty?
+        if @card.errors.empty?
           roles_card = card.fetch :trait=>:roles, :new=>{}
           roles_card.content = "[[#{Card[Card::AdminID].name}]]"
           roles_card.save

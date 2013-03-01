@@ -23,7 +23,7 @@ class AccountController < CardController
       @account = User.new account_params
     else
       @account, @card = User.create_with_card account_params, card_params
-      if @account.errors.any?
+      if @card.errors.any?
         render_errors
       else
         if @card.ok?(:create, :new=>{}, :trait=>:account)      # automated approval

@@ -1,6 +1,3 @@
-require_dependency 'chunks/chunk'
-require_dependency 'chunk_manager'
-
 class SplitLinkType < ActiveRecord::Migration
   def up
     add_column :card_references, :present, :integer

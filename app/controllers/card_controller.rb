@@ -136,7 +136,7 @@ class CardController < ApplicationController
     raise Wagn::PermissionDenied, "can't add account to this card" unless card.accountable?
     email_args = { :subject => "Your new #{Card.setting :title} account.",   #ENGLISH
                    :message => "Welcome!  You now have an account on #{Card.setting :title}." } #ENGLISH
-    @account, @card = User.create_with_card params[:user], card, email_args
+    @account, @card = User.create_with_card params[:account], card, email_args
     if @card.errors.any?
       render_errors
     else

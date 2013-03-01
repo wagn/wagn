@@ -6,6 +6,8 @@ include Sets
 
     define_view :closed_rule, :rstar=>true, :tags=>:unknown_ok do |args|
       rule_card = card.new_card? ? find_current_rule_card[0] : card
+      Rails.logger.info "card = #{card.name},"+
+        "rule_card = #{rule_card.nil?}"
 
       rule_content = !rule_card ? '' : begin
         r = subrenderer rule_card
@@ -208,8 +210,8 @@ include Sets
       # This generates a prototypical member of the POTENTIAL rule's set
       # and returns that member's ACTUAL rule for the POTENTIAL rule's setting
       set_prototype = Card.fetch( card.cardname.trunk_name ).prototype
-      #warn "f c rcard #{card.inspect}, #{set_prototype.inspect}, #{card.cardname.trunk_name}"
-      rule_card = card.new_card? ? set_prototype.rule_card( card.cardname.tag ) : card
+      Rails.logger.info "f c rcard #{card.inspect}, #{set_prototype.inspect}, #{card.cardname.trunk_name}"
+      rule_card = card.new_card? ? set_prototype.rule_card( card.tag.codename ) : card
       [ rule_card, set_prototype ]
     end
   end

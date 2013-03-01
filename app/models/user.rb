@@ -87,7 +87,7 @@ class User < ActiveRecord::Base
 #~~~~~~~ Instance
 
   def reset_instance_cache
-    self.class.cache.write card_id, nil
+    self.class.cache.write "~#{card_id}", nil
     self.class.cache.write email, nil if email
   end
 

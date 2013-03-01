@@ -7,16 +7,21 @@ include Sets
     define_view :closed_rule, :rstar=>true, :tags=>:unknown_ok do |args|
       rule_card = card.new_card? ? find_current_rule_card[0] : card
 
+      rule_content = !rule_card ? '' : begin
+        r = subrenderer rule_card
+        r.render_closed_content :set_context=>card.cardname.trunk_name
+      end
+
       cells = [
         ["rule-setting",
           link_to( card.cardname.tag.sub(/^\*/,''), path(:view=>:open_rule),
-            :class => 'edit-rule-link slotter', :remote => true )
+            :class => 'edit-rule-link slotter', :remote => true, :rel=>'nofollow' )
         ],
         ["rule-content",
           %{<div class="rule-content-container">
-             <span class="closed-content content">#{rule_card ? subrenderer(rule_card).render_closed_content : ''}</span>
+             <span class="closed-content content">#{rule_content}</span>
            </div> } ],
-        ["rule-type", (rule_card ? rule_card.type_name : '') ],
+        ["rule-set", (rule_card ? rule_card.trunk.label : '') ],
       ]
 
       extra_css_class = rule_card && !rule_card.new_card? ? 'known-rule' : 'missing-rule'
@@ -36,6 +41,7 @@ include Sets
       current_rule ||= Card.new :name=> "*all+#{setting_name}"
       set_selected = false
 
+      #~~~~~~ handle reloading due to type change
       if params[:type_reload] && card_args=params[:card]
         params.delete :success # otherwise updating the editor looks like a successful post
         if card_args[:name] && card_args[:name].to_name.key != current_rule.key
@@ -58,6 +64,8 @@ include Sets
         :set_selected    => set_selected
       }
 
+
+      #~~~~~~~~~~ determine the set options to which the user can apply the rule.
       if !opts[:read_only]
         set_options = prototype.set_names.reverse
         first = (csk=opts[:current_set_key]) ? set_options.index{|s| s.to_name.key == csk} : 0
@@ -70,7 +78,7 @@ include Sets
         # note, the -1 can happen with virtual cards because the self set doesn't show up in the set_names.  FIXME!!
         opts[:set_options] = set_options[first..last]
 
-        # The above is about creating the options for the sets to which the user can apply the rule.
+
         # The broadest set should always be the currently applied rule
         # (for anything more general, they must explicitly choose to "DELETE" the current one)
         # the narrowest rule should be the one attached to the set being viewed.  So, eg, if you're looking at the "*all plus" set, you shouldn't
@@ -104,7 +112,7 @@ include Sets
           <div class="rule-column-1">
             <div class="rule-setting">
               #{ link_to( setting_name.sub(/^\*/,''), path(:card=>open_rule, :view=>:closed_rule),
-                  :remote => true, :class => 'close-rule-link slotter') }
+                  :remote => true, :class => 'close-rule-link slotter', :rel => 'nofollow' ) }
             </div>
             <ul class="set-editor">
         } +

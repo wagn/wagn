@@ -85,6 +85,9 @@ h1.card-title {
 .name-editor input {
   width: 100%;
 }
+.name-editor.known-name input {
+  border: 3px solid #c22;
+}
 
 .ui-menu .ui-menu-item {
   padding: 2px 0;
@@ -142,19 +145,7 @@ a.email-link {
   color: #069;
   background: #ffc;
 }
-/*
-.content-view p,
-.content-view span,
-.content-view a,
-.content-view ul,
-.content-view ol,
-.content-view h1,
-.content-view h2 {
-  background-color: inherit;
-  -moz-border-radius: inherit;
-  border-radius: inherit;
-}
-*/
+
 
 /* note:   ".card-slot .content-view div not(.editor)" was not working properly and was breaking nested block elements.
    without it nested divs in content-view areas probably won't highlight  */
@@ -357,7 +348,6 @@ body#wagn .card-slot.recent-changes h2 {
   margin: 1px 0 0 0;
 }
 .closed-view .card-header {
-  padding: auto 12px;
   vertical-align: middle;
   display: inline-block;
   line-height: 15px;
@@ -466,17 +456,18 @@ ul.pointer {
 }
 .pointer-list-editor input {
   margin-right: 10px;
-  width: 60%;
+  width: 65%;
 }
 .pointer-list-editor li {
   list-style: none;
+  white-space: nowrap;
 }
 .pointer-list-editor .pointer-item-delete {
   margin-left: 4px;
-  font-weight: bold;
-  color: #933;
-  font-size: 15px;
   vertical-align: middle;
+  display: inline-block;
+  position: relative;
+  bottom: 2px;
 }
 
 
@@ -526,7 +517,6 @@ div.search-result-list .search-result-item {
 /*-----------( Image ) -----------*/
 
 
-/*.open-view.type-Image, */
 .open-view .TYPE-image .content {
 /*  overflow: auto;  */
   padding: 5px;
@@ -541,12 +531,13 @@ div.search-result-list .search-result-item {
 /*------------( Layout, Plain Text ) ------------*/
 
 .TYPE-layout > .content,
-.TYPE-plain_text > .content {
+.TYPE-plain_text > .content,
+.RIGHT-Xcontent > .content,
+.RIGHT-Xdefault> .content {
   white-space: pre-wrap
 }
 
-.TYPE-layout > .card-editor,
-.TYPE-plain_text > .card-editor {
+.content.card-editor {
   white-space: normal;
 }
 
@@ -598,4 +589,22 @@ table.perm-editor .pointer-item-text {
 }
 .ui-loader {
   display: none;
+}
+.template-editor-main {
+  float: left;
+  width: 85%;
+}
+.template-editor-left,
+.template-editor-right {
+  float: left;
+  width: 5%;
+  text-align: center;
+  font-size: 3em;
+  line-height: 2em;
+}
+.template-editor-close {
+   float: right;
+}
+.template_link-view {
+  display: inline;
 }

@@ -4,35 +4,29 @@ module Wagn
 
     format :html
 
-    define_view :raw, :name=>:signup do |args|
-      warn "signup view #{card.inspect}"
-    end
-
-    define_view :raw, :name=>:invite do |args|
-      warn "invite view #{card.inspect}"
-    end
-
     define_view :raw, :name=>:account_links do |args|
       #ENGLISH
       prefix = Wagn::Conf[:root_path] + '/account'
       %{<span id="logging">#{
         if Account.logged_in?
           ucard = Account.current
-          %{#{   link_to ucard.name, "#{Wagn::Conf[:root_path]}/#{ucard.cardname.url_key}", :id=>'my-card-link'
-             }#{ if invite_card = Card[:invite] and invite_card.ok? :create
-                   link_to 'Invite a Friend', invite_card.key, :id=>'invite-a-friend-link'
-                 end
-             }#{ #link_to 'Sign out', Card[:session].key, :method=>'DELETE', :id=>'signout-link'
-                 link_to 'Sign out', '/account/signout', :id=>'signout-link'
-           }}
-         else
-           %{#{ if signup_card = Card[:signup].send_if(:ok?, :create)
-                 link_to 'Sign up', signup_card.key, :id=>'signup-link'
-                end
-            }#{ #link_to 'Sign in', Card[:session].key, :id=>'signin-link'
-                 link_to 'Sign in', '/account/signin', :id=>'signout-link'
-            }}
-         end }
+          %{
+            #{ link_to ucard.name, "#{Wagn::Conf[:root_path]}/#{ucard.cardname.url_key}", :id=>'my-card-link' }
+            #{
+              if User.create_ok?
+                link_to 'Invite a Friend', "#{prefix}/invite", :id=>'invite-a-friend-link'
+              end
+            }
+            #{ link_to 'Sign out', "#{prefix}/signout",                                      :id=>'signout-link' }
+          }
+        else
+          %{
+            #{ if Card.new(:typecode=>'account_request').ok? :create
+                 link_to 'Sign up', "#{prefix}/signup", :id=>'signup-link'
+               end }
+            #{ link_to 'Sign in', "#{prefix}/signin", :id=>'signin-link' }
+          }
+        end }
       </span>}
     end
   end

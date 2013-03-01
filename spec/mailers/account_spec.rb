@@ -24,7 +24,7 @@ describe Mailer do
     before do
       user_id =  Card['sara'].id
       Account.as_bot do
-        @user = User.where(:card_id=>user_id).first
+        @user = User[ user_id ]
         @user.generate_password
         @email = Mailer.account_info(@user, "New password subject", "Forgot my password")
       end

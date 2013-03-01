@@ -100,9 +100,11 @@ describe "reader rules" do
   end
 
   it "should work with relative settings" do
-    Account.as_bot { @perm_card.save! }
-    all_plus = Card.fetch '*all plus+*read', :new=>{:content=>'_left'}
-    all_plus.save
+    Account.as_bot do
+      @perm_card.save!
+      all_plus = Card.fetch '*all plus+*read', :new=>{:content=>'_left'}
+      all_plus.save
+    end
     c = Card.new(:name=>'Home+Heart')
     c.who_can(:read).should == [Card::AuthID]
     c.permission_rule_card(:read).first.id.should == @perm_card.id
@@ -152,7 +154,7 @@ end
 describe "Permission", ActiveSupport::TestCase do
   before do
     Account.as_bot do
-      User.cache.reset
+#      User.cache.reset
       @u1, @u2, @u3, @r1, @r2, @r3, @c1, @c2, @c3 =
         %w( u1 u2 u3 r1 r2 r3 c1 c2 c3 ).map do |x| Card[x] end
     end

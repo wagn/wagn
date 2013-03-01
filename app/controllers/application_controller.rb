@@ -36,6 +36,7 @@ class ApplicationController < ActionController::Base
       Wagn::Renderer.current_slot = nil
 
       Wagn::Cache.renew
+      Card.clear_rule_cache local_only=true
 
       #warn "set curent_user (app-cont) #{self.current_account_id}, U.cu:#{Account.current_id}"
       Account.current_id = self.current_account_id || Card::AnonID
@@ -89,9 +90,9 @@ class ApplicationController < ActionController::Base
     ext = request.parameters[:format]
     known = FORMATS.split('|').member? ext
 
-    if !known && card && card.error_view
+    if !known && status >= 400
       ext, known = 'txt', true
-      # render simple text for errors on unknown formats; without this, file/image permissions checks are meaningless
+      # render simple text for errors on unknown formats;
     end
 
     case

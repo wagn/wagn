@@ -6,14 +6,10 @@ module WagnTestHelper
 #  include CardBuilderMethods
 
   def setup_default_user
-    User.cache.reset
-
-    #current = Card['joe user']
-    #current = Card[:wagn_bot]
     Account.current_id = Card::WagnBotID
-    @user = Account.user
+    @account = Account.current.account
 
-    @user.update_column 'crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c'
+    @account.update_column 'crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c'
 
     Account.current_id = Card['joe_user'].id
     nil
@@ -53,10 +49,8 @@ module WagnTestHelper
   }
 
   def integration_login_as(user, functional=nil)
-    User.cache.reset
-
     raise "Don't know email & password for #{user}" unless uc=Card[user] and
-        u=User.where(:card_id=>uc.id).first and
+        u = User[ uc.id ] and
         login = u.email and pass = USERS[login]
 
     if functional
@@ -77,9 +71,9 @@ module WagnTestHelper
   def post_invite(options = {})
     action = options[:action] || :invite
     post action,
-      :user => { :email => 'new@user.com' }.merge(options[:user]||{}),
-      :card => { :name => "New User" }.merge(options[:card]||{}),
-      :email => { :subject => "mailit",  :message => "baby"  }
+      :account => { :email => 'new@user.com' }.merge(options[:account]||{}),
+      :card    => { :name => "New User" }.merge(options[:card]||{}),
+      :email   => { :subject => "mailit",  :message => "baby"  }
   end
 
 #  def test_render(url)

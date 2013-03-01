@@ -45,7 +45,7 @@ module Wagn
     end
   
     define_view :title do |args|
-      t = content_tag :h1, fancy_title, :class=>'card-title', :name_context=>"#{ @context_names.map(&:key)*',' }"
+      t = content_tag :h1, fancy_title, :class=>'card-title'
       add_name_context
       t
     end
@@ -79,17 +79,22 @@ module Wagn
   
     define_view :menu do |args|
       #goto_icon = %{<a class="ui-icon ui-icon-arrowreturnthick-1-e"></a>}
-      
       option_html = %{
         <ul class="card-menu">
-          <li>#{ link_to_view 'edit', :edit, :class=>'slotter' }
-            <ul>
-                <li>#{ link_to_view 'content', :edit, :class=>'slotter' }</li>
-                <li>#{ link_to_view 'name', :edit_name, :class=>'slotter' }</li>
-                <li>#{ link_to_view 'type', :edit_type, :class=>'slotter' }</li>
-                <li>#{ link_to_view 'history', :changes, :class=>'slotter' }</li>
-            </ul>
-          </li>
+          #{
+            if !card.virtual?
+              %{
+                <li>#{ link_to_view 'edit', :edit, :class=>'slotter' }
+                  <ul>
+                      <li>#{ link_to_view 'content', :edit, :class=>'slotter' }</li>
+                      <li>#{ link_to_view 'name', :edit_name, :class=>'slotter' }</li>
+                      <li>#{ link_to_view 'type', :edit_type, :class=>'slotter' }</li>
+                      <li>#{ link_to_view 'history', :changes, :class=>'slotter' }</li>
+                  </ul>
+                </li>
+              }
+            end
+          }
           <li>#{ link_to_page 'view', card.name }
             <ul>
             #{
@@ -97,7 +102,7 @@ module Wagn
                 "<li>#{ link_to_page raw("#{piece} &crarr;"), piece }</li>"
               end.join "\n"
             }
-              <li>#{ link_to_view 'refresh', :read }
+              <li>#{ link_to_view 'refresh', :read, :class=>'slotter' }
                 <ul>
                   #{ 
                     %w{ titled open closed content }.map do |view|
@@ -120,7 +125,7 @@ module Wagn
             end
           }
           #{
-            if card && card.update_account_ok? 
+            if card.update_account_ok? 
               "<li>#{ link_to_view 'account', :account, :class=>'slotter' }</li>"
             end
           }
@@ -173,7 +178,7 @@ module Wagn
       end
 
       if !ajax_call? 
-        header_text = card.type_id == Card::DefaultTypeID ? 'Card' : card.type_name
+        header_text = card.type_id == Card::DefaultTypeID ? '' : card.type_name
         %{ <h1 class="page-header">New #{header_text}</h1>}
       else '' end +
       
@@ -263,7 +268,7 @@ module Wagn
     define_view :name_editor do |args|
       fieldset 'name', (editor_wrap :name do
          raw( name_field form )
-      end)
+      end), :help=>''
     end
 
 
@@ -313,7 +318,7 @@ module Wagn
         else
           type_field :class=>"type-field live-type-field", :href=>path(:view=>:new), 'data-remote'=>true
         end
-      end)
+      end), :attribs=> { :class=>'type-fieldset'}
     end
 
     define_view :edit_type, :perms=>:update do |args|
@@ -344,18 +349,19 @@ module Wagn
     define_view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
       eform = form_for_multi
       content = content_field eform, :nested=>true
-      attribs = %{ class="card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" }
+      attribs = { :class=> "card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" }
       link_target, help_settings = if card.new_card?
         content += raw( "\n #{ eform.hidden_field :type_id }" )
         [ card.cardname.tag, [:add_help, { :fallback => :edit_help } ] ]
       else
-        attribs += %{ card-id="#{card.id}" card-name="#{h card.name}" }
+        attribs.merge :card_id=>card.id, :card_name=>(h card.name)
         [ card.name, :edit_help ]
 
       end
       label = link_to_page fancy_title, link_target
       fieldset label, content, :help=>help_settings, :attribs=>attribs
     end
+
 
     define_view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
 
@@ -399,7 +405,7 @@ module Wagn
               <div class="settings-tab">
                 #{ if !related_sets.empty?
                   %{ <div class="set-selection">
-                    #{ form_tag path(:view=>:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'slotter' }
+                    #{ form_tag path(:view=>:options), :method=>'get', :remote=>true, :class=>'slotter' }
                         <label>Set:</label>
                         <select name="current_set" class="set-select">#{ set_options }</select>
                     </form>
@@ -410,11 +416,10 @@ module Wagn
                   #{ raw subrenderer( Card.fetch current_set).render_content }
                 </div>
 
-                #{ if Card.toggle(card.rule(:accountable)) && card.fetch(:trait=>:account, :new=>{}).ok?(:create)
+                #{ if card.accountable?
                     %{<div class="new-account-link">
-                    #{ link_to %{Add a sign-in account for "#{card.name}"},
-                        path(:view=>:options, :attrib=>:new_account),
-                      :class=>'slotter new-account-link', :remote=>true }
+                    #{ link_to %{Add a sign-in account for "#{card.name}"}, path(:view=>:new_account),
+                         :class=>'slotter new-account-link', :remote=>true }
                     </div>}
                    end
                 }
@@ -423,7 +428,6 @@ module Wagn
             #{ notice }
           }
        end
-      # should be just if !card.fetch(:trait=>:account) and Card.new( :name=>"#{card.name}+Card[:account].name").ok?(create)
     end
     
     define_view :option_roles do |args|
@@ -463,18 +467,32 @@ module Wagn
       )}}
     end
 
-    define_view :option_new_account do |args|
-      %{#{
-        card_form :create_account do |form|
-          #ENGLISH 
-          %{<table class="fieldset">
-          #{ template.render :partial=>'account/email' }
-             <tr><td colspan="3" style><p>
-         A password for a new sign-in account will be sent to the above address.
-             #{ submit_tag 'Create Account' }
-             </p></td></tr>
-          </table>}
-       end}}
+    define_view :new_account,
+      :perms=> lambda { |r| r.card.accountable? } do |args|
+      wrap :new_account, args.merge(:frame=>true) do
+        %{
+          #{ _render_header }
+          #{ card_form :create_account do |form|
+            #ENGLISH 
+              %{
+                #{ hidden_field_tag 'success[id]', '_self' }
+                #{ hidden_field_tag 'success[view]', 'account' }
+                <table class="fieldset">
+                  #{ template.render :partial=>'account/email' }
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td colspan="2">
+                      <div>A password will be sent to the above address.</div>
+                      <div>#{ submit_tag 'Create Account' }</div>
+                    </td>
+                  </tr>
+                </table>
+              }
+            end
+          }
+         #{ notice }
+        }
+      end
     end
 
     define_view :changes do |args|
@@ -547,7 +565,7 @@ module Wagn
     end
 
     define_view :errors, :perms=>:none do |args|
-      Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller*"\n"}"
+      Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller[0..3]*", "}"
       wrap :errors, args do
         %{ <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
         card.errors.map { |attrib, msg| "<div>#{attrib.to_s.upcase}: #{msg}</div>" } * ''

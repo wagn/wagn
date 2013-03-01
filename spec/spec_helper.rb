@@ -32,6 +32,8 @@ Spork.prefork do
 
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
 
+  ORIGINAL_RULE_CACHE = Card.rule_cache
+
   RSpec.configure do |config|
 
     config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => {
@@ -51,7 +53,9 @@ Spork.prefork do
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
 
+
     config.before(:each) do
+      Card.set_rule_cache ORIGINAL_RULE_CACHE.clone
       Wagn::Cache.restore
     end
     config.after(:each) do
@@ -96,10 +100,8 @@ end
   }
 
   def integration_login_as(user, functional=nil)
-    User.cache.reset
-
     raise "Don't know email & password for #{user}" unless uc=Card[user] and
-        u=User.where(:card_id=>uc.id).first and
+        u=User[ uc.id ] and
         login = u.email and pass = USERS[login]
 
     if functional
@@ -120,7 +122,7 @@ end
   def post_invite(options = {})
     action = options[:action] || :invite
     post action,
-      :user => { :email => 'new@user.com' }.merge(options[:user]||{}),
+      :account => { :email => 'new@user.com' }.merge(options[:account]||{}),
       :card => { :name => "New User" }.merge(options[:card]||{}),
       :email => { :subject => "mailit",  :message => "baby"  }
   end

@@ -172,6 +172,9 @@ describe CardController do
       end
       get :read, :id=>'Strawberry'
       assert_response 403
+      get :read, :id=>'Strawberry', :format=>'txt'
+      assert_response 403
+      
     end
     
     describe "view = new" do
@@ -207,6 +210,16 @@ describe CardController do
         login_as :anonymous
         get :read, :type=>"Fruit", :view=>'new'
         assert_response :success
+      end
+      
+      it "should treat underscores in id as spaces" do
+        get :read, :id=>'my_life', :view=>'new'
+        assigns['card'].name.should == 'my life'
+      end
+      
+      it "should not treat underscores in card params as spaces" do
+        get :read, :card=>{:name =>'my_life'}, :view=>'new'
+        assigns['card'].name.should == 'my_life'
       end
       
     end

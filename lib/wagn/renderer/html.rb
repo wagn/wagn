@@ -106,14 +106,24 @@ module Wagn
       classes << 'card-frame' if args[:frame]
       classes << card.safe_keys if card
 
-      attributes = { :class => classes.join(' ') }
-      [:style, :home_view, :item].each { |key| attributes[key] = args[key] }
+      attributes = { 
+        :class => classes*' ',
+        :style=>args[:style]
+      }
+      
+      [:home_view, :item, :include].each do |key|
+        attributes["slot-#{key}"] = args[key]
+      end
 
       if card
         attributes['card-id']  = card.id
         attributes['card-name'] = card.name
       end
-
+      
+      if @context_names
+        attributes['slot-name_context'] = @context_names.map( &:key ) * ','
+      end
+      
       content_tag(:div, attributes ) { yield }
     end
 
@@ -246,8 +256,13 @@ module Wagn
     end
 
     def fieldset title, content, opts={}
+      if attribs = opts[:attribs]
+        attrib_string = attribs.keys.map do |key| 
+          %{#{key}="#{attribs[key]}"}
+        end * ' '
+      end
       %{
-        <fieldset #{ opts[:attribs] }>
+        <fieldset #{ attrib_string }>
           <legend>
             <h2>#{ title }</h2>
             #{ help_text *opts[:help] }
@@ -255,6 +270,14 @@ module Wagn
           #{ content }
         </fieldset>
       }
+    end
+
+    def main?
+      if ajax_call?
+        @depth == 0 && params[:is_main]
+      else
+        @depth == 1 && @mode == :main
+      end
     end
 
     private

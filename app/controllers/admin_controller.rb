@@ -6,7 +6,7 @@ class AdminController < CardController
   layout 'application'
 
   def setup
-    raise(Wagn::Oops, "Already setup") unless Account.no_logins? && !User[:first]
+    raise(Wagn::Oops, "Already setup") unless Account.no_logins?
     Wagn::Conf[:recaptcha_on] = false
     if request.post?
       #Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
@@ -16,7 +16,7 @@ class AdminController < CardController
 
         #warn "ext id = #{@account.id}"
 
-        if @account.errors.empty?
+        if @card.errors.empty?
           roles_card = card.fetch :trait=>:roles, :new=>{}
           roles_card.content = "[[#{Card[Card::AdminID].name}]]"
           roles_card.save
@@ -30,7 +30,7 @@ class AdminController < CardController
       end
     else
       @card = Card.new( params[:card] || {} ) #should prolly skip defaults
-      @account = User.new( params[:user] || {} )
+      @account = User.new( params[:account] || {} )
     end
   end
 

@@ -1,34 +1,43 @@
 module Cardlib::Settings
-  def rule setting_name, options={}
-    #warn "rule #{setting_name.inspect}, #{options.inspect}"
+  RuleSQL = %{
+    select rules.id as rule_id, settings.id as setting_id, sets.id as set_id, sets.left_id as anchor_id, sets.right_id as set_tag_id
+    from cards rules join cards sets on rules.left_id = sets.id join cards settings on rules.right_id = settings.id
+    where sets.type_id     = #{Card::SetID }    and sets.trash     is false
+    and   settings.type_id = #{Card::SettingID} and settings.trash is false
+    and                                             rules.trash    is false;
+  }
+  
+  ReadRuleSQL = %{
+    select refs.referee_id as party_id, read_rules.id as read_rule_id
+    from cards read_rules join card_references refs on refs.referer_id = read_rules.id join cards sets on read_rules.left_id = sets.id
+    where read_rules.right_id = #{Card::ReadID} and read_rules.trash is false and sets.type_id = #{Card::SetID};
+  }  
+  
+  def is_rule?
+    !simple?   and 
+    !new_card? and 
+    l = left   and
+    l.type_id==Card::SetID and
+    r = right  and
+    r.type_id==Card::SettingID 
+  end
+  
+  def rule setting_code, options={}
     options[:skip_modules] = true
-    card = rule_card setting_name, options
+    card = rule_card setting_code, options
     card && card.content
   end
-
-  def rule_card setting_name, options={}
+  
+  def rule_card setting_code, options={}
     fallback = options.delete( :fallback )
-    fetch_args = {:skip_virtual=>true}.merge options
-    #warn "rule_card[#{name}] #{setting_name}, #{options.inspect} RSN:#{real_set_names.inspect}" if name =~ /Jim\+birthday/
-    real_set_names.each do |set_name|
-      #warn "rule_card search #{set_name.inspect}" if name =~ /Jim\+birthday/
-      set_name=set_name.to_name
-      card = Card.fetch(set_name.trait_name( setting_name ), fetch_args)
-      card ||= fallback && Card.fetch(set_name.trait_name(fallback), fetch_args)
-      #warn "rule #{name} [#{set_name}] rc:#{card.inspect}" if name =~ /Jim\birthday/
-      return card if card
+    rule_set_keys.each do |rule_set_key|
+      rule_id = self.class.rule_cache["#{rule_set_key}+#{setting_code}"]
+      rule_id ||= fallback && self.class.rule_cache["#{rule_set_key}+#{fallback}"]
+      return Card.fetch( rule_id, options) if rule_id
     end
-    #warn (Rails.logger.warn "rc nothing #{setting_name}, #{name}") if name =~ /Jim\birthday/
     nil
   end
-  def rule_card_with_cache setting_name, options={}
-    setting_name = (sc=Card[setting_name] and (sc.codename || sc.name).to_sym) unless Symbol===setting_name
-    @rule_cards ||= {}  # FIXME: initialize this when creating card
-    rcwc = (@rule_cards[setting_name] ||=
-      rule_card_without_cache setting_name, options)
-    #warn (Rails.logger.warn "rcwc #{rcwc.inspect}"); rcwc #if setting_name == :read; rcwc
-  end
-  alias_method_chain :rule_card, :cache
+  
 
   def related_sets
     # refers to sets that users may configure from the current card - NOT to sets to which the current card belongs
@@ -44,15 +53,62 @@ module Cardlib::Settings
   end
 
   module ClassMethods
-    def default_rule setting_name, fallback=nil
-      card = default_rule_card setting_name, fallback
+    def rule_cache
+      @@rule_cache ||= Card.cache.read('RULES') || begin        
+        hash = {}
+        ActiveRecord::Base.connection.select_all( Cardlib::Settings::RuleSQL ).each do |row|
+          setting_code = Wagn::Codename[ row['setting_id'].to_i ] or next
+          anchor_id = row['anchor_id']
+          set_class_id = anchor_id.nil? ? row['set_id'] : row['set_tag_id']
+      
+          set_class_code = Wagn::Codename[ set_class_id.to_i ] or next
+          hash_key = [ anchor_id, set_class_code, setting_code ].compact.map( &:to_s ) * '+'
+          hash[ hash_key ] = row['rule_id'].to_i
+        end
+        Card.cache.write 'RULES', hash
+      end
+    end
+    
+    def clear_rule_cache local_only=false
+      Card.cache.write 'RULES', nil unless local_only
+      @@rule_cache = nil
+    end
+    
+    def set_rule_cache hash
+      #FIXME: should fail except in test envs.
+      @@rule_cache = hash
+    end
+    
+    def read_rule_cache
+      @@read_rule_cache ||= Card.cache.read('READRULES') || begin
+        hash = {}
+        ActiveRecord::Base.connection.select_all( Cardlib::Settings::ReadRuleSQL ).each do |row|
+          party_id, read_rule_id = row['party_id'].to_i, row['read_rule_id'].to_i
+          hash[party_id] ||= []
+          hash[party_id] << read_rule_id
+        end
+        Card.cache.write 'READRULES', hash
+      end
+    end
+    
+    def clear_read_rule_cache local_only=false
+      Card.cache.write 'READRULES', nil unless local_only
+      @@read_rule_cache = nil
+    end
+    
+
+    
+    def default_rule setting_code, fallback=nil
+      card = default_rule_card setting_code, fallback
       return card && card.content
     end
 
-    def default_rule_card setting_name, fallback=nil
-      Card["*all".to_name.trait_name(setting_name)] or
-        fallback ? default_rule_card(fallback) : nil
+    def default_rule_card setting_code, fallback=nil
+      rule_id = rule_cache["all+#{setting_code}"]
+      rule_id ||= fallback && rule_cache["all+#{fallback}"]
+      Card[rule_id] if rule_id
     end
+
   end
 
   def self.included(base)

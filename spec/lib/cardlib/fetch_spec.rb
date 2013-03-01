@@ -46,12 +46,18 @@ describe Card do
       Card['A+*self'].should be_nil
       Card.fetch( 'A+*self' ).should_not be_nil
     end
+    
 
     it "fetches newly virtual cards" do
       #pending "needs new cache clearing"
       Card.fetch( 'A+virtual').should be_nil
       Account.as_bot { Card.create :name=>'virtual+*right+*content' }
       Card.fetch( 'A+virtual').should_not be_nil
+    end
+    
+    it "handles name variants of cached cards" do
+      Card.fetch('yomama+*self').name.should == 'yomama+*self'
+      Card.fetch('YOMAMA+*self').name.should == 'YOMAMA+*self'
     end
 
     it "does not recurse infinitely on template templates" do
@@ -114,18 +120,20 @@ describe Card do
       end
 
       it "should recognize pattern overrides" do
+        #~~~ create right rule
         tc=Card.create!(:name => "y+*right+*content", :content => "Right Content")
         card = Card.fetch("a+y")
         card.virtual?.should be_true
         card.content.should == "Right Content"
+        
+#        warn "creating template"
         tpr = Card.create!(:name => "Basic+y+*type plus right+*content", :content => "Type Plus Right Content")
-        card.reset_patterns
         card = Card.fetch("a+y")
-        card.reset_patterns
         card.virtual?.should be_true
         card.content.should == "Type Plus Right Content"
+
+        #~~~ delete type plus right rule
         tpr.delete!
-        card.reset_patterns
         card = Card.fetch("a+y")
         card.virtual?.should be_true
         card.content.should == "Right Content"

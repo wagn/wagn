@@ -38,14 +38,20 @@ module Chunks
       @text = match_string
       @processed = nil
       @card_params = card_params
-      #warn "base initialize ch #{inspect}"
+      #warn "base initialize ch #{@card_params.inspect}, #{inspect}"
       self
     end
-    def renderer()           @card_params[:renderer] end
-    def card()               @card_params[:card]     end
+    
+    def card
+      @card_params[:card]
+    end
+
+    def renderer
+      @card_params[:renderer] #||= Wagn::Renderer.new(card) 
+    end
 
     def to_s
-      @process_chunk || @processed|| @text
+      @process_chunk || @processed || @text
     end
 
     def inspect

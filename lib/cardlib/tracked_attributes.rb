@@ -28,7 +28,7 @@ module Cardlib::TrackedAttributes
     write_attribute :key, k=cardname.key
     write_attribute :name, name_without_tracking # what does this do?  Not sure, maybe comment it out and see
 
-    reset_patterns_if_rule # reset the new name
+    reset_patterns_if_rule saving=true# reset the new name
 
     Card.expire cardname
 
@@ -109,8 +109,7 @@ module Cardlib::TrackedAttributes
     #srev = self.current_revision = Card::Revision.create( :card_id=>self.id, :content=>new_content, :creator_id =>Account.current_id )
     new_rev = Card::Revision.create :card_id=>self.id, :content=>new_content, :creator_id =>Account.current_id
     self.current_revision_id = new_rev.id
-    reset_patterns_if_rule
-    #warn "finish cont #{new_content}, #{inspect}, #{self.current_revision.inspect} ,sr:#{srev.inspect}"
+    reset_patterns_if_rule saving=true
     @name_or_content_changed = true
   end
 

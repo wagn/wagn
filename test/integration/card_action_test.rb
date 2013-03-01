@@ -97,11 +97,11 @@ class CardActionTest < ActionController::IntegrationTest
       t2 = Card.create! :name => "Testable1+bandana", :content => "world"
     end
 
-    get path_for_page( t1.name )
-    get path_for_page( t2.name )
+    get page_path( t1.name )
+    get page_path( t2.name )
 
     post 'card/delete/~' + t2.id.to_s
-    assert_redirected_to path_for_page( t1.name )
+    assert_redirected_to page_path( t1.name )
     assert_nil Card[ t2.name ]
 
     post 'card/delete/~' + t1.id.to_s
@@ -111,6 +111,7 @@ class CardActionTest < ActionController::IntegrationTest
 
   def test_should_create_account_from_scratch
     integration_login_as 'joe_admin'
+    Account.as_bot { Card.create! :name=> 'a+*self+*accountable', :content=>'1' }
     assert_difference ActionMailer::Base.deliveries, :size do
       post '/card/create_account/', :id=>'a', :account=>{:email=>'foo@bar.com'}
       assert_response :redirect  # this now redirects, and I think that is correct
@@ -131,7 +132,7 @@ class CardActionTest < ActionController::IntegrationTest
     post '/card/update_account', :id=>"Joe User".to_name.key, :account => { :blocked => '1' }
     assert !User.where(:card_id=>Card['joe_user'].id).first.blocked?
   end
-#=end
+
 end
 
 

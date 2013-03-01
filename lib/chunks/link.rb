@@ -7,7 +7,7 @@ module Chunks
     WIKI_CONFIG = {
       :class     => Link,
       :prefix_re => '\\[',
-      :rest_re   => /^\[([^\]]+)\]\]|([^\]]+)\]\[([^\]]*)\]/,
+      :rest_re   => /^\[([^\]]+)\]\]/, #|([^\]\n]+)\]\[([^\]]*)\]/,
       :idx_char  => '['
     }
 
@@ -51,7 +51,7 @@ module Chunks
     def objectify raw
       if raw
         raw.strip!
-        if raw =~ /(^|[^\\]){{/
+        if raw =~ /(^|[^\\])\{\{/
           ObjectContent.new raw, @card_params
         else
           raw

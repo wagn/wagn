@@ -7,7 +7,7 @@ module Wagn
     define_view :editor, :right=>'create' do |args|
       set_name = card.cardname.trunk_name
       set_card = Card.fetch(set_name)
-      not_set = set_card && set_card.type_id==Card::SetID
+      not_set = set_card && set_card.type_id != Card::SetID
 
       group_options = Account.as_bot { Card.search(:type=>Card::RoleID, :sort=>'name') }
 
@@ -55,11 +55,11 @@ module Wagn
 
     define_view :core, { :right=>'create'} do |args|
       @item_view ||= :link
-      card.content=='_left' ? core_inherit_content : _final_pointer_type_core(args)
+      card.content=='_left' ? core_inherit_content(args) : _final_pointer_type_core(args)
     end
 
     define_view :closed_content, { :right=>'create'} do |args|
-      card.content=='_left' ? core_inherit_content : _final_pointer_type_closed_content(args)
+      card.content=='_left' ? core_inherit_content(args) : _final_pointer_type_closed_content(args)
     end
 
     alias_view :core,           { :right=>'create' }, { :right=>'read' }, { :right=>'update' }, { :right=>'delete' }, { :right=>'comment' }
@@ -71,8 +71,23 @@ module Wagn
 
     private
 
-    def core_inherit_content
-      %{<div class="inherit-perm"> (Inherit from left card) </div>}
+    def core_inherit_content args={}
+      sc = args[:set_context]
+      text = if sc && sc.tag_name.key == Card[:self].key
+        begin
+          task = card.tag.codename
+          ancestor = Card[sc.trunk_name.trunk_name]
+          links = ancestor.who_can( task.to_sym ).map do |card_id|
+            link_to_page Card[card_id].name
+          end*", "
+          "#{links} (inherit)"
+        rescue
+          '(Inherit)'
+        end
+      else
+        '(Inherit from left card)'
+      end
+      %{<div class="inherit-perm">#{text}</div>}
     end
   end
 end

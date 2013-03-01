@@ -15,7 +15,7 @@ describe Chunks::Link, "link chunk tests" do
     lbj_link = '<a class="known-card" href="/Baines">Lyndon</a>'
 
     card2 = newcard('Johnson', '[Lyndon][Baines]')
-    assert_equal(lbj_link, render_test_card(card2) )
+#    assert_equal(lbj_link, render_test_card(card2) )
 
     card2.content = '[[Baines|Lyndon]]'; card2.save
     assert_equal(lbj_link, render_test_card(card2) )
@@ -44,12 +44,12 @@ describe Chunks::Link, "link chunk tests" do
   end
 
   it "should escape spaces %20 (not +)" do
-    card5 = newcard('userlink', '[Marie][Marie "Mad Dog" Deatherage]')
+    card5 = newcard('userlink', '[[Marie "Mad Dog" Deatherage|Marie]]')
     assert_equal('<a class="wanted-card" href="/Marie%20%22Mad%20Dog%22%20Deatherage">Marie</a>', render_test_card(card5) )
   end
 
   it "should external needs not escaped" do
-    card6 = newcard('google link2', 'wgw&nbsp; [google][http://www.google.com] &nbsp;  <br>')
+    card6 = newcard('google link2', 'wgw&nbsp; [[http://www.google.com|google]] &nbsp;  <br>')
     assert_equal "wgw&nbsp; <a class=\"external-link\" href=\"http://www.google.com\">google</a> &nbsp;  <br>", render_test_card(card6)
   end
 

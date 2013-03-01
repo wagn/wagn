@@ -178,7 +178,7 @@ module Wagn
       end
 
       if !ajax_call? 
-        header_text = card.type_id == Card::DefaultTypeID ? 'Card' : card.type_name
+        header_text = card.type_id == Card::DefaultTypeID ? '' : card.type_name
         %{ <h1 class="page-header">New #{header_text}</h1>}
       else '' end +
       
@@ -268,7 +268,7 @@ module Wagn
     define_view :name_editor do |args|
       fieldset 'name', (editor_wrap :name do
          raw( name_field form )
-      end)
+      end), :help=>''
     end
 
 
@@ -362,6 +362,7 @@ module Wagn
       fieldset label, content, :help=>help_settings, :attribs=>attribs
     end
 
+
     define_view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
 
       locals = {:slot=>self, :card=>card, :account=>card.account }
@@ -404,7 +405,7 @@ module Wagn
               <div class="settings-tab">
                 #{ if !related_sets.empty?
                   %{ <div class="set-selection">
-                    #{ form_tag path(:view=>:options, :attrib=>:settings), :method=>'get', :remote=>true, :class=>'slotter' }
+                    #{ form_tag path(:view=>:options), :method=>'get', :remote=>true, :class=>'slotter' }
                         <label>Set:</label>
                         <select name="current_set" class="set-select">#{ set_options }</select>
                     </form>
@@ -415,11 +416,10 @@ module Wagn
                   #{ raw subrenderer( Card.fetch current_set).render_content }
                 </div>
 
-                #{ if Card.toggle(card.rule(:accountable)) && card.fetch(:trait=>:account, :new=>{}).ok?(:create)
+                #{ if card.accountable?
                     %{<div class="new-account-link">
-                    #{ link_to %{Add a sign-in account for "#{card.name}"},
-                        path(:view=>:options, :attrib=>:new_account),
-                      :class=>'slotter new-account-link', :remote=>true }
+                    #{ link_to %{Add a sign-in account for "#{card.name}"}, path(:view=>:new_account),
+                         :class=>'slotter new-account-link', :remote=>true }
                     </div>}
                    end
                 }
@@ -428,7 +428,6 @@ module Wagn
             #{ notice }
           }
        end
-      # should be just if !card.fetch(:trait=>:account) and Card.new( :name=>"#{card.name}+Card[:account].name").ok?(create)
     end
     
     define_view :option_roles do |args|
@@ -468,18 +467,32 @@ module Wagn
       )}}
     end
 
-    define_view :option_new_account do |args|
-      %{#{
-        card_form :create_account do |form|
-          #ENGLISH 
-          %{<table class="fieldset">
-          #{ template.render :partial=>'account/email' }
-             <tr><td colspan="3" style><p>
-         A password for a new sign-in account will be sent to the above address.
-             #{ submit_tag 'Create Account' }
-             </p></td></tr>
-          </table>}
-       end}}
+    define_view :new_account,
+      :perms=> lambda { |r| r.card.accountable? } do |args|
+      wrap :new_account, args.merge(:frame=>true) do
+        %{
+          #{ _render_header }
+          #{ card_form :create_account do |form|
+            #ENGLISH 
+              %{
+                #{ hidden_field_tag 'success[id]', '_self' }
+                #{ hidden_field_tag 'success[view]', 'account' }
+                <table class="fieldset">
+                  #{ template.render :partial=>'account/email' }
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td colspan="2">
+                      <div>A password will be sent to the above address.</div>
+                      <div>#{ submit_tag 'Create Account' }</div>
+                    </td>
+                  </tr>
+                </table>
+              }
+            end
+          }
+         #{ notice }
+        }
+      end
     end
 
     define_view :changes do |args|

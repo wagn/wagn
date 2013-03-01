@@ -125,10 +125,7 @@ class CardController < ApplicationController
       acct.update_attributes account_args
     end
 
-    if acct && acct.errors.any?
-      acct.errors.each do |field, err|
-        card.errors.add field, err
-      end
+    if card.errors.any?
       render_errors
     else
       success
@@ -136,16 +133,15 @@ class CardController < ApplicationController
   end
 
   def create_account
-    card.ok!(:create, :new=>{}, :trait=>:account)
+    raise Wagn::PermissionDenied, "can't add account to this card" unless card.accountable?
     email_args = { :subject => "Your new #{Card.setting :title} account.",   #ENGLISH
                    :message => "Welcome!  You now have an account on #{Card.setting :title}." } #ENGLISH
-    @account, @card = User.create_with_card(params[:account],card, email_args)
-    raise ActiveRecord::RecordInvalid.new(@account) if !@account.errors.empty?
-    #@account = User.new(:email=>@account.email)
-#    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
-    params[:attribute] = :account
-
-    wagn_redirect( previous_location )
+    @account, @card = User.create_with_card params[:user], card, email_args
+    if @card.errors.any?
+      render_errors
+    else
+      success
+    end
   end
 
 
@@ -244,7 +240,7 @@ class CardController < ApplicationController
       end
 
     case
-    when  redirect        ; wagn_redirect ( Card===target ? path_for_page( target.cardname, new_params ) : target )
+    when  redirect        ; wagn_redirect ( Card===target ? page_path( target.cardname, new_params ) : target )
     when  String===target ; render :text => target
     else
       @card = target

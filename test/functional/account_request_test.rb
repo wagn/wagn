@@ -26,7 +26,6 @@ class AccountRequestTest < ActionController::TestCase
       :content=>"Let me in!"
     }
     assert_response 302
-    #assert_redirected_to @controller.path_for_page(::Setting.find_by_codename('account_request_landing').card.name)
   end
 
   def test_should_create_account_request

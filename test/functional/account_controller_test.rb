@@ -20,7 +20,7 @@ class AccountControllerTest < ActionController::TestCase
     @response   = ActionController::TestResponse.new
 
     @newby_email = 'newby@wagn.net'
-    @newby_args =  {:user=>{ :email=>@newby_email },
+    @newby_args =  {:account=>{ :email=>@newby_email },
                     :card=>{ :name=>'Newby Dooby' }}
     Account.as_bot do
       Card.create(:name=>'Account Request+*type+*captcha', :content=>'0')

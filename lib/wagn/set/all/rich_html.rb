@@ -565,7 +565,7 @@ module Wagn
     end
 
     define_view :errors, :perms=>:none do |args|
-      Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller*"\n"}"
+      Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller[0..3]*", "}"
       wrap :errors, args do
         %{ <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
         card.errors.map { |attrib, msg| "<div>#{attrib.to_s.upcase}: #{msg}</div>" } * ''

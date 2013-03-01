@@ -5,7 +5,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "pat
 Given /^I log in as (.+)$/ do |account_name|
   # FIXME: define a faster simulate method ("I am logged in as")
   @current_id = ucid = Card[account_name].id
-  user_object = User.where(:card_id=>ucid).first
+  user_object = User[ ucid ]
   visit "/account/signin"
   fill_in("login", :with=> user_object.email )
   fill_in("password", :with=> user_object.login.split("_")[0]+"_pass")

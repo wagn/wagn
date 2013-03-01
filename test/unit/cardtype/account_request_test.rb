@@ -26,10 +26,9 @@ class Wagn::Set::Type::AccountRequestTest < ActiveSupport::TestCase
   def test_should_block_user
     c=Card.fetch('Ron Request')
     Account.as 'joe_admin' do c.delete!  end
-    #warn "deleted card (#{c.inspect}) #{User.where(:email=>'ron@request.com').first.inspect}"
 
     assert_equal nil, Card.fetch('Ron Request')
-    assert_equal 'blocked', User.where(:email=>'ron@request.com').first.status
+    assert_equal 'blocked', User['ron@request.com'].status
   end
 
 

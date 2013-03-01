@@ -113,24 +113,24 @@ class CardActionTest < ActionController::IntegrationTest
     integration_login_as 'joe_admin'
     Account.as_bot { Card.create! :name=> 'a+*self+*accountable', :content=>'1' }
     assert_difference ActionMailer::Base.deliveries, :size do
-      post '/card/create_account/', :id=>'a', :user=>{:email=>'foo@bar.com'}
+      post '/card/create_account/', :id=>'a', :account=>{:email=>'foo@bar.com'}
       assert_response :redirect  # this now redirects, and I think that is correct
     end
     email = ActionMailer::Base.deliveries[-1]
     # emails should be 'from' inviting user
-    #assert_equal Account.user.email, email.from[0]
+    #assert_equal Account.current.email.email, email.from[0]
     #assert_equal 'active', User.find_by_email('new@user.com').status
     #assert_equal 'active', User.find_by_email('new@user.com').status
   end
 
-  def test_update_user_account_email
+  def test_update_account_email
     post '/card/update_account', :id=>"Joe User".to_name.key, :account => { :email => 'joe@user.co.uk' }
-    assert User.where(:card_id=>Card['joe_user'].id).first.email == 'joe@user.co.uk'
+    assert User[ Card['joe_user'].id ].email == 'joe@user.co.uk'
   end
 
   def test_user_cant_block_self
     post '/card/update_account', :id=>"Joe User".to_name.key, :account => { :blocked => '1' }
-    assert !User.where(:card_id=>Card['joe_user'].id).first.blocked?
+    assert !User[ Card['joe_user'].id ].blocked?
   end
 
 end

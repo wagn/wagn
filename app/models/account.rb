@@ -18,7 +18,7 @@ class Account
       if @@user && @@user.card_id == current_id
         @@user
       else
-        @@user = User.from_id current_id
+        @@user = User[ current_id ]
       end
     end
 

@@ -15,7 +15,7 @@ module Wagn
 
       case
       when results.nil?
-        Rails.logger.debug error.backtrace
+        Rails.logger.debug " no result? #{error.backtrace}"
         %{No results? #{error.class.to_s}: #{error&&error.message}<br/>#{card.content}}
       when card.spec[:return] =='count'
         results.to_s

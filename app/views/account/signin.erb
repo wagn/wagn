@@ -11,7 +11,7 @@
   <p>&nbsp;</p>
 
   <h2 class="page-header">Forgot your password?</h2><%#ENGLISH%>
-  <%= error_messages_for @user %>
+  <%= error_messages_for @account %>
   <%= form_tag :action=>'forgot_password' do %>
     <p><label for="email">Email</label></p>
     <p><%= text_field_tag 'email', params[:email] %></p>

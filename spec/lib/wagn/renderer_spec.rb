@@ -16,6 +16,10 @@ describe Wagn::Renderer, "" do
       render_content("[[A]]").should=="<a class=\"known-card\" href=\"/A\">A</a>"
     end
 
+    it "empty inclusion shouldn't blow up" do
+      render_content("{{}}").should==""
+    end
+
     it "should handle dot (.) in missing cardlink" do
       render_content("[[Wagn 1.10.12]]").should=='<a class="wanted-card" href="/Wagn%201%2E10%2E12">Wagn 1.10.12</a>'
     end

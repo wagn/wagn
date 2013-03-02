@@ -431,7 +431,6 @@ module Wagn
           Rails.logger.debug "build_link mistakenly(?) called on #{href}, #{text}"
         end
           
-      #warn "build_link #{href}, #{opts.inspect}"
       final_link href, opts
     end
  

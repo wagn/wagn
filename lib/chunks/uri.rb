@@ -37,7 +37,7 @@ class URIChunk < Chunks::Abstract
 
   def initialize match, card_params, params
     super
-    last_char = match[-1]
+    last_char = match[-1,1]
     match.gsub!(/(?:&nbsp;)+/, '')
 
     @trailing_punctuation = if %w{ , . ) ! ? : }.member?(last_char)
@@ -116,6 +116,7 @@ class HostURIChunk < URIChunk
   def initialize match, card_params, params
     super
     @text = @text.sub(/^http:\/\//,'')  # this removes the prepended string from the unchanged match text
+    #warn "huri t:#{@text}, #{match}, #{params.inspect}"
     @process_chunk = self.renderer ? "#{self.renderer.build_link(@link_text, @text)}#{@trailing_punctuation}" : @text
   end
 end

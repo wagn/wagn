@@ -305,7 +305,7 @@ module Wagn
         included_card = Card.fetch fullname, :new=>( @mode==:edit ? new_inclusion_card_args(opts) : {} )
 
         result = process_inclusion included_card, opts
-        @char_count += result.length if result
+        @char_count += result.length if @mode == :closed && result
         result
       end
     end

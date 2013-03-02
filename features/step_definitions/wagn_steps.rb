@@ -174,7 +174,7 @@ Then /^In (.*) I should (not )?see a ([^\"]*) with class "([^\"]*)"$/ do |select
   # checks for existence of a element with a class in a selection context
   element = 'a' if element == 'link'
   within scope_of(selection) do
-    page.send ( neg ? :should_not : :should ), have_css( [ element, selector ] * '.' )
+    page.send( ( neg ? :should_not : :should ), have_css( [ element, selector ] * '.' ) )
   end
 end
 

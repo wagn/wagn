@@ -66,12 +66,23 @@ describe Wagn::Renderer, "" do
   context "language quirks" do
     it "should not fail on quirky language" do
       render_content( 'irc: man').should == 'irc: man'
+      # this is really a specification issue, should we exclude the , like we do . at the end of a 'free' URI ?
       render_content( 'ethan@wagn.org, dude').should == '<a class="email-link" href="mailto:ethan@wagn.org">ethan@wagn.org</a>, dude'
     end
   
     it "should leave alone something that quacks like a URI when URI module raises invalid uri error" do
-      wack_uri = 'git://<a href="http://github.com/wagn/wagn.git">github.com/wagn/wagn.git</a>'
-      render_content( wack_uri ).should_not == wack_uri
+      # it does leave this alone, there was too much going on in one test
+      wack_uri = 'git://<a href="/wagn/wagn.git">/wagn/wagn.git</a>'
+      render_content( wack_uri ).should == wack_uri
+    end
+    it "should leave alone something that quacks like a URI when ?" do
+      pending "its embeded in an <a> tag? quotes? need a spec"
+      wack_uri = '<a href="http://github.com/wagn/wagn.git">github.com/wagn/wagn.git</a>'
+      render_content( wack_uri ).should == wack_uri
+    end
+    it "should leave alone something that quacks like a URI when URI module raises invalid uri error" do
+      render_content( 'mailto:eat@joe.com?v=k').should == "<a class=\"email-link\" href=\"mailto:eat@joe.com?v=k\">mailto:eat@joe.com?v=k</a>"
+      #render_content( 'mailto:eat@joe.com?v=k').should == "mailto:eat@joe.com?v=k\">mailto:eat@joe.com?Subject=Hello"
     end
   end
 

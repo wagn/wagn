@@ -82,7 +82,7 @@ module Cardlib::TrackedAttributes
     self.type_id_without_tracking= new_type_id
     return true if new_card?
     on_type_change # FIXME this should be a callback
-    if is_hard_template? && !type_template?
+    if assigns_type?
       hard_templatee_names.each do |templatee_name|
         tee = Card[templatee_name]
         tee.allow_type_change = true  #FIXME? this is a hacky way around the standard validation

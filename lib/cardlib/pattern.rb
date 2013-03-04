@@ -14,6 +14,18 @@ module Cardlib
         end
       end
     end
+    
+    def self.find_class mark
+      if mark
+        class_key = if SmartName === mark
+          key_card = Card.fetch mark.to_name.tag_name, :skip_modules=>true
+          key_card && key_card.codename
+        else
+          mark.to_s
+        end
+        @@subclasses.find { |sub| sub.key == class_key }
+      end
+    end
 
 
     def reset_patterns_if_rule saving=false
@@ -73,7 +85,7 @@ module Cardlib
 
       class << self
 
-        attr_accessor :key, :key_id, :opt_keys, :junction_only, :method_key
+        attr_accessor :key, :key_id, :opt_keys, :junction_only, :method_key, :assigns_type
 
         def find_module mod
           module_name_parts = mod.split('/') << 'model'
@@ -127,7 +139,7 @@ module Cardlib
       end
 
       def initialize(card)
-        @card = card
+#        @card = card
         @anchor_name = self.class.anchor_name(card).to_name
         #        raise if @trunk_name.to_s == 'true'
         
@@ -234,14 +246,14 @@ module Cardlib
     end
 
     class RightPattern < BasePattern
-      register 'right', :right, :junction_only=>true
+      register 'right', :right, :junction_only=>true, :assigns_type=>true
       def self.label            name;   %{All "+#{name}" cards}    end
       def self.prototype_args   base;   {:name=>"*dummy+#{base}"}  end
       def self.anchor_name      card;   card.cardname.tag          end
     end
 
     class LeftTypeRightNamePattern < BasePattern
-      register 'type_plus_right', [:ltype, :right], :junction_only=>true
+      register 'type_plus_right', [:ltype, :right], :junction_only=>true, :assigns_type=>true
       class << self
         def label name
           %{All "+#{name.to_name.tag}" cards on "#{name.to_name.left_name}" cards}
@@ -260,7 +272,7 @@ module Cardlib
     end
 
     class SelfPattern < BasePattern
-      register 'self', :name
+      register 'self', :name, :assigns_type=>true
       def self.label          name;     %{The card "#{name}"}      end
       def self.prototype_args base;     { :name=>base }            end
       def self.anchor_name    card;     card.name                  end

@@ -7,10 +7,6 @@ module Cardlib::Templating
   def is_hard_template?
     cardname.trait_name? :content
   end
-  
-  def type_template?
-    template? and cardname.trunk_name.trait_name? :type
-  end
 
   def template
     # currently applicable templating card.
@@ -32,7 +28,7 @@ module Cardlib::Templating
           default_card
         end
       elsif tmpl = content_rule_card
-        if type_id != tmpl.type_id
+        if type_id != tmpl.type_id and tmpl.assigns_type?
           repair_type tmpl.type_id
         end
         tmpl
@@ -85,6 +81,12 @@ module Cardlib::Templating
   end
 
 
+  def assigns_type?
+    if is_hard_template?
+      set_class = Cardlib::Pattern.find_class cardname.trunk_name
+      set_class && set_class.assigns_type
+    end
+  end
 
   private
   
@@ -99,5 +101,7 @@ module Cardlib::Templating
       c.type_id == Card::SetID ? c.get_spec : true
     end
   end
+  
+
 
 end

@@ -729,7 +729,7 @@ class Card < ActiveRecord::Base
     # validate on update and create
     if card.updates.for?(:type_id) or card.new_record?
       # invalid to change type when type is hard_templated
-      if rt = card.hard_template and !rt.type_template? and type_id!=rt.type_id and !card.allow_type_change
+      if rt = card.hard_template and rt.assigns_type? and type_id!=rt.type_id and !card.allow_type_change
         card.errors.add :type, "can't be changed because #{card.name} is hard templated to #{rt.type_name}"
       end
     end

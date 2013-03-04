@@ -448,7 +448,7 @@ class Card < ActiveRecord::Base
   def raw_content
     hard_template ? template.content : content
   end
-
+  
   def selected_rev_id
     @selected_rev_id or ( ( cr = current_revision ) ? cr.id : 0 )
   end

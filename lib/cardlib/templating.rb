@@ -31,14 +31,19 @@ module Cardlib::Templating
         else
           default_card
         end
-      else
-        content_rule_card
+      elsif tmpl = content_rule_card
+        if type_id != tmpl.type_id
+          repair_type tmpl.type_id
+        end
+        tmpl
       end
     end
   end
 
   def hard_template
-    template if template && template.is_hard_template?
+    if template && template.is_hard_template?
+      template
+    end
   end
 
   def virtual?
@@ -82,6 +87,12 @@ module Cardlib::Templating
 
 
   private
+  
+  def repair_type template_type_id
+    self.type_id = template_type_id
+    update_column :type_id, type_id
+    reset_patterns
+  end
 
   def hard_templatee_spec
     if is_hard_template? and c=Card.fetch(cardname.trunk_name)

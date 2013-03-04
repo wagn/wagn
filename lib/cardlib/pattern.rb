@@ -29,7 +29,7 @@ module Cardlib
     end
 
     def reset_patterns
-      @set_mods_loaded = @patterns = @set_modules = @junction_only = @method_keys = @set_names = @template = @rule_set_keys = nil
+      @set_mods_loaded = @patterns = @set_modules = @junction_only = @method_keys = @set_names = @template = @rule_set_keys = @virtual = nil
       true
     end
 

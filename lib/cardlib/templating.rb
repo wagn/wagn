@@ -28,6 +28,7 @@ module Cardlib::Templating
           default_card
         end
       elsif tmpl = content_rule_card
+        # this is a mechanism for repairing bad data.  like #repair_key, it should be obviated and removed.
         if type_id != tmpl.type_id and tmpl.assigns_type?
           repair_type tmpl.type_id
         end
@@ -57,31 +58,40 @@ module Cardlib::Templating
 
   def hard_templatee_names
     if wql = hard_templatee_spec
-      #warn "ht_names_wql #{wql.inspect}"
       Account.as_bot do
-        wql == true ? [name] : Wql.new(wql.merge :return=>:name).run
+        Wql.new(wql.merge :return=>:name).run
       end
-    else [] end
+    else
+      []
+    end
   end
 
   # FIXME: content settings -- do we really need the reference expiration system?
   #
   # I kind of think so.  otherwise how do we handled patterned references in hard-templated cards?
-  # I'll leave the FIXME here until the need is well documented.  -efm
+  # I'll leave the FIXME here until the need (and/or other solution) is well documented.  -efm
 
   def expire_templatee_references
+    update_templatees :references_expired => 1
+  end
+  
+  def update_templatees args
+    # note that this is not smart about overriding templating rules
+    # for example, if someone were to change the type of a +*right+*content rule that was overridden
+    # by a +*type plus right+*content rule, the override would not be respected.
     if query = hard_templatee_spec
       Account.as_bot do
-        query = {:name => name} if query == true
         Wql.new( query.merge(:return => :id) ).run.each_slice(100) do |id_batch|
-          Card.where( :id => id_batch ).update_all :references_expired=>1
+          Card.where( :id => id_batch ).update_all args
         end
       end
     end
   end
 
-
   def assigns_type?
+    # needed because not all *content templates govern the type of set members
+    # for example, X+*type+*content governs all cards of type X,
+    # but the content rule does not (in fact cannot) have the type X.
     if is_hard_template?
       set_class = Cardlib::Pattern.find_class cardname.trunk_name
       set_class && set_class.assigns_type
@@ -97,11 +107,8 @@ module Cardlib::Templating
   end
 
   def hard_templatee_spec
-    if is_hard_template? and c=Card.fetch(cardname.trunk_name)
-      c.type_id == Card::SetID ? c.get_spec : true
+    if is_hard_template? and c=trunk and c.type_id = Card::SetID  #could use is_rule?...
+      c.get_spec
     end
   end
-  
-
-
 end

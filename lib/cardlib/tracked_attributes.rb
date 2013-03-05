@@ -76,18 +76,16 @@ module Cardlib::TrackedAttributes
     Card.where(:id=>self.id).update_all(:name=>tmp_name, :key=>tmp_name)
   end
 
-  def set_type_id(new_type_id)
-
+  def set_type_id new_type_id
     self.type_id_without_tracking= new_type_id
+    if assigns_type? # certain *content templates
+      update_templatees :type_id => new_type_id
+    end
     if real?
       on_type_change # FIXME this should be a callback
-      if assigns_type?
-        update_templatees :type_id => new_type_id
-      end
-
-      # do we need to "undo" loaded modules?  Maybe reload defaults?
       reset_patterns
-      include_set_modules
+      include_set_modules # dislike doing this prior to save, but I think it's done to catch set-specific behavior??
+      # do we need to "undo" loaded modules?  Maybe reload defaults?
     end
     true
   end

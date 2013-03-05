@@ -32,8 +32,8 @@ module Wagn
     end
 
     define_view :titled do |args|
-      unless args[:show] and args[:show].member? 'menu_link'  #need to simplify this pattern
-        args[:hide] ||= ['menu_link']
+      unless args[:show] and args[:show].member? 'menu'  #need to simplify this pattern
+        args[:hide] ||= ['menu']
       end
       
       wrap :titled, args do
@@ -68,71 +68,55 @@ module Wagn
         <div class="card-header">
           #{ args.delete :toggler }
           #{ _render_title }
-          #{ _optional_render :menu_link, args }
+          #{ _optional_render :menu, args }
         </div>
       }
     end
   
-    define_view :menu_link do |args|
-      %{<div class="card-menu-link">#{ _render_menu }<a class="ui-icon ui-icon-gear"></a></div>}
-    end
-  
     define_view :menu do |args|
-      #goto_icon = %{<a class="ui-icon ui-icon-arrowreturnthick-1-e"></a>}
-      option_html = %{
-        <ul class="card-menu">
-          #{
-            if !card.virtual?
-              %{
-                <li>#{ link_to_view 'edit', :edit, :class=>'slotter' }
-                  <ul>
-                      <li>#{ link_to_view 'content', :edit, :class=>'slotter' }</li>
-                      <li>#{ link_to_view 'name', :edit_name, :class=>'slotter' }</li>
-                      <li>#{ link_to_view 'type', :edit_type, :class=>'slotter' }</li>
-                      <li>#{ link_to_view 'history', :changes, :class=>'slotter' }</li>
-                  </ul>
-                </li>
-              }
-            end
-          }
-          <li>#{ link_to_page 'view', card.name }
-            <ul>
-            #{
-              card.cardname.piece_names.reverse.map do |piece|
-                "<li>#{ link_to_page raw("#{piece} &crarr;"), piece }</li>"
-              end.join "\n"
-            }
-              <li>#{ link_to_view 'refresh', :read, :class=>'slotter' }
-                <ul>
-                  #{ 
-                    %w{ titled open closed content }.map do |view|
-                      "<li>#{ link_to_view view, view, :class=>'slotter' }</li>"
-                    end.join "\n"
-                  }
-                </ul>
-              </li>
-            </ul>         
-          </li>
-          <li>#{ link_to_view 'advanced', :options, :class=>'slotter' }
-            <ul>
-              <li>#{ link_to_view 'rules', :options, :class=>'slotter' }</li>
-              <li>#{ link_to_page raw("#{card.type_name} &crarr;"), card.type_name }</li>
-            </ul>    
-          </li>
-          #{ 
-            if Account.logged_in? && !card.new_card? 
-              "<li>#{ render_watch }</li>"
-            end
-          }
-          #{
-            if card.update_account_ok? 
-              "<li>#{ link_to_view 'account', :account, :class=>'slotter' }</li>"
-            end
-          }
-        </ul>      
+      @menu_checks = {
+        :real    => card.real?,
+        :account => card.account && card.update_account_ok?,
+        :structure => card.hard_template && card.ok?(:update)
       }
-      #fixme - many of these (including watch) need permission checks for activation
+      
+      piece_links = card.cardname.piece_names.reverse.map { |piece| { :page=>piece } }
+      
+      menu_obj = [ 
+        { :view=>:edit, :text=>'edit', :if=>:real, :sub=>[   #if virtual
+            { :view=>:edit,           :text=>'content' },
+            { :view=>:edit_name,      :text=>'name'    },
+            { :view=>:edit_type,      :text=>'type'    }, #{}"type (#{card.type_name})"   },
+#            { :view=>:edit_structure, :text=>'structure', :if=>:structure },
+          ] },
+        { :page=>card.name, :text=>'view', :sub=> [
+            { :page=>card.name,  :text=>'page', :sub=>piece_links },
+            { :view=>:home,      :text=>'refresh', :sub=>[
+                { :view=>:titled  },
+                { :view=>:open    },
+                { :view=>:closed  },
+                { :view=>:content },
+              ] },
+            { :view=>:changes,   :text=>'history' },
+#            { :view=>:structure, :if=>:structure  },          
+          ] },
+        { :view=>:options, :text=>'advanced', :sub=>[
+            { :view=>:options, :text=>'rules' },
+            { :page=>card.type_name }
+          ] },
+        { :link=>render_watch },
+        { :view=>:account, :if=>:account }
+      ]
+
+      %{
+      <div class="card-menu-link">
+        <ul class="card-menu">
+          #{ build_menu_items menu_obj }
+        </ul>
+        <a class="ui-icon ui-icon-gear"></a>
+      </div>}
     end
+
   
     define_view :type do |args|
       klasses = ['cardtype']
@@ -654,6 +638,23 @@ module Wagn
   end  
   
   class Renderer::Html < Renderer
+    
+    def build_menu_items array
+      array.map do |h|
+        if !h[:if] or @menu_checks[ h[:if] ]
+          link = case
+            when h[:link]  ;  h[:link]
+            when h[:page]  ;  link_to_page (h[:text] || raw("#{h[:page]} &crarr;")), h[:page]
+            when h[:view]  ;  link_to_view (h[:text] || h[:view]), h[:view], :class=>'slotter'
+            else           ;  raise "bad menu item"
+            end
+          sub = h[:sub] && "\n<ul>\n#{build_menu_items h[:sub]}\n</ul>\n"
+          "<li>#{link} #{sub}</li>"
+        end
+      end.compact * "\n"
+    end
+    
+    
     def watching_type_cards
       %{<div class="faint">(following)</div>} #yuck
     end

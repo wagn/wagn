@@ -173,7 +173,7 @@ module Wagn
     def link_to_view text, view, html_opts={}
       html_opts[:remote] = true
       html_opts[:rel] = 'nofollow'
-      path_opts = view==:read ? {} : { :view=>view }
+      path_opts = view==:home ? {} : { :view=>view }
       link_to text, path( path_opts ), html_opts
     end
 

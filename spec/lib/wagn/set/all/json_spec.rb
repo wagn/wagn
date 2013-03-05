@@ -15,9 +15,9 @@ describe Wagn::Set::All::Json, "JSON pack" do
         unknown = Card.new :name=>'sump'
         unreadable = Card.new :name=>'kumq', :type=>'Fruit'
         
-        unknown_json = Wagn::Renderer::JsonRenderer.new(unknown)._render_status
+        unknown_json = Wagn::Renderer::Json.new(unknown)._render_status
         JSON[unknown_json].should == {"key"=>"sump","status"=>"unknown"}
-        unreadable_json = Wagn::Renderer::JsonRenderer.new(unreadable)._render_status
+        unreadable_json = Wagn::Renderer::Json.new(unreadable)._render_status
         JSON[unreadable_json].should == {"key"=>"kumq","status"=>"unknown"}
       end
     end

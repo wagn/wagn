@@ -37,11 +37,24 @@ describe Card, "with right content template" do
     Wagn::Renderer.new(@jb)._render_raw.should == 'Today!'
   end
 
-  it "should change content with template" do
+  it "should change type and content with template" do
     Account.as_bot do
-      @bt.content = "Tomorrow"; @bt.save!
+      @bt.content = "Tomorrow"
+      @bt.type = 'Phrase'
+      @bt.save!
     end
-    Wagn::Renderer.new( Card['Jim+birthday']).render(:raw).should == 'Tomorrow'
+    jb = @jb.refresh force=true
+    Wagn::Renderer.new( jb ).render(:raw).should == 'Tomorrow'
+    jb.type_id.should == Card::PhraseID    
+  end
+  
+  it "should have type and content overridden by (new) type_plus_right set" do
+    Account.as_bot do
+      Card.create! :name=>'Basic+birthday+*type plus right+*content', :type=>'PlainText', :content=>'Yesterday'
+    end
+    jb = @jb.refresh force=true
+    jb.raw_content.should == 'Yesterday'
+    jb.type_id.should == Card::PlainTextID
   end
 end
 

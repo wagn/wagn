@@ -76,24 +76,17 @@ module Cardlib::TrackedAttributes
     Card.where(:id=>self.id).update_all(:name=>tmp_name, :key=>tmp_name)
   end
 
-  def set_type_id(new_type_id)
-    #Rails.logger.debug "set_typecde No type code for #{name}, #{type_id}" unless new_type_id
-    #warn "set_type_id(#{new_type_id}) #{self.type_id_without_tracking}"
+  def set_type_id new_type_id
     self.type_id_without_tracking= new_type_id
-    return true if new_card?
-    on_type_change # FIXME this should be a callback
-    if is_hard_template? && !type_template?
-      hard_templatee_names.each do |templatee_name|
-        tee = Card[templatee_name]
-        tee.allow_type_change = true  #FIXME? this is a hacky way around the standard validation
-        tee.type_id = new_type_id
-        tee.save!
-      end
+    if assigns_type? # certain *content templates
+      update_templatees :type_id => new_type_id
     end
-
-    # do we need to "undo" and loaded modules?  Maybe reload defaults?
-    reset_patterns
-    include_set_modules
+    if real?
+      on_type_change # FIXME this should be a callback
+      reset_patterns
+      include_set_modules # dislike doing this prior to save, but I think it's done to catch set-specific behavior??
+      # do we need to "undo" loaded modules?  Maybe reload defaults?
+    end
     true
   end
 

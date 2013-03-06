@@ -75,37 +75,71 @@ module Wagn
   
     define_view :menu do |args|
       @menu_checks = {
-        :real    => card.real?,
-        :account => card.account && card.update_account_ok?,
-        :structure => card.hard_template && card.ok?(:update)
+        :real      => card.real?,
+        :edit      => card.real? && card.ok?(:update),
+        :account   => card.real? && card.account && card.update_account_ok?,
+        :structure => card.hard_template && card.template.ok?(:update),
+        :watch     => Account.logged_in? && !card.new_card?,
+#        :talk => talk_card = card. #FIXME -- need something like ok? :create_or_update
+      }
+      
+      @menu_subs = {
+        :self => card.name,
+        :type => card.type_name,
+        :structure => card.template && card.template.name,
+        :creator => card.real? && card.creator.name,
+        :updater => card.real? && card.creator.name,
       }
       
       piece_links = card.cardname.piece_names.reverse.map { |piece| { :page=>piece } }
       
       menu_obj = [ 
-        { :view=>:edit, :text=>'edit', :if=>:real, :sub=>[   #if virtual
-            { :view=>:edit,           :text=>'content' },
-            { :view=>:edit_name,      :text=>'name'    },
-            { :view=>:edit_type,      :text=>'type'    }, #{}"type (#{card.type_name})"   },
-#            { :view=>:edit_structure, :text=>'structure', :if=>:structure },
+        { :view=>:edit, :text=>'edit', :if=>:edit, :sub=>[   #if virtual
+            { :view=>:edit,       :text=>'content' },
+            { :view=>:edit_name,  :text=>'name'    },
+            { :view=>:edit_type,  :text=>'type'    }, #{}"type (#{card.type_name})"   },
+            { :related=>{ :name=>:structure, :view=>:edit }, :text=>'structure', :if=>:structure },
           ] },
-        { :page=>card.name, :text=>'view', :sub=> [
-            { :page=>card.name,  :text=>'page', :sub=>piece_links },
-            { :view=>:home,      :text=>'refresh', :sub=>[
+        { :page=>:self, :text=>'view', :sub=> [
+            { :page=>:self, :text=>'page', :sub=>piece_links },
+            { :view=>:home, :text=>'refresh', :sub=>[
                 { :view=>:titled  },
                 { :view=>:open    },
                 { :view=>:closed  },
                 { :view=>:content },
               ] },
-            { :view=>:changes,   :text=>'history' },
-#            { :view=>:structure, :if=>:structure  },          
+            { :view=>:changes, :text=>'history', :if=>:edit },
+            { :related=>{ :name=>:structure }, :text=>'structure', :if=>:structure },
           ] },
         { :view=>:options, :text=>'advanced', :sub=>[
             { :view=>:options, :text=>'rules' },
-            { :page=>card.type_name }
+            { :page=>:type, :text=>'type', :sub=>[
+                { :page=>:type },
+                { :related=>"#{card.type_name}+#{Card[:type].name}+by_name", :text=>"#{card.type_name} cards"} # yuck
+              ] },
+            { :plain=>'refs', :sub=>[
+                { :related=>"+*refers to", :text=>"from #{card.name}", :sub=>[
+                    { :related=>"+*links",      :text=>"links" },
+                    { :related=>"+*inclusions", :text=>"inclusions" }                  
+                  ] },
+                { :related=>"+*referred to by", :text=>"to #{card.name}", :sub=>[
+                    { :related=>"+*linkers",   :text=>"links" },
+                    { :related=>"+*includers", :text=>"inclusions" }
+                  ] }
+              ] },
+            { :plain=>'kin', :sub=>[
+                { :related=>"+*plus cards", :text=>'children' },
+                { :related=>"+*plus parts", :text=>'mates'    },
+              ] },              
+            { :plain=>'editors', :if=>:real, :sub=>[
+                { :page=>:creator, :text=>card.real? && "creator (#{card.creator.name})" },
+                { :page=>:updater, :text=>card.real? && "last editor (#{card.updater.name})" },
+                { :related=>"+*editors", :text=>'all editors'               },
+              ] },
           ] },
-        { :link=>render_watch },
-        { :view=>:account, :if=>:account }
+        { :link=>render_watch, :if=>:watch },
+        { :view=>:account, :if=>:account },
+        { :related=>{ :name=>"+*talk", :view=>:edit }, :text=>'talk' }
       ]
 
       %{
@@ -478,6 +512,24 @@ module Wagn
         }
       end
     end
+    
+    define_view :related do |args|
+      if rparams = params[:related]
+        rcardname = rparams[:name].to_name.to_absolute_name( card.cardname)
+        rcard = Card.fetch rcardname, :new=>{}
+        rview = rparams[:view] || :titled
+
+        wrap :related, args.merge(:frame=>true) do
+          %{
+            #{ _render_header }
+            <div class="card-body">
+              #{ subrenderer(rcard).render rview, :show=>['menu'] }
+            </div>
+          
+          }
+        end
+      end
+    end
 
     define_view :changes do |args|
       load_revisions
@@ -643,15 +695,36 @@ module Wagn
       array.map do |h|
         if !h[:if] or @menu_checks[ h[:if] ]
           link = case
-            when h[:link]  ;  h[:link]
-            when h[:page]  ;  link_to_page (h[:text] || raw("#{h[:page]} &crarr;")), h[:page]
-            when h[:view]  ;  link_to_view (h[:text] || h[:view]), h[:view], :class=>'slotter'
-            else           ;  raise "bad menu item"
+            when h[:plain]
+              "<a>#{h[:plain]}</a>"
+            when h[:link]
+              h[:link]
+            when h[:page]
+              next unless h[:page] = menu_subs( h[:page] )
+              link_to_page (h[:text] || raw("#{h[:page]} &crarr;")), h[:page]
+            else
+              if h[:related]
+                h[:related] = { :name=> h[:related] } if String === h[:related]
+                next unless h[:related][:name] = menu_subs( h[:related][:name] )
+                h[:view] = :related
+                h[:path_opts] ||= {}
+                h[:path_opts].merge! :related=>h[:related]
+              end                
+                
+              if h[:view]
+                link_to_view (h[:text] || h[:view]), h[:view], :class=>'slotter', :path_opts=>h[:path_opts]
+              else
+                raise "bad menu item"
+              end
             end
           sub = h[:sub] && "\n<ul>\n#{build_menu_items h[:sub]}\n</ul>\n"
           "<li>#{link} #{sub}</li>"
         end
       end.compact * "\n"
+    end
+    
+    def menu_subs key
+      Symbol===key ? @menu_subs[key] : key
     end
     
     

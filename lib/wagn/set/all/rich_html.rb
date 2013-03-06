@@ -5,10 +5,11 @@ module Wagn
     format :html
 
     define_view :show do |args|
-      @main_view = args[:view] || params[:home_view]
+      @main_view = args[:view] || args[:home_view]
 
       if ajax_call?
-        self.render( @main_view || :open )
+        view = @main_view || :open
+        self.render view, args
       else
         self.render_layout args
       end
@@ -32,12 +33,8 @@ module Wagn
     end
 
     define_view :titled do |args|
-      unless args[:show] and args[:show].member? 'menu'  #need to simplify this pattern
-        args[:hide] ||= ['menu']
-      end
-      
       wrap :titled, args do
-        _render_header( args ) +
+        _render_header( args.merge :menu_default_hidden=>true ) +
         wrap_content( :titled ) do
           _render_core args
         end
@@ -68,7 +65,7 @@ module Wagn
         <div class="card-header">
           #{ args.delete :toggler }
           #{ _render_title }
-          #{ _optional_render :menu, args }
+          #{ _optional_render :menu, args, args[:menu_default_hidden] || false }
         </div>
       }
     end
@@ -115,14 +112,14 @@ module Wagn
             { :view=>:options, :text=>'rules' },
             { :page=>:type, :text=>'type', :sub=>[
                 { :page=>:type },
-                { :related=>"#{card.type_name}+#{Card[:type].name}+by_name", :text=>"#{card.type_name} cards"} # yuck
+                { :related=>"%{type}+*type+by_name", :text=>"%{type} cards"} # yuck
               ] },
             { :plain=>'refs', :sub=>[
-                { :related=>"+*refers to", :text=>"from #{card.name}", :sub=>[
+                { :related=>"+*refers to", :text=>"from %{self}", :sub=>[
                     { :related=>"+*links",      :text=>"links" },
                     { :related=>"+*inclusions", :text=>"inclusions" }                  
                   ] },
-                { :related=>"+*referred to by", :text=>"to #{card.name}", :sub=>[
+                { :related=>"+*referred to by", :text=>"to %{self}", :sub=>[
                     { :related=>"+*linkers",   :text=>"links" },
                     { :related=>"+*includers", :text=>"inclusions" }
                   ] }
@@ -132,8 +129,8 @@ module Wagn
                 { :related=>"+*plus parts", :text=>'mates'    },
               ] },              
             { :plain=>'editors', :if=>:real, :sub=>[
-                { :page=>:creator, :text=>card.real? && "creator (#{card.creator.name})" },
-                { :page=>:updater, :text=>card.real? && "last editor (#{card.updater.name})" },
+                { :page=>:creator, :text=>"creator (%{creator})" },
+                { :page=>:updater, :text=>"last editor (%{updater})" },
                 { :related=>"+*editors", :text=>'all editors'               },
               ] },
           ] },
@@ -694,6 +691,7 @@ module Wagn
     def build_menu_items array
       array.map do |h|
         if !h[:if] or @menu_checks[ h[:if] ]
+          h[:text] = h[:text] % @menu_subs if h[:text]
           link = case
             when h[:plain]
               "<a>#{h[:plain]}</a>"
@@ -704,7 +702,7 @@ module Wagn
               link_to_page (h[:text] || raw("#{h[:page]} &crarr;")), h[:page]
             else
               if h[:related]
-                h[:related] = { :name=> h[:related] } if String === h[:related]
+                h[:related] = { :name => h[:related] % @menu_subs } if String === h[:related]
                 next unless h[:related][:name] = menu_subs( h[:related][:name] )
                 h[:view] = :related
                 h[:path_opts] ||= {}

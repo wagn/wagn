@@ -111,7 +111,7 @@ module Wagn
         :style=>args[:style]
       }
       
-      [:home_view, :item, :include].each do |key|
+      [:home_view, :item, :include, :show, :hide].each do |key|
         attributes["slot-#{key}"] = args[key]
       end
 

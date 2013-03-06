@@ -28,15 +28,13 @@ module Wagn
     end
     
     define_view :template_link, :type=>'set' do |args|
-      include_syntax = (@depth==0 && params[:include]) || args[:include] 
       wrap :template_link, args do
-        link = link_to_view include_syntax, :template_editor, :class=>'slotter' #, 'slot-include'=>include_syntax
+        link = link_to_view args[:include], :template_editor, :class=>'slotter' #, 'slot-include'=>include_syntax
         "{{#{link}}}"
       end
     end
     
     define_view :template_editor, :type=>'set' do |args|
-      include_syntax = (@depth==0 && params[:include]) || args[:include] 
       wrap :template_editor, args do
         %{
           <div class="template-editor-left">{{</div> 

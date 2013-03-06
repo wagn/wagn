@@ -69,9 +69,10 @@ module Wagn
     def initialize card, opts={}
       Renderer.current_slot ||= self unless(opts[:not_current])
       @card = card
-      opts.each { |key, value| instance_variable_set "@#{key}", value }
-      #raise "opts #{opts.inspect}, #{@format}" if @format == :html
-      #warn "opts #{opts.inspect}, #{@format}"
+      opts.each do |key, value|
+        instance_variable_set "@#{key}", value
+      end
+
       @format ||= :html
       @char_count = @depth = 0
       @root = self
@@ -79,10 +80,8 @@ module Wagn
       @context_names ||= if context_name_list = params[:name_context]
         context_name_list.split(',').map &:to_name
       else [] end
-
-      if card && card.collection? && params[:item] && !params[:item].blank?
-        @item_view = params[:item]
-      end
+        
+      @item_view ||= params[:item] if !params[:item].blank?
     end
 
     def params()       @params     ||= controller.params                          end
@@ -144,7 +143,7 @@ module Wagn
 
     def optional_render view, args, default_hidden=false
       test = default_hidden ? :show : :hide
-      override = args[test] && args[test].member?(view.to_s)
+      override = args[test] && [args[test]].flatten.member?(view.to_s)
       return nil if default_hidden ? !override : override
       render view, args
     end
@@ -322,7 +321,7 @@ module Wagn
     end
 
     def process_inclusion tcard, opts
-      sub_opts = { :item_view =>opts[:item] }
+      sub_opts = { :item_view => opts[:item] }
       [ :type, :size ].each { |key| sub_opts[key] = opts[key] }
       sub = subrenderer tcard, sub_opts
 

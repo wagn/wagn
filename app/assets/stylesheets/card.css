@@ -530,10 +530,12 @@ div.search-result-list .search-result-item {
 
 /*------------( Layout, Plain Text ) ------------*/
 
-.TYPE-layout > .content,
-.TYPE-plain_text > .content,
+/*
 .RIGHT-Xcontent > .content,
-.RIGHT-Xdefault> .content {
+.RIGHT-Xdefault> .content 
+*/
+.TYPE-layout > .content,
+.TYPE-plain_text > .content {
   white-space: pre-wrap
 }
 

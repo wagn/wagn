@@ -1,7 +1,7 @@
 module Cardlib::Permissions
 
   def ydhpt
-    "#{Account.current.name}, You don't have permission to"
+    "You don't have permission to"
   end
 
   def approved?
@@ -54,7 +54,7 @@ module Cardlib::Permissions
   end
   
   def update_account_ok? #FIXME - temporary API, I think this is fixed, can we cache any of this for speed, this is accessed for each header
-    id == Account.current_id || ok?( :create, :trait=>:account, :new=>{} )
+    id == Account.current_id || ok?( :update, :trait=>:account )
   end
 
   def who_can operation

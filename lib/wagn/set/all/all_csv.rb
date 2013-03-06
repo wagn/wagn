@@ -10,8 +10,7 @@ module Wagn
       if !card.collection?
         "CSV format only works on collections (searches, pointers, etc)"
       else
-        @item_view = :csvrow
-        super args
+        super args.merge :item=>:csvrow
       end
     end
 

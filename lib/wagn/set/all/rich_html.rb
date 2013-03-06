@@ -49,7 +49,7 @@ module Wagn
 
     define_view :open do |args|
       args[:toggler] = link_to '', path(:view=>:closed), :title => "close #{card.name}", :remote => true,
-        :class => "close-icon ui-icon ui-icon-circle-triangle-s toggler slotter"
+        :class => "close-icon ui-icon ui-icon-circle-triangle-s toggler slotter nodblclick"
       wrap :open, args.merge(:frame=>true) do
         %{
            #{ _render_header args }
@@ -157,7 +157,7 @@ module Wagn
 
     define_view :closed do |args|
       args[:toggler] = link_to '', path(:view=>:open), :title => "open #{card.name}", :remote => true,
-        :class => "open-icon ui-icon ui-icon-circle-triangle-e toggler slotter"
+        :class => "open-icon ui-icon ui-icon-circle-triangle-e toggler slotter nodblclick"
       wrap :closed, args do
         %{
           #{ render_header args }
@@ -598,7 +598,7 @@ module Wagn
     end
 
     define_view :errors, :perms=>:none do |args|
-      Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller[0..3]*", "}"
+      #Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller[0..3]*", "}"
       wrap :errors, args do
         %{ <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
         card.errors.map { |attrib, msg| "<div>#{attrib.to_s.upcase}: #{msg}</div>" } * ''

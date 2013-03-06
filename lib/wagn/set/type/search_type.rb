@@ -12,6 +12,8 @@ module Wagn
       rescue Exception=>e
         error = e; nil
       end
+      @itemview = args[:item] || card.spec[:view]
+      
 
       case
       when results.nil?
@@ -25,13 +27,13 @@ module Wagn
     end
 
     define_view :card_list, :type=>:search_type do |args|
-      @item_view ||= card.spec[:view] || :name
+      @itemview ||= :name
 
       if args[:results].empty?
         'no results'
       else
         args[:results].map do |c|
-          process_inclusion c, :view=>@item_view
+          process_inclusion c, :view=>@itemview
         end.join "\n"
       end
     end
@@ -52,6 +54,8 @@ module Wagn
       rescue Exception=>e
         error = e; nil
       end
+      
+      @itemview = args[:item] || card.spec[:view]
 
       if results.nil?
         %{"#{error.class.to_s}: #{error.message}"<br/>#{card.content}}
@@ -63,14 +67,14 @@ module Wagn
         %{<span class="search-count">(#{ card.count })</span>
         <div class="search-result-list">
           #{results.map do |c|
-            %{<div class="search-result-item">#{@item_view == 'name' ? c.name : link_to_page( c.name ) }</div>}
+            %{<div class="search-result-item">#{@itemview == 'name' ? c.name : link_to_page( c.name ) }</div>}
           end*"\n"}
         </div>}
       end
     end
 
     define_view :card_list, :type=>:search_type do |args|
-      @item_view ||= (card.spec[:view]) || :closed
+      @itemview ||= :closed
       @item_size ||= (card.spec[:size]) || nil
 
       paging = _optional_render :paging, args
@@ -83,8 +87,8 @@ module Wagn
         #{paging}
         <div class="search-result-list"> #{
         args[:results].map do |c|
-          %{<div class="search-result-item item-#{ @item_view }">
-            #{ process_inclusion c, :view=>@item_view, :size=>@item_size }
+          %{<div class="search-result-item item-#{ @itemview }">
+            #{ process_inclusion c, :view=>@itemview, :size=>@item_size }
           </div>}
         end.join }
         </div>
@@ -104,7 +108,7 @@ module Wagn
 
     define_view :card_list, :name=>:recent do |args|
       cards = args[:results]
-      @item_view ||= (card.spec[:view]) || :change
+      @itemview ||= :change
 
       cards_by_day = Hash.new { |h, day| h[day] = [] }
       cards.each do |card|
@@ -130,8 +134,8 @@ module Wagn
 %{  <h2>#{format_date(day, include_time = false) }</h2>
         <div class="search-result-list">} +
              cards_by_day[day].map do |card| %{
-          <div class="search-result-item item-#{ @item_view }">
-               #{process_inclusion(card, :view=>@item_view) }
+          <div class="search-result-item item-#{ @itemview }">
+               #{process_inclusion(card, :view=>@itemview) }
           </div>}
              end.join(' ') + %{
         </div>
@@ -152,7 +156,7 @@ module Wagn
       total = card.count search_params
       return '' if limit >= total # should only happen if limit exactly equals the total
 
-      @paging_path_args = { :limit => limit, :item  => ( @item_view || args[:item] ) }
+      @paging_path_args = { :limit => limit, :item  => @itemview }
       @paging_limit = limit
 
       s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }
@@ -199,16 +203,16 @@ module Wagn
     format :json
 
     define_view :card_list, :type=>:search_type do |args|
-      @item_view ||= card.spec[:view] || :name
+      @itemview ||= :name
 
       if args[:results].empty?
         'no results'
       else
         # simpler version gives [{'card':{the card stuff}, {'card' ...} vs.
-        #  args[:results].map do |c|  process_inclusion c, :view=>@item_view end
+        #  args[:results].map do |c|  process_inclusion c, :view=>@itemview end
         # This which converts to {'cards':[{the card suff}, {another card stuff} ...]} we may want to support both ...
         {:cards => args[:results].map do |c|
-            inc = process_inclusion c, :view=>@item_view
+            inc = process_inclusion c, :view=>@itemview
             (!(String===inc) and inc.has_key?(:card)) ? inc[:card] : inc
           end
         }

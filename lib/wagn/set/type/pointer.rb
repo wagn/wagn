@@ -13,14 +13,14 @@ module Wagn
     format :html
 
     define_view :core, :type=>'pointer' do |args|
-      @item_view ||= Wagn::Renderer::DEFAULT_ITEM_VIEW  #FIXME: this needs work, it won't subclass as intended
-      %{<div class="pointer-list">#{card.pointer_items self, @item_view}</div>}
+      itemview = args[:item] || :closed #Wagn::Renderer::DEFAULT_ITEM_VIEW  #FIXME: this needs work, it won't subclass as intended
+      %{<div class="pointer-list">#{card.pointer_items self, itemview}</div>}
       #+ link_to( 'add/edit', path(action), :remote=>true, :class=>'slotter add-edit-item' ) #ENGLISH
     end
 
     define_view :closed_content, :type=>'pointer' do |args|
-      @item_view = 'link' unless @item_view == 'name'
-      %{<div class="pointer-list">#{card.pointer_items self, @item_view}</div>}
+      itemview = args[:item]=='name' ? 'name' : 'link'
+      %{<div class="pointer-list">#{card.pointer_items self, itemview}</div>}
     end
 
     define_view :editor, :type=>'pointer' do |args|
@@ -93,13 +93,13 @@ module Wagn
     module Model
       def collection?() true  end
 
-      def pointer_items renderer, item_view
+      def pointer_items renderer, itemview
         typeparam = case (type=item_type)
           when String ; ";type:#{type}"
           when Array  ; ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
           else ""
         end
-        renderer.process_content_object content.gsub(/\[\[/,"<div class=\"pointer-item item-#{item_view}\">{{").gsub(/\]\]/,"|#{item_view}#{typeparam}}}</div>")
+        renderer.process_content_object content.gsub(/\[\[/,"<div class=\"pointer-item item-#{itemview}\">{{").gsub(/\]\]/,"|#{itemview}#{typeparam}}}</div>")
       end
 
       def item_cards( args={} )

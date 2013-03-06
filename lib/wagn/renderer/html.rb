@@ -2,7 +2,7 @@ module Wagn
   class Renderer::Html < Renderer
 
     attr_accessor  :options_need_save, :start_time, :skip_autosave
-    DEFAULT_ITEM_VIEW = :closed  #FIXME: It can't access this default
+#    DEFAULT_ITEM_VIEW = :closed  #FIXME: It can't access this default
 
     # these initialize the content of missing builtin layouts
     LAYOUTS = { 'default' => %{

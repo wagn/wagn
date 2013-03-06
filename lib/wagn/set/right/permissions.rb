@@ -54,7 +54,7 @@ module Wagn
     end
 
     define_view :core, { :right=>'create'} do |args|
-      @item_view ||= :link
+      args[:item] ||= :link
       card.content=='_left' ? core_inherit_content(args) : _final_pointer_type_core(args)
     end
 

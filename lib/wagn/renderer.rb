@@ -8,7 +8,7 @@ module Wagn
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
-    DEFAULT_ITEM_VIEW = :link  # should be set in card?
+    #DEFAULT_ITEM_VIEW = :link  # should be set in card?
 
     RENDERERS = { #should be defined in renderer
       :json => :JsonRenderer,
@@ -80,8 +80,6 @@ module Wagn
       @context_names ||= if context_name_list = params[:name_context]
         context_name_list.split(',').map &:to_name
       else [] end
-        
-      @item_view ||= params[:item] if !params[:item].blank?
     end
 
     def params()       @params     ||= controller.params                          end
@@ -180,20 +178,19 @@ module Wagn
     # ------------- Sub Renderer and Inclusion Processing ------------
     #
 
-    def subrenderer subcard, opts={}
+    def subrenderer subcard
+      #should consider calling "child"
       subcard = Card.fetch( subcard, :new=>{} ) if String===subcard
       sub = self.clone
-      sub.initialize_subrenderer subcard, self, opts
+      sub.initialize_subrenderer subcard, self
     end
 
-    def initialize_subrenderer subcard, parent, opts
-      @parent=parent
+    def initialize_subrenderer subcard, parent
+      @parent = parent
       @card = subcard
       @char_count = 0
       @depth += 1
-      @item_view = @main_content = @showname = nil
-      opts.each { |key, value| instance_variable_set "@#{key}", value }
-      #Rails.logger.warn "subrenderer inited #{card && card.name} #{opts.inspect}, iv:#{@item_view}, #{@item}, #{@view}"
+      @main_content = @showname = nil
       self
     end
 
@@ -286,7 +283,6 @@ module Wagn
     end
 
     def expand_inclusion opts
-      #warn "ex inc #{card.inspect}, #{opts.inspect}"
       case
       when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
@@ -321,10 +317,7 @@ module Wagn
     end
 
     def process_inclusion tcard, opts
-      sub_opts = { :item_view => opts[:item] }
-      [ :type, :size ].each { |key| sub_opts[key] = opts[key] }
-      sub = subrenderer tcard, sub_opts
-
+      sub = subrenderer tcard
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
       # don't like depending on this global var switch
       # I think we can get rid of it as soon as we get rid of the remaining rails views?

@@ -277,7 +277,7 @@ del.diffmod,
   text-align: center;
   color: #009;
   display: none;
-  margin: 0px 0px 4px 0px;
+  margin: 0 0 4px 0;
 
 }
 .help.content {
@@ -291,8 +291,8 @@ del.diffmod,
   min-height: 25px;
 }
 .instruction {
-  border-left: 0px;
-  border-right: 0px;
+  border-left: 0;
+  border-right: 0;
 }
 .hidden,
 .denied {
@@ -324,7 +324,7 @@ body#wagn .card-slot.recent-changes h2 {
 }
 .open-view .down-arrow,
 .open-view .close-link {
-  margin: 0px 5px 0px 0px;
+  margin: 0 5px 0 0;
 }
 
 
@@ -340,7 +340,7 @@ body#wagn .card-slot.recent-changes h2 {
   background: #fff;
   overflow: hidden;
   white-space: nowrap !important;
-  border: 0px;
+  border: 0;
   border-bottom: 1px solid #ccc;
   -moz-border-radius: 0 !important;
   border-radius: 0 !important;
@@ -351,8 +351,8 @@ body#wagn .card-slot.recent-changes h2 {
   vertical-align: middle;
   display: inline-block;
   line-height: 15px;
-  -moz-border-radius: 0px 6px 6px 0px;
-  border-radius: 0px 6px 6px 0px;
+  -moz-border-radius: 0 6px 6px 0;
+  border-radius: 0 6px 6px 0;
   margin-right: 4px;
 }
 .closed-content,
@@ -375,7 +375,7 @@ body#wagn .card-slot.recent-changes h2 {
 .closed-content a,
 .closed-content blockquote {
   display: inline !important;
-  margin: 0px 4px;
+  margin: 0 6px 0 0;
   padding: 0px !important;
   border: 0px !important;
   font-size: 11px !important;

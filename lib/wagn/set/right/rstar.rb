@@ -1,6 +1,6 @@
 module Wagn
-  module Set::Right::Rstar
-include Sets
+  module Set::Rstar
+    include Sets
 
     format :html
 
@@ -8,8 +8,7 @@ include Sets
       rule_card = card.new_card? ? find_current_rule_card[0] : card
 
       rule_content = !rule_card ? '' : begin
-        r = subrenderer rule_card
-        r.render_closed_content :set_context=>card.cardname.trunk_name
+        subrenderer(rule_card)._render_closed_content :set_context=>card.cardname.trunk_name
       end
 
       cells = [
@@ -197,6 +196,31 @@ include Sets
 
       end.html_safe
     end
+    
+   module Model  
+     #def should_be_set?
+    #   r = right and
+    #   r.codename and
+    #   Cardlib::Pattern.subclasses.map( &:key ).member? r.codename
+    # end
+   
+    def repair_set
+      @set_repair_attempted = true
+       if real?
+         reset_patterns
+         template # repair happens in template loading
+         include_set_modules
+       end
+     end
+   
+     def method_missing method_id, *args
+       if !@set_repair_attempted and repair_set
+         send method_id, *args
+       else
+         super
+       end
+     end
+   end
   end
 
 
@@ -207,7 +231,7 @@ include Sets
       # self.card is a POTENTIAL rule; it quacks like a rule but may or may not exist.
       # This generates a prototypical member of the POTENTIAL rule's set
       # and returns that member's ACTUAL rule for the POTENTIAL rule's setting
-      set_prototype = Card.fetch( card.cardname.trunk_name ).prototype
+      set_prototype = card.trunk.prototype
       rule_card = card.new_card? ? set_prototype.rule_card( card.tag.codename ) : card
       [ rule_card, set_prototype ]
     end

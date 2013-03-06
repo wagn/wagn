@@ -146,8 +146,8 @@ module Wagn
           process_content( inc ).strip
         end.join
 #        raw _render_core(args)
-      elsif card.new_card?
-        fieldset '', content_field( form )
+#      elsif card.new_card?
+#        fieldset '', content_field( form )
       else
         content_field form
       end
@@ -170,11 +170,14 @@ module Wagn
       "<strong>view <em>#{view}</em> not supported for <em>#{error_cardname}</em></strong>"
     end
 
-    def link_to_view text, view, html_opts={}
-      html_opts[:remote] = true
-      html_opts[:rel] = 'nofollow'
-      path_opts = view==:read ? {} : { :view=>view }
-      link_to text, path( path_opts ), html_opts
+    def link_to_view text, view, opts={}
+      path_opts = view==:home ? {} : { :view=>view }
+      if p = opts.delete( :path_opts )
+        path_opts.merge! p
+      end
+      opts[:remote] = true
+      opts[:rel] = 'nofollow'
+      link_to text, path( path_opts ), opts
     end
 
     def name_field form=nil, options={}

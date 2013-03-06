@@ -43,7 +43,7 @@ module Wagn
           <div class="template-editor-main card-frame">
             <div class="card-header">
               #{content_tag :h1, card.label, :class=>'card-title'}   
-              #{link_to_view '', :template_link, :class=>'slotter ui-icon ui-icon-circle-close template-editor-close'}
+              #{link_to_view '', :template_link, :class=>'slotter ui-icon ui-icon-close-thick template-editor-close'}
             </div>
             <div class="card-body">
               #{ _render_core }

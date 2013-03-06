@@ -29,16 +29,19 @@ module Cardlib::Settings
   end
   
   def rule_card setting_code, options={}
+    Card.fetch rule_card_id( setting_code, options )
+  end
+  
+  def rule_card_id setting_code, options={}
     fallback = options.delete( :fallback )
     rule_set_keys.each do |rule_set_key|
       rule_id = self.class.rule_cache["#{rule_set_key}+#{setting_code}"]
       rule_id ||= fallback && self.class.rule_cache["#{rule_set_key}+#{fallback}"]
-      return Card.fetch( rule_id, options) if rule_id
+      return rule_id if rule_id
     end
     nil
   end
   
-
   def related_sets
     # refers to sets that users may configure from the current card - NOT to sets to which the current card belongs
     sets = ["#{name}+*self"]

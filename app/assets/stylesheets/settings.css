@@ -48,6 +48,7 @@ td.rule-setting {
   text-overflow: ellipsis;
   line-height: inherit;
   background: inherit;
+  white-space: nowrap;
 }
 .rule-content-container .closed-content,
 .rule-content-container .closed-content .pointer-list,

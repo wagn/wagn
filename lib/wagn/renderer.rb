@@ -382,10 +382,7 @@ module Wagn
       if pcard && !pcard.name.empty? && !opts.delete(:no_id) && ![:new, :create].member?(opts[:action]) #generalize. dislike hardcoding views/actions here
         base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
       end
-      query =''
-      if !opts.empty?
-        query = '?' + ( opts.map{ |k,v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&') )
-      end
+      query = opts.empty? ? '' : "?#{opts.to_param}"
       wagn_path( base + query )
     end
 

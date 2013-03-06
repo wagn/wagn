@@ -1,7 +1,7 @@
 module Cardlib::Permissions
 
   def ydhpt
-    "#{Account.current.name}, You don't have permission to"
+    "You don't have permission to"
   end
 
   def approved?
@@ -32,7 +32,7 @@ module Cardlib::Permissions
   #      to fetch and the test is perfomed on the fetched card, therefore:
   #
   #      :trait=>:account         would fetch this card plus a tag codenamed :account
-  #      :trait=>:roles, :new=>{} would create a new card with default ({}) options.
+  #      :trait=>:roles, :new=>{} would initialize a new card with default ({}) options.
 
   def ok_with_fetch? operation, opts={}
     card = opts[:trait].nil? ? self : fetch(opts)
@@ -54,7 +54,7 @@ module Cardlib::Permissions
   end
   
   def update_account_ok? #FIXME - temporary API, I think this is fixed, can we cache any of this for speed, this is accessed for each header
-    id == Account.current_id || ok?( :create, :trait=>:account, :new=>{} )
+    id == Account.current_id || ok?( :update, :trait=>:account )
   end
 
   def who_can operation

@@ -26,7 +26,7 @@ describe Mailer do
       Account.as_bot do
         @user = User[ user_id ]
         @user.generate_password
-        @email = Mailer.account_info(@user, "New password subject", "Forgot my password")
+        @email = @user.send_account_info(:subject => "New password subject", :mesage => "Forgot my password")
       end
     end
 

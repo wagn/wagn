@@ -112,7 +112,7 @@ module Wagn
       }
       
       [:home_view, :item, :include, :show, :hide].each do |key|
-        attributes["slot-#{key}"] = args[key]
+        attributes["slot-#{key}"] = args[key] if args[key].present?
       end
 
       if card

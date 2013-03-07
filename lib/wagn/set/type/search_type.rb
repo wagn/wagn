@@ -75,7 +75,6 @@ module Wagn
 
     define_view :card_list, :type=>:search_type do |args|
       @itemview ||= :closed
-      @item_size ||= (card.spec[:size]) || nil
 
       paging = _optional_render :paging, args
 
@@ -88,7 +87,7 @@ module Wagn
         <div class="search-result-list"> #{
         args[:results].map do |c|
           %{<div class="search-result-item item-#{ @itemview }">
-            #{ process_inclusion c, :view=>@itemview, :size=>@item_size }
+            #{ process_inclusion c, :view=>@itemview, :size=>args[:size] }
           </div>}
         end.join }
         </div>

@@ -76,7 +76,7 @@ module Wagn
         :edit      => card.real? && card.ok?(:update),
         :account   => card.real? && card.account && card.update_account_ok?,
         :structure => card.hard_template && card.template.ok?(:update),
-        :watch     => Account.logged_in? && !card.new_card?,
+        :watch     => card.real? && Account.logged_in?,
 #        :talk => talk_card = card. #FIXME -- need something like ok? :create_or_update
       }
       
@@ -86,15 +86,16 @@ module Wagn
         :structure => card.template && card.template.name,
         :creator => card.real? && card.creator.name,
         :updater => card.real? && card.creator.name,
+        :watch => render_watch
       }
       
       piece_links = card.cardname.piece_names.reverse.map { |piece| { :page=>piece } }
       
       menu_obj = [ 
-        { :view=>:edit, :text=>'edit', :if=>:edit, :sub=>[   #if virtual
+        { :view=>:edit, :text=>'edit', :if=>:edit, :sub=>[
             { :view=>:edit,       :text=>'content' },
             { :view=>:edit_name,  :text=>'name'    },
-            { :view=>:edit_type,  :text=>'type'    }, #{}"type (#{card.type_name})"   },
+            { :view=>:edit_type,  :text=>'type'    },
             { :related=>{ :name=>:structure, :view=>:edit }, :text=>'structure', :if=>:structure },
           ] },
         { :page=>:self, :text=>'view', :sub=> [
@@ -115,13 +116,13 @@ module Wagn
                 { :related=>"%{type}+*type+by_name", :text=>"%{type} cards"} # yuck
               ] },
             { :plain=>'refs', :sub=>[
-                { :related=>"+*refers to", :text=>"from %{self}", :sub=>[
+                { :related=>"+*refers to",      :text=>"from %{self}", :sub=>[
                     { :related=>"+*links",      :text=>"links" },
                     { :related=>"+*inclusions", :text=>"inclusions" }                  
                   ] },
                 { :related=>"+*referred to by", :text=>"to %{self}", :sub=>[
-                    { :related=>"+*linkers",   :text=>"links" },
-                    { :related=>"+*includers", :text=>"inclusions" }
+                    { :related=>"+*linkers",    :text=>"links" },
+                    { :related=>"+*includers",  :text=>"inclusions" }
                   ] }
               ] },
             { :plain=>'kin', :sub=>[
@@ -134,7 +135,7 @@ module Wagn
                 { :related=>"+*editors", :text=>'all editors'               },
               ] },
           ] },
-        { :link=>render_watch, :if=>:watch },
+        { :link=>:watch, :if=>:watch },
         { :view=>:account, :if=>:account },
         { :related=>{ :name=>"+*talk", :view=>:edit }, :text=>'talk' }
       ]
@@ -696,7 +697,7 @@ module Wagn
             when h[:plain]
               "<a>#{h[:plain]}</a>"
             when h[:link]
-              h[:link]
+              menu_subs h[:link]
             when h[:page]
               next unless h[:page] = menu_subs( h[:page] )
               link_to_page (h[:text] || raw("#{h[:page]} &crarr;")), h[:page]

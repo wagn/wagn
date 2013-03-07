@@ -116,7 +116,7 @@ module Wagn
 
       def item_names( args={} )
         context = args[:context] || self.cardname
-        cc=self.content
+        cc=self.raw_content
         self.content.split(/\n+/).map{ |line|
           line.gsub(/\[\[|\]\]/,'')
         }.map{ |link| context==:raw ? link : link.to_name.to_absolute(context) }

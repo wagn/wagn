@@ -26,7 +26,7 @@ describe Mailer do
       Account.as_bot do
         @user = User[ user_id ]
         @user.generate_password
-        @email = @user.send_account_info(:subject => "New password subject", :mesage => "Forgot my password")
+        @email = @user.send_account_info(:subject => "New password subject", :message => "Forgot my password")
       end
     end
 
@@ -41,12 +41,12 @@ describe Mailer do
       end
 
       it "has subject" do
-        @email.should have_subject /^New password subject$/
+        @email.should have_subject( /^New password subject$/ )
       end
 
       it "sends the right email" do
         #@email.should have_body_text /Account Details\b.*\bPassword: *[0-9A-Za-z]{9}$/m
-        @email.should have_body_text /Account Details.*\bPassword: *[0-9A-Za-z]{9}$/m
+        @email.should have_body_text( /Account Details.*\bPassword: *[0-9A-Za-z]{9}$/m )
       end
     end
   end

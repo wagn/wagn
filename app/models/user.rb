@@ -130,16 +130,15 @@ class User < ActiveRecord::Base
   end
 
   def send_account_info args
-    #return if args[:no_email]
-    raise(Wagn::Oops, "subject is required") unless (args[:subject])
-    raise(Wagn::Oops, "message is required") unless (args[:message])
+    raise Wagn::Oops, "subject and message required" unless args[:subject] && args[:message]
     begin
-      args.merge :to => self.email, :password => self.password
-      warn "send_account_info(#{args.inspect})"
-      message = Mailer.account_info self, args
+      args.merge! :to => self.email, :password => self.password
+      #warn "account infor args: #{args}"
+      message = Mailer.account_info Card[card_id], args
       message.deliver
     rescue Exception=>e
-      warn Rails.logger.info("ACCOUNT INFO DELIVERY FAILED: \n #{args.inspect}\n   #{e.message}, #{e.backtrace*"\n"}")
+      Airbrake.notify e if Airbrake.configuration.api_key
+      Rails.logger.info("ACCOUNT INFO DELIVERY FAILED: \n #{args.inspect}\n   #{e.message}, #{e.backtrace*"\n"}")
     end
   end
 

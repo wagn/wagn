@@ -10,36 +10,23 @@ class Mailer < ActionMailer::Base
 
   include LocationHelper
 
-  EMAIL_FIELDS = { :to => false, :subject => false, :message => true, :password => true }
-
-  def valid_args? cd_with_acct, args
-    EMAIL_FIELDS.map do |k,del|
-      unless val = args[k]
-        cd_with_acct.errors.add :email, "Missing email parameters: #{nil_args.map(&:to_s)*', '}"
-        return false
-      end
-      args.delete(k) if del
-      val 
-    end
-  end
 
   def account_info cd_with_acct, args
-    return unless vargs = valid_args?( cd_with_acct, args )
-    @email, @subject, @message, @password = vargs
+    @email, subject, @message, @password = [:to, :subject, :message, :password].map do |k|
+      args[k] or raise "Missing email parameter: #{k}"
+    end
 
-    @card_url = wagn_url cd_with_acct
-    @pw_url   = wagn_url "/card/options/#{cd_with_acct.cardname.url_key}"
+    @pw_url   = wagn_url "#{cd_with_acct.cardname.url_key}?view=options"
     @login_url= wagn_url "/account/signin"
-    @message  = @message.clone
 
     #FIXME - might want different "from" settings for different contexts?
-    unless invite_from = Card.setting( '*invite+*from' )
+    invite_from = Card.setting( '*invite+*from' ) || begin
       from_card_id = Account.current_id
-      from_card_id = Card::WagnBotID if from_card_id == Card::AnonID || from_card_id == cd_with_acct.id
+      from_card_id = Card::WagnBotID if [ Card::AnonID, cd_with_acct.id ].member? from_card_id
       from_card = Card[from_card_id]
-      invite_from = "#{from_card.name} <#{from_card.account.email}>"
+      "#{from_card.name} <#{from_card.account.email}>"
     end
-    mail_from args, invite_from
+    mail_from( { :to=>@email, :subject=>subject }, invite_from )
   end
 
   def signup_alert invite_request
@@ -101,14 +88,16 @@ class Mailer < ActionMailer::Base
   private
 
   def mail_from args, from
-    from_name, from_email = (from =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, from]
-    if default_from=@@defaults[:from]
-      args[:from] = !from_email ? default_from : "#{from_name || from_email} <#{default_from}>"
-      args[:reply_to] ||= from
-    else
-      args[:from] = from
+    unless Wagn::Conf[:migration]
+      from_name, from_email = (from =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, from]
+      if default_from=@@defaults[:from]
+        args[:from] = !from_email ? default_from : "#{from_name || from_email} <#{default_from}>"
+        args[:reply_to] ||= from
+      else
+        args[:from] = from
+      end
+      mail args
     end
-    mail args unless Wagn::Conf[:migration]
   end
 
 

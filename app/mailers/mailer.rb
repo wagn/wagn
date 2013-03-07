@@ -10,30 +10,22 @@ class Mailer < ActionMailer::Base
 
   include LocationHelper
 
-  EMAIL_FIELDS = [ :to, :subject, :message, :password ]
+  EMAIL_FIELDS = { :to => false, :subject => false, :message => true, :password => true }
 
   def valid_args? cd_with_acct, args
-    nil_args = EMAIL_FIELDS.find_all { |k| args[k].nil? }.compact
-    if nil_args.any?
-      unless cd_with_acct.errors[:email].any?
-        cd_with_acct.errors[:email].add(:email, "Missing email parameters: #{nil_args.map(&:to_s)*', '}")
+    EMAIL_FIELDS.map do |k,del|
+      unless val = args[k]
+        cd_with_acct.errors.add :email, "Missing email parameters: #{nil_args.map(&:to_s)*', '}"
+        return false
       end
-      false
-    else
-      true
+      args.delete(k) if del
+      val 
     end
   end
 
-
-  #def account_info cd_with_acct, args
-  def account_info user, subject, message
-    cd_with_acct = Card===user ? user : Card[user.card_id]
-    args = { :subject => subject, :message => message, :password => user.password, :to => user.email }
-
-    arg_array = EMAIL_FIELDS.map { |f| args[f] }
-    return if arg_array.find(&:nil?)
-
-    @email, @subject, @message, @password = arg_array
+  def account_info cd_with_acct, args
+    return unless vargs = valid_args?( cd_with_acct, args )
+    @email, @subject, @message, @password = vargs
 
     @card_url = wagn_url cd_with_acct
     @pw_url   = wagn_url "/card/options/#{cd_with_acct.cardname.url_key}"
@@ -42,8 +34,10 @@ class Mailer < ActionMailer::Base
 
     #FIXME - might want different "from" settings for different contexts?
     unless invite_from = Card.setting( '*invite+*from' )
-      cur_card = Account.current
-      invite_from = "#{cur_card.name} <#{cur_card.account.email}>"
+      from_card_id = Account.current_id
+      from_card_id = Card::WagnBotID if from_card_id == Card::AnonID || from_card_id == cd_with_acct.id
+      from_card = Card[from_card_id]
+      invite_from = "#{from_card.name} <#{from_card.account.email}>"
     end
     mail_from args, invite_from
   end

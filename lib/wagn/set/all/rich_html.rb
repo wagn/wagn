@@ -28,7 +28,10 @@ module Wagn
   
     define_view :content do |args|
       wrap :content, args do
-        wrap_content( :content ) { _render_core args }
+        %{
+          #{ optional_render :menu, args, default_hidden=true }
+          #{ wrap_content( :content ) { _render_core args }   }
+        }
       end
     end
 
@@ -36,7 +39,11 @@ module Wagn
       wrap :titled, args do
         _render_header( args.merge :menu_default_hidden=>true ) +
         wrap_content( :titled ) do
-          _render_core args
+          %{
+            #{ _render_core args  }
+            #{ optional_render :comment_box, args }
+            #{ notice }
+          }
         end
       end
     end
@@ -71,13 +78,14 @@ module Wagn
     end
   
     define_view :menu do |args|
+      discussion_card = Card.fetch "#{card.name}+discussion", :skip_virtual=>true, :skip_modules=>true, :new=>{}
       @menu_checks = {
         :real      => card.real?,
         :edit      => card.real? && card.ok?(:update),
         :account   => card.real? && card.account && card.update_account_ok?,
         :structure => card.hard_template && card.template.ok?(:update),
         :watch     => card.real? && Account.logged_in?,
-#        :talk => talk_card = card. #FIXME -- need something like ok? :create_or_update
+        :discuss   => discussion_card.ok?(:read)
       }
       
       @menu_subs = {
@@ -86,59 +94,12 @@ module Wagn
         :structure => card.template && card.template.name,
         :creator => card.real? && card.creator.name,
         :updater => card.real? && card.creator.name,
-        :watch => render_watch
+        :watch => render_watch,
+        :piecenames => card.cardname.piece_names.reverse,
       }
-      
-      piece_links = card.cardname.piece_names.reverse.map { |piece| { :page=>piece } }
-      
-      menu_obj = [ 
-        { :view=>:edit, :text=>'edit', :if=>:edit, :sub=>[
-            { :view=>:edit,       :text=>'content' },
-            { :view=>:edit_name,  :text=>'name'    },
-            { :view=>:edit_type,  :text=>'type'    },
-            { :related=>{ :name=>:structure, :view=>:edit }, :text=>'structure', :if=>:structure },
-          ] },
-        { :page=>:self, :text=>'view', :sub=> [
-            { :page=>:self, :text=>'page', :sub=>piece_links },
-            { :view=>:home, :text=>'refresh', :sub=>[
-                { :view=>:titled  },
-                { :view=>:open    },
-                { :view=>:closed  },
-                { :view=>:content },
-              ] },
-            { :view=>:changes, :text=>'history', :if=>:edit },
-            { :related=>{ :name=>:structure }, :text=>'structure', :if=>:structure },
-          ] },
-        { :view=>:options, :text=>'advanced', :sub=>[
-            { :view=>:options, :text=>'rules' },
-            { :page=>:type, :text=>'type', :sub=>[
-                { :page=>:type },
-                { :related=>"%{type}+*type+by_name", :text=>"%{type} cards"} # yuck
-              ] },
-            { :plain=>'refs', :sub=>[
-                { :related=>"+*refers to",      :text=>"from %{self}", :sub=>[
-                    { :related=>"+*links",      :text=>"links" },
-                    { :related=>"+*inclusions", :text=>"inclusions" }                  
-                  ] },
-                { :related=>"+*referred to by", :text=>"to %{self}", :sub=>[
-                    { :related=>"+*linkers",    :text=>"links" },
-                    { :related=>"+*includers",  :text=>"inclusions" }
-                  ] }
-              ] },
-            { :plain=>'kin', :sub=>[
-                { :related=>"+*plus cards", :text=>'children' },
-                { :related=>"+*plus parts", :text=>'mates'    },
-              ] },              
-            { :plain=>'editors', :if=>:real, :sub=>[
-                { :page=>:creator, :text=>"creator (%{creator})" },
-                { :page=>:updater, :text=>"last editor (%{updater})" },
-                { :related=>"+*editors", :text=>'all editors'               },
-              ] },
-          ] },
-        { :link=>:watch, :if=>:watch },
-        { :view=>:account, :if=>:account },
-        { :related=>{ :name=>"+*talk", :view=>:edit }, :text=>'talk' }
-      ]
+    
+      menu_obj = default_menu
+
 
       %{
       <div class="card-menu-link">
@@ -691,6 +652,7 @@ module Wagn
     
     def build_menu_items array
       array.map do |h|
+        h = h.clone if Hash===h
         if !h[:if] or @menu_checks[ h[:if] ]
           h[:text] = h[:text] % @menu_subs if h[:text]
           link = case
@@ -716,6 +678,19 @@ module Wagn
                 raise "bad menu item"
               end
             end
+          if Hash === h[:sub]
+            arr = []
+            h[:sub].each do |k1,v1| # piecenames, {pages=>itmes}
+              menu_subs(k1).each do |item_val| #[names].each do |name|
+                menu_item = v1.clone
+                menu_item.each do |k2, v2|
+                  menu_item[k2] = item_val if v2 == :item
+                end
+                arr << menu_item
+              end            
+            end
+            h[:sub] = arr
+          end
           sub = h[:sub] && "\n<ul>\n#{build_menu_items h[:sub]}\n</ul>\n"
           "<li>#{link} #{sub}</li>"
         end

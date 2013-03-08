@@ -98,13 +98,10 @@ module Wagn
         :piecenames => card.cardname.piece_names.reverse,
       }
     
-      menu_obj = default_menu
-
-
       %{
       <div class="card-menu-link">
         <ul class="card-menu">
-          #{ build_menu_items menu_obj }
+          #{ build_menu_items default_menu }
         </ul>
         <a class="ui-icon ui-icon-gear"></a>
       </div>}
@@ -665,7 +662,11 @@ module Wagn
               link_to_page (h[:text] || raw("#{h[:page]} &crarr;")), h[:page]
             else
               if h[:related]
-                h[:related] = { :name => h[:related] % @menu_subs } if String === h[:related]
+                h[:related] = if String === h[:related]
+                  { :name => h[:related] % @menu_subs }
+                else
+                  h[:related].clone
+                end
                 next unless h[:related][:name] = menu_subs( h[:related][:name] )
                 h[:view] = :related
                 h[:path_opts] ||= {}

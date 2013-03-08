@@ -1,6 +1,6 @@
 module Wagn
   class Renderer::Html < Renderer
-
+    cattr_accessor :default_menu
     attr_accessor  :options_need_save, :start_time, :skip_autosave
 #    DEFAULT_ITEM_VIEW = :closed  #FIXME: It can't access this default
 
@@ -69,57 +69,54 @@ module Wagn
    }
    
    
-    def default_menu 
-      @@default_menu ||= [ 
-        { :view=>:edit, :text=>'edit', :if=>:edit, :sub=>[
-            { :view=>:edit,       :text=>'content' },
-            { :view=>:edit_name,  :text=>'name'    },
-            { :view=>:edit_type,  :text=>'type'    },
-            { :related=>{ :name=>:structure, :view=>:edit }, :text=>'structure', :if=>:structure },
-          ] },
-        { :page=>:self, :text=>'view', :sub=> [
-            { :page=>:self, :text=>'page', :sub=>{ :piecenames => { :page=>:item } } },
-            { :view=>:home, :text=>'refresh', :sub=>[
-                { :view=>:titled  },
-                { :view=>:open    },
-                { :view=>:closed  },
-                { :view=>:content },
-              ] },
-            { :view=>:changes, :text=>'history', :if=>:edit },
-            { :related=>{ :name=>:structure }, :text=>'structure', :if=>:structure },
-          ] },
-        { :view=>:options, :text=>'advanced', :sub=>[
-            { :view=>:options, :text=>'rules' },
-            { :page=>:type, :text=>'type', :sub=>[
-                { :page=>:type },
-                { :related=>"%{type}+*type+by_name", :text=>"%{type} cards"} # yuck
-              ] },
-            { :plain=>'refs', :sub=>[
-                { :related=>"+*refers to",      :text=>"from %{self}", :sub=>[
-                    { :related=>"+*links",      :text=>"links" },
-                    { :related=>"+*inclusions", :text=>"inclusions" }                  
-                  ] },
-                { :related=>"+*referred to by", :text=>"to %{self}", :sub=>[
-                    { :related=>"+*linkers",    :text=>"links" },
-                    { :related=>"+*includers",  :text=>"inclusions" }
-                  ] }
-              ] },
-            { :plain=>'kin', :sub=>[
-                { :related=>"+*plus cards", :text=>'children' },
-                { :related=>"+*plus parts", :text=>'mates'    },
-              ] },              
-            { :plain=>'editors', :if=>:real, :sub=>[
-                { :page=>:creator, :text=>"creator (%{creator})" },
-                { :page=>:updater, :text=>"last editor (%{updater})" },
-                { :related=>"+*editors", :text=>'all editors'               },
-              ] },
-          ] },
-        { :link=>:watch, :if=>:watch },
-        { :view=>:account, :if=>:account },
-        { :related=>{ :name=>"+discussion" }, :text=>'discuss', :if=>:discuss }
-      ]
-    end
-
+    @@default_menu ||= [ 
+      { :view=>:edit, :text=>'edit', :if=>:edit, :sub=>[
+          { :view=>:edit,       :text=>'content' },
+          { :view=>:edit_name,  :text=>'name'    },
+          { :view=>:edit_type,  :text=>'type'    },
+          { :related=>{ :name=>:structure, :view=>:edit }, :text=>'structure', :if=>:structure },
+        ] },
+      { :page=>:self, :text=>'view', :sub=> [
+          { :page=>:self, :text=>'page', :sub=>{ :piecenames => { :page=>:item } } },
+          { :view=>:home, :text=>'refresh', :sub=>[
+              { :view=>:titled  },
+              { :view=>:open    },
+              { :view=>:closed  },
+              { :view=>:content },
+            ] },
+          { :view=>:changes, :text=>'history', :if=>:edit },
+          { :related=>{ :name=>:structure }, :text=>'structure', :if=>:structure },
+        ] },
+      { :view=>:options, :text=>'advanced', :sub=>[
+          { :view=>:options, :text=>'rules' },
+          { :page=>:type, :text=>'type', :sub=>[
+              { :page=>:type },
+              { :related=>"%{type}+*type+by_name", :text=>"%{type} cards"} # yuck
+            ] },
+          { :plain=>'refs', :sub=>[
+              { :related=>"+*refers to",      :text=>"from %{self}", :sub=>[
+                  { :related=>"+*links",      :text=>"links" },
+                  { :related=>"+*inclusions", :text=>"inclusions" }                  
+                ] },
+              { :related=>"+*referred to by", :text=>"to %{self}", :sub=>[
+                  { :related=>"+*linkers",    :text=>"links" },
+                  { :related=>"+*includers",  :text=>"inclusions" }
+                ] }
+            ] },
+          { :plain=>'kin', :sub=>[
+              { :related=>"+*plus cards", :text=>'children' },
+              { :related=>"+*plus parts", :text=>'mates'    },
+            ] },              
+          { :plain=>'editors', :if=>:real, :sub=>[
+              { :page=>:creator, :text=>"creator (%{creator})" },
+              { :page=>:updater, :text=>"last editor (%{updater})" },
+              { :related=>"+*editors", :text=>'all editors'               },
+            ] },
+        ] },
+      { :link=>:watch, :if=>:watch },
+      { :view=>:account, :if=>:account },
+      { :related=>{ :name=>"+discussion" }, :text=>'discuss', :if=>:discuss }
+    ]
 
     def get_layout_content(args)
       Account.as_bot do

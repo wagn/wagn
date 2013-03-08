@@ -67,7 +67,7 @@ module Wagn
     end
 
     def initialize card, opts={}
-      Renderer.current_slot ||= self unless(opts[:not_current])
+      Renderer.current_slot ||= self unless opts[:not_current]
       @card = card
       opts.each do |key, value|
         instance_variable_set "@#{key}", value
@@ -77,7 +77,7 @@ module Wagn
       @char_count = @depth = 0
       @root = self
 
-      @context_names ||= if context_name_list = params[:name_context]
+      @context_names ||= if params[:slot] && context_name_list = params[:slot][:name_context]
         context_name_list.split(',').map &:to_name
       else [] end
     end

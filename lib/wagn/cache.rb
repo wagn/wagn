@@ -59,9 +59,6 @@ module Wagn
           cache.reset hard=true
         end
         Wagn::Codename.reset_cache
-        Card.clear_rule_cache
-        Card.clear_read_rule_cache
-        
       end
 
       private

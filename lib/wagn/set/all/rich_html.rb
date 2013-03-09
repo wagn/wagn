@@ -5,10 +5,11 @@ module Wagn
     format :html
 
     define_view :show do |args|
-      @main_view = args[:view] || params[:home_view]
+      @main_view = args[:view] || args[:home_view]
 
       if ajax_call?
-        self.render( @main_view || :open )
+        view = @main_view || :open
+        self.render view, args
       else
         self.render_layout args
       end
@@ -27,19 +28,22 @@ module Wagn
   
     define_view :content do |args|
       wrap :content, args do
-        wrap_content( :content ) { _render_core args }
+        %{
+          #{ optional_render :menu, args, default_hidden=true }
+          #{ wrap_content( :content ) { _render_core args }   }
+        }
       end
     end
 
     define_view :titled do |args|
-      unless args[:show] and args[:show].member? 'menu'  #need to simplify this pattern
-        args[:hide] ||= ['menu']
-      end
-      
       wrap :titled, args do
-        _render_header( args ) +
+        _render_header( args.merge :menu_default_hidden=>true ) +
         wrap_content( :titled ) do
-          _render_core args
+          %{
+            #{ _render_core args  }
+            #{ optional_render :comment_box, args }
+            #{ notice }
+          }
         end
       end
     end
@@ -52,7 +56,7 @@ module Wagn
 
     define_view :open do |args|
       args[:toggler] = link_to '', path(:view=>:closed), :title => "close #{card.name}", :remote => true,
-        :class => "close-icon ui-icon ui-icon-circle-triangle-s toggler slotter"
+        :class => "close-icon ui-icon ui-icon-circle-triangle-s toggler slotter nodblclick"
       wrap :open, args.merge(:frame=>true) do
         %{
            #{ _render_header args }
@@ -68,19 +72,20 @@ module Wagn
         <div class="card-header">
           #{ args.delete :toggler }
           #{ _render_title }
-          #{ _optional_render :menu, args }
+          #{ _optional_render :menu, args, args[:menu_default_hidden] || false }
         </div>
       }
     end
   
     define_view :menu do |args|
+      discussion_card = Card.fetch "#{card.name}+discussion", :skip_virtual=>true, :skip_modules=>true, :new=>{}
       @menu_checks = {
         :real      => card.real?,
         :edit      => card.real? && card.ok?(:update),
         :account   => card.real? && card.account && card.update_account_ok?,
         :structure => card.hard_template && card.template.ok?(:update),
-        :watch     => Account.logged_in? && !card.new_card?,
-#        :talk => talk_card = card. #FIXME -- need something like ok? :create_or_update
+        :watch     => card.real? && Account.logged_in?,
+        :discuss   => discussion_card.ok?(:read)
       }
       
       @menu_subs = {
@@ -89,63 +94,14 @@ module Wagn
         :structure => card.template && card.template.name,
         :creator => card.real? && card.creator.name,
         :updater => card.real? && card.creator.name,
+        :watch => render_watch,
+        :piecenames => card.cardname.piece_names.reverse,
       }
-      
-      piece_links = card.cardname.piece_names.reverse.map { |piece| { :page=>piece } }
-      
-      menu_obj = [ 
-        { :view=>:edit, :text=>'edit', :if=>:edit, :sub=>[   #if virtual
-            { :view=>:edit,       :text=>'content' },
-            { :view=>:edit_name,  :text=>'name'    },
-            { :view=>:edit_type,  :text=>'type'    }, #{}"type (#{card.type_name})"   },
-            { :related=>{ :name=>:structure, :view=>:edit }, :text=>'structure', :if=>:structure },
-          ] },
-        { :page=>:self, :text=>'view', :sub=> [
-            { :page=>:self, :text=>'page', :sub=>piece_links },
-            { :view=>:home, :text=>'refresh', :sub=>[
-                { :view=>:titled  },
-                { :view=>:open    },
-                { :view=>:closed  },
-                { :view=>:content },
-              ] },
-            { :view=>:changes, :text=>'history', :if=>:edit },
-            { :related=>{ :name=>:structure }, :text=>'structure', :if=>:structure },
-          ] },
-        { :view=>:options, :text=>'advanced', :sub=>[
-            { :view=>:options, :text=>'rules' },
-            { :page=>:type, :text=>'type', :sub=>[
-                { :page=>:type },
-                { :related=>"#{card.type_name}+#{Card[:type].name}+by_name", :text=>"#{card.type_name} cards"} # yuck
-              ] },
-            { :plain=>'refs', :sub=>[
-                { :related=>"+*refers to", :text=>"from #{card.name}", :sub=>[
-                    { :related=>"+*links",      :text=>"links" },
-                    { :related=>"+*inclusions", :text=>"inclusions" }                  
-                  ] },
-                { :related=>"+*referred to by", :text=>"to #{card.name}", :sub=>[
-                    { :related=>"+*linkers",   :text=>"links" },
-                    { :related=>"+*includers", :text=>"inclusions" }
-                  ] }
-              ] },
-            { :plain=>'kin', :sub=>[
-                { :related=>"+*plus cards", :text=>'children' },
-                { :related=>"+*plus parts", :text=>'mates'    },
-              ] },              
-            { :plain=>'editors', :if=>:real, :sub=>[
-                { :page=>:creator, :text=>card.real? && "creator (#{card.creator.name})" },
-                { :page=>:updater, :text=>card.real? && "last editor (#{card.updater.name})" },
-                { :related=>"+*editors", :text=>'all editors'               },
-              ] },
-          ] },
-        { :link=>render_watch, :if=>:watch },
-        { :view=>:account, :if=>:account },
-        { :related=>{ :name=>"+*talk", :view=>:edit }, :text=>'talk' }
-      ]
-
+    
       %{
       <div class="card-menu-link">
         <ul class="card-menu">
-          #{ build_menu_items menu_obj }
+          #{ build_menu_items default_menu }
         </ul>
         <a class="ui-icon ui-icon-gear"></a>
       </div>}
@@ -160,7 +116,7 @@ module Wagn
 
     define_view :closed do |args|
       args[:toggler] = link_to '', path(:view=>:open), :title => "open #{card.name}", :remote => true,
-        :class => "open-icon ui-icon ui-icon-circle-triangle-e toggler slotter"
+        :class => "open-icon ui-icon ui-icon-circle-triangle-e toggler slotter nodblclick"
       wrap :closed, args do
         %{
           #{ render_header args }
@@ -601,7 +557,7 @@ module Wagn
     end
 
     define_view :errors, :perms=>:none do |args|
-      Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller[0..3]*", "}"
+      #Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller[0..3]*", "}"
       wrap :errors, args do
         %{ <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
         card.errors.map { |attrib, msg| "<div>#{attrib.to_s.upcase}: #{msg}</div>" } * ''
@@ -693,18 +649,24 @@ module Wagn
     
     def build_menu_items array
       array.map do |h|
+        h = h.clone if Hash===h
         if !h[:if] or @menu_checks[ h[:if] ]
+          h[:text] = h[:text] % @menu_subs if h[:text]
           link = case
             when h[:plain]
               "<a>#{h[:plain]}</a>"
             when h[:link]
-              h[:link]
+              menu_subs h[:link]
             when h[:page]
               next unless h[:page] = menu_subs( h[:page] )
               link_to_page (h[:text] || raw("#{h[:page]} &crarr;")), h[:page]
             else
               if h[:related]
-                h[:related] = { :name=> h[:related] } if String === h[:related]
+                h[:related] = if String === h[:related]
+                  { :name => h[:related] % @menu_subs }
+                else
+                  h[:related].clone
+                end
                 next unless h[:related][:name] = menu_subs( h[:related][:name] )
                 h[:view] = :related
                 h[:path_opts] ||= {}
@@ -717,6 +679,19 @@ module Wagn
                 raise "bad menu item"
               end
             end
+          if Hash === h[:sub]
+            arr = []
+            h[:sub].each do |k1,v1| # piecenames, {pages=>itmes}
+              menu_subs(k1).each do |item_val| #[names].each do |name|
+                menu_item = v1.clone
+                menu_item.each do |k2, v2|
+                  menu_item[k2] = item_val if v2 == :item
+                end
+                arr << menu_item
+              end            
+            end
+            h[:sub] = arr
+          end
           sub = h[:sub] && "\n<ul>\n#{build_menu_items h[:sub]}\n</ul>\n"
           "<li>#{link} #{sub}</li>"
         end

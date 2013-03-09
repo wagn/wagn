@@ -101,8 +101,9 @@ class ApplicationController < ActionController::Base
       obj_sym = [:json, :xml].member?( ext = ext.to_sym ) ? ext : :text
       renderer = Wagn::Renderer.new card, :format=>ext, :controller=>self
 
-      render_obj = renderer.render_show :view => view || params[:view]
-      render obj_sym => render_obj, :status=> renderer.error_status || status
+      view_opts = ( params[:slot] || {} ).merge :view => ( view || params[:view] )      
+      rendered_obj = renderer.render_show view_opts
+      render obj_sym => rendered_obj, :status => renderer.error_status || status
 
     when show_file            # send_file can handle it
     else                      # dunno how to handle it

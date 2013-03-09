@@ -322,11 +322,6 @@ body#wagn .card-slot.recent-changes h2 {
   display: inline;
   padding: 0;
 }
-.open-view .down-arrow,
-.open-view .close-link {
-  margin: 0 5px 0 0;
-}
-
 
 .titled-view > .card-header {
    background: inherit;
@@ -516,11 +511,11 @@ div.search-result-list .search-result-item {
 
 /*-----------( Image ) -----------*/
 
-
+/*
 .open-view .TYPE-image .content {
-/*  overflow: auto;  */
   padding: 5px;
 }
+*/
 
 /*-----------( Toggle ) -----------*/
 
@@ -530,10 +525,12 @@ div.search-result-list .search-result-item {
 
 /*------------( Layout, Plain Text ) ------------*/
 
-.TYPE-layout > .content,
-.TYPE-plain_text > .content,
+/*
 .RIGHT-Xcontent > .content,
-.RIGHT-Xdefault> .content {
+.RIGHT-Xdefault> .content 
+*/
+.TYPE-layout > .content,
+.TYPE-plain_text > .content {
   white-space: pre-wrap
 }
 

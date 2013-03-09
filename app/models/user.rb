@@ -129,28 +129,28 @@ class User < ActiveRecord::Base
     self.send_account_info(email_args) if card.errors.empty?
   end
 
-  def send_account_info(args)
-    #return if args[:no_email]
-    raise(Wagn::Oops, "subject is required") unless (args[:subject])
-    raise(Wagn::Oops, "message is required") unless (args[:message])
+  def send_account_info args
+    raise Wagn::Oops, "subject and message required" unless args[:subject] && args[:message]
     begin
-      #warn "send_account_info(#{args.inspect})"
-      message = Mailer.account_info(self, args[:subject], args[:message])
+      args.merge! :to => self.email, :password => self.password
+      #warn "account infor args: #{args}"
+      message = Mailer.account_info Card[card_id], args
       message.deliver
     rescue Exception=>e
-      warn Rails.logger.info("ACCOUNT INFO DELIVERY FAILED: \n #{args.inspect}\n   #{e.message}, #{e.backtrace*"\n"}")
+      Airbrake.notify e if Airbrake.configuration.api_key
+      Rails.logger.info("ACCOUNT INFO DELIVERY FAILED: \n #{args.inspect}\n   #{e.message}, #{e.backtrace*"\n"}")
     end
   end
 
-  def anonymous?() card_id == Card::AnonID end
+  def anonymous?; card_id == Card::AnonID end
 
-  def active?()   status=='active'  end
-  def blocked?()  status=='blocked' end
-  def built_in?() status=='system'  end
-  def pending?()  status=='pending' end
+  def active?   ; status=='active'  end
+  def blocked?  ; status=='blocked' end
+  def built_in? ; status=='system'  end
+  def pending?  ; status=='pending' end
 
   # blocked methods for legacy boolean status
-  def blocked=(block)
+  def blocked= block
     if block != '0'
       self.status = 'blocked'
     elsif !built_in?

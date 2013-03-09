@@ -99,7 +99,7 @@ module Wagn
       setting_name    = args[:setting_name]
       current_set_key = args[:current_set_key] || '*all' # Card[:all].name (should have a constant for this?)
       open_rule       = args[:open_rule]
-      @item_view ||= :link
+      args[:item] ||= :link
 
       form_for card, :url=>path(:action=>:update, :no_id=>true), :remote=>true, :html=>
           {:class=>"card-form card-rule-form #{edit_mode && 'slotter'}" } do |form|

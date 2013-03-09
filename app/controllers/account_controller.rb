@@ -100,7 +100,7 @@ class AccountController < CardController
         subject = "Password Reset"
         message = "You have been given a new temporary password.  " +
            "Please update your password once you've signed in. "
-        Mailer.account_info(@account, subject, message).deliver
+        @account.send_account_info(:subject => subject, :message => message)
         flash[:notice] = "Check your email for your new temporary password"
         redirect_to previous_location
       end

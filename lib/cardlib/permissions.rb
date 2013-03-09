@@ -65,7 +65,7 @@ module Cardlib::Permissions
   def permission_rule_card operation
     opcard = rule_card operation
     unless opcard
-      errors.add :permission_denied, "No #{operation} setting card for #{name}"
+      errors.add :permission_denied, "No #{operation} rule for #{name}"
       raise Card::PermissionDenied.new(self)
     end
 

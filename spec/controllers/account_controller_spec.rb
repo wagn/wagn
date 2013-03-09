@@ -112,7 +112,7 @@ describe AccountController do
       @msgs.size.should == 1
       @msgs[0].should be_a Mail::Message
       # FIXME: shouldn't it be simpler? @msgs[0].from.should == "Anonymous"
-      @msgs[0].from.should == "Anonymous <>"
+      @msgs[0].from.should == ["no-reply@wagn.org"]
     end
 
 

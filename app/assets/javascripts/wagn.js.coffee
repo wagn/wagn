@@ -13,7 +13,7 @@ wagn.prepUrl = (url, slot)->
     xtra['is_main'] = true if slot.isMain()
     $.each slot[0].attributes, (i, att)->
       if (m = att.name.match /^slot-(.*)$/) and att.value?
-        xtra[m[1]] = att.value
+        xtra['slot[' + m[1] + ']' ] = att.value
 
   url + ( (if url.match /\?/ then '&' else '?') + $.param(xtra) )
 

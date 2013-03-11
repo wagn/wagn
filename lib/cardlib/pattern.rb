@@ -272,7 +272,8 @@ module Cardlib
     end
 
     class SelfPattern < BasePattern
-      register 'self', :name, :assigns_type=>true
+      register 'self', :name
+      #note: does not assign type bc this causes trouble when cardtype cards have a *self set.
       def self.label          name;     %{The card "#{name}"}      end
       def self.prototype_args base;     { :name=>base }            end
       def self.anchor_name    card;     card.name                  end

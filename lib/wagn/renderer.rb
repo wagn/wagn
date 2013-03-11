@@ -330,7 +330,12 @@ module Wagn
       # FIXME: special views should be represented in view definitions
       
       view = case
-      when @mode == :edit       ; @@perms[view]==:none || tcard.hard_template ? :blank : :edit_in_form
+      when @mode == :edit
+        if @@perms[view]==:none || tcard.hard_template || tcard.key.blank? # eg {{_self|type}} on new cards
+          :blank
+        else
+          :edit_in_form
+        end
       when @@perms[view]==:none ; view
       when @mode == :closed     ; !tcard.known?  ? :closed_missing : :closed_content
       when @mode == :template   ; :template_rule

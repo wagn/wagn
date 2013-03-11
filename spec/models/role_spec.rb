@@ -66,10 +66,11 @@ describe User, 'Joe User' do
     @roles_card.item_names.length.should==1
   end
   it "should save new roles and reload correctly" do
-    Account.as_bot {
-      @roles_card.content=''
-      @roles_card << @r1;
-    }
+    Account.as_bot do
+      @roles_card.content = ''
+      @roles_card << @r1
+      @roles_card.save!
+    end
     @ju = Card['joe_user'].account
     @roles_card = Card[@jucard.fetch(:new=>{},:trait=>:roles).id]
     @roles_card.item_names.length.should==1

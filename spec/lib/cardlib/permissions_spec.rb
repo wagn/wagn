@@ -203,21 +203,15 @@ describe "Permission", ActiveSupport::TestCase do
 
 
   it "write user permissions" do
-    Account.as_bot {
-      rc=@u1.fetch(:trait=>:roles, :new=>{})
-      rc.content = ''; rc << @r1 << @r2
-      rc.save
-      rc=@u2.fetch(:trait=>:roles, :new=>{})
-      rc.content = ''; rc << @r1 << @r3
-      rc.save
-      rc=@u3.fetch(:trait=>:roles, :new=>{})
-      rc.content = ''; rc << @r1 << @r2 << @r3
-      rc.save
+    Account.as_bot do
+      @u1.fetch(:trait=>:roles, :new=>{}).items = [@r1, @r2]
+      @u2.fetch(:trait=>:roles, :new=>{}).items = [@r1, @r3]
+      @u3.fetch(:trait=>:roles, :new=>{}).items = [@r1, @r2, @r3]
 
       cards=[1,2,3].map do |num|
         Card.create(:name=>"c#{num}+*self+*update", :type=>'Pointer', :content=>"[[u#{num}]]")
       end
-    }
+    end
 
     @c1 = Card['c1']
     assert_not_locked_from( @u1, @c1 )
@@ -232,12 +226,8 @@ describe "Permission", ActiveSupport::TestCase do
 
   it "read group permissions" do
     Account.as_bot do
-      rc=@u1.fetch(:trait=>:roles)
-      rc.content = ''; rc << @r1 << @r2
-      rc.save
-      rc=@u2.fetch(:trait=>:roles)
-      rc.content = ''; rc << @r1 << @r3
-      rc.save
+      @u1.fetch(:trait=>:roles).items = [@r1, @r2]
+      @u2.fetch(:trait=>:roles).items = [@r1, @r3]
 
       [1,2,3].each do |num|
         Card.create(:name=>"c#{num}+*self+*read", :type=>'Pointer', :content=>"[[r#{num}]]")
@@ -259,8 +249,7 @@ describe "Permission", ActiveSupport::TestCase do
         Card.create(:name=>"c#{num}+*self+*update", :type=>'Pointer', :content=>"[[r#{num}]]")
       end
 
-      (rc=@u3.fetch(:trait=>:roles, :new=>{})).content =  ''
-      rc << @r1
+      @u3.fetch(:trait=>:roles, :new=>{}).items = [@r1]
     end
 
     %{        u1 u2 u3
@@ -282,12 +271,9 @@ describe "Permission", ActiveSupport::TestCase do
 
   it "read user permissions" do
     Account.as_bot {
-      (rc=@u1.fetch(:trait=>:roles, :new=>{})).content = ''
-      rc << @r1 << @r2
-      (rc=@u2.fetch(:trait=>:roles, :new=>{})).content = ''
-      rc << @r1 << @r3
-      (rc=@u3.fetch(:trait=>:roles, :new=>{})).content = ''
-      rc << @r1 << @r2 << @r3
+      @u1.fetch(:trait=>:roles, :new=>{}).items = [@r1, @r2]
+      @u2.fetch(:trait=>:roles, :new=>{}).items = [@r1, @r3]
+      @u3.fetch(:trait=>:roles, :new=>{}).items = [@r1, @r2, @r3]
 
       [1,2,3].each do |num|
         Card.create(:name=>"c#{num}+*self+*read", :type=>'Pointer', :content=>"[[u#{num}]]")

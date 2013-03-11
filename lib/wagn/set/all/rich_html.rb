@@ -418,7 +418,7 @@ module Wagn
         (roles.map do |rolecard|
           if rolecard && !rolecard.trash
            %{<div style="white-space: nowrap">
-             #{ check_box_tag "user_roles[%s]" % rolecard.id, 1, user_role_ids.member?(rolecard.id) ? true : false }
+             #{ check_box_tag "account_roles[%s]" % rolecard.id, 1, user_role_ids.member?(rolecard.id) ? true : false }
              #{ link_to_page rolecard.name }
            </div>}
           end

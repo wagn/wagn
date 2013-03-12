@@ -107,10 +107,10 @@ module Wagn
               { :related=>"+*plus cards", :text=>'children' },
               { :related=>"+*plus parts", :text=>'mates'    },
             ] },              
-          { :plain=>'editors', :if=>:real, :sub=>[
+          { :related=>'+*editors', :text=>'editors', :if=>:real, :sub=>[
+              { :related=>"+*editors", :text=>'all editors' },
               { :page=>:creator, :text=>"creator (%{creator})" },
               { :page=>:updater, :text=>"last editor (%{updater})" },
-              { :related=>"+*editors", :text=>'all editors'               },
             ] },
         ] },
       { :link=>:watch, :if=>:watch },
@@ -391,9 +391,9 @@ module Wagn
     end
 
     def forward
-      if @revision_number < card.revisions.length
+      if @revision_number < card.revisions.count
         revision_link('Newer', @revision_number +1, 'to_next_revision', 'F' ) +
-          raw(" <small>(#{card.revisions.length - @revision_number})</small>")
+          raw(" <small>(#{card.revisions.count - @revision_number})</small>")
       else
         'Newer <small>(0)</small>'
       end

@@ -242,11 +242,12 @@ $(window).ready ->
       slot_id = box.slot().attr 'card-id' # use id to avoid warning when renaming to name variant
       if status != 'unknown' and !(slot_id && parseInt(slot_id) == data['id'])
         ed.addClass status + '-name known-name'
+        link = 
         qualifier = if status == 'virtual' #wish coffee would let me use  a ? b : c syntax here
           'in virtual'
         else
           'already in'
-        inst.html '"' + name + '" ' + qualifier + ' use'
+        inst.html '"<a href="' + wagn.rootPath + '/' + data['url_key'] + '">' + name + '</a>" ' + qualifier + ' use'
       else
         inst.html ''
 

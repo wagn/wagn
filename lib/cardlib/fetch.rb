@@ -18,11 +18,9 @@ module Cardlib::Fetch
     # "mark" here means a generic identifier -- can be a numeric id, a name, a string name, etc.
     #
     #   Options:
-    #     :skip_vitual                Real cards only
+    #     :skip_virtual               Real cards only
     #     :skip_modules               Don't load Set modules
-    #     :loaded_left => card        Loads the card's trunk
     #     :new => {  card opts }      Return a new card when not found
-    #     :trait => :code (or [:c1, :c2] maybe?)  Fetches base card + tag(s)
     #
 
     def fetch mark, opts = {}
@@ -30,12 +28,8 @@ module Cardlib::Fetch
 
       if mark.nil?
         return if opts[:new].nil?
-        # This is fetch_or_new now when you supply :new=>{opts}
-
       else
 
-        #Rails.logger.warn "fetch #{mark.inspect}, #{opts.inspect}"
-        # Symbol (codename) handling
         if Symbol===mark
           mark = Wagn::Codename[mark] || raise( "Missing codename for #{mark.inspect}" )
         end
@@ -63,7 +57,7 @@ module Cardlib::Fetch
       end
 
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      opts[:skip_virtual] = true if opts[:loaded_left]
+#      opts[:skip_virtual] = true if opts[:loaded_left]
 
       if Integer===mark
         if card.nil?
@@ -71,18 +65,17 @@ module Cardlib::Fetch
           return nil
         end
       else
-        if card && opts[:skip_virtual] && card.new_card?
+        if card && opts[:skip_virtual] && card.new_card? && opts[:new] != {}
           return card.renew(opts)
         end
 
-        #warn "new card? #{card.inspect}"
         # NEW card -- (either virtual or missing)
-        if card.nil? or ( !opts[:skip_virtual] && card.type_id==-1 )
+        if card.nil? or ( card.type_id==-1 && ( !opts[:skip_virtual] || opts[:new]=={} ) )
           # The -1 type_id allows us to skip all the type lookup and flag the need for
           # reinitialization later.  *** It should NEVER be seen elsewhere ***
           needs_caching = true
           new_args = { :name=>mark.to_s, :skip_modules=>true }
-          new_args[:type_id] = -1 if opts[:skip_virtual]
+          new_args[:type_id] = -1 if opts[:skip_virtual] && opts[:new] != {}
           card = new new_args
         end
       end
@@ -93,7 +86,7 @@ module Cardlib::Fetch
       end
 
       if card.new_card?
-        if opts[:skip_virtual] || !card.virtual?
+        if ( opts[:skip_virtual] || !card.virtual? ) && opts[:new] != {}
           return card.renew(opts)
         elsif opts[:name] && opts[:name] != card.name
           card.name = opts[:name]

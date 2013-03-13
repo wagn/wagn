@@ -171,7 +171,7 @@ module Wagn
               else                             ; _render_name_editor
               end
               }
-              #{ params[:type] ? form.hidden_field( :type_id ) : _render_type_editor }
+              #{ params[:type] || !card.simple? ? form.hidden_field( :type_id ) : _render_type_editor }
             </div>
             <div class="card-body">
               <div class="card-editor editor">#{ edit_slot args }</div>
@@ -582,8 +582,11 @@ module Wagn
     end
 
     define_view :denial do |args|
-      task = args[:denied_task] || :read
-      to_task = %{to #{task} this card#{ ": <strong>#{card.name}</strong>" if card.name && !card.name.blank? }.}
+      to_task = if task = args[:denied_task]
+        %{to #{task} this card#{ ": <strong>#{card.name}</strong>" if card.name && !card.name.blank? }.}
+      else
+        'to do that.'
+      end
       if !focal?
         %{<span class="denied"><!-- Sorry, you don't have permission #{to_task} --></span>}
       else

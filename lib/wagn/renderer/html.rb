@@ -328,7 +328,7 @@ module Wagn
       if ajax_call?
         @depth == 0 && params[:is_main]
       else
-        @depth == 1 && @mode == :main
+        @depth == 1 && @mainline
       end
     end
 

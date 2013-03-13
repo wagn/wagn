@@ -121,7 +121,7 @@ describe Wagn::Renderer, "" do
 # (*all sets)
 
 
-  context "handles view" do
+  context "view" do
 
     it("name"    ) { render_card(:name).should      == 'Tempo Rary' }
     it("key"     ) { render_card(:key).should       == 'tempo_rary' }

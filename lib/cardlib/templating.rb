@@ -1,6 +1,6 @@
 module Cardlib::Templating
 
-  def template?
+  def is_template?
     cardname.trait_name? :content, :default
   end
   

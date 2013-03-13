@@ -152,7 +152,7 @@ module Cardlib::Permissions
   def approve_comment
     approve_task :comment, 'comment on'
     if @operation_approved
-      deny_because "No comments allowed on template cards" if template?
+      deny_because "No comments allowed on template cards" if is_template?
       deny_because "No comments allowed on hard templated cards" if hard_template
     end
   end

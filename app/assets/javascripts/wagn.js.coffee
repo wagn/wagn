@@ -219,11 +219,6 @@ $(window).ready ->
     content_field = $(this)
     setTimeout ( -> content_field.autosave() ), 500
 
-  $('.go-to-selected select').live 'change', ->
-    val = $(this).val()
-    if val != ''
-      window.location = wagn.rootPath + escape( val )
-
   $('[hover_content]').live 'mouseenter', ->
     $(this).attr 'hover_restore', $(this).html()
     $(this).html $(this).attr( 'hover_content' )

@@ -71,9 +71,9 @@ module Wagn
    
     @@default_menu ||= [ 
       { :view=>:edit, :text=>'edit', :if=>:edit, :sub=>[
-          { :view=>:edit,       :text=>'content' },
-          { :view=>:edit_name,  :text=>'name'    },
-          { :view=>:edit_type,  :text=>'type'    },
+          { :view=>:edit,      :text=>'content'       },
+          { :view=>:edit_name, :text=>'name'          },
+          { :view=>:edit_type, :text=>'type: %{type}' },
           { :related=>{ :name=>:structure, :view=>:edit }, :text=>'structure', :if=>:structure },
         ] },
       { :page=>:self, :text=>'view', :sub=> [
@@ -87,19 +87,16 @@ module Wagn
           { :view=>:changes, :text=>'history', :if=>:edit },
           { :related=>{ :name=>:structure }, :text=>'structure', :if=>:structure },
         ] },
+      { :related=>{ :name=>"+discussion" }, :text=>'discuss', :if=>:discuss },
       { :view=>:options, :text=>'advanced', :sub=>[
           { :view=>:options, :text=>'rules' },
-          { :page=>:type, :text=>'type', :sub=>[
-              { :page=>:type },
-              { :related=>"%{type}+*type+by_name", :text=>"%{type} cards"} # yuck
-            ] },
           { :plain=>'refs', :sub=>[
               { :related=>"+*refers to",      :text=>"from %{self}", :sub=>[
-                  { :related=>"+*links",      :text=>"links" },
+                  { :related=>"+*links",      :text=>"links"      },
                   { :related=>"+*inclusions", :text=>"inclusions" }                  
                 ] },
               { :related=>"+*referred to by", :text=>"to %{self}", :sub=>[
-                  { :related=>"+*linkers",    :text=>"links" },
+                  { :related=>"+*linkers",    :text=>"links"      },
                   { :related=>"+*includers",  :text=>"inclusions" }
                 ] }
             ] },
@@ -108,14 +105,14 @@ module Wagn
               { :related=>"+*plus parts", :text=>'mates'    },
             ] },              
           { :related=>'+*editors', :text=>'editors', :if=>:real, :sub=>[
-              { :related=>"+*editors", :text=>'all editors' },
-              { :page=>:creator, :text=>"creator (%{creator})" },
-              { :page=>:updater, :text=>"last editor (%{updater})" },
+              { :related=>"+*editors", :text=>'all editors'             },
+              { :page=>:creator,       :text=>"creator: %{creator}"     },
+              { :page=>:updater,       :text=>"last editor: %{updater}" },
             ] },
         ] },
-      { :link=>:watch, :if=>:watch },
-      { :view=>:account, :if=>:account },
-      { :related=>{ :name=>"+discussion" }, :text=>'discuss', :if=>:discuss }
+        { :link=>:watch,   :if=>:watch   },
+        { :view=>:account, :if=>:account }
+
     ]
 
     def get_layout_content(args)

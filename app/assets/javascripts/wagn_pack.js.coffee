@@ -59,16 +59,13 @@ wagn.chooseFile = (e, data) ->
   # we add and remove the contentField to insure that nothing is added / updated when nothing is chosen.
 
 wagn.openMenu = (link) ->
-  # if card menu already exists
-  #   show it
-  # else
-  #   get the template menu
-  #   make a copy right after menu link (or associate if necessary)
-  #   do simple substitutions?
   cm = $(link).find '.card-menu'
-  cm.menu position: { my:'right top', at:'left top' }, 
-    icons:{ submenu:'ui-icon-carat-1-w' }
-  cm.show()
+  if $(link).find('.ui-menu-icon')[0]
+    cm.show()
+  else
+    cm.menu position: { my:'right top', at:'left-2 top-3' }, icons: { submenu:'ui-icon-carat-1-w' }
+    cm.show()
+    cm.position my:'right top', at:'right+2 top+2', of: link
   
 
 $(window).ready ->
@@ -94,12 +91,13 @@ $(window).ready ->
     wagn.openMenu this
     
   $('.card-menu-link').live 'mouseleave', ->
-    cm = $(this).find('.card-menu')    
-    cm.hide()
-    cm.menu "collapseAll", null, true
+    if $(this).find('.ui-menu')[0]
+      cm = $(this).find('.card-menu')    
+      cm.hide()
+      cm.menu "collapseAll", null, true
 
   $('.card-menu').live 'swipe', ->
-    $(this).hide()
+    $(this).hide() #combine with above and handle collapsing.
   
   $('.card-menu-link').live 'tap', (event) ->
     initiated_menu = $(this).find('.ui-menu')[0]

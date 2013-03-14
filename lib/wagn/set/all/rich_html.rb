@@ -100,10 +100,10 @@ module Wagn
     
       %{
       <div class="card-menu-link">
+        <a class="ui-icon ui-icon-gear"></a>
         <ul class="card-menu">
           #{ build_menu_items default_menu }
         </ul>
-        <a class="ui-icon ui-icon-gear"></a>
       </div>}
     end
 

@@ -59,16 +59,13 @@ wagn.chooseFile = (e, data) ->
   # we add and remove the contentField to insure that nothing is added / updated when nothing is chosen.
 
 wagn.openMenu = (link) ->
-  # if card menu already exists
-  #   show it
-  # else
-  #   get the template menu
-  #   make a copy right after menu link (or associate if necessary)
-  #   do simple substitutions?
   cm = $(link).find '.card-menu'
-  cm.menu position: { my:'right top', at:'left top' }, 
-    icons:{ submenu:'ui-icon-carat-1-w' }
-  cm.show()
+  if $(link).find('.ui-menu-icon')[0]
+    cm.show()
+  else
+    cm.menu position: { my:'right top', at:'left-2 top-3' }, icons: { submenu:'ui-icon-carat-1-w' }
+    cm.show()
+    cm.position my:'right top', at:'right+2 top+2', of: link
   
 
 $(window).ready ->
@@ -93,11 +90,14 @@ $(window).ready ->
   $('.card-menu-link').live 'mouseenter', ->
     wagn.openMenu this
     
-  $('.card-menu').live 'mouseleave', ->
-    $(this).hide()
+  $('.card-menu-link').live 'mouseleave', ->
+    if $(this).find('.ui-menu')[0]
+      cm = $(this).find('.card-menu')    
+      cm.hide()
+      cm.menu "collapseAll", null, true
 
   $('.card-menu').live 'swipe', ->
-    $(this).hide()
+    $(this).hide() #combine with above and handle collapsing.
   
   $('.card-menu-link').live 'tap', (event) ->
     initiated_menu = $(this).find('.ui-menu')[0]
@@ -180,6 +180,31 @@ $(window).ready ->
   if firstShade = $('.shade-view h1')[0]
     $(firstShade).trigger 'click'
     
+
+  #wikirate pack
+  $('#wikirate-nav > a').live 'mouseenter', ->
+    ul = $(this).find 'ul'
+    if ul[0]
+      ul.css 'display', 'inline-block'
+    else
+      link = $(this)
+      $.ajax link.attr('href'), {
+        data : { view: 'navdrop', layout: 'none', index: $('#wikirate-nav > a').index(link) },
+#        type : 'POST',
+        success: (data) ->
+          #alert 'success!'
+          wagn.d = data
+          link.prepend $(data).menu()
+      }
+  
+  $('#wikirate-nav ul').live 'mouseleave', ->
+    $(this).hide()
+  
+  
+  $('.go-to-selected select').live 'change', ->
+    val = $(this).val()
+    if val != ''
+      window.location = wagn.rootPath + escape( val )
 
 $(document).bind 'mobileinit', ->
   $.mobile.autoInitializePage = false

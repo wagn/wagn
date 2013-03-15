@@ -61,10 +61,10 @@ wait.gif: wait-fcacc98c2777bec05f82da6258e1378b.gif
 wait/index.gif: wait-fcacc98c2777bec05f82da6258e1378b.gif
 wait_lg.gif: wait_lg-397bf884dd6fafbdd31e51c0f7c328d3.gif
 wait_lg/index.gif: wait_lg-397bf884dd6fafbdd31e51c0f7c328d3.gif
-application.js: application-b3668d6d5c14ae77d7fc3582a5e81709.js
-application/index.js: application-b3668d6d5c14ae77d7fc3582a5e81709.js
-application-all.css: application-all-7b5c2464a1024551456de1c2a81f3be8.css
-application-all/index.css: application-all-7b5c2464a1024551456de1c2a81f3be8.css
+application.js: application-b172fad512a5417c6c8ef45877e6c029.js
+application/index.js: application-b172fad512a5417c6c8ef45877e6c029.js
+application-all.css: application-all-2295d16f60de35c7ea44af6e443fac53.css
+application-all/index.css: application-all-2295d16f60de35c7ea44af6e443fac53.css
 application-print.css: application-print-424a9b6d686daafe88b1bdef72b3dbb0.css
 application-print/index.css: application-print-424a9b6d686daafe88b1bdef72b3dbb0.css
 tinymce.js: tinymce-025f3a2beeeb18ce2b5f2dafdb14eb86.js

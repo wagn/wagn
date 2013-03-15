@@ -72,6 +72,9 @@ module Cardlib::Permissions
     rcard = Account.as_bot do
       if opcard.content == '_left' && self.junction?
         lcard = loaded_left || left_or_new( :skip_virtual=>true, :skip_modules=>true )
+        if operation==:create && lcard.real? && !lcard.was_new_card
+          operation = :update
+        end
         lcard.permission_rule_card(operation).first
       else
         opcard
@@ -149,7 +152,7 @@ module Cardlib::Permissions
   def approve_comment
     approve_task :comment, 'comment on'
     if @operation_approved
-      deny_because "No comments allowed on template cards" if template?
+      deny_because "No comments allowed on template cards" if is_template?
       deny_because "No comments allowed on hard templated cards" if hard_template
     end
   end

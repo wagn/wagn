@@ -63,7 +63,10 @@ module Cardlib
     end
 
     def set_names
-      Card.set_members(@set_names = patterns.map(&:to_s), key) if @set_names.nil?
+      if @set_names.nil?
+        @set_names = patterns.map &:to_s
+        Card.set_members @set_names, key
+      end
       @set_names
     end
     

@@ -28,6 +28,7 @@ td.rule-setting {
 }
 .rule-set {
   color: #666;
+  white-space: nowrap;
 }
 .rule-type-field {
   max-width: 70%;

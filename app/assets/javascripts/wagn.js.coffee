@@ -219,11 +219,6 @@ $(window).ready ->
     content_field = $(this)
     setTimeout ( -> content_field.autosave() ), 500
 
-  $('.go-to-selected select').live 'change', ->
-    val = $(this).val()
-    if val != ''
-      window.location = wagn.rootPath + escape( val )
-
   $('[hover_content]').live 'mouseenter', ->
     $(this).attr 'hover_restore', $(this).html()
     $(this).html $(this).attr( 'hover_content' )
@@ -242,11 +237,12 @@ $(window).ready ->
       slot_id = box.slot().attr 'card-id' # use id to avoid warning when renaming to name variant
       if status != 'unknown' and !(slot_id && parseInt(slot_id) == data['id'])
         ed.addClass status + '-name known-name'
+        link = 
         qualifier = if status == 'virtual' #wish coffee would let me use  a ? b : c syntax here
           'in virtual'
         else
           'already in'
-        inst.html '"' + name + '" ' + qualifier + ' use'
+        inst.html '"<a href="' + wagn.rootPath + '/' + data['url_key'] + '">' + name + '</a>" ' + qualifier + ' use'
       else
         inst.html ''
 

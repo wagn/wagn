@@ -128,26 +128,25 @@ module Wagn
         opt.item_type
       end
 
-      def items=(array)
+      def items= array
         self.content=''
-        array.each {|i| self << i }
+        array.each { |i| self << i }
+        save!
       end
-      # FIXME.  this is horribly inefficient.  If there are 10 items in the array the card will get saved 10 times!
 
-      def << card
-        add_item ( case card
-                     when Card; card.name
-                     when Integer; c = Card[card] and c.name
-                     else card
-                     end )
-        self
+      def << item
+        newname = case item
+          when Card     ;  item.name
+          when Integer  ;  c = Card[item] and c.name
+          else             item
+          end
+        add_item newname
       end
 
       def add_item newname
         inames = item_names
         unless inames.include? newname
           self.content="[[#{(inames << newname).reject(&:blank?)*"]]\n[["}]]"
-          save!
         end
       end
 
@@ -156,7 +155,6 @@ module Wagn
         if inames.include? name
           inames = inames.reject{|n|n==name}
           self.content= inames.empty? ? '' : "[[#{inames * "]]\n[["}]]"
-          save!
         end
       end
 

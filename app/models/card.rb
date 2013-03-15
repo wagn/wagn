@@ -12,12 +12,11 @@ class Card < ActiveRecord::Base
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
 
   attr_accessor :comment, :comment_author, :selected_rev_id,
-    :update_referencers,                # seems like wrong mechanisms for this
+    :update_referencers, :was_new_card, # seems like wrong mechanisms for these
     :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status #yuck
 
   attr_writer :update_read_rule_list
-  attr_reader :type_args
 
   before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
   after_save :base_after_save, :update_ruled_cards, :update_queue, :expire_related
@@ -29,7 +28,9 @@ class Card < ActiveRecord::Base
   class << self
     JUNK_INIT_ARGS = %w{ missing skip_virtual id }
 
-    def cache()          Wagn::Cache[Card]                           end
+    def cache
+      Wagn::Cache[Card]
+    end
 
     def new args={}, options={}
       args = (args || {}).stringify_keys
@@ -37,19 +38,6 @@ class Card < ActiveRecord::Base
       %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
       args.delete('content') if args['attach'] # should not be handled here!
 
-      if name = args['name'] and !name.blank?
-        if  Card.cache                                       and
-            cc = Card.cache.read_local(name.to_name.key)     and
-            cc.type_args                                     and
-            args['type']          == cc.type_args[:type]     and
-            args['typecode']      == cc.type_args[:typecode] and
-            args['type_id']       == cc.type_args[:type_id]  and
-            args['loaded_left']  == cc.loaded_left
-
-          args['type_id'] = cc.type_id
-          return cc.send( :initialize, args )
-        end
-      end
       super args
     end
 
@@ -104,7 +92,7 @@ class Card < ActiveRecord::Base
 
     args.delete('type_id') if args['type_id'] == 0 # can come in as 0, '', or nil
 
-    @type_args = { # these are cached to optimize #new
+    @type_args = {
       :type     => args.delete('type'    ),
       :typecode => args.delete('typecode'),
       :type_id  => args[       'type_id' ]
@@ -114,7 +102,7 @@ class Card < ActiveRecord::Base
 
     super args # ActiveRecord #initialize
 
-    if tid = get_type_id(@type_args)
+    if tid = get_type_id( @type_args )
       self.type_id_without_tracking = tid
     end
 
@@ -254,13 +242,15 @@ class Card < ActiveRecord::Base
     return unless cards
     cards.each_pair do |sub_name, opts|
       opts[:nested_edit] = self
-      absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute cardname
+      absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute_name cardname
+      next if absolute_name.key == key # don't resave self!
 
       if card = Card[absolute_name]
         card = card.refresh
         card.update_attributes opts
       elsif opts[:content].present? and opts[:content].strip.present?
         opts[:name] = absolute_name
+        opts[:loaded_left] = self
         card = Card.create opts
       end
 

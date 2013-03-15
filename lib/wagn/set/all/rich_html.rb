@@ -100,10 +100,10 @@ module Wagn
     
       %{
       <div class="card-menu-link">
+        <a class="ui-icon ui-icon-gear"></a>
         <ul class="card-menu">
           #{ build_menu_items default_menu }
         </ul>
-        <a class="ui-icon ui-icon-gear"></a>
       </div>}
     end
 
@@ -150,7 +150,12 @@ module Wagn
       else
         { :class=>'redirecter', :href=>Card.path_setting('/*previous') }
       end
-
+      
+      show_type_menu = if !params[:type]
+        ( main? || card.simple? || card.is_template? ) and
+          Card.new( :type_id=>card.type_id ).ok? :create #otherwise current type won't be on menu
+      end
+        
       if !ajax_call? 
         header_text = card.type_id == Card::DefaultTypeID ? '' : card.type_name
         %{ <h1 class="page-header">New #{header_text}</h1>}
@@ -171,7 +176,7 @@ module Wagn
               else                             ; _render_name_editor
               end
               }
-              #{ params[:type] ? form.hidden_field( :type_id ) : _render_type_editor }
+              #{ show_type_menu ? _render_type_menu : form.hidden_field( :type_id ) }
             </div>
             <div class="card-body">
               <div class="card-editor editor">#{ edit_slot args }</div>
@@ -285,7 +290,7 @@ module Wagn
       end
     end
 
-    define_view :type_editor do |args|
+    define_view :type_menu do |args|
       fieldset 'type', (editor_wrap :type do
         if args[:variety] == :edit
           type_field :class=>'type-field edit-type-field'
@@ -306,7 +311,7 @@ module Wagn
               #{if card.type_id == Card::CardtypeID and !Card.search(:type_id=>card.id).empty? #ENGLISH
                 %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
               else
-                _render_type_editor :variety=>:edit #FIXME dislike this api -ef
+                _render_type_menu :variety=>:edit #FIXME dislike this api -ef
               end}
               <fieldset>
                 <div class="button-area">              
@@ -582,8 +587,11 @@ module Wagn
     end
 
     define_view :denial do |args|
-      task = args[:denied_task] || :read
-      to_task = %{to #{task} this card#{ ": <strong>#{card.name}</strong>" if card.name && !card.name.blank? }.}
+      to_task = if task = args[:denied_task]
+        %{to #{task} this card#{ ": <strong>#{card.name}</strong>" if card.name && !card.name.blank? }.}
+      else
+        'to do that.'
+      end
       if !focal?
         %{<span class="denied"><!-- Sorry, you don't have permission #{to_task} --></span>}
       else

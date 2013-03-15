@@ -71,9 +71,9 @@ module Wagn
    
     @@default_menu ||= [ 
       { :view=>:edit, :text=>'edit', :if=>:edit, :sub=>[
-          { :view=>:edit,       :text=>'content' },
-          { :view=>:edit_name,  :text=>'name'    },
-          { :view=>:edit_type,  :text=>'type'    },
+          { :view=>:edit,      :text=>'content'       },
+          { :view=>:edit_name, :text=>'name'          },
+          { :view=>:edit_type, :text=>'type: %{type}' },
           { :related=>{ :name=>:structure, :view=>:edit }, :text=>'structure', :if=>:structure },
         ] },
       { :page=>:self, :text=>'view', :sub=> [
@@ -87,19 +87,16 @@ module Wagn
           { :view=>:changes, :text=>'history', :if=>:edit },
           { :related=>{ :name=>:structure }, :text=>'structure', :if=>:structure },
         ] },
+      { :related=>{ :name=>"+discussion" }, :text=>'discuss', :if=>:discuss },
       { :view=>:options, :text=>'advanced', :sub=>[
           { :view=>:options, :text=>'rules' },
-          { :page=>:type, :text=>'type', :sub=>[
-              { :page=>:type },
-              { :related=>"%{type}+*type+by_name", :text=>"%{type} cards"} # yuck
-            ] },
           { :plain=>'refs', :sub=>[
               { :related=>"+*refers to",      :text=>"from %{self}", :sub=>[
-                  { :related=>"+*links",      :text=>"links" },
+                  { :related=>"+*links",      :text=>"links"      },
                   { :related=>"+*inclusions", :text=>"inclusions" }                  
                 ] },
               { :related=>"+*referred to by", :text=>"to %{self}", :sub=>[
-                  { :related=>"+*linkers",    :text=>"links" },
+                  { :related=>"+*linkers",    :text=>"links"      },
                   { :related=>"+*includers",  :text=>"inclusions" }
                 ] }
             ] },
@@ -107,15 +104,15 @@ module Wagn
               { :related=>"+*plus cards", :text=>'children' },
               { :related=>"+*plus parts", :text=>'mates'    },
             ] },              
-          { :plain=>'editors', :if=>:real, :sub=>[
-              { :page=>:creator, :text=>"creator (%{creator})" },
-              { :page=>:updater, :text=>"last editor (%{updater})" },
-              { :related=>"+*editors", :text=>'all editors'               },
+          { :related=>'+*editors', :text=>'editors', :if=>:real, :sub=>[
+              { :related=>"+*editors", :text=>'all editors'             },
+              { :page=>:creator,       :text=>"creator: %{creator}"     },
+              { :page=>:updater,       :text=>"last editor: %{updater}" },
             ] },
         ] },
-      { :link=>:watch, :if=>:watch },
-      { :view=>:account, :if=>:account },
-      { :related=>{ :name=>"+discussion" }, :text=>'discuss', :if=>:discuss }
+        { :link=>:watch,   :if=>:watch   },
+        { :view=>:account, :if=>:account }
+
     ]
 
     def get_layout_content(args)
@@ -160,7 +157,7 @@ module Wagn
         :style=>args[:style]
       }
       
-      [:home_view, :item, :include, :show, :hide].each do |key|
+      [:home_view, :item, :include, :show, :hide, :size].each do |key|
         attributes["slot-#{key}"] = args[key] if args[key].present?
       end
 
@@ -328,7 +325,7 @@ module Wagn
       if ajax_call?
         @depth == 0 && params[:is_main]
       else
-        @depth == 1 && @mode == :main
+        @depth == 1 && @mainline
       end
     end
 
@@ -391,9 +388,9 @@ module Wagn
     end
 
     def forward
-      if @revision_number < card.revisions.length
+      if @revision_number < card.revisions.count
         revision_link('Newer', @revision_number +1, 'to_next_revision', 'F' ) +
-          raw(" <small>(#{card.revisions.length - @revision_number})</small>")
+          raw(" <small>(#{card.revisions.count - @revision_number})</small>")
       else
         'Newer <small>(0)</small>'
       end

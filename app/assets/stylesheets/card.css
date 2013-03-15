@@ -49,17 +49,11 @@ h1.card-title {
   margin-right: 5px;
 }
 .card-menu-link {
+  display: inline-block;
   float: right;
-  min-width: 90px;
-  text-align: right;
 }
-.closed-view .card-menu-link {
+.closed-view .card-menu-link  {
   float: none;
-  display: inline-block;
-  min-width: auto;
-}
-.card-menu-link a {
-  display: inline-block;
 }
 .card-menu {
   display: none;

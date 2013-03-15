@@ -185,14 +185,15 @@ module Wagn
     # ------------- Sub Renderer and Inclusion Processing ------------
     #
 
-    def subrenderer subcard
+    def subrenderer subcard, mainline=false
       #should consider calling "child"
       subcard = Card.fetch( subcard, :new=>{} ) if String===subcard
       sub = self.clone
-      sub.initialize_subrenderer subcard, self
+      sub.initialize_subrenderer subcard, self, mainline
     end
 
-    def initialize_subrenderer subcard, parent
+    def initialize_subrenderer subcard, parent, mainline=false
+      @mainline ||= mainline
       @parent = parent
       @card = subcard
       @char_count = 0
@@ -313,7 +314,7 @@ module Wagn
         end
       end
       opts[:view] = @main_view || opts[:view] || :open #FIXME configure elsewhere
-      opts[:include_name] = root.card.name
+      opts[:mainline] = true
       with_inclusion_mode :main do
         wrap_main process_inclusion( root.card, opts )
       end
@@ -324,7 +325,7 @@ module Wagn
     end
 
     def process_inclusion tcard, opts
-      sub = subrenderer tcard
+      sub = subrenderer tcard, opts[:mainline]
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
       # don't like depending on this global var switch
       # I think we can get rid of it as soon as we get rid of the remaining rails views?
@@ -337,7 +338,12 @@ module Wagn
       # FIXME: special views should be represented in view definitions
 
       view = case
-      when @mode == :edit       ; @@perms[view]==:none || tcard.hard_template ? :blank : :edit_in_form
+      when @mode == :edit
+        if @@perms[view]==:none || tcard.hard_template || tcard.key.blank? # eg {{_self|type}} on new cards
+          :blank
+        else
+          :edit_in_form
+        end
       when @@perms[view]==:none ; view
       when @mode == :closed     ; !tcard.known?  ? :closed_missing : :closed_content
       when @mode == :template   ; :template_rule

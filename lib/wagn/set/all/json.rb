@@ -18,7 +18,7 @@ module Wagn
       else                    ;  :wtf
       end
       
-      hash = { :key=>card.key, :status=>status }
+      hash = { :key=>card.key, :url_key=>card.cardname.url_key, :status=>status }
       hash[:id] = card.id if status == :real
        
       JSON( hash )

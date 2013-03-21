@@ -2,7 +2,7 @@
 <% email_content = capture do %><%= text_field :account, :email %><% end %>
 <%= raw slot.option( raw(email_content),
     :name=>"email",
-    :help=>"email address for account", #ENGLISH
+    :help=>"",
     :label=>"Email") %>
 
 <% password_content = capture do %><%= password_field :account, :password %><% end %>

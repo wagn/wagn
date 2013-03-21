@@ -304,6 +304,7 @@ body#wagn .card-slot.recent-changes h2 {
 }
 .last-update {
   color: #666;
+/*  margin-right: 5px; */
 }
 
 

@@ -60,12 +60,10 @@ wagn.chooseFile = (e, data) ->
 
 wagn.openMenu = (link) ->
   cm = $(link).find '.card-menu'
-  if $(link).find('.ui-menu-icon')[0]
-    cm.show()
-  else
+  unless $(link).find('.ui-menu-icon')[0]
     cm.menu position: { my:'right top', at:'left-2 top-3' }, icons: { submenu:'ui-icon-carat-1-w' }
-    cm.show()
-    cm.position my:'right top', at:'right+2 top+2', of: link
+  cm.show()
+  cm.position my:'right top', at:'right+2 top+2', of: link
   
 
 $(window).ready ->

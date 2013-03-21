@@ -82,6 +82,7 @@ module Wagn
       @menu_checks = {
         :real      => card.real?,
         :edit      => card.real? && card.ok?(:update),
+        :junction  => card.junction?,
         :account   => card.real? && card.account && card.update_account_ok?,
         :structure => card.hard_template && card.template.ok?(:update),
         :watch     => card.real? && Account.logged_in?,
@@ -95,7 +96,7 @@ module Wagn
         :creator => card.real? && card.creator.name,
         :updater => card.real? && card.creator.name,
         :watch => render_watch,
-        :piecenames => card.cardname.piece_names.reverse,
+        :piecenames => card.cardname.piece_names[0..-2],
       }
     
       %{
@@ -542,22 +543,26 @@ module Wagn
 
     define_view :change do |args|
       wrap :change, args do
-        %{#{link_to_page card.name, nil, :class=>'change-card'} #{
-         if rev = card.current_revision and !rev.new_record?
-           # this check should be unnecessary once we fix search result bug
-           %{<span class="last-update"> #{
+        %{
+          #{link_to_page card.name, nil, :class=>'change-card'}
+          #{ _optional_render :menu, args, default_hidden=true }
+          #{
+          if rev = card.current_revision and !rev.new_record?
+            # this check should be unnecessary once we fix search result bug
+            %{<span class="last-update"> #{
 
-             case card.updated_at.to_s
-               when card.created_at.to_s; 'added'
-               when rev.created_at.to_s;  link_to('edited', path(:view=>:changes), :class=>'last-edited', :rel=>'nofollow')
-               else; 'updated'
-             end} #{
-
-              time_ago_in_words card.updated_at } ago by #{ #ENGLISH
-              link_to_page card.updater.name, nil, :class=>'last-editor'}
-            </span>}
-         end }
-         <br style="clear:both"/>}
+              case card.updated_at.to_s
+                when card.created_at.to_s; 'added'
+                when rev.created_at.to_s;  link_to('edited', path(:view=>:changes), :class=>'last-edited', :rel=>'nofollow')
+                else; 'updated'
+              end} #{
+         
+               time_ago_in_words card.updated_at } ago by #{ #ENGLISH
+               link_to_page card.updater.name, nil, :class=>'last-editor'}
+             </span>}
+          end
+          }
+        }
       end
     end
 

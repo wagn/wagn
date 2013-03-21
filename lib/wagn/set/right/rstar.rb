@@ -95,6 +95,79 @@ module Wagn
     end
 
     define_view :edit_rule, :rstar=>true, :tags=>:unknown_ok do |args|
+      setting_name    = args[:setting_name]
+      current_set_key = args[:current_set_key] || '*all' # Card[:all].name (should have a constant for this?)
+      open_rule       = args[:open_rule]
+      args[:item] ||= :link
+
+      form_for card, :url=>path(:action=>:update, :no_id=>true), :remote=>true, :html=>
+          {:class=>"card-form card-rule-form slotter" } do |form|
+
+        %{
+          #{ hidden_field_tag( :success, open_rule.name ) }
+          #{ hidden_field_tag( :view, 'open_rule' ) }
+          <div class="rule-header">
+          
+            <div class="rule-setting">
+              #{ link_to_view setting_name.sub(/^\*/,''), :closed_rule, :class=>'close-rule-link slotter', :path_opts=>{ :card=>open_rule } }
+            </div>
+            
+            <div class="instruction rule-instruction">
+              #{ process_content "{{#{setting_name}+*right+*edit help}}" }
+            </div>
+          <div>
+
+          <div class="card-editor">
+            <div class="rule-set">
+              <ul>
+                #{
+                  args[:set_options].map do |set_name|
+                    set_label = Card.fetch(set_name).label
+                    checked = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
+                    full_label = if set_name.to_name.key == current_set_key
+                      %{<span class="set-label current-set-label">#{ set_label } <em>(current)</em></span>}
+                    else
+                      %{<span class="set-label">#{ set_label }</span>}
+                    end
+                    button = form.radio_button :name, "#{set_name}+#{setting_name}", :checked=> checked
+                    %{ <li> #{button} #{full_label} </li> }
+                  end.join
+                }
+              </ul>
+            </div>     
+            
+            <div class="type-editor">
+              <label>type:</label>
+              #{ type_field :href=>path(:card=>open_rule, :view=>:open_rule, :type_reload=>true),
+                   :class =>'type-field rule-type-field live-type-field', 'data-remote'=>true }
+            </div>
+            
+            <div class="rule-content">
+              #{ content_field form, :skip_rev_id=>true }
+            </div>
+          </div>
+
+          <div class="edit-button-area">
+            #{ 
+              if !card.new_card?
+                b_args = { :remote=>true, :class=>'rule-delete-button slotter', :type=>'button' }
+                b_args[:href] = path :action=>:delete, :view=>:open_rule, :success=>open_rule.cardname.url_key
+                if fset = args[:fallback_set]
+                  b_args['data-confirm']="Deleting will revert to #{setting_name} rule for #{Card.fetch(fset).label }"
+                end
+                %{<span class="rule-delete-section">#{ button_tag 'Delete', b_args }</span>}
+              end
+             }
+             #{ submit_tag 'Submit', :class=>'rule-submit-button' }
+             #{ button_tag 'Cancel', :class=>'rule-cancel-button', :type=>'button' }
+          </div>
+          #{notice }
+        }
+      end
+    end
+
+=begin    
+    define_view :edit_rule, :rstar=>true, :tags=>:unknown_ok do |args|
       edit_mode       = args[:edit_mode]
       setting_name    = args[:setting_name]
       current_set_key = args[:current_set_key] || '*all' # Card[:all].name (should have a constant for this?)
@@ -195,32 +268,31 @@ module Wagn
          notice.html_safe
 
       end.html_safe
+      
+      
+    end
+=end    
+    
+    module Model  
+   
+      def repair_set
+        @set_repair_attempted = true
+        if real?
+          reset_patterns
+          template # repair happens in template loading
+          include_set_modules
+        end
+      end
+     
+      def method_missing method_id, *args
+        if !@set_repair_attempted and repair_set
+          send method_id, *args
+        else
+          super
+        end
+      end
     end
     
-   module Model  
-     #def should_be_set?
-    #   r = right and
-    #   r.codename and
-    #   Cardlib::Pattern.subclasses.map( &:key ).member? r.codename
-    # end
-   
-    def repair_set
-      @set_repair_attempted = true
-       if real?
-         reset_patterns
-         template # repair happens in template loading
-         include_set_modules
-       end
-     end
-   
-     def method_missing method_id, *args
-       if !@set_repair_attempted and repair_set
-         send method_id, *args
-       else
-         super
-       end
-     end
-   end
   end
 
 

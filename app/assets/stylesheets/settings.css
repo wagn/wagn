@@ -68,35 +68,15 @@ td.missing-rule {
 .open-rule .card-editor {
   clear: both;
   padding: 5px;
-/*  position: relative;*/
 }
-.open-rule .rule-content {
-  background: #f6f6f6;
-  padding: 5px;
-  max-width: 70%;
-  min-height: 50px;
-}
-.open-rule .type-editor {
-  background: #f6f6f6;
-  max-width: 70%;
-  padding: 5px;
-  margin: 0 0 1em 0;
-}
-.open-rule .rule-set {
-/*  position: absolute;
-  bottom: 0;
-  right: 0; */
-  float: right;
-  width: 27%;
-}
-.open-rule .rule-set > ul {
-  margin: 0;
-  padding: 5px;
-  background: #f6f6f6;
+
+.open-rule .set-editor ul {
   list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
-.open-rule .rule-set li {
-  padding: 5px 0;
+.open-rule .set-editor .current-set-label {
+  font-weight: bold;
 }
 .open-rule .edit-button-area {
   clear:both;
@@ -106,9 +86,7 @@ td.missing-rule {
   float: right;
 }
 
-.open-rule .set-editor .current-set-label {
-  font-weight: bold;
-}
+
 .attention {
   border: 3px solid red;
 }

@@ -96,7 +96,7 @@ module Wagn
 
     define_view :edit_rule, :rstar=>true, :tags=>:unknown_ok do |args|
       setting_name    = args[:setting_name]
-      current_set_key = args[:current_set_key] || '*all' # Card[:all].name (should have a constant for this?)
+      current_set_key = args[:current_set_key] || Card[:all].name  # (should have a constant for this?)
       open_rule       = args[:open_rule]
       args[:item] ||= :link
 
@@ -107,44 +107,40 @@ module Wagn
           #{ hidden_field_tag( :success, open_rule.name ) }
           #{ hidden_field_tag( :view, 'open_rule' ) }
           <div class="rule-header">
-          
             <div class="rule-setting">
               #{ link_to_view setting_name.sub(/^\*/,''), :closed_rule, :class=>'close-rule-link slotter', :path_opts=>{ :card=>open_rule } }
             </div>
-            
             <div class="instruction rule-instruction">
               #{ process_content "{{#{setting_name}+*right+*edit help}}" }
             </div>
           <div>
 
           <div class="card-editor">
-            <div class="rule-set">
-              <ul>
-                #{
-                  args[:set_options].map do |set_name|
-                    set_label = Card.fetch(set_name).label
-                    checked = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
-                    full_label = if set_name.to_name.key == current_set_key
-                      %{<span class="set-label current-set-label">#{ set_label } <em>(current)</em></span>}
-                    else
-                      %{<span class="set-label">#{ set_label }</span>}
-                    end
-                    button = form.radio_button :name, "#{set_name}+#{setting_name}", :checked=> checked
-                    %{ <li> #{button} #{full_label} </li> }
-                  end.join
-                }
-              </ul>
-            </div>     
+            #{ fieldset 'type', ( editor_wrap 'type' do
+                type_field :href=>path(:card=>open_rule, :view=>:open_rule, :type_reload=>true),
+                 :class =>'type-field rule-type-field live-type-field', 'data-remote'=>true
+              end )
+            }
             
-            <div class="type-editor">
-              <label>type:</label>
-              #{ type_field :href=>path(:card=>open_rule, :view=>:open_rule, :type_reload=>true),
-                   :class =>'type-field rule-type-field live-type-field', 'data-remote'=>true }
-            </div>
+            #{ fieldset 'content', content_field( form, :skip_rev_id=>true ) }
             
-            <div class="rule-content">
-              #{ content_field form, :skip_rev_id=>true }
-            </div>
+            #{ fieldset 'set', ( editor_wrap 'set' do
+                option_items = args[:set_options].map do |set_name|
+                  checked = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
+                  is_current = set_name.to_name.key == current_set_key
+                  %{
+                    <li>
+                      #{ form.radio_button :name, "#{set_name}+#{setting_name}", :checked=> checked }
+                      <span class="set-label" #{'current-set-label' if is_current }>
+                        #{ link_to_page Card.fetch(set_name).label, set_name, :target=>'wagn_set' }
+                        #{'<em>(current)</em>' if is_current}
+                      </span>
+                    </li>
+                  }
+                end.join
+                %{ <ul>#{option_items}</ul>}
+              end )
+            }          
           </div>
 
           <div class="edit-button-area">

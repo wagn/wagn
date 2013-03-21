@@ -145,7 +145,7 @@ $(window).ready ->
     if f.find('.set-editor input:checked').val()
       true
     else
-      f.find('.rule-set ul').addClass('attention')
+      f.find('.set-editor').addClass('attention')
       $(this).notify 'To what Set of cards does this Rule apply?'
       false
 

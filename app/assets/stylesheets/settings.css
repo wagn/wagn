@@ -26,7 +26,7 @@
 td.rule-setting {
   width: 30%;
 }
-.closed-rule .rule-set {
+.rule-set {
   color: #666;
   white-space: nowrap;
 }
@@ -40,6 +40,7 @@ td.rule-setting {
 .closed-rule td {
   vertical-align: middle;
 }
+.rule-placeholder,
 .closed-rule .rule-content {
   width: 350px;
 }
@@ -60,33 +61,37 @@ td.missing-rule {
   background-color: #eee;
   border-bottom: 1px solid #fff;
 }
-
-.open-rule .rule-setting {
+.show-rule div.rule-setting,
+.edit-rule .rule-setting {
   padding-top: 4px;
   float: left;
+  width: 30%;
 }
-.open-rule .card-editor {
+.rule-placeholder {
+  float: left;
+}
+.show-rule .card-body,
+.edit-rule .card-editor {
   clear: both;
   padding: 5px;
 }
 
-.open-rule .set-editor ul {
+.edit-rule .set-editor ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
-.open-rule .set-editor .current-set-label {
+.edit-rule .set-editor .current-set-label {
   font-weight: bold;
 }
-.open-rule .edit-button-area {
+.edit-rule .edit-button-area {
   clear:both;
   padding-top: 5px;
 }
-.open-rule .instruction {
+.edit-rule .instruction {
   float: right;
+  max-width: 70%;
 }
-
-
 .attention {
   border: 3px solid red;
 }

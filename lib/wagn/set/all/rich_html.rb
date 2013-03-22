@@ -329,17 +329,15 @@ module Wagn
     define_view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
       eform = form_for_multi
       content = content_field eform, :nested=>true
-      attribs = { :class=> "card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" }
-      link_target, help_settings = if card.new_card?
+      opts = { :attribs => { :class=> "card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" } }
+      if card.new_card?
         content += raw( "\n #{ eform.hidden_field :type_id }" )
-        [ card.cardname.tag, [:add_help, { :fallback => :edit_help } ] ]
+        opts[:help] = [:add_help, { :fallback => :edit_help } ]
       else
         attribs.merge :card_id=>card.id, :card_name=>(h card.name)
-        [ card.name, :edit_help ]
-
+        opts[:help] = :edit_help
       end
-      label = link_to_page fancy_title, link_target
-      fieldset label, content, :help=>help_settings, :attribs=>attribs
+      fieldset fancy_title, content, opts
     end
 
 

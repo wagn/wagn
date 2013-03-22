@@ -548,20 +548,10 @@ div.search-result-list .search-result-item {
 
 /*------- permissions ------------------*/
 
-table.perm-editor th {
-  text-align: left;
-  padding-left: 20px;
-  background-color: inherit;
-  border: 0;
-  color: #666;
+.perm-group h5 {
+  margin-top: 0px;
 }
-table.perm-editor td {
-  padding: 5px;
-  vertical-align: top;
-}
-table.perm-editor .pointer-item-text {
-  width: 200px;
-}
+
 
 /*---------- comment-box -------------------------------------- */
 .comment-box textarea {

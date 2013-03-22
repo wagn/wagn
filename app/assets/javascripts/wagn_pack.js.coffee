@@ -149,8 +149,8 @@ $(window).ready ->
       $(this).notify 'To what Set of cards does this Rule apply?'
       false
 
-  $('body').delegate '.rule-cancel-button', 'click', ->
-    $(this).closest('tr').find('.close-rule-link').click()
+#  $('body').delegate '.rule-cancel-button', 'click', ->
+#    $(this).closest('tr').find('.close-rule-link').click()
 
 
   # etherpad pack

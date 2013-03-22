@@ -28,6 +28,7 @@ module Wagn
     end
     
     define_view :template_link, :type=>'set' do |args|
+      args.delete :style
       wrap :template_link, args do
         link = link_to_view args[:include], :template_editor, :class=>'slotter' #, 'slot-include'=>include_syntax
         "{{#{link}}}"
@@ -41,7 +42,7 @@ module Wagn
           <div class="template-editor-main card-frame">
             <div class="card-header">
               #{content_tag :h1, card.label, :class=>'card-title'}   
-              #{link_to_view '', :template_link, :class=>'slotter ui-icon ui-icon-close-thick template-editor-close'}
+              #{link_to_view '', :template_link, :class=>'slotter ui-icon ui-icon-closethick template-editor-close'}
             </div>
             <div class="card-body">
               #{ _render_core }

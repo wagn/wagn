@@ -59,7 +59,9 @@ h1.card-title {
   display: none;
   position:absolute;
   z-index: 1;
+  font-size: 11px;
 }
+
 .card-menu .ui-menu-icon {
   float: left;
   margin-right: 5px;
@@ -71,6 +73,24 @@ h1.card-title {
 .card-menu .ui-menu-item a {
   color: #333;
 }
+
+.card-menu-tappable {
+  font-size: 1.4em;
+}
+.card-menu-tappable .ui-menu-icon {
+  padding: 9px;
+  display: inline-block;
+  margin-right: 15px;
+  background: #666;
+  border-radius: 3px;
+  color: #fff;
+  vertical-align: super;
+  font-size: 0.8em;
+}
+.card-menu-tappable .ui-menu-icon:after {
+  content: '<';
+}
+
 .card-header .toggler {
   display: inline-block;
   position: relative;

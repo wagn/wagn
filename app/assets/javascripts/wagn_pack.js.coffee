@@ -90,22 +90,24 @@ $(window).ready ->
     
   $('.card-menu-link').live 'mouseleave', ->
     if $(this).find('.ui-menu')[0]
-      cm = $(this).find('.card-menu')    
+      cm = $(this).find('.card-menu')
       cm.hide()
       cm.menu "collapseAll", null, true
 
-  $('.card-menu').live 'swipe', ->
-    $(this).hide() #combine with above and handle collapsing.
-  
-  $('.card-menu-link').live 'tap', (event) ->
-    initiated_menu = $(this).find('.ui-menu')[0]
-    if initiated_menu
-      if $(initiated_menu).is ':hidden'
-        $(initiated_menu).show()
-        event.preventDefault()
-    else
-      wagn.openMenu this
+  $('.card-header').live 'tap', (event) ->
+    link = $(this).find('.card-menu-link')
+    unless !link[0] or                                             # no gear
+        $(event.target).closest('.card-menu')[0] or                # already in menu
+        event.pageX - $(this).offset().left < $(this).width() / 2  # left half of header
+      
+      link.find('.card-menu').addClass 'card-menu-tappable'
+      wagn.openMenu link
       event.preventDefault()
+  
+  $('body').live 'tap', (event) ->
+    unless $(event.target).closest('.card-header')[0] or $(event.target).closest('.card-menu-link')[0]
+      $('.card-menu').hide()
+      # this and mouseleave should use a close menu method that handles collapsing. (though not seeing bad behavior...)
 
   $('.ui-menu-icon').live 'tap', (event)->
     $(this).closest('li').trigger('mouseenter')

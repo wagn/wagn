@@ -334,7 +334,7 @@ module Wagn
         content += raw( "\n #{ eform.hidden_field :type_id }" )
         opts[:help] = [:add_help, { :fallback => :edit_help } ]
       else
-        attribs.merge :card_id=>card.id, :card_name=>(h card.name)
+        opts[:attribs].merge! :card_id=>card.id, :card_name=>(h card.name)
         opts[:help] = :edit_help
       end
       fieldset fancy_title, content, opts

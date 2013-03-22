@@ -33,7 +33,6 @@ GEM
       builder
       girl_friday
     ansi (1.4.3)
-    archive-tar-minitar (0.5.2)
     arel (3.0.2)
     builder (3.0.4)
     capybara (1.1.4)
@@ -53,7 +52,6 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.4.0)
-    columnize (0.3.6)
     connection_pool (1.0.0)
     cucumber (1.2.1)
       builder (>= 2.1.2)
@@ -93,8 +91,6 @@ GEM
     libwebsocket (0.1.7.1)
       addressable
       websocket
-    linecache19 (0.5.12)
-      ruby_core_source (>= 0.1.4)
     macaddr (1.6.1)
       systemu (~> 2.5.0)
     mail (2.4.4)
@@ -158,17 +154,7 @@ GEM
     rubinius-actor (0.0.2)
       rubinius-core-api
     rubinius-core-api (0.0.1)
-    ruby-debug-base19 (0.11.25)
-      columnize (>= 0.3.1)
-      linecache19 (>= 0.5.11)
-      ruby_core_source (>= 0.1.4)
-    ruby-debug19 (0.11.6)
-      columnize (>= 0.3.1)
-      linecache19 (>= 0.5.11)
-      ruby-debug-base19 (>= 0.11.19)
     ruby-prof (0.12.1)
-    ruby_core_source (0.1.5)
-      archive-tar-minitar (>= 0.5.2)
     rubyzip (0.9.9)
     sass (3.2.5)
     sass-rails (3.2.5)
@@ -240,7 +226,6 @@ DEPENDENCIES
   rmagick (~> 2.13)
   rr
   rspec-rails (~> 2.6)
-  ruby-debug19
   ruby-prof (~> 0.12.1)
   rubyzip (~> 0.9)
   sass-rails (~> 3.1)

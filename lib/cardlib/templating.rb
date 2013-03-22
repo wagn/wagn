@@ -16,7 +16,7 @@ module Cardlib::Templating
       if new_card?
         default_card = rule_card :default, :skip_modules=>true
 
-        dup_card = self.dup
+        dup_card = dup
 #        dup_card.type_id_without_tracking = default_card.type_id
         dup_card.type_id_without_tracking = default_card ? default_card.type_id : Card::DefaultTypeID
 

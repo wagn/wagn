@@ -3,6 +3,7 @@ body {
   color: #444;
   font-style: normal;
   margin: 0px;
+  min-width: 480px;
 }
 body, p, ol, ul, td, th, textarea {
   font-family: verdana, arial, helvetica, sans-serif;
@@ -12,7 +13,6 @@ body, p, ol, ul, td, th, textarea {
 body, p, ol, ul {
   line-height: 21px;
 }
-
 
 /*--------- headers and links --------------*/
 h1 {

@@ -203,7 +203,7 @@ describe Wagn::Renderer, "" do
          r = Wagn::Renderer.new(Card.fetch('*read+*right+*input',:new=>{})).render_open_rule
          r.should_not match(/error/i)
          r.should_not match('No Card!')
-         assert_view_select r, 'tr[class="card-slot open-rule"]' do
+         assert_view_select r, 'tr[class="card-slot edit-rule"]' do
            assert_select 'input[id="success"][name="success"][type="hidden"][value="*read+*right+*input"]'
          end
       end

@@ -40,6 +40,7 @@ td.rule-setting {
 .closed-rule td {
   vertical-align: middle;
 }
+.rule-placeholder,
 .closed-rule .rule-content {
   width: 350px;
 }
@@ -60,47 +61,36 @@ td.missing-rule {
   background-color: #eee;
   border-bottom: 1px solid #fff;
 }
-.rule-column-1 {
-  float: left;
-  width: 25%;
-}
-.rule-column-2 {
-  float: right;
-  width: 70%;
-  border: 1px solid #eee;
-  margin-top: 5px;
-}
-.open-rule .rule-setting {
+.show-rule div.rule-setting,
+.edit-rule .rule-setting {
   padding-top: 4px;
+  float: left;
+  width: 30%;
 }
-.open-rule .rule-content {
-  padding: 10px;
+.rule-placeholder {
+  float: left;
+}
+.show-rule .card-body,
+.edit-rule .card-editor {
   clear: both;
-  min-height: 50px;
+  padding: 5px;
 }
-.open-rule .type-editor {
-  width: 35%;
-  float: right;
-  text-align: right;
-  padding: 5px 2px;
+
+.edit-rule .set-editor ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
-.open-rule .edit-button-area {
+.edit-rule .set-editor .current-set-label {
+  font-weight: bold;
+}
+.edit-rule .edit-button-area {
   clear:both;
   padding-top: 5px;
 }
-.open-rule .instruction {
-  float: left;
-  width: 55%;
-  margin: 0;
-}
-.open-rule .set-editor {
-  margin: 10px 0;
-  padding: 5px;
-  background: #eee;
-  list-style-type: none;
-}
-.open-rule .set-editor .current-set-label {
-  font-weight: bold;
+.edit-rule .instruction {
+  float: right;
+  max-width: 70%;
 }
 .attention {
   border: 3px solid red;

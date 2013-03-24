@@ -16,41 +16,42 @@ module Wagn
 
       item_names = inheriting ? [] : card.item_names
 
-      form.hidden_field( :content, :class=>'card-content') +
-
-      content_tag(:table, :class=>'perm-editor') do
-
-        content_tag(:tr, :class=>'perm-labels') do
-          content_tag(:th) { 'Groups'} +
-          content_tag(:th) { 'Individuals'} +
-          (inheritable ? content_tag(:th) { 'Inherit'} : '')
-        end +
-
-        content_tag(:tr, :class=>'perm-options') do
-          content_tag(:td, :class=>'perm-group perm-vals') do
-            group_options.map do |option|
-              checked = !!item_names.delete(option.name)
-              %{<div class="group-option">
-                #{ check_box_tag( "#{option.key}-perm-checkbox", option.name, checked, :class=>'perm-checkbox-button'  ) }
-                <label>#{ link_to_page option.name }</label>
-              </div>}
-            end * "\n"
-          end +
-
-          content_tag(:td, :class=>'perm-indiv perm-vals') do
-            _render_list :items=>item_names, :extra_css_class=>'perm-indiv-ul'
-          end +
-
-          if inheritable
-            content_tag(:td, :class=>'perm-inherit') do
-              check_box_tag( 'inherit', 'inherit', inheriting ) +
-              content_tag(:a, :title=>"use #{card.cardname.tag} rule for left card") { '?' }
+      %{     
+        #{ form.hidden_field :content, :class=>'card-content' }
+        <div class="perm-editor">
+        
+          <div class="perm-group perm-vals">
+            <h5>Groups</h5>
+            #{
+              group_options.map do |option|
+                checked = !!item_names.delete(option.name)
+                %{
+                  <div class="group-option">
+                    #{ check_box_tag( "#{option.key}-perm-checkbox", option.name, checked, :class=>'perm-checkbox-button'  ) }
+                    <label>#{ link_to_page option.name }</label>
+                  </div>
+                }
+              end * "\n"
+            }
+          </div>
+          
+          <div class="perm-indiv perm-vals">
+            <h5>Individuals</h5>
+            #{ _render_list :items=>item_names, :extra_css_class=>'perm-indiv-ul' }
+          </div>
+          
+          #{
+            if inheritable
+              %{
+                <h5>Inheritance</h5>
+                #{ check_box_tag 'inherit', 'inherit', inheriting }
+                #{ content_tag( :a, :title=>"use #{card.cardname.tag} rule for left card") { '?' } }
+              }
             end
-          else; ''; end
-        end
-      end
-
-
+          }
+          
+        </div>
+      }
     end
 
     define_view :core, { :right=>'create'} do |args|

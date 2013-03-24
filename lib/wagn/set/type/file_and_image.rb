@@ -10,7 +10,12 @@ module Wagn
     end
 
     define_view :source, :type=>'image' do |args|
-      style = @mode==:closed ? :icon : ( args[:size] || :medium )
+      style = case
+        when @mode==:closed ;  :icon
+        when args[:size]    ;  args[:size]
+        when main?          ;  :large
+        else                ;  :medium
+        end
       style = :original if style.to_sym == :full
       card.attach.url style
     end

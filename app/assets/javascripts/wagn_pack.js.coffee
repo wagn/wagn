@@ -60,12 +60,10 @@ wagn.chooseFile = (e, data) ->
 
 wagn.openMenu = (link) ->
   cm = $(link).find '.card-menu'
-  if $(link).find('.ui-menu-icon')[0]
-    cm.show()
-  else
+  unless $(link).find('.ui-menu-icon')[0]
     cm.menu position: { my:'right top', at:'left-2 top-3' }, icons: { submenu:'ui-icon-carat-1-w' }
-    cm.show()
-    cm.position my:'right top', at:'right+2 top+2', of: link
+  cm.show()
+  cm.position my:'right top', at:'right+2 top+2', of: link
   
 
 $(window).ready ->
@@ -92,22 +90,24 @@ $(window).ready ->
     
   $('.card-menu-link').live 'mouseleave', ->
     if $(this).find('.ui-menu')[0]
-      cm = $(this).find('.card-menu')    
+      cm = $(this).find('.card-menu')
       cm.hide()
       cm.menu "collapseAll", null, true
 
-  $('.card-menu').live 'swipe', ->
-    $(this).hide() #combine with above and handle collapsing.
-  
-  $('.card-menu-link').live 'tap', (event) ->
-    initiated_menu = $(this).find('.ui-menu')[0]
-    if initiated_menu
-      if $(initiated_menu).is ':hidden'
-        $(initiated_menu).show()
-        event.preventDefault()
-    else
-      wagn.openMenu this
+  $('.card-header').live 'tap', (event) ->
+    link = $(this).find('.card-menu-link')
+    unless !link[0] or                                             # no gear
+        $(event.target).closest('.card-menu')[0] or                # already in menu
+        event.pageX - $(this).offset().left < $(this).width() / 2  # left half of header
+      
+      link.find('.card-menu').addClass 'card-menu-tappable'
+      wagn.openMenu link
       event.preventDefault()
+  
+  $('body').live 'tap', (event) ->
+    unless $(event.target).closest('.card-header')[0] or $(event.target).closest('.card-menu-link')[0]
+      $('.card-menu').hide()
+      # this and mouseleave should use a close menu method that handles collapsing. (though not seeing bad behavior...)
 
   $('.ui-menu-icon').live 'tap', (event)->
     $(this).closest('li').trigger('mouseenter')
@@ -151,8 +151,8 @@ $(window).ready ->
       $(this).notify 'To what Set of cards does this Rule apply?'
       false
 
-  $('body').delegate '.rule-cancel-button', 'click', ->
-    $(this).closest('tr').find('.close-rule-link').click()
+#  $('body').delegate '.rule-cancel-button', 'click', ->
+#    $(this).closest('tr').find('.close-rule-link').click()
 
 
   # etherpad pack

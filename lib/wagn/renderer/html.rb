@@ -76,31 +76,28 @@ module Wagn
           { :view=>:edit_type, :text=>'type: %{type}' },
           { :related=>{ :name=>:structure, :view=>:edit }, :text=>'structure', :if=>:structure },
         ] },
-      { :page=>:self, :text=>'view', :sub=> [
-          { :page=>:self, :text=>'page', :sub=>{ :piecenames => { :page=>:item } } },
-          { :view=>:home, :text=>'refresh', :sub=>[
-              { :view=>:titled  },
-              { :view=>:open    },
-              { :view=>:closed  },
-              { :view=>:content },
-            ] },
-          { :view=>:changes, :text=>'history', :if=>:edit },
+      { :view=>:home, :text=>'view', :sub=> [
+          { :view=>:home,                    :text=>'refresh'                    },
+          { :page=>:self,                    :text=>'page'                       },
+          { :view=>:changes,                 :text=>'history',   :if=>:edit      },
+          { :related=>{ :name=>:type },      :text=>'type: %{type}'              },
           { :related=>{ :name=>:structure }, :text=>'structure', :if=>:structure },
         ] },
       { :related=>{ :name=>"+discussion" }, :text=>'discuss', :if=>:discuss },
       { :view=>:options, :text=>'advanced', :sub=>[
           { :view=>:options, :text=>'rules' },
-          { :plain=>'refs', :sub=>[
-              { :related=>"+*refers to",      :text=>"from %{self}", :sub=>[
-                  { :related=>"+*links",      :text=>"links"      },
-                  { :related=>"+*inclusions", :text=>"inclusions" }                  
-                ] },
-              { :related=>"+*referred to by", :text=>"to %{self}", :sub=>[
-                  { :related=>"+*linkers",    :text=>"links"      },
-                  { :related=>"+*includers",  :text=>"inclusions" }
-                ] }
+          { :related=>"+*referred to by",     :text=>"references to", :sub=>[
+              { :related=>"+*referred to by", :text=>"all"        },                  
+              { :related=>"+*linkers",        :text=>"links"      },                  
+              { :related=>"+*includers",      :text=>"inclusions" }
+            ] },            
+          { :related=>"+*refers to",          :text=>"references from", :sub=>[
+              { :related=>"+*refers to",      :text=>"all"        },
+              { :related=>"+*links",          :text=>"links"      },
+              { :related=>"+*inclusions",     :text=>"inclusions" }                  
             ] },
-          { :plain=>'kin', :sub=>[
+          { :plain=>'related', :sub=>[
+              { :plain=>'ancestors', :if=>:junction, :sub=>{ :piecenames => { :page=>:item } } },
               { :related=>"+*plus cards", :text=>'children' },
               { :related=>"+*plus parts", :text=>'mates'    },
             ] },              
@@ -111,9 +108,24 @@ module Wagn
             ] },
         ] },
         { :link=>:watch,   :if=>:watch   },
-        { :view=>:account, :if=>:account }
+        { :view=>:account, :if=>:account, :sub=>[
+            { :view=>:account,       :text=>'details' },
+            { :related=>"+*created", :text=>'created' },
+            { :related=>"+*editing", :text=>'edited'  }
+          ] }
 
     ]
+
+=begin
+, :sub=>[
+    { :view=>:titled  },
+    { :view=>:open    },
+    { :view=>:closed  },
+    { :view=>:content },
+#              { :view=>:change  },  
+  ]
+=end
+
 
     def get_layout_content(args)
       Account.as_bot do

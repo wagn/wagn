@@ -25,7 +25,7 @@ module Wagn
                 :sort  => 'name',
                 :limit => 100
               }
-        wql[:left][ (set_class.anchorless? ? :name : :right )] = set_class.key_name
+        wql[:left][ (set_class.anchorless? ? :key : :right )] = set_class.key_name.key
 
         search_card = Card.new :type =>Card::SearchTypeID, :content=>wql.to_json
         next if search_card.count == 0

@@ -9,7 +9,7 @@ module Wagn
       body = card.setting_codes_by_group.map do |group_name, data|
         next if group_name.nil? || data.nil?
         content_tag(:tr, :class=>"rule-group") do
-          (["#{group_name} Settings"]+%w{Content Set}).map do |heading|
+          (["#{group_name} Rules"]+%w{Content Set}).map do |heading|
             content_tag(:th, :class=>'rule-heading') { heading }
           end * "\n"
         end +
@@ -61,13 +61,13 @@ module Wagn
 
       def inheritable?
         return true if junction_only?
-        cardname.tag==Cardlib::Patterns::SelfPattern.key_name and cardname.trunk_name.junction?
+        cardname.trunk_name.junction? and cardname.tag_name.key == Cardlib::Patterns::SelfPattern.key_name.key
       end
 
       def subclass_for_set
-        #FIXME - use codename??
+        set_class_key = tag.codename
         Cardlib::Pattern.subclasses.find do |sub|
-          cardname.tag==sub.key_name
+          cardname.tag_name.key == sub.key_name.key
         end
       end
 

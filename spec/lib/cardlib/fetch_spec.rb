@@ -173,6 +173,7 @@ describe Card do
       new_card.should be_instance_of(Card)
       new_card.typecode.should == :image
       new_card.new_record?.should be_true
+      Card.fetch( 'Never Before', :new=>{} ).type_id.should == Card::BasicID
     end
   end
 

@@ -119,7 +119,7 @@ module Cardlib
         end
 
         def key_name
-          @key_name ||= (code=Wagn::Codename[self.key] and card=Card[code] and card.name)
+          @key_name ||= (code=Wagn::Codename[self.key] and card=Card[code] and card.cardname)
         end
 
         def register key, opt_keys, opts={}
@@ -192,7 +192,7 @@ module Cardlib
 
       def to_s
         kn = self.class.key_name
-        self.class.anchorless? ? kn : "#{@anchor_name}+#{kn}"
+        self.class.anchorless? ? kn.s : "#{@anchor_name}+#{kn}"
       end
 
       def inspect

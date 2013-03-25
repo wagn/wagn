@@ -45,7 +45,6 @@ html>body .open-view {
 }
 h1.card-title {
   padding: 2px 0;
-  white-space: nowrap;
   margin-right: 5px;
 }
 .card-menu-link {
@@ -75,17 +74,16 @@ h1.card-title {
 }
 
 .card-menu-tappable {
-  font-size: 1.4em;
+  font-size: 18px;
 }
 .card-menu-tappable .ui-menu-icon {
-  padding: 9px;
+  padding: 7px;
   display: inline-block;
   margin-right: 15px;
   background: #666;
   border-radius: 3px;
   color: #fff;
-  vertical-align: super;
-  font-size: 0.8em;
+  font-size: 10px;
 }
 .card-menu-tappable .ui-menu-icon:after {
   content: '<';

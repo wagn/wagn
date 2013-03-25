@@ -119,7 +119,7 @@ module Cardlib
         end
 
         def key_name
-          @key_name ||= (code=Wagn::Codename[self.key] and card=Card[code] and card.cardname)
+          Card.fetch(self.key_id, :skip_modules=>true).cardname
         end
 
         def register key, opt_keys, opts={}
@@ -190,9 +190,12 @@ module Cardlib
         @opt_vals
       end
 
+      def key_name
+        @key_name ||= self.class.key_name
+      end
+
       def to_s
-        kn = self.class.key_name
-        self.class.anchorless? ? kn.s : "#{@anchor_name}+#{kn}"
+        self.class.anchorless? ? key_name.s : "#{@anchor_name}+#{key_name}"
       end
 
       def inspect

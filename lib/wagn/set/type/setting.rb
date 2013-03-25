@@ -20,18 +20,22 @@ module Wagn
       _render_closed_content(args) +
 
       Cardlib::Pattern.subclasses.reverse.map do |set_class|
-        wql = { :left  => {:type =>Card::SetID},
+        wql = { :left  => { :type =>Card::SetID },
                 :right => card.id,
                 :sort  => 'name',
-                :limit => 100
+                :limit => 0
               }
-        wql[:left][ (set_class.anchorless? ? :key : :right )] = set_class.key_name.key
+        wql[:left][ (set_class.anchorless? ? :id : :right_id )] = set_class.key_id
 
         search_card = Card.new :type =>Card::SearchTypeID, :content=>wql.to_json
         next if search_card.count == 0
 
-        raw( content_tag( :h2, (set_class.anchorless? ? '' : '+') + set_class.key_name, :class=>'values-for-setting') ) +
-        subrenderer(search_card)._render_content
+        %{ 
+          <div class="set-class set-class-#{set_class.key}">
+            <h2>#{ set_class.key_name }</h2>
+            #{ subrenderer(search_card)._render_content }
+          </div>
+        }
       end.compact * "\n"
 
     end

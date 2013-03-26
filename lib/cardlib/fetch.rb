@@ -86,7 +86,7 @@ module Cardlib::Fetch
       end
 
       if card.new_card?
-        if ( opts[:skip_virtual] || !card.virtual? ) && opts[:new] != {}
+        if !opts[:new].blank? || opts[:skip_virtual] || !card.virtual?
           return card.renew(opts)
         elsif opts[:name] && opts[:name] != card.name
           card.name = opts[:name]

@@ -172,7 +172,7 @@ class Card < ActiveRecord::Base
 
   def assign_attributes args={}, options={}
     if args and newtype = args.delete(:type) || args.delete('type')
-      args[:type_id] = Card.fetch_id( newtype )
+      args['type_id'] = Card.fetch_id( newtype )
     end
     reset_patterns
 

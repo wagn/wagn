@@ -8,6 +8,7 @@ wagn.editorContentFunctionMap = {
   '.pointer-list-ul'       : -> pointerContent @find('input'        ).map( -> $(this).val() )
   '.pointer-checkbox-list' : -> pointerContent @find('input:checked').map( -> $(this).val() )
   '.perm-editor'           : -> permissionsContent this # must happen after pointer-list-ul, I think
+  '.wikirate-topic-tree'   : -> pointerContent @find('.jstree-clicked').map( -> $.trim( $(this).text() ) )
 }
 
 wagn.editorInitFunctionMap = {
@@ -16,6 +17,14 @@ wagn.editorInitFunctionMap = {
   '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
   '.file-upload'           : -> @fileupload( add: wagn.chooseFile )#, forceIframeTransport: true )
   '.etherpad-textarea'     : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
+  '.wikirate-topic-tree'   : -> $(this).jstree
+     plugins: ["themes","html_data","ui","crrm"],
+     ui:      
+       select_multiple_modifier: 'on'
+       initially_select: $(this).closest('.editor').find('.initial-content').text().split '|'
+       selected_parent_close: false
+     themes: icons: false
+
 }
 
 wagn.initPointerList = (input)->
@@ -199,7 +208,22 @@ $(window).ready ->
   
   $('#wikirate-nav ul').live 'mouseleave', ->
     $(this).hide()
-  
+      
+  $('.TYPE-claim .card-editor fieldset.RIGHT-source_type').live 'change', ->
+    f = $(this).closest 'form' 
+    val = $(this).find('input:checked').val()
+    
+    new_field      = f.find 'fieldset.RIGHT-source_link'
+    existing_field = f.find 'fieldset.RIGHT-source'
+    
+    if val == 'existing'
+      existing_field.show()
+      new_field.hide()
+    else
+      existing_field.hide()
+      new_field.show()
+
+  $('.TYPE-claim .card-editor fieldset.RIGHT-source_type').trigger 'change'
   
   $('.go-to-selected select').live 'change', ->
     val = $(this).val()

@@ -78,36 +78,40 @@ module Wagn
     end
   
     define_view :menu do |args|
-      discussion_card = Card.fetch "#{card.name}+discussion", :skip_virtual=>true, :skip_modules=>true, :new=>{}
-      @menu_checks = {
-        :real      => card.real?,
-        :edit      => card.real? && card.ok?(:update),
-        :junction  => card.junction?,
-        :account   => card.real? && card.account && card.update_account_ok?,
-        :structure => card.hard_template && card.template.ok?(:update),
-        :watch     => card.real? && Account.logged_in?,
-        :discuss   => discussion_card.ok?(:read)
-      }
+      disc_card = unless card.junction? && card.cardname.tag_name.key == 'discussion'
+        Card.fetch "#{card.name}+discussion", :skip_virtual=>true, :skip_modules=>true, :new=>{}
+      end
       
-      @menu_subs = {
-        :self => card.name,
-        :type => card.type_name,
-        :structure => card.template && card.template.name,
-        :creator => card.real? && card.creator.name,
-        :updater => card.real? && card.creator.name,
-        :watch => render_watch,
-        :piecenames => card.cardname.piece_names[0..-2],
+      @menu_vars = {
+        :self       => card.name,
+        :type       => card.type_name,
+        :structure  => card.hard_template && card.template.ok?(:update) && card.template.name,
+        :discuss    => disc_card && disc_card.ok?( disc_card.new_card? ? :create : :read),
+        :piecenames => card.junction? && card.cardname.piece_names[0..-2],
       }
+      if card.real?
+        @menu_vars.merge!({
+          :edit      => card.ok?(:update),
+          :account   => card.account && card.update_account_ok?,
+          :watch     => Account.logged_in? && render_watch,
+          :creator   => card.creator.name,
+          :updater   => card.updater.name,          
+        })
+      end
     
       %{
-      <div class="card-menu-link">
-        <a class="ui-icon ui-icon-gear"></a>
-        <ul class="card-menu">
-          #{ build_menu_items default_menu }
-        </ul>
-      </div>}
+        <div class="card-menu-link">
+          #{ _render_menu_link }
+          <ul class="card-menu">
+            #{ build_menu_items default_menu }
+          </ul>
+        </div>
+      }
     end
 
+    define_view :menu_link do |args|
+      '<a class="ui-icon ui-icon-gear"></a>'
+    end
   
     define_view :type do |args|
       klasses = ['cardtype']
@@ -661,8 +665,8 @@ module Wagn
     def build_menu_items array
       array.map do |h|
         h = h.clone if Hash===h
-        if !h[:if] or @menu_checks[ h[:if] ]
-          h[:text] = h[:text] % @menu_subs if h[:text]
+        if !h[:if] or @menu_vars[ h[:if] ]
+          h[:text] = h[:text] % @menu_vars if h[:text]
           link = case
             when h[:plain]
               "<a>#{h[:plain]}</a>"
@@ -670,11 +674,11 @@ module Wagn
               menu_subs h[:link]
             when h[:page]
               next unless h[:page] = menu_subs( h[:page] )
-              link_to_page (h[:text] || raw("#{h[:page]} &crarr;")), h[:page]
+              link_to_page (raw("#{h[:text] || h[:page]} &crarr;")), h[:page]
             else
               if h[:related]
                 h[:related] = if String === h[:related]
-                  { :name => h[:related] % @menu_subs }
+                  { :name => h[:related] % @menu_vars }
                 else
                   h[:related].clone
                 end
@@ -710,7 +714,7 @@ module Wagn
     end
     
     def menu_subs key
-      Symbol===key ? @menu_subs[key] : key
+      Symbol===key ? @menu_vars[key] : key
     end
     
     

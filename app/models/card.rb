@@ -42,7 +42,7 @@ class Card < ActiveRecord::Base
     end
 
     ID_CONST_ALIAS = {
-      :default_type => :basic,
+      :default_type => :basic, #this should not be hardcoded (not a constant -- should come from *all+*default)
       :anon         => :anonymous,
       :auth         => :anyone_signed_in,
       :admin        => :administrator

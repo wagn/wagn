@@ -79,8 +79,8 @@ module Wagn
       { :view=>:home, :text=>'view', :sub=> [
           { :view=>:home,                    :text=>'refresh'                    },
           { :page=>:self,                    :text=>'page'                       },
+          { :page=>:type,                    :text=>'type: %{type}'              },
           { :view=>:changes,                 :text=>'history',   :if=>:edit      },
-          { :related=>{ :name=>:type },      :text=>'type: %{type}'              },
           { :related=>{ :name=>:structure }, :text=>'structure', :if=>:structure },
         ] },
       { :related=>{ :name=>"+discussion" }, :text=>'discuss', :if=>:discuss },
@@ -97,11 +97,11 @@ module Wagn
               { :related=>"+*inclusions",     :text=>"inclusions" }                  
             ] },
           { :plain=>'related', :sub=>[
-              { :plain=>'ancestors', :if=>:junction, :sub=>{ :piecenames => { :page=>:item } } },
+              { :plain=>'ancestors', :if=>:piecenames, :sub=>{ :piecenames => { :page=>:item } } },
               { :related=>"+*plus cards", :text=>'children' },
               { :related=>"+*plus parts", :text=>'mates'    },
             ] },              
-          { :related=>'+*editors', :text=>'editors', :if=>:real, :sub=>[
+          { :related=>'+*editors', :text=>'editors', :if=>:creator, :sub=>[
               { :related=>"+*editors", :text=>'all editors'             },
               { :page=>:creator,       :text=>"creator: %{creator}"     },
               { :page=>:updater,       :text=>"last editor: %{updater}" },

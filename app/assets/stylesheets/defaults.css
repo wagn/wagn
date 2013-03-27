@@ -94,7 +94,9 @@ textarea {
 body.mceContentBody {
   margin: 4px;
 }
-
+input, select {
+  max-width: 100%;
+}
 
 /*-- miscellaneous --*/
 form {

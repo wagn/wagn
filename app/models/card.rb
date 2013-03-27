@@ -42,7 +42,7 @@ class Card < ActiveRecord::Base
     end
 
     ID_CONST_ALIAS = {
-      :default_type => :basic,
+      :default_type => :basic, #this should not be hardcoded (not a constant -- should come from *all+*default)
       :anon         => :anonymous,
       :auth         => :anyone_signed_in,
       :admin        => :administrator
@@ -173,7 +173,7 @@ class Card < ActiveRecord::Base
 
   def assign_attributes args={}, options={}
     if args and newtype = args.delete(:type) || args.delete('type')
-      args[:type_id] = Card.fetch_id( newtype )
+      args['type_id'] = Card.fetch_id( newtype )
     end
     reset_patterns
 

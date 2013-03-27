@@ -566,8 +566,12 @@ div.search-result-list .search-result-item {
 
 /*------- permissions ------------------*/
 
-.perm-group h5 {
-  margin-top: 0px;
+.perm-section {
+  margin-bottom: 20px;
+}
+.perm-section h5 {
+  margin: 0 0 10px 0;
+  
 }
 
 

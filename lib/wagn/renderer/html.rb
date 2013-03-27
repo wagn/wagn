@@ -266,7 +266,7 @@ module Wagn
       editor_wrap :content do
         %{
         #{ revision_tracking }
-        #{ _render_editor    }
+        #{ _render_editor options }
         }
       end
     end

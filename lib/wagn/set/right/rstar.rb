@@ -54,9 +54,12 @@ module Wagn
         set_selected = card_args[:name].to_name.left_name.to_s
       end
 
-      edit_mode = !params[:success] and card.ok?( card.new_card? ? :create : :update )
+      edit_mode = !params[:success] && card.ok?( ( card.new_card? ? :create : :update ) )
+      
       opts = { :open_rule => card, :setting_name=> setting_name }
       rule_view = edit_mode ? :edit_rule : :show_rule
+      
+      
       
       if edit_mode
         opts.merge!( {
@@ -103,14 +106,20 @@ module Wagn
               :class=>'close-rule-link slotter', :path_opts=>{ :card=>args[:open_rule] } }
         </div>
         
-        <div class="rule-placeholder">&nbsp;</div>
-      
-        <div class="rule-set">
-          #{ card.trunk.label }
-        </div>
-        
         <div class="card-body">
-          #{ render_core }
+          #{
+            if !card.new_card?
+              set = card.trunk
+              %{
+                <div class="rule-set">
+                  <label>Applies to</label> #{ link_to_page set.label, set.name }:
+                </div>
+                #{ _render_core :set_context=>args[:open_rule].cardname.trunk_name }
+              }
+            else
+              'No Current Rule'
+            end
+          }
         </div>
       }
     end
@@ -142,7 +151,7 @@ module Wagn
               end )
             }
             
-            #{ fieldset 'content', content_field( form, :skip_rev_id=>true ) }
+            #{ fieldset 'content', content_field( form, :skip_rev_id=>true, :set_context=>open_rule.cardname.trunk_name ) }
             
             #{ fieldset 'set', ( editor_wrap 'set' do
                 option_items = args[:set_options].map do |set_name|

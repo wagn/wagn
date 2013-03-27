@@ -17,8 +17,11 @@
 .set-rules th,
 .set-rules td.rule-cell {
   text-align: left;
-  border-bottom: 1px solid #eee;
   padding: 2px 5px;
+}
+.set-rules th,
+.set-rules td.rule-cell {
+  border-bottom: 1px solid #eee;
 }
 .rule-setting {
   font-weight: bold;
@@ -40,7 +43,6 @@ td.rule-setting {
 .closed-rule td {
   vertical-align: middle;
 }
-.rule-placeholder,
 .closed-rule .rule-content {
   width: 350px;
 }
@@ -61,16 +63,16 @@ td.missing-rule {
   background-color: #eee;
   border-bottom: 1px solid #fff;
 }
-.show-rule div.rule-setting,
-.edit-rule .rule-setting {
+.rule-setting {
   padding-top: 4px;
+}
+.edit-rule .rule-setting {
   float: left;
   width: 30%;
 }
 .rule-placeholder {
   float: left;
 }
-.show-rule .card-body,
 .edit-rule .card-editor {
   clear: both;
   padding: 5px;
@@ -97,4 +99,7 @@ td.missing-rule {
 }
 .rule-delete-section {
   float: right;
+}
+.show-rule .rule-set {
+  margin-bottom: 10px;
 }

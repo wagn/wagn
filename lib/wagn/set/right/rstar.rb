@@ -56,7 +56,11 @@ module Wagn
 
       edit_mode = !params[:success] && card.ok?( ( card.new_card? ? :create : :update ) )
       
-      opts = { :open_rule => card, :setting_name=> setting_name }
+      opts = {
+        :open_rule    => card,
+        :setting_name => setting_name,
+        :set_context  => card.cardname.trunk_name
+      }
       rule_view = edit_mode ? :edit_rule : :show_rule
       
       
@@ -100,6 +104,8 @@ module Wagn
     
     define_view :show_rule, :rstar=>true, :tags=>:unknown_ok do |args|
       setting_name = args[:setting_name]
+      args[:item] ||= :link
+      
       %{
         <div class="rule-setting">
           #{ link_to_view args[:setting_name].sub(/^\*/,''), :closed_rule,
@@ -114,7 +120,7 @@ module Wagn
                 <div class="rule-set">
                   <label>Applies to</label> #{ link_to_page set.label, set.name }:
                 </div>
-                #{ _render_core :set_context=>args[:open_rule].cardname.trunk_name }
+                #{ _render_core args }
               }
             else
               'No Current Rule'
@@ -128,7 +134,6 @@ module Wagn
       setting_name    = args[:setting_name]
       current_set_key = args[:current_set_key] || Card[:all].name  # (should have a constant for this?)
       open_rule       = args[:open_rule]
-      args[:item] ||= :link
 
       form_for card, :url=>path(:action=>:update, :no_id=>true), :remote=>true, :html=>
           {:class=>"card-form card-rule-form slotter" } do |form|
@@ -151,7 +156,7 @@ module Wagn
               end )
             }
             
-            #{ fieldset 'content', content_field( form, :skip_rev_id=>true, :set_context=>open_rule.cardname.trunk_name ) }
+            #{ fieldset 'content', content_field( form, args.merge(:skip_rev_id=>true) ) }
             
             #{ fieldset 'set', ( editor_wrap 'set' do
                 option_items = args[:set_options].map do |set_name|

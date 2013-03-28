@@ -4,7 +4,7 @@ module Chunks
   class Include < Reference
 #    attr_reader :options
     cattr_reader :options
-    @@options = [ :include_name, :view, :item, :type, :size, :title, :hide, :show, :include ].
+    @@options = [ :include_name, :view, :item, :type, :size, :title, :hide, :show, :include, :structure ].
       inject({}) do |hash, key| hash[key] = nil; hash end
     
 #    attr_reader :options

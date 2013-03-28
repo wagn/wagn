@@ -11,22 +11,25 @@ module Wagn
       render( args[:view] || :core )
     end
 
-    define_view :raw      do |args|  card ? card.raw_content : _render_blank                          end
-    define_view :core     do |args|  process_content _render_raw                                    end
-    define_view :content  do |args|  _render_core                                                     end
+    define_view :raw do |args|
+      scard = args[:structure] ? Card[ args[:structure] ] : card
+      scard ? scard.raw_content : _render_blank
+    end
+    
+    define_view :core     do |args|  process_content _render_raw(args)            end
+    define_view :content  do |args|  _render_core args                            end
       # this should be done as an alias, but you can't make an alias with an unknown view,
       # and base renderer doesn't know "content" at this point
-    define_view :titled   do |args|  card.name + "\n\n" + _render_core                                end
-
-    define_view :name,     :perms=>:none  do |args|  card.name                                        end
-    define_view :key,      :perms=>:none  do |args|  card.key                                         end
-    define_view :id,       :perms=>:none  do |args|  card.id                                          end
-    define_view :linkname, :perms=>:none  do |args|  card.cardname.url_key                         end
-    define_view :url,      :perms=>:none  do |args|  wagn_url _render_linkname                        end
+    define_view :titled   do |args|  card.name + "\n\n" + _render_core(args)      end
+                                                                                  
+    define_view :name,     :perms=>:none  do |args|  card.name                    end
+    define_view :key,      :perms=>:none  do |args|  card.key                     end
+    define_view :id,       :perms=>:none  do |args|  card.id                      end
+    define_view :linkname, :perms=>:none  do |args|  card.cardname.url_key        end
+    define_view :url,      :perms=>:none  do |args|  wagn_url _render_linkname    end
 
     define_view :link, :perms=>:none  do |args|
-      name = card.name
-      card_link name, showname( args[:title] ), card.known?
+      card_link card.name, showname( args[:title] ), card.known?
     end
 
     define_view :open_content do |args|
@@ -42,7 +45,7 @@ module Wagn
     define_view :array do |args|
       if card.collection?
         card.item_cards(:limit=>0).map do |item_card|
-          subrenderer(item_card)._render_core
+          subrenderer(item_card)._render_core(args)
         end
       else
         [ _render_core(args) ]#{ yield } ]

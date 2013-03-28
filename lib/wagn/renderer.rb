@@ -239,7 +239,8 @@ module Wagn
           else
             args[:denied_task] = [perms_required].flatten.find do |task|
               task = :create if task == :update && card.new_card?
-              !card.ok? task
+              @ok ||= {}
+              @ok[task].nil? ? @ok[task] = !card.ok?(task) : @ok[task]
             end
           end
           args[:denied_task] ? (@@denial_views[view] || :denial) : view

@@ -46,7 +46,7 @@
 
 #logo {
   text-align: center;
-  padding: 10px 0px;
+  padding: 10px;
   background: #fff;
   border: 1px solid #777;
   -moz-border-radius: 8px;
@@ -58,6 +58,9 @@
   color: #448;
   text-decoration: none;
   text-align: center;
+}
+#logo img {
+  width: 100%;
 }
 
 

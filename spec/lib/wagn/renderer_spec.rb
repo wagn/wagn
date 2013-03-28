@@ -103,7 +103,7 @@ describe Wagn::Renderer, "" do
     it "missing relative inclusion is relative" do
       c = Card.new :name => 'bad_include', :content => "{{+bad name missing}}"
       rr=(r=Wagn::Renderer.new(c))._render(:titled)
-      rr.match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
+      rr.match(/Add.*\+.*bad name missing/).should_not be_nil
     end
 
     it "renders deny for unpermitted cards" do
@@ -571,7 +571,7 @@ describe Wagn::Renderer, "" do
 
   context "missing" do
     it "should prompt to add" do
-      render_content('{{+cardipoo|open}}').match(/Add \<strong\>/ ).should_not be_nil
+      render_content('{{+cardipoo|open}}').match(/Add \<span/ ).should_not be_nil
     end
   end
 

@@ -77,8 +77,11 @@ module Wagn
   
 
     define_view :open do |args|
-      args[:toggler] = link_to '', path(:view=>:closed), :title => "close #{card.name}", :remote => true,
-        :class => "close-icon ui-icon ui-icon-circle-triangle-s toggler slotter nodblclick"
+      args[:toggler] = link_to '', path( :view=>:closed ),
+        :remote => true,
+        :title  => "close #{card.name}",
+        :class  => "close-icon ui-icon ui-icon-circle-triangle-s toggler slotter nodblclick"
+        
       wrap :open, args.merge(:frame=>true) do
         %{
            #{ _render_header args }
@@ -142,12 +145,14 @@ module Wagn
     end
 
     define_view :closed do |args|
-      args[:toggler] = link_to '', path(:view=>:open), :title => "open #{card.name}", :remote => true,
+      args[:toggler] = link_to '', path( :view=>:open ),
+        :remote => true,
+        :title => "open #{card.name}",
         :class => "open-icon ui-icon ui-icon-circle-triangle-e toggler slotter nodblclick"
       wrap :closed, args do
         %{
           #{ render_header args }
-          #{ wrap_content( :closed ) { _render_closed_content } }
+          #{ wrap_content( :closed ) { _render_closed_content args } }
         }
       end
     end
@@ -172,8 +177,8 @@ module Wagn
     define_view :new, :perms=>:create, :tags=>:unknown_ok do |args|
       name_ready = !card.cardname.blank? && !Card.exists?( card.cardname )
 
-      cancel = if ajax_call?
-        { :class=>'slotter',    :href=>path(:view=>:missing)    }
+      cancel = if ajax_call? # shouldn't this be main? ??
+        { :class=>'slotter',    :href=>path( :view=>:missing         ) }
       else
         { :class=>'redirecter', :href=>Card.path_setting('/*previous') }
       end
@@ -230,8 +235,8 @@ module Wagn
       new_args['card[type]'] = args[:type] if args[:type]
 
       wrap :missing, args do
-        link_to raw("Add <strong>#{ showname args[:title] }</strong>"), path(new_args),
-          :class=>"slotter missing-#{args[:denied_view]}", :remote=>true
+        link_to raw("Add #{ fancy_title args[:title] }"), path(new_args),
+          :class=>"slotter missing-#{ args[:denied_view] || args[:home_view]}", :remote=>true
       end
     end
 
@@ -471,8 +476,7 @@ module Wagn
       )}}
     end
 
-    define_view :new_account,
-      :perms=> lambda { |r| r.card.accountable? } do |args|
+    define_view :new_account, :perms=> lambda { |r| r.card.accountable? } do |args|
       wrap :new_account, args.merge(:frame=>true) do
         %{
           #{ _render_header }

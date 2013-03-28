@@ -158,6 +158,9 @@ module Wagn
       lo_card.content
     end
 
+    def slot_options
+      @@slot_options ||= Chunks::Include.options.keys.reject { |k| k == :view }.unshift :home_view
+    end
 
     def wrap view, args = {}
       classes = ['card-slot', "#{view}-view"]
@@ -169,7 +172,7 @@ module Wagn
         :style=>args[:style]
       }
       
-      ( [:home_view ] + Chunks::Include.options.keys ).each do |key|
+      slot_options.each do |key|
         attributes["slot-#{key}"] = args[key] if args[key].present?
       end
 
@@ -360,9 +363,7 @@ module Wagn
     end
 
     def fancy_title title=nil
-      name = showname(title)
-      title = name.to_name.parts.join %{<span class="joint">+</span>}
-      raw title
+      raw %{<span class="card-title">#{showname(title).to_name.parts.join %{<span class="joint">+</span>} }</span>}
     end
 
     def load_revisions

@@ -1,4 +1,4 @@
-module Cardlib::Settings
+module Cardlib::Rules
   RuleSQL = %{
     select rules.id as rule_id, settings.id as setting_id, sets.id as set_id, sets.left_id as anchor_id, sets.right_id as set_tag_id
     from cards rules join cards sets on rules.left_id = sets.id join cards settings on rules.right_id = settings.id
@@ -59,7 +59,7 @@ module Cardlib::Settings
     def rule_cache
       @@rule_cache ||= Card.cache.read('RULES') || begin        
         hash = {}
-        ActiveRecord::Base.connection.select_all( Cardlib::Settings::RuleSQL ).each do |row|
+        ActiveRecord::Base.connection.select_all( Cardlib::Rules::RuleSQL ).each do |row|
           setting_code = Wagn::Codename[ row['setting_id'].to_i ] or next
           anchor_id = row['anchor_id']
           set_class_id = anchor_id.nil? ? row['set_id'] : row['set_tag_id']
@@ -85,7 +85,7 @@ module Cardlib::Settings
     def read_rule_cache
       @@read_rule_cache ||= Card.cache.read('READRULES') || begin
         hash = {}
-        ActiveRecord::Base.connection.select_all( Cardlib::Settings::ReadRuleSQL ).each do |row|
+        ActiveRecord::Base.connection.select_all( Cardlib::Rules::ReadRuleSQL ).each do |row|
           party_id, read_rule_id = row['party_id'].to_i, row['read_rule_id'].to_i
           hash[party_id] ||= []
           hash[party_id] << read_rule_id

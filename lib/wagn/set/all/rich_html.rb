@@ -37,22 +37,44 @@ module Wagn
 
     define_view :titled do |args|
       wrap :titled, args do
-        _render_header( args.merge :menu_default_hidden=>true ) +
-        wrap_content( :titled ) do
-          %{
-            #{ _render_core args  }
-            #{ optional_render :comment_box, args }
-            #{ notice }
+        %{
+          #{ _render_header args.merge( :menu_default_hidden=>true ) }
+          #{ wrap_content( :titled, :body=>true ) { _render_core args } }
+          #{ optional_render :comment_box, args }
+          #{ notice }
+        }
+      end
+    end
+    
+    define_view :labeled do |args|
+      wrap :labeled, args do
+        %{
+          #{ _optional_render :menu, args }
+          
+          <label>
+            #{ _render_title args }
+          </label>
+          #{
+            wrap_content :titled do
+              _render_closed_content args
+            end
           }
-        end
+        }
       end
     end
   
     define_view :title do |args|
-      t = content_tag :h1, fancy_title, :class=>'card-title'
+      title = content_tag :h1, fancy_title( args[:title] ), :class=>'card-title'
+      title = _optional_render( :title_link, args.merge( :title_ready=>title ), default_hidden=true ) || title
       add_name_context
-      t
+      title
     end
+    
+    define_view :title_link do |args|
+      link_to_page (args[:title_ready] || showname(args[:title]) ), card.name
+    end
+    
+  
 
     define_view :open do |args|
       args[:toggler] = link_to '', path(:view=>:closed), :title => "close #{card.name}", :remote => true,
@@ -71,7 +93,7 @@ module Wagn
       %{
         <div class="card-header">
           #{ args.delete :toggler }
-          #{ _render_title }
+          #{ _render_title args }
           #{ _optional_render :menu, args, args[:menu_default_hidden] || false }
         </div>
       }
@@ -176,7 +198,7 @@ module Wagn
               #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
               #{
               case
-              when name_ready                  ; _render_title + hidden_field_tag( 'card[name]', card.name )
+              when name_ready                  ; _render_title(args) + hidden_field_tag( 'card[name]', card.name )
               when card.rule_card( :autoname ) ; ''
               else                             ; _render_name_editor
               end
@@ -208,8 +230,8 @@ module Wagn
       new_args['card[type]'] = args[:type] if args[:type]
 
       wrap :missing, args do
-        link_to raw("Add <strong>#{ showname }</strong>"), path(new_args),
-          :class=>'slotter', :remote=>true
+        link_to raw("Add <strong>#{ showname args[:title] }</strong>"), path(new_args),
+          :class=>"slotter missing-#{args[:denied_view]}", :remote=>true
       end
     end
 

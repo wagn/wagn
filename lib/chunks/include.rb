@@ -2,7 +2,12 @@ require_dependency 'chunks/chunk'
 
 module Chunks
   class Include < Reference
-    attr_reader :options
+#    attr_reader :options
+    cattr_reader :options
+    @@options = [ :include_name, :view, :item, :type, :size, :title, :hide, :show, :include ].
+      inject({}) do |hash, key| hash[key] = nil; hash end
+    
+#    attr_reader :options
     unless defined? INCLUDE_CONFIG
       #  {{+name|attr:val;attr:val;attr:val}}
       #  Groups: $1, everything (less {{}}), $2 name, $3 options
@@ -32,12 +37,7 @@ module Chunks
         when /^\#/   ;  "<!-- #{CGI.escapeHTML in_brackets} -->"
         when ''      ; '' # no name
         else
-          @options = {
-            :include_name => name,
-            :view  => nil, :item  => nil, :type  => nil, :size  => nil,
-            :hide  => nil, :show  => nil, :wild  => nil, :include => in_brackets, #yuck, need better name (this is raw stuff)
-            
-          }
+          @options = @@options.clone.merge :include_name => name, :include => in_brackets #yuck, need better name (this is raw stuff)
 
           @configs = Hash.new_from_semicolon_attr_list opts
 
@@ -74,7 +74,7 @@ module Chunks
         view = view.to_sym
       end
 
-      @processed = yield options # this is not necessarily text, sometimes objects for json
+      @processed = yield @options # this is not necessarily text, sometimes objects for json
     end
 
     def replace_reference old_name, new_name

@@ -15,6 +15,7 @@
 html>body .open-view {
   width: auto;  /* so non-ie browsers do better with image floats */
 }
+.card-frame .card-body,
 .card-slot,
 .ALL {
   overflow: hidden;
@@ -208,9 +209,7 @@ fieldset > legend > .instruction {
 
 
 /* for IE */
-div.content-view {
-  display: inline;
-}
+
 .conflict-view {
   text-align: left;
   background: #ffc;
@@ -292,15 +291,13 @@ del.diffmod,
   margin: 0 0 4px 0;
 
 }
-.help.content {
+/*.help.content {
   padding: 10px;
   margin-top: 5px;
   color: #444;
-}
+}*/
 .card-body {
-  display: block;
-  padding: 5px 12px;
-  min-height: 25px;
+    padding: 5px 5px;
 }
 .instruction {
   border-left: 0;
@@ -320,28 +317,55 @@ del.diffmod,
 body#wagn .card-slot.recent-changes h2 {
   margin-top: 15px;
 }
-.last-update {
-  color: #666;
-/*  margin-right: 5px; */
-}
 
 
-/*-------------- STATES -----------*/
 
-/*-----------  open cards -------*/
+/*-------------- VIEWS -----------*/
 
-  /* means content view */
-.content-content {
+/*-------------- content view ------ */
+.content-view {
   display: inline;
-  padding: 0;
 }
+
+/*-----------  titled view -------*/
+
 
 .titled-view > .card-header {
    background: inherit;
-   padding: 0;
 }
 
-/*------------- closed cards -------*/
+.titled-view > .card-header,
+.titled-view > .card-body {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+
+/*-----------  related view -------*/
+
+
+
+.related-view > .card-body  {
+   background: #ddd;
+   padding: 5px;
+}
+.related-view > .card-body > .ALL  {
+   background: #ddd;
+   background: #fff;
+   border-radius: 6px;
+}
+.related-view > .card-body > .ALL > .card-header {
+   background: #eee;
+}
+.related-view > .card-body > .ALL > .card-header h1 {
+   color: #000;
+}
+.related-view > .card-body > .ALL > .card-header,
+.related-view > .card-body > .ALL > .card-body {
+   padding: 5px;
+}
+
+/*------------- closed view -------*/
 
 .closed-view {
   width: 100%;  /*needed for ie6, or..?*/
@@ -418,6 +442,7 @@ body#wagn .card-slot.recent-changes h2 {
   float: left;
 }
 .change-view .last-update {
+  color: #666;
   float:right;
   text-align: right;
 }
@@ -428,7 +453,27 @@ body#wagn .card-slot.recent-changes h2 {
   white-space: nowrap;
 }
 
+/*----------- Labeled View ---------*/
 
+
+.labeled-view .card-menu-link {
+  display: none;
+}
+.labeled-view:hover .card-menu-link {
+  display: inline-block;
+}
+a.missing-labeled,
+.labeled-view label {
+  display: inline-block;
+  min-width: 20%;
+  text-align: right;
+}
+
+.labeled-view label h1,
+.labeled-view .pointer-list,
+.labeled-view .pointer-item {
+  display: inline;
+}
 
 /* CARDTYPE_SPECIFIC ------------------------------*/
 
@@ -513,7 +558,6 @@ div.search-result-list .search-result-item {
 .pointer-item.item-link,
 .search-result-item.item-name,
 .pointer-item.item-name {
-  display: block;
   text-indent: -15px;
   padding-left: 15px;
 }
@@ -524,11 +568,7 @@ div.search-result-list .search-result-item {
 
 /*-----------( Image ) -----------*/
 
-/*
-.open-view .TYPE-image .content {
-  padding: 5px;
-}
-*/
+
 
 /*-----------( Toggle ) -----------*/
 

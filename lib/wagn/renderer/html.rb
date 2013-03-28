@@ -169,7 +169,7 @@ module Wagn
         :style=>args[:style]
       }
       
-      [:home_view, :item, :include, :show, :hide, :size].each do |key|
+      ( [:home_view ] + Chunks::Include.options.keys ).each do |key|
         attributes["slot-#{key}"] = args[key] if args[key].present?
       end
 
@@ -186,7 +186,9 @@ module Wagn
     end
 
     def wrap_content view, args={}
-      raw %{<span class="#{view}-content content #{'card-body' if args[:body] } #{args[:class]}">#{ yield }</span>}
+      tag_type = args[:body] ? :div : :span
+      klass = ["#{view}-content content", args[:class], ('card-body' if args[:body])].compact * ' '
+      content_tag( tag_type, :class=>klass ) { yield }
     end
 
     def wrap_main(content)
@@ -357,8 +359,8 @@ module Wagn
       %{<div class="instruction">#{raw text}</div>} if text
     end
 
-    def fancy_title name=nil
-      name ||= showname
+    def fancy_title title=nil
+      name = showname(title)
       title = name.to_name.parts.join %{<span class="joint">+</span>}
       raw title
     end

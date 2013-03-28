@@ -155,12 +155,12 @@ describe Wagn::Renderer, "" do
     end
 
     it "titled" do
-      result = render_card(:titled, :name=>'A+B')
+      result = render_card :titled, :name=>'A+B'
       assert_view_select result, 'div[class~="titled-view"]' do
         assert_select 'h1' do
           assert_select 'span'
         end
-        assert_select 'span[class~="titled-content"]', 'AlphaBeta'
+        assert_select 'div[class~="titled-content"]', 'AlphaBeta'
       end
     end
 
@@ -174,7 +174,7 @@ describe Wagn::Renderer, "" do
           assert_select 'div[class="card-header"]' do
             assert_select 'h1[class="card-title"]'
           end
-          assert_select 'span[class~="card-body"]'
+          assert_select 'div[class~="card-body"]'
         end
       end
 
@@ -200,12 +200,15 @@ describe Wagn::Renderer, "" do
       end
 
       it "should render setting view for a *input rule" do
-         r = Wagn::Renderer.new(Card.fetch('*read+*right+*input',:new=>{})).render_open_rule
-         r.should_not match(/error/i)
-         r.should_not match('No Card!')
-         assert_view_select r, 'tr[class="card-slot edit-rule"]' do
-           assert_select 'input[id="success"][name="success"][type="hidden"][value="*read+*right+*input"]'
-         end
+        Account.as_bot do
+          r = Wagn::Renderer.new(Card.fetch('*read+*right+*input',:new=>{})).render_open_rule
+          r.should_not match(/error/i)
+          r.should_not match('No Card!')
+          # warn "r = #{r}"
+          assert_view_select r, 'tr[class="card-slot edit-rule"]' do
+            assert_select 'input[id="success"][name="success"][type="hidden"][value="*read+*right+*input"]'
+          end
+        end
       end
     end
 
@@ -239,7 +242,7 @@ describe Wagn::Renderer, "" do
 
       it "renders card content" do
         #warn "simple page = #{@simple_page}"
-        assert_view_select @simple_page, 'span[class="open-content content card-body "]', 'AlphaBeta'
+        assert_view_select @simple_page, 'div[class="open-content content card-body"]', 'AlphaBeta'
       end
 
       it "renders notice info" do

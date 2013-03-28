@@ -25,12 +25,7 @@ module Wagn
     @@view_tags      = {}
 
     def self.get_renderer format
-      #warn "get_renderer #{format.inspect}"
-      const_get( if RENDERERS.has_key? format
-          RENDERERS[ format ]
-        else
-          format.to_s.camelize.to_sym
-        end )
+      const_get( ( RENDERERS[ format ] || format.to_s.camelize.to_sym ) )
     end
 
     attr_reader :format, :card, :root, :parent
@@ -88,8 +83,12 @@ module Wagn
     def session()      CardController===controller ? controller.session : {}      end
     def ajax_call?()   @@ajax_call                                                end
 
-    def showname
-      @showname ||= card.cardname.to_show *@context_names
+    def showname title=nil
+      if title
+        title.to_name.to_absolute_name(card.cardname).to_show *@context_names
+      else
+        @showname ||= card.cardname.to_show *@context_names
+      end
     end
     
     def main?

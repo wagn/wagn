@@ -190,7 +190,7 @@ module Wagn
       @card = subcard
       @char_count = 0
       @depth += 1
-      @main_content = @showname = nil
+      @main_content = @showname = @search =  nil
       self
     end
 

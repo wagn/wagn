@@ -3,7 +3,7 @@ module Wagn
    module Set
     include Sets
 
-    format :base
+    format :html
 
     define_view :core , :type=>:set do |args|
       body = card.setting_codes_by_group.map do |group_name, data|
@@ -53,7 +53,9 @@ module Wagn
       end
     end
 
-    alias_view(:closed_content , {:type=>:search_type}, {:type=>:set})
+    define_view :closed_content, :type=>:set do |args|
+      ''
+    end
 
 
     module Model

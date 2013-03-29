@@ -168,15 +168,16 @@ module Cardlib
       end
 
       def get_method_key
-        tkls_key = self.class.method_key
-        return tkls_key if tkls_key
-        return self.class.method_key if self.class.anchorless?
-        opts = {}
-        self.class.opt_keys.each_with_index do |key, index|
-          return nil unless opt_vals[index]
-          opts[key] = opt_vals[index]
+        if self.class.anchorless?
+          self.class.method_key
+        else
+          opts = {}
+          self.class.opt_keys.each_with_index do |key, index|
+            return nil unless opt_vals[index]
+            opts[key] = opt_vals[index]
+          end
+          self.class.method_key_from_opts opts
         end
-        self.class.method_key_from_opts opts
       end
 
       def opt_vals

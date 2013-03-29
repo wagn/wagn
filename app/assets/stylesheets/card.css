@@ -393,7 +393,10 @@ body#wagn .card-slot.recent-changes h2 {
   margin-right: 4px;
 }
 .closed-content,
+.closed-content table,
+.closed-content tbody,
 .closed-content tr,
+.closed-content th,
 .closed-content td,
 .closed-content p,
 .closed-content h1,
@@ -540,6 +543,12 @@ ul.pointer {
 .search-no-results:after {
   content:'0 results';
 }
+.closed-content .search-no-results:after {
+  content:'';
+}
+
+
+
 .search-count {
   float: right;
   color: #bbc;

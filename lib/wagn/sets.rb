@@ -126,6 +126,7 @@ module Wagn
                 a = [{}] if a.empty?
                 if final_method = view_method(view)
                   with_inclusion_mode view do
+                    #Rails.logger.info( warn "rendering final method: #{final_method}" )
                     send final_method, *a
                   end
                 else
@@ -167,7 +168,7 @@ module Wagn
               raise "Bad view #{alias_view.inspect}"
             end
 
-          #Rails.logger.warn "def view final_alias #{alias_view_key}, #{view_key}"
+          #Rails.logger.info( warn "def view final_alias #{alias_view_key}, #{view_key}" )
           Renderer.renderer.class_eval do
             define_method "_final_#{alias_view_key}".to_sym do |*a|
               send "_final_#{view_key}", *a

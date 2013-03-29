@@ -376,23 +376,6 @@ module Wagn
       query = opts.empty? ? '' : "?#{opts.to_param}"
       wagn_path( base + query )
     end
-
-    def search_params
-      @search_params ||= begin
-        p = self.respond_to?(:paging_params) ? paging_params : { :default_limit=> 100 }
-        p[:vars] = {}
-        if self == @root
-          params.each do |key,val|
-            case key.to_s
-            when '_wql'      ;  p.merge! val
-            when /^\_(\w+)$/ ;  p[:vars][$1.to_sym] = val
-            end
-          end
-        end
-        p
-      end
-    end
-
     #
     # ------------ LINKS ---------------
     #

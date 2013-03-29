@@ -93,6 +93,7 @@ module Wagn
       end
 
       %{
+        
         <tr class="card-slot #{rule_view.to_s.sub '_', '-'}">
           <td class="rule-cell" colspan="3">
             #{ subrenderer( current_rule )._render rule_view, opts }

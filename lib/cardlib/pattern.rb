@@ -3,8 +3,8 @@ module Cardlib
     mattr_accessor :subclasses
     @@subclasses = []
 
-    def self.register_class klass
-      @@subclasses.unshift klass
+    def self.register_class klass, index=nil
+      @@subclasses.insert index.to_i, klass
     end
 
     def self.method_key opts
@@ -26,7 +26,6 @@ module Cardlib
         @@subclasses.find { |sub| sub.key == class_key }
       end
     end
-
 
     def reset_patterns_if_rule saving=false
       if is_rule?
@@ -55,7 +54,7 @@ module Cardlib
     alias_method_chain :patterns, :new
 
     def safe_keys
-      patterns.map(&:safe_key).reverse*" "
+      patterns.map( &:safe_key ).reverse * " "
     end
 
     def set_modules
@@ -123,7 +122,7 @@ module Cardlib
         end
 
         def register key, opt_keys, opts={}
-          Cardlib::Pattern.register_class self
+          Cardlib::Pattern.register_class self, opts.delete(:index)
           self.key = key
           self.key_id = Wagn::Codename[key]
           self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]
@@ -219,19 +218,19 @@ module Cardlib
     class AllPattern < BasePattern
       register 'all', [], :method_key=>''
       def self.label(name)              'All cards'                end
-      def self.prototype_args(base)     {}                         end
+      def self.prototype_args(anchor)   {}                         end
     end
 
     class AllPlusPattern < BasePattern
       register 'all_plus', :all_plus, :method_key=>'all_plus', :junction_only=>true
       def self.label(name)              'All "+" cards'            end
-      def self.prototype_args(base)     {:name=>'+'}               end
+      def self.prototype_args(anchor)   {:name=>'+'}               end
     end
 
     class TypePattern < BasePattern
       register 'type', :type
       def self.label             name;  %{All "#{name}" cards}     end
-      def self.prototype_args    base;  {:type=>base}              end
+      def self.prototype_args  anchor;  {:type=>anchor}            end
       def self.pattern_applies?  card;  !!card.type_id             end
       def self.anchor_name       card;  card.type_name             end
       def self.anchor_id         card;  card.type_id               end
@@ -240,22 +239,22 @@ module Cardlib
     class StarPattern < BasePattern
       register 'star', :star, :method_key=>'star'
       def self.label            name;   'All "*" cards'            end
-      def self.prototype_args   base;   {:name=>'*dummy'}          end
+      def self.prototype_args anchor;   {:name=>'*dummy'}          end
       def self.pattern_applies? card;   card.cardname.star?        end
     end
 
     class RstarPattern < BasePattern
       register 'rstar', :rstar, :method_key=>'rstar', :junction_only=>true
       def self.label            name;   'All "+*" cards'           end
-      def self.prototype_args   base;   { :name=>'*dummy+*dummy'}  end
+      def self.prototype_args anchor;   { :name=>'*dummy+*dummy'}  end
       def self.pattern_applies? card;   card.cardname.rstar?       end
     end
 
     class RightPattern < BasePattern
       register 'right', :right, :junction_only=>true, :assigns_type=>true
-      def self.label            name;   %{All "+#{name}" cards}    end
-      def self.prototype_args   base;   {:name=>"*dummy+#{base}"}  end
-      def self.anchor_name      card;   card.cardname.tag          end
+      def self.label            name;  %{All "+#{name}" cards}     end
+      def self.prototype_args anchor;  {:name=>"*dummy+#{anchor}"} end
+      def self.anchor_name      card;  card.cardname.tag           end
     end
 
     class LeftTypeRightNamePattern < BasePattern
@@ -264,9 +263,9 @@ module Cardlib
         def label name
           %{All "+#{name.to_name.tag}" cards on "#{name.to_name.left_name}" cards}
         end
-        def prototype_args base
-          { :name=>"*dummy+#{base.tag}",
-            :loaded_left=> Card.new( :name=>'*dummy', :type=>base.trunk_name )
+        def prototype_args anchor
+          { :name=>"*dummy+#{anchor.tag}",
+            :loaded_left=> Card.new( :name=>'*dummy', :type=>anchor.trunk_name )
           }
         end
         def anchor_name card
@@ -280,10 +279,11 @@ module Cardlib
     class SelfPattern < BasePattern
       register 'self', :name
       #note: does not assign type bc this causes trouble when cardtype cards have a *self set.
-      def self.label          name;     %{The card "#{name}"}      end
-      def self.prototype_args base;     { :name=>base }            end
-      def self.anchor_name    card;     card.name                  end
-      def self.anchor_id      card;     card.id                    end
+      def self.label            name;     %{The card "#{name}"}      end
+      def self.prototype_args anchor;     { :name=>anchor }          end
+      def self.anchor_name      card;     card.name                  end
+      def self.anchor_id        card;     card.id                    end
     end
+    
   end
 end

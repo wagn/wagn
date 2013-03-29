@@ -456,7 +456,7 @@ describe Wagn::Renderer, "" do
       end
 
       it "should have special editor" do
-        assert_view_select render_editor('Html'), 'textarea[rows="30"]'
+        assert_view_select render_editor('Html'), 'textarea[rows="15"]'
       end
 
       it "should not render any content in closed view" do

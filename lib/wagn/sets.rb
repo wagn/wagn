@@ -51,8 +51,8 @@ module Wagn
     class << self
       def load_cardlib  ; load_dir File.expand_path( CARDLIB, __FILE__   ) end
       def load_renderers; load_dir File.expand_path( RENDERERS, __FILE__ ) end
-      def dir newdir    ; @@dirs << newdir                                 end
-      def load_dirs     ; @@dirs.each { |dir| load_dir dir }               end
+      #def dir newdir    ; @@dirs << newdir                                 end
+      #def load_dirs     ; @@dirs.each { |dir| load_dir dir }               end
 
       def load_sets
         [ SETS, Wagn::Conf[:pack_dirs].split( /,\s*/ ) ].flatten.each do |dirname|

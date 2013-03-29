@@ -17,7 +17,7 @@ module Wagn
     end
 
     define_view :editor, :type=>'html' do |args|
-      form.text_area :content, :rows=>30, :class=>'card-content'
+      form.text_area :content, :rows=>15, :class=>'card-content'
     end
 
     define_view :closed_content, :type=>'html' do |args|

@@ -25,9 +25,11 @@ html>body .open-view {
 .card-slot > .instruction {
   background: #eee;
 }
-
 .card-body {
   padding: 5px 1.5%;
+}
+.card-frame .card-body {
+  min-height: 20px;
 }
 
 

@@ -75,6 +75,7 @@ module Wagn
           { :view=>:edit_name, :text=>'name'          },
           { :view=>:edit_type, :text=>'type: %{type}' },
           { :related=>{ :name=>:structure, :view=>:edit }, :text=>'structure', :if=>:structure },
+#          { :view=>:edit_type, :text=>'type: %{type}' },
         ] },
       { :view=>:home, :text=>'view', :sub=> [
           { :view=>:home,                    :text=>'refresh'                    },

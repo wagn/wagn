@@ -75,7 +75,8 @@ module LocationHelper
 
   def link_to_page( text, title=nil, options={})
     title ||= text
-    url_options = (options[:type]) ? {:type=>options[:type]} : {}
+    url_options = {}
+    [:type, :view].each { |k| url_options[k] = options.delete(k) if options[k] }
     url = wagn_path page_path( title, url_options )
     link_to text, url, options
   end

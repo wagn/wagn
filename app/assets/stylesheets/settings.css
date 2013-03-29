@@ -6,14 +6,18 @@
 .set-select {
   margin: 10px;
 }
+.setting-rules,
 .set-rules {
   width: 100%;
 }
+.setting-rules th,
 .set-rules th {
   background: #aaa;
   color: #eee;
   padding: 5px 0;
 }
+.setting-rules th,
+.setting-rules td,
 .set-rules th,
 .set-rules td.rule-cell {
   text-align: left;
@@ -23,6 +27,7 @@
 .set-rules td.rule-cell {
   border-bottom: 1px solid #eee;
 }
+.setting-klass,
 .rule-setting {
   font-weight: bold;
 }
@@ -102,4 +107,15 @@ td.missing-rule {
 }
 .show-rule .rule-set {
   margin-bottom: 10px;
+}
+.klass-row {
+  background: #eee;
+  border-top: 1px solid #ddd;
+}
+tr.rule-changeover td {
+  border-top: 1px solid #eee;
+  padding-top: 5px;
+}
+td.rule-anchor {
+  padding-left: 30px;
 }

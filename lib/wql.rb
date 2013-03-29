@@ -186,7 +186,8 @@ class Wql
           content = [key,val]
         elsif MODIFIERS.has_key?(key)
           next if spec[key].is_a? Hash
-          @mods[key] = spec.delete(key).to_s
+          val = spec.delete key
+          @mods[key] = Array === val ? val : val.to_s
         end
       end
       spec[:content] = content if content
@@ -401,11 +402,21 @@ class Wql
     end
 
     def sort_to_sql
+      #fail "order_key = #{@mods[:sort]}, class = #{order_key.class}"
+      
       return nil if @parent or @mods[:return]=='count'
       order_key ||= @mods[:sort].blank? ? "update" : @mods[:sort]
-      dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[order_key.to_sym]||'asc') : safe_sql(@mods[:dir])
+      
+      order_directives = [order_key].flatten.map do |key|
+        dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[key.to_sym]||'asc') : safe_sql(@mods[:dir]) #wonky
+        sort_field key, @mods[:sort_as], dir
+      end.join ', '
+      "ORDER BY #{order_directives}"
 
-      order_field = case order_key
+    end
+    
+    def sort_field key, as, dir
+      order_field = case key
         when "id";              "#{table_alias}.id"
         when "update";          "#{table_alias}.updated_at"
         when "create";          "#{table_alias}.created_at"
@@ -421,11 +432,11 @@ class Wql
             "#{table_alias}.updated_at"
           end
         else
-          safe_sql(order_key)
+          safe_sql(key)
         end
-      order_field = "CAST(#{order_field} AS #{cast_type(@mods[:sort_as])})" if @mods[:sort_as]
-      "ORDER BY #{order_field} #{dir}"
-
+      order_field = "CAST(#{order_field} AS #{cast_type(as)})" if as
+      "#{order_field} #{dir}"
+      
     end
   end
 

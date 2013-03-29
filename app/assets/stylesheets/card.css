@@ -26,7 +26,7 @@ html>body .open-view {
   background: #eee;
 }
 .card-body {
-  padding: 5px 1.5%;
+  padding: 5px 12px;
 }
 .card-frame .card-body {
   min-height: 20px;

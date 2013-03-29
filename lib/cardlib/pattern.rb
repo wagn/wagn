@@ -170,7 +170,7 @@ module Cardlib
       def get_method_key
         if self.class.anchorless?
           self.class.method_key
-        elsif self.class.opt_keys.size == opt_vals.size
+        else
           opts = {}
           self.class.opt_keys.each_with_index do |key, index|
             return nil unless opt_vals[index]
@@ -188,7 +188,12 @@ module Cardlib
       end
       
       def find_opt_vals
-        @anchor_name.parts.map do |part|
+        anchor_parts = if self.class.opt_keys.size > 1
+          [ @anchor_name.left, @anchor_name.right ]
+        else
+          [ @anchor_name ]
+        end
+        anchor_parts.map do |part|
           card = Card.fetch part, :skip_virtual=>true, :skip_modules=>true
           card && Wagn::Codename[card.id.to_i] or return []
         end

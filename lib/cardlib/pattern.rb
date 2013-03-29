@@ -131,8 +131,8 @@ module Cardlib
 
         def method_key_from_opts opts
           method_key || ((opt_keys.map do |opt_key|
-              opts[opt_key].to_s.gsub('+', '-')
-            end << key) * '_')
+            opts[opt_key].to_s.gsub('+', '-')
+          end << key) * '_' )
         end
 
         def pattern_applies? card
@@ -170,7 +170,7 @@ module Cardlib
       def get_method_key
         if self.class.anchorless?
           self.class.method_key
-        else
+        elsif self.class.opt_keys.size == opt_vals.size
           opts = {}
           self.class.opt_keys.each_with_index do |key, index|
             return nil unless opt_vals[index]
@@ -182,12 +182,16 @@ module Cardlib
 
       def opt_vals
         if @opt_vals.nil?
-          @opt_vals = self.class.anchorless? ? [] :
-            @anchor_name.parts.map do |part|
-              card=Card.fetch(part, :skip_virtual=>true, :skip_modules=>true) and Wagn::Codename[card.id.to_i]
-            end
+          @opt_vals = self.class.anchorless? ? [] : find_opt_vals
         end
         @opt_vals
+      end
+      
+      def find_opt_vals
+        @anchor_name.parts.map do |part|
+          card = Card.fetch part, :skip_virtual=>true, :skip_modules=>true
+          card && Wagn::Codename[card.id.to_i] or return []
+        end
       end
 
       def key_name

@@ -108,11 +108,12 @@ module Wagn
       end
       
       @menu_vars = {
-        :self       => card.name,
-        :type       => card.type_name,
-        :structure  => card.hard_template && card.template.ok?(:update) && card.template.name,
-        :discuss    => disc_card && disc_card.ok?( disc_card.new_card? ? :create : :read),
-        :piecenames => card.junction? && card.cardname.piece_names[0..-2],
+        :self         => card.name,
+        :type         => card.type_name,
+        :structure    => card.hard_template && card.template.ok?(:update) && card.template.name,
+        :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :create : :read),
+        :piecenames   => card.junction? && card.cardname.piece_names[0..-2].map { |n| { :item=>n } },
+        :related_sets => card.related_sets.map { |name,label| { :text=>label, :path_opts=>{ :current_set => name } } }
       }
       if card.real?
         @menu_vars.merge!({
@@ -120,7 +121,12 @@ module Wagn
           :account   => card.account && card.update_account_ok?,
           :watch     => Account.logged_in? && render_watch,
           :creator   => card.creator.name,
-          :updater   => card.updater.name,          
+          :updater   => card.updater.name,
+          :delete    => card.ok?(:delete) && link_to( 'delete', path(:action=>:delete),
+            :class=>'slotter standard-delete', 
+            :'data-confirm'=> "Are you sure you want to delete #{card.name}?"
+          )
+
         })
       end
     
@@ -242,36 +248,26 @@ module Wagn
 
   ###---(  EDIT VIEWS )
     define_view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
-      confirm_delete = "Are you sure you want to delete #{card.name}?"
-      if dependents = card.dependents and dependents.any?
-        confirm_delete +=  %{ \n\nThat would mean removing #{dependents.size} related piece(s) of information. }
-      end
-      
       wrap :edit, args.merge(:frame=>true) do
         %{
-        #{ help_text :edit_help }
-        #{_render_header }
-        #{ wrap_content :edit, :body=>true, :class=>'card-editor' do
-           card_form :update, 'card-form card-edit-form autosave' do |f|
-            @form= f
-            %{
-            <div>#{ edit_slot args }</div>
-            <fieldset>
-              <div class="button-area">
-                #{ submit_tag 'Submit', :class=>'submit-button' }
-                #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button'}
-                #{ 
-                if !card.new_card?
-                  button_tag "Delete", :href=>path(:action=>:delete), :type=>'button',
-                    :class=>'delete-button slotter standard-delete', :'data-confirm'=>confirm_delete
-                end
-                }            
-              </div>
-            </fieldset>
-            }
+          #{ help_text :edit_help }
+          #{_render_header }
+          #{ wrap_content :edit, :body=>true, :class=>'card-editor' do
+            card_form :update, 'card-form card-edit-form autosave' do |f|
+              @form= f
+              %{
+                <div>#{ edit_slot args }</div>
+                <fieldset>
+                  <div class="button-area">
+                    #{ submit_tag 'Submit', :class=>'submit-button' }
+                    #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
+                  </div>
+                </fieldset>
+              }
+            end
           end
-        end }
-        #{ notice }
+          }
+          #{ notice }
         }
       end
     end
@@ -400,43 +396,25 @@ module Wagn
     end
   
     define_view :options do |args|
-      related_sets = card.related_sets
-      current_set = params[:current_set] || related_sets[(card.type_id==Card::CardtypeID ? 1 : 0)]  #FIXME - explicit cardtype reference
-      set_options = related_sets.map do |set_name|
-        set_card = Card.fetch set_name
-        selected = set_card.key == current_set.to_name.key ? 'selected="selected"' : ''
-        %{<option value="#{ set_card.key }" #{ selected }>#{ set_card.label }</option>}
-      end.join
+      current_set = Card.fetch( params[:current_set] || card.related_sets[0][0] )
 
       wrap :options, args.merge(:frame=>true) do
-        %{ #{ _render_header }
-            <div class="options-body">
-              <div class="settings-tab">
-                #{ if !related_sets.empty?
-                  %{ <div class="set-selection">
-                    #{ form_tag path(:view=>:options), :method=>'get', :remote=>true, :class=>'slotter' }
-                        <label>Set:</label>
-                        <select name="current_set" class="set-select">#{ set_options }</select>
-                    </form>
-                  </div>}
-                end }
+        %{
+          #{ _render_header }
+          <div class="card-body">
+            #{ subrenderer( current_set ).render_content }
 
-                <div class="current-set">
-                  #{ raw subrenderer( Card.fetch current_set).render_content }
-                </div>
-
-                #{ if card.accountable?
-                    %{<div class="new-account-link">
-                    #{ link_to %{Add a sign-in account for "#{card.name}"}, path(:view=>:new_account),
-                         :class=>'slotter new-account-link', :remote=>true }
-                    </div>}
-                   end
-                }
-              </div>
-            </div>
-            #{ notice }
-          }
-       end
+            #{ if card.accountable?
+                %{<div class="new-account-link">
+                #{ link_to %{Add a sign-in account for "#{card.name}"}, path(:view=>:new_account),
+                     :class=>'slotter new-account-link', :remote=>true }
+                </div>}
+               end
+            }
+          </div>
+          #{ notice }
+        }
+      end
     end
     
     define_view :option_roles do |args|
@@ -689,7 +667,9 @@ module Wagn
   class Renderer::Html < Renderer
     
     def build_menu_items array
+      
       array.map do |h|
+        add_li_tag = true
         h = h.clone if Hash===h
         if !h[:if] or @menu_vars[ h[:if] ]
           h[:text] = h[:text] % @menu_vars if h[:text]
@@ -701,6 +681,19 @@ module Wagn
             when h[:page]
               next unless h[:page] = menu_subs( h[:page] )
               link_to_page (raw("#{h[:text] || h[:page]} &crarr;")), h[:page]
+            when h[:list]
+              items = []
+              h[:list].each do |k1,v1| # piecenames, {pages=>itmes}
+                items = menu_subs(k1).map do |item_val| #[names].each do |name|
+                  menu_item = v1.clone
+                  menu_item.each do |k2, v2| # | :page, :item|
+                    menu_item[k2] = item_val[v2] if item_val.has_key?(v2)
+                  end
+                  menu_item
+                end
+              end
+              add_li_tag = false
+              build_menu_items items
             else
               if h[:related]
                 h[:related] = if String === h[:related]
@@ -720,29 +713,15 @@ module Wagn
                 raise "bad menu item"
               end
             end
-          if Hash === h[:sub]
-            arr = []
-            h[:sub].each do |k1,v1| # piecenames, {pages=>itmes}
-              menu_subs(k1).each do |item_val| #[names].each do |name|
-                menu_item = v1.clone
-                menu_item.each do |k2, v2|
-                  menu_item[k2] = item_val if v2 == :item
-                end
-                arr << menu_item
-              end            
-            end
-            h[:sub] = arr
-          end
           sub = h[:sub] && "\n<ul>\n#{build_menu_items h[:sub]}\n</ul>\n"
-          "<li>#{link} #{sub}</li>"
+          add_li_tag ? "<li>#{link} #{sub}</li>" : link
         end
-      end.compact * "\n"
+      end.flatten.compact * "\n"
     end
     
     def menu_subs key
       Symbol===key ? @menu_vars[key] : key
     end
-    
     
     def watching_type_cards
       %{<div class="faint">(following)</div>} #yuck

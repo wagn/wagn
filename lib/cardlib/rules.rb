@@ -44,14 +44,13 @@ module Cardlib::Rules
   
   def related_sets
     # refers to sets that users may configure from the current card - NOT to sets to which the current card belongs
-    sets = ["#{name}+*self"]
-    sets << "#{name}+*type" if type_id==Card::CardtypeID
-    if cardname.simple?
-      sets<< "#{name}+*right"
-      Card.search(:type=>'Set',:left=>{:right=>name},:right=>'*type plus right',:return=>'name').each do |set_name|
-        sets<< set_name
-      end
-    end
+    sets =     [ ["#{name}+*self",  Cardlib::Patterns::SelfPattern.label( name) ] ]
+    sets.unshift ["#{name}+*type",  Cardlib::Patterns::TypePattern.label( name) ] if type_id==Card::CardtypeID
+    sets.push    ["#{name}+*right", Cardlib::Patterns::RightPattern.label(name) ] if cardname.simple?
+      
+#      Card.search(:type=>'Set',:left=>{:right=>name},:right=>'*type plus right',:return=>'name').each do |set_name|
+#        sets<< set_name
+#      end
     sets
   end
 

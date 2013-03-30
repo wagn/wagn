@@ -18,8 +18,10 @@ module Wagn
           process_inclusion rule_card, :view=>:closed_rule
         end * "\n" )
       end.compact * ''
-
-      content_tag('table', :class=>'set-rules') { body }
+      %{
+        <h2 class="set-label">#{ card.label }</h2>
+        #{ content_tag('table', :class=>'set-rules') { body } }
+      }
     end
 
 

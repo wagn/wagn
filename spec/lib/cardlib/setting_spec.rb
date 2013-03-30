@@ -45,16 +45,16 @@ describe Card do
         sets = Card['Cardtype A'].related_sets
         sets.should == ['Cardtype A+*self', 'Cardtype A+*type', 'Cardtype A+*right']
       end
-      it "should show type plus right sets when they exist" do
-        Account.as_bot { Card.create :name=>'Basic+A+*type plus right', :content=>'' }
-        sets = Card['A'].related_sets
-        sets.should == ['A+*self', 'A+*right', 'Basic+A+*type plus right']
-      end
-      it "should show type plus right sets when they exist, and type" do
-        Account.as_bot { Card.create :name=>'Basic+Cardtype A+*type plus right', :content=>'' }
-        sets = Card['Cardtype A'].related_sets
-        sets.should == ['Cardtype A+*self', 'Cardtype A+*type', 'Cardtype A+*right', 'Basic+Cardtype A+*type plus right']
-      end
+#      it "should show type plus right sets when they exist" do
+#        Account.as_bot { Card.create :name=>'Basic+A+*type plus right', :content=>'' }
+#        sets = Card['A'].related_sets
+#        sets.should == ['A+*self', 'A+*right', 'Basic+A+*type plus right']
+#      end
+#      it "should show type plus right sets when they exist, and type" do
+#        Account.as_bot { Card.create :name=>'Basic+Cardtype A+*type plus right', :content=>'' }
+#        sets = Card['Cardtype A'].related_sets
+#        sets.should == ['Cardtype A+*self', 'Cardtype A+*type', 'Cardtype A+*right', 'Basic+Cardtype A+*type plus right']
+#      end
       it "should have sets for a non-simple card" do
         sets = Card['A+B'].related_sets
         sets.should == ['A+B+*self']

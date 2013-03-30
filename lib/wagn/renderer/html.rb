@@ -69,13 +69,13 @@ module Wagn
    }
    
    
-    @@default_menu ||= [ 
+    @@default_menu = [ 
       { :view=>:edit, :text=>'edit', :if=>:edit, :sub=>[
           { :view=>:edit,      :text=>'content'       },
           { :view=>:edit_name, :text=>'name'          },
           { :view=>:edit_type, :text=>'type: %{type}' },
           { :related=>{ :name=>:structure, :view=>:edit }, :text=>'structure', :if=>:structure },
-#          { :view=>:edit_type, :text=>'type: %{type}' },
+          { :link=>:delete,    :if=>:delete           }
         ] },
       { :view=>:home, :text=>'view', :sub=> [
           { :view=>:home,                    :text=>'refresh'                    },
@@ -86,7 +86,14 @@ module Wagn
         ] },
       { :related=>{ :name=>"+discussion" }, :text=>'discuss', :if=>:discuss },
       { :view=>:options, :text=>'advanced', :sub=>[
-          { :view=>:options, :text=>'rules' },
+          { :view=>:options, :text=>'rules', :sub=>[
+              :list => { :related_sets=> { :view=>:options, :text=>:text, :path_opts=>:path_opts } }
+            ] },
+          { :plain=>'related', :sub=>[
+              { :list=> { :piecenames => { :page=>:item } }, :if => :piecenames },
+              { :related=>"+*plus cards", :text=>'children' },
+              { :related=>"+*plus parts", :text=>'mates'    },
+            ] },
           { :related=>"+*referred to by",     :text=>"references to", :sub=>[
               { :related=>"+*referred to by", :text=>"all"        },                  
               { :related=>"+*linkers",        :text=>"links"      },                  
@@ -96,12 +103,7 @@ module Wagn
               { :related=>"+*refers to",      :text=>"all"        },
               { :related=>"+*links",          :text=>"links"      },
               { :related=>"+*inclusions",     :text=>"inclusions" }                  
-            ] },
-          { :plain=>'related', :sub=>[
-              { :plain=>'ancestors', :if=>:piecenames, :sub=>{ :piecenames => { :page=>:item } } },
-              { :related=>"+*plus cards", :text=>'children' },
-              { :related=>"+*plus parts", :text=>'mates'    },
-            ] },              
+            ] },           
           { :related=>'+*editors', :text=>'editors', :if=>:creator, :sub=>[
               { :related=>"+*editors", :text=>'all editors'             },
               { :page=>:creator,       :text=>"creator: %{creator}"     },

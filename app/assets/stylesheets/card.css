@@ -483,6 +483,8 @@ a.missing-labeled,
   display: inline;
 }
 
+
+
 /* CARDTYPE_SPECIFIC ------------------------------*/
 
 
@@ -578,6 +580,13 @@ div.search-result-list .search-result-item {
 .radio-option-description,
 .checkbox-option-description {
   margin-left: 40px;
+}
+
+
+/*---------( Set ) ---------- */
+
+h2.set-label {
+  padding-bottom: 10px;
 }
 
 /*-----------( Image ) -----------*/

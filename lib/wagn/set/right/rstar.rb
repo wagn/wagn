@@ -94,9 +94,20 @@ module Wagn
 
       %{
         
-        <tr class="card-slot #{rule_view.to_s.sub '_', '-'}">
+        <tr class="card-slot open-rule #{rule_view.to_s.sub '_', '-'}">
           <td class="rule-cell" colspan="3">
-            #{ subrenderer( current_rule )._render rule_view, opts }
+            <div class="rule-setting">
+              #{ link_to_view setting_name.sub(/^\*/,''), :closed_rule, :class=>'close-rule-link slotter' }
+              #{ link_to_page "all rules", setting_name, :class=>'setting-link', :target=>'wagn_setting' }
+            </div>
+            
+            <div class="instruction rule-instruction">
+              #{ process_content "{{#{setting_name}+*right+*edit help}}" }
+            </div>
+            
+            <div class="card-body">
+              #{ subrenderer( current_rule )._render rule_view, opts }
+            </div>
           </td>
         </tr>
       }
@@ -104,31 +115,18 @@ module Wagn
     end
     
     define_view :show_rule, :rstar=>true, :tags=>:unknown_ok do |args|
-      setting_name = args[:setting_name]
-      args[:item] ||= :link
-      
-      %{
-        <div class="rule-setting">
-          #{ link_to_view args[:setting_name].sub(/^\*/,''), :closed_rule,
-              :class=>'close-rule-link slotter', :path_opts=>{ :card=>args[:open_rule] } }
-        </div>
-        
-        <div class="card-body">
-          #{
-            if !card.new_card?
-              set = card.trunk
-              %{
-                <div class="rule-set">
-                  <label>Applies to</label> #{ link_to_page set.label, set.name }:
-                </div>
-                #{ _render_core args }
-              }
-            else
-              'No Current Rule'
-            end
-          }
-        </div>
-      }
+      if !card.new_card?
+        set = card.trunk
+        args[:item] ||= :link
+        %{
+          <div class="rule-set">
+            <label>Applies to</label> #{ link_to_page set.label, set.name }:
+          </div>
+          #{ _render_core args }
+        }
+      else
+        'No Current Rule'
+      end
     end
 
     define_view :edit_rule, :rstar=>true, :tags=>:unknown_ok do |args|
@@ -142,13 +140,6 @@ module Wagn
         %{
           #{ hidden_field_tag( :success, open_rule.name ) }
           #{ hidden_field_tag( :view, 'open_rule' ) }
-          <div class="rule-setting">
-            #{ link_to_view setting_name.sub(/^\*/,''), :closed_rule, :class=>'close-rule-link slotter', :path_opts=>{ :card=>open_rule } }
-          </div>
-          
-          <div class="instruction rule-instruction">
-            #{ process_content "{{#{setting_name}+*right+*edit help}}" }
-          </div>
 
           <div class="card-editor">
             #{ fieldset 'type', ( editor_wrap 'type' do

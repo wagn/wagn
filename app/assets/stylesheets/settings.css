@@ -5,6 +5,8 @@
   padding: 5px 15px;
 }
 */
+
+
 .set-select {
   margin: 10px;
 }
@@ -73,18 +75,18 @@ td.missing-rule {
 .rule-setting {
   padding-top: 4px;
 }
-.edit-rule .rule-setting {
-  float: left;
-  width: 30%;
-}
-.rule-placeholder {
+.open-rule .rule-setting {
+  width: 28%;
   float: left;
 }
-.edit-rule .card-editor {
+.open-rule .card-body {
   clear: both;
-  padding: 5px;
 }
-
+.open-rule .instruction {
+  float: right;
+  text-align: left;
+  max-width: 68%;
+}
 .edit-rule .set-editor ul {
   list-style-type: none;
   margin: 0;
@@ -96,10 +98,6 @@ td.missing-rule {
 .edit-rule .edit-button-area {
   clear:both;
   padding-top: 5px;
-}
-.edit-rule .instruction {
-  float: right;
-  max-width: 70%;
 }
 .attention {
   border: 3px solid red;
@@ -120,4 +118,11 @@ tr.rule-changeover td {
 }
 td.rule-anchor {
   padding-left: 30px;
+}
+a.setting-link {
+  font-style: italic;
+  margin-left: 2%;
+  font-weight: normal;
+  color: #000;
+  white-space: nowrap;
 }

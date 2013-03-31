@@ -426,7 +426,7 @@ body#wagn .card-slot.recent-changes h2 {
   margin: 0px;
 }
 .closed-content img {
-  height: 16px;
+  max-height: 16px;
   width: auto;
   float: none;
   padding: 0px;

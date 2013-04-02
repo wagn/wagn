@@ -190,7 +190,7 @@ module Wagn
       @card = subcard
       @char_count = 0
       @depth += 1
-      @main_content = @showname = @search =  nil
+      @main_content = @showname = @search = @ok = nil
       self
     end
 
@@ -225,7 +225,7 @@ module Wagn
         # HANDLE UNKNOWN CARDS ~~~~~~~~~~~~
         when !card.known? && !self.class.tagged( view, :unknown_ok )
           if focal?
-            if @format==:html && card.ok?(:create) ;  :new
+            if @format==:html && card.ok?(:create) ;  :new # this should use the @ok caching
             else                                   ;  :not_found
             end
           else                                     ;  :missing
@@ -240,12 +240,12 @@ module Wagn
             args[:denied_task] = [perms_required].flatten.find do |task|
               task = :create if task == :update && card.new_card?
               @ok ||= {}
-              @ok[task].nil? ? @ok[task] = !card.ok?(task) : @ok[task]
+              @ok[task] = card.ok? task if @ok[task].nil?
+              !@ok[task]
             end
           end
           args[:denied_task] ? (@@denial_views[view] || :denial) : view
         end
-
 
       if view != original_view
         args[:denied_view] = original_view

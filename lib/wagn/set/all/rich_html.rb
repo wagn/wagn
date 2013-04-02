@@ -223,6 +223,7 @@ module Wagn
                 </div>
               </fieldset>
             </div>
+            #{ notice }
           }
         end
       end)
@@ -260,6 +261,7 @@ module Wagn
                     #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
                   </div>
                 </fieldset>
+                #{ notice }
               }
             end
           end

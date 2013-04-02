@@ -125,7 +125,7 @@ $(window).ready ->
 
   $('.slotter').live 'ajax:beforeSend', (event, xhr, opt)->
     return if opt.skip_before_send
-
+    
     unless opt.url.match /home_view/ #avoiding duplication.  could be better test?
       opt.url = wagn.prepUrl opt.url, $(this).slot()
 
@@ -150,7 +150,7 @@ $(window).ready ->
           iframeUploadFilter = (data)-> data.find('body').html()
           opt.dataFilter = iframeUploadFilter
           # gets rid of default html and body tags
-
+        
         args = $.extend opt, (widget._getAJAXSettings data), url: opt.url
         # combines settings from wagn's slotter and jQuery UI's upload widget
         args.skip_before_send = true #avoid looping through this method again
@@ -163,8 +163,8 @@ $(window).ready ->
     $(this).find('.card-content').attr('no-autosave','true')
     true
 
-#  $('.submitter').live 'click', ->
-#    $(this).closest('form').submit()
+  $('.submitter').live 'click', ->
+    $(this).closest('form').submit()
    
   $('.renamer-updater').live 'click', ->
     $(this).closest('form').find('.update_referencers').val 'true'

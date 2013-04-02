@@ -244,11 +244,7 @@ describe Wagn::Renderer, "" do
         #warn "simple page = #{@simple_page}"
         assert_view_select @simple_page, 'div[class="open-content content card-body"]', 'AlphaBeta'
       end
-
-      it "renders notice info" do
-        assert_view_select @simple_page, 'div[class="card-notice"]'
-      end
-
+ 
       it "renders card credit" do
         assert_view_select @simple_page, 'div[id="credit"]', /Wheeled by/ do
           assert_select 'a', 'Wagn'

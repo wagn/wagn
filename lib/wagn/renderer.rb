@@ -249,10 +249,9 @@ module Wagn
 
       if view != original_view
         args[:denied_view] = original_view
-
-        if focal? && error_code = @@error_codes[view]
-          root.error_status = error_code
-        end
+      end
+      if focal? && error_code = @@error_codes[view]
+        root.error_status = error_code
       end
       #warn "ok_view[#{original_view}] #{view}, #{args.inspect}, Cd:#{card.inspect}" #{caller[0..20]*"\n"}"
       view

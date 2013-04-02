@@ -36,7 +36,7 @@ module Cardlib::References
     expire if refresh
 
     rendered_content ||= ObjectContent.new(content, {:card=>self} )
-      
+    
     rendered_content.find_chunks(Chunks::Reference).each do |chunk|
       if referee_name = chunk.referee_name # name is referenced (not true of commented inclusions)
         referee_id = chunk.referee_id   

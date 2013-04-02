@@ -33,8 +33,11 @@ jQuery.fn.extend {
     v
 
   notify: (message) ->
-    notice = @slot().find '.card-notice'
-    return false unless notice[0]
+    slot = @slot()
+    notice = slot.find '.card-notice'
+    unless notice[0]
+      notice = $('<div class="card-notice"></div>')
+      slot.append notice 
     notice.html message
     notice.show 'blind'
 

@@ -27,7 +27,7 @@ module Chunks
       end
       
       @link_text = objectify @link_text
-      if target =~ /[\/:]/
+      if target =~ /\/|mailto:/
         @explicit_link = objectify target
       else
         @name = target

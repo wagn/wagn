@@ -473,13 +473,15 @@ body#wagn .card-slot.recent-changes h2 {
 a.missing-labeled,
 .labeled-view label {
   display: inline-block;
-  min-width: 20%;
+  min-width: 30%;
   text-align: right;
 }
 
 .labeled-view label h1,
 .labeled-view .pointer-list,
-.labeled-view .pointer-item {
+.labeled-view .pointer-item,
+.labeled-view .search-result-list,
+.labeled-view .search-result-item {
   display: inline;
 }
 

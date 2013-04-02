@@ -41,7 +41,6 @@ module Wagn
           #{ _render_header args.merge( :menu_default_hidden=>true ) }
           #{ wrap_content( :titled, :body=>true ) { _render_core args } }
           #{ optional_render :comment_box, args }
-          #{ notice }
         }
       end
     end
@@ -87,7 +86,6 @@ module Wagn
            #{ _render_header args }
            #{ wrap_content( :open, :body=>true ) { _render_open_content args } }
            #{ render_comment_box }
-           #{ notice }
         }
       end
     end
@@ -225,7 +223,6 @@ module Wagn
                 </div>
               </fieldset>
             </div>
-            #{ notice }
           }
         end
       end)
@@ -267,7 +264,6 @@ module Wagn
             end
           end
           }
-          #{ notice }
         }
       end
     end
@@ -390,7 +386,6 @@ module Wagn
               </table>}
             end }
           </div>
-          #{ notice }
         }
       end
     end
@@ -412,7 +407,6 @@ module Wagn
                end
             }
           </div>
-          #{ notice }
         }
       end
     end
@@ -476,7 +470,6 @@ module Wagn
               }
             end
           }
-         #{ notice }
         }
       end
     end

@@ -483,6 +483,7 @@ a.missing-labeled,
 .labeled-view .search-result-list,
 .labeled-view .search-result-item {
   display: inline;
+  font-size: 1em;
 }
 
 

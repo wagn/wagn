@@ -111,7 +111,8 @@ module Wagn
         :structure    => card.hard_template && card.template.ok?(:update) && card.template.name,
         :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :create : :read),
         :piecenames   => card.junction? && card.cardname.piece_names[0..-2].map { |n| { :item=>n } },
-        :related_sets => card.related_sets.map { |name,label| { :text=>label, :path_opts=>{ :current_set => name } } }
+        :related_sets => card.related_sets.map { |name,label| { :text=>label.gsub('%','%%'), :path_opts=>{ :current_set => name } } }
+          #should generalize percent thing.  this is because sprintf is run on all "text" values.
       }
       if card.real?
         @menu_vars.merge!({

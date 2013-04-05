@@ -54,8 +54,6 @@ class CardController < ApplicationController
   end 
 
 
-
-
   ## the following methods need to be merged into #update
 
   def save_draft

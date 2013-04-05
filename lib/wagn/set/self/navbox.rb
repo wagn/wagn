@@ -22,7 +22,7 @@ module Wagn
 
       exact = Card.fetch term, :new=>{}
       goto_cards = Card.search goto_wql(term)
-      goto_cards.unshift term if exact.virtual?
+      goto_cards.unshift exact.name if exact.known? && !goto_cards.map{|n| n.to_name.key}.include?(exact.key) 
 
       JSON({
         :search => true, # card.ok?( :read ),

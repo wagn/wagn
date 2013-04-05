@@ -12,7 +12,13 @@ module Wagn
     end
 
     define_view :raw do |args|
-      scard = args[:structure] ? Card[ args[:structure] ] : card
+#      scard = args[:structure] ? Card[ args[:structure] ] : card
+#      Rails.logger.info "rendering raw for #{card.name}.  #{args[:structure]}  #{args[:structure].class}  "
+      scard = case args[:structure]
+        when nil    ; card
+        when :blank ; nil
+        else        ; Card[ args[:structure] ]
+      end
       scard ? scard.raw_content : _render_blank
     end
     

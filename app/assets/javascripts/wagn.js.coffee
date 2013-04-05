@@ -23,7 +23,7 @@ jQuery.fn.extend {
   setSlotContent: (val) ->
     s = @slot()
     v = $(val)
-    if val[0]
+    if v[0]
       $.each s[0].attributes, (i, att)->
         if att.name.match(/^slot-.*/) && att.value?
           v.attr att.name, att.value

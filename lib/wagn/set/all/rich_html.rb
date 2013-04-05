@@ -35,7 +35,7 @@ module Wagn
       end
     end
 
-    define_view :titled do |args|
+    define_view :titled, :tags=>:comment do |args|
       wrap :titled, args do
         %{
           #{ _render_header args.merge( :menu_default_hidden=>true ) }
@@ -75,7 +75,7 @@ module Wagn
     
   
 
-    define_view :open do |args|
+    define_view :open, :tags=>:comment do |args|
       args[:toggler] = link_to '', path( :view=>:closed ),
         :remote => true,
         :title  => "close #{card.name}",
@@ -85,7 +85,7 @@ module Wagn
         %{
            #{ _render_header args }
            #{ wrap_content( :open, :body=>true ) { _render_open_content args } }
-           #{ render_comment_box }
+           #{ optional_render :comment_box, args }
         }
       end
     end
@@ -109,7 +109,7 @@ module Wagn
         :self         => card.name,
         :type         => card.type_name,
         :structure    => card.hard_template && card.template.ok?(:update) && card.template.name,
-        :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :create : :read),
+        :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read),
         :piecenames   => card.junction? && card.cardname.piece_names[0..-2].map { |n| { :item=>n } },
         :related_sets => card.related_sets.map { |name,label| { :text=>label.gsub('%','%%'), :path_opts=>{ :current_set => name } } }
           #should generalize percent thing.  this is because sprintf is run on all "text" values.
@@ -122,8 +122,7 @@ module Wagn
           :creator   => card.creator.name,
           :updater   => card.updater.name,
           :delete    => card.ok?(:delete) && link_to( 'delete', path(:action=>:delete),
-            :class=>'slotter standard-delete', 
-            :'data-confirm'=> "Are you sure you want to delete #{card.name}?"
+            :class => 'slotter standard-delete', :remote => true, :'data-confirm' => "Are you sure you want to delete #{card.name}?"
           )
 
         })
@@ -163,7 +162,7 @@ module Wagn
     end
   
   
-    define_view( :comment_box, :denial=>:blank, :perms=>lambda { |r| r.card.ok? :comment } ) do |args|
+    define_view( :comment_box, :denial=>:blank, :tags=>:unknown_ok, :perms=>lambda { |r| r.card.ok? :comment } ) do |args|
       
       %{<div class="comment-box nodblclick"> #{
         card_form :comment do |f|
@@ -219,7 +218,7 @@ module Wagn
               <div class="card-editor editor">#{ edit_slot args }</div>
               <fieldset>
                 <div class="button-area">
-                  #{ submit_tag 'Submit', :class=>'create-submit-button' }
+                  #{ submit_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
                   #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
                 </div>
               </fieldset>
@@ -481,13 +480,14 @@ module Wagn
       if rparams = params[:related]
         rcardname = rparams[:name].to_name.to_absolute_name( card.cardname)
         rcard = Card.fetch rcardname, :new=>{}
-        rview = rparams[:view] || :titled
+        rview = rparams[:view] || :titled        
+        show_view = rparams[:name] == '+discussion' ? 'comment_box' : 'menu' #hack
 
         wrap :related, args.merge(:frame=>true) do
           %{
             #{ _render_header }
             <div class="card-body">
-              #{ subrenderer(rcard).render rview, :show=>['menu'] }
+              #{ subrenderer(rcard).render rview, :show=>[show_view] }
             </div>
           
           }

@@ -73,7 +73,7 @@ class CardController < ApplicationController
     author = Account.logged_in? ? "[[#{Account.current.name}]]" :
              "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)"
 
-    card.comment = %{<hr>#{ params[:card][:comment].to_html }<p><em>&nbsp;&nbsp;--#{ author }.....#{Time.now}</em></p>}
+    card.comment = %{#{'<hr>' unless card.content.blank? }#{ params[:card][:comment].to_html }<p><em>&nbsp;&nbsp;--#{ author }.....#{Time.now}</em></p>}
 
     if card.save
       show

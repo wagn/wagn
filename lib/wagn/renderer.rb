@@ -224,26 +224,29 @@ module Wagn
 
         # HANDLE UNKNOWN CARDS ~~~~~~~~~~~~
         when !card.known? && !self.class.tagged( view, :unknown_ok )
-          if focal?
-            if @format==:html && card.ok?(:create) ;  :new # this should use the @ok caching
-            else                                   ;  :not_found
-            end
-          else                                     ;  :missing
+    
+          case
+          when @format==:html && focal? && ok?( :create )
+            :new
+          when @format==:html && comment_box?( view, args ) && ok?( :comment )
+            args[:structure] = :blank
+            args[:menu_default_hidden] = true
+            view
+          when focal?
+            :not_found
+          else
+            :missing
           end
 
         # CHECK PERMISSIONS  ~~~~~~~~~~~~~~~~
         else
           perms_required = @@perms[view] || :read
-          if Proc === perms_required
-            args[:denied_task] = :read if !(perms_required.call self)  # read isn't quite right
-          else
-            args[:denied_task] = [perms_required].flatten.find do |task|
-              task = :create if task == :update && card.new_card?
-              @ok ||= {}
-              @ok[task] = card.ok? task if @ok[task].nil?
-              !@ok[task]
+          args[:denied_task] =
+            if Proc === perms_required
+              :read if !(perms_required.call self)  # read isn't quite right
+            else
+              [perms_required].flatten.find { |task| !ok? task }
             end
-          end
           args[:denied_task] ? (@@denial_views[view] || :denial) : view
         end
 
@@ -255,6 +258,17 @@ module Wagn
       end
       #warn "ok_view[#{original_view}] #{view}, #{args.inspect}, Cd:#{card.inspect}" #{caller[0..20]*"\n"}"
       view
+    end
+    
+    def ok? task
+      task = :create if task == :update && card.new_card?
+      @ok ||= {}
+      @ok[task] = card.ok? task if @ok[task].nil?
+      @ok[task]
+    end
+    
+    def comment_box? view, args
+      self.class.tagged view, :comment and [args[:show]].flatten.member? 'comment_box'
     end
 
     def canonicalize_view view

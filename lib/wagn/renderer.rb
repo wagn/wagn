@@ -140,7 +140,7 @@ module Wagn
 
     def optional_render view, args, default_hidden=false
       test = default_hidden ? :show : :hide
-      override = args[test] && [args[test]].flatten.member?(view.to_s)
+      override = args[test] && args[test].split(/[\s\,]+/).member?( view.to_s )
       return nil if default_hidden ? !override : override
       render view, args
     end
@@ -266,7 +266,7 @@ module Wagn
     end
     
     def comment_box? view, args
-      self.class.tagged view, :comment and [args[:show]].flatten.member? 'comment_box'
+      self.class.tagged view, :comment and args[:show] =~ /comment_box/
     end
 
     def canonicalize_view view

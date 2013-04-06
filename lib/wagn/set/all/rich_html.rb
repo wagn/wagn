@@ -481,8 +481,8 @@ module Wagn
         rcardname = rparams[:name].to_name.to_absolute_name( card.cardname)
         rcard = Card.fetch rcardname, :new=>{}
         rview = rparams[:view] || :titled        
-        show = [ 'menu' ]
-        show << 'comment_box' if rparams[:name] == '+discussion'
+        show = 'menu'
+        show += ',comment_box' if rparams[:name] == '+discussion'
 
         wrap :related, args.merge(:frame=>true) do
           %{

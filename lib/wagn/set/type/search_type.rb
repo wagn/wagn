@@ -71,7 +71,7 @@ module Wagn
         set_search_vars args        
         @search[:item] = :link unless @search[:item] == :name  #FIXME - probably want other way to specify closed_view ok...
         
-        _render_core args.merge( :hide=>['paging'] )
+        _render_core args.merge( :hide=>'paging' )
       end
     end
 

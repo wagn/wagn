@@ -58,10 +58,6 @@ td, th {
   vertical-align: top;
   padding: 0px;
 }
-.table-row-odd {
-  background: #cce;
-}
-
 
 /*---- headers --------*/
 input[type=text],

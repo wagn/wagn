@@ -229,8 +229,6 @@ module Wagn
           when @format==:html && focal? && ok?( :create )
             :new
           when @format==:html && comment_box?( view, args ) && ok?( :comment )
-            args[:structure] = :blank
-            args[:menu_default_hidden] = true
             view
           when focal?
             :not_found

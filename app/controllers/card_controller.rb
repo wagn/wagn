@@ -76,7 +76,7 @@ class CardController < ApplicationController
     card.comment = %{#{'<hr>' unless card.content.blank? }#{ params[:card][:comment].to_html }<p><em>&nbsp;&nbsp;--#{ author }.....#{Time.now}</em></p>}
 
     if card.save
-      show
+      success
     else
       render_errors
     end

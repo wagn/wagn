@@ -100,7 +100,7 @@ module Wagn
       }
     end
   
-    define_view :menu do |args|
+    define_view :menu, :tags=>:unknown_ok do |args|
       disc_card = unless card.junction? && card.cardname.tag_name.key == 'discussion'
         Card.fetch "#{card.name}+discussion", :skip_virtual=>true, :skip_modules=>true, :new=>{}
       end
@@ -481,15 +481,15 @@ module Wagn
         rcardname = rparams[:name].to_name.to_absolute_name( card.cardname)
         rcard = Card.fetch rcardname, :new=>{}
         rview = rparams[:view] || :titled        
-        show_view = rparams[:name] == '+discussion' ? 'comment_box' : 'menu' #hack
+        show = [ 'menu' ]
+        show << 'comment_box' if rparams[:name] == '+discussion'
 
         wrap :related, args.merge(:frame=>true) do
           %{
             #{ _render_header }
             <div class="card-body">
-              #{ subrenderer(rcard).render rview, :show=>[show_view] }
+              #{ process_inclusion rcard, :view=>rview, :show=>show }
             </div>
-          
           }
         end
       end

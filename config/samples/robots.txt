@@ -9,3 +9,4 @@ Crawl-delay: 3
 Disallow: /card/
 Disallow: /admin/
 Disallow: /account/
+Disallow: *?*

@@ -32,6 +32,6 @@ describe Card, "comment addition" do
       @c.comment = " and more\n  \nsome lines\n\n"
       @c.save!
     end
-    Card["basicname"].content.should == "basiccontent and more\n  \nsome lines\n\n"
+    Card["basicname"].content.should =~ /\<p\>some lines\<\/p\>/
   end
 end

@@ -165,7 +165,7 @@ module Wagn
     define_view( :comment_box, :denial=>:blank, :tags=>:unknown_ok, :perms=>lambda { |r| r.card.ok? :comment } ) do |args|
       
       %{<div class="comment-box nodblclick"> #{
-        card_form :comment do |f|
+        card_form :update do |f|
           %{#{f.text_area :comment, :rows=>3 }<br/> #{
           unless Account.logged_in?
             card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH

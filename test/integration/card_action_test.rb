@@ -34,8 +34,8 @@ class CardActionTest < ActionController::IntegrationTest
     Account.as_bot  do
       Card.create :name=>'A+*self+*comment', :type=>'Pointer', :content=>'[[Anyone]]'
     end
-    post "card/comment/A", :card => { :comment=>"how come" }
-    assert_response :success
+    post "card/update/A", :card => { :comment=>"how come" }
+    assert_response 302
   end
 
   def test_create_role_card

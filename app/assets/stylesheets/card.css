@@ -637,22 +637,27 @@ h2.set-label {
 }
 .perm-section h5 {
   margin: 0 0 10px 0;
-  
 }
 
 
-/*---------- comment-box -------------------------------------- */
+/*---------- comments -------------------------------------- */
 .comment-box textarea {
-    margin-bottom:5px;
+  margin-bottom:5px;
 }
 .comment-box input {
   padding: 0px;
   font-size: 12px;
 }
 .comment-box {
-    padding: 8px;
-    margin: 0px;
+  padding: 8px;
+  margin: 0px;
 }
+.w-comment-author {
+  font-style: italic;
+  margin-left: 10px;
+}
+
+/*--------------*/
 .ui-icon {
   background-image: url('images/ui-icons_454545_256x240.png')
 }

@@ -105,7 +105,21 @@ module Cardlib::TrackedAttributes
 
   def set_comment new_comment
     #seems hacky to do this as tracked attribute.  following complexity comes from set_content complexity.  sigh.
-    commented = content + new_comment  
+    
+    commented = %{
+      #{ content }
+      #{ '<hr>' unless content.blank? }
+      #{ new_comment.to_html }
+      <div class="w-comment-author">--#{
+        if Account.logged_in?
+          "[[#{Account.current.name}]]"
+        else
+          Wagn::Conf[:controller].session[:comment_author] = comment_author if Wagn::Conf[:controller]
+          "#{ comment_author } (Not signed in)"
+        end
+      }.....#{Time.now}</div>
+    }
+    
     if new_card?
       self.content = commented
     else

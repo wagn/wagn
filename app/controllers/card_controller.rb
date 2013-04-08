@@ -10,7 +10,7 @@ class CardController < ApplicationController
 
   before_filter :load_id, :only => [ :read ]
   before_filter :load_card
-  before_filter :refresh_card, :only=> [ :create, :update, :delete, :comment, :rollback ]
+  before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
 
   def create
     if card.save
@@ -64,23 +64,6 @@ class CardController < ApplicationController
     end
   end
 
-  def comment
-    raise Wagn::BadAddress, "comment without card" unless params[:card]
-    # this previously failed unless request.post?, but it is now (properly) a PUT.
-    # if we enforce RESTful http methods, we should do it consistently,
-    # and error should be 405 Method Not Allowed
-
-    author = Account.logged_in? ? "[[#{Account.current.name}]]" :
-             "#{session[:comment_author] = params[:card][:comment_author]} (Not signed in)"
-
-    card.comment = %{#{'<hr>' unless card.content.blank? }#{ params[:card][:comment].to_html }<p><em>&nbsp;&nbsp;--#{ author }.....#{Time.now}</em></p>}
-
-    if card.save
-      success
-    else
-      render_errors
-    end
-  end
 
   def rollback
     revision = card.revisions[params[:rev].to_i - 1]

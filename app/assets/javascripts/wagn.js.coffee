@@ -248,6 +248,12 @@ $(window).ready ->
         inst.html '"<a href="' + wagn.rootPath + '/' + data['url_key'] + '">' + name + '</a>" ' + qualifier + ' use'
       else
         inst.html ''
+        
+  $('.render-error-link').live 'click', (event) ->
+    msg = $(this).closest('.render-error').find '.render-error-message'
+    msg.show()
+#    msg.dialog()
+    event.preventDefault()
 
 newCaptcha = (form)->
   recapUri = 'http://www.google.com/recaptcha/api/js/recaptcha_ajax.js'

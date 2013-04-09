@@ -225,7 +225,25 @@ module Wagn
     end
 
     def rendering_error exception, view
-      %{<span class="render-error">error rendering #{link_to_page(error_cardname, nil, :title=>CGI.escapeHTML(exception.message))} (#{view} view)</span>}
+      %{
+        <span class="render-error">
+          error rendering
+          #{
+            if Account.always_ok?
+              %{
+                #{ link_to_page error_cardname, nil, :class=>'render-error-link' }
+                <div class="render-error-message errors-view" style="display:none">
+                  <h3>Error message (visible to admin only)</h3>
+                  #{ exception.message.to_html }
+                </div>
+              }
+            else
+              error_cardname
+            end
+          }
+          (#{view} view)
+        </span>
+      }
     end
     
     def unknown_view view

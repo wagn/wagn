@@ -5,6 +5,8 @@ class CardMigrationGenerator < ActiveRecord::Generators::Base
   argument :card_list, :type => :string, :default => nil
 
   def create_migration_file
+    fail "deprecated!!!"
+    
     unless @card_list
       say_status "Failure", "no card_list file specified; see rails g card_migration --help", :red
       return false

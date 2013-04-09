@@ -17,4 +17,14 @@ module WagnMigrationHelper
       card.save!
     end    
   end
+  
+  def contentedly &block
+    ar_suffix = ActiveRecord::Base.table_name_suffix
+    ActiveRecord::Base.table_name_suffix = ''
+    Account.as_bot do
+      yield
+    end
+    ActiveRecord::Base.table_name_suffix = ar_suffix
+  end
+  
 end

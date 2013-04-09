@@ -1,4 +1,29 @@
 namespace :wagn do
+  desc "create a wagn database from scratch"
+  task :create do
+    puts "dropping"
+    begin
+      Rake::Task['db:drop'].invoke
+    rescue
+      puts "not dropped"
+    end
+
+    puts "creating"
+    Rake::Task['db:create'].invoke
+
+    puts "loading schema"
+    Rake::Task['db:schema:load'].invoke
+
+    if Rails.env == 'test'
+      puts "loading test fixtures"
+      Rake::Task['db:fixtures:load'].invoke
+    else
+      puts "loading bootstrap"
+      Rake::Task['wagn:bootstrap:load'].invoke
+    end
+  end
+  
+  
   desc "install wagn configuration files"
   task :install do
     require 'erb'
@@ -24,22 +49,20 @@ namespace :wagn do
     File.open File.join(config_dir, 'database.yml'), 'w' do |file|
       file.write ERB.new(dbfile).result(binding)
     end
-
-=begin
-#  can't do this.  rake requires bundle!
-
-    bundle_config = "BUNDLE_WITHOUT: "
-    bundle_config << ( @engine==:mysql ? 'postgres' : 'mysql' )
-    bundle_config << ":memcache:test:debug:development:assets\n" unless @mode==:dev
-
-    File.open File.join(rails_root, '.bundle/config'), 'w' do |file|
-      file.write bundle_config
-      puts ""
-    end
-=end
   end
 
+  desc "migrate content"
+  task :migrate_content => :environment do
+    rpaths = Rails.application.paths
+    rpaths.add 'db/migrate_content'
+    paths = ActiveRecord::Migrator.migrations_paths = rpaths['db/migrate_content'].to_a
+    
+    ActiveRecord::Base.table_name_suffix = '_content'
+    ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
+    ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+  end
 
+  desc "copy over .htaccess files useful in production mode"
   task :copy_htaccess do
     access_file = File.join(Rails.root, 'config/samples/asset_htaccess')
 

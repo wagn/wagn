@@ -1,12 +1,14 @@
 # -*- encoding : utf-8 -*-
 
 class ApplicationController < ActionController::Base
+
   include Wagn::Exceptions
 
   include AuthenticatedSystem
   include LocationHelper
   include Recaptcha::Verify
   include ActionView::Helpers::SanitizeHelper
+
 
   helper :all
   before_filter :per_request_setup, :except=>[:fast_404]
@@ -21,7 +23,6 @@ class ApplicationController < ActionController::Base
   end
 
   protected
-
   def per_request_setup
 #    ActiveSupport::Notifications.instrument 'wagn.per_request_setup', :message=>"" do
       request.format = :html if !params[:format] #is this used??
@@ -32,11 +33,11 @@ class ApplicationController < ActionController::Base
       Wagn::Conf[:main_name] = nil
       Wagn::Conf[:controller] = self
 
-      Wagn::Renderer.ajax_call = ajax?
-      Wagn::Renderer.current_slot = nil
-
       Wagn::Cache.renew
       Card.clear_rule_cache local_only=true
+
+      Wagn::Renderer.ajax_call = ajax?
+      Wagn::Renderer.current_slot = nil
 
       #warn "set curent_user (app-cont) #{self.current_account_id}, U.cu:#{Account.current_id}"
       Account.current_id = self.current_account_id || Card::AnonID
@@ -168,7 +169,6 @@ class ApplicationController < ActionController::Base
 
     show view, status
   end
-
 end
 
 

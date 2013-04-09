@@ -95,16 +95,18 @@ module Wagn
       end
 
       def setting_codes_by_group
-        is_pointer = Card::PointerID == (
-          if templt = fetch(:trait=>:content) || fetch(:trait=>:default)
-            templt.type_id
-          elsif right_id == Card::TypeID
-            left_id
-          else
-            trunk(:new=>{}).type_id
-          end
-        )
+#        is_pointer = Card::PointerID == (
+#          if templt = fetch(:trait=>:content) || fetch(:trait=>:default)
+#            templt.type_id
+#          elsif right_id == Card::TypeID
+#            left_id
+#          else
+#            trunk(:new=>{}).type_id
+#          end
+#        )
+        is_pointer = prototype.type_id == Card::PointerID
         Setting::SETTING_GROUPS.reject { |k,v| !is_pointer && k == Setting::POINTER_KEY }
+#        Setting::SETTING_GROUPS
       end
 
       def prototype

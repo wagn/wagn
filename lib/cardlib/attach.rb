@@ -39,7 +39,7 @@ module Cardlib::Attach
     when Card::FileID
       nil
     when Card::ImageID
-      if style.nil? || style.to_sym == :full
+      if style.nil? || style.to_s == 'full'
         :original
       else
         style

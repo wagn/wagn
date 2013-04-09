@@ -99,7 +99,7 @@ module Wagn
       #
 
       def format fmt=nil
-        Renderer.renderer = if fmt.nil? || fmt == :base then Renderer else Renderer.get_renderer fmt end
+        Renderer.current_class = if fmt.nil? || fmt == :base then Renderer else Renderer.get_renderer fmt end
       end
 
       def define_view view, opts={}, &final
@@ -115,12 +115,12 @@ module Wagn
 
         view_key = get_set_key view, opts
         #warn "defining view method[#{Renderer.renderer}] _final_#{view_key}"
-        Renderer.renderer.class_eval { define_method "_final_#{view_key}", &final }
+        Renderer.current_class.class_eval { define_method "_final_#{view_key}", &final }
         Renderer.subset_views[view] = true if !opts.empty?
 
         if !method_defined? "render_#{view}"
           #warn "defining view method[#{Renderer.renderer}] _render_#{view}"
-          Renderer.renderer.class_eval do
+          Renderer.current_class.class_eval do
             define_method "_render_#{view}" do |*a|
               begin
                 a = [{}] if a.empty?
@@ -139,7 +139,7 @@ module Wagn
           end
 
           #Rails.logger.warn "define_method render_#{view}"
-          Renderer.renderer.class_eval do
+          Renderer.current_class.class_eval do
             define_method "render_#{view}" do |*a|
               send "_render_#{ ok_view view, *a }", *a
             end
@@ -169,7 +169,7 @@ module Wagn
             end
 
           #Rails.logger.info( warn "def view final_alias #{alias_view_key}, #{view_key}" )
-          Renderer.renderer.class_eval do
+          Renderer.current_class.class_eval do
             define_method "_final_#{alias_view_key}".to_sym do |*a|
               send "_final_#{view_key}", *a
             end

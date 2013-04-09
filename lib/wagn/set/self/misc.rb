@@ -10,10 +10,10 @@ module Wagn
     alias_view(:raw, {:name=>'now'}, :core)
 
 
-    define_view :raw, :name=>'version' do |args|
+    define_view :raw, :name=>:version do |args|
       Wagn::Version.full
     end
-    alias_view(:raw, {:name=>'version'}, :core)
+    alias_view(:raw, {:name=>:version}, :core)
 
 
     define_view :raw, :name=>'alerts' do |args|

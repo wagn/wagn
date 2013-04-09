@@ -59,8 +59,8 @@ class Card < ActiveRecord::Base
       else
         super
       end
-    rescue NameError
-      warn "ne: const_miss #{e.inspect}, #{const}" if const.to_sym==:Card
+#    rescue NameError
+#      warn "ne: const_miss #{e.inspect}, #{const}" #if const.to_sym==:Card
     end
 
     def setting name

@@ -124,7 +124,6 @@ module Wagn
           :delete    => card.ok?(:delete) && link_to( 'delete', path(:action=>:delete),
             :class => 'slotter standard-delete', :remote => true, :'data-confirm' => "Are you sure you want to delete #{card.name}?"
           )
-
         })
       end
     

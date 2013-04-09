@@ -133,14 +133,14 @@ module Wagn
     def get_layout_content(args)
       Account.as_bot do
         case
-          when (params[:layout] || args[:layout]) ;  layout_from_name
+          when (params[:layout] || args[:layout]) ;  layout_from_name args
           when card                               ;  layout_from_card
           else                                    ;  LAYOUTS['default']
         end
       end
     end
 
-    def layout_from_name
+    def layout_from_name args
       lname = (params[:layout] || args[:layout]).to_s
       lcard = Card.fetch(lname, :skip_virtual=>true, :skip_modules=>true)
       case

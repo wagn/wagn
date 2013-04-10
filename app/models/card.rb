@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency 'smart_name'
+require 'smart_name'
 
 class Card < ActiveRecord::Base
 
@@ -28,6 +28,13 @@ class Card < ActiveRecord::Base
   class << self
     JUNK_INIT_ARGS = %w{ missing skip_virtual id }
 
+    ID_CONST_ALIAS = {
+      :default_type => :basic, #this should not be hardcoded (not a constant -- should come from *all+*default)
+      :anon         => :anonymous,
+      :auth         => :anyone_signed_in,
+      :admin        => :administrator
+    }
+
     def cache
       Wagn::Cache[Card]
     end
@@ -37,16 +44,8 @@ class Card < ActiveRecord::Base
       JUNK_INIT_ARGS.each { |a| args.delete(a) }
       %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
       args.delete('content') if args['attach'] # should not be handled here!
-
       super args
     end
-
-    ID_CONST_ALIAS = {
-      :default_type => :basic, #this should not be hardcoded (not a constant -- should come from *all+*default)
-      :anon         => :anonymous,
-      :auth         => :anyone_signed_in,
-      :admin        => :administrator
-    }
 
     def const_missing const
       if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore.to_sym
@@ -77,6 +76,13 @@ class Card < ActiveRecord::Base
 
     def toggle val
       val == '1'
+    end
+    
+    def empty_trash
+      Card.where(:trash=>true).delete_all
+      User.delete_cardless
+      Card::Revision.delete_cardless
+      Card::Reference.repair_missing_referees
     end
   end
 
@@ -587,6 +593,7 @@ class Card < ActiveRecord::Base
   # INCLUDED MODULES
 
   include Cardlib
+    
 
   after_save :after_save_hooks
   # moved this after Cardlib inclusions because aikido module needs to come after Paperclip triggers,

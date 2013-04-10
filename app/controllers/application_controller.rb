@@ -34,7 +34,6 @@ class ApplicationController < ActionController::Base
       Wagn::Conf[:controller] = self
 
       Wagn::Cache.renew
-      Card.clear_rule_cache local_only=true
 
       Wagn::Renderer.ajax_call = ajax?
       Wagn::Renderer.current_slot = nil

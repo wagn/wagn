@@ -20,7 +20,7 @@ div_id = "main-body"
   <style> .fieldset td.help { width: 30% ;} </style>
 
 
-  <%= form_for :email, :action=>@action do |f| %>
+  <%= form_for :email, :action=>params[:action] do |f| %>
 
     <%= hidden_field_tag 'element', "#{div_id}"  %>
 

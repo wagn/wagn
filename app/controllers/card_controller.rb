@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency 'cardlib'
+#require_dependency 'cardlib'
 
 class CardController < ApplicationController
 
@@ -175,7 +175,7 @@ class CardController < ApplicationController
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
         name = params[:id] || opts[:name]
         
-        if @action == 'create'
+        if params[:action] == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
           # I think we may need to create a "#create" instance method that handles this checking.
           # that would let us get rid of this...

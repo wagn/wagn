@@ -1,6 +1,4 @@
 # -*- encoding : utf-8 -*-
-#
-class InvitationError < StandardError; end
 
 class AccountController < CardController
 

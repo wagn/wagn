@@ -1,10 +1,4 @@
-
 require_dependency 'chunks/chunk'
-require_dependency 'chunks/uri'
-require_dependency 'chunks/literal'
-require_dependency 'chunks/reference'
-require_dependency 'chunks/link'
-require_dependency 'chunks/include'
 
 class ObjectContent < SimpleDelegator
 

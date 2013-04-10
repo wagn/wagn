@@ -1,7 +1,10 @@
 
+
 module Wagn
   class Renderer
 
+    include LocationHelper
+    
     cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :current_class
     @@current_class = Renderer
 
@@ -24,22 +27,14 @@ module Wagn
     @@error_codes    = {}
     @@view_tags      = {}
 
-    def self.get_renderer format
-      const_get( ( RENDERERS[ format ] || format.to_s.camelize.to_sym ) )
-    end
-
     attr_reader :format, :card, :root, :parent
     attr_accessor :form, :main_content, :error_status
 
-    Card::Reference
-    Card
-    include LocationHelper
-
-  end
-
-  class Renderer
-
     class << self
+
+      def get_renderer format
+        const_get( RENDERERS[ format ] || format.to_s.camelize.to_sym )
+      end
 
       def new card, opts={}
         format = ( opts[:format].send_if :to_sym ) || :html

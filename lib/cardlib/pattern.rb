@@ -122,11 +122,12 @@ module Cardlib
         end
 
         def register key, opts={}
-          Cardlib::Pattern.register_class self, opts.delete(:index)
-          self.key = key
-          self.key_id = Wagn::Codename[key]
-          self.opt_keys = opts.delete(:opt_keys) || [ key.to_sym ]
-          opts.each { |key, val| send "#{key}=", val }
+          if self.key_id = Wagn::Codename[key]          
+            self.key = key
+            Cardlib::Pattern.register_class self, opts.delete(:index)
+            self.opt_keys = opts.delete(:opt_keys) || [ key.to_sym ]
+            opts.each { |key, val| send "#{key}=", val }
+          end
         end
 
         def method_key_from_opts opts

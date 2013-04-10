@@ -30,17 +30,7 @@ unless Rake::TaskManager.methods.include?(:redefine_task)
 end
 
 namespace :db do
-  namespace :test do
-    desc 'Prepare the test database and load the schema'
-    Rake::Task.redefine_task( :prepare => :environment ) do
-      if ENV['RELOAD_TEST_DATA'] == 'true' || ENV['RUN_CODE_RUN']
-        puts `env RAILS_ENV=test rake wagn:create`
-      else
-        puts "skipping loading test data.  to force, run  env RELOAD_TEST_DATA=true rake db:test:prepare"
-      end
-    end
-  end
-
+  
   desc 'Run migrations and then write the version to a file'
   task :migrate_and_stamp => :environment do
     Rake::Task['db:migrate'].invoke
@@ -51,5 +41,27 @@ namespace :db do
       file.puts version
     end
     Wagn::Cache.reset_global
+  end
+  
+  namespace :fixtures do
+    desc "Load fixtures into the current environment's database.  Load specific fixtures using FIXTURES=x,y"
+    task :load => :environment do
+      require 'active_record/fixtures'
+      ActiveRecord::Base.establish_connection(::Rails.env.to_sym)
+      (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : Dir.glob(File.join(Rails.root.to_s, 'test', 'fixtures', '*.{yml,csv}'))).each do |fixture_file|
+        ActiveRecord::Fixtures.create_fixtures('test/fixtures', File.basename(fixture_file, '.*'))
+      end
+    end
+  end
+  
+  namespace :test do
+    desc 'Prepare the test database and load the schema'
+    Rake::Task.redefine_task( :prepare => :environment ) do
+      if ENV['RELOAD_TEST_DATA'] == 'true' || ENV['RUN_CODE_RUN']
+        puts `env RAILS_ENV=test rake wagn:create`
+      else
+        puts "skipping loading test data.  to force, run  env RELOAD_TEST_DATA=true rake db:test:prepare"
+      end
+    end
   end
 end

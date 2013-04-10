@@ -7,32 +7,26 @@ def set_database( db )
   end
 end
 
-# desc 'Check for pending migrations and load the test schema'
-# task :prepare => 'db:abort_if_pending_migrations' do
-#   if defined?(ActiveRecord) && !ActiveRecord::Base.configurations.blank?
-#     Rake::Task[{ :sql  => "db:test:clone_structure", :ruby => "db:test:load" }[ActiveRecord::Base.schema_format]].invoke
-#   end
-# end
 
-namespace :db do
-  namespace :fixtures do
-    desc "Load fixtures into the current environment's database.  Load specific fixtures using FIXTURES=x,y"
-    task :load => :environment do
-      require 'active_record/fixtures'
-      ActiveRecord::Base.establish_connection(::Rails.env.to_sym)
-      (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : Dir.glob(File.join(Rails.root.to_s, 'test', 'fixtures', '*.{yml,csv}'))).each do |fixture_file|
-        ActiveRecord::Fixtures.create_fixtures('test/fixtures', File.basename(fixture_file, '.*'))
-      end
-    end
-  end
-end
 
 namespace :test do
+  task :all => :environment do
+    puts 'This is not yet working; only first invocation takes effect'
+    Rake::Task['test:functionals'].invoke
+    puts 'put 2'
+    Rake::Task['test:functionals'].invoke
+    puts 'put 3'
+    
+    #    Rake::Task['test'].invoke
+    #    Rake::Task['spec'].invoke
+    #    Rake::Task['cucumber'].invoke
+  end
+  
   ## FIXME: this generates an "Adminstrator links" card with the wrong reader_id, I have been
   ##  setting it by hand after fixture generation.
   desc "recreate test fixtures from fresh db"
   task :generate_fixtures => :environment do
-    Rake::Task['cache:clear']
+    Rake::Task['wagn:clear_cache']
     # env gets auto-set to 'test' somehow.
     # but we need development to get the right schema dumped.
     ENV['RAILS_ENV'] = 'development'
@@ -67,7 +61,7 @@ namespace :test do
 
   desc "dump current db to test fixtures"
   task :extract_fixtures => :environment do
-     YAML::ENGINE.yamler = 'syck'
+    YAML::ENGINE.yamler = 'syck'
       # use old engine while we're supporting ruby 1.8.7 because it can't support Psych,
       # which dumps with slashes that syck can't understand (also !!null stuff)
 

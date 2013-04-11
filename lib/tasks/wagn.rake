@@ -55,6 +55,7 @@ namespace :wagn do
 
   desc "migrate structure and cards"
   task :migrate =>:environment do
+    Wagn::Conf[:migration] = true
     stamp = ENV['STAMP_MIGRATIONS']
 
     puts 'migrating structure'
@@ -76,6 +77,8 @@ namespace :wagn do
 
     desc "migrate cards"
     task :cards => :environment do
+      Wagn::Conf[:migration] = true
+      
       rpaths = Rails.application.paths
       rpaths.add 'db/migrate_cards'
       paths = ActiveRecord::Migrator.migrations_paths = rpaths['db/migrate_cards'].to_a
@@ -85,8 +88,10 @@ namespace :wagn do
       ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
     end
   
-    desc 'Run migrations and then write the version to a file'
+    desc 'write the version to a file (not usually called directly)' #maybe we should move this to a method? 
     task :stamp, :suffix do |t, args|
+      Wagn::Conf[:migration] = true
+      
       ActiveRecord::Base.table_name_suffix = args[:suffix]
       stamp_dir = Wagn::Application.config.paths['config/database'].first.sub /[^\/]*$/, ''
       stamp_file = stamp_dir + "version#{ args[:suffix] }.txt"      

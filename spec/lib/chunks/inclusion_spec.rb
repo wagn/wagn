@@ -40,7 +40,7 @@ describe Chunks::Include, "include chunk tests" do
      template = Card['*template']
      specialtype = Card.create :typecode=>'Cardtype', :name=>'SpecialType'
 
-     specialtype_template = specialtype.fetch(:trait=>:type,:new=>{}).fetch(:trait=>:content,:new=>{})
+     specialtype_template = specialtype.fetch(:trait=>:type,:new=>{}).fetch(:trait=>:structure,:new=>{})
      specialtype_template.content = "{{#{SmartName.joint}age}}"
      Account.as_bot { specialtype_template.save! }
      assert_equal "{{#{SmartName.joint}age}}", Wagn::Renderer.new(specialtype_template).render_raw

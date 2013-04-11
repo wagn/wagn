@@ -332,7 +332,7 @@ describe Wagn::Renderer, "" do
       Card.create! :name => "n+a", :type=>"Number", :content=>"10"
       Card.create! :name => "n+b", :type=>"Phrase", :content=>"say:\"what\""
       Card.create! :name => "n+c", :type=>"Number", :content=>"30"
-      c = Card.new :name => 'nplusarray', :content => "{{n+*plus cards+by create|array}}"
+      c = Card.new :name => 'nplusarray', :content => "{{n+*children+by create|array}}"
       Wagn::Renderer.new(c)._render( :core ).should == %{["10", "say:\\"what\\"", "30"]}
     end
 
@@ -381,7 +381,7 @@ describe Wagn::Renderer, "" do
         mock(card).rule_card(:thanks, {:skip_modules=>true}).returns(nil)
         mock(card).rule_card(:autoname).returns(nil)
         mock(card).rule_card(:default,  {:skip_modules=>true}   ).returns(Card['*all+*default'])
-        mock(card).rule_card(:add_help, {:fallback=>:edit_help} ).returns(help_card)
+        mock(card).rule_card(:add_help, {:fallback=>:help} ).returns(help_card)
         rendered = Wagn::Renderer::Html.new(card).render_new
         #warn "rendered = #{rendered}"
         assert_view_select rendered, 'fieldset' do

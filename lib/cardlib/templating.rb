@@ -1,11 +1,11 @@
 module Cardlib::Templating
 
   def is_template?
-    cardname.trait_name? :content, :default
+    cardname.trait_name? :structure, :default
   end
   
   def is_hard_template?
-    cardname.trait_name? :content
+    cardname.trait_name? :structure
   end
 
   def template
@@ -52,7 +52,7 @@ module Cardlib::Templating
   end
 
   def content_rule_card
-    card = rule_card :content, :skip_modules=>true
+    card = rule_card :structure, :skip_modules=>true
     card && card.content.strip == '_self' ? nil : card
   end
 

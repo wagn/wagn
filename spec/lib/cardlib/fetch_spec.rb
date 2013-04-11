@@ -105,7 +105,7 @@ describe Card do
         c2=Card.create!(:name => "a+y", :content => "DB Content")
         card = Card.fetch("a+y")
         card.virtual?.should be_false
-        card.rule(:content).should == "Formatted Content"
+        card.rule(:structure).should == "Formatted Content"
         card.content.should == "DB Content"
       end
 

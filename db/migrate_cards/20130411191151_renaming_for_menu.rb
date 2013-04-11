@@ -6,6 +6,8 @@ class RenamingForMenu < ActiveRecord::Migration
   def up
     contentedly do
       renames = {
+        '*content'    => '*structure',
+        '*edit help'  => '*help',
         '*links'      => '*links to',
         '*inclusions' => '*includes',
         '*linkers'    => '*linked to by',
@@ -13,7 +15,6 @@ class RenamingForMenu < ActiveRecord::Migration
         '*plus cards' => '*children',
         '*plus parts' => '*mates',
         '*editing'    => '*edited',
-        '*edit help'  => '*help',
       }
       renames.each do |oldname, newname|
         c = Card[oldname]

@@ -101,6 +101,7 @@ module Wagn
     end
   
     define_view :menu, :tags=>:unknown_ok do |args|
+      #fixme use codename!
       disc_card = unless card.junction? && card.cardname.tag_name.key == 'discussion'
         Card.fetch "#{card.name}+discussion", :skip_virtual=>true, :skip_modules=>true, :new=>{}
       end
@@ -201,7 +202,7 @@ module Wagn
         card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
           @form = form
           %{
-            #{ help_text :add_help, :fallback=>:edit_help }
+            #{ help_text :add_help, :fallback=>:help }
             <div class="card-header">
               #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
               #{
@@ -247,7 +248,7 @@ module Wagn
     define_view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
       wrap :edit, args.merge(:frame=>true) do
         %{
-          #{ help_text :edit_help }
+          #{ help_text :help }
           #{_render_header }
           #{ wrap_content :edit, :body=>true, :class=>'card-editor' do
             card_form :update, 'card-form card-edit-form autosave' do |f|
@@ -356,10 +357,10 @@ module Wagn
       opts = { :attribs => { :class=> "card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" } }
       if card.new_card?
         content += raw( "\n #{ eform.hidden_field :type_id }" )
-        opts[:help] = [:add_help, { :fallback => :edit_help } ]
+        opts[:help] = [:add_help, { :fallback => :help } ]
       else
         opts[:attribs].merge! :card_id=>card.id, :card_name=>(h card.name)
-        opts[:help] = :edit_help
+        opts[:help] = :help
       end
       fieldset fancy_title, content, opts
     end

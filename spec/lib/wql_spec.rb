@@ -2,7 +2,7 @@ require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
 A_JOINEES = ["B", "C", "D", "E", "F"]
 
-CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User","*plusses+*right+*structure"].sort
+CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User"].sort
 
 describe Wql do
   before do
@@ -229,11 +229,6 @@ describe Wql do
 
   end
 
-  #describe "group tagging" do
-  #  it "should find frequent taggers of cardtype cards" do
-  #    Wql.new( :group_tagging=>'Cardtype' ).run.map(&:name).sort().should == ["*related", "*tform"].sort()
-  #  end
-  #end
 
   describe "trash handling" do
     it "should not find cards in the trash" do
@@ -316,7 +311,7 @@ describe Wql do
     end
 
     it "should get only content when content is explicit" do
-      Wql.new( :content=>[:match, "two"] ).run.map(&:name).sort.should==["Joe User",'*plusses+*right+*structure'].sort
+      Wql.new( :content=>[:match, "two"] ).run.map(&:name).sort.should==["Joe User"]
     end
 
     it "should get only name when name is explicit" do

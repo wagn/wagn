@@ -15,19 +15,19 @@ describe Card do
   describe "#settings" do
     it "retrieves Set based value" do
       Card.create :name => "Book+*type+*add help", :content => "authorize"
-      Card.new( :type => "Book" ).rule(:add_help, :fallback=>:edit_help).should == "authorize"
+      Card.new( :type => "Book" ).rule(:add_help, :fallback=>:help).should == "authorize"
     end
 
     it "retrieves default values" do
       #Card.create :name => "all Basic cards", :type => "Set", :content => "{\"type\": \"Basic\"}"  #defaults should work when other Sets are present
       assert c=Card.create(:name => "*all+*add help", :content => "lobotomize")
-      Card.default_rule(:add_help, :fallback=>:edit_help).should == "lobotomize"
-      Card.new( :type => "Basic" ).rule(:add_help, :fallback=>:edit_help).should == "lobotomize"
+      Card.default_rule(:add_help, :fallback=>:help).should == "lobotomize"
+      Card.new( :type => "Basic" ).rule(:add_help, :fallback=>:help).should == "lobotomize"
     end
 
     it "retrieves single values" do
       Card.create! :name => "banana+*self+*help", :content => "pebbles"
-      Card["banana"].rule(:edit_help).should == "pebbles"
+      Card["banana"].rule(:help).should == "pebbles"
     end
   end
 
@@ -38,18 +38,18 @@ describe Card do
     end
 
     it "retrieves default setting" do
-      Card.new( :type => "Book" ).rule(:add_help, :fallback=>:edit_help).should == "edit any kind of card"
+      Card.new( :type => "Book" ).rule(:add_help, :fallback=>:help).should == "edit any kind of card"
     end
 
     it "retrieves primary setting" do
       Card.create :name => "*all+*add help", :content => "add any kind of card"
-      Card.new( :type => "Book" ).rule(:add_help, :fallback=>:edit_help).should == "add any kind of card"
+      Card.new( :type => "Book" ).rule(:add_help, :fallback=>:help).should == "add any kind of card"
     end
 
     it "retrieves more specific default setting" do
       Card.create :name => "*all+*add help", :content => "add any kind of card"
       Card.create :name => "*Book+*type+*help", :content => "edit a Book"
-      Card.new( :type => "Book" ).rule(:add_help, :fallback=>:edit_help).should == "add any kind of card"
+      Card.new( :type => "Book" ).rule(:add_help, :fallback=>:help).should == "add any kind of card"
     end
   end
 
@@ -88,11 +88,9 @@ describe Card do
     end
 
     it "returns pointer-specific setting names for pointer card (*self)" do
-      c = Card.fetch '*account+*related+*self', :new=>{}
-      c.save if c.new_card?
-      c = Card.fetch '*account+*related+*self', :new=>{}
+      c = Card.fetch '*star+*create+*self', :new=>{}
       snbg = c.setting_codes_by_group
-      #warn "result #{snbg.inspect}"
+      warn "result #{snbg.inspect}"
       snbg[POINTER_KEY].should == @pointer_settings
     end
 

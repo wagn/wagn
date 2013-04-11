@@ -35,7 +35,7 @@ module Wagn
 
       JSON({
         :search => true, # card.ok?( :read ),
-        :add    => (exact.new_card? && exact.cardname.valid? && !exact.virtual? && exact.ok?( :create )),
+        :add    => (exact.new_card? && exact.cardname.valid? && !exact.virtual? && exact.ok?( :create ) && exact.name),
         :new    => (exact.type_id==Card::CardtypeID &&
                     Card.new(:type_id=>exact.type_id).ok?(:create) &&
                     [exact.name, exact.cardname.url_key]

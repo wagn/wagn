@@ -11,7 +11,7 @@ module Wagn
 
 
     define_view :raw, :name=>:version do |args|
-      Wagn::Version.full
+      Wagn::Version.to_s
     end
     alias_view(:raw, {:name=>:version}, :core)
 

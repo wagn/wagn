@@ -84,37 +84,37 @@ module Wagn
           { :view=>:changes,                 :text=>'history',   :if=>:edit      },
           { :related=>{ :name=>:structure }, :text=>'structure', :if=>:structure },
         ] },
-      { :related=>{ :name=>"+discussion" }, :text=>'discuss', :if=>:discuss },
+      { :related=>:discussion, :text=>'discuss', :if=>:discuss },
       { :view=>:options, :text=>'advanced', :sub=>[
           { :view=>:options, :text=>'rules', :sub=>[
               :list => { :related_sets=> { :view=>:options, :text=>:text, :path_opts=>:path_opts } }
             ] },
           { :plain=>'related', :sub=>[
-              { :list=> { :piecenames => { :page=>:item } }, :if => :piecenames },
-              { :related=>"+*plus cards", :text=>'children' },
-              { :related=>"+*plus parts", :text=>'mates'    },
+              { :list    => { :piecenames => { :page=>:item } }, :if => :piecenames },
+              { :related => :children },
+              { :related => :mates    },
             ] },
-          { :related=>"+*referred to by",     :text=>"references to", :sub=>[
-              { :related=>"+*referred to by", :text=>"all"        },                  
-              { :related=>"+*linkers",        :text=>"links"      },                  
-              { :related=>"+*includers",      :text=>"inclusions" }
+          { :related=>:referred_to_by, :sub=>[
+              { :related=>:referred_to_by, :text=>"all"        },                  
+              { :related=>:linked_to_by,   :text=>"links"      },                  
+              { :related=>:included_by,    :text=>"inclusions" }
             ] },            
-          { :related=>"+*refers to",          :text=>"references from", :sub=>[
-              { :related=>"+*refers to",      :text=>"all"        },
-              { :related=>"+*links",          :text=>"links"      },
-              { :related=>"+*inclusions",     :text=>"inclusions" }                  
+          { :related=>:refers_to, :sub=>[
+              { :related=>:refers_to,      :text=>"all"        },
+              { :related=>:links_to,       :text=>"links"      },
+              { :related=>:includes,       :text=>"inclusions" }                  
             ] },           
-          { :related=>'+*editors', :text=>'editors', :if=>:creator, :sub=>[
-              { :related=>"+*editors", :text=>'all editors'             },
-              { :page=>:creator,       :text=>"creator: %{creator}"     },
-              { :page=>:updater,       :text=>"last editor: %{updater}" },
+          { :related=>:editors, :if=>:creator, :sub=>[
+              { :related=>:editors, :text=>'all editors'             },
+              { :page=>:creator,    :text=>"creator: %{creator}"     },
+              { :page=>:updater,    :text=>"last editor: %{updater}" },
             ] },
         ] },
         { :link=>:watch,   :if=>:watch   },
         { :view=>:account, :if=>:account, :sub=>[
-            { :view=>:account,       :text=>'details' },
-            { :related=>"+*created", :text=>'created' },
-            { :related=>"+*editing", :text=>'edited'  }
+            { :view    => :account, :text=>'details' },
+            { :related => :created },
+            { :related => :edited  }
           ] }
 
     ]
@@ -234,7 +234,10 @@ module Wagn
                 #{ link_to_page error_cardname, nil, :class=>'render-error-link' }
                 <div class="render-error-message errors-view" style="display:none">
                   <h3>Error message (visible to admin only)</h3>
-                  #{ exception.message.to_html }
+                  <p><strong>#{ exception.message }</strong></p>
+                  <div>
+                    #{exception.backtrace * "<br>\n"}
+                  </div>
                 </div>
               }
             else

@@ -691,12 +691,14 @@ module Wagn
               build_menu_items items
             else
               if h[:related]
-                h[:related] = if String === h[:related]
-                  { :name => h[:related] % @menu_vars }
+                h[:related] = if Symbol === h[:related]
+                  h[:text] ||= h[:related].to_s.gsub '_', ' '
+                  { :name => '+' + Card.fetch( h[:related], :skip_modules=>true ).name }
                 else
-                  h[:related].clone
+                  h2 = h[:related].clone
+                  h2[:name] = menu_subs h2[:name]
+                  h2
                 end
-                next unless h[:related][:name] = menu_subs( h[:related][:name] )
                 h[:view] = :related
                 h[:path_opts] ||= {}
                 h[:path_opts].merge! :related=>h[:related]

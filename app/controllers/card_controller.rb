@@ -1,7 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-#require_dependency 'cardlib'
-
 class CardController < ApplicationController
 
   helper :wagn

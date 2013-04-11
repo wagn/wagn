@@ -102,7 +102,7 @@ module Wagn
             </div>
             
             <div class="instruction rule-instruction">
-              #{ process_content "{{#{setting_name}+*right+*edit help}}" }
+              #{ process_content "{{#{setting_name}+*right+*help}}" }
             </div>
             
             <div class="card-body">

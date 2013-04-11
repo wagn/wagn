@@ -76,13 +76,13 @@ describe Flexmail do
         Card.create!  :name => 'default subject', :content=>'a very nutty thang', :type=>'Phrase'
         Card.create!  :name => "mailconfig+*to", :content => %{ {"key":"bob_addy"} }, :type=>'Search'
         Card.create!  :name => "mailconfig+*from", :content => %{ {"left":"_left", "right":"email"} }, :type=>'Search'
-        Card.create!  :name => "subject search+*right+*content", :content => %{{"referred_to_by":"_self+subject"}}, :type=>'Search'
+        Card.create!  :name => "subject search+*right+*structure", :content => %{{"referred_to_by":"_self+subject"}}, :type=>'Search'
         Card.create!  :name => "mailconfig+*subject", :content => "{{+subject search|core;item:core}}"
         Card.create! :name => "mailconfig+*message", :content => "Triggered by {{_self|name}} and its wonderful content: {{_self|core}}"
         Card.create! :name => "mailconfig+*attach", :type=>"Pointer", :content => "[[_self+attachment]]"
         Card.create! :name=>'Trigger', :type=>'Cardtype'
         Card.create :name=>'Trigger+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
-        Card.create! :name=>'Trigger+*type+*content', :content=>''
+        Card.create! :name=>'Trigger+*type+*structure', :content=>''
         Card.create! :name => "Trigger+*type+*send", :content => "[[mailconfig]]", :type=>'Pointer'
       end
     end

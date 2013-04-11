@@ -1142,11 +1142,11 @@ card_revisions_178:
   card_id: 397
   creator_id: 1
   content: |-
-    <p>For the [[*community+*right+*content|community subtab]] of the Related tab:</p>
+    <p>For the [[*community+*right+*structure|community subtab]] of the Related tab:</p>
     <p>&nbsp;</p>
-    <p>{{+*right+*content|open}}</p>
+    <p>{{+*right+*structure|open}}</p>
     <p>&nbsp;</p>
-    <p>{{Cardtype+_+*type plus right+*content|open}}</p>
+    <p>{{Cardtype+_+*type plus right+*structure|open}}</p>
 card_revisions_179: 
   id: 3867
   created_at: 2013-01-09 14:44:20 Z

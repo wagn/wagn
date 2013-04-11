@@ -307,8 +307,8 @@ cards_018:
   type_id: 3
 cards_019: 
   id: 34
-  name: "*plus cards+*right+*content"
-  key: "*plu_card+*right+*content"
+  name: "*plus cards+*right+*structure"
+  key: "*plu_card+*right+*structure"
   codename: 
   left_id: 350
   right_id: 317
@@ -341,8 +341,8 @@ cards_020:
   type_id: 3
 cards_021: 
   id: 36
-  name: "*plus parts+*right+*content"
-  key: "*plu_part+*right+*content"
+  name: "*plus parts+*right+*structure"
+  key: "*plu_part+*right+*structure"
   codename: 
   left_id: 349
   right_id: 317
@@ -375,8 +375,8 @@ cards_022:
   type_id: 3
 cards_023: 
   id: 38
-  name: "*includers+*right+*content"
-  key: "*includer+*right+*content"
+  name: "*includers+*right+*structure"
+  key: "*includer+*right+*structure"
   codename: 
   left_id: 348
   right_id: 317
@@ -409,8 +409,8 @@ cards_024:
   type_id: 3
 cards_025: 
   id: 40
-  name: "*linkers+*right+*content"
-  key: "*linker+*right+*content"
+  name: "*linkers+*right+*structure"
+  key: "*linker+*right+*structure"
   codename: 
   left_id: 345
   right_id: 317
@@ -443,8 +443,8 @@ cards_026:
   type_id: 3
 cards_027: 
   id: 42
-  name: "*inclusions+*right+*content"
-  key: "*inclusion+*right+*content"
+  name: "*inclusions+*right+*structure"
+  key: "*inclusion+*right+*structure"
   codename: 
   left_id: 347
   right_id: 317
@@ -477,8 +477,8 @@ cards_028:
   type_id: 3
 cards_029: 
   id: 44
-  name: "*links+*right+*content"
-  key: "*link+*right+*content"
+  name: "*links+*right+*structure"
+  key: "*link+*right+*structure"
   codename: 
   left_id: 346
   right_id: 317
@@ -834,7 +834,7 @@ cards_049:
   type_id: 3
 cards_050: 
   id: 82
-  name: "*edit help"
+  name: "*help"
   key: "*edit_help"
   codename: edit_help
   left_id: 
@@ -851,7 +851,7 @@ cards_050:
   type_id: 278
 cards_051: 
   id: 83
-  name: "*sidebar+*self+*edit help"
+  name: "*sidebar+*self+*help"
   key: "*sidebar+*self+*edit_help"
   codename: 
   left_id: 315
@@ -919,8 +919,8 @@ cards_054:
   type_id: 47
 cards_055: 
   id: 88
-  name: Cardtype+*type+*content
-  key: cardtype+*type+*content
+  name: Cardtype+*type+*structure
+  key: cardtype+*type+*structure
   codename: 
   left_id: 320
   right_id: 317
@@ -953,7 +953,7 @@ cards_056:
   type_id: 278
 cards_057: 
   id: 90
-  name: "*table of contents+*right+*edit help"
+  name: "*table of contents+*right+*help"
   key: "*table_of_content+*right+*edit_help"
   codename: 
   left_id: 285
@@ -1004,8 +1004,8 @@ cards_059:
   type_id: 3
 cards_060: 
   id: 93
-  name: "*editors+*right+*content"
-  key: "*editor+*right+*content"
+  name: "*editors+*right+*structure"
+  key: "*editor+*right+*structure"
   codename: 
   left_id: 352
   right_id: 317
@@ -1021,8 +1021,8 @@ cards_060:
   type_id: 30
 cards_061: 
   id: 95
-  name: "*editing+*right+*content"
-  key: "*editing+*right+*content"
+  name: "*editing+*right+*structure"
+  key: "*editing+*right+*structure"
   codename: 
   left_id: 351
   right_id: 317
@@ -1072,8 +1072,8 @@ cards_063:
   type_id: 3
 cards_064: 
   id: 99
-  name: "*members+*right+*content"
-  key: "*member+*right+*content"
+  name: "*members+*right+*structure"
+  key: "*member+*right+*structure"
   codename: 
   left_id: 342
   right_id: 317
@@ -1191,8 +1191,8 @@ cards_070:
   type_id: 3
 cards_071: 
   id: 111
-  name: "*plusses+*right+*content"
-  key: "*pluss+*right+*content"
+  name: "*plusses+*right+*structure"
+  key: "*pluss+*right+*structure"
   codename: 
   left_id: 337
   right_id: 317
@@ -1242,8 +1242,8 @@ cards_073:
   type_id: 3
 cards_074: 
   id: 116
-  name: "*community+*right+*content"
-  key: "*community+*right+*content"
+  name: "*community+*right+*structure"
+  key: "*community+*right+*structure"
   codename: 
   left_id: 340
   right_id: 317
@@ -1463,8 +1463,8 @@ cards_086:
   type_id: 3
 cards_087: 
   id: 169
-  name: "*outgoing+*right+*content"
-  key: "*outgoing+*right+*content"
+  name: "*outgoing+*right+*structure"
+  key: "*outgoing+*right+*structure"
   codename: 
   left_id: 339
   right_id: 317
@@ -1497,8 +1497,8 @@ cards_088:
   type_id: 3
 cards_089: 
   id: 171
-  name: "*incoming+*right+*content"
-  key: "*incoming+*right+*content"
+  name: "*incoming+*right+*structure"
+  key: "*incoming+*right+*structure"
   codename: 
   left_id: 334
   right_id: 317
@@ -1531,8 +1531,8 @@ cards_090:
   type_id: 3
 cards_091: 
   id: 173
-  name: "*tagged+*right+*content"
-  key: "*tagged+*right+*content"
+  name: "*tagged+*right+*structure"
+  key: "*tagged+*right+*structure"
   codename: 
   left_id: 338
   right_id: 317
@@ -1565,8 +1565,8 @@ cards_092:
   type_id: 3
 cards_093: 
   id: 179
-  name: by update+*right+*content
-  key: by_update+*right+*content
+  name: by update+*right+*structure
+  key: by_update+*right+*structure
   codename: 
   left_id: 341
   right_id: 317
@@ -1650,8 +1650,8 @@ cards_097:
   type_id: 3
 cards_098: 
   id: 185
-  name: by name+*right+*content
-  key: by_name+*right+*content
+  name: by name+*right+*structure
+  key: by_name+*right+*structure
   codename: 
   left_id: 336
   right_id: 317
@@ -1684,8 +1684,8 @@ cards_099:
   type_id: 3
 cards_100: 
   id: 191
-  name: by create+*right+*content
-  key: by_create+*right+*content
+  name: by create+*right+*structure
+  key: by_create+*right+*structure
   codename: 
   left_id: 335
   right_id: 317
@@ -1990,8 +1990,8 @@ cards_117:
   type_id: 3
 cards_118: 
   id: 223
-  name: "*watching+*right+*content"
-  key: "*watching+*right+*content"
+  name: "*watching+*right+*structure"
+  key: "*watching+*right+*structure"
   codename: 
   left_id: 329
   right_id: 317
@@ -2092,7 +2092,7 @@ cards_123:
   type_id: 52
 cards_124: 
   id: 249
-  name: "*autoname+*right+*edit help"
+  name: "*autoname+*right+*help"
   key: "*autoname+*right+*edit_help"
   codename: 
   left_id: 289
@@ -2109,7 +2109,7 @@ cards_124:
   type_id: 3
 cards_125: 
   id: 250
-  name: "*thanks+*right+*edit help"
+  name: "*thanks+*right+*help"
   key: "*thank+*right+*edit_help"
   codename: 
   left_id: 288
@@ -2160,7 +2160,7 @@ cards_127:
   type_id: 52
 cards_128: 
   id: 254
-  name: "*option label+*right+*edit help"
+  name: "*option label+*right+*help"
   key: "*option_label+*right+*edit_help"
   codename: 
   left_id: 286
@@ -2262,8 +2262,8 @@ cards_133:
   type_id: 3
 cards_134: 
   id: 261
-  name: "*right+*right+*content"
-  key: "*right+*right+*content"
+  name: "*right+*right+*structure"
+  key: "*right+*right+*structure"
   codename: 
   left_id: 324
   right_id: 317
@@ -2296,8 +2296,8 @@ cards_135:
   type_id: 3
 cards_136: 
   id: 263
-  name: "*type plus right+*right+*content"
-  key: "*type_plu_right+*right+*content"
+  name: "*type plus right+*right+*structure"
+  key: "*type_plu_right+*right+*structure"
   codename: 
   left_id: 325
   right_id: 317
@@ -2330,8 +2330,8 @@ cards_137:
   type_id: 3
 cards_138: 
   id: 265
-  name: "*self+*right+*content"
-  key: "*self+*right+*content"
+  name: "*self+*right+*structure"
+  key: "*self+*right+*structure"
   codename: 
   left_id: 326
   right_id: 317
@@ -2364,8 +2364,8 @@ cards_139:
   type_id: 3
 cards_140: 
   id: 267
-  name: "*type+*right+*content"
-  key: "*type+*right+*content"
+  name: "*type+*right+*structure"
+  key: "*type+*right+*structure"
   codename: 
   left_id: 327
   right_id: 317
@@ -2534,7 +2534,7 @@ cards_149:
   type_id: 47
 cards_150: 
   id: 281
-  name: "*layout+*right+*edit help"
+  name: "*layout+*right+*help"
   key: "*layout+*right+*edit_help"
   codename: 
   left_id: 284
@@ -2755,7 +2755,7 @@ cards_162:
   type_id: 3
 cards_163: 
   id: 299
-  name: "*input+*right+*edit help"
+  name: "*input+*right+*help"
   key: "*input+*right+*edit_help"
   codename: 
   left_id: 268
@@ -2789,7 +2789,7 @@ cards_164:
   type_id: 259
 cards_165: 
   id: 301
-  name: "*options+*right+*edit help"
+  name: "*options+*right+*help"
   key: "*option+*right+*edit_help"
   codename: 
   left_id: 300
@@ -2823,7 +2823,7 @@ cards_166:
   type_id: 259
 cards_167: 
   id: 304
-  name: "*captcha+*right+*edit help"
+  name: "*captcha+*right+*help"
   key: "*captcha+*right+*edit_help"
   codename: 
   left_id: 302
@@ -2840,7 +2840,7 @@ cards_167:
   type_id: 3
 cards_168: 
   id: 305
-  name: "*edit help+*right"
+  name: "*help+*right"
   key: "*edit_help+*right"
   codename: 
   left_id: 82
@@ -2857,7 +2857,7 @@ cards_168:
   type_id: 259
 cards_169: 
   id: 306
-  name: "*edit help+*right+*edit help"
+  name: "*help+*right+*help"
   key: "*edit_help+*right+*edit_help"
   codename: 
   left_id: 305
@@ -2891,7 +2891,7 @@ cards_170:
   type_id: 259
 cards_171: 
   id: 308
-  name: "*accountable+*right+*edit help"
+  name: "*accountable+*right+*help"
   key: "*accountable+*right+*edit_help"
   codename: 
   left_id: 307
@@ -2942,7 +2942,7 @@ cards_173:
   type_id: 259
 cards_174: 
   id: 311
-  name: "*add help+*right+*edit help"
+  name: "*add help+*right+*help"
   key: "*add_help+*right+*edit_help"
   codename: 
   left_id: 310
@@ -3010,8 +3010,8 @@ cards_177:
   type_id: 30
 cards_178: 
   id: 317
-  name: "*content"
-  key: "*content"
+  name: "*structure"
+  key: "*structure"
   codename: content
   left_id: 
   right_id: 
@@ -3095,8 +3095,8 @@ cards_182:
   type_id: 259
 cards_183: 
   id: 322
-  name: Role+*type+*content
-  key: role+*type+*content
+  name: Role+*type+*structure
+  key: role+*type+*structure
   codename: 
   left_id: 321
   right_id: 317
@@ -3622,7 +3622,7 @@ cards_213:
   type_id: 259
 cards_214: 
   id: 357
-  name: "*default+*right+*edit help"
+  name: "*default+*right+*help"
   key: "*default+*right+*edit_help"
   codename: 
   left_id: 356
@@ -3639,8 +3639,8 @@ cards_214:
   type_id: 3
 cards_215: 
   id: 358
-  name: "*content+*right"
-  key: "*content+*right"
+  name: "*structure+*right"
+  key: "*structure+*right"
   codename: 
   left_id: 317
   right_id: 260
@@ -3656,8 +3656,8 @@ cards_215:
   type_id: 259
 cards_216: 
   id: 359
-  name: "*content+*right+*edit help"
-  key: "*content+*right+*edit_help"
+  name: "*structure+*right+*help"
+  key: "*structure+*right+*edit_help"
   codename: 
   left_id: 358
   right_id: 82
@@ -3707,7 +3707,7 @@ cards_218:
   type_id: 259
 cards_219: 
   id: 365
-  name: "*send+*right+*edit help"
+  name: "*send+*right+*help"
   key: "*send+*right+*edit_help"
   codename: 
   left_id: 364
@@ -3809,8 +3809,8 @@ cards_224:
   type_id: 259
 cards_225: 
   id: 373
-  name: email config+*right+*content
-  key: email_config+*right+*content
+  name: email config+*right+*structure
+  key: email_config+*right+*structure
   codename: 
   left_id: 372
   right_id: 317
@@ -4098,7 +4098,7 @@ cards_241:
   type_id: 52
 cards_242: 
   id: 392
-  name: email config+*right+*edit help
+  name: email config+*right+*help
   key: email_config+*right+*edit_help
   codename: 
   left_id: 372
@@ -4183,8 +4183,8 @@ cards_246:
   type_id: 259
 cards_247: 
   id: 400
-  name: Cardtype+watcher instructions for related tab+*type plus right+*content
-  key: cardtype+watcher_instruction_for_related_tab+*type_plu_right+*content
+  name: Cardtype+watcher instructions for related tab+*type plus right+*structure
+  key: cardtype+watcher_instruction_for_related_tab+*type_plu_right+*structure
   codename: 
   left_id: 399
   right_id: 317
@@ -4217,8 +4217,8 @@ cards_248:
   type_id: 259
 cards_249: 
   id: 402
-  name: watcher instructions for related tab+*right+*content
-  key: watcher_instruction_for_related_tab+*right+*content
+  name: watcher instructions for related tab+*right+*structure
+  key: watcher_instruction_for_related_tab+*right+*structure
   codename: 
   left_id: 401
   right_id: 317
@@ -4353,8 +4353,8 @@ cards_256:
   type_id: 259
 cards_257: 
   id: 421
-  name: "*count+*right+*content"
-  key: "*count+*right+*content"
+  name: "*count+*right+*structure"
+  key: "*count+*right+*structure"
   codename: 
   left_id: 420
   right_id: 317
@@ -4404,8 +4404,8 @@ cards_259:
   type_id: 259
 cards_260: 
   id: 427
-  name: "*last edited+*right+*content"
-  key: "*last_edited+*right+*content"
+  name: "*last edited+*right+*structure"
+  key: "*last_edited+*right+*structure"
   codename: 
   left_id: 426
   right_id: 317
@@ -4455,8 +4455,8 @@ cards_262:
   type_id: 259
 cards_263: 
   id: 430
-  name: "*creator+*right+*content"
-  key: "*creator+*right+*content"
+  name: "*creator+*right+*structure"
+  key: "*creator+*right+*structure"
   codename: 
   left_id: 429
   right_id: 317
@@ -4506,8 +4506,8 @@ cards_265:
   type_id: 259
 cards_266: 
   id: 433
-  name: "*created+*right+*content"
-  key: "*created+*right+*content"
+  name: "*created+*right+*structure"
+  key: "*created+*right+*structure"
   codename: 
   left_id: 432
   right_id: 317
@@ -4557,8 +4557,8 @@ cards_268:
   type_id: 259
 cards_269: 
   id: 437
-  name: "*when created+*right+*content"
-  key: "*when_created+*right+*content"
+  name: "*when created+*right+*structure"
+  key: "*when_created+*right+*structure"
   codename: 
   left_id: 436
   right_id: 317
@@ -4608,8 +4608,8 @@ cards_271:
   type_id: 259
 cards_272: 
   id: 440
-  name: "*when last edited+*right+*content"
-  key: "*when_last_edited+*right+*content"
+  name: "*when last edited+*right+*structure"
+  key: "*when_last_edited+*right+*structure"
   codename: 
   left_id: 439
   right_id: 317
@@ -4693,8 +4693,8 @@ cards_276:
   type_id: 259
 cards_277: 
   id: 447
-  name: "*refers to+*right+*content"
-  key: "*refer_to+*right+*content"
+  name: "*refers to+*right+*structure"
+  key: "*refer_to+*right+*structure"
   codename: 
   left_id: 446
   right_id: 317
@@ -4744,8 +4744,8 @@ cards_279:
   type_id: 259
 cards_280: 
   id: 450
-  name: "*referred to by+*right+*content"
-  key: "*referred_to_by+*right+*content"
+  name: "*referred to by+*right+*structure"
+  key: "*referred_to_by+*right+*structure"
   codename: 
   left_id: 449
   right_id: 317
@@ -4778,8 +4778,8 @@ cards_281:
   type_id: 259
 cards_282: 
   id: 453
-  name: Account Request+*self+*content
-  key: account_request+*self+*content
+  name: Account Request+*self+*structure
+  key: account_request+*self+*structure
   codename: 
   left_id: 452
   right_id: 317
@@ -4812,8 +4812,8 @@ cards_283:
   type_id: 259
 cards_284: 
   id: 456
-  name: Set+*self+*content
-  key: set+*self+*content
+  name: Set+*self+*structure
+  key: set+*self+*structure
   codename: 
   left_id: 455
   right_id: 317
@@ -5781,7 +5781,7 @@ cards_340:
   type_id: 259
 cards_341: 
   id: 525
-  name: "*comment+*right+*edit help"
+  name: "*comment+*right+*help"
   key: "*comment+*right+*edit_help"
   codename: 
   left_id: 524
@@ -5815,7 +5815,7 @@ cards_342:
   type_id: 259
 cards_343: 
   id: 527
-  name: "*create+*right+*edit help"
+  name: "*create+*right+*help"
   key: "*create+*right+*edit_help"
   codename: 
   left_id: 526
@@ -5849,7 +5849,7 @@ cards_344:
   type_id: 259
 cards_345: 
   id: 529
-  name: "*delete+*right+*edit help"
+  name: "*delete+*right+*help"
   key: "*delete+*right+*edit_help"
   codename: 
   left_id: 528
@@ -5883,7 +5883,7 @@ cards_346:
   type_id: 259
 cards_347: 
   id: 531
-  name: "*read+*right+*edit help"
+  name: "*read+*right+*help"
   key: "*read+*right+*edit_help"
   codename: 
   left_id: 530
@@ -5917,7 +5917,7 @@ cards_348:
   type_id: 259
 cards_349: 
   id: 533
-  name: "*update+*right+*edit help"
+  name: "*update+*right+*help"
   key: "*update+*right+*edit_help"
   codename: 
   left_id: 532
@@ -6121,7 +6121,7 @@ cards_360:
   type_id: 259
 cards_361: 
   id: 545
-  name: "*css+*self+*edit help"
+  name: "*css+*self+*help"
   key: "*css+*self+*edit_help"
   codename: 
   left_id: 544
@@ -6155,7 +6155,7 @@ cards_362:
   type_id: 259
 cards_363: 
   id: 547
-  name: "*tinyMCE+*self+*edit help"
+  name: "*tinyMCE+*self+*help"
   key: "*tiny_mce+*self+*edit_help"
   codename: 
   left_id: 546
@@ -6444,8 +6444,8 @@ cards_379:
   type_id: 259
 cards_380: 
   id: 567
-  name: "*email+*right+*content"
-  key: "*email+*right+*content"
+  name: "*email+*right+*structure"
+  key: "*email+*right+*structure"
   codename: 
   left_id: 566
   right_id: 317
@@ -8178,8 +8178,8 @@ cards_481:
   type_id: 259
 cards_482: 
   id: 856
-  name: UserForm+*type+*content
-  key: user_form+*type+*content
+  name: UserForm+*type+*structure
+  key: user_form+*type+*structure
   codename: 
   left_id: 855
   right_id: 317
@@ -8314,8 +8314,8 @@ cards_489:
   type_id: 259
 cards_490: 
   id: 864
-  name: Book+*type+*content
-  key: book+*type+*content
+  name: Book+*type+*structure
+  key: book+*type+*structure
   codename: 
   left_id: 863
   right_id: 317

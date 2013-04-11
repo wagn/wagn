@@ -77,8 +77,8 @@ module Cardlib::Templating
   
   def update_templatees args
     # note that this is not smart about overriding templating rules
-    # for example, if someone were to change the type of a +*right+*content rule that was overridden
-    # by a +*type plus right+*content rule, the override would not be respected.
+    # for example, if someone were to change the type of a +*right+*structure rule that was overridden
+    # by a +*type plus right+*structure rule, the override would not be respected.
     if query = hard_templatee_spec
       Account.as_bot do
         Wql.new( query.merge(:return => :id) ).run.each_slice(100) do |id_batch|
@@ -89,8 +89,8 @@ module Cardlib::Templating
   end
 
   def assigns_type?
-    # needed because not all *content templates govern the type of set members
-    # for example, X+*type+*content governs all cards of type X,
+    # needed because not all *structure templates govern the type of set members
+    # for example, X+*type+*structure governs all cards of type X,
     # but the content rule does not (in fact cannot) have the type X.
     if is_hard_template?
       set_class = Cardlib::Pattern.find_class cardname.trunk_name

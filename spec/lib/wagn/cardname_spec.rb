@@ -156,11 +156,11 @@ describe SmartName do
 
   describe "trait_name?" do
     it "returns true for content codename" do
-      "bazoinga+*right+*content".to_name.trait_name?(:content).should be_true
+      "bazoinga+*right+*structure".to_name.trait_name?(:content).should be_true
     end
 
     it "handles arrays" do
-      "bazoinga+*right+*content".to_name.trait_name?(:content, :default).should be_true
+      "bazoinga+*right+*structure".to_name.trait_name?(:content, :default).should be_true
     end
 
     it "returns false for non-template" do

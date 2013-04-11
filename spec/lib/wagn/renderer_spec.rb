@@ -27,7 +27,7 @@ describe Wagn::Renderer, "" do
     it "should allow for inclusion in links as in Cardtype" do
        Account.as_bot do
          Card.create! :name=>"TestType", :type=>'Cardtype', :content=>'[[/new/{{_self|linkname}}|add {{_self|name}} card]]'
-         Card.create! :name=>'TestType+*self+*content', :content=>'_self' #otherwise content overwritten by *content rule
+         Card.create! :name=>'TestType+*self+*structure', :content=>'_self' #otherwise content overwritten by *structure rule
          Wagn::Renderer.new(Card['TestType']).render_core.should == '<a class="internal-link" href="/new/TestType">add TestType card</a>'
          
        end
@@ -352,7 +352,7 @@ describe Wagn::Renderer, "" do
 
   context "Content rule" do
     it "closed_content is rendered as title + raw" do
-      template = Card.new(:name=>'A+*right+*content', :content=>'[[link]] {{inclusion}}')
+      template = Card.new(:name=>'A+*right+*structure', :content=>'[[link]] {{inclusion}}')
       Wagn::Renderer.new(template)._render(:closed_content).should ==
         '<a href="/Basic" class="cardtype default-type">Basic</a> : [[link]] {{inclusion}}'
     end
@@ -374,7 +374,7 @@ describe Wagn::Renderer, "" do
 
     it "is used in new card forms when hard" do
       Account.as :joe_admin do
-        content_card = Card.create!(:name=>"Cardtype E+*type+*content",  :content=>"{{+Yoruba}}" )
+        content_card = Card.create!(:name=>"Cardtype E+*type+*structure",  :content=>"{{+Yoruba}}" )
         help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
         card = Card.new(:type=>'Cardtype E')
 
@@ -392,7 +392,7 @@ describe Wagn::Renderer, "" do
 
     it "should be used in edit forms" do
       Account.as_bot do
-        config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
+        config_card = Card.create!(:name=>"templated+*self+*structure", :content=>"{{+alpha}}" )
       end
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
       @card.content = 'Bar'

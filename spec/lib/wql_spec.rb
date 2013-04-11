@@ -2,7 +2,7 @@ require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
 A_JOINEES = ["B", "C", "D", "E", "F"]
 
-CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User","*plusses+*right+*content"].sort
+CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User","*plusses+*right+*structure"].sort
 
 describe Wql do
   before do
@@ -316,7 +316,7 @@ describe Wql do
     end
 
     it "should get only content when content is explicit" do
-      Wql.new( :content=>[:match, "two"] ).run.map(&:name).sort.should==["Joe User",'*plusses+*right+*content'].sort
+      Wql.new( :content=>[:match, "two"] ).run.map(&:name).sort.should==["Joe User",'*plusses+*right+*structure'].sort
     end
 
     it "should get only name when name is explicit" do

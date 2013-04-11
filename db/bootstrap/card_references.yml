@@ -128,21 +128,21 @@ card_references_018:
 card_references_019: 
   id: 9520
   referer_id: 322
-  referee_key: role+*type+*content+description
+  referee_key: role+*type+*structure+description
   referee_id: 
   ref_type: L
   present: 0
 card_references_020: 
   id: 9521
   referer_id: 322
-  referee_key: role+*type+*content
+  referee_key: role+*type+*structure
   referee_id: 322
   ref_type: I
   present: 1
 card_references_021: 
   id: 9522
   referer_id: 322
-  referee_key: role+*type+*content+*member
+  referee_key: role+*type+*structure+*member
   referee_id: 
   ref_type: L
   present: 0
@@ -457,49 +457,49 @@ card_references_065:
 card_references_066: 
   id: 11363
   referer_id: 373
-  referee_key: email_config+*right+*content+*from
+  referee_key: email_config+*right+*structure+*from
   referee_id: 
   ref_type: L
   present: 0
 card_references_067: 
   id: 11364
   referer_id: 373
-  referee_key: email_config+*right+*content+*to
+  referee_key: email_config+*right+*structure+*to
   referee_id: 
   ref_type: L
   present: 0
 card_references_068: 
   id: 11365
   referer_id: 373
-  referee_key: email_config+*right+*content+*cc
+  referee_key: email_config+*right+*structure+*cc
   referee_id: 
   ref_type: L
   present: 0
 card_references_069: 
   id: 11366
   referer_id: 373
-  referee_key: email_config+*right+*content+*bcc
+  referee_key: email_config+*right+*structure+*bcc
   referee_id: 
   ref_type: L
   present: 0
 card_references_070: 
   id: 11367
   referer_id: 373
-  referee_key: email_config+*right+*content+*subject
+  referee_key: email_config+*right+*structure+*subject
   referee_id: 
   ref_type: L
   present: 0
 card_references_071: 
   id: 11368
   referer_id: 373
-  referee_key: email_config+*right+*content+*message
+  referee_key: email_config+*right+*structure+*message
   referee_id: 
   ref_type: L
   present: 0
 card_references_072: 
   id: 11369
   referer_id: 373
-  referee_key: email_config+*right+*content+*attach
+  referee_key: email_config+*right+*structure+*attach
   referee_id: 
   ref_type: L
   present: 0
@@ -534,21 +534,21 @@ card_references_076:
 card_references_077: 
   id: 11845
   referer_id: 397
-  referee_key: watcher_instruction_for_related_tab+*right+*content
+  referee_key: watcher_instruction_for_related_tab+*right+*structure
   referee_id: 402
   ref_type: I
   present: 1
 card_references_078: 
   id: 11846
   referer_id: 397
-  referee_key: cardtype+watcher_instruction_for_related_tab+*type_plu_right+*content
+  referee_key: cardtype+watcher_instruction_for_related_tab+*type_plu_right+*structure
   referee_id: 400
   ref_type: I
   present: 1
 card_references_079: 
   id: 11847
   referer_id: 397
-  referee_key: "*community+*right+*content"
+  referee_key: "*community+*right+*structure"
   referee_id: 116
   ref_type: L
   present: 1
@@ -702,56 +702,56 @@ card_references_100:
 card_references_101: 
   id: 14819
   referer_id: 453
-  referee_key: account_request+*self+*content+description
+  referee_key: account_request+*self+*structure+description
   referee_id: 
   ref_type: L
   present: 0
 card_references_102: 
   id: 14820
   referer_id: 453
-  referee_key: account_request+*self+*content
+  referee_key: account_request+*self+*structure
   referee_id: 
   ref_type: L
   present: 0
 card_references_103: 
   id: 14821
   referer_id: 453
-  referee_key: account_request+*self+*content+*type+by_name
+  referee_key: account_request+*self+*structure+*type+by_name
   referee_id: 
   ref_type: I
   present: 1
 card_references_104: 
   id: 14933
   referer_id: 88
-  referee_key: cardtype+*type+*content+description
+  referee_key: cardtype+*type+*structure+description
   referee_id: 
   ref_type: L
   present: 0
 card_references_105: 
   id: 14934
   referer_id: 88
-  referee_key: cardtype+*type+*content
+  referee_key: cardtype+*type+*structure
   referee_id: 88
   ref_type: I
   present: 1
 card_references_106: 
   id: 14935
   referer_id: 88
-  referee_key: cardtype+*type+*content
+  referee_key: cardtype+*type+*structure
   referee_id: 88
   ref_type: I
   present: 1
 card_references_107: 
   id: 14936
   referer_id: 88
-  referee_key: cardtype+*type+*content
+  referee_key: cardtype+*type+*structure
   referee_id: 88
   ref_type: I
   present: 1
 card_references_108: 
   id: 14937
   referer_id: 88
-  referee_key: cardtype+*type+*content+*type+by_name
+  referee_key: cardtype+*type+*structure+*type+by_name
   referee_id: 
   ref_type: I
   present: 1
@@ -765,21 +765,21 @@ card_references_109:
 card_references_110: 
   id: 14953
   referer_id: 456
-  referee_key: set+*self+*content+description
+  referee_key: set+*self+*structure+description
   referee_id: 
   ref_type: L
   present: 0
 card_references_111: 
   id: 14954
   referer_id: 456
-  referee_key: set+*self+*content
+  referee_key: set+*self+*structure
   referee_id: 
   ref_type: L
   present: 0
 card_references_112: 
   id: 14955
   referer_id: 456
-  referee_key: set+*self+*content+*type+by_name
+  referee_key: set+*self+*structure+*type+by_name
   referee_id: 
   ref_type: I
   present: 1

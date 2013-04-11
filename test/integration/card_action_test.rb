@@ -66,7 +66,7 @@ class CardActionTest < ActionController::IntegrationTest
 
   def test_newcard_shows_edit_instructions
     given_card( {:type=>'cardtype', :name=>"YFoo", :content => ""} )
-    given_card( {:name=>"YFoo+*type+*edit help", :content => "instruct-me"} )
+    given_card( {:name=>"YFoo+*type+*help", :content => "instruct-me"} )
     get 'card/new', :card => {:type=>'YFoo'}
     assert_tag :tag=>'div', :attributes=>{ :class=>"instruction" },  :content=>/instruct-me/
   end

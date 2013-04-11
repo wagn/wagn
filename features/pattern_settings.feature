@@ -5,7 +5,7 @@ Feature: Set settings
 
   Background:
     Given I log in as Joe Admin
-    And I create card "*all+*edit help" with content "say something spicy"
+    And I create card "*all+*help" with content "say something spicy"
 
   Scenario: default setting and plus card override
     Given I create Phrase card "color+*right+*add help" with content "If colorblind, leave blank"
@@ -22,10 +22,10 @@ Feature: Set settings
     Then I should see "poopoo"
 
   Scenario: *type_plus_right Set
-    Given I create Phrase card "User+cereal+*type plus right+*edit help" with content "your favorite"
+    Given I create Phrase card "User+cereal+*type plus right+*help" with content "your favorite"
     When I go to card  "Joe User+cereal"
     Then I should see "your favorite"
-    When I create card "User+*type+*content" with content "{{+cereal}}"
+    When I create card "User+*type+*structure" with content "{{+cereal}}"
     And I log in as Joe User
     And I edit "Joe User"
     Then I should see "your favorite"

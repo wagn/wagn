@@ -26,7 +26,7 @@ describe Card do
     end
 
     it "retrieves single values" do
-      Card.create! :name => "banana+*self+*edit help", :content => "pebbles"
+      Card.create! :name => "banana+*self+*help", :content => "pebbles"
       Card["banana"].rule(:edit_help).should == "pebbles"
     end
   end
@@ -34,7 +34,7 @@ describe Card do
 
   context "cascading settings" do
     before do
-      Card.create :name => "*all+*edit help", :content => "edit any kind of card"
+      Card.create :name => "*all+*help", :content => "edit any kind of card"
     end
 
     it "retrieves default setting" do
@@ -48,7 +48,7 @@ describe Card do
 
     it "retrieves more specific default setting" do
       Card.create :name => "*all+*add help", :content => "add any kind of card"
-      Card.create :name => "*Book+*type+*edit help", :content => "edit a Book"
+      Card.create :name => "*Book+*type+*help", :content => "edit a Book"
       Card.new( :type => "Book" ).rule(:add_help, :fallback=>:edit_help).should == "add any kind of card"
     end
   end
@@ -134,7 +134,7 @@ describe Card do
 
     it "returns content even when context card is hard templated" do
       context_card = Card["A"] # refers to 'Z'
-      c1=Card.create! :name => "A+*self+*content", :content => "Banana"
+      c1=Card.create! :name => "A+*self+*structure", :content => "Banana"
       c = Card.new( :name => "foo", :content => "{{_self+B|core}}" )
       c.contextual_content( context_card ).should == "AlphaBeta"
     end

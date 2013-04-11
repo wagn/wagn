@@ -92,7 +92,7 @@ module Wagn
 
     def prepopulate klass
       ['*all','*all plus','basic+*type','html+*type','*cardtype+*type','*sidebar+*self'].each do |k|
-        [k,"#{k}+*content", "#{k}+*default", "#{k}+*read" ].each { |k| klass[k] }
+        [k,"#{k}+*structure", "#{k}+*default", "#{k}+*read" ].each { |k| klass[k] }
       end
       frozen[klass] = Marshal.dump Cache[klass]
     end

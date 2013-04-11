@@ -137,7 +137,7 @@ class SharedData
 
     # for template stuff
     Card.create! :type_id=>Card::CardtypeID, :name=> "UserForm"
-    Card.create! :name=>"UserForm+*type+*content", :content=>"{{+name}} {{+age}} {{+description}}"
+    Card.create! :name=>"UserForm+*type+*structure", :content=>"{{+name}} {{+age}} {{+description}}"
 
     Account.current_id = Card['joe_user'].id
     Card.create!( :name=>"JoeLater", :content=>"test")
@@ -149,7 +149,7 @@ class SharedData
     Card.create :name=>'Cardtype B+*type+*create', :type=>'Pointer', :content=>'[[r1]]'
 
     Card.create! :type=>"Cardtype", :name=>"Book"
-    Card.create! :name=>"Book+*type+*content", :content=>"by {{+author}}, design by {{+illustrator}}"
+    Card.create! :name=>"Book+*type+*structure", :content=>"by {{+author}}, design by {{+illustrator}}"
     Card.create! :name => "Iliad", :type=>"Book"
 
 

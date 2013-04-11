@@ -9,7 +9,7 @@ module Wagn
     SETTING_GROUPS = {
       "Permission"    => [ :create, :read, :update, :delete, :comment ],
       "Look and Feel" => [ :default, :structure, :layout, :table_of_contents ],
-      "Communication" => [ :add_help, :help, :send, :thanks ],
+      "Communication" => [ :help, :add_help, :send, :thanks ],
       POINTER_KEY     => [ :options, :options_label, :input ],
       "Other"         => [ :autoname, :accountable, :captcha ]
     }

@@ -71,6 +71,8 @@ module Wagn
             cache.reset_local
           else warn "reset class #{cc}, #{cache.class} #{caller[0..8]*"\n"} ???" end
         }
+        Card.clear_rule_cache      local_only=true
+        Card.clear_read_rule_cache local_only=true
       end
 
     end

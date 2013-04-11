@@ -53,15 +53,49 @@ namespace :wagn do
     end
   end
 
-  desc "migrate cards"
-  task :migrate_cards => :environment do
-    rpaths = Rails.application.paths
-    rpaths.add 'db/migrate_cards'
-    paths = ActiveRecord::Migrator.migrations_paths = rpaths['db/migrate_cards'].to_a
+  desc "migrate structure and cards"
+  task :migrate =>:environment do
+    stamp = ENV['STAMP_MIGRATIONS']
+
+    puts 'migrating structure'
+    Rake::Task['db:migrate'].invoke
+    if stamp
+      Rake::Task['wagn:migrate:stamp'].invoke ''
+    end
     
-    ActiveRecord::Base.table_name_suffix = '_cards'
-    ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
-    ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+    puts 'migrating cards'
+    Rake::Task['wagn:migrate:cards'].execute #not invoke because we don't want to reload environment
+    if stamp
+      Rake::Task['wagn:migrate:stamp'].reenable
+      Rake::Task['wagn:migrate:stamp'].invoke '_cards'
+    end
+    Wagn::Cache.reset_global
+  end
+
+  namespace :migrate do
+
+    desc "migrate cards"
+    task :cards => :environment do
+      rpaths = Rails.application.paths
+      rpaths.add 'db/migrate_cards'
+      paths = ActiveRecord::Migrator.migrations_paths = rpaths['db/migrate_cards'].to_a
+    
+      ActiveRecord::Base.table_name_suffix = '_cards'
+      ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
+      ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+    end
+  
+    desc 'Run migrations and then write the version to a file'
+    task :stamp, :suffix do |t, args|
+      ActiveRecord::Base.table_name_suffix = args[:suffix]
+      stamp_dir = Wagn::Application.config.paths['config/database'].first.sub /[^\/]*$/, ''
+      stamp_file = stamp_dir + "version#{ args[:suffix] }.txt"      
+      version = ActiveRecord::Migrator.current_version
+      puts ">>  writing version: #{version} to #{stamp_file}"
+      if file = open(stamp_file, 'w')
+        file.puts version
+      end
+    end
   end
 
   desc "copy over .htaccess files useful in production mode"

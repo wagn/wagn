@@ -29,20 +29,7 @@ unless Rake::TaskManager.methods.include?(:redefine_task)
   end
 end
 
-namespace :db do
-  
-  desc 'Run migrations and then write the version to a file'
-  task :migrate_and_stamp => :environment do
-    Rake::Task['db:migrate'].invoke
-    stamp_file = Wagn::Application.config.paths['config/database'].first.sub(/[^\/]*$/,'version.txt')
-    version = ActiveRecord::Migrator.current_version
-    puts ">>  writing version: #{version} to #{stamp_file}"
-    if file = open(stamp_file, 'w')
-      file.puts version
-    end
-    Wagn::Cache.reset_global
-  end
-  
+namespace :db do  
   namespace :fixtures do
     desc "Load fixtures into the current environment's database.  Load specific fixtures using FIXTURES=x,y"
     task :load => :environment do

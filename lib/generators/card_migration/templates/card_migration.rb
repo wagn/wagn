@@ -1,5 +1,5 @@
 # encoding: utf-8
-load 'db/wagn_migration_helper.rb'
+require 'wagn_migration_helper'
 
 class <%= migration_class_name %> < ActiveRecord::Migration<%# %>
   include WagnMigrationHelper

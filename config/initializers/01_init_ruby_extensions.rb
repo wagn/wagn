@@ -46,9 +46,7 @@ class Object
     }
     klone
   end
-end
 
-class Object
   def send_unless method, *args, &block
     ( block_given? ? yield : self ) or  send method, *args
   end

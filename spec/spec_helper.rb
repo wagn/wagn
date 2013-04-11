@@ -15,9 +15,9 @@ end
 
 Spork.prefork do
   require File.expand_path File.dirname(__FILE__) + "/../config/environment"
-  require File.expand_path File.dirname(__FILE__) + "/../lib/authenticated_test_helper.rb"
+  require File.expand_path File.dirname(__FILE__) + "/../lib/authenticated_test_helper"
 
-  #require File.expand_path File.dirname(__FILE__) + "/../lib/util/card_builder.rb"
+  #require File.expand_path File.dirname(__FILE__) + "/../lib/util/card_builder"
   require 'rspec/rails'
 
   require_dependency 'chunks/chunk'

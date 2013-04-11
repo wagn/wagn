@@ -46,9 +46,6 @@ class ApplicationController < ActionController::Base
       Wagn::Conf[:recaptcha_on] = !Account.logged_in? &&     # this too
         !!( Wagn::Conf[:recaptcha_public_key] && Wagn::Conf[:recaptcha_private_key] )
       @recaptcha_count = 0
-
-      @action = params[:action]
-#    end
   end
 
   def wagn_layout

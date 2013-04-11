@@ -1,10 +1,6 @@
 
 module Wagn
   class Renderer::Text < Renderer
-  end
-end
-module Wagn
-  class Renderer::Text < Renderer
     def initialize card, opts
       super card,opts
 

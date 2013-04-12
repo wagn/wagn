@@ -28,8 +28,7 @@ class SharedData
       { :name=>"Joe Admin", :content => "I'm number one" }
     )
 
-    roles_card = Card['Joe Admin'].fetch(:trait=>:roles, :new=>{})
-    roles_card << Card::AdminID
+    Card['Joe Admin'].fetch(:trait=>:roles, :new=>{}).items = [ Card::AdminID ]
 
     User.create_with_card(
       { :login=>"joe_camel",:email=>'joe@camel.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass' },
@@ -84,16 +83,9 @@ class SharedData
     r3 = Card.create!( :typecode=>'role', :name=>'r3' )
     r4 = Card.create!( :typecode=>'role', :name=>'r4' )
 
-    Card['u1'].fetch(:trait=>:roles, :new=>{}) << r1 << r2 << r3
-    Card['u2'].fetch(:trait=>:roles, :new=>{}) << r1 << r2 << r4
-    u3_star = Card['u3'].fetch(:trait=>:roles, :new=>{}) << r1 << r4
-    #r1.users = [ u1, u2, u3 ]
-    #r2.users = [ u1, u2 ]
-    #r3.users = [ u1 ]
-    #r4.users = [ u3, u2 ]
-
-    u3_star << Card::AdminID
-    #Role[:admin].users<< [ u3 ]
+    Card['u1'].fetch( :trait=>:roles, :new=>{} ).items = [ r1, r2, r3 ]
+    Card['u2'].fetch( :trait=>:roles, :new=>{} ).items = [ r1, r2, r4 ]
+    Card['u3'].fetch( :trait=>:roles, :new=>{} ).items = [ r1, r4, Card::AdminID ]
 
     c1 = Card.create! :name=>'c1'
     c2 = Card.create! :name=>'c2'

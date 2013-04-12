@@ -26,7 +26,7 @@ namespace :test do
   ##  setting it by hand after fixture generation.
   desc "recreate test fixtures from fresh db"
   task :generate_fixtures => :environment do
-    Rake::Task['wagn:clear_cache']
+    Rake::Task['wagn:reset_cache']
     # env gets auto-set to 'test' somehow.
     # but we need development to get the right schema dumped.
     ENV['RAILS_ENV'] = 'development'
@@ -66,7 +66,7 @@ namespace :test do
       # which dumps with slashes that syck can't understand (also !!null stuff)
 
     sql = "SELECT * FROM %s"
-    skip_tables = ["schema_info","schema_migrations","sessions"]
+    skip_tables = ["schema_info","schema_migrations","schema_migrations_cards","sessions"]
     ActiveRecord::Base.establish_connection
     (ActiveRecord::Base.connection.tables - skip_tables).each do |table_name|
       i = "000"

@@ -60,6 +60,12 @@ ActiveRecord::Schema.define(:version => 20130411210957) do
   add_index "cards", ["right_id"], :name => "index_cards_on_tag_id"
   add_index "cards", ["type_id"], :name => "card_type_index"
 
+  create_table "schema_migrations_cards", :id => false, :force => true do |t|
+    t.string "version", :null => false
+  end
+
+  add_index "schema_migrations_cards", ["version"], :name => "unique_schema_migrations_cards", :unique => true
+
   create_table "sessions", :force => true do |t|
     t.string   "session_id"
     t.text     "data"

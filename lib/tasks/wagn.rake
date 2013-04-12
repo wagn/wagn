@@ -52,10 +52,16 @@ namespace :wagn do
       file.write ERB.new(dbfile).result(binding)
     end
   end
+  
+  desc "reset cache"
+  task :reset_cache => :environment  do
+    Wagn::Cache.reset_global
+  end
+
 
   desc "migrate structure and cards"
   task :migrate =>:environment do
-    Wagn::Conf[:migration] = true
+    Wagn::Conf[:migration] = true  #probably only necessary in migrate:cards?
     stamp = ENV['STAMP_MIGRATIONS']
 
     puts 'migrating structure'

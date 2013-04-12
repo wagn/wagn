@@ -90,7 +90,7 @@ describe Card do
     it "returns pointer-specific setting names for pointer card (*self)" do
       c = Card.fetch '*star+*create+*self', :new=>{}
       snbg = c.setting_codes_by_group
-      warn "result #{snbg.inspect}"
+      #warn "result #{snbg.inspect}"
       snbg[POINTER_KEY].should == @pointer_settings
     end
 

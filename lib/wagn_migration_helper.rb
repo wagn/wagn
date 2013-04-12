@@ -22,7 +22,9 @@ module WagnMigrationHelper
     ar_suffix = ActiveRecord::Base.table_name_suffix
     ActiveRecord::Base.table_name_suffix = ''
     Account.as_bot do
-      yield
+      ActiveRecord::Base.transaction do
+        yield
+      end
     end
     ActiveRecord::Base.table_name_suffix = ar_suffix
   end

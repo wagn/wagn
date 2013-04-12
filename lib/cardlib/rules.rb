@@ -76,11 +76,6 @@ module Cardlib::Rules
       @@rule_cache = nil
     end
     
-    def set_rule_cache hash
-      #FIXME: should fail except in test envs.
-      @@rule_cache = hash
-    end
-    
     def read_rule_cache
       @@read_rule_cache ||= Card.cache.read('READRULES') || begin
         hash = {}

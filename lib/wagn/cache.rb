@@ -13,13 +13,12 @@ module Wagn
 
 
   class Cache
-    @@prepopulating     = (Rails.env == 'cucumber') ? { Card => true } : {}
+    @@prepopulating     = [ 'test','cucumber' ].include? Rails.env
     @@using_rails_cache = Rails.env =~ /^cucumber|test$/
     @@prefix_root       = Wagn::Application.config.database_configuration[Rails.env]['database']
-    @@frozen            = {}
     @@cache_by_class    = {}
 
-    cattr_reader :cache_by_class, :prepopulating, :frozen, :prefix_root
+    cattr_reader :cache_by_class, :prefix_root
 
     class << self
       def [] klass
@@ -35,7 +34,7 @@ module Wagn
             raise "renewing nil cache: #{klass}"
           end
         end
-        reset_local if prepopulating.empty?
+        reset_local
       end
 
       def system_prefix klass
@@ -43,10 +42,8 @@ module Wagn
       end
 
       def restore klass=nil
-        klass=Card if klass.nil?
-        raise "no klass" if klass.nil?
         reset_local
-        cache_by_class[klass] = Marshal.load(frozen[klass]) if cache_by_class[klass] and prepopulating[klass]
+        prepopulate
       end
 
       def generate_cache_id
@@ -62,6 +59,15 @@ module Wagn
       end
 
       private
+
+      def prepopulate
+        if @@prepopulating
+          @@rule_cache      ||= Card.rule_cache
+          @@read_rule_cache ||= Card.read_rule_cache
+          Card.cache.write_local 'RULES', @@rule_cache
+          Card.cache.write_local 'READRULES', @@read_rule_cache
+        end
+      end
 
 
       def reset_local
@@ -87,15 +93,8 @@ module Wagn
       @local = Hash.new
       self.system_prefix = opts[:prefix] || self.class.system_prefix(opts[:class])
       cache_by_class[klass] = self
-      prepopulate klass if prepopulating[klass]
     end
-
-    def prepopulate klass
-      ['*all','*all plus','basic+*type','html+*type','*cardtype+*type','*sidebar+*self'].each do |k|
-        [k,"#{k}+*structure", "#{k}+*default", "#{k}+*read" ].each { |k| klass[k] }
-      end
-      frozen[klass] = Marshal.dump Cache[klass]
-    end
+    
 
     def system_prefix= system_prefix
       @system_prefix = system_prefix

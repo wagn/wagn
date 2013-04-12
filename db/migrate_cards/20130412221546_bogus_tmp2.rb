@@ -5,7 +5,7 @@ class BogusTmp2 < ActiveRecord::Migration
   include WagnMigrationHelper
   def up
     contentedly do
-      fail "just a temporary migration to test deployment"
+      puts "just a temporary migration to test deployment"
     end
   end
 

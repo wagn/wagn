@@ -212,8 +212,8 @@ module Wagn
           process_content( inc ).strip
         end.join
 #        raw _render_core(args)
-#      elsif card.new_card?
-#        fieldset '', content_field( form )
+      elsif args[:short_editor] #card.new_card?
+        fieldset '', content_field( form )
       else
         content_field form
       end
@@ -332,7 +332,7 @@ module Wagn
         <td class="inline field">
       } + content + %{
         </td>
-        <td class="help">#{args[:help]}</td>
+        <td class="help">#{ args[:help] }</td>
         </tr>
       }
     end
@@ -355,7 +355,7 @@ module Wagn
         <fieldset #{ attrib_string }>
           <legend>
             <h2>#{ title }</h2>
-            #{ help_text *opts[:help] }
+            #{ _render_help opts[:help] }
           </legend>
           #{ content }
         </fieldset>
@@ -371,20 +371,6 @@ module Wagn
     end
 
     private
-
-    def help_text *opts
-      text = case opts[0]
-        when Symbol
-          if help_card = card.rule_card( *opts )
-            with_inclusion_mode :normal do
-              subrenderer( help_card ).render_core
-            end
-          end
-        when String
-          opts[0]
-        end
-      %{<div class="instruction">#{raw text}</div>} if text
-    end
 
     def fancy_title title=nil
       raw %{<span class="card-title">#{showname(title).to_name.parts.join %{<span class="joint">+</span>} }</span>}

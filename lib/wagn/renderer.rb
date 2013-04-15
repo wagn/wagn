@@ -343,9 +343,9 @@ module Wagn
         else
           :edit_in_form
         end
+      when @mode == :template   ; :template_rule
       when @@perms[view]==:none ; view
       when @mode == :closed     ; !tcard.known?  ? :closed_missing : :closed_content
-      when @mode == :template   ; :template_rule
       else                      ; view
       end  
 

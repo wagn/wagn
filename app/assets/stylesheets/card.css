@@ -67,16 +67,17 @@ h1.card-title {
   z-index: 1;
   font-size: 11px;
 }
-.card-menu .ui-menu-icon {
-  float: left;
-  margin-right: 5px;
-}
-.card-menu .ui-menu-item {
+.card-menu li {
   text-align: right;
   white-space: nowrap;
 }
-.card-menu .ui-menu-item a {
+.card-menu li a {
   color: #333;
+}
+
+.card-menu .ui-menu-icon {
+  float: left;
+  margin-right: 5px;
 }
 
 .card-menu-tappable {
@@ -351,16 +352,15 @@ body#wagn .card-slot.recent-changes h2 {
 
 
 .related-view > .card-body  {
-   background: #ddd;
+   background: #bbb;
    padding: 5px;
 }
 .related-view > .card-body > .ALL  {
-   background: #ddd;
    background: #fff;
    border-radius: 6px;
 }
 .related-view > .card-body > .ALL > .card-header {
-   background: #eee;
+   background: #ddd;
 }
 .related-view > .card-body > .ALL > .card-header h1 {
    color: #000;

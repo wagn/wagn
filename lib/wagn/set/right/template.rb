@@ -9,7 +9,7 @@ module Wagn
         self._final_core args
       end
     end
-    alias_view :core, { :right=>:structure }, { :right=>:default }
+    alias_view :core, { :right=>:structure }, { :right=>:default }, {:right=>:help}
 
     define_view :closed_content, :right=>:structure do |args|
       "#{_render_type} : #{_render_raw}"

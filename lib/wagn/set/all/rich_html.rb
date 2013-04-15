@@ -97,6 +97,8 @@ module Wagn
           #{ _render_title args }
           #{ _optional_render :menu, args, args[:menu_default_hidden] || false }
         </div>
+        #{ optional_render :help, args.merge( :setting => :help ), args[:help_default_hidden].nil? ? true : false }
+        
       }
     end
   
@@ -180,42 +182,43 @@ module Wagn
 
     define_view :new, :perms=>:create, :tags=>:unknown_ok do |args|
       name_ready = !card.cardname.blank? && !Card.exists?( card.cardname )
+      prompt_for_name = !name_ready && !card.rule_card( :autoname )
 
-      cancel = if ajax_call? # shouldn't this be main? ??
-        { :class=>'slotter',    :href=>path( :view=>:missing         ) }
-      else
-        { :class=>'redirecter', :href=>Card.path_setting('/*previous') }
-      end
-      
-      show_type_menu = if !params[:type]
+      prompt_for_type = if !params[:type]
         ( main? || card.simple? || card.is_template? ) and
           Card.new( :type_id=>card.type_id ).ok? :create #otherwise current type won't be on menu
       end
-        
-      if !ajax_call? 
-        header_text = card.type_id == Card::DefaultTypeID ? '' : card.type_name
-        %{ <h1 class="page-header">New #{header_text}</h1>}
-      else '' end +
+
+      cancel = if main?
+        { :class=>'redirecter', :href=>Card.path_setting('/*previous') }
+      else        
+        { :class=>'slotter',    :href=>path( :view=>:missing         ) }
+      end
       
-      
+              
       (wrap :new, args.merge(:frame=>true) do  
         card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
           @form = form
           %{
-            #{ help_text :add_help, :fallback=>:help }
-            <div class="card-header">
-              #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
+            #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
+            <div class="card-header">          
               #{
-              case
-              when name_ready                  ; _render_title(args) + hidden_field_tag( 'card[name]', card.name )
-              when card.rule_card( :autoname ) ; ''
-              else                             ; _render_name_editor
-              end
+                if name_ready
+                  _render_title(args) + hidden_field_tag( 'card[name]', card.name )
+                else
+                  args[:title] ||= "New #{ card.type_name unless card.type_id == Card::DefaultTypeID }"
+                  _render_title args
+                end
               }
-              #{ show_type_menu ? _render_type_menu : form.hidden_field( :type_id ) }
             </div>
+            
+            #{ _render_help :setting => :add_help }
+            #{ _render_name_editor if prompt_for_name }
+
             <div class="card-body">
-              <div class="card-editor editor">#{ edit_slot args }</div>
+              #{ prompt_for_type ? _render_type_menu : form.hidden_field( :type_id ) }
+            
+              <div class="card-editor editor">#{ edit_slot args.merge( :short_editor => prompt_for_name || prompt_for_type ) }</div>
               <fieldset>
                 <div class="button-area">
                   #{ submit_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
@@ -248,8 +251,7 @@ module Wagn
     define_view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
       wrap :edit, args.merge(:frame=>true) do
         %{
-          #{ help_text :help }
-          #{_render_header }
+          #{ _render_header :help_default_hidden=>false }
           #{ wrap_content :edit, :body=>true, :class=>'card-editor' do
             card_form :update, 'card-form card-edit-form autosave' do |f|
               @form= f
@@ -277,7 +279,6 @@ module Wagn
     end
 
 
-  
     define_view :edit_name, :perms=>:update do |args|
       card.update_referencers = false
       referers = card.extended_referencers
@@ -357,10 +358,10 @@ module Wagn
       opts = { :attribs => { :class=> "card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" } }
       if card.new_card?
         content += raw( "\n #{ eform.hidden_field :type_id }" )
-        opts[:help] = [:add_help, { :fallback => :help } ]
+        opts[:help] = { :setting => :add_help }
       else
         opts[:attribs].merge! :card_id=>card.id, :card_name=>(h card.name)
-        opts[:help] = :help
+        opts[:help] = { :setting => :help }
       end
       fieldset fancy_title, content, opts
     end
@@ -481,7 +482,7 @@ module Wagn
         rcardname = rparams[:name].to_name.to_absolute_name( card.cardname)
         rcard = Card.fetch rcardname, :new=>{}
         rview = rparams[:view] || :titled        
-        show = 'menu'
+        show = 'menu,help'
         show += ',comment_box' if rparams[:name] == '+discussion'
 
         wrap :related, args.merge(:frame=>true) do
@@ -523,6 +524,22 @@ module Wagn
           }
         end
       end
+    end
+
+    define_view :help do |args|
+      text = case args
+        when String
+          args
+        when Hash
+          setting = args[:setting]
+          setting = [ :add_help, :fallback => :help ] if setting == :add_help
+          if help_card = card.rule_card( *setting ) and help_card.ok? :read
+            with_inclusion_mode :normal do
+              _final_core args.merge( :structure=>help_card.name )
+            end
+          end
+        end
+      %{<div class="instruction">#{raw text}</div>} if text
     end
 
     define_view :diff do |args|

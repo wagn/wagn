@@ -96,8 +96,8 @@ module Wagn
           #{ args.delete :toggler }
           #{ _render_title args }
           #{ _optional_render :menu, args, args[:menu_default_hidden] || false }
+          #{ optional_render :help, args.merge( :setting => :help ), args[:help_default_hidden].nil? ? true : false }
         </div>
-        #{ optional_render :help, args.merge( :setting => :help ), args[:help_default_hidden].nil? ? true : false }
         
       }
     end
@@ -210,15 +210,16 @@ module Wagn
                   _render_title args
                 end
               }
+              #{ _render_help :setting => :add_help }
+              
             </div>
             
-            #{ _render_help :setting => :add_help }
             #{ _render_name_editor if prompt_for_name }
 
             <div class="card-body">
               #{ prompt_for_type ? _render_type_menu : form.hidden_field( :type_id ) }
             
-              <div class="card-editor editor">#{ edit_slot args.merge( :short_editor => prompt_for_name || prompt_for_type ) }</div>
+              <div class="card-editor editor">#{ edit_slot args.merge( :label => prompt_for_name || prompt_for_type ) }</div>
               <fieldset>
                 <div class="button-area">
                   #{ submit_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
@@ -275,7 +276,7 @@ module Wagn
     define_view :name_editor do |args|
       fieldset 'name', (editor_wrap :name do
          raw( name_field form )
-      end), :help=>''
+      end), :help=>args[:help]
     end
 
 
@@ -455,21 +456,16 @@ module Wagn
       wrap :new_account, args.merge(:frame=>true) do
         %{
           #{ _render_header }
-          #{ card_form :create_account do |form|
-            #ENGLISH 
+          #{
+            card_form :create_account do |form|
               %{
                 #{ hidden_field_tag 'success[id]', '_self' }
                 #{ hidden_field_tag 'success[view]', 'account' }
-                <table class="fieldset">
-                  #{ template.render :partial=>'account/email' }
-                  <tr>
-                    <td>&nbsp;</td>
-                    <td colspan="2">
-                      <div>A password will be sent to the above address.</div>
-                      <div>#{ submit_tag 'Create Account' }</div>
-                    </td>
-                  </tr>
-                </table>
+                #{ fieldset :email,
+                    editor_wrap(:email) { text_field( :account, :email ) },
+                    :help=>'A password will be sent to the above address.' #ENGLISH 
+                }
+                <fieldset><div class="button-area">#{ submit_tag 'Create Account' }</div></fieldset>
               }
             end
           }
@@ -526,19 +522,15 @@ module Wagn
       end
     end
 
-    define_view :help do |args|
-      text = case args
-        when String
-          args
-        when Hash
-          setting = args[:setting]
-          setting = [ :add_help, :fallback => :help ] if setting == :add_help
-          if help_card = card.rule_card( *setting ) and help_card.ok? :read
-            with_inclusion_mode :normal do
-              _final_core args.merge( :structure=>help_card.name )
-            end
+    define_view :help, :tags=>:unknown_ok do |args|
+      text = args[:text] or if setting = args[:setting]
+        setting = [ :add_help, :fallback => :help ] if setting == :add_help
+        if help_card = card.rule_card( *setting ) and help_card.ok? :read
+          with_inclusion_mode :normal do
+            _final_core args.merge( :structure=>help_card.name )
           end
         end
+      end
       %{<div class="instruction">#{raw text}</div>} if text
     end
 
@@ -601,10 +593,11 @@ module Wagn
          </div>}
       end
     
-      %{ <h1 class="page-header">Not Found</h1> } +
       wrap( :not_found, args.merge(:frame=>true) ) do # ENGLISH
-        %{<div class="content instruction">
-            <div>Could not find #{card.name.present? ? "<strong>#{card.name}</strong>" : 'the card requested'}.</div>
+        %{
+          <div class="card-header"><h1>Not Found</h1></div>
+          <div class="card-body">
+            <h2>Could not find #{card.name.present? ? "<em>#{card.name}</em>" : 'the card requested'}.</h2>
             #{sign_in_or_up_links}
           </div>}
       end
@@ -622,7 +615,7 @@ module Wagn
         wrap :denial, args.merge(:frame=>true) do #ENGLISH below
           %{
           #{ _render_header }
-          <div id="denied" class="instruction card-body">
+          <div class="card-body">
             <h1>Ooo.  Sorry, but...</h1>
             #{
             if task != :read && Wagn::Conf[:read_only]

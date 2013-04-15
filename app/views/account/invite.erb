@@ -1,5 +1,5 @@
 <%-
-email = params[:email] || {}
+email = params[:account] || {}
 subject = email[:subject] || Card.setting('*invite+*subject') || ''
 message = email[:message] || Card.setting('*invite+*message') || ''
 SmartName.substitute!( message, {
@@ -10,72 +10,50 @@ SmartName.substitute!( message, {
 div_id = "main-body"
 -%>
 
-<h1 class="page-header">Invite A Friend</h1> <%#ENGLISH%>
 
+<iframe id="iframe-<%= div_id %>" height="0" width="0" frameborder="0"></iframe>
 
 <%= wrap_slot do |slot| %>
 
-  <iframe id="iframe-<%= div_id %>" height="0" width="0" frameborder="0"></iframe>
+  
+  <div class="card-header">
+    <h1>Invite a Friend</h1>
+    <% if !card.known? %>
+      <%= raw( slot._render :help, :text=>"Accept account request from: #{link_to_page card.name}" ) %>
+    <% end %>
+  </div>
 
-  <style> .fieldset td.help { width: 30% ;} </style>
+  <%= form_for :card, :action=>params[:action] do |f| %>
+    <%- slot.form = f %>
+    <div class="card-body">
+      <%= hidden_field_tag 'element', "#{div_id}"  %>
 
+      <%= raw error_messages_for( @card ) %>
 
-  <%= form_for :email, :action=>params[:action] do |f| %>
-
-    <%= hidden_field_tag 'element', "#{div_id}"  %>
-
-    <%= raw error_messages_for( @account ) %>
-
-    <table class="fieldset">
-      <% if card.cardname.blank? %>
-        <tr>
-          <td class="label"><label for="name">Name</label></td>
-          <td class="field">
-            <%= text_field( :card, :name, {:class=>'new-card-name', :id=>"new-card-name-field", :autocomplete=>'off'} )%>
-          </td>
-          <td class="help"><strong>Title for user's card</strong><br/> Usually a full name.</td><%#ENGLISH%>
-        </tr>
-        <tr>
-          <td class="label"><label for="email">Email</label></td>
-          <td class="field"><%= text_field :account,:email %></td>
-          <td class="help">&nbsp;</td> <%#ENGLISH%>
-        </tr>
-
+      <% if !card.known? %>
+        <%= raw slot._render_name_editor( :help=>'usually first and last name' ) %>
+        <%= raw slot.fieldset( :email, slot.editor_wrap(:email) { text_field( :account, :email, :size=>60 ) } ) %>
       <% else %>
-        <tr><td colspan="3" class="accept-request-intro" style="text-align: center">
-          <em>Accept Account Request from:<em> <strong><%= link_to_page card.name %></strong><%#ENGLISH%>
-          <%= hidden_field( :card, :key ) %>
-          <%= hidden_field( :account, :email ) %>
-
-        </td></tr>
+        <%= hidden_field( :card, :key ) %>
+        <%= hidden_field( :account, :email ) %>
       <% end %>
+      
+      <%= raw slot.fieldset( :subject, slot.editor_wrap(:subject) { text_field :email, :subject, :value=>subject, :size=>60 } ) %>
+      
+      <%= raw slot.fieldset( :message,
+        slot.editor_wrap(:message) { text_area :email, :message, :value=>message, :rows=>15, :cols => 60  },
+        :help => "We'll create a password and attach it to the email."
+        ) %>
+    </div>
+          
+    <fieldset>
+      <div class="button-area">      
+        <%= submit_tag 'Invite' %>
+        <%= link_to 'Cancel', previous_location  %>
+      </div>
+    </fieldset>
 
-      <tr>
-        <td class="label"><label for="subject">Subject</label></td><%#ENGLISH%>
-        <td class="field" colspan="2"><%= f.text_field :subject, :value=>subject,  :size=>60  %></td>
-      </tr>
-      <tr>
-        <td class="label"><label for="message">Message</label></td><%#ENGLISH%>
-        <td class="field" colspan="2"><%= f.text_area :message, :value=>message, :rows=>15, :cols => 60  %></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td class="help" colspan="2">We'll create a password and attach it to the email.</td>     <%#ENGLISH%>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td colspan="2">
-          <%= submit_tag 'Invite' %>
-          <!--FIXME with css?-->&nbsp;&nbsp;
-          <%= link_to 'Cancel', previous_location  %>
-        </td>
-      </tr>
-
-      <tr><td></td><td colspan="2"><%= raw( slot.notice ) %></td></tr>
-
-    </table>
+    <%= raw( slot.notice ) %>
 
   <% end %>
 <% end %>

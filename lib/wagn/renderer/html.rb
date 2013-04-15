@@ -212,8 +212,9 @@ module Wagn
           process_content( inc ).strip
         end.join
 #        raw _render_core(args)
-      elsif args[:short_editor] #card.new_card?
-        fieldset '', content_field( form )
+      elsif label = args[:label]
+        label = '' if label == true
+        fieldset label, content_field( form )
       else
         content_field form
       end
@@ -351,11 +352,17 @@ module Wagn
           %{#{key}="#{attribs[key]}"}
         end * ' '
       end
+      help_args = case opts[:help]
+        when String ; { :text=> opts[:help] }
+        when Symbol ; { :setting => opts[:help] }
+        when Hash   ; opts[:help]
+        else        ; {}
+      end
       %{
         <fieldset #{ attrib_string }>
           <legend>
             <h2>#{ title }</h2>
-            #{ _render_help opts[:help] }
+            #{ _render_help help_args }
           </legend>
           #{ content }
         </fieldset>

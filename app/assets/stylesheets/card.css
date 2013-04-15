@@ -21,10 +21,12 @@ html>body .open-view {
   overflow: hidden;
   white-space: normal;
 }
+/*
 .card-slot > form >.instruction,
 .card-slot > .instruction {
   background: #eee;
-}
+}*/
+
 .card-body {
   padding: 5px 12px;
 }
@@ -109,6 +111,10 @@ h1.card-title {
 }
 .name-editor.known-name input {
   border: 3px solid #c22;
+}
+.name-messages {
+  font-style: italic;
+  background: #ffd;
 }
 
 .ui-menu .ui-menu-item {
@@ -304,7 +310,7 @@ del.diffmod,
   padding: 10px;
   margin-top: 5px;
   color: #444;
-}*/
+}*
 .instruction {
   border-left: 0;
   border-right: 0;
@@ -361,13 +367,17 @@ body#wagn .card-slot.recent-changes h2 {
 }
 .related-view > .card-body > .ALL > .card-header {
    background: #ddd;
+   padding: 5px;
 }
 .related-view > .card-body > .ALL > .card-header h1 {
    color: #000;
 }
-.related-view > .card-body > .ALL > .card-header,
+.related-view > .card-body > .ALL > .card-header .ui-icon {
+  background-image: url('images/ui-icons_888888_256x240.png')
+
+}
 .related-view > .card-body > .ALL > .card-body {
-   padding: 5px;
+   padding: 8px 2%;
 }
 
 /*------------- closed view -------*/
@@ -622,12 +632,12 @@ h2.set-label {
 .invite-links {
   padding: 10px;
   margin-top: 10px;
-  border: 1px solid #66b;
+  background: #ddd;
+  text-align: center;
 }
 .invite-links a {
-  font-style: normal;
   font-weight: bold;
-  margin-right: 20px;
+  margin: 0 20px;
 }
 
 /*------- permissions ------------------*/

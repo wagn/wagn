@@ -235,7 +235,11 @@ $(window).ready ->
       return null if box.val() != name # avert race conditions
       status = data['status']
       ed = box.parent()
-      inst = box.closest('fieldset').find '.instruction'
+      leg = box.closest('fieldset').find('legend')
+      msg = leg.find '.name-messages'
+      unless msg[0]
+        msg = $('<span class="name-messages"></span>')
+        leg.append msg
       ed.removeClass 'real-name virtual-name known-name'
       slot_id = box.slot().attr 'card-id' # use id to avoid warning when renaming to name variant
       if status != 'unknown' and !(slot_id && parseInt(slot_id) == data['id'])
@@ -245,9 +249,9 @@ $(window).ready ->
           'in virtual'
         else
           'already in'
-        inst.html '"<a href="' + wagn.rootPath + '/' + data['url_key'] + '">' + name + '</a>" ' + qualifier + ' use'
+        msg.html '"<a href="' + wagn.rootPath + '/' + data['url_key'] + '">' + name + '</a>" ' + qualifier + ' use'
       else
-        inst.html ''
+        msg.html ''
         
   $('.render-error-link').live 'click', (event) ->
     msg = $(this).closest('.render-error').find '.render-error-message'

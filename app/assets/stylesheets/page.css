@@ -103,12 +103,12 @@
 
 .help, .instruction {
   color: #440;
-  font-style: italic;
   text-align: center;
   padding: 4px 10px;
 }
-
-
+.instruction {
+  display: inline-block;
+}
 /*--- errors -----*/
 
 .exception p {

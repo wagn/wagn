@@ -465,7 +465,7 @@ describe Wagn::Renderer, "" do
         #pending
         #I can't get this working.  I keep getting this url_for error -- from a line that doesn't call url_for
         card = Card.create!(:name=>'Big Bad Wolf', :type=>'Account Request')
-        assert_view_select Wagn::Renderer.new(card).render(:core), 'div[class="invite-links help instruction"]'
+        assert_view_select Wagn::Renderer.new(card).render(:core), 'div[class="invite-links"]'
       end
     end
 

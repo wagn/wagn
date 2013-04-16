@@ -85,7 +85,7 @@ module Wagn
 
     define_view :search_header, :name=>:search do |args|
       return '' unless vars = search_params[:vars] and keyword = vars[:keyword]
-      %{<h1 class="page-header search-result-header">Search results for: <em>#{keyword}</em></h1>}
+      %{<h1>Search results for: <em>#{keyword}</em></h1>}
     end
 
     define_view :card_list, :name=>:recent do |args|
@@ -106,8 +106,8 @@ module Wagn
       paging = _optional_render :paging, args
 
       %{
-        <h1 class="page-header">Recent Changes</h1>
         <div class="card-frame recent-changes">
+          <div class="card-header"><h1>Recent Changes</h1></div>
           <div class="card-body">
             #{ paging }
             #{

@@ -413,13 +413,15 @@ module Wagn
 
 
     define_view :account_details, :perms=>lambda { |r| r.card.update_account_ok? } do |args|
-      account ||= card.account
+      account = args[:account] || card.account
       
       %{
         #{ fieldset :email, text_field( :account, :email, :autocomplete => :off, :value=>account.email ) }
-        #{ fieldset :password, password_field( :account, :password ), :help=>'no change if blank' }
+        #{ fieldset :password, password_field( :account, :password ), :help=>(args[:setup] ? nil : 'no change if blank') }
         #{ fieldset 'confirm password', password_field( :account, :password_confirmation ) }
-        #{ fieldset :block, check_box_tag( 'account[blocked]', '1', account.blocked? ), :help=>'prevents sign-ins' }        
+        #{ unless args[:setup]
+          fieldset :block, check_box_tag( 'account[blocked]', '1', account.blocked? ), :help=>'prevents sign-ins'
+        end }        
       }
     end
     

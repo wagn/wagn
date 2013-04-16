@@ -10,7 +10,7 @@ class AdminController < CardController
     if request.post?
       #Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
       Account.as_bot do
-        @account, @card = User.create_with_card( params[:account].merge({:login=>'first'}), params[:card] )
+        @account, @card = User.create_with_card( params[:account], params[:card] )
         set_default_request_recipient
 
         if @card.errors.empty?
@@ -21,8 +21,6 @@ class AdminController < CardController
           Card.cache.delete 'no_logins'
           flash[:notice] = "You're good to go!"
           redirect_to Card.path_setting('/')
-        else
-          flash[:notice] = "Durn, setup went awry..."
         end
       end
     else

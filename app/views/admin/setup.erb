@@ -1,25 +1,17 @@
-<h1 class="page-header"> Welcome To Wagn </h1>
-
-<%= raw error_messages_for(@account) %>
-
 <%= wrap_slot do |slot| %>
 
-  <div class="card-body">
-    <h2 class="page-header">To get started, set up an account. </h2><%#ENGLISH%>
+  <div class="card-header"><h1>Welcome! First, set up an account.</h1></div>
+  
+  <%= form_for :card do |f| %>
+    <%- slot.form = f %>
+  
+    <div class="card-body">
+      <%= raw error_messages_for( @card ) %>
 
-    <%= form_tag :id=>params[:id], :action => "setup" do %>
-      <table class="fieldset">
-        <%- option_content = capture do %>
-          <%= text_field :card, :name %>
-        <% end %>
-        <%= raw( slot.option(option_content,
-            :name=>"name",
-            :help=>"<strong>Title for user's card</strong><br/> Usually a full name.", #ENGLISH
-            :label=>"Name")) %>
-        <%= render :partial=>'account/edit', :locals=>{:slot=>slot, :card=>card} %>
-      </table>
-
-      <%= submit_tag 'Create' %>
-    <% end %>
-  </div>
+      <%= raw slot._render_name_editor( :help=>'usually first and last name' ) %>
+      <%= raw slot._render_account_details( :account=>@account, :setup=>true )%>
+    </div>
+    
+    <fieldset><div class="button-area"><%= submit_tag 'Create' %></div></fieldset>
+  <% end %>
 <% end %>

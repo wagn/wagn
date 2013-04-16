@@ -19,7 +19,11 @@ module Wagn
         end * "\n" )
       end.compact * ''
       %{
-        <h2 class="set-label">#{ card.label }</h2>
+        #{
+          unless args[:unlabeled]
+            %{ <h2 class="set-label">#{ card.label }</h2> }
+          end
+        }
         #{ content_tag('table', :class=>'set-rules') { body } }
       }
     end
@@ -47,7 +51,7 @@ module Wagn
               #{link_to_view '', :template_link, :class=>'slotter ui-icon ui-icon-closethick template-editor-close'}
             </div>
             <div class="card-body">
-              #{ _render_core }
+              #{ _render_core args.merge(:unlabeled=>true) }
             </div>
           </div>
           <div class="template-editor-right">}}</div> 

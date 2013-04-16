@@ -64,41 +64,6 @@
 }
 
 
-
-/*----- fieldset tables --------*/
-
-.fieldset {
-  width: 100%;
-}
-.fieldset td     {
-  padding: 5px 3px 5px 3px;
-  border-bottom: 1px solid #ddd;
-}
-.fieldset th {
-  text-align: center;
-  padding: 8px;
-  font-style: normal;
-}
-.fieldset .label {
-  text-align: right;
-  white-space: nowrap;
-  padding-right: 6px;
-  vertical-align: middle;
-}
-.fieldset .field {
-  width: 25%;
-  vertical-align: middle;
-  padding: 7px
-}
-.fieldset .help {
-  padding-left: 6px;
-  width: 50%;
-}
-.fieldset input[type=submit] {
-  margin: 6px
-}
-
-
 /* -- instructions ---*/
 
 .help, .instruction {
@@ -129,23 +94,18 @@
   padding: 1px 20px;
   font-style: italic;
 }
-/*render-error-message {
-#  display: none;
-}*/
-
 /*-------- Special Pages --------*/
 
 /*-- sign in page --*/
 
-#sign-in p {
-  margin: 5px;
-}
 #sign-in input#login_field,
 #sign-in input#password,
-#sign-in input#email {
+#forgot-password input#email {
   width: 50%;
 }
-
+#forgot-password {
+  margin-top: 40px;
+}
 
 /* -- extra boxes -----*/
 

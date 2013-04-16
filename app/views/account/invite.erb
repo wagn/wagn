@@ -32,18 +32,16 @@ div_id = "main-body"
 
       <% if !card.known? %>
         <%= raw slot._render_name_editor( :help=>'usually first and last name' ) %>
-        <%= raw slot.fieldset( :email, slot.editor_wrap(:email) { text_field( :account, :email, :size=>60 ) } ) %>
+        <%= raw slot.fieldset( :email, text_field( :account, :email, :size=>60 ) ) %>
       <% else %>
         <%= hidden_field( :card, :key ) %>
         <%= hidden_field( :account, :email ) %>
       <% end %>
       
-      <%= raw slot.fieldset( :subject, slot.editor_wrap(:subject) { text_field :email, :subject, :value=>subject, :size=>60 } ) %>
+      <%= raw slot.fieldset( :subject, text_field( :email, :subject, :value=>subject, :size=>60 ) ) %>
       
-      <%= raw slot.fieldset( :message,
-        slot.editor_wrap(:message) { text_area :email, :message, :value=>message, :rows=>15, :cols => 60  },
-        :help => "We'll create a password and attach it to the email."
-        ) %>
+      <%= raw slot.fieldset( :message, text_area( :email, :message, :value=>message, :rows=>15, :cols => 60 ),
+        :help => "We'll create a password and attach it to the email." ) %>
     </div>
           
     <fieldset>

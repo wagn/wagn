@@ -142,15 +142,18 @@ module Wagn
           #{ hidden_field_tag( :view, 'open_rule' ) }
 
           <div class="card-editor">
-            #{ fieldset 'type', ( editor_wrap 'type' do
-                type_field :href=>path(:card=>open_rule, :view=>:open_rule, :type_reload=>true),
-                 :class =>'type-field rule-type-field live-type-field', 'data-remote'=>true
-              end )
+            #{
+              fieldset 'type', type_field(
+                :href         => path(:card=>open_rule, :view=>:open_rule, :type_reload=>true),
+                :class        => 'type-field rule-type-field live-type-field',
+                'data-remote' => true
+              ), :editor=>'type'
             }
             
-            #{ fieldset 'content', content_field( form, args.merge(:skip_rev_id=>true) ) }
+            #{ fieldset 'content', content_field( form, args.merge(:skip_rev_id=>true) ), :editor=>'content' }
             
-            #{ fieldset 'set', ( editor_wrap 'set' do
+            #{
+              fieldset 'set', (
                 option_items = args[:set_options].map do |set_name|
                   checked = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
                   is_current = set_name.to_name.key == current_set_key
@@ -163,9 +166,9 @@ module Wagn
                       </span>
                     </li>
                   }
-                end.join
-                %{ <ul>#{option_items}</ul>}
-              end )
+                end
+                %{ <ul>#{ option_items * "\n" }</ul>}
+              ), :editor => 'set'
             }          
           </div>
           

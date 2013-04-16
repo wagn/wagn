@@ -214,9 +214,9 @@ module Wagn
 #        raw _render_core(args)
       elsif label = args[:label]
         label = '' if label == true
-        fieldset label, content_field( form )
+        fieldset label, content_field( form ), :editor=>:content
       else
-        content_field form
+        editor_wrap( :content ) { content_field form }
       end
     end
 
@@ -293,12 +293,10 @@ module Wagn
       revision_tracking = if card && !card.new_card? && !options[:skip_rev_id]
         form.hidden_field :current_revision_id, :class=>'current_revision_id'
       end
-      editor_wrap :content do
-        %{
+      %{
         #{ revision_tracking }
         #{ _render_editor options }
-        }
-      end
+      }
     end
 
     def form_for_multi
@@ -324,26 +322,8 @@ module Wagn
       opts
     end
 
-    def option content, args
-      args[:label] ||= args[:name]
-      args[:editable]= true unless args.has_key?(:editable)
-      self.options_need_save = true if args[:editable]
-      raw %{<tr>
-        <td class="inline label"><label for="#{args[:name]}">#{args[:label]}</label></td>
-        <td class="inline field">
-      } + content + %{
-        </td>
-        <td class="help">#{ args[:help] }</td>
-        </tr>
-      }
-    end
-
-    def option_header title
-      raw %{<tr><th colspan="3" class="option-header"><h2>#{title}</h2></th></tr>}
-    end
-
-    def editor_wrap type
-      content_tag( :div, :class=>"editor #{type}-editor" ) { yield }
+    def editor_wrap type=nil
+      content_tag( :div, :class=>"editor#{ " #{type}-editor" if type }" ) { yield }
     end
 
     def fieldset title, content, opts={}
@@ -364,7 +344,7 @@ module Wagn
             <h2>#{ title }</h2>
             #{ _render_help help_args }
           </legend>
-          #{ content }
+          #{ editor_wrap( opts[:editor] ) { content } }
         </fieldset>
       }
     end

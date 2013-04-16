@@ -274,11 +274,8 @@ module Wagn
     end
 
     define_view :name_editor do |args|
-      fieldset 'name', (editor_wrap :name do
-         raw( name_field form )
-      end), :help=>args[:help]
+      fieldset 'name', raw( name_field form ), :editor=>'name', :help=>args[:help]
     end
-
 
     define_view :edit_name, :perms=>:update do |args|
       card.update_referencers = false
@@ -319,13 +316,12 @@ module Wagn
     end
 
     define_view :type_menu do |args|
-      fieldset 'type', (editor_wrap :type do
-        if args[:variety] == :edit
-          type_field :class=>'type-field edit-type-field'
-        else
-          type_field :class=>"type-field live-type-field", :href=>path(:view=>:new), 'data-remote'=>true
-        end
-      end), :attribs=> { :class=>'type-fieldset'}
+      field = if args[:variety] == :edit
+        type_field :class=>'type-field edit-type-field'
+      else
+        type_field :class=>"type-field live-type-field", :href=>path(:view=>:new), 'data-remote'=>true
+      end
+      fieldset 'type', field, :editor => 'type', :attribs => { :class=>'type-fieldset'}
     end
 
     define_view :edit_type, :perms=>:update do |args|
@@ -356,7 +352,10 @@ module Wagn
     define_view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
       eform = form_for_multi
       content = content_field eform, :nested=>true
-      opts = { :attribs => { :class=> "card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" } }
+      opts = {
+        :editor  => 'content',
+        :attribs => { :class=> "card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" }
+      }
       if card.new_card?
         content += raw( "\n #{ eform.hidden_field :type_id }" )
         opts[:help] = { :setting => :add_help }
@@ -367,32 +366,6 @@ module Wagn
       fieldset fancy_title, content, opts
     end
 
-
-    define_view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
-
-      locals = {:slot=>self, :card=>card, :account=>card.account }
-      wrap :options, args.merge(:frame=>true) do
-        %{ #{ _render_header }
-          <div class="options-body">
-            #{ card_form :update_account, '', 'notify-success'=>'account details updated' do |form|
-              %{
-              #{ hidden_field_tag 'success[id]', '_self' }
-              #{ hidden_field_tag 'success[view]', 'options' }
-              <table class="fieldset">
-                #{ option_header 'Account Details' }
-                #{ template.render :partial=>'account/edit',  :locals=>locals }
-
-                #{ _render_option_roles }
-                #{ if options_need_save
-                    %{<tr><td colspan="3">#{ submit_tag 'Save Changes' }</td></tr>}
-                   end
-                }
-              </table>}
-            end }
-          </div>
-        }
-      end
-    end
   
     define_view :options do |args|
       current_set = Card.fetch( params[:current_set] || card.related_sets[0][0] )
@@ -415,7 +388,45 @@ module Wagn
       end
     end
     
-    define_view :option_roles do |args|
+    
+    define_view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
+
+      locals = {:slot=>self, :card=>card, :account=>card.account }
+      wrap :options, args.merge(:frame=>true) do
+        %{ #{ _render_header }
+          <div class="card-body">
+            #{
+              card_form :update_account, '', 'notify-success'=>'account details updated' do |form|
+                %{
+                  #{ hidden_field_tag 'success[id]', '_self' }
+                  #{ hidden_field_tag 'success[view]', 'account' }
+                  #{ render_account_details }
+                  #{ render_account_roles   }
+                  <fieldset><div class="button-area">#{ submit_tag 'Save Changes' }</div></fieldset>
+                }
+              end
+            }
+          </div>
+        }
+      end
+    end
+
+
+    define_view :account_details, :perms=>lambda { |r| r.card.update_account_ok? } do |args|
+      account ||= card.account
+      
+      %{
+        #{ fieldset :email, text_field( :account, :email, :autocomplete => :off, :value=>account.email ) }
+        #{ fieldset :password, password_field( :account, :password ), :help=>'no change if blank' }
+        #{ fieldset 'confirm password', password_field( :account, :password_confirmation ) }
+        #{ fieldset :block, check_box_tag( 'account[blocked]', '1', account.blocked? ), :help=>'prevents sign-ins' }        
+      }
+    end
+    
+    define_view :account_roles, :perms=>lambda { |r| 
+          r.card.fetch( :trait => :roles, :new=>{} ).ok? :read
+        } do |args|
+          
       roles = Card.search( :type=>Card::RoleID, :limit=>0 ).reject do |x|
         [Card::AnyoneID, Card::AuthID].member? x.id.to_i
       end
@@ -444,12 +455,7 @@ module Wagn
         end
       end
 
-      %{#{ raw option_header( 'User Roles' ) }#{
-         option(option_content, :name=>"roles",
-        :help=>%{ <span class="small">"#{ link_to_page 'Roles' }" are used to set user permissions</span>}, #ENGLISH
-        :label=>"#{card.name}'s Roles",
-        :editable=>card.fetch(:trait=>:roles, :new=>{}).ok?(:update)
-      )}}
+      fieldset :roles, option_content
     end
 
     define_view :new_account, :perms=> lambda { |r| r.card.accountable? } do |args|
@@ -461,10 +467,7 @@ module Wagn
               %{
                 #{ hidden_field_tag 'success[id]', '_self' }
                 #{ hidden_field_tag 'success[view]', 'account' }
-                #{ fieldset :email,
-                    editor_wrap(:email) { text_field( :account, :email ) },
-                    :help=>'A password will be sent to the above address.' #ENGLISH 
-                }
+                #{ fieldset :email, text_field( :account, :email ), :help=>'A password will be sent to the above address.' }
                 <fieldset><div class="button-area">#{ submit_tag 'Create Account' }</div></fieldset>
               }
             end
@@ -523,7 +526,9 @@ module Wagn
     end
 
     define_view :help, :tags=>:unknown_ok do |args|
-      text = args[:text] or if setting = args[:setting]
+      text = if args[:text]
+        args[:text]
+      elsif setting = args[:setting]
         setting = [ :add_help, :fallback => :help ] if setting == :add_help
         if help_card = card.rule_card( *setting ) and help_card.ok? :read
           with_inclusion_mode :normal do

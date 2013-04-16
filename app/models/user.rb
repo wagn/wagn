@@ -155,7 +155,7 @@ class User < ActiveRecord::Base
 
   # blocked methods for legacy boolean status
   def blocked= block
-    if block != '0'
+    if block == true
       self.status = 'blocked'
     elsif !built_in?
       self.status = 'active'

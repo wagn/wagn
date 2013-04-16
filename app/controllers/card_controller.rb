@@ -99,10 +99,16 @@ class CardController < ApplicationController
 
     acct = card.account
     if acct and account_args = params[:account]
-      unless Account.as_id == card.id and !account_args[:blocked]
+      account_args[:blocked] = account_args[:blocked] == '1'
+      if Account.as_id == card.id
+        raise Wagn::Oops, "can't block own account" if account_args[:blocked]
+      else
         card.fetch(:trait=>:account).ok! :update
       end
       acct.update_attributes account_args
+      acct.errors.each do |key,err|
+        card.errors.add key,err
+      end
     end
 
     if card.errors.any?

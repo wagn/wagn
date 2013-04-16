@@ -214,7 +214,7 @@ CONTENT = {
      }
 
    ~
-} # should the ~ be there?  is it css?
+}
 
 CLASSES = {
    :one => [String, Literal::Escape, String, Chunks::Include, String ],

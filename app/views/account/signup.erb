@@ -25,7 +25,7 @@
 
       <div class="card-body">      
         <%= raw slot._render_name_editor( :help=>'usually first and last name' ) %>
-        <%= raw slot.fieldset( :email, slot.editor_wrap(:email) { text_field( :account, :email ) } ) %>
+        <%= raw slot.fieldset( :email, text_field( :account, :email ) ) %>
         <%= raw( slot.with_inclusion_mode(:new) { slot.edit_slot :label=>'other' } ) %>
       </div>
       

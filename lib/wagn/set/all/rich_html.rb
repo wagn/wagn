@@ -419,10 +419,13 @@ module Wagn
         #{ fieldset :email, text_field( :account, :email, :autocomplete => :off, :value=>account.email ) }
         #{ fieldset :password, password_field( :account, :password ), :help=>(args[:setup] ? nil : 'no change if blank') }
         #{ fieldset 'confirm password', password_field( :account, :password_confirmation ) }
-        #{ unless args[:setup]
-          fieldset :block, check_box_tag( 'account[blocked]', '1', account.blocked? ), :help=>'prevents sign-ins'
-        end }        
+        #{ 
+          if !args[:setup] && Account.user.id != account.id 
+            fieldset :block, check_box_tag( 'account[blocked]', '1', account.blocked? ), :help=>'prevents sign-ins'
+          end
+        }
       }
+      
     end
     
     define_view :account_roles, :perms=>lambda { |r| 

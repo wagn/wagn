@@ -7,7 +7,7 @@ cards_001:
   left_id: 
   right_id: 
   current_revision_id: 1541
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-19 14:17:59 Z
   creator_id: 1
   updater_id: 1
@@ -24,7 +24,7 @@ cards_002:
   left_id: 
   right_id: 
   current_revision_id: 5472
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 16:33:11 Z
   creator_id: 1
   updater_id: 1
@@ -41,7 +41,7 @@ cards_003:
   left_id: 
   right_id: 
   current_revision_id: 5490
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 16:39:19 Z
   creator_id: 1
   updater_id: 1
@@ -58,7 +58,7 @@ cards_004:
   left_id: 
   right_id: 
   current_revision_id: 5470
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 16:30:28 Z
   creator_id: 1
   updater_id: 1
@@ -75,7 +75,7 @@ cards_005:
   left_id: 
   right_id: 
   current_revision_id: 5487
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 16:38:23 Z
   creator_id: 1
   updater_id: 1
@@ -92,7 +92,7 @@ cards_006:
   left_id: 
   right_id: 
   current_revision_id: 8
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-04-06 14:11:12 Z
   creator_id: 1
   updater_id: 1
@@ -109,7 +109,7 @@ cards_007:
   left_id: 
   right_id: 
   current_revision_id: 9
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-04-06 14:11:12 Z
   creator_id: 1
   updater_id: 1
@@ -126,7 +126,7 @@ cards_008:
   left_id: 
   right_id: 
   current_revision_id: 10
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-04-06 14:11:12 Z
   creator_id: 1
   updater_id: 1
@@ -143,7 +143,7 @@ cards_009:
   left_id: 
   right_id: 
   current_revision_id: 5471
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 16:30:46 Z
   creator_id: 1
   updater_id: 1
@@ -160,7 +160,7 @@ cards_010:
   left_id: 
   right_id: 
   current_revision_id: 2573
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-06-09 18:25:35 Z
   creator_id: 1
   updater_id: 1
@@ -177,7 +177,7 @@ cards_011:
   left_id: 
   right_id: 
   current_revision_id: 5479
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 16:36:07 Z
   creator_id: 1
   updater_id: 1
@@ -194,7 +194,7 @@ cards_012:
   left_id: 
   right_id: 
   current_revision_id: 5480
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 16:36:21 Z
   creator_id: 1
   updater_id: 1
@@ -211,7 +211,7 @@ cards_013:
   left_id: 
   right_id: 
   current_revision_id: 5482
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 16:37:02 Z
   creator_id: 1
   updater_id: 1
@@ -228,7 +228,7 @@ cards_014:
   left_id: 
   right_id: 
   current_revision_id: 5483
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 16:37:17 Z
   creator_id: 1
   updater_id: 1
@@ -245,7 +245,7 @@ cards_015:
   left_id: 
   right_id: 
   current_revision_id: 5485
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 16:37:52 Z
   creator_id: 1
   updater_id: 1
@@ -262,7 +262,7 @@ cards_016:
   left_id: 274
   right_id: 318
   current_revision_id: 28
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-17 12:09:07 Z
   creator_id: 1
   updater_id: 1
@@ -279,7 +279,7 @@ cards_017:
   left_id: 
   right_id: 
   current_revision_id: 5488
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 16:38:37 Z
   creator_id: 1
   updater_id: 1
@@ -296,7 +296,7 @@ cards_018:
   left_id: 
   right_id: 
   current_revision_id: 33
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:02:24 Z
   creator_id: 1
   updater_id: 1
@@ -313,7 +313,7 @@ cards_019:
   left_id: 350
   right_id: 317
   current_revision_id: 5607
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-03 17:00:20 Z
   creator_id: 1
   updater_id: 1
@@ -330,7 +330,7 @@ cards_020:
   left_id: 
   right_id: 
   current_revision_id: 35
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:02:24 Z
   creator_id: 1
   updater_id: 1
@@ -347,7 +347,7 @@ cards_021:
   left_id: 349
   right_id: 317
   current_revision_id: 5608
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-03 17:00:28 Z
   creator_id: 1
   updater_id: 1
@@ -364,7 +364,7 @@ cards_022:
   left_id: 
   right_id: 
   current_revision_id: 37
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:02:23 Z
   creator_id: 1
   updater_id: 1
@@ -381,7 +381,7 @@ cards_023:
   left_id: 348
   right_id: 317
   current_revision_id: 5603
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-03 16:57:53 Z
   creator_id: 1
   updater_id: 1
@@ -398,7 +398,7 @@ cards_024:
   left_id: 
   right_id: 
   current_revision_id: 39
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:02:23 Z
   creator_id: 1
   updater_id: 1
@@ -415,7 +415,7 @@ cards_025:
   left_id: 345
   right_id: 317
   current_revision_id: 5606
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-03 16:58:57 Z
   creator_id: 1
   updater_id: 1
@@ -432,7 +432,7 @@ cards_026:
   left_id: 
   right_id: 
   current_revision_id: 41
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:02:21 Z
   creator_id: 1
   updater_id: 1
@@ -449,7 +449,7 @@ cards_027:
   left_id: 347
   right_id: 317
   current_revision_id: 5604
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-03 16:58:03 Z
   creator_id: 1
   updater_id: 1
@@ -466,7 +466,7 @@ cards_028:
   left_id: 
   right_id: 
   current_revision_id: 43
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:02:20 Z
   creator_id: 1
   updater_id: 1
@@ -483,7 +483,7 @@ cards_029:
   left_id: 346
   right_id: 317
   current_revision_id: 5605
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-03 16:58:54 Z
   creator_id: 1
   updater_id: 1
@@ -500,7 +500,7 @@ cards_030:
   left_id: 
   right_id: 
   current_revision_id: 5486
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 16:38:10 Z
   creator_id: 1
   updater_id: 1
@@ -517,7 +517,7 @@ cards_031:
   left_id: 
   right_id: 
   current_revision_id: 5481
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 16:36:34 Z
   creator_id: 1
   updater_id: 1
@@ -534,7 +534,7 @@ cards_032:
   left_id: 
   right_id: 
   current_revision_id: 5489
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 16:39:05 Z
   creator_id: 1
   updater_id: 1
@@ -551,7 +551,7 @@ cards_033:
   left_id: 
   right_id: 
   current_revision_id: 5484
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 16:37:32 Z
   creator_id: 1
   updater_id: 1
@@ -568,7 +568,7 @@ cards_034:
   left_id: 
   right_id: 
   current_revision_id: 6025
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-01-14 01:47:25 Z
   creator_id: 1
   updater_id: 1
@@ -585,7 +585,7 @@ cards_035:
   left_id: 
   right_id: 
   current_revision_id: 1755
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-04-08 10:23:29 Z
   creator_id: 1
   updater_id: 1
@@ -602,7 +602,7 @@ cards_036:
   left_id: 
   right_id: 
   current_revision_id: 6072
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-10-09 23:20:10 Z
   creator_id: 1
   updater_id: 1
@@ -619,7 +619,7 @@ cards_037:
   left_id: 
   right_id: 
   current_revision_id: 62
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-18 15:24:33 Z
   creator_id: 1
   updater_id: 1
@@ -636,7 +636,7 @@ cards_038:
   left_id: 56
   right_id: 61
   current_revision_id: 2474
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-17 09:21:52 Z
   creator_id: 1
   updater_id: 1
@@ -653,7 +653,7 @@ cards_039:
   left_id: 
   right_id: 
   current_revision_id: 5566
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-21 08:42:54 Z
   creator_id: 1
   updater_id: 1
@@ -670,7 +670,7 @@ cards_040:
   left_id: 
   right_id: 
   current_revision_id: 66
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-20 18:00:53 Z
   creator_id: 1
   updater_id: 1
@@ -687,7 +687,7 @@ cards_041:
   left_id: 
   right_id: 
   current_revision_id: 6272
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-01-03 17:05:17 Z
   creator_id: 1
   updater_id: 1
@@ -704,7 +704,7 @@ cards_042:
   left_id: 66
   right_id: 61
   current_revision_id: 2472
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-17 09:21:50 Z
   creator_id: 1
   updater_id: 1
@@ -721,7 +721,7 @@ cards_043:
   left_id: 
   right_id: 
   current_revision_id: 2494
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-06-01 12:55:14 Z
   creator_id: 1
   updater_id: 1
@@ -738,7 +738,7 @@ cards_044:
   left_id: 
   right_id: 
   current_revision_id: 3318
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-19 12:14:00 Z
   creator_id: 1
   updater_id: 1
@@ -755,7 +755,7 @@ cards_045:
   left_id: 
   right_id: 
   current_revision_id: 5941
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-22 10:03:07 Z
   creator_id: 1
   updater_id: 1
@@ -772,7 +772,7 @@ cards_046:
   left_id: 
   right_id: 
   current_revision_id: 5214
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-21 10:23:17 Z
   creator_id: 1
   updater_id: 1
@@ -789,7 +789,7 @@ cards_047:
   left_id: 
   right_id: 
   current_revision_id: 5985
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-01-08 22:30:07 Z
   creator_id: 1
   updater_id: 1
@@ -806,7 +806,7 @@ cards_048:
   left_id: 
   right_id: 
   current_revision_id: 6019
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-01-08 23:12:38 Z
   creator_id: 1
   updater_id: 1
@@ -823,7 +823,7 @@ cards_049:
   left_id: 
   right_id: 
   current_revision_id: 2331
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-12 14:05:19 Z
   creator_id: 1
   updater_id: 1
@@ -840,7 +840,7 @@ cards_050:
   left_id: 
   right_id: 
   current_revision_id: 237
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:02:00 Z
   creator_id: 1
   updater_id: 1
@@ -856,9 +856,9 @@ cards_051:
   codename: 
   left_id: 315
   right_id: 82
-  current_revision_id: 5936
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2011-07-22 09:59:39 Z
+  current_revision_id: 6335
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:49:41 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -874,7 +874,7 @@ cards_052:
   left_id: 
   right_id: 
   current_revision_id: 5996
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-01-08 22:33:46 Z
   creator_id: 1
   updater_id: 1
@@ -891,7 +891,7 @@ cards_053:
   left_id: 
   right_id: 
   current_revision_id: 266
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-02 16:02:58 Z
   creator_id: 1
   updater_id: 1
@@ -908,7 +908,7 @@ cards_054:
   left_id: 300
   right_id: 318
   current_revision_id: 5497
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 21:34:07 Z
   creator_id: 1
   updater_id: 1
@@ -925,7 +925,7 @@ cards_055:
   left_id: 320
   right_id: 317
   current_revision_id: 5516
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 22:06:30 Z
   creator_id: 1
   updater_id: 1
@@ -942,7 +942,7 @@ cards_056:
   left_id: 
   right_id: 
   current_revision_id: 311
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-17 09:22:46 Z
   creator_id: 1
   updater_id: 1
@@ -958,9 +958,9 @@ cards_057:
   codename: 
   left_id: 285
   right_id: 82
-  current_revision_id: 3494
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2010-04-21 16:26:52 Z
+  current_revision_id: 6340
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:51:22 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -976,7 +976,7 @@ cards_058:
   left_id: 285
   right_id: 318
   current_revision_id: 3033
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:47 Z
   creator_id: 1
   updater_id: 1
@@ -993,7 +993,7 @@ cards_059:
   left_id: 
   right_id: 
   current_revision_id: 349
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:02:25 Z
   creator_id: 1
   updater_id: 1
@@ -1010,7 +1010,7 @@ cards_060:
   left_id: 352
   right_id: 317
   current_revision_id: 5966
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-09-01 12:21:06 Z
   creator_id: 1
   updater_id: 1
@@ -1027,7 +1027,7 @@ cards_061:
   left_id: 351
   right_id: 317
   current_revision_id: 5598
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-03 16:49:16 Z
   creator_id: 1
   updater_id: 1
@@ -1044,7 +1044,7 @@ cards_062:
   left_id: 
   right_id: 
   current_revision_id: 353
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-04-06 14:11:12 Z
   creator_id: 1
   updater_id: 1
@@ -1061,7 +1061,7 @@ cards_063:
   left_id: 
   right_id: 
   current_revision_id: 355
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-04-09 16:34:46 Z
   creator_id: 1
   updater_id: 1
@@ -1078,7 +1078,7 @@ cards_064:
   left_id: 342
   right_id: 317
   current_revision_id: 1881
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:15 Z
   creator_id: 1
   updater_id: 1
@@ -1095,7 +1095,7 @@ cards_065:
   left_id: 
   right_id: 
   current_revision_id: 5976
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-01-02 13:49:04 Z
   creator_id: 1
   updater_id: 1
@@ -1112,7 +1112,7 @@ cards_066:
   left_id: 
   right_id: 
   current_revision_id: 486
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-24 08:47:48 Z
   creator_id: 1
   updater_id: 1
@@ -1129,7 +1129,7 @@ cards_067:
   left_id: 
   right_id: 
   current_revision_id: 6287
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-03-26 17:46:38 Z
   creator_id: 1
   updater_id: 1
@@ -1146,7 +1146,7 @@ cards_068:
   left_id: 63
   right_id: 61
   current_revision_id: 2473
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-17 09:21:54 Z
   creator_id: 1
   updater_id: 1
@@ -1163,7 +1163,7 @@ cards_069:
   left_id: 
   right_id: 
   current_revision_id: 3031
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-02 16:28:23 Z
   creator_id: 1
   updater_id: 1
@@ -1180,7 +1180,7 @@ cards_070:
   left_id: 
   right_id: 
   current_revision_id: 1407
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-04-06 14:11:12 Z
   creator_id: 1
   updater_id: 1
@@ -1197,7 +1197,7 @@ cards_071:
   left_id: 355
   right_id: 318
   current_revision_id: 1408
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:31 Z
   creator_id: 1
   updater_id: 1
@@ -1214,7 +1214,7 @@ cards_072:
   left_id: 
   right_id: 
   current_revision_id: 1409
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:02:26 Z
   creator_id: 1
   updater_id: 1
@@ -1231,7 +1231,7 @@ cards_073:
   left_id: 354
   right_id: 318
   current_revision_id: 1410
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:30 Z
   creator_id: 1
   updater_id: 1
@@ -1248,7 +1248,7 @@ cards_074:
   left_id: 
   right_id: 
   current_revision_id: 1521
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-20 18:01:25 Z
   creator_id: 1
   updater_id: 1
@@ -1265,7 +1265,7 @@ cards_075:
   left_id: 
   right_id: 
   current_revision_id: 1550
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:02:28 Z
   creator_id: 1
   updater_id: 1
@@ -1282,7 +1282,7 @@ cards_076:
   left_id: 
   right_id: 
   current_revision_id: 1696
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-04-06 14:11:12 Z
   creator_id: 1
   updater_id: 1
@@ -1299,7 +1299,7 @@ cards_077:
   left_id: 10
   right_id: 146
   current_revision_id: 6078
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-10-09 23:22:14 Z
   creator_id: 1
   updater_id: 1
@@ -1316,7 +1316,7 @@ cards_078:
   left_id: 
   right_id: 
   current_revision_id: 6063
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-10-01 16:35:39 Z
   creator_id: 1
   updater_id: 1
@@ -1333,7 +1333,7 @@ cards_079:
   left_id: 
   right_id: 
   current_revision_id: 5767
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-19 11:17:37 Z
   creator_id: 1
   updater_id: 1
@@ -1350,7 +1350,7 @@ cards_080:
   left_id: 
   right_id: 
   current_revision_id: 2013
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-04-24 10:30:47 Z
   creator_id: 1
   updater_id: 1
@@ -1367,7 +1367,7 @@ cards_081:
   left_id: 338
   right_id: 317
   current_revision_id: 2022
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:09 Z
   creator_id: 1
   updater_id: 1
@@ -1384,7 +1384,7 @@ cards_082:
   left_id: 
   right_id: 
   current_revision_id: 2087
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:02:16 Z
   creator_id: 1
   updater_id: 1
@@ -1401,7 +1401,7 @@ cards_083:
   left_id: 341
   right_id: 317
   current_revision_id: 2089
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:14 Z
   creator_id: 1
   updater_id: 1
@@ -1418,7 +1418,7 @@ cards_084:
   left_id: 5
   right_id: 146
   current_revision_id: 2093
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-21 16:27:07 Z
   creator_id: 1
   updater_id: 1
@@ -1435,7 +1435,7 @@ cards_085:
   left_id: 4
   right_id: 146
   current_revision_id: 2094
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-21 16:27:07 Z
   creator_id: 1
   updater_id: 1
@@ -1452,7 +1452,7 @@ cards_086:
   left_id: 30
   right_id: 146
   current_revision_id: 5196
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-19 08:32:20 Z
   creator_id: 1
   updater_id: 1
@@ -1469,7 +1469,7 @@ cards_087:
   left_id: 
   right_id: 
   current_revision_id: 2264
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:02:16 Z
   creator_id: 1
   updater_id: 1
@@ -1486,7 +1486,7 @@ cards_088:
   left_id: 336
   right_id: 317
   current_revision_id: 2266
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:06 Z
   creator_id: 1
   updater_id: 1
@@ -1503,7 +1503,7 @@ cards_089:
   left_id: 
   right_id: 
   current_revision_id: 2290
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:02:18 Z
   creator_id: 1
   updater_id: 1
@@ -1520,7 +1520,7 @@ cards_090:
   left_id: 335
   right_id: 317
   current_revision_id: 2291
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:06 Z
   creator_id: 1
   updater_id: 1
@@ -1537,7 +1537,7 @@ cards_091:
   left_id: 
   right_id: 
   current_revision_id: 6261
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-12-02 03:19:38 Z
   creator_id: 1
   updater_id: 1
@@ -1554,7 +1554,7 @@ cards_092:
   left_id: 
   right_id: 
   current_revision_id: 2402
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-05-21 10:35:27 Z
   creator_id: 1
   updater_id: 1
@@ -1571,7 +1571,7 @@ cards_093:
   left_id: 319
   right_id: 318
   current_revision_id: 2403
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:30 Z
   creator_id: 1
   updater_id: 1
@@ -1588,7 +1588,7 @@ cards_094:
   left_id: 50
   right_id: 146
   current_revision_id: 2408
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-21 16:27:06 Z
   creator_id: 1
   updater_id: 1
@@ -1605,7 +1605,7 @@ cards_095:
   left_id: 288
   right_id: 318
   current_revision_id: 2430
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:52 Z
   creator_id: 1
   updater_id: 1
@@ -1622,7 +1622,7 @@ cards_096:
   left_id: 8
   right_id: 146
   current_revision_id: 2571
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-21 16:27:04 Z
   creator_id: 1
   updater_id: 1
@@ -1639,7 +1639,7 @@ cards_097:
   left_id: 9
   right_id: 146
   current_revision_id: 2570
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-21 16:27:05 Z
   creator_id: 1
   updater_id: 1
@@ -1656,7 +1656,7 @@ cards_098:
   left_id: 51
   right_id: 146
   current_revision_id: 2574
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-21 16:27:04 Z
   creator_id: 1
   updater_id: 1
@@ -1673,7 +1673,7 @@ cards_099:
   left_id: 47
   right_id: 146
   current_revision_id: 5524
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 22:15:26 Z
   creator_id: 1
   updater_id: 1
@@ -1690,7 +1690,7 @@ cards_100:
   left_id: 19
   right_id: 146
   current_revision_id: 2576
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-21 16:27:03 Z
   creator_id: 1
   updater_id: 1
@@ -1707,7 +1707,7 @@ cards_101:
   left_id: 18
   right_id: 146
   current_revision_id: 4871
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-15 22:54:16 Z
   creator_id: 1
   updater_id: 1
@@ -1724,7 +1724,7 @@ cards_102:
   left_id: 12
   right_id: 146
   current_revision_id: 2581
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-21 16:27:02 Z
   creator_id: 1
   updater_id: 1
@@ -1741,7 +1741,7 @@ cards_103:
   left_id: 331
   right_id: 318
   current_revision_id: 2604
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:00 Z
   creator_id: 1
   updater_id: 1
@@ -1758,7 +1758,7 @@ cards_104:
   left_id: 
   right_id: 
   current_revision_id: 3754
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-11-01 17:46:26 Z
   creator_id: 1
   updater_id: 1
@@ -1775,7 +1775,7 @@ cards_105:
   left_id: 269
   right_id: 318
   current_revision_id: 2609
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:59 Z
   creator_id: 1
   updater_id: 1
@@ -1792,7 +1792,7 @@ cards_106:
   left_id: 269
   right_id: 86
   current_revision_id: 5713
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-06-06 13:11:10 Z
   creator_id: 1
   updater_id: 1
@@ -1809,7 +1809,7 @@ cards_107:
   left_id: 
   right_id: 
   current_revision_id: 2624
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-07-03 11:43:20 Z
   creator_id: 1
   updater_id: 1
@@ -1826,7 +1826,7 @@ cards_108:
   left_id: 329
   right_id: 317
   current_revision_id: 5621
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-03 17:07:11 Z
   creator_id: 1
   updater_id: 1
@@ -1843,7 +1843,7 @@ cards_109:
   left_id: 7
   right_id: 146
   current_revision_id: 6081
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-10-09 23:23:16 Z
   creator_id: 1
   updater_id: 1
@@ -1860,7 +1860,7 @@ cards_110:
   left_id: 
   right_id: 
   current_revision_id: 2878
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-02 16:02:58 Z
   creator_id: 1
   updater_id: 1
@@ -1877,7 +1877,7 @@ cards_111:
   left_id: 268
   right_id: 318
   current_revision_id: 2879
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-04 16:52:55 Z
   creator_id: 1
   updater_id: 1
@@ -1894,7 +1894,7 @@ cards_112:
   left_id: 
   right_id: 
   current_revision_id: 2889
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-02 16:02:57 Z
   creator_id: 1
   updater_id: 1
@@ -1911,7 +1911,7 @@ cards_113:
   left_id: 289
   right_id: 318
   current_revision_id: 2890
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:58 Z
   creator_id: 1
   updater_id: 1
@@ -1927,9 +1927,9 @@ cards_114:
   codename: 
   left_id: 289
   right_id: 82
-  current_revision_id: 6039
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2012-03-02 19:11:17 Z
+  current_revision_id: 6299
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:14:16 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -1944,9 +1944,9 @@ cards_115:
   codename: 
   left_id: 288
   right_id: 82
-  current_revision_id: 3495
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2010-04-21 16:26:52 Z
+  current_revision_id: 6343
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:55:28 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -1962,7 +1962,7 @@ cards_116:
   left_id: 
   right_id: 
   current_revision_id: 3023
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-02 16:02:58 Z
   creator_id: 1
   updater_id: 1
@@ -1979,7 +1979,7 @@ cards_117:
   left_id: 286
   right_id: 318
   current_revision_id: 2901
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:51 Z
   creator_id: 1
   updater_id: 1
@@ -1995,9 +1995,9 @@ cards_118:
   codename: 
   left_id: 286
   right_id: 82
-  current_revision_id: 6040
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2012-03-02 19:14:15 Z
+  current_revision_id: 6329
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:23:41 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -2013,7 +2013,7 @@ cards_119:
   left_id: 
   right_id: 
   current_revision_id: 3019
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-02 16:02:57 Z
   creator_id: 1
   updater_id: 1
@@ -2030,7 +2030,7 @@ cards_120:
   left_id: 
   right_id: 
   current_revision_id: 3021
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-02 16:02:57 Z
   creator_id: 1
   updater_id: 1
@@ -2047,7 +2047,7 @@ cards_121:
   left_id: 302
   right_id: 318
   current_revision_id: 2930
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:45 Z
   creator_id: 1
   updater_id: 1
@@ -2064,7 +2064,7 @@ cards_122:
   left_id: 
   right_id: 
   current_revision_id: 5469
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 16:28:08 Z
   creator_id: 1
   updater_id: 1
@@ -2081,7 +2081,7 @@ cards_123:
   left_id: 
   right_id: 
   current_revision_id: 3001
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-20 18:00:53 Z
   creator_id: 1
   updater_id: 1
@@ -2098,7 +2098,7 @@ cards_124:
   left_id: 324
   right_id: 317
   current_revision_id: 3002
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:43 Z
   creator_id: 1
   updater_id: 1
@@ -2115,7 +2115,7 @@ cards_125:
   left_id: 
   right_id: 
   current_revision_id: 3003
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-02 16:03:03 Z
   creator_id: 1
   updater_id: 1
@@ -2132,7 +2132,7 @@ cards_126:
   left_id: 325
   right_id: 317
   current_revision_id: 3004
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:43 Z
   creator_id: 1
   updater_id: 1
@@ -2149,7 +2149,7 @@ cards_127:
   left_id: 
   right_id: 
   current_revision_id: 3005
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-02 16:03:00 Z
   creator_id: 1
   updater_id: 1
@@ -2166,7 +2166,7 @@ cards_128:
   left_id: 326
   right_id: 317
   current_revision_id: 3006
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:44 Z
   creator_id: 1
   updater_id: 1
@@ -2183,7 +2183,7 @@ cards_129:
   left_id: 
   right_id: 
   current_revision_id: 3007
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-02 16:03:00 Z
   creator_id: 1
   updater_id: 1
@@ -2200,7 +2200,7 @@ cards_130:
   left_id: 327
   right_id: 317
   current_revision_id: 3008
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:45 Z
   creator_id: 1
   updater_id: 1
@@ -2217,7 +2217,7 @@ cards_131:
   left_id: 241
   right_id: 260
   current_revision_id: 3009
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-08 12:25:14 Z
   creator_id: 1
   updater_id: 1
@@ -2234,7 +2234,7 @@ cards_132:
   left_id: 219
   right_id: 260
   current_revision_id: 3010
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-08 12:25:14 Z
   creator_id: 1
   updater_id: 1
@@ -2251,7 +2251,7 @@ cards_133:
   left_id: 
   right_id: 
   current_revision_id: 3088
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-17 11:52:04 Z
   creator_id: 1
   updater_id: 1
@@ -2268,7 +2268,7 @@ cards_134:
   left_id: 274
   right_id: 255
   current_revision_id: 3171
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-23 11:51:05 Z
   creator_id: 1
   updater_id: 1
@@ -2285,7 +2285,7 @@ cards_135:
   left_id: 274
   right_id: 256
   current_revision_id: 6257
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-11-21 16:30:55 Z
   creator_id: 1
   updater_id: 1
@@ -2302,7 +2302,7 @@ cards_136:
   left_id: 274
   right_id: 252
   current_revision_id: 3022
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-02 16:02:56 Z
   creator_id: 1
   updater_id: 1
@@ -2319,7 +2319,7 @@ cards_137:
   left_id: 
   right_id: 
   current_revision_id: 5538
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-20 11:51:09 Z
   creator_id: 1
   updater_id: 1
@@ -2336,7 +2336,7 @@ cards_138:
   left_id: 274
   right_id: 89
   current_revision_id: 3871
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-02 19:49:22 Z
   creator_id: 1
   updater_id: 1
@@ -2353,7 +2353,7 @@ cards_139:
   left_id: 284
   right_id: 318
   current_revision_id: 3040
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:46 Z
   creator_id: 1
   updater_id: 1
@@ -2369,9 +2369,9 @@ cards_140:
   codename: 
   left_id: 284
   right_id: 82
-  current_revision_id: 6038
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2012-03-02 19:09:40 Z
+  current_revision_id: 6325
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:21:47 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -2387,7 +2387,7 @@ cards_141:
   left_id: 255
   right_id: 260
   current_revision_id: 3060
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-12 14:05:33 Z
   creator_id: 1
   updater_id: 1
@@ -2404,7 +2404,7 @@ cards_142:
   left_id: 89
   right_id: 260
   current_revision_id: 3061
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-12 14:05:33 Z
   creator_id: 1
   updater_id: 1
@@ -2421,7 +2421,7 @@ cards_143:
   left_id: 252
   right_id: 260
   current_revision_id: 3063
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-12 14:05:34 Z
   creator_id: 1
   updater_id: 1
@@ -2438,7 +2438,7 @@ cards_144:
   left_id: 61
   right_id: 260
   current_revision_id: 3065
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-12 14:05:34 Z
   creator_id: 1
   updater_id: 1
@@ -2455,7 +2455,7 @@ cards_145:
   left_id: 247
   right_id: 260
   current_revision_id: 3066
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-12 14:05:34 Z
   creator_id: 1
   updater_id: 1
@@ -2472,7 +2472,7 @@ cards_146:
   left_id: 
   right_id: 
   current_revision_id: 3078
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-21 16:02:40 Z
   creator_id: 1
   updater_id: 1
@@ -2489,7 +2489,7 @@ cards_147:
   left_id: 307
   right_id: 318
   current_revision_id: 3079
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:42 Z
   creator_id: 1
   updater_id: 1
@@ -2506,7 +2506,7 @@ cards_148:
   left_id: 274
   right_id: 291
   current_revision_id: 3081
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-10 14:35:21 Z
   creator_id: 1
   updater_id: 1
@@ -2523,7 +2523,7 @@ cards_149:
   left_id: 4
   right_id: 266
   current_revision_id: 3082
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-10 14:35:53 Z
   creator_id: 1
   updater_id: 1
@@ -2540,7 +2540,7 @@ cards_150:
   left_id: 294
   right_id: 291
   current_revision_id: 3083
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-11-01 17:46:24 Z
   creator_id: 1
   updater_id: 1
@@ -2557,7 +2557,7 @@ cards_151:
   left_id: 259
   right_id: 146
   current_revision_id: 5573
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-23 13:49:23 Z
   creator_id: 1
   updater_id: 1
@@ -2574,7 +2574,7 @@ cards_152:
   left_id: 278
   right_id: 146
   current_revision_id: 5945
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-03 02:29:08 Z
   creator_id: 1
   updater_id: 1
@@ -2590,9 +2590,9 @@ cards_153:
   codename: 
   left_id: 268
   right_id: 82
-  current_revision_id: 5627
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2011-04-04 16:54:22 Z
+  current_revision_id: 6322
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:20:39 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -2608,7 +2608,7 @@ cards_154:
   left_id: 86
   right_id: 260
   current_revision_id: 3101
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:28 Z
   creator_id: 1
   updater_id: 1
@@ -2624,9 +2624,9 @@ cards_155:
   codename: 
   left_id: 300
   right_id: 82
-  current_revision_id: 5549
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2011-03-20 22:38:48 Z
+  current_revision_id: 6327
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:22:50 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -2642,7 +2642,7 @@ cards_156:
   left_id: 256
   right_id: 260
   current_revision_id: 3123
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:45 Z
   creator_id: 1
   updater_id: 1
@@ -2658,9 +2658,9 @@ cards_157:
   codename: 
   left_id: 302
   right_id: 82
-  current_revision_id: 6037
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2012-03-02 19:08:40 Z
+  current_revision_id: 6316
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:18:47 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -2676,7 +2676,7 @@ cards_158:
   left_id: 82
   right_id: 260
   current_revision_id: 3126
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-21 14:08:43 Z
   creator_id: 1
   updater_id: 1
@@ -2692,9 +2692,9 @@ cards_159:
   codename: 
   left_id: 305
   right_id: 82
-  current_revision_id: 3266
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2010-04-21 16:26:54 Z
+  current_revision_id: 6320
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:19:35 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -2710,7 +2710,7 @@ cards_160:
   left_id: 291
   right_id: 260
   current_revision_id: 3133
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:41 Z
   creator_id: 1
   updater_id: 1
@@ -2726,9 +2726,9 @@ cards_161:
   codename: 
   left_id: 307
   right_id: 82
-  current_revision_id: 6089
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2012-10-09 23:37:22 Z
+  current_revision_id: 6294
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:12:33 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -2744,7 +2744,7 @@ cards_162:
   left_id: 
   right_id: 
   current_revision_id: 3137
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-21 16:02:41 Z
   creator_id: 1
   updater_id: 1
@@ -2761,7 +2761,7 @@ cards_163:
   left_id: 309
   right_id: 260
   current_revision_id: 3140
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-22 06:45:59 Z
   creator_id: 1
   updater_id: 1
@@ -2777,9 +2777,9 @@ cards_164:
   codename: 
   left_id: 310
   right_id: 82
-  current_revision_id: 3264
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2010-04-21 16:26:54 Z
+  current_revision_id: 6296
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:13:28 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -2795,7 +2795,7 @@ cards_165:
   left_id: 
   right_id: 
   current_revision_id: 6260
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-11-30 05:23:45 Z
   creator_id: 1
   updater_id: 1
@@ -2812,7 +2812,7 @@ cards_166:
   left_id: 81
   right_id: 264
   current_revision_id: 3177
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-22 08:05:08 Z
   creator_id: 1
   updater_id: 1
@@ -2829,7 +2829,7 @@ cards_167:
   left_id: 284
   right_id: 86
   current_revision_id: 3178
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2009-12-22 08:27:16 Z
   creator_id: 1
   updater_id: 1
@@ -2846,7 +2846,7 @@ cards_168:
   left_id: 
   right_id: 
   current_revision_id: 3196
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:01:47 Z
   creator_id: 1
   updater_id: 1
@@ -2863,7 +2863,7 @@ cards_169:
   left_id: 
   right_id: 
   current_revision_id: 3197
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-09 14:29:15 Z
   creator_id: 1
   updater_id: 1
@@ -2880,7 +2880,7 @@ cards_170:
   left_id: 50
   right_id: 266
   current_revision_id: 3198
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-20 16:39:20 Z
   creator_id: 1
   updater_id: 1
@@ -2897,7 +2897,7 @@ cards_171:
   left_id: 5
   right_id: 266
   current_revision_id: 3199
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-20 16:39:20 Z
   creator_id: 1
   updater_id: 1
@@ -2914,7 +2914,7 @@ cards_172:
   left_id: 7
   right_id: 266
   current_revision_id: 3201
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-20 16:39:20 Z
   creator_id: 1
   updater_id: 1
@@ -2931,7 +2931,7 @@ cards_173:
   left_id: 321
   right_id: 317
   current_revision_id: 3203
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:37 Z
   creator_id: 1
   updater_id: 1
@@ -2948,7 +2948,7 @@ cards_174:
   left_id: 12
   right_id: 266
   current_revision_id: 5764
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-15 15:40:20 Z
   creator_id: 1
   updater_id: 1
@@ -2965,7 +2965,7 @@ cards_175:
   left_id: 260
   right_id: 260
   current_revision_id: 3206
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-20 16:39:21 Z
   creator_id: 1
   updater_id: 1
@@ -2982,7 +2982,7 @@ cards_176:
   left_id: 262
   right_id: 260
   current_revision_id: 3207
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:43 Z
   creator_id: 1
   updater_id: 1
@@ -2999,7 +2999,7 @@ cards_177:
   left_id: 264
   right_id: 260
   current_revision_id: 3208
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:44 Z
   creator_id: 1
   updater_id: 1
@@ -3016,7 +3016,7 @@ cards_178:
   left_id: 266
   right_id: 260
   current_revision_id: 3209
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:44 Z
   creator_id: 1
   updater_id: 1
@@ -3033,7 +3033,7 @@ cards_179:
   left_id: 222
   right_id: 260
   current_revision_id: 3213
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:52 Z
   creator_id: 1
   updater_id: 1
@@ -3050,7 +3050,7 @@ cards_180:
   left_id: 100
   right_id: 260
   current_revision_id: 3214
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:53 Z
   creator_id: 1
   updater_id: 1
@@ -3067,7 +3067,7 @@ cards_181:
   left_id: 19
   right_id: 260
   current_revision_id: 3218
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:42:59 Z
   creator_id: 1
   updater_id: 1
@@ -3084,7 +3084,7 @@ cards_182:
   left_id: 190
   right_id: 260
   current_revision_id: 3224
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:06 Z
   creator_id: 1
   updater_id: 1
@@ -3101,7 +3101,7 @@ cards_183:
   left_id: 184
   right_id: 260
   current_revision_id: 3225
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:06 Z
   creator_id: 1
   updater_id: 1
@@ -3118,7 +3118,7 @@ cards_184:
   left_id: 172
   right_id: 260
   current_revision_id: 3228
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:09 Z
   creator_id: 1
   updater_id: 1
@@ -3135,7 +3135,7 @@ cards_185:
   left_id: 178
   right_id: 260
   current_revision_id: 3232
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:13 Z
   creator_id: 1
   updater_id: 1
@@ -3152,7 +3152,7 @@ cards_186:
   left_id: 98
   right_id: 260
   current_revision_id: 3233
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:14 Z
   creator_id: 1
   updater_id: 1
@@ -3169,7 +3169,7 @@ cards_187:
   left_id: 39
   right_id: 260
   current_revision_id: 3238
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:18 Z
   creator_id: 1
   updater_id: 1
@@ -3186,7 +3186,7 @@ cards_188:
   left_id: 43
   right_id: 260
   current_revision_id: 3239
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:19 Z
   creator_id: 1
   updater_id: 1
@@ -3203,7 +3203,7 @@ cards_189:
   left_id: 41
   right_id: 260
   current_revision_id: 3240
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:20 Z
   creator_id: 1
   updater_id: 1
@@ -3220,7 +3220,7 @@ cards_190:
   left_id: 37
   right_id: 260
   current_revision_id: 3241
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:21 Z
   creator_id: 1
   updater_id: 1
@@ -3237,7 +3237,7 @@ cards_191:
   left_id: 35
   right_id: 260
   current_revision_id: 3242
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:21 Z
   creator_id: 1
   updater_id: 1
@@ -3254,7 +3254,7 @@ cards_192:
   left_id: 33
   right_id: 260
   current_revision_id: 3243
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:22 Z
   creator_id: 1
   updater_id: 1
@@ -3271,7 +3271,7 @@ cards_193:
   left_id: 138
   right_id: 260
   current_revision_id: 3244
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:23 Z
   creator_id: 1
   updater_id: 1
@@ -3288,7 +3288,7 @@ cards_194:
   left_id: 92
   right_id: 260
   current_revision_id: 3246
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:25 Z
   creator_id: 1
   updater_id: 1
@@ -3305,7 +3305,7 @@ cards_195:
   left_id: 96
   right_id: 260
   current_revision_id: 3248
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-09-20 16:42:34 Z
   creator_id: 1
   updater_id: 1
@@ -3322,7 +3322,7 @@ cards_196:
   left_id: 130
   right_id: 260
   current_revision_id: 3250
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:29 Z
   creator_id: 1
   updater_id: 1
@@ -3339,7 +3339,7 @@ cards_197:
   left_id: 128
   right_id: 260
   current_revision_id: 3251
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-15 18:43:30 Z
   creator_id: 1
   updater_id: 1
@@ -3356,7 +3356,7 @@ cards_198:
   left_id: 318
   right_id: 260
   current_revision_id: 3253
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-16 21:08:50 Z
   creator_id: 1
   updater_id: 1
@@ -3372,9 +3372,9 @@ cards_199:
   codename: 
   left_id: 356
   right_id: 82
-  current_revision_id: 6036
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2012-03-02 19:05:52 Z
+  current_revision_id: 6318
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:19:14 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -3390,7 +3390,7 @@ cards_200:
   left_id: 317
   right_id: 260
   current_revision_id: 3260
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-16 21:15:06 Z
   creator_id: 1
   updater_id: 1
@@ -3406,9 +3406,9 @@ cards_201:
   codename: 
   left_id: 358
   right_id: 82
-  current_revision_id: 3482
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2010-04-21 16:26:58 Z
+  current_revision_id: 6337
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:50:27 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -3424,7 +3424,7 @@ cards_202:
   left_id: 
   right_id: 
   current_revision_id: 3478
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-20 16:39:19 Z
   creator_id: 1
   updater_id: 1
@@ -3441,7 +3441,7 @@ cards_203:
   left_id: 363
   right_id: 260
   current_revision_id: 3513
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-19 17:54:32 Z
   creator_id: 1
   updater_id: 1
@@ -3457,9 +3457,9 @@ cards_204:
   codename: 
   left_id: 364
   right_id: 82
-  current_revision_id: 3794
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2011-01-09 14:09:53 Z
+  current_revision_id: 6332
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:24:40 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -3475,7 +3475,7 @@ cards_205:
   left_id: 278
   right_id: 264
   current_revision_id: 3574
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-20 08:38:31 Z
   creator_id: 1
   updater_id: 1
@@ -3492,7 +3492,7 @@ cards_206:
   left_id: 366
   right_id: 89
   current_revision_id: 3575
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-21 16:26:49 Z
   creator_id: 1
   updater_id: 1
@@ -3509,7 +3509,7 @@ cards_207:
   left_id: 364
   right_id: 318
   current_revision_id: 3606
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-05-02 03:11:10 Z
   creator_id: 1
   updater_id: 1
@@ -3526,7 +3526,7 @@ cards_208:
   left_id: 
   right_id: 
   current_revision_id: 3608
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-20 17:40:17 Z
   creator_id: 1
   updater_id: 1
@@ -3543,7 +3543,7 @@ cards_209:
   left_id: 371
   right_id: 260
   current_revision_id: 3609
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-20 17:40:18 Z
   creator_id: 1
   updater_id: 1
@@ -3560,7 +3560,7 @@ cards_210:
   left_id: 372
   right_id: 317
   current_revision_id: 3610
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-05-02 03:12:56 Z
   creator_id: 1
   updater_id: 1
@@ -3577,7 +3577,7 @@ cards_211:
   left_id: 64
   right_id: 260
   current_revision_id: 4915
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-16 02:12:11 Z
   creator_id: 1
   updater_id: 1
@@ -3594,7 +3594,7 @@ cards_212:
   left_id: 374
   right_id: 318
   current_revision_id: 3612
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-05-02 03:11:20 Z
   creator_id: 1
   updater_id: 1
@@ -3611,7 +3611,7 @@ cards_213:
   left_id: 137
   right_id: 260
   current_revision_id: 4913
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-16 02:11:13 Z
   creator_id: 1
   updater_id: 1
@@ -3628,7 +3628,7 @@ cards_214:
   left_id: 376
   right_id: 318
   current_revision_id: 3614
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-05-02 03:11:29 Z
   creator_id: 1
   updater_id: 1
@@ -3645,7 +3645,7 @@ cards_215:
   left_id: 
   right_id: 
   current_revision_id: 3615
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-20 17:58:33 Z
   creator_id: 1
   updater_id: 1
@@ -3662,7 +3662,7 @@ cards_216:
   left_id: 378
   right_id: 260
   current_revision_id: 4894
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-16 00:03:49 Z
   creator_id: 1
   updater_id: 1
@@ -3679,7 +3679,7 @@ cards_217:
   left_id: 379
   right_id: 318
   current_revision_id: 3617
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-05-02 03:11:41 Z
   creator_id: 1
   updater_id: 1
@@ -3696,7 +3696,7 @@ cards_218:
   left_id: 
   right_id: 
   current_revision_id: 3618
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-20 17:58:52 Z
   creator_id: 1
   updater_id: 1
@@ -3713,7 +3713,7 @@ cards_219:
   left_id: 381
   right_id: 260
   current_revision_id: 4892
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-16 00:03:03 Z
   creator_id: 1
   updater_id: 1
@@ -3730,7 +3730,7 @@ cards_220:
   left_id: 382
   right_id: 318
   current_revision_id: 3620
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-05-02 03:10:16 Z
   creator_id: 1
   updater_id: 1
@@ -3747,7 +3747,7 @@ cards_221:
   left_id: 
   right_id: 
   current_revision_id: 3621
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-20 17:59:09 Z
   creator_id: 1
   updater_id: 1
@@ -3764,7 +3764,7 @@ cards_222:
   left_id: 
   right_id: 
   current_revision_id: 3624
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-20 17:59:31 Z
   creator_id: 1
   updater_id: 1
@@ -3781,7 +3781,7 @@ cards_223:
   left_id: 387
   right_id: 260
   current_revision_id: 4888
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-15 23:59:39 Z
   creator_id: 1
   updater_id: 1
@@ -3798,7 +3798,7 @@ cards_224:
   left_id: 388
   right_id: 318
   current_revision_id: 3626
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-05-02 03:09:53 Z
   creator_id: 1
   updater_id: 1
@@ -3815,7 +3815,7 @@ cards_225:
   left_id: 384
   right_id: 260
   current_revision_id: 3628
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-04-20 18:05:47 Z
   creator_id: 1
   updater_id: 1
@@ -3832,7 +3832,7 @@ cards_226:
   left_id: 390
   right_id: 318
   current_revision_id: 3629
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2010-05-02 03:10:04 Z
   creator_id: 1
   updater_id: 1
@@ -3848,9 +3848,9 @@ cards_227:
   codename: 
   left_id: 372
   right_id: 82
-  current_revision_id: 5411
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2011-03-08 14:31:49 Z
+  current_revision_id: 6346
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:56:20 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -3866,7 +3866,7 @@ cards_228:
   left_id: 388
   right_id: 86
   current_revision_id: 5619
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-03 17:05:47 Z
   creator_id: 1
   updater_id: 1
@@ -3883,7 +3883,7 @@ cards_229:
   left_id: 3
   right_id: 146
   current_revision_id: 6274
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-03-11 02:36:29 Z
   creator_id: 1
   updater_id: 1
@@ -3900,7 +3900,7 @@ cards_230:
   left_id: 20
   right_id: 146
   current_revision_id: 4841
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-15 21:39:42 Z
   creator_id: 1
   updater_id: 1
@@ -3917,7 +3917,7 @@ cards_231:
   left_id: 22
   right_id: 146
   current_revision_id: 4869
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-15 22:52:34 Z
   creator_id: 1
   updater_id: 1
@@ -3934,7 +3934,7 @@ cards_232:
   left_id: 52
   right_id: 146
   current_revision_id: 4872
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-15 22:54:42 Z
   creator_id: 1
   updater_id: 1
@@ -3951,7 +3951,7 @@ cards_233:
   left_id: 17
   right_id: 146
   current_revision_id: 4846
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-15 21:44:09 Z
   creator_id: 1
   updater_id: 1
@@ -3968,7 +3968,7 @@ cards_234:
   left_id: 
   right_id: 
   current_revision_id: 5199
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-19 17:10:06 Z
   creator_id: 1
   updater_id: 1
@@ -3985,7 +3985,7 @@ cards_235:
   left_id: 419
   right_id: 260
   current_revision_id: 5200
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-19 17:10:07 Z
   creator_id: 1
   updater_id: 1
@@ -4002,7 +4002,7 @@ cards_236:
   left_id: 420
   right_id: 317
   current_revision_id: 5984
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-01-06 13:08:02 Z
   creator_id: 1
   updater_id: 1
@@ -4019,7 +4019,7 @@ cards_237:
   left_id: 
   right_id: 
   current_revision_id: 5245
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-25 16:47:49 Z
   creator_id: 1
   updater_id: 1
@@ -4036,7 +4036,7 @@ cards_238:
   left_id: 425
   right_id: 260
   current_revision_id: 5246
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-25 16:47:50 Z
   creator_id: 1
   updater_id: 1
@@ -4053,7 +4053,7 @@ cards_239:
   left_id: 426
   right_id: 317
   current_revision_id: 5291
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-25 22:15:41 Z
   creator_id: 1
   updater_id: 1
@@ -4070,7 +4070,7 @@ cards_240:
   left_id: 
   right_id: 
   current_revision_id: 5249
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-25 16:51:35 Z
   creator_id: 1
   updater_id: 1
@@ -4087,7 +4087,7 @@ cards_241:
   left_id: 428
   right_id: 260
   current_revision_id: 5250
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-25 16:51:35 Z
   creator_id: 1
   updater_id: 1
@@ -4104,7 +4104,7 @@ cards_242:
   left_id: 429
   right_id: 317
   current_revision_id: 5290
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-25 22:11:34 Z
   creator_id: 1
   updater_id: 1
@@ -4121,7 +4121,7 @@ cards_243:
   left_id: 
   right_id: 
   current_revision_id: 5252
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:02:27 Z
   creator_id: 1
   updater_id: 1
@@ -4138,7 +4138,7 @@ cards_244:
   left_id: 431
   right_id: 260
   current_revision_id: 5253
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-25 16:53:26 Z
   creator_id: 1
   updater_id: 1
@@ -4155,7 +4155,7 @@ cards_245:
   left_id: 432
   right_id: 317
   current_revision_id: 5292
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-25 22:17:35 Z
   creator_id: 1
   updater_id: 1
@@ -4172,7 +4172,7 @@ cards_246:
   left_id: 
   right_id: 
   current_revision_id: 5296
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-25 22:21:24 Z
   creator_id: 1
   updater_id: 1
@@ -4189,7 +4189,7 @@ cards_247:
   left_id: 435
   right_id: 260
   current_revision_id: 5297
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-25 22:21:24 Z
   creator_id: 1
   updater_id: 1
@@ -4206,7 +4206,7 @@ cards_248:
   left_id: 436
   right_id: 317
   current_revision_id: 5972
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-12-31 13:02:46 Z
   creator_id: 1
   updater_id: 1
@@ -4223,7 +4223,7 @@ cards_249:
   left_id: 
   right_id: 
   current_revision_id: 5404
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-08 00:14:22 Z
   creator_id: 1
   updater_id: 1
@@ -4240,7 +4240,7 @@ cards_250:
   left_id: 438
   right_id: 260
   current_revision_id: 5403
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-08 00:14:23 Z
   creator_id: 1
   updater_id: 1
@@ -4257,7 +4257,7 @@ cards_251:
   left_id: 439
   right_id: 317
   current_revision_id: 5973
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-12-31 13:03:09 Z
   creator_id: 1
   updater_id: 1
@@ -4274,7 +4274,7 @@ cards_252:
   left_id: 73
   right_id: 264
   current_revision_id: 5333
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-27 18:28:27 Z
   creator_id: 1
   updater_id: 1
@@ -4291,7 +4291,7 @@ cards_253:
   left_id: 441
   right_id: 89
   current_revision_id: 5334
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-27 18:28:27 Z
   creator_id: 1
   updater_id: 1
@@ -4308,7 +4308,7 @@ cards_254:
   left_id: 
   right_id: 
   current_revision_id: 5392
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:02:19 Z
   creator_id: 1
   updater_id: 1
@@ -4325,7 +4325,7 @@ cards_255:
   left_id: 445
   right_id: 260
   current_revision_id: 5393
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-28 10:51:54 Z
   creator_id: 1
   updater_id: 1
@@ -4342,7 +4342,7 @@ cards_256:
   left_id: 446
   right_id: 317
   current_revision_id: 5611
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-03 17:01:16 Z
   creator_id: 1
   updater_id: 1
@@ -4359,7 +4359,7 @@ cards_257:
   left_id: 
   right_id: 
   current_revision_id: 5395
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-04-11 22:02:21 Z
   creator_id: 1
   updater_id: 1
@@ -4376,7 +4376,7 @@ cards_258:
   left_id: 448
   right_id: 260
   current_revision_id: 5396
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-02-28 10:52:49 Z
   creator_id: 1
   updater_id: 1
@@ -4393,7 +4393,7 @@ cards_259:
   left_id: 449
   right_id: 317
   current_revision_id: 5612
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-03 17:01:21 Z
   creator_id: 1
   updater_id: 1
@@ -4410,7 +4410,7 @@ cards_260:
   left_id: 12
   right_id: 264
   current_revision_id: 5510
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 22:03:39 Z
   creator_id: 1
   updater_id: 1
@@ -4427,7 +4427,7 @@ cards_261:
   left_id: 452
   right_id: 317
   current_revision_id: 5511
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 22:03:39 Z
   creator_id: 1
   updater_id: 1
@@ -4444,7 +4444,7 @@ cards_262:
   left_id: 259
   right_id: 264
   current_revision_id: 5520
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 22:09:27 Z
   creator_id: 1
   updater_id: 1
@@ -4461,7 +4461,7 @@ cards_263:
   left_id: 455
   right_id: 317
   current_revision_id: 5521
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-19 22:09:27 Z
   creator_id: 1
   updater_id: 1
@@ -4478,7 +4478,7 @@ cards_264:
   left_id: 330
   right_id: 89
   current_revision_id: 5581
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-03-23 20:24:48 Z
   creator_id: 1
   updater_id: 1
@@ -4495,7 +4495,7 @@ cards_265:
   left_id: 268
   right_id: 86
   current_revision_id: 5592
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-04 16:52:21 Z
   creator_id: 1
   updater_id: 1
@@ -4512,7 +4512,7 @@ cards_266:
   left_id: 268
   right_id: 241
   current_revision_id: 5593
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-04 16:53:27 Z
   creator_id: 1
   updater_id: 1
@@ -4529,7 +4529,7 @@ cards_267:
   left_id: 
   right_id: 
   current_revision_id: 5640
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-27 10:28:05 Z
   creator_id: 1
   updater_id: 1
@@ -4546,7 +4546,7 @@ cards_268:
   left_id: 
   right_id: 
   current_revision_id: 6033
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-01-26 23:36:28 Z
   creator_id: 1
   updater_id: 1
@@ -4563,7 +4563,7 @@ cards_269:
   left_id: 
   right_id: 
   current_revision_id: 5642
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-27 10:28:06 Z
   creator_id: 1
   updater_id: 1
@@ -4580,7 +4580,7 @@ cards_270:
   left_id: 
   right_id: 
   current_revision_id: 5643
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-27 10:28:07 Z
   creator_id: 1
   updater_id: 1
@@ -4597,7 +4597,7 @@ cards_271:
   left_id: 
   right_id: 
   current_revision_id: 5644
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-27 10:28:08 Z
   creator_id: 1
   updater_id: 1
@@ -4614,7 +4614,7 @@ cards_272:
   left_id: 
   right_id: 
   current_revision_id: 5645
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-27 10:28:08 Z
   creator_id: 1
   updater_id: 1
@@ -4631,7 +4631,7 @@ cards_273:
   left_id: 
   right_id: 
   current_revision_id: 5646
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-27 10:28:08 Z
   creator_id: 1
   updater_id: 1
@@ -4648,7 +4648,7 @@ cards_274:
   left_id: 
   right_id: 
   current_revision_id: 5647
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-27 10:28:09 Z
   creator_id: 1
   updater_id: 1
@@ -4665,7 +4665,7 @@ cards_275:
   left_id: 
   right_id: 
   current_revision_id: 5648
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-27 10:28:09 Z
   creator_id: 1
   updater_id: 1
@@ -4682,7 +4682,7 @@ cards_276:
   left_id: 
   right_id: 
   current_revision_id: 5649
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-04-27 10:28:09 Z
   creator_id: 1
   updater_id: 1
@@ -4699,7 +4699,7 @@ cards_277:
   left_id: 
   right_id: 
   current_revision_id: 5948
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-16 13:30:35 Z
   creator_id: 1
   updater_id: 1
@@ -4716,7 +4716,7 @@ cards_278:
   left_id: 
   right_id: 
   current_revision_id: 5950
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-16 13:30:35 Z
   creator_id: 1
   updater_id: 1
@@ -4733,7 +4733,7 @@ cards_279:
   left_id: 
   right_id: 
   current_revision_id: 5949
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-16 13:30:35 Z
   creator_id: 1
   updater_id: 1
@@ -4750,7 +4750,7 @@ cards_280:
   left_id: 
   right_id: 
   current_revision_id: 5717
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:21 Z
   creator_id: 1
   updater_id: 1
@@ -4767,7 +4767,7 @@ cards_281:
   left_id: 
   right_id: 
   current_revision_id: 5718
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:21 Z
   creator_id: 1
   updater_id: 1
@@ -4784,7 +4784,7 @@ cards_282:
   left_id: 
   right_id: 
   current_revision_id: 5719
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:21 Z
   creator_id: 1
   updater_id: 1
@@ -4801,7 +4801,7 @@ cards_283:
   left_id: 
   right_id: 
   current_revision_id: 5720
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:21 Z
   creator_id: 1
   updater_id: 1
@@ -4818,7 +4818,7 @@ cards_284:
   left_id: 
   right_id: 
   current_revision_id: 5721
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:21 Z
   creator_id: 1
   updater_id: 1
@@ -4835,7 +4835,7 @@ cards_285:
   left_id: 476
   right_id: 478
   current_revision_id: 5722
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:21 Z
   creator_id: 1
   updater_id: 1
@@ -4852,7 +4852,7 @@ cards_286:
   left_id: 477
   right_id: 478
   current_revision_id: 5723
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:21 Z
   creator_id: 1
   updater_id: 1
@@ -4869,7 +4869,7 @@ cards_287:
   left_id: 319
   right_id: 478
   current_revision_id: 5724
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:21 Z
   creator_id: 1
   updater_id: 1
@@ -4886,7 +4886,7 @@ cards_288:
   left_id: 180
   right_id: 262
   current_revision_id: 5725
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:22 Z
   creator_id: 1
   updater_id: 1
@@ -4903,7 +4903,7 @@ cards_289:
   left_id: 486
   right_id: 478
   current_revision_id: 5726
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:22 Z
   creator_id: 1
   updater_id: 1
@@ -4920,7 +4920,7 @@ cards_290:
   left_id: 476
   right_id: 480
   current_revision_id: 5727
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:22 Z
   creator_id: 1
   updater_id: 1
@@ -4937,7 +4937,7 @@ cards_291:
   left_id: 477
   right_id: 480
   current_revision_id: 5728
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:22 Z
   creator_id: 1
   updater_id: 1
@@ -4954,7 +4954,7 @@ cards_292:
   left_id: 319
   right_id: 480
   current_revision_id: 5729
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:22 Z
   creator_id: 1
   updater_id: 1
@@ -4971,7 +4971,7 @@ cards_293:
   left_id: 486
   right_id: 480
   current_revision_id: 5730
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:22 Z
   creator_id: 1
   updater_id: 1
@@ -4988,7 +4988,7 @@ cards_294:
   left_id: 476
   right_id: 481
   current_revision_id: 5731
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:22 Z
   creator_id: 1
   updater_id: 1
@@ -5005,7 +5005,7 @@ cards_295:
   left_id: 477
   right_id: 481
   current_revision_id: 5732
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:22 Z
   creator_id: 1
   updater_id: 1
@@ -5022,7 +5022,7 @@ cards_296:
   left_id: 319
   right_id: 481
   current_revision_id: 5733
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:22 Z
   creator_id: 1
   updater_id: 1
@@ -5039,7 +5039,7 @@ cards_297:
   left_id: 486
   right_id: 481
   current_revision_id: 5734
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:22 Z
   creator_id: 1
   updater_id: 1
@@ -5056,7 +5056,7 @@ cards_298:
   left_id: 269
   right_id: 478
   current_revision_id: 5735
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:22 Z
   creator_id: 1
   updater_id: 1
@@ -5073,7 +5073,7 @@ cards_299:
   left_id: 269
   right_id: 480
   current_revision_id: 5736
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:23 Z
   creator_id: 1
   updater_id: 1
@@ -5090,7 +5090,7 @@ cards_300:
   left_id: 274
   right_id: 478
   current_revision_id: 5737
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:23 Z
   creator_id: 1
   updater_id: 1
@@ -5107,7 +5107,7 @@ cards_301:
   left_id: 475
   right_id: 478
   current_revision_id: 5738
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:23 Z
   creator_id: 1
   updater_id: 1
@@ -5124,7 +5124,7 @@ cards_302:
   left_id: 274
   right_id: 479
   current_revision_id: 5739
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:23 Z
   creator_id: 1
   updater_id: 1
@@ -5141,7 +5141,7 @@ cards_303:
   left_id: 475
   right_id: 479
   current_revision_id: 5740
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:23 Z
   creator_id: 1
   updater_id: 1
@@ -5158,7 +5158,7 @@ cards_304:
   left_id: 274
   right_id: 480
   current_revision_id: 5741
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:23 Z
   creator_id: 1
   updater_id: 1
@@ -5175,7 +5175,7 @@ cards_305:
   left_id: 475
   right_id: 480
   current_revision_id: 5742
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:23 Z
   creator_id: 1
   updater_id: 1
@@ -5192,7 +5192,7 @@ cards_306:
   left_id: 274
   right_id: 481
   current_revision_id: 5743
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:23 Z
   creator_id: 1
   updater_id: 1
@@ -5209,7 +5209,7 @@ cards_307:
   left_id: 475
   right_id: 481
   current_revision_id: 5744
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:23 Z
   creator_id: 1
   updater_id: 1
@@ -5226,7 +5226,7 @@ cards_308:
   left_id: 274
   right_id: 482
   current_revision_id: 5745
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:23 Z
   creator_id: 1
   updater_id: 1
@@ -5243,7 +5243,7 @@ cards_309:
   left_id: 354
   right_id: 482
   current_revision_id: 5747
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:25 Z
   creator_id: 1
   updater_id: 1
@@ -5260,7 +5260,7 @@ cards_310:
   left_id: 314
   right_id: 264
   current_revision_id: 5748
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:27 Z
   creator_id: 1
   updater_id: 1
@@ -5277,7 +5277,7 @@ cards_311:
   left_id: 366
   right_id: 480
   current_revision_id: 5750
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:27 Z
   creator_id: 1
   updater_id: 1
@@ -5294,7 +5294,7 @@ cards_312:
   left_id: 366
   right_id: 481
   current_revision_id: 5751
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:28 Z
   creator_id: 1
   updater_id: 1
@@ -5311,7 +5311,7 @@ cards_313:
   left_id: 441
   right_id: 480
   current_revision_id: 5754
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:28 Z
   creator_id: 1
   updater_id: 1
@@ -5328,7 +5328,7 @@ cards_314:
   left_id: 441
   right_id: 481
   current_revision_id: 5755
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:28 Z
   creator_id: 1
   updater_id: 1
@@ -5345,7 +5345,7 @@ cards_315:
   left_id: 151
   right_id: 264
   current_revision_id: 5756
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:28 Z
   creator_id: 1
   updater_id: 1
@@ -5362,7 +5362,7 @@ cards_316:
   left_id: 517
   right_id: 479
   current_revision_id: 5757
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:28 Z
   creator_id: 1
   updater_id: 1
@@ -5379,7 +5379,7 @@ cards_317:
   left_id: 517
   right_id: 481
   current_revision_id: 5758
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-08 21:22:28 Z
   creator_id: 1
   updater_id: 1
@@ -5396,7 +5396,7 @@ cards_318:
   left_id: 323
   right_id: 478
   current_revision_id: 5765
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-15 15:40:20 Z
   creator_id: 1
   updater_id: 1
@@ -5413,7 +5413,7 @@ cards_319:
   left_id: 482
   right_id: 260
   current_revision_id: 5768
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-19 11:48:54 Z
   creator_id: 1
   updater_id: 1
@@ -5429,9 +5429,9 @@ cards_320:
   codename: 
   left_id: 524
   right_id: 82
-  current_revision_id: 5797
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2011-07-20 10:08:41 Z
+  current_revision_id: 6302
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:15:31 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -5447,7 +5447,7 @@ cards_321:
   left_id: 478
   right_id: 260
   current_revision_id: 5770
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-19 11:49:18 Z
   creator_id: 1
   updater_id: 1
@@ -5463,9 +5463,9 @@ cards_322:
   codename: 
   left_id: 526
   right_id: 82
-  current_revision_id: 5793
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2011-07-20 10:08:39 Z
+  current_revision_id: 6304
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:15:57 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -5481,7 +5481,7 @@ cards_323:
   left_id: 481
   right_id: 260
   current_revision_id: 5772
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-19 11:49:45 Z
   creator_id: 1
   updater_id: 1
@@ -5497,9 +5497,9 @@ cards_324:
   codename: 
   left_id: 528
   right_id: 82
-  current_revision_id: 5796
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2011-07-20 10:08:41 Z
+  current_revision_id: 6313
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:17:58 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -5515,7 +5515,7 @@ cards_325:
   left_id: 479
   right_id: 260
   current_revision_id: 5775
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-19 11:50:19 Z
   creator_id: 1
   updater_id: 1
@@ -5532,7 +5532,7 @@ cards_326:
   left_id: 530
   right_id: 82
   current_revision_id: 5794
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-20 10:08:40 Z
   creator_id: 1
   updater_id: 1
@@ -5549,7 +5549,7 @@ cards_327:
   left_id: 480
   right_id: 260
   current_revision_id: 5777
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-19 11:50:35 Z
   creator_id: 1
   updater_id: 1
@@ -5565,9 +5565,9 @@ cards_328:
   codename: 
   left_id: 532
   right_id: 82
-  current_revision_id: 5795
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2011-07-20 10:08:40 Z
+  current_revision_id: 6345
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:55:56 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -5583,7 +5583,7 @@ cards_329:
   left_id: 526
   right_id: 318
   current_revision_id: 5779
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-20 10:08:39 Z
   creator_id: 1
   updater_id: 1
@@ -5600,7 +5600,7 @@ cards_330:
   left_id: 526
   right_id: 86
   current_revision_id: 5780
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-20 10:08:39 Z
   creator_id: 1
   updater_id: 1
@@ -5617,7 +5617,7 @@ cards_331:
   left_id: 530
   right_id: 318
   current_revision_id: 5781
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-20 10:08:40 Z
   creator_id: 1
   updater_id: 1
@@ -5634,7 +5634,7 @@ cards_332:
   left_id: 530
   right_id: 86
   current_revision_id: 5782
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-20 10:08:40 Z
   creator_id: 1
   updater_id: 1
@@ -5651,7 +5651,7 @@ cards_333:
   left_id: 532
   right_id: 318
   current_revision_id: 5785
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-20 10:08:40 Z
   creator_id: 1
   updater_id: 1
@@ -5668,7 +5668,7 @@ cards_334:
   left_id: 532
   right_id: 86
   current_revision_id: 5786
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-20 10:08:40 Z
   creator_id: 1
   updater_id: 1
@@ -5685,7 +5685,7 @@ cards_335:
   left_id: 528
   right_id: 318
   current_revision_id: 5787
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-20 10:08:41 Z
   creator_id: 1
   updater_id: 1
@@ -5702,7 +5702,7 @@ cards_336:
   left_id: 528
   right_id: 86
   current_revision_id: 5788
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-20 10:08:41 Z
   creator_id: 1
   updater_id: 1
@@ -5719,7 +5719,7 @@ cards_337:
   left_id: 524
   right_id: 318
   current_revision_id: 5789
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-20 10:08:41 Z
   creator_id: 1
   updater_id: 1
@@ -5736,7 +5736,7 @@ cards_338:
   left_id: 524
   right_id: 86
   current_revision_id: 5790
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-20 10:08:41 Z
   creator_id: 1
   updater_id: 1
@@ -5753,7 +5753,7 @@ cards_339:
   left_id: 198
   right_id: 264
   current_revision_id: 5929
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-22 09:57:07 Z
   creator_id: 1
   updater_id: 1
@@ -5769,9 +5769,9 @@ cards_340:
   codename: 
   left_id: 544
   right_id: 82
-  current_revision_id: 5935
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2011-07-22 09:58:32 Z
+  current_revision_id: 6317
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:19:02 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -5787,7 +5787,7 @@ cards_341:
   left_id: 53
   right_id: 264
   current_revision_id: 5938
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-07-22 10:01:35 Z
   creator_id: 1
   updater_id: 1
@@ -5803,9 +5803,9 @@ cards_342:
   codename: 
   left_id: 546
   right_id: 82
-  current_revision_id: 5939
-  created_at: 2013-04-11 21:23:56 Z
-  updated_at: 2011-07-22 10:01:36 Z
+  current_revision_id: 6355
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-14 02:58:51 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -5821,7 +5821,7 @@ cards_343:
   left_id: 470
   right_id: 264
   current_revision_id: 5951
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-25 09:22:56 Z
   creator_id: 1
   updater_id: 1
@@ -5838,7 +5838,7 @@ cards_344:
   left_id: 548
   right_id: 479
   current_revision_id: 5952
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-25 09:22:57 Z
   creator_id: 1
   updater_id: 1
@@ -5855,7 +5855,7 @@ cards_345:
   left_id: 469
   right_id: 264
   current_revision_id: 5953
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-25 09:23:06 Z
   creator_id: 1
   updater_id: 1
@@ -5872,7 +5872,7 @@ cards_346:
   left_id: 550
   right_id: 479
   current_revision_id: 5954
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-25 09:23:06 Z
   creator_id: 1
   updater_id: 1
@@ -5889,7 +5889,7 @@ cards_347:
   left_id: 544
   right_id: 479
   current_revision_id: 5955
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-25 09:24:29 Z
   creator_id: 1
   updater_id: 1
@@ -5906,7 +5906,7 @@ cards_348:
   left_id: 473
   right_id: 264
   current_revision_id: 5956
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-25 09:24:36 Z
   creator_id: 1
   updater_id: 1
@@ -5923,7 +5923,7 @@ cards_349:
   left_id: 553
   right_id: 479
   current_revision_id: 5957
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-25 09:24:37 Z
   creator_id: 1
   updater_id: 1
@@ -5940,7 +5940,7 @@ cards_350:
   left_id: 79
   right_id: 264
   current_revision_id: 5958
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-25 09:25:01 Z
   creator_id: 1
   updater_id: 1
@@ -5957,7 +5957,7 @@ cards_351:
   left_id: 555
   right_id: 479
   current_revision_id: 5959
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-25 09:25:01 Z
   creator_id: 1
   updater_id: 1
@@ -5974,7 +5974,7 @@ cards_352:
   left_id: 474
   right_id: 264
   current_revision_id: 5960
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-25 09:25:11 Z
   creator_id: 1
   updater_id: 1
@@ -5991,7 +5991,7 @@ cards_353:
   left_id: 557
   right_id: 479
   current_revision_id: 5961
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-25 09:25:11 Z
   creator_id: 1
   updater_id: 1
@@ -6008,7 +6008,7 @@ cards_354:
   left_id: 315
   right_id: 479
   current_revision_id: 5962
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-25 09:25:30 Z
   creator_id: 1
   updater_id: 1
@@ -6025,7 +6025,7 @@ cards_355:
   left_id: 465
   right_id: 264
   current_revision_id: 5963
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-25 09:25:39 Z
   creator_id: 1
   updater_id: 1
@@ -6042,7 +6042,7 @@ cards_356:
   left_id: 560
   right_id: 479
   current_revision_id: 5964
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2011-08-25 09:25:39 Z
   creator_id: 1
   updater_id: 1
@@ -6059,7 +6059,7 @@ cards_357:
   left_id: 
   right_id: 
   current_revision_id: 6021
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-01-14 01:47:22 Z
   creator_id: 1
   updater_id: 1
@@ -6076,7 +6076,7 @@ cards_358:
   left_id: 565
   right_id: 260
   current_revision_id: 6022
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-01-14 01:47:25 Z
   creator_id: 1
   updater_id: 1
@@ -6093,7 +6093,7 @@ cards_359:
   left_id: 566
   right_id: 317
   current_revision_id: 6023
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-01-14 01:47:25 Z
   creator_id: 1
   updater_id: 1
@@ -6110,7 +6110,7 @@ cards_360:
   left_id: 566
   right_id: 479
   current_revision_id: 6024
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-01-14 01:47:25 Z
   creator_id: 1
   updater_id: 1
@@ -6127,7 +6127,7 @@ cards_361:
   left_id: 
   right_id: 
   current_revision_id: 6027
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-01-14 01:47:26 Z
   creator_id: 1
   updater_id: 1
@@ -6144,7 +6144,7 @@ cards_362:
   left_id: 569
   right_id: 266
   current_revision_id: 6028
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-01-14 01:47:26 Z
   creator_id: 1
   updater_id: 1
@@ -6161,7 +6161,7 @@ cards_363:
   left_id: 570
   right_id: 478
   current_revision_id: 6029
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-01-14 01:47:26 Z
   creator_id: 1
   updater_id: 1
@@ -6178,7 +6178,7 @@ cards_364:
   left_id: 570
   right_id: 480
   current_revision_id: 6030
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-01-14 01:47:26 Z
   creator_id: 1
   updater_id: 1
@@ -6195,7 +6195,7 @@ cards_365:
   left_id: 570
   right_id: 481
   current_revision_id: 6031
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-01-14 01:47:26 Z
   creator_id: 1
   updater_id: 1
@@ -6212,7 +6212,7 @@ cards_366:
   left_id: 475
   right_id: 318
   current_revision_id: 6044
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-04-18 20:26:21 Z
   creator_id: 1
   updater_id: 1
@@ -6229,7 +6229,7 @@ cards_367:
   left_id: 
   right_id: 
   current_revision_id: 6052
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-09-20 16:42:33 Z
   creator_id: 1
   updater_id: 1
@@ -6246,7 +6246,7 @@ cards_368:
   left_id: 353
   right_id: 318
   current_revision_id: 6053
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-09-20 16:42:34 Z
   creator_id: 1
   updater_id: 1
@@ -6263,7 +6263,7 @@ cards_369:
   left_id: 330
   right_id: 478
   current_revision_id: 6054
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-09-20 16:42:34 Z
   creator_id: 1
   updater_id: 1
@@ -6280,7 +6280,7 @@ cards_370:
   left_id: 1
   right_id: 96
   current_revision_id: 6055
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-09-20 16:42:34 Z
   creator_id: 1
   updater_id: 1
@@ -6297,7 +6297,7 @@ cards_371:
   left_id: 1
   right_id: 100
   current_revision_id: 6262
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-12-02 04:06:19 Z
   creator_id: 1
   updater_id: 1
@@ -6314,7 +6314,7 @@ cards_372:
   left_id: 15
   right_id: 100
   current_revision_id: 6263
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2012-12-02 04:06:20 Z
   creator_id: 1
   updater_id: 1
@@ -6331,7 +6331,7 @@ cards_373:
   left_id: 353
   right_id: 86
   current_revision_id: 6275
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-03-11 02:37:23 Z
   creator_id: 1
   updater_id: 1
@@ -6348,7 +6348,7 @@ cards_374:
   left_id: 353
   right_id: 241
   current_revision_id: 6276
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:20 Z
   updated_at: 2013-03-11 02:37:40 Z
   creator_id: 1
   updater_id: 1
@@ -6358,32 +6358,32 @@ cards_374:
   trash: 0
   type_id: 47
 cards_375: 
-  id: 775
-  name: Joe User
-  key: joe_user
+  id: 776
+  name: "*children+*right+*help"
+  key: "*child+*right+*help"
   codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6288
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
+  left_id: 350
+  right_id: 82
+  current_revision_id: 6405
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-15 04:21:50 Z
   creator_id: 1
   updater_id: 1
-  read_rule_class: "*all"
+  read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
   trash: 0
-  type_id: 4
+  type_id: 3
 cards_376: 
-  id: 776
-  name: Joe User+*account
-  key: joe_user+*account
+  id: 777
+  name: "*mates+*right+*help"
+  key: "*mate+*right+*help"
   codename: 
-  left_id: 775
-  right_id: 100
-  current_revision_id: 6289
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
+  left_id: 349
+  right_id: 82
+  current_revision_id: 6390
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-15 04:05:52 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -6392,32 +6392,32 @@ cards_376:
   trash: 0
   type_id: 3
 cards_377: 
-  id: 777
-  name: Joe Admin
-  key: joe_admin
+  id: 778
+  name: "*referred to by+*right+*help"
+  key: "*referred_to_by+*right+*help"
   codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6290
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
+  left_id: 449
+  right_id: 82
+  current_revision_id: 6392
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-15 04:06:17 Z
   creator_id: 1
   updater_id: 1
-  read_rule_class: "*all"
+  read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
   trash: 0
-  type_id: 4
+  type_id: 3
 cards_378: 
-  id: 778
-  name: Joe Admin+*account
-  key: joe_admin+*account
+  id: 779
+  name: "*linked to by+*right+*help"
+  key: "*linked_to_by+*right+*help"
   codename: 
-  left_id: 777
-  right_id: 100
-  current_revision_id: 6291
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
+  left_id: 345
+  right_id: 82
+  current_revision_id: 6382
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-15 04:03:04 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -6426,49 +6426,49 @@ cards_378:
   trash: 0
   type_id: 3
 cards_379: 
-  id: 779
-  name: Joe Admin+*roles
-  key: joe_admin+*role
+  id: 780
+  name: "*included by+*right+*help"
+  key: "*included_by+*right+*help"
   codename: 
-  left_id: 777
-  right_id: 96
-  current_revision_id: 6292
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
+  left_id: 348
+  right_id: 82
+  current_revision_id: 6379
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-15 04:02:37 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
   trash: 0
-  type_id: 47
+  type_id: 3
 cards_380: 
-  id: 780
-  name: Joe Camel
-  key: joe_camel
+  id: 781
+  name: "*refers to+*right+*help"
+  key: "*refer_to+*right+*help"
   codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6293
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
+  left_id: 446
+  right_id: 82
+  current_revision_id: 6391
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-15 04:06:09 Z
   creator_id: 1
   updater_id: 1
-  read_rule_class: "*all"
+  read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
   trash: 0
-  type_id: 4
+  type_id: 3
 cards_381: 
-  id: 781
-  name: Joe Camel+*account
-  key: joe_camel+*account
+  id: 782
+  name: "*links to+*right+*help"
+  key: "*link_to+*right+*help"
   codename: 
-  left_id: 780
-  right_id: 100
-  current_revision_id: 6294
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
+  left_id: 346
+  right_id: 82
+  current_revision_id: 6380
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-15 04:02:54 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -6477,66 +6477,66 @@ cards_381:
   trash: 0
   type_id: 3
 cards_382: 
-  id: 782
-  name: color
-  key: color
+  id: 783
+  name: "*includes+*right+*help"
+  key: "*include+*right+*help"
   codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6295
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
+  left_id: 347
+  right_id: 82
+  current_revision_id: 6378
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-15 04:02:35 Z
   creator_id: 1
   updater_id: 1
-  read_rule_class: "*all"
+  read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
   trash: 0
   type_id: 3
 cards_383: 
-  id: 783
-  name: Basic Card
-  key: basic_card
+  id: 784
+  name: "*editors+*right+*help"
+  key: "*editor+*right+*help"
   codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6296
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
+  left_id: 352
+  right_id: 82
+  current_revision_id: 6377
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-15 04:02:33 Z
   creator_id: 1
   updater_id: 1
-  read_rule_class: "*all"
+  read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
   trash: 0
   type_id: 3
 cards_384: 
-  id: 784
-  name: Ron Request
-  key: ron_request
+  id: 785
+  name: "*created+*right+*help"
+  key: "*created+*right+*help"
   codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6297
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
+  left_id: 432
+  right_id: 82
+  current_revision_id: 6372
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-15 04:01:33 Z
   creator_id: 1
   updater_id: 1
-  read_rule_class: "*all"
+  read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
   trash: 0
-  type_id: 12
+  type_id: 3
 cards_385: 
-  id: 785
-  name: Ron Request+*account
-  key: ron_request+*account
+  id: 786
+  name: "*edited+*right+*help"
+  key: "*edited+*right+*help"
   codename: 
-  left_id: 784
-  right_id: 100
-  current_revision_id: 6298
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
+  left_id: 351
+  right_id: 82
+  current_revision_id: 6376
+  created_at: 2013-04-16 12:49:20 Z
+  updated_at: 2013-04-15 04:02:31 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -6545,15 +6545,15 @@ cards_385:
   trash: 0
   type_id: 3
 cards_386: 
-  id: 786
-  name: No Count
-  key: no_count
+  id: 787
+  name: Joe User
+  key: joe_user
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6299
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
+  current_revision_id: 6406
+  created_at: 2013-04-16 18:49:59 Z
+  updated_at: 2013-04-16 18:49:59 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -6562,32 +6562,15 @@ cards_386:
   trash: 0
   type_id: 4
 cards_387: 
-  id: 787
-  name: Sample User
-  key: sample_user
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6300
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 4
-cards_388: 
   id: 788
-  name: Sample User+*account
-  key: sample_user+*account
+  name: Joe User+*account
+  key: joe_user+*account
   codename: 
   left_id: 787
   right_id: 100
-  current_revision_id: 6301
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
+  current_revision_id: 6407
+  created_at: 2013-04-16 18:49:59 Z
+  updated_at: 2013-04-16 18:49:59 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -6595,16 +6578,135 @@ cards_388:
   references_expired: 
   trash: 0
   type_id: 3
-cards_389: 
+cards_388: 
   id: 789
-  name: Sample AccountRequest
-  key: sample_account_request
+  name: Joe Admin
+  key: joe_admin
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6302
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
+  current_revision_id: 6408
+  created_at: 2013-04-16 18:49:59 Z
+  updated_at: 2013-04-16 18:49:59 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 4
+cards_389: 
+  id: 790
+  name: Joe Admin+*account
+  key: joe_admin+*account
+  codename: 
+  left_id: 789
+  right_id: 100
+  current_revision_id: 6409
+  created_at: 2013-04-16 18:50:00 Z
+  updated_at: 2013-04-16 18:50:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_390: 
+  id: 791
+  name: Joe Admin+*roles
+  key: joe_admin+*role
+  codename: 
+  left_id: 789
+  right_id: 96
+  current_revision_id: 6410
+  created_at: 2013-04-16 18:50:00 Z
+  updated_at: 2013-04-16 18:50:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 47
+cards_391: 
+  id: 792
+  name: Joe Camel
+  key: joe_camel
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6411
+  created_at: 2013-04-16 18:50:00 Z
+  updated_at: 2013-04-16 18:50:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 4
+cards_392: 
+  id: 793
+  name: Joe Camel+*account
+  key: joe_camel+*account
+  codename: 
+  left_id: 792
+  right_id: 100
+  current_revision_id: 6412
+  created_at: 2013-04-16 18:50:00 Z
+  updated_at: 2013-04-16 18:50:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_393: 
+  id: 794
+  name: color
+  key: color
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6413
+  created_at: 2013-04-16 18:50:00 Z
+  updated_at: 2013-04-16 18:50:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_394: 
+  id: 795
+  name: Basic Card
+  key: basic_card
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6414
+  created_at: 2013-04-16 18:50:00 Z
+  updated_at: 2013-04-16 18:50:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_395: 
+  id: 796
+  name: Ron Request
+  key: ron_request
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6415
+  created_at: 2013-04-16 18:50:00 Z
+  updated_at: 2013-04-16 18:50:00 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -6612,16 +6714,101 @@ cards_389:
   references_expired: 
   trash: 0
   type_id: 12
-cards_390: 
-  id: 790
+cards_396: 
+  id: 797
+  name: Ron Request+*account
+  key: ron_request+*account
+  codename: 
+  left_id: 796
+  right_id: 100
+  current_revision_id: 6416
+  created_at: 2013-04-16 18:50:01 Z
+  updated_at: 2013-04-16 18:50:01 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_397: 
+  id: 798
+  name: No Count
+  key: no_count
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6417
+  created_at: 2013-04-16 18:50:01 Z
+  updated_at: 2013-04-16 18:50:01 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 4
+cards_398: 
+  id: 799
+  name: Sample User
+  key: sample_user
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6418
+  created_at: 2013-04-16 18:50:01 Z
+  updated_at: 2013-04-16 18:50:01 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 4
+cards_399: 
+  id: 800
+  name: Sample User+*account
+  key: sample_user+*account
+  codename: 
+  left_id: 799
+  right_id: 100
+  current_revision_id: 6419
+  created_at: 2013-04-16 18:50:01 Z
+  updated_at: 2013-04-16 18:50:01 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_400: 
+  id: 801
+  name: Sample AccountRequest
+  key: sample_account_request
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6420
+  created_at: 2013-04-16 18:50:01 Z
+  updated_at: 2013-04-16 18:50:01 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 12
+cards_401: 
+  id: 802
   name: Sample Basic
   key: sample_basic
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6303
-  created_at: 2013-04-12 03:24:24 Z
-  updated_at: 2013-04-12 03:24:24 Z
+  current_revision_id: 6421
+  created_at: 2013-04-16 18:50:01 Z
+  updated_at: 2013-04-16 18:50:01 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -6629,16 +6816,16 @@ cards_390:
   references_expired: 
   trash: 0
   type_id: 3
-cards_391: 
-  id: 791
+cards_402: 
+  id: 803
   name: Sample Cardtype
   key: sample_cardtype
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6304
-  created_at: 2013-04-12 03:24:24 Z
-  updated_at: 2013-04-12 03:24:24 Z
+  current_revision_id: 6422
+  created_at: 2013-04-16 18:50:01 Z
+  updated_at: 2013-04-16 18:50:01 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -6646,16 +6833,16 @@ cards_391:
   references_expired: 
   trash: 0
   type_id: 5
-cards_392: 
-  id: 792
+cards_403: 
+  id: 804
   name: Sample Date
   key: sample_date
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6305
-  created_at: 2013-04-12 03:24:24 Z
-  updated_at: 2013-04-12 03:24:24 Z
+  current_revision_id: 6423
+  created_at: 2013-04-16 18:50:02 Z
+  updated_at: 2013-04-16 18:50:02 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -6663,16 +6850,16 @@ cards_392:
   references_expired: 
   trash: 0
   type_id: 17
-cards_393: 
-  id: 793
+cards_404: 
+  id: 805
   name: Sample File
   key: sample_file
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6306
-  created_at: 2013-04-12 03:24:24 Z
-  updated_at: 2013-04-12 03:24:24 Z
+  current_revision_id: 6424
+  created_at: 2013-04-16 18:50:02 Z
+  updated_at: 2013-04-16 18:50:02 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -6680,16 +6867,16 @@ cards_393:
   references_expired: 
   trash: 0
   type_id: 18
-cards_394: 
-  id: 794
+cards_405: 
+  id: 806
   name: Sample HTML
   key: sample_html
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6307
-  created_at: 2013-04-12 03:24:24 Z
-  updated_at: 2013-04-12 03:24:24 Z
+  current_revision_id: 6425
+  created_at: 2013-04-16 18:50:02 Z
+  updated_at: 2013-04-16 18:50:02 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -6697,16 +6884,16 @@ cards_394:
   references_expired: 
   trash: 0
   type_id: 50
-cards_395: 
-  id: 795
+cards_406: 
+  id: 807
   name: Sample Image
   key: sample_image
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6308
-  created_at: 2013-04-12 03:24:24 Z
-  updated_at: 2013-04-12 03:24:24 Z
+  current_revision_id: 6426
+  created_at: 2013-04-16 18:50:02 Z
+  updated_at: 2013-04-16 18:50:02 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -6714,16 +6901,16 @@ cards_395:
   references_expired: 
   trash: 0
   type_id: 19
-cards_396: 
-  id: 796
+cards_407: 
+  id: 808
   name: Sample Layout
   key: sample_layout
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6309
-  created_at: 2013-04-12 03:24:24 Z
-  updated_at: 2013-04-12 03:24:24 Z
+  current_revision_id: 6427
+  created_at: 2013-04-16 18:50:02 Z
+  updated_at: 2013-04-16 18:50:02 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -6731,16 +6918,16 @@ cards_396:
   references_expired: 
   trash: 0
   type_id: 569
-cards_397: 
-  id: 797
+cards_408: 
+  id: 809
   name: Sample Number
   key: sample_number
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6310
-  created_at: 2013-04-12 03:24:24 Z
-  updated_at: 2013-04-12 03:24:24 Z
+  current_revision_id: 6428
+  created_at: 2013-04-16 18:50:03 Z
+  updated_at: 2013-04-16 18:50:03 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -6748,16 +6935,16 @@ cards_397:
   references_expired: 
   trash: 0
   type_id: 20
-cards_398: 
-  id: 798
+cards_409: 
+  id: 810
   name: Sample Phrase
   key: sample_phrase
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6311
-  created_at: 2013-04-12 03:24:24 Z
-  updated_at: 2013-04-12 03:24:24 Z
+  current_revision_id: 6429
+  created_at: 2013-04-16 18:50:03 Z
+  updated_at: 2013-04-16 18:50:03 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -6765,16 +6952,16 @@ cards_398:
   references_expired: 
   trash: 0
   type_id: 52
-cards_399: 
-  id: 799
+cards_410: 
+  id: 811
   name: Sample PlainText
   key: sample_plain_text
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6312
-  created_at: 2013-04-12 03:24:24 Z
-  updated_at: 2013-04-12 03:24:24 Z
+  current_revision_id: 6430
+  created_at: 2013-04-16 18:50:03 Z
+  updated_at: 2013-04-16 18:50:03 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -6782,16 +6969,16 @@ cards_399:
   references_expired: 
   trash: 0
   type_id: 22
-cards_400: 
-  id: 800
+cards_411: 
+  id: 812
   name: Sample Pointer
   key: sample_pointer
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6313
-  created_at: 2013-04-12 03:24:24 Z
-  updated_at: 2013-04-12 03:24:24 Z
+  current_revision_id: 6431
+  created_at: 2013-04-16 18:50:03 Z
+  updated_at: 2013-04-16 18:50:03 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -6799,203 +6986,16 @@ cards_400:
   references_expired: 
   trash: 0
   type_id: 47
-cards_401: 
-  id: 801
+cards_412: 
+  id: 813
   name: Sample Role
   key: sample_role
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6314
-  created_at: 2013-04-12 03:24:24 Z
-  updated_at: 2013-04-12 03:24:24 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 7
-cards_402: 
-  id: 802
-  name: Sample Search
-  key: sample_search
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6315
-  created_at: 2013-04-12 03:24:24 Z
-  updated_at: 2013-04-12 03:24:24 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 30
-cards_403: 
-  id: 803
-  name: Sample Toggle
-  key: sample_toggle
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6316
-  created_at: 2013-04-12 03:24:24 Z
-  updated_at: 2013-04-12 03:24:24 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 51
-cards_404: 
-  id: 804
-  name: u1
-  key: u1
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6317
-  created_at: 2013-04-12 03:24:24 Z
-  updated_at: 2013-04-12 03:24:24 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 4
-cards_405: 
-  id: 805
-  name: u1+*account
-  key: u1+*account
-  codename: 
-  left_id: 804
-  right_id: 100
-  current_revision_id: 6318
-  created_at: 2013-04-12 03:24:24 Z
-  updated_at: 2013-04-12 03:24:24 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all plus"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_406: 
-  id: 806
-  name: u2
-  key: u2
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6319
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 4
-cards_407: 
-  id: 807
-  name: u2+*account
-  key: u2+*account
-  codename: 
-  left_id: 806
-  right_id: 100
-  current_revision_id: 6320
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all plus"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_408: 
-  id: 808
-  name: u3
-  key: u3
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6321
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 4
-cards_409: 
-  id: 809
-  name: u3+*account
-  key: u3+*account
-  codename: 
-  left_id: 808
-  right_id: 100
-  current_revision_id: 6322
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all plus"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_410: 
-  id: 810
-  name: r1
-  key: r1
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6323
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 7
-cards_411: 
-  id: 811
-  name: r2
-  key: r2
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6324
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 7
-cards_412: 
-  id: 812
-  name: r3
-  key: r3
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6325
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
+  current_revision_id: 6432
+  created_at: 2013-04-16 18:50:03 Z
+  updated_at: 2013-04-16 18:50:03 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -7004,15 +7004,151 @@ cards_412:
   trash: 0
   type_id: 7
 cards_413: 
-  id: 813
-  name: r4
-  key: r4
+  id: 814
+  name: Sample Search
+  key: sample_search
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6326
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
+  current_revision_id: 6433
+  created_at: 2013-04-16 18:50:03 Z
+  updated_at: 2013-04-16 18:50:03 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 30
+cards_414: 
+  id: 815
+  name: Sample Toggle
+  key: sample_toggle
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6434
+  created_at: 2013-04-16 18:50:03 Z
+  updated_at: 2013-04-16 18:50:03 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 51
+cards_415: 
+  id: 816
+  name: u1
+  key: u1
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6435
+  created_at: 2013-04-16 18:50:03 Z
+  updated_at: 2013-04-16 18:50:03 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 4
+cards_416: 
+  id: 817
+  name: u1+*account
+  key: u1+*account
+  codename: 
+  left_id: 816
+  right_id: 100
+  current_revision_id: 6436
+  created_at: 2013-04-16 18:50:03 Z
+  updated_at: 2013-04-16 18:50:03 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_417: 
+  id: 818
+  name: u2
+  key: u2
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6437
+  created_at: 2013-04-16 18:50:04 Z
+  updated_at: 2013-04-16 18:50:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 4
+cards_418: 
+  id: 819
+  name: u2+*account
+  key: u2+*account
+  codename: 
+  left_id: 818
+  right_id: 100
+  current_revision_id: 6438
+  created_at: 2013-04-16 18:50:04 Z
+  updated_at: 2013-04-16 18:50:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_419: 
+  id: 820
+  name: u3
+  key: u3
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6439
+  created_at: 2013-04-16 18:50:04 Z
+  updated_at: 2013-04-16 18:50:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 4
+cards_420: 
+  id: 821
+  name: u3+*account
+  key: u3+*account
+  codename: 
+  left_id: 820
+  right_id: 100
+  current_revision_id: 6440
+  created_at: 2013-04-16 18:50:04 Z
+  updated_at: 2013-04-16 18:50:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_421: 
+  id: 822
+  name: r1
+  key: r1
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6441
+  created_at: 2013-04-16 18:50:04 Z
+  updated_at: 2013-04-16 18:50:04 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -7020,16 +7156,67 @@ cards_413:
   references_expired: 
   trash: 0
   type_id: 7
-cards_414: 
-  id: 814
+cards_422: 
+  id: 823
+  name: r2
+  key: r2
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6442
+  created_at: 2013-04-16 18:50:04 Z
+  updated_at: 2013-04-16 18:50:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 7
+cards_423: 
+  id: 824
+  name: r3
+  key: r3
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6443
+  created_at: 2013-04-16 18:50:04 Z
+  updated_at: 2013-04-16 18:50:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 7
+cards_424: 
+  id: 825
+  name: r4
+  key: r4
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6444
+  created_at: 2013-04-16 18:50:05 Z
+  updated_at: 2013-04-16 18:50:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 7
+cards_425: 
+  id: 826
   name: u1+*roles
   key: u1+*role
   codename: 
-  left_id: 804
+  left_id: 816
   right_id: 96
-  current_revision_id: 6327
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
+  current_revision_id: 6445
+  created_at: 2013-04-16 18:50:05 Z
+  updated_at: 2013-04-16 18:50:05 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -7037,16 +7224,16 @@ cards_414:
   references_expired: 
   trash: 0
   type_id: 47
-cards_415: 
-  id: 815
+cards_426: 
+  id: 827
   name: u2+*roles
   key: u2+*role
   codename: 
-  left_id: 806
+  left_id: 818
   right_id: 96
-  current_revision_id: 6328
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
+  current_revision_id: 6446
+  created_at: 2013-04-16 18:50:06 Z
+  updated_at: 2013-04-16 18:50:06 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -7054,16 +7241,16 @@ cards_415:
   references_expired: 
   trash: 0
   type_id: 47
-cards_416: 
-  id: 816
+cards_427: 
+  id: 828
   name: u3+*roles
   key: u3+*role
   codename: 
-  left_id: 808
+  left_id: 820
   right_id: 96
-  current_revision_id: 6329
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
+  current_revision_id: 6447
+  created_at: 2013-04-16 18:50:06 Z
+  updated_at: 2013-04-16 18:50:06 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -7071,203 +7258,16 @@ cards_416:
   references_expired: 
   trash: 0
   type_id: 47
-cards_417: 
-  id: 817
+cards_428: 
+  id: 829
   name: c1
   key: c1
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6330
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_418: 
-  id: 818
-  name: c2
-  key: c2
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6331
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_419: 
-  id: 819
-  name: c3
-  key: c3
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6332
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_420: 
-  id: 820
-  name: Z
-  key: z
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6333
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_421: 
-  id: 821
-  name: A
-  key: a
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6334
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_422: 
-  id: 822
-  name: B
-  key: b
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6335
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_423: 
-  id: 823
-  name: T
-  key: t
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6336
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_424: 
-  id: 824
-  name: X
-  key: x
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6337
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_425: 
-  id: 825
-  name: Y
-  key: y
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6338
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_426: 
-  id: 826
-  name: A+B
-  key: a+b
-  codename: 
-  left_id: 821
-  right_id: 822
-  current_revision_id: 6339
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all plus"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_427: 
-  id: 827
-  name: One
-  key: one
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6340
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_428: 
-  id: 828
-  name: Two
-  key: two
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6341
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  current_revision_id: 6448
+  created_at: 2013-04-16 18:50:06 Z
+  updated_at: 2013-04-16 18:50:06 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -7276,32 +7276,32 @@ cards_428:
   trash: 0
   type_id: 3
 cards_429: 
-  id: 829
-  name: One+Two
-  key: one+two
+  id: 830
+  name: c2
+  key: c2
   codename: 
-  left_id: 827
-  right_id: 828
-  current_revision_id: 6342
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  left_id: 
+  right_id: 
+  current_revision_id: 6449
+  created_at: 2013-04-16 18:50:06 Z
+  updated_at: 2013-04-16 18:50:06 Z
   creator_id: 1
   updater_id: 1
-  read_rule_class: "*all plus"
+  read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
   trash: 0
   type_id: 3
 cards_430: 
-  id: 830
-  name: Three
-  key: three
+  id: 831
+  name: c3
+  key: c3
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6343
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  current_revision_id: 6450
+  created_at: 2013-04-16 18:50:06 Z
+  updated_at: 2013-04-16 18:50:06 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -7310,32 +7310,32 @@ cards_430:
   trash: 0
   type_id: 3
 cards_431: 
-  id: 831
-  name: One+Two+Three
-  key: one+two+three
+  id: 832
+  name: Z
+  key: z
   codename: 
-  left_id: 829
-  right_id: 830
-  current_revision_id: 6344
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  left_id: 
+  right_id: 
+  current_revision_id: 6451
+  created_at: 2013-04-16 18:50:06 Z
+  updated_at: 2013-04-16 18:50:06 Z
   creator_id: 1
   updater_id: 1
-  read_rule_class: "*all plus"
+  read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
   trash: 0
   type_id: 3
 cards_432: 
-  id: 832
-  name: Four
-  key: four
+  id: 833
+  name: A
+  key: a
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6345
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  current_revision_id: 6452
+  created_at: 2013-04-16 18:50:06 Z
+  updated_at: 2013-04-16 18:50:06 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -7344,32 +7344,32 @@ cards_432:
   trash: 0
   type_id: 3
 cards_433: 
-  id: 833
-  name: Four+One
-  key: four+one
+  id: 834
+  name: B
+  key: b
   codename: 
-  left_id: 832
-  right_id: 827
-  current_revision_id: 6346
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  left_id: 
+  right_id: 
+  current_revision_id: 6453
+  created_at: 2013-04-16 18:50:07 Z
+  updated_at: 2013-04-16 18:50:07 Z
   creator_id: 1
   updater_id: 1
-  read_rule_class: "*all plus"
+  read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
   trash: 0
   type_id: 3
 cards_434: 
-  id: 834
-  name: Five
-  key: five
+  id: 835
+  name: T
+  key: t
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6347
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  current_revision_id: 6454
+  created_at: 2013-04-16 18:50:07 Z
+  updated_at: 2013-04-16 18:50:07 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -7378,32 +7378,32 @@ cards_434:
   trash: 0
   type_id: 3
 cards_435: 
-  id: 835
-  name: Four+One+Five
-  key: four+one+five
+  id: 836
+  name: X
+  key: x
   codename: 
-  left_id: 833
-  right_id: 834
-  current_revision_id: 6348
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  left_id: 
+  right_id: 
+  current_revision_id: 6455
+  created_at: 2013-04-16 18:50:08 Z
+  updated_at: 2013-04-16 18:50:08 Z
   creator_id: 1
   updater_id: 1
-  read_rule_class: "*all plus"
+  read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
   trash: 0
   type_id: 3
 cards_436: 
-  id: 836
-  name: C
-  key: c
+  id: 837
+  name: Y
+  key: y
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6349
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  current_revision_id: 6456
+  created_at: 2013-04-16 18:50:10 Z
+  updated_at: 2013-04-16 18:50:10 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -7412,15 +7412,15 @@ cards_436:
   trash: 0
   type_id: 3
 cards_437: 
-  id: 837
-  name: A+C
-  key: a+c
+  id: 838
+  name: A+B
+  key: a+b
   codename: 
-  left_id: 821
-  right_id: 836
-  current_revision_id: 6350
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  left_id: 833
+  right_id: 834
+  current_revision_id: 6457
+  created_at: 2013-04-16 18:50:10 Z
+  updated_at: 2013-04-16 18:50:10 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -7429,15 +7429,15 @@ cards_437:
   trash: 0
   type_id: 3
 cards_438: 
-  id: 838
-  name: D
-  key: d
+  id: 839
+  name: One
+  key: one
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6351
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  current_revision_id: 6458
+  created_at: 2013-04-16 18:50:10 Z
+  updated_at: 2013-04-16 18:50:10 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -7446,32 +7446,15 @@ cards_438:
   trash: 0
   type_id: 3
 cards_439: 
-  id: 839
-  name: A+D
-  key: a+d
-  codename: 
-  left_id: 821
-  right_id: 838
-  current_revision_id: 6352
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all plus"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_440: 
   id: 840
-  name: E
-  key: e
+  name: Two
+  key: two
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6353
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  current_revision_id: 6459
+  created_at: 2013-04-16 18:50:10 Z
+  updated_at: 2013-04-16 18:50:10 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -7479,16 +7462,16 @@ cards_440:
   references_expired: 
   trash: 0
   type_id: 3
-cards_441: 
+cards_440: 
   id: 841
-  name: A+E
-  key: a+e
+  name: One+Two
+  key: one+two
   codename: 
-  left_id: 821
+  left_id: 839
   right_id: 840
-  current_revision_id: 6354
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  current_revision_id: 6460
+  created_at: 2013-04-16 18:50:10 Z
+  updated_at: 2013-04-16 18:50:10 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -7496,16 +7479,33 @@ cards_441:
   references_expired: 
   trash: 0
   type_id: 3
-cards_442: 
+cards_441: 
   id: 842
-  name: C+A
-  key: c+a
+  name: Three
+  key: three
   codename: 
-  left_id: 836
-  right_id: 821
-  current_revision_id: 6355
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  left_id: 
+  right_id: 
+  current_revision_id: 6461
+  created_at: 2013-04-16 18:50:10 Z
+  updated_at: 2013-04-16 18:50:10 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_442: 
+  id: 843
+  name: One+Two+Three
+  key: one+two+three
+  codename: 
+  left_id: 841
+  right_id: 842
+  current_revision_id: 6462
+  created_at: 2013-04-16 18:50:10 Z
+  updated_at: 2013-04-16 18:50:10 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -7514,32 +7514,15 @@ cards_442:
   trash: 0
   type_id: 3
 cards_443: 
-  id: 843
-  name: D+A
-  key: d+a
-  codename: 
-  left_id: 838
-  right_id: 821
-  current_revision_id: 6356
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all plus"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_444: 
   id: 844
-  name: F
-  key: f
+  name: Four
+  key: four
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6357
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  current_revision_id: 6463
+  created_at: 2013-04-16 18:50:11 Z
+  updated_at: 2013-04-16 18:50:11 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -7547,16 +7530,16 @@ cards_444:
   references_expired: 
   trash: 0
   type_id: 3
-cards_445: 
+cards_444: 
   id: 845
-  name: F+A
-  key: f+a
+  name: Four+One
+  key: four+one
   codename: 
   left_id: 844
-  right_id: 821
-  current_revision_id: 6358
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  right_id: 839
+  current_revision_id: 6464
+  created_at: 2013-04-16 18:50:11 Z
+  updated_at: 2013-04-16 18:50:11 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -7564,16 +7547,33 @@ cards_445:
   references_expired: 
   trash: 0
   type_id: 3
-cards_446: 
+cards_445: 
   id: 846
-  name: A+B+C
-  key: a+b+c
+  name: Five
+  key: five
   codename: 
-  left_id: 826
-  right_id: 836
-  current_revision_id: 6359
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
+  left_id: 
+  right_id: 
+  current_revision_id: 6465
+  created_at: 2013-04-16 18:50:11 Z
+  updated_at: 2013-04-16 18:50:11 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_446: 
+  id: 847
+  name: Four+One+Five
+  key: four+one+five
+  codename: 
+  left_id: 845
+  right_id: 846
+  current_revision_id: 6466
+  created_at: 2013-04-16 18:50:11 Z
+  updated_at: 2013-04-16 18:50:11 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -7582,236 +7582,151 @@ cards_446:
   trash: 0
   type_id: 3
 cards_447: 
-  id: 847
-  name: Cardtype A
-  key: cardtype_a
-  codename: cardtype_a
-  left_id: 
-  right_id: 
-  current_revision_id: 6360
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 5
-cards_448: 
   id: 848
-  name: Cardtype B
-  key: cardtype_b
-  codename: cardtype_b
-  left_id: 
-  right_id: 
-  current_revision_id: 6361
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 5
-cards_449: 
-  id: 849
-  name: Cardtype C
-  key: cardtype_c
-  codename: cardtype_c
-  left_id: 
-  right_id: 
-  current_revision_id: 6362
-  created_at: 2013-04-12 03:24:26 Z
-  updated_at: 2013-04-12 03:24:26 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 5
-cards_450: 
-  id: 850
-  name: Cardtype D
-  key: cardtype_d
-  codename: cardtype_d
-  left_id: 
-  right_id: 
-  current_revision_id: 6363
-  created_at: 2013-04-12 03:24:27 Z
-  updated_at: 2013-04-12 03:24:27 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 5
-cards_451: 
-  id: 851
-  name: Cardtype E
-  key: cardtype_e
-  codename: cardtype_e
-  left_id: 
-  right_id: 
-  current_revision_id: 6364
-  created_at: 2013-04-12 03:24:27 Z
-  updated_at: 2013-04-12 03:24:27 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 5
-cards_452: 
-  id: 852
-  name: Cardtype F
-  key: cardtype_f
-  codename: cardtype_f
-  left_id: 
-  right_id: 
-  current_revision_id: 6365
-  created_at: 2013-04-12 03:24:27 Z
-  updated_at: 2013-04-12 03:24:27 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 5
-cards_453: 
-  id: 853
-  name: basicname
-  key: basicname
+  name: C
+  key: c
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6366
-  created_at: 2013-04-12 03:24:27 Z
-  updated_at: 2013-04-12 03:24:27 Z
+  current_revision_id: 6467
+  created_at: 2013-04-16 18:50:11 Z
+  updated_at: 2013-04-16 18:50:11 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_448: 
+  id: 849
+  name: A+C
+  key: a+c
+  codename: 
+  left_id: 833
+  right_id: 848
+  current_revision_id: 6468
+  created_at: 2013-04-16 18:50:11 Z
+  updated_at: 2013-04-16 18:50:11 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_449: 
+  id: 850
+  name: D
+  key: d
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6469
+  created_at: 2013-04-16 18:50:12 Z
+  updated_at: 2013-04-16 18:50:12 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_450: 
+  id: 851
+  name: A+D
+  key: a+d
+  codename: 
+  left_id: 833
+  right_id: 850
+  current_revision_id: 6470
+  created_at: 2013-04-16 18:50:12 Z
+  updated_at: 2013-04-16 18:50:12 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_451: 
+  id: 852
+  name: E
+  key: e
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6471
+  created_at: 2013-04-16 18:50:12 Z
+  updated_at: 2013-04-16 18:50:12 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_452: 
+  id: 853
+  name: A+E
+  key: a+e
+  codename: 
+  left_id: 833
+  right_id: 852
+  current_revision_id: 6472
+  created_at: 2013-04-16 18:50:12 Z
+  updated_at: 2013-04-16 18:50:12 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_453: 
+  id: 854
+  name: C+A
+  key: c+a
+  codename: 
+  left_id: 848
+  right_id: 833
+  current_revision_id: 6473
+  created_at: 2013-04-16 18:50:12 Z
+  updated_at: 2013-04-16 18:50:12 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
   trash: 0
   type_id: 3
 cards_454: 
-  id: 854
-  name: type-a-card
-  key: type_a_card
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6367
-  created_at: 2013-04-12 03:24:27 Z
-  updated_at: 2013-04-12 03:24:27 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 847
-cards_455: 
   id: 855
-  name: type-b-card
-  key: type_b_card
+  name: D+A
+  key: d+a
   codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6368
-  created_at: 2013-04-12 03:24:27 Z
-  updated_at: 2013-04-12 03:24:27 Z
+  left_id: 850
+  right_id: 833
+  current_revision_id: 6474
+  created_at: 2013-04-16 18:50:12 Z
+  updated_at: 2013-04-16 18:50:12 Z
   creator_id: 1
   updater_id: 1
-  read_rule_class: "*all"
+  read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
   trash: 0
-  type_id: 848
-cards_456: 
+  type_id: 3
+cards_455: 
   id: 856
-  name: type-c-card
-  key: type_c_card
+  name: F
+  key: f
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6369
-  created_at: 2013-04-12 03:24:27 Z
-  updated_at: 2013-04-12 03:24:27 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 849
-cards_457: 
-  id: 857
-  name: type-d-card
-  key: type_d_card
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6370
-  created_at: 2013-04-12 03:24:27 Z
-  updated_at: 2013-04-12 03:24:27 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 850
-cards_458: 
-  id: 858
-  name: type-e-card
-  key: type_e_card
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6371
-  created_at: 2013-04-12 03:24:27 Z
-  updated_at: 2013-04-12 03:24:27 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 851
-cards_459: 
-  id: 859
-  name: type-f-card
-  key: type_f_card
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6372
-  created_at: 2013-04-12 03:24:27 Z
-  updated_at: 2013-04-12 03:24:27 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 852
-cards_460: 
-  id: 860
-  name: revtest
-  key: revtest
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6375
-  created_at: 2013-04-12 03:24:27 Z
-  updated_at: 2013-04-12 03:24:27 Z
+  current_revision_id: 6475
+  created_at: 2013-04-16 18:50:12 Z
+  updated_at: 2013-04-16 18:50:12 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -7819,16 +7734,101 @@ cards_460:
   references_expired: 
   trash: 0
   type_id: 3
-cards_461: 
-  id: 861
-  name: UserForm
-  key: user_form
+cards_456: 
+  id: 857
+  name: F+A
+  key: f+a
   codename: 
+  left_id: 856
+  right_id: 833
+  current_revision_id: 6476
+  created_at: 2013-04-16 18:50:12 Z
+  updated_at: 2013-04-16 18:50:12 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_457: 
+  id: 858
+  name: A+B+C
+  key: a+b+c
+  codename: 
+  left_id: 838
+  right_id: 848
+  current_revision_id: 6477
+  created_at: 2013-04-16 18:50:12 Z
+  updated_at: 2013-04-16 18:50:12 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_458: 
+  id: 859
+  name: Cardtype A
+  key: cardtype_a
+  codename: cardtype_a
   left_id: 
   right_id: 
-  current_revision_id: 6376
-  created_at: 2013-04-12 03:24:27 Z
-  updated_at: 2013-04-12 03:24:27 Z
+  current_revision_id: 6478
+  created_at: 2013-04-16 18:50:12 Z
+  updated_at: 2013-04-16 18:50:12 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 5
+cards_459: 
+  id: 860
+  name: Cardtype B
+  key: cardtype_b
+  codename: cardtype_b
+  left_id: 
+  right_id: 
+  current_revision_id: 6479
+  created_at: 2013-04-16 18:50:13 Z
+  updated_at: 2013-04-16 18:50:13 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 5
+cards_460: 
+  id: 861
+  name: Cardtype C
+  key: cardtype_c
+  codename: cardtype_c
+  left_id: 
+  right_id: 
+  current_revision_id: 6480
+  created_at: 2013-04-16 18:50:13 Z
+  updated_at: 2013-04-16 18:50:13 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 5
+cards_461: 
+  id: 862
+  name: Cardtype D
+  key: cardtype_d
+  codename: cardtype_d
+  left_id: 
+  right_id: 
+  current_revision_id: 6481
+  created_at: 2013-04-16 18:50:13 Z
+  updated_at: 2013-04-16 18:50:13 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -7837,134 +7837,15 @@ cards_461:
   trash: 0
   type_id: 5
 cards_462: 
-  id: 862
-  name: UserForm+*type
-  key: user_form+*type
-  codename: 
-  left_id: 861
-  right_id: 266
-  current_revision_id: 6377
-  created_at: 2013-04-12 03:24:27 Z
-  updated_at: 2013-04-12 03:24:27 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all plus"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 259
-cards_463: 
   id: 863
-  name: UserForm+*type+*structure
-  key: user_form+*type+*structure
-  codename: 
-  left_id: 862
-  right_id: 317
-  current_revision_id: 6378
-  created_at: 2013-04-12 03:24:27 Z
-  updated_at: 2013-04-12 03:24:27 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all plus"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_464: 
-  id: 864
-  name: JoeLater
-  key: joe_later
-  codename: 
+  name: Cardtype E
+  key: cardtype_e
+  codename: cardtype_e
   left_id: 
   right_id: 
-  current_revision_id: 6379
-  created_at: 2013-04-12 03:24:28 Z
-  updated_at: 2013-04-12 03:24:28 Z
-  creator_id: 775
-  updater_id: 775
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_465: 
-  id: 865
-  name: JoeNow
-  key: joe_now
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6380
-  created_at: 2013-04-12 03:24:28 Z
-  updated_at: 2013-04-12 03:24:28 Z
-  creator_id: 775
-  updater_id: 775
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_466: 
-  id: 866
-  name: AdminNow
-  key: admin_now
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6381
-  created_at: 2013-04-12 03:24:28 Z
-  updated_at: 2013-04-12 03:24:28 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_467: 
-  id: 867
-  name: Cardtype B+*type
-  key: cardtype_b+*type
-  codename: 
-  left_id: 848
-  right_id: 266
-  current_revision_id: 6382
-  created_at: 2013-04-12 03:24:28 Z
-  updated_at: 2013-04-12 03:24:28 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all plus"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 259
-cards_468: 
-  id: 868
-  name: Cardtype B+*type+*create
-  key: cardtype_b+*type+*create
-  codename: 
-  left_id: 867
-  right_id: 478
-  current_revision_id: 6383
-  created_at: 2013-04-12 03:24:28 Z
-  updated_at: 2013-04-12 03:24:28 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all plus"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 47
-cards_469: 
-  id: 869
-  name: Book
-  key: book
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6384
-  created_at: 2013-04-12 03:24:28 Z
-  updated_at: 2013-04-12 03:24:28 Z
+  current_revision_id: 6482
+  created_at: 2013-04-16 18:50:13 Z
+  updated_at: 2013-04-16 18:50:13 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -7972,16 +7853,186 @@ cards_469:
   references_expired: 
   trash: 0
   type_id: 5
-cards_470: 
-  id: 870
-  name: Book+*type
-  key: book+*type
+cards_463: 
+  id: 864
+  name: Cardtype F
+  key: cardtype_f
+  codename: cardtype_f
+  left_id: 
+  right_id: 
+  current_revision_id: 6483
+  created_at: 2013-04-16 18:50:13 Z
+  updated_at: 2013-04-16 18:50:13 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 5
+cards_464: 
+  id: 865
+  name: basicname
+  key: basicname
   codename: 
-  left_id: 869
+  left_id: 
+  right_id: 
+  current_revision_id: 6484
+  created_at: 2013-04-16 18:50:13 Z
+  updated_at: 2013-04-16 18:50:13 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_465: 
+  id: 866
+  name: type-a-card
+  key: type_a_card
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6485
+  created_at: 2013-04-16 18:50:14 Z
+  updated_at: 2013-04-16 18:50:14 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 859
+cards_466: 
+  id: 867
+  name: type-b-card
+  key: type_b_card
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6486
+  created_at: 2013-04-16 18:50:14 Z
+  updated_at: 2013-04-16 18:50:14 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 860
+cards_467: 
+  id: 868
+  name: type-c-card
+  key: type_c_card
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6487
+  created_at: 2013-04-16 18:50:14 Z
+  updated_at: 2013-04-16 18:50:14 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 861
+cards_468: 
+  id: 869
+  name: type-d-card
+  key: type_d_card
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6488
+  created_at: 2013-04-16 18:50:14 Z
+  updated_at: 2013-04-16 18:50:14 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 862
+cards_469: 
+  id: 870
+  name: type-e-card
+  key: type_e_card
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6489
+  created_at: 2013-04-16 18:50:14 Z
+  updated_at: 2013-04-16 18:50:14 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 863
+cards_470: 
+  id: 871
+  name: type-f-card
+  key: type_f_card
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6490
+  created_at: 2013-04-16 18:50:14 Z
+  updated_at: 2013-04-16 18:50:14 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 864
+cards_471: 
+  id: 872
+  name: revtest
+  key: revtest
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6493
+  created_at: 2013-04-16 18:50:14 Z
+  updated_at: 2013-04-16 18:50:15 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_472: 
+  id: 873
+  name: UserForm
+  key: user_form
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6494
+  created_at: 2013-04-16 18:50:15 Z
+  updated_at: 2013-04-16 18:50:15 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 5
+cards_473: 
+  id: 874
+  name: UserForm+*type
+  key: user_form+*type
+  codename: 
+  left_id: 873
   right_id: 266
-  current_revision_id: 6385
-  created_at: 2013-04-12 03:24:28 Z
-  updated_at: 2013-04-12 03:24:28 Z
+  current_revision_id: 6495
+  created_at: 2013-04-16 18:50:15 Z
+  updated_at: 2013-04-16 18:50:15 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -7989,67 +8040,16 @@ cards_470:
   references_expired: 
   trash: 0
   type_id: 259
-cards_471: 
-  id: 871
-  name: Book+*type+*structure
-  key: book+*type+*structure
-  codename: 
-  left_id: 870
-  right_id: 317
-  current_revision_id: 6386
-  created_at: 2013-04-12 03:24:28 Z
-  updated_at: 2013-04-12 03:24:28 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all plus"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_472: 
-  id: 872
-  name: Iliad
-  key: iliad
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6387
-  created_at: 2013-04-12 03:24:28 Z
-  updated_at: 2013-04-12 03:24:28 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 869
-cards_473: 
-  id: 873
-  name: John
-  key: john
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6388
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 4
 cards_474: 
-  id: 874
-  name: John+*account
-  key: john+*account
+  id: 875
+  name: UserForm+*type+*structure
+  key: user_form+*type+*structure
   codename: 
-  left_id: 873
-  right_id: 100
-  current_revision_id: 6389
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
+  left_id: 874
+  right_id: 317
+  current_revision_id: 6496
+  created_at: 2013-04-16 18:50:15 Z
+  updated_at: 2013-04-16 18:50:15 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -8058,13 +8058,166 @@ cards_474:
   trash: 0
   type_id: 3
 cards_475: 
-  id: 875
-  name: Sara
-  key: sara
+  id: 876
+  name: JoeLater
+  key: joe_later
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6390
+  current_revision_id: 6497
+  created_at: 2013-04-16 18:50:15 Z
+  updated_at: 2013-04-16 18:50:15 Z
+  creator_id: 787
+  updater_id: 787
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_476: 
+  id: 877
+  name: JoeNow
+  key: joe_now
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6498
+  created_at: 2013-04-16 18:50:15 Z
+  updated_at: 2013-04-16 18:50:15 Z
+  creator_id: 787
+  updater_id: 787
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_477: 
+  id: 878
+  name: AdminNow
+  key: admin_now
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6499
+  created_at: 2013-04-16 18:50:16 Z
+  updated_at: 2013-04-16 18:50:16 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_478: 
+  id: 879
+  name: Cardtype B+*type
+  key: cardtype_b+*type
+  codename: 
+  left_id: 860
+  right_id: 266
+  current_revision_id: 6500
+  created_at: 2013-04-16 18:50:16 Z
+  updated_at: 2013-04-16 18:50:16 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 259
+cards_479: 
+  id: 880
+  name: Cardtype B+*type+*create
+  key: cardtype_b+*type+*create
+  codename: 
+  left_id: 879
+  right_id: 478
+  current_revision_id: 6501
+  created_at: 2013-04-16 18:50:16 Z
+  updated_at: 2013-04-16 18:50:16 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 47
+cards_480: 
+  id: 881
+  name: Book
+  key: book
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6502
+  created_at: 2013-04-16 18:50:16 Z
+  updated_at: 2013-04-16 18:50:16 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 5
+cards_481: 
+  id: 882
+  name: Book+*type
+  key: book+*type
+  codename: 
+  left_id: 881
+  right_id: 266
+  current_revision_id: 6503
+  created_at: 2013-04-16 18:50:16 Z
+  updated_at: 2013-04-16 18:50:16 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 259
+cards_482: 
+  id: 883
+  name: Book+*type+*structure
+  key: book+*type+*structure
+  codename: 
+  left_id: 882
+  right_id: 317
+  current_revision_id: 6504
+  created_at: 2013-04-16 18:50:16 Z
+  updated_at: 2013-04-16 18:50:16 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_483: 
+  id: 884
+  name: Iliad
+  key: iliad
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6505
+  created_at: 2013-04-16 18:50:16 Z
+  updated_at: 2013-04-16 18:50:16 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 881
+cards_484: 
+  id: 885
+  name: John
+  key: john
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6506
   created_at: 2019-12-31 07:00:00 Z
   updated_at: 2019-12-31 07:00:00 Z
   creator_id: 1
@@ -8074,184 +8227,31 @@ cards_475:
   references_expired: 
   trash: 0
   type_id: 4
-cards_476: 
-  id: 876
-  name: Sara+*account
-  key: sara+*account
-  codename: 
-  left_id: 875
-  right_id: 100
-  current_revision_id: 6391
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all plus"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_477: 
-  id: 877
-  name: Sara Watching
-  key: sara_watching
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6392
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_478: 
-  id: 878
-  name: Sara Watching+*watchers
-  key: sara_watching+*watcher
-  codename: 
-  left_id: 877
-  right_id: 219
-  current_revision_id: 6393
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all plus"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 47
-cards_479: 
-  id: 879
-  name: All Eyes On Me
-  key: all_eye_on_me
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6394
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_480: 
-  id: 880
-  name: All Eyes On Me+*watchers
-  key: all_eye_on_me+*watcher
-  codename: 
-  left_id: 879
-  right_id: 219
-  current_revision_id: 6395
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all plus"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 47
-cards_481: 
-  id: 881
-  name: John Watching
-  key: john_watching
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6396
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_482: 
-  id: 882
-  name: John Watching+*watchers
-  key: john_watching+*watcher
-  codename: 
-  left_id: 881
-  right_id: 219
-  current_revision_id: 6397
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all plus"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 47
-cards_483: 
-  id: 883
-  name: her
-  key: her
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6398
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
-cards_484: 
-  id: 884
-  name: John Watching+her
-  key: john_watching+her
-  codename: 
-  left_id: 881
-  right_id: 883
-  current_revision_id: 6399
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all plus"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 3
 cards_485: 
-  id: 885
-  name: No One Sees Me
-  key: no_one_see_me
+  id: 886
+  name: John+*account
+  key: john+*account
   codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6400
+  left_id: 885
+  right_id: 100
+  current_revision_id: 6507
   created_at: 2019-12-31 07:00:00 Z
   updated_at: 2019-12-31 07:00:00 Z
   creator_id: 1
   updater_id: 1
-  read_rule_class: "*all"
+  read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
   trash: 0
   type_id: 3
 cards_486: 
-  id: 886
-  name: Optic
-  key: optic
+  id: 887
+  name: Sara
+  key: sara
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6401
+  current_revision_id: 6508
   created_at: 2019-12-31 07:00:00 Z
   updated_at: 2019-12-31 07:00:00 Z
   creator_id: 1
@@ -8260,15 +8260,15 @@ cards_486:
   read_rule_id: 500
   references_expired: 
   trash: 0
-  type_id: 5
+  type_id: 4
 cards_487: 
-  id: 887
-  name: Optic+*watchers
-  key: optic+*watcher
+  id: 888
+  name: Sara+*account
+  key: sara+*account
   codename: 
-  left_id: 886
-  right_id: 219
-  current_revision_id: 6402
+  left_id: 887
+  right_id: 100
+  current_revision_id: 6509
   created_at: 2019-12-31 07:00:00 Z
   updated_at: 2019-12-31 07:00:00 Z
   creator_id: 1
@@ -8277,32 +8277,15 @@ cards_487:
   read_rule_id: 500
   references_expired: 
   trash: 0
-  type_id: 47
+  type_id: 3
 cards_488: 
-  id: 888
-  name: Sunglasses
-  key: sunglass
-  codename: 
-  left_id: 
-  right_id: 
-  current_revision_id: 6403
-  created_at: 2019-12-31 07:00:00 Z
-  updated_at: 2019-12-31 07:00:00 Z
-  creator_id: 1
-  updater_id: 1
-  read_rule_class: "*all"
-  read_rule_id: 500
-  references_expired: 
-  trash: 0
-  type_id: 886
-cards_489: 
   id: 889
-  name: tint
-  key: tint
+  name: Sara Watching
+  key: sara_watching
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6404
+  current_revision_id: 6510
   created_at: 2019-12-31 07:00:00 Z
   updated_at: 2019-12-31 07:00:00 Z
   creator_id: 1
@@ -8312,50 +8295,118 @@ cards_489:
   references_expired: 
   trash: 0
   type_id: 3
-cards_490: 
+cards_489: 
   id: 890
-  name: Sunglasses+tint
-  key: sunglass+tint
+  name: Sara Watching+*watchers
+  key: sara_watching+*watcher
   codename: 
-  left_id: 888
-  right_id: 889
-  current_revision_id: 6405
+  left_id: 889
+  right_id: 219
+  current_revision_id: 6511
   created_at: 2019-12-31 07:00:00 Z
   updated_at: 2019-12-31 07:00:00 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 47
+cards_490: 
+  id: 891
+  name: All Eyes On Me
+  key: all_eye_on_me
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6512
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
   read_rule_id: 500
   references_expired: 
   trash: 0
   type_id: 3
 cards_491: 
-  id: 891
-  name: Cardtype E+*type
-  key: cardtype_e+*type
+  id: 892
+  name: All Eyes On Me+*watchers
+  key: all_eye_on_me+*watcher
   codename: 
-  left_id: 851
-  right_id: 266
-  current_revision_id: 6406
-  created_at: 2013-04-12 03:24:30 Z
-  updated_at: 2013-04-12 03:24:30 Z
+  left_id: 891
+  right_id: 219
+  current_revision_id: 6513
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
   read_rule_id: 500
   references_expired: 
   trash: 0
-  type_id: 259
+  type_id: 47
 cards_492: 
-  id: 892
-  name: Cardtype E+*type+*default
-  key: cardtype_e+*type+*default
+  id: 893
+  name: John Watching
+  key: john_watching
   codename: 
-  left_id: 891
-  right_id: 318
-  current_revision_id: 6407
-  created_at: 2013-04-12 03:24:30 Z
-  updated_at: 2013-04-12 03:24:30 Z
+  left_id: 
+  right_id: 
+  current_revision_id: 6514
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_493: 
+  id: 894
+  name: John Watching+*watchers
+  key: john_watching+*watcher
+  codename: 
+  left_id: 893
+  right_id: 219
+  current_revision_id: 6515
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 47
+cards_494: 
+  id: 895
+  name: her
+  key: her
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6516
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_495: 
+  id: 896
+  name: John Watching+her
+  key: john_watching+her
+  codename: 
+  left_id: 893
+  right_id: 895
+  current_revision_id: 6517
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -8363,16 +8414,33 @@ cards_492:
   references_expired: 
   trash: 0
   type_id: 3
-cards_493: 
-  id: 893
-  name: Fruit
-  key: fruit
+cards_496: 
+  id: 897
+  name: No One Sees Me
+  key: no_one_see_me
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6408
-  created_at: 2013-04-12 03:24:30 Z
-  updated_at: 2013-04-12 03:24:30 Z
+  current_revision_id: 6518
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_497: 
+  id: 898
+  name: Optic
+  key: optic
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6519
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -8380,16 +8448,84 @@ cards_493:
   references_expired: 
   trash: 0
   type_id: 5
-cards_494: 
-  id: 894
-  name: Fruit+*type
-  key: fruit+*type
+cards_498: 
+  id: 899
+  name: Optic+*watchers
+  key: optic+*watcher
   codename: 
-  left_id: 893
+  left_id: 898
+  right_id: 219
+  current_revision_id: 6520
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 47
+cards_499: 
+  id: 900
+  name: Sunglasses
+  key: sunglass
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6521
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 898
+cards_500: 
+  id: 901
+  name: tint
+  key: tint
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6522
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_501: 
+  id: 902
+  name: Sunglasses+tint
+  key: sunglass+tint
+  codename: 
+  left_id: 900
+  right_id: 901
+  current_revision_id: 6523
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_502: 
+  id: 903
+  name: Cardtype E+*type
+  key: cardtype_e+*type
+  codename: 
+  left_id: 863
   right_id: 266
-  current_revision_id: 6409
-  created_at: 2013-04-12 03:24:30 Z
-  updated_at: 2013-04-12 03:24:30 Z
+  current_revision_id: 6524
+  created_at: 2013-04-16 18:50:22 Z
+  updated_at: 2013-04-16 18:50:22 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -8397,16 +8533,67 @@ cards_494:
   references_expired: 
   trash: 0
   type_id: 259
-cards_495: 
-  id: 895
+cards_503: 
+  id: 904
+  name: Cardtype E+*type+*default
+  key: cardtype_e+*type+*default
+  codename: 
+  left_id: 903
+  right_id: 318
+  current_revision_id: 6525
+  created_at: 2013-04-16 18:50:22 Z
+  updated_at: 2013-04-16 18:50:22 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 3
+cards_504: 
+  id: 905
+  name: Fruit
+  key: fruit
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6526
+  created_at: 2013-04-16 18:50:22 Z
+  updated_at: 2013-04-16 18:50:22 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 5
+cards_505: 
+  id: 906
+  name: Fruit+*type
+  key: fruit+*type
+  codename: 
+  left_id: 905
+  right_id: 266
+  current_revision_id: 6527
+  created_at: 2013-04-16 18:50:22 Z
+  updated_at: 2013-04-16 18:50:22 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: 0
+  type_id: 259
+cards_506: 
+  id: 907
   name: Fruit+*type+*create
   key: fruit+*type+*create
   codename: 
-  left_id: 894
+  left_id: 906
   right_id: 478
-  current_revision_id: 6410
-  created_at: 2013-04-12 03:24:30 Z
-  updated_at: 2013-04-12 03:24:30 Z
+  current_revision_id: 6528
+  created_at: 2013-04-16 18:50:22 Z
+  updated_at: 2013-04-16 18:50:22 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -8414,16 +8601,16 @@ cards_495:
   references_expired: 
   trash: 0
   type_id: 47
-cards_496: 
-  id: 896
+cards_507: 
+  id: 908
   name: Fruit+*type+*read
   key: fruit+*type+*read
   codename: 
-  left_id: 894
+  left_id: 906
   right_id: 479
-  current_revision_id: 6411
-  created_at: 2013-04-12 03:24:30 Z
-  updated_at: 2013-04-12 03:24:30 Z
+  current_revision_id: 6529
+  created_at: 2013-04-16 18:50:22 Z
+  updated_at: 2013-04-16 18:50:22 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -8431,16 +8618,16 @@ cards_496:
   references_expired: 
   trash: 0
   type_id: 47
-cards_497: 
-  id: 897
+cards_508: 
+  id: 909
   name: OnneHeading
   key: onne_heading
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6412
-  created_at: 2013-04-12 03:24:30 Z
-  updated_at: 2013-04-12 03:24:30 Z
+  current_revision_id: 6530
+  created_at: 2013-04-16 18:50:23 Z
+  updated_at: 2013-04-16 18:50:23 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -8448,16 +8635,16 @@ cards_497:
   references_expired: 
   trash: 0
   type_id: 3
-cards_498: 
-  id: 898
+cards_509: 
+  id: 910
   name: TwwoHeading
   key: twwo_heading
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6413
-  created_at: 2013-04-12 03:24:30 Z
-  updated_at: 2013-04-12 03:24:30 Z
+  current_revision_id: 6531
+  created_at: 2013-04-16 18:50:23 Z
+  updated_at: 2013-04-16 18:50:23 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -8465,16 +8652,16 @@ cards_498:
   references_expired: 
   trash: 0
   type_id: 3
-cards_499: 
-  id: 899
+cards_510: 
+  id: 911
   name: ThreeHeading
   key: three_heading
   codename: 
   left_id: 
   right_id: 
-  current_revision_id: 6414
-  created_at: 2013-04-12 03:24:30 Z
-  updated_at: 2013-04-12 03:24:30 Z
+  current_revision_id: 6532
+  created_at: 2013-04-16 18:50:23 Z
+  updated_at: 2013-04-16 18:50:23 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"
@@ -8482,16 +8669,16 @@ cards_499:
   references_expired: 
   trash: 0
   type_id: 3
-cards_500: 
-  id: 900
+cards_511: 
+  id: 912
   name: Basic+*type
   key: basic+*type
   codename: 
   left_id: 3
   right_id: 266
-  current_revision_id: 6415
-  created_at: 2013-04-12 03:24:31 Z
-  updated_at: 2013-04-12 03:24:31 Z
+  current_revision_id: 6533
+  created_at: 2013-04-16 18:50:23 Z
+  updated_at: 2013-04-16 18:50:23 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"
@@ -8499,16 +8686,16 @@ cards_500:
   references_expired: 
   trash: 0
   type_id: 259
-cards_501: 
-  id: 901
+cards_512: 
+  id: 913
   name: Basic+*type+*table_of_contents
   key: basic+*type+*table_of_content
   codename: 
-  left_id: 900
+  left_id: 912
   right_id: 89
-  current_revision_id: 6416
-  created_at: 2013-04-12 03:24:31 Z
-  updated_at: 2013-04-12 03:24:31 Z
+  current_revision_id: 6534
+  created_at: 2013-04-16 18:50:24 Z
+  updated_at: 2013-04-16 18:50:24 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all plus"

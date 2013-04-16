@@ -5,7 +5,7 @@ users_001:
   email: no-reply@wagn.org
   crypted_password: 
   salt: 
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:21 Z
   updated_at: 2012-12-02 04:06:20 Z
   password_reset_code: 
   status: system
@@ -19,7 +19,7 @@ users_002:
   email: 
   crypted_password: 
   salt: 
-  created_at: 2013-04-11 21:23:56 Z
+  created_at: 2013-04-16 12:49:21 Z
   updated_at: 2012-12-02 04:06:20 Z
   password_reset_code: 
   status: system
@@ -31,114 +31,114 @@ users_003:
   id: 3
   login: joe_user
   email: joe@user.com
-  crypted_password: dddd725ee6564eb71e7bedb36fa8abc6feca5233
-  salt: 68e304d1722f7f2063c9670c3d66128842077895
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
-  password_reset_code: 
-  status: active
-  invite_sender_id: 
-  identity_url: 
-  card_id: 775
-  account_id: 776
-users_004: 
-  id: 4
-  login: joe_admin
-  email: joe@admin.com
-  crypted_password: 1772712f9317667406bbb20b0ee62944c63384de
-  salt: 4ce21252f3121b88b99f5bf34cd3aff068dcf938
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
-  password_reset_code: 
-  status: active
-  invite_sender_id: 
-  identity_url: 
-  card_id: 777
-  account_id: 778
-users_005: 
-  id: 5
-  login: joe_camel
-  email: joe@camel.com
-  crypted_password: 6a95a29b3fc2ecde0f9e97705c9facf5d7661703
-  salt: a167a45153728b81223ec6dcc1b9ec0105eb60bc
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
-  password_reset_code: 
-  status: active
-  invite_sender_id: 
-  identity_url: 
-  card_id: 780
-  account_id: 781
-users_006: 
-  id: 6
-  login: 
-  email: ron@request.com
-  crypted_password: e599e639726cb7fe32ac17ea8ca9aeea44d19d8e
-  salt: b0ca97b476e2861e4890e44c32e17d00e0b06d20
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
-  password_reset_code: 
-  status: pending
-  invite_sender_id: 
-  identity_url: 
-  card_id: 784
-  account_id: 785
-users_007: 
-  id: 7
-  login: sample_user
-  email: sample@user.com
-  crypted_password: 5603962f35c93d516f3e1c0ea528ee5fee9ab867
-  salt: ad47ef32509f51f5709f46abb10a9008854baa47
-  created_at: 2013-04-12 03:24:23 Z
-  updated_at: 2013-04-12 03:24:23 Z
+  crypted_password: f2a87d0d0282c92bc320e68b8def780ba2a337f9
+  salt: cc6c633098a25546134a08a694e5d813a9f6f327
+  created_at: 2013-04-16 18:49:59 Z
+  updated_at: 2013-04-16 18:49:59 Z
   password_reset_code: 
   status: active
   invite_sender_id: 
   identity_url: 
   card_id: 787
   account_id: 788
+users_004: 
+  id: 4
+  login: joe_admin
+  email: joe@admin.com
+  crypted_password: 393bc7b652b15ea546c079f33594f13007e79fc3
+  salt: ae5d72e7c41d83754e3ff66dba7c6152f6dff241
+  created_at: 2013-04-16 18:50:00 Z
+  updated_at: 2013-04-16 18:50:00 Z
+  password_reset_code: 
+  status: active
+  invite_sender_id: 
+  identity_url: 
+  card_id: 789
+  account_id: 790
+users_005: 
+  id: 5
+  login: joe_camel
+  email: joe@camel.com
+  crypted_password: 05cab28c1a5895e0b3e0c24607146bc726e3d71f
+  salt: 6f5ba41aad1f57c14b3077f7ee240ac7bd5b9563
+  created_at: 2013-04-16 18:50:00 Z
+  updated_at: 2013-04-16 18:50:00 Z
+  password_reset_code: 
+  status: active
+  invite_sender_id: 
+  identity_url: 
+  card_id: 792
+  account_id: 793
+users_006: 
+  id: 6
+  login: 
+  email: ron@request.com
+  crypted_password: 3dc9bbc1e7aea704cdbfc5c3adf373dd341ce309
+  salt: bad1cefa512dfeba6ee1e988c5910d1c9468aa0a
+  created_at: 2013-04-16 18:50:01 Z
+  updated_at: 2013-04-16 18:50:01 Z
+  password_reset_code: 
+  status: pending
+  invite_sender_id: 
+  identity_url: 
+  card_id: 796
+  account_id: 797
+users_007: 
+  id: 7
+  login: sample_user
+  email: sample@user.com
+  crypted_password: 0b33c510e64803ae772569ef168e079baa0d3f67
+  salt: 8bc7444b6f241bf5c80b48bd2001acf00f3a046c
+  created_at: 2013-04-16 18:50:01 Z
+  updated_at: 2013-04-16 18:50:01 Z
+  password_reset_code: 
+  status: active
+  invite_sender_id: 
+  identity_url: 
+  card_id: 799
+  account_id: 800
 users_008: 
   id: 8
   login: u1
   email: u1@user.com
-  crypted_password: 956efd85359ac02ffd995491f44115253a8afbce
-  salt: d397b896e5d66f4e15cfd47f0018835d22a19d52
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
+  crypted_password: 0c072fa38285f100ca24964e3ce28a816831ebc5
+  salt: b9200a16e1d32c3debca8fc3d94864d3ede040a9
+  created_at: 2013-04-16 18:50:03 Z
+  updated_at: 2013-04-16 18:50:03 Z
   password_reset_code: 
   status: active
   invite_sender_id: 
   identity_url: 
-  card_id: 804
-  account_id: 805
+  card_id: 816
+  account_id: 817
 users_009: 
   id: 9
   login: u2
   email: u2@user.com
-  crypted_password: 680e2694ab81fce3c0f8171f4e51b67f55a60076
-  salt: e3ddff3465e1dd2fc7644dc351d16c96ed62293a
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
+  crypted_password: 8e90c00232ca3337d17b6339b1cfc8a03abcdfd1
+  salt: 7789228d40e88c3ce2b291e42a746956d3aa66ab
+  created_at: 2013-04-16 18:50:04 Z
+  updated_at: 2013-04-16 18:50:04 Z
   password_reset_code: 
   status: active
   invite_sender_id: 
   identity_url: 
-  card_id: 806
-  account_id: 807
+  card_id: 818
+  account_id: 819
 users_010: 
   id: 10
   login: u3
   email: u3@user.com
-  crypted_password: 613ebd3fb70ee97b4f5112bcb901d31fa371af9f
-  salt: 0b04f0240727ef1c5396942686f2c355fe150092
-  created_at: 2013-04-12 03:24:25 Z
-  updated_at: 2013-04-12 03:24:25 Z
+  crypted_password: 2e7280878ee4ec134d65e6d28ce7a42b98ae6891
+  salt: 62676f8ca2ed7ecb29ed268b3fe9f11b9ac8f481
+  created_at: 2013-04-16 18:50:04 Z
+  updated_at: 2013-04-16 18:50:04 Z
   password_reset_code: 
   status: active
   invite_sender_id: 
   identity_url: 
-  card_id: 808
-  account_id: 809
+  card_id: 820
+  account_id: 821
 users_011: 
   id: 11
   login: john
@@ -151,8 +151,8 @@ users_011:
   status: active
   invite_sender_id: 
   identity_url: 
-  card_id: 873
-  account_id: 874
+  card_id: 885
+  account_id: 886
 users_012: 
   id: 12
   login: sara
@@ -165,5 +165,5 @@ users_012:
   status: active
   invite_sender_id: 
   identity_url: 
-  card_id: 875
-  account_id: 876
+  card_id: 887
+  account_id: 888

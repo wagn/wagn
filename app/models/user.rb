@@ -8,17 +8,17 @@ class User < ActiveRecord::Base
 
   validates :card_id,    :presence=>true, :uniqueness=>true
   validates :account_id, :presence=>true, :uniqueness=>true
-  validates :email,
-    :presence   => true,
-    :uniqueness => { :scope   => :login },
+
+  validates :email, :presence=>true, :if=>:email_required?,
+    :uniqueness => { :scope   => :login                                      },
     :format     => { :with    => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i },
-    :length     => { :maximum => 100 },
-    :if         => :email_required?
-  validates :password, 
-    :presence     => true,
-    :confirmation => true,
-    :length       => { :within => 5..40 },
-    :if           => :password_required?
+    :length     => { :maximum => 100                                         }
+  
+  validates :password, :presence=>true, :confirmation=>true, :if=>:password_required?,
+    :length => { :within => 5..40 }
+  validates :password_confirmation, :presence=>true, :if=>:password_required?
+  
+    
 
   before_validation :downcase_email!
   before_save :encrypt_password

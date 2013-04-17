@@ -18,6 +18,7 @@ class RenamingForMenu < ActiveRecord::Migration
       }
       renames.each do |oldname, newname|
         c = Card[oldname]
+        c.update_referencers = true
         c.name = newname
         c.save!
       end

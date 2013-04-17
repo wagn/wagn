@@ -8,7 +8,7 @@ module Wagn
     ### ---- Core renders --- Keep these on top for dependencies
 
     define_view :show, :perms=>:none  do |args|
-      render( args[:view] || :core )
+      render( ( args[:view] || :core ), args )
     end
 
     define_view :raw do |args|

@@ -464,6 +464,9 @@ module Wagn
   class Renderer::Html < Renderer
   end
 
+  class Renderer::Xml < Renderer::Html
+  end
+
   class Renderer::Csv < Renderer::Text
   end
   

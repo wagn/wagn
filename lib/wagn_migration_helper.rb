@@ -19,6 +19,7 @@ module WagnMigrationHelper
   end
   
   def contentedly &block
+    Wagn::Cache.reset_global
     ar_suffix = ActiveRecord::Base.table_name_suffix
     ActiveRecord::Base.table_name_suffix = ''
     Account.as_bot do

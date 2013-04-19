@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Card::Reference < ActiveRecord::Base
   def referencer
     Card[referer_id]

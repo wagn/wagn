@@ -1,4 +1,4 @@
-# encoding: utf-8
+# -*- encoding : utf-8 -*-
 class Hash
   def pull(key)
     has_key?(key) && !(v = delete(key)).to_s.empty? ? v : false

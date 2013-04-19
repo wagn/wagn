@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module ScopeHelpers
   def scope_of section
     case section

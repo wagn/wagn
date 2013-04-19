@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 h = Wagn::Conf
 if base_u = h[:base_url]
   h[:base_url] = base_u.gsub!(/\/$/,'')

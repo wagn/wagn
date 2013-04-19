@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Cardlib
   module Pattern
     mattr_accessor :subclasses
@@ -28,7 +29,7 @@ module Cardlib
     end
 
     def reset_patterns_if_rule saving=false
-      if is_rule?
+      if !new_card? && is_rule?
         set = left
         set.reset_patterns
         set.include_set_modules

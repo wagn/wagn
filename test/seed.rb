@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 #require File.expand_path('../db/migrate/20120327090000_codename_table', File.dirname(__FILE__))
 require 'timecop'
 

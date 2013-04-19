@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 FORMATS = 'html|json|xml|rss|kml|css|txt|text|csv' unless defined? FORMATS
 
 Wagn::Application.routes.draw do

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Require18Migrations < ActiveRecord::Migration
   def self.up
     fail %{

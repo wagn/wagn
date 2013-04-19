@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'rails/generators/active_record'
 
 class CardMigrationGenerator < ActiveRecord::Generators::Base

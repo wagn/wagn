@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Wagn
   module Set::Rstar
     include Sets
@@ -5,6 +6,8 @@ module Wagn
     format :html
 
     define_view :closed_rule, :rstar=>true, :tags=>:unknown_ok do |args|
+      return 'not a rule' if !card.is_rule? #these are helpful for handling non-rule rstar cards until we have real rule sets
+        
       rule_card = card.new_card? ? find_current_rule_card[0] : card
 
       rule_content = !rule_card ? '' : begin
@@ -35,6 +38,8 @@ module Wagn
 
 
     define_view :open_rule, :rstar=>true, :tags=>:unknown_ok do |args|
+      return 'not a rule' if !card.is_rule?
+      
       current_rule, prototype = find_current_rule_card
       setting_name = card.cardname.tag
       current_rule ||= Card.new :name=> "*all+#{setting_name}" #FIXME use codename
@@ -115,6 +120,8 @@ module Wagn
     end
     
     define_view :show_rule, :rstar=>true, :tags=>:unknown_ok do |args|
+      return 'not a rule' if !card.is_rule?
+      
       if !card.new_card?
         set = card.trunk
         args[:item] ||= :link
@@ -130,6 +137,8 @@ module Wagn
     end
 
     define_view :edit_rule, :rstar=>true, :tags=>:unknown_ok do |args|
+      return 'not a rule' if !card.is_rule?
+  
       setting_name    = args[:setting_name]
       current_set_key = args[:current_set_key] || Card[:all].name  # (should have a constant for this?)
       open_rule       = args[:open_rule]
@@ -225,7 +234,11 @@ module Wagn
       # This generates a prototypical member of the POTENTIAL rule's set
       # and returns that member's ACTUAL rule for the POTENTIAL rule's setting
       set_prototype = card.trunk.prototype
-      rule_card = card.new_card? ? set_prototype.rule_card( card.tag.codename ) : card
+      rule_card = if card.new_card?
+        setting = card.right and set_prototype.rule_card setting.codename   
+      else
+        card
+      end 
       [ rule_card, set_prototype ]
     end
   end

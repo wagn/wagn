@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-
 class AdminController < CardController
   layout 'application'
   before_filter :admin_only, :except=>:setup

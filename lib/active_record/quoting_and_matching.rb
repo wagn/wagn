@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module ActiveRecord
   module QuotingAndMatching
     # dummy module to trigger loading code below

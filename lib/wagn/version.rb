@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Wagn::Version
     class << self
       def to_s

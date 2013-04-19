@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 =begin
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 include AuthenticatedTestHelper

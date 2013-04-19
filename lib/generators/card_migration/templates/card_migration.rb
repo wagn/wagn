@@ -1,4 +1,4 @@
-# encoding: utf-8
+# -*- encoding : utf-8 -*-
 require 'wagn_migration_helper'
 
 class <%= migration_class_name %> < ActiveRecord::Migration<%# %>

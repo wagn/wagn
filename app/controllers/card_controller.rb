@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-
 class CardController < ApplicationController
 
   helper :wagn
@@ -153,7 +152,7 @@ class CardController < ApplicationController
         params[:id].gsub '_', ' '
         # with unknown cards, underscores in urls assumed to indicate spaces.
         # with known cards, the key look makes this irrelevant
-        # (note that this is not performed on params[:card][:name])
+        # (note that this is not performed on params[:card][:name])          
       when Account.no_logins?
         return wagn_redirect( '/admin/setup' )
       when params[:card] && params[:card][:name]
@@ -163,7 +162,10 @@ class CardController < ApplicationController
       else  
         Card.setting(:home) || 'Home'
       end
+  rescue ArgumentError # less than perfect way to handle encoding issues.
+    raise Wagn::BadAddress
   end
+  
 
   def load_card
     @card = case params[:id]

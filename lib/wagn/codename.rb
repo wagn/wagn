@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Wagn
  class Codename
 
@@ -6,8 +7,10 @@ module Wagn
   class << self
     # returns codename for id and vice versa.  not in love with this api --efm
     def [] key
-      key = key.to_sym unless Integer===key
-      codehash[key]
+      if !key.nil?
+        key = key.to_sym unless Integer===key
+        codehash[key]
+      end
     end
 
     def codehash

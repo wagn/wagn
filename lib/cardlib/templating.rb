@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Cardlib::Templating
 
   def is_template?

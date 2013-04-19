@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-
 require 'smart_name'
 
 class Card < ActiveRecord::Base
@@ -340,15 +339,17 @@ class Card < ActiveRecord::Base
   def junction?()      cardname.junction?                   end
 
   def left *args
-    unless !simple? and updates.for? :name and name_without_tracking.to_name.key == cardname.left_name.key
-      #the ugly code above is to prevent recursion when, eg, renaming A+B to A+B+C
-      #it should really be testing for any trunk
-      Card.fetch cardname.left, *args
+    if !simple?
+      unless updates.for? :name and name_without_tracking.to_name.key == cardname.left_name.key
+        #the ugly code above is to prevent recursion when, eg, renaming A+B to A+B+C
+        #it should really be testing for any trunk
+        Card.fetch cardname.left, *args
+      end
     end
   end
 
   def right *args
-    simple? ? nil : Card.fetch( cardname.right, *args )
+    Card.fetch( cardname.right, *args ) if !simple?
   end
 
   def trunk *args

@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-
 class AccountController < CardController
 
   before_filter :login_required, :only => [ :invite, :update ]

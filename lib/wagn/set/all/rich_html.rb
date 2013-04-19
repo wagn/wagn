@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Wagn
   module Set::All::RichHtml
     include Sets
@@ -596,7 +597,7 @@ module Wagn
     end
 
     define_view :not_found do |args| #ug.  bad name.
-      sign_in_or_up_links = if Account.logged_in?
+      sign_in_or_up_links = if !Account.logged_in?
         %{<div>
           #{link_to "Sign In", :controller=>'account', :action=>'signin'} or
           #{link_to 'Sign Up', :controller=>'account', :action=>'signup'} to create it.

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'spork'
 ENV["RAILS_ENV"] = 'test'
 

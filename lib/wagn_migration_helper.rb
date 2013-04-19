@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module WagnMigrationHelper
 
   # "pristine" here refers to cards that have not been edited directly by human users.  bleep blorp.
@@ -19,12 +20,16 @@ module WagnMigrationHelper
   end
   
   def contentedly &block
-    Wagn::Cache.reset_global
     ar_suffix = ActiveRecord::Base.table_name_suffix
     ActiveRecord::Base.table_name_suffix = ''
     Account.as_bot do
+      Wagn::Cache.reset_global
       ActiveRecord::Base.transaction do
-        yield
+        begin
+          yield
+        ensure
+          Wagn::Cache.reset_global
+        end
       end
     end
     ActiveRecord::Base.table_name_suffix = ar_suffix

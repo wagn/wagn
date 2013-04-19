@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 #!/usr/bin/env ruby
 
 require File.expand_path('../test_helper', File.dirname(__FILE__))

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require_dependency 'active_support/builder' unless defined?(Builder)
 
 module Wagn

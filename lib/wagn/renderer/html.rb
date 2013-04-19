@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Wagn
   class Renderer::Html < Renderer
     cattr_accessor :default_menu

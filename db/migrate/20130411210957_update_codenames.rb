@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class UpdateCodenames < ActiveRecord::Migration
   def up
     { :content => :structure, :edit_help => :help}.each do |oldname, newname|

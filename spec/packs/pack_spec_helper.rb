@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module PackSpecHelper
 
 include ActionDispatch::Assertions::SelectorAssertions

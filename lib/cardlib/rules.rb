@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Cardlib::Rules
   RuleSQL = %{
     select rules.id as rule_id, settings.id as setting_id, sets.id as set_id, sets.left_id as anchor_id, sets.right_id as set_tag_id
@@ -14,12 +15,11 @@ module Cardlib::Rules
   }  
   
   def is_rule?
-    !simple?   and 
-    !new_card? and 
-    l = left   and
-    l.type_id==Card::SetID and
-    r = right  and
-    r.type_id==Card::SettingID 
+    !simple?                          and
+    l = left(  :skip_modules=>true )  and
+    l.type_id == Card::SetID          and
+    r = right( :skip_modules=>true )  and
+    r.type_id == Card::SettingID 
   end
   
   def rule setting_code, options={}
@@ -56,7 +56,7 @@ module Cardlib::Rules
 
   module ClassMethods
     def rule_cache
-      @@rule_cache ||= Card.cache.read('RULES') || begin        
+      Card.cache.read('RULES') || begin        
         hash = {}
         ActiveRecord::Base.connection.select_all( Cardlib::Rules::RuleSQL ).each do |row|
           setting_code = Wagn::Codename[ row['setting_id'].to_i ] or next
@@ -71,13 +71,12 @@ module Cardlib::Rules
       end
     end
     
-    def clear_rule_cache local_only=false
-      Card.cache.write 'RULES', nil unless local_only
-      @@rule_cache = nil
+    def clear_rule_cache
+      Card.cache.write 'RULES', nil
     end
     
     def read_rule_cache
-      @@read_rule_cache ||= Card.cache.read('READRULES') || begin
+      Card.cache.read('READRULES') || begin
         hash = {}
         ActiveRecord::Base.connection.select_all( Cardlib::Rules::ReadRuleSQL ).each do |row|
           party_id, read_rule_id = row['party_id'].to_i, row['read_rule_id'].to_i
@@ -88,12 +87,9 @@ module Cardlib::Rules
       end
     end
     
-    def clear_read_rule_cache local_only=false
-      Card.cache.write 'READRULES', nil unless local_only
-      @@read_rule_cache = nil
+    def clear_read_rule_cache
+      Card.cache.write 'READRULES', nil
     end
-    
-
     
     def default_rule setting_code, fallback=nil
       card = default_rule_card setting_code, fallback

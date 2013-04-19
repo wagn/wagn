@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module PermissionTestHelper
 
   def assert_hidden_from( user, card, msg='')

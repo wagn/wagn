@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Cardlib::TrackedAttributes
 
   def set_tracked_attributes

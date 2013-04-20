@@ -31,6 +31,37 @@ module Wagn
         end.join "\n"
       end
     end
+    
+    format :data
+    
+    define_view :card_list, :type=>:search_type do |args|
+      @search[:item] ||= :atom
+      
+      @search[:results].map do |c|
+        process_inclusion c, :view=>@search[:item]
+      end
+    end
+  
+    
+#    format :json
+#
+#    define_view :card_list, :type=>:search_type do |args|
+#      @search[:item] ||= :name
+#
+#      if @search[:results].empty?
+#        'no results'
+#      else
+#        # simpler version gives [{'card':{the card stuff}, {'card' ...} vs.
+#        # @search[:results].map do |c|  process_inclusion c, :view=>@search[:item] end
+#        # This which converts to {'cards':[{the card suff}, {another card stuff} ...]} we may want to support both ...
+#        {:cards => @search[:results].map do |c|
+#            inc = process_inclusion c, :view=>@search[:item]
+#            (!(String===inc) and inc.has_key?(:card)) ? inc[:card] : inc
+#          end
+#        }
+#      end
+#    end
+    
 
     format :html
     
@@ -189,24 +220,7 @@ module Wagn
     end
 
 
-    format :json
 
-    define_view :card_list, :type=>:search_type do |args|
-      @search[:item] ||= :name
-
-      if @search[:results].empty?
-        'no results'
-      else
-        # simpler version gives [{'card':{the card stuff}, {'card' ...} vs.
-        # @search[:results].map do |c|  process_inclusion c, :view=>@search[:item] end
-        # This which converts to {'cards':[{the card suff}, {another card stuff} ...]} we may want to support both ...
-        {:cards => @search[:results].map do |c|
-            inc = process_inclusion c, :view=>@search[:item]
-            (!(String===inc) and inc.has_key?(:card)) ? inc[:card] : inc
-          end
-        }
-      end
-    end
 
 
     module Model

@@ -1,0 +1,410 @@
+[
+  {
+    "card": {
+      "name": "*accountable+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>When \"yes\", users permitted to create [[*account+*right|+*account cards]] can add [[http://wagn.org/account|accounts]] to these cards.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*add help+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>[[http://www.wagn.org/wagn/custom_help_text|Help text]] people will see when adding cards.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*autoname+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Autogenerate name for new cards by incrementing this value. <em>[[http://wagn.org/autonaming|more]]</em></p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*captcha+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Anti-spam setting.  Requires non-signed-in users to complete a [[http://wagn.org/captcha|captcha]] before adding or editing cards (where permitted).</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*children+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Cards formed by \"mating\" <em>{{_left|name}} </em>with another card. eg: \"{{_left|name}}<strong>+</strong>mate\".</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*comment+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Who can add comments.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*create+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Who can create new cards.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*created+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Cards created by <em>{{_left|name}}</em>.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*css+*self+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Add custom CSS styling.  <em>[[http://wagn.org/Skin|more]]</em></p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*default+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Template for initial type and content of new cards. <em>[[http://wagn.org/formatting|more]]</em></p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*delete+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Who can remove cards.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*edited+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Cards edited by <em>{{_left|name}}</em>.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*editors+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Users who have edited <em>{{_left|name}}</em>.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*help+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>[[http://wagn.org/custom_help_text|Help text]] people will see when editing.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*includes+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Cards that <em>{{_left|name}}</em> includes.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*included by+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Cards that include <em>{{_left|name}}</em>.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*input+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Edit interface for [[Pointer]] cards.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*layout+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Default page layout.  <em>[[http://wagn.org/custom_layouts | more]]</em></p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*links to+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Cards that <em>{{_left|name}}</em> links to.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*linked to by+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Cards that link to <em>{{_left|name}}</em>.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*mates+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>If there is a card named \"X+<em>{{_left|name}}</em>\", then X is a mate of <em>{{_left|name}}</em>.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*option label+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Labels for [[Pointer]] radio button and checkbox items.  <em>[[http://wagn.org/Pointer|more]]</em></p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*options+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Value options for [[Pointer]] cards. Can itself be a Pointer or a [[Search]]. <em>[[http://wagn.org/Pointer|more]]</em></p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*read+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "Who can view cards in the [[set]]."
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*refers to+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Cards that <em>{{_left|name}}</em> refers to.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*referred to by+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Cards that refer to <em>{{_left|name}}</em>.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*send+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Configures email to be sent when card is created. <em>[[http://wagn.org/flexible_email|more]]</em></p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*sidebar+*self+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Sidebar content of [[Default Layout]]. <em>[[http://wagn.org/sidebar|more]]</em></p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*structure+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Controls cards' content / structure. <em>[[http://wagn.org/formatting|more]]</em></p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*table of contents+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Autogenerate [[http://wagn.org/table_of_contents|table of contents]] on cards with at least this many headers (\"0\" means never).</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*thanks+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Destination after card is created. <em>[[http://wagn.org/Custom_thank_you_messages_for_forms|more]]</em></p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*tinyMCE+*self+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Configure [[http://tinymce.com|TinyMCE]], Wagn's default [[http://en.wikipedia.org/wiki/Wysiwyg|wysiwyg]] editor. <em>[[http://wagn.org/TinyMCE|more]]</em></p>\r\n<p> </p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "*update+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Who can edit cards.</p>"
+      }
+    ]
+  },
+  {
+    "card": {
+      "name": "email config+*right+*help",
+      "type": "Basic"
+    },
+    "views": [
+      {
+        "name": "raw",
+        "parts": "<p>Configures email to be sent using [[http://wagn.org/flexible_email|flexible email]]. </p>"
+      }
+    ]
+  }
+]

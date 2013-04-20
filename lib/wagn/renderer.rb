@@ -456,23 +456,16 @@ module Wagn
 
   end
 
-  class Renderer::JsonRenderer < Renderer
-  end
 
-  class Renderer::Text < Renderer
-  end
+  class Renderer::Html < Renderer                ; end
 
-  class Renderer::Html < Renderer
-  end
-
-  class Renderer::Xml < Renderer::Html
-  end
-
-  class Renderer::Csv < Renderer::Text
-  end
+  class Renderer::Text < Renderer                ; end
+  class Renderer::Csv < Renderer::Text           ; end
+  class Renderer::Css < Renderer::Text           ; end
   
-  class Renderer::Css < Renderer::Text
-  end
+  class Renderer::Data < Renderer                ; end
+  class Renderer::JsonRenderer < Renderer::Data  ; end
+  class Renderer::Xml < Renderer::Data           ; end
 
 end
 

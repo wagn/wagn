@@ -34,7 +34,7 @@ module Wagn
       goto_cards = Card.search goto_wql(term)
       goto_cards.unshift exact.name if exact.known? && !goto_cards.map{|n| n.to_name.key}.include?(exact.key) 
 
-      JSON({
+      {
         :search => true, # card.ok?( :read ),
         :add    => (exact.new_card? && exact.cardname.valid? && !exact.virtual? && exact.ok?( :create ) && exact.name),
         :new    => (exact.type_id==Card::CardtypeID &&
@@ -42,7 +42,7 @@ module Wagn
                     [exact.name, exact.cardname.url_key]
                    ),
         :goto   => goto_cards.map { |name| [name, highlight(name, term), name.to_name.url_key] }
-      })
+      }
     end
   end
 

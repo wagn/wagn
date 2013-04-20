@@ -33,6 +33,7 @@ class Card < ActiveRecord::Base
       :auth         => :anyone_signed_in,
       :admin        => :administrator
     }
+    
 
     def cache
       Wagn::Cache[Card]
@@ -83,6 +84,16 @@ class Card < ActiveRecord::Base
       Card::Revision.delete_cardless
       Card::Reference.repair_missing_referees
     end
+    
+    def merge name, attribs={}, opts={}
+      Rails.logger.info "about to merge: #{name}, #{attribs}, #{opts}"
+      card = fetch name, :new=>{}
+      unless opts[:pristine] && !card.pristine?
+        card.attributes = attribs
+        card.save!
+      end
+    end
+    
   end
 
 
@@ -168,6 +179,11 @@ class Card < ActiveRecord::Base
 
   def real?
     !new_card?
+  end
+  
+  def pristine?
+    # has not been edited directly by human users.  bleep blorp.
+    new_card? || !revisions.map(&:creator_id).find { |id| id != Card::WagnBotID }
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

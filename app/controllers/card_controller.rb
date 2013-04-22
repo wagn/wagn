@@ -7,12 +7,11 @@ class CardController < ApplicationController
   before_filter :load_card
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
   
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+  #  CORE METHODS
+  
   def create
-    if card.save
-      success
-    else
-      render_errors
-    end
+    handle { card.save }
   end
 
   def read
@@ -23,22 +22,18 @@ class CardController < ApplicationController
   def update
     if card.new_card?
       create
-    elsif card.update_attributes params[:card]
-      success
     else
-      render_errors
+      handle { card.update_attributes params[:card] }
     end
   end
 
   def delete
-    if card.delete
-      discard_locations_for card #should be an event
-      success 'REDIRECT: *previous'
-    else
-      render_errors
-    end
+    discard_locations_for card #should be an event
+    params[:success] ||= { :id=>'*previous', :redirect=>true }
+    handle { card.delete }
   end
 
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ## the following methods need to be merged into #update
 
   def save_draft
@@ -95,11 +90,7 @@ class CardController < ApplicationController
       end
     end
 
-    if card.errors.empty?
-      success
-    else
-      render_errors
-    end
+    handle { card.errors.empty? }
   end
 
   def create_account
@@ -108,16 +99,17 @@ class CardController < ApplicationController
                    :message => "Welcome!  You now have an account on #{Card.setting :title}." } #ENGLISH
     @account, @card = User.create_with_card params[:account], card, email_args
     
-    if card.errors.empty?
-      success
-    else
-      render_errors
-    end
+    handle { card.errors.empty? }
   end
 
 
 
   private
+  
+  def handle
+    yield ? success : render_errors
+  end
+  
   #-------( FILTERS )
 
   def refresh_card

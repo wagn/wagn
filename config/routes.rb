@@ -21,7 +21,7 @@ Wagn::Application.routes.draw do
 
   match 'new/:type' => 'card#read', :view => 'new'
 
-  match 'card/:view(/:id(.:format))' => 'card#read', :constraints => #DEPRECATED!
+  match 'card/:view(/:id(.:format))' => 'card#read', :constraints =>
     { :view=> /new|changes|options|related|edit/ }
 
   match ':controller/:action(/:id(.:format))'

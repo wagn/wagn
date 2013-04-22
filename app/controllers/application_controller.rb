@@ -74,58 +74,34 @@ class ApplicationController < ActionController::Base
     end
   end
 
+
   def render_errors
     view   = card.error_view   || :errors
     status = card.error_status || 422
     show view, status
   end
 
+
   def show view = nil, status = 200
-    ext = request.parameters[:format]
-    known = FORMATS.split('|').member? ext
+    format = request.parameters[:format]
+    format = :file if !FORMATS.split('|').member? format #unknown format
 
-    if !known && status >= 400
-      ext, known = 'txt', true
-      # render simple text for errors on unknown formats;
-    end
+    opts = params[:slot] || {}
+    opts[:view] = view || params[:view]      
 
-    case
-    when known                # renderers can handle it
-      renderer = Wagn::Renderer.new card, :format=>ext, :controller=>self
-
-      view_opts = ( params[:slot] || {} ).merge :view => ( view || params[:view] )      
-      rendered_text = renderer.render_show view_opts
-      render :text=>rendered_text, :status=> renderer.error_status || status
-
-    when show_file            # send_file can handle it
-    else                      # dunno how to handle it
-      render :text=>"unknown format: #{extension}", :status=>404
+    renderer = Wagn::Renderer.new card, :controller=>self, :format=>format
+    result = renderer.render_show opts
+    status = renderer.error_status || status
+    
+    if format==:file && status==200
+      send_file *result
+    else
+      args = { :text=>result, :status=>status }
+      args[:content_type] = 'text/text' if format == :file
+      render args
     end
   end
-
-  def show_file
-    return fast_404 if !card
-
-    card.selected_rev_id = (@rev_id || card.current_revision_id).to_i
-    format = card.attachment_format(params[:format])
-    return fast_404 if !format
-
-    if ![format, 'file'].member?( params[:format] )
-      return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #card.attach.url(style) )
-    end
-
-    style = card.attachment_style card.type_id, ( params[:size] || @style )
-    return fast_404 if style == :error
-
-    # check file existence?  or just rescue MissingFile errors and raise NotFound?
-    # we do see some errors from not having this, though I think they're mostly from legacy issues....
-
-    send_file card.attach.path( *[style].compact ), #nil or empty arg breaks 1.8.7
-      :type => card.attach_content_type,
-      :filename =>  "#{card.cardname.url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
-      :x_sendfile => true,
-      :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
-  end
+  
 
 
   rescue_from Exception do |exception|

@@ -10,7 +10,7 @@ class Card < ActiveRecord::Base
 
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
 
-  attr_accessor :comment, :comment_author, :selected_rev_id,
+  attr_accessor :comment, :comment_author, :selected_revision_id,
     :update_referencers, :was_new_card, # seems like wrong mechanisms for these
     :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status #yuck
@@ -460,8 +460,8 @@ class Card < ActiveRecord::Base
     hard_template ? template.content : content
   end
   
-  def selected_rev_id
-    @selected_rev_id or ( ( cr = current_revision ) ? cr.id : 0 )
+  def selected_revision_id
+    @selected_revision_id || current_revision_id || 0
   end
 
   def current_revision

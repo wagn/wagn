@@ -16,14 +16,17 @@ Wagn::Application.routes.draw do
   match '/' => 'card#read'
   match 'recent(.:format)' => 'card#read', :id => '*recent', :view => 'content'
   match '(/wagn)/:id(.:format)' => 'card#read'
-  match '/files/(*id)' => 'card#read_file'
+  match 'files/:id(-:size)-:rev.:format' => 'card#read', :constraints => { :id=>/[^-]+/ }
+  
 
   match 'new/:type' => 'card#read', :view => 'new'
 
-  match 'card/:view(/:id(.:format))' => 'card#read', :constraints =>
+  match 'card/:view(/:id(.:format))' => 'card#read', :constraints => #DEPRECATED!
     { :view=> /new|changes|options|related|edit/ }
 
   match ':controller/:action(/:id(.:format))'
+  match ':action(/:id(.:format))' =>'card'
+  
 
   match '*id' => 'card#read', :view => 'bad_address'
 

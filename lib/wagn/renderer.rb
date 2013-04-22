@@ -458,6 +458,8 @@ module Wagn
 
 
   class Renderer::Html < Renderer                ; end
+  
+  class Renderer::File < Renderer                ; end
 
   class Renderer::Text < Renderer                ; end
   class Renderer::Csv < Renderer::Text           ; end

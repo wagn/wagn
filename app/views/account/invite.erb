@@ -18,7 +18,7 @@ div_id = "main-body"
   
   <div class="card-header">
     <h1>Invite a Friend</h1>
-    <% if !card.known? %>
+    <% if card.known? %>
       <%= raw( slot._render :help, :text=>"Accept account request from: #{link_to_page card.name}" ) %>
     <% end %>
   </div>

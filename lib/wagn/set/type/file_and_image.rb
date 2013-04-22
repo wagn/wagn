@@ -69,10 +69,10 @@ module Wagn
     define_view :diff, :type=>'image' do |args|
       out = ''
       if @show_diff and @previous_revision
-        card.selected_rev_id=@previous_revision.id
+        card.selected_revision_id=@previous_revision.id
         out << _render_core
       end
-      card.selected_rev_id=@revision.id
+      card.selected_revision_id=@revision.id
       out << _render_core
       out
     end

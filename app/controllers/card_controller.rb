@@ -3,12 +3,10 @@ class CardController < ApplicationController
 
   helper :wagn
 
-  before_filter :read_file_preload, :only=> [ :read_file ]
-
   before_filter :load_id, :only => [ :read ]
   before_filter :load_card
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
-
+  
   def create
     if card.save
       success
@@ -41,16 +39,6 @@ class CardController < ApplicationController
     end
   end
 
-  #FIXME!  move into renderer
-  def read_file
-    if card.ok? :read
-      show_file
-    else
-      wagn_redirect "#{params[:id]}?view=denial"
-    end
-  end 
-
-
   ## the following methods need to be merged into #update
 
   def save_draft
@@ -81,9 +69,6 @@ class CardController < ApplicationController
 
 
 
-
-
-
   #-------- ( ACCOUNT METHODS )
 
   def update_account
@@ -110,10 +95,10 @@ class CardController < ApplicationController
       end
     end
 
-    if card.errors.any?
-      render_errors
-    else
+    if card.errors.empty?
       success
+    else
+      render_errors
     end
   end
 
@@ -122,31 +107,24 @@ class CardController < ApplicationController
     email_args = { :subject => "Your new #{Card.setting :title} account.",   #ENGLISH
                    :message => "Welcome!  You now have an account on #{Card.setting :title}." } #ENGLISH
     @account, @card = User.create_with_card params[:account], card, email_args
-    if @card.errors.any?
-      render_errors
-    else
+    
+    if card.errors.empty?
       success
+    else
+      render_errors
     end
   end
 
 
 
   private
-
   #-------( FILTERS )
 
-  def read_file_preload
-    #warn "show preload #{params.inspect}"
-    params[:id] = params[:id].sub(/(-(#{Card::STYLES*'|'}))?(-\d+)?(\.[^\.]*)?$/) do
-      @style = $1.nil? ? 'original' : $2
-      @rev_id = $3 && $3[1..-1]
-      params[:format] = $4[1..-1] if $4
-      ''
-    end
+  def refresh_card
+    @card =  card.refresh
   end
 
-
-  def load_id
+  def load_id    
     params[:id] = case
       when params[:id]
         params[:id].gsub '_', ' '
@@ -191,16 +169,14 @@ class CardController < ApplicationController
           Card.fetch name, :new=>opts
         end
       end
+    @card.selected_revision_id = params[:rev].to_i if params[:rev]
 
     Wagn::Conf[:main_name] = params[:main] || (card && card.name) || ''
     render_errors if card.errors.any?
     true
   end
 
-  # FIXME: event
-  def refresh_card
-    @card =  card.refresh
-  end
+
 
   #------- REDIRECTION 
 

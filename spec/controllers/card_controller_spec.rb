@@ -226,7 +226,7 @@ describe CardController do
     end
   end
   
-  describe "#read_file" do
+  describe "#read file" do
     before do
       Account.as_bot do
         Card.create :name => "mao2", :typecode=>'image', :attach=>File.new("#{Rails.root}/test/fixtures/mao2.jpg")
@@ -237,15 +237,15 @@ describe CardController do
     it "handles image with no read permission" do
       get :read, :id=>'mao2'
       assert_response 403, "should deny html card view"
-      get :read_file, :id=>'mao2.jpg'
-      assert_response 302, "should redirect actual image to denial"      
+      get :read, :id=>'mao2', :format=>'jpg'
+      assert_response 403, "should deny simple file view"
     end
     
     it "handles image with read permission" do
       login_as :joe_admin
       get :read, :id=>'mao2'
       assert_response 200
-      get :read_file, :id=>'mao2.jpg'
+      get :read, :id=>'mao2', :format=>'jpg'
       assert_response 200
     end
   end

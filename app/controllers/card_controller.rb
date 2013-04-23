@@ -20,11 +20,7 @@ class CardController < ApplicationController
   end
 
   def update
-    if card.new_card?
-      create
-    else
-      handle { card.update_attributes params[:card] }
-    end
+    card.new_card? ? create : handle { card.update_attributes params[:card] }
   end
 
   def delete

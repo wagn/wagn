@@ -15,7 +15,6 @@ module Wagn
 
       %{
         <form action="#{Card.path_setting '/:search'}" method="get" class="navbox-form nodblclick">
-          #{ hidden_field_tag :view, 'content' }
           #{ text_field_tag :_keyword, '', input_args }
        </form>
       }

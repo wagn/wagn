@@ -112,11 +112,11 @@ class ApplicationController < ActionController::Base
     view, status = case exception
       ## arguably the view and status should be defined in the error class;
       ## some are redundantly defined in view
-      when Wagn::NotFound, ActiveRecord::RecordNotFound, ActionController::MissingFile
-        [ :not_found, 404 ]
       when Wagn::PermissionDenied, Card::PermissionDenied
         [ :denial, 403]
-      when Wagn::BadAddress, ActionController::UnknownController, AbstractController::ActionNotFound
+      when Wagn::NotFound, ActiveRecord::RecordNotFound, ActionController::MissingFile
+        [ :not_found, 404 ]        
+      when Wagn::BadAddress
         [ :bad_address, 404 ]
       when Wagn::Oops
         card.errors.add :exception, exception.message 

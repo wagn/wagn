@@ -7,26 +7,18 @@ Wagn::Application.routes.draw do
     mount Object.const_get(:JasmineRails).const_get(:Engine) => "/specs"
   end
 
-  # these file requests should only get here if the file isn't present.
-  # if we get a request for a file we don't have, don't waste any time on it.
-  #FAST 404s
-  match ':asset/:foo' => 'application#fast_404', :constraints =>
-    { :asset=>/assets|images?|stylesheets?|javascripts?/, :foo => /.*/ }
-
   match '/' => 'card#read'
-  match 'recent(.:format)' => 'card#read', :id => '*recent', :view => 'content'
+  match 'recent(.:format)' => 'card#read', :id => '*recent'
   match '(/wagn)/:id(.:format)' => 'card#read'
   match 'files/:id(-:size)-:rev.:format' => 'card#read', :constraints => { :id=>/[^-]+/ }
   
 
   match 'new/:type' => 'card#read', :view => 'new'
 
-  match 'card/:view(/:id(.:format))' => 'card#read', :constraints =>
-    { :view=> /new|changes|options|related|edit/ }
+  match 'card/:view(/:id(.:format))' => 'card#read', :constraints => { :view=> /new|changes|options|edit/ }
 
   match ':controller/:action(/:id(.:format))'
-  match ':action(/:id(.:format))' =>'card'
-  
+  match ':action(/:id(.:format))' =>'card', :constraints => { :action=> /create|read|update|delete/ }
 
   match '*id' => 'card#read', :view => 'bad_address'
 

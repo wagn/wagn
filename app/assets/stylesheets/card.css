@@ -306,30 +306,6 @@ del.diffmod,
   margin: 0 0 4px 0;
 
 }
-/*.help.content {
-  padding: 10px;
-  margin-top: 5px;
-  color: #444;
-}*
-.instruction {
-  border-left: 0;
-  border-right: 0;
-}
-.hidden,
-.denied {
-  display: none;
-}
-
-
-/* -----   CONTEXTS  -------------------------------*/
-
-
-/*----------recent changes -----------*/
-
-body#wagn .card-slot.recent-changes h2 {
-  margin-top: 15px;
-}
-
 
 
 /*-------------- VIEWS -----------*/
@@ -555,15 +531,15 @@ ul.pointer {
 
 /*---------( Search ) ---------- */
 
+.search-keyword {
+  font-style: italic;
+}
 .search-no-results:after {
   content:'0 results';
 }
 .closed-content .search-no-results:after {
   content:'';
 }
-
-
-
 .search-count {
   float: right;
   color: #bbc;

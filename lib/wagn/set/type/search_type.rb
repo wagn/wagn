@@ -70,7 +70,6 @@ module Wagn
 
       paging = _optional_render :paging, args
 
-      _render_search_header +
       if @search[:results].empty?
         %{<div class="search-no-results"></div>}
       else
@@ -111,13 +110,16 @@ module Wagn
       form.text_area :content, :rows=>10
     end
 
-    define_view :search_header do |args|
-      ''
+
+    define_view :title, :name=>:search do |args|
+      if vars = search_params[:vars] and keyword = vars[:keyword]
+         args.merge! :title=> %{Search results for: <span class="search-keyword">#{keyword}</span>}
+      end
+      _final_title args
     end
 
-    define_view :search_header, :name=>:search do |args|
-      return '' unless vars = search_params[:vars] and keyword = vars[:keyword]
-      %{<h1>Search results for: <em>#{keyword}</em></h1>}
+    define_view :title, :name=>:recent do |args|
+       _final_title args.merge( :title=>'Recent Changes' )
     end
 
     define_view :card_list, :name=>:recent do |args|
@@ -136,33 +138,27 @@ module Wagn
       end
 
       paging = _optional_render :paging, args
-
       %{
-        <div class="card-frame recent-changes ALL">
-          <div class="card-header"><h1>Recent Changes</h1></div>
-          <div class="card-body">
-            #{ paging }
-            #{
-              cards_by_day.keys.sort.reverse.map do |day|
-                %{
-                  <h2>#{format_date(day, include_time = false) }</h2>
-                  <div class="search-result-list">
-                    #{
-                       cards_by_day[day].map do |card|
-                         %{
-                           <div class="search-result-item item-#{ @search[:item] }">
-                            #{ process_inclusion(card, :view=>@search[:item]) }
-                          </div>
-                         }
-                       end * ' '
-                    }
-                  </div>
+        #{ paging }
+        #{
+          cards_by_day.keys.sort.reverse.map do |day|
+            %{
+              <h2>#{format_date(day, include_time = false) }</h2>
+              <div class="search-result-list">
+                #{
+                   cards_by_day[day].map do |card|
+                     %{
+                       <div class="search-result-item item-#{ @search[:item] }">
+                        #{ process_inclusion(card, :view=>@search[:item]) }
+                      </div>
+                     }
+                   end * ' '
                 }
-              end * "\n"
+              </div>
             }
-            #{ paging }
-          </div>
-        </div>
+          end * "\n"
+        }
+        #{ paging }
       }
     end
 

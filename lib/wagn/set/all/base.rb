@@ -71,11 +71,11 @@ module Wagn
     end
 
     define_view :bad_address, :perms=>:none, :error_code=>404 do |args|
-      %{ Bad Address }
+      %{ 404: Bad Address }
     end
 
     define_view :no_card, :perms=>:none, :error_code=>404 do |args|
-      %{ No Card! }
+      %{ 404: No Card! }
     end
 
     define_view :too_deep, :perms=>:none do |args|

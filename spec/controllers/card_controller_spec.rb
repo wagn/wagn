@@ -20,6 +20,13 @@ describe CardController do
       {:get => "/recent.rss"}.should route_to(:controller=>"card", :action=>"read", :id=>"*recent", :format=>"rss")
     end
 
+    it "should handle RESTful posts" do
+      { :put => '/mycard' }.should route_to( :controller=>'card', :action=>'update', :id=>'mycard')
+      { :put => '/' }.should route_to( :controller=>'card', :action=>'update')
+      
+    end
+
+
     ["/wagn",""].each do |prefix|
       describe "routes prefixed with '#{prefix}'" do
         it "should recognize .rss format" do
@@ -45,6 +52,7 @@ describe CardController do
             :controller=>"card",:action=>"read",:id=>"random"
           )
         end
+        
       end
     end
   end

@@ -29,7 +29,7 @@ class CardController < ApplicationController
 
   def delete
     discard_locations_for card #should be an event
-    params[:success] ||= { :id=>'*previous', :redirect=>true }
+    params[:success] ||= 'REDIRECT: *previous'
     handle { card.delete }
   end
 
@@ -172,21 +172,21 @@ class CardController < ApplicationController
 
   #------- REDIRECTION 
 
-  def success default_target='_self'
-    target = params[:success] || default_target
-    redirect = !ajax?
-    new_params = {}
-
-    if Hash === target
-      new_params = target
-      target = new_params.delete :id # should be some error handling here
-      redirect ||= !!(new_params.delete :redirect)
-    end
-
-    if target =~ /^REDIRECT:\s*(.+)/
-      redirect, target = true, $1
-    end
-
+  def success
+    redirect, new_params = !ajax?, {}
+    
+    target = case params[:success]
+      when Hash
+        new_params = params[:success]
+        redirect ||= !!(new_params.delete :redirect)
+        new_params.delete :id
+      when /^REDIRECT:\s*(.+)/
+        redirect=true
+        $1
+      when nil  ;  '_self'
+      else      ;   params[:success]
+      end
+        
     target = case target
       when '*previous'     ;  previous_location #could do as *previous
       when '_self  '       ;  card #could do as _self
@@ -196,11 +196,15 @@ class CardController < ApplicationController
       end
 
     case
-    when  redirect        ; wagn_redirect ( Card===target ? page_path( target.cardname, new_params ) : target )
-    when  String===target ; render :text => target
+    when redirect
+      target = page_path target.cardname, new_params if Card === target
+      wagn_redirect target
+    when String===target
+      render :text => target
     else
       @card = target
-      show new_params[:view]
+      params = new_params
+      show
     end
   end
 

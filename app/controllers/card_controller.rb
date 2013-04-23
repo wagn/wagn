@@ -203,7 +203,7 @@ class CardController < ApplicationController
       render :text => target
     else
       @card = target
-      params = new_params
+      self.params = new_params
       show
     end
   end

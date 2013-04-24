@@ -253,12 +253,8 @@ reqIndex = 0 #prevents race conditions
 
 navbox_results = (request, response) ->
   f = this.element.closest 'form'
-  view_field = f.find '[name=view]'
-  orig_view = view_field.val()
-  view_field.val 'complete'
-  formData = f.serialize()
-  view_field.val orig_view
-
+  formData = f.serialize() + '&view=complete'
+  
   this.xhr = $.ajax {
 		url: wagn.prepUrl wagn.rootPath + '/:search.json'
 		data: formData

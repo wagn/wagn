@@ -104,9 +104,9 @@ module Wagn
     end
   
     define_view :menu, :tags=>:unknown_ok do |args|
-      #fixme use codename!
-      disc_card = unless card.junction? && card.cardname.tag_name.key == 'discussion'
-        Card.fetch "#{card.name}+discussion", :skip_virtual=>true, :skip_modules=>true, :new=>{}
+      disc_tagname = Card.fetch(:discussion, :skip_modules=>true).cardname
+      disc_card = unless card.junction? && card.cardname.tag_name.key == disc_tagname.key
+        Card.fetch "#{card.name}+#{disc_tagname}", :skip_virtual=>true, :skip_modules=>true, :new=>{}
       end
       
       @menu_vars = {

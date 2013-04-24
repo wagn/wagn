@@ -20,6 +20,9 @@
   display: none;
   position: absolute;
   z-index: 1;
+  li {
+    white-space: nowrap;
+  }
 }
 .card-menu-link {
   display: inline-block;
@@ -54,6 +57,12 @@
     display: none !important;
   }
 }
+.labeled-view {
+  label h1, .pointer-list, .pointer-item, .search-result-list, .search-result-item {
+    display: inline;
+    font-size: 1em;
+  }
+}
 .related-view > .card-body  {
   background: #bbb;
   padding: 5px;
@@ -74,4 +83,61 @@
     }
   }
 }
-
+.render-error {
+  background-color: #ecc !important;
+}
+ins.diffmod,
+.diffins {
+  background: #aea;
+}
+del.diffmod,
+.diffdel {
+  background: #eaa;
+}
+.change-view {
+  clear: both;
+  .change-card{
+    float: left;
+  }
+  .last-update {
+    float:right;
+    text-align: right;
+  }
+  .last-editor {
+    white-space: nowrap;
+  }
+}
+.TYPE-layout > .content,
+.TYPE-plain_text > .content {
+  white-space: pre-wrap;
+}
+.content.card-editor {
+  white-space: normal;
+}
+.template-editor-main {
+  float: left;
+  width: 85%;
+}
+.template-editor-left,
+.template-editor-right {
+  float: left;
+  width: 5%;
+  text-align: center;
+  font-size: 3em;
+  line-height: 2em;
+}
+.template-editor-close {
+  float: right;
+}
+.template_link-view {
+  display: inline;
+}
+.new-current-revision-id,
+.editor .revision-navigation,
+.editor .autosave-alert,
+.labeled-view .card-menu-link {  
+  display: none
+}
+.labeled-view:hover .card-menu-link {
+  display: inline-block;
+}

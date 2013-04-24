@@ -1,5 +1,4 @@
 /**
- * application-all.css
  *
  *= require jquery-ui-smoothness
  *= unrequire jquerymobile
@@ -8,8 +7,8 @@
  *= require settings
 
  
- *= require page
- *= require defaults
- *= require card
+ * require page
+ * require defaults
+ * require card
 
 */

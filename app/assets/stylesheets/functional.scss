@@ -1,0 +1,143 @@
+.card-body,
+.card-slot,
+.ALL {
+  overflow: hidden;
+  white-space: normal;
+}
+.card-header {
+  overflow: hidden;
+  .toggler {
+    display: inline-block;
+  }
+  h1 {
+    display: inline;
+  }
+}
+.instruction {
+  display: inline-block;
+}
+.card-menu {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  li {
+    white-space: nowrap;
+  }
+}
+.card-menu-link {
+  display: inline-block;
+  float: right;
+}
+.closed-view {
+  width: 100%;  /*needed for ie6, or..?*/
+  white-space: nowrap !important;
+  overflow: hidden;
+  .card-header {
+    display: inline-block;
+  }
+  .card-menu-link {
+    float: none;
+  }
+}
+.closed-content {
+  table, tbody, tr, th, td, p, h1, h2, h3, h4, h5, h6, ul, li, pre, ol hr, div, span, a, blockquote, img {
+    display: inline !important;
+    margin: 0 6px 0 0;
+    padding: 0 !important;
+    border:  0 !important;
+    white-space: nowrap !important;
+    float: none !important;
+    font-size: 1em !important;
+  }
+  img {
+    max-height: 1em;
+    width: auto;
+  }
+  br, hr, input, textarea, object {
+    display: none !important;
+  }
+}
+.labeled-view {
+  label h1, .pointer-list, .pointer-item, .search-result-list, .search-result-item {
+    display: inline;
+    font-size: 1em;
+  }
+}
+.related-view > .card-body  {
+  background: #bbb;
+  padding: 5px;
+  > .ALL  {
+    background: #fff;
+    .card-header {
+      background: #ddd;
+      padding: 5px;
+      h1 {
+        color: #000;
+      }
+      .ui-icon {
+        background-image: url('images/ui-icons_888888_256x240.png');
+      }
+    }
+    .card-body {
+       padding: 8px 2%;
+    }
+  }
+}
+.render-error {
+  background-color: #ecc !important;
+}
+ins.diffmod,
+.diffins {
+  background: #aea;
+}
+del.diffmod,
+.diffdel {
+  background: #eaa;
+}
+.change-view {
+  clear: both;
+  .change-card{
+    float: left;
+  }
+  .last-update {
+    float:right;
+    text-align: right;
+  }
+  .last-editor {
+    white-space: nowrap;
+  }
+}
+.TYPE-layout > .content,
+.TYPE-plain_text > .content {
+  white-space: pre-wrap;
+}
+.content.card-editor {
+  white-space: normal;
+}
+.template-editor-main {
+  float: left;
+  width: 85%;
+}
+.template-editor-left,
+.template-editor-right {
+  float: left;
+  width: 5%;
+  text-align: center;
+  font-size: 3em;
+  line-height: 2em;
+}
+.template-editor-close {
+  float: right;
+}
+.template_link-view {
+  display: inline;
+}
+.new-current-revision-id,
+.editor .revision-navigation,
+.editor .autosave-alert,
+.labeled-view .card-menu-link {  
+  display: none
+}
+.labeled-view:hover .card-menu-link {
+  display: inline-block;
+}

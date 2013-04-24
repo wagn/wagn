@@ -15,12 +15,7 @@
 html>body .open-view {
   width: auto;  /* so non-ie browsers do better with image floats */
 }
-.card-body,
-.card-slot,
-.ALL {
-  overflow: hidden;
-  white-space: normal;
-}
+
 .card-body {
   padding: 5px 12px;
 }
@@ -36,16 +31,13 @@ html>body .open-view {
   padding: 5px 12px;
   margin: 0;
   text-align: left;
-  overflow: hidden;
 }
 .card-header,
 .card-header a,
 .card-header h1 {
   color: #333
 }
-.card-header h1 {
-  display: inline;
-}
+
 h1.card-title {
   padding: 2px 0;
   margin-right: 5px;
@@ -56,17 +48,10 @@ h1.card-title {
   border-radius: 8px;
   -moz-border-radius: 8px;
 }
-.card-menu-link {
-  display: inline-block;
-  float: right;
-}
 .closed-view .card-menu-link  {
   float: none;
 }
 .card-menu {
-  display: none;
-  position:absolute;
-  z-index: 1;
   font-size: 11px;
 }
 .card-menu li {
@@ -98,7 +83,6 @@ h1.card-title {
   content: '<';
 }
 .card-header .toggler {
-  display: inline-block;
   position: relative;
   top: 2px;
 }
@@ -329,101 +313,34 @@ del.diffmod,
 }
 
 
-/*-----------  related view -------*/
-
-
-
-.related-view > .card-body  {
-   background: #bbb;
-   padding: 5px;
-}
-.related-view > .card-body > .ALL  {
-   background: #fff;
-   border-radius: 6px;
-}
-.related-view > .card-body > .ALL > .card-header {
-   background: #ddd;
-   padding: 5px;
-}
-.related-view > .card-body > .ALL > .card-header h1 {
-   color: #000;
-}
-.related-view > .card-body > .ALL > .card-header .ui-icon {
-  background-image: url('images/ui-icons_888888_256x240.png')
-
-}
-.related-view > .card-body > .ALL > .card-body {
-   padding: 8px 2%;
-}
 
 /*------------- closed view -------*/
 
-.closed-view {
-  width: 100%;  /*needed for ie6, or..?*/
+
+.closed-view {  
   background: #fff;
-  overflow: hidden;
-  white-space: nowrap !important;
   border: 0;
   border-bottom: 1px solid #ccc;
   -moz-border-radius: 0 !important;
   border-radius: 0 !important;
   padding: 0;
-  margin: 1px 0 0 0;
+  margin: 1px 0 0 0; 
 }
+
+.closed-content {
+  font-size: 11px !important;
+}
+
 .closed-view .card-header {
   vertical-align: middle;
-  display: inline-block;
   line-height: 15px;
   -moz-border-radius: 0 6px 6px 0;
   border-radius: 0 6px 6px 0;
   margin-right: 4px;
 }
-.closed-content,
-.closed-content table,
-.closed-content tbody,
-.closed-content tr,
-.closed-content th,
-.closed-content td,
-.closed-content p,
-.closed-content h1,
-.closed-content h2,
-.closed-content h3,
-.closed-content h4,
-.closed-content h5,
-.closed-content h6,
-.closed-content ul,
-.closed-content li,
-.closed-content pre,
-.closed-content ol,
-.closed-content hr,
-.closed-content div,
-.closed-content span,
-.closed-content a,
-.closed-content blockquote {
-  display: inline !important;
-  margin: 0 6px 0 0;
-  padding: 0px !important;
-  border: 0px !important;
-  font-size: 11px !important;
-  white-space: nowrap !important;
-  float: none !important;
-}
-.closed-content a {
-  margin: 0px;
-}
-.closed-content img {
-  max-height: 16px;
-  width: auto;
-  float: none;
-  padding: 0px;
-}
-.closed-content br,
-.closed-content hr,
-.closed-content input,
-.closed-content textarea,
-.closed-content object {
-  display: none !important;
-}
+
+
+
 /*----------- Change View ---------*/
 
 .change-view {

@@ -1,0 +1,24 @@
+// layout
+
+#primary {
+  margin: 0 1%;
+  float: left;
+  width: 67%;
+}
+#secondary {
+  margin: 0 1%;
+  float: right;
+  width: 28%;
+}
+.navbox-form {
+  display: inline
+}
+table {
+  border-collapse: collapse;
+}
+.card-header {
+  background: #eee;
+}
+.render-error {
+  background-color: #ecc !important;
+}

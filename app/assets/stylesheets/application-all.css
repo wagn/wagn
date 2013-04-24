@@ -3,9 +3,13 @@
  *
  *= require jquery-ui-smoothness
  *= unrequire jquerymobile
- *= require page
- *= require defaults
- *= require card
+ *= require functional
+ *= require minimal
  *= require settings
+
+ 
+ * require page
+ * require defaults
+ * require card
 
   */

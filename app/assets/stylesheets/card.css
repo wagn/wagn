@@ -21,12 +21,6 @@ html>body .open-view {
   overflow: hidden;
   white-space: normal;
 }
-/*
-.card-slot > form >.instruction,
-.card-slot > .instruction {
-  background: #eee;
-}*/
-
 .card-body {
   padding: 5px 12px;
 }
@@ -55,6 +49,12 @@ html>body .open-view {
 h1.card-title {
   padding: 2px 0;
   margin-right: 5px;
+}
+.card-header .instruction {
+  border: 1px solid #887;
+  background: #ddc;
+  border-radius: 8px;
+  -moz-border-radius: 8px;
 }
 .card-menu-link {
   display: inline-block;

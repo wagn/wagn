@@ -66,12 +66,10 @@
 
 /* -- instructions ---*/
 
-.help, .instruction {
+.instruction {
   color: #440;
   text-align: center;
   padding: 4px 10px;
-}
-.instruction {
   display: inline-block;
 }
 /*--- errors -----*/

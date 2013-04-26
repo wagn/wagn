@@ -43,14 +43,17 @@
   }
 }
 .closed-content {
-  table, tbody, tr, th, td, p, h1, h2, h3, h4, h5, h6, ul, li, pre, ol hr, div, span, a, blockquote, img {
+  table, tbody, tr, th, td, p, h1, h2, h3, h4, h5, h6, ul, li, pre, ol, div, span, a, blockquote, img {
     display: inline !important;
+    font-size: 1em !important;
+    white-space: nowrap !important;    
     margin: 0 6px 0 0;
     padding: 0 !important;
     border:  0 !important;
-    white-space: nowrap !important;
     float: none !important;
-    font-size: 1em !important;
+  }
+  a {
+    margin: 0;
   }
   img {
     max-height: 1em;
@@ -71,7 +74,7 @@
   padding: 5px;
   > .ALL  {
     background: #fff;
-    .card-header {
+    > .card-header {
       background: #ddd;
       padding: 5px;
       h1 {
@@ -81,7 +84,7 @@
         background-image: url('images/ui-icons_888888_256x240.png');
       }
     }
-    .card-body {
+    > .card-body {
        padding: 8px 2%;
     }
   }

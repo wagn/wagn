@@ -77,7 +77,7 @@ wagn.openMenu = (link) ->
 
 $(window).ready ->
 
-  $('.cancel-upload').live 'click', ->
+  $('body').on 'click', '.cancel-upload', ->
     editor = $(this).closest '.card-editor'
     editor.find('.chosen-file').hide()
     editor.find('.choose-file').show()
@@ -94,16 +94,16 @@ $(window).ready ->
     # sadly, it also causes odd navbox behavior, resetting the search term
   }
 
-  $('.card-menu-link').live 'mouseenter', ->
+  $('body').on 'mouseenter', '.card-menu-link', ->
     wagn.openMenu this
     
-  $('.card-menu-link').live 'mouseleave', ->
+  $('body').on 'mouseleave', '.card-menu-link', ->
     if $(this).find('.ui-menu')[0]
       cm = $(this).find('.card-menu')
       cm.hide()
       cm.menu "collapseAll", null, true
 
-  $('.card-header').live 'tap', (event) ->
+  $(document).on 'tap', '.card-header', (event) ->
     link = $(this).find('.card-menu-link')
     unless !link[0] or                                             # no gear
         $(event.target).closest('.card-menu')[0] or                # already in menu
@@ -113,18 +113,18 @@ $(window).ready ->
       wagn.openMenu link
       event.preventDefault()
   
-  $('body').live 'tap', (event) ->
+  $(document).on 'tap', 'body', (event) ->
     unless $(event.target).closest('.card-header')[0] or $(event.target).closest('.card-menu-link')[0]
       $('.card-menu').hide()
       # this and mouseleave should use a close menu method that handles collapsing. (though not seeing bad behavior...)
 
-  $('.ui-menu-icon').live 'tap', (event)->
+  $(document).on 'tap', '.ui-menu-icon', (event)->
     $(this).closest('li').trigger('mouseenter')
     event.preventDefault()
 
 
   #pointer pack
-  $('.pointer-item-add').live 'click', (event)->
+  $('body').on 'click', '.pointer-item-add', (event)->
     last_item = $(this).closest('.content-editor').find '.pointer-li:last'
     new_item = last_item.clone()
     input = new_item.find('input')
@@ -133,7 +133,7 @@ $(window).ready ->
     wagn.initPointerList(input)
     event.preventDefault() # Prevent link from following its href
 
-  $('.pointer-item-delete').live 'click', ->
+  $('body').on 'click', '.pointer-item-delete', ->
     item = $(this).closest 'li'
     if item.closest('ul').find('.pointer-li').length > 1
       item.remove()
@@ -142,16 +142,16 @@ $(window).ready ->
     event.preventDefault() # Prevent link from following its href
 
   # permissions pack
-  $('.perm-vals input').live 'click', ->
+  $('body').on 'click', '.perm-vals input', ->
     $(this).slot().find('#inherit').attr('checked',false)
 
-  $('.perm-editor #inherit').live 'click', ->
+  $('body').on 'click', '.perm-editor #inherit', ->
     slot = $(this).slot()
     slot.find('.perm-group input:checked').attr('checked', false)
     slot.find('.perm-indiv input').val('')
 
   # rstar pack
-  $('body').delegate '.rule-submit-button', 'click', ->
+  $('body').on 'click', '.rule-submit-button', ->
     f = $(this).closest('form')
     if f.find('.set-editor input:checked').val()
       true
@@ -160,12 +160,12 @@ $(window).ready ->
       $(this).notify 'To what Set of cards does this Rule apply?'
       false
 
-#  $('body').delegate '.rule-cancel-button', 'click', ->
+#  $('body').on 'click', '.rule-cancel-button', ->
 #    $(this).closest('tr').find('.close-rule-link').click()
 
 
   # etherpad pack
-  $('body').delegate '.etherpad-submit-button', 'click', ->
+  $('body').on 'click', '.etherpad-submit-button', ->
     wagn.padform = $(this).closest('form')
 
     padsrc = $(wagn.padform).find('iframe')[0].src
@@ -179,7 +179,7 @@ $(window).ready ->
     false
 
   #wagn_org pack (for now)
-  $('.shade-view h1').live 'click', ->
+  $('body').on 'click', '.shade-view h1', ->
     toggleThis = $(this).slot().find('.shade-content').is ':hidden'
     toggleShade $(this).closest('.pointer-list').find('.shade-content:visible').parent()
     if toggleThis
@@ -191,7 +191,7 @@ $(window).ready ->
     
 
   #wikirate pack
-  $('#wikirate-nav > a').live 'mouseenter', ->
+  $('body').on 'mouseenter', '#wikirate-nav > a', ->
     ul = $(this).find 'ul'
     if ul[0]
       ul.css 'display', 'inline-block'
@@ -206,10 +206,10 @@ $(window).ready ->
           link.prepend $(data).menu()
       }
   
-  $('#wikirate-nav ul').live 'mouseleave', ->
+  $('body').on 'mouseleave', '#wikirate-nav ul', ->
     $(this).hide()
       
-  $('.TYPE-claim .card-editor fieldset.RIGHT-source_type').live 'change', ->
+  $('body').on 'change', '.TYPE-claim .card-editor fieldset.RIGHT-source_type', ->
     f = $(this).closest 'form' 
     val = $(this).find('input:checked').val()
     
@@ -225,7 +225,7 @@ $(window).ready ->
 
   $('.TYPE-claim .card-editor fieldset.RIGHT-source_type').trigger 'change'
   
-  $('.go-to-selected select').live 'change', ->
+  $('body').on 'change', '.go-to-selected select', ->
     val = $(this).val()
     if val != ''
       window.location = wagn.rootPath + escape( val )

@@ -29,7 +29,7 @@ Wagn::Application.routes.draw do
   
   # standard non-RESTful
   match ':controller/:action(/:id(.:format))'
-  match ':action(/:id(.:format))'        => 'card'
+  match ':action(/:id(.:format))'        => 'card' 
 
   # other
   match '*id' => 'card#read', :view => 'bad_address'

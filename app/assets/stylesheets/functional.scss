@@ -29,8 +29,11 @@
   float: right;
 }
 .closed-view {
-  width: 100%;  /*needed for ie6, or..?*/
+  width: 100%;
   white-space: nowrap !important;
+  .closed-content {
+    white-space: nowrap !important;
+  }
   overflow: hidden;
   .card-header {
     display: inline-block;

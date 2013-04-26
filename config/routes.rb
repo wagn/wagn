@@ -11,6 +11,7 @@ Wagn::Application.routes.draw do
   root                               :to => 'card#read', :via=>:get
   match 'files/:id(-:size)-:rev.:format' => 'card#read', :via=>:get, :id => /[^-]+/
   match 'recent(.:format)'               => 'card#read', :via=>:get, :id => '*recent' #obviate by renaming "*recent"
+#  match ':view:(:id(.:format))'          => 'card#read', :via=>:get  
   match '(/wagn)/:id(.:format)'          => 'card#read', :via=>:get  #/wagn is deprecated
   
   # RESTful

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 =begin
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 include AuthenticatedTestHelper
@@ -95,7 +96,7 @@ describe AccountController, "with captcha enabled" do
     require_captcha_on(
       :signup,
       :card => { :name => "Bob", :type=>"Account Request" },
-      :user => { :email => "bob@user.com" }
+      :account => { :email => "bob@user.com" }
     )
   end
 

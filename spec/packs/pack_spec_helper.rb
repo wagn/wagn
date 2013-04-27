@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module PackSpecHelper
 
 include ActionDispatch::Assertions::SelectorAssertions
@@ -22,8 +23,6 @@ include ActionDispatch::Assertions::SelectorAssertions
     @card ||= Card.new :name=>"Tempo Rary 2"
     @card.content=content
     r = Wagn::Renderer.new @card,args
-    #r.add_name_context "Tempo Rary 2"
-    #warn "rc core #{r}"
     r._render(:core)
   end
 

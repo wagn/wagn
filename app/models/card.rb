@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
-
-require_dependency 'smart_name'
+require 'smart_name'
 
 class Card < ActiveRecord::Base
 
@@ -11,13 +10,12 @@ class Card < ActiveRecord::Base
 
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
 
-  attr_accessor :comment, :comment_author, :selected_rev_id,
-    :update_referencers, :allow_type_change, # seems like wrong mechanisms for this
+  attr_accessor :comment, :comment_author, :selected_revision_id,
+    :update_referencers, :was_new_card, # seems like wrong mechanisms for these
     :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status #yuck
 
   attr_writer :update_read_rule_list
-  attr_reader :type_args
 
   before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
   after_save :base_after_save, :update_ruled_cards, :update_queue, :expire_related
@@ -29,36 +27,25 @@ class Card < ActiveRecord::Base
   class << self
     JUNK_INIT_ARGS = %w{ missing skip_virtual id }
 
-    def cache()          Wagn::Cache[Card]                           end
+    ID_CONST_ALIAS = {
+      :default_type => :basic, #this should not be hardcoded (not a constant -- should come from *all+*default)
+      :anon         => :anonymous,
+      :auth         => :anyone_signed_in,
+      :admin        => :administrator
+    }
+    
+
+    def cache
+      Wagn::Cache[Card]
+    end
 
     def new args={}, options={}
       args = (args || {}).stringify_keys
       JUNK_INIT_ARGS.each { |a| args.delete(a) }
       %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
       args.delete('content') if args['attach'] # should not be handled here!
-
-      if name = args['name'] and !name.blank?
-        if  Card.cache                                       and
-            cc = Card.cache.read_local(name.to_name.key)     and
-            cc.type_args                                     and
-            args['type']          == cc.type_args[:type]     and
-            args['typecode']      == cc.type_args[:typecode] and
-            args['type_id']       == cc.type_args[:type_id]  and
-            args['loaded_left']  == cc.loaded_left
-
-          args['type_id'] = cc.type_id
-          return cc.send( :initialize, args )
-        end
-      end
       super args
     end
-
-    ID_CONST_ALIAS = {
-      :default_type => :basic,
-      :anon         => :anonymous,
-      :auth         => :anyone_signed_in,
-      :admin        => :administrator
-    }
 
     def const_missing const
       if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore.to_sym
@@ -71,8 +58,8 @@ class Card < ActiveRecord::Base
       else
         super
       end
-    rescue NameError
-      warn "ne: const_miss #{e.inspect}, #{const}" if const.to_sym==:Card
+#    rescue NameError
+#      warn "ne: const_miss #{e.inspect}, #{const}" #if const.to_sym==:Card
     end
 
     def setting name
@@ -90,6 +77,23 @@ class Card < ActiveRecord::Base
     def toggle val
       val == '1'
     end
+    
+    def empty_trash
+      Card.where(:trash=>true).delete_all
+      User.delete_cardless
+      Card::Revision.delete_cardless
+      Card::Reference.repair_missing_referees
+    end
+    
+    def merge name, attribs={}, opts={}
+      Rails.logger.info "about to merge: #{name}, #{attribs}, #{opts}"
+      card = fetch name, :new=>{}
+      unless opts[:pristine] && !card.pristine?
+        card.attributes = attribs
+        card.save!
+      end
+    end
+    
   end
 
 
@@ -104,7 +108,7 @@ class Card < ActiveRecord::Base
 
     args.delete('type_id') if args['type_id'] == 0 # can come in as 0, '', or nil
 
-    @type_args = { # these are cached to optimize #new
+    @type_args = {
       :type     => args.delete('type'    ),
       :typecode => args.delete('typecode'),
       :type_id  => args[       'type_id' ]
@@ -114,7 +118,7 @@ class Card < ActiveRecord::Base
 
     super args # ActiveRecord #initialize
 
-    if tid = get_type_id(@type_args)
+    if tid = get_type_id( @type_args )
       self.type_id_without_tracking = tid
     end
 
@@ -137,8 +141,6 @@ class Card < ActiveRecord::Base
     when :noop 
     when false, nil
       errors.add :type, "#{args[:type] || args[:typecode]} is not a known type."
-      @error_view = :not_found
-      @error_status = 404
     else
       return type_id
     end
@@ -179,13 +181,18 @@ class Card < ActiveRecord::Base
   def real?
     !new_card?
   end
+  
+  def pristine?
+    # has not been edited directly by human users.  bleep blorp.
+    new_card? || !revisions.map(&:creator_id).find { |id| id != Card::WagnBotID }
+  end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING
 
   def assign_attributes args={}, options={}
     if args and newtype = args.delete(:type) || args.delete('type')
-      args[:type_id] = Card.fetch_id( newtype )
+      args['type_id'] = Card.fetch_id( newtype )
     end
     reset_patterns
 
@@ -254,20 +261,27 @@ class Card < ActiveRecord::Base
     return unless cards
     cards.each_pair do |sub_name, opts|
       opts[:nested_edit] = self
-      absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute cardname
+      absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute_name cardname
+      next if absolute_name.key == key # don't resave self!
+
       if card = Card[absolute_name]
         card = card.refresh
         card.update_attributes opts
       elsif opts[:content].present? and opts[:content].strip.present?
         opts[:name] = absolute_name
+        opts[:loaded_left] = self
         card = Card.create opts
       end
+
       @subcards << card if card
       if card and card.errors.any?
         card.errors.each do |field, err|
           self.errors.add card.name, err
         end
         raise ActiveRecord::Rollback, "broke save_subcards"
+      else
+        cards = nil
+        true
       end
     end
   end
@@ -290,6 +304,7 @@ class Card < ActiveRecord::Base
     Card.transaction do
       if validate_delete
         delete_to_trash
+        reset_patterns_if_rule saving=true
         true
       end
     end
@@ -342,15 +357,17 @@ class Card < ActiveRecord::Base
   def junction?()      cardname.junction?                   end
 
   def left *args
-    unless updates.for? :name and name_without_tracking.to_name.key == cardname.left_name.key
-      #the ugly code above is to prevent recursion when, eg, renaming A+B to A+B+C
-      #it should really be testing for any trunk
-      Card.fetch cardname.left, *args
+    if !simple?
+      unless updates.for? :name and name_without_tracking.to_name.key == cardname.left_name.key
+        #the ugly code above is to prevent recursion when, eg, renaming A+B to A+B+C
+        #it should really be testing for any trunk
+        Card.fetch cardname.left, *args
+      end
     end
   end
 
   def right *args
-    simple? ? nil : Card.fetch( cardname.right, *args )
+    Card.fetch( cardname.right, *args ) if !simple?
   end
 
   def trunk *args
@@ -422,7 +439,8 @@ class Card < ActiveRecord::Base
 
   def type_name
     return if type_id.nil?
-    card = Card.fetch( type_id, :skip_modules=>true, :skip_virtual=>true ) and card.name
+    type_card = Card.fetch type_id.to_i, :skip_modules=>true, :skip_virtual=>true
+    type_card and type_card.name
   end
 
   def type= type_name
@@ -443,9 +461,9 @@ class Card < ActiveRecord::Base
   def raw_content
     hard_template ? template.content : content
   end
-
-  def selected_rev_id
-    @selected_rev_id or ( ( cr = current_revision ) ? cr.id : 0 )
+  
+  def selected_revision_id
+    @selected_revision_id || current_revision_id || 0
   end
 
   def current_revision
@@ -504,10 +522,10 @@ class Card < ActiveRecord::Base
   # these should be done in a set module when we have the capacity to address the set of "cards with accounts"
   # in the meantime, they should probably be in a module.
 
-  def among? authzed
+  def among? card_with_acct
     prties = parties
-    authzed.each { |auth| return true if prties.member? auth }
-    authzed.member? Card::AnyoneID
+    card_with_acct.each { |auth| return true if prties.member? auth }
+    card_with_acct.member? Card::AnyoneID
   end
 
   def parties
@@ -516,14 +534,15 @@ class Card < ActiveRecord::Base
 
   def read_rules
     @read_rules ||= begin
-      if id==Card::WagnBotID
-        [] # avoids infinite loop
-      else
-        party_keys = ['in', Card::AnyoneID] + parties
-        Account.as_bot do
-          Card.search(:right=>{:codename=>'read'}, :refer_to=>{:id=>party_keys}, :return=>:id).map &:to_i
+      rule_ids = []
+      unless id==Card::WagnBotID # always_ok, so not needed
+        ( [ Card::AnyoneID ] + parties ).each do |party_id|
+          if rule_ids_for_party = self.class.read_rule_cache[ party_id ]
+            rule_ids += rule_ids_for_party
+          end
         end
       end
+      rule_ids
     end
   end
 
@@ -545,9 +564,14 @@ class Card < ActiveRecord::Base
   end
 
   def account
-    User.where( :card_id => id ).first
+    User[ id ]
   end
 
+  def accountable?
+    Card.toggle(rule(:accountable)) and
+    !account and
+    fetch( :trait=>:account, :new=>{} ).ok?( :create)
+  end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # METHODS FOR OVERRIDE
@@ -566,7 +590,7 @@ class Card < ActiveRecord::Base
 
   #def debug_type() type_id end
   def debug_type() "#{typecode||'no code'}:#{type_id}" end
-  #def debug_type() "#{typename}:#{type_id}" end # this can cause infinite recursion
+  #def debug_type() "#{type_name}:#{type_id}" end # this can cause infinite recursion
 
   def to_s
     "#<#{self.class.name}[#{debug_type}]#{self.attributes['name']}>"
@@ -581,8 +605,6 @@ class Card < ActiveRecord::Base
     #"{#{references_expired==1 ? 'Exp' : "noEx"}:" +
     "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{frozen? ? 'Fz' : readonly? ? 'RdO' : ''}" +
     "#{@virtual &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }:#{references_expired.inspect}}" +
-    (self.errors.any? ? self.errors.map(&:inspect)*", " : 'NoErrs') +
-    #" Rules:#{ @rule_cards.nil? ? 'nil' : @rule_cards.map{|k,v| "#{k} >> #{v.nil? ? 'nil' : v.name}"}*", "}" +
     '>'
   end
 
@@ -590,6 +612,7 @@ class Card < ActiveRecord::Base
   # INCLUDED MODULES
 
   include Cardlib
+    
 
   after_save :after_save_hooks
   # moved this after Cardlib inclusions because aikido module needs to come after Paperclip triggers,
@@ -720,7 +743,7 @@ class Card < ActiveRecord::Base
     # validate on update and create
     if card.updates.for?(:type_id) or card.new_record?
       # invalid to change type when type is hard_templated
-      if rt = card.hard_template and !rt.type_template? and type_id!=rt.type_id and !card.allow_type_change
+      if rt = card.hard_template and rt.assigns_type? and type_id!=rt.type_id
         card.errors.add :type, "can't be changed because #{card.name} is hard templated to #{rt.type_name}"
       end
     end
@@ -735,7 +758,7 @@ class Card < ActiveRecord::Base
   end
 
   # these old_modules should be refactored out
-  require_dependency 'flexmail.rb'
-  require_dependency 'google_maps_addon.rb'
-  require_dependency 'notification.rb'
+  require_dependency 'flexmail'
+  require_dependency 'google_maps_addon'
+  require_dependency 'notification'
 end

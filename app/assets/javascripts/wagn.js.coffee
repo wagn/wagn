@@ -10,14 +10,11 @@ wagn.prepUrl = (url, slot)->
   main = $('#main').children('.card-slot').attr 'card-name'
   xtra['main'] = main if main?
   if slot
-    home_view = slot.attr 'home_view'
-    item      = slot.attr 'item'
-    title     = slot.children('.card-header').children '.card-title'
-    xtra['home_view'] = home_view if home_view?
-    xtra['item']      = item      if item?
-    xtra['is_main']   = true      if slot.isMain()
-    if title?
-      xtra['name_context'] = $(title[0]).attr 'name_context'
+    xtra['is_main'] = true if slot.isMain()
+    $.each slot[0].attributes, (i, att)->
+      if (m = att.name.match /^slot-(.*)$/) and att.value?
+        xtra['slot[' + m[1] + ']' ] = att.value
+
   url + ( (if url.match /\?/ then '&' else '?') + $.param(xtra) )
 
 jQuery.fn.extend {
@@ -26,17 +23,21 @@ jQuery.fn.extend {
   setSlotContent: (val) ->
     s = @slot()
     v = $(val)
-    if val[0]
-      v.attr 'home_view', s.attr 'home_view'
-      v.attr 'item',      s.attr 'item'
-    else #simple string
+    if v[0]
+      $.each s[0].attributes, (i, att)->
+        if att.name.match(/^slot-.*/) && att.value?
+          v.attr att.name, att.value
+    else #simple text (not html)
       v = val
     s.replaceWith v
     v
 
   notify: (message) ->
-    notice = @slot().find '.card-notice'
-    return false unless notice[0]
+    slot = @slot()
+    notice = slot.find '.card-notice'
+    unless notice[0]
+      notice = $('<div class="card-notice"></div>')
+      slot.append notice 
     notice.html message
     notice.show 'blind'
 
@@ -124,7 +125,7 @@ $(window).ready ->
 
   $('.slotter').live 'ajax:beforeSend', (event, xhr, opt)->
     return if opt.skip_before_send
-
+    
     unless opt.url.match /home_view/ #avoiding duplication.  could be better test?
       opt.url = wagn.prepUrl opt.url, $(this).slot()
 
@@ -149,7 +150,7 @@ $(window).ready ->
           iframeUploadFilter = (data)-> data.find('body').html()
           opt.dataFilter = iframeUploadFilter
           # gets rid of default html and body tags
-
+        
         args = $.extend opt, (widget._getAJAXSettings data), url: opt.url
         # combines settings from wagn's slotter and jQuery UI's upload widget
         args.skip_before_send = true #avoid looping through this method again
@@ -162,8 +163,8 @@ $(window).ready ->
     $(this).find('.card-content').attr('no-autosave','true')
     true
 
-#  $('.submitter').live 'click', ->
-#    $(this).closest('form').submit()
+  $('.submitter').live 'click', ->
+    $(this).closest('form').submit()
    
   $('.renamer-updater').live 'click', ->
     $(this).closest('form').find('.update_referencers').val 'true'
@@ -221,16 +222,42 @@ $(window).ready ->
     content_field = $(this)
     setTimeout ( -> content_field.autosave() ), 500
 
-  $('.go-to-selected select').live 'change', ->
-    val = $(this).val()
-    if val != ''
-      window.location = wagn.rootPath + escape( val )
-
   $('[hover_content]').live 'mouseenter', ->
     $(this).attr 'hover_restore', $(this).html()
     $(this).html $(this).attr( 'hover_content' )
   $('[hover_content]').live 'mouseleave', ->
     $(this).html $(this).attr( 'hover_restore' )
+    
+  $('.name-editor input').live 'keyup', ->
+    box =  $(this)
+    name = box.val()
+    wagn.pingName name, (data)->
+      return null if box.val() != name # avert race conditions
+      status = data['status']
+      ed = box.parent()
+      leg = box.closest('fieldset').find('legend')
+      msg = leg.find '.name-messages'
+      unless msg[0]
+        msg = $('<span class="name-messages"></span>')
+        leg.append msg
+      ed.removeClass 'real-name virtual-name known-name'
+      slot_id = box.slot().attr 'card-id' # use id to avoid warning when renaming to name variant
+      if status != 'unknown' and !(slot_id && parseInt(slot_id) == data['id'])
+        ed.addClass status + '-name known-name'
+        link = 
+        qualifier = if status == 'virtual' #wish coffee would let me use  a ? b : c syntax here
+          'in virtual'
+        else
+          'already in'
+        msg.html '"<a href="' + wagn.rootPath + '/' + data['url_key'] + '">' + name + '</a>" ' + qualifier + ' use'
+      else
+        msg.html ''
+        
+  $('.render-error-link').live 'click', (event) ->
+    msg = $(this).closest('.render-error').find '.render-error-message'
+    msg.show()
+#    msg.dialog()
+    event.preventDefault()
 
 newCaptcha = (form)->
   recapUri = 'http://www.google.com/recaptcha/api/js/recaptcha_ajax.js'
@@ -238,5 +265,9 @@ newCaptcha = (form)->
   $(form).children().last().after recapDiv
   $.getScript recapUri, -> recapDiv.loadCaptcha()
 
+
+
+wagn.pingName = (name, success)->
+  $.getJSON wagn.rootPath + '/', { format: 'json', view: 'status', 'card[name]': name }, success
 
 warn = (stuff) -> console.log stuff if console?

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
 describe Card do
@@ -286,7 +287,9 @@ describe "basic card tests" do
   end
 
   it 'update_should_create_subcards_as_wagn_bot_if_missing_subcard_permissions' do
-    Card.create :name=>'peel'
+    Account.as :joe_user do
+      Card.create :name=>'peel'
+    end
     Account.current_id = Card::AnonID
 
     Card['Banana'].should_not be

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # = Card#fetch
 #
 # A multipurpose retrieval operator that incorporates caching, "virtual" card retrieval
@@ -15,26 +16,21 @@ module Cardlib::Fetch
     #   - database
     #   - virtual cards
     #
+    # "mark" here means a generic identifier -- can be a numeric id, a name, a string name, etc.
+    #
     #   Options:
-    #     :skip_vitual                Real cards only
+    #     :skip_virtual               Real cards only
     #     :skip_modules               Don't load Set modules
-    #     :loaded_left => card       Loads the card's trunk
     #     :new => {  card opts }      Return a new card when not found
-    #     :trait => :code (or [:c1, :c2] maybe?)  Fetches base card + tag(s)
     #
 
     def fetch mark, opts = {}
-      # "mark" here means a generic identifier -- can be a numeric id, a name, a string name, etc.
-#      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{cardname}" do
+#      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{mark}" do
 
       if mark.nil?
         return if opts[:new].nil?
-        # This is fetch_or_new now when you supply :new=>{opts}
-
       else
 
-        #Rails.logger.warn "fetch #{mark.inspect}, #{opts.inspect}"
-        # Symbol (codename) handling
         if Symbol===mark
           mark = Wagn::Codename[mark] || raise( "Missing codename for #{mark.inspect}" )
         end
@@ -42,6 +38,7 @@ module Cardlib::Fetch
         cache_key, method, val = if Integer===mark
           [ "~#{mark}", :find_by_id_and_trash, mark ]
         else
+          opts[:name] = mark # this is needed to correctly fetch missing cards with different name variants in cache
           key = mark.to_name.key
           [ key, :find_by_key_and_trash, key ]
         end
@@ -61,24 +58,26 @@ module Cardlib::Fetch
       end
 
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      opts[:skip_virtual] = true if opts[:loaded_left]
+#      opts[:skip_virtual] = true if opts[:loaded_left]
 
       if Integer===mark
         if card.nil?
-          return nil 
           Rails.logger.info "fetch of missing card_id #{mark}" # should send this to airbrake
+          return nil
         end
       else
-        return card.fetch_new(opts) if card && opts[:skip_virtual] && card.new_card?
+        if card && opts[:skip_virtual] && card.new_card? && opts[:new] != {}
+          return card.renew(opts)
+        end
 
         #warn "new card? #{card.inspect}"
         # NEW card -- (either virtual or missing)
-        if card.nil? or ( !opts[:skip_virtual] && card.type_id==-1 )
+        if card.nil? or ( card.type_id==-1 && ( !opts[:skip_virtual] || opts[:new]=={} ) )
           # The -1 type_id allows us to skip all the type lookup and flag the need for
           # reinitialization later.  *** It should NEVER be seen elsewhere ***
           needs_caching = true
           new_args = { :name=>mark.to_s, :skip_modules=>true }
-          new_args[:type_id] = -1 if opts[:skip_virtual]
+          new_args[:type_id] = -1 if opts[:skip_virtual] && opts[:new] != {}
           card = new new_args
         end
       end
@@ -88,9 +87,18 @@ module Cardlib::Fetch
         Card.cache.write "~#{card.id}", card.key if card.id and card.id != 0
       end
 
-      return card.fetch_new(opts) if card.new_card? and ( opts[:skip_virtual] || !card.virtual? )
+      if card.new_card?
+        if opts[:new] == {}
+          #noop default case; use cache.
+        elsif !opts[:new].blank? || opts[:skip_virtual] || !card.virtual?
+          return card.renew(opts)
+        end
+        
+        if opts[:name] && opts[:name] != card.name
+          card.name = opts[:name]
+        end
+      end
 
-      #warn "fetch returning #{card.inspect}"
       card.include_set_modules unless opts[:skip_modules]
       card
     end
@@ -104,8 +112,8 @@ module Cardlib::Fetch
       fetch name, :skip_virtual=>true
     end
 
-    def exists? cardname
-      card = fetch cardname, :skip_virtual=>true, :skip_modules=>true
+    def exists? name
+      card = fetch name, :skip_virtual=>true, :skip_modules=>true
       card.present?
     end
 
@@ -125,8 +133,6 @@ module Cardlib::Fetch
     end
 
     def set_members set_names, key
-
-      #warn Rails.logger.warn("set_members #{set_names.inspect}, #{key}")
       set_names.compact.map(&:to_name).map(&:key).map do |set_key|
         skey = "$#{set_key}" # dollar sign avoids conflict with card keys
         h = Card.cache.read skey
@@ -137,7 +143,6 @@ module Cardlib::Fetch
         end
         h = h.dup if h.frozen?
         h[key] = true
-        #warn Rails.logger.warn("set_members w #{h.inspect}, #{skey.inspect}")
         Card.cache.write skey, h
       end
     end
@@ -153,8 +158,12 @@ module Cardlib::Fetch
     end
   end
 
-  def fetch_new opts={}
-    opts = opts[:new] and Card.new opts.merge(:name=>cardname)
+  def renew args={}
+    if opts = args[:new]
+      opts[:name] = cardname
+      opts[:skip_modules] = args[:skip_modules]
+      Card.new opts
+    end
   end
 
   def expire_pieces
@@ -166,7 +175,7 @@ module Cardlib::Fetch
   def expire_related
     self.expire
 
-    if self.hard_template?
+    if self.is_hard_template?
       self.hard_templatee_names.each do |name|
         Card.expire name
       end
@@ -186,8 +195,8 @@ module Cardlib::Fetch
     Card.cache.delete "~#{id}" if id
   end
 
-  def refresh
-    if self.frozen? || self.readonly?
+  def refresh force=false
+    if force || self.frozen? || self.readonly?
       fresh_card = self.class.find id
       fresh_card.include_set_modules
       fresh_card

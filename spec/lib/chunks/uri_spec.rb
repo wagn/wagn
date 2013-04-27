@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe URIChunk, "URI chunk tests" do
@@ -233,11 +234,13 @@ describe URIChunk, "URI chunk tests" do
   it "should test_interesting_uri_with__comma" do
     # Counter-intuitively, this URL matches, but the query part includes the trailing comma.
     # It has no way to know that the query does not include the comma.
+    # The trailing , addition breaks this test, but is this test actually valid?
+    # It seems better to exclude the comma from the uri, YMMV
     match_chunk(
         URIChunk,
         "This text contains a URL http://someplace.org:8080/~person/stuff.cgi?arg=val, doesn't it?",
         :scheme => 'http', :host => 'someplace.org', :port => 8080, :path => '/~person/stuff.cgi',
-        :query => 'arg=val,')
+        :query => 'arg=val')
   end
 
  describe URIChunk, "URI chunk tests" do

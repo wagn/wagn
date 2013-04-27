@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Wagn
   module Set::Self::HeadAndFoot
     include Sets
@@ -10,8 +11,12 @@ module Wagn
       title = params[:action] if title=='*placeholder'
       bits = ["<title>#{title ? "#{title} - " : ''}#{ Card.setting :title }</title>"]
 
-      if favicon_card = Card[:favicon] and favicon_card.type_id == Card::ImageID
-        bits << %{<link rel="shortcut icon" href="#{ subrenderer(favicon_card)._render_source :size=>:icon }" />}
+      icon_card = nil
+      [:favicon, :logo].find do |name|
+        icon_card = Card[name] and icon_card.type_id == Card::ImageID and !icon_card.content.blank?
+      end
+      if icon_card
+        bits << %{<link rel="shortcut icon" href="#{ subrenderer(icon_card)._render_source :size=>:icon }" />}
       end
 
       #Universal Edit Button
@@ -24,12 +29,12 @@ module Wagn
         if root.card.type_id == Card::SearchTypeID
           opts = { :format => :rss }
           root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
-          rss_href = path_for_page root.card.name, opts
-          bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{rss_href} />}
+          rss_href = page_path root.card.name, opts
+          bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{wagn_path rss_href} />}
         end
       end
 
-      bits << %{<meta name="viewport" content="width=device-width, initial-scale=0.8">}
+      bits << %{<meta name="viewport" content="width=device-width, initial-scale=1.0"/>}
       # CSS
       #bits << stylesheet_link_tag('http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css')
       bits << stylesheet_link_tag('application-all')

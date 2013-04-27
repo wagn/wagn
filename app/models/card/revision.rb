@@ -2,8 +2,18 @@
 class Card::Revision < ActiveRecord::Base
   before_save :set_stamper
 
-  def self.cache
-    Wagn::Cache[Card::Revision]
+  class << self
+    def cache
+      Wagn::Cache[Card::Revision]
+    end
+    
+    def delete_old
+      where( Card.where( :current_revision_id=>arel_table[:id] ).exists.not ).delete_all
+    end
+    
+    def delete_cardless
+      where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
+    end
   end
 
   def set_stamper

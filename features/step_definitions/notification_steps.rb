@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
 
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
@@ -6,8 +7,9 @@ Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
 end
 
 Then /^(.*) should be notified that "(.*)"$/ do |username, subject|
-  user = User.where(:card_id=>(username == "I") ? @current_id : Card[username].id).first
-  email = user.email
+  card_with_acct = username=='I' ? Account.current : Card[username]
+  email = card_with_acct.account.email
+
   begin
     step %{"#{email}" should receive 1 email}
   rescue RSpec::Expectations::ExpectationNotMetError=>e

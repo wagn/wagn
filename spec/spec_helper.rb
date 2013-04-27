@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
@@ -15,16 +16,12 @@ end
 
 Spork.prefork do
   require File.expand_path File.dirname(__FILE__) + "/../config/environment"
-  require File.expand_path File.dirname(__FILE__) + "/../lib/authenticated_test_helper.rb"
+  require File.expand_path File.dirname(__FILE__) + "/../lib/authenticated_test_helper"
+
+  #require File.expand_path File.dirname(__FILE__) + "/../lib/util/card_builder"
   require 'rspec/rails'
 
   require_dependency 'chunks/chunk'
-  require_dependency 'chunks/uri'
-  require_dependency 'chunks/literal'
-  require_dependency 'chunks/reference'
-  require_dependency 'chunks/link'
-  require_dependency 'chunks/include'
-
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
@@ -50,6 +47,7 @@ Spork.prefork do
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
+
 
     config.before(:each) do
       Wagn::Cache.restore
@@ -96,10 +94,8 @@ end
   }
 
   def integration_login_as(user, functional=nil)
-    User.cache.reset
-
     raise "Don't know email & password for #{user}" unless uc=Card[user] and
-        u=User.where(:card_id=>uc.id).first and
+        u=User[ uc.id ] and
         login = u.email and pass = USERS[login]
 
     if functional
@@ -120,7 +116,7 @@ end
   def post_invite(options = {})
     action = options[:action] || :invite
     post action,
-      :user => { :email => 'new@user.com' }.merge(options[:user]||{}),
+      :account => { :email => 'new@user.com' }.merge(options[:account]||{}),
       :card => { :name => "New User" }.merge(options[:card]||{}),
       :email => { :subject => "mailit",  :message => "baby"  }
   end

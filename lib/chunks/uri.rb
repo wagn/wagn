@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'uri'
 require_dependency 'chunks/chunk'
 
@@ -37,10 +38,10 @@ class URIChunk < Chunks::Abstract
 
   def initialize match, card_params, params
     super
-    last_char = match[-1]
+    last_char = match[-1,1]
     match.gsub!(/(?:&nbsp;)+/, '')
 
-    @trailing_punctuation = if %w{ . ) ! ? : }.member?(last_char)
+    @trailing_punctuation = if %w{ , . ) ! ? : }.member?(last_char)
       ch = match.chop!
       last_char
     end
@@ -48,10 +49,9 @@ class URIChunk < Chunks::Abstract
 
     @link_text = match
 
-    #warn "parsing[#{self.class}]#{@trailing_punctuation}>#{match}"
+    #warn "uri parse[#{match.inspect}]"
     @uri = URI.parse( match )
     @process_chunk = self.renderer ? "#{self.renderer.build_link(@link_text, @link_text)}#{@trailing_punctuation}" : @text
-    #warn "init URI[#{@process_chunk}]#{link_text}, #{uri.inspect}:: U:#{self.inspect}, sc:#{uri.scheme}, h:#{uri.host}, pt:#{uri.port}, path:#{uri.path}, q:#{uri.query}"
     self
   end
 
@@ -117,7 +117,7 @@ class HostURIChunk < URIChunk
   def initialize match, card_params, params
     super
     @text = @text.sub(/^http:\/\//,'')  # this removes the prepended string from the unchanged match text
-    #warn "host chunk #{@text}, #{@link_text} tp:#{@trailing_punctuation}"
+    #warn "huri t:#{@text}, #{match}, #{params.inspect}"
     @process_chunk = self.renderer ? "#{self.renderer.build_link(@link_text, @text)}#{@trailing_punctuation}" : @text
   end
 end

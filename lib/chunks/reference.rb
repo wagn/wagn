@@ -1,39 +1,42 @@
+# -*- encoding : utf-8 -*-
 require_dependency 'chunks/chunk'
 
 module Chunks
   class Reference < Abstract
-    attr_accessor :cardname
+    attr_accessor :referee_name, :name
 
-    def cardname= name
-      return @cardname=nil unless name
-      @cardname = name.to_name
+    def referee_name
+      return if name.nil?
+        
+      @referee_name ||= ( render_obj name ).to_name
+      @referee_name = @referee_name.to_absolute(card.cardname).to_name
     end
 
-    def refcardname
-      cardname && self.cardname = cardname.to_absolute(card.cardname).to_name
-      #warn "rercardname #{inspect}, #{cardname.nil? ? 'nil' : cardname.to_absolute(card.cardname)}"; cardname
+    def referee_card
+      @referee_card ||= referee_name && Card.fetch( referee_name )
     end
 
-    def reference_card
-      @refcard ||= refcardname && Card.fetch(refcardname)
+    def referee_id
+      referee_card and referee_card.id
     end
 
-    def reference_id
-      rc=reference_card and rc.id
+    def replace_name_reference old_name, new_name
+      #warn "ref rnr #{inspect}, #{old_name}, #{new_name}"
+      @referee_card = @referee_name = nil
+      if ObjectContent===name
+        name.find_chunks(Chunks::Reference).each { |chunk| chunk.replace_reference old_name, new_name }
+      else
+        @name = name.to_name.replace_part( old_name, new_name )
+      end
     end
-
-    def reference_name
-      rc=refcardname and rc.key or ''
-    end
-
-    def link_text
-      refcardname.to_s
-    end
-
-    def render_link
-      lt = self.link_text
-      lt = renderer.process_content( lt ) if ObjectContent===lt 
-      renderer.build_link refcardname, lt
+    
+    def render_obj raw
+      if renderer && ObjectContent===raw
+        renderer.card.references_expired = nil # don't love this; this is to keep from running update_references again
+        renderer.process_content raw
+      else
+        raw
+      end
     end
   end
 end

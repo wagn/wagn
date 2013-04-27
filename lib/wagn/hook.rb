@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Wagn
   class Hook
     cattr_reader :registry

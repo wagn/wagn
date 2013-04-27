@@ -8,6 +8,7 @@ wagn.editorContentFunctionMap = {
   '.pointer-list-ul'       : -> pointerContent @find('input'        ).map( -> $(this).val() )
   '.pointer-checkbox-list' : -> pointerContent @find('input:checked').map( -> $(this).val() )
   '.perm-editor'           : -> permissionsContent this # must happen after pointer-list-ul, I think
+  '.wikirate-topic-tree'   : -> pointerContent @find('.jstree-clicked').map( -> $.trim( $(this).text() ) )
 }
 
 wagn.editorInitFunctionMap = {
@@ -16,6 +17,14 @@ wagn.editorInitFunctionMap = {
   '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
   '.file-upload'           : -> @fileupload( add: wagn.chooseFile )#, forceIframeTransport: true )
   '.etherpad-textarea'     : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
+  '.wikirate-topic-tree'   : -> $(this).jstree
+     plugins: ["themes","html_data","ui","crrm"],
+     ui:      
+       select_multiple_modifier: 'on'
+       initially_select: $(this).closest('.editor').find('.initial-content').text().split '|'
+       selected_parent_close: false
+     themes: icons: false
+
 }
 
 wagn.initPointerList = (input)->
@@ -59,16 +68,11 @@ wagn.chooseFile = (e, data) ->
   # we add and remove the contentField to insure that nothing is added / updated when nothing is chosen.
 
 wagn.openMenu = (link) ->
-  # if card menu already exists
-  #   show it
-  # else
-  #   get the template menu
-  #   make a copy right after menu link (or associate if necessary)
-  #   do simple substitutions?
   cm = $(link).find '.card-menu'
-  cm.menu position: { my:'right top', at:'left top' }, 
-    icons:{ submenu:'ui-icon-carat-1-w' }
+  unless $(link).find('.ui-menu-icon')[0]
+    cm.menu position: { my:'right top', at:'left-2 top-3' }, icons: { submenu:'ui-icon-carat-1-w' }
   cm.show()
+  cm.position my:'right top', at:'right+2 top+2', of: link
   
 
 $(window).ready ->
@@ -93,21 +97,26 @@ $(window).ready ->
   $('.card-menu-link').live 'mouseenter', ->
     wagn.openMenu this
     
-  $('.card-menu').live 'mouseleave', ->
-    $(this).hide()
+  $('.card-menu-link').live 'mouseleave', ->
+    if $(this).find('.ui-menu')[0]
+      cm = $(this).find('.card-menu')
+      cm.hide()
+      cm.menu "collapseAll", null, true
 
-  $('.card-menu').live 'swipe', ->
-    $(this).hide()
-  
-  $('.card-menu-link').live 'tap', (event) ->
-    initiated_menu = $(this).find('.ui-menu')[0]
-    if initiated_menu
-      if $(initiated_menu).is ':hidden'
-        $(initiated_menu).show()
-        event.preventDefault()
-    else
-      wagn.openMenu this
+  $('.card-header').live 'tap', (event) ->
+    link = $(this).find('.card-menu-link')
+    unless !link[0] or                                             # no gear
+        $(event.target).closest('.card-menu')[0] or                # already in menu
+        event.pageX - $(this).offset().left < $(this).width() / 2  # left half of header
+      
+      link.find('.card-menu').addClass 'card-menu-tappable'
+      wagn.openMenu link
       event.preventDefault()
+  
+  $('body').live 'tap', (event) ->
+    unless $(event.target).closest('.card-header')[0] or $(event.target).closest('.card-menu-link')[0]
+      $('.card-menu').hide()
+      # this and mouseleave should use a close menu method that handles collapsing. (though not seeing bad behavior...)
 
   $('.ui-menu-icon').live 'tap', (event)->
     $(this).closest('li').trigger('mouseenter')
@@ -151,8 +160,8 @@ $(window).ready ->
       $(this).notify 'To what Set of cards does this Rule apply?'
       false
 
-  $('body').delegate '.rule-cancel-button', 'click', ->
-    $(this).closest('tr').find('.close-rule-link').click()
+#  $('body').delegate '.rule-cancel-button', 'click', ->
+#    $(this).closest('tr').find('.close-rule-link').click()
 
 
   # etherpad pack
@@ -180,6 +189,46 @@ $(window).ready ->
   if firstShade = $('.shade-view h1')[0]
     $(firstShade).trigger 'click'
     
+
+  #wikirate pack
+  $('#wikirate-nav > a').live 'mouseenter', ->
+    ul = $(this).find 'ul'
+    if ul[0]
+      ul.css 'display', 'inline-block'
+    else
+      link = $(this)
+      $.ajax link.attr('href'), {
+        data : { view: 'navdrop', layout: 'none', index: $('#wikirate-nav > a').index(link) },
+#        type : 'POST',
+        success: (data) ->
+          #alert 'success!'
+          wagn.d = data
+          link.prepend $(data).menu()
+      }
+  
+  $('#wikirate-nav ul').live 'mouseleave', ->
+    $(this).hide()
+      
+  $('.TYPE-claim .card-editor fieldset.RIGHT-source_type').live 'change', ->
+    f = $(this).closest 'form' 
+    val = $(this).find('input:checked').val()
+    
+    new_field      = f.find 'fieldset.RIGHT-source_link'
+    existing_field = f.find 'fieldset.RIGHT-source'
+    
+    if val == 'existing'
+      existing_field.show()
+      new_field.hide()
+    else
+      existing_field.hide()
+      new_field.show()
+
+  $('.TYPE-claim .card-editor fieldset.RIGHT-source_type').trigger 'change'
+  
+  $('.go-to-selected select').live 'change', ->
+    val = $(this).val()
+    if val != ''
+      window.location = wagn.rootPath + escape( val )
 
 $(document).bind 'mobileinit', ->
   $.mobile.autoInitializePage = false
@@ -231,7 +280,7 @@ navboxize = (term, results)->
         i.icon = key
         i.term = term
       else if key == 'add'
-        i.href = '/card/new?card[name]=' + encodeURIComponent(term)
+        i.href = '/card/new?card[name]=' + encodeURIComponent(val)
       else if key == 'new'
         i.type = 'add' # for icon
         i.href = '/new/' + val[1]

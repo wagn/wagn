@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Card do
@@ -46,16 +47,22 @@ describe Card do
       Card['A+*self'].should be_nil
       Card.fetch( 'A+*self' ).should_not be_nil
     end
+    
 
     it "fetches newly virtual cards" do
       #pending "needs new cache clearing"
       Card.fetch( 'A+virtual').should be_nil
-      Account.as_bot { Card.create :name=>'virtual+*right+*content' }
+      Account.as_bot { Card.create :name=>'virtual+*right+*structure' }
       Card.fetch( 'A+virtual').should_not be_nil
+    end
+    
+    it "handles name variants of cached cards" do
+      Card.fetch('yomama+*self').name.should == 'yomama+*self'
+      Card.fetch('YOMAMA+*self').name.should == 'YOMAMA+*self'
     end
 
     it "does not recurse infinitely on template templates" do
-      Card.fetch("*content+*right+*content").should be_nil
+      Card.fetch("*structure+*right+*structure").should be_nil
     end
 
     it "expires card and dependencies on save" do
@@ -95,16 +102,16 @@ describe Card do
       end
 
       it "prefers db cards to pattern virtual cards" do
-        c1=Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
+        c1=Card.create!(:name => "y+*right+*structure", :content => "Formatted Content")
         c2=Card.create!(:name => "a+y", :content => "DB Content")
         card = Card.fetch("a+y")
         card.virtual?.should be_false
-        card.rule(:content).should == "Formatted Content"
+        card.rule(:structure).should == "Formatted Content"
         card.content.should == "DB Content"
       end
 
       it "prefers a pattern virtual card to trash cards" do
-        Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
+        Card.create!(:name => "y+*right+*structure", :content => "Formatted Content")
         Card.create!(:name => "a+y", :content => "DB Content")
         Card.fetch("a+y").delete!
 
@@ -114,18 +121,20 @@ describe Card do
       end
 
       it "should recognize pattern overrides" do
-        tc=Card.create!(:name => "y+*right+*content", :content => "Right Content")
+        #~~~ create right rule
+        tc=Card.create!(:name => "y+*right+*structure", :content => "Right Content")
         card = Card.fetch("a+y")
         card.virtual?.should be_true
         card.content.should == "Right Content"
-        tpr = Card.create!(:name => "Basic+y+*type plus right+*content", :content => "Type Plus Right Content")
-        card.reset_patterns
+        
+#        warn "creating template"
+        tpr = Card.create!(:name => "Basic+y+*type plus right+*structure", :content => "Type Plus Right Content")
         card = Card.fetch("a+y")
-        card.reset_patterns
         card.virtual?.should be_true
         card.content.should == "Type Plus Right Content"
+
+        #~~~ delete type plus right rule
         tpr.delete!
-        card.reset_patterns
         card = Card.fetch("a+y")
         card.virtual?.should be_true
         card.content.should == "Right Content"
@@ -133,7 +142,7 @@ describe Card do
       end
 
       it "should not hit the database for every fetch_virtual lookup" do
-        Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
+        Card.create!(:name => "y+*right+*structure", :content => "Formatted Content")
         Card.fetch("a+y")
         mock.dont_allow(Card).find_by_key
         Card.fetch("a+y")
@@ -165,15 +174,16 @@ describe Card do
       new_card.should be_instance_of(Card)
       new_card.typecode.should == :image
       new_card.new_record?.should be_true
+      Card.fetch( 'Never Before', :new=>{} ).type_id.should == Card::BasicID
     end
   end
 
   describe "#fetch_virtual" do
     before { Account.as :joe_user }
 
-    it "should find cards with *right+*content specified" do
+    it "should find cards with *right+*structure specified" do
       Account.as_bot do
-        Card.create! :name=>"testsearch+*right+*content", :content=>'{"plus":"_self"}', :type => 'Search'
+        Card.create! :name=>"testsearch+*right+*structure", :content=>'{"plus":"_self"}', :type => 'Search'
       end
       c = Card.fetch("A+testsearch".to_name)
       assert c.virtual?

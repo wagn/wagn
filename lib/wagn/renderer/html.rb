@@ -1,8 +1,9 @@
+# -*- encoding : utf-8 -*-
 module Wagn
   class Renderer::Html < Renderer
-
+    cattr_accessor :default_menu
     attr_accessor  :options_need_save, :start_time, :skip_autosave
-    DEFAULT_ITEM_VIEW = :closed  #FIXME: It can't access this default
+#    DEFAULT_ITEM_VIEW = :closed  #FIXME: It can't access this default
 
     # these initialize the content of missing builtin layouts
     LAYOUTS = { 'default' => %{
@@ -67,19 +68,80 @@ module Wagn
   <html> <body><pre>{{_main|raw}}</pre></body> </html> },
 
    }
+   
+   
+    @@default_menu = [ 
+      { :view=>:edit, :text=>'edit', :if=>:edit, :sub=>[
+          { :view=>:edit,      :text=>'content'       },
+          { :view=>:edit_name, :text=>'name'          },
+          { :view=>:edit_type, :text=>'type: %{type}' },
+          { :related=>{ :name=>:structure, :view=>:edit }, :text=>'structure', :if=>:structure },
+          { :link=>:delete,    :if=>:delete           }
+        ] },
+      { :view=>:home, :text=>'view', :sub=> [
+          { :view=>:home,                    :text=>'refresh'                    },
+          { :page=>:self,                    :text=>'page'                       },
+          { :page=>:type,                    :text=>'type: %{type}'              },
+          { :view=>:changes,                 :text=>'history',   :if=>:edit      },
+          { :related=>{ :name=>:structure }, :text=>'structure', :if=>:structure },
+        ] },
+      { :related=>:discussion, :text=>'discuss', :if=>:discuss },
+      { :view=>:options, :text=>'advanced', :sub=>[
+          { :view=>:options, :text=>'rules', :sub=>[
+              :list => { :related_sets=> { :view=>:options, :text=>:text, :path_opts=>:path_opts } }
+            ] },
+          { :plain=>'related', :sub=>[
+              { :list    => { :piecenames => { :page=>:item } }, :if => :piecenames },
+              { :related => :children },
+              { :related => :mates    },
+            ] },
+          { :related=>:referred_to_by, :sub=>[
+              { :related=>:referred_to_by, :text=>"all"        },                  
+              { :related=>:linked_to_by,   :text=>"links"      },                  
+              { :related=>:included_by,    :text=>"inclusions" }
+            ] },            
+          { :related=>:refers_to, :sub=>[
+              { :related=>:refers_to,      :text=>"all"        },
+              { :related=>:links_to,       :text=>"links"      },
+              { :related=>:includes,       :text=>"inclusions" }                  
+            ] },           
+          { :related=>:editors, :if=>:creator, :sub=>[
+              { :related=>:editors, :text=>'all editors'             },
+              { :page=>:creator,    :text=>"creator: %{creator}"     },
+              { :page=>:updater,    :text=>"last editor: %{updater}" },
+            ] },
+        ] },
+        { :link=>:watch,   :if=>:watch   },
+        { :view=>:account, :if=>:account, :sub=>[
+            { :view    => :account, :text=>'details' },
+            { :related => :created },
+            { :related => :edited  }
+          ] }
+
+    ]
+
+=begin
+, :sub=>[
+    { :view=>:titled  },
+    { :view=>:open    },
+    { :view=>:closed  },
+    { :view=>:content },
+#              { :view=>:change  },  
+  ]
+=end
 
 
     def get_layout_content(args)
       Account.as_bot do
         case
-          when (params[:layout] || args[:layout]) ;  layout_from_name
+          when (params[:layout] || args[:layout]) ;  layout_from_name args
           when card                               ;  layout_from_card
           else                                    ;  LAYOUTS['default']
         end
       end
     end
 
-    def layout_from_name
+    def layout_from_name args
       lname = (params[:layout] || args[:layout]).to_s
       lcard = Card.fetch(lname, :skip_virtual=>true, :skip_modules=>true)
       case
@@ -100,25 +162,40 @@ module Wagn
       lo_card.content
     end
 
+    def slot_options
+      @@slot_options ||= Chunks::Include.options.keys.reject { |k| k == :view }.unshift :home_view
+    end
 
     def wrap view, args = {}
       classes = ['card-slot', "#{view}-view"]
       classes << 'card-frame' if args[:frame]
       classes << card.safe_keys if card
 
-      attributes = { :class => classes.join(' ') }
-      [:style, :home_view, :item].each { |key| attributes[key] = args[key] }
+      attributes = { 
+        :class => classes*' ',
+        :style=>args[:style]
+      }
+      
+      slot_options.each do |key|
+        attributes["slot-#{key}"] = args[key] if args[key].present?
+      end
 
       if card
         attributes['card-id']  = card.id
         attributes['card-name'] = card.name
       end
-
+      
+      if @context_names
+        attributes['slot-name_context'] = @context_names.map( &:key ) * ','
+      end
+      
       content_tag(:div, attributes ) { yield }
     end
 
     def wrap_content view, args={}
-      raw %{<span class="#{view}-content content #{'card-body' if args[:body] } #{args[:class]}">#{ yield }</span>}
+      tag_type = args[:body] ? :div : :span
+      klass = ["#{view}-content content", args[:class], ('card-body' if args[:body])].compact * ' '
+      content_tag( tag_type, :class=>klass ) { yield }
     end
 
     def wrap_main(content)
@@ -136,20 +213,42 @@ module Wagn
           process_content( inc ).strip
         end.join
 #        raw _render_core(args)
-      elsif card.new_card?
-        fieldset '', content_field( form )
+      elsif label = args[:label]
+        label = '' if label == true
+        fieldset label, content_field( form ), :editor=>:content
       else
-        content_field form
+        editor_wrap( :content ) { content_field form }
       end
     end
 
     #### --------------------  additional helpers ---------------- ###
-    def notice
+    def notice #note, this is only needed if you want the notice somewhere other than the end of the slot
       %{<div class="card-notice"></div>}
     end
 
     def rendering_error exception, view
-      %{<span class="render-error">error rendering #{link_to_page(error_cardname, nil, :title=>CGI.escapeHTML(exception.message))} (#{view} view)</span>}
+      %{
+        <span class="render-error">
+          error rendering
+          #{
+            if Account.always_ok?
+              %{
+                #{ link_to_page error_cardname, nil, :class=>'render-error-link' }
+                <div class="render-error-message errors-view" style="display:none">
+                  <h3>Error message (visible to admin only)</h3>
+                  <p><strong>#{ exception.message }</strong></p>
+                  <div>
+                    #{exception.backtrace * "<br>\n"}
+                  </div>
+                </div>
+              }
+            else
+              error_cardname
+            end
+          }
+          (#{view} view)
+        </span>
+      }
     end
     
     def unknown_view view
@@ -160,11 +259,14 @@ module Wagn
       "<strong>view <em>#{view}</em> not supported for <em>#{error_cardname}</em></strong>"
     end
 
-    def link_to_view text, view, html_opts={}
-      html_opts[:remote] = true
-      html_opts[:rel] = 'nofollow'
-      path_opts = view==:read ? {} : { :view=>view }
-      link_to text, path( path_opts ), html_opts
+    def link_to_view text, view, opts={}
+      path_opts = view==:home ? {} : { :view=>view }
+      if p = opts.delete( :path_opts )
+        path_opts.merge! p
+      end
+      opts[:remote] = true
+      opts[:rel] = 'nofollow'
+      link_to text, path( path_opts ), opts
     end
 
     def name_field form=nil, options={}
@@ -192,12 +294,10 @@ module Wagn
       revision_tracking = if card && !card.new_card? && !options[:skip_rev_id]
         form.hidden_field :current_revision_id, :class=>'current_revision_id'
       end
-      editor_wrap :content do
-        %{
+      %{
         #{ revision_tracking }
-        #{ _render_editor    }
-        }
-      end
+        #{ _render_editor options }
+      }
     end
 
     def form_for_multi
@@ -223,60 +323,45 @@ module Wagn
       opts
     end
 
-    def option content, args
-      args[:label] ||= args[:name]
-      args[:editable]= true unless args.has_key?(:editable)
-      self.options_need_save = true if args[:editable]
-      raw %{<tr>
-        <td class="inline label"><label for="#{args[:name]}">#{args[:label]}</label></td>
-        <td class="inline field">
-      } + content + %{
-        </td>
-        <td class="help">#{args[:help]}</td>
-        </tr>
-      }
-    end
-
-    def option_header title
-      raw %{<tr><th colspan="3" class="option-header"><h2>#{title}</h2></th></tr>}
-    end
-
-    def editor_wrap type
-      content_tag( :div, :class=>"editor #{type}-editor" ) { yield }
+    def editor_wrap type=nil
+      content_tag( :div, :class=>"editor#{ " #{type}-editor" if type }" ) { yield }
     end
 
     def fieldset title, content, opts={}
+      if attribs = opts[:attribs]
+        attrib_string = attribs.keys.map do |key| 
+          %{#{key}="#{attribs[key]}"}
+        end * ' '
+      end
+      help_args = case opts[:help]
+        when String ; { :text=> opts[:help] }
+        when Symbol ; { :setting => opts[:help] }
+        when Hash   ; opts[:help]
+        else        ; {}
+      end
       %{
-        <fieldset #{ opts[:attribs] }>
+        <fieldset #{ attrib_string }>
           <legend>
             <h2>#{ title }</h2>
-            #{ help_text *opts[:help] }
+            #{ _render_help help_args }
           </legend>
-          #{ content }
+          #{ editor_wrap( opts[:editor] ) { content } }
         </fieldset>
       }
     end
 
-    private
-
-    def help_text *opts
-      text = case opts[0]
-        when Symbol
-          if help_card = card.rule_card( *opts )
-            with_inclusion_mode :normal do
-              subrenderer( help_card ).render_core
-            end
-          end
-        when String
-          opts[0]
-        end
-      %{<div class="instruction">#{raw text}</div>} if text
+    def main?
+      if ajax_call?
+        @depth == 0 && params[:is_main]
+      else
+        @depth == 1 && @mainline
+      end
     end
 
-    def fancy_title name=nil
-      name ||= showname
-      title = name.to_name.parts.join %{<span class="joint">+</span>}
-      raw title
+    private
+
+    def fancy_title title=nil
+      raw %{<span class="card-title">#{showname(title).to_name.parts.join %{<span class="joint">+</span>} }</span>}
     end
 
     def load_revisions
@@ -316,9 +401,9 @@ module Wagn
     end
 
     def forward
-      if @revision_number < card.revisions.length
+      if @revision_number < card.revisions.count
         revision_link('Newer', @revision_number +1, 'to_next_revision', 'F' ) +
-          raw(" <small>(#{card.revisions.length - @revision_number})</small>")
+          raw(" <small>(#{card.revisions.count - @revision_number})</small>")
       else
         'Newer <small>(0)</small>'
       end

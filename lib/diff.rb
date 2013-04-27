@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module HTMLDiff
 
   Match = Struct.new(:start_in_old, :start_in_new, :size)

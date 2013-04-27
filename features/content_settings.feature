@@ -6,11 +6,11 @@ Feature: Content Settings
   Background:
     Given I log in as Joe Admin
     And I create Cardtype card "Movie"
-    And I create card "Movie+*type+*content" with content "{{+director}} {{+lead}} {{+color}}"
+    And I create card "Movie+*type+*structure" with content "{{+director}} {{+lead}} {{+color}}"
     And I create Phrase card "color+*right+*default" with content "true dat"
 
-  Scenario: New card with templated content
-    When I edit "Movie+*type+*content"
+  Scenario: New structured card
+    When I edit "Movie+*type+*structure"
     And I should see "{{+lead}}"
     When I go to new Movie
     Then I should see "+director"

@@ -3,6 +3,7 @@ body {
   color: #444;
   font-style: normal;
   margin: 0px;
+  min-width: 480px;
 }
 body, p, ol, ul, td, th, textarea {
   font-family: verdana, arial, helvetica, sans-serif;
@@ -12,7 +13,6 @@ body, p, ol, ul, td, th, textarea {
 body, p, ol, ul {
   line-height: 21px;
 }
-
 
 /*--------- headers and links --------------*/
 h1 {
@@ -24,12 +24,6 @@ h2 {
 h1, h2 {
   font-weight: bold;
   margin: 0px;
-}
-/* headers outside of cards */
-h1.page-header,
-h2.page-header {
-  font-weight: normal;
-  margin: 0 0 10px 0;
 }
 a {
   color: #279;
@@ -58,10 +52,6 @@ td, th {
   vertical-align: top;
   padding: 0px;
 }
-.table-row-odd {
-  background: #cce;
-}
-
 
 /*---- headers --------*/
 input[type=text],
@@ -94,7 +84,9 @@ textarea {
 body.mceContentBody {
   margin: 4px;
 }
-
+input, select {
+  max-width: 100%;
+}
 
 /*-- miscellaneous --*/
 form {

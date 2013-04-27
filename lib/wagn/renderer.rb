@@ -1,23 +1,24 @@
-require_dependency "cardlib"
+# -*- encoding : utf-8 -*-
 
 module Wagn
   class Renderer
-    Card::Reference
+
     include LocationHelper
+    
+    cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :current_class
+    attr_reader :card
+
+    @@current_class = Renderer
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
-    DEFAULT_ITEM_VIEW = :link  # should be set in card?
+    #DEFAULT_ITEM_VIEW = :link  # should be set in card?
 
     RENDERERS = { #should be defined in renderer
       :email => :EmailHtml,
-      :css  => :Text,
       :txt  => :Text
     }
-
-    cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags
-    cattr_reader :renderer
 
     @@max_char_count = 200 #should come from Wagn::Conf
     @@max_depth      = 10 # ditto
@@ -28,31 +29,11 @@ module Wagn
     @@view_tags      = {}
     @@renderer = Renderer
 
-    def self.get_renderer format
-      @@renderer = format.nil? || format == :base ? Renderer :
-        const_get( if RENDERERS.has_key? format
-            RENDERERS[ format ]
-          else
-            format.to_s.camelize.to_sym
-          end )
-    end
-
-    def self.renderer= format
-      @@renderer = get_renderer format
-    end
-
-    attr_reader :format, :card, :root, :parent
-    attr_accessor :form, :main_content, :error_status
-
-    Card
-    Card::Reference
-    include LocationHelper
-
-  end
-
-  class Renderer
-
     class << self
+
+      def get_renderer format
+        const_get( RENDERERS[ format ] || format.to_s.camelize.to_sym )
+      end
 
       def new card, opts={}
         format = ( opts[:format].send_if :to_sym ) || :html
@@ -75,20 +56,19 @@ module Wagn
     end
 
     def initialize card, opts={}
-      Renderer.current_slot ||= self unless(opts[:not_current])
+      Renderer.current_slot ||= self unless opts[:not_current]
       @card = card
-      opts.each { |key, value| instance_variable_set "@#{key}", value }
+      opts.each do |key, value|
+        instance_variable_set "@#{key}", value
+      end
+
       @format ||= :html
       @char_count = @depth = 0
       @root = self
 
-      @context_names ||= if context_name_list = params[:name_context]
+      @context_names ||= if params[:slot] && context_name_list = params[:slot][:name_context]
         context_name_list.split(',').map &:to_name
       else [] end
-
-      if card && card.collection? && params[:item] && !params[:item].blank?
-        @item_view = params[:item]
-      end
     end
 
     def params()       @params     ||= controller.params                          end
@@ -97,16 +77,16 @@ module Wagn
     def session()      CardController===controller ? controller.session : {}      end
     def ajax_call?()   @@ajax_call                                                end
 
-    def showname
-      @showname ||= card.cardname.to_show *@context_names
-    end
-
-    def main?
-      if ajax_call?
-        @depth == 0 && params[:is_main]
+    def showname title=nil
+      if title
+        title.to_name.to_absolute_name(card.cardname).to_show *@context_names
       else
-        @depth == 1 && @mode == :main
+        @showname ||= card.cardname.to_show *@context_names
       end
+    end
+    
+    def main?
+      @depth == 0
     end
 
     def focal? # meaning the current card is the requested card
@@ -128,7 +108,7 @@ module Wagn
 
     def method_missing method_id, *args, &proc
       proc = proc {|*a| raw yield *a } if proc
-      #warn "mmiss #{self.class}, #{card.name}, #{method_id}"
+      #Rails.logger.warn "mmiss #{self.class}, #{@card.inspect}, #{caller[0]}, #{method_id}"
       response = template.send method_id, *args, &proc
       String===response ? template.raw( response ) : response
     end
@@ -154,7 +134,7 @@ module Wagn
 
     def optional_render view, args, default_hidden=false
       test = default_hidden ? :show : :hide
-      override = args[test] && args[test].member?(view.to_s)
+      override = args[test] && args[test].split(/[\s\,]+/).member?( view.to_s )
       return nil if default_hidden ? !override : override
       render view, args
     end
@@ -167,7 +147,7 @@ module Wagn
     def rescue_view e, view
       controller.send :notify_airbrake, e if Airbrake.configuration.api_key
       Rails.logger.info "\nError rendering #{error_cardname} / #{view}: #{e.class} : #{e.message}"
-      Rails.logger.debug "  #{e.backtrace*"\n  "}"
+      Rails.logger.debug "BT:  #{e.backtrace*"\n  "}"
       rendering_error e, view
     end
 
@@ -191,20 +171,20 @@ module Wagn
     # ------------- Sub Renderer and Inclusion Processing ------------
     #
 
-    def subrenderer subcard, opts={}
+    def subrenderer subcard, mainline=false
+      #should consider calling "child"
       subcard = Card.fetch( subcard, :new=>{} ) if String===subcard
       sub = self.clone
-      sub.initialize_subrenderer subcard, self, opts
+      sub.initialize_subrenderer subcard, self, mainline
     end
 
-    def initialize_subrenderer subcard, parent, opts
-      @parent=parent
+    def initialize_subrenderer subcard, parent, mainline=false
+      @mainline ||= mainline
+      @parent = parent
       @card = subcard
       @char_count = 0
       @depth += 1
-      @item_view = @main_content = @showname = nil
-      opts.each { |key, value| instance_variable_set "@#{key}", value }
-      #Rails.logger.warn "subrenderer inited #{card && card.name} #{opts.inspect}, iv:#{@item_view}, #{@item}, #{@view}"
+      @main_content = @showname = @search = @ok = nil
       self
     end
 
@@ -218,7 +198,7 @@ module Wagn
 
       obj_content = ObjectContent===content ? content : ObjectContent.new(content, {:card=>card, :renderer=>self})
 
-      card.update_references( obj_content, true ) if card.references_expired # I thik we need this genralized
+      card.update_references( obj_content, true ) if card.references_expired  # I thik we need this genralized
 
       obj_content.process_content_object do |opts|
         expand_inclusion(opts) { yield }
@@ -238,37 +218,49 @@ module Wagn
 
         # HANDLE UNKNOWN CARDS ~~~~~~~~~~~~
         when !card.known? && !self.class.tagged( view, :unknown_ok )
-          if focal?
-            if @format==:html && card.ok?(:create) ;  :new
-            else                                   ;  :not_found
-            end
-          else                                     ;  :missing
+    
+          case
+          when @format==:html && focal? && ok?( :create )
+            :new
+          when @format==:html && comment_box?( view, args ) && ok?( :comment )
+            view
+          when focal?
+            :not_found
+          else
+            :missing
           end
 
         # CHECK PERMISSIONS  ~~~~~~~~~~~~~~~~
         else
           perms_required = @@perms[view] || :read
-          if Proc === perms_required
-            args[:denied_task] = !(perms_required.call self)
-          else
-            args[:denied_task] = [perms_required].flatten.find do |task|
-              task = :create if task == :update && card.new_card?
-              !card.ok? task
+          args[:denied_task] =
+            if Proc === perms_required
+              :read if !(perms_required.call self)  # read isn't quite right
+            else
+              [perms_required].flatten.find { |task| !ok? task }
             end
-          end
           args[:denied_task] ? (@@denial_views[view] || :denial) : view
         end
 
-
       if view != original_view
         args[:denied_view] = original_view
-
-        if focal? && error_code = @@error_codes[view]
-          root.error_status = error_code
-        end
+      end
+      if focal? && error_code = @@error_codes[view]
+        root.error_status = error_code
       end
       #warn "ok_view[#{original_view}] #{view}, #{args.inspect}, Cd:#{card.inspect}" #{caller[0..20]*"\n"}"
       view
+    end
+    
+    def ok? task
+      task = :create if task == :update && card.new_card?
+      @ok ||= {}
+      @ok[task] = card.ok? task if @ok[task].nil?
+      @ok[task]
+    end
+    
+    def comment_box? view, args
+      self.class.tagged view, :comment and args[:show] =~ /comment_box/
     end
 
     def canonicalize_view view
@@ -297,7 +289,6 @@ module Wagn
     end
 
     def expand_inclusion opts
-      #warn "ex inc #{card.inspect}, #{opts.inspect}"
       case
       when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
@@ -308,7 +299,7 @@ module Wagn
         included_card = Card.fetch fullname, :new=>( @mode==:edit ? new_inclusion_card_args(opts) : {} )
 
         result = process_inclusion included_card, opts
-        @char_count += result.length if result
+        @char_count += result.length if @mode == :closed && result
         result
       end
     end
@@ -321,7 +312,7 @@ module Wagn
         end
       end
       opts[:view] = @main_view || opts[:view] || :open #FIXME configure elsewhere
-      opts[:include_name] = root.card.name
+      opts[:mainline] = true
       with_inclusion_mode :main do
         wrap_main process_inclusion( root.card, opts )
       end
@@ -332,10 +323,7 @@ module Wagn
     end
 
     def process_inclusion tcard, opts
-      sub_opts = { :item_view =>opts[:item] }
-      [ :type, :size ].each { |key| sub_opts[key] = opts[key] }
-      sub = subrenderer tcard, sub_opts
-
+      sub = subrenderer tcard, opts[:mainline]
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
       # don't like depending on this global var switch
       # I think we can get rid of it as soon as we get rid of the remaining rails views?
@@ -348,10 +336,15 @@ module Wagn
       # FIXME: special views should be represented in view definitions
 
       view = case
-      when @mode == :edit       ; @@perms[view]==:none || tcard.hard_template ? :blank : :edit_in_form
+      when @mode == :edit
+        if @@perms[view]==:none || tcard.hard_template || tcard.key.blank? # eg {{_self|type}} on new cards
+          :blank
+        else
+          :edit_in_form
+        end
+      when @mode == :template   ; :template_rule
       when @@perms[view]==:none ; view
       when @mode == :closed     ; !tcard.known?  ? :closed_missing : :closed_content
-      when @mode == :template   ; :template_rule
       else                      ; view
       end
 
@@ -381,70 +374,67 @@ module Wagn
 
     def path opts={}
       pcard = opts.delete(:card) || card
-      base = opts[:action] ? "/card/#{ opts.delete :action }" : ''
+      base = opts[:action] ? "/#{ opts.delete :action }" : ''
       if pcard && !pcard.name.empty? && !opts.delete(:no_id) && ![:new, :create].member?(opts[:action]) #generalize. dislike hardcoding views/actions here
         base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
       end
-      if attrib = opts.delete( :attrib )
-        base += "/#{attrib}"
-      end
-      query =''
-      if !opts.empty?
-        query = '?' + ( opts.map{ |k,v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&') )
-      end
+      query = opts.empty? ? '' : "?#{opts.to_param}"
       wagn_path( base + query )
     end
-
-    def search_params
-      @search_params ||= begin
-        p = self.respond_to?(:paging_params) ? paging_params : { :default_limit=> 100 }
-        p[:vars] = {}
-        if self == @root
-          params.each do |key,val|
-            case key.to_s
-            when '_wql'      ;  p.merge! val
-            when /^\_(\w+)$/ ;  p[:vars][$1.to_sym] = val
-            end
-          end
-        end
-        p
-      end
-    end
-
     #
     # ------------ LINKS ---------------
     #
 
-    def build_link href, text, known_card = nil
-      #Rails.logger.info "~~~~~~~~~~~~~~~ bl #{href.inspect}, #{text.inspect}, #{known_card.inspect}"
-      klass = case href.to_s
-        when /^https?:/                   ; 'external-link'
-        when /^mailto:/                   ; 'email-link'
-        when /^([a-zA-Z][\-+.a-zA-Z\d]*):/; $1 + '-link'
-        when /^\//
-          href = full_uri href.to_s
-          'internal-link'
-        else
-          known_card = !!Card.fetch(href, :skip_modules=>true) if known_card.nil?
-          if card
-            text = text.to_name.to_absolute_name(card.name).to_show *@context_names
-          end
+    # FIXME: shouldn't this be in the html version of this?  this should give plain-text links.
+    # Maybe like this:
+    #def final_link klass, href, text=nil
+    #  text = href if text.nil?
+    #  %{[#{klass}]#{href}"#{text && "(#{text.to_s}_"})}
+    #  # or
+    #  %{[#{klass =~ /wanted/ && '[missing]'}#{href}"#{text && "(#{text.to_s}_"})}
+    #end
 
-          #href+= "?type=#{type.url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
-          cardname = href.to_name
-          href = known_card ? cardname.url_key : ERB::Util.url_encode( cardname.to_s )
-          #note - CGI.escape uses '+' to escape space.  that won't work for us.
-          href = full_uri href.to_s
-          known_card ? 'known-card' : 'wanted-card'
+    # and move this to the html renderer
+    def final_link href, opts={}
+      text = opts[:text] || href
+      %{<a class="#{opts[:class]}" href="#{href}">#{text}</a>}
+    end
+
+    def build_link href, text=nil
+      opts = {:text => text }
+
+      opts[:class] = case href.to_s
+        when /^https?:/                      ; 'external-link'
+        when /^mailto:/                      ; 'email-link'
+        when /^([a-zA-Z][\-+.a-zA-Z\d]*):/   ; $1 + '-link'
+        when /^\//
+          href = internal_url href           ; 'internal-link'
+        else
+          return href
+          Rails.logger.debug "build_link mistakenly(?) called on #{href}, #{text}"
         end
-      # FIXME: shouldn't this be in the html version of this?  this should give plain-text links.
-      %{<a class="#{klass}" href="#{href}">#{text.to_s}</a>}
+          
+      final_link href, opts
+    end
+ 
+    def card_link name, text, known
+      text ||= name
+      opts = {
+        :class => ( known ? 'known-card' : 'wanted-card' ),
+        :text  => ( text.to_name.to_show @context_names  )
+      }
+      relative_path = known ? name.to_name.url_key : encode_path(name)
+      final_link internal_url( relative_path ), opts
+    end
+    
+    def encode_path path
+      ERB::Util.url_encode( path.to_s ).gsub('.', '%2E')
     end
 
     def unique_id() "#{card.key}-#{Time.now.to_i}-#{rand(3)}" end
 
-    def full_uri relative_uri
-      wagn_path relative_uri
+    def internal_url relative_path
+      wagn_path relative_path
     end
 
     def format_date date, include_time = true
@@ -464,17 +454,17 @@ module Wagn
 
   end
 
-  class Renderer::Json < Renderer
-  end
+  class Renderer::Html < Renderer                ; end
+  
+  class Renderer::File < Renderer                ; end
 
-  class Renderer::Text < Renderer
-  end
-
-  class Renderer::Html < Renderer
-  end
-
-  class Renderer::Csv < Renderer::Text
-  end
+  class Renderer::Text < Renderer                ; end
+  class Renderer::Csv < Renderer::Text           ; end
+  class Renderer::Css < Renderer::Text           ; end
+  
+  class Renderer::Data < Renderer                ; end
+  class Renderer::Json < Renderer::Data          ; end
+  class Renderer::Xml < Renderer::Data           ; end
 
 end
 

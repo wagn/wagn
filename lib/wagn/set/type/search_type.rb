@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 module Wagn
   module Set::Type::SearchType
@@ -6,105 +7,126 @@ module Wagn
     format :base
 
     define_view :core, :type=>:search_type do |args|
-      error=nil
-      results = begin
-        card.item_cards( search_params )
-      rescue Exception=>e
-        error = e; nil
-      end
+      set_search_vars args
 
       case
-      when results.nil?
-        Rails.logger.debug error.backtrace
-        %{No results? #{error.class.to_s}: #{error&&error.message}<br/>#{card.content}}
-      when card.spec[:return] =='count'
-        results.to_s
+      when e = @search[:error]
+        Rails.logger.debug " no result? #{e.backtrace}"
+        %{No results? #{e.class.to_s} :: #{e.message} :: #{card.content}}
+      when @search[:spec][:return] =='count'
+        @search[:results].to_s
       else
-        _render_card_list args.merge( :results=>results )
+        _render_card_list args
       end
     end
 
     define_view :card_list, :type=>:search_type do |args|
-      @item_view ||= card.spec[:view] || :name
+      @search[:item] ||= :name
 
-      if args[:results].empty?
+      if @search[:results].empty?
         'no results'
       else
-        args[:results].map do |c|
-          process_inclusion c, :view=>@item_view
+        @search[:results].map do |c|
+          process_inclusion c, :view=>@search[:item]
         end.join "\n"
       end
     end
+    
+    format :data
+    
+    define_view :card_list, :type=>:search_type do |args|
+      @search[:item] ||= :atom
+      
+      @search[:results].map do |c|
+        process_inclusion c, :view=>@search[:item]
+      end
+    end
+  
+    
+#    format :json
+#
+#    define_view :card_list, :type=>:search_type do |args|
+#      @search[:item] ||= :name
+#
+#      if @search[:results].empty?
+#        'no results'
+#      else
+#        # simpler version gives [{'card':{the card stuff}, {'card' ...} vs.
+#        # @search[:results].map do |c|  process_inclusion c, :view=>@search[:item] end
+#        # This which converts to {'cards':[{the card suff}, {another card stuff} ...]} we may want to support both ...
+#        {:cards => @search[:results].map do |c|
+#            inc = process_inclusion c, :view=>@search[:item]
+#            (!(String===inc) and inc.has_key?(:card)) ? inc[:card] : inc
+#          end
+#        }
+#      end
+#    end
+    
 
     format :html
+    
+    define_view :card_list, :type=>:search_type do |args|
+      @search[:item] ||= :closed
+
+      paging = _optional_render :paging, args
+
+      if @search[:results].empty?
+        %{<div class="search-no-results"></div>}
+      else
+        %{
+          #{paging}
+          <div class="search-result-list">
+            #{
+              @search[:results].map do |c|
+                %{
+                  <div class="search-result-item item-#{ @search[:item] }">
+                    #{ process_inclusion c, :view=>@search[:item], :size=>args[:size] }
+                  </div>
+                }
+              end * "\n"
+            }
+          </div>
+          #{ paging if @search[:results].length > 10 }
+        }
+      end
+    end
+
+
+    define_view :closed_content, :type=>:search_type do |args|
+      if @depth > 2
+        "..."
+      else
+        search_params[:limit] = 10 #not quite right, but prevents massive invisible lists.  
+        # really needs to be a hard high limit but allow for lower ones.
+
+        set_search_vars args        
+        @search[:item] = :link unless @search[:item] == :name  #FIXME - probably want other way to specify closed_view ok...
+        
+        _render_core args.merge( :hide=>'paging' )
+      end
+    end
 
     define_view :editor, :type=>:search_type do |args|
       form.text_area :content, :rows=>10
     end
 
-    define_view :closed_content, :type=>:search_type do |args|
-      return "..." if @depth > 2
-      results= begin
-        card.item_cards( search_params )
-      rescue Exception=>e
-        error = e; nil
-      end
 
-      if results.nil?
-        %{"#{error.class.to_s}: #{error.message}"<br/>#{card.content}}
-      elsif card.spec[:return] =='count'
-        results.to_s
-      elsif results.length==0
-        '<span class="search-count">(0)</span>'
-      else
-        %{<span class="search-count">(#{ card.count })</span>
-        <div class="search-result-list">
-          #{results.map do |c|
-            %{<div class="search-result-item">#{@item_view == 'name' ? c.name : link_to_page( c.name ) }</div>}
-          end*"\n"}
-        </div>}
+    define_view :title, :name=>:search do |args|
+      if vars = search_params[:vars] and keyword = vars[:keyword]
+         args.merge! :title=> %{Search results for: <span class="search-keyword">#{keyword}</span>}
       end
+      _final_title args
     end
 
-    define_view :card_list, :type=>:search_type do |args|
-      @item_view ||= (card.spec[:view]) || :closed
-      @item_size ||= (card.spec[:size]) || nil
-
-      paging = _optional_render :paging, args
-
-      _render_search_header +
-      if args[:results].empty?
-        %{<div class="search-no-results"></div>}
-      else
-        %{
-        #{paging}
-        <div class="search-result-list"> #{
-        args[:results].map do |c|
-          %{<div class="search-result-item item-#{ @item_view }">
-            #{ process_inclusion c, :view=>@item_view, :size=>@item_size }
-          </div>}
-        end.join }
-        </div>
-        #{ paging if args[:results].length > 10 }
-        }
-      end
-    end
-
-    define_view :search_header do |args|
-      ''
-    end
-
-    define_view :search_header, :name=>:search do |args|
-      return '' unless vars = search_params[:vars] and keyword = vars[:keyword]
-      %{<h1 class="page-header search-result-header">Search results for: <em>#{keyword}</em></h1>}
+    define_view :title, :name=>:recent do |args|
+       _final_title args.merge( :title=>'Recent Changes' )
     end
 
     define_view :card_list, :name=>:recent do |args|
-      cards = args[:results]
-      @item_view ||= (card.spec[:view]) || :change
+      @search[:item] ||= :change
 
       cards_by_day = Hash.new { |h, day| h[day] = [] }
-      cards.each do |card|
+      @search[:results].each do |card|
         begin
           stamp = card.updated_at
           day = Date.new(stamp.year, stamp.month, stamp.day)
@@ -116,27 +138,28 @@ module Wagn
       end
 
       paging = _optional_render :paging, args
-
-%{<h1 class="page-header">Recent Changes</h1>
-<div class="card-frame recent-changes">
-      <div class="card-body">
+      %{
         #{ paging }
-      } +
+        #{
           cards_by_day.keys.sort.reverse.map do |day|
-
-%{  <h2>#{format_date(day, include_time = false) }</h2>
-        <div class="search-result-list">} +
-             cards_by_day[day].map do |card| %{
-          <div class="search-result-item item-#{ @item_view }">
-               #{process_inclusion(card, :view=>@item_view) }
-          </div>}
-             end.join(' ') + %{
-        </div>
-        } end.join("\n") + %{
-          #{ paging }
-      </div>
-</div>
-}
+            %{
+              <h2>#{format_date(day, include_time = false) }</h2>
+              <div class="search-result-list">
+                #{
+                   cards_by_day[day].map do |card|
+                     %{
+                       <div class="search-result-item item-#{ @search[:item] }">
+                        #{ process_inclusion(card, :view=>@search[:item]) }
+                      </div>
+                     }
+                   end * ' '
+                }
+              </div>
+            }
+          end * "\n"
+        }
+        #{ paging }
+      }
     end
 
 
@@ -145,11 +168,11 @@ module Wagn
       s = card.spec search_params
       offset, limit = s[:offset].to_i, s[:limit].to_i
       return '' if limit < 1
-      return '' if offset==0 && limit > offset + args[:results].length #avoid query if we know there aren't enough results to warrant paging
+      return '' if offset==0 && limit > offset + @search[:results].length #avoid query if we know there aren't enough results to warrant paging
       total = card.count search_params
       return '' if limit >= total # should only happen if limit exactly equals the total
 
-      @paging_path_args = { :limit => limit, :item  => ( @item_view || args[:item] ) }
+      @paging_path_args = { :limit => limit, :item  => @search[:item] }
       @paging_limit = limit
 
       s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }
@@ -193,24 +216,7 @@ module Wagn
     end
 
 
-    format :json
 
-    define_view :card_list, :type=>:search_type do |args|
-      @item_view ||= card.spec[:view] || :name
-
-      if args[:results].empty?
-        'no results'
-      else
-        # simpler version gives [{'card':{the card stuff}, {'card' ...} vs.
-        #  args[:results].map do |c|  process_inclusion c, :view=>@item_view end
-        # This which converts to {'cards':[{the card suff}, {another card stuff} ...]} we may want to support both ...
-        {:cards => args[:results].map do |c|
-            inc = process_inclusion c, :view=>@item_view
-            (!(String===inc) and inc.has_key?(:card)) ? inc[:card] : inc
-          end
-        }
-      end
-    end
 
 
     module Model
@@ -264,7 +270,38 @@ module Wagn
     end
   end
 
-  class Renderer::Html < Renderer
+  class Renderer
+    def set_search_vars args
+      @search ||= begin
+        v = {}
+        v[:spec] = card.spec search_params
+        v[:item] = args[:item] || v[:spec][:view]
+        v[:results]  = card.item_cards search_params
+        v
+      rescue Exception=>e
+        { :error => e }
+      end
+    end
+
+    def search_params
+      @search_params ||= begin
+        p = self.respond_to?(:paging_params) ? paging_params : { :default_limit=> 100 }
+        p[:vars] = {}
+        if self == @root
+          params.each do |key,val|
+            case key.to_s
+            when '_wql'      ;  p.merge! val
+            when /^\_(\w+)$/ ;  p[:vars][$1.to_sym] = val
+            end
+          end
+        end
+        p
+      end
+    end
+  end
+  
+  class Renderer::Html
+    
     def page_link text, page
       @paging_path_args[:offset] = page * @paging_limit
       " #{link_to raw(text), path(@paging_path_args), :class=>'card-paging-link slotter', :remote => true} "
@@ -288,5 +325,6 @@ module Wagn
       end
     end
   end
+  
 
 end

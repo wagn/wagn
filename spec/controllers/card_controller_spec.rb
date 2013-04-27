@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 include AuthenticatedTestHelper
 
@@ -16,10 +17,15 @@ describe CardController do
     end
 
     it "should recognize .rss on /recent" do
-      {:get => "/recent.rss"}.should route_to(:controller=>"card", :view=>"content", :action=>"read",
-        :id=>"*recent", :format=>"rss"
-      )
+      {:get => "/recent.rss"}.should route_to(:controller=>"card", :action=>"read", :id=>"*recent", :format=>"rss")
     end
+
+    it "should handle RESTful posts" do
+      { :put => '/mycard' }.should route_to( :controller=>'card', :action=>'update', :id=>'mycard')
+      { :put => '/' }.should route_to( :controller=>'card', :action=>'update')
+      
+    end
+
 
     ["/wagn",""].each do |prefix|
       describe "routes prefixed with '#{prefix}'" do
@@ -46,6 +52,7 @@ describe CardController do
             :controller=>"card",:action=>"read",:id=>"random"
           )
         end
+        
       end
     end
   end
@@ -172,6 +179,9 @@ describe CardController do
       end
       get :read, :id=>'Strawberry'
       assert_response 403
+      get :read, :id=>'Strawberry', :format=>'txt'
+      assert_response 403
+      
     end
     
     describe "view = new" do
@@ -209,10 +219,20 @@ describe CardController do
         assert_response :success
       end
       
+      it "should treat underscores in id as spaces" do
+        get :read, :id=>'my_life', :view=>'new'
+        assigns['card'].name.should == 'my life'
+      end
+      
+      it "should not treat underscores in card params as spaces" do
+        get :read, :card=>{:name =>'my_life'}, :view=>'new'
+        assigns['card'].name.should == 'my_life'
+      end
+      
     end
   end
   
-  describe "#read_file" do
+  describe "#read file" do
     before do
       Account.as_bot do
         Card.create :name => "mao2", :typecode=>'image', :attach=>File.new("#{Rails.root}/test/fixtures/mao2.jpg")
@@ -223,18 +243,47 @@ describe CardController do
     it "handles image with no read permission" do
       get :read, :id=>'mao2'
       assert_response 403, "should deny html card view"
-      get :read_file, :id=>'mao2.jpg'
-      assert_response 302, "should redirect actual image to denial"      
+      get :read, :id=>'mao2', :format=>'jpg'
+      assert_response 403, "should deny simple file view"
     end
     
     it "handles image with read permission" do
       login_as :joe_admin
       get :read, :id=>'mao2'
       assert_response 200
-      get :read_file, :id=>'mao2.jpg'
+      get :read, :id=>'mao2', :format=>'jpg'
       assert_response 200
     end
   end
+
+  describe '#update_account' do
+    it "should handle email updates" do
+      login_as :joe_admin
+      post :update_account, :id=>"Joe User".to_name.key, :account => { :email => 'joe@user.co.uk' }
+      assert_response 302
+      Card['joe_user'].account.email.should == 'joe@user.co.uk'
+    end
+    
+    it "should not allow a user to block himself" do
+      login_as :joe_user
+      post :update_account, :id=>"Joe User".to_name.key, :account => { :blocked => '1' }
+      Card['joe_user'].account.blocked?.should be_false
+    end
+    
+    it "should update roles" do
+      login_as :joe_admin
+      admin_id = Card['Administrator'].id
+      
+      post :update_account, :id=>"Joe User".to_name.key, :save_roles=>true, :account_roles => { admin_id => true }
+      assert_response 302
+      Card['joe_user+*roles'].item_names.should == ['Administrator']
+      post :update_account, :id=>"Joe User".to_name.key, :save_roles=>true
+      assert_response 302
+      Card['joe_user+*roles'].item_names.should == []
+    end
+
+  end
+
 
   describe "unit tests" do
     include AuthenticatedTestHelper
@@ -286,11 +335,10 @@ describe CardController do
       Account.as_bot do
         Card.create :name => 'basicname+*self+*comment', :content=>'[[Anyone Signed In]]'
       end
-      @c = Card["basicname"]
-      post :comment, :id=>"~#{@c.id}", :card=>{:comment => " and more\n  \nsome lines\n\n"}
+      post :update, :id=>'basicname', :card=>{:comment => " and more\n  \nsome lines\n\n"}
       cont = Card['basicname'].content
-      part = "basiccontent<hr><p> and more</p>\n<p>&nbsp;</p>\n<p>some lines</p><p><em>&nbsp;&nbsp;--[[Joe User]]"
-      cont[0,part.length].should == part
+      cont.should =~ /basiccontent/
+      cont.should =~ /some lines/
     end
 
     it "should watch" do

@@ -2,7 +2,7 @@ Feature: Virtual Cards
 
   Scenario: Virtual Search
     Given I log in as Joe Admin
-    And I create Search card "editors+*right+*content" with content
+    And I create Search card "editors+*right+*structure" with content
       """
       {"editor_of":"_self"}
       """

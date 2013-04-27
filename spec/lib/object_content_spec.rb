@@ -1,11 +1,15 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 require 'object_content'
 
 CONTENT = {
   :one => %(Some Literals: \\[{I'm not| a link]}, and \\{{This Card|Is not Included}}, but {{this is}}, and some tail),
+  #:two => %(Some Links and includes: [[the card|the text]], and {{This Card|Is Included}}{{this too}}
+  #       more formats for links and includes: [the card][the text],
+  #       and [[http://external.wagn.org/path|link text]][This Card][Is linked]{{Included|open}}),
   :two => %(Some Links and includes: [[the card|the text]], and {{This Card|Is Included}}{{this too}}
-         more formats for links and includes: [the card][the text],
-         and [[http://external.wagn.org/path|link text]][This Card][Is linked]{{Included|open}}),
+        and [[http://external.wagn.org/path|link text]]{{Included|open}}),
+         
   :three => %(Some URIs and Links: http://a.url.com/
         More urls: wagn.com/a/path/to.html
         http://localhost:2020/path?cgi=foo&bar=baz  [[http://brain.org/Home|extra]]
@@ -211,11 +215,12 @@ CONTENT = {
      }
 
    ~
-} # should the ~ be there?  is it css?
+}
 
 CLASSES = {
    :one => [String, Literal::Escape, String, Chunks::Include, String ],
-   :two => [String, Chunks::Link, String, Chunks::Include, Chunks::Include, String, Chunks::Link, String, Chunks::Link, Chunks::Link, Chunks::Include ],
+#   :two => [String, Chunks::Link, String, Chunks::Include, Chunks::Include, String, Chunks::Link, String, Chunks::Link, Chunks::Link, Chunks::Include ],
+   :two => [String, Chunks::Link, String, Chunks::Include, Chunks::Include, String, Chunks::Link, Chunks::Include ],
    :three => [String, URIChunk, String, HostURIChunk, String, URIChunk, String, Chunks::Link, String, URIChunk, String, URIChunk, String ],
    :three_b => [String, URIChunk, String, HostURIChunk, String, URIChunk, String, URIChunk, String, URIChunk, String, Chunks::Link ],
    :five => [Chunks::Include]
@@ -227,9 +232,11 @@ RENDERED = {
   :two => ["Some Links and includes: ", "<a class=\"wanted-card\" href=\"/the%20card\">the text</a>", #"[[the card|the text]]",
      ", and ", {:options => {:include_name=>"This Card", :view => "Is Included",:include => "This Card|Is Included",:style=>""}},{
       :options=>{:include_name=>"this too",:include=>"this too",:style=>""}},
-    "\n         more formats for links and includes: ","<a class=\"wanted-card\" href=\"/the%20text\">the card</a>",
-    ",\n         and ","<a class=\"external-link\" href=\"http://external.wagn.org/path\">link text</a>",
-    "<a class=\"wanted-card\" href=\"/Is%20linked\">This Card</a>",
+#    "\n         more formats for links and includes: ","<a class=\"wanted-card\" href=\"/the%20text\">the card</a>",
+#",\n         and ",
+    "\n        and ",
+    "<a class=\"external-link\" href=\"http://external.wagn.org/path\">link text</a>",
+#    "<a class=\"wanted-card\" href=\"/Is%20linked\">This Card</a>",
     {:options=>{:include_name=>"Included",:view=>"open",:include=>"Included|open",:style=>""}}],
   :three => ["Some URIs and Links: ", '<a class="external-link" href="http://a.url.com/">http://a.url.com/</a>',"\n        More urls: ",
     "<a class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>","\n        ",
@@ -310,6 +317,7 @@ describe ObjectContent do
     it "should find uri chunks (b)" do
       # tried some tougher cases that failed, don't know the spec, so hard to form better tests for URIs here
       cobj = ObjectContent.new CONTENT[:three_b], @card_opts
+      #warn "cobj #{cobj.inspect} #{CLASSES[:three_b].inspect}"
       cobj.inject(CLASSES[:three_b], &@check_proc).should == true
       clist = CLASSES[:three_b].find_all {|c| String != c }
       #warn "clist #{clist.inspect}, #{cobj.inspect}"

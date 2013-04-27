@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Account
   @@as_card = @@as_id = @@current_id = @@current = @@user = nil
 
@@ -18,7 +19,7 @@ class Account
       if @@user && @@user.card_id == current_id
         @@user
       else
-        @@user = User.from_id current_id
+        @@user = User[ current_id ]
       end
     end
 

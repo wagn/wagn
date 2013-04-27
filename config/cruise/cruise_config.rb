@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # Project-specific configuration for CruiseControl.rb
 
 Project.configure do |project|

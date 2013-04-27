@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 ENV["RAILS_ENV"] = "test"
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
@@ -17,11 +18,10 @@ unless defined? TEST_ROOT
 
     # Add more helper methods to be used by all tests here...
 
-
-
-
-
     include AuthenticatedTestHelper
+    include WagnTestHelper
+    
+    
     # Transactional fixtures accelerate your tests by wrapping each test method
     # in a transaction that's rolled back on completion.  This ensures that the
     # test database remains unchanged so your fixtures don't have to be reloaded
@@ -50,16 +50,6 @@ unless defined? TEST_ROOT
         Wagn::Cache.restore
       end
     end
-
-
-  end
-
-
-
-
-  class ActiveSupport::TestCase
-    include AuthenticatedTestHelper
-    include WagnTestHelper
 
     def prepare_url(url, cardtype)
       if url =~ /:id/

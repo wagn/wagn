@@ -1,12 +1,13 @@
 # -*- encoding : utf-8 -*-
-
 class ApplicationController < ActionController::Base
+
   include Wagn::Exceptions
 
   include AuthenticatedSystem
   include LocationHelper
   include Recaptcha::Verify
   include ActionView::Helpers::SanitizeHelper
+
 
   helper :all
   before_filter :per_request_setup, :except=>[:fast_404]
@@ -21,7 +22,6 @@ class ApplicationController < ActionController::Base
   end
 
   protected
-
   def per_request_setup
 #    ActiveSupport::Notifications.instrument 'wagn.per_request_setup', :message=>"" do
       request.format = :html if !params[:format] #is this used??
@@ -32,10 +32,10 @@ class ApplicationController < ActionController::Base
       Wagn::Conf[:main_name] = nil
       Wagn::Conf[:controller] = self
 
+      Wagn::Cache.renew
+
       Wagn::Renderer.ajax_call = ajax?
       Wagn::Renderer.current_slot = nil
-
-      Wagn::Cache.renew
 
       #warn "set curent_user (app-cont) #{self.current_account_id}, U.cu:#{Account.current_id}"
       Account.current_id = self.current_account_id || Card::AnonID
@@ -45,9 +45,6 @@ class ApplicationController < ActionController::Base
       Wagn::Conf[:recaptcha_on] = !Account.logged_in? &&     # this too
         !!( Wagn::Conf[:recaptcha_public_key] && Wagn::Conf[:recaptcha_private_key] )
       @recaptcha_count = 0
-
-      @action = params[:action]
-#    end
   end
 
   def wagn_layout
@@ -77,61 +74,34 @@ class ApplicationController < ActionController::Base
     end
   end
 
+
   def render_errors
-    if card.errors.any? #this check is currently superfluous
-      view   = card.error_view   || :errors
-      status = card.error_status || 422
-      show view, status
-    end
+    view   = card.error_view   || :errors
+    status = card.error_status || 422
+    show view, status
   end
+
 
   def show view = nil, status = 200
-    ext = request.parameters[:format]
-    known = FORMATS.split('|').member? ext
+    format = request.parameters[:format]
+    format = :file if !FORMATS.split('|').member? format #unknown format
 
-    if !known && card && card.error_view
-      ext, known = 'txt', true
-      # render simple text for errors on unknown formats; without this, file/image permissions checks are meaningless
-    end
+    opts = params[:slot] || {}
+    opts[:view] = view || params[:view]      
 
-    case
-    when known                # renderers can handle it
-      # FIXME: generalize this so it can be overriden when registering a renderer
-      obj_sym = [:json, :xml].member?( ext = ext.to_sym ) ? ext : :text
-      renderer = Wagn::Renderer.new card, :format=>ext, :controller=>self
-
-      render_obj = renderer.render_show :view => view || params[:view]
-      render obj_sym => render_obj, :status=> renderer.error_status || status
-
-    when show_file            # send_file can handle it
-    else                      # dunno how to handle it
-      render :text=>"unknown format: #{extension}", :status=>404
+    renderer = Wagn::Renderer.new card, :controller=>self, :format=>format
+    result = renderer.render_show opts
+    status = card.error_status || status
+    
+    if format==:file && status==200
+      send_file *result
+    else
+      args = { :text=>result, :status=>status }
+      args[:content_type] = 'text/text' if format == :file
+      render args
     end
   end
-
-  def show_file
-    return fast_404 if !card
-
-    card.selected_rev_id = (@rev_id || card.current_revision_id).to_i
-    format = card.attachment_format(params[:format])
-    return fast_404 if !format
-
-    if ![format, 'file'].member?( params[:format] )
-      return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #card.attach.url(style) )
-    end
-
-    style = card.attachment_style card.type_id, ( params[:size] || @style )
-    return fast_404 if style == :error
-
-    # check file existence?  or just rescue MissingFile errors and raise NotFound?
-    # we do see some errors from not having this, though I think they're mostly from legacy issues....
-
-    send_file card.attach.path( *[style].compact ), #nil or empty arg breaks 1.8.7
-      :type => card.attach_content_type,
-      :filename =>  "#{card.cardname.url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
-      :x_sendfile => true,
-      :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
-  end
+  
 
 
   rescue_from Exception do |exception|
@@ -142,11 +112,11 @@ class ApplicationController < ActionController::Base
     view, status = case exception
       ## arguably the view and status should be defined in the error class;
       ## some are redundantly defined in view
-      when Wagn::NotFound, ActiveRecord::RecordNotFound
-        [ :not_found, 404 ]
       when Wagn::PermissionDenied, Card::PermissionDenied
         [ :denial, 403]
-      when Wagn::BadAddress, ActionController::UnknownController, AbstractController::ActionNotFound
+      when Wagn::NotFound, ActiveRecord::RecordNotFound, ActionController::MissingFile
+        [ :not_found, 404 ]        
+      when Wagn::BadAddress
         [ :bad_address, 404 ]
       when Wagn::Oops
         card.errors.add :exception, exception.message 
@@ -168,7 +138,6 @@ class ApplicationController < ActionController::Base
 
     show view, status
   end
-
 end
 
 

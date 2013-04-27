@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Flexmail
   class << self
     def configs_for card

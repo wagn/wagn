@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 
@@ -32,6 +33,6 @@ describe Card, "comment addition" do
       @c.comment = " and more\n  \nsome lines\n\n"
       @c.save!
     end
-    Card["basicname"].content.should == "basiccontent and more\n  \nsome lines\n\n"
+    Card["basicname"].content.should =~ /\<p\>some lines\<\/p\>/
   end
 end

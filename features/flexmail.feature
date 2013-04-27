@@ -7,11 +7,11 @@ Feature: Flexmail
     Given I log in as Joe Admin
     And I create Cardtype card "Testimony"
     And I create Pointer card "Testimony+*type+*send" with content "[[Testemailconfig]]"
-    And I create card "Testimony+*type+*content" with content
+    And I create card "Testimony+*type+*structure" with content
       """
       {{+name}} {{+email}} {{+Testimony}} {{+recipients}}
       """
-    And I create Search card "search test+*right+*content" with content "{"type":"User"}"
+    And I create Search card "search test+*right+*structure" with content "{"type":"User"}"
 #    And I create Basic card "Testemailconfig"
     And I create Search card "Testemailconfig+*to" with content
       """

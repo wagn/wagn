@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 require File.expand_path('../../packs/pack_spec_helper', File.dirname(__FILE__))
 
@@ -14,6 +15,28 @@ describe Wagn::Renderer, "" do
   context "special syntax handling should render" do
     it "simple card links" do
       render_content("[[A]]").should=="<a class=\"known-card\" href=\"/A\">A</a>"
+    end
+
+    it "empty inclusion shouldn't blow up" do
+      render_content("{{}}").should==""
+    end
+
+    it "should handle dot (.) in missing cardlink" do
+      render_content("[[Wagn 1.10.12]]").should=='<a class="wanted-card" href="/Wagn%201%2E10%2E12">Wagn 1.10.12</a>'
+    end
+
+    it "should allow for inclusion in links as in Cardtype" do
+       Account.as_bot do
+         Card.create! :name=>"TestType", :type=>'Cardtype', :content=>'[[/new/{{_self|linkname}}|add {{_self|name}} card]]'
+         Card.create! :name=>'TestType+*self+*structure', :content=>'_self' #otherwise content overwritten by *structure rule
+         Wagn::Renderer.new(Card['TestType']).render_core.should == '<a class="internal-link" href="/new/TestType">add TestType card</a>'
+         
+       end
+    end
+    
+    it "should ignore empty inclusions" do
+      render_content('{{}}').should == ''
+      render_content('{{ }}').should == ''
     end
 
     it "invisible comment inclusions as blank" do
@@ -44,6 +67,29 @@ describe Wagn::Renderer, "" do
       end
     end
   end
+  
+  context "language quirks" do
+    it "should not fail on quirky language" do
+      render_content( 'irc: man').should == 'irc: man'
+      # this is really a specification issue, should we exclude the , like we do . at the end of a 'free' URI ?
+      render_content( 'ethan@wagn.org, dude').should == '<a class="email-link" href="mailto:ethan@wagn.org">ethan@wagn.org</a>, dude'
+    end
+  
+    it "should leave alone something that quacks like a URI when URI module raises invalid uri error" do
+      # it does leave this alone, there was too much going on in one test
+      wack_uri = 'git://<a href="/wagn/wagn.git">/wagn/wagn.git</a>'
+      render_content( wack_uri ).should == wack_uri
+    end
+    it "should leave alone something that quacks like a URI when ?" do
+      pending "its embeded in an <a> tag? quotes? need a spec"
+      wack_uri = '<a href="http://github.com/wagn/wagn.git">github.com/wagn/wagn.git</a>'
+      render_content( wack_uri ).should == wack_uri
+    end
+    it "should leave alone something that quacks like a URI when URI module raises invalid uri error" do
+      render_content( 'mailto:eat@joe.com?v=k').should == "<a class=\"email-link\" href=\"mailto:eat@joe.com?v=k\">mailto:eat@joe.com?v=k</a>"
+      #render_content( 'mailto:eat@joe.com?v=k').should == "mailto:eat@joe.com?v=k\">mailto:eat@joe.com?Subject=Hello"
+    end
+  end
 
 #~~~~~~~~~~~~ Error handling ~~~~~~~~~~~~~~~~~~#
 
@@ -58,7 +104,7 @@ describe Wagn::Renderer, "" do
     it "missing relative inclusion is relative" do
       c = Card.new :name => 'bad_include', :content => "{{+bad name missing}}"
       rr=(r=Wagn::Renderer.new(c))._render(:titled)
-      rr.match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
+      rr.match(/Add.*\+.*bad name missing/).should_not be_nil
     end
 
     it "renders deny for unpermitted cards" do
@@ -76,7 +122,7 @@ describe Wagn::Renderer, "" do
 # (*all sets)
 
 
-  context "handles view" do
+  context "view" do
 
     it("name"    ) { render_card(:name).should      == 'Tempo Rary' }
     it("key"     ) { render_card(:key).should       == 'tempo_rary' }
@@ -110,12 +156,12 @@ describe Wagn::Renderer, "" do
     end
 
     it "titled" do
-      result = render_card(:titled, :name=>'A+B')
+      result = render_card :titled, :name=>'A+B'
       assert_view_select result, 'div[class~="titled-view"]' do
         assert_select 'h1' do
           assert_select 'span'
         end
-        assert_select 'span[class~="titled-content"]', 'AlphaBeta'
+        assert_select 'div[class~="titled-content"]', 'AlphaBeta'
       end
     end
 
@@ -129,7 +175,7 @@ describe Wagn::Renderer, "" do
           assert_select 'div[class="card-header"]' do
             assert_select 'h1[class="card-title"]'
           end
-          assert_select 'span[class~="card-body"]'
+          assert_select 'div[class~="card-body"]'
         end
       end
 
@@ -155,12 +201,15 @@ describe Wagn::Renderer, "" do
       end
 
       it "should render setting view for a *input rule" do
-         r = Wagn::Renderer.new(Card.fetch('*read+*right+*input',:new=>{})).render_open_rule
-         r.should_not match(/error/i)
-         r.should_not match('No Card!')
-         assert_view_select r, 'tr[class="card-slot open-rule"]' do
-           assert_select 'input[id="success"][name="success"][type="hidden"][value="*read+*right+*input"]'
-         end
+        Account.as_bot do
+          r = Wagn::Renderer.new(Card.fetch('*read+*right+*input',:new=>{})).render_open_rule
+          r.should_not match(/error/i)
+          r.should_not match('No Card!')
+          #warn "r = #{r}"
+          assert_view_select r, 'tr[class="card-slot open-rule edit-rule"]' do
+            assert_select 'input[id="success"][name="success"][type="hidden"][value="*read+*right+*input"]'
+          end
+        end
       end
     end
 
@@ -175,6 +224,7 @@ describe Wagn::Renderer, "" do
 
 
       it "renders top menu" do
+        #warn "sp #{@simple_page}"
         assert_view_select @simple_page, 'div[id="menu"]' do
           assert_select 'a[class="internal-link"][href="/"]', 'Home'
           assert_select 'a[class="internal-link"][href="/recent"]', 'Recent'
@@ -193,13 +243,9 @@ describe Wagn::Renderer, "" do
 
       it "renders card content" do
         #warn "simple page = #{@simple_page}"
-        assert_view_select @simple_page, 'span[class="open-content content card-body "]', 'AlphaBeta'
+        assert_view_select @simple_page, 'div[class="open-content content card-body"]', 'AlphaBeta'
       end
-
-      it "renders notice info" do
-        assert_view_select @simple_page, 'div[class="card-notice"]'
-      end
-
+ 
       it "renders card credit" do
         assert_view_select @simple_page, 'div[id="credit"]', /Wheeled by/ do
           assert_select 'a', 'Wagn'
@@ -287,7 +333,7 @@ describe Wagn::Renderer, "" do
       Card.create! :name => "n+a", :type=>"Number", :content=>"10"
       Card.create! :name => "n+b", :type=>"Phrase", :content=>"say:\"what\""
       Card.create! :name => "n+c", :type=>"Number", :content=>"30"
-      c = Card.new :name => 'nplusarray', :content => "{{n+*plus cards+by create|array}}"
+      c = Card.new :name => 'nplusarray', :content => "{{n+*children+by create|array}}"
       Wagn::Renderer.new(c)._render( :core ).should == %{["10", "say:\\"what\\"", "30"]}
     end
 
@@ -306,9 +352,10 @@ describe Wagn::Renderer, "" do
 
 
   context "Content rule" do
-    it "is rendered as raw" do
-      template = Card.new(:name=>'A+*right+*content', :content=>'[[link]] {{inclusion}}')
-      Wagn::Renderer.new(template)._render(:core).should == '[[link]] {{inclusion}}'
+    it "closed_content is rendered as title + raw" do
+      template = Card.new(:name=>'A+*right+*structure', :content=>'[[link]] {{inclusion}}')
+      Wagn::Renderer.new(template)._render(:closed_content).should ==
+        '<a href="/Basic" class="cardtype default-type">Basic</a> : [[link]] {{inclusion}}'
     end
 
     it "is used in new card forms when soft" do
@@ -328,14 +375,14 @@ describe Wagn::Renderer, "" do
 
     it "is used in new card forms when hard" do
       Account.as :joe_admin do
-        content_card = Card.create!(:name=>"Cardtype E+*type+*content",  :content=>"{{+Yoruba}}" )
+        content_card = Card.create!(:name=>"Cardtype E+*type+*structure",  :content=>"{{+Yoruba}}" )
         help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
         card = Card.new(:type=>'Cardtype E')
 
         mock(card).rule_card(:thanks, {:skip_modules=>true}).returns(nil)
         mock(card).rule_card(:autoname).returns(nil)
         mock(card).rule_card(:default,  {:skip_modules=>true}   ).returns(Card['*all+*default'])
-        mock(card).rule_card(:add_help, {:fallback=>:edit_help} ).returns(help_card)
+        mock(card).rule_card(:add_help, {:fallback=>:help} ).returns(help_card)
         rendered = Wagn::Renderer::Html.new(card).render_new
         #warn "rendered = #{rendered}"
         assert_view_select rendered, 'fieldset' do
@@ -346,11 +393,12 @@ describe Wagn::Renderer, "" do
 
     it "should be used in edit forms" do
       Account.as_bot do
-        config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
+        config_card = Card.create!(:name=>"templated+*self+*structure", :content=>"{{+alpha}}" )
       end
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
       @card.content = 'Bar'
       result = Wagn::Renderer.new(@card).render :edit
+      #warn "res #{@card.inspect}\n#{result}"
       assert_view_select result, 'fieldset' do
         assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][templated~plus~alpha][content]'
       end
@@ -405,7 +453,7 @@ describe Wagn::Renderer, "" do
       end
 
       it "should have special editor" do
-        assert_view_select render_editor('Html'), 'textarea[rows="30"]'
+        assert_view_select render_editor('Html'), 'textarea[rows="15"]'
       end
 
       it "should not render any content in closed view" do
@@ -418,7 +466,7 @@ describe Wagn::Renderer, "" do
         #pending
         #I can't get this working.  I keep getting this url_for error -- from a line that doesn't call url_for
         card = Card.create!(:name=>'Big Bad Wolf', :type=>'Account Request')
-        assert_view_select Wagn::Renderer.new(card).render(:core), 'div[class="invite-links help instruction"]'
+        assert_view_select Wagn::Renderer.new(card).render(:core), 'div[class="invite-links"]'
       end
     end
 
@@ -442,6 +490,8 @@ describe Wagn::Renderer, "" do
       it "should have special content that escapes HTML" do
         render_card(:core, :type=>'Plain Text', :content=>"<b></b>").should == '&lt;b&gt;&lt;/b&gt;'
       end
+      
+      it 
     end
 
     context "Search" do
@@ -518,7 +568,7 @@ describe Wagn::Renderer, "" do
 
   context "missing" do
     it "should prompt to add" do
-      render_content('{{+cardipoo|open}}').match(/Add \<strong\>/ ).should_not be_nil
+      render_content('{{+cardipoo|open}}').match(/Add \<span/ ).should_not be_nil
     end
   end
 

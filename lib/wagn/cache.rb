@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Wagn
 
   ActiveSupport::Cache::FileStore.class_eval do
@@ -13,13 +14,12 @@ module Wagn
 
 
   class Cache
-    @@prepopulating     = (Rails.env == 'cucumber') ? { Card => true } : {}
+    @@prepopulating     = [ 'test','cucumber' ].include? Rails.env
     @@using_rails_cache = Rails.env =~ /^cucumber|test$/
     @@prefix_root       = Wagn::Application.config.database_configuration[Rails.env]['database']
-    @@frozen            = {}
     @@cache_by_class    = {}
 
-    cattr_reader :cache_by_class, :prepopulating, :frozen, :prefix_root
+    cattr_reader :cache_by_class, :prefix_root
 
     class << self
       def [] klass
@@ -35,7 +35,7 @@ module Wagn
             raise "renewing nil cache: #{klass}"
           end
         end
-        reset_local if prepopulating.empty?
+        reset_local
       end
 
       def system_prefix klass
@@ -43,10 +43,8 @@ module Wagn
       end
 
       def restore klass=nil
-        klass=Card if klass.nil?
-        raise "no klass" if klass.nil?
         reset_local
-        cache_by_class[klass] = Marshal.load(frozen[klass]) if cache_by_class[klass] and prepopulating[klass]
+        prepopulate
       end
 
       def generate_cache_id
@@ -63,14 +61,22 @@ module Wagn
 
       private
 
+      def prepopulate
+        if @@prepopulating
+          @@rule_cache      ||= Card.rule_cache
+          @@read_rule_cache ||= Card.read_rule_cache
+          Card.cache.write_local 'RULES', @@rule_cache
+          Card.cache.write_local 'READRULES', @@read_rule_cache
+        end
+      end
+
 
       def reset_local
-        #warn "reset local #{cache_by_class.map{|k,v|k.to_s+' '+v.to_s}*", "}"
-        cache_by_class.each{ |cc, cache|
+        cache_by_class.each do |cc, cache|
           if Wagn::Cache===cache
             cache.reset_local
           else warn "reset class #{cc}, #{cache.class} #{caller[0..8]*"\n"} ???" end
-        }
+        end
       end
 
     end
@@ -85,15 +91,8 @@ module Wagn
       @local = Hash.new
       self.system_prefix = opts[:prefix] || self.class.system_prefix(opts[:class])
       cache_by_class[klass] = self
-      prepopulate klass if prepopulating[klass]
     end
-
-    def prepopulate klass
-      ['*all','*all plus','basic+*type','html+*type','*cardtype+*type','*sidebar+*self'].each do |k|
-        [k,"#{k}+*content", "#{k}+*default", "#{k}+*read" ].each { |k| klass[k] }
-      end
-      frozen[klass] = Marshal.dump Cache[klass]
-    end
+    
 
     def system_prefix= system_prefix
       @system_prefix = system_prefix
@@ -109,25 +108,28 @@ module Wagn
     end
 
     def read key
-      return @local[key] unless @store
-      fetch_local(key) do
-        #warn "cach read #{key}, #{@store}, #{@prefix}"
-        @store.read(@prefix + key)
+      if @local.has_key? key
+        read_local key
+      elsif @store
+        write_local key, @store.read(@prefix + key)
       end
+    end
+    
+    def read_local key
+      @local[key]
     end
 
     def write key, value
-      self.write_local(key, value)
-      #@store.write(@prefix + key, Marshal.dump(value))  if @store
       @store.write(@prefix + key, value) if @store
-      value
+      write_local key, value
     end
 
-    def write_local(key, value) @local[key] = value end
-    def read_local(key)         @local[key]         end
+    def write_local key, value
+      @local[key] = value
+    end
 
     def fetch key, &block
-      fetch_local(key) do
+      fetch_local key do
         if @store
           @store.fetch(@prefix + key, &block)
         else
@@ -135,10 +137,14 @@ module Wagn
         end
       end
     end
+    
+    def fetch_local key
+      read_local key or write_local key, yield
+    end
 
     def delete key
+      @store.delete(@prefix + key) if @store
       @local.delete key
-      @store.delete(@prefix + key)  if @store
     end
 
     def dump
@@ -146,10 +152,6 @@ module Wagn
       @local.each do |k, v|
         p "#{k} --> #{v.inspect[0..30]}"
       end
-    end
-
-    def reset_local
-      @local = {}
     end
 
     def reset hard=false
@@ -164,17 +166,9 @@ module Wagn
       end
       @prefix = @system_prefix + @cache_id + "/"
     end
-
-    private
-    def fetch_local key
-      if @local.has_key?(key)
-        @local[key]
-      else
-        val = yield
-        val.reset_mods if val.respond_to?(:reset_mods)
-        #why does this happen here?
-        @local[key] = val
-      end
+    
+    def reset_local
+      @local = {}
     end
   end
 end

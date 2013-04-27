@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../test_helper', File.dirname(__FILE__))
 class RevisionTest < ActiveSupport::TestCase
 
@@ -26,7 +27,7 @@ class RevisionTest < ActiveSupport::TestCase
     card.save
     card.reload
 
-    assert_equal 2, card.revisions.length, 'Should have two revisions'
+    assert_equal 2, card.revisions.count, 'Should have two revisions'
     assert_equal author_cd2.name, card.current_revision.creator.name, 'current author'
     assert_equal author_cd1.name, card.revisions.first.creator.name,  'first author'
   end
@@ -49,7 +50,7 @@ class RevisionTest < ActiveSupport::TestCase
 =begin #FIXME - don't think this is used by any controller. we'll see what breaks
   def test_rollback
     @card = newcard("alhpa", "some test content")
-    @user = User.where(:card_id=>Card['quentin'].id).first
+    @user = User[ Card['quentin'].id ]
     @card.content = "spot two"; @card.save
     @card.content = "spot three"; @card.save
     assert_equal 3, @card.revisions(true).length, "Should have three revisions"

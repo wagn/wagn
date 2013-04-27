@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Cardlib::Collection
   module ClassMethods
     def search(spec)

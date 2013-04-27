@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 require File.expand_path('../../pattern_spec_helper', File.dirname(__FILE__))
 
@@ -41,6 +42,12 @@ describe Cardlib::Pattern do
         ]
       end
     end
+    
+    it "handles type plus right prototypes properly" do #right place for this?  really need more prototype tests...
+      Account.as_bot do
+        Card.fetch('Fruit+flavor+*type plus right').prototype.set_names.include?('Fruit+flavor+*type plus right').should be_true
+      end
+    end
   end
 
   describe :junction_only? do
@@ -74,7 +81,14 @@ describe Cardlib::Pattern do
       card = Card.fetch("AnewCard")
       card.method_keys.should == [ "basic_type",""]
     end
-
+  end
+  
+  describe :rule_set_keys do
+    it "returns correct set names for new cards" do
+      card = Card.new :name => "AnewCard"
+      card.rule_set_keys.should == [ "#{Card::BasicID}+type", "all"]
+    end
+    
   end
 
   describe :safe_keys do

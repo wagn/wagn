@@ -50,7 +50,7 @@ module LocationHelper
 
 
   # FIXME: missing test
-  def path_for_page( title, opts={} )
+  def page_path title, opts={}
     format = (opts[:format] ? ".#{opts.delete(:format)}"  : "")
     vars = ''
     if !opts.empty?
@@ -58,11 +58,11 @@ module LocationHelper
       opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
       vars = '?' + pairs.join('&')
     end
-    wagn_path "/#{title.to_name.url_key}#{format}#{vars}"
+    "/#{title.to_name.url_key}#{format}#{vars}"
   end
 
-  def wagn_path( rel ) #should be in smartname?
-    rel_path = Card===rel ? rel.cardname.url_key : rel
+  def wagn_path rel #should be in smartname?
+    rel_path = Card===rel ? rel.cardname.url_key : rel.to_s
     Wagn::Conf[:root_path].to_s + ( rel_path =~ /^\// ? '' : '/' ) + rel_path
   end
 
@@ -75,8 +75,9 @@ module LocationHelper
 
   def link_to_page( text, title=nil, options={})
     title ||= text
-    url_options = (options[:type]) ? {:type=>options[:type]} : {}
-    url = path_for_page(title, url_options)
+    url_options = {}
+    [:type, :view].each { |k| url_options[k] = options.delete(k) if options[k] }
+    url = wagn_path page_path( title, url_options )
     link_to text, url, options
   end
 

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 require File.expand_path('../../permission_spec_helper', File.dirname(__FILE__))
 require File.expand_path('../../packs/pack_spec_helper', File.dirname(__FILE__))
@@ -100,9 +101,11 @@ describe "reader rules" do
   end
 
   it "should work with relative settings" do
-    Account.as_bot { @perm_card.save! }
-    all_plus = Card.fetch '*all plus+*read', :new=>{:content=>'_left'}
-    all_plus.save
+    Account.as_bot do
+      @perm_card.save!
+      all_plus = Card.fetch '*all plus+*read', :new=>{:content=>'_left'}
+      all_plus.save
+    end
     c = Card.new(:name=>'Home+Heart')
     c.who_can(:read).should == [Card::AuthID]
     c.permission_rule_card(:read).first.id.should == @perm_card.id
@@ -111,8 +114,10 @@ describe "reader rules" do
   end
 
   it "should get updated when relative settings change" do
-    all_plus = Card.fetch '*all plus+*read', :new => { :content=>'_left' }
-    all_plus.save
+    Account.as_bot do
+      all_plus = Card.fetch '*all plus+*read', :new=>{:content=>'_left'}
+      all_plus.save
+    end
     c = Card.new(:name=>'Home+Heart')
     c.who_can(:read).should == [Card::AnyoneID]
     c.permission_rule_card(:read).first.id.should == Card.fetch('*all+*read').id
@@ -152,7 +157,7 @@ end
 describe "Permission", ActiveSupport::TestCase do
   before do
     Account.as_bot do
-      User.cache.reset
+#      User.cache.reset
       @u1, @u2, @u3, @r1, @r2, @r3, @c1, @c2, @c3 =
         %w( u1 u2 u3 r1 r2 r3 c1 c2 c3 ).map do |x| Card[x] end
     end
@@ -199,21 +204,15 @@ describe "Permission", ActiveSupport::TestCase do
 
 
   it "write user permissions" do
-    Account.as_bot {
-      rc=@u1.fetch(:trait=>:roles, :new=>{})
-      rc.content = ''; rc << @r1 << @r2
-      rc.save
-      rc=@u2.fetch(:trait=>:roles, :new=>{})
-      rc.content = ''; rc << @r1 << @r3
-      rc.save
-      rc=@u3.fetch(:trait=>:roles, :new=>{})
-      rc.content = ''; rc << @r1 << @r2 << @r3
-      rc.save
+    Account.as_bot do
+      @u1.fetch(:trait=>:roles, :new=>{}).items = [@r1, @r2]
+      @u2.fetch(:trait=>:roles, :new=>{}).items = [@r1, @r3]
+      @u3.fetch(:trait=>:roles, :new=>{}).items = [@r1, @r2, @r3]
 
       cards=[1,2,3].map do |num|
         Card.create(:name=>"c#{num}+*self+*update", :type=>'Pointer', :content=>"[[u#{num}]]")
       end
-    }
+    end
 
     @c1 = Card['c1']
     assert_not_locked_from( @u1, @c1 )
@@ -228,12 +227,8 @@ describe "Permission", ActiveSupport::TestCase do
 
   it "read group permissions" do
     Account.as_bot do
-      rc=@u1.fetch(:trait=>:roles)
-      rc.content = ''; rc << @r1 << @r2
-      rc.save
-      rc=@u2.fetch(:trait=>:roles)
-      rc.content = ''; rc << @r1 << @r3
-      rc.save
+      @u1.fetch(:trait=>:roles).items = [@r1, @r2]
+      @u2.fetch(:trait=>:roles).items = [@r1, @r3]
 
       [1,2,3].each do |num|
         Card.create(:name=>"c#{num}+*self+*read", :type=>'Pointer', :content=>"[[r#{num}]]")
@@ -255,8 +250,7 @@ describe "Permission", ActiveSupport::TestCase do
         Card.create(:name=>"c#{num}+*self+*update", :type=>'Pointer', :content=>"[[r#{num}]]")
       end
 
-      (rc=@u3.fetch(:trait=>:roles, :new=>{})).content =  ''
-      rc << @r1
+      @u3.fetch(:trait=>:roles, :new=>{}).items = [@r1]
     end
 
     %{        u1 u2 u3
@@ -278,12 +272,9 @@ describe "Permission", ActiveSupport::TestCase do
 
   it "read user permissions" do
     Account.as_bot {
-      (rc=@u1.fetch(:trait=>:roles, :new=>{})).content = ''
-      rc << @r1 << @r2
-      (rc=@u2.fetch(:trait=>:roles, :new=>{})).content = ''
-      rc << @r1 << @r3
-      (rc=@u3.fetch(:trait=>:roles, :new=>{})).content = ''
-      rc << @r1 << @r2 << @r3
+      @u1.fetch(:trait=>:roles, :new=>{}).items = [@r1, @r2]
+      @u2.fetch(:trait=>:roles, :new=>{}).items = [@r1, @r3]
+      @u3.fetch(:trait=>:roles, :new=>{}).items = [@r1, @r2, @r3]
 
       [1,2,3].each do |num|
         Card.create(:name=>"c#{num}+*self+*read", :type=>'Pointer', :content=>"[[u#{num}]]")

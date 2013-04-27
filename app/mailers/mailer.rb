@@ -10,42 +10,23 @@ class Mailer < ActionMailer::Base
 
   include LocationHelper
 
-  EMAIL_FIELDS = [ :to, :subject, :message, :password ]
 
-  def valid_args? cd_with_acct, args
-    nil_args = EMAIL_FIELDS.find_all { |k| args[k].nil? }.compact
-    if nil_args.any?
-      unless cd_with_acct.errors[:email].any?
-        cd_with_acct.errors[:email].add(:email, "Missing email parameters: #{nil_args.map(&:to_s)*', '}")
-      end
-      false
-    else
-      true
+  def account_info cd_with_acct, args
+    @email, subject, @message, @password = [:to, :subject, :message, :password].map do |k|
+      args[k] or raise "Missing email parameter: #{k}"
     end
-  end
 
-
-  #def account_info cd_with_acct, args
-  def account_info user, subject, message
-    cd_with_acct = Card===user ? user : Card[user.card_id]
-    args = { :subject => subject, :message => message, :password => user.password, :to => user.email }
-
-    arg_array = EMAIL_FIELDS.map { |f| args[f] }
-    return if arg_array.find(&:nil?)
-
-    @email, @subject, @message, @password = arg_array
-
-    @card_url = wagn_url cd_with_acct
-    @pw_url   = wagn_url "/card/options/#{cd_with_acct.cardname.url_key}"
+    @pw_url   = wagn_url "#{cd_with_acct.cardname.url_key}?view=options"
     @login_url= wagn_url "/account/signin"
-    @message  = @message.clone
 
     #FIXME - might want different "from" settings for different contexts?
-    unless invite_from = Card.setting( '*invite+*from' )
-      cur_card = Account.current
-      invite_from = "#{cur_card.name} <#{cur_card.account.email}>"
+    invite_from = Card.setting( '*invite+*from' ) || begin
+      from_card_id = Account.current_id
+      from_card_id = Card::WagnBotID if [ Card::AnonID, cd_with_acct.id ].member? from_card_id
+      from_card = Card[from_card_id]
+      "#{from_card.name} <#{from_card.account.email}>"
     end
-    mail_from args, invite_from
+    mail_from( { :to=>@email, :subject=>subject }, invite_from )
   end
 
   def signup_alert invite_request
@@ -107,14 +88,16 @@ class Mailer < ActionMailer::Base
   private
 
   def mail_from args, from
-    from_name, from_email = (from =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, from]
-    if default_from=@@defaults[:from]
-      args[:from] = !from_email ? default_from : "#{from_name || from_email} <#{default_from}>"
-      args[:reply_to] ||= from
-    else
-      args[:from] = from
+    unless Wagn::Conf[:migration]
+      from_name, from_email = (from =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, from]
+      if default_from=@@defaults[:from]
+        args[:from] = !from_email ? default_from : "#{from_name || from_email} <#{default_from}>"
+        args[:reply_to] ||= from
+      else
+        args[:from] = from
+      end
+      mail args
     end
-    mail args unless Wagn::Conf[:migration]
   end
 
 

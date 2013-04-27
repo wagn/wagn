@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require_dependency 'chunks/chunk'
 
 # These are basic chunks that have a pattern and can be protected.
@@ -17,7 +18,7 @@ module Literal
       ESCAPE_CONFIG = {
         :class     => Literal::Escape,
         :prefix_re => '\\\\(?:\\[\\[|\\{\\{)',
-        :rest_re => { '[' => /^[^\]]*\]\]/, '{' => /^[^}]*}}/ },
+        :rest_re => { '[' => /^[^\]]*\]\]/, '{' => /^[^\}]*\}\}/ },
         :idx_char  => '\\'
       }
     end
@@ -27,7 +28,6 @@ module Literal
     def initialize match, card_params, params
       super
       @process_chunk = match.sub(/^\\(.)/, "<span>\\1</span>")
-      #warn "new literal chunk pc:[#{@process_chunk}] #{inspect} #{match}, cparams:#{card_params.inspect}, params:#{params.inspect}"
       self
     end
   end

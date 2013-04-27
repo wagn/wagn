@@ -1,7 +1,8 @@
+# -*- encoding : utf-8 -*-
 module Wagn
   class Renderer::EmailHtml < Renderer::Html
-    def full_uri(relative_uri)
-      wagn_url relative_uri
+    def internal_url relative_path
+      wagn_url relative_path
     end
   end
 end

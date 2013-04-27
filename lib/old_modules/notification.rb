@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Notification
   module CardMethods
     def self.included(base)
@@ -44,7 +45,7 @@ module Notification
     rescue Exception=>e
       Airbrake.notify e if Airbrake.configuration.api_key
       Rails.logger.info "\nController exception: #{e.message}"
-      Rails.logger.debug e.backtrace*"\n"
+      Rails.logger.debug "BT: #{e.backtrace*"\n"}"
     end
 
     def trunk_watcher_watched_pairs

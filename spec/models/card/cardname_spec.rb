@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 module RenameMethods
@@ -5,7 +6,7 @@ module RenameMethods
     {
       :content     => card.content,
       #:updater_id  => card.updater_id,
-      :revisions   => card.revisions.length,
+      :revisions   => card.revisions.count,
       :referencers => card.referencers.map(&:name).sort,
       :referencees => card.referencees.map(&:name).sort,
       :dependents  => card.dependents.map(&:id)
@@ -174,13 +175,14 @@ describe "renaming" do
   it "test_junction_to_simple" do
     assert_rename card("A+B"), "K"
   end
-
+  
   it "test_reference_updates_plus_to_simple" do
      c1, c2 = Card['Blue'], Card["chuck_wagn+chuck"]
      c1.content = "[[chuck wagn+chuck]]"
      c1.save!
      assert_rename c2, 'schmuck'
-     assert_equal '[[schmuck]]', Card.find(c1.id).content
+     c1 = Card.find(c1.id)
+     assert_equal '[[schmuck]]', c1.content
   end
 
   it "test_updates_inclusions_when_renaming" do
@@ -279,15 +281,16 @@ describe "renaming" do
     assert_equal "[[Card of Joe]]", Card["Admin Card"].content
   end
 
-  it "test_rename_should_not_fail_when_updating_hard_templated_referencer" do
-    pending "the test seems wrong, the *default rule isn't even found, why not *content?"
-    c=Card.create! :name => "Pit"
-    Card.create! :name => "Orange", :type=>"Fruit", :content => "[[Pit]]"
-    Card["Fruit+*type+*default"].update_attributes(:content=>"this [[Pit]]")
+  it "test_rename_should_update_hard_templated_referencer" do
+    Account.as_bot do
+      c=Card.create! :name => "Pit"
+      Card.create! :name => "Orange", :type=>"Fruit", :content => "[[Pit]]"
+      Card.create! :name => "Fruit+*type+*structure", :content=>"this [[Pit]]"
 
-    assert_equal "this [[Pit]]", Card["Orange"].content
-    c.update_attributes! :name => "Seed", :update_referencers => true
-    assert true  # just make sure nothing exploded
+      assert_equal "this [[Pit]]", Card["Orange"].raw_content
+      c.update_attributes! :name => "Seed", :update_referencers => true
+      assert_equal "this [[Seed]]", Card["Orange"].raw_content
+    end
   end
 end
 

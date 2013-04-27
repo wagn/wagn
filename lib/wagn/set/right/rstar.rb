@@ -47,7 +47,6 @@ module Wagn
 
       #~~~~~~ handle reloading due to type change
       if params[:type_reload] && card_args=params[:card]
-        params.delete :success # otherwise updating the editor looks like a successful post
         if card_args[:name] && card_args[:name].to_name.key != current_rule.key
           current_rule = Card.new card_args
         else
@@ -59,7 +58,7 @@ module Wagn
         set_selected = card_args[:name].to_name.left_name.to_s
       end
 
-      edit_mode = !params[:success] && card.ok?( ( card.new_card? ? :create : :update ) )
+      edit_mode = !params[:item] && card.ok?( ( card.new_card? ? :create : :update ) )
       
       opts = {
         :open_rule    => card,
@@ -147,8 +146,10 @@ module Wagn
           {:class=>"card-form card-rule-form slotter" } do |form|
 
         %{
-          #{ hidden_field_tag( :success, open_rule.name ) }
-          #{ hidden_field_tag( :view, 'open_rule' ) }
+          #{ hidden_field_tag 'success[id]', open_rule.name }
+          #{ hidden_field_tag 'success[view]', 'open_rule' }
+          #{ hidden_field_tag 'success[item]', 'view_rule' }
+          
 
           <div class="card-editor">
             #{
@@ -185,7 +186,7 @@ module Wagn
             #{ 
               if !card.new_card?
                 b_args = { :remote=>true, :class=>'rule-delete-button slotter', :type=>'button' }
-                b_args[:href] = path :action=>:delete, :view=>:open_rule, :success=>open_rule.cardname.url_key
+                b_args[:href] = path :action=>:delete, :success=>{ :id=>open_rule.cardname.url_key, :view=>:open_rule, :item=>:view_rule }
                 if fset = args[:fallback_set]
                   b_args['data-confirm']="Deleting will revert to #{setting_name} rule for #{Card.fetch(fset).label }"
                 end
@@ -194,7 +195,7 @@ module Wagn
              }
              #{ submit_tag 'Submit', :class=>'rule-submit-button' }
              #{ button_tag 'Cancel', :class=>'rule-cancel-button slotter', :type=>'button',
-                  :href=>path( :view=>( card.new_card? ? :closed_rule : :open_rule ), :card=>open_rule, :success=>true ) }
+                  :href=>path( :view=>( card.new_card? ? :closed_rule : :open_rule ), :card=>open_rule, :item=>:view_rule ) }
           </div>
           #{notice }
         }

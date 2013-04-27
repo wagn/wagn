@@ -37,8 +37,13 @@ module Wagn
       bits << %{<meta name="viewport" content="width=device-width, initial-scale=1.0"/>}
       # CSS
       #bits << stylesheet_link_tag('http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css')
-      bits << stylesheet_link_tag('application-all')
-      bits << stylesheet_link_tag('application-print', :media=>'print')
+      if params[:barebones]
+        bits << stylesheet_link_tag('barebones')
+      else
+        bits << stylesheet_link_tag('application-all')
+        bits << stylesheet_link_tag('application-print', :media=>'print')
+      end
+      
       if css_card = Card[:css]
         local_css_path = wagn_path "*css.css?#{ css_card.current_revision_id }"
         bits << stylesheet_link_tag(local_css_path)

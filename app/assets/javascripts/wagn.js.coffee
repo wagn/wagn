@@ -98,14 +98,14 @@ $(window).ready ->
   setTimeout (-> wagn.initializeEditors $('body')), 10
   #  dislike the timeout, but without this forms with multiple TinyMCE editors were failing to load properly
 
-  $('body').delegate '.slotter', "ajax:success", (event, data) ->
+  $('body').on 'ajax:success', '.slotter', (event, data) ->
     notice = $(this).attr('notify-success')
     newslot = $(this).setSlotContent data
     wagn.initializeEditors newslot
     if notice?
       newslot.notify notice
 
-  $('body').delegate '.slotter', "ajax:error", (event, xhr) ->
+  $('body').on 'ajax:error', '.slotter', (event, xhr) ->
     result = xhr.responseText
     if xhr.status == 303 #redirect
       window.location=result
@@ -119,11 +119,11 @@ $(window).ready ->
       else if xhr.status == 449
         s.find('.recaptcha-box').loadCaptcha()
 
-  $('body').delegate 'button.slotter', 'click', (event)->
+  $('body').on 'click', 'button.slotter', (event)->
     return false if !$.rails.allowAction $(this)
     $.rails.handleRemote $(this)
 
-  $('.slotter').live 'ajax:beforeSend', (event, xhr, opt)->
+  $('body').on 'ajax:beforeSend', '.slotter', (event, xhr, opt)->
     return if opt.skip_before_send
     
     unless opt.url.match /home_view/ #avoiding duplication.  could be better test?
@@ -158,18 +158,18 @@ $(window).ready ->
         $.ajax( args )
         false
 
-  $('body').delegate '.card-form', 'submit', ->
+  $('body').on 'submit', '.card-form', ->
     $(this).setContentFieldsFromMap()
     $(this).find('.card-content').attr('no-autosave','true')
     true
 
-  $('.submitter').live 'click', ->
+  $('body').on 'click', '.submitter', ->
     $(this).closest('form').submit()
    
-  $('.renamer-updater').live 'click', ->
+  $('body').on 'click', '.renamer-updater', ->
     $(this).closest('form').find('.update_referencers').val 'true'
         
-  $('body').delegate '.card-name-form', 'submit', (event) ->
+  $('body').on 'submit', '.card-name-form', ->
     confirmer = $(this).find '.confirm-rename'
     if confirmer.is ':hidden'
       if $(this).find('#referers').val() > 0
@@ -178,11 +178,11 @@ $(window).ready ->
       confirmer.show 'blind'
       false
     
-  $('body').delegate 'button.redirecter', 'click', ->
+  $('body').on 'click', 'button.redirecter', ->
     window.location = $(this).attr('href')
 
   unless wagn.noDoubleClick
-    $('.card-slot').live 'dblclick', (event)->
+    $('body').on 'dblclick', '.card-slot', (event) ->
       s = $(this)
       return false if s.find( '.card-editor' )[0]
       return false if s.closest( '.card-header' )[0]
@@ -192,43 +192,39 @@ $(window).ready ->
       $.rails.handleRemote(s)
       false # don't propagate up to next slot
 
-  $('.nodblclick').live 'dblclick', -> false
+  $('body').on 'dblclick', '.nodblclick', -> false
 
-  $('body').delegate 'form.slotter', 'submit', (event)->
+  $('body').on 'submit', 'form.slotter', (event)->
     if (target = $(this).attr 'main-success') and $(this).isMain()
       input = $(this).find '[name=success]'
       if input and !(input.val().match /^REDIRECT/)
         input.val ( if target == 'REDIRECT' then target + ': ' + input.val() else target )
 
   #more of this info should be in views; will need to refactor for HTTP DELETE anyway...
-  $('.card-slot').delegate '.standard-delete', 'click', ->
+  $('.card-slot').on 'click', '.standard-delete', ->
     return if $(this).attr('success-ready') == 'true' #prevent double-click weirdness
     s = if $(this).isMain() then 'REDIRECT: *previous' else 'TEXT:' + $(this).slot().attr('card-name') + ' removed'
     $(this).attr 'href', $(this).attr('href') + '?success=' + encodeURIComponent(s)
     $(this).attr 'success-ready', 'true'
 
-  $('body').delegate '.live-type-field', 'change', ->
+  $('body').on 'change', '.live-type-field', ->
     $(this).data 'params', $(this).closest('form').serialize()
     $(this).data 'url', $(this).attr 'href'
 
-  #unify these next two
-  $('.edit-type-field').live 'change', ->
+  $('body').on 'change', '.edit-type-field', ->
     $(this).closest('form').submit()
 
-  $('.set-select').live 'change', ->
-    $(this).closest('form').submit()
-
-  $('.autosave .card-content').live 'change', ->
+  $('body').on 'change', '.autosave .card-content', ->
     content_field = $(this)
     setTimeout ( -> content_field.autosave() ), 500
 
-  $('[hover_content]').live 'mouseenter', ->
+  $('body').on 'mouseenter', '[hover_content]', ->
     $(this).attr 'hover_restore', $(this).html()
     $(this).html $(this).attr( 'hover_content' )
-  $('[hover_content]').live 'mouseleave', ->
+  $('body').on 'mouseleave', '[hover_content]', ->
     $(this).html $(this).attr( 'hover_restore' )
     
-  $('.name-editor input').live 'keyup', ->
+  $('body').on 'keyup', '.name-editor input', ->
     box =  $(this)
     name = box.val()
     wagn.pingName name, (data)->
@@ -253,7 +249,7 @@ $(window).ready ->
       else
         msg.html ''
         
-  $('.render-error-link').live 'click', (event) ->
+  $('body').on 'click', '.render-error-link', (event) ->
     msg = $(this).closest('.render-error').find '.render-error-message'
     msg.show()
 #    msg.dialog()

@@ -15,17 +15,6 @@
 html>body .open-view {
   width: auto;  /* so non-ie browsers do better with image floats */
 }
-.card-body,
-.card-slot,
-.ALL {
-  overflow: hidden;
-  white-space: normal;
-}
-/*
-.card-slot > form >.instruction,
-.card-slot > .instruction {
-  background: #eee;
-}*/
 
 .card-body {
   padding: 5px 12px;
@@ -42,36 +31,31 @@ html>body .open-view {
   padding: 5px 12px;
   margin: 0;
   text-align: left;
-  overflow: hidden;
 }
 .card-header,
 .card-header a,
 .card-header h1 {
   color: #333
 }
-.card-header h1 {
-  display: inline;
-}
+
 h1.card-title {
   padding: 2px 0;
   margin-right: 5px;
 }
-.card-menu-link {
-  display: inline-block;
-  float: right;
+.card-header .instruction {
+  border: 1px solid #887;
+  background: #ddc;
+  border-radius: 8px;
+  -moz-border-radius: 8px;
 }
 .closed-view .card-menu-link  {
   float: none;
 }
 .card-menu {
-  display: none;
-  position:absolute;
-  z-index: 1;
   font-size: 11px;
 }
 .card-menu li {
   text-align: right;
-  white-space: nowrap;
 }
 .card-menu li a {
   color: #333;
@@ -98,7 +82,6 @@ h1.card-title {
   content: '<';
 }
 .card-header .toggler {
-  display: inline-block;
   position: relative;
   top: 2px;
 }
@@ -181,16 +164,11 @@ a.email-link {
 
 /* ---------- edit tab / new / inline editing--------*/
 
-.new-current-revision-id,
-.editor .revision-navigation,
-.editor .autosave-alert {
-  display: none
-}
+
 fieldset {
   margin: 5px 1px;
   clear: both;
   float: none !important;
-  display:block;
   border: 0;
 }
 fieldset > .button-area,
@@ -257,44 +235,15 @@ fieldset > legend > .instruction {
 .revision-navigation span {
    margin: 0px 10px
 }
-ins.diffmod,
-.diffins {
-  background: #aea;
-}
-del.diffmod,
-.diffdel {
-  background: #eaa;
-}
 
-/*-------options tab ------*/
+/*-------option ------*/
 
-/*--settings (new) --*/
-
-.options-set-label {
-  font-size: 1.1em;
-  color: #000;
-  padding: 5px 0;
-}
-.options-set-content {
-  padding: 0 0 30px 10px;
-}
-
-/*--permissions (old) --*/
-
-.small {  /* this is a crappy class name */
-  font-size: 10px;
-  display: block;
-  margin: 2px;
-  line-height: 13px
-}
 .new-account-link {
   text-align: center;
 }
 
 
-
 /*------------- multiple tabs / misc -----*/
-
 
 .card-notice {
   background: #fff;
@@ -304,7 +253,6 @@ del.diffmod,
   color: #009;
   display: none;
   margin: 0 0 4px 0;
-
 }
 
 
@@ -329,133 +277,54 @@ del.diffmod,
 }
 
 
-/*-----------  related view -------*/
-
-
-
-.related-view > .card-body  {
-   background: #bbb;
-   padding: 5px;
-}
-.related-view > .card-body > .ALL  {
-   background: #fff;
-   border-radius: 6px;
-}
-.related-view > .card-body > .ALL > .card-header {
-   background: #ddd;
-   padding: 5px;
-}
-.related-view > .card-body > .ALL > .card-header h1 {
-   color: #000;
-}
-.related-view > .card-body > .ALL > .card-header .ui-icon {
-  background-image: url('images/ui-icons_888888_256x240.png')
-
-}
-.related-view > .card-body > .ALL > .card-body {
-   padding: 8px 2%;
-}
 
 /*------------- closed view -------*/
 
-.closed-view {
-  width: 100%;  /*needed for ie6, or..?*/
+
+.closed-view {  
   background: #fff;
-  overflow: hidden;
-  white-space: nowrap !important;
   border: 0;
   border-bottom: 1px solid #ccc;
   -moz-border-radius: 0 !important;
   border-radius: 0 !important;
   padding: 0;
-  margin: 1px 0 0 0;
+  margin: 1px 0 0 0; 
 }
+
+.closed-content {
+  font-size: 11px !important;
+}
+
 .closed-view .card-header {
   vertical-align: middle;
-  display: inline-block;
   line-height: 15px;
   -moz-border-radius: 0 6px 6px 0;
   border-radius: 0 6px 6px 0;
   margin-right: 4px;
 }
-.closed-content,
-.closed-content table,
-.closed-content tbody,
-.closed-content tr,
-.closed-content th,
-.closed-content td,
-.closed-content p,
-.closed-content h1,
-.closed-content h2,
-.closed-content h3,
-.closed-content h4,
-.closed-content h5,
-.closed-content h6,
-.closed-content ul,
-.closed-content li,
-.closed-content pre,
-.closed-content ol,
-.closed-content hr,
-.closed-content div,
-.closed-content span,
-.closed-content a,
-.closed-content blockquote {
-  display: inline !important;
-  margin: 0 6px 0 0;
-  padding: 0px !important;
-  border: 0px !important;
-  font-size: 11px !important;
-  white-space: nowrap !important;
-  float: none !important;
-}
-.closed-content a {
-  margin: 0px;
-}
-.closed-content img {
-  max-height: 16px;
-  width: auto;
-  float: none;
-  padding: 0px;
-}
-.closed-content br,
-.closed-content hr,
-.closed-content input,
-.closed-content textarea,
-.closed-content object {
-  display: none !important;
-}
+
+
+
 /*----------- Change View ---------*/
 
 .change-view {
   padding: 5px 0px;
   border-bottom: 1px dotted grey;
-  clear: both;
 }
 .change-view .change-card{
   font-weight: bold;
-  float: left;
 }
 .change-view .last-update {
   color: #666;
-  float:right;
-  text-align: right;
 }
 .change-view .last-edited {
   color: #7a7;
-}
-.change-view .last-editor {
-  white-space: nowrap;
 }
 
 /*----------- Labeled View ---------*/
 
 
-.labeled-view .card-menu-link {
-  display: none;
-}
-.labeled-view:hover .card-menu-link {
-  display: inline-block;
-}
+
 a.missing-labeled,
 .labeled-view label {
   display: inline-block;
@@ -463,14 +332,7 @@ a.missing-labeled,
   text-align: right;
 }
 
-.labeled-view label h1,
-.labeled-view .pointer-list,
-.labeled-view .pointer-item,
-.labeled-view .search-result-list,
-.labeled-view .search-result-item {
-  display: inline;
-  font-size: 1em;
-}
+
 
 
 
@@ -594,14 +456,7 @@ h2.set-label {
 .RIGHT-Xcontent > .content,
 .RIGHT-Xdefault> .content 
 */
-.TYPE-layout > .content,
-.TYPE-plain_text > .content {
-  white-space: pre-wrap
-}
 
-.content.card-editor {
-  white-space: normal;
-}
 
 /*----------- (Account Request)--------------*/
 
@@ -650,21 +505,4 @@ h2.set-label {
 .ui-loader {
   display: none;
 }
-.template-editor-main {
-  float: left;
-  width: 85%;
-}
-.template-editor-left,
-.template-editor-right {
-  float: left;
-  width: 5%;
-  text-align: center;
-  font-size: 3em;
-  line-height: 2em;
-}
-.template-editor-close {
-   float: right;
-}
-.template_link-view {
-  display: inline;
-}
+

@@ -1,26 +1,19 @@
 /*---- page layout */
 
-#primary {
-  margin: 0 1%;
-  float: left;
-  width: 67%;
+/*
+#secondary > div {
+  margin-bottom: 30px;
 }
-#secondary {
-  margin: 0 1%;
-  float: right;
-  width: 28%;
-}
+*/
 
 
 /* --------menu -------------*/
 
 #menu {
-  display: block;
   font-size: 14px;
   background: #8AB;
   margin-bottom: 20px;
   padding: 2px;
-  overflow: hidden;
 }
 #menu a {
   color: #000;
@@ -66,14 +59,11 @@
 
 /* -- instructions ---*/
 
-.help, .instruction {
+.instruction {
   color: #440;
   text-align: center;
   padding: 4px 10px;
-}
-.instruction {
-  display: inline-block;
-}
+ }
 /*--- errors -----*/
 
 .exception p {
@@ -91,7 +81,6 @@
   color: #333;
 }
 .render-error {
-  background-color: #ecc !important;
   padding: 1px 20px;
   font-style: italic;
 }

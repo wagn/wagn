@@ -7,25 +7,31 @@ Wagn::Application.routes.draw do
     mount Object.const_get(:JasmineRails).const_get(:Engine) => "/specs"
   end
   
-  root :to=>'card#read',   :via=>:get
-  root :to=>'card#create', :via=>:post
-  root :to=>'card#update', :via=>:put
-  root :to=>'card#delete', :via=>:delete
-
-  match 'files/:id(-:size)-:rev.:format' => 'card#read', :via=>:get, :constraints => { :id=>/[^-]+/ }
+  #most common
+  root                               :to => 'card#read', :via=>:get
+  match 'files/:id(-:size)-:rev.:format' => 'card#read', :via=>:get, :id => /[^-]+/
   match 'recent(.:format)'               => 'card#read', :via=>:get, :id => '*recent' #obviate by renaming "*recent"
+#  match ':view:(:id(.:format))'          => 'card#read', :via=>:get  
+  match '(/wagn)/:id(.:format)'          => 'card#read', :via=>:get  #/wagn is deprecated
   
-  match '(/wagn)/:id(.:format)'          => 'card#read',   :via=>:get  #/wagn is deprecated
-  match         ':id(.:format)'          => 'card#create', :via=>:post
-  match         ':id(.:format)'          => 'card#update', :via=>:put
-  match         ':id(.:format)'          => 'card#delete', :via=>:delete
-                                         
+  # RESTful
+  root              :to => 'card#create', :via=>:post
+  root              :to => 'card#update', :via=>:put
+  root              :to => 'card#delete', :via=>:delete
+  
+  match ':id(.:format)' => 'card#create', :via=>:post
+  match ':id(.:format)' => 'card#update', :via=>:put
+  match ':id(.:format)' => 'card#delete', :via=>:delete
+
+  # legacy                                         
   match 'new/:type'                      => 'card#read', :view=>'new'
-  match 'card/:view(/:id(.:format))'     => 'card#read', :constraints => { :view=> /new|changes|options|edit/ }  #deprecate
-
+  match 'card/:view(/:id(.:format))'     => 'card#read', :view=> /new|changes|options|edit/
+  
+  # standard non-RESTful
   match ':controller/:action(/:id(.:format))'
-  match ':action(/:id(.:format))'        => 'card'
+  match ':action(/:id(.:format))'        => 'card' 
 
+  # other
   match '*id' => 'card#read', :view => 'bad_address'
 
 end

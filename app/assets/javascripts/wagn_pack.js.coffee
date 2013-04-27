@@ -53,7 +53,7 @@ wagn.chooseFile = (e, data) ->
 #  $(this).fileupload '_normalizeFile', 0, file # so file objects have same fields in all browsers
   $(this).closest('form').data 'file-data', data # stores data on form for use at submission time
 
-  if name_field = $(this).slot().find( '.card-name-field' )
+  if name_field = $(this).slot().find( '.name-editor input' )
     # populates card name if blank
     if name_field[0] and name_field.val() == ''
       name_field.val file.name.replace( /\..*$/, '' ).replace( /_/g, ' ')

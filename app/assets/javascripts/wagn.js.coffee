@@ -120,7 +120,6 @@ $(window).ready ->
         s.find('.recaptcha-box').loadCaptcha()
 
   $('body').on 'click', 'button.slotter', (event)->
-    alert "body click called"
     return false if !$.rails.allowAction $(this)
     $.rails.handleRemote $(this)
 

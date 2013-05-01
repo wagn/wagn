@@ -97,7 +97,7 @@ class AdminController < CardController
       render_text 'deleted'
     else
       render_text %{
-        <form>Delete session records last updated more than <input name="months"> months ago</form>
+        <form>Delete session records last updated more than <input name="months"/> months ago</form>
       }
     end
   end

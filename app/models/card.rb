@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
-
-require_dependency 'smart_name'
+require 'smart_name'
 
 class Card < ActiveRecord::Base
 
@@ -11,7 +10,7 @@ class Card < ActiveRecord::Base
 
   has_many :revisions, :order => :id #, :foreign_key=>'card_id'
 
-  attr_accessor :comment, :comment_author, :selected_rev_id,
+  attr_accessor :comment, :comment_author, :selected_revision_id,
     :update_referencers, :was_new_card, # seems like wrong mechanisms for these
     :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status #yuck
@@ -28,6 +27,14 @@ class Card < ActiveRecord::Base
   class << self
     JUNK_INIT_ARGS = %w{ missing skip_virtual id }
 
+    ID_CONST_ALIAS = {
+      :default_type => :basic, #this should not be hardcoded (not a constant -- should come from *all+*default)
+      :anon         => :anonymous,
+      :auth         => :anyone_signed_in,
+      :admin        => :administrator
+    }
+    
+
     def cache
       Wagn::Cache[Card]
     end
@@ -37,16 +44,8 @@ class Card < ActiveRecord::Base
       JUNK_INIT_ARGS.each { |a| args.delete(a) }
       %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
       args.delete('content') if args['attach'] # should not be handled here!
-
       super args
     end
-
-    ID_CONST_ALIAS = {
-      :default_type => :basic,
-      :anon         => :anonymous,
-      :auth         => :anyone_signed_in,
-      :admin        => :administrator
-    }
 
     def const_missing const
       if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore.to_sym
@@ -59,8 +58,8 @@ class Card < ActiveRecord::Base
       else
         super
       end
-    rescue NameError
-      warn "ne: const_miss #{e.inspect}, #{const}" if const.to_sym==:Card
+#    rescue NameError
+#      warn "ne: const_miss #{e.inspect}, #{const}" #if const.to_sym==:Card
     end
 
     def setting name
@@ -78,6 +77,23 @@ class Card < ActiveRecord::Base
     def toggle val
       val == '1'
     end
+    
+    def empty_trash
+      Card.where(:trash=>true).delete_all
+      User.delete_cardless
+      Card::Revision.delete_cardless
+      Card::Reference.repair_missing_referees
+    end
+    
+    def merge name, attribs={}, opts={}
+      Rails.logger.info "about to merge: #{name}, #{attribs}, #{opts}"
+      card = fetch name, :new=>{}
+      unless opts[:pristine] && !card.pristine?
+        card.attributes = attribs
+        card.save!
+      end
+    end
+    
   end
 
 
@@ -124,8 +140,6 @@ class Card < ActiveRecord::Base
     when :noop 
     when false, nil
       errors.add :type, "#{args[:type] || args[:typecode]} is not a known type."
-      @error_view = :not_found
-      @error_status = 404
     else
       return type_id
     end
@@ -166,13 +180,18 @@ class Card < ActiveRecord::Base
   def real?
     !new_card?
   end
+  
+  def pristine?
+    # has not been edited directly by human users.  bleep blorp.
+    new_card? || !revisions.map(&:creator_id).find { |id| id != Card::WagnBotID }
+  end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING
 
   def assign_attributes args={}, options={}
     if args and newtype = args.delete(:type) || args.delete('type')
-      args[:type_id] = Card.fetch_id( newtype )
+      args['type_id'] = Card.fetch_id( newtype )
     end
     reset_patterns
 
@@ -336,15 +355,17 @@ class Card < ActiveRecord::Base
   def junction?()      cardname.junction?                   end
 
   def left *args
-    unless !simple? and updates.for? :name and name_without_tracking.to_name.key == cardname.left_name.key
-      #the ugly code above is to prevent recursion when, eg, renaming A+B to A+B+C
-      #it should really be testing for any trunk
-      Card.fetch cardname.left, *args
+    if !simple?
+      unless updates.for? :name and name_without_tracking.to_name.key == cardname.left_name.key
+        #the ugly code above is to prevent recursion when, eg, renaming A+B to A+B+C
+        #it should really be testing for any trunk
+        Card.fetch cardname.left, *args
+      end
     end
   end
 
   def right *args
-    simple? ? nil : Card.fetch( cardname.right, *args )
+    Card.fetch( cardname.right, *args ) if !simple?
   end
 
   def trunk *args
@@ -439,8 +460,8 @@ class Card < ActiveRecord::Base
     hard_template ? template.content : content
   end
   
-  def selected_rev_id
-    @selected_rev_id or ( ( cr = current_revision ) ? cr.id : 0 )
+  def selected_revision_id
+    @selected_revision_id || current_revision_id || 0
   end
 
   def current_revision
@@ -589,6 +610,7 @@ class Card < ActiveRecord::Base
   # INCLUDED MODULES
 
   include Cardlib
+    
 
   after_save :after_save_hooks
   # moved this after Cardlib inclusions because aikido module needs to come after Paperclip triggers,
@@ -734,7 +756,7 @@ class Card < ActiveRecord::Base
   end
 
   # these old_modules should be refactored out
-  require_dependency 'flexmail.rb'
-  require_dependency 'google_maps_addon.rb'
-  require_dependency 'notification.rb'
+  require_dependency 'flexmail'
+  require_dependency 'google_maps_addon'
+  require_dependency 'notification'
 end

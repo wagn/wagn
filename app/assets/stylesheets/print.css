@@ -12,9 +12,6 @@
 .title {
   font-size: 15px;
 }
-.card-slot.paragraph .content {
-  overflow: visible !important;
-}
 body#wagn {
   color: #444;
   font-style: normal;

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Wagn
   module Set::Rstar
     include Sets
@@ -5,6 +6,8 @@ module Wagn
     format :html
 
     define_view :closed_rule, :rstar=>true, :tags=>:unknown_ok do |args|
+      return 'not a rule' if !card.is_rule? #these are helpful for handling non-rule rstar cards until we have real rule sets
+        
       rule_card = card.new_card? ? find_current_rule_card[0] : card
 
       rule_content = !rule_card ? '' : begin
@@ -35,6 +38,8 @@ module Wagn
 
 
     define_view :open_rule, :rstar=>true, :tags=>:unknown_ok do |args|
+      return 'not a rule' if !card.is_rule?
+      
       current_rule, prototype = find_current_rule_card
       setting_name = card.cardname.tag
       current_rule ||= Card.new :name=> "*all+#{setting_name}" #FIXME use codename
@@ -42,7 +47,6 @@ module Wagn
 
       #~~~~~~ handle reloading due to type change
       if params[:type_reload] && card_args=params[:card]
-        params.delete :success # otherwise updating the editor looks like a successful post
         if card_args[:name] && card_args[:name].to_name.key != current_rule.key
           current_rule = Card.new card_args
         else
@@ -54,9 +58,16 @@ module Wagn
         set_selected = card_args[:name].to_name.left_name.to_s
       end
 
-      edit_mode = !params[:success] and card.ok?( card.new_card? ? :create : :update )
-      opts = { :open_rule => card, :setting_name=> setting_name }
+      edit_mode = !params[:item] && card.ok?( ( card.new_card? ? :create : :update ) )
+      
+      opts = {
+        :open_rule    => card,
+        :setting_name => setting_name,
+        :set_context  => card.cardname.trunk_name
+      }
       rule_view = edit_mode ? :edit_rule : :show_rule
+      
+      
       
       if edit_mode
         opts.merge!( {
@@ -86,9 +97,21 @@ module Wagn
       end
 
       %{
-        <tr class="card-slot #{rule_view.to_s.sub '_', '-'}">
+        
+        <tr class="card-slot open-rule #{rule_view.to_s.sub '_', '-'}">
           <td class="rule-cell" colspan="3">
-            #{ subrenderer( current_rule )._render rule_view, opts }
+            <div class="rule-setting">
+              #{ link_to_view setting_name.sub(/^\*/,''), :closed_rule, :class=>'close-rule-link slotter' }
+              #{ link_to_page "all rules", setting_name, :class=>'setting-link', :target=>'wagn_setting' }
+            </div>
+            
+            <div class="instruction rule-instruction">
+              #{ process_content "{{#{setting_name}+*right+*help}}" }
+            </div>
+            
+            <div class="card-body">
+              #{ subrenderer( current_rule )._render rule_view, opts }
+            </div>
           </td>
         </tr>
       }
@@ -96,55 +119,51 @@ module Wagn
     end
     
     define_view :show_rule, :rstar=>true, :tags=>:unknown_ok do |args|
-      setting_name = args[:setting_name]
-      %{
-        <div class="rule-setting">
-          #{ link_to_view args[:setting_name].sub(/^\*/,''), :closed_rule,
-              :class=>'close-rule-link slotter', :path_opts=>{ :card=>args[:open_rule] } }
-        </div>
-        
-        <div class="rule-placeholder">&nbsp;</div>
+      return 'not a rule' if !card.is_rule?
       
-        <div class="rule-set">
-          #{ card.trunk.label }
-        </div>
-        
-        <div class="card-body">
-          #{ render_core }
-        </div>
-      }
+      if !card.new_card?
+        set = card.trunk
+        args[:item] ||= :link
+        %{
+          <div class="rule-set">
+            <label>Applies to</label> #{ link_to_page set.label, set.name }:
+          </div>
+          #{ _render_core args }
+        }
+      else
+        'No Current Rule'
+      end
     end
 
     define_view :edit_rule, :rstar=>true, :tags=>:unknown_ok do |args|
+      return 'not a rule' if !card.is_rule?
+  
       setting_name    = args[:setting_name]
       current_set_key = args[:current_set_key] || Card[:all].name  # (should have a constant for this?)
       open_rule       = args[:open_rule]
-      args[:item] ||= :link
 
       form_for card, :url=>path(:action=>:update, :no_id=>true), :remote=>true, :html=>
           {:class=>"card-form card-rule-form slotter" } do |form|
 
         %{
-          #{ hidden_field_tag( :success, open_rule.name ) }
-          #{ hidden_field_tag( :view, 'open_rule' ) }
-          <div class="rule-setting">
-            #{ link_to_view setting_name.sub(/^\*/,''), :closed_rule, :class=>'close-rule-link slotter', :path_opts=>{ :card=>open_rule } }
-          </div>
+          #{ hidden_field_tag 'success[id]', open_rule.name }
+          #{ hidden_field_tag 'success[view]', 'open_rule' }
+          #{ hidden_field_tag 'success[item]', 'view_rule' }
           
-          <div class="instruction rule-instruction">
-            #{ process_content "{{#{setting_name}+*right+*edit help}}" }
-          </div>
 
           <div class="card-editor">
-            #{ fieldset 'type', ( editor_wrap 'type' do
-                type_field :href=>path(:card=>open_rule, :view=>:open_rule, :type_reload=>true),
-                 :class =>'type-field rule-type-field live-type-field', 'data-remote'=>true
-              end )
+            #{
+              fieldset 'type', type_field(
+                :href         => path(:card=>open_rule, :view=>:open_rule, :type_reload=>true),
+                :class        => 'type-field rule-type-field live-type-field',
+                'data-remote' => true
+              ), :editor=>'type'
             }
             
-            #{ fieldset 'content', content_field( form, :skip_rev_id=>true ) }
+            #{ fieldset 'content', content_field( form, args.merge(:skip_rev_id=>true) ), :editor=>'content' }
             
-            #{ fieldset 'set', ( editor_wrap 'set' do
+            #{
+              fieldset 'set', (
                 option_items = args[:set_options].map do |set_name|
                   checked = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
                   is_current = set_name.to_name.key == current_set_key
@@ -157,9 +176,9 @@ module Wagn
                       </span>
                     </li>
                   }
-                end.join
-                %{ <ul>#{option_items}</ul>}
-              end )
+                end
+                %{ <ul>#{ option_items * "\n" }</ul>}
+              ), :editor => 'set'
             }          
           </div>
           
@@ -167,7 +186,7 @@ module Wagn
             #{ 
               if !card.new_card?
                 b_args = { :remote=>true, :class=>'rule-delete-button slotter', :type=>'button' }
-                b_args[:href] = path :action=>:delete, :view=>:open_rule, :success=>open_rule.cardname.url_key
+                b_args[:href] = path :action=>:delete, :success=>{ :id=>open_rule.cardname.url_key, :view=>:open_rule, :item=>:view_rule }
                 if fset = args[:fallback_set]
                   b_args['data-confirm']="Deleting will revert to #{setting_name} rule for #{Card.fetch(fset).label }"
                 end
@@ -176,7 +195,7 @@ module Wagn
              }
              #{ submit_tag 'Submit', :class=>'rule-submit-button' }
              #{ button_tag 'Cancel', :class=>'rule-cancel-button slotter', :type=>'button',
-                  :href=>path( :view=>( card.new_card? ? :closed_rule : :open_rule ), :card=>open_rule, :success=>true ) }
+                  :href=>path( :view=>( card.new_card? ? :closed_rule : :open_rule ), :card=>open_rule, :item=>:view_rule ) }
           </div>
           #{notice }
         }
@@ -216,7 +235,11 @@ module Wagn
       # This generates a prototypical member of the POTENTIAL rule's set
       # and returns that member's ACTUAL rule for the POTENTIAL rule's setting
       set_prototype = card.trunk.prototype
-      rule_card = card.new_card? ? set_prototype.rule_card( card.tag.codename ) : card
+      rule_card = if card.new_card?
+        setting = card.right and set_prototype.rule_card setting.codename   
+      else
+        card
+      end 
       [ rule_card, set_prototype ]
     end
   end

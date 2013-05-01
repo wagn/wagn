@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
@@ -15,26 +16,18 @@ end
 
 Spork.prefork do
   require File.expand_path File.dirname(__FILE__) + "/../config/environment"
-  require File.expand_path File.dirname(__FILE__) + "/../lib/authenticated_test_helper.rb"
+  require File.expand_path File.dirname(__FILE__) + "/../lib/authenticated_test_helper"
 
-  #require File.expand_path File.dirname(__FILE__) + "/../lib/util/card_builder.rb"
+  #require File.expand_path File.dirname(__FILE__) + "/../lib/util/card_builder"
   require 'rspec/rails'
 
   require_dependency 'chunks/chunk'
-  require_dependency 'chunks/uri'
-  require_dependency 'chunks/literal'
-  require_dependency 'chunks/reference'
-  require_dependency 'chunks/link'
-  require_dependency 'chunks/include'
-
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
-
-  ORIGINAL_RULE_CACHE = Card.rule_cache
 
   RSpec.configure do |config|
 
@@ -57,7 +50,6 @@ Spork.prefork do
 
 
     config.before(:each) do
-      Card.set_rule_cache ORIGINAL_RULE_CACHE.clone
       Wagn::Cache.restore
     end
     config.after(:each) do

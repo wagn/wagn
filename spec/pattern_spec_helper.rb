@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module PatternExampleGroupMethods
   def it_generates( opts )
     name = opts[:name]

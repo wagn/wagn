@@ -1,9 +1,9 @@
+# -*- encoding : utf-8 -*-
 module Cardlib::TrackedAttributes
 
   def set_tracked_attributes
     @was_new_card = self.new_card?
     updates.each_pair do |attrib, value|
-      #Rails.logger.debug "updates #{attrib} = #{value}"
       if send("set_#{attrib}", value )
         updates.clear attrib
       end
@@ -78,7 +78,7 @@ module Cardlib::TrackedAttributes
 
   def set_type_id new_type_id
     self.type_id_without_tracking= new_type_id
-    if assigns_type? # certain *content templates
+    if assigns_type? # certain *structure templates
       update_templatees :type_id => new_type_id
     end
     if real?
@@ -91,23 +91,41 @@ module Cardlib::TrackedAttributes
   end
 
   def set_content new_content
-    #warn "set_content no id #{name} #{new_content}" unless self.id
-    return false unless self.id
-    #warn "set_content #{name} #{new_content}"
-    new_content ||= ''
-    #new_content ||= (tmpl = template).nil? ? '' : tmpl.content
-    new_content = CleanHtml.clean! new_content if clean_html?
-    clear_drafts if current_revision_id
-    #warn "set_content #{name} #{Account.current_id}, #{new_content}"
-    #srev = self.current_revision = Card::Revision.create( :card_id=>self.id, :content=>new_content, :creator_id =>Account.current_id )
-    new_rev = Card::Revision.create :card_id=>self.id, :content=>new_content, :creator_id =>Account.current_id
-    self.current_revision_id = new_rev.id
-    reset_patterns_if_rule saving=true
-    @name_or_content_changed = true
+    if self.id #have to have this to create revision
+      new_content ||= ''
+      new_content = CleanHtml.clean! new_content if clean_html?
+      clear_drafts if current_revision_id
+      new_rev = Card::Revision.create :card_id=>self.id, :content=>new_content, :creator_id =>Account.current_id
+      self.current_revision_id = new_rev.id
+      reset_patterns_if_rule saving=true
+      @name_or_content_changed = true
+    else
+      false
+    end
   end
 
-  def set_comment(new_comment)
-    set_content( content + new_comment )
+  def set_comment new_comment
+    #seems hacky to do this as tracked attribute.  following complexity comes from set_content complexity.  sigh.
+    
+    commented = %{
+      #{ content }
+      #{ '<hr>' unless content.blank? }
+      #{ new_comment.to_html }
+      <div class="w-comment-author">--#{
+        if Account.logged_in?
+          "[[#{Account.current.name}]]"
+        else
+          Wagn::Conf[:controller].session[:comment_author] = comment_author if Wagn::Conf[:controller]
+          "#{ comment_author } (Not signed in)"
+        end
+      }.....#{Time.now}</div>
+    }
+    
+    if new_card?
+      self.content = commented
+    else
+      set_content commented
+    end
     true
   end
 
@@ -118,6 +136,7 @@ module Cardlib::TrackedAttributes
 
     #warn "si cont #{content} #{updates.for?(:content).inspect}, #{updates[:content]}"
     set_content updates[:content] # if updates.for?(:content)
+    
     updates.clear :content
 
     # normally the save would happen after set_content. in this case, update manually:

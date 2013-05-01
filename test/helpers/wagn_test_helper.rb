@@ -1,4 +1,5 @@
-#require "#{Rails.root}/lib/util/card_builder.rb"
+# -*- encoding : utf-8 -*-
+#require "#{Rails.root}/lib/util/card_builder"
 #require 'renderer'
 
 module WagnTestHelper

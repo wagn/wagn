@@ -1,20 +1,21 @@
+# -*- encoding : utf-8 -*-
 module Wagn
   module Set::Right::Template
     include Wagn::Sets
 
     format :base
 
-    define_view :core, :right=>:content do |args|
+    define_view :core, :right=>:structure do |args|
       with_inclusion_mode :template do
         self._final_core args
       end
     end
-    alias_view :core, { :right=>:content }, { :right=>:default }
+    alias_view :core, { :right=>:structure }, { :right=>:default }, {:right=>:help}
 
-    define_view :closed_content, :right=>:content do |args|
+    define_view :closed_content, :right=>:structure do |args|
       "#{_render_type} : #{_render_raw}"
     end
-    alias_view :closed_content, { :right=>:content }, { :right=>:default }
+    alias_view :closed_content, { :right=>:structure }, { :right=>:default }
 
     # this view is technically defined on all cards.  should move soon.
     define_view :template_rule, :tags=>:unknown_ok do |args|

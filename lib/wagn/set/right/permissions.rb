@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Wagn
   module Set::Right::Permissions
     include Sets
@@ -20,7 +21,17 @@ module Wagn
         #{ form.hidden_field :content, :class=>'card-content' }
         <div class="perm-editor">
         
-          <div class="perm-group perm-vals">
+          #{ if inheritable; %{
+            <div class="perm-inheritance perm-section">
+              #{ check_box_tag 'inherit', 'inherit', inheriting }
+              <label>
+                #{ core_inherit_content args.merge(:target=>'wagn_role') }
+                #{ content_tag( :a, :title=>"use left's #{card.cardname.tag} rule") { '?' } }
+              </label>
+            </div>
+          } end }
+        
+          <div class="perm-group perm-vals perm-section">
             <h5>Groups</h5>
             #{
               group_options.map do |option|
@@ -28,28 +39,18 @@ module Wagn
                 %{
                   <div class="group-option">
                     #{ check_box_tag( "#{option.key}-perm-checkbox", option.name, checked, :class=>'perm-checkbox-button'  ) }
-                    <label>#{ link_to_page option.name }</label>
+                    <label>#{ link_to_page option.name, nil, :target=>'wagn_role' }</label>
                   </div>
                 }
               end * "\n"
             }
           </div>
           
-          <div class="perm-indiv perm-vals">
+          <div class="perm-indiv perm-vals perm-section">
             <h5>Individuals</h5>
             #{ _render_list :items=>item_names, :extra_css_class=>'perm-indiv-ul' }
           </div>
-          
-          #{
-            if inheritable
-              %{
-                <h5>Inheritance</h5>
-                #{ check_box_tag 'inherit', 'inherit', inheriting }
-                #{ content_tag( :a, :title=>"use #{card.cardname.tag} rule for left card") { '?' } }
-              }
-            end
-          }
-          
+                    
         </div>
       }
     end
@@ -79,16 +80,16 @@ module Wagn
           task = card.tag.codename
           ancestor = Card[sc.trunk_name.trunk_name]
           links = ancestor.who_can( task.to_sym ).map do |card_id|
-            link_to_page Card[card_id].name
+            link_to_page Card[card_id].name, nil, :target=>args[:target]
           end*", "
-          "#{links} (inherit)"
+          "Inherit ( #{links} )"
         rescue
-          '(Inherit)'
+          'Inherit'
         end
       else
-        '(Inherit from left card)'
+        'Inherit from left card'
       end
-      %{<div class="inherit-perm">#{text}</div>}
+      %{<span class="inherit-perm">#{text}</span>}
     end
   end
 end

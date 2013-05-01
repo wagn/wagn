@@ -1,4 +1,4 @@
-# encoding: utf-8
+# -*- encoding : utf-8 -*-
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 require File.expand_path('../../packs/pack_spec_helper', File.dirname(__FILE__))
 
@@ -40,7 +40,7 @@ describe Chunks::Include, "include chunk tests" do
      template = Card['*template']
      specialtype = Card.create :typecode=>'Cardtype', :name=>'SpecialType'
 
-     specialtype_template = specialtype.fetch(:trait=>:type,:new=>{}).fetch(:trait=>:content,:new=>{})
+     specialtype_template = specialtype.fetch(:trait=>:type,:new=>{}).fetch(:trait=>:structure,:new=>{})
      specialtype_template.content = "{{#{SmartName.joint}age}}"
      Account.as_bot { specialtype_template.save! }
      assert_equal "{{#{SmartName.joint}age}}", Wagn::Renderer.new(specialtype_template).render_raw
@@ -86,7 +86,7 @@ describe Chunks::Include, "include chunk tests" do
   it "should test_container_inclusion" do
     #pending "base:parent not supported now, can we make a similare test with _left ?"
     bob_city = Card.create! :name=>'bob+city', :content=> "Sparta"
-    Account.as_bot { address_tmpl = Card.create! :name=>'address+*right+*content', :content =>"{{_left+city}}" }
+    Account.as_bot { address_tmpl = Card.create! :name=>'address+*right+*structure', :content =>"{{_left+city}}" }
     bob_address = Card.create! :name=>'bob+address'
     #FIXME -- does not work retroactively if template is created later.
 

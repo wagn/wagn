@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require_dependency 'chunks/chunk'
 
 module Chunks
@@ -27,7 +28,7 @@ module Chunks
       end
       
       @link_text = objectify @link_text
-      if target =~ /[\/:]/
+      if target =~ /\/|mailto:/
         @explicit_link = objectify target
       else
         @name = target

@@ -3,51 +3,36 @@
   <%# iframe for file / image uploads?? %>
   <iframe id="iframe-<%= div_id %>" height="0" width="0" frameborder="0"></iframe>
 
-  <h1 class="page-header">Sign Up</h1><%#ENGLISH%>
-
-
   <%= wrap_slot do |slot| %>
+  
+    <div class="card-header">
+      <h1>Sign Up</h1>
 
-    <div class="instruction">
-      <% if inst = card.rule_card(:add_help, :fallback=>:edit_help) %>
-        <%= raw( slot.subrenderer(inst).render :core ) %>
-      <% elsif !User.create_ok? %>
-        <p><strong>All Account Requests are subject to review.</strong></p><%#ENGLISH%>
+      <% if card.rule_card(:add_help, :fallback=>:help) %>
+        <%= raw( slot._render :help, :setting=>:add_help ) %>
       <% else %>
-        <p><strong>Send us the following, and we'll send you a password.</strong></p><%#ENGLISH%>
+        <%= raw( slot._render :help, :text => ( User.create_ok? ? 
+          'Send us the following, and we\'ll send you a password.' : 
+          'All Account Requests are subject to review.' ) ) %>
       <% end %>
     </div>
 
-    <div class="content">
 
-      <%= form_for :card, slot.form_opts(wagn_path( '/account/signup' ), 'card-form') do |f| %>
-        <%= hidden_field_tag 'element', "#{div_id}"  %>
-        <%= f.hidden_field :type_id  %>
-        <%- slot.form = f %>
+    <%= form_for :card, slot.form_opts(wagn_path( '/account/signup' ), 'card-form') do |f| %>
+      <%= hidden_field_tag 'element', "#{div_id}"  %>
+      <%= f.hidden_field :type_id  %>
+      <%- slot.form = f %>
 
-        <table class="fieldset">
-          <%= raw( slot.option_header 'Account Details' ) %><%#ENGLISH%>
-          <%- new_name_field = capture do %><%= f.text_field :name, {:class=>'new-card-name', :id=>"new-card-name-field"} %><% end %>
-          <%= slot.option( new_name_field,
-              :name=>"name",
-              :help=>"<strong>Unique name for your card</strong><br/>usually first and last name",
-              :label=>"Name") %>
+      <div class="card-body">      
+        <%= raw slot._render_name_editor( :help=>'usually first and last name' ) %>
+        <%= raw slot.fieldset( :email, text_field( :account, :email ) ) %>
+        <%= raw( slot.with_inclusion_mode(:new) { slot.edit_slot :label=>'other' } ) %>
+      </div>
+      
+      <fieldset><div class="button-area"><%= submit_tag 'Submit' %></div></fieldset>
 
-          <%= render :partial=>'account/email' %>
-          <%= raw( slot.option_header 'About You' ) %>
-        </table>
+      <%= raw( slot.notice ) %>
 
-        <div class="card-body">
-          <%= raw( slot.with_inclusion_mode(:new) { slot.edit_slot } ) %>
-        </div>
-        <div class="submit-tag">
-          <%= submit_tag 'Submit' %>
-        </div>
-
-        <%= raw( slot.notice ) %>
-
-
-      <% end %>
-    </div>
+    <% end %>
   <% end %>
 </div>

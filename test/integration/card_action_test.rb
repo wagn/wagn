@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../test_helper', File.dirname(__FILE__))
 
 require 'card_controller'
@@ -34,8 +35,8 @@ class CardActionTest < ActionController::IntegrationTest
     Account.as_bot  do
       Card.create :name=>'A+*self+*comment', :type=>'Pointer', :content=>'[[Anyone]]'
     end
-    post "card/comment/A", :card => { :comment=>"how come" }
-    assert_response :success
+    post "card/update/A", :card => { :comment=>"how come" }
+    assert_response 302
   end
 
   def test_create_role_card
@@ -66,7 +67,7 @@ class CardActionTest < ActionController::IntegrationTest
 
   def test_newcard_shows_edit_instructions
     given_card( {:type=>'cardtype', :name=>"YFoo", :content => ""} )
-    given_card( {:name=>"YFoo+*type+*edit help", :content => "instruct-me"} )
+    given_card( {:name=>"YFoo+*type+*help", :content => "instruct-me"} )
     get 'card/new', :card => {:type=>'YFoo'}
     assert_tag :tag=>'div', :attributes=>{ :class=>"instruction" },  :content=>/instruct-me/
   end
@@ -84,8 +85,8 @@ class CardActionTest < ActionController::IntegrationTest
   def test_newcard_gives_reasonable_error_for_invalid_cardtype
     Account.as_bot do
       get 'card/new', :card => { :type=>'bananamorph' }  
-      assert_response 404
-# =>       assert_tag :tag=>'div', :attributes=>{:class=>/errors-view/}, :content=>/not a known type/
+      assert_response 422
+      assert_tag :tag=>'div', :attributes=>{:class=>/errors-view/}, :content=>/not a known type/
     end
   end
 

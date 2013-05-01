@@ -1,3 +1,7 @@
+DEPRECATED!!!
+
+( this is only here for reference)
+
 Description:
     Generates a migration of card type/content based on a list of cards from the template database (should be current development db)
 

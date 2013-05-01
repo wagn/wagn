@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 module Wagn
   module Set::Type::Pointer
@@ -33,7 +34,7 @@ module Wagn
       args ||= {}
       items = args[:items] || card.item_names(:context=>:raw)
       items = [''] if items.empty?
-      options_card_name = ((oc = card.options_card) ? oc.name : '*all').to_name.url_key
+      options_card_name = (oc = card.options_card) ? oc.cardname.url_key : ':all'
 
       extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
 
@@ -116,8 +117,7 @@ module Wagn
 
       def item_names( args={} )
         context = args[:context] || self.cardname
-        cc=self.raw_content
-        self.content.split(/\n+/).map{ |line|
+        self.raw_content.split(/\n+/).map{ |line|
           line.gsub(/\[\[|\]\]/,'')
         }.map{ |link| context==:raw ? link : link.to_name.to_absolute(context) }
       end

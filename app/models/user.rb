@@ -6,18 +6,19 @@ class User < ActiveRecord::Base
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :name
 
-  validates_presence_of     :card_id
-  validates_uniqueness_of   :card_id
-  validates_presence_of     :account_id
-  validates_uniqueness_of   :account_id
-  validates_presence_of     :email, :if => :email_required?
-  validates_format_of       :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i  , :if => :email_required?
-  validates_length_of       :email, :within => 3..100,   :if => :email_required?
-  validates_uniqueness_of   :email, :scope=>:login,      :if => :email_required?
-  validates_presence_of     :password,                   :if => :password_required?
-  validates_presence_of     :password_confirmation,      :if => :password_required?
-  validates_length_of       :password, :within => 5..40, :if => :password_required?
-  validates_confirmation_of :password,                   :if => :password_required?
+  validates :card_id,    :presence=>true, :uniqueness=>true
+  validates :account_id, :presence=>true, :uniqueness=>true
+
+  validates :email, :presence=>true, :if=>:email_required?,
+    :uniqueness => { :scope   => :login                                      },
+    :format     => { :with    => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i },
+    :length     => { :maximum => 100                                         }
+  
+  validates :password, :presence=>true, :confirmation=>true, :if=>:password_required?,
+    :length => { :within => 5..40 }
+  validates :password_confirmation, :presence=>true, :if=>:password_required?
+  
+    
 
   before_validation :downcase_email!
   before_save :encrypt_password
@@ -81,6 +82,10 @@ class User < ActiveRecord::Base
           cached_val
         end
       end
+    end
+    
+    def delete_cardless
+      where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
     end
   end
 
@@ -151,7 +156,7 @@ class User < ActiveRecord::Base
 
   # blocked methods for legacy boolean status
   def blocked= block
-    if block != '0'
+    if block == true
       self.status = 'blocked'
     elsif !built_in?
       self.status = 'active'
@@ -184,7 +189,7 @@ class User < ActiveRecord::Base
     end
   end
 
-protected
+#protected
 
   # Encrypts the password with the user salt
   def encrypt(password)

@@ -1,29 +1,37 @@
-FORMATS = 'html|json|xml|rss|kml|css|txt|text|csv' unless defined? FORMATS
+# -*- encoding : utf-8 -*-
+FORMATS = 'html|json|xml|rss|kml|css|txt|text|csv' unless defined? FORMATS #should be set by renderers
 
 Wagn::Application.routes.draw do
 
   if !Rails.env.production? && Object.const_defined?( :JasmineRails )
     mount Object.const_get(:JasmineRails).const_get(:Engine) => "/specs"
   end
+  
+  #most common
+  root                               :to => 'card#read', :via=>:get
+  match 'files/:id(-:size)-:rev.:format' => 'card#read', :via=>:get, :id => /[^-]+/
+  match 'recent(.:format)'               => 'card#read', :via=>:get, :id => '*recent' #obviate by renaming "*recent"
+#  match ':view:(:id(.:format))'          => 'card#read', :via=>:get  
+  match '(/wagn)/:id(.:format)'          => 'card#read', :via=>:get  #/wagn is deprecated
+  
+  # RESTful
+  root              :to => 'card#create', :via=>:post
+  root              :to => 'card#update', :via=>:put
+  root              :to => 'card#delete', :via=>:delete
+  
+  match ':id(.:format)' => 'card#create', :via=>:post
+  match ':id(.:format)' => 'card#update', :via=>:put
+  match ':id(.:format)' => 'card#delete', :via=>:delete
 
-  # these file requests should only get here if the file isn't present.
-  # if we get a request for a file we don't have, don't waste any time on it.
-  #FAST 404s
-  match ':asset/:foo' => 'application#fast_404', :constraints =>
-    { :asset=>/assets|images?|stylesheets?|javascripts?/, :foo => /.*/ }
-
-  match '/' => 'card#read'
-  match 'recent(.:format)' => 'card#read', :id => '*recent', :view => 'content'
-  match '(/wagn)/:id(.:format)' => 'card#read'
-  match '/files/(*id)' => 'card#read_file'
-
-  match 'new/:type' => 'card#read', :view => 'new'
-
-  match 'card/:view(/:id(.:format))' => 'card#read', :constraints =>
-    { :view=> /new|changes|options|related|edit/ }
-
+  # legacy                                         
+  match 'new/:type'                      => 'card#read', :view=>'new'
+  match 'card/:view(/:id(.:format))'     => 'card#read', :view=> /new|changes|options|edit/
+  
+  # standard non-RESTful
   match ':controller/:action(/:id(.:format))'
+  match ':action(/:id(.:format))'        => 'card' 
 
+  # other
   match '*id' => 'card#read', :view => 'bad_address'
 
 end

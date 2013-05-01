@@ -1,10 +1,11 @@
+# -*- encoding : utf-8 -*-
 module Cardlib
   module Pattern
     mattr_accessor :subclasses
     @@subclasses = []
 
-    def self.register_class klass
-      @@subclasses.unshift klass
+    def self.register_class klass, index=nil
+      @@subclasses.insert index.to_i, klass
     end
 
     def self.method_key opts
@@ -27,9 +28,8 @@ module Cardlib
       end
     end
 
-
     def reset_patterns_if_rule saving=false
-      if is_rule?
+      if !new_card? && is_rule?
         set = left
         set.reset_patterns
         set.include_set_modules
@@ -55,7 +55,7 @@ module Cardlib
     alias_method_chain :patterns, :new
 
     def safe_keys
-      patterns.map(&:safe_key).reverse*" "
+      patterns.map( &:safe_key ).reverse * " "
     end
 
     def set_modules
@@ -119,21 +119,22 @@ module Cardlib
         end
 
         def key_name
-          @key_name ||= (code=Wagn::Codename[self.key] and card=Card[code] and card.name)
+          Card.fetch(self.key_id, :skip_modules=>true).cardname
         end
 
-        def register key, opt_keys, opts={}
-          Cardlib::Pattern.register_class self
-          self.key = key
-          self.key_id = Wagn::Codename[key]
-          self.opt_keys = Array===opt_keys ? opt_keys : [opt_keys]
-          opts.each { |key, val| send "#{key}=", val }
+        def register key, opts={}
+          if self.key_id = Wagn::Codename[key]          
+            self.key = key
+            Cardlib::Pattern.register_class self, opts.delete(:index)
+            self.opt_keys = opts.delete(:opt_keys) || [ key.to_sym ]
+            opts.each { |key, val| send "#{key}=", val }
+          end
         end
 
         def method_key_from_opts opts
           method_key || ((opt_keys.map do |opt_key|
-              opts[opt_key].to_s.gsub('+', '-')
-            end << key) * '_')
+            opts[opt_key].to_s.gsub('+', '-')
+          end << key) * '_' )
         end
 
         def pattern_applies? card
@@ -169,30 +170,43 @@ module Cardlib
       end
 
       def get_method_key
-        tkls_key = self.class.method_key
-        return tkls_key if tkls_key
-        return self.class.method_key if self.class.anchorless?
-        opts = {}
-        self.class.opt_keys.each_with_index do |key, index|
-          return nil unless opt_vals[index]
-          opts[key] = opt_vals[index]
+        if self.class.anchorless?
+          self.class.method_key
+        else
+          opts = {}
+          self.class.opt_keys.each_with_index do |key, index|
+            return nil unless opt_vals[index]
+            opts[key] = opt_vals[index]
+          end
+          self.class.method_key_from_opts opts
         end
-        self.class.method_key_from_opts opts
       end
 
       def opt_vals
         if @opt_vals.nil?
-          @opt_vals = self.class.anchorless? ? [] :
-            @anchor_name.parts.map do |part|
-              card=Card.fetch(part, :skip_virtual=>true, :skip_modules=>true) and Wagn::Codename[card.id.to_i]
-            end
+          @opt_vals = self.class.anchorless? ? [] : find_opt_vals
         end
         @opt_vals
       end
+      
+      def find_opt_vals
+        anchor_parts = if self.class.opt_keys.size > 1
+          [ @anchor_name.left, @anchor_name.right ]
+        else
+          [ @anchor_name ]
+        end
+        anchor_parts.map do |part|
+          card = Card.fetch part, :skip_virtual=>true, :skip_modules=>true
+          card && Wagn::Codename[card.id.to_i] or return []
+        end
+      end
+
+      def key_name
+        @key_name ||= self.class.key_name
+      end
 
       def to_s
-        kn = self.class.key_name
-        self.class.anchorless? ? kn : "#{@anchor_name}+#{kn}"
+        self.class.anchorless? ? key_name.s : "#{@anchor_name}+#{key_name}"
       end
 
       def inspect
@@ -214,56 +228,56 @@ module Cardlib
     end
 
     class AllPattern < BasePattern
-      register 'all', [], :method_key=>''
+      register 'all', :opt_keys=>[], :method_key=>''
       def self.label(name)              'All cards'                end
-      def self.prototype_args(base)     {}                         end
+      def self.prototype_args(anchor)   {}                         end
     end
 
     class AllPlusPattern < BasePattern
-      register 'all_plus', :all_plus, :method_key=>'all_plus', :junction_only=>true
+      register 'all_plus', :method_key=>'all_plus', :junction_only=>true
       def self.label(name)              'All "+" cards'            end
-      def self.prototype_args(base)     {:name=>'+'}               end
+      def self.prototype_args(anchor)   {:name=>'+'}               end
     end
 
     class TypePattern < BasePattern
-      register 'type', :type
+      register 'type'
       def self.label             name;  %{All "#{name}" cards}     end
-      def self.prototype_args    base;  {:type=>base}              end
+      def self.prototype_args  anchor;  {:type=>anchor}            end
       def self.pattern_applies?  card;  !!card.type_id             end
       def self.anchor_name       card;  card.type_name             end
       def self.anchor_id         card;  card.type_id               end
     end
 
     class StarPattern < BasePattern
-      register 'star', :star, :method_key=>'star'
+      register 'star', :method_key=>'star'
       def self.label            name;   'All "*" cards'            end
-      def self.prototype_args   base;   {:name=>'*dummy'}          end
+      def self.prototype_args anchor;   {:name=>'*dummy'}          end
       def self.pattern_applies? card;   card.cardname.star?        end
     end
 
     class RstarPattern < BasePattern
-      register 'rstar', :rstar, :method_key=>'rstar', :junction_only=>true
+      register 'rstar', :method_key=>'rstar', :junction_only=>true
       def self.label            name;   'All "+*" cards'           end
-      def self.prototype_args   base;   { :name=>'*dummy+*dummy'}  end
+      def self.prototype_args anchor;   { :name=>'*dummy+*dummy'}  end
       def self.pattern_applies? card;   card.cardname.rstar?       end
     end
 
     class RightPattern < BasePattern
-      register 'right', :right, :junction_only=>true, :assigns_type=>true
-      def self.label            name;   %{All "+#{name}" cards}    end
-      def self.prototype_args   base;   {:name=>"*dummy+#{base}"}  end
-      def self.anchor_name      card;   card.cardname.tag          end
+      register 'right', :junction_only=>true, :assigns_type=>true
+      def self.label            name;  %{All "+#{name}" cards}     end
+      def self.prototype_args anchor;  {:name=>"*dummy+#{anchor}"} end
+      def self.anchor_name      card;  card.cardname.tag           end
     end
 
     class LeftTypeRightNamePattern < BasePattern
-      register 'type_plus_right', [:ltype, :right], :junction_only=>true, :assigns_type=>true
+      register 'type_plus_right', :opt_keys=>[:ltype, :right], :junction_only=>true, :assigns_type=>true
       class << self
         def label name
           %{All "+#{name.to_name.tag}" cards on "#{name.to_name.left_name}" cards}
         end
-        def prototype_args base
-          { :name=>"*dummy+#{base.tag}",
-            :loaded_left=> Card.new( :name=>'*dummy', :type=>base.trunk_name )
+        def prototype_args anchor
+          { :name=>"*dummy+#{anchor.tag}",
+            :loaded_left=> Card.new( :name=>'*dummy', :type=>anchor.trunk_name )
           }
         end
         def anchor_name card
@@ -275,12 +289,13 @@ module Cardlib
     end
 
     class SelfPattern < BasePattern
-      register 'self', :name
+      register 'self', :opt_keys=>[ :name ]
       #note: does not assign type bc this causes trouble when cardtype cards have a *self set.
-      def self.label          name;     %{The card "#{name}"}      end
-      def self.prototype_args base;     { :name=>base }            end
-      def self.anchor_name    card;     card.name                  end
-      def self.anchor_id      card;     card.id                    end
+      def self.label            name;     %{The card "#{name}"}      end
+      def self.prototype_args anchor;     { :name=>anchor }          end
+      def self.anchor_name      card;     card.name                  end
+      def self.anchor_id        card;     card.id                    end
     end
+    
   end
 end

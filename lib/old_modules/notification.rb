@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Notification
   module CardMethods
     def self.included(base)

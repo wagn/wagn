@@ -1,9 +1,13 @@
+# -*- encoding : utf-8 -*-
+
 
 module Wagn
   class Renderer
 
-    cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :renderer
-    @@renderer = Renderer
+    include LocationHelper
+    
+    cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :current_class
+    @@current_class = Renderer
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
@@ -24,27 +28,14 @@ module Wagn
     @@error_codes    = {}
     @@view_tags      = {}
 
-    def self.get_renderer format
-      #warn "get_renderer #{format.inspect}"
-      const_get( if RENDERERS.has_key? format
-          RENDERERS[ format ]
-        else
-          format.to_s.camelize.to_sym
-        end )
-    end
-
     attr_reader :format, :card, :root, :parent
     attr_accessor :form, :main_content, :error_status
 
-    Card::Reference
-    Card
-    include LocationHelper
-
-  end
-
-  class Renderer
-
     class << self
+
+      def get_renderer format
+        const_get( RENDERERS[ format ] || format.to_s.camelize.to_sym )
+      end
 
       def new card, opts={}
         format = ( opts[:format].send_if :to_sym ) || :html
@@ -88,8 +79,12 @@ module Wagn
     def session()      CardController===controller ? controller.session : {}      end
     def ajax_call?()   @@ajax_call                                                end
 
-    def showname
-      @showname ||= card.cardname.to_show *@context_names
+    def showname title=nil
+      if title
+        title.to_name.to_absolute_name(card.cardname).to_show *@context_names
+      else
+        @showname ||= card.cardname.to_show *@context_names
+      end
     end
     
     def main?
@@ -141,7 +136,7 @@ module Wagn
 
     def optional_render view, args, default_hidden=false
       test = default_hidden ? :show : :hide
-      override = args[test] && [args[test]].flatten.member?(view.to_s)
+      override = args[test] && args[test].split(/[\s\,]+/).member?( view.to_s )
       return nil if default_hidden ? !override : override
       render view, args
     end
@@ -191,7 +186,7 @@ module Wagn
       @card = subcard
       @char_count = 0
       @depth += 1
-      @main_content = @showname = nil
+      @main_content = @showname = @search = @ok = nil
       self
     end
 
@@ -225,37 +220,49 @@ module Wagn
 
         # HANDLE UNKNOWN CARDS ~~~~~~~~~~~~
         when !card.known? && !self.class.tagged( view, :unknown_ok )
-          if focal?
-            if @format==:html && card.ok?(:create) ;  :new
-            else                                   ;  :not_found
-            end
-          else                                     ;  :missing
+    
+          case
+          when @format==:html && focal? && ok?( :create )
+            :new
+          when @format==:html && comment_box?( view, args ) && ok?( :comment )
+            view
+          when focal?
+            :not_found
+          else
+            :missing
           end
 
         # CHECK PERMISSIONS  ~~~~~~~~~~~~~~~~
         else
           perms_required = @@perms[view] || :read
-          if Proc === perms_required
-            args[:denied_task] = :read if !(perms_required.call self)  # read isn't quite right
-          else
-            args[:denied_task] = [perms_required].flatten.find do |task|
-              task = :create if task == :update && card.new_card?
-              !card.ok? task
+          args[:denied_task] =
+            if Proc === perms_required
+              :read if !(perms_required.call self)  # read isn't quite right
+            else
+              [perms_required].flatten.find { |task| !ok? task }
             end
-          end
           args[:denied_task] ? (@@denial_views[view] || :denial) : view
         end
 
-
       if view != original_view
         args[:denied_view] = original_view
-
-        if focal? && error_code = @@error_codes[view]
-          root.error_status = error_code
-        end
+      end
+      if focal? && error_code = @@error_codes[view]
+        root.error_status = error_code
       end
       #warn "ok_view[#{original_view}] #{view}, #{args.inspect}, Cd:#{card.inspect}" #{caller[0..20]*"\n"}"
       view
+    end
+    
+    def ok? task
+      task = :create if task == :update && card.new_card?
+      @ok ||= {}
+      @ok[task] = card.ok? task if @ok[task].nil?
+      @ok[task]
+    end
+    
+    def comment_box? view, args
+      self.class.tagged view, :comment and args[:show] =~ /comment_box/
     end
 
     def canonicalize_view view
@@ -337,9 +344,9 @@ module Wagn
         else
           :edit_in_form
         end
+      when @mode == :template   ; :template_rule
       when @@perms[view]==:none ; view
       when @mode == :closed     ; !tcard.known?  ? :closed_missing : :closed_content
-      when @mode == :template   ; :template_rule
       else                      ; view
       end  
 
@@ -376,23 +383,6 @@ module Wagn
       query = opts.empty? ? '' : "?#{opts.to_param}"
       wagn_path( base + query )
     end
-
-    def search_params
-      @search_params ||= begin
-        p = self.respond_to?(:paging_params) ? paging_params : { :default_limit=> 100 }
-        p[:vars] = {}
-        if self == @root
-          params.each do |key,val|
-            case key.to_s
-            when '_wql'      ;  p.merge! val
-            when /^\_(\w+)$/ ;  p[:vars][$1.to_sym] = val
-            end
-          end
-        end
-        p
-      end
-    end
-
     #
     # ------------ LINKS ---------------
     #
@@ -466,20 +456,18 @@ module Wagn
 
   end
 
-  class Renderer::JsonRenderer < Renderer
-  end
 
-  class Renderer::Text < Renderer
-  end
-
-  class Renderer::Html < Renderer
-  end
-
-  class Renderer::Csv < Renderer::Text
-  end
+  class Renderer::Html < Renderer                ; end
   
-  class Renderer::Css < Renderer::Text
-  end
+  class Renderer::File < Renderer                ; end
+
+  class Renderer::Text < Renderer                ; end
+  class Renderer::Csv < Renderer::Text           ; end
+  class Renderer::Css < Renderer::Text           ; end
+  
+  class Renderer::Data < Renderer                ; end
+  class Renderer::JsonRenderer < Renderer::Data  ; end
+  class Renderer::Xml < Renderer::Data           ; end
 
 end
 

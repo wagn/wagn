@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # Commonly used email steps
 #
 # To add your own steps make a custom_email_steps.rb

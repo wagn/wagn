@@ -1,9 +1,10 @@
+# -*- encoding : utf-8 -*-
 module Cardlib::Attach
   def attach_array(rev_id=nil)
-    c=if rev_id || self.new_card? || selected_rev_id==current_revision_id
+    c=if rev_id || self.new_card? || selected_revision_id==current_revision_id
         self.content
       else
-        Card::Revision.find_by_id(selected_rev_id).content
+        Card::Revision.find_by_id(selected_revision_id).content
       end
     !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/)
   end
@@ -34,20 +35,6 @@ module Cardlib::Attach
 
   STYLES = %w{ icon small medium large original }
 
-  def attachment_style type_id, style
-    case type_id
-    when Card::FileID
-      nil
-    when Card::ImageID
-      if style.nil? || style.to_sym == :full
-        :original
-      else
-        style
-      end
-    else
-      :error
-    end
-  end
 
   def attachment_format(ext)
     return nil unless ext.present? && attach
@@ -71,16 +58,16 @@ module Cardlib::Attach
           when 'File'; ['']
           when 'Image'; STYLES
         end
-      save_rev_id = selected_rev_id
+      save_rev_id = selected_revision_id
       links = {}
 
-      self.selected_rev_id = rev_id
+      self.selected_revision_id = rev_id
       styles.each { |style|  links[style] = attach.path(style)          }
 
-      self.selected_rev_id = current_revision_id
+      self.selected_revision_id = current_revision_id
       styles.each { |style|  File.link links[style], attach.path(style) }
 
-      self.selected_rev_id = save_rev_id
+      self.selected_revision_id = save_rev_id
     end
   end
 
@@ -132,6 +119,6 @@ module Paperclip::Interpolations
     at.instance.type_id==Card::FileID || style_name.blank? ? '' : "#{style_name}-"
   end
 
-  def revision_id(at, style_name) at.instance.selected_rev_id end
+  def revision_id(at, style_name) at.instance.selected_revision_id end
 end
 

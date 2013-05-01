@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe "card search" do
@@ -7,7 +8,7 @@ describe "card search" do
   end
 
   def test_autocard_should_not_respond_to_tform
-    Card.fetch("u1+*type+*content").should_not be
+    Card.fetch("u1+*type+*structure").should_not be
   end
 
   def test_autocard_should_respond_to_ampersand_email_attribute

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 module Wagn
   module Set::Type::FileAndImage
@@ -42,7 +43,7 @@ module Wagn
 
     define_view :core, :type=>'file' do |args|
       handle_source args do |source|
-        "<a href=\"#{source}\">Download #{ showname }</a>"
+        "<a href=\"#{source}\">Download #{ showname args[:title] }</a>"
       end
     end
 
@@ -68,10 +69,10 @@ module Wagn
     define_view :diff, :type=>'image' do |args|
       out = ''
       if @show_diff and @previous_revision
-        card.selected_rev_id=@previous_revision.id
+        card.selected_revision_id=@previous_revision.id
         out << _render_core
       end
-      card.selected_rev_id=@revision.id
+      card.selected_revision_id=@revision.id
       out << _render_core
       out
     end

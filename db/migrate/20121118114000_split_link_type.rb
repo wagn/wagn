@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class SplitLinkType < ActiveRecord::Migration
   def up
     add_column :card_references, :present, :integer

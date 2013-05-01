@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../../test_helper', File.dirname(__FILE__))
 class Wagn::Set::Type::ImageTest < ActiveSupport::TestCase
   #require 'action_controller'

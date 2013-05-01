@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 require 'object_content'
 
@@ -214,7 +215,7 @@ CONTENT = {
      }
 
    ~
-} # should the ~ be there?  is it css?
+}
 
 CLASSES = {
    :one => [String, Literal::Escape, String, Chunks::Include, String ],

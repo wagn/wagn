@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 include AuthenticatedTestHelper
 
@@ -16,10 +17,15 @@ describe CardController do
     end
 
     it "should recognize .rss on /recent" do
-      {:get => "/recent.rss"}.should route_to(:controller=>"card", :view=>"content", :action=>"read",
-        :id=>"*recent", :format=>"rss"
-      )
+      {:get => "/recent.rss"}.should route_to(:controller=>"card", :action=>"read", :id=>"*recent", :format=>"rss")
     end
+
+    it "should handle RESTful posts" do
+      { :put => '/mycard' }.should route_to( :controller=>'card', :action=>'update', :id=>'mycard')
+      { :put => '/' }.should route_to( :controller=>'card', :action=>'update')
+      
+    end
+
 
     ["/wagn",""].each do |prefix|
       describe "routes prefixed with '#{prefix}'" do
@@ -46,6 +52,7 @@ describe CardController do
             :controller=>"card",:action=>"read",:id=>"random"
           )
         end
+        
       end
     end
   end
@@ -225,7 +232,7 @@ describe CardController do
     end
   end
   
-  describe "#read_file" do
+  describe "#read file" do
     before do
       Account.as_bot do
         Card.create :name => "mao2", :typecode=>'image', :attach=>File.new("#{Rails.root}/test/fixtures/mao2.jpg")
@@ -236,15 +243,15 @@ describe CardController do
     it "handles image with no read permission" do
       get :read, :id=>'mao2'
       assert_response 403, "should deny html card view"
-      get :read_file, :id=>'mao2.jpg'
-      assert_response 302, "should redirect actual image to denial"      
+      get :read, :id=>'mao2', :format=>'jpg'
+      assert_response 403, "should deny simple file view"
     end
     
     it "handles image with read permission" do
       login_as :joe_admin
       get :read, :id=>'mao2'
       assert_response 200
-      get :read_file, :id=>'mao2.jpg'
+      get :read, :id=>'mao2', :format=>'jpg'
       assert_response 200
     end
   end
@@ -328,11 +335,10 @@ describe CardController do
       Account.as_bot do
         Card.create :name => 'basicname+*self+*comment', :content=>'[[Anyone Signed In]]'
       end
-      @c = Card["basicname"]
-      post :comment, :id=>"~#{@c.id}", :card=>{:comment => " and more\n  \nsome lines\n\n"}
+      post :update, :id=>'basicname', :card=>{:comment => " and more\n  \nsome lines\n\n"}
       cont = Card['basicname'].content
-      part = "basiccontent<hr><p> and more</p>\n<p>&nbsp;</p>\n<p>some lines</p><p><em>&nbsp;&nbsp;--[[Joe User]]"
-      cont[0,part.length].should == part
+      cont.should =~ /basiccontent/
+      cont.should =~ /some lines/
     end
 
     it "should watch" do

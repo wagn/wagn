@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Cardlib::Exceptions
   class PermissionDenied < Wagn::PermissionDenied
     attr_reader :card

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 require File.expand_path('../../pattern_spec_helper', File.dirname(__FILE__))
 
@@ -39,6 +40,12 @@ describe Cardlib::Pattern do
         Card.new( :name=>"Iliad+*to" ).set_names.should == [
           "Book+*to+*type plus right","*to+*right","*rstar","Phrase+*type","*all plus","*all"
         ]
+      end
+    end
+    
+    it "handles type plus right prototypes properly" do #right place for this?  really need more prototype tests...
+      Account.as_bot do
+        Card.fetch('Fruit+flavor+*type plus right').prototype.set_names.include?('Fruit+flavor+*type plus right').should be_true
       end
     end
   end

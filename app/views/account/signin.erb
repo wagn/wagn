@@ -1,28 +1,34 @@
-<div id="sign-in" class="content">
-  <h1 class="page-header">Sign In</h1><%#ENGLISH%>
+<div id="sign-in">
+  <%= wrap_slot do |slot| %>
+    <div class="card-header"><h1>Sign In</h1></div>
 
-  <%= form_tag :action=>'signin' do %>
-    <p><label for="login">Email</label></p>
-    <p><%= text_field_tag 'login', params[:login], :id=>'login_field' %></p>
-    <p><label for="password">Password</label></p>
-    <p><%= password_field_tag 'password' %></p>
-    <p><%= submit_tag 'Sign me in' %></p>
+    <%= form_tag :action=>'signin' do %>    
+      <div class="card-body">
+        <%= raw slot.fieldset( :email, text_field_tag( 'login', params[:login], :id=>'login_field' ) ) %>
+        <%= raw slot.fieldset( :password, password_field_tag( 'password' ) ) %>
+      </div>  
+    
+      <fieldset>
+        <div class="button-area">
+          <%= submit_tag 'Sign in' %>
+          <%= link_to '...or sign up!', :action=>'signup' if Card.new(:typecode=>'account_request').ok?(:create) %>
+        </div>
+      </fieldset>
+    <% end %>
   <% end %>
-  <p>&nbsp;</p>
+</div>
 
-  <h2 class="page-header">Forgot your password?</h2><%#ENGLISH%>
-  <%= error_messages_for @account %>
-  <%= form_tag :action=>'forgot_password' do %>
-    <p><label for="email">Email</label></p>
-    <p><%= text_field_tag 'email', params[:email] %></p>
+<div id="forgot-password">
+  <%= wrap_slot do |slot| %>
+    <div class="card-header"><h1>Forgot Password</h1></div>
 
-    <p><%= submit_tag 'Reset my password' %></p>
+    <%= form_tag :action=>'forgot_password' do %>
+      <div class="card-body">
+        <%= error_messages_for @card %>
+        <%= raw slot.fieldset( :email, text_field_tag( 'email', params[:email] ) ) %>
+      </div>
+    
+      <fieldset><div class="button-area"><%= submit_tag 'Reset my password' %></div></fieldset>
+    <% end %>
   <% end %>
-  <p>&nbsp;</p>
-
-  <% if Card.new(:typecode=>'account_request').ok?(:create) %>
-    <h2 class="page-header">Need an Account?</h2><%#ENGLISH%>
-    <p><%= link_to 'Sign Up!', :action=>'signup' %></p>
-  <% end %>
-
 </div>

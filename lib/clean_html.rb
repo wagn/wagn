@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module CleanHtml
   class << self
   ## FIXME:  this is still not quite the right place for clean_html!

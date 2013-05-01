@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # = Card#fetch
 #
 # A multipurpose retrieval operator that incorporates caching, "virtual" card retrieval
@@ -86,9 +87,13 @@ module Cardlib::Fetch
       end
 
       if card.new_card?
-        if ( opts[:skip_virtual] || !card.virtual? ) && opts[:new] != {}
+        if opts[:new] == {}
+          #noop default case; use cache.
+        elsif !opts[:new].blank? || opts[:skip_virtual] || !card.virtual?
           return card.renew(opts)
-        elsif opts[:name] && opts[:name] != card.name
+        end
+        
+        if opts[:name] && opts[:name] != card.name
           card.name = opts[:name]
         end
       end
@@ -154,7 +159,8 @@ module Cardlib::Fetch
 
   def renew args={}
     if opts = args[:new]
-      opts[:name] ||= cardname
+      opts[:name] = cardname
+      opts[:skip_modules] = args[:skip_modules]
       Card.new opts
     end
   end

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require_dependency 'chunks/chunk'
 
 # These are basic chunks that have a pattern and can be protected.

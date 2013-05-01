@@ -1,4 +1,4 @@
-# encoding: utf-8
+# -*- encoding : utf-8 -*-
 class Hash
   def pull(key)
     has_key?(key) && !(v = delete(key)).to_s.empty? ? v : false
@@ -46,9 +46,7 @@ class Object
     }
     klone
   end
-end
 
-class Object
   def send_unless method, *args, &block
     ( block_given? ? yield : self ) or  send method, *args
   end

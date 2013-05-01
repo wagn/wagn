@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 module RenameMethods
@@ -284,7 +285,7 @@ describe "renaming" do
     Account.as_bot do
       c=Card.create! :name => "Pit"
       Card.create! :name => "Orange", :type=>"Fruit", :content => "[[Pit]]"
-      Card.create! :name => "Fruit+*type+*content", :content=>"this [[Pit]]"
+      Card.create! :name => "Fruit+*type+*structure", :content=>"this [[Pit]]"
 
       assert_equal "this [[Pit]]", Card["Orange"].raw_content
       c.update_attributes! :name => "Seed", :update_referencers => true

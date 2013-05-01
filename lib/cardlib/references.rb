@@ -1,9 +1,10 @@
+# -*- encoding : utf-8 -*-
 module Cardlib::References
   def name_referencers link_name=nil
     link_name = link_name.nil? ? key : link_name.to_name.key
     Card.all :joins => :out_references, :conditions => { :card_references => { :referee_key => link_name } }
   end
-
+  
   def extended_referencers
     # FIXME .. we really just need a number here.
     (dependents + [self]).map(&:referencers).flatten.uniq
@@ -31,12 +32,13 @@ module Cardlib::References
     #Card.update( id, :references_expired=>nil )
     #  or just this and save it elsewhere?
     #references_expired=nil
+    
     connection.execute("update cards set references_expired=NULL where id=#{id}")
   #  references_expired = nil
     expire if refresh
 
     rendered_content ||= ObjectContent.new(content, {:card=>self} )
-      
+    
     rendered_content.find_chunks(Chunks::Reference).each do |chunk|
       if referee_name = chunk.referee_name # name is referenced (not true of commented inclusions)
         referee_id = chunk.referee_id   

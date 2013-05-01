@@ -1,26 +1,19 @@
 /*---- page layout */
 
-#primary {
-  margin: 0 1%;
-  float: left;
-  width: 67%;
+/*
+#secondary > div {
+  margin-bottom: 30px;
 }
-#secondary {
-  margin: 0 1%;
-  float: right;
-  width: 28%;
-}
+*/
 
 
 /* --------menu -------------*/
 
 #menu {
-  display: block;
   font-size: 14px;
   background: #8AB;
   margin-bottom: 20px;
   padding: 2px;
-  overflow: hidden;
 }
 #menu a {
   color: #000;
@@ -46,7 +39,7 @@
 
 #logo {
   text-align: center;
-  padding: 10px 0px;
+  padding: 10px;
   background: #fff;
   border: 1px solid #777;
   -moz-border-radius: 8px;
@@ -59,53 +52,18 @@
   text-decoration: none;
   text-align: center;
 }
-
-
-
-/*----- fieldset tables --------*/
-
-.fieldset {
-  width: 100%;
-}
-.fieldset td     {
-  padding: 5px 3px 5px 3px;
-  border-bottom: 1px solid #ddd;
-}
-.fieldset th {
-  text-align: center;
-  padding: 8px;
-  font-style: normal;
-}
-.fieldset .label {
-  text-align: right;
-  white-space: nowrap;
-  padding-right: 6px;
-  vertical-align: middle;
-}
-.fieldset .field {
-  width: 25%;
-  vertical-align: middle;
-  padding: 7px
-}
-.fieldset .help {
-  padding-left: 6px;
-  width: 50%;
-}
-.fieldset input[type=submit] {
-  margin: 6px
+#logo img {
+  max-width: 100%;
 }
 
 
 /* -- instructions ---*/
 
-.help, .instruction {
+.instruction {
   color: #440;
-  font-style: italic;
   text-align: center;
   padding: 4px 10px;
-}
-
-
+ }
 /*--- errors -----*/
 
 .exception p {
@@ -120,26 +78,24 @@
   border: 1px solid #777;
   border-bottom: 2px solid #888;
   border-right: 2px solid #888;
+  color: #333;
 }
 .render-error {
-  background-color: #ecc !important;
   padding: 1px 20px;
   font-style: italic;
 }
-
 /*-------- Special Pages --------*/
 
 /*-- sign in page --*/
 
-#sign-in p {
-  margin: 5px;
-}
 #sign-in input#login_field,
 #sign-in input#password,
-#sign-in input#email {
+#forgot-password input#email {
   width: 50%;
 }
-
+#forgot-password {
+  margin-top: 40px;
+}
 
 /* -- extra boxes -----*/
 

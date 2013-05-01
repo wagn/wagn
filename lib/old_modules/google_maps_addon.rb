@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'net/http'
 class GoogleMapsAddon
   def self.geocode(address)

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class TableCleanup < ActiveRecord::Migration
   def up  
     drop_table :cardtypes

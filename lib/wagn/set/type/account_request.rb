@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Wagn
   module Set::Type::AccountRequest
     include Sets
@@ -16,7 +17,7 @@ module Wagn
 
       process_content(_render_raw) +
       if (card.new_card?); '' else
-        %{<div class="invite-links help instruction">
+        %{<div class="invite-links">
             <div><strong>#{card.name}</strong> requested an account on #{format_date(card.created_at) }</div>
             #{%{<div>#{links.join('')}</div> } unless links.empty? }
         </div>}

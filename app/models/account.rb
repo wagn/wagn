@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Account
   @@as_card = @@as_id = @@current_id = @@current = @@user = nil
 

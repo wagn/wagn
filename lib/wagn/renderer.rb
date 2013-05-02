@@ -6,7 +6,9 @@ module Wagn
     include LocationHelper
     
     cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :current_class
-    attr_reader :card
+    attr_reader :format, :card, :root, :parent
+    attr_accessor :form, :main_content, :error_status
+
 
     @@current_class = Renderer
 

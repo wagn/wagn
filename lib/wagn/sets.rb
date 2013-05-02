@@ -233,7 +233,6 @@ module Wagn
 
               rescue Exception=>e
                 controller.send :notify_airbrake, e if Airbrake.configuration.api_key
-                warn "Card Action Error: #{e.class} : #{e.message}"
                 Rails.logger.info "\nCard Action Error[#{core_method} #{e.class} : #{e.message}"
                 Rails.logger.debug "  #{e.backtrace*"\n  "}"
                 action_error e, (card && card.name.present? ? card.name : 'unknown card')

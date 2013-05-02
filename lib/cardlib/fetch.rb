@@ -70,7 +70,6 @@ module Cardlib::Fetch
           return card.renew(opts)
         end
 
-        #warn "new card? #{card.inspect}"
         # NEW card -- (either virtual or missing)
         if card.nil? or ( card.type_id==-1 && ( !opts[:skip_virtual] || opts[:new]=={} ) )
           # The -1 type_id allows us to skip all the type lookup and flag the need for

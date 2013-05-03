@@ -196,7 +196,6 @@ module Wagn
         :perform_update    => :update,
         :perform_delete    => :delete,
         :perform_index     => :read,
-        :perform_read_file => :read_file,
       }
 
       def action event, opts={}, &final_action

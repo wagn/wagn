@@ -35,15 +35,6 @@ module Wagn
       end
     end
 
-    action :read_file do |*a|
-      if card.ok? :read
-        show_file
-      else
-        wagn_redirect "#{params[:id]}?view=denial"
-      end
-    end 
-
-
 
     # ------- Views ------------
 

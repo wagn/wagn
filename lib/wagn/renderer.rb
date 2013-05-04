@@ -6,11 +6,11 @@ module Wagn
     include LocationHelper
     
     cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :current_class
+    @@current_class = Renderer
+
     attr_reader :format, :card, :root, :parent
     attr_accessor :form, :main_content, :error_status
 
-
-    @@current_class = Renderer
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
@@ -29,7 +29,6 @@ module Wagn
     @@subset_views   = {}
     @@error_codes    = {}
     @@view_tags      = {}
-    @@renderer = Renderer
 
     class << self
 

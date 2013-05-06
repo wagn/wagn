@@ -47,14 +47,14 @@ Then, edit the config/database.yml file as necessary.  The default configuration
 
 ===4. Seed your data
 
- bundle exec rake wagn:create
+ rake wagn:create
 
 
 ===5. Start your server
 
 To fire up the default, built-in WEBrick server, just run:
 
- env STATIC_ASSETS=true bundle exec rails server
+ env STATIC_ASSETS=true rails server
  
 ...and point your browser to http://localhost:3000 (unless otherwise configured).
 

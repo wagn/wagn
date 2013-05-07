@@ -11,9 +11,8 @@ module Wagn
       title = params[:action] if title=='*placeholder'
       bits = ["<title>#{title ? "#{title} - " : ''}#{ Card.setting :title }</title>"]
 
-      icon_card = nil
-      [:favicon, :logo].find do |name|
-        icon_card = Card[name] and icon_card.type_id == Card::ImageID and !icon_card.content.blank?
+      icon_card = [:favicon, :logo].find do |name|
+        c = Card[name] and c.type_id == Card::ImageID and !c.content.blank? and c
       end
       if icon_card
         bits << %{<link rel="shortcut icon" href="#{ subrenderer(icon_card)._render_source :size=>:icon }" />}

@@ -159,7 +159,7 @@ module Cardlib::Fetch
 
   def renew args={}
     if opts = args[:new]
-      opts[:name] = cardname
+      opts[:name] ||= cardname
       opts[:skip_modules] = args[:skip_modules]
       Card.new opts
     end

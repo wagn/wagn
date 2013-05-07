@@ -59,6 +59,10 @@ describe Card do
     it "handles name variants of cached cards" do
       Card.fetch('yomama+*self').name.should == 'yomama+*self'
       Card.fetch('YOMAMA+*self').name.should == 'YOMAMA+*self'
+      Card.fetch('yomama', :new=>{}).name.should == 'yomama'
+      Card.fetch('YOMAMA', :new=>{}).name.should == 'YOMAMA'
+      Card.fetch('yomama!', :new=>{ :name=>'Yomama'} ).name.should == 'Yomama'
+#      Card.fetch('yomama!', :new=>{ :type=>'Phrase'} ).name.should == 'yomama!'  FIXME!!     
     end
 
     it "does not recurse infinitely on template templates" do

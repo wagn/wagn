@@ -91,7 +91,8 @@ class Card < ActiveRecord::Base
       card_ids = Card.connection.select_all( %{ select id from cards where trash is false } ).map( &:values ).flatten
       file_ids = Dir.entries( dir )[2..-1].map( &:to_i )
       file_ids.each do |file_id|
-        if !card_ids.member?(file_id) && !Card.exists?(file_id) #does a separate lookup to double check (overkill?)
+        if !card_ids.member?(file_id)
+          raise Wagn::Error, "Narrowly averted deleting current file" if Card.exists?(file_id) #double check!
           FileUtils.rm_rf("#{dir}/#{file_id}", secure: true)
         end
       end

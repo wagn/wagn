@@ -18,31 +18,6 @@ module Wagn
         #warn "gvkey #{selection_key}, #{opts.inspect} R:#{key}"
         key.to_sym
       end
-
-=begin
-      def get_module mod
-        module_name_parts = mod.split('::').map(&:to_sym)
-        module_name_parts.inject Wagn::Set do |base, part|
-          return if base.nil?
-          key = "#{base}::#{part}"
-          args = Cardlib::Patterns::BasePattern::RUBY19 ? [part, false] : [part]
-          Cardlib::Patterns::BasePattern::MODULES[key] ||= if base.const_defined?(*args)
-                base.const_get *args
-              else
-                base.const_set part.to_sym, Module.new
-              end
-        end
-      rescue NameError => e
-        warn "rescue ne #{e.inspect}, #{e.backtrace*"\n"}"
-        nil
-      end
-
-      def namespace spc, &block
-        const = get_module spc
-        #warn "namespace2: #{spc.inspect} :: #{const}"
-        const.module_eval &block
-      end
-=end
     end
 
     CARDLIB   = "#{Rails.root}/lib/cardlib/*.rb"

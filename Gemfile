@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 #source "http://gems.github.com"
 
 # DEFAULT
-gem 'smartname',    '0.1.7'
+gem 'smartname',    '0.1.8'
 
 gem 'rails',        '~> 3.2.9'
 gem 'htmlentities', '~> 4.3'
@@ -91,13 +91,13 @@ end
 
 group :debug do
   gem 'rdoc'
-  if RUBY_VERSION =~ /^1\.9\.3-p0/
+  case RUBY_VERSION
+  when /^1\.9\.3-p0/
     gem 'linecache19', '~>0.5.13'
     gem 'ruby-debug-base19x', '~> 0.11.30.pre4'
-  end
-  if RUBY_VERSION =~ /^1\.9/
+  when /^1\.9/
     gem 'ruby-debug19', :require => 'ruby-debug'
-  else
+  when /^1\.8/
     gem 'ruby-debug'
   end
 end

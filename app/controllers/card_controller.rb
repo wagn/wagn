@@ -201,7 +201,7 @@ class CardController < ApplicationController
       render :text => target
     else
       @card = target
-      self.params = new_params
+      self.params = self.params.merge new_params #need tests.  insure we get slot, main...
       show
     end
     true

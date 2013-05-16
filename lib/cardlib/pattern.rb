@@ -35,7 +35,7 @@ module Cardlib
         set.include_set_modules
         
         if saving
-          self.read_rule_updates( set.item_cards :limit=>0 ) if right.id == Card::ReadID
+          self.add_to_read_rule_update_queue( set.item_cards :limit=>0 ) if right.id == Card::ReadID
         end
       end
     end

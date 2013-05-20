@@ -273,18 +273,21 @@ class Wql
     end
 
     def match(val)
-      cxn, v = match_prep(val)
-      return nil if v.empty?
-      v.gsub!(/\W+/,' ')
+      cxn, val = match_prep val
+      val.gsub! /[^#{SmartName::OK4KEY_RE}]+/, ' '
+      return nil if val.strip.empty?
+      
 
       cond = begin
         join_alias = add_revision_join
         # FIXME: OMFG this is ugly
-        '(' +
-        ["replace(#{self.table_alias}.name,'+',' ')","#{join_alias}.content"].collect do |f|
-          v.split(/\s+/).map{ |x| %{#{f} #{cxn.match(quote("[[:<:]]#{x}[[:>:]]"))}} }.join(" AND ")
-        end.join(" OR ") +
-        ')'
+        val_list = val.split(/\s+/).map do |v|
+          name_or_content = ["replace(#{self.table_alias}.name,'+',' ')","#{join_alias}.content"].map do |field|
+            %{#{field} #{ cxn.match quote("[[:<:]]#{v}[[:>:]]") }}
+          end
+          "(#{name_or_content.join ' OR '})"
+        end
+        "(#{val_list.join ' AND '})"
       end
 
       merge field(:cond)=>SqlCond.new(cond)

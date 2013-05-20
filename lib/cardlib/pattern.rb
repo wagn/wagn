@@ -142,10 +142,8 @@ module Cardlib
         end
       end
 
-      def initialize(card)
-#        @card = card
+      def initialize card
         @anchor_name = self.class.anchor_name(card).to_name
-        #        raise if @trunk_name.to_s == 'true'
         
         @anchor_id = if self.class.respond_to? :anchor_id
           self.class.anchor_id card

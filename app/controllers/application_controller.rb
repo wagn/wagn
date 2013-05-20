@@ -124,7 +124,7 @@ class ApplicationController < ActionController::Base
         # Probably want to rename accordingly.
         [ :errors, 422]
       else #the following indicate a code problem and therefore require full logging
-        Rails.logger.debug exception.backtrace*"\n"
+        Rails.logger.info exception.backtrace*"\n"
         notify_airbrake exception if Airbrake.configuration.api_key
 
         if ActiveRecord::RecordInvalid === exception

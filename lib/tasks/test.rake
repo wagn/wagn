@@ -73,6 +73,8 @@ namespace :test do
       File.open("#{Rails.root.to_s}/test/fixtures/#{table_name}.yml", 'w') do |file|
         data = ActiveRecord::Base.connection.select_all(sql % table_name)
         file.write data.inject({}) { |hash, record|
+          record['trash'] = false
+          puts "test that trash is actually stored as 'false' for postgres and deleteme "
           hash["#{table_name}_#{i.succ!}"] = record
           hash
         }.to_yaml

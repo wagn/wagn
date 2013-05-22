@@ -11,11 +11,11 @@ module Wagn
       title = params[:action] if title=='*placeholder'
       bits = ["<title>#{title ? "#{title} - " : ''}#{ Card.setting :title }</title>"]
 
-      icon_card = [:favicon, :logo].find do |name|
-        c = Card[name] and c.type_id == Card::ImageID and !c.content.blank? and c
-      end
-      if icon_card
-        bits << %{<link rel="shortcut icon" href="#{ subrenderer(icon_card)._render_source :size=>:icon }" />}
+      [:favicon, :logo].each do |name|
+        if c = Card[name] and c.type_id == Card::ImageID and !c.content.blank?
+          bits << %{<link rel="shortcut icon" href="#{ subrenderer(c)._render_source :size=>:icon }" />}
+          break
+        end
       end
 
       #Universal Edit Button

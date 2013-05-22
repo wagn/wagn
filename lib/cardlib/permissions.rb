@@ -227,20 +227,14 @@ module Cardlib::Permissions
   ensure
     Card.record_timestamps = true
   end
-
-  # fifo of cards that need read rules updated
-  def update_read_rule_list() @update_read_rule_list ||= [] end
-  def read_rule_updates updates
-    #warn "rrups #{updates.inspect}"
-    @update_read_rule_list = update_read_rule_list.concat updates
-    # to short circuite the queue mechanism, just each the new list here and update
+  
+  def add_to_read_rule_update_queue updates
+    @read_rule_update_queue = Array.wrap(@read_rule_update_queue).concat updates
   end
 
-  def update_queue
-    #warn "update queue[#{inspect}] Q[#{self.update_read_rule_list.inspect}]"
-
-    self.update_read_rule_list.each { |card| card.update_read_rule }
-    self.update_read_rule_list = []
+  def process_read_rule_update_queue
+    Array.wrap(@read_rule_update_queue).each { |card| card.update_read_rule }
+    @read_rule_update_queue = []
   end
 
  protected

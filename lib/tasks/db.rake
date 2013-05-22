@@ -47,7 +47,7 @@ namespace :db do
       if ENV['RELOAD_TEST_DATA'] == 'true' || ENV['RUN_CODE_RUN']
         puts `env RAILS_ENV=test rake wagn:create`
       else
-        puts "skipping loading test data.  to force, run  env RELOAD_TEST_DATA=true rake db:test:prepare"
+        puts "skipping loading test data.  to force, run `env RELOAD_TEST_DATA=true rake db:test:prepare`"
       end
     end
   end

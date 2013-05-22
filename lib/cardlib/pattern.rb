@@ -35,7 +35,7 @@ module Cardlib
         set.include_set_modules
         
         if saving
-          self.read_rule_updates( set.item_cards :limit=>0 ) if right.id == Card::ReadID
+          self.add_to_read_rule_update_queue( set.item_cards :limit=>0 ) if right.id == Card::ReadID
         end
       end
     end
@@ -142,10 +142,8 @@ module Cardlib
         end
       end
 
-      def initialize(card)
-#        @card = card
+      def initialize card
         @anchor_name = self.class.anchor_name(card).to_name
-        #        raise if @trunk_name.to_s == 'true'
         
         @anchor_id = if self.class.respond_to? :anchor_id
           self.class.anchor_id card

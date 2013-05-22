@@ -15,10 +15,8 @@ class Card < ActiveRecord::Base
     :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status #yuck
 
-  attr_writer :update_read_rule_list
-
   before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
-  after_save :base_after_save, :update_ruled_cards, :update_queue, :expire_related
+  after_save :base_after_save, :update_ruled_cards, :process_read_rule_update_queue, :expire_related
 
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 

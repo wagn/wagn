@@ -16,7 +16,7 @@ class Mailer < ActionMailer::Base
       args[k] or raise "Missing email parameter: #{k}"
     end
 
-    @pw_url   = wagn_url "#{cd_with_acct.cardname.url_key}?view=options"
+    @pw_url   = wagn_url "#{cd_with_acct.cardname.url_key}?view=account"
     @login_url= wagn_url "/account/signin"
 
     #FIXME - might want different "from" settings for different contexts?

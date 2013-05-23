@@ -22,8 +22,7 @@ class Card < ActiveRecord::Base
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
 
-  action :wcommit do |args|
-    puts "self.class = #{self.class}"
+  action :wcommit do #|args|
     set_stamper
     base_before_save
     set_read_rule

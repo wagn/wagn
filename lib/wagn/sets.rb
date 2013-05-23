@@ -86,7 +86,7 @@ module Wagn
         
         # the key work to do below is to set up triggers
         const.class_eval do
-          define_method "#{event}" do |*a| final.call *a end
+          define_method "#{event}", final
         end
       end
 

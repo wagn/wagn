@@ -78,6 +78,18 @@ module Wagn
         Renderer.current_class = if fmt.nil? || fmt == :base then Renderer else Renderer.get_renderer fmt end
       end
 
+
+      def action event, opts={}, &final
+        
+        const = Card #this will be Model submodule of Set module for sets other than "all"
+        #Should be determined by the class or set module from which this is called.
+        
+        # the key work to do below is to set up triggers
+        const.class_eval do
+          define_method "#{event}" do |*a| final.call *a end
+        end
+      end
+
       def define_view view, opts={}, &final
         Renderer.perms[view]       = opts.delete(:perms)      if opts[:perms]
         Renderer.error_codes[view] = opts.delete(:error_code) if opts[:error_code]

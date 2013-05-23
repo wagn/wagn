@@ -2,23 +2,34 @@
 require 'smart_name'
 
 class Card < ActiveRecord::Base
-
+  include Wagn::Sets
+  
   SmartName.codes= Wagn::Codename
   SmartName.params= Wagn::Conf
   SmartName.lookup= Card
   SmartName.session= proc { Account.current.name }
 
-  has_many :revisions, :order => :id #, :foreign_key=>'card_id'
+  has_many :revisions, :order => :id
 
   attr_accessor :comment, :comment_author, :selected_revision_id,
     :update_referencers, :was_new_card, # seems like wrong mechanisms for these
     :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status #yuck
 
-  before_save :set_stamper, :base_before_save, :set_read_rule, :set_tracked_attributes
+  before_save :wcommit
   after_save :base_after_save, :update_ruled_cards, :process_read_rule_update_queue, :expire_related
 
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
+
+
+  action :wcommit do |args|
+    puts "self.class = #{self.class}"
+    set_stamper
+    base_before_save
+    set_read_rule
+    set_tracked_attributes
+  end
+
 
   #~~~~~~  CLASS METHODS ~~~~~~~~~~~~~~~~~~~~~
 
@@ -66,7 +77,7 @@ class Card < ActiveRecord::Base
       end
     end
 
-    def path_setting name
+    def path_setting name #shouldn't this be in location helper?
       name ||= '/'
       return name if name =~ /^(http|mailto)/
       Wagn::Conf[:root_path] + name

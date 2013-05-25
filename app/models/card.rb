@@ -91,7 +91,7 @@ class Card < ActiveRecord::Base
       file_ids.each do |file_id|
         if !card_ids.member?(file_id)
           raise Wagn::Error, "Narrowly averted deleting current file" if Card.exists?(file_id) #double check!
-          FileUtils.rm_rf("#{dir}/#{file_id}", secure: true)
+          FileUtils.rm_rf("#{dir}/#{file_id}", :secure => true)
         end
       end
     end

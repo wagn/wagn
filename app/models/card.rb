@@ -16,18 +16,11 @@ class Card < ActiveRecord::Base
     :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status #yuck
 
-  before_save :wcommit
+  before_save :commit
   after_save :base_after_save, :update_ruled_cards, :process_read_rule_update_queue, :expire_related
 
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
-
-  action :wcommit do #|args|
-    set_stamper
-    base_before_save
-    set_read_rule
-    set_tracked_attributes
-  end
 
 
   #~~~~~~  CLASS METHODS ~~~~~~~~~~~~~~~~~~~~~
@@ -219,10 +212,7 @@ class Card < ActiveRecord::Base
     super args, options
   end
 
-  def set_stamper
-    self.updater_id = Account.current_id
-    self.creator_id = self.updater_id if new_card?
-  end
+
 
   after_validation :on => :create do
     pull_from_trash if new_record?
@@ -255,12 +245,25 @@ class Card < ActiveRecord::Base
     raise e
   end
 
-  def base_before_save
+
+  action :commit do
+    set_read_rule
+    set_tracked_attributes
+  end
+
+  action :set_stamper, :before=>:commit do
+    self.updater_id = Account.current_id
+    self.creator_id = self.updater_id if new_card?
+  end
+  
+  action :run_legacy_triggers, :before=>:commit do
+    ## this was done as a hacky way to make triggers in set modules work.  should get rid of it soon.
     if self.respond_to?(:before_save) and self.before_save == false
       errors.add(:save, "could not prepare card for destruction") #fixme - screwy error handling!!
       return false
     end
   end
+  
 
   def base_after_save
     save_subcards

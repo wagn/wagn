@@ -69,6 +69,7 @@ module Wagn
 
     module ClassMethods
       include SharedMethods
+      #include ActiveSupport::Callbacks
 
       #
       # ~~~~~~~~~~  VIEW DEFINITION
@@ -79,14 +80,30 @@ module Wagn
       end
 
 
+# action :set_stamper, :before=>:commit do
+
       def action event, opts={}, &final
         
-        const = Card #this will be Model submodule of Set module for sets other than "all"
+        const = self.ancestors.first #this will be Model submodule of Set module for sets other than "all"
         #Should be determined by the class or set module from which this is called.
-        
-        # the key work to do below is to set up triggers
+        puts "const = #{const}"
+
+        # I tried to do this without defining the final methods using Proc, lambda, etc, but couldn't quite get it to work.
+        # perhaps final method should be private?
+                
         const.class_eval do
-          define_method "#{event}", final
+          define_callbacks event
+          final_method = "_final_#{event}"
+          define_method final_method, &final   
+          define_method event do
+            run_callbacks event do send final_method end
+          end
+
+          [:before, :after, :around].each do |kind|
+            if object_method = opts[kind]
+              set_callback object_method, kind, event
+            end
+          end
         end
       end
 

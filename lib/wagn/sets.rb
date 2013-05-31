@@ -79,8 +79,6 @@ module Wagn
       end
 
 
-# event :set_stamper, :before=>:commit do
-
       def event event, opts={}, &final
         
         mod = self.ancestors.first

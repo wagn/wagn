@@ -17,7 +17,7 @@ class Card < ActiveRecord::Base
     :error_view, :error_status #yuck
 
   before_save :approve
-  around_save :commit
+  around_save :store
   
   after_save :base_after_save, :update_ruled_cards, :process_read_rule_update_queue, :expire_related
   
@@ -236,6 +236,7 @@ class Card < ActiveRecord::Base
   end
   
   define_callbacks :approve
+  define_callbacks :store
   define_callbacks :extend
   
   def approve
@@ -249,9 +250,9 @@ class Card < ActiveRecord::Base
     rescue_event e
   end
 
-  def commit
+  def store
 #    puts "commit called: #{name}"
-    run_callbacks :commit do
+    run_callbacks :store do
       set_read_rule #move to action
       set_tracked_attributes #move to action
       yield # wanted to do yield.  so far can't make it work.  surely there's a better way.
@@ -280,7 +281,7 @@ class Card < ActiveRecord::Base
     @action = nil    
   end
 
-  event :set_stamper, :before=>:commit do #|args|
+  event :set_stamper, :before=>:store do #|args|
 #    puts "stamper called: #{name}"
     self.updater_id = Account.current_id
     self.creator_id = self.updater_id if new_card?
@@ -292,7 +293,7 @@ class Card < ActiveRecord::Base
     send_notifications
   end
 
-  event :commit_subcards, :after=>:commit do #|args|
+  event :store_subcards, :after=>:store do #|args|
     @subcards = []
     return unless cards
     cards.each_pair do |sub_name, opts|

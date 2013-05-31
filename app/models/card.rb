@@ -16,11 +16,10 @@ class Card < ActiveRecord::Base
     :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status #yuck
 
-  before_save :commit
+  around_save :commit
   after_save :base_after_save, :update_ruled_cards, :process_read_rule_update_queue, :expire_related
 
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
-
 
 
   #~~~~~~  CLASS METHODS ~~~~~~~~~~~~~~~~~~~~~
@@ -245,18 +244,24 @@ class Card < ActiveRecord::Base
     raise e
   end
 
+  
 
-  action :commit do
+  action :commit do |args|
+#    puts "commit called: #{name}"
     set_read_rule
     set_tracked_attributes
+    args[:block].call # wanted to do yield.  so far can't make it work.  surely there's a better way.
+    
+    true
   end
 
-  action :set_stamper, :before=>:commit do
+  action :set_stamper, :before=>:commit do |args|
+#    puts "stamper called: #{name}"
     self.updater_id = Account.current_id
     self.creator_id = self.updater_id if new_card?
   end
   
-  action :run_legacy_triggers, :before=>:commit do
+  action :run_legacy_triggers, :before=>:commit do |args|
     ## this was done as a hacky way to make triggers in set modules work.  should get rid of it soon.
     if self.respond_to?(:before_save) and self.before_save == false
       errors.add(:save, "could not prepare card for destruction") #fixme - screwy error handling!!

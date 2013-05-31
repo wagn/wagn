@@ -91,7 +91,7 @@ module Cardlib
         attr_accessor :key, :key_id, :opt_keys, :junction_only, :method_key, :assigns_type
 
         def find_module mod
-          module_name_parts = mod.split('/') << 'model'
+          module_name_parts = mod.split('::') << 'model'
           module_name_parts.inject Wagn::Set do |base, part|
             return if base.nil?
             #Rails.logger.warn "find m #{base}, #{part}"
@@ -159,7 +159,7 @@ module Cardlib
         set_module = case
           when  self.class.anchorless?    ; self.class.key
           when  opt_vals.member?( nil )  ; nil
-          else  "#{self.class.key}/#{opt_vals * '_'}"
+          else  "#{self.class.key}::#{opt_vals * '_'}"
           end
 
         self.class.find_module set_module if set_module

@@ -215,13 +215,13 @@ module Wagn
         end
       end
      
-      def method_missing method_id, *args
-        if !@set_repair_attempted and repair_set
-          send method_id, *args
-        else
-          super
-        end
-      end
+#      def method_missing method_id, *args
+#        if !@set_repair_attempted and repair_set
+#          send method_id, *args
+#        else
+#          super
+#        end
+#      end
     end
     
   end

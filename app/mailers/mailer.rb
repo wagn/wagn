@@ -96,6 +96,7 @@ class Mailer < ActionMailer::Base
       else
         args[:from] = from
       end
+      puts "mail args: #{args}"
       mail args
     end
   end

@@ -69,7 +69,6 @@ module Wagn
 
     module ClassMethods
       include SharedMethods
-      #include ActiveSupport::Callbacks
 
       #
       # ~~~~~~~~~~  VIEW DEFINITION
@@ -84,19 +83,29 @@ module Wagn
 
       def action event, opts={}, &final
         
-        const = self.ancestors.first #this will be Model submodule of Set module for sets other than "all"
-        #Should be determined by the class or set module from which this is called.
-        puts "const = #{const}"
+        mod = self.ancestors.first
+        mod = case 
+          when mod == Card                          ; Card
+          when mod.name =~ /^Wagn::Set::All::/      ; Card 
+          when modl = Card.find_module( mod.name )  ; modl
+          else
+          end
+            
+        puts "#{mod} -> #{event} (#{opts})"
 
         # I tried to do this without defining the final methods using Proc, lambda, etc, but couldn't quite get it to work.
         # perhaps final method should be private?
                 
-        const.class_eval do
+        mod.class_eval do
+          include ActiveSupport::Callbacks
           define_callbacks event
           final_method = "_final_#{event}"
-          define_method final_method, &final   
-          define_method event do
-            run_callbacks event do send final_method end
+          define_method final_method, &final
+          define_method event do |*a, &block|
+            run_callbacks event do 
+#              puts "#{final_method} #{block}"
+              send final_method, :block=>block
+            end
           end
 
           [:before, :after, :around].each do |kind|

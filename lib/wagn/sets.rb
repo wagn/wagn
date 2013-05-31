@@ -79,9 +79,9 @@ module Wagn
       end
 
 
-# action :set_stamper, :before=>:commit do
+# event :set_stamper, :before=>:commit do
 
-      def action event, opts={}, &final
+      def event event, opts={}, &final
         
         mod = self.ancestors.first
         mod = case 
@@ -91,7 +91,7 @@ module Wagn
           else
           end
             
-        puts "#{mod} -> #{event} (#{opts})"
+        #puts "#{mod} -> #{event} (#{opts})"
 
         # I tried to do this without defining the final methods using Proc, lambda, etc, but couldn't quite get it to work.
         # perhaps final method should be private?
@@ -101,10 +101,13 @@ module Wagn
           define_callbacks event
           final_method = "_final_#{event}"
           define_method final_method, &final
-          define_method event do |*a, &block|
-            run_callbacks event do 
-#              puts "#{final_method} #{block}"
-              send final_method, :block=>block
+          define_method event do #|*a, &block|
+            run_callbacks event do
+              action = self.instance_variable_get(:@action)
+              if !opts[:action] or Array.wrap(opts[:action]).member? action
+              #puts "#{final_method}"#{}" #{block}"
+                send final_method #, :block=>block
+              end
             end
           end
 

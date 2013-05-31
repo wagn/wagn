@@ -3,7 +3,7 @@ module Wagn
   module Set::All::Flexmail
     include Sets
 
-    action :flexmail, :after=>:commit do |args|
+    event :flexmail, :after=>:extend, :action=>:create do #|args|
       Flexmail.mail_for self
     end
   end

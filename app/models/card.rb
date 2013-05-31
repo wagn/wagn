@@ -16,8 +16,13 @@ class Card < ActiveRecord::Base
     :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
     :error_view, :error_status #yuck
 
+  before_save :approve
   around_save :commit
+  
   after_save :base_after_save, :update_ruled_cards, :process_read_rule_update_queue, :expire_related
+  
+  
+  after_save :extend
 
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
@@ -229,61 +234,65 @@ class Card < ActiveRecord::Base
       raise e
     end
   end
-
-  def save
-    super
-  rescue Exception => e
-    expire_pieces
-    raise e
-  end
-
-  def save!
-    super
-  rescue Exception => e
-    expire_pieces
-    raise e
-  end
-
   
-
-  action :commit do |args|
-#    puts "commit called: #{name}"
-    set_read_rule
-    set_tracked_attributes
-    args[:block].call # wanted to do yield.  so far can't make it work.  surely there's a better way.
-    
-    true
+  define_callbacks :approve
+  define_callbacks :extend
+  
+  def approve
+    @action = case
+    when trash     ; :delete
+    when new_card? ; :create
+    else             :update
+    end
+    run_callbacks :approve
+  rescue Exception=>e
+    rescue_event e
   end
 
-  action :set_stamper, :before=>:commit do |args|
+  def commit
+#    puts "commit called: #{name}"
+    run_callbacks :commit do
+      set_read_rule #move to action
+      set_tracked_attributes #move to action
+      yield # wanted to do yield.  so far can't make it work.  surely there's a better way.
+      @virtual    = false
+      @from_trash = false
+    end
+  rescue Exception=>e
+    rescue_event e
+  end
+
+  def extend
+    run_callbacks :extend 
+  rescue Exception=>e
+    rescue_event e
+  ensure
+    @action = nil
+  end
+  
+  def rescue_event e
+    expire_pieces
+    if @subcards
+      @subcards.each{ |card| card.expire_pieces }
+    end
+    raise e
+  ensure
+    @action = nil    
+  end
+
+  event :set_stamper, :before=>:commit do #|args|
 #    puts "stamper called: #{name}"
     self.updater_id = Account.current_id
     self.creator_id = self.updater_id if new_card?
   end
-  
-  action :run_legacy_triggers, :before=>:commit do |args|
-    ## this was done as a hacky way to make triggers in set modules work.  should get rid of it soon.
-    if self.respond_to?(:before_save) and self.before_save == false
-      errors.add(:save, "could not prepare card for destruction") #fixme - screwy error handling!!
-      return false
-    end
-  end
+
   
 
   def base_after_save
-    save_subcards
-    @virtual    = false
-    @from_trash = false
-    Wagn::Hook.call :after_create, self if @was_new_card
     send_notifications
-    true
-  rescue Exception=>e
-    expire_pieces
-    @subcards.each{ |card| card.expire_pieces }
-    raise e
   end
 
-  def save_subcards
+  event :commit_subcards, :after=>:commit do #|args|
     @subcards = []
     return unless cards
     cards.each_pair do |sub_name, opts|
@@ -305,7 +314,7 @@ class Card < ActiveRecord::Base
         card.errors.each do |field, err|
           self.errors.add card.name, err
         end
-        raise ActiveRecord::Rollback, "broke save_subcards"
+        raise ActiveRecord::Rollback, "broke commit_subcards"
       else
         cards = nil
         true

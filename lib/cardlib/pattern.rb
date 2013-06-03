@@ -34,6 +34,7 @@ module Cardlib
         set.reset_patterns
         set.include_set_modules
         
+        #this is really messy.
         if saving
           self.add_to_read_rule_update_queue( set.item_cards :limit=>0 ) if right.id == Card::ReadID
         end

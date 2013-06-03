@@ -19,7 +19,7 @@ class Card < ActiveRecord::Base
   before_save :approve
   around_save :store
   
-  after_save :base_after_save, :update_ruled_cards, :process_read_rule_update_queue, :expire_related
+  after_save :update_ruled_cards, :process_read_rule_update_queue, :expire_related
   
   
   after_save :extend
@@ -235,15 +235,13 @@ class Card < ActiveRecord::Base
     end
   end
   
-  define_callbacks :approve
-  define_callbacks :store
-  define_callbacks :extend
+  define_callbacks :approve, :store, :extend
   
   def approve
     @action = case
-    when trash     ; :delete
-    when new_card? ; :create
-    else             :update
+      when trash     ; :delete
+      when new_card? ; :create
+      else             :update
     end
     run_callbacks :approve
   rescue Exception=>e
@@ -255,7 +253,7 @@ class Card < ActiveRecord::Base
     run_callbacks :store do
       set_read_rule #move to action
       set_tracked_attributes #move to action
-      yield # wanted to do yield.  so far can't make it work.  surely there's a better way.
+      yield
       @virtual    = false
       @from_trash = false
     end
@@ -264,6 +262,7 @@ class Card < ActiveRecord::Base
   end
 
   def extend
+#    puts "extend called"
     run_callbacks :extend 
   rescue Exception=>e
     rescue_event e
@@ -272,13 +271,12 @@ class Card < ActiveRecord::Base
   end
   
   def rescue_event e
+    @action = nil
     expire_pieces
     if @subcards
       @subcards.each{ |card| card.expire_pieces }
     end
     raise e
-  ensure
-    @action = nil    
   end
 
   event :set_stamper, :before=>:store do #|args|
@@ -287,13 +285,8 @@ class Card < ActiveRecord::Base
     self.creator_id = self.updater_id if new_card?
   end
 
-  
-
-  def base_after_save
-    send_notifications
-  end
-
   event :store_subcards, :after=>:store do #|args|
+    #puts "store subcards"
     @subcards = []
     return unless cards
     cards.each_pair do |sub_name, opts|
@@ -795,7 +788,5 @@ class Card < ActiveRecord::Base
   end
 
   # these old_modules should be refactored out
-  require_dependency 'flexmail'
   require_dependency 'google_maps_addon'
-  require_dependency 'notification'
 end

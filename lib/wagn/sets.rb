@@ -111,7 +111,7 @@ module Wagn
 
           [:before, :after, :around].each do |kind|
             if object_method = opts[kind]
-              set_callback object_method, kind, event
+              set_callback object_method, kind, event, :prepend=>true
             end
           end
         end

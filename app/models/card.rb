@@ -5,7 +5,6 @@ class Card < ActiveRecord::Base
   extend Wagn::Sets
   extend Wagn::Loader
   
-  
   SmartName.codes= Wagn::Codename
   SmartName.params= Wagn::Conf
   SmartName.lookup= Card
@@ -28,9 +27,9 @@ class Card < ActiveRecord::Base
   around_save :store
   
   after_save :update_ruled_cards, :process_read_rule_update_queue, :expire_related
+  after_save :extend
   
   
-
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
 
@@ -88,37 +87,6 @@ class Card < ActiveRecord::Base
 
     def toggle val
       val == '1'
-    end
-    
-    # following three should be moved to utils lib
-    
-    def empty_trash
-      Card.where(:trash=>true).delete_all
-      User.delete_cardless
-      Card::Revision.delete_cardless
-      Card::Reference.repair_missing_referees
-      Card.delete_trashed_files
-    end
-    
-    def delete_trashed_files #deletes any file not associated with a real card.
-      dir = Wagn::Conf[:attachment_storage_dir]
-      card_ids = Card.connection.select_all( %{ select id from cards where trash is false } ).map( &:values ).flatten
-      file_ids = Dir.entries( dir )[2..-1].map( &:to_i )
-      file_ids.each do |file_id|
-        if !card_ids.member?(file_id)
-          raise Wagn::Error, "Narrowly averted deleting current file" if Card.exists?(file_id) #double check!
-          FileUtils.rm_rf("#{dir}/#{file_id}", secure: true)
-        end
-      end
-    end
-    
-    def merge name, attribs={}, opts={}
-      Rails.logger.info "about to merge: #{name}, #{attribs}, #{opts}"
-      card = fetch name, :new=>{}
-      unless opts[:pristine] && !card.pristine?
-        card.attributes = attribs
-        card.save!
-      end
     end
     
   end
@@ -226,8 +194,6 @@ class Card < ActiveRecord::Base
 
     super args, options
   end
-
-
 
 
 
@@ -616,51 +582,17 @@ class Card < ActiveRecord::Base
     fetch( :trait=>:account, :new=>{} ).ok?( :create)
   end
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # METHODS FOR OVERRIDE
-  # pretty much all of these should be done differently -efm
-
-  def post_render( content )     content  end
-  def clean_html?()                 true  end
-  def collection?()                false  end
-  def on_type_change()                    end
-  def validate_type_change()        true  end
-  def validate_content( content )         end
-
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # MISCELLANEOUS
-
-  def debug_type() "#{typecode||'no code'}:#{type_id}" end
-    
-  def to_s
-    "#<#{self.class.name}[#{debug_type}]#{self.attributes['name']}>"
-  end
-
-  def inspect
-    "#<#{self.class.name}" + "##{id}" +
-    "###{object_id}" + #"l#{left_id}r#{right_id}" +
-    "[#{debug_type}]" + "(#{self.name})" + #"#{object_id}" +
-    #(errors.any? ? '*Errors*' : 'noE') +
-    (errors.any? ? "<E*#{errors.full_messages*', '}*>" : '') +
-    #"{#{references_expired==1 ? 'Exp' : "noEx"}:" +
-    "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{frozen? ? 'Fz' : readonly? ? 'RdO' : ''}" +
-    "#{@virtual &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }:#{references_expired.inspect}}" +
-    '>'
-  end
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # INCLUDED MODULES
+  # Include Card Libraries
 
 
   load_cardlib
-
   Cardlib.constants.each do |const|
     lib = Cardlib.const_get( const )
     include lib
     extend lib.const_get( :ClassMethods) if lib.const_defined? :ClassMethods
   end
-
 
 
   # Because of the way it chains methods, 'tracks' needs to come after
@@ -798,8 +730,44 @@ class Card < ActiveRecord::Base
     end
   end
 
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # METHODS FOR OVERRIDE
+  # pretty much all of these should be done differently -efm
+
+  def post_render( content )     content  end
+  def clean_html?()                 true  end
+  def collection?()                false  end
+  def on_type_change()                    end
+  def validate_type_change()        true  end
+  def validate_content( content )         end
+
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # MISCELLANEOUS
+
+  def debug_type() "#{typecode||'no code'}:#{type_id}" end
+    
+  def to_s
+    "#<#{self.class.name}[#{debug_type}]#{self.attributes['name']}>"
+  end
+
+  def inspect
+    "#<#{self.class.name}" + "##{id}" +
+    "###{object_id}" + #"l#{left_id}r#{right_id}" +
+    "[#{debug_type}]" + "(#{self.name})" + #"#{object_id}" +
+    #(errors.any? ? '*Errors*' : 'noE') +
+    (errors.any? ? "<E*#{errors.full_messages*', '}*>" : '') +
+    #"{#{references_expired==1 ? 'Exp' : "noEx"}:" +
+    "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{frozen? ? 'Fz' : readonly? ? 'RdO' : ''}" +
+    "#{@virtual &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }:#{references_expired.inspect}}" +
+    '>'
+  end
+
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # LOAD Renderers and Sets
+
   load_renderers
-  load_sets
-  after_save :extend
-  
+  load_sets  
 end

@@ -22,7 +22,6 @@ class Card < ActiveRecord::Base
   after_save :update_ruled_cards, :process_read_rule_update_queue, :expire_related
   
   
-  after_save :extend
 
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
@@ -82,6 +81,8 @@ class Card < ActiveRecord::Base
     def toggle val
       val == '1'
     end
+    
+    # following three should be moved to utils lib
     
     def empty_trash
       Card.where(:trash=>true).delete_all
@@ -148,9 +149,12 @@ class Card < ActiveRecord::Base
     return if args[:type_id] # type_id was set explicitly.  no need to set again.
 
     type_id = case
-      when args[:typecode] ;  code=args[:typecode] and (
-                              Wagn::Codename[code] || (c=Card[code] and c.id))
-      when args[:type]     ;  Card.fetch_id args[:type]
+      when args[:typecode]
+        if code=args[:typecode]
+          Wagn::Codename[code] || ( c=Card[code] and c.id)
+        end
+      when args[:type]
+        Card.fetch_id args[:type]
       else :noop
       end
 
@@ -174,7 +178,6 @@ class Card < ActiveRecord::Base
   def include_set_modules
     unless @set_mods_loaded
       set_modules.each do |m|
-        #warn "ism #{m}"
         singleton_class.send :include, m
       end
       @set_mods_loaded=true
@@ -218,11 +221,7 @@ class Card < ActiveRecord::Base
 
 
 
-  after_validation :on => :create do
-    pull_from_trash if new_record?
-    self.trash = !!trash
-    true
-  end
+
 
   after_validation do
     begin
@@ -238,6 +237,7 @@ class Card < ActiveRecord::Base
   define_callbacks :approve, :store, :extend
   
   def approve
+    @was_new_card = self.new_card?
     @action = case
       when trash     ; :delete
       when new_card? ; :create
@@ -254,8 +254,7 @@ class Card < ActiveRecord::Base
       set_read_rule #move to action
       set_tracked_attributes #move to action
       yield
-      @virtual    = false
-      @from_trash = false
+      @virtual = @from_trash = false
     end
   rescue Exception=>e
     rescue_event e
@@ -279,52 +278,67 @@ class Card < ActiveRecord::Base
     raise e
   end
 
-  event :set_stamper, :before=>:store do #|args|
-#    puts "stamper called: #{name}"
-    self.updater_id = Account.current_id
-    self.creator_id = self.updater_id if new_card?
-  end
 
-  event :store_subcards, :after=>:store do #|args|
-    #puts "store subcards"
-    @subcards = []
-    return unless cards
-    cards.each_pair do |sub_name, opts|
-      opts[:nested_edit] = self
-      absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute_name cardname
-      next if absolute_name.key == key # don't resave self!
 
-      if card = Card[absolute_name]
-        card = card.refresh
-        card.update_attributes opts
-      elsif opts[:content].present? and opts[:content].strip.present?
-        opts[:name] = absolute_name
-        opts[:loaded_left] = self
-        card = Card.create opts
+
+
+
+
+
+    event :pull_from_trash, :before=>:store, :on=>:create do
+      if trashed_card = Card.find_by_key_and_trash(key, true)
+        # a. (Rails way) tried Card.where(:key=>'wagn_bot').select(:id), but it wouldn't work.  This #select 
+        #    generally breaks on cardsI think our initialization process screws with something
+        # b. (Wagn way) we could get card directly from fetch if we add :include_trashed (eg).
+        #    likely low ROI, but would be nice to have interface to retrieve cards from trash...
+        self.id = trashed_card.id
+        @from_trash = @trash_changed = true
+        @new_record = false
       end
+      self.trash = false
+      true
+    end
 
-      @subcards << card if card
-      if card and card.errors.any?
-        card.errors.each do |field, err|
-          self.errors.add card.name, err
+    event :set_stamper, :before=>:store do #|args|
+  #    puts "stamper called: #{name}"
+      self.updater_id = Account.current_id
+      self.creator_id = self.updater_id if new_card?
+    end
+
+    event :store_subcards, :after=>:store do #|args|
+      #puts "store subcards"
+      @subcards = []
+      return unless cards
+      cards.each_pair do |sub_name, opts|
+        opts[:nested_edit] = self
+        absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute_name cardname
+        next if absolute_name.key == key # don't resave self!
+
+        if card = Card[absolute_name]
+          card = card.refresh
+          card.update_attributes opts
+        elsif opts[:content].present? and opts[:content].strip.present?
+          opts[:name] = absolute_name
+          opts[:loaded_left] = self
+          card = Card.create opts
         end
-        raise ActiveRecord::Rollback, "broke commit_subcards"
-      else
-        cards = nil
-        true
+
+        @subcards << card if card
+        if card and card.errors.any?
+          card.errors.each do |field, err|
+            self.errors.add card.name, err
+          end
+          raise ActiveRecord::Rollback, "broke commit_subcards"
+        else
+          cards = nil
+          true
+        end
       end
     end
-  end
 
-  def pull_from_trash
-    return unless key
-    return unless trashed_card = Card.find_by_key_and_trash(key, true)
-    #could optimize to use fetch if we add :include_trashed_cards or something.
-    #likely low ROI, but would be nice to have interface to retrieve cards from trash...
-    self.id = trashed_card.id
-    @from_trash = @trash_changed = true
-    @new_record = false
-  end
+
+
+
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # DESTROY
@@ -618,10 +632,8 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # MISCELLANEOUS
 
-  #def debug_type() type_id end
   def debug_type() "#{typecode||'no code'}:#{type_id}" end
-  #def debug_type() "#{type_name}:#{type_id}" end # this can cause infinite recursion
-
+    
   def to_s
     "#<#{self.class.name}[#{debug_type}]#{self.attributes['name']}>"
   end
@@ -642,15 +654,10 @@ class Card < ActiveRecord::Base
   # INCLUDED MODULES
 
   include Cardlib
-    
 
-  after_save :after_save_hooks
-  # moved this after Cardlib inclusions because aikido module needs to come after Paperclip triggers,
-  # which are set up in attach model.  CLEAN THIS UP!!!
 
-  def after_save_hooks # don't move unless you know what you're doing, see above.
-    Wagn::Hook.call :after_save, self
-  end
+  after_save :extend
+
 
   # Because of the way it chains methods, 'tracks' needs to come after
   # all the basic method definitions, and validations have to come after
@@ -787,6 +794,4 @@ class Card < ActiveRecord::Base
     end
   end
 
-  # these old_modules should be refactored out
-  require_dependency 'google_maps_addon'
 end

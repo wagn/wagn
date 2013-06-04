@@ -2,7 +2,10 @@
 module Cardlib
   module Pattern
     mattr_accessor :subclasses
+    MODULES={}
     @@subclasses = []
+    RUBY18 = !!(RUBY_VERSION =~ /^1\.8/)
+    
 
     def self.register_class klass, index=nil
       @@subclasses.insert index.to_i, klass
@@ -26,6 +29,26 @@ module Cardlib
         end
         @@subclasses.find { |sub| sub.key == class_key }
       end
+    end
+    
+    def self.find_module mod
+      module_name_parts = mod.split('::') << 'model'
+      module_name_parts.inject Wagn::Set do |base, part|
+        return if base.nil?
+        #Rails.logger.warn "find m #{base}, #{part}"
+        part = part.camelize
+        key = "#{base}::#{part}"
+        if MODULES.has_key?(key)
+          MODULES[key]
+        else
+          args = RUBY18 ? [part] : [part, false]
+          MODULES[key] = base.const_defined?(*args) ? base.const_get(*args) : nil
+        end
+      end
+    rescue Exception => e
+    #rescue NameError => e
+      Rails.logger.warn "find_module error #{mod}: #{e.inspect}"
+      return nil if NameError ===e
     end
 
     def reset_patterns_if_rule saving=false
@@ -80,36 +103,16 @@ module Cardlib
       @method_keys ||= patterns.map(&:get_method_key).compact
     end
   end
+  
+  
+  
 
   module Patterns
     class BasePattern
 
-      RUBY19 = !!(RUBY_VERSION =~ /^1\.9/)
-      MODULES={}
-
       class << self
 
         attr_accessor :key, :key_id, :opt_keys, :junction_only, :method_key, :assigns_type
-
-        def find_module mod
-          module_name_parts = mod.split('::') << 'model'
-          module_name_parts.inject Wagn::Set do |base, part|
-            return if base.nil?
-            #Rails.logger.warn "find m #{base}, #{part}"
-            part = part.camelize
-            key = "#{base}::#{part}"
-            if MODULES.has_key?(key)
-              MODULES[key]
-            else
-              args = RUBY19 ? [part, false] : [part]
-              MODULES[key] = base.const_defined?(*args) ? base.const_get(*args) : nil
-            end
-          end
-        rescue Exception => e
-        #rescue NameError => e
-          Rails.logger.warn "find_module error #{mod}: #{e.inspect}"
-          return nil if NameError ===e
-        end
 
         def junction_only?()  !!junction_only  end
         def anchorless?()     !!method_key     end # method key determined by class only when no trunk involved
@@ -163,7 +166,7 @@ module Cardlib
           else  "#{self.class.key}::#{opt_vals * '_'}"
           end
 
-        self.class.find_module set_module if set_module
+        Cardlib::Pattern.find_module set_module if set_module
         
       rescue Exception => e; warn "exception set_const #{e.inspect}," #{e.backtrace*"\n"}"
       end

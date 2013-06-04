@@ -3,6 +3,8 @@ require 'smart_name'
 
 class Card < ActiveRecord::Base
   extend Wagn::Sets
+  extend Wagn::Loader
+  
   
   SmartName.codes= Wagn::Codename
   SmartName.params= Wagn::Conf
@@ -10,6 +12,12 @@ class Card < ActiveRecord::Base
   SmartName.session= proc { Account.current.name }
 
   has_many :revisions, :order => :id
+  
+  has_many :references,     :class_name => :Reference, :foreign_key => :referee_id
+  has_many :includes,       :class_name => :Reference, :foreign_key => :referee_id, :conditions => { :ref_type => 'I' }
+
+  has_many :out_references, :class_name => :Reference, :foreign_key => :referer_id
+  has_many :out_includes,   :class_name => :Reference, :foreign_key => :referer_id, :conditions => { :ref_type => 'I' }
 
   attr_accessor :comment, :comment_author, :selected_revision_id,
     :update_referencers, :was_new_card, # seems like wrong mechanisms for these
@@ -279,65 +287,56 @@ class Card < ActiveRecord::Base
   end
 
 
+  event :pull_from_trash, :before=>:store, :on=>:create do
+    if trashed_card = Card.find_by_key_and_trash(key, true)
+      # a. (Rails way) tried Card.where(:key=>'wagn_bot').select(:id), but it wouldn't work.  This #select 
+      #    generally breaks on cardsI think our initialization process screws with something
+      # b. (Wagn way) we could get card directly from fetch if we add :include_trashed (eg).
+      #    likely low ROI, but would be nice to have interface to retrieve cards from trash...
+      self.id = trashed_card.id
+      @from_trash = @trash_changed = true
+      @new_record = false
+    end
+    self.trash = false
+    true
+  end
 
+  event :set_stamper, :before=>:store do #|args|
+#    puts "stamper called: #{name}"
+    self.updater_id = Account.current_id
+    self.creator_id = self.updater_id if new_card?
+  end
 
+  event :store_subcards, :after=>:store do #|args|
+    #puts "store subcards"
+    @subcards = []
+    return unless cards
+    cards.each_pair do |sub_name, opts|
+      opts[:nested_edit] = self
+      absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute_name cardname
+      next if absolute_name.key == key # don't resave self!
 
-
-
-
-    event :pull_from_trash, :before=>:store, :on=>:create do
-      if trashed_card = Card.find_by_key_and_trash(key, true)
-        # a. (Rails way) tried Card.where(:key=>'wagn_bot').select(:id), but it wouldn't work.  This #select 
-        #    generally breaks on cardsI think our initialization process screws with something
-        # b. (Wagn way) we could get card directly from fetch if we add :include_trashed (eg).
-        #    likely low ROI, but would be nice to have interface to retrieve cards from trash...
-        self.id = trashed_card.id
-        @from_trash = @trash_changed = true
-        @new_record = false
+      if card = Card[absolute_name]
+        card = card.refresh
+        card.update_attributes opts
+      elsif opts[:content].present? and opts[:content].strip.present?
+        opts[:name] = absolute_name
+        opts[:loaded_left] = self
+        card = Card.create opts
       end
-      self.trash = false
-      true
-    end
 
-    event :set_stamper, :before=>:store do #|args|
-  #    puts "stamper called: #{name}"
-      self.updater_id = Account.current_id
-      self.creator_id = self.updater_id if new_card?
-    end
-
-    event :store_subcards, :after=>:store do #|args|
-      #puts "store subcards"
-      @subcards = []
-      return unless cards
-      cards.each_pair do |sub_name, opts|
-        opts[:nested_edit] = self
-        absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute_name cardname
-        next if absolute_name.key == key # don't resave self!
-
-        if card = Card[absolute_name]
-          card = card.refresh
-          card.update_attributes opts
-        elsif opts[:content].present? and opts[:content].strip.present?
-          opts[:name] = absolute_name
-          opts[:loaded_left] = self
-          card = Card.create opts
+      @subcards << card if card
+      if card and card.errors.any?
+        card.errors.each do |field, err|
+          self.errors.add card.name, err
         end
-
-        @subcards << card if card
-        if card and card.errors.any?
-          card.errors.each do |field, err|
-            self.errors.add card.name, err
-          end
-          raise ActiveRecord::Rollback, "broke commit_subcards"
-        else
-          cards = nil
-          true
-        end
+        raise ActiveRecord::Rollback, "broke commit_subcards"
+      else
+        cards = nil
+        true
       end
     end
-
-
-
+  end
 
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -653,10 +652,15 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INCLUDED MODULES
 
-  include Cardlib
 
+  load_cardlib
 
-  after_save :extend
+  Cardlib.constants.each do |const|
+    lib = Cardlib.const_get( const )
+    include lib
+    extend lib.const_get( :ClassMethods) if lib.const_defined? :ClassMethods
+  end
+
 
 
   # Because of the way it chains methods, 'tracks' needs to come after
@@ -794,4 +798,8 @@ class Card < ActiveRecord::Base
     end
   end
 
+  load_renderers
+  load_sets
+  after_save :extend
+  
 end

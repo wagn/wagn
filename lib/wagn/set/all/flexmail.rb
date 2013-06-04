@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::All::Flexmail
-    include Sets
+    extend Sets
 
     event :flexmail, :after=>:extend, :on=>:create do #|args|
       Flexmail.mail_for self

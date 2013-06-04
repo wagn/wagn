@@ -2,7 +2,7 @@
 require 'smart_name'
 
 class Card < ActiveRecord::Base
-  include Wagn::Sets
+  extend Wagn::Sets
   
   SmartName.codes= Wagn::Codename
   SmartName.params= Wagn::Conf

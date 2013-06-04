@@ -3,7 +3,7 @@ require 'csv'
 
 module Wagn
   module Set::All::AllCsv
-    include Sets
+    extend Sets
 
     format :csv
 

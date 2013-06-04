@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::Type::PlaintextPhraseHtmlAndNumber
-    include Sets
+    extend Sets
 
     format :base
 

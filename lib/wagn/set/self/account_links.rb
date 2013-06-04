@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::Self::AccountLinks
-    include Wagn::Sets
+    extend Wagn::Sets
 
     format :html
 

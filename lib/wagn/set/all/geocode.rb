@@ -3,7 +3,7 @@ require 'net/http'
 
 module Wagn
   module Set::All::Geocode
-    include Sets
+    extend Sets
     
     event :update_geocode, :after=>:store, :on=>:save do
       Account.as_bot do

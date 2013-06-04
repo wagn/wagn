@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::Type::User
-    #include Wagn::Sets
+    #extend Wagn::Sets
 
     module Model
       include Wagn::Set::Type::Basic::Model

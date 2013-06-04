@@ -3,7 +3,7 @@ require_dependency 'active_support/builder' unless defined?(Builder)
 
 module Wagn
   module Set::All::Kml
-    include Sets
+    extend Sets
 
     format :kml
     define_view :show do |args|

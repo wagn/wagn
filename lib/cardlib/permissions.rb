@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 module Cardlib::Permissions
-  include Wagn::Sets
+  extend Wagn::Sets
 
   def ydhpt
     "You don't have permission to"

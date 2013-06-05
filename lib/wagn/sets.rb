@@ -6,7 +6,6 @@ module Wagn
   end
 
   module Sets
-
     # View definitions
     #
     #   When you declare:
@@ -120,7 +119,7 @@ module Wagn
       mod = case 
         when mod == Card                          ; Card
         when mod.name =~ /^Wagn::Set::All::/      ; Card 
-        when modl = Cardlib::Pattern.find_module( mod.name )  ; modl
+        when modl = Card.find_set_model_module( mod.name )  ; modl
         else mod.const_set :Model, Module.new
         end
 
@@ -157,7 +156,7 @@ module Wagn
             parts = mod.name.split '::'
             set_class_key = parts[-3].underscore
             anchor_or_placeholder = parts[-2].underscore
-            set_key = Cardlib::Pattern.method_key( { set_class_key.to_sym => anchor_or_placeholder } )
+            set_key = Card.method_key( { set_class_key.to_sym => anchor_or_placeholder } )
 
             if set_key.present?
               Card.class_eval do
@@ -208,7 +207,7 @@ module Wagn
     
     # the following is poorly named; the "selection_key" (really means view_key, no?) has nothing to do with the set
     def get_set_key selection_key, opts
-      unless pkey = Cardlib::Pattern.method_key(opts)
+      unless pkey = Card.method_key(opts)
         raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
       end
       key = pkey.blank? ? selection_key : "#{pkey}_#{selection_key}"

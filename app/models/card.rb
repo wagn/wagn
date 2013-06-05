@@ -15,11 +15,13 @@ class Card < ActiveRecord::Base
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
 
-  attr_accessor :comment, :comment_author, :selected_revision_id,
-    :update_referencers, :was_new_card, # seems like wrong mechanisms for these
+  cattr_accessor :set_patterns
+  attr_accessor :selected_revision_id,
     :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
-    :error_view, :error_status #yuck
-
+    :update_referencers, :was_new_card, # wrong mechanisms for these  
+    :comment, :comment_author,          # obviated soon
+    :error_view, :error_status          # yuck
+  
   before_save :approve
   around_save :store
   
@@ -590,7 +592,7 @@ class Card < ActiveRecord::Base
     include lib
     extend lib.const_get( :ClassMethods) if lib.const_defined? :ClassMethods
   end
-
+  Wagn::SetPatterns
 
   # Because of the way it chains methods, 'tracks' needs to come after
   # all the basic method definitions, and validations have to come after

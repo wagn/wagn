@@ -19,7 +19,7 @@ module Cardlib::TrackedAttributes
     return if @old_name == newname.to_s
     #Rails.logger.warn "rename . #{inspect}, N:#{newname}, O:#{@old_name}"
 
-    @cardname, name_without_tracking = if SmartName===newname
+    @cardname, name_without_tracking = if CardName===newname
       [ newname, newname.to_s]
     else
       [ newname.to_name, newname]

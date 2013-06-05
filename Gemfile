@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 #source "http://gems.github.com"
 
 # DEFAULT
-gem 'smartname',    '0.1.8'
+gem 'smartname',    '0.2.0'
 
 gem 'rails',        '~> 3.2.9'
 gem 'htmlentities', '~> 4.3'

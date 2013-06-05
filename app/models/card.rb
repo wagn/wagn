@@ -1,17 +1,10 @@
 # -*- encoding : utf-8 -*-
-require 'smart_name'
-
 class Card < ActiveRecord::Base
+
   extend Wagn::Sets
   extend Wagn::Loader
   
-  SmartName.codes= Wagn::Codename
-  SmartName.params= Wagn::Conf
-  SmartName.lookup= Card
-  SmartName.session= proc { Account.current.name }
-
-  has_many :revisions, :order => :id
-  
+  has_many :revisions, :order => :id  
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
 
@@ -657,7 +650,7 @@ class Card < ActiveRecord::Base
 
       unless cdname.valid?
         card.errors.add :name,
-          "may not contain any of the following characters: #{ SmartName.banned_array * ' ' }"
+          "may not contain any of the following characters: #{ CardName.banned_array * ' ' }"
       end
       # this is to protect against using a plus card as a tag
       if cdname.junction? and card.simple? and Account.as_bot { Card.count_by_wql :right_id=>card.id } > 0

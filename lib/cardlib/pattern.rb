@@ -21,7 +21,7 @@ module Cardlib
     
     def self.find_class mark
       if mark
-        class_key = if SmartName === mark
+        class_key = if CardName === mark
           key_card = Card.fetch mark.to_name.tag_name, :skip_modules=>true
           key_card && key_card.codename
         else

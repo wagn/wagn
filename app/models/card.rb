@@ -12,11 +12,8 @@ class Card < ActiveRecord::Base
 
   has_many :revisions, :order => :id
   
-  has_many :references,     :class_name => :Reference, :foreign_key => :referee_id
-  has_many :includes,       :class_name => :Reference, :foreign_key => :referee_id, :conditions => { :ref_type => 'I' }
-
-  has_many :out_references, :class_name => :Reference, :foreign_key => :referer_id
-  has_many :out_includes,   :class_name => :Reference, :foreign_key => :referer_id, :conditions => { :ref_type => 'I' }
+  has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
+  has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
 
   attr_accessor :comment, :comment_author, :selected_revision_id,
     :update_referencers, :was_new_card, # seems like wrong mechanisms for these

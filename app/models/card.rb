@@ -632,9 +632,6 @@ class Card < ActiveRecord::Base
   # VALIDATIONS
 
 
-
-  protected
-
   validate do |card|
     return true if @nested_edit
     return true unless Wagn::Conf[:recaptcha_on] && Card.toggle( card.rule(:captcha) )

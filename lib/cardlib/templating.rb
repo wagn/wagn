@@ -94,7 +94,7 @@ module Cardlib::Templating
     # for example, X+*type+*structure governs all cards of type X,
     # but the content rule does not (in fact cannot) have the type X.
     if is_hard_template?
-      set_class = Cardlib::Pattern.find_class cardname.trunk_name
+      set_class = Card.find_set_pattern cardname.trunk_name
       set_class && set_class.assigns_type
     end
   end

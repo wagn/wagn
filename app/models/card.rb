@@ -1,25 +1,20 @@
 # -*- encoding : utf-8 -*-
-require 'smart_name'
-
 class Card < ActiveRecord::Base
+
   extend Wagn::Sets
   extend Wagn::Loader
   
-  SmartName.codes= Wagn::Codename
-  SmartName.params= Wagn::Conf
-  SmartName.lookup= Card
-  SmartName.session= proc { Account.current.name }
-
-  has_many :revisions, :order => :id
-  
+  has_many :revisions, :order => :id  
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
 
-  attr_accessor :comment, :comment_author, :selected_revision_id,
-    :update_referencers, :was_new_card, # seems like wrong mechanisms for these
+  cattr_accessor :set_patterns
+  attr_accessor :selected_revision_id,
     :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
-    :error_view, :error_status #yuck
-
+    :update_referencers, :was_new_card, # wrong mechanisms for these  
+    :comment, :comment_author,          # obviated soon
+    :error_view, :error_status          # yuck
+  
   before_save :approve
   around_save :store
   
@@ -590,7 +585,7 @@ class Card < ActiveRecord::Base
     include lib
     extend lib.const_get( :ClassMethods) if lib.const_defined? :ClassMethods
   end
-
+  Wagn::SetPatterns
 
   # Because of the way it chains methods, 'tracks' needs to come after
   # all the basic method definitions, and validations have to come after
@@ -657,7 +652,7 @@ class Card < ActiveRecord::Base
 
       unless cdname.valid?
         card.errors.add :name,
-          "may not contain any of the following characters: #{ SmartName.banned_array * ' ' }"
+          "may not contain any of the following characters: #{ CardName.banned_array * ' ' }"
       end
       # this is to protect against using a plus card as a tag
       if cdname.junction? and card.simple? and Account.as_bot { Card.count_by_wql :right_id=>card.id } > 0

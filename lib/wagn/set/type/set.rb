@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
-module Wagn
-  module Set::Type::Set
+module Wagn::Set::Type
+  module Set
     extend Wagn::Set
 
     format :html
@@ -65,7 +65,7 @@ module Wagn
 
 
     module Model
-      include Wagn::Set::Type::SearchType::Model
+      include SearchType::Model
 
       def inheritable?
         return true if junction_only?
@@ -99,10 +99,8 @@ module Wagn
       end
 
       def setting_codes_by_group
-
         is_pointer = prototype.type_id == Card::PointerID
         Setting::SETTING_GROUPS.reject { |k,v| !is_pointer && k == Setting::POINTER_KEY }
-#        Setting::SETTING_GROUPS
       end
 
       def prototype

@@ -118,24 +118,24 @@ describe Cardlib::Pattern do
   end
 end
 
-describe Cardlib::Patterns::RightPattern do
+describe Wagn::SetPatterns::RightPattern do
   it_generates :name => "author+*right", :from => Card.new( :name => "Iliad+author" )
   it_generates :name => "author+*right", :from => Card.new( :name => "+author" )
 end
 
-describe Cardlib::Patterns::TypePattern do
+describe Wagn::SetPatterns::TypePattern do
   it_generates :name => "Book+*type", :from => Card.new( :type => "Book" )
 end
 
-describe Cardlib::Patterns::AllPlusPattern do
+describe Wagn::SetPatterns::AllPlusPattern do
   it_generates :name => "*all plus", :from => Card.new( :name => "Book+author" )
 end
 
 
-describe Cardlib::Patterns::AllPattern do
+describe Wagn::SetPatterns::AllPattern do
   it_generates :name => "*all", :from => Card.new( :type => "Book" )
 end
 
-describe Cardlib::Patterns::LeftTypeRightNamePattern do
+describe Wagn::SetPatterns::LeftTypeRightNamePattern do
   it_generates :name => "Book+author+*type plus right", :from => Card.new( :name=>"Iliad+author" )
 end

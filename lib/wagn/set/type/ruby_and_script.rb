@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::Type::RubyAndScript
-    extend Sets
+    extend Set
 
     class Shellbox
       def run(cmd)

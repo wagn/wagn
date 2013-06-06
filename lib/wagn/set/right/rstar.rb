@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::Rstar
-    extend Sets
+    extend Set
 
     format :html
 

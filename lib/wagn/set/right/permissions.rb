@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::Right::Permissions
-    extend Sets
+    extend Set
 
     format :base
 

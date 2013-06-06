@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Card < ActiveRecord::Base
 
-  extend Wagn::Sets
+  extend Wagn::Set
   extend Wagn::Loader
   
   has_many :revisions, :order => :id  

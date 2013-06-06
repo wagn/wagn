@@ -1,8 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
-  module Set::Type
-   module Set
-    extend Sets
+  module Set::Type::Set
+    extend Wagn::Set
 
     format :html
 
@@ -66,7 +65,7 @@ module Wagn
 
 
     module Model
-      include SearchType::Model
+      include Wagn::Set::Type::SearchType::Model
 
       def inheritable?
         return true if junction_only?
@@ -111,6 +110,5 @@ module Wagn
         Card.fetch opts[:name], :new=>opts
       end
     end
-   end
   end
 end

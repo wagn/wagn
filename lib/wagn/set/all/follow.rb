@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::All::Follow
-    extend Sets
+    extend Set
 
     event :notify_followers, :after=>:extend do
       begin

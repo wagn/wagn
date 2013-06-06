@@ -3,7 +3,7 @@ require_dependency 'json'
 
 module Wagn
   module Set::Type::Setting
-    extend Sets
+    extend Set
 
     POINTER_KEY = "Pointer"
 

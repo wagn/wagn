@@ -1,11 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 module Wagn
-  # pre-declare the root of the Modules namespace tree
   module Set
-  end
-
-  module Sets
     # View definitions
     #
     #   When you declare:

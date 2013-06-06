@@ -2,7 +2,7 @@
 
 module Wagn
   module Set::Type::Pointer
-    extend Sets
+    extend Set
 
     format :base
 

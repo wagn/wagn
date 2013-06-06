@@ -180,6 +180,7 @@ module Wagn::SetPatterns
       end
     end
   end
+  
 
   class SelfPattern < BasePattern
     register 'self', :opt_keys=>[ :name ]

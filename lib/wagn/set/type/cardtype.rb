@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::Type::Cardtype
-    extend Sets
+    extend Set
 
     format :html
 

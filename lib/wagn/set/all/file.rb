@@ -3,7 +3,7 @@
 
 module Wagn
   module Set::All::File
-    extend Sets
+    extend Set
 
     format :file
 

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::Self::Navbox
-    extend Sets
+    extend Set
 
     format :html
 

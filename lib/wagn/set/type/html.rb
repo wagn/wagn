@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::Type::Html
-  #extend Sets
+  #extend Set
 
     module Model
       def clean_html?

@@ -32,6 +32,7 @@ module Wagn
           end
         subrenderer( Card.fetch(set_name) ).render_template_link args
       end
+
     end
   end
 end

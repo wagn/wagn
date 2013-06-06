@@ -131,7 +131,6 @@ class Card < ActiveRecord::Base
       else :noop
       end
 
-
     case type_id
     when :noop 
     when false, nil

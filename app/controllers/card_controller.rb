@@ -159,7 +159,6 @@ class CardController < ApplicationController
       end
     @card.selected_revision_id = params[:rev].to_i if params[:rev]
 
-    #warn "load_card #{card.inspect}"
     Wagn::Conf[:main_name] = params[:main] || (card && card.name) || ''
     render_errors if card.errors.any?
     true
@@ -203,7 +202,6 @@ class CardController < ApplicationController
       self.params = self.params.merge new_params #need tests.  insure we get slot, main...
       show
     end
-    true
   end
 
 end

@@ -1,5 +1,31 @@
 # -*- encoding : utf-8 -*-
 require 'net/http'
+
+module Wagn
+  module Set::All::Geocode
+    extend Sets
+    
+    event :update_geocode, :after=>:store, :on=>:save do
+      Account.as_bot do
+        if conf = Card['*geocode']
+          if junction? && conf.item_names.include?( cardname.tag )
+            address = conf.item_names.map{ |p|
+              c=Card.fetch( self.cardname.trunk_name.to_s+"+#{p}", :new=>{}) and
+                c.content }.select(&:present?) * ', '
+            if (geocode = GoogleMapsAddon.geocode(address))
+              c = Card.fetch "#{self.cardname.trunk_name.to_s}+*geocode", :new=>{ :type_id=>Card::PhraseID }
+              c.save if c.new_card?
+              c.update_attributes( :content => geocode )
+            end
+          end
+        end
+      end
+    end
+    
+  end
+end
+
+
 class GoogleMapsAddon
   def self.geocode(address)
     opts = {
@@ -17,27 +43,6 @@ class GoogleMapsAddon
   end
 end
 
-class Card
-  after_save :update_geocode
-
-  def update_geocode
-    Account.as_bot do
-      if conf = Card['*geocode']
-        if self.junction? && conf.item_names.include?( self.cardname.tag )
-          address = conf.item_names.map{ |p|
-            card=Card.fetch( self.cardname.trunk_name.to_s+"+#{p}", :new=>{} ) and
-              card.content }.select(&:present?) * ', '
-          if geocode = GoogleMapsAddon.geocode(address)
-            card = Card.fetch "#{self.cardname.trunk_name.to_s}+*geocode", :new=>{:type_id=>Card::PhraseID}
-            card.content = geocode
-            card.save if card.new_card?
-            card.update_attributes( :content => geocode )
-          end
-        end
-      end
-    end
-  end
-end
 
 # ##  This spec is here instead of the test suite since it actually connects to the google service
 # describe GoogleMapsAddon do

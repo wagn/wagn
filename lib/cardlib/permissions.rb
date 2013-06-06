@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 module Cardlib::Permissions
+  extend Wagn::Sets
 
   def ydhpt
     "You don't have permission to"
@@ -237,7 +238,7 @@ module Cardlib::Permissions
     @read_rule_update_queue = []
   end
 
- protected
+  protected
 
   def update_ruled_cards
     if is_rule?

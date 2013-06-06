@@ -6,54 +6,6 @@ module Wagn
   end
 
   module Sets
-    @@dirs = []
-
-    module SharedMethods
-      private
-      def get_set_key selection_key, opts
-        unless pkey = Cardlib::Pattern.method_key(opts)
-          raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
-        end
-        key = pkey.blank? ? selection_key : "#{pkey}_#{selection_key}"
-        #warn "gvkey #{selection_key}, #{opts.inspect} R:#{key}"
-        key.to_sym
-      end
-    end
-
-    CARDLIB   = "#{Rails.root}/lib/cardlib/*.rb"
-    SETS      = "#{Rails.root}/lib/wagn/set/"
-    RENDERERS = "#{Rails.root}/lib/wagn/renderer/*.rb"
-
-    class << self
-      def load_cardlib  ; load_dir File.expand_path( CARDLIB, __FILE__   ) end
-      def load_renderers; load_dir File.expand_path( RENDERERS, __FILE__ ) end
-      #def dir newdir    ; @@dirs << newdir                                 end
-      #def load_dirs     ; @@dirs.each { |dir| load_dir dir }               end
-
-      def load_sets
-        [ SETS, Wagn::Conf[:pack_dirs].split( /,\s*/ ) ].flatten.each do |dirname|
-          load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
-        end
-      end
-
-      def load_dir dir
-        Dir[dir].each do |file|
-          begin
-            require_dependency file
-          rescue Exception=>e
-            Rails.logger.debug "Error loading file #{file}: #{e.message}\n#{e.backtrace*"\n"}"
-            raise e
-          end
-        end
-      end
-    end
-
-    # this module also get the action definitions
-    module CardActions
-      @@subset_actions = {}
-
-      mattr_reader :subset_actions
-    end
 
     # View definitions
     #
@@ -74,179 +26,196 @@ module Wagn
     #   Each of the above ultimately calls:
     #     _final(_set_key)_viewname(args)
 
-    module ClassMethods
-      include SharedMethods
+    #
+    # ~~~~~~~~~~  VIEW DEFINITION
+    #
 
-      #
-      # ~~~~~~~~~~  VIEW DEFINITION
-      #
-
-      def format fmt=nil
-        Renderer.current_class = if fmt.nil? || fmt == :base then Renderer else Renderer.get_renderer fmt end
-      end
-
-      def define_view view, opts={}, &final
-        Renderer.perms[view]       = opts.delete(:perms)      if opts[:perms]
-        Renderer.error_codes[view] = opts.delete(:error_code) if opts[:error_code]
-        Renderer.denial_views[view]= opts.delete(:denial)     if opts[:denial]
-        if opts[:tags]
-          [opts[:tags]].flatten.each do |tag|
-            Renderer.view_tags[view] ||= {}
-            Renderer.view_tags[view][tag] = true
-          end
-        end
-
-        view_key = get_set_key view, opts
-        #warn "defining view method[#{Renderer.current_class}] _final_#{view_key}"
-        Renderer.current_class.class_eval { define_method "_final_#{view_key}", &final }
-        Renderer.subset_views[view] = true if !opts.empty?
-
-        if !method_defined? "render_#{view}"
-          #warn "defining view method[#{Renderer.current_class}] _render_#{view}"
-          Renderer.current_class.class_eval do
-            define_method "_render_#{view}" do |*a|
-              begin
-                a = [{}] if a.empty?
-                if final_method = view_method(view)
-                  with_inclusion_mode view do
-                    #Rails.logger.info( warn "rendering final method: #{final_method}" )
-                    send final_method, *a
-                  end
-                else
-                  unsupported_view view
-                end
-              rescue Exception=>e
-                rescue_view e, view
-              end
-            end
-          end
-
-          #Rails.logger.warn "define_method render_#{view}"
-          Renderer.current_class.class_eval do
-            define_method "render_#{view}" do |*a|
-              send "_render_#{ ok_view view, *a }", *a
-            end
-          end
+    def define_view view, opts={}, &final
+      Renderer.perms[view]       = opts.delete(:perms)      if opts[:perms]
+      Renderer.error_codes[view] = opts.delete(:error_code) if opts[:error_code]
+      Renderer.denial_views[view]= opts.delete(:denial)     if opts[:denial]
+      if opts[:tags]
+        [opts[:tags]].flatten.each do |tag|
+          Renderer.view_tags[view] ||= {}
+          Renderer.view_tags[view][tag] = true
         end
       end
 
+      view_key = get_set_key view, opts
+      #warn "defining view method[#{Renderer.renderer}] _final_#{view_key}"
+      Renderer.current_class.class_eval { define_method "_final_#{view_key}", &final }
+      Renderer.subset_views[view] = true if !opts.empty?
 
-
-      def alias_view view, opts={}, *aliases
-        view_key = get_set_key view, opts
-        Renderer.subset_views[view] = true if !opts.empty?
-        aliases.each do |alias_view|
-          alias_view_key = case alias_view
-            when String
-              alias_view
-            when Symbol
-              if view_key==view
-                alias_view.to_sym
-              else
-                view_key.to_s.sub( /_#{view}$/, "_#{alias_view}" ).to_sym
-              end
-            when Hash
-              get_set_key (alias_view[:view] || view), alias_view
-            else
-              raise "Bad view #{alias_view.inspect}"
-            end
-
-          #Rails.logger.info( warn "def view final_alias #{alias_view_key}, #{view_key}" )
-          Renderer.current_class.class_eval do
-            define_method "_final_#{alias_view_key}".to_sym do |*a|
-              send "_final_#{view_key}", *a
-            end
-          end
-        end
-      end
-
-
-      #
-      # ~~~~~~~~~~~~~~~~~~  ACTION DEFINITION ~~~~~~~~~~~~~~~~~~~
-      #
-
-      DEFAULT_ALIAS = {
-        :perform_create    => :create,
-        :perform_read      => :read,
-        :perform_update    => :update,
-        :perform_delete    => :delete,
-        :perform_index     => :read,
-      }
-
-      def action event, opts={}, &final_action
-        action_key = get_set_key event, opts
-
-        CardActions.class_eval {
-        Rails.logger.warn "define action[#{self}] e:#{event.inspect}, ak:_final_#{action_key}, O:#{opts.inspect}" if event == :read
-          define_method "_final_#{action_key}", &final_action }
-
-        CardActions.subset_actions[event] = true if !opts.empty?
-
-        if !method_defined?( core_method = "perform_#{event}".to_sym )
-          ucore_method = "_#{core_method}".to_sym
-          CardActions.class_eval do
-
-            Rails.logger.warn "defining method[#{to_s}] #{ucore_method}" if event == :read
-            define_method( ucore_method ) do |*a|
+      if !method_defined? "render_#{view}"
+        #warn "defining view method[#{Renderer.renderer}] _render_#{view}"
+        Renderer.current_class.class_eval do
+          define_method "_render_#{view}" do |*a|
+            begin
               a = [{}] if a.empty?
-              if final_method = action_method(event)
-                Rails.logger.warn "final action #{final_method}"
-                #with_inclusion_mode event do
+              if final_method = view_method(view)
+                with_inclusion_mode view do
+                  #Rails.logger.info( warn "rendering final method: #{final_method}" )
                   send final_method, *a
-                #end
+                end
               else
-                raise "<strong>unsupported event: <em>#{event}</em></strong>"
+                unsupported_view view
               end
+            rescue Exception=>e
+              rescue_view e, view
             end
+          end
+        end
 
-            Rails.logger.warn "define action[#{self}] #{core_method}" if event == :read
-            define_method( core_method ) do |*a|
-              begin
+        #Rails.logger.warn "define_method render_#{view}"
+        Renderer.current_class.class_eval do
+          define_method "render_#{view}" do |*a|
+            send "_render_#{ ok_view view, *a }", *a
+          end
+        end
+      end
+    end
+    
 
-                send "_#{core_method}", *a
 
-              rescue Exception=>e
-                controller.send :notify_airbrake, e if Airbrake.configuration.api_key
-                Rails.logger.info "\nCard Action Error[#{core_method} #{e.class} : #{e.message}"
-                Rails.logger.debug "  #{e.backtrace*"\n  "}"
-                action_error e, (card && card.name.present? ? card.name : 'unknown card')
-              end
+    def alias_view view, opts={}, *aliases
+      view_key = get_set_key view, opts
+      Renderer.subset_views[view] = true if !opts.empty?
+      aliases.each do |alias_view|
+        alias_view_key = case alias_view
+          when String
+            alias_view
+          when Symbol
+            if view_key==view
+              alias_view.to_sym
+            else
+              view_key.to_s.sub( /_#{view}$/, "_#{alias_view}" ).to_sym
             end
+          when Hash
+            get_set_key (alias_view[:view] || view), alias_view
+          else
+            raise "Bad view #{alias_view.inspect}"
+          end
 
-            default_alias = DEFAULT_ALIAS[ core_method ] and
-                alias_method default_alias, core_method
+        #Rails.logger.info( warn "def view final_alias #{alias_view_key}, #{view_key}" )
+        Renderer.current_class.class_eval do
+          define_method "_final_#{alias_view_key}".to_sym do |*a|
+            send "_final_#{view_key}", *a
+          end
+        end
+      end
+    end
+    
+    
+    def format fmt=nil
+      Renderer.current_class = if fmt.nil? || fmt == :base then Renderer else Renderer.get_renderer fmt end
+    end
+    
+
+
+    def event event, opts={}, &final
+
+      opts[:on] = [:create, :update ] if opts[:on] == :save
+
+      mod = self.ancestors.first
+      mod = case 
+        when mod == Card                          ; Card
+        when mod.name =~ /^Wagn::Set::All::/      ; Card 
+        when modl = Cardlib::Pattern.find_module( mod.name )  ; modl
+        else mod.const_set :Model, Module.new
+        end
+
+      Card.define_callbacks event
+
+      mod.class_eval do
+        include ActiveSupport::Callbacks
+
+        final_method = "#{event}_without_callbacks" #should be private?
+        define_method final_method, &final
+
+        define_method event do #|*a, &block|
+          run_callbacks event do
+            action = self.instance_variable_get(:@action)
+            if !opts[:on] or Array.wrap(opts[:on]).member? action
+              send final_method #, :block=>block
+            end
           end
         end
       end
 
-      def alias_action event, opts={}, *aliases
-        event_key = get_set_key(event, opts)
-        CardActions.subset_actions[event] = true if !opts.empty?
-        aliases.each do |alias_event|
-          alias_event_key = case alias_event
-            when String; alias_event
-            when Symbol; event_key==event ? alias_event.to_sym : event_key.to_s.sub(/_#{event}$/, "_#{alias_event}").to_sym
-            when Hash;   get_set_key alias_event[:event] || event, alias_event
-            else; raise "Bad event #{alias_event.inspect}"
-            end
 
-          Rails.logger.warn "def final_alias action #{alias_event_key}, #{event_key}"
-          CardActions.class_eval { define_method( "_final_#{alias_event_key}".to_sym ) do |*a|
-            send "_final_#{event_key}", *a
-          end }
+      [:before, :after, :around].each do |kind|
+
+        if object_method = opts[kind]
+          if mod == Card
+            Card.class_eval { set_callback object_method, kind, event, :prepend=>true }
+          else
+
+            # Here is the current handling for non-all sets.  All callbacks are added directly to card and the set fitness is checked directly.
+            # My original intent was to add the callbacks to the singleton class (see code below).  We may have to go back to that approach if we 
+            # encounter problems with ordering, overrides, etc with this.
+
+            parts = mod.name.split '::'
+            set_class_key = parts[-3].underscore
+            anchor_or_placeholder = parts[-2].underscore
+            set_key = Cardlib::Pattern.method_key( { set_class_key.to_sym => anchor_or_placeholder } )
+
+            if set_key.present?
+              Card.class_eval do
+                set_callback object_method, kind, event, :prepend=>true, :if => proc { |c| c.method_keys.include? set_key }
+              end
+            else
+              puts Rails.logger.info( "EVENT defined for unknown set in #{mod.name}" )
+            end
+          end
         end
       end
     end
 
-    def self.included base
+    # first attempt at non-all sets was to have the callbacks added to the singleton classes.  They were preprocessed as follows....
 
-      base.extend SharedMethods
-      base.extend ClassMethods
+    #            if mod == Card
+    #              mod.class_eval do
+    #                set_callback object_method, kind, event, :prepend=>true
+    #              end
+    #            else
+    #              mod.class_eval do
+    #                unless class_variable_defined?(:@@callbacks)
+    #                  mattr_accessor :callbacks
+    #                  self.callbacks = []
+    #                end
+    #                self.callbacks << [ object_method, kind, event ]
+    #              end
+    #            end
 
-      super
+    # ... and then handled in #include_set_modules like so:
+    #
+    #   singleton_class.send :include, m
 
+    #    if m.respond_to? :callbacks 
+    #      m.callbacks.each do |object_method, kind, event|
+    #        singleton_class.set_callback object_method, kind, event, :prepend=>true
+    #      end
+    #    end
+
+    #  it may have been more appropriate to add the callbacks elsewhere, but point is current moot, as the callback definitions were screwing with the Card class.
+    #  I may have been doing something wrong, but it seemed like the callback class attributes were handling things fine, but the runner methods were getting
+    #  inappropriately update on the Card class itself.  This wasn't super easy to debug, and the current solution occurred to me in the process, but I wanted to 
+    #  document the alternative here in case we decide that's ultimately cleaner and more appropriate.
+
+
+
+    private
+    
+    # the following is poorly named; the "selection_key" (really means view_key, no?) has nothing to do with the set
+    def get_set_key selection_key, opts
+      unless pkey = Cardlib::Pattern.method_key(opts)
+        raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
+      end
+      key = pkey.blank? ? selection_key : "#{pkey}_#{selection_key}"
+      #warn "gvkey #{selection_key}, #{opts.inspect} R:#{key}"
+      key.to_sym
     end
-
+    
   end
 end
 

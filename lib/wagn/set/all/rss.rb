@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::All::Rss
-    include Sets
+    extend Sets
 
     format :rss
 

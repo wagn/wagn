@@ -16,7 +16,7 @@ class Mailer < ActionMailer::Base
       args[k] or raise "Missing email parameter: #{k}"
     end
 
-    @pw_url   = wagn_url "#{cd_with_acct.cardname.url_key}?view=options"
+    @pw_url   = wagn_url "#{cd_with_acct.cardname.url_key}?view=account"
     @login_url= wagn_url "/account/signin"
 
     #FIXME - might want different "from" settings for different contexts?
@@ -88,6 +88,7 @@ class Mailer < ActionMailer::Base
   private
 
   def mail_from args, from
+    #puts "unprocessed mail args: #{args}"
     unless Wagn::Conf[:migration]
       from_name, from_email = (from =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, from]
       if default_from=@@defaults[:from]
@@ -96,6 +97,7 @@ class Mailer < ActionMailer::Base
       else
         args[:from] = from
       end
+      #puts "mail args: #{args}"
       mail args
     end
   end

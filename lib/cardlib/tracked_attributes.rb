@@ -2,7 +2,6 @@
 module Cardlib::TrackedAttributes
 
   def set_tracked_attributes
-    @was_new_card = self.new_card?
     updates.each_pair do |attrib, value|
       if send("set_#{attrib}", value )
         updates.clear attrib

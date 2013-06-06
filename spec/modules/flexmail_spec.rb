@@ -128,10 +128,16 @@ describe Flexmail do
         }
       end
 
-      it "calls to mailer on Card#create" do
-        mock(Mailer).flexmail(hash_including(:to=>"joe@user.com")).at_least(1)
-        Card.create :name => "Banana+emailtest"
+      it "calls to mailer only on Card#create" do
+        Account.as_bot do
+          mock( Mailer ).flexmail( hash_including :to=>"joe@user.com" ).times 1
+          c =Card.create :name => "Banana+emailtest"
+          c.update_attributes! :content => 'short lived'
+          c.delete!
+        end
+        
       end
+      
 
       it "handles case of referring to self for content" do
         Card.create! :name => "Email", :type => "Cardtype"

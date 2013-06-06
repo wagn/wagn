@@ -2,7 +2,7 @@
 
 module Wagn
   module Set::Type::FileAndImage
-    include Sets
+    extend Sets
 
     format :base
 

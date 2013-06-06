@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::Self::Misc
-    include Wagn::Sets
+    extend Wagn::Sets
 
     format :base
 

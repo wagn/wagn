@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 class CardController < ApplicationController
-  include Wagn::Sets::CardActions
 
   helper :wagn
 

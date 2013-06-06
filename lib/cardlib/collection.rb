@@ -38,9 +38,4 @@ module Cardlib::Collection
       Wagn::Renderer.new(self, :not_current=>true)._render_raw
     )
   end
-
-  def self.included base
-    super
-    Card.extend ClassMethods
-  end
 end

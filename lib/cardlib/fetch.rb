@@ -204,10 +204,6 @@ module Cardlib::Fetch
     end
   end
 
-  def self.included(base)
-    super
-    base.extend Cardlib::Fetch::ClassMethods
-  end
 end
 
 

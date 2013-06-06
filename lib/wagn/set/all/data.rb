@@ -2,7 +2,7 @@
 
 module Wagn
   module Set::All::Json
-    include Sets
+    extend Sets
 
     define_view :atom do |args|
       item = args[:item]    

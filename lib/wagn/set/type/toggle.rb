@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::Type::Toggle
-    include Sets
+    extend Sets
 
     format :base
 

@@ -1,4 +1,14 @@
 # -*- encoding : utf-8 -*-
+module Wagn
+  module Set::All::Flexmail
+    extend Sets
+
+    event :flexmail, :after=>:extend, :on=>:create do #|args|
+      Flexmail.mail_for self
+    end
+  end
+end
+
 class Flexmail
   class << self
     def configs_for card
@@ -43,12 +53,4 @@ class Flexmail
       string.gsub(/<\/?[^>]*>/, "")
     end
   end
-
-  Wagn::Hook.add :after_create, '*all' do |card|
-    Flexmail.mail_for(card)
-  end
-
-  # The Mailer method and mail template are defined in the standard rails locations
-  # They can/should be brought out to more modular space if/when modules support adding
-  # view/mail templates.
 end

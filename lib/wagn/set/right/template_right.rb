@@ -1,8 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
-  module Set::Right::TemplateRight
-
-    include Wagn::Sets
+  module Set::Right::Template
+    extend Wagn::Sets
 
     format :base
 

@@ -2,9 +2,10 @@
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 include AuthenticatedTestHelper
 
+=begin
 describe CardController do
   it "module exists and autoloads" do
-    Wagn::Sets.should be_true
+    Wagn::Set.should be_true
   end
 
   describe "read all set" do
@@ -31,7 +32,7 @@ describe CardController do
     end
   end
 end
-
+=end
 
 describe CardController, "Basic rendering tests" do
 

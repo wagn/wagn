@@ -129,6 +129,7 @@ module Wagn
         define_method final_method, &final
 
         define_method event do #|*a, &block|
+          warn "running #{event}"
           run_callbacks event do
             action = self.instance_variable_get(:@action)
             if !opts[:on] or Array.wrap(opts[:on]).member? action

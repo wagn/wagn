@@ -259,7 +259,7 @@ class Wql
     end
 
     def found_by(val)
-      cards = (String===val ? [ Card.fetch( absolute_name(val), :new=>{} ) ] : Wql.new(val).run)
+      cards = ( String===val ? [ Card.fetch( absolute_name(val), :new=>{} ) ] : Wql.new(val).run )
       cards.each do |c|
         raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && [Card::SearchTypeID,Card::SetID].include?(c.type_id)
         found_by_spec = CardSpec.new(c.get_spec).rawspec

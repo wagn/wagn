@@ -5,7 +5,7 @@ require File.expand_path('../../../../packs/pack_spec_helper', File.dirname(__FI
 describe Wagn::Set::All::Json, "JSON pack" do
   context "status view" do
     it "should handle real and virtual cards" do
-      r = Wagn::Renderer::JsonRenderer
+      r = Wagn::Renderer::Json
       real_json = r.new(Card['T'])._render_show :view=>:status
       JSON[real_json].should == {"key"=>"t","status"=>"real","id"=>Card['T'].id, 'url_key'=>'T'}
       virtual_json = r.new(Card.fetch('T+*self'))._render_show :view=>:status
@@ -14,7 +14,7 @@ describe Wagn::Set::All::Json, "JSON pack" do
     
     it "should treat both unknown and unreadable cards as unknown" do
       Account.as Card::AnonID do
-        r = Wagn::Renderer::JsonRenderer
+        r = Wagn::Renderer::Json
         
         unknown = Card.new :name=>'sump'
         unreadable = Card.new :name=>'kumq', :type=>'Fruit'

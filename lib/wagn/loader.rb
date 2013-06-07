@@ -21,6 +21,31 @@ module Wagn
       [ SETS, Wagn::Conf[:pack_dirs].split( /,\s*/ ) ].flatten.each do |dirname|
         load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
       end
+      
+      tmpsetdir = "#{Rails.root}/lib/wagn/newset/"
+
+      #note: these should really go from broadest to narrowest set.
+      Dir.foreach tmpsetdir do |set_pattern|
+        next if set_pattern =~ /^\./
+        set_pattern_mod_name = set_pattern.camelize
+        
+        base = if Wagn::Set.const_defined? set_pattern_mod_name
+          Wagn::Set.const_get set_pattern.camelize
+        else
+          Wagn::Set.const_set set_pattern.camelize, Module.new
+        end
+        
+        Dir.foreach "#{tmpsetdir}/#{set_pattern}" do |anchor|
+          next if anchor =~ /^\./
+          anchor.gsub! /\.rb$/, ''
+          Wagn::Set::current_set_opts = { set_pattern.to_sym => anchor.to_sym }
+          base.const_set anchor.camelize, (Module.new do
+            extend Wagn::Set
+            class_eval File.read( "#{tmpsetdir}/#{set_pattern}/#{anchor}.rb" )
+          end )
+        end
+      end
+      
     end
 
     private

@@ -2,6 +2,7 @@
 
 module Wagn
   module Set
+    mattr_accessor :current_set_opts
     # View definitions
     #
     #   When you declare:
@@ -34,6 +35,10 @@ module Wagn
           Renderer.view_tags[view] ||= {}
           Renderer.view_tags[view][tag] = true
         end
+      end
+      
+      if set_opts = Wagn::Set.current_set_opts
+        opts.merge! set_opts
       end
 
       view_key = get_set_key view, opts

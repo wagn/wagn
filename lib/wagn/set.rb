@@ -114,6 +114,7 @@ module Wagn
       mod = self.ancestors.first
       mod = case 
         when mod == Card                          ; Card
+        when mod.name =~ /^Cardlib/               ; Card
         when mod.name =~ /^Wagn::Set::All::/      ; Card 
         when modl = Card.find_set_model_module( mod.name )  ; modl
         else mod.const_set :Model, Module.new

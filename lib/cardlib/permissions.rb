@@ -182,7 +182,7 @@ module Cardlib::Permissions
 
   public
 
-  def set_read_rule
+  event :set_read_rule, :before=>:store do
     if trash == true
       self.read_rule_id = self.read_rule_class = nil
     else
@@ -194,7 +194,7 @@ module Cardlib::Permissions
       # skip if name is updated because will already be resaved
 
       #warn "set_read_rule #{rcard.inspect}, #{rclass}"
-      if !new_card? && updates.for(:type_id)
+      if !new_card? && type_id_changed?
         Account.as_bot do
           Card.search(:left=>self.name).each do |plus_card|
             plus_card = plus_card.refresh.update_read_rule

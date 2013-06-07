@@ -103,6 +103,8 @@ describe Card, "rename to trashed name" do
       @a = Card["A"]
       @b = Card["B"]
       @a.delete!  #trash
+      Rails.logger.info "\n\n~~~~~~~deleted~~~~~~~~\n\n\n"
+      
       @b.update_attributes! :name=>"A", :update_referencers=>true
     end
   end
@@ -145,6 +147,7 @@ describe Card, "revived from trash" do
   before do
     Account.as_bot do
       Card["basicname"].delete!
+      
       @c = Card.create! :name=>'basicname', :content=>'revived content'
     end
   end

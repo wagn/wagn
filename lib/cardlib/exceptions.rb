@@ -1,5 +1,8 @@
 # -*- encoding : utf-8 -*-
 module Cardlib::Exceptions
+  # this breaks the cardlib pattern.  move?
+  
+  
   class PermissionDenied < Wagn::PermissionDenied
     attr_reader :card
     def initialize(card)

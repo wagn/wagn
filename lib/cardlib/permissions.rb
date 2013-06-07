@@ -233,14 +233,14 @@ module Cardlib::Permissions
     @read_rule_update_queue = Array.wrap(@read_rule_update_queue).concat updates
   end
 
-  def process_read_rule_update_queue
+  event :process_read_rule_update_queue do
     Array.wrap(@read_rule_update_queue).each { |card| card.update_read_rule }
     @read_rule_update_queue = []
   end
 
   protected
 
-  def update_ruled_cards
+  event :update_ruled_cards do
     if is_rule?
 #      warn "updating ruled cards for #{name}"
       self.class.clear_rule_cache

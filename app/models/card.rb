@@ -17,10 +17,7 @@ class Card < ActiveRecord::Base
   
   before_save :approve
   around_save :store
-  
-  after_save :update_ruled_cards, :process_read_rule_update_queue, :expire_related
   after_save :extend
-  
   
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
@@ -562,6 +559,26 @@ class Card < ActiveRecord::Base
     true
   end
 
+  set_callback :store, :after, :update_ruled_cards, :prepend=>true
+  set_callback :store, :after, :process_read_rule_update_queue, :prepend=>true
+
+  event :expire_related, :after=>:store do
+    self.expire
+
+    if self.is_hard_template?
+      self.hard_templatee_names.each do |name|
+        Card.expire name
+      end
+    end
+    # FIXME really shouldn't be instantiating all the following bastards.  Just need the key.
+    # fix in id_cache branch
+    self.dependents.each       { |c| c.expire }
+    self.referencers.each      { |c| c.expire }
+    self.name_referencers.each { |c| c.expire }
+    # FIXME: this will need review when we do the new defaults/templating system
+    #if card.changed?(:content)
+  end
+  
   event :store_subcards, :after=>:store do #|args|
     #puts "store subcards"
     @subcards = []

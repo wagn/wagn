@@ -144,7 +144,7 @@ module Cardlib::TrackedAttributes
     Rails.logger.info "set_initial_content #{content}, #{@current_revision_id}, s.#{self.current_revision_id} #{inspect}"
   end
 
-  event :cascade_name_changes do#, :after=>:store do
+  event :cascade_name_changes, :after=>:store do
     if @name_changed
       Rails.logger.debug "-------------------#{@old_name}- CASCADE #{self.name} -------------------------------------"
 
@@ -187,12 +187,6 @@ module Cardlib::TrackedAttributes
       @name_changed = false
     end
     true
-  end
-  
-  
-  def self.included base
-    super
-    base.after_save :cascade_name_changes
   end
 
 end

@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Cardlib::References
+  extend Wagn::Set
+  
   def name_referencers link_name=nil
     link_name = link_name.nil? ? key : link_name.to_name.key
     Card.all :joins => :references_to, :conditions => { :card_references => { :referee_key => link_name } }
@@ -81,35 +83,20 @@ module Cardlib::References
     refs.map { |ref| Card.fetch ref.referee_key, :new=>{} }.compact
   end
 
-  def self.included base
-
-    super
-
-    base.class_eval do
-      # ---------- Reference associations -----------
-      after_create  :update_references_on_create
-#      after_destroy :update_references_on_destroy
-      after_update  :update_references_on_update
-    end
-  end
 
   protected
 
-  def update_references_on_create
-    Card::Reference.update_existing_key self
 
-    # FIXME: bogus blank default content is set on hard_templated cards...
-    Account.as_bot do
-      self.update_references
-    end
-    expire_templatee_references
-    #obj_content.to_s
-  end
-
-  def update_references_on_update
+  event :refresh_references, :after=>:store, :on=>:save do
     self.update_references
     expire_templatee_references
   end
+
+  event :refresh_references_on_create, :before=>:refresh_references, :on=>:create do
+    Card::Reference.update_existing_key self
+    # FIXME: bogus blank default content is set on hard_templated cards...
+  end
+
 
   def update_references_on_delete
     Card::Reference.update_on_delete self

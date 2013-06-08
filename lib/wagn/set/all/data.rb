@@ -4,7 +4,7 @@ module Wagn
   module Set::All::Json
     extend Set
 
-    define_view :atom do |args|
+    view :atom do |args|
       item = args[:item]    
       item = :raw if item.nil? || item == :atom # item view of atom view
       args[:item] = :atom                       # item view of atom's item view

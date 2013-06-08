@@ -5,7 +5,7 @@ module Wagn
 
     format :html
 
-    define_view :raw, :name=>:navbox do |args|
+    view :raw, :name=>:navbox do |args|
       input_args = { :class=>'navbox' }
       @@placeholder ||= begin
         p = Card["#{Card[:navbox].name}+*placeholder"] and p.raw_content
@@ -19,11 +19,11 @@ module Wagn
        </form>
       }
     end
-    alias_view(:raw, {:name=>'navbox'}, :core)
+    view(:raw, {:name=>'navbox'}, :core)
 
     format :json
 
-    define_view :complete, :name=>:search do |args|
+    view :complete, :name=>:search do |args|
       term = params['_keyword']
       if term =~ /^\+/ && main = params['main']
         term = main+term

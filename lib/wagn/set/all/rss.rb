@@ -5,13 +5,13 @@ module Wagn
 
     format :rss
 
-    define_view :show do |args|
+    view :show do |args|
     #    render( args[:view] || :feed )
       render_feed
     end
 
     # FIXME: integrate this with common XML features when it is added
-    define_view :feed do |args|
+    view :feed do |args|
       xml = Builder::XmlMarkup.new
       xml.instruct! :xml, :version => "1.0"
 
@@ -44,13 +44,13 @@ module Wagn
       end
     end
 
-    define_view :titled do |args|
+    view :titled do |args|
       # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
       content_tag( :h2, showname(args[:title]) ) + self._render_open_content(args) { yield }
     end
-    alias_view(:titled,      {}, :open)
-    alias_view(:open_content,{}, :content)
-    alias_view(:link,        {}, :closed)
+    view(:titled,      {}, :open)
+    view(:open_content,{}, :content)
+    view(:link,        {}, :closed)
 
   end
 end

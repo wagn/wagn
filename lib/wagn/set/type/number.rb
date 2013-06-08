@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::Type::Number
-    #include Wagn::Sets
+    #extend Wagn::Set
 
     module Model
       def validate_content( content )

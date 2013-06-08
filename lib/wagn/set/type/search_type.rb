@@ -2,7 +2,7 @@
 
 module Wagn
   module Set::Type::SearchType
-    include Sets
+    extend Set
 
     format :base
 

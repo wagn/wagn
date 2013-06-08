@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::Type::LayoutType
-    include Sets
+    extend Set
 
     format :base
 

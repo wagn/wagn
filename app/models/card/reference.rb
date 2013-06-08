@@ -66,4 +66,5 @@ class Card::Reference < ActiveRecord::Base
     end
     
   end
+
 end

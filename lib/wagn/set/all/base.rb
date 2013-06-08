@@ -2,7 +2,7 @@
 
 module Wagn
   module Set::All::Base
-    include Sets
+    extend Set
 
     format :base
 

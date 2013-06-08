@@ -1,8 +1,7 @@
 # -*- encoding : utf-8 -*-
-module Wagn
-  module Set::Type
-   module Set
-    include Sets
+module Wagn::Set::Type
+  module Set
+    extend Wagn::Set
 
     format :html
 
@@ -70,12 +69,12 @@ module Wagn
 
       def inheritable?
         return true if junction_only?
-        cardname.trunk_name.junction? and cardname.tag_name.key == Cardlib::Patterns::SelfPattern.key_name.key
+        cardname.trunk_name.junction? and cardname.tag_name.key == Wagn::SetPatterns::SelfPattern.key_name.key
       end
 
       def subclass_for_set
         set_class_key = tag.codename
-        Cardlib::Pattern.subclasses.find do |sub|
+        Card.set_patterns.find do |sub|
           cardname.tag_name.key == sub.key_name.key
         end
       end
@@ -100,10 +99,8 @@ module Wagn
       end
 
       def setting_codes_by_group
-
         is_pointer = prototype.type_id == Card::PointerID
         Setting::SETTING_GROUPS.reject { |k,v| !is_pointer && k == Setting::POINTER_KEY }
-#        Setting::SETTING_GROUPS
       end
 
       def prototype
@@ -111,6 +108,5 @@ module Wagn
         Card.fetch opts[:name], :new=>opts
       end
     end
-   end
   end
 end

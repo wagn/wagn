@@ -44,9 +44,9 @@ module Cardlib::Rules
   
   def related_sets
     # refers to sets that users may configure from the current card - NOT to sets to which the current card belongs
-    sets =     [ ["#{name}+*self",  Cardlib::Patterns::SelfPattern.label( name) ] ]
-    sets.unshift ["#{name}+*type",  Cardlib::Patterns::TypePattern.label( name) ] if type_id==Card::CardtypeID
-    sets.push    ["#{name}+*right", Cardlib::Patterns::RightPattern.label(name) ] if cardname.simple?
+    sets =     [ ["#{name}+*self",  Wagn::SetPatterns::SelfPattern.label( name) ] ]
+    sets.unshift ["#{name}+*type",  Wagn::SetPatterns::TypePattern.label( name) ] if type_id==Card::CardtypeID
+    sets.push    ["#{name}+*right", Wagn::SetPatterns::RightPattern.label(name) ] if cardname.simple?
       
 #      Card.search(:type=>'Set',:left=>{:right=>name},:right=>'*type plus right',:return=>'name').each do |set_name|
 #        sets<< set_name
@@ -103,10 +103,4 @@ module Cardlib::Rules
     end
 
   end
-
-  def self.included(base)
-    super
-    base.extend(ClassMethods)
-  end
-
 end

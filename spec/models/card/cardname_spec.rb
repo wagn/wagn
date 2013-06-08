@@ -8,7 +8,7 @@ module RenameMethods
       #:updater_id  => card.updater_id,
       :revisions   => card.revisions.count,
       :referencers => card.referencers.map(&:name).sort,
-      :referencees => card.referencees.map(&:name).sort,
+      :referees => card.referees.map(&:name).sort,
       :dependents  => card.dependents.map(&:id)
     }
   end
@@ -43,7 +43,7 @@ describe Card, "Case Variant" do
 end
 
 
-describe SmartName, "Underscores" do
+describe CardName, "Underscores" do
   it "should be treated like spaces when making keys" do
     'weird_ combo'.to_name.key.should == 'weird  combo'.to_name.key
   end
@@ -52,7 +52,7 @@ describe SmartName, "Underscores" do
   end
 end
 
-describe SmartName, "changing from plus card to simple" do
+describe CardName, "changing from plus card to simple" do
   before do
     Account.as :joe_user
     @c = Card.create! :name=>'four+five'
@@ -159,13 +159,13 @@ describe "renaming" do
     c = Card['Menu']
     c.name = 'manure'
     c.save!
-    Card['manure'].references.size.should == 0
+    Card['manure'].references_from.size.should == 0
   end
   
   it "picks up new references" do
     Card.create :name=>'kinds of poop', :content=>'[[manure]]'
     assert_rename Card['Menu'], 'manure'
-    Card['manure'].references.size.should == 2
+    Card['manure'].references_from.size.should == 2
   end
 
   it "test_rename_same_key_with_dependents" do

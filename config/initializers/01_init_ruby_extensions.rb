@@ -54,6 +54,10 @@ class Object
   def send_if     method, *args, &block
     ( block_given? ? yield : self ) and send method, *args
   end
+  
+  def to_name
+    CardName.new self
+  end
 end
 
 class String

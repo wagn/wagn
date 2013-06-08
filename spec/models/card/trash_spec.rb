@@ -14,7 +14,7 @@ describe Card, "deleted card" do
   it "should come out of the trash when a plus card is created" do
     Account.as_bot do
       Card.create(:name=>'A+*acct')
-      c = Card['A']
+      c = Card[ 'A' ]
       c.trash.should be_false
     end
   end
@@ -103,6 +103,8 @@ describe Card, "rename to trashed name" do
       @a = Card["A"]
       @b = Card["B"]
       @a.delete!  #trash
+      Rails.logger.info "\n\n~~~~~~~deleted~~~~~~~~\n\n\n"
+      
       @b.update_attributes! :name=>"A", :update_referencers=>true
     end
   end
@@ -145,6 +147,7 @@ describe Card, "revived from trash" do
   before do
     Account.as_bot do
       Card["basicname"].delete!
+      
       @c = Card.create! :name=>'basicname', :content=>'revived content'
     end
   end

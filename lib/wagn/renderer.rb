@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-
 module Wagn
   class Renderer
 
@@ -9,13 +8,16 @@ module Wagn
     cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :current_class
     @@current_class = Renderer
 
+    attr_reader :format, :card, :root, :parent
+    attr_accessor :form, :main_content, :error_status
+
+
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     #DEFAULT_ITEM_VIEW = :link  # should be set in card?
 
     RENDERERS = { #should be defined in renderer
-      :json => :JsonRenderer,
       :email => :EmailHtml,
       :txt  => :Text
     }
@@ -27,9 +29,6 @@ module Wagn
     @@subset_views   = {}
     @@error_codes    = {}
     @@view_tags      = {}
-
-    attr_reader :format, :card, :root, :parent
-    attr_accessor :form, :main_content, :error_status
 
     class << self
 
@@ -110,7 +109,7 @@ module Wagn
 
     def method_missing method_id, *args, &proc
       proc = proc {|*a| raw yield *a } if proc
-      #warn "mmiss #{self.class}, #{card.name}, #{method_id}"
+      #Rails.logger.warn "mmiss #{self.class}, #{@card.inspect}, #{caller[0]}, #{method_id}"
       response = template.send method_id, *args, &proc
       String===response ? template.raw( response ) : response
     end
@@ -336,7 +335,7 @@ module Wagn
 
       opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
       # FIXME: special views should be represented in view definitions
-      
+
       view = case
       when @mode == :edit
         if @@perms[view]==:none || tcard.hard_template || tcard.key.blank? # eg {{_self|type}} on new cards
@@ -348,7 +347,7 @@ module Wagn
       when @@perms[view]==:none ; view
       when @mode == :closed     ; !tcard.known?  ? :closed_missing : :closed_content
       else                      ; view
-      end  
+      end
 
       result = sub.render(view, opts)
       Renderer.current_slot = oldrenderer
@@ -456,7 +455,6 @@ module Wagn
 
   end
 
-
   class Renderer::Html < Renderer                ; end
   
   class Renderer::File < Renderer                ; end
@@ -466,7 +464,7 @@ module Wagn
   class Renderer::Css < Renderer::Text           ; end
   
   class Renderer::Data < Renderer                ; end
-  class Renderer::JsonRenderer < Renderer::Data  ; end
+  class Renderer::Json < Renderer::Data          ; end
   class Renderer::Xml < Renderer::Data           ; end
 
 end

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::All::EmailHtml
-    include Sets
+    extend Set
 
     format :email
 

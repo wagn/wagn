@@ -38,7 +38,8 @@ describe "Card (Cardtype)" do
     assert_instance_of Card, c=Card.fetch("BananaPudding")
 
     # you have to have a module to include or it's just a Basic (typecode fielde excepted)
-    assert Card.create(:typecode=>'banana_pudding',:name=>"figgy" ).type_name == 'BananaPudding'
+    cd = Card.create(:type=>'banana_pudding',:name=>"figgy" )
+    assert cd.type_name == 'BananaPudding'
     assert Card.find_by_type_id(c.id)
   end
 

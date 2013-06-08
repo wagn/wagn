@@ -1,8 +1,10 @@
 # -*- encoding : utf-8 -*-
 module Cardlib::References
+  extend Wagn::Set
+  
   def name_referencers link_name=nil
     link_name = link_name.nil? ? key : link_name.to_name.key
-    Card.all :joins => :out_references, :conditions => { :card_references => { :referee_key => link_name } }
+    Card.all :joins => :references_to, :conditions => { :card_references => { :referee_key => link_name } }
   end
   
   def extended_referencers
@@ -60,66 +62,41 @@ module Cardlib::References
   end
 
 
-  # ---------- Referenced cards --------------
 
   def referencers
-    return [] unless refs = references
+    return [] unless refs = references_from
     refs.map(&:referer_id).map( &Card.method(:fetch) ).compact
   end
 
   def includers
-    return [] unless refs = includes
+    return [] unless refs = references_from.where( :ref_type => 'I' )
     refs.map(&:referer_id).map( &Card.method(:fetch) ).compact
   end
 
-
-  # ---------- Referencing cards --------------
-
-  def referencees
-    return [] unless refs = out_references
+  def referees
+    return [] unless refs = references_to
     refs.map { |ref| Card.fetch ref.referee_key, :new=>{} }.compact
   end
 
   def includees
-    return [] unless refs = out_includes
+    return [] unless refs = references_to.where( :ref_type => 'I' )
     refs.map { |ref| Card.fetch ref.referee_key, :new=>{} }.compact
   end
 
-  def self.included base
-
-    super
-
-    base.class_eval do
-      # ---------- Reference associations -----------
-      has_many :references,     :class_name => :Reference, :foreign_key => :referee_id
-      has_many :includes,       :class_name => :Reference, :foreign_key => :referee_id, :conditions => { :ref_type => 'I' }
-
-      has_many :out_references, :class_name => :Reference, :foreign_key => :referer_id
-      has_many :out_includes,   :class_name => :Reference, :foreign_key => :referer_id, :conditions => { :ref_type => 'I' }
-
-      after_create  :update_references_on_create
-#      after_destroy :update_references_on_destroy
-      after_update  :update_references_on_update
-    end
-  end
 
   protected
 
-  def update_references_on_create
-    Card::Reference.update_existing_key self
 
-    # FIXME: bogus blank default content is set on hard_templated cards...
-    Account.as_bot do
-      self.update_references
-    end
-    expire_templatee_references
-    #obj_content.to_s
-  end
-
-  def update_references_on_update
+  event :refresh_references, :after=>:store, :on=>:save do
     self.update_references
     expire_templatee_references
   end
+
+  event :refresh_references_on_create, :before=>:refresh_references, :on=>:create do
+    Card::Reference.update_existing_key self
+    # FIXME: bogus blank default content is set on hard_templated cards...
+  end
+
 
   def update_references_on_delete
     Card::Reference.update_on_delete self

@@ -161,7 +161,7 @@ class Wql
           val = @vars[$1.to_sym].to_s.strip
         end
         absolute_name val
-      when SmartName              ; clean_val val.s
+      when CardName              ; clean_val val.s
       when Hash                   ; clean val
       when Array                  ; val.map { |v| clean_val v }
       when Integer, Float, Symbol ; val
@@ -259,7 +259,7 @@ class Wql
     end
 
     def found_by(val)
-      cards = (String===val ? [ Card.fetch( absolute_name(val), :new=>{} ) ] : Wql.new(val).run)
+      cards = ( String===val ? [ Card.fetch( absolute_name(val), :new=>{} ) ] : Wql.new(val).run )
       cards.each do |c|
         raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && [Card::SearchTypeID,Card::SetID].include?(c.type_id)
         found_by_spec = CardSpec.new(c.get_spec).rawspec
@@ -274,7 +274,7 @@ class Wql
 
     def match(val)
       cxn, val = match_prep val
-      val.gsub! /[^#{SmartName::OK4KEY_RE}]+/, ' '
+      val.gsub! /[^#{CardName::OK4KEY_RE}]+/, ' '
       return nil if val.strip.empty?
       
 

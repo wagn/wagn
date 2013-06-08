@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
 module Cardlib::TrackedAttributes
-
-  def set_tracked_attributes
-    @was_new_card = self.new_card?
+  extend Wagn::Set
+  
+  event :set_tracked_attributes, :before=>:store do#, :on=>:save do
     updates.each_pair do |attrib, value|
       if send("set_#{attrib}", value )
         updates.clear attrib
@@ -12,15 +12,13 @@ module Cardlib::TrackedAttributes
     #Rails.logger.debug "Card(#{name})#set_tracked_attributes end"
   end
 
-
-
   protected
   def set_name newname
     @old_name = self.name_without_tracking
     return if @old_name == newname.to_s
     #Rails.logger.warn "rename . #{inspect}, N:#{newname}, O:#{@old_name}"
 
-    @cardname, name_without_tracking = if SmartName===newname
+    @cardname, name_without_tracking = if CardName===newname
       [ newname, newname.to_s]
     else
       [ newname.to_name, newname]
@@ -91,6 +89,7 @@ module Cardlib::TrackedAttributes
   end
 
   def set_content new_content
+    Rails.logger.info "setting content for #{name}: (#{self.id})"
     if self.id #have to have this to create revision
       new_content ||= ''
       new_content = CleanHtml.clean! new_content if clean_html?
@@ -129,22 +128,23 @@ module Cardlib::TrackedAttributes
     true
   end
 
-  def set_initial_content
-    #warn "Card(#{inspect})#set_initial_content start #{content_without_tracking}"
+  event :set_initial_content, :after=>:store, :on=>:create do
+    Rails.logger.info "Card(#{inspect})#set_initial_content start #{content_without_tracking}"
     # set_content bails out if we call it on a new record because it needs the
     # card id to create the revision.  call it again now that we have the id.
 
     #warn "si cont #{content} #{updates.for?(:content).inspect}, #{updates[:content]}"
-    set_content updates[:content] # if updates.for?(:content)
+    unless @from_trash
+      set_content updates[:content] # if updates.for?(:content)
     
-    updates.clear :content
+      updates.clear :content
 
-    # normally the save would happen after set_content. in this case, update manually:
-    Card.where(:id=>id).update_all(:current_revision_id => current_revision_id)
-    #warn "set_initial_content #{content}, #{@current_revision_id}, s.#{self.current_revision_id} #{inspect}"
+      Card.where(:id=>id).update_all(:current_revision_id => current_revision_id)
+    end
+    Rails.logger.info "set_initial_content #{content}, #{@current_revision_id}, s.#{self.current_revision_id} #{inspect}"
   end
 
-  def cascade_name_changes
+  event :cascade_name_changes, :after=>:store do
     if @name_changed
       Rails.logger.debug "-------------------#{@old_name}- CASCADE #{self.name} -------------------------------------"
 
@@ -187,12 +187,6 @@ module Cardlib::TrackedAttributes
       @name_changed = false
     end
     true
-  end
-
-  def self.included base
-    super
-    base.after_create :set_initial_content #call from update..._on_create
-    base.after_save :cascade_name_changes
   end
 
 end

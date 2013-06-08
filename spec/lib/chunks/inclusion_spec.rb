@@ -41,21 +41,21 @@ describe Chunks::Include, "include chunk tests" do
      specialtype = Card.create :typecode=>'Cardtype', :name=>'SpecialType'
 
      specialtype_template = specialtype.fetch(:trait=>:type,:new=>{}).fetch(:trait=>:structure,:new=>{})
-     specialtype_template.content = "{{#{SmartName.joint}age}}"
+     specialtype_template.content = "{{#{CardName.joint}age}}"
      Account.as_bot { specialtype_template.save! }
-     assert_equal "{{#{SmartName.joint}age}}", Wagn::Renderer.new(specialtype_template).render_raw
+     assert_equal "{{#{CardName.joint}age}}", Wagn::Renderer.new(specialtype_template).render_raw
 
      wooga = Card.create! :name=>'Wooga', :type=>'SpecialType'
-     wooga_age = Card.create!( :name=>"#{wooga.name}#{SmartName.joint}age", :content=> "39" )
+     wooga_age = Card.create!( :name=>"#{wooga.name}#{CardName.joint}age", :content=> "39" )
      Wagn::Renderer.new(wooga_age).render_core.should == "39"
      #warn "cards #{wooga.inspect}, #{wooga_age.inspect}"
      wooga_age.includers.map(&:name).should == ['Wooga']
    end
 
   it "should test_relative_include" do
-    alpha = newcard 'Alpha', "{{#{SmartName.joint}Beta}}"
+    alpha = newcard 'Alpha', "{{#{CardName.joint}Beta}}"
     beta = newcard 'Beta'
-    alpha_beta = Card.create :name=>"#{alpha.name}#{SmartName.joint}Beta", :content=>"Woot"
+    alpha_beta = Card.create :name=>"#{alpha.name}#{CardName.joint}Beta", :content=>"Woot"
     assert_view_select Wagn::Renderer.new(alpha).render_core, 'span[class~=content]', "Woot"
   end
 

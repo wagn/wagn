@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 module Cardlib::Permissions
+  extend Wagn::Set
 
   def ydhpt
     "You don't have permission to"
@@ -181,7 +182,7 @@ module Cardlib::Permissions
 
   public
 
-  def set_read_rule
+  event :set_read_rule, :before=>:store do
     if trash == true
       self.read_rule_id = self.read_rule_class = nil
     else
@@ -193,7 +194,7 @@ module Cardlib::Permissions
       # skip if name is updated because will already be resaved
 
       #warn "set_read_rule #{rcard.inspect}, #{rclass}"
-      if !new_card? && updates.for(:type_id)
+      if !new_card? && type_id_changed?
         Account.as_bot do
           Card.search(:left=>self.name).each do |plus_card|
             plus_card = plus_card.refresh.update_read_rule
@@ -232,14 +233,14 @@ module Cardlib::Permissions
     @read_rule_update_queue = Array.wrap(@read_rule_update_queue).concat updates
   end
 
-  def process_read_rule_update_queue
+  event :process_read_rule_update_queue do
     Array.wrap(@read_rule_update_queue).each { |card| card.update_read_rule }
     @read_rule_update_queue = []
   end
 
- protected
+  protected
 
-  def update_ruled_cards
+  event :update_ruled_cards do
     if is_rule?
 #      warn "updating ruled cards for #{name}"
       self.class.clear_rule_cache
@@ -263,7 +264,7 @@ module Cardlib::Permissions
         in_set = {}
         if !(self.trash)
           if class_id = (set=left and set_class=set.tag and set_class.id)
-            rule_class_ids = Cardlib::Pattern.subclasses.map &:key_id
+            rule_class_ids = set_patterns.map &:key_id
             #warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
 
             #first update all cards in set that aren't governed by narrower rule

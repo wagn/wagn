@@ -88,6 +88,7 @@ class Mailer < ActionMailer::Base
   private
 
   def mail_from args, from
+    #puts "unprocessed mail args: #{args}"
     unless Wagn::Conf[:migration]
       from_name, from_email = (from =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, from]
       if default_from=@@defaults[:from]
@@ -96,6 +97,7 @@ class Mailer < ActionMailer::Base
       else
         args[:from] = from
       end
+      #puts "mail args: #{args}"
       mail args
     end
   end

@@ -1,6 +1,8 @@
 # -*- encoding : utf-8 -*-
 module Cardlib::Collection
+  
   module ClassMethods
+    
     def search(spec)
       ::Wql.new(spec).run
     end
@@ -9,6 +11,7 @@ module Cardlib::Collection
       spec.delete(:offset)
       search spec.merge(:return=>'count')
     end
+    
   end
 
   def item_names(args={})
@@ -37,10 +40,5 @@ module Cardlib::Collection
     Wagn::Renderer.new(context_card, renderer_args).process_content(
       Wagn::Renderer.new(self, :not_current=>true)._render_raw
     )
-  end
-
-  def self.included base
-    super
-    Card.extend ClassMethods
   end
 end

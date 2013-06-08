@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Set::Type::Basic
-    #include Sets
+    #extend Set
 
     module Model
       def post_render(content)

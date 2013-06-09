@@ -14,7 +14,7 @@ module Wagn
           %{
             #{ link_to ucard.name, "#{Wagn::Conf[:root_path]}/#{ucard.cardname.url_key}", :id=>'my-card-link' }
             #{
-              if User.create_ok?
+              if Account.create_ok?
                 link_to 'Invite a Friend', "#{prefix}/invite", :id=>'invite-a-friend-link'
               end
             }

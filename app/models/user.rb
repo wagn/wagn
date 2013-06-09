@@ -29,8 +29,6 @@ class User < ActiveRecord::Base
     def as_user()        self[ Account.as_id      ]   end
     def user()           self[ Account.current_id ]   end
 
-    def cache()          Wagn::Cache[User]            end
-
     def create_ok?
       base  = Card.new :name=>'dummy*', :type_id=>Card::UserID
       trait = Card.new :name=>"dummy*+#{Card[:account].name}"
@@ -52,38 +50,11 @@ class User < ActiveRecord::Base
       [@account, @card]
     end
 
-    # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
-    def authenticate(email, password)
-      u = self.find_by_email(email.strip.downcase)
-      u && u.authenticated?(password.strip) ? u.card_id : nil
-    end
-
     # Encrypts some data with the salt.
     def encrypt(password, salt)
       Digest::SHA1.hexdigest("#{salt}--#{password}--")
     end
 
-    # User caching
-    def [] mark
-      if mark
-        cache_key = Integer === mark ? "~#{mark}" : mark
-        cached_val = cache.read cache_key
-        case cached_val
-        when :missing; nil
-        when nil
-          val = if Integer === mark
-            find_by_card_id mark
-          else
-            find_by_email mark
-          end
-          cache.write cache_key, ( val || :missing )
-          val
-        else
-          cached_val
-        end
-      end
-    end
-    
     def delete_cardless
       where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
     end
@@ -92,8 +63,7 @@ class User < ActiveRecord::Base
 #~~~~~~~ Instance
 
   def reset_instance_cache
-    self.class.cache.write "~#{card_id}", nil
-    self.class.cache.write email, nil if email
+    Account.reset_cache_item card_id, email
   end
 
   def save_with_card card

@@ -9,7 +9,7 @@ module AuthenticatedSystem
   def current_account_id
     @current_account_id ||= begin
       if card_id = session[:user]
-        if User[ card_id ]
+        if Account[ card_id ]
           card_id
         else
           session[:user] = nil

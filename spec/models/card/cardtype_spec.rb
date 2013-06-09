@@ -169,7 +169,7 @@ describe User, "Joe User" do
     end
 
     Account.as :joe_user
-    @user = User.user
+    @user = Account.user
     @ucard = Card[@user.card_id]
     @type_names = Account.createable_types
   end

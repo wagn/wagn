@@ -10,8 +10,8 @@ class UserTest < ActiveSupport::TestCase
 
 
   def test_should_reset_password
-    User.find_by_email('joe@user.com').update_attributes(:password => 'new password', :password_confirmation => 'new password')
-    assert_equal User.find_by_email('joe@user.com').card_id, User.authenticate('joe@user.com', 'new password')
+    Account[ 'joe@user.com' ].update_attributes(:password => 'new password', :password_confirmation => 'new password')
+    assert_equal Account[ 'joe@user.com' ].card_id, Account.authenticate('joe@user.com', 'new password')
   end
 
   def test_should_create_user
@@ -47,24 +47,24 @@ class UserTest < ActiveSupport::TestCase
   end
 
   def test_should_not_rehash_password
-    User.find_by_email('joe@user.com').update_attributes!(:email => 'joe2@user.com')
-    assert_equal User.find_by_email('joe2@user.com').card_id, User.authenticate('joe2@user.com', 'joe_pass')
+    Account[ 'joe@user.com' ].update_attributes!(:email => 'joe2@user.com')
+    assert_equal Account[ 'joe2@user.com' ].card_id, Account.authenticate('joe2@user.com', 'joe_pass')
   end
 
   def test_should_authenticate_user
-    assert_equal User.find_by_email('joe@user.com').card_id, User.authenticate('joe@user.com', 'joe_pass')
+    assert_equal Account[ 'joe@user.com' ].card_id, Account.authenticate('joe@user.com', 'joe_pass')
   end
 
   def test_should_authenticate_user_with_whitespace
-    assert_equal User.find_by_email('joe@user.com').card_id, User.authenticate(' joe@user.com ', ' joe_pass ')
+    assert_equal Account[ 'joe@user.com' ].card_id, Account.authenticate(' joe@user.com ', ' joe_pass ')
   end
 
   def test_should_authenticate_user_with_weird_email_capitalization
-    assert User.authenticate('JOE@user.com', 'joe_pass')
+    assert Account.authenticate('JOE@user.com', 'joe_pass')
   end
 
 #  def test_should_authenticate_user_with_same_email_as_wagn_bot
-#    u1 = User.admin
+#    u1 = Account.admin
 #  end
 
   protected

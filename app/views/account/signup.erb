@@ -11,7 +11,7 @@
       <% if card.rule_card(:add_help, :fallback=>:help) %>
         <%= raw( slot._render :help, :setting=>:add_help ) %>
       <% else %>
-        <%= raw( slot._render :help, :text => ( User.create_ok? ? 
+        <%= raw( slot._render :help, :text => ( Account.create_ok? ? 
           'Send us the following, and we\'ll send you a password.' : 
           'All Account Requests are subject to review.' ) ) %>
       <% end %>

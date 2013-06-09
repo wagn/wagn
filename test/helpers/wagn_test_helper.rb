@@ -51,7 +51,7 @@ module WagnTestHelper
 
   def integration_login_as(user, functional=nil)
     raise "Don't know email & password for #{user}" unless uc=Card[user] and
-        u = User[ uc.id ] and
+        u = Account[ uc.id ] and
         login = u.email and pass = USERS[login]
 
     if functional

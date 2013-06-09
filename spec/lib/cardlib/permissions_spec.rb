@@ -157,7 +157,7 @@ end
 describe "Permission", ActiveSupport::TestCase do
   before do
     Account.as_bot do
-#      User.cache.reset
+#      Account.cache.reset
       @u1, @u2, @u3, @r1, @r2, @r3, @c1, @c2, @c3 =
         %w( u1 u2 u3 r1 r2 r3 c1 c2 c3 ).map do |x| Card[x] end
     end

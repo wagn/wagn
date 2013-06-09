@@ -513,7 +513,7 @@ class Card < ActiveRecord::Base
   end
 
   def account
-    User[ id ]
+    Account[ id ]
   end
 
   def accountable?

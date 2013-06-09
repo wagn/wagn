@@ -8,11 +8,10 @@ class RevisionTest < ActiveSupport::TestCase
   end
 
   def test_revise
-    author1 = User.find_by_email('joe@user.com')
-    author2 = User.find_by_email('sara@user.com')
+    author1 = Account[ 'joe@user.com' ]
+    author2 = Account[ 'sara@user.com' ]
     author_cd1 = Card[author1.card_id]
     author_cd2 = Card[author2.card_id]
-    #author1, author2 = User.find(:all, :limit=>2)
     Account.current_id = Card::WagnBotID
     rc1=author_cd1.fetch(:new=>{}, :trait=>:roles)
     rc1 << Card::AdminID
@@ -50,7 +49,7 @@ class RevisionTest < ActiveSupport::TestCase
 =begin #FIXME - don't think this is used by any controller. we'll see what breaks
   def test_rollback
     @card = newcard("alhpa", "some test content")
-    @user = User[ Card['quentin'].id ]
+    @user = Account[ Card['quentin'].id ]
     @card.content = "spot two"; @card.save
     @card.content = "spot three"; @card.save
     assert_equal 3, @card.revisions(true).length, "Should have three revisions"

@@ -29,7 +29,7 @@ class Wagn::Set::Type::AccountRequestTest < ActiveSupport::TestCase
     Account.as 'joe_admin' do c.delete!  end
 
     assert_equal nil, Card.fetch('Ron Request')
-    assert_equal 'blocked', User['ron@request.com'].status
+    assert_equal 'blocked', Account['ron@request.com'].status
   end
 
 

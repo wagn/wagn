@@ -58,7 +58,7 @@ class AccountController < CardController
   end
 
   def invite
-    User.create_ok? or raise(Wagn::PermissionDenied, "You need permission to create")
+    Account.create_ok? or raise(Wagn::PermissionDenied, "You need permission to create")
     @account, @card = request.post? ?
       User.create_with_card( params[:account], params[:card] ) :
       [User.new, Card.new()]
@@ -83,7 +83,7 @@ class AccountController < CardController
 
   def forgot_password
     if request.post? and email = params[:email]
-      @account = User.find_by_email email.downcase
+      @account = Account[ email.downcase ]
       case
       when @account.nil?
         flash[:notice] = "Unrecognized email."
@@ -109,12 +109,12 @@ class AccountController < CardController
   protected
 
   def password_authentication(login, password)
-    if self.current_account_id = User.authenticate( params[:login], params[:password] )
+    if self.current_account_id = Account.authenticate( params[:login], params[:password] )
       flash[:notice] = "Successfully signed in"
       #warn Rails.logger.info("to prev #{previous_location}")
       redirect_to previous_location
     else
-      usr=User[ params[:login].strip.downcase ]
+      usr=Account[ params[:login].strip.downcase ]
       failed_login(
         case
         when usr.nil?     ; "Unrecognized email."

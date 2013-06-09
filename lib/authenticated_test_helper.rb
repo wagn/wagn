@@ -59,7 +59,7 @@ module AuthenticatedTestHelper
   end
 
   def assert_status(email, status)
-    u = User.find_by_email(email)
+    u = Account[ email ]
     assert_equal status, u.status
   end
 end

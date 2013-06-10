@@ -24,23 +24,19 @@ module Wagn
       
       tmpsetdir = "#{Rails.root}/lib/wagn/newset"
 
-      #note: these should really go from broadest to narrowest set.
-      Dir.foreach tmpsetdir do |set_pattern|
+      Card.set_patterns.reverse.map(&:key).each do |set_pattern|
+         
         next if set_pattern =~ /^\./
-        set_pattern_mod_name = set_pattern.camelize
+        dirname = "#{tmpsetdir}/#{set_pattern}"
+        next unless File.exists?( dirname )
+        set_pattern_const = get_set_pattern_constant set_pattern
         
-        base = if Wagn::Set.const_defined? set_pattern_mod_name
-          Wagn::Set.const_get set_pattern.camelize
-        else
-          Wagn::Set.const_set set_pattern.camelize, Module.new
-        end
-        
-        Dir.foreach "#{tmpsetdir}/#{set_pattern}" do |anchor|
+        Dir.foreach dirname do |anchor|
           next if anchor =~ /^\./
           anchor.gsub! /\.rb$/, ''
           Wagn::Set::current_set_opts = { set_pattern.to_sym => anchor.to_sym }
-          filename = "#{tmpsetdir}/#{set_pattern}/#{anchor}.rb"
-          base.const_set anchor.camelize, (Module.new do
+          filename = "#{dirname}/#{anchor}.rb"
+          set_pattern_const.const_set anchor.camelize, ( Module.new do
             extend Wagn::Set
             class_eval File.read( filename ), filename, 1 
           end )
@@ -50,6 +46,16 @@ module Wagn
     end
 
     private
+    
+    def get_set_pattern_constant set_pattern
+      set_pattern_mod_name = set_pattern.camelize
+      
+      if Wagn::Set.const_defined? set_pattern_mod_name
+        Wagn::Set.const_get set_pattern.camelize
+      else
+        Wagn::Set.const_set set_pattern.camelize, Module.new
+      end
+    end
     
     def load_dir dir
       Dir[dir].sort.each do |file|

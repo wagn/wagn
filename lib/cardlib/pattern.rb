@@ -2,7 +2,7 @@
 module Cardlib
   module Pattern
     MODULES={}
-    RUBY18 = !!(RUBY_VERSION =~ /^1\.8/)
+
     
     module ClassMethods
       def register_pattern klass, index=nil
@@ -41,7 +41,7 @@ module Cardlib
           if MODULES.has_key?(key)
             MODULES[key]
           else
-            args = RUBY18 ? [part] : [part, false]
+            args = Card::RUBY18 ? [part] : [part, false]
             MODULES[key] = base.const_defined?(*args) ? base.const_get(*args) : nil
           end
         end

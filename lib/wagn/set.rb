@@ -107,7 +107,17 @@ module Wagn
 
 
     def format fmt=nil
-      Renderer.current_class = if fmt.nil? || fmt == :base then Renderer else Renderer.get_renderer fmt end
+      if block_given?
+        format fmt
+        yield
+        format :base
+      else
+        Renderer.current_class = if fmt.nil? || fmt == :base
+          Renderer
+        else
+          Renderer.get_renderer fmt
+        end
+      end
     end
 
 

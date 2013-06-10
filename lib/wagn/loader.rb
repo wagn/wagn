@@ -22,7 +22,7 @@ module Wagn
         load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
       end
       
-      tmpsetdir = "#{Rails.root}/lib/wagn/newset"
+      tmpsetdir = "#{Rails.root}/sets"
 
       Card.set_patterns.reverse.map(&:key).each do |set_pattern|
          

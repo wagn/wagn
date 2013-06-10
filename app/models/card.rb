@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Card < ActiveRecord::Base
+  
+  RUBY18 = !!(RUBY_VERSION =~ /^1\.8/)
 
   extend Wagn::Set
   extend Wagn::Loader

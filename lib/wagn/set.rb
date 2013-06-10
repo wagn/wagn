@@ -6,7 +6,7 @@ module Wagn
     # View definitions
     #
     #   When you declare:
-    #     define_view :view_name, "<set>" do |args|
+    #     view :view_name, "<set>" do |args|
     #
     #   Methods are defined on the renderer
     #
@@ -26,90 +26,90 @@ module Wagn
     # ~~~~~~~~~~  VIEW DEFINITION
     #
 
-    def define_view view, opts={}, &final
-      Renderer.perms[view]       = opts.delete(:perms)      if opts[:perms]
-      Renderer.error_codes[view] = opts.delete(:error_code) if opts[:error_code]
-      Renderer.denial_views[view]= opts.delete(:denial)     if opts[:denial]
-      if opts[:tags]
-        [opts[:tags]].flatten.each do |tag|
-          Renderer.view_tags[view] ||= {}
-          Renderer.view_tags[view][tag] = true
+    def view view, opts={}, *aliases, &final
+      if block_given?
+        Renderer.perms[view]       = opts.delete(:perms)      if opts[:perms]
+        Renderer.error_codes[view] = opts.delete(:error_code) if opts[:error_code]
+        Renderer.denial_views[view]= opts.delete(:denial)     if opts[:denial]
+        if opts[:tags]
+          [opts[:tags]].flatten.each do |tag|
+            Renderer.view_tags[view] ||= {}
+            Renderer.view_tags[view][tag] = true
+          end
         end
-      end
       
-      if set_opts = Wagn::Set.current_set_opts
-        opts.merge! set_opts
-      end
+        if set_opts = Wagn::Set.current_set_opts
+          opts.merge! set_opts
+        end
 
-      view_key = get_set_key view, opts
-      #warn "defining view method[#{Renderer.renderer}] _final_#{view_key}"
-      Renderer.current_class.class_eval { define_method "_final_#{view_key}", &final }
-      Renderer.subset_views[view] = true if !opts.empty?
+        view_key = get_set_key view, opts
+        #warn "defining view method[#{Renderer.renderer}] _final_#{view_key}"
+        Renderer.current_class.class_eval { define_method "_final_#{view_key}", &final }
+        Renderer.subset_views[view] = true if !opts.empty?
 
-      if !method_defined? "render_#{view}"
-        #warn "defining view method[#{Renderer.renderer}] _render_#{view}"
-        Renderer.current_class.class_eval do
-          define_method "_render_#{view}" do |*a|
-            begin
-              a = [{}] if a.empty?
-              if final_method = view_method(view)
-                with_inclusion_mode view do
-                  #Rails.logger.info( warn "rendering final method: #{final_method}" )
-                  send final_method, *a
+        if !method_defined? "render_#{view}"
+          #warn "defining view method[#{Renderer.renderer}] _render_#{view}"
+          Renderer.current_class.class_eval do
+            define_method "_render_#{view}" do |*a|
+              begin
+                a = [{}] if a.empty?
+                if final_method = view_method(view)
+                  with_inclusion_mode view do
+                    #Rails.logger.info( warn "rendering final method: #{final_method}" )
+                    send final_method, *a
+                  end
+                else
+                  unsupported_view view
                 end
-              else
-                unsupported_view view
+              rescue Exception=>e
+                rescue_view e, view
               end
-            rescue Exception=>e
-              rescue_view e, view
+            end
+          end
+
+          #Rails.logger.warn "define_method render_#{view}"
+          Renderer.current_class.class_eval do
+            define_method "render_#{view}" do |*a|
+              send "_render_#{ ok_view view, *a }", *a
             end
           end
         end
 
-        #Rails.logger.warn "define_method render_#{view}"
-        Renderer.current_class.class_eval do
-          define_method "render_#{view}" do |*a|
-            send "_render_#{ ok_view view, *a }", *a
-          end
-        end
-      end
-    end
-    
+      else
 
-
-    def alias_view view, opts={}, *aliases
-      view_key = get_set_key view, opts
-      Renderer.subset_views[view] = true if !opts.empty?
-      aliases.each do |alias_view|
-        alias_view_key = case alias_view
-          when String
-            alias_view
-          when Symbol
-            if view_key==view
-              alias_view.to_sym
+        view_key = get_set_key view, opts
+        Renderer.subset_views[view] = true if !opts.empty?
+        aliases.each do |alias_view|
+          alias_view_key = case alias_view
+            when String
+              alias_view
+            when Symbol
+              if view_key==view
+                alias_view.to_sym
+              else
+                view_key.to_s.sub( /_#{view}$/, "_#{alias_view}" ).to_sym
+              end
+            when Hash
+              get_set_key (alias_view[:view] || view), alias_view
             else
-              view_key.to_s.sub( /_#{view}$/, "_#{alias_view}" ).to_sym
+              raise "Bad view #{alias_view.inspect}"
             end
-          when Hash
-            get_set_key (alias_view[:view] || view), alias_view
-          else
-            raise "Bad view #{alias_view.inspect}"
-          end
 
-        #Rails.logger.info( warn "def view final_alias #{alias_view_key}, #{view_key}" )
-        Renderer.current_class.class_eval do
-          define_method "_final_#{alias_view_key}".to_sym do |*a|
-            send "_final_#{view_key}", *a
+          #Rails.logger.info( warn "def view final_alias #{alias_view_key}, #{view_key}" )
+          Renderer.current_class.class_eval do
+            define_method "_final_#{alias_view_key}".to_sym do |*a|
+              send "_final_#{view_key}", *a
+            end
           end
         end
       end
     end
-    
-    
+
+
     def format fmt=nil
       Renderer.current_class = if fmt.nil? || fmt == :base then Renderer else Renderer.get_renderer fmt end
     end
-    
+
 
 
     def event event, opts={}, &final
@@ -117,10 +117,10 @@ module Wagn
       opts[:on] = [:create, :update ] if opts[:on] == :save
 
       mod = self.ancestors.first
-      mod = case 
+      mod = case
         when mod == Card                          ; Card
         when mod.name =~ /^Cardlib/               ; Card
-        when mod.name =~ /^Wagn::Set::All::/      ; Card 
+        when mod.name =~ /^Wagn::Set::All::/      ; Card
         when modl = Card.find_set_model_module( mod.name )  ; modl
         else mod.const_set :Model, Module.new
         end
@@ -153,7 +153,7 @@ module Wagn
           else
 
             # Here is the current handling for non-all sets.  All callbacks are added directly to card and the set fitness is checked directly.
-            # My original intent was to add the callbacks to the singleton class (see code below).  We may have to go back to that approach if we 
+            # My original intent was to add the callbacks to the singleton class (see code below).  We may have to go back to that approach if we
             # encounter problems with ordering, overrides, etc with this.
 
             parts = mod.name.split '::'
@@ -193,7 +193,7 @@ module Wagn
     #
     #   singleton_class.send :include, m
 
-    #    if m.respond_to? :callbacks 
+    #    if m.respond_to? :callbacks
     #      m.callbacks.each do |object_method, kind, event|
     #        singleton_class.set_callback object_method, kind, event, :prepend=>true
     #      end
@@ -201,13 +201,13 @@ module Wagn
 
     #  it may have been more appropriate to add the callbacks elsewhere, but point is current moot, as the callback definitions were screwing with the Card class.
     #  I may have been doing something wrong, but it seemed like the callback class attributes were handling things fine, but the runner methods were getting
-    #  inappropriately update on the Card class itself.  This wasn't super easy to debug, and the current solution occurred to me in the process, but I wanted to 
+    #  inappropriately update on the Card class itself.  This wasn't super easy to debug, and the current solution occurred to me in the process, but I wanted to
     #  document the alternative here in case we decide that's ultimately cleaner and more appropriate.
 
 
 
     private
-    
+
     # the following is poorly named; the "selection_key" (really means view_key, no?) has nothing to do with the set
     def get_set_key selection_key, opts
       unless pkey = Card.method_key(opts)
@@ -217,8 +217,7 @@ module Wagn
       #warn "gvkey #{selection_key}, #{opts.inspect} R:#{key}"
       key.to_sym
     end
-    
+
   end
 end
-
 

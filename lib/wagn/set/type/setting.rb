@@ -17,7 +17,7 @@ module Wagn
 
     format :base
 
-    define_view :core, :type=>'setting' do |args|
+    view :core, :type=>'setting' do |args|
 
       klasses = Card.set_patterns.reverse.map do |set_class|
         wql = { :left  => { :type =>Card::SetID },
@@ -88,7 +88,7 @@ module Wagn
 
     end
 
-    define_view :closed_content, :type=>'setting' do |args|
+    view :closed_content, :type=>'setting' do |args|
       %{<div class="instruction">#{process_content_object "{{+*right+*help}}"}</div>}
     end
 

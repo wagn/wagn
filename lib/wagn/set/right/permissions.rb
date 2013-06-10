@@ -5,7 +5,7 @@ module Wagn
 
     format :base
 
-    define_view :editor, :right=>'create' do |args|
+    view :editor, :right=>'create' do |args|
       set_name = card.cardname.trunk_name
       set_card = Card.fetch(set_name)
       not_set = set_card && set_card.type_id != Card::SetID
@@ -55,18 +55,18 @@ module Wagn
       }
     end
 
-    define_view :core, { :right=>'create'} do |args|
+    view :core, { :right=>'create'} do |args|
       args[:item] ||= :link
       card.content=='_left' ? core_inherit_content(args) : _final_pointer_type_core(args)
     end
 
-    define_view :closed_content, { :right=>'create'} do |args|
+    view :closed_content, { :right=>'create'} do |args|
       card.content=='_left' ? core_inherit_content(args) : _final_pointer_type_closed_content(args)
     end
 
-    alias_view :core,           { :right=>'create' }, { :right=>'read' }, { :right=>'update' }, { :right=>'delete' }, { :right=>'comment' }
-    alias_view :editor,         { :right=>'create' }, { :right=>'read' }, { :right=>'update' }, { :right=>'delete' }, { :right=>'comment' }
-    alias_view :closed_content, { :right=>'create' }, { :right=>'read' }, { :right=>'update' }, { :right=>'delete' }, { :right=>'comment' }
+    view :core,           { :right=>'create' }, { :right=>'read' }, { :right=>'update' }, { :right=>'delete' }, { :right=>'comment' }
+    view :editor,         { :right=>'create' }, { :right=>'read' }, { :right=>'update' }, { :right=>'delete' }, { :right=>'comment' }
+    view :closed_content, { :right=>'create' }, { :right=>'read' }, { :right=>'update' }, { :right=>'delete' }, { :right=>'comment' }
   end
   
   class Renderer::Html

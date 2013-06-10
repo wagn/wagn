@@ -5,7 +5,7 @@ module Wagn
 
     format :json
 
-    define_view :show do |args|
+    view :show do |args|
       args[:item] = params[:item]
       raw = render( ( args[:view] || :atom ), args )
       case
@@ -15,11 +15,11 @@ module Wagn
       end
     end
 
-    define_view :name_complete do |args|
+    view :name_complete do |args|
       card.item_cards :complete=>params['term'], :limit=>8, :sort=>'name', :return=>'name', :context=>''
     end
     
-    define_view :status, :tags=>:unknown_ok, :perms=>:none do |args|
+    view :status, :tags=>:unknown_ok, :perms=>:none do |args|
       status = case
       when !card.known?       ;  :unknown
 # do we want the following to prevent fishing?  of course, they can always post...        

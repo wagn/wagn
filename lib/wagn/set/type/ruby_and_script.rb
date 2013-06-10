@@ -16,7 +16,7 @@ module Wagn
 
     format :base
 
-    define_view :core, :type=>'script' do |args|
+    view :core, :type=>'script' do |args|
       command = process_content_object( card.content )
       begin
         if Wagn::Conf[:enable_server_cards]
@@ -29,7 +29,7 @@ module Wagn
       end
     end
 
-    alias_view( :editor, {:type=>'plain_text'},  {:type=>'script'} )
+    view( :editor, {:type=>'plain_text'},  {:type=>'script'} )
 
   end
 end

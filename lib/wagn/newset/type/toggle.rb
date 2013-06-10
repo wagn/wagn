@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-define_view :core do |args|
+view :core do |args|
   case card.raw_content.to_i
     when 1; 'yes'
     when 0; 'no'
@@ -8,6 +8,8 @@ define_view :core do |args|
     end
 end
 
-define_view :editor do |args|
+view :editor do |args|
+  fail "woot"
+  
   form.check_box :content
 end

@@ -9,7 +9,5 @@ view :core do |args|
 end
 
 view :editor do |args|
-  fail "woot"
-  
   form.check_box :content
 end

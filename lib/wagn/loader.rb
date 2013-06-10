@@ -22,7 +22,7 @@ module Wagn
         load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
       end
       
-      tmpsetdir = "#{Rails.root}/lib/wagn/newset/"
+      tmpsetdir = "#{Rails.root}/lib/wagn/newset"
 
       #note: these should really go from broadest to narrowest set.
       Dir.foreach tmpsetdir do |set_pattern|
@@ -39,9 +39,10 @@ module Wagn
           next if anchor =~ /^\./
           anchor.gsub! /\.rb$/, ''
           Wagn::Set::current_set_opts = { set_pattern.to_sym => anchor.to_sym }
+          filename = "#{tmpsetdir}/#{set_pattern}/#{anchor}.rb"
           base.const_set anchor.camelize, (Module.new do
             extend Wagn::Set
-            class_eval File.read( "#{tmpsetdir}/#{set_pattern}/#{anchor}.rb" )
+            class_eval File.read( filename ), filename, 1 
           end )
         end
       end

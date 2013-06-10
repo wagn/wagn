@@ -5,7 +5,7 @@ module Wagn
 
     format :html
 
-    define_view :show do |args|
+    view :show do |args|
       @main_view = args[:view] || args[:home_view]
 
       if ajax_call?
@@ -16,7 +16,7 @@ module Wagn
       end
     end
 
-    define_view :layout, :perms=>:none do |args|
+    view :layout, :perms=>:none do |args|
       if @main_content = args.delete( :main_content )
         @card = Card.fetch '*placeholder', :new=>{}
       end
@@ -27,7 +27,7 @@ module Wagn
       process_content layout_content, args
     end
   
-    define_view :content do |args|
+    view :content do |args|
       wrap :content, args do
         %{
           #{ optional_render :menu, args, default_hidden=true }
@@ -36,7 +36,7 @@ module Wagn
       end
     end
 
-    define_view :titled, :tags=>:comment do |args|
+    view :titled, :tags=>:comment do |args|
       wrap :titled, args do
         %{
           #{ _render_header args.merge( :menu_default_hidden=>true ) }
@@ -46,7 +46,7 @@ module Wagn
       end
     end
     
-    define_view :labeled do |args|
+    view :labeled do |args|
       wrap :labeled, args do
         %{
           #{ _optional_render :menu, args }
@@ -63,20 +63,20 @@ module Wagn
       end
     end
   
-    define_view :title do |args|
+    view :title do |args|
       title = content_tag :h1, fancy_title( args[:title] ), :class=>'card-title'
       title = _optional_render( :title_link, args.merge( :title_ready=>title ), default_hidden=true ) || title
       add_name_context
       title
     end
     
-    define_view :title_link do |args|
+    view :title_link do |args|
       link_to_page (args[:title_ready] || showname(args[:title]) ), card.name
     end
     
   
 
-    define_view :open, :tags=>:comment do |args|
+    view :open, :tags=>:comment do |args|
       args[:toggler] = link_to '', path( :view=>:closed ),
         :remote => true,
         :title  => "close #{card.name}",
@@ -91,7 +91,7 @@ module Wagn
       end
     end
 
-    define_view :header do |args|
+    view :header do |args|
       %{
         <div class="card-header">
           #{ args.delete :toggler }
@@ -103,7 +103,7 @@ module Wagn
       }
     end
   
-    define_view :menu, :tags=>:unknown_ok do |args|
+    view :menu, :tags=>:unknown_ok do |args|
       disc_tagname = Card.fetch(:discussion, :skip_modules=>true).cardname
       disc_card = unless card.junction? && card.cardname.tag_name.key == disc_tagname.key
         Card.fetch "#{card.name}+#{disc_tagname}", :skip_virtual=>true, :skip_modules=>true, :new=>{}
@@ -141,17 +141,17 @@ module Wagn
       }
     end
 
-    define_view :menu_link do |args|
+    view :menu_link do |args|
       '<a class="ui-icon ui-icon-gear"></a>'
     end
   
-    define_view :type do |args|
+    view :type do |args|
       klasses = ['cardtype']
       klasses << 'default-type' if card.type_id==Card::DefaultTypeID ? " default-type" : ''
       link_to_page card.type_name, nil, :class=>klasses
     end
 
-    define_view :closed do |args|
+    view :closed do |args|
       args[:toggler] = link_to '', path( :view=>:open ),
         :remote => true,
         :title => "open #{card.name}",
@@ -165,7 +165,7 @@ module Wagn
     end
   
   
-    define_view( :comment_box, :denial=>:blank, :tags=>:unknown_ok, :perms=>lambda { |r| r.card.ok? :comment } ) do |args|
+    view( :comment_box, :denial=>:blank, :tags=>:unknown_ok, :perms=>lambda { |r| r.card.ok? :comment } ) do |args|
       
       %{<div class="comment-box nodblclick"> #{
         card_form :update do |f|
@@ -181,7 +181,7 @@ module Wagn
 
 
 
-    define_view :new, :perms=>:create, :tags=>:unknown_ok do |args|
+    view :new, :perms=>:create, :tags=>:unknown_ok do |args|
       name_ready = !card.cardname.blank? && !Card.exists?( card.cardname )
       prompt_for_name = !name_ready && !card.rule_card( :autoname )
 
@@ -234,11 +234,11 @@ module Wagn
       end)
     end
 
-    define_view :editor do |args|
+    view :editor do |args|
       form.text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id
     end
 
-    define_view :missing do |args|
+    view :missing do |args|
       return '' unless card.ok? :create  #this should be moved into ok_view
       new_args = { :view=>:new, 'card[name]'=>card.name }
       new_args['card[type]'] = args[:type] if args[:type]
@@ -250,7 +250,7 @@ module Wagn
     end
 
   ###---(  EDIT VIEWS )
-    define_view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
+    view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
       wrap :edit, args.merge(:frame=>true) do
         %{
           #{ _render_header :help_default_hidden=>false }
@@ -274,11 +274,11 @@ module Wagn
       end
     end
 
-    define_view :name_editor do |args|
+    view :name_editor do |args|
       fieldset 'name', raw( name_field form ), :editor=>'name', :help=>args[:help]
     end
 
-    define_view :edit_name, :perms=>:update do |args|
+    view :edit_name, :perms=>:update do |args|
       card.update_referencers = false
       referers = card.extended_referencers
       dependents = card.dependents
@@ -316,7 +316,7 @@ module Wagn
       end
     end
 
-    define_view :type_menu do |args|
+    view :type_menu do |args|
       field = if args[:variety] == :edit
         type_field :class=>'type-field edit-type-field'
       else
@@ -325,7 +325,7 @@ module Wagn
       fieldset 'type', field, :editor => 'type', :attribs => { :class=>'type-fieldset'}
     end
 
-    define_view :edit_type, :perms=>:update do |args|
+    view :edit_type, :perms=>:update do |args|
       wrap :edit_type, args.merge(:frame=>true) do
         _render_header +
         wrap_content( :edit_type, :body=>true, :class=>'card-editor' ) do
@@ -350,7 +350,7 @@ module Wagn
       end
     end
 
-    define_view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
+    view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
       eform = form_for_multi
       content = content_field eform, :nested=>true
       opts = {
@@ -368,7 +368,7 @@ module Wagn
     end
 
   
-    define_view :options do |args|
+    view :options do |args|
       current_set = Card.fetch( params[:current_set] || card.related_sets[0][0] )
 
       wrap :options, args.merge(:frame=>true) do
@@ -390,7 +390,7 @@ module Wagn
     end
     
     
-    define_view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
+    view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
 
       locals = {:slot=>self, :card=>card, :account=>card.account }
       wrap :options, args.merge(:frame=>true) do
@@ -413,7 +413,7 @@ module Wagn
     end
 
 
-    define_view :account_details, :perms=>lambda { |r| r.card.update_account_ok? } do |args|
+    view :account_details, :perms=>lambda { |r| r.card.update_account_ok? } do |args|
       account = args[:account] || card.account
       
       %{
@@ -429,7 +429,7 @@ module Wagn
       
     end
     
-    define_view :account_roles, :perms=>lambda { |r| 
+    view :account_roles, :perms=>lambda { |r| 
           r.card.fetch( :trait => :roles, :new=>{} ).ok? :read
         } do |args|
           
@@ -464,7 +464,7 @@ module Wagn
       fieldset :roles, option_content
     end
 
-    define_view :new_account, :perms=> lambda { |r| r.card.accountable? } do |args|
+    view :new_account, :perms=> lambda { |r| r.card.accountable? } do |args|
       wrap :new_account, args.merge(:frame=>true) do
         %{
           #{ _render_header }
@@ -482,7 +482,7 @@ module Wagn
       end
     end
     
-    define_view :related do |args|
+    view :related do |args|
       if rparams = params[:related]
         rcardname = rparams[:name].to_name.to_absolute_name( card.cardname)
         rcard = Card.fetch rcardname, :new=>{}
@@ -501,7 +501,7 @@ module Wagn
       end
     end
 
-    define_view :changes do |args|
+    view :changes do |args|
       load_revisions
       if @revision
         wrap :changes, args.merge(:frame=>true) do
@@ -531,7 +531,7 @@ module Wagn
       end
     end
 
-    define_view :help, :tags=>:unknown_ok do |args|
+    view :help, :tags=>:unknown_ok do |args|
       text = if args[:text]
         args[:text]
       elsif setting = args[:setting]
@@ -545,7 +545,7 @@ module Wagn
       %{<div class="instruction">#{raw text}</div>} if text
     end
 
-    define_view :diff do |args|
+    view :diff do |args|
       if @show_diff and @previous_revision
         diff @previous_revision.content, @revision.content
       else
@@ -553,7 +553,7 @@ module Wagn
       end
     end
 
-    define_view :conflict, :error_code=>409 do |args|
+    view :conflict, :error_code=>409 do |args|
       load_revisions
       wrap :errors do |args|
         %{<strong>Conflict!</strong><span class="new-current-revision-id">#{@revision.id}</span>
@@ -563,7 +563,7 @@ module Wagn
       end
     end
 
-    define_view :change do |args|
+    view :change do |args|
       wrap :change, args do
         %{
           #{link_to_page card.name, nil, :class=>'change-card'}
@@ -588,7 +588,7 @@ module Wagn
       end
     end
 
-    define_view :errors, :perms=>:none do |args|
+    view :errors, :perms=>:none do |args|
       #Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller[0..3]*", "}"
       wrap :errors, args do
         %{ <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
@@ -596,7 +596,7 @@ module Wagn
       end
     end
 
-    define_view :not_found do |args| #ug.  bad name.
+    view :not_found do |args| #ug.  bad name.
       sign_in_or_up_links = if !Account.logged_in?
         %{<div>
           #{link_to "Sign In", :controller=>'account', :action=>'signin'} or
@@ -614,7 +614,7 @@ module Wagn
       end
     end
 
-    define_view :denial do |args|
+    view :denial do |args|
       to_task = if task = args[:denied_task]
         %{to #{task} this card#{ ": <strong>#{card.name}</strong>" if card.name && !card.name.blank? }.}
       else
@@ -649,7 +649,7 @@ module Wagn
     end
 
 
-    define_view :server_error do |args|
+    view :server_error do |args|
       %{
       <body>
         <div class="dialog">
@@ -662,7 +662,7 @@ module Wagn
       }
     end
   
-    define_view :watch, :tags=>:unknown_ok, :denial=>:blank,
+    view :watch, :tags=>:unknown_ok, :denial=>:blank,
       :perms=> lambda { |r| Account.logged_in? && !r.card.new_card? } do |args|
         
       wrap :watch do

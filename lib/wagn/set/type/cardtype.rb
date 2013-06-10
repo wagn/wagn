@@ -5,7 +5,7 @@ module Wagn
 
     format :html
 
-    define_view :watch, :type=>'cardtype' do |args|
+    view :watch, :type=>'cardtype' do |args|
       wrap :watch do
         #type_link = card.watching_type? ? "#{watching_type_cards} | " : ""
         link_args = if card.watching?

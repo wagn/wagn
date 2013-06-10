@@ -5,7 +5,7 @@ module Wagn
 
     format :base
 
-    define_view :core, :type=>:account_request do |args|
+    view :core, :type=>:account_request do |args|
       links = []
       #ENGLISH
       if Account.create_ok?

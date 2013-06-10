@@ -27,7 +27,7 @@ module Wagn
     private
     
     def load_dir dir
-      Dir[dir].each do |file|
+      Dir[dir].sort.each do |file|
         begin
           require_dependency file
         rescue Exception=>e

@@ -193,9 +193,7 @@ module Cardlib::Permissions
       #find all cards with me as trunk and update their read_rule (because of *type plus right)
       # skip if name is updated because will already be resaved
 
-      #Rails.logger.warn "set_read_rule #{type_id_changed?}, #{inspect}, #{rcard.inspect}, #{rclass}"
-      if !new_card? && updates.for?( :type_id )
-      #if !new_card? && type_id_changed?
+      if !new_card? && type_id_changed?
         Account.as_bot do
           Card.search(:left=>self.name).each do |plus_card|
             plus_card = plus_card.refresh.update_read_rule

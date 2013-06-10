@@ -6,31 +6,31 @@ module Wagn
 
     format :base
 
-    define_view :core, :type=>'pointer' do |args|
+    view :core, :type=>'pointer' do |args|
       card.item_names.join ', '
     end
 
 
     format :html
 
-    define_view :core, :type=>'pointer' do |args|
+    view :core, :type=>'pointer' do |args|
       itemview = args[:item] || :closed #Wagn::Renderer::DEFAULT_ITEM_VIEW  #FIXME: this needs work, it won't subclass as intended
       %{<div class="pointer-list">#{card.pointer_items self, itemview}</div>}
       #+ link_to( 'add/edit', path(action), :remote=>true, :class=>'slotter add-edit-item' ) #ENGLISH
     end
 
-    define_view :closed_content, :type=>'pointer' do |args|
+    view :closed_content, :type=>'pointer' do |args|
       itemview = args[:item]=='name' ? 'name' : 'link'
       %{<div class="pointer-list">#{card.pointer_items self, itemview}</div>}
     end
 
-    define_view :editor, :type=>'pointer' do |args|
+    view :editor, :type=>'pointer' do |args|
       part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/,'') : :list
       form.hidden_field( :content, :class=>'card-content') +
       raw(_render(part_view))
     end
 
-    define_view :list, :type=>'pointer' do |args|
+    view :list, :type=>'pointer' do |args|
       args ||= {}
       items = args[:items] || card.item_names(:context=>:raw)
       items = [''] if items.empty?
@@ -49,7 +49,7 @@ module Wagn
 
     end
 
-    define_view :checkbox, :type=>'pointer' do |args|
+    view :checkbox, :type=>'pointer' do |args|
       %{<div class="pointer-checkbox-list">} +
       card.options.map do |option|
         checked = card.item_names.include?(option.name)
@@ -64,12 +64,12 @@ module Wagn
       '</div>'
     end
 
-    define_view :multiselect, :type=>'pointer' do |args|
+    view :multiselect, :type=>'pointer' do |args|
       options = options_from_collection_for_select(card.options,:name,:name,card.item_names)
       select_tag("pointer_multiselect", options, :multiple=>true, :class=>'pointer-multiselect')
     end
 
-    define_view :radio, :type=>'pointer' do |args|
+    view :radio, :type=>'pointer' do |args|
       input_name = "pointer_radio_button-#{card.key}"
       options = card.options.map do |option|
         checked = (option.name==card.item_names.first)
@@ -85,7 +85,7 @@ module Wagn
       %{ <div class="pointer-radio-list">#{options}</div> }
     end
 
-    define_view :select, :type=>'pointer' do |args|
+    view :select, :type=>'pointer' do |args|
       options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]}
       select_tag("pointer_select", options_for_select(options, card.item_names.first), :class=>'pointer-select')
     end

@@ -7,11 +7,11 @@ module Wagn
 
     format :file
 
-    define_view :core do |args|
+    view :core do |args|
       'File rendering of this card not yet supported'
     end
     
-    define_view :core, :type=>:file do |args|               # returns send_file args.  not in love with this...
+    view :core, :type=>:file do |args|               # returns send_file args.  not in love with this...
       if format = card.attachment_format( params[:format] ) # this means we only support known formats.  dislike.       
        
   #      elsif ![format, 'file'].member? params[:format]    # formerly supported redirecting to correct file format 
@@ -31,14 +31,14 @@ module Wagn
       end
     end
     
-    define_view( :style ) { |args| nil }
+    view( :style ) { |args| nil }
         
-    define_view :style, :type=>:image do |args|  #should this be in model?
+    view :style, :type=>:image do |args|  #should this be in model?
       ['', 'full'].member?( args[:style].to_s ) ? :original : args[:style]
     end
     
     
-    alias_view :core, {:type=>:file}, {:type=>:image}    
+    view :core, {:type=>:file}, {:type=>:image}    
 
   end
 end

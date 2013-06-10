@@ -5,7 +5,7 @@ module Wagn
     
     format :css
 
-    define_view :show do |args|
+    view :show do |args|
       render_raw
     end
     

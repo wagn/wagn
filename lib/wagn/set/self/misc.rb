@@ -5,21 +5,21 @@ module Wagn
 
     format :base
 
-    define_view :raw, :name=>'now' do |args|
+    view :raw, :name=>'now' do |args|
       Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z')
     end
-    alias_view(:raw, {:name=>'now'}, :core)
+    view(:raw, {:name=>'now'}, :core)
 
 
-    define_view :raw, :name=>:version do |args|
+    view :raw, :name=>:version do |args|
       Wagn::Version.to_s
     end
-    alias_view(:raw, {:name=>:version}, :core)
+    view(:raw, {:name=>:version}, :core)
 
 
-    define_view :raw, :name=>'alerts' do |args|
+    view :raw, :name=>'alerts' do |args|
       '<!-- *alerts is deprecated. please remove from layout -->'
     end
-    alias_view(:raw, {:name=>'alerts'}, :core)
+    view(:raw, {:name=>'alerts'}, :core)
   end
 end

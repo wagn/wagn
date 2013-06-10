@@ -381,7 +381,7 @@ describe Wagn::Renderer, "" do
 
         mock(card).rule_card(:thanks, {:skip_modules=>true}).returns(nil)
         mock(card).rule_card(:autoname).returns(nil)
-        mock(card).rule_card_id(:default,  {:skip_modules=>true}   ).returns(Card['*all+*default'])
+        mock(card).rule_card(:default,  {:skip_modules=>true}   ).returns(Card['*all+*default'])
         mock(card).rule_card(:add_help, {:fallback=>:help} ).returns(help_card)
         rendered = Wagn::Renderer::Html.new(card).render_new
         #warn "rendered = #{rendered}"

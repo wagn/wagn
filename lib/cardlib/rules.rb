@@ -29,7 +29,7 @@ module Cardlib::Rules
   end
   
   def rule_card setting_code, options={}
-    Card.fetch rule_card_id( setting_code, options )
+    Card.fetch rule_card_id( setting_code, options ), options
   end
   
   def rule_card_id setting_code, options={}

@@ -5,7 +5,7 @@ module Wagn
 
     format :html
 
-    define_view :raw, :name=>'head' do |args|
+    view :raw, :name=>'head' do |args|
       title = root.card && root.card.name
       title = nil if title.blank?
       title = params[:action] if title=='*placeholder'
@@ -86,14 +86,14 @@ module Wagn
 
       bits.join("\n")
     end
-    alias_view(:raw, {:name=>'head'}, :core)
+    view(:raw, {:name=>'head'}, :core)
 
 
 
 
-    define_view :raw, :name=>'foot' do |args|
+    view :raw, :name=>'foot' do |args|
       '<!-- *foot is deprecated. please remove from layout -->'
     end
-    alias_view(:raw, {:name=>'foot'}, :core)
+    view(:raw, {:name=>'foot'}, :core)
   end
 end

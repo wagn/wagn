@@ -5,7 +5,7 @@ module Wagn
 
     format :html
 
-    define_view :closed_rule, :rstar=>true, :tags=>:unknown_ok do |args|
+    view :closed_rule, :rstar=>true, :tags=>:unknown_ok do |args|
       return 'not a rule' if !card.is_rule? #these are helpful for handling non-rule rstar cards until we have real rule sets
         
       rule_card = card.new_card? ? find_current_rule_card[0] : card
@@ -37,7 +37,7 @@ module Wagn
 
 
 
-    define_view :open_rule, :rstar=>true, :tags=>:unknown_ok do |args|
+    view :open_rule, :rstar=>true, :tags=>:unknown_ok do |args|
       return 'not a rule' if !card.is_rule?
       
       current_rule, prototype = find_current_rule_card
@@ -118,7 +118,7 @@ module Wagn
 
     end
     
-    define_view :show_rule, :rstar=>true, :tags=>:unknown_ok do |args|
+    view :show_rule, :rstar=>true, :tags=>:unknown_ok do |args|
       return 'not a rule' if !card.is_rule?
       
       if !card.new_card?
@@ -135,7 +135,7 @@ module Wagn
       end
     end
 
-    define_view :edit_rule, :rstar=>true, :tags=>:unknown_ok do |args|
+    view :edit_rule, :rstar=>true, :tags=>:unknown_ok do |args|
       return 'not a rule' if !card.is_rule?
   
       setting_name    = args[:setting_name]

@@ -6,12 +6,12 @@ module Wagn
     extend Set
 
     format :kml
-    define_view :show do |args|
+    view :show do |args|
       render( args[:view] || :search)
     end
 
     # FIXME: integrate this with common XML features when it is added
-    define_view :search do |args|
+    view :search do |args|
       xml = Builder::XmlMarkup.new
       xml.instruct! :xml, :version => "1.0"
 

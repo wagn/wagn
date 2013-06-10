@@ -5,7 +5,7 @@ module Wagn::Set::Type
 
     format :html
 
-    define_view :core , :type=>:set do |args|
+    view :core , :type=>:set do |args|
       body = card.setting_codes_by_group.map do |group_name, data|
         next if group_name.nil? || data.nil?
         content_tag(:tr, :class=>"rule-group") do
@@ -29,11 +29,11 @@ module Wagn::Set::Type
     end
 
 
-    define_view :editor, :type=>'set' do |args|
+    view :editor, :type=>'set' do |args|
       'Cannot currently edit Sets' #ENGLISH
     end
     
-    define_view :template_link, :type=>'set' do |args|
+    view :template_link, :type=>'set' do |args|
       args.delete :style
       wrap :template_link, args do
         link = link_to_view args[:include], :template_editor, :class=>'slotter' #, 'slot-include'=>include_syntax
@@ -41,7 +41,7 @@ module Wagn::Set::Type
       end
     end
     
-    define_view :template_editor, :type=>'set' do |args|
+    view :template_editor, :type=>'set' do |args|
       wrap :template_editor, args do
         %{
           <div class="template-editor-left">{{</div> 
@@ -59,7 +59,7 @@ module Wagn::Set::Type
       end
     end
 
-    define_view :closed_content, :type=>:set do |args|
+    view :closed_content, :type=>:set do |args|
       ''
     end
 

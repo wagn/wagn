@@ -5,7 +5,7 @@ module Wagn
 
     format :html
 
-    define_view :raw, :name=>:account_links do |args|
+    view :raw, :name=>:account_links do |args|
       #ENGLISH
       prefix = Wagn::Conf[:root_path] + '/account'
       %{<span id="logging">#{

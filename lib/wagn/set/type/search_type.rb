@@ -6,7 +6,7 @@ module Wagn
 
     format :base
 
-    define_view :core, :type=>:search_type do |args|
+    view :core, :type=>:search_type do |args|
       set_search_vars args
 
       case
@@ -20,7 +20,7 @@ module Wagn
       end
     end
 
-    define_view :card_list, :type=>:search_type do |args|
+    view :card_list, :type=>:search_type do |args|
       @search[:item] ||= :name
 
       if @search[:results].empty?
@@ -34,7 +34,7 @@ module Wagn
     
     format :data
     
-    define_view :card_list, :type=>:search_type do |args|
+    view :card_list, :type=>:search_type do |args|
       @search[:item] ||= :atom
       
       @search[:results].map do |c|
@@ -45,7 +45,7 @@ module Wagn
     
 #    format :json
 #
-#    define_view :card_list, :type=>:search_type do |args|
+#    view :card_list, :type=>:search_type do |args|
 #      @search[:item] ||= :name
 #
 #      if @search[:results].empty?
@@ -65,7 +65,7 @@ module Wagn
 
     format :html
     
-    define_view :card_list, :type=>:search_type do |args|
+    view :card_list, :type=>:search_type do |args|
       @search[:item] ||= :closed
 
       paging = _optional_render :paging, args
@@ -92,7 +92,7 @@ module Wagn
     end
 
 
-    define_view :closed_content, :type=>:search_type do |args|
+    view :closed_content, :type=>:search_type do |args|
       if @depth > 2
         "..."
       else
@@ -106,23 +106,23 @@ module Wagn
       end
     end
 
-    define_view :editor, :type=>:search_type do |args|
+    view :editor, :type=>:search_type do |args|
       form.text_area :content, :rows=>10
     end
 
 
-    define_view :title, :name=>:search do |args|
+    view :title, :name=>:search do |args|
       if vars = search_params[:vars] and keyword = vars[:keyword]
          args.merge! :title=> %{Search results for: <span class="search-keyword">#{keyword}</span>}
       end
       _final_title args
     end
 
-    define_view :title, :name=>:recent do |args|
+    view :title, :name=>:recent do |args|
        _final_title args.merge( :title=>'Recent Changes' )
     end
 
-    define_view :card_list, :name=>:recent do |args|
+    view :card_list, :name=>:recent do |args|
       @search[:item] ||= :change
 
       cards_by_day = Hash.new { |h, day| h[day] = [] }
@@ -164,7 +164,7 @@ module Wagn
 
 
 
-    define_view :paging, :type=>:search_type do |args|
+    view :paging, :type=>:search_type do |args|
       s = card.spec search_params
       offset, limit = s[:offset].to_i, s[:limit].to_i
       return '' if limit < 1

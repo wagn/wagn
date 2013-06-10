@@ -7,7 +7,7 @@ module Wagn
 
     format :csv
 
-    define_view :show do |args|
+    view :show do |args|
       if !card.collection?
         "CSV format only works on collections (searches, pointers, etc)"
       else
@@ -15,7 +15,7 @@ module Wagn
       end
     end
 
-    define_view :csvrow do |args|
+    view :csvrow do |args|
       array = _render_raw.scan( /\{\{[^\}]*\}\}/ ).map do |inc|
         process_content( inc ).strip
       end
@@ -24,7 +24,7 @@ module Wagn
       #chop is because search already joins with newlines
     end
 
-    define_view :missing do |args|
+    view :missing do |args|
       ''
     end
 

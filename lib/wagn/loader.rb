@@ -18,6 +18,7 @@ module Wagn
     end
 
     def load_sets
+      load_dir File.expand_path( "#{SETS}/*.rb", __FILE__ )
       [ SETS, Wagn::Conf[:pack_dirs].split( /,\s*/ ) ].flatten.each do |dirname|
         load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
       end

@@ -24,7 +24,7 @@ class CardName < SmartName
   end
 
   def trait_name tag_code
-    card_id = Wagn::Codename[ tag_code ] and card = Card[ card_id ] and
+    card_id = Wagn::Codename[ tag_code ] and card = Card.fetch(card_id, :skip_modules=>true) and
       [ self, card.cardname ].to_name
   end
 

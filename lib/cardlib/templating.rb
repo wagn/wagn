@@ -15,7 +15,7 @@ module Cardlib::Templating
     @template ||= begin
       @virtual = false
       if new_card?
-        default_card = rule_card :default, :skip_modules=>true
+        default_card = Card.fetch rule_card_id( :default, :skip_modules=>true ), :skip_modules=>true
 
         dup_card = dup
 #        dup_card.type_id_without_tracking = default_card.type_id

@@ -1,5 +1,16 @@
 # -*- encoding : utf-8 -*-
 
+format :html do
+  
+  view :title do |args|
+    if vars = search_params[:vars] and keyword = vars[:keyword]
+       args.merge! :title=> %{Search results for: <span class="search-keyword">#{keyword}</span>}
+    end
+    _final_title args
+  end
+end
+
+
 format :json do
 
   view :complete do |args|

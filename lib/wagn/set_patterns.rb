@@ -183,7 +183,7 @@ module Wagn::SetPatterns
   
 
   class SelfPattern < BasePattern
-    register 'self', :opt_keys=>[ :name ]
+    register 'self', :opt_keys=>[ :self ]
     #note: does not assign type bc this causes trouble when cardtype cards have a *self set.
     def self.label            name;     %{The card "#{name}"}      end
     def self.prototype_args anchor;     { :name=>anchor }          end

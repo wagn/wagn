@@ -48,9 +48,9 @@ module Wagn
       # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
       content_tag( :h2, showname(args[:title]) ) + self._render_open_content(args) { yield }
     end
-    view(:titled,      {}, :open)
-    view(:open_content,{}, :content)
-    view(:link,        {}, :closed)
+    view(:titled,       :open)
+    view(:open_content, :content)
+    view(:link,         :closed)
 
   end
 end

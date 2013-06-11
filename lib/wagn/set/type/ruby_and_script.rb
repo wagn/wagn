@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+=begin
 module Wagn
   module Set::Type::RubyAndScript
     extend Set
@@ -33,3 +34,4 @@ module Wagn
 
   end
 end
+=end

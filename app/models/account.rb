@@ -9,7 +9,7 @@ class Account
     def as_user()        self[ Account.as_id      ]   end
     def user()           self[ Account.current_id ]   end
 
-    def cache()          Wagn::Cache[User]            end
+    def cache()          Wagn::Cache[Account]         end
 
     def create_ok?
       base  = Card.new :name=>'dummy*', :type_id=>Card::UserID

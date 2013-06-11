@@ -56,3 +56,4 @@ format :file do
   view :core, :type=>:file
 
 end
+

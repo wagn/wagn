@@ -42,3 +42,4 @@ view :card_list do |args|
     #{ paging }
   }
 end
+

@@ -41,7 +41,7 @@ format :data do
   end
 end
     
-#    format :json
+#  format :json do
 #
 #    view :card_list, :type=>:search_type do |args|
 #      @search[:item] ||= :name
@@ -59,6 +59,7 @@ end
 #        }
 #      end
 #    end
+#  end
     
 
 format :html do

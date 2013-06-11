@@ -5,5 +5,5 @@ format :html do
     '<!-- *foot is deprecated. please remove from layout -->'
   end
 
-  #view :raw, :core
+  view :core, :raw
 end

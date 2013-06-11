@@ -1,5 +1,5 @@
 module Wagn
-  class Renderer::Html < Renderer
+  class Renderer::Html
     
     def build_menu_items array
       

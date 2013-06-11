@@ -84,7 +84,7 @@ format :html do
     bits.join("\n")
   end
 
-  #view :raw, :core
+  view :core, :raw
 end
 
 

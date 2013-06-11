@@ -17,4 +17,4 @@ format :html do
     }
   end
 end
-#  view(:raw, {:name=>'navbox'}, :core)
+view :core, :raw

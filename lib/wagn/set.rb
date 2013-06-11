@@ -110,15 +110,11 @@ module Wagn
 
     def format fmt=nil
       if block_given?
-        format fmt
+        Renderer.current_class = Renderer.get_renderer fmt
         yield
-        format :base
+        Renderer.current_class = Renderer
       else
-        Renderer.current_class = if fmt.nil? || fmt == :base
-          Renderer
-        else
-          Renderer.get_renderer fmt
-        end
+        fail "block required"
       end
     end
 

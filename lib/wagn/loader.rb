@@ -36,7 +36,7 @@ module Wagn
           anchor.gsub! /\.rb$/, ''
           Wagn::Set::current_set_opts = { set_pattern.to_sym => anchor.to_sym }
           filename = "#{dirname}/#{anchor}.rb"
-          set_pattern_const.const_set anchor.camelize, ( Module.new do
+          Wagn::Set::current_set_module = set_pattern_const.const_set anchor.camelize, ( Module.new do
             extend Wagn::Set
             class_eval File.read( filename ), filename, 1 
           end )

@@ -70,8 +70,6 @@ format :html do
   view :title_link do |args|
     link_to_page (args[:title_ready] || showname(args[:title]) ), card.name
   end
-  
-
 
   view :open, :tags=>:comment do |args|
     args[:toggler] = link_to '', path( :view=>:closed ),

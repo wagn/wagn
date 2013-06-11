@@ -2,7 +2,7 @@
 
 module Wagn
   module Set
-    mattr_accessor :current_set_opts
+    mattr_accessor :current_set_opts, :current_set_module
     # View definitions
     #
     #   When you declare:
@@ -27,9 +27,6 @@ module Wagn
     #
 
     def view view, *args, &final
-      
-
-    
       
       if block_given?
         define_view view, (args[0] || {}), &final
@@ -132,11 +129,12 @@ module Wagn
       opts[:on] = [:create, :update ] if opts[:on] == :save
 
       mod = self.ancestors.first
+      mod_name = mod.name || Wagn::Set::current_set_module.name
       mod = case
         when mod == Card                          ; Card
-        when mod.name =~ /^Cardlib/               ; Card
-        when mod.name =~ /^Wagn::Set::All::/      ; Card
-        when modl = Card.find_set_model_module( mod.name )  ; modl
+        when mod_name =~ /^Cardlib/               ; Card
+        when mod_name =~ /^Wagn::Set::All::/      ; Card
+        when modl = Card.find_set_model_module( mod_name )  ; modl
         else mod.const_set :Model, Module.new
         end
 
@@ -171,7 +169,7 @@ module Wagn
             # My original intent was to add the callbacks to the singleton class (see code below).  We may have to go back to that approach if we
             # encounter problems with ordering, overrides, etc with this.
 
-            parts = mod.name.split '::'
+            parts = mod_name.split '::'
             set_class_key = parts[-3].underscore
             anchor_or_placeholder = parts[-2].underscore
             set_key = Card.method_key( { set_class_key.to_sym => anchor_or_placeholder } )
@@ -181,7 +179,7 @@ module Wagn
                 set_callback object_method, kind, event, :prepend=>true, :if => proc { |c| c.method_keys.include? set_key }
               end
             else
-              puts Rails.logger.info( "EVENT defined for unknown set in #{mod.name}" )
+              puts Rails.logger.info( "EVENT defined for unknown set in #{mod_name}" )
             end
           end
         end

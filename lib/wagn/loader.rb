@@ -34,9 +34,11 @@ module Wagn
         Dir.foreach dirname do |anchor|
           next if anchor =~ /^\./
           anchor.gsub! /\.rb$/, ''
-          Wagn::Set::current_set_opts = { set_pattern.to_sym => anchor.to_sym }
+          Wagn::Set.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
+          Wagn::Set.current_set_module = "#{set_pattern_const.name}::#{anchor.camelize}"
+          
           filename = "#{dirname}/#{anchor}.rb"
-          Wagn::Set::current_set_module = set_pattern_const.const_set anchor.camelize, ( Module.new do
+          set_pattern_const.const_set anchor.camelize, ( Module.new do
             extend Wagn::Set
             class_eval File.read( filename ), filename, 1 
           end )

@@ -125,7 +125,7 @@ module Wagn
       opts[:on] = [:create, :update ] if opts[:on] == :save
 
       mod = self.ancestors.first
-      mod_name = mod.name || Wagn::Set::current_set_module.name
+      mod_name = mod.name || Wagn::Set.current_set_module
       mod = case
         when mod == Card                          ; Card
         when mod_name =~ /^Cardlib/               ; Card

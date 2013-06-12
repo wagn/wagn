@@ -679,7 +679,7 @@ class Card < ActiveRecord::Base
 
       unless cdname.valid?
         card.errors.add :name,
-          "may not contain any of the following characters: #{ CardName.banned_array * ' ' }"
+          "may not contain any of the following characters: #{ Card::Name.banned_array * ' ' }"
       end
       # this is to protect against using a plus card as a tag
       if cdname.junction? and card.simple? and Account.as_bot { Card.count_by_wql :right_id=>card.id } > 0

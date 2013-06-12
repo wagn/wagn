@@ -43,7 +43,7 @@ describe Card, "Case Variant" do
 end
 
 
-describe CardName, "Underscores" do
+describe Card::Name, "Underscores" do
   it "should be treated like spaces when making keys" do
     'weird_ combo'.to_name.key.should == 'weird  combo'.to_name.key
   end
@@ -52,7 +52,7 @@ describe CardName, "Underscores" do
   end
 end
 
-describe CardName, "changing from plus card to simple" do
+describe Card::Name, "changing from plus card to simple" do
   before do
     Account.as :joe_user
     @c = Card.create! :name=>'four+five'

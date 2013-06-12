@@ -152,6 +152,7 @@ class Card < ActiveRecord::Base
     self
   end
 
+
   # reset_mods: resets with patterns in model/pattern
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

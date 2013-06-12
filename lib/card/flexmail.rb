@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class Flexmail
+class Card::Flexmail
   class << self
     def configs_for card
       email_config_cardnames(card).map do |email_config|

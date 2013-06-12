@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-
+include Wagn::Set::Type::File
 
 view :closed_content do |args|
   _render_core :size=>:icon

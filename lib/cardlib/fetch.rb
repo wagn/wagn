@@ -82,9 +82,14 @@ module Cardlib::Fetch
         end
       end
 
-      if Card.cache && needs_caching
-        Card.cache.write card.key, card
-        Card.cache.write "~#{card.id}", card.key if card.id and card.id != 0
+      begin
+        if Card.cache && needs_caching
+          Card.cache.write card.key, card
+          Card.cache.write "~#{card.id}", card.key if card.id and card.id != 0
+        end
+      rescue TypeError
+        # I believe this only happens in development
+        Rails.logger.info "TypeError rescued"
       end
 
       if card.new_card?

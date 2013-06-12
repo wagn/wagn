@@ -86,7 +86,7 @@ module Cardlib
     end
 
     def set_modules
-      @set_modules ||= patterns_without_new.reverse.map(&:set_const).compact
+      @set_modules ||= patterns_without_new[0..-2].reverse.map(&:set_const).compact
     end
 
     def set_names

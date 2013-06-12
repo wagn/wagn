@@ -6,7 +6,6 @@ module Wagn
   
   module Loader
     CARDLIB   = "#{Rails.root}/lib/cardlib/*.rb"
-    OLDSETS   = "#{Rails.root}/lib/wagn/set/"
     RENDERERS = "#{Rails.root}/lib/wagn/renderer/*.rb"
     SETS      = "#{Rails.root}/wagn-app/sets"
 
@@ -18,10 +17,8 @@ module Wagn
       load_dir File.expand_path( RENDERERS, __FILE__ )
     end
 
-    def load_sets
-      load_dir File.expand_path( "#{OLDSETS}/**/*.rb", __FILE__ )
-      
-      load_newsets
+    def load_sets      
+      load_standard_sets
       
       Wagn::Conf[:pack_dirs].split( /,\s*/ ).each do |dirname|
         load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
@@ -29,7 +26,7 @@ module Wagn
     end
     
     
-    def load_newsets
+    def load_standard_sets
       
       Card.set_patterns.reverse.map(&:key).each do |set_pattern|
          
@@ -45,11 +42,22 @@ module Wagn
           Wagn::Set.current_set_module = "#{set_pattern_const.name}::#{anchor.camelize}"
           
           filename = "#{dirname}/#{anchor}.rb"
-          set_pattern_const.const_set anchor.camelize, ( Module.new do
+          set_module = set_pattern_const.const_set anchor.camelize, ( Module.new do
             extend Wagn::Set
             class_eval File.read( filename ), filename, 1 
           end )
+          
+          if set_pattern == 'all' and set_module.const_defined? :Model
+            Card.send :include, set_module.const_get( :Model )
+          end
+          
+          if set_module.const_defined? :Renderer
+            Wagn::Renderer.send :include, set_module.const_get( :Renderer )
+          end          
         end
+
+        
+        
       end
     ensure
       Wagn::Set.current_set_opts = Wagn::Set.current_set_module = nil

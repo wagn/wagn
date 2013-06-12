@@ -18,3 +18,12 @@ format :html do
   end
 end
 view :core, :raw
+
+module Renderer
+  private
+
+  #hacky.  here for override
+  def goto_wql(term)
+   { :complete=>term, :limit=>8, :sort=>'name', :return=>'name' }
+  end
+end

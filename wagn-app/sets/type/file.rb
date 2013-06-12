@@ -70,3 +70,13 @@ format :html do
   end
   
 end
+
+module Renderer
+  def handle_source args
+    source = _render_source args
+    source ? yield( source ) : ''
+  rescue
+    'File Error'
+  end
+end
+

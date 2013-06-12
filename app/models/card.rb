@@ -785,5 +785,5 @@ class Card < ActiveRecord::Base
   # LOAD Renderers and Sets
 
   load_renderers
-  load_sets  
+  load_sets
 end

@@ -6,8 +6,9 @@ module Wagn
   
   module Loader
     CARDLIB   = "#{Rails.root}/lib/cardlib/*.rb"
-    SETS      = "#{Rails.root}/lib/wagn/set/"
+    OLDSETS   = "#{Rails.root}/lib/wagn/set/"
     RENDERERS = "#{Rails.root}/lib/wagn/renderer/*.rb"
+    SETS      = "#{Rails.root}/wagn-app/sets"
 
     def load_cardlib
       load_dir File.expand_path( CARDLIB, __FILE__ )
@@ -18,16 +19,22 @@ module Wagn
     end
 
     def load_sets
-      [ SETS, Wagn::Conf[:pack_dirs].split( /,\s*/ ) ].flatten.each do |dirname|
+      load_dir File.expand_path( "#{OLDSETS}/**/*.rb", __FILE__ )
+      
+      load_newsets
+      
+      Wagn::Conf[:pack_dirs].split( /,\s*/ ).each do |dirname|
         load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
       end
+    end
+    
+    
+    def load_newsets
       
-      tmpsetdir = "#{Rails.root}/sets"
-
       Card.set_patterns.reverse.map(&:key).each do |set_pattern|
          
         next if set_pattern =~ /^\./
-        dirname = "#{tmpsetdir}/#{set_pattern}"
+        dirname = "#{SETS}/#{set_pattern}"
         next unless File.exists?( dirname )
         set_pattern_const = get_set_pattern_constant set_pattern
         

@@ -175,7 +175,7 @@ module Wagn
                 set_callback object_method, kind, event, :prepend=>true, :if => proc { |c| c.method_keys.include? set_key }
               end
             else
-              puts Rails.logger.info( "EVENT defined for unknown set in #{mod_name}" )
+              Rails.logger.info( "EVENT defined for unknown set in #{mod_name}" )
             end
           end
         end

@@ -30,7 +30,7 @@ view :core do |args|
 
 
   
-  %{
+  %{ 
     #{ _render_closed_content args }
     <table class="setting-rules">
       <tr><th>Set</th><th>Rule</th></tr>
@@ -77,7 +77,6 @@ view :core do |args|
         end * "\n"
       
       }
-      <th>
     </table>
   }
 

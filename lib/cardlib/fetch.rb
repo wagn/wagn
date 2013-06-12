@@ -83,6 +83,7 @@ module Cardlib::Fetch
       end
 
       if Card.cache && needs_caching
+        warn "trying to write: #{card.key}, #{card}"
         Card.cache.write card.key, card
         Card.cache.write "~#{card.id}", card.key if card.id and card.id != 0
       end

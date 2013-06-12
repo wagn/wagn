@@ -41,8 +41,8 @@ module Wagn
       Renderer.error_codes[view] = opts.delete(:error_code) if opts[:error_code]
       Renderer.denial_views[view]= opts.delete(:denial)     if opts[:denial]
       
-      if opts[:tags]
-        [opts[:tags]].flatten.each do |tag|
+      if tags = opts.delete(:tags)
+        Array.wrap(tags).each do |tag|
           Renderer.view_tags[view] ||= {}
           Renderer.view_tags[view][tag] = true
         end
@@ -166,8 +166,8 @@ module Wagn
             # encounter problems with ordering, overrides, etc with this.
 
             parts = mod_name.split '::'
-            set_class_key = parts[-3].underscore
-            anchor_or_placeholder = parts[-2].underscore
+            set_class_key = parts[-2].underscore
+            anchor_or_placeholder = parts[-1].underscore
             set_key = Card.method_key( { set_class_key.to_sym => anchor_or_placeholder } )
 
             if set_key.present?

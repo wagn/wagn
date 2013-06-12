@@ -51,7 +51,8 @@ module Wagn
           end )
         end
       end
-      
+    ensure
+      Wagn::Set.current_set_opts = Wagn::Set.current_set_module = nil
     end
 
     private

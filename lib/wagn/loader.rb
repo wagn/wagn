@@ -31,7 +31,7 @@ module Wagn
         next unless File.exists?( dirname )
         set_pattern_const = get_set_pattern_constant set_pattern
         
-        Dir.foreach dirname do |anchor|
+        Dir.entries( dirname ).sort.each do |anchor|
           next if anchor =~ /^\./
           anchor.gsub! /\.rb$/, ''
           Wagn::Set.current_set_opts = { set_pattern.to_sym => anchor.to_sym }

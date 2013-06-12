@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require_dependency 'chunks/chunk'
 
-class ObjectContent < SimpleDelegator
+class Card::Content < SimpleDelegator
 
   ACTIVE_CHUNKS = [ URIChunk, HostURIChunk, EmailURIChunk, Literal::Escape, Chunks::Include, Chunks::Link ]
   SCAN_RE = { ACTIVE_CHUNKS => Chunks::Abstract.scan_re(ACTIVE_CHUNKS) }
@@ -10,7 +10,7 @@ class ObjectContent < SimpleDelegator
   def initialize content, card_options
     @card_options = card_options
     @card_options[:card] or raise "No Card in Content!!"
-    content = ObjectContent.split_content(card_options, content) unless Array===content
+    content = Card::Content.split_content(card_options, content) unless Array===content
     #Rails.logger.warn "oc new[#{card_options}] #{content.class}, #{content.inspect} #{caller[0..10]*', '}"
     super content
   end
@@ -91,7 +91,7 @@ class ObjectContent < SimpleDelegator
     case __getobj__
     when Array;    map(&:to_s)*''
     when String;   __getobj__
-    when NilClass; raise "Nil ObjectContent"
+    when NilClass; raise "Nil Card::Content"
     else           __getobj__.to_s
     end
   end

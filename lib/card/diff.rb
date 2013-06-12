@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-module HTMLDiff
+module Card::Diff
 
   Match = Struct.new(:start_in_old, :start_in_new, :size)
   class Match

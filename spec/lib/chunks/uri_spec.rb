@@ -267,17 +267,17 @@ describe URIChunk, "URI chunk tests" do
 
   # Asserts a number of tests for the given type and text.
   def no_match(type, test_text)
-    test_cont = ObjectContent.new(test_text, CARD_PARMS)
+    test_cont = Card::Content.new(test_text, CARD_PARMS)
     ( ((test_cont.respond_to? :each) ? test_cont : [test_cont]).find{|ck| type===ck } ).should be_nil
   end
 
   def aa_match(type, test_text)
-    test_cont = ObjectContent.new(test_text, CARD_PARMS)
+    test_cont = Card::Content.new(test_text, CARD_PARMS)
     ( ((test_cont.respond_to? :each) ? test_cont : [test_cont]).find{|ck| type===ck } ).should_not be_nil
   end
 
   def match_chunk(type, test_text, expected)
-    test_cont = ObjectContent.new(test_text, CARD_PARMS)
+    test_cont = Card::Content.new(test_text, CARD_PARMS)
     chunk = ((test_cont.respond_to? :each) ? test_cont : [test_cont]).find{ |ck| type===ck }
     #warn "chunk? #{chunk.inspect}"
     chunk.should_not be_nil

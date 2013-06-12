@@ -1,4 +1,5 @@
 module Wagn
+
   class Renderer
     def set_search_vars args
       @search ||= begin
@@ -27,6 +28,14 @@ module Wagn
         p
       end
     end
+    
+    private
+
+    #hacky.  here for override
+    def goto_wql(term)
+     { :complete=>term, :limit=>8, :sort=>'name', :return=>'name' }
+    end
+    
   end
   
   class Renderer::Html

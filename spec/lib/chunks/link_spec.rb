@@ -55,9 +55,9 @@ describe Chunks::Link, "link chunk tests" do
   end
 
   it "should test relative link" do
-    dude,job = newcard('Harvey',"[[#{CardName.joint}business]]"), newcard('business')
+    dude,job = newcard('Harvey',"[[#{Card::Name.joint}business]]"), newcard('business')
     card = Card.create! :name => "#{dude.name}+#{job.name}", :content => "icepicker"
-    assert_equal("<a class=\"known-card\" href=\"/Harvey+business\">#{CardName.joint}business</a>", render_test_card(dude) )
+    assert_equal("<a class=\"known-card\" href=\"/Harvey+business\">#{Card::Name.joint}business</a>", render_test_card(dude) )
   end
   
   it "should handle inclusions as link text" do

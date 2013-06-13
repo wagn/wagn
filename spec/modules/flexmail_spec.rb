@@ -1,13 +1,13 @@
 # -*- encoding : utf-8 -*-
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
-describe Flexmail do
+describe Card::Flexmail do
   describe "#email_config_cardnames" do
     it "handles relative names" do
       Account.as_bot do
         Card.create! :name=>'emailtest+*right+*send', :content=>'[[_left+email_config]]', :type=>'Pointer'
         trigger_card = Card.new(:name=>'Huckleberry+emailtest')
-        Flexmail.email_config_cardnames(trigger_card).first.should=='emailtest+*right+email_config'
+        Card::Flexmail.email_config_cardnames(trigger_card).first.should=='emailtest+*right+email_config'
       end
     end
   end
@@ -22,13 +22,13 @@ describe Flexmail do
     end
 
     it "returns empty list for card with no configs" do
-      Flexmail.configs_for( Card.new( :name => "random" )).should == []
+      Card::Flexmail.configs_for( Card.new( :name => "random" )).should == []
     end
 
     it "takes Pointer value for extended_list fields" do
       Card.create! :name => "mailconfig+*cc", :content => "[[mailconfig+*to]]", :type=>'Pointer'
       c = Card.new(:name=>'Passion Fruit+emailtest')
-      Flexmail.configs_for(c)[0][:cc].should == 'joe@user.com'
+      Card::Flexmail.configs_for(c)[0][:cc].should == 'joe@user.com'
     end
 
     it "handles *email cards" do
@@ -38,7 +38,7 @@ describe Flexmail do
       end
       Account.as(:joe_user) do
         c = Card.new(:name=>'Kiwi+emailtest')
-        conf = Flexmail.configs_for(c)[0]
+        conf = Card::Flexmail.configs_for(c)[0]
         conf[:cc].should == 'joe@user.com'
         conf[:bcc].should == 'joe@admin.com'
       end
@@ -48,7 +48,7 @@ describe Flexmail do
       Card.create! :name => "mailconfig+*message", :content => "It's true that {{_left+story|core}}"
       c = Card.create :name=>'Banana+story', :content=>"I was born a poor black seed"
       c = Card.create :name => "Banana+emailtest", :content => "data content"
-      Flexmail.configs_for(c).should == [{
+      Card::Flexmail.configs_for(c).should == [{
         :to => "joe@user.com",
         :from => "from@user.com",
         :bcc => "",
@@ -93,7 +93,7 @@ describe Flexmail do
         Wagn::Conf[:base_url] = 'http://a.com'
         
         #c = Card.new(:name => "Banana Trigger", :content => "data content [[A]]", :type=>'Trigger')
-        #warn "boom: #{ Flexmail.configs_for(c).inspect }"
+        #warn "boom: #{ Card::Flexmail.configs_for(c).inspect }"
         
         c = Card.create(
           :name    => "Banana Trigger",
@@ -105,7 +105,7 @@ describe Flexmail do
 #            '~plus~attachment' => {:type=>'File', :content=>"notreally.txt" }
           }
         )
-        conf = Flexmail.configs_for(c).first
+        conf = Card::Flexmail.configs_for(c).first
 
         conf[:to     ].should == "bob@bob.com"
         conf[:from   ].should == "gary@gary.com"

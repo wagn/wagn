@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Card < ActiveRecord::Base
+  
+  RUBY18 = !!(RUBY_VERSION =~ /^1\.8/)
 
   extend Wagn::Set
   extend Wagn::Loader
@@ -149,6 +151,7 @@ class Card < ActiveRecord::Base
     end
     self
   end
+
 
   # reset_mods: resets with patterns in model/pattern
 
@@ -677,7 +680,7 @@ class Card < ActiveRecord::Base
 
       unless cdname.valid?
         card.errors.add :name,
-          "may not contain any of the following characters: #{ CardName.banned_array * ' ' }"
+          "may not contain any of the following characters: #{ Card::Name.banned_array * ' ' }"
       end
       # this is to protect against using a plus card as a tag
       if cdname.junction? and card.simple? and Account.as_bot { Card.count_by_wql :right_id=>card.id } > 0
@@ -783,5 +786,5 @@ class Card < ActiveRecord::Base
   # LOAD Renderers and Sets
 
   load_renderers
-  load_sets  
+  load_sets
 end

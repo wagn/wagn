@@ -23,7 +23,7 @@ module Chunks
     def replace_name_reference old_name, new_name
       #warn "ref rnr #{inspect}, #{old_name}, #{new_name}"
       @referee_card = @referee_name = nil
-      if ObjectContent===name
+      if Card::Content===name
         name.find_chunks(Chunks::Reference).each { |chunk| chunk.replace_reference old_name, new_name }
       else
         @name = name.to_name.replace_part( old_name, new_name )
@@ -31,7 +31,7 @@ module Chunks
     end
     
     def render_obj raw
-      if renderer && ObjectContent===raw
+      if renderer && Card::Content===raw
         renderer.card.references_expired = nil # don't love this; this is to keep from running update_references again
         renderer.process_content raw
       else

@@ -2,7 +2,7 @@
 require 'diff'
 
 module WagnHelper
-  include HTMLDiff
+  include Card::Diff
 
   def slot() Wagn::Renderer.current_slot end
   def card() @card ||= slot.card end

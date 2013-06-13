@@ -67,5 +67,7 @@ module Wagn
     # Custom directories with classes and modules you want to be autoloadable.
     config.autoload_paths += Dir["#{config.root}/app/models/"]
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
+    config.autoload_paths += Dir["#{config.root}/wagn-app/lib/**/"]
+    
   end
 end

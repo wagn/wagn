@@ -2,7 +2,7 @@
 email = params[:account] || {}
 subject = email[:subject] || Card.setting('*invite+*subject') || ''
 message = email[:message] || Card.setting('*invite+*message') || ''
-CardName.substitute!( message, {
+Card::Name.substitute!( message, {
   :invitor => Account.current.name + " (#{Account.current.account.email})",
   :invitee => card.name || ''}
 )

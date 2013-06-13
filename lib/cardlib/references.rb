@@ -13,7 +13,7 @@ module Cardlib::References
   end
 
   def replace_references old_name, new_name
-    obj_content = ObjectContent.new content, {:card=>self}
+    obj_content = Card::Content.new content, {:card=>self}
     
     obj_content.find_chunks( Chunks::Reference ).select do |chunk|
       if old_ref_name = chunk.referee_name and new_ref_name = old_ref_name.replace_part(old_name, new_name)
@@ -39,14 +39,14 @@ module Cardlib::References
   #  references_expired = nil
     expire if refresh
 
-    rendered_content ||= ObjectContent.new(content, {:card=>self} )
+    rendered_content ||= Card::Content.new(content, {:card=>self} )
     
     rendered_content.find_chunks(Chunks::Reference).each do |chunk|
       if referee_name = chunk.referee_name # name is referenced (not true of commented inclusions)
         referee_id = chunk.referee_id   
         if id != referee_id               # not self reference
           
-          #update_references chunk.referee_name if ObjectContent === chunk.referee_name
+          #update_references chunk.referee_name if Card::Content === chunk.referee_name
           # for the above to work we will need to get past delete_all!
           
           Card::Reference.create!(

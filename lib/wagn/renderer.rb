@@ -197,7 +197,7 @@ module Wagn
       return content unless card
       content = card.content if content.blank?
 
-      obj_content = ObjectContent===content ? content : ObjectContent.new(content, {:card=>card, :renderer=>self})
+      obj_content = Card::Content===content ? content : Card::Content.new(content, {:card=>card, :renderer=>self})
 
       card.update_references( obj_content, true ) if card.references_expired  # I thik we need this genralized
 

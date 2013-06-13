@@ -1,0 +1,1 @@
+view :core, :right=>:structure

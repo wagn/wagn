@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
-require 'object_content'
+require 'card/content'
 
 CONTENT = {
   :one => %(Some Literals: \\[{I'm not| a link]}, and \\{{This Card|Is not Included}}, but {{this is}}, and some tail),
@@ -253,7 +253,7 @@ RENDERED = {
   :four => "No chunks"
 }
 
-describe ObjectContent do
+describe Card::Content do
 
   before do
 
@@ -283,12 +283,12 @@ describe ObjectContent do
     it "should find all the chunks and strings" do
       # note the mixed [} that are considered matching, needs some cleanup ...
       #warn "cont? #{CONTENT[:one].inspect}"
-      cobj = ObjectContent.new CONTENT[:one], @card_opts
+      cobj = Card::Content.new CONTENT[:one], @card_opts
       cobj.inject(CLASSES[:one], &@check_proc).should == true
     end
 
     it "should give just the chunks" do
-      cobj = ObjectContent.new CONTENT[:one], @card_opts
+      cobj = Card::Content.new CONTENT[:one], @card_opts
       clist = CLASSES[:one].find_all {|c| String != c }
       #warn "clist #{clist.inspect}"
       cobj.each_chunk do |chk|
@@ -298,13 +298,13 @@ describe ObjectContent do
     end
 
     it "should find all the chunks links and trasclusions" do
-      cobj = ObjectContent.new CONTENT[:two], @card_opts
+      cobj = Card::Content.new CONTENT[:two], @card_opts
       cobj.inject(CLASSES[:two], &@check_proc).should == true
     end
 
     it "should find uri chunks " do
       # tried some tougher cases that failed, don't know the spec, so hard to form better tests for URIs here
-      cobj = ObjectContent.new CONTENT[:three], @card_opts
+      cobj = Card::Content.new CONTENT[:three], @card_opts
       cobj.inject(CLASSES[:three], &@check_proc).should == true
       clist = CLASSES[:three].find_all {|c| String != c }
       #warn "clist #{clist.inspect}, #{cobj.inspect}"
@@ -316,7 +316,7 @@ describe ObjectContent do
 
     it "should find uri chunks (b)" do
       # tried some tougher cases that failed, don't know the spec, so hard to form better tests for URIs here
-      cobj = ObjectContent.new CONTENT[:three_b], @card_opts
+      cobj = Card::Content.new CONTENT[:three_b], @card_opts
       #warn "cobj #{cobj.inspect} #{CLASSES[:three_b].inspect}"
       cobj.inject(CLASSES[:three_b], &@check_proc).should == true
       clist = CLASSES[:three_b].find_all {|c| String != c }
@@ -328,12 +328,12 @@ describe ObjectContent do
     end
 
     it "should parse just a string" do
-      cobj = ObjectContent.new CONTENT[:four], @card_opts
+      cobj = Card::Content.new CONTENT[:four], @card_opts
       cobj.should == RENDERED[:four]
     end
 
     it "should parse a single chunk" do
-      cobj = ObjectContent.new CONTENT[:five], @card_opts
+      cobj = Card::Content.new CONTENT[:five], @card_opts
       cobj.inject(CLASSES[:five], &@check_proc).should == true
       clist = CLASSES[:five].find_all {|c| String != c }
       cobj.each_chunk do |chk|
@@ -343,14 +343,14 @@ describe ObjectContent do
     end
     
     it "should leave css alone" do
-      cobj = ObjectContent.new CONTENT[:six], @card_opts
+      cobj = Card::Content.new CONTENT[:six], @card_opts
       cobj.should == CONTENT[:six]
     end
   end
 
   describe "render" do
     it "should render all includes" do
-      cobj = ObjectContent.new CONTENT[:one], @card_opts
+      cobj = Card::Content.new CONTENT[:one], @card_opts
       cobj.as_json.to_s.should match /not rendered/
       cobj.process_content_object &@render_block
       (rdr=cobj.as_json.to_json).should_not match /not rendered/
@@ -358,14 +358,14 @@ describe ObjectContent do
     end
 
     it "should render links and inclusions" do
-      cobj = ObjectContent.new CONTENT[:two], @card_opts
+      cobj = Card::Content.new CONTENT[:two], @card_opts
       cobj.process_content_object &@render_block
       (rdr=cobj.as_json.to_json).should_not match /not rendered/
       rdr.should == RENDERED[:two].to_json
     end
 
     it "should not need rendering if no inclusions" do
-      cobj = ObjectContent.new CONTENT[:three], @card_opts
+      cobj = Card::Content.new CONTENT[:three], @card_opts
       (rdr=cobj.as_json.to_json).should match /not rendered/ # links are rendered too, but not with a block
       cobj.process_content_object &@render_block
       (rdr=cobj.as_json.to_json).should_not match /not rendered/
@@ -373,7 +373,7 @@ describe ObjectContent do
     end
 
     it "should not need rendering if no inclusions (b)" do
-      cobj = ObjectContent.new CONTENT[:three_b], @card_opts
+      cobj = Card::Content.new CONTENT[:three_b], @card_opts
       (rdr=cobj.as_json.to_json).should match /not rendered/ # links are rendered too, but not with a block
       cobj.process_content_object &@render_block
       (rdr=cobj.as_json.to_json).should_not match /not rendered/

@@ -56,7 +56,7 @@ class Object
   end
   
   def to_name
-    CardName.new self
+    Card::Name.new self
   end
 end
 

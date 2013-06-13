@@ -2,6 +2,7 @@
 
 module Wagn
   module Set
+    mattr_accessor :current_set_opts, :current_set_module
     # View definitions
     #
     #   When you declare:
@@ -25,84 +26,96 @@ module Wagn
     # ~~~~~~~~~~  VIEW DEFINITION
     #
 
-    def view view, opts={}, *aliases, &final
+    def view view, *args, &final
+      
       if block_given?
-        Renderer.perms[view]       = opts.delete(:perms)      if opts[:perms]
-        Renderer.error_codes[view] = opts.delete(:error_code) if opts[:error_code]
-        Renderer.denial_views[view]= opts.delete(:denial)     if opts[:denial]
-        if opts[:tags]
-          [opts[:tags]].flatten.each do |tag|
-            Renderer.view_tags[view] ||= {}
-            Renderer.view_tags[view][tag] = true
-          end
-        end
-
-        view_key = get_set_key view, opts
-        #warn "defining view method[#{Renderer.renderer}] _final_#{view_key}"
-        Renderer.current_class.class_eval { define_method "_final_#{view_key}", &final }
-        Renderer.subset_views[view] = true if !opts.empty?
-
-        if !method_defined? "render_#{view}"
-          #warn "defining view method[#{Renderer.renderer}] _render_#{view}"
-          Renderer.current_class.class_eval do
-            define_method "_render_#{view}" do |*a|
-              begin
-                a = [{}] if a.empty?
-                if final_method = view_method(view)
-                  with_inclusion_mode view do
-                    #Rails.logger.info( warn "rendering final method: #{final_method}" )
-                    send final_method, *a
-                  end
-                else
-                  unsupported_view view
-                end
-              rescue Exception=>e
-                rescue_view e, view
-              end
-            end
-          end
-
-          #Rails.logger.warn "define_method render_#{view}"
-          Renderer.current_class.class_eval do
-            define_method "render_#{view}" do |*a|
-              send "_render_#{ ok_view view, *a }", *a
-            end
-          end
-        end
-
+        define_view view, (args[0] || {}), &final
       else
+        opts = Hash===args[0] ? args.shift : nil
+        alias_view view, opts, args.shift
+      end
+    end
+    
+    def define_view view, opts, &final
+      Renderer.perms[view]       = opts.delete(:perms)      if opts[:perms]
+      Renderer.error_codes[view] = opts.delete(:error_code) if opts[:error_code]
+      Renderer.denial_views[view]= opts.delete(:denial)     if opts[:denial]
+      
+      if tags = opts.delete(:tags)
+        Array.wrap(tags).each do |tag|
+          Renderer.view_tags[view] ||= {}
+          Renderer.view_tags[view][tag] = true
+        end
+      end
+      
+      if set_opts = Wagn::Set.current_set_opts
+        opts.merge! set_opts
+      end
+      
+      view_key = get_set_key view, opts
+      #warn "defining view method[#{Renderer.renderer}] _final_#{view_key}"
+      Renderer.current_class.class_eval { define_method "_final_#{view_key}", &final }
+      Renderer.subset_views[view] = true if !opts.empty?
 
-        view_key = get_set_key view, opts
-        Renderer.subset_views[view] = true if !opts.empty?
-        aliases.each do |alias_view|
-          alias_view_key = case alias_view
-            when String
-              alias_view
-            when Symbol
-              if view_key==view
-                alias_view.to_sym
+      if !method_defined? "render_#{view}"
+        #warn "defining view method[#{Renderer.renderer}] _render_#{view}"
+        Renderer.current_class.class_eval do
+          define_method "_render_#{view}" do |*a|
+            begin
+              a = [{}] if a.empty?
+              if final_method = view_method(view)
+                with_inclusion_mode view do
+                  #Rails.logger.info( warn "rendering final method: #{final_method}" )
+                  send final_method, *a
+                end
               else
-                view_key.to_s.sub( /_#{view}$/, "_#{alias_view}" ).to_sym
+                unsupported_view view
               end
-            when Hash
-              get_set_key (alias_view[:view] || view), alias_view
-            else
-              raise "Bad view #{alias_view.inspect}"
-            end
-
-          #Rails.logger.info( warn "def view final_alias #{alias_view_key}, #{view_key}" )
-          Renderer.current_class.class_eval do
-            define_method "_final_#{alias_view_key}".to_sym do |*a|
-              send "_final_#{view_key}", *a
+            rescue Exception=>e
+              rescue_view e, view
             end
           end
+        end
+
+        #Rails.logger.warn "define_method render_#{view}"
+        Renderer.current_class.class_eval do
+          define_method "render_#{view}" do |*a|
+            send "_render_#{ ok_view view, *a }", *a
+          end
+        end
+      end
+
+    end
+    
+    def alias_view alias_view, opts, referent_view=nil
+      
+      Renderer.subset_views[alias_view] = true if opts && !opts.empty?
+      
+      referent_view ||= alias_view
+      alias_opts = Wagn::Set.current_set_opts || {}
+      referent_view_key = get_set_key referent_view, (opts || alias_opts)
+      alias_view_key = get_set_key alias_view, alias_opts
+      
+      #warn "alias = #{alias_view_key}, referent = #{referent_view_key}"
+    
+      #Rails.logger.info( warn "def view final_alias #{alias_view_key}, #{view_key}" )
+      Renderer.current_class.class_eval do
+        define_method "_final_#{alias_view_key}".to_sym do |*a|
+          send "_final_#{referent_view_key}", *a
         end
       end
     end
 
 
+
     def format fmt=nil
-      Renderer.current_class = if fmt.nil? || fmt == :base then Renderer else Renderer.get_renderer fmt end
+      if block_given?
+        Renderer.current_class = Renderer.get_renderer fmt
+        yield
+        Renderer.current_class = Renderer
+      else
+        fail "block required"
+      end
     end
 
 
@@ -112,11 +125,12 @@ module Wagn
       opts[:on] = [:create, :update ] if opts[:on] == :save
 
       mod = self.ancestors.first
+      mod_name = mod.name || Wagn::Set.current_set_module
       mod = case
         when mod == Card                          ; Card
-        when mod.name =~ /^Cardlib/               ; Card
-        when mod.name =~ /^Wagn::Set::All::/      ; Card
-        when modl = Card.find_set_model_module( mod.name )  ; modl
+        when mod_name =~ /^Cardlib/               ; Card
+        when mod_name =~ /^Wagn::Set::All::/      ; Card
+        when modl = Card.find_set_model_module( mod_name )  ; modl
         else mod.const_set :Model, Module.new
         end
 
@@ -151,9 +165,9 @@ module Wagn
             # My original intent was to add the callbacks to the singleton class (see code below).  We may have to go back to that approach if we
             # encounter problems with ordering, overrides, etc with this.
 
-            parts = mod.name.split '::'
-            set_class_key = parts[-3].underscore
-            anchor_or_placeholder = parts[-2].underscore
+            parts = mod_name.split '::'
+            set_class_key = parts[-2].underscore
+            anchor_or_placeholder = parts[-1].underscore
             set_key = Card.method_key( { set_class_key.to_sym => anchor_or_placeholder } )
 
             if set_key.present?
@@ -161,7 +175,7 @@ module Wagn
                 set_callback object_method, kind, event, :prepend=>true, :if => proc { |c| c.method_keys.include? set_key }
               end
             else
-              puts Rails.logger.info( "EVENT defined for unknown set in #{mod.name}" )
+              Rails.logger.info( "EVENT defined for unknown set in #{mod_name}" )
             end
           end
         end

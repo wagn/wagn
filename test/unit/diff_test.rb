@@ -6,7 +6,7 @@ require 'diff'
 
 class DiffTest < ActiveSupport::TestCase
 
-  include HTMLDiff
+  include Card::Diff
 
   def setup
     super

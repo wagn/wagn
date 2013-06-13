@@ -53,7 +53,7 @@ module Chunks
       if raw
         raw.strip!
         if raw =~ /(^|[^\\])\{\{/
-          ObjectContent.new raw, @card_params
+          Card::Content.new raw, @card_params
         else
           raw
         end
@@ -83,7 +83,7 @@ module Chunks
     def replace_reference old_name, new_name
       replace_name_reference old_name, new_name
 
-      if ObjectContent===@link_text
+      if Card::Content===@link_text
         @link_text.find_chunks(Chunks::Reference).each { |chunk| chunk.replace_reference old_name, new_name }
       else
         @link_text = new_name if old_name.to_name == @link_text

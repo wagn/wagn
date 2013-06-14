@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
-User
+require_dependency 'user'
+
 class Account
   @@as_card = @@as_id = @@current_id = @@current = @@user = nil
 

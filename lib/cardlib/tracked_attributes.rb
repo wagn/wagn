@@ -89,7 +89,7 @@ module Cardlib::TrackedAttributes
   end
 
   def set_content new_content
-    Rails.logger.info "setting content for #{name}: (#{self.id})"
+    #Rails.logger.info "setting content for #{name}: (#{self.id})"
     if self.id #have to have this to create revision
       new_content ||= ''
       new_content = CleanHtml.clean! new_content if clean_html?
@@ -129,7 +129,7 @@ module Cardlib::TrackedAttributes
   end
 
   event :set_initial_content, :after=>:store, :on=>:create do
-    Rails.logger.info "Card(#{inspect})#set_initial_content start #{content_without_tracking}"
+    #Rails.logger.info "Card(#{inspect})#set_initial_content start #{content_without_tracking}"
     # set_content bails out if we call it on a new record because it needs the
     # card id to create the revision.  call it again now that we have the id.
 
@@ -141,7 +141,7 @@ module Cardlib::TrackedAttributes
 
       Card.where(:id=>id).update_all(:current_revision_id => current_revision_id)
     end
-    Rails.logger.info "set_initial_content #{content}, #{@current_revision_id}, s.#{self.current_revision_id} #{inspect}"
+    #Rails.logger.info "set_initial_content #{content}, #{@current_revision_id}, s.#{self.current_revision_id} #{inspect}"
   end
 
   event :cascade_name_changes, :after=>:store do

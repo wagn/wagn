@@ -28,7 +28,7 @@ class ApplicationController < ActionController::Base
 
       # these should not be Wagn::Conf, but more like WagnEnv
       Wagn::Conf[:host] = host = request.env['HTTP_HOST']
-      Wagn::Conf[:base_url] = 'http://' + host
+      Wagn::Conf[:base_url] = request.protocol + host
       Wagn::Conf[:main_name] = nil
       Wagn::Conf[:controller] = self
 

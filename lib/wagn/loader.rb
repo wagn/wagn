@@ -18,6 +18,7 @@ module Wagn
     end
 
     def load_sets      
+      load_dir File.expand_path( "#{Rails.root}/lib/wagn/*_patterns.rb" )
       load_standard_sets
       
       Wagn::Conf[:pack_dirs].split( /,\s*/ ).each do |dirname|

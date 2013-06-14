@@ -174,7 +174,7 @@ module Wagn::SetPatterns
         }
       end
       def anchor_name card
-        left = card.loaded_left || card.left
+        left = card.loaded_left || card.left( :skip_modules => true )
         type_name = (left && left.type_name) || Card[ Card::DefaultTypeID ].name
         "#{type_name}+#{card.cardname.tag}"
       end

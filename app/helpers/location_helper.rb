@@ -67,7 +67,7 @@ module LocationHelper
   end
 
   def wagn_url rel #should be in smartname?
-    rel =~ /^http\:/ ? rel : "#{Wagn::Conf[:base_url]}#{wagn_path(rel)}"
+    rel =~ /^https?\:/ ? rel : "#{Wagn::Conf[:base_url]}#{wagn_path(rel)}"
   end
 
 

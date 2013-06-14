@@ -1,6 +1,21 @@
 # -*- encoding : utf-8 -*-
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
+
+describe Card, "deleting card" do
+  it "should require permission" do
+    a = Card['a']
+    Account.as :anonymous do
+      a.ok?(:delete).should == false
+      assert_raises( Card::PermissionDenied ) do
+        a.delete
+      end
+      Card['a'].trash.should == false
+    end
+    
+  end
+end
+
 describe Card, "deleted card" do
   before do
     Account.as_bot do

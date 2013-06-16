@@ -22,7 +22,7 @@ describe Card, "created by Card.new " do
   end
 
   it "should have attribute_tracking updates" do
-    Cardlib::AttributeTracking::Updates.should === @c.updates
+    Wagn::Set::All::AttributeTracking::Model::Updates.should === @c.updates
   end
 
   it "should return original value for name" do

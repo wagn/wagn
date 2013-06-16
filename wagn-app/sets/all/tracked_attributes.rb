@@ -1,17 +1,16 @@
 # -*- encoding : utf-8 -*-
-module Cardlib::TrackedAttributes
-  extend Wagn::Set
-  
-  event :set_tracked_attributes, :before=>:store do#, :on=>:save do
-    updates.each_pair do |attrib, value|
-      if send("set_#{attrib}", value )
-        updates.clear attrib
-      end
-      @changed ||={}; @changed[attrib.to_sym]=true
-    end
-    #Rails.logger.debug "Card(#{name})#set_tracked_attributes end"
-  end
 
+event :set_tracked_attributes, :before=>:store do#, :on=>:save do
+  updates.each_pair do |attrib, value|
+    if send("set_#{attrib}", value )
+      updates.clear attrib
+    end
+    @changed ||={}; @changed[attrib.to_sym]=true
+  end
+  #Rails.logger.debug "Card(#{name})#set_tracked_attributes end"
+end
+
+module Model
   protected
   def set_name newname
     @old_name = self.name_without_tracking
@@ -105,7 +104,7 @@ module Cardlib::TrackedAttributes
 
   def set_comment new_comment
     #seems hacky to do this as tracked attribute.  following complexity comes from set_content complexity.  sigh.
-    
+
     commented = %{
       #{ content }
       #{ '<hr>' unless content.blank? }
@@ -119,7 +118,7 @@ module Cardlib::TrackedAttributes
         end
       }.....#{Time.now}</div>
     }
-    
+  
     if new_card?
       self.content = commented
     else
@@ -127,66 +126,66 @@ module Cardlib::TrackedAttributes
     end
     true
   end
+end
 
-  event :set_initial_content, :after=>:store, :on=>:create do
-    #Rails.logger.info "Card(#{inspect})#set_initial_content start #{content_without_tracking}"
-    # set_content bails out if we call it on a new record because it needs the
-    # card id to create the revision.  call it again now that we have the id.
+event :set_initial_content, :after=>:store, :on=>:create do
+  #Rails.logger.info "Card(#{inspect})#set_initial_content start #{content_without_tracking}"
+  # set_content bails out if we call it on a new record because it needs the
+  # card id to create the revision.  call it again now that we have the id.
 
-    #warn "si cont #{content} #{updates.for?(:content).inspect}, #{updates[:content]}"
-    unless @from_trash
-      set_content updates[:content] # if updates.for?(:content)
-    
-      updates.clear :content
+  #Rails.logger.warn "si cont #{content} #{updates.for?(:content).inspect}, #{updates[:content]}"
+  unless @from_trash
+    set_content updates[:content] # if updates.for?(:content)
+  
+    updates.clear :content
 
-      Card.where(:id=>id).update_all(:current_revision_id => current_revision_id)
-    end
-    #Rails.logger.info "set_initial_content #{content}, #{@current_revision_id}, s.#{self.current_revision_id} #{inspect}"
+    Card.where(:id=>id).update_all(:current_revision_id => current_revision_id)
   end
+  #Rails.logger.info "set_initial_content #{content}, #{@current_revision_id}, s.#{self.current_revision_id} #{inspect}"
+end
 
-  event :cascade_name_changes, :after=>:store do
-    if @name_changed
-      Rails.logger.debug "-------------------#{@old_name}- CASCADE #{self.name} -------------------------------------"
+event :cascade_name_changes, :after=>:store do
+  if @name_changed
+    Rails.logger.debug "-------------------#{@old_name}- CASCADE #{self.name} -------------------------------------"
 
-      self.update_referencers = false if self.update_referencers == 'false' #handle strings from cgi
-      Card::Reference.update_on_rename self, name, self.update_referencers
+    self.update_referencers = false if self.update_referencers == 'false' #handle strings from cgi
+    Card::Reference.update_on_rename self, name, self.update_referencers
 
-      deps = self.dependents
-      #warn "-------------------#{@old_name}---- CASCADE #{self.name} -> deps: #{deps.map(&:name)*", "} -----------------------"
+    deps = self.dependents
+    #warn "-------------------#{@old_name}---- CASCADE #{self.name} -> deps: #{deps.map(&:name)*", "} -----------------------"
 
-      @dependents = nil #reset
+    @dependents = nil #reset
 
-      deps.each do |dep|
-        # here we specifically want NOT to invoke recursive cascades on these cards, have to go this low level to avoid callbacks.
-        Card.expire dep.name #old name
-        newname = dep.cardname.replace_part @old_name, name
-        Card.where( :id=> dep.id ).update_all :name => newname.to_s, :key => newname.key
-        Card::Reference.update_on_rename dep, newname, update_referencers
-        Card.expire newname
-      end
+    deps.each do |dep|
+      # here we specifically want NOT to invoke recursive cascades on these cards, have to go this low level to avoid callbacks.
+      Card.expire dep.name #old name
+      newname = dep.cardname.replace_part @old_name, name
+      Card.where( :id=> dep.id ).update_all :name => newname.to_s, :key => newname.key
+      Card::Reference.update_on_rename dep, newname, update_referencers
+      Card.expire newname
+    end
 
-      if update_referencers
-        Account.as_bot do
-          [self.name_referencers(@old_name)+(deps.map &:referencers)].flatten.uniq.each do |card|
-            # FIXME  using "name_referencers" instead of plain "referencers" for self because there are cases where trunk and tag
-            # have already been saved via association by this point and therefore referencers misses things
-            # eg.  X includes Y, and Y is renamed to X+Z.  When X+Z is saved, X is first updated as a trunk before X+Z gets to this point.
-            # so at this time X is still including Y, which does not exist.  therefore #referencers doesn't find it, but name_referencers(old_name) does.
-            # some even more complicated scenario probably breaks on the dependents, so this probably needs a more thoughtful refactor
-            # aligning the dependent saving with the name cascading
+    if update_referencers
+      Account.as_bot do
+        [self.name_referencers(@old_name)+(deps.map &:referencers)].flatten.uniq.each do |card|
+          # FIXME  using "name_referencers" instead of plain "referencers" for self because there are cases where trunk and tag
+          # have already been saved via association by this point and therefore referencers misses things
+          # eg.  X includes Y, and Y is renamed to X+Z.  When X+Z is saved, X is first updated as a trunk before X+Z gets to this point.
+          # so at this time X is still including Y, which does not exist.  therefore #referencers doesn't find it, but name_referencers(old_name) does.
+          # some even more complicated scenario probably breaks on the dependents, so this probably needs a more thoughtful refactor
+          # aligning the dependent saving with the name cascading
 
-            Rails.logger.debug "------------------ UPDATE REFERER #{card.name}  ------------------------"
-            unless card == self or card.hard_template
-              card = card.refresh
-              card.content = card.replace_references @old_name, name
-              card.save!
-            end
+          Rails.logger.debug "------------------ UPDATE REFERER #{card.name}  ------------------------"
+          unless card == self or card.hard_template
+            card = card.refresh
+            card.content = card.replace_references @old_name, name
+            card.save!
           end
         end
       end
-      @name_changed = false
     end
-    true
+    @name_changed = false
   end
-
+  true
 end
+

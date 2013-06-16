@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-module Cardlib::Attach
+module Model
   def attach_array(rev_id=nil)
     c=if rev_id || self.new_card? || selected_revision_id==current_revision_id
         self.content

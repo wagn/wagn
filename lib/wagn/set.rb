@@ -1,6 +1,16 @@
 # -*- encoding : utf-8 -*-
 
 module Wagn
+
+  module ClassMethods
+    def register_pattern klass, index=nil
+      self.set_patterns = [] unless set_patterns
+      set_patterns.insert index.to_i, klass
+    end
+  end
+
+  Card.extend ClassMethods
+
   module Set
     mattr_accessor :current_set_opts, :current_set_module
     # View definitions
@@ -128,10 +138,14 @@ module Wagn
       mod_name = mod.name || Wagn::Set.current_set_module
       mod = case
         when mod == Card                          ; Card
-        when mod_name =~ /^Cardlib/               ; Card
         when mod_name =~ /^Wagn::Set::All::/      ; Card
         when modl = Card.find_set_model_module( mod_name )  ; modl
-        else mod.const_set :Model, Module.new
+        else
+          if mod.const_defined?( :Model )
+            mod.const_get( :Model )
+          else
+            mod.const_set( :Model, Module.new )
+          end
         end
 
       Card.define_callbacks event

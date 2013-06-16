@@ -1,33 +1,17 @@
 # -*- encoding : utf-8 -*-
 class Card < ActiveRecord::Base
-  
+
   RUBY18 = !!(RUBY_VERSION =~ /^1\.8/)
 
   extend Wagn::Set
   extend Wagn::Loader
-  
-  has_many :revisions, :order => :id  
-  has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
-  has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
 
   cattr_accessor :set_patterns
-  attr_accessor :selected_revision_id,
-    :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
-    :update_referencers, :was_new_card, # wrong mechanisms for these  
-    :comment, :comment_author,          # obviated soon
-    :error_view, :error_status          # yuck
-  
-  before_save :approve
-  around_save :store
-  after_save :extend
-  
-  cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
+  @@set_patterns = []
 
+  define_callbacks :approve, :store, :extend
 
-  #~~~~~~  CLASS METHODS ~~~~~~~~~~~~~~~~~~~~~
-
-  class << self
-    JUNK_INIT_ARGS = %w{ missing skip_virtual id }
+  class <<self
 
     ID_CONST_ALIAS = {
       :default_type => :basic, #this should not be hardcoded (not a constant -- should come from *all+*default)
@@ -35,19 +19,6 @@ class Card < ActiveRecord::Base
       :auth         => :anyone_signed_in,
       :admin        => :administrator
     }
-    
-
-    def cache
-      Wagn::Cache[Card]
-    end
-
-    def new args={}, options={}
-      args = (args || {}).stringify_keys
-      JUNK_INIT_ARGS.each { |a| args.delete(a) }
-      %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
-      args.delete('content') if args['attach'] # should not be handled here!
-      super args
-    end
 
     def const_missing const
       if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore.to_sym
@@ -62,6 +33,53 @@ class Card < ActiveRecord::Base
       end
 #    rescue NameError
 #      warn "ne: const_miss #{e.inspect}, #{const}" #if const.to_sym==:Card
+    end
+  end
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Include Card Libraries
+
+  Wagn::SetPatterns
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # LOAD Renderers and Sets
+
+  load_renderers
+  load_sets
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  has_many :revisions, :order => :id
+  has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
+  has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
+
+  attr_accessor :selected_revision_id,
+    :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
+    :update_referencers, :was_new_card, # wrong mechanisms for these
+    :comment, :comment_author,          # obviated soon
+    :error_view, :error_status          # yuck
+
+  before_save :approve
+  around_save :store
+  after_save :extend
+
+  cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
+
+
+  #~~~~~~  CLASS METHODS ~~~~~~~~~~~~~~~~~~~~~
+
+  class << self
+    JUNK_INIT_ARGS = %w{ missing skip_virtual id }
+
+    def cache
+      Wagn::Cache[Card]
+    end
+
+    def new args={}, options={}
+      args = (args || {}).stringify_keys
+      JUNK_INIT_ARGS.each { |a| args.delete(a) }
+      %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
+      args.delete('content') if args['attach'] # should not be handled here!
+      super args
     end
 
     def setting name
@@ -79,7 +97,7 @@ class Card < ActiveRecord::Base
     def toggle val
       val == '1'
     end
-    
+
   end
 
 
@@ -126,7 +144,7 @@ class Card < ActiveRecord::Base
       end
 
     case type_id
-    when :noop 
+    when :noop
     when false, nil
       errors.add :type, "#{args[:type] || args[:typecode]} is not a known type."
     else
@@ -169,7 +187,7 @@ class Card < ActiveRecord::Base
   def real?
     !new_card?
   end
-  
+
   def pristine?
     # has not been edited directly by human users.  bleep blorp.
     new_card? || !revisions.map(&:creator_id).find { |id| id != Card::WagnBotID }
@@ -199,9 +217,7 @@ class Card < ActiveRecord::Base
       raise e
     end
   end
-  
-  define_callbacks :approve, :store, :extend
-  
+
   def approve
     @was_new_card = self.new_card?
     @action = case
@@ -229,13 +245,13 @@ class Card < ActiveRecord::Base
 
   def extend
 #    puts "extend called"
-    run_callbacks :extend 
+    run_callbacks :extend
   rescue Exception=>e
     rescue_event e
   ensure
     @action = nil
   end
-  
+
   def rescue_event e
     @action = nil
     expire_pieces
@@ -261,7 +277,7 @@ class Card < ActiveRecord::Base
       end
     end
   end
-  
+
   def delete_to_trash
     if respond_to? :before_delete
       self.before_delete
@@ -278,8 +294,8 @@ class Card < ActiveRecord::Base
   def delete!
     delete or raise Wagn::Oops, "Delete failed: #{errors.full_messages.join(',')}"
   end
-  
- 
+
+
   def validate_delete
     if codename
       errors.add :delete, "#{name} is is a system card. (#{codename})\n  Deleting this card would mess up our revision records."
@@ -290,7 +306,7 @@ class Card < ActiveRecord::Base
     if respond_to? :custom_validate_delete
       self.custom_validate_delete
     end
-    
+
     dependents.each do |dep|
       dep.send :validate_delete
       if dep.errors[:delete].any?
@@ -338,7 +354,7 @@ class Card < ActiveRecord::Base
     return [] if new_card?
 
     if @dependents.nil?
-      @dependents = 
+      @dependents =
         Account.as_bot do
           deps = Card.search( { (simple? ? :part : :left) => name } ).to_a
           deps.inject(deps) do |array, card|
@@ -413,7 +429,7 @@ class Card < ActiveRecord::Base
   def raw_content
     hard_template ? template.content : content
   end
-  
+
   def selected_revision_id
     @selected_revision_id || current_revision_id || 0
   end
@@ -526,22 +542,6 @@ class Card < ActiveRecord::Base
   end
 
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # Include Card Libraries
-
-
-  load_cardlib
-  Cardlib.constants.each do |const|
-    lib = Cardlib.const_get( const )
-    include lib
-    extend lib.const_get( :ClassMethods) if lib.const_defined? :ClassMethods
-  end
-  Wagn::SetPatterns
-
-
-
-
-
   event :set_stamper, :before=>:store do #|args|
 #    puts "stamper called: #{name}"
     self.updater_id = Account.current_id
@@ -550,7 +550,7 @@ class Card < ActiveRecord::Base
 
   event :pull_from_trash, :before=>:store, :on=>:create do
     if trashed_card = Card.find_by_key_and_trash(key, true)
-      # a. (Rails way) tried Card.where(:key=>'wagn_bot').select(:id), but it wouldn't work.  This #select 
+      # a. (Rails way) tried Card.where(:key=>'wagn_bot').select(:id), but it wouldn't work.  This #select
       #    generally breaks on cardsI think our initialization process screws with something
       # b. (Wagn way) we could get card directly from fetch if we add :include_trashed (eg).
       #    likely low ROI, but would be nice to have interface to retrieve cards from trash...
@@ -581,7 +581,7 @@ class Card < ActiveRecord::Base
     # FIXME: this will need review when we do the new defaults/templating system
     #if card.changed?(:content)
   end
-  
+
   event :store_subcards, :after=>:store do #|args|
     #puts "store subcards"
     @subcards = []
@@ -764,7 +764,7 @@ class Card < ActiveRecord::Base
   # MISCELLANEOUS
 
   def debug_type() "#{typecode||'no code'}:#{type_id}" end
-    
+
   def to_s
     "#<#{self.class.name}[#{debug_type}]#{self.attributes['name']}>"
   end
@@ -781,10 +781,4 @@ class Card < ActiveRecord::Base
     '>'
   end
 
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # LOAD Renderers and Sets
-
-  load_renderers
-  load_sets
 end

@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-module Cardlib::AttributeTracking
+module Model
   class Updates
     include Enumerable
 
@@ -46,7 +46,7 @@ module Cardlib::AttributeTracking
     def tracks(*fields)
       class_eval do
         def updates
-          @updates ||= Updates.new(self)
+          @updates ||= Model::Updates.new(self)
         end
       end
 

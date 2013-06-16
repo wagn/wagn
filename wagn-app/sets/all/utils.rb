@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-module Cardlib::Utils
+module Model
   
   module ClassMethods
     

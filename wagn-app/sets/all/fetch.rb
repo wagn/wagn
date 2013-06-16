@@ -4,8 +4,7 @@
 # A multipurpose retrieval operator that incorporates caching, "virtual" card retrieval
 
 
-module Cardlib::Fetch
-  extend Wagn::Set
+module Model
   mattr_accessor :cache
 
   module ClassMethods

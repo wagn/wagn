@@ -51,12 +51,14 @@ module Wagn
           set_module.extend Wagn::Set
           set_module.class_eval File.read( filename ), filename, 1
 
-          if set_pattern == 'all' and set_module.const_defined? :Model
-            include_all_model set_module.const_get( :Model )
+          args = Card::RUBY18 ? [ :Model ] : [ :Model, false ]
+          if set_pattern == 'all' and set_module.const_defined? *args
+            include_all_model set_module.const_get( *args )
           end
 
-          if set_module.const_defined? :Renderer
-            Wagn::Renderer.send :include, set_module.const_get( :Renderer )
+          args = Card::RUBY18 ? [ :Renderer ] : [ :Renderer, false ]
+          if set_module.const_defined? *args
+            Wagn::Renderer.send :include, set_module.const_get( *args )
           end
         end
 
@@ -71,14 +73,16 @@ module Wagn
 
     def include_all_model set_model
       Card.send :include, set_model
-      Card.send( :extend, set_model.const_get( :ClassMethods ) ) if set_model.const_defined?( :ClassMethods )
+      args = Card::RUBY18 ? [ :ClassMethods ] : [ :ClassMethods, false ]
+      Card.send( :extend, set_model.const_get( *args ) ) if set_model.const_defined?( *args )
     end
 
     def get_set_pattern_constant set_pattern
       set_pattern_mod_name = set_pattern.camelize
 
-      if Wagn::Set.const_defined? set_pattern_mod_name, false
-        Wagn::Set.const_get set_pattern_mod_name, false
+      args = Card::RUBY18 ? [ set_pattern_mod_name ] : [ set_pattern_mod_name, false ]
+      if Wagn::Set.const_defined? *args
+        Wagn::Set.const_get *args
       else
         Wagn::Set.const_set set_pattern_mod_name, Module.new
       end

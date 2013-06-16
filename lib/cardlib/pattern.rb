@@ -3,7 +3,7 @@ module Cardlib
   module Pattern
     MODULES={}
 
-    
+
     module ClassMethods
       def register_pattern klass, index=nil
         self.set_patterns = [] unless set_patterns
@@ -18,7 +18,7 @@ module Cardlib
           end
         end
       end
-  
+
       def find_set_pattern mark
         if mark
           class_key = if Card::Name === mark
@@ -30,7 +30,7 @@ module Cardlib
           set_patterns.find { |sub| sub.key == class_key }
         end
       end
-  
+
       def find_set_model_module mod
         module_name_parts = mod.split('::') << 'model'
         module_name_parts.inject Wagn::Set do |base, part|
@@ -52,7 +52,7 @@ module Cardlib
       end
 
     end
-    
+
 
     def patterns
       @patterns ||= set_patterns.map { |sub| sub.new(self) }.compact
@@ -73,7 +73,7 @@ module Cardlib
         set = left
         set.reset_patterns
         set.include_set_modules
-        
+
         #this is really messy.
         if saving
           self.add_to_read_rule_update_queue( set.item_cards :limit=>0 ) if right.id == Card::ReadID
@@ -96,12 +96,12 @@ module Cardlib
       end
       @set_names
     end
-    
+
     def rule_set_keys
       set_names #this triggers set_members cache.  need better solution!
       @rule_set_keys ||= patterns.map( &:rule_set_key ).compact
     end
-    
+
     def method_keys
       @method_keys ||= patterns.map(&:get_method_key).compact
     end

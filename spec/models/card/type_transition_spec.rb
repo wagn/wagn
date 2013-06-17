@@ -6,46 +6,36 @@ class Card
 end
 
 module Wagn::Set::Type::CardtypeA
-  module Model
-    def approve_delete
-      deny_because("not allowed to delete card a")
-    end
+  def approve_delete
+    deny_because("not allowed to delete card a")
   end
 end
 
 
 module Wagn::Set::Type::CardtypeC
-  module Model
-    def validate_type_change
-      errors.add :delete_error, "card c is indestructible"
-    end
+  def validate_type_change
+    errors.add :delete_error, "card c is indestructible"
   end
 end
 
 module Wagn::Set::Type::CardtypeD
-  module Model
-    def valid?
-      errors.add :create_error, "card d always has errors"
-      errors.empty?
-    end
+  def valid?
+    errors.add :create_error, "card d always has errors"
+    errors.empty?
   end
 end
 
 module Wagn::Set::Type::CardtypeE
-  module Model
-    def self.included(base) Card.count = 2   end
-    def on_type_change()    decrement_count  end
-    def decrement_count()   Card.count -= 1  end
-  end
+  def self.included(base) Card.count = 2   end
+  def on_type_change()    decrement_count  end
+  def decrement_count()   Card.count -= 1  end
 end
 
 module Wagn::Set::Type::CardtypeF
-  module Model
-    def self.included(base) Card.count = 2   end
-    # FIXME: create_extension doesn't exist anymore, need another hook
-    def create_extension()  increment_count  end
-    def increment_count()   Card.count += 1  end
-  end
+  def self.included(base) Card.count = 2   end
+  # FIXME: create_extension doesn't exist anymore, need another hook
+  def create_extension()  increment_count  end
+  def increment_count()   Card.count += 1  end
 end
 
 

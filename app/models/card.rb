@@ -534,6 +534,7 @@ class Card < ActiveRecord::Base
   Cardlib.constants.each do |const|
     lib = Cardlib.const_get( const )
     include lib
+#warn "load cardlib #{lib}, #{const}, #{lib.const_defined? :ClassMethods}, #{lib.const_defined? :ClassMethods, false}"
     extend lib.const_get( :ClassMethods) if lib.const_defined? :ClassMethods
   end
   Wagn::SetPatterns

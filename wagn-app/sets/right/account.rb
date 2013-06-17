@@ -1,71 +1,33 @@
 # -*- encoding : utf-8 -*-
 require 'digest'
 
-class CardAccount < ActiveCard
+module Module
 
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :name
 
-  card_accessor :email,               :limit => 100, :type=>:phrase
-  card_accessor :crypted_password,    :limit => 40, :type=>:phrase
-  card_accessor :salt,                :limit => 42, :type=>:phrase
-  card_accessor :password_reset_code, :limit => 40, :type=>:phrase
-  card_accessor :status,              :default => "request", :type=>:phrase
-  card_accessor :invite_sender_id,    :type=>:pointer
-  card_accessor :identity_url,        :type=>:phrase
+  Card.card_accessor :email,               :limit => 100, :type=>:phrase
+  Card.card_accessor :crypted_password,    :limit => 40, :type=>:phrase
+  Card.card_accessor :salt,                :limit => 42, :type=>:phrase
+  Card.card_accessor :password_reset_code, :limit => 40, :type=>:phrase
+  Card.card_accessor :status,              :default => "request", :type=>:phrase
+  Card.card_accessor :invite_sender_id,    :type=>:pointer
+  Card.card_accessor :identity_url,        :type=>:phrase
 
-  validates :name,    :right=>:account
+  #Card.validates :name,    :right=>:account
 
-  validates :email, :presence=>true, :if=>:email_required?,
-    :format     => { :with    => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i },
-    :length     => { :maximum => 100                                         }
+  #Card.validates :email, :presence=>true, :if=>:email_required?,
+  #  :format     => { :with    => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i },
+  #  :length     => { :maximum => 100                                         }
 
-  validates :password, :presence=>true, :confirmation=>true, :if=>:password_required?,
-    :length => { :within => 5..40 }
-  validates :password_confirmation, :presence=>true, :if=>:password_required?
+  #Card.validates :password, :presence=>true, :confirmation=>true, :if=>:password_required?,
+  #  :length => { :within => 5..40 }
+  #Card.validates :password_confirmation, :presence=>true, :if=>:password_required?
 
 
   #before_validation :downcase_email!
   #before_save :encrypt_password
   #after_save :reset_instance_cache
-
-  class << self
-    def admin()          self[ Card::WagnBotID    ]   end
-    def as_user()        self[ Account.as_id      ]   end
-    def user()           self[ Account.current_id ]   end
-
-    def create_ok?
-      base  = Card.new :name=>'dummy*', :type_id=>Card::UserID
-      trait = Card.new :name=>"dummy*+#{Card[:account].name}"
-      base.ok?(:create) && trait.ok?(:create)
-    end
-
-    # FIXME: args=params.  should be less coupled..
-    def create_with_card user_args, card_args, email_args={}
-      card_args[:type_id] ||= Card::UserID
-      @card = Card.fetch card_args[:name], :new => card_args
-      Account.as_bot do
-        @account = User.new(user_args)
-        @account.status = 'active' unless user_args.has_key? :status
-        #Rails.logger.warn "create_wcard #{@account.inspect}, #{user_args.inspect}"
-        @account.generate_password if @account.password.blank?
-        @account.save_with_card(@card)
-        @account.send_account_info(email_args) if @card.errors.empty? && !email_args.empty?
-      end
-      [@account, @card]
-    end
-
-    # Encrypts some data with the salt.
-    def encrypt(password, salt)
-      Digest::SHA1.hexdigest("#{salt}--#{password}--")
-    end
-
-    def delete_cardless
-      where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
-    end
-  end
-
-#~~~~~~~ Instance
 
   def initialize args
     warn "new CardAccount #{args.inspect}"

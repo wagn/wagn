@@ -8,7 +8,12 @@ class RightValidator < ActiveModel::Validator
 warn "validate options #{@right_names.inspect}"
   end
 
-  def validate_each(rec, attr, value)
+  def validate rec
+    warn "validate #{rec.inspect}"
+    #rec.errors.add attr, "not right-name" if rec.name == @right_names[attr]
+  end
+
+  def validate_each rec, attr, value
     warn "validate #{attr}, #{value}, #{rec.name.right} == #{@right_names[attr]}"
     rec.errors.add attr, "not right-name" if rec.name.right == @right_names[attr]
   end

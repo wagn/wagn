@@ -45,6 +45,19 @@ module Wagn
           Wagn::Set.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
           Wagn::Set.current_set_module = "#{set_pattern_const.name}::#{anchor.camelize}"
 
+          mod = self.ancestors.first
+          mod_name = mod.name || Wagn::Set.current_set_module
+          Wagn::Set.module_for_current = case
+            when mod == Card                          ; Card
+            when mod_name =~ /^Cardlib/               ; Card
+            when mod_name =~ /^Wagn::Set::All::/      ; Card
+            when modl = Card.find_set_model_module( mod_name )  ; modl
+            else
+raise "Redefine module" if mod.const_defined? :Model, false
+              mod.const_set :Model, Module.new
+            end
+
+
           set_module = set_pattern_const.const_set anchor.camelize, ( Module.new do
             extend Wagn::Set
             class_eval File.read( filename ), filename, 1

@@ -6,7 +6,6 @@
 
 module Cardlib::Fetch
   extend Wagn::Set
-  mattr_accessor :cache
 
   module ClassMethods
 

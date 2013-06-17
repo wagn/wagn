@@ -2,7 +2,9 @@
 
 module Wagn
   module Set
-    mattr_accessor :current_set_opts, :current_set_module
+    mattr_accessor :current_set_opts, :current_set_module, :module_for_current
+    @@module_for_current = Card
+
     # View definitions
     #
     #   When you declare:
@@ -118,21 +120,11 @@ module Wagn
       end
     end
 
-
-
     def event event, opts={}, &final
 
       opts[:on] = [:create, :update ] if opts[:on] == :save
 
-      mod = self.ancestors.first
-      mod_name = mod.name || Wagn::Set.current_set_module
-      mod = case
-        when mod == Card                          ; Card
-        when mod_name =~ /^Cardlib/               ; Card
-        when mod_name =~ /^Wagn::Set::All::/      ; Card
-        when modl = Card.find_set_model_module( mod_name )  ; modl
-        else mod.const_set :Model, Module.new
-        end
+      mod = module_for_current
 
       Card.define_callbacks event
 
@@ -165,6 +157,7 @@ module Wagn
             # My original intent was to add the callbacks to the singleton class (see code below).  We may have to go back to that approach if we
             # encounter problems with ordering, overrides, etc with this.
 
+            mod_name = mod.name || Wagn::Set.current_set_module
             parts = mod_name.split '::'
             set_class_key = parts[-2].underscore
             anchor_or_placeholder = parts[-1].underscore

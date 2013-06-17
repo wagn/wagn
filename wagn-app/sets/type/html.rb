@@ -8,8 +8,6 @@ view :closed_content do |args|
   ''
 end
 
-module Model
-  def clean_html?
-    false
-  end
+def clean_html?
+  false
 end

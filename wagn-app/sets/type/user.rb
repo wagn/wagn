@@ -1,8 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-module Model
-  include Wagn::Set::Type::Basic::Model
+include Wagn::Set::Type::Basic
 
-  attr_accessor :email
-
-end
+attr_accessor :email

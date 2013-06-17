@@ -47,8 +47,8 @@ module Wagn
             class_eval File.read( filename ), filename, 1 
           end )
           
-          if set_pattern == 'all' and set_module.const_defined? :Model
-            Card.send :include, set_module.const_get( :Model )
+          if set_pattern == 'all' and !set_module.instance_methods.empty?
+            Card.send :include, set_module
           end
           
           if set_module.const_defined? :Renderer

@@ -124,34 +124,33 @@ module Wagn
 
       opts[:on] = [:create, :update ] if opts[:on] == :save
 
-      mod = self.ancestors.first
-      mod_name = mod.name || Wagn::Set.current_set_module
-      mod = case
-        when mod == Card                          ; Card
-        when mod_name =~ /^Cardlib/               ; Card
-        when mod_name =~ /^Wagn::Set::All::/      ; Card
-        when modl = Card.find_set_model_module( mod_name )  ; modl
-        else mod.const_set :Model, Module.new
-        end
-
       Card.define_callbacks event
 
-      mod.class_eval do
-        include ActiveSupport::Callbacks
+      mod = self.ancestors.first
+      mod_name = mod.name || Wagn::Set.current_set_module
+      mod = if mod == Card || mod_name =~ /^Cardlib/ ||
+               mod_name =~ /^Wagn::Set::All::/
+          Card
+        else
+          Card.find_set_model_module( mod_name ) || mod
+        end
 
-        final_method = "#{event}_without_callbacks" #should be private?
-        define_method final_method, &final
+        mod.class_eval do
+          include ActiveSupport::Callbacks
+ 
+          final_method = "#{event}_without_callbacks" #should be private?
+          define_method final_method, &final
 
-        define_method event do #|*a, &block|
-          #warn "running #{event} for #{name}"
-          run_callbacks event do
-            action = self.instance_variable_get(:@action)
-            if !opts[:on] or Array.wrap(opts[:on]).member? action
-              send final_method #, :block=>block
+          define_method event do #|*a, &block|
+            #warn "running #{event} for #{name}"
+            run_callbacks event do
+              action = self.instance_variable_get(:@action)
+              if !opts[:on] or Array.wrap(opts[:on]).member? action
+                send final_method #, :block=>block
+              end
             end
           end
         end
-      end
 
 
       [:before, :after, :around].each do |kind|

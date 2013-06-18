@@ -6,17 +6,16 @@ module Wagn
 
   module Loader
     RENDERERS = "#{Rails.root}/lib/wagn/renderer/*.rb"
-    SETS      = "#{Rails.root}/wagn-app/sets"
-    # load order for specific libs (from Cardlib) to make sure the load first
-    CARDLIBS  = %w{ attach attribute_tracking collection fetch pattern permissions references rules
-                    templating tracked_attributes utils }
+    CORESETS  = "#{Rails.root}/wagn-app/sets"
+    SETS      = "#{Rails.root}/wagn-app/core-sets"
 
     def load_renderers
       load_dir File.expand_path( RENDERERS, __FILE__ )
     end
 
     def load_sets
-      load_standard_sets
+      load_standard_sets "#{CORESETS}"
+      load_standard_sets "#{SETS}"
 
       Wagn::Conf[:pack_dirs].split( /,\s*/ ).each do |dirname|
         load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
@@ -24,30 +23,25 @@ module Wagn
     end
 
 
-    def load_standard_sets
+    def load_standard_sets basedir
 
       Card.set_patterns.reverse.map(&:key).each do |set_pattern|
 
         next if set_pattern =~ /^\./
-        dirname = "#{SETS}/#{set_pattern}"
+        dirname = [basedir, set_pattern] * '/'
         next unless File.exists?( dirname )
         set_pattern_const = get_set_pattern_constant set_pattern
 
-        if set_pattern == 'all'
-          Dir.entries( dirname ).sort.inject(CARDLIBS) do |libs, anchor|
-            anchor.gsub!( /\.rb$/, '' )
-            libs << anchor unless anchor =~ /^\./ or libs.member?( anchor )
-            libs
-          end
-        else
-          Dir.entries( dirname ).sort.map do |anchor| anchor.gsub( /\.rb$/, '' ) end
-        end.each do |anchor|
-          next if anchor =~ /^\./
-          set_module = set_pattern_const.const_set anchor.camelize, Module.new
+        Dir.entries( dirname ).sort.each do |anchor_filename|
+          next if anchor_filename =~ /^\./
+          anchor = anchor_filename.gsub /\.rb$/, ''
+          #FIXME: this doesn't support re-openning of the module from multiple calls to load_standard_sets
+          set_module = (set_pattern == 'all') ? Card : set_pattern_const.const_set( anchor.camelize, Module.new )
           Wagn::Set.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
           Wagn::Set.current_set_module = set_module.name
 
-          filename = "#{dirname}/#{anchor}.rb"
+          filename = [dirname, anchor_filename] * '/'
+warn "about to load #{filename}, #{basedir}, #{set_pattern}, #{anchor}"
           set_module.extend Wagn::Set
           set_module.class_eval File.read( filename ), filename, 1
 

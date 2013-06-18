@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
-require File.expand_path('../../../../packs/pack_spec_helper', File.dirname(__FILE__))
+require 'wagn/pack_spec_helper'
 
 describe Wagn::Set::All::Json, "JSON pack" do
   context "status view" do

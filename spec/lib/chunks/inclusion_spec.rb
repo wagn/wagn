@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
-require File.expand_path('../../packs/pack_spec_helper', File.dirname(__FILE__))
+require 'wagn/pack_spec_helper'
 
 #FIXME: None of these work now, since inclusion is handled at the slot/cache
 # level, but these cases should still be covered by tests

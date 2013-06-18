@@ -39,21 +39,20 @@ module Wagn
           set_module = (set_pattern == 'all') ? Card : set_pattern_const.const_set( anchor.camelize, Module.new )
           Wagn::Set.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
           Wagn::Set.current_set_module = set_module.name
-
+          
           filename = [dirname, anchor_filename] * '/'
 warn "about to load #{filename}, #{basedir}, #{set_pattern}, #{anchor}"
           set_module.extend Wagn::Set
           set_module.class_eval File.read( filename ), filename, 1
 
-          args = Card::RUBY18 ? [ :Model ] : [ :Model, false ]
-          if set_pattern == 'all' and set_module.const_defined? *args
-            include_all_model set_module.const_get( *args )
+          if set_pattern == 'all' and !set_module.instance_methods.empty?
+            Card.send :include, set_module
           end
 
-          args = Card::RUBY18 ? [ :Renderer ] : [ :Renderer, false ]
-          if set_module.const_defined? *args
-            Wagn::Renderer.send :include, set_module.const_get( *args )
-          end
+#          args = Card::RUBY18 ? [ :Renderer ] : [ :Renderer, false ]
+#          if set_module.const_defined? *args
+#            Wagn::Renderer.send :include, set_module.const_get( *args )
+#          end
         end
 
 

@@ -219,6 +219,7 @@ class Card < ActiveRecord::Base
   end
 
   def approve
+Rails.logger.warn "approve called"
     @was_new_card = self.new_card?
     @action = case
       when trash     ; :delete
@@ -231,6 +232,7 @@ class Card < ActiveRecord::Base
   end
 
   def store
+Rails.logger.warn "store called"
 #    puts "commit called: #{name}"
     run_callbacks :store do
       #set_read_rule #move to action
@@ -244,6 +246,7 @@ class Card < ActiveRecord::Base
   end
 
   def extend
+Rails.logger.warn "extend called"
 #    puts "extend called"
     run_callbacks :extend
   rescue Exception=>e
@@ -253,6 +256,7 @@ class Card < ActiveRecord::Base
   end
 
   def rescue_event e
+Rails.logger.warn "revent #{e.inspect}"
     @action = nil
     expire_pieces
     if @subcards

@@ -1,10 +1,8 @@
 # -*- encoding : utf-8 -*-
 
   
-module Model
-  def item_names(args={})  # needed for flexmail attachments.  hacky.
-    [self.cardname]
-  end
+def item_names(args={})  # needed for flexmail attachments.  hacky.
+  [self.cardname]
 end
 
 

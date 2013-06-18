@@ -266,7 +266,8 @@ module Wagn
 
     def canonicalize_view view
       unless view.blank?
-        DEPRECATED_VIEWS[view.to_sym] || view.to_sym
+        view_key = view.to_name.key.to_sym
+        DEPRECATED_VIEWS[view_key] || view_key
       end
     end
 

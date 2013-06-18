@@ -28,7 +28,7 @@ module Wagn::SetPatterns
 
       def method_key_from_opts opts
         method_key || ((opt_keys.map do |opt_key|
-          opts[opt_key].to_s.gsub('+', '-')
+          opts[opt_key].to_name.key.gsub('+', '-')
         end << key) * '_' )
       end
 

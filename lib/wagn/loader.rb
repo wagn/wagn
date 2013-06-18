@@ -6,8 +6,8 @@ module Wagn
 
   module Loader
     RENDERERS = "#{Rails.root}/lib/wagn/renderer/*.rb"
-    CORESETS  = "#{Rails.root}/wagn-app/sets"
-    SETS      = "#{Rails.root}/wagn-app/core-sets"
+    CORESETS  = "#{Rails.root}/wagn-app/core-sets"
+    SETS      = "#{Rails.root}/wagn-app/sets"
 
     def load_renderers
       load_dir File.expand_path( RENDERERS, __FILE__ )
@@ -36,26 +36,29 @@ module Wagn
           next if anchor_filename =~ /^\./
           anchor = anchor_filename.gsub /\.rb$/, ''
           #FIXME: this doesn't support re-openning of the module from multiple calls to load_standard_sets
-          set_module = (set_pattern == 'all') ? Card : set_pattern_const.const_set( anchor.camelize, Module.new )
+          acamel = anchor.camelize
+          args = Card::RUBY18 ? [ acamel ] : [ acamel, false ]
+          if set_pattern_const.const_defined?( *args )
+            set_module = set_pattern_const.const_get( *args )
+          else
+            set_module = set_pattern_const.const_set( acamel, Module.new )
+            set_module.extend Wagn::Set
+          end
           Wagn::Set.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
           Wagn::Set.current_set_module = set_module.name
           
           filename = [dirname, anchor_filename] * '/'
-warn "about to load #{filename}, #{basedir}, #{set_pattern}, #{anchor}"
-          set_module.extend Wagn::Set
           set_module.class_eval File.read( filename ), filename, 1
 
-          if set_pattern == 'all' and !set_module.instance_methods.empty?
-            Card.send :include, set_module
+          if set_pattern == 'all'
+            include_all_model set_module
           end
 
-#          args = Card::RUBY18 ? [ :Renderer ] : [ :Renderer, false ]
-#          if set_module.const_defined? *args
-#            Wagn::Renderer.send :include, set_module.const_get( *args )
-#          end
+          args = Card::RUBY18 ? [ :Renderer ] : [ :Renderer, false ]
+          if set_module.const_defined? *args
+            Wagn::Renderer.send :include, set_module.const_get( *args )
+          end
         end
-
-
 
       end
     ensure
@@ -64,10 +67,11 @@ warn "about to load #{filename}, #{basedir}, #{set_pattern}, #{anchor}"
 
     private
 
-    def include_all_model set_model
-      Card.send :include, set_model
+    def include_all_model set_module
+      Card.send :include, set_module if set_module.instance_methods.any?
+
       args = Card::RUBY18 ? [ :ClassMethods ] : [ :ClassMethods, false ]
-      Card.send( :extend, set_model.const_get( *args ) ) if set_model.const_defined?( *args )
+      Card.send( :extend, set_module.const_get( *args ) ) if set_module.const_defined?( *args )
     end
 
     def get_set_pattern_constant set_pattern

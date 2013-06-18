@@ -19,3 +19,4 @@ describe Wagn::Set::All::Base do
     render_card(:not_found).should == render_card('not found')
   end
 end
+

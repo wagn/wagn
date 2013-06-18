@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
-include AuthenticatedTestHelper
+include Wagn::AuthenticatedTestHelper
 include EmailSpec::Helpers
 include EmailSpec::Matchers
 

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 =begin
 require 'wagn/spec_helper'
-include AuthenticatedTestHelper
+include Wagn::AuthenticatedTestHelper
 
 module CaptchaExampleGroupMethods
   def require_captcha_on(action, params)

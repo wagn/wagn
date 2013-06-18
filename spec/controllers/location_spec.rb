@@ -1,5 +1,5 @@
 require 'wagn/spec_helper'
-include AuthenticatedTestHelper
+include Wagn::AuthenticatedTestHelper
 
 describe CardController, "location test from old integration" do
 

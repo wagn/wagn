@@ -16,7 +16,7 @@ end
 
 Spork.prefork do
   require File.expand_path File.dirname(__FILE__) + "/../../config/environment"
-  require File.expand_path File.dirname(__FILE__) + "/../authenticated_test_helper"
+  require File.expand_path File.dirname(__FILE__) + "/authenticated_test_helper"
   require 'rspec/rails'
 
   require_dependency 'chunks/chunk'
@@ -34,7 +34,7 @@ Spork.prefork do
 
     #config.include CustomMatchers
     #config.include ControllerMacros, :type=>:controllers
-    config.include AuthenticatedTestHelper, :type=>:controllers
+    config.include Wagn::AuthenticatedTestHelper, :type=>:controllers
 
     # == Mock Framework
     # If you prefer to mock with mocha, flexmock or RR, uncomment the appropriate symbol:

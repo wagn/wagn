@@ -1,6 +1,6 @@
 
 require 'wagn/spec_helper'
-include AuthenticatedTestHelper
+include Wagn::AuthenticatedTestHelper
 
 =begin
 describe CardController do

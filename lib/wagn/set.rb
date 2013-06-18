@@ -37,7 +37,7 @@ module Wagn
     #
 
     def view view, *args, &final
-      view = view.to_name.key
+      view = view.to_name.key.to_sym
       if block_given?
         define_view view, (args[0] || {}), &final
       else

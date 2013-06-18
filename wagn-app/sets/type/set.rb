@@ -62,48 +62,46 @@ format :html do
 end
 
 
-module Model
-  include Wagn::Set::Type::SearchType::Model
+include Wagn::Set::Type::SearchType
 
-  def inheritable?
-    return true if junction_only?
-    cardname.trunk_name.junction? and cardname.tag_name.key == Wagn::SetPatterns::SelfPattern.key_name.key
-  end
+def inheritable?
+  return true if junction_only?
+  cardname.trunk_name.junction? and cardname.tag_name.key == Wagn::SetPatterns::SelfPattern.key_name.key
+end
 
-  def subclass_for_set
-    set_class_key = tag.codename
-    Card.set_patterns.find do |sub|
-      cardname.tag_name.key == sub.key_name.key
-    end
+def subclass_for_set
+  set_class_key = tag.codename
+  Card.set_patterns.find do |sub|
+    cardname.tag_name.key == sub.key_name.key
   end
+end
 
-  def junction_only?()
-    !@junction_only.nil? ? @junction_only :
-       @junction_only = subclass_for_set.junction_only
-  end
+def junction_only?()
+  !@junction_only.nil? ? @junction_only :
+     @junction_only = subclass_for_set.junction_only
+end
 
-  def reset_set_patterns
-    Card.members( key ).each do |mem|
-      Card.expire mem
-    end
+def reset_set_patterns
+  Card.members( key ).each do |mem|
+    Card.expire mem
   end
+end
 
-  def label
-    if klass = subclass_for_set
-      klass.label cardname.left
-    else
-      ''
-    end
+def label
+  if klass = subclass_for_set
+    klass.label cardname.left
+  else
+    ''
   end
+end
 
-  def setting_codes_by_group
-    is_pointer = prototype.type_id == Card::PointerID
-    s = Wagn::Set::Type::Setting
-    s::SETTING_GROUPS.reject { |k,v| !is_pointer && k == s::POINTER_KEY }
-  end
+def setting_codes_by_group
+  is_pointer = prototype.type_id == Card::PointerID
+  s = Wagn::Set::Type::Setting
+  s::SETTING_GROUPS.reject { |k,v| !is_pointer && k == s::POINTER_KEY }
+end
 
-  def prototype
-    opts = subclass_for_set.prototype_args self.cardname.trunk_name
-    Card.fetch opts[:name], :new=>opts
-  end
+def prototype
+  opts = subclass_for_set.prototype_args self.cardname.trunk_name
+  Card.fetch opts[:name], :new=>opts
 end

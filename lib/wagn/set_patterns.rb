@@ -8,7 +8,7 @@ module Wagn::SetPatterns
       def junction_only?()  !!junction_only  end
       def anchorless?()     !!method_key     end # method key determined by class only when no trunk involved
       def anchor_name(card) ''               end
-        
+
       def new card
         super if pattern_applies? card
       end
@@ -18,7 +18,7 @@ module Wagn::SetPatterns
       end
 
       def register key, opts={}
-        if self.key_id = Wagn::Codename[key]          
+        if self.key_id = Wagn::Codename[key]
           self.key = key
           Card.register_pattern self, opts.delete(:index)
           self.opt_keys = opts.delete(:opt_keys) || [ key.to_sym ]
@@ -39,7 +39,7 @@ module Wagn::SetPatterns
 
     def initialize card
       @anchor_name = self.class.anchor_name(card).to_name
-      
+
       @anchor_id = if self.class.respond_to? :anchor_id
         self.class.anchor_id card
       else
@@ -48,7 +48,7 @@ module Wagn::SetPatterns
       end
       self
     end
-    
+
 
     def set_const
       set_module = case
@@ -58,7 +58,7 @@ module Wagn::SetPatterns
         end
 
       Card.find_set_model_module set_module if set_module
-      
+
     rescue Exception => e; warn "exception set_const #{e.inspect}," #{e.backtrace*"\n"}"
     end
 
@@ -81,7 +81,7 @@ module Wagn::SetPatterns
       end
       @opt_vals
     end
-    
+
     def find_opt_vals
       anchor_parts = if self.class.opt_keys.size > 1
         [ @anchor_name.left, @anchor_name.right ]
@@ -110,7 +110,7 @@ module Wagn::SetPatterns
       caps_part = self.class.key.gsub(' ','_').upcase
       self.class.anchorless? ? caps_part : "#{caps_part}-#{@anchor_name.safe_key}"
     end
-    
+
     def rule_set_key
       if self.class.anchorless?
         self.class.key
@@ -180,7 +180,7 @@ module Wagn::SetPatterns
       end
     end
   end
-  
+
 
   class SelfPattern < BasePattern
     register 'self', :opt_keys=>[ :self ]
@@ -190,5 +190,5 @@ module Wagn::SetPatterns
     def self.anchor_name      card;     card.name                  end
     def self.anchor_id        card;     card.id                    end
   end
-  
+
 end

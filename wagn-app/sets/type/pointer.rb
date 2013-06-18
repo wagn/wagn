@@ -85,87 +85,85 @@ format :html do
   end
 end
 
-module Model
-  def collection?
-    true
-  end
+def collection?
+  true
+end
 
-  def pointer_items renderer, itemview
-    typeparam = case (type=item_type)
-      when String ; ";type:#{type}"
-      when Array  ; ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
-      else ""
+def pointer_items renderer, itemview
+  typeparam = case (type=item_type)
+    when String ; ";type:#{type}"
+    when Array  ; ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
+    else ""
+  end
+  renderer.process_content_object content.gsub(/\[\[/,"<div class=\"pointer-item item-#{itemview}\">{{").gsub(/\]\]/,"|#{itemview}#{typeparam}}}</div>")
+end
+
+def item_cards( args={} )
+  if args[:complete]
+    #warn "item_card[#{args.inspect}], :complete"
+    Wql.new({:referred_to_by=>name}.merge(args)).run
+  else
+    #warn "item_card[#{inspect}], :complete"
+    item_names(args).map do |name|
+      Card.fetch name, :new=>{}
+    end.compact
+  end
+end
+
+def item_names( args={} )
+  context = args[:context] || self.cardname
+  self.raw_content.split(/\n+/).map{ |line|
+    line.gsub(/\[\[|\]\]/,'')
+  }.map{ |link| context==:raw ? link : link.to_name.to_absolute(context) }
+end
+
+def item_type
+  opt = options_card
+  return nil if (!opt || opt==self)  #fixme, need better recursion prevention
+  opt.item_type
+end
+
+def items= array
+  self.content=''
+  array.each { |i| self << i }
+  save!
+end
+
+def << item
+  newname = case item
+    when Card     ;  item.name
+    when Integer  ;  c = Card[item] and c.name
+    else             item
     end
-    renderer.process_content_object content.gsub(/\[\[/,"<div class=\"pointer-item item-#{itemview}\">{{").gsub(/\]\]/,"|#{itemview}#{typeparam}}}</div>")
-  end
+  add_item newname
+end
 
-  def item_cards( args={} )
-    if args[:complete]
-      #warn "item_card[#{args.inspect}], :complete"
-      Wql.new({:referred_to_by=>name}.merge(args)).run
-    else
-      #warn "item_card[#{inspect}], :complete"
-      item_names(args).map do |name|
-        Card.fetch name, :new=>{}
-      end.compact
-    end
+def add_item newname
+  inames = item_names
+  unless inames.include? newname
+    self.content="[[#{(inames << newname).reject(&:blank?)*"]]\n[["}]]"
   end
+end
 
-  def item_names( args={} )
-    context = args[:context] || self.cardname
-    self.raw_content.split(/\n+/).map{ |line|
-      line.gsub(/\[\[|\]\]/,'')
-    }.map{ |link| context==:raw ? link : link.to_name.to_absolute(context) }
+def drop_item name
+  inames = item_names
+  if inames.include? name
+    inames = inames.reject{|n|n==name}
+    self.content= inames.empty? ? '' : "[[#{inames * "]]\n[["}]]"
   end
+end
 
-  def item_type
-    opt = options_card
-    return nil if (!opt || opt==self)  #fixme, need better recursion prevention
-    opt.item_type
-  end
+def options_card
+  card = self.rule_card :options
+  (card && card.collection?) ? card : nil
+end
 
-  def items= array
-    self.content=''
-    array.each { |i| self << i }
-    save!
-  end
+def options
+  (oc=self.options_card) ? oc.item_cards(:default_limit=>50) : Card.search(:sort=>'alpha',:limit=>50)
+end
 
-  def << item
-    newname = case item
-      when Card     ;  item.name
-      when Integer  ;  c = Card[item] and c.name
-      else             item
-      end
-    add_item newname
-  end
-
-  def add_item newname
-    inames = item_names
-    unless inames.include? newname
-      self.content="[[#{(inames << newname).reject(&:blank?)*"]]\n[["}]]"
-    end
-  end
-
-  def drop_item name
-    inames = item_names
-    if inames.include? name
-      inames = inames.reject{|n|n==name}
-      self.content= inames.empty? ? '' : "[[#{inames * "]]\n[["}]]"
-    end
-  end
-
-  def options_card
-    card = self.rule_card :options
-    (card && card.collection?) ? card : nil
-  end
-
-  def options
-    (oc=self.options_card) ? oc.item_cards(:default_limit=>50) : Card.search(:sort=>'alpha',:limit=>50)
-  end
-
-  def option_text(option)
-    name = self.rule(:options_label) || 'description'
-    textcard = Card["#{option}+#{name}"]
-    textcard ? textcard.content : nil
-  end
+def option_text(option)
+  name = self.rule(:options_label) || 'description'
+  textcard = Card["#{option}+#{name}"]
+  textcard ? textcard.content : nil
 end

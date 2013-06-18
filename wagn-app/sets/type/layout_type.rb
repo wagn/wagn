@@ -9,8 +9,6 @@ view :core do |args|
   h _render_raw
 end
 
-module Model
-  def clean_html?
-    false
-  end
+def clean_html?
+  false
 end

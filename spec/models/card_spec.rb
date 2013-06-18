@@ -23,6 +23,7 @@ describe Card do
     end
 
     it "gets needed methods after save" do
+      @c.respond_to?( :get_spec ).should be_true
       @c.save!
       @c.respond_to?( :get_spec ).should be_true
     end
@@ -117,7 +118,7 @@ describe Card do
     end
 
     it "should have updates" do
-      Cardlib::AttributeTracking::Updates.should === @c.updates
+      Wagn::Set::All::AttributeTracking::Updates.should === @c.updates
     end
 
     it "should return original value" do

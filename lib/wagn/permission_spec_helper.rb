@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-module PermissionSpecHelper
+module Wagn::PermissionSpecHelper
 
   def assert_hidden_from( user, card, msg='')
     Account.as(user.id) { assert_hidden( card, msg ) }
@@ -34,7 +34,7 @@ module PermissionSpecHelper
   end
 end
 
-RSpec::Core::ExampleGroup.send :include, PermissionSpecHelper
+RSpec::Core::ExampleGroup.send :include, Wagn::PermissionSpecHelper
 
 
 class Card

@@ -1,4 +1,4 @@
-require File.expand_path('../spec_helper', File.dirname(__FILE__))
+require 'wagn/spec_helper'
 include AuthenticatedTestHelper
 
 describe CardController, "location test from old integration" do

@@ -3,7 +3,7 @@
 module ClassMethods
   
   def search(spec)
-    ::Wql.new(spec).run
+    ::Card::Query.new(spec).run
   end
 
   def count_by_wql(spec)

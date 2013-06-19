@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
-module WagnMigrationHelper
+
+module Wagn::MigrationHelper
   
   def contentedly &block
     Wagn::Cache.reset_global

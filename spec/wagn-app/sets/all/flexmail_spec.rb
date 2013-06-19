@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-require File.expand_path('../spec_helper', File.dirname(__FILE__))
+require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
 
 describe Card::Flexmail do
   describe "#email_config_cardnames" do

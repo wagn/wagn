@@ -5,7 +5,7 @@ module Wagn
   include Wagn::Exceptions
 
   module Loader
-    RENDERERS = "#{Rails.root}/lib/wagn/renderer/*.rb"
+    RENDERERS = "#{Rails.root}/lib/card/format/*.rb"
     CORESETS  = "#{Rails.root}/wagn-app/core-sets"
     SETS      = "#{Rails.root}/wagn-app/sets"
 

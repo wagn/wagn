@@ -4,7 +4,7 @@ require 'diff'
 module WagnHelper
   include Card::Diff
 
-  def slot() Wagn::Renderer.current_slot end
+  def slot() Card::Format.current_slot end
   def card() @card ||= slot.card end
 
   def params()
@@ -21,11 +21,11 @@ module WagnHelper
     card ||= @card
 
     slot =
-      if current = Wagn::Renderer.current_slot
+      if current = Card::Format.current_slot
         nil_given ? current : current.subrenderer(card)
       else
         opts = { :controller => self.controller }
-        Wagn::Renderer.current_slot = Wagn::Renderer.new( card, opts )
+        Card::Format.current_slot = Card::Format.new( card, opts )
       end
   end
 
@@ -65,7 +65,7 @@ module WagnHelper
 
 
   def wrap_slot(renderer=nil, args={}, &block)
-    renderer ||= (Wagn::Renderer.current_slot || get_slot)
+    renderer ||= (Card::Format.current_slot || get_slot)
     content = with_output_buffer { yield(renderer) }
     renderer.wrap(:open, args.merge(:frame=>true)) { content }
   end

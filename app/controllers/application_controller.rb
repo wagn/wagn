@@ -34,8 +34,8 @@ class ApplicationController < ActionController::Base
 
       Wagn::Cache.renew
 
-      Wagn::Renderer.ajax_call = ajax?
-      Wagn::Renderer.current_slot = nil
+      Card::Format.ajax_call = ajax?
+      Card::Format.current_slot = nil
 
       #warn "set curent_user (app-cont) #{self.current_account_id}, U.cu:#{Account.current_id}"
       Account.current_id = self.current_account_id || Card::AnonID
@@ -89,7 +89,7 @@ class ApplicationController < ActionController::Base
     opts = params[:slot] || {}
     opts[:view] = view || params[:view]      
 
-    renderer = Wagn::Renderer.new card, :controller=>self, :format=>format
+    renderer = Card::Format.new card, :controller=>self, :format=>format
     result = renderer.render_show opts
     status = renderer.error_status || status
     

@@ -123,7 +123,7 @@ class CardController < ApplicationController
         return wagn_redirect( '/admin/setup' )
       when params[:card] && params[:card][:name]
         params[:card][:name]
-      when Wagn::Renderer.tagged( params[:view], :unknown_ok )
+      when Card::Format.tagged( params[:view], :unknown_ok )
         ''
       else  
         Card.setting(:home) || 'Home'

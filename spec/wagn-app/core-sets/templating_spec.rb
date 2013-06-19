@@ -35,7 +35,7 @@ describe Card, "with right content template" do
   end
 
   it "should have default content" do
-    Wagn::Renderer.new(@jb)._render_raw.should == 'Today!'
+    Card::Format.new(@jb)._render_raw.should == 'Today!'
   end
 
   it "should change type and content with template" do
@@ -45,7 +45,7 @@ describe Card, "with right content template" do
       @bt.save!
     end
     jb = @jb.refresh force=true
-    Wagn::Renderer.new( jb ).render(:raw).should == 'Tomorrow'
+    Card::Format.new( jb ).render(:raw).should == 'Tomorrow'
     jb.type_id.should == Card::PhraseID    
   end
   
@@ -105,7 +105,7 @@ describe Card, "with type content template" do
   end
 
   it "should return templated content even if content is passed in" do
-    Wagn::Renderer.new(Card.new(:type=>'Date', :content=>''))._render(:raw).should == 'Tomorrow'
+    Card::Format.new(Card.new(:type=>'Date', :content=>''))._render(:raw).should == 'Tomorrow'
   end
 end
 

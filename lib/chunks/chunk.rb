@@ -48,7 +48,7 @@ module Chunks
     end
 
     def renderer
-      @card_params[:renderer] #||= Wagn::Renderer.new(card) 
+      @card_params[:renderer] #||= Card::Format.new(card) 
     end
 
     def to_s

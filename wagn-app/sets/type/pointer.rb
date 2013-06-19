@@ -8,7 +8,7 @@ end
 format :html do
 
   view :core do |args|
-    itemview = args[:item] || :closed #Wagn::Renderer::DEFAULT_ITEM_VIEW  #FIXME: this needs work, it won't subclass as intended
+    itemview = args[:item] || :closed #Card::Format::DEFAULT_ITEM_VIEW  #FIXME: this needs work, it won't subclass as intended
     %{<div class="pointer-list">#{card.pointer_items self, itemview}</div>}
     #+ link_to( 'add/edit', path(action), :remote=>true, :class=>'slotter add-edit-item' ) #ENGLISH
   end

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-module Wagn
-  class Renderer
+class Card
+  class Format
 
     include LocationHelper
     
@@ -62,12 +62,12 @@ module Wagn
         end
 
         view_key = get_set_key view, opts
-        #warn "defining view method[#{Wagn::Renderer.current_class}] _final_#{view_key}" if view_key =~ /stat/
+        #warn "defining view method[#{Card::Format.current_class}] _final_#{view_key}" if view_key =~ /stat/
         class_eval { define_method "_final_#{view_key}", &final }
         subset_views[view] = true if !opts.empty?
 
         if !method_defined? "render_#{view}"
-          #warn "defining view method[#{Wagn::Renderer.renderer}] _render_#{view}"
+          #warn "defining view method[#{Card::Format.renderer}] _render_#{view}"
           class_eval do
             define_method "_render_#{view}" do |*a|
               begin
@@ -120,7 +120,7 @@ module Wagn
 
       def new card, opts={}
         format = ( opts[:format].send_if :to_sym ) || :html
-        renderer = if self!=Renderer or format.nil? or format == :base
+        renderer = if self!=Format or format.nil? or format == :base
               self
             else
               get_renderer format
@@ -151,7 +151,7 @@ module Wagn
     end
 
     def initialize card, opts={}
-      Renderer.current_slot ||= self unless opts[:not_current]
+      Format.current_slot ||= self unless opts[:not_current]
       @card = card
       opts.each do |key, value|
         instance_variable_set "@#{key}", value
@@ -263,7 +263,7 @@ module Wagn
     end
 
     #
-    # ------------- Sub Renderer and Inclusion Processing ------------
+    # ------------- Sub Format and Inclusion Processing ------------
     #
 
     def subrenderer subcard, mainline=false
@@ -420,7 +420,7 @@ module Wagn
 
     def process_inclusion tcard, opts
       sub = subrenderer tcard, opts[:mainline]
-      oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
+      oldrenderer, Format.current_slot = Format.current_slot, sub
       # don't like depending on this global var switch
       # I think we can get rid of it as soon as we get rid of the remaining rails views?
 
@@ -445,7 +445,7 @@ module Wagn
       end
 
       result = sub.render(view, opts)
-      Renderer.current_slot = oldrenderer
+      Format.current_slot = oldrenderer
       result
     end
 
@@ -550,17 +550,17 @@ module Wagn
 
   end
 
-  class Renderer::Html < Renderer                ; end
+  class Format::Html < Format                ; end
   
-  class Renderer::File < Renderer                ; end
+  class Format::File < Format                ; end
 
-  class Renderer::Text < Renderer                ; end
-  class Renderer::Csv < Renderer::Text           ; end
-  class Renderer::Css < Renderer::Text           ; end
+  class Format::Text < Format                ; end
+  class Format::Csv < Format::Text           ; end
+  class Format::Css < Format::Text           ; end
   
-  class Renderer::Data < Renderer                ; end
-  class Renderer::Json < Renderer::Data          ; end
-  class Renderer::Xml < Renderer::Data           ; end
+  class Format::Data < Format                ; end
+  class Format::Json < Format::Data          ; end
+  class Format::Xml < Format::Data           ; end
 
 end
 

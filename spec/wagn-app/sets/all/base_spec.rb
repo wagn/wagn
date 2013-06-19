@@ -2,13 +2,13 @@
 require 'wagn/spec_helper'
 require 'wagn/pack_spec_helper'
 
-describe Wagn::Renderer do
+describe Card::Format do
   it "should render denial when user lacks read permissions" do
     c = Card.fetch('Administrator links')
     c.who_can(:read).should == [Card::AdminID]
     Account.as(:anonymous) do
       c.ok?(:read).should == false
-      Wagn::Renderer.new(c).render(:core).match('denied').should_not be_nil
+      Card::Format.new(c).render(:core).match('denied').should_not be_nil
     end
   end
 end

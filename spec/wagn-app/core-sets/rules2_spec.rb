@@ -21,13 +21,13 @@ describe Card do
 
     describe "renders with/without toc" do
       it "should not render for 'Onne Heading'" do
-        Wagn::Renderer.new(@c1).render.should_not match /Table of Contents/
+        Card::Format.new(@c1).render.should_not match /Table of Contents/
       end
       it "should render for 'Twwo Heading'" do
-        Wagn::Renderer.new(@c2).render.should match /Table of Contents/
+        Card::Format.new(@c2).render.should match /Table of Contents/
       end
       it "should render for 'Three Heading'" do
-        Wagn::Renderer.new(@c3).render.should match /Table of Contents/
+        Card::Format.new(@c3).render.should match /Table of Contents/
       end
     end
 
@@ -99,15 +99,15 @@ describe Card do
 
     describe "renders with/without toc" do
       it "should not render toc for 'Onne Heading'" do
-        Wagn::Renderer.new(@c1).render.should match /Table of Contents/
+        Card::Format.new(@c1).render.should match /Table of Contents/
       end
       it "should render toc for 'Twwo Heading'" do
-        Wagn::Renderer.new(@c2).render.should match /Table of Contents/
+        Card::Format.new(@c2).render.should match /Table of Contents/
       end
       it "should not render for 'Twwo Heading' when changed to 3" do
         @rule_card.content = "3"
         @c2.rule(:table_of_contents).should == "3"
-        Wagn::Renderer.new(@c2).render.should_not match /Table of Contents/
+        Card::Format.new(@c2).render.should_not match /Table of Contents/
       end
     end
 
@@ -142,13 +142,13 @@ describe Card do
 
     describe "renders without toc" do
       it "should not render for 'Onne Heading'" do
-        Wagn::Renderer.new(@c1).render.should_not match /Table of Contents/
+        Card::Format.new(@c1).render.should_not match /Table of Contents/
       end
       it "should render for 'Twwo Heading'" do
-        Wagn::Renderer.new(@c2).render.should_not match /Table of Contents/
+        Card::Format.new(@c2).render.should_not match /Table of Contents/
       end
       it "should render for 'Three Heading'" do
-        Wagn::Renderer.new(@c3).render.should_not match /Table of Contents/
+        Card::Format.new(@c3).render.should_not match /Table of Contents/
       end
     end
 
@@ -205,14 +205,14 @@ describe Card do
 
     describe "renders with/without toc" do
       it "should not render for 'Onne Heading'" do
-        Wagn::Renderer.new(@c1).render.should_not match /Table of Contents/
+        Card::Format.new(@c1).render.should_not match /Table of Contents/
       end
       it "should render for 'Twwo Heading'" do
         @c2.rule(:table_of_contents).should == "2"
-        Wagn::Renderer.new(@c2).render.should match /Table of Contents/
+        Card::Format.new(@c2).render.should match /Table of Contents/
       end
       it "should render for 'Three Heading'" do
-        Wagn::Renderer.new(@c3).render.should match /Table of Contents/
+        Card::Format.new(@c3).render.should match /Table of Contents/
       end
     end
   end
@@ -239,14 +239,14 @@ describe Card do
 
     describe "renders with/without toc" do
       it "should not render toc for 'Onne Heading'" do
-        Wagn::Renderer.new(@c1).render.should match /Table of Contents/
+        Card::Format.new(@c1).render.should match /Table of Contents/
       end
       it "should render toc for 'Twwo Heading'" do
-        Wagn::Renderer.new(@c2).render.should match /Table of Contents/
+        Card::Format.new(@c2).render.should match /Table of Contents/
       end
       it "should not render for 'Twwo Heading' when changed to 3" do
         @rule_card.content = "3"
-        Wagn::Renderer.new(@c2).render.should_not match /Table of Contents/
+        Card::Format.new(@c2).render.should_not match /Table of Contents/
       end
     end
 

@@ -14,7 +14,7 @@ module ClassMethods
 end
 
 def item_names(args={})
-  Wagn::Renderer.new(self)._render_raw.split /[,\n]/
+  Card::Format.new(self)._render_raw.split /[,\n]/
 end
 
 def item_cards(args={})  ## FIXME this is inconsistent with item_names
@@ -36,7 +36,7 @@ end
 
 def contextual_content(context_card=nil, renderer_args={})
   renderer_args[:not_current] = true
-  Wagn::Renderer.new(context_card, renderer_args).process_content(
-    Wagn::Renderer.new(self, :not_current=>true)._render_raw
+  Card::Format.new(context_card, renderer_args).process_content(
+    Card::Format.new(self, :not_current=>true)._render_raw
   )
 end

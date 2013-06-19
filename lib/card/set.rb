@@ -35,7 +35,7 @@ class Card
 
     def format fmt=nil, &block
       if block_given?
-        f = Wagn::Renderer
+        f = Card::Format
         format = fmt.nil? ? f : f.get_renderer(fmt)
         format.class_eval &block
       else

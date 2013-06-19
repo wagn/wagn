@@ -4,7 +4,7 @@ ENV["RAILS_ENV"] = 'test'
 
 module MySpecHelpers
   def render_test_card card
-    renderer = Wagn::Renderer.new card
+    renderer = Card::Format.new card
     renderer.add_name_context card.name
     renderer.process_content
   end
@@ -64,7 +64,7 @@ end
 
 
   def get_renderer()
-    Wagn::Renderer.new(Card.new(:name=>'dummy'))
+    Card::Format.new(Card.new(:name=>'dummy'))
   end
 
   def given_card( *card_args )

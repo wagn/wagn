@@ -271,7 +271,7 @@ describe Card::Content do
     assert card = Card["One"]
     @card_opts = {
       :card => card,
-      :renderer => Wagn::Renderer.new(card)
+      :renderer => Card::Format.new(card)
     }
 
     # non-nil valued opts only ...

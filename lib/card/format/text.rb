@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-module Wagn
-  class Renderer::Text < Renderer
+class Card
+  class Format::Text < Format
     def initialize card, opts
       super card,opts
 

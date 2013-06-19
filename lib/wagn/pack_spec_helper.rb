@@ -16,13 +16,13 @@ include ActionDispatch::Assertions::SelectorAssertions
 
   def render_editor(type)
     card = Card.create(:name=>"my favority #{type} + #{rand(4)}", :type=>type)
-    Wagn::Renderer.new(card).render(:edit)
+    Card::Format.new(card).render(:edit)
   end
 
   def render_content(content, args={})
     @card ||= Card.new :name=>"Tempo Rary 2"
     @card.content=content
-    r = Wagn::Renderer.new @card,args
+    r = Card::Format.new @card,args
     r._render(:core)
   end
 
@@ -45,7 +45,7 @@ include ActionDispatch::Assertions::SelectorAssertions
         c = Card.new(card_args)
       end
     end
-    Wagn::Renderer.new(card, args)._render(view)
+    Card::Format.new(card, args)._render(view)
   end
 end
 

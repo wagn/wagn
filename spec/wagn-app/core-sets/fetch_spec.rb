@@ -35,7 +35,7 @@ describe Card do
         card = Card.fetch("Joe User+*email")
         card.should be_instance_of(Card)
         card.name.should == "Joe User+*email"
-        Wagn::Renderer.new(card).render_raw.should == 'joe@user.com'
+        Card::Format.new(card).render_raw.should == 'joe@user.com'
       end
       #card.raw_content.should == 'joe@user.com'
       #cached_card = Card.cache.read("joe_user+*email")

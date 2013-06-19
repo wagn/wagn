@@ -2,7 +2,7 @@
 
 class Card < ActiveRecord::Base
   require_dependency 'card/query' #need to load explicitly because of AR name conflict
-  require_dependency 'card/set' #need to load explicitly because of AR name conflict
+  require_dependency 'card/set'
 
   extend Card::Set
   extend Wagn::Loader
@@ -40,7 +40,7 @@ class Card < ActiveRecord::Base
   # should be more explicit, and ultimately patterns should be more distributed
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # LOAD Renderers and Sets
+  # LOAD Card::Formats and Sets
 
   load_renderers
   load_sets

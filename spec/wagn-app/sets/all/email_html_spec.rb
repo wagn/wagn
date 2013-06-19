@@ -2,7 +2,7 @@
 require 'wagn/spec_helper'
 require 'wagn/pack_spec_helper'
 
-describe Wagn::Renderer::EmailHtml do
+describe Card::Format::EmailHtml do
   it "should render full urls" do
     Wagn::Conf[:base_url] = 'http://www.fake.com'
     render_content('[[B]]', :format=>'email_html').should == '<a class="known-card" href="http://www.fake.com/B">B</a>'

@@ -1,8 +1,7 @@
 # -*- encoding : utf-8 -*-
-require 'wagn_migration_helper'
 
 class ImportHelpText < ActiveRecord::Migration
-  include WagnMigrationHelper
+  include Wagn::MigrationHelper
   def up
     contentedly do
       # generated JSON from template db with this url:  /*help+*right+by_name.json?view=core&pretty=true

@@ -1,16 +1,12 @@
-DEPRECATED!!!
-
-( this is only here for reference)
 
 Description:
-    Generates a migration of card type/content based on a list of cards from the template database (should be current development db)
+    Generates a migration of database content
 
 Example:
-    rails generate card_migration better_commented_search_cards /tmp/search_card_list.txt
-
-    the tmp file should contain a list of card names, one name per line (and nothing else)
+    rails generate card_migration better_commented_search_cards
 
     This will create:
-        db/migrate/(migration_number)_name
+    
+        db/migrate_cards/(migration_number)_(name).rb
 
-    ...which will in turn use methods in db/wagn_migration_helper to update cards via the migration.
+    ...which is set up to use methods in lib/wagn/migration_helper.rb

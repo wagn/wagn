@@ -37,7 +37,7 @@ module Wagn
     #
 
     def view view, *args, &final
-      
+      view = view.to_name.key.to_sym
       if block_given?
         define_view view, (args[0] || {}), &final
       else
@@ -63,7 +63,7 @@ module Wagn
       end
       
       view_key = get_set_key view, opts
-      #warn "defining view method[#{Renderer.renderer}] _final_#{view_key}"
+      #warn "defining view method[#{Renderer.current_class}] _final_#{view_key}" if view_key =~ /stat/
       Renderer.current_class.class_eval { define_method "_final_#{view_key}", &final }
       Renderer.subset_views[view] = true if !opts.empty?
 

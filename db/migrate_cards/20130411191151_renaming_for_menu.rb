@@ -1,8 +1,7 @@
 # -*- encoding : utf-8 -*-
-require 'wagn_migration_helper'
 
 class RenamingForMenu < ActiveRecord::Migration
-  include WagnMigrationHelper
+  include Wagn::MigrationHelper
   def up
     contentedly do
       renames = {

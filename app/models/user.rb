@@ -50,7 +50,7 @@ class User < ActiveRecord::Base
       end
       if card.errors.any?
 Rails.logger.warn "errors in save w/carc #{card.inspect}"
-        card.expire_pieces
+        account.expire_pieces
         raise ActiveRecord::Rollback 
       end
       true

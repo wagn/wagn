@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
-module Wagn
- class Codename
+
+class Card::Codename
 
   @@codehash=nil
 
@@ -44,5 +44,4 @@ module Wagn
       @@codehash
     end
   end
- end
 end

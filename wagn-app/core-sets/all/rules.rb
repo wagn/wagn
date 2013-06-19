@@ -58,11 +58,11 @@ module ClassMethods
     Card.cache.read('RULES') || begin        
       hash = {}
       ActiveRecord::Base.connection.select_all( Wagn::Set::All::Rules::RuleSQL ).each do |row|
-        setting_code = Wagn::Codename[ row['setting_id'].to_i ] or next
+        setting_code = Card::Codename[ row['setting_id'].to_i ] or next
         anchor_id = row['anchor_id']
         set_class_id = anchor_id.nil? ? row['set_id'] : row['set_tag_id']
     
-        set_class_code = Wagn::Codename[ set_class_id.to_i ] or next
+        set_class_code = Card::Codename[ set_class_id.to_i ] or next
         hash_key = [ anchor_id, set_class_code, setting_code ].compact.map( &:to_s ) * '+'
         hash[ hash_key ] = row['rule_id'].to_i
       end

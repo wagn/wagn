@@ -25,7 +25,7 @@ class Card < ActiveRecord::Base
     def const_missing const
       if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore.to_sym
         code = ID_CONST_ALIAS[code] || code
-        if card_id = Wagn::Codename[code]
+        if card_id = Card::Codename[code]
           const_set const, card_id
         else
           raise "Missing codename #{code} (#{const}) #{caller*"\n"}"
@@ -135,7 +135,7 @@ class Card < ActiveRecord::Base
     type_id = case
       when args[:typecode]
         if code=args[:typecode]
-          Wagn::Codename[code] || ( c=Card[code] and c.id)
+          Card::Codename[code] || ( c=Card[code] and c.id)
         end
       when args[:type]
         Card.fetch_id args[:type]
@@ -405,7 +405,7 @@ Rails.logger.warn "revent #{e.inspect}"
   end
 
   def typecode # FIXME - change to "type_code"
-    Wagn::Codename[ type_id.to_i ]
+    Card::Codename[ type_id.to_i ]
   end
 
   def type_name

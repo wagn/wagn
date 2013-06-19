@@ -133,7 +133,7 @@ describe Card, "types" do
     ct = Card.create! :name=>"AFoo", :type=>'Cardtype', :codename=>'a_foo'
     ct.typecode.should == :cardtype
     ct = Card.fetch('AFoo')
-    Wagn::Codename.reset_cache
+    Card::Codename.reset_cache
 
     ct.update_attributes! :name=>"FooRenamed"
     (ct=Card.fetch('FooRenamed')).typecode.should == :cardtype
@@ -142,15 +142,15 @@ describe Card, "types" do
     ncd.type_name.should == 'FooRenamed'
     ncd.typecode.should == :a_foo
 
-    Wagn::Codename.reset_cache
+    Card::Codename.reset_cache
     Card.create!(:type=>"FooRenamed",:name=>"testy").typecode.should == :a_foo
     Card.create!(:type=>"foo_renamed",:name=>"so testy").typecode.should == :a_foo
 
-    Wagn::Codename.reset_cache
+    Card::Codename.reset_cache
   end
   it "should accept classname as typecode" do
     ct = Card.create! :name=>"BFoo", :type=>'Cardtype', :codename=>'b_foo'
-    Wagn::Codename.reset_cache
+    Card::Codename.reset_cache
 
     ct.update_attributes! :name=>"BFooRenamed"
 
@@ -160,7 +160,7 @@ describe Card, "types" do
     ncd.type_name.should == 'BFooRenamed'
     ncd.typecode.should == :b_foo
 
-    Wagn::Codename.reset_cache
+    Card::Codename.reset_cache
   end
 
 =begin

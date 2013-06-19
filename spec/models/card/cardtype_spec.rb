@@ -34,7 +34,7 @@ describe "Card (Cardtype)" do
 
   it "cardtype creation and dynamic cardtype" do
 
-    assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).type_id == Wagn::Codename[:cardtype]
+    assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).type_id == Card::Codename[:cardtype]
     assert_instance_of Card, c=Card.fetch("BananaPudding")
 
     # you have to have a module to include or it's just a Basic (typecode fielde excepted)

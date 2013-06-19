@@ -18,14 +18,14 @@ class Card
       junction? && begin
         right_key = right_name.key
         !!traitlist.find do |codename|
-          card_id = Wagn::Codename[ codename ] and card = Card[ card_id ] and
+          card_id = Card::Codename[ codename ] and card = Card[ card_id ] and
             card.key == right_key
         end
       end
     end
 
     def trait_name tag_code
-      card_id = Wagn::Codename[ tag_code ] and card = Card[ card_id ] and
+      card_id = Card::Codename[ tag_code ] and card = Card[ card_id ] and
         [ self, card.cardname ].to_name
     end
 

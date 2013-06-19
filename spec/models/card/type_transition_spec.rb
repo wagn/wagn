@@ -150,7 +150,7 @@ end
 def change_card_to_type(name, type)
   Account.as :joe_user do
     card = Card.fetch(name)
-    tid=card.type_id = Symbol===type ? Wagn::Codename[type] : Card.fetch_id(type)
+    tid=card.type_id = Symbol===type ? Card::Codename[type] : Card.fetch_id(type)
     #warn "card[#{name.inspect}, T:#{type.inspect}] is #{card.inspect}, TID:#{tid}"
     r=card.save
     #warn "saved #{card.inspect} R#{r}"

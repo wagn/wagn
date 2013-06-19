@@ -104,7 +104,7 @@ class Account
       when Integer ;   user
       else
         user = user.to_s
-        Wagn::Codename[user] or (cd=Card[user] and cd.id)
+        Card::Codename[user] or (cd=Card[user] and cd.id)
       end
     end
 

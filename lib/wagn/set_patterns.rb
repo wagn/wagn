@@ -18,7 +18,7 @@ module Wagn::SetPatterns
       end
 
       def register key, opts={}
-        if self.key_id = Wagn::Codename[key]
+        if self.key_id = Card::Codename[key]
           self.key = key
           Card.register_pattern self, opts.delete(:index)
           self.opt_keys = opts.delete(:opt_keys) || [ key.to_sym ]
@@ -90,7 +90,7 @@ module Wagn::SetPatterns
       end
       anchor_parts.map do |part|
         card = Card.fetch part, :skip_virtual=>true, :skip_modules=>true
-        card && Wagn::Codename[card.id.to_i] or return []
+        card && Card::Codename[card.id.to_i] or return []
       end
     end
 

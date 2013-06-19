@@ -31,7 +31,7 @@ module ClassMethods
     else
 
       if Symbol===mark
-        mark = Wagn::Codename[mark] || raise( "Missing codename for #{mark.inspect}" )
+        mark = Card::Codename[mark] || raise( "Missing codename for #{mark.inspect}" )
       end
 
       cache_key, method, val = if Integer===mark

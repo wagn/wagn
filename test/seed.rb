@@ -13,7 +13,7 @@ class SharedData
 
   def self.add_test_data
     #Account.current_id = Card::WagnBotID
-    CodenameTable.load_bootcodes unless !Wagn::Codename[:wagn_bot].nil?
+    CodenameTable.load_bootcodes unless !Card::Codename[:wagn_bot].nil?
 
     Wagn::Cache.reset_global
     Account.as(Card::WagnBotID)

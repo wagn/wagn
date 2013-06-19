@@ -66,10 +66,6 @@ class Account
       end
     end
     
-    def delete_cardless
-      where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
-    end
-
 #----------
     def current_id
       @@current_id ||= Card::AnonID

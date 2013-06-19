@@ -396,8 +396,8 @@ format :html do
               %{
                 #{ hidden_field_tag 'success[id]', '_self' }
                 #{ hidden_field_tag 'success[view]', 'account' }
-                #{ render_account_details }
-                #{ render_account_roles   }
+                #{ render_account_detail }
+                #{ render_account_role   }
                 <fieldset><div class="button-area">#{ submit_tag 'Save Changes' }</div></fieldset>
               }
             end
@@ -408,7 +408,7 @@ format :html do
   end
 
 
-  view :account_details, :perms=>lambda { |r| r.card.update_account_ok? } do |args|
+  view :account_detail, :perms=>lambda { |r| r.card.update_account_ok? } do |args|
     account = args[:account] || card.account
     
     %{

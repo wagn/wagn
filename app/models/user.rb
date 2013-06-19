@@ -25,36 +25,6 @@ class User < ActiveRecord::Base
   after_save :reset_instance_cache
 
   class << self
-    def admin()          self[ Card::WagnBotID    ]   end
-    def as_user()        self[ Account.as_id      ]   end
-    def user()           self[ Account.current_id ]   end
-
-    def create_ok?
-      base  = Card.new :name=>'dummy*', :type_id=>Card::UserID
-      trait = Card.new :name=>"dummy*+#{Card[:account].name}"
-      base.ok?(:create) && trait.ok?(:create)
-    end
-
-    # FIXME: args=params.  should be less coupled..
-    def create_with_card user_args, card_args, email_args={}
-      card_args[:type_id] ||= Card::UserID
-      @card = Card.fetch card_args[:name], :new => card_args
-      Account.as_bot do
-        @account = User.new(user_args)
-        @account.status = 'active' unless user_args.has_key? :status
-        #Rails.logger.warn "create_wcard #{@account.inspect}, #{user_args.inspect}"
-        @account.generate_password if @account.password.blank?
-        @account.save_with_card(@card)
-        @account.send_account_info(email_args) if @card.errors.empty? && !email_args.empty?
-      end
-      [@account, @card]
-    end
-
-    # Encrypts some data with the salt.
-    def encrypt(password, salt)
-      Digest::SHA1.hexdigest("#{salt}--#{password}--")
-    end
-
     def delete_cardless
       where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
     end
@@ -85,7 +55,8 @@ class User < ActiveRecord::Base
         card.errors.add key,err
       end
       if card.errors.any?
-        card.expire_pieces
+Rails.logger.warn "errors in save w/carc #{card.inspect}"
+        account.expire_pieces
         raise ActiveRecord::Rollback 
       end
       true
@@ -163,7 +134,7 @@ class User < ActiveRecord::Base
 
   # Encrypts the password with the user salt
   def encrypt(password)
-    self.class.encrypt(password, salt)
+    Account.encrypt(password, salt)
   end
 
   # before save

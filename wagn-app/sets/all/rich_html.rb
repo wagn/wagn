@@ -408,7 +408,7 @@ format :html do
   end
 
 
-  view :account_details, :perms=>lambda { |r| r.card.update_account_ok? } do |args|
+  view :account_detail, :perms=>lambda { |r| r.card.update_account_ok? } do |args|
     account = args[:account] || card.account
     
     %{

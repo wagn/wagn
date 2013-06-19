@@ -1,8 +1,7 @@
 # -*- encoding : utf-8 -*-
-module CleanHtml
+module Card::CleanHtml
   class << self
-  ## FIXME:  this is still not quite the right place for clean_html!
-  ##  but it's better than the general string extension library where it was before.
+  ## FIXME: clean_html and diff should both be in athe content class.
 
   ## Dictionary describing allowable HTML
   ## tags and attributes.

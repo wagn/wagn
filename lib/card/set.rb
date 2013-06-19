@@ -8,7 +8,7 @@ class Card
   end
 
   module Set
-    mattr_accessor :current_set_opts, :current_set_module, :current_format
+    mattr_accessor :current_set_opts, :current_set_module
     # View definitions
     #
     #   When you declare:
@@ -33,26 +33,21 @@ class Card
     #
 
 
-    def format fmt=nil
+    def format fmt=nil, &block
       if block_given?
-        f = Wagn::Renderer        
-        Card::Set.current_format = [nil, :base].member?(fmt) ? f : f.get_renderer(fmt)
-        yield        
-        Card::Set.current_format = f
+        format = if fmt.nil?
+          Wagn::Renderer
+        else
+          Wagn::Renderer.get_renderer fmt
+        end
+        format.class_eval &block
       else
         fail "block required"
       end
     end
-
-    def view view, *args, &final
-      view = view.to_name.key.to_sym
-      format = Card::Set.current_format
-      if block_given?
-        format.define_view view, (args[0] || {}), &final
-      else
-        opts = Hash===args[0] ? args.shift : nil
-        format.alias_view view, opts, args.shift
-      end
+    
+    def view *args, &block
+      format do view *args, &block end
     end
     
 

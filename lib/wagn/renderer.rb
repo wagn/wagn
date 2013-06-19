@@ -35,6 +35,15 @@ module Wagn
         const_get( RENDERERS[ format ] || format.to_s.camelize.to_sym )
       end
 
+      def view view, *args, &final
+        view = view.to_name.key.to_sym
+        if block_given?
+          define_view view, (args[0] || {}), &final
+        else
+          opts = Hash===args[0] ? args.shift : nil
+          alias_view view, opts, args.shift
+        end
+      end
 
       def define_view view, opts, &final
         perms[view]       = opts.delete(:perms)      if opts[:perms]

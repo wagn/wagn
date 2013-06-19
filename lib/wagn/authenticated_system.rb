@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-module AuthenticatedSystem
+module Wagn::AuthenticatedSystem
   protected
   def logged_in?
     Account.logged_in?

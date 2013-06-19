@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
 
   include Wagn::Exceptions
 
-  include AuthenticatedSystem
+  include Wagn::AuthenticatedSystem
   include LocationHelper
   include Recaptcha::Verify
   include ActionView::Helpers::SanitizeHelper

@@ -1,12 +1,9 @@
 # -*- encoding : utf-8 -*-
-require File.expand_path('../../spec_helper', File.dirname(__FILE__))
-require File.expand_path('../../pattern_spec_helper', File.dirname(__FILE__))
+require 'wagn/spec_helper'
+require 'wagn/pattern_spec_helper'
+
 
 describe Wagn::Set::All::Pattern do
-  it "module exists and autoloads" do
-    Wagn::Set::All::Pattern.should be_true
-  end
-
 
   describe :set_names do
     it "returns self, type, all for simple cards" do

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
   # encoding: utf-8
-require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+require 'wagn/spec_helper'
 
 describe Card::Name do
 

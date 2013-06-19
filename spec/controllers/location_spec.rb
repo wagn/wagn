@@ -1,5 +1,5 @@
-require File.expand_path('../spec_helper', File.dirname(__FILE__))
-include AuthenticatedTestHelper
+require 'wagn/spec_helper'
+include Wagn::AuthenticatedTestHelper
 
 describe CardController, "location test from old integration" do
 

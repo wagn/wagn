@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
+
 class Card < ActiveRecord::Base
+  require_dependency 'card/query' #need to load explicitly because of AR name conflict
 
   RUBY18 = !!(RUBY_VERSION =~ /^1\.8/)
 
@@ -31,15 +33,12 @@ class Card < ActiveRecord::Base
       else
         super
       end
-#    rescue NameError
-#      warn "ne: const_miss #{e.inspect}, #{const}" #if const.to_sym==:Card
     end
   end
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # Include Card Libraries
 
-  Wagn::SetPatterns
+  Wagn::SetPatterns # this is to trigger the loading of the set patterns.
+  # should be more explicit, and ultimately patterns should be more distributed
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # LOAD Renderers and Sets

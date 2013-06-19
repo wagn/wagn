@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class Wql
+class Card::Query
   include ActiveRecord::QuotingAndMatching
 
   ATTRIBUTES = {
@@ -259,7 +259,7 @@ class Wql
     end
 
     def found_by(val)
-      cards = ( String===val ? [ Card.fetch( absolute_name(val), :new=>{} ) ] : Wql.new(val).run )
+      cards = ( String===val ? [ Card.fetch( absolute_name(val), :new=>{} ) ] : Card::Query.new(val).run )
       cards.each do |c|
         raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && [Card::SearchTypeID,Card::SetID].include?(c.type_id)
         found_by_spec = CardSpec.new(c.get_spec).rawspec
@@ -370,7 +370,7 @@ class Wql
       return "(" + sql.conditions.last + ")" if @mods[:return]=='condition'
 
       # Permissions
-      unless Account.always_ok? or (Wql.root_perms_only && !root?)
+      unless Account.always_ok? or (Card::Query.root_perms_only && !root?)
         sql.conditions <<
          "(#{table_alias}.read_rule_id IN (#{(rr=Account.as_card.read_rules).nil? ? 1 : rr*','}))"
       end

@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-module PatternExampleGroupMethods
+module Wagn::PatternSpecHelper
   def it_generates( opts )
     name = opts[:name]
     card = opts[:from]
@@ -9,4 +9,4 @@ module PatternExampleGroupMethods
   end
 end
 
-RSpec::Core::ExampleGroup.extend PatternExampleGroupMethods
+RSpec::Core::ExampleGroup.extend Wagn::PatternSpecHelper

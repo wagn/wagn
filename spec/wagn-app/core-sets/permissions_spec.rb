@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
-require File.expand_path('../../spec_helper', File.dirname(__FILE__))
-require File.expand_path('../../permission_spec_helper', File.dirname(__FILE__))
-require File.expand_path('../../packs/pack_spec_helper', File.dirname(__FILE__))
+require 'wagn/spec_helper'
+require 'wagn/permission_spec_helper'
+require 'wagn/pack_spec_helper'
 
 describe "reader rules" do
   before do

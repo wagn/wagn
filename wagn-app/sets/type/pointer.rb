@@ -101,7 +101,7 @@ end
 def item_cards( args={} )
   if args[:complete]
     #warn "item_card[#{args.inspect}], :complete"
-    Wql.new({:referred_to_by=>name}.merge(args)).run
+    Card::Query.new({:referred_to_by=>name}.merge(args)).run
   else
     #warn "item_card[#{inspect}], :complete"
     item_names(args).map do |name|

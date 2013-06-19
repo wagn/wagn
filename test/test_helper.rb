@@ -18,7 +18,7 @@ unless defined? TEST_ROOT
 
     # Add more helper methods to be used by all tests here...
 
-    include AuthenticatedTestHelper
+    include Wagn::AuthenticatedTestHelper
     include WagnTestHelper
     
     

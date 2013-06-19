@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+require 'wagn/spec_helper'
 
 class Card
   # REVIEW: hooks api will do this differently, probably should remove and add new tests elsewhere

@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-module AuthenticatedTestHelper
+module Wagn::AuthenticatedTestHelper
   # Sets the current user in the session from the user fixtures.
   def login_as user
     Account.current_id = @request.session[:user] = (uc=Card[user.to_s] and uc.id)

@@ -59,7 +59,7 @@ end
 def hard_templatee_names
   if wql = hard_templatee_spec
     Account.as_bot do
-      Wql.new(wql.merge :return=>:name).run
+      Card::Query.new(wql.merge :return=>:name).run
     end
   else
     []
@@ -81,7 +81,7 @@ def update_templatees args
   # by a +*type plus right+*structure rule, the override would not be respected.
   if query = hard_templatee_spec
     Account.as_bot do
-      Wql.new( query.merge(:return => :id) ).run.each_slice(100) do |id_batch|
+      Card::Query.new( query.merge(:return => :id) ).run.each_slice(100) do |id_batch|
         Card.where( :id => id_batch ).update_all args
       end
     end

@@ -2,9 +2,9 @@
 require File.expand_path('../test_helper', File.dirname(__FILE__))
 
 class UserTest < ActiveSupport::TestCase
-  # Be sure to include AuthenticatedTestHelper in test/test_helper.rb instead.
+  # Be sure to include Wagn::AuthenticatedTestHelper in test/test_helper.rb instead.
   # Then, you can remove it from this and the functional test.
-  include AuthenticatedTestHelper
+  include Wagn::AuthenticatedTestHelper
   #fixtures :users
 
 

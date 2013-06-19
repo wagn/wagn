@@ -14,7 +14,7 @@ describe Wagn::Renderer do
 end
 
 
-describe Wagn::Set::All::Base do
+describe Card::Set::All::Base do
   it "should ignore underscores" do
     render_card(:not_found).should == render_card('not found')
   end

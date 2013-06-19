@@ -43,9 +43,9 @@ end
 
 def related_sets
   # refers to sets that users may configure from the current card - NOT to sets to which the current card belongs
-  sets =     [ ["#{name}+*self",  Wagn::SetPatterns::SelfPattern.label( name) ] ]
-  sets.unshift ["#{name}+*type",  Wagn::SetPatterns::TypePattern.label( name) ] if type_id==Card::CardtypeID
-  sets.push    ["#{name}+*right", Wagn::SetPatterns::RightPattern.label(name) ] if cardname.simple?
+  sets =     [ ["#{name}+*self",  Card::SetPatterns::SelfPattern.label( name) ] ]
+  sets.unshift ["#{name}+*type",  Card::SetPatterns::TypePattern.label( name) ] if type_id==Card::CardtypeID
+  sets.push    ["#{name}+*right", Card::SetPatterns::RightPattern.label(name) ] if cardname.simple?
     
 #      Card.search(:type=>'Set',:left=>{:right=>name},:right=>'*type plus right',:return=>'name').each do |set_name|
 #        sets<< set_name
@@ -57,7 +57,7 @@ module ClassMethods
   def rule_cache
     Card.cache.read('RULES') || begin        
       hash = {}
-      ActiveRecord::Base.connection.select_all( Wagn::Set::All::Rules::RuleSQL ).each do |row|
+      ActiveRecord::Base.connection.select_all( Card::Set::All::Rules::RuleSQL ).each do |row|
         setting_code = Card::Codename[ row['setting_id'].to_i ] or next
         anchor_id = row['anchor_id']
         set_class_id = anchor_id.nil? ? row['set_id'] : row['set_tag_id']
@@ -77,7 +77,7 @@ module ClassMethods
   def read_rule_cache
     Card.cache.read('READRULES') || begin
       hash = {}
-      ActiveRecord::Base.connection.select_all( Wagn::Set::All::Rules::ReadRuleSQL ).each do |row|
+      ActiveRecord::Base.connection.select_all( Card::Set::All::Rules::ReadRuleSQL ).each do |row|
         party_id, read_rule_id = row['party_id'].to_i, row['read_rule_id'].to_i
         hash[party_id] ||= []
         hash[party_id] << read_rule_id

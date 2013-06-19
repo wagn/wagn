@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
 
-describe Wagn::Set do
+describe Card::Set do
   context "load_all" do
     it "loads files in the modules directory" do
       pending 'needs further isolation; generates broader dependency issues'
@@ -14,8 +14,8 @@ describe Wagn::Set do
             end
           EOF
         end
-        Wagn::Set.dirs << file
-        Wagn::Set.load
+        Card::Set.dirs << file
+        Card::Set.load
         JBob.foo.should == "bar"
       ensure
         `rm #{file}`  #PLATFORM SPECIFIC

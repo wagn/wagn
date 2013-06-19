@@ -62,11 +62,11 @@ format :html do
 end
 
 
-include Wagn::Set::Type::SearchType
+include Card::Set::Type::SearchType
 
 def inheritable?
   return true if junction_only?
-  cardname.trunk_name.junction? and cardname.tag_name.key == Wagn::SetPatterns::SelfPattern.key_name.key
+  cardname.trunk_name.junction? and cardname.tag_name.key == Card::SetPatterns::SelfPattern.key_name.key
 end
 
 def subclass_for_set
@@ -97,7 +97,7 @@ end
 
 def setting_codes_by_group
   is_pointer = prototype.type_id == Card::PointerID
-  s = Wagn::Set::Type::Setting
+  s = Card::Set::Type::Setting
   s::SETTING_GROUPS.reject { |k,v| !is_pointer && k == s::POINTER_KEY }
 end
 

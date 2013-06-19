@@ -1,4 +1,4 @@
-module Wagn::SetPatterns
+module Card::SetPatterns
   class BasePattern
 
     class << self

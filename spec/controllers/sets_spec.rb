@@ -5,7 +5,7 @@ include Wagn::AuthenticatedTestHelper
 =begin
 describe CardController do
   it "module exists and autoloads" do
-    Wagn::Set.should be_true
+    Card::Set.should be_true
   end
 
   describe "read all set" do

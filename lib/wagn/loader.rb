@@ -42,10 +42,10 @@ module Wagn
             set_module = set_pattern_const.const_get( *args )
           else
             set_module = set_pattern_const.const_set( acamel, Module.new )
-            set_module.extend Wagn::Set
+            set_module.extend Card::Set
           end
-          Wagn::Set.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
-          Wagn::Set.current_set_module = set_module.name
+          Card::Set.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
+          Card::Set.current_set_module = set_module.name
           
           filename = [dirname, anchor_filename] * '/'
           set_module.class_eval File.read( filename ), filename, 1
@@ -62,7 +62,7 @@ module Wagn
 
       end
     ensure
-      Wagn::Set.current_set_opts = Wagn::Set.current_set_module = nil
+      Card::Set.current_set_opts = Card::Set.current_set_module = nil
     end
 
     private
@@ -78,10 +78,10 @@ module Wagn
       set_pattern_mod_name = set_pattern.camelize
 
       args = Card::RUBY18 ? [ set_pattern_mod_name ] : [ set_pattern_mod_name, false ]
-      if Wagn::Set.const_defined? *args
-        Wagn::Set.const_get *args
+      if Card::Set.const_defined? *args
+        Card::Set.const_get *args
       else
-        Wagn::Set.const_set set_pattern_mod_name, Module.new
+        Card::Set.const_set set_pattern_mod_name, Module.new
       end
     end
 

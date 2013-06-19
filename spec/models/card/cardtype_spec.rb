@@ -207,7 +207,7 @@ describe Card, "Cardtype with Existing Cards" do
 end
 
 
-describe Wagn::Set::Type::Cardtype do
+describe Card::Set::Type::Cardtype do
 
   it "should handle changing away from Cardtype" do
     Account.as_bot do

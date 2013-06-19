@@ -1,15 +1,11 @@
 # -*- encoding : utf-8 -*-
 
-module Wagn
-
-  module ClassMethods
-    def register_pattern klass, index=nil
-      self.set_patterns = [] unless set_patterns
-      set_patterns.insert index.to_i, klass
-    end
+class Card
+  
+  def self.register_pattern klass, index=nil
+    self.set_patterns = [] unless set_patterns
+    set_patterns.insert index.to_i, klass
   end
-
-  Card.extend ClassMethods
 
   module Set
     mattr_accessor :current_set_opts, :current_set_module
@@ -47,29 +43,29 @@ module Wagn
     end
     
     def define_view view, opts, &final
-      Renderer.perms[view]       = opts.delete(:perms)      if opts[:perms]
-      Renderer.error_codes[view] = opts.delete(:error_code) if opts[:error_code]
-      Renderer.denial_views[view]= opts.delete(:denial)     if opts[:denial]
+      Wagn::Renderer.perms[view]       = opts.delete(:perms)      if opts[:perms]
+      Wagn::Renderer.error_codes[view] = opts.delete(:error_code) if opts[:error_code]
+      Wagn::Renderer.denial_views[view]= opts.delete(:denial)     if opts[:denial]
       
       if tags = opts.delete(:tags)
         Array.wrap(tags).each do |tag|
-          Renderer.view_tags[view] ||= {}
-          Renderer.view_tags[view][tag] = true
+          Wagn::Renderer.view_tags[view] ||= {}
+          Wagn::Renderer.view_tags[view][tag] = true
         end
       end
       
-      if set_opts = Wagn::Set.current_set_opts
+      if set_opts = Card::Set.current_set_opts
         opts.merge! set_opts
       end
       
       view_key = get_set_key view, opts
-      #warn "defining view method[#{Renderer.current_class}] _final_#{view_key}" if view_key =~ /stat/
-      Renderer.current_class.class_eval { define_method "_final_#{view_key}", &final }
-      Renderer.subset_views[view] = true if !opts.empty?
+      #warn "defining view method[#{Wagn::Renderer.current_class}] _final_#{view_key}" if view_key =~ /stat/
+      Wagn::Renderer.current_class.class_eval { define_method "_final_#{view_key}", &final }
+      Wagn::Renderer.subset_views[view] = true if !opts.empty?
 
       if !method_defined? "render_#{view}"
-        #warn "defining view method[#{Renderer.renderer}] _render_#{view}"
-        Renderer.current_class.class_eval do
+        #warn "defining view method[#{Wagn::Renderer.renderer}] _render_#{view}"
+        Wagn::Renderer.current_class.class_eval do
           define_method "_render_#{view}" do |*a|
             begin
               a = [{}] if a.empty?
@@ -88,7 +84,7 @@ module Wagn
         end
 
         #Rails.logger.warn "define_method render_#{view}"
-        Renderer.current_class.class_eval do
+        Wagn::Renderer.current_class.class_eval do
           define_method "render_#{view}" do |*a|
             send "_render_#{ ok_view view, *a }", *a
           end
@@ -99,17 +95,17 @@ module Wagn
     
     def alias_view alias_view, opts, referent_view=nil
       
-      Renderer.subset_views[alias_view] = true if opts && !opts.empty?
+      Wagn::Renderer.subset_views[alias_view] = true if opts && !opts.empty?
       
       referent_view ||= alias_view
-      alias_opts = Wagn::Set.current_set_opts || {}
+      alias_opts = Card::Set.current_set_opts || {}
       referent_view_key = get_set_key referent_view, (opts || alias_opts)
       alias_view_key = get_set_key alias_view, alias_opts
       
       #warn "alias = #{alias_view_key}, referent = #{referent_view_key}"
     
       #Rails.logger.info( warn "def view final_alias #{alias_view_key}, #{view_key}" )
-      Renderer.current_class.class_eval do
+      Wagn::Renderer.current_class.class_eval do
         define_method "_final_#{alias_view_key}".to_sym do |*a|
           send "_final_#{referent_view_key}", *a
         end
@@ -120,9 +116,9 @@ module Wagn
 
     def format fmt=nil
       if block_given?
-        Renderer.current_class = Renderer.get_renderer fmt
+        Wagn::Renderer.current_class = Wagn::Renderer.get_renderer fmt
         yield
-        Renderer.current_class = Renderer
+        Wagn::Renderer.current_class = Wagn::Renderer
       else
         fail "block required"
       end
@@ -137,8 +133,8 @@ module Wagn
       Card.define_callbacks event
 
       mod = self.ancestors.first
-      mod_name = mod.name || Wagn::Set.current_set_module
-      mod = if mod == Card || mod_name =~ /^Wagn::Set::All::/
+      mod_name = mod.name || Card::Set.current_set_module
+      mod = if mod == Card || mod_name =~ /^Card::Set::All::/
           Card
         else
           Card.find_set_model_module( mod_name ) || mod

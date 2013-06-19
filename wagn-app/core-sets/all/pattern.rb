@@ -25,7 +25,7 @@ module ClassMethods
 
   def find_set_model_module mod
     module_name_parts = mod.split('::')
-    module_name_parts.inject Wagn::Set do |base, part|
+    module_name_parts.inject Card::Set do |base, part|
       return if base.nil?
       #Rails.logger.warn "find m #{base}, #{part}"
       part = part.camelize

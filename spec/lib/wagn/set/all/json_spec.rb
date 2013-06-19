@@ -2,7 +2,7 @@
 require 'wagn/spec_helper'
 require 'wagn/pack_spec_helper'
 
-describe Wagn::Set::All::Json, "JSON pack" do
+describe Card::Set::All::Json, "JSON pack" do
   context "status view" do
     it "should handle real and virtual cards" do
       r = Wagn::Renderer::Json

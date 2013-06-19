@@ -18,7 +18,7 @@ format :html do
 end
 
 
-include Wagn::Set::Type::Basic
+include Card::Set::Type::Basic
 
 def on_type_change
   custom_validate_delete

@@ -2,10 +2,12 @@
 
 class Card < ActiveRecord::Base
   require_dependency 'card/query' #need to load explicitly because of AR name conflict
+  require_dependency 'card/set' #need to load explicitly because of AR name conflict
+  
 
   RUBY18 = !!(RUBY_VERSION =~ /^1\.8/)
 
-  extend Wagn::Set
+  extend Card::Set
   extend Wagn::Loader
 
   cattr_accessor :set_patterns
@@ -37,7 +39,7 @@ class Card < ActiveRecord::Base
   end
 
 
-  Wagn::SetPatterns # this is to trigger the loading of the set patterns.
+  Card::SetPatterns # this is to trigger the loading of the set patterns.
   # should be more explicit, and ultimately patterns should be more distributed
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

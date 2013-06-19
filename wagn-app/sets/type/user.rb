@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-include Wagn::Set::Type::Basic
+include Card::Set::Type::Basic
 
 attr_accessor :email

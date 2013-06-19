@@ -153,7 +153,7 @@ module Wagn
 
     def layout_from_card
       return unless rule_card = (card.rule_card(:layout) or Card.default_rule_card(:layout))
-      #return unless rule_card.is_a?(Wagn::Set::Type::Pointer) and  # type check throwing lots of warnings under cucumber: rule_card.type_id == Card::PointerID        and
+      #return unless rule_card.is_a?(Card::Set::Type::Pointer) and  # type check throwing lots of warnings under cucumber: rule_card.type_id == Card::PointerID        and
       return unless rule_card.type_id == Card::PointerID        and
           layout_name=rule_card.item_names.first                and
           !layout_name.nil?                                     and

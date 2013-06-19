@@ -2,7 +2,7 @@
 require 'wagn/spec_helper'
 
 # FIXME this shouldn't be here
-describe Wagn::Set::Type::Cardtype, ".create with :codename" do
+describe Card::Set::Type::Cardtype, ".create with :codename" do
   before do
     Account.as :joe_user
   end
@@ -22,7 +22,7 @@ describe Card, "created by Card.new " do
   end
 
   it "should have attribute_tracking updates" do
-    Wagn::Set::All::AttributeTracking::Updates.should === @c.updates
+    Card::Set::All::AttributeTracking::Updates.should === @c.updates
   end
 
   it "should return original value for name" do

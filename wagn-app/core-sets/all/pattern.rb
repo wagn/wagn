@@ -33,8 +33,7 @@ module ClassMethods
       if MODULES.has_key?(key)
         MODULES[key]
       else
-        args = Card::RUBY18 ? [part] : [part, false]
-        MODULES[key] = base.const_defined?(*args) ? base.const_get(*args) : nil
+        MODULES[key] = base.const_get_if_defined part
       end
     end
   rescue Exception => e

@@ -1,4 +1,6 @@
 # -*- encoding : utf-8 -*-
+RUBY_VERSION_18 = !!(RUBY_VERSION =~ /^1\.8/)
+
 class Hash
   def pull(key)
     has_key?(key) && !(v = delete(key)).to_s.empty? ? v : false
@@ -65,3 +67,17 @@ class String
     split(/\n/).map {|line| "<p>#{line.strip.empty? ? '&nbsp;' : line}</p>"} * "\n"
   end
 end
+
+class Module
+  def const_get_if_defined const
+    args = RUBY_VERSION_18 ? [ const ] : [ const, false ]
+    if const_defined? *args
+      const_get *args
+    end
+  end
+  
+  def const_get_or_set const
+    const_get_if_defined const or const_set const, yield
+  end
+end
+

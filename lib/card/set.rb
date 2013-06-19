@@ -47,7 +47,6 @@ class Card
       format do view *args, &block end
     end
     
-
     def event event, opts={}, &final
 
       opts[:on] = [:create, :update ] if opts[:on] == :save
@@ -107,6 +106,7 @@ class Card
         end
       end
     end
+  
 
     # first attempt at non-all sets was to have the callbacks added to the singleton classes.  They were preprocessed as follows....
 
@@ -138,7 +138,6 @@ class Card
     #  I may have been doing something wrong, but it seemed like the callback class attributes were handling things fine, but the runner methods were getting
     #  inappropriately update on the Card class itself.  This wasn't super easy to debug, and the current solution occurred to me in the process, but I wanted to
     #  document the alternative here in case we decide that's ultimately cleaner and more appropriate.
-
 
   end
 end

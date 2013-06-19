@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
-require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
-require File.expand_path('../../../packs/pack_spec_helper', File.dirname(__FILE__))
+require 'wagn/spec_helper'
+require 'wagn/pack_spec_helper'
 
 describe Wagn::Renderer do
   it "should render denial when user lacks read permissions" do

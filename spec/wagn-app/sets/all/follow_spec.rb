@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
+require 'wagn/spec_helper'
 require File.expand_path('../../../../test/seed', File.dirname(__FILE__))
 FUTURE = SharedData::FUTURE
 

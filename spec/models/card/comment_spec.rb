@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+require 'wagn/spec_helper'
 
 
 # FIXME: this test is breaking; I can cut and paste the code into console and it works great. wtf?

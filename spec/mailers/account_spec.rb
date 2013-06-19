@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
-require File.expand_path('../spec_helper', File.dirname(__FILE__))
-include AuthenticatedTestHelper
+require 'wagn/spec_helper'
+include Wagn::AuthenticatedTestHelper
 include EmailSpec::Helpers
 include EmailSpec::Matchers
 

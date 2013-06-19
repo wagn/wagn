@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
-require File.expand_path('../spec_helper', File.dirname(__FILE__))
-include AuthenticatedTestHelper
+require 'wagn/spec_helper'
+include Wagn::AuthenticatedTestHelper
 
 describe CardController do
 
@@ -286,7 +286,7 @@ describe CardController do
 
 
   describe "unit tests" do
-    include AuthenticatedTestHelper
+    include Wagn::AuthenticatedTestHelper
 
     before do
       @simple_card = Card['Sample Basic']

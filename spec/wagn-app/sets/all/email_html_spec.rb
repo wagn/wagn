@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
-require File.expand_path('../../spec_helper', File.dirname(__FILE__))
-require File.expand_path('../pack_spec_helper', File.dirname(__FILE__))
+require 'wagn/spec_helper'
+require 'wagn/pack_spec_helper'
 
 describe Wagn::Renderer::EmailHtml do
   it "should render full urls" do

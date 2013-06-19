@@ -9,7 +9,7 @@
       <%= raw error_messages_for( @card ) %>
 
       <%= raw slot._render_name_editor( :help=>'usually first and last name' ) %>
-      <%= raw slot._render_account_details( :account=>@account, :setup=>true )%>
+      <%= raw slot._render_account_detail( :account=>@account, :setup=>true )%>
     </div>
     
     <fieldset><div class="button-area"><%= submit_tag 'Create' %></div></fieldset>

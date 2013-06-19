@@ -24,6 +24,12 @@ class User < ActiveRecord::Base
   before_save :encrypt_password
   after_save :reset_instance_cache
 
+  class << self
+    def delete_cardless
+      where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
+    end
+  end
+
 #~~~~~~~ Instance
 
   def reset_instance_cache
@@ -50,7 +56,7 @@ class User < ActiveRecord::Base
       end
       if card.errors.any?
 Rails.logger.warn "errors in save w/carc #{card.inspect}"
-        card.expire_pieces
+        account.expire_pieces
         raise ActiveRecord::Rollback 
       end
       true

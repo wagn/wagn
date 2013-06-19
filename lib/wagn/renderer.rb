@@ -5,8 +5,7 @@ module Wagn
 
     include LocationHelper
     
-    cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :current_class
-    @@current_class = Renderer
+    cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags
 
     attr_reader :format, :card, :root, :parent
     attr_accessor :form, :main_content, :error_status
@@ -36,6 +35,80 @@ module Wagn
         const_get( RENDERERS[ format ] || format.to_s.camelize.to_sym )
       end
 
+
+      def define_view view, opts, &final
+        perms[view]       = opts.delete(:perms)      if opts[:perms]
+        error_codes[view] = opts.delete(:error_code) if opts[:error_code]
+        denial_views[view]= opts.delete(:denial)     if opts[:denial]
+
+        if tags = opts.delete(:tags)
+          Array.wrap(tags).each do |tag|
+            view_tags[view] ||= {}
+            view_tags[view][tag] = true
+          end
+        end
+
+        if set_opts = Card::Set.current_set_opts
+          opts.merge! set_opts
+        end
+
+        view_key = get_set_key view, opts
+        #warn "defining view method[#{Wagn::Renderer.current_class}] _final_#{view_key}" if view_key =~ /stat/
+        class_eval { define_method "_final_#{view_key}", &final }
+        subset_views[view] = true if !opts.empty?
+
+        if !method_defined? "render_#{view}"
+          #warn "defining view method[#{Wagn::Renderer.renderer}] _render_#{view}"
+          class_eval do
+            define_method "_render_#{view}" do |*a|
+              begin
+                a = [{}] if a.empty?
+                if final_method = view_method(view)
+                  with_inclusion_mode view do
+                    #Rails.logger.info( warn "rendering final method: #{final_method}" )
+                    send final_method, *a
+                  end
+                else
+                  unsupported_view view
+                end
+              rescue Exception=>e
+                rescue_view e, view
+              end
+            end
+          end
+
+          #Rails.logger.warn "define_method render_#{view}"
+          class_eval do
+            define_method "render_#{view}" do |*a|
+              send "_render_#{ ok_view view, *a }", *a
+            end
+          end
+        end
+
+      end
+
+      def alias_view alias_view, opts, referent_view=nil
+
+        subset_views[alias_view] = true if opts && !opts.empty?
+
+        referent_view ||= alias_view
+        alias_opts = Card::Set.current_set_opts || {}
+        referent_view_key = get_set_key referent_view, (opts || alias_opts)
+        alias_view_key = get_set_key alias_view, alias_opts
+
+        #warn "alias = #{alias_view_key}, referent = #{referent_view_key}"
+
+        #Rails.logger.info( warn "def view final_alias #{alias_view_key}, #{view_key}" )
+        class_eval do
+          define_method "_final_#{alias_view_key}".to_sym do |*a|
+            send "_final_#{referent_view_key}", *a
+          end
+        end
+      end
+
+
+
+
       def new card, opts={}
         format = ( opts[:format].send_if :to_sym ) || :html
         renderer = if self!=Renderer or format.nil? or format == :base
@@ -50,9 +123,21 @@ module Wagn
         new_renderer
       end
       
-      
       def tagged view, tag
         view && tag && @@view_tags[view.to_sym] && @@view_tags[view.to_sym][tag.to_sym]
+      end
+      
+      
+      private
+
+      # the following is poorly named; the "selection_key" (really means view_key, no?) has nothing to do with the set
+      def get_set_key selection_key, opts
+        unless pkey = Card.method_key(opts)
+          raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
+        end
+        key = pkey.blank? ? selection_key : "#{pkey}_#{selection_key}"
+        #warn "gvkey #{selection_key}, #{opts.inspect} R:#{key}"
+        key.to_sym
       end
     end
 

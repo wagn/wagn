@@ -8,7 +8,7 @@ class Card
   end
 
   module Set
-    mattr_accessor :current_set_opts, :current_set_module
+    mattr_accessor :current_set_opts, :current_set_module, :current_format
     # View definitions
     #
     #   When you declare:
@@ -32,99 +32,29 @@ class Card
     # ~~~~~~~~~~  VIEW DEFINITION
     #
 
-    def view view, *args, &final
-      view = view.to_name.key.to_sym
-      if block_given?
-        define_view view, (args[0] || {}), &final
-      else
-        opts = Hash===args[0] ? args.shift : nil
-        alias_view view, opts, args.shift
-      end
-    end
-    
-    def define_view view, opts, &final
-      Wagn::Renderer.perms[view]       = opts.delete(:perms)      if opts[:perms]
-      Wagn::Renderer.error_codes[view] = opts.delete(:error_code) if opts[:error_code]
-      Wagn::Renderer.denial_views[view]= opts.delete(:denial)     if opts[:denial]
-      
-      if tags = opts.delete(:tags)
-        Array.wrap(tags).each do |tag|
-          Wagn::Renderer.view_tags[view] ||= {}
-          Wagn::Renderer.view_tags[view][tag] = true
-        end
-      end
-      
-      if set_opts = Card::Set.current_set_opts
-        opts.merge! set_opts
-      end
-      
-      view_key = get_set_key view, opts
-      #warn "defining view method[#{Wagn::Renderer.current_class}] _final_#{view_key}" if view_key =~ /stat/
-      Wagn::Renderer.current_class.class_eval { define_method "_final_#{view_key}", &final }
-      Wagn::Renderer.subset_views[view] = true if !opts.empty?
-
-      if !method_defined? "render_#{view}"
-        #warn "defining view method[#{Wagn::Renderer.renderer}] _render_#{view}"
-        Wagn::Renderer.current_class.class_eval do
-          define_method "_render_#{view}" do |*a|
-            begin
-              a = [{}] if a.empty?
-              if final_method = view_method(view)
-                with_inclusion_mode view do
-                  #Rails.logger.info( warn "rendering final method: #{final_method}" )
-                  send final_method, *a
-                end
-              else
-                unsupported_view view
-              end
-            rescue Exception=>e
-              rescue_view e, view
-            end
-          end
-        end
-
-        #Rails.logger.warn "define_method render_#{view}"
-        Wagn::Renderer.current_class.class_eval do
-          define_method "render_#{view}" do |*a|
-            send "_render_#{ ok_view view, *a }", *a
-          end
-        end
-      end
-
-    end
-    
-    def alias_view alias_view, opts, referent_view=nil
-      
-      Wagn::Renderer.subset_views[alias_view] = true if opts && !opts.empty?
-      
-      referent_view ||= alias_view
-      alias_opts = Card::Set.current_set_opts || {}
-      referent_view_key = get_set_key referent_view, (opts || alias_opts)
-      alias_view_key = get_set_key alias_view, alias_opts
-      
-      #warn "alias = #{alias_view_key}, referent = #{referent_view_key}"
-    
-      #Rails.logger.info( warn "def view final_alias #{alias_view_key}, #{view_key}" )
-      Wagn::Renderer.current_class.class_eval do
-        define_method "_final_#{alias_view_key}".to_sym do |*a|
-          send "_final_#{referent_view_key}", *a
-        end
-      end
-    end
-
-
 
     def format fmt=nil
       if block_given?
-        Wagn::Renderer.current_class = Wagn::Renderer.get_renderer fmt
-        yield
-        Wagn::Renderer.current_class = Wagn::Renderer
+        f = Wagn::Renderer        
+        Card::Set.current_format = [nil, :base].member?(fmt) ? f : f.get_renderer(fmt)
+        yield        
+        Card::Set.current_format = f
       else
         fail "block required"
       end
     end
 
-
+    def view view, *args, &final
+      view = view.to_name.key.to_sym
+      format = Card::Set.current_format
+      if block_given?
+        format.define_view view, (args[0] || {}), &final
+      else
+        opts = Hash===args[0] ? args.shift : nil
+        format.alias_view view, opts, args.shift
+      end
+    end
+    
 
     def event event, opts={}, &final
 
@@ -217,19 +147,6 @@ class Card
     #  inappropriately update on the Card class itself.  This wasn't super easy to debug, and the current solution occurred to me in the process, but I wanted to
     #  document the alternative here in case we decide that's ultimately cleaner and more appropriate.
 
-
-
-    private
-
-    # the following is poorly named; the "selection_key" (really means view_key, no?) has nothing to do with the set
-    def get_set_key selection_key, opts
-      unless pkey = Card.method_key(opts)
-        raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
-      end
-      key = pkey.blank? ? selection_key : "#{pkey}_#{selection_key}"
-      #warn "gvkey #{selection_key}, #{opts.inspect} R:#{key}"
-      key.to_sym
-    end
 
   end
 end

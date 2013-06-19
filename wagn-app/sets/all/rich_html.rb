@@ -674,11 +674,6 @@ format :html do
     end
   end
   
-end  
-
-
-module Renderer
-    
   def build_menu_items array
     
     array.map do |h|

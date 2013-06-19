@@ -16,10 +16,9 @@ format :html do
      </form>
     }
   end
-end
-view :core, :raw
 
-module Renderer
+  view :core, :raw
+
   private
 
   #hacky.  here for override

@@ -44,6 +44,7 @@ module Wagn
             set_module = set_pattern_const.const_set( acamel, Module.new )
             set_module.extend Card::Set
           end
+          
           Card::Set.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
           Card::Set.current_set_module = set_module.name
           
@@ -53,13 +54,7 @@ module Wagn
           if set_pattern == 'all'
             include_all_model set_module
           end
-
-          args = Card::RUBY18 ? [ :Renderer ] : [ :Renderer, false ]
-          if set_module.const_defined? *args
-            Wagn::Renderer.send :include, set_module.const_get( *args )
-          end
-        end
-
+        end    
       end
     ensure
       Card::Set.current_set_opts = Card::Set.current_set_module = nil

@@ -6,17 +6,26 @@ def item_names(args={})  # needed for flexmail attachments.  hacky.
 end
 
 
-view :source do |args|
-  card.attach.url
-end
+format do
+  view :source do |args|
+    card.attach.url
+  end
 
-view :core do |args|
-  handle_source args do |source|
-    wagn_url source
+  view :core do |args|
+    handle_source args do |source|
+      wagn_url source
+    end
+  end
+
+  def handle_source args
+    source = _render_source args
+    source ? yield( source ) : ''
+  rescue
+    'File Error'
   end
 end
-  
-  
+
+
 format :file do
       
   view :core do |args|               # returns send_file args.  not in love with this...
@@ -69,12 +78,5 @@ format :html do
   
 end
 
-module Renderer
-  def handle_source args
-    source = _render_source args
-    source ? yield( source ) : ''
-  rescue
-    'File Error'
-  end
-end
+
 

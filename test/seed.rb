@@ -4,12 +4,12 @@ require 'timecop'
 
 require_dependency 'card'
 
+# following looks like legacy code to me - efm
 Dir["#{Rails.root}/app/models/card/*.rb"].sort.each do |cardtype|
   require_dependency cardtype
 end
 
 class SharedData
-  FUTURE = Time.local(2020,1,1,0,0,0)
 
   def self.add_test_data
     #Account.current_id = Card::WagnBotID
@@ -147,7 +147,7 @@ class SharedData
 
 
     ### -------- Notification data ------------
-    Timecop.freeze(FUTURE - 1.day) do
+    Timecop.freeze(Wagn::Future::STAMP - 1.day) do
       # fwiw Timecop is apparently limited by ruby Time object, which goes only to 2037 and back to 1900 or so.
       #  whereas DateTime can represent all dates.
 

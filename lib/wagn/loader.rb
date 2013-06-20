@@ -6,8 +6,8 @@ module Wagn
 
   module Loader
     RENDERERS = "#{Rails.root}/lib/card/format/*.rb"
-    CORESETS  = "#{Rails.root}/pack/core-sets"
-    SETS      = "#{Rails.root}/pack/sets"
+    CORESETS  = "#{Rails.root}/pack/core/sets"
+    SETS      = "#{Rails.root}/pack/standard/sets"
 
     def load_formats
       load_dir File.expand_path( RENDERERS, __FILE__ )

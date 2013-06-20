@@ -1,12 +1,9 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
-require File.expand_path('../../../../test/seed', File.dirname(__FILE__))
-FUTURE = SharedData::FUTURE
-
 
 describe "Card" do
   before do
-    Timecop.travel(FUTURE)  # make sure we're ahead of all the test data
+    Timecop.travel(Wagn::Future::STAMP)  # make sure we're ahead of all the test data
     @just_s = [Card["Sara"].id]
     @s_and_j= [Card["Sara"].id, Card["John"].id].sort
   end
@@ -37,7 +34,7 @@ end
 describe "On Card Changes" do
   before do
     Account.current_id = Card['john'].id
-    Timecop.travel(FUTURE)  # make sure we're ahead of all the test data
+    Timecop.travel(Wagn::Future::STAMP)  # make sure we're ahead of all the test data
   end
 
   it "sends notifications of edits" do
@@ -73,7 +70,7 @@ end
 describe "Trunk watcher notificatione" do
   before do
     Account.current_id = Card['joe user'].id
-    Timecop.travel(FUTURE)  # make sure we're ahead of all the test data
+    Timecop.travel(Wagn::Future::STAMP)  # make sure we're ahead of all the test data
 
     Card.create :type=>'Book', :name=>'Ulysses'
     (@ulyss =Card['Ulysses']).should be

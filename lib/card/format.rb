@@ -3,34 +3,23 @@
 class Card
   class Format
     include LocationHelper
-  
-    cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags
-
-    attr_reader :card, :root, :parent
-    attr_accessor :form, :main_content, :error_status
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
-    #DEFAULT_ITEM_VIEW = :link  # should be set in card?
 
-    RENDERERS = { #should be defined in format
-      :email => :email_html,
-      :txt  => :text
-    }
-
+    cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases
+    [ :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases ].each { |acc| self.send "#{acc}=", {} }
     @@max_char_count = 200 #should come from Wagn::Conf
     @@max_depth      = 10 # ditto
-    @@perms          = {}
-    @@denial_views   = {}
-    @@subset_views   = {}
-    @@error_codes    = {}
-    @@view_tags      = {}
 
+    attr_reader :card, :root, :parent
+    attr_accessor :form, :main_content, :error_status
+  
     class << self
 
       def get_format format
-        fkey = RENDERERS[ format ] || format
+        fkey = @@aliases[ format ] || format
         Card.const_get( "#{fkey.to_s.camelize}Format" )
       end
 

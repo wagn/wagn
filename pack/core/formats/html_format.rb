@@ -4,73 +4,8 @@ class Card::HtmlFormat < Card::Format
   attr_accessor  :options_need_save, :start_time, :skip_autosave
 #    DEFAULT_ITEM_VIEW = :closed  #FIXME: It can't access this default
 
-  # these initialize the content of missing builtin layouts
-  LAYOUTS = { 'default' => %{
-<!DOCTYPE HTML>
-<html>
-  <head> {{*head}} </head>
-
-  <body id="wagn">
-    <div id="menu">
-      [[/ | Home]]   [[/recent | Recent]]   {{*navbox}} {{*account links}}
-    </div>
-
-    <div id="primary"> {{_main}} </div>
-
-    <div id="secondary">
-      <div id="logo">[[/ | {{*logo}}]]</div>
-      {{*sidebar}}
-      <div id="credit"><a href="http://www.wagn.org" title="Wagn {{*version}}">Wagn.</a> We're on it.</div>
-      {{*alerts}}
-    </div>
-
-  </body>
-</html> },
-
-        'blank' => %{
-<!DOCTYPE HTML>
-<html>
-  <head> {{*head}} </head>
-  <body id="wagn"> {{_main}} </body>
-</html> },
-
-        'simple' => %{
-<!DOCTYPE HTML>
-<html>
-  <head> {{*head}} </head>
-  <body> {{_main}} </body>
-</html> },
-
-        'none' => '{{_main}}',
-
-        'noside' => %{
-<!DOCTYPE HTML>
-<html>
-  <head> {{*head}} </head>
-
-  <body id="wagn" class="noside">
-    <div id="menu">
-      [[/ | Home]]   [[/recent | Recent]]   {{*navbox}} {{*account links}}
-    </div>
-
-    <div>
-      {{*alerts}}
-      {{_main}}
-      <div id="credit">Wheeled by [[http://www.wagn.org|Wagn]] v. {{*version}}</div>
-    </div>
-
-  </body>
-</html> },
-
-        'pre' => %{
-<!DOCTYPE HTML>
-<html> <body><pre>{{_main|raw}}</pre></body> </html> },
-
- }
- 
-  def self.transactional?
-    true # HTML can handle create, update, delete events.
-  end
+  # builtin layouts allow for rescue / testing
+  LAYOUTS = Wagn::Loader.load_layouts.merge 'none' => '{{_main}}'
  
   @@default_menu = [ 
     { :view=>:edit, :text=>'edit', :if=>:edit, :sub=>[
@@ -121,6 +56,10 @@ class Card::HtmlFormat < Card::Format
         ] }
 
   ]
+  
+  def self.transactional?
+    true # HTML can handle create, update, delete events.
+  end
 
   def get_layout_content(args)
     Account.as_bot do
@@ -365,7 +304,7 @@ class Card::HtmlFormat < Card::Format
 
   # navigation for revisions -
   # --------------------------------------------------
-  # some of this should be in rich_html, maybe most
+  # some of this should be in views, maybe most
   def revision_link text, revision, name, accesskey='', mode=nil
     link_to text, path(:view=>:changes, :rev=>revision, :mode=>(mode || params[:mode] || true) ),
       :class=>"slotter", :remote=>true, :rel=>'nofollow'

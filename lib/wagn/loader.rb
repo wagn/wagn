@@ -54,6 +54,20 @@ module Wagn
       Card::Set.current_set_opts = Card::Set.current_set_module = nil
     end
 
+    
+    def self.load_layouts
+      hash = {}
+      PACKS.each do |pack|
+        dirname = "#{pack}/layouts"
+        next unless File.exists? dirname
+        Dir.foreach( dirname ) do |filename|
+          next if filename =~ /^\./
+          hash[ filename.gsub /\.html$/, '' ] = File.read( [dirname, filename] * '/' )
+        end
+      end
+      hash
+    end
+
     private
 
     def include_all_model set_module

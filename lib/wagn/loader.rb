@@ -5,17 +5,17 @@ module Wagn
   include Wagn::Exceptions
 
   module Loader
-    RENDERERS = "#{Rails.root}/lib/card/format/*.rb"
-    CORESETS  = "#{Rails.root}/pack/core/sets"
-    SETS      = "#{Rails.root}/pack/standard/sets"
+    PACKS = [ 'core', 'standard' ].map { |pack| "#{Rails.root}/pack/#{pack}" }
 
     def load_formats
-      load_dir File.expand_path( RENDERERS, __FILE__ )
+      #cheating on load issues now by putting all inherited-from formats in core pack.
+      PACKS.each do |pack|
+        load_dir File.expand_path( "#{pack}/formats/*.rb", __FILE__ )
+      end
     end
 
     def load_sets
-      load_standard_sets "#{CORESETS}"
-      load_standard_sets "#{SETS}"
+      PACKS.each { |pack| load_standard_sets "#{pack}/sets" }
 
       Wagn::Conf[:pack_dirs].split( /,\s*/ ).each do |dirname|
         load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )

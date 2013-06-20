@@ -10,15 +10,14 @@ class Card
     attr_reader :format, :card, :root, :parent
     attr_accessor :form, :main_content, :error_status
 
-
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     #DEFAULT_ITEM_VIEW = :link  # should be set in card?
 
     RENDERERS = { #should be defined in format
-      :email => :EmailHtml,
-      :txt  => :Text
+      :email => :email_html,
+      :txt  => :text
     }
 
     @@max_char_count = 200 #should come from Wagn::Conf
@@ -32,7 +31,8 @@ class Card
     class << self
 
       def get_format format
-        const_get( RENDERERS[ format ] || format.to_s.camelize.to_sym )
+        fkey = RENDERERS[ format ] || format
+        Card.const_get( "#{fkey.to_s.camelize}Format" )
       end
 
       def view view, *args, &final
@@ -549,18 +549,6 @@ class Card
     end
 
   end
-
-  class Format::Html < Format                ; end
-  
-  class Format::File < Format                ; end
-
-  class Format::Text < Format                ; end
-  class Format::Csv < Format::Text           ; end
-  class Format::Css < Format::Text           ; end
-  
-  class Format::Data < Format                ; end
-  class Format::Json < Format::Data          ; end
-  class Format::Xml < Format::Data           ; end
 
 end
 

@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
-class Card
-  class Format::Html < Format
+class Card::HtmlFormat < Card::Format
     cattr_accessor :default_menu
     attr_accessor  :options_need_save, :start_time, :skip_autosave
 #    DEFAULT_ITEM_VIEW = :closed  #FIXME: It can't access this default
@@ -426,6 +425,5 @@ class Card
     def autosave_revision
        revision_link("Autosaved Draft", card.revisions.count, 'to autosave')
     end
-  end
 
 end

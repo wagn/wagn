@@ -3,6 +3,8 @@
 class Card < ActiveRecord::Base
   require_dependency 'card/query' #need to load explicitly because of AR name conflict
   require_dependency 'card/set'
+  require_dependency 'card/format'
+  
 
   extend Card::Set
   extend Wagn::Loader

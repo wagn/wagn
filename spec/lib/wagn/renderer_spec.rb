@@ -217,7 +217,7 @@ describe Card::Format, "" do
       before do
         Account.as_bot do
           card = Card['A+B']
-          @simple_page = Card::Format::Html.new(card).render(:layout)
+          @simple_page = Card::HtmlFormat.new(card).render(:layout)
           #warn "render sp: #{card.inspect} :: #{@simple_page}"
         end
       end
@@ -367,7 +367,7 @@ describe Card::Format, "" do
         help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
         card = Card.new(:type=>'Cardtype E')
 
-        assert_view_select Card::Format::Html.new(card).render_new, 'div[class~="content-editor"]' do
+        assert_view_select Card::HtmlFormat.new(card).render_new, 'div[class~="content-editor"]' do
           assert_select 'textarea[class="tinymce-textarea card-content"]', :text => '{{+Yoruba}}'
         end
       end
@@ -383,7 +383,7 @@ describe Card::Format, "" do
         mock(card).rule_card(:autoname).returns(nil)
         mock(card).rule_card(:default,  {:skip_modules=>true}   ).returns(Card['*all+*default'])
         mock(card).rule_card(:add_help, {:fallback=>:help} ).returns(help_card)
-        rendered = Card::Format::Html.new(card).render_new
+        rendered = Card::HtmlFormat.new(card).render_new
         #warn "rendered = #{rendered}"
         assert_view_select rendered, 'fieldset' do
           assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', "card[cards][~plus~Yoruba][content]"
@@ -409,7 +409,7 @@ describe Card::Format, "" do
         Card.create(:name=>'Book+author+*type plus right+*default', :type=>'Phrase', :content=>'Zamma Flamma')
       end
       c = Card.new :name=>'Yo Buddddy', :type=>'Book'
-      result = Card::Format::Html.new(c).render( :edit )
+      result = Card::HtmlFormat.new(c).render( :edit )
       assert_view_select result, 'fieldset' do
         assert_select 'input[name=?][type="text"][value="Zamma Flamma"]', 'card[cards][~plus~author][content]'
         assert_select %{input[name=?][type="hidden"][value="#{Card::PhraseID}"]},     'card[cards][~plus~author][type_id]'

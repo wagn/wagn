@@ -1,15 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-class Chunks::Abstract
-end
-
-require_dependency 'chunks/uri'
-require_dependency 'chunks/literal'
-require_dependency 'chunks/reference'
-require_dependency 'chunks/link'
-require_dependency 'chunks/include'
-
-require 'uri/common'
 
 # A chunk is a pattern of text that can be protected
 # and interrogated by a format. Each Chunk class has a
@@ -19,6 +9,15 @@ require 'uri/common'
 
 module Chunks
   class Abstract
+    
+    require_dependency 'chunks/uri'
+    require_dependency 'chunks/literal'
+    require_dependency 'chunks/reference'
+    require_dependency 'chunks/link'
+    require_dependency 'chunks/include'
+
+    require 'uri/common'
+    
     cattr_accessor :prefix_cfg
     @@prefix_cfg = {}
 

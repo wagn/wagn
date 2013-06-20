@@ -9,7 +9,7 @@ module Wagn
     CORESETS  = "#{Rails.root}/wagn-app/core-sets"
     SETS      = "#{Rails.root}/wagn-app/sets"
 
-    def load_renderers
+    def load_formats
       load_dir File.expand_path( RENDERERS, __FILE__ )
     end
 

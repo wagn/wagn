@@ -16,7 +16,7 @@ class Card
       :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     #DEFAULT_ITEM_VIEW = :link  # should be set in card?
 
-    RENDERERS = { #should be defined in renderer
+    RENDERERS = { #should be defined in format
       :email => :EmailHtml,
       :txt  => :Text
     }
@@ -31,7 +31,7 @@ class Card
 
     class << self
 
-      def get_renderer format
+      def get_format format
         const_get( RENDERERS[ format ] || format.to_s.camelize.to_sym )
       end
 
@@ -67,7 +67,7 @@ class Card
         subset_views[view] = true if !opts.empty?
 
         if !method_defined? "render_#{view}"
-          #warn "defining view method[#{Card::Format.renderer}] _render_#{view}"
+          #warn "defining view method[#{Card::Format.format}] _render_#{view}"
           class_eval do
             define_method "_render_#{view}" do |*a|
               begin
@@ -120,16 +120,16 @@ class Card
 
       def new card, opts={}
         format = ( opts[:format].send_if :to_sym ) || :html
-        renderer = if self!=Format or format.nil? or format == :base
+        fmt = if self!=Format or format.nil? or format == :base
               self
             else
-              get_renderer format
+              get_format format
             end
 
         opts[:format] = format
-        new_renderer = renderer.allocate
-        new_renderer.send :initialize, card, opts
-        new_renderer
+        new_format = fmt.allocate
+        new_format.send :initialize, card, opts
+        new_format
       end
       
       def tagged view, tag
@@ -266,14 +266,14 @@ class Card
     # ------------- Sub Format and Inclusion Processing ------------
     #
 
-    def subrenderer subcard, mainline=false
+    def subformat subcard, mainline=false
       #should consider calling "child"
       subcard = Card.fetch( subcard, :new=>{} ) if String===subcard
       sub = self.clone
-      sub.initialize_subrenderer subcard, self, mainline
+      sub.initialize_subformat subcard, self, mainline
     end
 
-    def initialize_subrenderer subcard, parent, mainline=false
+    def initialize_subformat subcard, parent, mainline=false
       @mainline ||= mainline
       @parent = parent
       @card = subcard
@@ -291,7 +291,7 @@ class Card
       return content unless card
       content = card.content if content.blank?
 
-      obj_content = Card::Content===content ? content : Card::Content.new(content, {:card=>card, :renderer=>self})
+      obj_content = Card::Content===content ? content : Card::Content.new(content, {:card=>card, :format=>self})
 
       card.update_references( obj_content, true ) if card.references_expired  # I thik we need this genralized
 
@@ -305,11 +305,11 @@ class Card
 
       view = case
         when @depth >= @@max_depth   ; :too_deep
-        # prevent recursion.  @depth tracks subrenderers (view within views)
+        # prevent recursion.  @depth tracks subformats (view within views)
         when @@perms[view] == :none  ; view
         # This may currently be overloaded.  always allowed = skip modes = never modified.  not sure that's right.
         when !card                   ; :no_card
-        # This should disappear when we get rid of admin and account controllers and all renderers always have cards
+        # This should disappear when we get rid of admin and account controllers and all formats always have cards
 
         # HANDLE UNKNOWN CARDS ~~~~~~~~~~~~
         when !card.known? && !self.class.tagged( view, :unknown_ok )
@@ -415,12 +415,12 @@ class Card
     end
 
     def wrap_main content
-      content  #no wrapping in base renderer
+      content  #no wrapping in base format
     end
 
     def process_inclusion tcard, opts
-      sub = subrenderer tcard, opts[:mainline]
-      oldrenderer, Format.current_slot = Format.current_slot, sub
+      sub = subformat tcard, opts[:mainline]
+      oldformat, Format.current_slot = Format.current_slot, sub
       # don't like depending on this global var switch
       # I think we can get rid of it as soon as we get rid of the remaining rails views?
 
@@ -445,7 +445,7 @@ class Card
       end
 
       result = sub.render(view, opts)
-      Format.current_slot = oldrenderer
+      Format.current_slot = oldformat
       result
     end
 
@@ -490,7 +490,7 @@ class Card
     #  %{[#{klass =~ /wanted/ && '[missing]'}#{href}"#{text && "(#{text.to_s}_"})}
     #end
 
-    # and move this to the html renderer
+    # and move this to the html format
     def final_link href, opts={}
       text = opts[:text] || href
       %{<a class="#{opts[:class]}" href="#{href}">#{text}</a>}

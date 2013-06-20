@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 #require "#{Rails.root}/lib/util/card_builder"
-#require 'renderer'
+#require 'format'
 
 module WagnTestHelper
 
@@ -16,7 +16,7 @@ module WagnTestHelper
     nil
   end
 
-  def new_renderer()
+  def new_format()
     Card::Format.new(Card.new(:name=>'dummy'))
   end
 

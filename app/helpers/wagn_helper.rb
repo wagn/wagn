@@ -22,7 +22,7 @@ module WagnHelper
 
     slot =
       if current = Card::Format.current_slot
-        nil_given ? current : current.subrenderer(card)
+        nil_given ? current : current.subformat(card)
       else
         opts = { :controller => self.controller }
         Card::Format.current_slot = Card::Format.new( card, opts )
@@ -64,10 +64,10 @@ module WagnHelper
   end
 
 
-  def wrap_slot(renderer=nil, args={}, &block)
-    renderer ||= (Card::Format.current_slot || get_slot)
-    content = with_output_buffer { yield(renderer) }
-    renderer.wrap(:open, args.merge(:frame=>true)) { content }
+  def wrap_slot(format=nil, args={}, &block)
+    format ||= (Card::Format.current_slot || get_slot)
+    content = with_output_buffer { yield(format) }
+    format.wrap(:open, args.merge(:frame=>true)) { content }
   end
   # ------------( helpers ) --------------
 

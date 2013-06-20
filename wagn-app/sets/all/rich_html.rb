@@ -370,7 +370,7 @@ format :html do
       %{
         #{ _render_header }
         <div class="card-body">
-          #{ subrenderer( current_set ).render_content }
+          #{ subformat( current_set ).render_content }
 
           #{ if card.accountable?
               %{<div class="new-account-link">

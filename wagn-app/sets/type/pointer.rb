@@ -89,13 +89,13 @@ def collection?
   true
 end
 
-def pointer_items renderer, itemview
+def pointer_items format, itemview
   typeparam = case (type=item_type)
     when String ; ";type:#{type}"
     when Array  ; ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
     else ""
   end
-  renderer.process_content_object content.gsub(/\[\[/,"<div class=\"pointer-item item-#{itemview}\">{{").gsub(/\]\]/,"|#{itemview}#{typeparam}}}</div>")
+  format.process_content_object content.gsub(/\[\[/,"<div class=\"pointer-item item-#{itemview}\">{{").gsub(/\]\]/,"|#{itemview}#{typeparam}}}</div>")
 end
 
 def item_cards( args={} )

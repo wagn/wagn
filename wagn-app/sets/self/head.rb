@@ -10,7 +10,7 @@ format :html do
 
     [:favicon, :logo].each do |name|
       if c = Card[name] and c.type_id == Card::ImageID and !c.content.blank?
-        bits << %{<link rel="shortcut icon" href="#{ subrenderer(c)._render_source :size=>:icon }" />}
+        bits << %{<link rel="shortcut icon" href="#{ subformat(c)._render_source :size=>:icon }" />}
         break
       end
     end

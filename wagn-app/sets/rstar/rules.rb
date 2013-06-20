@@ -6,7 +6,7 @@ format :html do
     rule_card = card.new_card? ? find_current_rule_card[0] : card
 
     rule_content = !rule_card ? '' : begin
-      subrenderer(rule_card)._render_closed_content :set_context=>card.cardname.trunk_name
+      subformat(rule_card)._render_closed_content :set_context=>card.cardname.trunk_name
     end
 
     cells = [
@@ -105,7 +105,7 @@ format :html do
           </div>
           
           <div class="card-body">
-            #{ subrenderer( current_rule )._render rule_view, opts }
+            #{ subformat( current_rule )._render rule_view, opts }
           </div>
         </td>
       </tr>

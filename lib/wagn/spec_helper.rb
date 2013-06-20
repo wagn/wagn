@@ -4,9 +4,9 @@ ENV["RAILS_ENV"] = 'test'
 
 module MySpecHelpers
   def render_test_card card
-    renderer = Card::Format.new card
-    renderer.add_name_context card.name
-    renderer.process_content
+    format = Card::Format.new card
+    format.add_name_context card.name
+    format.process_content
   end
 
   def newcard(name, content="")
@@ -63,7 +63,7 @@ end
 =begin
 
 
-  def get_renderer()
+  def get_format()
     Card::Format.new(Card.new(:name=>'dummy'))
   end
 

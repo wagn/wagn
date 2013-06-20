@@ -34,9 +34,9 @@ def extended_list context = nil
   # this could go on and on.  more elegant to recurse until you don't have a collection
 end
 
-def contextual_content(context_card=nil, renderer_args={})
-  renderer_args[:not_current] = true
-  Card::Format.new(context_card, renderer_args).process_content(
+def contextual_content(context_card=nil, format_args={})
+  format_args[:not_current] = true
+  Card::Format.new(context_card, format_args).process_content(
     Card::Format.new(self, :not_current=>true)._render_raw
   )
 end

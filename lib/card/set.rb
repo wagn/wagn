@@ -14,7 +14,7 @@ class Card
     #   When you declare:
     #     view :view_name, "<set>" do |args|
     #
-    #   Methods are defined on the renderer
+    #   Methods are defined on the format
     #
     #   The external api with checks:
     #     render(:viewname, args)
@@ -36,7 +36,7 @@ class Card
     def format fmt=nil, &block
       if block_given?
         f = Card::Format
-        format = fmt.nil? ? f : f.get_renderer(fmt)
+        format = fmt.nil? ? f : f.get_format(fmt)
         format.class_eval &block
       else
         fail "block required"

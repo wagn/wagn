@@ -89,9 +89,9 @@ class ApplicationController < ActionController::Base
     opts = params[:slot] || {}
     opts[:view] = view || params[:view]      
 
-    renderer = Card::Format.new card, :controller=>self, :format=>format
-    result = renderer.render_show opts
-    status = renderer.error_status || status
+    formatter = Card::Format.new card, :controller=>self, :format=>format
+    result = formatter.render_show opts
+    status = formatter.error_status || status
     
     if format==:file && status==200
       send_file *result

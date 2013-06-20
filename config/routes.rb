@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-FORMATS = 'html|json|xml|rss|kml|css|txt|text|csv' unless defined? FORMATS #should be set by renderers
+FORMATS = 'html|json|xml|rss|kml|css|txt|text|csv' unless defined? FORMATS #should be set by formats
 
 Wagn::Application.routes.draw do
 

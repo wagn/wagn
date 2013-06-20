@@ -40,7 +40,7 @@ view :core do |args|
             <tr class="klass-row anchorless-#{ klass.anchorless? }">
               <td class="setting-klass">#{ klass.anchorless? ? link_to_page( klass.key_name ) : klass.key_name }</td>
               <td class="rule-content-container">
-                <span class="closed-content content">#{ subrenderer(rules[0])._render_closed_content if klass.anchorless? }</span>
+                <span class="closed-content content">#{ subformat(rules[0])._render_closed_content if klass.anchorless? }</span>
               </td>
             </tr>
             #{
@@ -61,7 +61,7 @@ view :core do |args|
                         else
                           %{
                             <td class="rule-content-container">
-                              <span class="closed-content content">#{ subrenderer(rule)._render_closed_content }</span>
+                              <span class="closed-content content">#{ subformat(rule)._render_closed_content }</span>
                             </td>
                           }
                         end

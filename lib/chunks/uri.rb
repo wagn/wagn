@@ -3,7 +3,7 @@ require 'uri'
 require_dependency 'chunks/chunk'
 
 # This wiki chunk matches arbitrary URIs, using patterns from the Ruby URI modules.
-# It parses out a variety of fields that could be used by renderers to format
+# It parses out a variety of fields that could be used by formats to format
 # the links in various ways (shortening domain names, hiding email addresses)
 # It matches email addresses and host.com.au domains without schemes (http://)
 # but adds these on as required.
@@ -51,7 +51,7 @@ class URIChunk < Chunks::Abstract
 
     #warn "uri parse[#{match.inspect}]"
     @uri = URI.parse( match )
-    @process_chunk = self.renderer ? "#{self.renderer.build_link(@link_text, @link_text)}#{@trailing_punctuation}" : @text
+    @process_chunk = self.format ? "#{self.format.build_link(@link_text, @link_text)}#{@trailing_punctuation}" : @text
     self
   end
 
@@ -78,7 +78,7 @@ class EmailURIChunk < URIChunk
   def initialize match, card_params, params
     super
     @text = @text.sub(/^mailto:/,'')  # this removes the prepended string from the unchanged match text
-    @process_chunk = self.renderer ? "#{self.renderer.build_link(@link_text, @text)}#{@trailing_punctuation}" : @text
+    @process_chunk = self.format ? "#{self.format.build_link(@link_text, @text)}#{@trailing_punctuation}" : @text
   end
 end
 
@@ -118,6 +118,6 @@ class HostURIChunk < URIChunk
     super
     @text = @text.sub(/^http:\/\//,'')  # this removes the prepended string from the unchanged match text
     #warn "huri t:#{@text}, #{match}, #{params.inspect}"
-    @process_chunk = self.renderer ? "#{self.renderer.build_link(@link_text, @text)}#{@trailing_punctuation}" : @text
+    @process_chunk = self.format ? "#{self.format.build_link(@link_text, @text)}#{@trailing_punctuation}" : @text
   end
 end

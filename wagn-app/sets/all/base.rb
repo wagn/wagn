@@ -14,7 +14,7 @@ end
 view :core     do |args|  process_content _render_raw(args)            end
 view :content  do |args|  _render_core args                            end
   # this should be done as an alias, but you can't make an alias with an unknown view,
-  # and base renderer doesn't know "content" at this point
+  # and base format doesn't know "content" at this point
 view :titled   do |args|  card.name + "\n\n" + _render_core(args)      end
                                                                               
 view :name,     :perms=>:none  do |args|  card.name                    end
@@ -42,7 +42,7 @@ end
 view :array do |args|
   if card.collection?
     card.item_cards(:limit=>0).map do |item_card|
-      subrenderer(item_card)._render_core(args)
+      subformat(item_card)._render_core(args)
     end
   else
     [ _render_core(args) ]#{ yield } ]
@@ -76,7 +76,7 @@ view :too_deep, :perms=>:none do |args|
   %{ Man, you're too deep.  (Too many levels of inclusions at a time) }
 end
 
-# The below have HTML!?  should not be any html in the base renderer
+# The below have HTML!?  should not be any html in the base format
 
 
 view :closed_missing, :perms=>:none do |args|
@@ -103,6 +103,6 @@ view :template_rule, :tags=>:unknown_ok do |args|
       else
         "#{tname.gsub /^\+/,''}+#{Card[:right].name}"                                      # *right
       end
-    subrenderer( Card.fetch(set_name) ).render_template_link args
+    subformat( Card.fetch(set_name) ).render_template_link args
   end
 end

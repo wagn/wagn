@@ -17,7 +17,7 @@ class Card::Content < SimpleDelegator
 
   attr_reader :revision, :card_options
   def card() @card_options[:card] end
-  def renderer() @card_options[:renderer] end
+  def format() @card_options[:format] end
 
   # for objet_content, it uses this instead of the apply_to by chunk type
   def self.split_content card_params, content

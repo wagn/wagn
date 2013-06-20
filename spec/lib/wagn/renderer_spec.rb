@@ -578,7 +578,7 @@ describe Card::Format, "" do
 # test because it has a very special code path that is really very limited.  It gets
 # internal links expanded in html or xml style, and prety much ignores any other output.
 #
-# this should be short-lived now: moving these tests over from test/unit/renderer_test.rb and adapting as specs
+# this should be short-lived now: moving these tests over from test/unit/format_test.rb and adapting as specs
 
   #attr_accessor :controller
 
@@ -608,9 +608,9 @@ describe Card::Format, "" do
   end
 
   def slot_link card, format=:html
-    renderer = Card::Format.new card, :format=>format
-    renderer.add_name_context
-    result = renderer.render :content
+    format = Card::Format.new card, :format=>format
+    format.add_name_context
+    result = format.render :content
     m = result.match(/<(cardlink|link|a) class.*<\/(cardlink|link|a)>/)
     (m.to_s != "") ? m.to_s : result
   end

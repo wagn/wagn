@@ -2,12 +2,11 @@
 
 class Card
   class Format
-
     include LocationHelper
-    
+  
     cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags
 
-    attr_reader :format, :card, :root, :parent
+    attr_reader :card, :root, :parent
     attr_accessor :form, :main_content, :error_status
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
@@ -116,30 +115,23 @@ class Card
       end
 
 
-
-
       def new card, opts={}
-        format = ( opts[:format].send_if :to_sym ) || :html
-        fmt = if self!=Format or format.nil? or format == :base
-              self
-            else
-              get_format format
-            end
-
-        opts[:format] = format
-        new_format = fmt.allocate
+        klass = self != Format ? self : get_format( (opts[:format] || :html).to_sym )
+        new_format = klass.allocate
         new_format.send :initialize, card, opts
         new_format
       end
-      
+    
       def tagged view, tag
         view && tag && @@view_tags[view.to_sym] && @@view_tags[view.to_sym][tag.to_sym]
       end
-      
-      
+    
+      def transactional?
+        false # default, because most formats don't handle create, update, delete events.  might be better name?
+      end
+    
       private
 
-      # the following is poorly named; the "selection_key" (really means view_key, no?) has nothing to do with the set
       def get_set_key selection_key, opts
         unless pkey = Card.method_key(opts)
           raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
@@ -157,7 +149,6 @@ class Card
         instance_variable_set "@#{key}", value
       end
 
-      @format ||= :html
       @char_count = @depth = 0
       @root = self
 
@@ -179,7 +170,7 @@ class Card
         @showname ||= card.cardname.to_show *@context_names
       end
     end
-    
+  
     def main?
       @depth == 0
     end
@@ -249,7 +240,7 @@ class Card
     def error_cardname
       card && card.name.present? ? card.name : 'unknown card'
     end
-    
+  
     def unknown_view view
       "unknown view: #{view}"
     end
@@ -313,11 +304,11 @@ class Card
 
         # HANDLE UNKNOWN CARDS ~~~~~~~~~~~~
         when !card.known? && !self.class.tagged( view, :unknown_ok )
-    
+  
           case
-          when @format==:html && focal? && ok?( :create )
+          when self.class.transactional? && focal? && ok?( :create )
             :new
-          when @format==:html && comment_box?( view, args ) && ok?( :comment )
+          when self.class.transactional? && comment_box?( view, args ) && ok?( :comment )
             view
           when focal?
             :not_found
@@ -346,14 +337,14 @@ class Card
       #warn "ok_view[#{original_view}] #{view}, #{args.inspect}, Cd:#{card.inspect}" #{caller[0..20]*"\n"}"
       view
     end
-    
+  
     def ok? task
       task = :create if task == :update && card.new_card?
       @ok ||= {}
       @ok[task] = card.ok? task if @ok[task].nil?
       @ok[task]
     end
-    
+  
     def comment_box? view, args
       self.class.tagged view, :comment and args[:show] =~ /comment_box/
     end
@@ -509,10 +500,10 @@ class Card
           return href
           Rails.logger.debug "build_link mistakenly(?) called on #{href}, #{text}"
         end
-          
+        
       final_link href, opts
     end
- 
+
     def card_link name, text, known
       text ||= name
       opts = {
@@ -522,7 +513,7 @@ class Card
       relative_path = known ? name.to_name.url_key : encode_path(name)
       final_link internal_url( relative_path ), opts
     end
-    
+  
     def encode_path path
       ERB::Util.url_encode( path.to_s ).gsub('.', '%2E')
     end
@@ -547,7 +538,6 @@ class Card
       @context_names += name.to_name.part_names
       @context_names.uniq!
     end
-
   end
 
 end

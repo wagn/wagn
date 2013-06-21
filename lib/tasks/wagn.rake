@@ -17,10 +17,8 @@ namespace :wagn do
     Rake::Task['db:schema:load'].invoke
     
     # inserts existing card migrations into schema_migrations_cards to avoid re-migrating
-    current_version = File.read( Wagn::Version.schema_stamp_path :card ).strip
-    migration_paths = Wagn::MigrationHelper.card_migration_paths
     Wagn::MigrationHelper.schema_mode :card do
-      ActiveRecord::Schema.assume_migrated_upto_version current_version, migration_paths
+      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:cards), Wagn::MigrationHelper.card_migration_paths
     end
     
     if Rails.env == 'test'

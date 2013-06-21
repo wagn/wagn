@@ -133,6 +133,6 @@ describe Card::SetPatterns::AllPattern do
   it_generates :name => "*all", :from => Card.new( :type => "Book" )
 end
 
-describe Card::SetPatterns::LeftTypeRightNamePattern do
+describe Card::SetPatterns::TypePlusRightPattern do
   it_generates :name => "Book+author+*type plus right", :from => Card.new( :name=>"Iliad+author" )
 end

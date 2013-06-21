@@ -6,6 +6,27 @@ module Wagn
 
   module Loader
     PACKS = [ 'core', 'standard' ].map { |pack| "#{Rails.root}/pack/#{pack}" }
+    
+    def load_set_patterns
+      PACKS.each do |pack|
+        dirname = "#{pack}/set_patterns"
+        if File.exists? dirname
+          Dir.entries( dirname ).sort.each do |filename|
+            if m = filename.match( /^(\d+_)?([^\.]*).rb/) and key = m[2]
+              mod = Module.new
+              filename = [ dirname, filename ] * '/'
+              mod.class_eval { mattr_accessor :options }
+              mod.class_eval File.read( filename ), filename, 1
+            
+              klass = Card::SetPatterns.const_set "#{key.camelize}Pattern", Class.new( Card::SetPatterns )
+              klass.extend mod
+              klass.register key, (mod.options || {})
+            
+            end
+          end
+        end
+      end
+    end
 
     def load_formats
       #cheating on load issues now by putting all inherited-from formats in core pack.

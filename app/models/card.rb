@@ -38,12 +38,11 @@ class Card < ActiveRecord::Base
   end
 
 
-  Card::SetPatterns # this is to trigger the loading of the set patterns.
-  # should be more explicit, and ultimately patterns should be more distributed
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # LOAD Card::Formats and Sets
 
+  load_set_patterns
   load_formats
   load_sets
 

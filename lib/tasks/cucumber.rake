@@ -39,6 +39,9 @@ begin
       require 'rails/code_statistics'
       ::STATS_DIRECTORIES << %w(Cucumber\ features features) if File.exist?('features')
       ::CodeStatistics::TEST_TYPES << "Cucumber features" if File.exist?('features')
+      ::STATS_DIRECTORIES << %w(Packs pack) if File.exist?('pack') #hack!  should be elsewhere
+      
+      
     end
   end
   desc 'Alias for cucumber:ok'

@@ -3,7 +3,7 @@ include Wagn::AuthenticatedTestHelper
 
 describe CardController, "location test from old integration" do
 
-  include LocationHelper
+  include Wagn::Location
 
   before do
     login_as 'joe_user'

@@ -8,7 +8,7 @@ class Mailer < ActionMailer::Base
   @@defaults[:charset] ||= 'utf-8'
   default @@defaults
 
-  include LocationHelper
+  include Wagn::Location
 
 
   def account_info cd_with_acct, args

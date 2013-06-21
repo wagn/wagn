@@ -2,7 +2,7 @@
 
 class Card
   class Format
-    include LocationHelper
+    include Wagn::Location
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,

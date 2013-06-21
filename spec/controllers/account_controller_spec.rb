@@ -57,6 +57,15 @@ describe AccountController do
     end
 
     #FIXME: tests needed : signup without approval, signup alert emails
+    it 'should provide signup form' do
+      pending "this is needed; couldn't get it to work"
+      Account.as :anonymous do
+        get :signup
+        warn "body = #{response.body}"
+        assert_select 'h1', 'Sign Up'
+        assert_response :success
+      end
+    end
 
     it 'should create a user' do
       #warn "who #{Account.current.inspect}"

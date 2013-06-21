@@ -115,24 +115,24 @@ describe Card::Set::All::Pattern do
   end
 end
 
-describe Card::SetPatterns::RightPattern do
+describe Card::SetPattern::RightPattern do
   it_generates :name => "author+*right", :from => Card.new( :name => "Iliad+author" )
   it_generates :name => "author+*right", :from => Card.new( :name => "+author" )
 end
 
-describe Card::SetPatterns::TypePattern do
+describe Card::SetPattern::TypePattern do
   it_generates :name => "Book+*type", :from => Card.new( :type => "Book" )
 end
 
-describe Card::SetPatterns::AllPlusPattern do
+describe Card::SetPattern::AllPlusPattern do
   it_generates :name => "*all plus", :from => Card.new( :name => "Book+author" )
 end
 
 
-describe Card::SetPatterns::AllPattern do
+describe Card::SetPattern::AllPattern do
   it_generates :name => "*all", :from => Card.new( :type => "Book" )
 end
 
-describe Card::SetPatterns::TypePlusRightPattern do
+describe Card::SetPattern::TypePlusRightPattern do
   it_generates :name => "Book+author+*type plus right", :from => Card.new( :name=>"Iliad+author" )
 end

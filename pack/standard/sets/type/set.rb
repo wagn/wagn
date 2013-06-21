@@ -66,7 +66,7 @@ include Card::Set::Type::SearchType
 
 def inheritable?
   return true if junction_only?
-  cardname.trunk_name.junction? and cardname.tag_name.key == Card::SetPatterns::SelfPattern.key_name.key
+  cardname.trunk_name.junction? and cardname.tag_name.key == Card::SetPattern::SelfPattern.key_name.key
 end
 
 def subclass_for_set

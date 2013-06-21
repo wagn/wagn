@@ -7,6 +7,11 @@ module Wagn
   module Loader
     PACKS = [ 'core', 'standard' ].map { |pack| "#{Rails.root}/pack/#{pack}" }
     
+    def register_pattern klass, index=nil
+      self.set_patterns = [] unless set_patterns
+      set_patterns.insert index.to_i, klass
+    end
+    
     def load_set_patterns
       PACKS.each do |pack|
         dirname = "#{pack}/set_patterns"
@@ -18,7 +23,7 @@ module Wagn
               mod.class_eval { mattr_accessor :options }
               mod.class_eval File.read( filename ), filename, 1
             
-              klass = Card::SetPatterns.const_set "#{key.camelize}Pattern", Class.new( Card::SetPatterns )
+              klass = Card::SetPattern.const_set "#{key.camelize}Pattern", Class.new( Card::SetPattern )
               klass.extend mod
               klass.register key, (mod.options || {})
             
@@ -36,7 +41,7 @@ module Wagn
     end
 
     def load_sets
-      PACKS.each { |pack| load_standard_sets "#{pack}/sets" }
+      PACKS.each { |pack| load_implicit_sets "#{pack}/sets" }
 
       Wagn::Conf[:pack_dirs].split( /,\s*/ ).each do |dirname|
         load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
@@ -44,7 +49,7 @@ module Wagn
     end
 
 
-    def load_standard_sets basedir
+    def load_implicit_sets basedir
 
       Card.set_patterns.reverse.map(&:key).each do |set_pattern|
 
@@ -56,7 +61,7 @@ module Wagn
         Dir.entries( dirname ).sort.each do |anchor_filename|
           next if anchor_filename =~ /^\./
           anchor = anchor_filename.gsub /\.rb$/, ''
-          #FIXME: this doesn't support re-openning of the module from multiple calls to load_standard_sets
+          #FIXME: this doesn't support re-openning of the module from multiple calls to load_implicit_sets
           set_module = set_pattern_const.const_get_or_set( anchor.camelize ) { Module.new }
           set_module.extend Card::Set
           

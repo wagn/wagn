@@ -1,12 +1,6 @@
 # -*- encoding : utf-8 -*-
 
 class Card
-  
-  def self.register_pattern klass, index=nil
-    self.set_patterns = [] unless set_patterns
-    set_patterns.insert index.to_i, klass
-  end
-
   module Set
     mattr_accessor :current_set_opts, :current_set_module
     # View definitions

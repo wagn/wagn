@@ -43,9 +43,9 @@ end
 
 def related_sets
   # refers to sets that users may configure from the current card - NOT to sets to which the current card belongs
-  sets =     [ ["#{name}+*self",  Card::SetPatterns::SelfPattern.label( name) ] ]
-  sets.unshift ["#{name}+*type",  Card::SetPatterns::TypePattern.label( name) ] if type_id==Card::CardtypeID
-  sets.push    ["#{name}+*right", Card::SetPatterns::RightPattern.label(name) ] if cardname.simple?
+  sets =     [ ["#{name}+*self",  Card::SetPattern::SelfPattern.label( name) ] ]
+  sets.unshift ["#{name}+*type",  Card::SetPattern::TypePattern.label( name) ] if type_id==Card::CardtypeID
+  sets.push    ["#{name}+*right", Card::SetPattern::RightPattern.label(name) ] if cardname.simple?
     
 #      Card.search(:type=>'Set',:left=>{:right=>name},:right=>'*type plus right',:return=>'name').each do |set_name|
 #        sets<< set_name

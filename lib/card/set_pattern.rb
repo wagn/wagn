@@ -1,4 +1,4 @@
-class Card::SetPatterns
+class Card::SetPattern
 
   class << self
 
@@ -60,7 +60,8 @@ class Card::SetPatterns
 
     Card.find_set_model_module set_module if set_module
 
-  rescue Exception => e; warn "exception set_const #{e.inspect}," #{e.backtrace*"\n"}"
+  rescue Exception => e
+    warn "exception set_const #{e.inspect}," #{e.backtrace*"\n"}"
   end
 
   def get_method_key

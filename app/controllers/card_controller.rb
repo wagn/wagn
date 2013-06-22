@@ -98,6 +98,10 @@ class CardController < ApplicationController
     handle { card.errors.empty? }
   end
 
+  def show_cache
+    raise Wagn::PermissionDenied unless Account.always_ok?
+    show :show_cache
+  end
 
 
   private

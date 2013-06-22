@@ -16,10 +16,10 @@ class AccountController < ApplicationController
     #FIXME - don't raise; handle it!
     raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless @card.ok? :create
 
+    @account, @card = Account.create_with_card account_params, card_params
     if !request.post? #signup form
-      @account = User.new account_params
+      show :signup
     else
-      @account, @card = Account.create_with_card account_params, card_params
       if @card.errors.any?
         render_errors
       else
@@ -70,8 +70,11 @@ class AccountController < ApplicationController
 
 
   def signin
+    @card = Card.new
     if params[:login]
       password_authentication params[:login], params[:password]
+    else
+      show :signin
     end
   end
 
@@ -87,10 +90,10 @@ class AccountController < ApplicationController
       case
       when @account.nil?
         flash[:notice] = "Unrecognized email."
-        render :action=>'signin', :status=>404
+        show :signin, 404
       when !@account.active?
         flash[:notice] = "That account is not active."
-        render :action=>'signin', :status=>403
+        show :signin, 403
       else
         @account.generate_password
         @account.save!
@@ -127,7 +130,7 @@ class AccountController < ApplicationController
 
   def failed_login(message)
     flash[:notice] = "Oops: #{message}"
-    render :action=>'signin', :status=>403
+    show :signin, 403
   end
 
 end

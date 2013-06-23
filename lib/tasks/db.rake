@@ -40,7 +40,7 @@ namespace :db do
       end
     end
   end
-  
+    
   namespace :test do
     desc 'Prepare the test database and load the schema'
     Rake::Task.redefine_task( :prepare => :environment ) do

@@ -5,6 +5,8 @@ module Wagn
   include Wagn::Exceptions
 
   module Loader
+    mattr_accessor :current_set_opts, :current_set_module, :current_set_name
+
     PACKS = [ 'core', 'standard' ].map { |pack| "#{Rails.root}/pack/#{pack}" }
     
     def register_pattern klass, index=nil
@@ -62,11 +64,12 @@ module Wagn
           next if anchor_filename =~ /^\./
           anchor = anchor_filename.gsub /\.rb$/, ''
           #FIXME: this doesn't support re-openning of the module from multiple calls to load_implicit_sets
-          set_module = set_pattern_const.const_get_or_set( anchor.camelize ) { Module.new }
+          Wagn::Loader.current_set_module = set_module =
+            set_pattern_const.const_get_or_set( anchor.camelize ) { Module.new }
           set_module.extend Card::Set
           
-          Card::Set.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
-          Card::Set.current_set_module = set_module.name
+          Wagn::Loader.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
+          Wagn::Loader.current_set_name = set_module.name
           
           filename = [dirname, anchor_filename] * '/'
           set_module.class_eval File.read( filename ), filename, 1
@@ -77,7 +80,7 @@ module Wagn
         end    
       end
     ensure
-      Card::Set.current_set_opts = Card::Set.current_set_module = nil
+      Wagn::Loader.current_set_opts = Wagn::Loader.current_set_module = Wagn::Loader.current_set_name = nil
     end
 
     

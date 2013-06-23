@@ -45,7 +45,7 @@ class Card
           end
         end
 
-        if set_opts = Card::Set.current_set_opts
+        if set_opts = Wagn::Loader.current_set_opts
           opts.merge! set_opts
         end
 
@@ -89,7 +89,7 @@ class Card
         subset_views[alias_view] = true if opts && !opts.empty?
 
         referent_view ||= alias_view
-        alias_opts = Card::Set.current_set_opts || {}
+        alias_opts = Wagn::Loader.current_set_opts || {}
         referent_view_key = get_set_key referent_view, (opts || alias_opts)
         alias_view_key = get_set_key alias_view, alias_opts
 

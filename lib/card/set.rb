@@ -16,13 +16,11 @@ class Card
     end
 
     def []= set_name, value
-#warn "[#{prepend_base set_name}]= #{value.inspect}"
       modules_by_set[prepend_base set_name] = value
     end
 
     def [] set_name
-      r=modules_by_set[prepend_base set_name]
-#warn "[#{prepend_base set_name}] => #{r.inspect}"; r
+      modules_by_set[prepend_base set_name]
     end
 
     def register_set set_module
@@ -30,21 +28,17 @@ class Card
     end
 
     def set_module_from_name *args
-#warn "set mod lookup #{args.inspect}"
       module_name_parts = args.length == 1 ? args[0].split('::') : args
       r=module_name_parts.inject Card::Set do |base, part|
         return if base.nil?
         part = part.camelize
         module_name = "#{base.name}::#{part}"
-#warn "sm from #{module_name}, #{modules_by_set[module_name].inspect}"
         if modules_by_set.has_key?(module_name)
           modules_by_set[module_name]
         else
           r=modules_by_set[module_name] = base.const_get_or_set( part ) { Module.new }
-#warn "sm store new #{module_name} :: #{r}"; r
         end
       end
-#warn "sm looked up #{module_name_parts.inspect}, #{r}"; r
     rescue Exception => e
     #rescue NameError => e
       Rails.logger.warn "set_module_from_name error #{args.inspect}: #{e.inspect}"

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 #require "#{Rails.root}/lib/util/card_builder"
-#require 'renderer'
+#require 'format'
 
 module WagnTestHelper
 
@@ -16,8 +16,8 @@ module WagnTestHelper
     nil
   end
 
-  def new_renderer()
-    Wagn::Renderer.new(Card.new(:name=>'dummy'))
+  def new_format()
+    Card::Format.new(Card.new(:name=>'dummy'))
   end
 
   def given_card( *card_args )
@@ -28,7 +28,7 @@ module WagnTestHelper
 
 
   def render_test_card( card )
-    r = Wagn::Renderer.new(card)
+    r = Card::Format.new(card)
     r.add_name_context card.name
     r.process_content
   end

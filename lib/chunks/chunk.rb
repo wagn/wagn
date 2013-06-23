@@ -1,24 +1,23 @@
 # -*- encoding : utf-8 -*-
 
-class Chunks::Abstract
-end
-
-require_dependency 'chunks/uri'
-require_dependency 'chunks/literal'
-require_dependency 'chunks/reference'
-require_dependency 'chunks/link'
-require_dependency 'chunks/include'
-
-require 'uri/common'
 
 # A chunk is a pattern of text that can be protected
-# and interrogated by a renderer. Each Chunk class has a
+# and interrogated by a format. Each Chunk class has a
 # +pattern+ that states what sort of text it matches.
 # Chunks are initalized by passing in the result of a
 # match by its pattern.
 
 module Chunks
   class Abstract
+    
+    require_dependency 'chunks/uri'
+    require_dependency 'chunks/literal'
+    require_dependency 'chunks/reference'
+    require_dependency 'chunks/link'
+    require_dependency 'chunks/include'
+
+    require 'uri/common'
+    
     cattr_accessor :prefix_cfg
     @@prefix_cfg = {}
 
@@ -47,8 +46,8 @@ module Chunks
       @card_params[:card]
     end
 
-    def renderer
-      @card_params[:renderer] #||= Wagn::Renderer.new(card) 
+    def format
+      @card_params[:format] #||= Card::Format.new(card) 
     end
 
     def to_s

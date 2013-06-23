@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+require 'wagn/spec_helper'
 
 
 describe "Card::Reference" do
@@ -13,7 +13,7 @@ describe "Card::Reference" do
   describe "references on hard templated cards should get updated" do
     it "on templatee creation" do
       Card.create! :name=>"JoeForm", :type=>'UserForm'
-      Wagn::Renderer.new(Card["JoeForm"]).render(:core)
+      Card::Format.new(Card["JoeForm"]).render(:core)
       assert_equal ["joe_form+age", "joe_form+description", "joe_form+name"],
         Card["JoeForm"].includees.map(&:key).sort
       Card["JoeForm"].references_expired.should_not == true
@@ -27,7 +27,7 @@ describe "Card::Reference" do
       Card.create! :name=>"SpecialForm+*type+*structure", :content=>"{{+bar}}"
       c = Card["Form1"]
       c.references_expired.should be_true
-      Wagn::Renderer.new(Card["Form1"]).render(:core)
+      Card::Format.new(Card["Form1"]).render(:core)
       c = Card["Form1"]
       c.references_expired.should be_nil
       Card["Form1"].includees.map(&:key).should == ["form1+bar"]
@@ -39,7 +39,7 @@ describe "Card::Reference" do
       tmpl.content = "{{+monkey}} {{+banana}} {{+fruit}}";
       tmpl.save!
       Card["JoeForm"].references_expired.should be_true
-      Wagn::Renderer.new(Card["JoeForm"]).render(:core)
+      Card::Format.new(Card["JoeForm"]).render(:core)
       assert_equal ["joe_form+banana", "joe_form+fruit", "joe_form+monkey"],
         Card["JoeForm"].includees.map(&:key).sort
       Card["JoeForm"].references_expired.should_not == true
@@ -191,7 +191,7 @@ describe "Card::Reference" do
   it "revise changes references from wanted to linked for new cards" do
     new_card = Card.create(:name=>'NewCard')
     new_card.revise('Reference to [[WantedCard]], and to [[WantedCard2]]', Time.now, Card['quentin'].account),
-        new_renderer)
+        new_format)
 
     references = new_card.card_references(true)
     references.size.should == 2
@@ -201,7 +201,7 @@ describe "Card::Reference" do
     references[1].ref_type.should == Card::Reference::WANTED_PAGE
 
     wanted_card = Card.create(:name=>'WantedCard')
-    wanted_card.revise('And here it is!', Time.now, Card['quentin'].account), new_renderer)
+    wanted_card.revise('And here it is!', Time.now, Card['quentin'].account), new_format)
 
     # link type stored for NewCard -> WantedCard reference should change from WANTED to LINKED
     # reference NewCard -> WantedCard2 should remain the same

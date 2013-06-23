@@ -31,9 +31,9 @@ module Chunks
     end
     
     def render_obj raw
-      if renderer && Card::Content===raw
-        renderer.card.references_expired = nil # don't love this; this is to keep from running update_references again
-        renderer.process_content raw
+      if format && Card::Content===raw
+        format.card.references_expired = nil # don't love this; this is to keep from running update_references again
+        format.process_content raw
       else
         raw
       end

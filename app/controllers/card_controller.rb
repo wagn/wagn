@@ -93,7 +93,7 @@ class CardController < ApplicationController
     raise Wagn::PermissionDenied, "can't add account to this card" unless card.accountable?
     email_args = { :subject => "Your new #{Card.setting :title} account.",   #ENGLISH
                    :message => "Welcome!  You now have an account on #{Card.setting :title}." } #ENGLISH
-    @account, @card = User.create_with_card params[:account], card, email_args
+    @account, @card = Account.create_with_card params[:account], card, email_args
     
     handle { card.errors.empty? }
   end
@@ -123,7 +123,7 @@ class CardController < ApplicationController
         return wagn_redirect( '/admin/setup' )
       when params[:card] && params[:card][:name]
         params[:card][:name]
-      when Wagn::Renderer.tagged( params[:view], :unknown_ok )
+      when Card::Format.tagged( params[:view], :unknown_ok )
         ''
       else  
         Card.setting(:home) || 'Home'
@@ -154,6 +154,7 @@ class CardController < ApplicationController
           opts[:name] ||= name
           Card.new opts
         else
+Rails.logger.warn "loading #{name}, #{opts.inspect}"
           Card.fetch name, :new=>opts
         end
       end

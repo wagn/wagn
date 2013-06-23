@@ -1,4 +1,4 @@
-require File.expand_path('../spec_helper', File.dirname(__FILE__))
+require 'wagn/spec_helper'
 
 describe AdminController, "admin functions" do
   before do

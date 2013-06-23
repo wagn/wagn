@@ -15,7 +15,12 @@ namespace :wagn do
 
     puts "loading schema"
     Rake::Task['db:schema:load'].invoke
-
+    
+    # inserts existing card migrations into schema_migrations_cards to avoid re-migrating
+    Wagn::MigrationHelper.schema_mode :card do
+      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:cards), Wagn::MigrationHelper.card_migration_paths
+    end
+    
     if Rails.env == 'test'
       puts "loading test fixtures"
       Rake::Task['db:fixtures:load'].invoke
@@ -24,6 +29,7 @@ namespace :wagn do
       Rake::Task['wagn:bootstrap:load'].invoke
     end
   end
+  
   
   
   desc "install wagn configuration files"
@@ -84,27 +90,26 @@ namespace :wagn do
     desc "migrate cards"
     task :cards => :environment do
       Wagn::Conf[:migration] = true
-      
-      rpaths = Rails.application.paths
-      rpaths.add 'db/migrate_cards'
-      paths = ActiveRecord::Migrator.migrations_paths = rpaths['db/migrate_cards'].to_a
     
-      ActiveRecord::Base.table_name_suffix = '_cards'
-      ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
-      ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+      paths = ActiveRecord::Migrator.migrations_paths = Wagn::MigrationHelper.card_migration_paths
+    
+      Wagn::MigrationHelper.schema_mode :card do
+        ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
+        ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+      end
     end
   
     desc 'write the version to a file (not usually called directly)' #maybe we should move this to a method? 
     task :stamp, :suffix do |t, args|
       Wagn::Conf[:migration] = true
       
-      ActiveRecord::Base.table_name_suffix = args[:suffix]
-      stamp_dir = Wagn::Application.config.paths['config/database'].first.sub /[^\/]*$/, ''
-      stamp_file = stamp_dir + "version#{ args[:suffix] }.txt"      
-      version = ActiveRecord::Migrator.current_version
-      puts ">>  writing version: #{version} to #{stamp_file}"
-      if file = open(stamp_file, 'w')
-        file.puts version
+      stamp_file = Wagn::Version.schema_stamp_path args[:suffix]
+      Wagn::MigrationHelper.schema_mode args[:suffix ] do
+        version = ActiveRecord::Migrator.current_version
+        puts ">>  writing version: #{version} to #{stamp_file}"
+        if file = open(stamp_file, 'w')
+          file.puts version
+        end
       end
     end
   end

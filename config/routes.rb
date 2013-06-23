@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-FORMATS = 'html|json|xml|rss|kml|css|txt|text|csv' unless defined? FORMATS #should be set by renderers
+FORMATS = 'html|json|xml|rss|kml|css|txt|text|csv' unless defined? FORMATS #should be set by formats
 
 Wagn::Application.routes.draw do
 
@@ -25,7 +25,7 @@ Wagn::Application.routes.draw do
 
   # legacy                                         
   match 'new/:type'                      => 'card#read', :view=>'new'
-  match 'card/:view(/:id(.:format))'     => 'card#read', :view=> /new|changes|options|edit/
+  match 'card/:view(/:id(.:format))'     => 'card#read', :view=> /new|options|edit/
   
   # standard non-RESTful
   match ':controller/:action(/:id(.:format))'

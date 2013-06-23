@@ -9,15 +9,15 @@ class SaneDataTest < ActiveSupport::TestCase
 
     Card.find(:all).each do |ct|
       if ct.codename == :cardtype
-        assert ct.card.class.include?(Wagn::Set::Type::Cardtype), "#{ct.class_name} has card"
+        assert ct.card.class.include?(Card::Set::Type::Cardtype), "#{ct.class_name} has card"
       end
     end
     #Card.find(:all).each do |c|
-    #  assert ct.cardtype.class.include?(Wagn::Set::Type::Cardtype), "#{c.cardtype} #{c.name} has cardtype card"
+    #  assert ct.cardtype.class.include?(Card::Set::Type::Cardtype), "#{c.cardtype} #{c.name} has cardtype card"
     #  assert_instance_of Cardtype, c.cardtype.extension, "#{c.cardtype} #{c.name} cardtype card has extension"
     #end
     Role.find(:all).each do |r|
-      assert r.card.cardtype.class.include?(Wagn::Set::Type::Role), "Role #{r.codename} has extension"
+      assert r.card.cardtype.class.include?(Card::Set::Type::Role), "Role #{r.codename} has extension"
     end
   end
 

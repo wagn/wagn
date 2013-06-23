@@ -19,7 +19,7 @@ class AccountController < ApplicationController
     if !request.post? #signup form
       @account = User.new account_params
     else
-      @account, @card = User.create_with_card account_params, card_params
+      @account, @card = Account.create_with_card account_params, card_params
       if @card.errors.any?
         render_errors
       else
@@ -60,7 +60,7 @@ class AccountController < ApplicationController
   def invite
     Account.create_ok? or raise(Wagn::PermissionDenied, "You need permission to create")
     @account, @card = request.post? ?
-      User.create_with_card( params[:account], params[:card] ) :
+      Account.create_with_card( params[:account], params[:card] ) :
       [User.new, Card.new()]
     if request.post? and @card.errors.empty?
       @account.send_account_info(params[:email])

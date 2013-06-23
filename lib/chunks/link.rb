@@ -66,9 +66,9 @@ module Chunks
       
       if @explicit_link
         @explicit_link = render_obj @explicit_link
-        renderer.build_link @explicit_link, @link_text
+        format.build_link @explicit_link, @link_text
       elsif @name
-        renderer.card_link referee_name, @link_text, referee_card.send_if(:known?)
+        format.card_link referee_name, @link_text, referee_card.send_if(:known?)
       end
     end
 

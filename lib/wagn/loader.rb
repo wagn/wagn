@@ -5,20 +5,45 @@ module Wagn
   include Wagn::Exceptions
 
   module Loader
-    CARDLIB   = "#{Rails.root}/lib/cardlib/*.rb"
-    RENDERERS = "#{Rails.root}/lib/wagn/renderer/*.rb"
-    SETS      = "#{Rails.root}/wagn-app/sets"
+    mattr_accessor :current_set_opts, :current_set_module, :current_set_name
 
-    def load_cardlib
-      load_dir File.expand_path( CARDLIB, __FILE__ )
+    PACKS = [ 'core', 'standard' ].map { |pack| "#{Rails.root}/pack/#{pack}" }
+
+    def register_pattern klass, index=nil
+      self.set_patterns = [] unless set_patterns
+      set_patterns.insert index.to_i, klass
     end
 
-    def load_renderers
-      load_dir File.expand_path( RENDERERS, __FILE__ )
+    def load_set_patterns
+      PACKS.each do |pack|
+        dirname = "#{pack}/set_patterns"
+        if File.exists? dirname
+          Dir.entries( dirname ).sort.each do |filename|
+            if m = filename.match( /^(\d+_)?([^\.]*).rb/) and key = m[2]
+              mod = Module.new
+              filename = [ dirname, filename ] * '/'
+              mod.class_eval { mattr_accessor :options }
+              mod.class_eval File.read( filename ), filename, 1
+
+              klass = Card::SetPattern.const_set "#{key.camelize}Pattern", Class.new( Card::SetPattern )
+              klass.extend mod
+              klass.register key, (mod.options || {})
+
+            end
+          end
+        end
+      end
+    end
+
+    def load_formats
+      #cheating on load issues now by putting all inherited-from formats in core pack.
+      PACKS.each do |pack|
+        load_dir File.expand_path( "#{pack}/formats/*.rb", __FILE__ )
+      end
     end
 
     def load_sets
-      load_standard_sets
+      PACKS.each { |pack| load_implicit_sets "#{pack}/sets" }
 
       Wagn::Conf[:pack_dirs].split( /,\s*/ ).each do |dirname|
         load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
@@ -26,81 +51,67 @@ module Wagn
     end
 
 
-    def load_standard_sets
-      # load additional sets (and keys) first
-      Dir.glob( "#{SETS}/*_pattern.rb" ).sort.each do |file| load_file file end
+    def load_implicit_sets basedir
 
       Card.set_patterns.reverse.map(&:key).each do |set_pattern|
 
-        dirname = "#{SETS}/#{set_pattern}"
-        next unless File.directory?( dirname )
+        next if set_pattern =~ /^\./
+        dirname = [basedir, set_pattern] * '/'
+        next unless File.exists?( dirname )
 
-        set_pattern_const = get_set_pattern_constant set_pattern
+        Dir.entries( dirname ).sort.each do |anchor_filename|
+          next if anchor_filename =~ /^\./
+          anchor = anchor_filename.gsub /\.rb$/, ''
+          #FIXME: this doesn't support re-openning of the module from multiple calls to load_implicit_sets
+          Wagn::Loader.current_set_module = set_module = Card::Set.set_module_from_name( set_pattern, anchor )
+          set_module.extend Card::Set
 
-        Dir.entries( dirname ).sort.each do |anchor|
+          Wagn::Loader.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
+          Wagn::Loader.current_set_name = set_module.name
 
-          next if anchor =~ /^\./
-          filename = dirname + '/' + anchor
-          anchor.gsub! /\.rb$/, ''
-          Wagn::Set.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
-          Wagn::Set.current_set_module = "#{set_pattern_const.name}::#{anchor.camelize}"
+          filename = [dirname, anchor_filename] * '/'
+          set_module.class_eval File.read( filename ), filename, 1
 
-          mod = self.ancestors.first
-          mod_name = mod.name || Wagn::Set.current_set_module
-          Wagn::Set.module_for_current = case
-            when mod == Card                          ; Card
-            when mod_name =~ /^Cardlib/               ; Card
-            when mod_name =~ /^Wagn::Set::All::/      ; Card
-            when modl = Card.find_set_model_module( mod_name )  ; modl
-            else
-raise "Redefine module" if mod.const_defined? :Model, false
-              mod.const_set :Model, Module.new
-            end
-
-
-          set_module = set_pattern_const.const_set anchor.camelize, ( Module.new do
-            extend Wagn::Set
-            class_eval File.read( filename ), filename, 1
-          end )
-
-          if set_pattern == 'all' and set_module.const_defined? :Model
-            Card.send :include, set_module.const_get( :Model )
-          end
-
-          if set_module.const_defined? :Renderer
-            Wagn::Renderer.send :include, set_module.const_get( :Renderer )
-          end
+          include_all_model set_module if set_pattern == 'all'
         end
-
       end
     ensure
-      Wagn::Set.current_set_opts = Wagn::Set.current_set_module = nil
+      Wagn::Loader.current_set_opts = Wagn::Loader.current_set_module = Wagn::Loader.current_set_name = nil
+    end
+
+
+    def self.load_layouts
+      hash = {}
+      PACKS.each do |pack|
+        dirname = "#{pack}/layouts"
+        next unless File.exists? dirname
+        Dir.foreach( dirname ) do |filename|
+          next if filename =~ /^\./
+          hash[ filename.gsub /\.html$/, '' ] = File.read( [dirname, filename] * '/' )
+        end
+      end
+      hash
     end
 
     private
 
-    def get_set_pattern_constant set_pattern
-      set_pattern_mod_name = set_pattern.camelize
-
-      if Wagn::Set.const_defined? set_pattern_mod_name
-        Wagn::Set.const_get set_pattern.camelize
-      else
-        Wagn::Set.const_set set_pattern.camelize, Module.new
+    def include_all_model set_module
+      Card.send :include, set_module if set_module.instance_methods.any?
+      if class_methods = set_module.const_get_if_defined( :ClassMethods )
+        Card.send :extend, class_methods
       end
     end
 
-    def load_file file
-      #Rails.logger.debug "load_file #{file}"
-      begin
-        require_dependency file
-      rescue Exception=>e
-        Rails.logger.debug "Error loading file #{file}: #{e.message}\n#{e.backtrace*"\n"}"
-        raise e
-      end
-    end
 
     def load_dir dir
-      Dir[dir].sort.each do |file| load_file file end
+      Dir[dir].sort.each do |file|
+        begin
+          require_dependency file
+        rescue Exception=>e
+          Rails.logger.debug "Error loading file #{file}: #{e.message}\n#{e.backtrace*"\n"}"
+          raise e
+        end
+      end
     end
 
   end

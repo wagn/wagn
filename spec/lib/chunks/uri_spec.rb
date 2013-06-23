@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+require 'wagn/spec_helper'
 
 describe URIChunk, "URI chunk tests" do
   it "should test_non_matches" do
@@ -263,7 +263,7 @@ describe URIChunk, "URI chunk tests" do
  end
 
   private
-  CARD_PARMS = { :card => Card.new(:name=>'dummy') , :renderer => nil }
+  CARD_PARMS = { :card => Card.new(:name=>'dummy') , :format => nil }
 
   # Asserts a number of tests for the given type and text.
   def no_match(type, test_text)

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
-require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+require 'wagn/spec_helper'
 
-describe Wagn::Set::Type::Pointer do
+describe Card::Set::Type::Pointer do
   before do
     Account.current_id = Card['joe_user'].id
   end

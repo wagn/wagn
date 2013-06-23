@@ -56,7 +56,7 @@ module Wagn
           next unless cache = klass.cache
           cache.reset hard=true
         end
-        Wagn::Codename.reset_cache
+        Card::Codename.reset_cache
       end
 
       private

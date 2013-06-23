@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 require File.expand_path('../../test_helper', File.dirname(__FILE__))
-class Wagn::Set::Type::AccountRequestTest < ActiveSupport::TestCase
+class Card::Set::Type::AccountRequestTest < ActiveSupport::TestCase
 
 
   def setup

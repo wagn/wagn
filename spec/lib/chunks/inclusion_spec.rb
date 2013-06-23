@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
-require File.expand_path('../../spec_helper', File.dirname(__FILE__))
-require File.expand_path('../../packs/pack_spec_helper', File.dirname(__FILE__))
+require 'wagn/spec_helper'
+require 'wagn/pack_spec_helper'
 
 #FIXME: None of these work now, since inclusion is handled at the slot/cache
 # level, but these cases should still be covered by tests
@@ -20,19 +20,19 @@ describe Chunks::Include, "include chunk tests" do
     qnt = Card.create! :name=>'Quentin', :content=>'{{Admin}}'
     adm = Card['Quentin']
     adm.update_attributes :content => "{{Oak}}"
-    Wagn::Renderer.new(adm).render_core.should match('too deep')
+    Card::Format.new(adm).render_core.should match('too deep')
   end
 
   it "should test_missing_include" do
     @a = Card.create :name=>'boo', :content=>"hey {{+there}}"
-    r=Wagn::Renderer.new(@a).render_core
+    r=Card::Format.new(@a).render_core
     assert_view_select r, 'div[card-name="boo+there"][class~="missing-view"]'
   end
 
   it "should test_absolute_include" do
     alpha = newcard 'Alpha', "Pooey"
     beta = newcard 'Beta', "{{Alpha}}"
-    assert_view_select Wagn::Renderer.new(beta).render_core, 'span[class~="content"]', "Pooey"
+    assert_view_select Card::Format.new(beta).render_core, 'span[class~="content"]', "Pooey"
   end
 
   it "should test_template_inclusion" do
@@ -43,11 +43,11 @@ describe Chunks::Include, "include chunk tests" do
      specialtype_template = specialtype.fetch(:trait=>:type,:new=>{}).fetch(:trait=>:structure,:new=>{})
      specialtype_template.content = "{{#{Card::Name.joint}age}}"
      Account.as_bot { specialtype_template.save! }
-     assert_equal "{{#{Card::Name.joint}age}}", Wagn::Renderer.new(specialtype_template).render_raw
+     assert_equal "{{#{Card::Name.joint}age}}", Card::Format.new(specialtype_template).render_raw
 
      wooga = Card.create! :name=>'Wooga', :type=>'SpecialType'
      wooga_age = Card.create!( :name=>"#{wooga.name}#{Card::Name.joint}age", :content=> "39" )
-     Wagn::Renderer.new(wooga_age).render_core.should == "39"
+     Card::Format.new(wooga_age).render_core.should == "39"
      #warn "cards #{wooga.inspect}, #{wooga_age.inspect}"
      wooga_age.includers.map(&:name).should == ['Wooga']
    end
@@ -56,26 +56,26 @@ describe Chunks::Include, "include chunk tests" do
     alpha = newcard 'Alpha', "{{#{Card::Name.joint}Beta}}"
     beta = newcard 'Beta'
     alpha_beta = Card.create :name=>"#{alpha.name}#{Card::Name.joint}Beta", :content=>"Woot"
-    assert_view_select Wagn::Renderer.new(alpha).render_core, 'span[class~=content]', "Woot"
+    assert_view_select Card::Format.new(alpha).render_core, 'span[class~=content]', "Woot"
   end
 
 
   it "should test_shade_option" do
     alpha = newcard 'Alpha', "Pooey"
     beta = newcard 'Beta', "{{Alpha|shade:off}}"
-    r=Wagn::Renderer.new(newcard('Bee', "{{Alpha|shade:off}}" )).render_core
+    r=Card::Format.new(newcard('Bee', "{{Alpha|shade:off}}" )).render_core
     assert_view_select r, 'div[style~="shade:off;"]' do
       assert_select 'span[class~=content]', "Pooey"
     end
-    r=Wagn::Renderer.new(newcard('Cee', "{{Alpha| shade: off }}" )).render_core
+    r=Card::Format.new(newcard('Cee', "{{Alpha| shade: off }}" )).render_core
     assert_view_select r, 'div[style~="shade:off;"]' do
       assert_select 'span[class~=content]', "Pooey"
     end
-    r=Wagn::Renderer.new(newcard('Dee', "{{Alpha| shade:off }}" )).render_core
+    r=Card::Format.new(newcard('Dee', "{{Alpha| shade:off }}" )).render_core
     assert_view_select r, 'div[style~="shade:off;"]' do
       assert_select 'span[class~="content"]', "Pooey"
     end
-    r=Wagn::Renderer.new(newcard('Eee', "{{Alpha| shade:on }}" )).render_core
+    r=Card::Format.new(newcard('Eee', "{{Alpha| shade:on }}" )).render_core
     assert_view_select r, 'div[style~="shade:on;"]' do
       assert_select 'span[class~="content"]', "Pooey"
     end
@@ -90,7 +90,7 @@ describe Chunks::Include, "include chunk tests" do
     bob_address = Card.create! :name=>'bob+address'
     #FIXME -- does not work retroactively if template is created later.
 
-    r=Wagn::Renderer.new(bob_address.reload).render_core
+    r=Card::Format.new(bob_address.reload).render_core
     assert_view_select r, 'span[class~=content]', "Sparta"
     Card.fetch("bob+address").includees.map(&:name).should == [bob_city.name]
   end
@@ -100,7 +100,7 @@ describe Chunks::Include, "include chunk tests" do
     alpha = newcard 'Alpha', "{{Beta}}"
     beta = newcard 'Beta', "{{Delta}}"
     delta = newcard 'Delta', "Booya"
-    r=Wagn::Renderer.new( alpha ).render_core
+    r=Card::Format.new( alpha ).render_core
     #warn "r=#{r}"
     assert_view_select r, 'span[class~=content]', "Booya"
   end

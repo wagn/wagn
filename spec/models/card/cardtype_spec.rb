@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+require 'wagn/spec_helper'
 
 class Card
   # REVIEW: hooks api will do this differently, probably should remove and add new tests elsewhere
@@ -34,7 +34,7 @@ describe "Card (Cardtype)" do
 
   it "cardtype creation and dynamic cardtype" do
 
-    assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).type_id == Wagn::Codename[:cardtype]
+    assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).type_id == Card::Codename[:cardtype]
     assert_instance_of Card, c=Card.fetch("BananaPudding")
 
     # you have to have a module to include or it's just a Basic (typecode fielde excepted)
@@ -207,7 +207,7 @@ describe Card, "Cardtype with Existing Cards" do
 end
 
 
-describe Wagn::Set::Type::Cardtype do
+describe Card::Set::Type::Cardtype do
 
   it "should handle changing away from Cardtype" do
     Account.as_bot do

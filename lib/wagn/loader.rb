@@ -9,11 +9,6 @@ module Wagn
 
     PACKS = [ 'core', 'standard' ].map { |pack| "#{Rails.root}/pack/#{pack}" }
     
-    def register_pattern klass, index=nil
-      self.set_patterns = [] unless set_patterns
-      set_patterns.insert index.to_i, klass
-    end
-    
     def load_set_patterns
       PACKS.each do |pack|
         dirname = "#{pack}/set_patterns"

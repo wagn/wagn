@@ -9,29 +9,32 @@ module Wagn
 
     PACKS = [ 'core', 'standard' ].map { |pack| "#{Rails.root}/pack/#{pack}" }
 
-    def register_pattern klass, index=nil
-      self.set_patterns = [] unless set_patterns
-      set_patterns.insert index.to_i, klass
-    end
-
     def load_set_patterns
+      all_patterns={}
       PACKS.each do |pack|
         dirname = "#{pack}/set_patterns"
         if File.exists? dirname
-          Dir.entries( dirname ).sort.each do |filename|
+          all_patterns = Dir.entries( dirname ).sort.inject(all_patterns) do |patterns, filename|
             if m = filename.match( /^(\d+_)?([^\.]*).rb/) and key = m[2]
-              mod = Module.new
-              filename = [ dirname, filename ] * '/'
-              mod.class_eval { mattr_accessor :options }
-              mod.class_eval File.read( filename ), filename, 1
-
-              klass = Card::SetPattern.const_set "#{key.camelize}Pattern", Class.new( Card::SetPattern )
-              klass.extend mod
-              klass.register key, (mod.options || {})
-
+             
+              patterns[m[1]] = [key, [ dirname, filename ] * '/']
             end
+            patterns
           end
         end
+      end
+
+Rails.logger.warn "patterns #{all_patterns.keys.sort.inspect}"
+      all_patterns.keys.sort.each do |order_key|
+        key, filename = all_patterns[order_key]
+
+        mod = Module.new
+        mod.class_eval { mattr_accessor :options }
+        mod.class_eval File.read( filename ), filename, 1
+
+        klass = Card::SetPattern.const_set "#{key.camelize}Pattern", Class.new( Card::SetPattern )
+        klass.extend mod
+        klass.register key, (mod.options || {})
       end
     end
 

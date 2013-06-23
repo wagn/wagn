@@ -29,18 +29,17 @@ class Card
 
     def set_module_from_name *args
       module_name_parts = args.length == 1 ? args[0].split('::') : args
-      r=module_name_parts.inject Card::Set do |base, part|
+      module_name_parts.inject Card::Set do |base, part|
         return if base.nil?
         part = part.camelize
         module_name = "#{base.name}::#{part}"
         if modules_by_set.has_key?(module_name)
           modules_by_set[module_name]
         else
-          r=modules_by_set[module_name] = base.const_get_or_set( part ) { Module.new }
+          modules_by_set[module_name] = base.const_get_or_set( part ) { Module.new }
         end
       end
-    rescue Exception => e
-    #rescue NameError => e
+    rescue NameError => e
       Rails.logger.warn "set_module_from_name error #{args.inspect}: #{e.inspect}"
       #warn "set_module_from_name error #{args.inspect}: #{e.inspect} #{e.backtrace*"\n"}"
       return nil if NameError ===e

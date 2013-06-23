@@ -1,4 +1,11 @@
-class Card::SetPattern
+class Card
+
+  def self.register_pattern klass, index=nil
+    self.set_patterns = [] unless self.set_patterns
+    self.set_patterns.insert index.to_i, klass
+  end
+
+ class SetPattern
 
   class << self
 
@@ -120,4 +127,5 @@ class Card::SetPattern
       [ @anchor_id, self.class.key ].map( &:to_s ) * '+'
     end
   end
+ end
 end

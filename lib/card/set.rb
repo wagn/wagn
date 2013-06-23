@@ -2,11 +2,6 @@
 
 class Card
 
-  def self.register_pattern klass, index=nil
-    self.set_patterns = [] unless self.set_patterns
-    self.set_patterns.insert index.to_i, klass
-  end
-
   module Set
     mattr_accessor :modules_by_set
     @@modules_by_set = {}

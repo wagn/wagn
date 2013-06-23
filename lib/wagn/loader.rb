@@ -24,7 +24,6 @@ module Wagn
         end
       end
 
-Rails.logger.warn "patterns #{all_patterns.keys.sort.inspect}"
       all_patterns.keys.sort.each do |order_key|
         key, filename = all_patterns[order_key]
 

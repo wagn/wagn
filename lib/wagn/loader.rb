@@ -58,14 +58,12 @@ module Wagn
         next if set_pattern =~ /^\./
         dirname = [basedir, set_pattern] * '/'
         next unless File.exists?( dirname )
-        set_pattern_const = Card::Set.const_get_or_set( set_pattern.camelize ) { Module.new }
 
         Dir.entries( dirname ).sort.each do |anchor_filename|
           next if anchor_filename =~ /^\./
           anchor = anchor_filename.gsub /\.rb$/, ''
           #FIXME: this doesn't support re-openning of the module from multiple calls to load_implicit_sets
-          Wagn::Loader.current_set_module = set_module =
-            set_pattern_const.const_get_or_set( anchor.camelize ) { Module.new }
+          Wagn::Loader.current_set_module = set_module = Card::Set.set_module_from_name( set_pattern, anchor )
           set_module.extend Card::Set
           
           Wagn::Loader.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
@@ -74,9 +72,7 @@ module Wagn
           filename = [dirname, anchor_filename] * '/'
           set_module.class_eval File.read( filename ), filename, 1
 
-          if set_pattern == 'all'
-            include_all_model set_module
-          end
+          include_all_model set_module if set_pattern == 'all'
         end    
       end
     ensure

@@ -11,26 +11,18 @@ class Card
     mattr_accessor :modules_by_set
     @@modules_by_set = {}
 
-=begin
-    #@@sets_callbacks = {}
-    def sets_callback
-#warn "scallbcks #{Wagn::Loader.current_set_name},  #{sets_callbacks.inspect}"
-      sets_callbacks[Wagn::Loader.current_set_name] ||= []
-    end
-=end
-
     def prepend_base set_name
       set_name =~ /^Card::Set::/ ? set_name : 'Card::Set::' + set_name
     end
 
     def []= set_name, value
+#warn "[#{prepend_base set_name}]= #{value.inspect}"
       modules_by_set[prepend_base set_name] = value
     end
 
     def [] set_name
-      #return if set_name[-2] == '::'
       r=modules_by_set[prepend_base set_name]
-#warn "lookup set #{set_name} r:#{r}"; r
+#warn "[#{prepend_base set_name}] => #{r.inspect}"; r
     end
 
     def register_set set_module
@@ -38,22 +30,21 @@ class Card
     end
 
     def set_module_from_name *args
+#warn "set mod lookup #{args.inspect}"
       module_name_parts = args.length == 1 ? args[0].split('::') : args
-#warn "set_module_from_name #{args.inspect}, #{module_name_parts.inspect}"
-r=
-      module_name_parts.inject Card::Set do |base, part|
-        #warn "find m #{base.inspect}, #{part}"
+      r=module_name_parts.inject Card::Set do |base, part|
         return if base.nil?
         part = part.camelize
-        set_name = "#{base.name}::#{part}"
-        #warn "find m #{base.name}, #{part} : #{set_name}"
-        if modules_by_set.has_key?(set_name)
-          modules_by_set[set_name]
+        module_name = "#{base.name}::#{part}"
+#warn "sm from #{module_name}, #{modules_by_set[module_name].inspect}"
+        if modules_by_set.has_key?(module_name)
+          modules_by_set[module_name]
         else
-          modules_by_set[set_name] = base.const_get_or_set( part ) { Module.new }
+          r=modules_by_set[module_name] = base.const_get_or_set( part ) { Module.new }
+#warn "sm store new #{module_name} :: #{r}"; r
         end
       end
-#Rails.logger.warn "set_module_from_name #{args.inspect}, #{module_name_parts.inspect} R:#{r}"; r
+#warn "sm looked up #{module_name_parts.inspect}, #{r}"; r
     rescue Exception => e
     #rescue NameError => e
       Rails.logger.warn "set_module_from_name error #{args.inspect}: #{e.inspect}"

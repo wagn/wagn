@@ -53,12 +53,12 @@ class Card::SetPattern
 
   def set_const
     set_module = case
-      when  self.class.anchorless?    ; self.class.key
+      when  self.class.anchorless?    ; self.class.key.camelize
       when  opt_vals.member?( nil )  ; nil
-      else  "#{self.class.key}::#{opt_vals * '_'}"
+      else  "#{self.class.key.camelize}::#{opt_vals.map(&:to_s).map(&:camelize) * '_'}"
       end
 
-    Card.find_set_model_module set_module if set_module
+    Card::Set[set_module] if set_module
 
   rescue Exception => e
     warn "exception set_const #{e.inspect}," #{e.backtrace*"\n"}"

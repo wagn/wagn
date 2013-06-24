@@ -58,17 +58,21 @@ class Card
   end
 
 
-  def set_const
-    set_module = case
-      when  self.class.anchorless?    ; self.class.key.camelize
-      when  opt_vals.member?( nil )  ; nil
-      else  "#{self.class.key.camelize}::#{opt_vals.map(&:to_s).map(&:camelize) * '_'}"
-      end
+  def set_module_name
+    case
+    when self.class.anchorless?   ; self.class.key.camelize
+    when opt_vals.member?( nil )  ; nil
+    else "#{self.class.key.camelize}::#{opt_vals.map(&:to_s).map(&:camelize) * '_'}"
+    end
+  end
 
-    Card::Set[set_module] if set_module
+  def set_const
+    if set_module = self.set_module_name
+      Card::Set[set_module]
+    end
 
   rescue Exception => e
-    warn "exception set_const #{e.inspect}," #{e.backtrace*"\n"}"
+    warn "exception set_const #{e.inspect}, #{e.backtrace*"\n"}"
   end
 
   def get_method_key

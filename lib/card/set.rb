@@ -130,7 +130,80 @@ class Card
       end
     end
 
+    #
+    # ActiveCard support: accessing plus cards as attributes
+    #
 
-  end
+
+    mattr_accessor :traits
+
+    def card_accessor *args
+      options = args.extract_options!
+      add_traits args, options.merge( :reader=>true, :writer=>true )
+    end
+
+    def card_reader *args
+      options = args.extract_options!
+      add_traits args, options.merge( :reader=>true )
+    end
+
+    def card_writer *args
+      options = args.extract_options!
+      add_traits args, options.merge( :writer=>true )
+      options = args.extract_options!
+    end
+
+    def card_attributes
+      set_modules.each do |mod|
+        if mod_traits = Card::Set.traits && Card::Set.traits[mod]
+          return mod_traits
+        end
+      end
+    end
+
+  private
+
+    def add_traits args, options
+      raise "Can't define card traits on all set" if Wagn::Loader.current_set_module == Card
+
+      Card::Set.traits ||= {}
+      mod_traits = Card::Set.traits[Wagn::Loader.current_set_module]
+      if mod_traits.nil?
+        #warn "active card #{Wagn::Loader.current_set_name}"
+        mod_traits = Card::Set.traits[Wagn::Loader.current_set_module] = {}
+      end
+      #warn "card_trait #{args.inspect}, #{options.inspect}"
+      args.each do |trait|
+        trait_sym = trait.to_sym
+        trait_card = "#{trait}_card".to_sym
+        #warn "second definition of #{trait} at: #{caller[0]}" if mod_traits[trait]
+       if options[:reader]
+         Wagn::Loader.current_set_module.class_eval do
+           define_method trait_card do
+             card = instance_variable_get( "@#{trait_card}" ) ||
+               instance_variable_set( "@#{trait_card}", fetch(:trait=>trait_sym, :new=>{}) )
+warn "get trait #{trait}: #{card.inspect}"; card
+           end
+           define_method trait do
+             send(trait_card).content
+           end
+         end
+       end
+       if options[:writer]
+         Wagn::Loader.current_set_module.class_eval do
+           define_method "#{trait}=" do |value|
+warn "card?? #{value.inspect}" unless Card===value
+             card = send trait_card
+             card.content = value
+warn "set #{trait} on #{inspect} tc:#{card.inspect} to #{value.inspect}"
+             instance_variable_set "@#{trait}", value
+           end
+         end
+       end
+       mod_traits[trait_sym] = options
+     end
+
+   end
+ end
 end
 

@@ -122,9 +122,10 @@ class Card
                  {:prepend=>true } 
                else
                  parts = mod_name.split '::'
-                 set_key = Card.method_key( { parts[-2].underscore.to_sym => parts[-1].underscore } )
-                 { :prepend=>true, :if => proc do |c| c.method_keys.member? set_key end }
-               end
+                 set_class_key, anchor_or_placeholder = parts[-2].underscore.to_sym, parts[-1].underscore
+                 set_key = Card.method_key( set_class_key => anchor_or_placeholder )
+                 { :prepend=>true, :if => proc do |c| c.method_keys.member? set_key end } if set_key.present? 
+               end and
           Card.class_eval { set_callback object_method, kind, event, options }
         end
       end

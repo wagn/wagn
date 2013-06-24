@@ -153,14 +153,6 @@ class Card
       options = args.extract_options!
     end
 
-    def card_attributes
-      set_modules.each do |mod|
-        if mod_traits = Card::Set.traits && Card::Set.traits[mod]
-          return mod_traits
-        end
-      end
-    end
-
   private
 
     def add_traits args, options
@@ -180,9 +172,7 @@ class Card
        if options[:reader]
          Wagn::Loader.current_set_module.class_eval do
            define_method trait_card do
-             card = instance_variable_get( "@#{trait_card}" ) ||
-               instance_variable_set( "@#{trait_card}", fetch(:trait=>trait_sym, :new=>{}) )
-warn "get trait #{trait}: #{card.inspect}"; card
+             card = trait_var("@#{trait_card}") do fetch(:trait=>trait_sym, :new=>{}) end
            end
            define_method trait do
              send(trait_card).content
@@ -192,10 +182,10 @@ warn "get trait #{trait}: #{card.inspect}"; card
        if options[:writer]
          Wagn::Loader.current_set_module.class_eval do
            define_method "#{trait}=" do |value|
-warn "card?? #{value.inspect}" unless Card===value
              card = send trait_card
              card.content = value
-warn "set #{trait} on #{inspect} tc:#{card.inspect} to #{value.inspect}"
+#warn "set #{trait} on #{inspect} tc:#{card.inspect} to #{value.inspect}"
+             
              instance_variable_set "@#{trait}", value
            end
          end

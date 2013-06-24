@@ -18,7 +18,7 @@ class Card::SetPattern
     def register key, opts={}
       if self.key_id = Card::Codename[key]
         self.key = key
-        Card.register_pattern self, opts.delete(:index)
+        Wagn::Loader.register_pattern self, opts.delete(:index)
         if self.anchorless = !respond_to?( :anchor_name )
           self.method_key = opts[:method_key] || key
         end

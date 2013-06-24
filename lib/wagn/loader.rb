@@ -8,7 +8,11 @@ module Wagn
     mattr_accessor :current_set_opts, :current_set_module, :current_set_name
 
     PACKS = [ 'core', 'standard' ].map { |pack| "#{Rails.root}/pack/#{pack}" }
-    
+
+    def self.register_pattern klass, index=nil
+      Card.set_patterns.insert index.to_i, klass
+    end
+ 
     def load_set_patterns
       PACKS.each do |pack|
         dirname = "#{pack}/set_patterns"

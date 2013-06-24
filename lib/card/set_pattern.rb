@@ -1,11 +1,4 @@
-class Card
-
-  def self.register_pattern klass, index=nil
-    self.set_patterns = [] unless self.set_patterns
-    self.set_patterns.insert index.to_i, klass
-  end
-
- class SetPattern
+class Card::SetPattern
 
   class << self
 
@@ -25,7 +18,7 @@ class Card
     def register key, opts={}
       if self.key_id = Card::Codename[key]
         self.key = key
-        Card.register_pattern self, opts.delete(:index)
+        Wagn::Loader.register_pattern self, opts.delete(:index)
         if self.anchorless = !respond_to?( :anchor_name )
           self.method_key = opts[:method_key] || key
         end
@@ -131,5 +124,4 @@ class Card
       [ @anchor_id, self.class.key ].map( &:to_s ) * '+'
     end
   end
- end
 end

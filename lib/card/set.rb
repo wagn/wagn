@@ -6,23 +6,27 @@ class Card
     mattr_accessor :modules_by_set
     @@modules_by_set = {}
 
-    def prepend_base set_name
+  private
+
+    def self.prepend_base set_name
       set_name =~ /^Card::Set::/ ? set_name : 'Card::Set::' + set_name
     end
 
-    def []= set_name, value
+  public
+
+    def self.[]= set_name, value
       modules_by_set[prepend_base set_name] = value
     end
 
-    def [] set_name
+    def self.[] set_name
       modules_by_set[prepend_base set_name]
     end
 
-    def register_set set_module
+    def self.register_set set_module
       Card::Set[set_module.name]= set_module
     end
 
-    def set_module_from_name *args
+    def self.set_module_from_name *args
       module_name_parts = args.length == 1 ? args[0].split('::') : args
       module_name_parts.inject Card::Set do |base, part|
         return if base.nil?
@@ -39,9 +43,6 @@ class Card
       #warn "set_module_from_name error #{args.inspect}: #{e.inspect} #{e.backtrace*"\n"}"
       return nil if NameError ===e
     end
-
-    module_function :[]=, :[], :prepend_base, :set_module_from_name, :register_set
-    public :[]=, :[], :set_module_from_name, :register_set
 
 
     # View definitions

@@ -44,6 +44,14 @@ class Card
       return nil if NameError ===e
     end
 
+    def self.clean_empty_modules
+      modules_by_set.each do |mod_name, mod|
+        if mod.instance_methods.empty?
+warn "no methods in #{mod_name}"
+          modules_by_set.delete mod_name
+        end
+      end
+    end
 
     # View definitions
     #

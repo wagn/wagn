@@ -154,7 +154,6 @@ class CardController < ApplicationController
           opts[:name] ||= name
           Card.new opts
         else
-Rails.logger.warn "loading #{name}, #{opts.inspect}"
           Card.fetch name, :new=>opts
         end
       end

@@ -288,8 +288,6 @@ class Card
         # prevent recursion.  @depth tracks subformats (view within views)
         when @@perms[view] == :none  ; view
         # This may currently be overloaded.  always allowed = skip modes = never modified.  not sure that's right.
-        when !card                   ; :no_card
-        # This should disappear when we get rid of admin and account controllers and all formats always have cards
 
         # HANDLE UNKNOWN CARDS ~~~~~~~~~~~~
         when !card.known? && !self.class.tagged( view, :unknown_ok )

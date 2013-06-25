@@ -47,6 +47,8 @@ module Wagn
       Wagn::Conf[:pack_dirs].split( /,\s*/ ).each do |dirname|
         load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
       end
+
+      Card::Set.clean_empty_modules
     end
 
 

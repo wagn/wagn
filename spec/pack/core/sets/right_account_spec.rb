@@ -16,7 +16,7 @@ describe Card do
       @account_card.email= 'NewSara@user.com'
       @account_card.email.should == 'NewSara@user.com'
       Account.as_bot { @account_card.save }
-      warn "card #{@account_card.inspect}, #{@account_card.errors.map { |k,v| "error #{k} :: #{v}" }}"
+      Rails.logger.warn "card #{@account_card.inspect}, #{@account_card.content}, #{@account_card.errors.map { |k,v| "error #{k} :: #{v}" }}"
       Card.cache.reset
       @account_card = Card['sara'].fetch(:trait=>:account)
       @account_card.email.should == 'NewSara@user.com'

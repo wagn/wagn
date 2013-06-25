@@ -125,28 +125,28 @@ module Card::Set
     set_name =~ /^Card::Set::/ ? set_name : 'Card::Set::' + set_name
   end
 
-    #
-    # ActiveCard support: accessing plus cards as attributes
-    #
+  #
+  # ActiveCard support: accessing plus cards as attributes
+  #
 
 
-    mattr_accessor :traits
+  mattr_accessor :traits
 
-    def card_accessor *args
-      options = args.extract_options!
-      add_traits args, options.merge( :reader=>true, :writer=>true )
-    end
+  def card_accessor *args
+    options = args.extract_options!
+    add_traits args, options.merge( :reader=>true, :writer=>true )
+  end
 
-    def card_reader *args
-      options = args.extract_options!
-      add_traits args, options.merge( :reader=>true )
-    end
+  def card_reader *args
+    options = args.extract_options!
+    add_traits args, options.merge( :reader=>true )
+  end
 
-    def card_writer *args
-      options = args.extract_options!
-      add_traits args, options.merge( :writer=>true )
-      options = args.extract_options!
-    end
+  def card_writer *args
+    options = args.extract_options!
+    add_traits args, options.merge( :writer=>true )
+    options = args.extract_options!
+  end
 
   private
 
@@ -177,14 +177,32 @@ module Card::Set
           end
         end
       end
-      if options[:writer]
-        Wagn::Loader.current_set_module.class_eval do
-          define_method "#{trait}=" do |value|
-            card = send trait_card
-            card.content = value
-warn "set #{trait} on #{inspect} tc:#{card.inspect} to #{value.inspect}"
-             
-            instance_variable_set "@#{trait}", value
+      #warn "card_trait #{args.inspect}, #{options.inspect}"
+      args.each do |trait|
+        trait_sym = trait.to_sym
+        trait_card = "#{trait}_card".to_sym
+        #warn "second definition of #{trait} at: #{caller[0]}" if mod_traits[trait]
+        if options[:reader]
+          Wagn::Loader.current_set_module.class_eval do
+            define_method trait_card do
+              new_opts = options[:type] ? {:type=>options[:type]} : {}
+              new_opts.merge!( {:content => options[:default]} ) if options[:default]
+              card = trait_var("@#{trait_card}") do fetch(:trait=>trait_sym, :new=>new_opts) end
+            end
+            define_method trait do
+              send(trait_card).content
+            end
+          end
+        end
+        if options[:writer]
+          Wagn::Loader.current_set_module.class_eval do
+            define_method "#{trait}=" do |value|
+              card = send trait_card
+              card.content = value
+Rails.logger.warn "set #{trait} on #{inspect} tc:#{card.inspect} to #{value.inspect}"
+
+              instance_variable_set "@#{trait}", value
+            end
           end
         end
       end

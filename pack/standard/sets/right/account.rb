@@ -16,7 +16,7 @@ event :valid_account, :before=>:save do
 
   downcase_email!
 
-  warn "valid_account #{email.inspect}, #{email_required?}, #{inspect}"
+  Rails.logger.warn "valid_account #{email.inspect}, #{email_required?}, #{inspect}"
   # validations: email
   if email_required?
     if email.empty?
@@ -40,7 +40,7 @@ event :valid_account, :before=>:save do
     end
   end
 
-warn "errors on acct valid? #{errors.any?}"
+Rails.logger.warn "errors on acct valid? #{errors.any?}"
   return false if errors.any?
 
   true

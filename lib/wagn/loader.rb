@@ -5,13 +5,14 @@ module Wagn
   include Wagn::Exceptions
 
   module Loader
+    mattr_accessor :current_set_opts, :current_set_module, :current_set_name
+
     PACKS = [ 'core', 'standard' ].map { |pack| "#{Rails.root}/pack/#{pack}" }
-    
-    def register_pattern klass, index=nil
-      self.set_patterns = [] unless set_patterns
-      set_patterns.insert index.to_i, klass
+
+    def self.register_pattern klass, index=nil
+      Card.set_patterns.insert index.to_i, klass
     end
-    
+ 
     def load_set_patterns
       PACKS.each do |pack|
         dirname = "#{pack}/set_patterns"
@@ -46,6 +47,8 @@ module Wagn
       Wagn::Conf[:pack_dirs].split( /,\s*/ ).each do |dirname|
         load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
       end
+
+      Card::Set.clean_empty_modules
     end
 
 
@@ -56,28 +59,25 @@ module Wagn
         next if set_pattern =~ /^\./
         dirname = [basedir, set_pattern] * '/'
         next unless File.exists?( dirname )
-        set_pattern_const = Card::Set.const_get_or_set( set_pattern.camelize ) { Module.new }
 
         Dir.entries( dirname ).sort.each do |anchor_filename|
           next if anchor_filename =~ /^\./
           anchor = anchor_filename.gsub /\.rb$/, ''
           #FIXME: this doesn't support re-openning of the module from multiple calls to load_implicit_sets
-          set_module = set_pattern_const.const_get_or_set( anchor.camelize ) { Module.new }
+          Wagn::Loader.current_set_module = set_module = Card::Set.set_module_from_name( set_pattern, anchor )
           set_module.extend Card::Set
           
-          Card::Set.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
-          Card::Set.current_set_module = set_module.name
+          Wagn::Loader.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
+          Wagn::Loader.current_set_name = set_module.name
           
           filename = [dirname, anchor_filename] * '/'
           set_module.class_eval File.read( filename ), filename, 1
 
-          if set_pattern == 'all'
-            include_all_model set_module
-          end
+          include_all_model set_module if set_pattern == 'all'
         end    
       end
     ensure
-      Card::Set.current_set_opts = Card::Set.current_set_module = nil
+      Wagn::Loader.current_set_opts = Wagn::Loader.current_set_module = Wagn::Loader.current_set_name = nil
     end
 
     

@@ -19,7 +19,7 @@ class Card::HtmlFormat < Card::Format
         { :view=>:home,                    :text=>'refresh'                    },
         { :page=>:self,                    :text=>'page'                       },
         { :page=>:type,                    :text=>'type: %{type}'              },
-        { :view=>:changes,                 :text=>'history',   :if=>:edit      },
+        { :view=>:history,                 :text=>'history',   :if=>:edit      },
         { :related=>{ :name=>:structure }, :text=>'structure', :if=>:structure },
       ] },
     { :related=>:discussion, :text=>'discuss', :if=>:discuss },
@@ -306,7 +306,7 @@ class Card::HtmlFormat < Card::Format
   # --------------------------------------------------
   # some of this should be in views, maybe most
   def revision_link text, revision, name, accesskey='', mode=nil
-    link_to text, path(:view=>:changes, :rev=>revision, :mode=>(mode || params[:mode] || true) ),
+    link_to text, path(:view=>:history, :rev=>revision, :mode=>(mode || params[:mode] || true) ),
       :class=>"slotter", :remote=>true, :rel=>'nofollow'
   end
 

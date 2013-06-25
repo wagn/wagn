@@ -496,10 +496,10 @@ format :html do
     end
   end
 
-  view :changes do |args|
+  view :history do |args|
     load_revisions
     if @revision
-      wrap :changes, args.merge(:frame=>true) do
+      wrap :history, args.merge(:frame=>true) do
         %{#{ _render_header }
           <div class="revision-header">
             <span class="revision-title">#{ @revision.title }</span>
@@ -570,7 +570,7 @@ format :html do
 
             case card.updated_at.to_s
               when card.created_at.to_s; 'added'
-              when rev.created_at.to_s;  link_to('edited', path(:view=>:changes), :class=>'last-edited', :rel=>'nofollow')
+              when rev.created_at.to_s;  link_to('edited', path(:view=>:history), :class=>'last-edited', :rel=>'nofollow')
               else; 'updated'
             end} #{
        

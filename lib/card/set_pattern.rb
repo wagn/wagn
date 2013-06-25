@@ -18,7 +18,7 @@ class Card::SetPattern
     def register key, opts={}
       if self.key_id = Card::Codename[key]
         self.key = key
-        Card.register_pattern self, opts.delete(:index)
+        Wagn::Loader.register_pattern self, opts.delete(:index)
         if self.anchorless = !respond_to?( :anchor_name )
           self.method_key = opts[:method_key] || key
         end
@@ -53,12 +53,12 @@ class Card::SetPattern
 
   def set_const
     set_module = case
-      when  self.class.anchorless?    ; self.class.key
+      when  self.class.anchorless?    ; self.class.key.camelize
       when  opt_vals.member?( nil )  ; nil
-      else  "#{self.class.key}::#{opt_vals * '_'}"
+      else  "#{self.class.key.camelize}::#{opt_vals.map(&:to_s).map(&:camelize) * '_'}"
       end
 
-    Card.find_set_model_module set_module if set_module
+    Card::Set[set_module] if set_module
 
   rescue Exception => e
     warn "exception set_const #{e.inspect}," #{e.backtrace*"\n"}"

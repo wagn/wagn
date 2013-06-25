@@ -18,9 +18,9 @@ format :html do
   end
 
   view :core, :raw
+end
 
-  private
-
+format do
   #hacky.  here for override
   def goto_wql(term)
    { :complete=>term, :limit=>8, :sort=>'name', :return=>'name' }

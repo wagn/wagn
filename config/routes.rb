@@ -25,8 +25,7 @@ Wagn::Application.routes.draw do
 
   # legacy                                         
   match 'new/:type'                      => 'card#read', :view=>'new'
-  match 'account/signup'                 => 'card#read', :view=>'signup'
-  match 'card/:view(/:id(.:format))'     => 'card#read', :view=> /new|changes|options|edit/
+  match 'card/:view(/:id(.:format))'     => 'card#read', :view=> /new|options|edit/
   
   
   # standard non-RESTful

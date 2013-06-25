@@ -14,7 +14,7 @@ class Card
     @@max_depth      = 10 # ditto
 
     attr_reader :card, :root, :parent
-    attr_accessor :form, :main_content, :error_status
+    attr_accessor :form, :error_status
   
     class << self
 
@@ -259,7 +259,7 @@ class Card
       @card = subcard
       @char_count = 0
       @depth += 1
-      @main_content = @showname = @search = @ok = nil
+      @showname = @search = @ok = nil
       self
     end
 
@@ -381,7 +381,6 @@ class Card
     end
 
     def expand_main opts
-      return wrap_main( @main_content ) if @main_content
       [:item, :view, :size].each do |key|
         if val=params[key] and val.to_s.present?
           opts[key] = val.to_sym   #to sym??  why??

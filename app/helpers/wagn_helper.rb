@@ -4,32 +4,6 @@ require 'diff'
 module WagnHelper
   include Card::Diff
 
-  def slot() Card::Format.current_slot end
-  def card() @card ||= slot.card end
-
-  def params()
-    if controller
-      controller.params
-    else
-      slot and slot.params
-    end
-  end
-
-  # FIXME: I think all this slot initialization should happen in controllers
-  def get_slot(card=nil)
-    nil_given = card.nil?
-    card ||= @card
-
-    slot =
-      if current = Card::Format.current_slot
-        nil_given ? current : current.subformat(card)
-      else
-        opts = { :controller => self.controller }
-        Card::Format.current_slot = Card::Format.new( card, opts )
-      end
-  end
-
-
   def truncatewords_with_closing_tags(input, words = 25, truncate_string = "...")
     if input.nil? then return end
     wordlist = input.to_s.split
@@ -56,19 +30,4 @@ module WagnHelper
     wordstring.gsub! /<[\/]?p[^>]*>/, ' ' ## Also a hack -- get rid of <br>'s -- they make line view ugly.
     wordstring
   end
-
-  def error_messages_for(object)
-    if object && object.errors.any?
-      %{<div class="errors-view">#{object.errors.full_messages.map{ |msg| "<div>#{msg}</div>"}.join("\n")}</div>}
-    end
-  end
-
-
-  def wrap_slot(format=nil, args={}, &block)
-    format ||= (Card::Format.current_slot || get_slot)
-    content = with_output_buffer { yield(format) }
-    format.wrap(:open, args.merge(:frame=>true)) { content }
-  end
-  # ------------( helpers ) --------------
-
 end

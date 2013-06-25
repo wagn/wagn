@@ -89,4 +89,67 @@ format :html do
     }
   end
   
+  view :invite, :tags=>:unknown_ok do |args|
+    email = params[:account] || {}
+    subject = email[:subject] || Card.setting('*invite+*subject') || ''
+    message = email[:message] || Card.setting('*invite+*message') || ''
+    Card::Name.substitute!( message, {
+      :invitor => Account.current.name + " (#{Account.current.account.email})",
+      :invitee => card.name || ''}
+    )
+
+    div_id = "main-body"
+
+    iframe = %{ <iframe id="iframe-#{ div_id }" height="0" width="0" frameborder="0"></iframe> }
+    cardframe = wrap :invite, :frame=>true do
+      %{
+        <div class="card-header">
+          <h1>Invite a Friend</h1>
+          #{ _render_help :text=>"Accept account request from: #{link_to_page card.name}" if card.known? }
+        </div>        
+      }
+
+      form_for :card, :action=>params[:action] do |f|
+        @form = f
+        %{
+          <div class="card-body">
+            #{ hidden_field_tag 'element', "#{div_id}" }
+
+            #{ 
+              if !card.known?
+                %{
+                  #{ _render_name_editor :help=>'usually first and last name' }
+                  #{ fieldset :email, text_field( :account, :email, :size=>60 ) }
+                }
+              else
+                %{
+                  #{ hidden_field :card, :key }
+                  #{ hidden_field :account, :email }
+                }
+              end
+            }
+
+            #{ fieldset :subject, text_field( :email, :subject, :value=>subject, :size=>60 ) }
+
+            #{ fieldset :message, 
+                text_area( :email, :message, :value=>message, :rows=>15, :cols => 60 ),
+                :help => "We'll create a password and attach it to the email."
+            }
+          </div>
+
+          <fieldset>
+            <div class="button-area">      
+              #{ submit_tag 'Invite' }
+              #{ link_to 'Cancel', previous_location }
+            </div>
+          </fieldset>
+
+          #{ notice }
+        }
+
+      end
+    end
+    
+  end
+  
 end

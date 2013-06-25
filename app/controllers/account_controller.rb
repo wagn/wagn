@@ -53,8 +53,9 @@ class AccountController < ApplicationController
         redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
         return
       end
+    else
+      show :invite
     end
-    render :action=>'invite'
   end
 
   def invite
@@ -65,6 +66,8 @@ class AccountController < ApplicationController
     if request.post? and @card.errors.empty?
       @account.send_account_info(params[:email])
       redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
+    else
+      show :invite
     end
   end
 

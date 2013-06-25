@@ -4,14 +4,17 @@ require 'digest'
 # Virtual attribute for the unencrypted password
 attr_accessor :password
 
-Card.card_accessor :email,               :limit => 100, :type=>:phrase
-Card.card_accessor :crypted_password,    :limit => 40, :type=>:phrase
-Card.card_accessor :salt,                :limit => 42, :type=>:phrase
-Card.card_accessor :password_reset_code, :limit => 40, :type=>:phrase
-Card.card_accessor :status,              :default => "request", :type=>:phrase
-Card.card_accessor :invite_sender_id,    :type=>:pointer
-Card.card_accessor :identity_url,        :type=>:phrase
+card_accessor :email,               :limit => 100, :type=>:phrase
+card_accessor :crypted_password,    :limit => 40, :type=>:phrase
+card_accessor :salt,                :limit => 42, :type=>:phrase
+card_accessor :password_reset_code, :limit => 40, :type=>:phrase
+card_accessor :status,              :default => "request", :type=>:phrase
+card_accessor :invite_sender,       :type=>:pointer
+card_accessor :identity_url,        :type=>:phrase
 
+event :valid_account, :before=>:save do
+  
+end
 =begin
 Card.validates :name,    :right=>:account
 

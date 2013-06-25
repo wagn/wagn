@@ -173,7 +173,9 @@ class Card
        if options[:reader]
          Wagn::Loader.current_set_module.class_eval do
            define_method trait_card do
-             card = trait_var("@#{trait_card}") do fetch(:trait=>trait_sym, :new=>{}) end
+             new_opts = options[:type] ? {:type=>options[:type]} : {}
+             new_opts.merge!( {:content => options[:default]} ) if options[:default]
+             card = trait_var("@#{trait_card}") do fetch(:trait=>trait_sym, :new=>new_opts) end
            end
            define_method trait do
              send(trait_card).content
@@ -185,7 +187,7 @@ class Card
            define_method "#{trait}=" do |value|
              card = send trait_card
              card.content = value
-#warn "set #{trait} on #{inspect} tc:#{card.inspect} to #{value.inspect}"
+warn "set #{trait} on #{inspect} tc:#{card.inspect} to #{value.inspect}"
              
              instance_variable_set "@#{trait}", value
            end

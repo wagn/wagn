@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
 require 'digest'
 
-# Virtual attribute for the unencrypted password
-attr_accessor :password
+# Virtual attributes for the unencrypted password
+attr_accessor :password, :password_confirmation
 
 card_accessor :email,               :limit => 100, :type=>:phrase
 card_accessor :crypted_password,    :limit => 40, :type=>:phrase
@@ -13,34 +13,48 @@ card_accessor :invite_sender,       :type=>:pointer
 card_accessor :identity_url,        :type=>:phrase
 
 event :valid_account, :before=>:save do
-  
+
+  downcase_email!
+
+  warn "valid_account #{email.inspect}, #{email_required?}, #{inspect}"
+  # validations: email
+  if email_required?
+    if email.empty?
+      errors.add :email, :presence
+    elsif email !~ /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
+      errors.add :email, :format
+    elsif email.length > 100
+      errors.add :email, :length
+    end
+  end
+
+  if password_required?
+    if password.empty?
+      errors.add :password, :presence
+    elsif password.length < 5 || password.length > 40
+      errors.add :password, :length
+    elsif password_confirmation.empty?
+      errors.add :password_confirmation, :presence
+    elsif password != password_confirmation
+      errors.add :password, :password_confirmation
+    end
+  end
+
+warn "errors on acct valid? #{errors.any?}"
+  return false if errors.any?
+
+  true
 end
-=begin
-Card.validates :name,    :right=>:account
 
-Card.validates :email, :presence=>true, :if=>:email_required?,
-  :format     => { :with    => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i },
-  :length     => { :maximum => 100                                         }
-
-Card.validates :password, :presence=>true, :confirmation=>true, :if=>:password_required?,
-  :length => { :within => 5..40 }
-Card.validates :password_confirmation, :presence=>true, :if=>:password_required?
-
-
-before_validation :downcase_email!
-before_save :encrypt_password
-after_save :reset_instance_cache
-
-def initialize args
-  warn "new CardAccount #{args.inspect}"
-  super()
-  self.attributes= args
+event :encrypt_password, :before=>:save do
+  return true if password.blank?
+  self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
+  self.crypted_password = encrypt(password)
 end
-=end
 
-def reset_instance_cache
-  Account.reset_cache_item card_id, email
-end
+#event :reset_instance_cache, :after=>:save do
+#  Account.reset_cache_item left_id, email
+#end
 
 def save_with_card card
   User.transaction do
@@ -140,13 +154,6 @@ end
 # Encrypts the password with the user salt
 def encrypt(password)
   self.class.encrypt(password, salt)
-end
-
-# before save
-def encrypt_password
-  return if password.blank?
-  self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
-  self.crypted_password = encrypt(password)
 end
 
 def email_required?

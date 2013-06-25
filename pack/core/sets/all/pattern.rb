@@ -23,25 +23,6 @@ module ClassMethods
     end
   end
 
-  def find_set_model_module mod
-    module_name_parts = mod.split('::')
-    module_name_parts.inject Card::Set do |base, part|
-      return if base.nil?
-      #Rails.logger.warn "find m #{base}, #{part}"
-      part = part.camelize
-      key = "#{base}::#{part}"
-      if MODULES.has_key?(key)
-        MODULES[key]
-      else
-        MODULES[key] = base.const_get_if_defined part
-      end
-    end
-  rescue Exception => e
-  #rescue NameError => e
-    Rails.logger.warn "find_set_model_module error #{mod}: #{e.inspect}"
-    return nil if NameError ===e
-  end
-
 end
 
 

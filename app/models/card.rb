@@ -231,7 +231,7 @@ Rails.logger.warn "approve called"
   end
 
   def store
-Rails.logger.warn "store called"
+Rails.logger.warn "store called, #{inspect}"
 #    puts "commit called: #{name}"
     run_callbacks :store do
       #set_read_rule #move to action
@@ -255,7 +255,7 @@ Rails.logger.warn "extend called"
   end
 
   def rescue_event e
-Rails.logger.warn "revent #{e.inspect}"
+Rails.logger.warn "revent #{self.class}, #{self.inspect}, #{e.inspect}, #{e.backtrace*"\n"}"
     @action = nil
     expire_pieces
     if @subcards

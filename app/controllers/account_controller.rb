@@ -15,10 +15,10 @@ class AccountController < ApplicationController
     #FIXME - don't raise; handle it!
     raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless @card.ok? :create
 
-    @account, @card = Account.create_with_card account_params, card_params
     if !request.post? #signup form
       show :signup
     else
+      @account, @card = Account.create_with_card account_params, card_params
       if @card.errors.any?
         render_errors
       else

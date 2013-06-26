@@ -2,7 +2,6 @@
 class AccountController < ApplicationController
 
   before_filter :login_required, :only => [ :invite, :update ]
-  helper :wagn
 
   #ENGLISH many messages throughout this file
   def signup

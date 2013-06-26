@@ -8,7 +8,7 @@ class Card
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
 
-    cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases
+    cattr_accessor :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases
     [ :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases ].each { |acc| self.send "#{acc}=", {} }
     @@max_char_count = 200 #should come from Wagn::Conf
     @@max_depth      = 10 # ditto
@@ -132,7 +132,6 @@ class Card
     end
 
     def initialize card, opts={}
-      Format.current_slot ||= self unless opts[:not_current]
       @card = card
       opts.each do |key, value|
         instance_variable_set "@#{key}", value
@@ -397,10 +396,6 @@ class Card
 
     def process_inclusion tcard, opts
       sub = subformat tcard, opts[:mainline]
-      oldformat, Format.current_slot = Format.current_slot, sub
-      # don't like depending on this global var switch
-      # I think we can get rid of it as soon as we get rid of the remaining rails views?
-
 
       view = canonicalize_view opts.delete :view
       view ||= ( @mode == :layout ? :core : :content )  #set defaults elsewhere!!
@@ -421,9 +416,7 @@ class Card
       else                      ; view
       end
 
-      result = sub.render(view, opts)
-      Format.current_slot = oldformat
-      result
+      sub.render view, opts
     end
 
     def get_inclusion_content cardname

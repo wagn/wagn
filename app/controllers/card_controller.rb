@@ -1,8 +1,6 @@
 # -*- encoding : utf-8 -*-
 class CardController < ApplicationController
 
-  helper :wagn
-
   before_filter :load_id, :only => [ :read ]
   before_filter :load_card
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]

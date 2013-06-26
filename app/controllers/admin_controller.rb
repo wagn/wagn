@@ -26,7 +26,6 @@ class AdminController < CardController
     end
   end
 
-
   def clear_cache
     Wagn::Cache.reset_global
     render_text 'Cache cleared'
@@ -46,7 +45,7 @@ class AdminController < CardController
     }
   end
 
-
+  #DEPRECATED.  migrated away old links?
   def tasks
     render_text %{
       <h1>Global Permissions - REMOVED</h1>
@@ -112,8 +111,6 @@ class AdminController < CardController
       (get_current_memory_usage - before) / 1024.0
     end
   end
-
-
 
   def render_text response
     render :text =>response, :layout=> true

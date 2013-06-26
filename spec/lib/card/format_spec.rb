@@ -6,7 +6,6 @@ require 'wagn/pack_spec_helper'
 describe Card::Format, "" do
   before do
     Account.current_id = Card['joe_user'].id
-    Card::Format.current_slot = nil
     Card::Format.ajax_call = false
   end
 

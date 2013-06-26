@@ -88,7 +88,7 @@ def set_type_id new_type_id
 end
 
 def set_content new_content
-  Rails.logger.info "setting content for #{name}: (#{self.id}) #{new_content}"
+  Rails.logger.info "setting content for #{inspect}: C:#{new_content}"
   if self.id #have to have this to create revision
     new_content ||= ''
     new_content = Card::Content.clean! new_content if clean_html?

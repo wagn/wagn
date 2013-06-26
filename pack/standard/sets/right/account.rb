@@ -16,27 +16,30 @@ event :valid_account, :before=>:save do
 
   downcase_email!
 
-  Rails.logger.warn "valid_account #{email.inspect}, #{email_required?}, #{inspect}"
+  Rails.logger.warn "valid_account #{email.inspect}, #{inspect}, #{self.crypted_password}, #{crypted_password}"
   # validations: email
-  if email_required?
+  if !built_in? and !crypted_password.blank?
     if email.empty?
-      errors.add :email, :presence
+      errors.add :email, "cannot be blank"
     elsif email !~ /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
-      errors.add :email, :format
+      errors.add :email, "bad format"
     elsif email.length > 100
-      errors.add :email, :length
+      errors.add :email, "too long"
     end
   end
 
   if password_required?
-    if password.empty?
-      errors.add :password, :presence
-    elsif password.length < 5 || password.length > 40
-      errors.add :password, :length
+Rails.logger.warn "pw req -- errors on acct valid? #{errors.any?}"
+    if password.nil? || password.empty?
+      errors.add :password, "can't be blank"
+    elsif password.length < 5 
+      errors.add :password, "too short"
+    elsif password.length > 40
+      errors.add :password, "too long"
     elsif password_confirmation.empty?
-      errors.add :password_confirmation, :presence
+      errors.add :password_confirmation, "cannot be blank"
     elsif password != password_confirmation
-      errors.add :password, :password_confirmation
+      errors.add :password, "does not match"
     end
   end
 
@@ -153,11 +156,7 @@ end
 
 # Encrypts the password with the user salt
 def encrypt(password)
-  self.class.encrypt(password, salt)
-end
-
-def email_required?
-  !built_in?
+  Account.encrypt(password, salt)
 end
 
 def password_required?

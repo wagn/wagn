@@ -27,6 +27,7 @@ Wagn::Application.routes.draw do
   match 'new/:type'                      => 'card#read', :view=>'new'
   match 'card/:view(/:id(.:format))'     => 'card#read', :view=> /new|options|edit/
   
+  
   # standard non-RESTful
   match ':controller/:action(/:id(.:format))'
   match ':action(/:id(.:format))'        => 'card' 

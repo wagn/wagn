@@ -2,7 +2,6 @@
 class AccountController < ApplicationController
 
   before_filter :login_required, :only => [ :invite, :update ]
-  helper :wagn
 
   #ENGLISH many messages throughout this file
   def signup
@@ -17,7 +16,7 @@ class AccountController < ApplicationController
     raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless @card.ok? :create
 
     if !request.post? #signup form
-      @account = User.new account_params
+      show :signup
     else
       @account, @card = Account.create_with_card account_params, card_params
       if @card.errors.any?
@@ -53,8 +52,9 @@ class AccountController < ApplicationController
         redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
         return
       end
+    else
+      show :invite
     end
-    render :action=>'invite'
   end
 
   def invite
@@ -65,13 +65,18 @@ class AccountController < ApplicationController
     if request.post? and @card.errors.empty?
       @account.send_account_info(params[:email])
       redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
+    else
+      show :invite
     end
   end
 
 
   def signin
+    @card = Card.new
     if params[:login]
       password_authentication params[:login], params[:password]
+    else
+      show :signin
     end
   end
 
@@ -87,10 +92,10 @@ class AccountController < ApplicationController
       case
       when @account.nil?
         flash[:notice] = "Unrecognized email."
-        render :action=>'signin', :status=>404
+        show :signin, 404
       when !@account.active?
         flash[:notice] = "That account is not active."
-        render :action=>'signin', :status=>403
+        show :signin, 403
       else
         @account.generate_password
         @account.save!
@@ -127,7 +132,7 @@ class AccountController < ApplicationController
 
   def failed_login(message)
     flash[:notice] = "Oops: #{message}"
-    render :action=>'signin', :status=>403
+    show :signin, 403
   end
 
 end

@@ -6,7 +6,6 @@ require 'wagn/pack_spec_helper'
 describe Card::Format, "" do
   before do
     Account.current_id = Card['joe_user'].id
-    Card::Format.current_slot = nil
     Card::Format.ajax_call = false
   end
 
@@ -296,15 +295,6 @@ describe Card::Format, "" do
 
         Card::Format.new(@layout_card).render(:layout).should == %{Mainly <div id="main">Mainly {{_main|core}}</div>}
       end
-
-      it "should handle non-card content" do
-        @layout_card.content='Hello {{_main}}'
-        Account.as_bot { @layout_card.save }
-
-        result = Card::Format.new(nil).render(:layout, :main_content=>'and Goodbye')
-        result.should match(/Hello.*and Goodbye/)
-      end
-
     end
 
     it "raw content" do

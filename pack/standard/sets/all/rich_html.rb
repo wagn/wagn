@@ -14,10 +14,6 @@ format :html do
   end
 
   view :layout, :perms=>:none do |args|
-    if @main_content = args.delete( :main_content )
-      @card = Card.fetch '*placeholder', :new=>{}
-    end
-
     layout_content = get_layout_content args
 
     args[:params] = params # EXPLAIN why this is needed
@@ -585,9 +581,11 @@ format :html do
 
   view :errors, :perms=>:none do |args|
     #Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller[0..3]*", "}"
-    wrap :errors, args do
-      %{ <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
-      card.errors.map { |attrib, msg| "<div>#{attrib.to_s.upcase}: #{msg}</div>" } * ''
+    if card.errors.any?
+      wrap :errors, args do
+        %{ <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
+        card.errors.map { |attrib, msg| "<div>#{attrib.to_s.upcase}: #{msg}</div>" } * ''
+      end
     end
   end
 

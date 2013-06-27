@@ -35,7 +35,7 @@ view :open_content do |args|
 end
 
 view :closed_content do |args|
-  truncatewords_with_closing_tags _render_core(args) #{ yield }
+  Card::Content.truncatewords_with_closing_tags _render_core(args) #{ yield }
 end
 
 ###----------------( SPECIAL )

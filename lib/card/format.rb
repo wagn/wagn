@@ -8,13 +8,13 @@ class Card
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
 
-    cattr_accessor :current_slot, :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases
+    cattr_accessor :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases
     [ :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases ].each { |acc| self.send "#{acc}=", {} }
     @@max_char_count = 200 #should come from Wagn::Conf
     @@max_depth      = 10 # ditto
 
     attr_reader :card, :root, :parent
-    attr_accessor :form, :main_content, :error_status
+    attr_accessor :form, :error_status
   
     class << self
 
@@ -132,7 +132,6 @@ class Card
     end
 
     def initialize card, opts={}
-      Format.current_slot ||= self unless opts[:not_current]
       @card = card
       opts.each do |key, value|
         instance_variable_set "@#{key}", value
@@ -259,7 +258,7 @@ class Card
       @card = subcard
       @char_count = 0
       @depth += 1
-      @main_content = @showname = @search = @ok = nil
+      @showname = @search = @ok = nil
       self
     end
 
@@ -288,8 +287,6 @@ class Card
         # prevent recursion.  @depth tracks subformats (view within views)
         when @@perms[view] == :none  ; view
         # This may currently be overloaded.  always allowed = skip modes = never modified.  not sure that's right.
-        when !card                   ; :no_card
-        # This should disappear when we get rid of admin and account controllers and all formats always have cards
 
         # HANDLE UNKNOWN CARDS ~~~~~~~~~~~~
         when !card.known? && !self.class.tagged( view, :unknown_ok )
@@ -381,7 +378,6 @@ class Card
     end
 
     def expand_main opts
-      return wrap_main( @main_content ) if @main_content
       [:item, :view, :size].each do |key|
         if val=params[key] and val.to_s.present?
           opts[key] = val.to_sym   #to sym??  why??
@@ -400,10 +396,6 @@ class Card
 
     def process_inclusion tcard, opts
       sub = subformat tcard, opts[:mainline]
-      oldformat, Format.current_slot = Format.current_slot, sub
-      # don't like depending on this global var switch
-      # I think we can get rid of it as soon as we get rid of the remaining rails views?
-
 
       view = canonicalize_view opts.delete :view
       view ||= ( @mode == :layout ? :core : :content )  #set defaults elsewhere!!
@@ -424,9 +416,7 @@ class Card
       else                      ; view
       end
 
-      result = sub.render(view, opts)
-      Format.current_slot = oldformat
-      result
+      sub.render view, opts
     end
 
     def get_inclusion_content cardname

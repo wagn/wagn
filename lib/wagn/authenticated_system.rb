@@ -29,7 +29,6 @@ module Wagn::AuthenticatedSystem
 
   #
   def login_required
-
     # Check if user is logged in
     return true if logged_in?
 
@@ -51,7 +50,7 @@ module Wagn::AuthenticatedSystem
   # to access the requested action.  For example, a popup window might
   # simply close itself.
   def access_denied
-    wagn_redirect( Wagn::Conf[:base_url] + url_for(:controller=>'account', :action=>'signin') )
+    wagn_redirect 'account/signin'
   end
 
   # Store the URI of the current request in the session.

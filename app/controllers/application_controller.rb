@@ -1,17 +1,12 @@
 # -*- encoding : utf-8 -*-
 class ApplicationController < ActionController::Base
 
-  include Wagn::Exceptions
-
   include Wagn::AuthenticatedSystem
   include Wagn::Location
   include Recaptcha::Verify
-  include ActionView::Helpers::SanitizeHelper
 
-
-  helper :all
   before_filter :per_request_setup, :except=>[:fast_404]
-  layout :wagn_layout, :except=>[:fast_404]
+  layout nil
 
   attr_reader :card
   attr_accessor :recaptcha_count
@@ -35,24 +30,12 @@ class ApplicationController < ActionController::Base
       Wagn::Cache.renew
 
       Card::Format.ajax_call = ajax?
-      Card::Format.current_slot = nil
-
-      #warn "set curent_user (app-cont) #{self.current_account_id}, U.cu:#{Account.current_id}"
       Account.current_id = self.current_account_id || Card::AnonID
-      #warn "set curent_user a #{current_account_id}, U.cu:#{Account.current_id}"
 
       # RECAPTCHA HACKS
       Wagn::Conf[:recaptcha_on] = !Account.logged_in? &&     # this too
         !!( Wagn::Conf[:recaptcha_public_key] && Wagn::Conf[:recaptcha_private_key] )
       @recaptcha_count = 0
-  end
-
-  def wagn_layout
-    layout = nil
-    respond_to do |format|
-      format.html { layout = 'application' unless ajax? }
-    end
-    layout
   end
 
   def ajax?

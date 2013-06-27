@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 class AdminController < CardController
-  layout 'application'
   before_filter :admin_only, :except=>:setup
   
   def setup
@@ -23,15 +22,8 @@ class AdminController < CardController
         end
       end
     else
-      @card = Card.new( params[:card] || {} ) #should prolly skip defaults
-      @account = User.new( params[:account] || {} )
+      @card = Card.new( params[:card] || {} ) #should prolly skip default
     end
-  end
-
-  def show_cache
-    key = params[:id].to_name.key
-    @cache_card = Card.fetch(key)
-    @db_card = Card.find_by_key(key)
   end
 
   def clear_cache
@@ -53,7 +45,7 @@ class AdminController < CardController
     }
   end
 
-
+  #DEPRECATED.  migrated away old links?
   def tasks
     render_text %{
       <h1>Global Permissions - REMOVED</h1>
@@ -119,8 +111,6 @@ class AdminController < CardController
       (get_current_memory_usage - before) / 1024.0
     end
   end
-
-
 
   def render_text response
     render :text =>response, :layout=> true

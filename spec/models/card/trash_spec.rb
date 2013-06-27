@@ -53,7 +53,7 @@ describe Card, "plus cards" do
       c = Card.create! :name=>'zz+top'
       root = Card['zz']
       root.delete
-      Rails.logger.info "ERRORS = #{root.errors.full_messages*''}"
+#      Rails.logger.info "ERRORS = #{root.errors.full_messages*''}"
       Card.find(c.id).trash.should be_true
       Card['zz'].should be_nil
     end

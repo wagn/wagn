@@ -3,7 +3,7 @@
 class UserModelToCards < ActiveRecord::Migration
   def up
     Account.as_bot do
-      #Card['*email+*right+*structure'].delete
+      Card['*email+*right+*structure'].delete
 
       User.all.each do |user|
         acct_card = Card[user.account_id]

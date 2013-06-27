@@ -9,17 +9,19 @@ describe Card do
 
   describe "Read and write card attribute" do
     it "gets email attribute" do
-      @account_card.email.should == '' #FIXME: migrate data to cards and test for real value
+      @account_card.email.should == 'sara@user.com'
     end
 
     it "sets and saves email attribute" do
       @account_card.email= 'NewSara@user.com'
       @account_card.email.should == 'NewSara@user.com'
+      #@account_card.accept( @account_card.trunk, {:subject => "test accept", :message=>"you're in"} )
+      @account_card.pending?.should be_false
       Account.as_bot { @account_card.save }
       Rails.logger.warn "card #{@account_card.inspect}, #{@account_card.content}, #{@account_card.errors.map { |k,v| "error #{k} :: #{v}" }}"
       Card.cache.reset
       @account_card = Card['sara'].fetch(:trait=>:account)
-      @account_card.email.should == 'NewSara@user.com'
+      @account_card.email.should == 'newsara@user.com'
     end
   end
 end

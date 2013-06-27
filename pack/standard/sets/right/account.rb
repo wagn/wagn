@@ -18,7 +18,8 @@ event :valid_account, :before=>:save do
 
   Rails.logger.warn "valid_account #{email.inspect}, #{inspect}, #{self.crypted_password}, #{crypted_password}"
   # validations: email
-  if !built_in? and !crypted_password.blank?
+  if !built_in? and crypted_password.blank?
+  Rails.logger.warn "valid_account #{email.inspect}, #{inspect}, #{self.crypted_password}, #{crypted_password}"
     if email.empty?
       errors.add :email, "cannot be blank"
     elsif email !~ /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
@@ -59,39 +60,13 @@ end
 #  Account.reset_cache_item left_id, email
 #end
 
-def save_with_card card
-  User.transaction do
-    card = card.refresh
-    account = card.fetch :trait=>:account, :new=>{}
-    if card.save
-      if account.save
-        self.account_id = account.id
-        self.card_id = card.id
-        save
-      end
-    end
-
-    account.errors.each do |key,err|
-      card.errors.add key,err
-    end
-    self.errors.each do |key,err|
-      card.errors.add key,err
-    end
-    if card.errors.any?
-      card.expire_pieces
-      raise ActiveRecord::Rollback
-    end
-    true
-  end
-end
-
 def accept card, email_args
   Account.as_bot do #what permissions does approver lack?  Should we check for them?
     card.type_id = Card::UserID # Invite Request -> User
     self.status='active'
     generate_password
-    r=save_with_card(card)
-    #Rails.logger.warn "accept #{inspect}, #{card.inspect}, #{self.errors.full_messages*", "} R:#{r}"; r
+    r=save
+    Rails.logger.warn "accept #{inspect}, #{card.inspect}, #{self.errors.full_messages*", "} R:#{r}"; r
   end
   #card.save #hack to make it so last editor is current user.
   self.send_account_info(email_args) if card.errors.empty?
@@ -115,7 +90,9 @@ def anonymous?; card_id == Card::AnonID end
 def active?   ; status=='active'  end
 def blocked?  ; status=='blocked' end
 def built_in? ; status=='system'  end
-def pending?  ; status=='pending' end
+def pending?  ;
+Rails.logger.warn "p? status #{self.status}, #{status}"
+status=='pending' end
 
 # blocked methods for legacy boolean status
 def blocked= block

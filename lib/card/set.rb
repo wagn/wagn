@@ -163,17 +163,26 @@ module Card::Set
     args.each do |trait|
       trait_sym = trait.to_sym
       trait_card = "#{trait}_card".to_sym
-      #warn "second definition of #{trait} at: #{caller[0]}" if mod_traits[trait]
+      #Rails.logger.warn "second definition of #{trait} at: #{caller[0]}" if mod_traits[trait]
+
+      Wagn::Loader.current_set_module.class_eval do
+        define_method trait_card do
+          new_opts = options[:type] ? {:type=>options[:type]} : {}
+          new_opts.merge!( {:content => options[:default]} ) if options[:default]
+fc=nil
+          card = trait_var("@#{trait_card}") do fc=fetch(:trait=>trait_sym, :new=>new_opts) end
+raise "no card? #{trait_card.inspect} #{fc.inspect}, #{card.inspect}" unless Card===card
+          card
+        end
+      end
 
       if options[:reader]
         Wagn::Loader.current_set_module.class_eval do
-          define_method trait_card do
-            new_opts = options[:type] ? {:type=>options[:type]} : {}
-            new_opts.merge!( {:content => options[:default]} ) if options[:default]
-            card = trait_var("@#{trait_card}") do fetch(:trait=>trait_sym, :new=>new_opts) end
-          end
           define_method trait do
-            send(trait_card).content
+           r=
+            ( instance_variable_get( "@#{trait}" ) ||
+              instance_variable_set( "@#{trait}", send(trait_card).content ) )
+Rails.logger.warn "trait #{trait_card.inspect} is #{r}"; r
           end
         end
       end
@@ -183,8 +192,8 @@ module Card::Set
           define_method "#{trait}=" do |value|
 raise "value is Card ??? #{value.inspect}" if Card===value
             card = send trait_card
-            card.content = value
 Rails.logger.warn "set #{trait} on #{inspect} tc:#{card.inspect} to #{value.inspect}"
+            card.content = value
 
             instance_variable_set "@#{trait}", value
           end

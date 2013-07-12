@@ -14,7 +14,7 @@ class Card < ActiveRecord::Base
 
   define_callbacks :approve, :store, :extend
 
-  class <<self
+  class << self
 
     ID_CONST_ALIAS = {
       :default_type => :basic, #this should not be hardcoded (not a constant -- should come from *all+*default)

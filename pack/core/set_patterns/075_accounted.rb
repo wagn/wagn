@@ -1,9 +1,9 @@
 def label name
-  'Accounted "+" cards'
+  'Accounted cards'
 end
 
 def prototype_args anchor
-  {:name=>'*dummy+*account'}
+  {}
 end
 
 def pattern_applies? card

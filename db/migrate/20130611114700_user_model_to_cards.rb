@@ -10,10 +10,7 @@ class UserModelToCards < ActiveRecord::Migration
         acct_card.email               = user.email
         acct_card.crypted_password    = user.crypted_password
         acct_card.salt                = user.salt
-        acct_card.password_reset_code = user.password_reset_code
         acct_card.status              = user.status
-        sender = Card[user.invite_sender_id]
-        acct_card.invite_sender       = "[[#{sender.cardname}]]" unless sender.nil?
         acct_card.save
       end
     end

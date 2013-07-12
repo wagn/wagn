@@ -7,10 +7,7 @@ attr_accessor :password, :password_confirmation
 card_accessor :email,               :limit => 100, :type=>:phrase
 card_accessor :crypted_password,    :limit => 40, :type=>:phrase
 card_accessor :salt,                :limit => 42, :type=>:phrase
-card_accessor :password_reset_code, :limit => 40, :type=>:phrase
 card_accessor :status,              :default => "request", :type=>:phrase
-card_accessor :invite_sender,       :type=>:pointer
-card_accessor :identity_url,        :type=>:phrase
 
 event :valid_account, :before=>:save do
 

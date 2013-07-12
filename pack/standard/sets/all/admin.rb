@@ -1,4 +1,4 @@
-view :setup do |args|
+view :setup, :tags=>:unknown_ok do |args|
   wrap :setup, :frame=>true do
     account = User.new( params[:account] || {} )
     %{

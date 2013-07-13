@@ -45,7 +45,6 @@ format :html do
   end
   
   view :signup, :tags=>:unknown_ok do |args|
-    div_id = "main-body"
     help_text = if card.rule_card :add_help, :fallback=>:help
       _render :help, :setting=>:add_help
     else
@@ -57,7 +56,7 @@ format :html do
     
     %{      
       <div id="signup-form">
-        <iframe id="iframe-#{div_id}" height="0" width="0" frameborder="0"></iframe>
+        <iframe id="iframe-main-body" height="0" width="0" frameborder="0"></iframe>
         #{
           wrap :signup, :frame=>true do
             %{
@@ -69,7 +68,7 @@ format :html do
                 form_for :card, form_opts( wagn_path( '/account/signup' ), 'card-form') do |f|
                   @form = f
                   %{
-                    #{ hidden_field_tag 'element', div_id }
+                    #{ hidden_field_tag 'element', "main-body" }
                     #{ f.hidden_field :type_id }
                     <div class="card-body">      
                       #{ _render_name_editor :help=>'usually first and last name' }
@@ -90,9 +89,9 @@ format :html do
   end
   
   view :invite, :tags=>:unknown_ok do |args|
-    email = params[:account] || {}
-    subject = email[:subject] || Card.setting('*invite+*subject') || ''
-    message = email[:message] || Card.setting('*invite+*message') || ''
+    email_params = params[:email] || {}
+    subject = email_params[:subject] || Card.setting('*invite+*subject') || ''
+    message = email_params[:message] || Card.setting('*invite+*message') || ''
 
 # I really don't think this is used any more.  Looked at several old wagns and couldn't see it in use.  I suppose we'll hear quickly if it's needed,
 # in which case I think we should replace it with something more wagny.  Note that we can take substitute! out of SmartName.  (I never thought it fit)
@@ -114,7 +113,7 @@ format :html do
             @form = f
             %{
               <div class="card-body">
-                #{ hidden_field_tag 'element', "#{div_id}" }
+                #{ hidden_field_tag 'element', "main-body" }
 
                 #{ 
                   if !card.known?

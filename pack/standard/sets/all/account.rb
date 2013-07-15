@@ -53,7 +53,7 @@ format :html do
         'All Account Requests are subject to review.'
       )
     end
-    
+    account_card = card.fetch( :trait=>:account, :new=>{} )
     %{      
       <div id="signup-form">
         <iframe id="iframe-main-body" height="0" width="0" frameborder="0"></iframe>
@@ -72,7 +72,7 @@ format :html do
                     #{ f.hidden_field :type_id }
                     <div class="card-body">      
                       #{ _render_name_editor :help=>'usually first and last name' }
-                      #{ fieldset :email, text_field( :account, :email ) }
+                      #{ fieldset :email, account_card.card_field( :real_email ) }
                       #{ with_inclusion_mode(:new) { edit_slot :label=>'other' } }
                     </div>
 

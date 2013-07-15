@@ -4,7 +4,7 @@ require 'digest'
 # Virtual attributes for the unencrypted password
 attr_accessor :password, :password_confirmation
 
-card_accessor :email,               :limit => 100, :type=>:phrase
+card_accessor :real_email,          :limit => 100, :type=>:phrase
 card_accessor :crypted_password,    :limit => 40, :type=>:phrase
 card_accessor :salt,                :limit => 42, :type=>:phrase
 card_accessor :status,              :default => "request", :type=>:phrase
@@ -13,15 +13,15 @@ event :valid_account, :before=>:save do
 
   downcase_email!
 
-  Rails.logger.warn "valid_account #{email.inspect}, #{inspect}, #{self.crypted_password}, #{crypted_password}"
+  Rails.logger.warn "valid_account #{real_email.inspect}, #{inspect}, #{self.crypted_password}, #{crypted_password}"
   # validations: email
   if !built_in? and crypted_password.blank?
-  Rails.logger.warn "valid_account #{email.inspect}, #{inspect}, #{self.crypted_password}, #{crypted_password}"
-    if email.empty?
+  Rails.logger.warn "valid_account #{real_email.inspect}, #{inspect}, #{self.crypted_password}, #{crypted_password}"
+    if real_email.empty?
       errors.add :email, "cannot be blank"
-    elsif email !~ /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
+    elsif real_email !~ /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
       errors.add :email, "bad format"
-    elsif email.length > 100
+    elsif real_email.length > 100
       errors.add :email, "too long"
     end
   end
@@ -72,7 +72,7 @@ end
 def send_account_info args
   raise Wagn::Oops, "subject and message required" unless args[:subject] && args[:message]
   begin
-    args.merge! :to => self.email, :password => self.password
+    args.merge! :to => self.real_email, :password => self.password
     #warn "account infor args: #{args}"
     message = Mailer.account_info Card[card_id], args
     message.deliver
@@ -121,8 +121,8 @@ end
 
 #before validation
 def downcase_email!
-  if e = self.email and e != e.downcase
-    self.email=e.downcase
+  if e = self.real_email and e != e.downcase
+    self.real_email=e.downcase
   end
 end
 

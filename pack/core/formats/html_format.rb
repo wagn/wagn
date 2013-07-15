@@ -257,6 +257,16 @@ class Card::HtmlFormat < Card::Format
     content_tag( :div, :class=>"editor#{ " #{type}-editor" if type }" ) { yield }
   end
 
+  def card_field field, trait=nil, opts={}
+    cd = trait ? card.fetch( :trait=>trait, :new=>opts.delete( :new ) ) : card
+    parm = "card[#{cd.name}+#{Card[field].name}]"
+    if opts.delete( :password )
+      password_field parm, opts
+    else
+      text_field parm, opts
+    end
+  end
+
   def fieldset title, content, opts={}
     if attribs = opts[:attribs]
       attrib_string = attribs.keys.map do |key| 

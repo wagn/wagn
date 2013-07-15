@@ -383,7 +383,7 @@ format :html do
   
   view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
 
-    locals = {:slot=>self, :card=>card, :account=>card.account }
+    locals = {:slot=>self, :card=>card }
     wrap :options, args.merge(:frame=>true) do
       %{ #{ _render_header }
         <div class="card-body">
@@ -405,12 +405,12 @@ format :html do
 
 
   view :account_detail, :perms=>lambda { |r| r.card.update_account_ok? } do |args|
-    account = args[:account] || card.account
+    account = args[:account] || card.fetch( :trait=>:account )
     
     %{
-      #{ fieldset :email, text_field( :account, :email, :autocomplete => :off, :value=>account.email ) }
-      #{ fieldset :password, password_field( :account, :password ), :help=>(args[:setup] ? nil : 'no change if blank') }
-      #{ fieldset 'confirm password', password_field( :account, :password_confirmation ) }
+      #{ fieldset :email, card_field( :real_email, :account, :autocomplete => :off, :value=>account.email ) }
+      #{ fieldset :password, card_field( :password, :account ), :password=>true, :help=>(args[:setup] ? nil : 'no change if blank') }
+      #{ fieldset 'confirm password', card_field( :password_confirmation, :account, :password=>true) }
       #{ 
         if !args[:setup] && Account.user.id != account.id 
           fieldset :block, check_box_tag( 'account[blocked]', '1', account.blocked? ), :help=>'prevents sign-ins'
@@ -464,7 +464,7 @@ format :html do
             %{
               #{ hidden_field_tag 'success[id]', '_self' }
               #{ hidden_field_tag 'success[view]', 'account' }
-              #{ fieldset :email, text_field( :account, :email ), :help=>'A password will be sent to the above address.' }
+              #{ fieldset :email, card_field( :real_email, :account ), :help=>'A password will be sent to the above address.' }
               <fieldset><div class="button-area">#{ submit_tag 'Create Account' }</div></fieldset>
             }
           end

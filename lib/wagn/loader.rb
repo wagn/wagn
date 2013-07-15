@@ -14,30 +14,23 @@ module Wagn
     end
  
     def load_set_patterns
-      all_patterns={}
       PACKS.each do |pack|
         dirname = "#{pack}/set_patterns"
         if File.exists? dirname
-          all_patterns = Dir.entries( dirname ).sort.inject(all_patterns) do |patterns, filename|
+          Dir.entries( dirname ).sort.each do |filename|
             if m = filename.match( /^(\d+_)?([^\.]*).rb/) and key = m[2]
-             
-              patterns[m[1]] = [key, [ dirname, filename ] * '/']
+              mod = Module.new
+              filename = [ dirname, filename ] * '/'
+              mod.class_eval { mattr_accessor :options }
+              mod.class_eval File.read( filename ), filename, 1
+            
+              klass = Card::SetPattern.const_set "#{key.camelize}Pattern", Class.new( Card::SetPattern )
+              klass.extend mod
+              klass.register key, (mod.options || {})
+            
             end
-            patterns
           end
         end
-      end
-
-      all_patterns.keys.sort.each do |order_key|
-        key, filename = all_patterns[order_key]
-
-        mod = Module.new
-        mod.class_eval { mattr_accessor :options }
-        mod.class_eval File.read( filename ), filename, 1
-
-        klass = Card::SetPattern.const_set "#{key.camelize}Pattern", Class.new( Card::SetPattern )
-        klass.extend mod
-        klass.register key, (mod.options || {})
       end
     end
 
@@ -73,21 +66,21 @@ module Wagn
           #FIXME: this doesn't support re-openning of the module from multiple calls to load_implicit_sets
           Wagn::Loader.current_set_module = set_module = Card::Set.set_module_from_name( set_pattern, anchor )
           set_module.extend Card::Set
-
+          
           Wagn::Loader.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
           Wagn::Loader.current_set_name = set_module.name
-
+          
           filename = [dirname, anchor_filename] * '/'
           set_module.class_eval File.read( filename ), filename, 1
 
           include_all_model set_module if set_pattern == 'all'
-        end
+        end    
       end
     ensure
       Wagn::Loader.current_set_opts = Wagn::Loader.current_set_module = Wagn::Loader.current_set_name = nil
     end
 
-
+    
     def self.load_layouts
       hash = {}
       PACKS.each do |pack|

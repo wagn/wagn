@@ -72,7 +72,7 @@ format :html do
                     #{ f.hidden_field :type_id }
                     <div class="card-body">      
                       #{ _render_name_editor :help=>'usually first and last name' }
-                      #{ fieldset :email, account_card.card_field( :real_email ) }
+                      #{ fieldset :email, account_card.card_field( :email ) }
                       #{ with_inclusion_mode(:new) { edit_slot :label=>'other' } }
                     </div>
 

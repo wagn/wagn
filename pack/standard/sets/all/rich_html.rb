@@ -408,7 +408,7 @@ format :html do
     account = args[:account] || card.fetch( :trait=>:account )
     
     %{
-      #{ fieldset :email, card_field( :real_email, :account, :autocomplete => :off, :value=>account.email ) }
+      #{ fieldset :email, card_field( :email, :account, :autocomplete => :off, :value=>account.email ) }
       #{ fieldset :password, card_field( :password, :account ), :password=>true, :help=>(args[:setup] ? nil : 'no change if blank') }
       #{ fieldset 'confirm password', card_field( :password_confirmation, :account, :password=>true) }
       #{ 
@@ -464,7 +464,7 @@ format :html do
             %{
               #{ hidden_field_tag 'success[id]', '_self' }
               #{ hidden_field_tag 'success[view]', 'account' }
-              #{ fieldset :email, card_field( :real_email, :account ), :help=>'A password will be sent to the above address.' }
+              #{ fieldset :email, card_field( :email, :account ), :help=>'A password will be sent to the above address.' }
               <fieldset><div class="button-area">#{ submit_tag 'Create Account' }</div></fieldset>
             }
           end

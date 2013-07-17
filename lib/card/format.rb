@@ -270,7 +270,7 @@ class Card
       return content unless card
       content = card.content if content.blank?
 
-      obj_content = Card::Content===content ? content : Card::Content.new(content, {:card=>card, :format=>self})
+      obj_content = Card::Content===content ? content : Card::Content.new(content, card, self)
 
       card.update_references( obj_content, true ) if card.references_expired  # I thik we need this genralized
 

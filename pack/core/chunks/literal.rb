@@ -5,14 +5,7 @@
 # occuring within literal areas such as <code> and <pre> blocks
 # and within HTML tags.
 module Card::Chunk
-  class AbstractLiteral < Abstract
-    def initialize match, card_params, params
-      super
-      @process_chunk = @text
-    end
-  end
-
-  class EscapedLiteral < AbstractLiteral
+  class EscapedLiteral < Abstract
     ESCAPE_CONFIG = {
       :class     => Card::Chunk::EscapedLiteral,
       :prefix_re => '\\\\(?:\\[\\[|\\{\\{)',
@@ -22,7 +15,7 @@ module Card::Chunk
 
     def self.config() ESCAPE_CONFIG end
 
-    def initialize match, card_params, params
+    def initialize match, card, format, params
       super
       @process_chunk = match.sub(/^\\(.)/, "<span>\\1</span>")
       self

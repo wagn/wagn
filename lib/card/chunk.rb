@@ -14,7 +14,8 @@ module Card::Chunk
     cattr_accessor :prefix_cfg
     @@prefix_cfg = {}
 
-    def self.scan_re chunk_types
+    def self.parse_regexp chunk_types
+      chunk_types.map! { |chunkname| Card::Chunk.const_get chunkname }
       prefix_res = chunk_types.map do |chunk_cl|
         cfg = chunk_cl.config
         prefix = cfg[:idx_char] || :default
@@ -24,22 +25,15 @@ module Card::Chunk
       /(?:#{prefix_res * '|'})/mo
     end
 
-    attr_reader :text, :process_chunk
+    attr_reader :text, :process_chunk, :card, :format
 
-    def initialize match_string, card_params, params
+    def initialize match_string, card, format, params
       @text = match_string
       @processed = nil
-      @card_params = card_params
+      @card = card
+      @format = format
       #warn "base initialize ch #{@card_params.inspect}, #{inspect}"
       self
-    end
-    
-    def card
-      @card_params[:card]
-    end
-
-    def format
-      @card_params[:format] #||= Card::Format.new(card) 
     end
 
     def to_s

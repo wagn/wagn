@@ -12,7 +12,7 @@ module Card::Chunk
 
     def self.config() WIKI_CONFIG end
 
-    def initialize match, card_params, params
+    def initialize match, card, format, params
       super
       target, @link_text = if params[2]     # standard [[ ]] syntax
         raw_syntax = params[2]
@@ -51,7 +51,7 @@ module Card::Chunk
       if raw
         raw.strip!
         if raw =~ /(^|[^\\])\{\{/
-          Card::Content.new raw, @card_params
+          Card::Content.new raw, card, format
         else
           raw
         end

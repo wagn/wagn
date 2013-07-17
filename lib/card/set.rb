@@ -47,15 +47,19 @@ module Card::Set
   def event event, opts={}, &final
     opts[:on] = [:create, :update ] if opts[:on] == :save
 
-    Card.define_callbacks event
-
     mod = self.ancestors.first
     mod_name = mod.name || Wagn::Loader.current_set_name
-    mod = if mod == Card || mod_name =~ /^Card::Set::All::/
-        Card
+    mod = case
+      when mod == Card                           ; Card
+      when mod_name =~ /^Card::Set::All::/       ; Card
+      when csm = Wagn::Loader.current_set_module ; csm
       else
-        Wagn::Loader.current_set_module
+        # needed for explicit loading
+        Card::Set[mod.name]= mod
+        mod
       end
+
+    Card.define_callbacks event
 
     mod.class_eval do
       include ActiveSupport::Callbacks
@@ -64,7 +68,7 @@ module Card::Set
       define_method final_method, &final
 
       define_method event do #|*a, &block|
-        #Rails.logger.warn "running #{event} for #{name}, Meth: #{final_method}"
+        #Rails.logger.info "running #{event} for #{name}, Meth: #{final_method}"
         run_callbacks event do
           action = self.instance_variable_get(:@action)
           if !opts[:on] or Array.wrap(opts[:on]).member? action

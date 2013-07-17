@@ -117,10 +117,7 @@ class CardController < ApplicationController
   def load_id    
     params[:id] = case
       when params[:id]
-        params[:id].gsub '_', ' '
-        # with unknown cards, underscores in urls assumed to indicate spaces.
-        # with known cards, the key look makes this irrelevant
-        # (note that this is not performed on params[:card][:name])          
+        params[:id]
       when Account.no_logins?
         return wagn_redirect( '/admin/setup' )
       when params[:card] && params[:card][:name]
@@ -144,10 +141,15 @@ class CardController < ApplicationController
       when /^\:(\w+)$/
         Card.fetch $1.to_sym
       else
+        id = params[:id] && ( params[:id].gsub '_', ' ' )
+        # with unknown cards, underscores in urls assumed to indicate spaces.
+        # with known cards, the key look makes this irrelevant
+        # (note that this is not performed on params[:card][:name])
+        
         opts = params[:card]
         opts = opts ? opts.clone : {} #clone so that original params remain unaltered.  need deeper clone?
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
-        name = params[:id] || opts[:name]
+        name = id || opts[:name]
         
         if params[:action] == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)

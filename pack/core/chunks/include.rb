@@ -1,14 +1,11 @@
 # -*- encoding : utf-8 -*-
-require_dependency 'chunks/chunk'
 
-module Chunks
+module Card::Chunk
   class Include < Reference
-#    attr_reader :options
     cattr_reader :options
     @@options = [ :include_name, :view, :item, :type, :size, :title, :hide, :show, :include, :structure ].
       inject({}) do |hash, key| hash[key] = nil; hash end
     
-#    attr_reader :options
     unless defined? INCLUDE_CONFIG
       #  {{+name|attr:val;attr:val;attr:val}}
       #  Groups: $1, everything (less {{}}), $2 name, $3 options

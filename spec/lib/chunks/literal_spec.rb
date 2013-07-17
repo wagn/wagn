@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
 
-describe Literal::Escape, "literal chunk tests" do
+describe Card::Chunk::EscapedLiteral, "literal chunk tests" do
   include MySpecHelpers
 
   before do

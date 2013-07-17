@@ -41,6 +41,12 @@ module Wagn
       end
     end
 
+    def load_chunks
+      PACKS.each do |pack|
+        load_dir File.expand_path( "#{pack}/chunks/*.rb", __FILE__ )
+      end
+    end
+
     def load_sets
       PACKS.each { |pack| load_implicit_sets "#{pack}/sets" }
 

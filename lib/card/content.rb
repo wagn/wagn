@@ -98,7 +98,7 @@ class Card::Content < SimpleDelegator
     end
     
 
-    # for objet_content, it uses this instead of the apply_to by chunk type
+    # for object_content, it uses this instead of the apply_to by chunk type
     def split_content card_params, content
       positions = []
 

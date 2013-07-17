@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Card::HtmlFormat < Card::Format
+  include Card::Diff
+  
   cattr_accessor :default_menu
   attr_accessor  :options_need_save, :start_time, :skip_autosave
 #    DEFAULT_ITEM_VIEW = :closed  #FIXME: It can't access this default

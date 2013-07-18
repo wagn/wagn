@@ -1,13 +1,9 @@
 # -*- encoding : utf-8 -*-
 
+require_dependency 'card/chunk'
+
 class Card
-  class Content < SimpleDelegator
-    Card.load_chunks
-    
-    #not sure whether this is best place.  Could really happen almost anywhere (even before chunk classes are loaded).
-    Chunk.register_list :default, [ :URI, :HostURI, :EmailURI, :EscapedLiteral, :Include, :Link ]
-    Chunk.register_list :references,                         [ :EscapedLiteral, :Include, :Link ]
-      
+  class Content < SimpleDelegator      
     attr_reader :revision, :format
 
     def initialize content, format_or_card

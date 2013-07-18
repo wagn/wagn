@@ -19,7 +19,7 @@ module Card::Chunk
 
     def self.config() INCLUDE_CONFIG end
 
-    def initialize match, card, format, params
+    def initialize match, content, params
       super
       self.name = parse match, params
       self

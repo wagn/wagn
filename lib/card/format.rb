@@ -93,9 +93,6 @@ class Card
         referent_view_key = get_set_key referent_view, (opts || alias_opts)
         alias_view_key = get_set_key alias_view, alias_opts
 
-        #warn "alias = #{alias_view_key}, referent = #{referent_view_key}"
-
-        #Rails.logger.info( warn "def view final_alias #{alias_view_key}, #{view_key}" )
         class_eval do
           define_method "_final_#{alias_view_key}".to_sym do |*a|
             send "_final_#{referent_view_key}", *a
@@ -270,7 +267,7 @@ class Card
       return content unless card
       content = card.content if content.blank?
 
-      obj_content = Card::Content===content ? content : Card::Content.new(content, card, self)
+      obj_content = Card::Content===content ? content : Card::Content.new( content, format=self )
 
       card.update_references( obj_content, true ) if card.references_expired  # I thik we need this genralized
 

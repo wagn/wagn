@@ -36,7 +36,7 @@ module Card::Chunk
 
     def self.config; URI_CONFIG end
 
-    def initialize match, card, format, params
+    def initialize match, content, params
       super
       last_char = match[-1,1]
       match.gsub!(/(?:&nbsp;)+/, '')
@@ -75,7 +75,7 @@ module Card::Chunk
 
     def self.config; EMAIL_URI_CONFIG end
 
-    def initialize match, card, format, params
+    def initialize match, content, params
       super
       @text = @text.sub(/^mailto:/,'')  # this removes the prepended string from the unchanged match text
       @process_chunk = self.format ? "#{self.format.build_link(@link_text, @text)}#{@trailing_punctuation}" : @text
@@ -114,7 +114,7 @@ module Card::Chunk
 
     def self.config; HOST_URI_CONFIG end
 
-    def initialize match, card, format, params
+    def initialize match, content, params
       super
       @text = @text.sub(/^http:\/\//,'')  # this removes the prepended string from the unchanged match text
       #warn "huri t:#{@text}, #{match}, #{params.inspect}"

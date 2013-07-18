@@ -8,42 +8,27 @@ class Card
     cattr_accessor :default_chunks
   
     @@default_chunks = [ :URI, :HostURI, :EmailURI, :EscapedLiteral, :Include, :Link ]
-    @@parse_regexps = { :default => Chunk::Abstract.parse_regexp(default_chunks) }
+    @@chunk_regexps = { :default => Chunk::Abstract.parse_regexp( @@default_chunks ) }
 
     PREFIX_LOOKUP = Chunk::Abstract.prefix_cfg
   
-    @@allowed_tags = {}
-    %w{ 
-      br i b pre cite caption strong em ins sup sub del ol hr ul li p 
-      div h1 h2 h3 h4 h5 h6 span table tr td th tbody thead tfoot
-    }.each { |tag| @@allowed_tags[tag] = [] }
-  
-    # allowed attributes
-    @@allowed_tags.merge!(
-      'a' => ['href', 'title', 'target' ],
-      'img' => ['src', 'alt', 'title'],
-      'code' => ['lang'],
-      'blockquote' => ['cite']
-    )
+    attr_reader :revision, :format
 
-    if Wagn::Conf[:allow_inline_styles]
-      @@allowed_tags['table'] += %w[ cellpadding align border cellspacing ]
-    end
-
-    @@allowed_tags.each_key {|k|
-      @@allowed_tags[k] << 'class'
-      @@allowed_tags[k] << 'style' if Wagn::Conf[:allow_inline_styles]
-    }  
-  
-    attr_reader :revision, :card, :format
-
-    def initialize content, card, format=nil
-      @card = card or raise "No Card in Content!!"
-      @format = format
+    def initialize content, format_or_card
+      @format = if Card===format_or_card
+        Format.new format_or_card, :format=>nil
+      else
+        format_or_card
+      end
+      
       unless Array === content
         content = parse_content content
       end
       super content
+    end
+
+    def card
+      format.card
     end
 
     def to_s
@@ -84,7 +69,7 @@ class Card
 
       if String===content
         pre_start = pos = 0
-        while match = content[pos..-1].match( @@parse_regexps[:default] )
+        while match = content[pos..-1].match( @@chunk_regexps[:default] )
           m_str = match[0]
           first_char = m_str[0,1]
           grp_start = match.begin(0)+pos
@@ -116,7 +101,7 @@ class Card
                 # save between strings and chunks indexed by position (probably should just be ordered pairs)
                 m, *groups = rest_match.to_a
                 rec = [ pos, ( pre_start == grp_start ? nil : content[pre_start..grp_start-1] ), 
-                               chunk_class.new(m_str+m, card, format, [first_char, m_str] + groups) ]
+                               chunk_class.new(m_str+m, self, [first_char, m_str] + groups) ]
                 pre_start = pos
                 positions << rec
               end
@@ -145,6 +130,29 @@ class Card
 
     
     
+  
+    @@allowed_tags = {}
+    %w{ 
+      br i b pre cite caption strong em ins sup sub del ol hr ul li p 
+      div h1 h2 h3 h4 h5 h6 span table tr td th tbody thead tfoot
+    }.each { |tag| @@allowed_tags[tag] = [] }
+  
+    # allowed attributes
+    @@allowed_tags.merge!(
+      'a' => ['href', 'title', 'target' ],
+      'img' => ['src', 'alt', 'title'],
+      'code' => ['lang'],
+      'blockquote' => ['cite']
+    )
+
+    if Wagn::Conf[:allow_inline_styles]
+      @@allowed_tags['table'] += %w[ cellpadding align border cellspacing ]
+    end
+
+    @@allowed_tags.each_key {|k|
+      @@allowed_tags[k] << 'class'
+      @@allowed_tags[k] << 'style' if Wagn::Conf[:allow_inline_styles]
+    }
   
     class << self
 

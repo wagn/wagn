@@ -8,6 +8,7 @@
 # match by its pattern.
 
 module Card::Chunk
+  
   class Abstract
     require 'uri/common'
     
@@ -22,18 +23,24 @@ module Card::Chunk
         @@prefix_cfg[prefix] = cfg
         cfg[:prefix_re]
       end
-      /(?:#{prefix_res * '|'})/mo
+      /(?:#{ prefix_res * '|' })/mo
     end
 
-    attr_reader :text, :process_chunk, :card, :format
+    attr_reader :text, :process_chunk
 
-    def initialize match_string, card, format, params
+    def initialize match_string, content, params
       @text = match_string
       @processed = nil
-      @card = card
-      @format = format
-      #warn "base initialize ch #{@card_params.inspect}, #{inspect}"
+      @content = content
       self
+    end
+    
+    def format
+      @content.format
+    end
+    
+    def card
+      @content.card
     end
 
     def to_s

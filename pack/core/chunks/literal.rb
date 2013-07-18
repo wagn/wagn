@@ -15,7 +15,7 @@ module Card::Chunk
 
     def self.config() ESCAPE_CONFIG end
 
-    def initialize match, card, format, params
+    def initialize match, content, params
       super
       @process_chunk = match.sub(/^\\(.)/, "<span>\\1</span>")
       self

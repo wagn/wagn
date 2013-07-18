@@ -4,7 +4,7 @@ class Card
   class Content < SimpleDelegator
     Card.load_chunks
     
-    #not sure whether this is   best place.  Could really happen almost anywhere (even before chunk classes are loaded).
+    #not sure whether this is best place.  Could really happen almost anywhere (even before chunk classes are loaded).
     Chunk.register_list :default, [ :URI, :HostURI, :EmailURI, :EscapedLiteral, :Include, :Link ]
     Chunk.register_list :references,                         [ :EscapedLiteral, :Include, :Link ]
       

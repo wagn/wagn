@@ -1,17 +1,13 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency 'card/chunk'
-
 class Card
   class Content < SimpleDelegator
     Card.load_chunks
-    cattr_accessor :default_chunks
-  
-    @@default_chunks = [ :URI, :HostURI, :EmailURI, :EscapedLiteral, :Include, :Link ]
-    @@chunk_regexps = { :default => Chunk::Abstract.parse_regexp( @@default_chunks ) }
-
-    PREFIX_LOOKUP = Chunk::Abstract.prefix_cfg
-  
+    
+    #not sure whether this is   best place.  Could really happen almost anywhere (even before chunk classes are loaded).
+    Chunk.register_list :default, [ :URI, :HostURI, :EmailURI, :EscapedLiteral, :Include, :Link ]
+    Chunk.register_list :references,                         [ :EscapedLiteral, :Include, :Link ]
+      
     attr_reader :revision, :format
 
     def initialize content, format_or_card
@@ -69,7 +65,7 @@ class Card
 
       if String===content
         pre_start = pos = 0
-        while match = content[pos..-1].match( @@chunk_regexps[:default] )
+        while match = content[pos..-1].match( Chunk.get_regexp( card.chunk_list ) )
           m_str = match[0]
           first_char = m_str[0,1]
           grp_start = match.begin(0)+pos
@@ -79,11 +75,11 @@ class Card
           pos += match.end(0)
 
           # either it is indexed by the first character of the match
-          if match_cfg = PREFIX_LOOKUP[ first_char ]
+          if match_cfg = Chunk.prefix_cfg[ first_char ]
             rest_match = content[pos..-1].match( Hash===(h = match_cfg[:rest_re]) ? h[m_str[1,1]] : h )
 
           else # or it uses the default pattern (Chunk::URI now)
-            match_cfg = PREFIX_LOOKUP[ m_str[-1,1] ] || PREFIX_LOOKUP[ :default ]
+            match_cfg = Chunk.prefix_cfg[ m_str[-1,1] ] || Chunk.prefix_cfg[ :default ]
             prepend_str = match_cfg[:prepend_str]
             prepend_str = (m_str[-1,1] != ':' && prepend_str) ? prepend_str : ''
             #warn "pp #{match_cfg[:class]}, #{prepend_str.inspect} [#{m_str}, #{prepend_str}]"

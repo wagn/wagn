@@ -42,6 +42,8 @@ module Wagn
     end
 
     def load_chunks
+      require_dependency 'card/chunk'
+      
       PACKS.each do |pack|
         load_dir File.expand_path( "#{pack}/chunks/*.rb", __FILE__ )
       end

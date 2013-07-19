@@ -1,7 +1,5 @@
 # -*- encoding : utf-8 -*-
-require_dependency 'chunks/chunk'
-
-module Chunks
+module Card::Chunk
   class Link < Reference
     word = /\s*([^\]\|]+)\s*/
     # Groups: $1, [$2]: [[$1]] or [[$1|$2]] or $3, $4: [$3][$4]
@@ -14,7 +12,7 @@ module Chunks
 
     def self.config() WIKI_CONFIG end
 
-    def initialize match, card_params, params
+    def initialize match, content, params
       super
       target, @link_text = if params[2]     # standard [[ ]] syntax
         raw_syntax = params[2]
@@ -53,7 +51,7 @@ module Chunks
       if raw
         raw.strip!
         if raw =~ /(^|[^\\])\{\{/
-          Card::Content.new raw, @card_params
+          Card::Content.new raw, format
         else
           raw
         end
@@ -84,7 +82,7 @@ module Chunks
       replace_name_reference old_name, new_name
 
       if Card::Content===@link_text
-        @link_text.find_chunks(Chunks::Reference).each { |chunk| chunk.replace_reference old_name, new_name }
+        @link_text.find_chunks(Card::Chunk::Reference).each { |chunk| chunk.replace_reference old_name, new_name }
       else
         @link_text = new_name if old_name.to_name == @link_text
       end

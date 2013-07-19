@@ -6,7 +6,7 @@ require 'wagn/pack_spec_helper'
 # level, but these cases should still be covered by tests
 
 
-describe Chunks::Include, "include chunk tests" do
+describe Card::Chunk::Include, "include chunk tests" do
   include ActionView::Helpers::TextHelper
   include MySpecHelpers
 

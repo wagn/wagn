@@ -1,5 +1,10 @@
 # -*- encoding : utf-8 -*-
 module Card::Diff
+  
+  def diff(a, b)
+    DiffBuilder.new(a, b).build
+  end
+
 
   Match = Struct.new(:start_in_old, :start_in_new, :size)
   class Match
@@ -308,10 +313,5 @@ module Card::Diff
       words
     end
 
-  end # of class Diff Builder
-
-  def diff(a, b)
-    DiffBuilder.new(a, b).build
   end
-
 end

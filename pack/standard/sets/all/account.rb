@@ -1,5 +1,5 @@
 format :html do
-  view :signin, :tags=>:unknown_ok do |args|  
+  view :signin, :tags=>:unknown_ok, :perms=>:none do |args|  
     signin_core = wrap :signin, :frame=>:true do
       %{
         <div class="card-header"><h1>Sign In</h1></div>
@@ -26,7 +26,7 @@ format :html do
   end
   
   
-  view :forgot_password do |args|
+  view :forgot_password, :perms=>:none do |args|
     wrap :forgot_password, :frame=>:true do
       %{
         <div class="card-header"><h1>Forgot Password</h1></div>
@@ -44,7 +44,7 @@ format :html do
     end
   end
   
-  view :signup, :tags=>:unknown_ok do |args|
+  view :signup, :tags=>:unknown_ok, :perms=>:none do |args|
     help_text = if card.rule_card :add_help, :fallback=>:help
       _render :help, :setting=>:add_help
     else

@@ -11,3 +11,7 @@ end
 def clean_html?
   false
 end
+
+def chunk_list
+  :references
+end

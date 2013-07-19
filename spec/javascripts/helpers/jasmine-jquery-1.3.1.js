@@ -48,14 +48,14 @@ jasmine.Fixtures.prototype.load = function() {
 };
 
 jasmine.Fixtures.prototype.read = function() {
-  var htmlChunk = [];
+  var htmlChunks = [];
 
   var fixtureUrls = arguments;
   for(var urlCount = fixtureUrls.length, urlIndex = 0; urlIndex < urlCount; urlIndex++) {
-    htmlChunk.push(this.getFixtureHtml_(fixtureUrls[urlIndex]));
+    htmlChunks.push(this.getFixtureHtml_(fixtureUrls[urlIndex]));
   }
 
-  return htmlChunk.join('');
+  return htmlChunks.join('');
 };
 
 jasmine.Fixtures.prototype.clearCache = function() {

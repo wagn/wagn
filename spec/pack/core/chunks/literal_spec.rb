@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
+#Card::Content
 
 describe Card::Chunk::EscapedLiteral, "literal chunk tests" do
   include MySpecHelpers

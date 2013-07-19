@@ -13,7 +13,6 @@ module Card::Chunk
   
   class << self
     def register_list key, list
-      # this holds on to simple list so that registration can happen before chunk classes are loaded.
       raw_list[key] = list
     end
     
@@ -30,8 +29,13 @@ module Card::Chunk
         end
         /(?:#{ prefix_res * '|' })/m
       end
-    end
+    end  
   end
+  
+  
+  #not sure whether this is best place.  Could really happen almost anywhere (even before chunk classes are loaded).
+  register_list :default, [ :URI, :HostURI, :EmailURI, :EscapedLiteral, :Include, :Link ]
+  register_list :references,                         [ :EscapedLiteral, :Include, :Link ]
 
   
   class Abstract
@@ -67,6 +71,5 @@ module Card::Chunk
     end
   end
   
-
-  
+  Card.load_chunks
 end

@@ -2,8 +2,6 @@
 require 'wagn/spec_helper'
 require 'wagn/pack_spec_helper'
 
-#FIXME: None of these work now, since inclusion is handled at the slot/cache
-# level, but these cases should still be covered by tests
 
 
 describe Card::Chunk::Include, "include chunk tests" do

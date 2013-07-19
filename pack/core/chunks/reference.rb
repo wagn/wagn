@@ -1,7 +1,5 @@
 # -*- encoding : utf-8 -*-
-require_dependency 'chunks/chunk'
-
-module Chunks
+module Card::Chunk
   class Reference < Abstract
     attr_accessor :referee_name, :name
 
@@ -24,7 +22,7 @@ module Chunks
       #warn "ref rnr #{inspect}, #{old_name}, #{new_name}"
       @referee_card = @referee_name = nil
       if Card::Content===name
-        name.find_chunks(Chunks::Reference).each { |chunk| chunk.replace_reference old_name, new_name }
+        name.find_chunks(Chunk::Reference).each { |chunk| chunk.replace_reference old_name, new_name }
       else
         @name = name.to_name.replace_part( old_name, new_name )
       end

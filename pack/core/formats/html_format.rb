@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Card::HtmlFormat < Card::Format
+  include Card::Diff
+  
   cattr_accessor :default_menu
   attr_accessor  :options_need_save, :start_time, :skip_autosave
 #    DEFAULT_ITEM_VIEW = :closed  #FIXME: It can't access this default
@@ -93,7 +95,7 @@ class Card::HtmlFormat < Card::Format
   end
 
   def slot_options
-    @@slot_options ||= Chunks::Include.options.keys.reject { |k| k == :view }.unshift :home_view
+    @@slot_options ||= Card::Chunk::Include.options.keys.reject { |k| k == :view }.unshift :home_view
   end
 
   def wrap view, args = {}

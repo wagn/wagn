@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
 
-describe Chunks::Link, "link chunk tests" do
+describe Card::Chunk::Link, "link chunk tests" do
   include MySpecHelpers
 
   before do

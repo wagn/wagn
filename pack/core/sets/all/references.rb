@@ -11,9 +11,9 @@ def extended_referencers
 end
 
 def replace_references old_name, new_name
-  obj_content = Card::Content.new content, {:card=>self}
+  obj_content = Card::Content.new content, card=self
   
-  obj_content.find_chunks( Chunks::Reference ).select do |chunk|
+  obj_content.find_chunks( Card::Chunk::Reference ).select do |chunk|
     if old_ref_name = chunk.referee_name and new_ref_name = old_ref_name.replace_part(old_name, new_name)
       chunk.referee_name = chunk.replace_reference old_name, new_name
       Card::Reference.where( :referee_key => old_ref_name.key ).update_all :referee_key => new_ref_name.key
@@ -37,9 +37,9 @@ def update_references rendered_content = nil, refresh = false
 #  references_expired = nil
   expire if refresh
 
-  rendered_content ||= Card::Content.new(content, {:card=>self} )
+  rendered_content ||= Card::Content.new(content, card=self)
   
-  rendered_content.find_chunks(Chunks::Reference).each do |chunk|
+  rendered_content.find_chunks(Card::Chunk::Reference).each do |chunk|
     if referee_name = chunk.referee_name # name is referenced (not true of commented inclusions)
       referee_id = chunk.referee_id   
       if id != referee_id               # not self reference
@@ -51,7 +51,7 @@ def update_references rendered_content = nil, refresh = false
           :referer_id  => id,
           :referee_id  => referee_id,
           :referee_key => referee_name.key,
-          :ref_type    => Chunks::Link===chunk    ? 'L' : 'I',
+          :ref_type    => Card::Chunk::Link===chunk    ? 'L' : 'I',
           :present     => chunk.referee_card.nil? ?  0  :  1
         )
       end

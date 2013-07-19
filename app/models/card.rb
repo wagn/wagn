@@ -429,6 +429,10 @@ class Card < ActiveRecord::Base
     hard_template ? template.content : content
   end
 
+  def chunk_list #override to customize by set
+    :default
+  end
+
   def selected_revision_id
     @selected_revision_id || current_revision_id || 0
   end

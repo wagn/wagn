@@ -103,6 +103,7 @@ module Card::Set
   end
 
   def self.register_set set_module
+    Wagn::Loader.current_set_module = set_module
     Card::Set[set_module.name]= set_module
   end
 
@@ -173,9 +174,7 @@ module Card::Set
         define_method trait_card do
           new_opts = options[:type] ? {:type=>options[:type]} : {}
           new_opts.merge!( {:content => options[:default]} ) if options[:default]
-fc=nil
-          card = trait_var("@#{trait_card}") do fc=fetch(:trait=>trait_sym, :new=>new_opts) end
-raise "no card? #{trait_card.inspect} #{fc.inspect}, #{card.inspect}" unless Card===card
+          card = trait_var("@#{trait_card}") do fetch(:trait=>trait_sym, :new=>new_opts) end
           card
         end
       end
@@ -183,10 +182,8 @@ raise "no card? #{trait_card.inspect} #{fc.inspect}, #{card.inspect}" unless Car
       if options[:reader]
         Wagn::Loader.current_set_module.class_eval do
           define_method trait do
-           r=
             ( instance_variable_get( "@#{trait}" ) ||
               instance_variable_set( "@#{trait}", send(trait_card).content ) )
-Rails.logger.warn "trait #{trait_card.inspect} is #{r}"; r
           end
         end
       end
@@ -194,9 +191,7 @@ Rails.logger.warn "trait #{trait_card.inspect} is #{r}"; r
       if options[:writer]
         Wagn::Loader.current_set_module.class_eval do
           define_method "#{trait}=" do |value|
-raise "value is Card ??? #{value.inspect}" if Card===value
             card = send trait_card
-Rails.logger.warn "set #{trait} on #{inspect} tc:#{card.inspect} to #{value.inspect}"
             card.content = value
 
             instance_variable_set "@#{trait}", value

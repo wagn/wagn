@@ -1,46 +1,19 @@
 # -*- encoding : utf-8 -*-
 
 class Card < ActiveRecord::Base
-  require_dependency 'card/query' #need to load explicitly because of AR name conflict
+  require_dependency 'card/query'
+  require_dependency 'card/constant'
   require_dependency 'card/set'
   require_dependency 'card/format'
-  
 
   extend Card::Set
+  extend Card::Constant
   extend Wagn::Loader
-
+  
   cattr_accessor :set_patterns
   @@set_patterns = []
 
   define_callbacks :approve, :store, :extend
-
-  class << self
-
-    ID_CONST_ALIAS = {
-      :default_type => :basic, #this should not be hardcoded (not a constant -- should come from *all+*default)
-      :anon         => :anonymous,
-      :auth         => :anyone_signed_in,
-      :admin        => :administrator
-    }
-
-    def const_missing const
-      if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore.to_sym
-        code = ID_CONST_ALIAS[code] || code
-        if card_id = Card::Codename[code]
-          const_set const, card_id
-        else
-          raise "Missing codename #{code} (#{const}) #{caller*"\n"}"
-        end
-      else
-        super
-      end
-    end
-  end
-
-
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # LOAD Card::Formats and Sets
 
   load_set_patterns
   load_formats
@@ -62,6 +35,7 @@ class Card < ActiveRecord::Base
   after_save :extend
 
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
+
 
 
   #~~~~~~  CLASS METHODS ~~~~~~~~~~~~~~~~~~~~~
@@ -86,7 +60,7 @@ class Card < ActiveRecord::Base
         card=Card[name] and !card.content.strip.empty? and card.content
       end
     end
-
+    
     def path_setting name #shouldn't this be in location helper?
       name ||= '/'
       return name if name =~ /^(http|mailto)/
@@ -129,35 +103,7 @@ class Card < ActiveRecord::Base
     self
   end
 
-  def get_type_id args={}
-    return if args[:type_id] # type_id was set explicitly.  no need to set again.
 
-    type_id = case
-      when args[:typecode]
-        if code=args[:typecode]
-          Card::Codename[code] || ( c=Card[code] and c.id)
-        end
-      when args[:type]
-        Card.fetch_id args[:type]
-      else :noop
-      end
-
-    case type_id
-    when :noop
-    when false, nil
-      errors.add :type, "#{args[:type] || args[:typecode]} is not a known type."
-    else
-      return type_id
-    end
-
-    if name && t=template
-      reset_patterns #still necessary even with new template handling?
-      t.type_id
-    else
-      # if we get here we have no *all+*default -- let's address that!
-      DefaultTypeID
-    end
-  end
 
   def include_set_modules
     unless @set_mods_loaded
@@ -390,28 +336,6 @@ class Card < ActiveRecord::Base
   rescue
     Rails.logger.info "BROKE ATTEMPTING TO REPAIR BROKEN KEY: #{key}"
     self
-  end
-
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # TYPE
-
-  def type_card
-    Card[ type_id.to_i ]
-  end
-
-  def typecode # FIXME - change to "type_code"
-    Card::Codename[ type_id.to_i ]
-  end
-
-  def type_name
-    return if type_id.nil?
-    type_card = Card.fetch type_id.to_i, :skip_modules=>true, :skip_virtual=>true
-    type_card and type_card.name
-  end
-
-  def type= type_name
-    self.type_id = Card.fetch_id type_name
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

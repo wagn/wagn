@@ -150,7 +150,6 @@ module Card::Set
   def card_writer *args
     options = args.extract_options!
     add_traits args, options.merge( :writer=>true )
-    options = args.extract_options!
   end
 
   private

@@ -24,11 +24,12 @@ class Card < ActiveRecord::Base
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
 
-  attr_accessor :selected_revision_id,
-    :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
-    :update_referencers, :was_new_card, # wrong mechanisms for these
-    :comment, :comment_author,          # obviated soon
-    :error_view, :error_status          # yuck
+
+  attr_writer :selected_revision_id #writer because read method is in pack (and does not override upon load)
+  attr_accessor  :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
+    :update_referencers, :was_new_card,              # wrong mechanisms for these
+    :comment, :comment_author,                       # obviated soon
+    :error_view, :error_status                       # yuck
 
   before_save :approve
   around_save :store
@@ -261,157 +262,6 @@ class Card < ActiveRecord::Base
     errors.empty?
   end
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # NAME / RELATED NAMES
-
-
-  # FIXME: use delegations and include all cardname functions
-  def simple?()        cardname.simple?                     end
-  def junction?()      cardname.junction?                   end
-
-  def left *args
-    if !simple?
-      unless updates.for? :name and name_without_tracking.to_name.key == cardname.left_name.key
-        #the ugly code above is to prevent recursion when, eg, renaming A+B to A+B+C
-        #it should really be testing for any trunk
-        Card.fetch cardname.left, *args
-      end
-    end
-  end
-
-  def right *args
-    Card.fetch( cardname.right, *args ) if !simple?
-  end
-
-  def trunk *args
-    simple? ? self : left( *args )
-  end
-
-  def tag *args
-    simple? ? self : Card.fetch( cardname.right, *args )
-  end
-
-  def left_or_new args={}
-    left args or Card.new args.merge(:name=>cardname.left)
-  end
-
-  def dependents
-    return [] if new_card?
-
-    if @dependents.nil?
-      @dependents =
-        Account.as_bot do
-          deps = Card.search( { (simple? ? :part : :left) => name } ).to_a
-          deps.inject(deps) do |array, card|
-            array + card.dependents
-          end
-        end
-      #Rails.logger.warn "dependents[#{inspect}] #{@dependents.inspect}"
-    end
-    @dependents
-  end
-
-  def repair_key
-    Account.as_bot do
-      correct_key = cardname.key
-      current_key = key
-      return self if current_key==correct_key
-
-      if key_blocker = Card.find_by_key_and_trash(correct_key, true)
-        key_blocker.cardname = key_blocker.cardname + "*trash#{rand(4)}"
-        key_blocker.save
-      end
-
-      saved =   ( self.key  = correct_key and self.save! )
-      saved ||= ( self.cardname = current_key and self.save! )
-
-      if saved
-        self.dependents.each { |c| c.repair_key }
-      else
-        Rails.logger.debug "FAILED TO REPAIR BROKEN KEY: #{key}"
-        self.name = "BROKEN KEY: #{name}"
-      end
-      self
-    end
-  rescue
-    Rails.logger.info "BROKE ATTEMPTING TO REPAIR BROKEN KEY: #{key}"
-    self
-  end
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # CONTENT / REVISIONS
-
-  def content
-    if new_card?
-      template ? template.content : ''
-    else
-      current_revision.content
-    end
-  end
-
-  def raw_content
-    hard_template ? template.content : content
-  end
-
-  def chunk_list #override to customize by set
-    :default
-  end
-
-  def selected_revision_id
-    @selected_revision_id || current_revision_id || 0
-  end
-
-  def current_revision
-    #return current_revision || Card::Revision.new
-    if @cached_revision and @cached_revision.id==current_revision_id
-    elsif ( Card::Revision.cache &&
-       @cached_revision=Card::Revision.cache.read("#{cardname.safe_key}-content") and
-       @cached_revision.id==current_revision_id )
-    else
-      rev = current_revision_id ? Card::Revision.find(current_revision_id) : Card::Revision.new()
-      @cached_revision = Card::Revision.cache ?
-        Card::Revision.cache.write("#{cardname.safe_key}-content", rev) : rev
-    end
-    @cached_revision
-  end
-
-  def previous_revision revision_id
-    if revision_id
-      rev_index = revisions.find_index do |rev|
-        rev.id == revision_id
-      end
-      revisions[rev_index - 1] if rev_index.to_i != 0
-    end
-  end
-
-  def revised_at
-    (current_revision && current_revision.created_at) || Time.now
-  end
-
-  def creator
-    Card[ creator_id ]
-  end
-
-  def updater
-    Card[ updater_id || Card::AnonID ]
-  end
-
-  def drafts
-    revisions.find(:all, :conditions=>["id > ?", current_revision_id])
-  end
-
-  def save_draft( content )
-    clear_drafts
-    revisions.create :content=>content
-  end
-
-  protected
-
-  def clear_drafts # yuck!
-    connection.execute %{delete from card_revisions where card_id=#{id} and id > #{current_revision_id} }
-  end
-
-  public
 
   #~~~~~~~~~~~~~~ USER-ISH methods ~~~~~~~~~~~~~~#
   # these should be done in a set module when we have the capacity to address the set of "cards with accounts"

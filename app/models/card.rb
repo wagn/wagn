@@ -116,29 +116,6 @@ class Card < ActiveRecord::Base
     self
   end
 
-
-  # reset_mods: resets with patterns in model/pattern
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # STATES
-
-  def new_card?
-    new_record? || !!@from_trash
-  end
-
-  def known?
-    real? || virtual?
-  end
-
-  def real?
-    !new_card?
-  end
-
-  def pristine?
-    # has not been edited directly by human users.  bleep blorp.
-    new_card? || !revisions.map(&:creator_id).find { |id| id != Card::WagnBotID }
-  end
-
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING
 
@@ -149,19 +126,6 @@ class Card < ActiveRecord::Base
     reset_patterns
 
     super args, options
-  end
-
-
-
-  after_validation do
-    begin
-      raise PermissionDenied.new(self) unless approved?
-      expire_pieces if errors.any?
-      true
-    rescue Exception => e
-      expire_pieces
-      raise e
-    end
   end
 
   def approve
@@ -318,6 +282,9 @@ class Card < ActiveRecord::Base
     fetch( :trait=>:account, :new=>{} ).ok?( :create)
   end
 
+  event :check_perms, :after=>:approve do
+    approved? or raise( PermissionDenied.new self )
+  end
 
   event :set_stamper, :before=>:store do #|args|
 #    puts "stamper called: #{name}"
@@ -413,21 +380,20 @@ class Card < ActiveRecord::Base
   alias_method_chain :name=, :resets
   alias cardname= name=
 
-  def cardname
-    @cardname ||= name.to_name
-  end
-
-  def autoname name
-    if Card.exists? name
-      autoname name.next
-    else
-      name
-    end
-  end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # VALIDATIONS
 
+
+  after_validation do
+    begin
+      expire_pieces if errors.any?
+      true
+    rescue Exception => e
+      expire_pieces
+      raise e
+    end
+  end
 
   validate do |card|
     return true if @nested_edit
@@ -535,27 +501,5 @@ class Card < ActiveRecord::Base
   def on_type_change()                    end
   def validate_type_change()        true  end
   def validate_content( content )         end
-
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # MISCELLANEOUS
-
-  def debug_type() "#{typecode||'no code'}:#{type_id}" end
-
-  def to_s
-    "#<#{self.class.name}[#{debug_type}]#{self.attributes['name']}>"
-  end
-
-  def inspect
-    "#<#{self.class.name}" + "##{id}" +
-    "###{object_id}" + #"l#{left_id}r#{right_id}" +
-    "[#{debug_type}]" + "(#{self.name})" + #"#{object_id}" +
-    #(errors.any? ? '*Errors*' : 'noE') +
-    (errors.any? ? "<E*#{errors.full_messages*', '}*>" : '') +
-    #"{#{references_expired==1 ? 'Exp' : "noEx"}:" +
-    "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{frozen? ? 'Fz' : readonly? ? 'RdO' : ''}" +
-    "#{@virtual &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }:#{references_expired.inspect}}" +
-    '>'
-  end
 
 end

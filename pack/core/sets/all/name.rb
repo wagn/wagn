@@ -1,4 +1,16 @@
 
+def cardname
+  @cardname ||= name.to_name
+end
+
+def autoname name
+  if Card.exists? name
+    autoname name.next
+  else
+    name
+  end
+end
+
 # FIXME: use delegations and include all cardname functions
 def simple?
   cardname.simple?

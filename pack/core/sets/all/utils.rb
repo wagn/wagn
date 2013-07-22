@@ -31,3 +31,23 @@ module ClassMethods
   end
   
 end
+
+def debug_type
+  "#{typecode||'no code'}:#{type_id}"
+end
+
+def to_s
+  "#<#{self.class.name}[#{debug_type}]#{self.attributes['name']}>"
+end
+
+def inspect
+  "#<#{self.class.name}" + "##{id}" +
+  "###{object_id}" + #"l#{left_id}r#{right_id}" +
+  "[#{debug_type}]" + "(#{self.name})" + #"#{object_id}" +
+  #(errors.any? ? '*Errors*' : 'noE') +
+  (errors.any? ? "<E*#{errors.full_messages*', '}*>" : '') +
+  #"{#{references_expired==1 ? 'Exp' : "noEx"}:" +
+  "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{frozen? ? 'Fz' : readonly? ? 'RdO' : ''}" +
+  "#{@virtual &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }:#{references_expired.inspect}}" +
+  '>'
+end

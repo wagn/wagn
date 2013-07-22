@@ -1,6 +1,7 @@
 Feature: autonaming
-  In order for users to have a more intuitive interface
-  they should be able to skip naming cards in some cases
+  In order to save effort from thinking up names
+  As an Editor
+  I want to be able to skip naming cards where names matter little
 
   Background:
     Given I log in as Joe Admin

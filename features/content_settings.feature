@@ -22,15 +22,15 @@ Feature: Content Settings
       |director|lead|
       |George Lucas|Harrison Ford|
     And I go to card "Star Wars"
-    Then In the the main card content I should see "George Lucas"
-    And In the the main card content I should see "Harrison Ford"
+    Then In the main card content I should see "George Lucas"
+    And In the main card content I should see "Harrison Ford"
     When I edit "Star Wars" with plusses:
       |director|lead|
       |G. Lucas|H. Ford|
     And I go to card "Star Wars"
-    Then In the the main card content I should see "G. Lucas"
-    And In the the main card content I should see "H. Ford"
-    And In the the main card content I should see "true dat"
+    Then In the main card content I should see "G. Lucas"
+    And In the main card content I should see "H. Ford"
+    And In the main card content I should see "true dat"
 
   Scenario: Default on a ranking set
     Given I create card "Home Movie+*right+*default" with content "Watch this"

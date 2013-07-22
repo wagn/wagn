@@ -3,6 +3,14 @@ require 'uri'
 require 'cgi'
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
 
+
+Given /^I sign up as "(.*)" with email "(.*)"$/ do |cardname, email|
+  visit '/account/signup'
+  fill_in 'card_name', :with=>cardname
+  fill_in 'account_email', :with=>email
+  click_button 'Submit'
+end
+
 Given /^I log in as (.+)$/ do |account_name|
   # FIXME: define a faster simulate method ("I am logged in as")
   @current_id = ucid = Card[account_name].id
@@ -147,14 +155,14 @@ end
 
 Then /the card (.*) should contain "([^\"]*)"$/ do |cardname, content|
   visit path_to("card #{cardname}")
-  within scope_of("the main card content") do
+  within scope_of("main card content") do
     page.should have_content(content)
   end
 end
 
 Then /the card (.*) should not contain "([^\"]*)"$/ do |cardname, content|
   visit path_to("card #{cardname}")
-  within scope_of("the main card content") do
+  within scope_of("main card content") do
     page.should_not have_content(content)
   end
 end

@@ -19,11 +19,9 @@ class Card < ActiveRecord::Base
   load_formats
   load_sets
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   has_many :revisions, :order => :id
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
-
 
   attr_writer :selected_revision_id #writer because read method is in pack (and does not override upon load)
   attr_accessor  :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
@@ -38,142 +36,9 @@ class Card < ActiveRecord::Base
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
 
-
-  #~~~~~~  CLASS METHODS ~~~~~~~~~~~~~~~~~~~~~
-
-  class << self
-    JUNK_INIT_ARGS = %w{ missing skip_virtual id }
-
-    def cache
-      Wagn::Cache[Card]
-    end
-
-    def new args={}, options={}
-      args = (args || {}).stringify_keys
-      JUNK_INIT_ARGS.each { |a| args.delete(a) }
-      %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
-      args.delete('content') if args['attach'] # should not be handled here!
-      super args
-    end
-
-    def setting name
-      Account.as_bot do
-        card=Card[name] and !card.content.strip.empty? and card.content
-      end
-    end
-    
-    def path_setting name #shouldn't this be in location helper?
-      name ||= '/'
-      return name if name =~ /^(http|mailto)/
-      Wagn::Conf[:root_path] + name
-    end
-
-    def toggle val
-      val == '1'
-    end
-
-  end
-
-
-  # ~~~~~~ INSTANCE METHODS ~~~~~~~~~~~~~~~~~~~~~
-
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # INITIALIZATION
-
-  def initialize args={}
-    args['name']    = args['name'   ].to_s
-    args['type_id'] = args['type_id'].to_i
-
-    args.delete('type_id') if args['type_id'] == 0 # can come in as 0, '', or nil
-
-    @type_args = {
-      :type     => args.delete('type'    ),
-      :typecode => args.delete('typecode'),
-      :type_id  => args[       'type_id' ]
-    }
-
-    skip_modules = args.delete 'skip_modules'
-
-    super args # ActiveRecord #initialize
-
-    if tid = get_type_id( @type_args )
-      self.type_id_without_tracking = tid
-    end
-
-    include_set_modules unless skip_modules
-    self
-  end
-
-  def include_set_modules
-    unless @set_mods_loaded
-      set_modules.each do |m|
-        singleton_class.send :include, m
-      end
-      @set_mods_loaded=true
-    end
-    self
-  end
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # SAVING
-
-  def assign_attributes args={}, options={}
-    if args and newtype = args.delete(:type) || args.delete('type')
-      args['type_id'] = Card.fetch_id( newtype )
-    end
-    reset_patterns
-
-    super args, options
-  end
-
-  def approve
-    @was_new_card = self.new_card?
-    @action = case
-      when trash     ; :delete
-      when new_card? ; :create
-      else             :update
-    end
-    run_callbacks :approve
-  rescue Exception=>e
-    rescue_event e
-  end
-
-  def store
-#    puts "commit called: #{name}"
-    run_callbacks :store do
-      #set_read_rule #move to action
-      yield
-      @virtual = false
-    end
-  rescue Exception=>e
-    rescue_event e
-  ensure
-    @from_trash = nil
-  end
-
-  def extend
-#    puts "extend called"
-    run_callbacks :extend
-  rescue Exception=>e
-    rescue_event e
-  ensure
-    @action = nil
-  end
-
-  def rescue_event e
-    @action = nil
-    expire_pieces
-    if @subcards
-      @subcards.each{ |card| card.expire_pieces }
-    end
-    raise e
-  end
-
-
-
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # DESTROY
+  # DELETE
+  # following clearly need to be moved to events.
 
   def delete
     errors.clear
@@ -187,9 +52,6 @@ class Card < ActiveRecord::Base
   end
 
   def delete_to_trash
-    if respond_to? :before_delete
-      self.before_delete
-    end
     @trash_changed = true
     self.update_attributes :trash => true
     dependents.each do |dep|
@@ -224,6 +86,10 @@ class Card < ActiveRecord::Base
     errors.empty?
   end
 
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # EVENTS
+  # The following events are all currently defined AFTER the sets are loaded and are therefore unexposed to the API.  Not good.  (my fault) - efm
 
   event :check_perms, :after=>:approve do
     approved? or raise( PermissionDenied.new self )
@@ -301,6 +167,10 @@ class Card < ActiveRecord::Base
   end
 
 
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # ATTRIBUTE TRACKING
+  # we can phase this out and just use "dirty" handling once current content is stored in the cards table
+  
 
   # Because of the way it chains methods, 'tracks' needs to come after
   # all the basic method definitions, and validations have to come after
@@ -326,7 +196,7 @@ class Card < ActiveRecord::Base
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # VALIDATIONS
-
+  # eventify!
 
   after_validation do
     begin
@@ -436,7 +306,7 @@ class Card < ActiveRecord::Base
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # METHODS FOR OVERRIDE
-  # eventify these!
+  # eventify!
 
   def on_type_change()                    end
   def validate_type_change()        true  end

@@ -17,22 +17,19 @@ class SharedData
     Wagn::Cache.reset_global
     Account.as(Card::WagnBotID)
 
-    create_with_class = User.respond_to?( :create_with_card ) ? User : Account
-Rails.logger.warn "cwc #{create_with_class}"
-
-    create_with_class.create_with_card(
+    Account.create_with_card(
       { :login=>"joe_user", :email=>'joe@user.com', :status=>'active', :password=>'joe_pass', :password_confirmation=>'joe_pass' },
       { :name=>"Joe User", :content => "I'm number two" }
     )    
 
-    create_with_class.create_with_card(
+    Account.create_with_card(
       { :login=>"joe_admin", :email=>'joe@admin.com', :status=>'active', :password=>'joe_pass', :password_confirmation=>'joe_pass' },
       { :name=>"Joe Admin", :content => "I'm number one" }
     )
 
     Card['Joe Admin'].fetch(:trait=>:roles, :new=>{}).items = [ Card::AdminID ]
 
-    create_with_class.create_with_card(
+    Account.create_with_card(
       { :login=>"joe_camel",:email=>'joe@camel.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass' },
       { :name=>"Joe Camel", :content => "Mr. Buttz" }
     )
@@ -43,7 +40,7 @@ Rails.logger.warn "cwc #{create_with_class}"
 
     # data for testing users and account requests
 
-    create_with_class.create_with_card(
+    Account.create_with_card(
       { :email=>'ron@request.com', :password=>'ron_pass', :password_confirmation=>'ron_pass', :status=>'pending' },
       { :type_id=>Card::AccountRequestID, :name=>"Ron Request" }
     )
@@ -52,7 +49,7 @@ Rails.logger.warn "cwc #{create_with_class}"
 
     # CREATE A CARD OF EACH TYPE
     
-    create_with_class.create_with_card(
+    Account.create_with_card(
       { :login=>"sample_user", :email=>'sample@user.com', :status=>'active', :password=>'sample_pass', :password_confirmation=>'sample_pass' },
       { :name=>"Sample User" }
     )
@@ -66,15 +63,15 @@ Rails.logger.warn "cwc #{create_with_class}"
 
     # data for role_test.rb
 
-    create_with_class.create_with_card(
+    Account.create_with_card(
       { :login=>"u1", :email=>'u1@user.com', :status=>'active', :password=>'u1_pass', :password_confirmation=>'u1_pass' },
       { :name=>"u1" }
     )
-    create_with_class.create_with_card(
+    Account.create_with_card(
       { :login=>"u2", :email=>'u2@user.com', :status=>'active', :password=>'u2_pass', :password_confirmation=>'u2_pass' },
       { :name=>"u2" }
     )
-    create_with_class.create_with_card(
+    Account.create_with_card(
       { :login=>"u3", :email=>'u3@user.com', :status=>'active', :password=>'u3_pass', :password_confirmation=>'u3_pass' },
       { :name=>"u3" }
     )
@@ -152,12 +149,12 @@ Rails.logger.warn "cwc #{create_with_class}"
       # fwiw Timecop is apparently limited by ruby Time object, which goes only to 2037 and back to 1900 or so.
       #  whereas DateTime can represent all dates.
 
-      create_with_class.create_with_card(
+      Account.create_with_card(
         { :login=>"john",:email=>'john@user.com', :status => 'active', :password=>'john_pass', :password_confirmation=>'john_pass' },
         { :name=>"John" }
       )
 
-      create_with_class.create_with_card(
+      Account.create_with_card(
         { :login=>"sara",:email=>'sara@user.com', :status => 'active', :password=>'sara_pass', :password_confirmation=>'sara_pass' },
         { :name=>"Sara" }
       )

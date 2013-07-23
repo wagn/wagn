@@ -1,7 +1,7 @@
 def set_database( db )
   y = YAML.load_file("#{Rails.root.to_s}/config/database.yml")
-  y["development"]["database"] = db
-  y["production"]["database"] = db
+  y["development"]["database"] = db if y["development"]
+  y["production"]["database"] = db if y["production"]
   File.open( "#{Rails.root.to_s}/config/database.yml", 'w' ) do |out|
     YAML.dump( y, out )
   end
@@ -73,8 +73,11 @@ namespace :test do
       File.open("#{Rails.root.to_s}/test/fixtures/#{table_name}.yml", 'w') do |file|
         data = ActiveRecord::Base.connection.select_all(sql % table_name)
         file.write data.inject({}) { |hash, record|
-          record['trash'] = false
-          puts "test that trash is actually stored as 'false' for postgres and deleteme "
+
+          trsh = record['trash']
+          record['trash'] = false if trsh == 0 or trsh == '0'
+          raise "bad trash value #{record['trash'].inspect}" unless (trsh = record['trash']).nil? or trsh == false
+          #puts "test that trash is actually stored as 'false' for postgres and deleteme "
           hash["#{table_name}_#{i.succ!}"] = record
           hash
         }.to_yaml

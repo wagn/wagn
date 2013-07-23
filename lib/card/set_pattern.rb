@@ -24,6 +24,8 @@ class Card::SetPattern
         end
         self.opt_keys = Array.wrap( opts.delete(:opt_keys) || key.to_sym )
         opts.each { |key, val| send "#{key}=", val }
+      else
+        warn "no codename for key #{key}"
       end
     end
 

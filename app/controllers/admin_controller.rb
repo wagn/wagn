@@ -114,7 +114,7 @@ class AdminController < CardController
   end
 
   def render_text response
-    render :text =>response, :layout=> true
+    render :text =>response
   end
   
   def admin_only

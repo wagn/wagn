@@ -1,7 +1,8 @@
 @javascript
 Feature: Pointer Inputs
   In order to offer a more user friendly interface
-  Users should be able to use different input methods for pointers
+  As a User
+  I want to use different input methods for pointers
 
   Background:
     Given I log in as Joe Admin

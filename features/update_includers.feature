@@ -1,6 +1,9 @@
-Feature: Update Includer cards
-  In order for Notifications to be more user friendly
-  Users should be notified when included plus cards of a card they are watching change.
+Feature: Updates for Children of watched cards
+  In order to keep track of changes that are important to me
+  As an Editor
+  I want to be notified when someone changes a child of a card I'm watching
+
+#should this be in watch?
 
   Background:
     Given I log in as Joe User

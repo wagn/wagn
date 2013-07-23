@@ -1,6 +1,7 @@
 Feature: templates
   In order to create structures
-  Users should be able to template
+  As a Wagneer
+  I want to template cards
 
   Background:
     Given I log in as Joe User
@@ -15,14 +16,14 @@ Feature: templates
       |author|illustrator|
       |Joyce|Picasso|
     And I go to card "Ulysses"
-    Then In the the main card content I should see "Joyce"
-    And In the the main card content I should see "Picasso"
+    Then In the main card content I should see "Joyce"
+    And In the main card content I should see "Picasso"
     When I edit "Ulysses" with plusses:
       |author|illustrator|
       |Tolstoy|Goya|
     And I go to card "Ulysses"
-    Then In the the main card content I should see "Tolstoy"
-    And In the the main card content I should see "Goya"
+    Then In the main card content I should see "Tolstoy"
+    And In the main card content I should see "Goya"
 
 
 

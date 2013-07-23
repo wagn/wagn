@@ -9,7 +9,7 @@ class Card < ActiveRecord::Base
   extend Card::Set
   extend Card::Constant
   extend Wagn::Loader
-  
+
   cattr_accessor :set_patterns
   @@set_patterns = []
 
@@ -103,8 +103,6 @@ class Card < ActiveRecord::Base
     include_set_modules unless skip_modules
     self
   end
-
-
 
   def include_set_modules
     unless @set_mods_loaded
@@ -226,61 +224,6 @@ class Card < ActiveRecord::Base
     errors.empty?
   end
 
-
-  #~~~~~~~~~~~~~~ USER-ISH methods ~~~~~~~~~~~~~~#
-  # these should be done in a set module when we have the capacity to address the set of "cards with accounts"
-  # in the meantime, they should probably be in a module.
-
-  def among? card_with_acct
-    prties = parties
-    card_with_acct.each { |auth| return true if prties.member? auth }
-    card_with_acct.member? Card::AnyoneID
-  end
-
-  def parties
-    @parties ||= (all_roles << self.id).flatten.reject(&:blank?)
-  end
-
-  def read_rules
-    @read_rules ||= begin
-      rule_ids = []
-      unless id==Card::WagnBotID # always_ok, so not needed
-        ( [ Card::AnyoneID ] + parties ).each do |party_id|
-          if rule_ids_for_party = self.class.read_rule_cache[ party_id ]
-            rule_ids += rule_ids_for_party
-          end
-        end
-      end
-      rule_ids
-    end
-  end
-
-  def all_roles
-    if @all_roles.nil?
-      @all_roles = if id == AnonID; []
-        else
-          Account.as_bot do
-            if get_roles = fetch(:trait=>:roles) and
-                ( get_roles = get_roles.item_cards(:limit=>0) ).any?
-              [AuthID] + get_roles.map(&:id)
-            else [AuthID]
-            end
-          end
-        end
-    end
-    #warn "aroles #{inspect}, #{@all_roles.inspect}"
-    @all_roles
-  end
-
-  def account
-    Account[ id ]
-  end
-
-  def accountable?
-    Card.toggle(rule(:accountable)) and
-    !account and
-    fetch( :trait=>:account, :new=>{} ).ok?( :create)
-  end
 
   event :check_perms, :after=>:approve do
     approved? or raise( PermissionDenied.new self )
@@ -493,11 +436,8 @@ class Card < ActiveRecord::Base
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # METHODS FOR OVERRIDE
-  # pretty much all of these should be done differently -efm
+  # eventify these!
 
-  def post_render( content )     content  end
-  def clean_html?()                 true  end
-  def collection?()                false  end
   def on_type_change()                    end
   def validate_type_change()        true  end
   def validate_content( content )         end

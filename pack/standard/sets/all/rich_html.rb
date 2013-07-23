@@ -1,4 +1,7 @@
 # -*- encoding : utf-8 -*-
+def clean_html?
+  true
+end
 
 format :html do
 

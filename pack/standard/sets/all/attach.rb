@@ -1,10 +1,10 @@
 # -*- encoding : utf-8 -*-
 
 def attach_array(rev_id=nil)
-  c=if rev_id || self.new_card? || self.selected_revision_id==current_revision_id
+  c=if rev_id || self.new_card? || selected_revision_id==current_revision_id
       self.content
     else      
-      Card::Revision.find_by_id(self.selected_revision_id).content
+      Card::Revision.find_by_id(selected_revision_id).content
     end
   !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/)
 end

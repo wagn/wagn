@@ -3,12 +3,13 @@ class Card::SetPattern
   class << self
     attr_accessor :key, :key_id, :opt_keys, :junction_only, :method_key, :assigns_type, :anchorless
     
-    def register_pattern klass, index=nil
-      
+    def junction_only?
+      !!junction_only
     end
-
-    def junction_only?()  !!junction_only  end
-    def anchorless?()     !!anchorless     end
+    
+    def anchorless?
+      !!anchorless
+    end
 
     def new card
       super if pattern_applies? card
@@ -40,6 +41,9 @@ class Card::SetPattern
       junction_only? ? card.cardname.junction? : true
     end
   end
+
+
+  # Instance methods
 
   def initialize card
     @anchor_name = self.class.anchorless? ? '' : self.class.anchor_name(card).to_name

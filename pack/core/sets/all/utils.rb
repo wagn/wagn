@@ -51,3 +51,4 @@ def inspect
   "#{@virtual &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }:#{references_expired.inspect}}" +
   '>'
 end
+

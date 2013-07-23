@@ -98,6 +98,7 @@ format :html do
           <h1>Invite</h1>
           #{ _render_help :text=>"Accept account request from: #{link_to_page card.name}" if card.known? }
         </div>
+
         #{
 
           form_for :card, :action=>params[:action] do |f|
@@ -111,10 +112,7 @@ format :html do
                       #{ fieldset :email, text_field( :account, :email, :size=>60 ) }
                     }
                   else
-                    %{
-                      #{ hidden_field :card, :key }
-                      #{ hidden_field :account, :email }
-                    }
+                    hidden_field_tag 'card[key]', card.key
                   end
                 }
 

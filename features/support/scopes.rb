@@ -3,10 +3,10 @@ module ScopeHelpers
   def scope_of section
     case section
 
-    when /the main card content/
+    when /main card content/
       '#main > .card-slot > .content'
 
-    when /the main card header/
+    when /main card header/
       '#main > .card-slot > .card-header'
 
     else

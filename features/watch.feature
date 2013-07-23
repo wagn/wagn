@@ -1,7 +1,8 @@
 @javascript
 Feature: Watch interface
-  In order to more easily make use of notifications
-  Users should access appropriate watch interface on cards
+  In order to make use of notifications
+  As an Editor
+  I want simple watch interface on cards
 
   Background:
     Given I log in as Joe User

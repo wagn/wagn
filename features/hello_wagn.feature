@@ -1,6 +1,8 @@
-Feature: Seeing a card
-  In order for the site to be remotely usable
-  It should show me some text
+Feature: Reading and Creating a card
+  In order to do anything on the site
+  As a user
+  I want to be able to read and edit cards
+  #expand to CRUD?
 
   Background:
     Given I log in as Joe User

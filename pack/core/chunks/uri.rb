@@ -26,18 +26,14 @@ module Card::Chunk
     attr_reader :uri, :link_text
     delegate :to, :scheme, :host, :port, :path, :query, :fragment, :to => :uri
 
-    URI_CONFIG = {
-      :class     => Card::Chunk::URI,
+    Card::Chunk.register_class self, {
       :prefix_re => "(?:(?!#{REJECTED_PREFIX_RE})(?:#{SCHEMES * '|'})\\:)",
       :regexp    => /^#{::URI.regexp( SCHEMES )}/,
       :prepend_str => '',
       :idx_char  => ':'
     }
 
-    def self.config; URI_CONFIG end
-
-    def initialize match, content, params
-      super
+    def interpret match, content, params
       last_char = match[-1,1]
       match.gsub!(/(?:&nbsp;)+/, '')
 
@@ -52,7 +48,6 @@ module Card::Chunk
       #warn "uri parse[#{match.inspect}]"
       @uri = ::URI.parse( match )
       @process_chunk = self.format ? "#{self.format.build_link(@link_text, @link_text)}#{@trailing_punctuation}" : @text
-      self
     end
 
     def self.avoid_autolinking str
@@ -65,20 +60,18 @@ module Card::Chunk
 
     PREPEND_STR = 'mailto:'
     EMAIL = "[a-zA-Z\d](?:[-a-zA-Z\d]*[a-zA-Z\d])?\\@"
-    EMAIL_URI_CONFIG = {
-      :class     => Card::Chunk::EmailURI,
+        
+    Card::Chunk.register_class self, {
       :prefix_re => "(?:(?!#{REJECTED_PREFIX_RE})#{EMAIL})\\b",
       :regexp    => /^#{::URI.regexp( SCHEMES )}/,
       :prepend_str => PREPEND_STR,
       :idx_char  => '@'
     }
 
-    def self.config; EMAIL_URI_CONFIG end
-
-    def initialize match, content, params
+    def interpret match, content, params
       super
       @text = @text.sub(/^mailto:/,'')  # this removes the prepended string from the unchanged match text
-      @process_chunk = self.format ? "#{self.format.build_link(@link_text, @text)}#{@trailing_punctuation}" : @text
+      @process_chunk = "#{self.format.build_link(@link_text, @text)}#{@trailing_punctuation}"
     end
   end
 
@@ -105,20 +98,18 @@ module Card::Chunk
 
     PREPEND_STR = 'http://'
     HOST = "(?:[a-zA-Z\d](?:[-a-zA-Z\d]*[a-zA-Z\d])?\\.)+#{TLDS}"
-    HOST_URI_CONFIG = {
-      :class     => Card::Chunk::HostURI,
+    
+    Card::Chunk.register_class self, {
       :prefix_re => "(?:(?!#{REJECTED_PREFIX_RE})#{HOST})\\b",
       :regexp    => /^#{::URI.regexp( SCHEMES )}/,
       :prepend_str => PREPEND_STR
     }
 
-    def self.config; HOST_URI_CONFIG end
-
-    def initialize match, content, params
+    def interpret match, content, params
       super
       @text = @text.sub(/^http:\/\//,'')  # this removes the prepended string from the unchanged match text
       #warn "huri t:#{@text}, #{match}, #{params.inspect}"
-      @process_chunk = self.format ? "#{self.format.build_link(@link_text, @text)}#{@trailing_punctuation}" : @text
+      @process_chunk = "#{self.format.build_link(@link_text, @text)}#{@trailing_punctuation}"
     end
   end
 end

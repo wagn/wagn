@@ -43,7 +43,7 @@ describe Card do
       Card.cache.reset
       (tcard = Card['sara'].fetch(:trait=>:account)).should be
       tcard.status_field.should == 'pending'
-      tcard.fetch(:trait=>:write_field).content.should == 'test_value'
+      tcard.fetch(:trait=>:write).content.should == 'test_value'
     end
   end
 end

@@ -588,34 +588,53 @@ class Card < ActiveRecord::Base
   event :store_subcards, :after=>:store do #|args|
     #puts "store subcards"
     @subcards = []
-    return unless cards
-    cards.each_pair do |sub_name, opts|
-      opts[:nested_edit] = self
-      absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute_name cardname
-      next if absolute_name.key == key # don't resave self!
+    if cards
+      @subcards = cards.each_pair do |sub_name, opts|
+        opts[:nested_edit] = self
+        absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute_name cardname
+        next if absolute_name.key == key # don't resave self!
 
-      if card = Card[absolute_name]
-        card = card.refresh
-        card.update_attributes opts
-      elsif opts[:content].present? and opts[:content].strip.present?
-        opts[:name] = absolute_name
-        opts[:loaded_left] = self
-        card = Card.create opts
-      end
-
-      @subcards << card if card
-      if card and card.errors.any?
-        card.errors.each do |field, err|
-          self.errors.add card.name, err
+        if card = Card[absolute_name]
+          card = card.refresh
+          card.update_attributes opts
+        elsif opts[:content].present? and opts[:content].strip.present?
+          opts[:name] = absolute_name
+          opts[:loaded_left] = self
+          card = Card.create opts
         end
-        raise ActiveRecord::Rollback, "broke commit_subcards"
-      else
-        cards = nil
-        true
+        subcard_errors card
       end
+      cards = nil
     end
+
+    # save card attributes
+    return true unless attributes = self.card_attributes
+#warn "card attrs #{attributes.inspect}"
+    attributes.keys.each do |trait_name|
+      card_attr = "@#{trait_name}_card"
+      if trait_var? card_attr
+        trait_card = trait_var(card_attr) do fetch(:trait=>trait_name, :new=>{}) end
+#warn "tn saving #{trait_name}, #{trait_card.inspect}, C:#{trait_card.content.inspect}"
+        trait_card.save
+        instance_variable_set card_attr, nil
+        instance_variable_set "@#{trait_name}", ''
+
+#warn "tn saved #{trait_name}, #{card_attr.inspect}, #{trait_var? card_attr} "
+      end
+      subcard_errors trait_card
+    end
+    true
   end
 
+  def subcard_errors card
+    @subcards << card if card
+    if card and card.errors.any?
+      card.errors.each do |field, err|
+        self.errors.add card.name, err
+      end
+      raise ActiveRecord::Rollback, "broke commit_subcards"
+    end
+  end
 
 
   # Because of the way it chains methods, 'tracks' needs to come after

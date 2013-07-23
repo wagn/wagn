@@ -169,13 +169,11 @@ module Card::Set
       trait_sym = trait.to_sym
       trait_card_attr = "#{trait}_card".to_sym
       #Rails.logger.warn "second definition of #{trait} at: #{caller[0]}" if mod_traits[trait_sym]
-      warn "definition of #{trait} #{trait_field}, #{trait_card_attr}"
 
       Wagn::Loader.current_set_module.class_eval do
         define_method trait_card_attr do
           new_opts = options[:type] ? {:type=>options[:type]} : {}
           new_opts.merge!( {:content => options[:default]} ) if options[:default]
-warn "tca #{trait_card_attr}, #{trait_sym}"
           card = trait_var("@#{trait_card_attr}") do fetch(:trait=>trait_sym, :new=>new_opts) end
           card
         end
@@ -193,7 +191,6 @@ warn "tca #{trait_card_attr}, #{trait_sym}"
       if options[:writer]
         Wagn::Loader.current_set_module.class_eval do
           define_method "#{trait_field}=" do |value|
-warn "ta #{trait_card_attr}, #{trait}, #{trait_field}"
             card = send trait_card_attr
             card.content = value
 

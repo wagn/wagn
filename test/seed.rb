@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-#require File.expand_path('../db/migrate/20120327090000_codename_table', File.dirname(__FILE__))
 require 'timecop'
 
 require_dependency 'card'
@@ -185,6 +184,10 @@ class SharedData
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
     Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anyone]]'
     Card.create :name=>'Fruit+*type+*read', :type=>'Pointer', :content=>'[[Administrator]]'
+
+    # codenames for card_attribute tests
+    Card.create! :name=>'*status', :codename=>:status
+    Card.create! :name=>'*write', :codename=>:write
 
     # -------- For toc testing: ------------
 

@@ -10,8 +10,8 @@ module Card::Set::Right::Account
   end
 
   card_accessor :status,              :default => "request", :type=>:phrase
-  card_writer :write_field,           :default => "request", :type=>:phrase
-  card_reader :read_field,            :default => "request", :type=>:phrase
+  card_writer :write,                 :default => "request", :type=>:phrase
+  card_reader :read,                  :default => "request", :type=>:phrase
 end
 
 describe Card do
@@ -22,7 +22,7 @@ describe Card do
 
   describe "Read and write card attribute" do
     it "gets email attribute" do
-      @account_card.status.should == 'request'
+      @account_card.status_field.should == 'request'
     end
 
     it "shouldn't have a reader method for card_writer" do
@@ -37,12 +37,12 @@ describe Card do
 
     it "sets and saves attribute" do
       @account_card.write_field= 'test_value'
-      @account_card.status= 'pending'
-      @account_card.status.should == 'pending'
+      @account_card.status_field= 'pending'
+      @account_card.status_field.should == 'pending'
       Account.as_bot { @account_card.save }
       Card.cache.reset
       (tcard = Card['sara'].fetch(:trait=>:account)).should be
-      tcard.status.should == 'pending'
+      tcard.status_field.should == 'pending'
       tcard.fetch(:trait=>:write_field).content.should == 'test_value'
     end
   end

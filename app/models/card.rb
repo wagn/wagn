@@ -602,38 +602,17 @@ class Card < ActiveRecord::Base
           opts[:loaded_left] = self
           card = Card.create opts
         end
-        subcard_errors card
+        @subcards << card if card
+        if card and card.errors.any?
+          card.errors.each do |field, err|
+            self.errors.add card.name, err
+          end
+          raise ActiveRecord::Rollback, "broke commit_subcards"
+        end
       end
       cards = nil
     end
-
-    # save card attributes
-    return true unless attributes = self.card_attributes
-#warn "card attrs #{attributes.inspect}"
-    attributes.keys.each do |trait_name|
-      card_attr = "@#{trait_name}_card"
-      if trait_var? card_attr
-        trait_card = trait_var(card_attr) do fetch(:trait=>trait_name, :new=>{}) end
-#warn "tn saving #{trait_name}, #{trait_card.inspect}, C:#{trait_card.content.inspect}"
-        trait_card.save
-        instance_variable_set card_attr, nil
-        instance_variable_set "@#{trait_name}", ''
-
-#warn "tn saved #{trait_name}, #{card_attr.inspect}, #{trait_var? card_attr} "
-      end
-      subcard_errors trait_card
-    end
     true
-  end
-
-  def subcard_errors card
-    @subcards << card if card
-    if card and card.errors.any?
-      card.errors.each do |field, err|
-        self.errors.add card.name, err
-      end
-      raise ActiveRecord::Rollback, "broke commit_subcards"
-    end
   end
 
 

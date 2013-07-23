@@ -160,12 +160,9 @@ module Card::Set
     Card::Set.traits ||= {}
     mod_traits = Card::Set.traits[Wagn::Loader.current_set_module]
     if mod_traits.nil?
-      #warn "active card #{Wagn::Loader.current_set_name}"
       mod_traits = Card::Set.traits[Wagn::Loader.current_set_module] = {}
     end
-    #warn "card_trait #{args.inspect}, #{options.inspect}"
     args.each do |trait|
-      trait_field = "#{trait}_field"
       trait_sym = trait.to_sym
       trait_card_attr = "#{trait}_card".to_sym
       #Rails.logger.warn "second definition of #{trait} at: #{caller[0]}" if mod_traits[trait_sym]
@@ -181,18 +178,19 @@ module Card::Set
 
       if options[:reader]
         Wagn::Loader.current_set_module.class_eval do
-          define_method trait_field do
-            ( instance_variable_get( "@#{trait_field}" ) ||
-              instance_variable_set( "@#{trait_field}", send(trait_card_attr).content ) )
+          define_method trait do
+            ( instance_variable_get( "@#{trait}" ) ||
+              instance_variable_set( "@#{trait}", send(trait_card_attr).content ) )
           end
         end
       end
 
       if options[:writer]
         Wagn::Loader.current_set_module.class_eval do
-          define_method "#{trait_field}=" do |value|
+          define_method "#{trait}=" do |value|
             card = send trait_card_attr
-            card.content = value
+            self.cards ||= {}
+            self.cards[card.name] = {:type_id => card.type_id, :content=>value }
 
             instance_variable_set "@#{trait}", value
           end

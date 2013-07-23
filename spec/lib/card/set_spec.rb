@@ -22,27 +22,27 @@ describe Card do
 
   describe "Read and write card attribute" do
     it "gets email attribute" do
-      @account_card.status_field.should == 'request'
+      @account_card.status.should == 'request'
     end
 
     it "shouldn't have a reader method for card_writer" do
-      @account_card.respond_to?( :write_field ).should be_false
-      @account_card.method( :write_field= ).should be
+      @account_card.respond_to?( :write).should be_false
+      @account_card.method( :write= ).should be
     end
 
     it "shouldn't have a reader method for card_reader" do
-      @account_card.method( :read_field ).should be
-      @account_card.respond_to?( :read_field= ).should be_false
+      @account_card.method( :read).should be
+      @account_card.respond_to?( :read= ).should be_false
     end
 
     it "sets and saves attribute" do
-      @account_card.write_field= 'test_value'
-      @account_card.status_field= 'pending'
-      @account_card.status_field.should == 'pending'
+      @account_card.write= 'test_value'
+      @account_card.status= 'pending'
+      @account_card.status.should == 'pending'
       Account.as_bot { @account_card.save }
       Card.cache.reset
       (tcard = Card['sara'].fetch(:trait=>:account)).should be
-      tcard.status_field.should == 'pending'
+      tcard.status.should == 'pending'
       tcard.fetch(:trait=>:write).content.should == 'test_value'
     end
   end

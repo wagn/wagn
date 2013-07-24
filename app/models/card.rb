@@ -138,40 +138,37 @@ class Card < ActiveRecord::Base
   event :store_subcards, :after=>:store do #|args|
     #puts "store subcards"
     @subcards = []
-    return unless cards
-    cards.each_pair do |sub_name, opts|
-      opts[:nested_edit] = self
-      absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute_name cardname
-      next if absolute_name.key == key # don't resave self!
+    if cards
+      cards.each_pair do |sub_name, opts|
+        opts[:nested_edit] = self
+        absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute_name cardname
+        next if absolute_name.key == key # don't resave self!
 
-      if card = Card[absolute_name]
-        card = card.refresh
-        card.update_attributes opts
-      elsif opts[:content].present? and opts[:content].strip.present?
-        opts[:name] = absolute_name
-        opts[:loaded_left] = self
-        card = Card.create opts
-      end
-
-      @subcards << card if card
-      if card and card.errors.any?
-        card.errors.each do |field, err|
-          self.errors.add card.name, err
+        if card = Card[absolute_name]
+          card = card.refresh
+          card.update_attributes opts
+        elsif opts[:content].present? and opts[:content].strip.present?
+          opts[:name] = absolute_name
+          opts[:loaded_left] = self
+          card = Card.create opts
         end
-        raise ActiveRecord::Rollback, "broke commit_subcards"
-      else
-        cards = nil
-        true
+        @subcards << card if card
+        if card and card.errors.any?
+          card.errors.each do |field, err|
+            self.errors.add card.name, err
+          end
+          raise ActiveRecord::Rollback, "broke commit_subcards"
+        end
       end
+      cards = nil
     end
+    true
   end
-
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~
   # ATTRIBUTE TRACKING
   # we can phase this out and just use "dirty" handling once current content is stored in the cards table
   
-
   # Because of the way it chains methods, 'tracks' needs to come after
   # all the basic method definitions, and validations have to come after
   # that because they depend on some of the tracking methods.

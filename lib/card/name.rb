@@ -9,7 +9,7 @@ class Card
     def star?
       simple? and '*' == s[0,1]
     end
-  
+
     def rstar?
       right and '*' == right[0,1]
     end
@@ -18,19 +18,19 @@ class Card
       junction? && begin
         right_key = right_name.key
         !!traitlist.find do |codename|
-          card_id = Card::Codename[ codename ] and card = Card[ card_id ] and
+          card_id = Card::Codename[ codename ] and card = Card.fetch( card_id, :skip_modules=>true, :skip_virtual=>true ) and
             card.key == right_key
         end
       end
     end
 
     def trait_name tag_code
-      card_id = Card::Codename[ tag_code ] and card = Card[ card_id ] and
+      card_id = Card::Codename[ tag_code ] and card = Card.fetch( card_id, :skip_modules=>true, :skip_virtual=>true ) and
         [ self, card.cardname ].to_name
     end
 
     def trait tag_code
       trait_name( tag_code ).s
     end
-  end  
+  end
 end

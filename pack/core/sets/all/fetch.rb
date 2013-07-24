@@ -3,9 +3,6 @@
 #
 # A multipurpose retrieval operator that incorporates caching, "virtual" card retrieval
 
-
-mattr_accessor :cache
-
 module ClassMethods
   
   def cache

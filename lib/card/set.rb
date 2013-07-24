@@ -103,6 +103,7 @@ module Card::Set
   end
 
   def self.register_set set_module
+    Wagn::Loader.current_set_module = set_module
     Card::Set[set_module.name]= set_module
   end
 
@@ -129,11 +130,82 @@ module Card::Set
     set_name =~ /^Card::Set::/ ? set_name : 'Card::Set::' + set_name
   end
 
+  #
+  # ActiveCard support: accessing plus cards as attributes
+  #
+
+
+  mattr_accessor :traits
+
+  def card_accessor *args
+    options = args.extract_options!
+    add_traits args, options.merge( :reader=>true, :writer=>true )
+  end
+
+  def card_reader *args
+    options = args.extract_options!
+    add_traits args, options.merge( :reader=>true )
+  end
+
+  def card_writer *args
+    options = args.extract_options!
+    add_traits args, options.merge( :writer=>true )
+  end
+
+  private
+
+  def add_traits args, options
+    raise "Can't define card traits on all set" if Wagn::Loader.current_set_module == Card
+
+    Card::Set.traits ||= {}
+    mod_traits = Card::Set.traits[Wagn::Loader.current_set_module]
+    if mod_traits.nil?
+      mod_traits = Card::Set.traits[Wagn::Loader.current_set_module] = {}
+    end
+    args.each do |trait|
+      trait_sym = trait.to_sym
+      trait_card_attr = "#{trait}_card".to_sym
+      #Rails.logger.warn "second definition of #{trait} at: #{caller[0]}" if mod_traits[trait_sym]
+
+      Wagn::Loader.current_set_module.class_eval do
+        define_method trait_card_attr do
+          new_opts = options[:type] ? {:type=>options[:type]} : {}
+          new_opts.merge!( {:content => options[:default]} ) if options[:default]
+          card = trait_var("@#{trait_card_attr}") do fetch(:trait=>trait_sym, :new=>new_opts) end
+          card
+        end
+      end
+
+      if options[:reader]
+        Wagn::Loader.current_set_module.class_eval do
+          define_method trait do
+            ( instance_variable_get( "@#{trait}" ) ||
+              instance_variable_set( "@#{trait}", send(trait_card_attr).content ) )
+          end
+        end
+      end
+
+      if options[:writer]
+        Wagn::Loader.current_set_module.class_eval do
+          define_method "#{trait}=" do |value|
+            card = send trait_card_attr
+            self.cards ||= {}
+            self.cards[card.name] = {:type_id => card.type_id, :content=>value }
+
+            instance_variable_set "@#{trait}", value
+          end
+        end
+      end
+
+      mod_traits[trait_sym] = options
+    end
+
+  end
+
   def self.clean_empty_modules
     modules_by_set.each do |mod_name, mod|
       modules_by_set.delete mod_name if mod.instance_methods.empty?
     end
   end
-
 end
 

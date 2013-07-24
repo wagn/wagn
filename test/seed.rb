@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-#require File.expand_path('../db/migrate/20120327090000_codename_table', File.dirname(__FILE__))
 require 'timecop'
 
 require_dependency 'card'
@@ -18,20 +17,19 @@ class SharedData
     Wagn::Cache.reset_global
     Account.as(Card::WagnBotID)
 
-
-    User.create_with_card(
+    Account.create_with_card(
       { :login=>"joe_user", :email=>'joe@user.com', :status=>'active', :password=>'joe_pass', :password_confirmation=>'joe_pass' },
       { :name=>"Joe User", :content => "I'm number two" }
     )    
 
-    User.create_with_card(
+    Account.create_with_card(
       { :login=>"joe_admin", :email=>'joe@admin.com', :status=>'active', :password=>'joe_pass', :password_confirmation=>'joe_pass' },
       { :name=>"Joe Admin", :content => "I'm number one" }
     )
 
     Card['Joe Admin'].fetch(:trait=>:roles, :new=>{}).items = [ Card::AdminID ]
 
-    User.create_with_card(
+    Account.create_with_card(
       { :login=>"joe_camel",:email=>'joe@camel.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass' },
       { :name=>"Joe Camel", :content => "Mr. Buttz" }
     )
@@ -42,7 +40,7 @@ class SharedData
 
     # data for testing users and account requests
 
-    User.create_with_card(
+    Account.create_with_card(
       { :email=>'ron@request.com', :password=>'ron_pass', :password_confirmation=>'ron_pass', :status=>'pending' },
       { :type_id=>Card::AccountRequestID, :name=>"Ron Request" }
     )
@@ -51,7 +49,7 @@ class SharedData
 
     # CREATE A CARD OF EACH TYPE
     
-    User.create_with_card(
+    Account.create_with_card(
       { :login=>"sample_user", :email=>'sample@user.com', :status=>'active', :password=>'sample_pass', :password_confirmation=>'sample_pass' },
       { :name=>"Sample User" }
     )
@@ -65,15 +63,15 @@ class SharedData
 
     # data for role_test.rb
 
-    User.create_with_card(
+    Account.create_with_card(
       { :login=>"u1", :email=>'u1@user.com', :status=>'active', :password=>'u1_pass', :password_confirmation=>'u1_pass' },
       { :name=>"u1" }
     )
-    User.create_with_card(
+    Account.create_with_card(
       { :login=>"u2", :email=>'u2@user.com', :status=>'active', :password=>'u2_pass', :password_confirmation=>'u2_pass' },
       { :name=>"u2" }
     )
-    User.create_with_card(
+    Account.create_with_card(
       { :login=>"u3", :email=>'u3@user.com', :status=>'active', :password=>'u3_pass', :password_confirmation=>'u3_pass' },
       { :name=>"u3" }
     )
@@ -151,12 +149,12 @@ class SharedData
       # fwiw Timecop is apparently limited by ruby Time object, which goes only to 2037 and back to 1900 or so.
       #  whereas DateTime can represent all dates.
 
-      User.create_with_card(
+      Account.create_with_card(
         { :login=>"john",:email=>'john@user.com', :status => 'active', :password=>'john_pass', :password_confirmation=>'john_pass' },
         { :name=>"John" }
       )
 
-      User.create_with_card(
+      Account.create_with_card(
         { :login=>"sara",:email=>'sara@user.com', :status => 'active', :password=>'sara_pass', :password_confirmation=>'sara_pass' },
         { :name=>"Sara" }
       )
@@ -185,6 +183,12 @@ class SharedData
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
     Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anyone]]'
     Card.create :name=>'Fruit+*type+*read', :type=>'Pointer', :content=>'[[Administrator]]'
+
+    # codenames for card_attribute tests
+Rails.logger.warn "add codenames status and write"
+    Card.create! :name=>'*status', :codename=>:status
+    Card.create! :name=>'*write', :codename=>:write
+Rails.logger.warn "added codenames status and write"
 
     # -------- For toc testing: ------------
 

@@ -109,7 +109,7 @@ class Card
       end
     
       def tagged view, tag
-        view && tag && @@view_tags[view.to_sym] && @@view_tags[view.to_sym][tag.to_sym]
+        view and tag and view_tags = @@view_tags[view.to_sym] and view_tags[tag.to_sym]
       end
     
       def transactional?

@@ -216,7 +216,7 @@ class Card::HtmlFormat < Card::Format
 
     options = options_from_collection_for_select(
       typelist.uniq.sort.map { |name| [ name, name ] },
-      :first, :last, Card[ card ? card.type_id : Card::DefaultTypeID ].name )
+      :first, :last, Card[ card ? card.type_id : Card.default_type_id ].name )
     template.select_tag 'card[type]', options, args
   end
 

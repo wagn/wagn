@@ -30,8 +30,7 @@ view :link, :perms=>:none  do |args|
 end
 
 view :open_content do |args|
-  pre_render = _render_core(args) #{ yield args }
-  card ? card.post_render(pre_render) : pre_render
+  _render_core args
 end
 
 view :closed_content do |args|
@@ -40,12 +39,8 @@ end
 
 ###----------------( SPECIAL )
 view :array do |args|
-  if card.collection?
-    card.item_cards(:limit=>0).map do |item_card|
-      subformat(item_card)._render_core(args)
-    end
-  else
-    [ _render_core(args) ]#{ yield } ]
+  card.item_cards(:limit=>0).map do |item_card|
+    subformat(item_card)._render_core(args)
   end.inspect
 end
 

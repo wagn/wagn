@@ -10,6 +10,17 @@ event :set_tracked_attributes, :before=>:store do#, :on=>:save do
   #Rails.logger.debug "Card(#{name})#set_tracked_attributes end"
 end
 
+
+def assign_attributes args={}, options={}
+  if args and newtype = args.delete(:type) || args.delete('type')
+    args['type_id'] = Card.fetch_id( newtype )
+  end
+  reset_patterns
+
+  super args, options
+end
+
+
 protected
 
 def set_name newname

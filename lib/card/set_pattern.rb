@@ -1,11 +1,15 @@
 class Card::SetPattern
 
   class << self
-
     attr_accessor :key, :key_id, :opt_keys, :junction_only, :method_key, :assigns_type, :anchorless
-
-    def junction_only?()  !!junction_only  end
-    def anchorless?()     !!anchorless     end
+    
+    def junction_only?
+      !!junction_only
+    end
+    
+    def anchorless?
+      !!anchorless
+    end
 
     def new card
       super if pattern_applies? card
@@ -18,7 +22,7 @@ class Card::SetPattern
     def register key, opts={}
       if self.key_id = Card::Codename[key]
         self.key = key
-        Wagn::Loader.register_pattern self, opts.delete(:index)
+        Card.set_patterns.insert opts.delete(:index).to_i, self
         if self.anchorless = !respond_to?( :anchor_name )
           self.method_key = opts[:method_key] || key
         end
@@ -37,6 +41,9 @@ class Card::SetPattern
       junction_only? ? card.cardname.junction? : true
     end
   end
+
+
+  # Instance methods
 
   def initialize card
     @anchor_name = self.class.anchorless? ? '' : self.class.anchor_name(card).to_name

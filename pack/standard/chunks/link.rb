@@ -5,20 +5,17 @@ module Card::Chunk
     # Groups: $1, [$2]: [[$1]] or [[$1|$2]] or $3, $4: [$3][$4]
     Card::Chunk.register_class self, {
       :prefix_re => '\\[',
-      :rest_re   => /^\[([^\]]+)\]\]/, #|([^\]\n]+)\]\[([^\]]*)\]/,
+      :full_re   => /^\[\[([^\]]+)\]\]/,
       :idx_char  => '['
     }
 
-    def interpret match, content, params
-      target, @link_text = if params[2]     # standard [[ ]] syntax
-        raw_syntax = params[2]
+    def interpret match, content
+      target, @link_text = if raw_syntax = match[1]
         if i = divider_index( raw_syntax )  # [[ A | B ]]
           [ raw_syntax[0..(i-1)], raw_syntax[(i+1)..-1] ]
         else                                # [[ A ]]
           [ raw_syntax, nil ]
         end
-      else                                  # deprecated [ B ][ A ] syntax
-        [ params[4], params[3] ]
       end
       
       @link_text = objectify @link_text

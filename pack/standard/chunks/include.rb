@@ -8,12 +8,13 @@ module Card::Chunk
       
     Card::Chunk.register_class self, {
       :prefix_re => '\\{\\{',
-      :rest_re   =>  /^([^\}]*)\}\}/,
+      :full_re   =>  /^\{\{([^\}]*)\}\}/,
       :idx_char  => '{'    
     }
     
-    def interpret match, content, params
-      in_brackets = params[2]
+    def interpret match, content
+      in_brackets = match[1]
+#      warn "in_brackets = #{in_brackets}"
       opts = in_brackets.split '|'
       name = opts.shift.to_s.strip
       result = case name

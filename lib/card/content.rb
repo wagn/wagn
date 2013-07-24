@@ -62,25 +62,43 @@ class Card
 
       if String===content
         position = 0
-        prefix_regexp = Chunk.get_regexp card.chunk_list
+        prefix_regexp = Chunk.get_prefix_regexp card.chunk_list
         interval_string = ''
         
-        while prefix_match = content[position..-1].match( prefix_regexp)
+        while prefix_match = content[position..-1].match( prefix_regexp )
           prefix = prefix_match[0]
-          first_prefix_char = prefix[0,1]
           chunk_start = prefix_match.begin(0) + position
 
-          if position != chunk_start
+          if prefix_match.begin(0) > 0
             interval_string += content[ position..chunk_start-1 ]
           end
+
+          chunk_class = Chunk.find_class_by_prefix prefix
+          match, offset = chunk_class.full_match content[chunk_start..-1], prefix
+          
+          position = chunk_start
+          if match
+            position += ( match.end(0) + offset.to_i )
+            if interval_string.size > 0
+              positions << [ interval_string ] 
+              interval_string = ''
+            end
+            positions << [ chunk_class.new(match, self), position ]
+          else
+            position += 1
+            interval_string += prefix
+          end
+        end
+      end
+=begin          
 
           prefix_end = position + prefix_match.end(0) 
 
           # either it is indexed by the first character of the match
           
           prepend_str = ''
-          rest_match = if match_cfg = Chunk.prefix_cfg[ first_prefix_char ]
-            rest_regexp = match_cfg[:rest_re]
+          rest_match = if match_cfg = Chunk.prefix_map[ first_prefix_char ]
+            rest_regexp = match_cfg[:full_re]
             if Hash === rest_regexp
               rest_regexp = rest_regexp[ prefix[1,1] ] # FIXME!!!  this is a hack to support literals 
             end
@@ -88,7 +106,7 @@ class Card
             content[prefix_end..-1].match rest_regexp
 
           else # or it uses the default pattern (Chunk::URI now)
-            match_cfg = Chunk.prefix_cfg[ prefix[-1,1] ] || Chunk.prefix_cfg[ :default ]
+            match_cfg = Chunk.prefix_map[ prefix[-1,1] ] || Chunk.prefix_map[ :default ]
             prepend_str = match_cfg[:prepend_str]
             prepend_str = (prefix[-1,1] != ':' && prepend_str) ? prepend_str : ''
             #warn "pp #{match_cfg[:class]}, #{prepend_str.inspect} [#{m_str}, #{prepend_str}]"
@@ -116,12 +134,11 @@ class Card
           end
           
 #          warn "position = #{position}"
-        end
-      end
 
+=end
       if positions.any?
-        result = positions.map { |pos| pos[1] }
-        last_tracked_position = positions[-1][0]
+        result = positions.map { |pos| pos[0] }
+        last_tracked_position = positions[-1][1]
         if last_tracked_position < content.size
           remainder = content[ last_tracked_position..-1]
           result << remainder

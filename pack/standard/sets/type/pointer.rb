@@ -85,10 +85,6 @@ format :html do
   end
 end
 
-def collection?
-  true
-end
-
 def pointer_items format, itemview
   typeparam = case (type=item_type)
     when String ; ";type:#{type}"
@@ -154,12 +150,15 @@ def drop_item name
 end
 
 def options_card
-  card = self.rule_card :options
-  (card && card.collection?) ? card : nil
+  self.rule_card :options
 end
 
 def options
-  (oc=self.options_card) ? oc.item_cards(:default_limit=>50) : Card.search(:sort=>'alpha',:limit=>50)
+  if oc = options_card
+    oc.item_cards :default_limit=>50
+  else
+    Card.search :sort=>'alpha', :limit=>50
+  end
 end
 
 def option_text(option)

@@ -16,7 +16,7 @@ format :html do
   end
 
   view :open_content do |args|
-    card.post_render(_render_current_naked { yield })
+    _render_current_naked { yield }
   end
 
 # edit views

@@ -7,6 +7,10 @@
 mattr_accessor :cache
 
 module ClassMethods
+  
+  def cache
+    Wagn::Cache[Card]
+  end
 
   # === fetch
   #

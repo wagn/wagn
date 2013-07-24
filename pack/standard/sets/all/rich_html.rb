@@ -1,4 +1,7 @@
 # -*- encoding : utf-8 -*-
+def clean_html?
+  true
+end
 
 format :html do
 
@@ -138,7 +141,7 @@ format :html do
 
   view :type do |args|
     klasses = ['cardtype']
-    klasses << 'default-type' if card.type_id==Card::DefaultTypeID ? " default-type" : ''
+    klasses << 'default-type' if card.type_id==Card.default_type_id ? " default-type" : ''
     link_to_page card.type_name, nil, :class=>klasses
   end
 
@@ -198,7 +201,7 @@ format :html do
               if name_ready
                 _render_title(args) + hidden_field_tag( 'card[name]', card.name )
               else
-                args[:title] ||= "New #{ card.type_name unless card.type_id == Card::DefaultTypeID }"
+                args[:title] ||= "New #{ card.type_name unless card.type_id == Card.default_type_id }"
                 _render_title args
               end
             }

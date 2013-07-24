@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 
+require 'uri/common'
 
 # A chunk is a pattern of text that can be protected
 # and interrogated by a format. Each Chunk class has a
@@ -12,6 +13,11 @@ module Card::Chunk
   @@raw_list, @@list_regexp, @@prefix_cfg = {}, {}, {}
   
   class << self
+    def register_class klass, hash
+      klass.config = hash
+      klass.config.merge! :class => klass
+    end
+    
     def register_list key, list
       raw_list[key] = list
     end
@@ -39,15 +45,19 @@ module Card::Chunk
 
   
   class Abstract
-    require 'uri/common'
-
+    class_attribute :config
     attr_reader :text, :process_chunk
 
     def initialize match_string, content, params
       @text = match_string
       @processed = nil
       @content = content
+      interpret match_string, content, params
       self
+    end
+    
+    def interpret match_string, content, params
+      Rails.logger.info "no #interpret method found for chunk class: #{self.class}"
     end
     
     def format

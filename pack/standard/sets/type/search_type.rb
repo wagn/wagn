@@ -215,11 +215,6 @@ format :html do
   end
 end
 
-
-def collection?
-  true
-end
-
 def item_cards params={}
   s = spec(params)
   raise("OH NO.. no limit") unless s[:limit]

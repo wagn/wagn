@@ -18,7 +18,7 @@ def template
 
       dup_card = dup
 #        dup_card.type_id_without_tracking = default_card.type_id
-      dup_card.type_id_without_tracking = default_card ? default_card.type_id : Card::DefaultTypeID
+      dup_card.type_id_without_tracking = default_card ? default_card.type_id : Card.default_type_id
 
 
       if content_card = dup_card.content_rule_card

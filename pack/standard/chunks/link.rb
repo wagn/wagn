@@ -3,17 +3,13 @@ module Card::Chunk
   class Link < Reference
     word = /\s*([^\]\|]+)\s*/
     # Groups: $1, [$2]: [[$1]] or [[$1|$2]] or $3, $4: [$3][$4]
-    WIKI_CONFIG = {
-      :class     => Link,
+    Card::Chunk.register_class self, {
       :prefix_re => '\\[',
       :rest_re   => /^\[([^\]]+)\]\]/, #|([^\]\n]+)\]\[([^\]]*)\]/,
       :idx_char  => '['
     }
 
-    def self.config() WIKI_CONFIG end
-
-    def initialize match, content, params
-      super
+    def interpret match, content, params
       target, @link_text = if params[2]     # standard [[ ]] syntax
         raw_syntax = params[2]
         if i = divider_index( raw_syntax )  # [[ A | B ]]
@@ -31,8 +27,6 @@ module Card::Chunk
       else
         @name = target
       end  
-      
-      self
     end
 
     def divider_index string

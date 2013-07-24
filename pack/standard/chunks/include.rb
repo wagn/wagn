@@ -5,27 +5,14 @@ module Card::Chunk
     cattr_reader :options
     @@options = [ :include_name, :view, :item, :type, :size, :title, :hide, :show, :include, :structure ].
       inject({}) do |hash, key| hash[key] = nil; hash end
+      
+    Card::Chunk.register_class self, {
+      :prefix_re => '\\{\\{',
+      :rest_re   =>  /^([^\}]*)\}\}/,
+      :idx_char  => '{'    
+    }
     
-    unless defined? INCLUDE_CONFIG
-      #  {{+name|attr:val;attr:val;attr:val}}
-      #  Groups: $1, everything (less {{}}), $2 name, $3 options
-      INCLUDE_CONFIG = {
-        :class     => Include,
-        :prefix_re => '\\{\\{',
-        :rest_re   =>  /^([^\}]*)\}\}/,
-        :idx_char  => '{'
-      }
-    end
-
-    def self.config() INCLUDE_CONFIG end
-
-    def initialize match, content, params
-      super
-      self.name = parse match, params
-      self
-    end
-
-    def parse match, params
+    def interpret match, content, params
 
       in_brackets = params[2]
       #warn "parse include [#{in_brackets}] #{match}, #{params.inspect}"
@@ -50,10 +37,9 @@ module Card::Chunk
       end
       
       if result == :standard_inclusion
-        name
+        @name = name
       else
         @process_chunk = result
-        nil
       end
     end
 

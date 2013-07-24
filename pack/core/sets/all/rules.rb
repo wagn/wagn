@@ -54,6 +54,23 @@ def related_sets
 end
 
 module ClassMethods
+  
+  def setting name
+    Account.as_bot do
+      card=Card[name] and !card.content.strip.empty? and card.content
+    end
+  end
+  
+  def path_setting name #shouldn't this be in location helper?
+    name ||= '/'
+    return name if name =~ /^(http|mailto)/
+    Wagn::Conf[:root_path] + name
+  end
+
+  def toggle val
+    val == '1'
+  end
+
   def rule_cache
     Card.cache.read('RULES') || begin        
       hash = {}

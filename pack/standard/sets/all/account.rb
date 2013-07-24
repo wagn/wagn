@@ -1,3 +1,57 @@
+def account
+  Account[ id ]
+end
+
+def accountable?
+  Card.toggle( rule(:accountable) ) and
+  !account and
+  fetch( :trait=>:account, :new=>{} ).ok?( :create)
+end
+
+def parties
+  @parties ||= (all_roles << self.id).flatten.reject(&:blank?)
+end
+
+def among? card_with_acct
+  card_with_acct.each do |auth|
+    return true if parties.member? auth
+  end
+  card_with_acct.member? Card::AnyoneID
+end
+
+def read_rules
+  @read_rules ||= begin
+    rule_ids = []
+    unless id==Card::WagnBotID # always_ok, so not needed
+      ( [ Card::AnyoneID ] + parties ).each do |party_id|
+        if rule_ids_for_party = self.class.read_rule_cache[ party_id ]
+          rule_ids += rule_ids_for_party
+        end
+      end
+    end
+    rule_ids
+  end
+end
+
+def all_roles
+  if @all_roles.nil?
+    @all_roles = if id == Card::AnonID; []
+      else
+        Account.as_bot do
+          if get_roles = fetch(:trait=>:roles) and
+              ( get_roles = get_roles.item_cards(:limit=>0) ).any?
+            [Card::AuthID] + get_roles.map(&:id)
+          else [Card::AuthID]
+          end
+        end
+      end
+  end
+  #warn "aroles #{inspect}, #{@all_roles.inspect}"
+  @all_roles
+end
+
+
+
 format :html do
   view :signin, :tags=>:unknown_ok, :perms=>:none do |args|
     signin_core = wrap :signin, :frame=>:true do

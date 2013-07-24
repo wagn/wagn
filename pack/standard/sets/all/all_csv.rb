@@ -4,11 +4,7 @@ require 'csv'
 format :csv do
 
   view :show do |args|
-    if !card.collection?
-      "CSV format only works on collections (searches, pointers, etc)"
-    else
-      super args.merge :item=>:csvrow
-    end
+    super args.merge :item=>:csvrow
   end
 
   view :csvrow do |args|

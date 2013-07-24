@@ -48,6 +48,9 @@ module Card::Chunk
       #warn "uri parse[#{match.inspect}]"
       @uri = ::URI.parse( match )
       @process_chunk = self.format ? "#{self.format.build_link(@link_text, @link_text)}#{@trailing_punctuation}" : @text
+    rescue  URI::Error=>e
+      #warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect} #{e.backtrace*"\n"}"
+      Rails.logger.warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect}"
     end
 
     def self.avoid_autolinking str

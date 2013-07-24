@@ -13,15 +13,15 @@ module Card::Chunk
     }
     
     def interpret match, content, params
-
       in_brackets = params[2]
-      #warn "parse include [#{in_brackets}] #{match}, #{params.inspect}"
-      name, opts = in_brackets.split('|',2)
-      result = case name = name.to_s.strip
+      opts = in_brackets.split '|'
+      name = opts.shift.to_s.strip
+      result = case name
         when /^\#\#/ ; '' # invisible comment
         when /^\#/   ;  "<!-- #{CGI.escapeHTML in_brackets} -->"
         when ''      ; '' # no name
         else
+          opts = opts.first
           @options = @@options.clone.merge :include_name => name, :include => in_brackets #yuck, need better name (this is raw stuff)
 
           @configs = Hash.new_from_semicolon_attr_list opts
@@ -33,14 +33,10 @@ module Card::Chunk
             CGI.escapeHTML "#{style_name}:#{style};"
           end * ''
             
-          :standard_inclusion
-      end
+          @name = name
+        end
       
-      if result == :standard_inclusion
-        @name = name
-      else
-        @process_chunk = result
-      end
+      @process_chunk = result if !@name
     end
 
     def inspect

@@ -61,59 +61,71 @@ class Card
       positions = []
 
       if String===content
-        pre_start = pos = 0
-        while match = content[pos..-1].match( Chunk.get_regexp( card.chunk_list ) )
-          m_str = match[0]
-          first_char = m_str[0,1]
-          grp_start = match.begin(0)+pos
-      
-          pre_str = pre_start == grp_start ? nil : content[pre_start..grp_start]
-          #warn "scan m:#{m_str}[#{first_char}, #{m_str[-1,1]}, #{match.begin(0)}..#{match.end(0)}] grp:#{grp_start} pos:#{pos}:#{content[pos..match.end(0)]}"
-          pos += match.end(0)
+        position = 0
+        prefix_regexp = Chunk.get_regexp card.chunk_list
+        interval_string = ''
+        
+        while prefix_match = content[position..-1].match( prefix_regexp)
+          prefix = prefix_match[0]
+          first_prefix_char = prefix[0,1]
+          chunk_start = prefix_match.begin(0) + position
+
+          if position != chunk_start
+            interval_string += content[ position..chunk_start-1 ]
+          end
+
+          prefix_end = position + prefix_match.end(0) 
 
           # either it is indexed by the first character of the match
-          if match_cfg = Chunk.prefix_cfg[ first_char ]
-            rest_match = content[pos..-1].match( Hash===(h = match_cfg[:rest_re]) ? h[m_str[1,1]] : h )
+          
+          prepend_str = ''
+          rest_match = if match_cfg = Chunk.prefix_cfg[ first_prefix_char ]
+            rest_regexp = match_cfg[:rest_re]
+            if Hash === rest_regexp
+              rest_regexp = rest_regexp[ prefix[1,1] ] # FIXME!!!  this is a hack to support literals 
+            end
+            position = prefix_end
+            content[prefix_end..-1].match rest_regexp
 
           else # or it uses the default pattern (Chunk::URI now)
-            match_cfg = Chunk.prefix_cfg[ m_str[-1,1] ] || Chunk.prefix_cfg[ :default ]
+            match_cfg = Chunk.prefix_cfg[ prefix[-1,1] ] || Chunk.prefix_cfg[ :default ]
             prepend_str = match_cfg[:prepend_str]
-            prepend_str = (m_str[-1,1] != ':' && prepend_str) ? prepend_str : ''
+            prepend_str = (prefix[-1,1] != ':' && prepend_str) ? prepend_str : ''
             #warn "pp #{match_cfg[:class]}, #{prepend_str.inspect} [#{m_str}, #{prepend_str}]"
-            m_str = ''
-            rest_match = ( prepend_str+content[grp_start..-1] ).match( match_cfg[:regexp] )
-            pos = grp_start - prepend_str.length if rest_match
+            prefix = ''
+            position = chunk_start
+            (prepend_str+content[chunk_start..-1] ).match match_cfg[:regexp]
           end
 
           chunk_class = match_cfg[:class]
           if rest_match
-            pos += rest_match.end(0)
-      
-            begin
-              if grp_start < 1 or !chunk_class.respond_to?( :avoid_autolinking ) or !chunk_class.avoid_autolinking( content[grp_start-2..grp_start-1] )
+            position += ( rest_match.end(0) - prepend_str.length )
+            if chunk_start < 1 or !chunk_class.respond_to?( :avoid_autolinking ) or !chunk_class.avoid_autolinking( content[chunk_start-2..chunk_start-1] )
                 # save between strings and chunks indexed by position (probably should just be ordered pairs)
+                if interval_string.size > 0
+                  positions << [ position, interval_string ] 
+                  interval_string = ''
+                end
+                
                 m, *groups = rest_match.to_a
-                rec = [ pos, ( pre_start == grp_start ? nil : content[pre_start..grp_start-1] ), 
-                               chunk_class.new(m_str+m, self, [first_char, m_str] + groups) ]
-                pre_start = pos
-                positions << rec
-              end
-            rescue URI::Error=>e
-              #warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect} #{e.backtrace*"\n"}"
-              Rails.logger.warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect}"
+                positions << [ position, chunk_class.new(prefix+m, self, [first_prefix_char, prefix] + groups) ]
+                
             end
+          else
+            interval_string += prefix
           end
+          
+#          warn "position = #{position}"
         end
       end
 
       if positions.any?
-        result = positions.inject([]) do |arr, rec|
-            pos, pre, chunk = rec
-            arr << pre if pre
-            arr << chunk
-          end
-        pend = positions[-1][0]
-        result << content[pend..-1] unless pend == content.size
+        result = positions.map { |pos| pos[1] }
+        last_tracked_position = positions[-1][0]
+        if last_tracked_position < content.size
+          remainder = content[ last_tracked_position..-1]
+          result << remainder
+        end
         result
       else
         #warn "string content:#{content}, #{content.size}"

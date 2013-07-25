@@ -56,6 +56,7 @@ module Card::Chunk
       chunk.gsub!(/(?:&nbsp;)+/, '')
 
       @trailing_punctuation = if %w{ , . ) ! ? : }.member?(last_char)
+        @text.chop!
         chunk.chop!
         last_char
       end
@@ -65,8 +66,8 @@ module Card::Chunk
 
       #warn "uri parse[#{match.inspect}]"
       @uri = ::URI.parse( chunk )
-      @process_chunk = self.format ? "#{self.format.build_link(@link_text, @link_text)}#{@trailing_punctuation}" : @text
-    rescue  URI::Error=>e
+      @process_chunk = "#{self.format.build_link(@link_text, @link_text)}#{@trailing_punctuation}"
+    rescue ::URI::Error=>e
       #warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect} #{e.backtrace*"\n"}"
       Rails.logger.warn "rescue parse #{self.class}: #{e.inspect}"
     end

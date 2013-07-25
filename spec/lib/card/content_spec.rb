@@ -10,11 +10,9 @@ CONTENT = {
   :two => %(Some Links and includes: [[the card|the text]], and {{This Card|Is Included}}{{this too}}
         and [[http://external.wagn.org/path|link text]]{{Included|open}}),
          
-  :three => 
-  #%(Some URIs and Links: http://a.url.com/
-  #      More urls: wagn.com/a/path/to.html
-  #      http://localhost:2020/path?cgi=foo&bar=baz  [[http://brain.org/Home|extra]]
-  %(
+  :three =>%(Some URIs and Links: http://a.url.com/
+        More urls: wagn.com/a/path/to.html
+        http://localhost:2020/path?cgi=foo&bar=baz  [[http://brain.org/Home|extra]]
         [ http://gerry.wagn.com/a/path ]
         { https://brain.org/more?args }),
   :three_b => %(Some URIs and Links: http://a.url.com
@@ -82,10 +80,10 @@ RENDERED = {
 #    "<a class=\"wanted-card\" href=\"/Is%20linked\">This Card</a>",
     {:options=>{:include_name=>"Included",:view=>"open",:include=>"Included|open",:style=>""}}],
   :three => [
-#    "Some URIs and Links: ", '<a class="external-link" href="http://a.url.com/">http://a.url.com/</a>',"\n        More urls: ",
-#    "<a class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>","\n        ",
-#    "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>", "  ",
-#    "<a class=\"external-link\" href=\"http://brain.org/Home\">extra</a>",
+    "Some URIs and Links: ", '<a class="external-link" href="http://a.url.com/">http://a.url.com/</a>',"\n        More urls: ",
+    "<a class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>","\n        ",
+    "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>", "  ",
+    "<a class=\"external-link\" href=\"http://brain.org/Home\">extra</a>",
     "\n        [ ","<a class=\"external-link\" href=\"http://gerry.wagn.com/a/path\">http://gerry.wagn.com/a/path</a>",
     " ]\n        { ","<a class=\"external-link\" href=\"https://brain.org/more?args\">https://brain.org/more?args</a>"," }"],
   :three_b => ["Some URIs and Links: ","<a class=\"external-link\" href=\"http://a.url.com\">http://a.url.com</a>","\n        More urls: ",

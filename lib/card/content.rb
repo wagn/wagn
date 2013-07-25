@@ -75,67 +75,27 @@ class Card
 
           chunk_class = Chunk.find_class_by_prefix prefix
           match, offset = chunk_class.full_match content[chunk_start..-1], prefix
+          context_ok = chunk_class.context_ok? content, chunk_start
           
           position = chunk_start
+          
           if match
-            position += ( match.end(0) + offset.to_i )
-            if interval_string.size > 0
-              positions << [ interval_string ] 
-              interval_string = ''
+            position += ( match.end(0) - offset.to_i )
+            if context_ok
+              if interval_string.size > 0
+                positions << [ interval_string ] 
+                interval_string = ''
+              end
+              positions << [ chunk_class.new(match, self), position ]
             end
-            positions << [ chunk_class.new(match, self), position ]
           else
             position += 1
-            interval_string += prefix
           end
+          
+          interval_string += prefix if !match || !context_ok
         end
       end
-=begin          
 
-          prefix_end = position + prefix_match.end(0) 
-
-          # either it is indexed by the first character of the match
-          
-          prepend_str = ''
-          rest_match = if match_cfg = Chunk.prefix_map[ first_prefix_char ]
-            rest_regexp = match_cfg[:full_re]
-            if Hash === rest_regexp
-              rest_regexp = rest_regexp[ prefix[1,1] ] # FIXME!!!  this is a hack to support literals 
-            end
-            position = prefix_end
-            content[prefix_end..-1].match rest_regexp
-
-          else # or it uses the default pattern (Chunk::URI now)
-            match_cfg = Chunk.prefix_map[ prefix[-1,1] ] || Chunk.prefix_map[ :default ]
-            prepend_str = match_cfg[:prepend_str]
-            prepend_str = (prefix[-1,1] != ':' && prepend_str) ? prepend_str : ''
-            #warn "pp #{match_cfg[:class]}, #{prepend_str.inspect} [#{m_str}, #{prepend_str}]"
-            prefix = ''
-            position = chunk_start
-            (prepend_str+content[chunk_start..-1] ).match match_cfg[:regexp]
-          end
-
-          chunk_class = match_cfg[:class]
-          if rest_match
-            position += ( rest_match.end(0) - prepend_str.length )
-            if chunk_start < 1 or !chunk_class.respond_to?( :avoid_autolinking ) or !chunk_class.avoid_autolinking( content[chunk_start-2..chunk_start-1] )
-                # save between strings and chunks indexed by position (probably should just be ordered pairs)
-                if interval_string.size > 0
-                  positions << [ position, interval_string ] 
-                  interval_string = ''
-                end
-                
-                m, *groups = rest_match.to_a
-                positions << [ position, chunk_class.new(prefix+m, self, [first_prefix_char, prefix] + groups) ]
-                
-            end
-          else
-            interval_string += prefix
-          end
-          
-#          warn "position = #{position}"
-
-=end
       if positions.any?
         result = positions.map { |pos| pos[0] }
         last_tracked_position = positions[-1][1]

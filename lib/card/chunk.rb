@@ -60,6 +60,10 @@ module Card::Chunk
       def full_re prefix
         config[:full_re]
       end
+      
+      def context_ok? content, chunk_start
+        true
+      end
     end
 
     def initialize match, content

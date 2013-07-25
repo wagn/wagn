@@ -32,17 +32,24 @@ module Card::Chunk
       :idx_char  => ':'
     }
     
-    def self.full_match content, prefix
-      prepend_str = if prefix[-1,1] != ':' && config[:prepend_str]
-        config[:prepend_str]
-      else
-        ''
+    class << self
+      def full_match content, prefix
+        prepend_str = if prefix[-1,1] != ':' && config[:prepend_str]
+          config[:prepend_str]
+        else
+          ''
+        end
+        content = prepend_str + content
+        match = super content, prefix
+        [ match, prepend_str.length ]
       end
-      content = prepend_str + content
-      match = super content, prefix
-      [ match, -prepend_str.length ]
-    end
 
+      def context_ok? content, chunk_start
+        preceding_string = content[chunk_start-2..chunk_start-1]
+        !( preceding_string =~ /(?:#{REJECTED_PREFIX_RE})$/ )
+      end
+    end
+    
     def interpret match, content
       chunk = match[0]
       last_char = chunk[-1,1]
@@ -64,9 +71,7 @@ module Card::Chunk
       Rails.logger.warn "rescue parse #{self.class}: #{e.inspect}"
     end
 
-    def self.avoid_autolinking str
-      !!( str =~ /(?:#{REJECTED_PREFIX_RE})$/ )
-    end
+
   end
 
   # FIXME: DRY, merge these two into one class

@@ -90,6 +90,7 @@ namespace :wagn do
     desc "migrate cards"
     task :cards => :environment do
       Wagn::Conf[:migration] = true
+      Card # this is needed in production mode to insure core db structures are loaded before schema_mode is set
     
       paths = ActiveRecord::Migrator.migrations_paths = Wagn::MigrationHelper.card_migration_paths
     

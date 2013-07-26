@@ -4,23 +4,24 @@ require 'wagn/pack_spec_helper'
 
 
 
-describe Card::Chunk::Include, "include chunk tests" do
+describe Card::Chunk::Include, "Inclusion" do
   include ActionView::Helpers::TextHelper
   include MySpecHelpers
 
-  context "simple interpretation" do
+  context "syntax" do
     before do
       @class= Card::Chunk::Include
     end
     
     it "should handle no pipes" do
-      match = @class.full_match '{{toy}}'
-      @class.new( match, nil ).name.should == 'toy'
+      instance = @class.new( @class.full_match( '{{toy}}') , nil )
+      instance.name.should == 'toy'
+      instance.options[:include_name].should == 'toy'
+      instance.options.key?(:view).should == false
     end
     
     it "should handle single pipe" do
       options = @class.new( @class.full_match('{{toy|link}}'), nil ).options
-      warn "options = #{options}"
       options[:include_name].should == 'toy'
       options[:view].should == 'link'
       options.key?(:items).should == false
@@ -31,13 +32,12 @@ describe Card::Chunk::Include, "include chunk tests" do
       options[:include_name].should == 'box'
       options[:view].should == 'open'
       options[:items][:view].should == 'closed'
-      options[:items].key?(:items).should == false
-      
+      options[:items].key?(:items).should == false      
     end
     
   end
 
-  context "format rendering" do
+  context "rendering" do
     before do
       Account.current_id= Card['joe_user'].id
     end
@@ -57,7 +57,7 @@ describe Card::Chunk::Include, "include chunk tests" do
       assert_view_select r, 'div[card-name="boo+there"][class~="missing-view"]'
     end
 
-    it "should test_absolute_include" do
+    it "should handle absolute names" do
       alpha = newcard 'Alpha', "Pooey"
       beta = newcard 'Beta', "{{Alpha}}"
       assert_view_select Card::Format.new(beta).render_core, 'span[class~="content"]', "Pooey"

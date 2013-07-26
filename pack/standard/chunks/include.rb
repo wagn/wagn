@@ -25,12 +25,11 @@ module Card::Chunk
           opt_list_array = @opt_lists.to_s.split '|'
           opt_list_array.each_with_index do |opt_list, index|            
             process_opt_list opt_list, options_at_depth
-            options_at_depth.merge! :include_name => name, :include => in_brackets #yuck, need better name (this is raw stuff)
             if index + 1 < opt_list_array.size
-              warn "#{index + 1} < #{@opt_lists.size}"
               options_at_depth = options_at_depth[:items] = {}
             end
           end
+          @options.merge! :include_name => name, :include => in_brackets #yuck, need better name (this is raw stuff)
           @name = name
         end
       
@@ -49,7 +48,7 @@ module Card::Chunk
       end
       
       if !style_hash.empty?
-        hash[:style] = style_hash.map { |key, value| CGI.escapeHTML "#{style_name}:#{style};" } * ''
+        hash[:style] = style_hash.map { |key, value| CGI.escapeHTML "#{key}:#{value};" } * ''
       end
     end
 

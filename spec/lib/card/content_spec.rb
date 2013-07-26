@@ -69,16 +69,16 @@ end
 
 RENDERED = {
   :one => ["Some Literals: \\[{I'm not| a link]}, and ", "<span>{</span>{This Card|Is not Included}}", ", but ",
-            {:options => {:include_name=>"this is",:include=>"this is",:style=>''}}, ", and some tail" ],
+            {:options => {:include_name=>"this is",:include=>"this is"}}, ", and some tail" ],
   :two => ["Some Links and includes: ", "<a class=\"wanted-card\" href=\"/the%20card\">the text</a>", #"[[the card|the text]]",
-     ", and ", {:options => {:include_name=>"This Card", :view => "Is Included",:include => "This Card|Is Included",:style=>""}},{
-      :options=>{:include_name=>"this too",:include=>"this too",:style=>""}},
+     ", and ", {:options => {:include_name=>"This Card", :view => "Is Included",:include => "This Card|Is Included"}},{
+      :options=>{:include_name=>"this too",:include=>"this too"}},
 #    "\n         more formats for links and includes: ","<a class=\"wanted-card\" href=\"/the%20text\">the card</a>",
 #",\n         and ",
     "\n        and ",
     "<a class=\"external-link\" href=\"http://external.wagn.org/path\">link text</a>",
 #    "<a class=\"wanted-card\" href=\"/Is%20linked\">This Card</a>",
-    {:options=>{:include_name=>"Included",:view=>"open",:include=>"Included|open",:style=>""}}],
+    {:options=>{:include_name=>"Included",:view=>"open",:include=>"Included|open"}}],
   :three => [
     "Some URIs and Links: ", '<a class="external-link" href="http://a.url.com/">http://a.url.com/</a>',"\n        More urls: ",
     "<a class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>","\n        ",

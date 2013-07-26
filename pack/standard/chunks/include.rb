@@ -4,7 +4,7 @@ module Card::Chunk
   class Include < Reference
     cattr_reader :options
     @@options = [ 
-      :include_name, :inclusion_syntax, :view, :item, :items, # deprecating :item
+      :inc_name, :inc_syntax, :view, :item, :items, # deprecating :item
       :type, :size, :title, :hide, :show, :structure
     ].to_set
     attr_reader :options
@@ -32,7 +32,7 @@ module Card::Chunk
               options_at_depth = options_at_depth[:items] = {}
             end
           end
-          @options.merge! :include_name => name, :inclusion_syntax => in_brackets
+          @options.merge! :inc_name => name, :inc_syntax => in_brackets
           @name = name
         end
       

@@ -16,20 +16,20 @@ describe Card::Chunk::Include, "Inclusion" do
     it "should handle no pipes" do
       instance = @class.new( @class.full_match( '{{toy}}') , nil )
       instance.name.should == 'toy'
-      instance.options[:include_name].should == 'toy'
+      instance.options[:inc_name].should == 'toy'
       instance.options.key?(:view).should == false
     end
     
     it "should handle single pipe" do
       options = @class.new( @class.full_match('{{toy|link}}'), nil ).options
-      options[:include_name].should == 'toy'
+      options[:inc_name].should == 'toy'
       options[:view].should == 'link'
       options.key?(:items).should == false
     end
     
     it "should handle multiple pipes" do
       options = @class.new( @class.full_match('{{box|open|closed}}'), nil ).options
-      options[:include_name].should == 'box'
+      options[:inc_name].should == 'box'
       options[:view].should == 'open'
       options[:items][:view].should == 'closed'
       options[:items].key?(:items).should == false      

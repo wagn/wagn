@@ -9,33 +9,36 @@ require 'uri/common'
 # match by its pattern.
 
 module Card::Chunk
-  mattr_accessor :raw_list, :list_regexp, :prefix_cfg
-  @@raw_list, @@list_regexp, @@prefix_cfg = {}, {}, {}
+  mattr_accessor :raw_list, :prefix_regexp_by_list, :prefix_map
+  @@raw_list, @@prefix_regexp_by_list, @@prefix_map = {}, {}, {}
   
   class << self
     def register_class klass, hash
-      klass.config = hash
-      klass.config.merge! :class => klass
+      klass.config = hash.merge :class => klass
+      prefix_index = hash[:idx_char] || :default  # this is gross and needs to be moved out.  
+      prefix_map[prefix_index] = klass.config
     end
     
     def register_list key, list
       raw_list[key] = list
     end
     
-    def get_regexp key
-      @@list_regexp[key] ||= begin
-        chunk_types = raw_list[key].map { |chunkname| const_get chunkname }
+    def find_class_by_prefix prefix
+      config = prefix_map[ prefix[0,1] ] || prefix_map[ prefix[-1,1] ] || prefix_map[:default]
+      #prefix identified by first character, last character, or default.  a little ugly...
+      config[:class]
+    end
+    
+    def get_prefix_regexp chunk_list_key
+      prefix_regexp_by_list[chunk_list_key] ||= begin
+        chunk_types = raw_list[chunk_list_key].map { |chunkname| const_get chunkname }
         prefix_res = chunk_types.map do |chunk_class|
-          cfg = chunk_class.config
-          
-          prefix = cfg[:idx_char] || :default  # this is gross and needs to be moved out.  
-          @@prefix_cfg[prefix] = cfg           # the entire chunk config mechanism needs attention imo - efm
-          
-          cfg[:prefix_re]
+          chunk_class.config[:prefix_re]
         end
         /(?:#{ prefix_res * '|' })/m
       end
-    end  
+    end
+
   end
   
   
@@ -47,12 +50,27 @@ module Card::Chunk
   class Abstract
     class_attribute :config
     attr_reader :text, :process_chunk
+    
+    class << self
+      def full_match content, prefix
+#        warn "attempting full match on #{content}.  class = #{self}"
+        content.match full_re( prefix )
+      end
 
-    def initialize match_string, content, params
-      @text = match_string
+      def full_re prefix
+        config[:full_re]
+      end
+      
+      def context_ok? content, chunk_start
+        true
+      end
+    end
+
+    def initialize match, content
+      @text = match[0]
       @processed = nil
       @content = content
-      interpret match_string, content, params
+      interpret match, content
       self
     end
     

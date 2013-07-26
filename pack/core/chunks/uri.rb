@@ -28,31 +28,51 @@ module Card::Chunk
 
     Card::Chunk.register_class self, {
       :prefix_re => "(?:(?!#{REJECTED_PREFIX_RE})(?:#{SCHEMES * '|'})\\:)",
-      :regexp    => /^#{::URI.regexp( SCHEMES )}/,
-      :prepend_str => '',
+      :full_re    => /^#{::URI.regexp( SCHEMES )}/,
       :idx_char  => ':'
     }
+    
+    class << self
+      def full_match content, prefix
+        prepend_str = if prefix[-1,1] != ':' && config[:prepend_str]
+          config[:prepend_str]
+        else
+          ''
+        end
+        content = prepend_str + content
+        match = super content, prefix
+        [ match, prepend_str.length ]
+      end
 
-    def interpret match, content, params
-      last_char = match[-1,1]
-      match.gsub!(/(?:&nbsp;)+/, '')
+      def context_ok? content, chunk_start
+        preceding_string = content[chunk_start-2..chunk_start-1]
+        !( preceding_string =~ /(?:#{REJECTED_PREFIX_RE})$/ )
+      end
+    end
+    
+    def interpret match, content
+      chunk = match[0]
+      last_char = chunk[-1,1]
+      chunk.gsub!(/(?:&nbsp;)+/, '')
 
       @trailing_punctuation = if %w{ , . ) ! ? : }.member?(last_char)
-        ch = match.chop!
+        @text.chop!
+        chunk.chop!
         last_char
       end
-      match.sub!(/\.$/, '')
+      chunk.sub!(/\.$/, '')
 
-      @link_text = match
+      @link_text = chunk
 
       #warn "uri parse[#{match.inspect}]"
-      @uri = ::URI.parse( match )
-      @process_chunk = self.format ? "#{self.format.build_link(@link_text, @link_text)}#{@trailing_punctuation}" : @text
+      @uri = ::URI.parse( chunk )
+      @process_chunk = "#{self.format.build_link(@link_text, @link_text)}#{@trailing_punctuation}"
+    rescue ::URI::Error=>e
+      #warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect} #{e.backtrace*"\n"}"
+      Rails.logger.warn "rescue parse #{self.class}: #{e.inspect}"
     end
 
-    def self.avoid_autolinking str
-      !!( str =~ /(?:#{REJECTED_PREFIX_RE})$/ )
-    end
+
   end
 
   # FIXME: DRY, merge these two into one class
@@ -63,12 +83,12 @@ module Card::Chunk
         
     Card::Chunk.register_class self, {
       :prefix_re => "(?:(?!#{REJECTED_PREFIX_RE})#{EMAIL})\\b",
-      :regexp    => /^#{::URI.regexp( SCHEMES )}/,
+      :full_re    => /^#{::URI.regexp( SCHEMES )}/,
       :prepend_str => PREPEND_STR,
       :idx_char  => '@'
     }
 
-    def interpret match, content, params
+    def interpret match, content
       super
       @text = @text.sub(/^mailto:/,'')  # this removes the prepended string from the unchanged match text
       @process_chunk = "#{self.format.build_link(@link_text, @text)}#{@trailing_punctuation}"
@@ -101,11 +121,11 @@ module Card::Chunk
     
     Card::Chunk.register_class self, {
       :prefix_re => "(?:(?!#{REJECTED_PREFIX_RE})#{HOST})\\b",
-      :regexp    => /^#{::URI.regexp( SCHEMES )}/,
+      :full_re    => /^#{::URI.regexp( SCHEMES )}/,
       :prepend_str => PREPEND_STR
     }
 
-    def interpret match, content, params
+    def interpret match, content
       super
       @text = @text.sub(/^http:\/\//,'')  # this removes the prepended string from the unchanged match text
       #warn "huri t:#{@text}, #{match}, #{params.inspect}"

@@ -58,65 +58,51 @@ class Card
     end
     
     def parse_content content
-      positions = []
+      chunks = []
 
       if String===content
-        pre_start = pos = 0
-        while match = content[pos..-1].match( Chunk.get_regexp( card.chunk_list ) )
-          m_str = match[0]
-          first_char = m_str[0,1]
-          grp_start = match.begin(0)+pos
-      
-          pre_str = pre_start == grp_start ? nil : content[pre_start..grp_start]
-          #warn "scan m:#{m_str}[#{first_char}, #{m_str[-1,1]}, #{match.begin(0)}..#{match.end(0)}] grp:#{grp_start} pos:#{pos}:#{content[pos..match.end(0)]}"
-          pos += match.end(0)
+        position = last_position = 0
+        prefix_regexp = Chunk.get_prefix_regexp card.chunk_list
+        interval_string = ''
+        
+        while prefix_match = content[position..-1].match( prefix_regexp )
+          prefix = prefix_match[0]                                                 # prefix of matched chunk
+          chunk_start = prefix_match.begin(0) + position                           # content index of beginning of chunk
 
-          # either it is indexed by the first character of the match
-          if match_cfg = Chunk.prefix_cfg[ first_char ]
-            rest_match = content[pos..-1].match( Hash===(h = match_cfg[:rest_re]) ? h[m_str[1,1]] : h )
-
-          else # or it uses the default pattern (Chunk::URI now)
-            match_cfg = Chunk.prefix_cfg[ m_str[-1,1] ] || Chunk.prefix_cfg[ :default ]
-            prepend_str = match_cfg[:prepend_str]
-            prepend_str = (m_str[-1,1] != ':' && prepend_str) ? prepend_str : ''
-            #warn "pp #{match_cfg[:class]}, #{prepend_str.inspect} [#{m_str}, #{prepend_str}]"
-            m_str = ''
-            rest_match = ( prepend_str+content[grp_start..-1] ).match( match_cfg[:regexp] )
-            pos = grp_start - prepend_str.length if rest_match
+          if prefix_match.begin(0) > 0                                             # if matched chunk is not beginning of test string  
+            interval_string += content[ position..chunk_start-1 ]                  # hold onto the non-chunk part of the string
           end
 
-          chunk_class = match_cfg[:class]
-          if rest_match
-            pos += rest_match.end(0)
-      
-            begin
-              if grp_start < 1 or !chunk_class.respond_to?( :avoid_autolinking ) or !chunk_class.avoid_autolinking( content[grp_start-2..grp_start-1] )
-                # save between strings and chunks indexed by position (probably should just be ordered pairs)
-                m, *groups = rest_match.to_a
-                rec = [ pos, ( pre_start == grp_start ? nil : content[pre_start..grp_start-1] ), 
-                               chunk_class.new(m_str+m, self, [first_char, m_str] + groups) ]
-                pre_start = pos
-                positions << rec
-              end
-            rescue URI::Error=>e
-              #warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect} #{e.backtrace*"\n"}"
-              Rails.logger.warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect}"
+          chunk_class = Chunk.find_class_by_prefix prefix                          # get the chunk class from the prefix
+          match, offset = chunk_class.full_match content[chunk_start..-1], prefix  # see whether the full chunk actually matches (as opposed to bogus prefix)
+          context_ok = chunk_class.context_ok? content, chunk_start                # make sure there aren't contextual reasons for ignoring this chunk
+          position = chunk_start                                                   # move scanning position up to beginning of chunk
+          
+          if match                                                                 # we have a chunk match
+            position += ( match.end(0) - offset.to_i )                             # move scanning position up to end of chunk
+            if context_ok                                                          #
+              chunks << interval_string if interval_string.size > 0                # add the nonchunk string to the chunk list
+              chunks << chunk_class.new( match, self )                             # add the chunk to the chunk list
+              interval_string = ''                                                 # reset interval string for next go-round
+              last_position = position                                             # note that the end of the chunk was the last place where a chunk was found (so far)
             end
+          else
+            position += 1                                                          # no match.  look at the next character
+          end
+          
+          if !match || !context_ok
+            interval_string += content[chunk_start..position-1]                    # moving beyond the alleged chunk.  append failed string to "nonchunk" string
           end
         end
       end
 
-      if positions.any?
-        result = positions.inject([]) do |arr, rec|
-            pos, pre, chunk = rec
-            arr << pre if pre
-            arr << chunk
-          end
-        pend = positions[-1][0]
-        result << content[pend..-1] unless pend == content.size
-        result
+      if chunks.any?
+        if last_position < content.size
+          remainder = content[ last_position..-1]                                  # handle any leftover nonchunk string at the end of content
+          chunks << remainder
+        end
+        chunks
       else
-        #warn "string content:#{content}, #{content.size}"
         content
       end
     end

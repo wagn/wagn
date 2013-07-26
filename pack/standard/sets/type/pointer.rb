@@ -8,14 +8,14 @@ end
 format :html do
 
   view :core do |args|
-    itemview = args[:item] || :closed #Card::Format::DEFAULT_ITEM_VIEW  #FIXME: this needs work, it won't subclass as intended
-    %{<div class="pointer-list">#{card.pointer_items self, itemview}</div>}
+    @inclusion_defaults[:view] ||= :closed
+    %{<div class="pointer-list">#{card.pointer_items self}</div>}
     #+ link_to( 'add/edit', path(action), :remote=>true, :class=>'slotter add-edit-item' ) #ENGLISH
   end
 
   view :closed_content do |args|
-    itemview = args[:item]=='name' ? 'name' : 'link'
-    %{<div class="pointer-list">#{card.pointer_items self, itemview}</div>}
+    @inclusion_defaults[:view] = @inclusion_defaults[:view]=='name' ? 'name' : 'link'
+    %{<div class="pointer-list">#{card.pointer_items self}</div>}
   end
 
   view :editor do |args|
@@ -85,13 +85,17 @@ format :html do
   end
 end
 
-def pointer_items format, itemview
-  typeparam = case (type=item_type)
-    when String ; ";type:#{type}"
-    when Array  ; ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
-    else ""
+format do
+  def pointer_items
+    type = card.item_type
+    typeparam = case ()
+      when String ; ";type:#{type}"
+      when Array  ; ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
+      else ""
+    end
+    itemview = @inclusion_defaults[:view]
+    process_content_object content.gsub(/\[\[/,"<div class=\"pointer-item item-#{itemview}\">{{").gsub(/\]\]/,"|#{itemview}#{typeparam}}}</div>")
   end
-  format.process_content_object content.gsub(/\[\[/,"<div class=\"pointer-item item-#{itemview}\">{{").gsub(/\]\]/,"|#{itemview}#{typeparam}}}</div>")
 end
 
 def item_cards( args={} )

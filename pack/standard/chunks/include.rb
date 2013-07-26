@@ -25,11 +25,8 @@ module Card::Chunk
         when /^\s*$/ ; '' # no name
         else
           @options = @opt_lists.nil? ? {} :
-            @opt_lists.split('|').reverse.map do |level_options|
-              process_options level_options
-            end.inject(nil) do |nxt, opts|
-              opts[:items] = nxt unless nxt.nil?
-              opts
+            @opt_lists.split('|').reverse.inject(nil) do |prev_level, level_options|
+              process_options level_options, prev_level
             end
           @options.merge! :inc_name => name, :inc_syntax => in_brackets
           @name = name
@@ -38,9 +35,10 @@ module Card::Chunk
       @process_chunk = result if !@name
     end
 
-    def process_options list_string
+    def process_options list_string, items
       hash = {}
       style_hash = {}
+      hash[:items] = items unless items.nil?
       Hash.new_from_semicolon_attr_list( list_string ).each do |key, value|
         key = key.to_sym
         if @@options.include? key

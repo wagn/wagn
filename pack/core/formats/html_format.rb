@@ -95,7 +95,7 @@ class Card::HtmlFormat < Card::Format
   end
 
   def slot_options
-    @@slot_options ||= Card::Chunk::Include.options.keys.reject { |k| k == :view }.unshift :home_view
+    @@slot_options ||= Card::Chunk::Include.options.reject { |k| k == :view }.unshift :home_view
   end
 
   def wrap view, args = {}

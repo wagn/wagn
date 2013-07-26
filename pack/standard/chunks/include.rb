@@ -3,8 +3,7 @@
 module Card::Chunk
   class Include < Reference
     cattr_reader :options
-    @@options = [ :include_name, :view, :item, :type, :size, :title, :hide, :show, :include, :structure ].  #consider making this a Set? (in the ruby sense)
-      inject({}) do |hash, key| hash[key] = nil; hash end
+    @@options = [ :include_name, :view, :item, :items, :type, :size, :title, :hide, :show, :include, :structure ].to_set
     attr_reader :options
       
     Card::Chunk.register_class self, {
@@ -39,15 +38,13 @@ module Card::Chunk
     end
     
     def process_opt_list list_string, hash
-      hash.merge! @@options
-      
       style_hash = {} 
       Hash.new_from_semicolon_attr_list( list_string ).each do |key, value|
         key = key.to_sym
-        if hash.key? key
+        if @@options.include? key
           hash[key] = value
         else
-          styles[key] = value
+          style_hash[key] = value
         end
       end
       
@@ -73,9 +70,7 @@ module Card::Chunk
 
     def replace_reference old_name, new_name
       replace_name_reference old_name, new_name
-
-      opt_lists = @opt_lists ? "|#{@opt_lists}" : ''
-      @text = '{{' + @name.to_s + configs + '}}'
+      @text = "{{#{ [ @name.to_s, @opt_lists ].compact * '|' }}}"
     end
 
   end

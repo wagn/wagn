@@ -3,18 +3,18 @@
 module Card::Chunk
   class Include < Reference
     cattr_reader :options
-    @@options = [ 
+    @@options = [
       :inc_name, :inc_syntax, :view, :item, :items, # deprecating :item
       :type, :size, :title, :hide, :show, :structure
     ].to_set
     attr_reader :options
-      
+
     Card::Chunk.register_class self, {
       :prefix_re => '\\{\\{',
       :full_re   =>  /^\{\{([^\}]*)\}\}/,
-      :idx_char  => '{'    
+      :idx_char  => '{'
     }
-    
+
     def interpret match, content
       in_brackets = match[1]
 #      warn "in_brackets = #{in_brackets}"
@@ -24,23 +24,23 @@ module Card::Chunk
         when /^\#/   ; "<!-- #{CGI.escapeHTML in_brackets} -->"
         when /^\s*$/ ; '' # no name
         else
-          options_at_depth = @options = {}
-          opt_list_array = @opt_lists.to_s.split '|'
-          opt_list_array.each_with_index do |opt_list, index|            
-            process_opt_list opt_list, options_at_depth
-            if index + 1 < opt_list_array.size
-              options_at_depth = options_at_depth[:items] = {}
+          @options = @opt_lists.nil? ? {} :
+            @opt_lists.split('|').reverse.map do |level_options|
+              process_options level_options
+            end.inject(nil) do |nxt, opts|
+              opts[:items] = nxt unless nxt.nil?
+              opts
             end
-          end
           @options.merge! :inc_name => name, :inc_syntax => in_brackets
           @name = name
         end
-      
+
       @process_chunk = result if !@name
     end
-    
-    def process_opt_list list_string, hash
-      style_hash = {} 
+
+    def process_options list_string
+      hash = {}
+      style_hash = {}
       Hash.new_from_semicolon_attr_list( list_string ).each do |key, value|
         key = key.to_sym
         if @@options.include? key
@@ -49,10 +49,11 @@ module Card::Chunk
           style_hash[key] = value
         end
       end
-      
+
       if !style_hash.empty?
         hash[:style] = style_hash.map { |key, value| CGI.escapeHTML "#{key}:#{value};" } * ''
       end
+      hash
     end
 
     def inspect

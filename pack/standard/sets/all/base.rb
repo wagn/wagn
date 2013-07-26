@@ -89,7 +89,7 @@ end
 view :template_rule, :tags=>:unknown_ok do |args|
   tname = args[:include_name].gsub /\b_(left|right|whole|self|user|main|\d+|L*R?)\b/, ''
   if tname !~ /^\+/
-    "{{#{args[:include]}}}"
+    "{{#{args[:inclusion_syntax]}}}"
   else
     tmpl_set_name = parent.card.cardname.left_name
     set_name = # find the most appropriate set to use as prototype for inclusion

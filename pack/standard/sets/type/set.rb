@@ -33,7 +33,7 @@ format :html do
   view :template_link do |args|
     args.delete :style
     wrap :template_link, args do
-      link = link_to_view args[:include], :template_editor, :class=>'slotter' #, 'slot-include'=>include_syntax
+      link = link_to_view args[:inclusion_syntax], :template_editor, :class=>'slotter' #, 'slot-include'=>include_syntax
       "{{#{link}}}"
     end
   end

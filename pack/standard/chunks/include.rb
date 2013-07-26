@@ -3,7 +3,10 @@
 module Card::Chunk
   class Include < Reference
     cattr_reader :options
-    @@options = [ :include_name, :view, :item, :items, :type, :size, :title, :hide, :show, :include, :structure ].to_set
+    @@options = [ 
+      :include_name, :inclusion_syntax, :view, :item, :items, # deprecating :item
+      :type, :size, :title, :hide, :show, :structure
+    ].to_set
     attr_reader :options
       
     Card::Chunk.register_class self, {
@@ -16,10 +19,10 @@ module Card::Chunk
       in_brackets = match[1]
 #      warn "in_brackets = #{in_brackets}"
       name, @opt_lists = in_brackets.split '|', 2
-      result = case name
+      result = case name.to_s
         when /^\#\#/ ; '' # invisible comment
-        when /^\#/   ;  "<!-- #{CGI.escapeHTML in_brackets} -->"
-        when ''      ; '' # no name
+        when /^\#/   ; "<!-- #{CGI.escapeHTML in_brackets} -->"
+        when /^\s*$/ ; '' # no name
         else
           options_at_depth = @options = {}
           opt_list_array = @opt_lists.to_s.split '|'
@@ -29,7 +32,7 @@ module Card::Chunk
               options_at_depth = options_at_depth[:items] = {}
             end
           end
-          @options.merge! :include_name => name, :include => in_brackets #yuck, need better name (this is raw stuff)
+          @options.merge! :include_name => name, :inclusion_syntax => in_brackets
           @name = name
         end
       

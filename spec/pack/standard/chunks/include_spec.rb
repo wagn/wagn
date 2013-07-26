@@ -9,9 +9,30 @@ describe Card::Chunk::Include, "include chunk tests" do
   include MySpecHelpers
 
   context "simple interpretation" do
+    before do
+      @class= Card::Chunk::Include
+    end
+    
     it "should handle no pipes" do
-      pending
-      Card::Chunk::Include.new( '{{toy}}', nil, {} ).name.should == 'toy'
+      match = @class.full_match '{{toy}}'
+      @class.new( match, nil ).name.should == 'toy'
+    end
+    
+    it "should handle single pipe" do
+      options = @class.new( @class.full_match('{{toy|link}}'), nil ).options
+      warn "options = #{options}"
+      options[:include_name].should == 'toy'
+      options[:view].should == 'link'
+      options.key?(:items).should == false
+    end
+    
+    it "should handle multiple pipes" do
+      options = @class.new( @class.full_match('{{box|open|closed}}'), nil ).options
+      options[:include_name].should == 'box'
+      options[:view].should == 'open'
+      options[:items][:view].should == 'closed'
+      options[:items].key?(:items).should == false
+      
     end
     
   end

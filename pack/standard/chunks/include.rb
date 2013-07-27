@@ -3,10 +3,7 @@
 module Card::Chunk
   class Include < Reference
     cattr_reader :options
-    @@options = [
-      :inc_name, :inc_syntax, :view, :item, :items, # deprecating :item
-      :type, :size, :title, :hide, :show, :structure
-    ].to_set
+    @@options = ::Set.new [ :inc_name, :inc_syntax, :view, :items, :type, :size, :title, :hide, :show, :structure ]
     attr_reader :options
 
     Card::Chunk.register_class self, {
@@ -24,10 +21,11 @@ module Card::Chunk
         when /^\#/   ; "<!-- #{CGI.escapeHTML in_brackets} -->"
         when /^\s*$/ ; '' # no name
         else
-          @options = @opt_lists.nil? ? {} :
+          @options = if @opt_lists
             @opt_lists.split('|').reverse.inject(nil) do |prev_level, level_options|
               process_options level_options, prev_level
             end
+          else {} end
           @options.merge! :inc_name => name, :inc_syntax => in_brackets
           @name = name
         end
@@ -41,7 +39,10 @@ module Card::Chunk
       hash[:items] = items unless items.nil?
       Hash.new_from_semicolon_attr_list( list_string ).each do |key, value|
         key = key.to_sym
-        if @@options.include? key
+        if key==:item
+          hash[:items] ||= {}
+          hash[:items][:view] = value
+        elsif @@options.include? key
           hash[key] = value
         else
           style_hash[key] = value

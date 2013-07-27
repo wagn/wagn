@@ -263,7 +263,7 @@ describe Card::Format, "" do
         #warn "lay #{@layout_card.inspect}, #{@main_card.inspect}"
       end
 
-      it "should default to core view for non-main inclusions when context is layout_0" do
+      it "should default to core view when in layout mode" do
         @layout_card.content = "Hi {{A}}"
         Account.as_bot { @layout_card.save }
 

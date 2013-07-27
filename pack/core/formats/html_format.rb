@@ -58,9 +58,21 @@ class Card::HtmlFormat < Card::Format
         ] }
 
   ]
+
+  INCLUSION_DEFAULTS_BY_MODE = {
+    :main   => { :view => :open },
+    :layout => { :view => :core },
+    :normal => { :view => :content },
+    :item   => { :view => :closed }
+  }
   
   def self.transactional?
     true # HTML can handle create, update, delete events.
+  end
+  
+  def get_inclusion_defaults
+#    warn "getting inclusion defaults for #{card.name}. mode = #{@mode}"
+    INCLUSION_DEFAULTS_BY_MODE[@mode] || {}
   end
 
   def get_layout_content(args)

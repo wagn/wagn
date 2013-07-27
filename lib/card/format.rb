@@ -6,15 +6,18 @@ class Card
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
-      :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
+      :layout=>:layout, :new=>:edit, :normal=>:normal, :item=>:item, :template=>:template } #should be set in views
 
+    class_attribute :inclusion_defaults
+    self.inclusion_defaults = { :view => :name }
+    
     cattr_accessor :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases
     [ :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases ].each { |acc| self.send "#{acc}=", {} }
     @@max_char_count = 200 #should come from Wagn::Conf
     @@max_depth      = 10 # ditto
 
     attr_reader :card, :root, :parent
-    attr_accessor :form, :error_status, :inclusion_defaults
+    attr_accessor :form, :error_status, :inclusion_opts
   
     class << self
 
@@ -134,13 +137,25 @@ class Card
         instance_variable_set "@#{key}", value
       end
 
-      @inclusion_defaults ||= {}
+      @mode ||= :normal      
       @char_count = @depth = 0
       @root = self
 
       @context_names ||= if params[:slot] && context_name_list = params[:slot][:name_context]
         context_name_list.split(',').map &:to_name
       else [] end
+    end
+    
+    def inclusion_defaults
+      @inclusion_defaults ||= begin
+        defaults = get_inclusion_defaults.clone
+        defaults.merge! @inclusion_opts if @inclusion_opts
+        defaults
+      end
+    end
+    
+    def get_inclusion_defaults
+      self.class.inclusion_defaults
     end
 
     def params()       @params     ||= controller.params                          end
@@ -251,13 +266,12 @@ class Card
     end
 
     def initialize_subformat subcard, parent, mainline=false
-      @inclusion_defaults = {}
       @mainline ||= mainline
       @parent = parent
       @card = subcard
       @char_count = 0
       @depth += 1
-      @showname = @search = @ok = nil
+      @inclusion_defaults = @inclusion_opts = @showname = @search = @ok = nil
       self
     end
 
@@ -354,6 +368,7 @@ class Card
     def with_inclusion_mode mode
       if switch_mode = INCLUSION_MODES[ mode ]
         old_mode, @mode = @mode, switch_mode
+        @inclusion_defaults = nil unless @mode == old_mode
       end
       result = yield
       @mode = old_mode if switch_mode
@@ -393,20 +408,19 @@ class Card
       content  #no wrapping in base format
     end
 
-    def process_inclusion tcard, opts
+    def process_inclusion tcard, opts={}
       sub = subformat tcard, opts[:mainline]
+      #warn "explicit opts = #{opts}"
 
-      opts = @inclusion_defaults.merge opts
-      if next_level_opts = opts.delete(:items)
-        sub.inclusion_defaults = next_level_opts
-      elsif next_level_view = opts.delete(:item)
-        # you could make the case that this should work if there is no view option in the level above.
-        # current approach says, "if you're using the new syntax, get rid of the deprecated part"  
-        sub.inclusion_defaults[:view] = next_level_view
-      end
+      opts = inclusion_defaults.merge opts
+      sub.inclusion_opts = opts.delete(:items)
+
+      #warn "opts for #{tcard.name} = #{opts}"
+      #warn "inclusion_opts = #{@inclusion_opts}"
+      #warn "mode = #{@mode}"
 
       view = canonicalize_view opts.delete :view
-      view ||= ( @mode == :layout ? :core : :content )  #set defaults elsewhere!!
+#      view ||= @( @mode == :layout ? :core : :content )  #set defaults elsewhere!!
 
       opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
       # FIXME: special views should be represented in view definitions

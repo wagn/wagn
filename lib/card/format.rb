@@ -366,12 +366,15 @@ class Card
     end
 
     def with_inclusion_mode mode
-      if switch_mode = INCLUSION_MODES[ mode ]
+      if switch_mode = INCLUSION_MODES[ mode ] and @mode != switch_mode
         old_mode, @mode = @mode, switch_mode
-        @inclusion_defaults = nil unless @mode == old_mode
+        @inclusion_defaults = nil
       end
       result = yield
-      @mode = old_mode if switch_mode
+      if old_mode
+        @inclusion_defaults = nil
+        @mode = old_mode
+      end
       result
     end
 
@@ -397,7 +400,7 @@ class Card
           opts[key] = val.to_sym   #to sym??  why??
         end
       end
-      opts[:view] = @main_view if @main_view
+      opts[:view] = @main_view || opts[:view] || :open
       opts[:mainline] = true
       with_inclusion_mode :main do
         wrap_main process_inclusion( root.card, opts )
@@ -413,10 +416,9 @@ class Card
       opts.reverse_merge! inclusion_defaults
       
       sub = subformat tcard, opts[:mainline]
-      sub.inclusion_opts = opts.delete(:items)
+      sub.inclusion_opts = opts[:items] 
 
       #warn "opts for #{tcard.name} = #{opts}"
-      #warn "inclusion_opts = #{@inclusion_opts}"
       #warn "mode = #{@mode}"
 
       view = canonicalize_view opts.delete :view

@@ -35,10 +35,10 @@ format do
     @search ||= begin
       v = {}
       v[:spec] = card.spec search_params
-      v[:results]  = card.item_cards search_params
-      if v[:spec][:view] && !@inclusion_opts[:view]  # item view specified in WQL
-        inclusion_defaults[:view] = v[:spec][:view]
+      if itemview = ( v[:spec][:view] || args[:item] ) and !(inclusion_opts && inclusion_opts[:view] )
+        inclusion_defaults[:view] = itemview
       end
+      v[:results]  = card.item_cards search_params
       v
     rescue Exception=>e
       { :error => e }
@@ -97,26 +97,7 @@ format :data do
     end
   end
 end
-    
-#  format :json do
-#
-#    view :card_list, :type=>:search_type do |args|
-#      @search[:item] ||= :name
-#
-#      if @search[:results].empty?
-#        'no results'
-#      else
-#        # simpler version gives [{'card':{the card stuff}, {'card' ...} vs.
-#        # @search[:results].map do |c|  process_inclusion c, :view=>@search[:item] end
-#        # This which converts to {'cards':[{the card suff}, {another card stuff} ...]} we may want to support both ...
-#        {:cards => @search[:results].map do |c|
-#            inc = process_inclusion c, :view=>@search[:item]
-#            (!(String===inc) and inc.has_key?(:card)) ? inc[:card] : inc
-#          end
-#        }
-#      end
-#    end
-#  end
+  
     
 
 format :html do
@@ -152,11 +133,7 @@ format :html do
     else
       search_params[:limit] = 10 #not quite right, but prevents massive invisible lists.  
       # really needs to be a hard high limit but allow for lower ones.
-
-      set_search_vars args        
-      inclusion_defaults[:view] = :link unless inclusion_defaults[:view] == :name  #FIXME - probably want other way to specify closed_view ok...
-      
-      _render_core args.merge( :hide=>'paging' )
+      _render_core args.merge( :hide=>'paging', :item=>:link )
     end
   end
 

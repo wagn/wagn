@@ -60,8 +60,8 @@ class Card::HtmlFormat < Card::Format
   ]
 
   INCLUSION_DEFAULTS_BY_MODE = {
-    :main   => { :view => :open },
     :layout => { :view => :core },
+    :main   => { :view => :content },
     :normal => { :view => :content },
     :item   => { :view => :closed }
   }

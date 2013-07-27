@@ -68,30 +68,50 @@ CLASSES.each do |key, val|
 end
 
 RENDERED = {
-  :one => ["Some Literals: \\[{I'm not| a link]}, and ", "<span>{</span>{This Card|Is not Included}}", ", but ",
-            {:options => {:include_name=>"this is",:include=>"this is",:style=>''}}, ", and some tail" ],
-  :two => ["Some Links and includes: ", "<a class=\"wanted-card\" href=\"/the%20card\">the text</a>", #"[[the card|the text]]",
-     ", and ", {:options => {:include_name=>"This Card", :view => "Is Included",:include => "This Card|Is Included",:style=>""}},{
-      :options=>{:include_name=>"this too",:include=>"this too",:style=>""}},
-#    "\n         more formats for links and includes: ","<a class=\"wanted-card\" href=\"/the%20text\">the card</a>",
-#",\n         and ",
+  :one => [
+    "Some Literals: \\[{I'm not| a link]}, and ",
+    "<span>{</span>{This Card|Is not Included}}",
+    ", but ",
+    {:options => {:inc_name=>"this is",:inc_syntax=>"this is"}},
+    ", and some tail"
+  ],
+  :two => [
+    "Some Links and includes: ",
+    "<a class=\"wanted-card\" href=\"/the%20card\">the text</a>", #"[[the card|the text]]",
+    ", and ",
+    { :options => { :view => "Is Included", :inc_name=>"This Card", :inc_syntax => "This Card|Is Included"}},
+    { :options => { :inc_name=>"this too", :inc_syntax=>"this too"}},
     "\n        and ",
     "<a class=\"external-link\" href=\"http://external.wagn.org/path\">link text</a>",
-#    "<a class=\"wanted-card\" href=\"/Is%20linked\">This Card</a>",
-    {:options=>{:include_name=>"Included",:view=>"open",:include=>"Included|open",:style=>""}}],
+    { :options => { :view=>"open", :inc_name=>"Included", :inc_syntax=>"Included|open" }}
+  ],
   :three => [
-    "Some URIs and Links: ", '<a class="external-link" href="http://a.url.com/">http://a.url.com/</a>',"\n        More urls: ",
-    "<a class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>","\n        ",
-    "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>", "  ",
-    "<a class=\"external-link\" href=\"http://brain.org/Home\">extra</a>",
-    "\n        [ ","<a class=\"external-link\" href=\"http://gerry.wagn.com/a/path\">http://gerry.wagn.com/a/path</a>",
-    " ]\n        { ","<a class=\"external-link\" href=\"https://brain.org/more?args\">https://brain.org/more?args</a>"," }"],
-  :three_b => ["Some URIs and Links: ","<a class=\"external-link\" href=\"http://a.url.com\">http://a.url.com</a>","\n        More urls: ",
+    "Some URIs and Links: ", '<a class="external-link" href="http://a.url.com/">http://a.url.com/</a>',
+    "\n        More urls: ",
     "<a class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>",
-    "\n        [ ","<a class=\"external-link\" href=\"http://gerry.wagn.com/a/path\">http://gerry.wagn.com/a/path</a>",
-    " ]\n        { ","<a class=\"external-link\" href=\"https://brain.org/more?args\">https://brain.org/more?args</a>"," }\n        ",
-     "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>", "  ",
-    "<a class=\"external-link\" href=\"http://brain.org/Home\">extra</a>"],
+    "\n        ",
+    "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>",
+    "  ",
+    "<a class=\"external-link\" href=\"http://brain.org/Home\">extra</a>",
+    "\n        [ ",
+    "<a class=\"external-link\" href=\"http://gerry.wagn.com/a/path\">http://gerry.wagn.com/a/path</a>",
+    " ]\n        { ",
+    "<a class=\"external-link\" href=\"https://brain.org/more?args\">https://brain.org/more?args</a>",
+    " }"
+  ],
+  :three_b => [
+    "Some URIs and Links: ","<a class=\"external-link\" href=\"http://a.url.com\">http://a.url.com</a>",
+    "\n        More urls: ",
+    "<a class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>",
+    "\n        [ ",
+    "<a class=\"external-link\" href=\"http://gerry.wagn.com/a/path\">http://gerry.wagn.com/a/path</a>",
+    " ]\n        { ",
+    "<a class=\"external-link\" href=\"https://brain.org/more?args\">https://brain.org/more?args</a>",
+    " }\n        ",
+    "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>",
+    "  ",
+    "<a class=\"external-link\" href=\"http://brain.org/Home\">extra</a>"
+  ],
   :four => "No chunks"
 }
 

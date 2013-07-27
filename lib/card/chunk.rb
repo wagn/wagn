@@ -52,7 +52,7 @@ module Card::Chunk
     attr_reader :text, :process_chunk
     
     class << self
-      def full_match content, prefix
+      def full_match content, prefix=nil
 #        warn "attempting full match on #{content}.  class = #{self}"
         content.match full_re( prefix )
       end

@@ -14,7 +14,7 @@ class Card
     @@max_depth      = 10 # ditto
 
     attr_reader :card, :root, :parent
-    attr_accessor :form, :error_status
+    attr_accessor :form, :error_status, :inclusion_defaults
   
     class << self
 
@@ -134,6 +134,7 @@ class Card
         instance_variable_set "@#{key}", value
       end
 
+      @inclusion_defaults ||= {}
       @char_count = @depth = 0
       @root = self
 
@@ -250,6 +251,7 @@ class Card
     end
 
     def initialize_subformat subcard, parent, mainline=false
+      @inclusion_defaults = {}
       @mainline ||= mainline
       @parent = parent
       @card = subcard
@@ -362,10 +364,10 @@ class Card
       case
       when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
-      when opts[:include_name]=='_main' && !ajax_call? && @depth==0    ; expand_main opts
+      when opts[:inc_name]=='_main' && !ajax_call? && @depth==0    ; expand_main opts
       else
-        fullname = opts[:include_name].to_name.to_absolute card.cardname, :params=>params
-        #warn "ex inc full[#{opts[:include_name]}]#{fullname}, #{params.inspect}"
+        fullname = opts[:inc_name].to_name.to_absolute card.cardname, :params=>params
+        #warn "ex inc full[#{opts[:inc_name]}]#{fullname}, #{params.inspect}"
         included_card = Card.fetch fullname, :new=>( @mode==:edit ? new_inclusion_card_args(opts) : {} )
 
         result = process_inclusion included_card, opts
@@ -393,6 +395,15 @@ class Card
 
     def process_inclusion tcard, opts
       sub = subformat tcard, opts[:mainline]
+
+      opts = @inclusion_defaults.merge opts
+      if next_level_opts = opts.delete(:items)
+        sub.inclusion_defaults = next_level_opts
+      elsif next_level_view = opts.delete(:item)
+        # you could make the case that this should work if there is no view option in the level above.
+        # current approach says, "if you're using the new syntax, get rid of the deprecated part"  
+        sub.inclusion_defaults[:view] = next_level_view
+      end
 
       view = canonicalize_view opts.delete :view
       view ||= ( @mode == :layout ? :core : :content )  #set defaults elsewhere!!
@@ -428,8 +439,8 @@ class Card
 
     def new_inclusion_card_args options
       args = { :type =>options[:type] }
-      args[:loaded_left]=card if options[:include_name] =~ /^\+/
-      if content=get_inclusion_content(options[:include_name])
+      args[:loaded_left]=card if options[:inc_name] =~ /^\+/
+      if content=get_inclusion_content(options[:inc_name])
         args[:content]=content
       end
       args

@@ -3,41 +3,55 @@
 module Card::Chunk
   class Include < Reference
     cattr_reader :options
-    @@options = [ :include_name, :view, :item, :type, :size, :title, :hide, :show, :include, :structure ].
-      inject({}) do |hash, key| hash[key] = nil; hash end
-      
+    @@options = [
+      :inc_name, :inc_syntax, :view, :item, :items, # deprecating :item
+      :type, :size, :title, :hide, :show, :structure
+    ].to_set
+    attr_reader :options
+
     Card::Chunk.register_class self, {
       :prefix_re => '\\{\\{',
       :full_re   =>  /^\{\{([^\}]*)\}\}/,
-      :idx_char  => '{'    
+      :idx_char  => '{'
     }
-    
+
     def interpret match, content
       in_brackets = match[1]
 #      warn "in_brackets = #{in_brackets}"
-      opts = in_brackets.split '|'
-      name = opts.shift.to_s.strip
-      result = case name
+      name, @opt_lists = in_brackets.split '|', 2
+      result = case name.to_s
         when /^\#\#/ ; '' # invisible comment
-        when /^\#/   ;  "<!-- #{CGI.escapeHTML in_brackets} -->"
-        when ''      ; '' # no name
+        when /^\#/   ; "<!-- #{CGI.escapeHTML in_brackets} -->"
+        when /^\s*$/ ; '' # no name
         else
-          opts = opts.first
-          @options = @@options.clone.merge :include_name => name, :include => in_brackets #yuck, need better name (this is raw stuff)
-
-          @configs = Hash.new_from_semicolon_attr_list opts
-
-          @options[:style] = @configs.inject({}) do |styles, pair| key, value = pair
-            @options.key?(key.to_sym) ? @options[key.to_sym] = value : styles[key] = value
-            styles
-          end.map do |style_name,style|
-            CGI.escapeHTML "#{style_name}:#{style};"
-          end * ''
-            
+          @options = @opt_lists.nil? ? {} :
+            @opt_lists.split('|').reverse.inject(nil) do |prev_level, level_options|
+              process_options level_options, prev_level
+            end
+          @options.merge! :inc_name => name, :inc_syntax => in_brackets
           @name = name
         end
-      
+
       @process_chunk = result if !@name
+    end
+
+    def process_options list_string, items
+      hash = {}
+      style_hash = {}
+      hash[:items] = items unless items.nil?
+      Hash.new_from_semicolon_attr_list( list_string ).each do |key, value|
+        key = key.to_sym
+        if @@options.include? key
+          hash[key] = value
+        else
+          style_hash[key] = value
+        end
+      end
+
+      if !style_hash.empty?
+        hash[:style] = style_hash.map { |key, value| CGI.escapeHTML "#{key}:#{value};" } * ''
+      end
+      hash
     end
 
     def inspect
@@ -57,10 +71,7 @@ module Card::Chunk
 
     def replace_reference old_name, new_name
       replace_name_reference old_name, new_name
-
-      ( configs = @configs.to_semicolon_attr_list ).blank? or
-        configs = "|" + configs
-      @text = '{{' + @name.to_s + configs + '}}'
+      @text = "{{#{ [ @name.to_s, @opt_lists ].compact * '|' }}}"
     end
 
   end

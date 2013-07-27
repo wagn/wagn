@@ -9,7 +9,7 @@ module MySpecHelpers
     format.process_content
   end
 
-  def newcard(name, content="")
+  def newcard name, content=""
     Card.create! :name=>name, :content=>content
   end
 end

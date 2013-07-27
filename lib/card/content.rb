@@ -5,7 +5,7 @@ require_dependency 'card/chunk'
 
 class Card
   class Content < SimpleDelegator      
-    attr_reader :revision, :format
+    attr_reader :revision, :format, :chunks
 
     def initialize content, format_or_card
       @format = if Card===format_or_card
@@ -58,7 +58,7 @@ class Card
     end
     
     def parse_content content
-      chunks = []
+      @chunks = []
 
       if String===content
         position = last_position = 0
@@ -81,8 +81,8 @@ class Card
           if match                                                                 # we have a chunk match
             position += ( match.end(0) - offset.to_i )                             # move scanning position up to end of chunk
             if context_ok                                                          #
-              chunks << interval_string if interval_string.size > 0                # add the nonchunk string to the chunk list
-              chunks << chunk_class.new( match, self )                             # add the chunk to the chunk list
+              @chunks << interval_string if interval_string.size > 0                # add the nonchunk string to the chunk list
+              @chunks << chunk_class.new( match, self )                             # add the chunk to the chunk list
               interval_string = ''                                                 # reset interval string for next go-round
               last_position = position                                             # note that the end of the chunk was the last place where a chunk was found (so far)
             end
@@ -99,7 +99,7 @@ class Card
       if chunks.any?
         if last_position < content.size
           remainder = content[ last_position..-1]                                  # handle any leftover nonchunk string at the end of content
-          chunks << remainder
+          @chunks << remainder
         end
         chunks
       else

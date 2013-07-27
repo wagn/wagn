@@ -397,7 +397,7 @@ class Card
           opts[key] = val.to_sym   #to sym??  why??
         end
       end
-      opts[:view] = @main_view || opts[:view] || :open #FIXME configure elsewhere
+      opts[:view] = @main_view if @main_view
       opts[:mainline] = true
       with_inclusion_mode :main do
         wrap_main process_inclusion( root.card, opts )
@@ -409,10 +409,10 @@ class Card
     end
 
     def process_inclusion tcard, opts={}
+      opts.delete_if { |k,v| v.nil? }
+      opts.reverse_merge! inclusion_defaults
+      
       sub = subformat tcard, opts[:mainline]
-      #warn "explicit opts = #{opts}"
-
-      opts = inclusion_defaults.merge opts
       sub.inclusion_opts = opts.delete(:items)
 
       #warn "opts for #{tcard.name} = #{opts}"
@@ -420,8 +420,6 @@ class Card
       #warn "mode = #{@mode}"
 
       view = canonicalize_view opts.delete :view
-#      view ||= @( @mode == :layout ? :core : :content )  #set defaults elsewhere!!
-
       opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
       # FIXME: special views should be represented in view definitions
 

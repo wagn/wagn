@@ -84,7 +84,7 @@ format :html do
 end
 
 format do
-  #DISLIKE!  html hidden in (non-html-format) non-view method. yuck!
+  #FIXME!  html hidden in (non-html-format) non-view method. yuck!
   def pointer_items itemview=nil
     type = card.item_type
     typeparam = case ()

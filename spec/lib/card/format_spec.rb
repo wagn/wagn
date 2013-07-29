@@ -143,6 +143,7 @@ describe Card::Format, "" do
       end
     end
 
+
     describe "inclusions" do
       it "multi edit" do
         c = Card.new :name => 'ABook', :type => 'Book'
@@ -489,7 +490,6 @@ describe Card::Format, "" do
         render_card(:core, :type=>'Plain Text', :content=>"<b></b>").should == '&lt;b&gt;&lt;/b&gt;'
       end
       
-      it 
     end
 
     context "Search" do

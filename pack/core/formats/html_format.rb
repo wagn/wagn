@@ -119,9 +119,10 @@ class Card::HtmlFormat < Card::Format
       :class => classes*' ',
       :style=>args[:style]
     }
-    
+      
+    attributes['data'] = {}
     slot_options.each do |key|
-      attributes["slot-#{key}"] = args[key] if args[key].present?
+      attributes['data'][key] = args[key] if args[key].present?
     end
 
     if card
@@ -130,7 +131,7 @@ class Card::HtmlFormat < Card::Format
     end
     
     if @context_names
-      attributes['slot-name_context'] = @context_names.map( &:key ) * ','
+      attributes['data']['name_context'] = @context_names.map( &:key ) * ','
     end
     
     content_tag(:div, attributes ) { yield }

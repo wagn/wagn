@@ -11,11 +11,19 @@ wagn.prepUrl = (url, slot)->
   xtra['main'] = main if main?
   if slot
     xtra['is_main'] = true if slot.isMain()
-    $.each slot[0].attributes, (i, att)->
-      if (m = att.name.match /^slot-(.*)$/) and att.value?
-        xtra['slot[' + m[1] + ']' ] = att.value
-
+    wagn.slotParams slot.data(), xtra, 'slot'
+      
   url + ( (if url.match /\?/ then '&' else '?') + $.param(xtra) )
+  
+wagn.slotParams = (raw, processed, prefix)->
+  $.each raw, (key, value)->
+    cgiKey = prefix + '[' + snakeCase(key) + ']'
+    if key == 'items'
+      wagn.x = value
+      wagn.slotParams value, processed, cgiKey
+    else
+      processed[cgiKey] = value
+  
 
 jQuery.fn.extend {
   slot: -> @closest '.card-slot'
@@ -25,7 +33,7 @@ jQuery.fn.extend {
     v = $(val)
     if v[0]
       $.each s[0].attributes, (i, att)->
-        if att.name.match(/^slot-.*/) && att.value?
+        if att.name.match(/^data-.*/) && att.value?
           v.attr att.name, att.value
     else #simple text (not html)
       v = val
@@ -261,8 +269,9 @@ newCaptcha = (form)->
   $(form).children().last().after recapDiv
   $.getScript recapUri, -> recapDiv.loadCaptcha()
 
-
-
+snakeCase = (str)->
+  str.replace /([a-z])([A-Z])/g, (match)-> match[0] + '_' + match[1].toLowerCase()
+  
 wagn.pingName = (name, success)->
   $.getJSON wagn.rootPath + '/', { format: 'json', view: 'status', 'card[name]': name }, success
 

@@ -3,8 +3,7 @@ require 'csv'
 
 format :csv do
   def get_inclusion_defaults
-    @@inclusion_defaults ||= [:core,:csvrow].map {|view| {:view=>view} }
-    @@inclusion_defaults[@depth.to_i] || {:view=>:core}
+    { :view => @depth == 1 ? :csvrow : :core }
   end
   
   view :csvrow do |args|

@@ -418,9 +418,6 @@ class Card
       sub = subformat tcard, opts[:mainline]
       sub.inclusion_opts = opts[:items] 
 
-      #warn "opts for #{tcard.name} = #{opts}"
-      #warn "mode = #{@mode}"
-
       view = canonicalize_view opts.delete :view
       opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
       # FIXME: special views should be represented in view definitions

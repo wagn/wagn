@@ -4,16 +4,15 @@ view :core do |args|
   card.item_names.join ', '
 end
 
-
 format :html do
 
   view :core do |args|
-    %{<div class="pointer-list">#{ pointer_items }</div>}
+    %{<div class="pointer-list">#{ pointer_items args[:item] }</div>}
   end
 
   view :closed_content do |args|
-    itemview = inclusion_defaults[:view]=='name' ? 'name' : 'link'
-    %{<div class="pointer-list">#{ pointer_items itemview}</div>}
+    itemview = (args[:item] || inclusion_defaults[:view])=='name' ? 'name' : 'link'
+    %{<div class="pointer-list">#{ pointer_items itemview }</div>}
   end
 
   view :editor do |args|
@@ -22,9 +21,9 @@ format :html do
     raw(_render(part_view))
   end
 
-  view :list do |args|
+  view :list do |args| #this is a permission view.  should it go with them?
     args ||= {}
-    items = args[:items] || card.item_names(:context=>:raw)
+    items = args[:item_list] || card.item_names(:context=>:raw)
     items = [''] if items.empty?
     options_card_name = (oc = card.options_card) ? oc.cardname.url_key : ':all'
 
@@ -92,8 +91,8 @@ format do
       when Array  ; ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
       else ""
     end
-    itemview ||= inclusion_defaults[:view]
     with_inclusion_mode :item do
+      itemview ||= inclusion_defaults[:view]
       process_content_object render_raw.gsub(/\[\[/,"<div class=\"pointer-item item-#{itemview}\">{{").gsub(/\]\]/,"|#{itemview}#{typeparam}}}</div>")
     end
   end

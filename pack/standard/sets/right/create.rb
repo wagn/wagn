@@ -43,7 +43,7 @@ format do
       
         <div class="perm-indiv perm-vals perm-section">
           <h5>Individuals</h5>
-          #{ _render_list :items=>item_names, :extra_css_class=>'perm-indiv-ul' }
+          #{ _render_list :item_list=>item_names, :extra_css_class=>'perm-indiv-ul' }
         </div>
                 
       </div>

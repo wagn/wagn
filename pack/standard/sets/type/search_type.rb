@@ -35,8 +35,9 @@ format do
     @search ||= begin
       v = {}
       v[:spec] = card.spec search_params
-      if itemview = ( v[:spec][:view] || args[:item] ) and !(inclusion_opts && inclusion_opts[:view] )
-        inclusion_defaults[:view] = itemview
+      if itemview = ( args[:item] or (inclusion_opts && inclusion_opts[:view]) or v[:spec][:view] )
+        # args > inclusion syntax > WQL > inclusion defaults
+        v[:item] = inclusion_defaults[:view] = itemview
       end
       v[:results]  = card.item_cards search_params
       v
@@ -134,6 +135,7 @@ format :html do
       search_params[:limit] = 10 #not quite right, but prevents massive invisible lists.  
       # really needs to be a hard high limit but allow for lower ones.
       _render_core args.merge( :hide=>'paging', :item=>:link )
+      # fixme - if item is specified to be "name", then that should work.  otherwise use link
     end
   end
 

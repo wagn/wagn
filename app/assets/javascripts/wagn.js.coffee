@@ -19,7 +19,6 @@ wagn.slotParams = (raw, processed, prefix)->
   $.each raw, (key, value)->
     cgiKey = prefix + '[' + snakeCase(key) + ']'
     if key == 'items'
-      wagn.x = value
       wagn.slotParams value, processed, cgiKey
     else
       processed[cgiKey] = value

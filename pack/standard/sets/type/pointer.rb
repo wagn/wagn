@@ -119,8 +119,11 @@ end
 
 def item_type
   opt = options_card
-  return nil if (!opt || opt==self)  #fixme, need better recursion prevention
-  opt.item_type
+  if !opt or opt==self #fixme, need better recursion prevention
+    nil
+  else
+    opt.item_type
+  end
 end
 
 def items= array

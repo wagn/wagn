@@ -152,7 +152,7 @@ format :html do
     total = card.count search_params
     return '' if limit >= total # should only happen if limit exactly equals the total
 
-    @paging_path_args = { :limit => limit, :item  => inclusion_defaults[:view] }
+    @paging_path_args = { :limit => limit }
     @paging_limit = limit
 
     s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }

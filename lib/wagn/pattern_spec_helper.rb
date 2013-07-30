@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+require 'wagn/spec_helper'
 module Wagn::PatternSpecHelper
   def it_generates( opts )
     name = opts[:name]

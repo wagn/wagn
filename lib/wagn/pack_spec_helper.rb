@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+require 'wagn/spec_helper'
 module Wagn::PackSpecHelper
 
 include ActionDispatch::Assertions::SelectorAssertions

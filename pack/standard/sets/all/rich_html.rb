@@ -18,8 +18,6 @@ format :html do
 
   view :layout, :perms=>:none do |args|
     layout_content = get_layout_content args
-
-    args[:params] = params # EXPLAIN why this is needed
     process_content layout_content, args
   end
 

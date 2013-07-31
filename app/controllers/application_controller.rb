@@ -69,10 +69,10 @@ class ApplicationController < ActionController::Base
     format = request.parameters[:format]
     format = :file if !FORMATS.split('|').member? format #unknown format
 
-    opts = params[:slot] || {}
+    opts = ( params[:slot] || {} ).deep_symbolize_keys
     opts[:view] = view || params[:view]      
 
-    formatter = Card::Format.new card, :controller=>self, :format=>format
+    formatter = Card::Format.new card, :controller=>self, :format=>format, :inclusion_opts=>opts[:items]
     result = formatter.render_show opts
     status = formatter.error_status || status
     

@@ -2,11 +2,10 @@
 require 'csv'
 
 format :csv do
-
-  view :show do |args|
-    super args.merge :item=>:csvrow
+  def get_inclusion_defaults
+    { :view => @depth == 1 ? :csvrow : :core }
   end
-
+  
   view :csvrow do |args|
     array = _render_raw.scan( /\{\{[^\}]*\}\}/ ).map do |inc|
       process_content( inc ).strip

@@ -1,12 +1,11 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 require 'wagn/pack_spec_helper'
-
 
 describe Card::Format, "" do
   before do
     Account.current_id = Card['joe_user'].id
-    Card::Format.ajax_call = false
+    #Card::Format.ajax_call = false 
+    #FIXME why do we have to deal with the ajax call here?
   end
 
 #~~~~~~~~~~~~ special syntax ~~~~~~~~~~~#
@@ -143,6 +142,7 @@ describe Card::Format, "" do
       end
     end
 
+
     describe "inclusions" do
       it "multi edit" do
         c = Card.new :name => 'ABook', :type => 'Book'
@@ -263,7 +263,7 @@ describe Card::Format, "" do
         #warn "lay #{@layout_card.inspect}, #{@main_card.inspect}"
       end
 
-      it "should default to core view for non-main inclusions when context is layout_0" do
+      it "should default to core view when in layout mode" do
         @layout_card.content = "Hi {{A}}"
         Account.as_bot { @layout_card.save }
 
@@ -489,7 +489,6 @@ describe Card::Format, "" do
         render_card(:core, :type=>'Plain Text', :content=>"<b></b>").should == '&lt;b&gt;&lt;/b&gt;'
       end
       
-      it 
     end
 
     context "Search" do

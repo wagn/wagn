@@ -21,6 +21,10 @@ def item_cards(args={})  ## FIXME this is inconsistent with item_names
   [self]
 end
 
+def item_type
+  nil
+end
+
 def extended_list context = nil
   context = (context ? context.cardname : self.cardname)
   args={ :limit=>'' }

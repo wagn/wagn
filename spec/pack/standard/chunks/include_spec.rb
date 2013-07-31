@@ -1,8 +1,5 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 require 'wagn/pack_spec_helper'
-
-
 
 describe Card::Chunk::Include, "Inclusion" do
   include ActionView::Helpers::TextHelper
@@ -42,6 +39,12 @@ describe Card::Chunk::Include, "Inclusion" do
       options[:items][:view].should == 'closed'
     end
     
+    it "should treat :item as view of next level" do
+      options = @class.new( @class.full_match('{{toy|link;item:name}}'), nil ).options
+      options[:inc_name].should == 'toy'
+      options[:view].should == 'link'
+      options[:items][:view].should == 'name'
+    end
   end
 
   context "rendering" do
@@ -53,7 +56,9 @@ describe Card::Chunk::Include, "Inclusion" do
     it "should handle absolute names" do
       alpha = newcard 'Alpha', "Pooey"
       beta = newcard 'Beta', "{{Alpha}}"
-      assert_view_select Card::Format.new(beta).render_core, 'span[class~="content"]', "Pooey"
+      result = Card::Format.new(beta).render_core
+      #warn "result = #{result}"
+      assert_view_select result, 'span[class~="content"]', "Pooey"
     end
 
     it "should handle simple relative names" do
@@ -95,7 +100,8 @@ describe Card::Chunk::Include, "Inclusion" do
       qnt = Card.create! :name=>'Quentin', :content=>'{{Admin}}'
       adm = Card['Quentin']
       adm.update_attributes :content => "{{Oak}}"
-      Card::Format.new(adm).render_core.should match('too deep')
+      result = Card::Format.new(adm).render_core
+      result.should match('too deep')
     end
 
     it "should handle missing cards" do

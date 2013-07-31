@@ -4,27 +4,29 @@
 format do
 
   view :core do |args|
-    set_search_vars args
+    with_inclusion_mode :item do
+      set_search_vars args
 
-    case
-    when e = @search[:error]
-      Rails.logger.debug " no result? #{e.backtrace}"
-      %{No results? #{e.class.to_s} :: #{e.message} :: #{card.content}}
-    when @search[:spec][:return] =='count'
-      @search[:results].to_s
-    else
-      _render_card_list args
+      case
+      when e = @search[:error]
+        Rails.logger.debug " no result? #{e.backtrace}"
+        %{No results? #{e.class.to_s} :: #{e.message} :: #{card.content}}
+      when @search[:spec][:return] =='count'
+        @search[:results].to_s
+      else
+        _render_card_list args
+      end
     end
   end
 
   view :card_list do |args|
-    @search[:item] ||= :name
+    inclusion_defaults[:view] ||= :name
 
     if @search[:results].empty?
       'no results'
     else
       @search[:results].map do |c|
-        process_inclusion c, :view=>@search[:item]
+        process_inclusion c
       end.join "\n"
     end
   end
@@ -33,7 +35,10 @@ format do
     @search ||= begin
       v = {}
       v[:spec] = card.spec search_params
-      v[:item] = args[:item] || v[:spec][:view]
+      if itemview = ( args[:item] or (inclusion_opts && inclusion_opts[:view]) or v[:spec][:view] )
+        # args > inclusion syntax > WQL > inclusion defaults
+        v[:item] = inclusion_defaults[:view] = itemview
+      end
       v[:results]  = card.item_cards search_params
       v
     rescue Exception=>e
@@ -86,40 +91,19 @@ end
 format :data do
     
   view :card_list do |args|
-    @search[:item] ||= :atom
-    
+    inclusion_defaults[:view] = :atom
+
     @search[:results].map do |c|
-      process_inclusion c, :view=>@search[:item]
+      process_inclusion c
     end
   end
 end
-    
-#  format :json do
-#
-#    view :card_list, :type=>:search_type do |args|
-#      @search[:item] ||= :name
-#
-#      if @search[:results].empty?
-#        'no results'
-#      else
-#        # simpler version gives [{'card':{the card stuff}, {'card' ...} vs.
-#        # @search[:results].map do |c|  process_inclusion c, :view=>@search[:item] end
-#        # This which converts to {'cards':[{the card suff}, {another card stuff} ...]} we may want to support both ...
-#        {:cards => @search[:results].map do |c|
-#            inc = process_inclusion c, :view=>@search[:item]
-#            (!(String===inc) and inc.has_key?(:card)) ? inc[:card] : inc
-#          end
-#        }
-#      end
-#    end
-#  end
+  
     
 
 format :html do
     
   view :card_list do |args|
-    @search[:item] ||= :closed
-
     paging = _optional_render :paging, args
 
     if @search[:results].empty?
@@ -131,8 +115,8 @@ format :html do
           #{
             @search[:results].map do |c|
               %{
-                <div class="search-result-item item-#{ @search[:item] }">
-                  #{ process_inclusion c, :view=>@search[:item], :size=>args[:size] }
+                <div class="search-result-item item-#{ inclusion_defaults[:view] }">
+                  #{ process_inclusion c, :size=>args[:size] }
                 </div>
               }
             end * "\n"
@@ -150,11 +134,8 @@ format :html do
     else
       search_params[:limit] = 10 #not quite right, but prevents massive invisible lists.  
       # really needs to be a hard high limit but allow for lower ones.
-
-      set_search_vars args        
-      @search[:item] = :link unless @search[:item] == :name  #FIXME - probably want other way to specify closed_view ok...
-      
-      _render_core args.merge( :hide=>'paging' )
+      _render_core args.merge( :hide=>'paging', :item=>:link )
+      # fixme - if item is specified to be "name", then that should work.  otherwise use link
     end
   end
 
@@ -171,7 +152,7 @@ format :html do
     total = card.count search_params
     return '' if limit >= total # should only happen if limit exactly equals the total
 
-    @paging_path_args = { :limit => limit, :item  => @search[:item] }
+    @paging_path_args = { :limit => limit }
     @paging_limit = limit
 
     s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }

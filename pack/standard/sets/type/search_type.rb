@@ -4,18 +4,16 @@
 format do
 
   view :core do |args|
-    with_inclusion_mode :item do
-      set_search_vars args
+    set_search_vars args
 
-      case
-      when e = @search[:error]
-        Rails.logger.debug " no result? #{e.backtrace}"
-        %{No results? #{e.class.to_s} :: #{e.message} :: #{card.content}}
-      when @search[:spec][:return] =='count'
-        @search[:results].to_s
-      else
-        _render_card_list args
-      end
+    case
+    when e = @search[:error]
+      Rails.logger.debug " no result? #{e.backtrace}"
+      %{No results? #{e.class.to_s} :: #{e.message} :: #{card.content}}
+    when @search[:spec][:return] =='count'
+      @search[:results].to_s
+    else
+      _render_card_list args
     end
   end
 
@@ -152,7 +150,7 @@ format :html do
     total = card.count search_params
     return '' if limit >= total # should only happen if limit exactly equals the total
 
-    @paging_path_args = { :limit => limit }
+    @paging_path_args = { :limit => limit, :item=> inclusion_defaults[:view] }
     @paging_limit = limit
 
     s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }

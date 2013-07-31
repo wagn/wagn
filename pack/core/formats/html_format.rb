@@ -71,7 +71,6 @@ class Card::HtmlFormat < Card::Format
   end
   
   def get_inclusion_defaults
-#    warn "getting inclusion defaults for #{card.name}. mode = #{@mode}"
     INCLUSION_DEFAULTS_BY_MODE[@mode] || {}
   end
 

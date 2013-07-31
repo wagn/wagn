@@ -6,7 +6,7 @@ class Card
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
-      :layout=>:layout, :new=>:edit, :normal=>:normal, :item=>:item, :template=>:template } #should be set in views
+      :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
 
     class_attribute :inclusion_defaults
     self.inclusion_defaults = { :view => :name }

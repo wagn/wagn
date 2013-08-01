@@ -1,62 +1,61 @@
 # -*- encoding : utf-8 -*-
 #!/usr/bin/env ruby
 
-require File.expand_path('../test_helper', File.dirname(__FILE__))
+require 'wagn/spec_helper'
+require 'card/diff'
 require 'diff'
 
-class DiffTest < ActiveSupport::TestCase
-
+describe Card::Diff do
   include Card::Diff
 
-  def setup
-    super
-    @builder = DiffBuilder.new('old', 'new')
+  before do
+    @builder = Card::Diff::DiffBuilder.new 'old', 'new'
   end
 
-  def test_start_of_tag
+  it 'should start of tag' do
     assert @builder.start_of_tag?('<')
     assert(!@builder.start_of_tag?('>'))
     assert(!@builder.start_of_tag?('a'))
   end
 
-  def test_end_of_tag
+  it 'should end of tag' do
     assert @builder.end_of_tag?('>')
     assert(!@builder.end_of_tag?('<'))
     assert(!@builder.end_of_tag?('a'))
   end
 
-  def test_whitespace
+  it 'should whitespace' do
     assert @builder.whitespace?(" ")
     assert @builder.whitespace?("\n")
     assert @builder.whitespace?("\r")
     assert(!@builder.whitespace?("a"))
   end
 
-  def test_convert_html_to_list_of_words_simple
+  it 'should convert html to list of words simple' do
     assert_equal(
         ['the', ' ', 'original', ' ', 'text'],
         @builder.convert_html_to_list_of_words('the original text'))
   end
 
-  def test_convert_html_to_list_of_words_should_separate_endlines
+  it 'should convert html to list of words should separate endlines' do
     assert_equal(
         ['a', "\n", 'b', "\r", 'c'],
         @builder.convert_html_to_list_of_words("a\nb\rc"))
   end
 
-  def test_convert_html_to_list_of_words_should_not_compress_whitespace
+  it 'should convert html to list of words should not compress whitespace' do
     assert_equal(
         ['a', ' ', 'b', '  ', 'c', "\r \n ", 'd'],
         @builder.convert_html_to_list_of_words("a b  c\r \n d"))
   end
 
-  def test_convert_html_to_list_of_words_should_handle_tags_well
+  it 'should convert html to list of words should handle tags well' do
     assert_equal(
         ['<p>', 'foo', ' ', 'bar', '</p>'],
         @builder.convert_html_to_list_of_words("<p>foo bar</p>"))
   end
 
-  def test_convert_html_to_list_of_words_interesting
+  it 'should convert html to list of words interesting' do
     assert_equal(
         ['<p>', 'this', ' ', 'is', '</p>', "\r\n", '<p>', 'the', ' ', 'new', ' ', 'string',
          '</p>', "\r\n", '<p>', 'around', ' ', 'the', ' ', 'world', '</p>'],
@@ -64,7 +63,7 @@ class DiffTest < ActiveSupport::TestCase
             "<p>this is</p>\r\n<p>the new string</p>\r\n<p>around the world</p>"))
   end
 
-  def test_html_diff_simple
+  it 'should html diff simple' do
     a = 'this was the original string'
     b = 'this is the new string'
     assert_equal('this <del class="diffmod">was</del><ins class="diffmod">is</ins> the ' +
@@ -72,7 +71,7 @@ class DiffTest < ActiveSupport::TestCase
            diff(a, b))
   end
 
-  def test_html_diff_with_multiple_paragraphs
+  it 'should html diff with multiple paragraphs' do
     a = "<p>this was the original string</p>"
     b = "<p>this is</p>\r\n<p> the new string</p>\r\n<p>around the world</p>"
 
@@ -88,7 +87,7 @@ class DiffTest < ActiveSupport::TestCase
   end
 
   # FIXME this test fails (ticket #67, http://dev.instiki.org/ticket/67)
-  def test_html_diff_preserves_endlines_in_pre
+  it 'should html diff preserves endlines in pre' do
     a = "<pre>\na\nb\nc\n</pre>"
     b = "<pre>\n</pre>"
     assert_equal(
@@ -96,13 +95,13 @@ class DiffTest < ActiveSupport::TestCase
         diff(a, b))
   end
 
-  def test_html_diff_with_tags
+  it 'should html diff with tags' do
     a = ""
     b = "<div>foo</div>"
     assert_equal '<div><ins class="diffins">foo</ins></div>', diff(a, b)
   end
 
-  def test_diff_for_tag_change
+  it 'should diff for tag change' do
     a = "<a>x</a>"
     b = "<b>x</b>"
     # FIXME sad, but true - this case produces an invalid XML. If handle this you can, strong your foo is.

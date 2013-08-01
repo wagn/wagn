@@ -5,7 +5,6 @@ module Wagn::PackSpecHelper
 include ActionDispatch::Assertions::SelectorAssertions
 #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
 
-
   def assert_view_select(view_html, *args, &block)
     node = HTML::Document.new(view_html).root
     if block_given?
@@ -25,16 +24,6 @@ include ActionDispatch::Assertions::SelectorAssertions
     @card.content=content
     r = Card::Format.new @card,args
     r._render(:core)
-  end
-
-  #FIXME -- shouldn't these just be in the xml test?
-  def xml_render_content(content, args={})
-    args[:format] = :xml
-    render_content(content, args)
-  end
-
-  def xml_render_card(view, card_args={})
-    render_card(view, card_args, :format=>:xml)
   end
 
   def render_card(view, card_args={}, args={})

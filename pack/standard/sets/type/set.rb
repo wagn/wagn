@@ -77,8 +77,11 @@ def subclass_for_set
 end
 
 def junction_only?()
-  !@junction_only.nil? ? @junction_only :
-     @junction_only = subclass_for_set.junction_only
+  if @junction_only.nil?
+    @junction_only = subclass_for_set.junction_only
+  else
+    @junction_only
+  end
 end
 
 def reset_set_patterns

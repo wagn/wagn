@@ -1,7 +1,5 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
-require 'wagn/pattern_spec_helper'
-
 
 describe Card::Set::All::Pattern do
 
@@ -47,29 +45,6 @@ describe Card::Set::All::Pattern do
     end
   end
 
-  describe :junction_only? do
-    it "should identify sets that only apply to plus cards" do
-      Card.fetch("*all").junction_only?.should be_false
-      Card.fetch("*all plus").junction_only?.should be_true
-      Card.fetch("Book+*type").junction_only?.should be_false
-      Card.fetch("*to+*right").junction_only?.should be_true
-      Card.fetch("Book+*to+*type plus right").junction_only?.should be_true
-    end
-  end
-
-  describe :inheritable? do
-    it "should identify sets that can inherit rules" do
-      Card.fetch("A+*self").inheritable?.should be_false
-      Card.fetch("A+B+*self").inheritable?.should be_true
-      Card.fetch("Book+*to+*type plus right").inheritable?.should be_true
-      Card.fetch("Book+*type").inheritable?.should be_false
-      Card.fetch("*to+*right").inheritable?.should be_true
-      Card.fetch("*all plus").inheritable?.should be_true
-      Card.fetch("*all").inheritable?.should be_false
-    end
-  end
-
-
   describe :method_keys do
     it "returns correct set names for simple cards" do
       card = Card.new( :name => "AnewCard" )
@@ -113,26 +88,4 @@ describe Card::Set::All::Pattern do
       Card.new(:name=>'address+*right').label.should== %{All "+address" cards}
     end
   end
-end
-
-describe Card::SetPattern::RightPattern do
-  it_generates :name => "author+*right", :from => Card.new( :name => "Iliad+author" )
-  it_generates :name => "author+*right", :from => Card.new( :name => "+author" )
-end
-
-describe Card::SetPattern::TypePattern do
-  it_generates :name => "Book+*type", :from => Card.new( :type => "Book" )
-end
-
-describe Card::SetPattern::AllPlusPattern do
-  it_generates :name => "*all plus", :from => Card.new( :name => "Book+author" )
-end
-
-
-describe Card::SetPattern::AllPattern do
-  it_generates :name => "*all", :from => Card.new( :type => "Book" )
-end
-
-describe Card::SetPattern::TypePlusRightPattern do
-  it_generates :name => "Book+author+*type plus right", :from => Card.new( :name=>"Iliad+author" )
 end

@@ -116,128 +116,170 @@ RENDERED = {
 }
 
 describe Card::Content do
+  context "instance" do
 
-  before do
+    before do
 
-    @check_proc = Proc.new do |m, v|
-      if Array===m
-        wrong_class = m[0] != v.class
-        is_last = m.size == 1
-        #warn "check M[#{is_last}]:#{wrong_class}, #{m[0]}, V#{v.inspect}" if wrong_class || is_last
-        wrong_class.should be_false
-        wrong_class ? false : ( is_last ? true : m[1..-1] )
-      else false end
-    end
-
-    Account.current_id = Card['joe_user'].id
-    assert card = Card["One"]
-    @card = card
-
-    # non-nil valued opts only ...
-    @render_block =  Proc.new do |opts| {:options => opts.inject({}) {|i,v| !v[1].nil? && i[v[0]]=v[1]; i } } end
-  end
-
-
-  describe 'parse' do
-    it "should find all the chunks and strings" do
-      # note the mixed [} that are considered matching, needs some cleanup ...
-      #warn "cont? #{CONTENT[:one].inspect}"
-      cobj = Card::Content.new CONTENT[:one], @card
-      cobj.inject(CLASSES[:one], &@check_proc).should == true
-    end
-
-    it "should give just the chunks" do
-      cobj = Card::Content.new CONTENT[:one], @card
-      clist = CLASSES[:one].find_all {|c| String != c }
-      #warn "clist #{clist.inspect}"
-      cobj.each_chunk do |chk|
-        chk.should be_instance_of clist.shift
+      @check_proc = Proc.new do |m, v|
+        if Array===m
+          wrong_class = m[0] != v.class
+          is_last = m.size == 1
+          #warn "check M[#{is_last}]:#{wrong_class}, #{m[0]}, V#{v.inspect}" if wrong_class || is_last
+          wrong_class.should be_false
+          wrong_class ? false : ( is_last ? true : m[1..-1] )
+        else false end
       end
-      clist.should be_empty
+
+      Account.current_id = Card['joe_user'].id
+      assert card = Card["One"]
+      @card = card
+
+      # non-nil valued opts only ...
+      @render_block =  Proc.new do |opts| {:options => opts.inject({}) {|i,v| !v[1].nil? && i[v[0]]=v[1]; i } } end
     end
 
-    it "should find all the chunks links and trasclusions" do
-      cobj = Card::Content.new CONTENT[:two], @card
-      cobj.inject(CLASSES[:two], &@check_proc).should == true
-    end
 
-    it "should find uri chunks " do
-      # tried some tougher cases that failed, don't know the spec, so hard to form better tests for URIs here
-      cobj = Card::Content.new CONTENT[:three], @card
-      cobj.inject(CLASSES[:three], &@check_proc).should == true
-      clist = CLASSES[:three].find_all {|c| String != c }
-      #warn "clist #{clist.inspect}, #{cobj.inspect}"
-      cobj.each_chunk do |chk|
-        chk.should be_instance_of clist.shift
+    describe 'parse' do
+      it "should find all the chunks and strings" do
+        # note the mixed [} that are considered matching, needs some cleanup ...
+        #warn "cont? #{CONTENT[:one].inspect}"
+        cobj = Card::Content.new CONTENT[:one], @card
+        cobj.inject(CLASSES[:one], &@check_proc).should == true
       end
-      clist.should be_empty
-    end
 
-    it "should find uri chunks (b)" do
-      # tried some tougher cases that failed, don't know the spec, so hard to form better tests for URIs here
-      cobj = Card::Content.new CONTENT[:three_b], @card
-      #warn "cobj #{cobj.inspect} #{CLASSES[:three_b].inspect}"
-      cobj.inject(CLASSES[:three_b], &@check_proc).should == true
-      clist = CLASSES[:three_b].find_all {|c| String != c }
-      #warn "clist #{clist.inspect}, #{cobj.inspect}"
-      cobj.each_chunk do |chk|
-        chk.should be_instance_of clist.shift
+      it "should give just the chunks" do
+        cobj = Card::Content.new CONTENT[:one], @card
+        clist = CLASSES[:one].find_all {|c| String != c }
+        #warn "clist #{clist.inspect}"
+        cobj.each_chunk do |chk|
+          chk.should be_instance_of clist.shift
+        end
+        clist.should be_empty
       end
-      clist.should be_empty
-    end
 
-    it "should parse just a string" do
-      cobj = Card::Content.new CONTENT[:four], @card
-      cobj.should == RENDERED[:four]
-    end
-
-    it "should parse a single chunk" do
-      cobj = Card::Content.new CONTENT[:five], @card
-      cobj.inject(CLASSES[:five], &@check_proc).should == true
-      clist = CLASSES[:five].find_all {|c| String != c }
-      cobj.each_chunk do |chk|
-        chk.should be_instance_of clist.shift
+      it "should find all the chunks links and trasclusions" do
+        cobj = Card::Content.new CONTENT[:two], @card
+        cobj.inject(CLASSES[:two], &@check_proc).should == true
       end
-      clist.should be_empty
-    end
+
+      it "should find uri chunks " do
+        # tried some tougher cases that failed, don't know the spec, so hard to form better tests for URIs here
+        cobj = Card::Content.new CONTENT[:three], @card
+        cobj.inject(CLASSES[:three], &@check_proc).should == true
+        clist = CLASSES[:three].find_all {|c| String != c }
+        #warn "clist #{clist.inspect}, #{cobj.inspect}"
+        cobj.each_chunk do |chk|
+          chk.should be_instance_of clist.shift
+        end
+        clist.should be_empty
+      end
+
+      it "should find uri chunks (b)" do
+        # tried some tougher cases that failed, don't know the spec, so hard to form better tests for URIs here
+        cobj = Card::Content.new CONTENT[:three_b], @card
+        #warn "cobj #{cobj.inspect} #{CLASSES[:three_b].inspect}"
+        cobj.inject(CLASSES[:three_b], &@check_proc).should == true
+        clist = CLASSES[:three_b].find_all {|c| String != c }
+        #warn "clist #{clist.inspect}, #{cobj.inspect}"
+        cobj.each_chunk do |chk|
+          chk.should be_instance_of clist.shift
+        end
+        clist.should be_empty
+      end
+
+      it "should parse just a string" do
+        cobj = Card::Content.new CONTENT[:four], @card
+        cobj.should == RENDERED[:four]
+      end
+
+      it "should parse a single chunk" do
+        cobj = Card::Content.new CONTENT[:five], @card
+        cobj.inject(CLASSES[:five], &@check_proc).should == true
+        clist = CLASSES[:five].find_all {|c| String != c }
+        cobj.each_chunk do |chk|
+          chk.should be_instance_of clist.shift
+        end
+        clist.should be_empty
+      end
     
-    it "should leave css alone" do
-      cobj = Card::Content.new CONTENT[:six], @card
-      cobj.should == CONTENT[:six]
+      it "should leave css alone" do
+        cobj = Card::Content.new CONTENT[:six], @card
+        cobj.should == CONTENT[:six]
+      end
+    end
+
+    describe "render" do
+      it "should render all includes" do
+        cobj = Card::Content.new CONTENT[:one], @card
+        cobj.as_json.to_s.should match /not rendered/
+        cobj.process_content_object &@render_block
+        (rdr=cobj.as_json.to_json).should_not match /not rendered/
+        rdr.should == RENDERED[:one].to_json
+      end
+
+      it "should render links and inclusions" do
+        cobj = Card::Content.new CONTENT[:two], @card
+        cobj.process_content_object &@render_block
+        (rdr=cobj.as_json.to_json).should_not match /not rendered/
+        rdr.should == RENDERED[:two].to_json
+      end
+
+      it "should not need rendering if no inclusions" do
+        cobj = Card::Content.new CONTENT[:three], @card
+  #      (rdr=cobj.as_json.to_json).should match /not rendered/ # links are rendered too, but not with a block
+        cobj.process_content_object &@render_block
+        (rdr=cobj.as_json.to_json) #.should_not match /not rendered/
+        rdr.should == RENDERED[:three].to_json
+      end
+
+      it "should not need rendering if no inclusions (b)" do
+        cobj = Card::Content.new CONTENT[:three_b], @card
+        (rdr=cobj.as_json.to_json).should match /not rendered/ # links are rendered too, but not with a block
+        cobj.process_content_object &@render_block
+        (rdr=cobj.as_json.to_json).should_not match /not rendered/
+        rdr.should == RENDERED[:three_b].to_json
+      end
     end
   end
+  
+  context "class" do
+    describe '#clean!' do
+      it 'should not alter untagged content' do
+        assert_equal ' [grrew][/wiki/grrew]ss ',Card::Content.clean!(' [grrew][/wiki/grrew]ss ')
+      end
+    
+      it 'should strip disallowed html class attributes' do
+        assert_equal '<p>html<div>with</div> funky tags</p>', Card::Content.clean!('<p>html<div class="boo">with</div><monkey>funky</butts>tags</p>')
+        assert_equal '<span>foo</span>', Card::Content.clean!('<span class="banana">foo</span>')
+      end
 
-  describe "render" do
-    it "should render all includes" do
-      cobj = Card::Content.new CONTENT[:one], @card
-      cobj.as_json.to_s.should match /not rendered/
-      cobj.process_content_object &@render_block
-      (rdr=cobj.as_json.to_json).should_not match /not rendered/
-      rdr.should == RENDERED[:one].to_json
-    end
+      it 'should not stript permitted_classes' do
+        assert_equal '<span class="w-spotlight">foo</span>', Card::Content.clean!('<span class="w-spotlight">foo</span>')
+        assert_equal '<p class="w-highlight">foo</p>', Card::Content.clean!('<p class="w-highlight">foo</p>')
+      end
 
-    it "should render links and inclusions" do
-      cobj = Card::Content.new CONTENT[:two], @card
-      cobj.process_content_object &@render_block
-      (rdr=cobj.as_json.to_json).should_not match /not rendered/
-      rdr.should == RENDERED[:two].to_json
-    end
 
-    it "should not need rendering if no inclusions" do
-      cobj = Card::Content.new CONTENT[:three], @card
-#      (rdr=cobj.as_json.to_json).should match /not rendered/ # links are rendered too, but not with a block
-      cobj.process_content_object &@render_block
-      (rdr=cobj.as_json.to_json) #.should_not match /not rendered/
-      rdr.should == RENDERED[:three].to_json
-    end
+      it 'should allow permitted attributes' do
+        assert_equal '<img src="foo">',   Card::Content.clean!('<img src="foo">')
+        assert_equal '<img alt="foo">',   Card::Content.clean!('<img alt="foo">')
+        assert_equal '<img title="foo">', Card::Content.clean!('<img title="foo">')
+        assert_equal '<a href="foo">',    Card::Content.clean!('<a href="foo">')
+        assert_equal '<code lang="foo">', Card::Content.clean!('<code lang="foo">')
+        assert_equal '<blockquote cite="foo">', Card::Content.clean!('<blockquote cite="foo">')
+      end
 
-    it "should not need rendering if no inclusions (b)" do
-      cobj = Card::Content.new CONTENT[:three_b], @card
-      (rdr=cobj.as_json.to_json).should match /not rendered/ # links are rendered too, but not with a block
-      cobj.process_content_object &@render_block
-      (rdr=cobj.as_json.to_json).should_not match /not rendered/
-      rdr.should == RENDERED[:three_b].to_json
+      it 'should not allow nonpermitted attributes' do
+        assert_equal '<img>', Card::Content.clean!('<img size="25">')
+        assert_equal '<p>',   Card::Content.clean!('<p font="blah">')
+      end
+
+      it 'should remove comments' do
+        assert_equal 'yo', Card::Content.clean!('<!-- not me -->yo')
+        assert_equal 'joe', Card::Content.clean!('<!-- not me -->joe<!-- not me -->')
+      end
     end
   end
+  
+  
 end
 

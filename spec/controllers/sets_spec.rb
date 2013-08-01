@@ -40,8 +40,8 @@ describe CardController, "Basic rendering tests" do
     @sample_cards = Card.where("cards.key like 'sample_%' and cards.key not like '%+%'")
   end
 
-  #these tests are increasingly lame.
-  # how about we actually test for presense of a few things ?
+  # these tests are increasingly lame.
+  # how about we actually test for presence of a few things ?
 
   describe "for anonymous" do
     before do

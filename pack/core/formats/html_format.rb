@@ -59,11 +59,10 @@ class Card::HtmlFormat < Card::Format
 
   ]
 
-  INCLUSION_DEFAULTS_BY_MODE = {
+  INCLUSION_DEFAULTS = {
     :layout => { :view => :core },
     :main   => { :view => :content },
-    :normal => { :view => :content },
-    :item   => { :view => :closed }
+    :normal => { :view => :content }
   }
   
   def self.transactional?
@@ -71,7 +70,11 @@ class Card::HtmlFormat < Card::Format
   end
   
   def get_inclusion_defaults
-    INCLUSION_DEFAULTS_BY_MODE[@mode] || {}
+    INCLUSION_DEFAULTS[@mode] || {}
+  end
+  
+  def default_item_view
+    :closed
   end
 
   def get_layout_content(args)

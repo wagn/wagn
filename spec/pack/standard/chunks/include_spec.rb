@@ -17,6 +17,10 @@ describe Card::Chunk::Include, "Inclusion" do
       instance.options.key?(:view).should == false
     end
     
+    it "should strip the name" do
+      @class.new( @class.full_match( '{{ toy }}') , nil ).name.should == 'toy'
+    end
+    
     it "should handle single pipe" do
       options = @class.new( @class.full_match('{{toy|link}}'), nil ).options
       options[:inc_name].should == 'toy'

@@ -18,8 +18,6 @@ format do
   end
 
   view :card_list do |args|
-    inclusion_defaults[:view] ||= :name
-
     if @search[:results].empty?
       'no results'
     else
@@ -33,15 +31,19 @@ format do
     @search ||= begin
       v = {}
       v[:spec] = card.spec search_params
-      if itemview = ( args[:item] or (inclusion_opts && inclusion_opts[:view]) or v[:spec][:view] )
-        # args > inclusion syntax > WQL > inclusion defaults
-        v[:item] = inclusion_defaults[:view] = itemview
-      end
+      v[:item] = set_inclusion_opts args.merge( :spec_view=>v[:spec][:view] )
       v[:results]  = card.item_cards search_params
       v
     rescue Exception=>e
       { :error => e }
     end
+  end
+  
+  def set_inclusion_opts args
+    @inclusion_defaults = nil
+    @inclusion_opts ||= {}
+    @inclusion_opts[:view] = args[:item] || inclusion_opts[:view] || args[:spec_view] || default_item_view
+    # explicit > inclusion syntax > WQL > inclusion defaults
   end
 
   def search_params

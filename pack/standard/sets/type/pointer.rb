@@ -91,7 +91,7 @@ format do
       when Array  ; ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
       else ""
     end
-    itemview ||= inclusion_defaults[:view]
+    itemview ||= (@inclusion_opts && @inclusion_opts[:view]) || default_item_view
     process_content_object render_raw.gsub(/\[\[/,"<div class=\"pointer-item item-#{itemview}\">{{").gsub(/\]\]/,"|#{itemview}#{typeparam}}}</div>")
   end
 end

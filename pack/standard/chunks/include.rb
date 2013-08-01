@@ -16,7 +16,8 @@ module Card::Chunk
       in_brackets = match[1]
 #      warn "in_brackets = #{in_brackets}"
       name, @opt_lists = in_brackets.split '|', 2
-      result = case name.strip!
+      name = name.to_s.strip
+      result = case name
         when /^\#\#/ ; '' # invisible comment
         when /^\#/   ; "<!-- #{CGI.escapeHTML in_brackets} -->"
         when /^\s*$/ ; '' # no name

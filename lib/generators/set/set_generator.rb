@@ -5,12 +5,9 @@ class SetGenerator < Rails::Generators::Base
              #:banner => "attachment_one attachment_two attachment_three ..."
   argument :set_pattern
   argument :anchor
-  
-#  pack/standard/sets/type/tshirt.rb
-#  spec/pack/standard/sets/type/tshirt_spec.rb
-  
+    
   def create_files
-    template 'set_template.erb',           "pack/#{pack}/sets/#{set_pattern}/#{anchor}.rb"
+    #template 'set_template.erb',           "pack/#{pack}/sets/#{set_pattern}/#{anchor}.rb"
     template 'set_spec_template.erb', "spec/pack/#{pack}/sets/#{set_pattern}/#{anchor}_spec.rb"
   end
   

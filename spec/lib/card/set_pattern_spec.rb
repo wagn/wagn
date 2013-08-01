@@ -2,7 +2,7 @@
 require 'wagn/pattern_spec_helper'
 
 describe Card::SetPattern do
-  #SPECSTUB (low priority)
+  # SPECSTUB (low priority)
 end
 
 #FIXME - these should probably be in pattern-specific specs, though that may not leave much to test in the base class :)

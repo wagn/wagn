@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 
+=begin
+
 format :html do
 
   view :current do |args| _render_raw end
@@ -20,14 +22,6 @@ format :html do
   end
 
 # edit views
-=begin not sure anymore why we want/need this
-  view :edit, :type=>'Etherpad' do |args|
-    @state=:edit
-    wrap :edit, args do
-      self._render_editor
-    end
-  end
-=end
 
   view :editor do |args|
     pad_opts = card.pad_options
@@ -84,3 +78,5 @@ def get_pad_content
   # probably should do more with errors here
   Net::HTTPSuccess === resp ? resp.body : nil
 end
+
+=end

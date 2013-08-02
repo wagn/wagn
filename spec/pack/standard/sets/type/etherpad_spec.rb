@@ -2,5 +2,5 @@
 require 'wagn/pack_spec_helper'
 
 describe Card::Set::Type::Etherpad do
-  # SPECSTUB (low priority)
+  # code all commented
 end

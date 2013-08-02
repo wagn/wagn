@@ -2,5 +2,5 @@
 require 'wagn/pack_spec_helper'
 
 describe Card::Set::Type::Setting do
-  # SPECSTUB (low priority)
+  # SPECSTUB (HIGH priority)
 end

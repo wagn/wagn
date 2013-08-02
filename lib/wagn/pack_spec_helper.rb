@@ -6,6 +6,7 @@ module Wagn::PackSpecHelper
   #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
   
   def newcard name, content=""
+    #FIXME - misleading name; sounds like it doesn't save.
     Card.create! :name=>name, :content=>content
   end
 

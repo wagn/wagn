@@ -229,7 +229,6 @@ describe "remove tests" do
     @a = Card["A"]
   end
 
-
   # I believe this is here to test a bug where cards with certain kinds of references
   # would fail to delete.  probably less of an issue now that delete is done through
   # trash.

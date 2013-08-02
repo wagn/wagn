@@ -2,5 +2,5 @@
 require 'wagn/pack_spec_helper'
 
 describe Card::Set::Type::RubyAndScript do
-  # SPECSTUB (low priority)
+  # code currently all commented...
 end

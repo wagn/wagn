@@ -3,6 +3,20 @@ require 'wagn/pack_spec_helper'
 
 describe Card::Format do
 
+  describe :render do
+    it "should ignore underscores in view names" do
+      render_card(:not_found).should == render_card('not found')
+    end
+    
+    it "should render denial when user lacks read permissions" do
+      c = Card.fetch('Administrator links')
+      c.who_can(:read).should == [Card::AdminID]
+      Account.as(:anonymous) do
+        c.ok?(:read).should == false
+        Card::Format.new(c).render(:core).should =~ /denied/
+      end
+    end
+  end
 #~~~~~~~~~~~~ special syntax ~~~~~~~~~~~#
 
   context "special syntax" do
@@ -24,14 +38,6 @@ describe Card::Format do
       c =Card.new :name => 'Afloat', :type => 'Html', :content => '{{A|float:<object class="subject">}}'
       result = Card::Format.new(c)._render( :core )
       assert_view_select result, 'div[style="float:&amp;lt;object class=&amp;quot;subject&amp;quot;&amp;gt;;"]'
-    end
-
-    context "CGI variables" do
-      it "substituted when present" do
-        c = Card.new :name => 'cardcore', :content => "{{_card+B|core}}"
-        result = Card::Format.new(c, :params=>{'_card' => "A"})._render_core
-        result.should == "AlphaBeta"
-      end
     end
   end
   
@@ -60,7 +66,7 @@ describe Card::Format do
 
 #~~~~~~~~~~~~ Error handling ~~~~~~~~~~~~~~~~~~#
 
-  context "Error handling" do
+  describe "Error handling" do
 
     it "prevents infinite loops" do
       Card.create! :name => "n+a", :content=>"{{n+a|array}}"
@@ -83,24 +89,9 @@ describe Card::Format do
     end
   end
 
-#~~~~~~~~~~~~~ Standard views ~~~~~~~~~~~~~~~~#
-# (*all sets)
 
 
   context "view" do
-
-    it("name"    ) { render_card(:name).should      == 'Tempo Rary' }
-    it("key"     ) { render_card(:key).should       == 'tempo_rary' }
-    it("linkname") { render_card(:linkname).should  == 'Tempo_Rary' }
-
-    it "url" do
-      Wagn::Conf[:base_url] = 'http://eric.skippy.com'
-      render_card(:url).should == 'http://eric.skippy.com/Tempo_Rary'
-    end
-
-    it "core" do
-      render_card(:core, :name=>'A+B').should == "AlphaBeta"
-    end
 
     it "content" do
       result = render_card(:content, :name=>'A+B')
@@ -264,14 +255,7 @@ describe Card::Format do
       end
     end
 
-    it "raw content" do
-      @a = Card.new(:name=>'t', :content=>"{{A}}")
-      Card::Format.new(@a)._render(:raw).should == "{{A}}"
-    end
 
-    it "array (basic card)" do
-      render_card(:array, :content=>'yoing').should==%{["yoing"]}
-    end
   end
 
   describe "cgi params" do
@@ -286,22 +270,6 @@ describe Card::Format do
       Card::Format.new(c)._render( :core ).should == "_card+B"
     end
 
-    it "array (search card)" do
-      Card.create! :name => "n+a", :type=>"Number", :content=>"10"
-      Card.create! :name => "n+b", :type=>"Phrase", :content=>"say:\"what\""
-      Card.create! :name => "n+c", :type=>"Number", :content=>"30"
-      c = Card.new :name => 'nplusarray', :content => "{{n+*children+by create|array}}"
-      Card::Format.new(c)._render( :core ).should == %{["10", "say:\\"what\\"", "30"]}
-    end
-
-    it "array (pointer card)" do
-      Card.create! :name => "n+a", :type=>"Number", :content=>"10"
-      Card.create! :name => "n+b", :type=>"Number", :content=>"20"
-      Card.create! :name => "n+c", :type=>"Number", :content=>"30"
-      Card.create! :name => "npoint", :type=>"Pointer", :content => "[[n+a]]\n[[n+b]]\n[[n+c]]"
-      c = Card.new :name => 'npointArray', :content => "{{npoint|array}}"
-      Card::Format.new(c)._render( :core ).should == %q{["10", "20", "30"]}
-    end
   end
 
 #~~~~~~~~~~~~~  content views
@@ -377,34 +345,5 @@ describe Card::Format do
 
 #~~~~~~~~~ special views
 
-  context "missing" do
-    it "should prompt to add" do
-      render_content('{{+cardipoo|open}}').match(/Add \<span/ ).should_not be_nil
-    end
-  end
 
-
-#
-# Note that we are using stub rendering here to get links.  This isn't really a very good
-# test because it has a very special code path that is really very limited.  It gets
-# internal links expanded in html or xml style, and prety much ignores any other output.
-#
-# this should be short-lived now: moving these tests over from test/unit/format_test.rb and adapting as specs
-
-  #attr_accessor :controller
-
-  context "test/??? tests moved" do
-    
-    # should this one work?  I think not ...
-    it "should replace references should work on inclusions inside links" do
-      pending "I think this one doesn't need to work delete?"
-      card = Card.create!(:name=>"test", :content=>"[[test{{test}}]]"  )
-      assert_equal "[[test{{best}}]]", card.replace_references( "test", "best" )
-    end
-
-    it "should replace references should work on inclusions inside links" do
-      card = Card.create!(:name=>"test", :content=>"[[test_card|test{{test}}]]"  )
-      assert_equal "[[test_card|test{{best}}]]", card.replace_references("test", "best" )
-    end
-  end
 end

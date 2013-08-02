@@ -2,5 +2,5 @@
 require 'wagn/pack_spec_helper'
 
 describe Card::Set::Right::Salt do
-  # SPECSTUB (low priority)
+  # not used yet.  when used this should confirm that raw_content and raw view are different.
 end

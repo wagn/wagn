@@ -2,5 +2,5 @@
 require 'wagn/pack_spec_helper'
 
 describe Card::Set::Right::Default do
-  # SPECSTUB (low priority)
+  # (just aliases so far)
 end

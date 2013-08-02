@@ -2,86 +2,10 @@
 require 'wagn/spec_helper'
 
 describe Card do
-  context "new" do
-    it "gracefully handles explicit nil as parameters" do
-      Card.new( nil ).should be_instance_of(Card)
-    end
-
-    it "gracefully handles explicit nil name" do
-      Card.new( :name => nil ).should be_instance_of(Card)
-    end
-  end
-
-  describe "module inclusion" do
-    before do
-      @c = Card.new :type=>'Search', :name=>'Module Inclusion Test Card'
-    end
-
-    it "gets needed methods after new" do
-      @c.respond_to?( :get_spec ).should be_true
-    end
-
-    it "gets needed methods after save" do
-      @c.respond_to?( :get_spec ).should be_true
-      @c.save!
-      @c.respond_to?( :get_spec ).should be_true
-    end
-
-#    it "gets needed methods after find" do
-#      @c.save!
-#      c = Card[@c.name]
-#      c.respond_to?( :get_spec ).should be_true
-#    end
-
-    it "gets needed methods after fetch" do
-      @c.save!
-      c = Card.fetch(@c.name)
-      c.respond_to?( :get_spec ).should be_true
-    end
-  end
-
-  describe "pointer module inclusion" do
-    before do
-      @c_args = { :name=>'Home+*watchers' }
-    end
-
-    it "gets needed methods with explicit pointer setting" do
-      Card.new(@c_args.merge(:type=>'Pointer')).
-               respond_to?(:add_item).should be_true
-    end
-
-    it "gets needed methods with implicit pointer setting (from template)" do
-      c=Card.new(@c_args)
-      c.respond_to?(:add_item).should be_true
-    end
-  end
-
 
   describe "test data" do
     it "should be findable by name" do
       Card["Wagn Bot"].class.should == Card
-    end
-  end
-
-  describe  "new" do
-    context "with name" do
-      before do
-        @c = Card.new :name=>"Ceee"
-        @d = Card.new :type=>'Date'
-      end
-
-      it "c should have cardtype basic" do
-        @c.typecode.should == :basic
-      end
-
-      it "d should have cardtype Date" do
-        @d.typecode.should == :date
-      end
-    end
-
-    it "name is not nil" do
-      Card.new.name.should == ""
-      Card.new( nil ).name.should == ""
     end
   end
 
@@ -108,33 +32,6 @@ describe Card do
     end
   end
 
-
-  describe "attribute tracking for new card" do
-    before(:each) do
-      Account.as_bot do
-        @c = Card.new :name=>"New Card", :content=>"Great Content"
-      end
-    end
-
-    it "should have updates" do
-      Card::Set::All::AttributeTracking::Updates.should === @c.updates
-    end
-
-    it "should return original value" do
-      @c.name.should == 'New Card'
-    end
-
-    it "should track changes" do
-      @c.name = 'Old Card'
-      @c.name.should == 'Old Card'
-    end
-  end
-
-  describe "attribute tracking for existing card" do
-    before(:each) do
-      @c = Card["Joe User"]
-    end
-  end
 
   describe "content change should create new revision" do
     before do
@@ -240,19 +137,6 @@ describe "basic card tests" do
     alpha.save
     alpha.name.should == 'alpha'
     assert_stable alpha
-  end
-
-
-  # just a sanity check that we don't have broken data to start with
-  it 'should find cards in database' do
-    Card.find(:all).each do |p|
-       p.should be_instance_of Card
-    end
-  end
-
-  it 'should find_by_name' do
-    card = Card.create( :name=>"ThisMyCard", :content=>"Contentification is cool" )
-    Card["ThisMyCard"].should == card
   end
 
 

@@ -2,5 +2,9 @@
 require 'wagn/pack_spec_helper'
 
 describe Card::Set::All::RichHtml do
-  # SPECSTUB (low priority)
+  context :missing do
+    it "should prompt to add" do
+      render_content('{{+cardipoo|open}}').match(/Add \<span/ ).should_not be_nil
+    end
+  end
 end

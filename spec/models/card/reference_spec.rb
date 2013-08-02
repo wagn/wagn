@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/pack_spec_helper'
 
-describe "Card::Reference" do
+describe Card::Reference do
 
   before do
     Account.as(Card::WagnBotID) # FIXME: as without a block deprecated

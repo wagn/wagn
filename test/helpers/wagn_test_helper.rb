@@ -26,13 +26,6 @@ module WagnTestHelper
     end
   end
 
-
-  def render_test_card( card )
-    r = Card::Format.new(card)
-    r.add_name_context card.name
-    r.process_content
-  end
-
   def assert_difference(object, method = nil, difference = 1)
     initial_value = object.send(method)
     yield

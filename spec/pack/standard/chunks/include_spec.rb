@@ -125,23 +125,21 @@ describe Card::Chunk::Include, "Inclusion" do
     end
 
     it "should handle structured cards" do
-       age = newcard('age')
-       template = Card['*template']
-       specialtype = Card.create :typecode=>'Cardtype', :name=>'SpecialType'
-
-       specialtype_template = specialtype.fetch(:trait=>:type,:new=>{}).fetch(:trait=>:structure,:new=>{})
-       specialtype_template.content = "{{#{Card::Name.joint}age}}"
-       Account.as_bot { specialtype_template.save! }
-       assert_equal "{{#{Card::Name.joint}age}}", Card::Format.new(specialtype_template).render_raw
-
-       wooga = Card.create! :name=>'Wooga', :type=>'SpecialType'
-       wooga_age = Card.create!( :name=>"#{wooga.name}#{Card::Name.joint}age", :content=> "39" )
-       Card::Format.new(wooga_age).render_core.should == "39"
-       #warn "cards #{wooga.inspect}, #{wooga_age.inspect}"
-       wooga_age.includers.map(&:name).should == ['Wooga']
-     end
-
-
+      age = newcard('age')
+      template = Card['*template']
+      specialtype = Card.create :typecode=>'Cardtype', :name=>'SpecialType'
+    
+      specialtype_template = specialtype.fetch(:trait=>:type,:new=>{}).fetch(:trait=>:structure,:new=>{})
+      specialtype_template.content = "{{#{Card::Name.joint}age}}"
+      Account.as_bot { specialtype_template.save! }
+      assert_equal "{{#{Card::Name.joint}age}}", Card::Format.new(specialtype_template).render_raw
+    
+      wooga = Card.create! :name=>'Wooga', :type=>'SpecialType'
+      wooga_age = Card.create!( :name=>"#{wooga.name}#{Card::Name.joint}age", :content=> "39" )
+      Card::Format.new(wooga_age).render_core.should == "39"
+      #warn "cards #{wooga.inspect}, #{wooga_age.inspect}"
+      wooga_age.includers.map(&:name).should == ['Wooga']
+    end
 
     it "should handle shading" do
       alpha = newcard 'Alpha', "Pooey"

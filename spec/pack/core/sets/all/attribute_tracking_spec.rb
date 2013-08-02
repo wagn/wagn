@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/pack_spec_helper'
+require 'wagn/spec_helper'
 
 describe Card::Set::All::AttributeTracking do
   context "new card" do

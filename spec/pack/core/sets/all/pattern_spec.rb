@@ -89,3 +89,5 @@ describe Card::Set::All::Pattern do
     end
   end
 end
+
+

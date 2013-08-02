@@ -1,8 +1,9 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/pack_spec_helper'
+require 'wagn/spec_helper'
 
 describe Card::Set::All::Account do
   describe 'accountable?' do
+    
     it 'should be false for existing accounts' do
       Account.current.accountable?.should == false
     end

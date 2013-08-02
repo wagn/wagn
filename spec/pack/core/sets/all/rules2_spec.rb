@@ -1,6 +1,10 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
 
+
+#FIXME - this seems like a LOT of testing but it doesn't cover a ton of ground
+# I think we should move the rendering tests into basic and trim this to about a quarter of its current length
+
 describe Card do
   context 'when there is a general toc setting of 2' do
 
@@ -67,15 +71,6 @@ describe Card do
       it 'should have default rule' do
         Card.default_rule(:table_of_contents).should == '0'
       end
-    end
-
-    describe ".default_rule_card" do
-    end
-
-    describe ".universal_setting_names_by_group" do
-    end
-
-    describe ".setting_attrib" do
     end
 
   end

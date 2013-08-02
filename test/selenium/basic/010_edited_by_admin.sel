@@ -1,5 +1,0 @@
-|open|/wagn/Admin||
-|select|query-select|value=revised_by|
-|pause|3000||
-|verifyTextPresent|A||
-|verifyTextPresent|type_f_content||

@@ -1,4 +1,0 @@
-|open|/account/login||
-|type|login|email|
-|type|password|pass|
-|clickAndWait|commit||

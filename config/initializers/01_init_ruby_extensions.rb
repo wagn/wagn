@@ -2,9 +2,6 @@
 RUBY_VERSION_18 = !!(RUBY_VERSION =~ /^1\.8/)
 
 class Hash
-  def pull(key)
-    has_key?(key) && !(v = delete(key)).to_s.empty? ? v : false
-  end
 
   # FIXME: ? damn, this is ugly.  use JSON instead?
   class << self
@@ -18,10 +15,6 @@ class Hash
         result
       end
     end
-  end
-
-  def to_semicolon_attr_list
-    self.map {|key,value| key.to_s == 'view' ? value : "#{key}:#{value}" }.sort_by(&:length).join(";")
   end
 
 end

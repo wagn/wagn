@@ -2,5 +2,5 @@
 require 'wagn/spec_helper'
 
 describe Card::Set::All::Flexmail do
-  # SPECSTUB (low priority)
+  # set just has simple event. tests are in features/flexmail.feature and spec/lib/card/flexmail_spec.rb
 end

@@ -51,24 +51,6 @@ describe Card do
   end
 
 
-  describe "content change should create new revision" do
-    before do
-      Account.as_bot do
-        @c = Card['basicname']
-        @c.content = "foo"
-        @c.save!
-      end
-    end
-
-    it "should have 2 revisions"  do
-      @c.revisions.length.should == 2
-    end
-
-    it "should have original revision" do
-      @c.revisions[0].content.should == 'basiccontent'
-    end
-  end
-
 
   describe "created a virtual card when missing and has a template" do
     it "should be flagged as virtual" do

@@ -1,8 +1,0 @@
-|open|/wagn/B||
-|select|query-select|value=plussed_cards|
-|pause|1000||
-|verifyTextPresent|Alpha||
-|verifyTextPresent|Z||
-|select|query-select|value=plus_cards|
-|pause|1000||
-|verifyTextPresent|AlphaBeta||

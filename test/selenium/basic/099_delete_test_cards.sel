@@ -1,8 +1,0 @@
-|open|/wagn/Joe_User||
-|open|/wagn/D||
-|click|link=Edit||
-|pause|500||
-|click|//input[@value='Remove D']||
-|pause|500||
-|clickAndWait|commit||
-|verifyTextPresent|Joe User||

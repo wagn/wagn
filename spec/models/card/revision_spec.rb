@@ -1,13 +1,9 @@
 # -*- encoding : utf-8 -*-
-require File.expand_path('../test_helper', File.dirname(__FILE__))
-class RevisionTest < ActiveSupport::TestCase
+require 'wagn/spec_helper'
 
-  def setup
-    super
-    setup_default_user
-  end
+describe Card::Revision do
 
-  def test_revise
+  it 'should be created whenever content is updated' do
     author1 = Account[ 'joe@user.com' ]
     author2 = Account[ 'sara@user.com' ]
     author_cd1 = Card[author1.card_id]
@@ -58,14 +54,5 @@ class RevisionTest < ActiveSupport::TestCase
     assert_equal "some test content", @card.current_revision(true).content
   end
 =end
-
-  def test_save_draft
-    @card = Card.create! :name=>"mango", :content=>"foo"
-    @card.save_draft("bar")
-    assert_equal 1, @card.drafts.length
-    @card.save_draft("booboo")
-    assert_equal 1, @card.drafts.length
-    assert_equal "booboo", @card.drafts[0].content
-  end
 
 end

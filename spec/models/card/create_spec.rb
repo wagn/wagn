@@ -18,19 +18,6 @@ describe Card, "created by Card.new " do
     end
   end
 
-  it "should have attribute_tracking updates" do
-    Card::Set::All::AttributeTracking::Updates.should === @c.updates
-  end
-
-  it "should return original value for name" do
-    @c.name.should == 'New Card'
-  end
-
-  it "should track changes to name" do
-    @c.name = 'Old Card'
-    @c.name.should == 'Old Card'
-  end
-
   it "should not override explicit content with default content" do
     Account.as_bot do
       Card.create! :name => "blue+*right+*default", :content => "joe", :type=>"Pointer"
@@ -62,32 +49,6 @@ describe Card, "created by Card.create with valid attributes" do
 
   it "should be findable by name" do
     Card["New Card"].class.should == Card
-  end
-end
-
-describe Card, "created with autoname" do
-  before do
-    Account.as_bot do
-      @b1 = Card.create! :name=>'Book+*type+*autoname', :content=>'b1'
-    end
-  end
-
-  it "should handle cards without names" do
-    c = Card.create! :type=>'Book'
-    c.name.should== 'b1'
-  end
-
-  it "should increment again if name already exists" do
-    b1 = Card.create! :type=>'Book'
-    b2 = Card.create! :type=>'Book'
-    b2.name.should== 'b2'
-  end
-  
-  it "should handle trashed names" do
-    b1 = Card.create! :type=>'Book'
-    Account.as_bot { b1.delete }
-    b1 = Card.create! :type=>'Book'
-    b1.name.should== 'b1'
   end
 end
 

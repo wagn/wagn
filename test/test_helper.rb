@@ -6,8 +6,6 @@ require 'pathname'
 
 unless defined? TEST_ROOT
   TEST_ROOT = Pathname.new(File.expand_path(File.dirname(__FILE__))).cleanpath(true).to_s
-  load TEST_ROOT + '/helpers/wagn_test_helper.rb'
-  load TEST_ROOT + '/helpers/permission_test_helper.rb'
 
   class ActiveSupport::TestCase
     # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
@@ -17,9 +15,6 @@ unless defined? TEST_ROOT
     #fixtures :all
 
     # Add more helper methods to be used by all tests here...
-
-    include Wagn::AuthenticatedTestHelper
-    include WagnTestHelper
     
     
     # Transactional fixtures accelerate your tests by wrapping each test method
@@ -43,13 +38,6 @@ unless defined? TEST_ROOT
     # then set this back to true.
     self.use_instantiated_fixtures  = false
 
-    def setup
-      super
-      # let the cache stick accross test-runs while profiling
-      unless ActionController.const_defined?("PerformanceTest") and self.class.superclass == ActionController::PerformanceTest
-        Wagn::Cache.restore
-      end
-    end
 
     def prepare_url(url, cardtype)
       if url =~ /:id/

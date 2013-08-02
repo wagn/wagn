@@ -2,5 +2,7 @@
 require 'wagn/pack_spec_helper'
 
 describe Card::Set::Type::Date do
-  # SPECSTUB (low priority)
+  it "should have special editor" do
+    assert_view_select render_editor('Date'), 'input[class="date-editor"]'
+  end
 end

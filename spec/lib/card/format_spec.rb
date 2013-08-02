@@ -23,7 +23,6 @@ describe Card::Format, "" do
          Card.create! :name=>"TestType", :type=>'Cardtype', :content=>'[[/new/{{_self|linkname}}|add {{_self|name}} card]]'
          Card.create! :name=>'TestType+*self+*structure', :content=>'_self' #otherwise content overwritten by *structure rule
          Card::Format.new(Card['TestType']).render_core.should == '<a class="internal-link" href="/new/TestType">add TestType card</a>'
-         
        end
     end
     
@@ -397,99 +396,6 @@ describe Card::Format, "" do
         assert_select 'input[name=?][type="text"][value="Zamma Flamma"]', 'card[cards][~plus~author][content]'
         assert_select %{input[name=?][type="hidden"][value="#{Card::PhraseID}"]},     'card[cards][~plus~author][type_id]'
       end
-    end
-  end
-
-#~~~~~~~~~~~~~~~ Cardtype Views ~~~~~~~~~~~~~~~~~#
-# (type sets)
-
-  context "cards of type" do
-    context "Date" do
-      it "should have special editor" do
-        assert_view_select render_editor('Date'), 'input[class="date-editor"]'
-      end
-    end
-
-    context "File and Image" do
-      #image calls the file partial, so in a way this tests both
-      it "should have special editor" do
-#        pending "getting html_document error.  paperclip integration issue?"
-
-        assert_view_select render_editor('Image'), 'div[class="choose-file"]' do
-          assert_select 'input[class="file-upload slotter"]'
-        end
-      end
-    end
-
-    context "Image" do
-      it "should handle size argument in inclusion syntax" do
-        image_card = Card.create! :name => "TestImage", :type=>"Image", :content => %{TestImage.jpg\nimage/jpeg\n12345}
-        including_card = Card.new :name => 'Image1', :content => "{{TestImage | core; size:small }}"
-        rendered = Card::Format.new(including_card)._render :core
-        assert_view_select rendered, 'img[src=?]', "/files/TestImage-small-#{image_card.current_revision_id}.jpg"
-      end
-    end
-
-    context "HTML" do
-      before do
-        Account.current_id = Card::WagnBotID
-      end
-
-      it "should have special editor" do
-        assert_view_select render_editor('Html'), 'textarea[rows="15"]'
-      end
-
-      it "should not render any content in closed view" do
-        render_card(:closed_content, :type=>'Html', :content=>"<strong>Lions and Tigers</strong>").should == ''
-      end
-      
-      it "should render inclusions" do
-        render_card( :core, :type=>'HTML', :content=>'{{a}}' ).should =~ /slot/
-      end
-      
-      it 'should not render uris' do
-        render_card( :core, :type=>'HTML', :content=>'http://google.com' ).should_not =~ /\<a/
-      end
-    end
-
-    context "Account Request" do
-      it "should have a special section for approving requests" do
-        #pending
-        #I can't get this working.  I keep getting this url_for error -- from a line that doesn't call url_for
-        card = Card.create!(:name=>'Big Bad Wolf', :type=>'Account Request')
-        assert_view_select Card::Format.new(card).render(:core), 'div[class="invite-links"]'
-      end
-    end
-
-    context "Number" do
-      it "should have special editor" do
-        assert_view_select render_editor('Number'), 'input[type="text"]'
-      end
-    end
-
-    context "Phrase" do
-      it "should have special editor" do
-        assert_view_select render_editor('Phrase'), 'input[type="text"][class="phrasebox card-content"]'
-      end
-    end
-
-    context "Plain Text" do
-      it "should have special editor" do
-        assert_view_select render_editor('Plain Text'), 'textarea[rows="3"]'
-      end
-
-      it "should have special content that escapes HTML" do
-        render_card(:core, :type=>'Plain Text', :content=>"<b></b>").should == '&lt;b&gt;&lt;/b&gt;'
-      end
-      
-    end
-
-    context "Search" do
-
-    end
-
-    context "Toggle" do
-
     end
   end
 

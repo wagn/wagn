@@ -2,5 +2,7 @@
 require 'wagn/pack_spec_helper'
 
 describe Card::Set::Type::Number do
-  # SPECSTUB (low priority)
+  it "should have special editor" do
+    assert_view_select render_editor('Number'), 'input[type="text"]'
+  end
 end

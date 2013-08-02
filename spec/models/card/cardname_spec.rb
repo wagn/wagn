@@ -30,7 +30,6 @@ end
 
 describe Card, "Case Variant" do
   before do
-    Account.as :joe_user
     @c = Card.create! :name=>'chump'
   end
 
@@ -54,7 +53,6 @@ end
 
 describe Card::Name, "changing from plus card to simple" do
   before do
-    Account.as :joe_user
     @c = Card.create! :name=>'four+five'
     @c.name = 'nine'
     @c.save
@@ -137,7 +135,6 @@ describe "renaming" do
      
      c3, c4 = Card["chuck_wagn+chuck"], Card["chuck"]
     end
-    Account.current_id = Card['joe_user'].id
   end
 
   it "test_subdivision" do

@@ -2,9 +2,6 @@
 require 'wagn/spec_helper'
 
 describe Card::Set::Type::Pointer do
-  before do
-    Account.current_id = Card['joe_user'].id
-  end
 
   context "item_names" do
     it "should return array of names of items referred to by a pointer" do

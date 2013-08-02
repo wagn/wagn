@@ -30,7 +30,6 @@ describe Card, "with right content template" do
     Account.as_bot do
       @bt = Card.create! :name=>"birthday+*right+*structure", :type=>'Date', :content=>"Today!"
     end
-    Account.as :joe_user
     @jb = Card.create! :name=>"Jim+birthday"
   end
 
@@ -65,7 +64,6 @@ describe Card, "with right default template" do
     Account.as_bot  do
       @bt = Card.create! :name=>"birthday+*right+*default", :type=>'Date', :content=>"Today!"
     end
-    Account.as :joe_user
     @jb = Card.create! :name=>"Jim+birthday"
   end
 

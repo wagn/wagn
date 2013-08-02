@@ -119,7 +119,6 @@ describe Card::Content do
   context "instance" do
 
     before do
-
       @check_proc = Proc.new do |m, v|
         if Array===m
           wrong_class = m[0] != v.class
@@ -130,7 +129,6 @@ describe Card::Content do
         else false end
       end
 
-      Account.current_id = Card['joe_user'].id
       assert card = Card["One"]
       @card = card
 

@@ -53,10 +53,6 @@ describe Card::Chunk::Include, "Inclusion" do
 
   context "rendering" do
 
-    before do
-      Account.current_id= Card['joe_user'].id
-    end
-
     it "should handle absolute names" do
       alpha = newcard 'Alpha', "Pooey"
       beta = newcard 'Beta', "{{Alpha}}"

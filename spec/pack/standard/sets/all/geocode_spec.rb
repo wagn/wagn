@@ -4,7 +4,6 @@ require 'wagn/spec_helper'
 
 describe GoogleMapsAddon do
   before(:each) do
-    Account.as :joe_user
     @geotest = Card.new(:name=>"Geotest")
   end
 

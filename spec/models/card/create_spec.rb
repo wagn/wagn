@@ -3,9 +3,6 @@ require 'wagn/spec_helper'
 
 # FIXME this shouldn't be here
 describe Card::Set::Type::Cardtype, ".create with :codename" do
-  before do
-    Account.as :joe_user
-  end
   it "should work" do
     Card.create!(:name=>"Foo Type", :codename=>"foo", :type=>'Cardtype').typecode.should==:cardtype
   end
@@ -97,7 +94,6 @@ end
 
 describe Card, "create junction" do
   before(:each) do
-    Account.as :joe_user
     @c = Card.create! :name=>"Peach+Pear", :content=>"juicy"
   end
 

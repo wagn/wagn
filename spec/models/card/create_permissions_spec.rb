@@ -2,9 +2,6 @@
 require 'wagn/spec_helper'
 
 describe Card, "normal user create permissions" do
-  before do
-    Account.as :joe_user
-  end
   it "should allow anyone signed in to create Basic Cards" do
     Card.new(:type=>'Basic').ok?(:create).should be_true
   end

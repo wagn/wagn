@@ -4,10 +4,6 @@ require 'wagn/spec_helper'
 describe Card::Chunk::Link, "link chunk tests" do
   include MySpecHelpers
 
-  before do
-    Account.current_id = Card['joe_user'].id
-  end
-
   it "should test basic" do
     card = newcard('Baines', '[[Nixon]]')
     assert_equal('<a class="wanted-card" href="/Nixon">Nixon</a>', render_test_card(card) )

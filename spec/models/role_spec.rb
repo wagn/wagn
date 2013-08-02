@@ -26,9 +26,6 @@ describe User, "Anonymous User" do
 end
 
 describe User, "Authenticated User" do
-  before do
-    Account.current_id = Card['joe_user'].id
-  end
   it "should ok anon role" do Wagn.role_ok?(Role['anon'].id).should be_true end
   it "should ok auth role" do Wagn.role_ok?(Role['auth'].id).should be_true end
 end
@@ -48,8 +45,6 @@ end
 
 describe User, 'Joe User' do
   before do
-    Account.current_id = Card['joe_user'].id
-#    Account.cache.delete 'joe_user'
     @ju = Account.user
     @jucard = Account.current
     @r1 = Card['r1']

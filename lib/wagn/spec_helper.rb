@@ -24,6 +24,7 @@ Spork.prefork do
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
+  JOE_USER_ID = Card['joe_user'].id
 
   RSpec.configure do |config|
 
@@ -45,6 +46,7 @@ Spork.prefork do
 
 
     config.before(:each) do
+      Account.current_id = JOE_USER_ID
       Wagn::Cache.restore
     end
     config.after(:each) do

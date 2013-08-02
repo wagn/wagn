@@ -37,12 +37,10 @@ end
 
 describe Card, "in trash" do
   it "should be retrieved by fetch with new" do
-    Account.as :joe_user do
-      Card.create(:name=>"Betty").delete
-      c=Card.fetch "Betty", :new=>{}
-      c.save
-      Card["Betty"].should be_instance_of(Card)
-    end
+    Card.create(:name=>"Betty").delete
+    c=Card.fetch "Betty", :new=>{}
+    c.save
+    Card["Betty"].should be_instance_of(Card)
   end
 end
 
@@ -97,7 +95,6 @@ end
 
 describe Card, "dependent removal" do
   before do
-    Account.as :joe_user
     @a = Card['A']
     @a.delete!
     @c = Card.find_by_key "A+B+C".to_name.key
@@ -229,7 +226,6 @@ end
 describe "remove tests" do
 
   before do
-    Account.current_id = Card['joe_user'].id
     @a = Card["A"]
   end
 

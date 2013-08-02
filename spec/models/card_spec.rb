@@ -14,7 +14,6 @@ describe Card do
 
   describe "module inclusion" do
     before do
-      Account.as :joe_user
       @c = Card.new :type=>'Search', :name=>'Module Inclusion Test Card'
     end
 
@@ -264,23 +263,17 @@ describe "basic card tests" do
 
 
   it 'update_should_create_subcards' do
-    Account.current_id = Card['joe_user'].id
-    Account.as 'joe_user' do
-      banana = Card.create! :name=>'Banana'
-      Card.update banana.id, :cards=>{ "+peel" => { :content => "yellow" }}
+    banana = Card.create! :name=>'Banana'
+    Card.update banana.id, :cards=>{ "+peel" => { :content => "yellow" }}
 
-      peel = Card['Banana+peel']
-      peel.content.       should == "yellow"
-      Card['joe_user'].id.should == peel.creator_id
-    end
+    peel = Card['Banana+peel']
+    peel.content.       should == "yellow"
+    Card['joe_user'].id.should == peel.creator_id
   end
 
   it 'update_should_create_subcards_as_wagn_bot_if_missing_subcard_permissions' do
-    Account.as :joe_user do
-      Card.create :name=>'peel'
-    end
+    Card.create :name=>'peel'
     Account.current_id = Card::AnonID
-
     Card['Banana'].should_not be
     Card['Basic'].ok?(:create).should be_false, "anon can't creat"
 
@@ -293,11 +286,7 @@ describe "basic card tests" do
   end
 
   it 'update_should_not_create_subcards_if_missing_main_card_permissions' do
-    b = nil
-    Account.as(:joe_user) do
-      b = Card.create!( :name=>'Banana' )
-      #warn "created #{b.inspect}"
-    end
+    b = Card.create!( :name=>'Banana' )
     Account.as Card::AnonID do
       assert_raises( Card::PermissionDenied ) do
         Card.update(b.id, :cards=>{ "+peel" => { :content => "yellow" }})

@@ -183,8 +183,6 @@ describe Card do
   end
 
   describe "#fetch_virtual" do
-    before { Account.as :joe_user }
-
     it "should find cards with *right+*structure specified" do
       Account.as_bot do
         Card.create! :name=>"testsearch+*right+*structure", :content=>'{"plus":"_self"}', :type => 'Search'

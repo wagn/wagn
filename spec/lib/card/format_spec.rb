@@ -2,11 +2,6 @@
 require 'wagn/pack_spec_helper'
 
 describe Card::Format, "" do
-  before do
-    Account.current_id = Card['joe_user'].id
-    #Card::Format.ajax_call = false 
-    #FIXME why do we have to deal with the ajax call here?
-  end
 
 #~~~~~~~~~~~~ special syntax ~~~~~~~~~~~#
 
@@ -110,9 +105,7 @@ describe Card::Format, "" do
         Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
         Card.create(:name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]')
       end
-      Account.as :joe_user do
-        assert_view_select Card::Format.new(Card.fetch('Joe no see me')).render(:core), 'span[class="denied"]'
-      end
+      assert_view_select Card::Format.new(Card.fetch('Joe no see me')).render(:core), 'span[class="denied"]'
     end
   end
 
@@ -492,72 +485,12 @@ describe Card::Format, "" do
     end
 
     context "Search" do
-      it "should wrap search items with correct view class" do
-        Card.create :type=>'Search', :name=>'Asearch', :content=>%{{"type":"User"}}
-        c=render_content("{{Asearch|core;item:name}}")
-        c.should match('search-result-item item-name')
-        render_content("{{Asearch|core;item:open}}").should match('search-result-item item-open')
-        render_content("{{Asearch|core}}").should match('search-result-item item-closed')
-      end
 
-      it "should handle returning 'count'" do
-        render_card(:core, :type=>'Search', :content=>%{{ "type":"User", "return":"count"}}).should == '10'
-      end
     end
 
     context "Toggle" do
-      it "should have special editor" do
-        assert_view_select render_editor('Toggle'), 'input[type="checkbox"]'
-      end
 
-      it "should have yes/no as processed content" do
-        render_card(:core, :type=>'Toggle', :content=>"0").should == 'no'
-        render_card(:closed_content, :type=>'Toggle', :content=>"1").should == 'yes'
-      end
     end
-  end
-
-
-  # ~~~~~~~~~~~~~~~~~ Builtins Views ~~~~~~~~~~~~~~~~~~~
-  # ( *self sets )
-
-
-  context "builtin card" do
-    context "*now" do
-      it "should have a date" do
-        render_card(:raw, :name=>'*now').match(/\w+day, \w+ \d+, \d{4}/ ).should_not be_nil
-      end
-    end
-
-    context "*version" do
-      it "should have an X.X.X version" do
-        (render_card(:raw, :name=>'*version') =~ (/\d\.\d+\.\w+/ )).should be_true
-      end
-    end
-
-    context "*head" do
-      it "should have a javascript tag" do
-        assert_view_select render_card(:raw, :name=>'*head'), 'script[type="text/javascript"]'
-      end
-    end
-
-    context "*navbox" do
-      it "should have a form" do
-        assert_view_select render_card(:raw, :name=>'*navbox'), 'form.navbox-form'
-      end
-    end
-
-    context "*account link" do
-      it "should have a 'my card' link" do
-        Account.as :joe_user do
-          assert_view_select render_card(:raw, :name=>'*account links'), 'span[id="logging"]' do
-            assert_select 'a[id="my-card-link"]', :text => 'Joe User'
-          end
-        end
-      end
-    end
-
-    # also need one for *alerts
   end
 
 
@@ -580,10 +513,7 @@ describe Card::Format, "" do
   #attr_accessor :controller
 
   context "test/??? tests moved" do
-    before do
-      Account.current_id = Card['joe_user'].id
-    end
-
+    
     # should this one work?  I think not ...
     it "should replace references should work on inclusions inside links" do
       pending "I think this one doesn't need to work delete?"

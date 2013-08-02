@@ -1,9 +1,10 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
 
-
 describe Card, "delete without dependents" do
-  before do Account.as(:joe_user); @c = Card["Basic Card"] end
+  before do
+    @c = Card["Basic Card"]
+  end
 
   it "should succeed" do
     @c.delete.should be_true
@@ -11,7 +12,9 @@ describe Card, "delete without dependents" do
 end
 
 describe Card, "destroy with dependents" do
-  before do Account.as('joe_user'); @c = Card["A"] end
+  before do
+    @c = Card["A"]
+  end
 
   it "should succeed" do
     #should test for destruction of dependents!
@@ -20,7 +23,9 @@ describe Card, "destroy with dependents" do
 end
 
 describe Card, "rename without dependents" do
-  before do Account.as(:joe_user); @c = Card["Basic Card"] end
+  before do
+    @c = Card["Basic Card"]
+  end
 
   it "should succeed" do
     @c.name = "Brand New Name"

@@ -2,7 +2,6 @@ require 'wagn/spec_helper'
 
 describe Card, "account functions" do
   before(:each) do
-    Account.current_id= Card['joe_user'].id
     @auth_card = Account.current
     #warn "auth is #{@auth_card.inspect}"
   end

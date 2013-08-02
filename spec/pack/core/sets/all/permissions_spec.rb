@@ -355,8 +355,6 @@ end
 
 
 describe Card, "new permissions" do
-  Account.as :joe_user
-
   it "should let joe view new cards" do
     @c = Card.new
     @c.ok?(:read).should be_true
@@ -367,9 +365,7 @@ end
 
 describe Card, "default permissions" do
   before do
-    Account.as :joe_user do
-      @c = Card.create! :name=>"sky blue"
-    end
+    @c = Card.create! :name=>"sky blue"
   end
 
   it "should let anonymous users view basic cards" do
@@ -378,7 +374,7 @@ describe Card, "default permissions" do
     end
   end
 
-  it "should let joe view basic cards" do
+  it "should let joe user basic cards" do
     Account.as :joe_user do
       @c.ok?(:read).should be_true
     end

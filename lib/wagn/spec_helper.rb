@@ -3,15 +3,7 @@ require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
 module MySpecHelpers
-  def render_test_card card
-    format = Card::Format.new card
-    format.add_name_context card.name
-    format.process_content
-  end
 
-  def newcard name, content=""
-    Card.create! :name=>name, :content=>content
-  end
 end
 
 Spork.prefork do

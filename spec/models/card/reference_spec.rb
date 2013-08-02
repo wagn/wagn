@@ -1,12 +1,9 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
-
+require 'wagn/pack_spec_helper'
 
 describe "Card::Reference" do
-  include MySpecHelpers
 
   before do
-    #setup_default_user
     Account.as(Card::WagnBotID) # FIXME: as without a block deprecated
   end
 

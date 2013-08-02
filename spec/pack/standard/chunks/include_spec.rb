@@ -3,11 +3,24 @@ require 'wagn/pack_spec_helper'
 
 describe Card::Chunk::Include, "Inclusion" do
   include ActionView::Helpers::TextHelper
-  include MySpecHelpers
 
-  context "syntax" do
+  context "syntax parsing" do
     before do
       @class= Card::Chunk::Include
+    end
+    
+    it "should ignore invisible comments" do
+      render_content("{{## now you see nothing}}").should==''
+    end
+
+    it "should handle visible comments" do
+      render_content("{{# now you see me}}").should == '<!-- # now you see me -->'
+      render_content("{{# -->}}").should == '<!-- # --&gt; -->'
+    end
+    
+    it "should ignore empty inclusions" do
+      render_content('{{}}').should == ''
+      render_content('{{ }}').should == ''
     end
     
     it "should handle no pipes" do
@@ -22,9 +35,10 @@ describe Card::Chunk::Include, "Inclusion" do
     end
     
     it "should handle single pipe" do
-      options = @class.new( @class.full_match('{{toy|link}}'), nil ).options
+      options = @class.new( @class.full_match('{{toy|view:link;hide:me}}'), nil ).options
       options[:inc_name].should == 'toy'
       options[:view].should == 'link'
+      options[:hide].should == 'me'
       options.key?(:items).should == false
     end
     

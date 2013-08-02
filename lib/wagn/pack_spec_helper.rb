@@ -4,6 +4,10 @@ module Wagn::PackSpecHelper
 
   include ActionDispatch::Assertions::SelectorAssertions
   #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
+  
+  def newcard name, content=""
+    Card.create! :name=>name, :content=>content
+  end
 
   def assert_view_select(view_html, *args, &block)
     node = HTML::Document.new(view_html).root
@@ -19,14 +23,14 @@ module Wagn::PackSpecHelper
     Card::Format.new(card).render(:edit)
   end
 
-  def render_content(content, args={})
+  def render_content content, format_args={}
     @card ||= Card.new :name=>"Tempo Rary 2"
-    @card.content=content
-    r = Card::Format.new @card,args
-    r._render(:core)
+    @card.content = content
+    r = Card::Format.new @card, format_args
+    r._render :core
   end
 
-  def render_card(view, card_args={}, args={})
+  def render_card view, card_args={}, args={}
     card = begin
       if card_args[:name]
         Card.fetch(card_args[:name])

@@ -2,5 +2,5 @@
 require 'wagn/spec_helper'
 
 describe Card::Set::Rstar::Rules do
-  # SPECSTUB (low priority)
+  # SPECSTUB (HIGH priority)
 end

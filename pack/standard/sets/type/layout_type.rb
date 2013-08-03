@@ -1,14 +1,6 @@
 # -*- encoding : utf-8 -*-
-
-
-view :editor do |args|
-  form.text_area :content, :rows=>15, :class=>'card-content'
-end
+include Card::Set::Type::Html
 
 view :core do |args|
   h _render_raw
-end
-
-def clean_html?
-  false
 end

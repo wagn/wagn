@@ -2,5 +2,5 @@
 require 'wagn/spec_helper'
 
 describe Card::Set::All::File do
-  # SPECSTUB (low priority)
+  # these are basically just fallback views
 end

@@ -78,56 +78,6 @@ end
 
 
 describe Card, "types" do
-  before do
-    Account.as(Card::WagnBotID)  # FIXME: as without a block is deprecated
-    # NOTE: it looks like these tests aren't DRY- but you can't pull the cardtype creation up here because:
-    #  creating cardtypes creates constants in the namespace, and those aren't removed
-    #  when the db is rolled back, so you're not starting in the original state.
-    #  during use of the application the behavior probably won't create a problem, so we test around it here.
-  end
 
-  it "should accept cardtype name and casespace variant as type" do
-    ct = Card.create! :name=>"AFoo", :type=>'Cardtype', :codename=>'a_foo'
-    ct.typecode.should == :cardtype
-    ct = Card.fetch('AFoo')
-    Card::Codename.reset_cache
-
-    ct.update_attributes! :name=>"FooRenamed"
-    (ct=Card.fetch('FooRenamed')).typecode.should == :cardtype
-    # now the classname changes if it doesn't have a codename in the table
-    ncd = Card.create(:type=>'FooRenamed', :name=>'testy1')
-    ncd.type_name.should == 'FooRenamed'
-    ncd.typecode.should == :a_foo
-
-    Card::Codename.reset_cache
-    Card.create!(:type=>"FooRenamed",:name=>"testy").typecode.should == :a_foo
-    Card.create!(:type=>"foo_renamed",:name=>"so testy").typecode.should == :a_foo
-
-    Card::Codename.reset_cache
-  end
-  it "should accept classname as typecode" do
-    ct = Card.create! :name=>"BFoo", :type=>'Cardtype', :codename=>'b_foo'
-    Card::Codename.reset_cache
-
-    ct.update_attributes! :name=>"BFooRenamed"
-
-    # give it a codename entry
-    # now the classname changes if it doesn't have a codename in the table
-    ncd = Card.create(:type=>'BFooRenamed', :name=>'testy2')
-    ncd.type_name.should == 'BFooRenamed'
-    ncd.typecode.should == :b_foo
-
-    Card::Codename.reset_cache
-  end
-
-=begin
-  # this is not quite right; error is/should be detected at assignment time
-  it "should raise a validation error if a bogus type is given" do
-    ct = Card.create! :name=>"DFoo", :type=>'Cardtype'
-    c = Card.new(:type=>"$d_foo#adfa",:name=>"more testy")
-    c.errors[:type].should_not be_empty
-    c.valid?.should be_false
-  end  
-=end
 end
 

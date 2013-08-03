@@ -2,5 +2,5 @@
 require 'wagn/spec_helper'
 
 describe Card::Set::Right::AddHelp do
-  # SPECSTUB (low priority)
+  # (just aliases so far)
 end

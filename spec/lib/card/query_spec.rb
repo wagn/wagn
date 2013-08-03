@@ -390,20 +390,12 @@ describe Card::Query do
     end
 
     it "should find plus cards for _left" do
-      # this test fails in mysql when running the full suite
-      # (although not when running the individual test )
-      #pending
       Card::Query.new( :plus=>"_left", :context=>"A+B" ).run.map(&:name).sort.should == A_JOINEES
     end
 
     it "should find plus cards for _right" do
-      # this test fails in mysql when running the full suite
-      # (although not when running the individual test )
-      #pending
       Card::Query.new( :plus=>"_right", :context=>"C+A" ).run.map(&:name).sort.should == A_JOINEES
     end
-
-    #I may have just fixed these.  if not please recomment and set back to pending - efm
 
   end
 

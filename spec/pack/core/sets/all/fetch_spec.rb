@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
 
-describe Card do
+describe Card::Set::All::Fetch do
   describe ".fetch" do
     it "returns and caches existing cards" do
       Card.fetch("A").should be_instance_of(Card)

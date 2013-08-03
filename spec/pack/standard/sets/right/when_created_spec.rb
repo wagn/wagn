@@ -2,5 +2,7 @@
 require 'wagn/spec_helper'
 
 describe Card::Set::Right::WhenCreated do
-  # SPECSTUB (low priority)
+  it 'should produce a text date' do
+    render_card( :core, :name=>'A+*when created' ).should =~ /\w+ \d+/
+  end
 end

@@ -2,5 +2,7 @@
 require 'wagn/spec_helper'
 
 describe Card::Set::Type::LayoutType do
-  # SPECSTUB (low priority)
+  it "should include Html card methods" do
+    Card.new( :type=>'Layout' ).clean_html?.should be_false
+  end
 end

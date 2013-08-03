@@ -51,7 +51,7 @@ describe Card::Set::Type::Pointer do
   describe "watching" do
     it "not break on permissions" do
       watchers = Card.fetch "Home+*watchers", :new=>{}
-      watchers.typecode.should == :pointer
+      watchers.type_code.should == :pointer
       watchers << Account.current_id
       assert_equal '[[Joe User]]', watchers.content
     end

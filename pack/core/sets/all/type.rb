@@ -8,8 +8,8 @@ def get_type_id args={}
   return if args[:type_id] # type_id was set explicitly.  no need to set again.
 
   type_id = case
-    when args[:typecode]
-      if code=args[:typecode]
+    when args[:type_code]
+      if code=args[:type_code]
         Card::Codename[code] || ( c=Card[code] and c.id)
       end
     when args[:type]
@@ -20,7 +20,7 @@ def get_type_id args={}
   case type_id
   when :noop
   when false, nil
-    errors.add :type, "#{args[:type] || args[:typecode]} is not a known type."
+    errors.add :type, "#{args[:type] || args[:type_code]} is not a known type."
   else
     return type_id
   end
@@ -35,7 +35,7 @@ def type_card
   Card[ type_id.to_i ]
 end
 
-def typecode # FIXME - change to "type_code"
+def type_code # FIXME - change to "type_code"
   Card::Codename[ type_id.to_i ]
 end
 

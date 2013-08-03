@@ -9,7 +9,7 @@ describe Card::Set::All::Rules do
   describe "setting data setup" do
     it "should make Set of +*type" do
       Card.create! :name=>"SpeciForm", :type=>'Cardtype'
-      Card.create!( :name=>"SpeciForm+*type" ).typecode.should == :set
+      Card.create!( :name=>"SpeciForm+*type" ).type_code.should == :set
     end
   end
 

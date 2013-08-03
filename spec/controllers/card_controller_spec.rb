@@ -74,7 +74,7 @@ describe CardController do
       }
       assert_response 302
       c=Card["NewCardFoo"]
-      c.typecode.should == :basic
+      c.type_code.should == :basic
       c.content.should == "Bananas"
     end
 
@@ -84,7 +84,7 @@ describe CardController do
       assigns['card'].should_not be_nil
       assert_response 200
       c=Card["Editor"]
-      c.typecode.should == :cardtype
+      c.type_code.should == :cardtype
     end
 
     it "pulls deleted cards from trash" do
@@ -93,7 +93,7 @@ describe CardController do
       post :create, :card=>{"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
       assert_response 302
       c=Card["Problem"]
-      c.typecode.should == :phrase
+      c.type_code.should == :phrase
     end
 
     context "multi-create" do
@@ -207,7 +207,7 @@ describe CardController do
         assert_response :success, "response should succeed"  #really?? how come this is ok?
       end
       
-      it "new with typecode" do
+      it "new with type_code" do
         post :read, :card => {:type=>'Date'}, :view=>'new'
         assert_response :success, "response should succeed"
         assert_equal Card::DateID, assigns['card'].type_id, "@card type should == Date"
@@ -235,7 +235,7 @@ describe CardController do
   describe "#read file" do
     before do
       Account.as_bot do
-        Card.create :name => "mao2", :typecode=>'image', :attach=>File.new("#{Rails.root}/test/fixtures/mao2.jpg")
+        Card.create :name => "mao2", :type_code=>'image', :attach=>File.new("#{Rails.root}/test/fixtures/mao2.jpg")
         Card.create :name => 'mao2+*self+*read', :content=>'[[Administrator]]'
       end
     end
@@ -313,10 +313,10 @@ describe CardController do
         Card["Newt"].should_not be_nil
       end
 
-      it "update typecode" do
+      it "update type_code" do
         xhr :post, :update, :id=>"~#{@simple_card.id}", :card=>{ :type=>"Date" }
         assert_response :success, "changed card type"
-        Card['Sample Basic'].typecode.should == :date
+        Card['Sample Basic'].type_code.should == :date
       end
     end
 
@@ -366,7 +366,7 @@ describe CardController do
     #    #assert_equal "boo", assigns['card'].content
     #    assert_equal "<br/>", assigns['card'].content
     #    assert_response :success, "changed card type"
-    #    assert_equal :cardtype_a", Card['Sample Basic'].typecode
+    #    assert_equal :cardtype_a", Card['Sample Basic'].type_code
     #  end
     #
   end

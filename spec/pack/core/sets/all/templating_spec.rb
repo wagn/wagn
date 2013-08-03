@@ -62,7 +62,7 @@ describe Card::Set::All::Templating do
     end
 
     it "should have default cardtype" do
-      @jb.typecode.should == :date
+      @jb.type_code.should == :date
     end
 
     it "should have default content" do

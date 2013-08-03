@@ -172,31 +172,29 @@ module Card::Set
       trait_card_attr = "#{trait}_card".to_sym
       #Rails.logger.warn "second definition of #{trait} at: #{caller[0]}" if mod_traits[trait_sym]
 
-      mod.class_eval do
-        define_method trait_card_attr do
-          new_opts = options[:type] ? {:type=>options[:type]} : {}
-          new_opts.merge!( {:content => options[:default]} ) if options[:default]
-          trait_var "@#{trait_card_attr}" do
-            fetch :trait=>trait_sym, :new=>new_opts
+      define_method trait_card_attr do
+        new_opts = options[:type] ? {:type=>options[:type]} : {}
+        new_opts.merge!( {:content => options[:default]} ) if options[:default]
+        trait_var "@#{trait_card_attr}" do
+          fetch :trait=>trait_sym, :new=>new_opts
+        end
+      end
+
+      if options[:reader]
+        define_method trait do
+          trait_var "@#{trait}" do
+            send( trait_card_attr ).content
           end
         end
+      end
 
-        if options[:reader]
-          define_method trait do
-            trait_var "@#{trait}" do
-              send( trait_card_attr ).content
-            end
-          end
-        end
+      if options[:writer]
+        define_method "#{trait}=" do |value|
+          card = send trait_card_attr
+          self.cards ||= {}
+          self.cards[card.name] = {:type_id => card.type_id, :content=>value }
 
-        if options[:writer]
-          define_method "#{trait}=" do |value|
-            card = send trait_card_attr
-            self.cards ||= {}
-            self.cards[card.name] = {:type_id => card.type_id, :content=>value }
-
-            instance_variable_set "@#{trait}", value
-          end
+          instance_variable_set "@#{trait}", value
         end
       end
 

@@ -157,39 +157,39 @@ module Card::Set
     set_name =~ /^Card::Set::/ ? set_name : 'Card::Set::' + set_name
   end
 
-  def add_traits args, options
-    raise "Can't define card traits on all set" if Wagn::Loader.current_set_module == Card
-
+  def get_traits mod
     Card::Set.traits ||= {}
-    mod_traits = Card::Set.traits[Wagn::Loader.current_set_module]
-    if mod_traits.nil?
-      mod_traits = Card::Set.traits[Wagn::Loader.current_set_module] = {}
-    end
+    Card::Set.traits[mod] or Card::Set.traits[mod] = {}
+  end
+
+  def add_traits args, options
+    mod  = Wagn::Loader.current_set_module
+    raise "Can't define card traits on all set" if mod == Card
+    
+    mod_traits = get_traits mod
     args.each do |trait|
       trait_sym = trait.to_sym
       trait_card_attr = "#{trait}_card".to_sym
       #Rails.logger.warn "second definition of #{trait} at: #{caller[0]}" if mod_traits[trait_sym]
 
-      Wagn::Loader.current_set_module.class_eval do
+      mod.class_eval do
         define_method trait_card_attr do
           new_opts = options[:type] ? {:type=>options[:type]} : {}
           new_opts.merge!( {:content => options[:default]} ) if options[:default]
-          card = trait_var("@#{trait_card_attr}") do fetch(:trait=>trait_sym, :new=>new_opts) end
-          card
-        end
-      end
-
-      if options[:reader]
-        Wagn::Loader.current_set_module.class_eval do
-          define_method trait do
-            ( instance_variable_get( "@#{trait}" ) ||
-              instance_variable_set( "@#{trait}", send(trait_card_attr).content ) )
+          trait_var "@#{trait_card_attr}" do
+            fetch :trait=>trait_sym, :new=>new_opts
           end
         end
-      end
 
-      if options[:writer]
-        Wagn::Loader.current_set_module.class_eval do
+        if options[:reader]
+          define_method trait do
+            trait_var "@#{trait}" do
+              send( trait_card_attr ).content
+            end
+          end
+        end
+
+        if options[:writer]
           define_method "#{trait}=" do |value|
             card = send trait_card_attr
             self.cards ||= {}

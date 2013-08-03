@@ -26,7 +26,7 @@ class Card
       def view view, *args, &final
         view = view.to_name.key.to_sym
         if block_given?
-          define_view view, (args[0] || {}), &final
+          define_view view, args[0], &final
         else
           opts = Hash===args[0] ? args.shift : nil
           alias_view view, opts, args.shift
@@ -35,24 +35,21 @@ class Card
       
 
       def define_view view, opts, &final
+        opts ||= {}
+        opts.merge!( Wagn::Loader.current_set_opts || {} )
+        
         extract_class_vars view, opts
-        if set_opts = Wagn::Loader.current_set_opts
-          opts.merge! set_opts
-        end        
-
         view_key = get_set_key view, opts
-        class_eval { define_method "_final_#{view_key}", &final }
-        subset_views[view] = true if !opts.empty?
+        
+        define_method "_final_#{view_key}", &final
 
         if !method_defined? "render_#{view}"
-          class_eval do
-            define_method "_render_#{view}" do |*a|
-              send_final_render_method view, *a
-            end
+          define_method "_render_#{view}" do |*a|
+            send_final_render_method view, *a
+          end
 
-            define_method "render_#{view}" do |*a|
-              send "_render_#{ ok_view view, *a }", *a
-            end
+          define_method "render_#{view}" do |*a|
+            send "_render_#{ ok_view view, *a }", *a
           end
         end
       end
@@ -101,6 +98,10 @@ class Card
             view_tags[view] ||= {}
             view_tags[view][tag] = true
           end
+        end
+        
+        if !opts.empty?
+          subset_views[view] = true
         end
       end
       

@@ -17,7 +17,6 @@ format :html do
   end
 end
 
-
 include Card::Set::Type::Basic
 
 def on_type_change

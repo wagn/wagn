@@ -12,7 +12,6 @@ end
 
 describe Card do
   before do
-    #Account.as(Card::WagnBotID) # FIXME: as without a block is deprecated
     @account_card = Card['sara'].fetch(:trait=>:account)
   end
 

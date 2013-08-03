@@ -102,7 +102,7 @@ describe Card::Set::All::Fetch do
 
     describe "preferences" do
       before do
-        Account.as(Card::WagnBotID) # FIXME: as without a block is deprecated
+        Account.current_id = Card::WagnBotID
       end
 
       it "prefers db cards to pattern virtual cards" do

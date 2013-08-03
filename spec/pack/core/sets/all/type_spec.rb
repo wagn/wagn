@@ -21,7 +21,7 @@ describe Card::Set::All::Type do
     end
   end
   
-  describe 'card of wagneered type' do
+  describe 'card with wagneered type' do
     before do
       Account.as_bot do
         @type = Card.create! :name=>'Hat', :type=>'Cardtype'

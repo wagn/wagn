@@ -4,7 +4,7 @@ require 'wagn/spec_helper'
 describe Card::Reference do
 
   before do
-    Account.as(Card::WagnBotID) # FIXME: as without a block deprecated
+    Account.current_id = Card::WagnBotID
   end
 
   describe "references on hard templated cards should get updated" do

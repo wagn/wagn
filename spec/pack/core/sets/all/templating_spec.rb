@@ -1,8 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
 
-
-describe Card do
+describe Card::Set::All::Templating do
 
   describe "#hard_templatees" do
     it "for User+*type+*structure should return all Users" do
@@ -19,93 +18,88 @@ describe Card do
     #TESTME
   end
 
-end
 
-
-
-
-
-describe Card, "with right content template" do
-  before do
-    Account.as_bot do
-      @bt = Card.create! :name=>"birthday+*right+*structure", :type=>'Date', :content=>"Today!"
+  describe "with right structure" do
+    before do
+      Account.as_bot do
+        @bt = Card.create! :name=>"birthday+*right+*structure", :type=>'Date', :content=>"Today!"
+      end
+      @jb = Card.create! :name=>"Jim+birthday"
     end
-    @jb = Card.create! :name=>"Jim+birthday"
+
+    it "should have default content" do
+      Card::Format.new(@jb)._render_raw.should == 'Today!'
+    end
+
+    it "should change type and content with template" do
+      Account.as_bot do
+        @bt.content = "Tomorrow"
+        @bt.type = 'Phrase'
+        @bt.save!
+      end
+      jb = @jb.refresh force=true
+      Card::Format.new( jb ).render(:raw).should == 'Tomorrow'
+      jb.type_id.should == Card::PhraseID    
+    end
+  
+    it "should have type and content overridden by (new) type_plus_right set" do
+      Account.as_bot do
+        Card.create! :name=>'Basic+birthday+*type plus right+*structure', :type=>'PlainText', :content=>'Yesterday'
+      end
+      jb = @jb.refresh force=true
+      jb.raw_content.should == 'Yesterday'
+      jb.type_id.should == Card::PlainTextID
+    end
   end
 
-  it "should have default content" do
-    Card::Format.new(@jb)._render_raw.should == 'Today!'
+
+  describe "with right default" do
+    before do
+      Account.as_bot  do
+        @bt = Card.create! :name=>"birthday+*right+*default", :type=>'Date', :content=>"Today!"
+      end
+      @jb = Card.create! :name=>"Jim+birthday"
+    end
+
+    it "should have default cardtype" do
+      @jb.typecode.should == :date
+    end
+
+    it "should have default content" do
+      Card['Jim+birthday'].content.should == 'Today!'
+    end
   end
 
-  it "should change type and content with template" do
-    Account.as_bot do
-      @bt.content = "Tomorrow"
-      @bt.type = 'Phrase'
-      @bt.save!
+  describe "with type structure" do
+    before do
+      Account.as_bot do
+        @dt = Card.create! :name=>"Date+*type+*structure", :type=>'Basic', :content=>'Tomorrow'
+      end
     end
-    jb = @jb.refresh force=true
-    Card::Format.new( jb ).render(:raw).should == 'Tomorrow'
-    jb.type_id.should == Card::PhraseID    
+    
+    it "should return templated content even if content is passed in" do
+      Card::Format.new(Card.new(:type=>'Date', :content=>''))._render(:raw).should == 'Tomorrow'
+    end
+    
+    describe 'and right structure' do
+      before do
+        Account.as_bot do
+          Card.create :name=>"Jim+birthday", :content=>'Yesterday'
+          @bt = Card.create! :name=>"birthday+*right+*structure", :type=>'Date', :content=>"Today"
+        end
+      end
+      
+      it "*right setting should override *type setting" do
+        Card['Jim+birthday'].raw_content.should == 'Today'
+      end
+
+      it "should defer to normal content when *structure rule's content is (exactly) '_self'" do
+        Account.as_bot { Card.create! :name=>'Jim+birthday+*self+*structure', :content=>'_self' }
+        Card['Jim+birthday'].raw_content.should == 'Yesterday'
+      end
+    end
   end
   
-  it "should have type and content overridden by (new) type_plus_right set" do
-    Account.as_bot do
-      Card.create! :name=>'Basic+birthday+*type plus right+*structure', :type=>'PlainText', :content=>'Yesterday'
-    end
-    jb = @jb.refresh force=true
-    jb.raw_content.should == 'Yesterday'
-    jb.type_id.should == Card::PlainTextID
-  end
 end
-
-
-describe Card, "with right default template" do
-  before do
-    Account.as_bot  do
-      @bt = Card.create! :name=>"birthday+*right+*default", :type=>'Date', :content=>"Today!"
-    end
-    @jb = Card.create! :name=>"Jim+birthday"
-  end
-
-  it "should have default cardtype" do
-    @jb.typecode.should == :date
-  end
-
-  it "should have default content" do
-    Card['Jim+birthday'].content.should == 'Today!'
-  end
-end
-
-describe Card, "templating" do
-  before do
-    Account.as_bot do
-      Card.create :name=>"Jim+birthday", :content=>'Yesterday'
-      @dt = Card.create! :name=>"Date+*type+*structure", :type=>'Basic', :content=>'Tomorrow'
-      @bt = Card.create! :name=>"birthday+*right+*structure", :type=>'Date', :content=>"Today"
-    end
-  end
-
-  it "*right setting should override *type setting" do
-    Card['Jim+birthday'].raw_content.should == 'Today'
-  end
-
-  it "should defer to normal content when *structure rule's content is (exactly) '_self'" do
-    Account.as_bot { Card.create! :name=>'Jim+birthday+*self+*structure', :content=>'_self' }
-    Card['Jim+birthday'].raw_content.should == 'Yesterday'
-  end
-end
-
-describe Card, "with type content template" do
-  before do
-    Account.as_bot do
-      @dt = Card.create! :name=>"Date+*type+*structure", :type=>'Basic', :content=>'Tomorrow'
-    end
-  end
-
-  it "should return templated content even if content is passed in" do
-    Card::Format.new(Card.new(:type=>'Date', :content=>''))._render(:raw).should == 'Tomorrow'
-  end
-end
-
 
 

@@ -162,15 +162,13 @@ describe Card::Chunk::Include, "Inclusion" do
       end
     end
 
-
+    #FIXME - should move code and test to core_ext or some such
     it 'Hash.new_from_semicolon_attr_list should work' do
       Hash.new_from_semicolon_attr_list("").should == {}
       Hash.new_from_semicolon_attr_list(nil).should == {}
       Hash.new_from_semicolon_attr_list("a:b;c:4"  ).should == {:a=>'b', :c=>'4'}
       Hash.new_from_semicolon_attr_list("d:b;e:4; ").should == {:d=>'b', :e=>'4'}
     end
-
-
 
   end
 

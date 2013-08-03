@@ -5,23 +5,36 @@ require 'wagn/spec_helper'
 describe Card::Name do
 
   describe "#key" do
+    
+    it "should lowercase and underscore" do
+      "This Name".to_name.key.should == "this_name"
+    end
+    
     it "should remove spaces" do
       "this    Name".to_name.key.should == "this_name"
     end
 
-    it "should have initial _ for initial cap" do
-      "This Name".to_name.key.should == "this_name"
-    end
-
-    it "should have initial _ for initial cap" do
-      "_This Name".to_name.key.should == "this_name"
+    describe "underscores" do
+      
+      it "should be treated like spaces" do
+        'weird_ combo'.to_name.key.should == 'weird  combo'.to_name.key
+      end
+      
+      it "should not impede pluralization checks" do
+        'Mamas_and_Papas'.to_name.key.should == "Mamas and Papas".to_name.key
+      end
+      
+      it "should be removed when before first word character" do
+        "_This Name".to_name.key.should == "this_name"
+      end
+      
     end
 
     it "should singularize" do
       "ethans".to_name.key.should == "ethan"
     end
 
-    it "should underscore" do
+    it "should change CamelCase to snake case" do
       "ThisThing".to_name.key.should == "this_thing"
     end
 

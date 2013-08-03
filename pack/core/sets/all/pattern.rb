@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
 MODULES={}
 
-
 module ClassMethods
+  
   def method_key opts
     set_patterns.each do |pclass|
       if !pclass.opt_keys.map(&opts.method(:has_key?)).member? false;

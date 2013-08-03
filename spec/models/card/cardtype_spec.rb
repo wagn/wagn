@@ -9,10 +9,6 @@ end
 
 describe "Card (Cardtype)" do
 
-  before do
-    Account.as :joe_user
-  end
-
   it "should not allow cardtype remove when instances present" do
     Card.create :name=>'City', :type=>'Cardtype'
     city = Card.fetch('City')
@@ -164,11 +160,9 @@ describe User, "Joe User" do
   before do
     Account.as_bot do
       @r3 = Card['r3']
-
       Card.create :name=>'Cardtype F+*type+*create', :type=>'Pointer', :content=>'[[r3]]'
     end
 
-    Account.as :joe_user
     @user = Account.user
     @ucard = Card[@user.card_id]
     @type_names = Account.createable_types

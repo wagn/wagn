@@ -190,6 +190,7 @@ namespace :wagn do
 
     desc "load bootstrap fixtures into db"
     task :load => :environment do
+      #FIXME - shouldn't we be more standard and use seed.rb for this code?
       Rake.application.options.trace = true
       puts "bootstrap load starting"
       require 'active_record/fixtures'

@@ -1,5 +1,0 @@
-|open|/types/search/recent||
-|pause|5000||
-|verifyTextPresent|type_a_content||
-|verifyTextPresent|type_e_content||
-|verifyTextPresent|type_b_content||

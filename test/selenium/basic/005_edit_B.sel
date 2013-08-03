@@ -1,9 +1,0 @@
-|open|/wagn/B||
-|pause|250||
-|click|link=Edit||
-|pause|500||
-|selectFrame|main_1-iframe||
-|type|css=body|Beta Tester|
-|selectFrame|relative=top||
-|click|//input[@class='save-card-button']||
-|verifyTextPresent|Beta Tester||

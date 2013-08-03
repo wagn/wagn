@@ -69,7 +69,6 @@ end
 
 describe "Trunk watcher notificatione" do
   before do
-    Account.current_id = Card['joe user'].id
     Timecop.travel(Wagn::Future::STAMP)  # make sure we're ahead of all the test data
 
     Card.create :type=>'Book', :name=>'Ulysses'

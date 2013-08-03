@@ -303,7 +303,6 @@ describe CardController do
       end
       
       it "rename without update references should work" do
-        Account.as 'joe_user'
         f = Card.create! :type=>"Cardtype", :name=>"Apple"
         xhr :post, :update, :id => "~#{f.id}", :card => {
           :name => "Newt",
@@ -315,7 +314,6 @@ describe CardController do
       end
 
       it "update typecode" do
-        Account.as 'joe_user'
         xhr :post, :update, :id=>"~#{@simple_card.id}", :card=>{ :type=>"Date" }
         assert_response :success, "changed card type"
         Card['Sample Basic'].typecode.should == :date

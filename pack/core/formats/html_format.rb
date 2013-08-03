@@ -4,7 +4,6 @@ class Card::HtmlFormat < Card::Format
   
   cattr_accessor :default_menu
   attr_accessor  :options_need_save, :start_time, :skip_autosave
-#    DEFAULT_ITEM_VIEW = :closed  #FIXME: It can't access this default
 
   # builtin layouts allow for rescue / testing
   LAYOUTS = Wagn::Loader.load_layouts.merge 'none' => '{{_main}}'
@@ -59,11 +58,10 @@ class Card::HtmlFormat < Card::Format
 
   ]
 
-  INCLUSION_DEFAULTS_BY_MODE = {
+  INCLUSION_DEFAULTS = {
     :layout => { :view => :core },
     :main   => { :view => :content },
-    :normal => { :view => :content },
-    :item   => { :view => :closed }
+    :normal => { :view => :content }
   }
   
   def self.transactional?
@@ -71,8 +69,11 @@ class Card::HtmlFormat < Card::Format
   end
   
   def get_inclusion_defaults
-#    warn "getting inclusion defaults for #{card.name}. mode = #{@mode}"
-    INCLUSION_DEFAULTS_BY_MODE[@mode] || {}
+    INCLUSION_DEFAULTS[@mode] || {}
+  end
+  
+  def default_item_view
+    :closed
   end
 
   def get_layout_content(args)
@@ -154,7 +155,7 @@ class Card::HtmlFormat < Card::Format
 
   def edit_slot args={}
     if card.hard_template
-      _render_raw.scan( /\{\{[^\}]*\}\}/ ).map do |inc|
+      _render_raw.scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc|
         process_content( inc ).strip
       end.join
 #        raw _render_core(args)

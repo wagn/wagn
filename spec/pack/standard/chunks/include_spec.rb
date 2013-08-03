@@ -1,13 +1,26 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/pack_spec_helper'
+require 'wagn/spec_helper'
 
 describe Card::Chunk::Include, "Inclusion" do
   include ActionView::Helpers::TextHelper
-  include MySpecHelpers
 
-  context "syntax" do
+  context "syntax parsing" do
     before do
       @class= Card::Chunk::Include
+    end
+    
+    it "should ignore invisible comments" do
+      render_content("{{## now you see nothing}}").should==''
+    end
+
+    it "should handle visible comments" do
+      render_content("{{# now you see me}}").should == '<!-- # now you see me -->'
+      render_content("{{# -->}}").should == '<!-- # --&gt; -->'
+    end
+    
+    it "should ignore empty inclusions" do
+      render_content('{{}}').should == ''
+      render_content('{{ }}').should == ''
     end
     
     it "should handle no pipes" do
@@ -17,10 +30,15 @@ describe Card::Chunk::Include, "Inclusion" do
       instance.options.key?(:view).should == false
     end
     
+    it "should strip the name" do
+      @class.new( @class.full_match( '{{ toy }}') , nil ).name.should == 'toy'
+    end
+    
     it "should handle single pipe" do
-      options = @class.new( @class.full_match('{{toy|link}}'), nil ).options
+      options = @class.new( @class.full_match('{{toy|view:link;hide:me}}'), nil ).options
       options[:inc_name].should == 'toy'
       options[:view].should == 'link'
+      options[:hide].should == 'me'
       options.key?(:items).should == false
     end
     
@@ -48,10 +66,6 @@ describe Card::Chunk::Include, "Inclusion" do
   end
 
   context "rendering" do
-
-    before do
-      Account.current_id= Card['joe_user'].id
-    end
 
     it "should handle absolute names" do
       alpha = newcard 'Alpha', "Pooey"
@@ -111,23 +125,21 @@ describe Card::Chunk::Include, "Inclusion" do
     end
 
     it "should handle structured cards" do
-       age = newcard('age')
-       template = Card['*template']
-       specialtype = Card.create :typecode=>'Cardtype', :name=>'SpecialType'
-
-       specialtype_template = specialtype.fetch(:trait=>:type,:new=>{}).fetch(:trait=>:structure,:new=>{})
-       specialtype_template.content = "{{#{Card::Name.joint}age}}"
-       Account.as_bot { specialtype_template.save! }
-       assert_equal "{{#{Card::Name.joint}age}}", Card::Format.new(specialtype_template).render_raw
-
-       wooga = Card.create! :name=>'Wooga', :type=>'SpecialType'
-       wooga_age = Card.create!( :name=>"#{wooga.name}#{Card::Name.joint}age", :content=> "39" )
-       Card::Format.new(wooga_age).render_core.should == "39"
-       #warn "cards #{wooga.inspect}, #{wooga_age.inspect}"
-       wooga_age.includers.map(&:name).should == ['Wooga']
-     end
-
-
+      age = newcard('age')
+      template = Card['*template']
+      specialtype = Card.create :typecode=>'Cardtype', :name=>'SpecialType'
+    
+      specialtype_template = specialtype.fetch(:trait=>:type,:new=>{}).fetch(:trait=>:structure,:new=>{})
+      specialtype_template.content = "{{#{Card::Name.joint}age}}"
+      Account.as_bot { specialtype_template.save! }
+      assert_equal "{{#{Card::Name.joint}age}}", Card::Format.new(specialtype_template).render_raw
+    
+      wooga = Card.create! :name=>'Wooga', :type=>'SpecialType'
+      wooga_age = Card.create!( :name=>"#{wooga.name}#{Card::Name.joint}age", :content=> "39" )
+      Card::Format.new(wooga_age).render_core.should == "39"
+      #warn "cards #{wooga.inspect}, #{wooga_age.inspect}"
+      wooga_age.includers.map(&:name).should == ['Wooga']
+    end
 
     it "should handle shading" do
       alpha = newcard 'Alpha', "Pooey"
@@ -150,8 +162,13 @@ describe Card::Chunk::Include, "Inclusion" do
       end
     end
 
-
-
+    #FIXME - should move code and test to core_ext or some such
+    it 'Hash.new_from_semicolon_attr_list should work' do
+      Hash.new_from_semicolon_attr_list("").should == {}
+      Hash.new_from_semicolon_attr_list(nil).should == {}
+      Hash.new_from_semicolon_attr_list("a:b;c:4"  ).should == {:a=>'b', :c=>'4'}
+      Hash.new_from_semicolon_attr_list("d:b;e:4; ").should == {:d=>'b', :e=>'4'}
+    end
 
   end
 

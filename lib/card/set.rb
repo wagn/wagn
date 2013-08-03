@@ -2,7 +2,7 @@
 
 module Card::Set
 
-  mattr_accessor :modules_by_set
+  mattr_accessor :modules_by_set, :traits
   @@modules_by_set = {}
 
 
@@ -124,18 +124,11 @@ module Card::Set
     return nil if NameError ===e
   end
 
-  private
-
-  def self.prepend_base set_name
-    set_name =~ /^Card::Set::/ ? set_name : 'Card::Set::' + set_name
-  end
 
   #
   # ActiveCard support: accessing plus cards as attributes
   #
 
-
-  mattr_accessor :traits
 
   def card_accessor *args
     options = args.extract_options!
@@ -153,6 +146,16 @@ module Card::Set
   end
 
   private
+
+  def self.clean_empty_modules
+    modules_by_set.each do |mod_name, mod|
+      modules_by_set.delete mod_name if mod.instance_methods.empty?
+    end
+  end
+  
+  def self.prepend_base set_name
+    set_name =~ /^Card::Set::/ ? set_name : 'Card::Set::' + set_name
+  end
 
   def add_traits args, options
     raise "Can't define card traits on all set" if Wagn::Loader.current_set_module == Card
@@ -202,10 +205,6 @@ module Card::Set
 
   end
 
-  def self.clean_empty_modules
-    modules_by_set.each do |mod_name, mod|
-      modules_by_set.delete mod_name if mod.instance_methods.empty?
-    end
-  end
+
 end
 

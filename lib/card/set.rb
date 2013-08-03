@@ -47,22 +47,11 @@ module Card::Set
   def event event, opts={}, &final
     opts[:on] = [:create, :update ] if opts[:on] == :save
 
-    mod = self.ancestors.first
-    mod_name = mod.name || Wagn::Loader.current_set_name
-    mod = case
-      when mod == Card                           ; Card
-      when mod_name =~ /^Card::Set::All::/       ; Card
-      when csm = Wagn::Loader.current_set_module ; csm
-      else
-        # needed for explicit loading
-        Card::Set[mod.name]= mod
-        mod
-      end
-
+    mod = get_module
     Card.define_callbacks event
 
     mod.class_eval do
-      include ActiveSupport::Callbacks
+#      include ActiveSupport::Callbacks
 
       final_method = "#{event}_without_callbacks" #should be private?
       define_method final_method, &final
@@ -70,27 +59,14 @@ module Card::Set
       define_method event do #|*a, &block|
         #Rails.logger.info "running #{event} for #{name}, Meth: #{final_method}"
         run_callbacks event do
-          action = self.instance_variable_get(:@action)
-          if !opts[:on] or Array.wrap(opts[:on]).member? action
+          if event_applies? opts
             send final_method #, :block=>block
           end
         end
       end
     end
-
-
-    [:before, :after, :around].each do |kind|
-      if object_method = opts[kind]
-        options = {:prepend=>true } 
-        if mod != Card
-          parts = mod_name.split '::'
-          set_class_key, anchor_or_placeholder = parts[-2].underscore.to_sym, parts[-1].underscore
-          set_key = Card.method_key( set_class_key => anchor_or_placeholder )
-          options.merge!( { :if => proc do |c| c.method_keys.member? set_key end } )           
-        end
-        Card.class_eval { set_callback object_method, kind, event, options }
-      end
-    end
+    
+    set_event_callbacks event, mod, opts
   end
 
 
@@ -157,6 +133,36 @@ module Card::Set
     set_name =~ /^Card::Set::/ ? set_name : 'Card::Set::' + set_name
   end
 
+  def set_event_callbacks event, mod, opts
+    [:before, :after, :around].each do |kind|
+      if object_method = opts[kind]
+        options = {:prepend=>true } 
+        if mod != Card
+          parts = mod.name.split '::'
+          set_class_key, anchor_or_placeholder = parts[-2].underscore.to_sym, parts[-1].underscore
+          set_key = Card.method_key( set_class_key => anchor_or_placeholder )
+          options.merge!( { :if => proc do |c| c.method_keys.member? set_key end } )           
+        end
+        Card.class_eval { set_callback object_method, kind, event, options }
+      end
+    end
+  end
+
+  def get_module
+    mod = self.ancestors.first
+    mod_name = mod.name || Wagn::Loader.current_set_name
+    
+    case
+    when mod == Card                           ; Card
+    when mod_name =~ /^Card::Set::All::/       ; Card
+    when csm = Wagn::Loader.current_set_module ; csm
+    else
+      # needed for explicit loading
+      Card::Set[mod.name]= mod
+      mod
+    end
+  end
+
   def get_traits mod
     Card::Set.traits ||= {}
     Card::Set.traits[mod] or Card::Set.traits[mod] = {}
@@ -165,44 +171,46 @@ module Card::Set
   def add_traits args, options
     mod  = Wagn::Loader.current_set_module
     raise "Can't define card traits on all set" if mod == Card
-    
     mod_traits = get_traits mod
+    
+    new_opts = options[:type] ? {:type=>options[:type]} : {}
+    new_opts.merge!( {:content => options[:default]} ) if options[:default]
+    
     args.each do |trait|
-      trait_sym = trait.to_sym
-      trait_card_attr = "#{trait}_card".to_sym
-      #Rails.logger.warn "second definition of #{trait} at: #{caller[0]}" if mod_traits[trait_sym]
+      
+      define_trait_card trait, new_opts
+      define_trait_reader trait if options[:reader]
+      define_trait_writer trait if options[:writer]
 
-      define_method trait_card_attr do
-        new_opts = options[:type] ? {:type=>options[:type]} : {}
-        new_opts.merge!( {:content => options[:default]} ) if options[:default]
-        trait_var "@#{trait_card_attr}" do
-          fetch :trait=>trait_sym, :new=>new_opts
-        end
-      end
-
-      if options[:reader]
-        define_method trait do
-          trait_var "@#{trait}" do
-            send( trait_card_attr ).content
-          end
-        end
-      end
-
-      if options[:writer]
-        define_method "#{trait}=" do |value|
-          card = send trait_card_attr
-          self.cards ||= {}
-          self.cards[card.name] = {:type_id => card.type_id, :content=>value }
-
-          instance_variable_set "@#{trait}", value
-        end
-      end
-
-      mod_traits[trait_sym] = options
+      mod_traits[trait.to_sym] = options
     end
 
   end
+  
+  def define_trait_card trait, opts
+    define_method "#{trait}_card" do
+      trait_var "@#{trait}_card" do
+        fetch :trait=>trait.to_sym, :new=>opts
+      end
+    end
+  end
+  
+  def define_trait_reader trait
+    define_method trait do
+      trait_var "@#{trait}" do
+        send( "#{trait}_card" ).content
+      end
+    end
+  end
 
+  def define_trait_writer trait
+    define_method "#{trait}=" do |value|
+      card = send "#{trait}_card"
+      self.cards ||= {}
+      self.cards[card.name] = {:type_id => card.type_id, :content=>value }
+      instance_variable_set "@#{trait}", value
+    end
+  end
 
 end
 

@@ -44,3 +44,6 @@ def rescue_event e
   raise e
 end
 
+def event_applies? opts
+  !opts[:on] or Array.wrap(opts[:on]).member? @action
+end

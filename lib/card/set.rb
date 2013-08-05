@@ -51,16 +51,15 @@ module Card::Set
     Card.define_callbacks event
 
     mod.class_eval do
-#      include ActiveSupport::Callbacks
+#      include ActiveSupport::Callbacks # may need this when callbacks are truly by module
 
       final_method = "#{event}_without_callbacks" #should be private?
       define_method final_method, &final
 
-      define_method event do #|*a, &block|
-        #Rails.logger.info "running #{event} for #{name}, Meth: #{final_method}"
+      define_method event do
         run_callbacks event do
           if event_applies? opts
-            send final_method #, :block=>block
+            send final_method
           end
         end
       end
@@ -69,7 +68,7 @@ module Card::Set
     set_event_callbacks event, mod, opts
   end
 
-
+  #not sure these shortcuts are worth it.
   def self.[]= set_name, value
     modules_by_set[prepend_base set_name] = value
   end
@@ -169,22 +168,20 @@ module Card::Set
   end
 
   def add_traits args, options
-    mod  = Wagn::Loader.current_set_module
+    mod  = get_module
     raise "Can't define card traits on all set" if mod == Card
     mod_traits = get_traits mod
     
     new_opts = options[:type] ? {:type=>options[:type]} : {}
     new_opts.merge!( {:content => options[:default]} ) if options[:default]
     
-    args.each do |trait|
-      
+    args.each do |trait|   
       define_trait_card trait, new_opts
       define_trait_reader trait if options[:reader]
       define_trait_writer trait if options[:writer]
 
       mod_traits[trait.to_sym] = options
     end
-
   end
   
   def define_trait_card trait, opts

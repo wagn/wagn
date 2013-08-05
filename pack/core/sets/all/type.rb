@@ -35,7 +35,7 @@ def type_card
   Card[ type_id.to_i ]
 end
 
-def type_code # FIXME - change to "type_code"
+def type_code
   Card::Codename[ type_id.to_i ]
 end
 

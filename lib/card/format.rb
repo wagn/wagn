@@ -32,7 +32,6 @@ class Card
           alias_view view, opts, args.shift
         end
       end
-      
 
       def define_view view, opts, &final
         opts ||= {}
@@ -55,7 +54,6 @@ class Card
       end
 
       def alias_view alias_view, opts, referent_view=nil
-
         subset_views[alias_view] = true if opts && !opts.empty?
 
         referent_view ||= alias_view
@@ -69,7 +67,6 @@ class Card
           end
         end
       end
-
 
       def new card, opts={}
         klass = self != Format ? self : get_format( (opts[:format] || :html).to_sym )
@@ -115,18 +112,8 @@ class Card
       end
     end
     
-    def send_final_render_method view, *a
-      a = [{}] if a.empty?
-      if final_method = view_method(view)
-        with_inclusion_mode view do
-          send final_method, *a
-        end
-      else
-        unsupported_view view
-      end
-    rescue Exception=>e
-      rescue_view e, view
-    end
+    
+    #~~~~~ INSTANCE METHODS
 
     def initialize card, opts={}
       @card = card
@@ -228,6 +215,19 @@ class Card
     def _optional_render view, args, default_hidden=false
       args[:allowed] = true
       optional_render view, args, default_hidden
+    end
+
+    def send_final_render_method view, *a
+      a = [{}] if a.empty?
+      if final_method = view_method(view)
+        with_inclusion_mode view do
+          send final_method, *a
+        end
+      else
+        unsupported_view view
+      end
+    rescue Exception=>e
+      rescue_view e, view
     end
 
     def rescue_view e, view

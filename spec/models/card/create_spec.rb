@@ -4,7 +4,7 @@ require 'wagn/spec_helper'
 # FIXME this shouldn't be here
 describe Card::Set::Type::Cardtype, ".create with :codename" do
   it "should work" do
-    Card.create!(:name=>"Foo Type", :codename=>"foo", :type=>'Cardtype').typecode.should==:cardtype
+    Card.create!(:name=>"Foo Type", :codename=>"foo", :type=>'Cardtype').type_code.should==:cardtype
   end
 end
 

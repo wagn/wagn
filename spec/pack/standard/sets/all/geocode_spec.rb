@@ -28,7 +28,7 @@ describe GoogleMapsAddon do
       end
       Card.create! :name=>"Ethan's House+street address", :content => "519 Peterson St 80524"
       Card["Ethan's House+*geocode"].should_not be_nil
-      Card["Ethan's House+*geocode"].typecode.should == :phrase
+      Card["Ethan's House+*geocode"].type_code.should == :phrase
       Card["Ethan's House+*geocode"].content.should == '40.581144, -105.071947'
     end
   end

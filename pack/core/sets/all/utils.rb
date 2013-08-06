@@ -33,7 +33,7 @@ module ClassMethods
 end
 
 def debug_type
-  "#{typecode||'no code'}:#{type_id}"
+  "#{type_code||'no code'}:#{type_id}"
 end
 
 def to_s

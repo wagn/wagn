@@ -11,13 +11,13 @@ describe Card::Set::All::Type do
       Card.new( :type=>'phrase??' ).type_id.should == Card::PhraseID
     end
       
-    it 'should accept typecode' do
-      Card.new( :typecode=>'phrase'   ).type_id.should == Card::PhraseID
-      Card.new( :typecode=>:phrase    ).type_id.should == Card::PhraseID
+    it 'should accept type_code' do
+      Card.new( :type_code=>'phrase'   ).type_id.should == Card::PhraseID
+      Card.new( :type_code=>:phrase    ).type_id.should == Card::PhraseID
     end
     
     it 'should accept type_id' do
-      Card.new( :type_id=>Card::PhraseID   ).typecode.should == :phrase
+      Card.new( :type_id=>Card::PhraseID   ).type_code.should == :phrase
     end
   end
   
@@ -33,8 +33,8 @@ describe Card::Set::All::Type do
       @hat.type_name.should == 'Hat'
     end
     
-    it 'should not have a typecode' do
-      @hat.typecode.should == nil
+    it 'should not have a type_code' do
+      @hat.type_code.should == nil
     end
     
     it 'should have a type_id' do

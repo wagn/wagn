@@ -2,18 +2,6 @@
 require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
-module MySpecHelpers
-  def render_test_card card
-    format = Card::Format.new card
-    format.add_name_context card.name
-    format.process_content
-  end
-
-  def newcard name, content=""
-    Card.create! :name=>name, :content=>content
-  end
-end
-
 Spork.prefork do
   require File.expand_path File.dirname(__FILE__) + "/../../config/environment"
   require File.expand_path File.dirname(__FILE__) + "/authenticated_test_helper"
@@ -24,6 +12,7 @@ Spork.prefork do
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
+  JOE_USER_ID = Card['joe_user'].id
 
   RSpec.configure do |config|
 
@@ -45,6 +34,7 @@ Spork.prefork do
 
 
     config.before(:each) do
+      Account.current_id = JOE_USER_ID
       Wagn::Cache.restore
     end
     config.after(:each) do
@@ -58,90 +48,49 @@ Spork.each_run do
   # This code will be run each time you run your specs.
 end
 
-=begin
+module Wagn::SpecHelper
 
-
-  def get_format()
-    Card::Format.new(Card.new(:name=>'dummy'))
+  include ActionDispatch::Assertions::SelectorAssertions
+  #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
+  
+  def newcard name, content=""
+    #FIXME - misleading name; sounds like it doesn't save.
+    Card.create! :name=>name, :content=>content
   end
 
-  def given_card( *card_args )
-    Account.as_bot do
-      Card.create *card_args
-    end
-  end
-
-
-  def assert_difference(object, method = nil, difference = 1)
-    initial_value = object.send(method)
-    yield
-    assert_equal initial_value + difference, object.send(method), "#{object}##{method}"
-  end
-
-  def assert_no_difference(object, method, &block)
-    assert_difference object, method, 0, &block
-  end
-
-  USERS = {
-    'joe@user.com' => 'joe_pass',
-    'joe@admin.com' => 'joe_pass',
-    'u3@user.com' => 'u3_pass'
-  }
-
-  def integration_login_as(user, functional=nil)
-    raise "Don't know email & password for #{user}" unless uc=Card[user] and
-        u=Account[ uc.id ] and
-        login = u.email and pass = USERS[login]
-
-    if functional
-      #warn "functional login #{login}, #{pass}"
-      post :signin, :login=>login, :password=>pass, :controller=>:account
-    else
-      #warn "integration login #{login}, #{pass}"
-      post 'account/signin', :login=>login, :password=>pass, :controller=>:account
-    end
-    assert_response :redirect
-
+  def assert_view_select(view_html, *args, &block)
+    node = HTML::Document.new(view_html).root
     if block_given?
-      yield
-      post 'account/signout',:controller=>'account'
+      assert_select node, *args, &block
+    else
+      assert_select node, *args
     end
   end
 
-  def post_invite(options = {})
-    action = options[:action] || :invite
-    post action,
-      :account => { :email => 'new@user.com' }.merge(options[:account]||{}),
-      :card => { :name => "New User" }.merge(options[:card]||{}),
-      :email => { :subject => "mailit",  :message => "baby"  }
+  def render_editor(type)
+    card = Card.create(:name=>"my favority #{type} + #{rand(4)}", :type=>type)
+    Card::Format.new(card).render(:edit)
   end
 
-#  def test_render(url)
-#    get url
-#    assert_response :success, "#{url} should render successfully"
-#  end
-
-#  def test_action(url, args={})
-#    post( url, *args )
-#    assert_response :success
-#  end
-
-  def assert_rjs_redirected_to(url)
-    assert @response.body.match(/window\.location\.href = \"([^\"]+)\";/)
-    assert_equal $~[1], url
+  def render_content content, format_args={}
+    @card ||= Card.new :name=>"Tempo Rary 2"
+    @card.content = content
+    r = Card::Format.new @card, format_args
+    r._render :core
   end
-end
 
-module Test
-  module Unit
-    module Assertions
-      def assert_success(bypass_content_parsing = false)
-        assert_response :success
-        unless bypass_content_parsing
-          assert_nothing_raised(@response.content) { REXML::Document.new(@response.content) }
-        end
+  def render_card view, card_args={}, args={}
+    card = begin
+      if card_args[:name]
+        Card.fetch(card_args[:name])
+      else
+        card_args[:name] ||= "Tempo Rary"
+        c = Card.new(card_args)
       end
     end
+    Card::Format.new(card, args)._render(view)
   end
 end
-=end
+
+RSpec::Core::ExampleGroup.send :include, Wagn::SpecHelper
+

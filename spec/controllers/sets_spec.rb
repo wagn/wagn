@@ -2,37 +2,6 @@
 require 'wagn/spec_helper'
 include Wagn::AuthenticatedTestHelper
 
-=begin
-describe CardController do
-  it "module exists and autoloads" do
-    Card::Set.should be_true
-  end
-
-  describe "read all set" do
-    it "gets data" do
-      get :read, :id=>'a'
-    end
-  end
-
-  describe ".process_read" do
-    before do
-    end
-
-    it "invokes actions on matching cards" do
-    end
-
-    it "does not invoke actions on non-matching cards" do
-    end
-
-    it "invokes actions for set names" do
-
-    end
-
-    it "invokes multiple registered actions with arguments" do
-    end
-  end
-end
-=end
 
 describe CardController, "Basic rendering tests" do
 
@@ -40,8 +9,8 @@ describe CardController, "Basic rendering tests" do
     @sample_cards = Card.where("cards.key like 'sample_%' and cards.key not like '%+%'")
   end
 
-  #these tests are increasingly lame.
-  # how about we actually test for presense of a few things ?
+  # these tests are increasingly lame.
+  # how about we actually test for presence of a few things ?
 
   describe "for anonymous" do
     before do

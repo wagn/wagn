@@ -9,10 +9,6 @@ end
 
 describe "Card (Cardtype)" do
 
-  before do
-    Account.as :joe_user
-  end
-
   it "should not allow cardtype remove when instances present" do
     Card.create :name=>'City', :type=>'Cardtype'
     city = Card.fetch('City')
@@ -37,7 +33,7 @@ describe "Card (Cardtype)" do
     assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).type_id == Card::Codename[:cardtype]
     assert_instance_of Card, c=Card.fetch("BananaPudding")
 
-    # you have to have a module to include or it's just a Basic (typecode fielde excepted)
+    # you have to have a module to include or it's just a Basic (type_code fielde excepted)
     cd = Card.create(:type=>'banana_pudding',:name=>"figgy" )
     assert cd.type_name == 'BananaPudding'
     assert Card.find_by_type_id(c.id)
@@ -55,7 +51,7 @@ describe "Card (Cardtype)" do
       @card.type_name.should == 'Cookie'
       @card=Card['Cookie']
       assert_instance_of Card, @card
-      @card.typecode.should == nil # :cookie
+      @card.type_code.should == nil # :cookie
       assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).type_name
     end
   end
@@ -100,7 +96,7 @@ describe Card, "Normal card with dependents" do
     Account.as_bot do
       @a.type_id = Card::NumberID;
       @a.save!
-      Card['A'].typecode.should== :number
+      Card['A'].type_code.should== :number
     end
   end
   it "should still have its dependents after changing type" do
@@ -156,7 +152,7 @@ describe Card, "Wannabe Cardtype Card" do
 
   end
   it "should successfully change its type to a Cardtype" do
-    Card['convertible'].typecode.should==:cardtype
+    Card['convertible'].type_code.should==:cardtype
   end
 end
 
@@ -164,11 +160,9 @@ describe User, "Joe User" do
   before do
     Account.as_bot do
       @r3 = Card['r3']
-
       Card.create :name=>'Cardtype F+*type+*create', :type=>'Pointer', :content=>'[[r3]]'
     end
 
-    Account.as :joe_user
     @user = Account.user
     @ucard = Card[@user.card_id]
     @type_names = Account.createable_types
@@ -215,7 +209,7 @@ describe Card::Set::Type::Cardtype do
       ctg.type_id = Card::BasicID
       ctg.save!
       ctg = Card["CardtypeG"]
-      ctg.typecode.should == :basic
+      ctg.type_code.should == :basic
       #ctg.extension.should == nil
     end
   end

@@ -6,10 +6,6 @@ A_JOINEES = ["B", "C", "D", "E", "F"]
 CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User"].sort
 
 describe Card::Query do
-  before do
-    Account.current_id = Card['joe_user'].id
-  end
-
 
   describe 'append' do
     it "should find real cards" do
@@ -78,7 +74,11 @@ describe Card::Query do
     end
 
     it "should not give duplicate results for multiple edits" do
-      Account.as(:joe_user){ c=Card["JoeNow"]; c.content="testagagin"; c.save!; c.content="test3"; c.save! }
+      c=Card["JoeNow"]
+      c.content="testagagin"
+      c.save
+      c.content="test3"
+      c.save!
       Card::Query.new(:edited_by=>"Joe User").run.map(&:name).sort.should == ["JoeLater","JoeNow"]
     end
 
@@ -89,9 +89,7 @@ describe Card::Query do
 
   describe "created_by/creator_of" do
     before do
-      Account.as :joe_user do
-        Card.create :name=>'Create Test', :content=>'sufficiently distinctive'
-      end
+      Card.create :name=>'Create Test', :content=>'sufficiently distinctive'
     end
 
     it "should find Joe User as the card's creator" do
@@ -106,8 +104,9 @@ describe Card::Query do
 
   describe "last_edited_by/last_editor_of" do
     before do
-      Account.current_id = Card['joe_user'].id
-      c=Card.fetch('A'); c.content='peculicious'; c.save!
+      c=Card.fetch('A')
+      c.content='peculicious'
+      c.save!
     end
 
     it "should find Joe User as the card's last editor" do
@@ -391,20 +390,12 @@ describe Card::Query do
     end
 
     it "should find plus cards for _left" do
-      # this test fails in mysql when running the full suite
-      # (although not when running the individual test )
-      #pending
       Card::Query.new( :plus=>"_left", :context=>"A+B" ).run.map(&:name).sort.should == A_JOINEES
     end
 
     it "should find plus cards for _right" do
-      # this test fails in mysql when running the full suite
-      # (although not when running the individual test )
-      #pending
       Card::Query.new( :plus=>"_right", :context=>"C+A" ).run.map(&:name).sort.should == A_JOINEES
     end
-
-    #I may have just fixed these.  if not please recomment and set back to pending - efm
 
   end
 

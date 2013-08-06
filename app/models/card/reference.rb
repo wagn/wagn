@@ -9,6 +9,7 @@ class Card::Reference < ActiveRecord::Base
   end
 
   class << self
+    
     def delete_all_from card
       delete_all :referer_id => card.id
     end

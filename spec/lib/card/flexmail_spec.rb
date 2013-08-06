@@ -36,12 +36,10 @@ describe Card::Flexmail do
         Card.create! :name => "mailconfig+*cc", :content => "[[Joe User+*email]]", :type=>'Pointer'
         Card.create! :name => "mailconfig+*bcc", :content => '{"name":"Joe Admin","append":"*email"}', :type=>'Search'
       end
-      Account.as(:joe_user) do
-        c = Card.new(:name=>'Kiwi+emailtest')
-        conf = Card::Flexmail.configs_for(c)[0]
-        conf[:cc].should == 'joe@user.com'
-        conf[:bcc].should == 'joe@admin.com'
-      end
+      c = Card.new(:name=>'Kiwi+emailtest')
+      conf = Card::Flexmail.configs_for(c)[0]
+      conf[:cc].should == 'joe@user.com'
+      conf[:bcc].should == 'joe@admin.com'
     end
 
     it "returns list with correct hash for card with configs" do
@@ -140,9 +138,11 @@ describe Card::Flexmail do
       
 
       it "handles case of referring to self for content" do
-        Card.create! :name => "Email", :type => "Cardtype"
-        Card.create! :name => "Email+*type+*send", :type => "Pointer", :content => "[[mailconfig]]"
-        Card.create! :name => "mailconfig+*message", :content => "this {{_self|core}}"
+        Account.as_bot do
+          Card.create! :name => "Email", :type => "Cardtype"
+          Card.create! :name => "Email+*type+*send", :type => "Pointer", :content => "[[mailconfig]]"
+          Card.create! :name => "mailconfig+*message", :content => "this {{_self|core}}"
+        end
 
         Rails.logger.level = ActiveSupport::BufferedLogger::Severity::DEBUG
         mock(Mailer).flexmail(hash_including(:message=>"this had betta work"))

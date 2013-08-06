@@ -2,9 +2,6 @@
 require 'wagn/spec_helper'
 
 describe Card, "validate name" do
-  before(:each) do
-    Account.as :joe_user
-  end
 
   it "should error on name with /" do
     @c = Card.create :name=>"testname/"

@@ -8,7 +8,7 @@ class CardMigrationGenerator < ActiveRecord::Generators::Base
 
   def create_migration_file
 #        set_local_assigns!
-    migration_template "card_migration.rb", "db/migrate_cards/#{file_name}.rb"
+    migration_template "card_migration.erb", "db/migrate_cards/#{file_name}.rb"
   end
 
   protected

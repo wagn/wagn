@@ -537,7 +537,7 @@ format :html do
     %{<div class="instruction">#{raw text}</div>} if text
   end
 
-  view :diff do |args|
+  view :diff do |args| #note - doesn't work unless #load_revision has been run
     if @show_diff and @previous_revision
       diff @previous_revision.content, @revision.content
     else

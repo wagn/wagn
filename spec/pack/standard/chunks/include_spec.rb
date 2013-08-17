@@ -127,7 +127,7 @@ describe Card::Chunk::Include, "Inclusion" do
     it "should handle structured cards" do
       age = newcard('age')
       template = Card['*template']
-      specialtype = Card.create :typecode=>'Cardtype', :name=>'SpecialType'
+      specialtype = Card.create :type_code=>'Cardtype', :name=>'SpecialType'
     
       specialtype_template = specialtype.fetch(:trait=>:type,:new=>{}).fetch(:trait=>:structure,:new=>{})
       specialtype_template.content = "{{#{Card::Name.joint}age}}"

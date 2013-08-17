@@ -4,7 +4,7 @@ module ClassMethods
   def new args={}, options={}
     args = (args || {}).stringify_keys
     JUNK_INIT_ARGS.each { |a| args.delete(a) }
-    %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
+    %w{ type type_code }.each { |k| args.delete(k) if args[k].blank? }
     args.delete('content') if args['attach'] # should not be handled here!
     super args
   end
@@ -18,7 +18,7 @@ def initialize args={}
 
   @type_args = {
     :type     => args.delete('type'    ),
-    :typecode => args.delete('typecode'),
+    :type_code => args.delete('type_code'),
     :type_id  => args[       'type_id' ]
   }
 

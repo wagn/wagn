@@ -361,20 +361,14 @@ class Card::Query
       merge field(:id) => ValueSpec.new(['in',RefSpec.new([key,cardspec])], self)
     end
 
-    def to_sql(*args)
-      # Basic conditions
-      sql.conditions << (@spec.collect do |key, val|
-        val.to_sql(key.to_s.gsub(/\:\d+/,''))
-      end.join(" #{@mods[:conj].blank? ? :and : @mods[:conj]} "))
+    def to_sql *args
+      sql.conditions << basic_conditions
 
       return "(" + sql.conditions.last + ")" if @mods[:return]=='condition'
-
-      # Permissions
-      unless Account.always_ok? or (Card::Query.root_perms_only && !root?)
-        sql.conditions <<
-         "(#{table_alias}.read_rule_id IN (#{(rr=Account.as_card.read_rules).nil? ? 1 : rr*','}))"
+      
+      if pconds = permission_conditions
+        sql.conditions << pconds
       end
-      #warn "wql perms? #{Account.always_ok?} #{Account.as_id}, #{Account.as_card.read_rules*','} SqCond: #{sql.conditions.inspect}"
 
       sql.fields.unshift fields_to_sql
       sql.order = sort_to_sql  # has side effects!
@@ -384,11 +378,26 @@ class Card::Query
       sql.conditions << "#{table_alias}.trash is false"
       sql.group = "GROUP BY #{safe_sql(@mods[:group])}" if !@mods[:group].blank?
       if @mods[:limit].to_i > 0
-        sql.limit  = "LIMIT #{@mods[:limit].to_i}"
-        sql.offset = "OFFSET #{@mods[:offset].to_i}" if !@mods[:offset].blank?
+        sql.limit  = "LIMIT #{  @mods[:limit ].to_i }"
+        sql.offset = "OFFSET #{ @mods[:offset].to_i }" if !@mods[:offset].blank?
       end
 
       sql.to_s
+    end
+    
+    def basic_conditions
+      @spec.collect do |key, val|
+        key_root = key.to_s.gsub /\:\d+/, ''
+        val.to_sql key_root
+      end.join(" #{@mods[:conj].blank? ? :and : @mods[:conj]} ")
+    end
+
+    def permission_conditions
+      unless Account.always_ok? or ( Card::Query.root_perms_only && !root? )
+        read_rules = Account.as_card.read_rules
+        read_rule_list = read_rules.nil? ? 1 : read_rules.join(',')
+        "(#{table_alias}.read_rule_id IN (#{ read_rule_list }))"
+      end      
     end
 
     def fields_to_sql

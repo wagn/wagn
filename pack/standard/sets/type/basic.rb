@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 format :html do
   view :open_content do |args|
-    content = render_core args
+    content = _render_core args
     table_of_contents(content) || content
   end
 

@@ -32,7 +32,7 @@ describe Card::Set::Type::AccountRequest do
 
 
  it 'should require a unique name' do
-    @card = Card.create :typecode=>'account_request', :name=>"Joe User", :content=>"Let me in!"# :account=>{ :email=>"jamaster@jay.net" }
+    @card = Card.create :type_code=>'account_request', :name=>"Joe User", :content=>"Let me in!"# :account=>{ :email=>"jamaster@jay.net" }
     assert @card.errors[:name]
   end
 

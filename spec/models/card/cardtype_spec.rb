@@ -33,7 +33,7 @@ describe "Card (Cardtype)" do
     assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).type_id == Card::Codename[:cardtype]
     assert_instance_of Card, c=Card.fetch("BananaPudding")
 
-    # you have to have a module to include or it's just a Basic (typecode fielde excepted)
+    # you have to have a module to include or it's just a Basic (type_code fielde excepted)
     cd = Card.create(:type=>'banana_pudding',:name=>"figgy" )
     assert cd.type_name == 'BananaPudding'
     assert Card.find_by_type_id(c.id)
@@ -51,7 +51,7 @@ describe "Card (Cardtype)" do
       @card.type_name.should == 'Cookie'
       @card=Card['Cookie']
       assert_instance_of Card, @card
-      @card.typecode.should == nil # :cookie
+      @card.type_code.should == nil # :cookie
       assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).type_name
     end
   end
@@ -96,7 +96,7 @@ describe Card, "Normal card with dependents" do
     Account.as_bot do
       @a.type_id = Card::NumberID;
       @a.save!
-      Card['A'].typecode.should== :number
+      Card['A'].type_code.should== :number
     end
   end
   it "should still have its dependents after changing type" do
@@ -152,7 +152,7 @@ describe Card, "Wannabe Cardtype Card" do
 
   end
   it "should successfully change its type to a Cardtype" do
-    Card['convertible'].typecode.should==:cardtype
+    Card['convertible'].type_code.should==:cardtype
   end
 end
 
@@ -209,7 +209,7 @@ describe Card::Set::Type::Cardtype do
       ctg.type_id = Card::BasicID
       ctg.save!
       ctg = Card["CardtypeG"]
-      ctg.typecode.should == :basic
+      ctg.type_code.should == :basic
       #ctg.extension.should == nil
     end
   end

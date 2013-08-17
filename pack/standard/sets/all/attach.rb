@@ -54,7 +54,7 @@ end
 
 
 def attachment_link(rev_id) # create filesystem links to previous revision
-  if styles = case typecode
+  if styles = case type_code
         when 'File'; ['']
         when 'Image'; STYLES
       end

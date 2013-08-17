@@ -26,7 +26,7 @@ class Card
       def view view, *args, &final
         view = view.to_name.key.to_sym
         if block_given?
-          define_view view, (args[0] || {}), &final
+          define_view view, args[0], &final
         else
           opts = Hash===args[0] ? args.shift : nil
           alias_view view, opts, args.shift
@@ -34,58 +34,26 @@ class Card
       end
 
       def define_view view, opts, &final
-        perms[view]       = opts.delete(:perms)      if opts[:perms]
-        error_codes[view] = opts.delete(:error_code) if opts[:error_code]
-        denial_views[view]= opts.delete(:denial)     if opts[:denial]
-
-        if tags = opts.delete(:tags)
-          Array.wrap(tags).each do |tag|
-            view_tags[view] ||= {}
-            view_tags[view][tag] = true
-          end
-        end
-
-        if set_opts = Wagn::Loader.current_set_opts
-          opts.merge! set_opts
-        end
-
+        opts ||= {}
+        opts.merge!( Wagn::Loader.current_set_opts || {} )
+        
+        extract_class_vars view, opts
         view_key = get_set_key view, opts
-        #warn "defining view method[#{Card::Format.current_class}] _final_#{view_key}" if view_key =~ /stat/
-        class_eval { define_method "_final_#{view_key}", &final }
-        subset_views[view] = true if !opts.empty?
+        
+        define_method "_final_#{view_key}", &final
 
         if !method_defined? "render_#{view}"
-          #warn "defining view method[#{Card::Format.format}] _render_#{view}"
-          class_eval do
-            define_method "_render_#{view}" do |*a|
-              begin
-                a = [{}] if a.empty?
-                if final_method = view_method(view)
-                  with_inclusion_mode view do
-                    #Rails.logger.info( warn "rendering final method: #{final_method}" )
-                    send final_method, *a
-                  end
-                else
-                  unsupported_view view
-                end
-              rescue Exception=>e
-                rescue_view e, view
-              end
-            end
+          define_method "_render_#{view}" do |*a|
+            send_final_render_method view, *a
           end
 
-          #Rails.logger.warn "define_method render_#{view}"
-          class_eval do
-            define_method "render_#{view}" do |*a|
-              send "_render_#{ ok_view view, *a }", *a
-            end
+          define_method "render_#{view}" do |*a|
+            send "_render_#{ ok_view view, *a }", *a
           end
         end
-
       end
 
       def alias_view alias_view, opts, referent_view=nil
-
         subset_views[alias_view] = true if opts && !opts.empty?
 
         referent_view ||= alias_view
@@ -99,7 +67,6 @@ class Card
           end
         end
       end
-
 
       def new card, opts={}
         klass = self != Format ? self : get_format( (opts[:format] || :html).to_sym )
@@ -117,7 +84,24 @@ class Card
       end
     
       private
+      
+      def extract_class_vars view, opts
+        perms[view]       = opts.delete(:perms)      if opts[:perms]
+        error_codes[view] = opts.delete(:error_code) if opts[:error_code]
+        denial_views[view]= opts.delete(:denial)     if opts[:denial]
 
+        if tags = opts.delete(:tags)
+          Array.wrap(tags).each do |tag|
+            view_tags[view] ||= {}
+            view_tags[view][tag] = true
+          end
+        end
+        
+        if !opts.empty?
+          subset_views[view] = true
+        end
+      end
+      
       def get_set_key selection_key, opts
         unless pkey = Card.method_key(opts)
           raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
@@ -127,6 +111,9 @@ class Card
         key.to_sym
       end
     end
+    
+    
+    #~~~~~ INSTANCE METHODS
 
     def initialize card, opts={}
       @card = card
@@ -142,6 +129,8 @@ class Card
         context_name_list.split(',').map &:to_name
       else [] end
     end
+    
+
     
     def inclusion_defaults
       @inclusion_defaults ||= begin
@@ -226,6 +215,19 @@ class Card
     def _optional_render view, args, default_hidden=false
       args[:allowed] = true
       optional_render view, args, default_hidden
+    end
+
+    def send_final_render_method view, *a
+      a = [{}] if a.empty?
+      if final_method = view_method(view)
+        with_inclusion_mode view do
+          send final_method, *a
+        end
+      else
+        unsupported_view view
+      end
+    rescue Exception=>e
+      rescue_view e, view
     end
 
     def rescue_view e, view

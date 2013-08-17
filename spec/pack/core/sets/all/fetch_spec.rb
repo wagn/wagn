@@ -176,7 +176,7 @@ describe Card::Set::All::Fetch do
     it "takes a second hash of options as new card options" do
       new_card = Card.fetch "Never Before", :new=>{ :type => "Image" }
       new_card.should be_instance_of(Card)
-      new_card.typecode.should == :image
+      new_card.type_code.should == :image
       new_card.new_record?.should be_true
       Card.fetch( 'Never Before', :new=>{} ).type_id.should == Card::BasicID
     end
@@ -189,7 +189,7 @@ describe Card::Set::All::Fetch do
       end
       c = Card.fetch("A+testsearch".to_name)
       assert c.virtual?
-      c.typecode.should == :search_type
+      c.type_code.should == :search_type
       c.content.should ==  "{\"plus\":\"_self\"}"
     end
   end

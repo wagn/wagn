@@ -506,19 +506,20 @@ class Card
 
     def card_link name, text, known
       text ||= name
+      linkname = name.to_name.url_key
       opts = {
         :class => ( known ? 'known-card' : 'wanted-card' ),
         :text  => ( text.to_name.to_show @context_names  )
       }
-      relative_path = known ? name.to_name.url_key : encode_path(name)
-      final_link internal_url( relative_path ), opts
+      if !known && name.to_s != linkname
+        linkname += "?card[name]=#{CGI.escape name.to_s}"
+      end
+      final_link internal_url( linkname ), opts
     end
   
-    def encode_path path
-      ERB::Util.url_encode( path.to_s ).gsub('.', '%2E')
+    def unique_id
+      "#{card.key}-#{Time.now.to_i}-#{rand(3)}" 
     end
-
-    def unique_id() "#{card.key}-#{Time.now.to_i}-#{rand(3)}" end
 
     def internal_url relative_path
       wagn_path relative_path

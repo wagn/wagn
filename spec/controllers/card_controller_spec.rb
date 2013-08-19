@@ -219,14 +219,9 @@ describe CardController do
         assert_response :success
       end
       
-      it "should treat underscores in id as spaces" do
-        get :read, :id=>'my_life', :view=>'new'
-        assigns['card'].name.should == 'my life'
-      end
-      
-      it "should not treat underscores in card params as spaces" do
-        get :read, :card=>{:name =>'my_life'}, :view=>'new'
-        assigns['card'].name.should == 'my_life'
+      it "should use card params name over id in new cards" do
+        get :read, :id=>'my_life', :card=>{:name =>'My LIFE'}, :view=>'new'
+        assigns['card'].name.should == 'My LIFE'
       end
       
     end

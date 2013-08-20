@@ -1,3 +1,9 @@
+@mixin no_external_icon {
+  list-style-type: none;
+  padding-right: 0 !important;
+  background: inherit;
+}
+
 .SELF-home-original > .content {
   ul {
     list-style-type: none;
@@ -33,4 +39,46 @@
       font-size: .8em;
     }
   }
+  p > a.external-link {
+    @include no_external_icon;
+  }
 }
+
+/* 
+the following "secondary" styling is not just for home+original but was introduced at the same time.
+they may not always be safely bundled together
+*/
+
+
+#secondary {
+  > div {
+    .SELF-wagneer_menu > .content {
+      > p {
+        margin-left: 6%;
+        text-indent: -6%;
+      }
+      a.external-link {
+        @include no_external_icon;
+      }
+    }
+
+    > a > .SELF-Xlogo.content-view,
+    > .SELF-Xcredit.content-view {
+      display: block;
+      text-align: center;
+      padding: 10px;
+      background: #fff;
+      border: 1px solid #bbb;
+      -moz-border-radius: 8px;
+      border-radius: 8px;
+      img {
+        max-width: 100%;
+      }
+      a {
+        color: #186886;
+      }
+    }
+  }  
+}
+
+

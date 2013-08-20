@@ -1,646 +1,594 @@
 --- 
 card_revisions_001: 
   id: 8
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 8
   creator_id: 1
   content: ""
 card_revisions_002: 
   id: 9
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 9
   creator_id: 1
   content: ""
 card_revisions_003: 
   id: 10
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 10
   creator_id: 1
   content: ""
 card_revisions_004: 
   id: 28
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 28
   creator_id: 1
   content: ""
 card_revisions_005: 
   id: 33
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 33
   creator_id: 1
   content: ""
 card_revisions_006: 
   id: 35
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 35
   creator_id: 1
   content: ""
 card_revisions_007: 
   id: 37
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 37
   creator_id: 1
   content: ""
 card_revisions_008: 
   id: 39
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 39
   creator_id: 1
   content: ""
 card_revisions_009: 
   id: 41
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 41
   creator_id: 1
   content: ""
 card_revisions_010: 
   id: 43
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 43
   creator_id: 1
   content: ""
 card_revisions_011: 
   id: 62
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 61
   creator_id: 1
   content: ""
 card_revisions_012: 
   id: 66
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 64
   creator_id: 1
   content: ""
 card_revisions_013: 
   id: 237
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 82
   creator_id: 1
   content: ""
 card_revisions_014: 
   id: 266
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 86
   creator_id: 1
   content: ""
 card_revisions_015: 
   id: 311
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 89
   creator_id: 1
   content: ""
 card_revisions_016: 
   id: 349
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 92
   creator_id: 1
   content: ""
 card_revisions_017: 
   id: 353
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 96
   creator_id: 1
   content: ""
 card_revisions_018: 
   id: 355
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 98
   creator_id: 1
   content: ""
 card_revisions_019: 
   id: 486
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 101
   creator_id: 1
   content: "{\"extension_type\": \"User\"}"
 card_revisions_020: 
   id: 1407
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 128
   creator_id: 1
   content: ""
 card_revisions_021: 
   id: 1408
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 129
   creator_id: 1
   content: ""
 card_revisions_022: 
   id: 1409
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 130
   creator_id: 1
   content: ""
 card_revisions_023: 
   id: 1410
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 131
   creator_id: 1
   content: ""
 card_revisions_024: 
   id: 1521
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 137
   creator_id: 1
   content: ""
 card_revisions_025: 
   id: 1541
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 1
   creator_id: 1
   content: <p>This is the account that makes any automated updates &mdash; cards created when someone signs up, link updates when renaming cards, etc.</p>
 card_revisions_026: 
   id: 1550
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 138
   creator_id: 1
   content: ""
 card_revisions_027: 
   id: 1696
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 146
   creator_id: 1
   content: ""
 card_revisions_028: 
   id: 1755
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 55
   creator_id: 1
   content: My Wagn
 card_revisions_029: 
   id: 1881
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 99
   creator_id: 1
   content: "{\"member_of\": \"_self\", \"sort\":\"name\"}"
 card_revisions_030: 
   id: 2013
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 172
   creator_id: 1
   content: ""
 card_revisions_031: 
   id: 2022
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 173
   creator_id: 1
   content: "{\"right_plus\":[\"tags\", {\"refer_to\":\"_self\"}]}"
 card_revisions_032: 
   id: 2087
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 178
   creator_id: 1
   content: ""
 card_revisions_033: 
   id: 2089
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 179
   creator_id: 1
   content: "{\"found_by\": \"_self\", \"sort\": \"update\"}"
 card_revisions_034: 
-  id: 2093
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 180
-  creator_id: 1
-  content: <p><span><span>Every card has a type, which shapes what kind of information goes into it. You can also add your own cardtypes. To learn more, read the [[http://wagn.org/wagn/card_types|documentation about card types]].<br></span></span></p>
-card_revisions_035: 
   id: 2094
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 181
   creator_id: 1
   content: <p>People with accounts generally have a User card. To learn more, read the [[http://wagn.org/wagn/User|documentation about User cards]].</p>
-card_revisions_036: 
+card_revisions_035: 
   id: 2264
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 184
   creator_id: 1
   content: ""
-card_revisions_037: 
+card_revisions_036: 
   id: 2266
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 185
   creator_id: 1
   content: |
     {"found_by": "_self", "sort": "name"}
 
-card_revisions_038: 
+card_revisions_037: 
   id: 2290
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 190
   creator_id: 1
   content: ""
-card_revisions_039: 
+card_revisions_038: 
   id: 2291
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 191
   creator_id: 1
   content: "{\"found_by\": \"_self\", \"sort\": \"create\"}"
-card_revisions_040: 
-  id: 2331
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 81
-  creator_id: 1
-  content: |-
-    <p>&nbsp;</p>
-    <p>{{Menu|open}}</p>
-    <p>&nbsp;</p>
-    <p>{{Administrator links|open}}</p>
-card_revisions_041: 
+card_revisions_039: 
   id: 2402
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 200
   creator_id: 1
   content: <p>Thanks for submitting this form!</p>
-card_revisions_042: 
+card_revisions_040: 
   id: 2403
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 201
   creator_id: 1
   content: ""
-card_revisions_043: 
-  id: 2408
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 202
-  creator_id: 1
-  content: <p>These cards allow unrestricted use of HTML. See the [[http://wagn.org/wagn/HTML|documentation on HTML cards]].</p>
-card_revisions_044: 
+card_revisions_041: 
   id: 2430
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 205
   creator_id: 1
   content: ""
-card_revisions_045: 
+card_revisions_042: 
   id: 2472
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 67
   creator_id: 1
   content: /wagn/Signup_Success
-card_revisions_046: 
+card_revisions_043: 
   id: 2473
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 108
   creator_id: 1
   content: /wagn/Request_Sent
-card_revisions_047: 
+card_revisions_044: 
   id: 2474
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 62
   creator_id: 1
   content: /wagn/Invite_Success
-card_revisions_048: 
+card_revisions_045: 
   id: 2494
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 68
   creator_id: 1
   content: |-
     <p>Thanks!&nbsp; Your invitation is on its way.</p>
     <p>&nbsp;</p>
     <p>See [[Account Requests]].</p>
-card_revisions_049: 
-  id: 2570
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 211
-  creator_id: 1
-  content: <p>Anyone who is signed in has this role. [[http://wagn.org/wagn/account|Learn more about accounts]].</p>
-card_revisions_050: 
-  id: 2571
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 210
-  creator_id: 1
-  content: <p>Anyone who is not signed in has this role. Edits they make will be credited to [[Anonymous]]. [[http://wagn.org/wagn/account|Learn more about accounts]].</p>
-card_revisions_051: 
+card_revisions_046: 
   id: 2573
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 15
   creator_id: 1
   content: <p>Edits made by people who are not signed in are credited to Anonymous. [[http://wagn.org/wagn/account|Learn more about accounts]].</p>
-card_revisions_052: 
+card_revisions_047: 
   id: 2574
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 212
   creator_id: 1
   content: <p>Toggles simply indicate yes or no. [[http://wagn.org/wagn/Toggle|Learn more about Toggles]].</p>
-card_revisions_053: 
-  id: 2576
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 214
-  creator_id: 1
-  content: <p>On Wagn you upload images to Image cards, then include them wherever you want the image to appear. [[http://wagn.org/wagn/Image|Learn more about Image cards]].</p>
-card_revisions_054: 
-  id: 2581
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 216
-  creator_id: 1
-  content: <p>People who have requested accounts but not yet been approved ([[http://wagn.org/wagn/account|learn more about accounts]]):</p>
-card_revisions_055: 
+card_revisions_048: 
   id: 2604
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 217
   creator_id: 1
   content: ""
-card_revisions_056: 
+card_revisions_049: 
   id: 2609
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 220
   creator_id: 1
   content: ""
-card_revisions_057: 
+card_revisions_050: 
   id: 2624
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 222
   creator_id: 1
   content: ""
-card_revisions_058: 
+card_revisions_051: 
   id: 2878
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 241
   creator_id: 1
   content: ""
-card_revisions_059: 
+card_revisions_052: 
   id: 2879
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 242
   creator_id: 1
   content: ""
-card_revisions_060: 
+card_revisions_053: 
   id: 2889
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 247
   creator_id: 1
   content: ""
-card_revisions_061: 
+card_revisions_054: 
   id: 2890
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 248
   creator_id: 1
   content: ""
-card_revisions_062: 
+card_revisions_055: 
   id: 2901
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 253
   creator_id: 1
   content: ""
-card_revisions_063: 
+card_revisions_056: 
   id: 2930
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 257
   creator_id: 1
   content: "1"
-card_revisions_064: 
+card_revisions_057: 
   id: 3001
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 260
   creator_id: 1
   content: ""
-card_revisions_065: 
+card_revisions_058: 
   id: 3002
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 261
   creator_id: 1
   content: "{\"right\":\"_self\"}"
-card_revisions_066: 
+card_revisions_059: 
   id: 3003
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 262
   creator_id: 1
   content: ""
-card_revisions_067: 
+card_revisions_060: 
   id: 3004
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 263
   creator_id: 1
   content: "{\"left\":{\"type\":\"_left\"}, \"right\":\"_right\"}"
-card_revisions_068: 
+card_revisions_061: 
   id: 3005
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 264
   creator_id: 1
   content: ""
-card_revisions_069: 
+card_revisions_062: 
   id: 3006
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 265
   creator_id: 1
   content: "{\"name\":\"_self\"}"
-card_revisions_070: 
+card_revisions_063: 
   id: 3007
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 266
   creator_id: 1
   content: ""
-card_revisions_071: 
+card_revisions_064: 
   id: 3008
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 267
   creator_id: 1
   content: "{\"type\":\"_self\"}"
-card_revisions_072: 
+card_revisions_065: 
   id: 3009
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 268
   creator_id: 1
   content: "{\"right\":\"_self\"}"
-card_revisions_073: 
+card_revisions_066: 
   id: 3010
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 269
   creator_id: 1
   content: "{\"right\":\"_self\"}"
-card_revisions_074: 
+card_revisions_067: 
   id: 3019
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 255
   creator_id: 1
   content: ""
-card_revisions_075: 
+card_revisions_068: 
   id: 3021
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 256
   creator_id: 1
   content: ""
-card_revisions_076: 
+card_revisions_069: 
   id: 3022
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 277
   creator_id: 1
   content: description
-card_revisions_077: 
+card_revisions_070: 
   id: 3023
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 252
   creator_id: 1
   content: ""
-card_revisions_078: 
+card_revisions_071: 
   id: 3031
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 109
   creator_id: 1
   content: <div>Thank you for signing up with {{*title}}. Someone will receive your request for an account and approve it as soon as possible.</div>
-card_revisions_079: 
+card_revisions_072: 
   id: 3033
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 91
   creator_id: 1
   content: "4"
-card_revisions_080: 
+card_revisions_073: 
   id: 3040
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 280
   creator_id: 1
   content: ""
-card_revisions_081: 
+card_revisions_074: 
   id: 3060
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 284
   creator_id: 1
   content: ""
-card_revisions_082: 
+card_revisions_075: 
   id: 3061
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 285
   creator_id: 1
   content: ""
-card_revisions_083: 
+card_revisions_076: 
   id: 3063
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 286
   creator_id: 1
   content: ""
-card_revisions_084: 
+card_revisions_077: 
   id: 3065
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 288
   creator_id: 1
   content: ""
-card_revisions_085: 
+card_revisions_078: 
   id: 3066
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 289
   creator_id: 1
   content: ""
-card_revisions_086: 
+card_revisions_079: 
   id: 3078
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 291
   creator_id: 1
   content: ""
-card_revisions_087: 
+card_revisions_080: 
   id: 3079
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 292
   creator_id: 1
   content: "0"
-card_revisions_088: 
+card_revisions_081: 
   id: 3081
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 293
   creator_id: 1
   content: "0"
-card_revisions_089: 
+card_revisions_082: 
   id: 3082
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 294
   creator_id: 1
   content: "{\"type\":\"_self\"}"
-card_revisions_090: 
+card_revisions_083: 
   id: 3083
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 295
   creator_id: 1
   content: "1"
-card_revisions_091: 
+card_revisions_084: 
   id: 3088
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 274
   creator_id: 1
   content: "{}"
-card_revisions_092: 
+card_revisions_085: 
   id: 3101
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 300
   creator_id: 1
   content: "{\"right\":\"_self\"}"
-card_revisions_093: 
+card_revisions_086: 
   id: 3123
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 302
   creator_id: 1
   content: "{\"right\":\"_self\"}"
-card_revisions_094: 
+card_revisions_087: 
   id: 3126
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 305
   creator_id: 1
   content: "{\"right\":\"_self\"}"
-card_revisions_095: 
+card_revisions_088: 
   id: 3133
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 307
   creator_id: 1
   content: "{\"right\":\"_self\"}"
-card_revisions_096: 
+card_revisions_089: 
   id: 3137
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 309
   creator_id: 1
   content: ""
-card_revisions_097: 
+card_revisions_090: 
   id: 3140
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 310
   creator_id: 1
   content: "{\"right\":\"_self\"}"
-card_revisions_098: 
+card_revisions_091: 
   id: 3171
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 275
   creator_id: 1
   content: "[[Default Layout]]"
-card_revisions_099: 
+card_revisions_092: 
   id: 3177
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 315
   creator_id: 1
   content: "{\"name\":\"_self\"}"
-card_revisions_100: 
-  id: 3178
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 316
-  creator_id: 1
-  content: "{\"type\": \"HTML\"}"
-card_revisions_101: 
+card_revisions_093: 
   id: 3196
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 317
   creator_id: 1
   content: ""
-card_revisions_102: 
+card_revisions_094: 
   id: 3197
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 318
   creator_id: 1
   content: ""
-card_revisions_103: 
+card_revisions_095: 
   id: 3198
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 319
   creator_id: 1
   content: ""
-card_revisions_104: 
+card_revisions_096: 
   id: 3199
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 320
   creator_id: 1
   content: ""
-card_revisions_105: 
+card_revisions_097: 
   id: 3201
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 321
   creator_id: 1
   content: ""
-card_revisions_106: 
+card_revisions_098: 
   id: 3203
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 322
   creator_id: 1
   content: |-
@@ -650,207 +598,207 @@ card_revisions_106:
     <blockquote>
     <p>{{+*members}}</p>
     </blockquote>
-card_revisions_107: 
+card_revisions_099: 
   id: 3206
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 324
   creator_id: 1
   content: ""
-card_revisions_108: 
+card_revisions_100: 
   id: 3207
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 325
   creator_id: 1
   content: ""
-card_revisions_109: 
+card_revisions_101: 
   id: 3208
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 326
   creator_id: 1
   content: ""
-card_revisions_110: 
+card_revisions_102: 
   id: 3209
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 327
   creator_id: 1
   content: ""
-card_revisions_111: 
+card_revisions_103: 
   id: 3213
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 329
   creator_id: 1
   content: ""
-card_revisions_112: 
+card_revisions_104: 
   id: 3214
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 330
   creator_id: 1
   content: ""
-card_revisions_113: 
+card_revisions_105: 
   id: 3218
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 331
   creator_id: 1
   content: ""
-card_revisions_114: 
+card_revisions_106: 
   id: 3224
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 335
   creator_id: 1
   content: ""
-card_revisions_115: 
+card_revisions_107: 
   id: 3225
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 336
   creator_id: 1
   content: ""
-card_revisions_116: 
+card_revisions_108: 
   id: 3228
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 338
   creator_id: 1
   content: ""
-card_revisions_117: 
+card_revisions_109: 
   id: 3232
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 341
   creator_id: 1
   content: ""
-card_revisions_118: 
+card_revisions_110: 
   id: 3233
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 342
   creator_id: 1
   content: ""
-card_revisions_119: 
+card_revisions_111: 
   id: 3238
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 345
   creator_id: 1
   content: ""
-card_revisions_120: 
+card_revisions_112: 
   id: 3239
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 346
   creator_id: 1
   content: ""
-card_revisions_121: 
+card_revisions_113: 
   id: 3240
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 347
   creator_id: 1
   content: ""
-card_revisions_122: 
+card_revisions_114: 
   id: 3241
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 348
   creator_id: 1
   content: ""
-card_revisions_123: 
+card_revisions_115: 
   id: 3242
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 349
   creator_id: 1
   content: ""
-card_revisions_124: 
+card_revisions_116: 
   id: 3243
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 350
   creator_id: 1
   content: ""
-card_revisions_125: 
+card_revisions_117: 
   id: 3244
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 351
   creator_id: 1
   content: ""
-card_revisions_126: 
+card_revisions_118: 
   id: 3246
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 352
   creator_id: 1
   content: ""
-card_revisions_127: 
+card_revisions_119: 
   id: 3248
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 353
   creator_id: 1
   content: ""
-card_revisions_128: 
+card_revisions_120: 
   id: 3250
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 354
   creator_id: 1
   content: ""
-card_revisions_129: 
+card_revisions_121: 
   id: 3251
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 355
   creator_id: 1
   content: ""
-card_revisions_130: 
+card_revisions_122: 
   id: 3253
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 356
   creator_id: 1
   content: ""
-card_revisions_131: 
+card_revisions_123: 
   id: 3260
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 358
   creator_id: 1
   content: ""
-card_revisions_132: 
+card_revisions_124: 
   id: 3318
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 69
   creator_id: 1
   content: <div>Thank you for signing up with {{*title}}. Your new account information is on it's way to your emailbox now and should be there soon.</div>
-card_revisions_133: 
+card_revisions_125: 
   id: 3478
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 363
   creator_id: 1
   content: ""
-card_revisions_134: 
+card_revisions_126: 
   id: 3513
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 364
   creator_id: 1
   content: ""
-card_revisions_135: 
+card_revisions_127: 
   id: 3574
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 366
   creator_id: 1
   content: ""
-card_revisions_136: 
+card_revisions_128: 
   id: 3575
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 367
   creator_id: 1
   content: "0"
-card_revisions_137: 
+card_revisions_129: 
   id: 3606
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 368
   creator_id: 1
   content: "[[_left+email config]]"
-card_revisions_138: 
+card_revisions_130: 
   id: 3608
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 371
   creator_id: 1
   content: ""
-card_revisions_139: 
+card_revisions_131: 
   id: 3609
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 372
   creator_id: 1
   content: ""
-card_revisions_140: 
+card_revisions_132: 
   id: 3610
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 373
   creator_id: 1
   content: |-
@@ -861,216 +809,204 @@ card_revisions_140:
     <p>{{+*subject}}</p>
     <p>{{+*message}}</p>
     <p>{{+*attach}}</p>
-card_revisions_141: 
+card_revisions_133: 
   id: 3612
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 375
   creator_id: 1
   content: ""
-card_revisions_142: 
+card_revisions_134: 
   id: 3614
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 377
   creator_id: 1
   content: ""
-card_revisions_143: 
+card_revisions_135: 
   id: 3615
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 378
   creator_id: 1
   content: ""
-card_revisions_144: 
+card_revisions_136: 
   id: 3617
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 380
   creator_id: 1
   content: ""
-card_revisions_145: 
+card_revisions_137: 
   id: 3618
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 381
   creator_id: 1
   content: ""
-card_revisions_146: 
+card_revisions_138: 
   id: 3620
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 383
   creator_id: 1
   content: ""
-card_revisions_147: 
+card_revisions_139: 
   id: 3621
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 384
   creator_id: 1
   content: ""
-card_revisions_148: 
+card_revisions_140: 
   id: 3624
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 387
   creator_id: 1
   content: ""
-card_revisions_149: 
+card_revisions_141: 
   id: 3626
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 389
   creator_id: 1
   content: ""
-card_revisions_150: 
+card_revisions_142: 
   id: 3628
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 390
   creator_id: 1
   content: ""
-card_revisions_151: 
+card_revisions_143: 
   id: 3629
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 391
   creator_id: 1
   content: ""
-card_revisions_152: 
+card_revisions_144: 
   id: 3754
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 219
   creator_id: 1
   content: |-
     <p>These cards show who is getting email about changes to these cards or card types. ([[http://www.wagn.org/wagn/Notification|Learn more about notification.]]):</p>
     <p>&nbsp;</p>
     <p>{{+*right+by name}}</p>
-card_revisions_153: 
+card_revisions_145: 
   id: 3871
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 279
   creator_id: 1
   content: "0"
-card_revisions_154: 
-  id: 4841
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 406
-  creator_id: 1
-  content: <p>Number cards can contain only numerical values.</p>
-card_revisions_155: 
+card_revisions_146: 
   id: 4846
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 409
   creator_id: 1
   content: <p>Date cards contain a date.</p>
-card_revisions_156: 
+card_revisions_147: 
   id: 4869
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 407
   creator_id: 1
   content: <p>PlainText cards are for unstyled text.</p>
-card_revisions_157: 
-  id: 4871
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 215
-  creator_id: 1
-  content: <p>File cards are for uploading and downloading files. [[http://wagn.org/wagn/File|Learn more about File cards]].</p>
-card_revisions_158: 
+card_revisions_148: 
   id: 4872
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 408
   creator_id: 1
   content: <p>Phrase cards are for short unstyled text.</p>
-card_revisions_159: 
+card_revisions_149: 
   id: 4888
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 388
   creator_id: 1
   content: ""
-card_revisions_160: 
+card_revisions_150: 
   id: 4892
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 382
   creator_id: 1
   content: ""
-card_revisions_161: 
+card_revisions_151: 
   id: 4894
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 379
   creator_id: 1
   content: ""
-card_revisions_162: 
+card_revisions_152: 
   id: 4913
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 376
   creator_id: 1
   content: ""
-card_revisions_163: 
+card_revisions_153: 
   id: 4915
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 374
   creator_id: 1
   content: ""
-card_revisions_164: 
+card_revisions_154: 
   id: 5196
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 182
   creator_id: 1
   content: <p>Searches return a list of cards using [[http://wagn.org/wagn/WQL|WQL, the Wagn Query Language]]. See the [[http://wagn.org/wagn/WQL syntax|syntax documentation]].</p>
-card_revisions_165: 
+card_revisions_155: 
   id: 5199
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 419
   creator_id: 1
   content: ""
-card_revisions_166: 
+card_revisions_156: 
   id: 5200
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 420
   creator_id: 1
   content: ""
-card_revisions_167: 
+card_revisions_157: 
   id: 5214
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 77
   creator_id: 1
   content: Home
-card_revisions_168: 
+card_revisions_158: 
   id: 5245
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 425
   creator_id: 1
   content: ""
-card_revisions_169: 
+card_revisions_159: 
   id: 5246
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 426
   creator_id: 1
   content: ""
-card_revisions_170: 
+card_revisions_160: 
   id: 5249
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 428
   creator_id: 1
   content: ""
-card_revisions_171: 
+card_revisions_161: 
   id: 5250
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 429
   creator_id: 1
   content: ""
-card_revisions_172: 
+card_revisions_162: 
   id: 5252
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 431
   creator_id: 1
   content: ""
-card_revisions_173: 
+card_revisions_163: 
   id: 5253
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 432
   creator_id: 1
   content: ""
-card_revisions_174: 
+card_revisions_164: 
   id: 5290
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 430
   creator_id: 1
   content: "{\"creator_of\": \"_self\"}"
-card_revisions_175: 
+card_revisions_165: 
   id: 5291
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 427
   creator_id: 1
   content: |-
@@ -1078,78 +1014,78 @@ card_revisions_175:
      "sort": "update",
      "view": "change"
     }
-card_revisions_176: 
+card_revisions_166: 
   id: 5292
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 433
   creator_id: 1
   content: |-
     {"created_by": "_self",
      "sort": "create", "dir": "desc"
     }
-card_revisions_177: 
+card_revisions_167: 
   id: 5296
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 435
   creator_id: 1
   content: ""
-card_revisions_178: 
+card_revisions_168: 
   id: 5297
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 436
   creator_id: 1
   content: ""
-card_revisions_179: 
+card_revisions_169: 
   id: 5333
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 441
   creator_id: 1
   content: ""
-card_revisions_180: 
+card_revisions_170: 
   id: 5334
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 442
   creator_id: 1
   content: "4"
-card_revisions_181: 
+card_revisions_171: 
   id: 5392
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 445
   creator_id: 1
   content: ""
-card_revisions_182: 
+card_revisions_172: 
   id: 5393
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 446
   creator_id: 1
   content: ""
-card_revisions_183: 
+card_revisions_173: 
   id: 5395
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 448
   creator_id: 1
   content: ""
-card_revisions_184: 
+card_revisions_174: 
   id: 5396
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 449
   creator_id: 1
   content: ""
-card_revisions_185: 
+card_revisions_175: 
   id: 5403
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 439
   creator_id: 1
   content: ""
-card_revisions_186: 
+card_revisions_176: 
   id: 5404
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 438
   creator_id: 1
   content: ""
-card_revisions_187: 
+card_revisions_177: 
   id: 5469
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 259
   creator_id: 1
   content: |-
@@ -1159,9 +1095,9 @@ card_revisions_187:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_188: 
+card_revisions_178: 
   id: 5470
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 5
   creator_id: 1
   content: |-
@@ -1173,9 +1109,9 @@ card_revisions_188:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_189: 
+card_revisions_179: 
   id: 5471
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 12
   creator_id: 1
   content: |-
@@ -1183,9 +1119,9 @@ card_revisions_189:
     <blockquote>
     <p>{{+*type+by update}}</p>
     </blockquote>
-card_revisions_190: 
+card_revisions_180: 
   id: 5472
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 3
   creator_id: 1
   content: |-
@@ -1197,9 +1133,9 @@ card_revisions_190:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_191: 
+card_revisions_181: 
   id: 5479
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 17
   creator_id: 1
   content: |-
@@ -1211,9 +1147,9 @@ card_revisions_191:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_192: 
+card_revisions_182: 
   id: 5480
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 18
   creator_id: 1
   content: |-
@@ -1225,9 +1161,9 @@ card_revisions_192:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_193: 
+card_revisions_183: 
   id: 5481
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 50
   creator_id: 1
   content: |-
@@ -1239,9 +1175,9 @@ card_revisions_193:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_194: 
+card_revisions_184: 
   id: 5482
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 19
   creator_id: 1
   content: |-
@@ -1253,9 +1189,9 @@ card_revisions_194:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_195: 
+card_revisions_185: 
   id: 5483
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 20
   creator_id: 1
   content: |-
@@ -1267,9 +1203,9 @@ card_revisions_195:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_196: 
+card_revisions_186: 
   id: 5484
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 52
   creator_id: 1
   content: |-
@@ -1281,9 +1217,9 @@ card_revisions_196:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_197: 
+card_revisions_187: 
   id: 5485
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 22
   creator_id: 1
   content: |-
@@ -1295,9 +1231,9 @@ card_revisions_197:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_198: 
+card_revisions_188: 
   id: 5486
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 47
   creator_id: 1
   content: |-
@@ -1309,9 +1245,9 @@ card_revisions_198:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_199: 
+card_revisions_189: 
   id: 5487
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 7
   creator_id: 1
   content: |-
@@ -1321,9 +1257,9 @@ card_revisions_199:
     <p>&nbsp;</p>
     <h1>Roles</h1>
     <p>{{+*type+by name}}</p>
-card_revisions_200: 
+card_revisions_190: 
   id: 5488
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 30
   creator_id: 1
   content: |-
@@ -1335,9 +1271,9 @@ card_revisions_200:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_201: 
+card_revisions_191: 
   id: 5489
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 51
   creator_id: 1
   content: |-
@@ -1349,9 +1285,9 @@ card_revisions_201:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_202: 
+card_revisions_192: 
   id: 5490
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 4
   creator_id: 1
   content: |-
@@ -1363,21 +1299,21 @@ card_revisions_202:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_203: 
+card_revisions_193: 
   id: 5497
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 87
   creator_id: 1
   content: ""
-card_revisions_204: 
+card_revisions_194: 
   id: 5510
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 452
   creator_id: 1
   content: ""
-card_revisions_205: 
+card_revisions_195: 
   id: 5511
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 453
   creator_id: 1
   content: |-
@@ -1387,9 +1323,9 @@ card_revisions_205:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_206: 
+card_revisions_196: 
   id: 5516
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 88
   creator_id: 1
   content: |-
@@ -1401,15 +1337,15 @@ card_revisions_206:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_207: 
+card_revisions_197: 
   id: 5520
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 455
   creator_id: 1
   content: ""
-card_revisions_208: 
+card_revisions_198: 
   id: 5521
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 456
   creator_id: 1
   content: |-
@@ -1419,23 +1355,17 @@ card_revisions_208:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_209: 
-  id: 5524
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 213
-  creator_id: 1
-  content: <p><span><span>Pointers list (or "point" to) one or more other cards. [[http://wagn.org/wagn/Pointer|Learn more about Pointers]].<br></span></span></p>
-card_revisions_210: 
+card_revisions_199: 
   id: 5538
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 278
   creator_id: 1
   content: |-
     <p>&nbsp;</p>
     <blockquote></blockquote>
-card_revisions_211: 
+card_revisions_200: 
   id: 5566
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 63
   creator_id: 1
   content: |-
@@ -1450,21 +1380,21 @@ card_revisions_211:
     <div>HTTP:// <em>(YOUR WAGN'S DOMAIN) </em>{{+*thanks}}</div>
     </blockquote>
     <div>You can <strong>approve/deny account requests [[Account Request|here]]</strong>.</div>
-card_revisions_212: 
+card_revisions_201: 
   id: 5573
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 297
   creator_id: 1
   content: <div>Sets define a group of cards to which settings can apply. [[http://www.wagn.org/wagn/Setting|Learn more about settings.]]</div>
-card_revisions_213: 
+card_revisions_202: 
   id: 5581
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 458
   creator_id: 1
   content: "2"
-card_revisions_214: 
+card_revisions_203: 
   id: 5592
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 461
   creator_id: 1
   content: |-
@@ -1473,104 +1403,104 @@ card_revisions_214:
     [[select]]
     [[multiselect]]
     [[list]]
-card_revisions_215: 
+card_revisions_204: 
   id: 5593
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 462
   creator_id: 1
   content: radio
-card_revisions_216: 
+card_revisions_205: 
   id: 5598
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 95
   creator_id: 1
   content: |-
     {"edited_by": "_self",
      "sort": "update"}
-card_revisions_217: 
+card_revisions_206: 
   id: 5603
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 38
   creator_id: 1
   content: |-
     {"include":"_self",
      "sort": "name"
     }
-card_revisions_218: 
+card_revisions_207: 
   id: 5604
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 42
   creator_id: 1
   content: |-
     {"included_by":"_self",
      "sort": "name"
     }
-card_revisions_219: 
+card_revisions_208: 
   id: 5605
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 44
   creator_id: 1
   content: |-
     {"linked_to_by":"_self",
      "sort": "name"
     }
-card_revisions_220: 
+card_revisions_209: 
   id: 5606
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 40
   creator_id: 1
   content: |-
     {"link_to":"_self",
      "sort": "name"
     }
-card_revisions_221: 
+card_revisions_210: 
   id: 5607
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 34
   creator_id: 1
   content: |-
     {"part":"_self",
      "sort": "name"
     }
-card_revisions_222: 
+card_revisions_211: 
   id: 5608
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 36
   creator_id: 1
   content: |-
     {"plus":"_self",
      "sort": "name"
     }
-card_revisions_223: 
+card_revisions_212: 
   id: 5611
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 447
   creator_id: 1
   content: |-
     {"referred_to_by":"_self",
      "sort": "name"
     }
-card_revisions_224: 
+card_revisions_213: 
   id: 5612
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 450
   creator_id: 1
   content: |-
     {"refer_to":"_self",
      "sort": "name"
     }
-card_revisions_225: 
+card_revisions_214: 
   id: 5619
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 395
   creator_id: 1
   content: |-
     {"type": "File",
      "sort": "update"
     }
-card_revisions_226: 
+card_revisions_215: 
   id: 5621
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 223
   creator_id: 1
   content: |-
@@ -1584,649 +1514,567 @@ card_revisions_226:
     {"plus": ["*watcher", {"refer_to": "_self"} ],
      "sort": "name"
     }
-card_revisions_227: 
+card_revisions_216: 
   id: 5640
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 465
   creator_id: 1
   content: "{\"sort\":\"update\", \"dir\":\"desc\", \"view\":\"change\"}"
-card_revisions_228: 
+card_revisions_217: 
   id: 5642
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 467
   creator_id: 1
   content: "{\"link_to\":\"_none\"}"
-card_revisions_229: 
+card_revisions_218: 
   id: 5643
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 468
   creator_id: 1
   content: ""
-card_revisions_230: 
+card_revisions_219: 
   id: 5644
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 469
   creator_id: 1
   content: ""
-card_revisions_231: 
+card_revisions_220: 
   id: 5645
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 470
   creator_id: 1
   content: ""
-card_revisions_232: 
+card_revisions_221: 
   id: 5646
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 471
   creator_id: 1
   content: ""
-card_revisions_233: 
+card_revisions_222: 
   id: 5647
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 472
   creator_id: 1
   content: ""
-card_revisions_234: 
+card_revisions_223: 
   id: 5648
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 473
   creator_id: 1
   content: ""
-card_revisions_235: 
+card_revisions_224: 
   id: 5649
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 474
   creator_id: 1
   content: ""
-card_revisions_236: 
+card_revisions_225: 
   id: 5713
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 221
   creator_id: 1
   content: |-
     {"extension_type": "User"}
     /* note -- this syntax is not yet deprecated but will be before Wagn 2.0 */
-card_revisions_237: 
+card_revisions_226: 
   id: 5717
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 478
   creator_id: 1
   content: ""
-card_revisions_238: 
+card_revisions_227: 
   id: 5718
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 479
   creator_id: 1
   content: ""
-card_revisions_239: 
+card_revisions_228: 
   id: 5719
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 480
   creator_id: 1
   content: ""
-card_revisions_240: 
+card_revisions_229: 
   id: 5720
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 481
   creator_id: 1
   content: ""
-card_revisions_241: 
+card_revisions_230: 
   id: 5721
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 482
   creator_id: 1
   content: ""
-card_revisions_242: 
+card_revisions_231: 
   id: 5722
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 483
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_243: 
+card_revisions_232: 
   id: 5723
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 484
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_244: 
+card_revisions_233: 
   id: 5724
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 485
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_245: 
+card_revisions_234: 
   id: 5725
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 486
   creator_id: 1
   content: "{\"left\":{\"type\":\"_left\"}, \"right\":\"_right\"}"
-card_revisions_246: 
+card_revisions_235: 
   id: 5726
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 487
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_247: 
+card_revisions_236: 
   id: 5727
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 488
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_248: 
+card_revisions_237: 
   id: 5728
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 489
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_249: 
+card_revisions_238: 
   id: 5729
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 490
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_250: 
+card_revisions_239: 
   id: 5730
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 491
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_251: 
+card_revisions_240: 
   id: 5731
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 492
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_252: 
+card_revisions_241: 
   id: 5732
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 493
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_253: 
+card_revisions_242: 
   id: 5733
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 494
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_254: 
+card_revisions_243: 
   id: 5734
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 495
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_255: 
+card_revisions_244: 
   id: 5735
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 496
   creator_id: 1
   content: "[[Anyone Signed In]]"
-card_revisions_256: 
+card_revisions_245: 
   id: 5736
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 497
   creator_id: 1
   content: "[[Anyone Signed In]]"
-card_revisions_257: 
+card_revisions_246: 
   id: 5737
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 498
   creator_id: 1
   content: "[[Anyone Signed In]]"
-card_revisions_258: 
+card_revisions_247: 
   id: 5738
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 499
   creator_id: 1
   content: _left
-card_revisions_259: 
+card_revisions_248: 
   id: 5739
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 500
   creator_id: 1
   content: "[[Anyone]]"
-card_revisions_260: 
+card_revisions_249: 
   id: 5740
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 501
   creator_id: 1
   content: _left
-card_revisions_261: 
+card_revisions_250: 
   id: 5741
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 502
   creator_id: 1
   content: "[[Anyone Signed In]]"
-card_revisions_262: 
+card_revisions_251: 
   id: 5742
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 503
   creator_id: 1
   content: _left
-card_revisions_263: 
+card_revisions_252: 
   id: 5743
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 504
   creator_id: 1
   content: "[[Anyone Signed In]]"
-card_revisions_264: 
+card_revisions_253: 
   id: 5744
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 505
   creator_id: 1
   content: _left
-card_revisions_265: 
+card_revisions_254: 
   id: 5745
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 506
   creator_id: 1
   content: ""
-card_revisions_266: 
+card_revisions_255: 
   id: 5747
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 508
   creator_id: 1
   content: "[[Anyone]]"
-card_revisions_267: 
+card_revisions_256: 
   id: 5748
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 509
   creator_id: 1
   content: "{\"name\":\"_self\"}"
-card_revisions_268: 
+card_revisions_257: 
   id: 5750
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 511
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_269: 
+card_revisions_258: 
   id: 5751
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 512
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_270: 
+card_revisions_259: 
   id: 5754
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 515
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_271: 
+card_revisions_260: 
   id: 5755
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 516
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_272: 
+card_revisions_261: 
   id: 5756
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 517
   creator_id: 1
   content: "{\"name\":\"_self\"}"
-card_revisions_273: 
+card_revisions_262: 
   id: 5757
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 518
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_274: 
+card_revisions_263: 
   id: 5758
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 519
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_275: 
+card_revisions_264: 
   id: 5764
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 323
   creator_id: 1
   content: "{\"type\":\"_self\"}"
-card_revisions_276: 
+card_revisions_265: 
   id: 5765
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 523
   creator_id: 1
   content: "[[Anyone]]"
-card_revisions_277: 
-  id: 5767
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 154
-  creator_id: 1
-  content: |-
-    [[Ethan McCutchen]]
-    [[John Abbe]]
-    [[Lewis Hoffman]]
-    [[*ignore]]
-    [[cards to copy to new Wagns]]
-    [[new]]
-    [[all non-star cards]]
-    [[cards by type]]
-    [[Cardtype descriptions]]
-    [[Basic+*watchers]]
-    [[related subtabs - universal]]
-    [[Rules]]
-    [[not set or setting]]
-    [[translatable cards]]
-    [[default cards]]
-    [[star cards]]
-    [[not listed yet]]
-    [[Settings defaults and help]]
-    [[Advanced Search]]
-    [[new+*self]]
-    [[new+*self+*comment]]
-card_revisions_278: 
+card_revisions_266: 
   id: 5768
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 524
   creator_id: 1
   content: "{\"right\":\"_self\"}"
-card_revisions_279: 
+card_revisions_267: 
   id: 5770
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 526
   creator_id: 1
   content: "{\"right\":\"_self\"}"
-card_revisions_280: 
+card_revisions_268: 
   id: 5772
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 528
   creator_id: 1
   content: "{\"right\":\"_self\"}"
-card_revisions_281: 
+card_revisions_269: 
   id: 5775
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 530
   creator_id: 1
   content: "{\"right\":\"_self\"}"
-card_revisions_282: 
+card_revisions_270: 
   id: 5777
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 532
   creator_id: 1
   content: "{\"right\":\"_self\"}"
-card_revisions_283: 
+card_revisions_271: 
   id: 5779
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 534
   creator_id: 1
   content: ""
-card_revisions_284: 
+card_revisions_272: 
   id: 5780
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 535
   creator_id: 1
   content: "{\"extension_type\":\"User\"}"
-card_revisions_285: 
+card_revisions_273: 
   id: 5781
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 536
   creator_id: 1
   content: ""
-card_revisions_286: 
+card_revisions_274: 
   id: 5782
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 537
   creator_id: 1
   content: "{\"extension_type\":\"User\"}"
-card_revisions_287: 
+card_revisions_275: 
   id: 5785
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 538
   creator_id: 1
   content: ""
-card_revisions_288: 
+card_revisions_276: 
   id: 5786
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 539
   creator_id: 1
   content: "{\"extension_type\":\"User\"}"
-card_revisions_289: 
+card_revisions_277: 
   id: 5787
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 540
   creator_id: 1
   content: ""
-card_revisions_290: 
+card_revisions_278: 
   id: 5788
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 541
   creator_id: 1
   content: "{\"extension_type\":\"User\"}"
-card_revisions_291: 
+card_revisions_279: 
   id: 5789
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 542
   creator_id: 1
   content: ""
-card_revisions_292: 
+card_revisions_280: 
   id: 5790
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 543
   creator_id: 1
   content: "{\"extension_type\":\"User\"}"
-card_revisions_293: 
+card_revisions_281: 
   id: 5794
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 531
   creator_id: 1
   content: Who can view cards in the [[set]].
-card_revisions_294: 
+card_revisions_282: 
   id: 5929
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 544
   creator_id: 1
   content: "{\"name\":\"_self\"}"
-card_revisions_295: 
+card_revisions_283: 
   id: 5938
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 546
   creator_id: 1
   content: "{\"name\":\"_self\"}"
-card_revisions_296: 
-  id: 5941
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 73
-  creator_id: 1
-  content: |-
-    <h1>Basics</h1>
-    <div>&nbsp;</div>
-    <div>Set your site name, home card, and logo image:</div>
-    <blockquote>
-    <div><em></em>{{*title|closed;type:Phrase}}</div>
-    <div>{{*home|closed;type:Phrase}}<em></em></div>
-    <div>{{*logo|closed;type:Image}}</div>
-    </blockquote>
-    <div>&nbsp;</div>
-    <div>&nbsp;</div>
-    <h1>Sets / Settings / Rules</h1>
-    <div>&nbsp;</div>
-    <div>You can create "rules" by applying&nbsp;<em>[[settings]]</em>&nbsp;(configurations) to&nbsp;<em>[[sets]]&nbsp;</em>(groups) of cards.</div>
-    <blockquote>
-    <div>{{setting|closed}}</div>
-    <div>{{set|closed}}</div>
-    </blockquote>
-    <p>&nbsp;</p>
-    <div>All the rules impacting a given card can be accessed through its "Options" tab. &nbsp;The [[*all]] set is for site-wide defaults:</div>
-    <blockquote>
-    <div>{{*all|open}}</div>
-    </blockquote>
-    <div>&nbsp;</div>
-    <h1>Email / Account Configuration</h1>
-    <div>&nbsp;</div>
-    <div>Configure account-related emails here:</div>
-    <blockquote>
-    <div>{{*request|closed}}</div>
-    <div>{{*signup|closed}}</div>
-    {{*invite|closed}}</blockquote>
-    <div>By default, system emails come from [[/card/options/Wagn_Bot| Wagn Bot's email address]] (set via the Options tab).</div>
-    <blockquote>
-    <div>{{Wagn Bot|closed}}</div>
-    </blockquote>
-    <div>You can [[http://www.wagn.org/wagn/custom_sign-up_information|further configure signups]] by&nbsp;[[http://www.wagn.org/wagn/formatting|formatting]]&nbsp;[[Account Request]] and [[User]] cards.</div>
-    <div>&nbsp;</div>
-    <div><em>[[http://www.wagn.org/wagn/account#Administering%20accounts | Learn  more about configuring accounts.]]</em></div>
-    <div>&nbsp;</div>
-    <div>&nbsp;</div>
-    <h1>Miscellaneous options<br></h1>
-    <div>&nbsp;</div>
-    <blockquote>{{*css|closed;type:HTML}}
-    <div>{{*sidebar|closed}}</div>
-    <div>{{*tinyMCE|closed}}&nbsp;</div>
-    <div>&nbsp;</div>
-    <div>{{*google analytics key|closed; type:Phrase}} <em>[[http://wagn.org/wagn/Google_Analytics|How to set up Google  Analytics]]</em></div>
-    <div>&nbsp;</div>
-    <div>{{*favicon|closed;type:Image}} <em>[[http://www.wagn.org/wagn/favicon|How to customize your favicon]]</em></div>
-    </blockquote>
-card_revisions_297: 
+card_revisions_284: 
   id: 5945
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 298
   creator_id: 1
   content: |-
     <div>Settings affect how cards look and behave. Settings are available under each card's Options tab.</div>
     <p>&nbsp;</p>
     <div><em>[[http://www.wagn.org/wagn/Setting|Learn more about settings.]]</em></div>
-card_revisions_298: 
+card_revisions_285: 
   id: 5948
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 475
   creator_id: 1
   content: "{\"left\":{}}"
-card_revisions_299: 
+card_revisions_286: 
   id: 5949
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 477
   creator_id: 1
   content: "{\"right\":{\"complete\":\"*\"}}"
-card_revisions_300: 
+card_revisions_287: 
   id: 5950
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 476
   creator_id: 1
   content: "{\"complete\":\"*\"}"
-card_revisions_301: 
+card_revisions_288: 
   id: 5951
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 548
   creator_id: 1
   content: "{\"name\":\"_self\"}"
-card_revisions_302: 
+card_revisions_289: 
   id: 5952
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 549
   creator_id: 1
   content: |
     [[Anyone]]
 
-card_revisions_303: 
+card_revisions_290: 
   id: 5953
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 550
   creator_id: 1
   content: "{\"name\":\"_self\"}"
-card_revisions_304: 
+card_revisions_291: 
   id: 5954
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 551
   creator_id: 1
   content: |
     [[Anyone]]
 
-card_revisions_305: 
+card_revisions_292: 
   id: 5955
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 552
   creator_id: 1
   content: |
     [[Anyone]]
 
-card_revisions_306: 
+card_revisions_293: 
   id: 5956
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 553
   creator_id: 1
   content: "{\"name\":\"_self\"}"
-card_revisions_307: 
+card_revisions_294: 
   id: 5957
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 554
   creator_id: 1
   content: |
     [[Anyone]]
 
-card_revisions_308: 
+card_revisions_295: 
   id: 5958
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 555
   creator_id: 1
   content: "{\"name\":\"_self\"}"
-card_revisions_309: 
+card_revisions_296: 
   id: 5959
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 556
   creator_id: 1
   content: |
     [[Anyone]]
 
-card_revisions_310: 
+card_revisions_297: 
   id: 5960
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 557
   creator_id: 1
   content: "{\"name\":\"_self\"}"
-card_revisions_311: 
+card_revisions_298: 
   id: 5961
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 558
   creator_id: 1
   content: |
     [[Anyone]]
 
-card_revisions_312: 
+card_revisions_299: 
   id: 5962
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 559
   creator_id: 1
   content: |
     [[Anyone]]
 
-card_revisions_313: 
+card_revisions_300: 
   id: 5963
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 560
   creator_id: 1
   content: "{\"name\":\"_self\"}"
-card_revisions_314: 
+card_revisions_301: 
   id: 5964
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 561
   creator_id: 1
   content: |
     [[Anyone]]
 
-card_revisions_315: 
+card_revisions_302: 
   id: 5966
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 93
   creator_id: 1
   content: |-
     {"editor_of": "_self",
      "sort": "name"
     }
-card_revisions_316: 
+card_revisions_303: 
   id: 5972
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 437
   creator_id: 1
   content: ""
-card_revisions_317: 
+card_revisions_304: 
   id: 5973
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 440
   creator_id: 1
   content: ""
-card_revisions_318: 
+card_revisions_305: 
   id: 5976
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 100
   creator_id: 1
   content: |-
@@ -2238,70 +2086,42 @@ card_revisions_318:
     <p>{{Account Request+*type+by create}}</p>
     <p>&nbsp;</p>
     <p>{{Cards with accounts|titled}}</p>
-card_revisions_319: 
+card_revisions_306: 
   id: 5984
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 421
   creator_id: 1
   content: |-
     {"found_by":"_self",
      "return":"count"
     }
-card_revisions_320: 
-  id: 5985
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 79
-  creator_id: 1
-  content: ""
-card_revisions_321: 
-  id: 5996
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 85
-  creator_id: 1
-  content: <p>[[/card/new|Add a card]]</p>
-card_revisions_322: 
-  id: 6019
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 80
-  creator_id: 1
-  content: |-
-    <h1>Welcome to Wagn!</h1>
-    <p>&nbsp;</p>
-    <p>[[Config| Start configuring]] or learn more:</p>
-    <ul>
-    <li>[[http://wagn.org/wagn/configuration| Configuration]]</li>
-    <li>[[http://wagn.org/wagn/Documentation| Other Documentation]]</li>
-    <li>[[http://wagn.org/wagn/Support| Support]]</li>
-    </ul>
-    <div><em>Double-click content to edit.</em></div>
-    <p>&nbsp;</p>
-card_revisions_323: 
+card_revisions_307: 
   id: 6021
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 565
   creator_id: 1
   content: ""
-card_revisions_324: 
+card_revisions_308: 
   id: 6022
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 566
   creator_id: 1
   content: "{\"right\":\"_self\"}"
-card_revisions_325: 
+card_revisions_309: 
   id: 6023
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 567
   creator_id: 1
   content: ""
-card_revisions_326: 
+card_revisions_310: 
   id: 6024
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 568
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_327: 
+card_revisions_311: 
   id: 6025
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 53
   creator_id: 1
   content: |
@@ -2327,9 +2147,9 @@ card_revisions_327:
     + "align|onmouseover|onmouseout|name],hr[class|width|size|noshade],"
     + "font[face|size|color|style],span[class|align|style]"          
 
-card_revisions_328: 
+card_revisions_312: 
   id: 6027
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 569
   creator_id: 1
   content: |-
@@ -2341,80 +2161,69 @@ card_revisions_328:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_revisions_329: 
+card_revisions_313: 
   id: 6028
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 570
   creator_id: 1
   content: "{\"type\":\"_self\"}"
-card_revisions_330: 
+card_revisions_314: 
   id: 6029
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 571
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_331: 
+card_revisions_315: 
   id: 6030
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 572
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_332: 
+card_revisions_316: 
   id: 6031
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 573
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_333: 
+card_revisions_317: 
   id: 6033
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 466
   creator_id: 1
   content: "{\"match\":\"$keyword\", \"sort\":\"relevance\"}"
-card_revisions_334: 
+card_revisions_318: 
   id: 6044
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 578
   creator_id: 1
   content: ""
-card_revisions_335: 
+card_revisions_319: 
   id: 6052
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 586
   creator_id: 1
   content: "1"
-card_revisions_336: 
+card_revisions_320: 
   id: 6053
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 587
   creator_id: 1
   content: ""
-card_revisions_337: 
+card_revisions_321: 
   id: 6054
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 588
   creator_id: 1
   content: "[[Anyone Signed In]]"
-card_revisions_338: 
+card_revisions_322: 
   id: 6055
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 589
   creator_id: 1
   content: "[[Administrator]]"
-card_revisions_339: 
-  id: 6063
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 151
-  creator_id: 1
-  content: |-
-    <p>[[Config|Configuration]]</p>
-    <p>&nbsp;</p>
-    <p>[[*account|Accounts]]</p>
-    <p>&nbsp;</p>
-    <p>[[/admin/clear_cache|Clear the cache]]</p>
-card_revisions_340: 
+card_revisions_323: 
   id: 6072
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 56
   creator_id: 1
   content: |-
@@ -2441,73 +2250,33 @@ card_revisions_340:
     <blockquote>
     <div>HTTP:// <em>(YOUR WAGN'S DOMAIN) </em>{{+*thanks}}</div>
     </blockquote>
-card_revisions_341: 
-  id: 6078
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 147
-  creator_id: 1
-  content: <p>Administrators can create, read, update and delete any card in the system regardless of its permissions rules. [[http://wagn.org/wagn/permissions|Learn more]].</p>
-card_revisions_342: 
+card_revisions_324: 
   id: 6081
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 225
   creator_id: 1
   content: <p>Each [[user]] can be given roles to organize site permissions. [[http://wagn.org/wagn/Role|Learn more about roles]].</p>
-card_revisions_343: 
+card_revisions_325: 
   id: 6257
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 276
   creator_id: 1
   content: "1"
-card_revisions_344: 
-  id: 6260
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 314
-  creator_id: 1
-  content: |-
-    <!DOCTYPE HTML>
-    <html>
-      <head>
-        {{*head}}
-      </head>
-      
-      <body id="wagn">
-        <div id="menu">
-          [[/ | Home]]   [[/recent | Recent]]   {{*navbox}} {{*account links}}
-        </div>
-        
-        <div id="primary">
-          {{_main}}
-        </div>
-        
-        <div id="secondary">
-          <div id="logo">[[/ | {{*logo}}]]</div>
-          {{*sidebar}}
-          <div id="credit">Wheeled by [[http://www.wagn.org|Wagn]] v. {{*version}}</div>
-        </div>
-      </body>
-    </html>
-card_revisions_345: 
-  id: 6261
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 198
-  creator_id: 1
-  content: ""
-card_revisions_346: 
+card_revisions_326: 
   id: 6262
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 766
   creator_id: 1
   content: ""
-card_revisions_347: 
+card_revisions_327: 
   id: 6263
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 767
   creator_id: 1
   content: ""
-card_revisions_348: 
+card_revisions_328: 
   id: 6272
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 66
   creator_id: 1
   content: |-
@@ -2531,227 +2300,587 @@ card_revisions_348:
     </blockquote>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
-card_revisions_349: 
+card_revisions_329: 
   id: 6274
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 405
   creator_id: 1
   content: <p>Basic cards are for rich text, and are the default type for new cards.</p>
-card_revisions_350: 
+card_revisions_330: 
   id: 6275
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 773
   creator_id: 1
   content: "{\"type\": \"Roles\"}"
-card_revisions_351: 
+card_revisions_331: 
   id: 6276
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 774
   creator_id: 1
   content: "[[checkbox]]"
-card_revisions_352: 
-  id: 6287
-  created_at: 2013-04-16 12:49:21 Z
-  card_id: 103
-  creator_id: 1
-  content: ""
-card_revisions_353: 
+card_revisions_332: 
   id: 6294
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 308
   creator_id: 1
   content: <p>When "yes", users permitted to create [[*account+*right|+*account cards]] can add [[http://wagn.org/account|accounts]] to these cards.</p>
-card_revisions_354: 
+card_revisions_333: 
   id: 6296
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 311
   creator_id: 1
   content: <p>[[http://www.wagn.org/wagn/custom_help_text|Help text]] people will see when adding cards.</p>
-card_revisions_355: 
+card_revisions_334: 
   id: 6299
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 249
   creator_id: 1
   content: <p>Autogenerate name for new cards by incrementing this value. <em>[[http://wagn.org/autonaming|more]]</em></p>
-card_revisions_356: 
+card_revisions_335: 
   id: 6302
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 525
   creator_id: 1
   content: <p>Who can add comments.</p>
-card_revisions_357: 
+card_revisions_336: 
   id: 6304
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 527
   creator_id: 1
   content: <p>Who can create new cards.</p>
-card_revisions_358: 
+card_revisions_337: 
   id: 6313
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 529
   creator_id: 1
   content: <p>Who can remove cards.</p>
-card_revisions_359: 
+card_revisions_338: 
   id: 6316
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 304
   creator_id: 1
   content: <p>Anti-spam setting. &nbsp;Requires non-signed-in users to complete a [[http://wagn.org/captcha|captcha]] before adding or editing cards (where permitted).</p>
-card_revisions_360: 
+card_revisions_339: 
   id: 6317
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 545
   creator_id: 1
   content: <p>Add custom CSS styling. &nbsp;<em>[[http://wagn.org/Skin|more]]</em></p>
-card_revisions_361: 
+card_revisions_340: 
   id: 6318
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 357
   creator_id: 1
   content: <p>Template for initial type and content of new cards. <em>[[http://wagn.org/formatting|more]]</em></p>
-card_revisions_362: 
+card_revisions_341: 
   id: 6320
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 306
   creator_id: 1
   content: <p>[[http://wagn.org/custom_help_text|Help text]] people will see when editing.</p>
-card_revisions_363: 
+card_revisions_342: 
   id: 6322
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 299
   creator_id: 1
   content: <p>Edit interface for [[Pointer]] cards.</p>
-card_revisions_364: 
+card_revisions_343: 
   id: 6325
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 281
   creator_id: 1
   content: <p>Default page layout.&nbsp; <em>[[http://wagn.org/custom_layouts | more]]</em></p>
-card_revisions_365: 
+card_revisions_344: 
   id: 6327
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 301
   creator_id: 1
   content: <p>Value options for [[Pointer]] cards. Can itself be a Pointer or a [[Search]]. <em>[[http://wagn.org/Pointer|more]]</em></p>
-card_revisions_366: 
+card_revisions_345: 
   id: 6329
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 254
   creator_id: 1
   content: <p>Labels for [[Pointer]] radio button and checkbox items. &nbsp;<em>[[http://wagn.org/Pointer|more]]</em></p>
-card_revisions_367: 
+card_revisions_346: 
   id: 6332
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 365
   creator_id: 1
   content: <p>Configures email to be sent when card is created. <em>[[http://wagn.org/flexible_email|more]]</em></p>
-card_revisions_368: 
+card_revisions_347: 
   id: 6335
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 83
   creator_id: 1
   content: <p>Sidebar content of [[Default Layout]]. <em>[[http://wagn.org/sidebar|more]]</em></p>
-card_revisions_369: 
+card_revisions_348: 
   id: 6337
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 359
   creator_id: 1
   content: <p>Controls cards' content / structure. <em>[[http://wagn.org/formatting|more]]</em></p>
-card_revisions_370: 
+card_revisions_349: 
   id: 6340
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 90
   creator_id: 1
   content: <p>Autogenerate [[http://wagn.org/table_of_contents|table of contents]] on cards with at least this many headers ("0" means never).</p>
-card_revisions_371: 
+card_revisions_350: 
   id: 6343
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 250
   creator_id: 1
   content: <p>Destination after card is created. <em>[[http://wagn.org/Custom_thank_you_messages_for_forms|more]]</em></p>
-card_revisions_372: 
+card_revisions_351: 
   id: 6345
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 533
   creator_id: 1
   content: <p>Who can edit cards.</p>
-card_revisions_373: 
+card_revisions_352: 
   id: 6346
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 392
   creator_id: 1
   content: <p>Configures email to be sent using [[http://wagn.org/flexible_email|flexible email]].&nbsp;</p>
-card_revisions_374: 
+card_revisions_353: 
   id: 6355
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 547
   creator_id: 1
   content: |-
     <p>Configure [[http://tinymce.com|TinyMCE]], Wagn's default [[http://en.wikipedia.org/wiki/Wysiwyg|wysiwyg]] editor.&nbsp;<em>[[http://wagn.org/TinyMCE|more]]</em></p>
     <p>&nbsp;</p>
-card_revisions_375: 
+card_revisions_354: 
   id: 6372
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 785
   creator_id: 1
   content: <p>Cards created by&nbsp;<em>{{_left|name}}</em>.</p>
-card_revisions_376: 
+card_revisions_355: 
   id: 6376
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 786
   creator_id: 1
   content: <p>Cards edited by <em>{{_left|name}}</em>.</p>
-card_revisions_377: 
+card_revisions_356: 
   id: 6377
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 784
   creator_id: 1
   content: <p>Users who have edited <em>{{_left|name}}</em>.</p>
-card_revisions_378: 
+card_revisions_357: 
   id: 6378
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 783
   creator_id: 1
   content: <p>Cards that <em>{{_left|name}}</em> includes.</p>
-card_revisions_379: 
+card_revisions_358: 
   id: 6379
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 780
   creator_id: 1
   content: <p>Cards that include <em>{{_left|name}}</em>.</p>
-card_revisions_380: 
+card_revisions_359: 
   id: 6380
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 782
   creator_id: 1
   content: <p>Cards that <em>{{_left|name}}</em>&nbsp;links to.</p>
-card_revisions_381: 
+card_revisions_360: 
   id: 6382
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 779
   creator_id: 1
   content: <p>Cards that link to <em>{{_left|name}}</em>.</p>
-card_revisions_382: 
+card_revisions_361: 
   id: 6390
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 777
   creator_id: 1
   content: <p>If there is a card named "X+<em>{{_left|name}}</em>", then X is a mate of <em>{{_left|name}}</em>.</p>
-card_revisions_383: 
+card_revisions_362: 
   id: 6391
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 781
   creator_id: 1
   content: <p>Cards that <em>{{_left|name}}</em> refers to.</p>
-card_revisions_384: 
+card_revisions_363: 
   id: 6392
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 778
   creator_id: 1
   content: <p>Cards that refer to <em>{{_left|name}}</em>.</p>
-card_revisions_385: 
+card_revisions_364: 
   id: 6405
-  created_at: 2013-04-16 12:49:21 Z
+  created_at: 2013-08-20 13:57:42 Z
   card_id: 776
   creator_id: 1
   content: <p>Cards formed by "mating" <em>{{_left|name}} </em>with another card. eg:&nbsp;"{{_left|name}}<strong>+</strong>mate".</p>
+card_revisions_365: 
+  id: 6406
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 316
+  creator_id: 1
+  content: "{\"type\": \"Layout\"}"
+card_revisions_366: 
+  id: 6410
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 151
+  creator_id: 1
+  content: |-
+    <p>[[Config|Configuration]]</p>
+    <p>[[*account|Accounts]]</p>
+card_revisions_367: 
+  id: 6412
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 85
+  creator_id: 1
+  content: <p>[[/?view=new|Add a card]]</p>
+card_revisions_368: 
+  id: 6419
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 790
+  creator_id: 15
+  content: |-
+    vehicle_square72opaque2.png
+    image/png
+    2020
+    standard
+card_revisions_369: 
+  id: 6426
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 789
+  creator_id: 1
+  content: |-
+    <div>{{+image}}</div>
+    <div><a href="http://wagn.org">Wagn v{{*version}}</a></div>
+card_revisions_370: 
+  id: 6428
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 314
+  creator_id: 1
+  content: |-
+    <!DOCTYPE HTML>
+    <html>
+      <head>
+        {{*head}}
+      </head>
+      
+      <body id="wagn">
+        <div id="menu">
+          [[/ | Home]]   [[/recent | Recent]]   {{*navbox}} {{*account links}}
+        </div>
+        
+        <div id="primary">
+          {{_main}}
+        </div>
+        
+        <div id="secondary">
+          {{*sidebar}}
+        </div>
+      </body>
+    </html>
+card_revisions_371: 
+  id: 6453
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 210
+  creator_id: 1
+  content: <p>Everyone has this role, whether signed in or not. [[http://wagn.org/account|more]]</p>
+card_revisions_372: 
+  id: 6458
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 147
+  creator_id: 1
+  content: <p>Administrators can create, read, update and delete any card. [[http://wagn.org/permissions|more]]</p>
+card_revisions_373: 
+  id: 6460
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 216
+  creator_id: 1
+  content: <p>People with not-yet-approved accounts. [[http://wagn.org/account|more]]</p>
+card_revisions_374: 
+  id: 6461
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 211
+  creator_id: 1
+  content: <p>Anyone who is signed in has this role. [[http://wagn.org/account|more]]</p>
+card_revisions_375: 
+  id: 6465
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 180
+  creator_id: 1
+  content: <p><span><span>Every card has a type, which shapes the kind of information it holds. [[http://wagn.org/card_types|more]]<br></span></span></p>
+card_revisions_376: 
+  id: 6466
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 215
+  creator_id: 1
+  content: <p>File cards are for uploading and downloading files. [[http://wagn.org/File|more]]</p>
+card_revisions_377: 
+  id: 6467
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 202
+  creator_id: 1
+  content: <p>These cards allow unrestricted HTML. [[http://wagn.org/wagn/HTML|more]]</p>
+card_revisions_378: 
+  id: 6470
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 214
+  creator_id: 1
+  content: <p>Upload images to these cards and include them anywhere. [[http://wagn.org/Image|more]]</p>
+card_revisions_379: 
+  id: 6471
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 406
+  creator_id: 1
+  content: <p>Can contain only numerical values.</p>
+card_revisions_380: 
+  id: 6473
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 213
+  creator_id: 1
+  content: <p><span><span>Pointers list one or more other cards. [[http://wagn.org/Pointer|more]]<br></span></span></p>
+card_revisions_381: 
+  id: 6477
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 787
+  creator_id: 1
+  content: "[[select]]"
+card_revisions_382: 
+  id: 6492
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 154
+  creator_id: 1
+  content: |-
+    [[Ethan McCutchen]]
+    [[John Abbe]]
+    [[Lewis Hoffman]]
+    [[*ignore]]
+    [[cards to copy to new Wagns]]
+    [[new]]
+    [[all non-star cards]]
+    [[cards by type]]
+    [[Cardtype descriptions]]
+    [[Basic+*watchers]]
+    [[related subtabs - universal]]
+    [[list of rules]]
+    [[not set or setting]]
+    [[translatable cards]]
+    [[default cards]]
+    [[star cards]]
+    [[not listed yet]]
+    [[Settings defaults and help]]
+    [[Advanced Search]]
+    [[new+*self]]
+    [[new+*self+*comment]]
+    [[cquin]]
+card_revisions_383: 
+  id: 6515
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 796
+  creator_id: 1
+  content: "{\"name\":\"_self\"}"
+card_revisions_384: 
+  id: 6516
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 797
+  creator_id: 1
+  content: "[[Administrator]]"
+card_revisions_385: 
+  id: 6518
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 798
+  creator_id: 1
+  content: "{\"name\":\"_self\"}"
+card_revisions_386: 
+  id: 6519
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 799
+  creator_id: 1
+  content: <p>A favicon (or shortcut icon) is a small image used by browsers to help identify your website. [[http://www.wagn.org/wagn/favicon|How to customize your favicon]]</p>
+card_revisions_387: 
+  id: 6525
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 73
+  creator_id: 1
+  content: |-
+    <h1>Basics</h1>
+    <div>Set your site name, home card, and logo image:</div>
+    <blockquote>
+    <div>{{*title|closed;type:Phrase}}</div>
+    <div>{{*home|closed;type:Phrase}}</div>
+    <div>{{*logo|closed;type:Image}}</div>
+    </blockquote>
+    <div>&nbsp;</div>
+    <h1>Rules</h1>
+    <div>Cards are configured by creating <em>rules</em>. &nbsp;All the rules impacting a given card can be accessed from its card menu via the "advanced" item. Here are the site-wide defaults:</div>
+    <div>
+    <blockquote>{{*all|open}}</blockquote>
+    </div>
+    <div>&nbsp;</div>
+    <h1>Email / Account Configuration</h1>
+    <div>Configure account-related emails here:</div>
+    <blockquote>
+    <div>{{*request|closed}}</div>
+    <div>{{*signup|closed}}</div>
+    {{*invite|closed}}</blockquote>
+    <div>By default, system emails come from [[/Wagn_Bot?view=account| Wagn Bot's email address]].</div>
+    <blockquote>
+    <div>{{Wagn Bot|closed}}</div>
+    </blockquote>
+    <div>You can [[http://wagn.org/custom_sign-up_information|further configure signups]] by&nbsp;[[http://wagn.org/formatting|formatting]]&nbsp;[[Account Request]] and [[User]] cards.</div>
+    <div>&nbsp;</div>
+    <div><em>[[http://wagn.org/account#Administering%20accounts | Learn more about configuring accounts.]]</em></div>
+    <div>&nbsp;</div>
+    <div>&nbsp;</div>
+    <h1>Miscellaneous options</h1>
+    <blockquote>{{*css|closed}}
+    <div>{{*sidebar|closed}}</div>
+    <div>{{*tinyMCE|closed}}</div>
+    <div>{{*favicon|closed}}</div>
+    <div>{{*google analytics key|closed; type:Phrase}} <em>[[http://wagn.org/wagn/Google_Analytics|How to set up Google Analytics]]</em></div>
+    <div>&nbsp;</div>
+    <div>&nbsp;</div>
+    </blockquote>
+card_revisions_388: 
+  id: 6527
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 80
+  creator_id: 1
+  content: <div>{{+original}}</div>
+card_revisions_389: 
+  id: 6528
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 800
+  creator_id: 1
+  content: ""
+card_revisions_390: 
+  id: 6555
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 801
+  creator_id: 1
+  content: "<h1>Create</h1>\r\n\
+    <em>Wagn. For the Organizing Artist</em>\r\n\
+    <aside>\r\n\
+    <h2>The Wagn Way</h2>\r\n\
+    <p>DRY: Don't Repeat Yourself. &nbsp;Most projects wind up with data copied all over the place: on the website, in a database, in email, etc. &nbsp;Wagn helps you organize data for use and reuse in many different contexts. When you update it once, you update it everywhere.</p>\r\n\
+    </aside>\r\n\
+    <ul>\r\n\
+    <li>\r\n\
+    <h2>Database</h2>\r\n\
+    <p>Complex structures without the complex interface. [[http://wagn.org/types|Types]], [[http://wagn.org/compound_names|compound names]], [[http://wagn.org/formatting|formatting]], and a native [[http://wagn.org/WQL|query language]] comprise a powerful bottom-up data-organizing toolset. <em>[[http://wagn.org/structure|Howto]]</em></p>\r\n\
+    </li>\r\n\
+    <li>\r\n\
+    <h2>Website</h2>\r\n\
+    <p>[[http://wagn.org/layouts|Layouts]] and [[http://wagn.org/views|views]] help you present information flexibly and beautifully. <em>[[http://wagn.org/pages|Howto]]</em></p>\r\n\
+    </li>\r\n\
+    <li>\r\n\
+    <h2>Workflow</h2>\r\n\
+    <p>Web submissions, project proposals, meeting records, customer info, research, sketches, reports... &nbsp;Wagn helps teams create, evolve, and connect all their information flows in fluid and adaptive ways. <em>[[http://wagn.org/wagneering|Howto]]</em></p>\r\n\
+    </li>\r\n\
+    </ul>\r\n\
+    <h1>Collaborate</h1>\r\n\
+    <em>Wagn. Go Together</em>\r\n\
+    <aside>\r\n\
+    <h2>The Wagn Way</h2>\r\n\
+    <p>Any interface you don't use is noise. Wagn quiets edit interface for those who just want to read, quiets configuration interface quiet for those who just want to edit content, and quiets coding syntax for site managers.</p>\r\n\
+    </aside>\r\n\
+    <ul>\r\n\
+    <li>\r\n\
+    <h2>Accounts</h2>\r\n\
+    <p>Configure [[http://wagn.org/accounts|accounts]] and [[http://wagn.org/roles|roles]] to make your Wagn as open or closed as desired. <em>[[http://wagn.org/accounts|Howto]]</em></p>\r\n\
+    </li>\r\n\
+    <li>\r\n\
+    <h2>Permissions</h2>\r\n\
+    <p>An elegant [[http://wagn.org/permissions|permissions]] system allows fine-grained control over who can create, read, update, and delete. <em>[[http://wagn.org/permissions|Howto]]</em></p>\r\n\
+    </li>\r\n\
+    <li>\r\n\
+    <h2>History</h2>\r\n\
+    <p>Don't worry about breaking things. Every card has a revision [[http://wagn.org/history|history]], and even [[http://wagn.org/deleting|deleting]] cards doesn't permanently destroy them, it just puts them in the trash. &nbsp;So all changes can be reviewed and reversed. <em>[[http://wagn.org/history|Howto]]</em></p>\r\n\
+    </li>\r\n\
+    <li>\r\n\
+    <h2>Evolution</h2>\r\n\
+    <p>Building great collaborative websites requires thoughtfully adapting technology to community needs. Wagn is designed to evolve with you. <em>[[http://wagn.org/wagneering|Howto]]</em></p>\r\n\
+    </li>\r\n\
+    </ul>\r\n\
+    <h1>Explore</h1>\r\n\
+    <em>Wagn. How Pioneers Roll.</em>\r\n\
+    <aside>\r\n\
+    <h2>The Wagn Way</h2>\r\n\
+    <p>Context matters. Most web systems can only be managed in a separate \"admin area\", so fixing problems means shifting context entirely.  Wagn minimizes context shifts by letting you make changes in place wherever you see the need.</p>\r\n\
+    </aside>\r\n\
+    <ul>\r\n\
+    <li>\r\n\
+    <h2>Cards</h2>\r\n\
+    <p>[[http://wagn.org/cards|Cards]] are Wagn's building blocks. Everything \xE2\x80\x93 text, files, images, accounts, etc. \xE2\x80\x93 is in a card. <em>[[http://wagn.org/cards|Howto]]</em></p>\r\n\
+    </li>\r\n\
+    <li>\r\n\
+    <h2>Types</h2>\r\n\
+    <p>Every card has a [[http://wagn.org/type|type]]. Many types, like [[http://wagn.org/users|users]], [[http://wagn.org/image|images]], and [[http://wagn.org/search|searches]], come with Wagn out of the box, and you can create new types as you go. <em>[[http://wagn.org/type|Howto]]</em></p>\r\n\
+    </li>\r\n\
+    <li>\r\n\
+    <h2>Navbox</h2>\r\n\
+    <p>The [[http://wagn.org/navbox|navbox]] is a search bar, an auto-completer, and a shortcut for creating new cards. <em>[[http://wagn.org/navbox|Howto]]</em></p>\r\n\
+    </li>\r\n\
+    <li>\r\n\
+    <h2>Menus</h2>\r\n\
+    <p>Card [[http://wagn.org/menus|menus]] let you navigate, edit, configure, and administer without shifting context. <em>[[http://wagn.org/menus|Howto]]</em></p>\r\n\
+    </li>\r\n\
+    <li>\r\n\
+    <h2>Rules</h2>\r\n\
+    <p>The heart of configuring Wagn is creating [[http://wagn.org/rules|rules]].  Reached via the \"advanced\" menu item, rules control every aspect of a card's behavior and appearance, from [[http://wagn.org/permissions|permissions]] to [[http://wagn.org/formatting|formatting]] to [[http://wagn.org/help_text|help text]] and beyond. <em>[[http://wagn.org/rules|Howto]]</em></p>\r\n\
+    </li>\r\n\
+    </ul>\r\n"
+card_revisions_391: 
+  id: 6556
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 79
+  creator_id: 15
+  content: |-
+    sample_logo.png
+    image/png
+    9063
+    standard
+card_revisions_392: 
+  id: 6564
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 81
+  creator_id: 1
+  content: |-
+    <div>[[/ | {{*logo|content}}]]</div>
+    <div>&nbsp;</div>
+    <div>{{Menu|open}}</div>
+    <div>&nbsp;</div>
+    <div>
+    <div>{{Wagneer Menu|open}}</div>
+    <div>&nbsp;</div>
+    </div>
+    <div>{{Administrator Menu|open}}</div>
+    <div>&nbsp;</div>
+    <div>{{*credit|content}}</div>
+card_revisions_393: 
+  id: 6566
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 103
+  creator_id: 15
+  content: |-
+    favicon.ico
+    image/vnd.microsoft.icon
+    606
+    standard
+card_revisions_394: 
+  id: 6567
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 198
+  creator_id: 1
+  content: ""
+card_revisions_395: 
+  id: 6568
+  created_at: 2013-08-20 13:57:42 Z
+  card_id: 795
+  creator_id: 1
+  content: |-
+    <p><strong>[[http://wagn.org/Features| features]]</strong>: [[http://wagn.org/cards|cards]], [[http://wagn.org/types|types]], [[http://wagn.org/inclusions|inclusions]], [[http://wagn.org/views|views]], [[http://wagn.org/rules|rules]], [[http://wagn.org/layouts|layouts]], [[http://wagn.org/formatting|formatting]], [[http://wagn.org/accounts|accounts]], [[http://wagn.org/permissions|permissions]]</p>
+    <p><strong>[[http://wagn.org/Syntax Reference|syntax]]</strong>: [[http://wagn.org/link_syntax|links]], [[http://wagn.org/inclusion_syntax|inclusions]], [[http://wagn.org/WQL_syntax|queries]]</p>

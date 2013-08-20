@@ -90,13 +90,13 @@ describe Card::HtmlFormat do
       end
 
       it "renders card content" do
-        #warn "simple page = #{@simple_page}"
         assert_view_select @simple_page, 'div[class="open-content content card-body"]', 'AlphaBeta'
       end
  
       it "renders card credit" do
-        assert_view_select @simple_page, 'div[id="credit"]', /Wheeled by/ do
-          assert_select 'a', 'Wagn'
+        assert_view_select @simple_page, 'div[class~="SELF-Xcredit"]' do#, /Wheeled by/ do
+          assert_select 'img'
+          assert_select 'a', "Wagn v#{Wagn::Version.release}"
         end
       end
     end

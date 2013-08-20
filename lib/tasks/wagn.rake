@@ -167,7 +167,7 @@ namespace :wagn do
     task :dump => :environment do
       Wagn::Cache.reset_global
       
-      Rake::Task['wagn::bootstrap::pack_files'].invoke
+      Rake::Task['wagn:bootstrap:pack_files'].invoke
       
       YAML::ENGINE.yamler = 'syck'
       # use old engine while we're supporting ruby 1.8.7 because it can't support Psych,

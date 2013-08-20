@@ -9,7 +9,7 @@ describe Card::Format do
     end
     
     it "should render denial when user lacks read permissions" do
-      c = Card.fetch('Administrator links')
+      c = Card.fetch('Administrator Menu')
       c.who_can(:read).should == [Card::AdminID]
       Account.as(:anonymous) do
         c.ok?(:read).should == false

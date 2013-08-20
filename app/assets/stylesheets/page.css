@@ -56,6 +56,18 @@
   max-width: 100%;
 }
 
+.SELF-wagneer_menu .content ul {
+  list-style-type: none;
+  margin: .2em;
+  padding: 0 1em;
+}
+
+.SELF-wagneer_menu .content a.external-link {
+  list-style-type: none;
+  padding-right: 0;
+  background: inherit;
+}
+
 
 /* -- instructions ---*/
 

@@ -1,0 +1,36 @@
+.SELF-home-original > .content {
+  ul {
+    list-style-type: none;
+    margin: 1em;
+    padding: 0;
+  }
+  li {
+    padding: .8em;
+    margin: 0;
+    background: #eee
+  }
+  li:nth-child(even) {
+    background: #ddd;
+  }
+  h1 {
+    font-size: 1.5em;
+    padding: .6em 0 .3em 0
+  }
+  aside {
+    float:right;
+    border: 1px solid #999;  
+    background: white;
+    width: 33%;
+    padding: 1em;
+    margin: 36px 16px 2px 5px;
+    overflow: auto;
+    border-radius: 18px;
+    text-align: center;
+    h2 {
+      font-size: .9em;
+    }
+    p {
+      font-size: .8em;
+    }
+  }
+}

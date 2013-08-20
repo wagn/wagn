@@ -1,30 +1,12 @@
-// layout
-
 #primary {
-  margin: 0 1%;
+  margin: 0 1% 3em 1%;
   float: left;
   width: 67%;
 }
 #secondary {
-  margin: 0 1%;
+  margin: 0 1% 3em 1%;
   float: right;
   width: 28%;
-  .SELF-Xcredit {
-    text-align: center;
-    display: block;
-    width: 100%;
-    .content {
-      display: inline-block;
-      background: white;
-      width: 50%;
-      padding: 5px;
-      border-radius: 8px;
-      -moz-border-radius: 8px;
-    }
-    a {
-      color: #186886;
-    }
-  }
 }
 .navbox-form {
   display: inline

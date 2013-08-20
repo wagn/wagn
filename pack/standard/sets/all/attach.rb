@@ -19,6 +19,7 @@ end
 def attach_file_name()    attach_array[0] end
 def attach_content_type() attach_array[1] end
 def attach_file_size()    attach_array[2] end
+def attach_pack()         attach_array[3] end
 
 def attach_extension()    attach.send( :interpolate, ':extension' )  end
 
@@ -106,7 +107,15 @@ end
 
 module Paperclip::Interpolations
 
-  def local(    at, style_name )  Wagn::Conf[:attachment_storage_dir]  end
+  def local at, style_name
+    if pack = at.instance.attach_pack
+      # generalize this to work with any pack (needs design)
+      "#{Rails.root}/pack/#{pack}/files"
+    else
+      Wagn::Conf[:attachment_storage_dir]
+    end
+  end
+      
   def base_url( at, style_name )  Wagn::Conf[:attachment_web_dir]      end
   def card_id(  at, style_name )  at.instance.id                       end
 

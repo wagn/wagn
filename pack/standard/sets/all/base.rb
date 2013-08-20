@@ -1,25 +1,14 @@
 # -*- encoding : utf-8 -*-
 
-### ---- Core renders --- Keep these on top for dependencies
-
 view :show, :perms=>:none  do |args|
   render( ( args[:view] || :core ), args )
 end
 
-view :raw do |args|
-  scard = args[:structure] ? Card[ args[:structure] ] : card
-  scard ? scard.raw_content : _render_blank
-end
 
-view :core     do |args|  process_content _render_raw(args)            end
-view :content  do |args|  _render_core args                            end
-  # this should be done as an alias, but you can't make an alias with an unknown view,
-  # and base format doesn't know "content" at this point
-view :titled   do |args|  card.name + "\n\n" + _render_core(args)      end
+# NAME VIEWS
                                                                               
 view :name,     :perms=>:none  do |args|  card.name                    end
-view :codename, :perms=>:none  do |args|  card.codename.to_s           end
-  
+view :codename, :perms=>:none  do |args|  card.codename.to_s           end  
 view :key,      :perms=>:none  do |args|  card.key                     end
 view :id,       :perms=>:none  do |args|  card.id                      end
 view :linkname, :perms=>:none  do |args|  card.cardname.url_key        end
@@ -27,6 +16,22 @@ view :url,      :perms=>:none  do |args|  wagn_url _render_linkname    end
 
 view :link, :perms=>:none  do |args|
   card_link card.name, showname( args[:title] ), card.known?
+end
+
+
+# CONTENT VIEWS
+
+view :raw do |args|
+  scard = args[:structure] ? Card[ args[:structure] ] : card
+  scard ? scard.raw_content : _render_blank
+end
+
+view :core do |args|
+  process_content _render_raw(args)
+end
+
+view :content do |args|
+  _render_core args
 end
 
 view :open_content do |args|
@@ -37,7 +42,26 @@ view :closed_content do |args|
   Card::Content.truncatewords_with_closing_tags _render_core(args) #{ yield }
 end
 
-###----------------( SPECIAL )
+# note: content and open_content may look like they should be aliased to core, but it's important that they render
+# core explicitly so that core view overrides work.  the titled and labeled views below, however, are not intended
+# for frequent override, so this shortcut is fine.
+
+
+# NAME + CONTENT VIEWS
+
+view :titled do |args|
+  "#{ card.name }\n\n#{ _render_core args }"
+end
+view :open, :titled
+
+view :labeled do |args|
+  "#{ card.name }: #{ _render_closed_content args }"
+end
+view :closed, :labeled
+
+
+# SPECIAL VIEWS
+
 view :array do |args|
   card.item_cards(:limit=>0).map do |item_card|
     subformat(item_card)._render_core(args)
@@ -45,6 +69,9 @@ view :array do |args|
 end
 
 view :blank, :perms=>:none do |args| "" end
+
+
+# ERROR VIEWS
 
 view :not_found, :perms=>:none, :error_code=>404 do |args|
   %{ Could not find #{card.name.present? ? %{"#{card.name}"} : 'the card requested'}. }

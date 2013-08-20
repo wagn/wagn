@@ -41,7 +41,26 @@ class Card
         view_key = get_set_key view, opts
         
         define_method "_final_#{view_key}", &final
+        define_render_methods view
+      end
 
+      def alias_view alias_view, opts, referent_view=nil
+        subset_views[alias_view] = true if opts && !opts.empty?
+
+        referent_view ||= alias_view
+        alias_opts = Wagn::Loader.current_set_opts || {}
+        referent_view_key = get_set_key referent_view, (opts || alias_opts)
+        alias_view_key    = get_set_key alias_view, alias_opts
+
+        define_method "_final_#{alias_view_key}" do |*a|
+          send "_final_#{referent_view_key}", *a
+        end
+        define_render_methods alias_view
+      end
+
+      def define_render_methods view
+        # note: this could also be done with method_missing. Q: is this any faster?
+        # it's a very common pattern...
         if !method_defined? "render_#{view}"
           define_method "_render_#{view}" do |*a|
             send_final_render_method view, *a
@@ -52,21 +71,7 @@ class Card
           end
         end
       end
-
-      def alias_view alias_view, opts, referent_view=nil
-        subset_views[alias_view] = true if opts && !opts.empty?
-
-        referent_view ||= alias_view
-        alias_opts = Wagn::Loader.current_set_opts || {}
-        referent_view_key = get_set_key referent_view, (opts || alias_opts)
-        alias_view_key = get_set_key alias_view, alias_opts
-
-        class_eval do
-          define_method "_final_#{alias_view_key}".to_sym do |*a|
-            send "_final_#{referent_view_key}", *a
-          end
-        end
-      end
+      
 
       def new card, opts={}
         klass = self != Format ? self : get_format( (opts[:format] || :html).to_sym )
@@ -190,7 +195,7 @@ class Card
     # ---------- Rendering ------------
     #
 
-    def render view = :view, args={}
+    def render view, args={}
       prefix = args.delete(:allowed) ? '_' : ''
       method = "#{prefix}render_#{canonicalize_view view}"
       if respond_to? method

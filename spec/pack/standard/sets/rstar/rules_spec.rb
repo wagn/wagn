@@ -3,9 +3,10 @@ require 'wagn/spec_helper'
 
 describe Card::Set::Rstar::Rules do
   it "should render setting view for a right set" do
-     r = Card::Format.new(Card['*read+*right']).render
+     r = Card::Format.new(Card['*read+*right']).render_open
      r.should_not match(/error/i)
      r.should_not match('No Card!')
+     #warn "r = #{r}"
      assert_view_select r, 'table[class="set-rules"]' do
        assert_select 'a[href~="/*read+*right+*input?view=open_rule"]', :text => 'input'
      end

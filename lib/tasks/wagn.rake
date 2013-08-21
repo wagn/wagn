@@ -196,7 +196,7 @@ namespace :wagn do
       template_files_dir = "#{Rails.root}/local/files"
       standard_files_dir = "#{Rails.root}/pack/standard/files"
       
-      FileUtils.rmdir standard_files_dir
+      FileUtils.remove_dir standard_files_dir, force=true
       FileUtils.cp_r template_files_dir, standard_files_dir
       
       # add a fourth line to the raw content of each image (or file) to identify it as a pack file

@@ -34,20 +34,15 @@ def read_rules
 end
 
 def all_roles
-  if @all_roles.nil?
-    @all_roles = if id == Card::AnonID; []
-      else
-        Account.as_bot do
-          if get_roles = fetch(:trait=>:roles) and
-              ( get_roles = get_roles.item_cards(:limit=>0) ).any?
-            [Card::AuthID] + get_roles.map(&:id)
-          else [Card::AuthID]
-          end
-        end
+  @all_roles ||= 
+    if id == Card::AnonID
+      []
+    else
+      Account.as_bot do
+        role_trait = fetch :trait=>:roles
+        [ Card::AuthID ] + ( role_trait ? role_trait.item_ids : [] )
       end
-  end
-  #warn "aroles #{inspect}, #{@all_roles.inspect}"
-  @all_roles
+    end
 end
 
 

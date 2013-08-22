@@ -96,7 +96,7 @@ format do
   end
 end
 
-def item_cards( args={} )
+def item_cards args={}
   if args[:complete]
     #warn "item_card[#{args.inspect}], :complete"
     Card::Query.new({:referred_to_by=>name}.merge(args)).run
@@ -108,11 +108,17 @@ def item_cards( args={} )
   end
 end
 
-def item_names( args={} )
+def item_names args={}
   context = args[:context] || self.cardname
   self.raw_content.split(/\n+/).map{ |line|
     line.gsub(/\[\[|\]\]/,'')
   }.map{ |link| context==:raw ? link : link.to_name.to_absolute(context) }
+end
+
+def item_ids args={}
+  item_names(args).map do |name|
+    Card.fetch_id name
+  end
 end
 
 def item_type

@@ -2,6 +2,8 @@
 class Card::CssFormat < Card::TextFormat
   def initialize card, opts
     super card, opts
-    controller.response.headers["Cache-Control"] = "public"
+    if r = controller.response
+      r.headers["Cache-Control"] = "public"
+    end
   end
 end

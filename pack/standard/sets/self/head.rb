@@ -54,7 +54,7 @@ format :html do
       stylesheet_link_tag('application-all') +
       stylesheet_link_tag('application-print', :media=>'print')
     end
-    
+
     card_css = if css_card = Card[:css]
       @local_css_path = wagn_path "*css.css?#{ css_card.current_revision_id }"
       # FIXME this instance variable is hacky but should be obviated with new skinning
@@ -74,7 +74,8 @@ format :html do
         wagn.rootPath = '#{Wagn::Conf[:root_path]}';
         #{ Wagn::Conf[:recaptcha_on] ? %{wagn.recaptchaKey = "#{Wagn::Conf[:recaptcha_public_key]}";} : '' }
         #{ (c=Card[:double_click] and !Card.toggle(c.content)) ? 'wagn.noDoubleClick = true' : '' }
-        #{ @local_css_path ? %{ wagn.local_css_path = '#{@local_css_path}'; } : '' }
+        #{ #@local_css_path ? %{ wagn.local_css_path = '#{@local_css_path}'; } : '' 
+        }
         window.tinyMCEPreInit = {base:"#{wagn_path 'assets/tinymce'}",query:"3.5.8",suffix:""};
         wagn.tinyMCEConfig = { #{ Card.setting :tiny_mce } };
       </script>

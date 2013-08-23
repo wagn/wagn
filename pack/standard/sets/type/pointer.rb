@@ -80,10 +80,7 @@ format :html do
     options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]}
     select_tag("pointer_select", options_for_select(options, card.item_names.first), :class=>'pointer-select')
   end
-end
-
-format do
-  #FIXME!  html hidden in (non-html-format) non-view method. yuck!
+  
   def pointer_items itemview=nil
     type = card.item_type
     typeparam = case ()
@@ -95,6 +92,7 @@ format do
     process_content_object render_raw.gsub(/\[\[/,"<div class=\"pointer-item item-#{itemview}\">{{").gsub(/\]\]/,"|#{itemview}#{typeparam}}}</div>")
   end
 end
+
 
 def item_cards args={}
   if args[:complete]
@@ -176,4 +174,16 @@ def option_text(option)
   name = self.rule(:options_label) || 'description'
   textcard = Card["#{option}+#{name}"]
   textcard ? textcard.content : nil
+end
+
+format :css do
+  view :content do |args|
+    %(/* ~~~~ STYLE GROUP: #{card.name} ~~~~ */\n\n#{ _render_core })
+  end
+  
+  view :core do |args|
+    card.item_cards.map do |item|
+      process_inclusion item
+    end.join "\n\n"
+  end
 end

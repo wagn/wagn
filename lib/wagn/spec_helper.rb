@@ -75,20 +75,19 @@ module Wagn::SpecHelper
   def render_content content, format_args={}
     @card ||= Card.new :name=>"Tempo Rary 2"
     @card.content = content
-    r = Card::Format.new @card, format_args
-    r._render :core
+    f = Card::Format.new @card, format_args
+    f._render :core
   end
 
-  def render_card view, card_args={}, args={}
+  def render_card view, card_args={}, format_args={}
     card = begin
       if card_args[:name]
-        Card.fetch(card_args[:name])
+        Card.fetch card_args[:name], :new=>card_args
       else
-        card_args[:name] ||= "Tempo Rary"
-        c = Card.new(card_args)
+        Card.new card_args.merge( :name=> 'Tempo Rary' )
       end
     end
-    Card::Format.new(card, args)._render(view)
+    Card::Format.new(card, format_args)._render(view)
   end
 end
 

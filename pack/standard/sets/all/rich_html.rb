@@ -241,6 +241,10 @@ format :html do
     end
   end
 
+  view :closed_missing, :perms=>:none do |args|
+    %{<span class="faint"> #{ showname } </span>}
+  end
+
 ###---(  EDIT VIEWS )
   view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
     wrap :edit, args.merge(:frame=>true) do

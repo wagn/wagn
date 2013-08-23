@@ -68,10 +68,14 @@ view :array do |args|
   end.inspect
 end
 
-view :blank, :perms=>:none do |args| "" end
 
 
 # ERROR VIEWS
+
+
+view :blank,          :perms=>:none do |args| '' end
+view :closed_missing, :perms=>:none do |args| '' end
+view :missing,        :perms=>:none do |args| '' end
 
 view :not_found, :perms=>:none, :error_code=>404 do |args|
   %{ Could not find #{card.name.present? ? %{"#{card.name}"} : 'the card requested'}. }
@@ -98,20 +102,12 @@ view :too_deep, :perms=>:none do |args|
   %{ Man, you're too deep.  (Too many levels of inclusions at a time) }
 end
 
-# The below have HTML!?  should not be any html in the base format
-
-
-view :closed_missing, :perms=>:none do |args|
-  %{<span class="faint"> #{ showname } </span>}
-end
-
-view :missing, :perms=>:none do |args|
-  %{<span class="faint"> #{ showname } </span>}
-end
-
 view :too_slow, :perms=>:none do |args|
-  %{<span class="too-slow">Timed out! #{ showname } took too long to load.</span>}
+  %{ Timed out! #{ showname } took too long to load. }
 end
+
+
+
 
 view :template_rule, :tags=>:unknown_ok do |args|
   tname = args[:inc_name].gsub /\b_(left|right|whole|self|user|main|\d+|L*R?)\b/, ''

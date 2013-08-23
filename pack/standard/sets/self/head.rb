@@ -54,14 +54,13 @@ format :html do
       stylesheet_link_tag('application-all') +
       stylesheet_link_tag('application-print', :media=>'print')
     end
-
-    card_css = if css_card = Card[:css]
-      @local_css_path = wagn_path "*css.css?#{ css_card.current_revision_id }"
-      # FIXME this instance variable is hacky but should be obviated with new skinning
-      stylesheet_link_tag @local_css_path
+    
+    card_css = if style_rule = card.rule_card(:style)
+      @css_path = wagn_path style_rule.name.to_name.url_key
+      stylesheet_link_tag @css_path
     end
     
-    code_css + card_css
+    code_css + card_css.to_s
   end
   
   def head_javascript

@@ -263,7 +263,7 @@ $(window).ready ->
     event.preventDefault()
 
 newCaptcha = (form)->
-  recapUri = 'http://www.google.com/recaptcha/api/js/recaptcha_ajax.js'
+  recapUri = 'https://www.google.com/recaptcha/api/js/recaptcha_ajax.js'
   recapDiv = $('<div class="recaptcha-box"></div>')
   $(form).children().last().after recapDiv
   $.getScript recapUri, -> recapDiv.loadCaptcha()

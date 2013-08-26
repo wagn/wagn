@@ -48,14 +48,13 @@ format :html do
   end
   
   def head_stylesheets
-    style_rule = if params[:style]
-      Card[ params[:style] ]
-    else
-      card.rule_card :style
-    end 
-    
-    if style_rule
+    if params[:style]
+      @css_path = wagn_path params[:style].to_name.url_key
+    elsif style_rule = card.rule_card(:style)
       @css_path = wagn_path style_rule.name.to_name.url_key
+    end 
+
+    if @css_path
       stylesheet_link_tag @css_path
     end
   end

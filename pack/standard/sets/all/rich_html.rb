@@ -18,7 +18,7 @@ format :html do
 
   view :layout, :perms=>:none do |args|
     layout_content = get_layout_content args
-    process_content layout_content, args
+    process_content layout_content
   end
 
   view :content do |args|

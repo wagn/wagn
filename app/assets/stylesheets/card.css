@@ -141,7 +141,7 @@ a.wanted-card {
 a.external-link,
 .closed-content a.external-link {
   color: #729;
-  background: url(external_link.png) center right no-repeat;
+  background: url([[/external_link.png]]) center right no-repeat;
   padding-right: 13px !important;
 }
 a.email-link {
@@ -488,7 +488,7 @@ h2.set-label {
 
 /*--------------*/
 .ui-icon {
-  background-image: url('images/ui-icons_454545_256x240.png')
+  background-image: url([[/assets/images/ui-icons_454545_256x240.png]])
 }
 .ui-loader {
   display: none;

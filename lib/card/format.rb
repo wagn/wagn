@@ -291,8 +291,8 @@ class Card
 
       card.update_references( obj_content, true ) if card.references_expired  # I thik we need this genralized
 
-      obj_content.process_content_object do |opts|
-        expand_inclusion(opts) { yield }
+      obj_content.process_content_object do |chunk_opts|
+        expand_inclusion chunk_opts.merge(opts) { yield }
       end
     end
 
@@ -383,6 +383,7 @@ class Card
     end
 
     def expand_inclusion opts
+      warn "ei opts = #{opts}"
       case
       when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
@@ -416,6 +417,7 @@ class Card
     end
 
     def process_inclusion tcard, opts={}
+      warn "opts = #{opts}"
       opts.delete_if { |k,v| v.nil? }
       opts.reverse_merge! inclusion_defaults
       
@@ -477,19 +479,12 @@ class Card
     # ------------ LINKS ---------------
     #
 
-    # FIXME: shouldn't this be in the html version of this?  this should give plain-text links.
-    # Maybe like this:
-    #def final_link klass, href, text=nil
-    #  text = href if text.nil?
-    #  %{[#{klass}]#{href}"#{text && "(#{text.to_s}_"})}
-    #  # or
-    #  %{[#{klass =~ /wanted/ && '[missing]'}#{href}"#{text && "(#{text.to_s}_"})}
-    #end
-
-    # and move this to the html format
-    def final_link href, opts={}
-      text = opts[:text] || href
-      %{<a class="#{opts[:class]}" href="#{href}">#{text}</a>}
+    def final_link href, opts
+      if text = opts[:text]
+        "#{text}[#{href}]"
+      else
+        href
+      end
     end
 
     def build_link href, text=nil

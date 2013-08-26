@@ -45,7 +45,15 @@ format :html do
 
 end
 
-
+format :css do
+  view :core do |args|
+    render_source
+  end
+  
+  view :content do |args|
+    render_core
+  end
+end
 
 format :file do
 

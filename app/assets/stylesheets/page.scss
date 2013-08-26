@@ -1,0 +1,108 @@
+
+#menu {
+  font-size: 14px;
+  background: #8AB;
+  margin-bottom: 20px;
+  padding: 2px;
+ a {
+    color: #000;
+    padding: 0px 4px;
+  }
+  div {
+    display: inline;
+  }
+  #logging {  /* signing in and out */
+    float:right;
+    right: 0.5%;
+    top: 2px;
+  }
+  #my-card-link {
+    font-weight: bold;
+  }
+  .navbox {
+    height: 18px;
+    width: 30%;
+  }
+}
+
+/* -------  Secondary --------- */
+
+#logo {
+  text-align: center;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #777;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  a,
+  a:link,
+  a:visited {
+    color: #448;
+    text-decoration: none;
+    text-align: center;
+  }
+  img {
+    max-width: 100%;
+  }
+}
+
+
+/* -- instructions ---*/
+
+.instruction {
+  color: #440;
+  text-align: center;
+  padding: 4px 10px;
+  ol,
+  ul {
+    text-align: left;
+  }
+ }
+/*--- errors -----*/
+
+.exception p {
+  margin: 15px;
+}
+.errors-view {
+  margin: 10px;
+  padding: 10px;
+  border: 3px solid #966;
+  background: #ffa;
+  -moz-border-radius: 8px;
+  border: 1px solid #777;
+  border-bottom: 2px solid #888;
+  border-right: 2px solid #888;
+  color: #333;
+}
+.render-error {
+  padding: 1px 20px;
+  font-style: italic;
+}
+/*-------- Special Pages --------*/
+
+/*-- sign in page --*/
+
+#sign-in input#login_field,
+#sign-in input#password,
+#forgot-password input#email {
+  width: 50%;
+}
+#forgot-password {
+  margin-top: 40px;
+}
+
+/* -- extra boxes -----*/
+
+#credit {
+  margin: 30px 0;
+}
+#credit,
+.flash-notice {
+  color: #333;
+  font-size: 1.1em;
+  background: #fff;
+  border: 1px solid #888;
+  margin-bottom: 15px;
+  padding: 5px;
+  text-align: center;
+}

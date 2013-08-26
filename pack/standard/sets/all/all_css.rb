@@ -18,5 +18,5 @@ format :css do
     view = args[:view] || :content
     render view
   end
-    
+
 end

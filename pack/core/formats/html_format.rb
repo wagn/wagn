@@ -205,6 +205,11 @@ class Card::HtmlFormat < Card::Format
     "<strong>view <em>#{view}</em> not supported for <em>#{error_cardname}</em></strong>"
   end
 
+  def final_link href, opts={}
+    text = opts[:text] || href
+    %{<a class="#{opts[:class]}" href="#{href}">#{text}</a>}
+  end
+
   def link_to_view text, view, opts={}
     path_opts = view==:home ? {} : { :view=>view }
     if p = opts.delete( :path_opts )

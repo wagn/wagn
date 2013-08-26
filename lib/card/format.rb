@@ -383,7 +383,6 @@ class Card
     end
 
     def expand_inclusion opts
-      warn "ei opts = #{opts}"
       case
       when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
@@ -417,7 +416,6 @@ class Card
     end
 
     def process_inclusion tcard, opts={}
-      warn "opts = #{opts}"
       opts.delete_if { |k,v| v.nil? }
       opts.reverse_merge! inclusion_defaults
       

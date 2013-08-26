@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class Card::CssFormat < Card::TextFormat
+class Card::CssFormat < Card::Format
   def initialize card, opts
     super card, opts
     if r = controller.response

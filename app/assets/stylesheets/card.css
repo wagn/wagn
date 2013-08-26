@@ -440,23 +440,11 @@ h2.set-label {
   padding-bottom: 10px;
 }
 
-/*-----------( Image ) -----------*/
-
-
-
 /*-----------( Toggle ) -----------*/
 
 .TYPE-toggle .content {
   font-style: italic;
 }
-
-/*------------( Layout, Plain Text ) ------------*/
-
-/*
-.RIGHT-Xcontent > .content,
-.RIGHT-Xdefault> .content 
-*/
-
 
 /*----------- (Account Request)--------------*/
 

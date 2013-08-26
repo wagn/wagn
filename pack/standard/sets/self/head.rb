@@ -48,19 +48,17 @@ format :html do
   end
   
   def head_stylesheets
-    code_css = if params[:barebones]
-      stylesheet_link_tag 'barebones'
-    else
-      stylesheet_link_tag('application-all') +
-      stylesheet_link_tag('application-print', :media=>'print')
-    end
+#    code_css = if params[:barebones]
+#      stylesheet_link_tag 'barebones'
+#    else
+#      stylesheet_link_tag('application-all') +
+#      stylesheet_link_tag('application-print', :media=>'print')
+#    end
     
-    card_css = if style_rule = card.rule_card(:style)
+    if style_rule = card.rule_card(:style)
       @css_path = wagn_path style_rule.name.to_name.url_key
       stylesheet_link_tag @css_path
     end
-    
-    code_css + card_css.to_s
   end
   
   def head_javascript

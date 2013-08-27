@@ -39,6 +39,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 /* --  hidden info -- */
 
 .ui-loader,
+.card-notice,
 .new-current-revision-id,
 .editor .revision-navigation,
 .editor .autosave-alert,
@@ -159,14 +160,20 @@ fieldset {
 }
 
 
+.navbox-form {
+  display: inline
+}
+.navbox-item-label {
+  float: left;
+  position: relative;  
+}
+
+
 
 /*-- misc --*/
 
 .content.card-editor {
   white-space: normal;
-}
-.navbox-form {
-  display: inline
 }
 .TYPE-layout > .content,
 .TYPE-plain_text > .content,
@@ -177,6 +184,8 @@ pre {
   white-space: -o-pre-wrap;    /* Opera 7 */
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
-
+.missing-view a {
+  display: inline;
+}
 
 

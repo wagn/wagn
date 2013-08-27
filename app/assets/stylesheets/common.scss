@@ -1,0 +1,252 @@
+
+h1 {
+  font-size: 1.2em;
+}
+h2 {
+  font-size: 1.1em;
+}
+h1, h2 {
+  font-weight: bold;
+  margin: 0px;
+}
+p {
+  margin: 0px;
+}
+hr {
+  margin: 10px
+}
+th {
+  color: #666;
+  font-weight: normal;
+  font-style: italic;
+}
+td, th {
+  vertical-align: top;
+  padding: 0px;
+}
+
+
+
+a:link,
+a:visited {
+	text-decoration: none;
+}
+a:hover,
+a:focus {
+  text-decoration: underline;
+}
+
+
+form {
+  display: inline-block;
+  margin: 0px;
+  padding: 0px;
+}
+
+img {
+  border: 0px;
+  vertical-align: middle;
+}
+li {
+  margin-bottom: 2px;
+}
+/*-------- Special Pages --------*/
+
+/*-- sign in page --*/
+
+#sign-in input#login_field,
+#sign-in input#password,
+#forgot-password input#email {
+  width: 50%;
+}
+#forgot-password {
+  margin-top: 40px;
+}
+
+/* -- extra boxes -----*/
+
+
+.flash-notice,
+#credit {  
+  color: #333;
+  font-size: 1.1em;
+  background: #fff;
+  border: 1px solid #888;
+  margin-bottom: 15px;
+  padding: 5px;
+  text-align: center;
+}
+
+
+.TYPE-toggle .content {
+  font-style: italic;
+}
+
+
+
+
+.cardtype {
+  font-style: italic;
+  font-size: 10px;
+}
+
+
+
+
+.conflict-view {
+  text-align: left;
+  background: #ffc;
+  border: 1px solid grey;
+  padding: 10px;
+  margin-top: 12px;
+}
+
+/* ---------- changes tab -------*/
+
+.revision-content {
+  background: #ffd;
+}
+
+
+/*-------option ------*/
+
+
+
+/*----------- inputs ---------*/
+
+
+
+
+
+input[type=text],
+input[type=password],
+input[type=checkbox],
+textarea,
+select {
+  padding-left: 3px;
+  border: 1px solid #aaa;
+  border-top: 2px solid #666;
+  border-left: 2px solid #666;
+  background: #f9f9ed;
+}
+body#tinymce {
+  background: #f9f9ed;
+}
+input:focus,
+select:focus,
+textarea:focus,
+body#tinymce:focus {
+  background: #ffffee;
+}
+input[type=submit]:focus,
+input[type=button]:focus {
+  color: #000
+}
+
+body.mceContentBody {
+  margin: 4px;
+}
+input, select, textarea {
+  max-width: 100%;
+}
+
+
+/*----------- Change View ---------*/
+
+.change-view {
+  padding: 5px 0px;
+  border-bottom: 1px dotted grey;
+}
+.change-view .change-card{
+  font-weight: bold;
+}
+.change-view .last-update {
+  color: #666;
+}
+.change-view .last-edited {
+  color: #7a7;
+}
+
+
+
+/* CARDTYPE_SPECIFIC ------------------------------*/
+
+
+/*---------- ( Richtext )-------------*/
+
+.table-of-contents {
+  background: #eee;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  padding: 4px;
+  margin: 5px 20px 20px 20px;
+}
+.table-of-contents h5 {
+  margin: 0px 0px 0px 40px;
+}
+.table-of-contents ol {
+  list-style-type: upper-roman;
+}
+.table-of-contents ol ol {
+  list-style-type: upper-alpha;
+  padding-left: 25px
+}
+
+
+
+
+/*---------( Search ) ---------- */
+
+.search-keyword {
+  font-style: italic;
+}
+.search-no-results:after {
+  content:'0 results';
+}
+.closed-content .search-no-results:after {
+  content:'';
+}
+.search-count {
+  float: right;
+  color: #bbc;
+}
+
+
+
+
+
+
+/*----------- (Account Request)--------------*/
+
+.invite-links {
+  padding: 10px;
+  margin-top: 10px;
+  background: #ddd;
+  text-align: center;
+}
+.invite-links a {
+  font-weight: bold;
+  margin: 0 20px;
+}
+
+
+/*---------- comments -------------------------------------- */
+
+.comment-box {
+  padding: 8px;
+  margin: 0px;
+  input {
+    padding: 0px;
+    font-size: 12px;
+  }
+  textarea {
+    margin-bottom:5px;
+  }
+}
+.w-comment-author {
+  font-style: italic;
+  margin-left: 10px;
+}
+
+
+

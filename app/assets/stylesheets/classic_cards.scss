@@ -1,0 +1,136 @@
+body {
+  background: #ccc;
+  color: #444;
+  font-style: normal;
+  margin: 0px;
+  min-width: 480px;
+}
+
+
+.card-frame {
+  margin: 1px 0;
+  padding: 0 !important;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  border: 1px solid #aaa;
+  border-bottom: 2px solid #ccc;
+  border-right: 2px solid #ccc;
+  width: 100%;  /*needed for ie6, or..?*/
+  margin: 0;
+  background: #fff;
+  padding: 0;
+  .card-body {
+    min-height: 20px;
+  }
+}
+
+
+.card-header {
+  background: #8AB;
+  padding: 5px 12px;
+  margin: 0;
+  text-align: left;
+  .instruction {
+    color: #440;
+    border: 1px solid #887;
+    background: #ddc;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+  }
+  .toggler {
+    top: 2px;
+  }
+}
+.card-header,
+.card-header a,
+.card-header h1 {
+  color: #333
+}
+
+
+.card-body {
+  padding: 5px 12px;
+}
+
+
+
+/*--------- headers and links --------------*/
+
+a {
+  color: #279;
+}
+
+
+/*---- headers --------*/
+
+
+/*-- miscellaneous --*/
+
+label {
+  color: #777;
+}
+pre {
+  background-color: #eef;
+  padding: 10px;
+  font-family: monospace;
+  font-size: 11px;
+}
+
+
+
+/*------------- closed view -------*/
+
+
+.closed-view {  
+  background: #fff;
+  border: 0;
+  border-bottom: 1px solid #ccc;
+  -moz-border-radius: 0 !important;
+  border-radius: 0 !important;
+  padding: 0;
+  margin: 1px 0 0 0; 
+}
+
+.closed-content {
+  font-size: 11px !important;
+}
+
+.closed-view .card-header {
+  vertical-align: middle;
+  line-height: 15px;
+  -moz-border-radius: 0 6px 6px 0;
+  border-radius: 0 6px 6px 0;
+  margin-right: 4px;
+}
+
+
+
+.card-notice {
+  color: #009;
+}
+.faint {
+  color: #bbc;
+}
+.joint {
+  color: #960;
+}
+a.wanted-card {
+  color: #900
+}
+a.external-link,
+.closed-content a.external-link {
+  color: #729;
+  background: url([[/external_link.png]]) center right no-repeat;
+  padding-right: 13px !important;
+}
+a.email-link {
+  color: #979
+}
+.missing-view a {
+  color: #99b;
+  font-variant: small-caps;
+}
+.missing-view a:hover {
+  color: #069;
+  background: #ffc;
+}

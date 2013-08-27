@@ -1,122 +1,3 @@
-body {
-  background: #ccc;
-  color: #444;
-  font-style: normal;
-  margin: 0px;
-  min-width: 480px;
-}
-body, p, ol, ul, td, th, textarea {
-  font-family: verdana, arial, helvetica, sans-serif;
-  font-size:   12px;
-  font-weight: normal;
-}
-body, p, ol, ul {
-  line-height: 21px;
-}
-
-/*--------- headers and links --------------*/
-h1 {
-  font-size: 1.2em;
-}
-h2 {
-  font-size: 1.1em;
-}
-h1, h2 {
-  font-weight: bold;
-  margin: 0px;
-}
-a {
-  color: #279;
-}
-a:link,
-a:visited {
-	text-decoration: none;
-}
-a:hover,
-a:focus {
-  text-decoration: underline;
-}
-
-.instruction {
-  color: #440;
-}
-
-
-
-th {
-  color: #666;
-  font-weight: normal;
-  font-style: italic;
-}
-td, th {
-  vertical-align: top;
-  padding: 0px;
-}
-
-/*---- headers --------*/
-input[type=text],
-input[type=password],
-input[type=checkbox],
-textarea,
-select {
-  padding-left: 3px;
-  border: 1px solid #aaa;
-  border-top: 2px solid #666;
-  border-left: 2px solid #666;
-  background: #f9f9ed;
-}
-body#tinymce {
-  background: #f9f9ed;
-}
-input:focus,
-select:focus,
-textarea:focus,
-body#tinymce:focus {
-  background: #ffffee;
-}
-input[type=submit]:focus,
-input[type=button]:focus {
-  color: #000
-}
-textarea {
-  width: 98%;
-}
-body.mceContentBody {
-  margin: 4px;
-}
-input, select {
-  max-width: 100%;
-}
-
-/*-- miscellaneous --*/
-form {
-  margin: 0px;
-  padding: 0px;
-  display: inline;
-}
-p {
-  margin: 0px;
-}
-hr {
-  margin: 10px
-}
-img {
-  border: 0px;
-  vertical-align: middle;
-}
-li {
-  margin-bottom: 2px;
-}
-label {
-  color: #777;
-}
-pre {
-  background-color: #eef;
-  padding: 10px;
-  font-family: monospace;
-  font-size: 11px;
-}
-
 
 
 #menu {
@@ -167,31 +48,50 @@ pre {
 }
 
 
-/*-------- Special Pages --------*/
-
-/*-- sign in page --*/
-
-#sign-in input#login_field,
-#sign-in input#password,
-#forgot-password input#email {
-  width: 50%;
-}
-#forgot-password {
-  margin-top: 40px;
-}
-
-/* -- extra boxes -----*/
-
 #credit {
   margin: 30px 0;
 }
-#credit,
-.flash-notice {
-  color: #333;
-  font-size: 1.1em;
-  background: #fff;
-  border: 1px solid #888;
-  margin-bottom: 15px;
-  padding: 5px;
-  text-align: center;
+
+
+
+/*
+The following are specifically NOT recommended but are included here to avoid disrupting behavior in old sites
+*/
+
+/* best not to overspecify these properties */
+body, p, ol, ul, td, th, textarea {
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size:   12px;
+  font-weight: normal;
 }
+body, p, ol, ul {
+  line-height: 21px;
+}
+
+/* creates lots of inline divs.  confusing */
+.content-view {
+  display: inline;
+}
+
+textarea,
+.phrasebox {
+  width: 98%;
+}
+
+
+.titled-view > .card-header {
+   background: inherit;
+}
+
+.titled-view > .card-header,
+.titled-view > .card-body {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+h1.card-title {
+  padding: 2px 0;
+  margin-right: 5px;
+}
+
+

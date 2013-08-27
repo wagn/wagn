@@ -32,8 +32,9 @@ class AddStyleCards < ActiveRecord::Migration
       end
       
       classic_styles = barebones_styles.clone
-      %w{ minimal.scss traditional.scss card.scss }.each do |sheet|
+      %w{ minimal.scss common.scss traditional.scss classic_cards.scss }.each do |sheet|
         name, type = sheet.split '.'
+        name.gsub! '_', ' '
         classic_styles << name
         
         content = File.read "#{Rails.root}/app/assets/stylesheets/#{sheet}"

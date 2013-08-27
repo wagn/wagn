@@ -1,14 +1,15 @@
 
-
 /*
-This "standard" CSS provides basic styling for:
+This "standard" CSS provides styles for aspects of wagn sites not usually prioritized by skin designers.
+
+It includes basic styling for:
 
   1. wagneer interface (sets, settings, rules)
-  2. editor interface (forms, fieldsets, menus)
+  2. editor interface (forms, fieldsets, menus, navbox, history)
   3. views that by definition alter default styling (closed, labeled)
   4. error handling
+  5. key default content for new installs (home page, sidebar)
   
-
 Most colors are greyscale; any that aren't are explained with comments beginning with "NOTGREY"
 
 Note that this CSS is taken from code so that it will be updated automatically with releases.
@@ -23,44 +24,83 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 }
 
 
+/*-------------------- */
+/*- DYNAMIC ELEMENTS - */
+/*-------------------- */
 
-table {
-  border-collapse: collapse;
+
+/* -- card menus -- */
+
+.card-menu {
+  font-size: 11px;
+  li {
+    text-align: right;
+    a {
+      color: #333;
+    }
+  }
+  .ui-menu-icon {
+    float: left;
+    margin-right: 5px;
+  }
+}
+.ui-menu .ui-menu-item {
+  padding: 2px 0;
 }
 
-
-
-/* -- instructions ---*/
-
-.instruction {
-  text-align: center;
-  padding: 4px 10px;
-  ol,
-  ul {
-    text-align: left;
+.card-menu-tappable {
+  font-size: 18px;
+  .ui-menu-icon {
+    padding: 7px;
+    display: inline-block;
+    margin-right: 15px;
+    background: #666;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 10px;
   }
- }
+  .ui-menu-icon:after {
+    content: '<';
+  }
+}
+ 
 
-
+/* related view (used by many menu items)  */
 
 .related-view > .card-body  {
-  background: #bbb;
-  padding: 5px;
-  > .ALL  {
-    background: #fff;
-    > .card-header {
-      background: #ddd;
-      padding: 5px;
-      h1 {
-        color: #000;
-      }
-    }
-    > .card-body {
-       padding: 8px 2%;
-    }
-  }
+ background: #bbb;
+ padding: 5px;
+ > .ALL  {
+   background: #fff;
+   > .card-header {
+     background: #ddd;
+     padding: 5px;
+     h1 {
+       color: #000;
+     }
+   }
+   > .card-body {
+      padding: 8px 2%;
+   }
+ }
+} 
+
+/* navboxes */
+
+.navbox-item-label {
+  color: #777;
+  font-size: 10px;
+  width: 50px;
+  padding: 3px 0 3px 25px;
+}
+.navbox-item-label > a.ui-icon {
+  padding: 0;  
 }
 
+
+/*-------------------- */
+/*- ONE-LINE VIEWS   - */
+/*-------------------- */
 
 .closed-view {
   width: 100%;
@@ -97,6 +137,10 @@ a.missing-labeled,
 
 
 
+/*-------------------- */
+/*- EDIT INTERFACE   - */
+/*-------------------- */
+
 
 
 fieldset {
@@ -132,10 +176,17 @@ fieldset {
   }
 }
 
+/* name editor  */
 
-/*--------------*/
-.ui-icon {
-  background-image: url([[/assets/images/ui-icons_454545_256x240.png]])
+.name-editor input {
+  width: 100%;
+}
+.name-editor.known-name input {
+  border: 3px solid #c22; /* NOTGREY - red for warning */
+}
+.name-messages {
+  font-style: italic;
+  background: #ffd;  /* NOTGREY - yellow for highlighting */
 }
 
 /* -- template-editor (editing template rule inclusions inline) -- */
@@ -152,20 +203,106 @@ fieldset {
 }
 
 
-.render-error {
-  background-color: #ecc !important;
+
+.pointer-list-editor {
+  margin: 0px;
+  padding: 0px;
+  input {
+    margin-right: 10px;
+    width: 65%;
+  }
+  li {
+    list-style: none;
+    white-space: nowrap;
+  }
+  .pointer-item-delete {
+    margin-left: 4px;
+    vertical-align: middle;
+    display: inline-block;
+    position: relative;
+    bottom: 2px;
+  }
+}
+
+.new-account-link {
+  text-align: center;
+}
+
+
+
+/*-------------------- */
+/*- SEARCH & POINTER - */
+/*-------------------- */
+
+
+div.pointer-list,
+div.search-result-list {
+  list-style: none;
+  padding: 5px 0;
+  margin: 0;
+}
+div.pointer-list .pointer-item,
+div.search-result-list .search-result-item {
+  margin: 0;
+}
+.search-result-item.item-link,
+.pointer-item.item-link,
+.search-result-item.item-name,
+.pointer-item.item-name {
+  text-indent: -15px;
+  padding-left: 15px;
+}
+.radio-option-description,
+.checkbox-option-description {
+  margin-left: 40px;
+}
+
+ul.pointer {
+  margin: 0px;
+  padding: 0px;
+}
+
+/*-------------------- */
+/*- HISTORY          - */
+/*-------------------- */
+
+
+
+.revision-header {
+  padding: 4px;
+  text-align: center;
+}
+.revision-title {
+  font-weight: bold;
+}
+.revision-content {
+  margin: 0px 1px;
+  padding: 10px 5px;
+}
+.autosave-alert {
+  font-weight: bold;
+}
+.revision-navigation {
+  border-bottom: 1px solid silver;
+  span {
+    margin: 0px 10px
+  }
 }
 ins.diffmod,
 .diffins {
-  background: #aea;
+  background: #aea;  /* NOTGREY - green for additions */
 }
 del.diffmod,
 .diffdel {
-  background: #eaa;
+  background: #eaa;  /* NOTGREY - red for deletions */
 }
 
 
-/*--- errors -----*/
+
+/*-------------------- */
+/*- ERRORS / NOTICES - */
+/*-------------------- */
+
 
 .exception p {
   margin: 15px;
@@ -173,7 +310,7 @@ del.diffmod,
 .errors-view {
   margin: 10px;
   padding: 10px;
-  border: 3px solid #966;
+  border: 3px solid #966;   /* NOTGREY - red for error */
   background: #ffa;
   -moz-border-radius: 8px;
   border: 1px solid #777;
@@ -182,13 +319,23 @@ del.diffmod,
   color: #333;
 }
 .render-error {
+  background-color: #eaa !important;  /* NOTGREY - red for error */
   padding: 1px 20px;
   font-style: italic;
 }
 
+.card-notice {
+  background: #fff;
+  font-weight: bold;
+  font-style: italic;
+  text-align: center;
+  margin: 0 0 4px 0;
+}
 
 
-
+/*-------------------------- */
+/*- KEY DEFAULT CONTENT    - */
+/*-------------------------- */
 
 .SELF-home-original > .content {
   ul {
@@ -256,16 +403,17 @@ del.diffmod,
         max-width: 100%;
       }
       a {
-        color: #186886;
+        color: #186886; /* NOTGREY - Wagn blue */
       }
     }
   }  
 }
 
 
+/*-------------------------- */
+/*- SETS, SETTINGS, RULES  - */
+/*-------------------------- */
 
-
-/* -- Sets, Settings, Rules -- */
 
 .setting-rules,
 .set-rules {
@@ -390,3 +538,46 @@ a.setting-link {
   color: #000;
   white-space: nowrap;
 }
+h2.set-label {
+  padding-bottom: 10px;
+}
+
+
+/*------- permissions ------------------*/
+
+.perm-section {
+  margin-bottom: 20px;
+}
+.perm-section h5 {
+  margin: 0 0 10px 0;
+}
+
+
+
+/*-------------------------- */
+/*- MISCELLANEOUS          - */
+/*-------------------------- */
+
+table {
+  border-collapse: collapse;
+}
+
+.ui-icon {
+  background-image: url([[/assets/images/ui-icons_454545_256x240.png]])
+}
+
+.instruction {
+  text-align: center;
+  padding: 4px 10px;
+  ol,
+  ul {
+    text-align: left;
+  }
+}
+
+
+html>body .open-view {
+  width: auto;  /* so non-ie browsers do better with image floats */
+}
+
+

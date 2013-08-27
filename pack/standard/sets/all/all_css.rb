@@ -12,11 +12,18 @@ format :css do
   end
   
   view :content do |args|
-    %(/* -- Style Card: #{card.name} -- */\n\n#{ _render_core args })
+    major_comment( %{ Style Card: "#{ card.name }" } ) +
+   _render_core( args )
   end
   
   view :missing do |args|
-    "/*-- MISSING Style Card: #{card.name} --*/"
+    major_comment "MISSING Style Card: #{card.name}"
+  end
+
+  def major_comment comment, char='-'
+    edge = %{/* #{ char * ( comment.length+4 ) } */}
+    main = %{/* #{ char } #{ comment } #{ char } */}
+    "#{edge}\n#{main}\n#{edge}\n\n"
   end
 
 

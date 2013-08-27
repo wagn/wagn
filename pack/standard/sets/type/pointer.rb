@@ -178,7 +178,7 @@ end
 
 format :css do
   view :content do |args|
-    %(/* ~~~~ STYLE GROUP: #{card.name} ~~~~ */\n\n#{ _render_core })
+    %(#{major_comment "STYLE GROUP: \"#{card.name}\"", '='}#{ _render_core })
   end
   
   view :core do |args|

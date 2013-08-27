@@ -10,6 +10,9 @@
   margin: 0;
   background: #fff;
   padding: 0;
+  .card-body {
+    min-height: 20px;
+  }
 }
 
 html>body .open-view {
@@ -19,10 +22,6 @@ html>body .open-view {
 .card-body {
   padding: 5px 12px;
 }
-.card-frame .card-body {
-  min-height: 20px;
-}
-
 
 /*----- header ---------*/
 
@@ -31,6 +30,12 @@ html>body .open-view {
   padding: 5px 12px;
   margin: 0;
   text-align: left;
+  .instruction {
+    border: 1px solid #887;
+    background: #ddc;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+  }
 }
 .card-header,
 .card-header a,
@@ -42,28 +47,19 @@ h1.card-title {
   padding: 2px 0;
   margin-right: 5px;
 }
-.card-header .instruction {
-  border: 1px solid #887;
-  background: #ddc;
-  border-radius: 8px;
-  -moz-border-radius: 8px;
-}
-.closed-view .card-menu-link  {
-  float: none;
-}
+
 .card-menu {
   font-size: 11px;
-}
-.card-menu li {
-  text-align: right;
-}
-.card-menu li a {
-  color: #333;
-}
-
-.card-menu .ui-menu-icon {
-  float: left;
-  margin-right: 5px;
+  li {
+    text-align: right;
+    a {
+      color: #333;
+    }
+  }
+  .ui-menu-icon {
+    float: left;
+    margin-right: 5px;
+  }
 }
 
 .card-menu-tappable {
@@ -82,7 +78,6 @@ h1.card-title {
   content: '<';
 }
 .card-header .toggler {
-  position: relative;
   top: 2px;
 }
 
@@ -165,40 +160,7 @@ a.email-link {
 /* ---------- edit tab / new / inline editing--------*/
 
 
-fieldset {
-  margin: 5px 1px;
-  clear: both;
-  float: none !important;
-  border: 0;
-}
-fieldset > .button-area,
-fieldset > .editor {
-  float: right;
-  width: 70%;
-  padding: 3px;
-}
-fieldset > .button-area {
-  padding: 0 3px;
-}
-fieldset > .editor > input {
-  margin-left: 0;
-}
-fieldset > legend {
-  white-space: inherit;
-  float:left;
-  text-align:right;
-  width: 25%;
-  padding: 3px;
-  margin: 0;
-}
-fieldset > legend > .instruction {
-  text-align: right;
-  padding: 3px 0;
-}
-.button-area input,
-.button-area button {
-  margin-right: 2%;
-}
+
 
 
 /* for IE */
@@ -322,15 +284,6 @@ fieldset > legend > .instruction {
 }
 
 /*----------- Labeled View ---------*/
-
-
-
-a.missing-labeled,
-.labeled-view label {
-  display: inline-block;
-  min-width: 30%;
-  text-align: right;
-}
 
 
 
@@ -486,11 +439,6 @@ h2.set-label {
   margin-left: 10px;
 }
 
-/*--------------*/
-.ui-icon {
-  background-image: url([[/assets/images/ui-icons_454545_256x240.png]])
-}
-.ui-loader {
-  display: none;
-}
+
+
 

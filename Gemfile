@@ -50,13 +50,13 @@ group :assets do
   gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor
   
   # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one
-  gem 'therubyrhino', :platform=>:ruby        # :ruby is MRI rubies, so if you use a mac ruby ...
+  gem 'therubyrhino', :platform=>:ruby         # :ruby is MRI rubies, so if you use a mac ruby ...
 end
 
 
 
 group :profile do
-  gem 'ruby-prof', '~>0.12.1'                              # profiling
+  gem 'ruby-prof', '~>0.12.1'                  # profiling
   #gem 'test-unit' #was causing errors after cucumber runs.
 end
 

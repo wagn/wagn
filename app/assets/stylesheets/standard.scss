@@ -1,0 +1,392 @@
+
+
+/*
+This "standard" CSS provides basic styling for:
+
+  1. wagneer interface (sets, settings, rules)
+  2. editor interface (forms, fieldsets, menus)
+  3. views that by definition alter default styling (closed, labeled)
+  4. error handling
+  
+
+Most colors are greyscale; any that aren't are explained with comments beginning with "NOTGREY"
+
+Note that this CSS is taken from code so that it will be updated automatically with releases.
+If you don't want certain rules, you may (a) override them, or (b) choose not to include this card
+in your skin.  Choosing (b) will mean your CSS will not be affected by automated updates.
+*/
+
+@mixin no_external_icon {
+  list-style-type: none;
+  padding-right: 0 !important;
+  background: inherit;
+}
+
+
+
+table {
+  border-collapse: collapse;
+}
+
+
+
+/* -- instructions ---*/
+
+.instruction {
+  text-align: center;
+  padding: 4px 10px;
+  ol,
+  ul {
+    text-align: left;
+  }
+ }
+
+
+
+.related-view > .card-body  {
+  background: #bbb;
+  padding: 5px;
+  > .ALL  {
+    background: #fff;
+    > .card-header {
+      background: #ddd;
+      padding: 5px;
+      h1 {
+        color: #000;
+      }
+    }
+    > .card-body {
+       padding: 8px 2%;
+    }
+  }
+}
+
+
+.closed-view {
+  width: 100%;
+}
+.closed-content {
+  table, tbody, tr, th, td, p, h1, h2, h3, h4, h5, h6, ul, li, pre, ol, div, span, a, blockquote, img {
+    font-size: 1em !important;
+    margin: 0 6px 0 0;
+    padding: 0 !important;
+    border:  0 !important;
+  }
+  a {
+    margin: 0;
+  }
+  img {
+    max-height: 1em;
+    width: auto;
+  }
+}
+
+.labeled-view {
+  label h1, .pointer-list, .pointer-item, .search-result-list, .search-result-item {
+    font-size: 1em;
+  }
+}
+
+
+a.missing-labeled,
+.labeled-view label {
+  display: inline-block;
+  min-width: 30%;
+  text-align: right;
+}
+
+
+
+
+
+fieldset {
+  margin: 5px 1px;
+  border: 0;
+  
+  > .button-area {
+    width: 70%;
+    padding: 0 3px;
+    input,
+    button {
+      margin-right: 2%;
+    }
+  }
+    
+  > .editor {
+    width: 70%;
+    padding: 3px;
+    > input {
+      margin-left: 0;
+    }
+  }
+  
+  > legend {
+    text-align:right;
+    width: 25%;
+    padding: 3px;
+    margin: 0;
+    > .instruction {
+      text-align: right;
+      padding: 3px 0;
+    }
+  }
+}
+
+
+/*--------------*/
+.ui-icon {
+  background-image: url([[/assets/images/ui-icons_454545_256x240.png]])
+}
+
+/* -- template-editor (editing template rule inclusions inline) -- */
+
+.template-editor-main.card-frame {
+  width: 85%;
+}
+.template-editor-left,
+.template-editor-right {
+  width: 5%;
+  text-align: center;
+  font-size: 3em;
+  line-height: 2em;
+}
+
+
+.render-error {
+  background-color: #ecc !important;
+}
+ins.diffmod,
+.diffins {
+  background: #aea;
+}
+del.diffmod,
+.diffdel {
+  background: #eaa;
+}
+
+
+/*--- errors -----*/
+
+.exception p {
+  margin: 15px;
+}
+.errors-view {
+  margin: 10px;
+  padding: 10px;
+  border: 3px solid #966;
+  background: #ffa;
+  -moz-border-radius: 8px;
+  border: 1px solid #777;
+  border-bottom: 2px solid #888;
+  border-right: 2px solid #888;
+  color: #333;
+}
+.render-error {
+  padding: 1px 20px;
+  font-style: italic;
+}
+
+
+
+
+
+.SELF-home-original > .content {
+  ul {
+    list-style-type: none;
+    margin: 1em;
+    padding: 0;
+  }
+  li {
+    padding: .8em;
+    margin: 0;
+    background: #eee
+  }
+  li:nth-child(even) {
+    background: #ddd;
+  }
+  h1 {
+    font-size: 1.5em;
+    padding: .6em 0 .3em 0
+  }
+  aside {
+    float:right;
+    border: 1px solid #999;  
+    background: white;
+    width: 33%;
+    padding: 1em;
+    margin: 36px 16px 2px 5px;
+    overflow: auto;
+    border-radius: 18px;
+    text-align: center;
+    h2 {
+      font-size: .9em;
+    }
+    p {
+      font-size: .8em;
+    }
+  }
+  p > a.external-link {
+    @include no_external_icon;
+  }
+}
+
+
+#secondary {
+  > div {
+    .SELF-wagneer_menu > .content {
+      > p {
+        margin-left: 6%;
+        text-indent: -6%;
+      }
+      a.external-link {
+        @include no_external_icon;
+      }
+    }
+
+    > a > .SELF-Xlogo.content-view,
+    > .SELF-Xcredit.content-view {
+      display: block;
+      text-align: center;
+      padding: 10px;
+      background: #fff;
+      border: 1px solid #bbb;
+      -moz-border-radius: 8px;
+      border-radius: 8px;
+      img {
+        max-width: 100%;
+      }
+      a {
+        color: #186886;
+      }
+    }
+  }  
+}
+
+
+
+
+/* -- Sets, Settings, Rules -- */
+
+.setting-rules,
+.set-rules {
+  width: 100%;
+}
+.setting-rules th,
+.set-rules th {
+  background: #aaa;
+  color: #eee;
+  padding: 5px 0;
+}
+.setting-rules th,
+.setting-rules td,
+.set-rules th,
+.set-rules td.rule-cell {
+  text-align: left;
+  padding: 2px 5px;
+}
+.set-rules th,
+.set-rules td.rule-cell {
+  border-bottom: 1px solid #eee;
+}
+.setting-klass,
+.rule-setting {
+  font-weight: bold;
+}
+td.rule-setting {
+  width: 30%;
+}
+.rule-set {
+  color: #666;
+  white-space: nowrap;
+}
+.rule-type-field {
+  max-width: 70%;
+  margin-right: 5px;
+}
+.closed-rule {
+  height: 30px;
+  td {
+    vertical-align: middle;
+  }
+  .rule-content {
+    width: 350px;
+  }
+}
+
+.rule-content-container {
+  width: 350px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: inherit;
+  background: inherit;
+  white-space: nowrap;
+}
+.rule-content-container {
+  .closed-content,
+  .closed-content .pointer-list,
+  .closed-content .search-list {
+    margin: 0;
+  }
+}
+td.missing-rule {
+  background-color: #eee;
+  border-bottom: 1px solid #fff;
+}
+.rule-setting {
+  padding-top: 4px;
+}
+.open-rule .rule-setting {
+  width: 28%;
+  float: left;
+}
+.open-rule .card-body {
+  clear: both;
+}
+.open-rule .instruction {
+  float: right;
+  text-align: left;
+  max-width: 68%;
+}
+.edit-rule {
+  .set-editor {
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+    .current-set-label {
+      font-weight: bold;
+    }
+  }
+  .edit-button-area {
+    clear:both;
+    padding-top: 5px;
+  }
+}
+.attention {
+  border: 3px solid red;
+}
+.rule-delete-section {
+  float: right;
+}
+.show-rule .rule-set {
+  margin-bottom: 10px;
+}
+.klass-row {
+  background: #eee;
+  border-top: 1px solid #ddd;
+}
+tr.rule-changeover td {
+  border-top: 1px solid #eee;
+  padding-top: 5px;
+}
+td.rule-anchor {
+  padding-left: 30px;
+}
+a.setting-link {
+  font-style: italic;
+  margin-left: 2%;
+  font-weight: normal;
+  color: #000;
+  white-space: nowrap;
+}

@@ -21,18 +21,18 @@ class AddStyleCards < ActiveRecord::Migration
       
       Card.create! :name=>'*style', :codename=>:style,      :type_id=>Card::SettingID
       Card.create! :name=>'*style+*right+*default',         :type_id=>Card::PointerID
-      Card.create! :name=>'*all+*style', :content=>"[[style: classic]]\n[[*css]]"
       
-      classic_styles = []
-      %w{ jquery-ui-smoothness.css functional.scss }.each do |sheet|
+      # FIXME! add options and help text
+      
+      barebones_styles = []
+      %w{ jquery-ui-smoothness.css functional.scss standard.scss }.each do |sheet|
         name, type = sheet.split '.'
-        classic_styles << name
-        
+        barebones_styles << name
         Card.create! :name=>"style: #{name}", :type=>type, :codename=>"style_#{name.to_name.key}"
       end
       
-      
-      %w{ minimal.scss settings.scss page.scss defaults.css card.css home.scss }.each do |sheet|
+      classic_styles = barebones_styles.clone
+      %w{ minimal.scss traditional.scss card.scss }.each do |sheet|
         name, type = sheet.split '.'
         classic_styles << name
         
@@ -40,8 +40,16 @@ class AddStyleCards < ActiveRecord::Migration
         Card.create! :name=>"style: #{name}", :type=>type, :content=>content
       end
       
+      barebones_styles << 'minimal'
+      barebones_content = barebones_styles.map { |s| "[[style: #{s}]]" }.join"\n"
+      Card.create! :name=>"style: barebones", :type=>'Pointer', :content=> barebones_content      
+      
       classic_content = classic_styles.map { |s| "[[style: #{s}]]" }.join"\n"
       Card.create! :name=>"style: classic", :type=>'Pointer', :content=> classic_content
+      
+      Wagn::Cache.reset_global
+      Card.create! :name=>'*all+*style', :content=>"[[style: classic]]\n[[*css]]"
+      
     end
   end
 

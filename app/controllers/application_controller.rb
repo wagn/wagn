@@ -67,7 +67,7 @@ class ApplicationController < ActionController::Base
 
   def show view = nil, status = 200
     format = request.parameters[:format]
-    format = :file if !FORMATS.split('|').member? format #unknown format
+    format = :file if params[:explicit_link] or !FORMATS.split('|').member? format #unknown format
 
     opts = ( params[:slot] || {} ).deep_symbolize_keys
     opts[:view] = view || params[:view]      

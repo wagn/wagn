@@ -73,6 +73,7 @@ def attachment_link(rev_id) # create filesystem links to previous revision
 end
 
 def before_post_attach
+  Rails.logger.info "bpa called for #{name}"
   at=self.attach
   at.instance_write :file_name, at.original_filename
 

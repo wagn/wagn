@@ -67,7 +67,6 @@ namespace :wagn do
 
   desc "migrate structure and cards"
   task :migrate =>:environment do
-    Wagn::Conf[:migration] = true  #probably only necessary in migrate:cards?
     stamp = ENV['STAMP_MIGRATIONS']
 
     puts 'migrating structure'
@@ -89,6 +88,7 @@ namespace :wagn do
 
     desc "migrate cards"
     task :cards => :environment do
+      Wagn::Cache.reset_global
       Wagn::Conf[:migration] = true
       Card # this is needed in production mode to insure core db structures are loaded before schema_mode is set
     

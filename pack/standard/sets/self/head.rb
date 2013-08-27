@@ -50,8 +50,8 @@ format :html do
   def head_stylesheets
     if params[:style]
       @css_path = wagn_path params[:style].to_name.url_key
-    elsif style_rule = card.rule_card(:style)
-      @css_path = wagn_path style_rule.name.to_name.url_key
+    elsif style_rule = card.rule_card(:style) and style_file = style_rule.fetch( :trait=>:file )
+      @css_path = style_file.attach.url
     end 
 
     if @css_path

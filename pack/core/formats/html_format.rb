@@ -64,9 +64,7 @@ class Card::HtmlFormat < Card::Format
     :normal => { :view => :content }
   }
   
-  def self.transactional?
-    true # HTML can handle create, update, delete events.
-  end
+  
   
   def get_inclusion_defaults
     INCLUSION_DEFAULTS[@mode] || {}
@@ -75,6 +73,22 @@ class Card::HtmlFormat < Card::Format
   def default_item_view
     :closed
   end
+
+  def view_for_unknown view, args
+    case
+    when focal? && ok?( :create )   ;  :new
+    when commentable?( view, args ) ;  view
+    else                               super
+    end
+  end
+
+
+  def commentable? view, args
+    self.class.tagged view, :comment and 
+    args[:show] =~ /comment_box/     and
+    ok? :comment
+  end
+
 
   def get_layout_content(args)
     Account.as_bot do
@@ -305,7 +319,7 @@ class Card::HtmlFormat < Card::Format
     if ajax_call?
       @depth == 0 && params[:is_main]
     else
-      @depth == 1 && @mainline
+      @depth == 1 && @mode == :main
     end
   end
 

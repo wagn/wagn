@@ -120,7 +120,7 @@ a.wanted-card {
 a.external-link,
 .closed-content a.external-link {
   color: #729;
-  background: url([[/external_link.png]]) center right no-repeat;
+  background: url([[/assets/external_link.png]]) center right no-repeat;
   padding-right: 13px !important;
 }
 a.email-link {
@@ -133,4 +133,8 @@ a.email-link {
 .missing-view a:hover {
   color: #069;
   background: #ffc;
+}
+.cardtype {
+  font-style: italic;
+  font-size: 10px;
 }

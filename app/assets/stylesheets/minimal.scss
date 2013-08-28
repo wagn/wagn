@@ -12,3 +12,15 @@
 .card-header {
   background: #eee;
 }
+
+@media print {
+  #primary { 
+    width: 100%;
+    float: none;
+    margin: 0;
+  }
+  #menu,
+  #secondary {
+    display: none;
+  }
+}

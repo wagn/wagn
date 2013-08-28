@@ -24,9 +24,6 @@ td, th {
   vertical-align: top;
   padding: 0px;
 }
-
-
-
 a:link,
 a:visited {
 	text-decoration: none;
@@ -35,14 +32,10 @@ a:hover,
 a:focus {
   text-decoration: underline;
 }
-
-
 form {
-  display: inline-block;
   margin: 0px;
   padding: 0px;
 }
-
 img {
   border: 0px;
   vertical-align: middle;
@@ -50,6 +43,7 @@ img {
 li {
   margin-bottom: 2px;
 }
+
 /*-------- Special Pages --------*/
 
 /*-- sign in page --*/
@@ -81,18 +75,6 @@ li {
 .TYPE-toggle .content {
   font-style: italic;
 }
-
-
-
-
-.cardtype {
-  font-style: italic;
-  font-size: 10px;
-}
-
-
-
-
 .conflict-view {
   text-align: left;
   background: #ffc;
@@ -180,18 +162,17 @@ input, select, textarea {
   border-radius: 10px;
   padding: 4px;
   margin: 5px 20px 20px 20px;
+  h5 {
+    margin: 0 0 0 40px;
+  }
+  ol {
+    list-style-type: upper-roman;
+    ol {
+      list-style-type: upper-alpha;
+      padding-left: 25px
+    }
+  }
 }
-.table-of-contents h5 {
-  margin: 0px 0px 0px 40px;
-}
-.table-of-contents ol {
-  list-style-type: upper-roman;
-}
-.table-of-contents ol ol {
-  list-style-type: upper-alpha;
-  padding-left: 25px
-}
-
 
 
 
@@ -210,10 +191,6 @@ input, select, textarea {
   float: right;
   color: #bbc;
 }
-
-
-
-
 
 
 /*----------- (Account Request)--------------*/

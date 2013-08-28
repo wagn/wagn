@@ -55,7 +55,7 @@ format :html do
     end 
 
     if @css_path
-      stylesheet_link_tag @css_path
+      stylesheet_link_tag @css_path, :media=>:all
     end
   end
   

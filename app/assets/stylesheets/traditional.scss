@@ -1,5 +1,13 @@
+/*
+This "traditional" styling is for backwards compatibility.  It is not intended for use in Wagns created after version 1.12.
 
+There are two types of rules here:
+  1. rules applying to selectors no longer included in standard layouts (#menu, #logo, #credit)
+  2. rules enforcing now-deprecating styling patterns
 
+*/
+
+/* #menu is being replaced with #header */
 #menu {
   font-size: 14px;
   background: #8AB;
@@ -28,6 +36,7 @@
 
 /* -------  Secondary --------- */
 
+/* #logo is being replaced with *logo card slot wrappers */
 #logo {
   text-align: center;
   padding: 10px;
@@ -47,7 +56,7 @@
   }
 }
 
-
+/* #credit is being replaced with *credit card slot wrappers */
 #credit {
   margin: 30px 0;
 }
@@ -79,6 +88,8 @@ textarea,
 }
 
 
+
+/* titled view formerly did not have a styled header */
 .titled-view > .card-header {
    background: inherit;
 }

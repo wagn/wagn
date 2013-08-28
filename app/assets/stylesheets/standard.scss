@@ -56,6 +56,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
     margin-right: 15px;
     background: #666;
     border-radius: 3px;
+    -moz-border-radius: 3px;
     color: #fff;
     font-size: 10px;
   }
@@ -312,6 +313,7 @@ del.diffmod,
   padding: 10px;
   border: 3px solid #966;   /* NOTGREY - red for error */
   background: #ffa;
+  border-radius: 8px;
   -moz-border-radius: 8px;
   border: 1px solid #777;
   border-bottom: 2px solid #888;

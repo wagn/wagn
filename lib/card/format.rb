@@ -83,11 +83,7 @@ class Card
       def tagged view, tag
         view and tag and view_tags = @@view_tags[view.to_sym] and view_tags[tag.to_sym]
       end
-    
-      def transactional?
-        false # default, because most formats don't handle create, update, delete events.  might be better name?
-      end
-    
+        
       private
       
       def extract_class_vars view, opts
@@ -297,49 +293,41 @@ class Card
     end
 
     def ok_view view, args={}
-      original_view = view
-
-      view = case
-        when @depth >= @@max_depth   ; :too_deep
-        # prevent recursion.  @depth tracks subformats (view within views)
-        when @@perms[view] == :none  ; view
-        # This may currently be overloaded.  always allowed = skip modes = never modified.  not sure that's right.
-
-        # HANDLE UNKNOWN CARDS ~~~~~~~~~~~~
-        when !card.known? && !self.class.tagged( view, :unknown_ok )
-  
-          case
-          when self.class.transactional? && focal? && ok?( :create )
-            :new
-          when self.class.transactional? && comment_box?( view, args ) && ok?( :comment )
-            view
-          when focal?
-            :not_found
-          else
-            :missing
-          end
-
-        # CHECK PERMISSIONS  ~~~~~~~~~~~~~~~~
-        else
-          perms_required = @@perms[view] || :read
-          args[:denied_task] =
-            if Proc === perms_required
-              :read if !(perms_required.call self)  # read isn't quite right
-            else
-              [perms_required].flatten.find { |task| !ok? task }
-            end
-          args[:denied_task] ? (@@denial_views[view] || :denial) : view
+      approved_view = case
+        when @depth >= @@max_depth      ; :too_deep                    # prevent recursion. @depth tracks subformats
+        when @@perms[view] == :none     ; view                         # view requires no permissions
+        when !card.known? &&
+          !tagged( view, :unknown_ok )  ; view_for_unknown view, args  # handle unknown cards (where view not exempt)
+        else                            ; permitted_view view, args    # run explicit permission checks
         end
 
-      if view != original_view
-        args[:denied_view] = original_view
-      end
-      if focal? && error_code = @@error_codes[view]
+      args[:denied_view] = view if approved_view != view
+      if focal? && error_code = @@error_codes[ approved_view ]
         root.error_status = error_code
       end
-      #warn "ok_view[#{original_view}] #{view}, #{args.inspect}, Cd:#{card.inspect}" #{caller[0..20]*"\n"}"
-      view
+      approved_view
     end
+  
+    def tagged view, tag
+      self.class.tagged view, tag
+    end
+  
+    def permitted_view view, args
+      perms_required = @@perms[view] || :read
+      args[:denied_task] =
+        if Proc === perms_required
+          :read if !(perms_required.call self)  # read isn't quite right
+        else
+          [perms_required].flatten.find { |task| !ok? task }
+        end
+      
+      if args[:denied_task]
+        @@denial_views[view] || :denial
+      else
+        view
+      end
+    end
+  
   
     def ok? task
       task = :create if task == :update && card.new_card?
@@ -348,8 +336,8 @@ class Card
       @ok[task]
     end
   
-    def comment_box? view, args
-      self.class.tagged view, :comment and args[:show] =~ /comment_box/
+    def view_for_unknown view, args
+      focal? ? :not_found : :missing
     end
 
     def canonicalize_view view

@@ -26,14 +26,16 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 */
 
 
-/* -- slot defaults -- */
+/* -- resets -- */
 
+.card-frame,
 .card-body,
-.card-slot,
 .ALL {
   overflow: hidden;
   white-space: normal;
 }
+
+/* NOTE: we recommend against styling ".card-slot", which is heavily used by javascript */
 
 
 /* --  hidden info -- */
@@ -80,7 +82,6 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 /*-- closed and labeled views --*/
 
 .closed-view {
-  width: 100%;
   white-space: nowrap !important;
   .closed-content {
     white-space: nowrap !important;

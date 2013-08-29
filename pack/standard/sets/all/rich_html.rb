@@ -177,6 +177,10 @@ format :html do
     name_ready = !card.cardname.blank? && !Card.exists?( card.cardname )
     prompt_for_name = !name_ready && !card.rule_card( :autoname )
 
+    if !name_ready
+      args[:title] ||= "New #{ card.type_name unless card.type_id == Card.default_type_id }"
+    end
+
     prompt_for_type = if !params[:type]
       ( main? || card.simple? || card.is_template? ) and
         Card.new( :type_id=>card.type_id ).ok? :create #otherwise current type won't be on menu
@@ -189,41 +193,36 @@ format :html do
     end
     
             
-    (wrap :new, args.merge(:frame=>true) do  
-      card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
-        @form = form
-        %{
-          #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
-          <div class="card-header">          
-            #{
-              if name_ready
-                _render_title(args) + hidden_field_tag( 'card[name]', card.name )
-              else
-                args[:title] ||= "New #{ card.type_name unless card.type_id == Card.default_type_id }"
-                _render_title args
-              end
-            }
-            #{ _render_help :setting => :add_help }
-            
-          </div>
-          
-          #{ _render_name_editor if prompt_for_name }
-
-          <div class="card-body">
-            #{ prompt_for_type ? _render_type_menu : form.hidden_field( :type_id ) }
-          
-            <div class="card-editor editor">#{ edit_slot args.merge( :label => prompt_for_name || prompt_for_type ) }</div>
-            <fieldset>
-              <div class="button-area">
-                #{ submit_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
-                #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
-              </div>
-            </fieldset>
-          </div>
-          #{ notice }
-        }
-      end
-    end)
+    wrap :new, args.merge(:frame=>true) do  
+      %{
+        <div class="card-header">          
+          #{ _render_title args }
+          #{ _render_help :setting => :add_help }          
+        </div>
+        <div class="card-body">
+          #{
+            card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
+              @form = form
+              %{
+                #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
+                #{ hidden_field_tag 'card[name]', card.name if name_ready }
+                #{ _render_name_editor if prompt_for_name }
+                #{ prompt_for_type ? _render_type_menu : form.hidden_field( :type_id ) }                
+                <div class="card-editor editor">
+                  #{ edit_slot args.merge( :label => prompt_for_name || prompt_for_type ) }
+                </div>
+                <fieldset>
+                  <div class="button-area">
+                    #{ submit_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
+                    #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
+                  </div>
+                </fieldset>                
+              }
+            end
+          }
+        </div>
+      }
+    end
   end
 
   view :editor do |args|

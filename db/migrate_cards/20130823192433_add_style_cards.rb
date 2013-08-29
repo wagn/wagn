@@ -4,9 +4,12 @@ class AddStyleCards < ActiveRecord::Migration
   include Wagn::MigrationHelper
   def up
     contentedly do
+      # TAKE "CSS" CODENAME FROM OLD *CSS CARD
       old_css = Card[:css]
       old_css.update_attributes :codename=>nil  #old *css card no longer needs this codename
       
+
+      # CREATE CSS AND SCSS TYPES
       # following avoids name conflicts (create statements do not).  need better api to support this?
       css_attributes = { :codename=>:css, :type_id=>Card::CardtypeID }
       new_css = Card.fetch 'CSS', :new=>css_attributes
@@ -17,12 +20,23 @@ class AddStyleCards < ActiveRecord::Migration
       
       Card.create! :name=>'SCSS', :codename=>:scss, :type_id=>Card::CardtypeID
       
-      # FIXME! set permissions on CSS and SCSS cards!
       
-      Card.create! :name=>'*style', :codename=>:style,      :type_id=>Card::SettingID
-      Card.create! :name=>'*style+*right+*default',         :type_id=>Card::PointerID
+      # PERMISSIONS FOR CSS AND SCSS TYPES
+      
+      ['CSS', 'SCSS'].each do |type|
+        [ :create, :update, :delete].each do |action|
+          Card.create! :name=>"#{type}+*type+#{Card[action].name}", :content=>"[[#{Card[:administrator].name}]]"
+        end
+      end
+      
+      Card.create! :name=>'*style', :codename=>:style, :type_id=>Card::SettingID
+      Card.create! :name=>"*style+#{Card[:right].name}+#{Card[:default].name}", :type_id=>Card::PointerID
+      Card.create! :name=>"*style+#{Card[:right].name}+#{Card[:read].name}", :content=>"[[#{Card[:anyone].name}]]"
+      
       
       # FIXME! add options and help text
+      
+      # IMPORT STYLESHEETS
       
       barebones_styles = []
       %w{ jquery-ui-smoothness.css functional.scss standard.scss }.each do |sheet|
@@ -32,7 +46,7 @@ class AddStyleCards < ActiveRecord::Migration
       end
       
       classic_styles = barebones_styles.clone
-      %w{ minimal.scss common.scss traditional.scss classic_cards.scss }.each do |sheet|
+      %w{ minimal.scss common.scss classic_cards.scss traditional.scss }.each do |sheet|
         name, type = sheet.split '.'
         name.gsub! '_', ' '
         classic_styles << name
@@ -41,6 +55,8 @@ class AddStyleCards < ActiveRecord::Migration
         Card.create! :name=>"style: #{name}", :type=>type, :content=>content
       end
       
+      # CREATE STYLES
+      
       barebones_styles << 'minimal'
       barebones_content = barebones_styles.map { |s| "[[style: #{s}]]" }.join"\n"
       Card.create! :name=>"style: barebones", :type=>'Pointer', :content=> barebones_content      
@@ -48,8 +64,11 @@ class AddStyleCards < ActiveRecord::Migration
       classic_content = classic_styles.map { |s| "[[style: #{s}]]" }.join"\n"
       Card.create! :name=>"style: classic", :type=>'Pointer', :content=> classic_content
       
+      # CREATE DEFAULT STYLE RULE
+      # (this auto-generates cached file)
+      
       Wagn::Cache.reset_global
-      Card.create! :name=>'*all+*style', :content=>"[[style: classic]]\n[[*css]]"
+      Card.create! :name=>"#{Card[:all].name}+*style", :content=>"[[style: classic]]\n[[*css]]"
       
     end
   end

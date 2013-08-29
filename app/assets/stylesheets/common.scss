@@ -1,22 +1,28 @@
 
+$input_color: #f9f9ed;
+$input_focus_color: #ffffee;
+$label_color: #666666;
+
 h1 {
   font-size: 1.2em;
 }
 h2 {
   font-size: 1.1em;
 }
-h1, h2 {
-  font-weight: bold;
+
+/* 
+the following gives users more explicit control over spacing within tinyMCE
+but leads to lots of empty paragraph tags
+*/
+h1, h2, p {
   margin: 0px;
 }
-p {
-  margin: 0px;
-}
-hr {
-  margin: 10px
+
+label {
+  color: $label_color;
 }
 th {
-  color: #666;
+  color: $label_color;
   font-weight: normal;
   font-style: italic;
 }
@@ -36,12 +42,26 @@ form {
   margin: 0px;
   padding: 0px;
 }
-img {
-  border: 0px;
-  vertical-align: middle;
+
+
+.card-header,
+.card-body {
+  padding: 5px 0;
 }
-li {
-  margin-bottom: 2px;
+
+.card-frame {
+  border: 1px solid #000;
+  > .card-body {
+    padding: 5px 12px;
+  }
+}
+
+.card-frame,
+.closed-view {
+  > .card-header {
+    background: #eee;
+    padding: 5px 12px;
+  }  
 }
 
 /*-------- Special Pages --------*/
@@ -57,37 +77,10 @@ li {
   margin-top: 40px;
 }
 
-/* -- extra boxes -----*/
 
 
-.flash-notice,
-#credit {  
-  color: #333;
-  font-size: 1.1em;
-  background: #fff;
-  border: 1px solid #888;
-  margin-bottom: 15px;
-  padding: 5px;
-  text-align: center;
-}
 
 
-.TYPE-toggle .content {
-  font-style: italic;
-}
-.conflict-view {
-  text-align: left;
-  background: #ffc;
-  border: 1px solid grey;
-  padding: 10px;
-  margin-top: 12px;
-}
-
-/* ---------- changes tab -------*/
-
-.revision-content {
-  background: #ffd;
-}
 
 
 /*----------- inputs ---------*/
@@ -101,31 +94,29 @@ input[type=password],
 input[type=checkbox],
 textarea,
 select {
-  padding-left: 3px;
   border: 1px solid #aaa;
   border-top: 2px solid #666;
   border-left: 2px solid #666;
-  background: #f9f9ed;
-}
-body#tinymce {
-  background: #f9f9ed;
-}
-input:focus,
-select:focus,
-textarea:focus,
-body#tinymce:focus {
-  background: #ffffee;
+  background: $input_color;
 }
 input[type=submit]:focus,
 input[type=button]:focus {
   color: #000
 }
+.revision-content,
+.conflict-view,
+body#tinymce {
+  background: $input_color;
+}
+input:focus,
+select:focus,
+textarea:focus,
+body#tinymce:focus {
+  background: $input_focus_color;
+}
 
 body.mceContentBody {
   margin: 4px;
-}
-input, select, textarea {
-  max-width: 100%;
 }
 
 
@@ -134,20 +125,17 @@ input, select, textarea {
 .change-view {
   padding: 5px 0px;
   border-bottom: 1px dotted grey;
-}
-.change-view .change-card{
-  font-weight: bold;
-}
-.change-view .last-update {
-  color: #666;
-}
-.change-view .last-edited {
-  color: #7a7;
+  .change-card{
+    font-weight: bold;
+  }
+  .last-update {
+    color: #666;
+  }
+  .last-edited {
+    color: #7a7;
+  }
 }
 
-
-
-/* CARDTYPE_SPECIFIC ------------------------------*/
 
 
 /*---------- ( Richtext )-------------*/
@@ -171,18 +159,21 @@ input, select, textarea {
 }
 
 
+/* CARDTYPE_SPECIFIC ------------------------------*/
+
+
+.TYPE-toggle .content {
+  font-style: italic;
+}
+
+
 
 /*---------( Search ) ---------- */
 
 .search-keyword {
   font-style: italic;
 }
-.search-no-results:after {
-  content:'0 results';
-}
-.closed-content .search-no-results:after {
-  content:'';
-}
+
 .search-count {
   float: right;
   color: #bbc;
@@ -210,7 +201,6 @@ input, select, textarea {
   margin: 0px;
   input {
     padding: 0px;
-    font-size: 12px;
   }
   textarea {
     margin-bottom:5px;
@@ -220,6 +210,3 @@ input, select, textarea {
   font-style: italic;
   margin-left: 10px;
 }
-
-
-

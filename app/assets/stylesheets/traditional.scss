@@ -33,6 +33,12 @@ There are two types of rules here:
     width: 30%;
   }
 }
+@media print {
+  #menu {
+    display: none;
+  }
+}
+
 
 /* -------  Secondary --------- */
 
@@ -73,8 +79,13 @@ body, p, ol, ul, td, th, textarea {
   font-size:   12px;
   font-weight: normal;
 }
+
 body, p, ol, ul {
   line-height: 21px;
+}
+
+.closed-content {
+  font-size: 11px !important;
 }
 
 /* creates lots of inline divs.  confusing */
@@ -82,27 +93,12 @@ body, p, ol, ul {
   display: inline;
 }
 
-textarea,
-.phrasebox {
-  width: 98%;
+/* english content in css.  ugh */
+.search-no-results:after {
+  content:'0 results';
 }
-
-
-
-/* titled view formerly did not have a styled header */
-.titled-view > .card-header {
-   background: inherit;
-}
-
-.titled-view > .card-header,
-.titled-view > .card-body {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-h1.card-title {
-  padding: 2px 0;
-  margin-right: 5px;
+.closed-content .search-no-results:after {
+  content:'';
 }
 
 

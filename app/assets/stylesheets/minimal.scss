@@ -9,9 +9,6 @@
   width: 28%;
 }
 
-.card-header {
-  background: #eee;
-}
 
 @media print {
   #primary { 
@@ -19,7 +16,6 @@
     float: none;
     margin: 0;
   }
-  #menu,
   #secondary {
     display: none;
   }

@@ -7,7 +7,7 @@ It includes basic styling for:
   1. wagneer interface (sets, settings, rules)
   2. editor interface (forms, fieldsets, menus, navbox, history)
   3. views that by definition alter default styling (closed, labeled)
-  4. error handling
+  4. errors / warnings / notices
   5. key default content for new installs (home page, sidebar)
   
 Most colors are greyscale; any that aren't are explained with comments beginning with "NOTGREY"
@@ -21,6 +21,15 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
   list-style-type: none;
   padding-right: 0 !important;
   background: inherit;
+}
+
+
+/* -- resets -- */
+
+.card-frame {
+  text-align: left;
+  font-weight: normal;
+  font-style: normal;  
 }
 
 
@@ -123,14 +132,17 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 }
 
 .labeled-view {
-  label h1, .pointer-list, .pointer-item, .search-result-list, .search-result-item {
+  label h1,
+  .pointer-list,
+  .pointer-item,
+  .search-result-list,
+  .search-result-item {
     font-size: 1em;
   }
 }
 
-
-a.missing-labeled,
-.labeled-view label {
+.labeled-view label,
+a.missing-labeled {
   display: inline-block;
   min-width: 30%;
   text-align: right;
@@ -141,6 +153,7 @@ a.missing-labeled,
 /*-------------------- */
 /*- EDIT INTERFACE   - */
 /*-------------------- */
+
 
 
 
@@ -177,11 +190,19 @@ fieldset {
   }
 }
 
-/* name editor  */
-
-.name-editor input {
-  width: 100%;
+input, select, textarea {
+  padding: 0 1%;
 }
+input, select {
+  max-width: 97.5%;
+}
+textarea,
+.TYPE-phrase input,
+.name-editor input {
+  width: 97.5%;
+}
+/* width + padding = 99.5%, which leaves 0.5% for the borders.  This is imprecise, but borders can't be specified as a percentage */
+
 .name-editor.known-name input {
   border: 3px solid #c22; /* NOTGREY - red for warning */
 }
@@ -229,7 +250,17 @@ fieldset {
   text-align: center;
 }
 
+/* links to create missing cards */
 
+.missing-view a {
+  color: #999;
+  font-variant: small-caps;
+}
+
+.missing-view a:hover {
+  color: #069;
+  background: #ffc;
+}
 
 /*-------------------- */
 /*- SEARCH & POINTER - */
@@ -304,6 +335,7 @@ del.diffmod,
 /*- ERRORS / NOTICES - */
 /*-------------------- */
 
+/* FIXME - following should be consolidated / simplified */
 
 .exception p {
   margin: 15px;
@@ -312,7 +344,7 @@ del.diffmod,
   margin: 10px;
   padding: 10px;
   border: 3px solid #966;   /* NOTGREY - red for error */
-  background: #ffa;
+  background: #ffa;         /* NOTGREY - yellow for highlighting */
   border-radius: 8px;
   -moz-border-radius: 8px;
   border: 1px solid #777;
@@ -332,6 +364,26 @@ del.diffmod,
   font-style: italic;
   text-align: center;
   margin: 0 0 4px 0;
+}
+
+
+#credit, /* credit is deprecated */
+.flash-notice {  
+  color: #333;
+  font-size: 1.1em;
+  background: #fff;
+  border: 1px solid #888;
+  margin-bottom: 15px;
+  padding: 5px;
+  text-align: center;
+}
+
+
+.conflict-view {
+  text-align: left;
+  border: 1px solid grey;
+  padding: 10px;
+  margin-top: 12px;
 }
 
 
@@ -366,6 +418,7 @@ del.diffmod,
     margin: 36px 16px 2px 5px;
     overflow: auto;
     border-radius: 18px;
+    -moz-border-radius: 18px;
     text-align: center;
     h2 {
       font-size: .9em;
@@ -577,7 +630,17 @@ table {
   }
 }
 
-
+/* note said this is o non-ie browsers do better with image floats.  looks over-specified.
 html>body .open-view {
-  width: auto;  /* so non-ie browsers do better with image floats */
+  width: auto;  
+}
+*/
+
+/* the following classes are here because they're scheduled for deprecation */
+.faint {
+  color: #bbc;
+}
+.cardtype {
+  font-style: italic;
+  font-size: 10px;
 }

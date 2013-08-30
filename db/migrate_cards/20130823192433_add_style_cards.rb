@@ -36,11 +36,12 @@ class AddStyleCards < ActiveRecord::Migration
       end
       
       Card.create! :name=>'*style', :codename=>:style, :type_id=>Card::SettingID
-      Card.create! :name=>"*style+#{Card[:right].name}+#{Card[:default].name}", :type_id=>Card::PointerID
-      Card.create! :name=>"*style+#{Card[:right].name}+#{Card[:read].name}",    :content=>"[[#{Card[:anyone].name}]]"
-      Card.create! :name=>"*style+#{Card[:right].name}+#{Card[:options].name}", :content=>%({"type":"Skin"}), :type=>Card::SearchTypeID
-      Card.create! :name=>"*style+#{Card[:right].name}+#{Card[:input].name}",   :content=>'select'
-      Card.create! :name=>"*style+#{Card[:right].name}+#{Card[:help].name}",    :content=>
+      style_set = "*style+#{Card[:right].name}"
+      Card.create! :name=>"#{style_set}+#{Card[:default].name}", :type_id=>Card::PointerID
+      Card.create! :name=>"#{style_set}+#{Card[:read].name}",    :content=>"[[#{Card[:anyone].name}]]"
+      Card.create! :name=>"#{style_set}+#{Card[:options].name}", :content=>%({"type":"Skin"}), :type=>Card::SearchTypeID
+      Card.create! :name=>"#{style_set}+#{Card[:input].name}",   :content=>'select'
+      Card.create! :name=>"#{style_set}+#{Card[:help].name}",    :content=>
         %{Skin (collection of stylesheets) for card's page. [[http://wagn.org/skins|more]]}
       
       # IMPORT STYLESHEETS
@@ -52,13 +53,12 @@ class AddStyleCards < ActiveRecord::Migration
         Card.create! :name=>"style: #{name}", :type=>type, :codename=>"style_#{name.to_name.key}"
       end
       
+      json = JSON(File.read "#{Rails.root}/db/migrate_cards/data/1.12_stylesheets.json")
       %w{ right_sidebar.scss common.scss classic_cards.scss traditional.scss }.each_with_index do |sheet, index|
         name, type = sheet.split '.'
         name.gsub! '_', ' '
         index < 2 ? simple_styles << name : classic_styles << name
-        
-        content = File.read "#{Rails.root}/app/assets/stylesheets/#{sheet}"
-        Card.create! :name=>"style: #{name}", :type=>type, :content=>content
+        Card.create! :name=>"style: #{name}", :type=>type, :content=>json[sheet]
       end
       
       # CREATE SKINS

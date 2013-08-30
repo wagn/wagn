@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 
 event :save_stylesheet, :after=>:store, :on=>:save do
-  
   format = Card::CssFormat.new self
   compressed_css = Sass.compile format.render_core, :style=>:compressed  
   tmpdir = Rails.root.join 'tmp'

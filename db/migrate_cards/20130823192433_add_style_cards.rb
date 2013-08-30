@@ -21,6 +21,12 @@ class AddStyleCards < ActiveRecord::Migration
       Card.create! :name=>'SCSS', :codename=>:scss, :type_id=>Card::CardtypeID
       
       
+      skin_attributes = { :codename=>:skin, :type_id=>Card::CardtypeID }
+      skin_card = Card.fetch 'Skin', :new=>skin_attributes
+      skin_card.update_attributes( skin_attributes ) unless skin_card.new_card?
+      skin_card.save!
+      
+      
       # PERMISSIONS FOR CSS AND SCSS TYPES
       
       ['CSS', 'SCSS'].each do |type|
@@ -31,44 +37,51 @@ class AddStyleCards < ActiveRecord::Migration
       
       Card.create! :name=>'*style', :codename=>:style, :type_id=>Card::SettingID
       Card.create! :name=>"*style+#{Card[:right].name}+#{Card[:default].name}", :type_id=>Card::PointerID
-      Card.create! :name=>"*style+#{Card[:right].name}+#{Card[:read].name}", :content=>"[[#{Card[:anyone].name}]]"
-      
-      
-      # FIXME! add options and help text
+      Card.create! :name=>"*style+#{Card[:right].name}+#{Card[:read].name}",    :content=>"[[#{Card[:anyone].name}]]"
+      Card.create! :name=>"*style+#{Card[:right].name}+#{Card[:options].name}", :content=>%({"type":"Skin"}), :type=>Card::SearchTypeID
+      Card.create! :name=>"*style+#{Card[:right].name}+#{Card[:input].name}",   :content=>'select'
+      Card.create! :name=>"*style+#{Card[:right].name}+#{Card[:help].name}",    :content=>
+        %{Skin (collection of stylesheets) for card's page. [[http://wagn.org/skins|more]]}
       
       # IMPORT STYLESHEETS
       
-      barebones_styles = []
+      simple_styles, classic_styles = [], []
       %w{ jquery-ui-smoothness.css functional.scss standard.scss }.each do |sheet|
         name, type = sheet.split '.'
-        barebones_styles << name
+        simple_styles << name
         Card.create! :name=>"style: #{name}", :type=>type, :codename=>"style_#{name.to_name.key}"
       end
       
-      classic_styles = barebones_styles.clone
       %w{ minimal.scss common.scss classic_cards.scss traditional.scss }.each do |sheet|
         name, type = sheet.split '.'
         name.gsub! '_', ' '
-        classic_styles << name
+        name=='minimal' ? simple_styles << name : classic_styles << name
         
         content = File.read "#{Rails.root}/app/assets/stylesheets/#{sheet}"
         Card.create! :name=>"style: #{name}", :type=>type, :content=>content
       end
       
-      # CREATE STYLES
+      # CREATE SKINS
       
-      barebones_styles << 'minimal'
-      barebones_content = barebones_styles.map { |s| "[[style: #{s}]]" }.join"\n"
-      Card.create! :name=>"style: barebones", :type=>'Pointer', :content=> barebones_content      
-      
-      classic_content = classic_styles.map { |s| "[[style: #{s}]]" }.join"\n"
-      Card.create! :name=>"style: classic", :type=>'Pointer', :content=> classic_content
+      Card.create! :name=>"simple skin", :type=>'Skin', :content=>
+        simple_styles.map { |s| "[[style: #{s}]]" } * "\n"
+      Card.create! :name=>"classic skin", :type=>'Skin', :content=>
+        "[[simple skin]]\n" + ( classic_styles.map { |s| "[[style: #{s}]]" }.join"\n" )
       
       # CREATE DEFAULT STYLE RULE
       # (this auto-generates cached file)
       
+      default_skin = if old_css.content =~ /\S/
+        name = 'customized classic skin'
+        Card.create! :name=>name, :type=>Skin, :content=>"[[classic skin]]\n[[*css]]"
+        name
+      else
+        old_css.delete!
+        'classic skin'
+      end
+      
       Wagn::Cache.reset_global
-      Card.create! :name=>"#{Card[:all].name}+*style", :content=>"[[style: classic]]\n[[*css]]"
+      Card.create! :name=>"#{Card[:all].name}+*style", :content=>"[[#{default_skin}]]"
       
     end
   end

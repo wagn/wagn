@@ -98,7 +98,6 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 /* navboxes */
 
 .navbox-item-label {
-  color: #777;
   font-size: 10px;
   width: 50px;
   padding: 3px 0 3px 25px;
@@ -433,36 +432,16 @@ del.diffmod,
 }
 
 
-#secondary {
-  > div {
-    .SELF-wagneer_menu > .content {
-      > p {
-        margin-left: 6%;
-        text-indent: -6%;
-      }
-      a.external-link {
-        @include no_external_icon;
-      }
-    }
-
-    > a > .SELF-Xlogo.content-view,
-    > .SELF-Xcredit.content-view {
-      display: block;
-      text-align: center;
-      padding: 10px;
-      background: #fff;
-      border: 1px solid #bbb;
-      -moz-border-radius: 8px;
-      border-radius: 8px;
-      img {
-        max-width: 100%;
-      }
-      a {
-        color: #186886; /* NOTGREY - Wagn blue */
-      }
-    }
-  }  
+.SELF-wagneer_menu > .content {
+  > p {
+    margin-left: 6%;
+    text-indent: -6%;
+  }
+  a.external-link {
+    @include no_external_icon;
+  }
 }
+
 
 
 /*-------------------------- */
@@ -612,10 +591,6 @@ h2.set-label {
 /*-------------------------- */
 /*- MISCELLANEOUS          - */
 /*-------------------------- */
-
-table {
-  border-collapse: collapse;
-}
 
 .ui-icon {
   background-image: url([[/assets/images/ui-icons_454545_256x240.png]])

@@ -14,12 +14,17 @@ h2 {
 the following gives users more explicit control over spacing within tinyMCE
 but leads to lots of empty paragraph tags
 */
+
 h1, h2, p {
   margin: 0px;
 }
 
-label {
+label,
+.navbox-item-label {
   color: $label_color;
+}
+table {
+  border-collapse: collapse;
 }
 th {
   color: $label_color;
@@ -80,13 +85,7 @@ form {
 
 
 
-
-
-
 /*----------- inputs ---------*/
-
-
-
 
 
 input[type=text],

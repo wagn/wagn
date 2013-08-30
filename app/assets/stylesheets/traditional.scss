@@ -1,11 +1,19 @@
 /*
 This "traditional" styling is for backwards compatibility.  It is not intended for use in Wagns created after version 1.12.
 
-There are two types of rules here:
+There are three types of rules here:
   1. rules applying to selectors no longer included in standard layouts (#menu, #logo, #credit)
-  2. rules enforcing now-deprecating styling patterns
+  2. rules enforcing now-deprecated styling patterns
+  3. rules enforcing default content expected to change soon
 
 */
+
+@mixin no_external_icon {
+  list-style-type: none;
+  padding-right: 0 !important;
+  background: inherit;
+}
+
 
 /* #menu is being replaced with #header */
 #menu {
@@ -67,6 +75,29 @@ There are two types of rules here:
   margin: 30px 0;
 }
 
+
+
+
+#secondary {
+  > div {
+    > a > .SELF-Xlogo.content-view,
+    > .SELF-Xcredit.content-view {
+      display: block;
+      text-align: center;
+      padding: 10px;
+      background: #fff;
+      border: 1px solid #bbb;
+      -moz-border-radius: 8px;
+      border-radius: 8px;
+      img {
+        max-width: 100%;
+      }
+      a {
+        color: #186886; /* NOTGREY - Wagn blue */
+      }
+    }
+  }  
+}
 
 
 /*

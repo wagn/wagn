@@ -52,10 +52,10 @@ class AddStyleCards < ActiveRecord::Migration
         Card.create! :name=>"style: #{name}", :type=>type, :codename=>"style_#{name.to_name.key}"
       end
       
-      %w{ minimal.scss common.scss classic_cards.scss traditional.scss }.each do |sheet|
+      %w{ right_sidebar.scss common.scss classic_cards.scss traditional.scss }.each_with_index do |sheet, index|
         name, type = sheet.split '.'
         name.gsub! '_', ' '
-        name=='minimal' ? simple_styles << name : classic_styles << name
+        index < 2 ? simple_styles << name : classic_styles << name
         
         content = File.read "#{Rails.root}/app/assets/stylesheets/#{sheet}"
         Card.create! :name=>"style: #{name}", :type=>type, :content=>content

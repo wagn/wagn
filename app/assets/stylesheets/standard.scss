@@ -17,13 +17,6 @@ If you don't want certain rules, you may (a) override them, or (b) choose not to
 in your skin.  Choosing (b) will mean your CSS will not be affected by automated updates.
 */
 
-@mixin no_external_icon {
-  list-style-type: none;
-  padding-right: 0 !important;
-  background: inherit;
-}
-
-
 /* -- resets -- */
 
 .card-frame {
@@ -36,7 +29,6 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 /*-------------------- */
 /*- DYNAMIC ELEMENTS - */
 /*-------------------- */
-
 
 /* -- card menus -- */
 
@@ -75,7 +67,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 }
  
 
-/* related view (used by many menu items)  */
+/* related view (used by many menu items, such as "referred to by")  */
 
 .related-view > .card-body  {
  background: #bbb;
@@ -112,6 +104,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 /*-------------------- */
 
 .closed-view {
+  margin: 0 0 1px 0;
   width: 100%;
 }
 .closed-content {
@@ -147,14 +140,9 @@ a.missing-labeled {
   text-align: right;
 }
 
-
-
 /*-------------------- */
 /*- EDIT INTERFACE   - */
 /*-------------------- */
-
-
-
 
 fieldset {
   margin: 5px 1px;
@@ -426,9 +414,6 @@ del.diffmod,
       font-size: .8em;
     }
   }
-  p > a.external-link {
-    @include no_external_icon;
-  }
 }
 
 
@@ -436,9 +421,6 @@ del.diffmod,
   > p {
     margin-left: 6%;
     text-indent: -6%;
-  }
-  a.external-link {
-    @include no_external_icon;
   }
 }
 
@@ -586,8 +568,6 @@ h2.set-label {
   margin: 0 0 10px 0;
 }
 
-
-
 /*-------------------------- */
 /*- MISCELLANEOUS          - */
 /*-------------------------- */
@@ -617,5 +597,5 @@ html>body .open-view {
 }
 .cardtype {
   font-style: italic;
-  font-size: 10px;
+  font-size: .85em;
 }

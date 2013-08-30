@@ -49,13 +49,16 @@ format :html do
   
   def head_stylesheets
     if params[:style]
-      @css_path = wagn_path params[:style].to_name.url_key
+      args = { :format=>:css }
+      args[:item] = :import if params[:import_styles]
+      @css_path = page_path params[:style], args
     elsif style_rule = card.rule_card(:style) and style_file = style_rule.fetch( :trait=>:file )
       @css_path = style_file.attach.url
     end 
 
     if @css_path
-      stylesheet_link_tag @css_path, :media=>:all
+      %{<link href="#{@css_path}" media="all" rel="stylesheet" type="text/css" />}
+#      stylesheet_link_tag @css_path, :media=>:all
     end
   end
   

@@ -1,3 +1,7 @@
+/* 
+This stylesheet defines the core rules of the "classic" Wagn look.
+*/
+
 body {
   font: 12px verdana, arial, helvetica, sans-serif;
   background: #ccc;
@@ -56,7 +60,6 @@ body {
   -moz-border-radius: 0 !important;
   border-radius: 0 !important;
   padding: 0;
-  margin: 1px 0 0 0;
   .card-header {
     vertical-align: middle;
     -moz-border-radius: 0 6px 6px 0;
@@ -79,17 +82,9 @@ a {
 a.wanted-card {
   color: #990000;
 }
-a.external-link,
-.closed-content a.external-link {
-  color: #729;
-  background: url(/assets/external_link.png) center right no-repeat;
-  padding-right: 13px !important;
-}
 a.email-link {
   color: #997799;
 }
-
-
 
 
 

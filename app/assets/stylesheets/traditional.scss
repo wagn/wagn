@@ -76,7 +76,7 @@ There are three types of rules here:
 }
 
 
-
+/* the logo and credit will not be in the sidebar in most new layouts */
 
 #secondary {
   > div {
@@ -132,4 +132,21 @@ body, p, ol, ul {
   content:'';
 }
 
+/* many sites may want this external link behavior; it's here because it's a nuisance to override when not desired */
+
+a.external-link,
+.closed-content a.external-link {
+  color: #729;
+  background: url(/assets/external_link.png) center right no-repeat;
+  padding-right: 13px !important;
+}
+
+.SELF-home-original > .content p,
+.SELF-wagneer_menu > .content {
+  a.external-link {
+    list-style-type: none;
+    padding-right: 0 !important;
+    background: inherit;
+  }
+}
 

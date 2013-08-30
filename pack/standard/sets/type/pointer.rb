@@ -179,11 +179,11 @@ end
 format :css do
   view :content do |args|
     %(#{major_comment "STYLE GROUP: \"#{card.name}\"", '='}#{ _render_core })
-  end
+  end    
   
   view :core do |args|
     card.item_cards.map do |item|
-      process_inclusion item
+      process_inclusion item, :view=>(params[:item] || :content)
     end.join "\n\n"
   end
 end

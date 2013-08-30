@@ -1,7 +1,17 @@
+/*
+This stylesheet outlines a host of commonly-used styles.  Unlike the "standard" stylesheet, this
+sheet will likely affect prominent pages seen even by casual users, so any major style tweaking will
+likely alter some of the style rules below.
+
+We do not expect migrations to alter this card frequently
+*/
+
 
 $input_color: #f9f9ed;
 $input_focus_color: #ffffee;
 $label_color: #666666;
+$border_color: #999999;
+$header_color: #eeeeee;
 
 h1 {
   font-size: 1.2em;
@@ -55,7 +65,7 @@ form {
 }
 
 .card-frame {
-  border: 1px solid #000;
+  border: 1px solid $border_color;
   > .card-body {
     padding: 5px 12px;
   }
@@ -64,7 +74,7 @@ form {
 .card-frame,
 .closed-view {
   > .card-header {
-    background: #eee;
+    background: $header_color;
     padding: 5px 12px;
   }  
 }
@@ -123,15 +133,12 @@ body.mceContentBody {
 
 .change-view {
   padding: 5px 0px;
-  border-bottom: 1px dotted grey;
+  border-bottom: 1px dotted $border_color;
   .change-card{
     font-weight: bold;
   }
   .last-update {
-    color: #666;
-  }
-  .last-edited {
-    color: #7a7;
+    color: $label_color;
   }
 }
 
@@ -140,7 +147,7 @@ body.mceContentBody {
 /*---------- ( Richtext )-------------*/
 
 .table-of-contents {
-  background: #eee;
+  background: $header_color;
   -moz-border-radius: 10px;
   border-radius: 10px;
   padding: 4px;
@@ -175,7 +182,7 @@ body.mceContentBody {
 
 .search-count {
   float: right;
-  color: #bbc;
+  color: $label_color;
 }
 
 
@@ -184,7 +191,7 @@ body.mceContentBody {
 .invite-links {
   padding: 10px;
   margin-top: 10px;
-  background: #ddd;
+  background: $header_color;
   text-align: center;
 }
 .invite-links a {

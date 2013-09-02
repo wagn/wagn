@@ -42,7 +42,8 @@ format :rss do
   end
 
   view :titled do |args|
-    # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
+    # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader
+    # TESTME! above sounds obsolete.  still needed?
     content_tag( :h2, showname(args[:title]) ) + self._render_open_content(args) { yield }
   end
   

@@ -258,15 +258,14 @@ class Card
     # ------------- Sub Format and Inclusion Processing ------------
     #
 
-    def subformat subcard, mainline=false
+    def subformat subcard
       #should consider calling "child"
       subcard = Card.fetch( subcard, :new=>{} ) if String===subcard
       sub = self.clone
-      sub.initialize_subformat subcard, self, mainline
+      sub.initialize_subformat subcard, self
     end
 
-    def initialize_subformat subcard, parent, mainline=false
-      @mainline ||= mainline
+    def initialize_subformat subcard, parent
       @parent = parent
       @card = subcard
       @char_count = 0
@@ -328,7 +327,6 @@ class Card
       end
     end
   
-  
     def ok? task
       task = :create if task == :update && card.new_card?
       @ok ||= {}
@@ -337,6 +335,7 @@ class Card
     end
   
     def view_for_unknown view, args
+      # note: overridden in HTML
       focal? ? :not_found : :missing
     end
 
@@ -393,9 +392,8 @@ class Card
         end
       end
       opts[:view] = @main_view || opts[:view] || :open
-      opts[:mainline] = true
       with_inclusion_mode :main do
-        wrap_main process_inclusion( root.card, opts )
+        wrap_main process_inclusion root.card, opts
       end
     end
 
@@ -407,7 +405,7 @@ class Card
       opts.delete_if { |k,v| v.nil? }
       opts.reverse_merge! inclusion_defaults
       
-      sub = subformat tcard, opts[:mainline]
+      sub = subformat tcard
       if opts[:item] #currently needed to handle web params
         opts[:items] = (opts[:items] || {}).reverse_merge :view=>opts[:item]
       end

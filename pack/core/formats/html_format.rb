@@ -121,8 +121,20 @@ class Card::HtmlFormat < Card::Format
     lo_card.content
   end
 
-  def slot_options
-    @@slot_options ||= Card::Chunk::Include.options.reject { |k| k == :view }.unshift :home_view
+  def slot_options args
+    @@slot_option_keys ||= Card::Chunk::Include.options.reject { |k| k == :view }.unshift :home_view
+    options_hash = {}
+    
+    if @context_names.present?
+      options_hash['name_context'] = @context_names.map( &:key ) * ','
+    end
+    
+    @@slot_option_keys.inject(options_hash) do |hash, opt|
+      hash[opt] = args[opt] if args[opt].present?
+      hash
+    end
+    
+    JSON( options_hash )
   end
 
   def wrap view, args = {}
@@ -130,24 +142,13 @@ class Card::HtmlFormat < Card::Format
     classes << 'card-frame' if args[:frame]
     classes << card.safe_keys if card
 
-    attributes = { 
-      :class => classes*' ',
-      :style=>args[:style]
+    attributes = {
+      :style           => args[:style],
+      :class           => classes * ' ',
+      'data-slot'      => slot_options( args ),
+      'data-card-id'   => card.id,
+      'data-card-name' => card.name
     }
-      
-    attributes['data'] = {}
-    slot_options.each do |key|
-      attributes['data'][key] = args[key] if args[key].present?
-    end
-
-    if card
-      attributes['card-id']  = card.id
-      attributes['card-name'] = card.name
-    end
-    
-    if @context_names
-      attributes['data']['name_context'] = @context_names.map( &:key ) * ','
-    end
     
     content_tag(:div, attributes ) { yield }
   end

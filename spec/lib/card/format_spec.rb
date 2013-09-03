@@ -34,10 +34,10 @@ describe Card::Format do
       assert_view_select Card::Format.new(c)._render( :core ), 'div[style="float:right;"]'
     end
 
-    it "HTML in inclusion syntax as escaped" do
-      c =Card.new :name => 'Afloat', :type => 'Html', :content => '{{A|float:<object class="subject">}}'
+    it "HTML in inclusion syntax stripped" do
+      c =Card.new :name => 'Afloat', :type => 'Html', :content => '{{A|float:left<object class="subject">}}'
       result = Card::Format.new(c)._render( :core )
-      assert_view_select result, 'div[style="float:&amp;lt;object class=&amp;quot;subject&amp;quot;&amp;gt;;"]'
+      assert_view_select result, 'div[style="float:left;"]'
     end
   end
   

@@ -31,9 +31,8 @@ jQuery.fn.extend {
     s = @slot()
     v = $(val)
     if v[0]
-      $.each s[0].attributes, (i, att)->
-        if att.name.match(/^data-.*/) && att.value?
-          v.attr att.name, att.value
+      if slotdata = s.attr 'data-slot'
+        v.attr 'data-slot', slotdata if slotdata?
     else #simple text (not html)
       v = val
     s.replaceWith v

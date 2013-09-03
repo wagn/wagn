@@ -4,7 +4,7 @@ source 'http://rubygems.org'
 # DEFAULT
 gem 'smartname',    '0.2.2'
 
-gem 'rails',        '~> 3.2.9'
+gem 'rails',        '~> 3.2.14'
 gem 'htmlentities', '~> 4.3'
 gem 'uuid',         '~> 2.3'
 gem 'paperclip',    '~> 2.8'

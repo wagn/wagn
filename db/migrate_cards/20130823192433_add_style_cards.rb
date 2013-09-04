@@ -47,20 +47,15 @@ class AddStyleCards < ActiveRecord::Migration
       # IMPORT STYLESHEETS
       
       simple_styles, classic_styles = [], []
-      %w{ jquery-ui-smoothness.css functional.scss standard.scss }.each do |sheet|
-        name, type = sheet.split '.'
-        simple_styles << name
-        Card.create! :name=>"style: #{name}", :type=>type, :codename=>"style_#{name.to_name.key}"
-      end
-      
-      json = JSON(File.read "#{Rails.root}/db/migrate_cards/data/1.12_stylesheets.json")
-      %w{ right_sidebar.scss common.scss classic_cards.scss traditional.scss }.each_with_index do |sheet, index|
+      %w{
+        jquery-ui-smoothness.css functional.scss standard.scss right_sidebar.scss common.scss classic_cards.scss traditional.scss
+      }.each_with_index do |sheet, index|
         name, type = sheet.split '.'
         name.gsub! '_', ' '
-        index < 2 ? simple_styles << name : classic_styles << name
-        Card.create! :name=>"style: #{name}", :type=>type, :content=>json[sheet]
+        index < 5 ? simple_styles << name : classic_styles << name
+        Card.create! :name=>"style: #{name}", :type=>type, :codename=>"style_#{name.to_name.key}"
       end
-      
+            
       # CREATE SKINS
       
       Card.create! :name=>"simple skin", :type=>'Skin', :content=>

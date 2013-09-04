@@ -190,6 +190,9 @@ textarea,
 }
 /* width + padding = 99.5%, which leaves 0.5% for the borders.  This is imprecise, but borders can't be specified as a percentage */
 
+textarea {
+  max-height: 500px;
+}
 .name-editor.known-name input {
   border: 3px solid #c22; /* NOTGREY - red for warning */
 }
@@ -209,6 +212,7 @@ textarea,
   text-align: center;
   font-size: 3em;
   line-height: 2em;
+  white-space: nowrap;
 }
 
 

@@ -2,5 +2,7 @@
 include Card::Set::Type::Html
 
 view :core do |args|
-  h _render_raw
+  with_inclusion_mode :template do
+    process_content ::CodeRay.scan( _render_raw, :html ).div
+  end
 end

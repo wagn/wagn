@@ -13,6 +13,7 @@ wagn.editorContentFunctionMap = {
 
 wagn.editorInitFunctionMap = {
   '.date-editor'           : -> @datepicker { dateFormat: 'yy-mm-dd' }
+  'textarea'               : -> $(this).autosize()
   '.tinymce-textarea'      : -> wagn.initTinyMCE @[0].id
   '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
   '.file-upload'           : -> @fileupload( add: wagn.chooseFile )#, forceIframeTransport: true )

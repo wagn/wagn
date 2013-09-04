@@ -1,4 +1,4 @@
 # -*- encoding : utf-8 -*-
 view :raw do |args|
-  File.read "#{Rails.root}/app/assets/stylesheets/functional.scss"
+  File.read "#{Rails.root}/pack/standard/lib/stylesheets/functional.scss"
 end

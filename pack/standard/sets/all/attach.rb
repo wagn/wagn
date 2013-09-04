@@ -9,8 +9,11 @@ def attach_array(rev_id=nil)
   !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/)
 end
 
-def attach_array_set(i, v)
-  c = attach_array((cr=current_revision)&&cr.id)
+def attach_array_set i, v
+  rev_id = ( cr = current_revision and cr.id )
+  c = attach_array rev_id
+  c = c[0..2] # make sure there is no pack set for uploaded files
+  
   if c[i] != v
     c[i] = v
     self.content = c*"\n"

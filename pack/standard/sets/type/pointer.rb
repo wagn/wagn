@@ -116,7 +116,7 @@ end
 def item_ids args={}
   item_names(args).map do |name|
     Card.fetch_id name
-  end
+  end.compact
 end
 
 def item_type

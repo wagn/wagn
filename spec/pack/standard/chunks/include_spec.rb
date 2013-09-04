@@ -34,6 +34,13 @@ describe Card::Chunk::Include, "Inclusion" do
       @class.new( @class.full_match( '{{ toy }}') , nil ).name.should == 'toy'
     end
     
+    it 'should strip html tags' do
+      @class.new( @class.full_match( '{{ <span>toy</span> }}') , nil ).name.should == 'toy'
+      instance = @class.new( @class.full_match( '{{ <span>toy|open</span> }}') , nil )
+      instance.name.should == 'toy'
+      instance.options[:view].should == 'open'
+    end
+    
     it "should handle single pipe" do
       options = @class.new( @class.full_match('{{toy|view:link;hide:me}}'), nil ).options
       options[:inc_name].should == 'toy'
@@ -121,7 +128,7 @@ describe Card::Chunk::Include, "Inclusion" do
     it "should handle missing cards" do
       @a = Card.create :name=>'boo', :content=>"hey {{+there}}"
       r=Card::Format.new(@a).render_core
-      assert_view_select r, 'div[card-name="boo+there"][class~="missing-view"]'
+      assert_view_select r, 'div[data-card-name="boo+there"][class~="missing-view"]'
     end
 
     it "should handle structured cards" do

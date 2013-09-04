@@ -108,9 +108,11 @@ $(window).ready ->
   $('body').on 'ajax:success', '.slotter', (event, data) ->
     notice = $(this).attr('notify-success')
     newslot = $(this).setSlotContent data
-    wagn.initializeEditors newslot
-    if notice?
-      newslot.notify notice
+    
+    if newslot.jquery # sometimes response is plaintext
+      wagn.initializeEditors newslot
+      if notice?
+        newslot.notify notice
 
   $('body').on 'ajax:error', '.slotter', (event, xhr) ->
     result = xhr.responseText

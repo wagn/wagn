@@ -80,7 +80,7 @@ class AddStyleCards < ActiveRecord::Migration
         Card.create! :name=>"#{Card[:all].name}+*style", :content=>"[[#{default_skin}]]"
       rescue
         if default_skin =~ /customized/
-          Card.create! :name=>"#{Card[:all].name}+*style", :content=>"[[classic skin]]"
+          Card["#{Card[:all].name}+*style"].update_attributes :content=>"[[classic skin]]"
         end
       end
       

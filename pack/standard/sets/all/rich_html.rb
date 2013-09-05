@@ -58,7 +58,7 @@ format :html do
   end
 
   view :title do |args|
-    title = content_tag :h1, fancy_title( args[:title] ), :class=>'card-title'
+    title = content_tag :span, fancy_title( args[:title] ), :class=>'card-title'
     title = _optional_render( :title_link, args.merge( :title_ready=>title ), default_hidden=true ) || title
     add_name_context
     title
@@ -84,13 +84,12 @@ format :html do
 
   view :header do |args|
     %{
-      <div class="card-header">
+      <h1 class="card-header">
         #{ args.delete :toggler }
         #{ _render_title args }
         #{ _optional_render :menu, args, args[:menu_default_hidden] || false }
         #{ optional_render :help, args.merge( :setting => :help ), args[:help_default_hidden].nil? ? true : false }
-      </div>
-      
+      </h1>
     }
   end
 
@@ -194,10 +193,10 @@ format :html do
             
     wrap :new, args.merge(:frame=>true) do  
       %{
-        <div class="card-header">          
+        <h1 class="card-header">          
           #{ _render_title args }
           #{ _render_help :setting => :add_help }          
-        </div>
+        </h1>
         <div class="card-body">
           #{
             card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
@@ -575,7 +574,7 @@ format :html do
   
     wrap( :not_found, args.merge(:frame=>true) ) do # ENGLISH
       %{
-        <div class="card-header"><h1>Not Found</h1></div>
+        <h1 class="card-header">Not Found</h1>
         <div class="card-body">
           <h2>Could not find #{card.name.present? ? "<em>#{card.name}</em>" : 'the card requested'}.</h2>
           #{sign_in_or_up_links}

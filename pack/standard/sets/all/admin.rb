@@ -2,7 +2,7 @@ view :setup, :tags=>:unknown_ok do |args|
   wrap :setup, :frame=>true do
     account = User.new( params[:account] || {} )
     %{
-      <div class="card-header"><h1>Welcome, Wagneer! To get started, set up an account.</h1></div>
+      <h1 class="card-header">Welcome, Wagneer! To get started, set up an account.</h1>
 
       #{
         form_for :card do |f|

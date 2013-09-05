@@ -43,10 +43,10 @@ format :html do
       %{
         <div class="template-editor-left">{{</div> 
         <div class="template-editor-main card-frame">
-          <div class="card-header">
-            #{content_tag :h1, card.label, :class=>'card-title'}   
+          <h1 class="card-header">
+            #{content_tag :span, card.label, :class=>'card-title'}   
             #{link_to_view '', :template_link, :class=>'slotter ui-icon ui-icon-closethick template-editor-close'}
-          </div>
+          </h1>
           <div class="card-body">
             #{ _render_core args.merge(:unlabeled=>true) }
           </div>

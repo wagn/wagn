@@ -51,7 +51,7 @@ format :html do
   view :signin, :tags=>:unknown_ok, :perms=>:none do |args|
     signin_core = wrap :signin, :frame=>:true do
       %{
-        <div class="card-header"><h1>Sign In</h1></div>
+        <h1 class="card-header">Sign In</h1>
         #{
           form_tag wagn_path('account/signin') do
             %{
@@ -78,7 +78,7 @@ format :html do
   view :forgot_password, :perms=>:none do |args|
     wrap :forgot_password, :frame=>:true do
       %{
-        <div class="card-header"><h1>Forgot Password</h1></div>
+        <h1 class="card-header">Forgot Password</h1>
         #{
           form_tag wagn_path('account/forgot_password') do
             %{
@@ -109,10 +109,10 @@ format :html do
         #{
           wrap :signup, :frame=>true do
             %{
-              <div class="card-header">
-                <h1>Sign Up</h1>
+              <h1 class="card-header">
+                Sign Up
                 #{ help_text }
-              </div>
+              </h1>
               #{
                 form_for :card, form_opts( wagn_path( '/account/signup' ), 'card-form') do |f|
                   @form = f
@@ -143,10 +143,10 @@ format :html do
 
     cardframe = wrap :invite, :frame=>true do
       %{
-        <div class="card-header">
-          <h1>Invite</h1>
+        <h1 class="card-header">
+          Invite</h1>
           #{ _render_help :text=>"Accept account request from: #{link_to_page card.name}" if card.known? }
-        </div>
+        </h1>
 
         #{
 

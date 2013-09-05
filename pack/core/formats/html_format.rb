@@ -1,4 +1,7 @@
 # -*- encoding : utf-8 -*-
+
+require_dependency 'card/diff'
+
 class Card::HtmlFormat < Card::Format
   include Card::Diff
   

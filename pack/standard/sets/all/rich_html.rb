@@ -58,7 +58,7 @@ format :html do
   end
 
   view :title do |args|
-    title = content_tag :span, fancy_title( args[:title] ), :class=>'card-title'
+    title = fancy_title args[:title]
     title = _optional_render( :title_link, args.merge( :title_ready=>title ), default_hidden=true ) || title
     add_name_context
     title
@@ -74,7 +74,7 @@ format :html do
       :title  => "close #{card.name}",
       :class  => "close-icon ui-icon ui-icon-circle-triangle-s toggler slotter nodblclick"
       
-    wrap_frame :open do
+    wrap_frame :open, args do
       %{
          #{ _render_open_content args }
          #{ optional_render :comment_box, args }
@@ -122,12 +122,12 @@ format :html do
     end
   
     %{
-      <div class="card-menu-link">
+      <span class="card-menu-link">
         #{ _render_menu_link }
         <ul class="card-menu">
           #{ build_menu_items default_menu }
         </ul>
-      </div>
+      </span>
     }
   end
 
@@ -272,7 +272,7 @@ format :html do
     referers = card.extended_referencers
     dependents = card.dependents
   
-    wrap_frame :edit_name do
+    wrap_frame :edit_name, args do
       card_form( path(:action=>:update, :id=>card.id), 'card-name-form card-editor', 'main-success'=>'REDIRECT' ) do |f|
         @form = f
         %{  
@@ -312,7 +312,7 @@ format :html do
   end
 
   view :edit_type, :perms=>:update do |args|
-    wrap_frame :edit_type do
+    wrap_frame :edit_type, args do
       card_form( :update, 'card-edit-type-form card-editor' ) do |f|
         #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
         %{ 
@@ -354,7 +354,7 @@ format :html do
   view :options do |args|
     current_set = Card.fetch( params[:current_set] || card.related_sets[0][0] )
 
-    wrap_frame :options do
+    wrap_frame :options, args do
       %{
         #{ subformat( current_set ).render_content }
         #{ 
@@ -375,7 +375,7 @@ format :html do
   view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
 
     locals = {:slot=>self, :card=>card, :account=>card.account }
-    wrap_frame :account do
+    wrap_frame :account, args do
       card_form :update_account, '', 'notify-success'=>'account details updated' do |form|
         %{
           #{ hidden_field_tag 'success[id]', '_self' }
@@ -441,7 +441,7 @@ format :html do
   end
 
   view :new_account, :perms=> lambda { |r| r.card.accountable? } do |args|
-    wrap_frame :new_account do
+    wrap_frame :new_account, args do
       card_form :create_account do |form|
         %{
           #{ hidden_field_tag 'success[id]', '_self' }
@@ -461,7 +461,7 @@ format :html do
       show = 'menu,help'
       show += ',comment_box' if rparams[:name] == '+discussion'
 
-      wrap_frame :related do
+      wrap_frame :related, args do
         process_inclusion rcard, :view=>rview, :show=>show
       end
     end
@@ -592,7 +592,7 @@ format :html do
     if !focal?
       %{<span class="denied"><!-- Sorry, you don't have permission #{to_task} --></span>}
     else
-      wrap_frame :denial do #ENGLISH below
+      wrap_frame :denial, args do #ENGLISH below
         message = case
         when task != :read && Wagn::Conf[:read_only]
           "We are currently in read-only mode.  Please try again later."

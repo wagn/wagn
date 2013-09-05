@@ -141,9 +141,12 @@ class Card::HtmlFormat < Card::Format
   end
 
   def wrap view, args = {}
-    classes = ['card-slot', "#{view}-view"]
-    classes << 'card-frame' if args[:frame]
-    classes << card.safe_keys if card
+    classes = [
+      'card-slot',
+      "#{view}-view",
+      ( 'card-frame' if args[:frame] ),
+      card.safe_keys
+    ].compact
 
     attributes = {
       :style           => args[:style],
@@ -153,13 +156,32 @@ class Card::HtmlFormat < Card::Format
       'data-card-name' => card.name
     }
     
-    content_tag(:div, attributes ) { yield }
+    escaped_name = h card.name
+    space = '  ' * @depth
+    %{\n
+#{space}<!-- BEGIN SLOT: #{ escaped_name } -->
+  #{ content_tag(:div, attributes ) { "\n#{yield}\n  " } }
+#{space}<!-- END SLOT: #{ escaped_name } -->\n
+}
   end
 
   def wrap_content view, args={}
-    tag_type = args[:body] ? :div : :span
-    klass = ["#{view}-content content", args[:class], ('card-body' if args[:body])].compact * ' '
-    content_tag( tag_type, :class=>klass ) { yield }
+    css_classes = [
+      "#{view}-content content",
+      args[:class],
+      ('card-body' if args[:body])
+    ]
+    
+    content_tag( :div, :class=>css_classes.compact*' ' ) { yield }
+  end
+  
+  def wrap_frame view, args={}
+    wrap view, args.merge(:frame=>true) do
+      %{
+        #{ _render_header args }
+        #{ wrap_content( view, args.merge(:body=>true) ) do yield end }
+      }
+    end
   end
 
   def wrap_main(content)

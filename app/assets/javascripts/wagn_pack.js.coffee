@@ -42,12 +42,26 @@ wagn.initTinyMCE = (el_id) ->
   hard_conf = {
     mode: 'exact'
     elements: el_id
-    #the two below should probably be made optional, but it may involve migrating old legacy *tinyMCE settings to get rid of stale stuff.
-    content_css: wagn.rootPath + '/assets/application-all.css' + ',' + wagn.rootPath + wagn.local_css_path
+    #CSS could be made optional, but it may involve migrating old legacy *tinyMCE settings to get rid of stale stuff.
+    content_css: wagn.rootPath + wagn.cssPath
     entity_encoding: 'raw'
   }
   $.extend conf, user_conf, hard_conf
   tinyMCE.init conf
+
+wagn.initGoogleAnalytics = (key) ->
+  _gaq = _gaq || []
+  _gaq.push ['_setAccount', key]
+  _gaq.push ['_trackPageview']
+
+  initfunc = ()->
+    ga = document.createElement 'script'
+    ga.type = 'text/javascript'
+    ga.async = true
+    ga.src = `('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'`
+    s = document.getElementsByTagName('script')[0]
+    s.parentNode.insertBefore ga, s
+  initfunc()
 
 wagn.chooseFile = (e, data) ->
   file = data.files[0]
@@ -301,5 +315,6 @@ navbox_select = (event, ui) ->
     window.location = wagn.rootPath + ui.item.href
 
   $(this).attr('disabled', 'disabled')
+
 
   

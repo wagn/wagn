@@ -44,7 +44,7 @@ format :html do
         bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{wagn_path rss_href} />}
       end
     end
-    bits.join "\n"
+    bits.join "\n      "
   end
   
   def head_stylesheets
@@ -58,50 +58,31 @@ format :html do
 
     if @css_path
       %{<link href="#{@css_path}" media="all" rel="stylesheet" type="text/css" />}
-#      stylesheet_link_tag @css_path, :media=>:all
     end
   end
   
   def head_javascript
     # tinyMCE doesn't load on non-root wagns w/o preinit line
     
-    %(
-      <script>
-        var wagn = {};
-        window.wagn = wagn;
-        wagn.rootPath = '#{Wagn::Conf[:root_path]}';
-        #{ Wagn::Conf[:recaptcha_on] ? %{wagn.recaptchaKey = "#{Wagn::Conf[:recaptcha_public_key]}";} : '' }
-        #{ (c=Card[:double_click] and !Card.toggle(c.content)) ? 'wagn.noDoubleClick = true' : '' }
-        #{ #@local_css_path ? %{ wagn.local_css_path = '#{@local_css_path}'; } : '' 
-        }
-        window.tinyMCEPreInit = {base:"#{wagn_path 'assets/tinymce'}",query:"3.5.8",suffix:""};
-        wagn.tinyMCEConfig = { #{ Card.setting :tiny_mce } };
-      </script>
-      
+    varvals = [
+      'var wagn={}',
+      "wagn.rootPath='#{Wagn::Conf[:root_path]}'",
+      'window.wagn=wagn',
+      "window.tinyMCEPreInit={base:\"#{wagn_path 'assets/tinymce'}\",query:'3.5.8',suffix:''}",
+      "wagn.tinyMCEConfig={#{ Card.setting(:tiny_mce).to_s.gsub /\s+/, ' ' }}"      
+    ]
+    Wagn::Conf[:recaptcha_on]                        and varvals << "wagn.recaptchaKey='#{Wagn::Conf[:recaptcha_public_key]}'"
+    c=Card[:double_click] and !Card.toggle c.content and varvals << 'wagn.noDoubleClick=true'
+    @css_path                                        and varvals << "wagn.cssPath='#{@css_path}'"
+    
+    %(<script>#{ varvals * ';' }</script>      
       #{ javascript_include_tag 'application' }
-      <!--[if lt IE 9]>
-        #{ javascript_include_tag 'html5shiv-printshiv' }
-      <![endif]-->
-
-      #{
-        if ga_key=Card.setting("*google analytics key")
-          %(
-
-          <script type="text/javascript">
-            var _gaq = _gaq || [];
-            _gaq.push(['_setAccount', '#{ga_key}']);
-            _gaq.push(['_trackPageview']);
-
-            (function() {
-              var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-              ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-              var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-            })();
-          </script>
-          )
+      <!--[if lt IE 9]>#{ javascript_include_tag 'html5shiv-printshiv' }<![endif]-->
+      #{ 
+        if ga_key = Card.setting("*google analytics key")
+          %{<script>wagn.initGoogleAnalytics('#{ga_key}');</script>}
         end
-      }
-    )
+      })
   end
 end
 

@@ -74,10 +74,9 @@ format :html do
       :title  => "close #{card.name}",
       :class  => "close-icon ui-icon ui-icon-circle-triangle-s toggler slotter nodblclick"
       
-    wrap :open, args.merge(:frame=>true) do
+    wrap_frame :open do
       %{
-         #{ _render_header args }
-         #{ wrap_content( :open, :body=>true ) { _render_open_content args } }
+         #{ _render_open_content args }
          #{ optional_render :comment_box, args }
       }
     end
@@ -246,26 +245,22 @@ format :html do
 
 ###---(  EDIT VIEWS )
   view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
-    wrap :edit, args.merge(:frame=>true) do
-      %{
-        #{ _render_header :help_default_hidden=>false }
-        #{ wrap_content :edit, :body=>true, :class=>'card-editor' do
-          card_form :update, 'card-form card-edit-form autosave' do |f|
-            @form= f
-            %{
-              <div>#{ edit_slot args }</div>
-              <fieldset>
-                <div class="button-area">
-                  #{ submit_tag 'Submit', :class=>'submit-button' }
-                  #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
-                </div>
-              </fieldset>
-              #{ notice }
-            }
-          end
-        end
+    wrap_frame :edit, args.merge(:help_default_hidden=>false) do
+      card_form :update, 'card-form card-edit-form autosave' do |f|
+        @form= f
+        %{
+          <div class="card-editor">
+            #{ edit_slot args }
+          </div>
+          <fieldset>
+            <div class="button-area">
+              #{ submit_tag 'Submit', :class=>'submit-button' }
+              #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
+            </div>
+          </fieldset>
+          #{ notice }
         }
-      }
+      end
     end
   end
 
@@ -278,35 +273,32 @@ format :html do
     referers = card.extended_referencers
     dependents = card.dependents
   
-    wrap :edit_name, args.merge(:frame=>true) do
-      _render_header +
-      wrap_content( :edit_name, :body=>true, :class=>'card-editor' ) do
-        card_form( path(:action=>:update, :id=>card.id), 'card-name-form', 'main-success'=>'REDIRECT' ) do |f|
-          @form = f
-          %{  
-            #{ _render_name_editor}  
-            #{ f.hidden_field :update_referencers, :class=>'update_referencers'   }
-            #{ hidden_field_tag :success, '_self'  }
-            #{ hidden_field_tag :old_name, card.name }
-            #{ hidden_field_tag :referers, referers.size }
-            <div class="confirm-rename hidden">
-              <h1>Are you sure you want to rename <em>#{card.name}</em>?</h1>
-              #{ %{ <h2>This change will...</h2> } if referers.any? || dependents.any? }
-              <ul>
-                #{ %{<li>automatically alter #{ dependents.size } related name(s). } if dependents.any? }
-                #{ %{<li>affect at least #{referers.size} reference(s) to "#{card.name}".} if referers.any? }
-              </ul>
-              #{ %{<p>You may choose to <em>ignore or update</em> the references.</p>} if referers.any? }  
+    wrap_frame :edit_name do
+      card_form( path(:action=>:update, :id=>card.id), 'card-name-form card-editor', 'main-success'=>'REDIRECT' ) do |f|
+        @form = f
+        %{  
+          #{ _render_name_editor}  
+          #{ f.hidden_field :update_referencers, :class=>'update_referencers'   }
+          #{ hidden_field_tag :success, '_self'  }
+          #{ hidden_field_tag :old_name, card.name }
+          #{ hidden_field_tag :referers, referers.size }
+          <div class="confirm-rename hidden">
+            <h1>Are you sure you want to rename <em>#{card.name}</em>?</h1>
+            #{ %{ <h2>This change will...</h2> } if referers.any? || dependents.any? }
+            <ul>
+              #{ %{<li>automatically alter #{ dependents.size } related name(s). } if dependents.any? }
+              #{ %{<li>affect at least #{referers.size} reference(s) to "#{card.name}".} if referers.any? }
+            </ul>
+            #{ %{<p>You may choose to <em>ignore or update</em> the references.</p>} if referers.any? }  
+          </div>
+          <fieldset>
+            <div class="button-area">
+              #{ submit_tag 'Rename and Update', :class=>'renamer-updater hidden' }
+              #{ submit_tag 'Rename', :class=>'renamer' }
+              #{ button_tag 'Cancel', :class=>'edit-name-cancel-button slotter', :type=>'button', :href=>path(:view=>:edit, :id=>card.id)}
             </div>
-            <fieldset>
-              <div class="button-area">
-                #{ submit_tag 'Rename and Update', :class=>'renamer-updater hidden' }
-                #{ submit_tag 'Rename', :class=>'renamer' }
-                #{ button_tag 'Cancel', :class=>'edit-name-cancel-button slotter', :type=>'button', :href=>path(:view=>:edit, :id=>card.id)}
-              </div>
-            </fieldset>
-          }
-        end
+          </fieldset>
+        }
       end
     end
   end
@@ -321,26 +313,23 @@ format :html do
   end
 
   view :edit_type, :perms=>:update do |args|
-    wrap :edit_type, args.merge(:frame=>true) do
-      _render_header +
-      wrap_content( :edit_type, :body=>true, :class=>'card-editor' ) do
-        card_form( :update, 'card-edit-type-form' ) do |f|
-          #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
-          %{ 
-            #{ hidden_field_tag :view, :edit }
-            #{if card.type_id == Card::CardtypeID and !Card.search(:type_id=>card.id).empty? #ENGLISH
-              %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
-            else
-              _render_type_menu :variety=>:edit #FIXME dislike this api -ef
-            end}
-            <fieldset>
-              <div class="button-area">              
-                #{ submit_tag 'Submit', :disable_with=>'Submitting' }
-                #{ button_tag 'Cancel', :href=>path(:view=>:edit), :type=>'button', :class=>'edit-type-cancel-button slotter' }
-              </div>
-            </fieldset>
-          }
-        end
+    wrap_frame :edit_type do
+      card_form( :update, 'card-edit-type-form card-editor' ) do |f|
+        #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
+        %{ 
+          #{ hidden_field_tag :view, :edit }
+          #{if card.type_id == Card::CardtypeID and !Card.search(:type_id=>card.id).empty? #ENGLISH
+            %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
+          else
+            _render_type_menu :variety=>:edit #FIXME dislike this api -ef
+          end}
+          <fieldset>
+            <div class="button-area">              
+              #{ submit_tag 'Submit', :disable_with=>'Submitting' }
+              #{ button_tag 'Cancel', :href=>path(:view=>:edit), :type=>'button', :class=>'edit-type-cancel-button slotter' }
+            </div>
+          </fieldset>
+        }
       end
     end
   end
@@ -366,20 +355,19 @@ format :html do
   view :options do |args|
     current_set = Card.fetch( params[:current_set] || card.related_sets[0][0] )
 
-    wrap :options, args.merge(:frame=>true) do
+    wrap_frame :options do
       %{
-        #{ _render_header }
-        <div class="card-body">
-          #{ subformat( current_set ).render_content }
-
-          #{ if card.accountable?
-              %{<div class="new-account-link">
-              #{ link_to %{Add a sign-in account for "#{card.name}"}, path(:view=>:new_account),
+        #{ subformat( current_set ).render_content }
+        #{ 
+          if card.accountable?
+            %{
+              <div class="new-account-link">
+                #{ link_to %{Add a sign-in account for "#{card.name}"}, path(:view=>:new_account),
                    :class=>'slotter new-account-link', :remote=>true }
-              </div>}
-             end
-          }
-        </div>
+              </div>
+            }
+          end
+        }
       }
     end
   end
@@ -388,22 +376,16 @@ format :html do
   view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
 
     locals = {:slot=>self, :card=>card, :account=>card.account }
-    wrap :options, args.merge(:frame=>true) do
-      %{ #{ _render_header }
-        <div class="card-body">
-          #{
-            card_form :update_account, '', 'notify-success'=>'account details updated' do |form|
-              %{
-                #{ hidden_field_tag 'success[id]', '_self' }
-                #{ hidden_field_tag 'success[view]', 'account' }
-                #{ render_account_detail }
-                #{ render_account_role   }
-                <fieldset><div class="button-area">#{ submit_tag 'Save Changes' }</div></fieldset>
-              }
-            end
-          }
-        </div>
-      }
+    wrap_frame :account do
+      card_form :update_account, '', 'notify-success'=>'account details updated' do |form|
+        %{
+          #{ hidden_field_tag 'success[id]', '_self' }
+          #{ hidden_field_tag 'success[view]', 'account' }
+          #{ render_account_detail }
+          #{ render_account_role   }
+          <fieldset><div class="button-area">#{ submit_tag 'Save Changes' }</div></fieldset>
+        }
+      end
     end
   end
 
@@ -460,20 +442,15 @@ format :html do
   end
 
   view :new_account, :perms=> lambda { |r| r.card.accountable? } do |args|
-    wrap :new_account, args.merge(:frame=>true) do
-      %{
-        #{ _render_header }
-        #{
-          card_form :create_account do |form|
-            %{
-              #{ hidden_field_tag 'success[id]', '_self' }
-              #{ hidden_field_tag 'success[view]', 'account' }
-              #{ fieldset :email, text_field( :account, :email ), :help=>'A password will be sent to the above address.' }
-              <fieldset><div class="button-area">#{ submit_tag 'Create Account' }</div></fieldset>
-            }
-          end
+    wrap_frame :new_account do
+      card_form :create_account do |form|
+        %{
+          #{ hidden_field_tag 'success[id]', '_self' }
+          #{ hidden_field_tag 'success[view]', 'account' }
+          #{ fieldset :email, text_field( :account, :email ), :help=>'A password will be sent to the above address.' }
+          <fieldset><div class="button-area">#{ submit_tag 'Create Account' }</div></fieldset>
         }
-      }
+      end
     end
   end
   
@@ -485,13 +462,8 @@ format :html do
       show = 'menu,help'
       show += ',comment_box' if rparams[:name] == '+discussion'
 
-      wrap :related, args.merge(:frame=>true) do
-        %{
-          #{ _render_header }
-          <div class="card-body">
-            #{ process_inclusion rcard, :view=>rview, :show=>show }
-          </div>
-        }
+      wrap_frame :related do
+        process_inclusion rcard, :view=>rview, :show=>show
       end
     end
   end
@@ -613,34 +585,28 @@ format :html do
 
   view :denial do |args|
     to_task = if task = args[:denied_task]
-      %{to #{task} this card#{ ": <strong>#{card.name}</strong>" if card.name && !card.name.blank? }.}
+      %{to #{task} this.}
     else
       'to do that.'
     end
+    
     if !focal?
       %{<span class="denied"><!-- Sorry, you don't have permission #{to_task} --></span>}
     else
-      wrap :denial, args.merge(:frame=>true) do #ENGLISH below
-        %{
-        #{ _render_header }
-        <div class="card-body">
-          <h1>Ooo.  Sorry, but...</h1>
-          #{
-          if task != :read && Wagn::Conf[:read_only]
-            "<div>We are currently in read-only mode.  Please try again later.</div>"
-          else
-            if Account.logged_in?
-              %{<div>You need permission #{to_task}</div> }
-            else
-              %{<div>You have to #{ link_to "sign in", wagn_url("/account/signin") } #{to_task}</div> 
-              #{ 
-              if Card.new(:type_id=>Card::AccountRequestID).ok? :create
-                %{<div>#{ link_to 'Sign up for a new account', wagn_url("/account/signup") }.</div>}                    
-              end 
-              }}
-            end
-          end}
-        </div>}
+      wrap_frame :denial do #ENGLISH below
+        message = case
+        when task != :read && Wagn::Conf[:read_only]
+          "We are currently in read-only mode.  Please try again later."
+        when Account.logged_in?
+          "You need permission #{to_task}"
+        else
+          or_signup = if Card.new(:type_id=>Card::AccountRequestID).ok? :create
+            "or #{ link_to 'sign up', wagn_url('/account/signup') }"                    
+          end
+          "You have to #{ link_to 'sign in', wagn_url('/account/signin') } #{or_signup} #{to_task}"
+        end
+        
+        %{<h1>Sorry!</h1>\n<div>#{ message }</div>}
       end
     end
   end

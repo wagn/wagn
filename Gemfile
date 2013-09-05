@@ -17,7 +17,7 @@ gem 'xmlscan',      '~> 0.3'
 gem "rubyzip",      "~> 0.9" # only required in module.  should be separated out.
 gem "airbrake",     "~> 3.1"
 gem "coderay",      "~> 1.0"
-
+gem 'sass',         '~> 3.2'
 
 # DATABASE
 

@@ -76,7 +76,13 @@ class AddStyleCards < ActiveRecord::Migration
       end
       
       Wagn::Cache.reset_global
-      Card.create! :name=>"#{Card[:all].name}+*style", :content=>"[[#{default_skin}]]"
+      begin
+        Card.create! :name=>"#{Card[:all].name}+*style", :content=>"[[#{default_skin}]]"
+      rescue
+        if default_skin =~ /customized/
+          Card.create! :name=>"#{Card[:all].name}+*style", :content=>"[[classic skin]]"
+        end
+      end
       
     end
   end

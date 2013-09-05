@@ -68,7 +68,7 @@ class AddStyleCards < ActiveRecord::Migration
       
       default_skin = if old_css.content =~ /\S/
         name = 'customized classic skin'
-        Card.create! :name=>name, :type=>Skin, :content=>"[[classic skin]]\n[[*css]]"
+        Card.create! :name=>name, :type=>'Skin', :content=>"[[classic skin]]\n[[*css]]"
         name
       else
         old_css.delete!

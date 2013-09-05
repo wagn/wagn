@@ -231,7 +231,7 @@ DEPENDENCIES
   mysql2 (~> 0.3)
   paperclip (~> 2.8)
   pg (~> 0.12.2)
-  rails (~> 3.2.9)
+  rails (~> 3.2.14)
   rails-dev-tweaks (~> 0.6)
   rdoc
   recaptcha (~> 0.3)

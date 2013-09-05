@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+require 'sass'
 
 format :html do
 

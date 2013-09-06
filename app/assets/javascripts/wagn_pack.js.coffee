@@ -82,15 +82,93 @@ wagn.chooseFile = (e, data) ->
   editor.append '<input type="hidden" value="CHOSEN" class="upload-card-content" name="' + contentFieldName + '">'
   # we add and remove the contentField to insure that nothing is added / updated when nothing is chosen.
 
-wagn.openMenu = (link) ->
-  cm = wagn.generateMenu
-  unless $(link).find('.ui-menu-icon')[0]
+wagn.openMenu = (link, tapped) ->
+  l = $(link)
+  cm = l.data 'menu'
+  if !cm?
+    cm = wagn.generateMenu l.slot(), l.data('menu-vars')
+    l.data 'menu', cm
     cm.menu position: { my:'right top', at:'left-2 top-3' }, icons: { submenu:'ui-icon-carat-1-w' }
+    
+  if tapped
+    cm.addClass 'card-menu-tappable'
+      
   cm.show()
   cm.position my:'right top', at:'right+2 top+2', of: link
+
+wagn.closeMenu = (menu) ->
+  $(menu).hide()
+  $(menu).menu "collapseAll", null, true
+
   
-wagn.generateMenu = () ->
-  $('<ul class="card-menu"><li>' + $.now() + '</li></ul>')
+wagn.generateMenu = (slot, vars) ->
+  template_clone = $.extend true, {}, wagn.menu_template
+  items = wagn.generateMenuItems template_clone, vars
+  
+  m = $('<ul class="card-menu">' + items.join("\n") +  '</ul>')
+  slot.append m
+  m
+
+wagn.generateMenuItems = (template, vars)->
+  items = []
+  $.each template, (num, i)->
+    return true if i.if && !vars[i.if]
+    return true if i.page && !vars[i.page] # why needed?  
+    
+    if i.text
+      i.text = i.text.replace /\%\{([^}]*)\}/, (m, val)->
+        wagn.getVal( vars[val], 0 )
+#      i.text = $('div').text(i.text).html() #escapes html
+      
+    item = 
+      if i.link
+        vars[i.link]
+      else if i.plain
+        '<a>' + i.plain + '</a>'
+      else if i.page
+        page = vars[i.page]
+        text = i.text || wagn.getVal(page, 0)
+        '<a href="' + wagn.rootPath + '/' + wagn.getVal(page, 1) + '">' + text + '</a>'
+      else
+        wagn.generateStandardMenuItem i, vars
+
+    if i['sub']
+      item += '<ul>' + wagn.generateMenuItems(i['sub'], vars).join("\n") + '</ul>'
+    
+    items.push('<li>' + item + '</li>')
+  items
+
+  
+wagn.getVal = (val, index)->
+  if typeof(val) == 'object'
+    val[index]
+  else
+    val
+    
+
+wagn.generateStandardMenuItem = (i, vars)->
+  linkname = wagn.getVal vars['self'], 1
+  
+  if i.related
+    i.view='related'
+    if typeof(i.related) == 'object'
+      i.related.name = vars[i.name]
+    else
+      i.text ||= i.related.replace /_/g, ' '
+      i.related = { 'related[name]': '+' + i.related }
+  else
+    i.related = {}
+      
+  if i.view
+    params = $.param $.extend( view: i.view, i.related)
+    path = wagn.rootPath + '/' + linkname + '?' + params
+    text = i.text || i.view
+    '<a href="' + path + '" data-remote="true" class="slotter">' + text + '</a>'
+  else
+    'dunno'
+    
+
+  
 
 
 $(window).ready ->
@@ -113,22 +191,18 @@ $(window).ready ->
   }
 
   $('body').on 'mouseenter', '.card-menu-link', ->
-    wagn.openMenu this
+    wagn.openMenu this, false
     
-  $('body').on 'mouseleave', '.card-menu-link', ->
-    if $(this).find('.ui-menu')[0]
-      cm = $(this).find('.card-menu')
-      cm.hide()
-      cm.menu "collapseAll", null, true
+  $('body').on 'mouseleave', '.card-menu', ->
+    wagn.closeMenu this
 
   $(document).on 'tap', '.card-header', (event) ->
     link = $(this).find('.card-menu-link')
     unless !link[0] or                                             # no gear
-        $(event.target).closest('.card-menu')[0] or                # already in menu
+        link.data('menu') or                                       # already has menu
         event.pageX - $(this).offset().left < $(this).width() / 2  # left half of header
       
-      link.find('.card-menu').addClass 'card-menu-tappable'
-      wagn.openMenu link
+      wagn.openMenu link, true
       event.preventDefault()
   
   $(document).on 'tap', 'body', (event) ->

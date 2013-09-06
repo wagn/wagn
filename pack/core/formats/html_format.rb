@@ -5,61 +5,10 @@ require_dependency 'card/diff'
 class Card::HtmlFormat < Card::Format
   include Card::Diff
   
-  cattr_accessor :default_menu
   attr_accessor  :options_need_save, :start_time, :skip_autosave
 
   # builtin layouts allow for rescue / testing
   LAYOUTS = Wagn::Loader.load_layouts.merge 'none' => '{{_main}}'
- 
-  @@default_menu = [ 
-    { :view=>:edit, :text=>'edit', :if=>:edit, :sub=>[
-        { :view=>:edit,      :text=>'content'       },
-        { :view=>:edit_name, :text=>'name'          },
-        { :view=>:edit_type, :text=>'type: %{type}' },
-        { :related=>{ :name=>:structure, :view=>:edit }, :text=>'structure', :if=>:structure },
-        { :link=>:delete,    :if=>:delete           }
-      ] },
-    { :view=>:home, :text=>'view', :sub=> [
-        { :view=>:home,                    :text=>'refresh'                    },
-        { :page=>:self,                    :text=>'page'                       },
-        { :page=>:type,                    :text=>'type: %{type}'              },
-        { :view=>:history,                 :text=>'history',   :if=>:edit      },
-        { :related=>{ :name=>:structure }, :text=>'structure', :if=>:structure },
-      ] },
-    { :related=>:discussion, :text=>'discuss', :if=>:discuss },
-    { :view=>:options, :text=>'advanced', :sub=>[
-        { :view=>:options, :text=>'rules', :sub=>[
-            :list => { :related_sets=> { :view=>:options, :text=>:text, :path_opts=>:path_opts } }
-          ] },
-        { :plain=>'related', :sub=>[
-            { :list    => { :piecenames => { :page=>:item } }, :if => :piecenames },
-            { :related => :children },
-            { :related => :mates    },
-          ] },
-        { :related=>:referred_to_by, :sub=>[
-            { :related=>:referred_to_by, :text=>"all"        },                  
-            { :related=>:linked_to_by,   :text=>"links"      },                  
-            { :related=>:included_by,    :text=>"inclusions" }
-          ] },            
-        { :related=>:refers_to, :sub=>[
-            { :related=>:refers_to,      :text=>"all"        },
-            { :related=>:links_to,       :text=>"links"      },
-            { :related=>:includes,       :text=>"inclusions" }                  
-          ] },           
-        { :related=>:editors, :if=>:creator, :sub=>[
-            { :related=>:editors, :text=>'all editors'             },
-            { :page=>:creator,    :text=>"creator: %{creator}"     },
-            { :page=>:updater,    :text=>"last editor: %{updater}" },
-          ] },
-      ] },
-      { :link=>:watch,   :if=>:watch   },
-      { :view=>:account, :if=>:account, :sub=>[
-          { :view    => :account, :text=>'details' },
-          { :related => :created },
-          { :related => :edited  }
-        ] }
-
-  ]
 
   INCLUSION_DEFAULTS = {
     :layout => { :view => :core },

@@ -120,15 +120,13 @@ format :html do
         )
       })
     end
+    
+    # NOTE: this JSON and the stuff in the card-slot would be much more readable if we did something like data-x='"a":"b"'
+    # (frame with single quotes and don't escape doubles)
+    content_tag :span, :class=>'card-menu-link', 'data-menu-vars'=>JSON( @menu_vars ) do
+      _render_menu_link
+    end
   
-    %{
-      <span class="card-menu-link">
-        #{ _render_menu_link }
-        <ul class="card-menu">
-          #{ build_menu_items default_menu }
-        </ul>
-      </span>
-    }
   end
 
   view :menu_link do |args|

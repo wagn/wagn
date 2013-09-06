@@ -160,7 +160,7 @@ class Card::HtmlFormat < Card::Format
     space = '  ' * @depth
     %{\n
 #{space}<!-- BEGIN SLOT: #{ escaped_name } -->
-  #{ content_tag(:div, attributes ) { "\n#{yield}\n  " } }
+  #{ content_tag :div, attributes do "\n#{yield}\n  " end }
 #{space}<!-- END SLOT: #{ escaped_name } -->\n
 }
   end

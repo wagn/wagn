@@ -4,9 +4,10 @@ format :html do
 
   view :raw do |args|
     %(
+      <meta charset="UTF-8">  
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>    
       #{ head_title     }
       #{ head_buttons     }
-      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
       #{ head_stylesheets }
       #{ head_javascript  }      
     )
@@ -75,14 +76,11 @@ format :html do
     c=Card[:double_click] and !Card.toggle c.content and varvals << 'wagn.noDoubleClick=true'
     @css_path                                        and varvals << "wagn.cssPath='#{@css_path}'"
     
-    %(<script>#{ varvals * ';' }</script>      
+    ga_key = Card.setting("*google analytics key")
+    %(#{ javascript_tag do varvals * ';' end  }      
       #{ javascript_include_tag 'application' }
       <!--[if lt IE 9]>#{ javascript_include_tag 'html5shiv-printshiv' }<![endif]-->
-      #{ 
-        if ga_key = Card.setting("*google analytics key")
-          %{<script>wagn.initGoogleAnalytics('#{ga_key}');</script>}
-        end
-      })
+      #{ javascript_tag do %{wagn.initGoogleAnalytics('#{ga_key}');} end })
   end
 end
 

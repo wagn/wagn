@@ -83,12 +83,15 @@ wagn.chooseFile = (e, data) ->
   # we add and remove the contentField to insure that nothing is added / updated when nothing is chosen.
 
 wagn.openMenu = (link) ->
-  cm = $(link).find '.card-menu'
+  cm = wagn.generateMenu
   unless $(link).find('.ui-menu-icon')[0]
     cm.menu position: { my:'right top', at:'left-2 top-3' }, icons: { submenu:'ui-icon-carat-1-w' }
   cm.show()
   cm.position my:'right top', at:'right+2 top+2', of: link
   
+wagn.generateMenu = () ->
+  $('<ul class="card-menu"><li>' + $.now() + '</li></ul>')
+
 
 $(window).ready ->
 

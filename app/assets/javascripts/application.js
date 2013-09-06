@@ -14,6 +14,7 @@
 //= require tinymce
 //= require wagn_pack
 //= require wagn
+//= require wagn_menu
 //= require jquerymobile
 
 

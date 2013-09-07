@@ -62,6 +62,7 @@ wagn.menu_template = [
       { "related":"edited" }
     ]
   }
+  
 ]
 
 

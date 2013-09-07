@@ -105,7 +105,7 @@ wagn.generateMenu = (slot, vars) ->
   template_clone = $.extend true, {}, wagn.menu_template
   items = wagn.generateMenuItems template_clone, vars
   
-  m = $('<ul class="card-menu">' + items.join("\n") +  '</ul>')
+  m = $( '<ul class="card-menu">' + items.join("\n") +  '</ul>' )
   slot.append m
   m
 
@@ -113,7 +113,6 @@ wagn.generateMenuItems = (template, vars)->
   items = []
   $.each template, (index, i)->
     return true if i.if && !vars[i.if]
-#    return true if i.page && !vars[i.page] # needed?  
     
     if i.text
       i.text = i.text.replace /\%\{([^}]*)\}/, (m, val)->
@@ -132,14 +131,15 @@ wagn.generateMenuItems = (template, vars)->
       else
         wagn.generateStandardMenuItem i, vars
 
-    if i.list
-      if listsub = wagn.generateListTemplate i.list, vars 
-        i.sub = listsub if listsub.length > 0
+    if item
+      if i.list
+        if listsub = wagn.generateListTemplate i.list, vars 
+          i.sub = listsub if listsub.length > 0
 
-    if i.sub
-      item += '<ul>' + wagn.generateMenuItems(i.sub, vars).join("\n") + '</ul>'
+      if i.sub
+        item += '<ul>' + wagn.generateMenuItems(i.sub, vars).join("\n") + '</ul>'
     
-    items.push('<li>' + item + '</li>')
+      items.push('<li>' + item + '</li>')
   items
 
   
@@ -166,25 +166,22 @@ wagn.generateListTemplate = (list, vars)->
 
 wagn.generateStandardMenuItem = (i, vars)->
   linkname = wagn.getVal vars['self'], 1
+  params = {}
   
   if i.related
     i.view='related'
-    if typeof(i.related) == 'object'
-      i.related['related[name]'] = vars[i.name]
+    params['related'] = if typeof(i.related) == 'object'
+      $.extend {}, i.related, name: vars[i.related.name]
     else
       i.text ||= i.related.replace /_/g, ' '
-      i.related = { 'related[name]': '+' + i.related }
-  else
-    i.related = {}
+      { 'name': '+*' + i.related } #FIXME - should use codename
       
   if i.view
-    params = $.param $.extend( view: i.view, i.related)
-    path = wagn.rootPath + '/' + linkname + '?' + params
+    $.extend params, view: i.view
+    path = wagn.rootPath + '/' + linkname + '?' + $.param(params)
     text = i.text || i.view
     '<a href="' + path + '" data-remote="true" class="slotter">' + text + '</a>'
-  else
-    'dunno'
-    
+
 
   
 

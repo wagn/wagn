@@ -20,18 +20,19 @@ wagn.menu_template = [
   { "text":"discuss", "related":"discussion", "if":"discuss"},
   { "text":"advanced", "view":"options", "sub":
     [
-      { "text":"rules", "view":"options"
-      /*, "sub":
-      
-        [
-          { "list": { "related_sets": { "view":"options", "text":"text", "path_opts":"path_opts" } } }
-        ]*/
+      { "text":"rules", "view":"options", "list":
+        { "name": "related_sets",
+          "template" : { "view":"options", "text":"text", "path_opts":"path_opts" } 
+        } 
       },
-      { "plain":"related", "sub":[
-          { "list": { "piecenames": { "page":"item" } }, "if":"piecenames" },
-          { "related":"children" },
-          { "related":"mates" }
-        ]
+      { "plain":"related", "list" : 
+        { "name": "piecenames",
+          "template": {"page":"item"},
+          "append":[
+            { "related":"children" },
+            { "related":"mates" }
+          ]
+        }
       },
       { "related":"referred_to_by", "sub":[
           { "text":"all",        "related":"referred_to_by" },

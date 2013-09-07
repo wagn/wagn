@@ -104,8 +104,8 @@ format :html do
       :type         => card.type_name,
       :structure    => card.hard_template && card.template.ok?(:update) && card.template.name,
       :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read),
-#      :piecenames   => card.junction? && card.cardname.piece_names[0..-2].map { |n| { :item=>n } },
-      :related_sets => card.related_sets.map { |name,label| { :text=>label.gsub('%','%%'), :path_opts=>{ :current_set => name } } }
+      :piecenames   => card.junction? && card.cardname.piece_names[0..-2].map { |n| { :item=>[n.to_s, n.url_key] } },
+      :related_sets => card.related_sets.map { |name,label| { :text=>label, :path_opts=>{ :current_set => name.to_name.url_key } } }
         #should generalize percent thing.  this is because sprintf is run on all "text" values.
     }
     if card.real?
@@ -128,7 +128,7 @@ format :html do
     begin
       jmv = JSON( @menu_vars )
     rescue
-      return @menu_vars.inspect
+      return h @menu_vars.inspect
     end
     # NOTE: this JSON and the stuff in the card-slot would be much more readable if we did something like data-x='"a":"b"'
     # (frame with single quotes and don't escape doubles)

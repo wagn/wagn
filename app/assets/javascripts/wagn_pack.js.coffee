@@ -111,14 +111,14 @@ wagn.generateMenu = (slot, vars) ->
 
 wagn.generateMenuItems = (template, vars)->
   items = []
-  $.each template, (num, i)->
+  $.each template, (index, i)->
     return true if i.if && !vars[i.if]
-    return true if i.page && !vars[i.page] # why needed?  
+#    return true if i.page && !vars[i.page] # needed?  
     
     if i.text
       i.text = i.text.replace /\%\{([^}]*)\}/, (m, val)->
-        wagn.getVal( vars[val], 0 )
-#      i.text = $('div').text(i.text).html() #escapes html
+        wagn.getVal( vars[val], 0 )      
+      i.text = $('<div/>').text(i.text).html() #escapes html
       
     item = 
       if i.link
@@ -126,14 +126,18 @@ wagn.generateMenuItems = (template, vars)->
       else if i.plain
         '<a>' + i.plain + '</a>'
       else if i.page
-        page = vars[i.page]
+        page = vars[i.page] || i.page
         text = i.text || wagn.getVal(page, 0)
-        '<a href="' + wagn.rootPath + '/' + wagn.getVal(page, 1) + '">' + text + '</a>'
+        '<a href="' + wagn.rootPath + '/' + wagn.getVal(page, 1) + '">' + text + ' &crarr;</a>'
       else
         wagn.generateStandardMenuItem i, vars
 
-    if i['sub']
-      item += '<ul>' + wagn.generateMenuItems(i['sub'], vars).join("\n") + '</ul>'
+    if i.list
+      if listsub = wagn.generateListTemplate i.list, vars 
+        i.sub = listsub if listsub.length > 0
+
+    if i.sub
+      item += '<ul>' + wagn.generateMenuItems(i.sub, vars).join("\n") + '</ul>'
     
     items.push('<li>' + item + '</li>')
   items
@@ -146,13 +150,27 @@ wagn.getVal = (val, index)->
     val
     
 
+wagn.generateListTemplate = (list, vars)->
+  items = []
+  if list_vars = vars[list.name]
+    $.each list_vars, (index, itemvars)->
+      template = $.extend {}, list.template
+      $.each Object.keys(template), (index, key)->
+        template[key] = itemvars[template[key]] || template[key]
+      items.push template
+    
+  if list.append
+    items = items.concat list.append
+  
+  items
+
 wagn.generateStandardMenuItem = (i, vars)->
   linkname = wagn.getVal vars['self'], 1
   
   if i.related
     i.view='related'
     if typeof(i.related) == 'object'
-      i.related.name = vars[i.name]
+      i.related['related[name]'] = vars[i.name]
     else
       i.text ||= i.related.replace /_/g, ' '
       i.related = { 'related[name]': '+' + i.related }

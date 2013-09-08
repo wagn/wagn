@@ -150,8 +150,9 @@ When /^In (.*) I click "(.*)"$/ do |section, link|
 end
 
 When /^I hover over the main menu$/ do
-  page.execute_script "$('#main > .card-slot .card-header > .card-menu-link').trigger('mouseenter')"
+  page.execute_script "$('#main > .card-slot > .card-header > .card-menu-link').trigger('mouseenter')"
 end
+
 
 Then /the card (.*) should contain "([^\"]*)"$/ do |cardname, content|
   visit path_to("card #{cardname}")

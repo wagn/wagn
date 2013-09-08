@@ -17,7 +17,8 @@ Feature: Watch interface
     When I go to the homepage
     And I hover over the main menu
     And In the main card menu I click "follow"
-    Then In the main card menu I should see "following"
+    Then In the main card menu I should see "unfollow"
+    # assumes focus still on that link.  otherwise "following"
     And the card Home+*watchers should contain "Joe User"
 
   Scenario: Unwatching a Card

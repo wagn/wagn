@@ -16,7 +16,6 @@ Feature: Watch interface
   Scenario: Watching a Card
     When I go to the homepage
     And I hover over the main menu
-    And I wait a sec
     And In the main card menu I click "follow"
     Then In the main card menu I should see "following"
     And the card Home+*watchers should contain "Joe User"

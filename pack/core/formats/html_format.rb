@@ -107,11 +107,11 @@ class Card::HtmlFormat < Card::Format
     
     escaped_name = h card.name
     space = '  ' * @depth
-    %{\n
-#{space}<!-- BEGIN SLOT: #{ escaped_name } -->
-  #{ content_tag :div, attributes do "\n#{yield}\n  " end }
-#{space}<!-- END SLOT: #{ escaped_name } -->\n
-}
+    %{<!--\n\n#{space}BEGIN SLOT: #{ escaped_name }
+    
+-->#{ content_tag :div, attributes do "\n#{yield}\n  " end }<!--
+
+#{space}END SLOT: #{ escaped_name }\n\n -->}
   end
 
   def wrap_content view, args={}

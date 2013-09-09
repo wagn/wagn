@@ -3,7 +3,7 @@
 format :html do
 
   view :watch do |args|
-    wrap :watch do
+    wrap :watch, args do
       #type_link = card.watching_type? ? "#{watching_type_cards} | " : ""
       link_args = if card.watching?
         ["following", :off, "stop sending emails about changes to #{card.cardname}", { :hover_content=> 'unfollow' } ]

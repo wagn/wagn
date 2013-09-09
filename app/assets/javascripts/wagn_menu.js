@@ -17,7 +17,7 @@ wagn.menu_template = [
       { "text":"structure", "related":{ "name":"structure" }, "if":"structure" }
     ]
   },    
-  { "text":"discuss", "related":"discussion", "if":"discuss"},
+  { "text":"discuss", "related":{"name":"+discussion"}, "if":"discuss"},
   { "text":"advanced", "view":"options", "sub":
     [
       { "text":"rules", "view":"options", "list":
@@ -34,15 +34,15 @@ wagn.menu_template = [
           ]
         }
       },
-      { "related":"referred_to_by", "sub":[
-          { "text":"all",        "related":"referred_to_by" },
-          { "text":"links",      "related":"linked_to_by"   },
-          { "text":"inclusions", "related":"included_by"    }
+      { "related":"referred to by", "sub":[
+          { "text":"all",        "related":"referred to by" },
+          { "text":"links",      "related":"linked to by"   },
+          { "text":"inclusions", "related":"included by"    }
         ]
       },
-      { "related":"refers_to", "sub":[
-          { "text":"all",        "related":"refers_to"  },
-          { "text":"links",      "related":"links_to"   },
+      { "related":"refers to", "sub":[
+          { "text":"all",        "related":"refers to"  },
+          { "text":"links",      "related":"links to"   },
           { "text":"inclusions", "related":"includes"   }
         ]
       },

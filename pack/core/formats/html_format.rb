@@ -96,22 +96,17 @@ class Card::HtmlFormat < Card::Format
       ( 'card-frame' if args[:frame] ),
       card.safe_keys
     ].compact
-
-    attributes = {
-      :style           => args[:style],
-      :class           => classes * ' ',
-      'data-slot'      => slot_options( args ),
-      'data-card-id'   => card.id,
-      'data-card-name' => card.name
-    }
     
-    escaped_name = h card.name
-    space = '  ' * @depth
-    %{<!--\n\n#{space}BEGIN SLOT: #{ escaped_name }
-    
--->#{ content_tag :div, attributes do "\n#{yield}\n  " end }<!--
+    div = %{<div data-card-id=#{card.id} data-card-name="#{h card.name}" style="#{h args[:style]}" class="#{classes*' '}" } +
+      %{data-slot='#{html_escape_except_quotes slot_options( args )}'>\n#{yield}\n</div>}
 
-#{space}END SLOT: #{ escaped_name }\n\n -->}
+    if args[:no_wrap_comment]
+      div
+    else
+      name = h card.name
+      space = '  ' * @depth
+      %{<!--\n\n#{ space }BEGIN SLOT: #{ name }\n\n-->#{ div }<!--\n\n#{space}END SLOT: #{ name }\n\n-->}
+    end
   end
 
   def wrap_content view, args={}
@@ -140,6 +135,11 @@ class Card::HtmlFormat < Card::Format
       %{<div class="flash-notice">#{ flash[:notice] }</div>}
     end
     }<div id="main">#{content}</div>}
+  end
+
+  
+  def html_escape_except_quotes s
+    s.to_s.gsub(/&/, "&amp;").gsub(/\'/, "&apos;").gsub(/>/, "&gt;").gsub(/</, "&lt;")
   end
 
   def edit_slot args={}

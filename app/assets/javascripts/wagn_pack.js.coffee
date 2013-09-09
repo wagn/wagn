@@ -115,8 +115,7 @@ wagn.generateMenuItems = (template, vars)->
     return true if i.if && !vars[i.if]
     
     if i.text
-      i.text = i.text.replace /\%\{([^}]*)\}/, (m, val)->
-        wagn.getVal( vars[val], 0 )      
+      i.text = i.text.replace /\%\{([^}]*)\}/, (m, val)-> vars[val]      
       i.text = $('<div/>').text(i.text).html() #escapes html
       
     item = 
@@ -126,8 +125,8 @@ wagn.generateMenuItems = (template, vars)->
         '<a>' + i.plain + '</a>'
       else if i.page
         page = vars[i.page] || i.page
-        text = i.text || wagn.getVal(page, 0)
-        '<a href="' + wagn.rootPath + '/' + wagn.getVal(page, 1) + '">' + text + ' &crarr;</a>'
+        text = i.text || page
+        '<a href="' + wagn.rootPath + '/' + wagn.linkname(page) + '">' + text + ' &crarr;</a>'
       else
         wagn.generateStandardMenuItem i, vars
 
@@ -142,13 +141,9 @@ wagn.generateMenuItems = (template, vars)->
       items.push('<li>' + item + '</li>')
   items
 
-  
-wagn.getVal = (val, index)->
-  if typeof(val) == 'object'
-    val[index]
-  else
-    val
-    
+
+wagn.linkname = (n)->
+  n.replace(/\W+/g, ' ').replace(/\s+/g,'_')
 
 wagn.generateListTemplate = (list, vars)->
   items = []
@@ -165,16 +160,17 @@ wagn.generateListTemplate = (list, vars)->
   items
 
 wagn.generateStandardMenuItem = (i, vars)->
-  linkname = wagn.getVal vars['self'], 1
+  linkname = wagn.linkname vars['self']
   params = {}
   
   if i.related
+    console.log 'irelated = ' + i.related
     i.view='related'
     params['related'] = if typeof(i.related) == 'object'
       $.extend {}, i.related, name: vars[i.related.name]
     else
-      i.text ||= i.related.replace /_/g, ' '
-      { 'name': '+*' + i.related } #FIXME - should use codename
+      i.text ||= i.related
+      { 'name': '+*' + i.related }
       
   if i.view
     $.extend params, view: i.view

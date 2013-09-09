@@ -104,7 +104,7 @@ format :html do
       :type         => card.type_name,
       :structure    => card.hard_template && card.template.ok?(:update) && card.template.name,
       :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read),
-      :piecenames   => card.junction? && card.cardname.piece_names[0..-2].map { |n| { :item=>[n.to_s, n.url_key] } },
+      :piecenames   => card.junction? && card.cardname.piece_names[0..-2].map { |n| { :item=>n.to_s } },
       :related_sets => card.related_sets.map { |name,label| { :text=>label, :path_opts=>{ :current_set => name.to_name.url_key } } }
         #should generalize percent thing.  this is because sprintf is run on all "text" values.
     }
@@ -112,7 +112,7 @@ format :html do
       @menu_vars.merge!({
         :edit      => card.ok?(:update),
         :account   => card.account && card.update_account_ok?,
-        :watch     => Account.logged_in? && render_watch,
+        :watch     => Account.logged_in? && render_watch(args.merge :no_wrap_comment=>true),
         :creator   => card.creator.name,
         :updater   => card.updater.name,
         :delete    => card.ok?(:delete) && link_to( 'delete', path(:action=>:delete),
@@ -121,22 +121,14 @@ format :html do
       })
     end
     
-    [:self, :type, :creator, :updater].each do |key|
-      @menu_vars[key] &&= [@menu_vars[key], @menu_vars[key].to_name.url_key]
-    end
+#    [:self, :type, :creator, :updater].each do |key|
+#      @menu_vars[key] &&= [@menu_vars[key], @menu_vars[key].to_name.url_key]
+#    end
     
-    begin
-      jmv = JSON( @menu_vars )
-    rescue
-      return h @menu_vars.inspect
-    end
-    # NOTE: this JSON and the stuff in the card-slot would be much more readable if we did something like data-x='"a":"b"'
-    # (frame with single quotes and don't escape doubles)
-    content_tag :span, :class=>'card-menu-link', 'data-menu-vars'=>JSON( @menu_vars ) do
-      _render_menu_link
-    end
-  
+    json = html_escape_except_quotes JSON( @menu_vars )
+    %{<span class="card-menu-link" data-menu-vars='#{json}'>#{_render_menu_link}</span>}
   end
+
 
   view :menu_link do |args|
     '<a class="ui-icon ui-icon-gear"></a>'
@@ -634,7 +626,7 @@ format :html do
   view :watch, :tags=>:unknown_ok, :denial=>:blank,
     :perms=> lambda { |r| Account.logged_in? && !r.card.new_card? } do |args|
       
-    wrap :watch do
+    wrap :watch, args do
       if card.watching_type?
         watching_type_cards
       else

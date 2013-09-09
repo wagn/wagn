@@ -1,29 +1,31 @@
+$.extend wagn,
+  initializeEditors: (range, map) ->
+    map = wagn.editorInitFunctionMap unless map?
+    $.each map, (selector, fn) ->
+      $.each range.find(selector), ->
+        fn.call $(this)
 
-wagn.initializeEditors = (range, map) ->
-  map = wagn.editorInitFunctionMap unless map?
-  $.each map, (selector, fn) ->
-    $.each range.find(selector), ->
-      fn.call $(this)
-
-wagn.prepUrl = (url, slot)->
-  xtra = {}
-  main = $('#main').children('.card-slot').data 'cardName'
-  xtra['main'] = main if main?
-  if slot
-    xtra['is_main'] = true if slot.isMain()
-    slotdata = slot.data 'slot'
-    wagn.slotParams slotdata, xtra, 'slot' if slotdata?
+  prepUrl: (url, slot)->
+    xtra = {}
+    main = $('#main').children('.card-slot').data 'cardName'
+    xtra['main'] = main if main?
+    if slot
+      xtra['is_main'] = true if slot.isMain()
+      slotdata = slot.data 'slot'
+      wagn.slotParams slotdata, xtra, 'slot' if slotdata?
       
-  url + ( (if url.match /\?/ then '&' else '?') + $.param(xtra) )
+    url + ( (if url.match /\?/ then '&' else '?') + $.param(xtra) )
   
-wagn.slotParams = (raw, processed, prefix)->
-  $.each raw, (key, value)->
-    cgiKey = prefix + '[' + snakeCase(key) + ']'
-    if key == 'items'
-      wagn.slotParams value, processed, cgiKey
-    else
-      processed[cgiKey] = value
-  
+  slotParams: (raw, processed, prefix)->
+    $.each raw, (key, value)->
+      cgiKey = prefix + '[' + snakeCase(key) + ']'
+      if key == 'items'
+        wagn.slotParams value, processed, cgiKey
+      else
+        processed[cgiKey] = value
+
+  pingName: (name, success)->
+    $.getJSON wagn.rootPath + '/', { format: 'json', view: 'status', 'card[name]': name }, success  
 
 jQuery.fn.extend {
   slot: -> @closest '.card-slot'
@@ -273,8 +275,5 @@ newCaptcha = (form)->
 
 snakeCase = (str)->
   str.replace /([a-z])([A-Z])/g, (match)-> match[0] + '_' + match[1].toLowerCase()
-  
-wagn.pingName = (name, success)->
-  $.getJSON wagn.rootPath + '/', { format: 'json', view: 'status', 'card[name]': name }, success
 
 warn = (stuff) -> console.log stuff if console?

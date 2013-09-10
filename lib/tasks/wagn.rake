@@ -196,6 +196,8 @@ namespace :wagn do
       template_files_dir = "#{Rails.root}/local/files"
       standard_files_dir = "#{Rails.root}/pack/standard/files"
       
+      #FIXME - this should delete old revisions
+      
       FileUtils.remove_dir standard_files_dir, force=true
       FileUtils.cp_r template_files_dir, standard_files_dir
       

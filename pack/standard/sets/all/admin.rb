@@ -14,6 +14,7 @@ view :setup, :tags=>:unknown_ok do |args|
         #{ _render_name_editor :help=>'usually first and last name' }
         #{ _render_account_detail :account=>account, :setup=>true }
         <fieldset><div class="button-area">#{ submit_tag 'Create' }</div></fieldset>
+        #{ render_error }
       }
     end
   end

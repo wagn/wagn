@@ -20,7 +20,6 @@ class AdminController < CardController
           flash[:notice] = "You're good to go!"
           redirect_to Card.path_setting('/')
         else
-          @card = Card.new( params[:card] || {} )
           show :setup
         end
       end

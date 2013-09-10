@@ -77,7 +77,7 @@ describe CardController, "Basic rendering tests" do
 
     it "should get edit form for all types" do
       @sample_cards.each do |sample|
-        if %w{sample_html sample_layout sample_css sample_scss}.member? sample.key
+        if %w{ sample_html sample_layout sample_css sample_scss sample_skin }.member? sample.key
           login_as 'Joe Admin' do
             get :read, :id => "~#{sample.id}", :view=>'edit'
           end

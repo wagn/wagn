@@ -168,7 +168,7 @@ format :html do
                 #{ fieldset :subject, text_field( :email, :subject, :value=>subject, :size=>60 ) }
 
                 #{ fieldset :message,
-                    text_area( :email, :message, :value=>message, :rows=>15, :cols => 60 ),
+                    text_area( :email, :message, :value=>message, :rows=>10, :cols => 60 ),
                     :help => "We'll create a password and attach it to the email."
                 }
               </div>

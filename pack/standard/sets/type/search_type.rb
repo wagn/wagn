@@ -140,7 +140,7 @@ format :html do
   end
 
   view :editor do |args|
-    form.text_area :content, :rows=>10
+    form.text_area :content, :rows=>5
   end
 
 

@@ -172,8 +172,8 @@ $.extend wagn,
         i.text ||= i.related
         { 'name': '+*' + i.related }
       
-    if i.view
-      params['view'] = i.view
+    if i.view #following basically reproduces link_to_view.  make own function?
+      params['view'] = i.view unless i.view == 'home'
       path = wagn.rootPath + '/' + linkname + '?' + $.param(params)
       text = i.text || i.view
       '<a href="' + path + '" data-remote="true" class="slotter">' + text + '</a>'

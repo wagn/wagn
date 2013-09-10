@@ -29,7 +29,7 @@ class AddStyleCards < ActiveRecord::Migration
       
       # PERMISSIONS FOR CSS AND SCSS TYPES
       
-      ['CSS', 'SCSS'].each do |type|
+      ['CSS', 'SCSS', 'Skin'].each do |type|
         [ :create, :update, :delete].each do |action|
           Card.create! :name=>"#{type}+*type+#{Card[action].name}", :content=>"[[#{Card[:administrator].name}]]"
         end

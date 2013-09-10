@@ -105,8 +105,7 @@ format :html do
       :structure    => card.hard_template && card.template.ok?(:update) && card.template.name,
       :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read),
       :piecenames   => card.junction? && card.cardname.piece_names[0..-2].map { |n| { :item=>n.to_s } },
-      :related_sets => card.related_sets.map { |name,label| { :text=>label, :path_opts=>{ :current_set => name.to_name.url_key } } }
-        #should generalize percent thing.  this is because sprintf is run on all "text" values.
+      :related_sets => card.related_sets.map { |name,label| { :text=>label, :path_opts=>{ :current_set => name } } }
     }
     if card.real?
       @menu_vars.merge!({
@@ -120,10 +119,6 @@ format :html do
         )
       })
     end
-    
-#    [:self, :type, :creator, :updater].each do |key|
-#      @menu_vars[key] &&= [@menu_vars[key], @menu_vars[key].to_name.url_key]
-#    end
     
     json = html_escape_except_quotes JSON( @menu_vars )
     %{<span class="card-menu-link" data-menu-vars='#{json}'>#{_render_menu_link}</span>}
@@ -156,14 +151,21 @@ format :html do
 
   view( :comment_box, :denial=>:blank, :tags=>:unknown_ok, :perms=>lambda { |r| r.card.ok? :comment } ) do |args|
     
+    #FIXME - <br> = yuck
+    # also wish we had more generalized solution for names.  without code below, nonexistent cards will often take left's linkname.  (needs test)
     %{<div class="comment-box nodblclick"> #{
       card_form :update do |f|
-        %{#{f.text_area :comment, :rows=>3 }<br/> #{
-        unless Account.logged_in?
-          card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH
-          %{<label>My Name is:</label> #{ f.text_field :comment_author }}
-        end}
-        <input type="submit" value="Comment"/>}
+        %{
+          #{ hidden_field_tag( 'card[name]', card.name ) if card.new_card? }
+          #{ f.text_area :comment, :rows=>3 }<br/> 
+          #{
+            unless Account.logged_in?
+              card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH
+              %{<label>My Name is:</label> #{ f.text_field :comment_author }}
+            end
+          }
+          <input type="submit" value="Comment"/>
+        }
       end}
     </div>}
   end
@@ -455,6 +457,7 @@ format :html do
   view :related do |args|
     if rparams = params[:related]
       rcardname = rparams[:name].to_name.to_absolute_name( card.cardname)
+      warn "rcardname = #{rcardname}"
       rcard = Card.fetch rcardname, :new=>{}
       rview = rparams[:view] || :titled        
       show = 'menu,help'

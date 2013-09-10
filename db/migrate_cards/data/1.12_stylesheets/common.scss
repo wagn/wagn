@@ -66,6 +66,10 @@ form {
 
 .card-frame {
   border: 1px solid $border_color;
+  > .card-header {
+    background: $header_color;
+    padding: 5px 12px;
+  }  
   > .card-body {
     padding: 5px 12px;
   }
@@ -74,17 +78,14 @@ form {
   }  
 }
 
-.card-frame,
-.closed-view {
-  > .card-header {
-    background: $header_color;
-    padding: 5px 12px;
-  }  
-}
-
 .card-header > .instruction {
   font-weight: normal;
   font-size: 0.9em;
+}
+
+.closed-view {
+  border: 0;
+  border-bottom: 1px solid #eee
 }
 
 /*-------- Special Pages --------*/

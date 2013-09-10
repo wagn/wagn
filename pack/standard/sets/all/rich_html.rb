@@ -143,11 +143,10 @@ format :html do
       :remote => true,
       :title => "open #{card.name}",
       :class => "open-icon ui-icon ui-icon-circle-triangle-e toggler slotter nodblclick"
-    wrap :closed, args do
-      %{
-        #{ render_header args }
-        #{ wrap_content( :closed ) { _render_closed_content args } }
-      }
+      
+    wrap_frame :closed, args do
+#    wrap :closed, args do
+      _render_closed_content args
     end
   end
 

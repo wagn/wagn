@@ -25,6 +25,12 @@ body {
   }
   > .card-header {
     margin: 0;
+    color: #333333;
+    background: #8AB;
+    text-align: left;
+    .toggler {
+      top: 2px;
+    }
   }
   > .instruction {
     color: #440;
@@ -34,27 +40,13 @@ body {
 
 
 
-.card-frame,
-.closed-view {
-  > .card-header {
-    color: #333333;
-    background: #8AB;
-    text-align: left;
-    .toggler {
-      top: 2px;
-    }
-  }  
-}
-
 
 /*------------- closed view -------*/
 .closed-view {
-  background: #fff;
   border: 0;
   border-bottom: 1px solid #ccc;
   -moz-border-radius: 0 !important;
   border-radius: 0 !important;
-  padding: 0;
   .card-header {
     vertical-align: middle;
     -moz-border-radius: 0 6px 6px 0;

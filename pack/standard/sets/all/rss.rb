@@ -14,10 +14,10 @@ format :rss do
       @xml.instruct! :xml, :version => "1.0"
       @xml.rss :version => "2.0" do
         @xml.channel do
-          @xml.title       render_rss_title
-          @xml.description render_rss_description
+          @xml.title       render_feed_title
+          @xml.description render_feed_description
           @xml.link        render_url
-          render_rss_item_list
+          render_feed_item_list
         end
       end
     rescue Exception=>e
@@ -25,7 +25,7 @@ format :rss do
     end
   end
   
-  view :rss_item_list do |args|
+  view :feed_item_list do |args|
     items = if card.type_id == Card::SearchTypeID
       card.item_cards( search_params.merge(:default_limit => 25) )
     else
@@ -33,17 +33,17 @@ format :rss do
     end
     items.each do |item|
       @xml.item do
-        subformat(item).render_rss_item :view_changes=>(card.id==Card::RecentID)  #FIXME! yuck.
+        subformat(item).render_feed_item :view_changes=>(card.id==Card::RecentID)  #FIXME! yuck.
       end
     end
   end
   
   
-  view :rss_title do |args|
+  view :feed_title do |args|
     Card.setting(:title) + " : " + card.name.gsub(/^\*/,'')
   end
   
-  view :rss_item do |args|
+  view :feed_item do |args|
     @xml.title card.name
     add_name_context
     @xml.description render((args[:view_changes] ? :change : :open_content))
@@ -53,7 +53,7 @@ format :rss do
   end
 
 
-  view :rss_description do |args| '' end
+  view :feed_description do |args| '' end
   view :comment_box     do |args| '' end
   view :menu            do |args| '' end
     

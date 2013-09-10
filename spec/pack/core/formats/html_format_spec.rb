@@ -48,7 +48,7 @@ describe Card::HtmlFormat do
 
       it "should have the appropriate attributes on closed" do
         v = @ocslot.render(:closed)
-        assert_view_select v, 'div[class="card-slot closed-view ALL TYPE-basic SELF-a"]' do
+        assert_view_select v, 'div[class="card-slot closed-view card-frame ALL TYPE-basic SELF-a"]' do
           assert_select 'h1[class="card-header"]' do
             assert_select 'span[class="card-title"]'
           end

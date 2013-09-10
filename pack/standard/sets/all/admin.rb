@@ -1,23 +1,21 @@
 view :setup, :tags=>:unknown_ok do |args|
-  wrap :setup, :frame=>true do
-    account = User.new( params[:account] || {} )
-    %{
-      <h1 class="card-header">Welcome, Wagneer! To get started, set up an account.</h1>
-
-      #{
-        form_for :card do |f|
-          @form = f
-          %{
-            <div class="card-body">
-              #{ _render_name_editor :help=>'usually first and last name' }
-              #{ _render_account_detail :account=>account, :setup=>true }
-            </div>
-            <fieldset><div class="button-area">#{ submit_tag 'Create' }</div></fieldset>
-          }
-        end
-      }      
-    }
-
+  account = User.new( params[:account] || {} )
+  frame_args = {
+    :title=>'Welcome, Wagneer!',
+    :show_help=>true,
+    :hide_menu=>true, 
+    :help_text=>'To get started, set up an account.'
+  }
+    
+  wrap_frame :setup, frame_args do
+    form_for :card do |f|
+      @form = f
+      %{
+        #{ _render_name_editor :help=>'usually first and last name' }
+        #{ _render_account_detail :account=>account, :setup=>true }
+        <fieldset><div class="button-area">#{ submit_tag 'Create' }</div></fieldset>
+      }
+    end
   end
 end
 

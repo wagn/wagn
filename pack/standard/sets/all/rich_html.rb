@@ -87,8 +87,11 @@ format :html do
       <h1 class="card-header">
         #{ args.delete :toggler }
         #{ _render_title args }
-        #{ _optional_render :menu, args, args[:menu_default_hidden] || false }
-        #{ optional_render :help, args.merge( :setting => :help ), args[:help_default_hidden].nil? ? true : false }
+        #{
+          args[:custom_menu] or unless args[:hide_menu]                        # developer config
+            _optional_render :menu, args, args[:menu_default_hidden] || false  # wagneer config
+          end
+        }
       </h1>
     }
   end
@@ -151,20 +154,23 @@ format :html do
 
   view( :comment_box, :denial=>:blank, :tags=>:unknown_ok, :perms=>lambda { |r| r.card.ok? :comment } ) do |args|
     
-    #FIXME - <br> = yuck
-    # also wish we had more generalized solution for names.  without code below, nonexistent cards will often take left's linkname.  (needs test)
+    
     %{<div class="comment-box nodblclick"> #{
       card_form :update do |f|
         %{
-          #{ hidden_field_tag( 'card[name]', card.name ) if card.new_card? }
-          #{ f.text_area :comment, :rows=>3 }<br/> 
-          #{
-            unless Account.logged_in?
-              card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH
-              %{<label>My Name is:</label> #{ f.text_field :comment_author }}
-            end
+          #{ hidden_field_tag( 'card[name]', card.name ) if card.new_card? 
+          # FIXME wish we had more generalized solution for names.  without this, nonexistent cards will often take left's linkname.  (needs test)
           }
-          <input type="submit" value="Comment"/>
+          #{ f.text_area :comment, :rows=>3 }
+          <div class="comment-buttons">
+            #{
+              unless Account.logged_in?
+                card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH
+                %{<label>My Name is:</label> #{ f.text_field :comment_author }}
+              end
+            }
+            <input type="submit" value="Comment"/>
+          </div>
         }
       end}
     </div>}
@@ -191,36 +197,25 @@ format :html do
       { :class=>'slotter',    :href=>path( :view=>:missing         ) }
     end
     
-            
-    wrap :new, args.merge(:frame=>true) do  
-      %{
-        <h1 class="card-header">          
-          #{ _render_title args }
-          #{ _render_help :setting => :add_help }          
-        </h1>
-        <div class="card-body">
-          #{
-            card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
-              @form = form
-              %{
-                #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
-                #{ hidden_field_tag 'card[name]', card.name if name_ready }
-                #{ _render_name_editor if prompt_for_name }
-                #{ prompt_for_type ? _render_type_menu : form.hidden_field( :type_id ) }                
-                <div class="card-editor editor">
-                  #{ edit_slot args.merge( :label => prompt_for_name || prompt_for_type ) }
-                </div>
-                <fieldset>
-                  <div class="button-area">
-                    #{ submit_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
-                    #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
-                  </div>
-                </fieldset>                
-              }
-            end
-          }
-        </div>
-      }
+    wrap_frame :new, args.merge(:show_help=>true, :hide_menu=>true) do
+      card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
+        @form = form
+        %{
+          #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
+          #{ hidden_field_tag 'card[name]', card.name if name_ready }
+          #{ _render_name_editor if prompt_for_name }
+          #{ prompt_for_type ? _render_type_menu : form.hidden_field( :type_id ) }                
+          <div class="card-editor editor">
+            #{ edit_slot args.merge( :label => prompt_for_name || prompt_for_type ) }
+          </div>
+          <fieldset>
+            <div class="button-area">
+              #{ submit_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
+              #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
+            </div>
+          </fieldset>                
+        }
+      end
     end
   end
 
@@ -245,7 +240,7 @@ format :html do
 
 ###---(  EDIT VIEWS )
   view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
-    wrap_frame :edit, args.merge(:help_default_hidden=>false) do
+    wrap_frame :edit, args.merge(:show_help=>true) do
       card_form :update, 'card-form card-edit-form autosave' do |f|
         @form= f
         %{
@@ -337,16 +332,13 @@ format :html do
   view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
     eform = form_for_multi
     content = content_field eform, :nested=>true
-    opts = {
-      :editor  => 'content',
-      :attribs => { :class=> "card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" }
+    opts = { :editor=>'content', :help=>true, :attribs => 
+      { :class=> "card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" }
     }
     if card.new_card?
       content += raw( "\n #{ eform.hidden_field :type_id }" )
-      opts[:help] = { :setting => :add_help }
     else
       opts[:attribs].merge! :card_id=>card.id, :card_name=>(h card.name)
-      opts[:help] = { :setting => :help }
     end
     fieldset fancy_title, content, opts
   end
@@ -500,9 +492,10 @@ format :html do
   end
 
   view :help, :tags=>:unknown_ok do |args|
-    text = if args[:text]
-      args[:text]
-    elsif setting = args[:setting]
+    text = if args[:help_text]
+      args[:help_text]
+    else
+      setting = card.new_card? ? :add_help : :help
       setting = [ :add_help, { :fallback => :help } ] if setting == :add_help
       if help_card = card.rule_card( *setting ) and help_card.ok? :read
         with_inclusion_mode :normal do
@@ -574,13 +567,11 @@ format :html do
        </div>}
     end
   
-    wrap( :not_found, args.merge(:frame=>true) ) do # ENGLISH
+    wrap_frame :notfound, args.merge(:title=>'Not Found', :hide_menu=>'true') do
       %{
-        <h1 class="card-header">Not Found</h1>
-        <div class="card-body">
-          <h2>Could not find #{card.name.present? ? "<em>#{card.name}</em>" : 'the card requested'}.</h2>
-          #{sign_in_or_up_links}
-        </div>}
+        <h2>Could not find #{card.name.present? ? "<em>#{card.name}</em>" : 'that'}.</h2>
+        #{sign_in_or_up_links}
+      }
     end
   end
 

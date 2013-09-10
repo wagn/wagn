@@ -201,7 +201,7 @@ textarea {
 
 /* -- template-editor (editing template rule inclusions inline) -- */
 
-.template-editor-main.card-frame {
+.template-editor-main {
   width: 85%;
 }
 .template-editor-left,
@@ -480,7 +480,7 @@ td.rule-setting {
 }
 
 .rule-content-container {
-  width: 350px;
+  max-width: 350px;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: inherit;

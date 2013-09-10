@@ -123,6 +123,7 @@ class Card::HtmlFormat < Card::Format
     wrap view, args.merge(:frame=>true) do
       %{
         #{ _render_header args }
+        #{ render_help args if args[:show_help] }
         #{ wrap_content( view, args.merge(:body=>true) ) do yield end }
       }
     end
@@ -273,17 +274,16 @@ class Card::HtmlFormat < Card::Format
         %{#{key}="#{attribs[key]}"}
       end * ' '
     end
-    help_args = case opts[:help]
-      when String ; { :text=> opts[:help] }
-      when Symbol ; { :setting => opts[:help] }
-      when Hash   ; opts[:help]
-      else        ; {}
+    help_text = case opts[:help]
+      when String ; _render_help :help_text=> opts[:help]
+      when true   ; _render_help
+      else        ; nil
     end
     %{
       <fieldset #{ attrib_string }>
         <legend>
           <h2>#{ title }</h2>
-          #{ _render_help help_args }
+          #{ help_text }
         </legend>
         #{ editor_wrap( opts[:editor] ) { content } }
       </fieldset>

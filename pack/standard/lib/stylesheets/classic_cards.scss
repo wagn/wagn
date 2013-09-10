@@ -25,15 +25,14 @@ body {
   }
   > .card-header {
     margin: 0;
-    .instruction {
-      color: #440;
-      border: 1px solid #887;
-      background: #ddc;
-      border-radius: 8px;
-      -moz-border-radius: 8px;
-    }
   }
+  > .instruction {
+    color: #440;
+    background: #ddc;
+  }  
 }
+
+
 
 .card-frame,
 .closed-view {

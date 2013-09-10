@@ -39,17 +39,16 @@ format :html do
   end
   
   view :template_editor do |args|
+    custom_menu = link_to_view '', :template_link, :class=>'slotter ui-icon ui-icon-closethick template-editor-close'
     wrap :template_editor, args do
       %{
         <div class="template-editor-left">{{</div> 
-        <div class="template-editor-main card-frame">
-          <h1 class="card-header">
-            #{content_tag :span, card.label, :class=>'card-title'}   
-            #{link_to_view '', :template_link, :class=>'slotter ui-icon ui-icon-closethick template-editor-close'}
-          </h1>
-          <div class="card-body">
-            #{ _render_core args.merge(:unlabeled=>true) }
-          </div>
+        <div class="template-editor-main">
+          #{
+            wrap_frame :template_editor, :title=>card.label, :custom_menu=>custom_menu do
+              _render_core args.merge(:unlabeled=>true)
+            end
+          }
         </div>
         <div class="template-editor-right">}}</div> 
       }

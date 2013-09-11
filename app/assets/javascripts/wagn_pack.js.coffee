@@ -51,9 +51,8 @@ $.extend wagn,
     tinyMCE.init conf
 
   initGoogleAnalytics: (key) ->
-    _gaq = _gaq || []
-    _gaq.push ['_setAccount', key]
-    _gaq.push ['_trackPageview']
+    window._gaq.push ['_setAccount', key]
+    window._gaq.push ['_trackPageview']
 
     initfunc = ()->
       ga = document.createElement 'script'

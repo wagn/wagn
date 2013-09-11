@@ -68,14 +68,9 @@ format :html do
   end
   
   def head_javascript
-    # tinyMCE doesn't load on non-root wagns w/o preinit line
-    
     varvals = [
-      'var wagn={}',
-      "wagn.rootPath='#{Wagn::Conf[:root_path]}'",
-      'window.wagn=wagn',
-      "window.tinyMCEPreInit={base:\"#{wagn_path 'assets/tinymce'}\",query:'3.5.8',suffix:''}",
-      "wagn.tinyMCEConfig={#{ Card.setting(:tiny_mce).to_s.gsub /\s+/, ' ' }}"      
+      "window.wagn={rootPath:'#{Wagn::Conf[:root_path]}',tinyMCEConfig:{#{ Card.setting(:tiny_mce).to_s.gsub /\s+/, ' ' }}}",
+      "window.tinyMCEPreInit={base:\"#{wagn_path 'assets/tinymce'}\",query:'3.5.8',suffix:''}" # tinyMCE doesn't load on non-root wagns w/o preinit line
     ]
     Wagn::Conf[:recaptcha_on]                        and varvals << "wagn.recaptchaKey='#{Wagn::Conf[:recaptcha_public_key]}'"
     c=Card[:double_click] and !Card.toggle c.content and varvals << 'wagn.noDoubleClick=true'
@@ -85,7 +80,7 @@ format :html do
     %(#{ javascript_tag do varvals * ';' end  }      
       #{ javascript_include_tag 'application' }
       <!--[if lt IE 9]>#{ javascript_include_tag 'html5shiv-printshiv' }<![endif]-->
-      #{ javascript_tag do %{wagn.initGoogleAnalytics('#{ga_key}');} end })
+      #{ javascript_tag do %{var _gaq = _gaq || [];wagn.initGoogleAnalytics('#{ga_key}');} end if ga_key })
   end
 end
 

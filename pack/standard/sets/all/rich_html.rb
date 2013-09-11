@@ -44,12 +44,9 @@ format :html do
     wrap :labeled, args do
       %{
         #{ _optional_render :menu, args }
-        
-        <label>
-          #{ _render_title args }
-        </label>
+        <label>#{ _render_title args }</label>
         #{
-          wrap_content :titled do
+          wrap_content :labeled, :class=>'closed-content' do
             _render_closed_content args
           end
         }

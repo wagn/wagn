@@ -77,10 +77,6 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 
 .closed-view {
   white-space: nowrap !important;
-  .closed-content {
-    display: inline;
-    white-space: nowrap !important;
-  }
   overflow: hidden;
   .card-header {
     display: inline-block;
@@ -90,6 +86,9 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
   }
 }
 .closed-content {
+  display: inline;
+  white-space: nowrap !important;
+  
   table, tbody, tr, th, td, p, h1, h2, h3, h4, h5, h6, ul, li, pre, ol, div, span, a, blockquote, img {
     display: inline !important;
     white-space: nowrap !important;
@@ -99,11 +98,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
     display: none !important;
   }
 }
-.labeled-view {
-  label h1, .pointer-list, .pointer-item, .search-result-list, .search-result-item {
-    display: inline;
-  }
-}
+
 .labeled-view:hover .card-menu-link {
   display: inline-block;
 }

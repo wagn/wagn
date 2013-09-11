@@ -91,9 +91,9 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
   font-size: 10px;
   width: 50px;
   padding: 3px 0 3px 25px;
-}
-.navbox-item-label > a.ui-icon {
-  padding: 0;  
+  > a.ui-icon {
+    padding: 0;
+  }
 }
 
 
@@ -121,13 +121,18 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
   }
 }
 
+
 .labeled-view {
+  padding: 5px 0;
   label h1,
   .pointer-list,
   .pointer-item,
   .search-result-list,
   .search-result-item {
     font-size: 1em;
+  }
+  > .content {
+    padding-left: 10px;
   }
 }
 

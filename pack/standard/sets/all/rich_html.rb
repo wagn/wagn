@@ -88,8 +88,8 @@ format :html do
         #{ args.delete :toggler }
         #{ _render_title args }
         #{
-          args[:custom_menu] or unless args[:hide_menu]                        # developer config
-            _optional_render :menu, args, args[:menu_default_hidden] || false  # wagneer config
+          args[:custom_menu] or unless args[:hide_menu]                          # developer config
+            _optional_render :menu, args, (args[:menu_default_hidden] || false)  # wagneer config
           end
         }
       </h1>

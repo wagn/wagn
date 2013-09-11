@@ -123,7 +123,7 @@ class Card::HtmlFormat < Card::Format
     wrap view, args.merge(:frame=>true) do
       %{
         #{ _render_header args }
-        #{ render_help args if args[:show_help] }
+        #{ _render_help args if args[:show_help] }
         #{ wrap_content( view, args.merge(:body=>true) ) do yield end }
       }
     end

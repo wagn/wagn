@@ -76,11 +76,28 @@ format :html do
     c=Card[:double_click] and !Card.toggle c.content and varvals << 'wagn.noDoubleClick=true'
     @css_path                                        and varvals << "wagn.cssPath='#{@css_path}'"
     
-    ga_key = Card.setting("*google analytics key")
     %(#{ javascript_tag do varvals * ';' end  }      
       #{ javascript_include_tag 'application' }
       <!--[if lt IE 9]>#{ javascript_include_tag 'html5shiv-printshiv' }<![endif]-->
-      #{ javascript_tag do %{var _gaq = _gaq || [];wagn.initGoogleAnalytics('#{ga_key}');} end if ga_key })
+      #{ google_analytics_head_javascript })
+#      #{ javascript_tag do %{var _gaq = _gaq || [];wagn.initGoogleAnalytics('#{ga_key}');} end if ga_key })
+  end
+  
+  def google_analytics_head_javascript
+    if ga_key = Card.setting("*google analytics key") #fixme.  escape this?
+      %{
+        <script type="text/javascript">
+          var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', '#{ga_key}']);
+          _gaq.push(['_trackPageview']);
+          (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+          })();
+        </script>
+      }
+    end
   end
 end
 

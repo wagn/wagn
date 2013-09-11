@@ -49,11 +49,16 @@ format :html do
   end
   
   def head_stylesheets
-    if params[:style]
-      args = { :format=>:css }
-      args[:item] = :import if params[:import_styles]
-      @css_path = page_path params[:style], args
-    elsif style_rule = card.rule_card(:style) and style_file = style_rule.fetch( :trait=>:file )
+    manual_style = params[:style]
+    debug        = params[:debug] == 'style'
+    style_rule   = card.rule_card :style
+    
+    if manual_style or debug   
+      path_args = { :format=>:css }
+      path_args[:item] = :import if debug
+      style_cardname = manual_style || (style_rule && style_rule.name)
+      @css_path = page_path style_cardname, path_args
+    elsif style_rule and style_file=style_rule.fetch( :trait=>:file )
       @css_path = style_file.attach.url
     end 
 

@@ -50,20 +50,20 @@ $.extend wagn,
     $.extend conf, user_conf, hard_conf
     tinyMCE.init conf
 
-### Can't get this to work yet.  Intent was to tighten up head tag.
-  initGoogleAnalytics: (key) ->
-    window._gaq.push ['_setAccount', key]
-    window._gaq.push ['_trackPageview']
+# Can't get this to work yet.  Intent was to tighten up head tag.
+#  initGoogleAnalytics: (key) ->
+#    window._gaq.push ['_setAccount', key]
+#    window._gaq.push ['_trackPageview']
+#
+#    initfunc = ()->
+#      ga = document.createElement 'script'
+#      ga.type = 'text/javascript'
+#      ga.async = true
+#      ga.src = `('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'`
+#      s = document.getElementsByTagName('script')[0]
+#      s.parentNode.insertBefore ga, s
+#    initfunc()
 
-    initfunc = ()->
-      ga = document.createElement 'script'
-      ga.type = 'text/javascript'
-      ga.async = true
-      ga.src = `('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'`
-      s = document.getElementsByTagName('script')[0]
-      s.parentNode.insertBefore ga, s
-    initfunc()
-###
   chooseFile: (e, data) ->
     file = data.files[0]
   #  $(this).fileupload '_normalizeFile', 0, file # so file objects have same fields in all browsers

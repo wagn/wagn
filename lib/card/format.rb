@@ -41,7 +41,26 @@ class Card
         view_key = get_set_key view, opts
         
         define_method "_final_#{view_key}", &final
+        define_render_methods view
+      end
 
+      def alias_view alias_view, opts, referent_view=nil
+        subset_views[alias_view] = true if opts && !opts.empty?
+
+        referent_view ||= alias_view
+        alias_opts = Wagn::Loader.current_set_opts || {}
+        referent_view_key = get_set_key referent_view, (opts || alias_opts)
+        alias_view_key    = get_set_key alias_view, alias_opts
+
+        define_method "_final_#{alias_view_key}" do |*a|
+          send "_final_#{referent_view_key}", *a
+        end
+        define_render_methods alias_view
+      end
+
+      def define_render_methods view
+        # note: this could also be done with method_missing. Q: is this any faster?
+        # it's a very common pattern...
         if !method_defined? "render_#{view}"
           define_method "_render_#{view}" do |*a|
             send_final_render_method view, *a
@@ -52,21 +71,7 @@ class Card
           end
         end
       end
-
-      def alias_view alias_view, opts, referent_view=nil
-        subset_views[alias_view] = true if opts && !opts.empty?
-
-        referent_view ||= alias_view
-        alias_opts = Wagn::Loader.current_set_opts || {}
-        referent_view_key = get_set_key referent_view, (opts || alias_opts)
-        alias_view_key = get_set_key alias_view, alias_opts
-
-        class_eval do
-          define_method "_final_#{alias_view_key}".to_sym do |*a|
-            send "_final_#{referent_view_key}", *a
-          end
-        end
-      end
+      
 
       def new card, opts={}
         klass = self != Format ? self : get_format( (opts[:format] || :html).to_sym )
@@ -78,11 +83,7 @@ class Card
       def tagged view, tag
         view and tag and view_tags = @@view_tags[view.to_sym] and view_tags[tag.to_sym]
       end
-    
-      def transactional?
-        false # default, because most formats don't handle create, update, delete events.  might be better name?
-      end
-    
+        
       private
       
       def extract_class_vars view, opts
@@ -190,7 +191,7 @@ class Card
     # ---------- Rendering ------------
     #
 
-    def render view = :view, args={}
+    def render view, args={}
       prefix = args.delete(:allowed) ? '_' : ''
       method = "#{prefix}render_#{canonicalize_view view}"
       if respond_to? method
@@ -257,15 +258,14 @@ class Card
     # ------------- Sub Format and Inclusion Processing ------------
     #
 
-    def subformat subcard, mainline=false
+    def subformat subcard
       #should consider calling "child"
       subcard = Card.fetch( subcard, :new=>{} ) if String===subcard
       sub = self.clone
-      sub.initialize_subformat subcard, self, mainline
+      sub.initialize_subformat subcard, self
     end
 
-    def initialize_subformat subcard, parent, mainline=false
-      @mainline ||= mainline
+    def initialize_subformat subcard, parent
       @parent = parent
       @card = subcard
       @char_count = 0
@@ -286,54 +286,45 @@ class Card
 
       card.update_references( obj_content, true ) if card.references_expired  # I thik we need this genralized
 
-      obj_content.process_content_object do |opts|
-        expand_inclusion(opts) { yield }
+      obj_content.process_content_object do |chunk_opts|
+        expand_inclusion chunk_opts.merge(opts) { yield }
       end
     end
 
     def ok_view view, args={}
-      original_view = view
-
-      view = case
-        when @depth >= @@max_depth   ; :too_deep
-        # prevent recursion.  @depth tracks subformats (view within views)
-        when @@perms[view] == :none  ; view
-        # This may currently be overloaded.  always allowed = skip modes = never modified.  not sure that's right.
-
-        # HANDLE UNKNOWN CARDS ~~~~~~~~~~~~
-        when !card.known? && !self.class.tagged( view, :unknown_ok )
-  
-          case
-          when self.class.transactional? && focal? && ok?( :create )
-            :new
-          when self.class.transactional? && comment_box?( view, args ) && ok?( :comment )
-            view
-          when focal?
-            :not_found
-          else
-            :missing
-          end
-
-        # CHECK PERMISSIONS  ~~~~~~~~~~~~~~~~
-        else
-          perms_required = @@perms[view] || :read
-          args[:denied_task] =
-            if Proc === perms_required
-              :read if !(perms_required.call self)  # read isn't quite right
-            else
-              [perms_required].flatten.find { |task| !ok? task }
-            end
-          args[:denied_task] ? (@@denial_views[view] || :denial) : view
+      approved_view = case
+        when @depth >= @@max_depth      ; :too_deep                    # prevent recursion. @depth tracks subformats
+        when @@perms[view] == :none     ; view                         # view requires no permissions
+        when !card.known? &&
+          !tagged( view, :unknown_ok )  ; view_for_unknown view, args  # handle unknown cards (where view not exempt)
+        else                            ; permitted_view view, args    # run explicit permission checks
         end
 
-      if view != original_view
-        args[:denied_view] = original_view
-      end
-      if focal? && error_code = @@error_codes[view]
+      args[:denied_view] = view if approved_view != view
+      if focal? && error_code = @@error_codes[ approved_view ]
         root.error_status = error_code
       end
-      #warn "ok_view[#{original_view}] #{view}, #{args.inspect}, Cd:#{card.inspect}" #{caller[0..20]*"\n"}"
-      view
+      approved_view
+    end
+  
+    def tagged view, tag
+      self.class.tagged view, tag
+    end
+  
+    def permitted_view view, args
+      perms_required = @@perms[view] || :read
+      args[:denied_task] =
+        if Proc === perms_required
+          :read if !(perms_required.call self)  # read isn't quite right
+        else
+          [perms_required].flatten.find { |task| !ok? task }
+        end
+      
+      if args[:denied_task]
+        @@denial_views[view] || :denial
+      else
+        view
+      end
     end
   
     def ok? task
@@ -343,8 +334,9 @@ class Card
       @ok[task]
     end
   
-    def comment_box? view, args
-      self.class.tagged view, :comment and args[:show] =~ /comment_box/
+    def view_for_unknown view, args
+      # note: overridden in HTML
+      focal? ? :not_found : :missing
     end
 
     def canonicalize_view view
@@ -400,9 +392,8 @@ class Card
         end
       end
       opts[:view] = @main_view || opts[:view] || :open
-      opts[:mainline] = true
       with_inclusion_mode :main do
-        wrap_main process_inclusion( root.card, opts )
+        wrap_main process_inclusion root.card, opts
       end
     end
 
@@ -414,7 +405,7 @@ class Card
       opts.delete_if { |k,v| v.nil? }
       opts.reverse_merge! inclusion_defaults
       
-      sub = subformat tcard, opts[:mainline]
+      sub = subformat tcard
       if opts[:item] #currently needed to handle web params
         opts[:items] = (opts[:items] || {}).reverse_merge :view=>opts[:item]
       end
@@ -472,19 +463,12 @@ class Card
     # ------------ LINKS ---------------
     #
 
-    # FIXME: shouldn't this be in the html version of this?  this should give plain-text links.
-    # Maybe like this:
-    #def final_link klass, href, text=nil
-    #  text = href if text.nil?
-    #  %{[#{klass}]#{href}"#{text && "(#{text.to_s}_"})}
-    #  # or
-    #  %{[#{klass =~ /wanted/ && '[missing]'}#{href}"#{text && "(#{text.to_s}_"})}
-    #end
-
-    # and move this to the html format
-    def final_link href, opts={}
-      text = opts[:text] || href
-      %{<a class="#{opts[:class]}" href="#{href}">#{text}</a>}
+    def final_link href, opts
+      if text = opts[:text]
+        "#{text}[#{href}]"
+      else
+        href
+      end
     end
 
     def build_link href, text=nil
@@ -506,19 +490,20 @@ class Card
 
     def card_link name, text, known
       text ||= name
+      linkname = name.to_name.url_key
       opts = {
         :class => ( known ? 'known-card' : 'wanted-card' ),
         :text  => ( text.to_name.to_show @context_names  )
       }
-      relative_path = known ? name.to_name.url_key : encode_path(name)
-      final_link internal_url( relative_path ), opts
+      if !known && name.to_s != linkname
+        linkname += "?card[name]=#{CGI.escape name.to_s}"
+      end
+      final_link internal_url( linkname ), opts
     end
   
-    def encode_path path
-      ERB::Util.url_encode( path.to_s ).gsub('.', '%2E')
+    def unique_id
+      "#{card.key}-#{Time.now.to_i}-#{rand(3)}" 
     end
-
-    def unique_id() "#{card.key}-#{Time.now.to_i}-#{rand(3)}" end
 
     def internal_url relative_path
       wagn_path relative_path

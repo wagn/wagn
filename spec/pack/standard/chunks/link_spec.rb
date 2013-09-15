@@ -17,17 +17,17 @@ describe Card::Chunk::Link do
 
   it "should handle relative names" do
     @card = Card.new :name=>'Kennedy'
-    render_content('[[+Monroe]]'     ).should == '<a class="wanted-card" href="/Kennedy%2BMonroe">Kennedy+Monroe</a>'
-    render_content('[[_self+Exner]]' ).should == '<a class="wanted-card" href="/Kennedy%2BExner">Kennedy+Exner</a>'
-    render_content('[[Onassis+]]'    ).should == '<a class="wanted-card" href="/Onassis%2BKennedy">Onassis+Kennedy</a>'
+    render_content('[[+Monroe]]'     ).should == '<a class="wanted-card" href="/Kennedy+Monroe">Kennedy+Monroe</a>'
+    render_content('[[_self+Exner]]' ).should == '<a class="wanted-card" href="/Kennedy+Exner">Kennedy+Exner</a>'
+    render_content('[[Onassis+]]'    ).should == '<a class="wanted-card" href="/Onassis+Kennedy">Onassis+Kennedy</a>'
   end
 
   it "should handle relative names in context" do
     @card = Card.new :name=>'Kennedy'
     format_args = { :context_names => [ 'Kennedy'.to_name ] }
-    render_content('[[+Monroe]]'    , format_args ).should == '<a class="wanted-card" href="/Kennedy%2BMonroe">+Monroe</a>'
-    render_content('[[_self+Exner]]', format_args ).should == '<a class="wanted-card" href="/Kennedy%2BExner">+Exner</a>'
-    render_content('[[Onassis+]]'   , format_args ).should == '<a class="wanted-card" href="/Onassis%2BKennedy">Onassis</a>'
+    render_content('[[+Monroe]]'    , format_args ).should == '<a class="wanted-card" href="/Kennedy+Monroe">+Monroe</a>'
+    render_content('[[_self+Exner]]', format_args ).should == '<a class="wanted-card" href="/Kennedy+Exner">+Exner</a>'
+    render_content('[[Onassis+]]'   , format_args ).should == '<a class="wanted-card" href="/Onassis+Kennedy">Onassis</a>'
   end
 
   it "should handle relative urls" do
@@ -39,7 +39,8 @@ describe Card::Chunk::Link do
   end
 
   it "should escape spaces in cardnames with %20 (not +)" do
-    render_content('[[Marie "Mad Dog" Deatherage|Marie]]').should == '<a class="wanted-card" href="/Marie%20%22Mad%20Dog%22%20Deatherage">Marie</a>'
+    render_content('[[Marie "Mad Dog" Deatherage|Marie]]').should ==
+      '<a class="wanted-card" href="/Marie_Mad_Dog_Deatherage?card[name]=Marie+%22Mad+Dog%22+Deatherage">Marie</a>'
   end
 
   it "should not escape content outside of link" do
@@ -52,7 +53,7 @@ describe Card::Chunk::Link do
   end
   
   it "should handle dot (.) in missing cardlink" do
-    render_content("[[Wagn 1.10.12]]").should=='<a class="wanted-card" href="/Wagn%201%2E10%2E12">Wagn 1.10.12</a>'
+    render_content("[[Wagn 1.10.12]]").should=='<a class="wanted-card" href="/Wagn_1_10_12?card[name]=Wagn+1.10.12">Wagn 1.10.12</a>'
   end
 
 end

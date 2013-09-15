@@ -87,6 +87,7 @@ class AccountController < ApplicationController
   end
 
   def forgot_password
+    @card = Card.new
     if request.post? and email = params[:email]
       @account = Account[ email.downcase ]
       case

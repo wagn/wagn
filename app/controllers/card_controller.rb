@@ -141,15 +141,10 @@ class CardController < ApplicationController
       when /^\:(\w+)$/
         Card.fetch $1.to_sym
       else
-        id = params[:id] && ( params[:id].gsub '_', ' ' )
-        # with unknown cards, underscores in urls assumed to indicate spaces.
-        # with known cards, the key look makes this irrelevant
-        # (note that this is not performed on params[:card][:name])
-        
         opts = params[:card]
         opts = opts ? opts.clone : {} #clone so that original params remain unaltered.  need deeper clone?
         opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
-        name = id || opts[:name]
+        name = params[:id] || opts[:name]
         
         if params[:action] == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)

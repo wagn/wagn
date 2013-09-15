@@ -36,20 +36,29 @@ describe Card::Set::All::Account do
 
     context 'for Joe User' do
       before do
-        @joe_user = Account.user
         @joe_user_card = Account.current
+        @parties = @joe_user_card.parties # note: must be called to test resets
       end
 
       it "should initially have only auth and self " do
-        @joe_user_card.parties.should == [Card::AuthID, @joe_user_card.id]
+        @parties.should == [Card::AuthID, @joe_user_card.id]
       end
       
       it 'should update when new roles are set' do
         roles_card = @joe_user_card.fetch :trait=>:roles, :new=>{}
-        #note this is really testing functionality that's used in CardController#update_account
         r1 = Card['r1']
-        Account.as_bot { roles_card.items = [ r1.id ] }
-        @joe_user_card.refresh.parties.should == [ Card::AuthID, r1.id, @joe_user_card.id ]
+
+        Account.as_bot { roles_card.items = [ r1.id ] }        
+        Card['Joe User'].parties.should == @parties            # local cache still has old parties (permission does not change mid-request)        
+                                                               
+        Wagn::Cache.restore                                    # simulate new request -- clears local cache, where, eg, @parties would still be cached on card
+        Account.current_id = Account.current_id                # simulate new request -- current_id assignment clears several class variables
+        
+        new_parties = [ Card::AuthID, r1.id, @joe_user_card.id ]
+        Card['Joe User'].parties.should == new_parties         # @parties regenerated, now with correct values
+        Account.current. parties.should == new_parties
+        
+        # @joe_user_card.refresh(force=true).parties.should == new_parties   # should work, but now superfluous?
       end
     end
     

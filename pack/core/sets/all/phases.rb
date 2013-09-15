@@ -12,7 +12,6 @@ end
 
 
 def store
-#    puts "commit called: #{name}"
   run_callbacks :store do
     #set_read_rule #move to action
     yield

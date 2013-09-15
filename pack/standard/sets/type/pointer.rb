@@ -80,10 +80,7 @@ format :html do
     options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]}
     select_tag("pointer_select", options_for_select(options, card.item_names.first), :class=>'pointer-select')
   end
-end
-
-format do
-  #FIXME!  html hidden in (non-html-format) non-view method. yuck!
+  
   def pointer_items itemview=nil
     type = card.item_type
     typeparam = case ()
@@ -96,7 +93,8 @@ format do
   end
 end
 
-def item_cards( args={} )
+
+def item_cards args={}
   if args[:complete]
     #warn "item_card[#{args.inspect}], :complete"
     Card::Query.new({:referred_to_by=>name}.merge(args)).run
@@ -108,11 +106,17 @@ def item_cards( args={} )
   end
 end
 
-def item_names( args={} )
+def item_names args={}
   context = args[:context] || self.cardname
   self.raw_content.split(/\n+/).map{ |line|
     line.gsub(/\[\[|\]\]/,'')
   }.map{ |link| context==:raw ? link : link.to_name.to_absolute(context) }
+end
+
+def item_ids args={}
+  item_names(args).map do |name|
+    Card.fetch_id name
+  end.compact
 end
 
 def item_type
@@ -170,4 +174,16 @@ def option_text(option)
   name = self.rule(:options_label) || 'description'
   textcard = Card["#{option}+#{name}"]
   textcard ? textcard.content : nil
+end
+
+format :css do
+  view :content do |args|
+    %(#{major_comment "STYLE GROUP: \"#{card.name}\"", '='}#{ _render_core })
+  end    
+  
+  view :core do |args|
+    card.item_cards.map do |item|
+      process_inclusion item, :view=>(params[:item] || :content)
+    end.join "\n\n"
+  end
 end

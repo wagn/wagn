@@ -8,26 +8,26 @@ module Wagn::MigrationHelper
   end
   
   def self.schema_mode type
-    suffix = type.to_s =~ /card/ ? '_cards' : ''
-    ActiveRecord::Base.table_name_suffix = suffix
+    new_suffix = type.to_s =~ /card/ ? '_cards' : ''
+    original_suffix = ActiveRecord::Base.table_name_suffix
+    ActiveRecord::Base.table_name_suffix = new_suffix
     yield
-    ActiveRecord::Base.table_name_suffix = ''
+    ActiveRecord::Base.table_name_suffix = original_suffix
   end
   
   def contentedly &block
     Wagn::Cache.reset_global
-    ar_suffix = ActiveRecord::Base.table_name_suffix
-    ActiveRecord::Base.table_name_suffix = ''
-    Account.as_bot do
-      ActiveRecord::Base.transaction do
-        begin
-          yield
-        ensure
-          Wagn::Cache.reset_global
+    Wagn::MigrationHelper.schema_mode '' do
+      Account.as_bot do
+        ActiveRecord::Base.transaction do
+          begin
+            yield
+          ensure
+            Wagn::Cache.reset_global
+          end
         end
       end
     end
-    ActiveRecord::Base.table_name_suffix = ar_suffix
   end
   
 end

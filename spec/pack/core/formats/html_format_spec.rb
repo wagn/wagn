@@ -8,7 +8,7 @@ describe Card::HtmlFormat do
     it "content" do
       result = render_card(:content, :name=>'A+B')
       assert_view_select result, 'div[class="card-slot content-view ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]' do
-        assert_select 'span[class~="content-content content"]'
+        assert_select 'div[class~="content-content content"]'
       end
     end
 
@@ -39,8 +39,8 @@ describe Card::HtmlFormat do
 
       it "should have the appropriate attributes on open" do
         assert_view_select @ocslot.render(:open), 'div[class="card-slot open-view card-frame ALL TYPE-basic SELF-a"]' do
-          assert_select 'div[class="card-header"]' do
-            assert_select 'h1[class="card-title"]'
+          assert_select 'h1[class="card-header"]' do
+            assert_select 'span[class="card-title"]'
           end
           assert_select 'div[class~="card-body"]'
         end
@@ -48,11 +48,11 @@ describe Card::HtmlFormat do
 
       it "should have the appropriate attributes on closed" do
         v = @ocslot.render(:closed)
-        assert_view_select v, 'div[class="card-slot closed-view ALL TYPE-basic SELF-a"]' do
-          assert_select 'div[class="card-header"]' do
-            assert_select 'h1[class="card-title"]'
+        assert_view_select v, 'div[class="card-slot closed-view card-frame ALL TYPE-basic SELF-a"]' do
+          assert_select 'h1[class="card-header"]' do
+            assert_select 'span[class="card-title"]'
           end
-          assert_select 'span[class~="closed-content content"]'
+          assert_select 'div[class~="closed-content content"]'
         end
       end
     end
@@ -84,19 +84,19 @@ describe Card::HtmlFormat do
 
       it "renders card header" do
         # lots of duplication here...
-        assert_view_select @simple_page, 'div[class="card-header"]' do
-          assert_select 'h1[class="card-title"]'
+        assert_view_select @simple_page, 'h1[class="card-header"]' do
+          assert_select 'span[class="card-title"]'
         end
       end
 
       it "renders card content" do
-        #warn "simple page = #{@simple_page}"
         assert_view_select @simple_page, 'div[class="open-content content card-body"]', 'AlphaBeta'
       end
  
       it "renders card credit" do
-        assert_view_select @simple_page, 'div[id="credit"]', /Wheeled by/ do
-          assert_select 'a', 'Wagn'
+        assert_view_select @simple_page, 'div[class~="SELF-Xcredit"]' do#, /Wheeled by/ do
+          assert_select 'img'
+          assert_select 'a', "Wagn v#{Wagn::Version.release}"
         end
       end
     end
@@ -142,7 +142,9 @@ describe Card::HtmlFormat do
         @layout_card.content="Mainly {{_main|core}}"
         Account.as_bot { @layout_card.save }
 
-        Card::Format.new(@layout_card).render(:layout).should == %{Mainly <div id="main">Mainly {{_main|core}}</div>}
+        rendered = Card::Format.new(@layout_card).render(:layout).should == 
+          %{Mainly <div id="main"><div class="CodeRay">\n  <div class="code"><pre>Mainly {{_main|core}}</pre></div>\n</div>\n</div>}
+          #probably better to check that it matches "Mainly" exactly twice.
       end
     end
 

@@ -5,6 +5,7 @@ class Card
   class Name < SmartName
     Card::Name.params  = Wagn::Conf
     Card::Name.session = proc { Account.current.name }
+    Card::Name.banned_array = ['/']
 
     def star?
       simple? and '*' == s[0,1]

@@ -1,62 +1,14 @@
 # -*- encoding : utf-8 -*-
+
+require_dependency 'card/diff'
+
 class Card::HtmlFormat < Card::Format
   include Card::Diff
   
-  cattr_accessor :default_menu
   attr_accessor  :options_need_save, :start_time, :skip_autosave
 
   # builtin layouts allow for rescue / testing
   LAYOUTS = Wagn::Loader.load_layouts.merge 'none' => '{{_main}}'
- 
-  @@default_menu = [ 
-    { :view=>:edit, :text=>'edit', :if=>:edit, :sub=>[
-        { :view=>:edit,      :text=>'content'       },
-        { :view=>:edit_name, :text=>'name'          },
-        { :view=>:edit_type, :text=>'type: %{type}' },
-        { :related=>{ :name=>:structure, :view=>:edit }, :text=>'structure', :if=>:structure },
-        { :link=>:delete,    :if=>:delete           }
-      ] },
-    { :view=>:home, :text=>'view', :sub=> [
-        { :view=>:home,                    :text=>'refresh'                    },
-        { :page=>:self,                    :text=>'page'                       },
-        { :page=>:type,                    :text=>'type: %{type}'              },
-        { :view=>:history,                 :text=>'history',   :if=>:edit      },
-        { :related=>{ :name=>:structure }, :text=>'structure', :if=>:structure },
-      ] },
-    { :related=>:discussion, :text=>'discuss', :if=>:discuss },
-    { :view=>:options, :text=>'advanced', :sub=>[
-        { :view=>:options, :text=>'rules', :sub=>[
-            :list => { :related_sets=> { :view=>:options, :text=>:text, :path_opts=>:path_opts } }
-          ] },
-        { :plain=>'related', :sub=>[
-            { :list    => { :piecenames => { :page=>:item } }, :if => :piecenames },
-            { :related => :children },
-            { :related => :mates    },
-          ] },
-        { :related=>:referred_to_by, :sub=>[
-            { :related=>:referred_to_by, :text=>"all"        },                  
-            { :related=>:linked_to_by,   :text=>"links"      },                  
-            { :related=>:included_by,    :text=>"inclusions" }
-          ] },            
-        { :related=>:refers_to, :sub=>[
-            { :related=>:refers_to,      :text=>"all"        },
-            { :related=>:links_to,       :text=>"links"      },
-            { :related=>:includes,       :text=>"inclusions" }                  
-          ] },           
-        { :related=>:editors, :if=>:creator, :sub=>[
-            { :related=>:editors, :text=>'all editors'             },
-            { :page=>:creator,    :text=>"creator: %{creator}"     },
-            { :page=>:updater,    :text=>"last editor: %{updater}" },
-          ] },
-      ] },
-      { :link=>:watch,   :if=>:watch   },
-      { :view=>:account, :if=>:account, :sub=>[
-          { :view    => :account, :text=>'details' },
-          { :related => :created },
-          { :related => :edited  }
-        ] }
-
-  ]
 
   INCLUSION_DEFAULTS = {
     :layout => { :view => :core },
@@ -64,9 +16,7 @@ class Card::HtmlFormat < Card::Format
     :normal => { :view => :content }
   }
   
-  def self.transactional?
-    true # HTML can handle create, update, delete events.
-  end
+  
   
   def get_inclusion_defaults
     INCLUSION_DEFAULTS[@mode] || {}
@@ -75,6 +25,22 @@ class Card::HtmlFormat < Card::Format
   def default_item_view
     :closed
   end
+
+  def view_for_unknown view, args
+    case
+    when focal? && ok?( :create )   ;  :new
+    when commentable?( view, args ) ;  view
+    else                               super
+    end
+  end
+
+
+  def commentable? view, args
+    self.class.tagged view, :comment and 
+    args[:show] =~ /comment_box/     and
+    ok? :comment
+  end
+
 
   def get_layout_content(args)
     Account.as_bot do
@@ -107,41 +73,60 @@ class Card::HtmlFormat < Card::Format
     lo_card.content
   end
 
-  def slot_options
-    @@slot_options ||= Card::Chunk::Include.options.reject { |k| k == :view }.unshift :home_view
+  def slot_options args
+    @@slot_option_keys ||= Card::Chunk::Include.options.reject { |k| k == :view }.unshift :home_view
+    options_hash = {}
+    
+    if @context_names.present?
+      options_hash['name_context'] = @context_names.map( &:key ) * ','
+    end
+    
+    @@slot_option_keys.inject(options_hash) do |hash, opt|
+      hash[opt] = args[opt] if args[opt].present?
+      hash
+    end
+    
+    JSON( options_hash )
   end
 
   def wrap view, args = {}
-    classes = ['card-slot', "#{view}-view"]
-    classes << 'card-frame' if args[:frame]
-    classes << card.safe_keys if card
-
-    attributes = { 
-      :class => classes*' ',
-      :style=>args[:style]
-    }
-      
-    attributes['data'] = {}
-    slot_options.each do |key|
-      attributes['data'][key] = args[key] if args[key].present?
-    end
-
-    if card
-      attributes['card-id']  = card.id
-      attributes['card-name'] = card.name
-    end
+    classes = [
+      'card-slot',
+      "#{view}-view",
+      ( 'card-frame' if args[:frame] ),
+      card.safe_keys
+    ].compact
     
-    if @context_names
-      attributes['data']['name_context'] = @context_names.map( &:key ) * ','
+    div = %{<div data-card-id="#{card.id}" data-card-name="#{h card.name}" style="#{h args[:style]}" class="#{classes*' '}" } +
+      %{data-slot='#{html_escape_except_quotes slot_options( args )}'>\n#{yield}\n</div>}
+
+    if args[:no_wrap_comment]
+      div
+    else
+      name = h card.name
+      space = '  ' * @depth
+      %{<!--\n\n#{ space }BEGIN SLOT: #{ name }\n\n-->#{ div }<!--\n\n#{space}END SLOT: #{ name }\n\n-->}
     end
-    
-    content_tag(:div, attributes ) { yield }
   end
 
   def wrap_content view, args={}
-    tag_type = args[:body] ? :div : :span
-    klass = ["#{view}-content content", args[:class], ('card-body' if args[:body])].compact * ' '
-    content_tag( tag_type, :class=>klass ) { yield }
+    css_classes = [
+      "#{view}-content content",
+      args[:class],
+      ('card-body' if args[:body])
+    ]
+    
+    content_tag( :div, :class=>css_classes.compact*' ' ) { yield }
+  end
+  
+  def wrap_frame view, args={}
+    wrap view, args.merge(:frame=>true) do
+      %{
+        #{ _render_header args }
+        #{ _render_help args if args[:show_help] }
+        #{ wrap_content( view, args.merge(:body=>true) ) do yield end }
+      }
+    end
   end
 
   def wrap_main(content)
@@ -151,6 +136,11 @@ class Card::HtmlFormat < Card::Format
       %{<div class="flash-notice">#{ flash[:notice] }</div>}
     end
     }<div id="main">#{content}</div>}
+  end
+
+  
+  def html_escape_except_quotes s
+    s.to_s.gsub(/&/, "&amp;").gsub(/\'/, "&apos;").gsub(/>/, "&gt;").gsub(/</, "&lt;")
   end
 
   def edit_slot args={}
@@ -203,6 +193,11 @@ class Card::HtmlFormat < Card::Format
   
   def unsupported_view view
     "<strong>view <em>#{view}</em> not supported for <em>#{error_cardname}</em></strong>"
+  end
+
+  def final_link href, opts={}
+    text = opts[:text] || href
+    %{<a class="#{opts[:class]}" href="#{href}">#{text}</a>}
   end
 
   def link_to_view text, view, opts={}
@@ -279,17 +274,16 @@ class Card::HtmlFormat < Card::Format
         %{#{key}="#{attribs[key]}"}
       end * ' '
     end
-    help_args = case opts[:help]
-      when String ; { :text=> opts[:help] }
-      when Symbol ; { :setting => opts[:help] }
-      when Hash   ; opts[:help]
-      else        ; {}
+    help_text = case opts[:help]
+      when String ; _render_help :help_text=> opts[:help]
+      when true   ; _render_help
+      else        ; nil
     end
     %{
       <fieldset #{ attrib_string }>
         <legend>
           <h2>#{ title }</h2>
-          #{ _render_help help_args }
+          #{ help_text }
         </legend>
         #{ editor_wrap( opts[:editor] ) { content } }
       </fieldset>
@@ -300,7 +294,7 @@ class Card::HtmlFormat < Card::Format
     if ajax_call?
       @depth == 0 && params[:is_main]
     else
-      @depth == 1 && @mainline
+      @depth == 1 && @mode == :main
     end
   end
 

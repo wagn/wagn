@@ -14,17 +14,16 @@ Feature: Reading and Creating a card
     Then I should see "Home"
     And I should see "Joe User"
     And I should see "Sign out"
-    Then In the main card header I should see a link with class "ui-icon-gear"
+    Then In the main card header I should see a link with class "ui-icon-circle-triangle-s"
     Then In the main card header I click "close Home"
-    Then In the main card header I should see a link with class "ui-icon-gear"
+    Then In the main card header I should see a link with class "ui-icon-circle-triangle-e"
     Then In the main card header I click "open Home"
-    Then In the main card header I should see a link with class "ui-icon-gear"
+    Then In the main card header I should see a link with class "ui-icon-circle-triangle-s"
 
   Scenario: Create a Card
     Given I log in as Joe User
     When I create Phrase card "Buffalo" with content "Me and Me"
 #    And I go to card "Buffalo"
     Then In the main card header  I should see "Buffalo"
-    And  In the main card header  I should see "Phrase"
     And  In the main card content I should see "Me and Me"
 

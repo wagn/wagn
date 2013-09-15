@@ -1,28 +1,31 @@
+$.extend wagn,
+  initializeEditors: (range, map) ->
+    map = wagn.editorInitFunctionMap unless map?
+    $.each map, (selector, fn) ->
+      $.each range.find(selector), ->
+        fn.call $(this)
 
-wagn.initializeEditors = (range, map) ->
-  map = wagn.editorInitFunctionMap unless map?
-  $.each map, (selector, fn) ->
-    $.each range.find(selector), ->
-      fn.call $(this)
-
-wagn.prepUrl = (url, slot)->
-  xtra = {}
-  main = $('#main').children('.card-slot').attr 'card-name'
-  xtra['main'] = main if main?
-  if slot
-    xtra['is_main'] = true if slot.isMain()
-    wagn.slotParams slot.data(), xtra, 'slot'
+  prepUrl: (url, slot)->
+    xtra = {}
+    main = $('#main').children('.card-slot').data 'cardName'
+    xtra['main'] = main if main?
+    if slot
+      xtra['is_main'] = true if slot.isMain()
+      slotdata = slot.data 'slot'
+      wagn.slotParams slotdata, xtra, 'slot' if slotdata?
       
-  url + ( (if url.match /\?/ then '&' else '?') + $.param(xtra) )
+    url + ( (if url.match /\?/ then '&' else '?') + $.param(xtra) )
   
-wagn.slotParams = (raw, processed, prefix)->
-  $.each raw, (key, value)->
-    cgiKey = prefix + '[' + snakeCase(key) + ']'
-    if key == 'items'
-      wagn.slotParams value, processed, cgiKey
-    else
-      processed[cgiKey] = value
-  
+  slotParams: (raw, processed, prefix)->
+    $.each raw, (key, value)->
+      cgiKey = prefix + '[' + snakeCase(key) + ']'
+      if key == 'items'
+        wagn.slotParams value, processed, cgiKey
+      else
+        processed[cgiKey] = value
+
+  pingName: (name, success)->
+    $.getJSON wagn.rootPath + '/', { format: 'json', view: 'status', 'card[name]': name }, success  
 
 jQuery.fn.extend {
   slot: -> @closest '.card-slot'
@@ -31,9 +34,8 @@ jQuery.fn.extend {
     s = @slot()
     v = $(val)
     if v[0]
-      $.each s[0].attributes, (i, att)->
-        if att.name.match(/^data-.*/) && att.value?
-          v.attr att.name, att.value
+      if slotdata = s.attr 'data-slot'
+        v.attr 'data-slot', slotdata if slotdata?
     else #simple text (not html)
       v = val
     s.replaceWith v
@@ -65,10 +67,10 @@ jQuery.fn.extend {
     return if @attr 'no-autosave'
     multi = @closest 'fieldset'
     if multi[0]
-      return unless id = multi.attr 'card-id'
-      reportee = ': ' + multi.attr 'card-name'
+      return unless id = multi.data 'cardId'
+      reportee = ': ' + multi.data 'cardName'
     else
-      id = slot.attr 'card-id'
+      id = slot.data 'cardId'
       reportee = ''
 
     #might be better to put this href base in the html
@@ -108,9 +110,11 @@ $(window).ready ->
   $('body').on 'ajax:success', '.slotter', (event, data) ->
     notice = $(this).attr('notify-success')
     newslot = $(this).setSlotContent data
-    wagn.initializeEditors newslot
-    if notice?
-      newslot.notify notice
+    
+    if newslot.jquery # sometimes response is plaintext
+      wagn.initializeEditors newslot
+      if notice?
+        newslot.notify notice
 
   $('body').on 'ajax:error', '.slotter', (event, xhr) ->
     result = xhr.responseText
@@ -132,9 +136,10 @@ $(window).ready ->
 
   $('body').on 'ajax:beforeSend', '.slotter', (event, xhr, opt)->
     return if opt.skip_before_send
-    
+
     unless opt.url.match /home_view/ #avoiding duplication.  could be better test?
       opt.url = wagn.prepUrl opt.url, $(this).slot()
+    
 
     if $(this).is('form')
       if wagn.recaptchaKey and $(this).attr('recaptcha')=='on' and !($(this).find('.recaptcha-box')[0])
@@ -193,9 +198,9 @@ $(window).ready ->
       s = $(this)
       return false if s.find( '.card-editor' )[0]
       return false if s.closest( '.card-header' )[0]
-      return false unless s.attr('card-id')
+      return false unless s.data('cardId')
       s.addClass 'slotter'
-      s.attr 'href', wagn.rootPath + '/card/edit/~' + s.attr('card-id')
+      s.attr 'href', wagn.rootPath + '/card/edit/~' + s.data('cardId')
       $.rails.handleRemote(s)
       false # don't propagate up to next slot
 
@@ -210,7 +215,7 @@ $(window).ready ->
   #more of this info should be in views; will need to refactor for HTTP DELETE anyway...
   $('.card-slot').on 'click', '.standard-delete', ->
     return if $(this).attr('success-ready') == 'true' #prevent double-click weirdness
-    s = if $(this).isMain() then 'REDIRECT: *previous' else 'TEXT:' + $(this).slot().attr('card-name') + ' removed'
+    s = if $(this).isMain() then 'REDIRECT: *previous' else 'TEXT:' + $(this).slot().data('cardName') + ' removed'
     $(this).attr 'href', $(this).attr('href') + '?success=' + encodeURIComponent(s)
     $(this).attr 'success-ready', 'true'
 
@@ -244,7 +249,7 @@ $(window).ready ->
         msg = $('<span class="name-messages"></span>')
         leg.append msg
       ed.removeClass 'real-name virtual-name known-name'
-      slot_id = box.slot().attr 'card-id' # use id to avoid warning when renaming to name variant
+      slot_id = box.slot().data 'cardId' # use id to avoid warning when renaming to name variant
       if status != 'unknown' and !(slot_id && parseInt(slot_id) == data['id'])
         ed.addClass status + '-name known-name'
         link = 
@@ -263,15 +268,12 @@ $(window).ready ->
     event.preventDefault()
 
 newCaptcha = (form)->
-  recapUri = 'http://www.google.com/recaptcha/api/js/recaptcha_ajax.js'
+  recapUri = 'https://www.google.com/recaptcha/api/js/recaptcha_ajax.js'
   recapDiv = $('<div class="recaptcha-box"></div>')
   $(form).children().last().after recapDiv
   $.getScript recapUri, -> recapDiv.loadCaptcha()
 
 snakeCase = (str)->
   str.replace /([a-z])([A-Z])/g, (match)-> match[0] + '_' + match[1].toLowerCase()
-  
-wagn.pingName = (name, success)->
-  $.getJSON wagn.rootPath + '/', { format: 'json', view: 'status', 'card[name]': name }, success
 
 warn = (stuff) -> console.log stuff if console?

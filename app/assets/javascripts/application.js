@@ -10,9 +10,11 @@
 //= require jquery.iframe-transport.js
 //= require jquery.ui.autocomplete.html.js
 //= require jquery_ujs
+//= require jquery.autosize
 //= require tinymce
 //= require wagn_pack
 //= require wagn
+//= require wagn_menu
 //= require jquerymobile
 
 

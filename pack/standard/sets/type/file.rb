@@ -29,12 +29,17 @@ end
 format :file do
       
   view :core do |args|               # returns send_file args.  not in love with this...
-    if format = card.attachment_format( params[:format] ) # this means we only support known formats.  dislike.       
+    if format = card.attachment_format( params[:format] ) # this means we only support known formats.  dislike.
+      if params[:explicit_file] and r = controller.response
+        r.headers["Expires"] = 1.year.from_now.httpdate
+        #r.headers["Cache-Control"] = "public"  # currently using default "private", because proxy servers could block needed permission checks
+      end
+      
    
   #      elsif ![format, 'file'].member? params[:format]    # formerly supported redirecting to correct file format 
   #        return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #card.attach.url(style) )
 
-      style  = _render_style :style=>params[:size]
+      style = _render_style :style=>params[:size]
       [ card.attach.path( *[style].compact ), #nil or empty arg breaks 1.8.7
         {
           :type => card.attach_content_type,

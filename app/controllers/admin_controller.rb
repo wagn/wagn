@@ -19,6 +19,8 @@ class AdminController < CardController
           Card.cache.delete 'no_logins'
           flash[:notice] = "You're good to go!"
           redirect_to Card.path_setting('/')
+        else
+          show :setup
         end
       end
     else

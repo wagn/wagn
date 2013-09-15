@@ -67,7 +67,6 @@ namespace :wagn do
 
   desc "migrate structure and cards"
   task :migrate =>:environment do
-    Wagn::Conf[:migration] = true  #probably only necessary in migrate:cards?
     stamp = ENV['STAMP_MIGRATIONS']
 
     puts 'migrating structure'
@@ -89,6 +88,7 @@ namespace :wagn do
 
     desc "migrate cards"
     task :cards => :environment do
+      Wagn::Cache.reset_global
       Wagn::Conf[:migration] = true
       Card # this is needed in production mode to insure core db structures are loaded before schema_mode is set
     
@@ -166,10 +166,13 @@ namespace :wagn do
     desc "dump db to bootstrap fixtures"
     task :dump => :environment do
       Wagn::Cache.reset_global
+      
+      Rake::Task['wagn:bootstrap:pack_files'].invoke
+      
       YAML::ENGINE.yamler = 'syck'
       # use old engine while we're supporting ruby 1.8.7 because it can't support Psych,
       # which dumps with slashes that syck can't understand
-
+      
       WAGN_BOOTSTRAP_TABLES.each do |table|
         i = "000"
         File.open("#{Rails.root}/db/bootstrap/#{table}.yml", 'w') do |file|
@@ -184,6 +187,24 @@ namespace :wagn do
             hash
           end)
         end
+      end
+      
+    end
+
+    desc "copy files from template database to standard pack and update cards"
+    task :pack_files => :environment do
+      template_files_dir = "#{Rails.root}/local/files"
+      standard_files_dir = "#{Rails.root}/pack/standard/files"
+      
+      #FIXME - this should delete old revisions
+      
+      FileUtils.remove_dir standard_files_dir, force=true
+      FileUtils.cp_r template_files_dir, standard_files_dir
+      
+      # add a fourth line to the raw content of each image (or file) to identify it as a pack file
+      Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
+        rev = Card::Revision.find card.current_revision_id
+        rev.update_attributes :content=>rev.content + "\nstandard"        
       end
     end
 

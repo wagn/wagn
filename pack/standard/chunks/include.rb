@@ -13,7 +13,7 @@ module Card::Chunk
     }
 
     def interpret match, content
-      in_brackets = match[1]
+      in_brackets = strip_tags match[1]
 #      warn "in_brackets = #{in_brackets}"
       name, @opt_lists = in_brackets.split '|', 2
       name = name.to_s.strip
@@ -32,6 +32,11 @@ module Card::Chunk
         end
 
       @process_chunk = result if !@name
+    end
+
+    def strip_tags string
+      #note: not using ActionView's strip_tags here because this needs to be super fast.
+      string.gsub /\<[^\>]*\>/, ''
     end
 
     def process_options list_string, items

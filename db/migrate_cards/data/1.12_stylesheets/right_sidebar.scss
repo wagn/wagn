@@ -1,0 +1,27 @@
+/*
+This stylesheet defines a simple layout with the sidebar at right.
+*/
+
+
+#primary {
+  margin: 0 1% 3em 1%;
+  float: left;
+  width: 67%;
+}
+#secondary {
+  margin: 0 1% 3em 1%;
+  float: right;
+  width: 28%;
+}
+
+
+@media print {
+  #primary { 
+    width: 100%;
+    float: none;
+    margin: 0;
+  }
+  #secondary {
+    display: none;
+  }
+}

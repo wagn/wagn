@@ -1,79 +1,183 @@
 window.wagn ||= {} #needed to run w/o *head.  eg. jasmine
 
-wagn.editorContentFunctionMap = {
-  '.tinymce-textarea'      : -> tinyMCE.get(@[0].id).getContent()
-  '.pointer-select'        : -> pointerContent @val()
-  '.pointer-multiselect'   : -> pointerContent @val()
-  '.pointer-radio-list'    : -> pointerContent @find('input:checked').val()
-  '.pointer-list-ul'       : -> pointerContent @find('input'        ).map( -> $(this).val() )
-  '.pointer-checkbox-list' : -> pointerContent @find('input:checked').map( -> $(this).val() )
-  '.perm-editor'           : -> permissionsContent this # must happen after pointer-list-ul, I think
-  '.wikirate-topic-tree'   : -> pointerContent @find('.jstree-clicked').map( -> $.trim( $(this).text() ) )
-}
-
-wagn.editorInitFunctionMap = {
-  '.date-editor'           : -> @datepicker { dateFormat: 'yy-mm-dd' }
-  '.tinymce-textarea'      : -> wagn.initTinyMCE @[0].id
-  '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
-  '.file-upload'           : -> @fileupload( add: wagn.chooseFile )#, forceIframeTransport: true )
-  '.etherpad-textarea'     : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
-  '.wikirate-topic-tree'   : -> $(this).jstree
-     plugins: ["themes","html_data","ui","crrm"],
-     ui:      
-       select_multiple_modifier: 'on'
-       initially_select: $(this).closest('.editor').find('.initial-content').text().split '|'
-       selected_parent_close: false
-     themes: icons: false
-
-}
-
-wagn.initPointerList = (input)->
-  optionsCard = input.closest('ul').attr('options-card')
-  input.autocomplete { source: wagn.prepUrl wagn.rootPath + '/' + optionsCard + '.json?view=name_complete' }
-
-wagn.initTinyMCE = (el_id) ->
-  # verify_html: false -- note: this option needed for empty paragraphs to add space.
-  conf = {
-    plugins: 'autoresize'
-    autoresize_max_height: 500
+$.extend wagn,
+  editorContentFunctionMap: {
+    '.tinymce-textarea'      : -> tinyMCE.get(@[0].id).getContent()
+    '.pointer-select'        : -> pointerContent @val()
+    '.pointer-multiselect'   : -> pointerContent @val()
+    '.pointer-radio-list'    : -> pointerContent @find('input:checked').val()
+    '.pointer-list-ul'       : -> pointerContent @find('input'        ).map( -> $(this).val() )
+    '.pointer-checkbox-list' : -> pointerContent @find('input:checked').map( -> $(this).val() )
+    '.perm-editor'           : -> permissionsContent this # must happen after pointer-list-ul, I think
+    '.wikirate-topic-tree'   : -> pointerContent @find('.jstree-clicked').map( -> $.trim( $(this).text() ) )
   }
-  user_conf = if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {}
-  hard_conf = {
-    mode: 'exact'
-    elements: el_id
-    #the two below should probably be made optional, but it may involve migrating old legacy *tinyMCE settings to get rid of stale stuff.
-    content_css: wagn.rootPath + '/assets/application-all.css' + ',' + wagn.rootPath + wagn.local_css_path
-    entity_encoding: 'raw'
+
+  editorInitFunctionMap: {
+    '.date-editor'           : -> @datepicker { dateFormat: 'yy-mm-dd' }
+    'textarea'               : -> $(this).autosize()
+    '.tinymce-textarea'      : -> wagn.initTinyMCE @[0].id
+    '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
+    '.file-upload'           : -> @fileupload( add: wagn.chooseFile )#, forceIframeTransport: true )
+    '.etherpad-textarea'     : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
+    '.wikirate-topic-tree'   : -> $(this).jstree
+       plugins: ["themes","html_data","ui","crrm"],
+       ui:      
+         select_multiple_modifier: 'on'
+         initially_select: $(this).closest('.editor').find('.initial-content').text().split '|'
+         selected_parent_close: false
+       themes: icons: false
+
   }
-  $.extend conf, user_conf, hard_conf
-  tinyMCE.init conf
 
-wagn.chooseFile = (e, data) ->
-  file = data.files[0]
-#  $(this).fileupload '_normalizeFile', 0, file # so file objects have same fields in all browsers
-  $(this).closest('form').data 'file-data', data # stores data on form for use at submission time
+  initPointerList: (input)->
+    optionsCard = input.closest('ul').attr('options-card')
+    input.autocomplete { source: wagn.prepUrl wagn.rootPath + '/' + optionsCard + '.json?view=name_complete' }
 
-  if name_field = $(this).slot().find( '.name-editor input' )
-    # populates card name if blank
-    if name_field[0] and name_field.val() == ''
-      name_field.val file.name.replace( /\..*$/, '' ).replace( /_/g, ' ')
+  initTinyMCE: (el_id) ->
+    # verify_html: false -- note: this option needed for empty paragraphs to add space.
+    conf = {
+      plugins: 'autoresize'
+      autoresize_max_height: 500
+    }
+    user_conf = if wagn.tinyMCEConfig? then wagn.tinyMCEConfig else {}
+    hard_conf = {
+      mode: 'exact'
+      elements: el_id
+      #CSS could be made optional, but it may involve migrating old legacy *tinyMCE settings to get rid of stale stuff.
+      content_css: wagn.rootPath + wagn.cssPath
+      entity_encoding: 'raw'
+    }
+    $.extend conf, user_conf, hard_conf
+    tinyMCE.init conf
 
-  editor = $(this).closest '.card-editor'
-  editor.find('.choose-file').hide()
-  editor.find('.chosen-filename').text file.name
-  editor.find('.chosen-file').show()
+# Can't get this to work yet.  Intent was to tighten up head tag.
+#  initGoogleAnalytics: (key) ->
+#    window._gaq.push ['_setAccount', key]
+#    window._gaq.push ['_trackPageview']
+#
+#    initfunc = ()->
+#      ga = document.createElement 'script'
+#      ga.type = 'text/javascript'
+#      ga.async = true
+#      ga.src = `('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'`
+#      s = document.getElementsByTagName('script')[0]
+#      s.parentNode.insertBefore ga, s
+#    initfunc()
 
-  contentFieldName = this.name.replace( /attach\]$/, 'content]' )
-  editor.append '<input type="hidden" value="CHOSEN" class="upload-card-content" name="' + contentFieldName + '">'
-  # we add and remove the contentField to insure that nothing is added / updated when nothing is chosen.
+  chooseFile: (e, data) ->
+    file = data.files[0]
+  #  $(this).fileupload '_normalizeFile', 0, file # so file objects have same fields in all browsers
+    $(this).closest('form').data 'file-data', data # stores data on form for use at submission time
 
-wagn.openMenu = (link) ->
-  cm = $(link).find '.card-menu'
-  unless $(link).find('.ui-menu-icon')[0]
-    cm.menu position: { my:'right top', at:'left-2 top-3' }, icons: { submenu:'ui-icon-carat-1-w' }
-  cm.show()
-  cm.position my:'right top', at:'right+2 top+2', of: link
+    if name_field = $(this).slot().find( '.name-editor input' )
+      # populates card name if blank
+      if name_field[0] and name_field.val() == ''
+        name_field.val file.name.replace( /\..*$/, '' ).replace( /_/g, ' ')
+
+    editor = $(this).closest '.card-editor'
+    editor.find('.choose-file').hide()
+    editor.find('.chosen-filename').text file.name
+    editor.find('.chosen-file').show()
+
+    contentFieldName = this.name.replace( /attach\]$/, 'content]' )
+    editor.append '<input type="hidden" value="CHOSEN" class="upload-card-content" name="' + contentFieldName + '">'
+    # we add and remove the contentField to insure that nothing is added / updated when nothing is chosen.
+
+  openMenu: (link, tapped) ->
+    l = $(link)
+    cm = l.data 'menu'
+    if !cm?
+      cm = wagn.generateMenu l.slot(), l.data('menu-vars')
+      l.data 'menu', cm
+      cm.menu position: { my:'right top', at:'left-2 top-3' }, icons: { submenu:'ui-icon-carat-1-w' }
+    
+    if tapped
+      cm.addClass 'card-menu-tappable'
+      
+    cm.show()
+    cm.position my:'right top', at:'right+2 top+2', of: link
+
+  closeMenu: (menu) ->
+    $(menu).hide()
+    $(menu).menu "collapseAll", null, true
+
   
+  generateMenu: (slot, vars) ->
+    template_clone = $.extend true, {}, wagn.menu_template
+    items = wagn.generateMenuItems template_clone, vars
+  
+    m = $( '<ul class="card-menu">' + items.join("\n") +  '</ul>' )
+    slot.append m
+    m
+
+  generateMenuItems: (template, vars)->
+    items = []
+    $.each template, (index, i)->
+      return true if i.if && !vars[i.if]
+    
+      if i.text
+        i.text = i.text.replace /\%\{([^}]*)\}/, (m, val)-> vars[val]      
+        i.text = $('<div/>').text(i.text).html() #escapes html
+      
+      item = 
+        if i.link
+          vars[i.link]
+        else if i.plain
+          '<a>' + i.plain + '</a>'
+        else if i.page
+          page = vars[i.page] || i.page
+          text = i.text || page
+          '<a href="' + wagn.rootPath + '/' + wagn.linkname(page) + '">' + text + ' &crarr;</a>'
+        else
+          wagn.generateStandardMenuItem i, vars
+
+      if item
+        if i.list
+          if listsub = wagn.generateListTemplate i.list, vars 
+            i.sub = listsub if listsub.length > 0
+
+        if i.sub
+          item += '<ul>' + wagn.generateMenuItems(i.sub, vars).join("\n") + '</ul>'
+    
+        items.push('<li>' + item + '</li>')
+    items
+
+
+  linkname: (name)-> #duplicates smartname #url_key
+    name.replace(/[^\w\*\+]/g, ' ').replace(/\s+/g,'_')
+
+  generateListTemplate: (list, vars)->
+    items = []
+    if list_vars = vars[list.name]
+      $.each list_vars, (index, itemvars)->
+        template = $.extend {}, list.template
+        $.each Object.keys(template), (index, key)->
+          template[key] = itemvars[template[key]] || template[key]
+        items.push template
+    
+    if list.append
+      items = items.concat list.append
+  
+    items
+
+  generateStandardMenuItem: (i, vars)->
+    linkname = wagn.linkname vars['self']
+    params = i.path_opts || {}
+  
+    if i.related
+      i.view='related'
+      params['related'] = if typeof(i.related) == 'object'
+        $.extend {}, i.related, name: vars[i.related.name]
+      else
+        i.text ||= i.related
+        { 'name': '+*' + i.related }
+      
+    if i.view #following basically reproduces link_to_view.  make own function?
+      params['view'] = i.view unless i.view == 'home'
+      path = wagn.rootPath + '/' + linkname + '?' + $.param(params)
+      text = i.text || i.view
+      '<a href="' + path + '" data-remote="true" class="slotter">' + text + '</a>'
+
 
 $(window).ready ->
 
@@ -95,22 +199,18 @@ $(window).ready ->
   }
 
   $('body').on 'mouseenter', '.card-menu-link', ->
-    wagn.openMenu this
+    wagn.openMenu this, false
     
-  $('body').on 'mouseleave', '.card-menu-link', ->
-    if $(this).find('.ui-menu')[0]
-      cm = $(this).find('.card-menu')
-      cm.hide()
-      cm.menu "collapseAll", null, true
+  $('body').on 'mouseleave', '.card-menu', ->
+    wagn.closeMenu this
 
   $(document).on 'tap', '.card-header', (event) ->
     link = $(this).find('.card-menu-link')
     unless !link[0] or                                             # no gear
-        $(event.target).closest('.card-menu')[0] or                # already in menu
+        link.data('menu') or                                       # already has menu
         event.pageX - $(this).offset().left < $(this).width() / 2  # left half of header
       
-      link.find('.card-menu').addClass 'card-menu-tappable'
-      wagn.openMenu link
+      wagn.openMenu link, true
       event.preventDefault()
   
   $(document).on 'tap', 'body', (event) ->
@@ -300,5 +400,6 @@ navbox_select = (event, ui) ->
     window.location = wagn.rootPath + ui.item.href
 
   $(this).attr('disabled', 'disabled')
+
 
   

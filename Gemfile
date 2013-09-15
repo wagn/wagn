@@ -4,7 +4,7 @@ source 'http://rubygems.org'
 # DEFAULT
 gem 'smartname',    '0.2.2'
 
-gem 'rails',        '~> 3.2.9'
+gem 'rails',        '~> 3.2.14'
 gem 'htmlentities', '~> 4.3'
 gem 'uuid',         '~> 2.3'
 gem 'paperclip',    '~> 2.8'
@@ -16,7 +16,8 @@ gem 'xmlscan',      '~> 0.3'
 
 gem "rubyzip",      "~> 0.9" # only required in module.  should be separated out.
 gem "airbrake",     "~> 3.1"
-
+gem "coderay",      "~> 1.0"
+gem 'sass',         '~> 3.2'
 
 # DATABASE
 
@@ -49,13 +50,13 @@ group :assets do
   gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor
   
   # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one
-  gem 'therubyrhino', :platform=>:ruby        # :ruby is MRI rubies, so if you use a mac ruby ...
+  gem 'therubyrhino', :platform=>:ruby         # :ruby is MRI rubies, so if you use a mac ruby ...
 end
 
 
 
 group :profile do
-  gem 'ruby-prof', '~>0.12.1'                              # profiling
+  gem 'ruby-prof', '~>0.12.1'                  # profiling
   #gem 'test-unit' #was causing errors after cucumber runs.
 end
 
@@ -69,6 +70,7 @@ end
 group :test do
   gem 'cucumber-rails', '~> 1.3', :require=>false # feature-driven-development suite
   gem 'capybara', '~> 1.1'                     # note, selectors were breaking when we used 2.0.1
+  gem 'capybara-webkit'
   gem 'launchy'                                # lets cucumber launch browser windows
 
   gem 'timecop', '=0.3.5'                      # not clear on use/need.  referred to in shared_data.rb 
@@ -82,7 +84,7 @@ group :test do
   gem 'database_cleaner', '~> 0.7'             # used by cucumber for db transactions
   
   gem 'turn', "~>0.8.3", :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
-  gem 'minitest'
+  gem 'minitest', "~>4.0"
   
   #windows stuff
   gem 'win32console', '~> 1.3', :platforms => ['mingw', 'mswin']

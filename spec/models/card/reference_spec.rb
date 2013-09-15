@@ -85,10 +85,10 @@ describe Card::Reference do
   end
 
   it "should update referencers on rename when requested (case 2)" do
-    card = Card['Administrator links+*self+*read']
+    card = Card['Administrator Menu+*self+*read']
     refs = Card::Reference.where(:referee_id => Card::AdminID).map(&:referer_id).sort
     card.update_referencers = true
-    card.name='Administrator links+*type+*read'
+    card.name='Administrator Menu+*type+*read'
     card.save
     Card::Reference.where(:referee_id => Card::AdminID).map(&:referer_id).sort.should == refs
   end

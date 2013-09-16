@@ -1,9 +1,9 @@
 Description:
-    Generates new set files in packs and matching specs.
+    Generates new set files in mods and matching specs.
 
 Example:
     rails generate set standard type tshirt
 
     This will create:
-        pack/standard/sets/type/tshirt.rb
-        spec/pack/standard/sets/type/tshirt_spec.rb
+        mods/standard/sets/type/tshirt.rb
+        spec/mods/standard/sets/type/tshirt_spec.rb

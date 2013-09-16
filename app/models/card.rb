@@ -23,7 +23,7 @@ class Card < ActiveRecord::Base
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
 
-  attr_writer :selected_revision_id #writer because read method is in pack (and does not override upon load)
+  attr_writer :selected_revision_id #writer because read method is in mod (and does not override upon load)
   attr_accessor  :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
     :update_referencers, :was_new_card,              # wrong mechanisms for these
     :comment, :comment_author,                       # obviated soon

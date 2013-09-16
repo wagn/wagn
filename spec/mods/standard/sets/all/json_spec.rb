@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
 
-describe Card::Set::All::Json, "JSON pack" do
+describe Card::Set::All::Json, "JSON mod" do
   context "status view" do
     it "should handle real and virtual cards" do
       r = Card::JsonFormat

@@ -5,5 +5,5 @@ Example:
     rails generate format backup
 
     This will create:
-        pack/standard/formats/backup_format.rb
-        spec/pack/standard/formats/backup_format_spec.rb
+        mods/standard/formats/backup_format.rb
+        spec/mods/standard/formats/backup_format_spec.rb

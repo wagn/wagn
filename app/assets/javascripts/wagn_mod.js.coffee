@@ -141,7 +141,7 @@ $.extend wagn,
     
         items.push('<li>' + item + '</li>')
     items
-
+x``
 
   linkname: (name)-> #duplicates smartname #url_key
     name.replace(/[^\w\*\+]/g, ' ').replace(/\s+/g,'_')
@@ -188,7 +188,7 @@ $(window).ready ->
     $(this).closest('form').data 'file-data', null
     contentField = editor.find( '.upload-card-content' ).remove()
 
-  #navbox pack
+  #navbox mod
   $('.navbox').autocomplete {
     html: 'html',
     source: navbox_results,
@@ -223,7 +223,7 @@ $(window).ready ->
     event.preventDefault()
 
 
-  #pointer pack
+  #pointer mod
   $('body').on 'click', '.pointer-item-add', (event)->
     last_item = $(this).closest('.content-editor').find '.pointer-li:last'
     new_item = last_item.clone()
@@ -241,7 +241,7 @@ $(window).ready ->
       item.find('input').val ''
     event.preventDefault() # Prevent link from following its href
 
-  # permissions pack
+  # permissions mod
   $('body').on 'click', '.perm-vals input', ->
     $(this).slot().find('#inherit').attr('checked',false)
 
@@ -250,7 +250,7 @@ $(window).ready ->
     slot.find('.perm-group input:checked').attr('checked', false)
     slot.find('.perm-indiv input').val('')
 
-  # rstar pack
+  # rstar mod
   $('body').on 'click', '.rule-submit-button', ->
     f = $(this).closest('form')
     if f.find('.set-editor input:checked').val()
@@ -264,7 +264,7 @@ $(window).ready ->
 #    $(this).closest('tr').find('.close-rule-link').click()
 
 
-  # etherpad pack
+  # etherpad mod
   $('body').on 'click', '.etherpad-submit-button', ->
     wagn.padform = $(this).closest('form')
 
@@ -278,7 +278,7 @@ $(window).ready ->
        $(wagn.padform)[0].submit()
     false
 
-  #wagn_org pack (for now)
+  #wagn_org mod (for now)
   $('body').on 'click', '.shade-view h1', ->
     toggleThis = $(this).slot().find('.shade-content').is ':hidden'
     toggleShade $(this).closest('.pointer-list').find('.shade-content:visible').parent()
@@ -290,7 +290,7 @@ $(window).ready ->
     $(firstShade).trigger 'click'
     
 
-  #wikirate pack
+  #wikirate mod
   $('body').on 'mouseenter', '#wikirate-nav > a', ->
     ul = $(this).find 'ul'
     if ul[0]
@@ -348,7 +348,7 @@ pointerContent = (vals) ->
   list = $.map $.makeArray(vals), (v)-> if v then '[[' + v + ']]'
   $.makeArray(list).join "\n"
 
-#navbox pack
+#navbox mod
 reqIndex = 0 #prevents race conditions
 
 navbox_results = (request, response) ->

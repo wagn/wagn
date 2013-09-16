@@ -13,10 +13,10 @@ end
 h[:attachment_web_dir]     ||= h[:root_path] + '/files'
 h[:attachment_storage_dir] ||= "#{Rails.root}/local/files"
 
-h[:pack_dirs] = if %w{ test cucumber }.include? Rails.env
+h[:mod_dirs] = if %w{ test cucumber }.include? Rails.env
   ''
 else
-  h[:pack_dirs] || "#{Rails.root}/local/packs"
+  h[:mod_dirs] || "#{Rails.root}/local/mods"
 end
 
 h[:read_only] = begin

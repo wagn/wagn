@@ -7,11 +7,11 @@ module Wagn
   module Loader
     mattr_accessor :current_set_opts, :current_set_module, :current_set_name
 
-    PACKS = [ 'core', 'standard' ].map { |pack| "#{Rails.root}/pack/#{pack}" }
+    MODS = [ 'core', 'standard' ].map { |mod| "#{Rails.root}/mods/#{mod}" }
 
     def load_set_patterns
-      PACKS.each do |pack|
-        dirname = "#{pack}/set_patterns"
+      MODS.each do |mod|
+        dirname = "#{mod}/set_patterns"
         if File.exists? dirname
           Dir.entries( dirname ).sort.each do |filename|
             if m = filename.match( /^(\d+_)?([^\.]*).rb/) and key = m[2]
@@ -31,22 +31,22 @@ module Wagn
     end
 
     def load_formats
-      #cheating on load issues now by putting all inherited-from formats in core pack.
-      PACKS.each do |pack|
-        load_dir File.expand_path( "#{pack}/formats/*.rb", __FILE__ )
+      #cheating on load issues now by putting all inherited-from formats in core mod.
+      MODS.each do |mod|
+        load_dir File.expand_path( "#{mod}/formats/*.rb", __FILE__ )
       end
     end
 
     def load_chunks      
-      PACKS.each do |pack|
-        load_dir File.expand_path( "#{pack}/chunks/*.rb", __FILE__ )
+      MODS.each do |mod|
+        load_dir File.expand_path( "#{mod}/chunks/*.rb", __FILE__ )
       end
     end
 
     def load_sets
-      PACKS.each { |pack| load_implicit_sets "#{pack}/sets" }
+      MODS.each { |mod| load_implicit_sets "#{mod}/sets" }
 
-      Wagn::Conf[:pack_dirs].split( /,\s*/ ).each do |dirname|
+      Wagn::Conf[:mod_dirs].split( /,\s*/ ).each do |dirname|
         load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
       end
 
@@ -85,8 +85,8 @@ module Wagn
 
     def self.load_layouts
       hash = {}
-      PACKS.each do |pack|
-        dirname = "#{pack}/layouts"
+      MODS.each do |mod|
+        dirname = "#{mod}/layouts"
         next unless File.exists? dirname
         Dir.foreach( dirname ) do |filename|
           next if filename =~ /^\./

@@ -12,7 +12,7 @@ end
 def attach_array_set i, v
   rev_id = ( cr = current_revision and cr.id )
   c = attach_array rev_id
-  c = c[0..2] # make sure there is no pack set for uploaded files
+  c = c[0..2] # make sure there is no mod set for uploaded files
   
   if c[i] != v
     c[i] = v
@@ -22,7 +22,7 @@ end
 def attach_file_name()    attach_array[0] end
 def attach_content_type() attach_array[1] end
 def attach_file_size()    attach_array[2] end
-def attach_pack()         attach_array[3] end
+def attach_mod()         attach_array[3] end
 
 def attach_extension()    attach.send( :interpolate, ':extension' )  end
 
@@ -112,9 +112,9 @@ end
 module Paperclip::Interpolations
 
   def local at, style_name
-    if pack = at.instance.attach_pack
-      # generalize this to work with any pack (needs design)
-      "#{Rails.root}/pack/#{pack}/files"
+    if mod = at.instance.attach_mod
+      # generalize this to work with any mod (needs design)
+      "#{Rails.root}/mods/#{mod}/files"
     else
       Wagn::Conf[:attachment_storage_dir]
     end

@@ -49,7 +49,7 @@ module Wagn::Location
    # -----------( urls and redirects from application.rb) ----------------
 
 
-  # FIXME: missing test
+  # FIXME: missing test  shouldn't this have the rootpath?
   def page_path title, opts={}
     format = (opts[:format] ? ".#{opts.delete(:format)}"  : "")
     vars = ''

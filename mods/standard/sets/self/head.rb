@@ -37,7 +37,7 @@ format :html do
         bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="#{ root.path :view=>:edit }"/>}
       end
 
-      # RSS # move to packs!
+      # RSS # move to mods!
       if root.card.type_id == Card::SearchTypeID
         opts = { :format => :rss }
         root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }

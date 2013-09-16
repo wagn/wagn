@@ -141,7 +141,6 @@ $.extend wagn,
     
         items.push('<li>' + item + '</li>')
     items
-x``
 
   linkname: (name)-> #duplicates smartname #url_key
     name.replace(/[^\w\*\+]/g, ' ').replace(/\s+/g,'_')

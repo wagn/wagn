@@ -3,7 +3,11 @@ require 'csv'
 
 format :csv do
   def get_inclusion_defaults
-    { :view => @depth == 1 ? :csvrow : :core }
+    { :view => :core}
+  end
+  
+  def default_item_view 
+    @depth == 0 ? :csvrow : :core
   end
   
   view :csvrow do |args|

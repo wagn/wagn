@@ -158,9 +158,6 @@ class Card::HtmlFormat < Card::Format
   end
 
   #### --------------------  additional helpers ---------------- ###
-  def notice #note, this is only needed if you want the notice somewhere other than the end of the slot
-    %{<div class="card-notice"></div>}
-  end
 
   def rendering_error exception, view
     %{

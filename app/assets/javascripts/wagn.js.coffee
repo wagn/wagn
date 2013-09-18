@@ -46,7 +46,11 @@ jQuery.fn.extend {
     notice = slot.find '.card-notice'
     unless notice[0]
       notice = $('<div class="card-notice"></div>')
-      slot.append notice 
+      form = slot.find('.card-form')
+      if form[0]
+        $(form[0]).append notice
+      else
+        slot.append notice 
     notice.html message
     notice.show 'blind'
 
@@ -107,20 +111,21 @@ $(window).ready ->
   setTimeout (-> wagn.initializeEditors $('body')), 10
   #  dislike the timeout, but without this forms with multiple TinyMCE editors were failing to load properly
 
-  $('body').on 'ajax:success', '.slotter', (event, data) ->
-    notice = $(this).attr('notify-success')
-    newslot = $(this).setSlotContent data
-    
-    if newslot.jquery # sometimes response is plaintext
-      wagn.initializeEditors newslot
-      if notice?
-        newslot.notify notice
+  $('body').on 'ajax:success', '.slotter', (event, data, c, d) ->
+    if data.redirect
+      window.location=data.redirect
+    else
+      notice = $(this).attr('notify-success')
+      newslot = $(this).setSlotContent data
+        
+      if newslot.jquery # sometimes response is plaintext
+        wagn.initializeEditors newslot
+        if notice?
+          newslot.notify notice
 
   $('body').on 'ajax:error', '.slotter', (event, xhr) ->
     result = xhr.responseText
-    if xhr.status == 303 #redirect
-      window.location=result
-    else if xhr.status == 403 #permission denied
+    if xhr.status == 403 #permission denied
       $(this).setSlotContent result
     else
       $(this).notify result

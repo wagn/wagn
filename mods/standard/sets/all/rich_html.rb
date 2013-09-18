@@ -249,7 +249,6 @@ format :html do
               #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
             </div>
           </fieldset>
-          #{ notice }
         }
       end
     end

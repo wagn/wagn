@@ -150,7 +150,7 @@ $.extend wagn,
     if list_vars = vars[list.name]
       $.each list_vars, (index, itemvars)->
         template = $.extend {}, list.template
-        $.each Object.keys(template), (index, key)->
+        $.map template, (val, key)->
           template[key] = itemvars[template[key]] || template[key]
         items.push template
     

@@ -51,7 +51,8 @@ class ApplicationController < ActionController::Base
   def wagn_redirect url
     url = wagn_url url #make sure we have absolute url
     if ajax?
-      render :text => url, :status => 303
+      # lets client reset window location (not just receive redirected response)
+      render :json => {:redirect=> url}
     else
       redirect_to url
     end

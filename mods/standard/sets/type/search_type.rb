@@ -99,6 +99,16 @@ format :data do
   end
 end
   
+format :csv do
+  view :card_list do |args|
+    items = super args
+    if @depth == 0
+      render_csv_title_row + items
+    else
+      items
+    end
+  end
+end
     
 
 format :html do

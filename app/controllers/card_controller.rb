@@ -38,7 +38,6 @@ class CardController < ApplicationController
     end
   end
 
-
   def rollback
     revision = card.revisions[params[:rev].to_i - 1]
     card.update_attributes! :content=>revision.content

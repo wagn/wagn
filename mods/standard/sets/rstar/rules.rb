@@ -192,7 +192,6 @@ format :html do
            #{ button_tag 'Cancel', :class=>'rule-cancel-button slotter', :type=>'button',
                 :href=>path( :view=>( card.new_card? ? :closed_rule : :open_rule ), :card=>open_rule, :item=>:view_rule ) }
         </div>
-        #{notice }
       }
     end
   end

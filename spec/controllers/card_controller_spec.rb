@@ -118,7 +118,7 @@ describe CardController do
             "~plus~color" => { :type=>'Phrase', :content => "red"  }
           }
         }
-        assert_response 303
+        assert_response 200
         Card["Gala"].should_not be_nil
         Card["Gala+kind"].content.should == 'apple'
         Card["Gala+color"].type_name.should == 'Phrase'
@@ -133,7 +133,9 @@ describe CardController do
     it "redirects to thanks if present" do
       login_as 'joe_admin'
       xhr :post, :create, :success => 'REDIRECT: /thank_you', :card => { "name" => "Wombly" }
-      assert_response 303, "/thank_you"
+      assert_response 200
+      json = JSON.parse response.body
+      json['redirect'].should =~ /^http.*\/thank_you$/
     end
 
     it "redirects to card if thanks is blank" do

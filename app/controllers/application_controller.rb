@@ -52,6 +52,7 @@ class ApplicationController < ActionController::Base
     url = wagn_url url #make sure we have absolute url
     if ajax?
       # lets client reset window location (not just receive redirected response)
+      # formerly used 303 response, but that gave IE the fits
       render :json => {:redirect=> url}
     else
       redirect_to url

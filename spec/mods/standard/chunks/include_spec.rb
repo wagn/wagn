@@ -78,15 +78,14 @@ describe Card::Chunk::Include, "Inclusion" do
       alpha = newcard 'Alpha', "Pooey"
       beta = newcard 'Beta', "{{Alpha}}"
       result = Card::Format.new(beta).render_core
-      #warn "result = #{result}"
-      assert_view_select result, 'div[class~="content"]', "Pooey"
+      assert_view_select result, 'div[class~="card-content"]', "Pooey"
     end
 
     it "should handle simple relative names" do
       alpha = newcard 'Alpha', "{{#{Card::Name.joint}Beta}}"
       beta = newcard 'Beta'
       alpha_beta = Card.create :name=>"#{alpha.name}#{Card::Name.joint}Beta", :content=>"Woot"
-      assert_view_select Card::Format.new(alpha).render_core, 'div[class~=content]', "Woot"
+      assert_view_select Card::Format.new(alpha).render_core, 'div[class~=card-content]', "Woot"
     end
     
     it "should handle complex relative names" do
@@ -95,7 +94,7 @@ describe Card::Chunk::Include, "Inclusion" do
       bob_address = Card.create! :name=>'bob+address'
 
       r=Card::Format.new(bob_address.reload).render_core
-      assert_view_select r, 'div[class~=content]', "Sparta"
+      assert_view_select r, 'div[class~=card-content]', "Sparta"
       Card.fetch("bob+address").includees.map(&:name).should == [bob_city.name]
     end
 
@@ -105,7 +104,7 @@ describe Card::Chunk::Include, "Inclusion" do
       delta = newcard 'Delta', "Booya"
       r=Card::Format.new( alpha ).render_core
       #warn "r=#{r}"
-      assert_view_select r, 'div[class~=content]'
+      assert_view_select r, 'div[class~=card-content]'
       r.should =~ /Booya/
     end
 
@@ -154,19 +153,19 @@ describe Card::Chunk::Include, "Inclusion" do
       beta = newcard 'Beta', "{{Alpha|shade:off}}"
       r=Card::Format.new(newcard('Bee', "{{Alpha|shade:off}}" )).render_core
       assert_view_select r, 'div[style~="shade:off;"]' do
-        assert_select 'div[class~=content]', "Pooey"
+        assert_select 'div[class~=card-content]', "Pooey"
       end
       r=Card::Format.new(newcard('Cee', "{{Alpha| shade: off }}" )).render_core
       assert_view_select r, 'div[style~="shade:off;"]' do
-        assert_select 'div[class~=content]', "Pooey"
+        assert_select 'div[class~=card-content]', "Pooey"
       end
       r=Card::Format.new(newcard('Dee', "{{Alpha| shade:off }}" )).render_core
       assert_view_select r, 'div[style~="shade:off;"]' do
-        assert_select 'div[class~="content"]', "Pooey"
+        assert_select 'div[class~="card-content"]', "Pooey"
       end
       r=Card::Format.new(newcard('Eee', "{{Alpha| shade:on }}" )).render_core
       assert_view_select r, 'div[style~="shade:on;"]' do
-        assert_select 'div[class~="content"]', "Pooey"
+        assert_select 'div[class~="card-content"]', "Pooey"
       end
     end
 

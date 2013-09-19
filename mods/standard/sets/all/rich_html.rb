@@ -22,10 +22,10 @@ format :html do
   end
 
   view :content do |args|
-    wrap :content, args do
+    wrap :content, args.merge(:slot_class=>'card-content') do
       %{
         #{ optional_render :menu, args, default_hidden=true }
-        #{ wrap_content( :content ) { _render_core args }   }
+        #{ _render_core }
       }
     end
   end
@@ -34,7 +34,7 @@ format :html do
     wrap :titled, args do
       %{
         #{ _render_header args.merge( :menu_default_hidden=>true ) }
-        #{ wrap_content( :titled, :body=>true ) { _render_core args } }
+        #{ wrap_body( :content=>true ) { _render_core args } }
         #{ optional_render :comment_box, args }
       }
     end
@@ -46,7 +46,7 @@ format :html do
         #{ _optional_render :menu, args }
         <label>#{ _render_title args }</label>
         #{
-          wrap_content :labeled, :class=>'closed-content' do
+          wrap_body :class=>'closed-content', :content=>true do
             _render_closed_content args
           end
         }
@@ -71,7 +71,7 @@ format :html do
       :title  => "close #{card.name}",
       :class  => "close-icon ui-icon ui-icon-circle-triangle-s toggler slotter nodblclick"
       
-    wrap_frame :open, args do
+    wrap_frame :open, args.merge(:content=>true) do
       %{
          #{ _render_open_content args }
          #{ optional_render :comment_box, args }
@@ -141,7 +141,7 @@ format :html do
       :title => "open #{card.name}",
       :class => "open-icon ui-icon ui-icon-circle-triangle-e toggler slotter nodblclick"
       
-    wrap_frame :closed, args do
+    wrap_frame :closed, args.merge(:content=>true, :body_class=>'closed-content') do
 #    wrap :closed, args do
       _render_closed_content args
     end
@@ -480,7 +480,11 @@ format :html do
             end}
           </div>
           <div class="revision-navigation">#{ revision_menu }</div>
-          #{ wrap_content( :revision, :body=>true ) { _render_diff } }
+          #{ 
+            wrap_body :body_class=>'revision-content', :content=>true do
+             _render_diff
+            end
+          }
         }
       end
     end

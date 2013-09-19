@@ -167,7 +167,7 @@ fieldset {
   white-space: normal;
 }
 pre,
-.TYPE-plain_text > .content {
+.TYPE-plain_text.content {
   white-space: pre-wrap;       /* css-3 */
   white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
   white-space: -pre-wrap;      /* Opera 4-6 */

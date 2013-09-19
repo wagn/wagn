@@ -94,6 +94,7 @@ class Card::HtmlFormat < Card::Format
       'card-slot',
       "#{view}-view",
       ( 'card-frame' if args[:frame] ),
+      ( args[:slot_class] if args[:slot_class] ),
       card.safe_keys
     ].compact
     
@@ -108,23 +109,22 @@ class Card::HtmlFormat < Card::Format
       %{<!--\n\n#{ space }BEGIN SLOT: #{ name }\n\n-->#{ div }<!--\n\n#{space}END SLOT: #{ name }\n\n-->}
     end
   end
-
-  def wrap_content view, args={}
+  
+  def wrap_body args={}
     css_classes = [
-      "#{view}-content content",
-      args[:class],
-      ('card-body' if args[:body])
+      'card-body',
+      ( args[:body_class] if args[:body_class] ),
+      ( 'card-content' if args[:content] )
     ]
-    
     content_tag( :div, :class=>css_classes.compact*' ' ) { yield }
   end
-  
+    
   def wrap_frame view, args={}
     wrap view, args.merge(:frame=>true) do
       %{
         #{ _render_header args }
         #{ _render_help args if args[:show_help] }
-        #{ wrap_content( view, args.merge(:body=>true) ) do yield end }
+        #{ wrap_body args.merge(:content=>true) do yield end }
       }
     end
   end

@@ -7,9 +7,7 @@ describe Card::HtmlFormat do
 
     it "content" do
       result = render_card(:content, :name=>'A+B')
-      assert_view_select result, 'div[class="card-slot content-view ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]' do
-        assert_select 'div[class~="content-content content"]'
-      end
+      assert_view_select result, 'div[class="card-slot content-view card-content ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]'
     end
 
 
@@ -28,7 +26,7 @@ describe Card::HtmlFormat do
         assert_select 'h1' do
           assert_select 'span'
         end
-        assert_select 'div[class~="titled-content"]', 'AlphaBeta'
+        assert_select 'div[class="card-body card-content"]', 'AlphaBeta'
       end
     end
 
@@ -52,7 +50,7 @@ describe Card::HtmlFormat do
           assert_select 'h1[class="card-header"]' do
             assert_select 'span[class="card-title"]'
           end
-          assert_select 'div[class~="closed-content content"]'
+          assert_select 'div[class~="closed-content card-content"]'
         end
       end
     end
@@ -90,7 +88,7 @@ describe Card::HtmlFormat do
       end
 
       it "renders card content" do
-        assert_view_select @simple_page, 'div[class="open-content content card-body"]', 'AlphaBeta'
+        assert_view_select @simple_page, 'div[class="card-body card-content"]', 'AlphaBeta'
       end
  
       it "renders card credit" do

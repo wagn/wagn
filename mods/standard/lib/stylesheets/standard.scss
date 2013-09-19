@@ -131,7 +131,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
   .search-result-item {
     font-size: 1em;
   }
-  > .content {
+  > .card-content {
     padding-left: 10px;
   }
 }
@@ -385,7 +385,7 @@ del.diffmod,
 /*- KEY DEFAULT CONTENT    - */
 /*-------------------------- */
 
-.SELF-home-original > .content {
+.SELF-home-original.content {
   ul {
     list-style-type: none;
     margin: 1em;
@@ -424,7 +424,7 @@ del.diffmod,
 }
 
 
-.SELF-wagneer_menu > .content {
+.SELF-wagneer_menu.content {
   > p {
     margin-left: 6%;
     text-indent: -6%;

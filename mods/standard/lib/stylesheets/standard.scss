@@ -301,7 +301,7 @@ ul.pointer {
 .revision-title {
   font-weight: bold;
 }
-.revision-content {
+.history-view > .card-content {
   margin: 0px 1px;
   padding: 10px 5px;
 }
@@ -385,7 +385,7 @@ del.diffmod,
 /*- KEY DEFAULT CONTENT    - */
 /*-------------------------- */
 
-.SELF-home-original.content {
+.SELF-home-original.card-content {
   ul {
     list-style-type: none;
     margin: 1em;
@@ -424,7 +424,7 @@ del.diffmod,
 }
 
 
-.SELF-wagneer_menu.content {
+.SELF-wagneer_menu.card-content {
   > p {
     margin-left: 6%;
     text-indent: -6%;

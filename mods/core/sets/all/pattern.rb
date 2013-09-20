@@ -53,7 +53,7 @@ def reset_patterns_if_rule saving=false
   end
 end
 
-def safe_keys
+def safe_set_keys
   patterns.map( &:safe_key ).reverse * " "
 end
 

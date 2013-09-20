@@ -121,7 +121,7 @@ input[type=submit]:focus,
 input[type=button]:focus {
   color: #000
 }
-.revision-content,
+.history-view > .card-content,
 .conflict-view,
 body#tinymce {
   background: $input_color;
@@ -181,7 +181,9 @@ body.mceContentBody {
   font-style: italic;
 }
 
-
+.TYPE-image.card-content img {
+  max-width: 100%;
+}
 
 /*---------( Search ) ---------- */
 

@@ -17,7 +17,6 @@ class Card::HtmlFormat < Card::Format
   }
   
   
-  
   def get_inclusion_defaults
     INCLUSION_DEFAULTS[@mode] || {}
   end
@@ -34,13 +33,11 @@ class Card::HtmlFormat < Card::Format
     end
   end
 
-
   def commentable? view, args
     self.class.tagged view, :comment and 
     args[:show] =~ /comment_box/     and
     ok? :comment
   end
-
 
   def get_layout_content(args)
     Account.as_bot do
@@ -93,9 +90,8 @@ class Card::HtmlFormat < Card::Format
     classes = [
       'card-slot',
       "#{view}-view",
-      ( 'card-frame' if args[:frame] ),
       ( args[:slot_class] if args[:slot_class] ),
-      card.safe_keys
+      card.safe_set_keys
     ].compact
     
     div = %{<div data-card-id="#{card.id}" data-card-name="#{h card.name}" style="#{h args[:style]}" class="#{classes*' '}" } +
@@ -113,16 +109,17 @@ class Card::HtmlFormat < Card::Format
   def wrap_body args={}
     css_classes = [ 'card-body' ]
     css_classes << args[:body_class]                  if args[:body_class]
-    css_classes += [ 'card-content', card.safe_keys ] if args[:content]
+    css_classes += [ 'card-content', card.safe_set_keys ] if args[:content]
     content_tag :div, :class=>css_classes.compact*' ' do
       yield
     end
   end
     
   def wrap_frame view, args={}
-    wrap view, args.merge(:frame=>true) do
+    wrap view, args.merge(:slot_class=>'card-frame') do
       %{
         #{ _render_header args }
+        #{ %{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader] }
         #{ _render_help args if args[:show_help] }
         #{ wrap_body args.merge(:content=>true) do yield end }
       }
@@ -140,8 +137,10 @@ class Card::HtmlFormat < Card::Format
 
   
   def html_escape_except_quotes s
+    # to be used inside single quotes (makes for readable json attributes)
     s.to_s.gsub(/&/, "&amp;").gsub(/\'/, "&apos;").gsub(/>/, "&gt;").gsub(/</, "&lt;")
   end
+
 
   def edit_slot args={}
     if card.hard_template
@@ -299,69 +298,6 @@ class Card::HtmlFormat < Card::Format
 
   def fancy_title title=nil
     raw %{<span class="card-title">#{showname(title).to_name.parts.join %{<span class="joint">+</span>} }</span>}
-  end
-
-  def load_revisions
-    @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i
-    @revision = card.revisions[@revision_number - 1]
-    @previous_revision = @revision ? card.previous_revision( @revision.id ) : nil
-    @show_diff = (params[:mode] != 'false')
-  end
-
-
-  # navigation for revisions -
-  # --------------------------------------------------
-  # some of this should be in views, maybe most
-  def revision_link text, revision, name, accesskey='', mode=nil
-    link_to text, path(:view=>:history, :rev=>revision, :mode=>(mode || params[:mode] || true) ),
-      :class=>"slotter", :remote=>true, :rel=>'nofollow'
-  end
-
-  def rollback to_rev=nil
-    to_rev ||= @revision_number
-    if card.ok?(:update) && !(card.current_revision==@revision)
-      link_to 'Save as current', path(:action=>:rollback, :rev=>to_rev),
-        :class=>'slotter', :remote=>true
-    end
-  end
-
-  def revision_menu
-    revision_menu_items.flatten.map do |item|
-      "<span>#{item}</span>"
-    end.join('')
-  end
-
-  def revision_menu_items
-    items = [back_for_revision, forward, see_or_hide_changes_for_revision]
-    items << rollback unless Wagn::Conf[:recaptcha_on]
-    items
-  end
-
-  def forward
-    if @revision_number < card.revisions.count
-      revision_link('Newer', @revision_number +1, 'to_next_revision', 'F' ) +
-        raw(" <small>(#{card.revisions.count - @revision_number})</small>")
-    else
-      'Newer <small>(0)</small>'
-    end
-  end
-
-  def back_for_revision
-    if @revision_number > 1
-      revision_link('Older',@revision_number - 1, 'to_previous_revision') +
-        raw("<small>(#{@revision_number - 1})</small>")
-    else
-      'Older <small>(0)</small>'
-    end
-  end
-
-  def see_or_hide_changes_for_revision
-    revision_link(@show_diff ? 'Hide changes' : 'Show changes',
-      @revision_number, 'see_changes', 'C', (@show_diff ? 'false' : 'true'))
-  end
-
-  def autosave_revision
-     revision_link("Autosaved Draft", card.revisions.count, 'to autosave')
   end
 
 end

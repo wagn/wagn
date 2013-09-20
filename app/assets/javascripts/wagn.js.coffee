@@ -247,24 +247,25 @@ $(window).ready ->
     wagn.pingName name, (data)->
       return null if box.val() != name # avert race conditions
       status = data['status']
-      ed = box.parent()
-      leg = box.closest('fieldset').find('legend')
-      msg = leg.find '.name-messages'
-      unless msg[0]
-        msg = $('<span class="name-messages"></span>')
-        leg.append msg
-      ed.removeClass 'real-name virtual-name known-name'
-      slot_id = box.slot().data 'cardId' # use id to avoid warning when renaming to name variant
-      if status != 'unknown' and !(slot_id && parseInt(slot_id) == data['id'])
-        ed.addClass status + '-name known-name'
-        link = 
-        qualifier = if status == 'virtual' #wish coffee would let me use  a ? b : c syntax here
-          'in virtual'
+      if status
+        ed = box.parent()
+        leg = box.closest('fieldset').find('legend')
+        msg = leg.find '.name-messages'
+        unless msg[0]
+          msg = $('<span class="name-messages"></span>')
+          leg.append msg
+        ed.removeClass 'real-name virtual-name known-name'
+        slot_id = box.slot().data 'cardId' # use id to avoid warning when renaming to name variant
+        if status != 'unknown' and !(slot_id && parseInt(slot_id) == data['id'])
+          ed.addClass status + '-name known-name'
+          link = 
+          qualifier = if status == 'virtual' #wish coffee would let me use  a ? b : c syntax here
+            'in virtual'
+          else
+            'already in'
+          msg.html '"<a href="' + wagn.rootPath + '/' + data['url_key'] + '">' + name + '</a>" ' + qualifier + ' use'
         else
-          'already in'
-        msg.html '"<a href="' + wagn.rootPath + '/' + data['url_key'] + '">' + name + '</a>" ' + qualifier + ' use'
-      else
-        msg.html ''
+          msg.html ''
         
   $('body').on 'click', '.render-error-link', (event) ->
     msg = $(this).closest('.render-error').find '.render-error-message'

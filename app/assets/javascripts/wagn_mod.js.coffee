@@ -33,6 +33,14 @@ $.extend wagn,
     optionsCard = input.closest('ul').attr('options-card')
     input.autocomplete { source: wagn.prepUrl wagn.rootPath + '/' + optionsCard + '.json?view=name_complete' }
 
+  setTinyMCEConfig: (string)->
+    setter = ()-> 
+      try
+        $.parseJSON string
+      catch
+        {}
+    wagn.tinyMCEConfig = setter()
+    
   initTinyMCE: (el_id) ->
     # verify_html: false -- note: this option needed for empty paragraphs to add space.
     conf = {

@@ -21,7 +21,7 @@ view :setup, :tags=>:unknown_ok do |args|
 end
 
 view :show_cache do |args|
-  wrap :show_cache, :frame=>true do 
+  wrap_frame :show_cache, args do 
     key = card.key
     cache_card = Card.fetch(key)
     db_card = Card.find_by_key(key)

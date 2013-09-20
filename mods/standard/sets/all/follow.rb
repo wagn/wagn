@@ -1,3 +1,35 @@
+format :html do
+  
+  watch_perms = lambda { |r| Account.logged_in? && !r.card.new_card? }
+  view :watch, :tags=>:unknown_ok, :denial=>:blank, :perms=>watch_perms do |args|
+    
+    wrap :watch, args do
+      if card.watching_type?
+        watching_type_cards
+      else
+        link_args = if card.watching?
+          ["following", :off, "stop sending emails about changes to #{card.cardname}", { :hover_content=> 'unfollow' } ]
+        else
+          ["follow", :on, "send emails about changes to #{card.cardname}" ]
+        end
+        watch_link *link_args
+      end
+    end
+  end
+
+  def watching_type_cards
+    %{<div class="faint">(following)</div>} #yuck
+  end
+
+  def watch_link text, toggle, title, extra={}
+    link_to "#{text}", path(:action=>:watch, :toggle=>toggle), 
+      {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :title=>title, :remote=>true, :method=>'post'}.merge(extra)
+  end
+  
+end
+
+
+
 event :notify_followers, :after=>:extend do
   begin
     return false if Card.record_timestamps==false || Wagn::Conf[:migration]
@@ -59,7 +91,11 @@ end
 
 def watching_type?; watcher_pairs(false, :type).member? Account.current_id end
 def watching?;      watcher_pairs(false).       member? Account.current_id end
-def watchers;       watcher_watched_pairs false                         end
+
+def watchers
+  watcher_watched_pairs false
+end
+
 def watcher_watched_pairs pairs=true
   watcher_pairs pairs, :name, whash = {}
   watcher_pairs pairs, :type, whash

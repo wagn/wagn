@@ -63,23 +63,23 @@ describe Card::Set::All::Pattern do
     
   end
 
-  describe :safe_keys do
+  describe :safe_set_keys do
     it "returns css names for simple star cards" do
       Account.as_bot do
         card = Card.new( :name => "*AnewCard")
-        card.safe_keys.should == "ALL TYPE-basic STAR"
+        card.safe_set_keys.should == "ALL TYPE-basic STAR"
         card.save!
         card = Card.fetch("*AnewCard")
-        card.safe_keys.should == "ALL TYPE-basic STAR SELF-Xanew_card"
+        card.safe_set_keys.should == "ALL TYPE-basic STAR SELF-Xanew_card"
       end
     end
 
     it "returns set names for junction cards" do
       card=Card.new( :name=>"Iliad+author" )
-      card.safe_keys.should == "ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author"
+      card.safe_set_keys.should == "ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author"
       card.save!
       card = Card.fetch("Iliad+author")
-      card.safe_keys.should == "ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author SELF-iliad-author"
+      card.safe_set_keys.should == "ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author SELF-iliad-author"
     end
   end
 

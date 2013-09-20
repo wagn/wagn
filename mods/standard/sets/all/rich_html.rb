@@ -456,40 +456,6 @@ format :html do
     end
   end
 
-  view :history do |args|
-    load_revisions
-    if @revision
-      wrap :history, args.merge(:frame=>true) do
-        %{#{ _render_header }
-          <div class="revision-header">
-            <span class="revision-title">#{ @revision.title }</span>
-            posted by #{ link_to_page @revision.creator.name }
-            on #{ format_date(@revision.created_at) } #{
-            if !card.drafts.empty?
-              %{<div class="autosave-alert">
-                This card has an #{ autosave_revision }
-              </div>}
-            end}#{
-            if @show_diff and @revision_number > 1  #ENGLISH
-              %{<div class="revision-diff-header">
-                <small>
-                  Showing changes from revision ##{ @revision_number - 1 }:
-                  <ins class="diffins">Added</ins> | <del class="diffmod">Deleted</del>
-                </small>
-              </div>}
-            end}
-          </div>
-          <div class="revision-navigation">#{ revision_menu }</div>
-          #{ 
-            wrap_body :body_class=>'revision-content', :content=>true do
-             _render_diff
-            end
-          }
-        }
-      end
-    end
-  end
-
   view :help, :tags=>:unknown_ok do |args|
     text = if args[:help_text]
       args[:help_text]
@@ -503,14 +469,6 @@ format :html do
       end
     end
     %{<div class="instruction">#{raw text}</div>} if text
-  end
-
-  view :diff do |args| #note - doesn't work unless #load_revision has been run
-    if @show_diff and @previous_revision
-      diff @previous_revision.content, @revision.content
-    else
-      @revision.content
-    end
   end
 
   view :conflict, :error_code=>409 do |args|
@@ -616,31 +574,6 @@ format :html do
     }
   end
 
-  view :watch, :tags=>:unknown_ok, :denial=>:blank,
-    :perms=> lambda { |r| Account.logged_in? && !r.card.new_card? } do |args|
-      
-    wrap :watch, args do
-      if card.watching_type?
-        watching_type_cards
-      else
-        link_args = if card.watching?
-          ["following", :off, "stop sending emails about changes to #{card.cardname}", { :hover_content=> 'unfollow' } ]
-        else
-          ["follow", :on, "send emails about changes to #{card.cardname}" ]
-        end
-        watch_link *link_args
-      end
-    end
-  end
-  
-  def watching_type_cards
-    %{<div class="faint">(following)</div>} #yuck
-  end
-
-  def watch_link text, toggle, title, extra={}
-    link_to "#{text}", path(:action=>:watch, :toggle=>toggle), 
-      {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :title=>title, :remote=>true, :method=>'post'}.merge(extra)
-  end
 end
 
 

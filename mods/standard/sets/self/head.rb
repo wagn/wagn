@@ -69,7 +69,7 @@ format :html do
   
   def head_javascript
     varvals = [
-      "window.wagn={rootPath:'#{Wagn::Conf[:root_path]}',tinyMCEConfig:{#{ Card.setting(:tiny_mce).to_s.gsub /\s+/, ' ' }}}",
+      "window.wagn={rootPath:'#{ Wagn::Conf[:root_path] }'}",
       "window.tinyMCEPreInit={base:\"#{wagn_path 'assets/tinymce'}\",query:'3.5.8',suffix:''}" # tinyMCE doesn't load on non-root wagns w/o preinit line
     ]
     Wagn::Conf[:recaptcha_on]                        and varvals << "wagn.recaptchaKey='#{Wagn::Conf[:recaptcha_public_key]}'"
@@ -79,9 +79,10 @@ format :html do
     %(#{ javascript_tag do varvals * ';' end  }      
       #{ javascript_include_tag 'application' }
       <!--[if lt IE 9]>#{ javascript_include_tag 'html5shiv-printshiv' }<![endif]-->
+      #{ javascript_tag { "wagn.setTinyMCEConfig('#{ escape_javascript Card.setting(:tiny_mce).to_s }')" } }
       #{ google_analytics_head_javascript })
-#      #{ javascript_tag do %{var _gaq = _gaq || [];wagn.initGoogleAnalytics('#{ga_key}');} end if ga_key })
   end
+    
   
   def google_analytics_head_javascript
     if ga_key = Card.setting("*google analytics key") #fixme.  escape this?

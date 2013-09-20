@@ -26,7 +26,7 @@ describe Card::HtmlFormat do
         assert_select 'h1' do
           assert_select 'span'
         end
-        assert_select 'div[class="card-body card-content"]', 'AlphaBeta'
+        assert_select 'div[class~="card-body card-content"]', 'AlphaBeta'
       end
     end
 
@@ -88,7 +88,7 @@ describe Card::HtmlFormat do
       end
 
       it "renders card content" do
-        assert_view_select @simple_page, 'div[class="card-body card-content"]', 'AlphaBeta'
+        assert_view_select @simple_page, 'div[class="card-body card-content ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]', 'AlphaBeta'
       end
  
       it "renders card credit" do

@@ -111,12 +111,12 @@ class Card::HtmlFormat < Card::Format
   end
   
   def wrap_body args={}
-    css_classes = [
-      'card-body',
-      ( args[:body_class] if args[:body_class] ),
-      ( 'card-content' if args[:content] )
-    ]
-    content_tag( :div, :class=>css_classes.compact*' ' ) { yield }
+    css_classes = [ 'card-body' ]
+    css_classes << args[:body_class]                  if args[:body_class]
+    css_classes += [ 'card-content', card.safe_keys ] if args[:content]
+    content_tag :div, :class=>css_classes.compact*' ' do
+      yield
+    end
   end
     
   def wrap_frame view, args={}

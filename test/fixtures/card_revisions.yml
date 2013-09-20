@@ -3243,8 +3243,8 @@ card_revisions_421:
       padding-right: 13px !important;
     }
     
-    .SELF-home-original > .content p,
-    .SELF-wagneer_menu > .content {
+    .SELF-home-original > .card-content p,
+    .SELF-wagneer_menu > .card-content {
       a.external-link {
         list-style-type: none;
         padding-right: 0 !important;

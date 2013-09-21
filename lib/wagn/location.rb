@@ -58,16 +58,24 @@ module Wagn::Location
       opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
       vars = '?' + pairs.join('&')
     end
-    "/#{title.to_name.url_key}#{format}#{vars}"
+    wagn_path "#{title.to_name.url_key}#{format}#{vars}"
   end
 
   def wagn_path rel #should be in smartname?
     rel_path = Card===rel ? rel.cardname.url_key : rel.to_s
-    Wagn::Conf[:root_path].to_s + ( rel_path =~ /^\// ? '' : '/' ) + rel_path
+    if rel_path =~ /^\//
+      rel_path
+    else
+      Wagn::Conf[:root_path].to_s + '/' + rel_path
+    end
   end
 
   def wagn_url rel #should be in smartname?
-    rel =~ /^https?\:/ ? rel : "#{Wagn::Conf[:base_url]}#{wagn_path(rel)}"
+    if rel =~ /^https?\:/
+      rel
+    else
+      Wagn::Conf[:base_url] + wagn_path(rel)
+    end
   end
 
 

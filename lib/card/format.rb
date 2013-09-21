@@ -452,7 +452,7 @@ class Card
 
     def path opts={}
       pcard = opts.delete(:card) || card
-      base = opts[:action] ? "/card/#{ opts.delete :action }" : ''
+      base = opts[:action] ? "card/#{ opts.delete :action }" : ''
       if pcard && !pcard.name.empty? && !opts.delete(:no_id) && ![:new, :create].member?(opts[:action]) #generalize. dislike hardcoding views/actions here
         base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
       end
@@ -479,7 +479,7 @@ class Card
         when /^mailto:/                      ; 'email-link'
         when /^([a-zA-Z][\-+.a-zA-Z\d]*):/   ; $1 + '-link'
         when /^\//
-          href = internal_url href           ; 'internal-link'
+          href = internal_url href[1..-1]    ; 'internal-link'
         else
           return href
           Rails.logger.debug "build_link mistakenly(?) called on #{href}, #{text}"

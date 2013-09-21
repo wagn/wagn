@@ -58,7 +58,7 @@ format :html do
           <fieldset>
             <div class="button-area">
               #{ submit_tag 'Sign in' }
-              #{ link_to '...or sign up!', wagn_path('/account/signup') if Card.new(:type_id=>Card::AccountRequestID).ok? :create }
+              #{ link_to '...or sign up!', wagn_path('account/signup') if Card.new(:type_id=>Card::AccountRequestID).ok? :create }
             </div>
           </fieldset>
         }
@@ -92,7 +92,7 @@ format :html do
       end
 
     wrap_frame :signup, frame_args do
-      form_for :card, form_opts( wagn_path( '/account/signup' ), 'card-form') do |f|
+      form_for :card, form_opts( wagn_path( 'account/signup' ), 'card-form') do |f|
         @form = f
         %{
           #{ f.hidden_field :type_id }

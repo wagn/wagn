@@ -111,7 +111,7 @@ class Card::HtmlFormat < Card::Format
     css_classes << args[:body_class]                  if args[:body_class]
     css_classes += [ 'card-content', card.safe_set_keys ] if args[:content]
     content_tag :div, :class=>css_classes.compact*' ' do
-      yield
+      yield args
     end
   end
     
@@ -121,7 +121,7 @@ class Card::HtmlFormat < Card::Format
         #{ _render_header args }
         #{ %{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader] }
         #{ _render_help args if args[:show_help] }
-        #{ wrap_body args.merge(:content=>true) do yield end }
+        #{ wrap_body args do yield args end }
       }
     end
   end

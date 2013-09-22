@@ -9,10 +9,9 @@ class JsonizeTinymce < ActiveRecord::Migration
         key, val = row.split /\s*\:\s*/
         val.gsub! /\"\s*\+\s*\"/, ''
         val.gsub! "'", '"'
-        val=%{"#{val}"} unless val=~/^\s*[\'\"]/;
         %("#{key}":#{val})
       end
-      card.content = %({\n#{ cleaned_rows.join "\n" }\n})
+      card.content = %({\n#{ cleaned_rows.join ",\n" }\n})
       card.save!
     end
   end

@@ -25,7 +25,7 @@ format :html do
     wrap :content, args.merge(:slot_class=>'card-content') do
       %{
         #{ optional_render :menu, args, default_hidden=true }
-        #{ _render_core }
+        #{ _render_core args }
       }
     end
   end
@@ -72,10 +72,7 @@ format :html do
       :class  => "close-icon ui-icon ui-icon-circle-triangle-s toggler slotter nodblclick"
       
     wrap_frame :open, args.merge(:content=>true) do
-      %{
-         #{ _render_open_content args }
-         #{ optional_render :comment_box, args }
-      }
+      %{#{ _render_open_content args }#{ optional_render :comment_box, args }}
     end
   end
 

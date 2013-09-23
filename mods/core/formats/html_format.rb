@@ -95,7 +95,7 @@ class Card::HtmlFormat < Card::Format
     ].compact
     
     div = %{<div data-card-id="#{card.id}" data-card-name="#{h card.name}" style="#{h args[:style]}" class="#{classes*' '}" } +
-      %{data-slot='#{html_escape_except_quotes slot_options( args )}'>\n#{yield}\n</div>}
+      %{data-slot='#{html_escape_except_quotes slot_options( args )}'>#{yield}</div>}
 
     if args[:no_wrap_comment]
       div

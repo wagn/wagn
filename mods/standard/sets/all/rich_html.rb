@@ -23,10 +23,8 @@ format :html do
 
   view :content do |args|
     wrap :content, args.merge(:slot_class=>'card-content') do
-      %{
-        #{ optional_render :menu, args, default_hidden=true }
-        #{ _render_core args }
-      }
+      menu = optional_render :menu, args, default_hidden=true
+      %{#{ menu }#{ _render_core args }}
     end
   end
 
@@ -46,7 +44,7 @@ format :html do
         #{ _optional_render :menu, args }
         <label>#{ _render_title args }</label>
         #{
-          wrap_body :class=>'closed-content', :content=>true do
+          wrap_body :body_class=>'closed-content', :content=>true do
             _render_closed_content args
           end
         }

@@ -118,7 +118,7 @@ class CardController < ApplicationController
       when params[:id]
         params[:id]
       when Account.no_logins?
-        return wagn_redirect( '/admin/setup' )
+        return wagn_redirect( 'admin/setup' )
       when params[:card] && params[:card][:name]
         params[:card][:name]
       when Card::Format.tagged( params[:view], :unknown_ok )

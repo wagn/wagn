@@ -21,13 +21,43 @@ module ClassMethods
     end
   end
   
+  def merge_list attribs, opts
+    unmerged = []
+    attribs.each do |row|
+      result = begin
+        merge row['name'], attribs, opts
+      rescue
+        false
+      end
+      unless result == true
+        unmerged.push row
+      end
+    end
+            
+    if unmerged.empty?
+      Rails.logger.info "successfully merged all!"
+    else
+      unmerged_json = JSON.pretty_generate unmerged
+      Rails.logger.info "unmerged = \n\n#{ unmerged_json}\n\n"
+      if output_file = opts[:output_file]
+        File.open output_file, 'w' do |f|
+          f.write unmerged_json
+        end
+      end
+    end
+  end    
+    
+  
   def merge name, attribs={}, opts={}
     Rails.logger.info "about to merge: #{name}, #{attribs}, #{opts}"
     card = fetch name, :new=>{}
     unless opts[:pristine] && !card.pristine?
-      card.attributes = attribs
-      card.save!
+      Rails.logger.info "would update: #{card.name!}"
+      #card.attributes = attribs
+      #card.save!
+      return true
     end
+    false
   end
   
 end

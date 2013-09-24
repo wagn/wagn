@@ -1,6 +1,54 @@
 # -*- encoding : utf-8 -*-
 
 
+
+def item_cards params={}
+  s = spec(params)
+  raise("OH NO.. no limit") unless s[:limit]
+  # forces explicit limiting
+  # can be 0 or less to force no limit
+  #Rails.logger.debug "search item_cards #{params.inspect}"
+  Card.search( s )
+end
+
+def item_names params={}
+  ## FIXME - this should just alter the spec to have it return name rather than instantiating all the cards!!
+  ## (but need to handle prepend/append)
+  #Rails.logger.debug "search item_names #{params.inspect}"
+  Card.search(spec(params)).map(&:cardname)
+end
+
+def item_type
+  spec[:type]
+end
+
+def count params={}
+  Card.count_by_wql spec( params )
+end
+
+def spec params={}
+  @spec ||= {}
+  @spec[params.to_s] ||= get_spec(params.clone)
+end
+
+def get_spec params={}
+  spec = Account.as_bot do ## why is this a wagn_bot thing?  can't deny search content??
+    spec_content = params.delete(:spec) || raw_content
+    #warn "get_spec #{name}, #{spec_content}, #{params.inspect}"
+    raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
+    JSON.parse( spec_content )
+  end
+  spec.symbolize_keys!.merge! params.symbolize_keys
+  if default_limit = spec.delete(:default_limit) and !spec[:limit]
+    spec[:limit] = default_limit
+  end
+  spec[:context] ||= (cardname.junction? ? cardname.left_name : cardname)
+  spec
+end
+
+
+
+
 format do
 
   view :core do |args|
@@ -46,9 +94,13 @@ format do
     # explicit > inclusion syntax > WQL > inclusion defaults
   end
 
+  def default_search_params
+    { :default_limit=> 100 }
+  end
+
   def search_params
     @search_params ||= begin
-      p = self.respond_to?(:paging_params) ? paging_params : { :default_limit=> 100 }
+      p = default_search_params
       p[:vars] = {}
       if self == @root
         params.each do |key,val|
@@ -65,24 +117,6 @@ format do
   def page_link text, page
     @paging_path_args[:offset] = page * @paging_limit
     " #{link_to raw(text), path(@paging_path_args), :class=>'card-paging-link slotter', :remote => true} "
-  end
-
-  def paging_params
-    if ajax_call? && @depth > 0
-      {:default_limit=>20}  #important that paging calls not pass variables to included searches
-    else
-      @paging_params ||= begin
-        s = {}
-        [:offset,:vars].each{ |key| s[key] = params[key] }
-        s[:offset] = s[:offset] ? s[:offset].to_i : 0
-        if params[:limit]
-          s[:limit] = params[:limit].to_i
-        else
-          s[:default_limit] = 20 #can be overridden by card value
-        end
-        s
-      end
-    end
   end
 
 end
@@ -204,51 +238,28 @@ format :html do
     out << %{<span class="search-count">(#{total})</span></span>}
     out.join
   end
-end
-
-def item_cards params={}
-  s = spec(params)
-  raise("OH NO.. no limit") unless s[:limit]
-  # forces explicit limiting
-  # can be 0 or less to force no limit
-  #Rails.logger.debug "search item_cards #{params.inspect}"
-  Card.search( s )
-end
-
-def item_names params={}
-  ## FIXME - this should just alter the spec to have it return name rather than instantiating all the cards!!
-  ## (but need to handle prepend/append)
-  #Rails.logger.debug "search item_names #{params.inspect}"
-  Card.search(spec(params)).map(&:cardname)
-end
-
-def item_type
-  spec[:type]
-end
-
-def count params={}
-  Card.count_by_wql spec( params )
-end
-
-def spec params={}
-  @spec ||= {}
-  @spec[params.to_s] ||= get_spec(params.clone)
-end
-
-def get_spec params={}
-  spec = Account.as_bot do ## why is this a wagn_bot thing?  can't deny search content??
-    spec_content = params.delete(:spec) || raw_content
-    #warn "get_spec #{name}, #{spec_content}, #{params.inspect}"
-    raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
-    JSON.parse( spec_content )
+  
+  def default_search_params
+    if ajax_call? && @depth > 0
+      {:default_limit=>20}  #important that paging calls not pass variables to included searches
+    else
+      @default_search_params ||= begin
+        s = {}
+        [:offset,:vars].each{ |key| s[key] = params[key] }
+        s[:offset] = s[:offset] ? s[:offset].to_i : 0
+        if params[:limit]
+          s[:limit] = params[:limit].to_i
+        else
+          s[:default_limit] = 20 #can be overridden by card value
+        end
+        s
+      end
+    end
   end
-  spec.symbolize_keys!.merge! params.symbolize_keys
-  if default_limit = spec.delete(:default_limit) and !spec[:limit]
-    spec[:limit] = default_limit
-  end
-  spec[:context] ||= (cardname.junction? ? cardname.left_name : cardname)
-  spec
+  
 end
+
+
 
 
 

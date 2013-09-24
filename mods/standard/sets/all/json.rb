@@ -1,8 +1,27 @@
 # -*- encoding : utf-8 -*-
 format :json do
 
+  def get_inclusion_defaults
+    { :view=>:atom }
+  end
+
+  def default_item_view
+    if @depth == 0 && params[:item]
+      params[:item]
+    else
+      :core
+    end
+  end
+  
+  def default_search_params
+    { :default_limit => 0 }
+  end
+  
+  def max_depth
+    params[:max_depth] || 1
+  end
+
   view :show do |args|
-    args[:item] = params[:item]
     raw = render( ( args[:view] || :atom ), args )
     case
     when String === raw  ;  raw
@@ -32,21 +51,23 @@ format :json do
   end
 
   view :atom do |args|
-    item = args[:item]    
-    item = :raw if item.nil? || item == :atom # item view of atom view
-    args[:item] = :atom                       # item view of atom's item view
     h = {
-      :card => {
-        :name  => card.name,
-        :type  => card.type_name 
+      :name    => card.name,
+      :type    => card.type_name,
+      :content => card.raw_content
+    }
+    unless @depth == max_depth
+      h[:value] = _render default_item_view, args
+    end
+    if @depth==0
+      {
+        :url => controller.request.original_url,
+        :timestamp => Time.now.to_s,
+        :card => h
       }
-    }  
-    h[:views] = [
-      { :name => item,
-        :parts => _render( item, args)
-      }
-    ]
-    h
+    else
+      h
+    end
   end
 
 end

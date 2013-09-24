@@ -26,7 +26,7 @@ format :rss do
   end
   
   view :feed_item_list do |args|
-    items = if card.type_id == Card::SearchTypeID
+    items = if card.type_id == Card::SearchTypeID  #FIXME! yuck.
       card.item_cards( search_params.merge(:default_limit => 25) )
     else
       [card]

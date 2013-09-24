@@ -12,5 +12,5 @@ end
 
 def pristine?
   # has not been edited directly by human users.  bleep blorp.
-  new_card? || !revisions.map(&:creator_id).find { |id| id != Card::WagnBotID }
+  new_card? or !revisions.map(&:creator_id).find { |id| id != Card::WagnBotID }
 end

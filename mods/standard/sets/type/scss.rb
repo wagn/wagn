@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'sass'
 
+
 format :html do
 
   view :editor, :type=>:plain_text
@@ -26,3 +27,8 @@ format do
   end
     
 end
+
+event :reset_style_for_scss, :after=>:store do
+  Card::Set::Right::Style.delete_style_files
+end
+

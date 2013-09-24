@@ -11,3 +11,7 @@ format :html do
   end
   
 end
+
+event :reset_style_for_css, :after=>:store do
+  Card::Set::Right::Style.delete_style_files
+end

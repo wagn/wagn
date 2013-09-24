@@ -21,43 +21,50 @@ module ClassMethods
     end
   end
   
+  def delete_tmp_files id=nil
+    dir = Wagn::Conf[:attachment_storage_dir] + '/tmp'
+    dir += "/#{id}" if id
+    FileUtils.rm_rf dir, :secure=>true
+  rescue
+    Rails.logger.info "failed to remove tmp files"
+  end
+  
+  
   def merge_list attribs, opts
     unmerged = []
     attribs.each do |row|
       result = begin
-        merge row['name'], attribs, opts
+        merge row['name'], row, opts
       rescue
         false
       end
-      unless result == true
-        unmerged.push row
-      end
+      unmerged.push row unless result == true
     end
             
     if unmerged.empty?
       Rails.logger.info "successfully merged all!"
     else
       unmerged_json = JSON.pretty_generate unmerged
-      Rails.logger.info "unmerged = \n\n#{ unmerged_json}\n\n"
       if output_file = opts[:output_file]
         File.open output_file, 'w' do |f|
           f.write unmerged_json
         end
+      else
+        Rails.logger.info "failed to merge:\n\n#{ unmerged_json }"
       end
     end
   end    
     
   
   def merge name, attribs={}, opts={}
-    Rails.logger.info "about to merge: #{name}, #{attribs}, #{opts}"
     card = fetch name, :new=>{}
-    unless opts[:pristine] && !card.pristine?
-      Rails.logger.info "would update: #{card.name!}"
-      #card.attributes = attribs
-      #card.save!
-      return true
+    
+    if opts[:pristine] && !card.pristine?
+      false
+    else
+      card.attributes = attribs
+      card.save!
     end
-    false
   end
   
 end

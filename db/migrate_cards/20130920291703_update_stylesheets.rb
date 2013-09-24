@@ -11,7 +11,6 @@ class UpdateStylesheets < ActiveRecord::Migration
           card.update_attributes! :content=>File.read("#{dir}/#{sheetname}.scss")
         end
       end
-      Card["#{Card[:all].name}+*style"].save!
     end
   end
 

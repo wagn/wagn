@@ -19,3 +19,9 @@ format :css do
   view :content, :type=>:pointer
   view :core,    :type=>:pointer
 end
+
+
+event :reset_style_for_skin, :after=>:store do
+  Card::Set::Right::Style.delete_style_files
+end
+

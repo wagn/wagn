@@ -58,8 +58,8 @@ format :html do
       path_args[:item] = :import if debug
       style_cardname = manual_style || (style_rule && style_rule.name)
       @css_path = page_path style_cardname, path_args
-    elsif style_rule and style_file=style_rule.fetch( :trait=>:file )
-      @css_path = style_file.attach.url
+    elsif style_rule
+      @css_path = style_rule.style_path
     end 
 
     if @css_path

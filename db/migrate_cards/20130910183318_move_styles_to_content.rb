@@ -8,7 +8,6 @@ class MoveStylesToContent < ActiveRecord::Migration
       %w{ right_sidebar common classic_cards traditional }.each do |sheetname|
         Card["style: #{sheetname}"].update_attributes! :codename=>nil, :content=>File.read("#{dir}/#{sheetname}.scss")
       end
-      Card["#{Card[:all].name}+*style"].save!
     end
   end
 

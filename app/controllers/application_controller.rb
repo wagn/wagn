@@ -80,6 +80,8 @@ class ApplicationController < ActionController::Base
     
     if format==:file && status==200
       send_file *result
+    elsif status == 302
+      wagn_redirect result
     else
       args = { :text=>result, :status=>status }
       args[:content_type] = 'text/text' if format == :file

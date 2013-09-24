@@ -20,6 +20,11 @@ h2 {
   font-size: 1.1em;
 }
 
+textarea, input {
+  font-size: 1em;
+  line-height: 1.5em;
+}
+
 /* 
 the following gives users more explicit control over spacing within tinyMCE
 but leads to lots of empty paragraph tags

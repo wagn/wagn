@@ -52,8 +52,11 @@ end
 
 
 def compress_stylesheets
-  format = Card::CssFormat.new self
-  Sass.compile format._render_core, :style=>:compressed
+  Account.as_bot do
+    format = Card::CssFormat.new self
+    Sass.compile format._render_core, :style=>:compressed
+  end
 rescue Exception=>e
   raise Wagn::Oops, "Stylesheet Error:\n#{ e.message }"
 end
+

@@ -10,6 +10,10 @@ end
 
 #FIXME - the following could be unified with type/file.rb considerably
 
+# note that this was formerly accomplished as a separate File card (eg *all+*style+file).  The issue was that the permanent
+# file regularly caused problems with non-root wagns, and requiring users to re-save the *all+*style rule upon updates
+# to CSS, SCSS, and Skin cards was not popular.
+
 def style_file
   Wagn::Conf[:attachment_storage_dir] + "/tmp/#{id}/#{current_revision_id}.css"
 end

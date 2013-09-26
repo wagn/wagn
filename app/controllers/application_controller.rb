@@ -9,7 +9,6 @@ class ApplicationController < ActionController::Base
   layout nil
 
   attr_reader :card
-  attr_accessor :recaptcha_count
 
   def fast_404
     message = "<h1>404 Page Not Found</h1>"
@@ -19,23 +18,13 @@ class ApplicationController < ActionController::Base
   protected
   def per_request_setup
 #    ActiveSupport::Notifications.instrument 'wagn.per_request_setup', :message=>"" do
-      request.format = :html if !params[:format] #is this used??
+    request.format = :html if !params[:format] #is this used??
 
-      # these should not be Wagn::Conf, but more like WagnEnv
-      Wagn::Conf[:host] = host = request.env['HTTP_HOST']
-      Wagn::Conf[:base_url] = request.protocol + host
-      Wagn::Conf[:main_name] = nil
-      Wagn::Conf[:controller] = self
+    Wagn::Env.reset :controller=>self
+    Wagn::Cache.renew
 
-      Wagn::Cache.renew
-
-      Card::Format.ajax_call = ajax?
-      Account.current_id = self.current_account_id || Card::AnonID
-
-      # RECAPTCHA HACKS
-      Wagn::Conf[:recaptcha_on] = !Account.logged_in? &&     # this too
-        !!( Wagn::Conf[:recaptcha_public_key] && Wagn::Conf[:recaptcha_private_key] )
-      @recaptcha_count = 0
+    Card::Format.ajax_call = ajax?             # move to Wagn::Env?
+    Account.current_id = self.current_account_id || Card::AnonID
   end
 
   def ajax?

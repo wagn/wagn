@@ -95,11 +95,6 @@ class CardController < ApplicationController
 #    handle { card.errors.empty? }
 #  end
 
-  def show_cache
-    raise Wagn::PermissionDenied unless Account.always_ok?
-    show :show_cache
-  end
-
 
   private
   
@@ -157,7 +152,7 @@ class CardController < ApplicationController
       end
     @card.selected_revision_id = params[:rev].to_i if params[:rev]
 
-    Wagn::Conf[:main_name] = params[:main] || (card && card.name) || ''
+    Wagn::Env[:main_name] = params[:main] || (card && card.name) || ''
     render_errors if card.errors.any?
     true
   end

@@ -1,9 +1,5 @@
 # -*- encoding : utf-8 -*-
 h = Wagn::Conf
-if base_u = h[:base_url]
-  h[:base_url] = base_u.gsub!(/\/$/,'')
-  h[:host] = base_u.gsub(/^https?:\/\//,'') unless h[:host]
-end
 
 h[:root_path] = begin
   epath = ENV['RAILS_RELATIVE_URL_ROOT']

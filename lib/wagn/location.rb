@@ -74,7 +74,7 @@ module Wagn::Location
     if rel =~ /^https?\:/
       rel
     else
-      Wagn::Conf[:base_url] + wagn_path(rel)
+      "#{ Wagn::Env[:protocol] }#{ Wagn::Env[:host] }#{ wagn_path rel }"
     end
   end
 

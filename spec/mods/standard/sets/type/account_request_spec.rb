@@ -9,7 +9,7 @@ describe Card::Set::Type::AccountRequest do
   
   context 'valid request' do
     before do
-      card = Card.create! :name=>'Big Bad Wolf', :type=>'Account Request'
+      card = Card.create! :name=>'Big Bad Wolf', :type=>'Account Request', :account_args=>{:email=>'dude@wagn.org'}
       @format = Card::Format.new card
     end
 

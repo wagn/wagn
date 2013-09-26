@@ -256,7 +256,7 @@ class Card::HtmlFormat < Card::Format
     url = path(:action=>url) if Symbol===url
     opts = { :url=>url, :remote=>true, :html=>other_html }
     opts[:html][:class] = classes + ' slotter'
-    opts[:html][:recaptcha] = 'on' if Wagn::Conf[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
+    opts[:html][:recaptcha] = 'on' if Wagn::Env[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
     opts
   end
 

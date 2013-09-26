@@ -206,11 +206,17 @@ class Card < ActiveRecord::Base
   end
 
   validate do |card|
-    return true if @nested_edit
-    return true unless Wagn::Conf[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
-    c = Wagn::Conf[:controller]
-    return true if (c.recaptcha_count += 1) > 1
-    c.verify_recaptcha( :model=>card ) || card.error_status = 449
+    if !@nested_edit                      and
+        Wagn::Env[:recaptcha_on]          and
+        Card.toggle( card.rule :captcha ) and
+        num = Wagn::Env[:recaptcha_count] and
+        num < 2
+        
+      Wagn::Env[:recaptcha_count] = num + 1
+      Wagn::Env[:controller].verify_recaptcha :model=>card or card.error_status = 449
+    else
+      true
+    end
   end
 
   validates_each :name do |card, attr, name|

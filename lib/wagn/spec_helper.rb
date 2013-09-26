@@ -36,6 +36,7 @@ Spork.prefork do
     config.before(:each) do
       Account.current_id = JOE_USER_ID
       Wagn::Cache.restore
+      Wagn::Env.reset
     end
     config.after(:each) do
       Timecop.return

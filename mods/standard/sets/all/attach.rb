@@ -89,7 +89,7 @@ def self.included(base)
   base.class_eval do
     has_attached_file :attach, :preserve_files=>true,
       :default_url => "missing",
-      :url => ":base_url/:basename-:size:revision_id.:extension",
+      :url => ":file_path/:basename-:size:revision_id.:extension",
       :path => ":local/:card_id/:size:revision_id.:extension",
       :styles => { :icon   => '16x16#', :small  => '75x75',
                  :medium => '200x200>', :large  => '500x500>' }
@@ -120,7 +120,7 @@ module Paperclip::Interpolations
     end
   end
       
-  def base_url( at, style_name )  Wagn::Conf[:attachment_web_dir]      end
+  def file_path( at, style_name )  Wagn::Conf[:attachment_web_dir]      end
   def card_id(  at, style_name )  at.instance.id                       end
 
   def basename(at, style_name)

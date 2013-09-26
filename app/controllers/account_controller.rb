@@ -3,38 +3,6 @@ class AccountController < ApplicationController
 
   before_filter :login_required, :only => [ :invite, :update ]
 
-#  def accept
-#    card_key=params[:card][:key]
-#    raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
-#    @card = Card[card_key] or raise(Wagn::NotFound, "Can't find this Account Request")
-#    @account = @card.account or raise(Wagn::Oops, "This card doesn't have an account to approve")
-#    @card.ok?(:create) or raise(Wagn::PermissionDenied, "You need permission to create accounts")
-#
-#    if request.post?
-#      @account.accept(@card, params[:email])
-#      if @card.errors.empty? #SUCCESS
-#        redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
-#        return
-#      end
-#    else
-#      show :invite
-#    end
-#  end
-
-#  def invite
-#    Account.create_ok? or raise(Wagn::PermissionDenied, "You need permission to create")
-#    @account, @card = request.post? ?
-#      Account.create_with_card( params[:account], params[:card] ) :
-#      [User.new, Card.new()]
-#    if request.post? and @card.errors.empty?
-#      @account.send_account_info(params[:email])
-#      redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
-#    else
-#      show :invite
-#    end
-#  end
-
-
   def signin
     @card = Card.new
     if params[:login]
@@ -62,12 +30,10 @@ class AccountController < ApplicationController
         flash[:notice] = "That account is not active."
         show :signin, 403
       else
-        @account.generate_password
-        @account.save!
-        subject = "Password Reset"
-        message = "You have been given a new temporary password.  " +
-           "Please update your password once you've signed in. "
-        @account.send_account_info(:subject => subject, :message => message)
+        @account.send_account_info(
+          :subject => "Password Reset",
+          :message => "You have been given a new temporary password. Please update your password once you've signed in."
+        )
         flash[:notice] = "Check your email for your new temporary password"
         redirect_to previous_location
       end

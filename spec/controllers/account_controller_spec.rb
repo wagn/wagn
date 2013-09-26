@@ -39,7 +39,8 @@ describe CardController do
       post :create, :card=>{ :name=>'Joe New', :type_id=>Card::AccountRequestID, :account_args=>{:email=>'joe@new.com'} }
       login_as :joe_admin
 
-      post :accept, :card=>{:key=>'joe_new'}, :email=>{:subject=>'Hey Joe!', :message=>'Can I Come on in?'}
+      warn "updating now"
+      post :update, :card=>{ :key=>'joe_new', :type_id=>Card::UserID}, :email=>{:subject=>'Hey Joe!', :message=>'Can I Come on in?'}
 
       @msgs.size.should == 1
       @msgs[0].should be_a Mail::Message
@@ -49,21 +50,11 @@ describe CardController do
     it 'should detect duplicates' do
       post :create, :card=>{ :name=>'Joe Scope',     :type_id=>Card::AccountRequestID, :account_args=>{ :email=>'joe@user.com'} }
       post :create, :card=>{ :name=>'Joe Duplicate', :type_id=>Card::AccountRequestID, :account_args=>{ :email=>'joe@user.com'} }
-            
+      
+      assert_response 422
       #s=Card['joe scope']
       c=Card['Joe Duplicate']
       c.should be_nil
-    end
-  end
-end
-
-
-describe AccountController do
-
-  describe "#accept" do
-    before do
-      login_as :joe_user
-      @user = Account.user
     end
   end
   
@@ -79,7 +70,7 @@ describe AccountController do
       @ja_email = @jadmin.account.email
 
       @email_args = {:subject=>'Hey Joe!', :message=>'Come on in.'}
-      post :invite, :account=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'},
+      post :create, :card=>{ :name=>'Joe New', :type_id=>Card::UserID, :account_args=>{:email=>'joe@new.com'} },
         :email=> @email_args
 
       @cd_with_acct = Card['Joe New']
@@ -87,7 +78,9 @@ describe AccountController do
 
     end
 
-    it 'should create a user' do
+    it 'should create a card, user, and account card' do
+      assert_response :redirect
+      @cd_with_acct.should be
       @new_user.should be
       @new_user.card_id.should == @cd_with_acct.id
       @cd_with_acct.type_id.should == Card::UserID
@@ -102,6 +95,10 @@ describe AccountController do
     end
   end
 
+end
+
+
+describe AccountController do
 
   describe "#signin" do
   end

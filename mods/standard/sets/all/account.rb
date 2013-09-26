@@ -1,17 +1,18 @@
 def create_account
+  account_card = Account.as_bot do
+    Card.create! :name=>"#{ name }+#{ Card[:account].name }"
+  end #error handling?
+  
   @account_args ||= {}
-  account_card = fetch :trait=>:account
-  @account_args.reverse_merge!({
+  @account_args.reverse_merge!( {
      :card_id    => self.id,
      :status     => 'active',
-     :account_id => (account_card && account_card.id)
-  })
+     :account_id => account_card.id
+  } )
   
-  warn "account_args = #{@account_args}"
-  account = User.new @account_args
-  account.generate_password if account.password.blank?
-  unless account.save
-    account.errors.each do |key,err|
+  user = User.new @account_args
+  unless user.save
+    user.errors.each do |key,err|
       errors.add key,err
     end
     raise ActiveRecord::RecordInvalid, self
@@ -102,9 +103,6 @@ format :html do
       end
     end
   end
-
-
-
 
 
 end

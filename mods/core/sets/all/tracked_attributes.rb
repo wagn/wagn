@@ -123,7 +123,7 @@ def set_comment new_comment
       if Account.logged_in?
         "[[#{Account.current.name}]]"
       else
-        Wagn::Conf[:controller].session[:comment_author] = comment_author if Wagn::Conf[:controller]
+        Wagn::Env[:controller].session[:comment_author] = comment_author if Wagn::Env[:controller]
         "#{ comment_author } (Not signed in)"
       end
     }.....#{Time.now}</div>

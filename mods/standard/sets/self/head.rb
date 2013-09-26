@@ -72,7 +72,7 @@ format :html do
       "window.wagn={rootPath:'#{ Wagn::Conf[:root_path] }'}",
       "window.tinyMCEPreInit={base:\"#{wagn_path 'assets/tinymce'}\",query:'3.5.8',suffix:''}" # tinyMCE doesn't load on non-root wagns w/o preinit line
     ]
-    Wagn::Conf[:recaptcha_on]                        and varvals << "wagn.recaptchaKey='#{Wagn::Conf[:recaptcha_public_key]}'"
+    Wagn::Env[:recaptcha_on]                        and varvals << "wagn.recaptchaKey='#{Wagn::Conf[:recaptcha_public_key]}'"
     c=Card[:double_click] and !Card.toggle c.content and varvals << 'wagn.noDoubleClick=true'
     @css_path                                        and varvals << "wagn.cssPath='#{@css_path}'"
     

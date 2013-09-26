@@ -24,9 +24,10 @@ Wagn::Application.routes.draw do
   match ':id(.:format)' => 'card#delete', :via=>:delete
 
   # legacy                                         
-  match 'new/:type'                      => 'card#read', :view=>'new'
-  match 'card/:view(/:id(.:format))'     => 'card#read', :view=> /new|options|edit/
-  
+  match 'new/:type'                      => 'card#read', :via=>:get, :view=>'new'
+  match 'card/:view(/:id(.:format))'     => 'card#read', :via=>:get, :view=> /new|options|edit/
+  match 'account/signup'                 => 'card#read', :via=>:get, :view=>'new', :card=>{ :type_id=>Card::AccountRequestID }
+  match 'account/invite'                 => 'card#read', :via=>:get, :view=>'new', :card=>{ :type_id=>Card::UserID           }
   
   # standard non-RESTful
   match ':controller/:action(/:id(.:format))'

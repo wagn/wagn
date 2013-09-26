@@ -17,22 +17,13 @@ class SharedData
     Wagn::Cache.reset_global
     Account.as(Card::WagnBotID)
 
-    Account.create_with_card(
-      { :login=>"joe_user", :email=>'joe@user.com', :status=>'active', :password=>'joe_pass', :password_confirmation=>'joe_pass' },
-      { :name=>"Joe User", :content => "I'm number two" }
-    )    
+    account_args = { :status=>'active', :password=>'joe_pass', :password_confirmation=>'joe_pass' }
 
-    Account.create_with_card(
-      { :login=>"joe_admin", :email=>'joe@admin.com', :status=>'active', :password=>'joe_pass', :password_confirmation=>'joe_pass' },
-      { :name=>"Joe Admin", :content => "I'm number one" }
-    )
+    Card.create! :name=>"Joe User",  :content=>"I'm number two", :account_args=>account_args.merge( :login=>"joe_user",  :email=>'joe@user.com'  )
+    Card.create! :name=>"Joe Admin", :content=>"I'm number one", :account_args=>account_args.merge( :login=>"joe_admin", :email=>'joe@admin.com' )
+    Card.create! :name=>"Joe Camel", :content=>"Mr. Buttz",      :account_args=>account_args.merge( :login=>"joe_camel", :email=>'joe@camel.com' )
 
     Card['Joe Admin'].fetch(:trait=>:roles, :new=>{}).items = [ Card::AdminID ]
-
-    Account.create_with_card(
-      { :login=>"joe_camel",:email=>'joe@camel.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass' },
-      { :name=>"Joe Camel", :content => "Mr. Buttz" }
-    )
 
     # generic, shared attribute card
     color = Card.create! :name=>"color"
@@ -40,19 +31,17 @@ class SharedData
 
     # data for testing users and account requests
 
-    Account.create_with_card(
-      { :email=>'ron@request.com', :password=>'ron_pass', :password_confirmation=>'ron_pass', :status=>'pending' },
-      { :type_id=>Card::AccountRequestID, :name=>"Ron Request" }
-    )
+    Card.create! :name=>"Ron Request", :type_id=>Card::AccountRequestID, :account_args=>{
+      :email=>'ron@request.com', :password=>'ron_pass', :password_confirmation=>'ron_pass', :status=>'pending'
+    }
     
     Card.create! :type_code=>'user', :name=>"No Count", :content=>"I got no account"
 
     # CREATE A CARD OF EACH TYPE
     
-    Account.create_with_card(
-      { :login=>"sample_user", :email=>'sample@user.com', :status=>'active', :password=>'sample_pass', :password_confirmation=>'sample_pass' },
-      { :name=>"Sample User" }
-    )
+    Card.create! :name=>"Sample User", :account_args=>{ 
+      :login=>"sample_user", :email=>'sample@user.com', :status=>'active', :password=>'sample_pass', :password_confirmation=>'sample_pass'
+    }
 
     request_card = Card.create! :type_code=>'account_request', :name=>"Sample AccountRequest" #, :email=>"invitation@request.com"
 
@@ -63,19 +52,17 @@ class SharedData
 
     # data for role_test.rb
 
-    Account.create_with_card(
-      { :login=>"u1", :email=>'u1@user.com', :status=>'active', :password=>'u1_pass', :password_confirmation=>'u1_pass' },
-      { :name=>"u1" }
-    )
-    Account.create_with_card(
-      { :login=>"u2", :email=>'u2@user.com', :status=>'active', :password=>'u2_pass', :password_confirmation=>'u2_pass' },
-      { :name=>"u2" }
-    )
-    Account.create_with_card(
-      { :login=>"u3", :email=>'u3@user.com', :status=>'active', :password=>'u3_pass', :password_confirmation=>'u3_pass' },
-      { :name=>"u3" }
-    )
+    Card.create! :name=>"u1", :account_args=>{
+      :login=>"u1", :email=>'u1@user.com', :status=>'active', :password=>'u1_pass', :password_confirmation=>'u1_pass'
+    }
 
+    Card.create! :name=>"u2", :account_args=>{
+      :login=>"u2", :email=>'u2@user.com', :status=>'active', :password=>'u2_pass', :password_confirmation=>'u2_pass'
+    }
+
+    Card.create! :name=>"u3", :account_args=>{
+      :login=>"u3", :email=>'u3@user.com', :status=>'active', :password=>'u3_pass', :password_confirmation=>'u3_pass'
+    }
 
     r1 = Card.create!( :type_code=>'role', :name=>'r1' )
     r2 = Card.create!( :type_code=>'role', :name=>'r2' )
@@ -149,15 +136,13 @@ class SharedData
       # fwiw Timecop is apparently limited by ruby Time object, which goes only to 2037 and back to 1900 or so.
       #  whereas DateTime can represent all dates.
 
-      Account.create_with_card(
-        { :login=>"john",:email=>'john@user.com', :status => 'active', :password=>'john_pass', :password_confirmation=>'john_pass' },
-        { :name=>"John" }
-      )
+      Card.create! :name=>"John", :account_args=>{
+        :login=>"john", :email=>'john@user.com', :status=>'active', :password=>'john_pass', :password_confirmation=>'john_pass'
+      }
 
-      Account.create_with_card(
-        { :login=>"sara",:email=>'sara@user.com', :status => 'active', :password=>'sara_pass', :password_confirmation=>'sara_pass' },
-        { :name=>"Sara" }
-      )
+      Card.create! :name=>"Sara", :account_args=>{
+        :login=>"sara",:email=>'sara@user.com', :status => 'active', :password=>'sara_pass', :password_confirmation=>'sara_pass'
+      }
 
       Card.create! :name => "Sara Watching+*watchers",  :content => "[[Sara]]"
       Card.create! :name => "All Eyes On Me+*watchers", :content => "[[Sara]]\n[[John]]"

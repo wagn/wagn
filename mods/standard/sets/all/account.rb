@@ -1,3 +1,23 @@
+def create_account
+  @account_args ||= {}
+  account_card = fetch :trait=>:account
+  @account_args.reverse_merge!({
+     :card_id    => self.id,
+     :status     => 'active',
+     :account_id => (account_card && account_card.id)
+  })
+  
+  warn "account_args = #{@account_args}"
+  account = User.new @account_args
+  account.generate_password if account.password.blank?
+  unless account.save
+    account.errors.each do |key,err|
+      errors.add key,err
+    end
+    raise ActiveRecord::RecordInvalid, self
+  end
+end
+
 def account
   Account[ id ]
 end
@@ -83,73 +103,8 @@ format :html do
     end
   end
 
-  view :signup, :tags=>:unknown_ok, :perms=>:none do |args|
-    frame_args = args.merge :title=>'Sign Up', :show_help=>true, :hide_menu=>true
-    frame_args[:help_text] = case
-      when card.rule_card( :add_help, :fallback=>:help ) ; nil
-      when Account.create_ok?                            ; 'Send us the following, and we\'ll send you a password.' 
-      else                                               ; 'All Account Requests are subject to review.'
-      end
 
-    wrap_frame :signup, frame_args do
-      form_for :card, form_opts( wagn_path( 'account/signup' ), 'card-form') do |f|
-        @form = f
-        %{
-          #{ f.hidden_field :type_id }
-          #{ _render_name_editor :help=>'usually first and last name' }
-          #{ fieldset :email, text_field( :account, :email ) }
-          #{ with_inclusion_mode(:new) { edit_slot :label=>'other' } }
 
-          <fieldset><div class="button-area">#{ submit_tag 'Submit' }</div></fieldset>
-        }
-      end
-    end
-  end
 
-  view :invite, :tags=>:unknown_ok do |args|
-    email_params = params[:email] || {}
-    subject = email_params[:subject] || Card.setting('*invite+*subject') || ''
-    message = email_params[:message] || Card.setting('*invite+*message') || ''
-    
-    frame_args = args.merge :title=>'Invite', :show_help=>true, :hide_menu=>true
-    if card.known?
-      frame_args[:help_text] = "Accept account request from: #{link_to_page card.name}"
-    end
-    
-    wrap_frame :invite, frame_args do
-      form_for :card, :action=>params[:action] do |f|
-        
-        @form = f
-        %{
-          #{
-            if !card.known?
-              %{
-                #{ _render_name_editor :help=>'usually first and last name' }
-                #{ fieldset :email, text_field( :account, :email, :size=>60 ) }
-              }
-            else
-              hidden_field_tag 'card[key]', card.key
-            end
-          }
-
-          #{ fieldset :subject, text_field( :email, :subject, :value=>subject, :size=>60 ) }
-
-          #{ fieldset :message,
-              text_area( :email, :message, :value=>message, :rows=>10, :cols => 60 ),
-              :help => "We'll create a password and attach it to the email."
-          }
-
-          <fieldset>
-            <div class="button-area">
-              #{ submit_tag 'Invite' }
-              #{ link_to 'Cancel', previous_location }
-            </div>
-          </fieldset>
-
-          #{render_error}
-        }
-      end
-    end
-  end
 
 end

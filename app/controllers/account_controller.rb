@@ -3,72 +3,36 @@ class AccountController < ApplicationController
 
   before_filter :login_required, :only => [ :invite, :update ]
 
-  #ENGLISH many messages throughout this file
-  def signup
-    #FIXME - don't raise; handle it!
-    raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?
-    
-    card_params = ( params[:card] || {} ).symbolize_keys.merge :type_id=>Card::AccountRequestID
-    account_params = ( params[:account] || {} ).symbolize_keys.merge :status=>'pending'
-    
-    @card = Card.new card_params
-    #FIXME - don't raise; handle it!
-    raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless @card.ok? :create
+#  def accept
+#    card_key=params[:card][:key]
+#    raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
+#    @card = Card[card_key] or raise(Wagn::NotFound, "Can't find this Account Request")
+#    @account = @card.account or raise(Wagn::Oops, "This card doesn't have an account to approve")
+#    @card.ok?(:create) or raise(Wagn::PermissionDenied, "You need permission to create accounts")
+#
+#    if request.post?
+#      @account.accept(@card, params[:email])
+#      if @card.errors.empty? #SUCCESS
+#        redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
+#        return
+#      end
+#    else
+#      show :invite
+#    end
+#  end
 
-    if !request.post? #signup form
-      show :signup
-    else
-      @account, @card = Account.create_with_card account_params, card_params
-      if @card.errors.any?
-        render_errors
-      else
-        if @card.ok?(:create, :new=>{}, :trait=>:account)      # automated approval
-          email_args = { :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!",
-                         :subject => Card.setting('*signup+*subject') || "Account info for #{Card.setting('*title')}!" }
-          @account.accept @card, email_args
-          redirect_cardname = '*signup+*thanks'
-        else                                            # requires further approval
-          Account.as_bot do
-            Mailer.signup_alert(@card).deliver if Card.setting '*request+*to'
-          end
-          #Rails.logger.warn "signup with/app #{@account}, #{@card}"
-          redirect_cardname = '*request+*thanks'
-        end
-        wagn_redirect Card.setting( redirect_cardname )
-      end
-    end
-  end
-
-  def accept
-    card_key=params[:card][:key]
-    raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
-    @card = Card[card_key] or raise(Wagn::NotFound, "Can't find this Account Request")
-    @account = @card.account or raise(Wagn::Oops, "This card doesn't have an account to approve")
-    @card.ok?(:create) or raise(Wagn::PermissionDenied, "You need permission to create accounts")
-
-    if request.post?
-      @account.accept(@card, params[:email])
-      if @card.errors.empty? #SUCCESS
-        redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
-        return
-      end
-    else
-      show :invite
-    end
-  end
-
-  def invite
-    Account.create_ok? or raise(Wagn::PermissionDenied, "You need permission to create")
-    @account, @card = request.post? ?
-      Account.create_with_card( params[:account], params[:card] ) :
-      [User.new, Card.new()]
-    if request.post? and @card.errors.empty?
-      @account.send_account_info(params[:email])
-      redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
-    else
-      show :invite
-    end
-  end
+#  def invite
+#    Account.create_ok? or raise(Wagn::PermissionDenied, "You need permission to create")
+#    @account, @card = request.post? ?
+#      Account.create_with_card( params[:account], params[:card] ) :
+#      [User.new, Card.new()]
+#    if request.post? and @card.errors.empty?
+#      @account.send_account_info(params[:email])
+#      redirect_to Card.path_setting(Card.setting('*invite+*thanks'))
+#    else
+#      show :invite
+#    end
+#  end
 
 
   def signin

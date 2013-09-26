@@ -8,7 +8,7 @@ class AdminController < CardController
     if request.post?
       #Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
       Account.as_bot do
-        @account, @card = Account.create_with_card( params[:account], params[:card] )
+        @card = Card.create params[:card]
         set_default_request_recipient
 
         if @card.errors.empty?

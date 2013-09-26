@@ -189,7 +189,7 @@ format :html do
     end
     
     wrap_frame :new, args.merge(:show_help=>true, :hide_menu=>true) do
-      card_form :create, 'card-form card-new-form', 'main-success'=>'REDIRECT' do |form|
+      card_form :create, 'card-form', 'main-success'=>'REDIRECT' do |form|
         @form = form
         %{
           #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
@@ -232,7 +232,7 @@ format :html do
 ###---(  EDIT VIEWS )
   view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
     wrap_frame :edit, args.merge(:show_help=>true) do
-      card_form :update, 'card-form card-edit-form autosave' do |f|
+      card_form :update, 'card-form autosave' do |f|
         @form= f
         %{
           <div class="card-editor">

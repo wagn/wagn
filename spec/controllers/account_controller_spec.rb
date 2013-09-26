@@ -3,6 +3,61 @@ require 'wagn/spec_helper'
 include Wagn::AuthenticatedTestHelper
 require 'rr'
 
+
+describe CardController do
+  describe "#signup" do
+    before do
+      @msgs=[]
+      mock.proxy(Mailer).account_info.with_any_args.times(any_times) do |m|
+        @msgs << m
+        mock(m).deliver
+      end
+    end
+
+    #FIXME: tests needed : signup without approval, signup alert emails
+    
+    it 'should provide signup form' do
+      Account.as :anonymous do
+        get :read, :view=>'new', :card=>{ :type_id=>Card::AccountRequestID }  
+        response.body.match( /Sign Up/ ).should be_true
+        assert_response :success
+      end
+    end
+
+    it 'should create a user' do
+      post :create, :card=>{ :name=>'Joe New', :type_id=>Card::AccountRequestID, :account_args=>{:email=>'joe@new.com'} }
+      new_user = Account[ 'joe@new.com' ]
+      
+      @cd_with_acct = Card['Joe New']
+      new_user.should be
+      new_user.card_id.should == @cd_with_acct.id
+      new_user.pending?.should be_true
+      @cd_with_acct.type_id.should == Card::AccountRequestID
+    end
+
+    it 'should send email' do
+      post :create, :card=>{ :name=>'Joe New', :type_id=>Card::AccountRequestID, :account_args=>{:email=>'joe@new.com'} }
+      login_as :joe_admin
+
+      post :accept, :card=>{:key=>'joe_new'}, :email=>{:subject=>'Hey Joe!', :message=>'Can I Come on in?'}
+
+      @msgs.size.should == 1
+      @msgs[0].should be_a Mail::Message
+      #puts "msg looks like #{@msgs[0].inspect}"
+    end
+
+    it 'should detect duplicates' do
+      post :create, :card=>{ :name=>'Joe Scope',     :type_id=>Card::AccountRequestID, :account_args=>{ :email=>'joe@user.com'} }
+      post :create, :card=>{ :name=>'Joe Duplicate', :type_id=>Card::AccountRequestID, :account_args=>{ :email=>'joe@user.com'} }
+            
+      #s=Card['joe scope']
+      c=Card['Joe Duplicate']
+      c.should be_nil
+    end
+  end
+end
+
+
 describe AccountController do
 
   describe "#accept" do
@@ -47,57 +102,6 @@ describe AccountController do
     end
   end
 
-  describe "#signup" do
-    before do
-      @msgs=[]
-      mock.proxy(Mailer).account_info.with_any_args.times(any_times) do |m|
-        @msgs << m
-        mock(m).deliver
-      end
-    end
-
-    #FIXME: tests needed : signup without approval, signup alert emails
-    
-    it 'should provide signup form' do
-      Account.as :anonymous do
-        get :signup
-        #assert_select 'h1', 'Sign Up'
-        assert_response :success
-      end
-    end
-
-    it 'should create a user' do
-      #warn "who #{Account.current.inspect}"
-      post :signup, :account=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}
-      new_user = Account[ 'joe@new.com' ]
-      
-      @cd_with_acct = Card['Joe New']
-      new_user.should be
-      new_user.card_id.should == @cd_with_acct.id
-      new_user.pending?.should be_true
-      @cd_with_acct.type_id.should == Card::AccountRequestID
-    end
-
-    it 'should send email' do
-      post :signup, :account=>{:email=>'joe@new.com'}, :card=>{:name=>'Joe New'}
-      login_as :joe_admin
-
-      post :accept, :card=>{:key=>'joe_new'}, :email=>{:subject=>'Hey Joe!', :message=>'Can I Come on in?'}
-
-      @msgs.size.should == 1
-      @msgs[0].should be_a Mail::Message
-      #puts "msg looks like #{@msgs[0].inspect}"
-    end
-
-    it 'should detect duplicates' do
-      post :signup, :account=>{:email=>'joe@user.com'}, :card=>{:name=>'Joe Scope'}
-      post :signup, :account=>{:email=>'joe@user.com'}, :card=>{:name=>'Joe Duplicate'}
-      
-      #s=Card['joe scope']
-      c=Card['Joe Duplicate']
-      c.should be_nil
-    end
-  end
 
   describe "#signin" do
   end

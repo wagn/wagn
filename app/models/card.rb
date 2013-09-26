@@ -25,8 +25,8 @@ class Card < ActiveRecord::Base
 
   attr_writer :selected_revision_id #writer because read method is in mod (and does not override upon load)
   attr_accessor  :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
+    :comment, :comment_author, :account_args,        # obviated soon
     :update_referencers, :was_new_card,              # wrong mechanisms for these
-    :comment, :comment_author,                       # obviated soon
     :error_view, :error_status                       # yuck
 
   before_save :approve

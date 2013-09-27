@@ -4,10 +4,6 @@ require 'wagn/spec_helper'
 describe Card::Set::All::Account do
   describe 'accountable?' do
     
-    it 'should be false for existing accounts' do
-      Account.current.accountable?.should == false
-    end
-    
     it 'should be false for cards with *accountable rule off' do
       Card['A'].accountable?.should == false
     end

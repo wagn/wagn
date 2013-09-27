@@ -53,12 +53,12 @@ event :create_invited_account, :after=>:store, :on=>:create do
   create_account
 end
 
-event :notify_accounted, :after=>:extend, :on=>:create do
-  warn "notify accounted!"
+event :notify_accounted, :after=>:extend do
   if account.active?
-    account.send_account_info(
-      :message => Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!",
-      :subject => Card.setting('*signup+*subject') || "Account info for #{Card.setting('*title')}!"
-    )
+    params = Wagn::Env[:params]  || {}
+    email_args = params[:email] || {}
+    email_args[:message] ||= Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!"
+    email_args[:subject] ||= Card.setting('*signup+*subject') || "Account info for #{Card.setting('*title')}!"
+    account.send_account_info email_args
   end
 end

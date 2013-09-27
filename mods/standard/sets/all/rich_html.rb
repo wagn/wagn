@@ -341,7 +341,7 @@ format :html do
       %{
         #{ subformat( current_set ).render_content }
         #{ 
-          if card.accountable?
+          if card.accountable? && !card.account
             %{
               <div class="new-account-link">
                 #{ link_to %{Add a sign-in account for "#{card.name}"}, path(:view=>:new_account),
@@ -423,7 +423,7 @@ format :html do
     fieldset :roles, option_content
   end
 
-  view :new_account, :perms=> lambda { |r| r.card.accountable? } do |args|
+  view :new_account, :perms=> lambda { |r| r.card.accountable? && !r.card.account } do |args|
     wrap_frame :new_account, args do
       card_form :create_account do |form|
         %{

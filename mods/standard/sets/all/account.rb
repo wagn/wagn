@@ -15,7 +15,7 @@ def create_account
     user.errors.each do |key,err|
       errors.add key,err
     end
-    raise ActiveRecord::RecordInvalid, self
+    raise ActiveRecord::Rollback
   end
 end
 
@@ -25,7 +25,6 @@ end
 
 def accountable?
   Card.toggle( rule(:accountable) ) and
-  !account and
   fetch( :trait=>:account, :new=>{} ).ok?( :create)
 end
 
@@ -66,6 +65,16 @@ def all_roles
     end
 end
 
+
+
+
+event :activate_account, :after=>:store, :on=>:update do
+  params = Wagn::Env[:params]
+  warn "#{params[:activate]} and #{accountable?} and #{account = Account[ self.id ]}"
+  if params[:activate] and accountable? and account = Account[ self.id ]
+    account.update_attributes :status=>'active'
+  end
+end
 
 
 format :html do

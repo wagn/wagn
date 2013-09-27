@@ -7,6 +7,8 @@ module Wagn::Env
       
       if c = args[:controller]
         self[:controller] = c
+        self[:params] = c.request.params
+        
         self[:host]       = Wagn::Conf[:host]     || c.request.env['HTTP_HOST']
         self[:protocol]   = Wagn::Conf[:protocol] || c.request.protocol
         

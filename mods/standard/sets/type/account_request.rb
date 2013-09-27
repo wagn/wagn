@@ -40,7 +40,8 @@ format :html do
       card_form :update, 'card-form autosave' do |f|
         @form= f
         %{
-          #{ hidden_field_tag 'card[key]', card.key }
+          #{ f.hidden_field :type_id, Card::UserID  }
+          #{ hidden_field_tag :activate, true       }
           #{ _render_invitation_field               }        
         }
       end
@@ -51,7 +52,7 @@ format :html do
     links = []
     #ENGLISH
     if Account.create_ok?
-      links << link_to( "Invite #{card.name}", Card.path_setting("/account/accept?card[key]=#{card.cardname.url_key}"), :class=>'invitation-link')
+      links << link_to( "Invite #{card.name}", path(:action=>:edit), :class=>'invitation-link')
     end
     if Account.logged_in? && card.ok?(:delete)
       links << link_to( "Deny #{card.name}", path(:action=>:delete), :class=>'slotter standard-delete', :remote=>true )
@@ -67,7 +68,10 @@ format :html do
   end
 end
 
-event :set_status, :after=>:approve do
+
+
+
+event :set_type_and_status, :after=>:approve, :on=>:create do
   if accountable?
     self.type_id = Card::UserID
   else
@@ -80,8 +84,9 @@ event :create_requested_account, :after=>:store, :on=>:create do
   create_account
 end
 
+
+
 event :signup_notifications, :after=>:extend, :on=>:create do
-  warn "signup notifications called!"
   Mailer.signup_alert(self).deliver if Card.setting '*request+*to'
 end
 

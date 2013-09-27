@@ -1,4 +1,6 @@
 def approve
+  Rails.logger.info "calling approve on #{name}"
+  
   @was_new_card = self.new_card?
   @action = case
     when trash     ; :delete
@@ -13,6 +15,7 @@ end
 
 def store
   run_callbacks :store do
+    Rails.logger.info "calling store on #{name}"
     #set_read_rule #move to action
     yield
     @virtual = false
@@ -38,11 +41,11 @@ def rescue_event e
   @action = nil
   expire_pieces
   if @subcards
-    @subcards.each{ |card| card.expire_pieces }
+    @subcards.each { |card| card.expire_pieces }
   end
   raise e
 end
 
 def event_applies? opts
-  !opts[:on] or Array.wrap(opts[:on]).member? @action
+  !opts[:on] or Array.wrap( opts[:on] ).member? @action
 end

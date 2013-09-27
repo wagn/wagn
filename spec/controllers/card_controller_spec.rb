@@ -253,21 +253,6 @@ describe CardController do
     end
   end
 
-  describe '#update_account' do
-    
-    it "should update roles" do
-      login_as :joe_admin
-      admin_id = Card['Administrator'].id
-      
-      post :update, :id=>"Joe User".to_name.key, :save_roles=>true, :account_roles => { admin_id => true }
-      assert_response 302
-      Card['joe_user+*roles'].item_names.should == ['Administrator']
-      post :update, :id=>"Joe User".to_name.key, :save_roles=>true
-      assert_response 302
-      Card['joe_user+*roles'].item_names.should == []
-    end
-
-  end
 
 
   describe "unit tests" do

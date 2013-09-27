@@ -85,8 +85,6 @@ format :html do
           #{ hidden_field_tag 'success[id]', '_self' }
           #{ hidden_field_tag 'success[view]', 'account' }
           #{ render_account_detail }
-          #{ #render_account_role   
-          }
           <fieldset><div class="button-area">#{ submit_tag 'Save Changes' }</div></fieldset>
         }
       end
@@ -110,40 +108,6 @@ format :html do
     
   end
   
-  view :account_roles, :perms=>lambda { |r| 
-        r.card.fetch( :trait => :roles, :new=>{} ).ok? :read
-      } do |args|
-        
-    roles = Card.search( :type=>Card::RoleID, :limit=>0 ).reject do |x|
-      [Card::AnyoneID, Card::AuthID].member? x.id.to_i
-    end
-
-    traitc = card.fetch :trait => :roles, :new=>{}
-    user_roles = traitc.item_cards :limit=>0
-
-    option_content = if traitc.ok? :update
-      user_role_ids = user_roles.map &:id
-      hidden_field_tag(:save_roles, true) +
-      (roles.map do |rolecard|
-        if rolecard && !rolecard.trash
-         %{<div style="white-space: nowrap">
-           #{ check_box_tag "account_roles[%s]" % rolecard.id, 1, user_role_ids.member?(rolecard.id) ? true : false }
-           #{ link_to_page rolecard.name }
-         </div>}
-        end
-      end.compact * "\n").html_safe
-    else
-      if user_roles.empty?
-        'No roles assigned'  # #ENGLISH
-      else
-        (user_roles.map do |rolecard|
-          %{ <div>#{ link_to_page rolecard.name }</div>}
-        end * "\n").html_safe
-      end
-    end
-
-    fieldset :roles, option_content
-  end
 
   view :new_account, :perms=> lambda { |r| r.card.accountable? && !r.card.account } do |args|
     wrap_frame :new_account, args do

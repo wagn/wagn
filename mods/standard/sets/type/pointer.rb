@@ -41,18 +41,20 @@ format :html do
   end
 
   view :checkbox do |args|
-    %{<div class="pointer-checkbox-list">} +
-    card.options.map do |option|
+    options = card.options.map do |option|
       checked = card.item_names.include?(option.name)
       id = "pointer-checkbox-#{option.cardname.key}"
-      %{<div class="pointer-checkbox"> } +
-        check_box_tag( "pointer_checkbox", option.name, checked, :id=>id, :class=>'pointer-checkbox-button' ) +
-        %{<label for="#{id}">#{option.name}</label> } +
-        ((description = card.option_text(option.name)) ?
-          %{<div class="checkbox-option-description">#{ description }</div>} : '' ) +
-      "</div>"
-    end.join("\n") +
-    '</div>'
+      description = pointer_option_description option
+      %{
+        <div class="pointer-checkbox">
+          #{ check_box_tag "pointer_checkbox", option.name, checked, :id=>id, :class=>'pointer-checkbox-button' }
+          <label for="#{id}">#{option.name}</label>
+          #{ %{<div class="checkbox-option-description">#{ description }</div>} if description }
+        </div>
+      }
+    end.join "\n"
+
+    %{<div class="pointer-checkbox-list">#{options}</div>}
   end
 
   view :multiselect do |args|
@@ -65,20 +67,31 @@ format :html do
     options = card.options.map do |option|
       checked = (option.name==card.item_names.first)
       id = "pointer-radio-#{option.cardname.key}"
-      description = card.option_text(option.name)
-      %{ <div class="pointer-radio"> } +
-        radio_button_tag( input_name, option.name, checked, :id=>id, :class=>'pointer-radio-button' ) +
-        %{<label for="#{id}">#{ option.name }</label> } +
-        (description ? %{<div class="radio-option-description">#{ description }</div>} : '') +
-      '</div>'
+      description = pointer_option_description option
+      %{ 
+        <div class="pointer-radio">
+        #{ radio_button_tag input_name, option.name, checked, :id=>id, :class=>'pointer-radio-button' }
+        <label for="#{id}">#{ option.name }</label>
+        #{ %{<div class="radio-option-description">#{ description }</div>} if description }
+        </div>
+      }
     end.join("\n")
 
-    %{ <div class="pointer-radio-list">#{options}</div> }
+    %{<div class="pointer-radio-list">#{options}</div>}
   end
 
   view :select do |args|
     options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]}
     select_tag("pointer_select", options_for_select(options, card.item_names.first), :class=>'pointer-select')
+  end
+  
+  def pointer_option_description option
+    pod_name = card.rule(:options_label) || 'description'
+    dcard = Card[ "#{option.name}+#{pod_name}" ]
+    warn "#{option}+#{pod_name} -> #{dcard.inspect}"
+    if dcard and dcard.ok? :read
+      subformat(dcard).render_core
+    end
   end
   
   def pointer_items itemview=nil
@@ -170,11 +183,6 @@ def options
   end
 end
 
-def option_text(option)
-  name = self.rule(:options_label) || 'description'
-  textcard = Card["#{option}+#{name}"]
-  textcard ? textcard.content : nil
-end
 
 format :css do
   view :content do |args|

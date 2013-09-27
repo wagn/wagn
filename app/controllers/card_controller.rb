@@ -57,21 +57,6 @@ class CardController < ApplicationController
 
 
 
-  #-------- ( ACCOUNT METHODS )
-
-#  def update_account
-#    if params[:save_roles]
-#      role_card = card.fetch :trait=>:roles, :new=>{}
-#      role_card.ok! :update
-#
-#      role_hash = params[:account_roles] || {}
-#      role_card = role_card.refresh
-#      role_card.items= role_hash.keys.map &:to_i
-#    end
-#
-
-
-
 
   private
   

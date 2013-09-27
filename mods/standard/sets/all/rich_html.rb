@@ -358,7 +358,6 @@ format :html do
   view :related do |args|
     if rparams = params[:related]
       rcardname = rparams[:name].to_name.to_absolute_name( card.cardname)
-      warn "rcardname = #{rcardname}"
       rcard = Card.fetch rcardname, :new=>{}
       rview = rparams[:view] || :titled        
       show = 'menu,help'

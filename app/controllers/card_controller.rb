@@ -146,8 +146,6 @@ class CardController < ApplicationController
       else                 ;  Card.fetch target.to_name.to_absolute(card.cardname), :new=>{}
       end
 
-#    Rails.logger.info "success case handling: #{redirect}, #{target}, #{params}"
-
     case
     when redirect
       target = page_path target.cardname, new_params if Card === target

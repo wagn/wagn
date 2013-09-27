@@ -1,8 +1,6 @@
 # -*- encoding : utf-8 -*-
-#require 'rr'
 
 require 'wagn/spec_helper'
-Mailer
 
 describe Card::Set::Type::AccountRequest do
   
@@ -160,6 +158,3 @@ describe Card::Set::Type::AccountRequest do
     end
   end
 end
-
-
- 

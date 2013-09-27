@@ -92,10 +92,7 @@ class Card < ActiveRecord::Base
   # The following events are all currently defined AFTER the sets are loaded and are therefore unexposed to the API.  Not good.  (my fault) - efm
 
   event :check_perms, :after=>:approve do
-    approved? or begin
-      Rails.logger.info "RAISING DENIAL for #{name}"
-      raise( PermissionDenied.new self )
-    end
+    approved? or raise( PermissionDenied.new self )
   end
 
   event :set_stamper, :before=>:store do #|args|

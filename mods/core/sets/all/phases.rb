@@ -1,6 +1,4 @@
 def approve
-  Rails.logger.info "calling approve on #{name}"
-  
   @was_new_card = self.new_card?
   @action = case
     when trash     ; :delete
@@ -15,8 +13,6 @@ end
 
 def store
   run_callbacks :store do
-    Rails.logger.info "calling store on #{name}"
-    #set_read_rule #move to action
     yield
     @virtual = false
   end

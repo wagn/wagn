@@ -45,9 +45,6 @@ def all_roles
 end
 
 
-
-
-
 format :html do
   view :invitation_fields do |args|
     email_params = params[:email] || {}
@@ -58,13 +55,9 @@ format :html do
     
     %{
       #{ hidden_field_tag :success, "REDIRECT: #{success}" if success }
-      
       #{ fieldset :subject, text_field( :email, :subject, :value=>subject, :size=>60 ) }
-
-      #{ fieldset :message,
-          text_area( :email, :message, :value=>message, :rows=>10, :cols => 60 ),
-          :help => "We'll create a password and attach it to the email."
-      }
+      #{ fieldset :message, text_area( :email, :message, :value=>message, :rows=>10, :cols => 60 ),
+          :help => "We'll create a password and attach it to the email." }
       <fieldset>
         <div class="button-area">
           #{ submit_tag 'Invite' }
@@ -73,7 +66,6 @@ format :html do
       </fieldset>
     }    
   end
-  
   
   
   view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|

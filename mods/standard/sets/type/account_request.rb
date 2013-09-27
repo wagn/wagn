@@ -1,8 +1,6 @@
 # -*- encoding : utf-8 -*-
 
 format :html do
-  view :invitation_fields, :type=>:user
-
   view :new do |args|
     #FIXME - make more use of standard new view
     frame_args = args.merge :title=>'Sign Up', :show_help=>true, :hide_menu=>true
@@ -12,14 +10,15 @@ format :html do
       else                                               ; 'All Account Requests are subject to review.'
       end
 
-    redirect = Card.setting "#{ Card[ card.accountable? ? :signup : :request ].name }+#{ Card[ :thanks ].name }"
+    success = Card.setting "#{ Card[ card.accountable? ? :signup : :request ].name }+#{ Card[ :thanks ].name }"
     # *signup+*thanks or *request+*thanks
 
     wrap_frame :signup, frame_args do
-      card_form :create, 'card-form', 'main-success'=>"REDIRECT: #{redirect}" do |f|
+      card_form :create, 'card-form', 'main-success'=>"REDIRECT" do |f|
         @form = f
         %{
           #{ f.hidden_field :type_id }
+          #{ hidden_field_tag :success, success }
           #{ _render_name_editor :help=>'usually first and last name' }
           #{ fieldset :email, text_field( 'card[account_args]', :email ) }
           #{ with_inclusion_mode(:new) { edit_slot :label=>'other' } }
@@ -40,9 +39,9 @@ format :html do
       card_form :update, 'card-form autosave' do |f|
         @form= f
         %{
-          #{ f.hidden_field :type_id, Card::UserID  }
-          #{ hidden_field_tag :activate, true       }
-          #{ _render_invitation_field               }        
+          #{ hidden_field_tage 'card[type_id]', Card::UserID  }
+          #{ hidden_field_tag :activate, 'true'               }
+          #{ _render_invitation_field                         }        
         }
       end
     end
@@ -52,7 +51,7 @@ format :html do
     links = []
     #ENGLISH
     if Account.create_ok?
-      links << link_to( "Invite #{card.name}", path(:action=>:edit), :class=>'invitation-link')
+      links << link_to( "Invite #{card.name}", path(:view=>:edit), :class=>'invitation-link')
     end
     if Account.logged_in? && card.ok?(:delete)
       links << link_to( "Deny #{card.name}", path(:action=>:delete), :class=>'slotter standard-delete', :remote=>true )
@@ -71,28 +70,16 @@ end
 
 
 
-event :set_type_and_status, :after=>:approve, :on=>:create do
+event :auto_approve, :after=>:approve, :on=>:create do
   if accountable?
     self.type_id = Card::UserID
-  else
-    @account_args ||= {}
-    @account_args[:status] = 'pending'
   end
 end
-
-event :create_requested_account, :after=>:store, :on=>:create do
-  create_account
-end
-
 
 
 event :signup_notifications, :after=>:extend, :on=>:create do
-  Mailer.signup_alert(self).deliver if Card.setting '*request+*to'
-end
-
-
-event :block_user, :after=>:store, :on=>:delete do
-  if account = Account[ self.id ]
-    account.update_attributes :status=>'blocked'
+  if account and account.pending? and Card.setting '*request+*to'
+    Mailer.signup_alert(self).deliver
   end
 end
+

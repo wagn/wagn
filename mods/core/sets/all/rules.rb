@@ -68,7 +68,7 @@ module ClassMethods
   end
 
   def toggle val
-    val == '1'
+    val.to_s.strip == '1'
   end
 
   def rule_cache

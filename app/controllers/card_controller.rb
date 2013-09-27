@@ -69,31 +69,8 @@ class CardController < ApplicationController
 #      role_card.items= role_hash.keys.map &:to_i
 #    end
 #
-#    acct = card.account
-#    if acct and account_args = params[:account]
-#      account_args[:blocked] = account_args[:blocked] == '1'
-#      if Account.as_id == card.id
-#        raise Wagn::Oops, "can't block own account" if account_args[:blocked]
-#      else
-#        card.fetch(:trait=>:account).ok! :update
-#      end
-#      acct.update_attributes account_args
-#      acct.errors.each do |key,err|
-#        card.errors.add key,err
-#      end
-#    end
-#
-#    handle { card.errors.empty? }
-#  end
-#
-#  def create_account
-#    raise Wagn::PermissionDenied, "can't add account to this card" unless card.accountable?
-#    card.create_account params[:account], 
-#    email_args = { :subject => "Your new #{Card.setting :title} account.",   #ENGLISH
-#                   :message => "Welcome!  You now have an account on #{Card.setting :title}." } #ENGLISH
-#    
-#    handle { card.errors.empty? }
-#  end
+
+
 
 
   private
@@ -163,7 +140,7 @@ class CardController < ApplicationController
 
   def success
     redirect, new_params = !ajax?, {}
-    
+
     target = case params[:success]
       when Hash
         new_params = params[:success]
@@ -183,6 +160,8 @@ class CardController < ApplicationController
       when /^TEXT:\s*(.+)/ ;  $1
       else                 ;  Card.fetch target.to_name.to_absolute(card.cardname), :new=>{}
       end
+
+#    Rails.logger.info "success case handling: #{redirect}, #{target}, #{params}"
 
     case
     when redirect

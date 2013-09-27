@@ -57,6 +57,7 @@ module Card::Set
       define_method final_method, &final
 
       define_method event do
+        #Rails.logger.info "#{event} called for #{name}"
         run_callbacks event do
           if event_applies? opts
             send final_method

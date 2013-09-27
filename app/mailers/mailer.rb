@@ -26,6 +26,7 @@ class Mailer < ActionMailer::Base
       from_card = Card[from_card_id]
       "#{from_card.name} <#{from_card.account.email}>"
     end
+    
     mail_from( { :to=>@email, :subject=>subject }, invite_from )
   end
 

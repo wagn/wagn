@@ -26,6 +26,10 @@ module Wagn::Env
       @@env[key.to_sym] = value
     end
 
+    def params
+      self[:params] || {}
+    end
+    
     private
     
     def have_recaptcha_keys?

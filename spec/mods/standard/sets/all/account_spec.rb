@@ -66,4 +66,52 @@ describe Card::Set::All::Account do
     end
   end
   
+
+  describe "#invitation" do
+    it 'should create a card, user, and account card' do
+      jadmin = Card['joe admin']
+      Account.current_id = jadmin.id #simulate login to get correct from address
+      ja_email = jadmin.account.email
+
+      Wagn::Env[:params] = { :email => {:subject=>'Hey Joe!', :message=>'Come on in.'} }
+      Card.create :name=>'Joe New', :type_id=>Card::UserID, :account_args=>{:email=>'joe@new.com'}
+
+      c = Card['Joe New']
+      u = Account[ 'joe@new.com' ]
+      
+      c.should be
+      u.should be
+      u.card_id.should == c.id
+      c.type_id.should == Card::UserID
+      
+      email = ActionMailer::Base.deliveries.last
+      email.to.should == ['joe@new.com']
+      email.subject.should == 'Hey Joe!'
+      email.from.should == [ ja_email ]
+    end
+  end
+  
+  context 'updates' do
+    before do
+      @card = Card['Joe User']
+    end
+    it "should handle email updates" do
+      @card.update_attributes :account_args => { :email => 'joe@user.co.uk' }
+      @card.account.email.should == 'joe@user.co.uk'
+    end
+  
+    it "should not allow a user to block or unblock himself" do
+      expect do
+        @card.update_attributes! :account_args => { :blocked => '1' }
+      end.to raise_error
+      @card.account.blocked?.should be_false
+      
+      Account.as_bot do
+        @card.update_attributes! :account_args => { :blocked => '1' }
+        @card.account.blocked?.should be_true
+      end
+      
+    end
+  end
+
 end

@@ -92,7 +92,10 @@ class Card < ActiveRecord::Base
   # The following events are all currently defined AFTER the sets are loaded and are therefore unexposed to the API.  Not good.  (my fault) - efm
 
   event :check_perms, :after=>:approve do
-    approved? or raise( PermissionDenied.new self )
+    approved? or begin
+      Rails.logger.info "RAISING DENIAL for #{name}"
+      raise( PermissionDenied.new self )
+    end
   end
 
   event :set_stamper, :before=>:store do #|args|
@@ -210,7 +213,7 @@ class Card < ActiveRecord::Base
         Wagn::Env[:recaptcha_on]          and
         Card.toggle( card.rule :captcha ) and
         num = Wagn::Env[:recaptcha_count] and
-        num < 2
+        num < 1
         
       Wagn::Env[:recaptcha_count] = num + 1
       Wagn::Env[:controller].verify_recaptcha :model=>card or card.error_status = 449

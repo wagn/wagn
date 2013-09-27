@@ -99,8 +99,7 @@ describe Card::Set::Type::AccountRequest do
     end
     
     context 'approval' do
-      before do
-      end
+
       
       it 'should convert card to user' do
         Wagn::Env[:params] = { :activate=>true, :email => { :subject=>'subj', :message=>'msg' } }
@@ -118,30 +117,47 @@ describe Card::Set::Type::AccountRequest do
       end
       
     end
-    
-    
   end
-
-  it 'should require name' do
-    card = Card.create :type_id=>Card::AccountRequestID #, :account=>{ :email=>"bunny@hop.com" } currently no api for this
-    #Rails.logger.info "name errors: #{@card.errors.full_messages.inspect}"
-    assert card.errors[:name]
+  
+  context 'auto approve' do
+    it 'should happen when configured' do
+      Account.as_bot do
+        Card['*account+*right+*create'].update_attributes! :content=>'[[Anyone]]'
+      end
+      
+      c = Card.create :name=>'Joe New', :type_id=>Card::AccountRequestID, :account_args=>{:email=>'joe@new.com'}
+      c.type_id.should == Card::UserID
+      c.account.active?.should be_true
+      email = ActionMailer::Base.deliveries.last
+      email.to.should == ['joe@new.com']
+      email.subject.should =~ /Account info/
+    end
   end
+  
+  
+  context 'request validation' do
 
-
- it 'should require a unique name' do
-    @card = Card.create :type_code=>'account_request', :name=>"Joe User", :content=>"Let me in!"# :account=>{ :email=>"jamaster@jay.net" }
-    assert @card.errors[:name]
-  end
-
-
-  it 'should block user upon delete' do
-    Account.as_bot do
-      Card.fetch('Ron Request').delete!
+    it 'should require name' do
+      card = Card.create :type_id=>Card::AccountRequestID #, :account=>{ :email=>"bunny@hop.com" } currently no api for this
+      #Rails.logger.info "name errors: #{@card.errors.full_messages.inspect}"
+      assert card.errors[:name]
     end
 
-    assert_equal nil, Card.fetch('Ron Request')
-    assert_equal 'blocked', Account['ron@request.com'].status
+
+   it 'should require a unique name' do
+      @card = Card.create :type_code=>'account_request', :name=>"Joe User", :content=>"Let me in!"# :account=>{ :email=>"jamaster@jay.net" }
+      assert @card.errors[:name]
+    end
+
+
+    it 'should block user upon delete' do
+      Account.as_bot do
+        Card.fetch('Ron Request').delete!
+      end
+
+      assert_equal nil, Card.fetch('Ron Request')
+      assert_equal 'blocked', Account['ron@request.com'].status
+    end
   end
 end
 

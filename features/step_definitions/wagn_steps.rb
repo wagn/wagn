@@ -7,7 +7,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "pat
 Given /^I sign up as "(.*)" with email "(.*)"$/ do |cardname, email|
   visit '/account/signup'
   fill_in 'card_name', :with=>cardname
-  fill_in 'account_email', :with=>email
+  fill_in 'card_account_args_email', :with=>email
   click_button 'Submit'
 end
 

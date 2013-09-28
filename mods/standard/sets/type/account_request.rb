@@ -39,9 +39,9 @@ format :html do
       card_form :update, 'card-form autosave' do |f|
         @form= f
         %{
-          #{ hidden_field_tage 'card[type_id]', Card::UserID  }
-          #{ hidden_field_tag :activate, 'true'               }
-          #{ _render_invitation_field                         }        
+          #{ hidden_field_tag 'card[type_id]', Card::UserID }
+          #{ hidden_field_tag :activate, 'true'             }
+          #{ _render_invitation_field                       }        
         }
       end
     end

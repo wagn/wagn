@@ -8,7 +8,7 @@ Feature: account requests
     And I log in as Joe Admin
     And I create card "User+*type+*structure" with content "{{+life story}}"
 
-  Scenario: 
+  Scenario: Responding to account request
     When I go to card "AccountRequest"
     And In the main card content I click "Wanna B"
     When In the main card content I click "Invite Wanna B"

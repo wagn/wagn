@@ -375,6 +375,7 @@ format :html do
     else
       setting = card.new_card? ? :add_help : :help
       setting = [ :add_help, { :fallback => :help } ] if setting == :add_help
+      
       if help_card = card.rule_card( *setting ) and help_card.ok? :read
         with_inclusion_mode :normal do
           _final_core args.merge( :structure=>help_card.name )

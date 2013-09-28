@@ -88,7 +88,6 @@ format :html do
   def pointer_option_description option
     pod_name = card.rule(:options_label) || 'description'
     dcard = Card[ "#{option.name}+#{pod_name}" ]
-    warn "#{option}+#{pod_name} -> #{dcard.inspect}"
     if dcard and dcard.ok? :read
       subformat(dcard).render_core
     end

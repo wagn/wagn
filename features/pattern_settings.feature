@@ -29,7 +29,7 @@ Feature: Set settings
     And I log in as Joe User
     And I edit "Joe User"
     Then I should see "your favorite"
-    When I go to new User
+    When I go to new card "Joe Admin+cereal"
     Then I should see "your favorite"
 
   Scenario: Solo Set

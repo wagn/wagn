@@ -4,7 +4,6 @@ ENV["RAILS_ENV"] = 'test'
 
 Spork.prefork do
   require File.expand_path File.dirname(__FILE__) + "/../../config/environment"
-  require File.expand_path File.dirname(__FILE__) + "/authenticated_test_helper"
   require 'rspec/rails'
 
   # Requires supporting ruby files with custom matchers and macros, etc,

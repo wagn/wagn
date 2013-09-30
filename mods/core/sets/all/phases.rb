@@ -6,6 +6,7 @@ def approve
     else             :update
   end
   run_callbacks :approve
+  errors.empty?
 rescue Exception=>e
   rescue_event e
 end
@@ -43,5 +44,11 @@ def rescue_event e
 end
 
 def event_applies? opts
-  !opts[:on] or Array.wrap( opts[:on] ).member? @action
+  if !opts[:on] or Array.wrap( opts[:on] ).member? @action
+    if opts[:when]
+      opts[:when].call self
+    else
+      true
+    end
+  end
 end

@@ -13,7 +13,8 @@ class Card < ActiveRecord::Base
   cattr_accessor :set_patterns
   @@set_patterns = []
 
-  define_callbacks :approve, :store, :extend
+  define_callbacks :approve, :terminator=>'result == false'
+  define_callbacks :store, :extend
 
   load_set_patterns
   load_formats

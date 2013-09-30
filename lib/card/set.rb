@@ -58,8 +58,8 @@ module Card::Set
 
       define_method event do
         #Rails.logger.info "#{event} called for #{name}"
-        run_callbacks event do
-          if event_applies? opts
+        if event_applies? opts
+          run_callbacks event do
             send final_method
           end
         end
@@ -141,7 +141,9 @@ module Card::Set
           parts = mod.name.split '::'
           set_class_key, anchor_or_placeholder = parts[-2].underscore.to_sym, parts[-1].underscore
           set_key = Card.method_key( set_class_key => anchor_or_placeholder )
-          options.merge!( { :if => proc do |c| c.method_keys.member? set_key end } )           
+          options.merge!( { :if => proc do |c| c.method_keys.member? set_key end } ) 
+            #FIXME -- need to unify this :if stuff with #event_applies? / :when handling
+            # (though ideally the above would be obviated by a move to set-based callback handling)
         end
         Card.class_eval { set_callback object_method, kind, event, options }
       end

@@ -70,16 +70,15 @@ end
 
 
 
-event :auto_approve, :after=>:approve, :on=>:create do
-  if accountable?
-    self.type_id = Card.default_accounted_type_id
-  end
+event :auto_approve, :after=>:approve, :on=>:create, :when=>proc { |c| c.accountable? } do
+  self.type_id = Card.default_accounted_type_id
 end
 
+send_signup_notifications = proc do |c|
+  c.account and c.account.pending? and Card.setting '*request+*to'
+end
 
-event :signup_notifications, :after=>:extend, :on=>:create do
-  if account and account.pending? and Card.setting '*request+*to'
-    Mailer.signup_alert(self).deliver
-  end
+event :signup_notifications, :after=>:extend, :on=>:create, :when=>send_signup_notifications do
+  Mailer.signup_alert(self).deliver
 end
 

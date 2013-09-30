@@ -201,12 +201,13 @@ def handle_user_save user
 end
 
 
-event :activate_account, :after=>:store, :on=>:update do
-  Rails.logger.info "\n\nactivate_account: #{Wagn::Env.params[:activate]} and #{accountable?} and #{account}"
-  if Wagn::Env.params[:activate] and accountable? and account
-    account.update_attributes :status=>'active'
-    @newly_activated_account = true
-  end
+activation_ready = proc do |c|
+  Wagn::Env.params[:activate] and c.accountable? and c.account
+end
+
+event :activate_account, :after=>:store, :on=>:update, :when=>activation_ready do
+  account.update_attributes :status=>'active'
+  @newly_activated_account = true
 end
 
 

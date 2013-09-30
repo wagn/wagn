@@ -297,7 +297,7 @@ class Card::HtmlFormat < Card::Format
   private
 
   def fancy_title title=nil
-    raw %{<span class="card-title">#{ showname(title).to_name.parts.map {|p| h p }.join %{<span class="joint">+</span>} }</span>}
+    raw %{<span class="card-title">#{ showname(title).to_name.parts.join %{<span class="joint">+</span>} }</span>}
   end
 
 end

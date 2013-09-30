@@ -8,7 +8,7 @@ class AccountEvents < ActiveRecord::Migration
       aa.content = "1"
       aa.save!
       
-      role_right = "#{ Card[ :role ].name }+#{ Card[ :right ].name }"
+      role_right = "#{ Card[ :roles ].name }+#{ Card[ :right ].name }"
       
       r_options = Card.fetch "#{ role_right }+#{ Card[ :options ].name }", :new=>{}
       r_options.type_id = Card::SearchTypeID

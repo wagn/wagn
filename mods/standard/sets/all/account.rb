@@ -1,3 +1,9 @@
+module ClassMethods
+  def default_accounted_type_id
+    Card::UserID
+  end
+end
+
 def account
   Account[ id ]
 end

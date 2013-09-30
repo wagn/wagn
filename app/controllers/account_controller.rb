@@ -1,8 +1,6 @@
 # -*- encoding : utf-8 -*-
 class AccountController < ApplicationController
 
-  before_filter :login_required, :only => [ :invite, :update ]
-
   def signin
     @card = Card.new
     if params[:login]

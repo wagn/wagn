@@ -14,7 +14,7 @@ class Account
     def cache()          Wagn::Cache[Account]         end
 
     def create_ok?
-      base  = Card.new :name=>'dummy*', :type_id=>Card::UserID
+      base  = Card.new :name=>'dummy*', :type_id=>Card.default_accounted_type_id
       trait = Card.new :name=>"dummy*+#{Card[:account].name}"
       base.ok?(:create) && trait.ok?(:create)
     end

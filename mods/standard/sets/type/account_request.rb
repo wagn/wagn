@@ -39,9 +39,9 @@ format :html do
       card_form :update, 'card-form autosave' do |f|
         @form= f
         %{
-          #{ hidden_field_tag 'card[type_id]', Card::UserID }
-          #{ hidden_field_tag :activate, 'true'             }
-          #{ _render_invitation_field                       }        
+          #{ hidden_field_tag 'card[type_id]', Card.default_accounted_type_id }
+          #{ hidden_field_tag :activate, 'true'                               }
+          #{ _render_invitation_field                                         }        
         }
       end
     end
@@ -72,7 +72,7 @@ end
 
 event :auto_approve, :after=>:approve, :on=>:create do
   if accountable?
-    self.type_id = Card::UserID
+    self.type_id = Card.default_accounted_type_id
   end
 end
 

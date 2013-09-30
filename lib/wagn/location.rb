@@ -3,10 +3,6 @@
 #  note: i'm sure this isn't the optimal name..
 module Wagn::Location
 
-  # the location_history mechanism replaces
-  # store_location() & redirect_back_or_default() from the
-  # authenticated helper.
-  #
   # we keep a history stack so that in the case of card removal
   # we can crawl back up to the last un-removed location
 

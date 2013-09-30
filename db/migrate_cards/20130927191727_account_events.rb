@@ -8,14 +8,14 @@ class AccountEvents < ActiveRecord::Migration
       aa.content = "1"
       aa.save!
       
-      role_right = "#{ Card[ :role ] }+#{ Card[ :right   ] }"
+      role_right = "#{ Card[ :role ].name }+#{ Card[ :right ].name }"
       
-      r_options = Card.fetch "#{ role_right }+#{ Card[ :options ] }", :new=>{}
+      r_options = Card.fetch "#{ role_right }+#{ Card[ :options ].name }", :new=>{}
       r_options.type_id = Card::SearchTypeID
       r_options.content = %({"type":"role", "not":{"codename":["in","anyone","anyone_signed_in"]}})
       r_options.save!
       
-      r_input = Card.fetch "#{ role_right }+#{ Card[ :input ] }", :new=>{}
+      r_input = Card.fetch "#{ role_right }+#{ Card[ :input ].name }", :new=>{}
       r_input.content = '[[checkbox]]'
       r_input.save!
     end

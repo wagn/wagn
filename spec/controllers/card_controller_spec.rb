@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
-include Wagn::AuthenticatedTestHelper
 
 describe CardController do
 
@@ -256,7 +255,6 @@ describe CardController do
 
 
   describe "unit tests" do
-    include Wagn::AuthenticatedTestHelper
 
     before do
       @simple_card = Card['Sample Basic']

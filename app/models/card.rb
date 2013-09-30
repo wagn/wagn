@@ -70,7 +70,7 @@ class Card < ActiveRecord::Base
     if codename
       errors.add :delete, "#{name} is is a system card. (#{codename})\n  Deleting this card would mess up our revision records."
     end
-    if type_id== Card::UserID && Card::Revision.find_by_creator_id( self.id )
+    if account && Card::Revision.find_by_creator_id( self.id )
       errors.add :delete, "Edits have been made with #{name}'s user account.\n  Deleting this card would mess up our revision records."
     end
     if respond_to? :custom_validate_delete

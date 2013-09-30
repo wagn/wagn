@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
-include Wagn::AuthenticatedTestHelper
 require 'rr'
 
 

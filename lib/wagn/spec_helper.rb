@@ -21,7 +21,6 @@ Spork.prefork do
 
     #config.include CustomMatchers
     #config.include ControllerMacros, :type=>:controllers
-    config.include Wagn::AuthenticatedTestHelper, :type=>:controllers
 
     # == Mock Framework
     # If you prefer to mock with mocha, flexmock or RR, uncomment the appropriate symbol:
@@ -53,6 +52,11 @@ module Wagn::SpecHelper
 
   include ActionDispatch::Assertions::SelectorAssertions
   #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
+  
+  def login_as user
+    Account.current_id = @request.session[:user] = (uc=Card[user.to_s] and uc.id)
+    #warn "(ath)login_as #{user.inspect}, #{Account.current_id}, #{@request.session[:user]}"
+  end
   
   def newcard name, content=""
     #FIXME - misleading name; sounds like it doesn't save.

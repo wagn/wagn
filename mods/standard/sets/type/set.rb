@@ -45,7 +45,7 @@ format :html do
         <div class="template-editor-left">{{</div> 
         <div class="template-editor-main">
           #{
-            wrap_frame :template_editor, :title=>card.label, :custom_menu=>custom_menu do
+            wrap_frame :template_editor, :no_slot=>true, :title=>card.label, :custom_menu=>custom_menu do
               _render_core args.merge(:unlabeled=>true)
             end
           }

@@ -88,7 +88,7 @@ class Card::HtmlFormat < Card::Format
 
   def wrap view, args = {}
     classes = [
-      'card-slot',
+      ( 'card-slot' unless args[:no_slot] ),
       "#{view}-view",
       ( args[:slot_class] if args[:slot_class] ),
       card.safe_set_keys

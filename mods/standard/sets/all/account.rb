@@ -169,13 +169,13 @@ event :create_account, :after=>:store do
     account_card = Account.as_bot do
       Card.create! :name=>"#{ name }+#{ Card[:account].name }"
     end 
-
+    
     @account_args[:status] = 'pending' unless accountable?
     @account_args.reverse_merge! :card_id => self.id, :status => 'active', :account_id => account_card.id
 
     user = User.new @account_args
     handle_user_save user
-    @newly_activated_account = user.active?
+    @newly_activated_account = user if user.active?
   end
 end
 
@@ -207,16 +207,16 @@ end
 
 event :activate_account, :after=>:store, :on=>:update, :when=>activation_ready do
   account.update_attributes :status=>'active'
-  @newly_activated_account = true
+  @newly_activated_account = account
 end
 
 
 event :notify_accounted, :after=>:extend do
-  if @newly_activated_account && account.active?
+  if @newly_activated_account && @newly_activated_account.active?
     email_args = Wagn::Env.params[:email] || {}
     email_args[:message] ||= Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!"
     email_args[:subject] ||= Card.setting('*signup+*subject') || "Account info for #{Card.setting('*title')}!"
-    account.send_account_info email_args
+    @newly_activated_account.send_account_info email_args
   end
 end
 

@@ -98,8 +98,8 @@ class User < ActiveRecord::Base
 #protected
 
   # Encrypts the password with the user salt
-  def encrypt(password)
-    Account.encrypt(password, salt)
+  def encrypt password
+    Account.encrypt password, salt
   end
 
   # before save

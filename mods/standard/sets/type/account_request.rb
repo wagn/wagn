@@ -68,10 +68,8 @@ format :html do
 end
 
 
-
-
 event :auto_approve, :after=>:approve, :on=>:create, :when=>proc { |c| c.accountable? } do
-  self.type_id = Card.default_accounted_type_id
+  self.type_id = Card.default_accounted_type_id unless Wagn::Env[:no_auto_approval]
 end
 
 send_signup_notifications = proc do |c|

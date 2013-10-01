@@ -51,13 +51,10 @@ module Card::Set
     Card.define_callbacks event
 
     mod.class_eval do
-#      include ActiveSupport::Callbacks # may need this when callbacks are truly by module
-
       final_method = "#{event}_without_callbacks" #should be private?
       define_method final_method, &final
 
       define_method event do
-        #Rails.logger.info "#{event} called for #{name}"
         if event_applies? opts
           run_callbacks event do
             send final_method

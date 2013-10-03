@@ -452,9 +452,9 @@ class Card
 
     def path opts={}
       pcard = opts.delete(:card) || card
-      base = opts[:action] ? "card/#{ opts.delete :action }" : ''
+      base = opts[:action] ? "card/#{ opts.delete :action }/" : ''
       if pcard && !pcard.name.empty? && !opts.delete(:no_id) && ![:new, :create].member?(opts[:action]) #generalize. dislike hardcoding views/actions here
-        base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
+        base += ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
       end
       query = opts.empty? ? '' : "?#{opts.to_param}"
       wagn_path( base + query )

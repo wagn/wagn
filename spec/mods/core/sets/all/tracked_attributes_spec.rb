@@ -111,33 +111,12 @@ describe Card::Set::All::TrackedAttributes do
     # not sure if it's the card creation or the actual renaming process.
     # Card#save needs optimized in general.
     # Can't we just move this data to fixtures?
-    before do
-      Account.as_bot do
-       Card.create! :name => "chuck_wagn+chuck"
-       Card.create! :name => "Blue"
-     
-       Card.create! :name => "blue includer 1", :content => "{{Blue}}"
-       Card.create! :name => "blue includer 2", :content => "{{blue|closed;other:stuff}}"
-     
-       Card.create! :name => "blue linker 1", :content => "[[Blue]]"
-       Card.create! :name => "blue linker 2", :content => "[[blue]]"
-     
-       Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
-     
-       c3, c4 = Card["chuck_wagn+chuck"], Card["chuck"]
-      end
+
+
+    it "renaming plus card to its own child" do
+      assert_rename card("A+B"), "A+B+T"
     end
 
-    it "test_subdivision" do
-      assert_rename card("A+B"), "A+B+T"  # re-uses the parent card: A+B
-    end
-
-    it "test_rename_name_substitution" do
-      c1, c2 = Card["chuck_wagn+chuck"], Card["chuck"]
-      assert_rename c2, "buck"
-      assert_equal "chuck_wagn+buck", Card.find(c1.id).name
-    end
-  
     it "clears cache for old name" do
       assert_rename Card['Menu'], 'manure'
       Card['Menu'].should be_nil
@@ -156,47 +135,16 @@ describe Card::Set::All::TrackedAttributes do
       Card['manure'].references_from.size.should == 2
     end
 
-    it "test_rename_same_key_with_dependents" do
+    it "handles name variants" do
       assert_rename card("B"), "b"
     end
 
-    it "test_junction_to_simple" do
+    it "handles plus cards renamed to simple" do
       assert_rename card("A+B"), "K"
     end
   
-    it "test_reference_updates_plus_to_simple" do
-       c1, c2 = Card['Blue'], Card["chuck_wagn+chuck"]
-       c1.content = "[[chuck wagn+chuck]]"
-       c1.save!
-       assert_rename c2, 'schmuck'
-       c1 = Card.find(c1.id)
-       assert_equal '[[schmuck]]', c1.content
-    end
 
-    it "test_updates_inclusions_when_renaming" do
-      c1,c2,c3 = Card["Blue"], Card["blue includer 1"], Card["blue includer 2"]
-      c1.update_attributes :name => "Red", :update_referencers => true
-      assert_equal "{{Red}}", Card.find(c2.id).content                     
-      # NOTE these attrs pass through a hash stage that may not preserve order
-      assert_equal "{{Red|closed;other:stuff}}", Card.find(c3.id).content
-    end
-
-    it "test_updates_inclusions_when_renaming_to_plus" do
-      c1,c2 = Card["Blue"], Card["blue includer 1"]
-      c1.update_attributes :name => "blue includer 1+color", :update_referencers => true
-      assert_equal "{{blue includer 1+color}}", Card.find(c2.id).content                     
-    end
-
-    it "test_reference_updates_on_case_variants" do
-      c1,c2,c3 = Card["Blue"], Card["blue linker 1"], Card["blue linker 2"]
-      c1.reload.name = "Red"
-      c1.update_referencers = true
-      c1.save!
-      assert_equal "[[Red]]", Card.find(c2.id).content
-      assert_equal "[[Red]]", Card.find(c3.id).content
-    end
-
-    it "test_flip" do
+    it "handles flipped parts" do
       assert_rename card("A+B"), "B+A"
     end
 
@@ -245,19 +193,7 @@ describe Card::Set::All::TrackedAttributes do
       assert Card["Banana Card"] != nil
     end
 
-    it "test_renaming_card_with_self_link_should_not_hang" do
-      c = Card["Dairy"]
-      c.name = "Buttah"
-      c.update_referencers = true
-      c.save!
-      assert_equal "[[/new/{{_self|name}}|new]]", Card["Buttah"].content
-    end
 
-    it "test_renaming_card_without_updating_references_should_not_have_errors" do
-      c = Card["Dairy"]
-      c.update_attributes "name"=>"Newt", "update_referencers"=>'false'
-      assert_equal "[[/new/{{_self|name}}|new]]", Card["Newt"].content
-    end
 
     it "test_rename_should_not_fail_when_updating_inaccessible_referencer" do
       Card.create! :name => "Joe Card", :content => "Whattup"
@@ -278,6 +214,100 @@ describe Card::Set::All::TrackedAttributes do
         assert_equal "this [[Pit]]", Card["Orange"].raw_content
         c.update_attributes! :name => "Seed", :update_referencers => true
         assert_equal "this [[Seed]]", Card["Orange"].raw_content
+      end
+    end
+    
+    it 'should handle plus cards that have children' do
+      Account.as_bot do
+        Card.create :name=>'a+b+c+d'
+        ab = Card['a+b']
+        assert_rename ab, 'e+f'
+      end
+    end
+    
+    
+    context "chuck" do
+      before do
+        Account.as_bot do
+          Card.create! :name => "chuck_wagn+chuck"
+        end
+      end
+      
+      it "test_rename_name_substitution" do
+        c1, c2 = Card["chuck_wagn+chuck"], Card["chuck"]
+        assert_rename c2, "buck"
+        assert_equal "chuck_wagn+buck", Card.find(c1.id).name
+      end
+      
+      it "test_reference_updates_plus_to_simple" do
+         c1 = Account.as_bot do
+           Card.create! :name=>'Huck', :content=>"[[chuck wagn+chuck]]"
+         end
+         c2 = Card["chuck_wagn+chuck"]
+         assert_rename c2, 'schmuck'
+         c1 = Card.find(c1.id)
+         assert_equal '[[schmuck]]', c1.content
+      end
+    end
+    
+    context "dairy" do
+      before do
+        Account.as_bot do
+          Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
+        end
+      end
+      
+      it "test_renaming_card_with_self_link_should_not_hang" do
+        c = Card["Dairy"]
+        c.name = "Buttah"
+        c.update_referencers = true
+        c.save!
+        assert_equal "[[/new/{{_self|name}}|new]]", Card["Buttah"].content
+      end
+
+      it "test_renaming_card_without_updating_references_should_not_have_errors" do
+        c = Card["Dairy"]
+        c.update_attributes "name"=>"Newt", "update_referencers"=>'false'
+        assert_equal "[[/new/{{_self|name}}|new]]", Card["Newt"].content
+      end
+    end
+    
+    
+    context "blues" do
+      before do
+        Account.as_bot do
+          Card.create! :name => "Blue"
+    
+          Card.create! :name => "blue includer 1", :content => "{{Blue}}"
+          Card.create! :name => "blue includer 2", :content => "{{blue|closed;other:stuff}}"
+    
+          Card.create! :name => "blue linker 1", :content => "[[Blue]]"
+          Card.create! :name => "blue linker 2", :content => "[[blue]]"
+        end
+      end
+      
+      
+      it "test_updates_inclusions_when_renaming" do
+        c1,c2,c3 = Card["Blue"], Card["blue includer 1"], Card["blue includer 2"]
+        c1.update_attributes :name => "Red", :update_referencers => true
+        assert_equal "{{Red}}", Card.find(c2.id).content                     
+        # NOTE these attrs pass through a hash stage that may not preserve order
+        assert_equal "{{Red|closed;other:stuff}}", Card.find(c3.id).content
+      end
+
+      it "test_updates_inclusions_when_renaming_to_plus" do
+        c1,c2 = Card["Blue"], Card["blue includer 1"]
+        c1.update_attributes :name => "blue includer 1+color", :update_referencers => true
+        assert_equal "{{blue includer 1+color}}", Card.find(c2.id).content                     
+      end
+
+      it "test_reference_updates_on_case_variants" do
+        c1,c2,c3 = Card["Blue"], Card["blue linker 1"], Card["blue linker 2"]
+        c1.reload.name = "Red"
+        c1.update_referencers = true
+        c1.save!
+        assert_equal "[[Red]]", Card.find(c2.id).content
+        assert_equal "[[Red]]", Card.find(c3.id).content
       end
     end
 

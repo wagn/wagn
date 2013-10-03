@@ -361,7 +361,7 @@ format :html do
       rcard = Card.fetch rcardname, :new=>{}
       rview = rparams[:view] || :titled        
       show = 'menu,help'
-      show += ',comment_box' if rparams[:name] == '+discussion'
+      show += ',comment_box' if rparams[:name] == '+discussion' #fixme.  yuck!
 
       wrap_frame :related, args do
         process_inclusion rcard, :view=>rview, :show=>show

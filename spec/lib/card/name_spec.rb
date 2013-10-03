@@ -139,7 +139,8 @@ describe Card::Name do
       'a+b'.to_name.replace_part('b','x').to_s.should == 'a+x'
     end
     it "replaces two name parts" do
-      'a+b+c'.to_name.replace_part('a+b','x').to_s.should == 'x+c'
+      'a+b+c'  .to_name.replace_part('a+b', 'x'  ).to_s.should == 'x+c'
+      'a+b+c+d'.to_name.replace_part('a+b', 'e+f').to_s.should == 'e+f+c+d'
     end
     it "doesn't replace two part tag" do
       'a+b+c'.to_name.replace_part('b+c','x').to_s.should == 'a+b+c'

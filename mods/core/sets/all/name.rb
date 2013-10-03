@@ -46,13 +46,17 @@ def left_or_new args={}
   left args or Card.new args.merge(:name=>cardname.left)
 end
 
+def children
+  Card.search( { (simple? ? :part : :left) => name } ).to_a
+end
+
 def dependents
   return [] if new_card?
 
   if @dependents.nil?
     @dependents =
       Account.as_bot do
-        deps = Card.search( { (simple? ? :part : :left) => name } ).to_a
+        deps = children
         deps.inject(deps) do |array, card|
           array + card.dependents
         end

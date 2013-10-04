@@ -115,7 +115,7 @@ view :template_rule, :tags=>:unknown_ok do |args|
   name = args[:inc_name]
   regexp = /\b_(left|right|whole|self|user|main|\d+|L*R?)\b/
   absolute = name !~ regexp && name !~ /^\+/
-  
+    
   tname = name.gsub regexp, ''
   if tname !~ /^\+/ and !absolute
     "{{#{args[:inc_syntax]}}}"
@@ -123,7 +123,7 @@ view :template_rule, :tags=>:unknown_ok do |args|
     set_name = if absolute # find the most appropriate set to use as prototype for inclusion
       "#{name}+#{Card[:self].name}"
     else
-      tmpl_set_name = parent.card.cardname.left_name
+      tmpl_set_name = parent.card.cardname.trunk_name
       if tmpl_set_class_name = tmpl_set_name.tag_name and Card[tmpl_set_class_name].codename == 'type'
         "#{tmpl_set_name.left_name}#{name}+#{Card[:type_plus_right].name}"  # *type plus right
       else

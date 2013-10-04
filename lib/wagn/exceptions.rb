@@ -1,10 +1,10 @@
 # -*- encoding : utf-8 -*-
 module Wagn
   module Exceptions
-    Error               = Class.new StandardError
-    NotFound            = Class.new Error
-    BadAddress          = Class.new Error
-    PermissionDenied    = Class.new Error
-    Oops                = Class.new Error
+    class Error     < StandardError ; end
+    class NotFound          < Error ; end
+    class BadAddress        < Error ; end
+    class PermissionDenied  < Error ; end
+    class Oops              < Error ; end
   end
 end

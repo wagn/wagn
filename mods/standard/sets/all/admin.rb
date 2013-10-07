@@ -1,5 +1,5 @@
 view :setup, :tags=>:unknown_ok do |args|
-  account = User.new( params[:account] || {} )
+  account = User.new( params[:account_args] || {} )
   frame_args = {
     :title=>'Welcome, Wagneer!',
     :show_help=>true,

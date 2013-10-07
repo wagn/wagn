@@ -12,6 +12,7 @@ view :setup, :tags=>:unknown_ok do |args|
       @form = f
       %{
         #{ _render_name_editor :help=>'usually first and last name' }
+        #{ hidden_field_tag 'card[type_id]', Card.default_accounted_type_id }
         #{ _render_account_detail :account=>account, :setup=>true }
         <fieldset><div class="button-area">#{ submit_tag 'Create' }</div></fieldset>
         #{ render_error }

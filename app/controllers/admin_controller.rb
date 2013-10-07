@@ -6,7 +6,6 @@ class AdminController < CardController
     raise Wagn::Oops, "Already setup" unless Account.no_logins?
     Wagn::Env[:recaptcha_on] = false
     if request.post?
-      #Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
       Account.as_bot do
         @card = Card.create params[:card]
         set_default_request_recipient

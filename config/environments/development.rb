@@ -20,6 +20,9 @@ Wagn::Application.configure do
   # Print deprecation notices to the Rails logger
   config.active_support.deprecation = :log
 
+  # See everything in the log (default is :info)
+  config.log_level = :debug
+  
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
@@ -36,13 +39,12 @@ Wagn::Application.configure do
   # Normally you could skip that by not serving static assets, but that breaks tinymce (see above)
   config.assets.prefix = "dynamic-assets"
 
-#FIXME - add back the next two when we go back to 3.2
   # Raise exception on mass assignment protection for Active Record models
-#  config.active_record.mass_assignment_sanitizer = :strict
+  config.active_record.mass_assignment_sanitizer = :strict
 
   # Log the query plan for queries taking more than this (works
   # with SQLite, MySQL, and PostgreSQL)
-#  config.active_record.auto_explain_threshold_in_seconds = 0.5
+  config.active_record.auto_explain_threshold_in_seconds = 0.5
 
   #  if File.exists?(File.join(Rails.root,'tmp', 'debug.txt'))
 #    require 'ruby-debug'

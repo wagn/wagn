@@ -125,7 +125,7 @@ class AdminController < CardController
 
   def set_default_request_recipient
     to_card = Card.fetch '*request+*to', :new=>{}
-    to_card.content=params[:account_args][:email]
+    to_card.content=params[:card][:account_args][:email]
     to_card.save
   end
 end

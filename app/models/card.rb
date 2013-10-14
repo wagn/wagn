@@ -87,7 +87,6 @@ class Card < ActiveRecord::Base
     errors.empty?
   end
 
-
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # EVENTS
   # The following events are all currently defined AFTER the sets are loaded and are therefore unexposed to the API.  Not good.  (my fault) - efm

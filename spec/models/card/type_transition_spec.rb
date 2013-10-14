@@ -8,7 +8,7 @@ end
 module Card::Set::Type::CardtypeA
   Card::Set.register_set self
 
-  def approve_delete
+  def ok_to_delete
     deny_because("not allowed to delete card a")
   end
 end

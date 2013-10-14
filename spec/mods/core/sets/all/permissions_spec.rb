@@ -14,12 +14,6 @@ class ::Card
       ok? :read
     end
   end
-
-  def appendable_by(user)
-    Account.as(user.id) do
-      ok? :append
-    end
-  end
 end
 
 

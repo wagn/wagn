@@ -121,23 +121,15 @@ select {
   border-top: 2px solid #666;
   border-left: 2px solid #666;
   background: $input_color;
-}
-input[type=submit]:focus,
-input[type=button]:focus {
-  color: #000
+  :focus {
+    background: $input_focus_color;    
+  }
 }
 .history-view > .card-content,
 .conflict-view,
 body#tinymce {
   background: $input_color;
 }
-input:focus,
-select:focus,
-textarea:focus,
-body#tinymce:focus {
-  background: $input_focus_color;
-}
-
 body.mceContentBody {
   margin: 4px;
 }

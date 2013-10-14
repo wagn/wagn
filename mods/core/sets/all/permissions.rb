@@ -5,7 +5,7 @@ def ydhpt
 end
 
 def approved?
-  @operation_approved = true
+  @action_approved = true
   @permission_errors = []
 
   if trash
@@ -22,11 +22,11 @@ def approved?
   @permission_errors.each do |err|
     errors.add :permission_denied, err
   end
-  @operation_approved
+  @action_approved
 end
 
 
-# ok? and ok! are public facing methods to approve one operation at a time
+# ok? and ok! are public facing methods to approve one action at a time
 #
 #   fetching: if the optional :trait parameter is supplied, it is passed
 #      to fetch and the test is perfomed on the fetched card, therefore:
@@ -34,48 +34,47 @@ end
 #      :trait=>:account         would fetch this card plus a tag codenamed :account
 #      :trait=>:roles, :new=>{} would initialize a new card with default ({}) options.
 
-def ok_with_fetch? operation, opts={}
+def ok_with_fetch? action, opts={}
   card = opts[:trait].nil? ? self : fetch(opts)
-  card && card.ok_without_fetch?(operation)
+  card && card.ok_without_fetch?(action)
 end
 
-def ok? operation
-  @operation_approved = true
+def ok? action
+  @action_approved = true
   @permission_errors = []
-
-  send "approve_#{operation}"
-  #warn "ok? #{inspect}, #{operation}, #{@operation_approved}"
-  @operation_approved
+  send "ok_to_#{action}"
+  @action_approved
 end
-alias_method_chain :ok?, :fetch # note: method is chained so that we can return the instance variable @operation_approved
+alias_method_chain :ok?, :fetch # note: method is chained so that we can return the instance variable @action_approved
 
-def ok! operation, opts={}
-  raise Card::PermissionDenied.new self unless ok? operation, opts
+def ok! action, opts={}
+  raise Card::PermissionDenied.new self unless ok? action, opts
 end
 
 def update_account_ok? #FIXME - temporary API, I think this is fixed, can we cache any of this for speed, this is accessed for each header
   id == Account.current_id || ok?( :update, :trait=>:account )
 end
 
-def who_can operation
-  #warn "who_can[#{name}] #{(prc=permission_rule_card(operation)).inspect}, #{prc.first.item_cards.map(&:id)}" if operation == :update
-  permission_rule_card(operation).first.item_cards.map(&:id)
+def who_can action
+  #warn "who_can[#{name}] #{(prc=permission_rule_card(action)).inspect}, #{prc.first.item_cards.map(&:id)}" if action == :update
+  permission_rule_card(action).first.item_cards.map &:id
 end
 
-def permission_rule_card operation
-  opcard = rule_card operation
-  unless opcard
-    errors.add :permission_denied, "No #{operation} rule for #{name}"
+def permission_rule_card action
+  opcard = rule_card action
+  
+  unless opcard # RULE missing.  should not be possible.  generalize this to handling of all required rules
+    errors.add :permission_denied, "No #{action} rule for #{name}"
     raise Card::PermissionDenied.new(self)
   end
 
   rcard = Account.as_bot do
-    if opcard.content == '_left' && self.junction?
+    if opcard.content == '_left' && self.junction?  # compound cards can inherit permissions from left parent
       lcard = loaded_left || left_or_new( :skip_virtual=>true, :skip_modules=>true )
-      if operation==:create && lcard.real? && !lcard.was_new_card
-        operation = :update
+      if action==:create && lcard.real? && !lcard.was_new_card
+        action = :update
       end
-      lcard.permission_rule_card(operation).first
+      lcard.permission_rule_card(action).first
     else
       opcard
     end
@@ -94,64 +93,61 @@ end
 
 def deny_because why
   [why].flatten.each {|err| @permission_errors << err }
-  @operation_approved = false
+  @action_approved = false
 end
 
-def lets_account operation
-  #warn "creating *account ??? #{caller[0..25]*"\n"}" if name == '*account' && operation==:create
-  #warn "lets_account[#{operation}]#{inspect}" #if name=='Buffalo'
-  return false if operation != :read    and Wagn::Conf[:read_only]
-  return true  if operation != :comment and Account.always_ok?
+def permitted? action
 
-  permitted_ids = who_can operation
+  if !Wagn::Conf[:read_only]
+    return true if action != :comment and Account.always_ok?
 
-  if operation == :comment && Account.always_ok?
-    # admin can comment if anyone can
-    !permitted_ids.empty?
-  else
-    #warn "lets_account[#{operation}]#{name} permitted:#{permitted_ids.map {|id|Card[id].name}*', '} " if name=='c1' and operation==:update
-    Account.among? permitted_ids
+    permitted_ids = who_can action
+
+    if action == :comment && Account.always_ok?
+      # admin can comment if anyone can
+      !permitted_ids.empty?
+    else
+      Account.among? permitted_ids
+    end
   end
 end
 
-def approve_task operation, verb=nil
-  deny_because "Currently in read-only mode" if operation != :read && Wagn::Conf[:read_only]
-  verb ||= operation.to_s
-  #warn "approve_task[#{inspect}](#{operation}, #{verb})" if operation == :create
-  deny_because you_cant("#{verb} this card") unless self.lets_account( operation )
-end
-
-def approve_account
-  #approve_task :accountable  # maybe we want that setting as a permission task?
-  approve_task :update
-end
-
-def approve_create
-  approve_task :create
-end
-
-def approve_read
-  #Rails.logger.warn "AR #{inspect} #{Account.always_ok?}"
-  return true if Account.always_ok?
-  @read_rule_id ||= (rr=permission_rule_card(:read).first).id.to_i
-  #warn "AR #{name} #{@read_rule_id}, #{Account.as_card.inspect} #{rr&&rr.name}, RR:#{Account.as_card.read_rules.map{|i|c=Card[i] and c.name}*", "}"
-  unless Account.as_card.read_rules.member?(@read_rule_id.to_i)
-    deny_because you_cant("read this card")
+def permit action, verb=nil
+  if Wagn::Conf[:read_only] # not called by ok_to_read
+    deny_because "Currently in read-only mode"
+  end
+  
+  verb ||= action.to_s
+  unless permitted? action
+    deny_because you_cant("#{verb} this card")
   end
 end
 
-def approve_update
-  approve_task :update
-  approve_read if @operation_approved
+def ok_to_create
+  permit :create
 end
 
-def approve_delete
-  approve_task :delete
+def ok_to_read
+  if !Account.always_ok?
+    @read_rule_id ||= permission_rule_card(:read).first.id.to_i
+    if !Account.as_card.read_rules.member? @read_rule_id
+      deny_because you_cant "read this card"
+    end
+  end
 end
 
-def approve_comment
-  approve_task :comment, 'comment on'
-  if @operation_approved
+def ok_to_update
+  permit :update
+  ok_to_read if @action_approved
+end
+
+def ok_to_delete
+  permit :delete
+end
+
+def ok_to_comment
+  permit :comment, 'comment on'
+  if @action_approved
     deny_because "No comments allowed on template cards" if is_template?
     deny_because "No comments allowed on hard templated cards" if hard_template
   end
@@ -161,7 +157,7 @@ def approve_type_id
   case
   when !type_name
     deny_because("No such type")
-  when !new_card? && reset_patterns && !lets_account(:create)
+  when !new_card? && reset_patterns && !permitted?(:create)
     deny_because you_cant("change to this type (need create permission)"  )
   end
   #NOTE: we used to check for delete permissions on previous type, but this would really need to happen before the name gets changes
@@ -177,6 +173,9 @@ def approve_content
   end
 end
 
+def approve_comment
+  ok_to_comment
+end
 
 public
 

@@ -36,7 +36,7 @@ class AccountController < ApplicationController
         redirect_to previous_location
       end
     else
-      raise Wagn::BadAddress
+      show :forgot_password 
     end
   end
 

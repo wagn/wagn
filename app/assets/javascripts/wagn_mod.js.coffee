@@ -316,21 +316,23 @@ $(window).ready ->
   $('body').on 'mouseleave', '#wikirate-nav ul', ->
     $(this).hide()
       
-  $('body').on 'change', '.TYPE-claim .card-editor fieldset.RIGHT-source_type', ->
-    f = $(this).closest 'form' 
-    val = $(this).find('input:checked').val()
-    
-    new_field      = f.find 'fieldset.RIGHT-source_link'
-    existing_field = f.find 'fieldset.RIGHT-source'
-    
-    if val == 'existing'
-      existing_field.show()
-      new_field.hide()
-    else
-      existing_field.hide()
-      new_field.show()
+#  $('body').on 'change', '.TYPE-claim .card-editor fieldset.RIGHT-source_type', ->
+#    f = $(this).closest 'form' 
+#    val = $(this).find('input:checked').val()
+#    
+#    new_field      = f.find 'fieldset.RIGHT-source_link'
+#    existing_field = f.find 'fieldset.RIGHT-source'
+#    
+#    if val == 'existing'
+#      existing_field.show()
+#      new_field.hide()
+#    else
+#      existing_field.hide()
+#      new_field.show()
+#
+#  $('.TYPE-claim .card-editor fieldset.RIGHT-source_type').trigger 'change'
 
-  $('.TYPE-claim .card-editor fieldset.RIGHT-source_type').trigger 'change'
+  # following not in use??
   
   $('body').on 'change', '.go-to-selected select', ->
     val = $(this).val()

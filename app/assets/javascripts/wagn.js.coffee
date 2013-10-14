@@ -176,8 +176,11 @@ $(window).ready ->
         false
 
   $('body').on 'submit', '.card-form', ->
+#    warn "on submit called"
     $(this).setContentFieldsFromMap()
+#    warn "content fields set"    
     $(this).find('.card-content').attr('no-autosave','true')
+#    warn "autosave worked"
     true
 
   $('body').on 'click', '.submitter', ->

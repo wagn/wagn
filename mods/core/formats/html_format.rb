@@ -12,7 +12,6 @@ class Card::HtmlFormat < Card::Format
 
   INCLUSION_DEFAULTS = {
     :layout => { :view => :core },
-    :main   => { :view => :content },
     :normal => { :view => :content }
   }
   
@@ -290,7 +289,7 @@ class Card::HtmlFormat < Card::Format
     if ajax_call?
       @depth == 0 && params[:is_main]
     else
-      @depth == 1 && @mode == :main
+      @depth == 1 && @mainline
     end
   end
 

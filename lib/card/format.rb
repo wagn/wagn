@@ -5,7 +5,7 @@ class Card
     include Wagn::Location
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
-    INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
+    INCLUSION_MODES  = { :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     
     cattr_accessor :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases
@@ -392,8 +392,11 @@ class Card
         end
       end
       opts[:view] = @main_view || opts[:view] || :open
-      with_inclusion_mode :main do
-        wrap_main process_inclusion root.card, opts
+      with_inclusion_mode :normal do
+        @mainline = true
+        result = wrap_main process_inclusion( root.card, opts )
+        @mainline = false
+        result
       end
     end
 

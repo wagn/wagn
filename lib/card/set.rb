@@ -72,25 +72,15 @@ module Card::Set
       register_set mod
     end
     
-    #not sure these shortcuts are worth it.
-    def []= set_name, value
-      includable_modules[prepend_base set_name] = value
-    end
-
-    def [] set_name
-      includable_modules[prepend_base set_name]
-    end
-
     def register_set set_module
       self.current = {
         :module => set_module,
         :opts   => opts_from_module( set_module )
       }
-      self[ set_module.name ] = set_module
+      includable_modules[ set_module.name ] = set_module
     end
 
     def opts_from_module set_module
-      warn "set_module = #{set_module}"
       if name_parts = set_module.to_s.split('::')[2..-1]
         pattern, anchor = name_parts.map { |part| part.underscore.to_sym }
         { pattern => anchor }
@@ -144,10 +134,6 @@ module Card::Set
     includable_modules.each do |mod_name, mod|
       includable_modules.delete mod_name if mod.instance_methods.empty?
     end
-  end
-  
-  def self.prepend_base set_name
-    set_name =~ /^Card::Set::/ ? set_name : 'Card::Set::' + set_name
   end
 
   def set_event_callbacks event, mod, opts

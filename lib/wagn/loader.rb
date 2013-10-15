@@ -93,6 +93,8 @@ module Wagn
     private
 
     def include_all_model set_module
+      # FIXME - this should work for explicitly loaded sets too. possibly in #extended (Card::Set) but need to handle case where
+      # ClassMethods are defined after "extend Set" 
       Card.send :include, set_module if set_module.instance_methods.any?
       if class_methods = set_module.const_get_if_defined( :ClassMethods )
         Card.send :extend, class_methods

@@ -2,7 +2,6 @@
 require 'wagn/spec_helper'
 
 module Card::Set::Right::Account # won't this conflict with a real set (and fail to provide controlled test?)
-  Card::Set.register_set self
   extend Card::Set
 
   card_accessor :status, :default => "request", :type=>:phrase

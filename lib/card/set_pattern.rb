@@ -61,16 +61,17 @@ class Card::SetPattern
 
 
   def set_module_name
-    case
-    when self.class.anchorless?   ; self.class.key.camelize
-    when opt_vals.member?( nil )  ; nil
-    else "#{self.class.key.camelize}::#{opt_vals.map(&:to_s).map(&:camelize) * '::'}"
-    end
+    tail = case
+      when self.class.anchorless?   ; self.class.key.camelize
+      when opt_vals.member?( nil )  ; nil
+      else "#{self.class.key.camelize}::#{opt_vals.map(&:to_s).map(&:camelize) * '::'}"
+      end
+    tail && "Card::Set::#{ tail }"
   end
 
   def set_const
     if set_module = self.set_module_name
-      Card::Set[set_module]
+      Card::Set.includable_modules[ set_module ]
     end
 
   rescue Exception => e

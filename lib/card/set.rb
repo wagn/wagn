@@ -2,8 +2,8 @@
 
 module Card::Set
 
-  mattr_accessor :modules_by_set, :traits
-  @@modules_by_set = {}
+  mattr_accessor :includable_modules, :traits, :current
+  @@includable_modules = {}
 
 
   # View definitions
@@ -74,16 +74,29 @@ module Card::Set
     
     #not sure these shortcuts are worth it.
     def []= set_name, value
-      modules_by_set[prepend_base set_name] = value
+      includable_modules[prepend_base set_name] = value
     end
 
     def [] set_name
-      modules_by_set[prepend_base set_name]
+      includable_modules[prepend_base set_name]
     end
 
     def register_set set_module
-      Wagn::Loader.current_set_module = set_module
+      self.current = {
+        :module => set_module,
+        :opts   => opts_from_module( set_module )
+      }
       self[ set_module.name ] = set_module
+    end
+
+    def opts_from_module set_module
+      warn "set_module = #{set_module}"
+      if name_parts = set_module.to_s.split('::')[2..-1]
+        pattern, anchor = name_parts.map { |part| part.underscore.to_sym }
+        { pattern => anchor }
+      else
+        { }
+      end
     end
 
     def set_module_from_name *args
@@ -92,10 +105,10 @@ module Card::Set
         return if base.nil?
         part = part.camelize
         module_name = "#{base.name}::#{part}"
-        if modules_by_set.has_key?(module_name)
-          modules_by_set[module_name]
+        if includable_modules.has_key?(module_name)
+          includable_modules[module_name]
         else
-          modules_by_set[module_name] = base.const_get_or_set( part ) { Module.new }
+          includable_modules[module_name] = base.const_get_or_set( part ) { Module.new }
         end
       end
     rescue NameError => e
@@ -128,8 +141,8 @@ module Card::Set
   private
 
   def self.clean_empty_modules
-    modules_by_set.each do |mod_name, mod|
-      modules_by_set.delete mod_name if mod.instance_methods.empty?
+    includable_modules.each do |mod_name, mod|
+      includable_modules.delete mod_name if mod.instance_methods.empty?
     end
   end
   
@@ -155,17 +168,10 @@ module Card::Set
   end
 
   def get_module
-    mod = self.ancestors.first
-    mod_name = mod.name || Wagn::Loader.current_set_name
-    
-    case
-    when mod == Card                           ; Card
-    when mod_name =~ /^Card::Set::All::/       ; Card
-    when csm = Wagn::Loader.current_set_module ; csm
+    mod = if self.ancestors.first == Card or self.current[:module].name =~ /^Card::Set::All::/
+      Card
     else
-      # needed for explicit loading
-      Card::Set[mod.name]= mod
-      mod
+      self.current[:module]
     end
   end
 

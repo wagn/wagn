@@ -5,8 +5,6 @@ module Wagn
   include Wagn::Exceptions
 
   module Loader
-    mattr_accessor :current_set_opts, :current_set_module, :current_set_name
-
     MODS = [ 'core', 'standard' ].map { |mod| "#{Rails.root}/mods/#{mod}" }
 
     def load_set_patterns
@@ -51,6 +49,7 @@ module Wagn
       end
 
       Card::Set.clean_empty_modules
+      Card::Set.register_set Card # reset so events will be defined on card itself  (temporary?)
     end
 
 
@@ -66,11 +65,8 @@ module Wagn
           next if anchor_filename =~ /^\./
           anchor = anchor_filename.gsub /\.rb$/, ''
           #FIXME: this doesn't support re-openning of the module from multiple calls to load_implicit_sets
-          Wagn::Loader.current_set_module = set_module = Card::Set.set_module_from_name( set_pattern, anchor )
+          set_module = Card::Set.set_module_from_name( set_pattern, anchor )
           set_module.extend Card::Set
-
-          Wagn::Loader.current_set_opts = { set_pattern.to_sym => anchor.to_sym }
-          Wagn::Loader.current_set_name = set_module.name
 
           filename = [dirname, anchor_filename] * '/'
           set_module.class_eval File.read( filename ), filename, 1
@@ -78,8 +74,6 @@ module Wagn
           include_all_model set_module if set_pattern == 'all'
         end    
       end
-    ensure
-      Wagn::Loader.current_set_opts = Wagn::Loader.current_set_module = Wagn::Loader.current_set_name = nil
     end
 
 

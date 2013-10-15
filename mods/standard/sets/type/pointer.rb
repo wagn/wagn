@@ -176,7 +176,7 @@ end
 
 def options
   if oc = options_card
-    oc.item_cards :default_limit=>50
+    oc.item_cards :default_limit=>50, :context=>name
   else
     Card.search :sort=>'alpha', :limit=>50
   end

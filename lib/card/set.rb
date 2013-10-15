@@ -66,37 +66,44 @@ module Card::Set
     set_event_callbacks event, mod, opts
   end
 
-  #not sure these shortcuts are worth it.
-  def self.[]= set_name, value
-    modules_by_set[prepend_base set_name] = value
-  end
-
-  def self.[] set_name
-    modules_by_set[prepend_base set_name]
-  end
-
-  def self.register_set set_module
-    Wagn::Loader.current_set_module = set_module
-    Card::Set[set_module.name]= set_module
-  end
-
-  def self.set_module_from_name *args
-    module_name_parts = args.length == 1 ? args[0].split('::') : args
-    module_name_parts.inject Card::Set do |base, part|
-      return if base.nil?
-      part = part.camelize
-      module_name = "#{base.name}::#{part}"
-      if modules_by_set.has_key?(module_name)
-        modules_by_set[module_name]
-      else
-        modules_by_set[module_name] = base.const_get_or_set( part ) { Module.new }
-      end
+  class << self
+    
+    def extended mod
+      register_set mod
     end
-  rescue NameError => e
-    Rails.logger.warn "set_module_from_name error #{args.inspect}: #{e.inspect}"
-    return nil if NameError ===e
-  end
+    
+    #not sure these shortcuts are worth it.
+    def []= set_name, value
+      modules_by_set[prepend_base set_name] = value
+    end
 
+    def [] set_name
+      modules_by_set[prepend_base set_name]
+    end
+
+    def register_set set_module
+      Wagn::Loader.current_set_module = set_module
+      self[ set_module.name ] = set_module
+    end
+
+    def set_module_from_name *args
+      module_name_parts = args.length == 1 ? args[0].split('::') : args
+      module_name_parts.inject Card::Set do |base, part|
+        return if base.nil?
+        part = part.camelize
+        module_name = "#{base.name}::#{part}"
+        if modules_by_set.has_key?(module_name)
+          modules_by_set[module_name]
+        else
+          modules_by_set[module_name] = base.const_get_or_set( part ) { Module.new }
+        end
+      end
+    rescue NameError => e
+      Rails.logger.warn "set_module_from_name error #{args.inspect}: #{e.inspect}"
+      return nil if NameError ===e
+    end
+    
+  end
 
   #
   # ActiveCard support: accessing plus cards as attributes

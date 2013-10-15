@@ -64,7 +64,7 @@ class Card::SetPattern
     case
     when self.class.anchorless?   ; self.class.key.camelize
     when opt_vals.member?( nil )  ; nil
-    else "#{self.class.key.camelize}::#{opt_vals.map(&:to_s).map(&:camelize) * '_'}"
+    else "#{self.class.key.camelize}::#{opt_vals.map(&:to_s).map(&:camelize) * '::'}"
     end
   end
 

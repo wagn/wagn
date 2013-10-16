@@ -20,7 +20,7 @@ format :html do
           #{ f.hidden_field :type_id }
           #{ hidden_field_tag :success, success }
           #{ _render_name_editor :help=>'usually first and last name' }
-          #{ fieldset :email, text_field( 'card[account_args]', :email ) }
+          #{ fieldset :email, text_field( 'card[account_args]', :email ), :editor=>'content' }
           #{ with_inclusion_mode(:new) { edit_slot :label=>'other' } }
 
           <fieldset><div class="button-area">#{ submit_tag 'Submit' }</div></fieldset>

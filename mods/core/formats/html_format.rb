@@ -149,9 +149,9 @@ class Card::HtmlFormat < Card::Format
 #        raw _render_core(args)
     elsif label = args[:label]
       label = '' if label == true
-      fieldset label, content_field( form ), :editor=>:content
+      fieldset label, content_field( form, args ), :editor=>:content
     else
-      editor_wrap( :content ) { content_field form }
+      editor_wrap( :content ) { content_field form, args }
     end
   end
 

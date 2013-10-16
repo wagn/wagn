@@ -94,9 +94,19 @@ format :html do
     account = args[:account] || card.account
     
     %{
-      #{ fieldset :email,                 text_field( 'card[account_args]', :email, :autocomplete => :off, :value=>account.email ) }
-      #{ fieldset :password,          password_field( 'card[account_args]', :password ), :help=>(args[:setup] ? nil : 'no change if blank') }
-      #{ fieldset 'confirm password', password_field( 'card[account_args]', :password_confirmation ) }
+      #{ fieldset :email,
+        text_field( 'card[account_args]', :email, :autocomplete => :off, :value=>account.email ),
+        :editor => 'content'
+      }
+      #{ fieldset :password,
+        password_field( 'card[account_args]', :password ),
+        :help   => (args[:setup] ? nil : 'no change if blank'),
+        :editor => 'content'
+      }
+      #{ fieldset 'confirm password',
+        password_field( 'card[account_args]', :password_confirmation ),
+        :editor => 'content'
+      }
       #{ 
         if !args[:setup] && Account.user.id != account.id 
           fieldset :block, check_box_tag( 'card[account][blocked]', '1', account.blocked? ), :help=>'prevents sign-ins'

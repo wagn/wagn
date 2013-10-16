@@ -62,6 +62,8 @@ class CardController < ApplicationController
   
   def handle
     yield ? success : render_errors
+  rescue Card::Cancel
+    success
   end
   
   #-------( FILTERS )

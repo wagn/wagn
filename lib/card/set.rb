@@ -82,6 +82,7 @@ module Card::Set
 
     def opts_from_module set_module
       if name_parts = set_module.to_s.split('::')[2..-1]
+        #FIXME - does not handle set patterns with multiple opts (eg type plus right)
         pattern, anchor = name_parts.map { |part| part.underscore.to_sym }
         { pattern => anchor }
       else

@@ -187,7 +187,8 @@ input, select {
   max-width: 97.5%;
 }
 textarea,
-.TYPE-phrase .content-editor input,
+.content-editor > input[type=text],
+.content-editor > input[type=password],
 .name-editor input {
   width: 97.5%;
 }

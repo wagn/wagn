@@ -376,8 +376,7 @@ class Card
       when opts[:inc_name]=='_main' && !ajax_call? && @depth==0    ; expand_main opts
       else
         fullname = opts[:inc_name].to_name.to_absolute card.cardname, :params=>params
-        #warn "ex inc full[#{opts[:inc_name]}]#{fullname}, #{params.inspect}"
-        included_card = Card.fetch fullname, :new=>( @mode==:edit ? new_inclusion_card_args(opts) : {} )
+        included_card = Card.fetch fullname, :new=>new_inclusion_card_args(opts)
 
         result = process_inclusion included_card, opts
         @char_count += result.length if @mode == :closed && result

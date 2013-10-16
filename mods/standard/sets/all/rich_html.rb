@@ -177,7 +177,7 @@ format :html do
       args[:title] ||= "New #{ card.type_name unless card.type_id == Card.default_type_id }"
     end
 
-    prompt_for_type = if !params[:type]
+    prompt_for_type = if !params[:type] and !args[:type] and
       ( main? || card.simple? || card.is_template? ) and
         Card.new( :type_id=>card.type_id ).ok? :create #otherwise current type won't be on menu
     end
@@ -321,7 +321,7 @@ format :html do
 
   view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
     eform = form_for_multi
-    content = content_field eform, :nested=>true
+    content = content_field eform, args.merge( :nested=>true )
     opts = { :editor=>'content', :help=>true, :attribs => 
       { :class=> "card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" }
     }

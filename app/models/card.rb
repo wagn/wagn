@@ -10,6 +10,9 @@ class Card < ActiveRecord::Base
   extend Card::Constant
   extend Wagn::Loader
 
+  require_dependency 'card/exceptions'
+  include Card::Exceptions
+
   cattr_accessor :set_patterns
   @@set_patterns = []
 

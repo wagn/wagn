@@ -66,14 +66,15 @@ module Wagn
         dirname = [basedir, set_pattern] * '/'
         next unless File.exists?( dirname )
 
+        #FIXME support multiple anchors!
         Dir.entries( dirname ).sort.each do |anchor_filename|
           next if anchor_filename =~ /^\./
           anchor = anchor_filename.gsub /\.rb$/, ''
-          #FIXME: this doesn't support re-openning of the module from multiple calls to load_implicit_sets
-          set_module = Card::Set.set_module_from_name( set_pattern, anchor )
-          set_module.extend Card::Set
 
+          set_module = Card::Set.set_module_from_name( set_pattern, anchor )
           filename = [dirname, anchor_filename] * '/'
+          
+          set_module.extend Card::Set
           set_module.class_eval File.read( filename ), filename, 1
         end    
       end

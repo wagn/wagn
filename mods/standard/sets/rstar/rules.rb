@@ -214,6 +214,8 @@ format :html do
 
 end
 
+# I doubt that the following are actually included at present.
+
 def repair_set
   @set_repair_attempted = true
   if real?

@@ -42,14 +42,19 @@ module Wagn
     end
 
     def load_sets
-      MODS.each { |mod| load_implicit_sets "#{mod}/sets" }
+      MODS.each do |mod|
+        load_implicit_sets "#{mod}/sets"
+        Card::Set.process_base_modules #must do this here because core sets must be processed into Card class before loading standard sets
+      end
 
       Wagn::Conf[:mod_dirs].split( /,\s*/ ).each do |dirname|
         load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
       end
-
+      
+      Card::Set.process_base_modules
       Card::Set.clean_empty_modules
-      Card::Set.register_set Card # reset so events will be defined on card itself  (temporary?)
+            
+      Card::Set.register_set Card # reset so events in card.rb will be defined on card itself  (temporary?)
     end
 
 
@@ -70,8 +75,6 @@ module Wagn
 
           filename = [dirname, anchor_filename] * '/'
           set_module.class_eval File.read( filename ), filename, 1
-
-          include_all_model set_module if set_pattern == 'all'
         end    
       end
     end
@@ -92,14 +95,6 @@ module Wagn
 
     private
 
-    def include_all_model set_module
-      # FIXME - this should work for explicitly loaded sets too. possibly in #extended (Card::Set) but need to handle case where
-      # ClassMethods are defined after "extend Set" 
-      Card.send :include, set_module if set_module.instance_methods.any?
-      if class_methods = set_module.const_get_if_defined( :ClassMethods )
-        Card.send :extend, class_methods
-      end
-    end
 
 
     def load_dir dir

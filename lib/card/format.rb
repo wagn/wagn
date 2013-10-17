@@ -59,8 +59,7 @@ class Card
       end
 
       def define_render_methods view
-        # note: this could also be done with method_missing. Q: is this any faster?
-        # it's a very common pattern...
+        # note: this could also be done with method_missing. is this any faster?
         if !method_defined? "render_#{view}"
           define_method "_render_#{view}" do |*a|
             send_final_render_method view, *a
@@ -429,7 +428,7 @@ class Card
       when @mode == :closed     ; !tcard.known?  ? :closed_missing : :closed_content
       else                      ; view
       end
-
+      
       sub.render view, opts
     end
 

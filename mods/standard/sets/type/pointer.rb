@@ -1,7 +1,25 @@
 # -*- encoding : utf-8 -*-
 
-view :core do |args|
-  card.item_names.join ', '
+format do
+  def wrap_item item, args={}
+    item #no wrap in base    
+  end
+  
+  view :core do |args|
+    pointer_items args[:item], joint=', '
+  end
+  
+  def pointer_items itemview=nil, joint=''
+    args = { :view => ( itemview || (@inclusion_opts && @inclusion_opts[:view]) || default_item_view ) }
+    if type = card.item_type
+      args[:type] = type
+    end
+      
+    card.item_cards.map do |icard|
+      wrap_item process_inclusion(icard, args), args 
+    end.join joint
+  end
+
 end
 
 format :html do
@@ -93,17 +111,14 @@ format :html do
     end
   end
   
-  def pointer_items itemview=nil
-    type = card.item_type
-    typeparam = case ()
-      when String ; ";type:#{type}"
-      when Array  ; ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
-      else ""
-    end
-    itemview ||= (@inclusion_opts && @inclusion_opts[:view]) || default_item_view
-    process_content_object render_raw.gsub(/\[\[/,"<div class=\"pointer-item item-#{itemview}\">{{").gsub(/\]\]/,"|#{itemview}#{typeparam}}}</div>")
+
+  
+  def wrap_item item, args
+    %{<div class="pointer-item item-#{args[:view]}">#{item}</div>}
   end
+  
 end
+
 
 
 def item_cards args={}
@@ -113,16 +128,22 @@ def item_cards args={}
   else
     #warn "item_card[#{inspect}], :complete"
     item_names(args).map do |name|
-      Card.fetch name, :new=>{}
+      new_args = args[:type] ? { :type=>args[:type] } : {}
+      Card.fetch name, :new=>new_args
     end.compact
   end
 end
 
 def item_names args={}
   context = args[:context] || self.cardname
-  self.raw_content.split(/\n+/).map{ |line|
-    line.gsub(/\[\[|\]\]/,'')
-  }.map{ |link| context==:raw ? link : link.to_name.to_absolute(context) }
+  self.raw_content.split(/\n+/).map do |line|
+    item_name = line.gsub /\[\[|\]\]/, ''
+    if context == :raw
+      item_name
+    else
+      item_name.to_name.to_absolute context
+    end
+  end
 end
 
 def item_ids args={}

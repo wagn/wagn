@@ -1,9 +1,9 @@
 # -*- encoding : utf-8 -*-
 require 'csv'
 
-format :csv do
+format :csv  do
   def get_inclusion_defaults
-    { :view => :core}
+    { :view => :core }
   end
   
   def default_item_view 

@@ -11,12 +11,13 @@ format do
   
   def pointer_items itemview=nil, joint=''
     args = { :view => ( itemview || (@inclusion_opts && @inclusion_opts[:view]) || default_item_view ) }
+    
     if type = card.item_type
       args[:type] = type
     end
       
     card.item_cards.map do |icard|
-      wrap_item process_inclusion(icard, args), args 
+      wrap_item process_inclusion(icard, args.clone), args 
     end.join joint
   end
 

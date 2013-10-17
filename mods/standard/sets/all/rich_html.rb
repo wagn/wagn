@@ -177,10 +177,9 @@ format :html do
       args[:title] ||= "New #{ card.type_name unless card.type_id == Card.default_type_id }"
     end
 
-    prompt_for_type = if !params[:type] and !args[:type] and
+    prompt_for_type = !params[:type] and !args[:type] and
       ( main? || card.simple? || card.is_template? ) and
-        Card.new( :type_id=>card.type_id ).ok? :create #otherwise current type won't be on menu
-    end
+      Card.new( :type_id=>card.type_id ).ok? :create #otherwise current type won't be on menu
 
     cancel = if main?
       { :class=>'redirecter', :href=>Card.path_setting('/*previous') }

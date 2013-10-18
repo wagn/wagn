@@ -63,9 +63,28 @@ def save_draft( content )
   revisions.create :content=>content
 end
 
-protected
-
 def clear_drafts # yuck!
   connection.execute %{delete from card_revisions where card_id=#{id} and id > #{current_revision_id} }
 end
 
+
+event :set_default_content, :on=>:create, :before=>:approve do
+  if !updates.for?(:content)
+    self.content = content
+  end
+end
+
+event :validate_content, :before=>:approve do
+  if updates.for? :content
+    reset_patterns_if_rule # why?  is this really a validation??    
+  end
+end
+
+
+event :detect_conflict, :before=>:approve, :on=>:save do
+  if current_revision_id_changed? && current_rev_id.to_i != current_revision_id_was.to_i
+    @current_revision_id = current_revision_id_was
+    errors.add :conflict, "changes not based on latest revision"
+    @error_view = :conflict
+  end
+end

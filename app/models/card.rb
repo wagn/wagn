@@ -198,8 +198,6 @@ class Card < ActiveRecord::Base
   # METHODS FOR OVERRIDE
   # eventify!
 
-  def on_type_change()                    end
   def validate_type_change()        true  end
-  def further_validate_content( content )         end
 
 end

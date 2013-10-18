@@ -234,7 +234,19 @@ event :process_read_rule_update_queue do
   @read_rule_update_queue = []
 end
 
-protected
+
+event :recaptcha, :before=>:approve do
+  if !@nested_edit                      and
+      Wagn::Env[:recaptcha_on]          and
+      Card.toggle( rule :captcha )      and
+      num = Wagn::Env[:recaptcha_count] and
+      num < 1
+      
+    Wagn::Env[:recaptcha_count] = num + 1
+    Wagn::Env[:controller].verify_recaptcha :model=>self or self.error_status = 449
+  end
+end
+
 
 event :update_ruled_cards do
   if is_rule?

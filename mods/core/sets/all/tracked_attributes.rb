@@ -90,12 +90,16 @@ def set_type_id new_type_id
     update_templatees :type_id => new_type_id
   end
   if real?
-    on_type_change # FIXME this should be a callback
+    on_type_change
     reset_patterns
     include_set_modules # dislike doing this prior to save, but I think it's done to catch set-specific behavior??
     # do we need to "undo" loaded modules?  Maybe reload defaults?
   end
   true
+end
+
+
+def on_type_change# FIXME this should be an event!!  (currently here for override)
 end
 
 def set_content new_content

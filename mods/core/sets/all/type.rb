@@ -1,3 +1,25 @@
+
+event :validate_type, :before=>:approve do
+  # validate on update
+  if updates.for?(:type_id) and !new_card?
+    if !validate_type_change
+      errors.add :type, "of #{ name } can't be changed; errors changing from #{ type_name }"
+    end
+    if c = dup and c.type_id_without_tracking = type_id and c.id = nil and !c.valid?
+      errors.add :type, "of #{ name } can't be changed; errors creating new #{ type_id }: #{ c.errors.full_messages * ', ' }"
+    end
+  end
+
+  # validate on update and create
+  if updates.for?(:type_id) or new_record?
+    # invalid to change type when type is hard_templated
+    if rt = hard_template and rt.assigns_type? and type_id!=rt.type_id
+      errors.add :type, "can't be changed because #{name} is hard templated to #{rt.type_name}"
+    end
+  end
+end
+
+
 module ClassMethods
   def default_type_id
     @@default_type_id ||= Card[:all].fetch( :trait=>:default ).type_id

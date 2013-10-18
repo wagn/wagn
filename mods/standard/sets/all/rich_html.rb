@@ -174,8 +174,9 @@ format :html do
     prompt_for_name = !name_ready && !card.rule_card( :autoname )
 
     hidden = { :success=> card.rule(:thanks) || '_self' }
-    if !name_ready
-      hidden['card[name]'] = card.name  #really?  even if autoname?
+    if name_ready
+      hidden['card[name]'] = card.name
+    else
       args[:title] ||= "New #{ card.type_name unless card.type_id == Card.default_type_id }"
     end
 

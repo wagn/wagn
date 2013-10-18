@@ -5,7 +5,17 @@ module Wagn
   include Wagn::Exceptions
 
   module Loader
-    MODS = [ 'core', 'standard' ].map { |mod| "#{Rails.root}/mods/#{mod}" }
+    MODS = begin
+      builtins = [ 'core', 'standard' ].map { |mod| "#{Rails.root}/mods/#{mod}" }
+      addons = Wagn::Conf[:mod_dirs].split( /,\s*/ ).map do |dirname|
+        Dir.entries( dirname ).sort.map do |filename|
+          if filename !~ /^\./
+            "#{dirname}/#{filename}"
+          end
+        end.compact
+      end.flatten
+      builtins + addons
+    end
 
     def load_set_patterns
       MODS.each do |mod|
@@ -43,12 +53,13 @@ module Wagn
 
     def load_sets
       MODS.each do |mod|
-        load_implicit_sets "#{mod}/sets"
+        if File.directory? mod
+          load_implicit_sets "#{mod}/sets"
+        else
+          next unless mod =~ /\.rb$/
+          require_dependency mod
+        end
         Card::Set.process_base_modules #must do this here because core sets must be processed into Card class before loading standard sets
-      end
-
-      Wagn::Conf[:mod_dirs].split( /,\s*/ ).each do |dirname|
-        load_dir File.expand_path( "#{dirname}/**/*.rb", __FILE__ )
       end
       
       Card::Set.process_base_modules

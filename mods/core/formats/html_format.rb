@@ -143,7 +143,7 @@ class Card::HtmlFormat < Card::Format
 
   def edit_slot args={}
     if card.hard_template
-      _render_raw.scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc|
+      _render_raw(args).scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc|
         process_content( inc ).strip
       end.join
 #        raw _render_core(args)
@@ -154,6 +154,7 @@ class Card::HtmlFormat < Card::Format
       editor_wrap( :content ) { content_field form, args }
     end
   end
+  
 
   #### --------------------  additional helpers ---------------- ###
 
@@ -283,6 +284,20 @@ class Card::HtmlFormat < Card::Format
         #{ editor_wrap( opts[:editor] ) { content } }
       </fieldset>
     }
+  end
+  
+  def hidden_tags hash, base=nil
+    # convert hash into a collection of hidden tags
+    result = ''
+    hash.each do |key, val|
+      result += if Hash === val
+        hidden_tags val, key
+      else
+        name = base ? "#{base}[#{key}]" : key
+        hidden_field_tag name, val
+      end
+    end
+    result
   end
 
   def main?

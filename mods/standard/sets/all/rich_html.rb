@@ -173,13 +173,17 @@ format :html do
     name_ready = !card.cardname.blank? && !Card.exists?( card.cardname )
     prompt_for_name = !name_ready && !card.rule_card( :autoname )
 
+    hidden = { :success=> card.rule(:thanks) || '_self' }
     if !name_ready
+      hidden['card[name]'] = card.name  #really?  even if autoname?
       args[:title] ||= "New #{ card.type_name unless card.type_id == Card.default_type_id }"
     end
 
-    prompt_for_type = !params[:type] and !args[:type] and
+    prompt_for_type = (
+      !params[:type] and !args[:type] and
       ( main? || card.simple? || card.is_template? ) and
       Card.new( :type_id=>card.type_id ).ok? :create #otherwise current type won't be on menu
+    ) 
 
     cancel = if main?
       { :class=>'redirecter', :href=>Card.path_setting('/*previous') }
@@ -191,8 +195,7 @@ format :html do
       card_form :create, 'card-form', 'main-success'=>'REDIRECT' do |form|
         @form = form
         %{
-          #{ hidden_field_tag :success, card.rule(:thanks) || '_self' }
-          #{ hidden_field_tag 'card[name]', card.name if name_ready }
+          #{ hidden_tags hidden.merge( args[:hidden] || {} ) }
           #{ _render_name_editor if prompt_for_name }
           #{ prompt_for_type ? _render_type_menu : form.hidden_field( :type_id ) }                
           <div class="card-editor editor">
@@ -208,6 +211,7 @@ format :html do
       end
     end
   end
+
 
   view :editor do |args|
     form.text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id

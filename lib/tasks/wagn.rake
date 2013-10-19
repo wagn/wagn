@@ -167,7 +167,7 @@ namespace :wagn do
     task :dump => :environment do
       Wagn::Cache.reset_global
       
-      Rake::Task['wagn:bootstrap:pack_files'].invoke
+      Rake::Task['wagn:bootstrap:mod_files'].invoke
       
       YAML::ENGINE.yamler = 'syck'
       # use old engine while we're supporting ruby 1.8.7 because it can't support Psych,
@@ -191,17 +191,17 @@ namespace :wagn do
       
     end
 
-    desc "copy files from template database to standard pack and update cards"
-    task :pack_files => :environment do
+    desc "copy files from template database to standard mod and update cards"
+    task :mod_files => :environment do
       template_files_dir = "#{Rails.root}/local/files"
-      standard_files_dir = "#{Rails.root}/pack/standard/files"
+      standard_files_dir = "#{Rails.root}/mods/standard/files"
       
       #FIXME - this should delete old revisions
       
       FileUtils.remove_dir standard_files_dir, force=true
       FileUtils.cp_r template_files_dir, standard_files_dir
       
-      # add a fourth line to the raw content of each image (or file) to identify it as a pack file
+      # add a fourth line to the raw content of each image (or file) to identify it as a mod file
       Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
         rev = Card::Revision.find card.current_revision_id
         rev.update_attributes :content=>rev.content + "\nstandard"        

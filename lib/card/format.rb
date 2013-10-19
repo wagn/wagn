@@ -5,7 +5,7 @@ class Card
     include Wagn::Location
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
-    INCLUSION_MODES  = { :main=>:main, :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
+    INCLUSION_MODES  = { :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     
     cattr_accessor :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases
@@ -35,7 +35,7 @@ class Card
 
       def define_view view, opts, &final
         opts ||= {}
-        opts.merge!( Wagn::Loader.current_set_opts || {} )
+        opts.merge! Card::Set.current[:opts]
         
         extract_class_vars view, opts
         view_key = get_set_key view, opts
@@ -48,7 +48,7 @@ class Card
         subset_views[alias_view] = true if opts && !opts.empty?
 
         referent_view ||= alias_view
-        alias_opts = Wagn::Loader.current_set_opts || {}
+        alias_opts = Card::Set.current[:opts]
         referent_view_key = get_set_key referent_view, (opts || alias_opts)
         alias_view_key    = get_set_key alias_view, alias_opts
 
@@ -59,8 +59,7 @@ class Card
       end
 
       def define_render_methods view
-        # note: this could also be done with method_missing. Q: is this any faster?
-        # it's a very common pattern...
+        # note: this could also be done with method_missing. is this any faster?
         if !method_defined? "render_#{view}"
           define_method "_render_#{view}" do |*a|
             send_final_render_method view, *a
@@ -376,8 +375,7 @@ class Card
       when opts[:inc_name]=='_main' && !ajax_call? && @depth==0    ; expand_main opts
       else
         fullname = opts[:inc_name].to_name.to_absolute card.cardname, :params=>params
-        #warn "ex inc full[#{opts[:inc_name]}]#{fullname}, #{params.inspect}"
-        included_card = Card.fetch fullname, :new=>( @mode==:edit ? new_inclusion_card_args(opts) : {} )
+        included_card = Card.fetch fullname, :new=>new_inclusion_card_args(opts)
 
         result = process_inclusion included_card, opts
         @char_count += result.length if @mode == :closed && result
@@ -392,8 +390,11 @@ class Card
         end
       end
       opts[:view] = @main_view || opts[:view] || :open
-      with_inclusion_mode :main do
-        wrap_main process_inclusion root.card, opts
+      with_inclusion_mode :normal do
+        @mainline = true
+        result = wrap_main process_inclusion( root.card, opts )
+        @mainline = false
+        result
       end
     end
 
@@ -427,7 +428,7 @@ class Card
       when @mode == :closed     ; !tcard.known?  ? :closed_missing : :closed_content
       else                      ; view
       end
-
+      
       sub.render view, opts
     end
 
@@ -452,9 +453,9 @@ class Card
 
     def path opts={}
       pcard = opts.delete(:card) || card
-      base = opts[:action] ? "/card/#{ opts.delete :action }" : ''
+      base = opts[:action] ? "card/#{ opts.delete :action }/" : ''
       if pcard && !pcard.name.empty? && !opts.delete(:no_id) && ![:new, :create].member?(opts[:action]) #generalize. dislike hardcoding views/actions here
-        base += '/' + ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
+        base += ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
       end
       query = opts.empty? ? '' : "?#{opts.to_param}"
       wagn_path( base + query )
@@ -479,7 +480,7 @@ class Card
         when /^mailto:/                      ; 'email-link'
         when /^([a-zA-Z][\-+.a-zA-Z\d]*):/   ; $1 + '-link'
         when /^\//
-          href = internal_url href           ; 'internal-link'
+          href = internal_url href[1..-1]    ; 'internal-link'
         else
           return href
           Rails.logger.debug "build_link mistakenly(?) called on #{href}, #{text}"

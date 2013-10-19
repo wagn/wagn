@@ -30,9 +30,9 @@
 # smtp:
 # used to set Rails config.action_mailer.smtp_settings
 
-# pack_dirs:
-# customize pack directories
-# defaults to RAILS_ROOT/local/packs
+# mod_dirs:
+# customize mod directories
+# defaults to RAILS_ROOT/local/mods
 
 # mem_cache_servers
 # IP address for mem cache server

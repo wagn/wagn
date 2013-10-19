@@ -20,6 +20,11 @@ h2 {
   font-size: 1.1em;
 }
 
+textarea, input {
+  font-size: 1em;
+  line-height: 1.5em;
+}
+
 /* 
 the following gives users more explicit control over spacing within tinyMCE
 but leads to lots of empty paragraph tags
@@ -116,23 +121,15 @@ select {
   border-top: 2px solid #666;
   border-left: 2px solid #666;
   background: $input_color;
+  :focus {
+    background: $input_focus_color;    
+  }
 }
-input[type=submit]:focus,
-input[type=button]:focus {
-  color: #000
-}
-.revision-content,
+.history-view > .card-content,
 .conflict-view,
 body#tinymce {
   background: $input_color;
 }
-input:focus,
-select:focus,
-textarea:focus,
-body#tinymce:focus {
-  background: $input_focus_color;
-}
-
 body.mceContentBody {
   margin: 4px;
 }
@@ -177,11 +174,13 @@ body.mceContentBody {
 /* CARDTYPE_SPECIFIC ------------------------------*/
 
 
-.TYPE-toggle .content {
+.TYPE-toggle.card-content {
   font-style: italic;
 }
 
-
+.TYPE-image.card-content img {
+  max-width: 100%;
+}
 
 /*---------( Search ) ---------- */
 

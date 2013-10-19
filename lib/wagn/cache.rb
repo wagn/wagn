@@ -57,6 +57,7 @@ module Wagn
           cache.reset hard=true
         end
         Card::Codename.reset_cache
+        Card.delete_tmp_files
       end
 
       private

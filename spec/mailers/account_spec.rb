@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
-include Wagn::AuthenticatedTestHelper
 include EmailSpec::Helpers
 include EmailSpec::Matchers
 
@@ -26,7 +25,6 @@ describe Mailer do
       user_id =  Card['sara'].id
       Account.as_bot do
         @user = Account[ user_id ]
-        @user.generate_password
         @email = @user.send_account_info(:subject => "New password subject", :message => "Forgot my password")
       end
     end

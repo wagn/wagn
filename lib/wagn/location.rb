@@ -3,10 +3,6 @@
 #  note: i'm sure this isn't the optimal name..
 module Wagn::Location
 
-  # the location_history mechanism replaces
-  # store_location() & redirect_back_or_default() from the
-  # authenticated helper.
-  #
   # we keep a history stack so that in the case of card removal
   # we can crawl back up to the last un-removed location
 
@@ -49,7 +45,7 @@ module Wagn::Location
    # -----------( urls and redirects from application.rb) ----------------
 
 
-  # FIXME: missing test
+  # FIXME: missing test  shouldn't this have the rootpath?
   def page_path title, opts={}
     format = (opts[:format] ? ".#{opts.delete(:format)}"  : "")
     vars = ''
@@ -58,16 +54,24 @@ module Wagn::Location
       opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
       vars = '?' + pairs.join('&')
     end
-    "/#{title.to_name.url_key}#{format}#{vars}"
+    wagn_path "#{title.to_name.url_key}#{format}#{vars}"
   end
 
   def wagn_path rel #should be in smartname?
     rel_path = Card===rel ? rel.cardname.url_key : rel.to_s
-    Wagn::Conf[:root_path].to_s + ( rel_path =~ /^\// ? '' : '/' ) + rel_path
+    if rel_path =~ /^\//
+      rel_path
+    else
+      Wagn::Conf[:root_path].to_s + '/' + rel_path
+    end
   end
 
   def wagn_url rel #should be in smartname?
-    rel =~ /^https?\:/ ? rel : "#{Wagn::Conf[:base_url]}#{wagn_path(rel)}"
+    if rel =~ /^https?\:/
+      rel
+    else
+      "#{ Wagn::Env[:protocol] }#{ Wagn::Env[:host] }#{ wagn_path rel }"
+    end
   end
 
 

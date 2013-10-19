@@ -20,11 +20,10 @@ Feature: Pointer Inputs
   Scenario: Creating a templated card including a select input
     Given I create Phrase card "User+*type+*structure" with content "{{+friends}}"
     And I create Phrase card "friends+*right+*input" with content "select"
-    When I go to new User
-    And I fill in "card_name" with "Jill"
+    When I edit "Joe User"
     And I select "Joe Admin" from "pointer_select"
     And I press "Submit"
-    And I go to card "Jill"
+    And I go to card "Joe User"
     Then I should see "Joe Admin"
 
   Scenario: Creating a card with multiselect input
@@ -38,11 +37,10 @@ Feature: Pointer Inputs
   Scenario: Creating a templated card including a multiselect input
     Given I create Phrase card "User+*type+*structure" with content "{{+friends}}"
     And I create Phrase card "friends+*right+*input" with content "multiselect"
-    When I go to new User
-    And I fill in "card_name" with "Jill"
+    When I edit "Joe User"
     And I select "Joe Admin" from "pointer_multiselect"
     And I press "Submit"
-    And I go to card "Jill"
+    And I go to card "Joe User"
     And I should see "Joe Admin"
 
   Scenario: Creating a card with radio input

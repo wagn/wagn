@@ -2,8 +2,8 @@
 
 module Card::Set
 
-  mattr_accessor :modules_by_set, :traits
-  @@modules_by_set = {}
+  mattr_accessor :includable_modules, :base_modules, :traits, :current
+  @@includable_modules, @@base_modules = {}, []
 
 
   # View definitions
@@ -47,18 +47,16 @@ module Card::Set
   def event event, opts={}, &final
     opts[:on] = [:create, :update ] if opts[:on] == :save
 
-    mod = get_module
+    mod = Card::Set.current[:module]
     Card.define_callbacks event
 
     mod.class_eval do
-#      include ActiveSupport::Callbacks # may need this when callbacks are truly by module
-
       final_method = "#{event}_without_callbacks" #should be private?
       define_method final_method, &final
 
       define_method event do
-        run_callbacks event do
-          if event_applies? opts
+        if event_applies? opts
+          run_callbacks event do
             send final_method
           end
         end
@@ -68,36 +66,6 @@ module Card::Set
     set_event_callbacks event, mod, opts
   end
 
-  #not sure these shortcuts are worth it.
-  def self.[]= set_name, value
-    modules_by_set[prepend_base set_name] = value
-  end
-
-  def self.[] set_name
-    modules_by_set[prepend_base set_name]
-  end
-
-  def self.register_set set_module
-    Wagn::Loader.current_set_module = set_module
-    Card::Set[set_module.name]= set_module
-  end
-
-  def self.set_module_from_name *args
-    module_name_parts = args.length == 1 ? args[0].split('::') : args
-    module_name_parts.inject Card::Set do |base, part|
-      return if base.nil?
-      part = part.camelize
-      module_name = "#{base.name}::#{part}"
-      if modules_by_set.has_key?(module_name)
-        modules_by_set[module_name]
-      else
-        modules_by_set[module_name] = base.const_get_or_set( part ) { Module.new }
-      end
-    end
-  rescue NameError => e
-    Rails.logger.warn "set_module_from_name error #{args.inspect}: #{e.inspect}"
-    return nil if NameError ===e
-  end
 
 
   #
@@ -119,18 +87,94 @@ module Card::Set
     options = args.extract_options!
     add_traits args, options.merge( :writer=>true )
   end
+  
+  
+  
+  #
+  # Singleton methods
+  #
+
+  class << self
+    
+    def extended mod
+      register_set mod
+    end
+    
+    def register_set set_module
+      if all_set?( set_module )
+        self.current = { :module=>Card, :opts=>{} }
+        base_modules << set_module unless set_module == Card
+      else
+        self.current = { :module=>set_module, :opts=>opts_from_module( set_module ) }
+      end      
+
+      includable_modules[ set_module.name ] = set_module unless set_module == Card
+    end
+    
+    def all_set? set_module
+      set_module == Card or set_module.name =~ /^Card::Set::All::/
+    end
+
+    def opts_from_module set_module
+      if name_parts = set_module.to_s.split('::')[2..-1]
+        #FIXME - does not handle set patterns with multiple opts (eg type plus right)
+        pattern, anchor = name_parts.map { |part| part.underscore.to_sym }
+        { pattern => anchor }
+      else
+        { }
+      end
+    end
+
+    def set_module_from_name *args
+      # FIXME - this does not properly handle anchorless sets
+      # There are special hacks for *all, but others (like *rstar) will not be found by
+      # include_set_modules, which will look for Card::Set::Rstar, not Card::Set::Rstar::Blah
+      
+      module_name_parts = args.length == 1 ? args[0].split('::') : args
+      module_name_parts.inject Card::Set do |base, part|
+        return if base.nil?
+        part = part.camelize
+        module_name = "#{base.name}::#{part}"
+        if includable_modules.has_key?(module_name)
+          includable_modules[module_name]
+        else
+          base.const_get_or_set( part ) { Module.new }
+        end
+      end
+    rescue NameError => e
+      Rails.logger.warn "set_module_from_name error #{args.inspect}: #{e.inspect}"
+      return nil if NameError ===e
+    end
+    
+    def process_base_modules
+      base_modules.each do |mod|
+        if mod.instance_methods.any?
+          Card.send :include, mod
+        end
+        if class_methods = mod.const_get_if_defined( :ClassMethods )
+          Card.send :extend, class_methods
+        end
+        includable_modules.delete mod.name
+      end
+      @@base_modules = []
+    end
+    
+    def clean_empty_modules
+      includable_modules.each do |mod_name, mod|
+        if mod.instance_methods.empty?
+          includable_modules.delete mod_name
+        end
+      end
+    end
+    
+    
+  end
+
+
+
 
   private
 
-  def self.clean_empty_modules
-    modules_by_set.each do |mod_name, mod|
-      modules_by_set.delete mod_name if mod.instance_methods.empty?
-    end
-  end
-  
-  def self.prepend_base set_name
-    set_name =~ /^Card::Set::/ ? set_name : 'Card::Set::' + set_name
-  end
 
   def set_event_callbacks event, mod, opts
     [:before, :after, :around].each do |kind|
@@ -140,25 +184,12 @@ module Card::Set
           parts = mod.name.split '::'
           set_class_key, anchor_or_placeholder = parts[-2].underscore.to_sym, parts[-1].underscore
           set_key = Card.method_key( set_class_key => anchor_or_placeholder )
-          options.merge!( { :if => proc do |c| c.method_keys.member? set_key end } )           
+          options.merge!( { :if => proc do |c| c.method_keys.member? set_key end } ) 
+            #FIXME -- need to unify this :if stuff with #event_applies? / :when handling
+            # (though ideally the above would be obviated by a move to set-based callback handling)
         end
         Card.class_eval { set_callback object_method, kind, event, options }
       end
-    end
-  end
-
-  def get_module
-    mod = self.ancestors.first
-    mod_name = mod.name || Wagn::Loader.current_set_name
-    
-    case
-    when mod == Card                           ; Card
-    when mod_name =~ /^Card::Set::All::/       ; Card
-    when csm = Wagn::Loader.current_set_module ; csm
-    else
-      # needed for explicit loading
-      Card::Set[mod.name]= mod
-      mod
     end
   end
 
@@ -168,7 +199,7 @@ module Card::Set
   end
 
   def add_traits args, options
-    mod  = get_module
+    mod = Card::Set.current[:module]
     raise "Can't define card traits on all set" if mod == Card
     mod_traits = get_traits mod
     

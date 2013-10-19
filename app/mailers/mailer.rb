@@ -17,7 +17,7 @@ class Mailer < ActionMailer::Base
     end
 
     @pw_url   = wagn_url "#{cd_with_acct.cardname.url_key}?view=account"
-    @login_url= wagn_url "/account/signin"
+    @login_url= wagn_url "account/signin"
 
     #FIXME - might want different "from" settings for different contexts?
     invite_from = Card.setting( '*invite+*from' ) || begin
@@ -26,6 +26,7 @@ class Mailer < ActionMailer::Base
       from_card = Card[from_card_id]
       "#{from_card.name} <#{from_card.account.email}>"
     end
+    
     mail_from( { :to=>@email, :subject=>subject }, invite_from )
   end
 
@@ -58,8 +59,8 @@ class Mailer < ActionMailer::Base
     @action = action
     @subedits = subedits
     @card_url = wagn_url card
-    @change_url = wagn_url "/card/changes/#{card.cardname.url_key}"
-    @unwatch_url = wagn_url "/card/watch/#{watched.to_name.url_key}?toggle=off"
+    @change_url  = wagn_url "card/changes/#{card.cardname.url_key}"
+    @unwatch_url = wagn_url "card/watch/#{watched.to_name.url_key}?toggle=off"
     @udpater_url = wagn_url card.updater
     @watched = (watched == card.cardname ? "#{watched}" : "#{watched} cards")
 

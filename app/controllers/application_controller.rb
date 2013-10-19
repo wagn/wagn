@@ -9,7 +9,6 @@ class ApplicationController < ActionController::Base
   layout nil
 
   attr_reader :card
-  attr_accessor :recaptcha_count
 
   def fast_404
     message = "<h1>404 Page Not Found</h1>"
@@ -19,23 +18,12 @@ class ApplicationController < ActionController::Base
   protected
   def per_request_setup
 #    ActiveSupport::Notifications.instrument 'wagn.per_request_setup', :message=>"" do
-      request.format = :html if !params[:format] #is this used??
+    request.format = :html if !params[:format] #is this used??
+    Wagn::Cache.renew
+    Account.current_id = self.current_account_id || Card::AnonID
+    Wagn::Env.reset :controller=>self
 
-      # these should not be Wagn::Conf, but more like WagnEnv
-      Wagn::Conf[:host] = host = request.env['HTTP_HOST']
-      Wagn::Conf[:base_url] = request.protocol + host
-      Wagn::Conf[:main_name] = nil
-      Wagn::Conf[:controller] = self
-
-      Wagn::Cache.renew
-
-      Card::Format.ajax_call = ajax?
-      Account.current_id = self.current_account_id || Card::AnonID
-
-      # RECAPTCHA HACKS
-      Wagn::Conf[:recaptcha_on] = !Account.logged_in? &&     # this too
-        !!( Wagn::Conf[:recaptcha_public_key] && Wagn::Conf[:recaptcha_private_key] )
-      @recaptcha_count = 0
+    Card::Format.ajax_call = ajax?             # move to Wagn::Env?
   end
 
   def ajax?
@@ -51,7 +39,9 @@ class ApplicationController < ActionController::Base
   def wagn_redirect url
     url = wagn_url url #make sure we have absolute url
     if ajax?
-      render :text => url, :status => 303
+      # lets client reset window location (not just receive redirected response)
+      # formerly used 303 response, but that gave IE the fits
+      render :json => {:redirect=> url}
     else
       redirect_to url
     end
@@ -78,6 +68,8 @@ class ApplicationController < ActionController::Base
     
     if format==:file && status==200
       send_file *result
+    elsif status == 302
+      wagn_redirect result
     else
       args = { :text=>result, :status=>status }
       args[:content_type] = 'text/text' if format == :file

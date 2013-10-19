@@ -46,7 +46,11 @@ jQuery.fn.extend {
     notice = slot.find '.card-notice'
     unless notice[0]
       notice = $('<div class="card-notice"></div>')
-      slot.append notice 
+      form = slot.find('.card-form')
+      if form[0]
+        $(form[0]).append notice
+      else
+        slot.append notice 
     notice.html message
     notice.show 'blind'
 
@@ -107,20 +111,21 @@ $(window).ready ->
   setTimeout (-> wagn.initializeEditors $('body')), 10
   #  dislike the timeout, but without this forms with multiple TinyMCE editors were failing to load properly
 
-  $('body').on 'ajax:success', '.slotter', (event, data) ->
-    notice = $(this).attr('notify-success')
-    newslot = $(this).setSlotContent data
-    
-    if newslot.jquery # sometimes response is plaintext
-      wagn.initializeEditors newslot
-      if notice?
-        newslot.notify notice
+  $('body').on 'ajax:success', '.slotter', (event, data, c, d) ->
+    if data.redirect
+      window.location=data.redirect
+    else
+      notice = $(this).attr('notify-success')
+      newslot = $(this).setSlotContent data
+        
+      if newslot.jquery # sometimes response is plaintext
+        wagn.initializeEditors newslot
+        if notice?
+          newslot.notify notice
 
   $('body').on 'ajax:error', '.slotter', (event, xhr) ->
     result = xhr.responseText
-    if xhr.status == 303 #redirect
-      window.location=result
-    else if xhr.status == 403 #permission denied
+    if xhr.status == 403 #permission denied
       $(this).setSlotContent result
     else
       $(this).notify result
@@ -171,8 +176,11 @@ $(window).ready ->
         false
 
   $('body').on 'submit', '.card-form', ->
+#    warn "on submit called"
     $(this).setContentFieldsFromMap()
+#    warn "content fields set"    
     $(this).find('.card-content').attr('no-autosave','true')
+#    warn "autosave worked"
     true
 
   $('body').on 'click', '.submitter', ->
@@ -242,24 +250,25 @@ $(window).ready ->
     wagn.pingName name, (data)->
       return null if box.val() != name # avert race conditions
       status = data['status']
-      ed = box.parent()
-      leg = box.closest('fieldset').find('legend')
-      msg = leg.find '.name-messages'
-      unless msg[0]
-        msg = $('<span class="name-messages"></span>')
-        leg.append msg
-      ed.removeClass 'real-name virtual-name known-name'
-      slot_id = box.slot().data 'cardId' # use id to avoid warning when renaming to name variant
-      if status != 'unknown' and !(slot_id && parseInt(slot_id) == data['id'])
-        ed.addClass status + '-name known-name'
-        link = 
-        qualifier = if status == 'virtual' #wish coffee would let me use  a ? b : c syntax here
-          'in virtual'
+      if status
+        ed = box.parent()
+        leg = box.closest('fieldset').find('legend')
+        msg = leg.find '.name-messages'
+        unless msg[0]
+          msg = $('<span class="name-messages"></span>')
+          leg.append msg
+        ed.removeClass 'real-name virtual-name known-name'
+        slot_id = box.slot().data 'cardId' # use id to avoid warning when renaming to name variant
+        if status != 'unknown' and !(slot_id && parseInt(slot_id) == data['id'])
+          ed.addClass status + '-name known-name'
+          link = 
+          qualifier = if status == 'virtual' #wish coffee would let me use  a ? b : c syntax here
+            'in virtual'
+          else
+            'already in'
+          msg.html '"<a href="' + wagn.rootPath + '/' + data['url_key'] + '">' + name + '</a>" ' + qualifier + ' use'
         else
-          'already in'
-        msg.html '"<a href="' + wagn.rootPath + '/' + data['url_key'] + '">' + name + '</a>" ' + qualifier + ' use'
-      else
-        msg.html ''
+          msg.html ''
         
   $('body').on 'click', '.render-error-link', (event) ->
     msg = $(this).closest('.render-error').find '.render-error-message'

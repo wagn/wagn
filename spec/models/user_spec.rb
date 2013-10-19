@@ -42,9 +42,9 @@ describe User do
     end
   end
 
-  it 'should require password' do
+  it 'should require valid password' do
     assert_no_difference User, :count do
-      u = create_user(:password => nil)
+      u = create_user(:password => 'AB', :password_confirmation => 'AB')
       assert u.errors[:password]
     end
   end

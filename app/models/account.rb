@@ -14,24 +14,9 @@ class Account
     def cache()          Wagn::Cache[Account]         end
 
     def create_ok?
-      base  = Card.new :name=>'dummy*', :type_id=>Card::UserID
+      base  = Card.new :name=>'dummy*', :type_id=>Card.default_accounted_type_id
       trait = Card.new :name=>"dummy*+#{Card[:account].name}"
       base.ok?(:create) && trait.ok?(:create)
-    end
-
-    # FIXME: args=params.  should be less coupled..
-    def create_with_card user_args, card_args, email_args={}
-      card_args[:type_id] ||= Card::UserID
-      @card = Card.fetch card_args[:name], :new => card_args
-      Account.as_bot do
-        @account = User.new(user_args)
-        @account.status = 'active' unless user_args.has_key? :status
-        #Rails.logger.warn "create_wcard #{@account.inspect}, #{user_args.inspect}"
-        @account.generate_password if @account.password.blank?
-        @account.save_with_card(@card)
-        @account.send_account_info(email_args) if @card.errors.empty? && !email_args.empty?
-      end
-      [@account, @card]
     end
 
     # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.

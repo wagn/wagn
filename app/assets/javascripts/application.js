@@ -12,7 +12,7 @@
 //= require jquery_ujs
 //= require jquery.autosize
 //= require tinymce
-//= require wagn_pack
+//= require wagn_mod
 //= require wagn
 //= require wagn_menu
 //= require jquerymobile

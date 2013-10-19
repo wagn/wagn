@@ -88,7 +88,8 @@ describe Card::Flexmail do
 
     it "returns list with correct hash for card with configs" do
       Account.as_bot do
-        Wagn::Conf[:base_url] = 'http://a.com'
+        Wagn::Env[:protocol] = 'http://'
+        Wagn::Env[:host]     = 'a.com'
         
         #c = Card.new(:name => "Banana Trigger", :content => "data content [[A]]", :type=>'Trigger')
         #warn "boom: #{ Card::Flexmail.configs_for(c).inspect }"

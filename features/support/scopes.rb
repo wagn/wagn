@@ -4,7 +4,7 @@ module ScopeHelpers
     case section
 
     when /main card content/
-      '#main > .card-slot > .content'
+      '#main > .card-slot > .card-content'
 
     when /main card header/
       '#main > .card-slot > .card-header'

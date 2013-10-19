@@ -2,7 +2,7 @@
 module Wagn::Version
   class << self
     def release
-      @@version ||= File.read( File.join Rails.root, 'VERSION' )
+      @@version ||= File.read( File.join Rails.root, 'VERSION' ).strip
     end
     
     def schema type=nil

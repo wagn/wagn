@@ -1,7 +1,4 @@
-
 require 'wagn/spec_helper'
-include Wagn::AuthenticatedTestHelper
-
 
 describe CardController, "Basic rendering tests" do
 

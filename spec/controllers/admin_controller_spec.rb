@@ -18,6 +18,6 @@ describe AdminController, "admin functions" do
   end
 
   it "should show cache" do
-    get :show_cache, :id=>"A"
+    get :read, :id=>"A", :view=>:show_cache
   end
 end

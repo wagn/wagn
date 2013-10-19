@@ -10,10 +10,14 @@ class Card < ActiveRecord::Base
   extend Card::Constant
   extend Wagn::Loader
 
+  require_dependency 'card/exceptions'
+  include Card::Exceptions
+
   cattr_accessor :set_patterns
   @@set_patterns = []
 
-  define_callbacks :approve, :store, :extend
+  define_callbacks :approve, :terminator=>'result == false'
+  define_callbacks :store, :extend
 
   load_set_patterns
   load_formats
@@ -23,10 +27,10 @@ class Card < ActiveRecord::Base
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
 
-  attr_writer :selected_revision_id #writer because read method is in pack (and does not override upon load)
+  attr_writer :selected_revision_id #writer because read method is in mod (and does not override upon load)
   attr_accessor  :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
+    :comment, :comment_author, :account_args,        # obviated soon
     :update_referencers, :was_new_card,              # wrong mechanisms for these
-    :comment, :comment_author,                       # obviated soon
     :error_view, :error_status                       # yuck
 
   before_save :approve
@@ -67,10 +71,10 @@ class Card < ActiveRecord::Base
 
 
   def validate_delete
-    if codename
-      errors.add :delete, "#{name} is is a system card. (#{codename})\n  Deleting this card would mess up our revision records."
+    if !codename.blank?
+      errors.add :delete, "#{name} is is a system card. (#{codename})"
     end
-    if type_id== Card::UserID && Card::Revision.find_by_creator_id( self.id )
+    if account && Card::Revision.find_by_creator_id( self.id )
       errors.add :delete, "Edits have been made with #{name}'s user account.\n  Deleting this card would mess up our revision records."
     end
     if respond_to? :custom_validate_delete
@@ -85,7 +89,6 @@ class Card < ActiveRecord::Base
     end
     errors.empty?
   end
-
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # EVENTS
@@ -206,11 +209,17 @@ class Card < ActiveRecord::Base
   end
 
   validate do |card|
-    return true if @nested_edit
-    return true unless Wagn::Conf[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
-    c = Wagn::Conf[:controller]
-    return true if (c.recaptcha_count += 1) > 1
-    c.verify_recaptcha( :model=>card ) || card.error_status = 449
+    if !@nested_edit                      and
+        Wagn::Env[:recaptcha_on]          and
+        Card.toggle( card.rule :captcha ) and
+        num = Wagn::Env[:recaptcha_count] and
+        num < 1
+        
+      Wagn::Env[:recaptcha_count] = num + 1
+      Wagn::Env[:controller].verify_recaptcha :model=>card or card.error_status = 449
+    else
+      true
+    end
   end
 
   validates_each :name do |card, attr, name|

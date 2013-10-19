@@ -4,7 +4,6 @@ ENV["RAILS_ENV"] = 'test'
 
 Spork.prefork do
   require File.expand_path File.dirname(__FILE__) + "/../../config/environment"
-  require File.expand_path File.dirname(__FILE__) + "/authenticated_test_helper"
   require 'rspec/rails'
 
   # Requires supporting ruby files with custom matchers and macros, etc,
@@ -21,7 +20,6 @@ Spork.prefork do
 
     #config.include CustomMatchers
     #config.include ControllerMacros, :type=>:controllers
-    config.include Wagn::AuthenticatedTestHelper, :type=>:controllers
 
     # == Mock Framework
     # If you prefer to mock with mocha, flexmock or RR, uncomment the appropriate symbol:
@@ -36,6 +34,7 @@ Spork.prefork do
     config.before(:each) do
       Account.current_id = JOE_USER_ID
       Wagn::Cache.restore
+      Wagn::Env.reset
     end
     config.after(:each) do
       Timecop.return
@@ -52,6 +51,11 @@ module Wagn::SpecHelper
 
   include ActionDispatch::Assertions::SelectorAssertions
   #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
+  
+  def login_as user
+    Account.current_id = @request.session[:user] = (uc=Card[user.to_s] and uc.id)
+    #warn "(ath)login_as #{user.inspect}, #{Account.current_id}, #{@request.session[:user]}"
+  end
   
   def newcard name, content=""
     #FIXME - misleading name; sounds like it doesn't save.

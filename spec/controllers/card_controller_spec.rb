@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
-include Wagn::AuthenticatedTestHelper
 
 describe CardController do
 
@@ -118,7 +117,7 @@ describe CardController do
             "~plus~color" => { :type=>'Phrase', :content => "red"  }
           }
         }
-        assert_response 303
+        assert_response 200
         Card["Gala"].should_not be_nil
         Card["Gala+kind"].content.should == 'apple'
         Card["Gala+color"].type_name.should == 'Phrase'
@@ -133,7 +132,9 @@ describe CardController do
     it "redirects to thanks if present" do
       login_as 'joe_admin'
       xhr :post, :create, :success => 'REDIRECT: /thank_you', :card => { "name" => "Wombly" }
-      assert_response 303, "/thank_you"
+      assert_response 200
+      json = JSON.parse response.body
+      json['redirect'].should =~ /^http.*\/thank_you$/
     end
 
     it "redirects to card if thanks is blank" do
@@ -251,37 +252,9 @@ describe CardController do
     end
   end
 
-  describe '#update_account' do
-    it "should handle email updates" do
-      login_as :joe_admin
-      post :update_account, :id=>"Joe User".to_name.key, :account => { :email => 'joe@user.co.uk' }
-      assert_response 302
-      Card['joe_user'].account.email.should == 'joe@user.co.uk'
-    end
-    
-    it "should not allow a user to block himself" do
-      login_as :joe_user
-      post :update_account, :id=>"Joe User".to_name.key, :account => { :blocked => '1' }
-      Card['joe_user'].account.blocked?.should be_false
-    end
-    
-    it "should update roles" do
-      login_as :joe_admin
-      admin_id = Card['Administrator'].id
-      
-      post :update_account, :id=>"Joe User".to_name.key, :save_roles=>true, :account_roles => { admin_id => true }
-      assert_response 302
-      Card['joe_user+*roles'].item_names.should == ['Administrator']
-      post :update_account, :id=>"Joe User".to_name.key, :save_roles=>true
-      assert_response 302
-      Card['joe_user+*roles'].item_names.should == []
-    end
-
-  end
 
 
   describe "unit tests" do
-    include Wagn::AuthenticatedTestHelper
 
     before do
       @simple_card = Card['Sample Basic']

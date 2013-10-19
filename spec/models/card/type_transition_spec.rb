@@ -3,45 +3,46 @@ require 'wagn/spec_helper'
 
 class Card
   cattr_accessor :count
-end
 
-module Card::Set::Type::CardtypeA
-  Card::Set.register_set self
+  module Set::Type
+  
+    module CardtypeA
+      extend Card::Set
 
-  def approve_delete
-    deny_because("not allowed to delete card a")
+      def ok_to_delete
+        deny_because("not allowed to delete card a")
+      end
+    end
+
+    module CardtypeC
+      extend Card::Set
+
+      def validate_type_change
+        errors.add :delete_error, "card c is indestructible"
+      end
+    end
+
+    module CardtypeD
+      def valid?
+        errors.add :create_error, "card d always has errors"
+        errors.empty?
+      end
+    end
+
+    module CardtypeE
+      def self.included(base) Card.count = 2   end
+      def on_type_change()    decrement_count  end
+      def decrement_count()   Card.count -= 1  end
+    end
+
+    module CardtypeF
+      def self.included(base) Card.count = 2   end
+      # FIXME: create_extension doesn't exist anymore, need another hook
+      def create_extension()  increment_count  end
+      def increment_count()   Card.count += 1  end
+    end
   end
 end
-
-
-module Card::Set::Type::CardtypeC
-  Card::Set.register_set self
-
-  def validate_type_change
-    errors.add :delete_error, "card c is indestructible"
-  end
-end
-
-module Card::Set::Type::CardtypeD
-  def valid?
-    errors.add :create_error, "card d always has errors"
-    errors.empty?
-  end
-end
-
-module Card::Set::Type::CardtypeE
-  def self.included(base) Card.count = 2   end
-  def on_type_change()    decrement_count  end
-  def decrement_count()   Card.count -= 1  end
-end
-
-module Card::Set::Type::CardtypeF
-  def self.included(base) Card.count = 2   end
-  # FIXME: create_extension doesn't exist anymore, need another hook
-  def create_extension()  increment_count  end
-  def increment_count()   Card.count += 1  end
-end
-
 
 describe Card, "with role" do
   before do

@@ -13,8 +13,14 @@ class Card < ActiveRecord::Base
   require_dependency 'card/exceptions'
   include Card::Exceptions
 
-  cattr_accessor :set_patterns
+  cattr_accessor :set_patterns, :error_codes
   @@set_patterns = []
+  #fixme: move these to modules
+  @@error_codes = {
+    :permission_denied => [:denial,   403],
+    :captcha           => [:error,    449],
+    :conflict          => [:conflict, 409]
+  }
 
   define_callbacks :approve, :terminator=>'result == false'
   define_callbacks :store, :extend
@@ -29,10 +35,9 @@ class Card < ActiveRecord::Base
 
   attr_writer :selected_revision_id #writer because read method is in mod (and does not override upon load)
   attr_accessor :action,
-    :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
-    :comment, :comment_author, :account_args,        # obviated soon
-    :update_referencers,                             # wrong mechanisms for this
-    :error_view, :error_status                       # yuck
+    :cards, :loaded_left, :nested_edit,          # should be possible to merge these concepts
+    :comment, :comment_author, :account_args,    # obviated soon
+    :update_referencers                          # wrong mechanisms for this
 
   before_validation :approve
   around_save :store
@@ -47,9 +52,7 @@ class Card < ActiveRecord::Base
   # EVENTS
   # The following events are all currently defined AFTER the sets are loaded and are therefore unexposed to the API.  Not good.  (my fault) - efm
 
-  event :check_perms, :after=>:approve do
-    approved?  #or raise( PermissionDenied.new self )
-  end
+
 
   event :set_stamper, :before=>:store do #|args|
 #    puts "stamper called: #{name}"
@@ -60,7 +63,7 @@ class Card < ActiveRecord::Base
   event :pull_from_trash, :before=>:store, :on=>:create do
     if trashed_card = Card.find_by_key_and_trash(key, true)
       # a. (Rails way) tried Card.where(:key=>'wagn_bot').select(:id), but it wouldn't work.  This #select
-      #    generally breaks on cardsI think our initialization process screws with something
+      #    generally breaks on cards. I think our initialization process screws with something
       # b. (Wagn way) we could get card directly from fetch if we add :include_trashed (eg).
       #    likely low ROI, but would be nice to have interface to retrieve cards from trash...
       self.id = trashed_card.id

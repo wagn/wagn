@@ -4,25 +4,14 @@ def ydhpt
   "You don't have permission to"
 end
 
-def approved?
-  @action_approved = true
-  @permission_errors = []
 
-  if trash
-    ok? :delete
+event :check_permissions, :after=>:approve do
+  act = if @action != :delete && updates.keys == ['comment'] #will be obviated by new comment handling
+    :comment
   else
-    unless updates.keys == ['comment'] # if only updating comment, next section will handle
-      new_card? ? ok?(:create) : ok?(:update)
-    end
-    updates.each_pair do |attr,value|
-      send "approve_#{attr}"
-    end
+    @action
   end
-
-  @permission_errors.each do |err|
-    errors.add :permission_denied, err
-  end
-  @action_approved
+  ok? act
 end
 
 
@@ -34,18 +23,19 @@ end
 #      :trait=>:account         would fetch this card plus a tag codenamed :account
 #      :trait=>:roles, :new=>{} would initialize a new card with default ({}) options.
 
+
+def ok? action
+  @action_ok = true
+  send "ok_to_#{action}"
+  @action_ok
+end
+
 def ok_with_fetch? action, opts={}
   card = opts[:trait].nil? ? self : fetch(opts)
   card && card.ok_without_fetch?(action)
 end
+alias_method_chain :ok?, :fetch # note: method is chained so that we can return the instance variable @action_ok
 
-def ok? action
-  @action_approved = true
-  @permission_errors = []
-  send "ok_to_#{action}"
-  @action_approved
-end
-alias_method_chain :ok?, :fetch # note: method is chained so that we can return the instance variable @action_approved
 
 def ok! action, opts={}
   raise Card::PermissionDenied.new self unless ok? action, opts
@@ -92,8 +82,10 @@ def you_cant what
 end
 
 def deny_because why
-  [why].flatten.each {|err| @permission_errors << err }
-  @action_approved = false
+  [why].flatten.each do |message|
+    errors.add :permission_denied, message
+  end
+  @action_ok = false
 end
 
 def permitted? action
@@ -138,7 +130,10 @@ end
 
 def ok_to_update
   permit :update
-  ok_to_read if @action_approved
+  if @action_ok and updates.for? :type_id and !permitted? :create
+    deny_because you_cant( "change to this type (need create permission)" )
+  end
+  ok_to_read if @action_ok
 end
 
 def ok_to_delete
@@ -147,35 +142,13 @@ end
 
 def ok_to_comment
   permit :comment, 'comment on'
-  if @action_approved
+  if @action_ok
     deny_because "No comments allowed on template cards" if is_template?
     deny_because "No comments allowed on hard templated cards" if hard_template
   end
 end
 
-def approve_type_id
-  case
-  when !type_name
-    deny_because("No such type")
-  when !new_card? && reset_patterns && !permitted?(:create)
-    deny_because you_cant("change to this type (need create permission)"  )
-  end
-  #NOTE: we used to check for delete permissions on previous type, but this would really need to happen before the name gets changes
-  #(hence before the tracked_attributes stuff is run)
-end
 
-def approve_name
-end
-
-def approve_content
-  if !new_card? && hard_template
-    deny_because you_cant("change the content of this card -- it is hard templated by #{template.name}")
-  end
-end
-
-def approve_comment
-  ok_to_comment
-end
 
 public
 
@@ -243,7 +216,7 @@ event :recaptcha, :before=>:approve do
       num < 1
       
     Wagn::Env[:recaptcha_count] = num + 1
-    Wagn::Env[:controller].verify_recaptcha :model=>self or self.error_status = 449
+    Wagn::Env[:controller].verify_recaptcha :model=>self, :attribute=>:captcha
   end
 end
 

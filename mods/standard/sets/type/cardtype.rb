@@ -19,13 +19,7 @@ end
 
 include Card::Set::Type::Basic
 
-#def on_type_change
-#  custom_validate_delete
-#end
 
-#def validate_type_change
-#  custom_validate_delete
-#end
 
 def cards_of_type_exist?
   Account.as_bot { Card.count_by_wql :type_id=>id } > 0

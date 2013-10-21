@@ -50,6 +50,8 @@ def get_type_id args={}
   end
 end
 
+
+
 event :validate_type, :before=>:approve, :on=>:save do
   # validate on update
   if updates.for?(:type_id) and !new_card?
@@ -64,6 +66,11 @@ event :validate_type, :before=>:approve, :on=>:save do
   # validate on update and create
   if updates.for?(:type_id) or new_record?
     # invalid to change type when type is hard_templated
+    
+    if !type_name
+      errors.add :type, "No such type"
+    end
+    
     if rt = hard_template and rt.assigns_type? and type_id!=rt.type_id
       errors.add :type, "can't be changed because #{name} is hard templated to #{rt.type_name}"
     end

@@ -49,10 +49,15 @@ class ApplicationController < ActionController::Base
 
 
   def render_errors
-    view   = card.error_view   || :errors
-    status = card.error_status || 422
+    #fixme - should prioritize certain error classes
+    code = nil
+    card.errors.each do |key, msg|
+      break if code = Card.error_codes[ key ]
+    end
+    view, status = code || [ :errors, 422]
     show view, status
   end
+  
 
 
   def show view = nil, status = 200
@@ -84,34 +89,34 @@ class ApplicationController < ActionController::Base
     
     @card ||= Card.new
     
-    view, status = case exception
+    view = case exception
       ## arguably the view and status should be defined in the error class;
       ## some are redundantly defined in view
       when Wagn::PermissionDenied, Card::PermissionDenied
-        [ :denial, 403]
+        :denial
       when Wagn::NotFound, ActiveRecord::RecordNotFound, ActionController::MissingFile
-        [ :not_found, 404 ]        
+        :not_found
       when Wagn::BadAddress
-        [ :bad_address, 404 ]
+        :bad_address
       when Wagn::Oops
         card.errors.add :exception, exception.message 
         # Wagn:Oops error messages are visible to end users and are generally not treated as bugs.
         # Probably want to rename accordingly.
-        [ :errors, 422]
+        :errors
       else #the following indicate a code problem and therefore require full logging
         Rails.logger.info exception.backtrace*"\n"
         notify_airbrake exception if Airbrake.configuration.api_key
 
         if ActiveRecord::RecordInvalid === exception
-          [ :errors, 422]
+          :errors
         elsif Wagn::Conf[:migration] or Rails.logger.level == 0 # could also just check non-production mode...
           raise exception
         else
-          [ :server_error, 500 ]
+          :server_error
         end
       end
 
-    show view, status
+    show view
   end
 end
 

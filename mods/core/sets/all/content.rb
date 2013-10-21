@@ -74,17 +74,16 @@ event :set_default_content, :on=>:create, :before=>:approve do
   end
 end
 
-event :validate_content, :before=>:approve do
-  if updates.for? :content
-    reset_patterns_if_rule # why?  is this really a validation??    
+event :validate_content, :before=>:approve, :on=>:update do
+  if updates.for?(:content) && hard_template
+    errors.add :content, "can't change; structured by #{template.name}"
   end
 end
 
 
-event :detect_conflict, :before=>:approve, :on=>:save do
+event :detect_conflict, :before=>:approve, :on=>:update do
   if current_revision_id_changed? && current_rev_id.to_i != current_revision_id_was.to_i
     @current_revision_id = current_revision_id_was
     errors.add :conflict, "changes not based on latest revision"
-    @error_view = :conflict
   end
 end

@@ -4,7 +4,7 @@ view :editor do |args|
   form.text_field :content, :class=>'card-content'
 end
 
-event :validate_number, :before=>:approve do
+event :validate_number, :after=>:approve do
   errors.add :content, "'#{content}' is not numeric" unless valid_number?( content )
 end
 

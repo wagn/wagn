@@ -36,14 +36,7 @@ event :notify_followers, :after=>:extend do
     # userstamps and timestamps are turned off in cases like updating read_rules that are automated and
     # generally not of enough interest to warrant notification
   
-    action = case
-      when trash;  'deleted'
-      when @was_new_card; 'added'
-      when nested_notifications; 'updated'
-      when updated_at.to_s==current_revision.created_at.to_s;  'edited'
-      else; 'updated'
-    end
-  
+    action = "#{@action}d"
     #warn "send note #{inspect}, #{action}, #{watcher_watched_pairs.inspect}"
     @trunk_watcher_watched_pairs = trunk_watcher_watched_pairs
     #warn "send note #{inspect}, #{action}, #{@trunk_watcher_watched_pairs.inspect}"

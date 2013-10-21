@@ -92,11 +92,11 @@ describe Card, "Normal card with dependents" do
   it "should confirm that it has dependents" do
     @a.dependents.length.should > 0
   end
-  it "should successfull have its type changed" do
+  it "should successfully have its type changed" do
     Account.as_bot do
-      @a.type_id = Card::NumberID;
+      @a.type_id = Card::PhraseID;
       @a.save!
-      Card['A'].type_code.should== :number
+      Card['A'].type_code.should== :phrase
     end
   end
   it "should still have its dependents after changing type" do

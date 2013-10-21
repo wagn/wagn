@@ -1,11 +1,13 @@
 def approve
-  #warn "approve called!"
-  @was_new_card = self.new_card?
+#  warn "approve called for #{name}!"
   @action = case
     when trash     ; :delete
     when new_card? ; :create
     else             :update
-  end
+    end
+
+  reset_patterns
+  include_set_modules
   run_callbacks :approve
   expire_pieces if errors.any?
   errors.empty?
@@ -13,9 +15,6 @@ rescue Exception=>e
   rescue_event e
 end
 
-def valid? *args
-  !!approve
-end
 
 def store
   run_callbacks :store do

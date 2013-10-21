@@ -1,29 +1,26 @@
 
-event :validate_type, :before=>:approve do
-  # validate on update
-  if updates.for?(:type_id) and !new_card?
-    if !validate_type_change
-      errors.add :type, "of #{ name } can't be changed; errors changing from #{ type_name }"
-    end
-    if c = dup and c.type_id_without_tracking = type_id and c.id = nil and !c.valid?
-      errors.add :type, "of #{ name } can't be changed; errors creating new #{ type_id }: #{ c.errors.full_messages * ', ' }"
-    end
-  end
-
-  # validate on update and create
-  if updates.for?(:type_id) or new_record?
-    # invalid to change type when type is hard_templated
-    if rt = hard_template and rt.assigns_type? and type_id!=rt.type_id
-      errors.add :type, "can't be changed because #{name} is hard templated to #{rt.type_name}"
-    end
-  end
-end
-
-
 module ClassMethods
   def default_type_id
     @@default_type_id ||= Card[:all].fetch( :trait=>:default ).type_id
   end
+end
+
+def type_card
+  Card[ type_id.to_i ]
+end
+
+def type_code
+  Card::Codename[ type_id.to_i ]
+end
+
+def type_name
+  return if type_id.nil?
+  type_card = Card.fetch type_id.to_i, :skip_modules=>true, :skip_virtual=>true
+  type_card and type_card.name
+end
+
+def type= type_name
+  self.type_id = Card.fetch_id type_name
 end
 
 def get_type_id args={}
@@ -53,20 +50,26 @@ def get_type_id args={}
   end
 end
 
-def type_card
-  Card[ type_id.to_i ]
+event :validate_type, :before=>:approve, :on=>:save do
+  # validate on update
+  if updates.for?(:type_id) and !new_card?
+    if !validate_type_change
+      errors.add :type, "of #{ name } can't be changed; errors changing from #{ type_name }"
+    end
+    if c = dup and c.type_id_without_tracking = type_id and c.id = nil and !c.valid?
+      errors.add :type, "of #{ name } can't be changed; errors creating new #{ type_id }: #{ c.errors.full_messages * ', ' }"
+    end
+  end
+
+  # validate on update and create
+  if updates.for?(:type_id) or new_record?
+    # invalid to change type when type is hard_templated
+    if rt = hard_template and rt.assigns_type? and type_id!=rt.type_id
+      errors.add :type, "can't be changed because #{name} is hard templated to #{rt.type_name}"
+    end
+  end
 end
 
-def type_code
-  Card::Codename[ type_id.to_i ]
-end
-
-def type_name
-  return if type_id.nil?
-  type_card = Card.fetch type_id.to_i, :skip_modules=>true, :skip_virtual=>true
-  type_card and type_card.name
-end
-
-def type= type_name
-  self.type_id = Card.fetch_id type_name
+def validate_type_change  #HACK
+  true
 end

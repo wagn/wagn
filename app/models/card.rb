@@ -28,12 +28,13 @@ class Card < ActiveRecord::Base
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
 
   attr_writer :selected_revision_id #writer because read method is in mod (and does not override upon load)
-  attr_accessor  :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
+  attr_accessor :action,
+    :cards, :loaded_left, :nested_edit, # should be possible to merge these concepts
     :comment, :comment_author, :account_args,        # obviated soon
-    :update_referencers, :was_new_card,              # wrong mechanisms for these
+    :update_referencers,                             # wrong mechanisms for this
     :error_view, :error_status                       # yuck
 
-  before_save :approve
+  before_validation :approve
   around_save :store
   after_save :extend
 
@@ -194,10 +195,5 @@ class Card < ActiveRecord::Base
   alias cardname= name=
 
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # METHODS FOR OVERRIDE
-  # eventify!
-
-  def validate_type_change()        true  end
 
 end

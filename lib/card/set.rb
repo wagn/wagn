@@ -179,7 +179,7 @@ module Card::Set
   def set_event_callbacks event, mod, opts
     [:before, :after, :around].each do |kind|
       if object_method = opts[kind]
-        options = {:prepend=>true } 
+        options = { :prepend => true } 
         if mod != Card
           parts = mod.name.split '::'
           set_class_key, anchor_or_placeholder = parts[-2].underscore.to_sym, parts[-1].underscore

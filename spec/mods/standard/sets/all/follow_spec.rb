@@ -38,18 +38,18 @@ describe "On Card Changes" do
   end
 
   it "sends notifications of edits" do
-    mock(Mailer).change_notice( Card['Sara'].id, Card["Sara Watching"], "edited", "Sara Watching", nil )
+    mock(Mailer).change_notice( Card['Sara'].id, Card["Sara Watching"], "updated", "Sara Watching", nil )
     Card["Sara Watching"].update_attributes :content => "A new change"
   end
 
   it "sends notifications of additions" do
     new_card = Card.new :name => "Microscope", :type => "Optic"
-    mock(Mailer).change_notice( Card['Sara'].id, new_card,"added", "Optic", nil  )
+    mock(Mailer).change_notice( Card['Sara'].id, new_card,"created", "Optic", nil  )
     new_card.save!
   end
 
   it "sends notification of updates" do
-    mock(Mailer).change_notice( is_a(Integer), Card["Sunglasses"], "edited", "Optic", nil)
+    mock(Mailer).change_notice( is_a(Integer), Card["Sunglasses"], "updated", "Optic", nil)
     Card["Sunglasses"].update_attributes :content => 'updated content'
   end
 
@@ -88,8 +88,8 @@ describe "Trunk watcher notificatione" do
 
   it "sends notification to Joe Camel" do
     name = "Ulysses+author"
-    mock(Mailer).change_notice( @ja_id, @ulyss, "updated", 'Book' , [[name, "added"]], is_a(Card))
-    mock(Mailer).change_notice( @jc_id, @ulyss, "updated", @ulyss.name , [[name, "added"]], is_a(Card))
+    mock(Mailer).change_notice( @ja_id, @ulyss, "updated", 'Book' , [[name, "created"]], is_a(Card))
+    mock(Mailer).change_notice( @jc_id, @ulyss, "updated", @ulyss.name , [[name, "created"]], is_a(Card))
     c=Card.create :name=>name, :content => "James Joyce"
   end
 

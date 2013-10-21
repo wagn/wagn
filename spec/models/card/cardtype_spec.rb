@@ -15,7 +15,7 @@ describe "Card (Cardtype)" do
     c1=Card.create :name=>'Sparta', :type=>'City'
     c2=Card.create :name=>'Eugene', :type=>'City'
     assert_equal ['Eugene','Sparta'], Card.search(:type=>'City').map(&:name).sort
-    assert_raises Wagn::Oops do
+    assert_raises ActiveRecord::RecordInvalid do
       city.delete!
     end
     # make sure it wasn't deleted / trashed

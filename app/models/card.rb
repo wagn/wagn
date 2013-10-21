@@ -41,62 +41,14 @@ class Card < ActiveRecord::Base
   cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
 
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # DELETE
-  # following clearly need to be moved to events.
-
-  def delete
-    errors.clear
-    Card.transaction do
-      if validate_delete
-        delete_to_trash
-        reset_patterns_if_rule saving=true
-        true
-      end
-    end
-  end
-
-  def delete_to_trash
-    @trash_changed = true
-    self.update_attributes :trash => true
-    dependents.each do |dep|
-      dep.delete_to_trash
-    end
-    update_references_on_delete
-    expire
-  end
-
-  def delete!
-    delete or raise Wagn::Oops, "Delete failed: #{errors.full_messages.join(',')}"
-  end
-
-
-  def validate_delete
-    if !codename.blank?
-      errors.add :delete, "#{name} is is a system card. (#{codename})"
-    end
-    if account && Card::Revision.find_by_creator_id( self.id )
-      errors.add :delete, "Edits have been made with #{name}'s user account.\n  Deleting this card would mess up our revision records."
-    end
-    if respond_to? :custom_validate_delete
-      self.custom_validate_delete
-    end
-
-    dependents.each do |dep|
-      dep.send :validate_delete
-      if dep.errors[:delete].any?
-        errors.add(:delete, "can't delete dependent card #{dep.name}: #{dep.errors[:delete]}")
-      end
-    end
-    errors.empty?
-  end
+  
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # EVENTS
   # The following events are all currently defined AFTER the sets are loaded and are therefore unexposed to the API.  Not good.  (my fault) - efm
 
   event :check_perms, :after=>:approve do
-    approved? or raise( PermissionDenied.new self )
+    approved?  #or raise( PermissionDenied.new self )
   end
 
   event :set_stamper, :before=>:store do #|args|
@@ -112,7 +64,7 @@ class Card < ActiveRecord::Base
       # b. (Wagn way) we could get card directly from fetch if we add :include_trashed (eg).
       #    likely low ROI, but would be nice to have interface to retrieve cards from trash...
       self.id = trashed_card.id
-      @from_trash = @trash_changed = true
+      @from_trash = true
       @new_record = false
     end
     self.trash = false
@@ -139,7 +91,7 @@ class Card < ActiveRecord::Base
     #if card.changed?(:content)
   end
 
-  event :store_subcards, :after=>:store do #|args|
+  event :store_subcards, :after=>:store, :on=>:save do #|args|
     #puts "store subcards"
     @subcards = []
     if cards

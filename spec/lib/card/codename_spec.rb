@@ -22,11 +22,7 @@ describe Card::Codename, "Codename" do
       @codes.each do |code|
         card = Card[code]
         card.delete
-        if err = card.errors[:cardtype].first
-          err.should match "can't be altered because"
-        elsif err = card.errors[:delete].first
-          err.should match 'is a system card'
-        end
+        card.errors[:delete].first.should match 'is a system card'
         Card[code].should be
       end
     end

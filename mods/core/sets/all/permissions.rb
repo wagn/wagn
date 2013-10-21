@@ -254,9 +254,9 @@ event :update_ruled_cards do
     self.class.clear_rule_cache
     left.reset_set_patterns
   
-    if right_id==Card::ReadID && (@name_or_content_changed || @trash_changed)
+    if right_id==Card::ReadID && (@name_or_content_changed || ([:create, :delete].member? @action) )
       # These instance vars are messy.  should use tracked attributes' @changed variable
-      # and get rid of @name_changed, @name_or_content_changed, and @trash_changed.
+      # and get rid of @name_changed, @name_or_content_changed, and @child.
       # Above should look like [:name, :content, :trash].member?( @changed.keys ).
       # To implement that, we need to make sure @changed actually tracks trash
       # (though maybe not as a tracked_attribute for performance reasons?)

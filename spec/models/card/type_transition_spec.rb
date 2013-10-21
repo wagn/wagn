@@ -82,7 +82,8 @@ describe Card, "type transition approve create" do
   end
 
   it "should have errors" do
-    lambda { change_card_to_type("basicname", "cardtype_b") }.should raise_error(Wagn::PermissionDenied)
+    c = change_card_to_type("basicname", "cardtype_b")
+    c.errors[:permission_denied].should_not be_empty
   end
 
   it "should be the original type" do

@@ -53,13 +53,6 @@ class Card < ActiveRecord::Base
   # The following events are all currently defined AFTER the sets are loaded and are therefore unexposed to the API.  Not good.  (my fault) - efm
 
 
-
-  event :set_stamper, :before=>:store do #|args|
-#    puts "stamper called: #{name}"
-    self.updater_id = Account.current_id
-    self.creator_id = self.updater_id if new_card?
-  end
-
   event :pull_from_trash, :before=>:store, :on=>:create do
     if trashed_card = Card.find_by_key_and_trash(key, true)
       # a. (Rails way) tried Card.where(:key=>'wagn_bot').select(:id), but it wouldn't work.  This #select

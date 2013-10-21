@@ -169,6 +169,11 @@ format :html do
 end
 
 
+event :set_stamper, :after=>:approve do
+#    puts "stamper called: #{name}"
+  self.updater_id = Account.current_id
+  self.creator_id = self.updater_id if new_card?
+end
 
 event :create_account, :after=>:store do
   if @account_args && !account && Card.toggle( rule :accountable )

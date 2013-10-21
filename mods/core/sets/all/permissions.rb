@@ -1,19 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-def ydhpt
-  "You don't have permission to"
-end
-
-
-event :check_permissions, :after=>:approve do
-  act = if @action != :delete && updates.keys == ['comment'] #will be obviated by new comment handling
-    :comment
-  else
-    @action
-  end
-  ok? act
-end
-
 
 # ok? and ok! are public facing methods to approve one action at a time
 #
@@ -50,6 +36,7 @@ def who_can action
   permission_rule_card(action).first.item_cards.map &:id
 end
 
+
 def permission_rule_card action
   opcard = rule_card action
   
@@ -76,10 +63,10 @@ def rule_class_name
   trunk.type_id == Card::SetID ? cardname.trunk_name.tag : nil
 end
 
-protected
 def you_cant what
-  "#{ydhpt} #{what}"
+  "You don't have permission to #{what}"
 end
+
 
 def deny_because why
   [why].flatten.each do |message|
@@ -150,7 +137,6 @@ end
 
 
 
-public
 
 event :set_read_rule, :before=>:store do
   if trash == true
@@ -200,6 +186,16 @@ end
 
 def add_to_read_rule_update_queue updates
   @read_rule_update_queue = Array.wrap(@read_rule_update_queue).concat updates
+end
+
+
+event :check_permissions, :after=>:approve do
+  act = if @action != :delete && updates.keys == ['comment'] #will be obviated by new comment handling
+    :comment
+  else
+    @action
+  end
+  ok? act
 end
 
 event :process_read_rule_update_queue do

@@ -6,8 +6,10 @@ def approve
     else             :update
     end
 
+  # the following should really happen when type, name etc are changed
   reset_patterns
   include_set_modules
+  
   run_callbacks :approve
   expire_pieces if errors.any?
   errors.empty?

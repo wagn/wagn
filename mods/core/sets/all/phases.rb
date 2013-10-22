@@ -50,13 +50,16 @@ def rescue_event e
 end
 
 def event_applies? opts
-  if !opts[:on] or Array.wrap( opts[:on] ).member? @action
-    if opts[:when]
-      opts[:when].call self
-    else
-      true
-    end
+  if opts[:on]
+    return false unless Array.wrap( opts[:on] ).member? @action
   end
+  if opts[:when]
+    return false unless opts[:when].call self
+  end
+  if opts[:changed] && @action == :update
+    return false unless changes[ opts[:changed].to_s ]
+  end
+  true
 end
 
 

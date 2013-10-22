@@ -84,15 +84,6 @@ def suspend_name(name)
   Card.where(:id=>self.id).update_all(:name=>tmp_name, :key=>tmp_name)
 end
 
-def set_type_id new_type_id
-  self.type_id_without_tracking= new_type_id
-  if assigns_type? # certain *structure templates
-    update_templatees :type_id => new_type_id
-  end
-  true
-end
-
-
 
 def set_content new_content
   if self.id #have to have this to create revision

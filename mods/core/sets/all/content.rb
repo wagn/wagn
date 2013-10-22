@@ -1,3 +1,4 @@
+::Card.error_codes[:conflict] = [:conflict, 409]
 
 def content
   if new_card?

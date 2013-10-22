@@ -14,16 +14,10 @@ class Card < ActiveRecord::Base
   include Card::Exceptions
 
   cattr_accessor :set_patterns, :error_codes
-  @@set_patterns = []
-  #fixme: move these to modules
-  @@error_codes = {
-    :permission_denied => [:denial,   403],
-    :captcha           => [:error,    449],
-    :conflict          => [:conflict, 409]
-  }
+  @@set_patterns, @@error_codes = [], {}
 
-  define_callbacks :approve, :terminator=>'result == false'
-  define_callbacks :store, :extend
+  define_callbacks :approve, :store, :extend
+  #:terminator=>'result == false'
 
   load_set_patterns
   load_formats
@@ -72,7 +66,6 @@ class Card < ActiveRecord::Base
     self.referencers.each      { |c| c.expire }
     self.name_referencers.each { |c| c.expire }
     # FIXME: this will need review when we do the new defaults/templating system
-    #if card.changed?(:content)
   end
 
 
@@ -83,7 +76,7 @@ class Card < ActiveRecord::Base
   # Because of the way it chains methods, 'tracks' needs to come after
   # all the basic method definitions, and validations have to come after
   # that because they depend on some of the tracking methods.
-  tracks :name, :type_id, :content, :comment
+  tracks :name, :content, :comment
 
   # this method piggybacks on the name tracking method and
   # must therefore be defined after the #tracks call

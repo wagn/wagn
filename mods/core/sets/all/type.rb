@@ -51,32 +51,21 @@ def get_type_id args={}
 end
 
 
-
-event :validate_type, :before=>:approve, :on=>:save do
-  # validate on update
-  if updates.for?(:type_id) and !new_card?
-    if !validate_type_change
-      errors.add :type, "of #{ name } can't be changed; errors changing from #{ type_name }"
-    end
-    if c = dup and c.type_id_without_tracking = type_id and c.id = nil and !c.valid?
-      errors.add :type, "of #{ name } can't be changed; errors creating new #{ type_id }: #{ c.errors.full_messages * ', ' }"
-    end
+event :validate_type_change, :before=>:approve, :on=>:update, :changed=>:type_id do
+  if c = dup and c.action == :create and !c.valid?
+    errors.add :type, "of #{ name } can't be changed; errors creating new #{ type_id }: #{ c.errors.full_messages * ', ' }"
   end
+  
+end
 
-  # validate on update and create
-  if updates.for?(:type_id) or new_record?
-    # invalid to change type when type is hard_templated
-    
-    if !type_name
-      errors.add :type, "No such type"
-    end
-    
-    if rt = hard_template and rt.assigns_type? and type_id!=rt.type_id
-      errors.add :type, "can't be changed because #{name} is hard templated to #{rt.type_name}"
-    end
+event :validate_type, :before=>:approve, :on=>:save, :changed=>:type_id do    
+  if !type_name
+    errors.add :type, "No such type"
+  end
+  
+  if rt = hard_template and rt.assigns_type? and type_id!=rt.type_id
+    errors.add :type, "can't be changed because #{name} is hard templated to #{rt.type_name}"
   end
 end
 
-def validate_type_change  #HACK
-  true
-end
+

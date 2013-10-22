@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 
+Card.error_codes.merge! :permission_denied=>[:denial, 403], :captcha=>[:error,449]
+
 
 # ok? and ok! are public facing methods to approve one action at a time
 #
@@ -117,7 +119,7 @@ end
 
 def ok_to_update
   permit :update
-  if @action_ok and updates.for? :type_id and !permitted? :create
+  if @action_ok and type_id_changed? and !permitted? :create
     deny_because you_cant( "change to this type (need create permission)" )
   end
   ok_to_read if @action_ok

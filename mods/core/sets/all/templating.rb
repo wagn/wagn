@@ -17,8 +17,7 @@ def template
       default_card = rule_card :default, :skip_modules=>true
 
       dup_card = dup
-#        dup_card.type_id_without_tracking = default_card.type_id
-      dup_card.type_id_without_tracking = default_card ? default_card.type_id : Card.default_type_id
+      dup_card.type_id = default_card ? default_card.type_id : Card.default_type_id
 
 
       if content_card = dup_card.content_rule_card
@@ -109,5 +108,11 @@ end
 def hard_templatee_spec
   if is_hard_template? and c=trunk and c.type_id = Card::SetID  #could use is_rule?...
     c.get_spec
+  end
+end
+
+event :update_templatees_type, :after=>:store, :changed=>:type_id do
+  if assigns_type? # certain *structure templates
+    update_templatees :type_id => type_id
   end
 end

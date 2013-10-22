@@ -27,7 +27,7 @@ def initialize args={}
   super args # ActiveRecord #initialize
 
   if tid = get_type_id( @type_args )
-    self.type_id_without_tracking = tid
+    self.type_id = tid
   end
 
   include_set_modules unless skip_modules

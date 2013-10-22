@@ -56,6 +56,7 @@ module Card::Set
 
       define_method event do
         if event_applies? opts
+#          warn "event #{event} called for #{name}"
           run_callbacks event do
             send final_method
           end

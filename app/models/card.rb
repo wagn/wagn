@@ -17,6 +17,8 @@ class Card < ActiveRecord::Base
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
 
+  cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
+
   cattr_accessor :set_patterns, :error_codes
   @@set_patterns, @@error_codes = [], {}
 
@@ -38,16 +40,9 @@ class Card < ActiveRecord::Base
 
 
 
-  cache_attributes 'name', 'type_id' #Review - still worth it in Rails 3?
-
-
-  
-
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # EVENTS
   # The following events are all currently defined AFTER the sets are loaded and are therefore unexposed to the API.  Not good.  (my fault) - efm
-
-
 
 
   set_callback :store, :after, :update_ruled_cards, :prepend=>true
@@ -74,27 +69,6 @@ class Card < ActiveRecord::Base
   # ATTRIBUTE TRACKING
   # we can phase this out and just use "dirty" handling once current content is stored in the cards table
   
-  # Because of the way it chains methods, 'tracks' needs to come after
-  # all the basic method definitions, and validations have to come after
-  # that because they depend on some of the tracking methods.
-  tracks :name, :content, :comment
-
-  # this method piggybacks on the name tracking method and
-  # must therefore be defined after the #tracks call
-
-  def name_with_resets= newname
-    newkey = newname.to_name.key
-    if key != newkey
-      self.key = newkey
-      reset_patterns_if_rule # reset the old name - should be handled in tracked_attributes!!
-      reset_patterns
-    end
-    @cardname = nil if name != newname.to_s
-    self.name_without_resets = newname.to_s
-  end
-  alias_method_chain :name=, :resets
-  alias cardname= name=
-
-
-
+  # Because of the way it chains methods, 'tracks' needs to come after all the basic method definitions
+  tracks :content, :comment
 end

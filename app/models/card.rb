@@ -68,7 +68,6 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~ 
   # ATTRIBUTE TRACKING
   # we can phase this out and just use "dirty" handling once current content is stored in the cards table
-  
   # Because of the way it chains methods, 'tracks' needs to come after all the basic method definitions
-  tracks :content, :comment
+  tracks :content
 end

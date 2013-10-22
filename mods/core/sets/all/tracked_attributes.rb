@@ -40,30 +40,7 @@ def set_content new_content
   end
 end
 
-def set_comment new_comment
-  #seems hacky to do this as tracked attribute.  following complexity comes from set_content complexity.  sigh.
 
-  commented = %{
-    #{ content }
-    #{ '<hr>' unless content.blank? }
-    #{ new_comment.to_html }
-    <div class="w-comment-author">--#{
-      if Account.logged_in?
-        "[[#{Account.current.name}]]"
-      else
-        Wagn::Env[:controller].session[:comment_author] = comment_author if Wagn::Env[:controller]
-        "#{ comment_author } (Not signed in)"
-      end
-    }.....#{Time.now}</div>
-  }
-
-  if new_card?
-    self.content = commented
-  else
-    set_content commented
-  end
-  true
-end
 
 event :set_initial_content, :after=>:store, :on=>:create do
   #Rails.logger.info "Card(#{inspect})#set_initial_content start #{content_without_tracking}"

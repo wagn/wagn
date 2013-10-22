@@ -192,7 +192,7 @@ end
 
 
 event :check_permissions, :after=>:approve do
-  act = if @action != :delete && updates.keys == ['comment'] #will be obviated by new comment handling
+  act = if @action != :delete && comment #will be obviated by new comment handling
     :comment
   else
     @action

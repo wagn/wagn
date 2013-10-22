@@ -55,7 +55,6 @@ event :validate_type_change, :before=>:approve, :on=>:update, :changed=>:type_id
   if c = dup and c.action == :create and !c.valid?
     errors.add :type, "of #{ name } can't be changed; errors creating new #{ type_id }: #{ c.errors.full_messages * ', ' }"
   end
-  
 end
 
 event :validate_type, :before=>:approve, :on=>:save, :changed=>:type_id do    

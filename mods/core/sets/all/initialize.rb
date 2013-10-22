@@ -17,9 +17,9 @@ def initialize args={}
   args.delete('type_id') if args['type_id'] == 0 # can come in as 0, '', or nil
 
   @type_args = {
-    :type     => args.delete('type'    ),
+    :type      => args.delete('type'     ),
     :type_code => args.delete('type_code'),
-    :type_id  => args[       'type_id' ]
+    :type_id   => args[       'type_id'  ]
   }
 
   skip_modules = args.delete 'skip_modules'

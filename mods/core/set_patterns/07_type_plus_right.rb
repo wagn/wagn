@@ -15,7 +15,7 @@ def prototype_args anchor
 end
 
 def anchor_name card
-  left = card.loaded_left || card.left
+  left = card.left
   type_name = (left && left.type_name) || Card[ Card.default_type_id ].name
   "#{type_name}+#{card.cardname.tag}"
 end

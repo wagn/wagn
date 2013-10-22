@@ -58,7 +58,6 @@ module ClassMethods
     end
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#      opts[:skip_virtual] = true if opts[:loaded_left]
 
     if Integer===mark
       if card.nil?

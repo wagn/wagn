@@ -21,7 +21,7 @@ def junction?
 end
 
 def left *args
-  if !simple?
+  loaded_left or if !simple?
     unless updates.for? :name and name_without_tracking.to_name.key == cardname.left_name.key
       #the ugly code above is to prevent recursion when, eg, renaming A+B to A+B+C
       #it should really be testing for any trunk

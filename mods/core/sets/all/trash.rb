@@ -7,6 +7,20 @@ def delete!
 end
   
 
+
+event :pull_from_trash, :before=>:store, :on=>:create do
+  if trashed_card = Card.find_by_key_and_trash(key, true)
+    # a. (Rails way) tried Card.where(:key=>'wagn_bot').select(:id), but it wouldn't work.  This #select
+    #    generally breaks on cards. I think our initialization process screws with something
+    # b. (Wagn way) we could get card directly from fetch if we add :include_trashed (eg).
+    #    likely low ROI, but would be nice to have interface to retrieve cards from trash...
+    self.id = trashed_card.id
+    @from_trash = true
+    @new_record = false
+  end
+  self.trash = false
+  true
+end
 #reset_patterns_if_rule saving=true
 
 event :validate_delete, :before=>:approve, :on=>:delete do
@@ -19,23 +33,19 @@ event :validate_delete, :before=>:approve, :on=>:delete do
 end
 
 event :validate_delete_children, :after=>:approve, :on=>:delete do
-  @cards = children
-  cards.each do |child|
+  @subcards = children
+  @subcards.each do |child|
     child.trash = true
     unless child.valid?
-      errors.add(:delete, "can't delete child #{child.name}: #{child.errors[:delete]}")  #add permission errors too?
+      child.errors.each do |field, message|
+        errors.add field, "can't delete #{child.name}: #{message}"
+      end
     end
   end
 end
 
-event :delete_children, :after=>:store, :on=>:delete do
-  cards.each do |child|
-    child.save
-    if child.errors.any?
-      child.errors.each do |field, err|
-        errors.add card.name, err
-      end
-      raise ActiveRecord::Rollback, "broke commit_subcards"
-    end
-  end
-end
+#event :delete_children, :after=>:store, :on=>:delete do
+#  @children.each do |child|
+#    child.save! :validate=>false
+#  end
+#end

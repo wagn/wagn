@@ -1,5 +1,5 @@
 def approve
-#  warn "approve called for #{name}!"
+  #warn "approve called for #{name}!"
   @action = case
     when trash     ; :delete
     when new_card? ; :create
@@ -58,3 +58,39 @@ def event_applies? opts
     end
   end
 end
+
+
+
+event :process_subcards, :after=>:approve, :on=>:save do
+  @subcards = []
+  (cards || {}).each_pair do |sub_name, opts|
+    opts[:nested_edit] = self
+    absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute_name cardname
+
+    next if absolute_name.key == key # don't resave self!
+    subcard = if existing_card = Card[absolute_name]
+      existing_card.refresh.assign_attributes opts
+    elsif opts[:content].present? and opts[:content].strip.present?
+      Card.new opts.merge( :name => absolute_name, :loaded_left => self )
+    end
+
+    @subcards << subcard if subcard
+  end
+end
+
+event :approve_subcards, :after=>:process_subcards do
+  @subcards.each do |subcard|
+    if !subcard.valid?
+      subcard.errors.each do |field, err|
+        errors.add field, "problem with #{subcard.name}: #{err}"
+      end
+    end
+  end
+end
+
+event :store_subcards, :after=>:store do
+  @subcards.each do |sub|
+    sub.save! :validate=>false
+  end
+end
+

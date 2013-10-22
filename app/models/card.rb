@@ -53,19 +53,7 @@ class Card < ActiveRecord::Base
   # The following events are all currently defined AFTER the sets are loaded and are therefore unexposed to the API.  Not good.  (my fault) - efm
 
 
-  event :pull_from_trash, :before=>:store, :on=>:create do
-    if trashed_card = Card.find_by_key_and_trash(key, true)
-      # a. (Rails way) tried Card.where(:key=>'wagn_bot').select(:id), but it wouldn't work.  This #select
-      #    generally breaks on cards. I think our initialization process screws with something
-      # b. (Wagn way) we could get card directly from fetch if we add :include_trashed (eg).
-      #    likely low ROI, but would be nice to have interface to retrieve cards from trash...
-      self.id = trashed_card.id
-      @from_trash = true
-      @new_record = false
-    end
-    self.trash = false
-    true
-  end
+
 
   set_callback :store, :after, :update_ruled_cards, :prepend=>true
   set_callback :store, :after, :process_read_rule_update_queue, :prepend=>true
@@ -87,35 +75,6 @@ class Card < ActiveRecord::Base
     #if card.changed?(:content)
   end
 
-  event :store_subcards, :after=>:store, :on=>:save do #|args|
-    #puts "store subcards"
-    @subcards = []
-    if cards
-      cards.each_pair do |sub_name, opts|
-        opts[:nested_edit] = self
-        absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute_name cardname
-        next if absolute_name.key == key # don't resave self!
-
-        if card = Card[absolute_name]
-          card = card.refresh
-          card.update_attributes opts
-        elsif opts[:content].present? and opts[:content].strip.present?
-          opts[:name] = absolute_name
-          opts[:loaded_left] = self
-          card = Card.create opts
-        end
-        @subcards << card if card
-        if card and card.errors.any?
-          card.errors.each do |field, err|
-            self.errors.add card.name, err
-          end
-          raise ActiveRecord::Rollback, "broke commit_subcards"
-        end
-      end
-      cards = nil
-    end
-    true
-  end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~
   # ATTRIBUTE TRACKING

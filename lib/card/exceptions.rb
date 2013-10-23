@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-
 module Card::Exceptions
   class PermissionDenied < Wagn::PermissionDenied
     attr_reader :card

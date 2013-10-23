@@ -5,7 +5,6 @@ end
 def delete!
   update_attributes! :trash => true
 end
-  
 
 
 event :pull_from_trash, :before=>:store, :on=>:create do
@@ -43,9 +42,3 @@ event :validate_delete_children, :after=>:approve, :on=>:delete do
     end
   end
 end
-
-#event :delete_children, :after=>:store, :on=>:delete do
-#  @children.each do |child|
-#    child.save! :validate=>false
-#  end
-#end

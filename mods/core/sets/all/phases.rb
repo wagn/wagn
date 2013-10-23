@@ -161,6 +161,3 @@ class ::ActiveSupport::Callbacks::Callback
   end
 end
 
-
-
-

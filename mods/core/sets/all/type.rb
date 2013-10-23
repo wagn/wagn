@@ -57,7 +57,7 @@ event :validate_type_change, :before=>:approve, :on=>:update, :changed=>:type_id
   end
 end
 
-event :validate_type, :before=>:approve, :on=>:save, :changed=>:type_id do    
+event :validate_type, :before=>:approve, :changed=>:type_id do    
   if !type_name
     errors.add :type, "No such type"
   end

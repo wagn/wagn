@@ -117,5 +117,7 @@ module ClassMethods
     rule_id ||= fallback && rule_cache["all+#{fallback}"]
     Card[rule_id] if rule_id
   end
-
+  
 end
+
+

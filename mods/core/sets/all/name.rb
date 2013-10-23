@@ -153,7 +153,7 @@ event :validate_key, :after=>:validate_name, :on=>:save do
   end
 end
 
-event :set_name, :before=>:store, :on=>:save, :changed=>:name do
+event :set_name, :before=>:store, :changed=>:name do
   Card.expire name
   Card.expire name_was
   

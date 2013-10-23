@@ -38,36 +38,6 @@ class Card < ActiveRecord::Base
   load_formats
   load_sets
 
+  tracks :content # we can phase this out and just use "dirty" handling once current content is stored in the cards table
 
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # EVENTS
-  # The following events are all currently defined AFTER the sets are loaded and are therefore unexposed to the API.  Not good.  (my fault) - efm
-
-
-  set_callback :store, :after, :update_ruled_cards, :prepend=>true
-  set_callback :store, :after, :process_read_rule_update_queue, :prepend=>true
-
-  event :expire_related, :after=>:store do
-    self.expire
-
-    if self.is_hard_template?
-      self.hard_templatee_names.each do |name|
-        Card.expire name
-      end
-    end
-    # FIXME really shouldn't be instantiating all the following bastards.  Just need the key.
-    # fix in id_cache branch
-    self.dependents.each       { |c| c.expire }
-    self.referencers.each      { |c| c.expire }
-    self.name_referencers.each { |c| c.expire }
-    # FIXME: this will need review when we do the new defaults/templating system
-  end
-
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-  # ATTRIBUTE TRACKING
-  # we can phase this out and just use "dirty" handling once current content is stored in the cards table
-  # Because of the way it chains methods, 'tracks' needs to come after all the basic method definitions
-  tracks :content
 end

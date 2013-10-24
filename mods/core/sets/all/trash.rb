@@ -32,8 +32,9 @@ event :validate_delete, :before=>:approve, :on=>:delete do
 end
 
 event :validate_delete_children, :after=>:approve, :on=>:delete do
-  @subcards = children
-  @subcards.each do |child|
+  @subcards = {}
+  children.each do |child|
+    @subcards[child.name]=child
     child.trash = true
     unless child.valid?
       child.errors.each do |field, message|

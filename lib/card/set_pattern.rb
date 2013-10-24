@@ -48,14 +48,17 @@ class Card::SetPattern
   # Instance methods
 
   def initialize card
-    @anchor_name = self.class.anchorless? ? '' : self.class.anchor_name(card).to_name
+    
+    unless self.class.anchorless?
+      @anchor_name = self.class.anchor_name(card).to_name
 
-    @anchor_id = if self.class.respond_to? :anchor_id
-      self.class.anchor_id card
-    else
-      anchor_card = Card.fetch @anchor_name, :skip_virtual=>true, :skip_modules=>true
-      anchor_card && anchor_card.id
+      @anchor_id = if self.class.respond_to? :anchor_id
+        self.class.anchor_id card
+      else
+        Card.fetch_id @anchor_name
+      end
     end
+
     self
   end
 

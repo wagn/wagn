@@ -44,7 +44,7 @@ def rescue_event e
   @action = nil
   expire_pieces
   if @subcards
-    @subcards.each { |card| card.expire_pieces }
+    @subcards.each { |key, card| card.expire_pieces }
   end
   raise e
 end
@@ -67,24 +67,25 @@ def event_applies? opts
 end
 
 event :process_subcards, :after=>:approve, :on=>:save do
-  @subcards = []
-  (cards || {}).each_pair do |sub_name, opts|
+  @subcards = {}
+  (cards || {}).each do |sub_name, opts|
     opts[:supercard] = self
-    absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute_name cardname
+    absolute_name = sub_name.to_name.to_absolute_name cardname
 
     next if absolute_name.key == key # don't resave self!
+    
     subcard = if existing_card = Card[absolute_name]
       existing_card.refresh.assign_attributes opts
     elsif opts[:content].present? and opts[:content].strip.present?
       Card.new opts.merge( :name => absolute_name, :loaded_left => self )
     end
 
-    @subcards << subcard if subcard
+    @subcards[sub_name] = subcard if subcard
   end
 end
 
 event :approve_subcards, :after=>:process_subcards do
-  @subcards.each do |subcard|
+  @subcards.each do |key, subcard|
     if !subcard.valid?
       subcard.errors.each do |field, err|
         errors.add field, "problem with #{subcard.name}: #{err}"
@@ -94,7 +95,7 @@ event :approve_subcards, :after=>:process_subcards do
 end
 
 event :store_subcards, :after=>:store do
-  @subcards.each do |sub|
+  @subcards.each do |key, sub|
     sub.save! :validate=>false
   end
 end

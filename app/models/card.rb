@@ -30,7 +30,9 @@ class Card < ActiveRecord::Base
     :update_referencers                          # wrong mechanism for this
 
 
-  define_callbacks :approve, :store, :extend
+  define_callbacks :approve, :terminator=>'result == false'
+  define_callbacks :store, :extend
+  
   before_validation :approve
   around_save :store
   after_save :extend

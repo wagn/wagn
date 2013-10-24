@@ -75,7 +75,7 @@ event :set_default_content, :on=>:create, :before=>:approve do
   end
 end
 
-event :validate_content, :before=>:approve, :on=>:update do
+event :protect_structured_content, :before=>:approve, :on=>:update do
   if updates.for?(:content) && hard_template
     errors.add :content, "can't change; structured by #{template.name}"
   end

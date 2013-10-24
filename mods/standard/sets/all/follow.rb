@@ -50,9 +50,9 @@ event :notify_followers, :after=>:extend do
                       watched.to_s, nested_notifications ) and mail.deliver
     end
   
-    if nested_edit
-      nested_edit.nested_notifications ||= []
-      nested_edit.nested_notifications << [ name, action ]
+    if supercard
+      supercard.nested_notifications ||= []
+      supercard.nested_notifications << [ name, action ]
     else
       @trunk_watcher_watched_pairs.each do |watcher, watched|
         #warn "wp tw #{watcher.inspect}, #{watched.inspect}"

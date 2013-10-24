@@ -69,7 +69,7 @@ end
 event :process_subcards, :after=>:approve, :on=>:save do
   @subcards = []
   (cards || {}).each_pair do |sub_name, opts|
-    opts[:nested_edit] = self
+    opts[:supercard] = self
     absolute_name = sub_name.to_name.post_cgi.to_name.to_absolute_name cardname
 
     next if absolute_name.key == key # don't resave self!

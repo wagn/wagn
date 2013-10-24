@@ -203,7 +203,7 @@ end
 
 
 event :recaptcha, :before=>:approve do
-  if !@nested_edit                      and
+  if !@supercard                        and
       Wagn::Env[:recaptcha_on]          and
       Card.toggle( rule :captcha )      and
       num = Wagn::Env[:recaptcha_count] and

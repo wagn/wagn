@@ -169,7 +169,7 @@ format :html do
 end
 
 
-event :set_stamper, :after=>:approve do
+event :set_stamper, :before=>:approve do
 #    puts "stamper called: #{name}"
   self.updater_id = Account.current_id
   self.creator_id = self.updater_id if new_card?

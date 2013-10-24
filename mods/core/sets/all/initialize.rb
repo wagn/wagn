@@ -15,13 +15,13 @@ def initialize args={}
   args['type_id'] = args['type_id'].to_i
 
   args.delete('type_id') if args['type_id'] == 0 # can come in as 0, '', or nil
-
   @type_args = {
     :type      => args.delete('type'     ),
     :type_code => args.delete('type_code'),
     :type_id   => args[       'type_id'  ]
   }
 
+  @supercard = args.delete 'supercard' # must come before name =
   skip_modules = args.delete 'skip_modules'
 
   super args # ActiveRecord #initialize

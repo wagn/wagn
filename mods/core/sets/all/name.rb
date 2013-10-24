@@ -1,6 +1,12 @@
 
 def name= newname
   @cardname = newname.to_name
+  if @supercard
+    @relative_name = @cardname
+    @superleft = @supercard if @relative_name.s =~ /^#{Card::Name::JOINT_RE}/
+    @cardname = @relative_name.to_absolute_name @supercard.name
+  end
+  
   newkey = @cardname.key
   if key != newkey
     self.key = newkey
@@ -9,10 +15,10 @@ def name= newname
   end
   if @subcards
     @subcards.each do |subkey, subcard|
-      subcard.name = subkey.to_name.to_absolute newname
+      subcard.name = subkey.to_name.to_absolute @cardname
     end
   end
-  super newname
+  super @cardname.s
 end
 
 def cardname
@@ -36,8 +42,14 @@ def junction?
   cardname.junction?
 end
 
+
+def relative_name
+  @relative_name || @cardname
+end
+
 def left *args
-  loaded_left or if !simple?
+#  warn "left called for #{name}.  superleft = #{@superleft}"
+  @superleft or if !simple?
     unless name_changed? and name.to_name.trunk_name.key == name_was.to_name.key
       # prevent recursion when, eg, renaming A+B to A+B+C
       Card.fetch cardname.left, *args      

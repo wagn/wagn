@@ -9,9 +9,7 @@ def label name
 end
 
 def prototype_args anchor
-  { :name=>"*dummy+#{anchor.tag}",
-    :loaded_left=> Card.new( :name=>'*dummy', :type=>anchor.trunk_name )
-  }
+  { :name=>"+#{anchor.tag}", :supercard=>Card.new( :name=>'*dummy', :type=>anchor.trunk_name ) }
 end
 
 def anchor_name card

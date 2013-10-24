@@ -24,14 +24,12 @@ class Card < ActiveRecord::Base
 
   attr_writer :selected_revision_id #writer because read method is in mod (and does not override upon load)
   attr_accessor :action,
-    :cards,                                      # rename to subcards?
-    :supercard, :loaded_left,                    # merge these concepts?
+    :cards, :supercard,                                  # rename to subcards?
     :comment, :comment_author, :account_args,    # obviated soon
     :update_referencers                          # wrong mechanism for this
 
 
-  define_callbacks :approve, :terminator=>'result == false'
-  define_callbacks :store, :extend
+  define_callbacks :approve, :store, :extend
   
   before_validation :approve
   around_save :store

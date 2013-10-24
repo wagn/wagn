@@ -108,8 +108,8 @@ class Card::SetPattern
       [ @anchor_name ]
     end
     anchor_parts.map do |part|
-      card = Card.fetch part, :skip_virtual=>true, :skip_modules=>true
-      card && Card::Codename[card.id.to_i] or return []
+      part_id = Card.fetch_id part
+      part_id && Card::Codename[ part_id.to_i ] or return []
     end
   end
 

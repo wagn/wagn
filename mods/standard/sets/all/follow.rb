@@ -29,6 +29,12 @@ format :html do
 end
 
 
+event :record_followers, :before=>:store, :on=>:delete do
+  # find before, because in case of deleted cards all the data is gone!
+
+  @trunk_watcher_watched_pairs = trunk_watcher_watched_pairs
+  @watcher_watched_pairs = watcher_watched_pairs
+end
 
 event :notify_followers, :after=>:extend do
   begin
@@ -37,30 +43,24 @@ event :notify_followers, :after=>:extend do
     # generally not of enough interest to warrant notification
   
     action = "#{@action}d"
-    #warn "send note #{inspect}, #{action}, #{watcher_watched_pairs.inspect}"
-    @trunk_watcher_watched_pairs = trunk_watcher_watched_pairs
-    #warn "send note #{inspect}, #{action}, #{@trunk_watcher_watched_pairs.inspect}"
-    @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)
   
-    #Rails.logger.warn "send notice #{action}, #{inspect} TW:#{@trunk_watchers.inspect}"
-  
-    watcher_watched_pairs.reject {|p| @trunk_watchers.include?(p.first) }.each do |watcher, watched|
-      #warn "wtch: Mailer.change_notice( #{watcher.inspect}, #{self.inspect}, #{action.inspect}, #{watched.inspect}, #{nested_notifications.inspect}"
-      watcher and mail = Mailer.change_notice( watcher, self, action,
-                      watched.to_s, nested_notifications ) and mail.deliver
+    @trunk_watcher_watched_pairs ||= trunk_watcher_watched_pairs
+    @watcher_watched_pairs ||= watcher_watched_pairs
+    
+    @watcher_watched_pairs.reject {|p| @trunk_watcher_watched_pairs.map(&:first).include? p.first }.each do |watcher, watched|
+      watcher and mail = Mailer.change_notice( watcher, self, action, watched.to_s, nested_notifications ) and mail.deliver
     end
   
-    if supercard
-      supercard.nested_notifications ||= []
-      supercard.nested_notifications << [ name, action ]
+    if @supercard
+      @supercard.nested_notifications ||= []
+      @supercard.nested_notifications << [ name, action ]
     else
       @trunk_watcher_watched_pairs.each do |watcher, watched|
-        #warn "wp tw #{watcher.inspect}, #{watched.inspect}"
         next if watcher.nil?
         Mailer.change_notice( watcher, self.left, 'updated', watched.to_s, [[name, action]], self ).send_if :deliver
       end
     end
-  rescue Exception=>e
+  rescue Exception=>e  #this error handling should apply to all extend callback exceptions
     Airbrake.notify e if Airbrake.configuration.api_key
     Rails.logger.info "\nController exception: #{e.message}"
     Rails.logger.debug "BT: #{e.backtrace*"\n"}"

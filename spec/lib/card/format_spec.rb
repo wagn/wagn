@@ -91,11 +91,13 @@ describe Card::Format do
 
 
   describe "new_inclusion_card_args (with cgi params)" do
-    it "uses params for card name substitutions" do
-      c = Card.new :name => 'cardcore', :content => "{{_card+B|core}}"
-      result = Card::Format.new(c, :params=>{'_card' => "A"})._render_core
-      result.should == "AlphaBeta"
-    end
+    
+# WHERE WAS THIS USED?    
+#    it "uses params for card name substitutions" do
+#      c = Card.new :name => 'cardcore', :content => "{{_card+B|core}}"
+#      result = Card::Format.new(c, :params=>{'_card' => "A"})._render_core
+#      result.should == "AlphaBeta"
+#    end
 
     it "should not change inclusion name if variable isn't present" do
       c = Card.new :name => 'cardBname', :content => "{{_card+B|name}}"
@@ -149,18 +151,18 @@ describe Card::Format do
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
       @card.content = 'Bar'
       result = Card::Format.new(@card).render :edit
-      #warn "res #{@card.inspect}\n#{result}"
+#      warn "res #{@card.inspect}\n#{result}"
       assert_view_select result, 'fieldset' do
-        assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][templated+alpha][content]'
+        assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][+alpha][content]'
       end
     end
 
-    it "work on type-plus-right sets edit calls" do
+    it "works on type-plus-right sets edit calls" do
       Account.as_bot do
         Card.create(:name=>'Book+author+*type plus right+*default', :type=>'Phrase', :content=>'Zamma Flamma')
       end
       c = Card.new :name=>'Yo Buddddy', :type=>'Book'
-      result = Card::HtmlFormat.new(c).render( :edit )
+      result = Card::HtmlFormat.new(c).render( :new )
       assert_view_select result, 'fieldset' do
         assert_select 'input[name=?][type="text"][value="Zamma Flamma"]', 'card[cards][+author][content]'
         assert_select %{input[name=?][type="hidden"][value="#{Card::PhraseID}"]},     'card[cards][+author][type_id]'

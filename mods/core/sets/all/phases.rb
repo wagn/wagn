@@ -69,15 +69,14 @@ end
 event :process_subcards, :after=>:approve, :on=>:save do
   @subcards = {}
   (cards || {}).each do |sub_name, opts|
-    opts[:supercard] = self
-    absolute_name = sub_name.to_name.to_absolute_name cardname
+    next if sub_name.to_name.key == key # don't resave self!
 
-    next if absolute_name.key == key # don't resave self!
-    
-    subcard = if existing_card = Card[absolute_name]
-      existing_card.refresh.assign_attributes opts
+    opts[:supercard] = self    
+    subcard = if known_card = Card[sub_name]
+      known_card.refresh.assign_attributes opts
+      known_card
     elsif opts[:content].present? and opts[:content].strip.present?
-      Card.new opts.merge( :name => absolute_name, :loaded_left => self )
+      Card.new opts.merge :name => sub_name
     end
 
     @subcards[sub_name] = subcard if subcard

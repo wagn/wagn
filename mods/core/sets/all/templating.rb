@@ -21,7 +21,7 @@ def template
 
 
       if content_card = dup_card.content_rule_card
-        @virtual = true
+        @virtual = true if junction?
         content_card
       else
         default_card

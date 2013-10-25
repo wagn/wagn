@@ -90,7 +90,7 @@ format :html do
 
   view :menu, :tags=>:unknown_ok do |args|
     disc_tagname = Card.fetch(:discussion, :skip_modules=>true).cardname
-    disc_card = unless card.junction? && card.cardname.tag_name.key == disc_tagname.key
+    disc_card = unless card.new_card? or card.junction? && card.cardname.tag_name.key == disc_tagname.key
       Card.fetch "#{card.name}+#{disc_tagname}", :skip_virtual=>true, :skip_modules=>true, :new=>{}
     end
     
@@ -98,7 +98,7 @@ format :html do
       :self         => card.name,
       :type         => card.type_name,
       :structure    => card.hard_template && card.template.ok?(:update) && card.template.name,
-      :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read),
+      :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read ),
       :piecenames   => card.junction? && card.cardname.piece_names[0..-2].map { |n| { :item=>n.to_s } },
       :related_sets => card.related_sets.map { |name,label| { :text=>label, :path_opts=>{ :current_set => name } } }
     }
@@ -166,7 +166,7 @@ format :html do
       { :class=>'slotter',    :href=>path( :view=>:missing         ) }
     end
     
-    wrap_frame :new, args.merge(:show_help=>true, :hide_menu=>true) do
+    wrap_frame :new, args.merge(:show_help=>true) do
       card_form :create, 'card-form', 'main-success'=>'REDIRECT' do |form|
         @form = form
         %{

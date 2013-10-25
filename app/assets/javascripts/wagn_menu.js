@@ -29,18 +29,18 @@ wagn.menu_template = [
         { "name": "piecenames",
           "template": {"page":"item"},
           "append":[
-            { "related":"children" },
+            { "related":"children", "if":"creator" },
             { "related":"mates" }
           ]
         }
       },
-      { "related":"referred to by", "sub":[
+      { "related":"referred to by", "if":"creator", "sub":[
           { "text":"all",        "related":"referred to by" },
           { "text":"links",      "related":"linked to by"   },
           { "text":"inclusions", "related":"included by"    }
         ]
       },
-      { "related":"refers to", "sub":[
+      { "related":"refers to", "if":"creator", "sub":[
           { "text":"all",        "related":"refers to"  },
           { "text":"links",      "related":"links to"   },
           { "text":"inclusions", "related":"includes"   }

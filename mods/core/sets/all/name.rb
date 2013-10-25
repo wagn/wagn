@@ -3,7 +3,7 @@ def name= newname
   @cardname = newname.to_name
   if @supercard
     @relative_name = @cardname
-    @superleft = @supercard if @relative_name.s =~ /^#{Card::Name::JOINT_RE}/
+    @superleft = (@relative_name.s =~ /^(#{Card::Name::JOINT_RE}|_main)/ && @supercard)
     @cardname = @relative_name.to_absolute_name @supercard.name
   end
   

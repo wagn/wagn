@@ -83,7 +83,7 @@ end
 
 
 event :detect_conflict, :before=>:approve, :on=>:update do
-  if current_revision_id_changed? && current_rev_id.to_i != current_revision_id_was.to_i
+  if current_revision_id_changed? && current_revision_id.to_i != current_revision_id_was.to_i
     @current_revision_id = current_revision_id_was
     errors.add :conflict, "changes not based on latest revision"
   end

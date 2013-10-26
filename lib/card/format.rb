@@ -11,7 +11,7 @@ class Card
     cattr_accessor :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases
     [ :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases ].each { |acc| self.send "#{acc}=", {} }
     @@max_char_count = 200 #should come from Wagn::Conf
-    @@max_depth      = 10 # ditto
+    @@max_depth      = 20 # ditto
 
     attr_reader :card, :root, :parent
     attr_accessor :form, :error_status, :inclusion_opts

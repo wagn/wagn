@@ -30,8 +30,8 @@ format :html do
   end
 
   view :closed_content do |args|
-    itemview = (args[:item] || inclusion_defaults[:view])=='name' ? 'name' : 'link'
-    %{<div class="pointer-list">#{ pointer_items itemview }</div>}
+    args[:item] = (args[:item] || inclusion_defaults[:view])=='name' ? 'name' : 'link'
+    _render_core args
   end
 
   view :editor do |args|

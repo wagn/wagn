@@ -437,11 +437,17 @@ class Card
       if p = params['cards'] and card_params = p[cardname.s]
         content = card_params['content']
       end
-      content if content.present?  # why is this necessary? - efm
+      content if content.present?  # why is this necessary? - efm  
+                                   # probably for blanks?  -- older/wiser efm
     end
 
     def new_inclusion_card_args options
-      args = { :type=>options[:type], :supercard=>card, :name=>options[:inc_name] }
+      args = { :name=>options[:inc_name], :type=>options[:type], :supercard=>card }
+      if options[:inc_name].to_s =~ /^_main\+/
+        # FIXME this is a rather hacky (and untested) way to get @superleft to work on new cards named _main+whatever
+        args[:name] = args[:name].to_s.gsub /^_main\+/, '+'
+        args[:supercard] = root.card
+      end
       if content=get_inclusion_content(options[:inc_name])
         args[:content]=content
       end

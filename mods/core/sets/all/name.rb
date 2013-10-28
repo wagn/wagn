@@ -3,7 +3,7 @@ def name= newname
   @cardname = newname.to_name
   if @supercard
     @relative_name = @cardname
-    @superleft = (@relative_name.s =~ /^(#{Card::Name::JOINT_RE}|_main)/ && @supercard)
+    @superleft = @supercard if @relative_name.parts.first.blank?
     @cardname = @relative_name.to_absolute_name @supercard.name
   end
   
@@ -48,11 +48,12 @@ def relative_name
 end
 
 def left *args
-#  warn "left called for #{name}.  superleft = #{@superleft}"
-  @superleft or if !simple?
-    unless name_changed? and name.to_name.trunk_name.key == name_was.to_name.key
-      # prevent recursion when, eg, renaming A+B to A+B+C
-      Card.fetch cardname.left, *args      
+  if !simple?
+    @superleft or begin
+      unless name_changed? and name.to_name.trunk_name.key == name_was.to_name.key
+        # prevent recursion when, eg, renaming A+B to A+B+C
+        Card.fetch cardname.left, *args      
+      end
     end
   end
 end

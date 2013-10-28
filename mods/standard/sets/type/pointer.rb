@@ -9,7 +9,7 @@ format do
     pointer_items args[:item], joint=', '
   end
   
-  def pointer_items itemview=nil, joint=''
+  def pointer_items itemview=nil, joint=' '
     args = { :view => ( itemview || (@inclusion_opts && @inclusion_opts[:view]) || default_item_view ) }
     
     if type = card.item_type

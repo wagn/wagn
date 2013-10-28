@@ -150,12 +150,12 @@ describe Card::HtmlFormat do
       
       it "should handle nested _main references" do
         Account.as_bot do
-          @layout_content="{{outer space}}"
+          @layout_card.content="{{outer space}}"
           @layout_card.save!
-          Card.new :name=>"outer space", :content=>"{{_main|name}}"
+          Card.create :name=>"outer space", :content=>"{{_main|name}}"
         end
         
-        rendered = Card::Format.new(@layout_card).render(:layout).should == 'Joe User'
+        Card::Format.new(@layout_card).render(:layout).should == 'Joe User'
       end
     end
 

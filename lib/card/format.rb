@@ -443,9 +443,9 @@ class Card
 
     def new_inclusion_card_args options
       args = { :name=>options[:inc_name], :type=>options[:type], :supercard=>card }
-      if options[:inc_name].to_s =~ /^_main\+/
+      if options[:inc_name] =~ /^_main\+/
         # FIXME this is a rather hacky (and untested) way to get @superleft to work on new cards named _main+whatever
-        args[:name] = args[:name].to_s.gsub /^_main\+/, '+'
+        args[:name] = args[:name].gsub /^_main\+/, '+'
         args[:supercard] = root.card
       end
       if content=get_inclusion_content(options[:inc_name])

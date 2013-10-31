@@ -16,7 +16,7 @@ describe Card::HtmlFormat do
       rendered =  Card::Format.new(c).render( :edit )
 
       assert_view_select rendered, 'fieldset' do
-        assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][~plus~illustrator][content]'
+        assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][+illustrator][content]'
       end
     end
 
@@ -107,6 +107,8 @@ describe Card::HtmlFormat do
         end
         c = Card['*all+*layout'] and c.content = '[[tmp layout]]'
         @main_card = Card.fetch('Joe User')
+        Wagn::Env[:main_name] = @main_card.name
+        
         #warn "lay #{@layout_card.inspect}, #{@main_card.inspect}"
       end
 
@@ -143,6 +145,17 @@ describe Card::HtmlFormat do
         rendered = Card::Format.new(@layout_card).render(:layout).should == 
           %{Mainly <div id="main"><div class="CodeRay">\n  <div class="code"><pre>Mainly {{_main|core}}</pre></div>\n</div>\n</div>}
           #probably better to check that it matches "Mainly" exactly twice.
+      end
+      
+      
+      it "should handle nested _main references" do
+        Account.as_bot do
+          @layout_card.content="{{outer space}}"
+          @layout_card.save!
+          Card.create :name=>"outer space", :content=>"{{_main|name}}"
+        end
+        
+        Card::Format.new(@layout_card).render(:layout).should == 'Joe User'
       end
     end
 

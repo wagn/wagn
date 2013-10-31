@@ -14,13 +14,9 @@ class Card
       end
     end
 
-    module CardtypeC
-      extend Card::Set
-
-      def validate_type_change
-        errors.add :delete_error, "card c is indestructible"
-      end
-    end
+#    module CardtypeC
+#      extend Card::Set
+#    end
 
     module CardtypeD
       def valid?
@@ -82,7 +78,8 @@ describe Card, "type transition approve create" do
   end
 
   it "should have errors" do
-    lambda { change_card_to_type("basicname", "cardtype_b") }.should raise_error(Wagn::PermissionDenied)
+    c = change_card_to_type("basicname", "cardtype_b")
+    c.errors[:permission_denied].should_not be_empty
   end
 
   it "should be the original type" do
@@ -92,17 +89,17 @@ describe Card, "type transition approve create" do
 end
 
 
-describe Card, "type transition validate_delete" do
-  before do @c = change_card_to_type("type-c-card", :basic) end
-
-  it "should have errors" do
-    @c.errors[:delete_error].first.should == "card c is indestructible"
-  end
-
-  it "should retain original type" do
-    Card["type_c_card"].type_code.should == :cardtype_c
-  end
-end
+#describe Card, "type transition validate_delete" do
+#  before do @c = change_card_to_type("type-c-card", :basic) end
+#
+#  it "should have errors" do
+#    @c.errors[:delete_error].first.should == "card c is indestructible"
+#  end
+#
+#  it "should retain original type" do
+#    Card["type_c_card"].type_code.should == :cardtype_c
+#  end
+#end
 
 describe Card, "type transition validate_create" do
   before do @c = change_card_to_type("basicname", "cardtype_d") end

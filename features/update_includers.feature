@@ -30,9 +30,9 @@ Feature: Updates for Children of watched cards
 
   Scenario: Templated cards should only send one email when added or updated
     When I create Book card "Bros Krmzv" with plusses:
-      |author|
-      |Dostoyevsky|
-    Then Joe Admin should be notified that "Joe User added \"Bros Krmzv\""
+      |author|illustrator|
+      |Dostoyevsky|Manet|
+    Then Joe Admin should be notified that "Joe User created \"Bros Krmzv\""
     When I edit "Bros Krmzv" with plusses:
       |author|illustrator|
       |Rumi|Monet|
@@ -50,7 +50,7 @@ Feature: Updates for Children of watched cards
     When I edit "Banana" with plusses:
       |color|flavor|
       |spotted|mushy|
-    Then Joe Camel should be notified that "Joe User edited \"Banana\+color\""
+    Then Joe Camel should be notified that "Joe User updated \"Banana\+color\""
     When Joe Camel is watching "Banana"
     And I wait a sec
     And I edit "Banana" with plusses:

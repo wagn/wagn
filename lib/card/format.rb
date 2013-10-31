@@ -11,7 +11,7 @@ class Card
     cattr_accessor :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases
     [ :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases ].each { |acc| self.send "#{acc}=", {} }
     @@max_char_count = 200 #should come from Wagn::Conf
-    @@max_depth      = 10 # ditto
+    @@max_depth      = 20 # ditto
 
     attr_reader :card, :root, :parent
     attr_accessor :form, :error_status, :inclusion_opts
@@ -374,9 +374,7 @@ class Card
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
       when opts[:inc_name]=='_main' && !ajax_call? && @depth==0    ; expand_main opts
       else
-        fullname = opts[:inc_name].to_name.to_absolute card.cardname, :params=>params
-        included_card = Card.fetch fullname, :new=>new_inclusion_card_args(opts)
-
+        included_card = Card.fetch opts[:inc_name], :new=>new_inclusion_card_args(opts)        
         result = process_inclusion included_card, opts
         @char_count += result.length if @mode == :closed && result
         result
@@ -436,15 +434,20 @@ class Card
       content = params[cardname.to_s.gsub(/\+/,'_')]
 
       # CLEANME This is a hack to get it so plus cards re-populate on failed signups
-      if p = params['cards'] and card_params = p[cardname.pre_cgi]
+      if p = params['cards'] and card_params = p[cardname.s]
         content = card_params['content']
       end
-      content if content.present?  # why is this necessary? - efm
+      content if content.present?  # why is this necessary? - efm  
+                                   # probably for blanks?  -- older/wiser efm
     end
 
     def new_inclusion_card_args options
-      args = { :type =>options[:type] }
-      args[:loaded_left]=card if options[:inc_name] =~ /^\+/
+      args = { :name=>options[:inc_name], :type=>options[:type], :supercard=>card }
+      if options[:inc_name] =~ /^_main\+/
+        # FIXME this is a rather hacky (and untested) way to get @superleft to work on new cards named _main+whatever
+        args[:name] = args[:name].gsub /^_main\+/, '+'
+        args[:supercard] = root.card
+      end
       if content=get_inclusion_content(options[:inc_name])
         args[:content]=content
       end

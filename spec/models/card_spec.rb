@@ -154,9 +154,13 @@ describe "basic card tests" do
   it 'update_should_not_create_subcards_if_missing_main_card_permissions' do
     b = Card.create!( :name=>'Banana' )
     Account.as Card::AnonID do
-      assert_raises( Card::PermissionDenied ) do
-        Card.update(b.id, :cards=>{ "+peel" => { :content => "yellow" }})
-      end
+      b.update_attributes :cards=>{ "+peel" => { :content => "yellow" }}
+      b.errors[:permission_denied].should_not be_empty
+      
+      
+      c = Card.update(b.id, :cards=>{ "+peel" => { :content => "yellow" }})
+      c.errors[:permission_denied].should_not be_empty
+      Card['Banana+peel'].should be_nil
     end
   end
 

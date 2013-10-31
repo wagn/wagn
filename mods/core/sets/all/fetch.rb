@@ -38,8 +38,13 @@ module ClassMethods
       cache_key, method, val = if Integer===mark
         [ "~#{mark}", :find_by_id_and_trash, mark ]
       else
-        opts[:name] = mark # this is needed to correctly fetch missing cards with different name variants in cache
-        key = mark.to_name.key
+        fullname = if opts[:new] && supercard = opts[:new][:supercard]
+          mark.to_name.to_absolute_name supercard.name
+        else
+          mark.to_name
+        end
+        opts[:name] = mark = fullname.to_s # this is needed to correctly fetch missing cards with different name variants in cache
+        key = fullname.key
         [ key, :find_by_key_and_trash, key ]
       end
 
@@ -58,7 +63,6 @@ module ClassMethods
     end
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#      opts[:skip_virtual] = true if opts[:loaded_left]
 
     if Integer===mark
       if card.nil?
@@ -112,12 +116,12 @@ module ClassMethods
     card and card.id
   end
 
-  def [](name)
-    fetch name, :skip_virtual=>true
+  def [](mark)
+    fetch mark, :skip_virtual=>true
   end
 
-  def exists? name
-    card = fetch name, :skip_virtual=>true, :skip_modules=>true
+  def exists? mark
+    card = fetch mark, :skip_virtual=>true, :skip_modules=>true
     card.present?
   end
 

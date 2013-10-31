@@ -15,7 +15,7 @@ Feature: Content Settings
     When I go to new Movie
     Then I should see "+director"
     And I should see "+lead"
-    #And I should see "[~plus~lead]"
+    #And I should see "[+lead]"
 
   Scenario: Create and edit templated card
     When I create Movie card "Star Wars" with plusses:

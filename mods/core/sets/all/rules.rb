@@ -43,9 +43,15 @@ end
 
 def related_sets
   # refers to sets that users may configure from the current card - NOT to sets to which the current card belongs
-  sets =     [ ["#{name}+*self",  Card::SetPattern::SelfPattern.label( name) ] ]
-  sets.unshift ["#{name}+*type",  Card::SetPattern::TypePattern.label( name) ] if type_id==Card::CardtypeID
-  sets.push    ["#{name}+*right", Card::SetPattern::RightPattern.label(name) ] if cardname.simple?
+
+  sets = []
+  if known?
+    sets << ["#{name}+*type",  Card::SetPattern::TypePattern.label( name) ] if type_id==Card::CardtypeID
+    sets << ["#{name}+*self",  Card::SetPattern::SelfPattern.label( name) ] 
+    sets << ["#{name}+*right", Card::SetPattern::RightPattern.label(name) ] if cardname.simple?
+  else
+    sets << ["#{type_name}+*type",  Card::SetPattern::TypePattern.label( type_name) ]
+  end
     
 #      Card.search(:type=>'Set',:left=>{:right=>name},:right=>'*type plus right',:return=>'name').each do |set_name|
 #        sets<< set_name
@@ -117,5 +123,7 @@ module ClassMethods
     rule_id ||= fallback && rule_cache["all+#{fallback}"]
     Card[rule_id] if rule_id
   end
-
+  
 end
+
+

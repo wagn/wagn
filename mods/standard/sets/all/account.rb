@@ -169,8 +169,12 @@ format :html do
 end
 
 
+event :set_stamper, :before=>:approve do
+  self.updater_id = Account.current_id
+  self.creator_id = self.updater_id if new_card?
+end
 
-event :create_account, :after=>:store do
+event :create_account, :after=>:store, :on=>:save do
   if @account_args && !account && Card.toggle( rule :accountable )
     
     # note - following must be done here because subcard handling happens later (after mods loaded)
@@ -230,7 +234,7 @@ event :notify_accounted, :after=>:extend do
   end
 end
 
-event :block_user, :after=>:store, :on=>:delete do
+event :block_deleted_user, :after=>:store, :on=>:delete do
   if account = Account[ self.id ]
     account.update_attributes :status=>'blocked'
   end

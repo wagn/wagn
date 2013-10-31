@@ -7,9 +7,8 @@ describe Card, "deleting card" do
     a = Card['a']
     Account.as :anonymous do
       a.ok?(:delete).should == false
-      assert_raises( Card::PermissionDenied ) do
-        a.delete
-      end
+      a.delete.should == false
+      a.errors[:permission_denied].should_not be_empty
       Card['a'].trash.should == false
     end
     

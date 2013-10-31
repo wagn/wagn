@@ -77,7 +77,16 @@ describe CardController do
       c.content.should == "Bananas"
     end
 
+    it "handles permission denials" do
+      post :create, :card => {
+        :name => 'LackPerms',
+        :type => 'Html'
+      }
+      assert_response 403
+      Card['LackPerms'].should be_nil
+    end
 
+    # no controller-specific handling.  move test elsewhere
     it "creates cardtype cards" do
       xhr :post, :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
       assigns['card'].should_not be_nil
@@ -86,6 +95,7 @@ describe CardController do
       c.type_code.should == :cardtype
     end
 
+    # no controller-specific handling.  move test elsewhere
     it "pulls deleted cards from trash" do
       @c = Card.create! :name=>"Problem", :content=>"boof"
       @c.delete!
@@ -95,12 +105,14 @@ describe CardController do
       c.type_code.should == :phrase
     end
 
+    
+
     context "multi-create" do
       it "catches missing name error" do
         post :create, "card"=>{
             "name"=>"",
             "type"=>"Fruit",
-            "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}
+            "cards"=>{"+text"=>{"content"=>"<p>abraid</p>"}}
           }, "view"=>"open"
         assert_response 422
         assigns['card'].errors[:key].first.should == "cannot be blank"
@@ -113,8 +125,8 @@ describe CardController do
           :name  => "Gala",
           :type  => "Fruit",
           :cards => {
-            "~plus~kind"  => { :content => "apple"} ,
-            "~plus~color" => { :type=>'Phrase', :content => "red"  }
+            "+kind"  => { :content => "apple"} ,
+            "+color" => { :type=>'Phrase', :content => "red"  }
           }
         }
         assert_response 200

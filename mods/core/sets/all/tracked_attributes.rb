@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-event :set_tracked_attributes, :before=>:store do#, :on=>:save do
+event :set_tracked_attributes, :before=>:store, :on=>:save do
   updates.each_pair do |attrib, value|
     if send("set_#{attrib}", value )
       updates.clear attrib
@@ -23,80 +23,8 @@ end
 
 protected
 
-def set_name newname
-  @old_name = self.name_without_tracking
-  return if @old_name == newname.to_s
-  #Rails.logger.warn "rename . #{inspect}, N:#{newname}, O:#{@old_name}"
 
-  @cardname, name_without_tracking = if Card::Name===newname
-    [ newname, newname.to_s]
-  else
-    [ newname.to_name, newname]
-  end
-  write_attribute :key, k=cardname.key
-  write_attribute :name, name_without_tracking # what does this do?  Not sure, maybe comment it out and see
 
-  reset_patterns_if_rule saving=true# reset the new name
-
-  Card.expire cardname
-
-  if @cardname.junction?
-    [:left, :right].each do |side|
-      sidename = @cardname.send "#{side}_name"
-      #Rails.logger.warn "sidename #{newname}, #{@old_name}, #{sidename}"
-      sidecard = Card[sidename]
-      old_name_in_way = (sidecard && sidecard.id==self.id) # eg, renaming A to A+B
-      suspend_name(sidename) if old_name_in_way
-      self.send "#{side}_id=", begin
-        if !sidecard || old_name_in_way
-          Card.create! :name=>sidename
-        else
-          sidecard
-        end.id
-      end
-    end
-  else
-    self.left_id = self.right_id = nil
-  end
-
-  return if new_card?
-  if existing_card = Card.find_by_key(@cardname.key) and existing_card != self
-    if existing_card.trash
-      existing_card.name = tr_name = existing_card.name+'*trash'
-      existing_card.instance_variable_set :@cardname, tr_name.to_name
-      existing_card.set_tracked_attributes
-      #Rails.logger.debug "trash renamed collision: #{tr_name}, #{existing_card.name}, #{existing_card.cardname.key}"
-      existing_card.save!
-    #else note -- else case happens when changing to a name variant.  any special handling needed?
-    end
-  end
-
-  Card.expire @old_name
-  @name_changed = true
-  @name_or_content_changed=true
-end
-
-def suspend_name(name)
-  # move the current card out of the way, in case the new name will require
-  # re-creating a card with the current name, ie.  A -> A+B
-  Card.expire name
-  tmp_name = "tmp:" + UUID.new.generate
-  Card.where(:id=>self.id).update_all(:name=>tmp_name, :key=>tmp_name)
-end
-
-def set_type_id new_type_id
-  self.type_id_without_tracking= new_type_id
-  if assigns_type? # certain *structure templates
-    update_templatees :type_id => new_type_id
-  end
-  if real?
-    on_type_change # FIXME this should be a callback
-    reset_patterns
-    include_set_modules # dislike doing this prior to save, but I think it's done to catch set-specific behavior??
-    # do we need to "undo" loaded modules?  Maybe reload defaults?
-  end
-  true
-end
 
 def set_content new_content
   if self.id #have to have this to create revision
@@ -112,30 +40,7 @@ def set_content new_content
   end
 end
 
-def set_comment new_comment
-  #seems hacky to do this as tracked attribute.  following complexity comes from set_content complexity.  sigh.
 
-  commented = %{
-    #{ content }
-    #{ '<hr>' unless content.blank? }
-    #{ new_comment.to_html }
-    <div class="w-comment-author">--#{
-      if Account.logged_in?
-        "[[#{Account.current.name}]]"
-      else
-        Wagn::Env[:controller].session[:comment_author] = comment_author if Wagn::Env[:controller]
-        "#{ comment_author } (Not signed in)"
-      end
-    }.....#{Time.now}</div>
-  }
-
-  if new_card?
-    self.content = commented
-  else
-    set_content commented
-  end
-  true
-end
 
 event :set_initial_content, :after=>:store, :on=>:create do
   #Rails.logger.info "Card(#{inspect})#set_initial_content start #{content_without_tracking}"
@@ -153,48 +58,88 @@ event :set_initial_content, :after=>:store, :on=>:create do
   #Rails.logger.info "set_initial_content #{content}, #{@current_revision_id}, s.#{self.current_revision_id} #{inspect}"
 end
 
-event :cascade_name_changes, :after=>:store do
-  if @name_changed
-    Rails.logger.debug "-------------------#{@old_name}- CASCADE #{self.name} -------------------------------------"
 
-    self.update_referencers = false if self.update_referencers == 'false' #handle strings from cgi
-    Card::Reference.update_on_rename self, name, self.update_referencers
+#fixme - the following don't really belong here, but they have to come after the reference stuff.  we need to organize a bit!
 
-    deps = self.dependents
-    #warn "-------------------#{@old_name}---- CASCADE #{self.name} -> deps: #{deps.map(&:name)*", "} -----------------------"
+event :update_ruled_cards, :after=>:store do
+  if is_rule?
+#      warn "updating ruled cards for #{name}"
+    self.class.clear_rule_cache
+    left.reset_set_patterns
 
-    @dependents = nil #reset
+    if right_id==Card::ReadID && (@name_or_content_changed || ([:create, :delete].member? @action) )
+      # These instance vars are messy.  should use tracked attributes' @changed variable
+      # and get rid of @name_changed, @name_or_content_changed, and @child.
+      # Above should look like [:name, :content, :trash].member?( @changed.keys ).
+      # To implement that, we need to make sure @changed actually tracks trash
+      # (though maybe not as a tracked_attribute for performance reasons?)
+      # AND need to make sure @changed gets wiped after save (probably last in the sequence)
 
-    deps.each do |dep|
-      # here we specifically want NOT to invoke recursive cascades on these cards, have to go this low level to avoid callbacks.
-      Card.expire dep.name #old name
-      newname = dep.cardname.replace_part @old_name, name
-      Card.where( :id=> dep.id ).update_all :name => newname.to_s, :key => newname.key
-      Card::Reference.update_on_rename dep, newname, update_referencers
-      Card.expire newname
-    end
+      self.class.clear_read_rule_cache
 
-    if update_referencers
-      Account.as_bot do
-        [self.name_referencers(@old_name)+(deps.map &:referencers)].flatten.uniq.each do |card|
-          # FIXME  using "name_referencers" instead of plain "referencers" for self because there are cases where trunk and tag
-          # have already been saved via association by this point and therefore referencers misses things
-          # eg.  X includes Y, and Y is renamed to X+Z.  When X+Z is saved, X is first updated as a trunk before X+Z gets to this point.
-          # so at this time X is still including Y, which does not exist.  therefore #referencers doesn't find it, but name_referencers(old_name) does.
-          # some even more complicated scenario probably breaks on the dependents, so this probably needs a more thoughtful refactor
-          # aligning the dependent saving with the name cascading
+#        Account.cache.reset
+      Card.cache.reset # maybe be more surgical, just Account.user related
+      expire #probably shouldn't be necessary,
+      # but was sometimes getting cached version when card should be in the trash.
+      # could be related to other bugs?
+      in_set = {}
+      if !(self.trash)
+        if class_id = (set=left and set_class=set.tag and set_class.id)
+          rule_class_ids = set_patterns.map &:key_id
+          #warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
 
-          Rails.logger.debug "------------------ UPDATE REFERER #{card.name}  ------------------------"
-          unless card == self or card.hard_template
-            card = card.refresh
-            card.content = card.replace_references @old_name, name
-            card.save!
+          #first update all cards in set that aren't governed by narrower rule
+           Account.as_bot do
+             cur_index = rule_class_ids.index Card[read_rule_class].id
+             if rule_class_index = rule_class_ids.index( class_id )
+                # Why isn't this just 'trunk', do we need the fetch?
+                Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
+                  in_set[item_card.key] = true
+                  next if cur_index > rule_class_index
+                  item_card.update_read_rule
+                end
+             elsif rule_class_index = rule_class_ids.index( 0 )
+               in_set[trunk.key] = true
+               #warn "self rule update: #{trunk.inspect}, #{rule_class_index}, #{cur_index}"
+               trunk.update_read_rule if cur_index > rule_class_index
+             else warn "No current rule index #{class_id}, #{rule_class_ids.inspect}"
+             end
           end
+
         end
       end
+
+      #then find all cards with me as read_rule_id that were not just updated and regenerate their read_rules
+      if !new_record?
+        Card.where( :read_rule_id=>self.id, :trash=>false ).reject do |w|
+          in_set[ w.key ]
+        end.each &:update_read_rule
+      end
     end
-    @name_changed = false
+
   end
-  true
+end
+
+event :process_read_rule_update_queue, :after=>:store do
+  Array.wrap(@read_rule_update_queue).each { |card| card.update_read_rule }
+  @read_rule_update_queue = []
+end
+
+#  set_callback :store, :after, :process_read_rule_update_queue, :prepend=>true
+
+event :expire_related, :after=>:store do
+  self.expire
+
+  if self.is_hard_template?
+    self.hard_templatee_names.each do |name|
+      Card.expire name
+    end
+  end
+  # FIXME really shouldn't be instantiating all the following bastards.  Just need the key.
+  # fix in id_cache branch
+  self.dependents.each       { |c| c.expire }
+  self.referencers.each      { |c| c.expire }
+  self.name_referencers.each { |c| c.expire }
+  # FIXME: this will need review when we do the new defaults/templating system
 end
 

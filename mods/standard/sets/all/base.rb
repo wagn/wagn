@@ -81,7 +81,7 @@ view :not_found, :perms=>:none, :error_code=>404 do |args|
   %{ Could not find #{card.name.present? ? %{"#{card.name}"} : 'the card requested'}. }
 end
 
-view :server_error, :perms=>:none do |args|
+view :server_error, :perms=>:none, :error_code=>500 do |args|
   %{ Wagn Hitch!  Server Error. Yuck, sorry about that.\n}+
   %{ To tell us more and follow the fix, add a support ticket at http://wagn.org/new/Support_Ticket }
 end

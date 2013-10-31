@@ -99,9 +99,9 @@ describe Card::Flexmail do
           :content => "data content [[A]]",
           :type    => 'Trigger',
           :cards=> {
-            '~plus~email'      => {:content=>'gary@gary.com'},
-            '~plus~subject'    => {:type=>'Pointer', :content=>'[[default subject]]'},
-#            '~plus~attachment' => {:type=>'File', :content=>"notreally.txt" }
+            '+email'      => {:content=>'gary@gary.com'},
+            '+subject'    => {:type=>'Pointer', :content=>'[[default subject]]'},
+#            '+attachment' => {:type=>'File', :content=>"notreally.txt" }
           }
         )
         conf = Card::Flexmail.configs_for(c).first

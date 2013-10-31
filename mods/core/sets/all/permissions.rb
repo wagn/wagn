@@ -1,29 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-def ydhpt
-  "You don't have permission to"
-end
-
-def approved?
-  @action_approved = true
-  @permission_errors = []
-
-  if trash
-    ok? :delete
-  else
-    unless updates.keys == ['comment'] # if only updating comment, next section will handle
-      new_card? ? ok?(:create) : ok?(:update)
-    end
-    updates.each_pair do |attr,value|
-      send "approve_#{attr}"
-    end
-  end
-
-  @permission_errors.each do |err|
-    errors.add :permission_denied, err
-  end
-  @action_approved
-end
+Card.error_codes.merge! :permission_denied=>[:denial, 403], :captcha=>[:error,449]
 
 
 # ok? and ok! are public facing methods to approve one action at a time
@@ -34,18 +11,19 @@ end
 #      :trait=>:account         would fetch this card plus a tag codenamed :account
 #      :trait=>:roles, :new=>{} would initialize a new card with default ({}) options.
 
+
+def ok? action
+  @action_ok = true
+  send "ok_to_#{action}"
+  @action_ok
+end
+
 def ok_with_fetch? action, opts={}
   card = opts[:trait].nil? ? self : fetch(opts)
   card && card.ok_without_fetch?(action)
 end
+alias_method_chain :ok?, :fetch # note: method is chained so that we can return the instance variable @action_ok
 
-def ok? action
-  @action_approved = true
-  @permission_errors = []
-  send "ok_to_#{action}"
-  @action_approved
-end
-alias_method_chain :ok?, :fetch # note: method is chained so that we can return the instance variable @action_approved
 
 def ok! action, opts={}
   raise Card::PermissionDenied.new self unless ok? action, opts
@@ -60,6 +38,7 @@ def who_can action
   permission_rule_card(action).first.item_cards.map &:id
 end
 
+
 def permission_rule_card action
   opcard = rule_card action
   
@@ -70,8 +49,8 @@ def permission_rule_card action
 
   rcard = Account.as_bot do
     if opcard.content == '_left' && self.junction?  # compound cards can inherit permissions from left parent
-      lcard = loaded_left || left_or_new( :skip_virtual=>true, :skip_modules=>true )
-      if action==:create && lcard.real? && !lcard.was_new_card
+      lcard = left_or_new( :skip_virtual=>true, :skip_modules=>true )
+      if action==:create && lcard.real? && !lcard.action==:create
         action = :update
       end
       lcard.permission_rule_card(action).first
@@ -86,14 +65,16 @@ def rule_class_name
   trunk.type_id == Card::SetID ? cardname.trunk_name.tag : nil
 end
 
-protected
 def you_cant what
-  "#{ydhpt} #{what}"
+  "You don't have permission to #{what}"
 end
 
+
 def deny_because why
-  [why].flatten.each {|err| @permission_errors << err }
-  @action_approved = false
+  [why].flatten.each do |message|
+    errors.add :permission_denied, message
+  end
+  @action_ok = false
 end
 
 def permitted? action
@@ -138,7 +119,10 @@ end
 
 def ok_to_update
   permit :update
-  ok_to_read if @action_approved
+  if @action_ok and type_id_changed? and !permitted? :create
+    deny_because you_cant( "change to this type (need create permission)" )
+  end
+  ok_to_read if @action_ok
 end
 
 def ok_to_delete
@@ -147,37 +131,14 @@ end
 
 def ok_to_comment
   permit :comment, 'comment on'
-  if @action_approved
+  if @action_ok
     deny_because "No comments allowed on template cards" if is_template?
     deny_because "No comments allowed on hard templated cards" if hard_template
   end
 end
 
-def approve_type_id
-  case
-  when !type_name
-    deny_because("No such type")
-  when !new_card? && reset_patterns && !permitted?(:create)
-    deny_because you_cant("change to this type (need create permission)"  )
-  end
-  #NOTE: we used to check for delete permissions on previous type, but this would really need to happen before the name gets changes
-  #(hence before the tracked_attributes stuff is run)
-end
 
-def approve_name
-end
 
-def approve_content
-  if !new_card? && hard_template
-    deny_because you_cant("change the content of this card -- it is hard templated by #{template.name}")
-  end
-end
-
-def approve_comment
-  ok_to_comment
-end
-
-public
 
 event :set_read_rule, :before=>:store do
   if trash == true
@@ -229,68 +190,29 @@ def add_to_read_rule_update_queue updates
   @read_rule_update_queue = Array.wrap(@read_rule_update_queue).concat updates
 end
 
-event :process_read_rule_update_queue do
-  Array.wrap(@read_rule_update_queue).each { |card| card.update_read_rule }
-  @read_rule_update_queue = []
+
+event :check_permissions, :after=>:approve do
+  act = if @action != :delete && comment #will be obviated by new comment handling
+    :comment
+  else
+    @action
+  end
+  ok? act
 end
 
-protected
 
-event :update_ruled_cards do
-  if is_rule?
-#      warn "updating ruled cards for #{name}"
-    self.class.clear_rule_cache
-    left.reset_set_patterns
-  
-    if right_id==Card::ReadID && (@name_or_content_changed || @trash_changed)
-      # These instance vars are messy.  should use tracked attributes' @changed variable
-      # and get rid of @name_changed, @name_or_content_changed, and @trash_changed.
-      # Above should look like [:name, :content, :trash].member?( @changed.keys ).
-      # To implement that, we need to make sure @changed actually tracks trash
-      # (though maybe not as a tracked_attribute for performance reasons?)
-      # AND need to make sure @changed gets wiped after save (probably last in the sequence)
 
-      self.class.clear_read_rule_cache
+event :recaptcha, :before=>:approve do
+  if !@supercard                        and
+      Wagn::Env[:recaptcha_on]          and
+      Card.toggle( rule :captcha )      and
+      num = Wagn::Env[:recaptcha_count] and
+      num < 1
       
-#        Account.cache.reset
-      Card.cache.reset # maybe be more surgical, just Account.user related
-      expire #probably shouldn't be necessary,
-      # but was sometimes getting cached version when card should be in the trash.
-      # could be related to other bugs?
-      in_set = {}
-      if !(self.trash)
-        if class_id = (set=left and set_class=set.tag and set_class.id)
-          rule_class_ids = set_patterns.map &:key_id
-          #warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
-
-          #first update all cards in set that aren't governed by narrower rule
-           Account.as_bot do
-             cur_index = rule_class_ids.index Card[read_rule_class].id
-             if rule_class_index = rule_class_ids.index( class_id )
-                # Why isn't this just 'trunk', do we need the fetch?
-                Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
-                  in_set[item_card.key] = true
-                  next if cur_index > rule_class_index
-                  item_card.update_read_rule
-                end
-             elsif rule_class_index = rule_class_ids.index( 0 )
-               in_set[trunk.key] = true
-               #warn "self rule update: #{trunk.inspect}, #{rule_class_index}, #{cur_index}"
-               trunk.update_read_rule if cur_index > rule_class_index
-             else warn "No current rule index #{class_id}, #{rule_class_ids.inspect}"
-             end
-          end
-
-        end
-      end
-
-      #then find all cards with me as read_rule_id that were not just updated and regenerate their read_rules
-      if !new_record?
-        Card.where( :read_rule_id=>self.id, :trash=>false ).reject do |w|
-          in_set[ w.key ]
-        end.each &:update_read_rule
-      end
-    end
-  
+    Wagn::Env[:recaptcha_count] = num + 1
+    Wagn::Env[:controller].verify_recaptcha :model=>self, :attribute=>:captcha
   end
 end
+
+
+

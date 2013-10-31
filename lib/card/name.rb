@@ -3,7 +3,7 @@ require 'smart_name'
 
 class Card
   class Name < SmartName
-    Card::Name.params  = Wagn::Conf
+    Card::Name.params  = Wagn::Env # yuck!
     Card::Name.session = proc { Account.current.name }
     Card::Name.banned_array = ['/']
 

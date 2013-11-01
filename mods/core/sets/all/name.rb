@@ -122,7 +122,15 @@ rescue
 end
 
 
+event :permit_codename, :before=>:approve, :on=>:update, :changed=>:codename do
+  errors.add :codename, 'only admins can set codename' unless Account.always_ok?
+end
 
+event :validate_unique_codename, :after=>:permit_codename do
+  if errors.empty? and Card.find_by_codename(codename).present?
+    errors.add :codename, "codename #{codename} already in use" 
+  end
+end
 
 event :validate_name, :before=>:approve, :on=>:save do 
 
@@ -133,8 +141,7 @@ event :validate_name, :before=>:approve, :on=>:save do
     #Rails.logger.debug "valid name #{card.name.inspect} New #{name.inspect}"
 
     unless cdname.valid?
-      errors.add :name,
-        "may not contain any of the following characters: #{ Card::Name.banned_array * ' ' }"
+      errors.add :name, "may not contain any of the following characters: #{ Card::Name.banned_array * ' ' }"
     end
     # this is to protect against using a plus card as a tag
     if cdname.junction? and simple? and id and Account.as_bot { Card.count_by_wql :right_id=>id } > 0

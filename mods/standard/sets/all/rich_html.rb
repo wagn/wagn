@@ -213,6 +213,7 @@ format :html do
       card_form :update, 'card-form autosave' do |f|
         @form= f
         %{
+          #{ hidden_tags(( args[:hidden] || {} )) }
           <div class="card-editor">
             #{ edit_slot args }
           </div>

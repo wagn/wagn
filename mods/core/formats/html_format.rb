@@ -90,6 +90,7 @@ class Card::HtmlFormat < Card::Format
       ( 'card-slot' unless args[:no_slot] ),
       "#{view}-view",
       ( args[:slot_class] if args[:slot_class] ),
+      ( "STRUCTURE-#{args[:structure].to_name.key}" if args[:structure]),
       card.safe_set_keys
     ].compact
     

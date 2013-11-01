@@ -11,6 +11,7 @@ format :html do
       card_form :create do |f|      
         @form = f
         %{
+          #{ f.hidden_field :type_id }
           #{ _render_name_editor :help=>'usually first and last name'   }
           #{ fieldset :email, text_field( :account, :email, :size=>60 ) }
           #{ _render_invitation_field                                   }

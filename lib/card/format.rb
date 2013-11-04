@@ -453,6 +453,11 @@ class Card
       end
       args
     end
+    
+    
+    def default_item_view
+      :name
+    end
 
     def path opts={}
       pcard = opts.delete(:card) || card

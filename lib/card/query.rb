@@ -4,13 +4,12 @@ class Card::Query
 
   ATTRIBUTES = {
 
-    :basic      =>  %w{ name type type_id content id key updater_id left_id right_id creator_id updater_id codename },
-    :custom     =>  %w{ edited_by editor_of edited last_editor_of extension_type
-       last_edited_by creator_of created_by member_of member role found_by sort
-       part left right plus left_plus right_plus or match complete not and },
-    :referential => %w{ link_to linked_to_by refer_to referred_to_by include
-       included_by },
-    :ignore      => %w{ prepend append view params vars size }
+    :basic           => %w{ name type type_id content id key updater_id left_id right_id creator_id updater_id codename },
+    :relational      => %w{ part left right editor_of last_editor_of edited_by last_edited_by creator_of created_by member_of member },
+    :plus_relational => %w{ plus left_plus right_plus },
+    :referential     => %w{ refer_to referred_to_by link_to linked_to_by include included_by },
+    :special         => %w{ and or found_by not sort match complete extension_type },
+    :ignore          => %w{ prepend append view params vars size }
 
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
 
@@ -169,15 +168,24 @@ class Card::Query
       end
     end
 
-    def merge(spec)
-#      spec = spec.clone
-      spec = case spec
+    def merge spec
+      spec = hashify spec
+      translate_to_attributes spec
+      translate_to_basic spec
+      @spec.merge! spec
+      self
+    end
+    
+    def hashify spec
+      case spec
         when String;   { :key => spec.to_name.key }
         when Integer;  { :id  => spec             }
         when Hash;     spec
         else raise("Invalid cardspec args #{spec.inspect}")
       end
+    end
 
+    def translate_to_attributes spec
       content = nil
       spec.each do |key,val|
         if key == :_parent
@@ -192,22 +200,32 @@ class Card::Query
         end
       end
       spec[:content] = content if content
+   end
 
-      spec.each do |key,val|
-        keyroot = key.to_s.sub( /\:\d+$/, '' ).to_sym
-        case ATTRIBUTES[keyroot]
-          when :basic; spec[key] = ValueSpec.new(val, self)
-          when :custom; self.send(keyroot, spec.delete(key))
-          when :referential;  self.refspec(keyroot, spec.delete(key))
-          when :ignore; spec.delete(key)
-          else keyroot==:cond ? nil : #internal condition
-            raise("Invalid attribute #{key}")
-        end
-      end
 
-      @spec.merge! spec
-      self
-    end
+   def translate_to_basic spec
+     spec.each do |key,val|
+       keyroot = key.to_s.sub( /\:\d+$/, '' ).to_sym
+       case ATTRIBUTES[keyroot]
+         when :basic      ; spec[key] = ValueSpec.new(val, self)
+         when :ignore     ; spec.delete key         
+         when :referential;  self.refspec(keyroot, spec.delete(key))
+         when :relational, :plus_relational, :special
+           val = spec.delete key
+           subcond = if Array === val
+             ATTRIBUTES[keyroot]==:plus_relational ? [Array, Symbol].member?( val.first ) : true
+           end
+            
+           if subcond
+           else
+             self.send keyroot, val
+           end
+         else keyroot==:cond ? nil : #internal condition
+           raise("Invalid attribute #{key}")
+       end
+     end
+
+   end
 
 
 

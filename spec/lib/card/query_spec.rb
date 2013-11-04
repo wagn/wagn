@@ -43,6 +43,9 @@ describe Card::Query do
   end
 
 
+
+
+
   describe "member_of/member" do
     it "member_of should find members" do
       Card::Query.new( :member_of => "r1" ).run.map(&:name).sort.should == %w(u1 u2 u3)

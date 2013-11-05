@@ -5,10 +5,11 @@ class Card::Query
   ATTRIBUTES = {
 
     :basic           => %w{ name type type_id content id key updater_id left_id right_id creator_id updater_id codename },
-    :relational      => %w{ part left right editor_of last_editor_of edited_by last_edited_by creator_of created_by member_of member },
+    :relational      => %w{ part left right editor_of edited_by last_editor_of last_edited_by creator_of created_by member_of member },
     :plus_relational => %w{ plus left_plus right_plus },
-    :referential     => %w{ refer_to referred_to_by link_to linked_to_by include included_by },
-    :special         => %w{ and or found_by not sort match complete extension_type },
+    :ref_relational  => %w{ refer_to referred_to_by link_to linked_to_by include included_by },
+    :conjunction     => %w{ and or all any },
+    :special         => %w{ found_by not sort match complete extension_type },
     :ignore          => %w{ prepend append view params vars size }
 
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
@@ -21,6 +22,8 @@ class Card::Query
   }.stringify_keys)
 
   DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
+  
+  CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
 
   cattr_reader :root_perms_only
   @@root_perms_only = false
@@ -139,7 +142,7 @@ class Card::Query
     def root?()     root == self                   end
     def selfname()  @selfname                      end
 
-    def absolute_name(name)
+    def absolute_name name
       name =~ /\b_/ ? name.to_name.to_absolute(root.selfname) : name
     end
 
@@ -171,7 +174,7 @@ class Card::Query
     def merge spec
       spec = hashify spec
       translate_to_attributes spec
-      translate_to_basic spec
+      ready_to_sqlize spec
       @spec.merge! spec
       self
     end
@@ -200,42 +203,56 @@ class Card::Query
         end
       end
       spec[:content] = content if content
-   end
+    end
 
 
-   def translate_to_basic spec
-     spec.each do |key,val|
-       keyroot = key.to_s.sub( /\:\d+$/, '' ).to_sym
-       case ATTRIBUTES[keyroot]
-         when :basic      ; spec[key] = ValueSpec.new(val, self)
-         when :ignore     ; spec.delete key         
-         when :referential;  self.refspec(keyroot, spec.delete(key))
-         when :relational, :plus_relational, :special
-           val = spec.delete key
-           subcond = if Array === val
-             ATTRIBUTES[keyroot]==:plus_relational ? [Array, Symbol].member?( val.first ) : true
-           end
-            
-           if subcond
-           else
-             self.send keyroot, val
-           end
-         else keyroot==:cond ? nil : #internal condition
-           raise("Invalid attribute #{key}")
-       end
-     end
+    def ready_to_sqlize spec
+      spec.each do |key,val|
+        keyroot = field_root(key).to_sym
+        if keyroot==:cond                            # internal SQL cond (already ready)
+        elsif ATTRIBUTES[keyroot] == :basic          # sqlize knows how to handle these keys; just process value
+          spec[key] = ValueSpec.new(val, self)
+        else                                         # keys need additional processing
+          val = spec.delete key
+          is_array = Array===val
+          case ATTRIBUTES[keyroot]
+            when :ignore                               #noop         
+            when :relational, :special, :conjunction ; relate is_array, keyroot, val, :send
+            when :ref_relational                     ; relate is_array, keyroot, val, :refspec
+            when :plus_relational
+              # Arrays can have multiple interpretations for these, so we have to look closer...
+              subcond = is_array && ( ATTRIBUTES[val.first]==:conjunction || Array===val.first )
+              relate subcond, keyroot, val, :send
+            else                                     ; raise "Invalid attribute #{key}"
+          end
+        end
+      end
+    
+    end
+    
+    def relate subcond, key, val, method
+      if subcond
+        conj = ATTRIBUTES[val.first]==:conjunction ? val.shift : :all        
+        if CONJUNCTIONS[conj.to_sym] == conjunction                # same conjunction as container, no need for subcondition
+          val.each { |v| send method, key, v }
+        else
+          send conj, val.inject({}) { |h,v| h[field key] = v; h }  # subcondition
+        end
+      else
+        send method, key, val
+      end
+    end
 
-   end
-
-
-
-    def cond(val)                                                                   end #noop
-    def and(val)   subcondition(val)                                                end
-    def or(val)    subcondition(val, :conj=>:or)                                    end
+    def all(val)   subcondition(val)              end
+    def any(val)   subcondition(val, :conj=>:or)  end
+    alias :and :all
+    alias :or :any
+    alias :in :any
+      
     def not(val)   merge field(:id) => subspec(val, {:return=>'id'}, negate=true)   end
 
-    def left(val)  merge field(:left_id) => subspec(val)                            end
-    def right(val) merge field(:right_id  ) => subspec(val)                         end
+    def left(val)  merge field(:left_id  ) => subspec(val)                          end
+    def right(val) merge field(:right_id ) => subspec(val)                          end
     def part(val)  subcondition({ :left => val, :right => (Integer===val) ? val : val.clone }, :conj=>:or)  end
 
     def left_plus(val)
@@ -255,19 +272,36 @@ class Card::Query
     def extension_type(val) add_join(:usr, :users, :id, :card_id)            end
     # this appears to be hacked so that it will only work with users?
 
-    def created_by(val)     merge field(:creator_id) => subspec(val)         end
-    def last_edited_by(val) merge field(:updater_id) => subspec(val)         end
-    def creator_of(val) merge field(:id)=>subspec(val,:return=>'creator_id') end
-    def editor_of(val)      revision_spec(:creator_id, :card_id, val)        end
-    def edited_by(val)      revision_spec(:card_id, :creator_id, val)        end
-    def last_editor_of(val)
+
+    def editor_of val
+      revision_spec :creator_id, :card_id, val
+    end
+
+    def edited_by val
+      revision_spec :card_id, :creator_id, val
+    end
+    
+    def last_editor_of val
       merge field(:id) => subspec(val, :return=>'updater_id')
     end
 
-    def member_of(val)
+    def last_edited_by val
+      merge field(:updater_id) => subspec(val)
+    end    
+
+    def creator_of val
+      merge field(:id)=>subspec(val,:return=>'creator_id')
+    end
+
+    def created_by val
+      merge field(:creator_id) => subspec(val)
+    end
+
+    def member_of val
       merge field(:right_plus) => [Card::RolesID, {:refer_to=>val}]
     end
-    def member(val)
+    
+    def member val
       merge field(:referred_to_by) => {:left=>val, :right=>Card::RolesID }
     end
 
@@ -321,13 +355,15 @@ class Card::Query
       add_join(:rev, :card_revisions, :current_revision_id, :id)
     end
 
-    def field(name)
-      @fields||={}; @fields[name]||=0; @fields[name]+=1
-      "#{name}:#{@fields[name]}"
+    def field name
+      @fields ||= {}
+      @fields[name] ||= 0
+      @fields[name] += 1
+      "#{ name }:#{ @fields[name] }"
     end
 
 
-    def sort(val)
+    def sort val
       return nil if @parent
       val[:return] = val[:return] ? safe_sql(val[:return]) : 'content'
       @mods[:sort] =  "t_sort.#{val[:return]}"
@@ -404,12 +440,17 @@ class Card::Query
     end
     
     def basic_conditions
-      @spec.collect do |key, val|
-        key_root = key.to_s.gsub /\:\d+/, ''
-        val.to_sql key_root
-      end.join(" #{@mods[:conj].blank? ? :and : @mods[:conj]} ")
+      @spec.map { |key, val| val.to_sql field_root(key) }.join " #{ conjunction } "
     end
 
+    def field_root key
+      key.to_s.gsub /\:\d+/, ''
+    end
+    
+    def conjunction
+      @mods[:conj].blank? ? :and : @mods[:conj]
+    end
+      
     def permission_conditions
       unless Account.always_ok? or ( Card::Query.root_perms_only && !root? )
         read_rules = Account.as_card.read_rules

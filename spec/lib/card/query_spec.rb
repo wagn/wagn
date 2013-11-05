@@ -61,6 +61,28 @@ describe Card::Query do
       Card::Query.new(:plus=>"A", :not=>{:plus=>"A+B"}).run.map(&:name).sort.should==%w{ B D E F }
     end
   end
+  
+  
+  describe "multiple values" do
+    it "should handle multiple values for relational keys" do
+      Card::Query.new( :member_of=>[:all, {:name=>'r1'}, {:key=>'r2'} ], :return=>:name).run.sort.should == %w{ u1 u2 }
+      Card::Query.new( :member_of=>[      {:name=>'r1'}, {:key=>'r2'} ], :return=>:name).run.sort.should == %w{ u1 u2 }
+      Card::Query.new( :member_of=>[:any, {:name=>'r1'}, {:key=>'r2'} ], :return=>:name).run.sort.should == %w{ u1 u2 u3 }      
+    end
+    
+    it "should handle multiple values for plus_relational keys" do
+      Card::Query.new( :right_plus=>[ :all, 'e', 'c' ], :return=>:name ).run.sort.should == %w{ A } #explicit conjunction
+      Card::Query.new( :right_plus=>[ ['e',{}],  'c' ], :return=>:name ).run.sort.should == %w{ A } # first element is array
+      Card::Query.new( :right_plus=>[ 'e', 'c'       ], :return=>:name ).run.sort.should == []      # NOT interpreted as multi-value
+    end
+
+    it "should handle multiple values for plus_relational keys" do
+      Card::Query.new( :refer_to=>[ :and, 'a', 'b' ], :return=>:name ).run.sort.should == %w{ Y } 
+      Card::Query.new( :refer_to=>[       'a', 'T' ], :return=>:name ).run.sort.should == %w{ X Y }
+      Card::Query.new( :refer_to=>[ :or,  'b', 'z' ], :return=>:name ).run.sort.should == %w{ A B Y}
+    end
+        
+  end
 
 
   describe "edited_by/editor_of" do

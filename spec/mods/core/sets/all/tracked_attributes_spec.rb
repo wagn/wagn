@@ -205,7 +205,7 @@ describe Card::Set::All::TrackedAttributes do
       assert_equal "[[Card of Joe]]", Card["Admin Card"].content
     end
 
-    it "test_rename_should_update_hard_templated_referencer" do
+    it "test_rename_should_update_structured_referencer" do
       Account.as_bot do
         c=Card.create! :name => "Pit"
         Card.create! :name => "Orange", :type=>"Fruit", :content => "[[Pit]]"

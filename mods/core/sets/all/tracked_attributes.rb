@@ -130,8 +130,8 @@ end
 event :expire_related, :after=>:store do
   self.expire
 
-  if self.is_hard_template?
-    self.hard_templatee_names.each do |name|
+  if self.is_structure?
+    self.structuree_names.each do |name|
       Card.expire name
     end
   end

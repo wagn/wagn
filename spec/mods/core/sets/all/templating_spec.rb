@@ -3,18 +3,18 @@ require 'wagn/spec_helper'
 
 describe Card::Set::All::Templating do
 
-  describe "#hard_templatees" do
+  describe "#structurees" do
     it "for User+*type+*structure should return all Users" do
       Account.as_bot do
         c=Card.create(:name=>'User+*type+*structure')
-        c.hard_templatee_names.sort.should == [
+        c.structuree_names.sort.should == [
           "Joe Admin", "Joe Camel", "Joe User", "John", "No Count", "Sample User", "Sara", "u1", "u2", "u3"
         ]
       end
     end
   end
 
-  it "#expire_templatee_references" do
+  it "#expire_structuree_references" do
     #TESTME
   end
 

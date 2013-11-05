@@ -416,7 +416,7 @@ class Card
 
       view = case
       when @mode == :edit
-        if @@perms[view]==:none || tcard.hard_template || tcard.key.blank? # eg {{_self|type}} on new cards
+        if @@perms[view]==:none || tcard.structure || tcard.key.blank? # eg {{_self|type}} on new cards
           :blank
         else
           :edit_in_form

@@ -3,7 +3,7 @@
 format :html do
   view :new do |args|
     #FIXME - make more use of standard new view
-    frame_args = args.merge :title=>'Sign Up', :show_help=>true, :hide_menu=>true
+    frame_args = args.merge :title=>'Sign Up', :show_help=>true #, :hide_menu=>true
     frame_args[:help_text] = case
       when card.rule_card( :add_help, :fallback=>:help ) ; nil
       when Account.create_ok?                            ; 'Send us the following, and we\'ll send you a password.' 

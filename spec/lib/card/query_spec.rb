@@ -434,15 +434,15 @@ describe Card::Query do
       perm_count.should == 2
     end
 
-    it "are not generated inside .without_nested_permissions block" do
-      perm_count = 0
-      Card::Query.without_nested_permissions do
-        Card::Query.new( { :left=>{:name=>"X"}}).sql.scan( /read_rule_id IN \([\d\,]+\)/ ) do |m|
-          perm_count+=1
-        end
-      end
-      perm_count.should == 1
-    end
+#    it "are not generated inside .without_nested_permissions block" do
+#      perm_count = 0
+#      Card::Query.without_nested_permissions do
+#        Card::Query.new( { :left=>{:name=>"X"}}).sql.scan( /read_rule_id IN \([\d\,]+\)/ ) do |m|
+#          perm_count+=1
+#        end
+#      end
+#      perm_count.should == 1
+#    end
   end
 
   #describe "return values" do

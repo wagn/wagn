@@ -51,8 +51,8 @@ def update_references rendered_content = nil, refresh = false
           :referer_id  => id,
           :referee_id  => referee_id,
           :referee_key => referee_name.key,
-          :ref_type    => Card::Chunk::Link===chunk    ? 'L' : 'I',
-          :present     => chunk.referee_card.nil? ?  0  :  1
+          :ref_type    => Card::Chunk::Link===chunk ? 'L' : 'I',
+          :present     => chunk.referee_card.nil?   ?  0  :  1
         )
       end
     end

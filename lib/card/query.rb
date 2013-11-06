@@ -69,8 +69,10 @@ class Card::Query
     end
 
     def to_s
-      "(select #{fields.reject(&:blank?).join(', ')} from #{tables} #{joins.join(' ')} " +
-        "where #{conditions.reject(&:blank?).join(' and ')} #{group} #{order} #{limit} #{offset})"
+      "(
+select #{fields.reject(&:blank?).join(', ')} from #{tables} #{joins.join(' ')}
+where #{conditions.reject(&:blank?).join(' and ')} #{group} #{order} #{limit} #{offset}
+)"
     end
   end
 

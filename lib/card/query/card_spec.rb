@@ -136,7 +136,7 @@ class Card::Query
             when :ref_relational                     ; relate is_array, keyroot, val, :refspec
             when :plus_relational
               # Arrays can have multiple interpretations for these, so we have to look closer...
-              subcond = is_array && ( ATTRIBUTES[val.first]==:conjunction || Array===val.first )
+              subcond = is_array && ( Array===val.first || conjunction(val.first) )
             
                                                        relate subcond, keyroot, val, :send
             else                                     ; raise "Invalid attribute #{key}"
@@ -148,12 +148,8 @@ class Card::Query
   
     def relate subcond, key, val, method
       if subcond
-        conj = if ATTRIBUTES[val.first]==:conjunction || val.first.to_s=='in' #FIXME - hack to support old type requests
-          val.shift
-        else
-          :all
-        end
-        if CONJUNCTIONS[conj.to_sym] == conjunction                # same conjunction as container, no need for subcondition
+        conj = conjunction( val.first ) ? conjunction( val.shift ) : :and
+        if conj == current_conjunction                # same conjunction as container, no need for subcondition
           val.each { |v| send method, key, v }
         else
           send conj, val.inject({}) { |h,v| h[field key] = v; h }  # subcondition
@@ -173,6 +169,11 @@ class Card::Query
     end
 
 
+    def conjunction val
+      if [String, Symbol].member? val.class
+        CONJUNCTIONS[val.to_sym]
+      end
+    end
 
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -251,23 +252,28 @@ class Card::Query
     
     #~~~~~~~  CONJUNCTION
     
-    def all val
+    def and val
       subcondition val
     end
-    alias :and :all
   
-    def any val
+    def or val
       subcondition val, :conj=>:or
     end
-    alias :or :any
-    alias :in :any
-    
+
     
     #~~~~~~ SPECIAL
 
 
-    def found_by(val)
-      cards = ( String===val ? [ Card.fetch( absolute_name(val), :new=>{} ) ] : Card::Query.new(val).run )
+    def found_by val
+      
+      cards = if Hash===val
+        Card::Query.new(val).run
+      else
+        Array.wrap(val).map do |v|
+          Card.fetch absolute_name(val), :new=>{}
+        end
+      end
+
       cards.each do |c|
         raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && [Card::SearchTypeID,Card::SetID].include?(c.type_id)
         found_by_spec = CardSpec.new(c.get_spec).rawspec
@@ -440,10 +446,10 @@ class Card::Query
     end
   
     def basic_conditions
-      @spec.map { |key, val| val.to_sql field_root(key) }.join " #{ conjunction } "
+      @spec.map { |key, val| val.to_sql field_root(key) }.join " #{ current_conjunction } "
     end
   
-    def conjunction
+    def current_conjunction
       @mods[:conj].blank? ? :and : @mods[:conj]
     end
     

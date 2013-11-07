@@ -3,7 +3,8 @@ def name= newname
   @cardname = newname.to_name
   if @supercard
     @relative_name = @cardname
-    @superleft = @supercard if @relative_name.parts.first.blank?
+    relparts = @relative_name.parts
+    @superleft = @supercard if relparts.size==2 && relparts.first.blank?
     @cardname = @relative_name.to_absolute_name @supercard.name
   end
   

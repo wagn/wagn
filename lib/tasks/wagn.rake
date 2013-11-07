@@ -143,16 +143,22 @@ namespace :wagn do
         ActiveRecord::Base.connection.update("update #{table} set created_at=now() #{extra_sql[table.to_sym] || ''};")
       end
 
-      # trash ignored cards
+      # delete ignored cards
       Account.as_bot do
-        Card.search( {:referred_to_by=>'*ignore'} ).each do |card|
-          card.delete!
+        if ignoramus = Card['*ignore']
+          ignoramus.item_cards.each do |card|
+            if card.account #have to get rid of revisions to delete account  
+              #(could also directly delete cards "manually", but would need to delete all descendants manually, too)
+              ActiveRecord::Base.connection.delete( "delete from card_revisions where card_id = #{card.id}" )
+            end
+            card.delete!
+          end
         end
       end
 
+      ActiveRecord::Base.connection.delete( "delete from cards where trash is true" )
 
       # delete unwanted rows ( will need to revise if we ever add db-level data integrity checks )
-      ActiveRecord::Base.connection.delete( "delete from cards where trash is true" )
       ActiveRecord::Base.connection.delete( "delete from card_revisions where not exists " +
         "( select name from cards where current_revision_id = card_revisions.id )"
       )
@@ -161,6 +167,8 @@ namespace :wagn do
         " (           referer_id is not null and not exists (select * from cards where cards.id = card_references.referer_id));"
       )
       ActiveRecord::Base.connection.delete( "delete from users where id > 2" ) #leave only anon and wagn bot
+      Wagn::Cache.reset_global
+      
     end
 
     desc "dump db to bootstrap fixtures"

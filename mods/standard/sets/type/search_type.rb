@@ -101,7 +101,7 @@ format do
   def search_params
     @vars[:search_params] ||= begin
       p = default_search_params
-      p[:vars] = {} #vars in params in vars.  yuck!
+      p[:vars] ||= {} #vars in params in vars.  yuck!
       if self == @root
         params.each do |key,val|
           case key.to_s

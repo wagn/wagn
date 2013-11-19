@@ -133,7 +133,7 @@ def ok_to_comment
   permit :comment, 'comment on'
   if @action_ok
     deny_because "No comments allowed on template cards" if is_template?
-    deny_because "No comments allowed on hard templated cards" if hard_template
+    deny_because "No comments allowed on hard templated cards" if structure
   end
 end
 

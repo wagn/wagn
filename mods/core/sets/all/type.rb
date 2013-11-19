@@ -62,7 +62,7 @@ event :validate_type, :before=>:approve, :changed=>:type_id do
     errors.add :type, "No such type"
   end
   
-  if rt = hard_template and rt.assigns_type? and type_id!=rt.type_id
+  if rt = structure and rt.assigns_type? and type_id!=rt.type_id
     errors.add :type, "can't be changed because #{name} is hard templated to #{rt.type_name}"
   end
 end

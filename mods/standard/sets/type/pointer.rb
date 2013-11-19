@@ -26,11 +26,12 @@ end
 format :html do
 
   view :core do |args|
-    %{<div class="pointer-list">#{ pointer_items args[:item] }</div>}
+    %{<div class="pointer-list">#{ pointer_items args[:item], args[:joint] }</div>}
   end
 
   view :closed_content do |args|
     args[:item] = (args[:item] || inclusion_defaults[:view])=='name' ? 'name' : 'link'
+    args[:joint] ||= ', '
     _render_core args
   end
 

@@ -49,7 +49,7 @@ class SharedData
     request_card = Card.create! :type_code=>'account_request', :name=>"Sample AccountRequest" #, :email=>"invitation@request.com"
 
     Account.createable_types.each do |type|
-      next if ['User', 'Account Request', 'Set'].include? type
+      next if ['User', 'Account Request', 'Set', 'Number'].include? type
       Card.create! :type=>type, :name=>"Sample #{type}"
     end
 

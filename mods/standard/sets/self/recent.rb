@@ -4,10 +4,10 @@ view :title do |args|
 end
 
 view :card_list do |args|
-  @search[:item] ||= :change
+  search_vars[:item] ||= :change
 
   cards_by_day = Hash.new { |h, day| h[day] = [] }
-  @search[:results].each do |card|
+  search_vars[:results].each do |card|
     begin
       stamp = card.updated_at
       day = Date.new(stamp.year, stamp.month, stamp.day)
@@ -29,8 +29,8 @@ view :card_list do |args|
             #{
                cards_by_day[day].map do |card|
                  %{
-                   <div class="search-result-item item-#{ @search[:item] }">
-                    #{ process_inclusion(card, :view=>@search[:item]) }
+                   <div class="search-result-item item-#{ search_vars[:item] }">
+                    #{ process_inclusion(card, :view=>search_vars[:item]) }
                   </div>
                  }
                end * ' '

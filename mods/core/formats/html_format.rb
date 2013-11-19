@@ -90,10 +90,11 @@ class Card::HtmlFormat < Card::Format
       ( 'card-slot' unless args[:no_slot] ),
       "#{view}-view",
       ( args[:slot_class] if args[:slot_class] ),
+      ( "STRUCTURE-#{args[:structure].to_name.key}" if args[:structure]),
       card.safe_set_keys
     ].compact
     
-    div = %{<div data-card-id="#{card.id}" data-card-name="#{h card.name}" style="#{h args[:style]}" class="#{classes*' '}" } +
+    div = %{<div id="#{card.cardname.url_key}" data-card-id="#{card.id}" data-card-name="#{h card.name}" style="#{h args[:style]}" class="#{classes*' '}" } +
       %{data-slot='#{html_escape_except_quotes slot_options( args )}'>#{yield}</div>}
 
     if args[:no_wrap_comment]
@@ -142,7 +143,7 @@ class Card::HtmlFormat < Card::Format
 
 
   def edit_slot args={}
-    if card.hard_template
+    if card.structure
       _render_raw(args).scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc|
         process_content( inc ).strip
       end.join

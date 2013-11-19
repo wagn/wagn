@@ -13,7 +13,7 @@ class Card
     @@max_char_count = 200 #should come from Wagn::Conf
     @@max_depth      = 20 # ditto
 
-    attr_reader :card, :root, :parent
+    attr_reader :card, :root, :parent, :vars
     attr_accessor :form, :error_status, :inclusion_opts
   
     class << self
@@ -124,6 +124,7 @@ class Card
       @mode ||= :normal      
       @char_count = @depth = 0
       @root = self
+      @vars = {}
 
       @context_names ||= if params[:slot] && context_name_list = params[:slot][:name_context]
         context_name_list.split(',').map &:to_name
@@ -267,9 +268,10 @@ class Card
     def initialize_subformat subcard, parent
       @parent = parent
       @card = subcard
+      @vars = {}
       @char_count = 0
       @depth += 1
-      @inclusion_defaults = @inclusion_opts = @showname = @search = @ok = nil
+      @inclusion_defaults = @inclusion_opts = @showname = @ok = nil
       self
     end
 
@@ -416,7 +418,7 @@ class Card
 
       view = case
       when @mode == :edit
-        if @@perms[view]==:none || tcard.hard_template || tcard.key.blank? # eg {{_self|type}} on new cards
+        if @@perms[view]==:none || tcard.structure || tcard.key.blank? # eg {{_self|type}} on new cards
           :blank
         else
           :edit_in_form
@@ -452,6 +454,11 @@ class Card
         args[:content]=content
       end
       args
+    end
+    
+    
+    def default_item_view
+      :name
     end
 
     def path opts={}

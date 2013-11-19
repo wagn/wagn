@@ -9,7 +9,7 @@ def content
 end
 
 def raw_content
-  hard_template ? template.content : content
+  structure ? template.content : content
 end
 
 def chunk_list #override to customize by set
@@ -76,14 +76,14 @@ event :set_default_content, :on=>:create, :before=>:approve do
 end
 
 event :protect_structured_content, :before=>:approve, :on=>:update do
-  if updates.for?(:content) && hard_template
+  if updates.for?(:content) && structure
     errors.add :content, "can't change; structured by #{template.name}"
   end
 end
 
 
 event :detect_conflict, :before=>:approve, :on=>:update do
-  if current_revision_id_changed? && current_revision_id.to_i != current_revision_id_was.to_i
+  if current_revision_id_changed?# && current_revision_id.to_i != current_revision_id_was.to_i
     @current_revision_id = current_revision_id_was
     errors.add :conflict, "changes not based on latest revision"
   end

@@ -3,7 +3,8 @@ def name= newname
   @cardname = newname.to_name
   if @supercard
     @relative_name = @cardname
-    @superleft = @supercard if @relative_name.parts.first.blank?
+    relparts = @relative_name.parts
+    @superleft = @supercard if relparts.size==2 && relparts.first.blank?
     @cardname = @relative_name.to_absolute_name @supercard.name
   end
   
@@ -122,7 +123,15 @@ rescue
 end
 
 
+event :permit_codename, :before=>:approve, :on=>:update, :changed=>:codename do
+  errors.add :codename, 'only admins can set codename' unless Account.always_ok?
+end
 
+event :validate_unique_codename, :after=>:permit_codename do
+  if errors.empty? and Card.find_by_codename(codename).present?
+    errors.add :codename, "codename #{codename} already in use" 
+  end
+end
 
 event :validate_name, :before=>:approve, :on=>:save do 
 
@@ -133,8 +142,7 @@ event :validate_name, :before=>:approve, :on=>:save do
     #Rails.logger.debug "valid name #{card.name.inspect} New #{name.inspect}"
 
     unless cdname.valid?
-      errors.add :name,
-        "may not contain any of the following characters: #{ Card::Name.banned_array * ' ' }"
+      errors.add :name, "may not contain any of the following characters: #{ Card::Name.banned_array * ' ' }"
     end
     # this is to protect against using a plus card as a tag
     if cdname.junction? and simple? and id and Account.as_bot { Card.count_by_wql :right_id=>id } > 0
@@ -246,7 +254,7 @@ event :cascade_name_changes, :after=>:store, :on=>:update, :changed=>:name do
         # aligning the dependent saving with the name cascading
 
         Rails.logger.debug "------------------ UPDATE REFERER #{card.name}  ------------------------"
-        unless card == self or card.hard_template
+        unless card == self or card.structure
           card = card.refresh
           card.content = card.replace_references name_was, name
           card.save!

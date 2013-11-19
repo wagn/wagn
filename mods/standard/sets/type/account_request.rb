@@ -3,7 +3,7 @@
 format :html do
   view :new do |args|
     #FIXME - make more use of standard new view
-    frame_args = args.merge :title=>'Sign Up', :show_help=>true, :hide_menu=>true
+    frame_args = args.merge :title=>'Sign Up', :show_help=>true #, :hide_menu=>true
     frame_args[:help_text] = case
       when card.rule_card( :add_help, :fallback=>:help ) ; nil
       when Account.create_ok?                            ; 'Send us the following, and we\'ll send you a password.' 
@@ -21,8 +21,7 @@ format :html do
           #{ hidden_field_tag :success, success }
           #{ _render_name_editor :help=>'usually first and last name' }
           #{ fieldset :email, text_field( 'card[account_args]', :email ), :editor=>'content' }
-          #{ with_inclusion_mode(:new) { edit_slot :label=>'other' } }
-
+          #{ with_inclusion_mode(:new) { edit_slot } if card.structure }
           <fieldset><div class="button-area">#{ submit_tag 'Submit' }</div></fieldset>
         }
       end

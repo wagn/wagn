@@ -54,11 +54,7 @@ def event_applies? opts
     return false unless Array.wrap( opts[:on] ).member? @action
   end
   if opts[:changed]
-    case @action
-    # everything is "changed" on :create  
-    when :update;  return false unless changes[ opts[:changed].to_s ]
-    when :delete;  return false
-    end
+    return false if @action == :delete or !changes[ opts[:changed].to_s ]
   end
   if opts[:when]
     return false unless opts[:when].call self

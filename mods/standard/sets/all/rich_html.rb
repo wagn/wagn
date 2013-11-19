@@ -97,7 +97,7 @@ format :html do
     @menu_vars = {
       :self         => card.name,
       :type         => card.type_name,
-      :structure    => card.hard_template && card.template.ok?(:update) && card.template.name,
+      :structure    => card.structure && card.template.ok?(:update) && card.template.name,
       :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read ),
       :piecenames   => card.junction? && card.cardname.piece_names[0..-2].map { |n| { :item=>n.to_s } },
       :related_sets => card.related_sets.map { |name,label| { :text=>label, :path_opts=>{ :current_set => name } } }
@@ -213,6 +213,7 @@ format :html do
       card_form :update, 'card-form autosave' do |f|
         @form= f
         %{
+          #{ hidden_tags(( args[:hidden] || {} )) }
           <div class="card-editor">
             #{ edit_slot args }
           </div>

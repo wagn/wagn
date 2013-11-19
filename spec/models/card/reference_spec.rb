@@ -8,7 +8,7 @@ describe Card::Reference do
   end
 
   describe "references on hard templated cards should get updated" do
-    it "on templatee creation" do
+    it "on structuree creation" do
       Card.create! :name=>"JoeForm", :type=>'UserForm'
       Card::Format.new(Card["JoeForm"]).render(:core)
       assert_equal ["joe_form+age", "joe_form+description", "joe_form+name"],

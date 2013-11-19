@@ -51,8 +51,8 @@ def update_references rendered_content = nil, refresh = false
           :referer_id  => id,
           :referee_id  => referee_id,
           :referee_key => referee_name.key,
-          :ref_type    => Card::Chunk::Link===chunk    ? 'L' : 'I',
-          :present     => chunk.referee_card.nil? ?  0  :  1
+          :ref_type    => Card::Chunk::Link===chunk ? 'L' : 'I',
+          :present     => chunk.referee_card.nil?   ?  0  :  1
         )
       end
     end
@@ -88,15 +88,15 @@ protected
 
 event :refresh_references, :after=>:store, :on=>:save do
   self.update_references
-  expire_templatee_references
+  expire_structuree_references
 end
 
 event :refresh_references_on_create, :before=>:refresh_references, :on=>:create do
   Card::Reference.update_existing_key self
-  # FIXME: bogus blank default content is set on hard_templated cards...
+  # FIXME: bogus blank default content is set on structured cards...
 end
 
 event :refresh_references_on_delete, :after=>:store, :on=>:delete do
   Card::Reference.update_on_delete self
-  expire_templatee_references
+  expire_structuree_references
 end

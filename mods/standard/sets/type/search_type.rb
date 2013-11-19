@@ -52,31 +52,31 @@ end
 format do
 
   view :core do |args|
-    set_search_vars args
+    search_vars args
 
     case
-    when e = @search[:error]
+    when e = search_vars[:error]
       Rails.logger.debug " no result? #{e.backtrace}"
       %{No results? #{e.class.to_s} :: #{e.message} :: #{card.content}}
-    when @search[:spec][:return] =='count'
-      @search[:results].to_s
+    when search_vars[:spec][:return] =='count'
+      search_vars[:results].to_s
     else
       _render_card_list args
     end
   end
 
   view :card_list do |args|
-    if @search[:results].empty?
+    if search_vars[:results].empty?
       'no results'
     else
-      @search[:results].map do |c|
+      search_vars[:results].map do |c|
         process_inclusion c
       end.join "\n"
     end
   end
   
-  def set_search_vars args
-    @search ||= begin
+  def search_vars args={}
+    @vars[:search] ||= begin
       v = {}
       v[:spec] = card.spec search_params
       v[:item] = set_inclusion_opts args.merge( :spec_view=>v[:spec][:view] )
@@ -99,9 +99,9 @@ format do
   end
 
   def search_params
-    @search_params ||= begin
+    @vars[:search_params] ||= begin
       p = default_search_params
-      p[:vars] = {}
+      p[:vars] ||= {} #vars in params in vars.  yuck!
       if self == @root
         params.each do |key,val|
           case key.to_s
@@ -115,7 +115,7 @@ format do
   end
 
   def page_link text, page
-    @paging_path_args[:offset] = page * @paging_limit
+    @paging_path_args[:offset] = page * @paging_limit  #fixme.  should be @vars?
     " #{link_to raw(text), path(@paging_path_args), :class=>'card-paging-link slotter', :remote => true} "
   end
 
@@ -127,7 +127,7 @@ format :data do
   view :card_list do |args|
     inclusion_defaults[:view] = :atom
 
-    @search[:results].map do |c|
+    search_vars[:results].map do |c|
       process_inclusion c
     end
   end
@@ -150,14 +150,14 @@ format :html do
   view :card_list do |args|
     paging = _optional_render :paging, args
 
-    if @search[:results].empty?
+    if search_vars[:results].empty?
       %{<div class="search-no-results"></div>}
     else
       %{
         #{paging}
         <div class="search-result-list">
           #{
-            @search[:results].map do |c|
+            search_vars[:results].map do |c|
               %{
                 <div class="search-result-item item-#{ inclusion_defaults[:view] }">
                   #{ process_inclusion c, :size=>args[:size] }
@@ -166,7 +166,7 @@ format :html do
             end * "\n"
           }
         </div>
-        #{ paging if @search[:results].length > 10 }
+        #{ paging if search_vars[:results].length > 10 }
       }
     end
   end
@@ -192,7 +192,7 @@ format :html do
     s = card.spec search_params
     offset, limit = s[:offset].to_i, s[:limit].to_i
     return '' if limit < 1
-    return '' if offset==0 && limit > offset + @search[:results].length #avoid query if we know there aren't enough results to warrant paging
+    return '' if offset==0 && limit > offset + search_vars[:results].length #avoid query if we know there aren't enough results to warrant paging
     total = card.count search_params
     return '' if limit >= total # should only happen if limit exactly equals the total
 

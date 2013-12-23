@@ -110,14 +110,14 @@ class Card
 
 
 
-    @@allowed_tags = {}
+    ALLOWED_TAGS = {}
     %w{
       br i b pre cite caption strong em ins sup sub del ol hr ul li p
       div h1 h2 h3 h4 h5 h6 span table tr td th tbody thead tfoot
-    }.each { |tag| @@allowed_tags[tag] = [] }
+    }.each { |tag| ALLOWED_TAGS[tag] = [] }
 
     # allowed attributes
-    @@allowed_tags.merge!(
+    ALLOWED_TAGS.merge!(
       'a' => ['href', 'title', 'target' ],
       'img' => ['src', 'alt', 'title'],
       'code' => ['lang'],
@@ -125,13 +125,15 @@ class Card
     )
 
     if Wagn::Conf[:allow_inline_styles]
-      @@allowed_tags['table'] += %w[ cellpadding align border cellspacing ]
+      ALLOWED_TAGS['table'] += %w[ cellpadding align border cellspacing ]
     end
 
-    @@allowed_tags.each_key {|k|
-      @@allowed_tags[k] << 'class'
-      @@allowed_tags[k] << 'style' if Wagn::Conf[:allow_inline_styles]
+    ALLOWED_TAGS.each_key {|k|
+      ALLOWED_TAGS[k] << 'class'
+      ALLOWED_TAGS[k] << 'style' if Wagn::Conf[:allow_inline_styles]
+      ALLOWED_TAGS[k].freeze
     }
+    ALLOWED_TAGS.freeze
 
     ATTR_VALUE_RE = [ /[^']+'/, /[^"]+"/, /\S+/ ]
 
@@ -142,25 +144,26 @@ class Card
 
       # this has been hacked for wagn to allow classes if
       # the class begins with "w-"
-      def clean!( string, tags = @@allowed_tags )
+      def clean!( string, tags = ALLOWED_TAGS )
         string.gsub( /<(\/*)(\w+)([^>]*)>/ ) do
           raw = $~
           tag = raw[2].downcase
-          if tags.has_key? tag
+          if attrs = tags[tag]
             "<#{raw[1]}#{
-              tags[tag].inject([tag]) do |pcs, attr|
+              attrs.inject([tag]) do |pcs, attr|
+                q='"'
+                rest_value=nil
                 if raw[3] =~ /\b#{attr}\s*=\s*(.)/i
-                  idx = %w{' "}.index $1
-                  rest_value = idx.nil? ? $1+$' : $'
+                  rest_value = (idx = %w{' "}.index($1) and q = $1) ? $' : $1+$'
                   re = ATTR_VALUE_RE[ idx || 2 ]
                   if re.match(rest_value)
                     rest_value = idx.nil? ? $& : $&.chop
                     if attr == 'class'
                       rest_value = rest_value.split(/\s+/).find_all {|s| s=~/^w-/i}*' '
                     end
-                    pcs << "#{attr}=\"#{rest_value}\"" unless rest_value.blank?
                   end
                 end
+                pcs << "#{attr}=#{q}#{rest_value}#{q}" unless rest_value.blank?
                 pcs
               end * ' '
             }>"

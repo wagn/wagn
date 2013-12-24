@@ -135,7 +135,7 @@ class Card
     }
     ALLOWED_TAGS.freeze
 
-    ATTR_VALUE_RE = [ /[^']+'/, /[^"]+"/, /\S+/ ]
+    ATTR_VALUE_RE = [ /(?<=^')[^']+(?=')/, /(?<=^")[^"]+(?=")/, /\S+/ ]
 
     class << self
 
@@ -153,11 +153,12 @@ class Card
               attrs.inject([tag]) do |pcs, attr|
                 q='"'
                 rest_value=nil
-                if raw[3] =~ /\b#{attr}\s*=\s*(.)/i
-                  rest_value = (idx = %w{' "}.index($1) and q = $1) ? $' : $1+$'
+                if raw[3] =~ /\b#{attr}\s*=\s*(?=(.))/i
+                  rest_value = $'
+                  idx = %w{' "}.index($1) and q = $1
                   re = ATTR_VALUE_RE[ idx || 2 ]
-                  if re.match(rest_value)
-                    rest_value = idx.nil? ? $& : $&.chop
+                  if match = rest_value.match(re)
+                    rest_value = match[0]
                     if attr == 'class'
                       rest_value = rest_value.split(/\s+/).find_all {|s| s=~/^w-/i}*' '
                     end

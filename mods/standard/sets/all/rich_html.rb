@@ -3,8 +3,6 @@ def clean_html?
   true
 end
 
-def purple?; true end
-
 format :html do
 
   view :show do |args|

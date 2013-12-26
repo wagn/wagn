@@ -217,12 +217,13 @@ class Card::HtmlFormat < Card::Format
 
   def type_field args={}
     typelist = Account.createable_types
-    typelist << card.type_name if !card.new_card?
-    # current type should be an option on existing cards, regardless of create perms
+    unless args[:no_current_type] || card.new_card? || typelist.include?( card.type_name )
+      # current type should be an option on existing cards, regardless of create perms
+      typelist = (typelist + card.type_name).sort
+    end
+    current_type = args[:no_current_type] ? nil : Card[ card ? card.type_id : Card.default_type_id ].name
 
-    options = options_from_collection_for_select(
-      typelist.uniq.sort.map { |name| [ name, name ] },
-      :first, :last, Card[ card ? card.type_id : Card.default_type_id ].name )
+    options = options_from_collection_for_select typelist, :to_s, :to_s, current_type
     template.select_tag 'card[type]', options, args
   end
 

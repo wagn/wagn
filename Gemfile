@@ -64,6 +64,9 @@ group :test, :development do
   gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
   gem 'rails-dev-tweaks', '~> 0.6'             # dramatic speeds up asset loading, among other tweaks
 
+
+#  gem "jeweler", "~> 1.8.8"
+
 #  gem 'jasmine-rails'
 end
 
@@ -92,7 +95,6 @@ group :test do
 end
 
 group :debug do
-  gem 'rdoc'
   case RUBY_VERSION
   when /^1\.9\.3-p0/
     gem 'linecache19', '~>0.5.13'

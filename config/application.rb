@@ -12,6 +12,21 @@ end
 
 module Wagn
   class Application < Rails::Application
+    
+
+    def config
+      # this is all about setting config root to gem root.
+      
+      if @config_reset_by_wagn #necessary because rails sets config on "def inherited" trigger
+        @config
+      else
+        @config_reset_by_wagn = true
+        gem_root = Pathname.new( File.dirname File.dirname(__FILE__) ).expand_path        
+        @config = Application::Configuration.new gem_root
+      end
+    end
+    
+    
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -32,6 +47,7 @@ module Wagn
     # config.i18n.default_locale = :de
 
     # Configure the default encoding used in templates for Ruby 1.9.
+    
     config.encoding = "utf-8"
 
     # Configure sensitive parameters which will be filtered from the log file.
@@ -56,9 +72,8 @@ module Wagn
       config.paths['log'] = File.join( log_file )
     end
 
-    if db_file = Wagn::Conf[:database_config_file]
-      config.paths['config/database'] = File.join( db_file )
-    end
+    db_file = Wagn::Conf[:database_config_file] || "#{WAGN_APP_ROOT}/config/database.yml"
+    config.paths['config/database'] = File.join( db_file )
 
     if Wagn::Conf[:smtp]
       config.action_mailer.smtp_settings = Wagn::Conf[:smtp].symbolize_keys

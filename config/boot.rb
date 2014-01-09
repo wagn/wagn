@@ -4,7 +4,7 @@ require 'yaml'
 module Wagn
   class Conf
     class << self
-      WAGN_CONFIG_FILE = ENV['WAGN_CONFIG_FILE'] || File.expand_path('../wagn.yml', __FILE__)
+      WAGN_CONFIG_FILE = ENV['WAGN_CONFIG_FILE'] || File.expand_path("#{WAGN_APP_ROOT}/config/wagn.yml")
       
       def [] key
         @@config[key.to_sym]
@@ -18,8 +18,8 @@ module Wagn
       f = WAGN_CONFIG_FILE
       if File.exists?( f ) and y = YAML.load_file( f ) and Hash === y
         h.merge! y
-      #else
-        #Should Wagn fail without config file?
+      else
+        abort "Wagn Config File (wagn.yml) not found: #{ WAGN_CONFIG_FILE }"
       end
       h.keys.each do |key|
         h[(key.to_sym rescue key) || key] = h.delete(key)
@@ -33,6 +33,7 @@ ENV['RAILS_ENV'] ||= Wagn::Conf[:rails_env] || 'production'
 require 'rubygems'
 
 # Set up gems listed in the Gemfile.
-ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path("#{WAGN_APP_ROOT}/Gemfile", __FILE__)
+
 
 require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])

@@ -2,38 +2,7 @@ source 'http://rubygems.org'
 #source "http://gems.github.com"
 
 # DEFAULT
-gem 'smartname',    '0.2.3' #, :path=>'~/dev/smartname/main'
-
-gem 'rails',        '~> 3.2.14'
-gem 'htmlentities', '~> 4.3'
-gem 'uuid',         '~> 2.3'
-gem 'paperclip',    '~> 2.8'
-gem 'rmagick',      '~> 2.13'
-gem "recaptcha",    "~> 0.3"
-
-gem 'xmlscan',      '~> 0.3'
-# the following two could be safely excluded on a local install (but are not known to cause problems)
-
-gem "rubyzip",      "~> 0.9" # only required in module.  should be separated out.
-gem "airbrake",     "~> 3.1"
-gem "coderay",      "~> 1.0"
-gem 'sass',         '~> 3.2'
-
-# DATABASE
-
-# need at least one of the following
-
-group :mysql do
-  gem "mysql2", "~> 0.3"
-end
-
-group :postgres do
-  gem 'pg', '~>0.12.2'
-  # if using 1.8.7 or ree and having no luck with the above, try:
-  # gem 'postgres', '~>0.7.9.2008.01.28'
-end
-#gem 'sqlite3-ruby', :require => 'sqlite3', :group=>'sqlite'
-
+gemspec
 
 gem 'dalli', :group => :memcache
 

@@ -19,4 +19,24 @@ Gem::Specification.new do |s|
   s.test_files    = s.files.grep(%r{^(test|spec|features)/})
   s.require_paths = ["lib"]
 
+  [
+    
+    [ 'rails',        '~> 3.2.14' ],
+    [ 'smartname',    '0.2.3'     ],  #, :path=>'~/dev/smartname/main'
+    
+    [ 'htmlentities', '~> 4.3'    ],
+    [ 'uuid',         '~> 2.3'    ],
+    [ 'paperclip',    '~> 2.8'    ],
+    [ 'rmagick',      '~> 2.13'   ],
+    [ 'recaptcha',    '~> 0.3'    ],
+                                  
+    [ 'xmlscan',      '~> 0.3'    ],
+    [ 'rubyzip',      '~> 0.9'    ], # only required in module.  should be separated out.
+    [ 'airbrake',     '~> 3.1'    ],
+    [ 'coderay',      '~> 1.0'    ],
+    [ 'sass',         '~> 3.2'    ]
+    
+  ].each do |dep|
+    s.add_dependency *dep
+  end 
 end

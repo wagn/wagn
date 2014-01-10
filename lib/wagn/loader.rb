@@ -8,19 +8,21 @@ module Wagn
     MODS = begin
       builtins = [ 'core', 'standard' ].map { |mod| "#{Rails.root}/mods/#{mod}" }
       addons = Wagn::Conf[:mod_dirs].split( /,\s*/ ).map do |dirname|
-        Dir.entries( dirname ).sort.map do |filename|
-          if filename !~ /^\./
-            "#{dirname}/#{filename}"
+        if Dir.exists? dirname
+          Dir.entries( dirname ).sort.map do |filename|
+            if filename !~ /^\./
+              "#{dirname}/#{filename}"
+            end
           end
-        end.compact
-      end.flatten
+        end
+      end.flatten.compact
       builtins + addons
     end
 
     def load_set_patterns
       MODS.each do |mod|
         dirname = "#{mod}/set_patterns"
-        if File.exists? dirname
+        if Dir.exists? dirname
           Dir.entries( dirname ).sort.each do |filename|
             if m = filename.match( /^(\d+_)?([^\.]*).rb/) and key = m[2]
               mod = Module.new

@@ -19,7 +19,7 @@ module Wagn
       if File.exists?( f ) and y = YAML.load_file( f ) and Hash === y
         h.merge! y
       else
-        abort "Wagn Config File (wagn.yml) not found: #{ WAGN_CONFIG_FILE }"
+#        abort "Wagn Config File (wagn.yml) not found: #{ WAGN_CONFIG_FILE }"
       end
       h.keys.each do |key|
         h[(key.to_sym rescue key) || key] = h.delete(key)

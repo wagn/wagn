@@ -86,3 +86,5 @@ module Wagn
     
   end
 end
+
+require 'paperclip' #not the right place for this!!

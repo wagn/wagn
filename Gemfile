@@ -76,11 +76,4 @@ group :debug do
 end
 
 
-# ~~~~~~~ #
-# HOSTING #
-# ~~~~~~~ #
-
-#group :hosting do
-#  gem 'newrelic_rpm', '>=2.14.1'
-#end
 

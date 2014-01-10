@@ -1,7 +1,5 @@
 # should be able to move these to more appropriate places
-puts "wagn called"
 
-require 'paperclip'
 require 'recaptcha'
 require 'airbrake'
 

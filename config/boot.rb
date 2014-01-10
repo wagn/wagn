@@ -4,7 +4,7 @@ require 'yaml'
 module Wagn
   class Conf
     class << self
-      WAGN_CONFIG_FILE = ENV['WAGN_CONFIG_FILE'] || File.expand_path("#{WAGN_APP_ROOT}/config/wagn.yml")
+      WAGN_CONFIG_FILE = ENV['WAGN_CONFIG_FILE'] || File.expand_path('config/wagn.yml')
       
       def [] key
         @@config[key.to_sym]
@@ -33,7 +33,7 @@ ENV['RAILS_ENV'] ||= Wagn::Conf[:rails_env] || 'production'
 require 'rubygems'
 
 # Set up gems listed in the Gemfile.
-ENV['BUNDLE_GEMFILE'] ||= File.expand_path("#{WAGN_APP_ROOT}/Gemfile", __FILE__)
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path("Gemfile")
 
 
 require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])

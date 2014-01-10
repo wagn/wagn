@@ -1,3 +1,6 @@
+# should be able to move these to more appropriate places
+puts "wagn called"
+
 require 'paperclip'
 require 'recaptcha'
 require 'airbrake'
@@ -12,11 +15,7 @@ require 'coderay'
 require 'sass'
 
 module Wagn
-  def self.gem_root
-    WAGN_GEM_ROOT
-  end
-  
-  def self.root
-    WAGN_APP_ROOT #ugly
-  end
+  mattr_reader :gem_root, :root
+  @@gem_root = File.expand_path('../..', __FILE__)
+  @@root ||= File.expand_path('')
 end

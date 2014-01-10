@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 require File.expand_path('../boot', __FILE__)
 require 'rails/all'
+require 'wagn'
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
@@ -21,7 +22,7 @@ module Wagn
         @config
       else
         @config_reset_by_wagn = true
-        gem_root = Pathname.new( File.dirname File.dirname(__FILE__) ).expand_path        
+        gem_root = Pathname.new( File.dirname File.dirname(__FILE__) ).expand_path    
         @config = Application::Configuration.new gem_root
       end
     end
@@ -72,7 +73,7 @@ module Wagn
       config.paths['log'] = File.join( log_file )
     end
 
-    db_file = Wagn::Conf[:database_config_file] || "#{WAGN_APP_ROOT}/config/database.yml"
+    db_file = Wagn::Conf[:database_config_file] || File.expand_path( "config/database.yml" )
     config.paths['config/database'] = File.join( db_file )
 
     if Wagn::Conf[:smtp]

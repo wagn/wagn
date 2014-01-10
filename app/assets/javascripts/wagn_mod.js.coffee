@@ -52,7 +52,7 @@ $.extend wagn,
       mode: 'exact'
       elements: el_id
       #CSS could be made optional, but it may involve migrating old legacy *tinyMCE settings to get rid of stale stuff.
-      content_css: wagn.rootPath + wagn.cssPath
+      content_css: wagn.cssPath
       entity_encoding: 'raw'
     }
     $.extend conf, user_conf, hard_conf

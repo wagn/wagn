@@ -1,7 +1,6 @@
 source 'http://rubygems.org'
 #source "http://gems.github.com"
 
-# DEFAULT
 gemspec
 
 gem 'dalli', :group => :memcache
@@ -41,8 +40,9 @@ end
 
 group :test do
   gem 'cucumber-rails', '~> 1.3', :require=>false # feature-driven-development suite
-  gem 'capybara', '~> 1.1'                     # note, selectors were breaking when we used 2.0.1
-  gem 'capybara-webkit'
+  gem 'capybara', '~> 2.2.1'                     # note, selectors were breaking when we used 2.0.1
+  gem 'selenium-webdriver', '~> 2.39'
+#  gem 'capybara-webkit'
   gem 'launchy'                                # lets cucumber launch browser windows
 
   gem 'timecop', '=0.3.5'                      # not clear on use/need.  referred to in shared_data.rb 

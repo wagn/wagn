@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
   [
     
-    [ 'rails',        '~> 3.2.14' ],
+    [ 'rails',        '~> 3.2.16' ],
     [ 'smartname',    '0.2.3'     ],  #, :path=>'~/dev/smartname/main'
     
     [ 'htmlentities', '~> 4.3'    ],
@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
     [ 'recaptcha',    '~> 0.3'    ],
                                   
     [ 'xmlscan',      '~> 0.3'    ],
-    [ 'rubyzip',      '~> 0.9'    ], # only required in module.  should be separated out.
+    [ 'rubyzip',      '~> 1.0'    ], # only required in module.  should be separated out.
     [ 'airbrake',     '~> 3.1'    ],
     [ 'coderay',      '~> 1.0'    ],
     [ 'sass',         '~> 3.2'    ]

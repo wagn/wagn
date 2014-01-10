@@ -14,7 +14,7 @@ gem "recaptcha",    "~> 0.3"
 gem 'xmlscan',      '~> 0.3'
 # the following two could be safely excluded on a local install (but are not known to cause problems)
 
-gem "rubyzip",      "~> 0.9" # only required in module.  should be separated out.
+gem "rubyzip",      "~> 1.0" # only required in module.  should be separated out.
 gem "airbrake",     "~> 3.1"
 gem "coderay",      "~> 1.0"
 gem 'sass',         '~> 3.2'
@@ -69,8 +69,9 @@ end
 
 group :test do
   gem 'cucumber-rails', '~> 1.3', :require=>false # feature-driven-development suite
-  gem 'capybara', '~> 1.1'                     # note, selectors were breaking when we used 2.0.1
-  gem 'capybara-webkit'
+  gem 'capybara', '~> 2.2.1'                     # note, selectors were breaking when we used 2.0.1
+  gem 'selenium-webdriver', '~> 2.39'
+#  gem 'capybara-webkit'
   gem 'launchy'                                # lets cucumber launch browser windows
 
   gem 'timecop', '=0.3.5'                      # not clear on use/need.  referred to in shared_data.rb 

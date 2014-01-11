@@ -6,8 +6,8 @@ h[:root_path] = begin
   epath && epath != '/' ? epath : ''
 end
 
-h[:attachment_web_dir]     ||= h[:root_path] + '/files'
-h[:attachment_storage_dir] ||= "#{Wagn.root}/files"
+h[:attachment_web_dir]     ||= "#{ h[:root_path] }/files"
+h[:attachment_storage_dir] ||= "#{ Wagn.root     }/files"
 
 h[:mod_dirs] = if %w{ test cucumber }.include? Rails.env
   ''

@@ -1,18 +1,18 @@
-# Note: file settings below should use absolute paths and should NOT contain the phrase "RAILS_ROOT"
+# Note: file settings below should use absolute paths and should NOT contain the phrase "WAGN_ROOT"
 
 # read_only:
 # defaults to false
 # disallows updating cards.
 
 # log_file:
-# defaults to RAILS_ROOT/log/<environment>.log
+# defaults to WAGN_ROOT/log/<environment>.log
 
 # database_config_file:
-# defaults to RAILS_ROOT/config/database.yml
+# defaults to WAGN_ROOT/config/database.yml
 
 # attachment_storage_dir:
 # this is where uploaded files are actually stored. (eg Image and File cards)
-# defaults to RAILS_ROOT/local/files
+# defaults to WAGN_ROOT/files
 
 # attachment_web_dir:
 # this is the base of the uri path that users see when downloading files
@@ -32,7 +32,7 @@
 
 # mod_dirs:
 # customize mod directories
-# defaults to RAILS_ROOT/local/mods
+# defaults to WAGN_ROOT/mods
 
 # mem_cache_servers
 # IP address for mem cache server

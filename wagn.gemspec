@@ -37,6 +37,8 @@ Gem::Specification.new do |s|
     [ 'sass',         '~> 3.2'    ]
     
   ].each do |dep|
-    s.add_dependency *dep
-  end 
+    s.add_runtime_dependency *dep
+  end
+  
+  
 end

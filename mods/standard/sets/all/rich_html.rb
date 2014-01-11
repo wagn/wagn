@@ -40,7 +40,7 @@ format :html do
 
   view :type_select do |args|
     %{ <script type="text/template" class="live-type-selection">
-      <span class="live-type-selection">#{ type_field :class=>'type-field live-type-field' }</span>
+      <span class="live-type-selection">#{ type_field args.merge( :class=>'type-field live-type-field' ) }</span>
     </script>}
   end
 

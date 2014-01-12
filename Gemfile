@@ -5,6 +5,16 @@ gemspec
 
 gem 'dalli', :group => :memcache
 
+group :mysql do
+  gem "mysql2", "~> 0.3"
+end
+
+group :postgres do
+  gem 'pg', '~>0.12.2'
+  # if using 1.8.7 or ree and having no luck with the above, try:
+  # gem 'postgres', '~>0.7.9.2008.01.28'
+end
+#gem 'sqlite3-ruby', :require => 'sqlite3', :group=>'sqlite'
 
 # These should only be needed if you're developing new JS / CSS.  It's all pre-compiled for production
 group :assets do
@@ -27,9 +37,9 @@ group :profile do
   gem 'ruby-prof', '~>0.12.1'                  # profiling
   #gem 'test-unit' #was causing errors after cucumber runs.
 end
+gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
 
 group :test, :development do
-  gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
   gem 'rails-dev-tweaks', '~> 0.6'             # dramatic speeds up asset loading, among other tweaks
 
 

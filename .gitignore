@@ -15,6 +15,7 @@ local*
 script/local
 script/performance/*.session
 tmp/*
+wagn*gem
 *.project
 *.sqlite3
 *.DS_Store

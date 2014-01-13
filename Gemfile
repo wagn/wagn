@@ -37,14 +37,10 @@ group :profile do
   gem 'ruby-prof', '~>0.12.1'                  # profiling
   #gem 'test-unit' #was causing errors after cucumber runs.
 end
-gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
 
 group :test, :development do
   gem 'rails-dev-tweaks', '~> 0.6'             # dramatic speeds up asset loading, among other tweaks
-
-
-#  gem "jeweler", "~> 1.8.8"
-
+  gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
 #  gem 'jasmine-rails'
 end
 

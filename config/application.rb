@@ -69,12 +69,20 @@ module Wagn
       end
     config.cache_store = cache_store, *cache_args
 
-    if log_file = Wagn::Conf[:log_file]
-      config.paths['log'] = File.join( log_file )
+    [
+      [ 'log',             :log_file,             "log/#{Rails.env}.log" ],
+      [ 'config/database', :database_config_file, 'config/database.yml'  ],
+      [ 'tmp',             :tmp_dir,              'tmp'                  ]
+      
+      ].each do |path_key, wagn_conf_key, default_path|
+      
+      config.paths[path_key] = if configured = Wagn::Conf[wagn_conf_key]
+        File.join configured
+      else
+        File.expand_path default_path
+      end
     end
 
-    db_file = Wagn::Conf[:database_config_file] || File.expand_path( "config/database.yml" )
-    config.paths['config/database'] = File.join( db_file )
 
     if Wagn::Conf[:smtp]
       config.action_mailer.smtp_settings = Wagn::Conf[:smtp].symbolize_keys

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
+require 'wagn'
 require File.expand_path('../boot', __FILE__)
 require 'rails/all'
-require 'wagn'
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
@@ -71,9 +71,10 @@ module Wagn
     custom_paths = [      
       [ 'log',                :log_file,             "log/#{Rails.env}.log" ],
       [ 'tmp',                :tmp_dir,              'tmp'                  ],
-      [ 'config/database',    :database_config_file, 'config/database.yml'  ],
-      [ 'config/environment', :environment_file,     'lib/wagn/environment' ]  
+      [ 'config/database',    :database_config_file, 'config/database.yml'  ]
     ]
+    
+    config.paths['config/environment'] = File.expand_path( '../environment.rb', __FILE__ )
     
     custom_paths.each do |path_key, wagn_conf_key, default_path|      
       config.paths[path_key] = if configured = Wagn::Conf[wagn_conf_key]

@@ -68,13 +68,14 @@ module Wagn
       end
     config.cache_store = cache_store, *cache_args
 
-    [
-      [ 'log',             :log_file,             "log/#{Rails.env}.log" ],
-      [ 'config/database', :database_config_file, 'config/database.yml'  ],
-      [ 'tmp',             :tmp_dir,              'tmp'                  ]
-      
-      ].each do |path_key, wagn_conf_key, default_path|
-      
+    custom_paths = [      
+      [ 'log',                :log_file,             "log/#{Rails.env}.log" ],
+      [ 'tmp',                :tmp_dir,              'tmp'                  ],
+      [ 'config/database',    :database_config_file, 'config/database.yml'  ],
+      [ 'config/environment', :environment_file,     'lib/wagn/environment' ]  
+    ]
+    
+    custom_paths.each do |path_key, wagn_conf_key, default_path|      
       config.paths[path_key] = if configured = Wagn::Conf[wagn_conf_key]
         File.join configured
       else

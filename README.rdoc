@@ -30,23 +30,25 @@ Platform-specific details at: http://www.wagn.org/wagn/installation_1_8+Platform
 
 Watch carefully for errors!
 
+
 ===2. create a new wagn application
 
-  wagn new mywagn
+  wagn new mysite
 
 
-===3. Configure
+===3. Set up database
 
 Edit the config/database.yml file as necessary.  The default configuration works if you have password-less root access to mysql.   More about database configuration at http://www.wagn.org/database_configuration.
 
+Then run
 
-===4. Seed your data
+  cd mysite
+  rake wagn:setup
+  
+..to create and seed the database
 
-  cd wagn
-  wagn seed
 
-
-===5. Start your server
+===4. Start your server
 
 To fire up the default, built-in WEBrick server, just run:
 

@@ -21,9 +21,8 @@ module Wagn
       if @config_reset_by_wagn #necessary because rails sets config on "def inherited" trigger
         @config
       else
-        @config_reset_by_wagn = true
-        gem_root = Pathname.new( File.dirname File.dirname(__FILE__) ).expand_path    
-        @config = Application::Configuration.new gem_root
+        @config_reset_by_wagn = true   
+        @config = Configuration.new Pathname.new(Wagn.gem_root).expand_path
       end
     end
     

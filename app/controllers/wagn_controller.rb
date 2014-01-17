@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class ApplicationController < ActionController::Base
+class WagnController < ActionController::Base
 
   include Wagn::AuthenticatedSystem
   include Wagn::Location

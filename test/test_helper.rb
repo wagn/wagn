@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 ENV["RAILS_ENV"] = "test"
-require File.expand_path('../../config/environment', __FILE__)
+require File.expand_path('../../lib/wagn/environment', __FILE__)
 require 'rails/test_help'
 require 'pathname'
 

@@ -1,0 +1,1 @@
+require File.expand_path( '../../lib/wagn/environment', __FILE__ )

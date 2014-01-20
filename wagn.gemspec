@@ -15,7 +15,9 @@ Gem::Specification.new do |s|
   s.license       = 'GPL'
 
   s.files         = `git ls-files`.split($/)
-  s.executables   = s.files.grep(%r{^bin/}) { |f| File.basename(f) }
+  
+  s.bindir = 'bin'
+  s.executables   = [ 'wagn' ]
   s.test_files    = s.files.grep(%r{^(test|spec|features)/})
   s.require_paths = ["lib"]
 

@@ -62,7 +62,7 @@ module Wagn
     cache_store = ( Wagn::Conf[:cache_store] || :file_store ).to_sym
     cache_args = case cache_store
       when :file_store
-        Wagn::Conf[:file_store_dir] || "#{Rails.root}/tmp/cache"
+        Wagn::Conf[:file_store_dir] || "#{Wagn.root}/tmp/cache"
       when :mem_cache_store, :dalli_store
         Wagn::Conf[:mem_cache_servers] || []
       end

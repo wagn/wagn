@@ -16,6 +16,7 @@ def name= newname
   end
   if @subcards
     @subcards.each do |subkey, subcard|
+      next if Symbol===subkey
       subcard.name = subkey.to_name.to_absolute @cardname
     end
   end

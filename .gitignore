@@ -1,10 +1,11 @@
 .idea/
+.jhw-cache
 .rvmrc
 .bundle
 config/*.yml
 config/wagn.rb
 coverage
-.jhw-cache
+files
 log/*
 pkg
 public/test

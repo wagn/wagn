@@ -2,7 +2,7 @@
 
 module Wagn
 
-  WAGN_ROOT = File.expand_path('')
+  WAGN_ROOT = File.expand_path('') # need more sophistication here!
   WAGN_GEM_ROOT = File.expand_path('../..', __FILE__)
 
   def self.root

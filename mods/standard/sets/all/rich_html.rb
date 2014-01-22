@@ -313,7 +313,7 @@ format :html do
   end
 
 
-  view :options do |args|
+  view :options, :tags=>:unknown_ok do |args|
     current_set = Card.fetch( params[:current_set] || card.related_sets[0][0] )
 
     wrap_frame :options, args do

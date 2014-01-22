@@ -20,7 +20,7 @@ module Card::Chunk
       result = case name
         when /^\#\#/ ; '' # invisible comment
         when /^\#/   ; "<!-- #{CGI.escapeHTML in_brackets} -->"
-        when /^\s*$/ ; '' # no name
+#        when /^\s*$/ ; '' # no name
         else
           @options = if @opt_lists
             @opt_lists.split('|').reverse.inject(nil) do |prev_level, level_options|

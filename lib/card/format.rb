@@ -376,7 +376,7 @@ class Card
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
       when opts[:inc_name]=='_main' && !ajax_call? && @depth==0    ; expand_main opts
       else
-        included_card = Card.fetch opts[:inc_name], :new=>new_inclusion_card_args(opts)        
+        included_card = Card.fetch opts[:inc_name], :new=>new_inclusion_card_args(opts)
         result = process_inclusion included_card, opts
         @char_count += result.length if @mode == :closed && result
         result
@@ -445,6 +445,7 @@ class Card
 
     def new_inclusion_card_args options
       args = { :name=>options[:inc_name], :type=>options[:type], :supercard=>card }
+      args.delete(:supercard) if options[:inc_name].strip.blank? # special case.  gets absolutized incorrectly. fix in smartname?
       if options[:inc_name] =~ /^_main\+/
         # FIXME this is a rather hacky (and untested) way to get @superleft to work on new cards named _main+whatever
         args[:name] = args[:name].gsub /^_main\+/, '+'

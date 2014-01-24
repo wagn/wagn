@@ -34,6 +34,8 @@ namespace :wagn do
   
   desc "install wagn configuration files"
   task :install do
+    puts "wagn:install is deprecated in favor of 'wagn new'"
+=begin    
     require 'erb'
     rails_root = File.expand_path('./') # must be run from rails root dir
     # not using Rails.root because this task is putting core files in place and
@@ -57,6 +59,7 @@ namespace :wagn do
     File.open File.join(config_dir, 'database.yml'), 'w' do |file|
       file.write ERB.new(dbfile).result(binding)
     end
+=end
   end
   
   desc "reset cache"
@@ -225,7 +228,7 @@ namespace :wagn do
       require 'active_record/fixtures'
 #      require 'time'
 
-      ActiveRecord::Fixtures.create_fixtures 'db/bootstrap', WAGN_BOOTSTRAP_TABLES
+      ActiveRecord::Fixtures.create_fixtures File.join( Wagn.gem_root, 'db/bootstrap'), WAGN_BOOTSTRAP_TABLES
 
     end
   end

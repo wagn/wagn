@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+# This command will automatically be run when you run "wagn" from the root of your application.
+
+require 'wagn/commands'

@@ -1,4 +1,6 @@
 # -*- encoding : utf-8 -*-
+require 'wagn'
+
 module Wagn
   module Version
     class << self
@@ -13,11 +15,11 @@ module Wagn
     
       def schema_stamp_path type
         suffix = type.to_s =~ /card/ ? '_cards' : ''
-        schema_stamp_dir + "version#{ suffix }.txt"  
+        File.join schema_stamp_dir, "/version#{ suffix }.txt"  
       end
     
       def schema_stamp_dir
-        Wagn::Application.config.paths['config/database'].first.sub /[^\/]*$/, ''
+        File.join Wagn.gem_root, 'config'
       end
       
     end

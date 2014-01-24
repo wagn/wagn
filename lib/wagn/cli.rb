@@ -12,7 +12,7 @@ Signal.trap("INT") { puts; exit(1) }
 #  ARGV.shift
 #  require 'wagn/commands/plugin_new'
 #else
-puts "ready to run command!!"
+puts "about to require wagn/commands/application"
 
-#  require 'wagn/commands/application'
+require 'wagn/commands/application'
 #end

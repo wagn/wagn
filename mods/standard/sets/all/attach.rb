@@ -1,7 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-require 'paperclip'
-
 def attach_array(rev_id=nil)
   c=if rev_id || self.new_card? || selected_revision_id==current_revision_id
       self.content

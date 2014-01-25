@@ -6,7 +6,7 @@ module Wagn
     class << self
       
       def release
-        @@version ||= File.read( File.join Rails.root, 'VERSION' ).strip
+        @@version ||= File.read( File.expand_path '../../../VERSION', __FILE__ ).strip
       end
     
       def schema type=nil

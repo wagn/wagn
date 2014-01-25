@@ -6,7 +6,7 @@ module Wagn
 
   module Loader
     MODS = begin
-      builtins = [ 'core', 'standard' ].map { |mod| "#{Rails.root}/mods/#{mod}" }
+      builtins = [ 'core', 'standard' ].map { |mod| "#{Wagn.gem_root}/mods/#{mod}" }
       addons = Wagn::Conf[:mod_dirs].split( /,\s*/ ).map do |dirname|
         if Dir.exists? dirname
           Dir.entries( dirname ).sort.map do |filename|

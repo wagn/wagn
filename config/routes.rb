@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 FORMATS = 'html|json|xml|rss|kml|css|txt|text|csv' unless defined? FORMATS #should be set by formats
 
-Wagn::Application.routes.draw do
+Rails.application.routes.draw do
 
   if !Rails.env.production? && Object.const_defined?( :JasmineRails )
     mount Object.const_get(:JasmineRails).const_get(:Engine) => "/specs"

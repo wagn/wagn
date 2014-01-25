@@ -8,6 +8,8 @@ require 'smart_name'
 require 'htmlentities'
 require 'uuid'
 require 'RMagick'
+require 'paperclip'
+
 # require 'xmlscan'
 # require 'rubyzip'
 require 'coderay'

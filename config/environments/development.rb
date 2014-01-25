@@ -55,4 +55,4 @@ Wagn::Application.configure do
 end
 
 
-Paperclip.options[:command_path] = "/opt/local/bin"
+#Paperclip.options[:command_path] = "/opt/local/bin"

@@ -1,8 +1,8 @@
 def set_database( db )
-  y = YAML.load_file("#{Wagn.root}/config/database.yml")
+  y = YAML.load_file("#{Rails.root}/config/database.yml")
   y["development"]["database"] = db if y["development"]
   y["production"]["database"] = db if y["production"]
-  File.open( "#{Wagn.root}/config/database.yml", 'w' ) do |out|
+  File.open( "#{Rails.root}/config/database.yml", 'w' ) do |out|
     YAML.dump( y, out )
   end
 end

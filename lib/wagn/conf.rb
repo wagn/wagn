@@ -4,7 +4,7 @@ require 'yaml'
 module Wagn
   class Conf
     class << self
-      WAGN_CONFIG_FILE = ENV['WAGN_CONFIG_FILE'] || "#{Wagn.root}/config/wagn.yml"
+      WAGN_CONFIG_FILE = ENV['WAGN_CONFIG_FILE'] || File.expand_path( "config/wagn.yml", __FILE__ )
       
       def [] key
         @@config[key.to_sym]

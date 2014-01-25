@@ -44,9 +44,16 @@ class WagnGenerator < Rails::Generators::AppBase
   end
   
   def config
-    directory 'config' #almost certainly want to improve this!
-  end
-  
+    empty_directory "config"
+
+    inside "config" do
+      template "application.rb"
+      template "environment.rb"
+      template "boot.rb"
+      template "database.yml"
+      template "wagn.yml"
+    end
+  end  
   def script
     directory "script" do |content|
       "#{shebang}\n" + content

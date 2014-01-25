@@ -11,10 +11,25 @@ development:
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this file to the same as development or production.
-test:
-  adapter: sqlite3
-  database: files/test.sqlite3
+#test:
+#  adapter: sqlite3
+#  database: files/test.sqlite3
+#
+#production:
+#  adapter: sqlite3
+#  database: files/production.sqlite3
 
 production:
-  adapter: sqlite3
-  database: files/production.sqlite3
+  encoding: utf8
+  database: dummy
+  adapter: mysql2
+  username: root
+  password: ''
+  host: localhost
+development:
+  encoding: utf8
+  database: dummy
+  adapter: mysql2
+  username: root
+  password: ''
+  host: localhost

@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 require File.expand_path('../boot', __FILE__)
-require 'rails/all'
 require 'wagn/all'
 
 if defined?(Bundler)
@@ -12,20 +11,7 @@ end
 
 
 module Wagn
-  class Application < Rails::Application
-    
-
-    def config
-      # this is all about setting config root to gem root.
-      
-      if @config_reset_by_wagn #necessary because rails sets config on "def inherited" trigger
-        @config
-      else
-        @config_reset_by_wagn = true   
-        @config = Configuration.new Pathname.new(Wagn.gem_root).expand_path
-      end
-    end
-    
+  class Application < Rails::Application    
     
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -62,38 +48,47 @@ module Wagn
     cache_store = ( Wagn::Conf[:cache_store] || :file_store ).to_sym
     cache_args = case cache_store
       when :file_store
-        Wagn::Conf[:file_store_dir] || "#{Wagn.root}/tmp/cache"
+        Wagn::Conf[:file_store_dir] || "#{Rails.root}/tmp/cache"
       when :mem_cache_store, :dalli_store
         Wagn::Conf[:mem_cache_servers] || []
       end
     config.cache_store = cache_store, *cache_args
 
-    custom_paths = [      
-      [ 'log',                :log_file,             "log/#{Rails.env}.log" ],
-      [ 'tmp',                :tmp_dir,              'tmp'                  ],
-      [ 'config/database',    :database_config_file, 'config/database.yml'  ]
-    ]
-    
-    config.paths['config/environment'] = File.expand_path( '../environment.rb', __FILE__ )
-    
-    custom_paths.each do |path_key, wagn_conf_key, default_path|      
-      config.paths[path_key] = if configured = Wagn::Conf[wagn_conf_key]
-        File.join configured
-      else
-        File.expand_path default_path
+
+    def paths
+      @paths ||= begin
+        paths = super
+        add_wagn_path paths, 'public'
+        add_wagn_path paths, "app",                 :eager_load => true, :glob => "*"
+        add_wagn_path paths, "app/assets",          :glob => "*"
+        add_wagn_path paths, "app/controllers",     :eager_load => true
+        add_wagn_path paths, "app/models",          :eager_load => true
+        add_wagn_path paths, "app/mailers",         :eager_load => true
+        add_wagn_path paths, "app/views"
+        add_wagn_path paths, "lib",                 :load_path => true
+        add_wagn_path paths, "lib/tasks",           :glob => "**/*.rake"
+        add_wagn_path paths, "config"
+        add_wagn_path paths, "config/environments", :glob => "#{Rails.env}.rb"
+        
+        add_wagn_path paths, "config/initializers", :glob => "**/*.rb"
+        add_wagn_path paths, "config/routes",       :with => "config/routes.rb"
+        add_wagn_path paths, "db"
+        add_wagn_path paths, "db/migrate"
+        add_wagn_path paths, "db/seeds",            :with => "db/seeds.rb"
+        paths
       end
     end
-
-
-    if Wagn::Conf[:smtp]
-      config.action_mailer.smtp_settings = Wagn::Conf[:smtp].symbolize_keys
+        
+    def add_wagn_path paths, path, options={}
+      wagn_path = File.join( wagn.gem_root, path )
+      with = options[:with] ? File.join( wagn.gem_root options[:with]) : wagn_path
+      paths[path] = Path.new(paths, wagn_path, with, options)
     end
 
     # Custom directories with classes and modules you want to be autoloadable.
-    config.autoload_paths += Dir["#{config.root}/lib/**/"]
-    config.autoload_paths += Dir["#{config.root}/mods/standard/lib/**/"]
+    config.autoload_paths += Dir["#{Wagn.gem_root}/lib/**/"]
+    config.autoload_paths += Dir["#{Wagn.gem_root}/mods/standard/lib/**/"]
     
   end
 end
 
-require 'paperclip' #not the right place for this!!

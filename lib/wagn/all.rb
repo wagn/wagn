@@ -1,3 +1,6 @@
+require 'rails/all'
+require 'wagn/application'
+
 require 'recaptcha'
 require 'airbrake'
 

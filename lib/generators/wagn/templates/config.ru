@@ -1,5 +1,4 @@
 # This file is used by Rack-based servers to start the application.
 
-require 'wagn/environment'
-
-run Wagn::Application
+require ::File.expand_path('../config/environment',  __FILE__)
+run <%= app_const %>

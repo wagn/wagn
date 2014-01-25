@@ -1,4 +1,5 @@
 source 'http://rubygems.org'
 
-gem 'wagn'
-gem 'sqlite3'
+gem 'wagn', :path=>'/opt/wagn'
+gem "mysql2", "~> 0.3"
+#gem 'sqlite3'

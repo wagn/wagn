@@ -5,22 +5,33 @@ module Wagn
   include Wagn::Exceptions
 
   module Loader
-    MODS = begin
-      builtins = [ 'core', 'standard' ].map { |mod| "#{Rails.root}/mods/#{mod}" }
-      addons = Wagn::Conf[:mod_dirs].split( /,\s*/ ).map do |dirname|
-        if Dir.exists? dirname
-          Dir.entries( dirname ).sort.map do |filename|
-            if filename !~ /^\./
-              "#{dirname}/#{filename}"
+    @@mod_dirs = nil
+
+    def self.mod_dirs *args
+      if @@mod_dirs.nil?
+        @@mod_dirs = [ 'core', *args ].map { |mod| "#{Rails.root}/mods/#{mod}" }
+        Wagn::Conf[:mod_dirs].split( /,\s*/ ).each do |dirname|
+          if Dir.exists? dirname
+            Dir.entries( dirname ).sort.each do |filename|
+              if filename !~ /^\./
+                @@mod_dirs << "#{dirname}/#{filename}"
+              end
             end
           end
         end
-      end.flatten.compact
-      builtins + addons
+      end
+      @@mod_dirs
     end
 
-    def load_set_patterns
-      MODS.each do |mod|
+    def load_mods *args
+      Wagn::Loader.mod_dirs *args
+      load_set_patterns @@mod_dirs
+      load_formats @@mod_dirs
+      load_sets @@mod_dirs
+    end
+
+    def load_set_patterns dirs
+      dirs.each do |mod|
         dirname = "#{mod}/set_patterns"
         if Dir.exists? dirname
           Dir.entries( dirname ).sort.each do |filename|
@@ -40,21 +51,21 @@ module Wagn
       end
     end
 
-    def load_formats
+    def load_formats dirs
       #cheating on load issues now by putting all inherited-from formats in core mod.
-      MODS.each do |mod|
+      dirs.each do |mod|
         load_dir File.expand_path( "#{mod}/formats/*.rb", __FILE__ )
       end
     end
 
-    def load_chunks      
-      MODS.each do |mod|
+    def load_chunks
+      Wagn::Loader.mod_dirs.each do |mod|
         load_dir File.expand_path( "#{mod}/chunks/*.rb", __FILE__ )
       end
     end
 
-    def load_sets
-      MODS.each do |mod|
+    def load_sets dirs
+      dirs.each do |mod|
         if File.directory? mod
           load_implicit_sets "#{mod}/sets"
         else
@@ -93,18 +104,17 @@ module Wagn
       end
     end
 
-
     def self.load_layouts
-      hash = {}
-      MODS.each do |mod|
+      mod_dirs.inject({}) do |hash, mod|
         dirname = "#{mod}/layouts"
-        next unless File.exists? dirname
-        Dir.foreach( dirname ) do |filename|
-          next if filename =~ /^\./
-          hash[ filename.gsub /\.html$/, '' ] = File.read( [dirname, filename] * '/' )
+        if File.exists? dirname
+          Dir.foreach( dirname ) do |filename|
+            next if filename =~ /^\./
+            hash[ filename.gsub /\.html$/, '' ] = File.read( [dirname, filename] * '/' )
+          end
         end
+        hash
       end
-      hash
     end
 
     private

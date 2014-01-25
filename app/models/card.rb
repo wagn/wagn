@@ -35,9 +35,7 @@ class Card < ActiveRecord::Base
   around_save :store
   after_save :extend
 
-  load_set_patterns
-  load_formats
-  load_sets
+  load_mods :standard
 
   tracks :content # we can phase this out and just use "dirty" handling once current content is stored in the cards table
 

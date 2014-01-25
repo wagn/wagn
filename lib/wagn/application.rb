@@ -21,6 +21,16 @@ module Wagn
       end      
     end
     
+    def config
+      @config ||= begin
+        config = super
+        config.autoload_paths += Dir["#{Wagn.gem_root}/app/**/"]
+        config.autoload_paths += Dir["#{Wagn.gem_root}/lib/**/"]
+        config.autoload_paths += Dir["#{Wagn.gem_root}/mods/standard/lib/**/"]
+        config
+      end
+    end
+    
 
     def paths
       @paths ||= begin

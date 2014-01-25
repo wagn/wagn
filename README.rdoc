@@ -36,19 +36,19 @@ Watch carefully for errors!
   wagn new mysite
 
 
-===3. Set up database
+===3. create / seed database
 
-Edit the config/database.yml file as necessary.  The default configuration works if you have password-less root access to mysql.   More about database configuration at http://www.wagn.org/database_configuration.
+Edit the config/database.yml file as necessary. More about database configuration at http://www.wagn.org/database_configuration.
 
 Then run
 
   cd mysite
-  rake wagn:setup
+  rake wagn:create
   
 ..to create and seed the database
 
 
-===4. Start your server
+===4. start your server
 
 To fire up the default, built-in WEBrick server, just run:
 

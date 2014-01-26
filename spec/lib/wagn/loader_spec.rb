@@ -1,8 +1,8 @@
-require 'wagn/spec_helper'
+require "wagn/spec_helper"
 
 describe Wagn::Loader do
-  let(:card) { Card.new(:name=>'simple') }
   let(:card_double) { proxy Card }
+  let(:pat_all_double) { proxy Card::SetPattern::AllPattern }
   let(:format_double) { proxy Card::Format }
   let(:html_format_double) { proxy Card::HtmlFormat }
   it "should auto-load Card class methods from lib/wagn and mods" do
@@ -12,9 +12,11 @@ describe Wagn::Loader do
     card_double.should_receive(:tracks).with(:any_args) # so Card still loads without core in failure testing
     card_double.method(:version).should be
     card_double.method(:method_key).should be
+    card_double.method(:type_card).should be
+    card_double.method(:file_path).should be
   end
   it "should define Card methods from modules" do
-    card.method(:set_modules).should be
+    pat_all_double.method(:set_modules).should be
   end
   it "should define Formatter methods from modules" do
     format_double.method(:render_core).should be

@@ -78,7 +78,7 @@ class WagnGenerator < Rails::Generators::AppBase
 
   def defined_app_const_base
     Rails.respond_to?(:application) && defined?(Rails::Application) &&
-      Rails.application.is_a?(Rails::Application) && Rails.application.class.name.sub(/::Application$/, "")
+      Wagn.application.is_a?(Rails::Application) && Wagn.application.class.name.sub(/::Application$/, "")
   end
 
   alias :defined_app_const_base? :defined_app_const_base

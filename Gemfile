@@ -3,6 +3,8 @@ source 'http://rubygems.org'
 
 gemspec
 
+gem 'wagn', :path=>File.expand_path( '../', __FILE__ )
+
 gem 'dalli', :group => :memcache
 
 group :mysql do

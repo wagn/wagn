@@ -35,7 +35,7 @@ namespace :db do
     task :load => :environment do
       require 'active_record/fixtures'
       ActiveRecord::Base.establish_connection(::Rails.env.to_sym)
-      (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : Dir.glob(File.join(Rails.root.to_s, 'test', 'fixtures', '*.{yml,csv}'))).each do |fixture_file|
+      (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : Dir.glob(File.join(Wagn.gem_root.to_s, 'test', 'fixtures', '*.{yml,csv}'))).each do |fixture_file|
         ActiveRecord::Fixtures.create_fixtures('test/fixtures', File.basename(fixture_file, '.*'))
       end
     end

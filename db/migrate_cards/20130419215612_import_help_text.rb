@@ -5,7 +5,7 @@ class ImportHelpText < ActiveRecord::Migration
   def up
     contentedly do
       # generated JSON from template db with this url:  /*help+*right+by_name.json?view=core&pretty=true
-      json = File.read( File.join Rails.root, 'db/migrate_cards/data/1.11_help_text.json' )
+      json = File.read( File.join Wagn.gem_root, 'db/migrate_cards/data/1.11_help_text.json' )
       data = JSON.parse json
       Rails.logger.info "parsed!"
       data.each do |atom|

@@ -77,7 +77,7 @@ describe Wagn::Cache do
 
   describe "with file store" do
     before do
-      cache_path = "#{Rails.root}/tmp/cache"
+      cache_path = "#{Wagn.root}/tmp/cache"
       @store = ActiveSupport::Cache::FileStore.new cache_path
 
       @store.clear

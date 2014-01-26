@@ -35,31 +35,6 @@ namespace :wagn do
   desc "install wagn configuration files"
   task :install do
     puts "wagn:install is deprecated in favor of 'wagn new'"
-=begin    
-    require 'erb'
-    rails_root = File.expand_path('./') # must be run from rails root dir
-    # not using Rails.root because this task is putting core files in place and
-    # therefore should not load rails environment
-
-    config_dir = File.join(rails_root, 'config')
-    sample_dir = File.join(rails_root, 'config/samples')
-
-    #File.expand_path('../boot', __FILE__)
-    @engine = ( ENV['ENGINE'] || 'mysql' ).to_sym
-    @mode = ( ENV['MODE'] || 'default' ).to_sym
-
-    cp File.join(sample_dir, "wagn.yml"), File.join(config_dir)
-
-    if @mode==:dev
-      cp File.join(sample_dir, "cucumber.yml"), File.join(config_dir)
-    end
-
-    dbfile = File.read File.join(sample_dir, 'database.yml.erb')
-
-    File.open File.join(config_dir, 'database.yml'), 'w' do |file|
-      file.write ERB.new(dbfile).result(binding)
-    end
-=end
   end
   
   desc "reset cache"
@@ -120,7 +95,7 @@ namespace :wagn do
 
   desc "copy over .htaccess files useful in production mode"
   task :copy_htaccess do
-    access_file = File.join(Rails.root, 'config/samples/asset_htaccess')
+    access_file = File.join(Wagn.gem_root, 'config/samples/asset_htaccess')
 
     %w{ files assets }.each do |dirname|
       dir = File.join Rails.public_path, dirname
@@ -186,7 +161,7 @@ namespace :wagn do
       
       WAGN_BOOTSTRAP_TABLES.each do |table|
         i = "000"
-        File.open("#{Rails.root}/db/bootstrap/#{table}.yml", 'w') do |file|
+        File.open("#{Wagn.gem_root}/db/bootstrap/#{table}.yml", 'w') do |file|
           data = ActiveRecord::Base.connection.select_all( "select * from #{table}" )
           file.write YAML::dump( data.inject({}) do |hash, record|
             record['trash'] = false if record.has_key? 'trash'
@@ -204,7 +179,7 @@ namespace :wagn do
 
     desc "copy files from template database to standard mod and update cards"
     task :mod_files => :environment do
-      template_files_dir = "#{Rails.root}/files"
+      template_files_dir = "#{Wagn.root}/files"
       standard_files_dir = "#{Wagn.gem_root}/mods/standard/files"
       
       #FIXME - this should delete old revisions

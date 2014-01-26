@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/conf'
 
-ENV['RAILS_ENV'] ||= Wagn::Conf[:rails_env] || 'production'
+ENV['RAILS_ENV'] ||= 'production'
 
 require 'rubygems'
 

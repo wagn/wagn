@@ -6,8 +6,7 @@ module Wagn
 
   module Loader
     MODS = begin
-      builtins = [ 'core', 'standard' ].map { |mod| "#{Wagn.gem_root}/mods/#{mod}" }
-      addons = Wagn::Conf[:mod_dirs].split( /,\s*/ ).map do |dirname|
+      Wagn.application.paths['mods'].uniq.map do |dirname|
         if Dir.exists? dirname
           Dir.entries( dirname ).sort.map do |filename|
             if filename !~ /^\./
@@ -16,7 +15,6 @@ module Wagn
           end
         end
       end.flatten.compact
-      builtins + addons
     end
 
     def load_set_patterns
@@ -43,13 +41,13 @@ module Wagn
     def load_formats
       #cheating on load issues now by putting all inherited-from formats in core mod.
       MODS.each do |mod|
-        load_dir File.expand_path( "#{mod}/formats/*.rb", __FILE__ )
+        load_dir "#{mod}/formats/*.rb"
       end
     end
 
     def load_chunks      
       MODS.each do |mod|
-        load_dir File.expand_path( "#{mod}/chunks/*.rb", __FILE__ )
+        load_dir "#{mod}/chunks/*.rb"
       end
     end
 

@@ -8,7 +8,7 @@ Spork.prefork do
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
-  Dir[ Wagn.gem_root.join "spec/support/**/*.rb" ].each { |f| require f }
+  Dir[ File.join(Wagn.gem_root, "spec/support/**/*.rb") ].each { |f| require f }
 
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
   JOE_USER_ID = Card['joe_user'].id

@@ -24,9 +24,16 @@ module Wagn
     def config
       @config ||= begin
         config = super
+        
         config.autoload_paths += Dir["#{Wagn.gem_root}/app/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/lib/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/mods/standard/lib/**/"]
+        
+        config.assets.enabled = true
+        config.assets.version = '1.0'
+        
+        config.filter_parameters += [:password]
+        
         config
       end
     end
@@ -52,10 +59,20 @@ module Wagn
         add_wagn_path paths, "db"
         add_wagn_path paths, "db/migrate"
         add_wagn_path paths, "db/seeds",            :with => "db/seeds.rb"
+        
+        add_wagn_path paths, 'mods'
+        paths['mods'] << 'mods' unless approot_is_gemroot?
+        
+        paths.add 'files'
+        
         paths
       end
     end
-        
+
+    def approot_is_gemroot?
+      Wagn.gem_root.to_s == config.root.to_s
+    end
+    
     def add_wagn_path paths, path, options={}
       wagn_path        = File.join( Wagn.gem_root, path )
       options[:with] &&= File.join( Wagn.gem_root, options[:with]) 

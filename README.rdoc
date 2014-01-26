@@ -2,9 +2,7 @@
 
 ==READ ME FIRST!
 
-This gem is brand new and is EXPERIMENTAL.  So experimental, in fact, that none of the installation instructions below actually works yet.
-
-If you're curious to play around, feel free.  But if you actually want to install a wagn, try the documentation at http://wagn.org/get_started
+This gem is brand new and is EXPERIMENTAL. If you're curious to play around, feel free! But if you want to host a production site, try the documentation at http://wagn.org/get_started
 
 ==Basics
 

@@ -6,12 +6,10 @@ module Wagn
 
   module Loader
     MODS = begin
-      (Wagn.paths['gem-mods'] + Wagn.paths['local-mods']).map do |dirname|
-        if Dir.exists? dirname
-          Dir.entries( dirname ).sort.map do |filename|
-            if filename !~ /^\./
-              "#{dirname}/#{filename}"
-            end
+      (Wagn.paths['gem-mods'].existent + Wagn.paths['local-mods'].existent).map do |dirname|
+        Dir.entries( dirname ).sort.map do |filename|
+          if filename !~ /^\./
+            "#{dirname}/#{filename}"
           end
         end
       end.flatten.compact

@@ -2,9 +2,8 @@
 
 module Wagn::MigrationHelper
   def self.card_migration_paths
-    rpaths = Wagn.paths
-    rpaths.add 'db/migrate_cards'
-    rpaths['db/migrate_cards'].to_a
+    Wagn.paths.add 'db/migrate_cards'
+    Wagn.paths['db/migrate_cards'].to_a
   end
   
   def self.schema_mode type

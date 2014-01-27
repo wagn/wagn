@@ -1,6 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/conf'
-
 ENV['RAILS_ENV'] ||= 'production'
 
 require 'rubygems'

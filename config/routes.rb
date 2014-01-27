@@ -8,11 +8,12 @@ Rails.application.routes.draw do
   end
   
   #most common
-  root                               :to => 'card#read', :via=>:get
-  match 'files/:id(-:size)-:rev.:format' => 'card#read', :via=>:get, :id => /[^-]+/, :explicit_file=>true
-  match 'recent(.:format)'               => 'card#read', :via=>:get, :id => '*recent' #obviate by making links use codename
+  root                      :to => 'card#read', :via=>:get
+  match "#{ Wagn.config.files_web_path }/:id(-:size)-:rev.:format" => 
+                                   'card#read', :via=>:get, :id => /[^-]+/, :explicit_file=>true
+  match 'recent(.:format)'      => 'card#read', :via=>:get, :id => '*recent' #obviate by making links use codename
 #  match ':view:(:id(.:format))'          => 'card#read', :via=>:get  
-  match '(/wagn)/:id(.:format)'          => 'card#read', :via=>:get  #/wagn is deprecated
+  match '(/wagn)/:id(.:format)' => 'card#read', :via=>:get  #/wagn is deprecated
   
   # RESTful
   root              :to => 'card#create', :via=>:post

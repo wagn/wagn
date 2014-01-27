@@ -437,7 +437,7 @@ format :html do
     else
       wrap_frame :denial, args do #ENGLISH below
         message = case
-        when task != :read && Wagn::Conf[:read_only]
+        when task != :read && Wagn.config.read_only
           "We are currently in read-only mode.  Please try again later."
         when Account.logged_in?
           "You need permission #{to_task}"

@@ -110,20 +110,27 @@ end
 
 
 module Paperclip::Interpolations
+  
+  extend Wagn::Location
 
   def local at, style_name
     if mod = at.instance.attach_mod
       # generalize this to work with any mod (needs design)
       "#{Wagn.gem_root}/mods/#{mod}/files"
     else
-      Wagn::Conf[:attachment_storage_dir]
+      Wagn.paths['files'].existent.first
     end
   end
       
-  def file_path( at, style_name )  Wagn::Conf[:attachment_web_dir]      end
-  def card_id(  at, style_name )  at.instance.id                       end
+  def file_path at, style_name
+    wagn_path Wagn.config.files_web_path
+  end
 
-  def basename(at, style_name)
+  def card_id at, style_name
+    at.instance.id
+  end
+
+  def basename at, style_name
     at.instance.name.to_name.url_key
   end
 

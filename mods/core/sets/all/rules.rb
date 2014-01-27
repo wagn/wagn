@@ -66,7 +66,7 @@ module ClassMethods
   def path_setting name #shouldn't this be in location helper?
     name ||= '/'
     return name if name =~ /^(http|mailto)/
-    Wagn::Conf[:root_path] + name
+    "#{Wagn.config.relative_url_root}#{name}"
   end
 
   def toggle val

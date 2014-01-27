@@ -4,16 +4,30 @@ WAGN_GEM_ROOT = File.expand_path('../..', __FILE__)
 
 module Wagn
 
-  def self.root
-    Rails.root
-  end
+  class << self
+    def root
+      Rails.root
+    end
   
-  def self.application
-    Rails.application
+    def application
+      Rails.application
+    end
+    
+    def config
+      application.config
+    end
+    
+    def paths
+      application.paths
+    end
+    
+    def gem_root
+      WAGN_GEM_ROOT
+    end
+    
+    def future_stamp
+      ## used in test data
+      @@future_stamp ||= Time.local 2020,1,1,0,0,0
+    end
   end
-      
-  def self.gem_root
-    WAGN_GEM_ROOT
-  end
-  
 end

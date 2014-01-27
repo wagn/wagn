@@ -67,7 +67,7 @@ namespace :wagn do
     desc "migrate cards"
     task :cards => :environment do
       Wagn::Cache.reset_global
-      Wagn::Conf[:migration] = true
+      ENV['WAGN_MIGRATION'] = true
       Card # this is needed in production mode to insure core db structures are loaded before schema_mode is set
     
       paths = ActiveRecord::Migrator.migrations_paths = Wagn::MigrationHelper.card_migration_paths
@@ -80,7 +80,7 @@ namespace :wagn do
   
     desc 'write the version to a file (not usually called directly)' #maybe we should move this to a method? 
     task :stamp, :suffix do |t, args|
-      Wagn::Conf[:migration] = true
+      ENV['WAGN_MIGRATION'] = true
       
       stamp_file = Wagn::Version.schema_stamp_path args[:suffix]
       Wagn::MigrationHelper.schema_mode args[:suffix ] do

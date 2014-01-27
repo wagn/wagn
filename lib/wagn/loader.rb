@@ -6,7 +6,7 @@ module Wagn
 
   module Loader
     MODS = begin
-      Wagn.application.paths['mods'].uniq.map do |dirname|
+      Wagn.paths['mods'].uniq.map do |dirname|
         if Dir.exists? dirname
           Dir.entries( dirname ).sort.map do |filename|
             if filename !~ /^\./

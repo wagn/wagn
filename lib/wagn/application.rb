@@ -33,6 +33,17 @@ module Wagn
         config.assets.version = '1.0'
         
         config.filter_parameters += [:password]
+        config.read_only = !!ENV['WAGN_READ_ONLY']
+        config.allow_inline_styles = false
+        config.files_web_path = 'files'
+        
+        config.recaptcha_public_key  = nil
+        config.recaptcha_private_key = nil
+        config.recaptcha_proxy       = nil
+        
+        config.email_defaults    = nil
+        config.override_host     = nil
+        config.override_protocol = nil
         
         config
       end

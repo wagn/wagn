@@ -51,7 +51,6 @@ class WagnGenerator < Rails::Generators::AppBase
       template "environment.rb"
       template "boot.rb"
       template "database.yml"
-      template "wagn.yml"
     end
   end  
   def script

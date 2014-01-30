@@ -62,7 +62,7 @@ module Wagn::Location
     if rel_path =~ /^\//
       rel_path
     else
-      Wagn::Conf[:root_path].to_s + '/' + rel_path
+      "#{ Wagn.config.relative_url_root }/#{ rel_path }"
     end
   end
 

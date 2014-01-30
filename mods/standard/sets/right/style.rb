@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 
+
 def self.delete_style_files
   Account.as_bot do
     Card.search( :right=>{:codename=>'style'}, :return=>'id' ).each do |style_file_id|
@@ -15,11 +16,11 @@ end
 # to CSS, SCSS, and Skin cards was not popular.
 
 def style_file
-  Wagn::Conf[:attachment_storage_dir] + "/tmp/#{id}/#{current_revision_id}.css"
+  Wagn.paths['files'].existent.first + "/tmp/#{id}/#{current_revision_id}.css"
 end
 
 def style_path
-  Wagn::Conf[:attachment_web_dir] + "/#{name.to_name.url_key}-#{current_revision_id}.css"
+  "#{ Wagn.config.files_web_path }/#{ name.to_name.url_key }-#{ current_revision_id }.css"
 end
 
 
@@ -34,7 +35,7 @@ format do
         f.write compressed_css
       end
       self.error_status = 302
-      card.style_path
+      wagn_path card.style_path
     else
       _final_not_found args
     end

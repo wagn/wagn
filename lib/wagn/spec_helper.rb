@@ -3,12 +3,12 @@ require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
 Spork.prefork do
-  require File.expand_path File.dirname(__FILE__) + "/../../config/environment"
+  require File.expand_path( '../../../config/environment', __FILE__ )
   require 'rspec/rails'
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
-  Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
+  Dir[ File.join(Wagn.gem_root, "spec/support/**/*.rb") ].each { |f| require f }
 
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
   JOE_USER_ID = Card['joe_user'].id

@@ -9,13 +9,10 @@ module Wagn
 
     def self.mod_dirs *args
       if @@mod_dirs.nil?
-        @@mod_dirs = [ 'core', *args ].map { |mod| "#{Rails.root}/mods/#{mod}" }
-        Wagn::Conf[:mod_dirs].split( /,\s*/ ).each do |dirname|
-          if Dir.exists? dirname
-            Dir.entries( dirname ).sort.each do |filename|
-              if filename !~ /^\./
-                @@mod_dirs << "#{dirname}/#{filename}"
-              end
+        (Wagn.paths['gem-mods'].existent + Wagn.paths['local-mods'].existent).each do |dirname|
+          Dir.entries( dirname ).sort.each do |filename|
+            if filename !~ /^\./
+              @@mod_dirs << "#{dirname}/#{filename}"
             end
           end
         end
@@ -25,13 +22,13 @@ module Wagn
 
     def load_mods *args
       Wagn::Loader.mod_dirs *args
-      load_set_patterns @@mod_dirs
-      load_formats @@mod_dirs
-      load_sets @@mod_dirs
+      load_set_patterns
+      load_formats
+      load_sets
     end
 
-    def load_set_patterns dirs
-      dirs.each do |mod|
+    def load_set_patterns
+      mod_dirs.each do |mod|
         dirname = "#{mod}/set_patterns"
         if Dir.exists? dirname
           Dir.entries( dirname ).sort.each do |filename|
@@ -51,21 +48,21 @@ module Wagn
       end
     end
 
-    def load_formats dirs
+    def load_formats
       #cheating on load issues now by putting all inherited-from formats in core mod.
-      dirs.each do |mod|
-        load_dir File.expand_path( "#{mod}/formats/*.rb", __FILE__ )
+      mod_dirs.each do |mod|
+        load_dir "#{mod}/formats/*.rb"
       end
     end
 
-    def load_chunks
+    def self.load_chunks
       Wagn::Loader.mod_dirs.each do |mod|
-        load_dir File.expand_path( "#{mod}/chunks/*.rb", __FILE__ )
+        load_dir "#{mod}/chunks/*.rb"
       end
     end
 
-    def load_sets dirs
-      dirs.each do |mod|
+    def load_sets
+      mod_dirs.each do |mod|
         if File.directory? mod
           load_implicit_sets "#{mod}/sets"
         else

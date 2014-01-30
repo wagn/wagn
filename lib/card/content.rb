@@ -124,13 +124,13 @@ class Card
       'blockquote' => ['cite']
     )
 
-    if Wagn::Conf[:allow_inline_styles]
+    if Wagn.config.allow_inline_styles
       ALLOWED_TAGS['table'] += %w[ cellpadding align border cellspacing ]
     end
 
     ALLOWED_TAGS.each_key {|k|
       ALLOWED_TAGS[k] << 'class'
-      ALLOWED_TAGS[k] << 'style' if Wagn::Conf[:allow_inline_styles]
+      ALLOWED_TAGS[k] << 'style' if Wagn.config.allow_inline_styles
       ALLOWED_TAGS[k].freeze
     }
     ALLOWED_TAGS.freeze

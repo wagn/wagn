@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class CardController < ApplicationController
+class CardController < WagnController
 
   before_filter :load_id, :only => [ :read ]
   before_filter :load_card

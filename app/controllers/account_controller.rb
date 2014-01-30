@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class AccountController < ApplicationController
+class AccountController < WagnController
 
   def signin
     @card = Card.new

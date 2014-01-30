@@ -16,7 +16,7 @@
     view :core, :type=>'script' do |args|
       command = process_content_object( card.content )
       begin
-        if Wagn::Conf[:enable_server_cards]
+        if Wagn.config.enable_server_cards
           Shellbox.new.run( command )
         else
           'sorry, server cards are not enabled' #ENGLISH

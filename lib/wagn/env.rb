@@ -1,4 +1,4 @@
-# Wagn::Env can differ for each request; Wagn::Conf should not
+# Wagn::Env can differ for each request; Wagn.config should not
 
 module Wagn::Env
   class << self
@@ -9,8 +9,8 @@ module Wagn::Env
         self[:controller] = c
         self[:params] = c.request.params
         
-        self[:host]       = Wagn::Conf[:host]     || c.request.env['HTTP_HOST']
-        self[:protocol]   = Wagn::Conf[:protocol] || c.request.protocol
+        self[:host]       = Wagn.config.override_host     || c.request.env['HTTP_HOST']
+        self[:protocol]   = Wagn.config.override_protocol || c.request.protocol
         
         #hacky - should be in module
         self[:recaptcha_on] = !Account.logged_in? && have_recaptcha_keys?
@@ -33,7 +33,7 @@ module Wagn::Env
     private
     
     def have_recaptcha_keys?
-      !!( Wagn::Conf[:recaptcha_public_key] && Wagn::Conf[:recaptcha_private_key] )
+      !!( Wagn.config.recaptcha_public_key && Wagn.config.recaptcha_private_key )
     end    
   end  
 end

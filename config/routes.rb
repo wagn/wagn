@@ -1,18 +1,19 @@
 # -*- encoding : utf-8 -*-
 FORMATS = 'html|json|xml|rss|kml|css|txt|text|csv' unless defined? FORMATS #should be set by formats
 
-Wagn::Application.routes.draw do
+Rails.application.routes.draw do
 
   if !Rails.env.production? && Object.const_defined?( :JasmineRails )
     mount Object.const_get(:JasmineRails).const_get(:Engine) => "/specs"
   end
   
   #most common
-  root                               :to => 'card#read', :via=>:get
-  match 'files/:id(-:size)-:rev.:format' => 'card#read', :via=>:get, :id => /[^-]+/, :explicit_file=>true
-  match 'recent(.:format)'               => 'card#read', :via=>:get, :id => '*recent' #obviate by making links use codename
+  root                      :to => 'card#read', :via=>:get
+  match "#{ Wagn.config.files_web_path }/:id(-:size)-:rev.:format" => 
+                                   'card#read', :via=>:get, :id => /[^-]+/, :explicit_file=>true
+  match 'recent(.:format)'      => 'card#read', :via=>:get, :id => '*recent' #obviate by making links use codename
 #  match ':view:(:id(.:format))'          => 'card#read', :via=>:get  
-  match '(/wagn)/:id(.:format)'          => 'card#read', :via=>:get  #/wagn is deprecated
+  match '(/wagn)/:id(.:format)' => 'card#read', :via=>:get  #/wagn is deprecated
   
   # RESTful
   root              :to => 'card#create', :via=>:post

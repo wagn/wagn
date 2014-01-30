@@ -132,7 +132,7 @@ def item_cards args={}
     item_names(args).map do |name|
       new_args = args[:type] ? { :type=>args[:type] } : {}
       Card.fetch name, :new=>new_args
-    end.compact
+    end.compact # compact?  can't be nil, right?
   end
 end
 

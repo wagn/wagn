@@ -86,11 +86,11 @@ First check the Wagn version of your existing site.
 
 ====Version 1.10 or newer
 
-1. Create a new Wagn using steps 1 and 2 from the installation section above.
+1. Create a new Wagn app using steps 1 and 2 from the installation section above.
 2. copy config/database.yml from the old site to the new one.
 3. copy the old local/files contents to the new files directory
 4. if you have edited wagn.yml in your old site, make the corresponding changes to the new config/application.rb file.
-5. Follow the standard upgrade proce
+5. Follow the standard upgrade procedure above
 
 ====Older than Version 1.10
 

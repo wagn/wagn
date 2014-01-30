@@ -5,31 +5,30 @@ module Wagn
   include Wagn::Exceptions
 
   module Loader
-    @@mod_dirs = nil
-
-    def self.mod_dirs *args
-      if @@mod_dirs.nil?
-        @@mod_dirs = []
-        (Wagn.paths['gem-mods'].existent + Wagn.paths['local-mods'].existent).each do |dirname|
-          Dir.entries( dirname ).sort.each do |filename|
-            if filename !~ /^\./
-              @@mod_dirs << "#{dirname}/#{filename}"
-            end
+    
+    def self.mod_dirs
+      @@mod_dirs ||= begin
+        (Wagn.paths['gem-mods'].existent + Wagn.paths['local-mods'].existent).map do |dirname|
+          Dir.entries( dirname ).sort.map do |filename|
+            "#{dirname}/#{filename}" if filename !~ /^\./
           end
-        end
+        end.flatten.compact
       end
-      @@mod_dirs
+    end
+    
+    def mod_dirs
+      Loader.mod_dirs
     end
 
-    def load_mods *args
-      Wagn::Loader.mod_dirs *args
+    def load_mods
+      mod_dirs
       load_set_patterns
       load_formats
       load_sets
     end
 
     def load_set_patterns
-      Wagn::Loader.mod_dirs.each do |mod|
+      mod_dirs.each do |mod|
         dirname = "#{mod}/set_patterns"
         if Dir.exists? dirname
           Dir.entries( dirname ).sort.each do |filename|
@@ -51,19 +50,19 @@ module Wagn
 
     def load_formats
       #cheating on load issues now by putting all inherited-from formats in core mod.
-      Wagn::Loader.mod_dirs.each do |mod|
+      mod_dirs.each do |mod|
         load_dir "#{mod}/formats/*.rb"
       end
     end
 
     def load_chunks
-      Wagn::Loader.mod_dirs.each do |mod|
+      mod_dirs.each do |mod|
         load_dir "#{mod}/chunks/*.rb"
       end
     end
 
     def load_sets
-      Wagn::Loader.mod_dirs.each do |mod|
+      mod_dirs.each do |mod|
         if File.directory? mod
           load_implicit_sets "#{mod}/sets"
         else
@@ -103,7 +102,7 @@ module Wagn
     end
 
     def self.load_layouts
-      Wagn::Loader.mod_dirs.inject({}) do |hash, mod|
+      mod_dirs.inject({}) do |hash, mod|
         dirname = "#{mod}/layouts"
         if File.exists? dirname
           Dir.foreach( dirname ) do |filename|

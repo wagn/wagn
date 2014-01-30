@@ -35,7 +35,7 @@ class Card < ActiveRecord::Base
   around_save :store
   after_save :extend
 
-  load_mods :standard
+  load_mods
 
   tracks :content # we can phase this out and just use "dirty" handling once current content is stored in the cards table
 

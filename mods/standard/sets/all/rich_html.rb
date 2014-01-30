@@ -106,7 +106,7 @@ format :html do
       @menu_vars.merge!({
         :edit      => card.ok?(:update),
         :account   => card.account && card.update_account_ok?,
-        :watch     => Account.logged_in? && render_watch(args.merge :no_wrap_comment=>true),
+        :watch     => Account.logged_in? && render_watch,
         :creator   => card.creator.name,
         :updater   => card.updater.name,
         :delete    => card.ok?(:delete) && link_to( 'delete', path(:action=>:delete),

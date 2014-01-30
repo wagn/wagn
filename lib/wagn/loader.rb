@@ -7,7 +7,7 @@ module Wagn
   module Loader
     @@mod_dirs = nil
 
-    def self.mod_dirs *args
+    def self.mod_dirs
       if @@mod_dirs.nil?
         @@mod_dirs = []
         (Wagn.paths['gem-mods'].existent + Wagn.paths['local-mods'].existent).each do |dirname|

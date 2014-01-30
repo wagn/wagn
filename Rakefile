@@ -4,4 +4,4 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-Wagn::Application.load_tasks
+WagnTest::Application.load_tasks

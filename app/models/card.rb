@@ -24,7 +24,7 @@ class Card < ActiveRecord::Base
 
   attr_writer :selected_revision_id #writer because read method is in mod (and does not override upon load)
   attr_accessor :action,
-    :cards, :supercard,                                  # rename to subcards?
+    :cards, :supercard,                          # rename to subcards?
     :comment, :comment_author, :account_args,    # obviated soon
     :update_referencers                          # wrong mechanism for this
 
@@ -35,9 +35,7 @@ class Card < ActiveRecord::Base
   around_save :store
   after_save :extend
 
-  load_set_patterns
-  load_formats
-  load_sets
+  load_mods
 
   tracks :content # we can phase this out and just use "dirty" handling once current content is stored in the cards table
 

@@ -143,7 +143,7 @@ class Card::HtmlFormat < Card::Format
 
 
   def edit_slot args={}
-    if card.structure
+    if args[:structure] || card.structure
       _render_raw(args).scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc|
         process_content( inc ).strip
       end.join

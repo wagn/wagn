@@ -240,10 +240,15 @@ describe Card::Content do
     end
   end
   
+  UNTAGGED_CASES = [ ' [grrew][/wiki/grrew]ss ', ' {{this is a test}}, {{this|view|is:too}} and',
+    ' so is http://foo.bar.come//', ' and foo="my attr, not int a tag" <not a=tag ', ' p class"foobar"> and more' ]
+
   context "class" do
     describe '#clean!' do
       it 'should not alter untagged content' do
-        assert_equal ' [grrew][/wiki/grrew]ss ',Card::Content.clean!(' [grrew][/wiki/grrew]ss ')
+        UNTAGGED_CASES.each do |test_case|
+          assert_equal test_case,Card::Content.clean!(test_case)
+        end
       end
     
       it 'should strip disallowed html class attributes' do
@@ -251,16 +256,21 @@ describe Card::Content do
         assert_equal '<span>foo</span>', Card::Content.clean!('<span class="banana">foo</span>')
       end
 
-      it 'should not stript permitted_classes' do
+      it 'should not strip permitted_classes' do
         assert_equal '<span class="w-spotlight">foo</span>', Card::Content.clean!('<span class="w-spotlight">foo</span>')
-        assert_equal '<p class="w-highlight">foo</p>', Card::Content.clean!('<p class="w-highlight">foo</p>')
+        assert_equal '<p class="w-highlight w-ok">foo</p>', Card::Content.clean!('<p class="w-highlight w-ok">foo</p>')
       end
 
+      it 'should strip permitted_classes but not permitted ones when both are present' do
+        assert_equal "<span class='w-spotlight w-ok'>foo</span>", Card::Content.clean!("<span class='w-spotlight banana w-ok'>foo</span>")
+        assert_equal '<p class="w-highlight">foo</p>', Card::Content.clean!('<p class="w-highlight bad-at end">foo</p>')
+        assert_equal '<p class="w-highlight">foo</p>', Card::Content.clean!('<p class="bad-class w-highlight">foo</p>')
+      end
 
       it 'should allow permitted attributes' do
         assert_equal '<img src="foo">',   Card::Content.clean!('<img src="foo">')
-        assert_equal '<img alt="foo">',   Card::Content.clean!('<img alt="foo">')
-        assert_equal '<img title="foo">', Card::Content.clean!('<img title="foo">')
+        assert_equal "<img alt='foo'>",   Card::Content.clean!("<img alt='foo'>")
+        assert_equal '<img title="foo">', Card::Content.clean!('<img title=foo>')
         assert_equal '<a href="foo">',    Card::Content.clean!('<a href="foo">')
         assert_equal '<code lang="foo">', Card::Content.clean!('<code lang="foo">')
         assert_equal '<blockquote cite="foo">', Card::Content.clean!('<blockquote cite="foo">')

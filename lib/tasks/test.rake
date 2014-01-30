@@ -1,8 +1,8 @@
 def set_database( db )
-  y = YAML.load_file("#{Rails.root.to_s}/config/database.yml")
+  y = YAML.load_file("#{Wagn.root}/config/database.yml")
   y["development"]["database"] = db if y["development"]
   y["production"]["database"] = db if y["production"]
-  File.open( "#{Rails.root.to_s}/config/database.yml", 'w' ) do |out|
+  File.open( "#{Wagn.root}/config/database.yml", 'w' ) do |out|
     YAML.dump( y, out )
   end
 end
@@ -70,7 +70,7 @@ namespace :test do
     ActiveRecord::Base.establish_connection
     (ActiveRecord::Base.connection.tables - skip_tables).each do |table_name|
       i = "000"
-      File.open("#{Rails.root.to_s}/test/fixtures/#{table_name}.yml", 'w') do |file|
+      File.open("#{Wagn.gem_root}/test/fixtures/#{table_name}.yml", 'w') do |file|
         data = ActiveRecord::Base.connection.select_all(sql % table_name)
         file.write data.inject({}) { |hash, record|
 

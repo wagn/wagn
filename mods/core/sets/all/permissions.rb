@@ -79,7 +79,7 @@ end
 
 def permitted? action
 
-  if !Wagn::Conf[:read_only]
+  if !Wagn.config.read_only
     return true if action != :comment and Account.always_ok?
 
     permitted_ids = who_can action
@@ -94,7 +94,7 @@ def permitted? action
 end
 
 def permit action, verb=nil
-  if Wagn::Conf[:read_only] # not called by ok_to_read
+  if Wagn.config.read_only # not called by ok_to_read
     deny_because "Currently in read-only mode"
   end
   

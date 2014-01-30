@@ -3,7 +3,7 @@ require 'wagn/spec_helper'
 
 describe "Card" do
   before do
-    Timecop.travel(Wagn::Future::STAMP)  # make sure we're ahead of all the test data
+    Timecop.travel(Wagn.future_stamp)  # make sure we're ahead of all the test data
     @just_s = [Card["Sara"].id]
     @s_and_j= [Card["Sara"].id, Card["John"].id].sort
   end
@@ -34,7 +34,7 @@ end
 describe "On Card Changes" do
   before do
     Account.current_id = Card['john'].id
-    Timecop.travel(Wagn::Future::STAMP)  # make sure we're ahead of all the test data
+    Timecop.travel(Wagn.future_stamp)  # make sure we're ahead of all the test data
   end
 
   it "sends notifications of edits" do
@@ -69,7 +69,7 @@ end
 
 describe "Trunk watcher notificatione" do
   before do
-    Timecop.travel(Wagn::Future::STAMP)  # make sure we're ahead of all the test data
+    Timecop.travel(Wagn.future_stamp)  # make sure we're ahead of all the test data
 
     Card.create :type=>'Book', :name=>'Ulysses'
     (@ulyss =Card['Ulysses']).should be

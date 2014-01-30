@@ -19,6 +19,7 @@ Feature: Watch interface
     And In the main card menu I click "follow"
     Then In the main card menu I should see "unfollow"
     # assumes focus still on that link.  otherwise "following"
+    # selenium behavior not totally consistent here.
     And the card Home+*watchers should contain "Joe User"
 
   Scenario: Unwatching a Card

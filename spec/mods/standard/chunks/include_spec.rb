@@ -18,9 +18,9 @@ describe Card::Chunk::Include, "Inclusion" do
       render_content("{{# -->}}").should == '<!-- # --&gt; -->'
     end
     
-    it "should ignore empty inclusions" do
-      render_content('{{}}').should == ''
-      render_content('{{ }}').should == ''
+    it "should handle empty inclusions" do
+      instance = @class.new( @class.full_match( '{{ }}' ) , nil )
+      instance.name.should == ''
     end
     
     it "should handle no pipes" do

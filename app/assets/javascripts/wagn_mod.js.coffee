@@ -52,7 +52,7 @@ $.extend wagn,
       mode: 'exact'
       elements: el_id
       #CSS could be made optional, but it may involve migrating old legacy *tinyMCE settings to get rid of stale stuff.
-      content_css: wagn.rootPath + wagn.cssPath
+      content_css: wagn.cssPath
       entity_encoding: 'raw'
     }
     $.extend conf, user_conf, hard_conf
@@ -271,20 +271,6 @@ $(window).ready ->
 #  $('body').on 'click', '.rule-cancel-button', ->
 #    $(this).closest('tr').find('.close-rule-link').click()
 
-
-  # etherpad mod
-  $('body').on 'click', '.etherpad-submit-button', ->
-    wagn.padform = $(this).closest('form')
-
-    padsrc = $(wagn.padform).find('iframe')[0].src
-    if (qindex = padsrc.indexOf('?')) != -1
-      padsrc = padsrc.slice(0,qindex)
-
-    # perform an ajax call on contentsUrl and write it to the parent
-    $.get padsrc + '/export/html', (data) ->
-       $(wagn.padform).find('.etherpad-textarea')[0].value = data
-       $(wagn.padform)[0].submit()
-    false
 
   #wagn_org mod (for now)
   $('body').on 'click', '.shade-view h1', ->

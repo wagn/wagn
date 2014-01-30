@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class ApplicationController < ActionController::Base
+class WagnController < ActionController::Base
 
   include Wagn::AuthenticatedSystem
   include Wagn::Location
@@ -109,7 +109,7 @@ class ApplicationController < ActionController::Base
 
         if ActiveRecord::RecordInvalid === exception
           :errors
-        elsif Wagn::Conf[:migration] or Rails.logger.level == 0 # could also just check non-production mode...
+        elsif ENV['WAGN_MIGRATION'] or Rails.logger.level == 0 # could also just check non-production mode...
           raise exception
         else
           :server_error

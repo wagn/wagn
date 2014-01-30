@@ -3,12 +3,12 @@ format :html do
 
   view :raw do |args|
     #ENGLISH
-    prefix = Wagn::Conf[:root_path] + '/account'
+    prefix = "#{ Wagn.config.relative_url_root }/account"
     %{<span id="logging">#{
       if Account.logged_in?
         ucard = Account.current
         %{
-          #{ link_to ucard.name, "#{Wagn::Conf[:root_path]}/#{ucard.cardname.url_key}", :id=>'my-card-link' }
+          #{ link_to ucard.name, "#{ Wagn.config.relative_url_root }/#{ucard.cardname.url_key}", :id=>'my-card-link' }
           #{
             if Account.create_ok?
               link_to 'Invite a Friend', "#{prefix}/invite", :id=>'invite-a-friend-link'

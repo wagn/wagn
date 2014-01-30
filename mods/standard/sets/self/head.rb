@@ -59,7 +59,7 @@ format :html do
       style_cardname = manual_style || (style_rule && style_rule.name)
       @css_path = page_path style_cardname, path_args
     elsif style_rule
-      @css_path = style_rule.style_path
+      @css_path = wagn_path style_rule.style_path
     end 
 
     if @css_path
@@ -69,10 +69,10 @@ format :html do
   
   def head_javascript args
     varvals = [
-      "window.wagn={rootPath:'#{ Wagn::Conf[:root_path] }'}",
+      "window.wagn={rootPath:'#{ Wagn.config.relative_url_root }'}",
       "window.tinyMCEPreInit={base:\"#{wagn_path 'assets/tinymce'}\",query:'3.5.8',suffix:''}" # tinyMCE doesn't load on non-root wagns w/o preinit line
     ]
-    Wagn::Env[:recaptcha_on]                        and varvals << "wagn.recaptchaKey='#{Wagn::Conf[:recaptcha_public_key]}'"
+    Wagn::Env[:recaptcha_on]                        and varvals << "wagn.recaptchaKey='#{Wagn.config.recaptcha_public_key}'"
     c=Card[:double_click] and !Card.toggle c.content and varvals << 'wagn.noDoubleClick=true'
     @css_path                                        and varvals << "wagn.cssPath='#{@css_path}'"
     

@@ -1,6 +1,10 @@
 =Wagn: how pioneers roll
 
-== Basics
+==READ ME FIRST!
+
+This gem is brand new and is EXPERIMENTAL. If you're curious to play around, feel free! But if you want to host a production site, try the documentation at http://wagn.org/get_started
+
+==Basics
 
 Wagn is an open web platform for building coherent web systems.
 
@@ -11,7 +15,6 @@ Using simple wiki-inspired building blocks called cards, "Wagneers" construct si
 Ruby[http://www.ruby-lang.org/en/]:: version 1.8.7 or higher
 Bundler[http://gembundler.com/]:: version 1.0 or higher
 ImageMagick[http://www.imagemagick.org/]::
-git[http://git-scm.com/]::
 A database engine:: Either MySQL[http://www.mysql.com/] or PostgreSQL[http://www.postgresql.org/]
 
 Platform-specific details at: http://www.wagn.org/wagn/installation_1_8+Platform_Notes
@@ -19,42 +22,35 @@ Platform-specific details at: http://www.wagn.org/wagn/installation_1_8+Platform
  
 =Installation
 
-===1. Get the source
+===1. install the gem
 
- git clone git://github.com/wagn/wagn.git
- cd wagn # remaining commands should be executed from this directory
+ gem install wagn
 
-
-===2. Get libraries (ruby gems)
-
- bundle install --without postgres:memcache:test:debug:development:assets:profile
-
-The above is for a mysql installation.  If you want to use postgres, switch "postgres" to "mysql" on the without list.
-
-Watch carefully for errors!  You may need to run as a admin user (using sudo, for example).  For more info see using bundler with Wagn.
+Watch carefully for errors!
 
 
-===3. Configure
-First, install needed config files with:
+===2. create a new wagn application
 
- rake wagn:install # production-only MySQL setup
- 
-For PostgreSQL setup, use `env ENGINE=postgres rake wagn:install` 
-For developer setup, use `env MODE=dev rake wagn:install` 
-
-Then, edit the config/database.yml file as necessary.  The default configuration works if you have password-less root access to mysql.   More about database configuration at http://www.wagn.org/database_configuration.
+  wagn new mysite
 
 
-===4. Seed your data
+===3. create / seed database
 
- rake wagn:create
+Edit the config/database.yml file as necessary. More about database configuration at http://www.wagn.org/database_configuration.
+
+Then run
+
+  cd mysite
+  rake wagn:create
+  
+..to create and seed the database
 
 
-===5. Start your server
+===4. start your server
 
 To fire up the default, built-in WEBrick server, just run:
 
- env STATIC_ASSETS=true rails server
+  wagn server
  
 ...and point your browser to http://localhost:3000 (unless otherwise configured).
 

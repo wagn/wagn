@@ -1,27 +1,11 @@
 source 'http://rubygems.org'
 #source "http://gems.github.com"
 
-# DEFAULT
-gem 'smartname',    '0.2.3' #, :path=>'~/dev/smartname/main'
+gemspec
 
-gem 'rails',        '~> 3.2.14'
-gem 'htmlentities', '~> 4.3'
-gem 'uuid',         '~> 2.3'
-gem 'paperclip',    '~> 2.8'
-gem 'rmagick',      '~> 2.13'
-gem "recaptcha",    "~> 0.3"
+gem 'wagn', :path=>File.expand_path( '../', __FILE__ )
 
-gem 'xmlscan',      '~> 0.3'
-# the following two could be safely excluded on a local install (but are not known to cause problems)
-
-gem "rubyzip",      "~> 0.9" # only required in module.  should be separated out.
-gem "airbrake",     "~> 3.1"
-gem "coderay",      "~> 1.0"
-gem 'sass',         '~> 3.2'
-
-# DATABASE
-
-# need at least one of the following
+gem 'dalli', :group => :memcache
 
 group :mysql do
   gem "mysql2", "~> 0.3"
@@ -33,10 +17,6 @@ group :postgres do
   # gem 'postgres', '~>0.7.9.2008.01.28'
 end
 #gem 'sqlite3-ruby', :require => 'sqlite3', :group=>'sqlite'
-
-
-gem 'dalli', :group => :memcache
-
 
 # These should only be needed if you're developing new JS / CSS.  It's all pre-compiled for production
 group :assets do
@@ -61,16 +41,16 @@ group :profile do
 end
 
 group :test, :development do
-  gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
   gem 'rails-dev-tweaks', '~> 0.6'             # dramatic speeds up asset loading, among other tweaks
-
+  gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
 #  gem 'jasmine-rails'
 end
 
 group :test do
   gem 'cucumber-rails', '~> 1.3', :require=>false # feature-driven-development suite
-  gem 'capybara', '~> 1.1'                     # note, selectors were breaking when we used 2.0.1
-  gem 'capybara-webkit'
+  gem 'capybara', '~> 2.2.1'                     # note, selectors were breaking when we used 2.0.1
+  gem 'selenium-webdriver', '~> 2.39'
+#  gem 'capybara-webkit'
   gem 'launchy'                                # lets cucumber launch browser windows
 
   gem 'timecop', '=0.3.5'                      # not clear on use/need.  referred to in shared_data.rb 
@@ -92,7 +72,6 @@ group :test do
 end
 
 group :debug do
-  gem 'rdoc'
   case RUBY_VERSION
   when /^1\.9\.3-p0/
     gem 'linecache19', '~>0.5.13'
@@ -105,11 +84,4 @@ group :debug do
 end
 
 
-# ~~~~~~~ #
-# HOSTING #
-# ~~~~~~~ #
-
-#group :hosting do
-#  gem 'newrelic_rpm', '>=2.14.1'
-#end
 

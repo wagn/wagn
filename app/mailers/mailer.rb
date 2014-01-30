@@ -2,7 +2,7 @@
 require 'open-uri'
 
 class Mailer < ActionMailer::Base
-  @@defaults = Wagn::Conf[:email_defaults] || {}
+  @@defaults = Wagn.config.email_defaults || {}
   @@defaults.symbolize_keys!
   @@defaults[:return_path] ||= @@defaults[:from] if @@defaults[:from]
   @@defaults[:charset] ||= 'utf-8'
@@ -90,7 +90,7 @@ class Mailer < ActionMailer::Base
 
   def mail_from args, from
     #puts "unprocessed mail args: #{args}"
-    unless Wagn::Conf[:migration]
+    unless ENV['WAGN_MIGRATION']
       from_name, from_email = (from =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, from]
       if default_from=@@defaults[:from]
         args[:from] = !from_email ? default_from : "#{from_name || from_email} <#{default_from}>"

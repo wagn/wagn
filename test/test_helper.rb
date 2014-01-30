@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 ENV["RAILS_ENV"] = "test"
-require File.expand_path('../../config/environment', __FILE__)
+require File.expand_path('../../lib/wagn/environment', __FILE__)
 require 'rails/test_help'
 require 'pathname'
 
@@ -86,7 +86,8 @@ unless defined? TEST_ROOT
         if args[:cardtypes]==:all
           # FIXME: need a better data source for this?
           #args[:cardtypes] = YAML.load_file('db/bootstrap/card_codenames.yml').
-          args[:cardtypes] = YAML.load_file('db/bootstrap/cards.yml').find_all do |p|
+          bootstrap_file = File.join( Wagn.gem_root, 'db/bootstrap/cards.yml')
+          args[:cardtypes] = YAML.load_file(bootstrap_file).find_all do |p|
             !%w{set setting}.member?( p[1]['codename'] ) and
               card=Card[ p[1]['name'] ] and card.type_id == Card::CardtypeID
           end.collect { |k,v| v['codename'] }

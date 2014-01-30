@@ -4,7 +4,7 @@ class UpdateStylesheets < ActiveRecord::Migration
   include Wagn::MigrationHelper
   def up
     contentedly do
-      dir = "#{Rails.root}/db/migrate_cards/data/1.12_stylesheets"
+      dir = "#{Wagn.gem_root}/db/migrate_cards/data/1.12_stylesheets"
       %w{ common traditional }.each do |sheetname|
         card = Card["style: #{sheetname}"]
         if card && card.pristine?

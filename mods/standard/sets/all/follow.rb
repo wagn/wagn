@@ -38,7 +38,7 @@ end
 
 event :notify_followers, :after=>:extend do
   begin
-    return false if Card.record_timestamps==false || Wagn::Conf[:migration]
+    return false if Card.record_timestamps==false || ENV['WAGN_MIGRATION']
     # userstamps and timestamps are turned off in cases like updating read_rules that are automated and
     # generally not of enough interest to warrant notification
   

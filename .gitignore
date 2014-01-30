@@ -1,10 +1,12 @@
 .idea/
+.jhw-cache
 .rvmrc
 .bundle
+Gemfile.lock
 config/*.yml
 config/wagn.rb
 coverage
-.jhw-cache
+files
 log/*
 pkg
 public/test
@@ -15,6 +17,7 @@ local*
 script/local
 script/performance/*.session
 tmp/*
+wagn*gem
 *.project
 *.sqlite3
 *.DS_Store

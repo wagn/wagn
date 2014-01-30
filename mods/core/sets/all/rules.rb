@@ -45,13 +45,9 @@ def related_sets
   # refers to sets that users may configure from the current card - NOT to sets to which the current card belongs
 
   sets = []
-  if known?
-    sets << ["#{name}+*type",  Card::SetPattern::TypePattern.label( name) ] if type_id==Card::CardtypeID
-    sets << ["#{name}+*self",  Card::SetPattern::SelfPattern.label( name) ] 
-    sets << ["#{name}+*right", Card::SetPattern::RightPattern.label(name) ] if cardname.simple?
-  else
-    sets << ["#{type_name}+*type",  Card::SetPattern::TypePattern.label( type_name) ]
-  end
+  sets << ["#{name}+*type",  Card::SetPattern::TypePattern.label( name) ] if known? && type_id==Card::CardtypeID
+  sets << ["#{name}+*self",  Card::SetPattern::SelfPattern.label( name) ] 
+  sets << ["#{name}+*right", Card::SetPattern::RightPattern.label(name) ] if known? && cardname.simple?
     
 #      Card.search(:type=>'Set',:left=>{:right=>name},:right=>'*type plus right',:return=>'name').each do |set_name|
 #        sets<< set_name
@@ -70,7 +66,7 @@ module ClassMethods
   def path_setting name #shouldn't this be in location helper?
     name ||= '/'
     return name if name =~ /^(http|mailto)/
-    Wagn::Conf[:root_path] + name
+    "#{Wagn.config.relative_url_root}#{name}"
   end
 
   def toggle val

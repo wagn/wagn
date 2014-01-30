@@ -159,7 +159,7 @@ format :html do
     name_ready = !card.cardname.blank? && !Card.exists?( card.cardname )
     prompt_for_name = !name_ready && !card.rule_card( :autoname )
 
-    hidden = { :success=> card.rule(:thanks) || '_self' }
+    hidden = args[:hidden] || { :success=> card.rule(:thanks) || '_self' }
     if name_ready
       hidden['card[name]'] = card.name
     else
@@ -321,11 +321,11 @@ format :html do
     else
       opts[:attribs].merge! :card_id=>card.id, :card_name=>(h card.name)
     end
-    fieldset fancy_title, content, opts
+    fieldset fancy_title( args[:title] ), content, opts
   end
 
 
-  view :options do |args|
+  view :options, :tags=>:unknown_ok do |args|
     current_set = Card.fetch( params[:current_set] || card.related_sets[0][0] )
 
     wrap_frame :options, args do
@@ -449,7 +449,7 @@ format :html do
     else
       wrap_frame :denial, args do #ENGLISH below
         message = case
-        when task != :read && Wagn::Conf[:read_only]
+        when task != :read && Wagn.config.read_only
           "We are currently in read-only mode.  Please try again later."
         when Account.logged_in?
           "You need permission #{to_task}"

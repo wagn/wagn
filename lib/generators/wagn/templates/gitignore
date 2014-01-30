@@ -7,9 +7,6 @@
 # Ignore bundler config
 /.bundler
 
-# Ignore app config
-/config/*yml
-
 # Ignore data files
 /files/*
 

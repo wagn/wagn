@@ -10,7 +10,7 @@ Wagn is an open web platform for building coherent web systems.
 
 Using simple wiki-inspired building blocks called cards, "Wagneers" construct sites ranging from simple content managers to custom project trackers to fully integrated web suites.  
 
-==Dependencies
+==System Requirements
  
 Ruby[http://www.ruby-lang.org/en/]:: version 1.8.7 or higher
 Bundler[http://gembundler.com/]:: version 1.0 or higher
@@ -20,7 +20,7 @@ A database engine:: Either MySQL[http://www.mysql.com/] or PostgreSQL[http://www
 Platform-specific details at: http://www.wagn.org/wagn/installation_1_8+Platform_Notes
 
  
-=Installation
+==Installation
 
 ===1. install the gem
 
@@ -57,13 +57,46 @@ To fire up the default, built-in WEBrick server, just run:
 WEBrick is great for a quick test run.  To run a production website, see http://www.wagn.org/wagn_in_production.
 
 
+==Upgrading
 
-=More Resources
+===Standard Upgrades
 
-To learn more about installation, see http://wagn.org/Installation
+====1. Backups
+Always back up your database and uploaded files.
 
-To learn more about configuration, see http://wagn.org/Configuration
+====2. Update Libraries
 
-For other documentation, see http://wagn.org/Documentation
+From your wagn root directory run:
 
-For community support, see http://wagn.org/Support
+  bundle update
+
+====3. Update Database
+
+Run the following:
+
+  rake wagn:migrate
+  
+As with all rake commands, you can try prefacing with "bundle exec" if you encounter gem problems.
+
+====4. Restart your server.
+
+===Upgrading pre-gem Wagn sites
+
+First check the Wagn version of your existing site.  
+
+====Version 1.10 or newer
+
+1. Create a new Wagn using steps 1 and 2 from the installation section above.
+2. copy config/database.yml from the old site to the new one.
+3. copy the old local/files contents to the new files directory
+4. if you have edited wagn.yml in your old site, make the corresponding changes to the new config/application.rb file.
+5. Follow the standard upgrade proce
+
+====Older than Version 1.10
+
+First update your Wagn to version 1.10 via the old update mechanisms, and then follow the directions above.
+
+
+==More Resources
+
+Find lots more info at http://wagn.org

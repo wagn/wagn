@@ -1,7 +1,13 @@
 require 'rails/generators/app_base'
 
 class WagnGenerator < Rails::Generators::AppBase
+
+#class WagnGenerator < Rails::Generators::AppGenerator
+
   source_root File.expand_path('../templates', __FILE__)
+  
+  class_option :database, :type => :string, :aliases => "-d", :default => "mysql",
+    :desc => "Preconfigure for selected database (options: #{DATABASES.join('/')})"
   
   public_task :create_root
   
@@ -50,9 +56,11 @@ class WagnGenerator < Rails::Generators::AppBase
       template "application.rb"
       template "environment.rb"
       template "boot.rb"
-      template "database.yml"
+      template "databases/#{options[:database]}.yml", "database.yml"  
     end
-  end  
+    
+  end
+  
   def script
     directory "script" do |content|
       "#{shebang}\n" + content
@@ -60,8 +68,23 @@ class WagnGenerator < Rails::Generators::AppBase
     chmod "script", 0755 & ~File.umask, :verbose => false
   end
   
+  public_task :run_bundle
+  
   protected
   
+  def mysql_socket
+    @mysql_socket ||= [
+      "/tmp/mysql.sock",                        # default
+      "/var/run/mysqld/mysqld.sock",            # debian/gentoo
+      "/var/tmp/mysql.sock",                    # freebsd
+      "/var/lib/mysql/mysql.sock",              # fedora
+      "/opt/local/lib/mysql/mysql.sock",        # fedora
+      "/opt/local/var/run/mysqld/mysqld.sock",  # mac + darwinports + mysql
+      "/opt/local/var/run/mysql4/mysqld.sock",  # mac + darwinports + mysql4
+      "/opt/local/var/run/mysql5/mysqld.sock",  # mac + darwinports + mysql5
+      "/opt/lampp/var/mysql/mysql.sock"         # xampp for linux
+    ].find { |f| File.exist?(f) } unless RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
+  end
   
   ### the following is straight from rails and is focused on checking the validity of the app name.
   ### needs wagn-specific tuning

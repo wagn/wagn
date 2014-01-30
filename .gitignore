@@ -2,6 +2,7 @@
 .jhw-cache
 .rvmrc
 .bundle
+Gemfile.lock
 config/*.yml
 config/wagn.rb
 coverage

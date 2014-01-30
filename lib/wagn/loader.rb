@@ -9,6 +9,7 @@ module Wagn
 
     def self.mod_dirs *args
       if @@mod_dirs.nil?
+        @@mod_dirs = []
         (Wagn.paths['gem-mods'].existent + Wagn.paths['local-mods'].existent).each do |dirname|
           Dir.entries( dirname ).sort.each do |filename|
             if filename !~ /^\./
@@ -28,7 +29,7 @@ module Wagn
     end
 
     def load_set_patterns
-      mod_dirs.each do |mod|
+      Wagn::Loader.mod_dirs.each do |mod|
         dirname = "#{mod}/set_patterns"
         if Dir.exists? dirname
           Dir.entries( dirname ).sort.each do |filename|
@@ -50,19 +51,19 @@ module Wagn
 
     def load_formats
       #cheating on load issues now by putting all inherited-from formats in core mod.
-      mod_dirs.each do |mod|
+      Wagn::Loader.mod_dirs.each do |mod|
         load_dir "#{mod}/formats/*.rb"
       end
     end
 
-    def self.load_chunks
+    def load_chunks
       Wagn::Loader.mod_dirs.each do |mod|
         load_dir "#{mod}/chunks/*.rb"
       end
     end
 
     def load_sets
-      mod_dirs.each do |mod|
+      Wagn::Loader.mod_dirs.each do |mod|
         if File.directory? mod
           load_implicit_sets "#{mod}/sets"
         else
@@ -102,7 +103,7 @@ module Wagn
     end
 
     def self.load_layouts
-      mod_dirs.inject({}) do |hash, mod|
+      Wagn::Loader.mod_dirs.inject({}) do |hash, mod|
         dirname = "#{mod}/layouts"
         if File.exists? dirname
           Dir.foreach( dirname ) do |filename|

@@ -79,6 +79,7 @@ format :html do
       <h1 class="card-header">
         #{ args.delete :toggler }
         #{ _render_title args }
+        #{ _render_type args.merge( :type_class=>"type-hidden" ) if args[:hidden_type] }
         #{
           args[:custom_menu] or unless args[:hide_menu]                          # developer config
             _optional_render :menu, args, (args[:menu_default_hidden] || false)  # wagneer config

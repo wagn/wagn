@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-require 'wagn'
+require File.expand_path( '../../wagn', __FILE__ )
 
 module Wagn
   module Version

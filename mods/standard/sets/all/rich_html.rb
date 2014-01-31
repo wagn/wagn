@@ -38,12 +38,6 @@ format :html do
     end
   end
 
-  view :type_select do |args|
-    %{ <script type="text/template" class="live-type-selection">
-      <span class="live-type-selection">#{ type_field args.merge( :class=>'type-field live-type-field' ) }</span>
-    </script>}
-  end
-
   view :labeled do |args|
     wrap :labeled, args do
       %{
@@ -64,7 +58,7 @@ format :html do
     add_name_context
     title
   end
-  
+
   view :title_link do |args|
     link_to_page (args[:title_ready] || showname(args[:title]) ), card.name
   end
@@ -74,7 +68,7 @@ format :html do
       :remote => true,
       :title  => "close #{card.name}",
       :class  => "close-icon ui-icon ui-icon-circle-triangle-s toggler slotter nodblclick"
-      
+
     wrap_frame :open, args.merge(:content=>true) do
       %{#{ _render_open_content args }#{ optional_render :comment_box, args }}
     end
@@ -85,7 +79,6 @@ format :html do
       <h1 class="card-header">
         #{ args.delete :toggler }
         #{ _render_title args }
-        #{ _render_type args.merge( :type_class=>"type-hidden" )  }
         #{
           args[:custom_menu] or unless args[:hide_menu]                          # developer config
             _optional_render :menu, args, (args[:menu_default_hidden] || false)  # wagneer config
@@ -100,7 +93,7 @@ format :html do
     disc_card = unless card.new_card? or card.junction? && card.cardname.tag_name.key == disc_tagname.key
       Card.fetch "#{card.name}+#{disc_tagname}", :skip_virtual=>true, :skip_modules=>true, :new=>{}
     end
-    
+
     @menu_vars = {
       :self         => card.name,
       :type         => card.type_name,
@@ -121,7 +114,7 @@ format :html do
         )
       })
     end
-    
+
     json = html_escape_except_quotes JSON( @menu_vars )
     %{<span class="card-menu-link" data-menu-vars='#{json}'>#{_render_menu_link}</span>}
   end
@@ -147,7 +140,7 @@ format :html do
       :remote => true,
       :title => "open #{card.name}",
       :class => "open-icon ui-icon ui-icon-circle-triangle-e toggler slotter nodblclick"
-      
+
     wrap_frame :closed, args.merge(:content=>true, :body_class=>'closed-content') do
 #    wrap :closed, args do
       _render_closed_content args
@@ -170,21 +163,21 @@ format :html do
       !params[:type] and !args[:type] and
       ( main? || card.simple? || card.is_template? ) and
       Card.new( :type_id=>card.type_id ).ok? :create #otherwise current type won't be on menu
-    ) 
+    )
 
     cancel = if main?
       { :class=>'redirecter', :href=>Card.path_setting('/*previous') }
-    else        
+    else
       { :class=>'slotter',    :href=>path( :view=>:missing         ) }
     end
-    
+
     wrap_frame :new, args.merge(:show_help=>true) do
       card_form :create, 'card-form', 'main-success'=>'REDIRECT' do |form|
         @form = form
         %{
           #{ hidden_tags hidden.merge( args[:hidden] || {} ) }
           #{ _render_name_editor if prompt_for_name }
-          #{ prompt_for_type ? _render_type_menu : form.hidden_field( :type_id ) }                
+          #{ prompt_for_type ? _render_type_menu : form.hidden_field( :type_id ) }
           <div class="card-editor editor">
             #{ edit_slot args.merge( :label => prompt_for_name || prompt_for_type ) }
           </div>
@@ -193,7 +186,7 @@ format :html do
               #{ submit_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
               #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
             </div>
-          </fieldset>                
+          </fieldset>
         }
       end
     end
@@ -248,12 +241,12 @@ format :html do
     card.update_referencers = false
     referers = card.extended_referencers
     dependents = card.dependents
-  
+
     wrap_frame :edit_name, args do
       card_form( path(:action=>:update, :id=>card.id), 'card-name-form card-editor', 'main-success'=>'REDIRECT' ) do |f|
         @form = f
-        %{  
-          #{ _render_name_editor}  
+        %{
+          #{ _render_name_editor}
           #{ f.hidden_field :update_referencers, :class=>'update_referencers'   }
           #{ hidden_field_tag :success, '_self'  }
           #{ hidden_field_tag :old_name, card.name }
@@ -265,7 +258,7 @@ format :html do
               #{ %{<li>automatically alter #{ dependents.size } related name(s). } if dependents.any? }
               #{ %{<li>affect at least #{referers.size} reference(s) to "#{card.name}".} if referers.any? }
             </ul>
-            #{ %{<p>You may choose to <em>ignore or update</em> the references.</p>} if referers.any? }  
+            #{ %{<p>You may choose to <em>ignore or update</em> the references.</p>} if referers.any? }
           </div>
           <fieldset>
             <div class="button-area">
@@ -292,7 +285,7 @@ format :html do
     wrap_frame :edit_type, args do
       card_form( :update, 'card-edit-type-form card-editor' ) do |f|
         #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
-        %{ 
+        %{
           #{ hidden_field_tag :view, :edit }
           #{if card.type_id == Card::CardtypeID and !Card.search(:type_id=>card.id).empty? #ENGLISH
             %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
@@ -300,7 +293,7 @@ format :html do
             _render_type_menu :variety=>:edit #FIXME dislike this api -ef
           end}
           <fieldset>
-            <div class="button-area">              
+            <div class="button-area">
               #{ submit_tag 'Submit', :disable_with=>'Submitting' }
               #{ button_tag 'Cancel', :href=>path(:view=>:edit), :type=>'button', :class=>'edit-type-cancel-button slotter' }
             </div>
@@ -313,7 +306,7 @@ format :html do
   view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
     eform = form_for_multi
     content = content_field eform, args.merge( :nested=>true )
-    opts = { :editor=>'content', :help=>true, :attribs => 
+    opts = { :editor=>'content', :help=>true, :attribs =>
       { :class=> "card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" }
     }
     if card.new_card?
@@ -331,7 +324,7 @@ format :html do
     wrap_frame :options, args do
       %{
         #{ subformat( current_set ).render_content }
-        #{ 
+        #{
           if card.accountable? && !card.account
             %{
               <div class="new-account-link">
@@ -344,13 +337,13 @@ format :html do
       }
     end
   end
-  
-  
+
+
   view :related do |args|
     if rparams = params[:related]
       rcardname = rparams[:name].to_name.to_absolute_name( card.cardname)
       rcard = Card.fetch rcardname, :new=>{}
-      rview = rparams[:view] || :titled        
+      rview = rparams[:view] || :titled
       show = 'menu,help'
       show += ',comment_box' if rparams[:name] == '+discussion' #fixme.  yuck!
 
@@ -366,7 +359,7 @@ format :html do
     else
       setting = card.new_card? ? :add_help : :help
       setting = [ :add_help, { :fallback => :help } ] if setting == :add_help
-      
+
       if help_card = card.rule_card( *setting ) and help_card.ok? :read
         with_inclusion_mode :normal do
           _final_core args.merge( :structure=>help_card.name )
@@ -401,7 +394,7 @@ format :html do
               when rev.created_at.to_s;  link_to('edited', path(:view=>:history), :class=>'last-edited', :rel=>'nofollow')
               else; 'updated'
             end} #{
-       
+
              time_ago_in_words card.updated_at } ago by #{ #ENGLISH
              link_to_page card.updater.name, nil, :class=>'last-editor'}
            </span>}
@@ -428,7 +421,7 @@ format :html do
         #{link_to 'Sign Up', :controller=>'account', :action=>'signup'} to create it.
        </div>}
     end
-  
+
     wrap_frame :notfound, args.merge(:title=>'Not Found', :hide_menu=>'true') do
       %{
         <h2>Could not find #{card.name.present? ? "<em>#{card.name}</em>" : 'that'}.</h2>
@@ -443,7 +436,7 @@ format :html do
     else
       'to do that.'
     end
-    
+
     if !focal?
       %{<span class="denied"><!-- Sorry, you don't have permission #{to_task} --></span>}
     else
@@ -455,11 +448,11 @@ format :html do
           "You need permission #{to_task}"
         else
           or_signup = if Card.new(:type_id=>Card::AccountRequestID).ok? :create
-            "or #{ link_to 'sign up', wagn_url('account/signup') }"                    
+            "or #{ link_to 'sign up', wagn_url('account/signup') }"
           end
           "You have to #{ link_to 'sign in', wagn_url('account/signin') } #{or_signup} #{to_task}"
         end
-        
+
         %{<h1>Sorry!</h1>\n<div>#{ message }</div>}
       end
     end

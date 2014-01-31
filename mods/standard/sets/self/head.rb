@@ -9,7 +9,7 @@ format :html do
       #{ head_title     }
       #{ head_buttons     }
       #{ head_stylesheets }
-      #{ head_javascript args }      
+      #{ head_javascript }      
     )
   end
 
@@ -67,7 +67,7 @@ format :html do
     end
   end
   
-  def head_javascript args
+  def head_javascript
     varvals = [
       "window.wagn={rootPath:'#{ Wagn.config.relative_url_root }'}",
       "window.tinyMCEPreInit={base:\"#{wagn_path 'assets/tinymce'}\",query:'3.5.8',suffix:''}" # tinyMCE doesn't load on non-root wagns w/o preinit line
@@ -80,8 +80,7 @@ format :html do
       #{ javascript_include_tag 'application' }
       <!--[if lt IE 9]>#{ javascript_include_tag 'html5shiv-printshiv' }<![endif]-->
       #{ javascript_tag { "wagn.setTinyMCEConfig('#{ escape_javascript Card.setting(:tiny_mce).to_s }')" } }
-      #{ google_analytics_head_javascript }
-      #{ optional_render :type_select, args.merge(:no_current_type => true ), true })
+      #{ google_analytics_head_javascript })
   end
     
   

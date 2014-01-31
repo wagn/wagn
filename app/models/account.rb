@@ -19,10 +19,12 @@ class Account
       base.ok?(:create) && trait.ok?(:create)
     end
 
-    # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
+    # Authenticates a user by their login name and unencrypted password.  
     def authenticate(email, password)
-      u = User.find_by_email(email.strip.downcase)
-      u && u.authenticated?(password.strip) ? u.card_id : nil
+      if u = User.find_by_email(email.strip.downcase) and 
+          ( Wagn.config.no_authentication or u.authenticated? password.strip )
+        u.card_id
+      end
     end
 
     # Encrypts some data with the salt.

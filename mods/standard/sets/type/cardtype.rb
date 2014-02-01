@@ -3,7 +3,7 @@
 format :html do
 
   view :type do |args|
-    args.merge!({:type_class=>'no-edit') if card.cards_of_type_exist?
+    args.merge!(:type_class=>'no-edit') if card.cards_of_type_exist?
     _final_type args
   end
 

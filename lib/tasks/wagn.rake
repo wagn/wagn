@@ -4,12 +4,15 @@ namespace :wagn do
   desc "create a wagn database from scratch"
   task :create do
     puts "dropping"
+    #fixme - this should be an option, but should not happen on standard creates!
     begin
       Rake::Task['db:drop'].invoke
     rescue
       puts "not dropped"
     end
 
+    ENV['SCHEMA'] = "#{Wagn.gem_root}/db/schema.rb"
+     
     puts "creating"
     Rake::Task['db:create'].invoke
 
@@ -54,6 +57,7 @@ namespace :wagn do
     end
     
     puts 'migrating cards'
+    Wagn::Cache.reset_global
     Rake::Task['wagn:migrate:cards'].execute #not invoke because we don't want to reload environment
     if stamp
       Rake::Task['wagn:migrate:stamp'].reenable

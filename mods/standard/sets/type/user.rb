@@ -13,7 +13,7 @@ format :html do
         %{
           #{ f.hidden_field :type_id }
           #{ _render_name_editor :help=>'usually first and last name'   }
-          #{ fieldset :email, text_field( :account, :email, :size=>60 ) }
+          #{ fieldset :email, text_field( 'card[account_args]', :email, :size=>60 ) }
           #{ _render_invitation_field                                   }
         }
       end

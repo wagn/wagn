@@ -38,14 +38,17 @@ format :html do
     end
   end
   
+  view :template_closer do |args|
+    link_to_view '', :template_link, :class=>'slotter ui-icon ui-icon-closethick template-editor-close'
+  end
+  
   view :template_editor do |args|
-    custom_menu = link_to_view '', :template_link, :class=>'slotter ui-icon ui-icon-closethick template-editor-close'
     wrap :template_editor, args do
       %{
         <div class="template-editor-left">{{</div> 
         <div class="template-editor-main">
           #{
-            wrap_frame :template_editor, :no_slot=>true, :title=>card.label, :custom_menu=>custom_menu do
+            wrap_frame :template_editor, :no_slot=>true, :title=>card.label, :optional_menu_view=>:template_closer do
               _render_core args.merge(:unlabeled=>true)
             end
           }

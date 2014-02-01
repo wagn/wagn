@@ -23,7 +23,7 @@ format :html do
 
   view :content do |args|
     wrap :content, args.merge(:slot_class=>'card-content') do
-      menu = optional_render :menu, args, default_hidden=true
+      menu = optional_render :menu, args, :hide
       %{#{ menu }#{ _render_core args }}
     end
   end
@@ -31,7 +31,7 @@ format :html do
   view :titled, :tags=>:comment do |args|
     wrap :titled, args do
       %{
-        #{ _render_header args.merge( :menu_default_hidden=>true ) }
+        #{ _render_header args.merge( :optional_menu=>:hide ) }
         #{ wrap_body( :content=>true ) { _render_core args } }
         #{ optional_render :comment_box, args }
       }
@@ -54,7 +54,7 @@ format :html do
 
   view :title do |args|
     title = fancy_title args[:title]
-    title = _optional_render( :title_link, args.merge( :title_ready=>title ), default_hidden=true ) || title
+    title = _optional_render( :title_link, args.merge( :title_ready=>title ), :hide ) || title
     add_name_context
     title
   end
@@ -64,26 +64,30 @@ format :html do
   end
 
   view :open, :tags=>:comment do |args|
-    args[:toggler] = link_to '', path( :view=>:closed ),
-      :remote => true,
-      :title  => "close #{card.name}",
-      :class  => "close-icon ui-icon ui-icon-circle-triangle-s toggler slotter nodblclick"
-      
     wrap_frame :open, args.merge(:content=>true) do
-      %{#{ _render_open_content args }#{ optional_render :comment_box, args }}
+      %{
+        #{ _render_open_content args }
+        #{ optional_render :comment_box, args }
+      }
     end
   end
+
+  view :toggle do |args|
+    verb, adjective, direction = args[:toggle] == :close ? %w{ close closed s } : %w{ open open e }
+    
+    link_to '', path( :view=>adjective ), 
+      :remote => true,
+      :title => "#{verb} #{card.name}",
+      :class => "#{verb}-icon ui-icon ui-icon-circle-triangle-#{direction} toggler slotter nodblclick"
+  end
+    
 
   view :header do |args|
     %{
       <h1 class="card-header">
-        #{ args.delete :toggler }
+        #{ _optional_render :toggle, args, :hide }
         #{ _render_title args }
-        #{
-          args[:custom_menu] or unless args[:hide_menu]                          # developer config
-            _optional_render :menu, args, (args[:menu_default_hidden] || false)  # wagneer config
-          end
-        }
+        #{ _optional_render :menu, args }
       </h1>
     }
   end
@@ -131,13 +135,7 @@ format :html do
   end
 
   view :closed do |args|
-    args[:toggler] = link_to '', path( :view=>:open ),
-      :remote => true,
-      :title => "open #{card.name}",
-      :class => "open-icon ui-icon ui-icon-circle-triangle-e toggler slotter nodblclick"
-      
-    wrap_frame :closed, args.merge(:content=>true, :body_class=>'closed-content') do
-#    wrap :closed, args do
+    wrap_frame :closed, args.merge(:content=>true, :body_class=>'closed-content', :toggle=>:close ) do
       _render_closed_content args
     end
   end
@@ -377,8 +375,8 @@ format :html do
   view :change do |args|
     wrap :change, args do
       %{
-        #{link_to_page card.name, nil, :class=>'change-card'}
-        #{ _optional_render :menu, args, default_hidden=true }
+        #{ link_to_page card.name, nil, :class=>'change-card' }
+        #{ _optional_render :menu, args, :hide }
         #{
         if rev = card.current_revision and !rev.new_record?
           # this check should be unnecessary once we fix search result bug
@@ -417,7 +415,7 @@ format :html do
        </div>}
     end
   
-    wrap_frame :notfound, args.merge(:title=>'Not Found', :hide_menu=>'true') do
+    wrap_frame :notfound, args.merge(:title=>'Not Found', :optional_menu=>:never) do
       %{
         <h2>Could not find #{card.name.present? ? "<em>#{card.name}</em>" : 'that'}.</h2>
         #{sign_in_or_up_links}

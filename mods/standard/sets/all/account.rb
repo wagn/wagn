@@ -133,7 +133,7 @@ format :html do
   
   
   view :signin, :tags=>:unknown_ok, :perms=>:none do |args|
-    frame_args = args.merge :title=>'Sign In', :show_help=>true, :hide_menu=>true
+    frame_args = args.merge :title=>'Sign In', :show_help=>true, :optional_menu=>:never
     signin_core = wrap_frame :signin, frame_args do
       form_tag wagn_path('account/signin') do
         %{
@@ -156,7 +156,7 @@ format :html do
 
 
   view :forgot_password, :perms=>:none do |args|
-    frame_args = args.merge :title=>'Forgot Password', :show_help=>true, :hide_menu=>true
+    frame_args = args.merge :title=>'Forgot Password', :show_help=>true, :optional_menu=>:never
     wrap_frame :forgot_password, frame_args do
       form_tag wagn_path('account/forgot_password') do
         %{

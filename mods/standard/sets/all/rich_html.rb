@@ -79,7 +79,7 @@ format :html do
       <h1 class="card-header">
         #{ args.delete :toggler }
         #{ _render_title args }
-        #{ _render_type args.merge( :type_class=>"type-hidden" ) if args[:hidden_type] }
+        #{ _optional_render( :type, args ) if args[:with_type] }
         #{
           args[:custom_menu] or unless args[:hide_menu]                          # developer config
             _optional_render :menu, args, (args[:menu_default_hidden] || false)  # wagneer config
@@ -128,11 +128,6 @@ format :html do
   view :type do |args|
     klasses = ['cardtype']
     klass = args[:type_class] and klasses << klass
-    case card.type_id
-      when Card.default_type_id; klasses << 'default-type'
-      when Card::CardtypeID
-        klasses << 'no-edit' if Card.search(:type_id=>card.id).present?
-    end
     link_to_page card.type_name, nil, :class=>klasses
   end
 

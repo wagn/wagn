@@ -131,9 +131,9 @@ class Card
     ALLOWED_TAGS.each_key {|k|
       ALLOWED_TAGS[k] << 'class'
       ALLOWED_TAGS[k] << 'style' if Wagn.config.allow_inline_styles
-      ALLOWED_TAGS[k].freeze
+      ALLOWED_TAGS[k]
     }
-    ALLOWED_TAGS.freeze
+    ALLOWED_TAGS
 
     ATTR_VALUE_RE = [ /(?<=^')[^']+(?=')/, /(?<=^")[^"]+(?=")/, /\S+/ ]
 

@@ -2,6 +2,11 @@
 
 format :html do
 
+  view :type do |args|
+    args.merge!({:type_class=>'no-edit') if card.cards_of_type_exist?
+    _final_type args
+  end
+
   view :watch do |args|
     wrap :watch, args do
       #type_link = card.watching_type? ? "#{watching_type_cards} | " : ""

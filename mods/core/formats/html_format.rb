@@ -220,7 +220,7 @@ class Card::HtmlFormat < Card::Format
     no_current_type = args.delete :no_current_type
     unless no_current_type || card.new_card? || typelist.include?( card.type_name )
       # current type should be an option on existing cards, regardless of create perms
-      typelist = (typelist + card.type_name).sort
+      typelist = (typelist << card.type_name).sort
     end
     current_type = no_current_type ? nil : Card[ card ? card.type_id : Card.default_type_id ].name
 

@@ -7,6 +7,27 @@ describe Card::Set::All::RichHtml do
       render_content('{{+cardipoo|open}}').match(/Add \<span/ ).should_not be_nil
     end
   end
+  context "type_list" do
+    before do
+      @card = Card['UserForm']  # no cards with this type
+    end
+    it "should get type options from type_field renderer method" do
+      Card::HtmlFormat.new(@card).type_field.should match(/<option [^>]*selected/)
+      tf=Card::HtmlFormat.new(@card).type_field(:no_current_type=>true)
+      tf.should_not match(/<option [^>]*selected/)
+      tf.scan(/<option /).length.should == 23
+    end
+    it "should get type list" do
+      Account.as :anonymous do
+        tf=Card::HtmlFormat.new(@card).type_field(:no_current_type=>true)
+        tf.should_not match(/<option [^>]*selected/)
+        tf.scan(/<option /).length.should == 1
+        tf=Card::HtmlFormat.new(@card).type_field
+        tf.should match(/<option [^>]*selected/)
+        tf.scan(/<option /).length.should == 2
+      end
+    end
+  end
   context "type and header" do
     before do
       @card = Card['UserForm']  # no cards with this type

@@ -129,7 +129,7 @@ event :permit_codename, :before=>:approve, :on=>:update, :changed=>:codename do
 end
 
 event :validate_unique_codename, :after=>:permit_codename do
-  if !codename.empty? and errors.empty? and Card.find_by_codename(codename).present?
+  if codename.present? and errors.empty? and Card.find_by_codename(codename).present?
     errors.add :codename, "codename #{codename} already in use" 
   end
 end

@@ -64,7 +64,7 @@ format :html do
   end
 
   view :open, :tags=>:comment do |args|
-    wrap_frame :open, args.merge(:content=>true) do
+    wrap_frame :open, args.merge(:content=>true, :optional_toggle=>:show) do
       %{
         #{ _render_open_content args }
         #{ optional_render :comment_box, args }
@@ -73,7 +73,7 @@ format :html do
   end
 
   view :toggle do |args|
-    verb, adjective, direction = args[:toggle] == :close ? %w{ close closed s } : %w{ open open e }
+    verb, adjective, direction = ( args[:toggle_mode] == :close ? %w{ open open e } : %w{ close closed s } )
     
     link_to '', path( :view=>adjective ), 
       :remote => true,
@@ -135,8 +135,8 @@ format :html do
   end
 
   view :closed do |args|
-    wrap_frame :closed, args.merge(:content=>true, :body_class=>'closed-content', :toggle=>:close ) do
-      _render_closed_content args
+    wrap_frame :closed, args.merge(:content=>true, :body_class=>'closed-content', :toggle_mode=>:close, :optional_toggle=>:show ) do
+      _optional_render :closed_content, args
     end
   end
 

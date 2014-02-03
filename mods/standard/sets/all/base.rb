@@ -11,6 +11,7 @@ view :name,     :perms=>:none  do |args|  card.name                    end
 view :codename, :perms=>:none  do |args|  card.codename.to_s           end  
 view :key,      :perms=>:none  do |args|  card.key                     end
 view :id,       :perms=>:none  do |args|  card.id                      end
+view :type,     :perms=>:none  do |args|  card.type_name               end
 view :linkname, :perms=>:none  do |args|  card.cardname.url_key        end
 view :url,      :perms=>:none  do |args|  wagn_url _render_linkname    end
 

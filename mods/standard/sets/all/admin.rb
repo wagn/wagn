@@ -3,7 +3,7 @@ view :setup, :tags=>:unknown_ok do |args|
   frame_args = {
     :title=>'Welcome, Wagneer!',
     :show_help=>true,
-    :hide_menu=>true, 
+    :optional_menu=>:never, 
     :help_text=>'To get started, set up an account.'
   }
     

@@ -7,7 +7,7 @@ attr_accessor :email
 format :html do
   #FIXME - should perms check permission to create account?
   view :new do |args|
-    wrap_frame :invite, args.merge( :title=>'Invite', :show_help=>true, :hide_menu=>true ) do
+    wrap_frame :invite, args.merge( :title=>'Invite', :show_help=>true, :optional_menu=>:never ) do
       card_form :create do |f|      
         @form = f
         %{

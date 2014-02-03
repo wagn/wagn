@@ -33,11 +33,10 @@ namespace :wagn do
     end
   end
   
-  
-  
-  desc "install wagn configuration files"
-  task :install do
-    puts "wagn:install is deprecated in favor of 'wagn new'"
+  desc "update wagn gems and database"
+  task :update do
+    system 'bundle update'
+    Rake::Task['wagn:migrate'].invoke
   end
   
   desc "reset cache"

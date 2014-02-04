@@ -16,6 +16,7 @@ class RenamingForMenu < ActiveRecord::Migration
         '*editing'    => '*edited',
       }
       renames.each do |oldname, newname|
+        puts "updating: #{oldname}"
         c = Card[oldname]
         c.update_referencers = true
         c.name = newname

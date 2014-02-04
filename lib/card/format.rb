@@ -206,17 +206,48 @@ class Card
       render view, args
     end
 
-    def optional_render view, args, default_hidden=false
-      test = default_hidden ? :show : :hide
-      override = args[test] && args[test].split(/[\s\,]+/).member?( view.to_s )
-      return nil if default_hidden ? !override : override
-      render view, args
+    def optional_render view, args, default=:show
+      if show_view? view, args, default
+        view = args["optional_#{ canonicalize_view view }_view".to_sym] || view
+        render view, args
+      end
     end
 
-    def _optional_render view, args, default_hidden=false
+    def _optional_render view, args, default=:show
       args[:allowed] = true
-      optional_render view, args, default_hidden
+      optional_render view, args, default
     end
+    
+    def show_view? view, args, default=:show
+      view_key = canonicalize_view view
+      api_option = args["optional_#{ view_key }".to_sym]
+      case 
+      # args remove option
+      when api_option == :always                   ; true
+      when api_option == :never                    ; false
+      # wagneer's choice                           
+      when show_views( args ).member?( view_key )  ; true
+      when hide_views( args ).member?( view_key )  ; false
+      # args override default                      
+      when api_option == :show                     ; true
+      when api_option == :hide                     ; false
+      # default                                    
+      else                                         ; default==:show
+      end        
+    end
+    
+    def show_views args
+      parse_view_visibility args[:show]
+    end
+    
+    def hide_views args
+      parse_view_visibility args[:hide]
+    end
+    
+    def parse_view_visibility val
+      (val || '').split( /[\s\,]+/ ).map { |view| canonicalize_view view }
+    end
+    
 
     def send_final_render_method view, *a
       a = [{}] if a.empty?
@@ -228,7 +259,11 @@ class Card
         unsupported_view view
       end
     rescue Exception=>e
-      rescue_view e, view
+      if Rails.env.test?
+        raise e
+      else
+        rescue_view e, view
+      end
     end
 
     def rescue_view e, view

@@ -2,7 +2,6 @@
 
 module Wagn::MigrationHelper
   def self.card_migration_paths
-    Wagn.paths.add 'db/migrate_cards'
     Wagn.paths['db/migrate_cards'].to_a
   end
   

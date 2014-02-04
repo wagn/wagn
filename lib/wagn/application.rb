@@ -71,6 +71,7 @@ module Wagn
         add_wagn_path paths, "config/routes",       :with => "config/routes.rb"
         add_wagn_path paths, "db"
         add_wagn_path paths, "db/migrate"
+        add_wagn_path paths, "db/migrate_cards"
         add_wagn_path paths, "db/seeds",            :with => "db/seeds.rb"        
         add_wagn_path paths, 'gem-mods',            :with => 'mods'
 
@@ -92,6 +93,13 @@ module Wagn
       paths[path] = Rails::Paths::Path.new(paths, wagn_path, with, options)
     end
 
+    def load_tasks(app=self)
+      super
+      unless approot_is_gemroot?
+        Rake::Task["db:schema:dump"].clear
+      end
+      self
+    end
   end
 end
 

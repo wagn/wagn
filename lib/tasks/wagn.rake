@@ -33,11 +33,10 @@ namespace :wagn do
     end
   end
   
-  
-  
-  desc "install wagn configuration files"
-  task :install do
-    puts "wagn:install is deprecated in favor of 'wagn new'"
+  desc "update wagn gems and database"
+  task :update do
+    system 'bundle update'
+    Rake::Task['wagn:migrate'].invoke
   end
   
   desc "reset cache"
@@ -48,6 +47,8 @@ namespace :wagn do
 
   desc "migrate structure and cards"
   task :migrate =>:environment do
+    ENV['SCHEMA'] = "#{Wagn.gem_root}/db/schema.rb"
+    
     stamp = ENV['STAMP_MIGRATIONS']
 
     puts 'migrating structure'
@@ -71,7 +72,8 @@ namespace :wagn do
     desc "migrate cards"
     task :cards => :environment do
       Wagn::Cache.reset_global
-      ENV['WAGN_MIGRATION'] = true
+      ENV['SCHEMA'] = "#{Wagn.gem_root}/db/schema.rb"
+      ENV['WAGN_MIGRATION'] = 'true'
       Card # this is needed in production mode to insure core db structures are loaded before schema_mode is set
     
       paths = ActiveRecord::Migrator.migrations_paths = Wagn::MigrationHelper.card_migration_paths
@@ -84,7 +86,8 @@ namespace :wagn do
   
     desc 'write the version to a file (not usually called directly)' #maybe we should move this to a method? 
     task :stamp, :suffix do |t, args|
-      ENV['WAGN_MIGRATION'] = true
+      ENV['WAGN_MIGRATION'] = 'true'
+      ENV['SCHEMA'] = "#{Wagn.gem_root}/db/schema.rb"
       
       stamp_file = Wagn::Version.schema_stamp_path args[:suffix]
       Wagn::MigrationHelper.schema_mode args[:suffix ] do

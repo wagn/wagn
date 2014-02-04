@@ -79,7 +79,6 @@ format :html do
       <h1 class="card-header">
         #{ args.delete :toggler }
         #{ _render_title args }
-        #{ _optional_render :type, args, default_hidden=true }
         #{
           args[:custom_menu] or unless args[:hide_menu]                          # developer config
             _optional_render :menu, args, (args[:menu_default_hidden] || false)  # wagneer config

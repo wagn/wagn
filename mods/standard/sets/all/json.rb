@@ -70,4 +70,32 @@ format :json do
     end
   end
 
+  view :export do |args|
+    Rails.logger.warn "export #{@depth}"
+    h = {
+      :name    => card.name,
+      :code    => card.codename,
+      :type    => card.type_name,
+      :status  => _render_statu,
+      :updater => card.updater.nil? ? "No Updates" : card.updater.name,
+      :creator => card.creator && card.creator.name,
+      :content => card.raw_content
+    }
+    h.delete(:code) if h[:code].blank? or h[:code] == 'null'
+    h.delete(:creator) if h[:creator].blank?
+    
+    unless @depth == max_depth
+      h[:value] = _render default_item_view, args
+    end
+    if @depth==0
+      {
+        :url => controller.request.original_url,
+        :timestamp => Time.now.to_s,
+        :card => h
+      }
+    else
+      h
+    end
+  end
+
 end

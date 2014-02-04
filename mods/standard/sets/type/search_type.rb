@@ -125,7 +125,7 @@ end
 format :data do
     
   view :card_list do |args|
-    inclusion_defaults[:view] = :atom
+    inclusion_defaults[:view] = args[:view] || :atom
 
     search_vars[:results].map do |c|
       process_inclusion c

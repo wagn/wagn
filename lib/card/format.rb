@@ -62,7 +62,8 @@ class Card
         # note: this could also be done with method_missing. is this any faster?
         if !method_defined? "render_#{view}"
           define_method "_render_#{view}" do |*a|
-            send_final_render_method view, *a
+            args = default_render_args view, *a
+            send_final_render_method view, args
           end
 
           define_method "render_#{view}" do |*a|
@@ -70,6 +71,8 @@ class Card
           end
         end
       end
+      
+
       
 
       def new card, opts={}
@@ -259,12 +262,29 @@ class Card
         unsupported_view view
       end
     rescue Exception=>e
-      if Rails.env.test?
+      if Rails.env =~ /^cucumber|test$/
         raise e
       else
         rescue_view e, view
       end
     end
+
+    def default_render_args view, a=nil
+      args = case a
+      when nil   ; {}
+      when Hash  ; a.clone
+      when Array ; a[0].merge a[1]
+      else       ; raise Wagn::Error, "bad render args: #{a}"
+      end
+      
+      view_key = canonicalize_view view
+      default_method = "default_#{ view }_args"
+      if respond_to? default_method
+        send default_method, args
+      end
+      args
+    end
+    
 
     def rescue_view e, view
       controller.send :notify_airbrake, e if Airbrake.configuration.api_key

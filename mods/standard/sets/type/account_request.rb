@@ -3,44 +3,39 @@
 format :html do
   view :new do |args|
     #FIXME - make more use of standard new view
-    frame_args = args.merge :title=>'Sign Up', :show_help=>true #, :optional_menu=>:never
-    frame_args[:help_text] = case
+    args = args.merge :title=>'Sign Up', :optional_help => :show #, :optional_menu=>:never
+    args[:help_text] = case
       when card.rule_card( :add_help, :fallback=>:help ) ; nil
       when Account.create_ok?                            ; 'Send us the following, and we\'ll send you a password.' 
       else                                               ; 'All Account Requests are subject to review.'
       end
 
-    success = Card.setting "#{ Card[ card.accountable? ? :signup : :request ].name }+#{ Card[ :thanks ].name }"
+    args[:hidden] ||={}
+    args[:hidden][:success] = Card.setting "#{ Card[ card.accountable? ? :signup : :request ].name }+#{ Card[ :thanks ].name }"
+    args[:buttons] = submit_tag 'Submit'
     # *signup+*thanks or *request+*thanks
 
-    frame :signup, frame_args do
-      card_form :create, 'card-form', 'main-success'=>"REDIRECT" do |f|
-        %{
-          #{ f.hidden_field :type_id }
-          #{ hidden_field_tag :success, success }
-          #{ _render_name_fieldset :help=>'usually first and last name' }
-          #{ fieldset :email, text_field( 'card[account_args]', :email ), :editor=>'content' }
-          #{ with_inclusion_mode(:new) { edit_slot } if card.structure }
-          <fieldset><div class="button-area">#{ submit_tag 'Submit' }</div></fieldset>
-        }
-      end
+    frame_and_form :signup, :create, args, 'main-success'=>"REDIRECT" do
+      %{
+        #{ @form.hidden_field :type_id }
+        #{ _render_name_fieldset :help=>'usually first and last name' }
+        #{ _render_email_fieldset }
+        #{ edit_slot if card.structure }
+        #{ _optional_render :button_fieldset, args }
+      }
     end
   end
 
 
   view :edit do |args|
-    frame_args = { :title=>'Invite', :show_help=>true, :optional_menu=>:never,
-      :help_text=>"Accept account request from: #{link_to_page card.name}"
-    }
+    args[:help_text] ||= "Accept account request"
+    args[:hidden] ||= {
+      :activate => 'true',
+      :card => { :type_id => Card.default_accounted_type_id }
+    } 
   
-    frame :edit, frame_args do
-      card_form :update, 'card-form autosave' do |f|
-        %{
-          #{ hidden_field_tag 'card[type_id]', Card.default_accounted_type_id }
-          #{ hidden_field_tag :activate, 'true'                               }
-          #{ _render_invitation_field                                         }        
-        }
-      end
+    frame_and_form :edit, :update, args do
+      _render_invitation_field
     end
   end
 

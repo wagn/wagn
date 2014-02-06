@@ -75,18 +75,17 @@ format :html do
   
   
   view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
-
-    locals = {:slot=>self, :card=>card, :account=>card.account }
-    frame :account, args do
-      card_form :update, '', 'notify-success'=>'account details updated' do |form|
-        %{
-          #{ hidden_field_tag 'success[id]', '_self' }
-          #{ hidden_field_tag 'success[view]', 'account' }
-          #{ render_account_detail }
-          <fieldset><div class="button-area">#{ submit_tag 'Save Changes' }</div></fieldset>
-        }
-      end
+    frame_and_form :account, :update, args, 'notify-success'=>'account details updated' do
+      %{
+        #{ render_account_detail }
+        #{ _optional_render :button_fieldset, args }
+      }
     end
+  end
+  
+  def default_account_args args
+    default_new_account_args args
+    args[:buttons] = submit_tag 'Save Changes'
   end
 
 
@@ -118,22 +117,27 @@ format :html do
   
 
   view :new_account, :perms=> lambda { |r| r.card.accountable? && !r.card.account } do |args|
-    frame :new_account, args do
-      card_form :update do |form|
-        %{
-          #{ hidden_field_tag 'success[id]', '_self'                       }
-          #{ hidden_field_tag 'success[view]', 'account'                   }
-          #{ fieldset :email, text_field( 'card[account_args]', :email )   }
-          #{ _render_invitation_field                                      }
-        }
-      end
+    frame_and_form :new_account, :update, args do
+      %{
+        #{ _render_email_fieldset    }
+        #{ _render_invitation_field  }
+      }
     end
+  end
+  
+  def default_new_account_args args
+    args[:hidden] = { :success => { :id=>'_self', :view=>'account' } }
+  end
+  
+  
+  view :email_fieldset do |args|
+    fieldset :email, text_field( 'card[account_args]', :email ), :editor=>'content'
   end
   
   
   
   view :signin, :tags=>:unknown_ok, :perms=>:none do |args|
-    frame_args = args.merge :title=>'Sign In', :show_help=>true, :optional_menu=>:never
+    frame_args = args.merge :title=>'Sign In', :optional_help=>:show, :optional_menu=>:never
     signin_core = frame :signin, frame_args do
       form_tag wagn_path('account/signin') do
         %{
@@ -156,7 +160,7 @@ format :html do
 
 
   view :forgot_password, :perms=>:none do |args|
-    frame_args = args.merge :title=>'Forgot Password', :show_help=>true, :optional_menu=>:never
+    frame_args = args.merge :title=>'Forgot Password', :optional_help=>:show, :optional_menu=>:never
     frame :forgot_password, frame_args do
       form_tag wagn_path('account/forgot_password') do
         %{

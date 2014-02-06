@@ -1,5 +1,12 @@
 require 'rails/all'
-require 'wagn/application'
+
+if Rails.env.development?
+  begin
+    require 'wagn/dev'
+  rescue
+    Rails.logger.info "WARNING: the gem wagn-dev is strongly recommended when running wagn in development mode!"
+  end
+end
 
 require 'recaptcha'
 require 'airbrake'
@@ -14,3 +21,5 @@ require 'paperclip'
 # require 'rubyzip'
 require 'coderay'
 require 'sass'
+
+require 'wagn/application'

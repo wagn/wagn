@@ -187,10 +187,10 @@ $(window).ready ->
     $(this).closest('form').submit()
    
   $('body').on 'click', '.renamer-updater', ->
-    $(this).closest('form').find('.update_referencers').val 'true'
+    $(this).closest('form').find('#card_update_referencers').val 'true'
         
-  $('body').on 'submit', '.card-name-form', ->
-    confirmer = $(this).find '.confirm-rename'
+  $('body').on 'submit', '.edit_name-view .card-form', ->
+    confirmer = $(this).find '.confirm_rename-view'
     if confirmer.is ':hidden'
       if $(this).find('#referers').val() > 0
         $(this).find('.renamer-updater').show()

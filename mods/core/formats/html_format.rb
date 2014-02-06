@@ -33,8 +33,8 @@ class Card::HtmlFormat < Card::Format
   end
 
   def commentable? view, args
-    self.class.tagged view, :comment and 
-    args[:show] =~ /comment_box/     and
+    self.class.tagged view, :comment      and 
+    show_view? :comment_box, args, :hide and #developer or wagneer has overridden default
     ok? :comment
   end
 
@@ -120,34 +120,23 @@ class Card::HtmlFormat < Card::Format
       %{
         #{ _render_header args }
         #{ %{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader] }
-        #{ _optional_render :help, args }
+        #{ _optional_render :help, args, :hide }
         #{ wrap_body args do yield args end }
       }
     end
   end
   
   
-  def frame_and_form view, args
-    view_key = canonicalize_view view
-    send "#{view_key}_frame_and_form", args do yield args end
-  end
-  
-  def new_frame_and_form args
-    frame :new, args.merge(:show_help=>true) do
-      card_form :create, 'card-form', 'main-success'=>'REDIRECT' do |form|
+  def frame_and_form view, action, args={}, form_opts={}
+    form_opts[:hidden] = args.delete(:hidden)
+    frame view, args do
+      card_form action, form_opts do
         yield args
       end
     end
   end
-  
-  
-  def edit_frame_and_form args
-    frame :edit, args.merge(:show_help=>true) do
-      card_form :update, 'card-form autosave' do |f|
-        yield args
-      end
-    end
-  end
+      
+
 
   def wrap_main(content)
     return content if params[:layout]=='none'
@@ -183,72 +172,6 @@ class Card::HtmlFormat < Card::Format
     end
   end
   
-#~~~~~ view arg helpers
-  
-  def set_default_args! view, args
-    view_key = canonicalize_view view
-    default_key = "default_#{canonicalize_view view}_args"
-    unless args[default_key.to_sym] == :ignore
-      send "#{ default_key }!", args
-      args
-    end
-  end
-  
-  def default_edit_args! args
-    args[:buttons] = %{
-      #{ submit_tag 'Submit', :class=>'submit-button' }
-      #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
-    }
-  end
-
-  def default_new_args! args
-    hidden = args[:hidden] ||= {}
-    hidden[:success] ||= card.rule(:thanks) || '_self'
-    hidden[:card   ] ||={}
-    
-    set_default_name_fieldset_args! args
-    set_default_type_fieldset_args! args
-  
-
-    cancel = if main?
-      { :class=>'redirecter', :href=>Card.path_setting('/*previous') }
-    else
-      { :class=>'slotter',    :href=>path( :view=>:missing         ) }
-    end
-    
-    args[:buttons] ||= %{
-      #{ submit_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
-      #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
-    }
-    
-    args[:content_fieldset_label] ||= begin
-      '' if :show == args[:optional_type_fieldset] || args[:optional_name_fieldset]
-    end
-  end
-  
-  def default_name_fieldset_args!
-    showhide = :hide
-    if !params[:name_prompt] and !card.cardname.blank?
-      # name is ready and will show up in title
-      args[:hidden][:card][:name] ||= card.name
-    else
-      # name is not ready; need generic title
-      args[:title] ||= "New #{ card.type_name unless card.type_id == Card.default_type_id }" #fixme - overrides nest args
-      unless card.rule_card :autoname
-        # prompt for name
-        args[:hidden][:name_prompt] = true unless hidden.has_key :name_prompt
-        showhide = :show
-      end
-    end
-    args[:optional_name_fieldset] ||= showhide
-  end
-  
-  def default_type_fieldset_args!
-    prompt_for_type = ( !params[:type] and !args[:type] and ( main? || card.simple? || card.is_template? ) and
-      Card.new( :type_id=>card.type_id ).ok? :create #otherwise current type won't be on menu
-    )
-    args[:optional_type_fieldset] = prompt_for_type ? :show : :hide
-  end
   
 
   #### --------------------  additional helpers ---------------- ###
@@ -347,22 +270,31 @@ class Card::HtmlFormat < Card::Format
     @form ||= form_for_multi
   end
 
-  def card_form *opts
-    form_for card, form_opts(*opts) do |form|
-      @form = form 
+  def card_form action, opts={}
+    hidden_args = opts.delete :hidden
+    form_for card, card_form_opts(action, opts) do |form|
+      @form = form
       %{
-        #{ hidden_tags args[:hidden] }
+        #{ hidden_tags hidden_args if hidden_args }
         #{ yield form }
       }
     end
   end
 
-  def form_opts url, classes='', other_html={}
-    url = path(:action=>url) if Symbol===url
-    opts = { :url=>url, :remote=>true, :html=>other_html }
-    opts[:html][:class] = classes + ' slotter'
-    opts[:html][:recaptcha] = 'on' if Wagn::Env[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
-    opts
+  def card_form_opts action, html={}
+    url, action = case action
+      when Symbol ;  [ path(:action=>action), action ]
+      when Hash   ;  [ path(action), action[:action] ]
+      else        ; raise Wagn::Error, "unsupported card_form action class: #{action.class}"
+      end
+    klasses = Array.wrap( html[:class] )
+    klasses << 'card-form slotter'
+    klasses << 'autosave' if action == :update
+    html[:class] = klasses.join ' '
+    
+    html[:recaptcha] = 'on' if Wagn::Env[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
+    
+    { :url=>url, :remote=>true, :html=>html }
   end
 
   def editor_wrap type=nil
@@ -391,9 +323,10 @@ class Card::HtmlFormat < Card::Format
     }
   end
   
-  def hidden_tags hash={}, base=nil
+  def hidden_tags hash, base=nil
     # convert hash into a collection of hidden tags
     result = ''
+    hash ||= {}
     hash.each do |key, val|
       result += if Hash === val
         hidden_tags val, key

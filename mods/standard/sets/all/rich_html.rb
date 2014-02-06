@@ -144,8 +144,8 @@ format :html do
   ###---( TOP_LEVEL (used by menu) NEW / EDIT VIEWS )
 
   view :new, :perms=>:create, :tags=>:unknown_ok do |args|
-    set_default_args! :new, args
-    frame_and_form :new, args do |form|
+#    set_default_args! :new, args
+    frame_and_form :new, :create, args, 'main-success'=>'REDIRECT' do |form|
       %{
         #{ _optional_render :name_fieldset, args }
         #{ _optional_render :type_fieldset, args }
@@ -155,72 +155,115 @@ format :html do
     end  
   end
   
-  view :edit, :perms=>:update, :tags=>:unknown_ok do |args|    
-    set_default_args! :edit, args
-    frame_and_form :edit, args do |form|
+
+  def default_new_args args    
+    hidden = args[:hidden] ||= {}
+    hidden[:success] ||= card.rule(:thanks) || '_self'
+    hidden[:card   ] ||={}
+    
+    args[:optional_help] = :show
+    
+    default_name_fieldset_args! args
+    default_type_fieldset_args! args  
+
+    cancel = if main?
+      { :class=>'redirecter', :href=>Card.path_setting('/*previous') }
+    else
+      { :class=>'slotter',    :href=>path( :view=>:missing         ) }
+    end
+    
+    args[:buttons] ||= %{
+      #{ submit_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
+      #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
+    }
+    
+    args[:content_fieldset_label] ||= begin
+      '' if [ args[:optional_type_fieldset], args[:optional_name_fieldset] ].member? :show
+    end
+  end
+
+  
+  view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
+    frame_and_form :edit, :update, args do |form|
       %{
         #{ _optional_render :content_fieldsets, args }
         #{ _optional_render :button_fieldset, args}
       }
     end
   end
+
+  def default_edit_args args
+    args[:optional_help] = :show
+    
+    args[:buttons] = %{
+      #{ submit_tag 'Submit', :class=>'submit-button' }
+      #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
+    }
+  end
   
   view :edit_name, :perms=>:update do |args|
-    card.update_referencers = false
-    referers = card.extended_referencers
+    frame_and_form :edit_name, { :action=>:update, :id=>card.id }, args, 'main-success'=>'REDIRECT' do
+      %{
+        #{ _render_name_fieldset args }
+        #{ _optional_render :confirm_rename, args }
+        #{ _optional_render :button_fieldset, args }
+      }
+    end
+  end
+  
+  view :confirm_rename do |args|
+    referers = args[:referers]
     dependents = card.dependents
-
-    frame :edit_name, args do
-      card_form( path(:action=>:update, :id=>card.id), 'card-name-form card-editor', 'main-success'=>'REDIRECT' ) do |f|
-        %{
-          #{ _render_name_fieldset}
-          #{ f.hidden_field :update_referencers, :class=>'update_referencers'   }
-          #{ hidden_field_tag :success, '_self'  }
-          #{ hidden_field_tag :old_name, card.name }
-          #{ hidden_field_tag :referers, referers.size }
-          <div class="confirm-rename hidden">
-            <h1>Are you sure you want to rename <em>#{card.name}</em>?</h1>
-            #{ %{ <h2>This change will...</h2> } if referers.any? || dependents.any? }
-            <ul>
-              #{ %{<li>automatically alter #{ dependents.size } related name(s). } if dependents.any? }
-              #{ %{<li>affect at least #{referers.size} reference(s) to "#{card.name}".} if referers.any? }
-            </ul>
-            #{ %{<p>You may choose to <em>ignore or update</em> the references.</p>} if referers.any? }
-          </div>
-          <fieldset>
-            <div class="button-area">
-              #{ submit_tag 'Rename and Update', :class=>'renamer-updater hidden' }
-              #{ submit_tag 'Rename', :class=>'renamer' }
-              #{ button_tag 'Cancel', :class=>'edit-name-cancel-button slotter', :type=>'button', :href=>path(:view=>:edit, :id=>card.id)}
-            </div>
-          </fieldset>
-        }
-      end
+    wrap :confirm_rename do
+      %{
+        <h1>Are you sure you want to rename <em>#{card.name}</em>?</h1>
+        #{ %{ <h2>This change will...</h2> } if referers.any? || dependents.any? }
+        <ul>
+          #{ %{<li>automatically alter #{ dependents.size } related name(s). } if dependents.any? }
+          #{ %{<li>affect at least #{referers.size} reference(s) to "#{card.name}".} if referers.any? }
+        </ul>
+        #{ %{<p>You may choose to <em>update or ignore</em> the references.</p>} if referers.any? }
+      }
     end
   end
 
+  def default_edit_name_args args
+    referers = args[:referers] = card.extended_referencers  
+    args[:hidden] ||= {}
+    args[:hidden].reverse_merge!(
+      :success  => '_self',
+      :old_name => card.name,
+      :referers => referers.size,
+      :card     => { :update_referencers => false }
+    )
+    args[:buttons] = %{
+      #{ submit_tag 'Rename and Update', :class=>'renamer-updater' }
+      #{ submit_tag 'Rename', :class=>'renamer' }
+      #{ button_tag 'Cancel', :class=>'slotter', :type=>'button', :href=>path(:view=>:edit, :id=>card.id)}
+    }
+    
+  end
 
 
   view :edit_type, :perms=>:update do |args|
-    frame :edit_type, args do
-      card_form( :update, 'card-edit-type-form card-editor' ) do |f|
-        #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
-        %{
-          #{ hidden_field_tag :view, :edit }
-          #{ _render_type_fieldset :variety=>:edit }
-          <fieldset>
-            <div class="button-area">
-              #{ submit_tag 'Submit', :disable_with=>'Submitting' }
-              #{ button_tag 'Cancel', :href=>path(:view=>:edit), :type=>'button', :class=>'edit-type-cancel-button slotter' }
-            </div>
-          </fieldset>
-        }
-      end
+    frame_and_form :edit_type, :update, args do
+    #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
+      %{
+        #{ _render_type_fieldset args }
+        #{ optional_render :button_fieldset, args }
+      }
     end
   end
-  
-  
 
+  def default_edit_type_args args
+    args[:variety] = :edit #YUCK!
+    args[:hidden] ||= { :view=>:edit }
+    args[:buttons] = %{
+      #{ submit_tag 'Submit', :disable_with=>'Submitting' }
+      #{ button_tag 'Cancel', :href=>path(:view=>:edit), :type=>'button', :class=>'slotter' }      
+    }    
+  end
+  
 
   view :missing do |args|
     return '' unless card.ok? :create  #this should be moved into ok_view
@@ -246,6 +289,28 @@ format :html do
     fieldset 'name', raw( name_field form ), :editor=>'name', :help=>args[:help]
   end
 
+  
+  def default_name_fieldset_args! args
+    hidden = args[:hidden] ||= {}
+    showhide = :hide
+    
+    if !params[:name_prompt] and !card.cardname.blank?
+      # name is ready and will show up in title
+      hidden[:card][:name] ||= card.name
+    else
+      # name is not ready; need generic title
+      args[:title] ||= "New #{ card.type_name unless card.type_id == Card.default_type_id }" #fixme - overrides nest args
+      unless card.rule_card :autoname
+        # prompt for name
+        hidden[:name_prompt] = true unless hidden.has_key? :name_prompt
+        showhide = :show
+      end
+    end
+    args[:optional_name_fieldset] ||= showhide
+  end
+  
+
+
   view :type_fieldset do |args|
     field = if args[:variety] == :edit #FIXME dislike this api -ef
       type_field :class=>'type-field edit-type-field'
@@ -254,6 +319,22 @@ format :html do
     end
     fieldset 'type', field, :editor => 'type', :attribs => { :class=>'type-fieldset'}
   end
+  
+  
+  def default_type_fieldset_args! args
+    prompt_for_type = ( !params[:type] and !args[:type] and ( main? || card.simple? || card.is_template? ) and
+      Card.new( :type_id=>card.type_id ).ok? :create #otherwise current type won't be on menu
+    )
+    args[:optional_type_fieldset] = if prompt_for_type
+        :show
+      else
+        args[:hidden] ||= {}
+        args[:hidden][:card] ||= {}
+        args[:hidden][:card][:type_id] ||= card.type_id # yuck!  more api
+        :hide
+      end
+  end
+  
   
   view :button_fieldset do |args|
     %{
@@ -321,12 +402,17 @@ format :html do
     if rparams = params[:related]
       rcardname = rparams[:name].to_name.to_absolute_name( card.cardname)
       rcard = Card.fetch rcardname, :new=>{}
-      rview = rparams[:view] || :titled
-      show = 'menu,help'
-      show += ',comment_box' if rparams[:name] == '+discussion' #fixme.  yuck!
+
+      nest_args = {
+        :view          => ( rparams[:view] || :titled ),
+        :optional_help => :show,
+        :optional_menu => :show
+      }
+      
+      nest_args[:optional_comment_box] = :show if rparams[:name] == '+discussion' #fixme.  yuck!
 
       frame :related, args do
-        process_inclusion rcard, :view=>rview, :show=>show
+        process_inclusion rcard, nest_args
       end
     end
   end

@@ -7,6 +7,14 @@ format :html do
     _final_type args
   end
 
+  view :type_fieldset do |args|
+    if cards.cards_of_type_exist?
+      %{<div>Sorry, this card must remain a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
+    else
+      _final_type_fieldset args
+    end  
+  end
+
   view :watch do |args|
     wrap :watch, args do
       #type_link = card.watching_type? ? "#{watching_type_cards} | " : ""
@@ -27,7 +35,7 @@ include Card::Set::Type::Basic
 
 
 def cards_of_type_exist?
-  Account.as_bot { Card.count_by_wql :type_id=>id } > 0
+  !new_card? and Account.as_bot { Card.count_by_wql :type_id=>id } > 0
 end
 
 event :check_for_cards_of_type, :after=>:validate_delete do

@@ -109,7 +109,7 @@ class WagnController < ActionController::Base
 
         if ActiveRecord::RecordInvalid === exception
           :errors
-        elsif ENV['WAGN_MIGRATION'] or Rails.logger.level == 0 # could also just check non-production mode...
+        elsif Rails.logger.level == 0 # could also just check non-production mode...
           raise exception
         else
           :server_error

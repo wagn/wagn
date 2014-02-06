@@ -45,6 +45,7 @@ module Wagn
         config.recaptcha_private_key = nil
         config.recaptcha_proxy       = nil
         
+        config.send_emails           = !ENV['WAGN_MIGRATION']
         config.email_defaults        = nil
         config.override_host         = nil
         config.override_protocol     = nil

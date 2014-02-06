@@ -77,7 +77,7 @@ format :html do
   view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
 
     locals = {:slot=>self, :card=>card, :account=>card.account }
-    wrap_frame :account, args do
+    frame :account, args do
       card_form :update, '', 'notify-success'=>'account details updated' do |form|
         %{
           #{ hidden_field_tag 'success[id]', '_self' }
@@ -118,7 +118,7 @@ format :html do
   
 
   view :new_account, :perms=> lambda { |r| r.card.accountable? && !r.card.account } do |args|
-    wrap_frame :new_account, args do
+    frame :new_account, args do
       card_form :update do |form|
         %{
           #{ hidden_field_tag 'success[id]', '_self'                       }
@@ -134,7 +134,7 @@ format :html do
   
   view :signin, :tags=>:unknown_ok, :perms=>:none do |args|
     frame_args = args.merge :title=>'Sign In', :show_help=>true, :optional_menu=>:never
-    signin_core = wrap_frame :signin, frame_args do
+    signin_core = frame :signin, frame_args do
       form_tag wagn_path('account/signin') do
         %{
           #{ fieldset :email, text_field_tag( 'login', params[:login], :id=>'login_field' ) }
@@ -157,7 +157,7 @@ format :html do
 
   view :forgot_password, :perms=>:none do |args|
     frame_args = args.merge :title=>'Forgot Password', :show_help=>true, :optional_menu=>:never
-    wrap_frame :forgot_password, frame_args do
+    frame :forgot_password, frame_args do
       form_tag wagn_path('account/forgot_password') do
         %{
           #{ fieldset :email, text_field_tag( 'email', params[:email] ) }

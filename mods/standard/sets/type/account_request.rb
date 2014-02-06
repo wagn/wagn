@@ -13,13 +13,12 @@ format :html do
     success = Card.setting "#{ Card[ card.accountable? ? :signup : :request ].name }+#{ Card[ :thanks ].name }"
     # *signup+*thanks or *request+*thanks
 
-    wrap_frame :signup, frame_args do
+    frame :signup, frame_args do
       card_form :create, 'card-form', 'main-success'=>"REDIRECT" do |f|
-        @form = f
         %{
           #{ f.hidden_field :type_id }
           #{ hidden_field_tag :success, success }
-          #{ _render_name_editor :help=>'usually first and last name' }
+          #{ _render_name_fieldset :help=>'usually first and last name' }
           #{ fieldset :email, text_field( 'card[account_args]', :email ), :editor=>'content' }
           #{ with_inclusion_mode(:new) { edit_slot } if card.structure }
           <fieldset><div class="button-area">#{ submit_tag 'Submit' }</div></fieldset>
@@ -34,9 +33,8 @@ format :html do
       :help_text=>"Accept account request from: #{link_to_page card.name}"
     }
   
-    wrap_frame :edit, frame_args do
+    frame :edit, frame_args do
       card_form :update, 'card-form autosave' do |f|
-        @form= f
         %{
           #{ hidden_field_tag 'card[type_id]', Card.default_accounted_type_id }
           #{ hidden_field_tag :activate, 'true'                               }

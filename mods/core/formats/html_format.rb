@@ -115,14 +115,37 @@ class Card::HtmlFormat < Card::Format
     end
   end
     
-  def wrap_frame view, args={}
+  def frame view, args={}
     wrap view, args.merge(:slot_class=>'card-frame') do
       %{
         #{ _render_header args }
         #{ %{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader] }
-        #{ _render_help args if args[:show_help] }
+        #{ _optional_render :help, args }
         #{ wrap_body args do yield args end }
       }
+    end
+  end
+  
+  
+  def frame_and_form view, args
+    view_key = canonicalize_view view
+    send "#{view_key}_frame_and_form", args do yield args end
+  end
+  
+  def new_frame_and_form args
+    frame :new, args.merge(:show_help=>true) do
+      card_form :create, 'card-form', 'main-success'=>'REDIRECT' do |form|
+        yield args
+      end
+    end
+  end
+  
+  
+  def edit_frame_and_form args
+    frame :edit, args.merge(:show_help=>true) do
+      card_form :update, 'card-form autosave' do |f|
+        yield args
+      end
     end
   end
 
@@ -144,16 +167,87 @@ class Card::HtmlFormat < Card::Format
 
   def edit_slot args={}
     if args[:structure] || card.structure
-      _render_raw(args).scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc|
+      # multi-card edit mode
+      _render_raw(args).scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc| #fixme - wrong place for regexp!
         process_content( inc ).strip
       end.join
 #        raw _render_core(args)
-    elsif label = args[:label]
-      label = '' if label == true
-      fieldset label, content_field( form, args ), :editor=>:content
     else
-      editor_wrap( :content ) { content_field form, args }
+      # single-card edit mode
+      field = content_field form, args
+      if label = args[:content_fieldset_label]
+        fieldset label, field, :editor=>:content
+      else
+        editor_wrap( :content ) { field }
+      end
     end
+  end
+  
+#~~~~~ view arg helpers
+  
+  def set_default_args! view, args
+    view_key = canonicalize_view view
+    default_key = "default_#{canonicalize_view view}_args"
+    unless args[default_key.to_sym] == :ignore
+      send "#{ default_key }!", args
+      args
+    end
+  end
+  
+  def default_edit_args! args
+    args[:buttons] = %{
+      #{ submit_tag 'Submit', :class=>'submit-button' }
+      #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
+    }
+  end
+
+  def default_new_args! args
+    hidden = args[:hidden] ||= {}
+    hidden[:success] ||= card.rule(:thanks) || '_self'
+    hidden[:card   ] ||={}
+    
+    set_default_name_fieldset_args! args
+    set_default_type_fieldset_args! args
+  
+
+    cancel = if main?
+      { :class=>'redirecter', :href=>Card.path_setting('/*previous') }
+    else
+      { :class=>'slotter',    :href=>path( :view=>:missing         ) }
+    end
+    
+    args[:buttons] ||= %{
+      #{ submit_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
+      #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
+    }
+    
+    args[:content_fieldset_label] ||= begin
+      '' if :show == args[:optional_type_fieldset] || args[:optional_name_fieldset]
+    end
+  end
+  
+  def default_name_fieldset_args!
+    showhide = :hide
+    if !params[:name_prompt] and !card.cardname.blank?
+      # name is ready and will show up in title
+      args[:hidden][:card][:name] ||= card.name
+    else
+      # name is not ready; need generic title
+      args[:title] ||= "New #{ card.type_name unless card.type_id == Card.default_type_id }" #fixme - overrides nest args
+      unless card.rule_card :autoname
+        # prompt for name
+        args[:hidden][:name_prompt] = true unless hidden.has_key :name_prompt
+        showhide = :show
+      end
+    end
+    args[:optional_name_fieldset] ||= showhide
+  end
+  
+  def default_type_fieldset_args!
+    prompt_for_type = ( !params[:type] and !args[:type] and ( main? || card.simple? || card.is_template? ) and
+      Card.new( :type_id=>card.type_id ).ok? :create #otherwise current type won't be on menu
+    )
+    args[:optional_type_fieldset] = prompt_for_type ? :show : :hide
   end
   
 
@@ -254,7 +348,13 @@ class Card::HtmlFormat < Card::Format
   end
 
   def card_form *opts
-    form_for( card, form_opts(*opts) ) { |form| yield form }
+    form_for card, form_opts(*opts) do |form|
+      @form = form 
+      %{
+        #{ hidden_tags args[:hidden] }
+        #{ yield form }
+      }
+    end
   end
 
   def form_opts url, classes='', other_html={}
@@ -291,7 +391,7 @@ class Card::HtmlFormat < Card::Format
     }
   end
   
-  def hidden_tags hash, base=nil
+  def hidden_tags hash={}, base=nil
     # convert hash into a collection of hidden tags
     result = ''
     hash.each do |key, val|

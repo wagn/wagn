@@ -5,7 +5,7 @@ format :html do
   view :history do |args|
     load_revisions
     if @revision
-      wrap_frame :history, args.merge(:content=>true, :subheader=>_render_revision_subheader ) do
+      frame :history, args.merge(:content=>true, :subheader=>_render_revision_subheader ) do
         _render_diff
       end
     end

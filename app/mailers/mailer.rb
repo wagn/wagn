@@ -89,16 +89,16 @@ class Mailer < ActionMailer::Base
   private
 
   def mail_from args, from
-    #puts "unprocessed mail args: #{args}"
-    unless ENV['WAGN_MIGRATION']
-      from_name, from_email = (from =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, from]
-      if default_from=@@defaults[:from]
-        args[:from] = !from_email ? default_from : "#{from_name || from_email} <#{default_from}>"
-        args[:reply_to] ||= from
-      else
-        args[:from] = from
-      end
-      #puts "mail args: #{args}"
+    from_name, from_email = (from =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, from]
+    if default_from=@@defaults[:from]
+      args[:from] = !from_email ? default_from : "#{from_name || from_email} <#{default_from}>"
+      args[:reply_to] ||= from
+    else
+      args[:from] = from
+    end
+    if config.send_emails == false
+      Rails.logger.debug "Email is off; NOT mailing the following: #{args}"
+    else
       mail args
     end
   end

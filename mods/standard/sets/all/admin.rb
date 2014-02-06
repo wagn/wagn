@@ -7,11 +7,11 @@ view :setup, :tags=>:unknown_ok do |args|
     :help_text=>'To get started, set up an account.'
   }
     
-  wrap_frame :setup, frame_args do
+  frame :setup, frame_args do
     form_for :card do |f|
       @form = f
       %{
-        #{ _render_name_editor :help=>'usually first and last name' }
+        #{ _render_name_fieldset :help=>'usually first and last name' }
         #{ hidden_field_tag 'card[type_id]', Card.default_accounted_type_id }
         #{ _render_account_detail :account=>account, :setup=>true }
         <fieldset><div class="button-area">#{ submit_tag 'Create' }</div></fieldset>
@@ -22,7 +22,7 @@ view :setup, :tags=>:unknown_ok do |args|
 end
 
 view :show_cache do |args|
-  wrap_frame :show_cache, args do 
+  frame :show_cache, args do 
     key = card.key
     cache_card = Card.fetch(key)
     db_card = Card.find_by_key(key)

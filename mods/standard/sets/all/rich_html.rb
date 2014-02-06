@@ -64,7 +64,7 @@ format :html do
   end
 
   view :open, :tags=>:comment do |args|
-    wrap_frame :open, args.merge(:content=>true, :optional_toggle=>:show) do
+    frame :open, args.merge(:content=>true, :optional_toggle=>:show) do
       %{
         #{ _render_open_content args }
         #{ optional_render :comment_box, args }
@@ -86,7 +86,7 @@ format :html do
     %{
       <h1 class="card-header">
         #{ _optional_render :toggle, args, :hide }
-        #{ _render_title args }
+        #{ _optional_render :title, args }
         #{ _optional_render :menu, args }
       </h1>
     }
@@ -135,111 +135,45 @@ format :html do
   end
 
   view :closed do |args|
-    wrap_frame :closed, args.merge(:content=>true, :body_class=>'closed-content', :toggle_mode=>:close, :optional_toggle=>:show ) do
+    frame :closed, args.merge(:content=>true, :body_class=>'closed-content', :toggle_mode=>:close, :optional_toggle=>:show ) do
       _optional_render :closed_content, args
     end
   end
 
 
+  ###---( TOP_LEVEL (used by menu) NEW / EDIT VIEWS )
+
   view :new, :perms=>:create, :tags=>:unknown_ok do |args|
-    name_ready = !card.cardname.blank? && !Card.exists?( card.cardname )
-    prompt_for_name = !name_ready && !card.rule_card( :autoname )
-
-    hidden = args[:hidden] || { :success=> card.rule(:thanks) || '_self' }
-    if name_ready
-      hidden['card[name]'] = card.name
-    else
-      args[:title] ||= "New #{ card.type_name unless card.type_id == Card.default_type_id }"
-    end
-
-    prompt_for_type = (
-      !params[:type] and !args[:type] and
-      ( main? || card.simple? || card.is_template? ) and
-      Card.new( :type_id=>card.type_id ).ok? :create #otherwise current type won't be on menu
-    )
-
-    cancel = if main?
-      { :class=>'redirecter', :href=>Card.path_setting('/*previous') }
-    else
-      { :class=>'slotter',    :href=>path( :view=>:missing         ) }
-    end
-
-    wrap_frame :new, args.merge(:show_help=>true) do
-      card_form :create, 'card-form', 'main-success'=>'REDIRECT' do |form|
-        @form = form
-        %{
-          #{ hidden_tags hidden.merge( args[:hidden] || {} ) }
-          #{ _render_name_editor if prompt_for_name }
-          #{ prompt_for_type ? _render_type_menu : form.hidden_field( :type_id ) }
-          <div class="card-editor editor">
-            #{ edit_slot args.merge( :label => prompt_for_name || prompt_for_type ) }
-          </div>
-          <fieldset>
-            <div class="button-area">
-              #{ submit_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
-              #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
-            </div>
-          </fieldset>
-        }
-      end
+    set_default_args! :new, args
+    frame_and_form :new, args do |form|
+      %{
+        #{ _optional_render :name_fieldset, args }
+        #{ _optional_render :type_fieldset, args }
+        #{ _optional_render :content_fieldsets, args }
+        #{ _optional_render :button_fieldset, args}
+      }
+    end  
+  end
+  
+  view :edit, :perms=>:update, :tags=>:unknown_ok do |args|    
+    set_default_args! :edit, args
+    frame_and_form :edit, args do |form|
+      %{
+        #{ _optional_render :content_fieldsets, args }
+        #{ _optional_render :button_fieldset, args}
+      }
     end
   end
-
-
-  view :editor do |args|
-    form.text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id
-  end
-
-  view :missing do |args|
-    return '' unless card.ok? :create  #this should be moved into ok_view
-    new_args = { :view=>:new, 'card[name]'=>card.name }
-    new_args['card[type]'] = args[:type] if args[:type]
-
-    wrap :missing, args do
-      link_to raw("Add #{ fancy_title args[:title] }"), path(new_args),
-        :class=>"slotter missing-#{ args[:denied_view] || args[:home_view]}", :remote=>true
-    end
-  end
-
-  view :closed_missing, :perms=>:none do |args|
-    %{<span class="faint"> #{ showname } </span>}
-  end
-
-###---(  EDIT VIEWS )
-  view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
-    wrap_frame :edit, args.merge(:show_help=>true) do
-      card_form :update, 'card-form autosave' do |f|
-        @form= f
-        %{
-          #{ hidden_tags(( args[:hidden] || {} )) }
-          <div class="card-editor">
-            #{ edit_slot args }
-          </div>
-          <fieldset>
-            <div class="button-area">
-              #{ submit_tag 'Submit', :class=>'submit-button' }
-              #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
-            </div>
-          </fieldset>
-        }
-      end
-    end
-  end
-
-  view :name_editor do |args|
-    fieldset 'name', raw( name_field form ), :editor=>'name', :help=>args[:help]
-  end
-
+  
   view :edit_name, :perms=>:update do |args|
     card.update_referencers = false
     referers = card.extended_referencers
     dependents = card.dependents
 
-    wrap_frame :edit_name, args do
+    frame :edit_name, args do
       card_form( path(:action=>:update, :id=>card.id), 'card-name-form card-editor', 'main-success'=>'REDIRECT' ) do |f|
-        @form = f
         %{
-          #{ _render_name_editor}
+          #{ _render_name_fieldset}
           #{ f.hidden_field :update_referencers, :class=>'update_referencers'   }
           #{ hidden_field_tag :success, '_self'  }
           #{ hidden_field_tag :old_name, card.name }
@@ -265,26 +199,15 @@ format :html do
     end
   end
 
-  view :type_menu do |args|
-    field = if args[:variety] == :edit
-      type_field :class=>'type-field edit-type-field'
-    else
-      type_field :class=>"type-field live-type-field", :href=>path(:view=>:new), 'data-remote'=>true
-    end
-    fieldset 'type', field, :editor => 'type', :attribs => { :class=>'type-fieldset'}
-  end
+
 
   view :edit_type, :perms=>:update do |args|
-    wrap_frame :edit_type, args do
+    frame :edit_type, args do
       card_form( :update, 'card-edit-type-form card-editor' ) do |f|
         #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
         %{
           #{ hidden_field_tag :view, :edit }
-          #{if card.type_id == Card::CardtypeID and !Card.search(:type_id=>card.id).empty? #ENGLISH
-            %{<div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
-          else
-            _render_type_menu :variety=>:edit #FIXME dislike this api -ef
-          end}
+          #{ _render_type_fieldset :variety=>:edit }
           <fieldset>
             <div class="button-area">
               #{ submit_tag 'Submit', :disable_with=>'Submitting' }
@@ -295,8 +218,70 @@ format :html do
       end
     end
   end
+  
+  
 
-  view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
+
+  view :missing do |args|
+    return '' unless card.ok? :create  #this should be moved into ok_view
+    new_args = { :view=>:new, 'card[name]'=>card.name }
+    new_args['card[type]'] = args[:type] if args[:type]
+
+    wrap :missing, args do
+      link_to raw("Add #{ fancy_title args[:title] }"), path(new_args),
+        :class=>"slotter missing-#{ args[:denied_view] || args[:home_view]}", :remote=>true
+    end
+  end
+
+  view :closed_missing, :perms=>:none do |args|
+    %{<span class="faint"> #{ showname } </span>}
+  end
+
+
+
+  
+# FIELDSET VIEWS
+
+  view :name_fieldset do |args|
+    fieldset 'name', raw( name_field form ), :editor=>'name', :help=>args[:help]
+  end
+
+  view :type_fieldset do |args|
+    field = if args[:variety] == :edit #FIXME dislike this api -ef
+      type_field :class=>'type-field edit-type-field'
+    else
+      type_field :class=>"type-field live-type-field", :href=>path(:view=>:new), 'data-remote'=>true
+    end
+    fieldset 'type', field, :editor => 'type', :attribs => { :class=>'type-fieldset'}
+  end
+  
+  view :button_fieldset do |args|
+    %{
+      <fieldset>
+        <div class="button-area">
+          #{ args[:buttons] }
+        </div>
+      </fieldset>
+    }
+  end
+  
+  view :content_fieldsets do |args|
+    %{
+      <div class="card-editor editor">
+        #{ edit_slot args }
+      </div>
+    }
+  end
+  
+# FIELD VIEWS
+  
+  view :editor do |args|
+    form.text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id
+  end
+
+
+
+  view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args| #fixme.  why is this a view??
     eform = form_for_multi
     content = content_field eform, args.merge( :nested=>true )
     opts = { :editor=>'content', :help=>true, :attribs =>
@@ -314,7 +299,7 @@ format :html do
   view :options, :tags=>:unknown_ok do |args|
     current_set = Card.fetch( params[:current_set] || card.related_sets[0][0] )
 
-    wrap_frame :options, args do
+    frame :options, args do
       %{
         #{ subformat( current_set ).render_content }
         #{
@@ -340,7 +325,7 @@ format :html do
       show = 'menu,help'
       show += ',comment_box' if rparams[:name] == '+discussion' #fixme.  yuck!
 
-      wrap_frame :related, args do
+      frame :related, args do
         process_inclusion rcard, :view=>rview, :show=>show
       end
     end
@@ -414,7 +399,7 @@ format :html do
         #{link_to 'Sign Up', :controller=>'account', :action=>'signup'} to create it.
        </div>}
     end
-    wrap_frame :notfound, args.merge(:title=>'Not Found', :optional_menu=>:never) do
+    frame :notfound, args.merge(:title=>'Not Found', :optional_menu=>:never) do
       %{
         <h2>Could not find #{card.name.present? ? "<em>#{card.name}</em>" : 'that'}.</h2>
         #{sign_in_or_up_links}
@@ -432,7 +417,7 @@ format :html do
     if !focal?
       %{<span class="denied"><!-- Sorry, you don't have permission #{to_task} --></span>}
     else
-      wrap_frame :denial, args do #ENGLISH below
+      frame :denial, args do #ENGLISH below
         message = case
         when task != :read && Wagn.config.read_only
           "We are currently in read-only mode.  Please try again later."

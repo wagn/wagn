@@ -46,6 +46,7 @@ Wagn.application.class.configure do
   # Log the query plan for queries taking more than this (works
   # with SQLite, MySQL, and PostgreSQL)
   config.active_record.auto_explain_threshold_in_seconds = 0.5
+  
 
   #  if File.exists?(File.join(Rails.root,'tmp', 'debug.txt'))
 #    require 'ruby-debug'
@@ -53,6 +54,8 @@ Wagn.application.class.configure do
 #    Debugger.start_remote
 #    File.delete(File.join(Rails.root,'tmp', 'debug.txt'))
 #  end
+
+  config.send_emails = false
 end
 
 

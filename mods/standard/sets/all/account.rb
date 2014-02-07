@@ -74,7 +74,7 @@ format :html do
   
   
   view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
-    frame_and_form :account, :update, args, 'notify-success'=>'account details updated' do
+    frame_and_form :update, args, 'notify-success'=>'account details updated' do
       %{
         #{ render_account_detail }
         #{ _optional_render :button_fieldset, args }
@@ -116,7 +116,7 @@ format :html do
   
 
   view :new_account, :perms=> lambda { |r| r.card.accountable? && !r.card.account } do |args|
-    frame_and_form :new_account, :update, args do
+    frame_and_form :update, args do
       %{
         #{ _render_email_fieldset    }
         #{ _render_invitation_field  }
@@ -135,7 +135,6 @@ format :html do
   
   
   view :signin_and_forgot_password, :perms=>:none do |args|
-    Wagn::Env[:recaptcha_on] = false
     %{
       <div id="sign-in">#{ _render_signin args }</div>
       <div id="forgot-password">#{ _render_forgot_password args }</div>
@@ -154,13 +153,12 @@ format :html do
       }
     } )
     
-    frame_and_form :signin, 'account/signin', args do
-      %{
-        #{ fieldset :email, text_field_tag( 'login', params[:login], :id=>'login_field' ) }
-        #{ fieldset :password, password_field_tag( 'password' ) }
-        #{ _optional_render :button_fieldset, args              }
-        
-      }
+    frame_and_form 'account/signin', args, :recaptcha=>:off do
+      [
+        fieldset( :email, text_field_tag( 'login', params[:login], :id=>'login_field' ) ),
+        fieldset( :password, password_field_tag( 'password' ) ),
+        _optional_render( :button_fieldset, args )
+      ]
     end
   end
 
@@ -173,12 +171,12 @@ format :html do
       :buttons => submit_tag( 'Reset my password' )
     } )
     
-    frame_and_form :forgot_password, 'account/forgot_password', args,
+    frame_and_form 'account/forgot_password', args, :recaptcha=>:off,
       'notify-success'=>"Check your email for your new temporary password" do
-      %{
-        #{ fieldset :email, text_field_tag( 'email', params[:email] ) }
-        #{ _optional_render :button_fieldset, args                    }
-      }
+      [
+        fieldset( :email, text_field_tag( 'email', params[:email] ) ),
+        _optional_render( :button_fieldset, args )
+      ]
     end
   end
 end

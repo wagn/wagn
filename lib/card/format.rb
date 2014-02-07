@@ -62,8 +62,7 @@ class Card
         # note: this could also be done with method_missing. is this any faster?
         if !method_defined? "render_#{view}"
           define_method "_render_#{view}" do |*a|
-            args = default_render_args view, *a
-            send_final_render_method view, args
+            send_final_render_method view, *a
           end
 
           define_method "render_#{view}" do |*a|
@@ -253,10 +252,11 @@ class Card
     
 
     def send_final_render_method view, *a
-      a = [{}] if a.empty?
+      @current_view = view
+      args = default_render_args view, *a
       if final_method = view_method(view)
         with_inclusion_mode view do
-          send final_method, *a
+          send final_method, args
         end
       else
         unsupported_view view

@@ -32,7 +32,7 @@ format :html do
   
   view :template_link do |args|
     args.delete :style
-    wrap :template_link, args do
+    wrap args do
       link = link_to_view args[:inc_syntax], :template_editor, :class=>'slotter' #, 'slot-include'=>include_syntax
       "{{#{link}}}"
     end
@@ -43,12 +43,12 @@ format :html do
   end
   
   view :template_editor do |args|
-    wrap :template_editor, args do
+    wrap args do
       %{
         <div class="template-editor-left">{{</div> 
         <div class="template-editor-main">
           #{
-            frame :template_editor, :no_slot=>true, :title=>card.label, :optional_menu_view=>:template_closer do
+            frame :no_slot=>true, :title=>card.label, :optional_menu_view=>:template_closer do
               _render_core args.merge(:unlabeled=>true)
             end
           }

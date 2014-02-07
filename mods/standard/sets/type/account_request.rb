@@ -15,7 +15,7 @@ format :html do
     args[:buttons] = submit_tag 'Submit'
     # *signup+*thanks or *request+*thanks
 
-    frame_and_form :signup, :create, args, 'main-success'=>"REDIRECT" do
+    frame_and_form :create, args, 'main-success'=>"REDIRECT" do
       %{
         #{ form.hidden_field :type_id }
         #{ _render_name_fieldset :help=>'usually first and last name' }
@@ -34,7 +34,7 @@ format :html do
       :card => { :type_id => Card.default_accounted_type_id }
     } 
   
-    frame_and_form :edit, :update, args do
+    frame_and_form :update, args do
       _render_invitation_field
     end
   end

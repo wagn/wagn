@@ -22,24 +22,24 @@ format :html do
   end
 
   view :content do |args|
-    wrap :content, args.merge(:slot_class=>'card-content') do
+    wrap args.merge(:slot_class=>'card-content') do
       menu = optional_render :menu, args, :hide
       %{#{ menu }#{ _render_core args }}
     end
   end
 
   view :titled, :tags=>:comment do |args|
-    wrap :titled, args do
-      %{
-        #{ _render_header args.merge( :optional_menu=>:hide ) }
-        #{ wrap_body( :content=>true ) { _render_core args } }
-        #{ optional_render :comment_box, args }
-      }
+    wrap args do   
+      [
+        _render_header( args.merge :optional_menu=>:hide ),
+        wrap_body( :content=>true ) { _render_core args },
+        optional_render( :comment_box, args )
+      ]
     end
   end
 
   view :labeled do |args|
-    wrap :labeled, args do
+    wrap args do
       %{
         #{ _optional_render :menu, args }
         <label>#{ _render_title args }</label>
@@ -64,7 +64,7 @@ format :html do
   end
 
   view :open, :tags=>:comment do |args|
-    frame :open, args.merge(:content=>true, :optional_toggle=>:show) do
+    frame args.merge(:content=>true, :optional_toggle=>:show) do
       %{
         #{ _render_open_content args }
         #{ optional_render :comment_box, args }
@@ -135,7 +135,7 @@ format :html do
   end
 
   view :closed do |args|
-    frame :closed, args.merge(:content=>true, :body_class=>'closed-content', :toggle_mode=>:close, :optional_toggle=>:show ) do
+    frame args.merge(:content=>true, :body_class=>'closed-content', :toggle_mode=>:close, :optional_toggle=>:show ) do
       _optional_render :closed_content, args
     end
   end
@@ -145,7 +145,7 @@ format :html do
 
   view :new, :perms=>:create, :tags=>:unknown_ok do |args|
 #    set_default_args! :new, args
-    frame_and_form :new, :create, args, 'main-success'=>'REDIRECT' do |form|
+    frame_and_form :create, args, 'main-success'=>'REDIRECT' do |form|
       %{
         #{ _optional_render :name_fieldset, args }
         #{ _optional_render :type_fieldset, args }
@@ -184,7 +184,7 @@ format :html do
 
   
   view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
-    frame_and_form :edit, :update, args do |form|
+    frame_and_form :update, args do |form|
       %{
         #{ _optional_render :content_fieldsets, args }
         #{ _optional_render :button_fieldset, args}
@@ -202,7 +202,7 @@ format :html do
   end
   
   view :edit_name, :perms=>:update do |args|
-    frame_and_form :edit_name, { :action=>:update, :id=>card.id }, args, 'main-success'=>'REDIRECT' do
+    frame_and_form( { :action=>:update, :id=>card.id }, args, 'main-success'=>'REDIRECT' ) do
       %{
         #{ _render_name_fieldset args }
         #{ _optional_render :confirm_rename, args }
@@ -214,7 +214,7 @@ format :html do
   view :confirm_rename do |args|
     referers = args[:referers]
     dependents = card.dependents
-    wrap :confirm_rename do
+    wrap args do
       %{
         <h1>Are you sure you want to rename <em>#{card.name}</em>?</h1>
         #{ %{ <h2>This change will...</h2> } if referers.any? || dependents.any? }
@@ -246,7 +246,7 @@ format :html do
 
 
   view :edit_type, :perms=>:update do |args|
-    frame_and_form :edit_type, :update, args do
+    frame_and_form :update, args do
     #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
       %{
         #{ _render_type_fieldset args }
@@ -270,7 +270,7 @@ format :html do
     new_args = { :view=>:new, 'card[name]'=>card.name }
     new_args['card[type]'] = args[:type] if args[:type]
 
-    wrap :missing, args do
+    wrap args do
       link_to raw("Add #{ fancy_title args[:title] }"), path(new_args),
         :class=>"slotter missing-#{ args[:denied_view] || args[:home_view]}", :remote=>true
     end
@@ -380,7 +380,7 @@ format :html do
   view :options, :tags=>:unknown_ok do |args|
     current_set = Card.fetch( params[:current_set] || card.related_sets[0][0] )
 
-    frame :options, args do
+    frame args do
       %{
         #{ subformat( current_set ).render_content }
         #{
@@ -411,7 +411,7 @@ format :html do
       
       nest_args[:optional_comment_box] = :show if rparams[:name] == '+discussion' #fixme.  yuck!
 
-      frame :related, args do
+      frame args do
         process_inclusion rcard, nest_args
       end
     end
@@ -435,7 +435,7 @@ format :html do
 
   view :conflict, :error_code=>409 do |args|
     load_revisions
-    wrap :errors do |args|
+    wrap args.merge( :slot_class=>'error-view' ) do
       %{<strong>Conflict!</strong><span class="new-current-revision-id">#{@revision.id}</span>
         <div>#{ link_to_page @revision.creator.name } has also been making changes.</div>
         <div>Please examine below, resolve above, and re-submit.</div>
@@ -444,7 +444,7 @@ format :html do
   end
 
   view :change do |args|
-    wrap :change, args do
+    wrap args do
       %{
         #{ link_to_page card.name, nil, :class=>'change-card' }
         #{ _optional_render :menu, args, :hide }
@@ -471,7 +471,7 @@ format :html do
   view :errors, :perms=>:none do |args|
     #Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller[0..3]*", "}"
     if card.errors.any?
-      wrap :errors, args do
+      wrap args do
         %{ <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
         card.errors.map { |attrib, msg| "<div>#{attrib.to_s.upcase}: #{msg}</div>" } * ''
       end
@@ -485,7 +485,7 @@ format :html do
         #{link_to 'Sign Up', :controller=>'account', :action=>'signup'} to create it.
        </div>}
     end
-    frame :notfound, args.merge(:title=>'Not Found', :optional_menu=>:never) do
+    frame args.merge(:title=>'Not Found', :optional_menu=>:never) do
       %{
         <h2>Could not find #{card.name.present? ? "<em>#{card.name}</em>" : 'that'}.</h2>
         #{sign_in_or_up_links}
@@ -503,7 +503,7 @@ format :html do
     if !focal?
       %{<span class="denied"><!-- Sorry, you don't have permission #{to_task} --></span>}
     else
-      frame :denial, args do #ENGLISH below
+      frame args do #ENGLISH below
         message = case
         when task != :read && Wagn.config.read_only
           "We are currently in read-only mode.  Please try again later."

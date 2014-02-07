@@ -13,7 +13,7 @@ format :html do
       :optional_menu=>:never 
     )
     
-    frame_and_form :invite, :create, args do
+    frame_and_form :create, args do
       %{
         #{ form.hidden_field :type_id }
         #{ _render_name_fieldset :help=>'usually first and last name'   }

@@ -85,10 +85,10 @@ class Card::HtmlFormat < Card::Format
     JSON( options_hash )
   end
 
-  def wrap view, args = {}
+  def wrap args = {}
     classes = [
       ( 'card-slot' unless args[:no_slot] ),
-      "#{view}-view",
+      "#{ @current_view }-view",
       ( args[:slot_class] if args[:slot_class] ),
       ( "STRUCTURE-#{args[:structure].to_name.key}" if args[:structure]),
       card.safe_set_keys
@@ -97,7 +97,7 @@ class Card::HtmlFormat < Card::Format
     div = %{<div id="#{card.cardname.url_key}" data-card-id="#{card.id}" data-card-name="#{h card.name}" style="#{h args[:style]}" class="#{classes*' '}" } +
       %{data-slot='#{html_escape_except_quotes slot_options( args )}'>#{yield}</div>}
 
-    if params[:debug] == 'slot' && !tagged(view, :no_wrap_comments )
+    if params[:debug] == 'slot' && !tagged( @current_view, :no_wrap_comments )
       name = h card.name
       space = '  ' * @depth
       %{<!--\n\n#{ space }BEGIN SLOT: #{ name }\n\n-->#{ div }<!--\n\n#{space}END SLOT: #{ name }\n\n-->}
@@ -115,27 +115,32 @@ class Card::HtmlFormat < Card::Format
     end
   end
     
-  def frame view, args={}
-    wrap view, args.merge(:slot_class=>'card-frame') do
+  def frame args={}
+    wrap args.merge(:slot_class=>'card-frame') do
       %{
         #{ _render_header args }
         #{ %{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader] }
         #{ _optional_render :help, args, :hide }
-        #{ wrap_body args do yield args end }
+        #{ wrap_body args do output( yield args ) end }
       }
     end
   end
   
-  
-  def frame_and_form view, action, args={}, form_opts={}
+  def frame_and_form action, args={}, form_opts={}
     form_opts[:hidden] = args.delete(:hidden)
-    frame view, args do
+    frame args do
       card_form action, form_opts do
-        yield args
+        output( yield args )
       end
     end
   end
-      
+  
+  def output content
+    case content
+    when String; content
+    when Array ; content.join "\n"
+    end
+  end  
 
 
   def wrap_main(content)
@@ -294,7 +299,8 @@ class Card::HtmlFormat < Card::Format
     klasses << 'autosave' if action == :update
     html[:class] = klasses.join ' '
     
-    html[:recaptcha] = 'on' if Wagn::Env[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
+    html[:recaptcha] ||= 'on' if Wagn::Env[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
+    html.delete :recaptcha if html[:recaptcha] == :off
     
     { :url=>url, :remote=>true, :html=>html }
   end

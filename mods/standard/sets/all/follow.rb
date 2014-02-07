@@ -3,7 +3,7 @@ format :html do
   watch_perms = lambda { |r| Account.logged_in? && !r.card.new_card? }
   view :watch, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>watch_perms do |args|
     
-    wrap :watch, args do
+    wrap args do
       if card.watching_type?
         watching_type_cards
       else

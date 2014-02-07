@@ -12,7 +12,7 @@ view :setup, :tags=>:unknown_ok do |args|
     }
   } )
     
-  frame_and_form :setup, 'admin/setup', args do
+  frame_and_form 'admin/setup', args, :recaptcha=>:off do
     %{
       #{ _render_name_fieldset :help=>'usually first and last name' }
       #{ _render_account_detail :account=>account, :setup=>true }
@@ -22,7 +22,7 @@ view :setup, :tags=>:unknown_ok do |args|
 end
 
 view :show_cache do |args|
-  frame :show_cache, args do 
+  frame args do 
     key = card.key
     cache_card = Card.fetch(key)
     db_card = Card.find_by_key(key)

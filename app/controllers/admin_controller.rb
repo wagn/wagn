@@ -4,7 +4,6 @@ class AdminController < CardController
   
   def setup
     raise Wagn::Oops, "Already setup" unless Account.no_logins?
-    Wagn::Env[:recaptcha_on] = false
     if request.post?
       handle do
         Account.as_bot do

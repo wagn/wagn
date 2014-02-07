@@ -135,6 +135,7 @@ format :html do
   
   
   view :signin_and_forgot_password, :perms=>:none do |args|
+    Wagn::Env[:recaptcha_on] = false
     %{
       <div id="sign-in">#{ _render_signin args }</div>
       <div id="forgot-password">#{ _render_forgot_password args }</div>

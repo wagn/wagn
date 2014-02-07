@@ -95,7 +95,7 @@ class Card::HtmlFormat < Card::Format
     ].compact
     
     div = %{<div id="#{card.cardname.url_key}" data-card-id="#{card.id}" data-card-name="#{h card.name}" style="#{h args[:style]}" class="#{classes*' '}" } +
-      %{data-slot='#{html_escape_except_quotes slot_options( args )}'>#{yield}</div>}
+      %{data-slot='#{html_escape_except_quotes slot_options( args )}'>#{ output yield }</div>}
 
     if params[:debug] == 'slot' && !tagged( @current_view, :no_wrap_comments )
       name = h card.name
@@ -138,7 +138,7 @@ class Card::HtmlFormat < Card::Format
   def output content
     case content
     when String; content
-    when Array ; content.join "\n"
+    when Array ; content.compact.join "\n"
     end
   end  
 
@@ -169,8 +169,10 @@ class Card::HtmlFormat < Card::Format
     else
       # single-card edit mode
       field = content_field form, args
-      if label = args[:content_fieldset_label]
-        fieldset label, field, :editor=>:content
+      
+      if [ args[:optional_type_fieldset], args[:optional_name_fieldset] ].member? :show
+        # display content field in fieldset for consistency with other fields
+        fieldset '', field, :editor=>:content
       else
         editor_wrap( :content ) { field }
       end

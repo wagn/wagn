@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.email         = ['info@wagn.org']
                   
 #  s.date          = '2013-12-20'
-  s.summary       = "Wagn: team-driven websites"
-  s.description   = "Create dynamic web systems out of wiki-inspired building blocks."
+  s.summary       = "structured wiki web platform"
+  s.description   = "a wiki approach to stuctured data, dynamic interaction, and web design"
   s.homepage      = 'http://wagn.org'
   s.license       = 'GPL'
 

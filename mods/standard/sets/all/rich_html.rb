@@ -23,8 +23,10 @@ format :html do
 
   view :content do |args|
     wrap args.merge(:slot_class=>'card-content') do
-      menu = optional_render :menu, args, :hide
-      %{#{ menu }#{ _render_core args }}
+      [
+        _optional_render( :menu, args, :hide ),
+        _render_core( args )
+      ]
     end
   end
 
@@ -40,15 +42,13 @@ format :html do
 
   view :labeled do |args|
     wrap args do
-      %{
-        #{ _optional_render :menu, args }
-        <label>#{ _render_title args }</label>
-        #{
-          wrap_body :body_class=>'closed-content', :content=>true do
-            _render_closed_content args
-          end
-        }
-      }
+      [
+        _optional_render( :menu, args ),
+        "<label>#{ _render_title args }</label>",
+        wrap_body( :body_class=>'closed-content', :content=>true ) do
+          _render_closed_content args
+        end
+      ]
     end
   end
 
@@ -65,10 +65,10 @@ format :html do
 
   view :open, :tags=>:comment do |args|
     frame args.merge(:content=>true, :optional_toggle=>:show) do
-      %{
-        #{ _render_open_content args }
-        #{ optional_render :comment_box, args }
-      }
+      [
+        _render_open_content( args ),
+        optional_render( :comment_box, args )
+      ]
     end
   end
 
@@ -144,14 +144,13 @@ format :html do
   ###---( TOP_LEVEL (used by menu) NEW / EDIT VIEWS )
 
   view :new, :perms=>:create, :tags=>:unknown_ok do |args|
-#    set_default_args! :new, args
     frame_and_form :create, args, 'main-success'=>'REDIRECT' do |form|
-      %{
-        #{ _optional_render :name_fieldset, args }
-        #{ _optional_render :type_fieldset, args }
-        #{ _optional_render :content_fieldsets, args }
-        #{ _optional_render :button_fieldset, args}
-      }
+      [
+        _optional_render( :name_fieldset,     args ),
+        _optional_render( :type_fieldset,     args ),
+        _optional_render( :content_fieldsets, args ),
+        _optional_render( :button_fieldset,   args )
+      ]
     end  
   end
   
@@ -162,9 +161,34 @@ format :html do
     hidden[:card   ] ||={}
     
     args[:optional_help] = :show
+
+    # name field / title
+    if !params[:name_prompt] and !card.cardname.blank?
+      # name is ready and will show up in title
+      hidden[:card][:name] ||= card.name
+    else
+      # name is not ready; need generic title
+      args[:title] ||= "New #{ card.type_name unless card.type_id == Card.default_type_id }" #fixme - overrides nest args
+      unless card.rule_card :autoname
+        # prompt for name
+        hidden[:name_prompt] = true unless hidden.has_key? :name_prompt
+        args[:optional_name_fieldset] ||= :show
+      end
+    end
+    args[:optional_name_fieldset] ||= :hide
+
     
-    default_name_fieldset_args! args
-    default_type_fieldset_args! args  
+    # type field
+    if ( !params[:type] and !args[:type] and 
+        ( main? || card.simple? || card.is_template? ) and
+        Card.new( :type_id=>card.type_id ).ok? :create #otherwise current type won't be on menu
+      )
+      args[:optional_type_fieldset] = :show
+    else
+      hidden[:card][:type_id] ||= card.type_id
+      args[:optional_type_fieldset] = :hide
+    end
+
 
     cancel = if main?
       { :class=>'redirecter', :href=>Card.path_setting('/*previous') }
@@ -177,18 +201,15 @@ format :html do
       #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
     }
     
-    args[:content_fieldset_label] ||= begin
-      '' if [ args[:optional_type_fieldset], args[:optional_name_fieldset] ].member? :show
-    end
   end
 
   
   view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
     frame_and_form :update, args do |form|
-      %{
-        #{ _optional_render :content_fieldsets, args }
-        #{ _optional_render :button_fieldset, args}
-      }
+      [
+        _optional_render( :content_fieldsets, args ),
+        _optional_render( :button_fieldset,   args )
+      ]
     end
   end
 
@@ -203,11 +224,11 @@ format :html do
   
   view :edit_name, :perms=>:update do |args|
     frame_and_form( { :action=>:update, :id=>card.id }, args, 'main-success'=>'REDIRECT' ) do
-      %{
-        #{ _render_name_fieldset args }
-        #{ _optional_render :confirm_rename, args }
-        #{ _optional_render :button_fieldset, args }
-      }
+      [
+        _render_name_fieldset( args ),
+        _optional_render( :confirm_rename, args ),
+        _optional_render( :button_fieldset, args )
+      ]
     end
   end
   
@@ -248,10 +269,10 @@ format :html do
   view :edit_type, :perms=>:update do |args|
     frame_and_form :update, args do
     #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
-      %{
-        #{ _render_type_fieldset args }
-        #{ optional_render :button_fieldset, args }
-      }
+      [
+        _render_type_fieldset( args ),
+        optional_render( :button_fieldset, args )
+      ]
     end
   end
 
@@ -289,28 +310,6 @@ format :html do
     fieldset 'name', raw( name_field form ), :editor=>'name', :help=>args[:help]
   end
 
-  
-  def default_name_fieldset_args! args
-    hidden = args[:hidden] ||= {}
-    showhide = :hide
-    
-    if !params[:name_prompt] and !card.cardname.blank?
-      # name is ready and will show up in title
-      hidden[:card][:name] ||= card.name
-    else
-      # name is not ready; need generic title
-      args[:title] ||= "New #{ card.type_name unless card.type_id == Card.default_type_id }" #fixme - overrides nest args
-      unless card.rule_card :autoname
-        # prompt for name
-        hidden[:name_prompt] = true unless hidden.has_key? :name_prompt
-        showhide = :show
-      end
-    end
-    args[:optional_name_fieldset] ||= showhide
-  end
-  
-
-
   view :type_fieldset do |args|
     field = if args[:variety] == :edit #FIXME dislike this api -ef
       type_field :class=>'type-field edit-type-field'
@@ -318,21 +317,6 @@ format :html do
       type_field :class=>"type-field live-type-field", :href=>path(:view=>:new), 'data-remote'=>true
     end
     fieldset 'type', field, :editor => 'type', :attribs => { :class=>'type-fieldset'}
-  end
-  
-  
-  def default_type_fieldset_args! args
-    prompt_for_type = ( !params[:type] and !args[:type] and ( main? || card.simple? || card.is_template? ) and
-      Card.new( :type_id=>card.type_id ).ok? :create #otherwise current type won't be on menu
-    )
-    args[:optional_type_fieldset] = if prompt_for_type
-        :show
-      else
-        args[:hidden] ||= {}
-        args[:hidden][:card] ||= {}
-        args[:hidden][:card][:type_id] ||= card.type_id # yuck!  more api
-        :hide
-      end
   end
   
   

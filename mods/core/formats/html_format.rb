@@ -283,10 +283,12 @@ class Card::HtmlFormat < Card::Format
 
   def card_form_opts action, html={}
     url, action = case action
-      when Symbol ;  [ path(:action=>action), action ]
-      when Hash   ;  [ path(action), action[:action] ]
-      else        ; raise Wagn::Error, "unsupported card_form action class: #{action.class}"
+      when Symbol ;  [ path(:action=>action) , action          ]
+      when Hash   ;  [ path(action)          , action[:action] ]
+      when String ;  [ wagn_path(action)     , nil             ] #deprecated
+      else        ;  raise Wagn::Error, "unsupported card_form action class: #{action.class}"
       end
+      
     klasses = Array.wrap( html[:class] )
     klasses << 'card-form slotter'
     klasses << 'autosave' if action == :update

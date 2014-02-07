@@ -3,3 +3,5 @@ source 'http://rubygems.org'
 gem 'wagn'
 
 <%= database_gemfile_entry -%>
+
+#gem 'wagn-dev', :group=>'development'

@@ -60,9 +60,6 @@ class CardController < WagnController
 
   private
   
-  def handle
-    yield ? success : render_errors
-  end
   
   #-------( FILTERS )
 
@@ -122,42 +119,6 @@ class CardController < WagnController
 
 
   #------- REDIRECTION 
-
-  def success
-    redirect, new_params = !ajax?, {}
-
-    target = case params[:success]
-      when Hash
-        new_params = params[:success]
-        redirect ||= !!(new_params.delete :redirect)
-        new_params.delete :id
-      when /^REDIRECT:\s*(.+)/
-        redirect=true
-        $1
-      when nil  ;  '_self'
-      else      ;   params[:success]
-      end
-        
-    target = case target
-      when '*previous'     ;  previous_location #could do as *previous
-      when '_self  '       ;  card #could do as _self
-      when /^(http|\/)/    ;  target
-      when /^TEXT:\s*(.+)/ ;  $1
-      else                 ;  Card.fetch target.to_name.to_absolute(card.cardname), :new=>{}
-      end
-
-    case
-    when redirect
-      target = page_path target.cardname, new_params if Card === target
-      wagn_redirect target
-    when String===target
-      render :text => target
-    else
-      @card = target
-      self.params = self.params.merge new_params #need tests.  insure we get slot, main...
-      show
-    end
-  end
 
 end
 

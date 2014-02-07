@@ -1,23 +1,23 @@
 view :setup, :tags=>:unknown_ok do |args|
   account = User.new( ( params[:card] && params[:card][:account_args] ) || {} )
-  frame_args = {
+  args.merge!( {
     :title=>'Welcome, Wagneer!',
     :optional_help=>:show,
     :optional_menu=>:never, 
-    :help_text=>'To get started, set up an account.'
-  }
+    :help_text=>'To get started, set up an account.',
+    :buttons => submit_tag( 'Create' ),
+    :hidden => { 
+      :success => "REDIRECT: #{ Card.path_setting '/' }",
+      'card[type_id]' => Card.default_accounted_type_id
+    }
+  } )
     
-  frame :setup, frame_args do
-    form_for :card do |f|
-      @form = f
-      %{
-        #{ _render_name_fieldset :help=>'usually first and last name' }
-        #{ hidden_field_tag 'card[type_id]', Card.default_accounted_type_id }
-        #{ _render_account_detail :account=>account, :setup=>true }
-        <fieldset><div class="button-area">#{ submit_tag 'Create' }</div></fieldset>
-        #{ render_error }
-      }
-    end
+  frame_and_form :setup, 'admin/setup', args do
+    %{
+      #{ _render_name_fieldset :help=>'usually first and last name' }
+      #{ _render_account_detail :account=>account, :setup=>true }
+      #{ _optional_render :button_fieldset, args}
+    }
   end
 end
 

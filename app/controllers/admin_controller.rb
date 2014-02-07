@@ -6,27 +6,26 @@ class AdminController < CardController
     raise Wagn::Oops, "Already setup" unless Account.no_logins?
     Wagn::Env[:recaptcha_on] = false
     if request.post?
-      Account.as_bot do
-        @card = Card.create params[:card]
-        set_default_request_recipient
-
-        if @card.errors.empty?
-          roles_card = card.fetch :trait=>:roles, :new=>{}
-          roles_card.content = "[[#{Card[Card::AdminID].name}]]"
-          roles_card.save
-          self.current_account_id = @card.id
-          Card.cache.delete 'no_logins'
+      handle do
+        Account.as_bot do
+          @card = Card.create params[:card], :cards=>[
+              { :name=>'+roles', :content=>"[[#{Card[Card::AdminID].name}]]" },
+              { :name=>'*request+*to', :content=>params[:card][:account_args][:email] }
+            ]
+        
+          @card.errors.empty?                 and
+          self.current_account_id = @card.id  and
+          Card.cache.delete 'no_logins'       and
           flash[:notice] = "You're good to go!"
-          redirect_to Card.path_setting('/')
-        else
-          show :setup
         end
       end
     else
-      @card = Card.new( params[:card] || {} ) #should prolly skip default
+      @card = Card.new #should prolly skip default
       show :setup
     end
   end
+
+
 
   def clear_cache
     Wagn::Cache.reset_global
@@ -122,9 +121,4 @@ class AdminController < CardController
     raise Wagn::PermissionDenied unless Account.always_ok?
   end
 
-  def set_default_request_recipient
-    to_card = Card.fetch '*request+*to', :new=>{}
-    to_card.content=params[:card][:account_args][:email]
-    to_card.save
-  end
 end

@@ -17,7 +17,7 @@ format :html do
 
     frame_and_form :signup, :create, args, 'main-success'=>"REDIRECT" do
       %{
-        #{ @form.hidden_field :type_id }
+        #{ form.hidden_field :type_id }
         #{ _render_name_fieldset :help=>'usually first and last name' }
         #{ _render_email_fieldset }
         #{ edit_slot if card.structure }

@@ -58,18 +58,17 @@ format :html do
     message = email_params[:message] || Card.setting('*invite+*message') || ''
     
     success = Card.setting "#{ Card[:invite].name }+#{ Card[:thanks].name }"
+    args[:buttons] = %{
+      #{ submit_tag 'Invite' }
+      #{ link_to 'Cancel', previous_location }      
+    }
     
     %{
       #{ hidden_field_tag :success, "REDIRECT: #{success}" if success }
       #{ fieldset :subject, text_field( :email, :subject, :value=>subject, :size=>60 ) }
       #{ fieldset :message, text_area( :email, :message, :value=>message, :rows=>10, :cols => 60 ),
           :help => "We'll create a password and attach it to the email." }
-      <fieldset>
-        <div class="button-area">
-          #{ submit_tag 'Invite' }
-          #{ link_to 'Cancel', previous_location }
-        </div>
-      </fieldset>
+      #{ _optional_render :button_fieldset, args }
     }    
   end
   
@@ -135,39 +134,50 @@ format :html do
   end
   
   
-  
-  view :signin, :tags=>:unknown_ok, :perms=>:none do |args|
-    frame_args = args.merge :title=>'Sign In', :optional_help=>:show, :optional_menu=>:never
-    signin_core = frame :signin, frame_args do
-      form_tag wagn_path('account/signin') do
-        %{
-          #{ fieldset :email, text_field_tag( 'login', params[:login], :id=>'login_field' ) }
-          #{ fieldset :password, password_field_tag( 'password' ) }
-          <fieldset>
-            <div class="button-area">
-              #{ submit_tag 'Sign in' }
-              #{ link_to '...or sign up!', wagn_path('account/signup') if Card.new(:type_id=>Card::AccountRequestID).ok? :create }
-            </div>
-          </fieldset>
-        }
-      end
-    end
+  view :signin_and_forgot_password, :perms=>:none do |args|
     %{
-      <div id="sign-in">#{signin_core}</div>
-      <div id="forgot-password">#{_render_forgot_password}</div>
+      <div id="sign-in">#{ _render_signin args }</div>
+      <div id="forgot-password">#{ _render_forgot_password args }</div>
     }
   end
 
+  view :signin, :perms=>:none do |args|
+    args.merge!( {
+      :title=>'Sign In',
+      :optional_help=>:show,
+      :optional_menu=>:never,
+      :hidden=>{ :success=>'REDIRECT:*previous' },
+      :buttons=>%{
+        #{ submit_tag 'Sign in' }
+        #{ link_to '...or sign up!', wagn_path('account/signup') if Card.new(:type_id=>Card::AccountRequestID).ok? :create }
+      }
+    } )
+    
+    frame_and_form :signin, 'account/signin', args do
+      %{
+        #{ fieldset :email, text_field_tag( 'login', params[:login], :id=>'login_field' ) }
+        #{ fieldset :password, password_field_tag( 'password' ) }
+        #{ _optional_render :button_fieldset, args              }
+        
+      }
+    end
+  end
 
   view :forgot_password, :perms=>:none do |args|
-    frame_args = args.merge :title=>'Forgot Password', :optional_help=>:show, :optional_menu=>:never
-    frame :forgot_password, frame_args do
-      form_tag wagn_path('account/forgot_password') do
-        %{
-          #{ fieldset :email, text_field_tag( 'email', params[:email] ) }
-          <fieldset><div class="button-area">#{ submit_tag 'Reset my password' }</div></fieldset>
-        }
-      end
+    args.merge!( {
+      :title=>'Forgot Password',
+      :optional_help=>:show, 
+      :optional_menu=>:never,
+      :hidden => { :success => { :view=>:forgot_password }},
+      :buttons => submit_tag( 'Reset my password' )
+    } )
+    
+    frame_and_form :forgot_password, 'account/forgot_password', args,
+      'notify-success'=>"Check your email for your new temporary password" do
+      %{
+        #{ fieldset :email, text_field_tag( 'email', params[:email] ) }
+        #{ _optional_render :button_fieldset, args                    }
+      }
     end
   end
 end

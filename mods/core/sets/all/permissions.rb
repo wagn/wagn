@@ -30,7 +30,7 @@ def ok! action, opts={}
 end
 
 def update_account_ok? #FIXME - temporary API, I think this is fixed, can we cache any of this for speed, this is accessed for each header
-  id == Account.current_id || ok?( :update, :trait=>:account )
+  id == Account.current_id or ok?( :update, :trait=>:account )
 end
 
 def who_can action

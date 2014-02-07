@@ -21,8 +21,9 @@ format :json do
     params[:max_depth] || 1
   end
 
-  view :show do |args|
-    raw = render( ( args[:view] || :atom ), args )
+  def show args
+    view = args[:view] || :atom 
+    raw = render view, args
     case
     when String === raw  ;  raw
     when params[:pretty] ;  JSON.pretty_generate raw

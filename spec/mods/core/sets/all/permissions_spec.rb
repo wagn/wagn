@@ -36,10 +36,12 @@ module PermissionSpecHelper
   end
 
   def assert_hidden( card, msg='' )
+    assert !card.ok?(:read)
     assert_equal [], Card.search(:id=>card.id).map(&:name), msg
   end
 
   def assert_not_hidden( card, msg='' )
+    assert card.ok?(:read)
     assert_equal [card.name], Card.search(:id=>card.id).map(&:name), msg
   end
 
@@ -346,6 +348,26 @@ describe Card::Set::All::Permissions do
       assert_hidden_from( @u1, @c2 )
       assert_hidden_from( @u3, @c2 )
     end
+    
+    context "create permissions" do
+      before do
+        Account.as_bot do
+          Card.create! :name=>'*structure+*right+*create', :type=>'Pointer', :content=>'[[Anyone Signed In]]'
+          Card.create! :name=>'*self+*right+*create',      :type=>'Pointer', :content=>'[[Anyone Signed In]]'
+        end
+      end
+      
+      it "should inherit" do
+        Account.as(:auth) do
+          Card.fetch( 'A+*self' ).ok?(:create).should be_true #explicitly granted above
+          Card.fetch( 'A+*right').ok?(:create).should be_false #by default restricted   
+          
+          Card.fetch( 'A+*self+*structure',  :new=>{} ).ok?(:create).should be_true # +*structure granted;
+          Card.fetch( 'A+*right+*structure', :new=>{} ).ok?(:create).should be_false # can't create A+B, therefore can't create A+B+C
+        end
+      end
+      
+    end
 
 
     it "private wql" do
@@ -472,6 +494,9 @@ describe Card::Set::All::Permissions do
       end
     end
   end
+  
+  
+  
 end
 
 

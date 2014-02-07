@@ -3,8 +3,9 @@ require_dependency 'active_support/builder' unless defined?(Builder)
 
 format :kml do
 
-  view :show do |args|
-    render( args[:view] || :search)
+  def show args
+    view = args[:view] || :search
+    render view, args
   end
 
   # FIXME: integrate this with common XML features when it is added

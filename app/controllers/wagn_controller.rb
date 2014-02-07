@@ -109,7 +109,7 @@ class WagnController < ActionController::Base
     opts[:view] = view || params[:view]      
 
     formatter = Card::Format.new card, :controller=>self, :format=>format, :inclusion_opts=>opts[:items]
-    result = formatter.render_show opts
+    result = formatter.show opts
     status = formatter.error_status || status
     
     if format==:file && status==200

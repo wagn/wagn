@@ -106,6 +106,15 @@ end
 
 def ok_to_create
   permit :create
+  if junction?
+    [:left, :right].each do |side|
+      part_card = send side, :new=>{}
+      next unless part_card.new_card?
+      unless part_card.ok? :create
+        deny_because you_cant("create #{part_card.name}")
+      end
+    end
+  end
 end
 
 def ok_to_read

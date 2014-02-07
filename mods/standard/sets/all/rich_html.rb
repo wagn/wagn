@@ -1,11 +1,8 @@
 # -*- encoding : utf-8 -*-
-def clean_html?
-  true
-end
 
 format :html do
-
-  view :show do |args|
+  
+  def show args
     @main_view = args[:view] || args[:home_view]
 
     if ajax_call?

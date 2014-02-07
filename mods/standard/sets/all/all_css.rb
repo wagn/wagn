@@ -6,9 +6,9 @@ format :css do
     { :view => :content }
   end
 
-  view :show do |args|
+  def show args
     view = args[:view] || :content
-    render view
+    render view, args
   end
   
   view :content do |args|

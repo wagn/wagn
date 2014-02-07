@@ -15,7 +15,6 @@ class Card::HtmlFormat < Card::Format
     :normal => { :view => :content }
   }
   
-  
   def get_inclusion_defaults
     INCLUSION_DEFAULTS[@mode] || {}
   end

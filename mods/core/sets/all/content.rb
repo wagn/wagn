@@ -52,7 +52,7 @@ def creator
 end
 
 def updater
-  Card[ updater_id || Card::AnonID ]
+  Card[ updater_id ]
 end
 
 def drafts
@@ -66,6 +66,10 @@ end
 
 def clear_drafts # yuck!
   connection.execute %{delete from card_revisions where card_id=#{id} and id > #{current_revision_id} }
+end
+
+def clean_html?
+  true
 end
 
 

@@ -1,9 +1,11 @@
 # -*- encoding : utf-8 -*-
 
-view :show, :perms=>:none  do |args|
-  render( ( args[:view] || :core ), args )
+format do
+  def show args
+    view = args[:view] || :core
+    render view, args
+  end
 end
-
 
 # NAME VIEWS
                                                                               

@@ -192,6 +192,8 @@ class Card
     #
     # ---------- Rendering ------------
     #
+    
+    
 
     def render view, args={}
       prefix = args.delete(:allowed) ? '_' : ''
@@ -512,7 +514,6 @@ class Card
       args
     end
     
-    
     def default_item_view
       :name
     end
@@ -590,7 +591,7 @@ class Card
       @context_names += name.to_name.part_names
       @context_names.uniq!
     end
-  end
 
+  end
 end
 

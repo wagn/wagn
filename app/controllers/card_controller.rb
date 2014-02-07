@@ -53,6 +53,7 @@ class CardController < WagnController
     watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
     watchers.save!
     ajax? ? show(:watch) : read
+    
   end
 
 

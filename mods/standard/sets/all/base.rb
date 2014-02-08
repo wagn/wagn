@@ -110,6 +110,7 @@ view :too_slow, :perms=>:none do |args|
 end
 
 
+#none of the below belongs here!!
 
 
 view :template_rule, :tags=>:unknown_ok do |args|
@@ -137,3 +138,5 @@ view :template_rule, :tags=>:unknown_ok do |args|
     subformat( Card.fetch(set_name) ).render_template_link args
   end
 end
+
+

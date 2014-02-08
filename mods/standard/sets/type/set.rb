@@ -1,5 +1,8 @@
 # -*- encoding : utf-8 -*-
 
+
+
+
 format :html do
 
   view :core do |args|

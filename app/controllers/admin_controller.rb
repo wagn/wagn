@@ -5,12 +5,13 @@ class AdminController < CardController
   def setup
     raise Wagn::Oops, "Already setup" unless Account.no_logins?
     if request.post?
+      Wagn::Env[:recaptcha_on] = false
       handle do
         Account.as_bot do
-          @card = Card.create params[:card], :cards=>[
-              { :name=>'+roles', :content=>"[[#{Card[Card::AdminID].name}]]" },
-              { :name=>'*request+*to', :content=>params[:card][:account_args][:email] }
-            ]
+          @card = Card.create params[:card].merge( :cards=>{
+              '+*roles'      => { :content=>"[[#{Card[:administrator].name}]]"    },
+              '*request+*to' => { :content=>params[:card][:account_args][:email]  }
+            })
         
           @card.errors.empty?                 and
           self.current_account_id = @card.id  and

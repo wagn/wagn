@@ -20,12 +20,17 @@ event :pull_from_trash, :before=>:store, :on=>:create do
   self.trash = false
   true
 end
-#reset_patterns_if_rule saving=true
 
 event :validate_delete, :before=>:approve, :on=>:delete do
   if !codename.blank?
     errors.add :delete, "#{name} is is a system card. (#{codename})"
   end
+  
+  undeletable_all_rules_tags = %w{ default style layout create read update delete }
+  if junction? and left.codename == 'all' and undeletable_all_rules_tags.member? right.codename
+    errors.add :delete, "#{name} is an indestructible rule"
+  end
+  
   if account && Card::Revision.find_by_creator_id( self.id )
     errors.add :delete, "Edits have been made with #{name}'s user account.\n  Deleting this card would mess up our revision records."
   end

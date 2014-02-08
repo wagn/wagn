@@ -27,4 +27,5 @@ describe Card::Codename, "Codename" do
       end
     end
   end
+  
 end

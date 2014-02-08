@@ -13,7 +13,7 @@ describe Card::Set::All::Json, "JSON mod" do
     
     it "should treat both unknown and unreadable cards as unknown" do
       Account.as Card::AnonID do
-        r = Card::JsonFormat
+        jf = Card::JsonFormat
         
         unknown = Card.new :name=>'sump'
         unreadable = Card.new :name=>'kumq', :type=>'Fruit'

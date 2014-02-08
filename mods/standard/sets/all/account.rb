@@ -10,7 +10,7 @@ end
 
 def accountable?
   Card.toggle( rule(:accountable) ) and
-  fetch( :trait=>:account, :new=>{} ).ok?( :create)
+  fetch( :trait=>:account, :new=>{} ).permitted?( :create) #don't use #ok? here because we don't want to check part permissions
 end
 
 def parties

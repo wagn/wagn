@@ -14,9 +14,9 @@ module Card::Exceptions
     end
   end
   
-#  class Cancel < Exception
-#    def backtrace
-#      ["\n( card action gently canceled )\n"]
-#    end
-#  end
+  class Cancel < Exception
+    def backtrace
+      ["\n( card action gently canceled )\n"]
+    end
+  end
 end

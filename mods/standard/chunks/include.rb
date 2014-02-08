@@ -22,11 +22,9 @@ module Card::Chunk
         when /^\#/   ; "<!-- #{CGI.escapeHTML in_brackets} -->"
 #        when /^\s*$/ ; '' # no name
         else
-          @options = if @opt_lists
-            @opt_lists.split('|').reverse.inject(nil) do |prev_level, level_options|
-              process_options level_options, prev_level
-            end
-          else {} end
+          @options = @opt_lists.to_s.split('|').reverse.inject(nil) do |prev_level, level_options|
+            process_options level_options, prev_level
+          end || {}
           @options.merge! :inc_name => name, :inc_syntax => in_brackets
           @name = name
         end

@@ -47,6 +47,8 @@ def rescue_event e
     @subcards.each { |key, card| card.expire_pieces }
   end
   raise e
+rescue Card::Cancel
+  false
 end
 
 def event_applies? opts

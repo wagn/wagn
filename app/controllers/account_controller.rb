@@ -44,18 +44,6 @@ class AccountController < WagnController
     end
   end
 
-  def password_authentication(login, password)
-    if self.current_account_id = Account.authenticate( params[:login], params[:password] )
-      flash[:notice] = "Successfully signed in"
-    else
-      usr=Account[ params[:login].strip.downcase ]
-      @card.errors.add :signin, case
-        when usr.nil?     ; "Unrecognized email."
-        when usr.blocked? ; "Sorry, that account is blocked."
-        else              ; "Wrong password"
-        end
-      false
-    end
-  end
+
 
 end

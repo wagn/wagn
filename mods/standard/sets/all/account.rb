@@ -141,26 +141,6 @@ format :html do
     }
   end
 
-  view :signin, :perms=>:none do |args|
-    args.merge!( {
-      :title=>'Sign In',
-      :optional_help=>:show,
-      :optional_menu=>:never,
-      :hidden=>{ :success=>'REDIRECT:*previous' },
-      :buttons=> submit_tag( 'Sign in' ) 
-    })
-    if Card.new(:type_id=>Card::AccountRequestID).ok? :create
-      args[:buttons] += link_to( '...or sign up!', wagn_path("new/:account_request"))
-    end
-    
-    frame_and_form 'account/signin', args, :recaptcha=>:off do
-      [
-        fieldset( :email, text_field_tag( 'login', params[:login], :id=>'login_field' ) ),
-        fieldset( :password, password_field_tag( 'password' ) ),
-        _optional_render( :button_fieldset, args )
-      ]
-    end
-  end
 
   view :forgot_password, :perms=>:none do |args|
     args.merge!( {

@@ -147,11 +147,11 @@ format :html do
       :optional_help=>:show,
       :optional_menu=>:never,
       :hidden=>{ :success=>'REDIRECT:*previous' },
-      :buttons=>%{
-        #{ submit_tag 'Sign in' }
-        #{ link_to '...or sign up!', wagn_path('account/signup') if Card.new(:type_id=>Card::AccountRequestID).ok? :create }
-      }
-    } )
+      :buttons=> submit_tag( 'Sign in' ) 
+    })
+    if Card.new(:type_id=>Card::AccountRequestID).ok? :create
+      args[:buttons] += link_to( '...or sign up!', wagn_path("new/:account_request"))
+    end
     
     frame_and_form 'account/signin', args, :recaptcha=>:off do
       [

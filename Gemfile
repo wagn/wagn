@@ -20,15 +20,6 @@ end
 
 group :test do
   
-  gem 'sass-rails',   "~> 3.1"                 # pretty code; compiles to CSS
-  gem 'coffee-rails', "~> 3.1"                 # pretty code; compiles to JS
-  gem 'uglifier'                               # makes pretty code ugly again.  compresses js/css for fast loading
-
-  gem 'jquery-rails',  '~> 2.1.4'              # main js framework, along with rails-specific unobtrusive lib
-  gem "jquerymobile-rails", "~> 0.2"
-  
-  gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor
-  
   # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one
   gem 'therubyrhino', :platform=>:ruby         # :ruby is MRI rubies, so if you use a mac ruby ...
   

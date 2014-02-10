@@ -1,10 +1,10 @@
 require 'rails/all'
 
 if Rails.env.development?
-  begin
+  if File.exists? 'wagn/dev'
     require 'wagn/dev'
-  rescue
-    Rails.logger.info "WARNING: the gem wagn-dev is strongly recommended when running wagn in development mode!"
+  else
+    puts "WARNING: the gem wagn-dev is strongly recommended when running wagn in development mode!"
   end
 end
 

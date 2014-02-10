@@ -107,7 +107,7 @@ format :html do
       }
       #{ 
         if !args[:setup] && Account.user.id != account.id 
-          fieldset :block, check_box_tag( 'card[account][blocked]', '1', account.blocked? ), :help=>'prevents sign-ins'
+          fieldset :block, check_box_tag( 'card[account_args][blocked]', '1', account.blocked? ), :help=>'prevents sign-ins'
         end
       }
     }

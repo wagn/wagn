@@ -21,6 +21,11 @@ describe Card::Chunk::Include, "Inclusion" do
     it "should handle empty inclusions" do
       instance = @class.new( @class.full_match( '{{ }}' ) , nil )
       instance.name.should == ''
+      instance.options[:inc_syntax].should == ' '
+      instance1 = @class.new( @class.full_match( '{{|}}' ) , nil )
+      instance1.name.should == ''
+      instance1.options[:inc_syntax].should == '|'
+      
     end
     
     it "should handle no pipes" do

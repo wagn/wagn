@@ -1,18 +1,8 @@
 # -*- encoding : utf-8 -*-
 class AccountController < WagnController
 
-  def signin
-    @card = Card.new
-    if params[:login]
-      handle { password_authentication params[:login], params[:password] }
-    else
-      show :signin_and_forgot_password
-    end
-  end
-
   def signout
     self.current_account_id = nil
-    flash[:notice] = "Successfully signed out"
     redirect_to Card.path_setting('/')  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
   end
 

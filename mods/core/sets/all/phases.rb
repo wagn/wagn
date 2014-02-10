@@ -1,3 +1,14 @@
+
+def save
+  super
+rescue Card::Abort => e
+  e.status == :success
+end
+
+def abort status=:failure, msg='save canceled'
+  raise Card::Abort.new( status, msg)
+end
+
 def approve
   #warn "approve called for #{name}!"
   @action = case
@@ -47,8 +58,8 @@ def rescue_event e
     @subcards.each { |key, card| card.expire_pieces }
   end
   raise e
-rescue Card::Cancel
-  false
+#rescue Card::Cancel
+#  false
 end
 
 def event_applies? opts

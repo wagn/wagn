@@ -118,8 +118,5 @@ class CardController < WagnController
   end
 
 
-
-  #------- REDIRECTION 
-
 end
 

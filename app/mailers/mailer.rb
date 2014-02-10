@@ -17,7 +17,7 @@ class Mailer < ActionMailer::Base
     end
 
     @pw_url   = wagn_url "#{cd_with_acct.cardname.url_key}?view=account"
-    @login_url= wagn_url "account/signin"
+    @login_url= wagn_url ":session"
 
     #FIXME - might want different "from" settings for different contexts?
     invite_from = Card.setting( '*invite+*from' ) || begin

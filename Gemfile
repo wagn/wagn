@@ -5,18 +5,10 @@ gemspec
 
 gem 'wagn', :path=>File.expand_path( '../', __FILE__ )
 
-gem 'wagn-dev', :path=>File.expand_path( '../../wagn-dev', __FILE__ )
-
-group :mysql do
-  gem "mysql2", "~> 0.3"
-end
+gem 'wagn-dev', :path=>File.expand_path( '../../wagn-dev', __FILE__ ), :group=>:development
+gem "mysql2", "~> 0.3"
 
 
-
-group :profile do
-  gem 'ruby-prof', '~>0.12.1'                  # profiling
-  #gem 'test-unit' #was causing errors after cucumber runs.
-end
 
 group :test do
   
@@ -49,6 +41,8 @@ group :test do
   gem 'win32console', '~> 1.3', :platforms => ['mingw', 'mswin']
   gem 'win32-process', '~> 0.6', :platforms => ['mingw', 'mswin']
 end
+
+gem 'ruby-prof', '~>0.12.1', :group=>:profile  # profiling
 
 group :debug do
   case RUBY_VERSION

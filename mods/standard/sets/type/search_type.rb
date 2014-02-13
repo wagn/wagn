@@ -90,9 +90,6 @@ format do
   def set_inclusion_opts args
     @inclusion_defaults = nil
     @inclusion_opts ||= {}
-    
-    
-    Rails.logger.info "@inclusion_opts[:view] = #{args[:item]} || #{inclusion_opts[:view]} || #{args[:spec_view]} || #{default_item_view}"
     @inclusion_opts[:view] = args[:item] || inclusion_opts[:view] || args[:spec_view] || default_item_view
     # explicit > inclusion syntax > WQL > inclusion defaults
   end

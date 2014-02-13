@@ -55,7 +55,6 @@ format :json do
     }
   end
   
-
   view :atom do |args|
     h = {
       :name    => card.name,

@@ -16,14 +16,16 @@ Gem::Specification.new do |s|
 
   s.files         = `git ls-files`.split($/)
   
-  s.bindir = 'bin'
+  s.bindir        = 'bin'
   s.executables   = [ 'wagn' ]
   s.test_files    = s.files.grep(%r{^(test|spec|features)/})
   s.require_paths = ["lib"]
 
+  s.required_ruby_version = '>= 1.8.7'
+
   [
     
-    [ 'rails',        '~> 3.2.16' ],
+    [ 'rails',        '3.2.16'    ],
     [ 'smartname',    '0.2.3'     ],  #, :path=>'~/dev/smartname/main'
     
     [ 'htmlentities', '~> 4.3'    ],
@@ -41,6 +43,5 @@ Gem::Specification.new do |s|
   ].each do |dep|
     s.add_runtime_dependency *dep
   end
-  
   
 end

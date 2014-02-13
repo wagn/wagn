@@ -159,12 +159,16 @@ class Card::HtmlFormat < Card::Format
 
 
   def edit_slot args={}
+    #note: @mode should already be :edit here...
     if args[:structure] || card.structure
-      # multi-card edit mode
-      _render_raw(args).scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc| #fixme - wrong place for regexp!
-        process_content( inc ).strip
-      end.join
-#        raw _render_core(args)
+      # multi-card editing
+      
+      if args[:core_edit] #need better name!
+        _render_core args
+      else
+        process_relative_tags args
+      end
+
     else
       # single-card edit mode
       field = content_field form, args
@@ -176,6 +180,12 @@ class Card::HtmlFormat < Card::Format
         editor_wrap( :content ) { field }
       end
     end
+  end
+  
+  def process_relative_tags args
+    _render_raw(args).scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc| #fixme - wrong place for regexp!
+      process_content( inc ).strip
+    end.join    
   end
   
   

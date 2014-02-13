@@ -11,8 +11,12 @@ format :css do
     render view, args
   end
   
-  view :content do |args|
+  view :titled do |args|
     major_comment( %{ Style Card: "#{ card.name }" } ) +
+    _render_core( args )
+  end
+  
+  view :content do |args|
    _render_core( args )
   end
   

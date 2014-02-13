@@ -61,7 +61,8 @@ format :html do
   end
 
   view :open, :tags=>:comment do |args|
-    frame args.merge(:content=>true, :optional_toggle=>:show) do
+    args[:optional_toggle] ||= main? ? :hide : :show
+    frame args.merge(:content=>true) do
       [
         _render_open_content( args ),
         optional_render( :comment_box, args )
@@ -420,7 +421,7 @@ format :html do
       %{<strong>Conflict!</strong><span class="new-current-revision-id">#{@revision.id}</span>
         <div>#{ link_to_page @revision.creator.name } has also been making changes.</div>
         <div>Please examine below, resolve above, and re-submit.</div>
-        #{wrap(:conflict) { |args| _render_diff } } }
+        #{ wrap do |args| _render_diff end } }
     end
   end
 

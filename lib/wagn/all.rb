@@ -1,10 +1,10 @@
 require 'rails/all'
 
 if Rails.env.development?
-  if File.exists? 'wagn/dev'
+  if $LOAD_PATH.find { |path| File.exists? "#{path}/wagn/dev.rb" } 
     require 'wagn/dev'
   else
-    puts "WARNING: the gem wagn-dev is strongly recommended when running wagn in development mode!"
+    puts "WARNING: the gem wagn-dev is strongly recommended when running wagn in development mode but is not found"
   end
 end
 

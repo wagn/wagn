@@ -6,16 +6,17 @@ format :json do
   end
 
   def default_item_view
-    :atom
+    params[:item] || :atom
+  end
+  
+  def max_depth
+    params[:max_depth] || 1
   end
   
   def default_search_params
     { :default_limit => 0 }
   end
   
-  def max_depth
-    params[:max_depth] || 1
-  end
 
   def show args
     view = args[:view] || :content

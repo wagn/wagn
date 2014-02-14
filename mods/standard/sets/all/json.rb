@@ -6,23 +6,20 @@ format :json do
   end
 
   def default_item_view
-    if @depth == 0 && params[:item]
-      params[:item]
-    else
-      :core
-    end
+    params[:item] || :atom
+  end
+  
+  def max_depth
+    params[:max_depth] || 1
   end
   
   def default_search_params
     { :default_limit => 0 }
   end
   
-  def max_depth
-    params[:max_depth] || 1
-  end
 
   def show args
-    view = args[:view] || :atom 
+    view = args[:view] || :content
     raw = render view, args
     case
     when String === raw  ;  raw
@@ -51,24 +48,23 @@ format :json do
     hash
   end
 
+  view :content do |args|
+    {
+      :url       => controller.request.original_url,
+      :timestamp => Time.now.to_s,
+      :card      => _render_atom
+    }
+  end
+  
   view :atom do |args|
     h = {
       :name    => card.name,
       :type    => card.type_name,
       :content => card.raw_content
     }
-    unless @depth == max_depth
-      h[:value] = _render default_item_view, args
-    end
-    if @depth==0
-      {
-        :url => controller.request.original_url,
-        :timestamp => Time.now.to_s,
-        :card => h
-      }
-    else
-      h
-    end
+    h[:codename] = card.codename     if card.codename
+    h[:value]    = _render_core args if @depth < max_depth
+    h
   end
 
 end

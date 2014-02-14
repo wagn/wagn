@@ -30,7 +30,7 @@ format :html do
   view :titled, :tags=>:comment do |args|
     wrap args do   
       [
-        _render_header( args.merge :optional_menu=>:hide ),
+        _render_header( args.reverse_merge :optional_menu=>:hide ),
         wrap_body( :content=>true ) { _render_core args },
         optional_render( :comment_box, args )
       ]

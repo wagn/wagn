@@ -1,3 +1,6 @@
 # -*- encoding : utf-8 -*-
-class Card::JsonFormat < Card::DataFormat
+class Card
+  Format.register :json
+  class JsonFormat < DataFormat
+  end
 end

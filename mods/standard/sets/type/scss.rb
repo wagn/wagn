@@ -7,6 +7,7 @@ format :html do
   view :editor, :type=>:plain_text
   
   view :core do |args|
+    #fixme - shouldn't we just render SCSS?
     css = compile_scss _render_raw
     highlighted_css = ::CodeRay.scan( css, :css ).div
     process_content highlighted_css

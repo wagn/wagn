@@ -57,6 +57,7 @@ module Card::Set
       define_method event do
 #        Rails.logger.info "running #{event} for #{name}"
         run_callbacks event do
+#          Rails.logger.info "calling event: #{event} for #{self}"
           send final_method
         end
       end

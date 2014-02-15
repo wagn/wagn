@@ -41,6 +41,28 @@ jQuery.fn.extend {
     s.replaceWith v
     v
 
+  slotSuccess: (data) ->
+    if data.redirect
+      window.location=data.redirect
+    else
+      notice = @attr('notify-success')
+      newslot = @setSlotContent data
+        
+      if newslot.jquery # sometimes response is plaintext
+        wagn.initializeEditors newslot
+        if notice?
+          newslot.notify notice
+
+  slotError: (status, result) ->
+    if status == 403 #permission denied
+      @setSlotContent result
+    else
+      @notify result
+      if status == 409 #edit conflict
+        @slot().find('.current_revision_id').val @slot().find('.new-current-revision-id').text()
+      else if status == 449
+        @slot().find('.recaptcha-box').loadCaptcha()
+
   notify: (message) ->
     slot = @slot()
     notice = slot.find '.card-notice'
@@ -111,40 +133,21 @@ $(window).ready ->
   setTimeout (-> wagn.initializeEditors $('body')), 10
   #  dislike the timeout, but without this forms with multiple TinyMCE editors were failing to load properly
 
-  $('body').on 'ajax:success', '.slotter', (event, data, c, d) ->
-    if data.redirect
-      window.location=data.redirect
-    else
-      notice = $(this).attr('notify-success')
-      newslot = $(this).setSlotContent data
-        
-      if newslot.jquery # sometimes response is plaintext
-        wagn.initializeEditors newslot
-        if notice?
-          newslot.notify notice
+  $('.card-slot').on 'ajax:success', '.slotter', (event, data, c, d) ->
+    $(this).slotSuccess data
 
-  $('body').on 'ajax:error', '.slotter', (event, xhr) ->
-    result = xhr.responseText
-    if xhr.status == 403 #permission denied
-      $(this).setSlotContent result
-    else
-      $(this).notify result
-      s = $(this).slot()
-      if xhr.status == 409 #edit conflict
-        s.find('.current_revision_id').val s.find('.new-current-revision-id').text()
-      else if xhr.status == 449
-        s.find('.recaptcha-box').loadCaptcha()
+  $('.card-slot').on 'ajax:error', '.slotter', (event, xhr) ->
+    $(this).slotError xhr.status, xhr.responseText
 
-  $('body').on 'click', 'button.slotter', (event)->
+  $('.card-slot').on 'click', 'button.slotter', (event)->
     return false if !$.rails.allowAction $(this)
     $.rails.handleRemote $(this)
 
-  $('body').on 'ajax:beforeSend', '.slotter', (event, xhr, opt)->
+  $('.card-slot').on 'ajax:beforeSend', '.slotter', (event, xhr, opt)->
     return if opt.skip_before_send
-
+    
     unless opt.url.match /home_view/ #avoiding duplication.  could be better test?
       opt.url = wagn.prepUrl opt.url, $(this).slot()
-    
 
     if $(this).is('form')
       if wagn.recaptchaKey and $(this).attr('recaptcha')=='on' and !($(this).find('.recaptcha-box')[0])

@@ -15,6 +15,12 @@ format :html do
 
   view :core, :raw
   
+  view :content do |args|
+    wrap args.merge(:slot_class=>'card-content') do
+      CGI.escapeHTML render_raw
+    end
+  end
+  
   def head_title
     title = root.card && root.card.name
     title = nil if title.blank?

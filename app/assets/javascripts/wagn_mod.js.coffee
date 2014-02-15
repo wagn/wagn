@@ -9,7 +9,7 @@ $.extend wagn,
     '.pointer-list-ul'       : -> pointerContent @find('input'        ).map( -> $(this).val() )
     '.pointer-checkbox-list' : -> pointerContent @find('input:checked').map( -> $(this).val() )
     '.perm-editor'           : -> permissionsContent this # must happen after pointer-list-ul, I think
-    '.wikirate-topic-tree'   : -> pointerContent @find('.jstree-clicked').map( -> $.trim( $(this).text() ) )
+#    '.wikirate-topic-tree'   : -> pointerContent @find('.jstree-clicked').map( -> $.trim( $(this).text() ) )
   }
 
   editorInitFunctionMap: {
@@ -19,13 +19,13 @@ $.extend wagn,
     '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
     '.file-upload'           : -> @fileupload( add: wagn.chooseFile )#, forceIframeTransport: true )
     '.etherpad-textarea'     : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
-    '.wikirate-topic-tree'   : -> $(this).jstree
-       plugins: ["themes","html_data","ui","crrm"],
-       ui:      
-         select_multiple_modifier: 'on'
-         initially_select: $(this).closest('.editor').find('.initial-content').text().split '|'
-         selected_parent_close: false
-       themes: icons: false
+#    '.wikirate-topic-tree'   : -> $(this).jstree
+#       plugins: ["themes","html_data","ui","crrm"],
+#       ui:      
+#         select_multiple_modifier: 'on'
+#         initially_select: $(this).closest('.editor').find('.initial-content').text().split '|'
+#         selected_parent_close: false
+#       themes: icons: false
 
   }
 
@@ -284,24 +284,24 @@ $(window).ready ->
     $(firstShade).trigger 'click'
     
 
-  #wikirate mod
-  $('body').on 'mouseenter', '#wikirate-nav > a', ->
-    ul = $(this).find 'ul'
-    if ul[0]
-      ul.css 'display', 'inline-block'
-    else
-      link = $(this)
-      $.ajax link.attr('href'), {
-        data : { view: 'navdrop', layout: 'none', index: $('#wikirate-nav > a').index(link) },
-#        type : 'POST',
-        success: (data) ->
-          #alert 'success!'
-          wagn.d = data
-          link.prepend $(data).menu()
-      }
-  
-  $('body').on 'mouseleave', '#wikirate-nav ul', ->
-    $(this).hide()
+#  #wikirate mod
+#  $('body').on 'mouseenter', '#wikirate-nav > a', ->
+#    ul = $(this).find 'ul'
+#    if ul[0]
+#      ul.css 'display', 'inline-block'
+#    else
+#      link = $(this)
+#      $.ajax link.attr('href'), {
+#        data : { view: 'navdrop', layout: 'none', index: $('#wikirate-nav > a').index(link) },
+##        type : 'POST',
+#        success: (data) ->
+#          #alert 'success!'
+#          wagn.d = data
+#          link.prepend $(data).menu()
+#      }
+#  
+#  $('body').on 'mouseleave', '#wikirate-nav ul', ->
+#    $(this).hide()
       
 #  $('body').on 'change', '.TYPE-claim .card-editor fieldset.RIGHT-source_type', ->
 #    f = $(this).closest 'form' 

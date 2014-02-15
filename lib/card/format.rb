@@ -8,15 +8,20 @@ class Card
     INCLUSION_MODES  = { :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     
-    cattr_accessor :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases
+    cattr_accessor :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases, :registered
     [ :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases ].each { |acc| self.send "#{acc}=", {} }
     @@max_char_count = 200 #should come from Wagn.config
     @@max_depth      = 20 # ditto
-
+    
     attr_reader :card, :root, :parent, :vars
     attr_accessor :form, :error_status, :inclusion_opts
   
     class << self
+      @@registered = []
+
+      def register format
+        @@registered << format.to_s
+      end
 
       def get_format format
         fkey = @@aliases[ format ] || format
@@ -493,7 +498,7 @@ class Card
       content = params[cardname.to_s.gsub(/\+/,'_')]
 
       # CLEANME This is a hack to get it so plus cards re-populate on failed signups
-      if p = params['cards'] and card_params = p[cardname.s]
+      if p = params['cards'] and card_params = p[cardname.to_s]
         content = card_params['content']
       end
       content if content.present?  # why is this necessary? - efm  

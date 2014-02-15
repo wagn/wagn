@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-FORMATS = 'html|json|xml|rss|kml|css|txt|text|csv' unless defined? FORMATS #should be set by formats
 
 Rails.application.routes.draw do
 

@@ -69,7 +69,6 @@ class WagnController < ActionController::Base
         
     target = case target
       when '*previous'     ;  previous_location #could do as *previous
-      when '_self  '       ;  card #could do as _self
       when /^(http|\/)/    ;  target
       when /^TEXT:\s*(.+)/ ;  $1
       else                 ;  Card.fetch target.to_name.to_absolute(card.cardname), :new=>{}
@@ -103,7 +102,7 @@ class WagnController < ActionController::Base
 
   def show view = nil, status = 200
     format = request.parameters[:format]
-    format = :file if params[:explicit_file] or !FORMATS.split('|').member? format #unknown format
+    format = :file if params[:explicit_file] or !Card::Format.registered.member? format #unknown format
 
     opts = ( params[:slot] || {} ).deep_symbolize_keys
     opts[:view] = view || params[:view]      

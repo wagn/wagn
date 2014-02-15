@@ -8,7 +8,7 @@ format :html do
   end
 
   view :type_fieldset do |args|
-    if cards.cards_of_type_exist?
+    if card.cards_of_type_exist?
       %{<div>Sorry, this card must remain a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
     else
       _final_type_fieldset args

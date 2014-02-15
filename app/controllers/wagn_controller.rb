@@ -69,14 +69,11 @@ class WagnController < ActionController::Base
         
     target = case target
       when '*previous'     ;  previous_location #could do as *previous
-      when '_self  '       ;  card #could do as _self
       when /^(http|\/)/    ;  target
       when /^TEXT:\s*(.+)/ ;  $1
       else                 ;  Card.fetch target.to_name.to_absolute(card.cardname), :new=>{}
       end
 
-
-    Rails.logger.info "rendering success.  redirect=#{redirect}, target = #{target}, new_params = #{new_params}"
     case
     when redirect
       target = page_path target.cardname, new_params if Card === target

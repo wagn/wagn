@@ -14,9 +14,14 @@ module Card::Exceptions
     end
   end
   
-#  class Cancel < Exception
+  class Abort < Exception
+    attr_reader :status
+    def initialize status=:failure, msg=''
+      @status = status
+      super msg
+    end
 #    def backtrace
 #      ["\n( card action gently canceled )\n"]
 #    end
-#  end
+  end
 end

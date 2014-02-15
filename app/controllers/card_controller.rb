@@ -45,7 +45,6 @@ class CardController < WagnController
     show
   end
 
-
   def watch
     watchers = card.fetch :trait=>:watchers, :new=>{}
     watchers = watchers.refresh

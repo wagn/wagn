@@ -1,3 +1,6 @@
 # -*- encoding : utf-8 -*-
-class Card::CsvFormat < Card::TextFormat
+class Card
+  Format.register :csv
+  class CsvFormat < TextFormat
+  end
 end

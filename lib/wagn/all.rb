@@ -20,6 +20,6 @@ require 'paperclip'
 # require 'xmlscan'
 # require 'rubyzip'
 require 'coderay'
-require 'sass'
+#require 'sass'
 
 require 'wagn/application'

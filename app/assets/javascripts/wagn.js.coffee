@@ -141,10 +141,10 @@ $(window).ready ->
 
   $('body').on 'ajax:beforeSend', '.slotter', (event, xhr, opt)->
     return if opt.skip_before_send
+    return if $(this).find '.firing'
 
     unless opt.url.match /home_view/ #avoiding duplication.  could be better test?
       opt.url = wagn.prepUrl opt.url, $(this).slot()
-    
 
     if $(this).is('form')
       if wagn.recaptchaKey and $(this).attr('recaptcha')=='on' and !($(this).find('.recaptcha-box')[0])

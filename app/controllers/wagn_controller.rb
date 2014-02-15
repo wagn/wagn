@@ -75,6 +75,8 @@ class WagnController < ActionController::Base
       else                 ;  Card.fetch target.to_name.to_absolute(card.cardname), :new=>{}
       end
 
+
+    Rails.logger.info "rendering success.  redirect=#{redirect}, target = #{target}, new_params = #{new_params}"
     case
     when redirect
       target = page_path target.cardname, new_params if Card === target
@@ -103,7 +105,7 @@ class WagnController < ActionController::Base
 
   def show view = nil, status = 200
     format = request.parameters[:format]
-    format = :file if params[:explicit_file] or !FORMATS.split('|').member? format #unknown format
+    format = :file if params[:explicit_file] or !Card::Format.registered.member? format #unknown format
 
     opts = ( params[:slot] || {} ).deep_symbolize_keys
     opts[:view] = view || params[:view]      

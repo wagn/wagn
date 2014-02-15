@@ -1,8 +1,11 @@
 # -*- encoding : utf-8 -*-
-class Card::RssFormat < Card::HtmlFormat
+class Card
+  Format.register :rss
 
-  def internal_url relative_path
-    wagn_url relative_path
+  class RssFormat < HtmlFormat
+
+    def internal_url relative_path
+      wagn_url relative_path
+    end
   end
-
 end

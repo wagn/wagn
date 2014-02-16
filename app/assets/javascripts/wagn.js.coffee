@@ -42,6 +42,9 @@ jQuery.fn.extend {
     v
 
   slotSuccess: (data) ->
+    warn "slotSuccess called"
+    wagn.success = data
+    
     if data.redirect
       window.location=data.redirect
     else
@@ -133,17 +136,17 @@ $(window).ready ->
   setTimeout (-> wagn.initializeEditors $('body')), 10
   #  dislike the timeout, but without this forms with multiple TinyMCE editors were failing to load properly
 
-  $('.card-slot').on 'ajax:success', '.slotter', (event, data, c, d) ->
+  $('body').on 'ajax:success', '.slotter', (event, data, c, d) ->
     $(this).slotSuccess data
 
-  $('.card-slot').on 'ajax:error', '.slotter', (event, xhr) ->
+  $('body').on 'ajax:error', '.slotter', (event, xhr) ->
     $(this).slotError xhr.status, xhr.responseText
 
-  $('.card-slot').on 'click', 'button.slotter', (event)->
+  $('body').on 'click', 'button.slotter', (event)->
     return false if !$.rails.allowAction $(this)
     $.rails.handleRemote $(this)
 
-  $('.card-slot').on 'ajax:beforeSend', '.slotter', (event, xhr, opt)->
+  $('body').on 'ajax:beforeSend', '.slotter', (event, xhr, opt)->
     return if opt.skip_before_send
     
     unless opt.url.match /home_view/ #avoiding duplication.  could be better test?

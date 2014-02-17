@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
   end
 
   def send_account_info args
-    raise Wagn::Oops, "subject and message required" unless args[:subject] && args[:message]
+    raise Card::Oops, "subject and message required" unless args[:subject] && args[:message]
     begin
       if password.blank?
         generate_password

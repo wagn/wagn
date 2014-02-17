@@ -281,7 +281,7 @@ class Card
       when nil   ; {}
       when Hash  ; a.clone
       when Array ; a[0].merge a[1]
-      else       ; raise Wagn::Error, "bad render args: #{a}"
+      else       ; raise Card::Error, "bad render args: #{a}"
       end
       
       view_key = canonicalize_view view

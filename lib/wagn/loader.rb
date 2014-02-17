@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
 
-module Wagn
+require_dependency 'wagn/exceptions'
 
-  include Wagn::Exceptions
+module Wagn
 
   module Loader
     

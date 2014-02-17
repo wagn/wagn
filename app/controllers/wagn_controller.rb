@@ -131,17 +131,17 @@ class WagnController < ActionController::Base
     view = case exception
       ## arguably the view and status should be defined in the error class;
       ## some are redundantly defined in view
-      when Wagn::PermissionDenied, Card::PermissionDenied
+      when Card::Oops, Card::Query
+        card.errors.add :exception, exception.message 
+        # Card::Oops error messages are visible to end users and are generally not treated as bugs.
+        # Probably want to rename accordingly.
+        :errors
+      when Card::PermissionDenied, Wagn::PermissionDenied
         :denial
       when Wagn::NotFound, ActiveRecord::RecordNotFound, ActionController::MissingFile
         :not_found
       when Wagn::BadAddress
         :bad_address
-      when Wagn::Oops
-        card.errors.add :exception, exception.message 
-        # Wagn:Oops error messages are visible to end users and are generally not treated as bugs.
-        # Probably want to rename accordingly.
-        :errors
       else #the following indicate a code problem and therefore require full logging
         Rails.logger.info exception.backtrace*"\n"
         notify_airbrake exception if Airbrake.configuration.api_key

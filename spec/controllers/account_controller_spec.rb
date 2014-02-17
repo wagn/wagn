@@ -5,7 +5,6 @@ require 'rr'
 
 describe AccountController do
 
-
   it "should route to forgot_password" do
     { :get => "/account/forgot_password" }.should route_to( :controller => 'account', :action=>'forgot_password' )
   end

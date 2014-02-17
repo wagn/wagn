@@ -56,8 +56,8 @@ format do
 
     case
     when e = search_vars[:error]
-      Rails.logger.debug " no result? #{e.backtrace}"
-      %{No results? #{e.class.to_s} :: #{e.message} :: #{card.content}}
+#      Rails.logger.debug " no result? #{e.backtrace}"
+      %{#{e.class.to_s} :: #{e.message} :: #{card.content}}
     when search_vars[:spec][:return] =='count'
       search_vars[:results].to_s
     else

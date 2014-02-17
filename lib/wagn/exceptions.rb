@@ -1,10 +1,11 @@
 # -*- encoding : utf-8 -*-
 module Wagn
-  module Exceptions
-    class Error     < StandardError ; end
-    class NotFound          < Error ; end
-    class BadAddress        < Error ; end
-    class PermissionDenied  < Error ; end
-    class Oops              < Error ; end
+  class NotFound < StandardError
+  end
+  
+  class BadAddress < StandardError
+  end
+  
+  class PermissionDenied < Error # can remove after obviating admin controller
   end
 end

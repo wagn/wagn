@@ -255,11 +255,12 @@ class Card::Query
     def and val
       subcondition val
     end
+    alias :all :and
   
     def or val
       subcondition val, :conj=>:or
     end
-
+    alias :any :or
     
     #~~~~~~ SPECIAL
 

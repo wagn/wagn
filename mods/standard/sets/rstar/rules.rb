@@ -196,6 +196,18 @@ format :html do
     end
   end
 
+=begin
+  view :edit_rule2 do |args|
+    card_form :update do
+      [
+        _optional_render( :type_fieldset,    args ),
+        _optional_render( :content_fieldset, args ),
+        _optional_render( :set_fieldset,     args ),
+        _optional_render( :button_fieldset,  args )
+      ]
+    end
+  end
+=end
 
   private
 

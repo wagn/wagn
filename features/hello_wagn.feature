@@ -14,11 +14,13 @@ Feature: Reading and Creating a card
     Then I should see "Home"
     And I should see "Joe User"
     And I should see "Sign out"
-    Then In the main card header I should see a link with class "ui-icon-circle-triangle-s"
-    Then In the main card header I click "close Home"
-    Then In the main card header I should see a link with class "ui-icon-circle-triangle-e"
-    Then In the main card header I click "open Home"
-    Then In the main card header I should see a link with class "ui-icon-circle-triangle-s"
+    
+# all of the following assume the toggle shows up on the main card by default, which it no longer does
+#    Then In the main card header I should see a link with class "ui-icon-circle-triangle-s"
+#    Then In the main card header I click "close Home"
+#    Then In the main card header I should see a link with class "ui-icon-circle-triangle-e"
+#    Then In the main card header I click "open Home"
+#    Then In the main card header I should see a link with class "ui-icon-circle-triangle-s"
 
   Scenario: Create a Card
     Given I log in as Joe User

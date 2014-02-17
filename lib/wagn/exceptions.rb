@@ -6,6 +6,6 @@ module Wagn
   class BadAddress < StandardError
   end
   
-  class PermissionDenied < Error # can remove after obviating admin controller
+  class PermissionDenied < StandardError # can remove after obviating admin controller
   end
 end

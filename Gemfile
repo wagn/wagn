@@ -10,9 +10,8 @@ gem "mysql2", "~> 0.3"
 
 
 
-
+#note: handling of pretty much all of the below should be moved to wagn-dev
 group :assets do
-  gem 'sass-rails',   "~> 3.1"                 # pretty code; compiles to CSS
   gem 'coffee-rails', "~> 3.1"                 # pretty code; compiles to JS
   gem 'uglifier'                               # makes pretty code ugly again.  compresses js/css for fast loading
 

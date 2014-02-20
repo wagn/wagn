@@ -9,7 +9,6 @@ gem 'wagn-dev', :path=>File.expand_path( '../../wagn-dev', __FILE__ ), :group=>:
 gem "mysql2", "~> 0.3"
 
 
-
 #note: handling of pretty much all of the below should be moved to wagn-dev
 group :assets do
   gem 'coffee-rails', "~> 3.1"                 # pretty code; compiles to JS

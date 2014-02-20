@@ -26,10 +26,12 @@ Gem::Specification.new do |s|
   [
     
     [ 'rails',        '3.2.16'    ],
-    [ 'smartname',    '0.2.3'     ],  #, :path=>'~/dev/smartname/main'
+    [ 'smartname',    '0.2.3'     ],
     
     [ 'htmlentities', '~> 4.3'    ],
     [ 'uuid',         '~> 2.3'    ],
+    [ 'macaddr',      '1.6.1'     ],  #required by uuid, but 1.6.2 is busted
+    
     [ 'paperclip',    '~> 2.8'    ],
     [ 'rmagick',      '~> 2.13'   ],
     [ 'recaptcha',    '~> 0.3'    ],

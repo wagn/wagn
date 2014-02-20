@@ -2,8 +2,12 @@
 
 module ClassMethods
   
-  def search(spec)
-    ::Card::Query.new(spec).run
+  def search spec
+    results = ::Card::Query.new(spec).run
+    if block_given? and Array===results
+      results.each { |result| yield result }
+    end
+    results
   end
 
   def count_by_wql(spec)

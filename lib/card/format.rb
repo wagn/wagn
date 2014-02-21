@@ -561,15 +561,18 @@ class Card
       final_link href, opts
     end
 
-    def card_link name, text, known
+    def card_link name, text, known, type=nil
       text ||= name
       linkname = name.to_name.url_key
       opts = {
         :class => ( known ? 'known-card' : 'wanted-card' ),
         :text  => ( text.to_name.to_show @context_names  )
       }
-      if !known && name.to_s != linkname
-        linkname += "?card[name]=#{CGI.escape name.to_s}"
+      if !known
+        link_params = {}
+        link_params['name'] = name.to_s if name.to_s != linkname
+        link_params['type'] = type      if type
+        linkname += "?#{ { :card => link_params }.to_param }" if !link_params.empty?
       end
       final_link internal_url( linkname ), opts
     end

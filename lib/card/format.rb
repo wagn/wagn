@@ -8,8 +8,11 @@ class Card
     INCLUSION_MODES  = { :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     
-    cattr_accessor :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases, :registered
-    [ :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases ].each { |acc| self.send "#{acc}=", {} }
+    cattr_accessor :ajax_call, :registered, :max_depth
+    [ :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases ].each do |acc|
+      cattr_accessor acc
+      self.send "#{acc}=", {}
+    end
     @@max_char_count = 200 #should come from Wagn.config
     @@max_depth      = 20 # ditto
     

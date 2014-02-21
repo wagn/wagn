@@ -171,7 +171,7 @@ format :html do
 
 
   view :closed_content do |args|
-    if @depth > 2
+    if @depth > @@max_depth
       "..."
     else
       search_params[:limit] = 10 #not quite right, but prevents massive invisible lists.  

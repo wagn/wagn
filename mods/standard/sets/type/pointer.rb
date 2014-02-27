@@ -41,7 +41,7 @@ format :html do
     raw(_render(part_view))
   end
 
-  view :list do |args| #this is a permission view.  should it go with them?
+  view :list do |args|
     args ||= {}
     items = args[:item_list] || card.item_names(:context=>:raw)
     items = [''] if items.empty?

@@ -15,6 +15,7 @@
 //= require wagn_mod
 //= require wagn
 //= require wagn_menu
+//= require jquery.mobile
 
 /*
 Note: I attempted to get tinymce up with tinymce-jquery,

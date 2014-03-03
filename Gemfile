@@ -15,6 +15,8 @@ group :assets do
   gem 'uglifier'                               # makes pretty code ugly again.  compresses js/css for fast loading
 
   gem 'jquery-rails',  '~> 2.3'                # main js framework, along with rails-specific unobtrusive lib
+  gem "jquery_mobile_rails", "~> 1.4.1"
+  
   gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor
   
   # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one

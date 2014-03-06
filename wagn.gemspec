@@ -36,8 +36,6 @@ Gem::Specification.new do |s|
     [ 'rmagick',      '~> 2.13'   ],
     [ 'recaptcha',    '~> 0.3'    ],
                                   
-    [ 'xmlscan',      '~> 0.3'    ],
-    [ 'rubyzip',      '~> 1.0'    ], # only required in module.  should be separated out.
     [ 'airbrake',     '~> 3.1'    ],
     [ 'coderay',      '~> 1.0'    ],
     [ 'sass',         '~> 3.2'    ]

@@ -90,10 +90,11 @@ format :html do
 
   view :account_detail, :perms=>lambda { |r| r.card.update_account_ok? } do |args|
     account = args[:account] || card.account
+    email = account && account.email
     
     %{
       #{ fieldset :email,
-        text_field( 'card[account_args]', :email, :autocomplete => :off, :value=>account.email ),
+        text_field( 'card[account_args]', :email, :autocomplete => :off, :value=>email ),
         :editor => 'content'
       }
       #{ fieldset :password,
@@ -106,7 +107,7 @@ format :html do
         :editor => 'content'
       }
       #{ 
-        if !args[:setup] && Account.user.id != account.id 
+        if !args[:setup] && account && Account.user.id != account.id 
           fieldset :block, check_box_tag( 'card[account_args][blocked]', '1', account.blocked? ), :help=>'prevents sign-ins'
         end
       }
@@ -182,7 +183,7 @@ event :create_account, :after=>:store, :on=>:save do
 
     user = User.new @account_args
     handle_user_save user
-    @newly_activated_account = user if user.active?
+#    @newly_activated_account = user if user.active?
   end
 end
 

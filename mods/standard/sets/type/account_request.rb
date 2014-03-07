@@ -19,7 +19,7 @@ format :html do
       %{
         #{ form.hidden_field :type_id }
         #{ _render_name_fieldset :help=>'usually first and last name' }
-        #{ _render_email_fieldset }
+        #{ _render_account_detail }
         #{ edit_slot if card.structure }
         #{ _optional_render :button_fieldset, args }
       }

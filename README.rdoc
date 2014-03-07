@@ -17,8 +17,6 @@ Bundler[http://gembundler.com/]:: version 1.0 or higher
 ImageMagick[http://www.imagemagick.org/]::
 A database engine:: Either MySQL[http://www.mysql.com/] or PostgreSQL[http://www.postgresql.org/]
 
-Platform-specific details at: http://www.wagn.org/wagn/installation_1_8+Platform_Notes
-
  
 ==Installation
 

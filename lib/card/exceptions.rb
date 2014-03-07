@@ -1,7 +1,16 @@
 # -*- encoding : utf-8 -*-
 
-module Card::Exceptions
-  class PermissionDenied < Wagn::PermissionDenied
+class Card
+  class Error < StandardError #code problem
+  end
+  
+  class Oops < Error # wagneer problem
+  end
+  
+  class BadQuery < Error
+  end
+    
+  class PermissionDenied < Error
     attr_reader :card
   
     def initialize card
@@ -10,18 +19,21 @@ module Card::Exceptions
     end
 
     def build_message
-      "for card #{@card.name}: #{@card.errors[:permission_denied]}"
+      if msg = @card.errors[:permission_denied]
+        "for card #{@card.name}: #{msg}"
+      else
+        super
+      end
     end
   end
   
   class Abort < Exception
     attr_reader :status
+
     def initialize status=:failure, msg=''
       @status = status
       super msg
     end
-#    def backtrace
-#      ["\n( card action gently canceled )\n"]
-#    end
+
   end
 end

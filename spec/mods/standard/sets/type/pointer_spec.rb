@@ -71,4 +71,11 @@ describe Card::Set::Type::Pointer do
       css_list.should =~ /#{ Regexp.escape @css }/
     end
   end
+  
+  describe '#standardize_item' do
+    it "should handle unlinked items" do
+      pointer1 = Card.create! :name=>'pointer1', :type=>'Pointer', :content=>'bracketme'
+      pointer1.content.should == '[[bracketme]]'
+    end
+  end
 end

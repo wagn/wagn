@@ -46,4 +46,25 @@ describe Card::Set::All::Type do
     end
 
   end
+  
+  
+  describe 'card with structured type' do
+    before do
+      Account.as_bot do
+        Card.create! :name=>'Topic', :type=>'Cardtype'
+        Card.create! :name=>'Topic+*type+*structure', :content=>'{{+results}}'
+        Card.create! :name=>'Topic+results+*type plus right+*structure', :type=>'Search', :content=>'{}'
+      end
+    end
+    
+    it "should clear cache of structured included card after saving" do
+      Account.as_bot do
+        topic1 = Card.new :type=>'Topic', :name=>'t1'
+        Card::Format.new(topic1)._render_new
+        topic1.save!
+        Card.fetch('t1+results', :new=>{}).type_name.should == 'Search'
+      end
+    end
+  end
+  
 end

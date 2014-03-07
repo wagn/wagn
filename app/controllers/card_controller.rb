@@ -96,7 +96,7 @@ class CardController < WagnController
       else
         opts = params[:card]
         opts = opts ? opts.clone : {} #clone so that original params remain unaltered.  need deeper clone?
-        opts[:type] ||= params[:type] # for /new/:type shortcut.  we should fix and deprecate this.
+        opts[:type] ||= params[:type] if params[:type]# for /new/:type shortcut.  we should fix and deprecate this.
         name = params[:id] || opts[:name]
         
         if params[:action] == 'create'

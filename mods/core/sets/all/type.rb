@@ -67,4 +67,11 @@ event :validate_type, :before=>:approve, :changed=>:type_id do
   end
 end
 
-
+event :reset_type_specific_fields, :after=>:store do
+  Account.as_bot do
+    Card.search :left=>{ :left=>type_name }, :right=>{:codename=>'type_plus_right'} do |set_card|
+      set_card.reset_set_patterns
+    end
+  end
+end
+  

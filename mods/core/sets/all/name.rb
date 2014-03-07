@@ -1,14 +1,14 @@
 
 def name= newname
-  @cardname = newname.to_name
+  cardname = newname.to_name
   if @supercard
-    @relative_name = @cardname
-    relparts = @relative_name.parts
+    @relative_name = cardname.to_s
+    relparts = @relative_name.to_name.parts
     @superleft = @supercard if relparts.size==2 && relparts.first.blank?
-    @cardname = @relative_name.to_absolute_name @supercard.name
+    cardname = @relative_name.to_name.to_absolute_name @supercard.name
   end
   
-  newkey = @cardname.key
+  newkey = cardname.key
   if key != newkey
     self.key = newkey
     reset_patterns_if_rule # reset the old name - should be handled in tracked_attributes!!
@@ -17,14 +17,14 @@ def name= newname
   if @subcards
     @subcards.each do |subkey, subcard|
       next if Symbol===subkey
-      subcard.name = subkey.to_name.to_absolute @cardname
+      subcard.name = subkey.to_name.to_absolute cardname
     end
   end
-  super @cardname.s
+  super cardname.s
 end
 
 def cardname
-  @cardname ||= name.to_name
+  name.to_name
 end
 
 def autoname name
@@ -46,7 +46,7 @@ end
 
 
 def relative_name
-  @relative_name || @cardname
+  @relative_name || name
 end
 
 def left *args
@@ -206,7 +206,7 @@ end
 
 
 event :rename, :after=>:set_name, :on=>:update do
-  if existing_card = Card.find_by_key_and_trash(@cardname.key, true) and existing_card != self
+  if existing_card = Card.find_by_key_and_trash(cardname.key, true) and existing_card != self
     existing_card.name = existing_card.name+'*trash'
     existing_card.rename_without_callbacks
     existing_card.save!

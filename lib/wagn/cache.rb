@@ -52,8 +52,7 @@ module Wagn
       end
 
       def reset_global
-        cache_by_class.keys.each do |klass|
-          next unless cache = klass.cache
+        cache_by_class.each do |klass, cache|
           cache.reset hard=true
         end
         Card::Codename.reset_cache

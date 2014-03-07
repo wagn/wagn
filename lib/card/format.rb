@@ -8,8 +8,11 @@ class Card
     INCLUSION_MODES  = { :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     
-    cattr_accessor :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases, :registered
-    [ :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases ].each { |acc| self.send "#{acc}=", {} }
+    cattr_accessor :ajax_call, :registered, :max_depth
+    [ :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases ].each do |acc|
+      cattr_accessor acc
+      self.send "#{acc}=", {}
+    end
     @@max_char_count = 200 #should come from Wagn.config
     @@max_depth      = 20 # ditto
     
@@ -281,7 +284,7 @@ class Card
       when nil   ; {}
       when Hash  ; a.clone
       when Array ; a[0].merge a[1]
-      else       ; raise Wagn::Error, "bad render args: #{a}"
+      else       ; raise Card::Error, "bad render args: #{a}"
       end
       
       view_key = canonicalize_view view
@@ -561,15 +564,18 @@ class Card
       final_link href, opts
     end
 
-    def card_link name, text, known
+    def card_link name, text, known, type=nil
       text ||= name
       linkname = name.to_name.url_key
       opts = {
         :class => ( known ? 'known-card' : 'wanted-card' ),
         :text  => ( text.to_name.to_show @context_names  )
       }
-      if !known && name.to_s != linkname
-        linkname += "?card[name]=#{CGI.escape name.to_s}"
+      if !known
+        link_params = {}
+        link_params['name'] = name.to_s if name.to_s != linkname
+        link_params['type'] = type      if type
+        linkname += "?#{ { :card => link_params }.to_param }" if !link_params.empty?
       end
       final_link internal_url( linkname ), opts
     end

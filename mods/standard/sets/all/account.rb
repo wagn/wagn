@@ -191,7 +191,7 @@ event :update_account, :after=>:store, :on=>:update do
   if @account_args && account && update_account_ok?
     @account_args[:blocked] = account_args[:blocked] == '1'
     if Account.as_id == id and account_args[:blocked]
-      raise Wagn::Oops, "can't block own account"
+      raise Card::Oops, "can't block own account"
     end
     user = account
     user.attributes = @account_args

@@ -41,7 +41,7 @@ format :html do
     raw(_render(part_view))
   end
 
-  view :list do |args| #this is a permission view.  should it go with them?
+  view :list do |args|
     args ||= {}
     items = args[:item_list] || card.item_names(:context=>:raw)
     items = [''] if items.empty?
@@ -122,7 +122,6 @@ format :html do
 end
 
 
-
 format :css do
   view :titled do |args|
     %(#{major_comment "STYLE GROUP: \"#{card.name}\"", '='}#{ _render_core })
@@ -142,6 +141,13 @@ format :data do
     card.item_cards.map do |c|
       process_inclusion c
     end
+  end
+end
+
+
+event :standardize_items, :before=>:approve, :on=>:save do
+  if updates.for? :content
+    self.content = item_names(:context=>:raw).map { |name| "[[#{name}]]" }.join "\n"
   end
 end
 

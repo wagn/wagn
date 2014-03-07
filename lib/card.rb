@@ -5,13 +5,11 @@ class Card < ActiveRecord::Base
   require_dependency 'card/constant'
   require_dependency 'card/set'
   require_dependency 'card/format'
+  require_dependency 'card/exceptions'
 
   extend Card::Set
   extend Card::Constant
   extend Wagn::Loader
-
-  require_dependency 'card/exceptions'
-  include Card::Exceptions
 
   has_many :revisions, :order => :id
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id

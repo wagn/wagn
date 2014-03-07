@@ -163,8 +163,8 @@ $(window).ready ->
         if input[1]
           $(this).notify "Wagn does not yet support multiple files in a single form."
           return false
-        widget = input.data 'fileupload' #jQuery UI widget
 
+        widget = input.data 'blueimpFileupload' #jQuery UI widget
         unless widget._isXHRUpload(widget.options) # browsers that can't do ajax uploads use iframe
           $(this).find('[name=success]').val('_self') # can't do normal redirects.
           # iframe response not passed back; all responses treated as success.  boo

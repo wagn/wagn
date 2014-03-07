@@ -356,9 +356,10 @@ describe Card::Query do
     end
   end
 
-  describe "or" do
+  describe "any/or" do
     it "should work with :plus" do
-      Card::Query.new(:plus=>"A", :or=>{:name=>'B', :match=>'K'}).run.map(&:name).sort.should==%w{ B }
+      Card::Query.new(:plus=>"A", :or =>{:name=>'B', :match=>'K'}).run.map(&:name).sort.should==%w{ B }
+      Card::Query.new(:plus=>"A", :any=>{:name=>'B', :match=>'K'}).run.map(&:name).sort.should==%w{ B }
     end
   end
 

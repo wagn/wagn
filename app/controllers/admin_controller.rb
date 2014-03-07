@@ -3,7 +3,7 @@ class AdminController < CardController
   before_filter :admin_only, :except=>:setup
   
   def setup
-    raise Wagn::Oops, "Already setup" unless Account.no_logins?
+    raise Card::Oops, "Already setup" unless Account.no_logins?
     if request.post?
       Wagn::Env[:recaptcha_on] = false
       handle do

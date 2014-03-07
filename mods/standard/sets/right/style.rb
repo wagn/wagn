@@ -62,6 +62,6 @@ def compress_stylesheets
     Sass.compile format._render_core, :style=>:compressed
   end
 rescue Exception=>e
-  raise Wagn::Oops, "Stylesheet Error:\n#{ e.message }"
+  raise Card::Oops, "Stylesheet Error:\n#{ e.message }"
 end
 

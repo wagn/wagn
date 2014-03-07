@@ -25,6 +25,8 @@ module Wagn
       @config ||= begin
         config = super
         
+        config.i18n.enforce_available_locales = true
+        
         config.autoload_paths += Dir["#{Wagn.gem_root}/app/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/lib/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/mods/standard/lib/**/"]

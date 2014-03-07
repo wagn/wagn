@@ -1,10 +1,10 @@
 # -*- encoding : utf-8 -*-
 class AccountController < WagnController
 
-  def signout
-    self.current_account_id = nil
-    redirect_to Card.path_setting('/')  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
-  end
+#  def signout
+#    self.current_account_id = nil
+#    redirect_to Card.path_setting('/')  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
+#  end
 
   def forgot_password
     @card = Card.new
@@ -27,9 +27,9 @@ class AccountController < WagnController
       @card.errors.add :account, error
       false
     else
-      account.send_account_info(
+      account.send_confirmation_email(
         :subject => "Password Reset",
-        :message => "You have been given a new temporary password. Please update your password once you've signed in."
+        :message => "Someone (we hope you) has asked to reset your password.  Click below to do so."
       )
     end
   end

@@ -2,5 +2,6 @@
 require 'wagn/spec_helper'
 
 describe Card::Set::Self::Session do
-  # SPECSTUB (low priority)
+  
+  
 end

@@ -11,7 +11,7 @@ class Mailer < ActionMailer::Base
   include Wagn::Location
 
 
-  def account_info cd_with_acct, args
+  def confirmation_email cd_with_acct, args
     @email, subject, @message, @password = [:to, :subject, :message, :password].map do |k|
       args[k] or raise "Missing email parameter: #{k}"
     end

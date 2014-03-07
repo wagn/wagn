@@ -65,7 +65,7 @@ describe Card::Set::Type::AccountRequest do
         Card.create! :name=>'*request+*to', :content=>'request@wagn.org'
       end
     
-      mock.dont_allow(Mailer).send_account_info
+      mock.dont_allow(Mailer).send_confirmation_email
       @card = Card.create :name=>'Joe New', :type_id=>Card::AccountRequestID, :account_args=>{:email=>'joe@new.com'}    
       ActionMailer::Base.deliveries.last.to.should == ['request@wagn.org']
     end
@@ -128,7 +128,7 @@ describe Card::Set::Type::AccountRequest do
       c.account.active?.should be_true
       email = ActionMailer::Base.deliveries.last
       email.to.should == ['joe@new.com']
-      email.subject.should =~ /Account info/
+      email.subject.should =~ /activate your account/
     end
   end
   

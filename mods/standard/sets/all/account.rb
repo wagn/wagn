@@ -183,7 +183,7 @@ event :create_account, :after=>:store, :on=>:save do
 
     user = User.new @account_args
     handle_user_save user
-#    @newly_activated_account = user if user.active?
+    @newly_activated_account = user if user.active?
   end
 end
 
@@ -223,8 +223,8 @@ event :notify_accounted, :after=>:extend do
   if @newly_activated_account && @newly_activated_account.active?
     email_args = Wagn::Env.params[:email] || {}
     email_args[:message] ||= Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!"
-    email_args[:subject] ||= Card.setting('*signup+*subject') || "Account info for #{Card.setting('*title')}!"
-    @newly_activated_account.send_account_info email_args
+    email_args[:subject] ||= Card.setting('*signup+*subject') || "Click below to activate your account on #{Card.setting('*title')}!"
+    @newly_activated_account.send_confirmation_email email_args
   end
 end
 

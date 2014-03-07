@@ -35,7 +35,7 @@ class User < ActiveRecord::Base
     Account.reset_cache_item card_id, email
   end
 
-  def send_account_info args
+  def send_confirmation_email args
     raise Card::Oops, "subject and message required" unless args[:subject] && args[:message]
     begin
       if password.blank?
@@ -45,11 +45,11 @@ class User < ActiveRecord::Base
       
       args.merge! :to => self.email, :password => self.password
       #warn "account infor args: #{args}"
-      message = Mailer.account_info Card[card_id], args
+      message = Mailer.confirmation_email Card[card_id], args
       message.deliver
     rescue Exception=>e
       Airbrake.notify e if Airbrake.configuration.api_key
-      Rails.logger.info("ACCOUNT INFO DELIVERY FAILED: \n #{args.inspect}\n   #{e.message}, #{e.backtrace*"\n"}")
+      Rails.logger.info("CONFIRMATION DELIVERY FAILED: \n #{args.inspect}\n   #{e.message}, #{e.backtrace*"\n"}")
     end
   end
 

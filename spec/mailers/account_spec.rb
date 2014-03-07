@@ -25,7 +25,7 @@ describe Mailer do
       user_id =  Card['sara'].id
       Account.as_bot do
         @user = Account[ user_id ]
-        @email = @user.send_account_info(:subject => "New password subject", :message => "Forgot my password")
+        @email = @user.send_confirmation_email(:subject => "New password subject", :message => "Forgot my password")
       end
     end
 

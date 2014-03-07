@@ -14,7 +14,7 @@ format :html do
               link_to 'Invite a Friend', "#{prefix}/invite", :id=>'invite-a-friend-link'
             end
           }
-          #{ link_to 'Sign out', "#{prefix}/signout",                                      :id=>'signout-link' }
+          #{ link_to 'Sign out', "#{prefix}/signout", :id=>'signout-link' }
         }
       else
         %{

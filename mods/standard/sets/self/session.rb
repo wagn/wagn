@@ -48,5 +48,6 @@ end
 
 event :signout, :before=>:approve, :on=>:delete do
   Wagn::Env[:controller].send 'current_account_id=', nil
+  abort :success
 end
 

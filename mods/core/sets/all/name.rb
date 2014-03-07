@@ -1,3 +1,4 @@
+require 'uuid'
 
 def name= newname
   cardname = newname.to_name

@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-
+require 'sass'
 
 def self.delete_style_files
   Account.as_bot do

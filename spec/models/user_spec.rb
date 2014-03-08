@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
 
-describe User do
+describe Card do
   
   describe 'update' do
     it 'should not rehash password' do

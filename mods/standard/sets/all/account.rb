@@ -4,13 +4,8 @@ module ClassMethods
   end
 end
 
+card_accessor :account
 card_accessor :email
-card_accessor :password
-card_accessor :session
-
-card_accessor :token
-card_accessor :salt
-card_accessor :status
 
 
 def account

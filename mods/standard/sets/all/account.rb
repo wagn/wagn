@@ -6,7 +6,6 @@ end
 
 card_accessor :email
 
-
 def account
   fetch :trait=>:account
 end

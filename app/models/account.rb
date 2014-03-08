@@ -23,7 +23,6 @@ class Account
           accounted.id
         end
       end
-
     end
 
     def password_authenticated? card, password

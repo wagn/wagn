@@ -71,7 +71,7 @@ describe Card::Set::All::Account do
     it 'should create a card, user, and account card' do
       jadmin = Card['joe admin']
       Account.current_id = jadmin.id #simulate login to get correct from address
-      ja_email = jadmin.account.email
+      ja_email = jadmin.email
 
       Wagn::Env[:params] = { :email => {:subject=>'Hey Joe!', :message=>'Come on in.'} }
       Card.create :name=>'Joe New', :type_id=>Card::UserID, :account_args=>{:email=>'joe@new.com'}
@@ -97,7 +97,7 @@ describe Card::Set::All::Account do
     end
     it "should handle email updates" do
       @card.update_attributes :account_args => { :email => 'joe@user.co.uk' }
-      @card.account.email.should == 'joe@user.co.uk'
+      @card.email.should == 'joe@user.co.uk'
     end
   
     it "should not allow a user to block or unblock himself" do

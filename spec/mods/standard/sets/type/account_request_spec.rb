@@ -106,7 +106,7 @@ describe Card::Set::Type::AccountRequest do
         
           c = @card.refresh
           c.type_id.should == Card::UserID
-          c.account.email.should == 'wolf@wagn.org'
+          c.email.should == 'wolf@wagn.org'
           c.account.active?.should be_true
           email = ActionMailer::Base.deliveries.last
           email.to.should == ['wolf@wagn.org']

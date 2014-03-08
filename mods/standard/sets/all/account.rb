@@ -4,17 +4,16 @@ module ClassMethods
   end
 end
 
-card_accessor :account
 card_accessor :email
 
 
 def account
-  Card[ id ]
+  fetch :trait=>:account
 end
 
 def accountable?
   Card.toggle( rule(:accountable) ) and
-  fetch( :trait=>:account, :new=>{} ).permitted?( :create) #don't use #ok? here because we don't want to check part permissions
+  fetch( :trait=>:account, :new=>{} ).permitted? :create #don't use #ok? here because we don't want to check part permissions
 end
 
 def parties
@@ -94,7 +93,7 @@ format :html do
 
   view :account_detail, :perms=>lambda { |r| r.card.update_account_ok? } do |args|
     account = args[:account] || card.account
-    email = account && account.email
+    email = card.email
     
     %{
       #{ fieldset :email,
@@ -111,7 +110,7 @@ format :html do
         :editor => 'content'
       }
       #{ 
-        if !args[:setup] && account && Account.user.id != account.id 
+        if !args[:setup] && account && Account.current_id != account.id 
           fieldset :block, check_box_tag( 'card[account_args][blocked]', '1', account.blocked? ), :help=>'prevents sign-ins'
         end
       }
@@ -233,7 +232,7 @@ event :notify_accounted, :after=>:extend do
 end
 
 event :block_deleted_user, :after=>:store, :on=>:delete do
-  if account = Account[ self.id ]
+  if account
     account.update_attributes :status=>'blocked'
   end
 end

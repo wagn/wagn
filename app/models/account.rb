@@ -1,14 +1,13 @@
 # -*- encoding : utf-8 -*-
 
 class Account
-  @@as_card = @@as_id = @@current_id = @@current = @@user = nil
+  @@as_card = @@as_id = @@current_id = @@current = nil
 
   #after_save :reset_instance_cache
 
   class << self
     def admin()          self[ Card::WagnBotID    ]   end
     def as_user()        self[ Account.as_id      ]   end
-    def user()           self[ Account.current_id ]   end
 
     def create_ok?
       base  = Card.new :name=>'dummy*', :type_id=>Card.default_accounted_type_id
@@ -18,9 +17,10 @@ class Account
 
     # Authenticates a user by their login name and unencrypted password.  
     def authenticate email, password
-      if accounted_card = find_accounted_card_by_email(email)  
-        if Wagn.config.no_authentication or password_authenticated?( accounted_card, password.strip )
-          accounted_card.id
+      accounted = find_accounted_by_email email
+      if accounted and account = accounted.account
+        if Wagn.config.no_authentication or password_authenticated?( account, password.strip )
+          accounted.id
         end
       end
 
@@ -39,13 +39,13 @@ class Account
     def [] mark
       cache_key = "EMAIL-#{mark.to_name.key}"
       cache_val = Card.cache.read( cache_key ) || begin
-        card = find_accounted_card_by_email mark
+        card = find_accounted_by_email mark
         Card.cache.write cache_key, ( card ? card.id : :missing )
       end
       cache_val == :missing ? nil : Card[cache_val]
     end
     
-    def find_accounted_card_by_email email
+    def find_accounted_by_email email
       Account.as_bot do
         Card.search( :right_plus=>[{:id=>Card::EmailID},{ :content=>email.strip.downcase }] ).first
       end
@@ -64,16 +64,8 @@ class Account
       end
     end
 
-    def user
-      if @@user && @@user.card_id == current_id
-        @@user
-      else
-        @@user = Account[ current_id ]
-      end
-    end
-
     def current_id= card_id
-      @@user = @@current = @@as_id = @@as_card = nil
+      @@current = @@as_id = @@as_card = nil
       @@current_id = card_id
     end
 

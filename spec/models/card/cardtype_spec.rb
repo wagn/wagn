@@ -163,8 +163,7 @@ describe Card, "Joe User" do
       Card.create :name=>'Cardtype F+*type+*create', :type=>'Pointer', :content=>'[[r3]]'
     end
 
-    @user = Account.user
-    @ucard = Card[@user.card_id]
+    @ucard = Account.current
     @type_names = Account.createable_types
   end
 

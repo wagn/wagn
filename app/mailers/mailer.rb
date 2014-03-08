@@ -24,7 +24,7 @@ class Mailer < ActionMailer::Base
       from_card_id = Account.current_id
       from_card_id = Card::WagnBotID if [ Card::AnonID, cd_with_acct.id ].member? from_card_id
       from_card = Card[from_card_id]
-      "#{from_card.name} <#{from_card.account.email}>"
+      "#{from_card.name} <#{from_card.email}>"
     end
     
     mail_from( { :to=>@email, :subject=>subject }, invite_from )
@@ -33,7 +33,7 @@ class Mailer < ActionMailer::Base
   def signup_alert invite_request
     @site = Card.setting :title
     @card = invite_request
-    @email= invite_request.account.email
+    @email= invite_request.email
     @name = invite_request.name
     @content = invite_request.content
     @request_url  = wagn_url invite_request
@@ -50,7 +50,7 @@ class Mailer < ActionMailer::Base
 
   def change_notice cd_with_acct, card, action, watched, subedits=[], updated_card=nil
     cd_with_acct = Card[cd_with_acct] unless Card===cd_with_acct
-    email = cd_with_acct.account.email
+    email = cd_with_acct.email
     #warn "change_notice( #{cd_with_acct}, #{email}, #{card.inspect}, #{action.inspect}, #{watched.inspect} Uc:#{updated_card.inspect}...)"
 
     updated_card ||= card
@@ -69,7 +69,7 @@ class Mailer < ActionMailer::Base
       :subject      => "[#{Card.setting :title} notice] #{@updater} #{action} \"#{card.name}\"" ,
       :content_type => 'text/html',
     }
-    mail_from args, Card[Card::WagnBotID].account.email
+    mail_from args, Card[Card::WagnBotID].email
   end
 
   def flexmail config

@@ -197,7 +197,7 @@ module Card::Set
 
   def add_traits args, options
     mod = Card::Set.current[:module]
-    raise "Can't define card traits on all set" if mod == Card
+#    raise "Can't define card traits on all set" if mod == Card
     mod_traits = get_traits mod
     
     new_opts = options[:type] ? {:type=>options[:type]} : {}

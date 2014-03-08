@@ -156,7 +156,7 @@ describe Card, "Wannabe Cardtype Card" do
   end
 end
 
-describe User, "Joe User" do
+describe Card, "Joe User" do
   before do
     Account.as_bot do
       @r3 = Card['r3']

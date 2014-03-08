@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require_dependency 'user'
 
 class Account
   @@as_card = @@as_id = @@current_id = @@current = @@user = nil
@@ -11,8 +10,6 @@ class Account
     def as_user()        self[ Account.as_id      ]   end
     def user()           self[ Account.current_id ]   end
 
-    def cache()          Wagn::Cache[Account]         end
-
     def create_ok?
       base  = Card.new :name=>'dummy*', :type_id=>Card.default_accounted_type_id
       trait = Card.new :name=>"dummy*+#{Card[:account].name}"
@@ -20,36 +17,37 @@ class Account
     end
 
     # Authenticates a user by their login name and unencrypted password.  
-    def authenticate(email, password)
-      if u = User.find_by_email(email.strip.downcase) and 
-          ( Wagn.config.no_authentication or u.authenticated? password.strip )
-        u.card_id
+    def authenticate email, password
+      if accounted_card = find_accounted_card_by_email(email)  
+        if Wagn.config.no_authentication or password_authenticated?( accounted_card, password.strip )
+          accounted_card.id
+        end
       end
+
     end
 
+    def password_authenticated? card, password
+      card.password == encrypt(password, card.salt)
+    end
+    
     # Encrypts some data with the salt.
     def encrypt(password, salt)
       Digest::SHA1.hexdigest("#{salt}--#{password}--")
     end
 
-    # Account caching
+    # Caching by email
     def [] mark
-      if mark
-        cache_key = Integer === mark ? "~#{mark}" : mark
-        cached_val = cache.read cache_key
-        case cached_val
-        when :missing; nil
-        when nil
-          val = if Integer === mark
-            User.find_by_card_id mark
-          else
-            User.find_by_email mark
-          end
-          cache.write cache_key, ( val || :missing )
-          val
-        else
-          cached_val
-        end
+      cache_key = "EMAIL-#{mark.to_name.key}"
+      cache_val = Card.cache.read( cache_key ) || begin
+        card = find_accounted_card_by_email mark
+        Card.cache.write cache_key, ( card ? card.id : :missing )
+      end
+      cache_val == :missing ? nil : Card[cache_val]
+    end
+    
+    def find_accounted_card_by_email email
+      Account.as_bot do
+        Card.search( :right_plus=>[{:id=>Card::EmailID},{ :content=>email.strip.downcase }] ).first
       end
     end
     
@@ -82,7 +80,6 @@ class Account
     def get_user_id user
       case user
       when NilClass;   nil
-      when User    ;   user.card_id
       when Card    ;   user.id
       when Integer ;   user
       else
@@ -132,7 +129,11 @@ class Account
 
     def no_logins?()
       c = Card.cache
-      !c.read('no_logins').nil? ? c.read('no_logins') : c.write('no_logins', (User.count < 3))
+      !c.read('no_logins').nil? ? c.read('no_logins') : c.write('no_logins', (account_count < 3))
+    end
+    
+    def account_count
+      Card.count_by_wql :right=>Card[:account].name
     end
 
     def always_ok?

@@ -4,8 +4,17 @@ module ClassMethods
   end
 end
 
+card_accessor :email
+card_accessor :password
+card_accessor :session
+
+card_accessor :token
+card_accessor :salt
+card_accessor :status
+
+
 def account
-  Account[ id ]
+  Card[ id ]
 end
 
 def accountable?

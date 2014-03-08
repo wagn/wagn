@@ -172,11 +172,8 @@ class SharedData
     Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anyone]]'
     Card.create :name=>'Fruit+*type+*read', :type=>'Pointer', :content=>'[[Administrator]]'
 
-    # codenames for card_attribute tests
-Rails.logger.warn "add codenames status and write"
-    Card.create! :name=>'*status', :codename=>:status
+    # codenames for card_accessor tests
     Card.create! :name=>'*write', :codename=>:write
-Rails.logger.warn "added codenames status and write"
 
     # -------- For toc testing: ------------
 

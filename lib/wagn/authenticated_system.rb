@@ -11,7 +11,7 @@ module Wagn::AuthenticatedSystem
   def current_account_id
     @current_account_id ||= begin
       if card_id = session[:user]
-        if Account[ card_id ]
+        if Card.exists? card_id
           card_id
         else
           session[:user] = nil

@@ -3,7 +3,6 @@ module ClassMethods
   
   def empty_trash
     Card.where(:trash=>true).delete_all
-    User.delete_cardless
     Card::Revision.delete_cardless
     Card::Reference.repair_missing_referees
     Card.delete_trashed_files

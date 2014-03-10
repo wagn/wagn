@@ -92,7 +92,7 @@ format :html do
 
   view :account_detail, :perms=>lambda { |r| r.card.update_account_ok? } do |args|
     account = args[:account] || card.account
-    email = card.email
+    email = account.email if account
     
     %{
       #{ fieldset :email,

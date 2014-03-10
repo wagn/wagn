@@ -14,12 +14,11 @@ class UserDataToCards < ActiveRecord::Migration
         base = Card[user.card_id]
         if base and !base.trash
           date_args = { :created_at => user.created_at, :updated_at => user.updated_at }
-          acct_name = "#{base.name}+#{Card[:account].name}"
-          
-          Card.create! date_args.merge( :name=>"#{base.name}+#{Card[:email].name   }", :content=>user.email            )
-          Card.create! date_args.merge( :name=>"#{acct_name}+#{Card[:password].name}", :content=>user.crypted_password )
-          Card.create! date_args.merge( :name=>"#{acct_name}+#{Card[:salt].name    }", :content=>user.salt             )
-          Card.create! date_args.merge( :name=>"#{acct_name}+#{Card[:status].name  }", :content=>user.status           )
+          [ :email, :password, :salt, :status ].each do |field|
+            cardname = "#{base.name}+#{Card[:account].name}+#{Card[field].name}"
+            content = user.send ( field==:password ? :crypted_password : field )
+            Card.create! date_args.merge( :name=>cardname, :content=>content)
+          end
         end
       end
     end

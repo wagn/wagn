@@ -31,7 +31,7 @@ describe Mailer do
 
     context "new password message" do
       it "is addressed to users email" do
-        @email.should deliver_to(@user.email)
+        @email.should deliver_to(@user.account.email)
       end
 
       it "is from Wagn Bot email" do

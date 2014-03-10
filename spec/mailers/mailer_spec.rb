@@ -36,7 +36,7 @@ describe Mailer do
         assert_equal ["sara@user.com"],  @mail.to
       end
       it "is from Wag bot email" do
-        assert_equal [Account.admin.email], @mail.from
+        assert_equal [Account.admin.account.email], @mail.from
       end
     end
   end

@@ -65,7 +65,7 @@ describe Card do
 
   it 'should downcase email' do
     u=create_user(:email=>'QuIrE@example.com')
-    assert_equal 'quire@example.com', u.email
+    assert_equal 'quire@example.com', u.account.email
   end
 
 

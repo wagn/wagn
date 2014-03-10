@@ -46,7 +46,10 @@ class Account
     
     def find_accounted_by_email email
       Account.as_bot do
-        Card.search( :right_plus=>[{:id=>Card::EmailID},{ :content=>email.strip.downcase }] ).first
+        Card.search( :right_plus=>[
+          {:id=>Card::AccountID},
+          {:right_plus=>[{:id=>Card::EmailID},{ :content=>email.strip.downcase }]}
+        ]).first
       end
     end
     

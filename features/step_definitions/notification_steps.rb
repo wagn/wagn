@@ -8,7 +8,7 @@ end
 
 Then /^(.*) should be notified that "(.*)"$/ do |username, subject|
   card_with_acct = username=='I' ? Account.current : Card[username]
-  email = card_with_acct.email
+  email = card_with_acct.account.email
 
   begin
     step %{"#{email}" should receive 1 email}

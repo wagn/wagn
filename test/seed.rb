@@ -10,6 +10,15 @@ end
 
 class SharedData
 
+  def self.account_args hash
+    { "+*account" =>{
+      :cards=>{
+        "+*status"   =>{:content=>'active'}
+        "+*password" =>{:content=>'joe_pass'}
+      }.merge hash
+    }
+  end
+
   def self.add_test_data
     #Account.current_id = Card::WagnBotID
     CodenameTable.load_bootcodes unless !Card::Codename[:wagn_bot].nil?
@@ -19,12 +28,9 @@ class SharedData
     Wagn::Env[:no_auto_approval] = true
     Account.as(Card::WagnBotID)
 
-
-    account_args = { :status=>'active', :password=>'joe_pass', :password_confirmation=>'joe_pass' }
-
-    Card.create! :name=>"Joe User",  :type_code=>'user', :content=>"I'm number two", :account_args=>account_args.merge( :login=>"joe_user",  :email=>'joe@user.com'  )
-    Card.create! :name=>"Joe Admin", :type_code=>'user', :content=>"I'm number one", :account_args=>account_args.merge( :login=>"joe_admin", :email=>'joe@admin.com' )
-    Card.create! :name=>"Joe Camel", :type_code=>'user', :content=>"Mr. Buttz",      :account_args=>account_args.merge( :login=>"joe_camel", :email=>'joe@camel.com' )
+    Card.create! :name=>"Joe User",  :type_code=>'user', :content=>"I'm number two", :cards=>account_args( '+*email'=>'joe@user.com'  )
+    Card.create! :name=>"Joe Admin", :type_code=>'user', :content=>"I'm number one", :cards=>account_args( '+*email'=>'joe@admin.com' )
+    Card.create! :name=>"Joe Camel", :type_code=>'user', :content=>"Mr. Buttz",      :cards=>account_args( '+*email'=>'joe@camel.com' )
 
     Card['Joe Admin'].fetch(:trait=>:roles, :new=>{}).items = [ Card::AdminID ]
 
@@ -34,17 +40,15 @@ class SharedData
 
     # data for testing users and account requests
 
-    Card.create! :name=>"Ron Request", :type_id=>Card::AccountRequestID, :account_args=>{
-      :email=>'ron@request.com', :password=>'ron_pass', :password_confirmation=>'ron_pass', :status=>'pending'
+    Card.create! :name=>"Ron Request", :type_id=>Card::AccountRequestID, :cards=>account_args(
+      '+*email'=>'ron@request.com', '+*password'=>'ron_pass', '+*status'=>'pending'
     }
     
     Card.create! :type_code=>'user', :name=>"No Count", :content=>"I got no account"
 
     # CREATE A CARD OF EACH TYPE
     
-    Card.create! :name=>"Sample User", :type_code=>'user', :account_args=>{ 
-      :login=>"sample_user", :email=>'sample@user.com', :status=>'active', :password=>'sample_pass', :password_confirmation=>'sample_pass'
-    }
+    Card.create! :name=>"Sample User", :type_code=>'user', :cards=>account_args('+*email'=>'sample@user.com', '+*password'=>'sample_pass')
 
     request_card = Card.create! :type_code=>'account_request', :name=>"Sample AccountRequest" #, :email=>"invitation@request.com"
 
@@ -55,17 +59,9 @@ class SharedData
 
     # data for role_test.rb
 
-    Card.create! :name=>"u1", :type_code=>'user', :account_args=>{
-      :login=>"u1", :email=>'u1@user.com', :status=>'active', :password=>'u1_pass', :password_confirmation=>'u1_pass'
-    }
-
-    Card.create! :name=>"u2", :type_code=>'user', :account_args=>{
-      :login=>"u2", :email=>'u2@user.com', :status=>'active', :password=>'u2_pass', :password_confirmation=>'u2_pass'
-    }
-
-    Card.create! :name=>"u3", :type_code=>'user', :account_args=>{
-      :login=>"u3", :email=>'u3@user.com', :status=>'active', :password=>'u3_pass', :password_confirmation=>'u3_pass'
-    }
+    Card.create! :name=>"u1", :type_code=>'user', :cards=>account_args('+*email'=>'u1@user.com', '+*password'=>'u1_pass')
+    Card.create! :name=>"u2", :type_code=>'user', :cards=>account_args('+*email'=>'u2@user.com', '+*password'=>'u2_pass')
+    Card.create! :name=>"u3", :type_code=>'user', :cards=>account_args('+*email'=>'u3@user.com', '+*password'=>'u3_pass')
 
     r1 = Card.create!( :type_code=>'role', :name=>'r1' )
     r2 = Card.create!( :type_code=>'role', :name=>'r2' )
@@ -139,13 +135,8 @@ class SharedData
       # fwiw Timecop is apparently limited by ruby Time object, which goes only to 2037 and back to 1900 or so.
       #  whereas DateTime can represent all dates.
 
-      Card.create! :name=>"John", :type_code=>'user', :account_args=>{
-        :login=>"john", :email=>'john@user.com', :status=>'active', :password=>'john_pass', :password_confirmation=>'john_pass'
-      }
-
-      Card.create! :name=>"Sara", :type_code=>'user', :account_args=>{
-        :login=>"sara",:email=>'sara@user.com', :status => 'active', :password=>'sara_pass', :password_confirmation=>'sara_pass'
-      }
+      Card.create! :name=>"John", :type_code=>'user', :cards=>account_args('+*email'=>'john@user.com', '+*password'=>'john_pass')
+      Card.create! :name=>"Sara", :type_code=>'user', :cards=>account_args('+*email'=>'sara@user.com', '+*password'=>'sara_pass')
 
       Card.create! :name => "Sara Watching+*watchers",  :content => "[[Sara]]"
       Card.create! :name => "All Eyes On Me+*watchers", :content => "[[Sara]]\n[[John]]"

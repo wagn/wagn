@@ -3,6 +3,7 @@
 card_accessor :session
 card_accessor :token
 
+card_accessor :email
 card_accessor :password
 card_accessor :salt
 card_accessor :status
@@ -20,4 +21,10 @@ def blocked= block
   elsif !built_in?
     self.status = 'active'
   end
+end
+
+
+def confirmation_email args
+    args.merge! :to => self.email
+    Mailer.confirmation_email left, args
 end

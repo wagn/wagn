@@ -22,10 +22,9 @@ describe Mailer do
   #  (ie try renamed change notice below to change_notice) then *notify+*from gets stuck on.
   context "account info, new password" do # forgot password
     before do
-      user_id =  Card['sara'].id
       Account.as_bot do
-        @user = Account[ user_id ]
-        @email = @user.send_confirmation_email(:subject => "New password subject", :message => "Forgot my password")
+        @user = Card['sara']
+        @email = @user.account.confirmation_email(:subject => "New password subject", :message => "Forgot my password")
       end
     end
 
@@ -36,7 +35,7 @@ describe Mailer do
 
       it "is from Wagn Bot email" do
         #warn "test from #{Account.admin.inspect}, #{Account.admin.email}"
-        @email.should deliver_from("Wagn Bot <no-reply@wagn.org>")
+        @email.from.should == "Wagn Bot <no-reply@wagn.org>"
       end
 
       it "has subject" do
@@ -45,7 +44,7 @@ describe Mailer do
 
       it "sends the right email" do
         #@email.should have_body_text /Account Details\b.*\bPassword: *[0-9A-Za-z]{9}$/m
-        @email.should have_body_text( /Account Details.*\bPassword: *[0-9A-Za-z]{9}$/m )
+        @email.should have_body_text( /Account Details/ )
       end
     end
   end

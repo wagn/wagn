@@ -4,8 +4,6 @@ module ClassMethods
   end
 end
 
-card_accessor :email
-
 def account
   fetch :trait=>:account
 end
@@ -226,7 +224,7 @@ event :notify_accounted, :after=>:extend do
     email_args = Wagn::Env.params[:email] || {}
     email_args[:message] ||= Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!"
     email_args[:subject] ||= Card.setting('*signup+*subject') || "Click below to activate your account on #{Card.setting('*title')}!"
-    @newly_activated_account.send_confirmation_email email_args
+    Mailer.confirmation_email @newly_activated_account, email_args
   end
 end
 

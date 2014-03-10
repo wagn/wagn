@@ -27,10 +27,10 @@ class AccountController < WagnController
       @card.errors.add :account, error
       false
     else
-      account.send_confirmation_email(
+      account.confirmation_email(
         :subject => "Password Reset",
         :message => "Someone (we hope you) has asked to reset your password.  Click below to do so."
-      )
+      ).deliver
     end
   end
 

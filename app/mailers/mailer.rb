@@ -12,9 +12,11 @@ class Mailer < ActionMailer::Base
 
 
   def confirmation_email cd_with_acct, args
-    @email, subject, @message, @password = [:to, :subject, :message, :password].map do |k|
+    @email, subject, @message= [:to, :subject, :message].map do |k|
       args[k] or raise "Missing email parameter: #{k}"
     end
+
+    @password = 'deleteme'
 
     @pw_url   = wagn_url "#{cd_with_acct.cardname.url_key}?view=account"
     @login_url= wagn_url ":session"
@@ -24,7 +26,7 @@ class Mailer < ActionMailer::Base
       from_card_id = Account.current_id
       from_card_id = Card::WagnBotID if [ Card::AnonID, cd_with_acct.id ].member? from_card_id
       from_card = Card[from_card_id]
-      "#{from_card.name} <#{from_card.email}>"
+      "#{from_card.name} <#{from_card.account.email}>"
     end
     
     mail_from( { :to=>@email, :subject=>subject }, invite_from )

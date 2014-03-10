@@ -4,19 +4,24 @@ require 'timecop'
 require_dependency 'card'
 
 # following looks like legacy code to me - efm
-Dir["#{Rails.root}/app/models/card/*.rb"].sort.each do |cardtype|
-  require_dependency cardtype
-end
+#Dir["#{Rails.root}/app/models/card/*.rb"].sort.each do |cardtype|
+#  require_dependency cardtype
+#end
 
 class SharedData
 
   def self.account_args hash
+    converted_hash = hash.keys.inject({}) do |h, key|
+       h[key] = { :content => hash[key] }; h 
+       h
+    end 
     { "+*account" =>
       {
+        :blank_ok=>true,
         :cards=>{
           "+*status"   =>{:content=>'active'},
           "+*password" =>{:content=>'joe_pass'}
-        }.merge( hash )
+        }.merge( converted_hash )
       }
     }
   end
@@ -42,9 +47,9 @@ class SharedData
 
     # data for testing users and account requests
 
-    Card.create! :name=>"Ron Request", :type_id=>Card::AccountRequestID, :cards=>account_args(
-      '+*email'=>'ron@request.com', '+*password'=>'ron_pass', '+*status'=>'pending'
-    )
+#    Card.create! :name=>"Ron Request", :type_id=>Card::AccountRequestID, :cards=>account_args(
+#      '+*email'=>'ron@request.com', '+*password'=>'ron_pass', '+*status'=>'pending'
+#    )
     
     Card.create! :type_code=>'user', :name=>"No Count", :content=>"I got no account"
 

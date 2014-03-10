@@ -7190,3 +7190,2043 @@ cards_423:
   references_expired: 
   trash: false
   type_id: 51
+cards_424: 
+  id: 976
+  name: Joe User
+  key: joe_user
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6820
+  created_at: 2014-03-10 18:42:01 Z
+  updated_at: 2014-03-10 18:42:01 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 4
+cards_425: 
+  id: 977
+  name: Joe Admin
+  key: joe_admin
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6821
+  created_at: 2014-03-10 18:42:02 Z
+  updated_at: 2014-03-10 18:42:02 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 4
+cards_426: 
+  id: 978
+  name: Joe Camel
+  key: joe_camel
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6822
+  created_at: 2014-03-10 18:42:02 Z
+  updated_at: 2014-03-10 18:42:02 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 4
+cards_427: 
+  id: 979
+  name: Joe Admin+*roles
+  key: joe_admin+*role
+  codename: 
+  left_id: 977
+  right_id: 96
+  current_revision_id: 6823
+  created_at: 2014-03-10 18:42:03 Z
+  updated_at: 2014-03-10 18:42:03 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 47
+cards_428: 
+  id: 980
+  name: color
+  key: color
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6824
+  created_at: 2014-03-10 18:42:03 Z
+  updated_at: 2014-03-10 18:42:03 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_429: 
+  id: 981
+  name: Basic Card
+  key: basic_card
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6825
+  created_at: 2014-03-10 18:42:03 Z
+  updated_at: 2014-03-10 18:42:03 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_430: 
+  id: 982
+  name: Ron Request
+  key: ron_request
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6826
+  created_at: 2014-03-10 18:42:03 Z
+  updated_at: 2014-03-10 18:42:03 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 12
+cards_431: 
+  id: 983
+  name: No Count
+  key: no_count
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6827
+  created_at: 2014-03-10 18:42:03 Z
+  updated_at: 2014-03-10 18:42:03 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 4
+cards_432: 
+  id: 984
+  name: Sample User
+  key: sample_user
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6828
+  created_at: 2014-03-10 18:42:03 Z
+  updated_at: 2014-03-10 18:42:03 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 4
+cards_433: 
+  id: 985
+  name: Sample AccountRequest
+  key: sample_account_request
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6829
+  created_at: 2014-03-10 18:42:03 Z
+  updated_at: 2014-03-10 18:42:03 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 12
+cards_434: 
+  id: 986
+  name: Sample Basic
+  key: sample_basic
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6830
+  created_at: 2014-03-10 18:42:03 Z
+  updated_at: 2014-03-10 18:42:03 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_435: 
+  id: 987
+  name: Sample CSS
+  key: sample_css
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6831
+  created_at: 2014-03-10 18:42:03 Z
+  updated_at: 2014-03-10 18:42:03 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 942
+cards_436: 
+  id: 988
+  name: Sample Cardtype
+  key: sample_cardtype
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6832
+  created_at: 2014-03-10 18:42:03 Z
+  updated_at: 2014-03-10 18:42:03 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 5
+cards_437: 
+  id: 989
+  name: Sample Date
+  key: sample_date
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6833
+  created_at: 2014-03-10 18:42:03 Z
+  updated_at: 2014-03-10 18:42:03 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 17
+cards_438: 
+  id: 990
+  name: Sample File
+  key: sample_file
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6834
+  created_at: 2014-03-10 18:42:03 Z
+  updated_at: 2014-03-10 18:42:03 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 18
+cards_439: 
+  id: 991
+  name: Sample HTML
+  key: sample_html
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6835
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 50
+cards_440: 
+  id: 992
+  name: Sample Image
+  key: sample_image
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6836
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 19
+cards_441: 
+  id: 993
+  name: Sample Layout
+  key: sample_layout
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6837
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 569
+cards_442: 
+  id: 994
+  name: Sample Phrase
+  key: sample_phrase
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6838
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 52
+cards_443: 
+  id: 995
+  name: Sample PlainText
+  key: sample_plain_text
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6839
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 22
+cards_444: 
+  id: 996
+  name: Sample Pointer
+  key: sample_pointer
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6840
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 47
+cards_445: 
+  id: 997
+  name: Sample Role
+  key: sample_role
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6841
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 7
+cards_446: 
+  id: 998
+  name: Sample SCSS
+  key: sample_scss
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6842
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 943
+cards_447: 
+  id: 999
+  name: Sample Search
+  key: sample_search
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6843
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 30
+cards_448: 
+  id: 1000
+  name: Sample Skin
+  key: sample_skin
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6844
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 944
+cards_449: 
+  id: 1001
+  name: Sample Toggle
+  key: sample_toggle
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6845
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 51
+cards_450: 
+  id: 1002
+  name: u1
+  key: u1
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6846
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 4
+cards_451: 
+  id: 1003
+  name: u2
+  key: u2
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6847
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 4
+cards_452: 
+  id: 1004
+  name: u3
+  key: u3
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6848
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 4
+cards_453: 
+  id: 1005
+  name: r1
+  key: r1
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6849
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 7
+cards_454: 
+  id: 1006
+  name: r2
+  key: r2
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6850
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 7
+cards_455: 
+  id: 1007
+  name: r3
+  key: r3
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6851
+  created_at: 2014-03-10 18:42:04 Z
+  updated_at: 2014-03-10 18:42:04 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 7
+cards_456: 
+  id: 1008
+  name: r4
+  key: r4
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6852
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 7
+cards_457: 
+  id: 1009
+  name: u1+*roles
+  key: u1+*role
+  codename: 
+  left_id: 1002
+  right_id: 96
+  current_revision_id: 6853
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 47
+cards_458: 
+  id: 1010
+  name: u2+*roles
+  key: u2+*role
+  codename: 
+  left_id: 1003
+  right_id: 96
+  current_revision_id: 6854
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 47
+cards_459: 
+  id: 1011
+  name: u3+*roles
+  key: u3+*role
+  codename: 
+  left_id: 1004
+  right_id: 96
+  current_revision_id: 6855
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 47
+cards_460: 
+  id: 1012
+  name: c1
+  key: c1
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6856
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_461: 
+  id: 1013
+  name: c2
+  key: c2
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6857
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_462: 
+  id: 1014
+  name: c3
+  key: c3
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6858
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_463: 
+  id: 1015
+  name: Z
+  key: z
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6859
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_464: 
+  id: 1016
+  name: A
+  key: a
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6860
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_465: 
+  id: 1017
+  name: B
+  key: b
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6861
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_466: 
+  id: 1018
+  name: T
+  key: t
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6862
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_467: 
+  id: 1019
+  name: X
+  key: x
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6863
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_468: 
+  id: 1020
+  name: Y
+  key: y
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6864
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_469: 
+  id: 1021
+  name: A+B
+  key: a+b
+  codename: 
+  left_id: 1016
+  right_id: 1017
+  current_revision_id: 6865
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_470: 
+  id: 1022
+  name: One
+  key: one
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6866
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_471: 
+  id: 1023
+  name: Two
+  key: two
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6867
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_472: 
+  id: 1024
+  name: One+Two
+  key: one+two
+  codename: 
+  left_id: 1022
+  right_id: 1023
+  current_revision_id: 6868
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_473: 
+  id: 1025
+  name: Three
+  key: three
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6869
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_474: 
+  id: 1026
+  name: One+Two+Three
+  key: one+two+three
+  codename: 
+  left_id: 1024
+  right_id: 1025
+  current_revision_id: 6870
+  created_at: 2014-03-10 18:42:05 Z
+  updated_at: 2014-03-10 18:42:05 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_475: 
+  id: 1027
+  name: Four
+  key: four
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6871
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_476: 
+  id: 1028
+  name: Four+One
+  key: four+one
+  codename: 
+  left_id: 1027
+  right_id: 1022
+  current_revision_id: 6872
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_477: 
+  id: 1029
+  name: Five
+  key: five
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6873
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_478: 
+  id: 1030
+  name: Four+One+Five
+  key: four+one+five
+  codename: 
+  left_id: 1028
+  right_id: 1029
+  current_revision_id: 6874
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_479: 
+  id: 1031
+  name: C
+  key: c
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6875
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_480: 
+  id: 1032
+  name: A+C
+  key: a+c
+  codename: 
+  left_id: 1016
+  right_id: 1031
+  current_revision_id: 6876
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_481: 
+  id: 1033
+  name: D
+  key: d
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6877
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_482: 
+  id: 1034
+  name: A+D
+  key: a+d
+  codename: 
+  left_id: 1016
+  right_id: 1033
+  current_revision_id: 6878
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_483: 
+  id: 1035
+  name: E
+  key: e
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6879
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_484: 
+  id: 1036
+  name: A+E
+  key: a+e
+  codename: 
+  left_id: 1016
+  right_id: 1035
+  current_revision_id: 6880
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_485: 
+  id: 1037
+  name: C+A
+  key: c+a
+  codename: 
+  left_id: 1031
+  right_id: 1016
+  current_revision_id: 6881
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_486: 
+  id: 1038
+  name: D+A
+  key: d+a
+  codename: 
+  left_id: 1033
+  right_id: 1016
+  current_revision_id: 6882
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_487: 
+  id: 1039
+  name: F
+  key: f
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6883
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_488: 
+  id: 1040
+  name: F+A
+  key: f+a
+  codename: 
+  left_id: 1039
+  right_id: 1016
+  current_revision_id: 6884
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_489: 
+  id: 1041
+  name: A+B+C
+  key: a+b+c
+  codename: 
+  left_id: 1021
+  right_id: 1031
+  current_revision_id: 6885
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_490: 
+  id: 1042
+  name: Cardtype A
+  key: cardtype_a
+  codename: cardtype_a
+  left_id: 
+  right_id: 
+  current_revision_id: 6886
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 5
+cards_491: 
+  id: 1043
+  name: Cardtype B
+  key: cardtype_b
+  codename: cardtype_b
+  left_id: 
+  right_id: 
+  current_revision_id: 6887
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 5
+cards_492: 
+  id: 1044
+  name: Cardtype C
+  key: cardtype_c
+  codename: cardtype_c
+  left_id: 
+  right_id: 
+  current_revision_id: 6888
+  created_at: 2014-03-10 18:42:06 Z
+  updated_at: 2014-03-10 18:42:06 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 5
+cards_493: 
+  id: 1045
+  name: Cardtype D
+  key: cardtype_d
+  codename: cardtype_d
+  left_id: 
+  right_id: 
+  current_revision_id: 6889
+  created_at: 2014-03-10 18:42:07 Z
+  updated_at: 2014-03-10 18:42:07 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 5
+cards_494: 
+  id: 1046
+  name: Cardtype E
+  key: cardtype_e
+  codename: cardtype_e
+  left_id: 
+  right_id: 
+  current_revision_id: 6890
+  created_at: 2014-03-10 18:42:07 Z
+  updated_at: 2014-03-10 18:42:07 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 5
+cards_495: 
+  id: 1047
+  name: Cardtype F
+  key: cardtype_f
+  codename: cardtype_f
+  left_id: 
+  right_id: 
+  current_revision_id: 6891
+  created_at: 2014-03-10 18:42:07 Z
+  updated_at: 2014-03-10 18:42:07 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 5
+cards_496: 
+  id: 1048
+  name: basicname
+  key: basicname
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6892
+  created_at: 2014-03-10 18:42:07 Z
+  updated_at: 2014-03-10 18:42:07 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_497: 
+  id: 1049
+  name: type-a-card
+  key: type_a_card
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6893
+  created_at: 2014-03-10 18:42:07 Z
+  updated_at: 2014-03-10 18:42:07 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 1042
+cards_498: 
+  id: 1050
+  name: type-b-card
+  key: type_b_card
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6894
+  created_at: 2014-03-10 18:42:07 Z
+  updated_at: 2014-03-10 18:42:07 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 1043
+cards_499: 
+  id: 1051
+  name: type-c-card
+  key: type_c_card
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6895
+  created_at: 2014-03-10 18:42:07 Z
+  updated_at: 2014-03-10 18:42:07 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 1044
+cards_500: 
+  id: 1052
+  name: type-d-card
+  key: type_d_card
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6896
+  created_at: 2014-03-10 18:42:07 Z
+  updated_at: 2014-03-10 18:42:07 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 1045
+cards_501: 
+  id: 1053
+  name: type-e-card
+  key: type_e_card
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6897
+  created_at: 2014-03-10 18:42:07 Z
+  updated_at: 2014-03-10 18:42:07 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 1046
+cards_502: 
+  id: 1054
+  name: type-f-card
+  key: type_f_card
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6898
+  created_at: 2014-03-10 18:42:07 Z
+  updated_at: 2014-03-10 18:42:07 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 1047
+cards_503: 
+  id: 1055
+  name: revtest
+  key: revtest
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6901
+  created_at: 2014-03-10 18:42:07 Z
+  updated_at: 2014-03-10 18:42:07 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_504: 
+  id: 1056
+  name: UserForm
+  key: user_form
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6902
+  created_at: 2014-03-10 18:42:07 Z
+  updated_at: 2014-03-10 18:42:07 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 5
+cards_505: 
+  id: 1057
+  name: UserForm+*type
+  key: user_form+*type
+  codename: 
+  left_id: 1056
+  right_id: 266
+  current_revision_id: 6903
+  created_at: 2014-03-10 18:42:07 Z
+  updated_at: 2014-03-10 18:42:07 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 259
+cards_506: 
+  id: 1058
+  name: UserForm+*type+*structure
+  key: user_form+*type+*structure
+  codename: 
+  left_id: 1057
+  right_id: 317
+  current_revision_id: 6904
+  created_at: 2014-03-10 18:42:07 Z
+  updated_at: 2014-03-10 18:42:07 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_507: 
+  id: 1059
+  name: JoeLater
+  key: joe_later
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6905
+  created_at: 2014-03-10 18:42:08 Z
+  updated_at: 2014-03-10 18:42:08 Z
+  creator_id: 976
+  updater_id: 976
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_508: 
+  id: 1060
+  name: JoeNow
+  key: joe_now
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6906
+  created_at: 2014-03-10 18:42:08 Z
+  updated_at: 2014-03-10 18:42:08 Z
+  creator_id: 976
+  updater_id: 976
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_509: 
+  id: 1061
+  name: AdminNow
+  key: admin_now
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6907
+  created_at: 2014-03-10 18:42:08 Z
+  updated_at: 2014-03-10 18:42:08 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_510: 
+  id: 1062
+  name: Cardtype B+*type
+  key: cardtype_b+*type
+  codename: 
+  left_id: 1043
+  right_id: 266
+  current_revision_id: 6908
+  created_at: 2014-03-10 18:42:08 Z
+  updated_at: 2014-03-10 18:42:08 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 259
+cards_511: 
+  id: 1063
+  name: Cardtype B+*type+*create
+  key: cardtype_b+*type+*create
+  codename: 
+  left_id: 1062
+  right_id: 478
+  current_revision_id: 6909
+  created_at: 2014-03-10 18:42:08 Z
+  updated_at: 2014-03-10 18:42:08 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 47
+cards_512: 
+  id: 1064
+  name: Book
+  key: book
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6910
+  created_at: 2014-03-10 18:42:08 Z
+  updated_at: 2014-03-10 18:42:08 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 5
+cards_513: 
+  id: 1065
+  name: Book+*type
+  key: book+*type
+  codename: 
+  left_id: 1064
+  right_id: 266
+  current_revision_id: 6911
+  created_at: 2014-03-10 18:42:08 Z
+  updated_at: 2014-03-10 18:42:08 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 259
+cards_514: 
+  id: 1066
+  name: Book+*type+*structure
+  key: book+*type+*structure
+  codename: 
+  left_id: 1065
+  right_id: 317
+  current_revision_id: 6912
+  created_at: 2014-03-10 18:42:08 Z
+  updated_at: 2014-03-10 18:42:08 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_515: 
+  id: 1067
+  name: Iliad
+  key: iliad
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6913
+  created_at: 2014-03-10 18:42:08 Z
+  updated_at: 2014-03-10 18:42:08 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 1064
+cards_516: 
+  id: 1068
+  name: John
+  key: john
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6914
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 4
+cards_517: 
+  id: 1069
+  name: Sara
+  key: sara
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6915
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 4
+cards_518: 
+  id: 1070
+  name: Sara Watching
+  key: sara_watching
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6916
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_519: 
+  id: 1071
+  name: Sara Watching+*watchers
+  key: sara_watching+*watcher
+  codename: 
+  left_id: 1070
+  right_id: 219
+  current_revision_id: 6917
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 47
+cards_520: 
+  id: 1072
+  name: All Eyes On Me
+  key: all_eye_on_me
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6918
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_521: 
+  id: 1073
+  name: All Eyes On Me+*watchers
+  key: all_eye_on_me+*watcher
+  codename: 
+  left_id: 1072
+  right_id: 219
+  current_revision_id: 6919
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 47
+cards_522: 
+  id: 1074
+  name: John Watching
+  key: john_watching
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6920
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_523: 
+  id: 1075
+  name: John Watching+*watchers
+  key: john_watching+*watcher
+  codename: 
+  left_id: 1074
+  right_id: 219
+  current_revision_id: 6921
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 47
+cards_524: 
+  id: 1076
+  name: her
+  key: her
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6922
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_525: 
+  id: 1077
+  name: John Watching+her
+  key: john_watching+her
+  codename: 
+  left_id: 1074
+  right_id: 1076
+  current_revision_id: 6923
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_526: 
+  id: 1078
+  name: No One Sees Me
+  key: no_one_see_me
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6924
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_527: 
+  id: 1079
+  name: Optic
+  key: optic
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6925
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 5
+cards_528: 
+  id: 1080
+  name: Optic+*watchers
+  key: optic+*watcher
+  codename: 
+  left_id: 1079
+  right_id: 219
+  current_revision_id: 6926
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 47
+cards_529: 
+  id: 1081
+  name: Sunglasses
+  key: sunglass
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6927
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 1079
+cards_530: 
+  id: 1082
+  name: tint
+  key: tint
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6928
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_531: 
+  id: 1083
+  name: Sunglasses+tint
+  key: sunglass+tint
+  codename: 
+  left_id: 1081
+  right_id: 1082
+  current_revision_id: 6929
+  created_at: 2019-12-31 07:00:00 Z
+  updated_at: 2019-12-31 07:00:00 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_532: 
+  id: 1084
+  name: Cardtype E+*type
+  key: cardtype_e+*type
+  codename: 
+  left_id: 1046
+  right_id: 266
+  current_revision_id: 6930
+  created_at: 2014-03-10 18:42:09 Z
+  updated_at: 2014-03-10 18:42:09 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 259
+cards_533: 
+  id: 1085
+  name: Cardtype E+*type+*default
+  key: cardtype_e+*type+*default
+  codename: 
+  left_id: 1084
+  right_id: 318
+  current_revision_id: 6931
+  created_at: 2014-03-10 18:42:09 Z
+  updated_at: 2014-03-10 18:42:09 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_534: 
+  id: 1086
+  name: Fruit
+  key: fruit
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6932
+  created_at: 2014-03-10 18:42:09 Z
+  updated_at: 2014-03-10 18:42:09 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 5
+cards_535: 
+  id: 1087
+  name: Fruit+*type
+  key: fruit+*type
+  codename: 
+  left_id: 1086
+  right_id: 266
+  current_revision_id: 6933
+  created_at: 2014-03-10 18:42:09 Z
+  updated_at: 2014-03-10 18:42:09 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 259
+cards_536: 
+  id: 1088
+  name: Fruit+*type+*create
+  key: fruit+*type+*create
+  codename: 
+  left_id: 1087
+  right_id: 478
+  current_revision_id: 6934
+  created_at: 2014-03-10 18:42:09 Z
+  updated_at: 2014-03-10 18:42:09 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 47
+cards_537: 
+  id: 1089
+  name: Fruit+*type+*read
+  key: fruit+*type+*read
+  codename: 
+  left_id: 1087
+  right_id: 479
+  current_revision_id: 6935
+  created_at: 2014-03-10 18:42:10 Z
+  updated_at: 2014-03-10 18:42:10 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 47
+cards_538: 
+  id: 1090
+  name: "*write"
+  key: "*write"
+  codename: write
+  left_id: 
+  right_id: 
+  current_revision_id: 6936
+  created_at: 2014-03-10 18:42:10 Z
+  updated_at: 2014-03-10 18:42:10 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_539: 
+  id: 1091
+  name: OnneHeading
+  key: onne_heading
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6937
+  created_at: 2014-03-10 18:42:10 Z
+  updated_at: 2014-03-10 18:42:10 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_540: 
+  id: 1092
+  name: TwwoHeading
+  key: twwo_heading
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6938
+  created_at: 2014-03-10 18:42:10 Z
+  updated_at: 2014-03-10 18:42:10 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_541: 
+  id: 1093
+  name: ThreeHeading
+  key: three_heading
+  codename: 
+  left_id: 
+  right_id: 
+  current_revision_id: 6939
+  created_at: 2014-03-10 18:42:10 Z
+  updated_at: 2014-03-10 18:42:10 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 3
+cards_542: 
+  id: 1094
+  name: Basic+*type
+  key: basic+*type
+  codename: 
+  left_id: 3
+  right_id: 266
+  current_revision_id: 6940
+  created_at: 2014-03-10 18:42:10 Z
+  updated_at: 2014-03-10 18:42:10 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 259
+cards_543: 
+  id: 1095
+  name: Basic+*type+*table_of_contents
+  key: basic+*type+*table_of_content
+  codename: 
+  left_id: 1094
+  right_id: 89
+  current_revision_id: 6941
+  created_at: 2014-03-10 18:42:10 Z
+  updated_at: 2014-03-10 18:42:10 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all plus"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 20

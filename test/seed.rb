@@ -11,11 +11,13 @@ end
 class SharedData
 
   def self.account_args hash
-    { "+*account" =>{
-      :cards=>{
-        "+*status"   =>{:content=>'active'}
-        "+*password" =>{:content=>'joe_pass'}
-      }.merge hash
+    { "+*account" =>
+      {
+        :cards=>{
+          "+*status"   =>{:content=>'active'},
+          "+*password" =>{:content=>'joe_pass'}
+        }.merge( hash )
+      }
     }
   end
 
@@ -42,7 +44,7 @@ class SharedData
 
     Card.create! :name=>"Ron Request", :type_id=>Card::AccountRequestID, :cards=>account_args(
       '+*email'=>'ron@request.com', '+*password'=>'ron_pass', '+*status'=>'pending'
-    }
+    )
     
     Card.create! :type_code=>'user', :name=>"No Count", :content=>"I got no account"
 

@@ -66,9 +66,9 @@ namespace :test do
       # which dumps with slashes that syck can't understand (also !!null stuff)
 
     sql = "SELECT * FROM %s"
-    skip_tables = ["schema_info","schema_migrations","schema_migrations_cards","sessions"]
+    tables = %w{ cards card_revisions card_references }
     ActiveRecord::Base.establish_connection
-    (ActiveRecord::Base.connection.tables - skip_tables).each do |table_name|
+    tables.each do |table_name|
       i = "000"
       File.open("#{Wagn.gem_root}/test/fixtures/#{table_name}.yml", 'w') do |file|
         data = ActiveRecord::Base.connection.select_all(sql % table_name)

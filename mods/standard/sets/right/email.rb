@@ -1,5 +1,16 @@
 #event :
 
+view :raw do |args|
+  
+  case
+  when !Account.always_ok? ; 'only administrators can view emails'
+  when card.real?          ; card.content
+  when card.left.account   ; card.left.account.email
+  else ''
+  end
+end
+
+view :core, :raw
 
 #validates :email, :presence=>true, :if=>:email_required?,
 #  :uniqueness => { :scope   => :login                                      },

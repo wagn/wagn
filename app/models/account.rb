@@ -6,8 +6,6 @@ class Account
   #after_save :reset_instance_cache
 
   class << self
-    def admin()          self[ Card::WagnBotID    ]   end
-    def as_user()        self[ Account.as_id      ]   end
 
     def create_ok?
       base  = Card.new :name=>'dummy*', :type_id=>Card.default_accounted_type_id
@@ -17,7 +15,7 @@ class Account
 
     # Authenticates a user by their login name and unencrypted password.  
     def authenticate email, password
-      accounted = find_accounted_by_email email
+      accounted = Account[ email ]
       if accounted and account = accounted.account
         if Wagn.config.no_authentication or password_authenticated?( account, password.strip )
           accounted.id
@@ -25,12 +23,12 @@ class Account
       end
     end
 
-    def password_authenticated? card, password
-      card.password == encrypt(password, card.salt)
+    def password_authenticated? account, password
+      account.password == encrypt(password, account.salt) and account.active?
     end
     
     # Encrypts some data with the salt.
-    def encrypt(password, salt)
+    def encrypt password, salt
       Digest::SHA1.hexdigest("#{salt}--#{password}--")
     end
 

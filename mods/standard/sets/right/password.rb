@@ -10,17 +10,25 @@ event :encrypt_password, :on=>:save, :after=>:approve do
   end
 end
 
-  
-#  validates :password, :length => { :within => 5..40 }, :confirmation=>true, :if=>:check_password?    
-#  validates :password_confirmation, :presence=>true, :if=>:check_password?
-#
-## before save
-#def encrypt_password
-#  self.crypted_password = Account.encrypt password, salt
-#end
-#
-#def check_password?
-#  !built_in? &&
-#  !pending?  &&
-#  !password.blank?
-#end
+event :validate_password, :on=>:save, :before=>:approve do
+  unless content.length > 3
+    errors.add :password, 'must be at least 4 characters'
+  end
+end
+
+#  validates :password, :length => { :within => 5..40 }, :confirmation=>true, :if=>:check_password?
+=begin
+def check_password?
+  !built_in? &&
+  !pending?  &&
+  !password.blank?
+end
+=end
+
+def permit action, verb=nil
+  is_own_account? ? true : super(action, verb)
+end
+
+def ok_to_read
+  is_own_account? ? true : super
+end

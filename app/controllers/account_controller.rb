@@ -17,17 +17,17 @@ class AccountController < WagnController
 
   protected
 
-  def reset_password account
+  def reset_password accounted
     error = case
-      when account.nil?      ;  "Unrecognized email."
-      when !account.active?  ;  "That account is not active."
+      when !accounted                  ;  "Unrecognized email."
+      when !accounted.account.active?  ;  "That account is not active."
       end
     
     if error
       @card.errors.add :account, error
       false
     else
-      account.confirmation_email(
+      accounted.account.confirmation_email(
         :subject => "Password Reset",
         :message => "Someone (we hope you) has asked to reset your password.  Click below to do so."
       ).deliver

@@ -77,7 +77,14 @@ describe Card::Set::Type::AccountRequest do
   
   context 'valid request' do
     before do
-      @card = Card.create! :name=>'Big Bad Wolf', :type=>'Account Request', :account_args=>{:email=>'wolf@wagn.org'}
+      @card = Card.create! :name=>'Big Bad Wolf', :type=>'Account Request', :cards=>{
+        '+*account'=>{
+          :blank_ok=>true,
+          :cards=>{
+            '+*email'=>{:content=>'wolf@wagn.org'}
+          }
+        }
+      }
     end
 
     context 'core view' do

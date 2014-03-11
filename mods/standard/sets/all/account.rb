@@ -24,6 +24,10 @@ def among? card_with_acct
   card_with_acct.member? Card::AnyoneID
 end
 
+def is_own_account?
+  cardname.parts[1].to_name.key == Card[:account].key and cardname.parts[0].to_name.key == Account.as_card.cardname.key
+end
+
 def read_rules
   @read_rules ||= begin
     rule_ids = []
@@ -168,6 +172,9 @@ event :set_stamper, :before=>:approve do
   self.creator_id = self.updater_id if new_card?
 end
 
+
+
+=begin
 event :create_account, :after=>:store, :on=>:save do
   if @account_args && !account && Card.toggle( rule :accountable )
     
@@ -178,7 +185,7 @@ event :create_account, :after=>:store, :on=>:save do
       Card.create! :name=>"#{ name }+#{ Card[:account].name }"
     end 
     
-    @account_args[:status] = 'pending' unless accountable?
+#    @account_args[:status] = 'pending' unless accountable?
     @account_args.reverse_merge! :card_id => self.id, :status => 'active', :account_id => account_card.id
 
     user = User.new @account_args
@@ -208,7 +215,6 @@ def handle_user_save user
   end
 end
 
-
 activation_ready = proc do |c|
   Wagn::Env.params[:activate] and c.accountable? and c.account
 end
@@ -219,17 +225,11 @@ event :activate_account, :after=>:store, :on=>:update, :when=>activation_ready d
 end
 
 
-event :notify_accounted, :after=>:extend do
-  if @newly_activated_account && @newly_activated_account.active?
-    email_args = Wagn::Env.params[:email] || {}
-    email_args[:message] ||= Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!"
-    email_args[:subject] ||= Card.setting('*signup+*subject') || "Click below to activate your account on #{Card.setting('*title')}!"
-    Mailer.confirmation_email @newly_activated_account, email_args
-  end
-end
+
 
 event :block_deleted_user, :after=>:store, :on=>:delete do
   if account
     account.update_attributes :status=>'blocked'
   end
 end
+=end

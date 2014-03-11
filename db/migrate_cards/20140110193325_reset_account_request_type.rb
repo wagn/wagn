@@ -11,9 +11,4 @@ class ResetAccountRequestType < ActiveRecord::Migration
     end
   end
 
-  def down
-    contentedly do
-      
-    end
-  end
 end

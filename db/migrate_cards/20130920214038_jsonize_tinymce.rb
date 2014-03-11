@@ -15,10 +15,4 @@ class JsonizeTinymce < ActiveRecord::Migration
       card.save!
     end
   end
-
-  def down
-    contentedly do
-      
-    end
-  end
 end

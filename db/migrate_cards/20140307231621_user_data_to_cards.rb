@@ -4,9 +4,7 @@ class User < ActiveRecord::Base
 end
 
 class UserDataToCards < ActiveRecord::Migration
-  include Wagn::MigrationHelper
-  
-  
+  include Wagn::MigrationHelper  
   
   def up
     contentedly do
@@ -24,11 +22,4 @@ class UserDataToCards < ActiveRecord::Migration
     end
   end
 
-  
-
-  def down
-    contentedly do
-      
-    end
-  end
 end

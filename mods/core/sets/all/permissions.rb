@@ -100,13 +100,13 @@ def permit action, verb=nil
   
   verb ||= action.to_s
   unless permitted? action
-    deny_because you_cant("#{verb} this card")
+    deny_because you_cant("#{verb} this")
   end
 end
 
 def ok_to_create
   permit :create
-  if junction?
+  if @action_ok and junction?
     [:left, :right].each do |side|
       part_card = send side, :new=>{}
       if part_card && part_card.new_card? #if no card, there must be other errors
@@ -122,7 +122,7 @@ def ok_to_read
   if !Account.always_ok?
     @read_rule_id ||= permission_rule_card(:read).first.id.to_i
     if !Account.as_card.read_rules.member? @read_rule_id
-      deny_because you_cant "read this card"
+      deny_because you_cant "read this"
     end
   end
 end
@@ -142,8 +142,8 @@ end
 def ok_to_comment
   permit :comment, 'comment on'
   if @action_ok
-    deny_because "No comments allowed on template cards" if is_template?
-    deny_because "No comments allowed on hard templated cards" if structure
+    deny_because "No comments allowed on templates" if is_template?
+    deny_because "No comments allowed on structured content" if structure
   end
 end
 

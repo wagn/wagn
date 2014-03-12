@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 
+include Card::Set::All::Permissions::Accounts
 
 card_accessor :email
 card_accessor :password
@@ -30,12 +31,21 @@ def confirmation_email args
   Mailer.confirmation_email left, args.merge(:to=>email)
 end
 
-view :raw do |args|
-  %{
-    {{+#{Card[:email   ].name}|titled;title:email}}
-    {{+#{Card[:password].name}|titled;title:password}}
-  }
+format :html do
+
+  view :raw do |args|
+    %{
+      {{+#{Card[:email   ].name}|titled;title:email}}
+      {{+#{Card[:password].name}|titled;title:password}}
+    }
+  end
+
+  view :edit do |args|
+    args[:structure] = true
+    _final_edit args
+  end
 end
+
 
 event :set_default_salt, :on=>:create, :before=>:process_subcards do
   salt = Digest::SHA1.hexdigest "--#{Time.now.to_s}--"
@@ -44,7 +54,7 @@ event :set_default_salt, :on=>:create, :before=>:process_subcards do
 end
 
 event :set_default_status, :on=>:create, :before=>:process_subcards do
-  subcards["+#{Card[:status].name}"] = { :content => ( Account.logged_in? ? 'active' : 'pending' ) }
+  subcards["+#{Card[:status].name}"] = { :content => ( Account.signed_in? ? 'active' : 'pending' ) }
 end
 
 event :generate_token, :on=>:create, :before=>:process_subcards do
@@ -58,10 +68,6 @@ event :notify_accounted, :on=>:create, :after=>:extend do
     email_args[:subject] ||= Card.setting('*signup+*subject') || "Click below to activate your account on #{Card.setting('*title')}!"
     confirmation_email( email_args ).deliver
   end
-end
-
-def permit action, verb=nil
-  is_own_account? ? true : super(action, verb)
 end
 
 def ok_to_read

@@ -1,7 +1,5 @@
 # -*- encoding : utf-8 -*-
 class WagnController < ActionController::Base
-
-  include Wagn::AuthenticatedSystem
   include Wagn::Location
   include Recaptcha::Verify
 
@@ -21,12 +19,12 @@ class WagnController < ActionController::Base
     request.format = :html if !params[:format] #is this used??
     Wagn::Cache.renew
     Wagn::Env.reset :controller=>self
-    Account.set_current_from_session #current_id = self.current_account_id || Card::AnonID
+    Account.set_current_from_session
     Card::Format.ajax_call = ajax?             # move to Wagn::Env?
   end
 
   def ajax?
-    request.xhr? || params[:simulate_xhr]
+    Wagn::Env.ajax?
   end
 
   def html?

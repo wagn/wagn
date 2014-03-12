@@ -24,6 +24,7 @@ def among? card_with_acct
 end
 
 def is_own_account?
+  # card is +*account card of signed_in user.
   cardname.part_names[0].key == Account.as_card.key and
   cardname.part_names[1].key == Card[:account].key
 end
@@ -78,21 +79,6 @@ format :html do
   end
   
   
-  view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
-    frame_and_form :update, args, 'notify-success'=>'account details updated' do
-      %{
-        #{# render_account_detail 
-        }
-        #{ _optional_render :button_fieldset, args }
-      }
-    end
-  end
-  
-  def default_account_args args
-    default_new_account_args args
-    args[:buttons] = submit_tag 'Save Changes'
-  end
-
 
   view :account_detail, :perms=>lambda { |r| r.card.update_account_ok? } do |args|
     account = args[:account] || card.account
@@ -122,23 +108,6 @@ format :html do
   end
   
 
-  view :new_account, :perms=> lambda { |r| r.card.accountable? && !r.card.account } do |args|
-    frame_and_form :update, args do
-      %{
-        #{ _render_email_fieldset    }
-        #{ _render_invitation_field  }
-      }
-    end
-  end
-  
-  def default_new_account_args args
-    args[:hidden] = { :success => { :id=>'_self', :view=>'account' } }
-  end
-  
-  
-  view :email_fieldset do |args|
-    fieldset :email, text_field( 'card[account_args]', :email ), :editor=>'content'
-  end
   
   
   view :signin_and_forgot_password, :perms=>:none do |args|
@@ -174,64 +143,3 @@ event :set_stamper, :before=>:approve do
   self.creator_id = self.updater_id if new_card?
 end
 
-
-
-=begin
-event :create_account, :after=>:store, :on=>:save do
-  if @account_args && !account && Card.toggle( rule :accountable )
-    
-    # note - following must be done here because subcard handling happens later (after mods loaded)
-    # and account card must be created before user entry
-    # when all are cards, neither the as_bot nor the special treatment should be necessary.
-    account_card = Account.as_bot do
-      Card.create! :name=>"#{ name }+#{ Card[:account].name }"
-    end 
-    
-#    @account_args[:status] = 'pending' unless accountable?
-    @account_args.reverse_merge! :card_id => self.id, :status => 'active', :account_id => account_card.id
-
-    user = User.new @account_args
-    handle_user_save user
-    @newly_activated_account = user if user.active?
-  end
-end
-
-event :update_account, :after=>:store, :on=>:update do
-  if @account_args && account && update_account_ok?
-    @account_args[:blocked] = account_args[:blocked] == '1'
-    if Account.as_id == id and account_args[:blocked]
-      raise Card::Oops, "can't block own account"
-    end
-    user = account
-    user.attributes = @account_args
-    handle_user_save user
-  end
-end
-
-def handle_user_save user
-  unless user.save
-    user.errors.each do |key,err|
-      errors.add key,err
-    end
-    raise ActiveRecord::Rollback
-  end
-end
-
-activation_ready = proc do |c|
-  Wagn::Env.params[:activate] and c.accountable? and c.account
-end
-
-event :activate_account, :after=>:store, :on=>:update, :when=>activation_ready do
-  account.update_attributes :status=>'active'
-  @newly_activated_account = account
-end
-
-
-
-
-event :block_deleted_user, :after=>:store, :on=>:delete do
-  if account
-    account.update_attributes :status=>'blocked'
-  end
-end
-=end

@@ -1,7 +1,14 @@
 # -*- encoding : utf-8 -*-
 
+include Card::Set::All::Permissions::Accounts
+
+view :editor do |args|
+  card.content = ''
+  _final_phrase_type_editor args
+end
+
 view :raw do |args|
-  'Passwords are encrypted and unavailable for viewing'
+  '<em>encrypted</em>'
 end
 
 event :encrypt_password, :on=>:save, :after=>:process_subcards, :when=>proc{ |c| !c.importing_passwords? } do
@@ -20,6 +27,9 @@ event :validate_password, :on=>:save, :before=>:approve, :when=>proc{ |c| !c.imp
   end
 end
 
+event :validate_password_present, :on=>:update, :before=>:approve do
+  abort :success if content.blank?
+end
 
 =begin
 def check_password?
@@ -30,12 +40,8 @@ end
 =end
 
 def importing_passwords?
-  #FIXME - this is not the correct mechanism for this
+  #FIXME - this is not the correct mechanism for this.  needs to be a way to turn off events from the call (where authorized)
   defined? UserDataToCards
-end
-
-def permit action, verb=nil
-  is_own_account? ? true : super(action, verb)
 end
 
 def ok_to_read

@@ -5,7 +5,7 @@ format :html do
     #ENGLISH
     prefix = "#{ Wagn.config.relative_url_root }/account"
     %{<span id="logging">#{
-      if Account.logged_in?
+      if Account.signed_in?
         ucard = Account.current
         %{
           #{ link_to ucard.name, "#{ Wagn.config.relative_url_root }/#{ucard.cardname.url_key}", :id=>'my-card-link' }

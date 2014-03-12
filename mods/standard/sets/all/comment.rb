@@ -4,7 +4,7 @@ event :add_comment, :after=>:approve, :on=>:save, :when=> proc {|c| c.comment } 
     #{ '<hr>' unless content.blank? }
     #{ comment.to_html }
     <div class="w-comment-author">--#{
-      if Account.logged_in?
+      if Account.signed_in?
         "[[#{Account.current.name}]]"
       else
         Wagn::Env[:controller].session[:comment_author] = comment_author if Wagn::Env[:controller]
@@ -26,7 +26,7 @@ view( :comment_box, :denial=>:blank, :tags=>:unknown_ok, :perms=>lambda { |r| r.
         #{ f.text_area :comment, :rows=>3 }
         <div class="comment-buttons">
           #{
-            unless Account.logged_in?
+            unless Account.signed_in?
               card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH
               %{<label>My Name is:</label> #{ f.text_field :comment_author }}
             end

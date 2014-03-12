@@ -140,7 +140,7 @@ class Account
       end
     end
 
-    def logged_in?
+    def signed_in?
       current_id != Card::AnonID
     end
 

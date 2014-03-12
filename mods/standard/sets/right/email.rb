@@ -1,4 +1,5 @@
 #event :
+include Card::Set::All::Permissions::Accounts
 
 view :raw do |args|
   
@@ -30,10 +31,6 @@ end
 
 def email_required?
   !built_in?
-end
-
-def permit action, verb=nil
-  is_own_account? ? true : super(action, verb)
 end
 
 def ok_to_read

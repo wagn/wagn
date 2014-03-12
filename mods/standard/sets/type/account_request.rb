@@ -38,7 +38,7 @@ format :html do
     } 
   
     frame_and_form :update, args do
-      _render_invitation_field
+      #_render_invitation_field
     end
   end
 
@@ -48,7 +48,7 @@ format :html do
     if Card.new(:type_id=>Card.default_accounted_type_id).ok? :create
       links << link_to( "Invite #{card.name}", path(:view=>:edit), :class=>'invitation-link')
     end
-    if Account.logged_in? && card.ok?(:delete)
+    if Account.signed_in? && card.ok?(:delete)
       links << link_to( "Deny #{card.name}", path(:action=>:delete), :class=>'slotter standard-delete', :remote=>true )
     end
 

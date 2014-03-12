@@ -29,10 +29,6 @@ def ok! action, opts={}
   raise Card::PermissionDenied.new self unless ok? action, opts
 end
 
-def update_account_ok? #FIXME - temporary API, I think this is fixed, can we cache any of this for speed, this is accessed for each header
-  id == Account.current_id or ok?( :update, :trait=>:account )
-end
-
 def who_can action
   #warn "who_can[#{name}] #{(prc=permission_rule_card(action)).inspect}, #{prc.first.item_cards.map(&:id)}" if action == :update
   permission_rule_card(action).first.item_cards.map &:id
@@ -222,4 +218,14 @@ event :recaptcha, :before=>:approve do
   end
 end
 
+module Accounts
+  def permit action, verb=nil
+    case
+    when action==:comment  ; @action_ok = false
+    when is_own_account?   ; true 
+    else                   ; super action, verb
+    end
+  end
+end
+  
 

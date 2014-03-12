@@ -2,6 +2,7 @@
 def save
   super
 rescue Card::Abort => e
+  # need mechanism for subcards to abort entire process
   e.status == :success
 end
 

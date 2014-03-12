@@ -9,7 +9,7 @@ class CardController < WagnController
   #  CORE METHODS
   
   def create
-    handle { card.save! }
+    handle { card.save }
   end
 
   def read

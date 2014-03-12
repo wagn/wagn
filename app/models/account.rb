@@ -56,16 +56,9 @@ class Account
       end
     end
     
-    def signin *args
-      signin_id = case args.size
-        when 2; Account.authenticate args.first, args.last
-        when 1; Account.authenticate_by_token args.first
-        end
-      
-      if signin_id
-        self.current_id = signin_id
-        session[:user] = signin_id if session
-      end
+    def signin signin_id
+      self.current_id = signin_id
+      session[:user] = signin_id if session
     end
 
     def session

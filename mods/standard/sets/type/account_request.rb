@@ -1,6 +1,8 @@
 # -*- encoding : utf-8 -*-
 
 format :html do
+  
+
   view :new do |args|
     #FIXME - make more use of standard new view
     args = args.merge :title=>'Sign Up', :optional_help => :show #, :optional_menu=>:never
@@ -19,7 +21,8 @@ format :html do
       %{
         #{ form.hidden_field :type_id }
         #{ _render_name_fieldset :help=>'usually first and last name' }
-        #{ _render_account_detail }
+        #{# _render_account_detail 
+        }
         #{ edit_slot if card.structure }
         #{ _optional_render :button_fieldset, args }
       }
@@ -72,4 +75,29 @@ end
 event :signup_notifications, :after=>:extend, :on=>:create, :when=>send_signup_notifications do
   Mailer.signup_alert(self).deliver
 end
+
+
+def setup
+  raise Card::Oops, "Already setup" unless Account.no_logins?
+  if request.post?
+    Wagn::Env[:recaptcha_on] = false
+    handle do
+      Account.as_bot do
+        @card = Card.create params[:card].merge( :subcards=>{
+            '+*roles'      => { :content=>"[[#{Card[:administrator].name}]]"    },
+            '*request+*to' => { :content=>params[:card][:account_args][:email]  }
+          })
+      
+        @card.errors.empty?                 and
+        self.current_account_id = @card.id  and
+        Card.cache.delete 'no_logins'       and
+        flash[:notice] = "You're good to go!"
+      end
+    end
+  else
+    @card = Card.new #should prolly skip default
+    show :setup
+  end
+end
+
 

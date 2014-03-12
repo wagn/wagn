@@ -30,6 +30,12 @@ def confirmation_email args
   Mailer.confirmation_email left, args.merge(:to=>email)
 end
 
+view :raw do |args|
+  %{
+    {{+#{Card[:email   ].name}|titled;title:email}}
+    {{+#{Card[:password].name}|titled;title:password}}
+  }
+end
 
 event :set_default_salt, :on=>:create, :before=>:process_subcards do
   salt = Digest::SHA1.hexdigest "--#{Time.now.to_s}--"

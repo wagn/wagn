@@ -142,7 +142,7 @@ format :html do
   ###---( TOP_LEVEL (used by menu) NEW / EDIT VIEWS )
 
   view :new, :perms=>:create, :tags=>:unknown_ok do |args|
-    frame_and_form :create, args, 'main-success'=>'REDIRECT' do |form|
+    frame_and_form :create, args, 'main-success'=>'REDIRECT' do
       [
         _optional_render( :name_fieldset,     args ),
         _optional_render( :type_fieldset,     args ),
@@ -363,8 +363,10 @@ format :html do
     current_set = Card.fetch( params[:current_set] || card.related_sets[0][0] )
 
     frame args do
-      %{
-        #{ subformat( current_set ).render_content }
+      subformat( current_set ).render_content
+    end
+        
+=begin        
         #{
           if card.accountable? && !card.account
             %{
@@ -375,8 +377,7 @@ format :html do
             }
           end
         }
-      }
-    end
+=end
   end
 
 

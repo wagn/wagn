@@ -6,7 +6,7 @@ class Card
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
-      :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
+      :layout=>:layout, :new=>:edit, :setup=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     
     cattr_accessor :ajax_call, :registered, :max_depth
     [ :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases ].each do |acc|

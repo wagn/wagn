@@ -56,6 +56,7 @@ end
 
 
 format :html do
+=begin  
   view :invitation_fields do |args|
     email_params = params[:email] || {}
     subject = email_params[:subject] || Card.setting('*invite+*subject') || ''
@@ -80,7 +81,8 @@ format :html do
   view :account, :perms=> lambda { |r| r.card.update_account_ok? } do |args|
     frame_and_form :update, args, 'notify-success'=>'account details updated' do
       %{
-        #{ render_account_detail }
+        #{# render_account_detail 
+        }
         #{ _optional_render :button_fieldset, args }
       }
     end
@@ -146,7 +148,7 @@ format :html do
     }
   end
 
-
+=end
   view :forgot_password, :perms=>:none do |args|
     args.merge!( {
       :title=>'Forgot Password',

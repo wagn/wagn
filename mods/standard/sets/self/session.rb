@@ -32,7 +32,8 @@ end
 event :signin, :before=>:approve, :on=>:save do
   login, password = Wagn::Env.params[:login], Wagn::Env.params[:password]
 
-  if Account.signin login, password
+  if signin_id = Account.authenticate( login, password )
+    Account.signin signin_id
     abort :success
   else
     accted = Account[ login.strip.downcase ]

@@ -10,7 +10,7 @@ class Account
     # Authenticates a user by their login name and unencrypted password.  
     def authenticate email, password
       accounted = Account[ email ]
-      if accounted and account = accounted.account
+      if accounted and account = accounted.account and account.active?
         if Wagn.config.no_authentication or password_authenticated?( account, password.strip )
           accounted.id
         end
@@ -18,16 +18,16 @@ class Account
     end
 
     def password_authenticated? account, password
-      account.password == encrypt(password, account.salt) and account.active?
+      account.password == encrypt( password, account.salt )
     end
 
     def authenticate_by_token token
       token_card = Account.as_bot{ Card.search( :right=>Card[:token].name, :content=>token ).first } and
-      token_card.updated_at > 1.day.ago and #make configurable (note, ">" means "after")
-      account = token_card.left and
-      account.right_id == Card::AccountID   #legitimacy of account cards
-      accounted = account.left and
-      accounted.accountable? and            #legitimacy of accounted_card  
+      token_card.updated_at > 1.day.ago   and  #make configurable (note, ">" means "after")
+      account = token_card.left           and
+      account.right_id == Card::AccountID and  #legitimacy of account cards
+      accounted = account.left            and
+      accounted.accountable?              and  #legitimacy of accounted_card  
       accounted.id
     end
 

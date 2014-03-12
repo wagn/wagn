@@ -11,18 +11,7 @@ require_dependency 'card'
 class SharedData
 
   def self.account_args hash
-    converted_hash = hash.keys.inject({}) do |h, key|
-       h[key] = { :content => hash[key] }; h 
-       h
-    end 
-    { "+*account" =>
-      {
-        :subcards=>{
-          "+*status"   =>{:content=>'active'},
-          "+*password" =>{:content=>'joe_pass'}
-        }.merge( converted_hash )
-      }
-    }
+    { "+*account" => { "+*password" =>'joe_pass' }.merge( hash ) }
   end
 
   def self.add_test_data
@@ -166,21 +155,21 @@ class SharedData
 
     ## --------- Fruit: creatable by anon but not readable ---
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-    Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anyone]]'
-    Card.create :name=>'Fruit+*type+*read', :type=>'Pointer', :content=>'[[Administrator]]'
+    Card.create! :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anyone]]'
+    Card.create! :name=>'Fruit+*type+*read', :type=>'Pointer', :content=>'[[Administrator]]'
 
     # codenames for card_accessor tests
     Card.create! :name=>'*write', :codename=>:write
 
     # -------- For toc testing: ------------
 
-    Card.create :name=>"OnneHeading", :content => "<h1>This is one heading</h1>\r\n<p>and some text</p>"
-    Card.create :name=>'TwwoHeading', :content => "<h1>One Heading</h1>\r\n<p>and some text</p>\r\n<h2>And a Subheading</h2>\r\n<p>and more text</p>"
-    Card.create :name=>'ThreeHeading', :content =>"<h1>A Heading</h1>\r\n<p>and text</p>\r\n<h2>And Subhead</h2>\r\n<p>text</p>\r\n<h1>And another top Heading</h1>"
+    Card.create! :name=>"OnneHeading", :content => "<h1>This is one heading</h1>\r\n<p>and some text</p>"
+    Card.create! :name=>'TwwoHeading', :content => "<h1>One Heading</h1>\r\n<p>and some text</p>\r\n<h2>And a Subheading</h2>\r\n<p>and more text</p>"
+    Card.create! :name=>'ThreeHeading', :content =>"<h1>A Heading</h1>\r\n<p>and text</p>\r\n<h2>And Subhead</h2>\r\n<p>text</p>\r\n<h1>And another top Heading</h1>"
 
     c=Card.fetch 'Basic+*type+*table_of_contents', :new=>{}
     c.content='2'
-    c.save
+    c.save!
 
   end
 end

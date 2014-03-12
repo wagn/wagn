@@ -32,11 +32,13 @@ end
 
 
 event :set_default_salt, :on=>:create, :before=>:process_subcards do
-  subcards["+#{Card[:salt].name}"] ||= {:content => Digest::SHA1.hexdigest( "--#{Time.now.to_s}--" ) }
+  salt = Digest::SHA1.hexdigest "--#{Time.now.to_s}--"
+  Wagn::Env[:salt] = salt # HACK!!! need viable mechanism to get this to password
+  subcards["+#{Card[:salt].name}"] ||= {:content => salt }
 end
 
 event :set_default_status, :on=>:create, :before=>:process_subcards do
-  subcards["+#{Card[:status].name}"] = { :content => 'pending' }
+  subcards["+#{Card[:status].name}"] = { :content => ( Account.logged_in? ? 'active' : 'pending' ) }
 end
 
 event :generate_token, :on=>:create, :before=>:process_subcards do

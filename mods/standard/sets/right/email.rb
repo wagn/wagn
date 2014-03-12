@@ -19,7 +19,7 @@ view :core, :raw
 
 
 event :downcase_email, :before=>:approve, :on=>:save do
-  if content != content.downcase
+  if content and content != content.downcase
     self.content = content.downcase
   end
 end

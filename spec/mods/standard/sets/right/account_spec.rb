@@ -3,11 +3,27 @@ require 'wagn/spec_helper'
 
 describe Card::Set::Right::Account do
   
-  before :each do
-    @user_card = Account[ 'joe@user.com' ]
+
+
+
+  describe '#create' do
+    before do
+      Account.as_bot do
+        @user_card = Card.create! :name=>'TmpUser', :type_id=>Card::UserID, '+*account'=>{ 
+          '+*email'=>'tmpuser@wagn.org', '+*password'=>'tmp_pass'
+        }
+      end
+      
+    end
+    it 'should create an authenticable password' do
+      Account.password_authenticated?( @user_card.account, 'tmp_pass').should be_true
+    end
   end
   
   describe '#update_attributes' do
+    before :each do
+      @user_card = Account[ 'joe@user.com' ]
+    end
 
     it 'should reset password' do
       @user_card.account.password_card.update_attributes!(:content => 'new password')

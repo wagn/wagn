@@ -8,7 +8,7 @@ class AdminController < CardController
       Wagn::Env[:recaptcha_on] = false
       handle do
         Account.as_bot do
-          @card = Card.create params[:card].merge( :cards=>{
+          @card = Card.create params[:card].merge( :subcards=>{
               '+*roles'      => { :content=>"[[#{Card[:administrator].name}]]"    },
               '*request+*to' => { :content=>params[:card][:account_args][:email]  }
             })

@@ -501,7 +501,7 @@ class Card
       content = params[cardname.to_s.gsub(/\+/,'_')]
 
       # CLEANME This is a hack to get it so plus cards re-populate on failed signups
-      if p = params['cards'] and card_params = p[cardname.to_s]
+      if p = params['subcards'] and card_params = p[cardname.to_s]
         content = card_params['content']
       end
       content if content.present?  # why is this necessary? - efm  

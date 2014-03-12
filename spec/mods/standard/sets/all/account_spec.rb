@@ -74,14 +74,7 @@ describe Card::Set::All::Account do
       ja_email = jadmin.account.email
 
       Wagn::Env[:params] = { :email => {:subject=>'Hey Joe!', :message=>'Come on in.'} }
-      Card.create :name=>'Joe New', :type_id=>Card::UserID, :cards=>{
-        '+*account'=>{
-          :blank_ok=>true,
-          :cards=>{
-            '+*email'=>{:content=>'joe@new.com'}
-          }
-        }
-      }
+      Card.create :name=>'Joe New', :type_id=>Card::UserID, '+*account'=>{ '+*email'=> 'joe@new.com' }
 
       c = Card['Joe New']
       u = Account[ 'joe@new.com' ]
@@ -101,14 +94,7 @@ describe Card::Set::All::Account do
       @card = Card['Joe User']
     end
     it "should handle email updates" do
-      @card.update_attributes! :cards => {
-        '+*account'=>{
-          :blank_ok=>true,
-          :cards=>{
-            '+*email'=>{:content=>'joe@user.co.uk'}
-          }
-        }
-      }
+      @card.update_attributes! '+*account'=>{ '+*email'=>'joe@user.co.uk' }
       @card.account.email.should == 'joe@user.co.uk'
     end
   

@@ -7,12 +7,6 @@ class Account
 
   class << self
 
-    def create_ok?
-      base  = Card.new :name=>'dummy*', :type_id=>Card.default_accounted_type_id
-      trait = Card.new :name=>"dummy*+#{Card[:account].name}"
-      base.ok?(:create) && trait.ok?(:create)
-    end
-
     # Authenticates a user by their login name and unencrypted password.  
     def authenticate email, password
       accounted = Account[ email ]
@@ -26,6 +20,17 @@ class Account
     def password_authenticated? account, password
       account.password == encrypt(password, account.salt) and account.active?
     end
+
+    def authenticate_by_token token
+      token_card = Account.as_bot{ Card.search( :right=>Card[:token].name, :content=>token ).first } and
+      token_card.updated_at > 1.day.ago and #make configurable (note, ">" means "after")
+      account = token_card.left and
+      account.right_id == Card::AccountID   #legitimacy of account cards
+      accounted = account.left and
+      accounted.accountable? and            #legitimacy of accounted_card  
+      accounted.id
+    end
+
     
     # Encrypts some data with the salt.
     def encrypt password, salt
@@ -51,7 +56,34 @@ class Account
       end
     end
     
-#----------
+    def signin *args
+      signin_id = case args.size
+        when 2; Account.authenticate args.first, args.last
+        when 1; Account.authenticate_by_token args.first
+        end
+      
+      if signin_id
+        self.current_id = signin_id
+        session[:user] = signin_id if session
+      end
+    end
+
+    def session
+      Wagn::Env[:session]
+    end
+
+    def set_current_from_session
+      self.current_id = 
+        if session
+          if card_id=session[:user] and Card.exists? card_id
+            card_id
+          else
+            session[:user] = nil
+          end
+        end
+      current_id
+    end
+
     def current_id
       @@current_id ||= Card::AnonID
     end

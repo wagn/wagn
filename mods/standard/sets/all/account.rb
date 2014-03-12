@@ -9,8 +9,7 @@ def account
 end
 
 def accountable?
-  Card.toggle( rule(:accountable) ) and
-  fetch( :trait=>:account, :new=>{} ).permitted? :create #don't use #ok? here because we don't want to check part permissions
+  Card.toggle( rule :accountable )
 end
 
 def parties
@@ -25,7 +24,8 @@ def among? card_with_acct
 end
 
 def is_own_account?
-  cardname.parts[1].to_name.key == Card[:account].key and cardname.parts[0].to_name.key == Account.as_card.cardname.key
+  cardname.part_names[0].key == Account.as_card.key and
+  cardname.part_names[1].key == Card[:account].key
 end
 
 def read_rules

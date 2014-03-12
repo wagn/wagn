@@ -1,11 +1,6 @@
 # -*- encoding : utf-8 -*-
 class AccountController < WagnController
 
-#  def signout
-#    self.current_account_id = nil
-#    redirect_to Card.path_setting('/')  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
-#  end
-
   def forgot_password
     @card = Card.new
     if email = params[:email]

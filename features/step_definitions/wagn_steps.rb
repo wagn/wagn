@@ -63,7 +63,7 @@ When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
   logged_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
     plusses.hashes.first.each do |name, content|
-      fill_in "card[cards][#{cardname}+#{name}][content]", :with=>content
+      fill_in "card[subcards][#{cardname}+#{name}][content]", :with=>content
     end
     click_button("Submit")
   end
@@ -88,7 +88,7 @@ end
 When /^(.*) creates?\s*([^\s]*) card "([^"]*)" with plusses:$/ do |username,cardtype,cardname,plusses|
   create_card(username,cardtype,cardname) do
     plusses.hashes.first.each do |name, content|
-      fill_in "card[cards][+#{name}][content]", :with=>content
+      fill_in "card[subcards][+#{name}][content]", :with=>content
     end
   end
 end

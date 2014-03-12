@@ -56,6 +56,9 @@ namespace :test do
     # go ahead and load the fixtures into the test database
     puts ">> preparing test database"
     puts `env RELOAD_TEST_DATA=true rake db:test:prepare --trace`
+    
+    Rake::Task['wagn:assume_card_migrations'].invoke
+    
   end
 
 

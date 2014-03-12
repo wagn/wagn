@@ -20,11 +20,10 @@ class Card < ActiveRecord::Base
   cattr_accessor :set_patterns, :error_codes
   @@set_patterns, @@error_codes = [], {}
 
-  attr_writer :selected_revision_id #writer because read method is in mod (and does not override upon load)
-  attr_accessor :action,
-    :cards, :supercard,                          # rename to subcards?
-    :comment, :comment_author, :account_args,    # obviated soon
-    :update_referencers                          # wrong mechanism for this
+  attr_writer :selected_revision_id #writer because read method is in mod (and does not override upon loads
+  attr_accessor :action, :supercard,         
+    :comment, :comment_author,    # obviated soon
+    :update_referencers           # wrong mechanism for this
 
 
   define_callbacks :approve, :store, :extend

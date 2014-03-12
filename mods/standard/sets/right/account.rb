@@ -1,12 +1,13 @@
 # -*- encoding : utf-8 -*-
 
-card_accessor :session
-card_accessor :token
 
 card_accessor :email
 card_accessor :password
 card_accessor :salt
 card_accessor :status
+card_accessor :token
+
+#card_accessor :session
 
 
 def active?   ; status=='active'  end
@@ -30,11 +31,16 @@ def confirmation_email args
 end
 
 
+event :set_default_salt, :on=>:create, :before=>:process_subcards do
+  subcards["+#{Card[:salt].name}"] ||= {:content => Digest::SHA1.hexdigest( "--#{Time.now.to_s}--" ) }
+end
 
-event :set_account_status, :on=>:create, :before=>:approve_subcards do
-  status = status_card
-  status.content = left.accountable? ? 'active' : 'pending'
-  @subcards['+status'] = status
+event :set_default_status, :on=>:create, :before=>:process_subcards do
+  subcards["+#{Card[:status].name}"] = { :content => 'pending' }
+end
+
+event :generate_token, :on=>:create, :before=>:process_subcards do
+  subcards["+#{Card[:token].name}"] = {:content => Digest::SHA1.hexdigest( "--#{Time.now.to_s}--#{rand 10}--" ) }
 end
 
 event :notify_accounted, :on=>:create, :after=>:extend do

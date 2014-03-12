@@ -6,7 +6,7 @@ format :html do
     args = args.merge :title=>'Sign Up', :optional_help => :show #, :optional_menu=>:never
     args[:help_text] = case
       when card.rule_card( :add_help, :fallback=>:help ) ; nil
-      when Account.create_ok?                            ; 'Send us the following, and we\'ll send you a password.' 
+#      when Account.create_ok?                            ; 'Send us the following, and we\'ll send you a password.' 
       else                                               ; 'All Account Requests are subject to review.'
       end
 
@@ -42,7 +42,7 @@ format :html do
   view :core do |args|
     links = []
     #ENGLISH
-    if Account.create_ok?
+    if Card.new(:type_id=>Card.default_accounted_type_id).ok? :create
       links << link_to( "Invite #{card.name}", path(:view=>:edit), :class=>'invitation-link')
     end
     if Account.logged_in? && card.ok?(:delete)
@@ -60,9 +60,10 @@ format :html do
 end
 
 
-event :auto_approve, :after=>:approve, :on=>:create, :when=>proc { |c| c.accountable? } do
-  self.type_id = Card.default_accounted_type_id unless Wagn::Env[:no_auto_approval]
-end
+
+#event :auto_approve, :after=>:approve, :on=>:create, :when=>proc { |c| c.accountable? } do
+#  self.type_id = Card.default_accounted_type_id unless Wagn::Env[:no_auto_approval]
+#end
 
 send_signup_notifications = proc do |c|
   c.account and c.account.pending? and Card.setting '*request+*to'

@@ -112,7 +112,7 @@ describe CardController do
         post :create, "card"=>{
             "name"=>"",
             "type"=>"Fruit",
-            "cards"=>{"+text"=>{"content"=>"<p>abraid</p>"}}
+            "subcards"=>{"+text"=>{"content"=>"<p>abraid</p>"}}
           }, "view"=>"open"
         assert_response 422
         assigns['card'].errors[:key].first.should == "cannot be blank"
@@ -124,7 +124,7 @@ describe CardController do
         xhr :post, :create, :success=>'REDIRECT: /', :card=>{
           :name  => "Gala",
           :type  => "Fruit",
-          :cards => {
+          :subcards => {
             "+kind"  => { :content => "apple"} ,
             "+color" => { :type=>'Phrase', :content => "red"  }
           }

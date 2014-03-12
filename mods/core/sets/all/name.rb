@@ -15,12 +15,12 @@ def name= newname
     reset_patterns_if_rule # reset the old name - should be handled in tracked_attributes!!
     reset_patterns
   end
-  if @subcards
-    @subcards.each do |subkey, subcard|
-      next if Symbol===subkey
-      subcard.name = subkey.to_name.to_absolute cardname
-    end
+  
+  subcards.each do |subkey, subcard|
+    next unless Card===subcard
+    subcard.name = subkey.to_name.to_absolute cardname
   end
+  
   super cardname.s
 end
 

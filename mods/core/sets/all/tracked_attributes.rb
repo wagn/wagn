@@ -11,14 +11,31 @@ event :set_tracked_attributes, :before=>:store, :on=>:save do
 end
 
 
+#fixme -this is called by both initialize and update_attributes.  really should be optimized for new!
 def assign_attributes args={}, options={}
-  if args and newtype = args.delete(:type) || args.delete('type')
+  args = args.stringify_keys
+  if args and newtype = args.delete('type')
     args['type_id'] = Card.fetch_id( newtype )
   end
+  @subcards = extract_subcard_args! args
   reset_patterns
 
   super args, options
 end
+
+
+def extract_subcard_args! args={}
+  extracted_subcards = args.delete('subcards') || {}
+  args.keys.each do |key|
+    if key =~ /^\+/
+      val = args.delete key
+      val = { 'content' => val } if String === val
+      extracted_subcards[key] = val
+    end
+  end
+  extracted_subcards
+end
+
 
 
 protected

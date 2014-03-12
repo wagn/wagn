@@ -10,7 +10,7 @@ format :html do
         %{
           #{ link_to ucard.name, "#{ Wagn.config.relative_url_root }/#{ucard.cardname.url_key}", :id=>'my-card-link' }
           #{
-            if Account.create_ok?
+            if Card.new(:type_id=>Card.default_accounted_type_id).ok? :create
               link_to 'Invite a Friend', "#{prefix}/invite", :id=>'invite-a-friend-link'
             end
           }
@@ -18,7 +18,7 @@ format :html do
         }
       else
         %{
-          #{ if Card.new(:type_code=>'account_request').ok? :create
+          #{ if Card.new(:type_id=>Card::AccountRequestID).ok? :create
                link_to 'Sign up', "#{prefix}/signup", :id=>'signup-link'
              end }
           #{ link_to 'Sign in', "#{prefix}/signin", :id=>'signin-link' }

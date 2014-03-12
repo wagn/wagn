@@ -231,8 +231,8 @@ module Card::Set
   def define_trait_writer trait
     define_method "#{trait}=" do |value|
       card = send "#{trait}_card"
-      self.cards ||= {}
-      self.cards[card.name] = {:type_id => card.type_id, :content=>value }
+      self.subcards ||= {}
+      self.subcards[card.name] = {:type_id => card.type_id, :content=>value }
       instance_variable_set "@#{trait}", value
     end
   end

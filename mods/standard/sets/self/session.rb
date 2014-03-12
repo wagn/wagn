@@ -32,14 +32,14 @@ end
 event :signin, :before=>:approve, :on=>:save do
   login, password = Wagn::Env.params[:login], Wagn::Env.params[:password]
 
-  if Wagn::Env[:controller].send 'current_account_id=', Account.authenticate( login, password )
+  if Account.signin login, password
     abort :success
   else
-    usr=Account[ login.strip.downcase ]
+    accted = Account[ login.strip.downcase ]
     errors.add :signin, case
-      when usr.nil?     ; "Unrecognized email."
-      when usr.blocked? ; "Sorry, that account is blocked."
-      else              ; "Wrong password"
+      when accted.nil?             ; "Unrecognized email."
+      when accted.account.blocked? ; "Sorry, that account is blocked."
+      else                         ; "Wrong password"
       end
     abort :failure
   end

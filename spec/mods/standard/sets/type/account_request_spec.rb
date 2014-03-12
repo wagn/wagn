@@ -24,34 +24,41 @@ describe Card::Set::Type::AccountRequest do
   end
   
 
-   #FIXME: tests needed : signup without approval
-  
-  context 'creation' do
+   
+  context 'signup (without approval)' do
     before do
-      @card = Card.create :name=>'Joe New', :type_id=>Card::AccountRequestID, :account_args=>{:email=>'joe@new.com'}
+      Account.as_bot do
+        Card.create! :name=>'User+*type+*create', :content=>'[[Anyone]]'
+      end
+      @request = Card.create! :name=>'Big Bad Wolf', :type=>'Account Request', '+*account'=>{ 
+        '+*email'=>'wolf@wagn.org', '+*password'=>'wolf'
+      }
+      @account = @request.account
+      @token = @account.token
     end
     
-    
-    it 'should create user entry and +*account cards' do
-      @card.real?.should be_true
-      @card.errors.empty?.should be_true
-      @card.type_id.should == Card::AccountRequestID
-      
-      new_user = Account[ 'joe@new.com' ]
-      new_user.should be
-      new_user.card_id.should == @card.id
-      new_user.pending?.should be_true
-      Card['Joe New+*account'].should be
+    it 'should create all the necessary cards' do
+      @request.type_id.should == Card::AccountRequestID
+      @account.email.should == 'wolf@wagn.org'
+      @account.status.should == 'pending'
+      @account.salt.should_not == ''
+      @account.password.length.should > 10 #encrypted
+      @account.token.should_not be_blank
+    end
+  
+    it 'should send email with an appropriate link' do
     end
     
-    it 'should detect/reject duplicates' do
-      dup = Card.create :name=>'Joe Duplicate', :type_id=>Card::AccountRequestID, :account_args=>{ :email=>'joe@new.com' }
-      
-      dup.real?.should be_false
-      dup.errors.empty?.should be_false
-      
-      Card['Joe Duplicate'].should be_nil
+    it 'should create an authenticable token' do
+      Account.authenticate_by_token(@token).should == @request.id
     end
+  
+  
+  end
+
+
+  context 'signup (with approval)' do
+
   end
   
   
@@ -77,19 +84,14 @@ describe Card::Set::Type::AccountRequest do
   
   context 'valid request' do
     before do
-      @card = Card.create! :name=>'Big Bad Wolf', :type=>'Account Request', :cards=>{
-        '+*account'=>{
-          :blank_ok=>true,
-          :cards=>{
-            '+*email'=>{:content=>'wolf@wagn.org'}
-          }
-        }
+      @request = Card.create! :name=>'Big Bad Wolf', :type=>'Account Request', '+*account'=>{ 
+        '+*email'=>'wolf@wagn.org', '+*password'=>'wolf'
       }
     end
 
     context 'core view' do
       before do
-        @format = Card::Format.new @card
+        @format = Card::Format.new @request
       end
         
       it "should not show invite links to anonymous users" do
@@ -103,40 +105,7 @@ describe Card::Set::Type::AccountRequest do
       end
     end
     
-    context 'approval' do
 
-      
-      it 'should convert card to user' do
-        Wagn::Env[:params] = { :activate=>true, :email => { :subject=>'subj', :message=>'msg' } }
-        Account.as_bot do
-          @card.update_attributes :type_id=>Card::UserID
-        
-          c = @card.refresh
-          c.type_id.should == Card::UserID
-          c.account.email.should == 'wolf@wagn.org'
-          c.account.active?.should be_true
-          email = ActionMailer::Base.deliveries.last
-          email.to.should == ['wolf@wagn.org']
-          email.subject.should == 'subj'
-        end
-      end
-      
-    end
-  end
-  
-  context 'auto approve' do
-    it 'should happen when configured' do
-      Account.as_bot do
-        Card['*account+*right+*create'].update_attributes! :content=>'[[Anyone]]'
-      end
-      
-      c = Card.create :name=>'Joe New', :type_id=>Card::AccountRequestID, :account_args=>{:email=>'joe@new.com'}
-      c.type_id.should == Card::UserID
-      c.account.active?.should be_true
-      email = ActionMailer::Base.deliveries.last
-      email.to.should == ['joe@new.com']
-      email.subject.should =~ /activate your account/
-    end
   end
   
   
@@ -154,14 +123,5 @@ describe Card::Set::Type::AccountRequest do
       assert @card.errors[:name]
     end
 
-
-    it 'should block user upon delete' do
-      Account.as_bot do
-        Card.fetch('Ron Request').delete!
-      end
-
-      assert_equal nil, Card.fetch('Ron Request')
-      assert_equal 'blocked', Account['ron@request.com'].status
-    end
   end
 end

@@ -7,6 +7,7 @@ module Wagn::Env
       
       if c = args[:controller]
         self[:controller] = c
+        self[:session] = c.request.session
         self[:params] = c.request.params
         
         self[:host]       = Wagn.config.override_host     || c.request.env['HTTP_HOST']

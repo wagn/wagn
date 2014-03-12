@@ -19,10 +19,8 @@ namespace :wagn do
     puts "loading schema"
     Rake::Task['db:schema:load'].invoke
     
-    # inserts existing card migrations into schema_migrations_cards to avoid re-migrating
-    Wagn::MigrationHelper.schema_mode :card do
-      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:cards), Wagn::MigrationHelper.card_migration_paths
-    end
+    puts "update card_migrations"
+    Rake::Task['wagn:assume_card_migrations'].invoke
     
     if Rails.env == 'test'
       puts "loading test fixtures"
@@ -65,6 +63,13 @@ namespace :wagn do
       Rake::Task['wagn:migrate:stamp'].invoke '_cards'
     end
     Wagn::Cache.reset_global
+  end
+
+  desc 'insert existing card migrations into schema_migrations_cards to avoid re-migrating'
+  task :assume_card_migrations do
+    Wagn::MigrationHelper.schema_mode :card do
+      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:cards), Wagn::MigrationHelper.card_migration_paths
+    end
   end
 
   namespace :migrate do

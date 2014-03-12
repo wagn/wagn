@@ -281,7 +281,7 @@ class Card
       builder = ActionView::Base.default_form_builder
       card.name = card.name.gsub(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_card?  ##FIXME -- need to match other relative inclusions.
     
-      builder.new("card[cards][#{card.relative_name}]", card, template, {}, block)
+      builder.new("card[subcards][#{card.relative_name}]", card, template, {}, block)
     end
 
     def form

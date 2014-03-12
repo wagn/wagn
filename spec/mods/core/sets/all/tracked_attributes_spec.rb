@@ -33,6 +33,17 @@ include RenameMethods
 
 
 describe Card::Set::All::TrackedAttributes do
+  
+  describe '#extract_subcard_args!' do
+    it "should move plus keys into subcard hash" do
+      raw_args = { 'name'=>'test', 'subcards'=>{ '+*oldway'=>{'content'=>'old'},  }, '+*newway'=>{'content'=>'new'} }
+      subcards = Card.new.extract_subcard_args! raw_args
+      raw_args['subcards'].should be_nil
+      subcards.keys.sort.should == ['+*newway', '+*oldway']
+    end
+  end
+  
+  
   describe 'set_name' do
 
 

@@ -42,6 +42,7 @@ module Wagn::Env
       when 0 ; self[ method_id ]
       when 1 ; self[ method_id ] = args[0]
       else   ; super
+      end
     end
     
     private

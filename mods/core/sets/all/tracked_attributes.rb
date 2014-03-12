@@ -13,13 +13,14 @@ end
 
 #fixme -this is called by both initialize and update_attributes.  really should be optimized for new!
 def assign_attributes args={}, options={}
-  args = args.stringify_keys
-  if args and newtype = args.delete('type')
-    args['type_id'] = Card.fetch_id( newtype )
+  if args
+    args = args.stringify_keys
+    if newtype = args.delete('type')
+      args['type_id'] = Card.fetch_id newtype
+    end
+    @subcards = extract_subcard_args! args
+    reset_patterns
   end
-  @subcards = extract_subcard_args! args
-  reset_patterns
-
   super args, options
 end
 

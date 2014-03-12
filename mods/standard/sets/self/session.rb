@@ -39,7 +39,7 @@ event :signin, :before=>:approve, :on=>:save do
     accted = Account[ login.strip.downcase ]
     errors.add :signin, case
       when accted.nil?             ; "Unrecognized email."
-      when accted.account.blocked? ; "Sorry, that account is blocked."
+      when !accted.account.active? ; "Sorry, that account is not active."
       else                         ; "Wrong password"
       end
     abort :failure
@@ -48,7 +48,7 @@ event :signin, :before=>:approve, :on=>:save do
 end
 
 event :signout, :before=>:approve, :on=>:delete do
-  Wagn::Env[:controller].send 'current_account_id=', nil
+  Account.signin nil
   abort :success
 end
 

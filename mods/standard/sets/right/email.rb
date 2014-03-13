@@ -13,17 +13,19 @@ end
 view :core, :raw
 
 event :validate_email, :after=>:approve, :on=>:save do
-  if content !~ /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
-    errors.add :email, 'must be valid address'
+  if content.present? && content !~ /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
+    errors.add :content, 'must be valid address'
   end
 end
 
 event :validate_unique_email, :after=>:validate_email, :on=>:save do
-  Account.as_bot do
-    wql = { :right_id=>Card::EmailID, :eq=>content }
-    wql[:not] = { :id => id } if id
-    if Card.search( wql ).first
-      errors.add :email, 'must be unique'
+  if content.present?
+    Account.as_bot do
+      wql = { :right_id=>Card::EmailID, :eq=>content }
+      wql[:not] = { :id => id } if id
+      if Card.search( wql ).first
+        errors.add :content, 'must be unique'
+      end
     end
   end
 end

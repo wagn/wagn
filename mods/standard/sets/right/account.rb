@@ -31,9 +31,16 @@ end
 
 event :validate_accountability, :on=>:create, :before=>:approve do
   unless left and left.accountable?
-    errors.add :account, "not allowed on this card"
+    errors.add :content, "not allowed on this card"
   end
 end
+
+event :require_email, :on=>:create, :after=>:approve do
+  unless subcards['+*email']
+    errors.add :email, 'required'
+  end
+end
+
 
 event :set_default_salt, :on=>:create, :before=>:process_subcards do
   salt = Digest::SHA1.hexdigest "--#{Time.now.to_s}--"

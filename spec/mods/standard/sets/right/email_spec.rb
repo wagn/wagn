@@ -29,7 +29,7 @@ describe Card::Set::Right::Email do
   
   context "+*account+*email" do
     context 'update' do
-      before do
+      before :each do
         @email_card = email_card = Card['u1'].account.email_card
       end
       
@@ -42,12 +42,12 @@ describe Card::Set::Right::Email do
 
       it 'should require valid email' do
         @email_card.update_attributes :content=>'boop'
-        @email_card.errors[:email].first.should == 'must be valid address'
+        @email_card.errors[:content].first.should =~ /must be valid address/
       end
       
       it 'should require unique email' do
         @email_card.update_attributes :content=>'joe@user.com'
-        @email_card.errors[:email].first.should == 'must be unique'
+        @email_card.errors[:content].first.should =~ /must be unique/
       end
       
     end

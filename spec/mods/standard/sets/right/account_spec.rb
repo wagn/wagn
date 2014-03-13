@@ -22,7 +22,12 @@ describe Card::Set::Right::Account do
     
     it "should check accountability of 'accounted' card" do
       @unaccountable = Card.create :name=>'BasicUnaccountable', '+*account'=>{ '+*email'=>'tmpuser@wagn.org', '+*password'=>'tmp_pass' }
-      @unaccountable.errors[:account].first.should == '+*account: not allowed on this card'
+      @unaccountable.errors['+*account'].first.should == 'not allowed on this card'
+    end
+    
+    it "should require email" do
+      @no_email = Card.create :name=>'TmpUser', :type_id=>Card::UserID, '+*account'=>{ '+*password'=>'tmp_pass' }
+      @no_email.errors['+*account'].first.should =~ /email required/
     end
     
   end

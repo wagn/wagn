@@ -113,7 +113,8 @@ event :approve_subcards, :after=>:process_subcards do
   subcards.each do |key, subcard|
     if !subcard.valid?
       subcard.errors.each do |field, err|
-        errors.add field, "#{subcard.relative_name}: #{err}"
+        err = "#{field} #{err}" unless field == :content
+        errors.add subcard.relative_name, err
       end
     end
   end

@@ -80,9 +80,6 @@ event :preprocess_account_subcards, :before=>:process_subcards, :on=>:create do
   subcards['+*account'] ||={}
   subcards['+*account']['+*email']   = email if email
   subcards['+*account']['+*password' ]=password if password
-  
-#  errors.add(:email,    'required') unless email and email[:content].present?
-#  errors.add(:password, 'required') unless password and password[:content].present?
 end
 
 #event :auto_approve, :after=>:approve, :on=>:create, :when=>proc { |c| c.accountable? } do

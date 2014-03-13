@@ -38,7 +38,7 @@ end
 
 event :notify_followers, :after=>:extend do
   begin
-    return false if Card.record_timestamps==false or Wagn.config.send_emails==false
+    return false if Card.record_timestamps==false or Wagn.config.perform_deliveries==false
     # userstamps and timestamps are turned off in cases like updating read_rules that are automated and
     # generally not of enough interest to warrant notification
   

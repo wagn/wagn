@@ -93,11 +93,7 @@ class Mailer < ActionMailer::Base
       args[:from] = from
     end
     
-    if config.send_emails == false
-      Rails.logger.debug "Email is off; NOT mailing the following: #{args}"
-    else
-      mail args
-    end
+    mail args
   end
 
 

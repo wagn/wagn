@@ -55,7 +55,9 @@ end
 =end
 
 event :send_new_account_confirmation_email, :on=>:create, :after=>:extend do
-  Mailer.confirmation_email( self ).deliver
+  if self.email
+    Mailer.confirmation_email( self ).deliver
+  end
 end
 
 def ok_to_read

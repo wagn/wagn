@@ -60,10 +60,11 @@ event :setup_as_bot, :before=>:check_permissions, :on=>:create, :when=>proc{ |c|
 end  
 
 event :setup_first_user, :before=>:process_subcards, :on=>:create, :when=>proc{ |c| Wagn::Env.params[:setup] } do
+  subcards['*request+*to'] = subcards['+*account+*email']
+  subcards['+*roles'     ] = { :content => Card[:administrator].name }
+  
   email, password = subcards.delete('+*account+*email'), subcards.delete('+*account+*password')
   subcards['+*account'   ] = { '+*email'=>email, '+*password'=>password }
-  subcards['+*roles'     ] = { :content => Card[:administrator].name }
-  subcards['*request+*to'] = subcards['+*account+*email']
 end
 
 event :signin_after_setup, :before=>:extend, :on=>:create, :when=>proc{ |c| Wagn::Env.params[:setup] } do

@@ -55,7 +55,7 @@ end
 =end
 
 event :send_new_account_confirmation_email, :on=>:create, :after=>:extend do
-  if self.email
+  if self.email.present?
     Mailer.confirmation_email( self ).deliver
   end
 end

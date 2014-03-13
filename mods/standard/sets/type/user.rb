@@ -31,7 +31,7 @@ format :html do
       :optional_help=>:show,
       :optional_menu=>:never, 
       :help_text=>'To get started, set up an account.',
-      :buttons => submit_tag( 'Create' ),
+      :buttons => submit_tag( 'Submit' ),
       :hidden => { 
         :success => "REDIRECT: #{ Card.path_setting '/' }",
         'card[type_id]' => Card.default_accounted_type_id,
@@ -63,7 +63,7 @@ event :setup_first_user, :before=>:process_subcards, :on=>:create, :when=>proc{ 
   email, password = subcards.delete('+*account+*email'), subcards.delete('+*account+*password')
   subcards['+*account'   ] = { '+*email'=>email, '+*password'=>password }
   subcards['+*roles'     ] = { :content => Card[:administrator].name }
-  subcards['*request+*to'] = email
+  subcards['*request+*to'] = subcards['+*account+*email']
 end
 
 event :signin_after_setup, :before=>:extend, :on=>:create, :when=>proc{ |c| Wagn::Env.params[:setup] } do

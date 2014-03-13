@@ -30,7 +30,7 @@ module Wagn::Env
     end
 
     def params
-      self[:params] || {}
+      self[:params] ||= {}
     end
     
     def ajax?

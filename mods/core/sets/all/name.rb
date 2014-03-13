@@ -175,7 +175,7 @@ end
 
 event :validate_key, :after=>:validate_name, :on=>:save do
   if key.empty?
-    errors.add :key, "cannot be blank"
+    errors.add :key, "cannot be blank" if errors.empty?
   elsif key != cardname.key
     errors.add :key, "wrong key '#{key}' for name #{name}"
   end

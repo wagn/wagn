@@ -8,28 +8,10 @@ card_accessor :salt
 card_accessor :status
 card_accessor :token
 
-#card_accessor :session
-
-
 def active?   ; status=='active'  end
 def blocked?  ; status=='blocked' end
 def built_in? ; status=='system'  end
 def pending?  ; status=='pending' end
-
-=begin
-# blocked methods for legacy boolean status
-def blocked= block
-  if block == true
-    self.status = 'blocked'
-  elsif !built_in?
-    self.status = 'active'
-  end
-end
-=end
-
-def confirmation_email args
-  Mailer.confirmation_email left, args.merge(:to=>email)
-end
 
 format :html do
 
@@ -61,6 +43,7 @@ event :generate_token, :on=>:create, :before=>:process_subcards do
   subcards["+#{Card[:token].name}"] = {:content => Digest::SHA1.hexdigest( "--#{Time.now.to_s}--#{rand 10}--" ) }
 end
 
+=begin
 event :notify_accounted, :on=>:create, :after=>:extend do
   if active? #FIXME - should be newly active!
     email_args = Wagn::Env.params[:email] || {}
@@ -68,6 +51,11 @@ event :notify_accounted, :on=>:create, :after=>:extend do
     email_args[:subject] ||= Card.setting('*signup+*subject') || "Click below to activate your account on #{Card.setting('*title')}!"
     confirmation_email( email_args ).deliver
   end
+end
+=end
+
+event :send_new_account_confirmation_email, :on=>:create, :after=>:extend do
+  Mailer.confirmation_email( self ).deliver
 end
 
 def ok_to_read

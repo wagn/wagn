@@ -27,8 +27,11 @@ describe Card::Set::Type::AccountRequest do
    
   context 'signup (without approval)' do
     before do
+      ActionMailer::Base.deliveries = [] #needed?
+      
       Account.as_bot do
         Card.create! :name=>'User+*type+*create', :content=>'[[Anyone]]'
+        Card.create! :name=>'*request+*to', :content=>'request@wagn.org'
       end
       @request = Card.create! :name=>'Big Bad Wolf', :type=>'Account Request', '+*account'=>{ 
         '+*email'=>'wolf@wagn.org', '+*password'=>'wolf'
@@ -43,7 +46,7 @@ describe Card::Set::Type::AccountRequest do
       @account.status.should == 'pending'
       @account.salt.should_not == ''
       @account.password.length.should > 10 #encrypted
-      @account.token.should_not be_blank
+      @account.token.should be_present
     end
   
     it 'should send email with an appropriate link' do
@@ -51,6 +54,20 @@ describe Card::Set::Type::AccountRequest do
     
     it 'should create an authenticable token' do
       Account.authenticate_by_token(@token).should == @request.id
+    end
+    
+    it 'should notify someone' do
+      ActionMailer::Base.deliveries.last.to.should == ['request@wagn.org']
+    end
+    
+    it 'should be activated by an update' do
+      Wagn::Env.params[:token] = @token
+      hash = {}
+      @request.update_attributes hash
+      #puts @request.errors.full_messages * "\n"
+      @request.errors.should be_empty
+      @account.status_card.refresh.content.should == 'active'
+      Card[ @account.name ].active?.should be_true
     end
   
   
@@ -62,23 +79,6 @@ describe Card::Set::Type::AccountRequest do
   end
   
   
-  context 'signup alerts' do
-    before do
-      ActionMailer::Base.deliveries = [] #needed?
-    end
-    
-    it 'should be sent when configured' do
-      Account.as_bot do
-        Card.create! :name=>'*request+*to', :content=>'request@wagn.org'
-      end
-    
-      mock.dont_allow(Mailer).send_confirmation_email
-      @card = Card.create :name=>'Joe New', :type_id=>Card::AccountRequestID, :account_args=>{:email=>'joe@new.com'}    
-      ActionMailer::Base.deliveries.last.to.should == ['request@wagn.org']
-    end
-  end
-    
-
 
   
   
@@ -108,20 +108,5 @@ describe Card::Set::Type::AccountRequest do
 
   end
   
-  
-  context 'request validation' do
 
-    it 'should require name' do
-      card = Card.create :type_id=>Card::AccountRequestID #, :account=>{ :email=>"bunny@hop.com" } currently no api for this
-      #Rails.logger.info "name errors: #{@card.errors.full_messages.inspect}"
-      assert card.errors[:name]
-    end
-
-
-   it 'should require a unique name' do
-      @card = Card.create :type_code=>'account_request', :name=>"Joe User", :content=>"Let me in!"# :account=>{ :email=>"jamaster@jay.net" }
-      assert @card.errors[:name]
-    end
-
-  end
 end

@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 class AccountController < WagnController
 
+=begin
   def forgot_password
     @card = Card.new
     if email = params[:email]
@@ -30,5 +31,5 @@ class AccountController < WagnController
   end
 
 
-
+=end
 end

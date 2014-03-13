@@ -11,25 +11,19 @@ class Mailer < ActionMailer::Base
   include Wagn::Location
 
 
-  def confirmation_email cd_with_acct, args
-    @email, subject, @message= [:to, :subject, :message].map do |k|
-      args[k] or raise "Missing email parameter: #{k}"
-    end
-
-    @password = 'deleteme'
-
-    @pw_url   = wagn_url "#{cd_with_acct.cardname.url_key}?view=account"
-    @login_url= wagn_url ":session"
+  def confirmation_email account
+    @site = Card.setting :title
+    @link = wagn_url "/update/#{account.left.cardname.url_key}?token=#{account.token}"
 
     #FIXME - might want different "from" settings for different contexts?
     invite_from = Card.setting( '*invite+*from' ) || begin
       from_card_id = Account.current_id
-      from_card_id = Card::WagnBotID if [ Card::AnonID, cd_with_acct.id ].member? from_card_id
+      from_card_id = Card::WagnBotID if [ Card::AnonID, account.left_id ].member? from_card_id
       from_card = Card[from_card_id]
       "#{from_card.name} <#{from_card.account.email}>"
     end
     
-    mail_from( { :to=>@email, :subject=>subject }, invite_from )
+    mail_from( { :to=>account.email, :subject=>"verification link for #{@site}" }, invite_from )
   end
 
   def signup_alert invite_request

@@ -12,7 +12,7 @@ view :raw do |args|
 end
 
 event :encrypt_password, :on=>:save, :after=>:process_subcards, :when=>proc{ |c| !c.importing_passwords? } do
-  salt = left.salt
+  salt = (left && left.salt)
   unless salt.present? or salt = Wagn::Env[:salt] #(hack)
     errors.add :password, 'need a valid salt'
   end

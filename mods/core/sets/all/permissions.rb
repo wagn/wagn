@@ -96,7 +96,7 @@ def permit action, verb=nil
   
   verb ||= action.to_s
   unless permitted? action
-    deny_because you_cant("#{verb} this")
+    deny_because you_cant("#{verb} #{name.present? ? name : 'this'}")
   end
 end
 

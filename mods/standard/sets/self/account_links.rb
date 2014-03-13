@@ -14,14 +14,14 @@ format :html do
               link_to 'Invite a Friend', "#{prefix}/invite", :id=>'invite-a-friend-link'
             end
           }
-          #{ link_to 'Sign out', "#{prefix}/signout", :id=>'signout-link' }
+          #{ link_to 'Sign out', wagn_path('delete/:signin'), :id=>'signout-link' }
         }
       else
         %{
           #{ if Card.new(:type_id=>Card::AccountRequestID).ok? :create
                link_to 'Sign up', "#{prefix}/signup", :id=>'signup-link'
              end }
-          #{ link_to 'Sign in', "#{prefix}/signin", :id=>'signin-link' }
+          #{ link_to 'Sign in', wagn_path(':signin'), :id=>'signin-link' }
         }
       end }
     </span>}

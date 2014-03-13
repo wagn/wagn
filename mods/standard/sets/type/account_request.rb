@@ -76,6 +76,7 @@ event :activate_by_token, :before=>:approve, :on=>:update do
 end
 
 event :preprocess_account_subcards, :before=>:process_subcards, :on=>:create do
+  #FIXME: use codenames!
   email, password = subcards.delete('+*account+*email'), subcards.delete('+*account+*password')
   subcards['+*account'] ||={}
   subcards['+*account']['+*email']   = email if email

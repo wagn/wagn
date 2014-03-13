@@ -36,7 +36,7 @@ event :validate_accountability, :on=>:create, :before=>:approve do
 end
 
 event :require_email, :on=>:create, :after=>:approve do
-  unless subcards['+*email']
+  unless subcards["+#{Card[:email].name}"] 
     errors.add :email, 'required'
   end
 end

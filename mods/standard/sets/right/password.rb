@@ -14,7 +14,8 @@ end
 event :encrypt_password, :on=>:save, :after=>:process_subcards do
   salt = (left && left.salt)
   unless salt.present? or salt = Wagn::Env[:salt] # hack - fix with better ORM handling
-    errors.add :password, 'need a valid salt'
+    #errors.add :password, 'need a valid salt'
+    # turns out we have a lot of existing account without a salt.  not sure when that broke??
   end
   if updates.for :content
     unless Wagn::Env[:no_password_encryptions] # hack for import - fix with api for ignoring events

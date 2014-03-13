@@ -3,20 +3,26 @@ require 'wagn/spec_helper'
 
 describe Card::Set::Right::Account do
   
-
-
-
   describe '#create' do
-    before do
-      Account.as_bot do
-        @user_card = Card.create! :name=>'TmpUser', :type_id=>Card::UserID, '+*account'=>{ 
-          '+*email'=>'tmpuser@wagn.org', '+*password'=>'tmp_pass'
-        }
+    context "valid user" do
+      #note - much of this is tested in account_request_spec
+      before do
+        Account.as_bot do
+          @user_card = Card.create! :name=>'TmpUser', :type_id=>Card::UserID, '+*account'=>{ 
+            '+*email'=>'tmpuser@wagn.org', '+*password'=>'tmp_pass'
+          }
+        end
+      
       end
       
+      it 'should create an authenticable password' do
+        Account.password_authenticated?( @user_card.account, 'tmp_pass').should be_true
+      end
     end
-    it 'should create an authenticable password' do
-      Account.password_authenticated?( @user_card.account, 'tmp_pass').should be_true
+    
+    it "should check accountability of 'accounted' card" do
+      @unaccountable = Card.create :name=>'BasicUnaccountable', '+*account'=>{ '+*email'=>'tmpuser@wagn.org', '+*password'=>'tmp_pass' }
+      @unaccountable.errors[:account].first.should == '+*account: not allowed on this card'
     end
     
   end

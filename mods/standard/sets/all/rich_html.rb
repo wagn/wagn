@@ -496,7 +496,7 @@ format :html do
           or_signup = if Card.new(:type_id=>Card::AccountRequestID).ok? :create
             "or #{ link_to 'sign up', wagn_url('new/:account_request') }"
           end
-          "You have to #{ link_to 'sign in', wagn_url(':session') } #{or_signup} #{to_task}"
+          "You have to #{ link_to 'sign in', wagn_url(':signin') } #{or_signup} #{to_task}"
         end
 
         %{<h1>Sorry!</h1>\n<div>#{ message }</div>}

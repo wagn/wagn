@@ -53,7 +53,10 @@ module Wagn::SpecHelper
   #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
   
   def login_as user
-    Account.current_id = @request.session[:user] = (uc=Card[user.to_s] and uc.id)
+    Account.current_id = (uc=Card[user.to_s] and uc.id)
+    if @request
+      @request.session[:user] = Account.current_id
+    end
     #warn "(ath)login_as #{user.inspect}, #{Account.current_id}, #{@request.session[:user]}"
   end
   

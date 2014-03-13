@@ -29,6 +29,11 @@ format :html do
 end
 
 
+event :validate_accountability, :on=>:create, :before=>:approve do
+  unless left and left.
+end
+  
+
 event :set_default_salt, :on=>:create, :before=>:process_subcards do
   salt = Digest::SHA1.hexdigest "--#{Time.now.to_s}--"
   Wagn::Env[:salt] = salt # HACK!!! need viable mechanism to get this to password
@@ -42,17 +47,6 @@ end
 event :generate_token, :on=>:create, :before=>:process_subcards do
   subcards["+#{Card[:token].name}"] = {:content => Digest::SHA1.hexdigest( "--#{Time.now.to_s}--#{rand 10}--" ) }
 end
-
-=begin
-event :notify_accounted, :on=>:create, :after=>:extend do
-  if active? #FIXME - should be newly active!
-    email_args = Wagn::Env.params[:email] || {}
-    email_args[:message] ||= Card.setting('*signup+*message') || "Thanks for signing up to #{Card.setting('*title')}!"
-    email_args[:subject] ||= Card.setting('*signup+*subject') || "Click below to activate your account on #{Card.setting('*title')}!"
-    confirmation_email( email_args ).deliver
-  end
-end
-=end
 
 event :send_new_account_confirmation_email, :on=>:create, :after=>:extend do
   if self.email.present?

@@ -18,6 +18,7 @@ describe Card::Set::Right::Account do
     it 'should create an authenticable password' do
       Account.password_authenticated?( @user_card.account, 'tmp_pass').should be_true
     end
+    
   end
   
   describe '#update_attributes' do

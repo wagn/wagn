@@ -27,7 +27,7 @@ class Account
       account = token_card.left           and
       account.right_id == Card::AccountID and  #legitimacy of account cards
       accounted = account.left            and
-      accounted.accountable?              and  #legitimacy of accounted_card  
+      accounted.accountable?              and  #legitimacy of accounted_card (overkill?)
       accounted.id
     end
 

@@ -1,5 +1,7 @@
 require 'wagn/spec_helper'
 
+#FIXME - this shouldn't really be with the controller specs
+
 describe CardController, "location test from old integration" do
 
   include Wagn::Location

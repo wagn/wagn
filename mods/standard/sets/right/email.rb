@@ -12,22 +12,27 @@ end
 
 view :core, :raw
 
-#validates :email, :presence=>true, :if=>:email_required?,
-#  :uniqueness => { :scope   => :login                                      },
-#  :format     => { :with    => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i },
-#  :length     => { :maximum => 100                                         }
-#
+event :validate_email, :after=>:approve, :on=>:save do
+  if content !~ /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
+    errors.add :email, 'must be valid address'
+  end
+end
 
+event :validate_unique_email, :after=>:validate_email, :on=>:save do
+  Account.as_bot do
+    wql = { :right_id=>Card::EmailID, :eq=>content }
+    wql[:not] = { :id => id } if id
+    if Card.search( wql ).first
+      errors.add :email, 'must be unique'
+    end
+  end
+end
 
 event :downcase_email, :before=>:approve, :on=>:save do
   if content and content != content.downcase
     self.content = content.downcase
   end
 end
-
-#event :validate_unique_email, :after=>:approve do
-#  wql = { :right=>Card[:email].name, :content=> }
-#end
 
 def email_required?
   !built_in?

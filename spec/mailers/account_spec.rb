@@ -20,6 +20,7 @@ describe Mailer do
   ## see notifier test for data used in these tests
   # FIXME: the cache is not cleared properly between tests.  if the order changes
   #  (ie try renamed change notice below to change_notice) then *notify+*from gets stuck on.
+=begin
   context "account info, new password" do # forgot password
     before do
       Account.as_bot do
@@ -48,7 +49,7 @@ describe Mailer do
       end
     end
   end
-
+=end
   describe "flexmail" do
     # FIXME: at least two tests should be here, with & w/o attachment.
   end

@@ -1,5 +1,5 @@
 require 'wagn/spec_helper'
-
+=begin
 describe CardController, "Basic rendering tests" do
 
   before do
@@ -93,5 +93,5 @@ describe CardController, "Basic rendering tests" do
   end
 
 end
-
+=end
 

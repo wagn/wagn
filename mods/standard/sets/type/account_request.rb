@@ -66,6 +66,7 @@ event :activate_by_token, :before=>:approve, :on=>:update do
   if token = Wagn::Env.params[:token]
     if id == Account.authenticate_by_token(token)
       subcards['+*account'] = {'+*status'=>'active'}
+      self.type_id = Card.default_accounted_type_id
       Account.signin id #move this to extend?
       Account.as_bot      
     else

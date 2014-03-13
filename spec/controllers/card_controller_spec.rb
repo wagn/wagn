@@ -115,7 +115,6 @@ describe CardController do
             "subcards"=>{"+text"=>{"content"=>"<p>abraid</p>"}}
           }, "view"=>"open"
         assert_response 422
-        assigns['card'].errors[:key].first.should == "cannot be blank"
         assigns['card'].errors[:name].first.should == "can't be blank"
       end
 

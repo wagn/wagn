@@ -81,11 +81,12 @@ describe Card::Set::All::Account do
       
       c.should == u
       c.type_id.should == Card::UserID
-      
+=begin      
       email = ActionMailer::Base.deliveries.last
       email.to.should == ['joe@new.com']
       email.subject.should == 'Hey Joe!'
       email.from.should == [ ja_email ]
+=end
     end
   end
   

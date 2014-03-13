@@ -66,6 +66,7 @@ describe Card::Set::Type::AccountRequest do
       @request.update_attributes hash
       #puts @request.errors.full_messages * "\n"
       @request.errors.should be_empty
+      @request.type_id.should == Card::UserID
       @account.status_card.refresh.content.should == 'active'
       Card[ @account.name ].active?.should be_true
     end
@@ -81,7 +82,7 @@ describe Card::Set::Type::AccountRequest do
   
 
   
-  
+=begin  
   context 'valid request' do
     before do
       @request = Card.create! :name=>'Big Bad Wolf', :type=>'Account Request', '+*account'=>{ 
@@ -107,6 +108,6 @@ describe Card::Set::Type::AccountRequest do
     
 
   end
-  
+=end  
 
 end

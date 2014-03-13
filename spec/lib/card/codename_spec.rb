@@ -4,27 +4,22 @@ require 'wagn/spec_helper'
 describe Card::Codename, "Codename" do
 
   before do
-    @codes = Card::Codename.codehash.each_key.find_all do |key|
-      Symbol===key
-    end
+    @codename = :default
   end
 
-  it "should have sane codename data" do
-    @codes.each do |code|
-      code.                      should be_instance_of Symbol
-      (i = Card::Codename[code]).should be_a_kind_of Integer
-      Card::Codename[i].         should == code
-    end
+  it "should be sane" do    
+    Card[@codename].codename.should == @codename.to_s #would prefer Symbol eventually
+    card_id = Card::Codename[@codename]
+    card_id.should be_a_kind_of Integer
+    Card::Codename[card_id].should == @codename
   end
 
-  it "cards should exist and be indestructable" do
+  it "should make cards indestructable" do
     Account.as_bot do
-      @codes.each do |code|
-        card = Card[code]
-        card.delete
-        card.errors[:delete].first.should match 'is a system card'
-        Card[code].should be
-      end
+      card = Card[@codename]
+      card.delete
+      card.errors[:delete].first.should match 'is a system card'
+      Card[@codename].should be
     end
   end
   

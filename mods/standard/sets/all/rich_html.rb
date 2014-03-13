@@ -107,8 +107,8 @@ format :html do
     if card.real?
       @menu_vars.merge!({
         :edit      => card.ok?(:update),
-        :account   => card.account && card.update_account_ok?,
-        :watch     => Account.logged_in? && render_watch,
+        :account   => card.account && card.ok?(:update),
+        :watch     => Account.signed_in? && render_watch,
         :creator   => card.creator.name,
         :updater   => card.updater.name,
         :delete    => card.ok?(:delete) && link_to( 'delete', path(:action=>:delete),
@@ -142,7 +142,7 @@ format :html do
   ###---( TOP_LEVEL (used by menu) NEW / EDIT VIEWS )
 
   view :new, :perms=>:create, :tags=>:unknown_ok do |args|
-    frame_and_form :create, args, 'main-success'=>'REDIRECT' do |form|
+    frame_and_form :create, args, 'main-success'=>'REDIRECT' do
       [
         _optional_render( :name_fieldset,     args ),
         _optional_render( :type_fieldset,     args ),
@@ -363,8 +363,10 @@ format :html do
     current_set = Card.fetch( params[:current_set] || card.related_sets[0][0] )
 
     frame args do
-      %{
-        #{ subformat( current_set ).render_content }
+      subformat( current_set ).render_content
+    end
+        
+=begin        
         #{
           if card.accountable? && !card.account
             %{
@@ -375,8 +377,7 @@ format :html do
             }
           end
         }
-      }
-    end
+=end
   end
 
 
@@ -461,7 +462,7 @@ format :html do
   end
 
   view :not_found do |args| #ug.  bad name.
-    sign_in_or_up_links = if !Account.logged_in?
+    sign_in_or_up_links = if !Account.signed_in?
       %{<div>
         #{link_to "Sign In", :controller=>'account', :action=>'signin'} or
         #{link_to 'Sign Up', :controller=>'account', :action=>'signup'} to create it.
@@ -489,13 +490,13 @@ format :html do
         message = case
         when task != :read && Wagn.config.read_only
           "We are currently in read-only mode.  Please try again later."
-        when Account.logged_in?
+        when Account.signed_in?
           "You need permission #{to_task}"
         else
           or_signup = if Card.new(:type_id=>Card::AccountRequestID).ok? :create
             "or #{ link_to 'sign up', wagn_url('new/:account_request') }"
           end
-          "You have to #{ link_to 'sign in', wagn_url('account/signin') } #{or_signup} #{to_task}"
+          "You have to #{ link_to 'sign in', wagn_url(':session') } #{or_signup} #{to_task}"
         end
 
         %{<h1>Sorry!</h1>\n<div>#{ message }</div>}

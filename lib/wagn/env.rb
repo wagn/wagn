@@ -7,13 +7,16 @@ module Wagn::Env
       
       if c = args[:controller]
         self[:controller] = c
+        self[:session] = c.request.session
         self[:params] = c.request.params
+        self[:ajax] = c.request.xhr? || c.request.params[:simulate_xhr]
+        
         
         self[:host]       = Wagn.config.override_host     || c.request.env['HTTP_HOST']
         self[:protocol]   = Wagn.config.override_protocol || c.request.protocol
         
         #hacky - should be in module
-        self[:recaptcha_on] = !Account.logged_in? && have_recaptcha_keys?
+        self[:recaptcha_on] = !Account.signed_in? && !Account.no_logins? && have_recaptcha_keys?
         self[:recaptcha_count] = 0
       end
     end
@@ -27,7 +30,19 @@ module Wagn::Env
     end
 
     def params
-      self[:params] || {}
+      self[:params] ||= {}
+    end
+    
+    def ajax?
+      self[:ajax]
+    end
+    
+    def method_missing method_id, *args
+      case args.length
+      when 0 ; self[ method_id ]
+      when 1 ; self[ method_id ] = args[0]
+      else   ; super
+      end
     end
     
     private

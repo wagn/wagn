@@ -15,8 +15,8 @@ Given /^I log in as (.+)$/ do |account_name|
   # FIXME: define a faster simulate method ("I am logged in as")
   @current_id = ucid = Card[account_name].id
   user_object = Account[ ucid ]
-  visit "/account/signin"
-  fill_in("login", :with=> user_object.email )
+  visit "/:session"
+  fill_in("login", :with=> user_object.account.email )
   fill_in("password", :with=> user_object.login.split("_")[0]+"_pass")
   click_button("Sign in")
   page.should have_content(account_name)
@@ -37,13 +37,13 @@ Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
 end
 
 When /^(.*) edits? "([^\"]*)"$/ do |username, cardname|
-  logged_in_as(username) do
+  signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
   end
 end
 
 When /^(.*) edits? "([^\"]*)" entering "([^\"]*)" into wysiwyg$/ do |username, cardname, content|
-  logged_in_as(username) do
+  signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
     page.execute_script "$('#main .card-content').val('#{content}')"
     click_button("Submit")
@@ -52,7 +52,7 @@ end
 
 
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
-  logged_in_as(username) do
+  signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
     fill_in 'card[content]', :with=>content
     click_button("Submit")
@@ -60,10 +60,10 @@ When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardnam
 end
 
 When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
-  logged_in_as(username) do
+  signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
     plusses.hashes.first.each do |name, content|
-      fill_in "card[cards][#{cardname}+#{name}][content]", :with=>content
+      fill_in "card[subcards][#{cardname}+#{name}][content]", :with=>content
     end
     click_button("Submit")
   end
@@ -88,13 +88,13 @@ end
 When /^(.*) creates?\s*([^\s]*) card "([^"]*)" with plusses:$/ do |username,cardtype,cardname,plusses|
   create_card(username,cardtype,cardname) do
     plusses.hashes.first.each do |name, content|
-      fill_in "card[cards][+#{name}][content]", :with=>content
+      fill_in "card[subcards][+#{name}][content]", :with=>content
     end
   end
 end
 
 When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
-  logged_in_as(username) do
+  signed_in_as(username) do
     visit "/card/delete/#{cardname.to_name.url_key}"
   end
 end
@@ -113,7 +113,7 @@ end
 
 
 def create_card(username,cardtype,cardname,content="")
-  logged_in_as(username) do
+  signed_in_as(username) do
     if cardtype=='Pointer'
       Card.create :name=>cardname, :type=>cardtype, :content=>content
     else
@@ -124,7 +124,7 @@ def create_card(username,cardtype,cardname,content="")
   end
 end
 
-def logged_in_as(username)
+def signed_in_as(username)
   sameuser = (username == "I" or @current_id && Card[@current_id].name == username)
   unless sameuser
     @saved_user = @current_id

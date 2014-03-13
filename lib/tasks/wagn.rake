@@ -1,4 +1,4 @@
-WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references users }
+WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references }
 
 namespace :wagn do
   desc "create a wagn database from scratch"
@@ -19,10 +19,8 @@ namespace :wagn do
     puts "loading schema"
     Rake::Task['db:schema:load'].invoke
     
-    # inserts existing card migrations into schema_migrations_cards to avoid re-migrating
-    Wagn::MigrationHelper.schema_mode :card do
-      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:cards), Wagn::MigrationHelper.card_migration_paths
-    end
+    puts "update card_migrations"
+    Rake::Task['wagn:assume_card_migrations'].invoke
     
     if Rails.env == 'test'
       puts "loading test fixtures"
@@ -65,6 +63,13 @@ namespace :wagn do
       Rake::Task['wagn:migrate:stamp'].invoke '_cards'
     end
     Wagn::Cache.reset_global
+  end
+
+  desc 'insert existing card migrations into schema_migrations_cards to avoid re-migrating'
+  task :assume_card_migrations do
+    Wagn::MigrationHelper.schema_mode :card do
+      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:cards), Wagn::MigrationHelper.card_migration_paths
+    end
   end
 
   namespace :migrate do
@@ -151,7 +156,6 @@ namespace :wagn do
         " (referee_id is not null and not exists (select * from cards where cards.id = card_references.referee_id)) or " +
         " (           referer_id is not null and not exists (select * from cards where cards.id = card_references.referer_id));"
       )
-      ActiveRecord::Base.connection.delete( "delete from users where id > 2" ) #leave only anon and wagn bot
       Wagn::Cache.reset_global
       
     end
@@ -160,7 +164,7 @@ namespace :wagn do
     task :dump => :environment do
       Wagn::Cache.reset_global
       
-      Rake::Task['wagn:bootstrap:mod_files'].invoke
+      Rake::Task['wagn:bootstrap:copy_mod_files'].invoke
       
       YAML::ENGINE.yamler = 'syck'
       # use old engine while we're supporting ruby 1.8.7 because it can't support Psych,
@@ -185,7 +189,7 @@ namespace :wagn do
     end
 
     desc "copy files from template database to standard mod and update cards"
-    task :mod_files => :environment do
+    task :copy_mod_files => :environment do
       template_files_dir = "#{Wagn.root}/files"
       standard_files_dir = "#{Wagn.gem_root}/mods/standard/files"
       

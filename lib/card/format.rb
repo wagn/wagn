@@ -6,7 +6,7 @@ class Card
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
-      :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
+      :layout=>:layout, :new=>:edit, :setup=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     
     cattr_accessor :ajax_call, :registered, :max_depth
     [ :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases ].each do |acc|
@@ -159,7 +159,7 @@ class Card
     def flash()        @flash      ||= controller.request ? controller.flash : {} end
     def controller()   @controller ||= StubCardController.new                     end
     def session()      CardController===controller ? controller.session : {}      end
-    def ajax_call?()   @@ajax_call                                                end
+    def ajax_call?()   Wagn::Env.ajax?                                            end
 
     def showname title=nil
       if title
@@ -501,7 +501,7 @@ class Card
       content = params[cardname.to_s.gsub(/\+/,'_')]
 
       # CLEANME This is a hack to get it so plus cards re-populate on failed signups
-      if p = params['cards'] and card_params = p[cardname.to_s]
+      if p = params['subcards'] and card_params = p[cardname.to_s]
         content = card_params['content']
       end
       content if content.present?  # why is this necessary? - efm  

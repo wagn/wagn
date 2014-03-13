@@ -67,27 +67,26 @@ describe Card::Set::All::Account do
   end
   
 
-  describe "#invitation" do
-    it 'should create a card, user, and account card' do
+  describe "'+*email'" do
+    it 'should create a card and account card' do
       jadmin = Card['joe admin']
       Account.current_id = jadmin.id #simulate login to get correct from address
       ja_email = jadmin.account.email
 
       Wagn::Env[:params] = { :email => {:subject=>'Hey Joe!', :message=>'Come on in.'} }
-      Card.create :name=>'Joe New', :type_id=>Card::UserID, :account_args=>{:email=>'joe@new.com'}
+      Card.create :name=>'Joe New', :type_id=>Card::UserID, '+*account'=>{ '+*email'=> 'joe@new.com' }
 
       c = Card['Joe New']
       u = Account[ 'joe@new.com' ]
       
-      c.should be
-      u.should be
-      u.card_id.should == c.id
+      c.should == u
       c.type_id.should == Card::UserID
-      
+=begin      
       email = ActionMailer::Base.deliveries.last
       email.to.should == ['joe@new.com']
       email.subject.should == 'Hey Joe!'
       email.from.should == [ ja_email ]
+=end
     end
   end
   
@@ -96,22 +95,44 @@ describe Card::Set::All::Account do
       @card = Card['Joe User']
     end
     it "should handle email updates" do
-      @card.update_attributes :account_args => { :email => 'joe@user.co.uk' }
+      @card.update_attributes! '+*account'=>{ '+*email'=>'joe@user.co.uk' }
       @card.account.email.should == 'joe@user.co.uk'
     end
   
-    it "should not allow a user to block or unblock himself" do
-      expect do
-        @card.update_attributes! :account_args => { :blocked => '1' }
-      end.to raise_error
-      @card.account.blocked?.should be_false
-      
+    it "should let Wagn Bot block accounts" do
       Account.as_bot do
-        @card.update_attributes! :account_args => { :blocked => '1' }
+        @card.account.status_card.update_attributes! :content => 'blocked'
         @card.account.blocked?.should be_true
       end
-      
     end
+    
+    
+    it "should not allow a user to block or unblock himself" do
+      expect do
+        @card.account.status_card.update_attributes! :content => 'blocked'
+      end.to raise_error
+      @card.account.blocked?.should be_false
+    end
+  end
+  
+  describe "#read_rules" do
+    before(:all) do
+      @read_rules = Card['joe_user'].read_rules
+    end
+
+
+    it "*all+*read should apply to Joe User" do
+      @read_rules.member?(Card.fetch('*all+*read').id).should be_true
+    end
+
+    it "3 more should apply to Joe Admin" do
+      Account.as(:joe_admin) do
+        ids = Account.as_card.read_rules
+        #warn "rules = #{ids.map(&Card.method(:find)).map(&:name) * ', '}"
+        ids.length.should == @read_rules.size + 4
+      end
+    end
+
   end
 
 end

@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 require 'smart_name'
 
-
 class Card
   class Name < SmartName
 

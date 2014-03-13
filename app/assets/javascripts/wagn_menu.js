@@ -55,9 +55,9 @@ wagn.menu_template = [
     ]
   },
   { "link":"watch", "if":"watch" },
-  { "view":"account", "if":"account", "sub":
+  { "text":"account", "related":{"name":"+*account", "view":"edit"}, "if":"account", "sub":
     [
-      { "view":"account", "text":"details" },
+      { "text":"account", "related":{"name":"+*account", "view":"edit"}, "text":"details" },
       { "related":"roles"   },
       { "related":"created" },
       { "related":"edited"  }

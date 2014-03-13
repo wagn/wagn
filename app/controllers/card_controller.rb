@@ -72,7 +72,9 @@ class CardController < WagnController
       when params[:id]
         params[:id]
       when Account.no_logins?
-        return wagn_redirect( 'admin/setup' )
+        params[:card] = { :type_id => Card.default_accounted_type_id }
+        params[:view] = 'setup'
+        ''
       when params[:card] && params[:card][:name]
         params[:card][:name]
       when Card::Format.tagged( params[:view], :unknown_ok )
@@ -116,9 +118,6 @@ class CardController < WagnController
     true
   end
 
-
-
-  #------- REDIRECTION 
 
 end
 

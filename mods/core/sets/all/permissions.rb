@@ -29,10 +29,6 @@ def ok! action, opts={}
   raise Card::PermissionDenied.new self unless ok? action, opts
 end
 
-def update_account_ok? #FIXME - temporary API, I think this is fixed, can we cache any of this for speed, this is accessed for each header
-  id == Account.current_id or ok?( :update, :trait=>:account )
-end
-
 def who_can action
   #warn "who_can[#{name}] #{(prc=permission_rule_card(action)).inspect}, #{prc.first.item_cards.map(&:id)}" if action == :update
   permission_rule_card(action).first.item_cards.map &:id
@@ -48,7 +44,7 @@ def permission_rule_card action
   end
 
   rcard = Account.as_bot do
-    if opcard.content == '_left' && self.junction?  # compound cards can inherit permissions from left parent
+    if ['_left','[[_left]]'].member?(opcard.content) && self.junction?  # compound cards can inherit permissions from left parent
       lcard = left_or_new( :skip_virtual=>true, :skip_modules=>true )
       if action==:create && lcard.real? && !lcard.action==:create
         action = :update
@@ -100,13 +96,13 @@ def permit action, verb=nil
   
   verb ||= action.to_s
   unless permitted? action
-    deny_because you_cant("#{verb} this card")
+    deny_because you_cant("#{verb} #{name.present? ? name : 'this'}")
   end
 end
 
 def ok_to_create
   permit :create
-  if junction?
+  if @action_ok and junction?
     [:left, :right].each do |side|
       part_card = send side, :new=>{}
       if part_card && part_card.new_card? #if no card, there must be other errors
@@ -122,7 +118,7 @@ def ok_to_read
   if !Account.always_ok?
     @read_rule_id ||= permission_rule_card(:read).first.id.to_i
     if !Account.as_card.read_rules.member? @read_rule_id
-      deny_because you_cant "read this card"
+      deny_because you_cant "read this"
     end
   end
 end
@@ -142,8 +138,8 @@ end
 def ok_to_comment
   permit :comment, 'comment on'
   if @action_ok
-    deny_because "No comments allowed on template cards" if is_template?
-    deny_because "No comments allowed on hard templated cards" if structure
+    deny_because "No comments allowed on templates" if is_template?
+    deny_because "No comments allowed on structured content" if structure
   end
 end
 
@@ -222,4 +218,14 @@ event :recaptcha, :before=>:approve do
   end
 end
 
+module Accounts
+  def permit action, verb=nil
+    case
+    when action==:comment  ; @action_ok = false
+    when is_own_account?   ; true 
+    else                   ; super action, verb
+    end
+  end
+end
+  
 

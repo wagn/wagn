@@ -28,4 +28,7 @@ module Wagn::MigrationHelper
     end
   end
   
+  def down
+    raise ActiveRecord::IrreversibleMigration
+  end
 end

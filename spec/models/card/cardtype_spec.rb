@@ -156,15 +156,14 @@ describe Card, "Wannabe Cardtype Card" do
   end
 end
 
-describe User, "Joe User" do
+describe Card, "Joe User" do
   before do
     Account.as_bot do
       @r3 = Card['r3']
       Card.create :name=>'Cardtype F+*type+*create', :type=>'Pointer', :content=>'[[r3]]'
     end
 
-    @user = Account.user
-    @ucard = Card[@user.card_id]
+    @ucard = Account.current
     @type_names = Account.createable_types
   end
 

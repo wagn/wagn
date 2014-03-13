@@ -55,6 +55,7 @@ module Card::Set
       define_method final_method, &final
 
       define_method event do
+#        Rails.logger.info "running #{event} for #{name}"
         run_callbacks event do
 #          Rails.logger.info "calling event: #{event} for #{self}"
           send final_method
@@ -196,7 +197,7 @@ module Card::Set
 
   def add_traits args, options
     mod = Card::Set.current[:module]
-    raise "Can't define card traits on all set" if mod == Card
+#    raise "Can't define card traits on all set" if mod == Card
     mod_traits = get_traits mod
     
     new_opts = options[:type] ? {:type=>options[:type]} : {}
@@ -230,8 +231,8 @@ module Card::Set
   def define_trait_writer trait
     define_method "#{trait}=" do |value|
       card = send "#{trait}_card"
-      self.cards ||= {}
-      self.cards[card.name] = {:type_id => card.type_id, :content=>value }
+      self.subcards ||= {}
+      self.subcards[card.name] = {:type_id => card.type_id, :content=>value }
       instance_variable_set "@#{trait}", value
     end
   end

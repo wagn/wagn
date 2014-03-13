@@ -130,7 +130,7 @@ describe "basic card tests" do
 
   it 'update_should_create_subcards' do
     banana = Card.create! :name=>'Banana'
-    Card.update banana.id, :cards=>{ "+peel" => { :content => "yellow" }}
+    Card.update banana.id, :subcards=>{ "+peel" => { :content => "yellow" }}
 
     peel = Card['Banana+peel']
     peel.content.       should == "yellow"
@@ -143,7 +143,7 @@ describe "basic card tests" do
     Card['Banana'].should_not be
     Card['Basic'].ok?(:create).should be_false, "anon can't creat"
 
-    Card.create! :type=>"Fruit", :name=>'Banana', :cards=>{ "+peel" => { :content => "yellow" }}
+    Card.create! :type=>"Fruit", :name=>'Banana', :subcards=>{ "+peel" => { :content => "yellow" }}
     Card['Banana'].should be
     peel = Card["Banana+peel"]
 
@@ -154,11 +154,11 @@ describe "basic card tests" do
   it 'update_should_not_create_subcards_if_missing_main_card_permissions' do
     b = Card.create!( :name=>'Banana' )
     Account.as Card::AnonID do
-      b.update_attributes :cards=>{ "+peel" => { :content => "yellow" }}
+      b.update_attributes :subcards=>{ "+peel" => { :content => "yellow" }}
       b.errors[:permission_denied].should_not be_empty
       
       
-      c = Card.update(b.id, :cards=>{ "+peel" => { :content => "yellow" }})
+      c = Card.update(b.id, :subcards=>{ "+peel" => { :content => "yellow" }})
       c.errors[:permission_denied].should_not be_empty
       Card['Banana+peel'].should be_nil
     end

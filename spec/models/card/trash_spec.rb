@@ -58,21 +58,23 @@ describe Card, "plus cards" do
 end
 
 # FIXME: these user tests should probably be in a set of cardtype specific tests somewhere..
-describe User, "with revisions" do
-  before do Account.as_bot { @c = Card["Wagn Bot"] } end
-  it "should not be removable" do
-    @c.delete.should_not be_true
-  end
-end
-
-describe User, "without revisions" do
-  before do
-    Account.as_bot do
-      @c = Card.create! :name=>'User Must Die', :type=>'User'
+describe Card do
+  context "with revisions" do
+    before do Account.as_bot { @c = Card["Wagn Bot"] } end
+    it "should not be removable" do
+      @c.delete.should_not be_true
     end
   end
-  it "should be removable" do
-    @c.delete!.should be_true
+
+  context "without revisions" do
+    before do
+      Account.as_bot do
+        @c = Card.create! :name=>'User Must Die', :type=>'User'
+      end
+    end
+    it "should be removable" do
+      @c.delete!.should be_true
+    end
   end
 end
 

@@ -139,7 +139,7 @@ describe Card::Format do
         rendered = Card::HtmlFormat.new(card).render_new
         #warn "rendered = #{rendered}"
         assert_view_select rendered, 'fieldset' do
-          assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', "card[cards][+Yoruba][content]"
+          assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', "card[subcards][+Yoruba][content]"
         end
       end
     end
@@ -153,7 +153,7 @@ describe Card::Format do
       result = Card::Format.new(@card).render :edit
 #      warn "res #{@card.inspect}\n#{result}"
       assert_view_select result, 'fieldset' do
-        assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][+alpha][content]'
+        assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[subcards][+alpha][content]'
       end
     end
 
@@ -164,8 +164,8 @@ describe Card::Format do
       c = Card.new :name=>'Yo Buddddy', :type=>'Book'
       result = Card::HtmlFormat.new(c).render( :new )
       assert_view_select result, 'fieldset' do
-        assert_select 'input[name=?][type="text"][value="Zamma Flamma"]', 'card[cards][+author][content]'
-        assert_select %{input[name=?][type="hidden"][value="#{Card::PhraseID}"]},     'card[cards][+author][type_id]'
+        assert_select 'input[name=?][type="text"][value="Zamma Flamma"]', 'card[subcards][+author][content]'
+        assert_select %{input[name=?][type="hidden"][value="#{Card::PhraseID}"]},     'card[subcards][+author][type_id]'
       end
     end
   end

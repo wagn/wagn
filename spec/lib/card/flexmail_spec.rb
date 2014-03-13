@@ -98,7 +98,7 @@ describe Card::Flexmail do
           :name    => "Banana Trigger",
           :content => "data content [[A]]",
           :type    => 'Trigger',
-          :cards=> {
+          :subcards=> {
             '+email'      => {:content=>'gary@gary.com'},
             '+subject'    => {:type=>'Pointer', :content=>'[[default subject]]'},
 #            '+attachment' => {:type=>'File', :content=>"notreally.txt" }
@@ -169,7 +169,7 @@ describe Card::Flexmail do
       it "calls to mailer on Card#create" do
         mock(Mailer).flexmail(hash_including(:to=>"joe@user.com")).at_least(1)
         c = Card.create :name => "Illiodity", :type=>"Book"
-        Card.update(c.id, :cards=> {"~author" => {"name" => "Bukowski"}})
+        Card.update(c.id, :subcards=> {"~author" => {"name" => "Bukowski"}})
       end
     end
   end

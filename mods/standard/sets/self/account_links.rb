@@ -5,20 +5,20 @@ format :html do
     #ENGLISH
     prefix = "#{ Wagn.config.relative_url_root }/account"
     %{<span id="logging">#{
-      if Account.logged_in?
+      if Account.signed_in?
         ucard = Account.current
         %{
           #{ link_to ucard.name, "#{ Wagn.config.relative_url_root }/#{ucard.cardname.url_key}", :id=>'my-card-link' }
           #{
-            if Account.create_ok?
+            if Card.new(:type_id=>Card.default_accounted_type_id).ok? :create
               link_to 'Invite a Friend', "#{prefix}/invite", :id=>'invite-a-friend-link'
             end
           }
-          #{ link_to 'Sign out', "#{prefix}/signout",                                      :id=>'signout-link' }
+          #{ link_to 'Sign out', "#{prefix}/signout", :id=>'signout-link' }
         }
       else
         %{
-          #{ if Card.new(:type_code=>'account_request').ok? :create
+          #{ if Card.new(:type_id=>Card::AccountRequestID).ok? :create
                link_to 'Sign up', "#{prefix}/signup", :id=>'signup-link'
              end }
           #{ link_to 'Sign in', "#{prefix}/signin", :id=>'signin-link' }

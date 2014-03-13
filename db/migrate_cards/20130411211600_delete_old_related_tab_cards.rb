@@ -18,10 +18,4 @@ class DeleteOldRelatedTabCards < ActiveRecord::Migration
       end      
     end
   end
-
-  def down
-    contentedly do
-      
-    end
-  end
 end

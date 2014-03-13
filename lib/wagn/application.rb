@@ -25,6 +25,8 @@ module Wagn
       @config ||= begin
         config = super
         
+        config.i18n.enforce_available_locales = true
+        
         config.autoload_paths += Dir["#{Wagn.gem_root}/app/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/lib/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/mods/standard/lib/**/"]
@@ -45,7 +47,7 @@ module Wagn
         config.recaptcha_private_key = nil
         config.recaptcha_proxy       = nil
         
-        config.send_emails           = !ENV['WAGN_MIGRATION']
+        config.send_emails           = true
         config.email_defaults        = nil
         config.override_host         = nil
         config.override_protocol     = nil

@@ -1,3 +1,4 @@
+require 'uuid'
 
 def name= newname
   cardname = newname.to_name
@@ -14,12 +15,12 @@ def name= newname
     reset_patterns_if_rule # reset the old name - should be handled in tracked_attributes!!
     reset_patterns
   end
-  if @subcards
-    @subcards.each do |subkey, subcard|
-      next if Symbol===subkey
-      subcard.name = subkey.to_name.to_absolute cardname
-    end
+  
+  subcards.each do |subkey, subcard|
+    next unless Card===subcard
+    subcard.name = subkey.to_name.to_absolute cardname
   end
+  
   super cardname.s
 end
 
@@ -174,7 +175,7 @@ end
 
 event :validate_key, :after=>:validate_name, :on=>:save do
   if key.empty?
-    errors.add :key, "cannot be blank"
+    errors.add :key, "cannot be blank" if errors.empty?
   elsif key != cardname.key
     errors.add :key, "wrong key '#{key}' for name #{name}"
   end

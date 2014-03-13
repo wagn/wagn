@@ -2,6 +2,7 @@
 def save
   super
 rescue Card::Abort => e
+  # need mechanism for subcards to abort entire process
   e.status == :success
 end
 
@@ -54,8 +55,9 @@ end
 def rescue_event e
   @action = nil
   expire_pieces
-  if @subcards
-    @subcards.each { |key, card| card.expire_pieces }
+  subcards.each do |key, card|
+    next unless Card===card
+    card.expire_pieces
   end
   raise e
 #rescue Card::Cancel
@@ -75,25 +77,40 @@ def event_applies? opts
   true
 end
 
-event :process_subcards, :after=>:approve, :on=>:save do
-  @subcards = {}
-  (cards || {}).each do |sub_name, opts|
-    next if sub_name.to_name.key == key # don't resave self!
+def subcards
+  @subcards ||= {}
+end
 
-    opts[:supercard] = self    
-    subcard = if known_card = Card[sub_name]
+event :process_subcards, :after=>:approve, :on=>:save do
+  
+  subcards.keys.each do |sub_name|
+    opts = @subcards[sub_name]
+    ab_name = sub_name.to_name.to_absolute_name name
+    next if ab_name.key == key # don't resave self!
+
+
+    opts = opts.stringify_keys
+    opts['subcards'] = extract_subcard_args! opts
+
+    opts[:supercard] = self
+    
+    subcard = if known_card = Card[ab_name]
       known_card.refresh.assign_attributes opts
       known_card
-    elsif opts[:content].present? and opts[:content].strip.present?
-      Card.new opts.merge :name => sub_name
+    elsif opts['subcards'].present? or (opts['content'].present? and opts['content'].strip.present?)
+      Card.new opts.reverse_merge 'name' => sub_name
     end
 
-    @subcards[sub_name] = subcard if subcard
+    if subcard
+      @subcards[sub_name] = subcard
+    else
+      @subcards.delete sub_name
+    end
   end
 end
 
 event :approve_subcards, :after=>:process_subcards do
-  @subcards.each do |key, subcard|
+  subcards.each do |key, subcard|
     if !subcard.valid?
       subcard.errors.each do |field, err|
         errors.add field, "#{subcard.relative_name}: #{err}"
@@ -103,7 +120,7 @@ event :approve_subcards, :after=>:process_subcards do
 end
 
 event :store_subcards, :after=>:store do
-  @subcards.each do |key, sub|
+  subcards.each do |key, sub|
     sub.save! :validate=>false
   end
 end

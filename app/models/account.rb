@@ -1,59 +1,82 @@
 # -*- encoding : utf-8 -*-
-require_dependency 'user'
 
 class Account
-  @@as_card = @@as_id = @@current_id = @@current = @@user = nil
+  @@as_card = @@as_id = @@current_id = @@current = nil
 
   #after_save :reset_instance_cache
 
   class << self
-    def admin()          self[ Card::WagnBotID    ]   end
-    def as_user()        self[ Account.as_id      ]   end
-    def user()           self[ Account.current_id ]   end
-
-    def cache()          Wagn::Cache[Account]         end
-
-    def create_ok?
-      base  = Card.new :name=>'dummy*', :type_id=>Card.default_accounted_type_id
-      trait = Card.new :name=>"dummy*+#{Card[:account].name}"
-      base.ok?(:create) && trait.ok?(:create)
-    end
 
     # Authenticates a user by their login name and unencrypted password.  
-    def authenticate(email, password)
-      if u = User.find_by_email(email.strip.downcase) and 
-          ( Wagn.config.no_authentication or u.authenticated? password.strip )
-        u.card_id
-      end
-    end
-
-    # Encrypts some data with the salt.
-    def encrypt(password, salt)
-      Digest::SHA1.hexdigest("#{salt}--#{password}--")
-    end
-
-    # Account caching
-    def [] mark
-      if mark
-        cache_key = Integer === mark ? "~#{mark}" : mark
-        cached_val = cache.read cache_key
-        case cached_val
-        when :missing; nil
-        when nil
-          val = if Integer === mark
-            User.find_by_card_id mark
-          else
-            User.find_by_email mark
-          end
-          cache.write cache_key, ( val || :missing )
-          val
-        else
-          cached_val
+    def authenticate email, password
+      accounted = Account[ email ]
+      if accounted and account = accounted.account and account.active?
+        if Wagn.config.no_authentication or password_authenticated?( account, password.strip )
+          accounted.id
         end
       end
     end
+
+    def password_authenticated? account, password
+      account.password == encrypt( password, account.salt )
+    end
+
+    def authenticate_by_token token
+      token_card = Account.as_bot{ Card.search( :right=>Card[:token].name, :content=>token ).first } and
+      token_card.updated_at > 1.day.ago   and  #make configurable (note, ">" means "after")
+      account = token_card.left           and
+      account.right_id == Card::AccountID and  #legitimacy of account cards
+      accounted = account.left            and
+      accounted.accountable?              and  #legitimacy of accounted_card  
+      accounted.id
+    end
+
     
-#----------
+    # Encrypts some data with the salt.
+    def encrypt password, salt
+      Digest::SHA1.hexdigest("#{salt}--#{password}--")
+    end
+
+    # Caching by email
+    def [] mark
+      cache_key = "EMAIL-#{mark.to_name.key}"
+      cache_val = Card.cache.read( cache_key ) || begin
+        card = find_accounted_by_email mark
+        Card.cache.write cache_key, ( card ? card.id : :missing )
+      end
+      cache_val == :missing ? nil : Card[cache_val]
+    end
+    
+    def find_accounted_by_email email
+      Account.as_bot do
+        Card.search( :right_plus=>[
+          {:id=>Card::AccountID},
+          {:right_plus=>[{:id=>Card::EmailID},{ :content=>email.strip.downcase }]}
+        ]).first
+      end
+    end
+    
+    def signin signin_id
+      self.current_id = signin_id
+      session[:user] = signin_id if session
+    end
+
+    def session
+      Wagn::Env[:session]
+    end
+
+    def set_current_from_session
+      self.current_id = 
+        if session
+          if card_id=session[:user] and Card.exists? card_id
+            card_id
+          else
+            session[:user] = nil
+          end
+        end
+      current_id
+    end
+
     def current_id
       @@current_id ||= Card::AnonID
     end
@@ -66,23 +89,14 @@ class Account
       end
     end
 
-    def user
-      if @@user && @@user.card_id == current_id
-        @@user
-      else
-        @@user = Account[ current_id ]
-      end
-    end
-
     def current_id= card_id
-      @@user = @@current = @@as_id = @@as_card = nil
+      @@current = @@as_id = @@as_card = nil
       @@current_id = card_id
     end
 
     def get_user_id user
       case user
       when NilClass;   nil
-      when User    ;   user.card_id
       when Card    ;   user.id
       when Integer ;   user
       else
@@ -126,13 +140,17 @@ class Account
       end
     end
 
-    def logged_in?
+    def signed_in?
       current_id != Card::AnonID
     end
 
     def no_logins?()
       c = Card.cache
-      !c.read('no_logins').nil? ? c.read('no_logins') : c.write('no_logins', (User.count < 3))
+      !c.read('no_logins').nil? ? c.read('no_logins') : c.write('no_logins', (account_count < 3))
+    end
+    
+    def account_count
+      Card.count_by_wql :right=>Card[:account].name
     end
 
     def always_ok?

@@ -2,31 +2,6 @@
 class AdminController < CardController
   before_filter :admin_only, :except=>:setup
   
-  def setup
-    raise Card::Oops, "Already setup" unless Account.no_logins?
-    if request.post?
-      Wagn::Env[:recaptcha_on] = false
-      handle do
-        Account.as_bot do
-          @card = Card.create params[:card].merge( :cards=>{
-              '+*roles'      => { :content=>"[[#{Card[:administrator].name}]]"    },
-              '*request+*to' => { :content=>params[:card][:account_args][:email]  }
-            })
-        
-          @card.errors.empty?                 and
-          self.current_account_id = @card.id  and
-          Card.cache.delete 'no_logins'       and
-          flash[:notice] = "You're good to go!"
-        end
-      end
-    else
-      @card = Card.new #should prolly skip default
-      show :setup
-    end
-  end
-
-
-
   def clear_cache
     Wagn::Cache.reset_global
     render_text 'Cache cleared'

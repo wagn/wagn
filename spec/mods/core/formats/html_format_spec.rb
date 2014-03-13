@@ -16,7 +16,7 @@ describe Card::HtmlFormat do
       rendered =  Card::Format.new(c).render( :edit )
 
       assert_view_select rendered, 'fieldset' do
-        assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][+illustrator][content]'
+        assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[subcards][+illustrator][content]'
       end
     end
 

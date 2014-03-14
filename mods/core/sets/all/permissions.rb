@@ -220,6 +220,7 @@ end
 
 module Accounts
   def permit action, verb=nil
+    case
     when action==:comment  ; @action_ok = false
     when is_own_account?   ; true 
     else                   ; super action, verb

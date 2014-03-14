@@ -42,8 +42,6 @@ jQuery.fn.extend {
     v
 
   slotSuccess: (data) ->
-    warn "slotSuccess called"
-    wagn.success = data
     
     if data.redirect
       window.location=data.redirect

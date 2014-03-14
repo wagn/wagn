@@ -128,6 +128,7 @@ class Card
     end
   
     def frame_and_form action, args={}, form_opts={}
+      form_opts.merge! args.delete(:form_opts) if args[:form_opts]
       form_opts[:hidden] = args.delete(:hidden)
       frame args do
         card_form action, form_opts do

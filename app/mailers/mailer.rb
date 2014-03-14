@@ -15,15 +15,16 @@ class Mailer < ActionMailer::Base
     @site = Card.setting :title
     @link = wagn_url "/update/#{account.left.cardname.url_key}?token=#{account.token}"
 
-    #FIXME - might want different "from" settings for different contexts?
-    invite_from = Card.setting( '*invite+*from' ) || begin
-      from_card_id = Account.current_id
-      from_card_id = Card::WagnBotID if [ Card::AnonID, account.left_id ].member? from_card_id
-      from_card = Card[from_card_id]
-      "#{from_card.name} <#{from_card.account.email}>"
-    end
+    confirm_from = token_emails_from(account)
+    mail_from( { :to=>account.email, :subject=>"verification link for #{@site}" }, confirm_from )
+  end
+  
+  def password_reset account
+    @site = Card.setting :title
+    @link = wagn_url "/update/#{account.cardname.url_key}?reset_token=#{account.token_card.refresh(true).content}"
     
-    mail_from( { :to=>account.email, :subject=>"verification link for #{@site}" }, invite_from )
+    reset_from = token_emails_from(account)
+    mail_from( { :to=>account.email, :subject=>"verification link for #{@site}" }, reset_from )    
   end
 
   def signup_alert invite_request
@@ -83,6 +84,15 @@ class Mailer < ActionMailer::Base
   end
 
   private
+
+  def token_emails_from account
+    Card.setting( '*invite+*from' ) || begin
+      from_card_id = Account.current_id
+      from_card_id = Card::WagnBotID if [ Card::AnonID, account.left_id ].member? from_card_id
+      from_card = Card[from_card_id]
+      "#{from_card.name} <#{from_card.account.email}>"
+    end
+  end
 
   def mail_from args, from
     from_name, from_email = (from =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, from]

@@ -203,7 +203,7 @@ format :html do
 
   
   view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
-    frame_and_form :update, args do |form|
+    frame_and_form :update, args do
       [
         _optional_render( :content_fieldsets, args ),
         _optional_render( :button_fieldset,   args )

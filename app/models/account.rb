@@ -37,17 +37,8 @@ class Account
       Digest::SHA1.hexdigest("#{salt}--#{password}--")
     end
 
-    # Caching by email
-    def [] mark
-      cache_key = "EMAIL-#{mark.to_name.key}"
-      cache_val = Card.cache.read( cache_key ) || begin
-        card = find_accounted_by_email mark
-        Card.cache.write cache_key, ( card ? card.id : :missing )
-      end
-      cache_val == :missing ? nil : Card[cache_val]
-    end
-    
-    def find_accounted_by_email email
+    # find accounted by email
+    def [] email
       Account.as_bot do
         Card.search( :right_plus=>[
           {:id=>Card::AccountID},
@@ -55,7 +46,7 @@ class Account
         ]).first
       end
     end
-    
+        
     def signin signin_id
       self.current_id = signin_id
       session[:user] = signin_id if session

@@ -45,16 +45,11 @@ module Wagn::Location
    # -----------( urls and redirects from application.rb) ----------------
 
 
-  # FIXME: missing test  shouldn't this have the rootpath?
+  # TESTME
   def page_path title, opts={}
-    format = (opts[:format] ? ".#{opts.delete(:format)}"  : "")
-    vars = ''
-    if !opts.empty?
-      pairs = []
-      opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
-      vars = '?' + pairs.join('&')
-    end
-    wagn_path "#{title.to_name.url_key}#{format}#{vars}"
+    format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
+    query  = opts.present? ? "?#{opts.to_param}"         : ''
+    wagn_path "#{title.to_name.url_key}#{format}#{query}"
   end
 
   def wagn_path rel #should be in smartname?

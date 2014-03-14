@@ -52,8 +52,23 @@ event :set_default_status, :on=>:create, :before=>:process_subcards do
   subcards["+#{Card[:status].name}"] = { :content => ( Account.signed_in? ? 'active' : 'pending' ) }
 end
 
-event :generate_token, :on=>:create, :before=>:process_subcards do
-  subcards["+#{Card[:token].name}"] = {:content => Digest::SHA1.hexdigest( "--#{Time.now.to_s}--#{rand 10}--" ) }
+event :generate_confirmation_token, :on=>:create, :before=>:process_subcards do
+  subcards["+#{Card[:token].name}"] = {:content => generate_token }
+end
+
+event :reset_password, :on=>:update, :before=>:approve do
+  if token = Wagn::Env.params[:reset_token]    
+    if left_id == Account.authenticate_by_token(token)
+      Account.signin left_id
+      Wagn::Env.params[:success] = { :id=>left.name, :view=>:related,
+        :related=>{:name=>"+#{Card[:account].name}", :view=>'edit'}
+      }
+      abort :success
+    else
+      abort :failure
+      # handle bad token
+    end
+  end
 end
 
 event :send_new_account_confirmation_email, :on=>:create, :after=>:extend do

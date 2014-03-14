@@ -4,7 +4,8 @@ include Card::Set::All::Permissions::Accounts
 
 view :editor do |args|
   card.content = ''
-  _final_phrase_type_editor args
+  autocomplete = Account.signed_in? ? 'off' : 'on'
+  form.password_field :content, :class=>'card-content', :autocomplete=>autocomplete
 end
 
 view :raw do |args|

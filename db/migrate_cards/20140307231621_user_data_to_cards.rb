@@ -30,6 +30,12 @@ class UserDataToCards < ActiveRecord::Migration
         Card.create! :name=>rulename, :type_id=>Card::PhraseID
       end
       
+      puts "signin permissions"
+      [:read, :update].each do |setting|
+        rulename = [ :signin, :self, setting ].map { |code| Card[code].name } * '+'
+        Card.create! :name=>rulename, :content=>"[[#{Card[:anyone].name}]]"
+      end
+      
       puts "turn captcha off by default"
       rulename = [:all, :captcha].map { |code| Card[code].name } * '+'
       captcha_rule = Card.fetch rulename, :new=>{}
@@ -58,7 +64,6 @@ class UserDataToCards < ActiveRecord::Migration
           end
         end
       end
-      
       
     end
   end

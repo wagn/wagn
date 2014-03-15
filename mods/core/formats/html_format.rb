@@ -334,7 +334,8 @@ class Card
         when true   ; _render_help
         else        ; nil
       end
-      %{
+      Rails.logger.info "about to render fieldset.  title = #{title}, help_text = #{help_text}"
+      f = %{
         <fieldset #{ attrib_string }>
           <legend>
             <h2>#{ title }</h2>
@@ -343,6 +344,8 @@ class Card
           #{ editor_wrap( opts[:editor] ) { content } }
         </fieldset>
       }
+      Rails.logger.info "f = #{f}"
+      f
     end
   
     def hidden_tags hash, base=nil

@@ -5,26 +5,28 @@ format :html do
     table_of_contents(content) || content
   end
 
-  def table_of_contents(content)
-    return if @mode==:closed
+  def table_of_contents content
+    return if @mode==:closed || !content.present?
     min = card.rule(:table_of_contents).to_i
     #warn "table_of #{name}, #{min}"
     return unless min and min > 0
 
     toc, dep = [], 1
     content.gsub!( /<(h\d)>(.*?)<\/h\d>/i ) do |match|
-      tag, value = $~[1,2]
-      value = ActionView::Base.new.strip_tags(value).strip
-      next if value.empty?
-      item = { :value => value, :uri => URI.escape(value) }
-      case tag.downcase
-      when 'h1'
-        item[:depth] = dep = 1; toc << item
-      when 'h2'
-        toc << []  if dep == 1
-        item[:depth] = dep = 2; toc.last << item
+      if $~
+        tag, value = $~[1,2]
+        value = ActionView::Base.new.strip_tags(value).strip
+        next if value.empty?
+        item = { :value => value, :uri => URI.escape(value) }
+        case tag.downcase
+        when 'h1'
+          item[:depth] = dep = 1; toc << item
+        when 'h2'
+          toc << []  if dep == 1
+          item[:depth] = dep = 2; toc.last << item
+        end
+        %{<a name="#{item[:uri]}"></a>#{match}}
       end
-      %{<a name="#{item[:uri]}"></a>#{match}}
     end
 
     if toc.flatten.length >= min

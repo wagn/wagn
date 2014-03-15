@@ -4,21 +4,22 @@
 format :html do
 
   view :open do |args|
-    args.merge!( {
-      :title=>'Sign In',
-      :optional_help=>:show,
-  #    :optional_menu=>:never,
-    } )
-  
+    args.merge! :title=>'Sign In', :optional_help=>:show
     _final_open args
   end
 
+  view :open_content do |args|
+    # annoying step designed to avoid table of contents.  sigh
+    _render_core( args )
+  end
+  
+  
   view :core do |args|
     args[:buttons] = submit_tag 'Sign in'
     if Card.new(:type_id=>Card::AccountRequestID).ok? :create
       args[:buttons] += link_to( '...or sign up!', wagn_path("new/:account_request"))
     end
-    args[:buttons] += raw("<div style='float:right'>#{ link_to_view 'RESET PASSWORD', :edit }</div>")
+    args[:buttons] += raw("<div style='float:right'>#{ link_to_view 'RESET PASSWORD', :edit }</div>") #FIXME - hardcoded styling
   
     account = card.fetch :trait=>:account, :new=>{}
   

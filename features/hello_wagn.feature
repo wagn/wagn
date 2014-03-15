@@ -2,7 +2,7 @@ Feature: Reading and Creating a card
   In order to do anything on the site
   As a user
   I want to be able to read and edit cards
-  #expand to CRUD?
+#expand to CRUD?
 
   Background:
     Given I log in as Joe User

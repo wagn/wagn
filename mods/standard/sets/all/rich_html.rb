@@ -329,7 +329,7 @@ format :html do
   end
   
   view :content_fieldsets do |args|
-    %{
+    raw %{
       <div class="card-editor editor">
         #{ edit_slot args }
       </div>
@@ -344,7 +344,7 @@ format :html do
 
 
 
-  view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args| #fixme.  why is this a view??
+  view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
     eform = form_for_multi
     content = content_field eform, args.merge( :nested=>true )
     opts = { :editor=>'content', :help=>true, :attribs =>
@@ -355,6 +355,13 @@ format :html do
     else
       opts[:attribs].merge! :card_id=>card.id, :card_name=>(h card.name)
     end
+    
+    Rails.logger.info %{edit_in_form called for #{card.name}:
+  title: #{args[:title]}
+  fancy_title: #{fancy_title args[:title]}
+
+}
+    
     fieldset fancy_title( args[:title] ), content, opts
   end
 

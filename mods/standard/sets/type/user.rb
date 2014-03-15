@@ -42,7 +42,7 @@ format :html do
     account = card.fetch :trait=>:account, :new=>{}
 
     Account.as_bot do
-      frame_and_form :create, args, :recaptcha=>:off do
+      frame_and_form :create, args do
         [
           _render_name_fieldset( :help=>'usually first and last name' ),
           subformat(account)._render( :content_fieldset, :structure=>true ), 
@@ -52,7 +52,6 @@ format :html do
     end
   end
 end
-
 
 event :setup_as_bot, :before=>:check_permissions, :on=>:create, :when=>proc{ |c| Wagn::Env.params[:setup] } do
   abort :failure unless Account.no_logins?

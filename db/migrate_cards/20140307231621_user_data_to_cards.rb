@@ -36,8 +36,8 @@ class UserDataToCards < ActiveRecord::Migration
         Card.create! :name=>rulename, :content=>"[[#{Card[:anyone].name}]]"
       end
       
-      puts "turn captcha off by default"
-      rulename = [:all, :captcha].map { |code| Card[code].name } * '+'
+      puts "turn captcha off by default on signup"
+      rulename = [:account_request, :type, :captcha].map { |code| Card[code].name } * '+'
       captcha_rule = Card.fetch rulename, :new=>{}
       captcha_rule.content = '0'
       captcha_rule.save!

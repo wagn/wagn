@@ -68,6 +68,7 @@ class WagnController < ActionController::Base
       when '*previous'     ;  previous_location #could do as *previous
       when /^(http|\/)/    ;  target
       when /^TEXT:\s*(.+)/ ;  $1
+      when ''              ;  ''
       else                 ;  Card.fetch target.to_name.to_absolute(card.cardname), :new=>{}
       end
 

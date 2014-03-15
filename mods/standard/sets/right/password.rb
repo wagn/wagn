@@ -4,7 +4,7 @@ include Card::Set::All::Permissions::Accounts
 
 view :editor do |args|
   card.content = ''
-  autocomplete = Account.signed_in? ? 'off' : 'on'
+  autocomplete = (@parent && @parent.card.name=='*signin+*account') ? 'on' : 'off' #hack
   form.password_field :content, :class=>'card-content', :autocomplete=>autocomplete
 end
 

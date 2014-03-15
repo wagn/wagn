@@ -10,7 +10,7 @@ format :html do
       :optional_help => :show, #, :optional_menu=>:never
       :buttons => submit_tag( 'Submit' ),
       :hidden => {
-        :success => Card.setting( "#{ Card[ card.accountable? ? :signup : :request ].name }+#{ Card[ :thanks ].name }" ),
+        :success => Card.setting( "#{ Card[ :signup ].name }+#{ Card[ :thanks ].name }" ),
         'card[type_id]' => card.type_id
       }
     )
@@ -27,7 +27,7 @@ format :html do
     end
   end
 
-
+=begin
   view :edit do |args|
     args[:help_text] ||= "Accept account request"
     args[:hidden] ||= {
@@ -39,25 +39,13 @@ format :html do
       #_render_invitation_field
     end
   end
+=end
 
   view :core do |args|
-    links = []
     #ENGLISH
-=begin
-    if Card.new(:type_id=>Card.default_accounted_type_id).ok? :create
-      links << link_to( "Invite #{card.name}", path(:view=>:edit), :class=>'invitation-link')
-    end
-    if Account.signed_in? && card.ok?(:delete)
-      links << link_to( "Deny #{card.name}", path(:action=>:delete), :class=>'slotter standard-delete', :remote=>true )
-    end
-=end
     process_content(_render_raw) +
     if (card.new_card?); '' else
-      %{<div class="invite-links">
-          <div><strong>#{card.name}</strong> requested an account on #{format_date(card.created_at) }</div>
-          #{#%{<div>#{links.join('')}</div> } unless links.empty? 
-          }
-      </div>}
+      %{<div class="invite-links"><strong>#{card.name}</strong> requested an account on #{format_date(card.created_at) }</div>}
     end
   end
 end
@@ -68,12 +56,14 @@ event :activate_by_token, :before=>:approve, :on=>:update do
       subcards['+*account'] = {'+*status'=>'active'}
       self.type_id = Card.default_accounted_type_id
       Account.signin id #move this to extend?
-      Account.as_bot      
+      Account.as_bot
+      Wagn::Env.params[:success] = ''
     else
       abort :failure
     end
   end
 end
+
 
 event :preprocess_account_subcards, :before=>:process_subcards, :on=>:create do
   #FIXME: use codenames!
@@ -82,10 +72,6 @@ event :preprocess_account_subcards, :before=>:process_subcards, :on=>:create do
   subcards['+*account']['+*email']   = email if email
   subcards['+*account']['+*password' ]=password if password
 end
-
-#event :auto_approve, :after=>:approve, :on=>:create, :when=>proc { |c| c.accountable? } do
-#  self.type_id = Card.default_accounted_type_id unless Wagn::Env[:no_auto_approval]
-#end
 
 send_signup_notifications = proc do |c|
   c.account and c.account.pending? and Card.setting '*request+*to'

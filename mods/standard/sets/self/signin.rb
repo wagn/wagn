@@ -30,7 +30,9 @@ format :html do
     with_inclusion_mode :edit do
       card_form :update, form_args do
         [
-          Account.as_bot { subformat(account)._render( :content_fieldset, :structure=>true ) }, 
+          Account.as_bot do
+            subformat(account)._render :content_fieldset, :structure=>true, :items=>{:autocomplete=>'on'}
+          end, 
           _optional_render( :button_fieldset, args )
         ].join
       end

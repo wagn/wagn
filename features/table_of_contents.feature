@@ -4,7 +4,7 @@ Feature: Table of Contents
   I want to be able to set a minimum header number
 
   Background:
-    Given I log in as Joe Admin
+    Given I sign in as Joe Admin
     And I create Basic card "Two Header" with content "<h1>I'm a header</h1><h1>me too</h1>"
     And I create Basic card "Three Headers" with content "<h1>I'm a header</h1><h2>Me too</h2><h1>same here</h1>"
 

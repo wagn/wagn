@@ -4,7 +4,7 @@ Feature: Notifications
 
   Scenario: Watching a Card
     Given Joe Admin is watching "Home"
-    And I log in as Joe Admin
+    And I sign in as Joe Admin
     When Joe User edits "Home" setting content to "Boo"
     Then Joe Admin should be notified that "Joe User updated \"Home\""
 # FIXME:need multiline matching
@@ -15,7 +15,7 @@ Feature: Notifications
 
   Scenario: Watching a Type Card
     Given Joe Admin is watching "Phrase"
-    And I log in as Joe Admin
+    And I sign in as Joe Admin
     When Joe User creates Phrase card "Foo" with content "bar"
     Then Joe Admin should be notified that "Joe User created \"Foo\""
     # FIXME:need multiline matching

@@ -20,7 +20,7 @@ class Card < ActiveRecord::Base
   cattr_accessor :set_patterns, :error_codes
   @@set_patterns, @@error_codes = [], {}
 
-  attr_writer :selected_revision_id #writer because read method is in mod (and does not override upon loads
+  attr_writer :selected_revision_id #writer because read method is in mod (and does not override upon load)
   attr_accessor :action, :supercard,         
     :comment, :comment_author,    # obviated soon
     :update_referencers           # wrong mechanism for this

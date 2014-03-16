@@ -4,8 +4,8 @@ Feature: account requests
   I want to receive and approve/deny account requests
 
   Background:
-    Given I sign up as "Wanna B" with email "wanna@wagn.org"
-    And I log in as Joe Admin
+    Given I sign up as "Wanna B" with email "wanna@wagn.org" and password "wanna_pass"
+    And I sign in as Joe Admin
     And I create card "User+*type+*structure" with content "{{+life story}}"
 
   Scenario: Responding to account request

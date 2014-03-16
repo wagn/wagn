@@ -5,7 +5,7 @@ Feature: Reading and Creating a card
 #expand to CRUD?
 
   Background:
-    Given I log in as Joe User
+    Given I sign in as Joe User
     #test authentication separately
 
 #  @javascript
@@ -23,7 +23,7 @@ Feature: Reading and Creating a card
 #    Then In the main card header I should see a link with class "ui-icon-circle-triangle-s"
 
   Scenario: Create a Card
-    Given I log in as Joe User
+    Given I sign in as Joe User
     When I create Phrase card "Buffalo" with content "Me and Me"
 #    And I go to card "Buffalo"
     Then In the main card header  I should see "Buffalo"

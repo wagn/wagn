@@ -11,7 +11,7 @@ Given /^I sign up as "(.*)" with email "(.*)"$/ do |cardname, email|
   click_button 'Submit'
 end
 
-Given /^I log in as (.+)$/ do |account_name|
+Given /^I sign in as (.+)$/ do |account_name|
   # FIXME: define a faster simulate method ("I am logged in as")
   accounted = Card[account_name]
   @current_id = accounted.id
@@ -128,11 +128,11 @@ def signed_in_as(username)
   sameuser = (username == "I" or @current_id && Card[@current_id].name == username)
   unless sameuser
     @saved_user = @current_id
-    step "I log in as #{username}"
+    step "I sign in as #{username}"
   end
   yield
   unless sameuser
-    step( @saved_user ? "I log in as #{Card[@saved_user].name}" : "I log out" )
+    step( @saved_user ? "I sign in as #{Card[@saved_user].name}" : "I log out" )
   end
 end
 

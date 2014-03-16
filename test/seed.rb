@@ -144,8 +144,6 @@ class SharedData
       Card.create! :name => "Optic+*watchers", :content => "[[Sara]]"
       Card.create! :name => "Sunglasses", :type=>"Optic", :content=>"{{+tint}}"
       Card.create! :name => "Sunglasses+tint"
-
-      # TODO: I would like to setup these card definitions with something like Cucumbers table feature.
     end
 
 

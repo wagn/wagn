@@ -4,7 +4,7 @@ Feature: autonaming
   I want to be able to skip naming cards where names matter little
 
   Background:
-    Given I log in as Joe Admin
+    Given I sign in as Joe Admin
     And I create Phrase card "Book+*type+*autoname" with content "Book_1"
 
   Scenario: Simple cardtype autoname

@@ -75,7 +75,7 @@ def trunk_watcher_watched_pairs
     tcard = Card[tname=cardname.trunk_name]
     tcard and pairs = tcard.watcher_watched_pairs
     #fixme - includers not working on structured cards, so this is commented for now
-    return pairs if !pairs.nil? #and includers.map(&:key).member?(tname.key)
+    return pairs if !pairs.nil? and includers.map(&:key).member?(tname.key)
   end
   []
 end

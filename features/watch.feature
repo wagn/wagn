@@ -5,7 +5,7 @@ Feature: Watch interface
   I want simple watch interface on cards
 
   Background:
-    Given I log in as Joe User
+    Given I sign in as Joe User
 
   Scenario: Anonymous User should not see watch UI
     Given I log out

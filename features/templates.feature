@@ -4,7 +4,7 @@ Feature: templates
   I want to template cards
 
   Background:
-    Given I log in as Joe User
+    Given I sign in as Joe User
 
   Scenario: New templated card
     When I go to new Book

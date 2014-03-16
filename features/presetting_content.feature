@@ -4,7 +4,7 @@ Feature: Presetting content
   I want to be able to create links specifying content for plus cards of templated cards
 
   Scenario: User age
-    Given I log in as Joe User
+    Given I sign in as Joe User
     And I go to new Book presetting name to "Harry Potter" and author to "JK Rowling"
     And I press "Submit"
     When I go to card "Harry Potter+author"

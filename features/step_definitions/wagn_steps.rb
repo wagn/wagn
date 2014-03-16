@@ -7,10 +7,9 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "pat
 Given /^I sign up as "(.*)" with email "([^\"]*)" and password "([^\"]*)"$/ do |cardname, email, password|
   visit '/account/signup'
   fill_in 'card_name', :with=>cardname
-  save_and_open_page
+#  save_and_open_page
   fill_in "card[subcards][+*account+*email][content]", :with=> email
   fill_in "card[subcards][+*account+*password][content]", :with=> password
-#  fill_in 'card_account_args_email', :with=>email
   click_button 'Submit'
 end
 
@@ -102,6 +101,16 @@ When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
   end
 end
 
+
+
+Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
+  user = Account.current.name if user == "I"
+  Account.as Card[user] do
+    step "the card #{cardname}+*watchers contains \"[[#{user}]]\""
+  end
+end
+
+
 When /I wait a sec/ do
   sleep 1
 end
@@ -113,6 +122,7 @@ end
 Then /debug/ do
   debugger
 end
+
 
 
 def create_card(username,cardtype,cardname,content="")

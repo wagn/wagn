@@ -356,12 +356,6 @@ format :html do
       opts[:attribs].merge! :card_id=>card.id, :card_name=>(h card.name)
     end
     
-    Rails.logger.info %{edit_in_form called for #{card.name}:
-  title: #{args[:title]}
-  fancy_title: #{fancy_title args[:title]}
-
-}
-    
     fieldset fancy_title( args[:title] ), content, opts
   end
 

@@ -4,10 +4,13 @@ require 'cgi'
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
 
 
-Given /^I sign up as "(.*)" with email "(.*)"$/ do |cardname, email|
+Given /^I sign up as "(.*)" with email "([^\"]*)" and password "([^\"]*)"$/ do |cardname, email, password|
   visit '/account/signup'
   fill_in 'card_name', :with=>cardname
-  fill_in 'card_account_args_email', :with=>email
+  save_and_open_page
+  fill_in "card[subcards][+*account+*email][content]", :with=> email
+  fill_in "card[subcards][+*account+*password][content]", :with=> password
+#  fill_in 'card_account_args_email', :with=>email
   click_button 'Submit'
 end
 

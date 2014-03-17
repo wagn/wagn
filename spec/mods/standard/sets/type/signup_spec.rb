@@ -2,7 +2,7 @@
 
 require 'wagn/spec_helper'
 
-describe Card::Set::Type::AccountRequest do
+describe Card::Set::Type::Signup do
   
   before do
     Account.current_id = Card::AnonID
@@ -11,7 +11,7 @@ describe Card::Set::Type::AccountRequest do
   
   context 'request form' do
     before do
-      card = Card.new :type_id=>Card::AccountRequestID
+      card = Card.new :type_id=>Card::SignupID
       format = Card::Format.new card
       @form = format.render_new
     end
@@ -33,7 +33,7 @@ describe Card::Set::Type::AccountRequest do
         Card.create! :name=>'User+*type+*create', :content=>'[[Anyone]]'
         Card.create! :name=>'*request+*to', :content=>'request@wagn.org'
       end
-      @request = Card.create! :name=>'Big Bad Wolf', :type=>'Account Request', '+*account'=>{ 
+      @request = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ 
         '+*email'=>'wolf@wagn.org', '+*password'=>'wolf'
       }
       @account = @request.account
@@ -41,7 +41,7 @@ describe Card::Set::Type::AccountRequest do
     end
     
     it 'should create all the necessary cards' do
-      @request.type_id.should == Card::AccountRequestID
+      @request.type_id.should == Card::SignupID
       @account.email.should == 'wolf@wagn.org'
       @account.status.should == 'pending'
       @account.salt.should_not == ''
@@ -85,7 +85,7 @@ describe Card::Set::Type::AccountRequest do
 =begin  
   context 'valid request' do
     before do
-      @request = Card.create! :name=>'Big Bad Wolf', :type=>'Account Request', '+*account'=>{ 
+      @request = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ 
         '+*email'=>'wolf@wagn.org', '+*password'=>'wolf'
       }
     end

@@ -11,7 +11,7 @@ format :html do
       #    link_to 'Invite a Friend', "#{prefix}/invite", :id=>'invite-a-friend-link'
       #  end
     else
-      if Card.new(:type_id=>Card::AccountRequestID).ok? :create
+      if Card.new(:type_id=>Card::SignupID).ok? :create
         links << link_to( 'Sign up', wagn_path('account/signup'), :id=>'signup-link' )
       end
       links << link_to( 'Sign in', wagn_path(':signin'), :id=>'signin-link' )

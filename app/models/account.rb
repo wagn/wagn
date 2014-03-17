@@ -186,7 +186,7 @@ class Account
 
   public
 
-    NON_CREATEABLE_TYPES = %w{ account_request setting set }
+    NON_CREATEABLE_TYPES = %w{ signup setting set }
 
     def createable_types
       type_names = Account.as_bot do

@@ -34,7 +34,7 @@ class Mailer < ActionMailer::Base
     @name = invite_request.name
     @content = invite_request.content
     @request_url  = wagn_url invite_request
-    @requests_url = wagn_url Card['Account Request']
+    @requests_url = wagn_url Card[:signup]
 
     args = {
       :to           => Card.setting('*request+*to'),

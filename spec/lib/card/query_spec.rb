@@ -296,9 +296,7 @@ describe Card::Query do
         c = Card.fetch('Setting+*self+*table of contents')
         c.content = '10'
         c.save
-        c = Card['Basic+*type+*table of contents']
-        c.content = '3'
-        c.save
+        c = Card.create! :name=>'Basic+*type+*table of contents', :content=>'3'
 
         w = Card::Query.new( :right_plus=>'*table of contents', :sort=>{ :right=>'*table_of_contents'}, :sort_as=>'integer'  ) # FIXME: codename
         #warn "sql from new wql = #{w.sql}"

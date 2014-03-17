@@ -29,9 +29,9 @@ Rails.application.routes.draw do
   
   match 'account/signin'             => 'card#read', :via=>:get, :id=>':signin'
   match 'account/signout'            => 'card#delete',           :id=>':signin'
-  match 'account/signup'             => 'card#read', :via=>:get, :view=>'new',  :card=>{ :type_code=>:account_request }
-  match 'account/accept'             => 'card#read', :via=>:get, :view=>'edit', :card=>{ :type_code=>:account_request }
-  match 'account/invite'             => 'card#read', :via=>:get, :view=>'new',  :card=>{ :type_code=>:user            }
+  match 'account/signup'             => 'card#read', :via=>:get, :view=>'new',  :card=>{ :type_id=>Card::SignupID }
+  match 'account/accept'             => 'card#read', :via=>:get, :view=>'edit', :card=>{ :type_id=>Card::SignupID }
+  match 'account/invite'             => 'card#read', :via=>:get, :view=>'new',  :card=>{ :type_id=>Card::UserID   }
   
   # standard non-RESTful
   match ':controller/:action(/:id(.:format))'

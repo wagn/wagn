@@ -6,9 +6,12 @@ require 'wagn/spec_helper'
 # I think we should move the rendering tests into basic and trim this to about a quarter of its current length
 
 describe Card do
-  context 'when there is a general toc setting of 2' do
+  context 'when there is a general toc rule of 2' do
 
     before do
+      Account.as_bot do
+        Card.create! :name=>'Basic+*type+*table of contents', :content=>'2'
+      end
       (@c1 = Card['Onne Heading']).should be
       (@c2 = Card['Twwo Heading']).should be
       (@c3 = Card['Three Heading']).should be
@@ -170,13 +173,10 @@ describe Card do
   context "when I create a new rule" do
     before do
       Account.as_bot do
-        @c1 = Card.create :name=>'toc1', :type=>"CardtypeE",
-          :content=>Card['Onne Heading'].content
-        # FIXME: CardtypeE should inherit from *default => Basic
-        @c2 = Card.create :name=>'toc2', #:type=>"CardtypeE",
-          :content=>Card['Twwo Heading'].content
-        @c3 = Card.create :name=>'toc3', #:type=>"CardtypeE",
-          :content=>Card['Three Heading'].content
+        Card.create! :name=>'Basic+*type+*table of contents', :content=>'2'
+        @c1 = Card.create! :name=>'toc1', :type=>"CardtypeE", :content=>Card['Onne Heading'].content
+        @c2 = Card.create! :name=>'toc2', :content=>Card['Twwo Heading'].content
+        @c3 = Card.create! :name=>'toc3', :content=>Card['Three Heading'].content
         @c1.type_name.should == 'Cardtype E'
         @rule_card = @c1.rule_card(:table_of_contents)
 

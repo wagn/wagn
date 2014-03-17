@@ -10,7 +10,7 @@ format :html do
       :optional_help => :show, #, :optional_menu=>:never
       :buttons => submit_tag( 'Submit' ),
       :hidden => {
-        :success => Card.setting( "#{ Card[ :signup ].name }+#{ Card[ :thanks ].name }" ),
+        :success => (card.rule(:thanks) || '_self'),
         'card[type_id]' => card.type_id
       }
     )

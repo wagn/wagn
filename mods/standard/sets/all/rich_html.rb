@@ -494,8 +494,8 @@ format :html do
         when Account.signed_in?
           "You need permission #{to_task}"
         else
-          or_signup = if Card.new(:type_id=>Card::AccountRequestID).ok? :create
-            "or #{ link_to 'sign up', wagn_url('new/:account_request') }"
+          or_signup = if Card.new(:type_id=>Card::SignupID).ok? :create
+            "or #{ link_to 'sign up', wagn_url('new/:signup') }"
           end
           "You have to #{ link_to 'sign in', wagn_url(':signin') } #{or_signup} #{to_task}"
         end

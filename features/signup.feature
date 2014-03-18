@@ -4,18 +4,34 @@ Feature: Signing up
   I want to signup for an account
 
   Background:
-#    Given I sign in as Joe Admin
-#    And I create card "User+*type+*structure" with content "{{+life story}}"
+    # By default Wagns are configured to require approval
 
-  Scenario: Signing up without approval
+  Scenario: Signing up (without approval) and then signing out and back in
     Given Joe Admin creates Pointer card "User+*type+*create" with content "[[Anyone]]"
-    And I sign up as "Wanna B" with email "wanna@wagn.org" and password "wanna_pass"
+    And I am signed out
+    #This is the needed permission configuration to allow signups without approval
+    
+    When I go to the home page
+    And I follow "Sign up"
+    And I fill in "card_name" with "Wanna B"
+    And I enter "wanna@wagn.org" into "*email"
+    And I enter "wanna_pass" into "*password"
+    And I press "Submit"
     Then I should see "Signup Success"
     And "wanna@wagn.org" should receive an email with subject "verification link for My Wagn"
-    And I open the email
+    
+    When I open the email
     And I click the first link in the email
     Then I should see "Wanna B"
-    # need better indicator of success
+    
+    When I follow "Sign out"
+    Then I should not see "Wanna B"
+    
+    When I follow "Sign in"
+    And I enter "wanna@wagn.org" into "*email"
+    And I enter "wanna_pass" into "*password"
+    And I press "Sign in"
+    Then I should see "Wanna B"
   
   Scenario: Signing up with approval
     #When I go to card "AccountRequest"

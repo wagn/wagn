@@ -4,15 +4,20 @@ require 'cgi'
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
 
 
-Given /^I sign up as "(.*)" with email "([^\"]*)" and password "([^\"]*)"$/ do |cardname, email, password|
-  visit '/account/signup'
-  fill_in 'card_name', :with=>cardname
-#  save_and_open_page
-  fill_in "card[subcards][+*account+*email][content]", :with=> email
-  fill_in "card[subcards][+*account+*password][content]", :with=> password
-  click_button 'Submit'
+Given /^I am signed in as (.+)$/ do |account_name|
+  accounted = Card[account_name]
+  visit "/update/:signin?card[subcards][%2B*email][content]=#{accounted.account.email}&card[subcards][%2B*password][content]=joe_pass"
+  #could optimize by specifying simple text success page
 end
 
+Given /^I am signed out$/ do
+  visit "/"
+  if page.has_content? "Sign out"
+    step 'I follow "Sign out"'
+  end
+end
+
+=begin
 Given /^I sign in as (.+)$/ do |account_name|
   # FIXME: define a faster simulate method ("I am logged in as")
   accounted = Card[account_name]
@@ -23,12 +28,8 @@ Given /^I sign in as (.+)$/ do |account_name|
   click_button "Sign in"
   page.should have_content(account_name)
 end
+=end
 
-Given /^I log out/ do
-  visit "/"
-  click_link("Sign out")
-  page.should have_content("Sign in")
-end
 
 Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
   Account.as_bot do
@@ -101,11 +102,14 @@ When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
   end
 end
 
-
+When /^(?:|I )enter "([^"]*)" into "([^"]*)"$/ do |value, field|
+  selector = ".RIGHT-#{field.to_name.safe_key} input.card-content"
+  find( selector ).set value
+end
 
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
   user = Account.current.name if user == "I"
-  Account.as Card[user] do
+  signed_in_as user do
     step "the card #{cardname}+*watchers contains \"[[#{user}]]\""
   end
 end
@@ -137,15 +141,15 @@ def create_card(username,cardtype,cardname,content="")
   end
 end
 
-def signed_in_as(username)
-  sameuser = (username == "I" or @current_id && Card[@current_id].name == username)
+def signed_in_as username
+  sameuser = (username == "I" or Account.current.key == username.to_name.key)
+  was_signed_in = Account.current_id if Account.signed_in?
   unless sameuser
-    @saved_user = @current_id
-    step "I sign in as #{username}"
+    step "I am signed in as #{username}"
   end
   yield
   unless sameuser
-    step( @saved_user ? "I sign in as #{Card[@saved_user].name}" : "I log out" )
+    step( was_signed_in ? "I am signed in as #{Card[was_signed_in].name}" : 'I follow "Sign out"' )
   end
 end
 

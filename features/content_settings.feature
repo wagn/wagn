@@ -4,7 +4,7 @@ Feature: Content Settings
   I want to manage content settings
 
   Background:
-    Given I sign in as Joe Admin
+    Given I am signed in as Joe Admin
     And I create Cardtype card "Movie"
     And I create card "Movie+*type+*structure" with content "{{+director}} {{+lead}} {{+color}}"
     And I create Phrase card "color+*right+*default" with content "true dat"

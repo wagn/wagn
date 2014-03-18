@@ -5,7 +5,7 @@ Feature: Pointer Inputs
   I want to use different input methods for pointers
 
   Background:
-    Given I sign in as Joe Admin
+    Given I am signed in as Joe Admin
     And I create Pointer card "friends+*right+*default"
     And I create Search card "friends+*right+*options" with content "{"type":"User"}"
 

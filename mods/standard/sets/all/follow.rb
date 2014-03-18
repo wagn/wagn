@@ -47,8 +47,12 @@ event :notify_followers, :after=>:extend do
     @trunk_watcher_watched_pairs ||= trunk_watcher_watched_pairs
     @watcher_watched_pairs ||= watcher_watched_pairs
     
-    @watcher_watched_pairs.reject {|p| @trunk_watcher_watched_pairs.map(&:first).include? p.first }.each do |watcher, watched|
-      watcher and mail = Mailer.change_notice( watcher, self, action, watched.to_s, nested_notifications ) and mail.deliver
+    @watcher_watched_pairs.reject do |p|
+      @trunk_watcher_watched_pairs.map(&:first).include? p.first
+    end.each do |watcher, watched|
+      watcher and
+      mail = Mailer.change_notice( watcher, self, action, watched.to_s, nested_notifications ) and
+      mail.deliver
     end
   
     if @supercard

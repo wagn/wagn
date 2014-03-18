@@ -5,10 +5,10 @@ Feature: Watch interface
   I want simple watch interface on cards
 
   Background:
-    Given I sign in as Joe User
+    Given I am signed in as Joe User
 
   Scenario: Anonymous User should not see watch UI
-    Given I log out
+    Given I follow "Sign out"
     When I go to the homepage
     And I hover over the main menu
     Then I should not see "follow"

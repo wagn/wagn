@@ -4,7 +4,7 @@ Feature: Flexmail
   So that we can create emailing forms
 
   Background:
-    Given I sign in as Joe Admin
+    Given I am signed in as Joe Admin
     And I create Cardtype card "Testimony"
     And I create Pointer card "Testimony+*type+*send" with content "[[Testemailconfig]]"
     And I create card "Testimony+*type+*structure" with content
@@ -38,7 +38,7 @@ Feature: Flexmail
       [[A+email]]
       [[B+email]]
       """
-    And I sign in as Joe User
+    And I am signed in as Joe User
 
   Scenario: Submitting a new Testimony
     Given I go to new Testimony

@@ -20,7 +20,7 @@ end
 
 event :validate_unique_email, :after=>:validate_email, :on=>:save do
   if content.present?
-    Account.as_bot do
+    Auth.as_bot do
       wql = { :right_id=>Card::EmailID, :eq=>content }
       wql[:not] = { :id => id } if id
       if Card.search( wql ).first
@@ -41,7 +41,7 @@ def email_required?
 end
 
 def ok_to_read
-  if is_own_account? or Account.always_ok?
+  if is_own_account? or Auth.always_ok?
     true
   else
     deny_because "viewing email is restricted to administrators and account holders"
@@ -49,5 +49,5 @@ def ok_to_read
 end
 
 def is_own_account?
-  cardname.parts[0].to_name.key == Account.as_card.cardname.key
+  cardname.parts[0].to_name.key == Auth.as_card.cardname.key
 end

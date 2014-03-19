@@ -63,9 +63,6 @@ module Wagn
         add_wagn_path paths, "app",                 :eager_load => true, :glob => "*"
         add_wagn_path paths, "app/assets",          :glob => "*"
         add_wagn_path paths, "app/controllers",     :eager_load => true
-        add_wagn_path paths, "app/models",          :eager_load => true
-        add_wagn_path paths, "app/mailers",         :eager_load => true
-        add_wagn_path paths, "app/views"
         add_wagn_path paths, "lib/tasks",           :glob => "**/*.rake"
         add_wagn_path paths, "config"
         add_wagn_path paths, "config/environments", :glob => "#{Rails.env}.rb"
@@ -77,6 +74,9 @@ module Wagn
         add_wagn_path paths, "db/seeds",            :with => "db/seeds.rb"        
         add_wagn_path paths, 'gem-mods',            :with => 'mods'
 
+        paths['app/models'] = []
+        paths['app/mailers'] = []
+        paths['app/views'] = File.join( Wagn.gem_root, 'lib/card' )
         paths['local-mods'] = approot_is_gemroot? ? [] : 'mods'        
         paths.add 'files'
         

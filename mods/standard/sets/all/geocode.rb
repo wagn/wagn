@@ -1,5 +1,5 @@
 event :update_geocode, :after=>:extend, :on=>:save do
-  Account.as_bot do
+  Auth.as_bot do
     if conf = Card['*geocode']
       if junction? && conf.item_names.include?( cardname.tag )
         address = conf.item_names.map do |p|

@@ -191,7 +191,7 @@ describe Card::Query do
 
   describe "permissions" do
     it "should not find cards not in group" do
-      Account.as_bot  do
+      Card::Auth.as_bot  do
         Card.create :name=>"C+*self+*read", :type=>'Pointer', :content=>"[[R1]]"
       end
       Card::Query.new( :plus=>"A" ).run.map(&:name).sort.should == %w{ B D E F }
@@ -292,7 +292,7 @@ describe Card::Query do
     end
 
     it "should sort by plus card content" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         c = Card.fetch('Setting+*self+*table of contents')
         c.content = '10'
         c.save
@@ -305,7 +305,7 @@ describe Card::Query do
     end
 
     it "should sort by count" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         w = Card::Query.new( :name=>[:in,'Sara','John','Joe User'], :sort=>{ :right=>'*watcher', :item=>'referred_to', :return=>'count' } )
         w.run.map(&:name).should == ['Joe User','John','Sara']
       end
@@ -371,7 +371,7 @@ describe Card::Query do
   #=end
   describe "found_by" do
     before do
-      Account.current_id = Card::WagnBotID
+      Card::Auth.current_id = Card::WagnBotID
       c = Card.create(:name=>'Simple Search', :type=>'Search', :content=>'{"name":"A"}')
     end
 

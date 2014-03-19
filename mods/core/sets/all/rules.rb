@@ -58,7 +58,7 @@ end
 module ClassMethods
   
   def setting name
-    Account.as_bot do
+    Auth.as_bot do
       card=Card[name] and !card.content.strip.empty? and card.content
     end
   end

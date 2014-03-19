@@ -10,13 +10,13 @@ describe Card::Set::Right::Email do
     end
 
     it 'should allow Wagn Bot to read' do
-      Account.as_bot do
+      Card::Auth.as_bot do
         @format.render_raw.should == 'u1@user.com'
       end
     end
 
     it 'should allow self to read' do
-      Account.as Card['u1'] do
+      Card::Auth.as Card['u1'] do
         @format.render_raw.should == 'u1@user.com'
       end
     end
@@ -34,7 +34,7 @@ describe Card::Set::Right::Email do
       end
       
       it 'should downcase email' do
-        Account.as_bot do
+        Card::Auth.as_bot do
           @email_card.update_attributes! :content=>'QuIrE@example.com'
           @email_card.content.should == 'quire@example.com'
         end

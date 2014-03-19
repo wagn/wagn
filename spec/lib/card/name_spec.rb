@@ -253,9 +253,9 @@ describe Card::Name do
     end
 
     it "does session user substitution" do
-      "_user".to_name.to_absolute("A").should == Account.current.name
-      Account.as_bot do
-        "_user".to_name.to_absolute("A").should == Account.current.name
+      "_user".to_name.to_absolute("A").should == Card::Auth.current.name
+      Card::Auth.as_bot do
+        "_user".to_name.to_absolute("A").should == Card::Auth.current.name
       end
     end
   end

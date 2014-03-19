@@ -95,7 +95,7 @@ describe Card::Chunk::Include, "Inclusion" do
     
     it "should handle complex relative names" do
       bob_city = Card.create! :name=>'bob+city', :content=> "Sparta"
-      Account.as_bot { address_tmpl = Card.create! :name=>'address+*right+*structure', :content =>"{{_left+city}}" }
+      Card::Auth.as_bot { address_tmpl = Card.create! :name=>'address+*right+*structure', :content =>"{{_left+city}}" }
       bob_address = Card.create! :name=>'bob+address'
 
       r=Card::Format.new(bob_address.reload).render_core
@@ -143,7 +143,7 @@ describe Card::Chunk::Include, "Inclusion" do
     
       specialtype_template = specialtype.fetch(:trait=>:type,:new=>{}).fetch(:trait=>:structure,:new=>{})
       specialtype_template.content = "{{#{Card::Name.joint}age}}"
-      Account.as_bot { specialtype_template.save! }
+      Card::Auth.as_bot { specialtype_template.save! }
       assert_equal "{{#{Card::Name.joint}age}}", Card::Format.new(specialtype_template).render_raw
     
       wooga = Card.create! :name=>'Wooga', :type=>'SpecialType'

@@ -459,8 +459,8 @@ class Card
       end
     
       def permission_conditions
-        unless Account.always_ok? #or ( Card::Query.root_perms_only && !root? )
-          read_rules = Account.as_card.read_rules
+        unless Auth.always_ok? #or ( Card::Query.root_perms_only && !root? )
+          read_rules = Auth.as_card.read_rules
           read_rule_list = read_rules.nil? ? 1 : read_rules.join(',')
           "(#{table_alias}.read_rule_id IN (#{ read_rule_list }))"
         end      

@@ -186,7 +186,7 @@ describe CardController do
     end
     
     it "returns denial when no read permission" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.create! :name=>'Strawberry', :type=>'Fruit' #only admin can read
       end
       get :read, :id=>'Strawberry'
@@ -241,7 +241,7 @@ describe CardController do
   
   describe "#read file" do
     before do
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.create :name => "mao2", :type_code=>'image', :attach=>File.new("#{Wagn.gem_root}/test/fixtures/mao2.jpg")
         Card.create :name => 'mao2+*self+*read', :content=>'[[Administrator]]'
       end
@@ -309,7 +309,7 @@ describe CardController do
     end
 
     it "should comment" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.create :name => 'basicname+*self+*comment', :content=>'[[Anyone Signed In]]'
       end
       post :update, :id=>'basicname', :card=>{:comment => " and more\n  \nsome lines\n\n"}
@@ -340,7 +340,7 @@ describe CardController do
     #  for now.
     #
     #  def test_update_cardtype_no_stripping
-    #    Account.as 'joe_user'
+    #    Card::Auth.as 'joe_user'
     #    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
     #    #assert_equal "boo", assigns['card'].content
     #    assert_equal "<br/>", assigns['card'].content

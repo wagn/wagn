@@ -93,7 +93,7 @@ class AdminController < CardController
   end
   
   def admin_only
-    raise Wagn::PermissionDenied unless Account.always_ok?
+    raise Wagn::PermissionDenied unless Card::Auth.always_ok?
   end
 
 end

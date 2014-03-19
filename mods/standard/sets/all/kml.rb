@@ -16,7 +16,7 @@ format :kml do
     xml.kml do
       xml.Document do
 
-        cardnames = Account.as_bot do
+        cardnames = Auth.as_bot do
           # Note: we use wagn_bot to find all the applicable cards, but not for the geocode or description cards
           # This is a workaround so that folks can have maps so long as their geocode cards are publicly viewable.
           # needs deeper redesign

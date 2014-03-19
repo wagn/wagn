@@ -13,7 +13,7 @@ describe Card::Set::Rstar::Rules do
   end
 
   it "should render setting view for a *input rule" do
-    Account.as_bot do
+    Card::Auth.as_bot do
       r = Card::Format.new(Card.fetch('*read+*right+*input',:new=>{})).render_open_rule
       r.should_not match(/error/i)
       r.should_not match('No Card!')

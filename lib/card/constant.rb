@@ -1,7 +1,6 @@
 module Card::Constant
   ID_CONST_ALIAS = {
     :anon         => :anonymous,
-    :auth         => :anyone_signed_in,
     :admin        => :administrator
   }
 

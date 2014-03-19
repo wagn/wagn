@@ -65,7 +65,7 @@ module Wagn::Location
     if rel =~ /^https?\:/
       rel
     else
-      "#{ Wagn::Env[:protocol] }#{ Wagn::Env[:host] }#{ wagn_path rel }"
+      "#{ Card::Env[:protocol] }#{ Card::Env[:host] }#{ wagn_path rel }"
     end
   end
 

@@ -20,7 +20,7 @@ format :html do
     frame_and_form :create, args, 'main-success'=>"REDIRECT" do
       [
         _render_name_fieldset( :help=>'usually first and last name' ),
-        Account.as_bot { subformat(account)._render( :content_fieldset, :structure=>true ) },  #YUCK!!!!
+        Auth.as_bot { subformat(account)._render( :content_fieldset, :structure=>true ) },  #YUCK!!!!
         ( card.structure ? edit_slot : ''),
         _optional_render( :button_fieldset, args )
       ]
@@ -51,13 +51,13 @@ format :html do
 end
 
 event :activate_by_token, :before=>:approve, :on=>:update do
-  if token = Wagn::Env.params[:token]
-    if id == Account.authenticate_by_token(token)
+  if token = Card::Env.params[:token]
+    if id == Auth.authenticate_by_token(token)
       subcards['+*account'] = {'+*status'=>'active'}
       self.type_id = Card.default_accounted_type_id
-      Account.signin id #move this to extend?
-      Account.as_bot
-      Wagn::Env.params[:success] = ''
+      Auth.signin id #move this to extend?
+      Auth.as_bot
+      Card::Env.params[:success] = ''
     else
       abort :failure
     end

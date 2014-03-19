@@ -4,9 +4,11 @@ Feature: Setting up
   I want to setup an initial account
   
   Background:
-    Given site simulates setup need
     
   Scenario: Wagneer visits site for first time
+    Given site simulates setup need
+#done here bc cache gets cleared otherwise
+  
     When I go to the homepage
     Then I should see "Welcome"
     
@@ -25,4 +27,6 @@ Feature: Setting up
     And I enter "newb_pass" into "*password"
     And I press "Sign in"
     Then I should see "The Newber"
+    
+    And site stops simulating setup need
   

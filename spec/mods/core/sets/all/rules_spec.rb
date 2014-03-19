@@ -3,7 +3,7 @@ require 'wagn/spec_helper'
 
 describe Card::Set::All::Rules do
   before do
-    Account.current_id = Card::WagnBotID
+    Card::Auth.current_id = Card::WagnBotID
   end
 
   describe "setting data setup" do
@@ -75,7 +75,7 @@ describe Card::Set::All::Rules do
     it "returns pointer-specific setting names for pointer card (*type)" do
       pending "Different api, we should just put the tests in a new spec for that"
       # was this test wrong before?  What made Fruit a pointer without this?
-      Account.as_bot do
+      Card::Auth.as_bot do
         c1=Card.create! :name=>'Fruit+*type+*default', :type=>'Pointer'
         Card.create! :name=>'Pointer+*type'
       end

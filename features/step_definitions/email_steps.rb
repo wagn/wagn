@@ -201,6 +201,6 @@ end
 
 
 def address_for_user username
-  card_with_acct = username=='I' ? Account.current : Card[username]
+  card_with_acct = username=='I' ? Auth.current : Card[username]
   card_with_acct ? card_with_acct.account.email : username
 end

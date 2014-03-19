@@ -33,36 +33,36 @@ end
 
 describe "On Card Changes" do
   before do
-    Account.current_id = Card['john'].id
+    Card::Auth.current_id = Card['john'].id
     Timecop.travel(Wagn.future_stamp)  # make sure we're ahead of all the test data
   end
 
   it "sends notifications of edits" do
-    mock(Mailer).change_notice( Card['Sara'].id, Card["Sara Watching"], "updated", "Sara Watching", nil )
+    mock(Card::Mailer).change_notice( Card['Sara'].id, Card["Sara Watching"], "updated", "Sara Watching", nil )
     Card["Sara Watching"].update_attributes :content => "A new change"
   end
 
   it "sends notifications of additions" do
     new_card = Card.new :name => "Microscope", :type => "Optic"
-    mock(Mailer).change_notice( Card['Sara'].id, new_card,"created", "Optic", nil  )
+    mock(Card::Mailer).change_notice( Card['Sara'].id, new_card,"created", "Optic", nil  )
     new_card.save!
   end
 
   it "sends notification of updates" do
-    mock(Mailer).change_notice( is_a(Integer), Card["Sunglasses"], "updated", "Optic", nil)
+    mock(Card::Mailer).change_notice( is_a(Integer), Card["Sunglasses"], "updated", "Optic", nil)
     Card["Sunglasses"].update_attributes :content => 'updated content'
   end
 
   it "does not send notification to author of change" do
-    mock(Mailer).change_notice.with_any_args.times(any_times) do
-      |*a| a[0].should_not == Account.current_id
+    mock(Card::Mailer).change_notice.with_any_args.times(any_times) do
+      |*a| a[0].should_not == Card::Auth.current_id
     end
 
     Card["All Eyes On Me"].update_attributes :content => "edit by John"
   end
 
   it "does include author in wathers" do
-     Card["All Eyes On Me"].watchers.member?(Account.current_id).should be_true
+     Card["All Eyes On Me"].watchers.member?(Card::Auth.current_id).should be_true
   end
 end
 
@@ -88,8 +88,8 @@ describe "Trunk watcher notificatione" do
 
   it "sends notification to Joe Camel" do
     name = "Ulysses+author"
-    mock(Mailer).change_notice( @ja_id, @ulyss, "updated", 'Book' , [[name, "created"]], is_a(Card))
-    mock(Mailer).change_notice( @jc_id, @ulyss, "updated", @ulyss.name , [[name, "created"]], is_a(Card))
+    mock(Card::Mailer).change_notice( @ja_id, @ulyss, "updated", 'Book' , [[name, "created"]], is_a(Card))
+    mock(Card::Mailer).change_notice( @jc_id, @ulyss, "updated", @ulyss.name , [[name, "created"]], is_a(Card))
     c=Card.create :name=>name, :content => "James Joyce"
   end
 

@@ -4,8 +4,8 @@ format :html do
   view :raw do |args|
     #ENGLISH
     links = []
-    if Account.signed_in?
-      links << link_to_page( Account.current.name, nil, :id=>'my-card-link' )
+    if Auth.signed_in?
+      links << link_to_page( Auth.current.name, nil, :id=>'my-card-link' )
       links << link_to( 'Sign out', wagn_path('delete/:signin'), :id=>'signout-link' )
       #  if Card.new(:type_id=>Card.default_accounted_type_id).ok? :create
       #    link_to 'Invite a Friend', "#{prefix}/invite", :id=>'invite-a-friend-link'

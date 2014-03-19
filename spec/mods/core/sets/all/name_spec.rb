@@ -4,7 +4,7 @@ require 'wagn/spec_helper'
 describe Card::Set::All::Name do
   describe 'autoname' do
     before do
-      Account.as_bot do
+      Card::Auth.as_bot do
         @b1 = Card.create! :name=>'Book+*type+*autoname', :content=>'b1'
       end
     end
@@ -22,7 +22,7 @@ describe Card::Set::All::Name do
 
     it "should handle trashed names" do
       b1 = Card.create! :type=>'Book'
-      Account.as_bot { b1.delete }
+      Card::Auth.as_bot { b1.delete }
       b1 = Card.create! :type=>'Book'
       b1.name.should== 'b1'
     end

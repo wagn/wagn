@@ -5,7 +5,7 @@ describe Card::Set::All::Pattern do
 
   describe :set_names do
     it "returns self, type, all for simple cards" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         card = Card.new( :name => "AnewCard" )
         card.set_names.should == [ "Basic+*type","*all"]
         card.save!
@@ -15,7 +15,7 @@ describe Card::Set::All::Pattern do
     end
 
     it "returns set names for simple star cards" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.fetch('*update').set_names.should == [
           "*update+*self","*star","Setting+*type","*all"
         ]
@@ -23,7 +23,7 @@ describe Card::Set::All::Pattern do
     end
 
     it "returns set names for junction cards" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.new( :name=>"Iliad+author" ).set_names.should == [
           "Book+author+*type plus right","author+*right","Basic+*type","*all plus","*all"
         ]
@@ -31,7 +31,7 @@ describe Card::Set::All::Pattern do
     end
 
     it "returns set names for compound star cards" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.new( :name=>"Iliad+*to" ).set_names.should == [
           "Book+*to+*type plus right","*to+*right","*rstar","Phrase+*type","*all plus","*all"
         ]
@@ -39,7 +39,7 @@ describe Card::Set::All::Pattern do
     end
     
     it "handles type plus right prototypes properly" do #right place for this?  really need more prototype tests...
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.fetch('Fruit+flavor+*type plus right').prototype.set_names.include?('Fruit+flavor+*type plus right').should be_true
       end
     end
@@ -65,7 +65,7 @@ describe Card::Set::All::Pattern do
 
   describe :safe_set_keys do
     it "returns css names for simple star cards" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         card = Card.new( :name => "*AnewCard")
         card.safe_set_keys.should == "ALL TYPE-basic STAR"
         card.save!

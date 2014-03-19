@@ -39,7 +39,7 @@ describe Card::Set::All::Collection do
     it "returns content even when context card is hard templated" do #why the heck is this good?  -efm
       context_card = Card["A"] # refers to 'Z'
       
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.create! :name => "A+*self+*structure", :content => "Banana"
       end
       c = Card.new( :name => "foo", :content => "{{_self+B|core}}" )

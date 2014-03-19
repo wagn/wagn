@@ -5,7 +5,7 @@ format do
     set_card = Card.fetch(set_name)
     not_set = set_card && set_card.type_id != Card::SetID
 
-    group_options = Account.as_bot { Card.search(:type=>Card::RoleID, :sort=>'name') }
+    group_options = Auth.as_bot { Card.search(:type=>Card::RoleID, :sort=>'name') }
 
     inheritable = not_set ? false : set_card.inheritable?
     inheriting = inheritable && card.content=='_left'

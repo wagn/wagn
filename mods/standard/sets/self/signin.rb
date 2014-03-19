@@ -31,7 +31,7 @@ format :html do
     with_inclusion_mode :edit do
       card_form :update, form_args do
         [
-          Account.as_bot do
+          Auth.as_bot do
             subformat(account)._render :content_fieldset, :structure=>true, :items=>{:autocomplete=>'on'}
           end, 
           _optional_render( :button_fieldset, args )
@@ -53,7 +53,7 @@ format :html do
       }
     } )
     
-    Account.as_bot { _final_edit args }
+    Auth.as_bot { _final_edit args }
   end
   
   view :raw do |args|
@@ -70,11 +70,11 @@ event :signin, :before=>:approve, :on=>:update do
   email = subcards["+#{Card[:email   ].name}"][:content]
   pword = subcards["+#{Card[:password].name}"][:content]
   
-  if signin_id = Account.authenticate( email, pword )
-    Account.signin signin_id
+  if signin_id = Auth.authenticate( email, pword )
+    Auth.signin signin_id
     abort :success
   else
-    accted = Account[ email.strip.downcase ]
+    accted = Auth[ email.strip.downcase ]
     errors.add :signin, case
       when accted.nil?             ; "Unrecognized email."
       when !accted.account.active? ; "Sorry, that account is not active."
@@ -84,11 +84,11 @@ event :signin, :before=>:approve, :on=>:update do
   end  
 end
 
-event :send_reset_password_token, :before=>:signin, :on=>:update, :when=>proc{ |c| Wagn::Env.params[:reset_password] } do
+event :send_reset_password_token, :before=>:signin, :on=>:update, :when=>proc{ |c| Card::Env.params[:reset_password] } do
   email = subcards["+#{Card[:email].name}"][:content]
   
-  if accted = Account[ email.strip.downcase ] and accted.account.active?
-    Account.as_bot do
+  if accted = Auth[ email.strip.downcase ] and accted.account.active?
+    Auth.as_bot do
       token_card = accted.account.token_card
       token_card.content = generate_token
       token_card.save!
@@ -102,7 +102,7 @@ event :send_reset_password_token, :before=>:signin, :on=>:update, :when=>proc{ |
 end
 
 event :signout, :before=>:approve, :on=>:delete do
-  Account.signin nil
+  Auth.signin nil
   abort :success
 end
 

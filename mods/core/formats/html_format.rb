@@ -10,7 +10,7 @@ class Card
     attr_accessor  :options_need_save, :start_time, :skip_autosave
 
     # builtin layouts allow for rescue / testing
-    LAYOUTS = Wagn::Loader.load_layouts.merge 'none' => '{{_main}}'
+    LAYOUTS = Loader.load_layouts.merge 'none' => '{{_main}}'
 
     INCLUSION_DEFAULTS = {
       :layout => { :view => :core },
@@ -40,7 +40,7 @@ class Card
     end
 
     def get_layout_content(args)
-      Account.as_bot do
+      Auth.as_bot do
         case
           when (params[:layout] || args[:layout]) ;  layout_from_name args
           when card                               ;  layout_from_card
@@ -200,7 +200,7 @@ class Card
         <span class="render-error">
           error rendering
           #{
-            if Account.always_ok?
+            if Auth.always_ok?
               %{
                 #{ link_to_page error_cardname, nil, :class=>'render-error-link' }
                 <div class="render-error-message errors-view" style="display:none">
@@ -252,7 +252,7 @@ class Card
     end
 
     def type_field args={}
-      typelist = Account.createable_types
+      typelist = Auth.createable_types
       current_type = unless args.delete :no_current_type
           unless card.new_card? || typelist.include?( card.type_name )
             # current type should be an option on existing cards, regardless of create perms
@@ -313,7 +313,7 @@ class Card
       klasses << 'autosave' if action == :update
       html[:class] = klasses.join ' '
     
-      html[:recaptcha] ||= 'on' if Wagn::Env[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
+      html[:recaptcha] ||= 'on' if Card::Env[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
       html.delete :recaptcha if html[:recaptcha] == :off
     
       { :url=>url, :remote=>true, :html=>html }

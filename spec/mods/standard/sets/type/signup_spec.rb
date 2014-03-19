@@ -5,7 +5,7 @@ require 'wagn/spec_helper'
 describe Card::Set::Type::Signup do
   
   before do
-    Account.current_id = Card::AnonID
+    Card::Auth.current_id = Card::AnonID
   end
   
   
@@ -17,7 +17,7 @@ describe Card::Set::Type::Signup do
     end
     
     it 'should prompt to signup' do
-      Account.as :anonymous do
+      Card::Auth.as :anonymous do
         @form.match( /Sign Up/ ).should be_true
       end
     end
@@ -29,7 +29,7 @@ describe Card::Set::Type::Signup do
     before do
       ActionMailer::Base.deliveries = [] #needed?
       
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.create! :name=>'User+*type+*create', :content=>'[[Anyone]]'
         Card.create! :name=>'*request+*to', :content=>'request@wagn.org'
       end
@@ -53,7 +53,7 @@ describe Card::Set::Type::Signup do
     end
     
     it 'should create an authenticable token' do
-      Account.authenticate_by_token(@token).should == @request.id
+      Card::Auth.authenticate_by_token(@token).should == @request.id
     end
     
     it 'should notify someone' do
@@ -61,7 +61,7 @@ describe Card::Set::Type::Signup do
     end
     
     it 'should be activated by an update' do
-      Wagn::Env.params[:token] = @token
+      Card::Env.params[:token] = @token
       hash = {}
       @request.update_attributes hash
       #puts @request.errors.full_messages * "\n"
@@ -100,7 +100,7 @@ describe Card::Set::Type::Signup do
       end
     
       it 'should show invite links to those who can invite' do
-        Account.as_bot do
+        Card::Auth.as_bot do
           assert_view_select @format.render_core, 'a[class="invitation-link"]'
         end
       end

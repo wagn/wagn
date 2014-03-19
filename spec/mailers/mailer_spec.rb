@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
 
-describe Mailer do
+describe Card::Mailer do
   #include ActionMailer::Quoting
 
   before do
@@ -21,7 +21,7 @@ describe Mailer do
       user =  Card['sara'].id
       card =  Card["Sunglasses"]
       action = "edited"
-      Mailer.change_notice( user, card, action, card.name ).deliver
+      Card::Mailer.change_notice( user, card, action, card.name ).deliver
     end
 
     it "deliver a message" do
@@ -51,7 +51,7 @@ describe Mailer do
     end
 
     def encode(subject)
-      quoted_printable(subject, Mailer::CHARSET)
+      quoted_printable(subject, Card::Mailer::CHARSET)
     end
 
 end

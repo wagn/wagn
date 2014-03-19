@@ -2,8 +2,7 @@
 
 require_dependency 'wagn/exceptions'
 
-module Wagn
-
+class Card
   module Loader
     
     def self.mod_dirs
@@ -38,7 +37,7 @@ module Wagn
               mod.class_eval { mattr_accessor :options }
               mod.class_eval File.read( filename ), filename, 1
 
-              klass = Card::SetPattern.const_set "#{key.camelize}Pattern", Class.new( Card::SetPattern )
+              klass = SetPattern.const_set "#{key.camelize}Pattern", Class.new( Card::SetPattern )
               klass.extend mod
               klass.register key, (mod.options || {})
 
@@ -69,13 +68,13 @@ module Wagn
           next unless mod =~ /\.rb$/
           require_dependency mod
         end
-        Card::Set.process_base_modules #must do this here because core sets must be processed into Card class before loading standard sets
+        Set.process_base_modules #must do this here because core sets must be processed into Card class before loading standard sets
       end
       
-      Card::Set.process_base_modules
-      Card::Set.clean_empty_modules
+      Set.process_base_modules
+      Set.clean_empty_modules
             
-      Card::Set.register_set Card # reset so events in card.rb will be defined on card itself  (temporary?)
+      Set.register_set Card # reset so events in card.rb will be defined on card itself  (temporary?)
     end
 
 
@@ -92,10 +91,10 @@ module Wagn
           next if anchor_filename =~ /^\./
           anchor = anchor_filename.gsub /\.rb$/, ''
 
-          set_module = Card::Set.set_module_from_name( set_pattern, anchor )
+          set_module = Set.set_module_from_name( set_pattern, anchor )
           filename = [dirname, anchor_filename] * '/'
           
-          set_module.extend Card::Set
+          set_module.extend Set
           set_module.class_eval File.read( filename ), filename, 1
         end    
       end

@@ -25,7 +25,7 @@ format :html do
   end
 
 
-  view :setup, :tags=>:unknown_ok, :perms=>lambda { |r| Account.needs_setup? } do |args|
+  view :setup, :tags=>:unknown_ok, :perms=>lambda { |r| Auth.needs_setup? } do |args|
     args.merge!( {
       :title=>'Welcome, Wagneer!',
       :optional_help=>:show,
@@ -41,7 +41,7 @@ format :html do
 
     account = card.fetch :trait=>:account, :new=>{}
 
-    Account.as_bot do
+    Auth.as_bot do
       frame_and_form :create, args do
         [
           _render_name_fieldset( :help=>'usually first and last name' ),
@@ -53,12 +53,12 @@ format :html do
   end
 end
 
-event :setup_as_bot, :before=>:check_permissions, :on=>:create, :when=>proc{ |c| Wagn::Env.params[:setup] } do
-  abort :failure unless Account.needs_setup?
-  Account.as_bot
+event :setup_as_bot, :before=>:check_permissions, :on=>:create, :when=>proc{ |c| Card::Env.params[:setup] } do
+  abort :failure unless Auth.needs_setup?
+  Auth.as_bot
 end  
 
-event :setup_first_user, :before=>:process_subcards, :on=>:create, :when=>proc{ |c| Wagn::Env.params[:setup] } do
+event :setup_first_user, :before=>:process_subcards, :on=>:create, :when=>proc{ |c| Card::Env.params[:setup] } do
   subcards['*request+*to'] = subcards['+*account+*email']
   subcards['+*roles'] = { :content => Card[:administrator].name }
   
@@ -66,9 +66,9 @@ event :setup_first_user, :before=>:process_subcards, :on=>:create, :when=>proc{ 
   subcards['+*account'] = { '+*email'=>email, '+*password'=>password }
 end
 
-event :signin_after_setup, :before=>:extend, :on=>:create, :when=>proc{ |c| Wagn::Env.params[:setup] } do
+event :signin_after_setup, :before=>:extend, :on=>:create, :when=>proc{ |c| Card::Env.params[:setup] } do
   Card.cache.delete 'no_signins'
-  Account.signin id
+  Auth.signin id
 end
 
 

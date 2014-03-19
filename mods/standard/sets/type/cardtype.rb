@@ -35,7 +35,7 @@ include Card::Set::Type::Basic
 
 
 def cards_of_type_exist?
-  !new_card? and Account.as_bot { Card.count_by_wql :type_id=>id } > 0
+  !new_card? and Auth.as_bot { Card.count_by_wql :type_id=>id } > 0
 end
 
 event :check_for_cards_of_type, :after=>:validate_delete do

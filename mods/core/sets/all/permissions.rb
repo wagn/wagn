@@ -43,7 +43,7 @@ def permission_rule_card action
     raise Card::PermissionDenied.new(self)
   end
 
-  rcard = Account.as_bot do
+  rcard = Auth.as_bot do
     if ['_left','[[_left]]'].member?(opcard.content) && self.junction?  # compound cards can inherit permissions from left parent
       lcard = left_or_new( :skip_virtual=>true, :skip_modules=>true )
       if action==:create && lcard.real? && !lcard.action==:create
@@ -76,15 +76,15 @@ end
 def permitted? action
 
   if !Wagn.config.read_only
-    return true if action != :comment and Account.always_ok?
+    return true if action != :comment and Auth.always_ok?
 
     permitted_ids = who_can action
 
-    if action == :comment && Account.always_ok?
+    if action == :comment && Auth.always_ok?
       # admin can comment if anyone can
       !permitted_ids.empty?
     else
-      Account.among? permitted_ids
+      Auth.among? permitted_ids
     end
   end
 end
@@ -115,9 +115,9 @@ def ok_to_create
 end
 
 def ok_to_read
-  if !Account.always_ok?
+  if !Auth.always_ok?
     @read_rule_id ||= permission_rule_card(:read).first.id.to_i
-    if !Account.as_card.read_rules.member? @read_rule_id
+    if !Auth.as_card.read_rules.member? @read_rule_id
       deny_because you_cant "read this"
     end
   end
@@ -156,7 +156,7 @@ event :set_read_rule, :before=>:store do
     # skip if name is updated because will already be resaved
 
     if !new_card? && type_id_changed?
-      Account.as_bot do
+      Auth.as_bot do
         Card.search(:left=>self.name).each do |plus_card|
           plus_card = plus_card.refresh.update_read_rule
         end
@@ -178,7 +178,7 @@ def update_read_rule
   expire
 
   # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
-  Account.as_bot do
+  Auth.as_bot do
     Card.search(:left=>self.name).each do |plus_card|
       if plus_card.rule(:read) == '_left'
         plus_card.update_read_rule
@@ -208,13 +208,13 @@ end
 
 event :recaptcha, :before=>:approve do
   if !@supercard                        and
-      Wagn::Env[:recaptcha_on]          and
+      Card::Env[:recaptcha_on]          and
       Card.toggle( rule :captcha )      and
-      num = Wagn::Env[:recaptcha_count] and
+      num = Card::Env[:recaptcha_count] and
       num < 1
       
-    Wagn::Env[:recaptcha_count] = num + 1
-    Wagn::Env[:controller].verify_recaptcha :model=>self, :attribute=>:captcha
+    Card::Env[:recaptcha_count] = num + 1
+    Card::Env[:controller].verify_recaptcha :model=>self, :attribute=>:captcha
   end
 end
 

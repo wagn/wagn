@@ -10,8 +10,8 @@ describe Card::Set::All::Base do
     it("linkname") { render_card(:linkname).should  == 'Tempo_Rary' }
 
     it "url" do
-      Wagn::Env[:protocol] = 'http://'
-      Wagn::Env[:host]     = 'eric.skippy.com'
+      Card::Env[:protocol] = 'http://'
+      Card::Env[:host]     = 'eric.skippy.com'
       render_card(:url).should == 'http://eric.skippy.com/Tempo_Rary'
     end
 

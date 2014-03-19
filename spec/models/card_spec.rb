@@ -11,7 +11,7 @@ describe Card do
 
   describe "creation" do
     before(:each) do
-      Account.as_bot do
+      Card::Auth.as_bot do
         @b = Card.create! :name=>"New Card", :content=>"Great Content"
         @c = Card.find(@b.id)
       end
@@ -35,7 +35,7 @@ describe Card do
 
   describe "content change should create new revision" do
     before do
-      Account.as_bot do
+      Card::Auth.as_bot do
         @c = Card['basicname']
         @c.update_attributes! :content=>'foo'
       end
@@ -139,7 +139,7 @@ describe "basic card tests" do
 
   it 'update_should_create_subcards_as_wagn_bot_if_missing_subcard_permissions' do
     Card.create :name=>'peel'
-    Account.current_id = Card::AnonID
+    Card::Auth.current_id = Card::AnonID
     Card['Banana'].should_not be
     Card['Basic'].ok?(:create).should be_false, "anon can't creat"
 
@@ -153,7 +153,7 @@ describe "basic card tests" do
 
   it 'update_should_not_create_subcards_if_missing_main_card_permissions' do
     b = Card.create!( :name=>'Banana' )
-    Account.as Card::AnonID do
+    Card::Auth.as Card::AnonID do
       b.update_attributes :subcards=>{ "+peel" => { :content => "yellow" }}
       b.errors[:permission_denied].should_not be_empty
       
@@ -167,7 +167,7 @@ describe "basic card tests" do
 
   it 'create_without_read_permission' do
     c = Card.create!({:name=>"Banana", :type=>"Fruit", :content=>"mush"})
-    Account.as Card::AnonID do
+    Card::Auth.as Card::AnonID do
       assert_raises Card::PermissionDenied do
         c.ok! :read
       end

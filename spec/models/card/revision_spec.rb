@@ -4,20 +4,20 @@ require 'wagn/spec_helper'
 describe Card::Revision do
 
   it 'should be created whenever content is updated' do
-    author1 = Account[ 'joe@user.com' ]
-    author2 = Account[ 'sara@user.com' ]
+    author1 = Card::Auth[ 'joe@user.com' ]
+    author2 = Card::Auth[ 'sara@user.com' ]
     author_cd1 = Card[author1.id]
     author_cd2 = Card[author2.id]
-    Account.current_id = Card::WagnBotID
+    Card::Auth.current_id = Card::WagnBotID
     rc1=author_cd1.fetch(:new=>{}, :trait=>:roles)
     rc1 << Card::AdminID
     rc2 = author_cd2.fetch(:new=>{}, :trait=>:roles)
     rc2 << Card::AdminID
     author_cd1.save
     author_cd2.save
-    Account.current_id = author_cd1.id
+    Card::Auth.current_id = author_cd1.id
     card = Card.create! :name=>'alpha', :content=>'stuff'
-    Account.current_id = author_cd2.id
+    Card::Auth.current_id = author_cd2.id
     card.content = 'boogy'
     card.save
     card.reload

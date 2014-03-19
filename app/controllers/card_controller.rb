@@ -48,7 +48,7 @@ class CardController < WagnController
   def watch
     watchers = card.fetch :trait=>:watchers, :new=>{}
     watchers = watchers.refresh
-    myname = Account.current.name
+    myname = Card::Auth.current.name
     watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
     watchers.save!
     ajax? ? show(:watch) : read
@@ -71,7 +71,7 @@ class CardController < WagnController
     params[:id] = case
       when params[:id]
         params[:id]
-      when Account.needs_setup?
+      when Card::Auth.needs_setup?
         params[:card] = { :type_id => Card.default_accounted_type_id }
         params[:view] = 'setup'
         ''
@@ -113,7 +113,7 @@ class CardController < WagnController
       end
     @card.selected_revision_id = params[:rev].to_i if params[:rev]
 
-    Wagn::Env[:main_name] = params[:main] || (card && card.name) || ''
+    Card::Env[:main_name] = params[:main] || (card && card.name) || ''
     render_errors if card.errors.any?
     true
   end

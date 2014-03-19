@@ -16,16 +16,16 @@ def parties
   @parties ||= (all_roles << self.id).flatten.reject(&:blank?)
 end
 
-def among? card_with_acct
-  card_with_acct.each do |auth|
-    return true if parties.member? auth
+def among? ok_ids
+  ok_ids.each do |ok_id|
+    return true if parties.member? ok_id
   end
-  card_with_acct.member? Card::AnyoneID
+  ok_ids.member? Card::AnyoneID
 end
 
 def is_own_account?
   # card is +*account card of signed_in user.
-  cardname.part_names[0].key == Account.as_card.key and
+  cardname.part_names[0].key == Auth.as_card.key and
   cardname.part_names[1].key == Card[:account].key
 end
 
@@ -48,9 +48,9 @@ def all_roles
     if id == Card::AnonID
       []
     else
-      Account.as_bot do
+      Auth.as_bot do
         role_trait = fetch :trait=>:roles
-        [ Card::AuthID ] + ( role_trait ? role_trait.item_ids : [] )
+        [ Card::AnyoneSignedInID ] + ( role_trait ? role_trait.item_ids : [] )
       end
     end
 end
@@ -61,7 +61,7 @@ event :generate_token do
 end
 
 event :set_stamper, :before=>:approve do
-  self.updater_id = Account.current_id
+  self.updater_id = Auth.current_id
   self.creator_id = self.updater_id if new_card?
 end
 

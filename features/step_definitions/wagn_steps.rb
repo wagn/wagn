@@ -5,7 +5,12 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "pat
 
 
 Given /^site simulates setup need$/ do
-  Account.simulate_setup_need!
+  Card::Auth.simulate_setup_need!
+end
+
+Given /^site stops simulating setup need$/ do
+  Card::Auth.simulate_setup_need! false
+  step 'I am signed out'
 end
   
 Given /^I am signed in as (.+)$/ do |account_name|
@@ -36,7 +41,7 @@ end
 
 
 Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
-  Account.as_bot do
+  Card::Auth.as_bot do
     card = Card.fetch cardname, :new=>{}
     card.content = content
     card.save!
@@ -112,7 +117,7 @@ When /^(?:|I )enter "([^"]*)" into "([^"]*)"$/ do |value, field|
 end
 
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
-  user = Account.current.name if user == "I"
+  user = Card::Auth.current.name if user == "I"
   signed_in_as user do
     step "the card #{cardname}+*watchers contains \"[[#{user}]]\""
   end
@@ -146,8 +151,8 @@ def create_card(username,cardtype,cardname,content="")
 end
 
 def signed_in_as username
-  sameuser = (username == "I" or Account.current.key == username.to_name.key)
-  was_signed_in = Account.current_id if Account.signed_in?
+  sameuser = (username == "I" or Card::Auth.current.key == username.to_name.key)
+  was_signed_in = Card::Auth.current_id if Card::Auth.signed_in?
   unless sameuser
     step "I am signed in as #{username}"
   end

@@ -33,7 +33,7 @@ describe Card do
       @account_card.write= 'test_value'
       @account_card.status= 'pending'
       @account_card.status.should == 'pending'
-      Account.as_bot { @account_card.save }
+      Card::Auth.as_bot { @account_card.save }
       Card.cache.reset
       (tcard = Card['sara'].fetch(:trait=>:account)).should be
       tcard.status.should == 'pending'

@@ -15,7 +15,7 @@ describe Card::Codename, "Codename" do
   end
 
   it "should make cards indestructable" do
-    Account.as_bot do
+    Card::Auth.as_bot do
       card = Card[@codename]
       card.delete
       card.errors[:delete].first.should match 'is a system card'

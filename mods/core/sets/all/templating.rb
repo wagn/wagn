@@ -57,7 +57,7 @@ end
 
 def structuree_names
   if wql = structuree_spec
-    Account.as_bot do
+    Auth.as_bot do
       Card::Query.new(wql.merge :return=>:name).run
     end
   else
@@ -79,7 +79,7 @@ def update_structurees args
   # for example, if someone were to change the type of a +*right+*structure rule that was overridden
   # by a +*type plus right+*structure rule, the override would not be respected.
   if query = structuree_spec
-    Account.as_bot do
+    Auth.as_bot do
       Card::Query.new( query.merge(:return => :id) ).run.each_slice(100) do |id_batch|
         Card.where( :id => id_batch ).update_all args
       end

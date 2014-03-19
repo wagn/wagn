@@ -18,13 +18,13 @@ class WagnController < ActionController::Base
 #    ActiveSupport::Notifications.instrument 'wagn.per_request_setup', :message=>"" do
     request.format = :html if !params[:format] #is this used??
     Wagn::Cache.renew
-    Wagn::Env.reset :controller=>self
-    Account.set_current_from_session
-    Card::Format.ajax_call = ajax?             # move to Wagn::Env?
+    Card::Env.reset :controller=>self
+    Card::Auth.set_current_from_session
+#    Card::Format.ajax_call = ajax?             # move to Card::Env?
   end
 
   def ajax?
-    Wagn::Env.ajax?
+    Card::Env.ajax?
   end
 
   def html?

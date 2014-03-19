@@ -159,7 +159,7 @@ class Card
     def flash()        @flash      ||= controller.request ? controller.flash : {} end
     def controller()   @controller ||= StubCardController.new                     end
     def session()      CardController===controller ? controller.session : {}      end
-    def ajax_call?()   Wagn::Env.ajax?                                            end
+    def ajax_call?()   Card::Env.ajax?                                            end
 
     def showname title=nil
       if title

@@ -2,7 +2,7 @@
 require 'sass'
 
 def self.delete_style_files
-  Account.as_bot do
+  Auth.as_bot do
     Card.search( :right=>{:codename=>'style'}, :return=>'id' ).each do |style_file_id|
       Card.delete_tmp_files style_file_id
     end
@@ -57,7 +57,7 @@ end
 
 
 def compress_stylesheets
-  Account.as_bot do
+  Auth.as_bot do
     format = Card::CssFormat.new self
     Sass.compile format._render_core, :style=>:compressed
   end

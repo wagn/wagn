@@ -15,12 +15,12 @@ class SharedData
   end
 
   def self.add_test_data
-    #Account.current_id = Card::WagnBotID
+    #Card::Auth.current_id = Card::WagnBotID
     CodenameTable.load_bootcodes unless !Card::Codename[:wagn_bot].nil?
 
     Wagn::Cache.reset_global
-    Wagn::Env.reset
-    Account.as(Card::WagnBotID)
+    Card::Env.reset
+    Card::Auth.as(Card::WagnBotID)
 
     Card.create! :name=>"Joe User",  :type_code=>'user', :content=>"I'm number two", :subcards=>account_args( '+*email'=>'joe@user.com'  )
     Card.create! :name=>"Joe Admin", :type_code=>'user', :content=>"I'm number one", :subcards=>account_args( '+*email'=>'joe@admin.com' )
@@ -46,7 +46,7 @@ class SharedData
 
     request_card = Card.create! :type_id=>Card::SignupID, :name=>"Sample Signup" #, :email=>"invitation@request.com"
 
-    Account.createable_types.each do |type|
+    Card::Auth.createable_types.each do |type|
       next if ['User', 'Sign Up', 'Set', 'Number'].include? type
       Card.create! :type=>type, :name=>"Sample #{type}"
     end
@@ -100,7 +100,7 @@ class SharedData
     Card.create! :type_code=>'cardtype_e', :name=>"type-e-card", :content=>"type_e_content"
     Card.create! :type_code=>'cardtype_f', :name=>"type-f-card", :content=>"type_f_content"
 
-    #warn "current user #{User.session_user.inspect}.  always ok?  #{Account.always_ok?}"
+    #warn "current user #{User.session_user.inspect}.  always ok?  #{Card::Auth.always_ok?}"
     c = Card.create! :name=>'revtest', :content=>'first'
     c.update_attributes! :content=>'second'
     c.update_attributes! :content=>'third'
@@ -110,11 +110,11 @@ class SharedData
     Card.create! :type_id=>Card::CardtypeID, :name=> "UserForm"
     Card.create! :name=>"UserForm+*type+*structure", :content=>"{{+name}} {{+age}} {{+description}}"
 
-    Account.current_id = Card['joe_user'].id
+    Card::Auth.current_id = Card['joe_user'].id
     Card.create!( :name=>"JoeLater", :content=>"test")
     Card.create!( :name=>"JoeNow", :content=>"test")
 
-    Account.current_id = Card::WagnBotID
+    Card::Auth.current_id = Card::WagnBotID
     Card.create!(:name=>"AdminNow", :content=>"test")
 
     Card.create :name=>'Cardtype B+*type+*create', :type=>'Pointer', :content=>'[[r1]]'

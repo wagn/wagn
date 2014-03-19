@@ -49,7 +49,7 @@ class UserDataToCards < ActiveRecord::Migration
       
       
       puts "importing all user details (for those not in trash) into +*account attributes"
-      Wagn::Env[:no_password_encryptions] = true
+      Card::Env[:no_password_encryptions] = true
       User.all.each do |user|
         base = Card[user.card_id]
         if base and !base.trash

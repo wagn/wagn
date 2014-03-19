@@ -61,7 +61,7 @@ describe Card::HtmlFormat do
 
     context "Simple page with Default Layout" do
       before do
-        Account.as_bot do
+        Card::Auth.as_bot do
           card = Card['A+B']
           @simple_page = Card::HtmlFormat.new(card).render(:layout)
           #warn "render sp: #{card.inspect} :: #{@simple_page}"
@@ -101,27 +101,27 @@ describe Card::HtmlFormat do
 
     context "layout" do
       before do
-        Account.as_bot do
+        Card::Auth.as_bot do
           @layout_card = Card.create(:name=>'tmp layout', :type=>'Layout')
           #warn "layout #{@layout_card.inspect}"
         end
         c = Card['*all+*layout'] and c.content = '[[tmp layout]]'
         @main_card = Card.fetch('Joe User')
-        Wagn::Env[:main_name] = @main_card.name
+        Card::Env[:main_name] = @main_card.name
         
         #warn "lay #{@layout_card.inspect}, #{@main_card.inspect}"
       end
 
       it "should default to core view when in layout mode" do
         @layout_card.content = "Hi {{A}}"
-        Account.as_bot { @layout_card.save }
+        Card::Auth.as_bot { @layout_card.save }
 
         Card::Format.new(@main_card).render(:layout).should match('Hi Alpha')
       end
 
       it "should default to open view for main card" do
         @layout_card.content='Open up {{_main}}'
-        Account.as_bot { @layout_card.save }
+        Card::Auth.as_bot { @layout_card.save }
 
         result = Card::Format.new(@main_card).render_layout
         result.should match(/Open up/)
@@ -131,7 +131,7 @@ describe Card::HtmlFormat do
 
       it "should render custom view of main" do
         @layout_card.content='Hey {{_main|name}}'
-        Account.as_bot { @layout_card.save }
+        Card::Auth.as_bot { @layout_card.save }
 
         result = Card::Format.new(@main_card).render_layout
         result.should match(/Hey.*div.*Joe User/)
@@ -140,7 +140,7 @@ describe Card::HtmlFormat do
 
       it "shouldn't recurse" do
         @layout_card.content="Mainly {{_main|core}}"
-        Account.as_bot { @layout_card.save }
+        Card::Auth.as_bot { @layout_card.save }
 
         rendered = Card::Format.new(@layout_card).render(:layout).should == 
           %{Mainly <div id="main"><div class="CodeRay">\n  <div class="code"><pre>Mainly {{_main|core}}</pre></div>\n</div>\n</div>}
@@ -149,7 +149,7 @@ describe Card::HtmlFormat do
       
       
       it "should handle nested _main references" do
-        Account.as_bot do
+        Card::Auth.as_bot do
           @layout_card.content="{{outer space}}"
           @layout_card.save!
           Card.create :name=>"outer space", :content=>"{{_main|name}}"

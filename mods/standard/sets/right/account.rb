@@ -44,12 +44,12 @@ end
 
 event :set_default_salt, :on=>:create, :before=>:process_subcards do
   salt = Digest::SHA1.hexdigest "--#{Time.now.to_s}--"
-  Wagn::Env[:salt] = salt # HACK!!! need viable mechanism to get this to password
+  Card::Env[:salt] = salt # HACK!!! need viable mechanism to get this to password
   subcards["+#{Card[:salt].name}"] ||= {:content => salt }
 end
 
 event :set_default_status, :on=>:create, :before=>:process_subcards do
-  default_status = ( Account.signed_in? || Account.needs_setup? ? 'active' : 'pending' )
+  default_status = ( Auth.signed_in? || Auth.needs_setup? ? 'active' : 'pending' )
   subcards["+#{Card[:status].name}"] = { :content => default_status }
 end
 
@@ -58,10 +58,10 @@ event :generate_confirmation_token, :on=>:create, :before=>:process_subcards do
 end
 
 event :reset_password, :on=>:update, :before=>:approve do
-  if token = Wagn::Env.params[:reset_token]    
-    if left_id == Account.authenticate_by_token(token)
-      Account.signin left_id
-      Wagn::Env.params[:success] = { :id=>left.name, :view=>:related,
+  if token = Card::Env.params[:reset_token]    
+    if left_id == Auth.authenticate_by_token(token)
+      Auth.signin left_id
+      Card::Env.params[:success] = { :id=>left.name, :view=>:related,
         :related=>{:name=>"+#{Card[:account].name}", :view=>'edit'}
       }
       abort :success

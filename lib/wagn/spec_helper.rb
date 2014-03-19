@@ -32,9 +32,9 @@ Spork.prefork do
 
 
     config.before(:each) do
-      Account.current_id = JOE_USER_ID
+      Card::Auth.current_id = JOE_USER_ID
       Wagn::Cache.restore
-      Wagn::Env.reset
+      Card::Env.reset
     end
     config.after(:each) do
       Timecop.return
@@ -53,11 +53,11 @@ module Wagn::SpecHelper
   #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
   
   def login_as user
-    Account.current_id = (uc=Card[user.to_s] and uc.id)
+    Card::Auth.current_id = (uc=Card[user.to_s] and uc.id)
     if @request
-      @request.session[:user] = Account.current_id
+      @request.session[:user] = Card::Auth.current_id
     end
-    #warn "(ath)login_as #{user.inspect}, #{Account.current_id}, #{@request.session[:user]}"
+    #warn "(ath)login_as #{user.inspect}, #{Card::Auth.current_id}, #{@request.session[:user]}"
   end
   
   def newcard name, content=""

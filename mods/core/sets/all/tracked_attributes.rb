@@ -49,7 +49,7 @@ def set_content new_content
     new_content ||= ''
     new_content = Card::Content.clean! new_content if clean_html?
     clear_drafts if current_revision_id
-    new_rev = Card::Revision.create :card_id=>self.id, :content=>new_content, :creator_id =>Account.current_id
+    new_rev = Card::Revision.create :card_id=>self.id, :content=>new_content, :creator_id =>Auth.current_id
     self.current_revision_id = new_rev.id
     reset_patterns_if_rule saving=true
     @name_or_content_changed = true
@@ -95,8 +95,8 @@ event :update_ruled_cards, :after=>:store do
 
       self.class.clear_read_rule_cache
 
-#        Account.cache.reset
-      Card.cache.reset # maybe be more surgical, just Account.user related
+#        Auth.cache.reset
+      Card.cache.reset # maybe be more surgical, just Auth.user related
       expire #probably shouldn't be necessary,
       # but was sometimes getting cached version when card should be in the trash.
       # could be related to other bugs?
@@ -107,7 +107,7 @@ event :update_ruled_cards, :after=>:store do
           #warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
 
           #first update all cards in set that aren't governed by narrower rule
-           Account.as_bot do
+           Auth.as_bot do
              cur_index = rule_class_ids.index Card[read_rule_class].id
              if rule_class_index = rule_class_ids.index( class_id )
                 # Why isn't this just 'trunk', do we need the fetch?

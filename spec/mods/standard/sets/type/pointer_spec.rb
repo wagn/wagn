@@ -52,7 +52,7 @@ describe Card::Set::Type::Pointer do
     it "not break on permissions" do
       watchers = Card.fetch "Home+*watchers", :new=>{}
       watchers.type_code.should == :pointer
-      watchers << Account.current_id
+      watchers << Card::Auth.current_id
       assert_equal '[[Joe User]]', watchers.content
     end
   end

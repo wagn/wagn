@@ -3,7 +3,7 @@ require 'wagn/spec_helper'
 
 describe Card::Set::Type::Html do
   before do
-    Account.current_id = Card::WagnBotID
+    Card::Auth.current_id = Card::WagnBotID
   end
 
   it "should have special editor" do

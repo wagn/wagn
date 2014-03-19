@@ -11,7 +11,7 @@ describe Card::Format do
     it "should render denial when user lacks read permissions" do
       c = Card.fetch('Administrator Menu')
       c.who_can(:read).should == [Card::AdminID]
-      Account.as(:anonymous) do
+      Card::Auth.as(:anonymous) do
         c.ok?(:read).should == false
         Card::Format.new(c).render(:core).should =~ /denied/
       end
@@ -22,7 +22,7 @@ describe Card::Format do
   context "special syntax" do
 
     it "should allow for inclusion in links as in Cardtype" do
-       Account.as_bot do
+       Card::Auth.as_bot do
          Card.create! :name=>"TestType", :type=>'Cardtype', :content=>'[[/new/{{_self|linkname}}|add {{_self|name}} card]]'
          Card.create! :name=>'TestType+*self+*structure', :content=>'_self' #otherwise content overwritten by *structure rule
          Card::Format.new(Card['TestType']).render_core.should == '<a class="internal-link" href="/new/TestType">add TestType card</a>'
@@ -81,7 +81,7 @@ describe Card::Format do
     end
 
     it "renders deny for unpermitted cards" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
         Card.create(:name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]')
       end
@@ -112,7 +112,7 @@ describe Card::Format do
 
   context "structure rule" do
     it "is used in new card forms when soft" do
-      Account.as :joe_admin do
+      Card::Auth.as :joe_admin do
         content_card = Card["Cardtype E+*type+*default"]
         content_card.content= "{{+Yoruba}}"
         content_card.save!
@@ -127,7 +127,7 @@ describe Card::Format do
     end
 
     it "is used in new card forms when hard" do
-      Account.as :joe_admin do
+      Card::Auth.as :joe_admin do
         content_card = Card.create!(:name=>"Cardtype E+*type+*structure",  :content=>"{{+Yoruba}}" )
         help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
         card = Card.new(:type=>'Cardtype E')
@@ -145,7 +145,7 @@ describe Card::Format do
     end
 
     it "should be used in edit forms" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         config_card = Card.create!(:name=>"templated+*self+*structure", :content=>"{{+alpha}}" )
       end
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
@@ -158,7 +158,7 @@ describe Card::Format do
     end
 
     it "works on type-plus-right sets edit calls" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.create(:name=>'Book+author+*type plus right+*default', :type=>'Phrase', :content=>'Zamma Flamma')
       end
       c = Card.new :name=>'Yo Buddddy', :type=>'Book'

@@ -12,7 +12,7 @@ describe Card::Set::All::Json, "JSON mod" do
     end
     
     it "should treat both unknown and unreadable cards as unknown" do
-      Account.as Card::AnonID do
+      Card::Auth.as Card::AnonID do
         jf = Card::JsonFormat
         
         unknown = Card.new :name=>'sump'

@@ -1,6 +1,6 @@
 require "wagn/spec_helper"
 
-describe Wagn::Loader do
+describe Card::Loader do
   let(:card_double) { proxy Card }
   let(:pat_all_double) { proxy Card::SetPattern::AllPattern }
   let(:format_double) { proxy Card::Format }

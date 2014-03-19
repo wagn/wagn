@@ -4,7 +4,7 @@ require 'wagn/spec_helper'
 describe Card::Set::All::Trash do
   
   it "certain 'all rules' should be indestructable" do
-    Account.as_bot do
+    Card::Auth.as_bot do
       name = '*all+*default'
       card = Card[name]
       card.delete

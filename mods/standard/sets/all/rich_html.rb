@@ -108,7 +108,7 @@ format :html do
       @menu_vars.merge!({
         :edit      => card.ok?(:update),
         :account   => card.account && card.ok?(:update),
-        :watch     => Account.signed_in? && render_watch,
+        :watch     => Auth.signed_in? && render_watch,
         :creator   => card.creator.name,
         :updater   => card.updater.name,
         :delete    => card.ok?(:delete) && link_to( 'delete', path(:action=>:delete),
@@ -463,7 +463,7 @@ format :html do
   end
 
   view :not_found do |args| #ug.  bad name.
-    sign_in_or_up_links = if !Account.signed_in?
+    sign_in_or_up_links = if !Auth.signed_in?
       %{<div>
         #{link_to "Sign In", :controller=>'account', :action=>'signin'} or
         #{link_to 'Sign Up', :controller=>'account', :action=>'signup'} to create it.
@@ -491,7 +491,7 @@ format :html do
         message = case
         when task != :read && Wagn.config.read_only
           "We are currently in read-only mode.  Please try again later."
-        when Account.signed_in?
+        when Auth.signed_in?
           "You need permission #{to_task}"
         else
           or_signup = if Card.new(:type_id=>Card::SignupID).ok? :create

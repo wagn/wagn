@@ -4,7 +4,7 @@ require 'wagn/spec_helper'
 describe Card::Set::Right::Password do
 
   before :each do
-    @user_card = Account[ 'joe@user.com' ]
+    @user_card = Card::Auth[ 'joe@user.com' ]
   end
   
   describe '#update_attributes' do
@@ -12,7 +12,7 @@ describe Card::Set::Right::Password do
     it 'should encrypt password' do
       @user_card.account.password_card.update_attributes! :content => 'new password'
       @user_card.account.password.should_not == 'new password'
-      assert_equal @user_card.id, Account.authenticate('joe@user.com', 'new password')
+      assert_equal @user_card.id, Card::Auth.authenticate('joe@user.com', 'new password')
     end
 
     it 'should validate password' do

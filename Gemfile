@@ -27,12 +27,14 @@ end
 
 group :test do
   
-  # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one
-  gem 'therubyrhino', :platform=>:ruby         # :ruby is MRI rubies, so if you use a mac ruby ...
+  gem 'simplecov', '~> 0.7.1', :require => false  #test coverage
   
   gem 'rails-dev-tweaks', '~> 0.6'             # dramatic speeds up asset loading, among other tweaks
+  
+  # SPECS see spec dir
   gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
   
+  # CUKES see features dir
   gem 'cucumber-rails', '~> 1.3', :require=>false # feature-driven-development suite
   gem 'capybara', '~> 2.2.1'                     # note, selectors were breaking when we used 2.0.1
   gem 'selenium-webdriver', '~> 2.39'

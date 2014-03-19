@@ -47,7 +47,7 @@ class SharedData
     request_card = Card.create! :type_id=>Card::SignupID, :name=>"Sample Signup" #, :email=>"invitation@request.com"
 
     Card::Auth.createable_types.each do |type|
-      next if ['User', 'Sign Up', 'Set', 'Number'].include? type
+      next if ['User', 'Sign up', 'Set', 'Number'].include? type
       Card.create! :type=>type, :name=>"Sample #{type}"
     end
 

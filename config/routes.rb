@@ -29,9 +29,10 @@ Rails.application.routes.draw do
   
   match 'account/signin'             => 'card#read', :via=>:get, :id=>':signin'
   match 'account/signout'            => 'card#delete',           :id=>':signin'
-  match 'account/signup'             => 'card#read', :via=>:get, :view=>'new',  :card=>{ :type_id=>Card::SignupID }
-  match 'account/accept'             => 'card#read', :via=>:get, :view=>'edit', :card=>{ :type_id=>Card::SignupID }
-  match 'account/invite'             => 'card#read', :via=>:get, :view=>'new',  :card=>{ :type_id=>Card::UserID   }
+  match 'account/signup'             => 'card#read', :via=>:get, :view=>'new',  :card=>{ :type_code=>:signup }
+  match 'account/accept'             => 'card#read', :via=>:get, :view=>'edit', :card=>{ :type_code=>:signup }
+  match 'account/invite'             => 'card#read', :via=>:get, :view=>'new',  :card=>{ :type_code=>:user   }
+  # use type_code rather than id because in some cases (eg populating test data) routes must get loaded without loading Card
   
   # standard non-RESTful
   match ':controller/:action(/:id(.:format))'

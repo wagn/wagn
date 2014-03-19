@@ -16,7 +16,7 @@ module Wagn::MigrationHelper
   def contentedly &block
     Wagn::Cache.reset_global
     Wagn::MigrationHelper.schema_mode '' do
-      Auth.as_bot do
+      Card::Auth.as_bot do
         ActiveRecord::Base.transaction do
           begin
             yield

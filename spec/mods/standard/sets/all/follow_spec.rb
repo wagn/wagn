@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'wagn/spec_helper'
 
-describe "Card" do
+describe Card do
   before do
     Timecop.travel(Wagn.future_stamp)  # make sure we're ahead of all the test data
     @just_s = [Card["Sara"].id]

@@ -18,7 +18,7 @@ describe Card::Set::Type::Signup do
     
     it 'should prompt to signup' do
       Card::Auth.as :anonymous do
-        @form.match( /Sign Up/ ).should be_true
+        @form.match( /Sign up/ ).should be_true
       end
     end
   end

@@ -6,7 +6,6 @@ format :html do
   view :new do |args|
     #FIXME - make more use of standard new view
     args.merge!(
-      :title=>'Sign Up',
       :optional_help => :show, #, :optional_menu=>:never
       :buttons => submit_tag( 'Submit' ),
       :hidden => {
@@ -27,19 +26,6 @@ format :html do
     end
   end
 
-=begin
-  view :edit do |args|
-    args[:help_text] ||= "Accept account request"
-    args[:hidden] ||= {
-      :activate => 'true',
-      :card => { :type_id => Card.default_accounted_type_id }
-    } 
-  
-    frame_and_form :update, args do
-      #_render_invitation_field
-    end
-  end
-=end
 
   view :core do |args|
     #ENGLISH

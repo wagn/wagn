@@ -1,4 +1,12 @@
+--colour
+--format profile
+--loadby mtime
+--reverse
+--drb
+
+
+
 --color
 --profile
 --backtrace
-
+--require spec_helper

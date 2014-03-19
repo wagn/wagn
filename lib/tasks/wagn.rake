@@ -134,7 +134,7 @@ namespace :wagn do
       end
 
       # delete ignored cards
-      Auth.as_bot do
+      Card::Auth.as_bot do
         if ignoramus = Card['*ignore']
           ignoramus.item_cards.each do |card|
             if card.account #have to get rid of revisions to delete account  

@@ -11,14 +11,9 @@ class Card
           self[:session] = c.request.session
           self[:params] = c.request.params
           self[:ajax] = c.request.xhr? || c.request.params[:simulate_xhr]
-        
-        
           self[:host]       = Wagn.config.override_host     || c.request.env['HTTP_HOST']
           self[:protocol]   = Wagn.config.override_protocol || c.request.protocol
         
-          #hacky - should be in module
-          self[:recaptcha_on] = !Auth.signed_in? && !Auth.needs_setup? && have_recaptcha_keys?
-          self[:recaptcha_count] = 0
         end
       end
     
@@ -28,6 +23,15 @@ class Card
     
       def []= key, value
         @@env[key.to_sym] = value
+      end
+      
+      #hacky - should be in module
+      def recaptcha_on?
+        if self[:recaptcha_on].nil?
+          self[:recaptcha_count] = 0
+          self[:recaptcha_on] = !Auth.signed_in? && !Auth.needs_setup? && have_recaptcha_keys?
+        end
+        self[:recaptcha_on]
       end
 
       def params

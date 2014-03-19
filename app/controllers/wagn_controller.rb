@@ -20,6 +20,7 @@ class WagnController < ActionController::Base
     Wagn::Cache.renew
     Card::Env.reset :controller=>self
     Card::Auth.set_current_from_session
+    
 #    Card::Format.ajax_call = ajax?             # move to Card::Env?
   end
 

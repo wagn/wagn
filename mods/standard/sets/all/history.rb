@@ -77,7 +77,7 @@ format :html do
 
   def revision_menu_items
     items = [back_for_revision, forward, see_or_hide_changes_for_revision]
-    items << rollback unless Card::Env[:recaptcha_on]
+    items << rollback unless Card::Env.recaptcha_on?
     items
   end
 

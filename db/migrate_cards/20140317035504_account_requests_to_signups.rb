@@ -15,6 +15,8 @@ class AccountRequestsToSignups < ActiveRecord::Migration
       old_signup.codename = nil
       old_signup.save!
 
+      Card::Codename.reset_cache
+      
       # rename Account Request to "Sign up"
       new_signup = Card[:account_request]
       new_signup.name = newname

@@ -208,13 +208,13 @@ end
 
 event :recaptcha, :before=>:approve do
   if !@supercard                        and
-      Card::Env[:recaptcha_on]          and
+      Env.recaptcha_on?          and
       Card.toggle( rule :captcha )      and
       num = Card::Env[:recaptcha_count] and
       num < 1
       
-    Card::Env[:recaptcha_count] = num + 1
-    Card::Env[:controller].verify_recaptcha :model=>self, :attribute=>:captcha
+    Env[:recaptcha_count] = num + 1
+    Env[:controller].verify_recaptcha :model=>self, :attribute=>:captcha
   end
 end
 

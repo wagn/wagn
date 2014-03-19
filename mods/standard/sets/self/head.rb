@@ -31,7 +31,7 @@ format :html do
   def head_buttons
     bits = []
     [:favicon, :logo].each do |name|
-      if c = Card[name] and c.type_id == Card::ImageID and !c.content.blank?
+      if c = Card[name] and c.type_id == ImageID and !c.content.blank?
         bits << %{<link rel="shortcut icon" href="#{ subformat(c)._render_source :size=>:icon }" />}
         break
       end
@@ -44,7 +44,7 @@ format :html do
       end
 
       # RSS # move to mods!
-      if root.card.type_id == Card::SearchTypeID
+      if root.card.type_id == SearchTypeID
         opts = { :format => :rss }
         root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
         rss_href = page_path root.card.name, opts
@@ -78,7 +78,7 @@ format :html do
       "window.wagn={rootPath:'#{ Wagn.config.relative_url_root }'}",
       "window.tinyMCEPreInit={base:\"#{wagn_path 'assets/tinymce'}\",query:'3.5.9',suffix:''}" # tinyMCE doesn't load on non-root wagns w/o preinit line
     ]
-    Card::Env[:recaptcha_on]                         and varvals << "wagn.recaptchaKey='#{Wagn.config.recaptcha_public_key}'"
+    Env.recaptcha_on?                               and varvals << "wagn.recaptchaKey='#{Wagn.config.recaptcha_public_key}'"
     c=Card[:double_click] and !Card.toggle c.content and varvals << 'wagn.noDoubleClick=true'
     @css_path                                        and varvals << "wagn.cssPath='#{@css_path}'"
     

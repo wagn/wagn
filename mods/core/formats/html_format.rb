@@ -313,7 +313,7 @@ class Card
       klasses << 'autosave' if action == :update
       html[:class] = klasses.join ' '
     
-      html[:recaptcha] ||= 'on' if Card::Env[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
+      html[:recaptcha] ||= 'on' if Card::Env.recaptcha_on? && Card.toggle( card.rule(:captcha) )
       html.delete :recaptcha if html[:recaptcha] == :off
     
       { :url=>url, :remote=>true, :html=>html }

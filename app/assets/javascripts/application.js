@@ -5,7 +5,7 @@
 // the compiled file.
 //
 //= require jquery
-//= require jquery-ui
+//= require jquery.ui.all
 //= require jquery.fileupload.js
 //= require jquery.iframe-transport.js
 //= require jquery.ui.autocomplete.html.js

@@ -1,4 +1,3 @@
-require "wagn/spec_helper"
 
 describe Card::Loader do
   let(:card_double) { proxy Card }

@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 class Card
   cattr_accessor :count

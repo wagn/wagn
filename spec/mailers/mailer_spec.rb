@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe Card::Mailer do
   #include ActionMailer::Quoting
@@ -46,10 +45,6 @@ describe Card::Mailer do
   end
 
   private
-    def read_fixture(action)
-      IO.readlines("#{FIXTURES_PATH}/user_notifier/#{action}")
-    end
-
     def encode(subject)
       quoted_printable(subject, Card::Mailer::CHARSET)
     end

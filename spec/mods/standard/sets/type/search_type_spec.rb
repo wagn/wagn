@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe Card::Set::Type::SearchType do
   it "should wrap search items with correct view class" do

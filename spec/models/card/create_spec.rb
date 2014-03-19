@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 # FIXME this shouldn't be here
 describe Card::Set::Type::Cardtype, ".create with :codename" do

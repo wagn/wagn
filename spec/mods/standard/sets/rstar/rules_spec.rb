@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe Card::Set::Rstar::Rules do
   it "should render setting view for a right set" do

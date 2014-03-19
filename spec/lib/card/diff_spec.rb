@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 #!/usr/bin/env ruby
 
-require 'wagn/spec_helper'
 require 'card/diff'
 require 'diff'
 

@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 class Card
   # REVIEW: hooks api will do this differently, probably should remove and add new tests elsewhere

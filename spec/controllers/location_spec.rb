@@ -1,4 +1,3 @@
-require 'wagn/spec_helper'
 
 #FIXME - this shouldn't really be with the controller specs
 

@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 module Card::Set::Right::Account # won't this conflict with a real set (and fail to provide controlled test?)
   extend Card::Set

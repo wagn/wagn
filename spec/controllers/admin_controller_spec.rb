@@ -1,4 +1,3 @@
-require 'wagn/spec_helper'
 
 describe AdminController, "admin functions" do
 

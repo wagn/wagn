@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe Card::Flexmail do
   describe "#email_config_cardnames" do

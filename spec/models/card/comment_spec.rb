@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 
 # FIXME: this test is breaking; I can cut and paste the code into console and it works great. wtf?

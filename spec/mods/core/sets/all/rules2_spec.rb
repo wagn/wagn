@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 
 #FIXME - this seems like a LOT of testing but it doesn't cover a ton of ground

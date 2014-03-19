@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe Card::Set::All::Attach do
   it 'should be triggered by image card creation' do

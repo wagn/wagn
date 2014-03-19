@@ -1,7 +1,7 @@
-Feature: Content Settings
+Feature: Structure Rules
   In order to have patterned content
   As a Wagneer
-  I want to manage content settings
+  I want to manage structure through rules
 
   Background:
     Given I am signed in as Joe Admin
@@ -36,9 +36,6 @@ Feature: Content Settings
     Given I create card "Home Movie+*right+*default" with content "Watch this"
     When I go to new Movie card named "Lew+Home Movie"
     Then I should see "Watch this"
-
-
-
 
 
 

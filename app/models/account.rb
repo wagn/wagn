@@ -3,6 +3,9 @@
 class Account
   @@as_card = @@as_id = @@current_id = @@current = nil
 
+  NON_CREATEABLE_TYPES = %w{ signup setting set } # NEED API
+  NEED_SETUP_KEY = 'NEED_SETUP'
+
   #after_save :reset_instance_cache
 
   class << self
@@ -135,14 +138,15 @@ class Account
       current_id != Card::AnonID
     end
 
-    def no_logins?()
-      c = Card.cache
-      !c.read('no_logins').nil? ? c.read('no_logins') : c.write('no_logins', (account_count < 3))
+    def needs_setup?
+      test = Card.cache.read NEED_SETUP_KEY
+      !test.nil? or Card.cache.write NEED_SETUP_KEY, (account_count < 3) # 3, because
     end
     
-    def account_count
-      Card.count_by_wql :right=>Card[:account].name
+    def simulate_setup_need!
+      Card.cache.write NEED_SETUP_KEY, true
     end
+    
 
     def always_ok?
       #warn Rails.logger.warn("aok? #{as_id}, #{as_id&&Card[as_id].id}")
@@ -163,7 +167,16 @@ class Account
     # PERMISSIONS
 
 
-  protected
+    def createable_types
+      type_names = Account.as_bot do
+        Card.search :type=>Card::CardtypeID, :return=>:name, :not => { :codename => ['in'] + NON_CREATEABLE_TYPES }
+      end
+      type_names.reject do |name|
+        !Card.new( :type=>name ).ok? :create
+      end.sort
+    end
+
+    protected
     # FIXME stick this in session? cache it somehow??
     def ok_hash
       usr_id = Account.as_id
@@ -184,22 +197,10 @@ class Account
       #warn "ok_h #{r}, #{usr_id}, #{ok_hash.inspect}";
     end
 
-  public
-
-    NON_CREATEABLE_TYPES = %w{ signup setting set }
-
-    def createable_types
-      type_names = Account.as_bot do
-        Card.search :type=>Card::CardtypeID, :return=>:name, :not => { :codename => ['in'] + NON_CREATEABLE_TYPES }
-      end
-      type_names.reject do |name|
-        !Card.new( :type=>name ).ok? :create
-      end.sort
-    end
-
-    def reset_cache_item card_id, email=nil
-      cache.write "~#{card_id}", nil
-      cache.write email, nil if email
+    private
+  
+    def account_count
+      Card.count_by_wql :right=>Card[:account].name
     end
 
   end

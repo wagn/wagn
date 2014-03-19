@@ -4,6 +4,10 @@ require 'cgi'
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
 
 
+Given /^site simulates setup need$/ do
+  Account.simulate_setup_need!
+end
+  
 Given /^I am signed in as (.+)$/ do |account_name|
   accounted = Card[account_name]
   visit "/update/:signin?card[subcards][%2B*email][content]=#{accounted.account.email}&card[subcards][%2B*password][content]=joe_pass"

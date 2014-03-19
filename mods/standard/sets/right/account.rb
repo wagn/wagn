@@ -49,7 +49,8 @@ event :set_default_salt, :on=>:create, :before=>:process_subcards do
 end
 
 event :set_default_status, :on=>:create, :before=>:process_subcards do
-  subcards["+#{Card[:status].name}"] = { :content => ( Account.signed_in? ? 'active' : 'pending' ) }
+  default_status = ( Account.signed_in? || Account.needs_setup? ? 'active' : 'pending' )
+  subcards["+#{Card[:status].name}"] = { :content => default_status }
 end
 
 event :generate_confirmation_token, :on=>:create, :before=>:process_subcards do

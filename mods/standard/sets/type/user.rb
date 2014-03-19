@@ -25,7 +25,7 @@ format :html do
   end
 
 
-  view :setup, :tags=>:unknown_ok, :perms=>lambda { |r| Account.no_logins? } do |args|
+  view :setup, :tags=>:unknown_ok, :perms=>lambda { |r| Account.needs_setup? } do |args|
     args.merge!( {
       :title=>'Welcome, Wagneer!',
       :optional_help=>:show,
@@ -54,7 +54,7 @@ format :html do
 end
 
 event :setup_as_bot, :before=>:check_permissions, :on=>:create, :when=>proc{ |c| Wagn::Env.params[:setup] } do
-  abort :failure unless Account.no_logins?
+  abort :failure unless Account.needs_setup?
   Account.as_bot
 end  
 
@@ -67,7 +67,7 @@ event :setup_first_user, :before=>:process_subcards, :on=>:create, :when=>proc{ 
 end
 
 event :signin_after_setup, :before=>:extend, :on=>:create, :when=>proc{ |c| Wagn::Env.params[:setup] } do
-  Card.cache.delete 'no_logins'
+  Card.cache.delete 'no_signins'
   Account.signin id
 end
 

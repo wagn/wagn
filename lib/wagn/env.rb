@@ -16,7 +16,7 @@ module Wagn::Env
         self[:protocol]   = Wagn.config.override_protocol || c.request.protocol
         
         #hacky - should be in module
-        self[:recaptcha_on] = !Account.signed_in? && !Account.no_logins? && have_recaptcha_keys?
+        self[:recaptcha_on] = !Account.signed_in? && !Account.needs_setup? && have_recaptcha_keys?
         self[:recaptcha_count] = 0
       end
     end

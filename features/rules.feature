@@ -1,7 +1,7 @@
-Feature: Set settings
+Feature: Set-based Rules
   In order to control settings in an efficient way
   As a Wagneer
-  I want to be able to control settings for sets of cards
+  I want to be able to control rules for sets of cards
 
   Background:
     Given I am signed in as Joe Admin

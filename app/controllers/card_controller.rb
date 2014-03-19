@@ -71,7 +71,7 @@ class CardController < WagnController
     params[:id] = case
       when params[:id]
         params[:id]
-      when Account.no_logins?
+      when Account.needs_setup?
         params[:card] = { :type_id => Card.default_accounted_type_id }
         params[:view] = 'setup'
         ''

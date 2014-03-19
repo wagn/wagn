@@ -98,7 +98,8 @@ class Card
 
     class << self
     
-      def extended mod
+      def extended mod 
+        # document!
         register_set mod
       end
     

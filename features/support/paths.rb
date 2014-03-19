@@ -31,7 +31,7 @@ module NavigationHelpers
       "/card/new?card[name]=#{CGI.escape($1)}"
 
     when /edit (.*)$/
-   "/card/edit/#{$1.to_name.url_key}"
+   "/#{$1.to_name.url_key}?view=edit"
 
     when /new (.*)$/
       "/new/#{$1.to_name.url_key}"

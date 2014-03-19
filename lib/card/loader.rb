@@ -71,10 +71,9 @@ class Card
         Set.process_base_modules #must do this here because core sets must be processed into Card class before loading standard sets
       end
       
-      Set.process_base_modules
+      #Set.process_base_modules #why is this run again?
       Set.clean_empty_modules
-            
-      Set.register_set Card # reset so events in card.rb will be defined on card itself  (temporary?)
+      #Set.register_set Card # reset so events in card.rb will be defined on card itself  (temporary?)
     end
 
 
@@ -96,7 +95,15 @@ class Card
           
           set_module.extend Set
           set_module.class_eval File.read( filename ), filename, 1
-        end    
+          #FIXME - this #class_eval call causes several issues:
+          #  1. confusing backtraces
+          #  2. failure to show up in Simplecov (built-in ruby Coverage tracking is triggered by require or load)
+          #  3. others?
+          # proposed fix: generate tmp files for set files and then require them (or, more precisely, use require_dependency on them)
+          # would ultimately be preferable not to have to have to regenerate them every time but support a mode where gem mod set files
+          # are required (without regeneration) but mods in instances are loaded dynamically
+        end
+            
       end
     end
 

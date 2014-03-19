@@ -180,27 +180,6 @@ class Card
         end.sort
       end
 
-      protected
-      # FIXME stick this in session? cache it somehow??
-      def ok_hash
-        usr_id = Auth.as_id
-        ok_hash = Card.cache.read('OK') || {}
-        #warn(Rails.logger.warn "ok_hash #{usr_id}")
-        if ok_hash[usr_id].nil?
-          ok_hash = ok_hash.dup if ok_hash.frozen?
-          ok_hash[usr_id] = begin
-              Card[usr_id].all_roles.inject({:role_ids => {}}) do |ok,role_id|
-                ok[:role_ids][role_id] = true
-                ok
-              end
-            end || false
-          #warn(Rails.logger.warn "update ok_hash(#{usr_id}) #{ok_hash.inspect}")
-          Card.cache.write 'OK', ok_hash
-        end
-        r=ok_hash[usr_id]
-        #warn "ok_h #{r}, #{usr_id}, #{ok_hash.inspect}";
-      end
-
       private
   
       def account_count

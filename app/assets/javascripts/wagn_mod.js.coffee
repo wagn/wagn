@@ -1,5 +1,6 @@
 window.wagn ||= {} #needed to run w/o *head.  eg. jasmine
 
+
 $.extend wagn,
   editorContentFunctionMap: {
     '.tinymce-textarea'      : -> tinyMCE.get(@[0].id).getContent()
@@ -126,7 +127,14 @@ $.extend wagn,
         else if i.page
           page = vars[i.page] || i.page
           text = i.text || page
-          '<a href="' + wagn.rootPath + '/' + wagn.linkname(page) + '">' + text + ' &crarr;</a>'
+          if page == vars['self']
+            relpath = vars['linkname']
+          else if page.match /^[\w\+\*]+$/
+            relpath = page
+          else
+            relpath = '?' + $.param( 'card[name]' : page ) 
+            
+          '<a href="' + wagn.rootPath + '/' + relpath + '">' + text + ' &crarr;</a>'
         else
           wagn.generateStandardMenuItem i, vars
 
@@ -140,9 +148,6 @@ $.extend wagn,
     
         items.push('<li>' + item + '</li>')
     items
-
-  linkname: (name)-> #duplicates smartname #url_key
-    name.replace(/[^\w\*\+]/g, ' ').replace(/\s+/g,'_')
 
   generateListTemplate: (list, vars)->
     items = []
@@ -159,7 +164,6 @@ $.extend wagn,
     items
 
   generateStandardMenuItem: (i, vars)->
-    linkname = wagn.linkname vars['self']
     params = i.path_opts || {}
   
     if i.related
@@ -171,9 +175,15 @@ $.extend wagn,
         { 'name': '+*' + i.related }
       
     if i.view #following basically reproduces link_to_view.  make own function?
-      params['view'] = i.view unless i.view == 'home'
-      path = wagn.rootPath + '/' + linkname
+      path = wagn.rootPath + '/'
+      if vars['creator']
+        path += vars['linkname']
+      else
+        params['card[name]'] = vars['self']
+      
+      params['view'] = i.view unless i.view == 'home'      
       path += '?' + $.param(params) unless $.isEmptyObject params
+      
       text = i.text || i.view
       '<a href="' + path + '" data-remote="true" class="slotter">' + text + '</a>'
 
@@ -282,9 +292,6 @@ $(window).ready ->
     if val != ''
       window.location = wagn.rootPath + escape( val )
 
-$(document).bind 'mobileinit', ->
-  $.mobile.autoInitializePage = false
-  $.mobile.ajaxEnabled = false
 
 toggleShade = (shadeSlot) ->
   shadeSlot.find('.shade-content').slideToggle 1000

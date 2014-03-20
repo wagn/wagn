@@ -5,17 +5,20 @@
 // the compiled file.
 //
 //= require jquery
-//= require jquery.ui.all
-//= require jquery.fileupload.js
-//= require jquery.iframe-transport.js
-//= require jquery.ui.autocomplete.html.js
-//= require jquery_ujs
-//= require jquery.autosize
 //= require tinymce
 //= require wagn_mod
 //= require wagn
 //= require wagn_menu
-//= require jquery.mobile
+//= !require jquery.mobile    
+    /* jquery.mobile must be after wagn to avoid mobileinit nastiness */
+//= require jquery.ui.all
+    /* jquery.ui.all must be after jquery.mobile to override dialog weirdness */
+//= require jquery.ui.autocomplete.html.js
+    /* this autocomplete must be after jquery.ui stuff */
+//= require jquery.autosize
+//= require jquery.fileupload.js
+//= require jquery.iframe-transport.js
+//= require jquery_ujs
 
 /*
 Note: I attempted to get tinymce up with tinymce-jquery,

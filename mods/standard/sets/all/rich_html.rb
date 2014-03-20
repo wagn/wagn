@@ -98,6 +98,7 @@ format :html do
 
     @menu_vars = {
       :self         => card.name,
+      :linkname     => card.cardname.url_key,
       :type         => card.type_name,
       :structure    => card.structure && card.template.ok?(:update) && card.template.name,
       :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read ),

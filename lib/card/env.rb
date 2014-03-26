@@ -29,7 +29,7 @@ class Card
       def recaptcha_on?
         if self[:recaptcha_on].nil?
           self[:recaptcha_count] = 0
-          self[:recaptcha_on] = !Auth.signed_in? && !Auth.needs_setup? && have_recaptcha_keys?
+          self[:recaptcha_on] = have_recaptcha_keys? && !Auth.signed_in? && !Auth.needs_setup? && !Auth.always_ok?
         end
         self[:recaptcha_on]
       end

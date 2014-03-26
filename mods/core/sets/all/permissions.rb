@@ -208,7 +208,7 @@ end
 
 event :recaptcha, :before=>:approve do
   if !@supercard                        and
-      Env.recaptcha_on?          and
+      Env.recaptcha_on?                 and
       Card.toggle( rule :captcha )      and
       num = Card::Env[:recaptcha_count] and
       num < 1

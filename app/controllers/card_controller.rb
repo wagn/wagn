@@ -96,19 +96,18 @@ class CardController < WagnController
       when /^\:(\w+)$/
         Card.fetch $1.to_sym
       else
-        opts = params[:card]
-        opts = opts ? opts.clone : {} #clone so that original params remain unaltered.  need deeper clone?
-        opts[:type] ||= params[:type] if params[:type]# for /new/:type shortcut.  we should fix and deprecate this.
-        name = params[:id] || opts[:name]
+        opts = params[:card] ? params[:card].clone : {}   # clone so that original params remain unaltered.  need deeper clone?
+        opts[:type] ||= params[:type] if params[:type]    # for /new/:type shortcut.  we should fix and deprecate this.
+        opts[:name] ||= params[:id].to_s.gsub( '_', ' ')  # move handling to Card::Name?
         
         if params[:action] == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
           # I think we may need to create a "#create" instance method that handles this checking.
           # that would let us get rid of this...
-          opts[:name] ||= name
           Card.new opts
         else
-          Card.fetch name, :new=>opts
+          mark = params[:id] || opts[:name]
+          Card.fetch mark, :new=>opts
         end
       end
     @card.selected_revision_id = params[:rev].to_i if params[:rev]

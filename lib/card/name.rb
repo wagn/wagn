@@ -20,7 +20,7 @@ class Card
       junction? && begin
         right_key = right_name.key
         !!traitlist.find do |codename|
-          card_id = Card::Codename[ codename ] and card = Card.fetch( card_id, :skip_modules=>true, :skip_virtual=>true ) and
+          card_id = Codename[ codename ] and card = Card.fetch( card_id, :skip_modules=>true, :skip_virtual=>true ) and
             card.key == right_key
         end
       end

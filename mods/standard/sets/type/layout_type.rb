@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-include Card::Set::Type::Html
+include Html
 
 view :editor, :type=>:html
 view :closed_content, :type=>:html

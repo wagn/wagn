@@ -1,5 +1,5 @@
 #event :
-include Card::Set::All::Permissions::Accounts
+include All::Permissions::Accounts
 
 view :raw do |args|
   

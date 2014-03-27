@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 
 format do
   def wrap_item item, args={}

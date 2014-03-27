@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 
 view :editor do |args|
   form.text_field :content, :class=>'card-content'

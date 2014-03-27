@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 
 Card.error_codes.merge! :permission_denied=>[:denial, 403], :captcha=>[:error,449]
 

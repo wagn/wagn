@@ -1,6 +1,5 @@
-# -*- encoding : utf-8 -*-
 
-include Card::Set::All::Permissions::Accounts
+include All::Permissions::Accounts
 
 card_accessor :email
 card_accessor :password
@@ -44,7 +43,7 @@ end
 
 event :set_default_salt, :on=>:create, :before=>:process_subcards do
   salt = Digest::SHA1.hexdigest "--#{Time.now.to_s}--"
-  Card::Env[:salt] = salt # HACK!!! need viable mechanism to get this to password
+  Env[:salt] = salt # HACK!!! need viable mechanism to get this to password
   subcards["+#{Card[:salt].name}"] ||= {:content => salt }
 end
 
@@ -58,10 +57,10 @@ event :generate_confirmation_token, :on=>:create, :before=>:process_subcards do
 end
 
 event :reset_password, :on=>:update, :before=>:approve do
-  if token = Card::Env.params[:reset_token]    
+  if token = Env.params[:reset_token]    
     if left_id == Auth.authenticate_by_token(token)
       Auth.signin left_id
-      Card::Env.params[:success] = { :id=>left.name, :view=>:related,
+      Env.params[:success] = { :id=>left.name, :view=>:related,
         :related=>{:name=>"+#{Card[:account].name}", :view=>'edit'}
       }
       abort :success

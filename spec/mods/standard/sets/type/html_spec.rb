@@ -12,11 +12,11 @@ describe Card::Set::Type::Html do
   it "should not render any content in closed view" do
     render_card(:closed_content, :type=>'Html', :content=>"<strong>Lions and Tigers</strong>").should == ''
   end
-  
+
   it "should render inclusions" do
     render_card( :core, :type=>'HTML', :content=>'{{a}}' ).should =~ /slot/
   end
-  
+
   it 'should not render uris' do
     render_card( :core, :type=>'HTML', :content=>'http://google.com' ).should_not =~ /\<a/
   end

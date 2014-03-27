@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 require_dependency 'json'
 
 POINTER_KEY = "Pointer"

@@ -1,6 +1,5 @@
-# -*- encoding : utf-8 -*-
 
-include Card::Set::Type::Basic
+include Basic
 
 attr_accessor :email
 

@@ -1,4 +1,4 @@
-# -*- encoding : utf-8 -*-
+
 format :json do
 
   def get_inclusion_defaults

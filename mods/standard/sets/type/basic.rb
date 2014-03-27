@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 format :html do
   view :open_content do |args|
     content = _render_core args

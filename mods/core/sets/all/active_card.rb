@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 
 def card_attributes
   if Card::Set.traits

@@ -1,4 +1,4 @@
-# -*- encoding : utf-8 -*-
+
 require 'sass'
 
 def self.delete_style_files

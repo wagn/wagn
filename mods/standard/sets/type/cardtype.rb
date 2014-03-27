@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 
 format :html do
 
@@ -30,7 +29,7 @@ format :html do
   end
 end
 
-include Card::Set::Type::Basic
+include Basic
 
 
 

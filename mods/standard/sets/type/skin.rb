@@ -1,6 +1,5 @@
-# -*- encoding : utf-8 -*-
 
-include Card::Set::Type::Pointer
+include Pointer
 
 view :core, :type=>:pointer
 
@@ -22,6 +21,6 @@ end
 
 
 event :reset_style_for_skin, :after=>:store do
-  Card::Set::Right::Style.delete_style_files
+  Right::Style.delete_style_files
 end
 

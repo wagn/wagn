@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 
 def is_template?
   cardname.trait_name? :structure, :default

@@ -1,6 +1,5 @@
-# -*- encoding : utf-8 -*-
 
-include Card::Set::All::Permissions::Accounts
+include All::Permissions::Accounts
 
 view :editor do |args|
   card.content = ''

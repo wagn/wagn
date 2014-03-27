@@ -1,5 +1,3 @@
-# -*- encoding : utf-8 -*-
-
   
 def item_names(args={})  # needed for flexmail attachments.  hacky.
   [self.cardname]

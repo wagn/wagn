@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 # = Card#fetch
 #
 # A multipurpose retrieval operator that incorporates caching, "virtual" card retrieval

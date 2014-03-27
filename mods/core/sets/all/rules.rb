@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 RuleSQL = %{
   select rules.id as rule_id, settings.id as setting_id, sets.id as set_id, sets.left_id as anchor_id, sets.right_id as set_tag_id
   from cards rules join cards sets on rules.left_id = sets.id join cards settings on rules.right_id = settings.id

@@ -1,8 +1,6 @@
-# -*- encoding : utf-8 -*-
 
 format :html do
   
-
   view :new do |args|
     #FIXME - make more use of standard new view
     args.merge!(
@@ -37,13 +35,13 @@ format :html do
 end
 
 event :activate_by_token, :before=>:approve, :on=>:update do
-  if token = Card::Env.params[:token]
+  if token = Env.params[:token]
     if id == Auth.authenticate_by_token(token)
       subcards['+*account'] = {'+*status'=>'active'}
       self.type_id = Card.default_accounted_type_id
       Auth.signin id #move this to extend?
       Auth.as_bot
-      Card::Env.params[:success] = ''
+      Env.params[:success] = ''
     else
       abort :failure
     end

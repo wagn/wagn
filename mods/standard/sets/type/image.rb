@@ -1,6 +1,5 @@
-# -*- encoding : utf-8 -*-
 
-include Card::Set::Type::File
+include File
 
 view :closed_content do |args|
   _render_core :size=>:icon

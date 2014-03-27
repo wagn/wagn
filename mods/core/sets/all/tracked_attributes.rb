@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 
 event :set_tracked_attributes, :before=>:store, :on=>:save do
   updates.each_pair do |attrib, value|

@@ -139,6 +139,21 @@ class Card
         end
       end
 
+      def write_tmp_set_file set_pattern, anchor, from_file
+        filename = "#{tmp_set_dir}/#{set_pattern}-#{anchor}.rb"
+        File.open filename, 'w' do |f|
+          f.write %{class Card; module Set; module #{set_pattern.camelize}; module #{anchor.camelize}; extend Card::Set;}
+          f.write File.read(from_file)
+          f.write %{\nend;end;end;end\n}
+        end
+        filename
+      end
+
+      def tmp_set_dir
+        paths = Wagn.paths['tmp/sets']
+        paths.existent.first or Dir.mkdir paths.first
+      end
+      
       def set_module_from_name *args
         # FIXME - this does not properly handle anchorless sets
         # There are special hacks for *all, but others (like *rstar) will not be found by

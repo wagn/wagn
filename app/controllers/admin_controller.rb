@@ -1,12 +1,23 @@
 # -*- encoding : utf-8 -*-
 class AdminController < CardController
-  before_filter :admin_only, :except=>:setup
   
-  def clear_cache
-    Wagn::Cache.reset_global
-    render_text 'Cache cleared'
-  end
+  
+  #READ
+  
 
+  
+  #/:stats
+  def stats msg
+    render_text %{
+      <h2>#{msg}</h2>
+      <p>cards: #{Card.where(:trash=>false).count}</p>
+      <p>trashed cards: #{Card.where(:trash=>true).count}</p>
+      <p>revisions: #{Card::Revision.count}</p>
+      <p>references: #{Card::Reference.count}</p>
+    }
+  end
+  
+  #merge with above
   def memory
     oldmem = session[:memory]
     session[:memory] = total = profile_memory
@@ -20,43 +31,34 @@ class AdminController < CardController
       }
     }
   end
-
-  #DEPRECATED.  migrated away old links?
-  def tasks
-    render_text %{
-      <h1>Global Permissions - REMOVED</h1>
-      <p>&nbsp;</p>
-      <p>After moving so much configuration power into cards, the old, weaker global system is no longer needed.</p>
-      <p>&nbsp;</p>
-      <p>Account permissions are now controlled through +*account cards and role permissions through +*role cards.</p>
-    }
+  
+  #UPDATE
+  
+  #/update/:all?task=clear_cache  
+  def clear_cache
+    Wagn::Cache.reset_global
+    render_text 'Cache cleared'
   end
   
+  #/update/:all?task=repair_references
   def repair_references
     Card::Reference.repair_all
     stats 'References Repaired'
   end
 
-
-  def stats msg
-    render_text %{
-      <h2>#{msg}</h2>
-      <p>cards: #{Card.where(:trash=>false).count}</p>
-      <p>trashed cards: #{Card.where(:trash=>true).count}</p>
-      <p>revisions: #{Card::Revision.count}</p>
-      <p>references: #{Card::Reference.count}</p>
-    }
-  end
-
+  #/update/:all?task=empty_trash  
   def empty_trash
     Card.empty_trash
     stats 'Trash Emptied'
   end
   
+  #/update/:all?task=delete_old_revisions
   def delete_old_revisions
     Card::Revision.delete_old
     stats 'Old Revisions Deleted'
   end
+
+  #/delete/:session
 
   def delete_old_sessions
     if params[:months] and params[:months].to_i > 0
@@ -88,12 +90,5 @@ class AdminController < CardController
     end
   end
 
-  def render_text response
-    render :text =>response
-  end
-  
-  def admin_only
-    raise Wagn::PermissionDenied unless Card::Auth.always_ok?
-  end
 
 end

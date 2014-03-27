@@ -2,13 +2,14 @@
 
 class Card < ActiveRecord::Base
   require_dependency 'card/query'
+  require_dependency 'card/set_pattern'  
   require_dependency 'card/set'
   require_dependency 'card/format'
   require_dependency 'card/exceptions'
   require_dependency 'card/auth'
+  require_dependency 'card/loader'
 
-  extend Card::Set
-  extend Card::Loader
+  extend Set
 
   has_many :revisions, :order => :id
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
@@ -31,7 +32,7 @@ class Card < ActiveRecord::Base
   around_save :store
   after_save :extend
 
-  load_mods
+  Loader.load_mods
 
   tracks :content # we can phase this out and just use "dirty" handling once current content is stored in the cards table
 

@@ -85,11 +85,11 @@ describe Card::Reference do
 
   it "should update referencers on rename when requested (case 2)" do
     card = Card['Administrator Menu+*self+*read']
-    refs = Card::Reference.where(:referee_id => Card::AdminID).map(&:referer_id).sort
+    refs = Card::Reference.where(:referee_id => Card::AdministratorID).map(&:referer_id).sort
     card.update_referencers = true
     card.name='Administrator Menu+*type+*read'
     card.save
-    Card::Reference.where(:referee_id => Card::AdminID).map(&:referer_id).sort.should == refs
+    Card::Reference.where(:referee_id => Card::AdministratorID).map(&:referer_id).sort.should == refs
   end
 
   it "should not update references when not requested" do

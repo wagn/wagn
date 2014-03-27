@@ -91,6 +91,17 @@ class Card
     end
   
   
+    def const_missing const
+      if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore.to_sym
+        if card_id = Codename[code]
+          const_set const, card_id
+        else
+          raise "Missing codename #{code} (#{const}) #{caller*"\n"}"
+        end
+      else
+        super
+      end
+    end
   
     #
     # Singleton methods
@@ -239,6 +250,8 @@ class Card
         instance_variable_set "@#{trait}", value
       end
     end
+    
+
     
   end
 end

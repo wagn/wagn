@@ -90,7 +90,7 @@ describe AccountController, "with captcha enabled" do
     end
   end
 
-  Auth.as Card::AnonID do
+  Auth.as Card::AnonymousID do
     require_captcha_on(
       :signup,
       :card => { :name => "Bob", :type=>"Account Request" },

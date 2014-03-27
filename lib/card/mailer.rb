@@ -90,7 +90,7 @@ class Card
     def token_emails_from account
       Card.setting( '*invite+*from' ) || begin
         from_card_id = Auth.current_id
-        from_card_id = Card::WagnBotID if [ Card::AnonID, account.left_id ].member? from_card_id
+        from_card_id = Card::WagnBotID if [ Card::AnonymousID, account.left_id ].member? from_card_id
         from_card = Card[from_card_id]
         "#{from_card.name} <#{from_card.account.email}>"
       end

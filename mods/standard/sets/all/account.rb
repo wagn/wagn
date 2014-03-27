@@ -45,7 +45,7 @@ end
 
 def all_roles
   @all_roles ||= 
-    if id == Card::AnonID
+    if id == Card::AnonymousID
       []
     else
       Auth.as_bot do

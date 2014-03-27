@@ -2,14 +2,12 @@
 
 class Card < ActiveRecord::Base
   require_dependency 'card/query'
-  require_dependency 'card/constant'
   require_dependency 'card/set'
   require_dependency 'card/format'
   require_dependency 'card/exceptions'
   require_dependency 'card/auth'
 
   extend Card::Set
-  extend Card::Constant
   extend Card::Loader
 
   has_many :revisions, :order => :id

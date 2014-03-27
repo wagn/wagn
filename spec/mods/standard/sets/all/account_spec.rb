@@ -21,7 +21,7 @@ describe Card::Set::All::Account do
   
     it "for Wagn Bot" do
       Card::Auth.current_id = Card::WagnBotID
-      Card::Auth.current.parties.sort.should == [Card::WagnBotID, Card::AnyoneSignedInID, Card::AdminID]
+      Card::Auth.current.parties.sort.should == [Card::WagnBotID, Card::AnyoneSignedInID, Card::AdministratorID]
     end
     
     it "for Anonymous" do

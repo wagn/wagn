@@ -26,7 +26,7 @@ class SharedData
     Card.create! :name=>"Joe Admin", :type_code=>'user', :content=>"I'm number one", :subcards=>account_args( '+*email'=>'joe@admin.com' )
     Card.create! :name=>"Joe Camel", :type_code=>'user', :content=>"Mr. Buttz",      :subcards=>account_args( '+*email'=>'joe@camel.com' )
 
-    Card['Joe Admin'].fetch(:trait=>:roles, :new=>{}).items = [ Card::AdminID ]
+    Card['Joe Admin'].fetch(:trait=>:roles, :new=>{}).items = [ Card::AdministratorID ]
 
     # generic, shared attribute card
     color = Card.create! :name=>"color"
@@ -64,7 +64,7 @@ class SharedData
 
     Card['u1'].fetch( :trait=>:roles, :new=>{} ).items = [ r1, r2, r3 ]
     Card['u2'].fetch( :trait=>:roles, :new=>{} ).items = [ r1, r2, r4 ]
-    Card['u3'].fetch( :trait=>:roles, :new=>{} ).items = [ r1, r4, Card::AdminID ]
+    Card['u3'].fetch( :trait=>:roles, :new=>{} ).items = [ r1, r4, Card::AdministratorID ]
 
     c1 = Card.create! :name=>'c1'
     c2 = Card.create! :name=>'c2'

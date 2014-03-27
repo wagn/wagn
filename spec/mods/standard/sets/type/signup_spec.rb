@@ -4,7 +4,7 @@
 describe Card::Set::Type::Signup do
   
   before do
-    Card::Auth.current_id = Card::AnonID
+    Card::Auth.current_id = Card::AnonymousID
   end
   
   

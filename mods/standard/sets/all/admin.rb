@@ -1,4 +1,5 @@
 
+# right/:stats
 
 view :show_cache do |args|
   frame args do 

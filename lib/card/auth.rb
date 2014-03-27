@@ -73,7 +73,7 @@ class Card
       end
 
       def current_id
-        @@current_id ||= Card::AnonID
+        @@current_id ||= Card::AnonymousID
       end
 
       def current
@@ -136,7 +136,7 @@ class Card
       end
 
       def signed_in?
-        current_id != Card::AnonID
+        current_id != Card::AnonymousID
       end
 
       def needs_setup?
@@ -161,7 +161,7 @@ class Card
         #warn(Rails.logger.warn "Auth.always_ok? #{usr_id}")
         if always[usr_id].nil?
           always = always.dup if always.frozen?
-          always[usr_id] = !!Card[usr_id].all_roles.detect{|r|r==Card::AdminID}
+          always[usr_id] = !!Card[usr_id].all_roles.detect{|r|r==Card::AdministratorID}
           #warn(Rails.logger.warn "update always hash #{always[usr_id]}, #{always.inspect}")
           Card.cache.write 'ALWAYS', always
         end

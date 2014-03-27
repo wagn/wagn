@@ -9,9 +9,9 @@ describe Card::Revision do
     author_cd2 = Card[author2.id]
     Card::Auth.current_id = Card::WagnBotID
     rc1=author_cd1.fetch(:new=>{}, :trait=>:roles)
-    rc1 << Card::AdminID
+    rc1 << Card::AdministratorID
     rc2 = author_cd2.fetch(:new=>{}, :trait=>:roles)
-    rc2 << Card::AdminID
+    rc2 << Card::AdministratorID
     author_cd1.save
     author_cd2.save
     Card::Auth.current_id = author_cd1.id

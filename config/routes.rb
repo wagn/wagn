@@ -41,7 +41,7 @@ Rails.application.routes.draw do
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~
   
   # standard non-RESTful
-  match '(card/):action/(:id(.:format))' => 'card' 
+  match '(card)/:action(/:id(.:format))' => 'card'
 
   # other
   match '*id' => 'card#read', :view => 'bad_address'

@@ -147,11 +147,7 @@ class Card
 
     def wrap_main(content)
       return content if params[:layout]=='none'
-      %{#{
-      if flash[:notice]
-        %{<div class="flash-notice">#{ flash[:notice] }</div>}
-      end
-      }<div id="main">#{content}</div>}
+      %{<div id="main">#{content}</div>}
     end
 
   

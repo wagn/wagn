@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 #TEMPORARY - delete me before 1.13!
+# (but add permission migration)
 
 class AddStats < ActiveRecord::Migration
   include Wagn::MigrationHelper

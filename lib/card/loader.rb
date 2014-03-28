@@ -67,6 +67,7 @@ class Card
       end
 
       def load_sets
+        prepare_tmp_dir 'tmp/sets'
         mod_dirs.each do |mod|
           if File.directory? mod
             load_implicit_sets "#{mod}/sets"
@@ -81,7 +82,6 @@ class Card
 
 
       def load_implicit_sets basedir
-        prepare_tmp_dir 'tmp/sets'
         Card.set_patterns.reverse.map(&:key).each do |set_pattern|
 
           next if set_pattern =~ /^\./

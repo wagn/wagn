@@ -1,4 +1,7 @@
 # -*- encoding : utf-8 -*-
+
+require_dependency File.expand_path( '../reference', __FILE__ )
+
 module Card::Chunk
   class Link < Reference
     word = /\s*([^\]\|]+)\s*/

@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 class Card < ActiveRecord::Base
+  require_dependency 'card/codename'
   require_dependency 'card/query'
   require_dependency 'card/set_pattern'  
   require_dependency 'card/set'

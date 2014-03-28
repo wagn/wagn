@@ -7,15 +7,7 @@ class AdminController < CardController
 
   
   #/:stats
-  def stats msg
-    render_text %{
-      <h2>#{msg}</h2>
-      <p>cards: #{Card.where(:trash=>false).count}</p>
-      <p>trashed cards: #{Card.where(:trash=>true).count}</p>
-      <p>revisions: #{Card::Revision.count}</p>
-      <p>references: #{Card::Reference.count}</p>
-    }
-  end
+
   
   #merge with above
   def memory
@@ -32,32 +24,6 @@ class AdminController < CardController
     }
   end
   
-  #UPDATE
-  
-  #/update/:all?task=clear_cache  
-  def clear_cache
-    Wagn::Cache.reset_global
-    render_text 'Cache cleared'
-  end
-  
-  #/update/:all?task=repair_references
-  def repair_references
-    Card::Reference.repair_all
-    stats 'References Repaired'
-  end
-
-  #/update/:all?task=empty_trash  
-  def empty_trash
-    Card.empty_trash
-    stats 'Trash Emptied'
-  end
-  
-  #/update/:all?task=delete_old_revisions
-  def delete_old_revisions
-    Card::Revision.delete_old
-    stats 'Old Revisions Deleted'
-  end
-
   #/delete/:session
 
   def delete_old_sessions

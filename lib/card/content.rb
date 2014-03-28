@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 require_dependency 'card/chunk'
-# you could make the case that Card::Chunk should be Card::Content::Chunk, which would make the above unnecessary (but create noise elsewhere)
+# you could make the case that Card::Chunk should be Card::Content::Chunk...
 
 class Card
   class Content < SimpleDelegator

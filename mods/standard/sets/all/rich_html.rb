@@ -465,8 +465,8 @@ format :html do
   view :not_found do |args| #ug.  bad name.
     sign_in_or_up_links = if !Auth.signed_in?
       %{<div>
-        #{link_to "Sign in", :controller=>'account', :action=>'signin'} or
-        #{link_to 'Sign up', :controller=>'account', :action=>'signup'} to create it.
+        #{link_to "Sign in", wagn_path(':signin') } or
+        #{link_to 'Sign up', wagn_path('account/signup') } to create it.
        </div>}
     end
     frame args.merge(:title=>'Not Found', :optional_menu=>:never) do

@@ -2,6 +2,7 @@
 
 #TEMPORARY - delete me before 1.13!
 # (but add permission migration)
+# ( and right structure)
 
 class AddStats < ActiveRecord::Migration
   include Wagn::MigrationHelper

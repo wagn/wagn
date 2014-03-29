@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::Set::All::Admin do
+describe Card::Set::All::Comment do
   # SPECSTUB (low priority)
 end

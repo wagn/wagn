@@ -17,7 +17,6 @@ format :json do
     { :default_limit => 0 }
   end
   
-
   def show args
     view = args[:view] || :content
     raw = render view, args

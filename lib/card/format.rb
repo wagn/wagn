@@ -155,7 +155,9 @@ class Card
       { :view => :name }
     end
     
-    def params()       @params     ||= controller.params                          end
+    def params
+      Env.params
+    end
     def controller()   @controller ||= StubCardController.new                     end
     def session()      CardController===controller ? controller.session : {}      end
     def ajax_call?()   Card::Env.ajax?                                            end

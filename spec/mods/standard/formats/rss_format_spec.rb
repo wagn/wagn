@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::RssFormat do
-  # SPECSTUB (low priority)
+  # SPECSTUB
 end

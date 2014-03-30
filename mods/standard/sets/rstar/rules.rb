@@ -214,7 +214,11 @@ format :html do
 
 end
 
-# I doubt that the following are actually included at present.
+# 
+
+=begin
+
+These are commented because they are not currently included (see notes in lib/card/set.rb re anchorless sets)
 
 def repair_set
   @set_repair_attempted = true
@@ -232,4 +236,4 @@ def method_missing method_id, *args
     super
   end
 end
-
+=end

@@ -62,7 +62,7 @@ describe Card::HtmlFormat do
       before do
         Card::Auth.as_bot do
           card = Card['A+B']
-          @simple_page = Card::HtmlFormat.new(card).render(:layout)
+          @simple_page = card.format.render(:layout)
           #warn "render sp: #{card.inspect} :: #{@simple_page}"
         end
       end

@@ -1,5 +1,8 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::All::Rss do
-  # SPECSTUB
+  it 'should render recent.rss' do
+    rendered = Card[:recent].format(:format=>:rss).show( {} )
+    rendered.should =~ /xml/
+  end
 end

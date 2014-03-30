@@ -32,7 +32,7 @@ format :rss do
     end
     items.each do |item|
       @xml.item do
-        subformat(item).render_feed_item :view_changes=>(card.id==Card::RecentID)  #FIXME! yuck.
+        subformat(item).render_feed_item :view_changes=>(card.id==RecentID)  #FIXME! yuck.
       end
     end
   end

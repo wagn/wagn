@@ -173,6 +173,7 @@ describe CardController do
       'Sample Basic'.should == assigns['card'].name
     end
 
+
     it "handles nonexistent card with create permission" do
       login_as 'joe_user'
       get :read, {:id=>'Sample_Fako'}
@@ -181,6 +182,11 @@ describe CardController do
 
     it "handles nonexistent card without create permissions" do
       get :read, {:id=>'Sample_Fako'}
+      assert_response 404
+    end
+    
+    it "handles nonexistent card ids" do
+      get :read, {:id=>'~9999999'}
       assert_response 404
     end
     
@@ -330,22 +336,5 @@ describe CardController do
 
 
 
-    
-
-
-    #  what's happening with this test is that when changing from Basic to CardtypeA it is
-    #  stripping the html when the test doesn't think it should.  this could be a bug, but it
-    #  seems less urgent that a lot of the other bugs on the list, so I'm leaving this test out
-    #  for now.
-    #
-    #  def test_update_cardtype_no_stripping
-    #    Card::Auth.as 'joe_user'
-    #    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
-    #    #assert_equal "boo", assigns['card'].content
-    #    assert_equal "<br/>", assigns['card'].content
-    #    assert_response :success, "changed card type"
-    #    assert_equal :cardtype_a", Card['Sample Basic'].type_code
-    #  end
-    #
   end
 end

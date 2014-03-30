@@ -4,7 +4,7 @@ format :html do
   def show args
     @main_view = args[:view] || args[:home_view]
 
-    if ajax_call?
+    if Env.ajax?
       view = @main_view || :open
       self.render view, args
     else

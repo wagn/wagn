@@ -9,7 +9,7 @@ describe Card::Reference do
   describe "references on hard templated cards should get updated" do
     it "on structuree creation" do
       Card.create! :name=>"JoeForm", :type=>'UserForm'
-      Card::Format.new(Card["JoeForm"]).render(:core)
+      Card["JoeForm"].format.render(:core)
       assert_equal ["joe_form+age", "joe_form+description", "joe_form+name"],
         Card["JoeForm"].includees.map(&:key).sort
       Card["JoeForm"].references_expired.should_not == true
@@ -23,7 +23,7 @@ describe Card::Reference do
       Card.create! :name=>"SpecialForm+*type+*structure", :content=>"{{+bar}}"
       c = Card["Form1"]
       c.references_expired.should be_true
-      Card::Format.new(Card["Form1"]).render(:core)
+      Card["Form1"].format.render(:core)
       c = Card["Form1"]
       c.references_expired.should be_nil
       Card["Form1"].includees.map(&:key).should == ["form1+bar"]
@@ -35,7 +35,7 @@ describe Card::Reference do
       tmpl.content = "{{+monkey}} {{+banana}} {{+fruit}}";
       tmpl.save!
       Card["JoeForm"].references_expired.should be_true
-      Card::Format.new(Card["JoeForm"]).render(:core)
+      Card["JoeForm"].format.render(:core)
       assert_equal ["joe_form+banana", "joe_form+fruit", "joe_form+monkey"],
         Card["JoeForm"].includees.map(&:key).sort
       Card["JoeForm"].references_expired.should_not == true

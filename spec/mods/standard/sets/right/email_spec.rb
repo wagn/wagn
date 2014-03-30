@@ -5,7 +5,7 @@ describe Card::Set::Right::Email do
   context '<User>+*email' do
     before do
       @card = Card.fetch 'u1+*email'
-      @format = Card::Format.new @card, :format=>nil
+      @format = @card.format
     end
 
     it 'should allow Wagn Bot to read' do

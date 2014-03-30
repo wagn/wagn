@@ -3,9 +3,9 @@ format do
   view :editor do |args|
     set_name = card.cardname.trunk_name
     set_card = Card.fetch(set_name)
-    not_set = set_card && set_card.type_id != Card::SetID
+    not_set = set_card && set_card.type_id != SetID
 
-    group_options = Auth.as_bot { Card.search(:type=>Card::RoleID, :sort=>'name') }
+    group_options = Auth.as_bot { Card.search(:type_id=>RoleID, :sort=>'name') }
 
     inheritable = not_set ? false : set_card.inheritable?
     inheriting = inheritable && card.content=='_left'

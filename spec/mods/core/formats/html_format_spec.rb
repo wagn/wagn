@@ -12,7 +12,7 @@ describe Card::HtmlFormat do
 
     it "inclusions in multi edit" do
       c = Card.new :name => 'ABook', :type => 'Book'
-      rendered =  Card::Format.new(c).render( :edit )
+      rendered =  c.format.render( :edit )
 
       assert_view_select rendered, 'fieldset' do
         assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[subcards][+illustrator][content]'
@@ -31,7 +31,7 @@ describe Card::HtmlFormat do
 
     context "full wrapping" do
       before do
-        @ocslot = Card::Format.new(Card['A'])
+        @ocslot = Card['A'].format
       end
 
       it "should have the appropriate attributes on open" do
@@ -115,14 +115,14 @@ describe Card::HtmlFormat do
         @layout_card.content = "Hi {{A}}"
         Card::Auth.as_bot { @layout_card.save }
 
-        Card::Format.new(@main_card).render(:layout).should match('Hi Alpha')
+        @main_card.format.render(:layout).should match('Hi Alpha')
       end
 
       it "should default to open view for main card" do
         @layout_card.content='Open up {{_main}}'
         Card::Auth.as_bot { @layout_card.save }
 
-        result = Card::Format.new(@main_card).render_layout
+        result = @main_card.format.render_layout
         result.should match(/Open up/)
         result.should match(/card-header/)
         result.should match(/Joe User/)
@@ -132,7 +132,7 @@ describe Card::HtmlFormat do
         @layout_card.content='Hey {{_main|name}}'
         Card::Auth.as_bot { @layout_card.save }
 
-        result = Card::Format.new(@main_card).render_layout
+        result = @main_card.format.render_layout
         result.should match(/Hey.*div.*Joe User/)
         result.should_not match(/card-header/)
       end
@@ -141,7 +141,7 @@ describe Card::HtmlFormat do
         @layout_card.content="Mainly {{_main|core}}"
         Card::Auth.as_bot { @layout_card.save }
 
-        rendered = Card::Format.new(@layout_card).render(:layout).should == 
+        rendered = @layout_card.format.render(:layout).should == 
           %{Mainly <div id="main"><div class="CodeRay">\n  <div class="code"><pre>Mainly {{_main|core}}</pre></div>\n</div>\n</div>}
           #probably better to check that it matches "Mainly" exactly twice.
       end
@@ -154,7 +154,7 @@ describe Card::HtmlFormat do
           Card.create :name=>"outer space", :content=>"{{_main|name}}"
         end
         
-        Card::Format.new(@layout_card).render(:layout).should == 'Joe User'
+        @layout_card.format.render(:layout).should == 'Joe User'
       end
     end
 

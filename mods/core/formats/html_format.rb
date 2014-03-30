@@ -357,7 +357,7 @@ class Card
     end
 
     def main?
-      if ajax_call?
+      if Env.ajax?
         @depth == 0 && params[:is_main]
       else
         @depth == 1 && @mainline

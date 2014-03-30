@@ -7,7 +7,7 @@ event :add_comment, :after=>:approve, :on=>:save, :when=> proc {|c| c.comment } 
       if Auth.signed_in?
         "[[#{Auth.current.name}]]"
       else
-        Card::Env[:controller].session[:comment_author] = comment_author if Card::Env[:controller]
+        Env.session[:comment_author] = comment_author if Env.session
         "#{ comment_author } (Not signed in)"
       end
     }.....#{Time.now}</div>

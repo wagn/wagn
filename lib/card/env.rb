@@ -37,6 +37,10 @@ class Card
       def params
         self[:params] ||= {}
       end
+      
+      def session
+        self[:session] ||= {}
+      end
     
       def ajax?
         self[:ajax]

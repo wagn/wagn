@@ -2,7 +2,7 @@ event :add_comment, :after=>:approve, :on=>:save, :when=> proc {|c| c.comment } 
   self.content = %{
     #{ content }
     #{ '<hr>' unless content.blank? }
-    #{ comment.to_html }
+    #{ comment.split(/\n/).map {|line| "<p>#{line.strip.empty? ? '&nbsp;' : line}</p>"} * "\n" }
     <div class="w-comment-author">--#{
       if Auth.signed_in?
         "[[#{Auth.current.name}]]"

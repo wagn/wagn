@@ -222,6 +222,10 @@ Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field|
   field_labeled(field).element.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
 end
 
+When /^I press enter to search$/ do
+  find('#_keyword').native.send_keys(:return)
+end
+
 ## variants of standard steps to handle """ style quoted args
 Then /^I should see$/ do |text|
   page.should have_content(text)
@@ -230,4 +234,5 @@ end
 When /^I fill in "([^\"]*)" with$/ do |field, value|
   fill_in(field, :with => value)
 end
+
 

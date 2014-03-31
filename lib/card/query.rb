@@ -6,9 +6,6 @@ class Card::Query
   require_dependency 'card/query/card_spec'
   require_dependency 'card/query/value_spec'  
   require_dependency 'card/query/ref_spec'
-  
-  include ActiveRecord::QuotingAndMatching
-
 
   MODIFIERS = {};  %w{ conj return sort sort_as group dir limit offset }.each{|key| MODIFIERS[key.to_sym] = nil }
 

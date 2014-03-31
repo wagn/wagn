@@ -63,7 +63,7 @@ module Wagn
         add_wagn_path paths, "app",                 :eager_load => true, :glob => "*"
         add_wagn_path paths, "app/assets",          :glob => "*"
         add_wagn_path paths, "app/controllers",     :eager_load => true
-        add_wagn_path paths, "lib/tasks",           :glob => "**/*.rake"
+        add_wagn_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
         add_wagn_path paths, "config"
         add_wagn_path paths, "config/environments", :glob => "#{Rails.env}.rb"
         add_wagn_path paths, "config/initializers", :glob => "**/*.rb"

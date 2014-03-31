@@ -2,13 +2,9 @@
 
 describe CardController do
 
+  include Wagn::Location
+
   describe "- route generation" do
-#  not sure we want this.
-#    it "gets name/id from /card/new/xxx" do
-#      {:post=> "/card/new/xxx"}.should route_to(
-#        :controller=>"card", :action=>'new', :id=>"xxx"
-#      )
-#    end
 
     it "should recognize type" do
       { :get => "/new/Phrase" }.should route_to( :controller => 'card', :action=>'read', :type=>'Phrase', :view=>'new' )
@@ -38,12 +34,6 @@ describe CardController do
             :controller=>"card", :action=>"read", :id=>"*recent", :format=>"xml"
           )
         end
-
-#        it "should accept cards with dot sections that don't match extensions" do
-#          {:get => "#{prefix}/random.card"}.should route_to(
-#            :controller=>"card",:action=>"read",:id=>"random.card"
-#          )
-#        end
 
         it "should accept cards without dots" do
           {:get => "#{prefix}/random"}.should route_to(
@@ -201,7 +191,7 @@ describe CardController do
       
     end
     
-    describe "view = new" do
+    context "view = new" do
       before do
         login_as 'joe_user'
       end
@@ -242,30 +232,48 @@ describe CardController do
       end
       
     end
-  end
-  
-  describe "#read file" do
-    before do
-      Card::Auth.as_bot do
-        Card.create :name => "mao2", :type_code=>'image', :attach=>File.new("#{Wagn.gem_root}/test/fixtures/mao2.jpg")
-        Card.create :name => 'mao2+*self+*read', :content=>'[[Administrator]]'
+    
+    context 'css' do
+      before do
+        @all_style = Card[ "#{ Card[:all].name }+#{ Card[:style].name }" ]
+        Card::Set::Right::Style.delete_style_files
+      end
+      
+      it 'should' do
+        args = { :id=>@all_style.name, :format=>'css', :rev=>@all_style.current_revision_id, :explicit_file=>true }
+        get :read, args
+        expect(response).to redirect_to( wagn_path @all_style.style_path )
+        get :read, args
+        expect(response.status).to eq(200)
+        
       end
     end
     
-    it "handles image with no read permission" do
-      get :read, :id=>'mao2'
-      assert_response 403, "should deny html card view"
-      get :read, :id=>'mao2', :format=>'jpg'
-      assert_response 403, "should deny simple file view"
-    end
+  
+    context "file" do
+      before do
+        Card::Auth.as_bot do
+          Card.create :name => "mao2", :type_code=>'image', :attach=>File.new("#{Wagn.gem_root}/test/fixtures/mao2.jpg")
+          Card.create :name => 'mao2+*self+*read', :content=>'[[Administrator]]'
+        end
+      end
     
-    it "handles image with read permission" do
-      login_as :joe_admin
-      get :read, :id=>'mao2'
-      assert_response 200
-      get :read, :id=>'mao2', :format=>'jpg'
-      assert_response 200
+      it "handles image with no read permission" do
+        get :read, :id=>'mao2'
+        assert_response 403, "should deny html card view"
+        get :read, :id=>'mao2', :format=>'jpg'
+        assert_response 403, "should deny simple file view"
+      end
+    
+      it "handles image with read permission" do
+        login_as :joe_admin
+        get :read, :id=>'mao2'
+        assert_response 200
+        get :read, :id=>'mao2', :format=>'jpg'
+        assert_response 200
+      end
     end
+
   end
 
 

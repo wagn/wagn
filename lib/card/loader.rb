@@ -102,8 +102,8 @@ class Card
       end
       
       def prepare_tmp_dir path
+        p = Wagn.paths[ path ]
         unless Rails.env.production? and Dir.exists? p.first
-          p = Wagn.paths[ path ]
           if p.existent.first
             FileUtils.rm_rf p.first, :secure=>true
           end

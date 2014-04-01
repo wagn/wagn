@@ -102,11 +102,14 @@ class Card
       end
       
       def prepare_tmp_dir path
-        p = Wagn.paths[ path ]
-        if p.existent.first
-          FileUtils.rm_rf p.first, :secure=>true
+        unless Rails.env.production? and Card.cache.read("TMPDIR-#{path}")
+          p = Wagn.paths[ path ]
+          if p.existent.first
+            FileUtils.rm_rf p.first, :secure=>true
+          end
+          Dir.mkdir p.first
+          Card.cache.write("TMPDIR-#{path}", true)
         end
-        Dir.mkdir p.first
       end
       
 

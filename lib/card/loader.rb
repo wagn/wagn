@@ -44,15 +44,23 @@ class Card
       end
 
       def load_set_patterns
+        if rewrite_tmp_files?
+          load_set_patterns_from_source
+        end
+        load_dir "#{Wagn.paths['tmp/set_patterns'].first}/*.rb"
+      end
+
+      def load_set_patterns_from_source
         prepare_tmp_dir 'tmp/set_patterns'
+        seq = 100
         mod_dirs.each do |mod|
           dirname = "#{mod}/set_patterns"
           if Dir.exists? dirname
             Dir.entries( dirname ).sort.each do |filename|
               if m = filename.match( /^(\d+_)?([^\.]*).rb/) and key = m[2]
                 filename = [ dirname, filename ] * '/'
-                tmp_file = SetPattern.write_tmp_file key, filename
-                require_dependency tmp_file
+                SetPattern.write_tmp_file key, filename, seq
+                seq = seq + 1
               end
             end
           end
@@ -68,24 +76,29 @@ class Card
 
       def load_sets
         prepare_tmp_dir 'tmp/sets'
-        mod_dirs.each do |mod|
-          if File.directory? mod
-            load_implicit_sets "#{mod}/sets"
-          else
-            next unless mod =~ /\.rb$/
-            require_dependency mod
-          end
-          Set.process_base_modules #must do this here because core sets must be processed into Card class before loading standard sets
-        end      
+        @@set_counter = 1000
+        load_sets_by_pattern
+        Set.process_base_modules 
         Set.clean_empty_modules
       end
 
 
-      def load_implicit_sets basedir
+      def load_sets_by_pattern
         Card.set_patterns.reverse.map(&:key).each do |set_pattern|
+          pattern_tmp_dir = "#{Wagn.paths['tmp/sets'].first}/#{set_pattern}"
+          if rewrite_tmp_files?
+            Dir.mkdir pattern_tmp_dir
+            load_implicit_sets_from_source set_pattern
+          end
+          if Dir.exists? pattern_tmp_dir
+            load_dir "#{pattern_tmp_dir}/*.rb"
+          end
+        end    
+      end
 
-          next if set_pattern =~ /^\./
-          dirname = [basedir, set_pattern] * '/'
+      def load_implicit_sets_from_source set_pattern
+        mod_dirs.each_with_index do |mod_dir, mod_index|
+          dirname = [mod_dir, 'sets', set_pattern] * '/'
           next unless File.exists?( dirname )
 
           #FIXME support multiple anchors!
@@ -94,16 +107,17 @@ class Card
             anchor = anchor_filename.gsub /\.rb$/, ''
 
             filename = [dirname, anchor_filename] * '/'
-            tmp_file = Set.write_tmp_file set_pattern, anchor, filename
-            require_dependency tmp_file
+            Set.write_tmp_file set_pattern, anchor, filename, @@set_counter
+            @@set_counter = @@set_counter + 1
           end
-            
         end
       end
+
+      
       
       def prepare_tmp_dir path
-        p = Wagn.paths[ path ]
-        unless Rails.env.production? and Dir.exists? p.first
+        if rewrite_tmp_files?
+          p = Wagn.paths[ path ]
           if p.existent.first
             FileUtils.rm_rf p.first, :secure=>true
           end
@@ -111,6 +125,13 @@ class Card
         end
       end
       
+      def rewrite_tmp_files?
+        if defined?( @@rewrite )
+          @@rewrite
+        else
+          @@rewrite = !( Rails.env.production? and Wagn.paths['tmp/sets'].existent.first )
+        end
+      end
 
       def load_dir dir
         Dir[dir].sort.each do |file|

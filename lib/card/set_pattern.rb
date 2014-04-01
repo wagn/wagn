@@ -44,8 +44,8 @@ class Card
         junction_only? ? card.cardname.junction? : true
       end
     
-      def write_tmp_file pattern_key, from_file
-        to_file = "#{Wagn.paths['tmp/set_patterns'].first}/#{pattern_key}.rb"
+      def write_tmp_file pattern_key, from_file, seq
+        to_file = "#{Wagn.paths['tmp/set_patterns'].first}/#{seq}-#{pattern_key}.rb"
         klass = "Card::SetPattern::#{pattern_key.camelize}Pattern"
         file_content = <<EOF
 # -*- encoding : utf-8 -*-

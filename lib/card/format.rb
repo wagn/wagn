@@ -113,7 +113,7 @@ class Card
       end
       
       def get_set_key selection_key, opts
-        unless pkey = Card.method_key(opts)
+        unless pkey = Card::Set.method_key(opts)
           raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
         end
         key = pkey.blank? ? selection_key : "#{pkey}_#{selection_key}"

@@ -1,14 +1,6 @@
 MODULES={}
 
 module ClassMethods
-  
-  def method_key opts
-    set_patterns.each do |pclass|
-      if !pclass.opt_keys.map(&opts.method(:has_key?)).member? false;
-        return pclass.method_key_from_opts(opts)
-      end
-    end
-  end
 
   def find_set_pattern mark
     if mark

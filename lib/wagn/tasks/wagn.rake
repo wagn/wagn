@@ -35,6 +35,7 @@ namespace :wagn do
   task :update do
     system 'bundle update'
     Rake::Task['wagn:migrate'].invoke
+    #fixme: remove tmp/sets ?
   end
   
   desc "reset cache"

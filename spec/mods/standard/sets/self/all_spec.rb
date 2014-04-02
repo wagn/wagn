@@ -4,6 +4,7 @@ describe Card::Set::Self::All do
   before do
     
     @all = Card[:all]
+    
   end
   
   context '#update' do
@@ -27,6 +28,20 @@ describe Card::Set::Self::All do
         a.revisions.count.should == 1        
       end
     end
+
+=begin    
+    it 'should be trigger reference repair' do
+      Card::Auth.as_bot do
+        a = Card['A']
+        puts a.references_to.count
+        Card::Env.params[:task] = :repair_references
+        puts a.references_to.count
+        @all.update_attributes({})
+        puts a.references_to.count
+        
+      end
+    end
+=end
     
   end
 end

@@ -76,7 +76,6 @@ class Card
 
       def load_sets
         prepare_tmp_dir 'tmp/sets'
-        @@set_counter = 1000
         load_sets_by_pattern
         Set.process_base_modules 
         Set.clean_empty_modules
@@ -97,6 +96,7 @@ class Card
       end
 
       def load_implicit_sets_from_source set_pattern
+        seq = 1000
         mod_dirs.each_with_index do |mod_dir, mod_index|
           dirname = [mod_dir, 'sets', set_pattern] * '/'
           next unless File.exists?( dirname )
@@ -107,8 +107,8 @@ class Card
             anchor = anchor_filename.gsub /\.rb$/, ''
 
             filename = [dirname, anchor_filename] * '/'
-            Set.write_tmp_file set_pattern, anchor, filename, @@set_counter
-            @@set_counter = @@set_counter + 1
+            Set.write_tmp_file set_pattern, anchor, filename, seq
+            seq = seq + 1
           end
         end
       end

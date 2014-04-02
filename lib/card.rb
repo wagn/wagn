@@ -35,9 +35,7 @@ class Card < ActiveRecord::Base
   around_save :store
   after_save :extend
 
-  Loader.load_mods
-
-  puts "finished loading mods!"
+  Loader.load_mods if count > 0
     
   tracks :content # we can phase this out and just use "dirty" handling once current content is stored in the cards table
 

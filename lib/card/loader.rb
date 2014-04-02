@@ -7,6 +7,7 @@ class Card
     
     class << self
       def load_mods
+        puts "loading mods"
         load_set_patterns
         load_formats
         load_sets
@@ -97,7 +98,7 @@ class Card
 
       def load_implicit_sets_from_source set_pattern
         seq = 1000
-        mod_dirs.each_with_index do |mod_dir, mod_index|
+        mod_dirs.each do |mod_dir|
           dirname = [mod_dir, 'sets', set_pattern] * '/'
           next unless File.exists?( dirname )
 

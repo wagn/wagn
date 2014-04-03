@@ -66,7 +66,7 @@ event :setup_first_user, :before=>:process_subcards, :on=>:create, :when=>proc{ 
 end
 
 event :signin_after_setup, :before=>:extend, :on=>:create, :when=>proc{ |c| Card::Env.params[:setup] } do
-  Card.cache.delete 'no_signins'
+  Card.cache.delete Auth::NEED_SETUP_KEY
   Auth.signin id
 end
 

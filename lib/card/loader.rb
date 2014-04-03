@@ -7,7 +7,6 @@ class Card
     
     class << self
       def load_mods
-        puts "loading mods"
         load_set_patterns
         load_formats
         load_sets

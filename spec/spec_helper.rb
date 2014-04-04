@@ -78,14 +78,13 @@ module Wagn::SpecHelper
 
   def render_editor(type)
     card = Card.create(:name=>"my favority #{type} + #{rand(4)}", :type=>type)
-    Card::Format.new(card).render(:edit)
+    card.format.render(:edit)
   end
 
   def render_content content, format_args={}
     @card ||= Card.new :name=>"Tempo Rary 2"
     @card.content = content
-    f = Card::Format.new @card, format_args
-    f._render :core
+    @card.format(format_args)._render :core
   end
 
   def render_card view, card_args={}, format_args={}
@@ -96,7 +95,7 @@ module Wagn::SpecHelper
         Card.new card_args.merge( :name=> 'Tempo Rary' )
       end
     end
-    Card::Format.new(card, format_args)._render(view)
+    card.format(format_args)._render(view)
   end
 end
 

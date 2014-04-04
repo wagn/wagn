@@ -164,7 +164,6 @@ fieldset {
 
 
 /*-- misc --*/
-
 .card-editor {
   white-space: normal;
 }
@@ -181,4 +180,12 @@ pre,
   display: inline;
 }
 
+.SELF-Xstat > .card-content {
+  table {
+    width: 100%;
+  }
+  tr:nth-child(even) {
+    background: #eee;
+  }
+}
 

@@ -113,7 +113,7 @@ class Card
       end
       
       def get_set_key selection_key, opts
-        unless pkey = Card.method_key(opts)
+        unless pkey = Card::Set.method_key(opts)
           raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
         end
         key = pkey.blank? ? selection_key : "#{pkey}_#{selection_key}"
@@ -155,10 +155,17 @@ class Card
       { :view => :name }
     end
     
-    def params()       @params     ||= controller.params                          end
-    def controller()   @controller ||= StubCardController.new                     end
-    def session()      CardController===controller ? controller.session : {}      end
-    def ajax_call?()   Card::Env.ajax?                                            end
+    def params
+      Env.params
+    end
+    
+    def controller
+      Env[:controller] ||= CardController.new
+    end
+    
+    def session
+      Env.session
+    end
 
     def showname title=nil
       if title
@@ -173,7 +180,7 @@ class Card
     end
 
     def focal? # meaning the current card is the requested card
-      if ajax_call?
+      if Env.ajax?
         @depth == 0
       else
         main?
@@ -438,7 +445,7 @@ class Card
       case
       when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
-      when opts[:inc_name]=='_main' && !ajax_call? && @depth==0    ; expand_main opts
+      when opts[:inc_name]=='_main' && !Env.ajax? && @depth==0  ; expand_main opts
       else
         included_card = Card.fetch opts[:inc_name], :new=>new_inclusion_card_args(opts)
         result = process_inclusion included_card, opts

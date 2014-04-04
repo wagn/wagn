@@ -4,12 +4,11 @@ format :html do
   view :history do |args|
     load_revisions
     if @revision
-      frame args.merge(:content=>true, :subheader=>_render_revision_subheader ) do
+      frame args.merge( :content=>true, :subheader=>_render_revision_subheader ) do
         _render_diff
       end
     end
   end
-
 
   view :diff do |args|
     load_revisions
@@ -43,7 +42,6 @@ format :html do
       <div class="revision-navigation">#{ revision_menu }</div>
     }
   end
-
   
   def load_revisions
     unless @revision_number
@@ -53,7 +51,6 @@ format :html do
       @show_diff = (params[:mode] != 'false')
     end
   end
-
 
   def revision_link text, revision, name, accesskey='', mode=nil
     link_to text, path(:view=>:history, :rev=>revision, :mode=>(mode || params[:mode] || true) ),
@@ -106,6 +103,5 @@ format :html do
   def autosave_revision
      revision_link("Autosaved Draft", card.revisions.count, 'to autosave')
   end
-
 
 end

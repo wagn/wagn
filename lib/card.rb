@@ -1,6 +1,8 @@
 # -*- encoding : utf-8 -*-
 
 class Card < ActiveRecord::Base
+  require_dependency 'card/active_record_ext'
+  
   require_dependency 'card/codename'
   require_dependency 'card/query'
   require_dependency 'card/set_pattern'  
@@ -33,8 +35,8 @@ class Card < ActiveRecord::Base
   around_save :store
   after_save :extend
 
-  Loader.load_mods
-
+  Loader.load_mods if count > 0
+    
   tracks :content # we can phase this out and just use "dirty" handling once current content is stored in the cards table
 
 end

@@ -4,25 +4,73 @@ format :html do
     oldmem = session[:memory]
     session[:memory] = newmem = card.profile_memory
     stats = %{
-      <h2>Stats</h2>
-      <p>cards:         #{ Card.where(:trash=>false).count }</p>
-      <p>trashed cards: #{ Card.where(:trash=>true).count  }</p>
-      <p>revisions:     #{ Card::Revision.count            }</p>
-      <p>references:    #{ Card::Reference.count           }</p>
-      <p>memory usage now: #{ newmem                      }M</p>
+      <table>
+        <tr>
+          <th>Stat</th>
+          <th>Value</th>
+          <th>Action</th>
+        </tr>
+        <tr>
+          <td>cards</td>
+          <td>#{ Card.where(:trash=>false).count }</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>trashed cards</td>
+          <td>#{ Card.where(:trash=>true).count  }</td>
+          <td>#{link_to 'delete all', wagn_path( 'update/:all?task=empty_trash' )}</td>
+        </tr>
+        <tr>
+          <td>revisions</td>
+          <td>#{ Card::Revision.count }</td>
+          <td>#{link_to 'delete old', wagn_path( 'update/:all?task=delete_old_revisions' ) }</td>
+        </tr>
+          <tr><td>references</td>
+          <td>#{ Card::Reference.count }</td>
+          <td>#{link_to 'repair all', wagn_path( 'update/:all?task=repair_references' ) }</td>
+        </tr>
+        <tr>
+          <td>sessions</td>
+          <td>#{ ActiveRecord::SessionStore::Session.count }</td>
+          <td>
+            delete older than
+            #{ delete_sessions_link 1 }
+            #{ delete_sessions_link 2 }
+            #{ delete_sessions_link 3 }
+            months
+          </td>
+        </tr>
+        <tr>
+          <td>memory now</td>
+          <td>#{ newmem }M</td>
+          <td>#{link_to 'clear cache',  wagn_path( 'update/:all?task=clear_cache' ) }</td>
+        </tr>
+        #{
+          if oldmem
+            %{
+              <tr>
+                <td>memory prev</td>
+                <td>#{ oldmem }M</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>memory diff</td>
+                <td>#{ newmem - oldmem }M</td>
+                <td></td>
+              </tr>
+              
+            }
+          end
+        }
+      </table>
     }
-    if oldmem
-      stats += %{
-        <p>memory usage previous: #{ oldmem               }M</p>
-        <p>memory usage diff:     #{ newmem - oldmem      }M</p>
-        
-      }
-    end
-    stats
   end
   
-
+  def delete_sessions_link months
+    link_to months, wagn_path( "update/:all?task=delete_old_sessions&months=#{months}")
+  end
 end
+
 
 
 

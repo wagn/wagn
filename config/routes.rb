@@ -35,8 +35,7 @@ Rails.application.routes.draw do
   match 'account/invite'             => 'card#read',   :view=>'new',  :card=>{ :type_code=>:user   }
   # use type_code rather than id because in some cases (eg populating test data) routes must get loaded without loading Card
 
-  match 'admin/stats'                => 'card#read',   :id=>':stats' 
-  match 'admin/delete_old_sessions'  => 'card#delete', :id=>':session'
+  match 'admin/stats'                => 'card#read',   :id=>':stats'
   match 'admin/:task'                => 'card#update', :id=>':all' 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~
   

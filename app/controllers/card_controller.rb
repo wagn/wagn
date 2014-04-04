@@ -219,7 +219,7 @@ class CardController < ActionController::Base
     opts = ( params[:slot] || {} ).deep_symbolize_keys
     opts[:view] = view || params[:view]      
 
-    formatter = Card::Format.new card, :controller=>self, :format=>format, :inclusion_opts=>opts[:items]
+    formatter = card.format( :format=>format, :controller=>self, :inclusion_opts=>opts[:items] )
     result = formatter.show opts
     status = formatter.error_status || status
 

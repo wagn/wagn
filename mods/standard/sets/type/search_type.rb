@@ -236,7 +236,7 @@ format :html do
   end
   
   def default_search_params
-    if ajax_call? && @depth > 0
+    if Env.ajax? && @depth > 0
       {:default_limit=>20}  #important that paging calls not pass variables to included searches
     else
       @default_search_params ||= begin

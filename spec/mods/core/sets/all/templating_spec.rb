@@ -27,7 +27,7 @@ describe Card::Set::All::Templating do
     end
 
     it "should have default content" do
-      Card::Format.new(@jb)._render_raw.should == 'Today!'
+      @jb.format._render_raw.should == 'Today!'
     end
 
     it "should change type and content with template" do
@@ -37,7 +37,7 @@ describe Card::Set::All::Templating do
         @bt.save!
       end
       jb = @jb.refresh force=true
-      Card::Format.new( jb ).render(:raw).should == 'Tomorrow'
+      jb.format.render(:raw).should == 'Tomorrow'
       jb.type_id.should == Card::PhraseID    
     end
   
@@ -77,7 +77,7 @@ describe Card::Set::All::Templating do
     end
     
     it "should return templated content even if content is passed in" do
-      Card::Format.new(Card.new(:type=>'Date', :content=>''))._render(:raw).should == 'Tomorrow'
+      Card.new(:type=>'Date', :content=>'').format._render(:raw).should == 'Tomorrow'
     end
     
     describe 'and right structure' do

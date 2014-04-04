@@ -25,9 +25,6 @@ describe Card::Set::All::Collection do
   end
 
   describe "#contextual_content" do
-    it "returns content for basic setting" do
-      Card.new(:name=>"foo", :content => "X").contextual_content.should == "X"
-    end
 
     it "processes inclusions relative to context card" do
       context_card = Card["A"] # refers to 'Z'

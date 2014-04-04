@@ -20,7 +20,7 @@ class SharedData
 
     Wagn::Cache.reset_global
     Card::Env.reset
-    Card::Auth.as(Card::WagnBotID)
+    Card::Auth.as_bot
 
     Card.create! :name=>"Joe User",  :type_code=>'user', :content=>"I'm number two", :subcards=>account_args( '+*email'=>'joe@user.com'  )
     Card.create! :name=>"Joe Admin", :type_code=>'user', :content=>"I'm number one", :subcards=>account_args( '+*email'=>'joe@admin.com' )
@@ -34,17 +34,15 @@ class SharedData
 
     # data for testing users and account requests
 
-#    Card.create! :name=>"Ron Request", :type_id=>Card::SignupID, :subcards=>account_args(
-#      '+*email'=>'ron@request.com', '+*password'=>'ron_pass', '+*status'=>'pending'
-#    )
-    
     Card.create! :type_code=>'user', :name=>"No Count", :content=>"I got no account"
 
-    # CREATE A CARD OF EACH TYPE
     
     Card.create! :name=>"Sample User", :type_code=>'user', :subcards=>account_args('+*email'=>'sample@user.com', '+*password'=>'sample_pass')
 
-    request_card = Card.create! :type_id=>Card::SignupID, :name=>"Sample Signup" #, :email=>"invitation@request.com"
+    # CREATE A CARD OF EACH TYPE
+
+    Card.create! :type_id=>Card::SignupID, :name=>"Sample Signup" #, :email=>"invitation@request.com"
+    #above still necessary?  try commenting out above and 'Sign up' below
 
     Card::Auth.createable_types.each do |type|
       next if ['User', 'Sign up', 'Set', 'Number'].include? type
@@ -164,9 +162,6 @@ class SharedData
     Card.create! :name=>'TwwoHeading', :content => "<h1>One Heading</h1>\r\n<p>and some text</p>\r\n<h2>And a Subheading</h2>\r\n<p>and more text</p>"
     Card.create! :name=>'ThreeHeading', :content =>"<h1>A Heading</h1>\r\n<p>and text</p>\r\n<h2>And Subhead</h2>\r\n<p>text</p>\r\n<h1>And another top Heading</h1>"
 
-#    c=Card.fetch 'Basic+*type+*table_of_contents', :new=>{}
-#    c.content='2'
-#    c.save!
 
   end
 end

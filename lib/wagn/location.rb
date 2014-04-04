@@ -47,6 +47,7 @@ module Wagn::Location
 
   # TESTME
   def page_path title, opts={}
+    
     format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
     query  = opts.present? ? "?#{opts.to_param}"         : ''
     wagn_path "#{title.to_name.url_key}#{format}#{query}"
@@ -76,7 +77,7 @@ module Wagn::Location
     title ||= text
     url_options = {}
     [:type, :view].each { |k| url_options[k] = options.delete(k) if options[k] }
-    url = wagn_path page_path( title, url_options )
+    url = page_path( title, url_options )
     link_to text, url, options
   end
 

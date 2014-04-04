@@ -11,8 +11,7 @@ describe Card::Set::Type::Signup do
   context 'request form' do
     before do
       card = Card.new :type_id=>Card::SignupID
-      format = Card::Format.new card
-      @form = format.render_new
+      @form = card.format.render_new
     end
     
     it 'should prompt to signup' do
@@ -79,34 +78,6 @@ describe Card::Set::Type::Signup do
   end
   
   
-
-  
-=begin  
-  context 'valid request' do
-    before do
-      @request = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ 
-        '+*email'=>'wolf@wagn.org', '+*password'=>'wolf'
-      }
-    end
-
-    context 'core view' do
-      before do
-        @format = Card::Format.new @request
-      end
-        
-      it "should not show invite links to anonymous users" do
-        @format.render_core.should_not =~ /invitation-link/
-      end
-    
-      it 'should show invite links to those who can invite' do
-        Card::Auth.as_bot do
-          assert_view_select @format.render_core, 'a[class="invitation-link"]'
-        end
-      end
-    end
-    
-
-  end
-=end  
+ 
 
 end

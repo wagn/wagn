@@ -10,8 +10,7 @@ class UserDataToCards < ActiveRecord::Migration
     contentedly do
       
       puts "adding new codename cards"
-#      [ :password, :token, :salt, :status, :signin, :stats ].each do |codename|
-      [ :password, :token, :salt, :status, :signin ].each do |codename|
+      [ :password, :token, :salt, :status, :signin, :stats ].each do |codename|
         Card.create! :name=>"*#{codename}", :codename=>codename
       end
       

@@ -4,6 +4,7 @@
 # (but add permission migration)
 # ( and right structure)
 
+=begin
 class AddStats < ActiveRecord::Migration
   include Wagn::MigrationHelper
   def up
@@ -14,3 +15,4 @@ class AddStats < ActiveRecord::Migration
     end
   end
 end
+=end

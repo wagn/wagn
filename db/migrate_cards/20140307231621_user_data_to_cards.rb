@@ -69,3 +69,10 @@ class UserDataToCards < ActiveRecord::Migration
   end
 
 end
+
+
+#FIXME
+# before 1.13!
+# but add read permission migration for *stats and 
+# structure for *stats+*right
+

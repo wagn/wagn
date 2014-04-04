@@ -41,3 +41,5 @@ class AccountRequestsToSignups < ActiveRecord::Migration
   end
 
 end
+
+

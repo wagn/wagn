@@ -49,7 +49,6 @@ describe Card::Set::All::Fetch do
     
 
     it "fetches newly virtual cards" do
-      #pending "needs new cache clearing"
       Card.fetch( 'A+virtual').should be_nil
       Card::Auth.as_bot { Card.create :name=>'virtual+*right+*structure' }
       Card.fetch( 'A+virtual').should_not be_nil
@@ -61,7 +60,6 @@ describe Card::Set::All::Fetch do
       Card.fetch('yomama', :new=>{}).name.should == 'yomama'
       Card.fetch('YOMAMA', :new=>{}).name.should == 'YOMAMA'
       Card.fetch('yomama!', :new=>{ :name=>'Yomama'} ).name.should == 'Yomama'
-#      Card.fetch('yomama!', :new=>{ :type=>'Phrase'} ).name.should == 'yomama!'  FIXME!!     
     end
 
     it "does not recurse infinitely on template templates" do

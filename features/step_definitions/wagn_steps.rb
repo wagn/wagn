@@ -179,6 +179,8 @@ When /^I hover over the main menu$/ do
   page.execute_script "$('#main > .card-slot > .card-header > .card-menu-link').trigger('mouseenter')"
 end
 
+When /^I pick (.*)$/ do |menu_item|
+end
 
 Then /the card (.*) should contain "([^\"]*)"$/ do |cardname, content|
   visit path_to("card #{cardname}")

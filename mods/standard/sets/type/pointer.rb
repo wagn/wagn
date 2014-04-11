@@ -14,7 +14,7 @@ format do
     if type = card.item_type
       args[:type] = type
     end
-      
+    
     card.item_cards.map do |icard|
       wrap_item process_inclusion(icard, args.clone), args 
     end.join joint
@@ -158,9 +158,11 @@ def item_cards args={}
     #warn "item_card[#{args.inspect}], :complete"
     Card::Query.new({:referred_to_by=>name}.merge(args)).run
   else
+    
+    itype = args[:type] || item_type
     #warn "item_card[#{inspect}], :complete"
     item_names(args).map do |name|
-      new_args = args[:type] ? { :type=>args[:type] } : {}
+      new_args = itype ? { :type=>itype } : {}
       Card.fetch name, :new=>new_args
     end.compact # compact?  can't be nil, right?
   end

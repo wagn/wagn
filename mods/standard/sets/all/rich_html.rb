@@ -428,30 +428,34 @@ format :html do
   end
 
   view :change do |args|
+    args[:optional_title_link] = :show
     wrap args do
-      %{
-        #{ link_to_page card.name, nil, :class=>'change-card' }
-        #{ _optional_render :menu, args, :hide }
-        #{
-        if rev = card.current_revision and !rev.new_record?
-          # this check should be unnecessary once we fix search result bug
-          %{<span class="last-update"> #{
-
-            case card.updated_at.to_s
-              when card.created_at.to_s; 'added'
-              when rev.created_at.to_s;  link_to('edited', path(:view=>:history), :class=>'last-edited', :rel=>'nofollow')
-              else; 'updated'
-            end} #{
-
-             time_ago_in_words card.updated_at } ago by #{ #ENGLISH
-             link_to_page card.updater.name, nil, :class=>'last-editor'}
-           </span>}
-        end
-        }
-      }
+      [
+        _optional_render( :title, args       ),
+        _optional_render( :menu, args, :hide ),
+        _optional_render( :last_action, args )
+      ]
     end
   end
-
+  
+  
+  view :last_action do |args|
+    rev = card.current_revision
+    action = case card.updated_at.to_s
+      when card.created_at.to_s; 'added'
+      when rev.created_at.to_s;  link_to('edited', path(:view=>:history), :class=>'last-edited', :rel=>'nofollow')
+      else; 'updated'
+      end
+    %{
+      <span class="last-update">
+        #{ action }
+        #{ _render_updated_at }
+        ago by
+        #{ subformat(card.updater)._render_link }
+      </span> 
+    }
+  end
+          
   view :errors, :perms=>:none do |args|
     #Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller[0..3]*", "}"
     if card.errors.any?

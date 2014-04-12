@@ -109,15 +109,12 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 
 .change-view {
   clear: both;
-  .change-card{
-    float: left;
-  }
   .last-update {
     float:right;
     text-align: right;
-  }
-  .last-editor {
-    white-space: nowrap;
+    a {
+      white-space: nowrap;
+    }
   }
 }
 

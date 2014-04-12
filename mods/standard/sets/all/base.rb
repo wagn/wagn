@@ -21,6 +21,12 @@ view :link, :perms=>:none  do |args|
 end
 
 
+# DATE VIEWS
+
+view :created_at do |args| time_ago_in_words card.created_at end
+view :updated_at do |args| time_ago_in_words card.updated_at end
+
+
 # CONTENT VIEWS
 
 view :raw do |args|
@@ -43,6 +49,7 @@ end
 view :closed_content do |args|
   Card::Content.truncatewords_with_closing_tags _render_core(args) #{ yield }
 end
+
 
 # note: content and open_content may look like they should be aliased to core, but it's important that they render
 # core explicitly so that core view overrides work.  the titled and labeled views below, however, are not intended

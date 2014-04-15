@@ -62,7 +62,7 @@ class Card
       elsif hardcoded_layout = LAYOUTS[name]
         hardcoded_layout
       else
-        "<h1>Unknown layout: #{lname}</h1>Built-in Layouts: #{LAYOUTS.keys.join(', ')}"
+        "<h1>Unknown layout: #{name}</h1>Built-in Layouts: #{LAYOUTS.keys.join(', ')}"
       end
     end
 

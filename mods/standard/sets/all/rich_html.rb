@@ -2,13 +2,12 @@
 format :html do
   
   def show view, args
-    view ||= args[:home_view]
-
     if Env.ajax?
-      view ||= :open  # should this be an error? should always have home_view with ajax, no?
+      view ||= args[:home_view] || :open
       self.render view, args
     else
-      @main_opts = args.merge :view=>view
+      args.merge :view=>view if view
+      @main_opts = args
       self.render_layout
     end
   end

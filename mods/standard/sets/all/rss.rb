@@ -2,7 +2,6 @@
 format :rss do
 
   def show args
-  #    render( args[:view] || :feed )
     @xml = Builder::XmlMarkup.new
     render_feed args
   end

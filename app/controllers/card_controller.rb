@@ -80,10 +80,8 @@ class CardController < ActionController::Base
   end
 
 
-  def load_id    
-    params[:id] = case
-      when params[:id]
-        params[:id]
+  def load_id
+    params[:id] ||= case
       when Card::Auth.needs_setup?
         params[:card] = { :type_id => Card.default_accounted_type_id }
         params[:view] = 'setup'
@@ -217,12 +215,12 @@ class CardController < ActionController::Base
     format = :file if params[:explicit_file] or !Card::Format.registered.member? format #unknown format
 
     opts = ( params[:slot] || {} ).deep_symbolize_keys
-    opts[:view] = view || params[:view]      
+    view ||= params[:view]      
 
-    formatter = card.format( :format=>format, :controller=>self, :inclusion_opts=>opts[:items] )
-    result = formatter.show opts
+    formatter = card.format( :format=>format )
+    result = formatter.show view, opts
     status = formatter.error_status || status
-
+    
     if format==:file && status==200
       send_file *result
     elsif status == 302

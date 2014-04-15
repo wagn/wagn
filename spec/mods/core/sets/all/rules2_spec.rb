@@ -67,14 +67,14 @@ describe Card do
         sets.should == ['A+B+*self']
       end
     end
-
+=begin
     # class methods
     describe ".default_rule" do
       it 'should have default rule' do
         Card.default_rule(:table_of_contents).should == '0'
       end
     end
-
+=end
   end
 
   context "when I change the general toc setting to 1" do
@@ -160,13 +160,14 @@ describe Card do
       end
     end
 
+=begin
     # class methods
     describe ".default_rule" do
       it 'should have default rule' do
         Card.default_rule(:table_of_contents).should == '0'
       end
     end
-
+=end
   end
 
   context "when I create a new rule" do

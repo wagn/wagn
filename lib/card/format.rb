@@ -442,6 +442,7 @@ class Card
     end
 
     def expand_inclusion opts
+      opts ||= {}
       case
       when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
@@ -455,17 +456,25 @@ class Card
     end
 
     def expand_main opts
-      [:item, :view, :size].each do |key|
-        if val=params[key] and val.to_s.present?
-          opts[key] = val.to_sym   #to sym??  why??
-        end
-      end
-      opts[:view] = @main_view || opts[:view] || :open
+      opts.merge! @main_opts if @main_opts
+      legacy_main_opts_tweaks! opts
+
+      opts[:view] ||= :open
       with_inclusion_mode :normal do
         @mainline = true
         result = wrap_main process_inclusion( root.card, opts )
         @mainline = false
         result
+      end
+    end
+    
+    def legacy_main_opts_tweaks! opts 
+      if val=params[:size] and val.present?
+        opts[:size] = val.to_sym
+      end
+
+      if val=params[:item] and val.present?
+        opts[:items] = (opts[:items] || {}).reverse_merge :view=>val.to_sym
       end
     end
 
@@ -478,9 +487,6 @@ class Card
       opts.reverse_merge! inclusion_defaults
       
       sub = subformat tcard
-      if opts[:item] #currently needed to handle web params
-        opts[:items] = (opts[:items] || {}).reverse_merge :view=>opts[:item]
-      end
       sub.inclusion_opts = opts[:items] 
 
       view = canonicalize_view opts.delete :view

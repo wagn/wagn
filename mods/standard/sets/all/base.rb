@@ -1,7 +1,7 @@
 
 format do
-  def show args
-    view = args[:view] || :core
+  def show view, args
+    view ||= :core
     render view, args
   end
 end
@@ -101,10 +101,6 @@ end
 
 view :bad_address, :perms=>:none, :error_code=>404 do |args|
   %{ 404: Bad Address }
-end
-
-view :no_card, :perms=>:none, :error_code=>404 do |args|
-  %{ 404: No Card! }
 end
 
 view :too_deep, :perms=>:none do |args|

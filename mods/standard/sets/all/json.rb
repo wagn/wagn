@@ -17,13 +17,13 @@ format :json do
     { :default_limit => 0 }
   end
   
-  def show args
-    view = args[:view] || :content
+  def show view, args
+    view ||= :content
     raw = render view, args
     case
-    when String === raw  ;  raw
-    when params[:pretty] ;  JSON.pretty_generate raw
-    else                 ;  JSON( raw )
+    when String === raw    ;  raw
+    when params[:compress] ;  JSON( raw )
+    else                   ;  JSON.pretty_generate raw
     end
   end
 

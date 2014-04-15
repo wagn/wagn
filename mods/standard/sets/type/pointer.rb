@@ -117,7 +117,7 @@ format :html do
 
   
   def wrap_item item, args
-    %{<div class="pointer-item item-#{args[:view]}">#{item}</div>}
+    %{<div class="pointer-item item-#{@current_view}">#{item}</div>}
   end
   
 end

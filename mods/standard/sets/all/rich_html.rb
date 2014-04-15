@@ -1,19 +1,20 @@
 
 format :html do
   
-  def show args
-    @main_view = args[:view] || args[:home_view]
+  def show view, args
+    view ||= args[:home_view]
 
     if Env.ajax?
-      view = @main_view || :open
+      view ||= :open  # should this be an error? should always have home_view with ajax, no?
       self.render view, args
     else
-      self.render_layout args
+      @main_opts = args.merge :view=>view
+      self.render_layout
     end
   end
 
   view :layout, :perms=>:none do |args|
-    layout_content = get_layout_content args
+    layout_content = get_layout_content
     process_content layout_content
   end
 
@@ -120,7 +121,6 @@ format :html do
     json = html_escape_except_quotes JSON( @menu_vars )
     %{<span class="card-menu-link" data-menu-vars='#{json}'>#{_render_menu_link}</span>}
   end
-
 
   view :menu_link do |args|
     '<a class="ui-icon ui-icon-gear"></a>'

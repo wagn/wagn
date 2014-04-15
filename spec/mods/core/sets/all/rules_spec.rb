@@ -21,7 +21,7 @@ describe Card::Set::All::Rules do
     it "retrieves default values" do
       #Card.create :name => "all Basic cards", :type => "Set", :content => "{\"type\": \"Basic\"}"  #defaults should work when other Sets are present
       assert c=Card.create(:name => "*all+*add help", :content => "lobotomize")
-      Card.default_rule(:add_help, :fallback=>:help).should == "lobotomize"
+#      Card.default_rule(:add_help, :fallback=>:help).should == "lobotomize"
       Card.new( :type => "Basic" ).rule(:add_help, :fallback=>:help).should == "lobotomize"
     end
 

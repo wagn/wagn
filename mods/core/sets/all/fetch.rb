@@ -31,7 +31,7 @@ module ClassMethods
     if mark.present?
       card, mark, needs_caching = fetch_from_cache_or_db mark, opts # have existing
     else
-      return unless opts[:new].present?
+      return unless opts[:new]
     end
 
     if Integer===mark

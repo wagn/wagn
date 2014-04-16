@@ -218,6 +218,7 @@ class CardController < ActionController::Base
     view ||= params[:view]      
 
     formatter = card.format( :format=>format )
+    
     result = formatter.show view, opts
     status = formatter.error_status || status
     

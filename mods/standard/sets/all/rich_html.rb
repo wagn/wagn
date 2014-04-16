@@ -7,7 +7,7 @@ format :html do
       @inclusion_opts = args.delete(:items)
       render view, args
     else
-      args.merge :view=>view if view
+      args.merge! :view=>view if view
       @main_opts = args
       self.render_layout
     end

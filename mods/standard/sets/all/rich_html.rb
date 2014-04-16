@@ -4,7 +4,8 @@ format :html do
   def show view, args
     if Env.ajax?
       view ||= args[:home_view] || :open
-      self.render view, args
+      @inclusion_opts = args.delete(:items)
+      render view, args
     else
       args.merge :view=>view if view
       @main_opts = args

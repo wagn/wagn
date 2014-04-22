@@ -74,6 +74,7 @@ format do
   end
   
   def search_vars args={}
+    
     @vars[:search] ||= begin
       v = {}
       v[:spec] = card.spec search_params

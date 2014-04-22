@@ -487,7 +487,8 @@ class Card
       opts.reverse_merge! inclusion_defaults
       
       sub = subformat tcard
-      sub.inclusion_opts = opts[:items] 
+      sub.inclusion_opts = opts[:items] ? opts[:items].clone : {}
+
 
       view = canonicalize_view opts.delete :view
       opts[:home_view] = [:closed, :edit].member?(view) ? :open : view

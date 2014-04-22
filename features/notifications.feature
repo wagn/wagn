@@ -10,7 +10,7 @@ Feature: Notifications
 # FIXME:need multiline matching
     #And He should see "was just edited by Joe User" in the email
     #And He should see "You received this email because you're watching Home" in the email
-    When I follow "Unwatch" in the email
+    When I follow "Unfollow" in the email
     Then the card Home+*watchers should not contain "Joe Admin"
 
   Scenario: Watching a Type Card
@@ -21,7 +21,7 @@ Feature: Notifications
     # FIXME:need multiline matching
     #And He should see "was just added by Joe User" in the email
     #And He should see "You received this email because you're watching Phrase cards" in the email
-    When I follow "Unwatch" in the email
+    When I follow "Unfollow" in the email
     Then the card Phrase+*watchers should not contain "Joe Admin"
 
   Scenario: Watching a Card

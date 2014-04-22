@@ -272,7 +272,6 @@ class Card
           Query.new(val).run
         else
           Array.wrap(val).map do |v|
-            Rails.logger.info "v = #{v}"
             Card.fetch absolute_name(val), :new=>{}
           end
         end

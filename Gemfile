@@ -29,9 +29,7 @@ end
 group :test do
   
   gem 'simplecov', '~> 0.7.1', :require => false  #test coverage
-  
-  gem 'rails-dev-tweaks', '~> 0.6'             # dramatic speeds up asset loading, among other tweaks
-  
+    
   # SPECS see spec dir
   gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
   

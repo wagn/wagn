@@ -56,6 +56,11 @@ Wagn.application.class.configure do
 #  end
 
   config.perform_deliveries = false
+  
+  
+  config.dev_tweaks.autoload_rules do
+    skip '/files'
+  end
 end
 
 

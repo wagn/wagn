@@ -1,9 +1,10 @@
 
 format :rss do
 
-  def show args
+  def show view, args
     @xml = Builder::XmlMarkup.new
-    render_feed args
+    view ||= :feed
+    render view, args
   end
 
   # FIXME: integrate this with common XML features when it is added

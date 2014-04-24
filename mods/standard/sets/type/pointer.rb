@@ -147,6 +147,8 @@ end
 
 
 event :standardize_items, :before=>:approve, :on=>:save do
+  Rails.logger.info "create.rb standardize_items base"
+  
   if updates.for? :content
     self.content = item_names(:context=>:raw).map { |name| "[[#{name}]]" }.join "\n"
   end

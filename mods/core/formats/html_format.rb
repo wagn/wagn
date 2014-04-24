@@ -140,7 +140,6 @@ class Card
       end
     end  
 
-
     def wrap_main(content)
       return content if params[:layout]=='none'
       %{<div id="main">#{content}</div>}
@@ -356,7 +355,7 @@ class Card
       if Env.ajax?
         @depth == 0 && params[:is_main]
       else
-        @depth == 1 && @mainline
+        @depth == 1 && @mainline #assumes layout includes {{_main}}
       end
     end
 

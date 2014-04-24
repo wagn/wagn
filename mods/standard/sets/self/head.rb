@@ -11,12 +11,12 @@ format :html do
       #{ head_javascript }      
     )
   end
-
-  view :core, :raw
   
-  view :content do |args|
-    wrap args.merge(:slot_class=>'card-content') do
-      CGI.escapeHTML render_raw
+  view :core do |args|
+    case
+    when focal?    ; CGI.escapeHTML _render_raw(args)
+    when @mainline ; "(*head)"
+    else           ; _render_raw(args)
     end
   end
   
@@ -45,9 +45,8 @@ format :html do
       # RSS # move to mods!
       if root.card.type_id == SearchTypeID
         opts = { :format => :rss }
-        root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
-        rss_href = page_path root.card.name, opts
-        bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{wagn_path rss_href} />}
+        search_params[:vars].each { |key, val| opts["_#{key}"] = val }
+        bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{page_path root.card.name, opts} />}
       end
     end
     bits.join "\n      "

@@ -13,10 +13,6 @@ format :json do
     params[:max_depth] || 1
   end
   
-  def default_search_params
-    { :default_limit => 0 }
-  end
-  
   def show view, args
     view ||= :content
     raw = render view, args

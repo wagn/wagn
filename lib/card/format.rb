@@ -359,7 +359,7 @@ class Card
       card.update_references( obj_content, true ) if card.references_expired  # I thik we need this genralized
 
       obj_content.process_content_object do |chunk_opts|
-        expand_inclusion chunk_opts.merge(opts) { yield }
+        prepare_nest chunk_opts.merge(opts) { yield }
       end
     end
 
@@ -441,15 +441,15 @@ class Card
       result
     end
 
-    def expand_inclusion opts
+    def prepare_nest opts
       opts ||= {}
       case
       when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
       when opts[:inc_name]=='_main' && !Env.ajax? && @depth==0  ; expand_main opts
       else
-        included_card = Card.fetch opts[:inc_name], :new=>new_inclusion_card_args(opts)
-        result = process_inclusion included_card, opts
+        nested_card = Card.fetch opts[:inc_name], :new=>new_inclusion_card_args(opts)
+        result = nest nested_card, opts
         @char_count += result.length if @mode == :closed && result
         result
       end
@@ -462,7 +462,7 @@ class Card
       opts[:view] ||= :open
       with_inclusion_mode :normal do
         @mainline = true
-        result = wrap_main process_inclusion( root.card, opts )
+        result = wrap_main nest( root.card, opts )
         @mainline = false
         result
       end
@@ -482,11 +482,11 @@ class Card
       content  #no wrapping in base format
     end
 
-    def process_inclusion tcard, opts={}
+    def nest nested_card, opts={}
       opts.delete_if { |k,v| v.nil? }
       opts.reverse_merge! inclusion_defaults
       
-      sub = subformat tcard
+      sub = subformat nested_card
       sub.inclusion_opts = opts[:items] ? opts[:items].clone : {}
 
 
@@ -496,14 +496,14 @@ class Card
 
       view = case
       when @mode == :edit
-        if @@perms[view]==:none || tcard.structure || tcard.key.blank? # eg {{_self|type}} on new cards
+        if @@perms[view]==:none || nested_card.structure || nested_card.key.blank? # eg {{_self|type}} on new cards
           :blank
         else
           :edit_in_form
         end
       when @mode == :template   ; :template_rule
       when @@perms[view]==:none ; view
-      when @mode == :closed     ; !tcard.known?  ? :closed_missing : :closed_content
+      when @mode == :closed     ; !nested_card.known?  ? :closed_missing : :closed_content
       else                      ; view
       end
       

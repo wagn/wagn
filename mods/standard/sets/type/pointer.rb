@@ -16,7 +16,7 @@ format do
     end
     
     card.item_cards.map do |icard|
-      wrap_item process_inclusion(icard, args.clone), args 
+      wrap_item nest(icard, args.clone), args 
     end.join joint
   end
 
@@ -132,7 +132,7 @@ format :css do
   
   view :core do |args|
     card.item_cards.map do |item|
-      process_inclusion item, :view=>(params[:item] || :content)
+      nest item, :view=>(params[:item] || :content)
     end.join "\n\n"
   end
 end
@@ -140,7 +140,7 @@ end
 format :data do
   view :core do |args|
     card.item_cards.map do |c|
-      process_inclusion c
+      nest c
     end
   end
 end

@@ -16,11 +16,17 @@ end
 # to CSS, SCSS, and Skin cards was not popular.
 
 def style_file
-  Wagn.paths['files'].existent.first + "/tmp/#{id}/#{current_revision_id}.css"
+  Wagn.paths['files'].existent.first + "/tmp/#{ id }/#{ style_fingerprint }.css"
 end
 
 def style_path
-  "#{ Wagn.config.files_web_path }/#{ name.to_name.url_key }-#{ current_revision_id }.css"
+  "#{ Wagn.config.files_web_path }/#{ name.to_name.url_key }-#{ style_fingerprint }.css"
+end
+
+def style_fingerprint
+  item_cards.map do |item|
+    item.respond_to?( :style_fingerprint ) ? item.style_fingerprint : item.current_revision_id.to_s
+  end.join '-'
 end
 
 

@@ -32,7 +32,7 @@ format :html do
                  cards_by_day[day].map do |card|
                    %{
                      <div class="search-result-item item-#{ search_vars[:item] }">
-                      #{ process_inclusion(card, :view=>search_vars[:item]) }
+                      #{ nest(card, :view=>search_vars[:item]) }
                     </div>
                    }
                  end * ' '

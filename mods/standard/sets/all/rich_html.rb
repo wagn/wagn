@@ -396,7 +396,7 @@ format :html do
       nest_args[:optional_comment_box] = :show if rparams[:name] == '+discussion' #fixme.  yuck!
 
       frame args do
-        process_inclusion rcard, nest_args
+        nest rcard, nest_args
       end
     end
   end

@@ -65,7 +65,7 @@ format do
       'no results'
     else
       search_vars[:results].map do |c|
-        process_inclusion c
+        nest c
       end.join "\n"
     end
   end
@@ -136,7 +136,7 @@ format :data do
     
   view :card_list do |args|
     search_vars[:results].map do |c|
-      process_inclusion c
+      nest c
     end
   end
 end
@@ -173,7 +173,7 @@ format :html do
             search_vars[:results].map do |c|
               %{
                 <div class="search-result-item item-#{ inclusion_defaults[:view] }">
-                  #{ process_inclusion c, :size=>args[:size] }
+                  #{ nest c, :size=>args[:size] }
                 </div>
               }
             end * "\n"

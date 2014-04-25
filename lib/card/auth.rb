@@ -27,7 +27,7 @@ class Card
 
       def authenticate_by_token token
         token_card = Auth.as_bot{ Card.search( :right=>Card[:token].name, :content=>token ).first } and
-        token_card.updated_at > 1.day.ago   and  #make configurable (note, ">" means "after")
+        token_card.updated_at > 1.week.ago  and  #make configurable (note, ">" means "after")
         account = token_card.left           and
         account.right_id == Card::AccountID and  #legitimacy of account cards
         accounted = account.left            and

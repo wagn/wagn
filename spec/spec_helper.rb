@@ -18,7 +18,10 @@ Spork.prefork do
   RSpec.configure do |config|
 
     config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => {
-      :file_path => /\bspec\/controllers\// }
+      :file_path => /\bspec\/controllers\//
+    }
+
+    #config.formatter = 'textmate'
 
     #config.include CustomMatchers
     #config.include ControllerMacros, :type=>:controllers

@@ -15,7 +15,7 @@ group :assets do
   gem 'uglifier'                               # makes pretty code ugly again.  compresses js/css for fast loading
 
   gem 'jquery-rails',  '~> 3.1'                # main js framework, along with rails-specific unobtrusive lib
-  gem 'jquery-ui-rails',  '~> 4.2'                # main js framework, along with rails-specific unobtrusive lib
+  gem 'jquery-ui-rails',  '~> 4.2'             # main js framework, along with rails-specific unobtrusive lib
   gem "jquery_mobile_rails", "~> 1.4.1"
   
   gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor
@@ -32,6 +32,9 @@ group :test do
     
   # SPECS see spec dir
   gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
+  
+  gem 'guard-rspec', '~> 4.2'
+  gem 'terminal-notifier-guard', '~> 1.5'  #fixme : mac only!
   
   # CUKES see features dir
   gem 'cucumber-rails', '~> 1.3', :require=>false # feature-driven-development suite

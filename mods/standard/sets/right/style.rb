@@ -50,6 +50,7 @@ format :file do
       r.headers["Expires"] = 1.year.from_now.httpdate
     end
     
+    #UNCLEAR - How does this work? Why a path and a different filename?
     [ card.style_file, { :filename=>"#{card.cardname.url_key}.css",
         :x_sendfile=>true, :type=>'text/css', :disposition=>'inline' } ]
   end

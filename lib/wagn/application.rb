@@ -25,6 +25,8 @@ module Wagn
       @config ||= begin
         config = super
         
+        config.i18n.enforce_available_locales = true
+        
         config.autoload_paths += Dir["#{Wagn.gem_root}/app/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/lib/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/mods/standard/lib/**/"]
@@ -45,7 +47,6 @@ module Wagn
         config.recaptcha_private_key = nil
         config.recaptcha_proxy       = nil
         
-        config.send_emails           = !ENV['WAGN_MIGRATION']
         config.email_defaults        = nil
         config.override_host         = nil
         config.override_protocol     = nil
@@ -62,10 +63,7 @@ module Wagn
         add_wagn_path paths, "app",                 :eager_load => true, :glob => "*"
         add_wagn_path paths, "app/assets",          :glob => "*"
         add_wagn_path paths, "app/controllers",     :eager_load => true
-        add_wagn_path paths, "app/models",          :eager_load => true
-        add_wagn_path paths, "app/mailers",         :eager_load => true
-        add_wagn_path paths, "app/views"
-        add_wagn_path paths, "lib/tasks",           :glob => "**/*.rake"
+        add_wagn_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
         add_wagn_path paths, "config"
         add_wagn_path paths, "config/environments", :glob => "#{Rails.env}.rb"
         add_wagn_path paths, "config/initializers", :glob => "**/*.rb"
@@ -76,8 +74,14 @@ module Wagn
         add_wagn_path paths, "db/seeds",            :with => "db/seeds.rb"        
         add_wagn_path paths, 'gem-mods',            :with => 'mods'
 
+        paths['app/models'] = []
+        paths['app/mailers'] = []
+        paths['app/views'] = File.join( Wagn.gem_root, 'lib/card' )
         paths['local-mods'] = approot_is_gemroot? ? [] : 'mods'        
+
         paths.add 'files'
+        paths.add 'tmp/sets'
+        paths.add 'tmp/set_patterns'
         
         paths
       end

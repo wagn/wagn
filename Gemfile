@@ -14,7 +14,8 @@ group :assets do
   gem 'coffee-rails', "~> 3.1"                 # pretty code; compiles to JS
   gem 'uglifier'                               # makes pretty code ugly again.  compresses js/css for fast loading
 
-  gem 'jquery-rails',  '~> 2.3'                # main js framework, along with rails-specific unobtrusive lib
+  gem 'jquery-rails',  '~> 3.1'                # main js framework, along with rails-specific unobtrusive lib
+  gem 'jquery-ui-rails',  '~> 4.2'             # main js framework, along with rails-specific unobtrusive lib
   gem "jquery_mobile_rails", "~> 1.4.1"
   
   gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor
@@ -27,12 +28,17 @@ end
 
 group :test do
   
-  # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one
-  gem 'therubyrhino', :platform=>:ruby         # :ruby is MRI rubies, so if you use a mac ruby ...
-  
-  gem 'rails-dev-tweaks', '~> 0.6'             # dramatic speeds up asset loading, among other tweaks
+  gem 'simplecov', '~> 0.7.1', :require => false  #test coverage
+    
+  # SPECS see spec dir
   gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
   
+  gem 'guard-rspec', '~> 4.2'                  # trigger test runs based on file edits
+  if RUBY_PLATFORM =~ /darwin/
+    gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
+  end
+  
+  # CUKES see features dir
   gem 'cucumber-rails', '~> 1.3', :require=>false # feature-driven-development suite
   gem 'capybara', '~> 2.2.1'                     # note, selectors were breaking when we used 2.0.1
   gem 'selenium-webdriver', '~> 2.39'

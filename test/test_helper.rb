@@ -101,7 +101,7 @@ unless defined? TEST_ROOT
             next if cardtype=~ /Cardtype|UserForm|Set|Fruit|Optic|Book/
 
             title = url.gsub(/:id/,'').gsub(/\//,'_') + "_#{cardtype}"
-            login = (current_id==Card::AnonID ? '' : "integration_login_as '#{user}'")
+            login = (current_id==Card::AnonymousID ? '' : "integration_login_as '#{user}'")
             test_def = %{
               def test_render_#{title}_#{user}_#{status}
                 #{login}

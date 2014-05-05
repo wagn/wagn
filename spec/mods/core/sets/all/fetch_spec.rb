@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe Card::Set::All::Fetch do
   describe ".fetch" do
@@ -17,7 +16,7 @@ describe Card::Set::All::Fetch do
     end
 
     it "returns nil and caches trash cards" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.fetch("A").delete!
         Card.fetch("A").should be_nil
         mock.dont_allow(Card).find_by_key
@@ -31,11 +30,11 @@ describe Card::Set::All::Fetch do
     end
 
     it "returns virtual cards and caches them as missing" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         card = Card.fetch("Joe User+*email")
         card.should be_instance_of(Card)
         card.name.should == "Joe User+*email"
-        Card::Format.new(card).render_raw.should == 'joe@user.com'
+        card.format.render_raw.should == 'joe@user.com'
       end
       #card.raw_content.should == 'joe@user.com'
       #cached_card = Card.cache.read("joe_user+*email")
@@ -50,9 +49,8 @@ describe Card::Set::All::Fetch do
     
 
     it "fetches newly virtual cards" do
-      #pending "needs new cache clearing"
       Card.fetch( 'A+virtual').should be_nil
-      Account.as_bot { Card.create :name=>'virtual+*right+*structure' }
+      Card::Auth.as_bot { Card.create :name=>'virtual+*right+*structure' }
       Card.fetch( 'A+virtual').should_not be_nil
     end
     
@@ -62,7 +60,6 @@ describe Card::Set::All::Fetch do
       Card.fetch('yomama', :new=>{}).name.should == 'yomama'
       Card.fetch('YOMAMA', :new=>{}).name.should == 'YOMAMA'
       Card.fetch('yomama!', :new=>{ :name=>'Yomama'} ).name.should == 'Yomama'
-#      Card.fetch('yomama!', :new=>{ :type=>'Phrase'} ).name.should == 'yomama!'  FIXME!!     
     end
 
     it "does not recurse infinitely on template templates" do
@@ -74,7 +71,7 @@ describe Card::Set::All::Fetch do
       Card.cache.reset_local
       Card.cache.local.keys.should == []
 
-      Account.as_bot do
+      Card::Auth.as_bot do
 
         a = Card.fetch("A")
         a.should be_instance_of(Card)
@@ -102,7 +99,7 @@ describe Card::Set::All::Fetch do
 
     describe "preferences" do
       before do
-        Account.current_id = Card::WagnBotID
+        Card::Auth.current_id = Card::WagnBotID
       end
 
       it "prefers db cards to pattern virtual cards" do
@@ -184,7 +181,7 @@ describe Card::Set::All::Fetch do
 
   describe "#fetch_virtual" do
     it "should find cards with *right+*structure specified" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.create! :name=>"testsearch+*right+*structure", :content=>'{"plus":"_self"}', :type => 'Search'
       end
       c = Card.fetch("A+testsearch".to_name)

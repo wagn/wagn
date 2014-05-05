@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe Card::Set::All::Collection do
   describe "#item_names" do
@@ -26,9 +25,6 @@ describe Card::Set::All::Collection do
   end
 
   describe "#contextual_content" do
-    it "returns content for basic setting" do
-      Card.new(:name=>"foo", :content => "X").contextual_content.should == "X"
-    end
 
     it "processes inclusions relative to context card" do
       context_card = Card["A"] # refers to 'Z'
@@ -39,7 +35,7 @@ describe Card::Set::All::Collection do
     it "returns content even when context card is hard templated" do #why the heck is this good?  -efm
       context_card = Card["A"] # refers to 'Z'
       
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.create! :name => "A+*self+*structure", :content => "Banana"
       end
       c = Card.new( :name => "foo", :content => "{{_self+B|core}}" )

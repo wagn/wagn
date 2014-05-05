@@ -4,32 +4,44 @@ require 'cgi'
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
 
 
-Given /^I sign up as "(.*)" with email "(.*)"$/ do |cardname, email|
-  visit '/account/signup'
-  fill_in 'card_name', :with=>cardname
-  fill_in 'card_account_args_email', :with=>email
-  click_button 'Submit'
+Given /^site simulates setup need$/ do
+  Card::Auth.simulate_setup_need!
 end
 
-Given /^I log in as (.+)$/ do |account_name|
+Given /^site stops simulating setup need$/ do
+  Card::Auth.simulate_setup_need! false
+  step 'I am signed out'
+end
+  
+Given /^I am signed in as (.+)$/ do |account_name|
+  accounted = Card[account_name]
+  visit "/update/:signin?card[subcards][%2B*email][content]=#{accounted.account.email}&card[subcards][%2B*password][content]=joe_pass"
+  #could optimize by specifying simple text success page
+end
+
+Given /^I am signed out$/ do
+  visit "/"
+  if page.has_content? "Sign out"
+    step 'I follow "Sign out"'
+  end
+end
+
+=begin
+Given /^I sign in as (.+)$/ do |account_name|
   # FIXME: define a faster simulate method ("I am logged in as")
-  @current_id = ucid = Card[account_name].id
-  user_object = Account[ ucid ]
-  visit "/account/signin"
-  fill_in("login", :with=> user_object.email )
-  fill_in("password", :with=> user_object.login.split("_")[0]+"_pass")
-  click_button("Sign in")
+  accounted = Card[account_name]
+  @current_id = accounted.id
+  visit "/:signin"
+  fill_in "card[subcards][+*email][content]", :with=> accounted.account.email
+  fill_in "card[subcards][+*password][content]", :with=> 'joe_pass'
+  click_button "Sign in"
   page.should have_content(account_name)
 end
+=end
 
-Given /^I log out/ do
-  visit "/"
-  click_link("Sign out")
-  page.should have_content("Sign in")
-end
 
 Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
-  Account.as_bot do
+  Card::Auth.as_bot do
     card = Card.fetch cardname, :new=>{}
     card.content = content
     card.save!
@@ -37,13 +49,13 @@ Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
 end
 
 When /^(.*) edits? "([^\"]*)"$/ do |username, cardname|
-  logged_in_as(username) do
+  signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
   end
 end
 
 When /^(.*) edits? "([^\"]*)" entering "([^\"]*)" into wysiwyg$/ do |username, cardname, content|
-  logged_in_as(username) do
+  signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
     page.execute_script "$('#main .card-content').val('#{content}')"
     click_button("Submit")
@@ -52,7 +64,7 @@ end
 
 
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
-  logged_in_as(username) do
+  signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
     fill_in 'card[content]', :with=>content
     click_button("Submit")
@@ -60,10 +72,10 @@ When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardnam
 end
 
 When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
-  logged_in_as(username) do
+  signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
     plusses.hashes.first.each do |name, content|
-      fill_in "card[cards][#{cardname}+#{name}][content]", :with=>content
+      fill_in "card[subcards][#{cardname}+#{name}][content]", :with=>content
     end
     click_button("Submit")
   end
@@ -88,16 +100,29 @@ end
 When /^(.*) creates?\s*([^\s]*) card "([^"]*)" with plusses:$/ do |username,cardtype,cardname,plusses|
   create_card(username,cardtype,cardname) do
     plusses.hashes.first.each do |name, content|
-      fill_in "card[cards][+#{name}][content]", :with=>content
+      fill_in "card[subcards][+#{name}][content]", :with=>content
     end
   end
 end
 
 When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
-  logged_in_as(username) do
+  signed_in_as(username) do
     visit "/card/delete/#{cardname.to_name.url_key}"
   end
 end
+
+When /^(?:|I )enter "([^"]*)" into "([^"]*)"$/ do |value, field|
+  selector = ".RIGHT-#{field.to_name.safe_key} input.card-content"
+  find( selector ).set value
+end
+
+Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
+  user = Card::Auth.current.name if user == "I"
+  signed_in_as user do
+    step "the card #{cardname}+*watchers contains \"[[#{user}]]\""
+  end
+end
+
 
 When /I wait a sec/ do
   sleep 1
@@ -112,8 +137,9 @@ Then /debug/ do
 end
 
 
+
 def create_card(username,cardtype,cardname,content="")
-  logged_in_as(username) do
+  signed_in_as(username) do
     if cardtype=='Pointer'
       Card.create :name=>cardname, :type=>cardtype, :content=>content
     else
@@ -124,15 +150,15 @@ def create_card(username,cardtype,cardname,content="")
   end
 end
 
-def logged_in_as(username)
-  sameuser = (username == "I" or @current_id && Card[@current_id].name == username)
+def signed_in_as username
+  sameuser = (username == "I" or Card::Auth.current.key == username.to_name.key)
+  was_signed_in = Card::Auth.current_id if Card::Auth.signed_in?
   unless sameuser
-    @saved_user = @current_id
-    step "I log in as #{username}"
+    step "I am signed in as #{username}"
   end
   yield
   unless sameuser
-    step( @saved_user ? "I log in as #{Card[@saved_user].name}" : "I log out" )
+    step( was_signed_in ? "I am signed in as #{Card[was_signed_in].name}" : 'I follow "Sign out"' )
   end
 end
 
@@ -153,6 +179,8 @@ When /^I hover over the main menu$/ do
   page.execute_script "$('#main > .card-slot > .card-header > .card-menu-link').trigger('mouseenter')"
 end
 
+When /^I pick (.*)$/ do |menu_item|
+end
 
 Then /the card (.*) should contain "([^\"]*)"$/ do |cardname, content|
   visit path_to("card #{cardname}")
@@ -196,6 +224,10 @@ Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field|
   field_labeled(field).element.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
 end
 
+When /^I press enter to search$/ do
+  find('#_keyword').native.send_keys(:return)
+end
+
 ## variants of standard steps to handle """ style quoted args
 Then /^I should see$/ do |text|
   page.should have_content(text)
@@ -204,4 +236,5 @@ end
 When /^I fill in "([^\"]*)" with$/ do |field, value|
   fill_in(field, :with => value)
 end
+
 

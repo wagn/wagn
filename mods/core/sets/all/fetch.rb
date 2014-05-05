@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 # = Card#fetch
 #
 # A multipurpose retrieval operator that incorporates caching, "virtual" card retrieval
@@ -23,89 +22,43 @@ module ClassMethods
   #     :skip_modules               Don't load Set modules
   #     :new => {  card opts }      Return a new card when not found
   #
+  
+  
+  def fetch mark, opts={}
 
-  def fetch mark, opts = {}
-#      ActiveSupport::Notifications.instrument 'wagn.fetch', :message=>"fetch #{mark}" do
+    mark = Card::Codename[mark] if Symbol === mark # id from codename
 
-    if mark.nil?
-      return if opts[:new].nil?
+    if mark.present?
+      card, mark, needs_caching = fetch_from_cache_or_db mark, opts # have existing
     else
-
-      if Symbol===mark
-        mark = Card::Codename[mark] || raise( "Missing codename for #{mark.inspect}" )
-      end
-
-      cache_key, method, val = if Integer===mark
-        [ "~#{mark}", :find_by_id_and_trash, mark ]
-      else
-        fullname = if opts[:new] && supercard = opts[:new][:supercard]
-          mark.to_name.to_absolute_name supercard.name
-        else
-          mark.to_name
-        end
-        opts[:name] = mark = fullname.to_s # this is needed to correctly fetch missing cards with different name variants in cache
-        key = fullname.key
-        [ key, :find_by_key_and_trash, key ]
-      end
-
-      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      # lookup card
-
-      #Cache lookup
-      result = Card.cache.read cache_key if Card.cache
-      card = (result && Integer===mark) ? Card.cache.read(result) : result
-
-      unless card
-        # DB lookup
-        needs_caching = true
-        card = Card.send method, val, false
-      end
+      return unless opts[:new]
     end
-
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     if Integer===mark
-      if card.nil?
-        Rails.logger.info "fetch of missing card_id #{mark}" # should send this to airbrake
-        return nil
-      end
+      return if card.nil? || mark.nil?
     else
-      if card && opts[:skip_virtual] && card.new_card? && opts[:new] != {}
-        return card.renew(opts)
-      end
-
-      # NEW card -- (either virtual or missing)
-      if card.nil? or ( card.type_id==-1 && ( !opts[:skip_virtual] || opts[:new]=={} ) )
-        # The -1 type_id allows us to skip all the type lookup and flag the need for
-        # reinitialization later.  *** It should NEVER be seen elsewhere ***
-        needs_caching = true
-        new_args = { :name=>mark.to_s, :skip_modules=>true }
-        new_args[:type_id] = -1 if opts[:skip_virtual] && opts[:new] != {}
-        card = new new_args
-      end
+      return card.renew(opts) if card and card.eager_renew?(opts)
+      if !card or card.type_id==-1 && clean_cache_opts?(opts)       # new (or improved) card for cache
+        needs_caching = true  
+        card = new_for_fetch mark, opts
+      end  
     end
-
-    if Card.cache && needs_caching
-      Card.cache.write card.key, card
-      Card.cache.write "~#{card.id}", card.key if card.id and card.id != 0
-    end
-
+    
+    write_to_cache card if Card.cache && needs_caching
+    
     if card.new_card?
-      if opts[:new] == {}
-        #noop default case; use cache.
-      elsif !opts[:new].blank? || opts[:skip_virtual] || !card.virtual?
-        return card.renew(opts)
+      if opts[:new]
+        return card.renew(opts) if !clean_cache_opts? opts
+      else
+        return unless !opts[:skip_virtual] && card.virtual?
       end
-      
-      if opts[:name] && opts[:name] != card.name
-        card.name = opts[:name]
-      end
+      card.name = mark.to_s if mark && mark.to_s != card.name
     end
 
     card.include_set_modules unless opts[:skip_modules]
     card
   end
-
+  
   def fetch_id mark #should optimize this.  what if mark is int?  or codename?
     card = fetch mark, :skip_virtual=>true, :skip_modules=>true
     card and card.id
@@ -149,6 +102,65 @@ module ClassMethods
       Card.cache.write skey, h
     end
   end
+  
+  def fetch_from_cache cache_key
+    Card.cache.read cache_key if Card.cache
+  end
+  
+  def fullname_from_name name, new_opts={}
+    if new_opts and supercard = new_opts[:supercard]
+      name.to_name.to_absolute_name supercard.name
+    else
+      name.to_name
+    end
+  end
+  
+  def fetch_from_cache_or_db mark, opts
+    needs_caching = false  
+    mark_type = Integer===mark ? :id : :key
+    
+    if mark_type == :key
+      mark = fullname_from_name mark, opts[:new]
+      val = mark.key
+    else
+      val = mark
+    end
+    
+    card = send( "fetch_from_cache_by_#{mark_type}", val ) || begin
+      needs_caching = true
+      send "find_by_#{mark_type}_and_trash", val, false
+    end
+    
+    [ card, mark, needs_caching ]
+  end
+  
+  def fetch_from_cache_by_id id
+    if name = fetch_from_cache("~#{id}")
+      fetch_from_cache name
+    end
+  end
+    
+  def fetch_from_cache_by_key key
+    fetch_from_cache key
+  end
+
+  def new_for_fetch name, opts
+    new_args = { :name=>name, :skip_modules=>true }
+    new_args[:type_id] = -1 unless clean_cache_opts? opts
+    # The -1 type_id allows us to skip all the type lookup and flag the need for
+    # reinitialization later.  *** It should NEVER be seen elsewhere ***
+    new new_args
+  end
+  
+  def clean_cache_opts? opts
+    !opts[:skip_virtual] && !opts[:new].present?
+  end
+  
+  def write_to_cache card
+    Card.cache.write card.key, card
+    Card.cache.write "~#{card.id}", card.key if card.id and card.id != 0
+  end  
+  
 
 end
 
@@ -162,11 +174,10 @@ def fetch opts={}
 end
 
 def renew args={}
-  if opts = args[:new]
-    opts[:name] ||= cardname
-    opts[:skip_modules] = args[:skip_modules]
-    Card.new opts
-  end
+  opts = args[:new]
+  opts[:name] ||= cardname
+  opts[:skip_modules] = args[:skip_modules]
+  Card.new opts
 end
 
 def expire_pieces
@@ -191,3 +202,9 @@ def refresh force=false
     self
   end
 end
+
+def eager_renew? opts
+  opts[:skip_virtual] && new_card? && opts[:new].present?
+end
+
+

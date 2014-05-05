@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 # FIXME this shouldn't be here
 describe Card::Set::Type::Cardtype, ".create with :codename" do
@@ -13,13 +12,13 @@ end
 
 describe Card, "created by Card.new " do
   before(:each) do
-    Account.as_bot do
+    Card::Auth.as_bot do
       @c = Card.new :name=>"New Card", :content=>"Great Content"
     end
   end
 
   it "should not override explicit content with default content" do
-    Account.as_bot do
+    Card::Auth.as_bot do
       Card.create! :name => "blue+*right+*default", :content => "joe", :type=>"Pointer"
       c = Card.new :name => "Lady+blue", :content => "[[Jimmy]]"
       c.content.should == "[[Jimmy]]"
@@ -31,7 +30,7 @@ end
 
 describe Card, "created by Card.create with valid attributes" do
   before(:each) do
-    Account.as_bot do
+    Card::Auth.as_bot do
       @b = Card.create :name=>"New Card", :content=>"Great Content"
       @c = Card.find(@b.id)
     end

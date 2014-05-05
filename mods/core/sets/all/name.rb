@@ -1,3 +1,4 @@
+require 'uuid'
 
 def name= newname
   cardname = newname.to_name
@@ -14,12 +15,12 @@ def name= newname
     reset_patterns_if_rule # reset the old name - should be handled in tracked_attributes!!
     reset_patterns
   end
-  if @subcards
-    @subcards.each do |subkey, subcard|
-      next if Symbol===subkey
-      subcard.name = subkey.to_name.to_absolute cardname
-    end
+  
+  subcards.each do |subkey, subcard|
+    next unless Card===subcard
+    subcard.name = subkey.to_name.to_absolute cardname
   end
+  
   super cardname.s
 end
 
@@ -85,7 +86,7 @@ def dependents
 
   if @dependents.nil?
     @dependents =
-      Account.as_bot do
+      Auth.as_bot do
         deps = children
         deps.inject(deps) do |array, card|
           array + card.dependents
@@ -97,7 +98,7 @@ def dependents
 end
 
 def repair_key
-  Account.as_bot do
+  Auth.as_bot do
     correct_key = cardname.key
     current_key = key
     return self if current_key==correct_key
@@ -125,7 +126,7 @@ end
 
 
 event :permit_codename, :before=>:approve, :on=>:update, :changed=>:codename do
-  errors.add :codename, 'only admins can set codename' unless Account.always_ok?
+  errors.add :codename, 'only admins can set codename' unless Auth.always_ok?
 end
 
 event :validate_unique_codename, :after=>:permit_codename do
@@ -146,7 +147,7 @@ event :validate_name, :before=>:approve, :on=>:save do
       errors.add :name, "may not contain any of the following characters: #{ Card::Name.banned_array * ' ' }"
     end
     # this is to protect against using a plus card as a tag
-    if cdname.junction? and simple? and id and Account.as_bot { Card.count_by_wql :right_id=>id } > 0
+    if cdname.junction? and simple? and id and Auth.as_bot { Card.count_by_wql :right_id=>id } > 0
       errors.add :name, "#{name} in use as a tag"
     end
 
@@ -167,14 +168,14 @@ end
 event :set_autoname, :before=>:validate_name, :on=>:create do
   if name.blank? and autoname_card = rule_card(:autoname)
     self.name = autoname autoname_card.content
-    Account.as_bot { autoname_card.refresh.update_attributes! :content=>name }   #fixme, should give placeholder on new, do next and save on create
+    Auth.as_bot { autoname_card.refresh.update_attributes! :content=>name }   #fixme, should give placeholder on new, do next and save on create
   end
 end
 
 
 event :validate_key, :after=>:validate_name, :on=>:save do
   if key.empty?
-    errors.add :key, "cannot be blank"
+    errors.add :key, "cannot be blank" if errors.empty?
   elsif key != cardname.key
     errors.add :key, "wrong key '#{key}' for name #{name}"
   end
@@ -245,7 +246,7 @@ event :cascade_name_changes, :after=>:store, :on=>:update, :changed=>:name do
   end
 
   if update_referencers
-    Account.as_bot do
+    Auth.as_bot do
       [self.name_referencers(name_was)+(deps.map &:referencers)].flatten.uniq.each do |card|
         # FIXME  using "name_referencers" instead of plain "referencers" for self because there are cases where trunk and tag
         # have already been saved via association by this point and therefore referencers misses things

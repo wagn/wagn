@@ -1,11 +1,10 @@
-# -*- encoding : utf-8 -*-
 
 format :rss do
 
-  def show args
-  #    render( args[:view] || :feed )
+  def show view, args
     @xml = Builder::XmlMarkup.new
-    render_feed args
+    view ||= :feed
+    render view, args
   end
 
   # FIXME: integrate this with common XML features when it is added
@@ -33,7 +32,7 @@ format :rss do
     end
     items.each do |item|
       @xml.item do
-        subformat(item).render_feed_item :view_changes=>(card.id==Card::RecentID)  #FIXME! yuck.
+        subformat(item).render_feed_item :view_changes=>(card.id==RecentID)  #FIXME! yuck.
       end
     end
   end

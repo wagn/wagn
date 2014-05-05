@@ -1,4 +1,5 @@
-require 'wagn/spec_helper'
+
+#FIXME - this shouldn't really be with the controller specs
 
 describe CardController, "location test from old integration" do
 
@@ -29,7 +30,7 @@ describe CardController, "location test from old integration" do
   # FIXME: this should probably be files in the spot for a delete test
   it "should test_removal_and_return_to_previous_undeleted_card_after_deletion" do
     t1 = t2 = nil
-    Account.as_bot do
+    Card::Auth.as_bot do
       t1 = Card.create! :name => "Testable1", :content => "hello"
       t2 = Card.create! :name => "Testable1+bandana", :content => "world"
     end

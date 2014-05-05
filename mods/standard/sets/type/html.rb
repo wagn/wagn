@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 
 view :editor do |args|
   form.text_area :content, :rows=>5, :class=>'card-content'

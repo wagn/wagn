@@ -28,17 +28,17 @@ Gem::Specification.new do |s|
     [ 'rails',        '3.2.16'    ],
     [ 'smartname',    '0.2.3'     ],
     
-    [ 'htmlentities', '~> 4.3'    ],
     [ 'uuid',         '~> 2.3'    ],
-    [ 'macaddr',      '1.6.1'     ],  #required by uuid, but 1.6.2 is busted
-    
     [ 'paperclip',    '~> 2.8'    ],
+    [ 'htmlentities', '~> 4.3'    ],
     [ 'rmagick',      '~> 2.13'   ],
-    [ 'recaptcha',    '~> 0.3'    ],
-                                  
-    [ 'airbrake',     '~> 3.1'    ],
+    [ 'recaptcha',    '~> 0.3'    ],                                  
     [ 'coderay',      '~> 1.0'    ],
-    [ 'sass',         '~> 3.2'    ]
+    [ 'sass',         '~> 3.2'    ],
+
+    # should not depend!
+    [ 'airbrake',     '~> 3.1'    ] 
+
     
   ].each do |dep|
     s.add_runtime_dependency *dep

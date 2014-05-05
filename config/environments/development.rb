@@ -31,7 +31,7 @@ Wagn.application.class.configure do
   config.assets.compress = false
 
   # Expands the lines which load the assets
-  config.assets.debug = true
+  config.assets.debug = true  
 
   # This needs to be on for tinymce to work, because several important files (themes, etc) are only served statically
   config.serve_static_assets = ENV['STATIC_ASSETS'] || true
@@ -55,7 +55,12 @@ Wagn.application.class.configure do
 #    File.delete(File.join(Rails.root,'tmp', 'debug.txt'))
 #  end
 
-  config.send_emails = false
+  config.perform_deliveries = false
+  
+  
+  config.dev_tweaks.autoload_rules do
+    skip '/files'
+  end
 end
 
 

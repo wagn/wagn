@@ -7,7 +7,7 @@ class CardCreateTest < ActionDispatch::PerformanceTest
   def initialize *args
     @name = 'CardA'
     super *args
-    Account.as Card::WagnBotID
+    Card::Auth.as Card::WagnBotID
   end
 
   def test_card_create_simple

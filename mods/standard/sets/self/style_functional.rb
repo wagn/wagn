@@ -1,4 +1,4 @@
-# -*- encoding : utf-8 -*-
+
 view :raw do |args|
   File.read "#{Wagn.gem_root}/mods/standard/lib/stylesheets/functional.scss"
 end

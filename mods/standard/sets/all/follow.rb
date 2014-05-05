@@ -1,6 +1,6 @@
 format :html do
   
-  watch_perms = lambda { |r| Account.logged_in? && !r.card.new_card? }
+  watch_perms = lambda { |r| Auth.signed_in? && !r.card.new_card? }
   view :watch, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>watch_perms do |args|
     
     wrap args do
@@ -38,7 +38,7 @@ end
 
 event :notify_followers, :after=>:extend do
   begin
-    return false if Card.record_timestamps==false or Wagn.config.send_emails==false
+    return false if Card.record_timestamps==false
     # userstamps and timestamps are turned off in cases like updating read_rules that are automated and
     # generally not of enough interest to warrant notification
   
@@ -47,8 +47,12 @@ event :notify_followers, :after=>:extend do
     @trunk_watcher_watched_pairs ||= trunk_watcher_watched_pairs
     @watcher_watched_pairs ||= watcher_watched_pairs
     
-    @watcher_watched_pairs.reject {|p| @trunk_watcher_watched_pairs.map(&:first).include? p.first }.each do |watcher, watched|
-      watcher and mail = Mailer.change_notice( watcher, self, action, watched.to_s, nested_notifications ) and mail.deliver
+    @watcher_watched_pairs.reject do |p|
+      @trunk_watcher_watched_pairs.map(&:first).include? p.first
+    end.each do |watcher, watched|
+      watcher and
+      mail = Mailer.change_notice( watcher, self, action, watched.to_s, nested_notifications ) and
+      mail.deliver
     end
   
     if @supercard
@@ -75,13 +79,13 @@ def trunk_watcher_watched_pairs
     tcard = Card[tname=cardname.trunk_name]
     tcard and pairs = tcard.watcher_watched_pairs
     #fixme - includers not working on structured cards, so this is commented for now
-    return pairs if !pairs.nil? #and includers.map(&:key).member?(tname.key)
+    return pairs if !pairs.nil? and includers.map(&:key).member?(tname.key)
   end
   []
 end
 
-def watching_type?; watcher_pairs(false, :type).member? Account.current_id end
-def watching?;      watcher_pairs(false).       member? Account.current_id end
+def watching_type?; watcher_pairs(false, :type).member? Auth.current_id end
+def watching?;      watcher_pairs(false).       member? Auth.current_id end
 
 def watchers
   watcher_watched_pairs false
@@ -93,7 +97,7 @@ def watcher_watched_pairs pairs=true
 end
 
 def watcher_pairs pairs=true, kind=:name, hash={}
-  #warn "wp #{inspect} P:#{pairs}, k:#{kind}, uid:#{Account.current_id} #{hash.inspect}, OI:#{hash.object_id}"
+  #warn "wp #{inspect} P:#{pairs}, k:#{kind}, uid:#{Auth.current_id} #{hash.inspect}, OI:#{hash.object_id}"
 
   wname, rc = (kind == :type) ?
        [ self.type_name, self.type_card.fetch(:trait=>:watchers) ] :
@@ -104,7 +108,7 @@ def watcher_pairs pairs=true, kind=:name, hash={}
   if hash.any?
     #warn "wp #{pairs}, #{kind}, #{hash.inspect}"
     if pairs
-      hash.each.reject {|i,wname| i == Account.current_id }.map {|i,wname| [ i, wname ] }
+      hash.each.reject {|i,wname| i == Auth.current_id }.map {|i,wname| [ i, wname ] }
     else
       hash.keys
     end

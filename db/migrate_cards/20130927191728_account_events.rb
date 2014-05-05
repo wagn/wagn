@@ -4,7 +4,7 @@ class AccountEvents < ActiveRecord::Migration
   include Wagn::MigrationHelper
   def up
     contentedly do
-      aa = Card.fetch "#{ Card[ :account_request ].name }+#{ Card[ :type ].name}+#{ Card[:accountable ].name}", :new=>{}
+      aa = Card.fetch "#{ Card[ :signup ].name }+#{ Card[ :type ].name}+#{ Card[:accountable ].name}", :new=>{}
       aa.content = "1"
       aa.save!
       
@@ -21,9 +21,4 @@ class AccountEvents < ActiveRecord::Migration
     end
   end
 
-  def down
-    contentedly do
-      
-    end
-  end
 end

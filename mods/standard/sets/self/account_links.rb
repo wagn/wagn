@@ -1,30 +1,23 @@
-# -*- encoding : utf-8 -*-
+
 format :html do
 
   view :raw do |args|
     #ENGLISH
-    prefix = "#{ Wagn.config.relative_url_root }/account"
-    %{<span id="logging">#{
-      if Account.logged_in?
-        ucard = Account.current
-        %{
-          #{ link_to ucard.name, "#{ Wagn.config.relative_url_root }/#{ucard.cardname.url_key}", :id=>'my-card-link' }
-          #{
-            if Account.create_ok?
-              link_to 'Invite a Friend', "#{prefix}/invite", :id=>'invite-a-friend-link'
-            end
-          }
-          #{ link_to 'Sign out', "#{prefix}/signout",                                      :id=>'signout-link' }
-        }
-      else
-        %{
-          #{ if Card.new(:type_code=>'account_request').ok? :create
-               link_to 'Sign up', "#{prefix}/signup", :id=>'signup-link'
-             end }
-          #{ link_to 'Sign in', "#{prefix}/signin", :id=>'signin-link' }
-        }
-      end }
-    </span>}
+    links = []
+    if Auth.signed_in?
+      links << link_to_page( Auth.current.name, nil, :id=>'my-card-link' )
+      links << link_to( 'Sign out', wagn_path('delete/:signin'), :id=>'signout-link' )
+      #  if Card.new(:type_id=>Card.default_accounted_type_id).ok? :create
+      #    link_to 'Invite a Friend', "#{prefix}/invite", :id=>'invite-a-friend-link'
+      #  end
+    else
+      if Card.new(:type_id=>Card::SignupID).ok? :create
+        links << link_to( 'Sign up', wagn_path('account/signup'), :id=>'signup-link' )
+      end
+      links << link_to( 'Sign in', wagn_path(':signin'), :id=>'signin-link' )
+    end
+    
+    %{<span id="logging">#{ links.join ' ' }</span>}
   end
 
 end

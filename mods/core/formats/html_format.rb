@@ -10,7 +10,7 @@ class Card
     attr_accessor  :options_need_save, :start_time, :skip_autosave
 
     # builtin layouts allow for rescue / testing
-    LAYOUTS = Wagn::Loader.load_layouts.merge 'none' => '{{_main}}'
+    LAYOUTS = Loader.load_layouts.merge 'none' => '{{_main}}'
 
     INCLUSION_DEFAULTS = {
       :layout => { :view => :core },
@@ -39,35 +39,31 @@ class Card
       ok? :comment
     end
 
-    def get_layout_content(args)
-      Account.as_bot do
-        case
-          when (params[:layout] || args[:layout]) ;  layout_from_name args
-          when card                               ;  layout_from_card
-          else                                    ;  LAYOUTS['default']
+    def get_layout_content
+      Auth.as_bot do
+        if requested_layout = params[:layout]
+          layout_from_card_or_code requested_layout
+        else
+          layout_from_rule
         end
       end
     end
 
-    def layout_from_name args
-      lname = (params[:layout] || args[:layout]).to_s
-      lcard = Card.fetch(lname, :skip_virtual=>true, :skip_modules=>true)
-      case
-        when lcard && lcard.ok?(:read)         ; lcard.content
-        when hardcoded_layout = LAYOUTS[lname] ; hardcoded_layout
-        else  ; "<h1>Unknown layout: #{lname}</h1>Built-in Layouts: #{LAYOUTS.keys.join(', ')}"
+    def layout_from_rule
+      if rule = card.rule_card(:layout) and rule.type_id==Card::PointerID and layout_name=rule.item_names.first
+        layout_from_card_or_code layout_name
       end
     end
 
-    def layout_from_card
-      return unless rule_card = (card.rule_card(:layout) or Card.default_rule_card(:layout))
-      #return unless rule_card.is_a?(Card::Set::Type::Pointer) and  # type check throwing lots of warnings under cucumber: rule_card.type_id == Card::PointerID        and
-      return unless rule_card.type_id == Card::PointerID        and
-          layout_name=rule_card.item_names.first                and
-          !layout_name.nil?                                     and
-          lo_card = Card.fetch( layout_name, :skip_virtual => true, :skip_modules=>true ) and
-          lo_card.ok?(:read)
-      lo_card.content
+    def layout_from_card_or_code name
+      layout_card = Card.fetch name.to_s, :skip_virtual=>true, :skip_modules=>true
+      if layout_card and layout_card.ok? :read
+        layout_card.content
+      elsif hardcoded_layout = LAYOUTS[name]
+        hardcoded_layout
+      else
+        "<h1>Unknown layout: #{name}</h1>Built-in Layouts: #{LAYOUTS.keys.join(', ')}"
+      end
     end
 
     def slot_options args
@@ -128,6 +124,7 @@ class Card
     end
   
     def frame_and_form action, args={}, form_opts={}
+      form_opts.merge! args.delete(:form_opts) if args[:form_opts]
       form_opts[:hidden] = args.delete(:hidden)
       frame args do
         card_form action, form_opts do
@@ -143,14 +140,9 @@ class Card
       end
     end  
 
-
     def wrap_main(content)
       return content if params[:layout]=='none'
-      %{#{
-      if flash[:notice]
-        %{<div class="flash-notice">#{ flash[:notice] }</div>}
-      end
-      }<div id="main">#{content}</div>}
+      %{<div id="main">#{content}</div>}
     end
 
   
@@ -199,7 +191,7 @@ class Card
         <span class="render-error">
           error rendering
           #{
-            if Account.always_ok?
+            if Auth.always_ok?
               %{
                 #{ link_to_page error_cardname, nil, :class=>'render-error-link' }
                 <div class="render-error-message errors-view" style="display:none">
@@ -251,7 +243,7 @@ class Card
     end
 
     def type_field args={}
-      typelist = Account.createable_types
+      typelist = Auth.createable_types
       current_type = unless args.delete :no_current_type
           unless card.new_card? || typelist.include?( card.type_name )
             # current type should be an option on existing cards, regardless of create perms
@@ -281,7 +273,7 @@ class Card
       builder = ActionView::Base.default_form_builder
       card.name = card.name.gsub(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_card?  ##FIXME -- need to match other relative inclusions.
     
-      builder.new("card[cards][#{card.relative_name}]", card, template, {}, block)
+      builder.new("card[subcards][#{card.relative_name}]", card, template, {}, block)
     end
 
     def form
@@ -312,7 +304,7 @@ class Card
       klasses << 'autosave' if action == :update
       html[:class] = klasses.join ' '
     
-      html[:recaptcha] ||= 'on' if Wagn::Env[:recaptcha_on] && Card.toggle( card.rule(:captcha) )
+      html[:recaptcha] ||= 'on' if Card::Env.recaptcha_on? && Card.toggle( card.rule(:captcha) )
       html.delete :recaptcha if html[:recaptcha] == :off
     
       { :url=>url, :remote=>true, :html=>html }
@@ -360,10 +352,10 @@ class Card
     end
 
     def main?
-      if ajax_call?
+      if Env.ajax?
         @depth == 0 && params[:is_main]
       else
-        @depth == 1 && @mainline
+        @depth == 1 && @mainline #assumes layout includes {{_main}}
       end
     end
 

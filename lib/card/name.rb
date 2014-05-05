@@ -1,12 +1,11 @@
 # -*- encoding : utf-8 -*-
 require 'smart_name'
 
-
 class Card
   class Name < SmartName
 
-    self.params  = Wagn::Env # yuck!
-    self.session = proc { Account.current.name }
+    self.params  = Card::Env # yuck!
+    self.session = proc { Auth.current.name }
     self.banned_array = ['/']
 
     def star?

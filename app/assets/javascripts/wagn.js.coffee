@@ -42,6 +42,7 @@ jQuery.fn.extend {
     v
 
   slotSuccess: (data) ->
+    
     if data.redirect
       window.location=data.redirect
     else
@@ -278,6 +279,15 @@ $(window).ready ->
     msg.show()
 #    msg.dialog()
     event.preventDefault()
+
+# important: this prevents jquery-mobile from taking over everything
+$( document ).on "mobileinit", ->
+  $.extend $.mobile , {
+    autoInitializePage: false
+    ajaxEnabled: false
+  }
+
+
 
 newCaptcha = (form)->
   recapUri = 'https://www.google.com/recaptcha/api/js/recaptcha_ajax.js'

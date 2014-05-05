@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe Card::Chunk::URI, "URI chunk tests" do
   it "should test_non_matches" do

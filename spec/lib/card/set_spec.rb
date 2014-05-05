@@ -1,22 +1,21 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 module Card::Set::Right::Account # won't this conflict with a real set (and fail to provide controlled test?)
   extend Card::Set
 
-  card_accessor :status, :default => "request", :type=>:phrase
-  card_writer :write,    :default => "request", :type=>:phrase
-  card_reader :read,     :default => "request", :type=>:phrase
+  card_accessor :role,   :default => "request", :type=>:phrase
+  card_writer   :write,  :default => "request", :type=>:phrase
+  card_reader   :read,   :default => "request", :type=>:phrase
 end
 
 describe Card do
   before do
-    @account_card = Card['sara'].fetch(:trait=>:account)
+    @account_card = Card['sara'].fetch :trait=>:account
   end
 
   describe "Read and write card attribute" do
     it "gets email attribute" do
-      @account_card.status.should == 'request'
+      @account_card.role.should == 'request'
     end
 
     it "shouldn't have a reader method for card_writer" do
@@ -33,7 +32,7 @@ describe Card do
       @account_card.write= 'test_value'
       @account_card.status= 'pending'
       @account_card.status.should == 'pending'
-      Account.as_bot { @account_card.save }
+      Card::Auth.as_bot { @account_card.save }
       Card.cache.reset
       (tcard = Card['sara'].fetch(:trait=>:account)).should be
       tcard.status.should == 'pending'

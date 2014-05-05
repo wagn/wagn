@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   root                      :to => 'card#read', :via=>:get
   match "#{ Wagn.config.files_web_path }/:id(-:size)-:rev.:format" => 
                                    'card#read', :via=>:get, :id => /[^-]+/, :explicit_file=>true
-  match 'recent(.:format)'      => 'card#read', :via=>:get, :id => '*recent' #obviate by making links use codename
+  match 'recent(.:format)'      => 'card#read', :via=>:get, :id => ':recent' #obviate by making links use codename
 #  match ':view:(:id(.:format))'          => 'card#read', :via=>:get  
   match '(/wagn)/:id(.:format)' => 'card#read', :via=>:get  #/wagn is deprecated
   
@@ -23,16 +23,24 @@ Rails.application.routes.draw do
   match ':id(.:format)' => 'card#update', :via=>:put
   match ':id(.:format)' => 'card#delete', :via=>:delete
 
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~
   # legacy                                         
-  match 'new/:type'                  => 'card#read', :via=>:get, :view=>'new'
-  match 'card/:view(/:id(.:format))' => 'card#read', :via=>:get, :view=> /new|options|edit/
-  match 'account/signup'             => 'card#read', :via=>:get, :view=>'new',  :card=>{ :type_code=>:account_request }
-  match 'account/accept'             => 'card#read', :via=>:get, :view=>'edit', :card=>{ :type_code=>:account_request }
-  match 'account/invite'             => 'card#read', :via=>:get, :view=>'new',  :card=>{ :type_code=>:user            }
+  match 'new/:type'                  => 'card#read',   :view=>'new'
+  match 'card/:view(/:id(.:format))' => 'card#read',   :view=> /new|options|edit/
+                                                     
+  match 'account/signin'             => 'card#read',   :id=>':signin'
+  match 'account/signout'            => 'card#delete', :id=>':signin'
+  match 'account/signup'             => 'card#read',   :view=>'new',  :card=>{ :type_code=>:signup }
+  match 'account/accept'             => 'card#read',   :view=>'edit', :card=>{ :type_code=>:signup }
+  match 'account/invite'             => 'card#read',   :view=>'new',  :card=>{ :type_code=>:user   }
+  # use type_code rather than id because in some cases (eg populating test data) routes must get loaded without loading Card
+
+  match 'admin/stats'                => 'card#read',   :id=>':stats'
+  match 'admin/:task'                => 'card#update', :id=>':all' 
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~
   
   # standard non-RESTful
-  match ':controller/:action(/:id(.:format))'
-  match ':action(/:id(.:format))'        => 'card' 
+  match '(card)/:action(/:id(.:format))' => 'card'
 
   # other
   match '*id' => 'card#read', :view => 'bad_address'

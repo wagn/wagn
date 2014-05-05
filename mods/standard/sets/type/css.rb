@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 
 format :html do
 
@@ -13,5 +12,5 @@ format :html do
 end
 
 event :reset_style_for_css, :after=>:store do
-  Card::Set::Right::Style.delete_style_files
+  Right::Style.delete_style_files
 end

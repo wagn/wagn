@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe Card::Set::Type::Pointer do
   describe "item_names" do
@@ -52,7 +51,7 @@ describe Card::Set::Type::Pointer do
     it "not break on permissions" do
       watchers = Card.fetch "Home+*watchers", :new=>{}
       watchers.type_code.should == :pointer
-      watchers << Account.current_id
+      watchers << Card::Auth.current_id
       assert_equal '[[Joe User]]', watchers.content
     end
   end

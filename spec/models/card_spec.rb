@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe Card do
 
@@ -11,7 +10,7 @@ describe Card do
 
   describe "creation" do
     before(:each) do
-      Account.as_bot do
+      Card::Auth.as_bot do
         @b = Card.create! :name=>"New Card", :content=>"Great Content"
         @c = Card.find(@b.id)
       end
@@ -35,7 +34,7 @@ describe Card do
 
   describe "content change should create new revision" do
     before do
-      Account.as_bot do
+      Card::Auth.as_bot do
         @c = Card['basicname']
         @c.update_attributes! :content=>'foo'
       end
@@ -130,7 +129,7 @@ describe "basic card tests" do
 
   it 'update_should_create_subcards' do
     banana = Card.create! :name=>'Banana'
-    Card.update banana.id, :cards=>{ "+peel" => { :content => "yellow" }}
+    Card.update banana.id, :subcards=>{ "+peel" => { :content => "yellow" }}
 
     peel = Card['Banana+peel']
     peel.content.       should == "yellow"
@@ -139,26 +138,26 @@ describe "basic card tests" do
 
   it 'update_should_create_subcards_as_wagn_bot_if_missing_subcard_permissions' do
     Card.create :name=>'peel'
-    Account.current_id = Card::AnonID
+    Card::Auth.current_id = Card::AnonymousID
     Card['Banana'].should_not be
     Card['Basic'].ok?(:create).should be_false, "anon can't creat"
 
-    Card.create! :type=>"Fruit", :name=>'Banana', :cards=>{ "+peel" => { :content => "yellow" }}
+    Card.create! :type=>"Fruit", :name=>'Banana', :subcards=>{ "+peel" => { :content => "yellow" }}
     Card['Banana'].should be
     peel = Card["Banana+peel"]
 
     peel.current_revision.content.should == "yellow"
-    peel.creator_id.should == Card::AnonID
+    peel.creator_id.should == Card::AnonymousID
   end
 
   it 'update_should_not_create_subcards_if_missing_main_card_permissions' do
     b = Card.create!( :name=>'Banana' )
-    Account.as Card::AnonID do
-      b.update_attributes :cards=>{ "+peel" => { :content => "yellow" }}
+    Card::Auth.as Card::AnonymousID do
+      b.update_attributes :subcards=>{ "+peel" => { :content => "yellow" }}
       b.errors[:permission_denied].should_not be_empty
       
       
-      c = Card.update(b.id, :cards=>{ "+peel" => { :content => "yellow" }})
+      c = Card.update(b.id, :subcards=>{ "+peel" => { :content => "yellow" }})
       c.errors[:permission_denied].should_not be_empty
       Card['Banana+peel'].should be_nil
     end
@@ -167,7 +166,7 @@ describe "basic card tests" do
 
   it 'create_without_read_permission' do
     c = Card.create!({:name=>"Banana", :type=>"Fruit", :content=>"mush"})
-    Account.as Card::AnonID do
+    Card::Auth.as Card::AnonymousID do
       assert_raises Card::PermissionDenied do
         c.ok! :read
       end

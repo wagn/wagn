@@ -6,7 +6,7 @@ Feature: Updates for Children of watched cards
 #should this be in watch?
 
   Background:
-    Given I log in as Joe User
+    Given I am signed in as Joe User
     And I create Book card "Ulysses"
     And Joe Camel is watching "Ulysses"
     And Joe Admin is watching "Book"
@@ -39,10 +39,10 @@ Feature: Updates for Children of watched cards
     Then Joe Admin should be notified that "Joe User updated \"Bros Krmzv\""
 
   Scenario: Watching a plus card on multiedit; and watching both plus card and including card on multiedit
-    Given I log in as Joe Admin
+    Given I am signed in as Joe Admin
     And I create Cardtype card "Froot"
     And I create card "Froot+*type+*structure" with content "{{+color}} {{+flavor}}"
-    And I log in as Joe User
+    And I am signed in as Joe User
     And I create Froot card "Banana" with plusses:
       |color|flavor|
       |yellow|sweet|

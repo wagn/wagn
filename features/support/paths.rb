@@ -16,7 +16,7 @@ module NavigationHelpers
     # Here is an example that pulls values out of the Regexp:
     #
     #   when /^(.*)'s profile page$/i
-    #     user_profile_path(Account[ $1 ])
+    #     user_profile_path(Auth[ $1 ])
 
     when /card (.*) with (.*) layout$/
       "/#{$1.to_name.url_key}?layout=$2"
@@ -31,7 +31,7 @@ module NavigationHelpers
       "/card/new?card[name]=#{CGI.escape($1)}"
 
     when /edit (.*)$/
-   "/card/edit/#{$1.to_name.url_key}"
+   "/#{$1.to_name.url_key}?view=edit"
 
     when /new (.*)$/
       "/new/#{$1.to_name.url_key}"

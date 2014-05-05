@@ -1,11 +1,10 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 
 describe Card, "deleting card" do
   it "should require permission" do
     a = Card['a']
-    Account.as :anonymous do
+    Card::Auth.as :anonymous do
       a.ok?(:delete).should == false
       a.delete.should == false
       a.errors[:permission_denied].should_not be_empty
@@ -17,7 +16,7 @@ end
 
 describe Card, "deleted card" do
   before do
-    Account.as_bot do
+    Card::Auth.as_bot do
       @c = Card['A']
       @c.delete!
     end
@@ -26,7 +25,7 @@ describe Card, "deleted card" do
     @c.trash.should be_true
   end
   it "should come out of the trash when a plus card is created" do
-    Account.as_bot do
+    Card::Auth.as_bot do
       Card.create(:name=>'A+*acct')
       c = Card[ 'A' ]
       c.trash.should be_false
@@ -46,7 +45,7 @@ end
 
 describe Card, "plus cards" do
   it "should be deleted when root is" do
-    Account.as :joe_admin do
+    Card::Auth.as :joe_admin do
       c = Card.create! :name=>'zz+top'
       root = Card['zz']
       root.delete
@@ -58,21 +57,23 @@ describe Card, "plus cards" do
 end
 
 # FIXME: these user tests should probably be in a set of cardtype specific tests somewhere..
-describe User, "with revisions" do
-  before do Account.as_bot { @c = Card["Wagn Bot"] } end
-  it "should not be removable" do
-    @c.delete.should_not be_true
-  end
-end
-
-describe User, "without revisions" do
-  before do
-    Account.as_bot do
-      @c = Card.create! :name=>'User Must Die', :type=>'User'
+describe Card do
+  context "with revisions" do
+    before do Card::Auth.as_bot { @c = Card["Wagn Bot"] } end
+    it "should not be removable" do
+      @c.delete.should_not be_true
     end
   end
-  it "should be removable" do
-    @c.delete!.should be_true
+
+  context "without revisions" do
+    before do
+      Card::Auth.as_bot do
+        @c = Card.create! :name=>'User Must Die', :type=>'User'
+      end
+    end
+    it "should be removable" do
+      @c.delete!.should be_true
+    end
   end
 end
 
@@ -82,7 +83,7 @@ end
 #NOT WORKING, BUT IT SHOULD
 #describe Card, "a part of an unremovable card" do
 #  before do
-#     Account.as(Card::WagnBotID)
+#     Card::Auth.as(Card::WagnBotID)
 #     # this ugly setup makes it so A+Admin is the actual user with edits..
 #     Card["Wagn Bot"].update_attributes! :name=>"A+Wagn Bot"
 #  end
@@ -110,7 +111,7 @@ end
 
 describe Card, "rename to trashed name" do
   before do
-    Account.as_bot do
+    Card::Auth.as_bot do
       @a = Card["A"]
       @b = Card["B"]
       @a.delete!  #trash
@@ -134,7 +135,7 @@ end
 
 describe Card, "sent to trash" do
   before do
-    Account.as_bot do
+    Card::Auth.as_bot do
       @c = Card["basicname"]
       @c.delete!
     end
@@ -156,7 +157,7 @@ end
 
 describe Card, "revived from trash" do
   before do
-    Account.as_bot do
+    Card::Auth.as_bot do
       Card["basicname"].delete!
       
       @c = Card.create! :name=>'basicname', :content=>'revived content'
@@ -183,7 +184,7 @@ end
 
 describe Card, "recreate trashed card via new" do
 #  before do
-#    Account.as(Card::WagnBotID)
+#    Card::Auth.as(Card::WagnBotID)
 #    @c = Card.create! :type=>'Basic', :name=>"BasicMe"
 #  end
 
@@ -198,7 +199,7 @@ end
 
 describe Card, "junction revival" do
   before do
-    Account.as_bot do
+    Card::Auth.as_bot do
       @c = Card.create! :name=>"basicname+woot", :content=>"basiccontent"
       @c.delete!
       @c = Card.create! :name=>"basicname+woot", :content=>"revived content"

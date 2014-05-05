@@ -102,7 +102,7 @@ module Card::Set
     def register_set set_module
       if all_set?( set_module )
         self.current = { :module=>Card, :opts=>{} }
-        base_modules << set_module unless set_module == Card
+        base_modules << set_module unless set_module == C ard
       else
         self.current = { :module=>set_module, :opts=>opts_from_module( set_module ) }
       end      

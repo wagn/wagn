@@ -33,8 +33,10 @@ group :test do
   # SPECS see spec dir
   gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
   
-  gem 'guard-rspec', '~> 4.2'
-  gem 'terminal-notifier-guard', '~> 1.5'  #fixme : mac only!
+  gem 'guard-rspec', '~> 4.2'                  # trigger test runs based on file edits
+  if RUBY_PLATFORM =~ /darwin/
+    gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
+  end
   
   # CUKES see features dir
   gem 'cucumber-rails', '~> 1.3', :require=>false # feature-driven-development suite

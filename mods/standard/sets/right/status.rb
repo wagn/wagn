@@ -1,5 +1,4 @@
-
-include All::Permissions::Accounts
+#include All::Permissions::Accounts
 
 def ok_to_update
   if is_own_account? && !Auth.always_ok?

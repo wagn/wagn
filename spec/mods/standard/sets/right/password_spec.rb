@@ -20,7 +20,26 @@ describe Card::Set::Right::Password do
       password_card.errors[:password].should_not be_empty
       
     end
+    
+    context 'blank password' do
+      it "shouldn't change the password" do
+        acct = @user_card.account
+        original_pw = acct.password
+        original_pw.size.should > 10
+        pw_card = acct.password_card
+        pw_card.content = ''
+        pw_card.save
+        original_pw.should == pw_card.refresh(force=true).content
+      end
+      
+      it "shouldn't break email editing" do
+        @user_card.account.update_attributes! '+*password'=>'', '+*email'=>'joe2@user.com'
+#        @user_card.account.update_attributes! '+*email'=>'joe2@user.com'
+        @user_card.account.email.should == 'joe2@user.com'
+      end
+    end
   end
+  
   
 
 end

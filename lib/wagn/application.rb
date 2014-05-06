@@ -30,6 +30,7 @@ module Wagn
         config.autoload_paths += Dir["#{Wagn.gem_root}/app/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/lib/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/mods/standard/lib/**/"]
+        config.autoload_paths += Dir["#{Wagn.gem_root}/mods/zfactory/lib/**/"]
         
         config.assets.enabled = true
         config.assets.version = '1.0'

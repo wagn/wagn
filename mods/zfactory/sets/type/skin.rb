@@ -1,5 +1,6 @@
-
 include Pointer
+include Factory
+#include Supplier
 
 view :core, :type=>:pointer
 

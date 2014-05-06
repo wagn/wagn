@@ -1,3 +1,18 @@
+include Factory
+# #include Supplier
+#
+
+def factory_process input
+end
+
+ 
+factory_process do |input|
+  # begin
+  #   Sass.compile input.content, :style=>:compressed
+  # rescue Exception=>e
+  #   raise Card::Oops, "Stylesheet Error:\n#{ e.message }"
+  # end
+end
 
 format :html do
 

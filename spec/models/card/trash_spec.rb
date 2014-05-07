@@ -178,7 +178,7 @@ describe Card, "revived from trash" do
 
   it "should have a new revision" do
     @c.content.should == 'revived content'
-#    d(@c.name).content.should == 'revived content'
+#    Card.fetch(@c.name).content.should == 'revived content'
   end
 end
 

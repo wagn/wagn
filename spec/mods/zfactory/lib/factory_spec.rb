@@ -1,5 +1,4 @@
 require 'byebug'
-require 'spec_helper'
 
 
 describe Factory do
@@ -10,44 +9,39 @@ describe Factory do
     @basics = []
     Card::Auth.as_bot do
       (2*@depth).times do |i|
-        @basics << Card.fetch( "basic level #{i}", :new => { :type => Card::BasicID } )
+        #@basics << Card.create!( :name =>  "basic level #{i}",  :type => Card::BasicID  )
+        @basics << Card.fetch( "basic level #{i}", :new =>  {:type => Card::BasicID } )
         @basics.last.save
       end
     end
   end
-  context 'new factory card' do
+
+  context 'after stored' do
     it 'creates input card' do
       Card::Auth.as_bot do
-        #c = Card.create :name => 'a style test',  :type => Card::SkinID 
-        c = Card.fetch 'a style test',  :new => { :type => Card::SkinID }
-        c.type = Card::SkinID
-        c.save
-        c.factory_input_cards.should == Card.fetch( 'a style test+*input' )
-        
+        name = 'a style test'
+        c = Card.fetch( "#{name}+*input" )
+        c.delete! if c
+        c = Card.fetch name
+        c.delete! if c  
+        c = Card.create!( :name => 'a style test',  :type => Card::SkinID )
+        Card.fetch( "#{name}+*input" ).should_not be_nil
       end
     end
     it 'creates output card' do
       Card::Auth.as_bot do
-        #c = Card.create :name => 'a style test',  :type => Card::SkinID 
-        c = Card.fetch 'a style test',  :new => { :type => Card::SkinID }
-        c.type = Card::SkinID
-        c.save
-        c.factory_input_cards.should == Card.fetch( 'a style test+*input' )
+        name = 'a style test'
+        c  = Card.fetch( "#{name}+*input" )
+        c.delete! if c
+        c = Card.fetch name
+        c.delete! if c  
+        c = Card.create! :name => 'a style test',  :type => Card::SkinID 
+        Card.fetch( "#{name}+*output" ).should_not be_nil
       end
     end
-    
   end
   
   describe "factory_input_cards" do
-    before do
-      Card::Auth.as_bot do
-        css = '#box { display: block }'
-        @css_card = Card.create :name=>'my css', :content=> css
-        @skin = Card.create :name=>'my skin', :type => Card::SkinID
-        @skin << @css_card
-      end
-    end
-     
     context 'for skins' do
       before do
         Card::Auth.as_bot do
@@ -67,7 +61,7 @@ describe Factory do
       it "scans all levels" do
         @first_level.factory_input_cards.map(&:id).sort.should == @basics.map(&:id).sort
       end
-      it "presevs order" do
+      it "preserves order" do
         @first_level.factory_input_cards.map(&:id).should == @basics.map(&:id)
       end
     end
@@ -89,7 +83,16 @@ describe Factory do
         end
       end
       
-      it "contains pointer card items" do
+      it "contains items" do
+        Card::Auth.as_bot do
+          css = '#box { display: block }'
+          @css_card = Card.create!( {:name => 'my css', :type => Card::CssID, :content => css } )
+          
+          @skin = Card.fetch 'my skin', :new =>  {:type => Card::SkinID }
+          @skin.content = ''
+          @skin << @css_card
+          @skin.save!
+        end
         input = @skin.factory_input_cards
         input.should == [@css_card]
       end

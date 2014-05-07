@@ -2,9 +2,8 @@ require 'byebug'
 
 module Factory    
   module ClassMethods
-    attr_accessor :output_config, :before_engine, :engine, :after_engine
+    attr_accessor :output_config #, :before_engine, :engine, :after_engine
     def factory_process &block
-      #self.engine = block
       define_method :engine, &block
     end
     
@@ -20,16 +19,15 @@ module Factory
         define_method :after_engine do
           #TODO do something with args
         end
-        
       end
     end
   
-    def arount_factory_process &block   #TODO - not used, I doubt that this will work. factory_input_cards is a instance method!
-      block.call( Proc.new do 
-                    factory_input_cards.each { |input| @engine.call( input ) }
-                  end     
-                )
-    end
+    # def around_factory_process &block   #TODO - not used, I doubt that this will work. factory_input_cards is a instance method!
+#       block.call( Proc.new do 
+#                     factory_input_cards.each { |input| engine( input ) }
+#                   end     
+#                 )
+#     end
   end
   
   
@@ -39,13 +37,11 @@ module Factory
     
     host_class.before_factory_process {}
     host_class.factory_process { |input| input }
-    
     host_class.store_factory_output do |output|
       store_path =  Wagn.paths['files'].existent.first + "/tmp/#{ id }.#{host_class.output_config[:filetype]}"   
-      file = File.open(store_path,"w")
-      file.write( output )
+      File.open(store_path,"w") { |f| f.write( output ) }
       Card::Auth.as_bot do
-        output_card.attach = file
+        output_card.attach = File.open(store_path, "r")
         output_card.save!
       end
     end
@@ -66,7 +62,11 @@ module Factory
         items.flatten!
       else
         item = items.shift  
-        input +=  item.respond_to?( :factory_input_cards ) ? item.factory_input_cards : item.item_cards
+        if item == self
+          input << item
+        else
+          input +=  item.respond_to?( :factory_input_cards ) ? item.factory_input_cards : item.item_cards
+        end
       end
     end
     input.flatten
@@ -75,13 +75,18 @@ module Factory
   
   def update_input
     Card::Auth.as_bot do
+      input = factory_input_cards.each   # Important: fetch input before creating input card
       c = Card.fetch "#{name}+*input", :new => {:type => Card::PointerID}
       c.content = ''
-      factory_input_cards.each do |item|
+      input.each do |item|
         c << item
       end
       c.save!
     end
+  end
+  
+  def input_card
+    
   end
   
   def output_card
@@ -91,13 +96,6 @@ module Factory
   def factory_output # maybe this should be a view
     output_card
   end
-  
-  def deliver
-    output
-  end
-  
- 
-
   
   def manufacture joint=''
     before_engine
@@ -125,28 +123,28 @@ module Factory
     # end
   end
   
-  def before_factory_process
-  end
-  
-  def factory_process input
-    input
-  end
-  
-  def store_product output
-    store_path =  Wagn.paths['files'].existent.first + "/tmp/#{ id }.#{host_class.output_config[:filetype]}"   
-    file = File.open(store_path,"w")
-    file.write( output )
-    Card::Auth.as_bot do
-      output_card.attach = file
-      output_card.save!
-    end
-  end
+  # def before_factory_process
+  # end
+  # 
+  # def factory_process input
+  #   input
+  # end
+  # 
+  # def store_product output
+  #   store_path =  Wagn.paths['files'].existent.first + "/tmp/#{ id }.#{host_class.output_config[:filetype]}"   
+  #   file = File.open(store_path,"w")
+  #   file.write( output )
+  #   Card::Auth.as_bot do
+  #     output_card.attach = file
+  #     output_card.save!
+  #   end
+  # end
    
   def stocktake updated=[]
     update_input
     updated << self
     factory_input_cards.each do |input|
-      if not updated.include? input and input.responds_to?( :stocktake )
+      if not updated.include? input and input.respond_to?( :stocktake )
         updated = input.stocktake(updated) 
       end
     end

@@ -1,5 +1,5 @@
 include Factory
-#include Supplier
+include Supplier
 
 def compress_css input
   begin
@@ -10,15 +10,12 @@ def compress_css input
 end 
 
 factory_process do |input_card|
-  puts "Hello"
-  #compress_css input_card.content
+  input_card.content
 end
-
-
-# 
-# deliver do 
-#   compess_css content
-# end
+ 
+deliver do 
+   compess_css content
+end
 
 format :html do
 

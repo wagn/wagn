@@ -1,6 +1,25 @@
 # -*- encoding : utf-8 -*-
 require 'sass'
 
+include Factory
+include Supplier
+
+def compress_css input
+  begin
+    Sass.compile input, :style=>:compressed
+  rescue Exception=>e
+    raise Card::Oops, "Stylesheet Error:\n#{ e.message }"
+  end
+end 
+
+factory_process do |input_card|
+  compress_css input_card.content
+end
+
+deliver do 
+   compess_css content
+end
+
 
 format :html do
 

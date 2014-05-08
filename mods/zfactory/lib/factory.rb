@@ -2,7 +2,7 @@ require 'byebug'
 
 module Factory    
   module ClassMethods
-    attr_accessor :output_config #, :before_engine, :engine, :after_engine
+    attr_accessor :product_config #, :before_engine, :engine, :after_engine
     def factory_process &block
       define_method :engine, &block
     end
@@ -11,7 +11,7 @@ module Factory
       define_method :before_engine, &block
     end
   
-    def store_factory_output *args, &block
+    def store_factory_product *args, &block
       if block_given?
         define_method :after_engine, &block
         #self.after_engine = block
@@ -30,120 +30,48 @@ module Factory
 #     end
   end
   
+   
+  
   
   def self.included(host_class)
     host_class.extend( ClassMethods )
-    host_class.output_config = { :filetype => "txt" }
+    host_class.product_config = { :filetype => "txt" }
+    
+    host_class.card_accessor :product, :type=>:file
+    host_class.card_accessor :supplies, :type => :pointer
     
     host_class.before_factory_process {}
     host_class.factory_process { |input| input }
-    host_class.store_factory_output do |output|
-      store_path =  Wagn.paths['files'].existent.first + "/tmp/#{ id }.#{host_class.output_config[:filetype]}"   
+    host_class.store_factory_product do |output|
+      store_path =  Wagn.paths['files'].existent.first + "/tmp/#{ id }.#{host_class.product_config[:filetype]}"   
       File.open(store_path,"w") { |f| f.write( output ) }
       Card::Auth.as_bot do
-        output_card.attach = File.open(store_path, "r")
-        output_card.save!
+        product_card.attach = File.open(store_path, "r")
+        product_card.save!
       end
     end
     
-    host_class.event "stocktake_#{host_class.class.name}", :after => :store do 
+    host_class.event "stocktake_#{host_class.class.name}", :after => :store_subcards do 
       stocktake
     end
   end
   
-  
-  def factory_input_cards
-    input_pointer = Card.fetch "#{name}+*input"
-    items = input_pointer.present? ? input_pointer.item_cards : self.item_cards
-    input = []
-    while items.size > 0
-      if items.first.type_id == Card::PointerID
-        items[0] = items[0].item_cards
-        items.flatten!
-      else
-        item = items.shift  
-        if item == self
-          input << item
-        else
-          input +=  item.respond_to?( :factory_input_cards ) ? item.factory_input_cards : item.item_cards
-        end
-      end
-    end
-    input.flatten
-  end
-  
-  
-  def update_input
-    Card::Auth.as_bot do
-      input = factory_input_cards.each   # Important: fetch input before creating input card
-      c = Card.fetch "#{name}+*input", :new => {:type => Card::PointerID}
-      c.content = ''
-      input.each do |item|
-        c << item
-      end
-      c.save!
-    end
-  end
-  
-  def input_card
-    
-  end
-  
-  def output_card
-    Card.fetch "#{name}+*output", :new => {:type => Card::FileID}
-  end
-  
-  def factory_output # maybe this should be a view
-    output_card
-  end
-  
   def manufacture joint=''
     before_engine
-    output = factory_input_cards.map do |input|
-      engine( input ) 
+    output = supplies_card.item_cards.map do |input|
+      if input.respond_to? :deliver
+        engine( input.deliver ) 
+      else
+        engine( input.content ) #TODO render_raw instead ?
+      end
     end.join( joint )
     after_engine output
-    # before_factory_process
-#     output = factory_input_cards.map do |input|
-#       factory_process( input ) 
-#     end.join( joint )
-#     store_factory_product output
-    # if self.class.before_engine.respond_to? :call
-    #   self.class.before_engine.call
-    # end
-    # if self.class.engine.is_block?
-    #   output = factory_input_cards.map do |input|
-    #     self.class.engine.call( input ) 
-    #   end.join( joint )
-    #   if self.class.engine.respond_to? :call
-    #     self.class.after_engine.call(output)
-    #   end
-    # else
-    #   raise Exception, "No factory engine given. Use factory_process to define on."
-    # end
   end
-  
-  # def before_factory_process
-  # end
-  # 
-  # def factory_process input
-  #   input
-  # end
-  # 
-  # def store_product output
-  #   store_path =  Wagn.paths['files'].existent.first + "/tmp/#{ id }.#{host_class.output_config[:filetype]}"   
-  #   file = File.open(store_path,"w")
-  #   file.write( output )
-  #   Card::Auth.as_bot do
-  #     output_card.attach = file
-  #     output_card.save!
-  #   end
-  # end
    
   def stocktake updated=[]
-    update_input
+    update_supplies_card
     updated << self
-    factory_input_cards.each do |input|
+    supplies_card.item_cards.each do |input|
       if not updated.include? input and input.respond_to?( :stocktake )
         updated = input.stocktake(updated) 
       end
@@ -152,11 +80,55 @@ module Factory
     return updated
   end
   
+  # traverse through all levels of pointers/skins/factories
+  # collects all item cards (for pointers/skins) and input cards (for factories)
+  # use [self] if this card has no input items
+  def update_supplies_card
+    items = supplies.present? ? supplies_card.item_cards : self.item_cards
+    factory_input = []
+    while items.size > 0
+      if items.first.type_id == Card::PointerID
+        items[0] = items[0].item_cards
+        items.flatten!
+      else
+        item = items.shift  
+        if item == self
+          factory_input << item
+        else
+          factory_input +=  item.respond_to?( :supplies_card ) ? item.supplies_card.item_cards : item.item_cards
+        end
+      end
+    end
+    
+    Card::Auth.as_bot do
+      supplies_card.items = factory_input
+      #my_supplies_card.save
+      #new_content = supplies_card.content
+      #supplies_card.save
+      #supplies_card.update_attributes :content => new_content
+    end
+  end
+  
+  # def product_card
+ #    Card.fetch "#{name}+product", :new => {:type => :file}
+ #    #fetch :trait => :product #, :new => {:type => :file}
+ #  end
+  
+  # def supplies_card
+  #   #Card.fetch "#{name}+supplies", :new => {:type => :pointer}
+  #   self.fetch :trait => :supplies#, :new => {:type => :pointer}
+  # end
+  # 
+  # def supplies
+  #   supplies_card.content if supplies_card
+  # end
+  
   def production_number
-    [current_revision_id.to_s] + factory_input_cards.map do |supplier|
+    [current_revision_id.to_s] + supplies_card.item_cards.map do |supplier|
       supplier.respond_to?( :production_number ) ? supplier_production_number : supplier.current_revision_id.to_s
     end.join('-')
   end
+  
 end
 
 

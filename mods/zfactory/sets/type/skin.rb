@@ -30,3 +30,5 @@ def style_fingerprint
     item.respond_to?( :style_fingerprint ) ? item.style_fingerprint : item.current_revision_id.to_s
   end.join '-'
 end
+
+

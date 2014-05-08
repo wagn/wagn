@@ -1,12 +1,28 @@
 
-def save
-  super
+def save args={}
+  abortable { super }
+end
+
+def save! args={}
+  abortable { super }
+end
+
+def valid_subcard?
+  abortable { valid? }
+end
+
+def abortable
+  yield
 rescue Card::Abort => e
-  # need mechanism for subcards to abort entire process
+  # need mechanism for subcards to abort entire process?
   e.status == :success
 end
 
-def abort status=:failure, msg='save canceled'
+
+def abort status=:failure, msg='action canceled'
+  if status == :failure && errors.empty?
+    errors.add :abort, msg
+  end
   raise Card::Abort.new( status, msg)
 end
 
@@ -81,6 +97,7 @@ def subcards
   @subcards ||= {}
 end
 
+
 event :process_subcards, :after=>:approve, :on=>:save do
   
   subcards.keys.each do |sub_name|
@@ -111,9 +128,9 @@ end
 
 event :approve_subcards, :after=>:process_subcards do
   subcards.each do |key, subcard|
-    if !subcard.valid?
+    if !subcard.valid_subcard?
       subcard.errors.each do |field, err|
-        err = "#{field} #{err}" unless field == :content
+        err = "#{field} #{err}" unless [:content, :abort].member? field
         errors.add subcard.relative_name, err
       end
     end

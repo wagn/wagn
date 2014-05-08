@@ -183,7 +183,7 @@ class Card
       private
   
       def account_count
-        Card.count_by_wql :right=>Card[:account].name
+        as_bot { Card.count_by_wql :right=>Card[:account].name }
       end
 
     end

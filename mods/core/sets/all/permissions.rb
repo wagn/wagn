@@ -103,8 +103,9 @@ def ok_to_create
   permit :create
   if @action_ok and junction?
     [:left, :right].each do |side|
-      part_card = send side, :new=>{}
-      if part_card && part_card.new_card? #if no card, there must be other errors
+      next if side==:left && @superleft   # left is supercard; create permissions will get checked there.
+      part_card = send side, :new=>{}      
+      if part_card && part_card.new_card? # if no card, there must be other errors
         unless part_card.ok? :create
           deny_because you_cant("create #{part_card.name}")
         end
@@ -218,13 +219,21 @@ event :recaptcha, :before=>:approve do
 end
 
 module Accounts
+  # This is a short-term hack that is used in account-related cards to allow a permissions pattern where
+  # permissions are restricted to the owner of the account (and, by default, Admin)
+  # That pattern should be permitted by our card representation (without creating 
+  # separate rules for each account holder) but is not yet.
+  
   def permit action, verb=nil
     case
     when action==:comment  ; @action_ok = false
-    when is_own_account?   ; true 
+    when action==:create   ; @superleft ? true : super( action, verb ) 
+      #restricts account creation to subcard handling on permitted card (unless explicitly permitted)
+    when is_own_account?   ; true
     else                   ; super action, verb
     end
   end
+  
 end
   
 

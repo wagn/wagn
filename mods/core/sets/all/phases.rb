@@ -27,12 +27,7 @@ def abort status=:failure, msg='action canceled'
 end
 
 def approve
-  #warn "approve called for #{name}!"
-  @action = case
-    when trash     ; :delete
-    when new_card? ; :create
-    else             :update
-    end
+  @action = identify_action
 
   # the following should really happen when type, name etc are changed
   reset_patterns
@@ -45,6 +40,13 @@ rescue Exception=>e
   rescue_event e
 end
 
+def identify_action
+  case
+  when trash     ; :delete
+  when new_card? ; :create
+  else             :update
+  end
+end
 
 def store
   run_callbacks :store do

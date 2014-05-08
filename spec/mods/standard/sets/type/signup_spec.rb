@@ -68,6 +68,9 @@ describe Card::Set::Type::Signup do
       @account.status_card.refresh.content.should == 'active'
       Card[ @account.name ].active?.should be_true
     end
+    
+    context 'expired token' do
+    end
   
   
   end

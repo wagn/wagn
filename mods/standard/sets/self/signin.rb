@@ -86,12 +86,7 @@ event :send_reset_password_token, :before=>:signin, :on=>:update, :when=>proc{ |
   email = subcards["+#{Card[:email].name}"][:content]
   
   if accted = Auth[ email.strip.downcase ] and accted.account.active?
-    Auth.as_bot do
-      token_card = accted.account.token_card
-      token_card.content = generate_token
-      token_card.save!
-    end
-    Mailer.password_reset(accted.account).deliver
+    accted.account.send_reset_password_token
     abort :success    
   else
     errors.add :account, (accted ? 'not active' : 'not found')

@@ -58,15 +58,20 @@ end
 
 event :reset_password, :on=>:update, :before=>:approve do
   if token = Env.params[:reset_token]    
-    if left_id == Auth.authenticate_by_token(token)
-      Auth.signin left_id
+    result = Auth.authenticate_by_token(token)
+    case result
+    when Integer
+      raise "got integer.  result = #{result}"
+      Auth.signin result
       Env.params[:success] = { :id=>left.name, :view=>:related,
         :related=>{:name=>"+#{Card[:account].name}", :view=>'edit'}
       }
       abort :success
+    when :token_expired
+      send_reset_password_token
+      abort :failure, "this token has expired; please check your email for a new token"
     else
-      abort :failure
-      # handle bad token
+      abort :failure, "error resetting password: #{result}" # bad token or account
     end
   end
 end
@@ -75,6 +80,14 @@ event :send_new_account_confirmation_email, :on=>:create, :after=>:extend do
   if self.email.present?
     Mailer.confirmation_email( self ).deliver
   end
+end
+
+event :send_reset_password_token do
+  Auth.as_bot do
+    token_card.content = generate_token
+    token_card.save!
+  end
+  Mailer.password_reset(self).deliver
 end
 
 def ok_to_read

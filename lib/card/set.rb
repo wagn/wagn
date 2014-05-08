@@ -237,7 +237,7 @@ EOF
     def define_trait_card trait, opts
       define_method "#{trait}_card" do
         trait_var "@#{trait}_card" do
-          fetch :trait=>trait.to_sym, :new=>opts
+          fetch :trait=>trait.to_sym, :new=>opts.clone
         end
       end
     end

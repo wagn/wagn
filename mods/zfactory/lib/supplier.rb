@@ -17,8 +17,8 @@ module Supplier
     host_class.deliver do
       content
     end
-    host_class.event "stocktake_#{host_class.class.name}".to_sym, :after=>:store_subcards do
-      recipients = Card.search( {:right_plus => [{:codename => "supplies"}, {:link_to => name}]}.merge(host_class.recipients) )  #TODO - correct query, somehting like { "plus": ["*input","link_to":"_self"]}
+    host_class.event "deliver_to_factories_#{host_class.name.gsub(':','_')}".to_sym, :after=>:store_subcards do
+      recipients = Card.search( {:right_plus => [{:codename => "supplies"}, {:link_to => name}]}.merge(host_class.recipients) )  
       recipients.each do |item|
         item.stocktake if item.kind_of? Factory
       end

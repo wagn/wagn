@@ -11,15 +11,17 @@ module Factory
       define_method :before_engine, &block
     end
   
-    def store_factory_product *args, &block
+    def store_factory_product args={}, &block
+      product_config.merge!(args)
       if block_given?
         define_method :after_engine, &block
         #self.after_engine = block
-      else
-        define_method :after_engine do
-          #TODO do something with args
-        end
       end
+      # else
+#         define_method :after_engine do
+#           #TODO do something with args
+#         end
+#       end
     end
   
     # def around_factory_process &block   #TODO - not used, I doubt that this will work. factory_input_cards is a instance method!
@@ -46,12 +48,13 @@ module Factory
       store_path =  Wagn.paths['files'].existent.first + "/tmp/#{ id }.#{host_class.product_config[:filetype]}"   
       File.open(store_path,"w") { |f| f.write( output ) }
       Card::Auth.as_bot do
-        product_card.attach = File.open(store_path, "r")
-        product_card.save!
+        p = product_card
+        p.attach =  File.open(store_path, "r")
+        p.save!
       end
     end
     
-    host_class.event "stocktake_#{host_class.class.name}", :after => :store_subcards do 
+    host_class.event "stocktake_#{host_class.name.gsub(':','_')}".to_sym, :after => :store_subcards do 
       stocktake
     end
   end
@@ -102,10 +105,6 @@ module Factory
     
     Card::Auth.as_bot do
       supplies_card.items = factory_input
-      #my_supplies_card.save
-      #new_content = supplies_card.content
-      #supplies_card.save
-      #supplies_card.update_attributes :content => new_content
     end
   end
   
@@ -130,77 +129,4 @@ module Factory
   end
   
 end
-
-
-
-### Example use-cases
-## Factory comes with
-# +*input
-# +*ouput
-
-# module Card::Set::Type::Skin
-#   include Factory
-#     
-#   around_production do  # too complicated? just redefine manufacture?
-#     @assemble = {}
-#     [:js, :css].each do |type|
-#       @assemble[:type] = { :filename => "#{key}-#{production_number}.#{type}", :content => '' }
-#     end
-#     @assemble[:css][:input_type] =  [Card::CssID, Card::ScssID]
-#     @assemble[:js][:input_type] =  [Card::JavascriptID, Card::CoffeeScriptID]
-#     
-#     yield
-#     
-#     @assemble.each do |type|
-#       File.open type[:filename], 'w' do |f|
-#         f.write type[:content]
-#       end
-#     end
-#   end
-#   
-#   process_input do |input|
-#     @assemble.each do |type|
-#       if type[:input_type].include? input.type_id
-#         type[:content] += input.responds_to?( :deliver ) ? input.deliver : input.content   
-#         break
-#       end
-#     end
-#   end
-#   
-#   prepare_production do
-#   end
-#     
-#   store_product do |output|
-#   end
-#   
-#   
-#   def output # view maybe?
-#     %{
-#       <link href="/files/#{filename}.css" media="all" rel="stylesheet" type="text/css">
-#       <script  >
-#     }
-#   end
-# end
-# 
-# 
-# module Card::Set::Type::Css
-#   include Supplier
-#   
-#   event
-#   
-#   #supply_for :type => 'Skin'
-#   supply_restricted_to :type => 'Skin'
-#   deliver :view => :core
-#   
-#   process_input do |input|
-#   end
-#   
-#   # create content in view or save in +*output ? 
-#   view :core do |args|
-#     # FIXME: scan must happen before process for inclusion interactions to work, but this will likely cause
-#     # problems with including other css?
-#     process_content ::CodeRay.scan( _render_raw, :css ).div, :size=>:icon
-#   end
-#   
-# end
 

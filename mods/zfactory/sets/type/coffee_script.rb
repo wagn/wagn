@@ -7,9 +7,12 @@ factory_process do |input_card|
   compile_coffee input_card.content
 end
 
+store_factory_product :filetype => "js"
+
 deliver do 
   compile_coffee content
 end
+
 
 def clean_html?
   false

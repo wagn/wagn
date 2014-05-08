@@ -1,6 +1,8 @@
 include Factory
 include Supplier
 
+store_factory_product :filetype => "css"
+
 def compress_css input
   begin
     Sass.compile input, :style=>:compressed
@@ -9,12 +11,12 @@ def compress_css input
   end
 end 
 
-factory_process do |input_card|
-  input_card.content
-end
- 
+# factory_process do |input_card|
+#   input_card.content
+# end
+
 deliver do 
-   compess_css content
+   compress_css content
 end
 
 format :html do

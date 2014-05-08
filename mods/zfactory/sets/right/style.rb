@@ -1,47 +1,11 @@
 
 require 'sass'
-  #include Factory
-  #store_factory_product :filetype => "css"
+include Factory
+
+store_factory_product :filetype => "css"
   
-  # around_production do  # too complicated? just redefine manufacture?
-  #   @assemble = {}
-  #   [:js, :css].each do |type|
-  #     @assemble[:type] = { :filename => "#{key}-#{production_number}.#{type}", :content => '' }
-  #   end
-  #   @assemble[:css][:input_type] =  [Card::CssID, Card::ScssID]
-  #   @assemble[:js][:input_type] =  [Card::JavascriptID, Card::CoffeeScriptID]
-  #   
-  #   yield
-  #   
-  #   @assemble.each do |type|
-  #     File.open type[:filename], 'w' do |f|
-  #       f.write type[:content]
-  #     end
-  #   end
-  # end
-  # 
-  # process_input do |input|
-  #   @assemble.each do |type|
-  #     if type[:input_type].include? input.type_id
-  #       type[:content] += input.responds_to?( :deliver ) ? input.deliver : input.content   
-  #       break
-  #     end
-  #   end
-  # end
-  # 
-  # 
-  # 
-  # 
-  # prepare_production do
-  # end
-    
   
-def output # view maybe?
-  %{
-    <link href="/files/#{filename}.css" media="all" rel="stylesheet" type="text/css">
-    <script  >
-  }
-end
+
 
 def self.delete_style_files
   Auth.as_bot do

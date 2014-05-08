@@ -4,6 +4,8 @@ require 'sass'
 include Factory
 include Supplier
 
+store_factory_product :filetype => "css"
+
 def compress_css input
   begin
     Sass.compile input, :style=>:compressed

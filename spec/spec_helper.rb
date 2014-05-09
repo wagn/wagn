@@ -20,8 +20,12 @@ Spork.prefork do
     config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => {
       :file_path => /\bspec\/controllers\//
     }
-
-    #config.formatter = 'textmate'
+    
+    if i = ARGV.find_index {|arg| arg =~ /--format/ }
+      config.add_formatter ARGV[i+1]
+    else
+      config.add_formatter 'documentation'
+    end
 
     #config.include CustomMatchers
     #config.include ControllerMacros, :type=>:controllers
@@ -34,7 +38,7 @@ Spork.prefork do
 
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
-
+    
 
     config.before(:each) do
       Card::Auth.current_id = JOE_USER_ID
@@ -49,6 +53,7 @@ end
 
 
 Spork.each_run do
+
   # This code will be run each time you run your specs.
 end
 
@@ -99,6 +104,38 @@ module Wagn::SpecHelper
       end
     end
     card.format(format_args)._render(view)
+  end
+end
+
+
+class Card
+  def self.gimme! name, args = {}
+    Card::Auth.as_bot do
+      c = Card.fetch( name, :new => args )
+      c.putty args
+      Card.fetch name 
+    end    
+  end
+  
+  def self.gimme name, args = {}
+    Card::Auth.as_bot do
+      c = Card.fetch( name, :new => args )
+      if args[:content] and c.content != args[:content]
+        c.putty :content => args[:content]
+        c = Card.fetch name 
+      end
+      c
+    end    
+  end
+  
+  def putty args = {}
+    Card::Auth.as_bot do
+      if args.present? 
+        update_attributes! (args) 
+      else 
+        save!
+      end
+    end
   end
 end
 

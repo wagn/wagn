@@ -54,18 +54,15 @@ format :html do
   
   def head_stylesheets
     manual_style = params[:style]
-    debug        = params[:debug] == 'style'
-    style_rule   = card.rule_card :style
+    style_card   = Card[manual_style] if manual_style
+    style_card ||= card.rule_card :style
     
-    if manual_style or debug   
-      path_args = { :format=>:css }
-      path_args[:item] = :import if debug
-      style_cardname = manual_style || (style_rule && style_rule.name)
-      @css_path = page_path style_cardname, path_args
-    elsif style_rule
-      @css_path = wagn_path style_rule.style_path
+    @css_path = if params[:debug] == 'style'
+      page_path( style_card.name, :item => :import, :format => :css) 
+    elsif style_card
+      wagn_path style_card.product_url
     end 
-
+    
     if @css_path
       %{<link href="#{@css_path}" media="all" rel="stylesheet" type="text/css" />}
     end

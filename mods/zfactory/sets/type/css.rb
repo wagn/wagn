@@ -3,6 +3,10 @@ include Supplier
 
 store_factory_product :filetype => "css"
 
+deliver do 
+  compress_css Card::Format.new(self)._render_raw
+end
+
 def compress_css input
   begin
     Sass.compile input, :style=>:compressed
@@ -10,14 +14,6 @@ def compress_css input
     raise Card::Oops, "Stylesheet Error:\n#{ e.message }"
   end
 end 
-
-# factory_process do |input_card|
-#   input_card.content
-# end
-
-deliver do 
-   compress_css content
-end
 
 format :html do
 
@@ -29,8 +25,4 @@ format :html do
     process_content ::CodeRay.scan( _render_raw, :css ).div, :size=>:icon
   end
   
-end
-
-event :reset_style_for_css, :after=>:store do
-  Right::Style.delete_style_files
 end

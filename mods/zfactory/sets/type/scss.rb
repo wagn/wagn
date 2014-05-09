@@ -6,7 +6,7 @@ include Supplier
 
 store_factory_product :filetype => "css"
 
-def compress_css input
+def compressed_css input
   begin
     Sass.compile input, :style=>:compressed
   rescue Exception=>e
@@ -14,12 +14,8 @@ def compress_css input
   end
 end 
 
-factory_process do |input_card|
-  compress_css input_card.content
-end
-
 deliver do 
-   compess_css content
+   compressed_css Card::Format.new(self)._render_raw
 end
 
 
@@ -50,7 +46,4 @@ format do
     
 end
 
-event :reset_style_for_scss, :after=>:store do
-  Right::Style.delete_style_files
-end
 

@@ -7,12 +7,9 @@ include Supplier
 store_factory_product :filetype => "js"
 
 deliver do 
-  compress_javascript script
+  Uglifier.compile(content)
 end
 
-def compress_javascript script
-  script
-end
 
 def clean_html?
   false

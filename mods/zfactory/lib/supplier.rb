@@ -1,6 +1,6 @@
 module Supplier
   module ClassMethods
-    attr_accessor :recipients, :deliver_config
+    attr_accessor :recipients
     
     def supply_for args
       @recipients = args
@@ -25,8 +25,8 @@ module Supplier
     end
   end
     
-  def production_number
-    current_revision_id.to_s
-  end
+  # def production_number
+  #   current_revision_id.to_s
+  # end
 end
 

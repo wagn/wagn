@@ -1,6 +1,8 @@
 include Pointer
 include Factory
-#include Supplier
+include Supplier
+
+store_factory_product :filetype => "css"
 
 view :core, :type=>:pointer
 
@@ -20,15 +22,5 @@ format :css do
   view :core,    :type=>:pointer
 end
 
-
-event :reset_style_for_skin, :after=>:store do
-  Right::Style.delete_style_files
-end
-
-def style_fingerprint
-  item_cards.map do |item|
-    item.respond_to?( :style_fingerprint ) ? item.style_fingerprint : item.current_revision_id.to_s
-  end.join '-'
-end
 
 

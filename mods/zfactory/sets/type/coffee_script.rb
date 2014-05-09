@@ -3,14 +3,11 @@ require 'coffee-script'
 include Factory
 include Supplier
 
-factory_process do |input_card|
-  compile_coffee input_card.content
-end
 
 store_factory_product :filetype => "js"
 
 deliver do 
-  compile_coffee content
+  compile_coffee Card::Format.new(self)._render_raw
 end
 
 
@@ -20,7 +17,7 @@ end
 
 
 def compile_coffee script
-  ::CoffeeScript.compile script
+  Uglifier.compile(::CoffeeScript.compile script)
 rescue Exception=>e
   e
 end
@@ -40,7 +37,7 @@ end
 
 format do
   view :core do |args|
-    process_content compile_coffee(_render_raw)
+    wagnprocess_content compile_coffee(_render_raw)
   end
     
 end

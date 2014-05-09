@@ -2,7 +2,7 @@ require 'byebug'
 
 module Factory    
   module ClassMethods
-    attr_accessor :product_config #, :before_engine, :engine, :after_engine
+    attr_accessor :product_config 
     def factory_process &block
       define_method :engine, &block
     end
@@ -15,25 +15,9 @@ module Factory
       product_config.merge!(args)
       if block_given?
         define_method :after_engine, &block
-        #self.after_engine = block
       end
-      # else
-#         define_method :after_engine do
-#           #TODO do something with args
-#         end
-#       end
     end
-  
-    # def around_factory_process &block   #TODO - not used, I doubt that this will work. factory_input_cards is a instance method!
-#       block.call( Proc.new do 
-#                     factory_input_cards.each { |input| engine( input ) }
-#                   end     
-#                 )
-#     end
   end
-  
-   
-  
   
   def self.included(host_class)
     host_class.extend( ClassMethods )
@@ -44,6 +28,11 @@ module Factory
     
     host_class.before_factory_process {}
     host_class.factory_process { |input| input }
+    host_class.format do
+      view :product_url do |args|
+        product_url
+      end
+    end
     host_class.store_factory_product do |output|
       store_path =  Wagn.paths['files'].existent.first + "/tmp/#{ id }.#{host_class.product_config[:filetype]}"   
       File.open(store_path,"w") { |f| f.write( output ) }
@@ -54,7 +43,8 @@ module Factory
       end
     end
     
-    host_class.event "stocktake_#{host_class.name.gsub(':','_')}".to_sym, :after => :store_subcards do 
+    # Important: If a card is a supplier and a factory at the same time, this has to happen before the supplier stocktake event
+    host_class.event "stocktake_#{host_class.name.gsub(':','_')}".to_sym, :after => :store do  
       stocktake
     end
   end
@@ -63,43 +53,44 @@ module Factory
     before_engine
     output = supplies_card.item_cards.map do |input|
       if input.respond_to? :deliver
-        engine( input.deliver ) 
+        test = engine( input.deliver ) 
       else
         engine( input.content ) #TODO render_raw instead ?
       end
-    end.join( joint )
+      "/*#{input.name}*/\n#{test}"
+    end.join( "\n" )
     after_engine output
   end
    
   def stocktake updated=[]
     update_supplies_card
-    updated << self
-    supplies_card.item_cards.each do |input|
-      if not updated.include? input and input.respond_to?( :stocktake )
-        updated = input.stocktake(updated) 
-      end
-    end
+    # updated << self
+#     supplies_card.item_cards.each do |input|
+#       if not updated.include? input and input.respond_to?( :stocktake )
+#         updated = input.stocktake(updated) 
+#       end
+#     end
     manufacture
     return updated
   end
   
   # traverse through all levels of pointers/skins/factories
-  # collects all item cards (for pointers/skins) and input cards (for factories)
-  # use [self] if this card has no input items
+  # collects all item cards (for pointers/skins) 
   def update_supplies_card
-    items = supplies.present? ? supplies_card.item_cards : self.item_cards
+    items = [self] #supplies.present? ? supplies_card.item_cards : self.item_cards
     factory_input = []
+    already_extended = [] # avoid loops
     while items.size > 0
-      if items.first.type_id == Card::PointerID
-        items[0] = items[0].item_cards
-        items.flatten!
+      item = items.shift
+      if item.trash or already_extended.include? item 
+        next
+      elsif (new_items = item.item_cards) == [item]  # No pointer card
+        factory_input << item
+        already_extended << item
       else
-        item = items.shift  
-        if item == self
-          factory_input << item
-        else
-          factory_input +=  item.respond_to?( :supplies_card ) ? item.supplies_card.item_cards : item.item_cards
-        end
+        items.insert(0, new_items)
+        items.flatten!
+        already_extended << item
       end
     end
     
@@ -108,25 +99,15 @@ module Factory
     end
   end
   
-  # def product_card
- #    Card.fetch "#{name}+product", :new => {:type => :file}
- #    #fetch :trait => :product #, :new => {:type => :file}
- #  end
-  
-  # def supplies_card
-  #   #Card.fetch "#{name}+supplies", :new => {:type => :pointer}
-  #   self.fetch :trait => :supplies#, :new => {:type => :pointer}
-  # end
-  # 
-  # def supplies
-  #   supplies_card.content if supplies_card
-  # end
-  
-  def production_number
-    [current_revision_id.to_s] + supplies_card.item_cards.map do |supplier|
-      supplier.respond_to?( :production_number ) ? supplier_production_number : supplier.current_revision_id.to_s
-    end.join('-')
+  def product_url
+    product_card.attach.url
   end
   
+  # def production_number
+  #   [current_revision_id.to_s] + supplies_card.item_cards.map do |supplier|
+  #     supplier.respond_to?( :production_number ) ? supplier_production_number : supplier.current_revision_id.to_s
+  #   end.join('-')
+  # end
 end
+
 

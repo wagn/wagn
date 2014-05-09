@@ -1,4 +1,7 @@
 # -*- encoding : utf-8 -*-
+
+require_dependency 'card'
+
 class CardController < ActionController::Base
 
   include Wagn::Location

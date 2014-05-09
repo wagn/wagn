@@ -60,18 +60,25 @@ describe Card::Set::Type::Signup do
     
     it 'should be activated by an update' do
       Card::Env.params[:token] = @token
-      hash = {}
-      @request.update_attributes hash
+      @request.update_attributes({})
       #puts @request.errors.full_messages * "\n"
       @request.errors.should be_empty
       @request.type_id.should == Card::UserID
-      @account.status_card.refresh.content.should == 'active'
+      @account.status.should == 'active'
       Card[ @account.name ].active?.should be_true
     end
     
-    context 'expired token' do
+    it 'should reject expired token and create new token' do
+      @account.token_card.update_column :updated_at, 3.days.ago.to_s
+      @account.token_card.expire
+      Card::Env.params[:token] = @token
+      
+      result = @request.update_attributes!({})
+      result.should == true                 # successfully completes save
+      @account.token.should_not == @token   # token gets updated
+      success = Card::Env.params[:success]
+      success[:message].should =~ /expired/ # user notified of expired token
     end
-  
   
   end
 

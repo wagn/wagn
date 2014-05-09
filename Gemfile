@@ -28,6 +28,7 @@ end
 
 group :test do
   
+  
   gem 'simplecov', '~> 0.7.1', :require => false  #test coverage
     
   # SPECS see spec dir
@@ -55,6 +56,9 @@ group :test do
   
   gem 'turn', "~>0.8.3", :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
   gem 'minitest', "~>4.0"
+  
+  gem 'byebug' if RUBY_VERSION =~ /^2/
+  
   
   #windows stuff
   gem 'win32console', '~> 1.3', :platforms => ['mingw', 'mswin']

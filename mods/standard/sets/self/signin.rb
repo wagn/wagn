@@ -82,14 +82,18 @@ event :signin, :before=>:approve, :on=>:update do
   end  
 end
 
-event :send_reset_password_token, :before=>:signin, :on=>:update, :when=>proc{ |c| Card::Env.params[:reset_password] } do
+event :send_reset_password_token, :before=>:signin, :on=>:update, :when=>proc{ |c| Env.params[:reset_password] } do
   email = subcards["+#{Card[:email].name}"][:content]
   
   if accted = Auth[ email.strip.downcase ] and accted.account.active?
     accted.account.send_reset_password_token
     abort :success    
   else
-    errors.add :account, (accted ? 'not active' : 'not found')
+    if accted
+      errors.add :account, 'not active'
+    else
+      errors.add :email, 'not recognized'
+    end
     abort :failure
   end
 end

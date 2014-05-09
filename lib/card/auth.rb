@@ -30,15 +30,14 @@ class Card
         
         token_card.updated_at >
           Wagn.config.token_expiry.ago      or return :token_expired  # > means "after"
-          
-          #fail "token not expired?? #{token_card.updated_at} > #{Wagn.config.token_expiry.ago}"
 
-        account = token_card.left and 
+        account = token_card.left and
         account.right_id==Card::AccountID   or return :bad_account
 
         accounted = account.left and
         accounted.accountable?              or return :illegal_account  #(overkill?)
         
+        as_bot { token_card.delete! }
         accounted.id
       end
 

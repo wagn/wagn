@@ -1,12 +1,4 @@
 
-def save args={}
-  abortable { super }
-end
-
-def save! args={}
-  abortable { super }
-end
-
 def valid_subcard?
   abortable { valid? }
 end
@@ -18,6 +10,17 @@ rescue Card::Abort => e
   e.status == :success
 end
 
+
+# this is an override of standard rails behavior that rescues abortmakes it so that :success abortions do not rollback
+def with_transaction_returning_status
+  status = nil
+  self.class.transaction do
+    add_to_transaction
+    status = abortable { yield }
+    raise ActiveRecord::Rollback unless status
+  end
+  status
+end
 
 def abort status=:failure, msg='action canceled'
   if status == :failure && errors.empty?

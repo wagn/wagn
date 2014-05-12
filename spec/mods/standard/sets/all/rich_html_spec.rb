@@ -1,15 +1,17 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::All::RichHtml do
-  context :missing do
+  describe 'missing view' do
     it "should prompt to add" do
       render_content('{{+cardipoo|open}}').match(/Add \<span/ ).should_not be_nil
     end
   end
-  context "type_list" do
+  
+  describe "type_list" do
     before do
       @card = Card['UserForm']  # no cards with this type
     end
+    
     it "should get type options from type_field renderer method" do
       @card.format.type_field.should match(/<option [^>]*selected/)
       tf=@card.format.type_field(:no_current_type=>true)
@@ -19,6 +21,7 @@ describe Card::Set::All::RichHtml do
       tf.should match(/<option [^>]*selected/)
       tf.scan(/<option /).length.should == 23
     end
+    
     it "should get type list" do
       Card::Auth.as :anonymous do
         tf=@card.format.type_field(:no_current_type=>true)
@@ -30,6 +33,7 @@ describe Card::Set::All::RichHtml do
       end
     end
   end
+  
   context "type and header" do
     it "should render type without no-edit class when no cards of type" do
       card = Card['UserForm']  # no cards with this type

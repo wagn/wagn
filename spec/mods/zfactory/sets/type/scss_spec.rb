@@ -3,14 +3,26 @@
 load 'spec/mods/zfactory/lib/factory_spec.rb'
 load 'spec/mods/zfactory/lib/supplier_spec.rb'
 
+
 describe Card::Set::Type::Scss do
-  let(:css) { '#box { display: block }' }
-  let(:compressed_css) {  "#box{display:block}\n" }
-  let(:changed_css) { '#box { display: inline }' }
-  let(:compressed_changed_css) { "#box{display:inline}\n" }
+  let(:scss) { 
+    %{
+      $link_color: #0af;
+      a { color: $link_color; }  
+    }
+  }
+  let(:compressed_css) {  "a{color:#0af}\n" }
+  let(:changed_scss) { 
+    %{
+      $link_color: #abc; 
+      a { color: $link_color; }
+    }
+  }
+  let(:compressed_changed_css) {  "a{color:#abc}\n" }
   before do
     @scss_card = Card[:style_functional]
   end
+  
   
   it 'should highlight code in html' do
     assert_view_select @scss_card.format.render_core, 'div[class=CodeRay]'
@@ -21,19 +33,19 @@ describe Card::Set::Type::Scss do
   end
   
   it_should_behave_like "a supplier"  do
-    let(:create_supplier_card) { Card.gimme! "test css", :type => :css, :content => css }
-    let(:create_factory_card)  { Card.gimme! "style with css+*style", :type => :pointer }
+    let(:create_supplier_card) { Card.gimme! "test scss", :type => :scss, :content => scss }
+    let(:create_factory_card)  { Card.gimme! "style with scss+*style", :type => :pointer }
     let(:card_content) do
-       { in:       css,         out:     compressed_css, 
-         new_in:   changed_css, new_out: compressed_changed_css }
+       { in:       scss,         out:     compressed_css, 
+         new_in:   changed_scss, new_out: compressed_changed_css }
     end
   end
 
   it_should_behave_like 'a content card factory', that_produces_css do
-    let(:factory_card) {  Card.gimme! "test css", :type => :css, :content => css }
+    let(:factory_card) {  Card.gimme! "test scss", :type => :scss, :content => scss }
     let(:card_content) do
-       { in:       css,         out:     compressed_css, 
-         new_in:   changed_css, new_out: compressed_changed_css }
+       { in:       scss,         out:     compressed_css, 
+         new_in:   changed_scss, new_out: compressed_changed_css }
     end
   end
 end

@@ -43,14 +43,14 @@ shared_examples_for 'a content card factory' do |filetype|
   
   context 'product card' do
     it 'creates file with supplied content' do
-      changed_path = factory_card.product_card.attach.path
-      File.open(changed_path) { |f| f.readlines.should == [card_content[:out]] }
+      path = factory_card.product_card.attach.path
+      expect(File.read(path)).to eq(card_content[:out])
     end
     it "updates #{filetype} file when content is changed" do
       changed_factory = factory_card
       changed_factory.putty :content =>card_content[:new_in]
       changed_path = changed_factory.product_card.attach.path
-      File.open(changed_path) { |f| f.readlines.should == [card_content[:new_out]] }
+      expect(File.read(changed_path)).to eq(card_content[:new_out])
     end
   end
 end
@@ -101,94 +101,13 @@ shared_examples_for 'a pointer card factory' do |filetype|
   describe 'product card' do
     it 'creates #{filetype} file with supplied content' do
       path = subject.product_card.attach.path
-      File.open(path) { |f| f.readlines.should == [card_content[:out]] }
+      expect(File.read(path)).to eq(card_content[:out])
     end
     
     it 'updates #{filetype} file if item is changed' do
       supplier_card.putty :content => card_content[:new_in]
       changed_path = subject.product_card.attach.path
-      File.open(changed_path) { |f| f.readlines.should == [card_content[:new_out]] }
-      change_factory = factory_card
+      expect(File.read(changed_path)).to eq(card_content[:new_out])
     end
   end
 end
-
-# def init_tree type, level
-#   Card::Auth.as_bot do
-#     @first_level =  Card.fetch(  'my nested #{type}', :new => {:type => Card::SkinID } )
-#     last_level = false
-#     level.times do |i|
-#       next_level = Card.fetch(  "#{type} level #{@depth-i}", :new => {:type => type } )
-#       next_level.content = ""
-#       next_level << @basics[@depth-i-1]
-#       next_level << last_level if last_level
-#       next_level << @basics[@depth+i]
-#       next_level.save!
-#       last_level = next_level
-#     end
-#     @first_level << last_level
-#     @first_level.save!
-#   end
-# end
-# 
-# def init_tree_top_down type, level
-#   Card::Auth.as_bot do
-#     @first_level = last_level = Card.fetch(  'my nested #{type}', :new => {:type => Card::SkinID } )
-#     level.times do |i|
-#       next_level = Card.fetch(  "#{type} level #{i}", :new => {:type => type } )
-#       last_level.content = ""
-#       last_level << @basics[i]
-#       last_level << next_level
-#       last_level << @basics[2*@depth-i-1]
-#       last_level.save!
-#       last_level = next_level
-#     end
-#     last_level.save!
-#   end
-# end
-# 
-# 
-# 
-# describe Factory do
-#   
-#   before(:all) do
-#     @depth = 4
-#     @basics = []
-#     Card::Auth.as_bot do
-#       (2*@depth).times do |i|
-#         @basics << Card.fetch( "basic level #{i}", :new =>  {:type => Card::BasicID } )
-#         @basics.last.save
-#       end
-#     end
-#   end
-#   
-#   context 'after stored' do
-#     before(:all) do
-#         name = 'a factory style test'
-#         @c = Card.fetch name, :new =>  { :type => :skin }
-#     end
-#     it 'creates supplies card' do
-#       @c.supplies_card.should_not be_nil
-#     end
-#     it 'creates product card' do
-#       @c.product_card.should_not be_nil
-#     end
-#   end
-#   
-#   context "supplies" do
-#     
-#     context 'for skins' do
-#       
-#       it "scans all levels" do
-#         init_tree :skin, @depth
-#         @first_level.supplies_card.item_cards.map(&:id).sort.should == @basics.map(&:id).sort
-#       end
-#       it "preserves order" do
-#         init_tree :skin, @depth
-#         @first_level.supplies_card.item_cards.map(&:id).should == @basics.map(&:id)
-#       end
-#     end
-#     
-#    
-#   end
-# end

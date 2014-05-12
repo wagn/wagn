@@ -14,7 +14,7 @@ describe Card::Set::Type::Css do
     end
   end
 
-  it_should_behave_like "a supplier"  do
+  it_behaves_like "a supplier"  do
     let(:create_supplier_card) { Card.gimme! "test css", :type => :css, :content => css }
     let(:create_factory_card)  { Card.gimme! "style with css+*style", :type => :pointer }
     let(:card_content) do
@@ -23,7 +23,7 @@ describe Card::Set::Type::Css do
     end
   end
 
-  it_should_behave_like 'a content card factory', that_produces_css do
+  it_behaves_like 'a content card factory', that_produces_css do
     let(:factory_card) {  Card.gimme! "test css", :type => :css, :content => css }
     let(:card_content) do
        { in:       css,         out:     compressed_css, 

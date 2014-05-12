@@ -64,8 +64,8 @@ describe Card::Set::Self::Signin do
     end
     
     it 'should return an error if email is not found' do
-      @card.update_attributes! '+*email'=>'schmoe@admin.com'
-      @card.errors[:account].first.should =~ /not found/
+      @card.update_attributes '+*email'=>'schmoe@admin.com'
+      @card.errors[:email].first.should =~ /not recognized/
     end
   end
   

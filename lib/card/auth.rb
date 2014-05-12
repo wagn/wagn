@@ -44,7 +44,7 @@ class Card
       def find_token_card token
         Auth.as_bot do
           Card.search(
-            :right=>Card[:token].name, 
+            :right_id=>Card::TokenID, 
             :content=>token
           ).first
         end          

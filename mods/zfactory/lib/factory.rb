@@ -53,12 +53,12 @@ module Factory
     before_engine
     output = supplies_card.item_cards.map do |input|
       if input.respond_to? :deliver
-        test = engine( input.deliver ) 
+        engine( input.deliver ) 
       else
         engine( input.content ) #TODO render_raw instead ?
       end
-      "/*#{input.name}*/\n#{test}"
-    end.join( "\n" )
+      #"/*#{input.name}*/\n#{test}"
+    end.join( joint )
     after_engine output
   end
    

@@ -23,6 +23,13 @@ module Supplier
         item.stocktake if item.kind_of? Factory
       end
     end
+    
+    host_class.event "deliver_to_factories_#{host_class.name.gsub(':','_')}".to_sym, :after=>:store, :on => :delete do
+      recipients = Card.search( {:right_plus => [{:codename => "supplies"}, {:link_to => name}]}.merge(host_class.recipients) )  
+      recipients.each do |item|
+        item.stocktake if item.kind_of? Factory
+      end
+    end
   end
     
   # def production_number

@@ -1,12 +1,4 @@
 
-def save args={}
-  abortable { super }
-end
-
-def save! args={}
-  abortable { super }
-end
-
 def valid_subcard?
   abortable { valid? }
 end
@@ -19,6 +11,17 @@ rescue Card::Abort => e
 end
 
 
+# this is an override of standard rails behavior that rescues abortmakes it so that :success abortions do not rollback
+def with_transaction_returning_status
+  status = nil
+  self.class.transaction do
+    add_to_transaction
+    status = abortable { yield }
+    raise ActiveRecord::Rollback unless status
+  end
+  status
+end
+
 def abort status=:failure, msg='action canceled'
   if status == :failure && errors.empty?
     errors.add :abort, msg
@@ -27,12 +30,7 @@ def abort status=:failure, msg='action canceled'
 end
 
 def approve
-  #warn "approve called for #{name}!"
-  @action = case
-    when trash     ; :delete
-    when new_card? ; :create
-    else             :update
-    end
+  @action = identify_action
 
   # the following should really happen when type, name etc are changed
   reset_patterns
@@ -45,6 +43,13 @@ rescue Exception=>e
   rescue_event e
 end
 
+def identify_action
+  case
+  when trash     ; :delete
+  when new_card? ; :create
+  else             :update
+  end
+end
 
 def store
   run_callbacks :store do

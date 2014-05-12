@@ -135,14 +135,9 @@ class Card
 
       def load_dir dir
         Dir[dir].sort.each do |file|
-          begin
   #          puts Benchmark.measure("from #load_dir: rd: #{file}") {
-            require_dependency file
+          require_dependency file
   #          }.format("%n: %t %r")
-          rescue Exception=>e
-            Rails.logger.info "Error loading file #{file}: #{e.message}\n#{e.backtrace*"\n"}"
-            raise e
-          end
         end
       end
     end

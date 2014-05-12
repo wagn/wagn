@@ -66,9 +66,7 @@ end
 
 
 def deny_because why
-  [why].flatten.each do |message|
-    errors.add :permission_denied, message
-  end
+  @permission_errors << why if @permission_errors
   @action_ok = false
 end
 
@@ -196,15 +194,28 @@ end
 
 
 event :check_permissions, :after=>:approve do
-  act = if @action != :delete && comment #will be obviated by new comment handling
+  task = if @action != :delete && comment #will be obviated by new comment handling
     :comment
   else
     @action
   end
-  ok? act
+  
+  track_permission_errors do
+    ok? task
+  end
 end
 
-
+def track_permission_errors
+  @permission_errors = []
+  result = yield
+  
+  @permission_errors.each do |message|
+    errors.add :permission_denied, message
+  end
+  @permission_errors = nil
+  
+  result
+end
 
 event :recaptcha, :before=>:approve do
   if !@supercard                        and

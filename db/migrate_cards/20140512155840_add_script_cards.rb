@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddStyleCards < ActiveRecord::Migration
+class AddScriptCards < ActiveRecord::Migration
   include Wagn::MigrationHelper
   def up
     contentedly do
@@ -86,6 +86,5 @@ class AddStyleCards < ActiveRecord::Migration
       
     end
   end
-
 end
 

@@ -1,11 +1,12 @@
 # -*- encoding : utf-8 -*-
 
-class AddFactoryCodenames < ActiveRecord::Migration
+class AddMachineCodenames < ActiveRecord::Migration
   include Wagn::MigrationHelper
   def up
     contentedly do
-      Card.create! :name=>'*product', :codename=>:product, :type_id=>Card::FileID
-      Card.create! :name=>'*supplies', :codename=>:supplies, :type_id=>Card::PointerID
+      Card.create! :name=>'*machine output', :codename=>:machine_output, :type_id=>Card::FileID
+      Card.create! :name=>'*machine input', :codename=>:machine_input, :type_id=>Card::PointerID
     end
   end
 end
+

@@ -174,7 +174,7 @@ def fetch opts={}
 end
 
 def renew args={}
-  opts = args[:new]
+  opts = args[:new].clone
   opts[:name] ||= cardname
   opts[:skip_modules] = args[:skip_modules]
   Card.new opts

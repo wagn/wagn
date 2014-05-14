@@ -60,7 +60,7 @@ format :html do
     @css_path = if params[:debug] == 'style'
       page_path( style_card.name, :item => :import, :format => :css) 
     elsif style_card
-      wagn_path style_card.product_url
+      wagn_path style_card.output_url
     end 
     
     if @css_path

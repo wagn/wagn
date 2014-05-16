@@ -14,10 +14,10 @@ describe Card::Set::All::RichHtml do
       @card.format.type_field.should match(/<option [^>]*selected/)
       tf=@card.format.type_field(:no_current_type=>true)
       tf.should_not match(/<option [^>]*selected/)
-      tf.scan(/<option /).length.should == 23
+      tf.scan(/<option /).length.should == 25
       tf=@card.format.type_field
       tf.should match(/<option [^>]*selected/)
-      tf.scan(/<option /).length.should == 23
+      tf.scan(/<option /).length.should == 25
     end
     it "should get type list" do
       Card::Auth.as :anonymous do

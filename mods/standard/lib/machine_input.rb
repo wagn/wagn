@@ -15,7 +15,7 @@ module MachineInput
     host_class.extend( ClassMethods )
     host_class.machines_wql = {}
     host_class.machine_input do
-      content
+      format._render_raw
     end
     host_class.event "after_machine_input_updated_#{host_class.name.gsub(':','_')}".to_sym, :after=>:store_subcards, :on => :save do
       machines = Card.search( {:right_plus => [{:codename => "machine_input"}, {:link_to => name}]}.merge(host_class.machines_wql) )  
@@ -26,11 +26,11 @@ module MachineInput
     
     
     host_class.event "before_machine_input_deleted_#{host_class.name.gsub(':','_')}".to_sym, :after=>:approve, :on => :delete do
-      @delete_machines = Card.search( {:right_plus => [{:codename => "machine_input"}, {:link_to => name}]}.merge(host_class.machines_wql) )  
+      @involved_machines = Card.search( {:right_plus => [{:codename => "machine_input"}, {:link_to => name}]}.merge(host_class.machines_wql) )  
     end
     
     host_class.event "after_machine_input_deleted_#{host_class.name.gsub(':','_')}".to_sym, :after=>:store_subcards, :on => :delete do
-      @delete_machines.each do |item|
+      @involved_machines.each do |item|
         item.update_machine_output if item.kind_of? Machine
       end
     end

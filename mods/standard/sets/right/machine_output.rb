@@ -1,5 +1,4 @@
 format do
-  # FIXME - this should be a read event (when we have read events)
   view :not_found do |args|
     if card.real? and card.left.kind_of? Machine
       card.left.update_machine_output

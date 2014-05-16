@@ -14,11 +14,9 @@ shared_examples_for 'machine input' do
   context 'when removed' do
     it 'updates machine_input card of machine card' do
       machine
-      byebug
       Card::Auth.as_bot do
         input.delete!
       end
-      byebug
       f = Card.gimme machine.name
       expect(f.machine_input_card.item_cards).to eq([])
     end

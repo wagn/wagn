@@ -2,14 +2,14 @@ module Machine
   module ClassMethods
     attr_accessor :output_config 
     
+    def prepare_machine_input &block
+      define_method :before_engine, &block
+    end
+    
     def machine_engine &block
       define_method :engine, &block
     end
     
-    def prepare_machine_input &block
-      define_method :before_engine, &block
-    end
-  
     def store_machine_output args={}, &block
       output_config.merge!(args)
       if block_given?
@@ -29,8 +29,8 @@ module Machine
     host_class.prepare_machine_input {}
     host_class.machine_engine { |input| input }
     host_class.store_machine_output do |output|
-      store_path =  Wagn.paths['files'].existent.first + "/tmp/#{ id }.#{host_class.output_config[:filetype]}"   
-      File.open(store_path,"w") { |f| f.write( output ) }
+      tmp_path =  "/tmp/#{ id }.#{host_class.output_config[:filetype]}"   
+      File.open(tmp_path,"w") { |f| f.write( output ) }
       Card::Auth.as_bot do
         p = machine_output_card
         p.attach =  File.open(store_path, "r")
@@ -44,7 +44,6 @@ module Machine
       end
     end
     
-    # Important: If a card is machine and machine input at the same time, this has to happen before the machine input update event
     host_class.event "update_machine_output_#{host_class.name.gsub(':','_')}".to_sym, :after => :store, :on => :save do  
       update_machine_output
     end
@@ -98,12 +97,20 @@ module Machine
   end
   
   def machine_output_url
+    ensure_machine_output
     machine_output_card.attach.url
   end 
   
   def machine_output_path
+    ensure_machine_output
     machine_output_card.attach.path
   end 
+  
+  def ensure_machine_output
+    unless fetch :trait => :machine_output
+      update_machine_output 
+    end
+  end
 end
 
 

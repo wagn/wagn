@@ -3,12 +3,12 @@
 include Machine
 include MachineInput
 
-store_machine_output :filetype => "js"
 
 machine_input do 
   compile_coffee format._render_raw
 end
 
+store_machine_output :filetype => "js"
 
 def clean_html?
   false

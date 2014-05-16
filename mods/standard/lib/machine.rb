@@ -64,32 +64,25 @@ module Machine
    
   def update_machine_output updated=[]
     update_input_card
-    #updated << self
-#     machine_input_card.item_cards.each do |input|
-#       if not updated.include? input and input.respond_to?( :stocktake )
-#         updated = input.stocktake(updated) 
-#       end
-#     end
     run_machine
-    return updated
   end
   
   
   # traverse through all levels of pointers/skins/factories
   # collects all item cards (for pointers/skins) 
   def update_input_card
-    items = [self] #machine_input.present? ? machine_input_card.item_cards : self.item_cards
+    items = [self]
     new_input = []
     already_extended = [] # avoid loops
     while items.size > 0
       item = items.shift
       if item.trash or already_extended.include? item 
         next
-      elsif (new_items = item.item_cards) == [item]  # No pointer card
+      elsif item.item_cards == [item]  # No pointer card
         new_input << item
         already_extended << item
       else
-        items.insert(0, new_items)
+        items.insert(0, item.item_cards)
         items.flatten!
         already_extended << item
       end
@@ -104,7 +97,7 @@ module Machine
     machine_input_card.item_cards
   end
   
-  def output_url
+  def machine_output_url
     machine_output_card.attach.url
   end 
   

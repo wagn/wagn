@@ -1,13 +1,12 @@
 # -*- encoding : utf-8 -*-
-require 'coffee-script'
-include Factory
-include Supplier
+#require 'coffee-script'
+include Machine
+include MachineInput
 
+store_machine_output :filetype => "js"
 
-store_factory_product :filetype => "js"
-
-deliver do 
-  compile_coffee Card::Format.new(self)._render_raw
+machine_input do 
+  compile_coffee format._render_raw
 end
 
 

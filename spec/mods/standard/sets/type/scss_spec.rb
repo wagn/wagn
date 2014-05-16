@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-load 'spec/mods/zfactory/lib/factory_spec.rb'
-load 'spec/mods/zfactory/lib/supplier_spec.rb'
+# load 'spec/mods/zfactory/lib/machine_spec.rb'
+# load 'spec/mods/zfactory/lib/machine_input_spec.rb'
 
 
 describe Card::Set::Type::Scss do
@@ -32,17 +32,17 @@ describe Card::Set::Type::Scss do
     @scss_card.format(:format=>:css).render_core.should_not =~ /CodeRay/
   end
   
-  it_should_behave_like "a supplier"  do
-    let(:create_supplier_card) { Card.gimme! "test scss", :type => :scss, :content => scss }
-    let(:create_factory_card)  { Card.gimme! "style with scss+*style", :type => :pointer }
+  it_should_behave_like "machine input"  do
+    let(:create_machine_input_card) { Card.gimme! "test scss", :type => :scss, :content => scss }
+    let(:create_machine_card)  { Card.gimme! "style with scss+*style", :type => :pointer }
     let(:card_content) do
        { in:       scss,         out:     compressed_css, 
          new_in:   changed_scss, new_out: compressed_changed_css }
     end
   end
 
-  it_should_behave_like 'a content card factory', that_produces_css do
-    let(:factory_card) {  Card.gimme! "test scss", :type => :scss, :content => scss }
+  it_should_behave_like 'content machine', that_produces_css do
+    let(:machine_card) {  Card.gimme! "test scss", :type => :scss, :content => scss }
     let(:card_content) do
        { in:       scss,         out:     compressed_css, 
          new_in:   changed_scss, new_out: compressed_changed_css }

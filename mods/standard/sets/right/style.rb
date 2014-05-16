@@ -1,7 +1,7 @@
 require 'sass'
-include Factory
+include Machine
 
-store_factory_product :filetype => "css"
+store_machine_output :filetype => "css"
   
 #FIXME - the following could be unified with type/file.rb considerably
 

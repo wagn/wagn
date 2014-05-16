@@ -7,7 +7,9 @@ require 'simplecov'
 Spork.prefork do
   require File.expand_path( '../../config/environment', __FILE__ )
   require 'rspec/rails'
-
+  
+  #load 'spec/mods/zfactory/lib/machine_spec.rb'
+  #load 'spec/mods/zfactory/lib/machine_input_spec.rb'
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
 #  Dir[ File.join(Wagn.gem_root, "spec/support/**/*.rb") ].each { |f| require f }
@@ -121,7 +123,7 @@ class Card
     Card::Auth.as_bot do
       c = Card.fetch( name, :new => args )
       if args[:content] and c.content != args[:content]
-        c.putty :content => args[:content]
+        c.putty args
         c = Card.fetch name 
       end
       c

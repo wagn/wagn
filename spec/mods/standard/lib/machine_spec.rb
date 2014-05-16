@@ -1,4 +1,3 @@
-require 'byebug'
 
 alias :old_method_missing :method_missing
 def that_produces type
@@ -15,50 +14,49 @@ def method_missing m, *args, &block
 end
 
 
-shared_examples_for 'a factory' do |filetype|
+shared_examples_for 'machine' do |filetype|
   context "when created" do
-    it 'has a supplies card' do
-      factory.supplies_card.should_not be_nil
+    it 'has +machine_input card' do
+      machine.machine_input_card.should_not be_nil
     end
-    it 'has a product card' do
-      factory.product_card.should_not be_nil
+    it 'has +machine_output card' do
+      machine.machine_output_card.should_not be_nil
     end
     it "generates #{filetype} file" do
-      path = factory.product_card.attach.path
-      path.should match "\.#{filetype}$"
+      expect(machine.machine_output_path).to match(/\.#{filetype}$/)
     end
   end
 end
 
-shared_examples_for 'a content card factory' do |filetype|
-  it_should_behave_like 'a factory', that_produces(filetype) do
-    let(:factory) { factory_card }
+shared_examples_for 'content machine' do |filetype|
+  it_should_behave_like 'machine', that_produces(filetype) do
+    let(:machine) { machine_card }
   end
   
-  context 'supplies card' do
+  context '+machine_input card' do
     it "points to self" do
-      factory_card.supplies_card.item_cards.should == [factory_card]
+      expect(machine_card.input_item_cards).to eq([machine_card])
     end
   end
   
-  context 'product card' do
+  context '+machine_output card' do
     it 'creates file with supplied content' do
-      path = factory_card.product_card.attach.path
+      path = machine_card.machine_output_path
       expect(File.read(path)).to eq(card_content[:out])
     end
     it "updates #{filetype} file when content is changed" do
-      changed_factory = factory_card
+      changed_factory = machine_card
       changed_factory.putty :content =>card_content[:new_in]
-      changed_path = changed_factory.product_card.attach.path
+      changed_path = changed_factory.machine_output_path
       expect(File.read(changed_path)).to eq(card_content[:new_out])
     end
   end
 end
 
 
-shared_examples_for 'a pointer card factory' do |filetype|
+shared_examples_for 'pointer machine' do |filetype|
   subject do
-    change_factory = factory_card
+    change_machine = machine_card
     @depth = 4
     @expected_items = []
     Card::Auth.as_bot do
@@ -76,37 +74,37 @@ shared_examples_for 'a pointer card factory' do |filetype|
         next_level.save!
         last_level = next_level
       end
-      change_factory << last_level
-      change_factory << supplier_card
-      @expected_items << supplier_card
-      change_factory.save!
+      change_machine << last_level
+      change_machine << machine_input_card
+      @expected_items << machine_input_card
+      change_machine.save!
     end
-    change_factory
+    change_machine
   end
 
-  it_should_behave_like 'a factory', that_produces(filetype) do
-    let(:factory) { factory_card }
+  it_should_behave_like 'machine', that_produces(filetype) do
+    let(:machine) { machine_card }
   end
   
-  describe 'supplies card' do
+  describe '+machine_input card' do
     it "contains items of all levels" do
-      subject.supplies_card.item_cards.map(&:id).sort.should == @expected_items.map(&:id).sort
+      subject.machine_input_card.item_cards.map(&:id).sort.should == @expected_items.map(&:id).sort
     end
     
     it "preserves order of items" do
-      subject.supplies_card.item_cards.map(&:id).should == @expected_items.map(&:id)
+      subject.machine_input_card.item_cards.map(&:id).should == @expected_items.map(&:id)
     end
   end
   
-  describe 'product card' do
+  describe '+machine_output card' do
     it 'creates #{filetype} file with supplied content' do
-      path = subject.product_card.attach.path
+      path = subject.machine_output_path
       expect(File.read(path)).to eq(card_content[:out])
     end
     
     it 'updates #{filetype} file if item is changed' do
-      supplier_card.putty :content => card_content[:new_in]
-      changed_path = subject.product_card.attach.path
+      machine_input_card.putty :content => card_content[:new_in]
+      changed_path = subject.machine_output_path
       expect(File.read(changed_path)).to eq(card_content[:new_out])
     end
   end

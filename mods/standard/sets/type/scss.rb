@@ -1,10 +1,10 @@
 # -*- encoding : utf-8 -*-
 require 'sass'
 
-include Factory
-include Supplier
+include Machine
+include MachineInput
 
-store_factory_product :filetype => "css"
+store_machine_output :filetype => "css"
 
 def compressed_css input
   begin
@@ -14,8 +14,8 @@ def compressed_css input
   end
 end 
 
-deliver do 
-   compressed_css Card::Format.new(self)._render_raw
+machine_input do 
+   compressed_css format._render_raw
 end
 
 

@@ -1,8 +1,8 @@
 include Pointer
-include Factory
-include Supplier
+include Machine
+include MachineInput
 
-store_factory_product :filetype => "css"
+store_machine_output :filetype => "css"
 
 view :core, :type=>:pointer
 

@@ -1,13 +1,13 @@
 # -*- encoding : utf-8 -*-
-require 'coffee-script'
+#require 'coffee-script'
 
-include Factory
-include Supplier
+include Machine
+include MachineInput
 
-store_factory_product :filetype => "js"
+store_machine_output :filetype => "js"
 
-deliver do 
-  Uglifier.compile(content)
+machine_input do 
+  Uglifier.compile(format._render_raw)
 end
 
 

@@ -1,10 +1,10 @@
-include Factory
-include Supplier
+include Machine
+include MachineInput
 
-store_factory_product :filetype => "css"
+store_machine_output :filetype => "css"
 
-deliver do 
-  compress_css Card::Format.new(self)._render_raw
+machine_input do 
+  compress_css format._render_raw
 end
 
 def compress_css input

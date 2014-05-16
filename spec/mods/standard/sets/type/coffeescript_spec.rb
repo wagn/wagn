@@ -1,5 +1,5 @@
-load 'spec/mods/zfactory/lib/factory_spec.rb'
-load 'spec/mods/zfactory/lib/supplier_spec.rb'
+# load 'spec/mods/zfactory/lib/machine_spec.rb'
+# load 'spec/mods/zfactory/lib/machine_input_spec.rb'
 
 describe Card::Set::Type::Coffeescript do
   let(:coffee)                    { 'alert "Hi"  '    }
@@ -8,17 +8,17 @@ describe Card::Set::Type::Coffeescript do
   let(:compressed_changed_coffee) { '(function(){alert("Hello")}).call(this);' }
 
 
-  it_should_behave_like 'a content card factory', that_produces_js do
-    let(:factory_card)  { Card.gimme! "test coffeescript", :type => Card::CoffeescriptID, :content => coffee}
+  it_should_behave_like 'content machine', that_produces_js do
+    let(:machine_card)  { Card.gimme! "test coffeescript", :type => Card::CoffeescriptID, :content => coffee}
     let(:card_content) do
        { in:       coffee,         out:     compressed_coffee, 
          new_in:   changed_coffee, new_out: compressed_changed_coffee }
     end
   end
 
-  it_behaves_like "a supplier"  do
-    let(:create_supplier_card) { Card.gimme! "test coffeescript", :type => :coffeescript, :content => coffee }
-    let(:create_factory_card)  { Card.gimme! "script with coffee+*script", :type => :pointer }
+  it_behaves_like "machine input"  do
+    let(:create_machine_input_card) { Card.gimme! "test coffeescript", :type => :coffeescript, :content => coffee }
+    let(:create_machine_card)  { Card.gimme! "script with coffee+*script", :type => :pointer }
     let(:card_content) do
        { in:       coffee,         out:     compressed_coffee, 
          new_in:   changed_coffee, new_out: compressed_changed_coffee }

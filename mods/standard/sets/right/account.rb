@@ -56,25 +56,44 @@ event :generate_confirmation_token, :on=>:create, :before=>:process_subcards do
   subcards["+#{Card[:token].name}"] = {:content => generate_token }
 end
 
-event :reset_password, :on=>:update, :before=>:approve do
-  if token = Env.params[:reset_token]    
-    if left_id == Auth.authenticate_by_token(token)
-      Auth.signin left_id
-      Env.params[:success] = { :id=>left.name, :view=>:related,
-        :related=>{:name=>"+#{Card[:account].name}", :view=>'edit'}
-      }
-      abort :success
-    else
-      abort :failure
-      # handle bad token
-    end
+event :reset_password, :on=>:update, :before=>:approve, :when=>proc{ |c| c.has_reset_token? } do
+  result = Auth.authenticate_by_token @env_token
+#  byebug
+  case result
+  when Integer
+    Auth.signin result
+    Env.params[:success] = { :id=>left.name, :view=>:related,
+      :related=>{:name=>"+#{Card[:account].name}", :view=>'edit'}
+    }
+    abort :success
+  when :token_expired
+    send_reset_password_token
+    Env.params[:success] = {
+      :id => '_self',
+      :view => 'message',
+      :message => "Sorry, this token has expired. Please check your email for a new password reset link."
+    }
+    abort :success
+  else
+    abort :failure, "error resetting password: #{result}" # bad token or account
   end
+end
+
+def has_reset_token?
+  @env_token = Env.params[:reset_token]
 end
 
 event :send_new_account_confirmation_email, :on=>:create, :after=>:extend do
   if self.email.present?
     Mailer.confirmation_email( self ).deliver
   end
+end
+
+event :send_reset_password_token do
+  Auth.as_bot do
+    token_card.update_attributes! :content => generate_token
+  end
+  Mailer.password_reset(self).deliver
 end
 
 def ok_to_read

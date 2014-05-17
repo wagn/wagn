@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 require 'wagn/all'
+require 'active_support/core_ext/numeric/time'
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
@@ -50,6 +51,8 @@ module Wagn
         config.email_defaults        = nil
         config.override_host         = nil
         config.override_protocol     = nil
+        
+        config.token_expiry          = 2.days
         
         config
       end

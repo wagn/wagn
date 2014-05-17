@@ -360,6 +360,7 @@ format :html do
   end
 
 
+
   view :options, :tags=>:unknown_ok do |args|
     current_set = Card.fetch( params[:current_set] || card.related_sets[0][0] )
 
@@ -417,6 +418,12 @@ format :html do
     %{<div class="instruction">#{raw text}</div>} if text
   end
 
+  view :message, :perms=>:none, :tags=>:unknown_ok do |args|
+    frame args do
+      params[:message]
+    end
+  end
+
   view :conflict, :error_code=>409 do |args|
     load_revisions
     wrap args.merge( :slot_class=>'error-view' ) do
@@ -459,9 +466,12 @@ format :html do
   view :errors, :perms=>:none do |args|
     #Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller[0..3]*", "}"
     if card.errors.any?
-      wrap args do
-        %{ <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
-        card.errors.map { |attrib, msg| "<div>#{attrib.to_s.upcase}: #{msg}</div>" } * ''
+      title = %{ Problems #{%{ with #{card.name} } unless card.name.blank?} }
+      frame args.merge( :title=>title ) do
+        card.errors.map do |attrib, msg|
+          msg = "#{attrib.to_s.upcase}: #{msg}" unless attrib == :abort
+          %{ <div class="card-error-msg">#{msg}</div> }
+        end
       end
     end
   end

@@ -15,7 +15,7 @@ group :assets do
   gem 'uglifier'                               # makes pretty code ugly again.  compresses js/css for fast loading
 
   gem 'jquery-rails',  '~> 3.1'                # main js framework, along with rails-specific unobtrusive lib
-  gem 'jquery-ui-rails',  '~> 4.2'                # main js framework, along with rails-specific unobtrusive lib
+  gem 'jquery-ui-rails',  '~> 4.2'             # main js framework, along with rails-specific unobtrusive lib
   gem "jquery_mobile_rails", "~> 1.4.1"
   
   gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor
@@ -28,10 +28,16 @@ end
 
 group :test do
   
+  
   gem 'simplecov', '~> 0.7.1', :require => false  #test coverage
     
   # SPECS see spec dir
   gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
+  
+  gem 'guard-rspec', '~> 4.2'                  # trigger test runs based on file edits
+  if RUBY_PLATFORM =~ /darwin/
+    gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
+  end
   
   # CUKES see features dir
   gem 'cucumber-rails', '~> 1.3', :require=>false # feature-driven-development suite
@@ -52,6 +58,9 @@ group :test do
   
   gem 'turn', "~>0.8.3", :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
   gem 'minitest', "~>4.0"
+  
+  gem 'byebug' if RUBY_VERSION =~ /^2/
+  
   
   #windows stuff
   gem 'win32console', '~> 1.3', :platforms => ['mingw', 'mswin']

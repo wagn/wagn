@@ -1,8 +1,5 @@
-
-require 'digest'
+include All::Permissions::Accounts
 
 view :raw do |args|
   "Private data"
 end
-view :core, :raw
-

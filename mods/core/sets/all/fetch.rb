@@ -4,10 +4,6 @@
 
 module ClassMethods
   
-  def cache
-    Wagn::Cache[Card]
-  end
-
   # === fetch
   #
   # looks for cards in
@@ -40,7 +36,7 @@ module ClassMethods
       return card.renew(opts) if card and card.eager_renew?(opts)
       if !card or card.type_id==-1 && clean_cache_opts?(opts)       # new (or improved) card for cache
         needs_caching = true  
-        card = new_for_fetch mark, opts
+        card = new_for_cache mark, opts
       end  
     end
     
@@ -103,6 +99,10 @@ module ClassMethods
     end
   end
   
+  def cache
+    Wagn::Cache[Card]
+  end
+  
   def fetch_from_cache cache_key
     Card.cache.read cache_key if Card.cache
   end
@@ -144,7 +144,7 @@ module ClassMethods
     fetch_from_cache key
   end
 
-  def new_for_fetch name, opts
+  def new_for_cache name, opts
     new_args = { :name=>name, :skip_modules=>true }
     new_args[:type_id] = -1 unless clean_cache_opts? opts
     # The -1 type_id allows us to skip all the type lookup and flag the need for
@@ -168,13 +168,14 @@ end
 
 def fetch opts={}
   if traits = opts.delete(:trait)
-     traits = [traits] unless Array===traits
-     traits.inject(self) { |card, trait| Card.fetch( card.cardname.trait(trait), opts ) }
+    traits = [traits] unless Array===traits
+    traits.inject(self) { |card, trait| Card.fetch( card.cardname.trait(trait), opts ) }
   end
 end
 
+
 def renew args={}
-  opts = args[:new]
+  opts = args[:new].clone
   opts[:name] ||= cardname
   opts[:skip_modules] = args[:skip_modules]
   Card.new opts

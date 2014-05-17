@@ -44,7 +44,7 @@ module Machine
       end
     end
     
-    host_class.event "update_machine_output_#{host_class.name.gsub(':','_')}".to_sym, :after => :store, :on => :save do  
+    host_class.event "update_machine_output_#{host_class.name.gsub(':','_')}".to_sym, :after => :store_subcards, :on => :save do  
       update_machine_output
     end
   end

@@ -35,7 +35,12 @@ class CardController < ActionController::Base
     params[:success] ||= 'REDIRECT: *previous'
     handle { card.delete }
   end
-
+  
+  def asset
+    byebug
+    send_file_inside File.join(Wagn.gem_root, 'new_public', 'assets'), params[:filename]
+  end
+  
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ## the following methods need to be merged into #update
 
@@ -69,6 +74,14 @@ class CardController < ActionController::Base
 
   private
   
+  def send_file_inside(allowed_path, filename, options = {})
+    path = File.expand_path(File.join(allowed_path, filename))
+    if path.match Regexp.new('^' + Regexp.escape(allowed_path))
+      send_file path, options
+    else
+      raise 'Disallowed file requested'
+    end
+  end
   
   #-------( FILTERS )
 

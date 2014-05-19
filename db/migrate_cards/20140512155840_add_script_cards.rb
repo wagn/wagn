@@ -38,7 +38,7 @@ class AddScriptCards < ActiveRecord::Migration
       script_set = "*script+#{Card[:right].name}"
       Card.create! :name=>"#{script_set}+#{Card[:default].name}", :type_id=>Card::PointerID
       Card.create! :name=>"#{script_set}+#{Card[:read].name}",    :content=>"[[#{Card[:anyone].name}]]"
-      Card.create! :name=>"#{script_set}+#{Card[:options].name}", :content=>%({"type":"Javascript"}), :type=>Card::SearchTypeID  #TODO search for both: js and coffee
+      Card.create! :name=>"#{script_set}+#{Card[:options].name}", :content=>%( {"type":["in", "Javascript", "Coffeescript"] }), :type=>Card::SearchTypeID  
       Card.create! :name=>"#{script_set}+#{Card[:input].name}",   :content=>'select'
       Card.create! :name=>"#{script_set}+#{Card[:help].name}",    :content=>
         %{Javascript and Coffeescript for card's page. [[http://wagn.org/skins|more]]}  #TODO  help link?

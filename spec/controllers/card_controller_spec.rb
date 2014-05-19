@@ -248,7 +248,6 @@ describe CardController do
         expect(response).to redirect_to( wagn_path @all_style.style_path )
         get :read, args
         expect(response.status).to eq(200)
-        
       end
     end
     
@@ -290,9 +289,10 @@ describe CardController do
       FileUtils.rm path
     end
       
-    it 'denies access to higher directories' do
+    it 'denies access to other directories' do
       args = { :filename => "/../../Gemfile" }
-      expect( get :asset, args ).to raise_error
+      get :asset, args 
+      expect(response.status).to eq(404)
     end
   end
   describe "unit tests" do

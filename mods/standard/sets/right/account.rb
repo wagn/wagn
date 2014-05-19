@@ -58,7 +58,6 @@ end
 
 event :reset_password, :on=>:update, :before=>:approve, :when=>proc{ |c| c.has_reset_token? } do
   result = Auth.authenticate_by_token @env_token
-#  byebug
   case result
   when Integer
     Auth.signin result

@@ -10,8 +10,14 @@ Rails.application.routes.draw do
   root                      :to => 'card#read', :via=>:get
   match "#{ Wagn.config.files_web_path }/:id(-:size)-:rev.:format" => 
                                    'card#read', :via=>:get, :id => /[^-]+/, :explicit_file=>true
-  match "assets/*filename" => 'card#asset', :via=>:get#, :explicit_file=>true
+  match "assets/*filename"      => 'card#asset', :via=>:get#, :explicit_file=>true
   match "javascripts/*filename" => 'card#asset', :via=>:get
+  match "robots.txt"            => 'card#asset', :via => :get, :filename => "robots", :format => "txt"
+  match "favicon.ico"           => 'card#asset', :via => :get, :filename => "favicon", :format => "ico"
+  match "404.html"              => 'card#asset', :via => :get, :filename => "404", :format => "html"
+  match "500.html"              => 'card#asset', :via => :get, :filename => "500", :format => "html"
+  
+  
   match 'recent(.:format)'      => 'card#read', :via=>:get, :id => ':recent' #obviate by making links use codename
 #  match ':view:(:id(.:format))'          => 'card#read', :via=>:get  
   match '(/wagn)/:id(.:format)' => 'card#read', :via=>:get  #/wagn is deprecated

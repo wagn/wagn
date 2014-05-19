@@ -40,8 +40,7 @@ class CardController < ActionController::Base
   end
   
   def asset
-    byebug
-    send_file_inside File.join(Wagn.gem_root, 'new_public', 'assets'), params[:filename]
+    send_file_inside Wagn.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.') 
   end
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -82,7 +81,7 @@ class CardController < ActionController::Base
     if path.match Regexp.new('^' + Regexp.escape(allowed_path))
       send_file path, options
     else
-      raise 'Disallowed file requested'
+      raise Wagn::BadAddress
     end
   end
   

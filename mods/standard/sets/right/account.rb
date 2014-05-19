@@ -52,7 +52,11 @@ event :set_default_status, :on=>:create, :before=>:process_subcards do
   subcards["+#{Card[:status].name}"] = { :content => default_status }
 end
 
-event :generate_confirmation_token, :on=>:create, :before=>:process_subcards do
+def confirm_ok?
+  Card.new( :type_id=>Card.default_accounted_type_id ).ok? :create
+end
+
+event :generate_confirmation_token, :on=>:create, :before=>:process_subcards, :when=>proc{ |c| c.confirm_ok? } do
   subcards["+#{Card[:token].name}"] = {:content => generate_token }
 end
 
@@ -83,16 +87,21 @@ def has_reset_token?
   @env_token = Env.params[:reset_token]
 end
 
-event :send_new_account_confirmation_email, :on=>:create, :after=>:extend do
+event :reset_token do
+  Auth.as_bot do
+    token_card.update_attributes! :content => generate_token
+  end
+end
+  
+
+event :send_account_confirmation_email, :on=>:create, :after=>:extend do
   if self.email.present?
     Mailer.confirmation_email( self ).deliver
   end
 end
 
 event :send_reset_password_token do
-  Auth.as_bot do
-    token_card.update_attributes! :content => generate_token
-  end
+  reset_token
   Mailer.password_reset(self).deliver
 end
 

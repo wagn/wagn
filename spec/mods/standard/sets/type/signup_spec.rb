@@ -8,7 +8,7 @@ describe Card::Set::Type::Signup do
   end
   
   
-  context 'request form' do
+  context 'signup form form' do
     before do
       card = Card.new :type_id=>Card::SignupID
       @form = card.format.render_new
@@ -29,17 +29,17 @@ describe Card::Set::Type::Signup do
       
       Card::Auth.as_bot do
         Card.create! :name=>'User+*type+*create', :content=>'[[Anyone]]'
-        Card.create! :name=>'*request+*to', :content=>'request@wagn.org'
+        Card.create! :name=>'*request+*to', :content=>'signups@wagn.org'
       end
-      @request = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ 
+      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ 
         '+*email'=>'wolf@wagn.org', '+*password'=>'wolf'
       }
-      @account = @request.account
+      @account = @signup.account
       @token = @account.token
     end
     
     it 'should create all the necessary cards' do
-      @request.type_id.should == Card::SignupID
+      @signup.type_id.should == Card::SignupID
       @account.email.should == 'wolf@wagn.org'
       @account.status.should == 'pending'
       @account.salt.should_not == ''
@@ -51,19 +51,19 @@ describe Card::Set::Type::Signup do
     end
     
     it 'should create an authenticable token' do
-      Card::Auth.authenticate_by_token(@token).should == @request.id
+      Card::Auth.authenticate_by_token(@token).should == @signup.id
     end
     
     it 'should notify someone' do
-      ActionMailer::Base.deliveries.last.to.should == ['request@wagn.org']
+      ActionMailer::Base.deliveries.last.to.should == ['signups@wagn.org']
     end
     
     it 'should be activated by an update' do
       Card::Env.params[:token] = @token
-      @request.update_attributes({})
-      #puts @request.errors.full_messages * "\n"
-      @request.errors.should be_empty
-      @request.type_id.should == Card::UserID
+      @signup.update_attributes({})
+      #puts @signup.errors.full_messages * "\n"
+      @signup.errors.should be_empty
+      @signup.type_id.should == Card::UserID
       @account.status.should == 'active'
       Card[ @account.name ].active?.should be_true
     end
@@ -73,7 +73,7 @@ describe Card::Set::Type::Signup do
       @account.token_card.expire
       Card::Env.params[:token] = @token
       
-      result = @request.update_attributes!({})
+      result = @signup.update_attributes!({})
       result.should == true                 # successfully completes save
       @account.token.should_not == @token   # token gets updated
       success = Card::Env.params[:success]
@@ -84,10 +84,48 @@ describe Card::Set::Type::Signup do
 
 
   context 'signup (with approval)' do
+    before do
+      # NOTE: by default Anonymous does not have permission to create User cards.
+      Card::Auth.as_bot do
+        Card.create! :name=>'*request+*to', :content=>'signups@wagn.org'
+      end
+      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ 
+        '+*email'=>'wolf@wagn.org', '+*password'=>'wolf'
+      }
+      @account = @signup.account
+    end
+    
+    
+    it 'should create all the necessary cards, but no token' do
+      @signup.type_id.should == Card::SignupID
+      @account.email.should == 'wolf@wagn.org'
+      @account.status.should == 'pending'
+      @account.salt.should_not == ''
+      @account.password.length.should > 10 #encrypted
+    end
+    
+    it 'should not create a token' do
+      @account.token.should_not be_present
+    end
+    
+    it 'should notify someone' do
+      ActionMailer::Base.deliveries.last.to.should == ['signups@wagn.org']
+    end
+    
+    context 'approval' do
+      before do
+        Card::Env.params[:approve] = true
+        Card::Auth.as :joe_admin
+      end
+      
+      
+      it 'should create token' do
+        @signup = Card.fetch @signup.id
+        @signup = save!
+        @signup.account.token.should be_present
+      end
+    end
 
   end
-  
-  
- 
 
 end

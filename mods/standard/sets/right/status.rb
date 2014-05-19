@@ -1,4 +1,3 @@
-
 include All::Permissions::Accounts
 
 def ok_to_update

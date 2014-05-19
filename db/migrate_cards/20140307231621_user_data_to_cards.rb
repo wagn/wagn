@@ -16,11 +16,11 @@ class UserDataToCards < ActiveRecord::Migration
       
       Card::Codename.reset_cache
       
-      puts "setting create permissions for account cards (inherit from left)"
+      puts "setting read permissions for account cards (Administrator)"
       [ :password, :token, :salt, :status, :email, :account ].each do |codename|
-        rule_name = [ codename, :right, :create ].map { |code| Card[code].name } * '+'
+        rule_name = [ codename, :right, :read ].map { |code| Card[code].name } * '+'
         rule_card = Card.fetch rule_name, :new=>{}
-        rule_card.content = '_left'
+        rule_card.content = '[[Administrator]]'
         rule_card.save!
       end
       

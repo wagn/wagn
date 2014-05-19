@@ -48,5 +48,43 @@ describe Card::Set::Right::Account do
   end
   
   
+  describe '#reset_password' do
+    before :each do
+      @email = 'joe@user.com'
+      @account = Card::Auth[@email].account
+      @account.send_reset_password_token
+      @token = @account.token
+      Card::Env.params[:reset_token] = @token
+      Card::Auth.current_id = Card::AnonymousID
+    end
+
+    it 'should authenticate with correct token and delete token card' do
+      Card::Auth.current_id.should == Card::AnonymousID
+      @account.save.should == true
+      Card::Auth.current_id.should == @account.left_id
+      @account = @account.refresh force=true
+      @account.fetch(:trait => :token).should be_nil
+      @account.save.should == false
+    end
+  
+    it 'should not work if token is expired' do
+      @account.token_card.update_column :updated_at, 3.days.ago.to_s
+      @account.token_card.expire
+      
+      result = @account.save
+      result.should == true                 # successfully completes save
+      @account.token.should_not == @token   # token gets updated
+      success = Card::Env.params[:success]
+      success[:message].should =~ /expired/ # user notified of expired token
+    end
+    
+    it 'should not work if token is wrong' do
+      Card::Env.params[:reset_token] = @token + 'xxx'
+      @account.save
+      @account.errors[:abort].first.should =~ /token_not_found/
+    end  
+    
+  end
+  
 end
 

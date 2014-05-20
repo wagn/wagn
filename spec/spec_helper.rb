@@ -22,13 +22,11 @@ Spork.prefork do
     config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => {
       :file_path => /\bspec\/controllers\//
     }
-    
-    if i = ARGV.find_index {|arg| arg =~ /--format/ }
-      config.add_formatter ARGV[i+1]
-    else
-      config.add_formatter 'documentation'
-    end
 
+    format_index = ARGV.find_index {|arg| arg =~ /--format/ }
+    formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation'
+    config.add_formatter formatter
+    
     #config.include CustomMatchers
     #config.include ControllerMacros, :type=>:controllers
 

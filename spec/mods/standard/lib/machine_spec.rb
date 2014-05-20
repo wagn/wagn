@@ -1,5 +1,4 @@
 
-alias :old_method_missing :method_missing
 def that_produces type
   type
 end
@@ -9,7 +8,7 @@ def method_missing m, *args, &block
   when /that_produces_(.+)/
     return $1
   else
-    old_method_missing m, args, block
+    super
   end
 end
 

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-load 'spec/mods/standard/lib/machine_spec.rb'
+require File.expand_path('../../../lib/machine_spec.rb', __FILE__)
 
 describe Card::Set::Right::Style do
 #  describe "#delet"

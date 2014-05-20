@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-load 'spec/mods/standard/lib/machine_spec.rb'
+#load 'spec/mods/standard/lib/machine_spec.rb'
 
 describe Card::Set::Right::Style do
 #  describe "#delet"

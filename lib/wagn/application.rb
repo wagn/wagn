@@ -62,7 +62,6 @@ module Wagn
     def paths
       @paths ||= begin
         paths = super
-        #add_wagn_path paths, 'public'
         add_wagn_path paths, "app",                 :eager_load => true, :glob => "*"
         add_wagn_path paths, "app/assets",          :glob => "*"
         add_wagn_path paths, "app/controllers",     :eager_load => true

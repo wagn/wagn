@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   root                      :to => 'card#read', :via=>:get
   match "#{ Wagn.config.files_web_path }/:id(-:size)-:rev.:format" => 
                                    'card#read', :via=>:get, :id => /[^-]+/, :explicit_file=>true
-  match "assets/*filename"      => 'card#asset', :via=>:get#, :explicit_file=>true
+  match "assets/*filename"      => 'card#asset', :via=>:get
   match "javascripts/*filename" => 'card#asset', :via=>:get
   match "robots.txt"            => 'card#asset', :via => :get, :filename => "robots", :format => "txt"
   match "favicon.ico"           => 'card#asset', :via => :get, :filename => "favicon", :format => "ico"

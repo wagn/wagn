@@ -62,6 +62,10 @@ class WagnGenerator < Rails::Generators::AppBase
   
   def public
     empty_directory "public"
+    
+    inside "public" do
+      template "robots.txt"
+    end
   end
   
   def script

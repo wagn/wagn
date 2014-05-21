@@ -236,16 +236,20 @@ describe CardController do
     context 'css' do
       before do
         @all_style = Card[ "#{ Card[:all].name }+#{ Card[:style].name }" ]
-        Card::Set::Right::Style.delete_style_files
+        @all_style.update_machine_output
+        Card::Auth.as_bot do
+          @all_style.fetch(:trait => :machine_output).delete!
+        end
       end
       
-      it 'should' do
-        args = { :id=>@all_style.name, :format=>'css', :rev=>@all_style.current_revision_id, :explicit_file=>true }
+      it 'should create missing machine output file' do
+        args = { :id=>@all_style.machine_output_card.name, :format=>'css', :explicit_file=>true }
         get :read, args
-        expect(response).to redirect_to( wagn_path @all_style.style_path )
+        output_card = Card[ "#{ Card[:all].name }+#{ Card[:style].name }+#{ Card[:machine_output].name}" ]
+        expect(response).to redirect_to( "#{ wagn_path output_card.attach.url }" )
+        #byebug 
         get :read, args
         expect(response.status).to eq(200)
-        
       end
     end
     

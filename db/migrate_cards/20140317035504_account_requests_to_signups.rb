@@ -4,9 +4,9 @@ class AccountRequestsToSignups < ActiveRecord::Migration
   include Wagn::MigrationHelper
   def up
     contentedly do
-      #d
+
       newname = 'Sign up'
-      newname = '*signup' if Card.exists? name
+      newname = '*signup' if Card.exists? newname
       
       #get old codename and name out of the way
       old_signup = Card[:signup]

@@ -4,7 +4,7 @@ POINTER_KEY = "Pointer"
 
 SETTING_GROUPS = {
   "Permission"    => [ :create, :read, :update, :delete, :comment ],
-  "Look and Feel" => [ :default, :structure, :layout, :style, :table_of_contents ],
+  "Look and Feel" => [ :default, :structure, :layout, :style, :script, :table_of_contents ],
   "Communication" => [ :help, :add_help, :send, :thanks ],
   POINTER_KEY     => [ :options, :options_label, :input ],
   "Other"         => [ :autoname, :accountable, :captcha ]

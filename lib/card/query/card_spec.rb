@@ -100,7 +100,7 @@ class Card
           when String;   { :key => s.to_name.key }
           when Integer;  { :id => s              }
           when Hash;     s
-          else; raise BadQueyr, "Invalid cardspec args #{s.inspect}"
+          else; raise BadQuery, "Invalid cardspec args #{s.inspect}"
         end
       end
 

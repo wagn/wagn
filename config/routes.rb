@@ -12,10 +12,8 @@ Rails.application.routes.draw do
                                    'card#read', :via=>:get, :id => /[^-]+/, :explicit_file=>true
   match "assets/*filename"      => 'card#asset', :via=>:get
   match "javascripts/*filename" => 'card#asset', :via=>:get
+  match "jasmine/*filename"     => 'card#asset', :via=>:get
   match "robots.txt"            => 'card#asset', :via => :get, :filename => "robots", :format => "txt"
-  match "favicon.ico"           => 'card#asset', :via => :get, :filename => "favicon", :format => "ico"
-  match "404.html"              => 'card#asset', :via => :get, :filename => "404", :format => "html"
-  match "500.html"              => 'card#asset', :via => :get, :filename => "500", :format => "html"
   
   
   match 'recent(.:format)'      => 'card#read', :via=>:get, :id => ':recent' #obviate by making links use codename
@@ -48,7 +46,7 @@ Rails.application.routes.draw do
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~
   
   # standard non-RESTful
-  match '(card)/:action(/:id(.:format))' => 'card'
+  match '(card)/:action(/:id(.:format))' => 'card', :action => /create|read|update|delete|save_draft|rollback|watch|asset/
 
   # other
   match '*id' => 'card#read', :view => 'bad_address'

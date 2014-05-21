@@ -13,7 +13,6 @@ Rails.application.routes.draw do
   match "assets/*filename"      => 'card#asset', :via=>:get
   match "javascripts/*filename" => 'card#asset', :via=>:get
   match "jasmine/*filename"     => 'card#asset', :via=>:get
-  match "robots.txt"            => 'card#asset', :via => :get, :filename => "robots", :format => "txt"
   
   
   match 'recent(.:format)'      => 'card#read', :via=>:get, :id => ':recent' #obviate by making links use codename

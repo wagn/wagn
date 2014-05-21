@@ -1563,28 +1563,28 @@ card_references_223:
 card_references_224:
   id: 1775
   referer_id: 1015
-  referee_key: javascript+description
+  referee_key: java_script+description
   referee_id: 
   ref_type: I
   present: 0
 card_references_225:
   id: 1776
   referer_id: 1015
-  referee_key: javascript+*type+by_name
+  referee_key: java_script+*type+by_name
   referee_id: 
   ref_type: I
   present: 1
 card_references_226:
   id: 1777
   referer_id: 1016
-  referee_key: coffeescript+description
+  referee_key: coffee_script+description
   referee_id: 
   ref_type: I
   present: 0
 card_references_227:
   id: 1778
   referer_id: 1016
-  referee_key: coffeescript+*type+by_name
+  referee_key: coffee_script+*type+by_name
   referee_id: 
   ref_type: I
   present: 1

@@ -6,7 +6,7 @@ class Card
 
     mattr_accessor :includable_modules, :base_modules, :traits, :current
     @@includable_modules, @@base_modules = {}, []
-
+    
 
     # View definitions
     #
@@ -89,7 +89,7 @@ class Card
       add_traits args, options.merge( :writer=>true )
     end
   
-  
+    
     def const_missing const
       if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore.to_sym
         if card_id = Codename[code]

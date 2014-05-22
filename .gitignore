@@ -4,7 +4,6 @@
 .bundle
 Gemfile.lock
 config/*.yml
-config/wagn.rb
 coverage
 files
 log/*

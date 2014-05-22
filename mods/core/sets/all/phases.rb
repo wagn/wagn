@@ -1,22 +1,36 @@
 
-def save
-  super
+def valid_subcard?
+  abortable { valid? }
+end
+
+def abortable
+  yield
 rescue Card::Abort => e
-  # need mechanism for subcards to abort entire process
+  # need mechanism for subcards to abort entire process?
   e.status == :success
 end
 
-def abort status=:failure, msg='save canceled'
+
+# this is an override of standard rails behavior that rescues abortmakes it so that :success abortions do not rollback
+def with_transaction_returning_status
+  status = nil
+  self.class.transaction do
+    add_to_transaction
+    status = abortable { yield }
+    raise ActiveRecord::Rollback unless status
+  end
+  status
+end
+
+def abort status=:failure, msg='action canceled'
+  if status == :failure && errors.empty?
+    errors.add :abort, msg
+  end
   raise Card::Abort.new( status, msg)
 end
 
 def approve
-  #warn "approve called for #{name}!"
-  @action = case
-    when trash     ; :delete
-    when new_card? ; :create
-    else             :update
-    end
+  @action = identify_action
 
   # the following should really happen when type, name etc are changed
   reset_patterns
@@ -29,6 +43,13 @@ rescue Exception=>e
   rescue_event e
 end
 
+def identify_action
+  case
+  when trash     ; :delete
+  when new_card? ; :create
+  else             :update
+  end
+end
 
 def store
   run_callbacks :store do
@@ -81,6 +102,7 @@ def subcards
   @subcards ||= {}
 end
 
+
 event :process_subcards, :after=>:approve, :on=>:save do
   
   subcards.keys.each do |sub_name|
@@ -111,9 +133,9 @@ end
 
 event :approve_subcards, :after=>:process_subcards do
   subcards.each do |key, subcard|
-    if !subcard.valid?
+    if !subcard.valid_subcard?
       subcard.errors.each do |field, err|
-        err = "#{field} #{err}" unless field == :content
+        err = "#{field} #{err}" unless [:content, :abort].member? field
         errors.add subcard.relative_name, err
       end
     end

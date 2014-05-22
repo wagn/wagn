@@ -33,9 +33,10 @@ namespace :wagn do
   
   desc "update wagn gems and database"
   task :update do
-    system 'bundle update'
+    #system 'bundle update'
     Rake::Task['wagn:migrate'].invoke
-    #fixme: remove tmp/sets ?
+    # FIXME remove tmp dir / clear cache
+    # add symlink from DECKROOT/public/assets to GEMROOT/public/assets
   end
   
   desc "reset cache"

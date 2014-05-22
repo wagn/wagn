@@ -16,6 +16,7 @@ class Card
     def confirmation_email account
       @site = Card.setting :title
       @link = wagn_url "/update/#{account.left.cardname.url_key}?token=#{account.token}"
+      @expiry = Wagn.config.token_expiry
 
       confirm_from = token_emails_from(account)
       mail_from( { :to=>account.email, :subject=>"verification link for #{@site}" }, confirm_from )
@@ -24,6 +25,7 @@ class Card
     def password_reset account
       @site = Card.setting :title
       @link = wagn_url "/update/#{account.cardname.url_key}?reset_token=#{account.token_card.refresh(true).content}"
+      @expiry = Wagn.config.token_expiry
     
       reset_from = token_emails_from(account)
       mail_from( { :to=>account.email, :subject=>"verification link for #{@site}" }, reset_from )    

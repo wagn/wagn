@@ -11,14 +11,14 @@ describe Card::Set::Type::Scss do
       a { color: $link_color; }  
     }
   }
-  let(:compressed_css) {  "a{color:#0af}\n" }
+  let(:compressed_css) {  "a{color:#00aaff}\n" }
   let(:changed_scss) { 
     %{
       $link_color: #abc; 
       a { color: $link_color; }
     }
   }
-  let(:compressed_changed_css) {  "a{color:#abc}\n" }
+  let(:compressed_changed_css) {  "a{color:#aabbcc}\n" }
   before do
     @scss_card = Card[:style_functional]
   end

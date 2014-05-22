@@ -26,26 +26,28 @@ format :html do
 
 
   view :core do |args|
-    headings = []
+    headings, links = [], []
     if !card.new_card? #necessary?
-      headings << %(<span class="invite-links"><strong>#{ card.name }</strong> requested an account on #{ format_date card.created_at }</span})
-      if card.account
-        if card.token
+      headings << %(<strong>#{ card.name }</strong> requested an account on #{ format_date card.created_at })
+      if account = card.account
+        if account.token
           headings << "An activation token has been sent for this account"
         else
-          if card.account.confirm_ok?
-            headings << link_to( "Approve #{card.name}", wagn_path("/update/~#{card.id}?approve=true") )
+          if account.confirm_ok?
+            links << link_to( "Approve #{card.name}", wagn_path("/update/~#{card.id}?approve=true") )
           end
           if card.ok? :delete
-            headings << link_to( "Deny #{card.name}", wagn_path("/delete/~#{card.id}") )
+            links << link_to( "Deny #{card.name}", wagn_path("/delete/~#{card.id}") )
           end
+          headings << links * '' if links.any?
         end
       else
         headings << "ERROR: signup card missing account"
       end
     end
-    %{
-      #{ headings.map { |h| "<div>#{h}</div>"} * "\n" }
+    %{<div class="invite-links">
+        #{ headings.map { |h| "<div>#{h}</div>"} * "\n" }
+      </div>
       #{ process_content render_raw }    
     }
   end
@@ -73,7 +75,7 @@ def has_token?
 end
 
 
-event :approve_account, :on=>:update, :before=>:process_subcards, :when=>proc {|c| Env[:approve] } do
+event :approve_account, :on=>:update, :before=>:process_subcards, :when=>proc {|c| Env.params[:approve] } do
   account.reset_token
   account.send_account_confirmation_email
 end

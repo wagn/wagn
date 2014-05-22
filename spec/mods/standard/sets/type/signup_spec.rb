@@ -118,10 +118,9 @@ describe Card::Set::Type::Signup do
         Card::Auth.as :joe_admin
       end
       
-      
       it 'should create token' do
         @signup = Card.fetch @signup.id
-        @signup = save!
+        @signup.save!
         @signup.account.token.should be_present
       end
     end

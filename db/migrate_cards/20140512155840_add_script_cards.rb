@@ -24,11 +24,10 @@ class AddScriptCards < ActiveRecord::Migration
       Card.create! :name=>"#{script_set}+#{Card[:default].name}", :type_id=>Card::PointerID
       Card.create! :name=>"#{script_set}+#{Card[:read].name}",    :content=>"[[#{Card[:anyone].name}]]"
       Card.create! :name=>"#{script_set}+#{Card[:options].name}", :content=>%( {"type":["in", "JavaScript", "CoffeeScript"] }), :type=>Card::SearchTypeID  
-      Card.create! :name=>"#{script_set}+#{Card[:input].name}",   :content=>'select'
+      Card.create! :name=>"#{script_set}+#{Card[:input].name}",   :content=>'list'
       Card.create! :name=>"#{script_set}+#{Card[:help].name}",    :content=>
         %{ JavaScript (or CoffeeScript) for card's page. }  #TODO  help link?
       
-      # IMPORT JAVASCRIPT  #TODO
      
       # Machine inputs and outputs
       default_rule_ending = "#{ Card[:right].name }+#{ Card[ :default ].name }"

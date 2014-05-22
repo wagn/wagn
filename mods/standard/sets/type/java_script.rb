@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-#require 'coffee-script'
 
 include Machine
 include MachineInput
@@ -7,7 +6,7 @@ include MachineInput
 store_machine_output :filetype => "js"
 
 machine_input do 
-  Uglifier.compile(format._render_raw)
+  Uglifier.compile(format(:format=>:js)._render_core)
 end
 
 
@@ -25,12 +24,4 @@ format :html do
     process_content highlighted_js
   end
   
-end
-
-
-format do
-  view :core do |args|
-    process_content _render_raw
-  end
-    
 end

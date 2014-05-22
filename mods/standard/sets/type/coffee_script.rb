@@ -5,7 +5,7 @@ include MachineInput
 
 
 machine_input do 
-  compile_coffee format._render_raw
+  compile_coffee format(:format => :js)._render_raw
 end
 
 store_machine_output :filetype => "js"
@@ -22,7 +22,12 @@ rescue Exception=>e
 end
 
 format :html do
-
+  def compile_coffee script
+    Uglifier.compile(::CoffeeScript.compile script)
+  rescue Exception=>e
+    e
+  end
+  
   view :editor, :type=>:plain_text
   
   view :core do |args|
@@ -35,8 +40,14 @@ end
 
 
 format do
+  def compile_coffee script
+    Uglifier.compile(::CoffeeScript.compile script)
+  rescue Exception=>e
+    e
+  end
+  
   view :core do |args|
-    wagnprocess_content compile_coffee(_render_raw)
+    process_content compile_coffee(_render_raw)
   end
     
 end

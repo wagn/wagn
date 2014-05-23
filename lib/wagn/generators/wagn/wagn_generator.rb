@@ -65,6 +65,11 @@ class WagnGenerator < Rails::Generators::AppBase
     
     inside "public" do
       template "robots.txt"
+      empty_directory "files"
+    
+      inside "files" do
+        template ".htaccess"
+      end
     end
   end
   

@@ -50,7 +50,7 @@ class Card
       end
     end
   
-    def run_machine joint="\n"
+    def run_machine joint=''
       before_engine
       output = input_item_cards.map do |input|
         if input.respond_to? :machine_input

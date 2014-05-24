@@ -35,7 +35,6 @@ class AddScriptCards < ActiveRecord::Migration
       Card.create! :name=>"*machine output+#{default_rule_ending}", :type_id=>Card::FileID
       Card.create! :name=>'*machine input', :codename=>:machine_input
       Card.create! :name=>"*machine input+#{default_rule_ending}", :type_id=>Card::PointerID
-      
       remove_const Card
       Card
     end

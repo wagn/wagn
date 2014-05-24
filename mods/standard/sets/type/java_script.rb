@@ -6,7 +6,7 @@ include MachineInput
 store_machine_output :filetype => "js"
 
 machine_input do 
-  Uglifier.compile(format(:format=>:js)._render_raw)
+  Uglifier.compile(format(:format=>:js)._render_core)
 end
 
 
@@ -14,6 +14,10 @@ def clean_html?
   false
 end
 
+def chunk_list  #turn off autodetection of uri's 
+                #TODO with the new format pattern this should be handled in the js format
+  :inclusion_only
+end
 
 format :html do
 

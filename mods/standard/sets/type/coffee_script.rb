@@ -5,13 +5,18 @@ include MachineInput
 
 
 machine_input do 
-  compile_coffee format(:format => :js)._render_raw
+  compile_coffee format(:format => :js)._render_core
 end
 
 store_machine_output :filetype => "js"
 
 def clean_html?
   false
+end
+
+def chunk_list  #turn off autodetection of uri's 
+                #TODO with the new format pattern this should be handled in the js format
+    :inclusion_only
 end
 
 

@@ -61,7 +61,7 @@ class Card
         else
           engine( input.format._render_raw )
         end
-      end.join( joint )
+      end.select(&:present?).join( joint )
       after_engine output
     end
  

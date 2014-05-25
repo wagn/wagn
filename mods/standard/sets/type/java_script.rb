@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+require 'uglifier'
 
 include Machine
 include MachineInput

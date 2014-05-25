@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
-require 'byebug'
+require 'coffee-script'
+require 'uglifier'
+
 include Machine
 include MachineInput
 

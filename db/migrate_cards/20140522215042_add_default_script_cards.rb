@@ -7,8 +7,9 @@ class AddDefaultScriptCards < ActiveRecord::Migration
       card_type = { 'js' => :java_script, 'coffee' => :coffee_script}
       scripts        = %w{ jquery tinymce slot     card_menu jquery_helper html5shiv_printshiv  }
       types          = %w{ js     js      coffee   js        js            js                   }
-        
+      # jquery.mobile  (in jquery_helper) must be after wagn to avoid mobileinit nastiness
       cardnames = scripts.map { |name| "script: #{name.gsub( '_', ' ' )}" }
+      
       
       scripts.each_with_index do |name, index|
         Card.create! :name=>cardnames[index], :type=>card_type[types[index]], :codename=>"script_#{name}"

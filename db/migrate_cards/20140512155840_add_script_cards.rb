@@ -50,6 +50,7 @@ class AddScriptCards < ActiveRecord::Migration
       cardnames.pop # html5shiv_printshiv not in default list, only used for IE9 (handled in head.rb)
       Wagn::Cache.reset_global
       Card.create! :name=>"#{Card[:all].name}+*script", :content=>cardnames.map { |name| "[[#{ name }]]" }.join("\n")
+
     end
   end
 end

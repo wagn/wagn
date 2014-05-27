@@ -28,16 +28,10 @@ end
 
 
 format :html do
-  def compile_coffee script
-    Uglifier.compile(::CoffeeScript.compile script)
-  rescue Exception=>e
-    e
-  end
-  
   view :editor, :type=>:plain_text
   
   view :core do |args|
-    js = compile_coffee _render_raw
+    js = card.compile_coffee _render_raw
     highlighted_js = ::CodeRay.scan( js, :js ).div
     process_content highlighted_js
   end
@@ -45,14 +39,8 @@ format :html do
 end
 
 
-format do
-  def compile_coffee script
-    Uglifier.compile(::CoffeeScript.compile script)
-  rescue Exception=>e
-    e
-  end
-  
+format do  
   view :core do |args|
-    process_content compile_coffee(_render_raw)
+    process_content card.compile_coffee(_render_raw)
   end
 end

@@ -22,7 +22,6 @@
 
 
 
-
 class Card
   module Machine    
     module ClassMethods
@@ -52,7 +51,7 @@ class Card
       host_class.extend( ClassMethods )
       host_class.output_config = { :filetype => "txt" }
             
-      if Codename[:machine_output]
+      #if Codename[:machine_output]
         host_class.card_accessor :machine_output, :type=>:file
         host_class.card_accessor :machine_input, :type => :pointer
   
@@ -76,7 +75,7 @@ class Card
               already_extended << item
             end
           end
-          items
+          new_input
         end
         host_class.prepare_machine_input {}
         host_class.machine_engine { |input| input }
@@ -99,7 +98,7 @@ class Card
         host_class.event "update_machine_output_#{host_class.name.gsub(':','_')}".to_sym, :after => :store, :on => :save do  
           update_machine_output
         end
-      end
+        #end
     end
 
     def run_machine joint="\n"

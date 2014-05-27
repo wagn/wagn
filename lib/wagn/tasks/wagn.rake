@@ -1,4 +1,3 @@
-require 'byebug'
 
 WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references }
 

@@ -8056,7 +8056,7 @@ cards_474:
   read_rule_id: 500
   references_expired: 
   trash: false
-  type_id: 3
+  type_id: 1003
 cards_475:
   id: 1027
   name: 'script: tinymce'
@@ -8073,7 +8073,7 @@ cards_475:
   read_rule_id: 500
   references_expired: 
   trash: false
-  type_id: 3
+  type_id: 1003
 cards_476:
   id: 1028
   name: 'script: slot'
@@ -8090,7 +8090,7 @@ cards_476:
   read_rule_id: 500
   references_expired: 
   trash: false
-  type_id: 3
+  type_id: 1004
 cards_477:
   id: 1029
   name: 'script: card menu'
@@ -8107,7 +8107,7 @@ cards_477:
   read_rule_id: 500
   references_expired: 
   trash: false
-  type_id: 3
+  type_id: 1003
 cards_478:
   id: 1030
   name: 'script: jquery helper'
@@ -8124,7 +8124,7 @@ cards_478:
   read_rule_id: 500
   references_expired: 
   trash: false
-  type_id: 3
+  type_id: 1003
 cards_479:
   id: 1031
   name: 'script: html5shiv printshiv'
@@ -8141,7 +8141,7 @@ cards_479:
   read_rule_id: 500
   references_expired: 
   trash: false
-  type_id: 3
+  type_id: 1003
 cards_480:
   id: 1032
   name: "*all+*script"

@@ -1,8 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-# load 'spec/mods/zfactory/lib/machine_spec.rb'
-# load 'spec/mods/zfactory/lib/machine_input_spec.rb'
-
 describe Card::Set::Type::Skin do
   let(:css)                    { "#box { display: block }"  }
   let(:compressed_css)         { "#box{display:block}\n"    }

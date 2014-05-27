@@ -1,3 +1,5 @@
+require 'byebug'
+
 WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references }
 
 namespace :wagn do
@@ -50,7 +52,9 @@ namespace :wagn do
 
   desc "set symlink for assets"
   task :update_assets_symlink do
-    FileUtils.ln_s( Wagn.paths['gem-assets'].first, File.join(Rails.public_path, "assets") )
+    unless Rails.root.to_s == Wagn.gem_root
+      FileUtils.ln_s( Wagn.paths['gem-assets'].first, File.join(Rails.public_path, "assets") )
+    end
   end
 
   desc "migrate structure and cards"

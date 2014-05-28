@@ -4,7 +4,7 @@
 class Card
   module Set
 
-    mattr_accessor :includable_modules, :base_modules, :traits, :current
+    mattr_accessor :includable_modules, :base_modules, :traits, :current, :current_set_module
     @@includable_modules, @@base_modules = {}, []
     
 
@@ -36,6 +36,7 @@ class Card
     end
 
     def format fmt=nil, &block
+      #new_format
       if block_given?
         f = Card::Format
         format = fmt.nil? ? f : f.get_format(fmt)
@@ -45,13 +46,17 @@ class Card
       end
     end
 
+    def new_format
+      puts "new format called.  self = #{self}"
+      #format_module = Card::Set.current_module
+    end
+
     def event event, opts={}, &final
       opts[:on] = [:create, :update ] if opts[:on] == :save
 
-      mod = Card::Set.current[:module]
       Card.define_callbacks event
 
-      mod.class_eval do
+      class_eval do
         final_method = "#{event}_without_callbacks" #should be private?
         define_method final_method, &final
 
@@ -64,7 +69,7 @@ class Card
         end
       end
     
-      set_event_callbacks event, mod, opts
+      set_event_callbacks event, opts
     end
 
 
@@ -108,8 +113,9 @@ class Card
 
     class << self
     
-      def extended mod 
-        # document!
+      def extended mod
+        # each set mod calls `extend Card::Set` when required
+        # that triggers the set registration
         register_set mod
       end
     
@@ -195,18 +201,16 @@ EOF
     private
 
 
-    def set_event_callbacks event, mod, opts
+    def set_event_callbacks event, opts
       [:before, :after, :around].each do |kind|
         if object_method = opts.delete(kind)
           options = { :prepend => true } 
-          if mod == Card
-            options[:if] = proc { |c| c.event_applies? opts }
-          else
-            parts = mod.name.split '::'
-            set_class_key, anchor_or_placeholder = parts[-2].underscore.to_sym, parts[-1].underscore
-            set_key = Card::Set.method_key( set_class_key => anchor_or_placeholder )
-            options[:if] = proc { |c| c.method_keys.member? set_key and c.event_applies? opts }
-          end        
+          parts = self.name.split '::'
+          
+          set_class_key, anchor_or_placeholder = parts[-2].underscore.to_sym, parts[-1].underscore
+          set_key = Card::Set.method_key( set_class_key => anchor_or_placeholder )
+          
+          options[:if] = proc { |c| c.method_keys.member? set_key and c.event_applies? opts }
           Card.class_eval { set_callback object_method, kind, event, options }
         end
       end

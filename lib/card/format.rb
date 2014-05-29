@@ -25,11 +25,14 @@ class Card
       def register format
         @@registered << format.to_s
       end
-
-      def get_format format
-        fkey = @@aliases[ format ] || format
-        Card.const_get( "#{fkey.to_s.camelize}Format" )
+    
+      def format_class_name format
+        f = format.to_s
+        f = @@aliases[ f ] || f
+        "#{ f.camelize }Format"
       end
+
+      ### THE OLD WAY
 
       def view view, *args, &final
         view = view.to_name.key.to_sym
@@ -39,6 +42,11 @@ class Card
           opts = Hash===args[0] ? args.shift : nil
           alias_view view, opts, args.shift
         end
+      end
+
+      def get_format format
+        fkey = @@aliases[ format.to_s ] || format
+        Card.const_get( "#{fkey.to_s.camelize}Format" )
       end
 
       def define_view view, opts, &final
@@ -83,10 +91,12 @@ class Card
       
 
       def new card, opts={}
-        klass = self != Format ? self : get_format( (opts[:format] || :html).to_sym )
-        new_format = klass.allocate
-        new_format.send :initialize, card, opts
-        new_format
+        if self != Format
+          super
+        else
+          klass = Card.const_get format_class_name( opts[:format] || :html )
+          self == klass ? super : klass.new( card, opts )
+        end
       end
     
       def tagged view, tag

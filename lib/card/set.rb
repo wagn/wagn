@@ -4,7 +4,7 @@
 class Card
   module Set
 
-    mattr_accessor :includable_modules, :base_modules, :traits, :current, :current_set_module
+    mattr_accessor :includable_modules, :base_modules, :traits, :current, :current_format
     @@includable_modules, @@base_modules = {}, []
     
 
@@ -32,23 +32,44 @@ class Card
     #
 
     def view *args, &block
-      format do view *args, &block end
-    end
-
-    def format fmt=nil, &block
-      #new_format
-      if block_given?
-        f = Card::Format
-        format = fmt.nil? ? f : f.get_format(fmt)
-        format.class_eval &block
+      
+      if current_format
+        handle_view *args, &block
       else
-        fail "block required"
+        new_format do
+          view *args, &block
+        end
       end
+      #format do view *args, &block end
     end
 
-    def new_format
-      puts "new format called.  self = #{self}"
-      #format_module = Card::Set.current_module
+
+    def handle_view view, *args, &final
+      view = view.to_name.key.to_sym
+      if block_given?
+#        extract_class_vars view, opts
+        define_view view, &final
+      else
+        opts = Hash===args[0] ? args.shift : nil
+#        alias_view view, opts, args.shift
+      end
+    end 
+    
+    def define_view view, &final
+      current_format.class_eval do
+        define_method "_view_#{ view }", &final
+      end
+    end   
+
+
+    def format format = nil
+      klass = Card::Format.format_class_name format
+      mod = const_get_or_set klass do Module.new end
+        
+      old_format = self.current_format
+      self.current_format = mod
+      yield
+      self.current_format = old_format if old_format        
     end
 
     def event event, opts={}, &final
@@ -117,6 +138,7 @@ class Card
         # each set mod calls `extend Card::Set` when required
         # that triggers the set registration
         register_set mod
+        self.current_format = nil
       end
     
       def method_key opts

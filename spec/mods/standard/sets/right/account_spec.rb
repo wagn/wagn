@@ -68,7 +68,7 @@ describe Card::Set::Right::Account do
     end
   
     it 'should not work if token is expired' do
-      @account.token_card.update_column :updated_at, 3.days.ago.to_s
+      @account.token_card.update_column :updated_at, 3.days.ago.strftime("%F %T")
       @account.token_card.expire
       
       result = @account.save

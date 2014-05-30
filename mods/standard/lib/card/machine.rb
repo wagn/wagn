@@ -50,8 +50,9 @@ class Card
     def self.included(host_class)
       host_class.extend( ClassMethods )
       host_class.output_config = { :filetype => "txt" }
+      
             
-      if Codename[:machine_output]
+      if Codename[:machine_output]  # for compatibility with old migrations
         host_class.card_accessor :machine_output, :type=>:file
         host_class.card_accessor :machine_input, :type => :pointer
   
@@ -84,8 +85,10 @@ class Card
           File.open(tmp_path,"w") { |f| f.write( output ) }
           Card::Auth.as_bot do
             p = machine_output_card
-            p.attach =  File.open(tmp_path, "r")
+            file = File.open(tmp_path, "r")
+            p.attach = file
             p.save!
+            file.close
           end
         end
   

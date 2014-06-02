@@ -25,19 +25,20 @@ Gem::Specification.new do |s|
 
   [
     
-    [ 'rails',        '3.2.16'    ],
-    [ 'smartname',    '0.2.3'     ],
-    
-    [ 'uuid',         '~> 2.3'    ],
-    [ 'paperclip',    '~> 2.8'    ],
-    [ 'htmlentities', '~> 4.3'    ],
-    [ 'rmagick',      '~> 2.13'   ],
-    [ 'recaptcha',    '~> 0.3'    ],                                  
-    [ 'coderay',      '~> 1.0'    ],
-    [ 'sass',         '~> 3.2'    ],
-
+    [ 'rails',            '3.2.16'  ],
+    [ 'smartname',        '0.2.3'   ],
+                          
+    [ 'uuid',             '~> 2.3'  ],
+    [ 'paperclip',        '~> 2.8'  ],
+    [ 'htmlentities',     '~> 4.3'  ],
+    [ 'rmagick',          '~> 2.13' ],
+    [ 'recaptcha',        '~> 0.3'  ],                                  
+    [ 'coderay',          '~> 1.0'  ],
+    [ 'sass',             '~> 3.2'  ],
+                          
     # should not depend!
-    [ 'airbrake',     '~> 3.1'    ] 
+    [ 'airbrake',         '~> 3.1'  ], 
+    [ 'scheduler_daemon', '~> 1.1.3'  ]
 
     
   ].each do |dep|

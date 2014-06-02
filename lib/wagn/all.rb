@@ -14,5 +14,6 @@ require 'airbrake'
 require 'RMagick'
 require 'paperclip'
 require 'coderay'
+require 'scheduler_daemon'
 
 require 'wagn/application'

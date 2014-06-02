@@ -1,3 +1,4 @@
-event :flexmail, :after=>:extend, :on=>:create do #|args|
+
+event :flexmail, :after=>:extend, :on=>:update do 
   Card::Flexmail.mail_for self
 end

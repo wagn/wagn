@@ -40,7 +40,7 @@ class Card
       end
     
       host_class.format do
-        view :machine_output_url do |args|
+        host_class.view :machine_output_url do |args|
           machine_output_url
         end
       end

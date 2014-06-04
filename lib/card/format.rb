@@ -9,7 +9,7 @@ class Card
       :layout=>:layout, :new=>:edit, :setup=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     
     cattr_accessor :ajax_call, :registered, :max_depth
-    [ :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases ].each do |acc|
+    [ :perms, :denial_views, :error_codes, :view_tags, :aliases ].each do |acc|
       cattr_accessor acc
       self.send "#{acc}=", {}
     end
@@ -32,8 +32,9 @@ class Card
         "#{ f.camelize }Format"
       end
 
+=begin
       ### THE OLD WAY
-
+      
       def view view, *args, &final
         view = view.to_name.key.to_sym
         if block_given?
@@ -87,8 +88,35 @@ class Card
         end
       end
       
-
+      def get_set_key selection_key, opts
+        unless pkey = Card::Set.method_key(opts)
+          raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
+        end
+        key = pkey.blank? ? selection_key : "#{pkey}_#{selection_key}"
+        #warn "gvkey #{selection_key}, #{opts.inspect} R:#{key}"
+        key.to_sym
+      end
       
+=end
+      def extract_class_vars view, opts
+        return unless opts.present?
+        perms[view]       = opts.delete(:perms)      if opts[:perms]
+        error_codes[view] = opts.delete(:error_code) if opts[:error_code]
+        denial_views[view]= opts.delete(:denial)     if opts[:denial]
+
+        if tags = opts.delete(:tags)
+          Array.wrap(tags).each do |tag|
+            view_tags[view] ||= {}
+            view_tags[view][tag] = true
+          end
+        end
+
+=begin        
+        if !opts.empty?
+          subset_views[view] = true
+        end
+=end
+      end
 
       def new card, opts={}
         if self != Format
@@ -105,31 +133,9 @@ class Card
         
       private
       
-      def extract_class_vars view, opts
-        perms[view]       = opts.delete(:perms)      if opts[:perms]
-        error_codes[view] = opts.delete(:error_code) if opts[:error_code]
-        denial_views[view]= opts.delete(:denial)     if opts[:denial]
 
-        if tags = opts.delete(:tags)
-          Array.wrap(tags).each do |tag|
-            view_tags[view] ||= {}
-            view_tags[view][tag] = true
-          end
-        end
-        
-        if !opts.empty?
-          subset_views[view] = true
-        end
-      end
       
-      def get_set_key selection_key, opts
-        unless pkey = Card::Set.method_key(opts)
-          raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
-        end
-        key = pkey.blank? ? selection_key : "#{pkey}_#{selection_key}"
-        #warn "gvkey #{selection_key}, #{opts.inspect} R:#{key}"
-        key.to_sym
-      end
+
     end
     
     
@@ -277,6 +283,7 @@ class Card
     end
     
 
+    #FIXME -> this should be the basis for the new method_missing
     def send_final_render_method view, *a
       @current_view = view
       args = default_render_args view, *a
@@ -294,7 +301,8 @@ class Card
         rescue_view e, view
       end
     end
-
+    
+    
     def default_render_args view, a=nil
       args = case a
       when nil   ; {}
@@ -428,6 +436,7 @@ class Card
       end
     end
 
+=begin
     def view_method view
       return "_final_#{view}" unless card && @@subset_views[view]
       card.method_keys.each do |method_key|
@@ -437,7 +446,9 @@ class Card
       end
       nil
     end
-
+=end
+    
+    
     def with_inclusion_mode mode
       if switch_mode = INCLUSION_MODES[ mode ] and @mode != switch_mode
         old_mode, @mode = @mode, switch_mode

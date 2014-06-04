@@ -1,9 +1,66 @@
 # -*- encoding : utf-8 -*-
 
-
 class Card
   module Set
 
+=begin
+    A "Set" is a group of cards to which "Rules" may be applied.  Sets can be as specific as
+    a single card, as general as all cards, or anywhere in between.
+
+    Rules take two main forms: card rules and code rules.
+
+    "Card rules" are defined in card content. These are generally configured via the web
+    interface and are thus documented at http://wagn.org/rules.
+
+    "Code rules" can be defined in a "set file" within any "Mod" (short for both "module" and
+    "modification"). In accordance with Wagn's "MoVE" architecture, there are three kinds of
+    code rules you can create in a set file: Model methods, Views, and Events.  The vast
+    majority of Wagn code is contained in these files.
+    
+        (FIXME - define mod, add generator)
+
+    Whenever you fetch or instantiate a card, it will automatically include all the
+    set modules defined in set files associated with sets of which it is a member.  This 
+    entails both simple model methods and "events", which are special methods explored
+    in greater detail below.
+    
+    For example, say you have a Plaintext card named "Philipp+address", and you have set files
+    for the following sets:
+    
+        * all cards
+        * all Plaintext cards
+        * all cards ending in +address
+    
+    When you run this:
+    
+        mycard = Card.fetch 'Philipp+address'
+    
+    ...then mycard will include the set modules associated with each of those sets in the above
+    order.  (The order is determined by the set pattern; see lib/card/set_pattern.rb for more
+    information about set_ptterns and mods/core/sets/all/fetch.rb for more about fetching.)
+
+    Similarly, whenever a Format object is instantiated for a card, it includes all views
+    associated with both (a) sets of which the card is a member and (b) the current format or 
+    its ancestors.  More on defining views below.
+
+ 
+    In order to have a set file associated with "all cards ending in +address", you could create
+    a file in mywagn/mods/mymod/sets/right/address.rb.  The recommended mechanism for doing so
+    is running `wagn generate set modname set_pattern set_anchor`. In the current example, this
+    would translate to `wagn generate set mymod right address`. Note that both the set_pattern 
+    and the set_anchor must correspond to the codename of a card in the database to function
+    correctly.
+
+    
+    When Wagn loads, it uses these files to autogenerate a tmp_file that uses this set file to
+    createa Card::Set::Right::Address module which itself is extended with Card::Set. A set file
+    is "just ruby" but is generally quite concise because Wagn uses its file location to 
+    autogenerate ruby module names and then uses Card::Set module to provide additional API.
+
+    
+=end
+    
+    
     mattr_accessor :includable_modules, :base_modules, :traits, :current, :current_format
     @@includable_modules, @@base_modules = {}, []
     
@@ -21,46 +78,8 @@ class Card
     #   Roughly equivalent to:
     #     render_viewname(args)
     #
-    #   The internal call that skips the checks:
-    #     _render_viewname(args)
-    #
-    #   Each of the above ultimately calls:
-    #     _final(_set_key)_viewname(args)
-
-    #
-    # ~~~~~~~~~~  VIEW DEFINITION
-    #
-
-    def view *args, &block
-      
-      if current_format
-        handle_view *args, &block
-      else
-        new_format do
-          view *args, &block
-        end
-      end
-      #format do view *args, &block end
-    end
-
-
-    def handle_view view, *args, &final
-      view = view.to_name.key.to_sym
-      if block_given?
-#        extract_class_vars view, opts
-        define_view view, &final
-      else
-        opts = Hash===args[0] ? args.shift : nil
-#        alias_view view, opts, args.shift
-      end
-    end 
     
-    def define_view view, &final
-      current_format.class_eval do
-        define_method "_view_#{ view }", &final
-      end
-    end   
-
+    
 
     def format format = nil
       klass = Card::Format.format_class_name format
@@ -70,6 +89,16 @@ class Card
       self.current_format = mod
       yield
       self.current_format = old_format if old_format        
+    end
+
+    def view *args, &block      
+      if current_format
+        handle_view *args, &block
+      else
+        format do
+          view *args, &block
+        end
+      end
     end
 
     def event event, opts={}, &final
@@ -82,9 +111,7 @@ class Card
         define_method final_method, &final
 
         define_method event do
-  #        Rails.logger.info "running #{event} for #{name}"
           run_callbacks event do
-  #          Rails.logger.info "calling event: #{event} for #{self}"
             send final_method
           end
         end
@@ -93,12 +120,39 @@ class Card
       set_event_callbacks event, opts
     end
 
-
-
-    #
-    # ActiveCard support: accessing plus cards as attributes
-    #
-
+#    private
+    
+    def handle_view view, *args, &final
+      view = view.to_name.key.to_sym
+      if block_given?
+        Card::Format.extract_class_vars view, args[0]
+        define_view view, &final
+      else
+        opts = Hash===args[0] ? args.shift : nil
+        alias_view view, args.shift, opts
+      end
+    end 
+    
+    def define_view view, &block
+      current_format.class_eval do
+        define_method "_view_#{ view }", &block
+      end
+    end
+    
+    def alias_view alias_view, referent_view, opts
+      if opts.blank? # alias to another view in the same set (or ancestors)
+        current_format.class_eval do
+          define_method "_view_#{ alias_view }" do |*a|
+            send "_view_#{ referent_view }", *a
+          end
+        end
+      else           # aliasing to a view in another set
+        # FIXME - not implemented
+        # need to call the instance method of the referent set module...
+        # might try getting the unbound method like this: Card::Set::Type::PlainText::HtmlFormat.instance_method :_view_editor
+        #... and then binding it to the current_format (however that works)
+      end
+    end
 
     def card_accessor *args
       options = args.extract_options!
@@ -115,6 +169,16 @@ class Card
       add_traits args, options.merge( :writer=>true )
     end
   
+
+
+
+
+
+    #
+    # ActiveCard support: accessing plus cards as attributes
+    #
+
+
     
     def const_missing const
       if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore.to_sym

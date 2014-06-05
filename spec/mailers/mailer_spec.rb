@@ -43,6 +43,27 @@ describe Card::Mailer do
   describe "flexmail" do
     # FIXME: at least two tests should be here, with & w/o attachment.
   end
+  
+  describe "confirmation email" do
+    it "render template" do
+      Card::Mailer.confirmation_email(Card[Card::WagnBotID].account).deliver
+      @mail = ActionMailer::Base.deliveries.last
+      expect( @mail.body.raw_source ).to match(Card.setting( :title ))
+    end
+    
+  end
+  
+  describe "cardmail" do
+    before do
+      Card.gimme "mailtest", :content => "test"
+    end
+    it "renders email text" do
+      Card::Mailer.cardmail(:to => "sara@user.com").deliver
+      @mail = ActionMailer::Base.deliveries.last
+      #byebug
+      expect(@mail.body).to eq("test")
+    end
+  end
 
   private
     def encode(subject)

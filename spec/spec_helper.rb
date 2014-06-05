@@ -24,7 +24,7 @@ Spork.prefork do
     }
 
     format_index = ARGV.find_index {|arg| arg =~ /--format/ }
-    formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation'
+    formatter = format_index ? ARGV[ format_index + 1 ] : 'textmate'
     config.add_formatter formatter
     
     #config.include CustomMatchers

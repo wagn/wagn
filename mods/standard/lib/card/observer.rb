@@ -46,7 +46,7 @@ class Card
       end
       
       def email_templates_for card, rule
-        event_card = card.rule_card rule  #FIXME 
+        event_card = card.rule_card rule  #FIXME is this really a rule?
         return unless event_card
         #Auth.as_bot { event_card.item_names }   #TODO this is the old line. Why as_bot used here?
         Auth.as_bot do

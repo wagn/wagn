@@ -37,6 +37,7 @@ group :test do
   gem 'guard-rspec', '~> 4.2'                  # trigger test runs based on file edits
   if RUBY_PLATFORM =~ /darwin/
     gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
+    #gem 'rspec-tmbundle'
   end
   
   # CUKES see features dir

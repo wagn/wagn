@@ -1,0 +1,9 @@
+# Some browsers still send conditional-GET requests if there's a
+# Last-Modified header or an ETag header even if they haven't
+# reached the expiry date sent in the Expires header.
+Header unset Last-Modified
+Header unset ETag
+FileETag None
+# RFC says only cache for 1 year
+ExpiresActive On
+ExpiresDefault "access plus 1 year"

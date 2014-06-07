@@ -40,6 +40,7 @@ class CardController < ActionController::Base
   end
   
   def asset
+    Rails.logger.info "Routing assets through Wagn. Recommend symlink from Deck to Wagn gem using 'rake wagn:update_assets_symlink'"
     send_file_inside Wagn.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
   end
   
@@ -118,11 +119,11 @@ class CardController < ActionController::Base
     @card = case params[:id]
       when '*previous'
         return wagn_redirect( previous_location )
-      when /^\~(\d+)$/
+      when /^\~(\d+)$/ # get by id
         Card.fetch( $1.to_i ) or raise Wagn::NotFound 
-      when /^\:(\w+)$/
+      when /^\:(\w+)$/ # get by codename
         Card.fetch $1.to_sym
-      else
+      else  # get by name
         opts = params[:card] ? params[:card].clone : {}   # clone so that original params remain unaltered.  need deeper clone?
         opts[:type] ||= params[:type] if params[:type]    # for /new/:type shortcut.  we should fix and deprecate this.
         opts[:name] ||= params[:id].to_s.gsub( '_', ' ')  # move handling to Card::Name?

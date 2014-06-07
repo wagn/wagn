@@ -70,15 +70,7 @@ end
 gem 'ruby-prof', '~>0.12.1', :group=>:profile  # profiling
 
 group :debug do
-  case RUBY_VERSION
-  when /^1\.9\.3-p0/
-    gem 'linecache19', '~>0.5.13'
-    gem 'ruby-debug-base19x', '~> 0.11.30.pre4'
-  when /^1\.9/
-    gem 'ruby-debug19', :require => 'ruby-debug'
-  when /^1\.8/
-    gem 'ruby-debug'
-  end
+  gem 'debugger'
 end
 
 

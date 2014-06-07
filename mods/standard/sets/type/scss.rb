@@ -15,7 +15,7 @@ def compressed_css input
 end 
 
 machine_input do 
-   compressed_css format._render_raw
+   compressed_css format(:format => :css)._render_core
 end
 
 

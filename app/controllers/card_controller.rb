@@ -77,13 +77,12 @@ class CardController < ActionController::Base
 
   private
   
-  # make sure that filenname doesn't leave allowed_path
+  # make sure that filenname doesn't leave allowed_path using ".."
   def send_file_inside(allowed_path, filename, options = {})
-    path = File.expand_path(File.join(allowed_path, filename))
-    if path.match Regexp.new('^' + Regexp.escape(allowed_path))
-      send_file path, options
-    else
+    if filename.include? "../"
       raise Wagn::BadAddress
+    else
+      send_file File.join(allowed_path, filename), options
     end
   end
   

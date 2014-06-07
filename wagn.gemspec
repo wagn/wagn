@@ -35,7 +35,9 @@ Gem::Specification.new do |s|
     [ 'recaptcha',    '~> 0.3'    ],                                  
     [ 'coderay',      '~> 1.0'    ],
     [ 'sass',         '~> 3.2'    ],
-
+    [ 'coffee-script','~> 2.2'    ],
+    [ 'uglifier',     '~> 2.5'    ],
+    
     # should not depend!
     [ 'airbrake',     '~> 3.1'    ] 
 

@@ -3,13 +3,14 @@ require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
 require 'simplecov'
+require File.expand_path( '../../spec/mods/standard/lib/machine_spec.rb', __FILE__ )
+require File.expand_path( '../../spec/mods/standard/lib/machine_input_spec.rb', __FILE__ )
 
 Spork.prefork do
   require File.expand_path( '../../config/environment', __FILE__ )
   require 'rspec/rails'
   
-  #load 'spec/mods/zfactory/lib/machine_spec.rb'
-  #load 'spec/mods/zfactory/lib/machine_input_spec.rb'
+  
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
 #  Dir[ File.join(Wagn.gem_root, "spec/support/**/*.rb") ].each { |f| require f }

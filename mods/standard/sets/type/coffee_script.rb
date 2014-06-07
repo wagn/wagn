@@ -1,11 +1,18 @@
 # -*- encoding : utf-8 -*-
-#require 'coffee-script'
+require 'coffee-script'
+require 'uglifier'
+
 include Machine
 include MachineInput
 
+def compile_coffee script
+  Uglifier.compile(::CoffeeScript.compile script)
+rescue Exception=>e
+  e
+end
 
 machine_input do 
-  compile_coffee format._render_raw
+  compile_coffee format(:format=>:js)._render_raw
 end
 
 store_machine_output :filetype => "js"
@@ -14,19 +21,17 @@ def clean_html?
   false
 end
 
-
-def compile_coffee script
-  Uglifier.compile(::CoffeeScript.compile script)
-rescue Exception=>e
-  e
+def chunk_list  #turn off autodetection of uri's 
+                #TODO with the new format pattern this should be handled in the js format
+  :inclusion_only
 end
 
-format :html do
 
+format :html do
   view :editor, :type=>:plain_text
   
   view :core do |args|
-    js = compile_coffee _render_raw
+    js = card.compile_coffee _render_raw
     highlighted_js = ::CodeRay.scan( js, :js ).div
     process_content highlighted_js
   end
@@ -34,9 +39,8 @@ format :html do
 end
 
 
-format do
+format do  
   view :core do |args|
-    wagnprocess_content compile_coffee(_render_raw)
+    process_content card.compile_coffee(_render_raw)
   end
-    
 end

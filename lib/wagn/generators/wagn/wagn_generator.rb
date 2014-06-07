@@ -38,7 +38,14 @@ class WagnGenerator < Rails::Generators::AppBase
   end
     
   def gemfile
-    template "Gemfile"
+    if ARGV.include? "-test"
+      template "Gemfile.core-dev", "Gemfile"
+      FileUtils.ln_s( File.join( Wagn.gem_root, "spec" ), "spec" )
+      FileUtils.ln_s( File.join( Wagn.gem_root, "test" ), "test" )
+      template "rspec", ".rspec"
+    else
+      template "Gemfile"
+    end
   end
 
   def configru

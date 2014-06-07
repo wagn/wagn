@@ -12,10 +12,12 @@ class SystemEmails < ActiveRecord::Migration
       data = JSON.parse(json)
       data.each do |mail|
         mail = mail.symbolize_keys!
-        Card.create! :name=> mail[:name], :codename=>mail[:codename]
+        Card.create! :name=> mail[:name], :codename=>mail[:codename], :type=>:email_template
         Card.create! :name=>"#{mail[:name]}+message", :content=>File.read( File.join( dir, mail[:message] ))
         Card.create! :name=>"#{mail[:name]}+subject", :content=>mail[:subject] 
       end
+      
+      Card.create! :name=>"account+*right+*on create"
     end
   end
 end

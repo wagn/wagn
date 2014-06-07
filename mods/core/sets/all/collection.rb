@@ -28,6 +28,31 @@ def item_type
   nil
 end
 
+def extended_item_cards context = nil
+  context = (context ? context.cardname : self.cardname)
+  items = self.item_cards(args.merge(:context=>context))
+  extended_list = []
+  already_extended = [] # avoid loops
+  
+  while items.size > 0
+    item = items.shift
+    if already_extended.include? item 
+      next
+    elsif item.item_cards == [item]  # no further level of items
+      extended_list << item
+      already_extended << item
+    else
+      items.insert(0, item.item_cards) # keep items in order
+      items.flatten!
+      already_extended << item
+    end
+  end
+end
+
+def extended_item_names context = nil
+  extended_item_cards(context).map(&:cardname)
+end
+
 def extended_list context = nil
   context = (context ? context.cardname : self.cardname)
   args={ :limit=>'' }
@@ -42,8 +67,7 @@ def extended_list context = nil
 end
 
 def contextual_content context_card, format_args={}
-  format_args[:not_current] = true
   context_card.format(format_args).process_content(
-    self.format(:not_current=>true)._render_raw
+    self.format()._render_raw
   )
 end

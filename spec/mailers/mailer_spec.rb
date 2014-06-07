@@ -53,17 +53,17 @@ describe Card::Mailer do
     
   end
   
-  describe "cardmail" do
-    before do
-      Card.gimme "mailtest", :content => "test"
-    end
-    it "renders email text" do
-      Card::Mailer.cardmail(:to => "sara@user.com").deliver
-      @mail = ActionMailer::Base.deliveries.last
-      #byebug
-      expect(@mail.body).to eq("test")
-    end
-  end
+  # describe "cardmail" do
+  #   before do
+  #     Card.gimme "mailtest", :content => "test"
+  #   end
+  #   it "renders email text" do
+  #     Card::Mailer.cardmail(:to => "sara@user.com").deliver
+  #     @mail = ActionMailer::Base.deliveries.last
+  #     #byebug
+  #     expect(@mail.body).to eq("test")
+  #   end
+  # end
 
   private
     def encode(subject)

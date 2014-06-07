@@ -35,10 +35,11 @@ Gem::Specification.new do |s|
     [ 'recaptcha',        '~> 0.3'  ],                                  
     [ 'coderay',          '~> 1.0'  ],
     [ 'sass',             '~> 3.2'  ],
+    [ 'scheduler_daemon', '~> 1.1.3'],
                           
     # should not depend!
     [ 'airbrake',         '~> 3.1'  ], 
-    [ 'scheduler_daemon', '~> 1.1.3'  ]
+    
 
     
   ].each do |dep|

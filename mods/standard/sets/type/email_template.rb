@@ -9,25 +9,29 @@ format :email do
 
   
   view :mail do |args|
-    card.flexmail args
+    card.mail_layout 
   end
 
   view :config do |args|
     config = {}
 
     [:to, :from, :cc, :bcc, :attach].each do |field|
-      if args[:field]
-        config[:field] = args[:field]
-      else
-        config[field] = ( fld_card=Card["#{card.name}+*#{field}"] ).nil? ? '' :
+      config[field] = args[:field] || ( fld_card=Card["#{card.name}+*#{field}"] ).nil? ? '' :
             # configuration can be anything visible to configurer
             Auth.as( fld_card.updater ) do
-              list = fld_card.extended_list card
+              list = fld_card.extended_item_names card
               field == :attach ? list : list * ','
             end
+    end
+    
+    if attachment_list = config.delete(:attach) and !attachment_list.empty?
+      attachment_list.each_with_index do |cardname, i|
+        if c = Card[ cardname ] and c.respond_to?(:attach)
+          attachments["attachment-#{i + 1}.#{c.attach_extension}"] = File.read( c.attach.path )
+        end
       end
     end
-
+    
     args[:locals] ||= {}
     args[:locals][:site] = Card.setting :title
     

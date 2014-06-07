@@ -29,6 +29,9 @@ namespace :wagn do
       puts "loading bootstrap"
       Rake::Task['wagn:bootstrap:load'].invoke
     end
+    
+    puts "set symlink for assets"
+    Rake::Task['wagn:update_assets_symlink'].invoke
   end
   
   desc "update wagn gems and database"
@@ -36,7 +39,8 @@ namespace :wagn do
     #system 'bundle update'
     Rake::Task['wagn:migrate'].invoke
     # FIXME remove tmp dir / clear cache
-    # add symlink from DECKROOT/public/assets to GEMROOT/public/assets
+    puts "set symlink for assets"
+    Rake::Task['wagn:update_assets_symlink'].invoke
   end
   
   desc "reset cache"
@@ -44,6 +48,10 @@ namespace :wagn do
     Wagn::Cache.reset_global
   end
 
+  desc "set symlink for assets"
+  task :update_assets_symlink do
+    FileUtils.ln_s( Wagn.paths['gem-assets'].first, File.join(Rails.public_path, "assets") )
+  end
 
   desc "migrate structure and cards"
   task :migrate =>:environment do

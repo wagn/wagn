@@ -81,8 +81,8 @@ class Card
         host_class.prepare_machine_input {}
         host_class.machine_engine { |input| input }
         host_class.store_machine_output do |output|
-          tmp_path =  "/tmp/#{ id }.#{host_class.output_config[:filetype]}"   
-          file = Tempfile.new tmp_path
+          tmp_path =     
+          file = Tempfile.new [ id, ".#{host_class.output_config[:filetype]}" ]
           file.write output
           Card::Auth.as_bot do
             p = machine_output_card

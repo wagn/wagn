@@ -59,7 +59,6 @@ group :test do
   gem 'turn', "~>0.8.3", :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
   gem 'minitest', "~>4.0"
   
-  gem 'byebug' if RUBY_VERSION =~ /^2/
   
   
   #windows stuff
@@ -70,6 +69,7 @@ end
 gem 'ruby-prof', '~>0.12.1', :group=>:profile  # profiling
 
 group :debug do
+  gem 'byebug' if RUBY_VERSION =~ /^2/
   gem 'debugger'
 end
 

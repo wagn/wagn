@@ -68,7 +68,7 @@ class WagnGenerator < Rails::Generators::AppBase
       empty_directory "files"
     
       inside "files" do
-        template ".htaccess"
+        template "htaccess", ".htaccess"
       end
     end
   end

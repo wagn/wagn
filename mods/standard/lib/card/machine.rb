@@ -82,14 +82,15 @@ class Card
         host_class.machine_engine { |input| input }
         host_class.store_machine_output do |output|
           tmp_path =  "/tmp/#{ id }.#{host_class.output_config[:filetype]}"   
-          File.open(tmp_path,"w") { |f| f.write( output ) }
+          file = Tempfile.new tmp_path
+          file.write output
           Card::Auth.as_bot do
             p = machine_output_card
-            file = File.open(tmp_path, "r")
             p.attach = file
             p.save!
-            file.close
           end
+          file.close
+          file.unlink
         end
   
         host_class.format do

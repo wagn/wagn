@@ -28,17 +28,17 @@ Wagn.application.class.configure do
   config.action_dispatch.best_standards_support = :builtin
 
   # Do not compress assets
-  config.assets.compress = false
-
-  # Expands the lines which load the assets
-  config.assets.debug = false
-
-  # This needs to be on for tinymce to work, because several important files (themes, etc) are only served statically
-  config.serve_static_assets = ENV['STATIC_ASSETS'] || true
-
-  # Setting a bogus directory so rails won't find public/assets in dev mode.
-  # Normally you could skip that by not serving static assets, but that breaks tinymce (see above)
-  config.assets.prefix = "dynamic-assets"
+  # config.assets.compress = false
+# 
+#   # Expands the lines which load the assets
+#   config.assets.debug = false
+# 
+#   # This needs to be on for tinymce to work, because several important files (themes, etc) are only served statically
+#   config.serve_static_assets = ENV['STATIC_ASSETS'] || true
+# 
+#   # Setting a bogus directory so rails won't find public/assets in dev mode.
+#   # Normally you could skip that by not serving static assets, but that breaks tinymce (see above)
+#   config.assets.prefix = "dynamic-assets"
 
   # Raise exception on mass assignment protection for Active Record models
   config.active_record.mass_assignment_sanitizer = :strict
@@ -58,9 +58,9 @@ Wagn.application.class.configure do
   config.perform_deliveries = false
   
   
-  config.dev_tweaks.autoload_rules do
-    skip '/files'
-  end
+  # config.dev_tweaks.autoload_rules do
+  #   skip '/files'
+  # end
 end
 
 

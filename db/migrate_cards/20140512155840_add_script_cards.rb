@@ -1,20 +1,48 @@
 # -*- encoding : utf-8 -*-
 
+class Card
+  def self.gimme! name, args = {}
+    Card::Auth.as_bot do
+      c = Card.fetch( name, :new => args )
+      c.putty args
+      Card.fetch name 
+    end    
+  end
+    
+  def putty args = {}
+    Card::Auth.as_bot do
+      if args.present? 
+        update_attributes! (args) 
+      else 
+        save!
+      end
+    end
+  end
+end
+
 class AddScriptCards < ActiveRecord::Migration
   include Wagn::MigrationHelper
   def up
     contentedly do    
       # JavaScript and CoffeeScript types
-
-      Card.create! :name=>'JavaScript', :codename=>:java_script, :type_id=>Card::CardtypeID
-      Card.create! :name=>'CoffeeScript', :codename=>:coffee_script, :type_id=>Card::CardtypeID
+      card = Card.fetch "CoffeeScript", :new => {}
+      card.codename = "coffee_script"
+      card.type_id = Card::CardtypeID
+      card.save!
+      
+      card = Card.fetch "JavaScript", :new => {}
+      card.codename = "java_script"
+      card.type_id = Card::CardtypeID
+      card.save!
+      #Card.create! :name=>'JavaScript', :codename=>:java_script, :type_id=>Card::CardtypeID
+      #Card.create! :name=>'CoffeeScript', :codename=>:coffee_script, :type_id=>Card::CardtypeID
       
       # Permissions for JavaScript and CoffeeScript types
       # ( the same as for CSS and SCSS)
       ['JavaScript', 'CoffeeScript'].each do |type|
         [ :create, :update, :delete].each do |action|
-          Card.create! :name=>"#{type}+#{Card[:type].name}+#{Card[action].name}", 
-            :content=>"[[#{Card[:administrator].name}]]"
+          Card.gimme!( "#{type}+#{Card[:type].name}+#{Card[action].name}", 
+            :content=>"[[#{Card[:administrator].name}]]")
         end
       end
       
@@ -37,7 +65,7 @@ class AddScriptCards < ActiveRecord::Migration
       Card.create! :name=>"*machine input+#{default_rule_ending}", :type_id=>Card::PointerID
       
       # create default script rule
-      card_type = { 'js' => :java_script, 'coffee' => :coffee_script}
+      card_type = { 'js' => "java_script", 'coffee' => "coffee_script"}
       scripts        = %w{ jquery tinymce slot     card_menu jquery_helper html5shiv_printshiv  }
       types          = %w{ js     js      coffee   js        js            js                   }
       # jquery.mobile  (in jquery_helper) must be after wagn to avoid mobileinit nastiness

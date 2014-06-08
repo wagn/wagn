@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'byebug'
 
 class SystemEmails < ActiveRecord::Migration
   include Wagn::MigrationHelper
@@ -16,8 +15,6 @@ class SystemEmails < ActiveRecord::Migration
         Card.create! :name=>"#{mail[:name]}+message", :content=>File.read( File.join( dir, mail[:message] ))
         Card.create! :name=>"#{mail[:name]}+subject", :content=>mail[:subject] 
       end
-      
-      Card.create! :name=>"account+*right+*on create"
     end
   end
 end

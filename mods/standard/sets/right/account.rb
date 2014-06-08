@@ -58,7 +58,6 @@ end
 
 event :reset_password, :on=>:update, :before=>:approve, :when=>proc{ |c| c.has_reset_token? } do
   result = Auth.authenticate_by_token @env_token
-#  byebug
   case result
   when Integer
     Auth.signin result
@@ -79,14 +78,16 @@ event :reset_password, :on=>:update, :before=>:approve, :when=>proc{ |c| c.has_r
   end
 end
 
-def has_reset_token?
-  @env_token = Env.params[:reset_token]
-end
-
 event :send_new_account_confirmation_email, :on=>:create, :after=>:extend do
   if self.email.present?
-    Card["confirmation email"].format(:format=>:email)._render_mail.deliver
-    #Mailer.confirmation_email( self ).deliver
+    Card["confirmation email"].format(:format=>:email)._render_mail(
+      :to     => self.email,
+      :from   => token_emails_from(self),
+      :locals =>{
+        :link        => wagn_url( "/update/#{self.left.cardname.url_key}?token=#{self.token}" ),
+        :expiry_days => Wagn.config.token_expiry / 1.day 
+      }
+    ).deliver
   end
 end
 
@@ -94,7 +95,22 @@ event :send_reset_password_token do
   Auth.as_bot do
     token_card.update_attributes! :content => generate_token
   end
-  Mailer.password_reset(self).deliver
+  Card["password reset"].format(:format=>:email)._render_mail(
+    :to     => self.email,
+    :from   => token_emails_from(self),
+    :locals => {
+      :link        => wagn_url( "/update/#{self.cardname.url_key}?reset_token=#{self.token_card.refresh(true).content}" ),
+      :expiry_days => Wagn.config.token_expiry / 1.day,
+    }).deliver
+end
+
+def token_emails_from account
+  Card.setting( '*invite+*from' ) || begin
+    from_card_id = Auth.current_id
+    from_card_id = WagnBotID if [ AnonymousID, account.left_id ].member? from_card_id
+    from_card = Card[from_card_id]
+    "#{from_card.name} <#{from_card.account.email}>"
+  end
 end
 
 def ok_to_read

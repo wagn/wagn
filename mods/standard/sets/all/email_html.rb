@@ -1,25 +1,7 @@
-def clean_html?
-  false
-end
-
 
 format :email do
-  def config_sender args, from
-    from_name, from_email = (from =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, from]
-    
-    if default_from=@@defaults[:from]
-      args[:from] = !from_email ? default_from : "#{from_name || from_email} <#{default_from}>"
-      args[:reply_to] ||= from
-    else
-      args[:from] = from
-    end
-    return args
-  end
-  
-  
   view :missing        do |args| '' end
   view :closed_missing do |args| '' end
-
 
   view :raw do |args| 
     output = card.raw_content
@@ -82,8 +64,10 @@ format :email do
         # config[field] = ERB.new(content).result(binding)  #FIXME run always ERB ???
       end
     end
-
     config[:subject] = strip_html(config[:subject]).strip
+    if args[:layout].present?
+      
+    end
     config[:body] ||= config[:message]
     config[:content_type] ||= 'text/html'
     config

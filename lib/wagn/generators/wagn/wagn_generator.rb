@@ -80,11 +80,6 @@ class WagnGenerator < Rails::Generators::AppBase
       template "databases/#{options[:database]}.yml", "database.yml"  
       if options['core-dev']
         template "cucumber.yml"
-        empty_directory "environments"
-        inside "environments" do
-          template "test.rb"
-          template "cucumber.rb"
-        end
       end
     end
     
@@ -101,8 +96,7 @@ class WagnGenerator < Rails::Generators::AppBase
   
   def seed_data
     puts "Your current database configuration: "
-    puts "#{File.read( File.join destination_root, 'config', 'database.yml') }\n"
-    #Dir.chdir destination_root
+    puts "#{File.read( File.join destination_root, 'config', 'database.yml') }\n" #FIXME just printing the whole content of database.yml is a bit confusing
     require File.join destination_root, 'config', 'application'
     require 'wagn/migration_helper'
     require 'rake'

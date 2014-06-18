@@ -247,7 +247,6 @@ describe CardController do
         get :read, args
         output_card = Card[ "#{ Card[:all].name }+#{ Card[:style].name }+#{ Card[:machine_output].name}" ]
         expect(response).to redirect_to( "#{ wagn_path output_card.attach.url }" )
-        #byebug 
         get :read, args
         expect(response.status).to eq(200)
       end

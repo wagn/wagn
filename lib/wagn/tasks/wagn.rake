@@ -34,8 +34,13 @@ namespace :wagn do
   desc "update wagn gems and database"
   task :update do
     #system 'bundle update'
+    if Wagn.paths["tmp"].existent
+      FileUtils.rm_rf Wagn.paths["tmp"].first, :secure=>true
+      Dir.mkdir  Wagn.paths["tmp"].first
+    end
     Rake::Task['wagn:migrate'].invoke
-    # FIXME remove tmp dir / clear cache
+
+    # FIXME  clear cache
     # add symlink from DECKROOT/public/assets to GEMROOT/public/assets
   end
   

@@ -40,7 +40,6 @@ group :test do
   gem 'guard-rspec', '~> 4.2'                  # trigger test runs based on file edits
   if RUBY_PLATFORM =~ /darwin/
     gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
-    #gem 'rspec-tmbundle'
   end
   
   # CUKES see features dir
@@ -63,7 +62,6 @@ group :test do
   gem 'turn', "~>0.8.3", :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
   gem 'minitest', "~>4.0"
   
-  gem 'byebug' if RUBY_VERSION =~ /^2/
   
   
   #windows stuff
@@ -74,18 +72,8 @@ end
 gem 'ruby-prof', '~>0.12.1', :group=>:profile  # profiling
 
 group :debug do
-  case RUBY_VERSION
-  when /^1\.9\.3-p0/
-    gem 'linecache19', '~>0.5.13'
-    gem 'ruby-debug-base19x', '~> 0.11.30.pre4'
-  when /^1\.9/
-    gem 'ruby-debug19', :require => 'ruby-debug'
-  when /^1\.8/
-    gem 'ruby-debug'
-  end
+  gem 'byebug' if RUBY_VERSION =~ /^2/
+  gem 'debugger'
 end
-
-gem 'byebug'
-
 
 

@@ -1,17 +1,34 @@
 require 'rails/generators/app_base'
 
+
 class WagnGenerator < Rails::Generators::AppBase
 
 #class WagnGenerator < Rails::Generators::AppGenerator
+
+  
 
   source_root File.expand_path('../templates', __FILE__)
   
   class_option :database, :type => :string, :aliases => "-d", :default => "mysql",
     :desc => "Preconfigure for selected database (options: #{DATABASES.join('/')})"
-  
+    
+  class_option 'core-dev', :type => :boolean, aliases: '-c', :default => false, :group => :runtime, 
+    desc: "Prepare deck for wagn core testing"
+                        
   public_task :create_root
   
 ## should probably eventually use rails-like AppBuilder approach, but this is a first step.  
+  def core_dev_setup
+    if options['core-dev']
+      @wagn_path = ask "Please enter the path to your local wagn installation: "
+      @wagndev_path = ask "Please enter the path to your local wagn-dev installation (leave empty to use the wagn-dev gem): "
+      @spec_path = File.join @wagn_path, 'spec'
+      @features_path = File.join @wagn_path, 'features/'  # ending slash is important in order to load support and step folders
+      
+      template "rspec", ".rspec"
+    end 
+  end
+
   
   def rakefile
     template "Rakefile"
@@ -38,11 +55,8 @@ class WagnGenerator < Rails::Generators::AppBase
   end
     
   def gemfile
-    if ARGV.include? "-test"
+    if options['core-dev']
       template "Gemfile.core-dev", "Gemfile"
-      FileUtils.ln_s( File.join( Wagn.gem_root, "spec" ), "spec" )
-      FileUtils.ln_s( File.join( Wagn.gem_root, "test" ), "test" )
-      template "rspec", ".rspec"
     else
       template "Gemfile"
     end
@@ -64,6 +78,14 @@ class WagnGenerator < Rails::Generators::AppBase
       template "environment.rb"
       template "boot.rb"
       template "databases/#{options[:database]}.yml", "database.yml"  
+      if options['core-dev']
+        template "cucumber.yml"
+        empty_directory "environments"
+        inside "environments" do
+          template "test.rb"
+          template "cucumber.rb"
+        end
+      end
     end
     
   end
@@ -77,7 +99,28 @@ class WagnGenerator < Rails::Generators::AppBase
   
   public_task :run_bundle
   
+  def seed_data
+    puts "Your current database configuration: "
+    puts "#{File.read( File.join destination_root, 'config', 'database.yml') }\n"
+    #Dir.chdir destination_root
+    require File.join destination_root, 'config', 'application'
+    require 'wagn/migration_helper'
+    require 'rake'
+    if yes?("Seed #{Rails.env}#{ " and test" if options['core-dev'] } database now? [yn]")
+      Wagn::Application.load_tasks
+      Rake::Task['wagn:create'].invoke
+      if options['core-dev']
+        ENV['RELOAD_TEST_DATA'] = 'true'
+        Rake::Task['db:test:prepare'].invoke
+      end
+    end
+    
+  end
+  
   protected
+  def self.banner
+     "wagn new #{self.arguments.map(&:usage).join(' ')} [options]"
+  end
   
   def mysql_socket
     @mysql_socket ||= [
@@ -131,4 +174,7 @@ class WagnGenerator < Rails::Generators::AppBase
     end
   end
   
+  
+
+
 end

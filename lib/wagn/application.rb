@@ -2,7 +2,6 @@
 
 require 'wagn/all'
 require 'active_support/core_ext/numeric/time'
-
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
   Bundler.require *Rails.groups(:assets => %w(development test))
@@ -13,6 +12,20 @@ end
 
 module Wagn
   class Application < Rails::Application
+    
+    initializer :load_wagn_environment_config, :before => :load_environment_config, :group => :all do
+      add_wagn_path paths, "lib/wagn/config/environments", :glob => "#{Rails.env}.rb"   
+      paths["lib/wagn/config/environments"].existent.each do |environment|
+        require environment
+      end
+    end
+    
+    initializer :load_wagn_config_initializers,  :before => :load_config_initializers do
+      add_wagn_path paths, 'lib/wagn/config/initializers', :glob => "**/*.rb" 
+      config.paths['lib/wagn/config/initializers'].existent.sort.each do |initializer|
+        load(initializer)
+      end
+    end
     
     class << self
       def inherited(base)
@@ -67,9 +80,9 @@ module Wagn
         add_wagn_path paths, "app/assets",          :glob => "*"
         add_wagn_path paths, "app/controllers",     :eager_load => true
         add_wagn_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
-        add_wagn_path paths, "config"
-        add_wagn_path paths, "config/environments", :glob => "#{Rails.env}.rb"
-        add_wagn_path paths, "config/initializers", :glob => "**/*.rb"
+        add_wagn_path paths, "config"               #TODO I'm not sure whether we have to keep this one
+        #add_wagn_path paths, "config/environments", :glob => "#{Rails.env}.rb"
+        #add_wagn_path paths, "config/initializers", :glob => "**/*.rb"
         add_wagn_path paths, "config/routes",       :with => "config/routes.rb"
         add_wagn_path paths, "db"
         add_wagn_path paths, "db/migrate"

@@ -45,7 +45,7 @@ module Wagn
         config.autoload_paths += Dir["#{Wagn.gem_root}/lib/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/mods/standard/lib/**/"]
         
-        config.assets.enabled = true
+        config.assets.enabled = false
         config.assets.version = '1.0'
         
         
@@ -75,7 +75,6 @@ module Wagn
     def paths
       @paths ||= begin
         paths = super
-        add_wagn_path paths, 'public'
         add_wagn_path paths, "app",                 :eager_load => true, :glob => "*"
         add_wagn_path paths, "app/assets",          :glob => "*"
         add_wagn_path paths, "app/controllers",     :eager_load => true
@@ -89,6 +88,7 @@ module Wagn
         add_wagn_path paths, "db/migrate_cards"
         add_wagn_path paths, "db/seeds",            :with => "db/seeds.rb"        
         add_wagn_path paths, 'gem-mods',            :with => 'mods'
+        add_wagn_path paths, 'gem-assets',          :with => 'public/assets'
 
         paths['app/models'] = []
         paths['app/mailers'] = []

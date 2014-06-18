@@ -6,6 +6,7 @@
  *
  * http://github.com/scottgonzalez/jquery-ui-extensions
  */
+
 (function( $ ) {
 
 var proto = $.ui.autocomplete.prototype,

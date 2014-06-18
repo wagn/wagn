@@ -10,6 +10,11 @@ Rails.application.routes.draw do
   root                      :to => 'card#read', :via=>:get
   match "#{ Wagn.config.files_web_path }/:id(-:size)-:rev.:format" => 
                                    'card#read', :via=>:get, :id => /[^-]+/, :explicit_file=>true
+  match "assets/*filename"      => 'card#asset', :via=>:get
+  match "javascripts/*filename" => 'card#asset', :via=>:get
+  match "jasmine/*filename"     => 'card#asset', :via=>:get
+  
+  
   match 'recent(.:format)'      => 'card#read', :via=>:get, :id => ':recent' #obviate by making links use codename
 #  match ':view:(:id(.:format))'          => 'card#read', :via=>:get  
   match '(/wagn)/:id(.:format)' => 'card#read', :via=>:get  #/wagn is deprecated
@@ -40,7 +45,7 @@ Rails.application.routes.draw do
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~
   
   # standard non-RESTful
-  match '(card)/:action(/:id(.:format))' => 'card'
+  match '(card)/:action(/:id(.:format))' => 'card', :action => /create|read|update|delete|save_draft|rollback|watch|asset/
 
   # other
   match '*id' => 'card#read', :view => 'bad_address'

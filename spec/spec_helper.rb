@@ -3,7 +3,9 @@ require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
 require 'simplecov'
-require 'byebug'
+require File.expand_path( '../../spec/mods/standard/lib/machine_spec.rb', __FILE__ )
+require File.expand_path( '../../spec/mods/standard/lib/machine_input_spec.rb', __FILE__ )
+
 Spork.prefork do
   if ENV["RAILS_ROOT"].present?
     require File.join( ENV["RAILS_ROOT"], '/config/environment')

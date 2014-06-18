@@ -46,7 +46,7 @@ class Card
     #not sure whether this is best place.  Could really happen almost anywhere (even before chunk classes are loaded).
     register_list :default, [ :URI, :HostURI, :EmailURI, :EscapedLiteral, :Include, :Link ]
     register_list :references,                         [ :EscapedLiteral, :Include, :Link ]
-
+    register_list :inclusion_only,                     [  :Include ]
   
     class Abstract
       class_attribute :config

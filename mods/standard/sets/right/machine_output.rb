@@ -1,3 +1,4 @@
+
 format do
   view :not_found do |args|
     if card.left.kind_of? Machine

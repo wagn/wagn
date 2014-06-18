@@ -45,7 +45,7 @@ module ClassMethods
     else
       unmerged_json = JSON.pretty_generate unmerged
       if output_file = opts[:output_file]
-        File.open output_file, 'w' do |f|
+        ::File.open output_file, 'w' do |f|
           f.write unmerged_json
         end
       else

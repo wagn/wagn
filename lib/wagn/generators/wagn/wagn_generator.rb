@@ -82,7 +82,19 @@ class WagnGenerator < Rails::Generators::AppBase
         template "cucumber.yml"
       end
     end
+  end
+  
+  def public
+    empty_directory "public"
     
+    inside "public" do
+      template "robots.txt"
+      empty_directory "files"
+    
+      inside "files" do
+        template "htaccess", ".htaccess"
+      end
+    end
   end
   
   def script

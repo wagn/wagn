@@ -41,7 +41,7 @@ module <%= app_const_base %>
 
     # config.override_protocol = nil
     # don't autodetect protocol (http/https) from web requests
-    
+
 
   end
 end

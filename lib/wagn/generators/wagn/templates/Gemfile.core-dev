@@ -2,9 +2,13 @@ source 'http://rubygems.org'
 #source "http://gems.github.com"
 
 
-gem 'wagn', :path=>'/opt/wagn'
+gem 'wagn', :path=>'<%= @wagn_path %>'
 
-gem 'wagn-dev', :path=>'/opt/wagn-dev', :group=>:development
+<% if @wagndev_path.present? -%>
+gem 'wagn-dev', :path=>'<%= @wagndev_path %>', :group=>:development
+<% else -%>
+gem 'wagn-dev', :group=>:development
+<% end -%>
 gem "mysql2", "~> 0.3"
 
 

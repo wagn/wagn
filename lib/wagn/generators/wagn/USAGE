@@ -1,8 +1,9 @@
 Description:
-    Explain the generator
+    The 'wagn new' command creates a new Wagn deck with a default
+    directory structure and configuration at the path you specify.
 
 Example:
-    rails generate wagn Thing
+    wagn new ~/Poker/FullHouse
 
-    This will create:
-        what/will/it/create
+    This generates a new deck in ~/Poker/FullHouse.
+

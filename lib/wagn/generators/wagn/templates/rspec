@@ -1,4 +1,5 @@
 --color
 --profile
 --backtrace
---require spec_helper
+--default-path '<%= @spec_path %>'
+--require '<%= File.join @spec_path, 'spec_helper' %>'

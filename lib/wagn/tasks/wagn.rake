@@ -55,7 +55,7 @@ namespace :wagn do
 
   desc "set symlink for assets"
   task :update_assets_symlink do
-    unless Rails.root.to_s == Wagn.gem_root
+    if Rails.root.to_s != Wagn.gem_root and not File.exists? File.join(Rails.public_path, "assets")
       FileUtils.ln_s( Wagn.paths['gem-assets'].first, File.join(Rails.public_path, "assets") )
     end
   end

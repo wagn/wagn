@@ -14,19 +14,30 @@ class WagnGenerator < Rails::Generators::AppBase
     
   class_option 'core-dev', :type => :boolean, aliases: '-c', :default => false, :group => :runtime, 
     desc: "Prepare deck for wagn core testing"
+    
+  class_option 'mod-dev', :type => :boolean, aliases: '-m', :default => false, :group => :runtime, 
+    desc: "Prepare deck for mod testing"
+    
+  class_option 'interactive', :type => :boolean, aliases: '-i', :default => false, :group => :runtime, 
+      desc: " "
                         
   public_task :create_root
   
 ## should probably eventually use rails-like AppBuilder approach, but this is a first step.  
-  def core_dev_setup
+  def core_dev_setup  
     if options['core-dev']
-      @wagn_path = ask "Please enter the path to your local wagn installation: "
-      @wagndev_path = ask "Please enter the path to your local wagn-dev installation (leave empty to use the wagn-dev gem): "
+      @wagn_path = ask "Enter the path to your local wagn installation: "
+      #@wagndev_path = ask "Please enter the path to your local wagn-dev installation (leave empty to use the wagn-dev gem): "
       @spec_path = File.join @wagn_path, 'spec'
+      @spec_helper_path = File.join @spec_path, 'spec_helper'
       @features_path = File.join @wagn_path, 'features/'  # ending slash is important in order to load support and step folders
       
       template "rspec", ".rspec"
-    end 
+    elsif options['mod-dev']
+      @spec_path = 'mods/'
+      @spec_helper_path = 'wagn/mods_spec_helper'
+      template "rspec", ".rspec"
+    end
   end
 
   
@@ -55,11 +66,7 @@ class WagnGenerator < Rails::Generators::AppBase
   end
     
   def gemfile
-    if options['core-dev']
-      template "Gemfile.core-dev", "Gemfile"
-    else
-      template "Gemfile"
-    end
+    template "Gemfile"
   end
 
   def configru
@@ -107,20 +114,49 @@ class WagnGenerator < Rails::Generators::AppBase
   public_task :run_bundle
   
   def seed_data
-    puts "Your current database configuration: "
-    puts "#{File.read( File.join destination_root, 'config', 'database.yml') }\n" #FIXME just printing the whole content of database.yml is a bit confusing
-    require File.join destination_root, 'config', 'application'
-    require 'wagn/migration_helper'
-    require 'rake'
-    if yes?("Seed #{Rails.env}#{ " and test" if options['core-dev'] } database now? [yn]")
-      Wagn::Application.load_tasks
-      Rake::Task['wagn:create'].invoke
-      if options['core-dev']
-        ENV['RELOAD_TEST_DATA'] = 'true'
-        Rake::Task['db:test:prepare'].invoke
+    if options['interactive']
+      seeded = false
+      require File.join destination_root, 'config', 'application'  # need this for Rails.env
+      while  (answer = ask( <<-TEXT
+        
+What would you like to do next?
+  e - edit database configuration file (config/database.yml)
+  s - seed #{Rails.env}#{ " and test" if options['core-dev'] or options['mod-dev']} database
+  a - seed all databases (production, development, and test)
+  x - exit #{ seeded ? "\n  r - run wagn server" : "(run 'wagn seed' to complete the installation later)"}
+[esax#{'r' if seeded}]
+TEXT
+)) != 'x'      
+        case answer
+        when 'e'
+          system "nano #{File.join destination_root, 'config', 'database.yml'}"
+        when 's'
+          require 'wagn/migration_helper'
+          require 'rake'
+          Wagn::Application.load_tasks
+          Rake::Task['wagn:create'].invoke
+          if options['core-dev'] or options['mod-dev']
+            ENV['RELOAD_TEST_DATA'] = 'true'
+            Rake::Task['db:test:prepare'].invoke
+          end
+          seeded = true
+        when 'a'
+          %w( production development test ).each do |env|
+            system("cd #{destination_root} && RAILS_ENV=#{env} rake wagn:create")  
+            # tried to set rails environment and invoke the task three times but it was only execute once, so I'm using 'system'
+          end
+          seeded = true
+        when 'r'
+          if seeded
+            system "cd #{destination_root} && wagn server"
+          else
+            puts "You have to seed the database first before you can start the server."
+          end
+        end
       end
+    else
+      puts "Review the database configuration in config/database.yml and run 'wagn seed' to complete the installation.\nStart the server with 'wagn s'."
     end
-    
   end
   
   protected

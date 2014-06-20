@@ -4,7 +4,6 @@ def load_rake_tasks
   Wagn::Application.load_tasks
 end
 
-
 require 'active_support/core_ext/object/inclusion' # adds method in? to Object class
 
 ARGV << '--help' if ARGV.empty?
@@ -37,7 +36,7 @@ else
     require 'rake'
     Wagn::Application.load_tasks
     Rake::Task['wagn:create'].invoke
-    if ARGV.include? "-test-data" 
+    if ARGV.include? "--test-data" 
       ENV['RELOAD_TEST_DATA'] = 'true'
       Rake::Task['db:test:prepare'].invoke
     end
@@ -45,9 +44,19 @@ else
     load_rake_tasks
     Rake::Taske['wagn:update'].invoke
   when 'cucumber'
-    system "RAILS_ROOT=. bundle exec cucumber"
+    system "RAILS_ROOT=. bundle exec cucumber #{ ARGV.join(' ') }"
   when 'rspec'
-    system "RAILS_ROOT=. bundle exec rspec"
+    if index = ( ARGV.index("-s") || ARGV.index("--spec" ))
+      ARGV.delete_at(index)
+      files = Dir.glob("mods/**/#{ARGV[index]}_spec.rb").flatten.join(' ')
+      ARGV.delete_at(index)
+    end
+    if index = ( ARGV.index("-m") || ARGV.index("--mod" ))
+      ARGV.delete_at(index)
+      files = "mods/#{ARGV[index]}"
+      ARGV.delete_at(index)
+    end
+    system "RAILS_ROOT=. bundle exec rspec #{ARGV.join(' ')} #{files}"
   when '--version', '-v'
     puts "Wagn #{Wagn::Version.release}"
   when 'new'

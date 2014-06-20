@@ -2,7 +2,7 @@
 require 'uri'
 require 'cgi'
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
-require 'debugger'
+#require 'debugger'
 
 
 Given /^site simulates setup need$/ do
@@ -134,7 +134,7 @@ Then /what/ do
 end
 
 Then /debug/ do
-  debugger
+  #debugger
   nil
 end
 

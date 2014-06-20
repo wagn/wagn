@@ -13,7 +13,7 @@ format :html do
   
   
   view :core do |args|
-    args[:buttons] = submit_tag 'Sign in'
+    args[:buttons] = button_tag 'Sign in'
     if Card.new(:type_id=>Card::SignupID).ok? :create
       args[:buttons] += link_to( '...or sign up!', wagn_path("account/signup"))
     end
@@ -43,7 +43,7 @@ format :html do
     args.merge!( {
       :title=>'Forgot Password',
       :optional_help=>:hide,
-      :buttons => submit_tag( 'Reset my password' ),
+      :buttons => button_tag( 'Reset my password' ),
       :structure => true,      
       :hidden => { 
         :reset_password => true,

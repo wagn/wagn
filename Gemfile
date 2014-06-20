@@ -69,8 +69,11 @@ end
 gem 'ruby-prof', '~>0.12.1', :group=>:profile  # profiling
 
 group :debug do
-  gem 'byebug' if RUBY_VERSION =~ /^2/
-  gem 'debugger'
+  if RUBY_VERSION =~ /^2/
+    gem 'byebug' 
+  else
+    gem 'debugger'
+  end
 end
 
 

@@ -34,19 +34,42 @@ format :html do
   end
 end
 
-event :activate_by_token, :before=>:approve, :on=>:update do
-  if token = Env.params[:token]
-    if id == Auth.authenticate_by_token(token)
-      subcards['+*account'] = {'+*status'=>'active'}
-      self.type_id = Card.default_accounted_type_id
-      Auth.signin id #move this to extend?
-      Auth.as_bot
-      Env.params[:success] = ''
-    else
-      abort :failure
-    end
+event :activate_by_token, :before=>:approve, :on=>:update, :when=>proc{ |c| c.has_token? } do
+  authentication_result = Auth.authenticate_by_token @env_token
+  case authentication_result
+  when Integer
+    subcards['+*account'] = {'+*status'=>'active'}
+    self.type_id = Card.default_accounted_type_id
+    Auth.signin authentication_result
+    Auth.as_bot
+    Env.params[:success] = ''
+  when :token_expired
+    resend_activation_token
+    abort :success
+  else
+    abort :failure, "signup activation error: #{authentication_result}" # bad token or account
   end
 end
+
+def has_token?
+  @env_token = Env.params[:token]
+end
+
+
+event :resend_activation_token do
+  Auth.as_bot do
+    token_card = Auth.find_token_card @env_token
+    token_card.update_attributes! :content => generate_token
+    token_card.left.send_new_account_confirmation_email
+  end
+  Env.params[:success] = {
+    :id => '_self',
+    :view => 'message',
+    :message => "Sorry, this token has expired. Please check your email for a new password reset link."
+  }
+end
+
+
 
 
 event :preprocess_account_subcards, :before=>:process_subcards, :on=>:create do

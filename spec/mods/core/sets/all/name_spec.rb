@@ -26,4 +26,36 @@ describe Card::Set::All::Name do
       b1.name.should== 'b1'
     end
   end
+  
+  describe 'codename' do
+    before :each do
+      @card = Card['a']
+    end
+    
+    it 'should require admin permission' do
+      @card.update_attributes :codename=>'structure'
+      @card.errors[:codename].first.should =~ /only admins/
+    end
+    
+    it 'should check uniqueness' do
+      Card::Auth.as_bot do
+        @card.update_attributes :codename=>'structure'
+        @card.errors[:codename].first.should =~ /already in use/
+      end
+    end
+    
+  end
+  
+  describe 'repair_key' do
+    it 'should fix broken keys' do
+      a = Card['a']
+      a.update_column 'key', 'broken_a'
+      a.expire
+      
+      a = Card.find a.id
+      a.key.should == 'broken_a'
+      a.repair_key
+      a.key.should == 'a'
+    end
+  end
 end

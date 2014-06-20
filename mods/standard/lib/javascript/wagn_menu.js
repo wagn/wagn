@@ -64,13 +64,4 @@ wagn.menu_template = [
     ]
   }
   
-]
-
-
-
-
-
-
-
-
-
+];

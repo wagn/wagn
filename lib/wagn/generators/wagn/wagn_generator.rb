@@ -58,7 +58,19 @@ class WagnGenerator < Rails::Generators::AppBase
       template "boot.rb"
       template "databases/#{options[:database]}.yml", "database.yml"  
     end
+  end
+  
+  def public
+    empty_directory "public"
     
+    inside "public" do
+      template "robots.txt"
+      empty_directory "files"
+    
+      inside "files" do
+        template "htaccess", ".htaccess"
+      end
+    end
   end
   
   def script

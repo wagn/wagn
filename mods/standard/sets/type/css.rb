@@ -1,3 +1,19 @@
+include Machine
+include MachineInput
+
+store_machine_output :filetype => "css"
+
+machine_input do 
+  compress_css format(:format => :css)._render_core
+end
+
+def compress_css input
+  begin
+    Sass.compile input, :style=>:compressed
+  rescue Exception=>e
+    raise Card::Oops, "Stylesheet Error:\n#{ e.message }"
+  end
+end 
 
 format :html do
 
@@ -9,8 +25,4 @@ format :html do
     process_content ::CodeRay.scan( _render_raw, :css ).div, :size=>:icon
   end
   
-end
-
-event :reset_style_for_css, :after=>:store do
-  Right::Style.delete_style_files
 end

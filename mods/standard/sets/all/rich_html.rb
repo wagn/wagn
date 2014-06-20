@@ -1,19 +1,20 @@
 
 format :html do
   
-  def show args
-    @main_view = args[:view] || args[:home_view]
-
+  def show view, args
     if Env.ajax?
-      view = @main_view || :open
-      self.render view, args
+      view ||= args[:home_view] || :open
+      @inclusion_opts = args.delete(:items)
+      render view, args
     else
-      self.render_layout args
+      args.merge! :view=>view if view
+      @main_opts = args
+      self.render_layout
     end
   end
 
   view :layout, :perms=>:none do |args|
-    layout_content = get_layout_content args
+    layout_content = get_layout_content
     process_content layout_content
   end
 
@@ -120,7 +121,6 @@ format :html do
     json = html_escape_except_quotes JSON( @menu_vars )
     %{<span class="card-menu-link" data-menu-vars='#{json}'>#{_render_menu_link}</span>}
   end
-
 
   view :menu_link do |args|
     '<a class="ui-icon ui-icon-gear"></a>'
@@ -360,6 +360,7 @@ format :html do
   end
 
 
+
   view :options, :tags=>:unknown_ok do |args|
     current_set = Card.fetch( params[:current_set] || card.related_sets[0][0] )
 
@@ -396,7 +397,7 @@ format :html do
       nest_args[:optional_comment_box] = :show if rparams[:name] == '+discussion' #fixme.  yuck!
 
       frame args do
-        process_inclusion rcard, nest_args
+        nest rcard, nest_args
       end
     end
   end
@@ -417,6 +418,12 @@ format :html do
     %{<div class="instruction">#{raw text}</div>} if text
   end
 
+  view :message, :perms=>:none, :tags=>:unknown_ok do |args|
+    frame args do
+      params[:message]
+    end
+  end
+
   view :conflict, :error_code=>409 do |args|
     load_revisions
     wrap args.merge( :slot_class=>'error-view' ) do
@@ -428,36 +435,43 @@ format :html do
   end
 
   view :change do |args|
+    args[:optional_title_link] = :show
     wrap args do
-      %{
-        #{ link_to_page card.name, nil, :class=>'change-card' }
-        #{ _optional_render :menu, args, :hide }
-        #{
-        if rev = card.current_revision and !rev.new_record?
-          # this check should be unnecessary once we fix search result bug
-          %{<span class="last-update"> #{
-
-            case card.updated_at.to_s
-              when card.created_at.to_s; 'added'
-              when rev.created_at.to_s;  link_to('edited', path(:view=>:history), :class=>'last-edited', :rel=>'nofollow')
-              else; 'updated'
-            end} #{
-
-             time_ago_in_words card.updated_at } ago by #{ #ENGLISH
-             link_to_page card.updater.name, nil, :class=>'last-editor'}
-           </span>}
-        end
-        }
-      }
+      [
+        _optional_render( :title, args       ),
+        _optional_render( :menu, args, :hide ),
+        _optional_render( :last_action, args )
+      ]
     end
   end
-
+  
+  
+  view :last_action do |args|
+    rev = card.current_revision
+    action = case card.updated_at.to_s
+      when card.created_at.to_s; 'added'
+      when rev.created_at.to_s;  link_to('edited', path(:view=>:history), :class=>'last-edited', :rel=>'nofollow')
+      else; 'updated'
+      end
+    %{
+      <span class="last-update">
+        #{ action }
+        #{ _render_updated_at }
+        ago by
+        #{ subformat(card.updater)._render_link }
+      </span> 
+    }
+  end
+          
   view :errors, :perms=>:none do |args|
     #Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller[0..3]*", "}"
     if card.errors.any?
-      wrap args do
-        %{ <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
-        card.errors.map { |attrib, msg| "<div>#{attrib.to_s.upcase}: #{msg}</div>" } * ''
+      title = %{ Problems #{%{ with #{card.name} } unless card.name.blank?} }
+      frame args.merge( :title=>title ) do
+        card.errors.map do |attrib, msg|
+          msg = "#{attrib.to_s.upcase}: #{msg}" unless attrib == :abort
+          %{ <div class="card-error-msg">#{msg}</div> }
+        end
       end
     end
   end
@@ -495,7 +509,7 @@ format :html do
           "You need permission #{to_task}"
         else
           or_signup = if Card.new(:type_id=>Card::SignupID).ok? :create
-            "or #{ link_to 'sign up', wagn_url(':signup') }"
+            "or #{ link_to 'sign up', wagn_url('account/signup') }"
           end
           "You have to #{ link_to 'sign in', wagn_url(':signin') } #{or_signup} #{to_task}"
         end

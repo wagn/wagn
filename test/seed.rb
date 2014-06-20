@@ -15,9 +15,7 @@ class SharedData
   end
 
   def self.add_test_data
-    #Card::Auth.current_id = Card::WagnBotID
-    CodenameTable.load_bootcodes unless !Card::Codename[:wagn_bot].nil?
-
+    
     Wagn::Cache.reset_global
     Card::Env.reset
     Card::Auth.as_bot

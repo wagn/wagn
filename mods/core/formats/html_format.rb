@@ -39,35 +39,31 @@ class Card
       ok? :comment
     end
 
-    def get_layout_content(args)
+    def get_layout_content
       Auth.as_bot do
-        case
-          when (params[:layout] || args[:layout]) ;  layout_from_name args
-          when card                               ;  layout_from_card
-          else                                    ;  LAYOUTS['default']
+        if requested_layout = params[:layout]
+          layout_from_card_or_code requested_layout
+        else
+          layout_from_rule
         end
       end
     end
 
-    def layout_from_name args
-      lname = (params[:layout] || args[:layout]).to_s
-      lcard = Card.fetch(lname, :skip_virtual=>true, :skip_modules=>true)
-      case
-        when lcard && lcard.ok?(:read)         ; lcard.content
-        when hardcoded_layout = LAYOUTS[lname] ; hardcoded_layout
-        else  ; "<h1>Unknown layout: #{lname}</h1>Built-in Layouts: #{LAYOUTS.keys.join(', ')}"
+    def layout_from_rule
+      if rule = card.rule_card(:layout) and rule.type_id==Card::PointerID and layout_name=rule.item_names.first
+        layout_from_card_or_code layout_name
       end
     end
 
-    def layout_from_card
-      return unless rule_card = (card.rule_card(:layout) or Card.default_rule_card(:layout))
-      #return unless rule_card.is_a?(Card::Set::Type::Pointer) and  # type check throwing lots of warnings under cucumber: rule_card.type_id == Card::PointerID        and
-      return unless rule_card.type_id == Card::PointerID        and
-          layout_name=rule_card.item_names.first                and
-          !layout_name.nil?                                     and
-          lo_card = Card.fetch( layout_name, :skip_virtual => true, :skip_modules=>true ) and
-          lo_card.ok?(:read)
-      lo_card.content
+    def layout_from_card_or_code name
+      layout_card = Card.fetch name.to_s, :skip_virtual=>true, :skip_modules=>true
+      if layout_card and layout_card.ok? :read
+        layout_card.content
+      elsif hardcoded_layout = LAYOUTS[name]
+        hardcoded_layout
+      else
+        "<h1>Unknown layout: #{name}</h1>Built-in Layouts: #{LAYOUTS.keys.join(', ')}"
+      end
     end
 
     def slot_options args
@@ -143,7 +139,6 @@ class Card
       when Array ; content.compact.join "\n"
       end
     end  
-
 
     def wrap_main(content)
       return content if params[:layout]=='none'
@@ -360,7 +355,7 @@ class Card
       if Env.ajax?
         @depth == 0 && params[:is_main]
       else
-        @depth == 1 && @mainline
+        @depth == 1 && @mainline #assumes layout includes {{_main}}
       end
     end
 

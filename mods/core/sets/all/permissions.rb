@@ -66,9 +66,7 @@ end
 
 
 def deny_because why
-  [why].flatten.each do |message|
-    errors.add :permission_denied, message
-  end
+  @permission_errors << why if @permission_errors
   @action_ok = false
 end
 
@@ -103,8 +101,9 @@ def ok_to_create
   permit :create
   if @action_ok and junction?
     [:left, :right].each do |side|
-      part_card = send side, :new=>{}
-      if part_card && part_card.new_card? #if no card, there must be other errors
+      next if side==:left && @superleft   # left is supercard; create permissions will get checked there.
+      part_card = send side, :new=>{}      
+      if part_card && part_card.new_card? # if no card, there must be other errors
         unless part_card.ok? :create
           deny_because you_cant("create #{part_card.name}")
         end
@@ -195,15 +194,28 @@ end
 
 
 event :check_permissions, :after=>:approve do
-  act = if @action != :delete && comment #will be obviated by new comment handling
+  task = if @action != :delete && comment #will be obviated by new comment handling
     :comment
   else
     @action
   end
-  ok? act
+  
+  track_permission_errors do
+    ok? task
+  end
 end
 
-
+def track_permission_errors
+  @permission_errors = []
+  result = yield
+  
+  @permission_errors.each do |message|
+    errors.add :permission_denied, message
+  end
+  @permission_errors = nil
+  
+  result
+end
 
 event :recaptcha, :before=>:approve do
   if !@supercard                        and
@@ -218,13 +230,21 @@ event :recaptcha, :before=>:approve do
 end
 
 module Accounts
+  # This is a short-term hack that is used in account-related cards to allow a permissions pattern where
+  # permissions are restricted to the owner of the account (and, by default, Admin)
+  # That pattern should be permitted by our card representation (without creating 
+  # separate rules for each account holder) but is not yet.
+  
   def permit action, verb=nil
     case
     when action==:comment  ; @action_ok = false
-    when is_own_account?   ; true 
+    when action==:create   ; @superleft ? true : super( action, verb ) 
+      #restricts account creation to subcard handling on permitted card (unless explicitly permitted)
+    when is_own_account?   ; true
     else                   ; super action, verb
     end
   end
+  
 end
   
 

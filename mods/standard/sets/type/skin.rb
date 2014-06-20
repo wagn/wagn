@@ -1,5 +1,8 @@
-
 include Pointer
+include Machine
+include MachineInput
+
+store_machine_output :filetype => "css"
 
 view :core, :type=>:pointer
 
@@ -20,7 +23,4 @@ format :css do
 end
 
 
-event :reset_style_for_skin, :after=>:store do
-  Right::Style.delete_style_files
-end
 

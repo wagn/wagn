@@ -59,6 +59,7 @@ format do
     card.content=='_left' ? core_inherit_content(args) : _final_pointer_type_closed_content(args)
   end
 
+
   private
 
   def core_inherit_content args={}
@@ -79,4 +80,9 @@ format do
     end
     %{<span class="inherit-perm">#{text}</span>}
   end
+end
+
+
+def standardize_items
+  # noop to override default behavior, which wouldn't let '_left' through and would therefore break
 end

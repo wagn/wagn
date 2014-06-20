@@ -298,7 +298,7 @@ toggleShade = (shadeSlot) ->
   shadeSlot.find('.ui-icon').toggleClass 'ui-icon-triangle-1-e ui-icon-triangle-1-s'  
 
 permissionsContent = (ed) ->
-  return '_left' if ed.find('#inherit').attr('checked')
+  return '_left' if ed.find('#inherit').is(':checked')  
   groups = ed.find('.perm-group input:checked').map( -> $(this).val() )
   indivs = ed.find('.perm-indiv input'        ).map( -> $(this).val() )
   pointerContent $.makeArray(groups).concat($.makeArray(indivs))

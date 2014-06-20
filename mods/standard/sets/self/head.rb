@@ -11,12 +11,12 @@ format :html do
       #{ head_javascript }      
     )
   end
-
-  view :core, :raw
   
-  view :content do |args|
-    wrap args.merge(:slot_class=>'card-content') do
-      CGI.escapeHTML render_raw
+  view :core do |args|
+    case
+    when focal?    ; CGI.escapeHTML _render_raw(args)
+    when @mainline ; "(*head)"
+    else           ; _render_raw(args)
     end
   end
   
@@ -45,9 +45,8 @@ format :html do
       # RSS # move to mods!
       if root.card.type_id == SearchTypeID
         opts = { :format => :rss }
-        root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
-        rss_href = page_path root.card.name, opts
-        bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{wagn_path rss_href} />}
+        search_params[:vars].each { |key, val| opts["_#{key}"] = val }
+        bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{page_path root.card.name, opts} />}
       end
     end
     bits.join "\n      "
@@ -55,18 +54,15 @@ format :html do
   
   def head_stylesheets
     manual_style = params[:style]
-    debug        = params[:debug] == 'style'
-    style_rule   = card.rule_card :style
+    style_card   = Card[manual_style] if manual_style
+    style_card ||= card.rule_card :style
     
-    if manual_style or debug   
-      path_args = { :format=>:css }
-      path_args[:item] = :import if debug
-      style_cardname = manual_style || (style_rule && style_rule.name)
-      @css_path = page_path style_cardname, path_args
-    elsif style_rule
-      @css_path = wagn_path style_rule.style_path
+    @css_path = if params[:debug] == 'style'
+      page_path( style_card.name, :item => :import, :format => :css) 
+    elsif style_card
+      wagn_path style_card.machine_output_url
     end 
-
+    
     if @css_path
       %{<link href="#{@css_path}" media="all" rel="stylesheet" type="text/css" />}
     end
@@ -81,9 +77,11 @@ format :html do
     c=Card[:double_click] and !Card.toggle c.content and varvals << 'wagn.noDoubleClick=true'
     @css_path                                        and varvals << "wagn.cssPath='#{@css_path}'"
     
+    script_card = card.rule_card :script
+    ie9_card    = Card[:script_html5shiv_printshiv]
     %(#{ javascript_tag do varvals * ';' end  }      
-      #{ javascript_include_tag 'application' }
-      <!--[if lt IE 9]>#{ javascript_include_tag 'html5shiv-printshiv' }<![endif]-->
+      #{ javascript_include_tag script_card.machine_output_url if script_card }
+      <!--[if lt IE 9]>#{ javascript_include_tag ie9_card.machine_output_url if ie9_card }<![endif]-->
       #{ javascript_tag { "wagn.setTinyMCEConfig('#{ escape_javascript Card.setting(:tiny_mce).to_s }')" } }
       #{ google_analytics_head_javascript })
   end

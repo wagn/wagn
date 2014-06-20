@@ -74,4 +74,9 @@ event :reset_type_specific_fields, :after=>:store do
     end
   end
 end
+
+#    Card.search :left_plus=>[ type_name, :right_plus=>{:codename=>'type_plus_right'}] do |right_anchor|
+#      Card["#{lef}"]
+#      set_card.reset_set_patterns
+#    end
   

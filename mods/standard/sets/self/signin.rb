@@ -15,7 +15,7 @@ format :html do
   view :core do |args|
     args[:buttons] = submit_tag 'Sign in'
     if Card.new(:type_id=>Card::SignupID).ok? :create
-      args[:buttons] += link_to( '...or sign up!', wagn_path(":signup"))
+      args[:buttons] += link_to( '...or sign up!', wagn_path("account/signup"))
     end
     args[:buttons] += raw("<div style='float:right'>#{ link_to_view 'RESET PASSWORD', :edit }</div>") #FIXME - hardcoded styling
   
@@ -65,8 +65,12 @@ format :html do
 end
 
 event :signin, :before=>:approve, :on=>:update do 
-  email = subcards["+#{Card[:email   ].name}"][:content]
-  pword = subcards["+#{Card[:password].name}"][:content]
+  email = subcards["+#{Card[:email   ].name}"]
+  email &&= email['content']
+  pword = subcards["+#{Card[:password].name}"]
+  pword &&= pword['content']
+
+  abort :failure, 'bad signin args' unless email && pword  
   
   if signin_id = Auth.authenticate( email, pword )
     Auth.signin signin_id
@@ -82,19 +86,19 @@ event :signin, :before=>:approve, :on=>:update do
   end  
 end
 
-event :send_reset_password_token, :before=>:signin, :on=>:update, :when=>proc{ |c| Card::Env.params[:reset_password] } do
-  email = subcards["+#{Card[:email].name}"][:content]
+event :send_reset_password_token, :before=>:signin, :on=>:update, :when=>proc{ |c| Env.params[:reset_password] } do
+  email = subcards["+#{Card[:email].name}"]
+  email &&= email['content']
   
   if accted = Auth[ email.strip.downcase ] and accted.account.active?
-    Auth.as_bot do
-      token_card = accted.account.token_card
-      token_card.content = generate_token
-      token_card.save!
-    end
-    Mailer.password_reset(accted.account).deliver
+    accted.account.send_reset_password_token
     abort :success    
   else
-    errors.add :account, (accted ? 'not active' : 'not found')
+    if accted
+      errors.add :account, 'not active'
+    else
+      errors.add :email, 'not recognized'
+    end
     abort :failure
   end
 end

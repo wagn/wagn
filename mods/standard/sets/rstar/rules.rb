@@ -53,7 +53,7 @@ format :html do
       set_selected = card_args[:name].to_name.left_name.to_s
     end
 
-    edit_mode = !params[:item] && card.ok?( ( card.new_card? ? :create : :update ) )
+    edit_mode = !params[:success] && card.ok?( ( card.new_card? ? :create : :update ) )
     
     opts = {
       :open_rule    => card,

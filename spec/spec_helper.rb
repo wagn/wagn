@@ -3,11 +3,14 @@ require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
 require 'simplecov'
+require File.expand_path( '../../spec/mods/standard/lib/machine_spec.rb', __FILE__ )
+require File.expand_path( '../../spec/mods/standard/lib/machine_input_spec.rb', __FILE__ )
 
 Spork.prefork do
   require File.expand_path( '../../config/environment', __FILE__ )
   require 'rspec/rails'
-
+  
+  
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
 #  Dir[ File.join(Wagn.gem_root, "spec/support/**/*.rb") ].each { |f| require f }
@@ -18,8 +21,13 @@ Spork.prefork do
   RSpec.configure do |config|
 
     config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => {
-      :file_path => /\bspec\/controllers\// }
+      :file_path => /\bspec\/controllers\//
+    }
 
+    format_index = ARGV.find_index {|arg| arg =~ /--format/ }
+    formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation'
+    config.add_formatter formatter
+    
     #config.include CustomMatchers
     #config.include ControllerMacros, :type=>:controllers
 
@@ -31,7 +39,7 @@ Spork.prefork do
 
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
-
+    
 
     config.before(:each) do
       Card::Auth.current_id = JOE_USER_ID
@@ -46,6 +54,7 @@ end
 
 
 Spork.each_run do
+
   # This code will be run each time you run your specs.
 end
 
@@ -96,6 +105,38 @@ module Wagn::SpecHelper
       end
     end
     card.format(format_args)._render(view)
+  end
+end
+
+
+class Card
+  def self.gimme! name, args = {}
+    Card::Auth.as_bot do
+      c = Card.fetch( name, :new => args )
+      c.putty args
+      Card.fetch name 
+    end    
+  end
+  
+  def self.gimme name, args = {}
+    Card::Auth.as_bot do
+      c = Card.fetch( name, :new => args )
+      if args[:content] and c.content != args[:content]
+        c.putty args
+        c = Card.fetch name 
+      end
+      c
+    end    
+  end
+  
+  def putty args = {}
+    Card::Auth.as_bot do
+      if args.present? 
+        update_attributes! (args) 
+      else 
+        save!
+      end
+    end
   end
 end
 

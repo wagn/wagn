@@ -1,3 +1,4 @@
+
 view :core do |args|
   case card.raw_content.to_i
   when 1; 'yes'

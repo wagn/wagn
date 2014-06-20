@@ -124,11 +124,11 @@ describe Card::Set::All::Account do
       @read_rules.member?(Card.fetch('*all+*read').id).should be_true
     end
 
-    it "3 more should apply to Joe Admin" do
+    it "9 more should apply to Joe Admin" do
+      # includes lots of account rules...
       Card::Auth.as(:joe_admin) do
         ids = Card::Auth.as_card.read_rules
-        #warn "rules = #{ids.map(&Card.method(:find)).map(&:name) * ', '}"
-        ids.length.should == @read_rules.size + 4
+        ids.length.should == @read_rules.size + 9
       end
     end
 

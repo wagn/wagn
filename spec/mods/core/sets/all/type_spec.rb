@@ -58,6 +58,8 @@ describe Card::Set::All::Type do
     
     it "should clear cache of structured included card after saving" do
       Card::Auth.as_bot do
+        Card.fetch('t1+results', :new=>{}).type_name.should == 'Basic'
+        
         topic1 = Card.new :type=>'Topic', :name=>'t1'
         topic1.format._render_new
         topic1.save!

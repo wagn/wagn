@@ -107,7 +107,7 @@ module ClassMethods
   def clear_read_rule_cache
     Card.cache.write 'READRULES', nil
   end
-  
+=begin  
   def default_rule setting_code, fallback=nil
     card = default_rule_card setting_code, fallback
     return card && card.content
@@ -118,7 +118,7 @@ module ClassMethods
     rule_id ||= fallback && rule_cache["all+#{fallback}"]
     Card[rule_id] if rule_id
   end
-  
+=end  
 end
 
 

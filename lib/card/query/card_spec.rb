@@ -100,7 +100,7 @@ class Card
           when String;   { :key => s.to_name.key }
           when Integer;  { :id => s              }
           when Hash;     s
-          else; raise BadQueyr, "Invalid cardspec args #{s.inspect}"
+          else; raise BadQuery, "Invalid cardspec args #{s.inspect}"
         end
       end
 
@@ -278,7 +278,7 @@ class Card
 
         cards.each do |c|
           unless c && [SearchTypeID,SetID].include?(c.type_id)
-            raise BadQuery, %{"found_by" value needs to be valid Search card}
+            raise BadQuery, %{"found_by" value needs to be valid Search, but #{c.name} is a #{c.type_name}}
           end
           found_by_spec = CardSpec.new(c.get_spec).rawspec
           merge(field(:id) => subspec(found_by_spec))

@@ -1,7 +1,7 @@
 
 format do
-  def show args
-    view = args[:view] || :core
+  def show view, args
+    view ||= :core
     render view, args
   end
 end
@@ -19,6 +19,12 @@ view :url,      :perms=>:none  do |args|  wagn_url _render_linkname    end
 view :link, :perms=>:none  do |args|
   card_link card.name, showname( args[:title] ), card.known?, args[:type]
 end
+
+
+# DATE VIEWS
+
+view :created_at do |args| time_ago_in_words card.created_at end
+view :updated_at do |args| time_ago_in_words card.updated_at end
 
 
 # CONTENT VIEWS
@@ -43,6 +49,7 @@ end
 view :closed_content do |args|
   Card::Content.truncatewords_with_closing_tags _render_core(args) #{ yield }
 end
+
 
 # note: content and open_content may look like they should be aliased to core, but it's important that they render
 # core explicitly so that core view overrides work.  the titled and labeled views below, however, are not intended
@@ -94,10 +101,6 @@ end
 
 view :bad_address, :perms=>:none, :error_code=>404 do |args|
   %{ 404: Bad Address }
-end
-
-view :no_card, :perms=>:none, :error_code=>404 do |args|
-  %{ 404: No Card! }
 end
 
 view :too_deep, :perms=>:none do |args|

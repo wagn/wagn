@@ -2,6 +2,7 @@
 require 'uri'
 require 'cgi'
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
+require 'debugger'
 
 
 Given /^site simulates setup need$/ do
@@ -134,6 +135,7 @@ end
 
 Then /debug/ do
   debugger
+  nil
 end
 
 
@@ -179,6 +181,8 @@ When /^I hover over the main menu$/ do
   page.execute_script "$('#main > .card-slot > .card-header > .card-menu-link').trigger('mouseenter')"
 end
 
+When /^I pick (.*)$/ do |menu_item|
+end
 
 Then /the card (.*) should contain "([^\"]*)"$/ do |cardname, content|
   visit path_to("card #{cardname}")

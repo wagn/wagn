@@ -1,3 +1,4 @@
+
 WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references }
 
 namespace :wagn do
@@ -29,13 +30,18 @@ namespace :wagn do
       puts "loading bootstrap"
       Rake::Task['wagn:bootstrap:load'].invoke
     end
+    
+    puts "set symlink for assets"
+    Rake::Task['wagn:update_assets_symlink'].invoke
   end
   
   desc "update wagn gems and database"
   task :update do
-    system 'bundle update'
+    #system 'bundle update'
     Rake::Task['wagn:migrate'].invoke
-    #fixme: remove tmp/sets ?
+    # FIXME remove tmp dir / clear cache
+    puts "set symlink for assets"
+    Rake::Task['wagn:update_assets_symlink'].invoke
   end
   
   desc "reset cache"
@@ -43,6 +49,12 @@ namespace :wagn do
     Wagn::Cache.reset_global
   end
 
+  desc "set symlink for assets"
+  task :update_assets_symlink do
+    unless Rails.root.to_s == Wagn.gem_root
+      FileUtils.ln_s( Wagn.paths['gem-assets'].first, File.join(Rails.public_path, "assets") )
+    end
+  end
 
   desc "migrate structure and cards"
   task :migrate =>:environment do

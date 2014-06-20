@@ -147,8 +147,6 @@ end
 
 
 event :standardize_items, :before=>:approve, :on=>:save do
-  Rails.logger.info "create.rb standardize_items base"
-  
   if updates.for? :content
     self.content = item_names(:context=>:raw).map { |name| "[[#{name}]]" }.join "\n"
   end
@@ -172,7 +170,7 @@ end
 
 def item_names args={}
   context = args[:context] || self.cardname
-  self.raw_content.split(/\n+/).map do |line|
+  self.raw_content.to_s.split(/\n+/).map do |line|
     item_name = line.gsub /\[\[|\]\]/, ''
     if context == :raw
       item_name

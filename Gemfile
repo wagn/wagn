@@ -15,7 +15,7 @@ group :assets do
   gem 'uglifier'                               # makes pretty code ugly again.  compresses js/css for fast loading
 
   gem 'jquery-rails',  '~> 3.1'                # main js framework, along with rails-specific unobtrusive lib
-  gem 'jquery-ui-rails',  '~> 4.2'             # main js framework, along with rails-specific unobtrusive lib
+  gem 'jquery-ui-rails',  '~> 4.2'
   gem "jquery_mobile_rails", "~> 1.4.1"
   
   gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor

@@ -26,11 +26,30 @@ format :html do
 
 
   view :core do |args|
-    #ENGLISH
-    process_content(_render_raw) +
-    if (card.new_card?); '' else
-      %{<div class="invite-links"><strong>#{card.name}</strong> requested an account on #{format_date(card.created_at) }</div>}
+    headings, links = [], []
+    if !card.new_card? #necessary?
+      headings << %(<strong>#{ card.name }</strong> requested an account on #{ format_date card.created_at })
+      if account = card.account
+        if account.token
+          headings << "An activation token has been sent for this account"
+        else
+          if account.confirm_ok?
+            links << link_to( "Approve #{card.name}", wagn_path("/update/~#{card.id}?approve=true") )
+          end
+          if card.ok? :delete
+            links << link_to( "Deny #{card.name}", wagn_path("/delete/~#{card.id}") )
+          end
+          headings << links * '' if links.any?
+        end
+      else
+        headings << "ERROR: signup card missing account"
+      end
     end
+    %{<div class="invite-links">
+        #{ headings.map { |h| "<div>#{h}</div>"} * "\n" }
+      </div>
+      #{ process_content render_raw }    
+    }
   end
 end
 
@@ -56,12 +75,16 @@ def has_token?
 end
 
 
+event :approve_account, :on=>:update, :before=>:process_subcards, :when=>proc {|c| Env.params[:approve] } do
+  account.reset_token
+  account.send_account_confirmation_email
+end
+
+
 event :resend_activation_token do
-  Auth.as_bot do
-    token_card = Auth.find_token_card @env_token
-    token_card.update_attributes! :content => generate_token
-    token_card.left.send_new_account_confirmation_email
-  end
+  account = Auth.find_token_card( @env_token ).left
+  account.reset_token
+  account.send_account_confirmation_email
   Env.params[:success] = {
     :id => '_self',
     :view => 'message',
@@ -87,6 +110,4 @@ end
 event :signup_notifications, :after=>:extend, :on=>:create, :when=>send_signup_notifications do
   Mailer.signup_alert(self).deliver
 end
-
-
 

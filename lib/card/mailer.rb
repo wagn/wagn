@@ -15,7 +15,8 @@ class Card
 
     def confirmation_email account
       @site = Card.setting :title
-      @link = wagn_url "/update/#{account.left.cardname.url_key}?token=#{account.token}"
+      @token = account.token
+      @link = wagn_url "/update/#{ account.left.cardname.url_key }?token=#{ @token }"
       @expiry = Wagn.config.token_expiry
 
       confirm_from = token_emails_from(account)

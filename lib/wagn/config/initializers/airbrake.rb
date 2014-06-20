@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-puts "wagn/Airbreak"
 filename = '/etc/airbrake.key'
 if File.exists? filename
   key = File.read( filename ).strip

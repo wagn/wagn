@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 Wagn.application.class.configure do
-  puts "wagn/production"
   # Settings specified here will take precedence over those in config/application.rb
 
   # Code is not reloaded between requests

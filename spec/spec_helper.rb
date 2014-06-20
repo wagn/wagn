@@ -7,9 +7,13 @@ require File.expand_path( '../../spec/mods/standard/lib/machine_spec.rb', __FILE
 require File.expand_path( '../../spec/mods/standard/lib/machine_input_spec.rb', __FILE__ )
 
 Spork.prefork do
-  require File.expand_path( '../../config/environment', __FILE__ )
-  require 'rspec/rails'
+  if ENV["RAILS_ROOT"]
+    require File.join( ENV["RAILS_ROOT"], '/config/environment')
+  else
+    require File.expand_path( '../../config/environment', __FILE__ )
+  end
   
+  require 'rspec/rails'
   
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.

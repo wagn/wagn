@@ -1,0 +1,5 @@
+--color
+--profile
+--backtrace
+--default-path '<%= @spec_path %>'
+--require '<%= @spec_helper_path %>'

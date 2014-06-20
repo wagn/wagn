@@ -1,4 +1,4 @@
-# -*- encoding : utf-8 -*-
+-*- encoding : utf-8 -*-
 $:.unshift(ENV['JASMINE_GEM_PATH']) if ENV['JASMINE_GEM_PATH'] # for gem testing purposes
 
 require 'rubygems'
@@ -18,4 +18,4 @@ end
 
 spec_builder.start
 should_stop = true
-spec_builder.declare_suites
+spec_builder.declare_suitesw

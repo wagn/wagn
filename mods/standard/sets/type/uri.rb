@@ -3,5 +3,5 @@ view :editor do |args|
 end
 
 view :core do |args|
-  build_link _render_raw, args['link_text'] || card.name
+  build_link _render_raw, args['title'] || card.name
 end

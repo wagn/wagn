@@ -1,4 +1,4 @@
-module Wagn::SpecHelper
+module Wagn::WagnSpecHelper
 
   include ActionDispatch::Assertions::SelectorAssertions
   #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#

@@ -62,5 +62,5 @@ Spork.each_run do
 end
 
 require 'wagn/wagn_spec_helper'
-RSpec::Core::ExampleGroup.send :include, Wagn::SpecHelper
+RSpec::Core::ExampleGroup.send :include, Wagn::WagnSpecHelper
 

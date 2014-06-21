@@ -78,8 +78,8 @@ else
                new deck called MyDeck in "./my_deck"
    seed        Create and seed the database specified in config/database.yml
    
-   console     Start the Rails console (short-cut alias: "c")
    server      Start the Rails server (short-cut alias: "s")
+   console     Start the Rails console (short-cut alias: "c")
    dbconsole   Start a console for the database specified in config/database.yml
                (short-cut alias: "db")
                

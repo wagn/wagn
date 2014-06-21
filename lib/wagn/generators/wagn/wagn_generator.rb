@@ -19,7 +19,7 @@ class WagnGenerator < Rails::Generators::AppBase
     desc: "Prepare deck for mod testing"
     
   class_option 'interactive', :type => :boolean, aliases: '-i', :default => false, :group => :runtime, 
-      desc: " "
+      desc: "Prompt with dynamic installation options"
                         
   public_task :create_root
   

@@ -38,6 +38,10 @@ namespace :wagn do
   desc "update wagn gems and database"
   task :update do
     #system 'bundle update'
+    if Wagn.paths["tmp"].existent
+      FileUtils.rm_rf Wagn.paths["tmp"].first, :secure=>true
+      Dir.mkdir  Wagn.paths["tmp"].first
+    end
     Rake::Task['wagn:migrate'].invoke
     # FIXME remove tmp dir / clear cache
     puts "set symlink for assets"
@@ -51,7 +55,7 @@ namespace :wagn do
 
   desc "set symlink for assets"
   task :update_assets_symlink do
-    unless Rails.root.to_s == Wagn.gem_root
+    if Rails.root.to_s != Wagn.gem_root and not File.exists? File.join(Rails.public_path, "assets")
       FileUtils.ln_s( Wagn.paths['gem-assets'].first, File.join(Rails.public_path, "assets") )
     end
   end

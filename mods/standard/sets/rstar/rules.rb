@@ -188,7 +188,7 @@ format :html do
               %{<span class="rule-delete-section">#{ button_tag 'Delete', b_args }</span>}
             end
            }
-           #{ submit_tag 'Submit', :class=>'rule-submit-button' }
+           #{ button_tag 'Submit', :class=>'rule-submit-button' }
            #{ button_tag 'Cancel', :class=>'rule-cancel-button slotter', :type=>'button',
                 :href=>path( :view=>( card.new_card? ? :closed_rule : :open_rule ), :card=>open_rule, :item=>:view_rule ) }
         </div>

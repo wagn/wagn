@@ -195,7 +195,7 @@ format :html do
     end
     
     args[:buttons] ||= %{
-      #{ submit_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
+      #{ button_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
       #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
     }
     
@@ -215,7 +215,7 @@ format :html do
     args[:optional_help] = :show
     
     args[:buttons] = %{
-      #{ submit_tag 'Submit', :class=>'submit-button' }
+      #{ button_tag 'Submit', :class=>'submit-button' }
       #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
     }
   end
@@ -256,8 +256,8 @@ format :html do
       :card     => { :update_referencers => false }
     )
     args[:buttons] = %{
-      #{ submit_tag 'Rename and Update', :class=>'renamer-updater' }
-      #{ submit_tag 'Rename', :class=>'renamer' }
+      #{ button_tag 'Rename and Update', :class=>'renamer-updater' }
+      #{ button_tag 'Rename', :class=>'renamer' }
       #{ button_tag 'Cancel', :class=>'slotter', :type=>'button', :href=>path(:view=>:edit, :id=>card.id)}
     }
     
@@ -278,7 +278,7 @@ format :html do
     args[:variety] = :edit #YUCK!
     args[:hidden] ||= { :view=>:edit }
     args[:buttons] = %{
-      #{ submit_tag 'Submit', :disable_with=>'Submitting' }
+      #{ button_tag 'Submit', :disable_with=>'Submitting' }
       #{ button_tag 'Cancel', :href=>path(:view=>:edit), :type=>'button', :class=>'slotter' }      
     }    
   end

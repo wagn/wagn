@@ -3,6 +3,12 @@ require 'uri'
 require 'cgi'
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
 
+if RUBY_VERSION =~ /^2/
+  require 'byebug'
+else
+  require 'debugger'
+end
+
 
 Given /^site simulates setup need$/ do
   Card::Auth.simulate_setup_need!
@@ -133,7 +139,15 @@ Then /what/ do
 end
 
 Then /debug/ do
+<<<<<<< HEAD
   #debugger
+=======
+  if RUBY_VERSION =~ /^2/
+    byebug
+  else
+    debugger
+  end
+>>>>>>> wagn/develop
   nil
 end
 

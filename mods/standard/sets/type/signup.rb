@@ -5,7 +5,7 @@ format :html do
     #FIXME - make more use of standard new view
     args.merge!(
       :optional_help => :show, #, :optional_menu=>:never
-      :buttons => submit_tag( 'Submit' ),
+      :buttons => button_tag( 'Submit' ),
       :hidden => {
         :success => (card.rule(:thanks) || '_self'),
         'card[type_id]' => card.type_id

@@ -139,15 +139,11 @@ Then /what/ do
 end
 
 Then /debug/ do
-<<<<<<< HEAD
-  #debugger
-=======
   if RUBY_VERSION =~ /^2/
     byebug
   else
     debugger
   end
->>>>>>> wagn/develop
   nil
 end
 
@@ -213,7 +209,11 @@ end
 
 Then /^In (.*) I should see "([^\"]*)"$/ do |section, text|
   within scope_of(section) do
-    page.should have_content(text)
+    if text.index('|')
+      text.split('|').any? {|t| have_content(t)}.should be
+    else
+      page.should have_content(text)
+    end
   end
 end
 

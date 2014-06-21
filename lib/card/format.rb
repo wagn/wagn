@@ -352,7 +352,7 @@ class Card
 
     def process_content_object content=nil, opts={}
       return content unless card
-      content = card.content if content.blank?
+      content = card.content if content.nil?
 
       obj_content = Card::Content===content ? content : Card::Content.new( content, format=self )
 

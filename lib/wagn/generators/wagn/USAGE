@@ -1,0 +1,9 @@
+Description:
+    The 'wagn new' command creates a new Wagn deck with a default
+    directory structure and configuration at the path you specify.
+
+Example:
+    wagn new ~/Poker/FullHouse
+
+    This generates a new deck in ~/Poker/FullHouse.
+

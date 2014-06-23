@@ -3,9 +3,9 @@ format do
   view :editor do |args|
     set_name = card.cardname.trunk_name
     set_card = Card.fetch(set_name)
-    not_set = set_card && set_card.type_id != Card::SetID
+    not_set = set_card && set_card.type_id != SetID
 
-    group_options = Account.as_bot { Card.search(:type=>Card::RoleID, :sort=>'name') }
+    group_options = Auth.as_bot { Card.search(:type_id=>RoleID, :sort=>'name') }
 
     inheritable = not_set ? false : set_card.inheritable?
     inheriting = inheritable && card.content=='_left'
@@ -59,6 +59,7 @@ format do
     card.content=='_left' ? core_inherit_content(args) : _final_pointer_type_closed_content(args)
   end
 
+
   private
 
   def core_inherit_content args={}
@@ -79,4 +80,9 @@ format do
     end
     %{<span class="inherit-perm">#{text}</span>}
   end
+end
+
+
+def standardize_items
+  # noop to override default behavior, which wouldn't let '_left' through and would therefore break
 end

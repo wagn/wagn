@@ -1,6 +1,8 @@
-# -*- encoding : utf-8 -*-
+include Pointer
+include Machine
+include MachineInput
 
-include Card::Set::Type::Pointer
+store_machine_output :filetype => "css"
 
 view :core, :type=>:pointer
 
@@ -21,7 +23,4 @@ format :css do
 end
 
 
-event :reset_style_for_skin, :after=>:store do
-  Card::Set::Right::Style.delete_style_files
-end
 

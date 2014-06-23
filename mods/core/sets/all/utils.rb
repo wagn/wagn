@@ -1,9 +1,8 @@
-# -*- encoding : utf-8 -*-
+
 module ClassMethods
   
   def empty_trash
     Card.where(:trash=>true).delete_all
-    User.delete_cardless
     Card::Revision.delete_cardless
     Card::Reference.repair_missing_referees
     Card.delete_trashed_files
@@ -15,7 +14,7 @@ module ClassMethods
     file_ids = Dir.entries( dir )[2..-1].map( &:to_i )
     file_ids.each do |file_id|
       if !card_ids.member?(file_id)
-        raise Wagn::Error, "Narrowly averted deleting current file" if Card.exists?(file_id) #double check!
+        raise Card::Error, "Narrowly averted deleting current file" if Card.exists?(file_id) #double check!
         FileUtils.rm_rf "#{dir}/#{file_id}", :secure => true
       end
     end
@@ -46,7 +45,7 @@ module ClassMethods
     else
       unmerged_json = JSON.pretty_generate unmerged
       if output_file = opts[:output_file]
-        File.open output_file, 'w' do |f|
+        ::File.open output_file, 'w' do |f|
           f.write unmerged_json
         end
       else

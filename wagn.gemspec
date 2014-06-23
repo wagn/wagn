@@ -26,19 +26,21 @@ Gem::Specification.new do |s|
   [
     
     [ 'rails',        '3.2.16'    ],
-    [ 'smartname',    '0.2.3'     ],  #, :path=>'~/dev/smartname/main'
+    [ 'smartname',    '0.2.3'     ],
     
-    [ 'htmlentities', '~> 4.3'    ],
     [ 'uuid',         '~> 2.3'    ],
     [ 'paperclip',    '~> 2.8'    ],
+    [ 'htmlentities', '~> 4.3'    ],
     [ 'rmagick',      '~> 2.13'   ],
-    [ 'recaptcha',    '~> 0.3'    ],
-                                  
-    [ 'xmlscan',      '~> 0.3'    ],
-    [ 'rubyzip',      '~> 1.0'    ], # only required in module.  should be separated out.
-    [ 'airbrake',     '~> 3.1'    ],
+    [ 'recaptcha',    '~> 0.3'    ],                                  
     [ 'coderay',      '~> 1.0'    ],
-    [ 'sass',         '~> 3.2'    ]
+    [ 'sass',         '~> 3.2'    ],
+    [ 'coffee-script','~> 2.2'    ],
+    [ 'uglifier',     '~> 2.5'    ],
+    
+    # should not depend!
+    [ 'airbrake',     '~> 3.1'    ] 
+
     
   ].each do |dep|
     s.add_runtime_dependency *dep

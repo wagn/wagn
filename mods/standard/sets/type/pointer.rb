@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 
 format do
   def wrap_item item, args={}
@@ -15,9 +14,9 @@ format do
     if type = card.item_type
       args[:type] = type
     end
-      
+    
     card.item_cards.map do |icard|
-      wrap_item process_inclusion(icard, args.clone), args 
+      wrap_item nest(icard, args.clone), args 
     end.join joint
   end
 
@@ -41,7 +40,7 @@ format :html do
     raw(_render(part_view))
   end
 
-  view :list do |args| #this is a permission view.  should it go with them?
+  view :list do |args|
     args ||= {}
     items = args[:item_list] || card.item_names(:context=>:raw)
     items = [''] if items.empty?
@@ -104,12 +103,14 @@ format :html do
     options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]}
     select_tag("pointer_select", options_for_select(options, card.item_names.first), :class=>'pointer-select')
   end
-  
+
   def pointer_option_description option
     pod_name = card.rule(:options_label) || 'description'
     dcard = Card[ "#{option.name}+#{pod_name}" ]
     if dcard and dcard.ok? :read
-      subformat(dcard).render_core
+      with_inclusion_mode :normal do
+        subformat(dcard).render_core
+      end
     end
   end
   
@@ -122,7 +123,6 @@ format :html do
 end
 
 
-
 format :css do
   view :titled do |args|
     %(#{major_comment "STYLE GROUP: \"#{card.name}\"", '='}#{ _render_core })
@@ -132,7 +132,7 @@ format :css do
   
   view :core do |args|
     card.item_cards.map do |item|
-      process_inclusion item, :view=>(params[:item] || :content)
+      nest item, :view=>(params[:item] || :content)
     end.join "\n\n"
   end
 end
@@ -140,8 +140,15 @@ end
 format :data do
   view :core do |args|
     card.item_cards.map do |c|
-      process_inclusion c
+      nest c
     end
+  end
+end
+
+
+event :standardize_items, :before=>:approve, :on=>:save do
+  if updates.for? :content
+    self.content = item_names(:context=>:raw).map { |name| "[[#{name}]]" }.join "\n"
   end
 end
 
@@ -151,9 +158,11 @@ def item_cards args={}
     #warn "item_card[#{args.inspect}], :complete"
     Card::Query.new({:referred_to_by=>name}.merge(args)).run
   else
+    
+    itype = args[:type] || item_type
     #warn "item_card[#{inspect}], :complete"
     item_names(args).map do |name|
-      new_args = args[:type] ? { :type=>args[:type] } : {}
+      new_args = itype ? { :type=>itype } : {}
       Card.fetch name, :new=>new_args
     end.compact # compact?  can't be nil, right?
   end
@@ -161,7 +170,7 @@ end
 
 def item_names args={}
   context = args[:context] || self.cardname
-  self.raw_content.split(/\n+/).map do |line|
+  self.raw_content.to_s.split(/\n+/).map do |line|
     item_name = line.gsub /\[\[|\]\]/, ''
     if context == :raw
       item_name

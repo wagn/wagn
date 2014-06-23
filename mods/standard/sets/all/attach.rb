@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 
 def attach_array(rev_id=nil)
   c=if rev_id || self.new_card? || selected_revision_id==current_revision_id
@@ -76,7 +75,7 @@ def attachment_link(rev_id) # create filesystem links to previous revision
 end
 
 def before_post_attach
-  Rails.logger.info "bpa called for #{name}"
+#  Rails.logger.info "bpa called for #{name}"
   at=self.attach
   at.instance_write :file_name, at.original_filename
 

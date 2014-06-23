@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe Card::Set::All::Type do
   
@@ -23,7 +22,7 @@ describe Card::Set::All::Type do
   
   describe 'card with wagneered type' do
     before do
-      Account.as_bot do
+      Card::Auth.as_bot do
         @type = Card.create! :name=>'Hat', :type=>'Cardtype'
       end
       @hat =  Card.new :type=>'Hat'
@@ -46,4 +45,27 @@ describe Card::Set::All::Type do
     end
 
   end
+  
+  
+  describe 'card with structured type' do
+    before do
+      Card::Auth.as_bot do
+        Card.create! :name=>'Topic', :type=>'Cardtype'
+        Card.create! :name=>'Topic+*type+*structure', :content=>'{{+results}}'
+        Card.create! :name=>'Topic+results+*type plus right+*structure', :type=>'Search', :content=>'{}'
+      end
+    end
+    
+    it "should clear cache of structured included card after saving" do
+      Card::Auth.as_bot do
+        Card.fetch('t1+results', :new=>{}).type_name.should == 'Basic'
+        
+        topic1 = Card.new :type=>'Topic', :name=>'t1'
+        topic1.format._render_new
+        topic1.save!
+        Card.fetch('t1+results', :new=>{}).type_name.should == 'Search'
+      end
+    end
+  end
+  
 end

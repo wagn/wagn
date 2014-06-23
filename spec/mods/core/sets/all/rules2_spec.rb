@@ -1,14 +1,16 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 
 #FIXME - this seems like a LOT of testing but it doesn't cover a ton of ground
 # I think we should move the rendering tests into basic and trim this to about a quarter of its current length
 
 describe Card do
-  context 'when there is a general toc setting of 2' do
+  context 'when there is a general toc rule of 2' do
 
     before do
+      Card::Auth.as_bot do
+        Card.create! :name=>'Basic+*type+*table of contents', :content=>'2'
+      end
       (@c1 = Card['Onne Heading']).should be
       (@c2 = Card['Twwo Heading']).should be
       (@c3 = Card['Three Heading']).should be
@@ -25,13 +27,13 @@ describe Card do
 
     describe "renders with/without toc" do
       it "should not render for 'Onne Heading'" do
-        Card::Format.new(@c1).render_open_content.should_not match /Table of Contents/
+        @c1.format.render_open_content.should_not match /Table of Contents/
       end
       it "should render for 'Twwo Heading'" do
-        Card::Format.new(@c2).render_open_content.should match /Table of Contents/
+        @c2.format.render_open_content.should match /Table of Contents/
       end
       it "should render for 'Three Heading'" do
-        Card::Format.new(@c3).render_open_content.should match /Table of Contents/
+        @c3.format.render_open_content.should match /Table of Contents/
       end
     end
 
@@ -51,12 +53,12 @@ describe Card do
         sets.should == ['Cardtype A+*type', 'Cardtype A+*self', 'Cardtype A+*right']
       end
 #      it "should show type plus right sets when they exist" do
-#        Account.as_bot { Card.create :name=>'Basic+A+*type plus right', :content=>'' }
+#        Card::Auth.as_bot { Card.create :name=>'Basic+A+*type plus right', :content=>'' }
 #        sets = Card['A'].related_sets
 #        sets.should == ['A+*self', 'A+*right', 'Basic+A+*type plus right']
 #      end
 #      it "should show type plus right sets when they exist, and type" do
-#        Account.as_bot { Card.create :name=>'Basic+Cardtype A+*type plus right', :content=>'' }
+#        Card::Auth.as_bot { Card.create :name=>'Basic+Cardtype A+*type plus right', :content=>'' }
 #        sets = Card['Cardtype A'].related_sets
 #        sets.should == ['Cardtype A+*self', 'Cardtype A+*type', 'Cardtype A+*right', 'Basic+Cardtype A+*type plus right']
 #      end
@@ -65,14 +67,14 @@ describe Card do
         sets.should == ['A+B+*self']
       end
     end
-
+=begin
     # class methods
     describe ".default_rule" do
       it 'should have default rule' do
         Card.default_rule(:table_of_contents).should == '0'
       end
     end
-
+=end
   end
 
   context "when I change the general toc setting to 1" do
@@ -94,15 +96,15 @@ describe Card do
 
     describe "renders with/without toc" do
       it "should not render toc for 'Onne Heading'" do
-        Card::Format.new(@c1).render_open_content.should match /Table of Contents/
+        @c1.format.render_open_content.should match /Table of Contents/
       end
       it "should render toc for 'Twwo Heading'" do
-        Card::Format.new(@c2).render_open_content.should match /Table of Contents/
+        @c2.format.render_open_content.should match /Table of Contents/
       end
       it "should not render for 'Twwo Heading' when changed to 3" do
         @rule_card.content = "3"
         @c2.rule(:table_of_contents).should == "3"
-        Card::Format.new(@c2).render_open_content.should_not match /Table of Contents/
+        @c2.format.render_open_content.should_not match /Table of Contents/
       end
     end
 
@@ -111,7 +113,7 @@ describe Card do
   context 'when I use CardtypeE cards' do
 
     before do
-      Account.as_bot do
+      Card::Auth.as_bot do
         @c1 = Card.create :name=>'toc1', :type=>"CardtypeE",
           :content=>Card['Onne Heading'].content
         @c2 = Card.create :name=>'toc2', :type=>"CardtypeE",
@@ -137,13 +139,13 @@ describe Card do
 
     describe "renders without toc" do
       it "should not render for 'Onne Heading'" do
-        Card::Format.new(@c1).render_open_content.should_not match /Table of Contents/
+        @c1.format.render_open_content.should_not match /Table of Contents/
       end
       it "should render for 'Twwo Heading'" do
-        Card::Format.new(@c2).render_open_content.should_not match /Table of Contents/
+        @c2.format.render_open_content.should_not match /Table of Contents/
       end
       it "should render for 'Three Heading'" do
-        Card::Format.new(@c3).render_open_content.should_not match /Table of Contents/
+        @c3.format.render_open_content.should_not match /Table of Contents/
       end
     end
 
@@ -158,25 +160,23 @@ describe Card do
       end
     end
 
+=begin
     # class methods
     describe ".default_rule" do
       it 'should have default rule' do
         Card.default_rule(:table_of_contents).should == '0'
       end
     end
-
+=end
   end
 
   context "when I create a new rule" do
     before do
-      Account.as_bot do
-        @c1 = Card.create :name=>'toc1', :type=>"CardtypeE",
-          :content=>Card['Onne Heading'].content
-        # FIXME: CardtypeE should inherit from *default => Basic
-        @c2 = Card.create :name=>'toc2', #:type=>"CardtypeE",
-          :content=>Card['Twwo Heading'].content
-        @c3 = Card.create :name=>'toc3', #:type=>"CardtypeE",
-          :content=>Card['Three Heading'].content
+      Card::Auth.as_bot do
+        Card.create! :name=>'Basic+*type+*table of contents', :content=>'2'
+        @c1 = Card.create! :name=>'toc1', :type=>"CardtypeE", :content=>Card['Onne Heading'].content
+        @c2 = Card.create! :name=>'toc2', :content=>Card['Twwo Heading'].content
+        @c3 = Card.create! :name=>'toc3', :content=>Card['Three Heading'].content
         @c1.type_name.should == 'Cardtype E'
         @rule_card = @c1.rule_card(:table_of_contents)
 
@@ -200,14 +200,14 @@ describe Card do
 
     describe "renders with/without toc" do
       it "should not render for 'Onne Heading'" do
-        Card::Format.new(@c1).render_open_content.should_not match /Table of Contents/
+        @c1.format.render_open_content.should_not match /Table of Contents/
       end
       it "should render for 'Twwo Heading'" do
         @c2.rule(:table_of_contents).should == "2"
-        Card::Format.new(@c2).render_open_content.should match /Table of Contents/
+        @c2.format.render_open_content.should match /Table of Contents/
       end
       it "should render for 'Three Heading'" do
-        Card::Format.new(@c3).render_open_content.should match /Table of Contents/
+        @c3.format.render_open_content.should match /Table of Contents/
       end
     end
   end
@@ -234,14 +234,14 @@ describe Card do
 
     describe "renders with/without toc" do
       it "should not render toc for 'Onne Heading'" do
-        Card::Format.new(@c1).render_open_content.should match /Table of Contents/
+        @c1.format.render_open_content.should match /Table of Contents/
       end
       it "should render toc for 'Twwo Heading'" do
-        Card::Format.new(@c2).render_open_content.should match /Table of Contents/
+        @c2.format.render_open_content.should match /Table of Contents/
       end
       it "should not render for 'Twwo Heading' when changed to 3" do
         @rule_card.content = "3"
-        Card::Format.new(@c2).render_open_content.should_not match /Table of Contents/
+        @c2.format.render_open_content.should_not match /Table of Contents/
       end
     end
 

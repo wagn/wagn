@@ -1,6 +1,23 @@
 # -*- encoding : utf-8 -*-
 require 'sass'
 
+include Machine
+include MachineInput
+
+store_machine_output :filetype => "css"
+
+def compressed_css input
+  begin
+    Sass.compile input, :style=>:compressed
+  rescue Exception=>e
+    raise Card::Oops, "Stylesheet Error:\n#{ e.message }"
+  end
+end 
+
+machine_input do
+   compressed_css format(:format => :css)._render_core
+end
+
 
 format :html do
 
@@ -29,7 +46,4 @@ format do
     
 end
 
-event :reset_style_for_scss, :after=>:store do
-  Card::Set::Right::Style.delete_style_files
-end
 

@@ -1,4 +1,4 @@
-# -*- encoding : utf-8 -*-
+
 format :json do
 
   def get_inclusion_defaults
@@ -13,18 +13,13 @@ format :json do
     params[:max_depth] || 1
   end
   
-  def default_search_params
-    { :default_limit => 0 }
-  end
-  
-
-  def show args
-    view = args[:view] || :content
+  def show view, args
+    view ||= :content
     raw = render view, args
     case
-    when String === raw  ;  raw
-    when params[:pretty] ;  JSON.pretty_generate raw
-    else                 ;  JSON( raw )
+    when String === raw    ;  raw
+    when params[:compress] ;  JSON( raw )
+    else                   ;  JSON.pretty_generate raw
     end
   end
 

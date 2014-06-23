@@ -21,6 +21,8 @@ def initialize args={}
     :type_id   => args[       'type_id'  ]
   }
 
+  #FIXME -- too much of the above is duplicated by assign_attributes (tracked_attributes.rb)
+
   @supercard = args.delete 'supercard' # must come before name =
   skip_modules = args.delete 'skip_modules'
 

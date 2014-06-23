@@ -5,10 +5,10 @@ Feature: Watch interface
   I want simple watch interface on cards
 
   Background:
-    Given I log in as Joe User
+    Given I am signed in as Joe User
 
   Scenario: Anonymous User should not see watch UI
-    Given I log out
+    Given I follow "Sign out"
     When I go to the homepage
     And I hover over the main menu
     Then I should not see "follow"
@@ -17,7 +17,7 @@ Feature: Watch interface
     When I go to the homepage
     And I hover over the main menu
     And In the main card menu I click "follow"
-    Then In the main card menu I should see "unfollow"
+    Then In the main card menu I should see "following|unfollow"
     # assumes focus still on that link.  otherwise "following"
     # selenium behavior not totally consistent here.
     And the card Home+*watchers should contain "Joe User"

@@ -30,7 +30,7 @@ module EmailHelpers
     # Replace with your a way to find your current email. e.g session -> email
     # last_email_address will return the last email address used by email spec to find an email.
     # Note that last_email_address will be reset after each Scenario.
-    last_email_address || "example@example.com"
+    last_email_address || 'fixthis@wagn.org'
   end
 end
 
@@ -58,6 +58,7 @@ Then /^(?:I|they|"([^"]*?)") should have (an|no|\d+) emails?$/ do |address, amou
 end
 
 Then /^(?:I|they|"([^"]*?)") should receive (an|no|\d+) emails? with subject "([^"]*?)"$/ do |address, amount, subject|
+#  address = address_for_user address
   unread_emails_for(address).select { |m| m.subject =~ Regexp.new(subject) }.size.should == parse_email_count(amount)
 end
 
@@ -180,4 +181,26 @@ end
 
 Then /^save and open all raw emails$/ do
   EmailSpec::EmailViewer::save_and_open_all_raw_emails
+end
+
+
+
+Then /^(.*) should be notified that "(.*)"$/ do |username, subject|
+  email = address_for_user username
+  begin
+    step %{"#{email}" should receive 1 email}
+  rescue RSpec::Expectations::ExpectationNotMetError=>e
+    raise RSpec::Expectations::ExpectationNotMetError, %(#{e.message}\n Found the following emails:\n\n #{all_emails*"\n\n~~~~~~~~\n\n"})
+  end
+  open_email(email, :with_subject => /#{subject}/)
+end
+
+Then /^No notification should be sent$/ do
+  all_emails.should be_empty
+end
+
+
+def address_for_user username
+  card_with_acct = username=='I' ? Auth.current : Card[username]
+  card_with_acct ? card_with_acct.account.email : username
 end

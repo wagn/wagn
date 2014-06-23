@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 
 module RenameMethods
@@ -33,6 +32,17 @@ include RenameMethods
 
 
 describe Card::Set::All::TrackedAttributes do
+  
+  describe '#extract_subcard_args!' do
+    it "should move plus keys into subcard hash" do
+      raw_args = { 'name'=>'test', 'subcards'=>{ '+*oldway'=>{'content'=>'old'},  }, '+*newway'=>{'content'=>'new'} }
+      subcards = Card.new.extract_subcard_args! raw_args
+      raw_args['subcards'].should be_nil
+      subcards.keys.sort.should == ['+*newway', '+*oldway']
+    end
+  end
+  
+  
   describe 'set_name' do
 
 
@@ -197,7 +207,7 @@ describe Card::Set::All::TrackedAttributes do
 
     it "test_rename_should_not_fail_when_updating_inaccessible_referencer" do
       Card.create! :name => "Joe Card", :content => "Whattup"
-      Account.as :joe_admin do
+      Card::Auth.as :joe_admin do
         Card.create! :name => "Admin Card", :content => "[[Joe Card]]"
       end
       c = Card["Joe Card"]
@@ -206,7 +216,7 @@ describe Card::Set::All::TrackedAttributes do
     end
 
     it "test_rename_should_update_structured_referencer" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         c=Card.create! :name => "Pit"
         Card.create! :name => "Orange", :type=>"Fruit", :content => "[[Pit]]"
         Card.create! :name => "Fruit+*type+*structure", :content=>"this [[Pit]]"
@@ -218,7 +228,7 @@ describe Card::Set::All::TrackedAttributes do
     end
     
     it 'should handle plus cards that have children' do
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.create :name=>'a+b+c+d'
         ab = Card['a+b']
         assert_rename ab, 'e+f'
@@ -228,7 +238,7 @@ describe Card::Set::All::TrackedAttributes do
     
     context "chuck" do
       before do
-        Account.as_bot do
+        Card::Auth.as_bot do
           Card.create! :name => "chuck_wagn+chuck"
         end
       end
@@ -240,7 +250,7 @@ describe Card::Set::All::TrackedAttributes do
       end
       
       it "test_reference_updates_plus_to_simple" do
-         c1 = Account.as_bot do
+         c1 = Card::Auth.as_bot do
            Card.create! :name=>'Huck', :content=>"[[chuck wagn+chuck]]"
          end
          c2 = Card["chuck_wagn+chuck"]
@@ -252,7 +262,7 @@ describe Card::Set::All::TrackedAttributes do
     
     context "dairy" do
       before do
-        Account.as_bot do
+        Card::Auth.as_bot do
           Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
         end
       end
@@ -275,7 +285,7 @@ describe Card::Set::All::TrackedAttributes do
     
     context "blues" do
       before do
-        Account.as_bot do
+        Card::Auth.as_bot do
           Card.create! :name => "Blue"
     
           Card.create! :name => "blue includer 1", :content => "{{Blue}}"

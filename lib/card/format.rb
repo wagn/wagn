@@ -6,10 +6,13 @@ class Card
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
-      :layout=>:layout, :new=>:edit, :normal=>:normal, :template=>:template } #should be set in views
+      :layout=>:layout, :new=>:edit, :setup=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     
-    cattr_accessor :ajax_call, :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases, :registered
-    [ :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases ].each { |acc| self.send "#{acc}=", {} }
+    cattr_accessor :ajax_call, :registered, :max_depth
+    [ :perms, :denial_views, :subset_views, :error_codes, :view_tags, :aliases ].each do |acc|
+      cattr_accessor acc
+      self.send "#{acc}=", {}
+    end
     @@max_char_count = 200 #should come from Wagn.config
     @@max_depth      = 20 # ditto
     
@@ -110,7 +113,7 @@ class Card
       end
       
       def get_set_key selection_key, opts
-        unless pkey = Card.method_key(opts)
+        unless pkey = Card::Set.method_key(opts)
           raise "bad method_key opts: #{pkey.inspect} #{opts.inspect}"
         end
         key = pkey.blank? ? selection_key : "#{pkey}_#{selection_key}"
@@ -152,11 +155,17 @@ class Card
       { :view => :name }
     end
     
-    def params()       @params     ||= controller.params                          end
-    def flash()        @flash      ||= controller.request ? controller.flash : {} end
-    def controller()   @controller ||= StubCardController.new                     end
-    def session()      CardController===controller ? controller.session : {}      end
-    def ajax_call?()   @@ajax_call                                                end
+    def params
+      Env.params
+    end
+    
+    def controller
+      Env[:controller] ||= CardController.new
+    end
+    
+    def session
+      Env.session
+    end
 
     def showname title=nil
       if title
@@ -171,7 +180,7 @@ class Card
     end
 
     def focal? # meaning the current card is the requested card
-      if ajax_call?
+      if Env.ajax?
         @depth == 0
       else
         main?
@@ -281,7 +290,7 @@ class Card
       when nil   ; {}
       when Hash  ; a.clone
       when Array ; a[0].merge a[1]
-      else       ; raise Wagn::Error, "bad render args: #{a}"
+      else       ; raise Card::Error, "bad render args: #{a}"
       end
       
       view_key = canonicalize_view view
@@ -343,14 +352,14 @@ class Card
 
     def process_content_object content=nil, opts={}
       return content unless card
-      content = card.content if content.blank?
+      content = card.content if content.nil?
 
       obj_content = Card::Content===content ? content : Card::Content.new( content, format=self )
 
       card.update_references( obj_content, true ) if card.references_expired  # I thik we need this genralized
 
       obj_content.process_content_object do |chunk_opts|
-        expand_inclusion chunk_opts.merge(opts) { yield }
+        prepare_nest chunk_opts.merge(opts) { yield }
       end
     end
 
@@ -432,31 +441,40 @@ class Card
       result
     end
 
-    def expand_inclusion opts
+    def prepare_nest opts
+      opts ||= {}
       case
       when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
       when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
-      when opts[:inc_name]=='_main' && !ajax_call? && @depth==0    ; expand_main opts
+      when opts[:inc_name]=='_main' && !Env.ajax? && @depth==0  ; expand_main opts
       else
-        included_card = Card.fetch opts[:inc_name], :new=>new_inclusion_card_args(opts)
-        result = process_inclusion included_card, opts
+        nested_card = Card.fetch opts[:inc_name], :new=>new_inclusion_card_args(opts)
+        result = nest nested_card, opts
         @char_count += result.length if @mode == :closed && result
         result
       end
     end
 
     def expand_main opts
-      [:item, :view, :size].each do |key|
-        if val=params[key] and val.to_s.present?
-          opts[key] = val.to_sym   #to sym??  why??
-        end
-      end
-      opts[:view] = @main_view || opts[:view] || :open
+      opts.merge! @main_opts if @main_opts
+      legacy_main_opts_tweaks! opts
+
+      opts[:view] ||= :open
       with_inclusion_mode :normal do
         @mainline = true
-        result = wrap_main process_inclusion( root.card, opts )
+        result = wrap_main nest( root.card, opts )
         @mainline = false
         result
+      end
+    end
+    
+    def legacy_main_opts_tweaks! opts 
+      if val=params[:size] and val.present?
+        opts[:size] = val.to_sym
+      end
+
+      if val=params[:item] and val.present?
+        opts[:items] = (opts[:items] || {}).reverse_merge :view=>val.to_sym
       end
     end
 
@@ -464,15 +482,13 @@ class Card
       content  #no wrapping in base format
     end
 
-    def process_inclusion tcard, opts={}
+    def nest nested_card, opts={}
       opts.delete_if { |k,v| v.nil? }
       opts.reverse_merge! inclusion_defaults
       
-      sub = subformat tcard
-      if opts[:item] #currently needed to handle web params
-        opts[:items] = (opts[:items] || {}).reverse_merge :view=>opts[:item]
-      end
-      sub.inclusion_opts = opts[:items] 
+      sub = subformat nested_card
+      sub.inclusion_opts = opts[:items] ? opts[:items].clone : {}
+
 
       view = canonicalize_view opts.delete :view
       opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
@@ -480,14 +496,14 @@ class Card
 
       view = case
       when @mode == :edit
-        if @@perms[view]==:none || tcard.structure || tcard.key.blank? # eg {{_self|type}} on new cards
+        if @@perms[view]==:none || nested_card.structure || nested_card.key.blank? # eg {{_self|type}} on new cards
           :blank
         else
           :edit_in_form
         end
       when @mode == :template   ; :template_rule
       when @@perms[view]==:none ; view
-      when @mode == :closed     ; !tcard.known?  ? :closed_missing : :closed_content
+      when @mode == :closed     ; !nested_card.known?  ? :closed_missing : :closed_content
       else                      ; view
       end
       
@@ -498,7 +514,7 @@ class Card
       content = params[cardname.to_s.gsub(/\+/,'_')]
 
       # CLEANME This is a hack to get it so plus cards re-populate on failed signups
-      if p = params['cards'] and card_params = p[cardname.to_s]
+      if p = params['subcards'] and card_params = p[cardname.to_s]
         content = card_params['content']
       end
       content if content.present?  # why is this necessary? - efm  
@@ -561,15 +577,18 @@ class Card
       final_link href, opts
     end
 
-    def card_link name, text, known
+    def card_link name, text, known, type=nil
       text ||= name
       linkname = name.to_name.url_key
       opts = {
         :class => ( known ? 'known-card' : 'wanted-card' ),
         :text  => ( text.to_name.to_show @context_names  )
       }
-      if !known && name.to_s != linkname
-        linkname += "?card[name]=#{CGI.escape name.to_s}"
+      if !known
+        link_params = {}
+        link_params['name'] = name.to_s if name.to_s != linkname
+        link_params['type'] = type      if type
+        linkname += "?#{ { :card => link_params }.to_param }" if !link_params.empty?
       end
       final_link internal_url( linkname ), opts
     end

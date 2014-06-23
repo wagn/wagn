@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 RuleSQL = %{
   select rules.id as rule_id, settings.id as setting_id, sets.id as set_id, sets.left_id as anchor_id, sets.right_id as set_tag_id
   from cards rules join cards sets on rules.left_id = sets.id join cards settings on rules.right_id = settings.id
@@ -58,7 +57,7 @@ end
 module ClassMethods
   
   def setting name
-    Account.as_bot do
+    Auth.as_bot do
       card=Card[name] and !card.content.strip.empty? and card.content
     end
   end
@@ -108,7 +107,7 @@ module ClassMethods
   def clear_read_rule_cache
     Card.cache.write 'READRULES', nil
   end
-  
+=begin  
   def default_rule setting_code, fallback=nil
     card = default_rule_card setting_code, fallback
     return card && card.content
@@ -119,7 +118,7 @@ module ClassMethods
     rule_id ||= fallback && rule_cache["all+#{fallback}"]
     Card[rule_id] if rule_id
   end
-  
+=end  
 end
 
 

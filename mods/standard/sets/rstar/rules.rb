@@ -53,7 +53,7 @@ format :html do
       set_selected = card_args[:name].to_name.left_name.to_s
     end
 
-    edit_mode = !params[:item] && card.ok?( ( card.new_card? ? :create : :update ) )
+    edit_mode = !params[:success] && card.ok?( ( card.new_card? ? :create : :update ) )
     
     opts = {
       :open_rule    => card,
@@ -188,7 +188,7 @@ format :html do
               %{<span class="rule-delete-section">#{ button_tag 'Delete', b_args }</span>}
             end
            }
-           #{ submit_tag 'Submit', :class=>'rule-submit-button' }
+           #{ button_tag 'Submit', :class=>'rule-submit-button' }
            #{ button_tag 'Cancel', :class=>'rule-cancel-button slotter', :type=>'button',
                 :href=>path( :view=>( card.new_card? ? :closed_rule : :open_rule ), :card=>open_rule, :item=>:view_rule ) }
         </div>
@@ -226,7 +226,11 @@ format :html do
 
 end
 
-# I doubt that the following are actually included at present.
+# 
+
+=begin
+
+These are commented because they are not currently included (see notes in lib/card/set.rb re anchorless sets)
 
 def repair_set
   @set_repair_attempted = true
@@ -244,4 +248,4 @@ def method_missing method_id, *args
     super
   end
 end
-
+=end

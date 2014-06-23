@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe Card::Chunk::Link do
 
@@ -40,7 +39,7 @@ describe Card::Chunk::Link do
 
   it "should escape spaces in cardnames with %20 (not +)" do
     render_content('[[Marie "Mad Dog" Deatherage|Marie]]').should ==
-      '<a class="wanted-card" href="/Marie_Mad_Dog_Deatherage?card[name]=Marie+%22Mad+Dog%22+Deatherage">Marie</a>'
+      '<a class="wanted-card" href="/Marie_Mad_Dog_Deatherage?card%5Bname%5D=Marie+%22Mad+Dog%22+Deatherage">Marie</a>'
   end
 
   it "should not escape content outside of link" do
@@ -53,7 +52,7 @@ describe Card::Chunk::Link do
   end
   
   it "should handle dot (.) in missing cardlink" do
-    render_content("[[Wagn 1.10.12]]").should=='<a class="wanted-card" href="/Wagn_1_10_12?card[name]=Wagn+1.10.12">Wagn 1.10.12</a>'
+    render_content("[[Wagn 1.10.12]]").should=='<a class="wanted-card" href="/Wagn_1_10_12?card%5Bname%5D=Wagn+1.10.12">Wagn 1.10.12</a>'
   end
 
 end

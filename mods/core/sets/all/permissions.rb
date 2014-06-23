@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 
 Card.error_codes.merge! :permission_denied=>[:denial, 403], :captcha=>[:error,449]
 
@@ -29,10 +28,6 @@ def ok! action, opts={}
   raise Card::PermissionDenied.new self unless ok? action, opts
 end
 
-def update_account_ok? #FIXME - temporary API, I think this is fixed, can we cache any of this for speed, this is accessed for each header
-  id == Account.current_id or ok?( :update, :trait=>:account )
-end
-
 def who_can action
   #warn "who_can[#{name}] #{(prc=permission_rule_card(action)).inspect}, #{prc.first.item_cards.map(&:id)}" if action == :update
   permission_rule_card(action).first.item_cards.map &:id
@@ -47,8 +42,8 @@ def permission_rule_card action
     raise Card::PermissionDenied.new(self)
   end
 
-  rcard = Account.as_bot do
-    if opcard.content == '_left' && self.junction?  # compound cards can inherit permissions from left parent
+  rcard = Auth.as_bot do
+    if ['_left','[[_left]]'].member?(opcard.content) && self.junction?  # compound cards can inherit permissions from left parent
       lcard = left_or_new( :skip_virtual=>true, :skip_modules=>true )
       if action==:create && lcard.real? && !lcard.action==:create
         action = :update
@@ -71,24 +66,22 @@ end
 
 
 def deny_because why
-  [why].flatten.each do |message|
-    errors.add :permission_denied, message
-  end
+  @permission_errors << why if @permission_errors
   @action_ok = false
 end
 
 def permitted? action
 
   if !Wagn.config.read_only
-    return true if action != :comment and Account.always_ok?
+    return true if action != :comment and Auth.always_ok?
 
     permitted_ids = who_can action
 
-    if action == :comment && Account.always_ok?
+    if action == :comment && Auth.always_ok?
       # admin can comment if anyone can
       !permitted_ids.empty?
     else
-      Account.among? permitted_ids
+      Auth.among? permitted_ids
     end
   end
 end
@@ -100,16 +93,17 @@ def permit action, verb=nil
   
   verb ||= action.to_s
   unless permitted? action
-    deny_because you_cant("#{verb} this card")
+    deny_because you_cant("#{verb} #{name.present? ? name : 'this'}")
   end
 end
 
 def ok_to_create
   permit :create
-  if junction?
+  if @action_ok and junction?
     [:left, :right].each do |side|
-      part_card = send side, :new=>{}
-      if part_card && part_card.new_card? #if no card, there must be other errors
+      next if side==:left && @superleft   # left is supercard; create permissions will get checked there.
+      part_card = send side, :new=>{}      
+      if part_card && part_card.new_card? # if no card, there must be other errors
         unless part_card.ok? :create
           deny_because you_cant("create #{part_card.name}")
         end
@@ -119,10 +113,10 @@ def ok_to_create
 end
 
 def ok_to_read
-  if !Account.always_ok?
+  if !Auth.always_ok?
     @read_rule_id ||= permission_rule_card(:read).first.id.to_i
-    if !Account.as_card.read_rules.member? @read_rule_id
-      deny_because you_cant "read this card"
+    if !Auth.as_card.read_rules.member? @read_rule_id
+      deny_because you_cant "read this"
     end
   end
 end
@@ -142,8 +136,8 @@ end
 def ok_to_comment
   permit :comment, 'comment on'
   if @action_ok
-    deny_because "No comments allowed on template cards" if is_template?
-    deny_because "No comments allowed on hard templated cards" if structure
+    deny_because "No comments allowed on templates" if is_template?
+    deny_because "No comments allowed on structured content" if structure
   end
 end
 
@@ -160,7 +154,7 @@ event :set_read_rule, :before=>:store do
     # skip if name is updated because will already be resaved
 
     if !new_card? && type_id_changed?
-      Account.as_bot do
+      Auth.as_bot do
         Card.search(:left=>self.name).each do |plus_card|
           plus_card = plus_card.refresh.update_read_rule
         end
@@ -182,7 +176,7 @@ def update_read_rule
   expire
 
   # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
-  Account.as_bot do
+  Auth.as_bot do
     Card.search(:left=>self.name).each do |plus_card|
       if plus_card.rule(:read) == '_left'
         plus_card.update_read_rule
@@ -200,26 +194,57 @@ end
 
 
 event :check_permissions, :after=>:approve do
-  act = if @action != :delete && comment #will be obviated by new comment handling
+  task = if @action != :delete && comment #will be obviated by new comment handling
     :comment
   else
     @action
   end
-  ok? act
-end
-
-
-
-event :recaptcha, :before=>:approve do
-  if !@supercard                        and
-      Wagn::Env[:recaptcha_on]          and
-      Card.toggle( rule :captcha )      and
-      num = Wagn::Env[:recaptcha_count] and
-      num < 1
-      
-    Wagn::Env[:recaptcha_count] = num + 1
-    Wagn::Env[:controller].verify_recaptcha :model=>self, :attribute=>:captcha
+  
+  track_permission_errors do
+    ok? task
   end
 end
 
+def track_permission_errors
+  @permission_errors = []
+  result = yield
+  
+  @permission_errors.each do |message|
+    errors.add :permission_denied, message
+  end
+  @permission_errors = nil
+  
+  result
+end
+
+event :recaptcha, :before=>:approve do
+  if !@supercard                        and
+      Env.recaptcha_on?                 and
+      Card.toggle( rule :captcha )      and
+      num = Card::Env[:recaptcha_count] and
+      num < 1
+      
+    Env[:recaptcha_count] = num + 1
+    Env[:controller].verify_recaptcha :model=>self, :attribute=>:captcha
+  end
+end
+
+module Accounts
+  # This is a short-term hack that is used in account-related cards to allow a permissions pattern where
+  # permissions are restricted to the owner of the account (and, by default, Admin)
+  # That pattern should be permitted by our card representation (without creating 
+  # separate rules for each account holder) but is not yet.
+  
+  def permit action, verb=nil
+    case
+    when action==:comment  ; @action_ok = false
+    when action==:create   ; @superleft ? true : super( action, verb ) 
+      #restricts account creation to subcard handling on permitted card (unless explicitly permitted)
+    when is_own_account?   ; true
+    else                   ; super action, verb
+    end
+  end
+  
+end
+  
 

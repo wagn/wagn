@@ -1,9 +1,8 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe Card::Set::Rstar::Rules do
   it "should render setting view for a right set" do
-     r = Card::Format.new(Card['*read+*right']).render_open
+     r = Card['*read+*right'].format.render_open
      r.should_not match(/error/i)
      r.should_not match('No Card!')
      #warn "r = #{r}"
@@ -13,8 +12,8 @@ describe Card::Set::Rstar::Rules do
   end
 
   it "should render setting view for a *input rule" do
-    Account.as_bot do
-      r = Card::Format.new(Card.fetch('*read+*right+*input',:new=>{})).render_open_rule
+    Card::Auth.as_bot do
+      r = Card.fetch('*read+*right+*input',:new=>{}).format.render_open_rule
       r.should_not match(/error/i)
       r.should_not match('No Card!')
       #warn "r = #{r}"

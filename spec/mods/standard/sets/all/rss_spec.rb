@@ -1,6 +1,8 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe Card::Set::All::Rss do
-  # SPECSTUB (low priority)
+  it 'should render recent.rss' do
+    rendered = Card[:recent].format(:format=>:rss).show( nil, {} )
+    rendered.should =~ /xml/
+  end
 end

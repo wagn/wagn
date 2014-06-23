@@ -1,9 +1,12 @@
-# -*- encoding : utf-8 -*-
 
 module ClassMethods
   
-  def search(spec)
-    ::Card::Query.new(spec).run
+  def search spec
+    results = ::Card::Query.new(spec).run
+    if block_given? and Array===results
+      results.each { |result| yield result }
+    end
+    results
   end
 
   def count_by_wql(spec)
@@ -14,7 +17,7 @@ module ClassMethods
 end
 
 def item_names(args={})
-  Card::Format.new(self)._render_raw.split /[,\n]/
+  format._render_raw.split /[,\n]/
 end
 
 def item_cards(args={})  ## FIXME this is inconsistent with item_names
@@ -38,9 +41,9 @@ def extended_list context = nil
   # this could go on and on.  more elegant to recurse until you don't have a collection
 end
 
-def contextual_content(context_card=nil, format_args={})
+def contextual_content context_card, format_args={}
   format_args[:not_current] = true
-  Card::Format.new(context_card, format_args).process_content(
-    Card::Format.new(self, :not_current=>true)._render_raw
+  context_card.format(format_args).process_content(
+    self.format(:not_current=>true)._render_raw
   )
 end

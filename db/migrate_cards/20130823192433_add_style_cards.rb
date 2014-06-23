@@ -31,7 +31,8 @@ class AddStyleCards < ActiveRecord::Migration
       
       ['CSS', 'SCSS', 'Skin'].each do |type|
         [ :create, :update, :delete].each do |action|
-          Card.create! :name=>"#{type}+*type+#{Card[action].name}", :content=>"[[#{Card[:administrator].name}]]"
+          Card.create! :name=>"#{type}+#{Card[:type].name}+#{Card[action].name}",
+            :content=>"[[#{Card[:administrator].name}]]"
         end
       end
       
@@ -87,9 +88,4 @@ class AddStyleCards < ActiveRecord::Migration
     end
   end
 
-  def down
-    contentedly do
-      
-    end
-  end
 end

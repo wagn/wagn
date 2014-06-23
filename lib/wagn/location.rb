@@ -45,16 +45,12 @@ module Wagn::Location
    # -----------( urls and redirects from application.rb) ----------------
 
 
-  # FIXME: missing test  shouldn't this have the rootpath?
+  # TESTME
   def page_path title, opts={}
-    format = (opts[:format] ? ".#{opts.delete(:format)}"  : "")
-    vars = ''
-    if !opts.empty?
-      pairs = []
-      opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
-      vars = '?' + pairs.join('&')
-    end
-    wagn_path "#{title.to_name.url_key}#{format}#{vars}"
+    
+    format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
+    query  = opts.present? ? "?#{opts.to_param}"         : ''
+    wagn_path "#{title.to_name.url_key}#{format}#{query}"
   end
 
   def wagn_path rel #should be in smartname?
@@ -70,7 +66,7 @@ module Wagn::Location
     if rel =~ /^https?\:/
       rel
     else
-      "#{ Wagn::Env[:protocol] }#{ Wagn::Env[:host] }#{ wagn_path rel }"
+      "#{ Card::Env[:protocol] }#{ Card::Env[:host] }#{ wagn_path rel }"
     end
   end
 
@@ -81,7 +77,7 @@ module Wagn::Location
     title ||= text
     url_options = {}
     [:type, :view].each { |k| url_options[k] = options.delete(k) if options[k] }
-    url = wagn_path page_path( title, url_options )
+    url = page_path( title, url_options )
     link_to text, url, options
   end
 

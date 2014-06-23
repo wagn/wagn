@@ -1,10 +1,9 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe Card::Set::All::AttributeTracking do
   context "new card" do
     before(:each) do
-      Account.as_bot do
+      Card::Auth.as_bot do
         @c = Card.new :name=>"New Card", :content=>"Great Content"
       end
     end

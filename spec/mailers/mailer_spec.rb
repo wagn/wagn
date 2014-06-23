@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
-describe Mailer do
+describe Card::Mailer do
   #include ActionMailer::Quoting
 
   before do
@@ -21,7 +20,7 @@ describe Mailer do
       user =  Card['sara'].id
       card =  Card["Sunglasses"]
       action = "edited"
-      Mailer.change_notice( user, card, action, card.name ).deliver
+      Card::Mailer.change_notice( user, card, action, card.name ).deliver
     end
 
     it "deliver a message" do
@@ -36,7 +35,7 @@ describe Mailer do
         assert_equal ["sara@user.com"],  @mail.to
       end
       it "is from Wag bot email" do
-        assert_equal [Account.admin.email], @mail.from
+        assert_equal [Card[Card::WagnBotID].account.email], @mail.from
       end
     end
   end
@@ -46,12 +45,8 @@ describe Mailer do
   end
 
   private
-    def read_fixture(action)
-      IO.readlines("#{FIXTURES_PATH}/user_notifier/#{action}")
-    end
-
     def encode(subject)
-      quoted_printable(subject, Mailer::CHARSET)
+      quoted_printable(subject, Card::Mailer::CHARSET)
     end
 
 end

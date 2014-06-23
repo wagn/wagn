@@ -31,7 +31,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 .card-frame,
 .card-body,
 .ALL {
-  overflow: hidden;
+  overflow: auto;
   white-space: normal;
 }
 
@@ -91,7 +91,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
   display: inline;
   white-space: nowrap !important;
   
-  table, thead, tbody, tr, th, td, p, h1, h2, h3, h4, h5, h6, ul, li, pre, ol, div, span, a, blockquote, img {
+  table, thead, tbody, tr, th, td, p, h1, h2, h3, h4, h5, h6, ul, li, pre, ol, div, span, a, blockquote, img, label {
     display: inline !important;
     white-space: nowrap !important;
     float: none !important;
@@ -109,15 +109,12 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 
 .change-view {
   clear: both;
-  .change-card{
-    float: left;
-  }
   .last-update {
     float:right;
     text-align: right;
-  }
-  .last-editor {
-    white-space: nowrap;
+    a {
+      white-space: nowrap;
+    }
   }
 }
 
@@ -164,7 +161,6 @@ fieldset {
 
 
 /*-- misc --*/
-
 .card-editor {
   white-space: normal;
 }
@@ -181,4 +177,12 @@ pre,
   display: inline;
 }
 
+.SELF-Xstat > .card-content {
+  table {
+    width: 100%;
+  }
+  tr:nth-child(even) {
+    background: #eee;
+  }
+}
 

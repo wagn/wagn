@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 class Card
   # REVIEW: hooks api will do this differently, probably should remove and add new tests elsewhere
@@ -67,7 +66,7 @@ end
 
 describe Card, "created without permission" do
   before do
-    Account.current_id = Card::AnonID
+    Card::Auth.current_id = Card::AnonymousID
   end
 
   # FIXME:  this one should pass.  unfortunately when I tried to fix it it started looking like the clean solution
@@ -93,14 +92,14 @@ describe Card, "Normal card with dependents" do
     @a.dependents.length.should > 0
   end
   it "should successfully have its type changed" do
-    Account.as_bot do
+    Card::Auth.as_bot do
       @a.type_id = Card::PhraseID;
       @a.save!
       Card['A'].type_code.should== :phrase
     end
   end
   it "should still have its dependents after changing type" do
-    Account.as_bot do
+    Card::Auth.as_bot do
       assert type_id = Card.fetch_id('cardtype_e')
       @a.type_id = type_id; @a.save!
       Card['A'].dependents.length.should > 0
@@ -112,7 +111,7 @@ end
 =begin No extension any more, is there a modified version of this we need?
 describe Card, "Recreated Card" do
   before do
-    Account.as_bot do
+    Card::Auth.as_bot do
     @ct = Card.create! :name=>'Species', :type=>'Cardtype'
     @ct.delete!
     @ct = Card.create! :name=>'Species', :type=>'Cardtype'
@@ -128,7 +127,7 @@ end
 
 describe Card, "New Cardtype" do
   before do
-    Account.as_bot do
+    Card::Auth.as_bot do
       @ct = Card.create! :name=>'Animal', :type=>'Cardtype'
     end
   end
@@ -144,7 +143,7 @@ end
 
 describe Card, "Wannabe Cardtype Card" do
   before do
-    Account.as_bot do
+    Card::Auth.as_bot do
       @card = Card.create! :name=> 'convertible'
       @card.type_id=Card::CardtypeID
       @card.save!
@@ -156,16 +155,15 @@ describe Card, "Wannabe Cardtype Card" do
   end
 end
 
-describe User, "Joe User" do
+describe Card, "Joe User" do
   before do
-    Account.as_bot do
+    Card::Auth.as_bot do
       @r3 = Card['r3']
       Card.create :name=>'Cardtype F+*type+*create', :type=>'Pointer', :content=>'[[r3]]'
     end
 
-    @user = Account.user
-    @ucard = Card[@user.card_id]
-    @type_names = Account.createable_types
+    @ucard = Card::Auth.current
+    @type_names = Card::Auth.createable_types
   end
 
   it "should not have r3 permissions" do
@@ -193,7 +191,7 @@ describe Card, "Cardtype with Existing Cards" do
   end
 
   it "should raise an error when you try to delete it" do
-    Account.as_bot do
+    Card::Auth.as_bot do
       @ct.delete
       @ct.errors[:cardtype].should_not be_empty
     end
@@ -204,7 +202,7 @@ end
 describe Card::Set::Type::Cardtype do
 
   it "should handle changing away from Cardtype" do
-    Account.as_bot do
+    Card::Auth.as_bot do
       ctg = Card.create! :name=>"CardtypeG", :type=>"Cardtype"
       ctg.type_id = Card::BasicID
       ctg.save!

@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 class Card
   cattr_accessor :count
@@ -42,7 +41,7 @@ end
 
 describe Card, "with role" do
   before do
-    Account.as_bot do
+    Card::Auth.as_bot do
       @role = Card.search(:type=>'Role')[0]
     end
   end
@@ -56,7 +55,7 @@ end
 
 describe Card, "with account" do
   before do
-    Account.as_bot do
+    Card::Auth.as_bot do
       @joe = change_card_to_type('Joe User', :basic)
     end
   end
@@ -132,7 +131,7 @@ end
 
 describe Card, "type transition create callback" do
   before do
-    Account.as_bot do
+    Card::Auth.as_bot do
       Card.create(:name=>'Basic+*type+*delete', :type=>'Pointer', :content=>"[[Anyone Signed in]]")
     end
     @c = change_card_to_type("basicname", :cardtype_f)

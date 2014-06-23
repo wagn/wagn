@@ -1,20 +1,20 @@
-# -*- encoding : utf-8 -*-
 
 format :html do
   
-  def show args
-    @main_view = args[:view] || args[:home_view]
-
-    if ajax_call?
-      view = @main_view || :open
-      self.render view, args
+  def show view, args
+    if Env.ajax?
+      view ||= args[:home_view] || :open
+      @inclusion_opts = args.delete(:items)
+      render view, args
     else
-      self.render_layout args
+      args.merge! :view=>view if view
+      @main_opts = args
+      self.render_layout
     end
   end
 
   view :layout, :perms=>:none do |args|
-    layout_content = get_layout_content args
+    layout_content = get_layout_content
     process_content layout_content
   end
 
@@ -98,6 +98,7 @@ format :html do
 
     @menu_vars = {
       :self         => card.name,
+      :linkname     => card.cardname.url_key,
       :type         => card.type_name,
       :structure    => card.structure && card.template.ok?(:update) && card.template.name,
       :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read ),
@@ -107,8 +108,8 @@ format :html do
     if card.real?
       @menu_vars.merge!({
         :edit      => card.ok?(:update),
-        :account   => card.account && card.update_account_ok?,
-        :watch     => Account.logged_in? && render_watch,
+        :account   => card.account && card.ok?(:update),
+        :watch     => Auth.signed_in? && render_watch,
         :creator   => card.creator.name,
         :updater   => card.updater.name,
         :delete    => card.ok?(:delete) && link_to( 'delete', path(:action=>:delete),
@@ -120,7 +121,6 @@ format :html do
     json = html_escape_except_quotes JSON( @menu_vars )
     %{<span class="card-menu-link" data-menu-vars='#{json}'>#{_render_menu_link}</span>}
   end
-
 
   view :menu_link do |args|
     '<a class="ui-icon ui-icon-gear"></a>'
@@ -142,7 +142,7 @@ format :html do
   ###---( TOP_LEVEL (used by menu) NEW / EDIT VIEWS )
 
   view :new, :perms=>:create, :tags=>:unknown_ok do |args|
-    frame_and_form :create, args, 'main-success'=>'REDIRECT' do |form|
+    frame_and_form :create, args, 'main-success'=>'REDIRECT' do
       [
         _optional_render( :name_fieldset,     args ),
         _optional_render( :type_fieldset,     args ),
@@ -195,7 +195,7 @@ format :html do
     end
     
     args[:buttons] ||= %{
-      #{ submit_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
+      #{ button_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
       #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
     }
     
@@ -203,7 +203,7 @@ format :html do
 
   
   view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
-    frame_and_form :update, args do |form|
+    frame_and_form :update, args do
       [
         _optional_render( :content_fieldsets, args ),
         _optional_render( :button_fieldset,   args )
@@ -215,7 +215,7 @@ format :html do
     args[:optional_help] = :show
     
     args[:buttons] = %{
-      #{ submit_tag 'Submit', :class=>'submit-button' }
+      #{ button_tag 'Submit', :class=>'submit-button' }
       #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
     }
   end
@@ -256,8 +256,8 @@ format :html do
       :card     => { :update_referencers => false }
     )
     args[:buttons] = %{
-      #{ submit_tag 'Rename and Update', :class=>'renamer-updater' }
-      #{ submit_tag 'Rename', :class=>'renamer' }
+      #{ button_tag 'Rename and Update', :class=>'renamer-updater' }
+      #{ button_tag 'Rename', :class=>'renamer' }
       #{ button_tag 'Cancel', :class=>'slotter', :type=>'button', :href=>path(:view=>:edit, :id=>card.id)}
     }
     
@@ -278,7 +278,7 @@ format :html do
     args[:variety] = :edit #YUCK!
     args[:hidden] ||= { :view=>:edit }
     args[:buttons] = %{
-      #{ submit_tag 'Submit', :disable_with=>'Submitting' }
+      #{ button_tag 'Submit', :disable_with=>'Submitting' }
       #{ button_tag 'Cancel', :href=>path(:view=>:edit), :type=>'button', :class=>'slotter' }      
     }    
   end
@@ -329,7 +329,7 @@ format :html do
   end
   
   view :content_fieldsets do |args|
-    %{
+    raw %{
       <div class="card-editor editor">
         #{ edit_slot args }
       </div>
@@ -344,7 +344,7 @@ format :html do
 
 
 
-  view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args| #fixme.  why is this a view??
+  view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
     eform = form_for_multi
     content = content_field eform, args.merge( :nested=>true )
     opts = { :editor=>'content', :help=>true, :attribs =>
@@ -355,16 +355,20 @@ format :html do
     else
       opts[:attribs].merge! :card_id=>card.id, :card_name=>(h card.name)
     end
+    
     fieldset fancy_title( args[:title] ), content, opts
   end
+
 
 
   view :options, :tags=>:unknown_ok do |args|
     current_set = Card.fetch( params[:current_set] || card.related_sets[0][0] )
 
     frame args do
-      %{
-        #{ subformat( current_set ).render_content }
+      subformat( current_set ).render_content
+    end
+        
+=begin        
         #{
           if card.accountable? && !card.account
             %{
@@ -375,8 +379,7 @@ format :html do
             }
           end
         }
-      }
-    end
+=end
   end
 
 
@@ -394,7 +397,7 @@ format :html do
       nest_args[:optional_comment_box] = :show if rparams[:name] == '+discussion' #fixme.  yuck!
 
       frame args do
-        process_inclusion rcard, nest_args
+        nest rcard, nest_args
       end
     end
   end
@@ -403,8 +406,7 @@ format :html do
     text = if args[:help_text]
       args[:help_text]
     else
-      setting = card.new_card? ? :add_help : :help
-      setting = [ :add_help, { :fallback => :help } ] if setting == :add_help
+      setting = card.new_card? ? [ :add_help, { :fallback => :help } ] : :help
 
       if help_card = card.rule_card( *setting ) and help_card.ok? :read
         with_inclusion_mode :normal do
@@ -413,6 +415,12 @@ format :html do
       end
     end
     %{<div class="instruction">#{raw text}</div>} if text
+  end
+
+  view :message, :perms=>:none, :tags=>:unknown_ok do |args|
+    frame args do
+      params[:message]
+    end
   end
 
   view :conflict, :error_code=>409 do |args|
@@ -426,45 +434,52 @@ format :html do
   end
 
   view :change do |args|
+    args[:optional_title_link] = :show
     wrap args do
-      %{
-        #{ link_to_page card.name, nil, :class=>'change-card' }
-        #{ _optional_render :menu, args, :hide }
-        #{
-        if rev = card.current_revision and !rev.new_record?
-          # this check should be unnecessary once we fix search result bug
-          %{<span class="last-update"> #{
-
-            case card.updated_at.to_s
-              when card.created_at.to_s; 'added'
-              when rev.created_at.to_s;  link_to('edited', path(:view=>:history), :class=>'last-edited', :rel=>'nofollow')
-              else; 'updated'
-            end} #{
-
-             time_ago_in_words card.updated_at } ago by #{ #ENGLISH
-             link_to_page card.updater.name, nil, :class=>'last-editor'}
-           </span>}
-        end
-        }
-      }
+      [
+        _optional_render( :title, args       ),
+        _optional_render( :menu, args, :hide ),
+        _optional_render( :last_action, args )
+      ]
     end
   end
-
+  
+  
+  view :last_action do |args|
+    rev = card.current_revision
+    action = case card.updated_at.to_s
+      when card.created_at.to_s; 'added'
+      when rev.created_at.to_s;  link_to('edited', path(:view=>:history), :class=>'last-edited', :rel=>'nofollow')
+      else; 'updated'
+      end
+    %{
+      <span class="last-update">
+        #{ action }
+        #{ _render_updated_at }
+        ago by
+        #{ subformat(card.updater)._render_link }
+      </span> 
+    }
+  end
+          
   view :errors, :perms=>:none do |args|
     #Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller[0..3]*", "}"
     if card.errors.any?
-      wrap args do
-        %{ <h2>Problems #{%{ with <em>#{card.name}</em>} unless card.name.blank?}</h2> } +
-        card.errors.map { |attrib, msg| "<div>#{attrib.to_s.upcase}: #{msg}</div>" } * ''
+      title = %{ Problems #{%{ with #{card.name} } unless card.name.blank?} }
+      frame args.merge( :title=>title ) do
+        card.errors.map do |attrib, msg|
+          msg = "#{attrib.to_s.upcase}: #{msg}" unless attrib == :abort
+          %{ <div class="card-error-msg">#{msg}</div> }
+        end
       end
     end
   end
 
   view :not_found do |args| #ug.  bad name.
-    sign_in_or_up_links = if !Account.logged_in?
+    sign_in_or_up_links = if !Auth.signed_in?
       %{<div>
-        #{link_to "Sign In", :controller=>'account', :action=>'signin'} or
-        #{link_to 'Sign Up', :controller=>'account', :action=>'signup'} to create it.
+        #{link_to "Sign in", wagn_path(':signin') } or
+        #{link_to 'Sign up', wagn_path('account/signup') } to create it.
        </div>}
     end
     frame args.merge(:title=>'Not Found', :optional_menu=>:never) do
@@ -489,13 +504,13 @@ format :html do
         message = case
         when task != :read && Wagn.config.read_only
           "We are currently in read-only mode.  Please try again later."
-        when Account.logged_in?
+        when Auth.signed_in?
           "You need permission #{to_task}"
         else
-          or_signup = if Card.new(:type_id=>Card::AccountRequestID).ok? :create
-            "or #{ link_to 'sign up', wagn_url('new/:account_request') }"
+          or_signup = if Card.new(:type_id=>Card::SignupID).ok? :create
+            "or #{ link_to 'sign up', wagn_url('account/signup') }"
           end
-          "You have to #{ link_to 'sign in', wagn_url('account/signin') } #{or_signup} #{to_task}"
+          "You have to #{ link_to 'sign in', wagn_url(':signin') } #{or_signup} #{to_task}"
         end
 
         %{<h1>Sorry!</h1>\n<div>#{ message }</div>}

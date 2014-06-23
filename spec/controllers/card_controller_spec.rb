@@ -1,22 +1,17 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe CardController do
 
+  include Wagn::Location
+
   describe "- route generation" do
-#  not sure we want this.
-#    it "gets name/id from /card/new/xxx" do
-#      {:post=> "/card/new/xxx"}.should route_to(
-#        :controller=>"card", :action=>'new', :id=>"xxx"
-#      )
-#    end
 
     it "should recognize type" do
       { :get => "/new/Phrase" }.should route_to( :controller => 'card', :action=>'read', :type=>'Phrase', :view=>'new' )
     end
 
     it "should recognize .rss on /recent" do
-      {:get => "/recent.rss"}.should route_to(:controller=>"card", :action=>"read", :id=>"*recent", :format=>"rss")
+      {:get => "/recent.rss"}.should route_to(:controller=>"card", :action=>"read", :id=>":recent", :format=>"rss")
     end
 
     it "should handle RESTful posts" do
@@ -25,6 +20,9 @@ describe CardController do
       
     end
 
+    it "handle asset requests" do
+       { :get => "/asset/application.js" }.should route_to( :controller => 'card',:action=>'asset', :id => 'application', :format=> 'js' )
+    end
 
     ["/wagn",""].each do |prefix|
       describe "routes prefixed with '#{prefix}'" do
@@ -39,12 +37,6 @@ describe CardController do
             :controller=>"card", :action=>"read", :id=>"*recent", :format=>"xml"
           )
         end
-
-#        it "should accept cards with dot sections that don't match extensions" do
-#          {:get => "#{prefix}/random.card"}.should route_to(
-#            :controller=>"card",:action=>"read",:id=>"random.card"
-#          )
-#        end
 
         it "should accept cards without dots" do
           {:get => "#{prefix}/random"}.should route_to(
@@ -112,10 +104,9 @@ describe CardController do
         post :create, "card"=>{
             "name"=>"",
             "type"=>"Fruit",
-            "cards"=>{"+text"=>{"content"=>"<p>abraid</p>"}}
+            "subcards"=>{"+text"=>{"content"=>"<p>abraid</p>"}}
           }, "view"=>"open"
         assert_response 422
-        assigns['card'].errors[:key].first.should == "cannot be blank"
         assigns['card'].errors[:name].first.should == "can't be blank"
       end
 
@@ -124,7 +115,7 @@ describe CardController do
         xhr :post, :create, :success=>'REDIRECT: /', :card=>{
           :name  => "Gala",
           :type  => "Fruit",
-          :cards => {
+          :subcards => {
             "+kind"  => { :content => "apple"} ,
             "+color" => { :type=>'Phrase', :content => "red"  }
           }
@@ -163,8 +154,6 @@ describe CardController do
     end
   end
 
-
-
   describe "#read" do
     it "works for basic request" do
       get :read, {:id=>'Sample_Basic'}
@@ -174,6 +163,7 @@ describe CardController do
       assert_response :success
       'Sample Basic'.should == assigns['card'].name
     end
+
 
     it "handles nonexistent card with create permission" do
       login_as 'joe_user'
@@ -186,8 +176,13 @@ describe CardController do
       assert_response 404
     end
     
+    it "handles nonexistent card ids" do
+      get :read, {:id=>'~9999999'}
+      assert_response 404
+    end
+    
     it "returns denial when no read permission" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.create! :name=>'Strawberry', :type=>'Fruit' #only admin can read
       end
       get :read, :id=>'Strawberry'
@@ -197,7 +192,7 @@ describe CardController do
       
     end
     
-    describe "view = new" do
+    context "view = new" do
       before do
         login_as 'joe_user'
       end
@@ -238,34 +233,72 @@ describe CardController do
       end
       
     end
-  end
-  
-  describe "#read file" do
-    before do
-      Account.as_bot do
-        Card.create :name => "mao2", :type_code=>'image', :attach=>File.new("#{Wagn.gem_root}/test/fixtures/mao2.jpg")
-        Card.create :name => 'mao2+*self+*read', :content=>'[[Administrator]]'
+    
+    
+    
+    context 'css' do
+      before do
+        @all_style = Card[ "#{ Card[:all].name }+#{ Card[:style].name }" ]
+        @all_style.update_machine_output
+        Card::Auth.as_bot do
+          @all_style.fetch(:trait => :machine_output).delete!
+        end
+      end
+      
+      it 'should create missing machine output file' do
+        args = { :id=>@all_style.machine_output_card.name, :format=>'css', :explicit_file=>true }
+        get :read, args
+        output_card = Card[ "#{ Card[:all].name }+#{ Card[:style].name }+#{ Card[:machine_output].name}" ]
+        expect(response).to redirect_to( "#{ wagn_path output_card.attach.url }" )
+        get :read, args
+        expect(response.status).to eq(200)
       end
     end
     
-    it "handles image with no read permission" do
-      get :read, :id=>'mao2'
-      assert_response 403, "should deny html card view"
-      get :read, :id=>'mao2', :format=>'jpg'
-      assert_response 403, "should deny simple file view"
-    end
+  
+    context "file" do
+      before do
+        Card::Auth.as_bot do
+          Card.create :name => "mao2", :type_code=>'image', :attach=>File.new("#{Wagn.gem_root}/test/fixtures/mao2.jpg")
+          Card.create :name => 'mao2+*self+*read', :content=>'[[Administrator]]'
+        end
+      end
     
-    it "handles image with read permission" do
-      login_as :joe_admin
-      get :read, :id=>'mao2'
-      assert_response 200
-      get :read, :id=>'mao2', :format=>'jpg'
-      assert_response 200
+      it "handles image with no read permission" do
+        get :read, :id=>'mao2'
+        assert_response 403, "should deny html card view"
+        get :read, :id=>'mao2', :format=>'jpg'
+        assert_response 403, "should deny simple file view"
+      end
+    
+      it "handles image with read permission" do
+        login_as :joe_admin
+        get :read, :id=>'mao2'
+        assert_response 200
+        get :read, :id=>'mao2', :format=>'jpg'
+        assert_response 200
+      end
+    end
+
+  end
+  
+  describe "#asset" do 
+    it 'serves file' do
+      filename = "asset-test.txt"
+      args = { :id=>filename, :format=>'txt', :explicit_file=>true }
+      path = File.join( Wagn.paths['gem-assets'].existent.first, filename)
+      File.open(path, "w") { |f| f.puts "test" } 
+      visit "assets/#{filename}"
+      expect(page.body).to eq ("test\n")
+      FileUtils.rm path
+    end
+      
+    it 'denies access to other directories' do
+      args = { :filename => "/../../Gemfile" }
+      get :asset, args 
+      expect(response.status).to eq(404)
     end
   end
-
-
-
   describe "unit tests" do
 
     before do
@@ -310,7 +343,7 @@ describe CardController do
     end
 
     it "should comment" do
-      Account.as_bot do
+      Card::Auth.as_bot do
         Card.create :name => 'basicname+*self+*comment', :content=>'[[Anyone Signed In]]'
       end
       post :update, :id=>'basicname', :card=>{:comment => " and more\n  \nsome lines\n\n"}
@@ -332,22 +365,5 @@ describe CardController do
 
 
 
-    
-
-
-    #  what's happening with this test is that when changing from Basic to CardtypeA it is
-    #  stripping the html when the test doesn't think it should.  this could be a bug, but it
-    #  seems less urgent that a lot of the other bugs on the list, so I'm leaving this test out
-    #  for now.
-    #
-    #  def test_update_cardtype_no_stripping
-    #    Account.as 'joe_user'
-    #    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
-    #    #assert_equal "boo", assigns['card'].content
-    #    assert_equal "<br/>", assigns['card'].content
-    #    assert_response :success, "changed card type"
-    #    assert_equal :cardtype_a", Card['Sample Basic'].type_code
-    #  end
-    #
   end
 end

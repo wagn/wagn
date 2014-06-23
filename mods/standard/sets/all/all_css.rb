@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
     
 format :css do
 
@@ -6,8 +5,8 @@ format :css do
     { :view => :content }
   end
 
-  def show args
-    view = args[:view] || :content
+  def show view, args
+    view ||= :content
     render view, args
   end
   

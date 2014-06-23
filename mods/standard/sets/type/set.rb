@@ -1,7 +1,3 @@
-# -*- encoding : utf-8 -*-
-
-
-
 
 format :html do
 
@@ -15,7 +11,7 @@ format :html do
       end +
       raw( data.map do |setting_code|
         rule_card = card.fetch(:trait=>setting_code, :new=>{})
-        process_inclusion rule_card, :view=>:closed_rule
+        nest rule_card, :view=>:closed_rule
       end * "\n" )
     end.compact * ''
     %{

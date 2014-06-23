@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 
 def name_referencers link_name=nil
   link_name = link_name.nil? ? key : link_name.to_name.key

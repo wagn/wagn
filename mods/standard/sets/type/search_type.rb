@@ -1,5 +1,3 @@
-# -*- encoding : utf-8 -*-
-
 
 
 def item_cards params={}
@@ -7,14 +5,12 @@ def item_cards params={}
   raise("OH NO.. no limit") unless s[:limit]
   # forces explicit limiting
   # can be 0 or less to force no limit
-  #Rails.logger.debug "search item_cards #{params.inspect}"
   Card.search( s )
 end
 
 def item_names params={}
   ## FIXME - this should just alter the spec to have it return name rather than instantiating all the cards!!
   ## (but need to handle prepend/append)
-  #Rails.logger.debug "search item_names #{params.inspect}"
   Card.search(spec(params)).map(&:cardname)
 end
 
@@ -32,7 +28,7 @@ def spec params={}
 end
 
 def get_spec params={}
-  spec = Account.as_bot do ## why is this a wagn_bot thing?  can't deny search content??
+  spec = Auth.as_bot do ## why is this a wagn_bot thing?  can't deny search content??
     spec_content = params.delete(:spec) || raw_content
     #warn "get_spec #{name}, #{spec_content}, #{params.inspect}"
     raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
@@ -56,8 +52,7 @@ format do
 
     case
     when e = search_vars[:error]
-      Rails.logger.debug " no result? #{e.backtrace}"
-      %{No results? #{e.class.to_s} :: #{e.message} :: #{card.content}}
+      %{#{e.class.to_s} :: #{e.message} :: #{card.content}}
     when search_vars[:spec][:return] =='count'
       search_vars[:results].to_s
     else
@@ -70,12 +65,13 @@ format do
       'no results'
     else
       search_vars[:results].map do |c|
-        process_inclusion c
+        nest c
       end.join "\n"
     end
   end
   
   def search_vars args={}
+    
     @vars[:search] ||= begin
       v = {}
       v[:spec] = card.spec search_params
@@ -95,22 +91,36 @@ format do
   end
 
   def default_search_params
-    { :default_limit=> 100 }
+    set_default_search_params
+  end
+  
+  def set_default_search_params overrides={}
+    @default_search_params ||= begin
+      p = { :default_limit=> 100 }.merge overrides
+      set_search_params_variables! p
+      p
+    end
   end
 
   def search_params
     @vars[:search_params] ||= begin
-      p = default_search_params
-      p[:vars] ||= {} #vars in params in vars.  yuck!
-      if self == @root
-        params.each do |key,val|
-          case key.to_s
-          when '_wql'      ;  p.merge! val
-          when /^\_(\w+)$/ ;  p[:vars][$1.to_sym] = val
-          end
-        end
+      p = default_search_params.clone
+      
+      if focal? 
+        p[:offset] = params[:offset] if params[:offset]
+        p[:limit]  = params[:limit]  if params[:limit]
+        p.merge! params[:wql]        if params[:wql]
       end
       p
+    end
+  end
+  
+  def set_search_params_variables! hash
+    hash[:vars] = params[:vars] || {}
+    params.each do |key,val|
+      if key.to_s =~ /^\_(\w+)$/
+        hash[:vars][$1.to_sym] = val
+      end
     end
   end
 
@@ -126,7 +136,7 @@ format :data do
     
   view :card_list do |args|
     search_vars[:results].map do |c|
-      process_inclusion c
+      nest c
     end
   end
 end
@@ -142,6 +152,11 @@ format :csv do
   end
 end
     
+format :json do
+  def default_search_params
+    set_default_search_params :default_limit => 0
+  end
+end
 
 format :html do
     
@@ -158,7 +173,7 @@ format :html do
             search_vars[:results].map do |c|
               %{
                 <div class="search-result-item item-#{ inclusion_defaults[:view] }">
-                  #{ process_inclusion c, :size=>args[:size] }
+                  #{ nest c, :size=>args[:size] }
                 </div>
               }
             end * "\n"
@@ -171,7 +186,7 @@ format :html do
 
 
   view :closed_content do |args|
-    if @depth > 2
+    if @depth > self.class.max_depth
       "..."
     else
       search_params[:limit] = 10 #not quite right, but prevents massive invisible lists.  
@@ -238,22 +253,9 @@ format :html do
   end
   
   def default_search_params
-    if ajax_call? && @depth > 0
-      {:default_limit=>20}  #important that paging calls not pass variables to included searches
-    else
-      @default_search_params ||= begin
-        s = {}
-        [:offset,:vars].each{ |key| s[key] = params[key] }
-        s[:offset] = s[:offset] ? s[:offset].to_i : 0
-        if params[:limit]
-          s[:limit] = params[:limit].to_i
-        else
-          s[:default_limit] = 20 #can be overridden by card value
-        end
-        s
-      end
-    end
+    set_default_search_params :default_limit=>20
   end
+  
   
 end
 

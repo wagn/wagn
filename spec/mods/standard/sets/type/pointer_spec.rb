@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 
 describe Card::Set::Type::Pointer do
   describe "item_names" do
@@ -52,7 +51,7 @@ describe Card::Set::Type::Pointer do
     it "not break on permissions" do
       watchers = Card.fetch "Home+*watchers", :new=>{}
       watchers.type_code.should == :pointer
-      watchers << Account.current_id
+      watchers << Card::Auth.current_id
       assert_equal '[[Joe User]]', watchers.content
     end
   end
@@ -69,6 +68,13 @@ describe Card::Set::Type::Pointer do
 #      css_list.should =~ /STYLE GROUP\: \"my style list\"/
 #      css_list.should =~ /Style Card\: \"my css\"/
       css_list.should =~ /#{ Regexp.escape @css }/
+    end
+  end
+  
+  describe '#standardize_item' do
+    it "should handle unlinked items" do
+      pointer1 = Card.create! :name=>'pointer1', :type=>'Pointer', :content=>'bracketme'
+      pointer1.content.should == '[[bracketme]]'
     end
   end
 end

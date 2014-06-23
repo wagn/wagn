@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'wagn/spec_helper'
 require 'card/content'
 
 CONTENT = {
@@ -77,7 +76,7 @@ RENDERED = {
   ],
   :two => [
     "Some Links and includes: ",
-    "<a class=\"wanted-card\" href=\"/the_card?card[name]=the+card\">the text</a>", #"[[the card|the text]]",
+    "<a class=\"wanted-card\" href=\"/the_card?card%5Bname%5D=the+card\">the text</a>", #"[[the card|the text]]",
     ", and ",
     { :options => { :view => "Is Included", :inc_name=>"This Card", :inc_syntax => "This Card|Is Included"}},
     { :options => { :inc_name=>"this too", :inc_syntax=>"this too"}},

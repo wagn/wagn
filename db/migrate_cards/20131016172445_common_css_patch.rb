@@ -9,13 +9,7 @@ class CommonCssPatch < ActiveRecord::Migration
       if card && card.pristine?
         card.update_attributes! :content=>File.read("#{dir}/common.scss")
       end
-      Card::Set::Right::Style.delete_style_files
     end
   end
 
-  def down
-    contentedly do
-      
-    end
-  end
 end

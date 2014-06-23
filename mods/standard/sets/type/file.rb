@@ -1,5 +1,3 @@
-# -*- encoding : utf-8 -*-
-
   
 def item_names(args={})  # needed for flexmail attachments.  hacky.
   [self.cardname]
@@ -68,7 +66,7 @@ format :html do
     #Rails.logger.debug "editor for file #{card.inspect}"
     out = '<div class="choose-file">'
     if !card.new_card?
-      out << %{<div class="attachment-preview", :id="#{card.attach_file_name}-preview"> #{_render_core(args)} </div> }
+      out << %{<div class="attachment-preview" :id="#{card.attach_file_name}-preview"> #{_render_core(args)} </div> }
     end
     out << %{
       <div>#{form.file_field :attach, :class=>'file-upload slotter'}</div>

@@ -2,12 +2,12 @@ event :add_comment, :after=>:approve, :on=>:save, :when=> proc {|c| c.comment } 
   self.content = %{
     #{ content }
     #{ '<hr>' unless content.blank? }
-    #{ comment.to_html }
+    #{ comment.split(/\n/).map {|line| "<p>#{line.strip.empty? ? '&nbsp;' : line}</p>"} * "\n" }
     <div class="w-comment-author">--#{
-      if Account.logged_in?
-        "[[#{Account.current.name}]]"
+      if Auth.signed_in?
+        "[[#{Auth.current.name}]]"
       else
-        Wagn::Env[:controller].session[:comment_author] = comment_author if Wagn::Env[:controller]
+        Env.session[:comment_author] = comment_author if Env.session
         "#{ comment_author } (Not signed in)"
       end
     }.....#{Time.now}</div>
@@ -26,7 +26,7 @@ view( :comment_box, :denial=>:blank, :tags=>:unknown_ok, :perms=>lambda { |r| r.
         #{ form.text_area :comment, :rows=>3 }
         <div class="comment-buttons">
           #{
-            unless Account.logged_in?
+            unless Auth.signed_in?
               card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH
               %{<label>My Name is:</label> #{ form.text_field :comment_author }}
             end

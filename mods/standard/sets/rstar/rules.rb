@@ -1,3 +1,4 @@
+
 format :html do
 
   view :closed_rule, :tags=>:unknown_ok do |args|
@@ -39,6 +40,7 @@ format :html do
     setting_name = card.cardname.tag
     current_rule ||= Card.new :name=> "*all+#{setting_name}" #FIXME use codename
     set_selected = false
+    edit_mode = !params[:success] && card.ok?( ( card.new_card? ? :create : :update ) )
 
     #~~~~~~ handle reloading due to type change
     if params[:type_reload] && card_args=params[:card]
@@ -49,11 +51,10 @@ format :html do
         current_rule.assign_attributes card_args
         current_rule.include_set_modules
       end
-
       set_selected = card_args[:name].to_name.left_name.to_s
+      edit_mode = true
     end
 
-    edit_mode = !params[:success] && card.ok?( ( card.new_card? ? :create : :update ) )
     
     opts = {
       :open_rule    => card,
@@ -190,7 +191,7 @@ format :html do
            }
            #{ button_tag 'Submit', :class=>'rule-submit-button' }
            #{ button_tag 'Cancel', :class=>'rule-cancel-button slotter', :type=>'button',
-                :href=>path( :view=>( card.new_card? ? :closed_rule : :open_rule ), :card=>open_rule, :item=>:view_rule ) }
+                :href=>path( :view=>( card.new_card? ? :closed_rule : :open_rule ), :success=>true ) }
         </div>
       }
     end

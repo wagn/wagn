@@ -356,7 +356,7 @@ class Card
 
       obj_content = Card::Content===content ? content : Card::Content.new( content, format=self )
 
-      card.update_references( obj_content, true ) if card.references_expired  # I thik we need this genralized
+      card.update_references( obj_content, true ) if card.references_expired  # I thik we need this generalized
 
       obj_content.process_content_object do |chunk_opts|
         prepare_nest chunk_opts.merge(opts) { yield }

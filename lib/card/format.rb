@@ -483,9 +483,10 @@ class Card
     end
 
     def nest nested_card, opts={}
+      #ActiveSupport::Notifications.instrument('wagn', message: "nest: #{nested_card.name}, #{opts}") do
       opts.delete_if { |k,v| v.nil? }
       opts.reverse_merge! inclusion_defaults
-      
+    
       sub = subformat nested_card
       sub.inclusion_opts = opts[:items] ? opts[:items].clone : {}
 
@@ -506,8 +507,9 @@ class Card
       when @mode == :closed     ; !nested_card.known?  ? :closed_missing : :closed_content
       else                      ; view
       end
-      
+    
       sub.render view, opts
+      #end
     end
 
     def get_inclusion_content cardname

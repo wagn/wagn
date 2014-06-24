@@ -58,6 +58,9 @@ Spork.prefork do
   end
 end
 
+Card['*all+*style' ].ensure_machine_output
+Card['*all+*script'].ensure_machine_output
+
 
 Spork.each_run do
 

@@ -61,6 +61,7 @@ class AddScriptCards < ActiveRecord::Migration
       default_rule_ending = "#{ Card[:right].name }+#{ Card[ :default ].name }"
       Card.create! :name=>'*machine output', :codename=>:machine_output
       Card.create! :name=>"*machine output+#{default_rule_ending}", :type_id=>Card::FileID
+      Card.create! :name=>"*machine output+#{ Card[:right].name}+#{Card[:read].name}", :content=>'_left'
       Card.create! :name=>'*machine input', :codename=>:machine_input
       Card.create! :name=>"*machine input+#{default_rule_ending}", :type_id=>Card::PointerID
       

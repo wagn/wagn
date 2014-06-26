@@ -22,6 +22,10 @@ describe Card::Set::All::Base do
     it "core" do
       render_card(:core, :name=>'A+B').should == "AlphaBeta"
     end
+    
+    it 'core for new card' do
+      Card.new.format._render_core.should == ''
+    end
   
     describe 'array' do
       it "of search items" do

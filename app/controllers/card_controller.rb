@@ -227,6 +227,8 @@ class CardController < ActionController::Base
 
 
   def show view = nil, status = 200
+#    ActiveSupport::Notifications.instrument('wagn', message: 'CardController#show') do
+        
     format = request.parameters[:format]
     format = :file if params[:explicit_file] or !Card::Format.registered.member? format #unknown format
 
@@ -234,10 +236,9 @@ class CardController < ActionController::Base
     view ||= params[:view]      
 
     formatter = card.format( :format=>format )
-    
     result = formatter.show view, opts
     status = formatter.error_status || status
-    
+  
     if format==:file && status==200
       send_file *result
     elsif status == 302
@@ -247,6 +248,7 @@ class CardController < ActionController::Base
       args[:content_type] = 'text/text' if format == :file
       render args
     end
+#    end
   end
 
 

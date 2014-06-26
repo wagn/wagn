@@ -2,7 +2,12 @@
 require 'uri'
 require 'cgi'
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
-require 'debugger'
+
+if RUBY_VERSION =~ /^2/
+  require 'byebug'
+else
+  require 'debugger'
+end
 
 
 Given /^site simulates setup need$/ do
@@ -134,7 +139,11 @@ Then /what/ do
 end
 
 Then /debug/ do
-  debugger
+  if RUBY_VERSION =~ /^2/
+    byebug
+  else
+    debugger
+  end
   nil
 end
 
@@ -200,7 +209,11 @@ end
 
 Then /^In (.*) I should see "([^\"]*)"$/ do |section, text|
   within scope_of(section) do
-    page.should have_content(text)
+    if text.index('|')
+      text.split('|').any? {|t| have_content(t)}.should be
+    else
+      page.should have_content(text)
+    end
   end
 end
 

@@ -1,11 +1,10 @@
 # -*- encoding : utf-8 -*-
 require 'spork'
+
 ENV["RAILS_ENV"] = 'test'
 
-require 'simplecov'
-require File.expand_path( '../../spec/mods/standard/lib/machine_spec.rb', __FILE__ )
-require File.expand_path( '../../spec/mods/standard/lib/machine_input_spec.rb', __FILE__ )
-
+#require File.expand_path( '../../../spec/mods/standard/lib/machine_spec.rb', __FILE__ )
+#require File.expand_path( '../../../spec/mods/standard/lib/machine_input_spec.rb', __FILE__ )
 
 Spork.prefork do
   if ENV["RAILS_ROOT"]
@@ -15,7 +14,6 @@ Spork.prefork do
   end
   
   require 'rspec/rails'
-  require File.expand_path( '../../lib/wagn/wagn_spec_helper.rb', __FILE__ )
   
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
@@ -41,7 +39,7 @@ Spork.prefork do
     # If you prefer to mock with mocha, flexmock or RR, uncomment the appropriate symbol:
     # :mocha, :flexmock, :rr
 
-    config.mock_with :rr
+    # config.mock_with :rr
 
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
@@ -58,46 +56,11 @@ Spork.prefork do
   end
 end
 
-Card['*all+*style' ].ensure_machine_output
-Card['*all+*script'].ensure_machine_output
-
 
 Spork.each_run do
-
   # This code will be run each time you run your specs.
 end
 
-
-class Card
-  def self.gimme! name, args = {}
-    Card::Auth.as_bot do
-      c = Card.fetch( name, :new => args )
-      c.putty args
-      Card.fetch name 
-    end    
-  end
-  
-  def self.gimme name, args = {}
-    Card::Auth.as_bot do
-      c = Card.fetch( name, :new => args )
-      if args[:content] and c.content != args[:content]
-        c.putty args
-        c = Card.fetch name 
-      end
-      c
-    end    
-  end
-  
-  def putty args = {}
-    Card::Auth.as_bot do
-      if args.present? 
-        update_attributes! (args) 
-      else 
-        save!
-      end
-    end
-  end
-end
-
+require 'wagn/wagn_spec_helper'
 RSpec::Core::ExampleGroup.send :include, Wagn::WagnSpecHelper
 

@@ -1,10 +1,10 @@
 ::Card.error_codes[:conflict] = [:conflict, 409]
 
 def content
-  if new_card?
-    template ? template.content : ''
-  else
+  if !new_card?
     current_revision.content
+  elsif template && template.content.present?
+    template.content
   end
 end
 

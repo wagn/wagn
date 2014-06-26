@@ -16,7 +16,7 @@
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 #
-#test:
+#test: &test
 #  adapter: mssql
 #  username: <%= app_name %>
 #  password:
@@ -47,14 +47,16 @@ development:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 
-test:
+test: &test
   adapter: jdbc
   username: <%= app_name %>
   password:
   driver:
   url: jdbc:db://localhost/<%= app_name %>_test
 
-production:
+cucumber: *test
+
+production: 
   adapter: jdbc
   username: <%= app_name %>
   password:

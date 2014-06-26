@@ -352,11 +352,11 @@ class Card
 
     def process_content_object content=nil, opts={}
       return content unless card
-      content = card.content if content.blank?
+      content = card.content if content.nil?
 
       obj_content = Card::Content===content ? content : Card::Content.new( content, format=self )
 
-      card.update_references( obj_content, true ) if card.references_expired  # I thik we need this genralized
+      card.update_references( obj_content, true ) if card.references_expired  # I thik we need this generalized
 
       obj_content.process_content_object do |chunk_opts|
         prepare_nest chunk_opts.merge(opts) { yield }
@@ -483,9 +483,10 @@ class Card
     end
 
     def nest nested_card, opts={}
+      #ActiveSupport::Notifications.instrument('wagn', message: "nest: #{nested_card.name}, #{opts}") do
       opts.delete_if { |k,v| v.nil? }
       opts.reverse_merge! inclusion_defaults
-      
+    
       sub = subformat nested_card
       sub.inclusion_opts = opts[:items] ? opts[:items].clone : {}
 
@@ -506,8 +507,9 @@ class Card
       when @mode == :closed     ; !nested_card.known?  ? :closed_missing : :closed_content
       else                      ; view
       end
-      
+    
       sub.render view, opts
+      #end
     end
 
     def get_inclusion_content cardname

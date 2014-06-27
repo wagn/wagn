@@ -100,7 +100,7 @@ EOF
         Card::Set.includable_modules[ set_module ]
       end
 
-    rescue Exception => e
+    rescue => e
       warn "exception set_const #{e.inspect}, #{e.backtrace*"\n"}"
     end
 

@@ -277,7 +277,7 @@ class Card
       else
         unsupported_view view
       end
-    rescue Exception=>e
+    rescue => e
       if Rails.env =~ /^cucumber|test$/
         raise e
       else

@@ -252,7 +252,7 @@ class CardController < ActionController::Base
   end
 
 
-  rescue_from Exception do |exception|
+  rescue_from StandardError do |exception|
     Rails.logger.info "exception = #{exception.class}: #{exception.message}"
 
     @card ||= Card.new

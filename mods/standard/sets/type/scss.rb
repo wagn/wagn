@@ -9,7 +9,7 @@ store_machine_output :filetype => "css"
 def compressed_css input
   begin
     Sass.compile input, :style=>:compressed
-  rescue Exception=>e
+  rescue =>e
     raise Card::Oops, "Stylesheet Error:\n#{ e.message }"
   end
 end 
@@ -40,7 +40,7 @@ format do
   
   def compile_scss scss, style=:expanded
     Sass.compile scss, :style=>style
-  rescue Exception=>e
+  rescue =>e
     e
   end
     

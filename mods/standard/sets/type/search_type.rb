@@ -78,7 +78,7 @@ format do
       v[:item] = set_inclusion_opts args.merge( :spec_view=>v[:spec][:view] )
       v[:results]  = card.item_cards search_params
       v
-    rescue Exception=>e
+    rescue =>e
       { :error => e }
     end
   end

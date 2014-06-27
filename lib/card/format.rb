@@ -16,7 +16,7 @@ class Card
     @@max_char_count = 200 #should come from Wagn.config
     @@max_depth      = 20 # ditto
     
-    attr_reader :card, :root, :parent, :vars
+    attr_reader :card, :root, :parent, :main_opts
     attr_accessor :form, :error_status, :inclusion_opts
   
     class << self
@@ -131,10 +131,9 @@ class Card
         instance_variable_set "@#{key}", value
       end
 
-      @mode ||= :normal      
-      @char_count = @depth = 0
-      @root = self
-      @vars = {}
+      @mode  ||= :normal
+      @depth ||= 0
+      @root  ||= self      
 
       @context_names ||= if params[:slot] && context_name_list = params[:slot][:name_context]
         context_name_list.split(',').map &:to_name
@@ -199,8 +198,8 @@ class Card
     def method_missing method_id, *args, &proc
       proc = proc {|*a| raw yield *a } if proc
       #Rails.logger.warn "mmiss #{self.class}, #{@card.inspect}, #{caller[0]}, #{method_id}"
-      response = template.send method_id, *args, &proc
-      String===response ? template.raw( response ) : response
+      response = root.template.send method_id, *args, &proc
+      String===response ? root.template.raw( response ) : response
     end
 
     #
@@ -330,21 +329,13 @@ class Card
     #
 
     def subformat subcard
-      #should consider calling "child"
       subcard = Card.fetch( subcard, :new=>{} ) if String===subcard
-      sub = self.clone
-      sub.initialize_subformat subcard, self
+      sub = self.class.new subcard, :parent=>self, :depth=>@depth+1, :root=>@root,
+        # FIXME - the following four should not be hard-coded here.  need a generalized mechanism
+        # for attribute inheritance
+        :context_names=>@context_names, :mode=>@mode, :mainline=>@mainline, :form=>@form
     end
 
-    def initialize_subformat subcard, parent
-      @parent = parent
-      @card = subcard
-      @vars = {}
-      @char_count = 0
-      @depth += 1
-      @inclusion_defaults = @inclusion_opts = @showname = @ok = nil
-      self
-    end
 
     def process_content content=nil, opts={}
       process_content_object(content, opts).to_s
@@ -442,6 +433,8 @@ class Card
     end
 
     def prepare_nest opts
+      @char_count ||= 0
+      
       opts ||= {}
       case
       when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
@@ -456,7 +449,7 @@ class Card
     end
 
     def expand_main opts
-      opts.merge! @main_opts if @main_opts
+      opts.merge! root.main_opts if root.main_opts
       legacy_main_opts_tweaks! opts
 
       opts[:view] ||= :open

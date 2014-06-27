@@ -4,7 +4,7 @@ include MachineInput
 store_machine_output :filetype => "css"
 
 machine_input do 
-  compress_css format._render_raw
+  compress_css format(:format => :css)._render_core
 end
 
 def compress_css input

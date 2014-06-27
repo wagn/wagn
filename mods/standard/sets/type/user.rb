@@ -30,7 +30,7 @@ format :html do
       :optional_help=>:show,
       :optional_menu=>:never, 
       :help_text=>'To get started, set up an account.',
-      :buttons => submit_tag( 'Submit' ),
+      :buttons => button_tag( 'Submit' ),
       :hidden => { 
         :success => "REDIRECT: #{ Card.path_setting '/' }",
         'card[type_id]' => Card.default_accounted_type_id,

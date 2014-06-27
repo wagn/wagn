@@ -5,7 +5,7 @@ format :html do
     #FIXME - make more use of standard new view
     args.merge!(
       :optional_help => :show, #, :optional_menu=>:never
-      :buttons => submit_tag( 'Submit' ),
+      :buttons => button_tag( 'Submit' ),
       :hidden => {
         :success => (card.rule(:thanks) || '_self'),
         'card[type_id]' => card.type_id
@@ -26,25 +26,47 @@ format :html do
 
 
   view :core do |args|
-    #ENGLISH
-    process_content(_render_raw) +
-    if (card.new_card?); '' else
-      %{<div class="invite-links"><strong>#{card.name}</strong> requested an account on #{format_date(card.created_at) }</div>}
+    headings, links = [], []
+    if !card.new_card? #necessary?
+      headings << %(<strong>#{ card.name }</strong> requested an account on #{ format_date card.created_at })
+      if account = card.account
+        if account.token
+          headings << "An activation token has been sent for this account"
+        else
+          if account.confirm_ok?
+            links << link_to( "Approve #{card.name}", wagn_path("/update/~#{card.id}?approve=true") )
+          end
+          if card.ok? :delete
+            links << link_to( "Deny #{card.name}", wagn_path("/delete/~#{card.id}") )
+          end
+          headings << links * '' if links.any?
+        end
+      else
+        headings << "ERROR: signup card missing account"
+      end
     end
+    %{<div class="invite-links">
+        #{ headings.map { |h| "<div>#{h}</div>"} * "\n" }
+      </div>
+      #{ process_content render_raw }    
+    }
   end
 end
 
-event :activate_by_token, :before=>:approve, :on=>:update do
-  if token = Env.params[:token]
-    if id == Auth.authenticate_by_token(token)
-      subcards['+*account'] = {'+*status'=>'active'}
-      self.type_id = Card.default_accounted_type_id
-      Auth.signin id #move this to extend?
-      Auth.as_bot
-      Env.params[:success] = ''
-    else
-      abort :failure
-    end
+event :activate_by_token, :before=>:approve, :on=>:update, :when=>proc{ |c| c.has_token? } do
+  authentication_result = Auth.authenticate_by_token @env_token
+  case authentication_result
+  when Integer
+    subcards['+*account'] = {'+*status'=>'active'}
+    self.type_id = Card.default_accounted_type_id
+    Auth.signin authentication_result
+    Auth.as_bot
+    Env.params[:success] = ''
+  when :token_expired
+    resend_activation_token
+    abort :success
+  else
+    abort :failure, "signup activation error: #{authentication_result}" # bad token or account
   end
 end
 
@@ -53,12 +75,16 @@ def has_token?
 end
 
 
+event :approve_account, :on=>:update, :before=>:process_subcards, :when=>proc {|c| Env.params[:approve] } do
+  account.reset_token
+  account.send_account_confirmation_email
+end
+
+
 event :resend_activation_token do
-  Auth.as_bot do
-    token_card = Auth.find_token_card @env_tokenx
-    token_card.update_attributes! :content => generate_token
-    token_card.left.send_new_account_confirmation_email
-  end
+  account = Auth.find_token_card( @env_token ).left
+  account.reset_token
+  account.send_account_confirmation_email
   Env.params[:success] = {
     :id => '_self',
     :view => 'message',
@@ -90,6 +116,4 @@ event :signup_notifications, :after=>:extend, :on=>:create, :when=>send_signup_n
       :requests_url => wagn_url( Card[:signup] ),
   }).deliver
 end
-
-
 

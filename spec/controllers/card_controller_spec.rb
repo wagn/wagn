@@ -20,6 +20,9 @@ describe CardController do
       
     end
 
+    it "handle asset requests" do
+       { :get => "/asset/application.js" }.should route_to( :controller => 'card',:action=>'asset', :id => 'application', :format=> 'js' )
+    end
 
     ["/wagn",""].each do |prefix|
       describe "routes prefixed with '#{prefix}'" do
@@ -151,8 +154,6 @@ describe CardController do
     end
   end
 
-
-
   describe "#read" do
     it "works for basic request" do
       get :read, {:id=>'Sample_Basic'}
@@ -233,6 +234,8 @@ describe CardController do
       
     end
     
+    
+    
     context 'css' do
       before do
         @all_style = Card[ "#{ Card[:all].name }+#{ Card[:style].name }" ]
@@ -247,7 +250,6 @@ describe CardController do
         get :read, args
         output_card = Card[ "#{ Card[:all].name }+#{ Card[:style].name }+#{ Card[:machine_output].name}" ]
         expect(response).to redirect_to( "#{ wagn_path output_card.attach.url }" )
-        #byebug 
         get :read, args
         expect(response.status).to eq(200)
       end
@@ -279,9 +281,24 @@ describe CardController do
     end
 
   end
-
-
-
+  
+  describe "#asset" do 
+    it 'serves file' do
+      filename = "asset-test.txt"
+      args = { :id=>filename, :format=>'txt', :explicit_file=>true }
+      path = File.join( Wagn.paths['gem-assets'].existent.first, filename)
+      File.open(path, "w") { |f| f.puts "test" } 
+      visit "assets/#{filename}"
+      expect(page.body).to eq ("test\n")
+      FileUtils.rm path
+    end
+      
+    it 'denies access to other directories' do
+      args = { :filename => "/../../Gemfile" }
+      get :asset, args 
+      expect(response.status).to eq(404)
+    end
+  end
   describe "unit tests" do
 
     before do

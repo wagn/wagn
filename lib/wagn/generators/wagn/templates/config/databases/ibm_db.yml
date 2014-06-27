@@ -51,7 +51,7 @@ development:
   #authentication: SERVER
   #parameterized: false
 
-test:
+test: &test
   adapter: ibm_db
   username: db2inst1
   password:
@@ -68,7 +68,9 @@ test:
   #authentication: SERVER
   #parameterized: false
 
-production:
+cucumber: *test
+
+production: 
   adapter: ibm_db
   username: db2inst1
   password:

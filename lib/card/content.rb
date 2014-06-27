@@ -28,7 +28,7 @@ class Card
       case __getobj__
       when Array;    map(&:to_s)*''
       when String;   __getobj__
-      when NilClass; raise "Nil Card::Content"
+      when NilClass; '' #raise "Nil Card::Content"
       else           __getobj__.to_s
       end
     end

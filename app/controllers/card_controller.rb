@@ -7,9 +7,9 @@ class CardController < ActionController::Base
   include Wagn::Location
   include Recaptcha::Verify
 
-  before_filter :per_request_setup
+  before_filter :per_request_setup, :except => [:asset]
   before_filter :load_id, :only => [ :read ]
-  before_filter :load_card
+  before_filter :load_card, :except => [:asset]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
 
   layout nil
@@ -38,7 +38,12 @@ class CardController < ActionController::Base
     params[:success] ||= 'REDIRECT: *previous'
     handle { card.delete }
   end
-
+  
+  def asset
+    Rails.logger.info "Routing assets through Wagn. Recommend symlink from Deck to Wagn gem using 'rake wagn:update_assets_symlink'"
+    send_file_inside Wagn.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
+  end
+  
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ## the following methods need to be merged into #update
 
@@ -72,6 +77,14 @@ class CardController < ActionController::Base
 
   private
   
+  # make sure that filenname doesn't leave allowed_path using ".."
+  def send_file_inside(allowed_path, filename, options = {})
+    if filename.include? "../"
+      raise Wagn::BadAddress
+    else
+      send_file File.join(allowed_path, filename), options
+    end
+  end
   
   #-------( FILTERS )
 
@@ -105,11 +118,11 @@ class CardController < ActionController::Base
     @card = case params[:id]
       when '*previous'
         return wagn_redirect( previous_location )
-      when /^\~(\d+)$/
+      when /^\~(\d+)$/ # get by id
         Card.fetch( $1.to_i ) or raise Wagn::NotFound 
-      when /^\:(\w+)$/
+      when /^\:(\w+)$/ # get by codename
         Card.fetch $1.to_sym
-      else
+      else  # get by name
         opts = params[:card] ? params[:card].clone : {}   # clone so that original params remain unaltered.  need deeper clone?
         opts[:type] ||= params[:type] if params[:type]    # for /new/:type shortcut.  we should fix and deprecate this.
         opts[:name] ||= params[:id].to_s.gsub( '_', ' ')  # move handling to Card::Name?
@@ -214,6 +227,8 @@ class CardController < ActionController::Base
 
 
   def show view = nil, status = 200
+#    ActiveSupport::Notifications.instrument('wagn', message: 'CardController#show') do
+        
     format = request.parameters[:format]
     format = :file if params[:explicit_file] or !Card::Format.registered.member? format #unknown format
 
@@ -221,10 +236,9 @@ class CardController < ActionController::Base
     view ||= params[:view]      
 
     formatter = card.format( :format=>format )
-    
     result = formatter.show view, opts
     status = formatter.error_status || status
-    
+  
     if format==:file && status==200
       send_file *result
     elsif status == 302
@@ -234,6 +248,7 @@ class CardController < ActionController::Base
       args[:content_type] = 'text/text' if format == :file
       render args
     end
+#    end
   end
 
 

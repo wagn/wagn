@@ -28,10 +28,8 @@ shared_examples_for 'machine input' do
       end
       f = Card.gimme machine.cardname
       path = f.machine_output_path
-      #expect(f.input_item_cards).to eq([])
       expect(File.read path).to eq('')
     end
-    
   end
   
   it 'delivers machine input' do
@@ -46,7 +44,5 @@ shared_examples_for 'machine input' do
       expect(File.read path).to eq(card_content[:new_out])
     end
   end
-  
-
 end
 

@@ -18,17 +18,17 @@ view( :comment_box, :denial=>:blank, :tags=>:unknown_ok, :perms=>lambda { |r| r.
   
   
   %{<div class="comment-box nodblclick"> #{
-    card_form :update do |f|
+    card_form :update do
       %{
         #{ hidden_field_tag( 'card[name]', card.name ) if card.new_card? 
         # FIXME wish we had more generalized solution for names.  without this, nonexistent cards will often take left's linkname.  (needs test)
         }
-        #{ f.text_area :comment, :rows=>3 }
+        #{ form.text_area :comment, :rows=>3 }
         <div class="comment-buttons">
           #{
             unless Auth.signed_in?
               card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH
-              %{<label>My Name is:</label> #{ f.text_field :comment_author }}
+              %{<label>My Name is:</label> #{ form.text_field :comment_author }}
             end
           }
           <input type="submit" value="Comment"/>

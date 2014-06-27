@@ -7,18 +7,18 @@
 describe Card::Set::Type::Scss do
   let(:scss) { 
     %{
-      $link_color: #0af;
+      $link_color: #abcdef;
       a { color: $link_color; }  
     }
   }
-  let(:compressed_css) {  "a{color:#0af}\n" }
+  let(:compressed_css) {  "a{color:#abcdef}\n" }
   let(:changed_scss) { 
     %{
-      $link_color: #abc; 
+      $link_color: #fedcba; 
       a { color: $link_color; }
     }
   }
-  let(:compressed_changed_css) {  "a{color:#abc}\n" }
+  let(:compressed_changed_css) {  "a{color:#fedcba}\n" }
   before do
     @scss_card = Card[:style_functional]
   end

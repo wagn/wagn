@@ -3,7 +3,7 @@ Description:
     Generates a migration of database content
 
 Example:
-    rails generate card_migration better_commented_search_cards
+    wagn generate card_migration better_commented_search_cards
 
     This will create:
     

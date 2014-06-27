@@ -6,9 +6,7 @@
 //
 //= require jquery
 //= require tinymce
-//= require wagn_mod
-//= require wagn
-//= require wagn_menu
+
 //= !require jquery.mobile    
     /* jquery.mobile must be after wagn to avoid mobileinit nastiness */
 //= require jquery.ui.all

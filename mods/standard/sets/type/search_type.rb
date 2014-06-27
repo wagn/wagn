@@ -72,7 +72,7 @@ format do
   
   def search_vars args={}
     
-    @vars[:search] ||= begin
+    @search_vars ||= begin
       v = {}
       v[:spec] = card.spec search_params
       v[:item] = set_inclusion_opts args.merge( :spec_view=>v[:spec][:view] )
@@ -103,7 +103,7 @@ format do
   end
 
   def search_params
-    @vars[:search_params] ||= begin
+    @search_params ||= begin
       p = default_search_params.clone
       
       if focal? 
@@ -125,7 +125,7 @@ format do
   end
 
   def page_link text, page
-    @paging_path_args[:offset] = page * @paging_limit  #fixme.  should be @vars?
+    @paging_path_args[:offset] = page * @paging_limit
     " #{link_to raw(text), path(@paging_path_args), :class=>'card-paging-link slotter', :remote => true} "
   end
 

@@ -1,7 +1,3 @@
-@@options = {
-  :opt_keys => []
-}
-
 def label name
   'All cards'
 end

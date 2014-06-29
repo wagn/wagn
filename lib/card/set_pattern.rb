@@ -3,7 +3,7 @@ class Card
     
 
     class << self
-      attr_accessor :key, :key_id, :opt_keys, :junction_only, :assigns_type, :anchorless
+      attr_accessor :key, :key_id, :junction_only, :assigns_type, :anchorless
     
       def junction_only?
         !!junction_only
@@ -26,7 +26,6 @@ class Card
           self.key = key
           Card.set_patterns.insert opts.delete(:index).to_i, self
           self.anchorless = !respond_to?( :anchor_name )
-          self.opt_keys = Array.wrap( opts.delete(:opt_keys) || key.to_sym )
           opts.each { |key, val| send "#{key}=", val }
         else
           warn "no codename for key #{key}"
@@ -80,11 +79,11 @@ EOF
 
 
     def set_module_name #FIXME optimize for re-use
-      tail = case
-        when self.class.anchorless?   ; self.class.key.camelize
-        when opt_vals.member?( nil )  ; nil
-        else "#{self.class.key.camelize}::#{opt_vals.map(&:to_s).map(&:camelize) * '::'}"
-        end
+      tail = if self.class.anchorless?
+        self.class.key.camelize
+      elsif anchor_codenames
+        "#{self.class.key.camelize}::#{anchor_codenames.map(&:to_s).map(&:camelize) * '::'}"
+      end
       tail && "Card::Set::#{ tail }"
     end
 
@@ -106,23 +105,10 @@ EOF
       warn "exception set_format_const #{e.inspect}, #{e.backtrace*"\n"}"
     end
 
-
-    def opt_vals
-      if @opt_vals.nil?
-        @opt_vals = self.class.anchorless? ? [] : find_opt_vals
-      end
-      @opt_vals
-    end
-
-    def find_opt_vals
-      anchor_parts = if self.class.opt_keys.size > 1
-        [ @anchor_name.left, @anchor_name.right ]
-      else
-        [ @anchor_name ]
-      end
-      anchor_parts.map do |part|
+    def anchor_codenames
+      @anchor_name.parts.map do |part|
         part_id = Card.fetch_id part
-        part_id && Card::Codename[ part_id.to_i ] or return []
+        part_id && Card::Codename[ part_id.to_i ] or return nil
       end
     end
 
@@ -138,7 +124,7 @@ EOF
       "<#{self.class} #{to_s.to_name.inspect}>"
     end
 
-    def safe_key()
+    def safe_key
       caps_part = self.class.key.gsub(' ','_').upcase
       self.class.anchorless? ? caps_part : "#{caps_part}-#{@anchor_name.safe_key}"
     end

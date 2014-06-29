@@ -44,15 +44,6 @@ describe Card::Set::All::Pattern do
     end
   end
 
-  describe :method_keys do
-    it "returns correct set names for simple cards" do
-      card = Card.new( :name => "AnewCard" )
-      card.method_keys.should == [ "basic_type", ""]
-      card.save!
-      card = Card.fetch("AnewCard")
-      card.method_keys.should == [ "basic_type",""]
-    end
-  end
   
   describe :rule_set_keys do
     it "returns correct set names for new cards" do

@@ -70,9 +70,6 @@ class Card
         ancestry
       end
         
-      private
-      
-
     end
     
     
@@ -287,7 +284,7 @@ class Card
 
     def process_content_object content=nil, opts={}
       return content unless card
-      content = card.raw_content if content.nil?
+      content = card.raw_content || '' if content.nil?
 
       obj_content = Card::Content===content ? content : Card::Content.new( content, format=self )
 

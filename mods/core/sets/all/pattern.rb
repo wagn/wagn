@@ -27,7 +27,7 @@ end
 alias_method_chain :patterns, :new
 
 def reset_patterns
-  @set_mods_loaded = @patterns = @set_modules = @junction_only = @method_keys = @set_names = @template = @rule_set_keys = @virtual = nil
+  @set_mods_loaded = @patterns = @set_modules = @junction_only = @set_names = @template = @rule_set_keys = @virtual = nil
   true
 end
 
@@ -67,26 +67,8 @@ def set_names
   @set_names
 end
 
-
-# FIXME - reconsider nomenclature
-#
-# the basic idea is that rule_set_keys need to map to sets with card rules 
-# (many of which have anchors without codenames), so they
-# use ids for the anchors.
-#
-# "method_keys" is a farse worse name, because it refers to functionality 
-# no longer here (these keys were used in the view methods before).
-# these keys are for mapping to code rules
-#
-# perhaps card_rule_set_keys (keys for sets for which there are card-based rules)
-# and code_rule_set_keys (keys for sets for which there are code-based rules) 
-# would be clearer?
-
 def rule_set_keys
   set_names #this triggers set_members cache.  need better solution!
   @rule_set_keys ||= patterns.map( &:rule_set_key ).compact
 end
 
-def method_keys
-  @method_keys ||= patterns.map(&:get_method_key).compact
-end

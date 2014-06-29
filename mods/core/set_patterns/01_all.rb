@@ -1,6 +1,5 @@
 @@options = {
-  :opt_keys => [],
-  :method_key => ''
+  :opt_keys => []
 }
 
 def label name

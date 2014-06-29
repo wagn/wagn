@@ -3,12 +3,8 @@
 class Card
   module Set
 
-    mattr_accessor :traits,
-      :base_modules, :base_format_modules,
-      :includable_modules, :includable_format_modules
-    @@base_modules, @@base_format_modules = [], {}
-    @@includable_modules, @@includable_format_modules= {}, {}
-    
+    mattr_accessor :base_modules, :base_format_modules,:includable_modules, :includable_format_modules, :traits
+    @@base_modules, @@base_format_modules, @@includable_modules, @@includable_format_modules = [], {}, {}, {}
     
 =begin
     A "Set" is a group of cards to which "Rules" may be applied.  Sets can be as specific as
@@ -269,20 +265,6 @@ EOF
         end
       end
       
-      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      
-      # FIXME - like everything else related to "set patterns", this needs renaming
-      # it no longer has anything to do with methods
-      # (also, this should probably be with the set patterns code, not here)
-      
-      def method_key opts
-        Card.set_patterns.each do |pclass|
-          if !pclass.opt_keys.map(&opts.method(:has_key?)).member? false;
-            return pclass.method_key_from_opts(opts)
-          end
-        end
-      end
-    
     end
 
 
@@ -293,14 +275,12 @@ EOF
     def set_event_callbacks event, opts
       [:before, :after, :around].each do |kind|
         if object_method = opts.delete(kind)
-          options = { :prepend => true } 
-          parts = self.name.split '::'
-          
-          set_class_key, anchor_or_placeholder = parts[-2].underscore.to_sym, parts[-1].underscore
-          set_key = Card::Set.method_key( set_class_key => anchor_or_placeholder )
-          
-          options[:if] = proc { |c| c.method_keys.member? set_key and c.event_applies? opts }
-          Card.class_eval { set_callback object_method, kind, event, options }
+          this_set_module = self
+          Card.class_eval do
+            set_callback object_method, kind, event, :prepend=>true, :if=> proc { |c|
+              c.singleton_class.include?( this_set_module ) and c.event_applies? opts
+            }
+          end
         end
       end
     end

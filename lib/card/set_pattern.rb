@@ -1,8 +1,9 @@
 class Card
   class SetPattern
+    
 
     class << self
-      attr_accessor :key, :key_id, :opt_keys, :junction_only, :method_key, :assigns_type, :anchorless
+      attr_accessor :key, :key_id, :opt_keys, :junction_only, :assigns_type, :anchorless
     
       def junction_only?
         !!junction_only
@@ -24,20 +25,12 @@ class Card
         if self.key_id = Card::Codename[key]
           self.key = key
           Card.set_patterns.insert opts.delete(:index).to_i, self
-          if self.anchorless = !respond_to?( :anchor_name )
-            self.method_key = opts[:method_key] || key
-          end
+          self.anchorless = !respond_to?( :anchor_name )
           self.opt_keys = Array.wrap( opts.delete(:opt_keys) || key.to_sym )
           opts.each { |key, val| send "#{key}=", val }
         else
           warn "no codename for key #{key}"
         end
-      end
-
-      def method_key_from_opts opts
-        method_key || ((opt_keys.map do |opt_key|
-          opts[opt_key].to_name.key.gsub('+', '-')
-        end << key) * '_' )
       end
 
       def pattern_applies? card
@@ -113,20 +106,6 @@ EOF
       warn "exception set_format_const #{e.inspect}, #{e.backtrace*"\n"}"
     end
 
-
-
-    def get_method_key
-      if self.class.anchorless?
-        self.class.method_key
-      else
-        opts = {}
-        self.class.opt_keys.each_with_index do |key, index|
-          return nil unless opt_vals[index]
-          opts[key] = opt_vals[index]
-        end
-        self.class.method_key_from_opts opts
-      end
-    end
 
     def opt_vals
       if @opt_vals.nil?

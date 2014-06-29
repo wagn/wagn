@@ -1,7 +1,6 @@
 class Card
   class SetPattern
     
-
     class << self
       attr_accessor :key, :key_id, :junction_only, :assigns_type, :anchorless
     
@@ -63,20 +62,16 @@ EOF
     # Instance methods
 
     def initialize card
-    
       unless self.class.anchorless?
         @anchor_name = self.class.anchor_name(card).to_name
-
         @anchor_id = if self.class.respond_to? :anchor_id
           self.class.anchor_id card
         else
           Card.fetch_id @anchor_name
         end
       end
-
       self
     end
-
 
     def set_module_name #FIXME optimize for re-use
       tail = if self.class.anchorless?

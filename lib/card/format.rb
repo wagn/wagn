@@ -89,7 +89,6 @@ class Card
         context_name_list.split(',').map &:to_name
       else [] end
         
-        
       include_set_format_modules
       self
     end
@@ -102,7 +101,6 @@ class Card
       end
     end
   
-    
     def inclusion_defaults
       @inclusion_defaults ||= begin
         defaults = get_inclusion_defaults.clone
@@ -350,8 +348,6 @@ class Card
         DEPRECATED_VIEWS[view_key] || view_key
       end
     end
-
-    
     
     def with_inclusion_mode mode
       if switch_mode = INCLUSION_MODES[ mode ] and @mode != switch_mode

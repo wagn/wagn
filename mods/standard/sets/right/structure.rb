@@ -1,7 +1,7 @@
 format :html do
   view :core do |args|
     with_inclusion_mode :template do
-      self._final_core args
+      super args
     end
   end
 end

@@ -3,7 +3,7 @@ format :html do
 
   view :open do |args|
     args.merge! :title=>'Sign In', :optional_help=>:show
-    _final_open args
+    super args
   end
 
   view :open_content do |args|
@@ -51,7 +51,7 @@ format :html do
       }
     } )
     
-    Auth.as_bot { _final_edit args }
+    Auth.as_bot { super args }
   end
   
   view :raw do |args|

@@ -1,6 +1,6 @@
 
 view :title do |args|
-   _final_title args.merge( :title=>'Recent Changes' )
+   super args.merge( :title=>'Recent Changes' )
 end
 
 format :html do

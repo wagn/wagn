@@ -6,7 +6,7 @@ format do
       root.error_status = 302
       wagn_path card.left.machine_output_card.attach.url(:default, :timestamp => false)  # to get rid of additional number in url
     else
-      _final_not_found args
+      super args
     end
   end
 end

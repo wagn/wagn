@@ -1,24 +1,33 @@
 
 include File
 
-view :closed_content do |args|
-  _render_core :size=>:icon
+format do
+
+  view :closed_content do |args|
+    _render_core :size=>:icon
+  end
+
+  view :source do |args|
+    style = case
+      when @mode==:closed ;  :icon
+      when args[:size]    ;  args[:size]
+      when main?          ;  :large
+      else                ;  :medium
+      end
+    style = :original if style.to_sym == :full
+    card.attach.url style
+  end
+
+
+  view :core, :type=>:file
+
+  def handle_source args  #FIXME - duplicate of file.rb.  should share code
+    source = _render_source args
+    source ? yield( source ) : ''
+  rescue
+    'File Error'
+  end
 end
-
-view :source do |args|
-  style = case
-    when @mode==:closed ;  :icon
-    when args[:size]    ;  args[:size]
-    when main?          ;  :large
-    else                ;  :medium
-    end
-  style = :original if style.to_sym == :full
-  card.attach.url style
-end
-
-
-view :core, :type=>:file
-
 
 format :html do
 

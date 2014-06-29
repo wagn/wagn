@@ -52,6 +52,13 @@ def set_modules
   @set_modules ||= patterns_without_new[0..-2].reverse.map(&:set_const).compact
 end
 
+def set_format_modules klass
+  @set_format_modules ||= {}
+  @set_format_modules[klass] = patterns_without_new[0..-2].reverse.map do |pattern|
+    pattern.set_format_const klass
+  end.compact
+end
+
 def set_names
   if @set_names.nil?
     @set_names = patterns.map &:to_s

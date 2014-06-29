@@ -86,7 +86,7 @@ EOF
     end
 
 
-    def set_module_name
+    def set_module_name #FIXME optimize for re-use
       tail = case
         when self.class.anchorless?   ; self.class.key.camelize
         when opt_vals.member?( nil )  ; nil
@@ -103,6 +103,17 @@ EOF
     rescue Exception => e
       warn "exception set_const #{e.inspect}, #{e.backtrace*"\n"}"
     end
+
+    def set_format_const klass
+      if set_module = self.set_module_name
+        hash = Card::Set.includable_format_modules[ klass ] and hash[ set_module ]
+      end
+
+    rescue Exception => e
+      warn "exception set_format_const #{e.inspect}, #{e.backtrace*"\n"}"
+    end
+
+
 
     def get_method_key
       if self.class.anchorless?

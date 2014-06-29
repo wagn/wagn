@@ -3,6 +3,13 @@
 class Card
   module Set
 
+    mattr_accessor :traits,
+      :base_modules, :base_format_modules,
+      :includable_modules, :includable_format_modules
+    @@base_modules, @@base_format_modules = [], {}
+    @@includable_modules, @@includable_format_modules= {}, {}
+    
+    
 =begin
     A "Set" is a group of cards to which "Rules" may be applied.  Sets can be as specific as
     a single card, as general as all cards, or anywhere in between.
@@ -13,9 +20,11 @@ class Card
     interface and are thus documented at http://wagn.org/rules.
 
     "Code rules" can be defined in a "set file" within any "Mod" (short for both "module" and
-    "modification"). In accordance with Wagn's "MoVE" architecture, there are three kinds of
-    code rules you can create in a set file: Model methods, Views, and Events.  The vast
-    majority of Wagn code is contained in these files.
+    "modification"). In accordance with Wagn's "MoVE" architecture, there are two main kinds of
+    code rules you can create in a set file: Views, and Events.  Events are associated with the
+    Card class, and Views are associated with a Format class.  You can also use set files to 
+    add or override Card and/or Format methods directly.  The majority of Wagn code is contained
+    in these files.
     
         (FIXME - define mod, add generator)
 
@@ -40,7 +49,7 @@ class Card
     information about set_ptterns and mods/core/sets/all/fetch.rb for more about fetching.)
 
     Similarly, whenever a Format object is instantiated for a card, it includes all views
-    associated with both (a) sets of which the card is a member and (b) the current format or 
+    associated with BOTH (a) sets of which the card is a member and (b) the current format or 
     its ancestors.  More on defining views below.
 
  
@@ -57,49 +66,64 @@ class Card
     is "just ruby" but is generally quite concise because Wagn uses its file location to 
     autogenerate ruby module names and then uses Card::Set module to provide additional API.
 
-    
+
+ View definitions
+
+   When you declare:
+     view :view_name do |args|
+       #...your code here
+     end
+
+   Methods are defined on the format
+
+   The external api with checks:
+     render(:viewname, args)
+
+
 =end
-    
-    
-    mattr_accessor :includable_modules, :base_modules, :traits, :current, :current_format
-    @@includable_modules, @@base_modules = {}, []
-    
 
-    # View definitions
-    #
-    #   When you declare:
-    #     view :view_name, "<set>" do |args|
-    #
-    #   Methods are defined on the format
-    #
-    #   The external api with checks:
-    #     render(:viewname, args)
-    #
-    #   Roughly equivalent to:
-    #     render_viewname(args)
-    #
-    
-    
-
-    def format format = nil
-      klass = Card::Format.format_class_name format
-      mod = const_get_or_set klass do Module.new end
-        
-      old_format = self.current_format
-      self.current_format = mod
-      yield
-      self.current_format = old_format if old_format        
-    end
-
-    def view *args, &block      
-      if current_format
-        handle_view *args, &block
-      else
-        format do
-          view *args, &block
+    module Format
+      def view view, *args, &block
+        view = view.to_name.key.to_sym
+        if block_given?
+          Card::Format.extract_class_vars view, args[0]
+          define_method "_view_#{ view }", &block
+        else
+          opts = Hash===args[0] ? args.shift : nil
+          alias_view view, args.shift, opts
         end
       end
+      
+      def alias_view alias_view, referent_view, opts
+        if opts.blank? # alias to another view in the same set (or ancestors)
+          define_method "_view_#{ alias_view }" do |*a|
+            send "_view_#{ referent_view }", *a
+          end
+        else           # aliasing to a view in another set
+          
+          # FIXME - not implemented
+          # need to call the instance method of the referent set module...
+          # might try getting the unbound method like this: Card::Set::Type::PlainText::HtmlFormat.instance_method :_view_editor
+          #... and then binding it to the current_format (however that works)
+        end
+      end     
     end
+
+    def format format=nil, &block
+      klass = Card::Format.format_class_name format
+      set_format_mod = const_get_or_set klass do Module.new end
+      Card::Set.register_set_format Card.const_get(klass), set_format_mod
+      
+      set_format_mod.extend Card::Set::Format
+      set_format_mod.class_eval &block
+    end
+
+    def view *args, &block
+      format do
+        view *args, &block
+      end
+    end
+    
 
     def event event, opts={}, &final
       opts[:on] = [:create, :update ] if opts[:on] == :save
@@ -120,39 +144,11 @@ class Card
       set_event_callbacks event, opts
     end
 
-#    private
-    
-    def handle_view view, *args, &final
-      view = view.to_name.key.to_sym
-      if block_given?
-        Card::Format.extract_class_vars view, args[0]
-        define_view view, &final
-      else
-        opts = Hash===args[0] ? args.shift : nil
-        alias_view view, args.shift, opts
-      end
-    end 
-    
-    def define_view view, &block
-      current_format.class_eval do
-        define_method "_view_#{ view }", &block
-      end
-    end
-    
-    def alias_view alias_view, referent_view, opts
-      if opts.blank? # alias to another view in the same set (or ancestors)
-        current_format.class_eval do
-          define_method "_view_#{ alias_view }" do |*a|
-            send "_view_#{ referent_view }", *a
-          end
-        end
-      else           # aliasing to a view in another set
-        # FIXME - not implemented
-        # need to call the instance method of the referent set module...
-        # might try getting the unbound method like this: Card::Set::Type::PlainText::HtmlFormat.instance_method :_view_editor
-        #... and then binding it to the current_format (however that works)
-      end
-    end
+
+    #
+    # ActiveCard support: accessing plus cards as attributes
+    #
+
 
     def card_accessor *args
       options = args.extract_options!
@@ -168,30 +164,9 @@ class Card
       options = args.extract_options!
       add_traits args, options.merge( :writer=>true )
     end
-  
 
 
 
-
-
-    #
-    # ActiveCard support: accessing plus cards as attributes
-    #
-
-
-    
-    def const_missing const
-      if const.to_s =~ /^([A-Z]\S*)ID$/ and code=$1.underscore.to_sym
-        if card_id = Codename[code]
-          const_set const, card_id
-        else
-          raise "Missing codename #{code} (#{const})"
-        end
-      else
-        super
-      end
-    end
-  
     #
     # Singleton methods
     #
@@ -202,7 +177,7 @@ class Card
         # each set mod calls `extend Card::Set` when required
         # that triggers the set registration
         register_set mod
-        self.current_format = nil
+        @@current_format = nil
       end
     
       def method_key opts
@@ -215,27 +190,27 @@ class Card
     
       def register_set set_module
         if all_set?( set_module )
-          self.current = { :module=>Card, :opts=>{} }
+          @@current = Card
           base_modules << set_module unless set_module == Card
         else
-          self.current = { :module=>set_module, :opts=>opts_from_module( set_module ) }
+          @@current = set_module
+          includable_modules[ set_module.name ] = set_module
         end      
-
-        includable_modules[ set_module.name ] = set_module unless set_module == Card
       end
+      
+      def register_set_format format_class, mod
+        if @@current == Card
+          base_format_modules[ format_class ] ||= []
+          base_format_modules[ format_class ] << mod
+        else
+          includable_format_modules[ format_class ] ||= {}
+          includable_format_modules[ format_class ][ @@current.name ] = mod
+        end
+      end
+    
     
       def all_set? set_module
         set_module == Card or set_module.name =~ /^Card::Set::All::/
-      end
-
-      def opts_from_module set_module
-        if name_parts = set_module.to_s.split('::')[2..-1]
-          #FIXME - does not handle set patterns with multiple opts (eg type plus right)
-          pattern, anchor = name_parts.map { |part| part.underscore.to_sym }
-          { pattern => anchor }
-        else
-          { }
-        end
       end
 
       def write_tmp_file set_pattern, anchor, from_file, seq
@@ -261,22 +236,35 @@ EOF
 
           
       def process_base_modules
-        base_modules.each do |mod|
+        process_base_module_list base_modules, Card
+        base_format_modules.each do |format_class, modules_list|
+          process_base_module_list modules_list, format_class
+        end
+        @@base_modules, @@base_format_modules = [], [] #needed?
+      end
+      
+      def process_base_module_list list, klass
+        list.each do |mod|
           if mod.instance_methods.any?
-            Card.send :include, mod
+            klass.send :include, mod
           end
           if class_methods = mod.const_get_if_defined( :ClassMethods )
-            Card.send :extend, class_methods
+            klass.send :extend, class_methods
           end
-          includable_modules.delete mod.name
         end
-        @@base_modules = []
       end
     
       def clean_empty_modules
-        includable_modules.each do |mod_name, mod|
+        clean_empty_module_from_hash includable_modules
+        includable_format_modules.values.each do |hash|
+          clean_empty_module_from_hash hash
+        end
+      end
+      
+      def clean_empty_module_from_hash hash
+        hash.each do |mod_name, mod|
           if mod.instance_methods.empty?
-            includable_modules.delete mod_name
+            hash.delete mod_name
           end
         end
       end
@@ -285,6 +273,7 @@ EOF
 
 
     private
+    
 
 
     def set_event_callbacks event, opts
@@ -308,7 +297,7 @@ EOF
     end
 
     def add_traits args, options
-      mod = Card::Set.current[:module]
+      mod = @@current
   #    raise "Can't define card traits on all set" if mod == Card
       mod_traits = get_traits mod
     

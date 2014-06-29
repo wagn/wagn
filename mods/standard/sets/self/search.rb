@@ -5,7 +5,7 @@ format :html do
     if vars = search_params[:vars] and keyword = vars[:keyword]
        args.merge! :title=> %{Search results for: <span class="search-keyword">#{keyword}</span>}
     end
-    _final_title args
+    super args
   end
 end
 

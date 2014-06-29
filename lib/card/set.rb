@@ -167,31 +167,27 @@ class Card
 
 
 
-    #
-    # Singleton methods
-    #
 
+    # the set loading process has two main phases:
+    
+    #  1. Definition: interpret each set file, creating/defining set and set_format modules
+    #  2. Organization: have base classes include modules associated with the "all" set, and
+    #     clean up the other modules
+       
     class << self
+
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      # Definition Phase
     
+      # each set file calls `extend Card::Set` when loaded
       def extended mod
-        # each set mod calls `extend Card::Set` when required
-        # that triggers the set registration
         register_set mod
-        @@current_format = nil
       end
-    
-      def method_key opts
-        Card.set_patterns.each do |pclass|
-          if !pclass.opt_keys.map(&opts.method(:has_key?)).member? false;
-            return pclass.method_key_from_opts(opts)
-          end
-        end
-      end
-    
+  
       def register_set set_module
         if all_set?( set_module )
           @@current = Card
-          base_modules << set_module unless set_module == Card
+          base_modules << set_module
         else
           @@current = set_module
           includable_modules[ set_module.name ] = set_module
@@ -233,6 +229,10 @@ EOF
         File.write to_file, file_content
         to_file
       end
+      
+      
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      # Organization Phase
 
           
       def process_base_modules
@@ -265,6 +265,20 @@ EOF
         hash.each do |mod_name, mod|
           if mod.instance_methods.empty?
             hash.delete mod_name
+          end
+        end
+      end
+      
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      
+      # FIXME - like everything else related to "set patterns", this needs renaming
+      # it no longer has anything to do with methods
+      # (also, this should probably be with the set patterns code, not here)
+      
+      def method_key opts
+        Card.set_patterns.each do |pclass|
+          if !pclass.opt_keys.map(&opts.method(:has_key?)).member? false;
+            return pclass.method_key_from_opts(opts)
           end
         end
       end

@@ -1,6 +1,11 @@
-[:create, :update, :read, :delete, :save].each do |action|
-  event :observer, :after=>:extend, :on=>action do 
-    Card::Observer.send_event_mails self, :on => action
+[:create, :update, :delete].each do |action|
+  event "observer_#{action}".to_sym, :after=>:approve, :on=>action do 
+    Card::Observer.send_event_mails self, :on=>action
   end
 end
+
+# event :observer, :after=>:approve, :on=>:delete do
+# #  byebug
+#   Card::Observer.send_event_mails self, :on=>:delete
+# end
 

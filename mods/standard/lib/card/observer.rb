@@ -11,8 +11,9 @@ class Card
         end
       end
 
-      def send_event_mails card, args        
-        setting = "on_#{args[:on]}"    
+      def send_event_mails card, args  
+        #byebug if args[:on] == :delete      
+        setting = "on #{args[:on]}"    
         email_templates_for( card, setting ) do |card|
           deliver( card )
         end
@@ -23,17 +24,13 @@ class Card
       end
       
       def email_templates_for card, setting
-        if event_card = card.rule_card( setting )
-          event_card.item_cards.each do |mailcard|
+        if event_card = Card.fetch("#{card.name}+*self+*#{setting}")   #FIXME
+        #if event_card = card.rule_card(setting)
+          event_card.extended_item_cards.each do |mailcard|
             yield(mailcard)
           end
         end
       end
-
-      def strip_html string
-        string.gsub(/<\/?[^>]*>/, "")
-      end
-      
     end
   end
 end

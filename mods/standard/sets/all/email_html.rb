@@ -2,6 +2,8 @@
 format :email do
   view :missing        do |args| '' end
   view :closed_missing do |args| '' end
+<<<<<<< Local Changes
+<<<<<<< Local Changes
 
   view :raw do |args| 
     output = card.raw_content
@@ -15,7 +17,6 @@ format :email do
   view :mail do |args|
     ActionMailer::Base.mail _render_config( args )
   end
-  
   
   view :change_notice do |args|    
     cd_with_acct = Card[args[:watcher]] unless Card===args[:watcher]
@@ -94,4 +95,8 @@ format :email do
   def strip_html string
     string.gsub(/<\/?[^>]*>/, "")
   end
+=======
+>>>>>>> External Changes
+=======
+>>>>>>> External Changes
 end

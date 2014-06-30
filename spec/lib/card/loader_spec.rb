@@ -1,7 +1,7 @@
 
 describe Card::Loader do
   let(:card_double) { proxy Card }
-  let(:pat_all_double) { proxy Card::SetPattern::AllPattern }
+  let(:pat_all_double) { proxy Card::AllSet }
   let(:format_double) { proxy Card::Format }
   let(:html_format_double) { proxy Card::HtmlFormat }
   it "should auto-load Card class methods from lib/wagn and mods" do

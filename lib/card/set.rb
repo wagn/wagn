@@ -1,10 +1,12 @@
 # -*- encoding : utf-8 -*-
 
+require 'byebug'
+
 class Card
   module Set
 
-    mattr_accessor :base_modules, :base_format_modules,:includable_modules, :includable_format_modules, :traits
-    @@base_modules, @@base_format_modules, @@includable_modules, @@includable_format_modules = [], {}, {}, {}
+    mattr_accessor :modules, :traits
+    @@modules = { :base=>[], :base_format=>{}, :nonbase=>{}, :nonbase_format=>{} }
     
 =begin
     A "Set" is a group of cards to which "Rules" may be applied.  Sets can be as specific as
@@ -106,12 +108,14 @@ class Card
     end
 
     def format format=nil, &block
-      klass = Card::Format.format_class_name format
-      set_format_mod = const_get_or_set klass do Module.new end
-      Card::Set.register_set_format Card.const_get(klass), set_format_mod
-      
-      set_format_mod.extend Card::Set::Format
-      set_format_mod.class_eval &block
+      klass = Card::Format.format_class_name format   # format class name, eg. HtmlFormat
+      mod = const_get_or_set klass do                 # called on current set module, eg Card::Set::Type::Pointer
+        m = Module.new                                # yielding set format module, eg Card::Set::Type::Pointer::HtmlFormat
+        register_set_format Card.const_get(klass), m
+        m.extend Card::Set::Format
+        m
+      end                                             
+      mod.class_eval &block
     end
 
     def view *args, &block
@@ -181,30 +185,14 @@ class Card
       end
   
       def register_set set_module
-        if all_set?( set_module )
-          @@current = Card
-          base_modules << set_module
+        if set_module.all_set?
+          modules[ :base ] << set_module
         else
-          @@current = set_module
-          includable_modules[ set_module.name ] = set_module
+          modules[ :nonbase ][ set_module.shortname ] ||= []
+          modules[ :nonbase ][ set_module.shortname ] << set_module
         end      
       end
       
-      def register_set_format format_class, mod
-        if @@current == Card
-          base_format_modules[ format_class ] ||= []
-          base_format_modules[ format_class ] << mod
-        else
-          includable_format_modules[ format_class ] ||= {}
-          includable_format_modules[ format_class ][ @@current.name ] = mod
-        end
-      end
-    
-    
-      def all_set? set_module
-        set_module == Card or set_module.name =~ /^Card::Set::All::/
-      end
-
       def write_tmp_file set_pattern, anchor, from_file, seq
         # FIXME - this does not properly handle anchorless sets
         # There are special hacks for *all, but others (like *rstar) will not be found by
@@ -230,13 +218,15 @@ EOF
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       # Organization Phase
 
-          
+      # "base modules" are modules that are permanently included on the Card or Format class
+      # "nonbase modules" are included dynamically on singleton_classes
       def process_base_modules
-        process_base_module_list base_modules, Card
-        base_format_modules.each do |format_class, modules_list|
+        process_base_module_list modules[:base], Card
+        modules[:base_format].each do |format_class, modules_list|
           process_base_module_list modules_list, format_class
         end
-        @@base_modules, @@base_format_modules = [], [] #needed?
+        modules.delete :base
+        modules.delete :base_format
       end
       
       def process_base_module_list list, klass
@@ -251,27 +241,50 @@ EOF
       end
     
       def clean_empty_modules
-        clean_empty_module_from_hash includable_modules
-        includable_format_modules.values.each do |hash|
+        clean_empty_module_from_hash modules[ :nonbase ]
+        modules[ :nonbase_format ].values.each do |hash|
           clean_empty_module_from_hash hash
         end
       end
       
       def clean_empty_module_from_hash hash
-        hash.each do |mod_name, mod|
-          if mod.instance_methods.empty?
-            hash.delete mod_name
-          end
+        hash.each do |mod_name, modlist|
+          modlist.delete_if { |x| x.instance_methods.empty? }
+          hash.delete mod_name if modlist.empty?
         end
       end
       
     end
 
 
+    def register_set_format format_class, mod
+      if self.all_set?
+        modules[ :base_format ][ format_class ] ||= []
+        modules[ :base_format ][ format_class ] << mod
+      else
+        format_hash = modules[ :nonbase_format ][ format_class ] ||= {}
+        format_hash[ shortname ] ||= []
+        format_hash[ shortname ] << mod
+      end
+    end
+
+    def shortname
+      parts = name.split '::'
+      first = 2 # shortname eliminates Card::Set
+      set_class = Card::SetPattern.find parts[first].underscore
+      
+      last = first + ( set_class.anchorless? ? 0 : 1 )
+      #FIXME - handle multi-anchor sets like type_plus_right 
+      parts[first..last].join '::'
+    end
+
+    def all_set?
+      name =~ /^Card::Set::All::/
+    end
+
     private
     
-
-
+    
     def set_event_callbacks event, opts
       [:before, :after, :around].each do |kind|
         if object_method = opts.delete(kind)
@@ -291,7 +304,7 @@ EOF
     end
 
     def add_traits args, options
-      mod = @@current
+      mod = self
   #    raise "Can't define card traits on all set" if mod == Card
       mod_traits = get_traits mod
     

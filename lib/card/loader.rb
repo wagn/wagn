@@ -83,7 +83,7 @@ class Card
 
 
       def load_sets_by_pattern
-        Card.set_patterns.reverse.map(&:key).each do |set_pattern|
+        Card.set_patterns.reverse.map(&:pattern_code).each do |set_pattern|
           pattern_tmp_dir = "#{Wagn.paths['tmp/sets'].first}/#{set_pattern}"
           if rewrite_tmp_files?
             Dir.mkdir pattern_tmp_dir

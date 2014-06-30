@@ -30,6 +30,7 @@ end
 
 def extended_item_cards context = nil
   context = (context ? context.cardname : self.cardname)
+  args={ :limit=>'' }
   items = self.item_cards(args.merge(:context=>context))
   extended_list = []
   already_extended = [] # avoid loops
@@ -47,10 +48,11 @@ def extended_item_cards context = nil
       already_extended << item
     end
   end
+  extended_list
 end
 
-def extended_item_names context = nil
-  extended_item_cards(context).map(&:cardname)
+def extended_item_contents context = nil
+  extended_item_cards(context).map(&:item_names).flatten
 end
 
 def extended_list context = nil

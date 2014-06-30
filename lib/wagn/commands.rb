@@ -51,6 +51,11 @@ else
       files = Dir.glob("mods/**/#{ARGV[index]}_spec.rb").flatten.join(' ')
       ARGV.delete_at(index)
     end
+    if index = ( ARGV.index("-cs") || ARGV.index("--core-spec" ))
+      ARGV.delete_at(index)
+      files = Dir.glob("#{Wagn.gem_root}/spec/**/#{ARGV[index]}_spec.rb").flatten.join(' ')
+      ARGV.delete_at(index)
+    end
     if index = ( ARGV.index("-m") || ARGV.index("--mod" ))
       ARGV.delete_at(index)
       files = "mods/#{ARGV[index]}"

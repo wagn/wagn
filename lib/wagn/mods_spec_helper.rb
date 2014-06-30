@@ -61,6 +61,6 @@ Spork.each_run do
   # This code will be run each time you run your specs.
 end
 
-require 'wagn/wagn_spec_helper'
-RSpec::Core::ExampleGroup.send :include, Wagn::WagnSpecHelper
+require 'wagn/spec_helper'
+RSpec::Core::ExampleGroup.send :include, Wagn::SpecHelper
 

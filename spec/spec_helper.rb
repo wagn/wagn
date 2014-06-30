@@ -15,7 +15,7 @@ Spork.prefork do
   end
   
   require 'rspec/rails'
-  require File.expand_path( '../../lib/wagn/wagn_spec_helper.rb', __FILE__ )
+  require File.expand_path( '../../lib/wagn/spec_helper.rb', __FILE__ )
   
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
@@ -30,7 +30,7 @@ Spork.prefork do
       :file_path => /\bspec\/controllers\//
     }
 
-    format_index = ARGV.find_index {|arg| arg =~ /--format/ }
+    format_index = ARGV.find_index {|arg| arg =~ /--format|-f/ }
     formatter = format_index ? ARGV[ format_index + 1 ] : 'textmate'
     config.add_formatter formatter
     
@@ -99,5 +99,5 @@ class Card
   end
 end
 
-RSpec::Core::ExampleGroup.send :include, Wagn::WagnSpecHelper
+RSpec::Core::ExampleGroup.send :include, Wagn::SpecHelper
 

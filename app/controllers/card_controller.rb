@@ -138,7 +138,7 @@ class CardController < ActionController::Base
         end
       end
     @card.selected_revision_id = params[:rev].to_i if params[:rev]
-
+    raise Card::Oops, "I cannot remember a long name." if card.name.length > 255
     Card::Env[:main_name] = params[:main] || (card && card.name) || ''
     render_errors if card.errors.any?
     true

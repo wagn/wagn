@@ -106,7 +106,7 @@ send_signup_notifications = proc do |c|
 end
 
 event :signup_notifications, :after=>:extend, :on=>:create, :when=>send_signup_notifications do
-  Card['invite request'].format(format=>:email)._render_mail(
+  Card['signup alert'].format(format=>:email)._render_mail(
     :to     => Card.setting('*request+*to'),
     :from   => Card.setting('*request+*from') || "#{@name} <#{@email}>",
     :locals => {

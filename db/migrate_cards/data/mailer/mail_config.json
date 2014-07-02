@@ -6,10 +6,10 @@
 	  "message" : "change_notice.html.erb"
   },
   {
-      "name"    : "confirmation email",
-	  "codename": "confirmation_email",
-      "subject" : "verification link for {{_site}}",
-	  "message" : "change_notice.html.erb"
+    "name"      : "confirmation email",
+	  "codename"  : "confirmation_email",
+    "subject"   : "verification link for {{_site}}",
+	  "message"   : "change_notice.html.erb"
   },
   {
       "name"    : "password reset",
@@ -22,10 +22,5 @@
 	  "codename": "invite_request",
       "subject" : "{{_name}} signed up for {{_site}}",
 	  "message" : "signup_alert.html"
-  },
-  {
-      "name"    : "email layout",
-	  "codename": "email_layout",
-	  "message" : "email_layout.html.erb"
   }
 ]

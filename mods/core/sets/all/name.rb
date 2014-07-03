@@ -136,9 +136,10 @@ event :validate_unique_codename, :after=>:permit_codename do
 end
 
 event :validate_name, :before=>:approve, :on=>:save do 
-
   cdname = name.to_name
-  if cdname.blank?
+  if name.length > 255
+    errors.add :name, "can't be too long(>255 characters)"
+  elsif cdname.blank?
     errors.add :name, "can't be blank"
   elsif name_changed?
     #Rails.logger.debug "valid name #{card.name.inspect} New #{name.inspect}"

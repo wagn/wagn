@@ -181,13 +181,6 @@ describe CardController do
       assert_response 404
     end
 
-    it "handles card name's length > 255" do
-      login_as 'joe_user'
-      _cardname = "1" * 256
-      get :read, :card=>{:name=>_cardname}
-      response.body.include?("EXCEPTION").should be_true
-    end
-
     it "returns denial when no read permission" do
       Card::Auth.as_bot do
         Card.create! :name=>'Strawberry', :type=>'Fruit' #only admin can read
@@ -215,12 +208,6 @@ describe CardController do
         post :read, :card=>{:name=>"BananaBread"}, :view=>'new'
         assert_response :success, "response should succeed"
         assert_equal 'BananaBread', assigns['card'].name, "@card.name should == BananaBread"
-      end
-
-      it "new card with name's length > 255" do
-         _cardname = "1" * 256
-        post :read, :card=>{:name=>_cardname}, :view=>'new'
-        response.body.include?("EXCEPTION").should be_true
       end
 
       it "new with existing name" do

@@ -9,19 +9,28 @@ end
 
 def compress_css input
   begin
+    byebug
     Sass.compile input, :style=>:compressed
   rescue Exception=>e
     raise Card::Oops, "Stylesheet Error:\n#{ e.message }"
   end
 end 
 
-format :html do
+def clean_html?
+  false
+end
 
+def chunk_list  #turn off autodetection of uri's 
+  :inclusion_only
+end
+
+format :html do
   view :editor, :type=>:plain_text
   
   view :core do |args|
     # FIXME: scan must happen before process for inclusion interactions to work, but this will likely cause
     # problems with including other css?
+    byebug
     process_content ::CodeRay.scan( _render_raw, :css ).div, :size=>:icon
   end
   

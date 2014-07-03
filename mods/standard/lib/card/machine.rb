@@ -62,18 +62,19 @@ class Card
           # collect all item cards as input 
           items = [self]
           new_input = []
-          already_extended = [] # avoid loops
+          already_extended = {} # avoid loops
+          loop_limit = 5
           while items.size > 0
             item = items.shift
-            if item.trash or already_extended.include? item 
+            if item.trash or ( already_extended[item.id] and already_extended[item.id] > loop_limit)
               next
             elsif item.item_cards == [item]  # no pointer card
               new_input << item
-              already_extended << item
             else
               items.insert(0, item.item_cards)
               items.flatten!
-              already_extended << item
+              new_input << item if item != self
+              already_extended[item] = already_extended[item] ? already_extended[item] + 1 : 1
             end
           end
           new_input
@@ -99,7 +100,7 @@ class Card
           end
         end
   
-        host_class.event "update_machine_output_#{host_class.name.gsub(':','_')}".to_sym, :after => :store, :on => :save do  
+        host_class.event "update_machine_output_#{host_class.name.gsub(':','_')}".to_sym, :after => :store_subcards, :on => :save do  
           update_machine_output
         end
       end
@@ -108,10 +109,12 @@ class Card
     def run_machine joint="\n"
       before_engine
       output = input_item_cards.map do |input|
-        if input.respond_to? :machine_input
-          engine( input.machine_input ) 
-        else
-          engine( input.format._render_raw )
+        unless input.kind_of? Card::Set::Type::Pointer
+          if input.respond_to? :machine_input
+            engine( input.machine_input ) 
+          else
+            engine( input.format._render_raw )
+          end
         end
       end.select(&:present?).join( joint )
       after_engine output
@@ -125,6 +128,7 @@ class Card
     def update_input_card
       Card::Auth.as_bot do
         machine_input_card.items = engine_input
+        #machine_input_card.save
       end
     end
 
@@ -134,7 +138,7 @@ class Card
 
     def machine_output_url
       ensure_machine_output
-      machine_output_card.attach.url
+      machine_output_card.attach.url(:default, :timestamp => false)   # to get rid of additional number in url
     end 
 
     def machine_output_path

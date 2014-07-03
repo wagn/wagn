@@ -9,7 +9,6 @@ end
 
 def compress_css input
   begin
-    byebug
     Sass.compile input, :style=>:compressed
   rescue Exception=>e
     raise Card::Oops, "Stylesheet Error:\n#{ e.message }"
@@ -30,7 +29,6 @@ format :html do
   view :core do |args|
     # FIXME: scan must happen before process for inclusion interactions to work, but this will likely cause
     # problems with including other css?
-    byebug
     process_content ::CodeRay.scan( _render_raw, :css ).div, :size=>:icon
   end
   

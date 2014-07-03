@@ -1,5 +1,3 @@
-# load 'spec/mods/zfactory/lib/machine_spec.rb'
-# load 'spec/mods/zfactory/lib/machine_input_spec.rb'
 
 describe Card::Set::Type::Css do
   let(:css) { '#box { display: block }' }
@@ -16,10 +14,11 @@ describe Card::Set::Type::Css do
 
   it_behaves_like "machine input"  do
     let(:create_machine_input_card) { Card.gimme! "test css", :type => :css, :content => css }
+    let(:create_another_machine_input_card) { Card.gimme! "more test css", :type => :css, :content => css }
     let(:create_machine_card)  { Card.gimme! "style with css+*style", :type => :pointer }
     let(:card_content) do
        { in:       css,         out:     compressed_css, 
-         new_in:   changed_css, new_out: compressed_changed_css }
+         changed_in:   changed_css, changed_out: compressed_changed_css }
     end
   end
 
@@ -27,7 +26,7 @@ describe Card::Set::Type::Css do
     let(:machine_card) {  Card.gimme! "test css", :type => :css, :content => css }
     let(:card_content) do
        { in:       css,         out:     compressed_css, 
-         new_in:   changed_css, new_out: compressed_changed_css }
+         changed_in:   changed_css, changed_out: compressed_changed_css }
     end
   end
 end

@@ -42,7 +42,7 @@ else
     end
   when 'update'
     load_rake_tasks
-    Rake::Taske['wagn:update'].invoke
+    Rake::Task['wagn:update'].invoke
   when 'cucumber'
     system "RAILS_ROOT=. bundle exec cucumber #{ ARGV.join(' ') }"
   when 'rspec'

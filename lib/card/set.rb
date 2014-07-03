@@ -81,30 +81,31 @@ class Card
 =end
 
     module Format
+      mattr_accessor :views
+      @@views = {}
+      
       def view view, *args, &block
         view = view.to_name.key.to_sym
-        if block_given?
-          Card::Format.extract_class_vars view, args[0]
-          define_method "_view_#{ view }", &block
-        else
-          opts = Hash===args[0] ? args.shift : nil
-          alias_view view, args.shift, opts
-        end
+        define_method "_view_#{ view }", if block_given?
+            views[self] ||= {}
+            views[self][view] = block
+            Card::Format.extract_class_vars view, args[0]
+            block
+          else
+            alias_block view, args
+          end
+#        end
       end
       
-      def alias_view alias_view, referent_view, opts
-        if opts.blank? # alias to another view in the same set (or ancestors)
-          define_method "_view_#{ alias_view }" do |*a|
-            send "_view_#{ referent_view }", *a
-          end
-        else           # aliasing to a view in another set
-          
-          # FIXME - not implemented
-          # need to call the instance method of the referent set module...
-          # might try getting the unbound method like this: Card::Set::Type::PlainText::HtmlFormat.instance_method :_view_editor
-          #... and then binding it to the current_format (however that works)
-        end
-      end     
+      def alias_block view, args
+        opts = Hash===args[0] ? args.shift : { :view => args.shift }
+        opts[:mod]  ||= self
+        opts[:view] ||= view
+        views[ opts[:mod] ][ opts[:view] ] or fail
+      rescue
+        raise "cannot find #{ opts[:view] } view in #{ opts[:mod] }; failed to alias #{view} in #{self}"
+      end
+      
     end
 
     def format format=nil, &block

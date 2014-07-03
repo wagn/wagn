@@ -21,7 +21,7 @@ end
 
 format :html do
 
-  view :editor, :type=>:plain_text
+  view :editor, :mod=>PlainText::HtmlFormat
   
   view :core do |args|
     #fixme - shouldn't we just render SCSS?

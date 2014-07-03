@@ -2,6 +2,8 @@
 include File
 
 format do
+  
+  include File::Format
 
   view :closed_content do |args|
     _render_core :size=>:icon
@@ -18,18 +20,10 @@ format do
     card.attach.url style
   end
 
-
-  view :core, :type=>:file
-
-  def handle_source args  #FIXME - duplicate of file.rb.  should share code
-    source = _render_source args
-    source ? yield( source ) : ''
-  rescue
-    'File Error'
-  end
 end
 
 format :html do
+  include File::HtmlFormat
 
   view :core do |args|
     handle_source args do |source|
@@ -49,8 +43,6 @@ format :html do
     out
   end
 
-  view :editor, :type=>:file
-
 end
 
 format :css do
@@ -64,12 +56,11 @@ format :css do
 end
 
 format :file do
+  include File::FileFormat
 
   view :style do |args|  #should this be in model?
     ['', 'full'].member?( args[:style].to_s ) ? :original : args[:style]
   end
     
-  view :core, :type=>:file
-
 end
 

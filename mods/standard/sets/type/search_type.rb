@@ -90,17 +90,8 @@ format do
     # explicit > inclusion syntax > WQL > inclusion defaults
   end
 
-  def default_search_params
-    set_default_search_params
-  end
   
-  def set_default_search_params overrides={}
-    @default_search_params ||= begin
-      p = { :default_limit=> 100 }.merge overrides
-      set_search_params_variables! p
-      p
-    end
-  end
+
 
   def search_params
     @search_params ||= begin
@@ -111,6 +102,18 @@ format do
         p[:limit]  = params[:limit]  if params[:limit]
         p.merge! params[:wql]        if params[:wql]
       end
+      p
+    end
+  end
+
+  def default_search_params # wahh?
+    set_default_search_params
+  end
+  
+  def set_default_search_params overrides={}
+    @default_search_params ||= begin
+      p = { :default_limit=> 100 }.merge overrides
+      set_search_params_variables! p
       p
     end
   end

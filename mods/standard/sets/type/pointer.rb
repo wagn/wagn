@@ -128,13 +128,14 @@ format :css do
     %(#{major_comment "STYLE GROUP: \"#{card.name}\"", '='}#{ _render_core })
   end
   
-  view :content, :core
-  
   view :core do |args|
     card.item_cards.map do |item|
       nest item, :view=>(params[:item] || :content)
     end.join "\n\n"
   end
+  
+  view :content, :core
+  
 end
 
 format :data do

@@ -159,7 +159,7 @@ class Card
       when /(_)?(optional_)?render(_(\w+))?/  
         view = $3 ? $4 : opts.shift      
         args = opts[0] ? opts.shift.clone : {} 
-        args.merge( :optional=>true, :default_visibility=>opts.shift) if $2
+        args.merge!( :optional=>true, :default_visibility=>opts.shift) if $2
         args[ :skip_permissions ] = true if $1
         render view, args           
       when /^_view_(\w+)/
@@ -179,6 +179,7 @@ class Card
     
 
     def render view, args={}
+      puts "card (#{card.name}) render #{view}, #{args}"
       unless args.delete(:optional) && !show_view?( view, args )
         @current_view = view = ok_view canonicalize_view( view ), args       
         args = default_render_args view, args

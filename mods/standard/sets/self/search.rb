@@ -2,7 +2,7 @@
 format :html do
   
   view :title do |args|
-    if vars = search_params[:vars] and keyword = vars[:keyword]
+    if vars =  [:vars] and keyword = vars[:keyword]
        args.merge! :title=> %{Search results for: <span class="search-keyword">#{keyword}</span>}
     end
     super args

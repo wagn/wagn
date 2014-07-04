@@ -46,7 +46,12 @@ Spork.prefork do
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
     
-
+    config.mock_with :rspec do |mocks|
+       mocks.syntax = [:should, :expect]
+     end
+    config.expect_with :rspec do |c|
+      c.syntax = [:should, :expect]
+    end
     config.before(:each) do
       Card::Auth.current_id = JOE_USER_ID
       Wagn::Cache.restore

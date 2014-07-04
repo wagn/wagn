@@ -29,6 +29,16 @@ describe Card::Set::Right::Account do
       @no_email.errors['+*account'].first.should =~ /email required/
     end
     
+
+    it 'sends confirmation email' do
+      # call card.send_account_confirmation_email and check email
+      Card::Auth.as_bot do
+        Card.create! :name => "aseefasdf", '+*account'=>{ 
+            '+*email'=>'tmpuser@wagn.org', '+*password'=>'tmp_pass' }
+      end
+      @mail = ActionMailer::Base.deliveries.last
+      expect( @mail.body.raw_source ).to match(Card.setting( :title ))
+    end
   end
   
   describe '#update_attributes' do

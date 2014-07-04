@@ -180,7 +180,7 @@ describe CardController do
       get :read, {:id=>'~9999999'}
       assert_response 404
     end
-    
+
     it "returns denial when no read permission" do
       Card::Auth.as_bot do
         Card.create! :name=>'Strawberry', :type=>'Fruit' #only admin can read

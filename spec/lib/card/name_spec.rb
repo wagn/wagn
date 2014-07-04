@@ -101,7 +101,13 @@ describe Card::Name do
 #      "Tes~sd".to_name.should_not be_valid
       "TEST/DDER".to_name.should_not be_valid
     end
-  end
+
+    it "rejects long names" do
+      card = Card.new
+      card.name="1"*256
+      card.should_not be_valid
+    end 
+  end 
 
   describe "#left_name" do
     it "returns nil for non junction" do

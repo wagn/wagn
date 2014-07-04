@@ -138,7 +138,7 @@ class CardController < ActionController::Base
         end
       end
     @card.selected_revision_id = params[:rev].to_i if params[:rev]
-
+    
     Card::Env[:main_name] = params[:main] || (card && card.name) || ''
     render_errors if card.errors.any?
     true

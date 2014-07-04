@@ -63,4 +63,3 @@ class Card
   end  
   Env.reset
 end
-

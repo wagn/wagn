@@ -22,7 +22,7 @@ format :html do
     account = card.fetch :trait=>:account, :new=>{}
   
     form_args = {
-      :hidden => { :success=>'REDIRECT: /' },
+      :hidden => { :success=>'REDIRECT: *previous' },
       :recaptcha => :off
     }
   

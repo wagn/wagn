@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+require 'sass'
 include Machine
 include MachineInput
 
@@ -10,7 +12,7 @@ end
 def compress_css input
   begin
     Sass.compile input, :style=>:compressed
-  rescue Exception=>e
+  rescue => e
     raise Card::Oops, "Stylesheet Error:\n#{ e.message }"
   end
 end 
@@ -20,7 +22,7 @@ def clean_html?
 end
 
 def chunk_list  #turn off autodetection of uri's 
-  :inclusion_only
+  :inclusion_and_link
 end
 
 format :html do
@@ -31,5 +33,4 @@ format :html do
     # problems with including other css?
     process_content ::CodeRay.scan( _render_raw, :css ).div, :size=>:icon
   end
-  
 end

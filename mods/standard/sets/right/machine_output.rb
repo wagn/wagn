@@ -1,8 +1,10 @@
 format do
   view :not_found do |args|
-    if card.left.kind_of? Machine
-      card.left.refresh.update_machine_output   # FIXME problems with cache; without refresh this produces a loop 
-        # (it creates a new file but returns the url to a "newer" version that doesn't exist )
+    srid = card.selected_revision_id = nil
+    if card.left.kind_of? Machine and (card.new_card? or !srid or srid == card.current_revision_id)
+      # only regenerate output if it's really warranted 
+      # (not when someone requests a specific old version that has been removed)
+      card.left.update_machine_output   
       root.error_status = 302
       wagn_path card.left.machine_output_url
     else

@@ -50,6 +50,7 @@ def set_content new_content
     clear_drafts if current_revision_id
     new_rev = Card::Revision.create :card_id=>self.id, :content=>new_content, :creator_id =>Auth.current_id
     self.current_revision_id = new_rev.id
+    self.selected_revision_id = nil
     reset_patterns_if_rule saving=true
     @name_or_content_changed = true
   else

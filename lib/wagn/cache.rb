@@ -59,6 +59,14 @@ module Wagn
         Card.delete_tmp_files
       end
 
+      def reset_local
+        cache_by_class.each do |cc, cache|
+          if Wagn::Cache===cache
+            cache.reset_local
+          else warn "reset class #{cc}, #{cache.class} #{caller[0..8]*"\n"} ???" end
+        end
+      end
+
       private
 
       def prepopulate
@@ -71,13 +79,6 @@ module Wagn
       end
 
 
-      def reset_local
-        cache_by_class.each do |cc, cache|
-          if Wagn::Cache===cache
-            cache.reset_local
-          else warn "reset class #{cc}, #{cache.class} #{caller[0..8]*"\n"} ???" end
-        end
-      end
 
     end
 

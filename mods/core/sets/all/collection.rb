@@ -68,8 +68,8 @@ def extended_list context = nil
   # this could go on and on.  more elegant to recurse until you don't have a collection
 end
 
-def contextual_content context_card, format_args={}
+def contextual_content context_card, format_args={}, view_args={}
   context_card.format(format_args).process_content(
-    self.format()._render_raw
+    self.format(format_args)._render_raw(view_args)
   )
 end

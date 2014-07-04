@@ -1,5 +1,6 @@
 
 include All::Permissions::Accounts
+include Wagn::Location
 
 card_accessor :email
 card_accessor :password
@@ -94,15 +95,16 @@ end
   
 
 event :send_account_confirmation_email, :on=>:create, :after=>:extend do
+  byebug
   if self.email.present?
-    Card["confirmation email"].format(:format=>:email)._render_mail(
+    Card["confirmation email"].format(:format=>:email).deliver(
       :to     => self.email,
       :from   => token_emails_from(self),
       :locals =>{
         :link        => wagn_url( "/update/#{self.left.cardname.url_key}?token=#{self.token}" ),
         :expiry_days => Wagn.config.token_expiry / 1.day 
       }
-    ).deliver
+    )
   end
 end
 
@@ -110,13 +112,13 @@ event :send_reset_password_token do
   Auth.as_bot do
     token_card.update_attributes! :content => generate_token
   end
-  Card["password reset"].format(:format=>:email)._render_mail(
+  Card["password reset"].format(:format=>:email).deliver(
     :to     => self.email,
     :from   => token_emails_from(self),
     :locals => {
       :link        => wagn_url( "/update/#{self.cardname.url_key}?reset_token=#{self.token_card.refresh(true).content}" ),
       :expiry_days => Wagn.config.token_expiry / 1.day,
-    }).deliver
+    })
 end
 
 def token_emails_from account

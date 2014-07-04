@@ -1,3 +1,4 @@
+<<<<<<< Local Changes
 # -*- encoding : utf-8 -*-
 require 'open-uri'
 
@@ -11,5 +12,9 @@ class Card
     default @@defaults
 
     include Wagn::Location
+
+    def change_notice watcher, watched_card, action, watched, nested_notifications 
+      watched_card.format(:format=>:email)._render_change_notice(
+                :watcher=>watcher, :watched=>watched.to_s, :action=>action, :subedits=>nested_notifications )
   end
 end

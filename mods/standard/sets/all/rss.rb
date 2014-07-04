@@ -19,7 +19,7 @@ format :rss do
           render_feed_item_list
         end
       end
-    rescue Exception=>e
+    rescue =>e
       @xml.error "\n\nERROR rendering RSS: #{e.inspect}\n\n #{e.backtrace}"
     end
   end
@@ -57,9 +57,9 @@ format :rss do
   view :menu            do |args| '' end
     
   
-  view :open, :titled
-  view :content, :core
-  view :open_content, :core
-  view :closed, :link
+  view :open,         { :view=>:titled, :mod=>All::Base::Format }
+  view :content,      { :view=>:core,   :mod=>All::Base::Format }
+  view :open_content, { :view=>:core,   :mod=>All::Base::Format }
+  view :closed,       { :view=>:link,   :mod=>All::Base::Format }
 
 end

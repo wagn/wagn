@@ -4,7 +4,7 @@ class Card
   class Error < StandardError #code problem
   end
   
-  class Oops < Error # wagneer problem
+  class Oops < Error # wagneer problem (rename!)
   end
   
   class BadQuery < Error
@@ -27,10 +27,10 @@ class Card
     end
   end
   
-  class Abort < Exception
+  class Abort < StandardError
     attr_reader :status
 
-    def initialize status=:failure, msg=''
+    def initialize status, msg=''
       @status = status
       super msg
     end

@@ -1,5 +1,2 @@
-include Right::Create
-
-view :core,           :right=>:create
-view :editor,         :right=>:create
-view :closed_content, :right=>:create
+include Create
+format :html do include Create::HtmlFormat end

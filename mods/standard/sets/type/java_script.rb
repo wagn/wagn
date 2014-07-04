@@ -22,7 +22,7 @@ end
 
 format :html do
 
-  view :editor, :type=>:plain_text
+  view :editor, :mod=>PlainText::HtmlFormat
   
   view :core do |args|
     highlighted_js = ::CodeRay.scan( _render_raw, :js ).div

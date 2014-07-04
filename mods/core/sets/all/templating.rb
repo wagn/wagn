@@ -91,8 +91,11 @@ def assigns_type?
   # for example, X+*type+*structure governs all cards of type X,
   # but the content rule does not (in fact cannot) have the type X.
   if is_structure?
-    set_class = Card.find_set_pattern cardname.trunk_name
-    set_class && set_class.assigns_type
+    if set_pattern = Card.fetch( cardname.trunk_name.tag_name, :skip_modules=>true )
+      pattern_code = set_pattern.codename and
+      set_class    = Card::SetPattern.find( pattern_code ) and
+      set_class.assigns_type
+    end
   end
 end
 

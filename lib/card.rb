@@ -12,8 +12,6 @@ class Card < ActiveRecord::Base
   require_dependency 'card/auth'
   require_dependency 'card/loader'
 
-  extend Set
-
   has_many :revisions, :order => :id
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
@@ -27,7 +25,6 @@ class Card < ActiveRecord::Base
   attr_accessor :action, :supercard,         
     :comment, :comment_author,    # obviated soon
     :update_referencers           # wrong mechanism for this
-
 
   define_callbacks :approve, :store, :extend
   

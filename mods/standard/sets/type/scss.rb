@@ -16,7 +16,7 @@ format do
   
   def compile_scss scss, style=:expanded
     Sass.compile scss, :style=>style
-  rescue Exception=>e
+  rescue =>e
     e
   end 
 end

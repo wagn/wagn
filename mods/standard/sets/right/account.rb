@@ -23,7 +23,7 @@ format :html do
 
   view :edit do |args|
     args[:structure] = true
-    _final_edit args
+    super args
   end
 end
 

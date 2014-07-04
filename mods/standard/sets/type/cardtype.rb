@@ -3,14 +3,14 @@ format :html do
 
   view :type do |args|
     args.merge!(:type_class=>'no-edit') if card.cards_of_type_exist?
-    _final_type args
+    super args
   end
 
   view :type_fieldset do |args|
     if card.cards_of_type_exist?
       %{<div>Sorry, this card must remain a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
     else
-      _final_type_fieldset args
+      super args
     end  
   end
 

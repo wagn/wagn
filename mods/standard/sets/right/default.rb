@@ -1,2 +1,3 @@
-view :core, :right=>:structure
-view :closed_content, :right=>:structure
+format :html do
+  include Structure::HtmlFormat
+end

@@ -1,21 +1,3 @@
-MODULES={}
-
-module ClassMethods
-
-  def find_set_pattern mark
-    if mark
-      class_key = if Card::Name === mark
-        key_card = Card.fetch mark.to_name.tag_name, :skip_modules=>true
-        key_card && key_card.codename
-      else
-        mark.to_s
-      end
-      set_patterns.find { |sub| sub.key == class_key }
-    end
-  end
-
-end
-
 
 def patterns
   @patterns ||= set_patterns.map { |sub| sub.new(self) }.compact
@@ -27,7 +9,7 @@ end
 alias_method_chain :patterns, :new
 
 def reset_patterns
-  @set_mods_loaded = @patterns = @set_modules = @junction_only = @method_keys = @set_names = @template = @rule_set_keys = @virtual = nil
+  @set_mods_loaded = @patterns = @set_modules = @junction_only = @set_names = @template = @rule_set_keys = @virtual = nil
   true
 end
 
@@ -49,7 +31,14 @@ def safe_set_keys
 end
 
 def set_modules
-  @set_modules ||= patterns_without_new[0..-2].reverse.map(&:set_const).compact
+  @set_modules ||= patterns_without_new[0..-2].reverse.map(&:module_list).flatten.compact
+end
+
+def set_format_modules klass
+  @set_format_modules ||= {}
+  @set_format_modules[klass] = patterns_without_new[0..-2].reverse.map do |pattern|
+    pattern.format_module_list klass
+  end.flatten.compact
 end
 
 def set_names
@@ -65,6 +54,3 @@ def rule_set_keys
   @rule_set_keys ||= patterns.map( &:rule_set_key ).compact
 end
 
-def method_keys
-  @method_keys ||= patterns.map(&:get_method_key).compact
-end

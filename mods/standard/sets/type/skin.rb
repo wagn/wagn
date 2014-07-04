@@ -1,26 +1,12 @@
-include Pointer
 include Machine
 include MachineInput
 
 store_machine_output :filetype => "css"
 
-view :core, :type=>:pointer
-
-format :html do
-  view :closed_content, :type=>:pointer
-  view :core,           :type=>:pointer
-  view :editor,         :type=>:pointer
-  view :list,           :type=>:pointer
-  view :checkbox,       :type=>:pointer
-  view :multiselect,    :type=>:pointer
-  view :radio,          :type=>:pointer
-  view :select,         :type=>:pointer  
-end
-
-format :css do
-  view :content, :type=>:pointer
-  view :core,    :type=>:pointer
-end
+include Pointer
+format()      { include Pointer::Format     }
+format(:html) { include Pointer::HtmlFormat }
+format(:css ) { include Pointer::CssFormat  }
 
 
 

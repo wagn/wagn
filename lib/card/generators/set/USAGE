@@ -2,7 +2,7 @@ Description:
     Generates new set files in mods and matching specs.
 
 Example:
-    rails generate set standard type tshirt
+    wagn generate set standard type tshirt
 
     This will create:
         mods/standard/sets/type/tshirt.rb

@@ -79,6 +79,7 @@ class Card
           end
           new_input
         end
+
         host_class.prepare_machine_input {}
         host_class.machine_engine { |input| input }
         host_class.store_machine_output do |output| 

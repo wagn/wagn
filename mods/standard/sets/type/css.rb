@@ -26,7 +26,7 @@ def chunk_list  #turn off autodetection of uri's
 end
 
 format :html do
-  view :editor, :type=>:plain_text
+  view :editor, :mod=>PlainText::HtmlFormat
   
   view :core do |args|
     # FIXME: scan must happen before process for inclusion interactions to work, but this will likely cause

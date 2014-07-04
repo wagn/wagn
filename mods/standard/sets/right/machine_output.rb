@@ -8,7 +8,7 @@ format do
       self.error_status = 302
       wagn_path card.left.machine_output_url
     else
-      _final_not_found args
+      super args
     end
   end
 end

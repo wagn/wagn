@@ -1,6 +1,6 @@
 format do
   view :not_found do |args|
-    srid = card.selected_revision_id = nil
+    srid = card.selected_revision_id
     if card.left.kind_of? Machine and (card.new_card? or !srid or srid == card.current_revision_id)
       # only regenerate output if it's really warranted 
       # (not when someone requests a specific old version that has been removed)

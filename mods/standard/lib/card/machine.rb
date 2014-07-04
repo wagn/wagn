@@ -82,8 +82,7 @@ class Card
 
         host_class.prepare_machine_input {}
         host_class.machine_engine { |input| input }
-        host_class.store_machine_output do |output|
-          tmp_path =     
+        host_class.store_machine_output do |output| 
           file = Tempfile.new [ id, ".#{host_class.output_config[:filetype]}" ]
           file.write output
           Card::Auth.as_bot do
@@ -139,7 +138,7 @@ class Card
 
     def machine_output_url
       ensure_machine_output
-      machine_output_card.attach.url(:default, :timestamp => false)   # to get rid of additional number in url
+      machine_output_card.attach.url #(:default, :timestamp => false)   # to get rid of additional number in url
     end 
 
     def machine_output_path

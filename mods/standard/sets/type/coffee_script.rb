@@ -28,7 +28,7 @@ end
 
 
 format :html do
-  view :editor, :mod=>Type::PlainText::HtmlFormat
+  view :editor, :mod=>PlainText::HtmlFormat
   
   view :core do |args|
     js = card.compile_coffee _render_raw

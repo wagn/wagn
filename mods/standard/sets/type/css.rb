@@ -16,7 +16,7 @@ def compress_css input
 end 
 
 format :html do
-  view :editor, :mod=>Type::PlainText::HtmlFormat
+  view :editor, :mod=>PlainText::HtmlFormat
   
   view :core do |args|
     # FIXME: scan must happen before process for inclusion interactions to work, but this will likely cause

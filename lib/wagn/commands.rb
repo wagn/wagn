@@ -19,6 +19,13 @@ aliases = {
   "r"  => "runner"
 }
 
+def format_rspec_file_argument index, base_dir
+  ARGV.delete_at(index)
+  file, line = ARGV[index].split(':')
+  ARGV.delete_at(index)
+  Dir.glob("#{base_dir}/**/#{file}_spec.rb").flatten.map{ |file| line ? "#{file}:#{line}" : file}.join(' ')
+end
+
 rails_commands = %w( generate destroy plugin benchmarker profiler console server dbconsole application runner )
 
 if ARGV.first.in? rails_commands or aliases[ARGV.first].in? rails_commands
@@ -47,14 +54,10 @@ else
     system "RAILS_ROOT=. bundle exec cucumber #{ ARGV.join(' ') }"
   when 'rspec'
     if index = ( ARGV.index("-s") || ARGV.index("--spec" ))
-      ARGV.delete_at(index)
-      files = Dir.glob("mods/**/#{ARGV[index]}_spec.rb").flatten.join(' ')
-      ARGV.delete_at(index)
+      files = format_rspec_file_argument( index, "mods")
     end
     if index = ( ARGV.index("-cs") || ARGV.index("--core-spec" ))
-      ARGV.delete_at(index)
-      files = Dir.glob("#{Wagn.gem_root}/spec/**/#{ARGV[index]}_spec.rb").flatten.join(' ')
-      ARGV.delete_at(index)
+      files = format_rspec_file_argument index, "#{Wagn.gem_root}/spec"
     end
     if index = ( ARGV.index("-m") || ARGV.index("--mod" ))
       ARGV.delete_at(index)

@@ -84,13 +84,14 @@ class Card
       
       def view view, *args, &block
         view = view.to_name.key.to_sym
-        define_method "_view_#{ view }", if block_given?
-            Card::Format.extract_class_vars view, args[0]
-            views[self] ||= {}
-            views[self][view] = block
-          else
-            alias_block view, args
-          end
+        views[self] ||= {}
+        view_block = views[self][view] = if block_given?
+          Card::Format.extract_class_vars view, args[0]
+          block
+        else
+          alias_block view, args
+        end
+        define_method "_view_#{ view }", view_block
       end
       
       def alias_block view, args

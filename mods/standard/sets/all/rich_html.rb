@@ -389,7 +389,8 @@ format :html do
       rcard = Card.fetch rcardname, :new=>{}
 
       nest_args = {
-        :view          => ( rparams[:view] || :titled ),
+        :view          => ( rparams[:view] || :open ),
+        :optional_toggle => :hide,
         :optional_help => :show,
         :optional_menu => :show
       }
@@ -410,7 +411,8 @@ format :html do
 
       if help_card = card.rule_card( *setting ) and help_card.ok? :read
         with_inclusion_mode :normal do
-          subformat(help_card).render :core, args.merge( :structure=>help_card.name )
+          process_content _render_raw( args.merge :structure=>help_card.name )
+          # render help card with current card's format so current card's context is used in help card inclusions
         end
       end
     end

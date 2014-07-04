@@ -64,7 +64,7 @@ event :notify_followers, :after=>:extend do
         Mailer.change_notice( watcher, self.left, 'updated', watched.to_s, [[name, action]], self ).send_if :deliver
       end
     end
-  rescue Exception=>e  #this error handling should apply to all extend callback exceptions
+  rescue =>e  #this error handling should apply to all extend callback exceptions
     Airbrake.notify e if Airbrake.configuration.api_key
     Rails.logger.info "\nController exception: #{e.message}"
     Rails.logger.debug "BT: #{e.backtrace*"\n"}"

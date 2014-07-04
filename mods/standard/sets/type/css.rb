@@ -10,7 +10,7 @@ end
 def compress_css input
   begin
     Sass.compile input, :style=>:compressed
-  rescue Exception=>e
+  rescue =>e
     raise Card::Oops, "Stylesheet Error:\n#{ e.message }"
   end
 end 

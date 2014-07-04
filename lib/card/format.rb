@@ -186,7 +186,7 @@ class Card
           send "_view_#{ view }", args
         end
       end
-    rescue Exception=>e
+    rescue => e
       rescue_view e, view
     end
 
@@ -222,7 +222,7 @@ class Card
       (val || '').split( /[\s\,]+/ ).map { |view| canonicalize_view view }
     end
     
-    
+
     def default_render_args view, a=nil
       args = case a
       when nil   ; {}

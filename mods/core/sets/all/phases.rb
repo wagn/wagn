@@ -1,15 +1,33 @@
 
-def valid_subcard?
-  abortable { valid? }
+# The Card#abort method is for cleanly exiting an action without continuing to process any further events.
+#
+# Three statuses are supported:
+#
+#   failure: adds an error, returns false on save
+#   success: no error, returns true on save
+#   triumph: similar to success, but if called on a subcard it causes the entire action to abort (not just the subcard)
+
+def abort status, msg='action canceled'
+  if status == :failure && errors.empty?
+    errors.add :abort, msg
+  end
+  raise Card::Abort.new( status, msg)
 end
+
 
 def abortable
   yield
 rescue Card::Abort => e
-  # need mechanism for subcards to abort entire process?
-  e.status == :success
+  if e.status == :triumph
+    @supercard ? raise( e ) : true
+  else
+    e.status == :success
+  end
 end
 
+def valid_subcard?
+  abortable { valid? }
+end
 
 # this is an override of standard rails behavior that rescues abortmakes it so that :success abortions do not rollback
 def with_transaction_returning_status
@@ -22,12 +40,8 @@ def with_transaction_returning_status
   status
 end
 
-def abort status=:failure, msg='action canceled'
-  if status == :failure && errors.empty?
-    errors.add :abort, msg
-  end
-  raise Card::Abort.new( status, msg)
-end
+# perhaps above should be in separate module?
+#~~~~~~
 
 def approve
   @action = identify_action
@@ -39,7 +53,7 @@ def approve
   run_callbacks :approve
   expire_pieces if errors.any?
   errors.empty?
-rescue Exception=>e
+rescue =>e
   rescue_event e
 end
 
@@ -56,7 +70,7 @@ def store
     yield
     @virtual = false
   end
-rescue Exception=>e
+rescue =>e
   rescue_event e
 ensure
   @from_trash = nil
@@ -66,7 +80,7 @@ end
 def extend
 #    puts "extend called"
   run_callbacks :extend
-rescue Exception=>e
+rescue =>e
   rescue_event e
 ensure
   @action = nil

@@ -13,7 +13,7 @@ format :html do
       begin
         stamp = card.updated_at
         day = Date.new(stamp.year, stamp.month, stamp.day)
-      rescue Exception=>e
+      rescue =>e
         day = Date.today
         card.content = "(error getting date)"
       end

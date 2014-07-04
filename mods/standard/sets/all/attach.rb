@@ -47,7 +47,7 @@ def attachment_format(ext)
   return nil unless exts
   return ext if exts.find {|mt| mt.extensions.member? ext }
   return exts[0].extensions[0]
-rescue Exception => e
+rescue => e
   Rails.logger.info "attachment_format issue: #{e.message}"
   nil
 end

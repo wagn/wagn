@@ -19,7 +19,7 @@ format :rss do
           render_feed_item_list
         end
       end
-    rescue Exception=>e
+    rescue =>e
       @xml.error "\n\nERROR rendering RSS: #{e.inspect}\n\n #{e.backtrace}"
     end
   end

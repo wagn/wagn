@@ -21,7 +21,7 @@ describe Card::Set::Type::Scss do
   
   
   it 'should highlight code in html' do
-    assert_view_select @scss_card.format(:formtat=>:html).render_core, 'div[class=CodeRay]'
+    assert_view_select @scss_card.format(:format=>:html).render_core, 'div[class=CodeRay]'
   end
   
   it 'should not highlight code in css' do

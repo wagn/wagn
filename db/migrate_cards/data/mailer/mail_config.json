@@ -18,8 +18,8 @@
 	  "message" : "password_reset.html"
   },
   {
-      "name"    : "invite request",
-	  "codename": "invite_request",
+      "name"    : "signup alert",
+	  "codename": "signup_alert",
       "subject" : "{{_name}} signed up for {{_site}}",
 	  "message" : "signup_alert.html"
   }

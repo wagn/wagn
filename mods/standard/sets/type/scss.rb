@@ -1,14 +1,11 @@
 include Card::Set::Type::Css
-include Machine
-include MachineInput
 
-store_machine_output :filetype => "css"
-
-machine_input do 
-  compress_css format(:format => :css)._render_core
+format :html do
+  view :core, :mod=>Css::HtmlFormat
+  view :editor, :mod=>PlainText::HtmlFormat
 end
-
-
+  
+  
 format do
   view :core do |args|
     process_content compile_scss(_render_raw)

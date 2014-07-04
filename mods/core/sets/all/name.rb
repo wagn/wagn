@@ -138,7 +138,7 @@ end
 event :validate_name, :before=>:approve, :on=>:save do 
   cdname = name.to_name
   if name.length > 255
-    errors.add :name, "can't be too long(>255 characters)"
+    errors.add :name, "is too long (255 character maximum)"
   elsif cdname.blank?
     errors.add :name, "can't be blank"
   elsif name_changed?

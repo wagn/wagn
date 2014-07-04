@@ -15,6 +15,14 @@ def compress_css input
   end
 end 
 
+def clean_html?
+  false
+end
+
+def chunk_list  #turn off autodetection of uri's 
+  :inclusion_only
+end
+
 format :html do
   view :editor, :mod=>PlainText::HtmlFormat
   

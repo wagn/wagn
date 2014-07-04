@@ -249,7 +249,7 @@ describe CardController do
         args = { :id=>@all_style.machine_output_card.name, :format=>'css', :explicit_file=>true }
         get :read, args
         output_card = Card[ "#{ Card[:all].name }+#{ Card[:style].name }+#{ Card[:machine_output].name}" ]
-        expect(response).to redirect_to( "#{ wagn_path output_card.attach.url }" )
+        expect(response).to redirect_to( @all_style.machine_output_url )
         get :read, args
         expect(response.status).to eq(200)
       end

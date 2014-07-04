@@ -18,6 +18,14 @@ machine_input do
    compressed_css format(:format => :css)._render_core
 end
 
+def clean_html?
+  false
+end
+
+def chunk_list  #turn off autodetection of uri's 
+  :inclusion_only
+end
+
 
 format :html do
 

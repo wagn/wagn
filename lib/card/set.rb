@@ -1,7 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-require 'byebug'
-
 class Card
   module Set
 

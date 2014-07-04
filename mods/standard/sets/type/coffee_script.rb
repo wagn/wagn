@@ -6,13 +6,13 @@ include Machine
 include MachineInput
 
 def compile_coffee script
-  Uglifier.compile(::CoffeeScript.compile script)
-rescue Exception=>e
+  ::CoffeeScript.compile script
+rescue =>e
   e
 end
 
 machine_input do 
-  compile_coffee format(:format=>:js)._render_raw
+  Uglifier.compile( compile_coffee format(:format=>:js)._render_raw )
 end
 
 store_machine_output :filetype => "js"
@@ -28,7 +28,7 @@ end
 
 
 format :html do
-  view :editor, :type=>:plain_text
+  view :editor, :mod=>PlainText::HtmlFormat
   
   view :core do |args|
     js = card.compile_coffee _render_raw

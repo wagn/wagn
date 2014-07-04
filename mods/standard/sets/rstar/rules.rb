@@ -231,8 +231,6 @@ end
 
 =begin
 
-These are commented because they are not currently included (see notes in lib/card/set.rb re anchorless sets)
-
 def repair_set
   @set_repair_attempted = true
   if real?

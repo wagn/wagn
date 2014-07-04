@@ -1,1 +1,3 @@
-view :core, :right=>:structure
+format :html do
+  include Structure::HtmlFormat
+end

@@ -34,8 +34,8 @@ class Card
     end
 
     def commentable? view, args
-      self.class.tagged view, :comment      and 
-      show_view? :comment_box, args, :hide and #developer or wagneer has overridden default
+      self.class.tagged view, :comment                                   and 
+      show_view? :comment_box, args.merge( :default_visibility=>:hide )  and #developer or wagneer has overridden default
       ok? :comment
     end
 
@@ -209,10 +209,6 @@ class Card
           (#{view} view)
         </span>
       }
-    end
-  
-    def unknown_view view
-      "<strong>unknown view: <em>#{view}</em></strong>"
     end
   
     def unsupported_view view

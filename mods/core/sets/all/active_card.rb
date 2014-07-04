@@ -29,5 +29,5 @@ end
 
 #fixme -this needs a better home!
 def format opts={}
-  Format.new self, opts
+  Card::Format.new self, opts
 end

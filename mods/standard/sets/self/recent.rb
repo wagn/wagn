@@ -1,6 +1,6 @@
 
 view :title do |args|
-   _final_title args.merge( :title=>'Recent Changes' )
+   super args.merge( :title=>'Recent Changes' )
 end
 
 format :html do
@@ -13,7 +13,7 @@ format :html do
       begin
         stamp = card.updated_at
         day = Date.new(stamp.year, stamp.month, stamp.day)
-      rescue Exception=>e
+      rescue =>e
         day = Date.today
         card.content = "(error getting date)"
       end

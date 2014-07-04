@@ -10,14 +10,21 @@ end
 def compress_css input
   begin
     Sass.compile input, :style=>:compressed
-  rescue Exception=>e
+  rescue =>e
     raise Card::Oops, "Stylesheet Error:\n#{ e.message }"
   end
 end 
 
-format :html do
+def clean_html?
+  false
+end
 
-  view :editor, :type=>:plain_text
+def chunk_list  #turn off autodetection of uri's 
+  :inclusion_only
+end
+
+format :html do
+  view :editor, :mod=>PlainText::HtmlFormat
   
   view :core do |args|
     # FIXME: scan must happen before process for inclusion interactions to work, but this will likely cause

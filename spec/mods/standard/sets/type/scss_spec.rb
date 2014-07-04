@@ -1,9 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-# load 'spec/mods/zfactory/lib/machine_spec.rb'
-# load 'spec/mods/zfactory/lib/machine_input_spec.rb'
-
-
 describe Card::Set::Type::Scss do
   let(:scss) { 
     %{
@@ -34,10 +30,11 @@ describe Card::Set::Type::Scss do
   
   it_should_behave_like "machine input"  do
     let(:create_machine_input_card) { Card.gimme! "test scss", :type => :scss, :content => scss }
+    let(:create_another_machine_input_card) { Card.gimme! "more scss", :type => :scss, :content => scss }
     let(:create_machine_card)  { Card.gimme! "style with scss+*style", :type => :pointer }
     let(:card_content) do
        { in:       scss,         out:     compressed_css, 
-         new_in:   changed_scss, new_out: compressed_changed_css }
+         changed_in:   changed_scss, changed_out: compressed_changed_css }
     end
   end
 
@@ -45,7 +42,7 @@ describe Card::Set::Type::Scss do
     let(:machine_card) {  Card.gimme! "test scss", :type => :scss, :content => scss }
     let(:card_content) do
        { in:       scss,         out:     compressed_css, 
-         new_in:   changed_scss, new_out: compressed_changed_css }
+         changed_in:   changed_scss, changed_out: compressed_changed_css }
     end
   end
 end

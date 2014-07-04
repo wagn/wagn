@@ -21,7 +21,7 @@ view :core do |args|
             :sort  => ['content', 'name'],
             :limit => 0
           }
-    wql[:left][ (set_class.anchorless? ? :id : :right_id )] = set_class.key_id
+    wql[:left][ (set_class.anchorless? ? :id : :right_id )] = set_class.pattern_id
 
     rules = Card.search wql
     [ set_class, rules ] unless rules.empty?
@@ -37,7 +37,7 @@ view :core do |args|
         klasses.map do |klass, rules|
           %{ 
             <tr class="klass-row anchorless-#{ klass.anchorless? }">
-              <td class="setting-klass">#{ klass.anchorless? ? link_to_page( klass.key_name ) : klass.key_name }</td>
+              <td class="setting-klass">#{ klass.anchorless? ? link_to_page( klass.pattern ) : klass.pattern }</td>
               <td class="rule-content-container">
                 <span class="closed-content content">#{ subformat(rules[0])._render_closed_content if klass.anchorless? }</span>
               </td>

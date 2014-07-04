@@ -45,7 +45,7 @@ format :html do
       # RSS # move to mods!
       if root.card.type_id == SearchTypeID
         opts = { :format => :rss }
-        search_params[:vars].each { |key, val| opts["_#{key}"] = val }
+        root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
         bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{page_path root.card.name, opts} />}
       end
     end

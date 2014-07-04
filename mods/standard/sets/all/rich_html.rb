@@ -410,7 +410,7 @@ format :html do
 
       if help_card = card.rule_card( *setting ) and help_card.ok? :read
         with_inclusion_mode :normal do
-          _final_core args.merge( :structure=>help_card.name )
+          subformat(help_card).render :core, args.merge( :structure=>help_card.name )
         end
       end
     end

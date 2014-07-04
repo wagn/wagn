@@ -72,13 +72,13 @@ format do
   
   def search_vars args={}
     
-    @vars[:search] ||= begin
+    @search_vars ||= begin
       v = {}
       v[:spec] = card.spec search_params
       v[:item] = set_inclusion_opts args.merge( :spec_view=>v[:spec][:view] )
       v[:results]  = card.item_cards search_params
       v
-    rescue Exception=>e
+    rescue =>e
       { :error => e }
     end
   end
@@ -90,20 +90,11 @@ format do
     # explicit > inclusion syntax > WQL > inclusion defaults
   end
 
-  def default_search_params
-    set_default_search_params
-  end
   
-  def set_default_search_params overrides={}
-    @default_search_params ||= begin
-      p = { :default_limit=> 100 }.merge overrides
-      set_search_params_variables! p
-      p
-    end
-  end
+
 
   def search_params
-    @vars[:search_params] ||= begin
+    @search_params ||= begin
       p = default_search_params.clone
       
       if focal? 
@@ -111,6 +102,18 @@ format do
         p[:limit]  = params[:limit]  if params[:limit]
         p.merge! params[:wql]        if params[:wql]
       end
+      p
+    end
+  end
+
+  def default_search_params # wahh?
+    set_default_search_params
+  end
+  
+  def set_default_search_params overrides={}
+    @default_search_params ||= begin
+      p = { :default_limit=> 100 }.merge overrides
+      set_search_params_variables! p
       p
     end
   end
@@ -125,7 +128,7 @@ format do
   end
 
   def page_link text, page
-    @paging_path_args[:offset] = page * @paging_limit  #fixme.  should be @vars?
+    @paging_path_args[:offset] = page * @paging_limit
     " #{link_to raw(text), path(@paging_path_args), :class=>'card-paging-link slotter', :remote => true} "
   end
 

@@ -12,8 +12,8 @@ class SystemEmails < ActiveRecord::Migration
       data.each do |mail|
         mail = mail.symbolize_keys!
         Card.create! :name=> mail[:name], :codename=>mail[:codename], :type=>:email_template
-        Card.create! :name=>"#{mail[:name]}+message", :content=>File.read( File.join( dir, mail[:message] ))
-        Card.create! :name=>"#{mail[:name]}+subject", :content=>mail[:subject] 
+        Card.create! :name=>"#{mail[:name]}+*message", :content=>File.read( File.join( dir, mail[:message] ))
+        Card.create! :name=>"#{mail[:name]}+*subject", :content=>mail[:subject] 
       end
     end
   end

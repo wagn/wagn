@@ -1,3 +1,4 @@
+include Wagn::Location
 
 format :html do
   
@@ -106,7 +107,7 @@ send_signup_notifications = proc do |c|
 end
 
 event :signup_notifications, :after=>:extend, :on=>:create, :when=>send_signup_notifications do
-  Card['signup alert'].format(format=>:email)._render_mail(
+  args =  {
     :to     => Card.setting('*request+*to'),
     :from   => Card.setting('*request+*from') || "#{@name} <#{@email}>",
     :locals => {
@@ -114,6 +115,8 @@ event :signup_notifications, :after=>:extend, :on=>:create, :when=>send_signup_n
       :name         => self.name,
       :request_url  => wagn_url( self ),
       :requests_url => wagn_url( Card[:signup] ),
-  }).deliver
+  }
+  }
+  Card['signup alert'].format(:format=>:email).deliver(args)
 end
 

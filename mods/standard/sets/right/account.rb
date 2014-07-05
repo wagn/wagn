@@ -95,7 +95,6 @@ end
   
 
 event :send_account_confirmation_email, :on=>:create, :after=>:extend do
-  byebug
   if self.email.present?
     Card["confirmation email"].format(:format=>:email).deliver(
       :to     => self.email,

@@ -3,32 +3,30 @@ format :email do
   def deliver args={}
     _render_mail(args).deliver
   end
-  
+    
   view :missing        do |args| '' end
   view :closed_missing do |args| '' end
 
   view :raw do |args| 
     output = card.raw_content
-    byebug if card.name == "password reset"
     if args[:locals]
       args[:locals].each do |key, value|
         output.gsub!(/\{\{\s*\_#{key.to_s}\s*\}\}/, value.to_s)  # this should happen in a special format/render combination
         instance_variable_set "@#{key}", value
       end
     end
-    ERB.new(output).result(binding)  #FIXME run always ERB ???
+    ERB.new(output).result(binding) 
   end
   
   view :mail do |args|
-    ActionMailer::Base.mail _render_config( args )
+    ActionMailer::Base.mail _render_config( args )   #TODO add error handling
   end
   
   view :change_notice do |args|    
     cd_with_acct = Card[args[:watcher]] unless Card===args[:watcher]
     email = cd_with_acct.account.email
     updated_card = args[:updated_card] || card
-    
-    Card['change notice'].format(:format=>:email)._render_mail(   #FIXME get card from a rule
+    Card['change notice'].format(:format=>:email)._render_mail(   #TODO get card from a rule?
       :to     => email,
       :from   => Card[Card::WagnBotID].account.email,
       :locals => {
@@ -67,7 +65,6 @@ format :email do
         end
       end
     end
-    
     [:subject, :message].each do |field|
       config[field] = args[field] || begin
         config[field] = ( fld_card=Card["#{card.name}+*#{field}"] ).nil? ? '' :
@@ -76,14 +73,7 @@ format :email do
             end
       end
     end
-    config[:body] ||= %{
-      <!DOCTYPE html>
-      <html>
-        <body>
-          #{config.delete(:message)}
-        </body>
-      </html>
-      }
+    config[:body] ||= Card::Mailer.layout(config.delete(:message))
     config[:subject] = strip_html(config[:subject]).strip if config[:subject]
     config[:content_type] ||= 'text/html'
     config

@@ -51,10 +51,10 @@ event :notify_followers, :after=>:extend do
       @trunk_watcher_watched_pairs.map(&:first).include? p.first
     end.each do |watcher, watched|
       watcher and
-      Mailer.change_notice( watcher, self, action, watched.to_s, nested_notifications ) and
+      mail= Mailer.change_notice( watcher, self, action, watched.to_s, nested_notifications ) and
       #mail = self.format(:format=>:email)._render_change_notice(
       #    watcher: watcher, watched: watched.to_s, action: action, subedits: nested_notifications) and
-          mail.deliver
+      mail.deliver
       
       
     end

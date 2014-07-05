@@ -48,10 +48,10 @@ describe "On Card Changes" do
   end
 
   it "sends notification of updates" do
-      Card::EmailHtmlFormat.any_instance.should_receive('_render_change_notice')#.with( {watcher: is_a(Integer), watched:"Optic", action: "updated"})
+    #  Card::EmailHtmlFormat.any_instance.should_receive('_render_change_notice').with( {watcher: is_a(Integer), watched:"Optic", action: "updated"})
      #   expect_any_instance_of(Card::HtmlFormat).to receive('_render_change_notice')
-    #mock(Card::Mailer).change_notice( is_a(Integer), Card["Sunglasses"], "updated", "Optic", nil)
-
+    
+    mock(Card::Mailer).change_notice( is_a(Integer), Card["Sunglasses"], "updated", "Optic", nil)
     Card["Sunglasses"].update_attributes :content => 'updated content'
   end
 

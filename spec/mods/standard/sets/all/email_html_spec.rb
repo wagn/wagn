@@ -49,7 +49,7 @@ describe Card::EmailHtmlFormat do
         :bcc => "",
         :cc => "",
         :subject => "Subject of the mail",
-        :body => "Nobody expects the Spanish Inquisition",
+        :body => Card::Mailer.layout("Nobody expects the Spanish Inquisition"),
         :content_type => "text/html"
       })
     end
@@ -64,7 +64,7 @@ describe Card::EmailHtmlFormat do
         :bcc => "",
         :cc => "",
         :subject => "Subject of the mail",
-        :body => "Nobody expects the Spanish Inquisition",
+        :body => Card::Mailer.layout("Nobody expects the Spanish Inquisition"),
         :content_type => "text/html"
       })
     end
@@ -108,7 +108,6 @@ describe Card::EmailHtmlFormat do
         Card.create! :name => "mailconfig+*attach", :type=>"Pointer", :content => "[[_self+attachment]]"
         Card.create! :name=>'Trigger', :type=>'Cardtype'
         Card.create :name=>'Trigger+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
-        Card.create! :name=>'Trigger+*type+*structure', :content=>''
         Card.create! :name => "Trigger+*type+*send", :content => "[[mailconfig]]", :type=>'Pointer'
       end
     end
@@ -128,7 +127,6 @@ describe Card::EmailHtmlFormat do
 #            '+attachment' => {:type=>'File', :content=>"notreally.txt" }
           }
         )
-        byebug
         conf = render_mailconfig( context: c )
 
         conf[:to     ].should == "bob@bob.com"
@@ -142,61 +140,16 @@ describe Card::EmailHtmlFormat do
       end
     end
   end
-
-
-  # describe "hooks for" do
-  #   describe "untemplated card" do
-  #     before do
-  #       Card::Auth.as_bot {
-  #         Card.create! :name => "emailtest+*right+*send", :type => "Pointer", :content => "[[mailconfig]]"
-  #         Card.create! :name => "mailconfig+*to", :content => "joe@user.com"
-  #       }
-  #     end
-  #
-  #     it "calls to mailer only on Card#create" do
-  #       Card::Auth.as_bot do
-  #         mock( Card::Mailer ).flexmail( hash_including :to=>"joe@user.com" ).times 1
-  #         c =Card.create :name => "Banana+emailtest"
-  #         c.update_attributes! :content => 'short lived'
-  #         c.delete!
-  #       end
-  #
-  #     end
-  #
-  #
-  #     it "handles case of referring to self for content" do
-  #       Card::Auth.as_bot do
-  #         Card.create! :name => "Email", :type => "Cardtype"
-  #         Card.create! :name => "Email+*type+*send", :type => "Pointer", :content => "[[mailconfig]]"
-  #         Card.create! :name => "mailconfig+*message", :content => "this {{_self|core}}"
-  #       end
-  #
-  #       Rails.logger.level = ActiveSupport::BufferedLogger::Severity::DEBUG
-  #       mock(Card::Mailer).flexmail(hash_including(:message=>"this had betta work"))
-  #       Card.create!(:name => "ToYou", :type => "Email", :content => "had betta work")
-  #     end
-  #
-  #   end
-  #
-  #   describe "templated card" do
-  #     before do
-  #       Card::Auth.as_bot do
-  #         Card.create! :name => "Book+*type+*send", :type => "Pointer",
-  #           :content => "[[mailconfig]]"
-  #         Card.create! :name => "mailconfig+*to", :content => "joe@user.com"
-  #       end
-  #     end
-  #
-  #     it "doesn't call to mailer on Card#create" do
-  #       mock.dont_allow(Card::Mailer).flexmail
-  #       Card.create :name => "Banana+emailtest"
-  #     end
-  #
-  #     it "calls to mailer on Card#create" do
-  #       mock(Card::Mailer).flexmail(hash_including(:to=>"joe@user.com")).at_least(1)
-  #       c = Card.create :name => "Illiodity", :type=>"Book"
-  #       Card.update(c.id, :subcards=> {"~author" => {"name" => "Bukowski"}})
-  #     end
-  #   end
-  # end
+  
+  describe 'change notice view' do
+    before do
+      @card = Card['A']
+      @mail = @card.format(:format=>:email)._render_mail 
+    it 'renders email' do
+      expect(@mail).to be_a_instance_of(Mail::Message)
+    end
+    it 'contains link to changed card' do
+      expect(@mail.body.raw_source).to include(@card.cardname.url_key)
+    end
+  end
 end

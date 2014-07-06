@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 class Card < ActiveRecord::Base
+
   require_dependency 'card/active_record_ext'
   require_dependency 'card/codename'
   require_dependency 'card/query'
@@ -21,7 +22,7 @@ class Card < ActiveRecord::Base
   @@set_patterns, @@error_codes = [], {}
 
   attr_writer :selected_revision_id #writer because read method is in mod (and does not override upon load)
-  attr_accessor :action, :supercard,         
+  attr_accessor :action, :supercard,
     :comment, :comment_author,    # obviated soon
     :update_referencers           # wrong mechanism for this
 

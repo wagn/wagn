@@ -262,7 +262,7 @@ class CardController < ActionController::Base
       ## some are redundantly defined in view
       when Card::Oops, Card::Query
         card.errors.add :exception, exception.message 
-        # Card::Oops error messages are visible to end users and are generally not treated as bugs.
+        # these error messages are visible to end users and are generally not treated as bugs.
         # Probably want to rename accordingly.
         :errors
       when Card::PermissionDenied, Wagn::PermissionDenied

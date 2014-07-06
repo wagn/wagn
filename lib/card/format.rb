@@ -76,7 +76,7 @@ class Card
     #~~~~~ INSTANCE METHODS
 
     def initialize card, opts={}
-      @card = card
+      @card = card or raise Card::Error, "format initialized without card"
       opts.each do |key, value|
         instance_variable_set "@#{key}", value
       end

@@ -2,8 +2,9 @@
 format :html do
   
   view :title do |args|
-    if vars =  [:vars] and keyword = vars[:keyword]
-       args.merge! :title=> %{Search results for: <span class="search-keyword">#{keyword}</span>}
+    vars = root.search_params[:vars]
+    if vars && vars[:keyword]
+       args.merge! :title=> %{Search results for: <span class="search-keyword">#{ vars[:keyword] }</span>}
     end
     super args
   end
@@ -33,4 +34,10 @@ format :json do
     }
   
   end
+  
+  #hacky.  here for override
+  def goto_wql(term)
+   { :complete=>term, :limit=>8, :sort=>'name', :return=>'name' }
+  end
+  
 end

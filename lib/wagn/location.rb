@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 # helper for urls, links, redirects, and other location related things.
 #  note: i'm sure this isn't the optimal name..
+
 module Wagn::Location
 
   # we keep a history stack so that in the case of card removal
@@ -17,8 +18,7 @@ module Wagn::Location
   end
 
   def save_location
-    return if ajax? || !html? || !@card.known?
-
+    return if ajax? || !html? || !@card.known? || (@card.codename == 'signin')
     discard_locations_for @card
     @previous_location = wagn_path @card
     location_history.push @previous_location

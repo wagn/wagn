@@ -121,8 +121,9 @@ format do
   def set_search_params_variables! hash
     hash[:vars] = params[:vars] || {}
     params.each do |key,val|
-      if key.to_s =~ /^\_(\w+)$/
-        hash[:vars][$1.to_sym] = val
+      case key.to_s
+      when '_wql'      ;  hash.merge! val
+      when /^\_(\w+)$/ ;  hash[:vars][$1.to_sym] = val
       end
     end
   end

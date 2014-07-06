@@ -1,5 +1,12 @@
 
 format :rss do
+  
+  attr_accessor :xml
+  
+  def initialize card, args
+    super
+    @xml = @parent.xml if @parent
+  end
 
   def show view, args
     @xml = Builder::XmlMarkup.new

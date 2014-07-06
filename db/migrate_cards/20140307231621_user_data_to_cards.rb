@@ -59,7 +59,11 @@ class UserDataToCards < ActiveRecord::Migration
             cardname = "#{base.name}+#{Card[:account].name}+#{Card[field].name}"
             user_field = ( field==:password ? :crypted_password : field )
             if content = user.send( user_field )
-              Card.create! date_args.merge( :name=>cardname, :content=>content)
+              begin
+                Card.create! date_args.merge( :name=>cardname, :content=>content)
+              rescue => e
+                puts "error importing #{cardname}: #{e.message}"
+              end
             end
           end
         end

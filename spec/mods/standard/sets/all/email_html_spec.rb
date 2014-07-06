@@ -144,7 +144,9 @@ describe Card::EmailHtmlFormat do
   describe 'change notice view' do
     before do
       @card = Card['A']
-      @mail = @card.format(:format=>:email)._render_mail 
+      @mail = @card.format(:format=>:email)._render_change_notice(:watcher=>'Joe User')
+    end
+    
     it 'renders email' do
       expect(@mail).to be_a_instance_of(Mail::Message)
     end

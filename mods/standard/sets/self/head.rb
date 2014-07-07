@@ -1,4 +1,3 @@
-
 format :html do
 
   view :raw do |args|
@@ -77,7 +76,7 @@ format :html do
     c=Card[:double_click] and !Card.toggle c.content and varvals << 'wagn.noDoubleClick=true'
     @css_path                                        and varvals << "wagn.cssPath='#{@css_path}'"
     
-    script_card = card.rule_card :script
+    script_card = root.card.rule_card :script
     ie9_card    = Card[:script_html5shiv_printshiv]
     %(#{ javascript_tag do varvals * ';' end  }      
       #{ javascript_include_tag script_card.machine_output_url if script_card }

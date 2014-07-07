@@ -9,7 +9,7 @@ format :html do
     else
       args.merge! :view=>view if view
       @main_opts = args
-      self.render_layout
+      self.render :layout
     end
   end
 

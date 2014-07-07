@@ -117,7 +117,7 @@ format do
   view :template_rule, :tags=>:unknown_ok do |args|
     #FIXME - relativity should be handled in smartname
   
-    name = args[:inc_name]
+    name = args[:inc_name] or return ''
     regexp = /\b_(left|right|whole|self|user|main|\d+|L*R?)\b/
     absolute = name !~ regexp && name !~ /^\+/
     

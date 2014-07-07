@@ -55,6 +55,8 @@ format do
       %{#{e.class.to_s} :: #{e.message} :: #{card.content}}
     when search_vars[:spec][:return] =='count'
       search_vars[:results].to_s
+    when @mode == :template
+      render :raw
     else
       _render_card_list args
     end

@@ -1,3 +1,4 @@
+
 format :html do
   view :core do |args|
     with_inclusion_mode :template do
@@ -10,5 +11,3 @@ format :html do
   end
   
 end
-
-

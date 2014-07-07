@@ -37,3 +37,4 @@ class Card < ActiveRecord::Base
   tracks :content # we can phase this out and just use "dirty" handling once current content is stored in the cards table
 
 end
+

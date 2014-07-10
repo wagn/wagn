@@ -179,7 +179,7 @@ class Card
     def process_relative_tags args
       _render_raw(args).scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc| #fixme - wrong place for regexp!
         process_content( inc ).strip
-      end.join    
+      end.join
     end
   
   

@@ -47,3 +47,41 @@ def contextual_content context_card, format_args={}
     self.format(:not_current=>true)._render_raw
   )
 end
+
+format do
+  
+  def search_params
+    @search_params ||= begin
+      p = default_search_params.clone
+    
+      if focal? 
+        p[:offset] = params[:offset] if params[:offset]
+        p[:limit]  = params[:limit]  if params[:limit]
+        p.merge! params[:wql]        if params[:wql]
+      end
+      p
+    end
+  end
+
+  def default_search_params # wahh?
+    set_default_search_params
+  end
+
+  def set_default_search_params overrides={}
+    @default_search_params ||= begin
+      p = { :default_limit=> 100 }.merge overrides
+      set_search_params_variables! p
+      p
+    end
+  end
+
+  def set_search_params_variables! hash
+    hash[:vars] = params[:vars] || {}
+    params.each do |key,val|
+      case key.to_s
+      when '_wql'      ;  hash.merge! val
+      when /^\_(\w+)$/ ;  hash[:vars][$1.to_sym] = val
+      end
+    end
+  end
+end

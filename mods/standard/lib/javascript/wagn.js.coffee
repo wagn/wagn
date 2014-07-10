@@ -23,6 +23,11 @@ $.extend wagn,
         wagn.slotParams value, processed, cgiKey
       else
         processed[cgiKey] = value
+        
+  slotReady: (func)->
+    $('document').ready ->
+      $('body').on 'slotReady', '.card-slot', ->
+        func.call this, $(this)
 
   pingName: (name, success)->
     $.getJSON wagn.rootPath + '/', { format: 'json', view: 'status', 'card[name]': name }, success  
@@ -39,6 +44,7 @@ jQuery.fn.extend {
     else #simple text (not html)
       v = val
     s.replaceWith v
+    v.trigger 'slotReady'
     v
 
   slotSuccess: (data) ->
@@ -279,6 +285,7 @@ $(window).ready ->
     msg.show()
 #    msg.dialog()
     event.preventDefault()
+	
 
 # important: this prevents jquery-mobile from taking over everything
 $( document ).on "mobileinit", ->

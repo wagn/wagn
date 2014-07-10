@@ -215,7 +215,7 @@ format :html do
     args[:optional_help] = :show
     
     args[:buttons] = %{
-      #{ button_tag 'Submit', :class=>'submit-button' }
+      #{ button_tag 'Submit', :class=>'submit-button', :disable_with=>'Submitting' }
       #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
     }
   end
@@ -256,8 +256,8 @@ format :html do
       :card     => { :update_referencers => false }
     )
     args[:buttons] = %{
-      #{ button_tag 'Rename and Update', :class=>'renamer-updater' }
-      #{ button_tag 'Rename', :class=>'renamer' }
+      #{ button_tag 'Rename and Update', :disable_with=>'Renaming', :class=>'renamer-updater' }
+      #{ button_tag 'Rename',            :disable_with=>'Renaming', :class=>'renamer'         }
       #{ button_tag 'Cancel', :class=>'slotter', :type=>'button', :href=>path(:view=>:edit, :id=>card.id)}
     }
     

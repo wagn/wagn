@@ -140,8 +140,9 @@ $(window).ready ->
   #  dislike the timeout, but without this forms with multiple TinyMCE editors were failing to load properly
 
   $('body').on 'ajax:success', '.slotter', (event, data, c, d) ->
-    $(this).slotSuccess data
-    false #don't propagate up
+    unless event.slotSuccessful
+      $(this).slotSuccess data
+      event.slotSuccessful = true
 
   $('body').on 'ajax:error', '.slotter', (event, xhr) ->
     $(this).slotError xhr.status, xhr.responseText

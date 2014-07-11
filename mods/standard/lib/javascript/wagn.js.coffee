@@ -48,7 +48,6 @@ jQuery.fn.extend {
     v
 
   slotSuccess: (data) ->
-    
     if data.redirect
       window.location=data.redirect
     else
@@ -142,6 +141,7 @@ $(window).ready ->
 
   $('body').on 'ajax:success', '.slotter', (event, data, c, d) ->
     $(this).slotSuccess data
+    false #don't propagate up
 
   $('body').on 'ajax:error', '.slotter', (event, xhr) ->
     $(this).slotError xhr.status, xhr.responseText
@@ -214,15 +214,16 @@ $(window).ready ->
   unless wagn.noDoubleClick
     $('body').on 'dblclick', '.card-slot', (event) ->
       s = $(this)
-      return false if s.find( '.card-editor' )[0]
+      return false if s.closest( '.nodblclick'  )[0]
       return false if s.closest( '.card-header' )[0]
+      return false if s.find( '.card-editor' )[0]
       return false unless s.data('cardId')
       s.addClass 'slotter'
       s.attr 'href', wagn.rootPath + '/card/edit/~' + s.data('cardId')
       $.rails.handleRemote(s)
       false # don't propagate up to next slot
 
-  $('body').on 'dblclick', '.nodblclick', -> false
+#  $('body').on 'dblclick', '.nodblclick', -> false
 
   $('body').on 'submit', 'form.slotter', (event)->
     if (target = $(this).attr 'main-success') and $(this).isMain()

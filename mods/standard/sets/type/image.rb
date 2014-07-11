@@ -50,7 +50,7 @@ format :css do
     render_source
   end
   
-  view :content do |args|
+  view :content do |args|  #why is this necessary?
     render_core
   end
 end

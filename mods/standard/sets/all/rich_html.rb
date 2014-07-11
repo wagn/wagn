@@ -285,7 +285,7 @@ format :html do
   
 
   view :missing do |args|
-    return '' unless card.ok? :create  #this should be moved into ok_view
+    return '' unless card.ok? :create  # should this be moved into ok_view?
     new_args = { :view=>:new, 'card[name]'=>card.name }
     new_args['card[type]'] = args[:type] if args[:type]
 

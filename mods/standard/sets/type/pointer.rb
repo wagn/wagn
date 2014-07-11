@@ -138,6 +138,16 @@ format :css do
   
 end
 
+
+format :js do
+  view :core do |args|
+    card.item_cards.map do |item|
+      nest item, :view=>(params[:item] || :core)
+    end.join "\n\n"
+  end
+end
+
+
 format :data do
   view :core do |args|
     card.item_cards.map do |c|

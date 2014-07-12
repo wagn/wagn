@@ -34,8 +34,9 @@ module ClassMethods
     attribs.each do |row|
       result = begin
         merge row['name'], row, opts
-      rescue
-        false
+#      rescue => e
+#        Rails.logger.info "merge_list problem: #{ e.message }"
+#        false
       end
       unmerged.push row unless result == true
     end

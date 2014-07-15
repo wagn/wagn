@@ -57,6 +57,7 @@ module ClassMethods
     
   
   def merge name, attribs={}, opts={}
+    puts "merging #{ name }"
     card = fetch name, :new=>{}
     
     if opts[:pristine] && !card.pristine?

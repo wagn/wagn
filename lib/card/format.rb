@@ -410,8 +410,13 @@ class Card
       opts.delete_if { |k,v| v.nil? }
       opts.reverse_merge! inclusion_defaults
     
-      sub = subformat nested_card
-      sub.inclusion_opts = opts[:items] ? opts[:items].clone : {}
+      sub = nil
+      if opts[:inc_name] =~ /^_(self)?$/
+        sub = self
+      else
+        sub = subformat nested_card
+        sub.inclusion_opts = opts[:items] ? opts[:items].clone : {}
+      end
 
 
       view = canonicalize_view opts.delete :view

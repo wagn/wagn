@@ -55,7 +55,7 @@ Wagn.application.class.configure do
 #    File.delete(File.join(Rails.root,'tmp', 'debug.txt'))
 #  end
 
-  config.perform_deliveries = false
+  config.action_mailer.perform_deliveries = false
   
 end
 

@@ -78,7 +78,7 @@ format do
       v = {}
       v[:spec] = card.spec search_params
       v[:item] = set_inclusion_opts args.merge( :spec_view=>v[:spec][:view] )
-      v[:results]  = card.item_cards search_params
+      v[:results]  = card.item_cards search_params  # this is really odd.  the search is called from within the vars???
       v
     rescue =>e
       { :error => e }

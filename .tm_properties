@@ -1,1 +1,2 @@
 excludeInFolderSearch = "{$excludeInFolderSearch,coverage,files,log,public,tmp}"
+excludeInFileChooser = "{$excludeInFileChooser,coverage,files,log,public,tmp}"

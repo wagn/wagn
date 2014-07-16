@@ -54,9 +54,9 @@ format :json do
   view :atom do |args|
     h = {
       :name    => card.name,
-      :type    => card.type_name,
-      :content => card.raw_content
+      :type    => card.type_name
     }
+    h[:content]  = card.content  unless card.structure
     h[:codename] = card.codename     if card.codename
     h[:value]    = _render_core args if @depth < max_depth
     h

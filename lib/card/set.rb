@@ -196,7 +196,7 @@ class Card
         # There are special hacks for *all, but others (like *rstar) will not be found by
         # include_set_modules, which will look for Card::Set::Rstar, not Card::Set::Rstar::Blah
         
-        to_file = "#{Wagn.paths['tmp/sets'].first}/#{set_pattern}/#{seq}-#{anchor}.rb"
+        to_file = "#{Wagn.paths['tmp/set'].first}/#{set_pattern}/#{seq}-#{anchor}.rb"
         file_content = <<EOF
 # -*- encoding : utf-8 -*-
 class Card; module Set; module #{set_pattern.camelize}; module #{anchor.camelize}

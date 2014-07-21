@@ -20,7 +20,7 @@ class Card
             
       def load_layouts
         mod_dirs.inject({}) do |hash, mod|
-          dirname = "#{mod}/layouts"
+          dirname = "#{mod}/layout"
           if File.exists? dirname
             Dir.foreach( dirname ) do |filename|
               next if filename =~ /^\./
@@ -98,7 +98,7 @@ class Card
       def load_implicit_sets_from_source set_pattern
         seq = 1000
         mod_dirs.each do |mod_dir|
-          dirname = [mod_dir, 'sets', set_pattern] * '/'
+          dirname = [mod_dir, 'set', set_pattern] * '/'
           next unless File.exists?( dirname )
 
           #FIXME support multiple anchors!

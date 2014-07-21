@@ -1,6 +1,11 @@
 # -*- encoding : utf-8 -*-
+<% if options['mod-dev'] || options['core-dev'] %>
+# add this line to default to production mode
+# ENV['RAILS_ENV'] ||= 'production'  
+<% else %>
 # comment out this line to default to development mode
 ENV['RAILS_ENV'] ||= 'production'
+<% end %>
 
 require 'rubygems'
 

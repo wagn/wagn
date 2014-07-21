@@ -89,6 +89,12 @@ format :html do
       </h1>
     }
   end
+  
+=begin  
+  view :anchor, :perms=>:none, :tags=>:unknown_ok do |args|
+    %{ <a id="#{card.cardname.url_key}" name="#{card.cardname.url_key}"></a> }
+  end
+=end  
 
   view :menu, :tags=>:unknown_ok do |args|
     disc_tagname = Card.fetch(:discussion, :skip_modules=>true).cardname
@@ -158,7 +164,7 @@ format :html do
     hidden[:success] ||= card.rule(:thanks) || '_self'
     hidden[:card   ] ||={}
     
-    args[:optional_help] = :show
+    args[:optional_help] ||= :show
 
     # name field / title
     if !params[:name_prompt] and !card.cardname.blank?

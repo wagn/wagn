@@ -11,6 +11,12 @@ group :test do
   gem 'spork', '>=0.9'
 end
 
+group :test, :development do
+  gem 'rails-dev-tweaks'
+  gem 'sprockets' # just so above works
+  gem 'byebug'
+end
+
 <% end %>
 <% if options['core-dev'] %>
 

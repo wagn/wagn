@@ -15,11 +15,7 @@ module Wagn
     
       def schema_stamp_path type
         suffix = type.to_s =~ /card/ ? '_cards' : ''
-        File.join schema_stamp_dir, "/version#{ suffix }.txt"  
-      end
-    
-      def schema_stamp_dir
-        File.join Wagn.gem_root, 'config'
+        File.join Wagn.paths['schema-stamp'].first, "/version#{ suffix }.txt"  
       end
       
     end

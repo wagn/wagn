@@ -1,6 +1,6 @@
 
 view :raw do |args|
-  File.read "#{Wagn.gem_root}/mods/standard/lib/stylesheets/standard.scss"
+  File.read "#{Wagn.gem_root}/mod/standard/lib/stylesheets/standard.scss"
 end
 
 view :editor do |args|

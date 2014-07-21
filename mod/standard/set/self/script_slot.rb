@@ -1,6 +1,6 @@
 view :raw do |args|
   [ "wagn_mod.js.coffee", "wagn.js.coffee" ].map do |name|
-    File.read "#{Wagn.gem_root}/mods/standard/lib/javascript/#{name}"
+    File.read "#{Wagn.gem_root}/mod/standard/lib/javascript/#{name}"
   end.join("\n")
 end
 

@@ -42,7 +42,7 @@ class Card
     
     ...then mycard will include the set modules associated with each of those sets in the above
     order.  (The order is determined by the set pattern; see lib/card/set_pattern.rb for more
-    information about set_ptterns and mods/core/sets/all/fetch.rb for more about fetching.)
+    information about set_ptterns and mod/core/set/all/fetch.rb for more about fetching.)
 
     Similarly, whenever a Format object is instantiated for a card, it includes all views
     associated with BOTH (a) sets of which the card is a member and (b) the current format or 
@@ -50,7 +50,7 @@ class Card
 
  
     In order to have a set file associated with "all cards ending in +address", you could create
-    a file in mywagn/mods/mymod/sets/right/address.rb.  The recommended mechanism for doing so
+    a file in mywagn/mod/mymod/set/right/address.rb.  The recommended mechanism for doing so
     is running `wagn generate set modname set_pattern set_anchor`. In the current example, this
     would translate to `wagn generate set mymod right address`. Note that both the set_pattern 
     and the set_anchor must correspond to the codename of a card in the database to function

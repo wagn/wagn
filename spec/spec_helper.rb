@@ -3,8 +3,8 @@ require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
 require 'simplecov'
-require File.expand_path( '../../spec/mods/standard/lib/machine_spec.rb', __FILE__ )
-require File.expand_path( '../../spec/mods/standard/lib/machine_input_spec.rb', __FILE__ )
+require File.expand_path( '../../spec/mod/standard/lib/machine_spec.rb', __FILE__ )
+require File.expand_path( '../../spec/mod/standard/lib/machine_input_spec.rb', __FILE__ )
 
 
 Spork.prefork do

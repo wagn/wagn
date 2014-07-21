@@ -43,7 +43,7 @@ module Wagn
         
         config.autoload_paths += Dir["#{Wagn.gem_root}/app/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/lib/**/"]
-        config.autoload_paths += Dir["#{Wagn.gem_root}/mods/standard/lib/**/"]
+        config.autoload_paths += Dir["#{Wagn.gem_root}/mod/standard/lib/**/"]
         
         config.assets.enabled = false
         config.assets.version = '1.0'
@@ -84,17 +84,17 @@ module Wagn
         add_gem_path paths, "db/migrate"
         add_gem_path paths, "db/migrate_cards"
         add_gem_path paths, "db/seeds",            :with => "db/seeds.rb"        
-        add_gem_path paths, 'gem-mods',            :with => 'mods'
+        add_gem_path paths, 'gem-mod',             :with => 'mod'
         add_gem_path paths, 'gem-assets',          :with => 'public/assets'
 
         paths['app/models'] = []
         paths['app/mailers'] = []
         paths['app/views'] = File.join( Wagn.gem_root, 'lib/card' )
-        paths['local-mods'] = approot_is_gemroot? ? [] : 'mods'        
+        paths['local-mod'] = approot_is_gemroot? ? [] : 'mod'        
 
         paths.add 'files'
-        paths.add 'tmp/sets'
-        paths.add 'tmp/set_patterns'
+        paths.add 'tmp/set'
+        paths.add 'tmp/set_pattern'
         
         paths
       end

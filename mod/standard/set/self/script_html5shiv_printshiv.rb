@@ -1,5 +1,5 @@
 view :raw do |args|
-  File.read "#{Wagn.gem_root}/mods/standard/lib/javascript/html5shiv-printshiv.js"
+  File.read "#{Wagn.gem_root}/mod/standard/lib/javascript/html5shiv-printshiv.js"
 end
 
 view :editor do |args|

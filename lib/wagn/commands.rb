@@ -48,12 +48,12 @@ else
   when 'rspec'
     if index = ( ARGV.index("-s") || ARGV.index("--spec" ))
       ARGV.delete_at(index)
-      files = Dir.glob("mods/**/#{ARGV[index]}_spec.rb").flatten.join(' ')
+      files = Dir.glob("mod/**/#{ARGV[index]}_spec.rb").flatten.join(' ')
       ARGV.delete_at(index)
     end
     if index = ( ARGV.index("-m") || ARGV.index("--mod" ))
       ARGV.delete_at(index)
-      files = "mods/#{ARGV[index]}"
+      files = "mod/#{ARGV[index]}"
       ARGV.delete_at(index)
     end
     system "RAILS_ROOT=. bundle exec rspec #{ARGV.join(' ')} #{files}"

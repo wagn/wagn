@@ -34,7 +34,7 @@ class WagnGenerator < Rails::Generators::AppBase
       
       template "rspec", ".rspec"
     elsif options['mod-dev']
-      @spec_path = 'mods/'
+      @spec_path = 'mod/'
       @spec_helper_path = 'wagn/mods_spec_helper'
       template "rspec", ".rspec"
     end
@@ -49,8 +49,8 @@ class WagnGenerator < Rails::Generators::AppBase
 #    copy_file "README", "README.rdoc"
 #  end
   
-  def mods
-    empty_directory_with_gitkeep 'mods'
+  def mod
+    empty_directory_with_gitkeep 'mod'
   end
   
   def log

@@ -40,8 +40,8 @@ namespace :wagn do
     #system 'bundle update'
     if Wagn.paths["tmp"].existent
       FileUtils.rm_rf Wagn.paths["tmp"].first, :secure=>true
-      Dir.mkdir  Wagn.paths["tmp"].first
     end
+    Dir.mkdir Wagn.paths["tmp"].first
     Rake::Task['wagn:migrate'].invoke
     # FIXME remove tmp dir / clear cache
     puts "set symlink for assets"

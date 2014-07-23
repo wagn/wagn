@@ -12,10 +12,11 @@ module Wagn
       def schema type=nil
         File.read( schema_stamp_path type ).strip
       end
+
+      private    
     
       def schema_stamp_path type
-        suffix = type.to_s =~ /card/ ? '_cards' : ''
-        File.join Wagn.paths['schema-stamp'].first, "/version#{ suffix }.txt"  
+        File.join Wagn.gem_root, 'config', "version#{ '_cards' if type.to_s =~ /card/ }.txt"  
       end
       
     end

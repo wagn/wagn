@@ -91,7 +91,6 @@ module Wagn
         paths['app/mailers'] = []
         paths['app/views'] = File.join( Wagn.gem_root, 'lib/card' )
         paths['local-mod'] = approot_is_gemroot? ? [] : 'mod'
-        paths['schema-stamp'] ||= 'config'
         
         paths.add 'files'
         paths.add 'tmp/set'

@@ -54,12 +54,12 @@ format :html do
   view :pointer_core, :view=>:core, :mod=>Type::Pointer::HtmlFormat
 
   view :core do |args|
-    args[:item] ||= :link
     card.content=='_left' ? core_inherit_content(args) : render( :pointer_core, args )
   end  
 
   view :closed_content do |args|
-    card.content=='_left' ? core_inherit_content(args) : render( :pointer_core, args )
+    args[:item] ||= :link
+    render_core args
   end
 
 

@@ -1,3 +1,3 @@
 format :html do
-  include Structure::HtmlFormat
+#  include Structure::HtmlFormat
 end

@@ -4,8 +4,15 @@ gem 'wagn'<%= ", :path=>'#{@wagn_path}'"  if @wagn_path.present? %>
 
 <%= database_gemfile_entry -%>
 
-<% if options['mod-dev'] %>
+# A javascript runtime is required for JavaScript cards.
+<% if RUBY_PLATFORM =~ /darwin/ %>
+# gem 'therubyracer'
+# Macs have one included, but you will need this or another runtime if/when running on another platform
+<% else%>
+gem 'therubyracer'
+<% end %>
 
+<% if options['mod-dev'] %>
 group :test do
   gem 'rspec-rails', "~> 2.6"   # behavior-driven-development suite
   gem 'spork', '>=0.9'
@@ -16,10 +23,8 @@ group :test, :development do
   gem 'sprockets' # just so above works
   gem 'byebug'
 end
-
 <% end %>
 <% if options['core-dev'] %>
-
 group :assets do
   gem 'jquery-rails',  '~> 3.1'                # main js framework, along with rails-specific unobtrusive lib
   gem 'jquery-ui-rails',  '~> 4.2'             # main js framework, along with rails-specific unobtrusive lib
@@ -33,11 +38,12 @@ end
 
 
 group :test do
+  gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
+  gem 'spork', '>=0.9'                                           
+  gem 'rr'#, '=1.0.0'
+  
 	gem 'simplecov', '~> 0.7.1', :require => false  #test coverage
     
-  # SPECS see spec dir
-  gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
-
   gem 'guard-rspec', '~> 4.2'                  # trigger test runs based on file edits
   if RUBY_PLATFORM =~ /darwin/
     gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
@@ -53,21 +59,12 @@ group :test do
   gem 'timecop', '=0.3.5'                      # not clear on use/need.  referred to in shared_data.rb 
   # NOTE: had weird errors with timecop 0.4.4.  would like to update when possible
 
-  gem 'spork', '>=0.9'
-                                             
-  gem 'rr'#, '=1.0.0'
 
   gem 'email_spec'                             # 
   gem 'database_cleaner', '~> 0.7'             # used by cucumber for db transactions
 
   gem 'turn', "~>0.8.3", :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
   gem 'minitest', "~>4.0"
-
-
-
-  #windows stuff
-  gem 'win32console', '~> 1.3', :platforms => ['mingw', 'mswin']
-  gem 'win32-process', '~> 0.6', :platforms => ['mingw', 'mswin']
 end
 
 gem 'ruby-prof', '~>0.12.1', :group=>:profile  # profiling

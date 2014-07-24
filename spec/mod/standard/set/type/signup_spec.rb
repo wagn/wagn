@@ -53,7 +53,7 @@ describe Card::Set::Type::Signup do
     it 'should create an authenticable token' do
       @account.token.should == @token
       @account.authenticate_by_token(@token).should == @signup.id
-      @signup.account.token.should_not be_present
+      @account.fetch(:trait=> :token).should_not be_present
     end
     
     it 'should notify someone' do

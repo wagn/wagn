@@ -239,10 +239,7 @@ describe CardController do
     context 'css' do
       before do
         @all_style = Card[ "#{ Card[:all].name }+#{ Card[:style].name }" ]
-        @all_style.update_machine_output
-        Card::Auth.as_bot do
-          @all_style.fetch(:trait => :machine_output).delete!
-        end
+        @all_style.reset_machine_output!
       end
       
       it 'should create missing machine output file' do

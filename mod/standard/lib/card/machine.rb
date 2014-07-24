@@ -1,3 +1,5 @@
+require 'byebug'
+
 # What is this?
 # The Machine module together with the MachineInput module implements a kind of observer pattern.  
 # It handles a collection of input cards to generate a output card (default is a file card). 
@@ -100,8 +102,8 @@ class Card
           end
         end
   
-        host_class.event "update_machine_output_#{host_class.name.gsub(':','_')}".to_sym, :after => :store_subcards, :on => :save do  
-          update_machine_output
+        host_class.event "reset_machine_output_#{host_class.name.gsub(':','_')}".to_sym, :after => :store_subcards, :on => :save do  
+          reset_machine_output!
         end
       end
     end
@@ -119,10 +121,25 @@ class Card
       end.select(&:present?).join( joint )
       after_engine output
     end
+    
+    def reset_machine_output!
+      Auth.as_bot do
+        moc = machine_output_card and moc.real? and moc.delete!
+        mic = machine_input_card  and mic.real? and mic.delete!
+      end
+    end
+    
  
     def update_machine_output updated=[]
-      update_input_card
-      run_machine
+      cache_key = "UPDATE-LOCK:#{key}"
+      already_locked = Card.cache.read cache_key
+      unless already_locked
+        Card.cache.write cache_key, true
+        update_input_card
+        run_machine
+      end
+    ensure
+      Card.cache.write cache_key, false unless already_locked
     end
 
     def update_input_card

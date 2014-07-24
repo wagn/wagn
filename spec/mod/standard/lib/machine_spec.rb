@@ -14,12 +14,16 @@ end
 
 
 shared_examples_for 'machine' do |filetype|
-  context "when created" do
+  context "machine is run" do
+    before do
+      machine.update_machine_output
+    end
+    
     it 'has +machine_input card' do
-      machine.machine_input_card.should_not be_nil
+      machine.machine_input_card.real?.should be_true 
     end
     it 'has +machine_output card' do
-      machine.machine_output_card.should_not be_nil
+      machine.machine_output_card.real?.should be_true
     end
     it "generates #{filetype} file" do 
       expect(machine.machine_output_path).to match(/\.#{filetype}$/)
@@ -32,8 +36,10 @@ shared_examples_for 'content machine' do |filetype|
     let(:machine) { machine_card }
   end
   
+  
   context '+machine_input card' do
     it "points to self" do
+      machine_card.update_input_card      
       expect(machine_card.input_item_cards).to eq([machine_card])
     end
   end
@@ -112,6 +118,10 @@ We build the following structure:
   end
   
   describe '+machine_input card' do
+    before do
+      subject.update_input_card
+    end
+    
     it "contains items of all levels" do
       subject.machine_input_card.item_cards.map(&:id).sort.should == @expected_items.map(&:id).sort
     end

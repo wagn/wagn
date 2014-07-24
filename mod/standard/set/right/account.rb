@@ -12,13 +12,25 @@ def blocked?  ; status=='blocked' end
 def built_in? ; status=='system'  end
 def pending?  ; status=='pending' end
 
+
+def authenticate_by_token val
+  tcard = token_card                               or return :token_not_found
+  token == val                                     or return :incorrect_token
+  tcard.updated_at > Wagn.config.token_expiry.ago  or return :token_expired  # > means "after"
+  left and left.accountable?                       or return :illegal_account  #(overkill?)
+  Auth.as_bot { tcard.delete! }
+  left.id
+end
+
+
+
 format :html do
 
   view :raw do |args|
-    %{
-      {{+#{Card[:email   ].name}|titled;title:email}}
-      {{+#{Card[:password].name}|titled;title:password}}
-    }
+    content = []
+    content << "{{+#{Card[:email   ].name}|titled;title:email}}"    unless args[:no_email]
+    content << "{{+#{Card[:password].name}|titled;title:password}}" unless args[:no_password]
+    content * ' '
   end
 
   view :edit do |args|
@@ -60,14 +72,11 @@ event :generate_confirmation_token, :on=>:create, :before=>:process_subcards, :w
   subcards["+#{Card[:token].name}"] = {:content => generate_token }
 end
 
-event :reset_password, :on=>:update, :before=>:approve, :when=>proc{ |c| c.has_reset_token? } do
-  result = Auth.authenticate_by_token @env_token
-  case result
+event :reset_password, :on=>:update, :before=>:approve, :when=>proc{ |c| c.has_reset_token? } do  
+  case ( result = authenticate_by_token @env_token )
   when Integer
     Auth.signin result
-    Env.params[:success] = { :id=>left.name, :view=>:related,
-      :related=>{:name=>"+#{Card[:account].name}", :view=>'edit'}
-    }
+    Env.params[:success] = edit_password_success_args
     abort :success
   when :token_expired
     send_reset_password_token
@@ -80,6 +89,14 @@ event :reset_password, :on=>:update, :before=>:approve, :when=>proc{ |c| c.has_r
   else
     abort :failure, "error resetting password: #{result}" # bad token or account
   end
+end
+
+def edit_password_success_args
+  { 
+    :id=>left.name,
+    :view=>:related,
+    :related=>{ :name=>"+#{Card[:account].name}", :view=>'edit' }
+  }
 end
 
 def has_reset_token?

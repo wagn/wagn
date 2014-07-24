@@ -35,13 +35,7 @@ class UserDataToCards < ActiveRecord::Migration
         rulename = [ :signin, :self, setting ].map { |code| Card[code].name } * '+'
         Card.create! :name=>rulename, :content=>"[[#{Card[:anyone].name}]]"
       end
-      
-      puts "turn captcha off by default on signup"
-      rulename = [:signup, :type, :captcha].map { |code| Card[code].name } * '+'
-      captcha_rule = Card.fetch rulename, :new=>{}
-      captcha_rule.content = '0'
-      captcha_rule.save!
-      
+            
       puts "supporting legacy handling of +*email on User cards"
       oldname = [       :email,           :right, :structure].map { |code| Card[code].name } * '+'
       newname = [:user, :email, :type_plus_right, :structure].map { |code| Card[code].name } * '+'

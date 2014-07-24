@@ -81,7 +81,7 @@ describe Card::Set::Right::Account do
     it 'should not work if token is wrong' do
       Card::Env.params[:reset_token] = @token + 'xxx'
       @account.save
-      @account.errors[:abort].first.should =~ /token_not_found/
+      @account.errors[:abort].first.should =~ /incorrect_token/
     end  
     
   end

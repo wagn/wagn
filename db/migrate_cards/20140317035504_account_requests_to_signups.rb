@@ -37,6 +37,13 @@ class AccountRequestsToSignups < ActiveRecord::Migration
         old_signup.delete!
       end
       
+      # turn captcha off by default on signup
+      rulename = [:signup, :type, :captcha].map { |code| Card[code].name } * '+'
+      captcha_rule = Card.fetch rulename, :new=>{}
+      captcha_rule.content = '0'
+      captcha_rule.save!
+      
+      
     end
   end
 

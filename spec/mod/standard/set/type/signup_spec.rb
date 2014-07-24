@@ -51,7 +51,9 @@ describe Card::Set::Type::Signup do
     end
     
     it 'should create an authenticable token' do
-      Card::Auth.authenticate_by_token(@token).should == @signup.id
+      @account.token.should == @token
+      @account.authenticate_by_token(@token).should == @signup.id
+      @signup.account.token.should_not be_present
     end
     
     it 'should notify someone' do
@@ -112,19 +114,56 @@ describe Card::Set::Type::Signup do
       ActionMailer::Base.deliveries.last.to.should == ['signups@wagn.org']
     end
     
-    context 'approval' do
-      before do
-        Card::Env.params[:approve] = true
-        Card::Auth.as :joe_admin
-      end
+    
+    context 'approval with token' do
       
       it 'should create token' do
+        Card::Env.params[:approve_token] = true
+        Card::Auth.as :joe_admin
+        
         @signup = Card.fetch @signup.id
         @signup.save!
         @signup.account.token.should be_present
       end
+      
+    end
+    
+    context 'approval without token' do
+      
+      it 'should create token' do
+        Card::Env.params[:approve_without_token] = true
+        Card::Auth.as :joe_admin
+        
+        @signup = Card.fetch @signup.id
+        @signup.save!
+        @signup.account.token.should_not be_present
+        @signup.type_id.should == Card::UserID
+        @signup.account.status.should == 'active'
+      end
     end
 
+  end
+  
+  
+  context 'invitation' do
+    before do
+      # NOTE: by default Anonymous does not have permission to create User cards.
+      Card::Auth.as_bot do
+        Card.create! :name=>'*request+*to', :content=>'signups@wagn.org'
+        @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ '+*email'=>'wolf@wagn.org'}
+      end
+      @account = @signup.account
+    end
+    
+    it 'should create all the necessary cards, but no password' do
+      @signup.type_id.should == Card::SignupID
+      @account.email.should == 'wolf@wagn.org'
+      @account.status.should == 'pending'
+      @account.salt.should_not == ''
+      @account.token.should be_present
+      @account.password.should_not be_present
+    end
+    
   end
 
 end

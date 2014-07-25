@@ -182,7 +182,7 @@ end
 def item_names args={}
   context = args[:context] || self.cardname
   self.raw_content.to_s.split(/\n+/).map do |line|
-    item_name = line.gsub /\[\[|\]\]/, ''
+    item_name = line.gsub( /\[\[|\]\]/, '').strip
     if context == :raw
       item_name
     else

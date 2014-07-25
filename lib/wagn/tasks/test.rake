@@ -90,7 +90,7 @@ namespace :test do
 
   desc "create sample data for testing"
   task :populate_template_database => :environment do
-    load 'test/seed.rb'
+    load "#{Wagn.gem_root}/test/seed.rb"
     SharedData.add_test_data
   end
 

@@ -150,14 +150,22 @@ namespace :wagn do
         ActiveRecord::Base.connection.update("update #{table} set created_at=now() #{extra_sql[table.to_sym] || ''};")
       end
 
-      # delete ignored cards
       Card::Auth.as_bot do
+        # delete ignored cards
+        
         if ignoramus = Card['*ignore']
           ignoramus.item_cards.each do |card|
             if card.account #have to get rid of revisions to delete account  
               #(could also directly delete cards "manually", but would need to delete all descendants manually, too)
               ActiveRecord::Base.connection.delete( "delete from card_revisions where card_id = #{card.id}" )
             end
+            card.delete!
+          end
+        end
+        
+        %w{ machine_input machine_output }.each do |codename|
+          Card.search(:right=>{:codename=>codename }).each do |card|
+            FileUtils.rm_rf File.join('files', card.id.to_s ), :secure=>true            
             card.delete!
           end
         end
@@ -208,7 +216,7 @@ namespace :wagn do
     desc "copy files from template database to standard mod and update cards"
     task :copy_mod_files => :environment do
       template_files_dir = "#{Wagn.root}/files"
-      standard_files_dir = "#{Wagn.gem_root}/mods/standard/files"
+      standard_files_dir = "#{Wagn.gem_root}/mod/standard/file"
       
       #FIXME - this should delete old revisions
       

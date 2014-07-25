@@ -14,8 +14,7 @@ format :html do
   end
 
   view :layout, :perms=>:none do |args|
-    layout_content = get_layout_content
-    process_content layout_content
+    process_content get_layout_content, :content_opts=>{ :chunk_list=>:default }
   end
 
   view :content do |args|

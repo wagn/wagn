@@ -16,6 +16,7 @@ Feature: Signing up
     And I fill in "card_name" with "Wanna B"
     And I enter "wanna@wagn.org" into "*email"
     And I enter "wanna_pass" into "*password"
+    Then show me the page
     And I press "Submit"
     Then I should see "Signup Success"
     And "wanna@wagn.org" should receive an email with subject "verification link for My Wagn"

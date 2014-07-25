@@ -284,7 +284,7 @@ class Card
       return content unless card
       content = card.raw_content || '' if content.nil?
 
-      obj_content = Card::Content===content ? content : Card::Content.new( content, format=self )
+      obj_content = Card::Content===content ? content : Card::Content.new( content, format=self, opts.delete(:content_opts) )
 
       card.update_references( obj_content, refresh=true ) if card.references_expired  # I thik we need this generalized
 

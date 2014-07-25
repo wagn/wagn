@@ -122,18 +122,6 @@ namespace :wagn do
     end
   end
 
-  desc "copy over .htaccess files useful in production mode"
-  task :copy_htaccess do
-    access_file = File.join(Wagn.gem_root, 'config/samples/asset_htaccess')
-
-    %w{ files assets }.each do |dirname|
-      dir = File.join Rails.public_path, dirname
-      mkdir_p dir
-      cp access_file, File.join( dir, '.htaccess' )
-    end
-  end
-
-
   namespace :bootstrap do
     desc "rid template of unneeded cards, revisions, and references"
     task :clean => :environment do

@@ -5,15 +5,16 @@ require_dependency 'card/chunk'
 
 class Card
   class Content < SimpleDelegator
-    attr_reader :revision, :format, :chunks
+    attr_reader :revision, :format, :chunks, :opts
 
-    def initialize content, format_or_card
+    def initialize content, format_or_card, opts={}
       @format = if Card===format_or_card
         Format.new format_or_card, :format=>nil
       else
         format_or_card
       end
-
+      @opts = opts || {}
+      
       unless Array === content
         content = parse_content content
       end
@@ -22,6 +23,10 @@ class Card
 
     def card
       format.card
+    end
+    
+    def chunk_list
+      @opts[:chunk_list] || card.chunk_list
     end
 
     def to_s
@@ -62,7 +67,7 @@ class Card
 
       if String===content
         position = last_position = 0
-        prefix_regexp = Chunk.get_prefix_regexp card.chunk_list
+        prefix_regexp = Chunk.get_prefix_regexp chunk_list
         interval_string = ''
 
         while prefix_match = content[position..-1].match( prefix_regexp )

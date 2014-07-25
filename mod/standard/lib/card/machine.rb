@@ -1,5 +1,3 @@
-require 'byebug'
-
 # What is this?
 # The Machine module together with the MachineInput module implements a kind of observer pattern.  
 # It handles a collection of input cards to generate a output card (default is a file card). 

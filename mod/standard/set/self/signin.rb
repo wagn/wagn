@@ -11,6 +11,10 @@ format :html do
     _render_core( args )
   end
   
+  view :closed_content do |args|
+    ''
+  end
+  
   
   view :core do |args|
     args[:buttons] = button_tag 'Sign in'

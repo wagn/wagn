@@ -5,14 +5,14 @@ gem 'wagn'<%= ", :path=>'#{@wagn_path}'"  if @wagn_path.present? %>
 <%= database_gemfile_entry -%>
 
 # A javascript runtime is required for JavaScript cards.
-<% if RUBY_PLATFORM =~ /darwin/ %>
+<% if RUBY_PLATFORM =~ /darwin/ -%>
+# Macs have one included, but on other platforms you'll need this or another runtime
 # gem 'therubyracer'
-# Macs have one included, but you will need this or another runtime if/when running on another platform
-<% else%>
+<% else -%>
 gem 'therubyracer'
-<% end %>
+<% end -%>
 
-<% if options['mod-dev'] %>
+<% if options['mod-dev'] -%>
 group :test do
   gem 'rspec-rails', "~> 2.6"   # behavior-driven-development suite
   gem 'spork', '>=0.9'
@@ -23,8 +23,10 @@ group :test, :development do
   gem 'sprockets' # just so above works
   gem 'byebug'
 end
-<% end %>
-<% if options['core-dev'] %>
+
+<% end -%>
+<% if options['core-dev'] -%>
+  
 group :assets do
   gem 'jquery-rails',  '~> 3.1'                # main js framework, along with rails-specific unobtrusive lib
   gem 'jquery-ui-rails',  '~> 4.2'             # main js framework, along with rails-specific unobtrusive lib

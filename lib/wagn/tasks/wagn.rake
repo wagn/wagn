@@ -140,14 +140,10 @@ namespace :wagn do
       Wagn::Cache.reset_global
 
       # Correct time and user stamps
-      botid = Card::WagnBotID
-      extra_sql = {
-        :cards          =>", creator_id=#{botid}, updater_id=#{botid}",
-        :card_revisions =>", creator_id=#{botid}"
-      }
-      WAGN_BOOTSTRAP_TABLES.each do |table|
-        next if table == 'card_references'
-        ActiveRecord::Base.connection.update("update #{table} set created_at=now() #{extra_sql[table.to_sym] || ''};")
+      %w{ cards card_revisions }.each do |table|
+        sql =  "update #{table} set created_at=now(), creator_id=#{ Card::WagnBotID }"
+        sql +=                    ",updated_at=now(), updater_id=#{ Card::WagnBotID }" if table == 'cards'
+        ActiveRecord::Base.connection.update sql
       end
 
       Card::Auth.as_bot do

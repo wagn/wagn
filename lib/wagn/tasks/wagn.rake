@@ -181,6 +181,9 @@ namespace :wagn do
         " (referee_id is not null and not exists (select * from cards where cards.id = card_references.referee_id)) or " +
         " (           referer_id is not null and not exists (select * from cards where cards.id = card_references.referer_id));"
       )
+      
+      ActiveRecord::Base.connection.delete( "delete from sessions" )
+      
       Wagn::Cache.reset_global
       
     end

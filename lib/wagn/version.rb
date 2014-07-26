@@ -14,9 +14,10 @@ module Wagn
       end
 
       def schema_stamp_path type
-        File.join Wagn.gem_root, 'config', "version#{ '_cards' if type.to_s =~ /card/ }.txt"  
+        stamp_dir = ENV['SCHEMA_STAMP_PATH'] || File.join( Wagn.gem_root, 'config' )
+        File.join stamp_dir, "version#{ '_cards' if type.to_s =~ /card/ }.txt"  
       end
-      
+            
     end
   end
 end

@@ -36,8 +36,8 @@ Rails.application.routes.draw do
   match 'account/signin'             => 'card#read',   :id=>':signin'
   match 'account/signout'            => 'card#delete', :id=>':signin'
   match 'account/signup'             => 'card#read',   :view=>'new',  :card=>{ :type_code=>:signup }
+  match 'account/invite'             => 'card#read',   :view=>'new',  :card=>{ :type_code=>:signup }
   match 'account/accept'             => 'card#read',   :view=>'edit', :card=>{ :type_code=>:signup }
-  match 'account/invite'             => 'card#read',   :view=>'new',  :card=>{ :type_code=>:user   }
   # use type_code rather than id because in some cases (eg populating test data) routes must get loaded without loading Card
 
   match 'admin/stats'                => 'card#read',   :id=>':stats'
@@ -51,7 +51,3 @@ Rails.application.routes.draw do
   match '*id' => 'card#read', :view => 'bad_address'
 
 end
-
-
-
-

@@ -4,25 +4,6 @@ include Basic
 attr_accessor :email
 
 format :html do
-  #FIXME - should perms check permission to create account?
-  view :new do |args|
-    args.merge!(
-      :title=>'Invite', 
-      :optional_help=>:show, 
-      :optional_menu=>:never 
-    )
-    args[:hidden].merge! :card => { :type_id => card.type_id }
-    frame_and_form :create, args do
-      %{
-        #{ _render_name_fieldset :help=>'usually first and last name'   }
-        #{# _render_email_fieldset                                       
-        }
-        #{# _render_invitation_field                                     
-        }
-      }
-    end
-  end
-
 
   view :setup, :tags=>:unknown_ok, :perms=>lambda { |r| Auth.needs_setup? } do |args|
     args.merge!( {
@@ -52,7 +33,16 @@ format :html do
   end
 end
 
+=begin
+def ok_to_create
+  unless Auth.needs_setup?
+    deny_because "You cannot create a #{type_name} directly; you must create a #{Card[:signup].name} first"
+  end
+end
+=end
+
 event :setup_as_bot, :before=>:check_permissions, :on=>:create, :when=>proc{ |c| Card::Env.params[:setup] } do
+  # is this still needed, even with the #ok_to_create call?
   abort :failure unless Auth.needs_setup?
   Auth.as_bot
 end  

@@ -39,7 +39,9 @@ shared_examples_for 'content machine' do |filetype|
   
   context '+machine_input card' do
     it "points to self" do
-      machine_card.update_input_card      
+      Card::Auth.as_bot do
+        machine_card.update_input_card
+      end
       expect(machine_card.input_item_cards).to eq([machine_card])
     end
   end
@@ -119,7 +121,9 @@ We build the following structure:
   
   describe '+machine_input card' do
     before do
-      subject.update_input_card
+      Card::Auth.as_bot do
+        subject.update_input_card
+      end
     end
     
     it "contains items of all levels" do

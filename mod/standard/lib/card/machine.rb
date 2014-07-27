@@ -128,23 +128,36 @@ class Card
     end
     
  
-    def update_machine_output updated=[]
-      cache_key = "UPDATE-LOCK:#{key}"
-      already_locked = Card.cache.read cache_key
-      unless already_locked
-        Card.cache.write cache_key, true
-        update_input_card
-        run_machine
+    def update_machine_output
+      if ok? :read and not was_already_locked = locked?
+        Auth.as_bot do
+          lock!
+          update_input_card
+          run_machine
+        end
       end
     ensure
-      Card.cache.write cache_key, false unless already_locked
+       unlock! unless was_already_locked
+    end
+    
+    def lock_cache_key
+      "UPDATE-LOCK:#{key}"
+    end
+    
+    def locked?
+      Card.cache.read lock_cache_key
+    end
+    
+    def lock!
+      Card.cache.write lock_cache_key, true
+    end
+    
+    def unlock!
+      Card.cache.write lock_cache_key, false
     end
 
     def update_input_card
-      Card::Auth.as_bot do
-        machine_input_card.items = engine_input
-        #machine_input_card.save
-      end
+      machine_input_card.items = engine_input
     end
 
     def input_item_cards

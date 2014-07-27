@@ -2,8 +2,12 @@
 format :html do
 
   view :open do |args|
-    args.merge! :title=>'Sign In', :optional_help=>:show
+    args.merge! :optional_help=>:show
     super args
+  end
+  
+  def default_title_args args
+    args[:title] ||= 'Sign In'
   end
 
   view :open_content do |args|

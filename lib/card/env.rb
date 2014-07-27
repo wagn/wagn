@@ -25,14 +25,6 @@ class Card
         @@env[key.to_sym] = value
       end
       
-      #hacky - should be in module
-      def recaptcha_on?
-        if self[:recaptcha_on].nil?
-          self[:recaptcha_count] = 0
-          self[:recaptcha_on] = self[:controller] && have_recaptcha_keys? && !Auth.signed_in? && !Auth.needs_setup? && !Auth.always_ok?
-        end
-        self[:recaptcha_on]
-      end
 
       def params
         self[:params] ||= {}
@@ -54,11 +46,7 @@ class Card
         end
       end
     
-      private
-    
-      def have_recaptcha_keys?
-        !!( Wagn.config.recaptcha_public_key && Wagn.config.recaptcha_private_key )
-      end
+
     end
   end  
   Env.reset

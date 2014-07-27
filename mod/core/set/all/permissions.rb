@@ -217,14 +217,19 @@ def track_permission_errors
   result
 end
 
+
+def recaptcha_on?
+  have_recaptcha_keys? && Env[:controller] && !Auth.signed_in? && !Auth.needs_setup? && !Auth.always_ok?
+end
+
+def have_recaptcha_keys?
+  @@have_recaptcha_keys = defined?(@@have_recaptcha_keys) ? @@have_recaptcha_keys : 
+    !!( Wagn.config.recaptcha_public_key && Wagn.config.recaptcha_private_key )
+end
+
 event :recaptcha, :before=>:approve do
-  if !@supercard                        and
-      Env.recaptcha_on?                 and
-      Card.toggle( rule :captcha )      and
-      num = Card::Env[:recaptcha_count] and
-      num < 1
-      
-    Env[:recaptcha_count] = num + 1
+  if !@supercard && !Env[:recaptcha_used] && recaptcha_on? && Card.toggle( rule :captcha )      
+    Env[:recaptcha_used] = true
     Env[:controller].verify_recaptcha :model=>self, :attribute=>:captcha
   end
 end

@@ -219,7 +219,12 @@ end
 
 
 def recaptcha_on?
-  have_recaptcha_keys? && Env[:controller] && !Auth.signed_in? && !Auth.needs_setup? && !Auth.always_ok?
+  have_recaptcha_keys? &&
+  Env[:controller]     &&
+  !Auth.signed_in?     &&
+  !Auth.needs_setup?   &&
+  !Auth.always_ok?     &&
+  Card.toggle( rule :captcha ) 
 end
 
 def have_recaptcha_keys?
@@ -228,7 +233,7 @@ def have_recaptcha_keys?
 end
 
 event :recaptcha, :before=>:approve do
-  if !@supercard && !Env[:recaptcha_used] && recaptcha_on? && Card.toggle( rule :captcha )      
+  if !@supercard && !Env[:recaptcha_used] && recaptcha_on?     
     Env[:recaptcha_used] = true
     Env[:controller].verify_recaptcha :model=>self, :attribute=>:captcha
   end

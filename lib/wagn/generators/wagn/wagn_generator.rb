@@ -37,6 +37,7 @@ class WagnGenerator < Rails::Generators::AppBase
       @spec_path = 'mod/'
       @spec_helper_path = 'wagn/mods_spec_helper'
       template "rspec", ".rspec"
+      template "simplecov", ".simplecov"
     end
   end
 

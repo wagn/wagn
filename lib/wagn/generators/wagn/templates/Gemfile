@@ -20,8 +20,9 @@ end
 
 group :test, :development do
   gem 'rails-dev-tweaks'
-  gem 'sprockets' # just so above works
+  gem 'sprockets' # just so above works 
   gem 'byebug'
+  # gem 'simplecov' # code coverage analysis tool
 end
 
 <% end -%>

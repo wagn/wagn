@@ -26,14 +26,10 @@ def simplecov_filter_for_gem
   end
 end
 
-
 require 'simplecov'
 require 'timecop'
 require File.expand_path( '../../spec/mod/standard/lib/machine_spec.rb', __FILE__ )
 require File.expand_path( '../../spec/mod/standard/lib/machine_input_spec.rb', __FILE__ )
-
-
-
 
 Spork.prefork do
   if ENV["RAILS_ROOT"]

@@ -1,5 +1,5 @@
 unless ENV['COVERAGE'] == 'false'
 	SimpleCov.start do
-		simplecov_filter_for_decks
+		<%= @simplecov_config %>
 	end
 end

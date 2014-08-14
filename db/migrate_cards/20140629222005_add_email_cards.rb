@@ -5,7 +5,8 @@ class SystemEmails < ActiveRecord::Migration
   def up
     contentedly do
       Card.create! :name=>"Email template", :codename=>:email_template, :type_id=>Card::CardtypeID
-      
+      Card.create! :name=>"Email template+*type+*structure", :content=> "{{+*from}}\n{{+*to}}\n{{+*cc}}\n{{+*bcc}}\n{{+*subject}}\n{{+*message}}\n{{+*attach}}"
+
       dir = "#{Wagn.gem_root}/db/migrate_cards/data/mailer"
       json = File.read( File.join( dir, 'mail_config.json' ))
       data = JSON.parse(json)

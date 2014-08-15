@@ -149,11 +149,13 @@ format :html do
 
         <div class="card-editor">
           #{
-            fieldset 'type', type_field(
-              :href         => path(:card=>open_rule, :view=>:open_rule, :type_reload=>true),
-              :class        => 'type-field rule-type-field live-type-field',
-              'data-remote' => true
-            ), :editor=>'type'
+            unless Card::Set::Type::Setting::FIXED_TYPE.include? card.cardname.tag.sub(/^\*/,'').gsub(' ','_').to_sym
+              fieldset 'type', type_field(
+                :href         => path(:card=>open_rule, :view=>:open_rule, :type_reload=>true),
+                :class        => 'type-field rule-type-field live-type-field',
+                'data-remote' => true
+              ), :editor=>'type'
+            end
           }
           
           #{ fieldset 'content', content_field( form, args.merge(:skip_rev_id=>true) ), :editor=>'content' }

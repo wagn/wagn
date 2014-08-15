@@ -10,6 +10,7 @@ SETTING_GROUPS = {
   "Other"         => [ :autoname, :accountable, :captcha ]
 }
 
+FIXED_TYPE = [ :create, :read, :update, :delete, :comment, :table_of_contents, :thanks, :autoname, :accountable, :captcha]
 
 view :core do |args|
 

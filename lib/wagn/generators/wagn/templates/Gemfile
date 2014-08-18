@@ -22,12 +22,16 @@ end
 group :test, :development do
   gem 'rails-dev-tweaks'
   gem 'sprockets' # just so above works
-  gem 'byebug'
+  if RUBY_VERSION =~ /^2/
+		gem 'byebug' 
+	else
+		gem 'debugger'
+	end
 end
 
 <% end -%>
-<% if options['core-dev'] -%>
-  
+
+<% if options['core-dev'] -%>  
 group :assets do
   gem 'jquery-rails',  '~> 3.1'                # main js framework, along with rails-specific unobtrusive lib
   gem 'jquery-ui-rails',  '~> 4.2'             # main js framework, along with rails-specific unobtrusive lib
@@ -39,6 +43,10 @@ group :assets do
   gem 'therubyrhino', :platform=>:ruby         # :ruby is MRI rubies, so if you use a mac ruby ...
 end
 
+group :development do
+  gem 'rails-dev-tweaks'
+  gem 'sprockets' # just so above works
+end
 
 group :test do
   gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite

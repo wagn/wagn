@@ -12,7 +12,7 @@ format :html do
         else
           ["follow", :on, "send emails about changes to #{card.cardname}" ]
         end
-        watch_link *link_args
+        follow_link *link_args
       end
     end
   end
@@ -21,6 +21,12 @@ format :html do
     %{<div class="faint">(following)</div>} #yuck
   end
 
+  def follow_link text, toggle, title, extra={}
+    username = Card.fetch(Card::Auth.current_id).name
+    url =  page_path "#{username}+following", :subscribe=>card.name, :view=>:edit 
+    link_to text, url
+  end
+  
   def watch_link text, toggle, title, extra={}
     link_to "#{text}", path(:action=>:watch, :toggle=>toggle), 
       {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :title=>title, :remote=>true, :method=>'post'}.merge(extra)
@@ -29,14 +35,37 @@ format :html do
 end
 
 
-event :record_followers, :before=>:store, :on=>:delete do
-  # find before, because in case of deleted cards all the data is gone!
-
-  @trunk_watcher_watched_pairs = trunk_watcher_watched_pairs
-  @watcher_watched_pairs = watcher_watched_pairs
+def all_trunks
+  yield(self)
+  trunk_card = self
+  while trunk_card.junction?
+    yield(trunk_card.trunk)
+  end
 end
 
-event :notify_followers, :after=>:extend do
+event :new_record_followers, :before=>:store, :on=>:delete do
+  # find before, because in case of deleted cards all the data is gone!
+  hash = {}
+  all_trunks do |changed_card|
+    set_names = changed_card.set_names.reverse
+    set_names << changed_card.name
+    set_names.each do |cname|
+       Card.search(:type => "User", :plus => ["following", :link_to => cname]).each do |user|
+         hash[user] ||= []
+         hash[user] << cname
+       end
+    end
+  end
+   @watcher_watched_pairs = hash
+end
+
+# event :record_followers, :before=>:store, :on=>:delete do
+#   @trunk_watcher_watched_pairs = trunk_watcher_watched_pairs
+#   @watcher_watched_pairs = watcher_watched_pairs
+# end
+
+
+event :new_notify_followers, :after=>:extend do
   begin
     return false if Card.record_timestamps==false
     # userstamps and timestamps are turned off in cases like updating read_rules that are automated and
@@ -44,32 +73,55 @@ event :notify_followers, :after=>:extend do
   
     action = "#{@action}d"
   
-    @trunk_watcher_watched_pairs ||= trunk_watcher_watched_pairs
     @watcher_watched_pairs ||= watcher_watched_pairs
     
-    @watcher_watched_pairs.reject do |p|
-      @trunk_watcher_watched_pairs.map(&:first).include? p.first
-    end.each do |watcher, watched|
+    @watcher_watched_pairs.each do |watcher, watched|
       watcher and
       mail = Mailer.change_notice( watcher, self, action, watched.to_s, nested_notifications ) and
       mail.deliver
     end
   
-    if @supercard
-      @supercard.nested_notifications ||= []
-      @supercard.nested_notifications << [ name, action ]
-    else
-      @trunk_watcher_watched_pairs.each do |watcher, watched|
-        next if watcher.nil?
-        Mailer.change_notice( watcher, self.left, 'updated', watched.to_s, [[name, action]], self ).send_if :deliver
-      end
-    end
   rescue =>e  #this error handling should apply to all extend callback exceptions
     Airbrake.notify e if Airbrake.configuration.api_key
     Rails.logger.info "\nController exception: #{e.message}"
     Rails.logger.debug "BT: #{e.backtrace*"\n"}"
   end
 end
+
+# event :notify_followers, :after=>:extend do
+#   begin
+#     return false if Card.record_timestamps==false
+#     # userstamps and timestamps are turned off in cases like updating read_rules that are automated and
+#     # generally not of enough interest to warrant notification
+#
+#     action = "#{@action}d"
+#
+#     @trunk_watcher_watched_pairs ||= trunk_watcher_watched_pairs
+#     @watcher_watched_pairs ||= watcher_watched_pairs
+#
+#     @watcher_watched_pairs.reject do |p|
+#       @trunk_watcher_watched_pairs.map(&:first).include? p.first
+#     end.each do |watcher, watched|
+#       watcher and
+#       mail = Mailer.change_notice( watcher, self, action, watched.to_s, nested_notifications ) and
+#       mail.deliver
+#     end
+#
+#     if @supercard
+#       @supercard.nested_notifications ||= []
+#       @supercard.nested_notifications << [ name, action ]
+#     else
+#       @trunk_watcher_watched_pairs.each do |watcher, watched|
+#         next if watcher.nil?
+#         Mailer.change_notice( watcher, self.left, 'updated', watched.to_s, [[name, action]], self ).send_if :deliver
+#       end
+#     end
+#   rescue =>e  #this error handling should apply to all extend callback exceptions
+#     Airbrake.notify e if Airbrake.configuration.api_key
+#     Rails.logger.info "\nController exception: #{e.message}"
+#     Rails.logger.debug "BT: #{e.backtrace*"\n"}"
+#   end
+# end
 
 attr_accessor :nested_notifications
 
@@ -108,7 +160,7 @@ def watcher_pairs pairs=true, kind=:name, hash={}
   if hash.any?
     #warn "wp #{pairs}, #{kind}, #{hash.inspect}"
     if pairs
-      hash.each.reject {|i,wname| i == Auth.current_id }.map {|i,wname| [ i, wname ] }
+      hash.each.reject {|i,wname| i == Auth.current_id }.map {|i,wname| [ i, wname ] }  # reject current user, return array with elements  [user_id, cardname] 
     else
       hash.keys
     end

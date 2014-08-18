@@ -2,10 +2,34 @@
 require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
+def simplecov_filter_for_gem
+  filters.clear # This will remove the :root_filter that comes via simplecov's defaults
+  add_filter do |src|
+    !(src.filename =~ /^#{SimpleCov.root}/) unless src.filename =~ /wagn/
+  end    
+  
+  add_filter '/spec/'
+  add_filter '/features/'
+  add_filter '/config/'
+  add_filter '/tasks/'
+  add_filter '/generators/'
+  add_filter 'lib/wagn'
+
+  add_group 'Card', 'lib/card'  
+  add_group 'Set Patterns', 'tmp/set_pattern/'
+  add_group 'Sets',         'tmp/set/'
+  add_group 'Formats' do |src_file|
+    src_file.filename =~ /mod\/[^\/]+\/format/
+  end
+  add_group 'Chunks' do |src_file|
+    src_file.filename =~ /mod\/[^\/]+\/chunk/
+  end
+end
+
 require 'simplecov'
+require 'timecop'
 require File.expand_path( '../../spec/mod/standard/lib/machine_spec.rb', __FILE__ )
 require File.expand_path( '../../spec/mod/standard/lib/machine_input_spec.rb', __FILE__ )
-
 
 Spork.prefork do
   if ENV["RAILS_ROOT"]

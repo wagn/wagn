@@ -44,7 +44,7 @@ module Wagn
         
         config.autoload_paths += Dir["#{Wagn.gem_root}/app/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/lib/**/"]
-        config.autoload_paths += Dir["#{Wagn.gem_root}/mod/standard/lib/**/"]
+        config.autoload_paths += Dir["#{Wagn.gem_root}/mod/*/lib/**/"]
         
         config.assets.enabled = false
         config.assets.version = '1.0'

@@ -1,0 +1,2 @@
+alert("Hi");
+alert("Hi");

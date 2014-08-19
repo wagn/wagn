@@ -28,8 +28,8 @@ end
 
 require 'simplecov'
 require 'timecop'
-require File.expand_path( '../../mod/02_machines/spec/lib/machine_spec.rb', __FILE__ )
-require File.expand_path( '../../mod/02_machines/spec/lib/machine_input_spec.rb', __FILE__ )
+require File.expand_path( '../../mod/03_machines/spec/lib/machine_spec.rb', __FILE__ )
+require File.expand_path( '../../mod/03_machines/spec/lib/machine_input_spec.rb', __FILE__ )
 
 Spork.prefork do
   if ENV["RAILS_ROOT"]

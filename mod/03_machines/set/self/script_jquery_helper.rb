@@ -4,7 +4,7 @@ view :raw do |args|
   # jquery.ui.autocomplete must be after jquery.ui stuff 
   js_files = %w( jquerymobile.js jquery-ui.js jquery.ui.autocomplete.html.js jquery.autosize.js jquery.fileupload.js jquery.iframe-transport.js jquery_ujs.js )
   js_files.map do |filename|
-    File.read "#{Wagn.gem_root}/mod/02_machines/lib/javascript/#{filename}"
+    File.read "#{Wagn.gem_root}/mod/03_machines/lib/javascript/#{filename}"
   end.join("\n")
 end
 

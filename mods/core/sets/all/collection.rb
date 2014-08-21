@@ -33,7 +33,7 @@ def extended_item_cards context = nil
   args={ :limit=>'' }
   items = self.item_cards(args.merge(:context=>context))
   extended_list = []
-  already_extended = [] # avoid loops
+  already_extended = ::Set.new # avoid loops
   
   while items.size > 0
     item = items.shift
@@ -43,8 +43,7 @@ def extended_item_cards context = nil
       extended_list << item
       already_extended << item
     else
-      items.insert(0, item.item_cards) # keep items in order
-      items.flatten!
+      items.unshift(*item.item_cards) # keep items in order
       already_extended << item
     end
   end

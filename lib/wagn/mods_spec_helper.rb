@@ -3,7 +3,7 @@ require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
 
-def simplecov_filter_for_decks
+def wagn_simplecov_filters
   add_filter 'spec/'
   add_filter '/config/'
   add_filter '/tasks/'

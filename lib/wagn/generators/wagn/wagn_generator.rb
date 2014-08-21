@@ -37,7 +37,7 @@ class WagnGenerator < Rails::Generators::AppBase
     elsif options['mod-dev']
       @spec_path = 'mod/'
       @spec_helper_path = 'wagn/mods_spec_helper'
-      @simplecov_config = "simplecov_filter_for_decks"
+      @simplecov_config = "wagn_simplecov_filters"
       template "rspec", ".rspec"
       template "simplecov", ".simplecov"
     end

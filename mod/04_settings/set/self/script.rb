@@ -1,2 +1,2 @@
-extend Card::Set::Type::Setting
-set_setting :group => :look_and_feel, :position=>5
+extend Card::Setting
+setting_opts :group=> :look_and_feel, :position=>5, :rule_type_editable => true

@@ -2,16 +2,16 @@
 format :html do
 
   view :core do |args|
-    body = card.setting_codes_by_group.map do |group, data|
+    body = card.setting_codenames_by_group.map do |group, data|
       next if group.nil? || data.nil?
-      group_name = Card::Set::Type::Setting::SETTING_GROUP_NAMES[group] || group.to_s
+      group_name = Card::Setting.group_names[group] || group.to_s
       content_tag(:tr, :class=>"rule-group") do
         (["#{group_name} Rules"]+%w{Content Set}).map do |heading|
           content_tag(:th, :class=>'rule-heading') { heading }
         end * "\n"
       end +
       raw( data.map do |setting|
-        rule_card = card.fetch(:trait=>setting.codename, :new=>{})
+        rule_card = card.fetch(:trait=>setting, :new=>{})
         nest rule_card, :view=>:closed_rule
       end * "\n" )
     end.compact * ''
@@ -101,12 +101,12 @@ def label
 end
 
 
-def setting_codes_by_group
+def setting_codenames_by_group
   result = {}
-  Card::Set::Type::Setting.setting_groups.each do |group, settings| 
-    visible_settings = settings.keep_if { |s| s and !s.invisible_for.include?(prototype.type_id) }
+  Card::Setting.groups.each do |group, settings| 
+    visible_settings = settings.keep_if { |s| s and s.applies_to_cardtype(prototype.type_id) }
     unless visible_settings.empty?
-      result[group] = visible_settings
+      result[group] = visible_settings.map { |s| s.codename }
     end
   end
   result

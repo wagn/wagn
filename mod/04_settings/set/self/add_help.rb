@@ -1,2 +1,2 @@
-extend Card::Set::Type::Setting
-set_setting :group=>:communication, :position=>2
+extend Card::Setting
+setting_opts  :group=>:communication, :position=>2, :rule_type_editable => true

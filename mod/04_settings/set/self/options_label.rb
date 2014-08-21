@@ -1,2 +1,2 @@
-extend Card::Set::Type::Setting
-set_setting :group=>:pointer, :position=>2, :visible => {:only => :pointer}, :rule_type_editable => false
+extend Card::Setting
+setting_opts :group=>:pointer, :position=>2, :restricted_to_type => :pointer, :rule_type_editable => false

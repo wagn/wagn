@@ -1,4 +1,4 @@
-
+require 'byebug'
 format :html do
 
   view :closed_rule, :tags=>:unknown_ok do |args|

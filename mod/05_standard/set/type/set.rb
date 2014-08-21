@@ -104,7 +104,7 @@ end
 def setting_codenames_by_group
   result = {}
   Card::Setting.groups.each do |group, settings| 
-    visible_settings = settings.keep_if { |s| s and s.applies_to_cardtype(prototype.type_id) }
+    visible_settings = settings.reject { |s| !s or !s.applies_to_cardtype(prototype.type_id) }
     unless visible_settings.empty?
       result[group] = visible_settings.map { |s| s.codename }
     end

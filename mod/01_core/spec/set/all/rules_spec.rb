@@ -53,45 +53,28 @@ describe Card::Set::All::Rules do
   end
 
 
-  describe "#setting_codes_by_group" do
+  describe "#setting_codenames_by_group" do
     before do
-      @pointer_key = Card::Set::Type::Setting::POINTER_KEY
       @pointer_settings =  [ :options, :options_label, :input ]
     end
     it "doesn't fail on nonexistent trunks" do
-      Card.new(:name=>'foob+*right').setting_codes_by_group.class.should == Hash
+      Card.new(:name=>'foob+*right').setting_codenames_by_group.class.should == Hash
     end
     
     it "returns universal setting names for non-pointer set" do
       pending "Different api, we should just put the tests in a new spec for that"
-      snbg = Card.fetch('*star').setting_codes_by_group
+      snbg = Card.fetch('*star').setting_codenames_by_group
       #warn "snbg #{snbg.class} #{snbg.inspect}"
       snbg.keys.length.should == 4
       snbg.keys.first.should be_a Symbol
-      snbg.keys.member?( @pointer_key ).should_not be_true
+      snbg.keys.member?( :pointer ).should_not be_true
     end
 
-    it "returns pointer-specific setting names for pointer card (*type)" do
-      pending "Different api, we should just put the tests in a new spec for that"
-      # was this test wrong before?  What made Fruit a pointer without this?
-      Card::Auth.as_bot do
-        c1=Card.create! :name=>'Fruit+*type+*default', :type=>'Pointer'
-        Card.create! :name=>'Pointer+*type'
-      end
-      c2 = Card.fetch('Fruit+*type')
-      snbg = c2.setting_codes_by_group
-      #warn "snbg #{snbg.class}, #{snbg.inspect}"
-      snbg[@pointer_key].should == @pointer_settings
-      c3 = Card.fetch('Pointer+*type')
-      snbg = c3.setting_codes_by_group
-      snbg[@pointer_key].should == @pointer_settings
-    end
 
-    it "returns pointer-specific setting names for pointer card (*self)" do
-      c = Card.fetch '*star+*create+*self', :new=>{}
-      snbg = c.setting_codes_by_group
-      #warn "result #{snbg.inspect}"
-      snbg[@pointer_key].should == @pointer_settings
+    it "returns pointer-specific setting names for pointer card" do
+      c = Card.fetch 'Fruit+*type+*create+*self', :new=>{}
+      snbg = c.setting_codenames_by_group
+      snbg[:pointer].should == @pointer_settings
     end
 
   end

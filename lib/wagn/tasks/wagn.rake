@@ -203,7 +203,7 @@ namespace :wagn do
     desc "copy files from template database to standard mod and update cards"
     task :copy_mod_files => :environment do
       template_files_dir = "#{Wagn.root}/files"
-      standard_files_dir = "#{Wagn.gem_root}/mod/standard/file"
+      standard_files_dir = "#{Wagn.gem_root}/mod/05_standard/file"
       
       #FIXME - this should delete old revisions
       

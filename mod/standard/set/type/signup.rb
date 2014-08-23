@@ -7,14 +7,16 @@ format :html do
       :optional_help => :show, #, :optional_menu=>:never
       :buttons => button_tag( 'Submit' ),
       :account => card.fetch( :trait=>:account, :new=>{} ),
-      :hidden => {
+      :title   => 'Sign up',
+      :hidden  => {
         :success => (card.rule(:thanks) || '_self'),
         'card[type_id]' => card.type_id
       }
     )
     
     if Auth.signed_in? and args[:account].confirm_ok?
-      args[:buttons] = button_tag 'Send Sign-up Token'
+      args[:title] = 'Invite'
+      args[:buttons] = button_tag 'Send Invitation'
       args[:hidden][:success] = '_self'
     end
   end
@@ -48,12 +50,12 @@ format :html do
       if account = card.account
         token_action = 'Send'
         if account.token
-          headings << "An activation token has been sent #{ "to #{account.email}" if account.email_card.ok? :read }"
+          headings << "A verification email has been sent #{ "to #{account.email}" if account.email_card.ok? :read }"
           token_action = 'Resend'
         end
         if account.confirm_ok?
-          links << link_to( "#{token_action} token", wagn_path("/update/~#{card.id}?approve_token=true"  ) )
-          links << link_to( "Approve without token", wagn_path("/update/~#{card.id}?approve_without_token=true") )
+          links << link_to( "#{token_action} verification email", wagn_path("/update/~#{card.id}?approve_token=true"  ) )
+          links << link_to( "Approve without verification", wagn_path("/update/~#{card.id}?approve_without_token=true") )
         end
         if card.ok? :delete
           links << link_to( "Deny and delete", wagn_path("/delete/~#{card.id}") )

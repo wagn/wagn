@@ -1,4 +1,3 @@
-
 format :html do
   
   def show view, args
@@ -348,7 +347,6 @@ format :html do
   end
 
 
-
   view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
     eform = form_for_multi
     content = content_field eform, args.merge( :nested=>true )
@@ -372,19 +370,6 @@ format :html do
     frame args do
       subformat( current_set ).render_content
     end
-        
-=begin        
-        #{
-          if card.accountable? && !card.account
-            %{
-              <div class="new-account-link">
-                #{ link_to %{Add a sign-in account for "#{card.name}"}, path(:view=>:new_account),
-                   :class=>'slotter new-account-link', :remote=>true }
-              </div>
-            }
-          end
-        }
-=end
   end
 
 
@@ -413,7 +398,6 @@ format :html do
       args[:help_text]
     else
       setting = card.new_card? ? [ :add_help, { :fallback => :help } ] : :help
-
       if help_card = card.rule_card( *setting ) and help_card.ok? :read
         with_inclusion_mode :normal do
           process_content _render_raw( args.merge :structure=>help_card.name )

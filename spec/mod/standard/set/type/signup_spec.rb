@@ -71,7 +71,7 @@ describe Card::Set::Type::Signup do
     end
     
     it 'should reject expired token and create new token' do
-      @account.token_card.update_column :updated_at, 3.days.ago.strftime("%F %T")
+      @account.token_card.update_column :updated_at, 8.days.ago.strftime("%F %T")
       @account.token_card.expire
       Card::Env.params[:token] = @token
       

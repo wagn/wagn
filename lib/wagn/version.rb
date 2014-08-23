@@ -1,8 +1,6 @@
 # -*- encoding : utf-8 -*-
 require File.expand_path( '../../wagn', __FILE__ )
 
-VERSION=File.read( File.expand_path '../../../VERSION', __FILE__ ).strip
-
 module Wagn
   module Version
     class << self

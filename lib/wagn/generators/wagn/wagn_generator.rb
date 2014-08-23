@@ -31,13 +31,13 @@ class WagnGenerator < Rails::Generators::AppBase
       @spec_path = File.join @wagn_path, 'spec'
       @spec_helper_path = File.join @spec_path, 'spec_helper'
       @features_path = File.join @wagn_path, 'features/'  # ending slash is important in order to load support and step folders
-      @simplecov_config = "simplecov_filter_for_gem"
+      @simplecov_config = "wagn_core_dev_simplecov_filters"
       template "rspec", ".rspec"
       template "simplecov", ".simplecov"
     elsif options['mod-dev']
       @spec_path = 'mod/'
       @spec_helper_path = 'wagn/mods_spec_helper'
-      @simplecov_config = "simplecov_filter_for_decks"
+      @simplecov_config = "wagn_simplecov_filters"
       template "rspec", ".rspec"
       template "simplecov", ".simplecov"
     end

@@ -1,56 +1,23 @@
 # -*- encoding : utf-8 -*-
 require 'spork'
+
 ENV["RAILS_ENV"] = 'test'
 
 
-def simplecov_filter_for_decks
-  add_filter 'spec/'
-  add_filter '/config/'
-  add_filter '/tasks/'
-	
-	# filter all wagn mods
-  add_filter do |src_file|
-    src_file.filename =~ /tmp\// and not
-    /\d+-(.+\.rb)/.match(src_file.filename) { |m| Dir["mod/**/#{m[1]}"].present? }
-  end
-	
-	# add group for each deck mod
-  Dir['mod/*'].map{ |path| path.sub('mod/','') }.each do |mod|
-    add_group mod.capitalize do |src_file|
-      src_file.filename =~ /mod\/#{mod}\// or 
-        (
-          src_file.filename =~ /tmp\// and
-          /\d+-(.+\.rb)/.match(src_file.filename) { |m| Dir["mod/#{mod}/**/#{m[1]}"].present? } 
-        )
-    end
-  end
-
-  add_group 'Sets' do |src_file|
-    src_file.filename =~ /tmp\/set\// and
-    /\d+-(.+\.rb)/.match(src_file.filename) { |m| Dir["mod/**/#{m[1]}"].present? }
-  end
-  add_group 'Set patterns' do |src_file|
-    src_file.filename =~ /tmp\/set_pattern\// and
-    /\d+-(.+\.rb)/.match(src_file.filename) { |m| Dir["mod/**/#{m[1]}"].present? }
-  end
-  add_group 'Formats' do |src_file|
-    src_file.filename =~ /mod\/[^\/]+\/formats/
-  end
-  add_group 'Chunks' do |src_file|
-    src_file.filename =~ /mod\/[^\/]+\/chunks/
-  end
-end
-
 Spork.prefork do
+  require File.expand_path( '../simplecov_helper.rb', __FILE__ )
+  
   if ENV["RAILS_ROOT"]
     require File.join( ENV["RAILS_ROOT"], '/config/environment')
   else
     require File.expand_path( '../../config/environment', __FILE__ )
   end
-  
+
   if defined?(Bundler)
     Bundler.require(:test)   # if simplecov is activated in the Gemfile, it has to be required here
   end
+  
+
   
   require 'rspec/rails'
   

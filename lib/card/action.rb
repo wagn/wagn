@@ -2,8 +2,9 @@
 require 'byebug'
 class Card
   class Action < ActiveRecord::Base
-    belongs_to :act
-    has_many :changes
+    belongs_to :act, :foreign_key=>:card_act_id
+    belongs_to :card
+    has_many :changes, :foreign_key=>:card_action_id
     
     # replace with enum if we start using rails 4 
     TYPE = [:create, :update, :delete]
@@ -17,7 +18,7 @@ class Card
     end
     
     def set_act
-      self.set_act ||= self.card.acts.last
+      self.set_act ||= self.acts.last
     end
     
   end

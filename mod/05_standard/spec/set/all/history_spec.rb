@@ -14,16 +14,19 @@ describe Card::Set::All::History do
         Card.create :name=>"historic card"
       end
       expect(c.acts.last.card_id).to eq(c.id)
-      expect(c.acts.last.actions.last.changes.last).to eq(:create)
+      expect(c.acts.last.actions.last.action_type).to eq(:create)
+      #byebug
+      #expect(c.acts.last.actions.last.changes.last.action_type).to eq(:create)
     end
     
     it 'creates act when card is deleted' do
       Card::Auth.as_bot do
-        c = Card.fetch "historic card"
+        c =  Card.create :name=>"historic card"
         c.delete
+        expect(c.acts.last.card_id).to eq(c.id)
+        expect(c.acts.last.actions.last.action_type).to eq(:delete)
       end
-      expect(c.acts.last.card_id).to eq(c.id)
-      expect(c.acts.last.actions.last.changes.last).to eq(:delete)
+#expect(c.acts.last.actions.last.changes.last).to eq(:delete)
     end
   end
 end

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Card  
   class Change < ActiveRecord::Base
-    belongs_to :action
+    belongs_to :action, :foreign_key=>:card_action_id
     
     # replace with enum if we start using rails 4 
     

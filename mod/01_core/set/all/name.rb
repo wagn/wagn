@@ -195,7 +195,7 @@ event :set_name, :before=>:store, :changed=>:name do
       suspend_name(sidename) if old_name_in_way
       send "#{side}_id=", begin
         if !sidecard || old_name_in_way
-          Card.create! :name=>sidename
+          Card.create! :name=>sidename, :supercard => self
         else
           sidecard
         end.id

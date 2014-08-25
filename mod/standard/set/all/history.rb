@@ -1,3 +1,27 @@
+event :remember_changes, :before=>:store do
+  @current_changes = self.changes
+end
+
+event :store_act, :after=>:store do
+  current_act = @supercard ? @supercard.current_act : self.acts.create_with_ip(request)
+end
+
+event :update_history, :after=>:store_act do
+  super_action = current_act.action.first.send_if(:id)
+  create_action current_act, super_action
+end
+
+
+def create_action act, super_action
+  Card::TRACKED_FIELDS.each do |field|
+    if changed_attributes.member? field
+      actions.create(:action_type=>@action, :card_act_id=>act, :super_action_id=>super_action) do |action|
+        action.changes.create :field => field, :value => self[:field]
+      end
+    end
+  end
+end
+
 
 format :html do
 

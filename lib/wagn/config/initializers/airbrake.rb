@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-filename = '/etc/airbrake.key'
+filename = File.join Rails.root, 'airbrake.key'
 if File.exists? filename
   key = File.read( filename ).strip
   Airbrake.configure do |config|

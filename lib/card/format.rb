@@ -207,7 +207,7 @@ class Card
       when api_option == :hide                     ; false
       # default                                    
       else                                         ; default==:show
-      end        
+      end
     end
     
     def show_views args

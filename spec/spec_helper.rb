@@ -2,10 +2,12 @@
 require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
-require 'simplecov'
-require File.expand_path( '../../spec/mod/standard/lib/machine_spec.rb', __FILE__ )
-require File.expand_path( '../../spec/mod/standard/lib/machine_input_spec.rb', __FILE__ )
 
+require File.expand_path( '../../lib/wagn/simplecov_helper.rb', __FILE__ )
+require 'simplecov'
+require 'timecop'
+require File.expand_path( '../../mod/03_machines/spec/lib/machine_spec.rb', __FILE__ )
+require File.expand_path( '../../mod/03_machines/spec/lib/machine_input_spec.rb', __FILE__ )
 
 Spork.prefork do
   if ENV["RAILS_ROOT"]

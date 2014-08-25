@@ -5,11 +5,19 @@ ENV["RAILS_ENV"] = 'test'
 
 
 Spork.prefork do
+  require File.expand_path( '../simplecov_helper.rb', __FILE__ )
+  
   if ENV["RAILS_ROOT"]
     require File.join( ENV["RAILS_ROOT"], '/config/environment')
   else
     require File.expand_path( '../../config/environment', __FILE__ )
   end
+
+  if defined?(Bundler)
+    Bundler.require(:test)   # if simplecov is activated in the Gemfile, it has to be required here
+  end
+  
+
   
   require 'rspec/rails'
   
@@ -61,4 +69,5 @@ end
 
 require 'wagn/wagn_spec_helper'
 RSpec::Core::ExampleGroup.send :include, Wagn::WagnSpecHelper
+
 

@@ -24,19 +24,22 @@ class WagnGenerator < Rails::Generators::AppBase
   public_task :create_root
   
 ## should probably eventually use rails-like AppBuilder approach, but this is a first step.  
-  def core_dev_setup  
+  def dev_setup  
     if options['core-dev']
       @wagn_path = ask "Enter the path to your local wagn installation: "
       #@wagndev_path = ask "Please enter the path to your local wagn-dev installation (leave empty to use the wagn-dev gem): "
       @spec_path = File.join @wagn_path, 'spec'
       @spec_helper_path = File.join @spec_path, 'spec_helper'
       @features_path = File.join @wagn_path, 'features/'  # ending slash is important in order to load support and step folders
-      
+      @simplecov_config = "wagn_core_dev_simplecov_filters"
       template "rspec", ".rspec"
+      template "simplecov", ".simplecov"
     elsif options['mod-dev']
       @spec_path = 'mod/'
       @spec_helper_path = 'wagn/mods_spec_helper'
+      @simplecov_config = "wagn_simplecov_filters"
       template "rspec", ".rspec"
+      template "simplecov", ".simplecov"
     end
   end
 

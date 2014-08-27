@@ -1,17 +1,31 @@
-event :store_act, :after=>:store do
-  @current_act = @supercard ? @supercard.current_act : acts.create
-end
-
-event :store_action_and_changes, :after=>:store_act do
-  super_action_id = @current_act.actions.first.send_if(:id)
-  Card::TRACKED_FIELDS.each do |field|
-    if changed_attributes.member? field
-      new_action = actions.create(:action_type=>@action, :card_act_id=>@current_act.id, :super_action_id=>super_action_id)
-      new_action.changes.create :field => field, :value => self[:field]
-    end
+# has to be called always and before :set_name and :process_subcards
+def create_act_and_action
+  @current_act = @supercard ? @supercard.current_act : Act.create!(:ip_address=>Env.ip)
+  @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
+  if @changed_fields.present?
+    @current_action = @current_act.actions.create(:action_type=>@action, :super_action_id=>@supercard ? @supercard.current_action.id : nil)
   end
 end
 
+event(:create_act_and_action_for_save,   :before=>:process_subcards, :on=>:save)   { create_act_and_action }
+event(:create_act_and_action_for_delete, :after =>:approve,          :on=>:delete) { create_act_and_action }
+
+event :store_changes, :after=>:store do  
+  if @changed_fields.present?
+    @current_action.update_attributes(:card_id=>id)
+    @changed_fields.each{ |f| @current_action.changes.create :field => f, :value => self[f] }
+  end
+end
+
+event :complete_act, :after=>:extend do
+  unless @supercard 
+    if @current_act.actions.empty?
+      @current_act.delete
+    else
+      @current_act.update_attributes(:card_id=>id)
+    end
+  end
+end
 
 
 format :html do

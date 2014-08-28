@@ -257,6 +257,7 @@ class Card
       @nested = options[:nested]
       revision_tracking = if card && !card.new_card? && !options[:skip_rev_id]
         form.hidden_field :current_revision_id, :class=>'current_revision_id'
+        #hidden_field_tag 'current_revision_id', card.actions.last.id, :class=>'current_revision_id'  #ACT
       end
       %{
         #{ revision_tracking }

@@ -47,11 +47,11 @@ def set_content new_content
   if self.id #have to have this to create revision
     new_content ||= ''
     new_content = Card::Content.clean! new_content if clean_html?
-    clear_drafts if current_revision_id
+    clear_drafts if current_revision_id   # removes all revisions with id > current_revision_id
     new_rev = Card::Revision.create :card_id=>self.id, :content=>new_content, :creator_id =>Auth.current_id
     self.current_revision_id = new_rev.id
     self.selected_revision_id = nil
-    reset_patterns_if_rule saving=true
+    reset_patterns_if_rule saving=true 
     @name_or_content_changed = true
   else
     false
@@ -59,6 +59,14 @@ def set_content new_content
 end
 
 
+
+# event :set_initial_content, :before=>:store, :on=>:create do
+#   unless @from_trash
+#     db_content = content || ''
+#     db_content = Card::Content.clean! db_content if clean_html?
+#     reset_patterns_if_rule saving=true
+#   end
+# end
 
 event :set_initial_content, :after=>:store, :on=>:create do
   #Rails.logger.info "Card(#{inspect})#set_initial_content start #{content_without_tracking}"
@@ -68,7 +76,6 @@ event :set_initial_content, :after=>:store, :on=>:create do
   #Rails.logger.warn "si cont #{content} #{updates.for?(:content).inspect}, #{updates[:content]}"
   unless @from_trash
     set_content updates[:content] # if updates.for?(:content)
-  
     updates.clear :content
 
     Card.where(:id=>id).update_all(:current_revision_id => current_revision_id)
@@ -86,6 +93,7 @@ event :update_ruled_cards, :after=>:store do
     left.reset_set_patterns
 
     if right_id==Card::ReadID && (@name_or_content_changed || ([:create, :delete].member? @action) )
+#    if right_id==Card::ReadID && ['name', 'content', 'trash'].member? previous_changes
       # These instance vars are messy.  should use tracked attributes' @changed variable
       # and get rid of @name_changed, @name_or_content_changed, and @child.
       # Above should look like [:name, :content, :trash].member?( @changed.keys ).

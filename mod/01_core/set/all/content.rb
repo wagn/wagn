@@ -8,6 +8,16 @@ def content
   end
 end
 
+# content is not part of the db so we have to add tracking
+# def content=(value)
+#   attribute_will_change!('content') if content != value
+#   @content = value
+# end
+# def content_changed?
+#   changed.include?('content')
+# end
+
+
 def raw_content
   structure ? template.content : content
 end

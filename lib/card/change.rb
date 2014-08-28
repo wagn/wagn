@@ -17,4 +17,3 @@ class Card
 end
 
 
-

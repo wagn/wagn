@@ -8,11 +8,11 @@ class Card
         Wagn::Cache[Card::Revision]
       end
     
-      def delete_old
+      def delete_old  #ACT  
         where( Card.where( :current_revision_id=>arel_table[:id] ).exists.not ).delete_all
       end
     
-      def delete_cardless
+      def delete_cardless  #ACT
         where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
       end
     end

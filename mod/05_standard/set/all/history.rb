@@ -1,9 +1,10 @@
 # has to be called always and before :set_name and :process_subcards
 def create_act_and_action
-  @current_act = @supercard ? @supercard.current_act : Act.create!(:ip_address=>Env.ip)
+  @current_act = @supercard ? @supercard.current_act : Act.create!(:card_id=>id, :ip_address=>Env.ip)
   @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
   if @changed_fields.present?
-    @current_action = @current_act.actions.create(:action_type=>@action, :super_action_id=>@supercard ? @supercard.current_action.id : nil)
+    super_action_id = (@supercard and @supercard.current_action) ? @supercard.current_action.id : nil
+    @current_action = @current_act.actions.create(:action_type=>@action, :super_action_id=>super_action_id)
   end
 end
 
@@ -21,7 +22,7 @@ event :complete_act, :after=>:extend do
   unless @supercard 
     if @current_act.actions.empty?
       @current_act.delete
-    else
+    elsif !@current_act.card_id
       @current_act.update_attributes(:card_id=>id)
     end
   end

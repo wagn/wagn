@@ -23,7 +23,7 @@ describe Card::Set::Self::All do
         a = Card['A']
         a.update_attributes! :content=>'a new day'
         a.revisions.count.should == 2
-        Card::Env.params[:task] = :delete_old_revisions
+        Card::Env.params[:task] = :delete_old_revisions #ACT
         @all.update_attributes({})
         a.revisions.count.should == 1        
       end

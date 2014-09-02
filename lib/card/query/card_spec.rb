@@ -4,7 +4,7 @@ class Card
     class CardSpec < Spec
     
       ATTRIBUTES = {
-        :basic           => %w{ name type_id content id key updater_id left_id right_id creator_id updater_id codename },
+        :basic           => %w{ name type_id content id key updater_id left_id right_id creator_id updater_id codename },  #ACT
         :relational      => %w{ type part left right editor_of edited_by last_editor_of last_edited_by creator_of created_by member_of member },
         :plus_relational => %w{ plus left_plus right_plus },
         :ref_relational  => %w{ refer_to referred_to_by link_to linked_to_by include included_by },
@@ -118,7 +118,7 @@ class Card
             @mods[key] = Array === val ? val : val.to_s
           end
         end
-        spec[:content] = content if content
+        spec[:content] = content if content   #ACT
       end
 
 
@@ -201,11 +201,11 @@ class Card
         merge field(:right_id) => id_or_subspec(val)
       end
 
-      def editor_of val
+      def editor_of val  #ACT IMPORTANT
         revision_spec :creator_id, :card_id, val
       end
 
-      def edited_by val
+      def edited_by val #ACT IMPORTANT
         revision_spec :card_id, :creator_id, val
       end
   
@@ -291,7 +291,7 @@ class Card
 
       def sort val
         return nil if @parent
-        val[:return] = val[:return] ? safe_sql(val[:return]) : 'content'
+        val[:return] = val[:return] ? safe_sql(val[:return]) : 'db_content'   #ACT
         @mods[:sort] =  "t_sort.#{val[:return]}"
         item = val.delete(:item) || 'left'
 
@@ -326,10 +326,8 @@ class Card
     
 
         cond = begin
-          join_alias = add_revision_join
-          # FIXME: OMFG this is ugly
           val_list = val.split(/\s+/).map do |v|
-            name_or_content = ["replace(#{self.table_alias}.name,'+',' ')","#{join_alias}.content"].map do |field|
+            name_or_content = ["replace(#{self.table_alias}.name,'+',' ')","#{self.table_alias}.db_content"].map do |field| 
               %{#{field} #{ cxn.match quote("[[:<:]]#{v}[[:>:]]") }}
             end
             "(#{name_or_content.join ' OR '})"
@@ -375,7 +373,7 @@ class Card
       end
 
       def add_revision_join
-        add_join(:rev, :card_revisions, :current_revision_id, :id)
+        add_join(:rev, :card_revisions, :current_revision_id, :id)  #ACT<revsision> remove
       end
 
       def field name
@@ -472,9 +470,9 @@ class Card
         when :raw;  "#{table_alias}.*"
         when :card; "#{table_alias}.name"
         when :count; "coalesce(count(*),0) as count"
-        when :content
-          join_alias = add_revision_join
-          "#{join_alias}.content"
+        when :content; "#{table_alias}.db_content"    #new
+          #old: join_alias = add_revision_join        #ACT IMPORTANT
+          #old: "#{join_alias}.content"
         else
           ATTRIBUTES[field.to_sym]==:basic ? "#{table_alias}.#{field}" : safe_sql(field)
         end
@@ -500,16 +498,9 @@ class Card
           when "update";          "#{table_alias}.updated_at"
           when "create";          "#{table_alias}.created_at"
           when /^(name|alpha)$/;  "LOWER( #{table_alias}.key )"
-          when 'content'
-            join_alias = add_revision_join
-            "lower(#{join_alias}.content)"
-          when "relevance"
-            if !sql.relevance_fields.empty?
-              sql.fields << sql.relevance_fields
-              "name_rank desc, content_rank"
-            else
-              "#{table_alias}.updated_at"
-            end
+          when 'content';         "#{table_alias}.db_content"  #new
+            #old: join_alias = add_revision_join
+            #old: "lower(#{join_alias}.content)"     #ACT IMPORTANT
           else
             safe_sql(key)
           end

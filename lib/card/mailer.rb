@@ -25,7 +25,7 @@ class Card
   
     def password_reset account
       @site = Card.setting :title
-      @link = wagn_url "/update/#{account.cardname.url_key}?reset_token=#{account.token_card.refresh(true).content}"
+      @link = wagn_url "/update/#{account.cardname.url_key}?reset_token=#{account.token_card.refresh(true).db_content}"  
       @expiry = Wagn.config.token_expiry
     
       reset_from = token_emails_from(account)
@@ -37,7 +37,7 @@ class Card
       @card = invite_request
       @email= invite_request.account.email
       @name = invite_request.name
-      @content = invite_request.content
+      @content = invite_request.raw_content    #ACT that looks dangerous. conflict with card.content?
       @request_url  = wagn_url invite_request
       @requests_url = wagn_url Card[:signup]
 

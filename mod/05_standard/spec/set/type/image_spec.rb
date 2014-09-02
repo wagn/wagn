@@ -11,6 +11,6 @@ describe Card::Set::Type::Image do
     image_card = Card.create! :name => "TestImage", :type=>"Image", :content => %{TestImage.jpg\nimage/jpeg\n12345}
     including_card = Card.new :name => 'Image1', :content => "{{TestImage | core; size:small }}"
     rendered = including_card.format._render :core
-    assert_view_select rendered, 'img[src=?]', "/files/TestImage-small-#{image_card.current_revision_id}.jpg"
+    assert_view_select rendered, 'img[src=?]', "/files/TestImage-small-#{image_card.last_action_id}.jpg"  #ACT(changed)
   end
 end

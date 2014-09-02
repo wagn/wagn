@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 require_dependency 'card'
+require_dependency 'card/action'
 
 class CardController < ActionController::Base
 
@@ -48,18 +49,23 @@ class CardController < ActionController::Base
   ## the following methods need to be merged into #update
 
   def save_draft
-    if card.save_draft params[:card][:content]
+    if card.save_draft params[:card][:content]  #ACT
       render :nothing=>true
     else
       render_errors
     end
   end
 
-  def rollback
-    revision = card.revisions[params[:rev].to_i - 1]
-    card.update_attributes! :content=>revision.content
-    card.attachment_link revision.id
-    show
+  def rollback   #ACT
+    action = card.find_action_by_params params 
+    if revision = card.revision(action)
+      card.update_attributes! revision
+      card.attachment_symlink_to action.id
+    end
+    #old: revision = card.revisions[params[:rev].to_i - 1]
+    #     card.update_attributes! :content=>revision.content
+    #     card.attachment_link revision.id
+    show   #ACT what to do if we can't find action? errors.add? 
   end
 
   def watch
@@ -137,7 +143,7 @@ class CardController < ActionController::Base
           Card.fetch mark, :new=>opts
         end
       end
-    @card.selected_revision_id = params[:rev].to_i if params[:rev]
+    @card.selected_action_id = (action=@card.find_action_by_params(params) and action.id)
     
     Card::Env[:main_name] = params[:main] || (card && card.name) || ''
     render_errors if card.errors.any?

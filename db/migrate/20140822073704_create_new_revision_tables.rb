@@ -1,10 +1,29 @@
 # -*- encoding : utf-8 -*-
+require 'byebug'
 class CreateNewRevisionTables < ActiveRecord::Migration
+  class TmpRevision < ActiveRecord::Base
+    self.table_name = 'card_revisions'
+  end
+  class TmpAct < ActiveRecord::Base
+    self.table_name = 'card_acts'
+  end
+  class TmpAction < ActiveRecord::Base
+    self.table_name = 'card_actions'
+  end
+  class TmpChange < ActiveRecord::Base
+    self.table_name = 'card_changes'
+  end
+  class TmpCard < ActiveRecord::Base
+    belongs_to :tmp_revision, :foreign_key=>:current_revision_id
+    has_many :tmp_actions, :foreign_key=>:card_id
+    self.table_name = 'cards'
+  end
+  
   def up
-    # remove_column :cards, :db_content
-    # drop_table :card_acts
-    # drop_table :card_actions
-    # drop_table :card_changes
+    remove_column :cards, :db_content
+    drop_table :card_acts
+    drop_table :card_actions
+    drop_table :card_changes
     
     add_column :cards, :db_content, :text
     
@@ -29,14 +48,19 @@ class CreateNewRevisionTables < ActiveRecord::Migration
       t.text    :value 
     end
     
-    Card::Revision.order(:created_at).each do |rev|
-      act = Card::Act.create(:card_id=>rev.card_id, :actor_id=>rev.creator_id, :acted_at=>rev.created_at)
-      action = Card::Action.create(:card_id=>rev.card_id, :card_act_id=>act.id, :action_type=>:create)
-      Card::Change.create(:card_action_id=>action.id, :field=>:db_content, :value=>rev.content )
+
+    
+    TmpRevision.find_each do |rev|
+      act = TmpAct.create(:id=>rev.id, :card_id=>rev.card_id, :actor_id=>rev.creator_id, :acted_at=>rev.created_at)
+      action = TmpAction.create(:id=>rev.id, :card_id=>rev.card_id, :card_act_id=>act.id, :action_type=>0)
+      TmpChange.create(:card_action_id=>action.id, :field=>2, :value=>rev.content )
     end 
     
-    Card.all.each do |card|
-      card.update_column(:db_content,card.current_revision.content)
+    
+    TmpCard.find_each do |card|
+      card.update_column(:db_content,card.tmp_revision.content) if card.tmp_revision
+      TmpChange.create(:card_action_id=>card.tmp_actions.first.id, :field=>1, :value=>card.type_id)
+      TmpChange.create(:card_action_id=>card.tmp_actions.first.id, :field=>0, :value=>card.name)
     end
     #drop_table :card_revisions
     #remove_column :cards, :current_revision

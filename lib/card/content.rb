@@ -16,9 +16,9 @@ class Card
       @opts = opts || {}
       
       unless Array === content
-        content = parse_content content
+        content = parse_content content  
       end
-      super content
+      super content  #ACT IMPORTANT
     end
 
     def card

@@ -1,6 +1,7 @@
 format :html do
   
   def show view, args
+    "sdaf"
     if Env.ajax?
       view ||= args[:home_view] || :open
       @inclusion_opts = args.delete(:items)
@@ -436,13 +437,12 @@ format :html do
   end
   
   
-  view :last_action do |args|
-    rev = card.current_revision
-    action = case card.updated_at.to_s
-      when card.created_at.to_s; 'added'
-      when rev.created_at.to_s;  link_to('edited', path(:view=>:history), :class=>'last-edited', :rel=>'nofollow')
-      else; 'updated'
-      end
+  view :last_action do |args|  #ACT
+    action = case card.last_action.action_type   #ACT
+    when :create; 'added'
+    when :update; link_to('edited', path(:view=>:history), :class=>'last-edited', :rel=>'nofollow')
+    when :delete; 'deleted'
+    end
     %{
       <span class="last-update">
         #{ action }

@@ -1,34 +1,66 @@
 ::Card.error_codes[:conflict] = [:conflict, 409]
 
+require 'byebug'
+#ACT<content> IMPORTANT
 def content
-  if !new_card?
-    current_revision.content
-  elsif template && template.content.present?
-    template.content
+  if new_card? || selected_action_id == last_action_id
+    return db_content
+  else
+    return revision(selected_action_id)[:db_content]
   end
+ # byebug
+ #  if !new_card?
+ #    db_content
+ #    #old: current_revision.content
+ #  elsif template && template.content.present?
+ #    template.content
+ #  end
 end
 
-# content is not part of the db so we have to add tracking
-# def content=(value)
-#   attribute_will_change!('content') if content != value
-#   @content = value
-# end
-# def content_changed?
-#   changed.include?('content')
-# end
+def selected_content  
+  content  #not sure whether this should be the standard behavior of content
+end
+
+#content is not part of the db so we have to add tracking
+def content=(value)
+  attribute_will_change!('content') if db_content != value
+  self.db_content = value
+end
+def content_changed?
+  changed.include?('content')
+end
 
 
 def raw_content
-  structure ? template.content : content
+  structure ? template.db_content : db_content  #ACT<content> IMPORTANT
 end
 
 def chunk_list #override to customize by set
   :default
 end
 
-def selected_revision_id
-  @selected_revision_id || current_revision_id || 0
+def selected_action_id
+  @selected_action_id || last_action_id || (current_action and current_action.id) || 0
 end
+
+
+def selected_action
+  Card::Action.find(selected_action_id)
+end
+#old
+# def selected_revision_id
+#   @selected_revision_id || current_revision_id || 0
+# end
+
+
+def last_action_id
+  last_action and last_action.id
+end
+
+def last_action
+  actions.last
+end
+
 
 def current_revision
   #return current_revision || Card::Revision.new
@@ -44,17 +76,36 @@ def current_revision
   @cached_revision
 end
 
-def previous_revision revision_id
-  if revision_id
+
+def previous_revision action_id
+  if previous_action_id
     rev_index = revisions.find_index do |rev|
       rev.id == revision_id
     end
     revisions[rev_index - 1] if rev_index.to_i != 0
   end
 end
+# old
+# def previous_revision revision_id
+#   if revision_id
+#     rev_index = revisions.find_index do |rev|
+#       rev.id == revision_id
+#     end
+#     revisions[rev_index - 1] if rev_index.to_i != 0
+#   end
+# end
+def previous_action action_id
+  if action_id
+    action_index = actions.find_index do |a|
+      a.id == action_id
+    end
+    actions[action_index - 1] if action_index.to_i != 0
+  end
+end
 
 def revised_at
-  (current_revision && current_revision.created_at) || Time.now
+  #old: (current_revision && current_revision.created_at) || Time.now
+  last_action && act=last_action.act && act.acted_at || Time.now
 end
 
 def creator
@@ -65,17 +116,20 @@ def updater
   Card[ updater_id ]
 end
 
-def drafts
-  revisions.find(:all, :conditions=>["id > ?", current_revision_id])
+def drafts   #ACT<draft>
+  actions.find_by_draft(true) || []
+  #old: revisions.find(:all, :conditions=>["id > ?", current_revision_id])
 end
 
-def save_draft( content )
+def save_draft( content )  #ACT<draft>
   clear_drafts
-  revisions.create :content=>content
+  update_attributes! :db_content => content, :draft=>true
+  #old: revisions.create :content=>content
 end
 
-def clear_drafts # yuck!
-  connection.execute %{delete from card_revisions where card_id=#{id} and id > #{current_revision_id} }
+def clear_drafts # yuck! #ACT<draft>
+  Card::Action.delete_all(:card_id=>id, :draft=>true)   
+  #old: connection.execute %{delete from card_revisions where card_id=#{id} and id > #{current_revision_id} }
 end
 
 def clean_html?
@@ -83,22 +137,22 @@ def clean_html?
 end
 
 
-event :set_default_content, :on=>:create, :before=>:approve do
-  if !updates.for?(:content)
-    self.content = content
+event :set_default_content, :on=>:create, :before=>:approve do  
+  if !db_content_changed? and template and template.db_content.present?
+    self.db_content = template.db_content
   end
 end
 
-event :protect_structured_content, :before=>:approve, :on=>:update do
-  if updates.for?(:content) && structure
+event :protect_structured_content, :before=>:approve, :on=>:update, :changed=>:db_content do  
+  if structure #ACT<content> #old: if updates.for?(:content) && structure
     errors.add :content, "can't change; structured by #{template.name}"
   end
 end
 
 
-event :detect_conflict, :before=>:approve, :on=>:update do
-  if current_revision_id_changed?# && current_revision_id.to_i != current_revision_id_was.to_i
-    @current_revision_id = current_revision_id_was
-    errors.add :conflict, "changes not based on latest revision"
-  end
-end
+# event :detect_conflict, :before=>:approve, :on=>:update do   #ACT
+#   if current_revision_id_changed?# && current_revision_id.to_i != current_revision_id_was.to_i
+#     @current_revision_id = current_revision_id_was
+#     errors.add :conflict, "changes not based on latest revision"
+#   end
+# end

@@ -6,7 +6,7 @@ module RenameMethods
     {
       :content     => card.content,
       #:updater_id  => card.updater_id,
-      :revisions   => card.revisions.count,
+      #:revisions   => card.actions.count,
       :referencers => card.referencers.map(&:name).sort,
       :referees => card.referees.map(&:name).sort,
       :dependents  => card.dependents.map(&:id)
@@ -15,9 +15,11 @@ module RenameMethods
 
   def assert_rename card, new_name
     attrs_before = name_invariant_attributes( card )
+    actions_count_before = card.actions.count
     card.name=new_name
     card.update_referencers = true
     card.save!
+    expect(card.actions.count).to eq(actions_count_before+1)
     assert_equal attrs_before, name_invariant_attributes(card)
     assert_equal new_name, card.name
     assert Card[new_name]

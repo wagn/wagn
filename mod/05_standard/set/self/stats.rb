@@ -21,8 +21,8 @@ format :html do
           <td>#{link_to 'delete all', wagn_path( 'update/:all?task=empty_trash' )}</td>
         </tr>
         <tr>
-          <td>revisions</td>
-          <td>#{ Card::Revision.count }</td>
+          <td>actions</td>
+          <td>#{ Card::Action.count }</td>
           <td>#{link_to 'delete old', wagn_path( 'update/:all?task=delete_old_revisions' ) }</td>
         </tr>
           <tr><td>references</td>

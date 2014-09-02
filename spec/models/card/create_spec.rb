@@ -42,8 +42,8 @@ describe Card, "created by Card.create with valid attributes" do
   it "should have the right name"    do @c.name.should     == "New Card"  end
   it "should have the right content" do @c.content.should  == "Great Content" end
 
-  it "should have a revision with the right content" do
-    @c.current_revision.content == "Great Content"
+  it "should have the right content" do
+    @c.db_content == "Great Content"
   end
 
   it "should be findable by name" do

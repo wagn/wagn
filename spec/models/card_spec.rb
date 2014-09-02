@@ -22,8 +22,9 @@ describe Card do
     it "should have the right name"    do @c.name.should     == "New Card"  end
     it "should have the right content" do @c.content.should  == "Great Content" end
 
-    it "should have a revision with the right content" do
-      @c.current_revision.content == "Great Content"
+    it "should have the right content" do
+      expect(@c.db_content).to eq("Great Content")
+      expect(@c.content).to eq("Great Content")
     end
 
     it "should be findable by name" do
@@ -32,7 +33,7 @@ describe Card do
   end
 
 
-  describe "content change should create new revision" do
+  describe "content change should create new action" do
     before do
       Card::Auth.as_bot do
         @c = Card['basicname']
@@ -40,12 +41,12 @@ describe Card do
       end
     end
 
-    it "should have 2 revisions"  do
-      @c.revisions.length.should == 2
+    it "should have 2 actions"  do
+      @c.actions.count.should == 2
     end
 
-    it "should have original revision" do
-      @c.revisions[0].content.should == 'basiccontent'
+    it "should have original action" do
+      @c.nth_revision(1)[:db_content].should == 'basiccontent'
     end
   end
 
@@ -64,13 +65,14 @@ describe "basic card tests" do
   def assert_simple_card card
     card.name.should be, "name not null"
     card.name.empty?.should be_false, "name not empty"
-    rev = card.current_revision
-    rev.should be_instance_of Card::Revision
-    rev.creator.should be_instance_of Card
+    action = card.last_action
+    action.should be_instance_of Card::Action
+    action.act.actor.should be_instance_of Card
   end
 
   def assert_samecard card1, card2
-    assert_equal card1.current_revision, card2.current_revision
+    #old: assert_equal card1.current_revision, card2.current_revision #ACT
+    assert_equal card1, card2
   end
 
   def assert_stable card1
@@ -146,7 +148,7 @@ describe "basic card tests" do
     Card['Banana'].should be
     peel = Card["Banana+peel"]
 
-    peel.current_revision.content.should == "yellow"
+    peel.db_content.should == "yellow"
     peel.creator_id.should == Card::AnonymousID
   end
 

@@ -1,3 +1,8 @@
+def rollback action
+  update_attributes!( revision(action) )
+end
+
+
 # has to be called always and before :set_name and :process_subcards
 def create_act_and_action
   @current_act = @supercard ? @supercard.current_act : Act.create!(:card_id=>id, :ip_address=>Env.ip)
@@ -40,7 +45,7 @@ format :html do
     end
   end
 
-  view :diff do |args|
+  view :diff do |args|  #ACT
     load_revisions
     if @show_diff and @previous_revision
       diff @previous_revision.content, @revision.content
@@ -75,9 +80,9 @@ format :html do
   
   def load_revisions
     unless @revision_number
-      @revision_number = (params[:rev] || (card.revisions.count - card.drafts.length)).to_i
-      @revision = card.revisions[@revision_number - 1]
-      @previous_revision = @revision ? card.previous_revision( @revision.id ) : nil
+      @revision_number = (params[:rev] || (card.actions.where(:draft=>false).count)).to_i
+      @revision = card.nth_revision(@revision_number)
+      @previous_revision = @revision_number > 1 ? card.nth_revision( @revision_number-1 ) : nil
       @show_diff = (params[:mode] != 'false')
     end
   end

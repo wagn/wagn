@@ -1,13 +1,13 @@
 
-event :set_tracked_attributes, :before=>:store, :on=>:save do
-  updates.each_pair do |attrib, value|
-    if send("set_#{attrib}", value )
-      updates.clear attrib
-    end
-    @changed ||={}; @changed[attrib.to_sym]=true
-  end
-  #Rails.logger.debug "Card(#{name})#set_tracked_attributes end"
-end
+# event :set_tracked_attributes, :before=>:store, :on=>:save do
+#   updates.each_pair do |attrib, value|
+#     if send("set_#{attrib}", value )
+#       updates.clear attrib
+#     end
+#     @changed ||={}; @changed[attrib.to_sym]=true
+#   end
+#   #Rails.logger.debug "Card(#{name})#set_tracked_attributes end"
+# end
 
 
 #fixme -this is called by both initialize and update_attributes.  really should be optimized for new!
@@ -29,7 +29,7 @@ def extract_subcard_args! args={}
   args.keys.each do |key|
     if key =~ /^\+/
       val = args.delete key
-      val = { 'content' => val } if String === val
+      val = { 'content' => val } if String === val  #ACT<content>
       extracted_subcards[key] = val
     end
   end
@@ -42,7 +42,7 @@ protected
 
 
 
-
+#ACT<content> IMPORTANT no longer called, see set old set_inital_content below
 def set_content new_content
   if self.id #have to have this to create revision
     new_content ||= ''
@@ -60,28 +60,29 @@ end
 
 
 
-# event :set_initial_content, :before=>:store, :on=>:create do
-#   unless @from_trash
-#     db_content = content || ''
-#     db_content = Card::Content.clean! db_content if clean_html?
-#     reset_patterns_if_rule saving=true
-#   end
-# end
-
-event :set_initial_content, :after=>:store, :on=>:create do
-  #Rails.logger.info "Card(#{inspect})#set_initial_content start #{content_without_tracking}"
-  # set_content bails out if we call it on a new record because it needs the
-  # card id to create the revision.  call it again now that we have the id.
-
-  #Rails.logger.warn "si cont #{content} #{updates.for?(:content).inspect}, #{updates[:content]}"
+event :set_initial_content, :before=>:store, :on=>:create do
   unless @from_trash
-    set_content updates[:content] # if updates.for?(:content)
-    updates.clear :content
-
-    Card.where(:id=>id).update_all(:current_revision_id => current_revision_id)
+    self.db_content = content || ''
+    self.db_content = Card::Content.clean! self.db_content if clean_html?
+    reset_patterns_if_rule saving=true
   end
-  #Rails.logger.info "set_initial_content #{content}, #{@current_revision_id}, s.#{self.current_revision_id} #{inspect}"
 end
+
+#old
+# event :set_initial_content, :after=>:store, :on=>:create do
+#   #Rails.logger.info "Card(#{inspect})#set_initial_content start #{content_without_tracking}"
+#   # set_content bails out if we call it on a new record because it needs the
+#   # card id to create the revision.  call it again now that we have the id.
+#
+#   #Rails.logger.warn "si cont #{content} #{updates.for?(:content).inspect}, #{updates[:content]}"
+#   unless @from_trash
+#     set_content updates[:content] # if updates.for?(:content)
+#     updates.clear :content
+#
+#     Card.where(:id=>id).update_all(:current_revision_id => current_revision_id)
+#   end
+#   #Rails.logger.info "set_initial_content #{content}, #{@current_revision_id}, s.#{self.current_revision_id} #{inspect}"
+# end
 
 
 #fixme - the following don't really belong here, but they have to come after the reference stuff.  we need to organize a bit!
@@ -92,18 +93,8 @@ event :update_ruled_cards, :after=>:store do
     self.class.clear_rule_cache
     left.reset_set_patterns
 
-    if right_id==Card::ReadID && (@name_or_content_changed || ([:create, :delete].member? @action) )
-#    if right_id==Card::ReadID && ['name', 'content', 'trash'].member? previous_changes
-      # These instance vars are messy.  should use tracked attributes' @changed variable
-      # and get rid of @name_changed, @name_or_content_changed, and @child.
-      # Above should look like [:name, :content, :trash].member?( @changed.keys ).
-      # To implement that, we need to make sure @changed actually tracks trash
-      # (though maybe not as a tracked_attribute for performance reasons?)
-      # AND need to make sure @changed gets wiped after save (probably last in the sequence)
-
+    if right_id==Card::ReadID and (name_changed? or trash_changed?)  #ACT (changed)
       self.class.clear_read_rule_cache
-
-#        Auth.cache.reset
       Card.cache.reset # maybe be more surgical, just Auth.user related
       expire #probably shouldn't be necessary,
       # but was sometimes getting cached version when card should be in the trash.
@@ -121,13 +112,15 @@ event :update_ruled_cards, :after=>:store do
                 # Why isn't this just 'trunk', do we need the fetch?
                 Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
                   in_set[item_card.key] = true
-                  next if cur_index > rule_class_index
-                  item_card.update_read_rule
+                  next if cur_index < rule_class_index
+                  if cur_index >= rule_class_index
+                    item_card.update_read_rule
+                  end
                 end
-             elsif rule_class_index = rule_class_ids.index( 0 )
-               in_set[trunk.key] = true
-               #warn "self rule update: #{trunk.inspect}, #{rule_class_index}, #{cur_index}"
-               trunk.update_read_rule if cur_index > rule_class_index
+             # elsif rule_class_index = rule_class_ids.index( 0 )
+ #               in_set[trunk.key] = true
+ #               #warn "self rule update: #{trunk.inspect}, #{rule_class_index}, #{cur_index}"
+ #   trunk.update_read_rule if cur_index > rule_class_index
              else warn "No current rule index #{class_id}, #{rule_class_ids.inspect}"
              end
           end

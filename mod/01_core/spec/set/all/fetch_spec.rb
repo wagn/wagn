@@ -103,7 +103,7 @@ describe Card::Set::All::Fetch do
       end
 
       it "prefers db cards to pattern virtual cards" do
-        c1=Card.create!(:name => "y+*right+*structure", :content => "Formatted Content")
+        c1=Card.create!(:name => "y+*right+*structure", :db_content => "Formatted Content")
         c2=Card.create!(:name => "a+y", :content => "DB Content")
         card = Card.fetch("a+y")
         card.virtual?.should be_false
@@ -115,10 +115,10 @@ describe Card::Set::All::Fetch do
         Card.create!(:name => "y+*right+*structure", :content => "Formatted Content")
         Card.create!(:name => "a+y", :content => "DB Content")
         Card.fetch("a+y").delete!
-
+        
         card = Card.fetch("a+y")
         card.virtual?.should be_true
-        card.content.should == "Formatted Content"
+        card.raw_content.should == "Formatted Content"
       end
 
       it "should recognize pattern overrides" do
@@ -126,19 +126,19 @@ describe Card::Set::All::Fetch do
         tc=Card.create!(:name => "y+*right+*structure", :content => "Right Content")
         card = Card.fetch("a+y")
         card.virtual?.should be_true
-        card.content.should == "Right Content"
+        card.raw_content.should == "Right Content"
         
 #        warn "creating template"
         tpr = Card.create!(:name => "Basic+y+*type plus right+*structure", :content => "Type Plus Right Content")
         card = Card.fetch("a+y")
         card.virtual?.should be_true
-        card.content.should == "Type Plus Right Content"
+        card.raw_content.should == "Type Plus Right Content"
 
         #~~~ delete type plus right rule
         tpr.delete!
         card = Card.fetch("a+y")
         card.virtual?.should be_true
-        card.content.should == "Right Content"
+        card.raw_content.should == "Right Content"
 
       end
 
@@ -187,7 +187,7 @@ describe Card::Set::All::Fetch do
       c = Card.fetch("A+testsearch".to_name)
       assert c.virtual?
       c.type_code.should == :search_type
-      c.content.should ==  "{\"plus\":\"_self\"}"
+      c.raw_content.should ==  "{\"plus\":\"_self\"}"
     end
   end
 

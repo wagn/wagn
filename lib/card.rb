@@ -23,8 +23,9 @@ class Card < ActiveRecord::Base
   cattr_accessor :set_patterns, :error_codes
   @@set_patterns, @@error_codes = [], {}
 
-  attr_writer :selected_revision_id #writer because read method is in mod (and does not override upon load)
-  attr_accessor :action, :supercard, :current_act, :current_action,
+  attr_writer :selected_action_id #writer because read method is in mod (and does not override upon load)
+  #old: :selected_revision_id #ACT
+  attr_accessor :action, :supercard, :current_act, :current_action, 
     :comment, :comment_author,    # obviated soon
     :update_referencers           # wrong mechanism for this
 
@@ -35,9 +36,7 @@ class Card < ActiveRecord::Base
   after_save :extend
   
   TRACKED_FIELDS = %w(name type_id db_content trash)
-  
+  ghjkj = "gfjf"
   Loader.load_mods if count > 0
-  
-  tracks :content # we can phase this out and just use "dirty" handling once current content is stored in the cards table
 end
 

@@ -22,10 +22,11 @@ describe Card::Set::Self::All do
       Card::Auth.as_bot do
         a = Card['A']
         a.update_attributes! :content=>'a new day'
-        a.revisions.count.should == 2
+        a.update_attributes! :content=>'another day'
+        a.actions.count.should == 3
         Card::Env.params[:task] = :delete_old_revisions #ACT
         @all.update_attributes({})
-        a.revisions.count.should == 1        
+        a.actions.count.should == 2        
       end
     end
 

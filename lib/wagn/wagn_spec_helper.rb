@@ -1,3 +1,4 @@
+require 'byebug'
 module Wagn::WagnSpecHelper
 
   include ActionDispatch::Assertions::SelectorAssertions
@@ -13,7 +14,7 @@ module Wagn::WagnSpecHelper
   
   def newcard name, content=""
     #FIXME - misleading name; sounds like it doesn't save.
-    Card.create! :name=>name, :content=>content
+    Card.create! :name=>name, :content=>content       #ACT<content>
   end
 
   def assert_view_select(view_html, *args, &block)
@@ -32,7 +33,7 @@ module Wagn::WagnSpecHelper
 
   def render_content content, format_args={}
     @card ||= Card.new :name=>"Tempo Rary 2"
-    @card.content = content
+    @card.content = content                   #ACT<content>
     @card.format(format_args)._render :core
   end
 

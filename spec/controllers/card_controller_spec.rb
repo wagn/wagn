@@ -307,7 +307,7 @@ describe CardController do
     describe "#update" do
       it "works" do
         xhr :post, :update, { :id=>"~#{@simple_card.id}",
-          :card=>{:current_revision_id=>@simple_card.current_revision.id, :content=>'brand new content' }}
+          :card=>{:content=>'brand new content' }}
         assert_response :success, "edited card"
         assert_equal 'brand new content', Card['Sample Basic'].content, "content was updated"
       end

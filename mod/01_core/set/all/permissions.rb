@@ -43,7 +43,7 @@ def permission_rule_card action
   end
 
   rcard = Auth.as_bot do
-    if ['_left','[[_left]]'].member?(opcard.content) && self.junction?  # compound cards can inherit permissions from left parent
+    if ['_left','[[_left]]'].member?(opcard.db_content) && self.junction?  # compound cards can inherit permissions from left parent   ACT<content>
       lcard = left_or_new( :skip_virtual=>true, :skip_modules=>true )
       if action==:create && lcard.real? && !lcard.action==:create
         action = :update

@@ -19,13 +19,13 @@ def template
       dup_card.type_id = default_card ? default_card.type_id : Card.default_type_id
 
 
-      if content_card = dup_card.content_rule_card
+      if content_card = dup_card.structure_rule_card
         @virtual = true if junction?
         content_card
       else
         default_card
       end
-    elsif tmpl = content_rule_card
+    elsif tmpl = structure_rule_card
       # this is a mechanism for repairing bad data.  like #repair_key, it should be obviated and removed.
       if type_id != tmpl.type_id and tmpl.assigns_type?
         repair_type tmpl.type_id
@@ -49,9 +49,9 @@ def virtual?
   @virtual
 end
 
-def content_rule_card
+def structure_rule_card
   card = rule_card :structure, :skip_modules=>true
-  card && card.content.strip == '_self' ? nil : card
+  card && card.db_content.strip == '_self' ? nil : card
 end
 
 def structuree_names

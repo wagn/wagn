@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 
+require 'card/action'
 
 describe Card, "deleting card" do
   it "should require permission" do
@@ -149,9 +150,9 @@ describe Card, "sent to trash" do
     Card["basicname"].should == nil
   end
 
-  it "should still have revision" do
-    @c.revisions.length.should == 1
-    @c.current_revision.content.should == 'basiccontent'
+  it "should still have actions" do
+    @c.actions.length.should == 2
+    @c.last_change_on(:db_content).value.should == 'basiccontent'
   end
 end
 
@@ -168,15 +169,15 @@ describe Card, "revived from trash" do
     @c.trash.should == false
   end
 
-  it "should have 2 revisions" do
-    @c.revisions.length.should == 2
+  it "should have 3 actions" do
+    @c.actions.count.should == 3
   end
 
-  it "should still have old revisions" do
-    @c.revisions[0].content.should == 'basiccontent'
+  it "should still have old content" do
+    @c.nth_revision(1)[:db_content].should == 'basiccontent'
   end
 
-  it "should have a new revision" do
+  it "should have the same content" do
     @c.content.should == 'revived content'
 #    Card.fetch(@c.name).content.should == 'revived content'
   end
@@ -210,16 +211,16 @@ describe Card, "junction revival" do
     @c.trash.should == false
   end
 
-  it "should have 2 revisions" do
-    @c.revisions.length.should == 2
+  it "should have 3 actions" do
+    @c.actions.count.should == 3
   end
 
-  it "should still have old revisions" do
-    @c.revisions[0].content.should == 'basiccontent'
+  it "should still have old action" do
+    @c.nth_revision(1)[:db_content].should == 'basiccontent'
   end
 
-  it "should have a new revision" do
-    @c.content.should == 'revived content'
+  it "should have old content" do
+    @c.db_content.should == 'revived content'
   end
 end
 

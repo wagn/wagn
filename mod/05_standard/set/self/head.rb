@@ -29,7 +29,7 @@ format :html do
   def head_buttons
     bits = []
     [:favicon, :logo].each do |name|
-      if c = Card[name] and c.type_id == ImageID and !c.content.blank?
+      if c = Card[name] and c.type_id == ImageID and !c.db_content.blank?
         bits << %{<link rel="shortcut icon" href="#{ subformat(c)._render_source :size=>:icon }" />}
         break
       end
@@ -54,7 +54,7 @@ format :html do
   def head_stylesheets
     manual_style = params[:style]
     style_card   = Card[manual_style] if manual_style
-    style_card ||= card.rule_card :style
+    style_card ||= root.card.rule_card :style
     
     @css_path = if params[:debug] == 'style'
       page_path( style_card.name, :item => :import, :format => :css) 

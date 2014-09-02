@@ -168,7 +168,7 @@ end
 
 event :set_autoname, :before=>:validate_name, :on=>:create do
   if name.blank? and autoname_card = rule_card(:autoname)
-    self.name = autoname autoname_card.content
+    self.name = autoname autoname_card.content              #ACT<content>
     Auth.as_bot { autoname_card.refresh.update_attributes! :content=>name }   #fixme, should give placeholder on new, do next and save on create
   end
 end
@@ -213,7 +213,6 @@ event :rename, :after=>:set_name, :on=>:update do
     existing_card.rename_without_callbacks
     existing_card.save!
   end
-  @name_or_content_changed=true
 end
 
 def suspend_name(name)
@@ -259,7 +258,7 @@ event :cascade_name_changes, :after=>:store, :on=>:update, :changed=>:name do
         Rails.logger.debug "------------------ UPDATE REFERER #{card.name}  ------------------------"
         unless card == self or card.structure
           card = card.refresh
-          card.content = card.replace_references name_was, name
+          card.content = card.replace_references name_was, name   #ACT<content>
           card.save!
         end
       end

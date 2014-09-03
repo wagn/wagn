@@ -49,7 +49,6 @@ def approve
   # the following should really happen when type, name etc are changed
   reset_patterns
   include_set_modules
-  
   run_callbacks :approve
   expire_pieces if errors.any?
   errors.empty?
@@ -65,8 +64,18 @@ def identify_action
   end
 end
 
+def store_changes
+  @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
+  if @changed_fields.present?
+    @changed_fields.each{ |f| @current_action.changes.build :field => f, :value => self[f] }
+  elsif @current_action and @current_action.changes.empty?
+    @current_action.delete
+  end
+end
+
 def store
   run_callbacks :store do
+    store_changes
     yield
     @virtual = false
   end
@@ -78,7 +87,6 @@ end
 
 
 def extend
-#    puts "extend called"
   run_callbacks :extend
 rescue =>e
   rescue_event e

@@ -3,11 +3,11 @@
 require 'byebug'
 #ACT<content> IMPORTANT
 def content
-  if new_card? || selected_action_id == last_action_id
+#  if new_card? || selected_action_id == last_action_id
     return db_content
-  else
-    return revision(selected_action_id)[:db_content]
-  end
+  # else
+  #   return revision(selected_action_id)[:db_content]
+  # end
  # byebug
  #  if !new_card?
  #    db_content
@@ -116,20 +116,25 @@ def updater
   Card[ updater_id ]
 end
 
-def drafts   #ACT<draft>
-  actions.find_by_draft(true) || []
-  #old: revisions.find(:all, :conditions=>["id > ?", current_revision_id])
+
+
+def drafts
+  if session[:user]
+    actions.joins(:act).where(:act=>{:actor_id=>session[:user]}, :draft=>true) || []
+  else
+    actions.joins(:act).where(:draft=>true) || []
+  end
 end
 
-def save_draft( content )  #ACT<draft>
+def save_draft( content )
   clear_drafts
-  update_attributes! :db_content => content, :draft=>true
-  #old: revisions.create :content=>content
+  acts.create do |act|
+    act.actions.build(:draft => true).changes.build :field=>:db_content, :value=>content
+  end
 end
 
-def clear_drafts # yuck! #ACT<draft>
-  Card::Action.delete_all(:card_id=>id, :draft=>true)   
-  #old: connection.execute %{delete from card_revisions where card_id=#{id} and id > #{current_revision_id} }
+def clear_drafts
+  drafts.delete_all
 end
 
 def clean_html?
@@ -144,7 +149,7 @@ event :set_default_content, :on=>:create, :before=>:approve do
 end
 
 event :protect_structured_content, :before=>:approve, :on=>:update, :changed=>:db_content do  
-  if structure #ACT<content> #old: if updates.for?(:content) && structure
+  if structure
     errors.add :content, "can't change; structured by #{template.name}"
   end
 end

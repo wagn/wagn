@@ -151,7 +151,7 @@ describe Card, "sent to trash" do
   end
 
   it "should still have actions" do
-    @c.actions.length.should == 2
+    @c.actions.count.should == 2
     @c.last_change_on(:db_content).value.should == 'basiccontent'
   end
 end

@@ -46,6 +46,11 @@ describe Card do
     end
 
     it "should have original action" do
+      # byebug
+      # @c.actions
+      # byebug
+      # @c.actions
+      byebug
       @c.nth_revision(1)[:db_content].should == 'basiccontent'
     end
   end

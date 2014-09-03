@@ -37,7 +37,6 @@ class Card
       @card = invite_request
       @email= invite_request.account.email
       @name = invite_request.name
-      @content = invite_request.raw_content    #ACT that looks dangerous. conflict with card.content?
       @request_url  = wagn_url invite_request
       @requests_url = wagn_url Card[:signup]
 
@@ -49,6 +48,33 @@ class Card
       mail_from args, Card.setting('*request+*from') || "#{@name} <#{@email}>"
     end
 
+
+    def change_notice act
+      #cd_with_acct, card, action, watched, subedits=[], updated_card=nil
+      cd_with_acct = Card[cd_with_acct] unless Card===cd_with_acct
+      email = cd_with_acct.account.email
+      #warn "change_notice( #{cd_with_acct}, #{email}, #{card.inspect}, #{action.inspect}, #{watched.inspect} Uc:#{updated_card.inspect}...)"
+
+      updated_card ||= card
+      @card = card
+      @updater = updated_card.updater.name
+      @action = action
+      @subedits = subedits
+      @card_url = wagn_url card
+      @change_url  = wagn_url "card/changes/#{card.cardname.url_key}"
+      @unwatch_url = wagn_url "card/watch/#{watched.to_name.url_key}?toggle=off"
+      @udpater_url = wagn_url card.updater
+      @watched = (watched == card.cardname ? "#{watched}" : "#{watched} cards")
+
+      args = {
+        :to           => email,
+        :subject      => "[#{Card.setting :title} notice] #{@updater} #{action} \"#{card.name}\"" ,
+        :content_type => 'text/html',
+      }
+      mail_from args, Card[Card::WagnBotID].account.email
+    end
+    
+    
 
     def change_notice cd_with_acct, card, action, watched, subedits=[], updated_card=nil
       cd_with_acct = Card[cd_with_acct] unless Card===cd_with_acct

@@ -114,9 +114,6 @@ describe Card::Set::All::History do
           expect(act.actions.last.action_type).to eq(:update)
           expect(act.actions.last.card.name).to eq("left+right")
         end
-        
-        #banana = Card.create! :name=>'Banana'
-        #Card.update banana.id, :subcards=>{ "+peel" => { :content => "yellow" }}
       end
     end
     
@@ -126,6 +123,7 @@ describe Card::Set::All::History do
           @card = Card.create :name=>'left+right', :db_content=>content
           @left_action = act.actions[1]
           @plus_action = act.actions[0]
+          @right_action = act.actions[2]
         end
       end
       
@@ -145,9 +143,8 @@ describe Card::Set::All::History do
           expect(@left_action.super_action_id).to eq(@plus_action.id)
         end
         it 'action for right part of type create' do
-          right_action = act.actions[2]
-          expect(right_action.card.name).to eq("right")
-          expect(right_action.action_type).to eq(:create)
+          expect(@right_action.card.name).to eq("right")
+          expect(@right_action.action_type).to eq(:create)
         end
         it 'action for plus card of type create' do
           expect(@plus_action.card.name).to eq("left+right")

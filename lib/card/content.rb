@@ -18,7 +18,7 @@ class Card
       unless Array === content
         content = parse_content content  
       end
-      super content  #ACT IMPORTANT
+      super content
     end
 
     def card

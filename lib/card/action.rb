@@ -4,9 +4,9 @@ class Card
   def find_action_by_params args
     case 
     when args[:rev]
-      actions[args[:rev].to_i-1] 
+      nth_action(args[:rev].to_i-1)
     when args[:rev_id]
-      action = Card::Action.find(args[:rev_id])  #ACT restrict to same card or allow to overwrite card with changes of different card?
+      action = Card::Action.find(args[:rev_id]) 
       if action.card_id == id 
         action 
       end
@@ -14,7 +14,11 @@ class Card
   end
   
   def nth_revision index
-    revision(actions[index-1])
+    revision(nth_action(index))
+  end
+  
+  def nth_action index
+    Card::Action.where("(draft IS NULL OR draft = :draft) AND card_id = ':id'", {:draft=>false, :id=>id})[index-1]
   end
   
   def revision action
@@ -32,6 +36,7 @@ class Card
   class Action < ActiveRecord::Base
     belongs_to :act, :foreign_key=>:card_act_id
     belongs_to :card
+    belongs_to :super_action, class_name: "Action"
     has_many :changes, :foreign_key=>:card_action_id
     
     # replace with enum if we start using rails 4 

@@ -28,8 +28,58 @@ describe Card::Set::Right::Account do
       @no_email = Card.create :name=>'TmpUser', :type_id=>Card::UserID, '+*account'=>{ '+*password'=>'tmp_pass' }
       @no_email.errors['+*account'].first.should =~ /email required/
     end
-    
   end
+  
+  describe '#send_account_confirmation_email' do
+    before do
+      @email = 'joe@user.com'
+      @account = Card::Auth[@email].account
+      ActionMailer::Base.deliveries = []
+      @account.send_account_confirmation_email
+      @mail = ActionMailer::Base.deliveries.last
+    end
+
+    it 'has correct address' do
+      expect( @mail.to ).to eq([@email])
+    end
+
+    it 'contains deck title' do
+      expect( @mail.body.raw_source ).to match(Card.setting( :title ))
+    end
+
+    it 'contains link to verify account' do
+      expect( @mail.body.raw_source ).to include("/update/#{@account.left.cardname.url_key}?token=#{@account.token}")
+    end
+
+    it 'contains expiry days' do
+      expect(@mail.body.raw_source).to include("(link will remain valid for #{Wagn.config.token_expiry / 1.day } days)")
+    end
+  end
+
+  describe '#send_reset_password_token' do
+    before do
+      @email = 'joe@user.com'
+      @account = Card::Auth[@email].account
+      ActionMailer::Base.deliveries = []
+      @account.send_reset_password_token
+      @mail = ActionMailer::Base.deliveries.last
+    end
+
+    it 'contains deck title' do
+      expect( @mail.body.raw_source ).to match(Card.setting( :title ))
+    end
+
+    it 'contains password resset link' do
+      expect( @mail.body.raw_source ).to include("/update/#{@account.cardname.url_key}?reset_token=#{@account.token_card.refresh(true).content}")
+    end
+
+    it 'contains expiry days' do
+      expect(@mail.body.raw_source).to include("(link will remain valid for #{Wagn.config.token_expiry / 1.day } days)")
+    end
+  end
+  
+  
+  
   
   describe '#update_attributes' do
     before :each do

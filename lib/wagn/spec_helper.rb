@@ -1,4 +1,3 @@
-require 'byebug'
 module Wagn::WagnSpecHelper
 
   include ActionDispatch::Assertions::SelectorAssertions
@@ -32,8 +31,12 @@ module Wagn::WagnSpecHelper
   end
 
   def render_content content, format_args={}
+    render_content_with_args( content, format_args )
+  end
+  
+  def render_content_with_args content, format_args={}, view_args={}
     @card ||= Card.new :name=>"Tempo Rary 2"
-    @card.content = content                   #ACT<content>
+    @card.content = content
     @card.format(format_args)._render :core
   end
 

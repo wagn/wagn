@@ -1,7 +1,7 @@
+
 format :html do
   
   def show view, args
-    "sdaf"
     if Env.ajax?
       view ||= args[:home_view] || :open
       @inclusion_opts = args.delete(:items)

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-
+include Wagn::Location
 describe Card::Set::Type::Signup do
   
   before do
@@ -26,14 +26,13 @@ describe Card::Set::Type::Signup do
   context 'signup (without approval)' do
     before do
       ActionMailer::Base.deliveries = [] #needed?
-      
       Card::Auth.as_bot do
         Card.create! :name=>'User+*type+*create', :content=>'[[Anyone]]'
         Card.create! :name=>'*request+*to', :content=>'signups@wagn.org'
+
       end
-      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ 
-        '+*email'=>'wolf@wagn.org', '+*password'=>'wolf'
-      }
+      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{'+*email'=>'wolf@wagn.org',
+         '+*password'=>'wolf'}     
       @account = @signup.account
       @token = @account.token
     end
@@ -48,6 +47,8 @@ describe Card::Set::Type::Signup do
     end
   
     it 'should send email with an appropriate link' do
+      @mail = ActionMailer::Base.deliveries.last
+      expect( @mail.body.raw_source ).to match(Card.setting( :title ))
     end
     
     it 'should create an authenticable token' do
@@ -166,4 +167,34 @@ describe Card::Set::Type::Signup do
     
   end
 
+  # describe '#signup_notifications' do
+  #   before do
+  #     Card::Auth.as_bot do
+  #       Card.create! :name=>'*request+*to', :content=>'signups@wagn.org'
+  #     end
+  #     @user_name = 'Big Bad Wolf'
+  #     @user_email = 'wolf@wagn.org'
+  #     @signup = Card.create! :name=>@user_name, :type_id=>Card::SignupID, '+*account'=>{
+  #       '+*email'=>@user_email, '+*password'=>'wolf'}
+  #     ActionMailer::Base.deliveries = []
+  #     @signup.signup_notifications
+  #     @mail = ActionMailer::Base.deliveries.last
+  #   end
+  #
+  #   it 'send to correct address' do
+  #     expect(@mail.to).to eq(['signups@wagn.org'])
+  #   end
+  #
+  #   it 'contains request url' do
+  #      expect(@mail.body.raw_source).to include(wagn_url(@signup))
+  #   end
+  #
+  #   it 'contains user name' do
+  #     expect(@mail.body.raw_source).to include(@user_name)
+  #   end
+  #
+  #   it 'contains user email' do
+  #     expect(@mail.body.raw_source).to include(@user_email)
+  #   end
+  # end
 end

@@ -27,6 +27,32 @@ def item_type
   nil
 end
 
+def extended_item_cards context = nil
+  context = (context ? context.cardname : self.cardname)
+  args={ :limit=>'' }
+  items = self.item_cards(args.merge(:context=>context))
+  extended_list = []
+  already_extended = ::Set.new # avoid loops
+  
+  while items.size > 0
+    item = items.shift
+    if already_extended.include? item 
+      next
+    elsif item.item_cards == [item]  # no further level of items
+      extended_list << item
+      already_extended << item
+    else
+      items.unshift(*item.item_cards) # keep items in order
+      already_extended << item
+    end
+  end
+  extended_list
+end
+
+def extended_item_contents context = nil
+  extended_item_cards(context).map(&:item_names).flatten
+end
+
 def extended_list context = nil
   context = (context ? context.cardname : self.cardname)
   args={ :limit=>'' }
@@ -40,10 +66,9 @@ def extended_list context = nil
   # this could go on and on.  more elegant to recurse until you don't have a collection
 end
 
-def contextual_content context_card, format_args={}
-  format_args[:not_current] = true
+def contextual_content context_card, format_args={}, view_args={}
   context_card.format(format_args).process_content(
-    self.format(:not_current=>true)._render_raw
+    self.format(format_args)._render_raw(view_args)
   )
 end
 

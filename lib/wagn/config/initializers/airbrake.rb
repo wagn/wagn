@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-filename = File.join Rails.root, 'airbrake.key'
+filename = File.join Wagn.root, 'config/airbrake.key'
 if File.exists? filename
   key = File.read( filename ).strip
   Airbrake.configure do |config|

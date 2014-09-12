@@ -149,3 +149,25 @@ end
 def ok_to_read
   is_own_account? ? true : super
 end
+
+
+def send_change_notice act, cardname_watched
+  args = { :watcher=>left.name, :watched=>cardname_watched }  
+  html_msg = act.card.format(:format=>:html).render_change_notice(args)
+  
+  if html_msg.present?
+    text_msg = act.card.format(:format=>:text).render_change_notice(args)
+    email = format(:format=>:email)._render_mail(
+        :html_message => html_msg
+        :text_message => text_msg
+      )
+    email.deliver if email
+  end
+end
+
+format :email do
+  view :mail do |args|
+    args[:to] ||= self.email
+    super args
+  end
+end

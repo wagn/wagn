@@ -1,5 +1,6 @@
-
+require 'byebug'
 format :email do
+  
   def deliver args={}
     _render_mail(args).deliver
   end
@@ -12,38 +13,53 @@ format :email do
     if args[:locals]
       args[:locals].each do |key, value|
         output.gsub!(/\{\{\s*\_#{key.to_s}\s*\}\}/, value.to_s)  # this should happen in a special format/render combination
-        instance_variable_set "@#{key}", value
+        #instance_variable_set "@#{key}", value
       end
     end
-    ERB.new(output).result(binding) 
+    output
   end
+    
   
-  view :mail do |args|
-    ActionMailer::Base.mail _render_config( args )   #TODO add error handling
+  view :mail do |args|      
+    args = email_config(args)
+    text_message = args.delete(:text_message)
+    html_message = args.delete(:html_message)
+    attachment_list = args.delete(:attach)
+    alternative = text_message.present? and html_message.present?
+    
+    mail = Mail.new(args) do
+      if alternative and !attachment_list.empty?
+        content_type 'multipart/mixed'
+        part :content_type => 'multipart/alternative' do |copy|
+          copy.part :content_type => 'text/plain' do |plain|
+            plain.body = text_message
+          end
+          copy.part :content_type => 'text/html' do |html|
+            html.body = html_message
+          end
+        end
+      else
+        text_part do
+          body text_message
+        end
+
+        html_part do
+          content_type 'text/html; charset=UTF-8'
+          body html_message
+        end
+      end  
+      if attachment_list
+        attachment_list.each_with_index do |cardname, i|
+          if c = Card[ cardname ] and c.respond_to?(:attach)
+            add_file :filename => "attachment-#{i + 1}.#{c.attach_extension}", :content => File.read( c.attach.path )
+          end
+        end
+      end
+    end   #TODO add error handling
   end
+    
   
-  view :change_notice do |args|    
-    cd_with_acct = Card[args[:watcher]] unless Card===args[:watcher]
-    email = cd_with_acct.account.email
-    updated_card = args[:updated_card] || card
-    Card['change notice'].format(:format=>:email)._render_mail(   #TODO get card from a rule?
-      :to     => email,
-      :from   => Card[Card::WagnBotID].account.email,
-      :locals => {
-                  :name => card.name,
-                  :updater => updated_card.updater.name,
-                  :action => args[:action],
-                  :subedits => args[:subedits],
-                  :card_url => wagn_url( card ),
-                  :change_url  => wagn_url( "card/changes/#{card.cardname.url_key}" ),
-                  :unwatch_url => wagn_url( "card/watch/#{args[:watched].to_name.url_key}?toggle=off" ),
-                  :updater_url => wagn_url( card.updater ),
-                  :watched => (args[:watched] == card.cardname ? "#{args[:watched]}" : "#{args[:watched]} cards"),
-                 })
-  end
-  
-  
-  view :config do |args|
+  def email_config args={}
     config = {}
     args[:locals] ||= {}
     args[:locals][:site] = Card.setting :title
@@ -58,14 +74,7 @@ format :email do
               end
         end
     end
-    if attachment_list = config.delete(:attach) and !attachment_list.empty?
-      attachment_list.each_with_index do |cardname, i|
-        if c = Card[ cardname ] and c.respond_to?(:attach)
-          attachments["attachment-#{i + 1}.#{c.attach_extension}"] = File.read( c.attach.path )
-        end
-      end
-    end
-    [:subject, :message].each do |field|
+    [:subject, :message, :html_message, :text_message].each do |field|
       config[field] = args[field] || begin
         config[field] = ( fld_card=Card["#{card.name}+*#{field}"] ).nil? ? '' :
             Auth.as( fld_card.updater ) do
@@ -73,10 +82,14 @@ format :email do
             end
       end
     end
-    config[:body] ||= Card::Mailer.layout(config.delete(:message))
+    if !config[:html_message].present?
+      config[:html_message] = config[:message]
+    end
+    config.delete(:message)
+    config[:html_message] = Card::Mailer.layout(config[:html_message])
+    config[:from] ||= Card[Card::WagnBotID].account.email
     config[:subject] = strip_html(config[:subject]).strip if config[:subject]
-    config[:content_type] ||= 'text/html'
-    config
+    config.select {|k,v| v.present? }
   end
   
   def strip_html string

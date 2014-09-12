@@ -1,4 +1,9 @@
 
+event :add_and_drop_items, :before=>:approve, :on=>:save do
+  self.add_item Env.params['add_item']   if Env.params['add_item']
+  self.drop_item Env.params['drop_item'] if Env.params['drop_item']
+end
+
 format do
   def wrap_item item, args={}
     item #no wrap in base    

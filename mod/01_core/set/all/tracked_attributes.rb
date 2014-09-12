@@ -1,15 +1,3 @@
-
-# event :set_tracked_attributes, :before=>:store, :on=>:save do
-#   updates.each_pair do |attrib, value|
-#     if send("set_#{attrib}", value )
-#       updates.clear attrib
-#     end
-#     @changed ||={}; @changed[attrib.to_sym]=true
-#   end
-#   #Rails.logger.debug "Card(#{name})#set_tracked_attributes end"
-# end
-
-
 #fixme -this is called by both initialize and update_attributes.  really should be optimized for new!
 def assign_attributes args={}, options={}
   if args
@@ -22,7 +10,6 @@ def assign_attributes args={}, options={}
   end
   super args, options
 end
-
 
 def extract_subcard_args! args={}
   extracted_subcards = args.delete('subcards') || {}
@@ -37,10 +24,7 @@ def extract_subcard_args! args={}
 end
 
 
-
 protected
-
-
 
 #ACT<content> IMPORTANT no longer called, see set old set_inital_content below
 def set_content new_content
@@ -58,31 +42,14 @@ def set_content new_content
   end
 end
 
-
-
 event :set_initial_content, :before=>:store, :on=>:create do
   unless @from_trash
     self.db_content = content || ''
     self.db_content = Card::Content.clean! self.db_content if clean_html?
+    self.selected_action_id = nil
     reset_patterns_if_rule saving=true
   end
 end
-
-#old
-# event :set_initial_content, :after=>:store, :on=>:create do
-#   #Rails.logger.info "Card(#{inspect})#set_initial_content start #{content_without_tracking}"
-#   # set_content bails out if we call it on a new record because it needs the
-#   # card id to create the revision.  call it again now that we have the id.
-#
-#   #Rails.logger.warn "si cont #{content} #{updates.for?(:content).inspect}, #{updates[:content]}"
-#   unless @from_trash
-#     set_content updates[:content] # if updates.for?(:content)
-#     updates.clear :content
-#
-#     Card.where(:id=>id).update_all(:current_revision_id => current_revision_id)
-#   end
-#   #Rails.logger.info "set_initial_content #{content}, #{@current_revision_id}, s.#{self.current_revision_id} #{inspect}"
-# end
 
 
 #fixme - the following don't really belong here, but they have to come after the reference stuff.  we need to organize a bit!

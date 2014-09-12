@@ -2,8 +2,9 @@
 class Card
   class Act < ActiveRecord::Base
     before_save :set_actor
-    after_save :change_notice
+    after_save :notify_followers
     has_many :actions, :order => :id, :foreign_key=>:card_act_id
+    #belongs_to :actor, class_name: "Card"
         
     def set_actor
       self.actor_id = Auth.current_id
@@ -15,24 +16,21 @@ class Card
 
     def card
       Card[ card_id ]
-    end
+    end 
     
-    def change_notice
+    def notify_followers
+      begin
+        return false if Card.record_timestamps==false
+        card.card_watchers.each {|w| w.send_change_notice self, card.cardname}
+        card.type_watchers.each {|w| w.send_change_notice self, card.type_name}
       
+        #@ethn: The rescue part is from the old notify_followers event. Remove it?
+      rescue =>e  #this error handling should apply to all extend callback exceptions 
+        Airbrake.notify e if Airbrake.configuration.api_key
+        Rails.logger.info "\nController exception: #{e.message}"
+        Rails.logger.debug "BT: #{e.backtrace*"\n"}"
+      end
     end
-    
-    # possibility for cross wagn card integration was just created by Anonymous
-    #
-    # This update included the following changes:
-    #
-    # created possibility for cross wagn card integration+status
-    # created possibility for cross wagn card integration+tags
-    # created possibility for cross wagn card integration+issue
-    # created possibility for cross wagn card integration+example
-    # See the card: http://wagn.org/possibility_for_cross_wagn_card_integration
-    #
-    # You received this email because you're following "Support Ticket cards".
-    # Unfollow to stop receiving these emails.
     
   private
     def timestamp_attributes_for_create

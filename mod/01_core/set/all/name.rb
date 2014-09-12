@@ -258,7 +258,7 @@ event :cascade_name_changes, :after=>:store, :on=>:update, :changed=>:name do
         Rails.logger.debug "------------------ UPDATE REFERER #{card.name}  ------------------------"
         unless card == self or card.structure
           card = card.refresh
-          card.content = card.replace_references name_was, name   #ACT<content>
+          card.db_content = card.replace_references name_was, name
           card.save!
         end
       end

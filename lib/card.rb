@@ -12,7 +12,7 @@ class Card < ActiveRecord::Base
   require_dependency 'card/auth'
   require_dependency 'card/loader'
 
-  has_many :revisions, :order => :id
+  #has_many :revisions, :order => :id
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
   has_many :acts, :order => :id
@@ -39,4 +39,3 @@ class Card < ActiveRecord::Base
 
   Loader.load_mods if count > 0
 end
-

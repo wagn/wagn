@@ -6,10 +6,10 @@ end
 # has to be called always and before :set_name and :process_subcards
 def create_act_and_action
   @current_act = @supercard ? @supercard.current_act : acts.build(:ip_address=>Env.ip)
-  @current_action = actions.build(:action_type=>@action)
-  @current_action.act = @current_act
-  if @supercard
-    @current_action.super_action = @supercard.current_action
+  @current_action = @current_act.actions.build(:action_type=>@action)
+  #@current_action.card = self # @current_act
+  if (@supercard and @supercard !=self)
+    #@current_action.super_action = @supercard.current_action
   end
 end
 
@@ -19,10 +19,12 @@ event(:create_act_and_action_for_delete, :after =>:approve,          :on=>:delet
 
 
 event :complete_act, :after=>:extend do
-  unless @supercard 
-    if @current_act.actions.empty?
-      @current_act.delete
-    end
+  if @supercard
+    @current_action.update_attributes(:super_action_id=>@supercard.current_action.id, :card_id=>id)
+  elsif @current_act.actions.empty?
+    @current_act.delete
+  else
+    @current_action.update_attributes!(:card_id=>id)
   end
 end
 

@@ -27,6 +27,10 @@ def item_type
   nil
 end
 
+def include_item? cardname
+  ::Set.new(item_names).member? cardname
+end
+
 def extended_item_cards context = nil
   context = (context ? context.cardname : self.cardname)
   args={ :limit=>'' }

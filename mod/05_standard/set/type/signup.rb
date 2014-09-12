@@ -142,7 +142,18 @@ send_signup_notifications = proc do |c|
   !Auth.signed_in? and c.account and c.account.pending? and Card.setting '*request+*to'
 end
 
+
 event :signup_notifications, :after=>:extend, :on=>:create, :when=>send_signup_notifications do
-  Mailer.signup_alert(self).deliver
+  args =  {
+    :to     => Card.setting('*request+*to'),
+    :from   => Card.setting('*request+*from') || "#{@name} <#{@email}>",
+    :locals => {
+      :email        => self.account.email,
+      :name         => self.name,
+      :request_url  => wagn_url( self ),
+      :requests_url => wagn_url( Card[:signup] ),
+  }
+  }
+  Card['signup alert'].format(:format=>:email).deliver(args)
 end
 

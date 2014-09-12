@@ -49,7 +49,7 @@ class CardController < ActionController::Base
   ## the following methods need to be merged into #update
 
   def save_draft
-    if card.save_draft params[:card][:content]  #ACT
+    if card.save_draft params[:card][:content]  
       render :nothing=>true
     else
       render_errors
@@ -62,20 +62,13 @@ class CardController < ActionController::Base
       card.update_attributes! revision
       card.attachment_symlink_to action.id
     end
-    #old: revision = card.revisions[params[:rev].to_i - 1]
-    #     card.update_attributes! :content=>revision.content
-    #     card.attachment_link revision.id
-    show   #ACT what to do if we can't find action? errors.add? 
+    show   #ACT what to do if we can't find the action? errors.add? 
   end
 
+
   def watch
-    watchers = card.fetch :trait=>:watchers, :new=>{}
-    watchers = watchers.refresh
-    myname = Card::Auth.current.name
-    watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
-    watchers.save!
-    ajax? ? show(:watch) : read
-    
+    toggle_subscription_for Card::Auth.current
+    ajax? ? show(:watch) : read    
   end
 
 

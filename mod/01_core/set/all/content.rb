@@ -119,8 +119,8 @@ end
 
 
 def drafts
-  if session[:user]
-    actions.joins(:act).where(:act=>{:actor_id=>session[:user]}, :draft=>true) || []
+  if Card::Auth.current_id
+    actions.joins(:act).where(:act=>{:actor_id=>Card::Auth.current_id}, :draft=>true) || []
   else
     actions.joins(:act).where(:draft=>true) || []
   end

@@ -135,6 +135,7 @@ class Card
 
         define_method event do
           run_callbacks event do
+            #puts event
             send final_method
           end
         end

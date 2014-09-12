@@ -1,3 +1,5 @@
+require 'optparse'
+require 'pry'
 def load_rake_tasks
   require './config/environment'
   require 'rake'
@@ -19,9 +21,18 @@ aliases = {
   "r"  => "runner"
 }
 
+def format_rspec_file filename, base_dir
+  file, line = filename.split(':')
+  file = File.basename(file,".rb")
+  binding.pry
+  Dir.glob("#{base_dir}/**/#{file}_spec.rb").flatten.map{ |file| line ? "#{file}:#{line}" : file}.join(' ')
+end
+
+
 def format_rspec_file_argument index, base_dir
   ARGV.delete_at(index)
   file, line = ARGV[index].split(':')
+  file = File.basename(file,".rb")
   ARGV.delete_at(index)
   Dir.glob("#{base_dir}/**/#{file}_spec.rb").flatten.map{ |file| line ? "#{file}:#{line}" : file}.join(' ')
 end
@@ -53,18 +64,25 @@ else
   when 'cucumber'
     system "RAILS_ROOT=. bundle exec cucumber #{ ARGV.join(' ') }"
   when 'rspec'
-    if index = ( ARGV.index("-s") || ARGV.index("--spec" ))
-      files = format_rspec_file_argument( index, "mods")
+    opts = {}
+    rspec_parser = OptionParser.new do |parser|
+      parser.on('-s', '--spec (PART_OF)FILENAME(:LINE)', 'Run spec for a deck file') do |file|
+        opts[:files] = format_rspec_file( file, "mods")
+      end
+      parser.on('-c', '--core-spec (PART_OF)FILENAME(:LINE)', 'Run spec for a core file') do |file|
+        opts[:files] = format_rspec_file( file, "#{Wagn.gem_root}" )
+      end
+      parser.on('-m', '--mod MOD NAME', 'Run all spec for a mod') do |file|
+        opts[:files] = "mod/#{file}"
+      end
+      parser.on('-r', '--rescue', 'Run with pry-rescue')
+        opts[:rescue] = 'rescue '
+      end
     end
-    if index = ( ARGV.index("-cs") || ARGV.index("--core-spec" ))
-      files = format_rspec_file_argument index, "#{Wagn.gem_root}/spec"
-    end
-    if index = ( ARGV.index("-m") || ARGV.index("--mod" ))
-      ARGV.delete_at(index)
-      files = "mod/#{ARGV[index]}"
-      ARGV.delete_at(index)
-    end
-    system "RAILS_ROOT=. bundle exec rspec #{ARGV.join(' ')} #{files}"
+    rspec_parser.parse!(ARGV)
+
+
+    system "RAILS_ROOT=. bundle exec #{opts[:rescue]} rspec #{ARGV.join(' ')} #{opts[:files]}"
   when '--version', '-v'
     puts "Wagn #{Wagn::Version.release}"
   when 'new'

@@ -136,5 +136,25 @@ describe Card::Set::Right::Account do
     
   end
   
+  
+  describe '#send_change_notice' do
+    it 'send multipart email' do
+      pass
+    end
+    
+    context 'denied access' do
+      it 'excludes protected subcards' do
+        Card.create(:name=>"A+B+*self+*read", :type=>'Pointer', :content=>"[[u1]]")
+        u2 = Card.fetch 'u2+*following'
+        u2.add_item "A"
+        a = Card.fetch "A"
+        a.update_attributes( :content=> "new content", :subcards=>{'+B'=>{:content=>'hidden content'}})
+        expect()
+      end
+      
+      it 'sends no email if changes not visible' do
+      end
+    end
+  end
 end
 

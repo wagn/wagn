@@ -21,7 +21,7 @@ class Card
   end
   
   class Change < ActiveRecord::Base
-    belongs_to :action, :foreign_key=>:card_action_id
+    #belongs_to :action, :foreign_key=>:card_action_id
     
     # replace with enum if we start using rails 4 
     

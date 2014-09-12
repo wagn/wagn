@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'byebug'
 class Card
   def find_action_by_params args
     case 
@@ -41,6 +40,18 @@ class Card
     
     # replace with enum if we start using rails 4 
     TYPE = [:create, :update, :delete]
+    
+    def edit_info
+      hash = {}
+      hash[:action_type] = "#{action_type}d"
+      hash[:new_content] = self[:db_content]
+      hash[:new_name] = self[:name]
+      hash[:new_cardtype] = ( typecard = Card[self[:type_id]] and typecard.name.capitalize )
+    end
+    
+    def [](field)
+      change = changes.find_by_field(field) and change.value
+    end    
     
     def action_type=(value)
       write_attribute(:action_type, TYPE.index(value))

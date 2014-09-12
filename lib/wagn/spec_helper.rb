@@ -1,4 +1,4 @@
-module Wagn::WagnSpecHelper
+module Wagn::SpecHelper
 
   include ActionDispatch::Assertions::SelectorAssertions
   #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
@@ -37,10 +37,14 @@ module Wagn::WagnSpecHelper
   def render_content_with_args content, format_args={}, view_args={}
     @card ||= Card.new :name=>"Tempo Rary 2"
     @card.content = content
-    @card.format(format_args)._render :core
+    @card.format(format_args)._render :core, view_args
   end
 
   def render_card view, card_args={}, format_args={}
+    render_card_with_args view, card_args, format_args
+  end
+  
+  def render_card_with_args view, card_args={}, format_args={}, view_args={}
     card = begin
       if card_args[:name]
         Card.fetch card_args[:name], :new=>card_args
@@ -48,6 +52,6 @@ module Wagn::WagnSpecHelper
         Card.new card_args.merge( :name=> 'Tempo Rary' )
       end
     end
-    card.format(format_args)._render(view)
+    card.format(format_args)._render(view, view_args)
   end
 end

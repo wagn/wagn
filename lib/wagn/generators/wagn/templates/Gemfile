@@ -77,11 +77,18 @@ end
 
 gem 'ruby-prof', '~>0.12.1', :group=>:profile  # profiling
 
+group :development, :test do
+  gem 'pry-rails'
+  gem 'pry-rescue'
+  gem 'pry-stack_explorer'
+end
+
 group :debug do
   if RUBY_VERSION =~ /^2/
-		gem 'byebug' 
+    gem 'pry-byebug'
 	else
 		gem 'debugger'
 	end
 end
+
 <% end %>

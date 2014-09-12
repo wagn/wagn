@@ -16,14 +16,12 @@ format :html do
 
   view :watch do |args|
     wrap args do
-      #type_link = card.watching_type? ? "#{watching_type_cards} | " : ""
-      link_args = if card.watching?
-        ["following", :off, "stop sending emails about changes to #{card.cardname}", { :hover_content=> 'unfollow' } ]
+      link_args = if card.watched
+        [card, "following", :off, "stop sending emails", { :hover_content=> 'unfollow' } ]
       else
-        ["follow all", :on, "send emails about changes to #{card.cardname}"]
+        [card, "follow all", :on, "send emails"]
       end
-      link_args[2] += ' cards'
-      #type_link + 
+      link_args[3] += " about changes to #{card.cardname} cards"
       watch_link( *link_args )
     end
   end

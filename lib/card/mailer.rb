@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'open-uri'
 
+
 class Card
   class Mailer < ActionMailer::Base
     
@@ -19,15 +20,17 @@ class Card
                 :watcher=>watcher, :watched=>watched.to_s, :action=>action, :subedits=>nested_notifications )
     end
     
-    def self.layout message
-      %{
-        <!DOCTYPE html>
-        <html>
-          <body>
-            #{message}
-          </body>
-        </html>
-      }
+    class << self
+      def layout message
+        %{
+          <!DOCTYPE html>
+          <html>
+            <body>
+              #{message}
+            </body>
+          </html>
+        }
+      end
     end
   end
 end

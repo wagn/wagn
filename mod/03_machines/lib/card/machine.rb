@@ -123,7 +123,8 @@ class Card
     def reset_machine_output!
       Auth.as_bot do
         moc = machine_output_card and moc.real? and moc.delete!
-        mic = machine_input_card  and mic.real? and mic.delete!
+        #mic = machine_input_card  and mic.real? and mic.delete!
+        update_input_card
       end
     end
     

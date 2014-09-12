@@ -24,7 +24,7 @@ class Card
           item.reset_machine_output! if item.kind_of? Machine
         end
       end
-    
+      
       host_class.event "before_machine_input_deleted_#{host_class.name.gsub(':','_')}".to_sym, :after=>:approve, :on => :delete do
         @involved_machines = Card.search( {:right_plus => [{:codename => "machine_input"}, {:link_to => name}]}.merge(host_class.machines_wql) )  
       end

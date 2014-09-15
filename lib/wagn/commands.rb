@@ -77,11 +77,11 @@ else
     #rspec_parser= tmp.parser(ARGV)
     
     #rspec_parser = OptionParser.new do |parser|
-      parser.banner = "Usage: wagn rspec [ARGS]"
+      parser.banner = "Usage: wagn rspec [WAGN ARGS] -- [RSPEC ARGS]\n\nRSPEC ARGS"
       
       parser.separator <<-WAGN 
-
-  **** Extra Wagn options ****
+      
+WAGN ARGS
 
   You don't have to give a full path for FILENAME, the basename is enough
   If FILENAME does not include '_spec' rspec searches for the corresponding spec file.

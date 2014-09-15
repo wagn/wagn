@@ -22,8 +22,12 @@ end
 group :test, :development do
   gem 'rails-dev-tweaks'
   gem 'sprockets' # just so above works
+  # gem 'pry-rails'
+  # gem 'pry-rescue'
+  # gem 'pry-stack_explorer'
   if RUBY_VERSION =~ /^2/
 		gem 'byebug' 
+    # gem 'pry-byebug'
 	else
 		gem 'debugger'
 	end
@@ -55,6 +59,7 @@ group :test do
   gem 'guard-rspec', '~> 4.2'                  # trigger test runs based on file edits
   if RUBY_PLATFORM =~ /darwin/
     gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
+    # gem 'rspec-formatter-webkit', :path=>'/opt/rspec-formatter-webkit'
   end
 
   # CUKES see features dir
@@ -90,5 +95,4 @@ group :debug do
 		gem 'debugger'
 	end
 end
-
 <% end %>

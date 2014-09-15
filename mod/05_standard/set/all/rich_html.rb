@@ -14,7 +14,7 @@ format :html do
   end
 
   view :layout, :perms=>:none do |args|
-    process_content get_layout_content, :content_opts=>{ :chunk_list=>:default }
+    process_content get_layout_content, :content_opts=>{ :chunk_list=>:references }
   end
 
   view :content do |args|
@@ -401,7 +401,7 @@ format :html do
       setting = card.new_card? ? [ :add_help, { :fallback => :help } ] : :help
       if help_card = card.rule_card( *setting ) and help_card.ok? :read
         with_inclusion_mode :normal do
-          process_content _render_raw( args.merge :structure=>help_card.name )
+          process_content _render_raw( args.merge :structure=>help_card.name ), :content_opts=>{ :chunk_list=>:references }
           # render help card with current card's format so current card's context is used in help card inclusions
         end
       end

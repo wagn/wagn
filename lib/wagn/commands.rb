@@ -1,16 +1,14 @@
 require 'optparse'
-require 'pry'
+require 'active_support/core_ext/object/inclusion' # adds method in? to Object class
+
 def load_rake_tasks
   require './config/environment'
   require 'rake'
   Wagn::Application.load_tasks
 end
 
-require 'active_support/core_ext/object/inclusion' # adds method in? to Object class
-
-ARGV << '--help' if ARGV.empty?
-
-aliases = {
+RAILS_COMMANDS = %w( generate destroy plugin benchmarker profiler console server dbconsole application runner )
+ALIAS = {
   "rs" => "rspec",
   "cc" => "cucumber",
   "g"  => "generate",
@@ -21,40 +19,51 @@ aliases = {
   "r"  => "runner"
 }
 
-def format_rspec_file filename, base_dir
+ARGV << '--help' if ARGV.empty?
+
+def supported_rails_command? arg
+  arg.in? RAILS_COMMANDS or ALIAS[arg].in? RAILS_COMMANDS
+end
+
+def find_spec_file filename, base_dir
   file, line = filename.split(':')
-  file = File.basename(file,".rb")
-  binding.pry
-  Dir.glob("#{base_dir}/**/#{file}_spec.rb").flatten.map{ |file| line ? "#{file}:#{line}" : file}.join(' ')
+  if file.include? '_spec.rb' and File.exist?(file)
+    filename
+  else
+    file = File.basename(file,".rb").sub(/_spec$/,'')
+    Dir.glob("#{base_dir}/**/#{file}_spec.rb").flatten.map{ |file| line ? "#{file}:#{line}" : file}.join(' ')
+  end
 end
 
 
-def format_rspec_file_argument index, base_dir
-  ARGV.delete_at(index)
-  file, line = ARGV[index].split(':')
-  file = File.basename(file,".rb")
-  ARGV.delete_at(index)
-  Dir.glob("#{base_dir}/**/#{file}_spec.rb").flatten.map{ |file| line ? "#{file}:#{line}" : file}.join(' ')
-end
-
-rails_commands = %w( generate destroy plugin benchmarker profiler console server dbconsole application runner )
-
-if ARGV.first.in? rails_commands or aliases[ARGV.first].in? rails_commands
+if supported_rails_command? ARGV.first
+  if ARGV.delete('--rescue')
+    ENV["PRY_RESCUE_RAILS"]="1"
+  end
   require 'wagn'
   require 'rails/commands'
 else
   command = ARGV.shift
-  command = aliases[command] || command
+  command = ALIAS[command] || command
 
   case command
   when 'seed'
+    options = {}
+    parser = OptionParser.new do |parser|
+      parser.banner = "Usage: wagn seed [options]\n\nCreate and seed the database specified in config/database.yml\n\n"
+      parser.on('--test-data', 'seed also the test database') do |test|
+        options[:prepare_test] = true
+      end
+    end
+    parser.parse!(ARGV)
+    
     #load_rake_tasks  we can't load config/environment if the database doesn't exist, use config/application instead
     require './config/application'
     require 'wagn/migration_helper'
     require 'rake'
     Wagn::Application.load_tasks
     Rake::Task['wagn:create'].invoke
-    if ARGV.include? "--test-data" 
+    if options[:prepare_test]
       ENV['RELOAD_TEST_DATA'] = 'true'
       Rake::Task['db:test:prepare'].invoke
     end
@@ -65,24 +74,41 @@ else
     system "RAILS_ROOT=. bundle exec cucumber #{ ARGV.join(' ') }"
   when 'rspec'
     opts = {}
-    rspec_parser = OptionParser.new do |parser|
-      parser.on('-s', '--spec (PART_OF)FILENAME(:LINE)', 'Run spec for a deck file') do |file|
-        opts[:files] = format_rspec_file( file, "mods")
-      end
-      parser.on('-c', '--core-spec (PART_OF)FILENAME(:LINE)', 'Run spec for a core file') do |file|
-        opts[:files] = format_rspec_file( file, "#{Wagn.gem_root}" )
-      end
-      parser.on('-m', '--mod MOD NAME', 'Run all spec for a mod') do |file|
-        opts[:files] = "mod/#{file}"
-      end
-      parser.on('-r', '--rescue', 'Run with pry-rescue')
-        opts[:rescue] = 'rescue '
-      end
+    require 'rspec/core'
+    parser = RSpec::Core::Parser.new.parser(opts)
+    parser.banner = "Usage: wagn rspec [WAGN ARGS] -- [RSPEC ARGS]\n\nRSPEC ARGS"
+    parser.separator <<-WAGN 
+      
+WAGN ARGS
+
+  You don't have to give a full path for FILENAME, the basename is enough
+  If FILENAME does not include '_spec' rspec searches for the corresponding spec file.
+  The line number always referes to example in the (corresponding) spec file.
+
+WAGN
+
+    parser.on('-d', '--deck-spec FILENAME(:LINE)', 'Run spec for a Wagn deck file') do |file|
+      opts[:files] = find_spec_file( file, "mods")
     end
-    rspec_parser.parse!(ARGV)
+    parser.on('-c', '--core-spec FILENAME(:LINE)', 'Run spec for a Wagn core file') do |file|
+      opts[:files] = find_spec_file( file, "#{Wagn.gem_root}" )
+    end
+    parser.on('-m', '--mod MODNAME', 'Run all specs for a mod') do |file|
+      opts[:files] = "mod/#{file}"
+    end
+    parser.on('-s', '--[no-]simplecov', 'Run with simplecov') do |s|
+      opts[:simplecov] = s ? '' : 'COVERAGE=false'
+    end
+    parser.on('--rescue', 'Run with pry-rescue') do
+      opts[:rescue] = 'rescue '
+    end
+    parser.separator "\n"
 
+    wagn_args, rspec_args = (' '<<ARGV.join(' ')).split(' -- ')
+    parser.parse!(wagn_args.split(' '))
 
-    system "RAILS_ROOT=. bundle exec #{opts[:rescue]} rspec #{ARGV.join(' ')} #{opts[:files]}"
+    puts "RAILS_ROOT=. #{opts[:simplecov]} bundle exec #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]}" 
+    system "RAILS_ROOT=. #{opts[:simplecov]} bundle exec #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]}" 
   when '--version', '-v'
     puts "Wagn #{Wagn::Version.release}"
   when 'new'
@@ -128,3 +154,6 @@ else
     exit(1)
   end
 end
+
+
+

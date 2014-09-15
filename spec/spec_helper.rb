@@ -37,10 +37,6 @@ Spork.prefork do
     config.add_formatter formatter
     
     config.infer_spec_type_from_file_location!
-    
-    # wagn_patterns = [%r{format}]
-    # config.backtrace_exclusion_patterns += wagn_patterns
-    # config.backtrace_clean_patterns += wagn_patterns
     #config.include CustomMatchers
     #config.include ControllerMacros, :type=>:controllers
 

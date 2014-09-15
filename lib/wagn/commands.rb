@@ -107,7 +107,6 @@ WAGN
     wagn_args, rspec_args = (' '<<ARGV.join(' ')).split(' -- ')
     parser.parse!(wagn_args.split(' '))
 
-    puts "RAILS_ROOT=. #{opts[:simplecov]} bundle exec #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]}" 
     system "RAILS_ROOT=. #{opts[:simplecov]} bundle exec #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]}" 
   when '--version', '-v'
     puts "Wagn #{Wagn::Version.release}"

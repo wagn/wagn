@@ -21,6 +21,21 @@ ALIAS = {
 
 ARGV << '--help' if ARGV.empty?
 
+def supported_rails_command? arg
+  arg.in? RAILS_COMMANDS or ALIAS[arg].in? RAILS_COMMANDS
+end
+
+def find_spec_file filename, base_dir
+  file, line = filename.split(':')
+  if file.include? '_spec.rb' and File.exist?(file)
+    filename
+  else
+    file = File.basename(file,".rb").sub(/_spec$/,'')
+    Dir.glob("#{base_dir}/**/#{file}_spec.rb").flatten.map{ |file| line ? "#{file}:#{line}" : file}.join(' ')
+  end
+end
+
+
 if supported_rails_command? ARGV.first
   if ARGV.delete('--rescue')
     ENV["PRY_RESCUE_RAILS"]="1"
@@ -92,6 +107,7 @@ WAGN
     wagn_args, rspec_args = (' '<<ARGV.join(' ')).split(' -- ')
     parser.parse!(wagn_args.split(' '))
 
+    puts "RAILS_ROOT=. #{opts[:simplecov]} bundle exec #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]}" 
     system "RAILS_ROOT=. #{opts[:simplecov]} bundle exec #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]}" 
   when '--version', '-v'
     puts "Wagn #{Wagn::Version.release}"
@@ -140,16 +156,4 @@ WAGN
 end
 
 
-def find_spec_file filename, base_dir
-  file, line = filename.split(':')
-  if File.exist? file
-    filename
-  else
-    file = File.basename(file,".rb").sub(/_spec$/,'')
-    Dir.glob("#{base_dir}/**/#{file}_spec.rb").flatten.map{ |file| line ? "#{file}:#{line}" : file}.join(' ')
-  end
-end
 
-def supported_rails_command? arg
-  arg.in? RAILS_COMMANDS or ALIAS[arg].in? RAILS_COMMANDS
-end

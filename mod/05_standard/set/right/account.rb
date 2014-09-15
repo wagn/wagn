@@ -158,7 +158,7 @@ def send_change_notice act, cardname_watched
   if html_msg.present?
     text_msg = act.card.format(:format=>:text).render_change_notice(args)
     email = format(:format=>:email)._render_mail(
-        :html_message => html_msg
+        :html_message => html_msg,
         :text_message => text_msg
       )
     email.deliver if email

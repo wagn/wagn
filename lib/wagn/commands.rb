@@ -1,4 +1,5 @@
 require 'optparse'
+require 'active_support/core_ext/object/inclusion' # adds method in? to Object class
 
 def load_rake_tasks
   require './config/environment'
@@ -6,11 +7,8 @@ def load_rake_tasks
   Wagn::Application.load_tasks
 end
 
-require 'active_support/core_ext/object/inclusion' # adds method in? to Object class
-
-ARGV << '--help' if ARGV.empty?
-
-aliases = {
+RAILS_COMMANDS = %w( generate destroy plugin benchmarker profiler console server dbconsole application runner )
+ALIAS = {
   "rs" => "rspec",
   "cc" => "cucumber",
   "g"  => "generate",
@@ -21,20 +19,9 @@ aliases = {
   "r"  => "runner"
 }
 
-def find_spec_file filename, base_dir
-  file, line = filename.split(':')
-  if File.exist? file
-    filename
-  else
-    file = File.basename(file,".rb").sub(/_spec$/,'')
-    Dir.glob("#{base_dir}/**/#{file}_spec.rb").flatten.map{ |file| line ? "#{file}:#{line}" : file}.join(' ')
-  end
-end
+ARGV << '--help' if ARGV.empty?
 
-5
-rails_commands = %w( generate destroy plugin benchmarker profiler console server dbconsole application runner )
-
-if ARGV.first.in? rails_commands or aliases[ARGV.first].in? rails_commands
+if supported_rails_command? ARGV.first
   if ARGV.delete('--rescue')
     ENV["PRY_RESCUE_RAILS"]="1"
   end
@@ -42,7 +29,7 @@ if ARGV.first.in? rails_commands or aliases[ARGV.first].in? rails_commands
   require 'rails/commands'
 else
   command = ARGV.shift
-  command = aliases[command] || command
+  command = ALIAS[command] || command
 
   case command
   when 'seed'
@@ -74,12 +61,8 @@ else
     opts = {}
     require 'rspec/core'
     parser = RSpec::Core::Parser.new.parser(opts)
-    #rspec_parser= tmp.parser(ARGV)
-    
-    #rspec_parser = OptionParser.new do |parser|
-      parser.banner = "Usage: wagn rspec [WAGN ARGS] -- [RSPEC ARGS]\n\nRSPEC ARGS"
-      
-      parser.separator <<-WAGN 
+    parser.banner = "Usage: wagn rspec [WAGN ARGS] -- [RSPEC ARGS]\n\nRSPEC ARGS"
+    parser.separator <<-WAGN 
       
 WAGN ARGS
 
@@ -88,6 +71,7 @@ WAGN ARGS
   The line number always referes to example in the (corresponding) spec file.
 
 WAGN
+
     parser.on('-d', '--deck-spec FILENAME(:LINE)', 'Run spec for a Wagn deck file') do |file|
       opts[:files] = find_spec_file( file, "mods")
     end
@@ -108,9 +92,7 @@ WAGN
     wagn_args, rspec_args = (' '<<ARGV.join(' ')).split(' -- ')
     parser.parse!(wagn_args.split(' '))
 
-    system "RAILS_ROOT=. #{opts[:simplecov]} bundle exec #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]}"
-  when 'server'
-    
+    system "RAILS_ROOT=. #{opts[:simplecov]} bundle exec #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]}" 
   when '--version', '-v'
     puts "Wagn #{Wagn::Version.release}"
   when 'new'
@@ -155,4 +137,19 @@ WAGN
     EOT
     exit(1)
   end
+end
+
+
+def find_spec_file filename, base_dir
+  file, line = filename.split(':')
+  if File.exist? file
+    filename
+  else
+    file = File.basename(file,".rb").sub(/_spec$/,'')
+    Dir.glob("#{base_dir}/**/#{file}_spec.rb").flatten.map{ |file| line ? "#{file}:#{line}" : file}.join(' ')
+  end
+end
+
+def supported_rails_command? arg
+  arg.in? RAILS_COMMANDS or ALIAS[arg].in? RAILS_COMMANDS
 end

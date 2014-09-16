@@ -3,20 +3,24 @@ class Card
   class Act < ActiveRecord::Base
     before_save :set_actor
     after_save :notify_followers
-    has_many :actions, :order => :id, :foreign_key=>:card_act_id
-    #belongs_to :actor, class_name: "Card"
-        
+    has_many :actions, :foreign_key=>:card_act_id, :inverse_of=> :act, :order => :id, :class_name=> "Card::Action"
+    belongs_to :actor, class_name: "Card"
+    belongs_to :card    
     def set_actor
       self.actor_id = Auth.current_id
     end
     
-    def actor
-      Card[ actor_id ]
-    end
+    # def actor
+    #   Card[ actor_id ]
+    # end
 
     def card
       Card[ card_id ]
-    end 
+    end
+    
+    def action_on card_id
+      actions.find_by_card_id(card_id)
+    end
     
     def notify_followers
       begin

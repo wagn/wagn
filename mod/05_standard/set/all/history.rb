@@ -5,11 +5,15 @@ end
 
 # has to be called always and before :set_name and :process_subcards
 def create_act_and_action
-  @current_act = @supercard ? @supercard.current_act : acts.build(:ip_address=>Env.ip)
-  @current_action = @current_act.actions.build(:action_type=>@action)
-  #@current_action.card = self # @current_act
+  #@current_act = (@supercard ? @supercard.current_act : Card::Act.create(:ip_address=>Env.ip)) #acts.build(:ip_address=>Env.ip
+  #@current_action = actions.build(:action_type=>@action, :card_act_id=>@current_act.id)
+  
+  @current_act = (@supercard ? @supercard.current_act : acts.build(:ip_address=>Env.ip))
+  @current_action = actions.build(:action_type=>@action)
+  @current_action.act = @current_act
+
   if (@supercard and @supercard !=self)
-    #@current_action.super_action = @supercard.current_action
+    @current_action.super_action = @supercard.current_action
   end
 end
 
@@ -17,14 +21,9 @@ event(:create_act_and_action_for_save,   :before=>:process_subcards, :on=>:save)
 event(:create_act_and_action_for_delete, :after =>:approve,          :on=>:delete) { create_act_and_action }
 
 
-
 event :complete_act, :after=>:extend do
-  if @supercard
-    @current_action.update_attributes(:super_action_id=>@supercard.current_action.id, :card_id=>id)
-  elsif @current_act.actions.empty?
-    @current_act.delete
-  else
-    @current_action.update_attributes!(:card_id=>id)
+  if not @supercard and @current_act.actions.empty?
+     @current_act.delete
   end
 end
 

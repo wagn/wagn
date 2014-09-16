@@ -77,6 +77,16 @@ end
 
 
 class Card
+  def self.create_or_update! name, args={}
+    Card::Auth.as_bot do
+      if c = Card.fetch(name)
+        c.update_attributes!(args)
+      else
+        Card.create! args.merge({:name=>name})
+      end
+    end
+  end
+  
   def self.gimme! name, args = {}
     Card::Auth.as_bot do
       c = Card.fetch( name, :new => args )

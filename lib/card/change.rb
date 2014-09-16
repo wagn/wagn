@@ -21,11 +21,9 @@ class Card
   end
   
   class Change < ActiveRecord::Base
-    #belongs_to :action, :foreign_key=>:card_action_id
+    belongs_to :action, :foreign_key=>:card_action_id, :inverse_of=>:changes
     
     # replace with enum if we start using rails 4 
-    
-    
     def field=(value)
       write_attribute(:field, Card::TRACKED_FIELDS.index(value.to_s))
     end

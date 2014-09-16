@@ -18,7 +18,7 @@ shared_examples_for 'notifications' do
       it { is_expected.to include sub2_content }
       
       context 'and missing permissions' do
-        subject { Card.fetch(@card.name).format(:format=>format)._render_change_notice }
+        subject { Card.fetch(@card.name).format(:format=>format).render_change_notice }
         context 'for subcard' do
           before do
             Card.create_or_update! "#{name}+s1+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
@@ -66,7 +66,7 @@ shared_examples_for 'notifications' do
     before do
       @card = Card.create!(:name=>name, :content=>content)
     end
-    subject { @card.format(:format=>format)._render_list_of_changes }
+    subject { @card.format(:format=>format).render_list_of_changes }
     
     context 'for a new card' do
       it { is_expected.to include "content: #{content}" }
@@ -110,7 +110,7 @@ shared_examples_for 'notifications' do
     before do
       @card = Card.create!(:name=>name, :content=>content)
     end
-    subject { @card.format(:format=>format)._render_subedit_notice }
+    subject { @card.format(:format=>format).render_subedit_notice }
     
     context 'for a new card' do
       it { is_expected.to include name }

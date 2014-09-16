@@ -96,7 +96,7 @@ end
 
 
 format :text do
-  view :change_notice, :skip_permissions=>true, :denial=>:blank do |args|
+  view :change_notice, :perms=>:none, :denial=>:blank do |args|
     h = change_notice_args(args)
     salutation  = h[:watcher] ? "Dear #{h[:watcher]}" : "Dear #{Card.setting :title} user"
     selfedits   = render_list_of_changes(args)

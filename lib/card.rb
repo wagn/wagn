@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 class Card < ActiveRecord::Base
-
+  
   require_dependency 'card/active_record_ext'
   require_dependency 'card/codename'
   require_dependency 'card/query'
@@ -36,6 +36,6 @@ class Card < ActiveRecord::Base
   after_save :extend
   
   TRACKED_FIELDS = %w(name type_id db_content trash)
-
+  #binding.pry
   Loader.load_mods if count > 0
 end

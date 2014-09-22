@@ -25,12 +25,13 @@ format :html do
   end
 
   def watch_link watched_card, text, toggle, title, extra={}
+    return '' unless watched_card
     following = Auth.current.fetch :trait=>:following, :new=>{:type=>:pointer}
     path = case toggle
       when :off
-        wagn_path "update/#{following.url_key}?drop_item=#{watched_card.url_key}"
+        wagn_path "update/#{following.cardname.url_key}?drop_item=#{watched_card.cardname.url_key}"
       when :on 
-        wagn_path "update/#{following.url_key}?add_item=#{watched_card.url_key}"
+        wagn_path "update/#{following.cardname.url_key}?add_item=#{watched_card.cardname.url_key}"
       end
     link_to "#{text}",  path, 
       {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :title=>title, :remote=>true, :method=>'post'}.merge(extra)
@@ -43,15 +44,15 @@ end
 # end
 
 
-def type_watched?; Auth.current.fetch(:trait=>:following).include_item? type_name end
-def watched?;     Auth.current.fetch(:trait=>:following).include_item? name end
+def type_watched?; Auth.current.fetch(:trait=>:following, :new=>{}).include_item? type_name end
+def watched?;     Auth.current.fetch(:trait=>:following, :new=>{}).include_item? name end
 
 def card_watchers
-  Card.search :plus=>[{:codename=> "following"},{:link_to=>card.name}]
+  Card.search :plus=>[{:codename=> "following"},{:link_to=>name}]
 end
 
 def type_watchers
-  Card.search :plus=>[{:codename=> "following"},{:link_to=>card.type_name}]
+  Card.search :plus=>[{:codename=> "following"},{:link_to=>type_name}]
 end
 
 def set_watchers

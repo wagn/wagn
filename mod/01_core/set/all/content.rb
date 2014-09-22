@@ -78,12 +78,13 @@ end
 
 
 def previous_revision action_id
-  if previous_action_id
-    rev_index = revisions.find_index do |rev|
-      rev.id == revision_id
-    end
-    revisions[rev_index - 1] if rev_index.to_i != 0
-  end
+  # binding.pry
+  # if previous_action_id
+  #   rev_index = revisions.find_index do |rev|
+  #     rev.id == revision_id
+  #   end
+  #   revisions[rev_index - 1] if rev_index.to_i != 0
+  # end
 end
 # old
 # def previous_revision revision_id

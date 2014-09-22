@@ -2,9 +2,17 @@
 require 'byebug'
 describe Card::Set::All::History do
   context "history view" do
+    # before do
+    #   Card.create! :name=>"my histoer card"
+    # end
     it 'should have a frame' do
       history = render_card :history, :name=>"A"
       assert_view_select history, 'div[class~="card-frame"]'
+    end
+    
+    it 'has revision-header' do
+      history = render_card :diff, :name=>"A"
+      assert_view_select history, 'div[class~="revision-header"]'
     end
   end
   

@@ -36,6 +36,21 @@ class Card
       end
     end
     
+    def elapsed_time
+      DateTime.new(acted_at).distance_of_time_in_words_to_now
+#      (DateTime.now - acted_at).min
+    end
+    
+    def relevant_actions_for card
+      if self.card.id == card.id
+        actions
+      else
+        actions.select do |action|
+          card.included_cards.include?(action.card) || (card == action.card)
+        end
+      end
+    end
+    
   private
     def timestamp_attributes_for_create
       super << :acted_at

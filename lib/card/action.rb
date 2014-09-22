@@ -32,6 +32,7 @@ class Card
   end
   
   
+  
   class Action < ActiveRecord::Base
     belongs_to :card
     belongs_to :act,  :foreign_key=>:card_act_id, :inverse_of=>:actions 
@@ -44,17 +45,29 @@ class Card
     TYPE = [:create, :update, :delete]
     
     def edit_info
-      hash = {}
-      hash[:action_type] = "#{action_type}d"
-      hash[:new_content] = self.new_value_for :db_content
-      hash[:new_name] = self.new_value_for :name
-      hash[:new_cardtype] = ( typecard = Card[self.new_value_for(:type_id).to_i] and typecard.name.capitalize )
-      hash
+      @edit_info || @edit_info = {
+        :action_type => "#{action_type}d",
+        :new_content => self.new_value_for(:db_content),
+        :new_name => self.new_value_for(:name),
+        :new_cardtype => ( typecard = Card[self.new_value_for(:type_id).to_i] and typecard.name.capitalize )
+      }
     end
     
     def new_value_for(field)
        ch = changes.find_by_field(field) and ch.value
     end
+    
+    
+    def new_type?
+      new_value_for(:type_id)
+    end
+    def new_content?
+      new_value_for(:db_content)
+    end
+    def new_name?
+      new_value_for(:name)
+    end
+    
     
     def action_type=(value)
       write_attribute(:action_type, TYPE.index(value))
@@ -66,6 +79,18 @@ class Card
     
     def set_act
       self.set_act ||= self.acts.last
+    end
+    
+    def revision_nr 
+      self.card.actions.index_of(self)
+    end
+    
+    def red?
+      action_type == :delete || :update
+    end
+    
+    def green?
+      action_type  == :create || :update
     end
   end
 end

@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'byebug'
 class CreateNewRevisionTables < ActiveRecord::Migration
   class TmpRevision < ActiveRecord::Base
     self.table_name = 'card_revisions'
@@ -59,8 +58,13 @@ class CreateNewRevisionTables < ActiveRecord::Migration
     
     TmpCard.find_each do |card|
       card.update_column(:db_content,card.tmp_revision.content) if card.tmp_revision
-      TmpChange.create(:card_action_id=>card.tmp_actions.first.id, :field=>1, :value=>card.type_id)
-      TmpChange.create(:card_action_id=>card.tmp_actions.first.id, :field=>0, :value=>card.name)
+      first_action = card.tmp_actions.first
+      if !first_action
+        puts "Missing actions#{card.name}"
+      else
+        TmpChange.create(:card_action_id=>first_action.id, :field=>1, :value=>card.type_id)
+        TmpChange.create(:card_action_id=>first_action.id, :field=>0, :value=>card.name)
+      end
     end
     #drop_table :card_revisions
     #remove_column :cards, :current_revision

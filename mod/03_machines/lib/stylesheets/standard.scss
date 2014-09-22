@@ -317,11 +317,13 @@ ul.pointer {
 }
 ins.diffmod,
 .diffins {
-  background: #aea;  /* NOTGREY - green for additions */
+  color: #41ad41;
+  /* background: #aea;   NOTGREY - green for additions */
 }
 del.diffmod,
 .diffdel {
-  background: #eaa;  /* NOTGREY - red for deletions */
+  color:#ff5050;
+  /*background: #eaa;   NOTGREY - red for deletions */
 }
 
 

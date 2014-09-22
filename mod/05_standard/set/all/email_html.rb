@@ -2,7 +2,9 @@ require 'byebug'
 format :email do
   
   def deliver args={}
-    _render_mail(args).deliver
+    mail = _render_mail(args)
+    mail.delivery_method(Wagn.config.action_mailer.delivery_method,Wagn.config.action_mailer.smtp_settings)
+    mail.deliver
   end
     
   view :missing        do |args| '' end
@@ -28,7 +30,7 @@ format :email do
     alternative = text_message.present? and html_message.present?
     
     mail = Mail.new(args) do
-      if alternative and !attachment_list.empty?
+      if alternative and attachment and !attachment_list.empty?
         content_type 'multipart/mixed'
         part :content_type => 'multipart/alternative' do |copy|
           copy.part :content_type => 'text/plain' do |plain|

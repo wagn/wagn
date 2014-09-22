@@ -128,7 +128,6 @@ end
 
 
 event :process_subcards, :after=>:approve, :on=>:save do
-  
   subcards.keys.each do |sub_name|
     opts = @subcards[sub_name] || {}
     opts = { 'content' => opts } if String===opts  #ACT<content>

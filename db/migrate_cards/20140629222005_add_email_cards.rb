@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class SystemEmails < ActiveRecord::Migration
+class AddEmailCards < ActiveRecord::Migration
   include Wagn::MigrationHelper
   def up
     contentedly do

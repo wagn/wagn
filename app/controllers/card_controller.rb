@@ -56,16 +56,6 @@ class CardController < ActionController::Base
     end
   end
 
-  def rollback   #ACT
-    action = card.find_action_by_params params 
-    if revision = card.revision(action)
-      card.update_attributes! revision
-      card.attachment_symlink_to action.id
-    end
-    show   #ACT what to do if we can't find the action? errors.add? 
-  end
-
-
   def watch
     toggle_subscription_for Card::Auth.current
     ajax? ? show(:watch) : read    

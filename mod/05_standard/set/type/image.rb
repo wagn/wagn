@@ -34,6 +34,7 @@ format :html do
 
   view :diff do |args|
     out = ''
+    binding.pry
     if @show_diff and @previous_revision
       card.selected_revision_id=@previous_revision.id
       out << _render_core

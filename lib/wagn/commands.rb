@@ -88,7 +88,7 @@ WAGN ARGS
 WAGN
 
     parser.on('-d', '--deck-spec FILENAME(:LINE)', 'Run spec for a Wagn deck file') do |file|
-      opts[:files] = find_spec_file( file, "mods")
+      opts[:files] = find_spec_file( file, "mod")
     end
     parser.on('-c', '--core-spec FILENAME(:LINE)', 'Run spec for a Wagn core file') do |file|
       opts[:files] = find_spec_file( file, "#{Wagn.gem_root}" )

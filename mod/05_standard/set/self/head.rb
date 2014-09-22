@@ -56,6 +56,7 @@ format :html do
     style_card   = Card[manual_style] if manual_style
     style_card ||= root.card.rule_card :style
     
+    #binding.pry
     @css_path = if params[:debug] == 'style'
       page_path( style_card.name, :item => :import, :format => :css) 
     elsif style_card

@@ -166,6 +166,8 @@ module Paperclip::Interpolations
     at.instance.type_id==Card::FileID || style_name.blank? ? '' : "#{style_name}-"
   end
 
-  def revision_id(at, style_name) at.instance.selected_action_id end
+  def revision_id(at, style_name) 
+    at.instance.selected_action_id 
+  end
 end
 

@@ -48,6 +48,7 @@ format :html do
         bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{page_path root.card.name, opts} />}
       end
     end
+    bits << '<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">'
     bits.join "\n      "
   end
   

@@ -7,6 +7,7 @@ require 'RMagick'
 require 'paperclip'
 require 'coderay'
 require 'haml'
+require 'kaminari'
 #require 'scheduler_daemon'
 
 if Rails.env == 'test'

@@ -39,7 +39,7 @@ Gem::Specification.new do |s|
     [ 'uglifier',     '~> 2.5'    ],
     
     [ 'haml',         '~> 4.0.5'  ],
-
+    [ 'kaminari',     '~> 0.16.1' ],
     # should not depend!
     [ 'airbrake',     '~> 3.1'    ] 
 

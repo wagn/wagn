@@ -1,5 +1,6 @@
 require 'haml'
 
+REVISIONS_PER_PAGE = 2
 # has to be called always and before :set_name and :process_subcards
 def create_act_and_action
   #@current_act = (@supercard ? @supercard.current_act : Card::Act.create(:ip_address=>Env.ip)) #acts.build(:ip_address=>Env.ip
@@ -53,7 +54,7 @@ end
 
 def intrusive_acts  # all acts with actions on self and on cards included in self
   @intrusive_acts ||= begin
-    Act.joins(:actions).where('card_actions.card_id IN (:card_ids)', {:card_ids => (included_card_ids << id)}).uniq.order(:id)
+    Act.joins(:actions).where('card_actions.card_id IN (:card_ids)', {:card_ids => (included_card_ids << id)}).uniq.order(:id).reverse_order
     #i_acts = (included_cards << self).map{|c| c.actions.map(&:act) }.flatten.uniq
     #i_acts.uniq.sort{ |a,b| b.acted_at <=> a.acted_at }
   end
@@ -74,26 +75,34 @@ format :html do
   end
 
   view :revisions do |args| 
-    count = card.intrusive_acts.size+1
-    card.intrusive_acts.page(Env.params['page']).per(2).reverse.map do |act|      
+    page = Env.params['page'] || 1
+    count = card.intrusive_acts.size+1-(page.to_i-1)*REVISIONS_PER_PAGE
+    
+    card.intrusive_acts.page(page).per(REVISIONS_PER_PAGE).map do |act|      
       count -= 1
       render_act_summary args.merge(:act=>act,:rev_nr=>count)
     end.join
   end
   
   view :revision_subheader do |args|
-    intr = card.intrusive_acts.page(Env.params['page']).per(2)
+    intr = card.intrusive_acts.page(Env.params['page']).per(REVISIONS_PER_PAGE)
     render_haml :intr=>intr do 
       # %span.revision-info{:style=>"text-align: left;"}
       #   Revisions for
       #   = "#{card.name}"
       %{
-.revision-header  
-  = paginate intr
-  %div.revision-legend{:style=>"text-align:right;"}
-    = added_chunk("Added")
-    |
-    = deleted_chunk("Deleted")
+.history-header  
+  = paginate intr, :html=> {:remote=>true, :class=>'slotter'}
+  %span.history-legend{:style=>"text-align:right;"}
+    %span.traffic-light.diff-green
+      &nbsp;
+    %span
+      = added_chunk("Added")
+      |
+    %span.traffic-light.diff-red
+      &nbsp;
+    %span
+      = deleted_chunk("Deleted")
       }
     
     end

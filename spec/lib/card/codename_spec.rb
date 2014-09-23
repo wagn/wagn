@@ -7,18 +7,18 @@ describe Card::Codename, "Codename" do
   end
 
   it "should be sane" do    
-    Card[@codename].codename.should == @codename.to_s #would prefer Symbol eventually
+    expect(Card[@codename].codename).to eq(@codename.to_s) #would prefer Symbol eventually
     card_id = Card::Codename[@codename]
-    card_id.should be_a_kind_of Integer
-    Card::Codename[card_id].should == @codename
+    expect(card_id).to be_a_kind_of Integer
+    expect(Card::Codename[card_id]).to eq(@codename)
   end
 
   it "should make cards indestructable" do
     Card::Auth.as_bot do
       card = Card[@codename]
       card.delete
-      card.errors[:delete].first.should match 'is a system card'
-      Card[@codename].should be
+      expect(card.errors[:delete].first).to match 'is a system card'
+      expect(Card[@codename]).to be
     end
   end
   

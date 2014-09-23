@@ -139,17 +139,17 @@ class Card
     
     
     def diff
-      @diff ||= { :type=>type_diff, :content=>content_diff, :name=>name_diff}
+      @diff ||= { :cardtype=>type_diff, :content=>content_diff, :name=>name_diff}
     end
       
   
-    def name_diff action
+    def name_diff
       if new_name?
         Card::Diff::DiffBuilder.new(old_values[:name],new_values[:name]).complete
       end
     end
   
-    def type_diff action
+    def type_diff
       if new_type?
         Card::Diff::DiffBuilder.new(old_values[:cardtype],new_values[:cardtype]).complete
       end

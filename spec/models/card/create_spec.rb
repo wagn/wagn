@@ -3,7 +3,7 @@
 # FIXME this shouldn't be here
 describe Card::Set::Type::Cardtype, ".create with :codename" do
   it "should work" do
-    Card.create!(:name=>"Foo Type", :codename=>"foo", :type=>'Cardtype').type_code.should==:cardtype
+    expect(Card.create!(:name=>"Foo Type", :codename=>"foo", :type=>'Cardtype').type_code).to eq(:cardtype)
   end
 end
 
@@ -21,7 +21,7 @@ describe Card, "created by Card.new " do
     Card::Auth.as_bot do
       Card.create! :name => "blue+*right+*default", :content => "joe", :type=>"Pointer"
       c = Card.new :name => "Lady+blue", :content => "[[Jimmy]]"
-      c.content.should == "[[Jimmy]]"
+      expect(c.content).to eq("[[Jimmy]]")
     end
   end
 end
@@ -36,18 +36,18 @@ describe Card, "created by Card.create with valid attributes" do
     end
   end
 
-  it "should not have errors"        do @b.errors.size.should == 0        end
-  it "should have the right class"   do @c.class.should    == Card end
-  it "should have the right key"     do @c.key.should      == "new_card"  end
-  it "should have the right name"    do @c.name.should     == "New Card"  end
-  it "should have the right content" do @c.content.should  == "Great Content" end
+  it "should not have errors"        do expect(@b.errors.size).to eq(0)        end
+  it "should have the right class"   do expect(@c.class).to    eq(Card) end
+  it "should have the right key"     do expect(@c.key).to      eq("new_card")  end
+  it "should have the right name"    do expect(@c.name).to     eq("New Card")  end
+  it "should have the right content" do expect(@c.content).to  eq("Great Content") end
 
   it "should have the right content" do
     @c.db_content == "Great Content"
   end
 
   it "should be findable by name" do
-    Card["New Card"].class.should == Card
+    expect(Card["New Card"].class).to eq(Card)
   end
 end
 
@@ -58,19 +58,19 @@ describe Card, "create junction" do
   end
 
   it "should not have errors" do
-    @c.errors.size.should == 0
+    expect(@c.errors.size).to eq(0)
   end
 
   it "should create junction card" do
-    Card["Peach+Pear"].class.should == Card
+    expect(Card["Peach+Pear"].class).to eq(Card)
   end
 
   it "should create trunk card" do
-    Card["Peach"].class.should == Card
+    expect(Card["Peach"].class).to eq(Card)
   end
 
   it "should create tag card" do
-    Card["Pear"].class.should == Card
+    expect(Card["Pear"].class).to eq(Card)
   end
 end
 

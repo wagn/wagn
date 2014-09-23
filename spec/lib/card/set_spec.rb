@@ -15,17 +15,17 @@ describe Card do
 
   describe "Read and write card attribute" do
     it "gets email attribute" do
-      @account_card.role.should == 'request'
+      expect(@account_card.role).to eq('request')
     end
 
     it "shouldn't have a reader method for card_writer" do
-      @account_card.respond_to?( :write).should be_false
-      @account_card.method( :write= ).should be
+      expect(@account_card.respond_to?( :write)).to be_falsey
+      expect(@account_card.method( :write= )).to be
     end
 
     it "shouldn't have a reader method for card_reader" do
-      @account_card.method( :read).should be
-      @account_card.respond_to?( :read= ).should be_false
+      expect(@account_card.method( :read)).to be
+      expect(@account_card.respond_to?( :read= )).to be_falsey
     end
 
     it "sets and saves attribute" do
@@ -34,9 +34,9 @@ describe Card do
 #      @account_card.status.should == 'pending'
       Card::Auth.as_bot { @account_card.save }
 #      Card.cache.reset
-      (tcard = Card['sara'].fetch(:trait=>:account)).should be
-      tcard.status.should == 'pending'
-      tcard.fetch(:trait=>:write).content.should == 'test_value'
+      expect(tcard = Card['sara'].fetch(:trait=>:account)).to be
+      expect(tcard.status).to eq('pending')
+      expect(tcard.fetch(:trait=>:write).content).to eq('test_value')
     end
 
   end
@@ -50,35 +50,35 @@ describe Card do
   let(:html_format_double) { proxy Card::HtmlFormat }
 
   it "should define Formatter methods from modules" do
-    format_double.method(:render_navbox_self_core).should be
-    format_double.method(:_render_right_right_raw).should be
-    format_double.method(:render_type_search_core).should be
-    format_double.method(:_final_type_search_raw).should be
+    expect(format_double.method(:render_navbox_self_core)).to be
+    expect(format_double.method(:_render_right_right_raw)).to be
+    expect(format_double.method(:render_type_search_core)).to be
+    expect(format_double.method(:_final_type_search_raw)).to be
   end
   it "should call set render methods" do
-    card_self.should_receive(:_final_self_navbox_core)
+    expect(card_self).to receive(:_final_self_navbox_core)
     card_self.render_core
-    card_right.method(:_render_right_right_raw).should be
+    expect(card_right.method(:_render_right_right_raw)).to be
     card_right.render_core
-    card_type_search.method(:render_type_search_core).should be
+    expect(card_type_search.method(:render_type_search_core)).to be
     card_type_search.render_core
-    card.method(:_final_type_search_raw).should be
+    expect(card.method(:_final_type_search_raw)).to be
     card.render_core
   end
   it "should define Formatter methods from modules" do
-    html_format_double.method(:render_self_navbox_core).should be
-    html_format_double.method(:_render_right_right_raw).should be
-    html_format_double.method(:render_type_search_core).should be
-    html_format_double.method(:_final_type_search_raw).should be
+    expect(html_format_double.method(:render_self_navbox_core)).to be
+    expect(html_format_double.method(:_render_right_right_raw)).to be
+    expect(html_format_double.method(:render_type_search_core)).to be
+    expect(html_format_double.method(:_final_type_search_raw)).to be
   end
   it "should define Formatter methods from modules" do
-    card_self.should_receive(:_final_self_navbox_titled)
+    expect(card_self).to receive(:_final_self_navbox_titled)
     card_self.render_titled
-    card_right.method(:_render_right_right_edit).should be
+    expect(card_right.method(:_render_right_right_edit)).to be
     card_right.render_edit
-    card_type_search.method(:render_type_search_menu).should be
+    expect(card_type_search.method(:render_type_search_menu)).to be
     card_type_search.render_menu
-    card.method(:_final_type_search_content).should be
+    expect(card.method(:_final_type_search_content)).to be
     card.render_content
   end
 end

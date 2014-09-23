@@ -15,18 +15,18 @@ describe Card::Set::Right::Account do
       end
       
       it 'should create an authenticable password' do
-        Card::Auth.password_authenticated?( @user_card.account, 'tmp_pass').should be_true
+        expect(Card::Auth.password_authenticated?( @user_card.account, 'tmp_pass')).to be_truthy
       end
     end
     
     it "should check accountability of 'accounted' card" do
       @unaccountable = Card.create :name=>'BasicUnaccountable', '+*account'=>{ '+*email'=>'tmpuser@wagn.org', '+*password'=>'tmp_pass' }
-      @unaccountable.errors['+*account'].first.should == 'not allowed on this card'
+      expect(@unaccountable.errors['+*account'].first).to eq('not allowed on this card')
     end
     
     it "should require email" do
       @no_email = Card.create :name=>'TmpUser', :type_id=>Card::UserID, '+*account'=>{ '+*password'=>'tmp_pass' }
-      @no_email.errors['+*account'].first.should =~ /email required/
+      expect(@no_email.errors['+*account'].first).to match(/email required/)
     end
   end
   
@@ -109,12 +109,12 @@ describe Card::Set::Right::Account do
     end
 
     it 'should authenticate with correct token and delete token card' do
-      Card::Auth.current_id.should == Card::AnonymousID
-      @account.save.should == true
-      Card::Auth.current_id.should == @account.left_id
+      expect(Card::Auth.current_id).to eq(Card::AnonymousID)
+      expect(@account.save).to eq(true)
+      expect(Card::Auth.current_id).to eq(@account.left_id)
       @account = @account.refresh force=true
-      @account.fetch(:trait => :token).should be_nil
-      @account.save.should == false
+      expect(@account.fetch(:trait => :token)).to be_nil
+      expect(@account.save).to eq(false)
     end
   
     it 'should not work if token is expired' do
@@ -122,16 +122,16 @@ describe Card::Set::Right::Account do
       @account.token_card.expire
       
       result = @account.save
-      result.should == true                 # successfully completes save
-      @account.token.should_not == @token   # token gets updated
+      expect(result).to eq(true)                 # successfully completes save
+      expect(@account.token).not_to eq(@token)   # token gets updated
       success = Card::Env.params[:success]
-      success[:message].should =~ /expired/ # user notified of expired token
+      expect(success[:message]).to match(/expired/) # user notified of expired token
     end
     
     it 'should not work if token is wrong' do
       Card::Env.params[:reset_token] = @token + 'xxx'
       @account.save
-      @account.errors[:abort].first.should =~ /incorrect_token/
+      expect(@account.errors[:abort].first).to match(/incorrect_token/)
     end  
     
   end

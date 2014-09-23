@@ -11,10 +11,10 @@ describe Card::Set::Self::All do
     it 'should be trigger empty trash (with right params)' do
       Card::Auth.as_bot do
         Card['A'].delete!
-        Card.where( :trash=>true ).should_not be_empty
+        expect(Card.where( :trash=>true )).not_to be_empty
         Card::Env.params[:task] = :empty_trash
         @all.update_attributes({})
-        Card.where( :trash=>true ).should be_empty
+        expect(Card.where( :trash=>true )).to be_empty
       end
     end
 
@@ -23,10 +23,10 @@ describe Card::Set::Self::All do
         a = Card['A']
         a.update_attributes! :content=>'a new day'
         a.update_attributes! :content=>'another day'
-        a.actions.count.should == 3
+        expect(a.actions.count).to eq(3)
         Card::Env.params[:task] = :delete_old_revisions #ACT
         @all.update_attributes({})
-        a.actions.count.should == 2        
+        expect(a.actions.count).to eq(2)        
       end
     end
 

@@ -115,7 +115,7 @@ describe Card::HtmlFormat do
         @layout_card.content = "Hi {{A}}"
         Card::Auth.as_bot { @layout_card.save }
 
-        @main_card.format.render(:layout).should match('Hi Alpha')
+        expect(@main_card.format.render(:layout)).to match('Hi Alpha')
       end
 
       it "should default to open view for main card" do
@@ -123,9 +123,9 @@ describe Card::HtmlFormat do
         Card::Auth.as_bot { @layout_card.save }
 
         result = @main_card.format.render_layout
-        result.should match(/Open up/)
-        result.should match(/card-header/)
-        result.should match(/Joe User/)
+        expect(result).to match(/Open up/)
+        expect(result).to match(/card-header/)
+        expect(result).to match(/Joe User/)
       end
 
       it "should render custom view of main" do
@@ -133,16 +133,17 @@ describe Card::HtmlFormat do
         Card::Auth.as_bot { @layout_card.save }
 
         result = @main_card.format.render_layout
-        result.should match(/Hey.*div.*Joe User/)
-        result.should_not match(/card-header/)
+        expect(result).to match(/Hey.*div.*Joe User/)
+        expect(result).not_to match(/card-header/)
       end
 
       it "shouldn't recurse" do
         @layout_card.content="Mainly {{_main|core}}"
         Card::Auth.as_bot { @layout_card.save }
 
-        rendered = @layout_card.format.render(:layout).should == 
+        rendered = expect(@layout_card.format.render(:layout)).to eq( 
           %{Mainly <div id="main"><div class="CodeRay">\n  <div class="code"><pre>Mainly {{_main|core}}</pre></div>\n</div>\n</div>}
+        )
           #probably better to check that it matches "Mainly" exactly twice.
       end
       
@@ -154,7 +155,7 @@ describe Card::HtmlFormat do
           Card.create :name=>"outer space", :content=>"{{_main|name}}"
         end
         
-        @layout_card.format.render(:layout).should == 'Joe User'
+        expect(@layout_card.format.render(:layout)).to eq('Joe User')
       end
     end
 

@@ -1,4 +1,3 @@
-require 'haml'
 
 REVISIONS_PER_PAGE = 2
 # has to be called always and before :set_name and :process_subcards
@@ -87,20 +86,15 @@ format :html do
   view :revision_subheader do |args|
     intr = card.intrusive_acts.page(params['page']).per(REVISIONS_PER_PAGE)
     render_haml :intr=>intr do 
-      # %span.revision-info{:style=>"text-align: left;"}
-      #   Revisions for
-      #   = "#{card.name}"
       %{
 .history-header  
   = paginate intr, :html=> {:remote=>true, :class=>'slotter'}
   %span.history-legend{:style=>"text-align:right;"}
-    %span.traffic-light.diff-green
-      &nbsp;
+    %i.fa.fa-circle.diff-green
     %span
       = Card::Diff.render_added_chunk("Added")
       |
-    %span.traffic-light.diff-red
-      &nbsp;
+    %i.fa.fa-circle.diff-red
     %span
       = Card::Diff.render_deleted_chunk("Deleted")
       }
@@ -120,15 +114,9 @@ format :html do
     rev_nr = params['rev_nr'] || args[:rev_nr] 
     current_rev_nr = params['current_rev_nr'] || args[:current_rev_nr] || card.intrusive_acts.size
     hide_diff = (params["hide_diff"]=="true") || args[:hide_diff]
-    if (act_view == :expanded)
-      toggled_view = :act_summary
-    else
-      toggled_view = :act_expanded
-    end
     wrap( args.merge(:slot_class=>"revision-#{act.id}") ) do
       render_haml :card=>card, :act=>act, :act_view=>act_view, 
                   :current_rev_nr=>current_rev_nr, :rev_nr=>rev_nr, 
-                  :toggled_view=>toggled_view,
                   :hide_diff=> hide_diff do 
         %{
 .act{:style=>"clear:both;"}
@@ -137,26 +125,19 @@ format :html do
       = "##{rev_nr}"
     .title
       .actor
-        = act.actor.name
+        = link_to act.actor.name, wagn_url( act.actor )
       .time.timeago
         = time_ago_in_words(act.acted_at)
         ago
         - if current_rev_nr == rev_nr
           |
-          %em 
+          %em.current
             Current
         - elsif act_view == :expanded
-          |
-          %em
-            = rollback_link act.relevant_actions_for(card)
-          |
-          = link_to_view (hide_diff ? "Show" : "Hide") + " changes", :act_expanded, 
-              :path_opts=>{:hide_diff=>!hide_diff, :act_id=>act.id, :act_view=>act_view, :rev_nr=>rev_nr, :current_rev_nr=>current_rev_nr}, 
-              :class=>'slotter', :remote=>true
+          = rollback_link act.relevant_actions_for(card)
+          = show_or_hide_changes_link hide_diff, :act_id=>act.id, :act_view=>act_view, :rev_nr=>rev_nr, :current_rev_nr=>current_rev_nr 
   .toggle
-    = link_to '', path(:view=>toggled_view, :act_id=>act.id, :act_view=>act_view, :rev_nr=>rev_nr, :current_rev_nr=>current_rev_nr), 
-              :class=>"slotter revision-#{act.id} #{ act_view==:expanded ? "arrow-down" : "arrow-right"}", 
-              :remote=>true
+    = fold_or_unfold_link :act_id=>act.id, :act_view=>act_view, :rev_nr=>rev_nr, :current_rev_nr=>current_rev_nr
   .action-container{:style=>("clear: left;" if act_view == :expanded)}
     - act.relevant_actions_for(card).each do |action|
       = send("_render_action_#{ act_view }", :action=>action )
@@ -181,20 +162,27 @@ format :html do
       %{
 .action
   .summary
-    .ampel   
-      .traffic-light{:class=> ("diff-red" if action.red?) }
-        &nbsp;
-      .traffic-light{:class=> ("diff-green" if action.green?) }
-        &nbsp;
-    .name-diff{:onClick=>"self.location.href='#{wagn_path(action.card)}?view=history'"}
-      = name_changes action, hide_diff
+    %span.ampel   
+      %i.fa.fa-circle{:class=>(action.red? ? 'diff-red' : 'diff-invisible')}
+      %i.fa.fa-circle{:class=>(action.green? ? 'diff-green' : 'diff-invisible')}
+    -if action.card == card
+      %span.name-diff
+        = name_changes(action, hide_diff)    
+    -else
+      =  link_to path(:view=>:related, :related=>{:view=>"history",:name=>action.card.name}), :class=>'slotter name-diff', 
+                   :slotSelector=>".card-slot.card-frame", :remote=>true do
+        - name_changes(action, hide_diff)    
     -if action.new_type?
-      .type-diff
+      %span.type-diff
         = type_changes action, hide_diff
     -if action.new_content?
-      .arrow
-        %i.fa.fa-arrow-right
-      .content-diff{:style=>("clear:left; padding: 10px 10px 10px 10px;" if action_view == :expanded)}
+      %i.fa.fa-arrow-right.arrow
+      -if action_view == :summary 
+        %span.content-diff
+          = content_changes action, action_view, hide_diff
+  -if action.new_content? and action_view == :expanded
+    .expanded
+      %span.content-diff
         = content_changes action, action_view, hide_diff
         }
     end
@@ -205,7 +193,7 @@ format :html do
     old_name = (name = action.old_values[:name] and showname(name))
                 
     if action.new_name?
-      new_name = showname(action.new_values[:name])
+      new_name = showname(action.new_values[:name]).to_s
       if hide_diff 
         new_name
       else
@@ -217,7 +205,7 @@ format :html do
   end
   
   def type_changes action, hide_diff=false
-    change = hide_diff ? action.edit_info[:new_type] : action.diff[:type]
+    change = hide_diff ? action.new_values[:cardtype] : action.diff[:cardtype]
     "(#{change})"
   end
   
@@ -231,11 +219,31 @@ format :html do
 
   def rollback_link action_ids
     if card.ok?(:update) 
-      link_to 'Save as current', path(:action=>:update, :view=>:open, :action_ids=>action_ids,),
-        :class=>'slotter',:slotSelector=>'.card-slot.card-frame', :remote=>true, :method=>:post
+      "| " + link_to('Save as current', path(:action=>:update, :view=>:open, :action_ids=>action_ids,),
+        :class=>'slotter',:slotSelector=>'.card-slot.card-frame', :remote=>true, :method=>:post)
     end
   end
 
+  def fold_or_unfold_link args
+    if (args[:act_view] == :expanded)
+      toggled_view = :act_summary
+    else
+      toggled_view = :act_expanded
+    end
+    link_to '', path(args.merge(:view=>toggled_view)), 
+              :class=>"slotter revision-#{args[:act_id]} #{ args[:act_view]==:expanded ? "arrow-down" : "arrow-right"}", 
+              :remote=>true
+  end
+  
+  def show_or_hide_changes_link hide_diff, args
+    "| " +  link_to_view( (hide_diff ? "Show" : "Hide") + " changes", :act_expanded, 
+      :path_opts=>args.merge(:hide_diff=>!hide_diff), 
+      :class=>'slotter', :remote=>true )
+  end
+  
+  def render_haml locals={}, &block
+    Haml::Engine.new(block.call).render(binding, locals)
+  end
   # old stuff
   
 
@@ -245,14 +253,6 @@ format :html do
   end
 
 
-
-  def rollback to_rev=nil
-    to_rev ||= @revision_number
-    if card.ok?(:update) && !(card.current_revision==@revision)
-      link_to 'Save as current', path(:action=>:rollback, :rev=>to_rev),
-        :class=>'slotter', :remote=>true
-    end
-  end
 
   def revision_menu
     revision_menu_items.flatten.map do |item|
@@ -265,39 +265,4 @@ format :html do
     items << rollback unless card.recaptcha_on?
     items
   end
-
-  def forward
-    if @revision_number < card.revisions.count
-      revision_link('Newer', @revision_number +1, 'to_next_revision', 'F' ) +
-        raw(" <small>(#{card.revisions.count - @revision_number})</small>")
-    else
-      'Newer <small>(0)</small>'
-    end
-  end
-
-  def back_for_revision
-    if @revision_number > 1
-      revision_link('Older',@revision_number - 1, 'to_previous_revision') +
-        raw("<small>(#{@revision_number - 1})</small>")
-    else
-      'Older <small>(0)</small>'
-    end
-  end
-
-  def see_or_hide_changes_for_revision
-    revision_link(@show_diff ? 'Hide changes' : 'Show changes',
-      @revision_number, 'see_changes', 'C', (@show_diff ? 'false' : 'true'))
-  end
-
-  def autosave_revision
-     revision_link("Autosaved Draft", card.revisions.count, 'to autosave')
-  end
-
-
-  #
-  def render_haml locals={}, &block
-    Haml::Engine.new(block.call).render(binding, locals)
-  end
-
-
 end

@@ -33,17 +33,38 @@ class AddEmailCards < ActiveRecord::Migration
                      :content=>"[[_left+email config]]"
       end
       
-      # the new watch rule
-      Card.create! :name => '*following', :type_code=>:pointer, :codename=>'following'
-      Card.create! :name => '*following+*right+*default', :type_code=>:pointer
-      
       # move old send rule to on_create
       fields = %w( to from cc bcc subject message attach )
       Card.search(:right=>"*send").each do |send_rule|
         Card.create! :name=>"send_rule.left+*on create", :content=>send_rule.content, :type_code=>:pointer
         #send_rule.delete  #@ethn: keep old rule for safety reasons?
       end
+    
+      # the new watch rule
+      Card.create! :name => '*following', :type_code=>:pointer, :codename=>'following'
+      Card.create! :name => '*following+*right+*default', :type_code=>:pointer
+      Card::Codename.reset_cache      
       
+      # move old watch rules
+      # +watchers
+      follower_hash = Hash.new { |h, v| h[v] = [] } 
+
+      Card.search(:right_plus => {:codename=> "watchers"}).each do |card|
+        card.item_names.each do |user_name|
+          follower_hash[user_name] << card.name
+        end
+      end
+      
+      follower_hash.each do |user, items|
+        if card=Card.fetch(user) and card.account
+          following = card.fetch :trait=>"following", :new=>{}
+          following.items = items
+        end
+      end
+      
+      watchers = Card[:watchers]
+      watchers.update_attributes :codename=>nil
+      watchers.delete!
     end
   end
 end

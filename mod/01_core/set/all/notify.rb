@@ -1,5 +1,3 @@
-require 'pry'
-
 format do
   def wrap_subedits subedits
     %{

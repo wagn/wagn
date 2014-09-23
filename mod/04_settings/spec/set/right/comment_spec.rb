@@ -9,18 +9,18 @@ describe Card::Set::Right::Comment do
     end
 
     it "should have appender immediately" do
-      Card['a'].ok?(:comment).should_not be_true
+      expect(Card['a'].ok?(:comment)).not_to be_truthy
       Card::Auth.as_bot do
         @rule.save!
       end
-      Card['a'].ok?(:comment).should be_true
+      expect(Card['a'].ok?(:comment)).to be_truthy
     end
 
     it "should have appender immediately" do
       Card::Auth.as_bot do 
-        Card['a'].ok?(:comment).should_not be_true 
+        expect(Card['a'].ok?(:comment)).not_to be_truthy 
         @rule.save!
-        Card['a'].ok?(:comment).should be_true
+        expect(Card['a'].ok?(:comment)).to be_truthy
       end
     end
   end
@@ -34,7 +34,7 @@ describe Card::Set::Right::Comment do
         @c.comment = " and more\n  \nsome lines\n\n"
         @c.save!
       end
-      Card["basicname"].content.should =~ /\<p\>some lines\<\/p\>/
+      expect(Card["basicname"].content).to match(/\<p\>some lines\<\/p\>/)
     end
   end
 

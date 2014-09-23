@@ -7,12 +7,12 @@ describe Card::EmailHtmlFormat do
   it "should render full urls" do
     Card::Env[:protocol] = 'http://'
     Card::Env[:host] = 'www.fake.com'
-    render_content('[[B]]', :format=>'email_html').should == '<a class="known-card" href="http://www.fake.com/B">B</a>'
+    expect(render_content('[[B]]', :format=>'email_html')).to eq('<a class="known-card" href="http://www.fake.com/B">B</a>')
   end
   
   describe "raw view" do
     it "renders missing included cards as blank" do
-      render_content('{{strombooby}}', :format=>'email_html').should == ''
+      expect(render_content('{{strombooby}}', :format=>'email_html')).to eq('')
     end
   
     it "renders local variables" do
@@ -106,8 +106,8 @@ describe Card::EmailHtmlFormat do
          Card.create! :name => "mailconfig+*bcc", :content => '{"name":"Joe Admin","append":"*email"}', :type=>'Search'
        end
        conf = mailconfig
-       conf[:cc].should == 'joe@user.com'
-       conf[:bcc].should == 'joe@admin.com'
+       expect(conf[:cc]).to eq('joe@user.com')
+       expect(conf[:bcc]).to eq('joe@admin.com')
      end
      
      it 'creates multipart email if text and html given' do
@@ -162,11 +162,11 @@ describe Card::EmailHtmlFormat do
         )
         conf = mailconfig( context: c )
 
-        conf[:to     ].should == "bob@bob.com"
-        conf[:from   ].should == "gary@gary.com"
-        conf[:bcc    ].should == nil
-        conf[:cc     ].should == nil
-        conf[:subject].should == "a very nutty thang"
+        expect(conf[:to     ]).to eq("bob@bob.com")
+        expect(conf[:from   ]).to eq("gary@gary.com")
+        expect(conf[:bcc    ]).to eq(nil)
+        expect(conf[:cc     ]).to eq(nil)
+        expect(conf[:subject]).to eq("a very nutty thang")
 #        conf[:attach ].should == ['Banana Trigger+attachment']
         expect(conf[:body]).to  include("Triggered by Banana Trigger and its wonderful content: data content " +
           '<a class="known-card" href="http://a.com/A">A</a>')

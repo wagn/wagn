@@ -42,13 +42,13 @@ class Card
     end
     
     def relevant_actions_for card
-      if self.card.id == card.id
-        actions
-      else
+  #    if self.card.id == card.id
+  #      actions
+  #    else
         actions.select do |action|
           card.included_card_ids.include?(action.card_id) || (card == action.card)
         end
-      end
+  #    end
     end
     
   private

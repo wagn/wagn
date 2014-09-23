@@ -267,19 +267,19 @@ describe Card::Chunk::URI, "URI chunk tests" do
   # Asserts a number of tests for the given type and text.
   def no_match(type, test_text)
     test_cont = Card::Content.new(test_text, DUMMY_CARD)
-    ( ((test_cont.respond_to? :each) ? test_cont : [test_cont]).find{|ck| type===ck } ).should be_nil
+    expect( ((test_cont.respond_to? :each) ? test_cont : [test_cont]).find{|ck| type===ck } ).to be_nil
   end
 
   def aa_match(type, test_text)
     test_cont = Card::Content.new(test_text, DUMMY_CARD)
-    ( ((test_cont.respond_to? :each) ? test_cont : [test_cont]).find{|ck| type===ck } ).should_not be_nil
+    expect( ((test_cont.respond_to? :each) ? test_cont : [test_cont]).find{|ck| type===ck } ).not_to be_nil
   end
 
   def match_chunk(type, test_text, expected)
     test_cont = Card::Content.new(test_text, DUMMY_CARD)
     chunk = ((test_cont.respond_to? :each) ? test_cont : [test_cont]).find{ |ck| type===ck }
     #warn "chunk? #{chunk.inspect}"
-    chunk.should_not be_nil
+    expect(chunk).not_to be_nil
 
     expected.each_pair do |method_sym, value|
       #assert_respond_to(chunk, method_sym)

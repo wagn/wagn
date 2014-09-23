@@ -7,8 +7,8 @@ describe Card::Set::All::Trash do
       name = '*all+*default'
       card = Card[name]
       card.delete
-      card.errors[:delete].first.should == "#{name} is an indestructible rule"
-      Card[name].should be
+      expect(card.errors[:delete].first).to eq("#{name} is an indestructible rule")
+      expect(Card[name]).to be
     end
   end
 

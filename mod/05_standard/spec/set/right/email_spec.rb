@@ -10,19 +10,19 @@ describe Card::Set::Right::Email do
 
     it 'should allow Wagn Bot to read' do
       Card::Auth.as_bot do
-        @format.render_raw.should == 'u1@user.com'
+        expect(@format.render_raw).to eq('u1@user.com')
       end
     end
 
     it 'should allow self to read' do
       Card::Auth.as Card['u1'] do
-        @format.render_raw.should == 'u1@user.com'
+        expect(@format.render_raw).to eq('u1@user.com')
       end
     end
 
     it 'should hide from other users' do
-      @card.ok?(:read).should be_false
-      @format.render_raw.should =~ /denied/
+      expect(@card.ok?(:read)).to be_falsey
+      expect(@format.render_raw).to match(/denied/)
     end
   end
   
@@ -35,18 +35,18 @@ describe Card::Set::Right::Email do
       it 'should downcase email' do
         Card::Auth.as_bot do
           @email_card.update_attributes! :content=>'QuIrE@example.com'
-          @email_card.content.should == 'quire@example.com'
+          expect(@email_card.content).to eq('quire@example.com')
         end
       end
 
       it 'should require valid email' do
         @email_card.update_attributes :content=>'boop'
-        @email_card.errors[:content].first.should =~ /must be valid address/
+        expect(@email_card.errors[:content].first).to match(/must be valid address/)
       end
       
       it 'should require unique email' do
         @email_card.update_attributes :content=>'joe@user.com'
-        @email_card.errors[:content].first.should =~ /must be unique/
+        expect(@email_card.errors[:content].first).to match(/must be unique/)
       end
       
     end

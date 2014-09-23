@@ -47,7 +47,7 @@ describe Card, "with role" do
   end
 
   it "should have a role type" do
-    @role.type_id.should== Card::RoleID
+    expect(@role.type_id).to eq(Card::RoleID)
   end
 end
 
@@ -61,29 +61,29 @@ describe Card, "with account" do
   end
 
   it "should not have errors" do
-    @joe.errors.empty?.should == true
+    expect(@joe.errors.empty?).to eq(true)
   end
 
   it "should allow type changes" do
-    @joe.type_code.should == :basic
+    expect(@joe.type_code).to eq(:basic)
   end
 
 end
 
 describe Card, "type transition approve create" do
   it 'should have cardtype b create role r1' do
-    (c=Card.fetch('Cardtype B+*type+*create')).content.should == '[[r1]]'
-    c.type_code.should == :pointer
+    expect((c=Card.fetch('Cardtype B+*type+*create')).content).to eq('[[r1]]')
+    expect(c.type_code).to eq(:pointer)
   end
 
   it "should have errors" do
     c = change_card_to_type("basicname", "cardtype_b")
-    c.errors[:permission_denied].should_not be_empty
+    expect(c.errors[:permission_denied]).not_to be_empty
   end
 
   it "should be the original type" do
     lambda { change_card_to_type("basicname", "cardtype_b") }
-    Card["basicname"].type_code.should == :basic
+    expect(Card["basicname"].type_code).to eq(:basic)
   end
 end
 
@@ -105,12 +105,12 @@ describe Card, "type transition validate_create" do
 
   it "should have errors" do
     pending "CardtypeD does not have a codename, so this is an invalid test"
-    @c.errors[:type].first.match(/card d always has errors/).should be_true
+    expect(@c.errors[:type].first.match(/card d always has errors/)).to be_truthy
   end
 
   it "should retain original type" do
     pending "CardtypeD does not have a codename, so this is an invalid test"
-    Card["basicname"].type_code.should == :basic
+    expect(Card["basicname"].type_code).to eq(:basic)
   end
 end
 
@@ -121,11 +121,11 @@ describe Card, "type transition delete callback" do
 
   it "should decrement counter in before delete" do
     pending "no trigger for this test anymore"
-    Card.count.should == 1
+    expect(Card.count).to eq(1)
   end
 
   it "should change type of the card" do
-    Card["type-e-card"].type_code.should == :basic
+    expect(Card["type-e-card"].type_code).to eq(:basic)
   end
 end
 
@@ -139,11 +139,11 @@ describe Card, "type transition create callback" do
 
   it "should increment counter"  do
     pending "No extensions, so no hooks for this now"
-    Card.count.should == 3
+    expect(Card.count).to eq(3)
   end
 
   it "should change type of card" do
-    Card["basicname"].type_code.should == :cardtype_f
+    expect(Card["basicname"].type_code).to eq(:cardtype_f)
   end
 end
 

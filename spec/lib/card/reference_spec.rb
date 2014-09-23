@@ -12,21 +12,21 @@ describe Card::Reference do
       Card["JoeForm"].format.render(:core)
       assert_equal ["joe_form+age", "joe_form+description", "joe_form+name"],
         Card["JoeForm"].includees.map(&:key).sort
-      Card["JoeForm"].references_expired.should_not == true
+      expect(Card["JoeForm"].references_expired).not_to eq(true)
     end
 
     it "on template creation" do
       Card.create! :name=>"SpecialForm", :type=>'Cardtype'
       Card.create! :name=>"Form1", :type=>'SpecialForm', :content=>"foo"
       c = Card["Form1"]
-      c.references_expired.should be_nil
+      expect(c.references_expired).to be_nil
       Card.create! :name=>"SpecialForm+*type+*structure", :content=>"{{+bar}}"
       c = Card["Form1"]
-      c.references_expired.should be_true
+      expect(c.references_expired).to be_truthy
       Card["Form1"].format.render(:core)
       c = Card["Form1"]
-      c.references_expired.should be_nil
-      Card["Form1"].includees.map(&:key).should == ["form1+bar"]
+      expect(c.references_expired).to be_nil
+      expect(Card["Form1"].includees.map(&:key)).to eq(["form1+bar"])
     end
 
     it "on template update" do
@@ -34,11 +34,11 @@ describe Card::Reference do
       tmpl = Card["UserForm+*type+*structure"]
       tmpl.content = "{{+monkey}} {{+banana}} {{+fruit}}";
       tmpl.save!
-      Card["JoeForm"].references_expired.should be_true
+      expect(Card["JoeForm"].references_expired).to be_truthy
       Card["JoeForm"].format.render(:core)
       assert_equal ["joe_form+banana", "joe_form+fruit", "joe_form+monkey"],
         Card["JoeForm"].includees.map(&:key).sort
-      Card["JoeForm"].references_expired.should_not == true
+      expect(Card["JoeForm"].references_expired).not_to eq(true)
     end
   end
 
@@ -47,19 +47,19 @@ describe Card::Reference do
     newcard("Submarine","[[Yellow]]")
     newcard("Sun","[[Yellow]]")
     newcard("Yellow")
-    Card["Yellow"].referencers.map(&:name).sort.should == %w{ Banana Submarine Sun }
+    expect(Card["Yellow"].referencers.map(&:name).sort).to eq(%w{ Banana Submarine Sun })
     y=Card["Yellow"];
     y.type_id= Card.fetch_id "UserForm";
     y.save!
-    Card["Yellow"].referencers.map(&:name).sort.should == %w{ Banana Submarine Sun }
+    expect(Card["Yellow"].referencers.map(&:name).sort).to eq(%w{ Banana Submarine Sun })
   end
 
   it "container inclusion" do
     Card.create :name=>'bob+city'
     Card.create :name=>'address+*right+*default',:content=>"{{_L+city}}"
     Card.create :name=>'bob+address'
-    Card.fetch('bob+address').includees.map(&:name).should == ["bob+city"]
-    Card.fetch('bob+city').includers.map(&:name).should == ["bob+address"]
+    expect(Card.fetch('bob+address').includees.map(&:name)).to eq(["bob+city"])
+    expect(Card.fetch('bob+city').includers.map(&:name)).to eq(["bob+address"])
   end
 
   it "pickup new links on rename" do
@@ -68,7 +68,7 @@ describe Card::Reference do
     @e.update_attributes! :name => "Ethan"  # NOW there is an Ethan card
     # @e.referencers.map(&:name).include("L")  as the test was originally written, fails
     #  do we need the links to be caught before reloading the card?
-    Card["Ethan"].referencers.map(&:name).include?("L").should_not == nil
+    expect(Card["Ethan"].referencers.map(&:name).include?("L")).not_to eq(nil)
   end
 
   it "should update references on rename when requested" do
@@ -80,7 +80,7 @@ describe Card::Reference do
     watermelon.update_referencers = true
     watermelon.name="grapefruit"
     watermelon.save!
-    lew.reload.content.should == "likes [[grapefruit]] and [[grapefruit+seeds|seeds]]"
+    expect(lew.reload.content).to eq("likes [[grapefruit]] and [[grapefruit+seeds|seeds]]")
   end
 
   it "should update referencers on rename when requested (case 2)" do
@@ -89,7 +89,7 @@ describe Card::Reference do
     card.update_referencers = true
     card.name='Administrator Menu+*type+*read'
     card.save
-    Card::Reference.where(:referee_id => Card::AdministratorID).map(&:referer_id).sort.should == refs
+    expect(Card::Reference.where(:referee_id => Card::AdministratorID).map(&:referer_id).sort).to eq(refs)
   end
 
   it "should not update references when not requested" do
@@ -103,7 +103,7 @@ describe Card::Reference do
     watermelon.update_referencers = false
     watermelon.name="grapefruit"
     watermelon.save!
-    lew.reload.content.should == "likes [[watermelon]] and [[watermelon+seeds|seeds]]"
+    expect(lew.reload.content).to eq("likes [[watermelon]] and [[watermelon+seeds|seeds]]")
     assert_equal [ 'L', 'L' ], lew.references_to.map(&:ref_type), "links should be a LINK"
     assert_equal [ 0, 0 ], lew.references_to.map(&:present), "links should not be present"
   end
@@ -112,14 +112,14 @@ describe Card::Reference do
     @ab = Card["A+B"] #linked to from X, included by Y
     @ab.update_attributes! :name=>'Peanut+Butter', :update_referencers => true
     @x = Card['X']
-    @x.content.should == "[[A]] [[Peanut+Butter]] [[T]]"
+    expect(@x.content).to eq("[[A]] [[Peanut+Butter]] [[T]]")
   end
 
   it "update referencing content on rename junction card" do
     @ab = Card["A+B"] #linked to from X, included by Y
     @ab.update_attributes! :name=>'Peanut+Butter', :update_referencers=>false
     @x = Card['X']
-    @x.content.should == "[[A]] [[A+B]] [[T]]"
+    expect(@x.content).to eq("[[A]] [[A+B]] [[T]]")
   end
 
   it "template inclusion" do
@@ -129,42 +129,42 @@ describe Card::Reference do
     rgb = newcard 'rgb'
     green_rgb = Card.create! :name => "green+rgb", :content=>"#00ff00"
 
-    green.reload.includees.map(&:name).should == ["green+rgb"]
-    green_rgb.reload.includers.map(&:name).should == ['green']
+    expect(green.reload.includees.map(&:name)).to eq(["green+rgb"])
+    expect(green_rgb.reload.includers.map(&:name)).to eq(['green'])
   end
 
   it "simple link" do
     alpha = Card.create :name=>'alpha'
     beta = Card.create :name=>'beta', :content=>"I link to [[alpha]]"
-    Card['alpha'].referencers.map(&:name).should == ['beta']
-    Card['beta'].referees.map(&:name).should == ['alpha']
+    expect(Card['alpha'].referencers.map(&:name)).to eq(['beta'])
+    expect(Card['beta'].referees.map(&:name)).to eq(['alpha'])
   end
 
   it "link with spaces" do
     alpha = Card.create! :name=>'alpha card'
     beta =  Card.create! :name=>'beta card', :content=>"I link to [[alpha_card|ALPHA CARD]]"
-    Card['beta card'].referees.map(&:name).should == ['alpha card']
-    Card['alpha card'].referencers.map(&:name).should == ['beta card']
+    expect(Card['beta card'].referees.map(&:name)).to eq(['alpha card'])
+    expect(Card['alpha card'].referencers.map(&:name)).to eq(['beta card'])
   end
 
 
   it "simple inclusion" do
     alpha = Card.create :name=>'alpha'
     beta = Card.create :name=>'beta', :content=>"I include to {{alpha}}"
-    Card['beta'].includees.map(&:name).should == ['alpha']
-    Card['alpha'].includers.map(&:name).should == ['beta']
+    expect(Card['beta'].includees.map(&:name)).to eq(['alpha'])
+    expect(Card['alpha'].includers.map(&:name)).to eq(['beta'])
   end
 
   it "non simple link" do
     alpha = Card.create :name=>'alpha'
     beta = Card.create :name=>'beta', :content=>"I link to [[alpha|ALPHA]]"
-    Card['beta'].referees.map(&:name).should == ['alpha']
-    Card['alpha'].referencers.map(&:name).should == ['beta']
+    expect(Card['beta'].referees.map(&:name)).to eq(['alpha'])
+    expect(Card['alpha'].referencers.map(&:name)).to eq(['beta'])
   end
   
   it "should handle commented inclusion" do
     c = Card.create :name=>'inclusion comment test', :content=>'{{## hi mom }}'
-    c.errors.any?.should be_false
+    expect(c.errors.any?).to be_falsey
   end
 
 
@@ -172,13 +172,13 @@ describe Card::Reference do
     @l = newcard("woof", "[[Lewdog]]")  # no Lewdog card yet...
     @e = newcard("Lewdog")              # now there is
     # NOTE @e.referencers does not work, you have to reload
-    @e.reload.referencers.map(&:name).include?("woof").should_not == nil
+    expect(@e.reload.referencers.map(&:name).include?("woof")).not_to eq(nil)
   end
 
   it "pickup new inclusions on create" do
     @l = Card.create! :name=>"woof", :content=>"{{Lewdog}}"  # no Lewdog card yet...
     @e = Card.new(:name=>"Lewdog", :content=>"grrr")              # now there is
-    @e.name_referencers.map(&:name).include?("woof").should_not == nil
+    expect(@e.name_referencers.map(&:name).include?("woof")).not_to eq(nil)
   end
 
 =begin

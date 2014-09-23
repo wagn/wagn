@@ -9,70 +9,70 @@ describe Card::Chunk::Include, "Inclusion" do
     end
     
     it "should ignore invisible comments" do
-      render_content("{{## now you see nothing}}").should==''
+      expect(render_content("{{## now you see nothing}}")).to eq('')
     end
 
     it "should handle visible comments" do
-      render_content("{{# now you see me}}").should == '<!-- # now you see me -->'
-      render_content("{{# -->}}").should == '<!-- # --&gt; -->'
+      expect(render_content("{{# now you see me}}")).to eq('<!-- # now you see me -->')
+      expect(render_content("{{# -->}}")).to eq('<!-- # --&gt; -->')
     end
     
     it "should handle empty inclusions" do
       instance = @class.new( @class.full_match( '{{ }}' ) , nil )
-      instance.name.should == ''
-      instance.options[:inc_syntax].should == ' '
+      expect(instance.name).to eq('')
+      expect(instance.options[:inc_syntax]).to eq(' ')
       instance1 = @class.new( @class.full_match( '{{|}}' ) , nil )
-      instance1.name.should == ''
-      instance1.options[:inc_syntax].should == '|'
+      expect(instance1.name).to eq('')
+      expect(instance1.options[:inc_syntax]).to eq('|')
       
     end
     
     it "should handle no pipes" do
       instance = @class.new( @class.full_match( '{{toy}}') , nil )
-      instance.name.should == 'toy'
-      instance.options[:inc_name].should == 'toy'
-      instance.options.key?(:view).should == false
+      expect(instance.name).to eq('toy')
+      expect(instance.options[:inc_name]).to eq('toy')
+      expect(instance.options.key?(:view)).to eq(false)
     end
     
     it "should strip the name" do
-      @class.new( @class.full_match( '{{ toy }}') , nil ).name.should == 'toy'
+      expect(@class.new( @class.full_match( '{{ toy }}') , nil ).name).to eq('toy')
     end
     
     it 'should strip html tags' do
-      @class.new( @class.full_match( '{{ <span>toy</span> }}') , nil ).name.should == 'toy'
+      expect(@class.new( @class.full_match( '{{ <span>toy</span> }}') , nil ).name).to eq('toy')
       instance = @class.new( @class.full_match( '{{ <span>toy|open</span> }}') , nil )
-      instance.name.should == 'toy'
-      instance.options[:view].should == 'open'
+      expect(instance.name).to eq('toy')
+      expect(instance.options[:view]).to eq('open')
     end
     
     it "should handle single pipe" do
       options = @class.new( @class.full_match('{{toy|view:link;hide:me}}'), nil ).options
-      options[:inc_name].should == 'toy'
-      options[:view].should == 'link'
-      options[:hide].should == 'me'
-      options.key?(:items).should == false
+      expect(options[:inc_name]).to eq('toy')
+      expect(options[:view]).to eq('link')
+      expect(options[:hide]).to eq('me')
+      expect(options.key?(:items)).to eq(false)
     end
     
     it "should handle multiple pipes" do
       options = @class.new( @class.full_match('{{box|open|closed}}'), nil ).options
-      options[:inc_name].should == 'box'
-      options[:view].should == 'open'
-      options[:items][:view].should == 'closed'
-      options[:items].key?(:items).should == false      
+      expect(options[:inc_name]).to eq('box')
+      expect(options[:view]).to eq('open')
+      expect(options[:items][:view]).to eq('closed')
+      expect(options[:items].key?(:items)).to eq(false)      
     end
 
     it "should handle multiple pipes with blank lists" do
       options = @class.new( @class.full_match('{{box||closed}}'), nil ).options
-      options[:inc_name].should == 'box'
-      options[:view].should == nil
-      options[:items][:view].should == 'closed'
+      expect(options[:inc_name]).to eq('box')
+      expect(options[:view]).to eq(nil)
+      expect(options[:items][:view]).to eq('closed')
     end
     
     it "should treat :item as view of next level" do
       options = @class.new( @class.full_match('{{toy|link;item:name}}'), nil ).options
-      options[:inc_name].should == 'toy'
-      options[:view].should == 'link'
-      options[:items][:view].should == 'name'
+      expect(options[:inc_name]).to eq('toy')
+      expect(options[:view]).to eq('link')
+      expect(options[:items][:view]).to eq('name')
     end
   end
 
@@ -99,7 +99,7 @@ describe Card::Chunk::Include, "Inclusion" do
 
       r=bob_address.reload.format.render_core
       assert_view_select r, 'div[class~=card-content]', "Sparta"
-      Card.fetch("bob+address").includees.map(&:name).should == [bob_city.name]
+      expect(Card.fetch("bob+address").includees.map(&:name)).to eq([bob_city.name])
     end
 
     it "should handle nesting" do
@@ -109,15 +109,15 @@ describe Card::Chunk::Include, "Inclusion" do
       r= alpha .format.render_core
       #warn "r=#{r}"
       assert_view_select r, 'div[class~=card-content]'
-      r.should =~ /Booya/
+      expect(r).to match(/Booya/)
     end
 
     it "should handle options when nesting" do
       Card.create! :type=>'Pointer', :name=>'Livable', :content=>'[[Earth]]'
       Card.create! :name=>'Earth'
       
-      render_content('{{Livable|core;item:link}}').should == render_content('{{Livable|core|link}}')
-      render_content('{{Livable|core;item:name}}').should == render_content('{{Livable|core|name}}')
+      expect(render_content('{{Livable|core;item:link}}')).to eq(render_content('{{Livable|core|link}}'))
+      expect(render_content('{{Livable|core;item:name}}')).to eq(render_content('{{Livable|core|name}}'))
     end
     
     it "should prevent recursion" do
@@ -126,7 +126,7 @@ describe Card::Chunk::Include, "Inclusion" do
       adm = Card['Quentin']
       adm.update_attributes :content => "{{Oak}}"
       result = adm.format.render_core
-      result.should match('too deep')
+      expect(result).to match('too deep')
     end
 
     it "should handle missing cards" do
@@ -147,9 +147,9 @@ describe Card::Chunk::Include, "Inclusion" do
     
       wooga = Card.create! :name=>'Wooga', :type=>'SpecialType'
       wooga_age = Card.create!( :name=>"#{wooga.name}#{Card::Name.joint}age", :content=> "39" )
-      wooga_age.format.render_core.should == "39"
+      expect(wooga_age.format.render_core).to eq("39")
       #warn "cards #{wooga.inspect}, #{wooga_age.inspect}"
-      wooga_age.includers.map(&:name).should == ['Wooga']
+      expect(wooga_age.includers.map(&:name)).to eq(['Wooga'])
     end
 
     it "should handle shading" do
@@ -175,10 +175,10 @@ describe Card::Chunk::Include, "Inclusion" do
 
     #FIXME - should move code and test to core_ext or some such
     it 'Hash.new_from_semicolon_attr_list should work' do
-      Hash.new_from_semicolon_attr_list("").should == {}
-      Hash.new_from_semicolon_attr_list(nil).should == {}
-      Hash.new_from_semicolon_attr_list("a:b;c:4"  ).should == {:a=>'b', :c=>'4'}
-      Hash.new_from_semicolon_attr_list("d:b;e:4; ").should == {:d=>'b', :e=>'4'}
+      expect(Hash.new_from_semicolon_attr_list("")).to eq({})
+      expect(Hash.new_from_semicolon_attr_list(nil)).to eq({})
+      expect(Hash.new_from_semicolon_attr_list("a:b;c:4"  )).to eq({:a=>'b', :c=>'4'})
+      expect(Hash.new_from_semicolon_attr_list("d:b;e:4; ")).to eq({:d=>'b', :e=>'4'})
     end
 
   end

@@ -10,14 +10,14 @@ describe Card::Set::Right::Password do
 
     it 'should encrypt password' do
       @user_card.account.password_card.update_attributes! :content => 'new password'
-      @user_card.account.password.should_not == 'new password'
+      expect(@user_card.account.password).not_to eq('new password')
       assert_equal @user_card.id, Card::Auth.authenticate('joe@user.com', 'new password')
     end
 
     it 'should validate password' do
       password_card = @user_card.account.password_card
       password_card.update_attributes :content => '2b'
-      password_card.errors[:password].should_not be_empty
+      expect(password_card.errors[:password]).not_to be_empty
       
     end
     
@@ -25,17 +25,17 @@ describe Card::Set::Right::Password do
       it "shouldn't change the password" do
         acct = @user_card.account
         original_pw = acct.password
-        original_pw.size.should > 10
+        expect(original_pw.size).to be > 10
         pw_card = acct.password_card
         pw_card.content = ''
         pw_card.save
-        original_pw.should == pw_card.refresh(force=true).content
+        expect(original_pw).to eq(pw_card.refresh(force=true).content)
       end
       
       it "shouldn't break email editing" do
         @user_card.account.update_attributes! '+*password'=>'', '+*email'=>'joe2@user.com'
 #        @user_card.account.update_attributes! '+*email'=>'joe2@user.com'
-        @user_card.account.email.should == 'joe2@user.com'
+        expect(@user_card.account.email).to eq('joe2@user.com')
       end
     end
   end

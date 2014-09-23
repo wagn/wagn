@@ -1,6 +1,5 @@
 ::Card.error_codes[:conflict] = [:conflict, 409]
 
-require 'byebug'
 #ACT<content> IMPORTANT
 def content
 #  if new_card? || selected_action_id == last_action_id
@@ -121,7 +120,8 @@ end
 
 def drafts
   if Card::Auth.current_id
-    actions.joins(:act).where(:act=>{:actor_id=>Card::Auth.current_id}, :draft=>true) || []
+   Card::Action.joins(:card,:act).where('card_actions.card_id'=>id, 'card_acts.actor_id' => Card::Auth.current_id, 'card_actions.draft'=>true)
+#   actions.joins(:act).where('card_acts.actor_id' => Card::Auth.current_id, :draft=>true) || []
   else
     actions.joins(:act).where(:draft=>true) || []
   end

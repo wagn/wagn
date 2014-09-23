@@ -66,9 +66,9 @@ describe Card::Set::All::Permissions do
 
     it "should be *all+*read by default" do
       card = Card.fetch('Home')
-      card.read_rule_id.should == Card.fetch('*all+*read').id
-      card.who_can(:read).should ==  [Card::AnyoneID]
-      Card::Auth.as(:anonymous){ card.ok?(:read).should be_true }
+      expect(card.read_rule_id).to eq(Card.fetch('*all+*read').id)
+      expect(card.who_can(:read)).to eq([Card::AnyoneID])
+      Card::Auth.as(:anonymous){ expect(card.ok?(:read)).to be_truthy }
     end
 
     it "should update to role ('Anyone Signed In')" do
@@ -78,10 +78,10 @@ describe Card::Set::All::Permissions do
       pc = Card[name]
       card = Card['Home']
       #warn "card #{name}, #{card.inspect}, #{pc.inspect}"
-      pc.should be
-      card.read_rule_id.should == pc.id
-      card.who_can(:read).should == [Card::AnyoneSignedInID]
-      Card::Auth.as(:anonymous){ card.ok?(:read).should be_false }
+      expect(pc).to be
+      expect(card.read_rule_id).to eq(pc.id)
+      expect(card.who_can(:read)).to eq([Card::AnyoneSignedInID])
+      Card::Auth.as(:anonymous){ expect(card.ok?(:read)).to be_falsey }
     end
 
     it "should update to user ('Joe Admin')" do
@@ -89,12 +89,12 @@ describe Card::Set::All::Permissions do
       Card::Auth.as_bot { @perm_card.save! }
 
       card = Card.fetch('Home')
-      card.read_rule_id.should == @perm_card.id
-      card.who_can(:read).should == [Card['joe_admin'].id]
-      Card::Auth.as(:anonymous) { card.ok?(:read).should be_false }
-      Card::Auth.as(:joe_user)  { card.ok?(:read).should be_false }
-      Card::Auth.as(:joe_admin) { card.ok?(:read).should be_true  }
-      Card::Auth.as_bot         { card.ok?(:read).should be_true  }
+      expect(card.read_rule_id).to eq(@perm_card.id)
+      expect(card.who_can(:read)).to eq([Card['joe_admin'].id])
+      Card::Auth.as(:anonymous) { expect(card.ok?(:read)).to be_falsey }
+      Card::Auth.as(:joe_user)  { expect(card.ok?(:read)).to be_falsey }
+      Card::Auth.as(:joe_admin) { expect(card.ok?(:read)).to be_truthy  }
+      Card::Auth.as_bot         { expect(card.ok?(:read)).to be_truthy  }
     end
 
     it "should revert to more general rule when more specific (self) rule is deleted" do
@@ -103,7 +103,7 @@ describe Card::Set::All::Permissions do
         @perm_card.delete!
       end
       card = Card.fetch('Home')
-      card.read_rule_id.should == Card.fetch('*all+*read').id
+      expect(card.read_rule_id).to eq(Card.fetch('*all+*read').id)
     end
 
     it "should revert to more general rule when more specific (right) rule is deleted" do
@@ -111,13 +111,13 @@ describe Card::Set::All::Permissions do
       Card::Auth.as_bot do
         pc=Card.create(:name=>'B+*right+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
       end
-      pc.should be
+      expect(pc).to be
       card = Card.fetch('A+B')
-      card.read_rule_id.should == pc.id
+      expect(card.read_rule_id).to eq(pc.id)
       pc = Card.fetch(pc.name) #important to re-fetch to catch issues with detecting change in trash status.
       Card::Auth.as_bot { pc.delete }
       card = Card.fetch('A+B')
-      card.read_rule_id.should == Card.fetch('*all+*read').id
+      expect(card.read_rule_id).to eq(Card.fetch('*all+*read').id)
     end
 
     it "should revert to more general rule when more specific rule is renamed" do
@@ -130,7 +130,7 @@ describe Card::Set::All::Permissions do
       end
 
       card = Card.fetch('Home')
-      card.read_rule_id.should == Card.fetch('*all+*read').id
+      expect(card.read_rule_id).to eq(Card.fetch('*all+*read').id)
     end
 
     it "should not be overruled by a more general rule added later" do
@@ -143,17 +143,17 @@ describe Card::Set::All::Permissions do
       end
 
       card = Card.fetch('Home')
-      card.read_rule_id.should == @perm_card.id
+      expect(card.read_rule_id).to eq(@perm_card.id)
     end
 
     it "should get updated when trunk type change makes type-plus-right apply / unapply" do
       @perm_card.name = "Phrase+B+*type plus right+*read"
       Card::Auth.as_bot { @perm_card.save! }
-      Card.fetch('A+B').read_rule_id.should == Card.fetch('*all+*read').id
+      expect(Card.fetch('A+B').read_rule_id).to eq(Card.fetch('*all+*read').id)
       c = Card.fetch('A')
       c.type_id = Card::PhraseID
       c.save!
-      Card.fetch('A+B').read_rule_id.should == @perm_card.id
+      expect(Card.fetch('A+B').read_rule_id).to eq(@perm_card.id)
     end
 
     it "should work with relative settings" do
@@ -163,10 +163,10 @@ describe Card::Set::All::Permissions do
         all_plus.save
       end
       c = Card.new(:name=>'Home+Heart')
-      c.who_can(:read).should == [Card::AnyoneSignedInID]
-      c.permission_rule_card(:read).first.id.should == @perm_card.id
+      expect(c.who_can(:read)).to eq([Card::AnyoneSignedInID])
+      expect(c.permission_rule_card(:read).first.id).to eq(@perm_card.id)
       c.save
-      c.read_rule_id.should == @perm_card.id
+      expect(c.read_rule_id).to eq(@perm_card.id)
     end
 
     it "should get updated when relative settings change" do
@@ -175,18 +175,18 @@ describe Card::Set::All::Permissions do
         all_plus.save
       end
       c = Card.new(:name=>'Home+Heart')
-      c.who_can(:read).should == [Card::AnyoneID]
-      c.permission_rule_card(:read).first.id.should == Card.fetch('*all+*read').id
+      expect(c.who_can(:read)).to eq([Card::AnyoneID])
+      expect(c.permission_rule_card(:read).first.id).to eq(Card.fetch('*all+*read').id)
       c.save
-      c.read_rule_id.should == Card.fetch('*all+*read').id
+      expect(c.read_rule_id).to eq(Card.fetch('*all+*read').id)
       Card::Auth.as_bot { @perm_card.save! }
       c2 = Card.fetch('Home+Heart')
-      c2.who_can(:read).should == [Card::AnyoneSignedInID]
-      c2.read_rule_id.should == @perm_card.id
-      Card.fetch('Home+Heart').read_rule_id.should == @perm_card.id
+      expect(c2.who_can(:read)).to eq([Card::AnyoneSignedInID])
+      expect(c2.read_rule_id).to eq(@perm_card.id)
+      expect(Card.fetch('Home+Heart').read_rule_id).to eq(@perm_card.id)
       Card::Auth.as_bot{ @perm_card.delete }
-      Card.fetch('Home').read_rule_id.should == Card.fetch('*all+*read').id
-      Card.fetch('Home+Heart').read_rule_id.should == Card.fetch('*all+*read').id
+      expect(Card.fetch('Home').read_rule_id).to eq(Card.fetch('*all+*read').id)
+      expect(Card.fetch('Home+Heart').read_rule_id).to eq(Card.fetch('*all+*read').id)
     end
 
     it "should insure that class overrides work with relative settings" do
@@ -195,15 +195,15 @@ describe Card::Set::All::Permissions do
         all_plus.save
         Card::Auth.as_bot { @perm_card.save! }
         c = Card.create(:name=>'Home+Heart')
-        c.read_rule_id.should == @perm_card.id
+        expect(c.read_rule_id).to eq(@perm_card.id)
         r = Card.create(:name=>'Heart+*right+*read', :type=>'Pointer', :content=>'[[Administrator]]')
-        Card.fetch('Home+Heart').read_rule_id.should == r.id
+        expect(Card.fetch('Home+Heart').read_rule_id).to eq(r.id)
       end
     end
 
     it "should work on virtual+virtual cards" do
       c = Card.fetch('Number+*type+by name')
-      c.ok?(:read).should be_true
+      expect(c.ok?(:read)).to be_truthy
     end
 
   end
@@ -222,21 +222,21 @@ describe Card::Set::All::Permissions do
 
     it "checking ok read should not add to errors" do
       Card::Auth.as_bot do
-        Card::Auth.always_ok?.should == true
+        expect(Card::Auth.always_ok?).to eq(true)
       end
       Card::Auth.as(:joe_user) do
-        Card::Auth.always_ok?.should == false
+        expect(Card::Auth.always_ok?).to eq(false)
       end
       Card::Auth.as(:joe_admin) do
-        Card::Auth.always_ok?.should == true
+        expect(Card::Auth.always_ok?).to eq(true)
         Card.create! :name=>"Hidden"
         Card.create(:name=>'Hidden+*self+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
       end
 
       Card::Auth.as(:anonymous) do
         h = Card.fetch('Hidden')
-        h.ok?(:read).should == false
-        h.errors.empty?.should_not == nil
+        expect(h.ok?(:read)).to eq(false)
+        expect(h.errors.empty?).not_to eq(nil)
       end
     end
 
@@ -244,8 +244,8 @@ describe Card::Set::All::Permissions do
       Card::Auth.as_bot do
         c1 = Card['c1']
         Card.create! :name=>'c1+*self+*comment', :type=>'Pointer', :content=>'[[r1]]'
-        c1.who_can( :comment ).should == [Card['r1'].id]
-        c1.ok?(:comment).should be_true
+        expect(c1.who_can( :comment )).to eq([Card['r1'].id])
+        expect(c1.ok?(:comment)).to be_truthy
       end
     end
 
@@ -253,8 +253,8 @@ describe Card::Set::All::Permissions do
       Card.where(:trash=>false).each do |c|
         prc = c.permission_rule_card(:read)
         #warn "C #{c.inspect}, #{c.read_rule_id}, #{prc.first.id}, #{c.read_rule_class}, #{prc.second}, #{prc.first.inspect}" unless prc.last == c.read_rule_class && prc.first.id == c.read_rule_id
-        prc.last.should == c.read_rule_class
-        prc.first.id.should == c.read_rule_id
+        expect(prc.last).to eq(c.read_rule_class)
+        expect(prc.first.id).to eq(c.read_rule_id)
       end
     end
 
@@ -358,11 +358,11 @@ describe Card::Set::All::Permissions do
       
       it "should inherit" do
         Card::Auth.as(:anyone_signed_in) do
-          Card.fetch( 'A+*self' ).ok?(:create).should be_true #explicitly granted above
-          Card.fetch( 'A+*right').ok?(:create).should be_false #by default restricted   
+          expect(Card.fetch( 'A+*self' ).ok?(:create)).to be_truthy #explicitly granted above
+          expect(Card.fetch( 'A+*right').ok?(:create)).to be_falsey #by default restricted   
           
-          Card.fetch( 'A+*self+*structure',  :new=>{} ).ok?(:create).should be_true # +*structure granted;
-          Card.fetch( 'A+*right+*structure', :new=>{} ).ok?(:create).should be_false # can't create A+B, therefore can't create A+B+C
+          expect(Card.fetch( 'A+*self+*structure',  :new=>{} ).ok?(:create)).to be_truthy # +*structure granted;
+          expect(Card.fetch( 'A+*right+*structure', :new=>{} ).ok?(:create)).to be_falsey # can't create A+B, therefore can't create A+B+C
         end
       end
       
@@ -379,10 +379,10 @@ describe Card::Set::All::Permissions do
        end
 
        Card::Auth.as(@u1) do
-         Card.search(:content=>'WeirdWord').map(&:name).sort.should == %w( c1 c2 c3 )
+         expect(Card.search(:content=>'WeirdWord').map(&:name).sort).to eq(%w( c1 c2 c3 ))
        end
        Card::Auth.as(@u2) do
-         Card.search(:content=>'WeirdWord').map(&:name).sort.should == %w( c2 c3 )
+         expect(Card.search(:content=>'WeirdWord').map(&:name).sort).to eq(%w( c2 c3 ))
        end
     end
 
@@ -398,11 +398,11 @@ describe Card::Set::All::Permissions do
       end
 
       Card::Auth.as(@u1) do
-        Card.search(:content=>'WeirdWord').map(&:name).sort.should == %w( c1 c2 c3 )
+        expect(Card.search(:content=>'WeirdWord').map(&:name).sort).to eq(%w( c1 c2 c3 ))
       end
       Card::Auth.current_id =nil # for Card::Auth.as to be effective, you can't have a logged in user
       Card::Auth.as(@u2) do
-        Card.search(:content=>'WeirdWord').map(&:name).sort.should == %w( c2 c3 )
+        expect(Card.search(:content=>'WeirdWord').map(&:name).sort).to eq(%w( c2 c3 ))
       end
     end
 
@@ -432,7 +432,7 @@ describe Card::Set::All::Permissions do
 
 
   it "should let joe view new cards" do
-    Card.new.ok?(:read).should be_true
+    expect(Card.new.ok?(:read)).to be_truthy
   end
 
 
@@ -443,24 +443,24 @@ describe Card::Set::All::Permissions do
 
     it "should let anonymous users view basic cards" do
       Card::Auth.as :anonymous do
-        @c.ok?(:read).should be_true
+        expect(@c.ok?(:read)).to be_truthy
       end
     end
 
     it "should let joe user basic cards" do
       Card::Auth.as :joe_user do
-        @c.ok?(:read).should be_true
+        expect(@c.ok?(:read)).to be_truthy
       end
     end
   end
 
   it "should allow anyone signed in to create Basic Cards" do
-    Card.new.ok?(:create).should be_true
+    expect(Card.new.ok?(:create)).to be_truthy
   end
 
   it "should not allow someone not signed in to create Basic Cards" do
     Card::Auth.as :anonymous do
-      Card.new.ok?(:create).should_not be_true
+      expect(Card.new.ok?(:create)).not_to be_truthy
     end
   end
 
@@ -478,18 +478,18 @@ describe Card::Set::All::Permissions do
 
     it "should handle delete as a setting" do
       c = Card.new :name=>'whatever'
-      c.who_can(:delete).should == [Card['joe_user'].id]
+      expect(c.who_can(:delete)).to eq([Card['joe_user'].id])
       Card::Auth.as(:joe_user) do
-        c.ok?(:delete).should == true
+        expect(c.ok?(:delete)).to eq(true)
       end
       Card::Auth.as(:u1) do
-        c.ok?(:delete).should == false
+        expect(c.ok?(:delete)).to eq(false)
       end
       Card::Auth.as(:anonymous) do
-        c.ok?(:delete).should == false
+        expect(c.ok?(:delete)).to eq(false)
       end
       Card::Auth.as_bot do
-        c.ok?(:delete).should == true #because administrator
+        expect(c.ok?(:delete)).to eq(true) #because administrator
       end
     end
   end

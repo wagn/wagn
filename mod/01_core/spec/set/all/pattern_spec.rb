@@ -6,40 +6,40 @@ describe Card::Set::All::Pattern do
     it "returns self, type, all for simple cards" do
       Card::Auth.as_bot do
         card = Card.new( :name => "AnewCard" )
-        card.set_names.should == [ "Basic+*type","*all"]
+        expect(card.set_names).to eq([ "Basic+*type","*all"])
         card.save!
         card = Card.fetch("AnewCard")
-        card.set_names.should == [ "AnewCard+*self","Basic+*type","*all"]
+        expect(card.set_names).to eq([ "AnewCard+*self","Basic+*type","*all"])
       end
     end
 
     it "returns set names for simple star cards" do
       Card::Auth.as_bot do
-        Card.fetch('*update').set_names.should == [
+        expect(Card.fetch('*update').set_names).to eq([
           "*update+*self","*star","Setting+*type","*all"
-        ]
+        ])
       end
     end
 
     it "returns set names for junction cards" do
       Card::Auth.as_bot do
-        Card.new( :name=>"Iliad+author" ).set_names.should == [
+        expect(Card.new( :name=>"Iliad+author" ).set_names).to eq([
           "Book+author+*type plus right","author+*right","Basic+*type","*all plus","*all"
-        ]
+        ])
       end
     end
 
     it "returns set names for compound star cards" do
       Card::Auth.as_bot do
-        Card.new( :name=>"Iliad+*to" ).set_names.should == [
+        expect(Card.new( :name=>"Iliad+*to" ).set_names).to eq([
           "Book+*to+*type plus right","*to+*right","*rstar","Phrase+*type","*all plus","*all"
-        ]
+        ])
       end
     end
     
     it "handles type plus right prototypes properly" do #right place for this?  really need more prototype tests...
       Card::Auth.as_bot do
-        Card.fetch('Fruit+flavor+*type plus right').prototype.set_names.include?('Fruit+flavor+*type plus right').should be_true
+        expect(Card.fetch('Fruit+flavor+*type plus right').prototype.set_names.include?('Fruit+flavor+*type plus right')).to be_truthy
       end
     end
   end
@@ -48,7 +48,7 @@ describe Card::Set::All::Pattern do
   describe :rule_set_keys do
     it "returns correct set names for new cards" do
       card = Card.new :name => "AnewCard"
-      card.rule_set_keys.should == [ "#{Card::BasicID}+type", "all"]
+      expect(card.rule_set_keys).to eq([ "#{Card::BasicID}+type", "all"])
     end
     
   end
@@ -57,25 +57,25 @@ describe Card::Set::All::Pattern do
     it "returns css names for simple star cards" do
       Card::Auth.as_bot do
         card = Card.new( :name => "*AnewCard")
-        card.safe_set_keys.should == "ALL TYPE-basic STAR"
+        expect(card.safe_set_keys).to eq("ALL TYPE-basic STAR")
         card.save!
         card = Card.fetch("*AnewCard")
-        card.safe_set_keys.should == "ALL TYPE-basic STAR SELF-Xanew_card"
+        expect(card.safe_set_keys).to eq("ALL TYPE-basic STAR SELF-Xanew_card")
       end
     end
 
     it "returns set names for junction cards" do
       card=Card.new( :name=>"Iliad+author" )
-      card.safe_set_keys.should == "ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author"
+      expect(card.safe_set_keys).to eq("ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author")
       card.save!
       card = Card.fetch("Iliad+author")
-      card.safe_set_keys.should == "ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author SELF-iliad-author"
+      expect(card.safe_set_keys).to eq("ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author SELF-iliad-author")
     end
   end
 
   describe :label do
     it "returns label for name" do
-      Card.new(:name=>'address+*right').label.should== %{All "+address" cards}
+      expect(Card.new(:name=>'address+*right').label).to eq(%{All "+address" cards})
     end
   end
 end

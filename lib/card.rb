@@ -39,21 +39,4 @@ class Card < ActiveRecord::Base
   #binding.pry
   Loader.load_mods if count > 0
 
-
-  def migrate_watch
-    follower_hash = Hash.new { |h, v| h[v] = [] } 
-
-    Card.search(:right_plus => {:codename=> "watchers"}).each do |card|
-      card.item_names.each do |user_name|
-        follower_hash[user_name] << card.name
-      end
-    end
-    
-    follower_hash.each do |user, items|
-      if card=Card.fetch(user) and card.account
-        following = card.fetch :trait=>"following", :new=>{}
-        following.items = items
-      end
-    end
-  end
 end

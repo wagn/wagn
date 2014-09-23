@@ -113,13 +113,38 @@ module Card::Diff
     
     def complete_lcs_diff
       last_position = 0
-      new_aggregated_lcs.inject('') do |text,change|
-        if last_position < change[:position]
-          text += @old_version[last_position..change[:position]]
+      res = ''
+      dels = ''
+      adds = ''
+      prev_action = nil
+      ::Diff::LCS.traverse_balanced(@old_version,@new_version) do |chunk|
+        if prev_action and prev_action != chunk.action and
+          !(prev_action == '-' and chunk.action == '!') and 
+          !(prev_action == '!' and chunk.action == '+')
+       
+          if dels.present?
+            res += deleted_chunk(dels)
+            dels = ''
+          end
+          if !adds.empty?
+            res += added_chunk(adds)
+            adds = ''
+          end
         end
-        last_position = change[:position] + change[:text].size
-        text += render_chunk change[:action], change[:text]
+        
+        case chunk.action
+        when '-' then dels += chunk.old_element
+        when '+' then adds += chunk.new_element
+        when '!' 
+          dels += chunk.old_element
+          adds += chunk.new_element
+        else
+          res += chunk.new_element
+        end
+        prev_action = chunk.action
       end
+      res += deleted_chunk(dels) if dels.present?
+      res += added_chunk(adds) if adds.present?
     end
     
     def complete_diffy_diff
@@ -165,12 +190,24 @@ module Card::Diff
       end
     end
     
+ 
+    
     def new_aggregated_lcs
-      new_lcs.inject([]) do |res, chunk|
-        res << { :position => chunk.first.position,
-                 :action   => chunk.first.action,
-                 :text   => chunk.map(&:element).join
-               }
+      new_lcs.inject([]) do |res, change_block|
+        last_action = nil
+        change_block.each do |change| 
+          if change.action != last_action
+            res << { :position => change.position,
+                   :action   => change.action,
+                   :text   => change.element
+                 }
+          else
+            res.last[:text] += change.element
+          end
+          last_action = change.action
+        end
+        binding.pry
+        res
       end
     end
     

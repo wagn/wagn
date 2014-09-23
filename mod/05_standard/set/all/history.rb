@@ -244,6 +244,8 @@ format :html do
   def render_haml locals={}, &block
     Haml::Engine.new(block.call).render(binding, locals)
   end
+  
+  
   # old stuff
   
 

@@ -32,7 +32,6 @@ class Card
     end
 
     def trait tag_code
-      Rails.logger.info "Tag code:#{tag_code}"
       trait_name( tag_code ).s
     end
   end

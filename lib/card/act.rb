@@ -46,7 +46,7 @@ class Card
         actions
       else
         actions.select do |action|
-          card.included_cards.include?(action.card) || (card == action.card)
+          card.included_card_ids.include?(action.card_id) || (card == action.card)
         end
       end
     end

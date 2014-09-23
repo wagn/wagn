@@ -25,7 +25,7 @@ event :complete_act, :after=>:extend do
 end
 
 
-event :rollback, :before=>:approve, :on=>:update, :when=>proc{ |c| Env.action_ids } do
+event :rollback, :after=>:extend, :on=>:update, :when=>proc{ |c| Env.params['action_ids'] } do
   if !Env.action_ids.class == Array
     #TODO Error handling? params 
   else
@@ -36,13 +36,14 @@ event :rollback, :before=>:approve, :on=>:update, :when=>proc{ |c| Env.action_id
     revision = { :subcards => {}}
     actions.each do |action|
       if action.card_id == id
-        revision.merge(action.revision) 
+        revision.merge!(revision(action)) 
       else
-        revision[:subcards].merge(action.revision)
+        revision[:subcards].merge!(revision(action))
       end
     end
     
-    card.update_attributes! revision
+    Env.params['action_ids'] = nil
+    update_attributes! revision
     actions.each do |action|
       action.card.attachment_symlink_to action.id
     end
@@ -52,18 +53,15 @@ end
 
 def intrusive_acts  # all acts with actions on self and on cards included in self
   @intrusive_acts ||= begin
-    # Change.joins(:action).where(
-    #     'card_actions.card_id = :card_id AND field = :field AND card_action_id < :action_id',
-    #                       {:card_id=>id,        :field=>field_index,        :action_id=>opts[:before].id}
-    #   ).order(:id).last
-    Act.joins(:actions).where('card_actions.id IN :card_ids', {:card_ids => references_to.where( :ref_type => 'I' ) }).distinct
-    i_acts = (included_cards << self).map{|c| c.actions.map(&:act) }.flatten.uniq
-    i_acts.uniq.sort{ |a,b| b.acted_at <=> a.acted_at }
+    Act.joins(:actions).where('card_actions.card_id IN (:card_ids)', {:card_ids => (included_card_ids << id)}).uniq.order(:id)
+    #i_acts = (included_cards << self).map{|c| c.actions.map(&:act) }.flatten.uniq
+    #i_acts.uniq.sort{ |a,b| b.acted_at <=> a.acted_at }
   end
 end
 
-def included_cards
-  @included_cards ||= Card.search(:referred_to_by => name)
+def included_card_ids
+  Card::Reference.select(:referee_id).where( :ref_type => 'I', :referer_id=>id ).map(&:referee_id).compact.uniq
+  #@included_cards ||= Card.search(:referred_to_by => name)
 end 
   
 
@@ -77,20 +75,21 @@ format :html do
 
   view :revisions do |args| 
     count = card.intrusive_acts.size+1
-    '<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">' +
-    card.intrusive_acts.map do |act|      
+    card.intrusive_acts.page(Env.params['page']).per(2).reverse.map do |act|      
       count -= 1
       render_act_summary args.merge(:act=>act,:rev_nr=>count)
     end.join
   end
   
   view :revision_subheader do |args|
-    render_haml do 
+    intr = card.intrusive_acts.page(Env.params['page']).per(2)
+    render_haml :intr=>intr do 
       # %span.revision-info{:style=>"text-align: left;"}
       #   Revisions for
       #   = "#{card.name}"
       %{
 .revision-header  
+  = paginate intr
   %div.revision-legend{:style=>"text-align:right;"}
     = added_chunk("Added")
     |
@@ -339,8 +338,8 @@ format :html do
 
   def rollback_link action_ids
     if card.ok?(:update) 
-      link_to 'Save as current', path(:action=>:update, :action_ids=>action_ids),
-        :class=>'slotter history-view', :remote=>true, :method=>:post
+      link_to 'Save as current', path(:action=>:update, :view=>:open, :action_ids=>action_ids,),
+        :class=>'slotter',:slotSelector=>'.card-slot.card-frame', :remote=>true, :method=>:post
     end
   end
 

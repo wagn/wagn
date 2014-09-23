@@ -77,7 +77,8 @@ format :html do
   end
 
   view :multiselect do |args|
-    options = options_from_collection_for_select(card.options,:name,:name,card.item_names.map{|i_n| (c=Card.fetch(i_n) and c.name) or i_n})
+    selected_options = card.item_names.map{|i_n| (c=Card.fetch(i_n) and c.name) or i_n}
+    options = options_from_collection_for_select(card.options,:name,:name,selected_options)
     select_tag("pointer_multiselect", options, :multiple=>true, :class=>'pointer-multiselect')
   end
 

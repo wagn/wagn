@@ -33,7 +33,11 @@ $.extend wagn,
     $.getJSON wagn.rootPath + '/', { format: 'json', view: 'status', 'card[name]': name }, success  
 
 jQuery.fn.extend {
-  slot: -> @closest '.card-slot'
+  slot: -> 
+    if @attr('slotSelector')
+      @closest @attr('slotSelector')
+    else
+      @closest '.card-slot'
 
   setSlotContent: (val) ->
     s = @slot()

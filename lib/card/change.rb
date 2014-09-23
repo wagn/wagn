@@ -1,25 +1,5 @@
 # -*- encoding : utf-8 -*-
 class Card  
-  def last_change_on(field, opts={})
-    field_index = Card::TRACKED_FIELDS.index(field.to_s)
-    if opts[:before] and opts[:before].kind_of? Card::Action
-      Change.joins(:action).where(
-          'card_actions.card_id = :card_id AND field = :field AND card_action_id < :action_id', 
-                            {:card_id=>id,        :field=>field_index,        :action_id=>opts[:before].id}
-        ).order(:id).last
-    elsif opts[:not_after] and opts[:not_after].kind_of? Card::Action
-      Change.joins(:action).where(
-          'card_actions.card_id = :card_id AND field = :field AND card_action_id <= :action_id', 
-                            {:card_id=>id,        :field=>field_index,         :action_id=>opts[:not_after].id}
-        ).order(:id).last
-    else
-      Change.joins(:action).where(
-          'card_actions.card_id = :card_id AND field = :field', 
-                            {:card_id => id,      :field=>field_index}
-        ).order(:id).last
-    end
-  end
-  
   class Change < ActiveRecord::Base
     belongs_to :action, :foreign_key=>:card_action_id, :inverse_of=>:changes
     

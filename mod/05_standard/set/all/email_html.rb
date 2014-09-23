@@ -1,4 +1,3 @@
-require 'byebug'
 format :email do
   
   def deliver args={}

@@ -31,6 +31,26 @@ class Card
     end
   end
   
+  def last_change_on(field, opts={})
+    field_index = Card::TRACKED_FIELDS.index(field.to_s)
+    if opts[:before] and opts[:before].kind_of? Card::Action
+      Change.joins(:action).where(
+          'card_actions.card_id = :card_id AND field = :field AND card_action_id < :action_id', 
+                            {:card_id=>id,        :field=>field_index,        :action_id=>opts[:before].id}
+        ).order(:id).last
+    elsif opts[:not_after] and opts[:not_after].kind_of? Card::Action
+      Change.joins(:action).where(
+          'card_actions.card_id = :card_id AND field = :field AND card_action_id <= :action_id', 
+                            {:card_id=>id,        :field=>field_index,         :action_id=>opts[:not_after].id}
+        ).order(:id).last
+    else
+      Change.joins(:action).where(
+          'card_actions.card_id = :card_id AND field = :field', 
+                            {:card_id => id,      :field=>field_index}
+        ).order(:id).last
+    end
+  end
+  
   
   
   class Action < ActiveRecord::Base
@@ -45,12 +65,36 @@ class Card
     TYPE = [:create, :update, :delete]
     
     def edit_info
-      @edit_info || @edit_info = {
-        :action_type => "#{action_type}d",
-        :new_content => self.new_value_for(:db_content),
-        :new_name => self.new_value_for(:name),
-        :new_cardtype => ( typecard = Card[self.new_value_for(:type_id).to_i] and typecard.name.capitalize )
+      @edit_info ||= {
+        :action_type  => "#{action_type}d",
+        :new_content  => new_values[:db_content],
+        :new_name     => new_values[:name],
+        :new_cardtype => new_values[:cardtype],
+        :old_content  => old_values[:db_content],
+        :old_name     => old_values[:name],
+        :old_cardtype => old_values[:cardtype]
       }
+    end
+    
+    def new_values
+      @new_values ||= {
+        :content  => new_value_for(:db_content),
+        :name     => new_value_for(:name),
+        :cardtype => ( typecard = Card[new_value_for(:type_id).to_i] and typecard.name.capitalize )
+      }
+    end
+    
+    def old_values
+      @old_values ||= {
+        :content  => last_value_for(:db_content),
+        :name     => last_value_for(:name),
+        :cardtype => ( value = last_value_for(:type_id) and 
+                       typecard = Card.find(value) and  typecard.name.capitalize )
+      }
+    end
+    
+    def last_value_for field
+       ch = self.card.last_change_on(field, :before=>self) and ch.value
     end
     
     def new_value_for(field)
@@ -86,12 +130,47 @@ class Card
     end
     
     def red?
-      action_type == :delete || :update
+      content_diff_builder.red?
     end
     
     def green?
-      action_type  == :create || :update
+      content_diff_builder.green?
     end
+    
+    
+    def diff
+      @diff ||= { :type=>type_diff, :content=>content_diff, :name=>name_diff}
+    end
+      
+  
+    def name_diff action
+      if new_name?
+        Card::Diff::DiffBuilder.new(old_values[:name],new_values[:name]).complete
+      end
+    end
+  
+    def type_diff action
+      if new_type?
+        Card::Diff::DiffBuilder.new(old_values[:cardtype],new_values[:cardtype]).complete
+      end
+    end
+  
+    def content_diff diff_type=:expanded
+      if new_content?
+        if diff_type == :summary
+          content_diff_builder.summary
+        else
+          content_diff_builder.complete
+        end
+      end
+    end
+    
+    def content_diff_builder
+      @content_diff_builder ||= begin
+        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], :compare_html=>false)
+      end
+    end
+    
   end
 end
 

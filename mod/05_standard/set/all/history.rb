@@ -75,7 +75,7 @@ format :html do
   end
 
   view :revisions do |args| 
-    page = Env.params['page'] || 1
+    page = params['page'] || 1
     count = card.intrusive_acts.size+1-(page.to_i-1)*REVISIONS_PER_PAGE
     
     card.intrusive_acts.page(page).per(REVISIONS_PER_PAGE).map do |act|      
@@ -85,7 +85,7 @@ format :html do
   end
   
   view :revision_subheader do |args|
-    intr = card.intrusive_acts.page(Env.params['page']).per(REVISIONS_PER_PAGE)
+    intr = card.intrusive_acts.page(params['page']).per(REVISIONS_PER_PAGE)
     render_haml :intr=>intr do 
       # %span.revision-info{:style=>"text-align: left;"}
       #   Revisions for
@@ -97,16 +97,14 @@ format :html do
     %span.traffic-light.diff-green
       &nbsp;
     %span
-      = added_chunk("Added")
+      = Card::Diff.render_added_chunk("Added")
       |
     %span.traffic-light.diff-red
       &nbsp;
     %span
-      = deleted_chunk("Deleted")
+      = Card::Diff.render_deleted_chunk("Deleted")
       }
-    
     end
-
   end
   
   view :act_summary do |args|
@@ -118,10 +116,10 @@ format :html do
   end
   
   def render_act act_view, args
-    act = (Env.params['act_id'] and Card::Act.find(Env.params['act_id']))  || args[:act]
-    rev_nr = Env.params['rev_nr'] || args[:rev_nr] 
-    current_rev_nr = Env.params['current_rev_nr'] || args[:current_rev_nr] || card.intrusive_acts.size
-    hide_diff = (Env.params["hide_diff"]=="true") || args[:hide_diff]
+    act = (params['act_id'] and Card::Act.find(params['act_id'])) || args[:act]
+    rev_nr = params['rev_nr'] || args[:rev_nr] 
+    current_rev_nr = params['current_rev_nr'] || args[:current_rev_nr] || card.intrusive_acts.size
+    hide_diff = (params["hide_diff"]=="true") || args[:hide_diff]
     if (act_view == :expanded)
       toggled_view = :act_summary
     else
@@ -129,8 +127,9 @@ format :html do
     end
     wrap( args.merge(:slot_class=>"revision-#{act.id}") ) do
       render_haml :card=>card, :act=>act, :act_view=>act_view, 
-                  :current_rev_nr=>current_rev_nr, :rev_nr=>rev_nr, :toggled_view=>toggled_view,
-                  :hide_diff=>  hide_diff         do
+                  :current_rev_nr=>current_rev_nr, :rev_nr=>rev_nr, 
+                  :toggled_view=>toggled_view,
+                  :hide_diff=> hide_diff do 
         %{
 .act{:style=>"clear:both;"}
   .head
@@ -175,175 +174,60 @@ format :html do
   end
 
   def render_action action_view, args
-    render_haml :action => args[:action] || card.last_action, 
+    action = args[:action] || card.last_action
+    render_haml :action => action, 
                 :action_view=>action_view, 
                 :hide_diff=>Env.params["hide_diff"]=="true" || args[:hide_diff] do
       %{
 .action
   .summary
     .ampel   
-      =action.edit_info[:action_type]
-      -#.traffic-light{:class=> ("diff-red" if action.red?) }
-      -#  &nbsp;
-      -#.traffic-light{:class=> ("diff-green" if action.green?) }
-      -#  &nbsp;
-    .name-diff{:onClick=>"self.location.href='#{wagn_path(args[:action].card)}?view=history'"}
-      = hide_diff ? action.edit_info[:new_name] : name_diff(action) 
+      .traffic-light{:class=> ("diff-red" if action.red?) }
+        &nbsp;
+      .traffic-light{:class=> ("diff-green" if action.green?) }
+        &nbsp;
+    .name-diff{:onClick=>"self.location.href='#{wagn_path(action.card)}?view=history'"}
+      = name_changes action, hide_diff
     -if action.new_type?
       .type-diff
-        = hide_diff ? action.edit_info[:new_type] : type_diff(action)
+        = type_changes action, hide_diff
     -if action.new_content?
       .arrow
         %i.fa.fa-arrow-right
       .content-diff{:style=>("clear:left; padding: 10px 10px 10px 10px;" if action_view == :expanded)}
-        = hide_diff ? action.edit_info[:new_content] : content_diff(action, action_view)
+        = content_changes action, action_view, hide_diff
         }
     end
   end
 
   
-  def name_diff action
-    if new_name = action.new_value_for(:name) 
-      if last_change = card.last_change_on(:name, :before=>action) 
-        diff last_change.value, new_name 
+  def name_changes action, hide_diff=false
+    old_name = (name = action.old_values[:name] and showname(name))
+                
+    if action.new_name?
+      new_name = showname(action.new_values[:name])
+      if hide_diff 
+        new_name
       else
-        added_chunk(new_name)
+        Card::Diff::DiffBuilder.new(old_name,new_name).complete
       end
     else
-      showname(action.card.name)
+      old_name
     end
   end
   
-  def type_diff action
-    if new_type_id = action.new_value_for(:type_id) and new_typecard = Card.find(new_type_id)
-      last_change = card.last_change_on(:type_id, :before=>action) 
-      if last_change and typecard = Card.find(last_change.value) and  
-        "(#{diff typecard.name.capitalize, new_typecard.name.capitalize})"
-      else
-        "(#{added_chunk(new_typecard.name.capitalize)})"
-      end
-    else
-      ''
+  def type_changes action, hide_diff=false
+    change = hide_diff ? action.edit_info[:new_type] : action.diff[:type]
+    "(#{change})"
+  end
+  
+  def content_changes action, diff_type, hide_diff=false
+    if hide_diff 
+      action.new_values[:new_content]
+    else 
+      action.content_diff(diff_type)
     end
   end
-  
-  def content_diff action, diff_type
-    new_content = action.new_value_for(:db_content) || action.card.db_content
-    if new_content
-      old_content = (change=action.card.last_change_on(:db_content, :before=>action) and change.value)
-    end
-    #Diffy::Diff.new(old_content, res).to_s(:html)
-    # ::Diffy::Diff.new(old_content,new_content).each_chunk do |line|
-    #   case line
-    #   when /^\+/ then diffs << "line #{line.chomp} added"
-    #   when /^-/ then diffs <<  "line #{line.chomp} removed"
-    #   else "unchanged"
-    #   end
-    # end
-    diff old_content, new_content, :type=>diff_type, :compare_html=>false
-  end
-  
-  
-  #  Diffy::Diff.new("foo\nbar\n", "foo\nbar\nbaz\n").each do |line|
-  #    case line
-  #    when /^\+/ then puts "line #{line.chomp} added"
-  #    when /^-/ then puts "line #{line.chomp} removed"
-  #    end
-  # end
-  
-  def diff old_content, new_content, opts={}
-    if !opts[:compare_html]
-      new_content = new_content.gsub(%r(</?\w+/?>), '')
-      old_content = old_content.gsub(%r(</?\w+/?>), '') if old_content
-    end
-    
-    if opts[:type] == :summary
-      diff_summary old_content, new_content
-    else
-      diff_complete old_content, new_content
-    end
-  end
-  
-  def diff_complete old_content, new_content
-    if old_content
-      diff = format_diff(::Diff::LCS.diff(old_content,new_content))
-      last_position = 0
-      diff.inject('') do |text,change|
-        if last_position < change[:position]
-          text += old_content[last_position..change[:position]]
-        end
-        last_position = change[:position] + change[:text].size
-        
-        text += case change[:action]
-        when '+'
-          added_chunk(change[:text])
-        when '-'
-          deleted_chunk(change[:text])
-        else
-          change[:text]
-        end
-      end
-    else
-      added_chunk(new_content) 
-    end 
-  end
-  
-  def diff_summary old_content, new_content
-    max_length = 50
-    joint = '...'
-    if old_content 
-      diff = format_diff(::Diff::LCS.diff(old_content,new_content))
-      last_position = 0
-      remaining_chars = max_length
-      res = ''
-      diff.each do |change|
-        if change[:position] > last_position
-          res += joint
-        end
-        res += change[:text][0..remaining_chars]
-        remaining_chars -= change[:text].size
-        if remaining_chars < 0  # no more space left
-          res += joint
-          break
-        end
-        last_position = change[:position]
-      end
-      res
-    else
-      res = new_content[0..max_length]
-      res += joint if new_content.size > max_length 
-      added_chunk(res) 
-    end
-  end
-  
-  
-  def format_diff diff, opts={}
-
-    diff.inject([]) do |res, chunk|
-      change = chunk.map(&:element).join
-      change.gsub! %r(</?\w+/?>), '' unless opts[:compare_html]
-      change = case chunk.first.action 
-      when '+'
-        added_chunk change
-      when '-'
-        deleted_chunk change
-      end
-      res << { :position => chunk.first.position,
-               :action   => chunk.first.action,
-               :text   => change
-             }
-    end
-  end
-  
-  def added_chunk text
-    "<ins class='diffins'>#{text}</ins>"
-  end
-  
-  def deleted_chunk text
-    "<del class='diffdel'>#{text}</del>"
-  end
-  
-  
 
   def rollback_link action_ids
     if card.ok?(:update) 
@@ -354,14 +238,6 @@ format :html do
 
   # old stuff
   
-  def load_revisions
-    unless @revision_number
-      @revision_number = (params[:rev] || (card.actions.where(:draft=>false).count)).to_i
-      @revision = card.nth_revision(@revision_number)
-      @previous_revision = @revision_number > 1 ? card.nth_revision( @revision_number-1 ) : nil
-      @show_diff = (params[:mode] != 'false')
-    end
-  end
 
   def revision_link text, revision, name, accesskey='', mode=nil
     link_to text, path(:view=>:history, :rev=>revision, :mode=>(mode || params[:mode] || true) ),

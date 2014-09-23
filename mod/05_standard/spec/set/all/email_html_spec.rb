@@ -56,7 +56,6 @@ describe Card::EmailHtmlFormat do
     
     it 'renders broken config' do
       Card.fetch("mailconfig+*to").update_attributes(:content=>"invalid mail address")
-      byebug
     end
     
   end
@@ -115,7 +114,6 @@ describe Card::EmailHtmlFormat do
        Card.create! :name => "mailconfig+*html_message", :content => "Nobody expects the Spanish Inquisition"
        Card.create! :name => "mailconfig+*text_message", :content => "Nobody expects the Spanish Inquisition"
        email= render_card :mail, {:name=>"mailconfig"}, {:format=>:email}
-       byebug
        expect(email[:content_type]).to eq('multipart/mixed')
      end
   end

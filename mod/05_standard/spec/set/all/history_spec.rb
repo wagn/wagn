@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'byebug'
 describe Card::Set::All::History do
   context "history view" do
     # before do

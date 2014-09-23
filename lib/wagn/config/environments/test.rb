@@ -42,4 +42,13 @@ Wagn.application.class.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+  
+  # Use Pry instead of IRB
+  silence_warnings do
+    begin
+      require 'pry'
+      IRB = Pry
+    rescue LoadError
+    end
+  end
 end

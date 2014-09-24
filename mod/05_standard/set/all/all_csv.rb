@@ -28,7 +28,7 @@ format :csv  do
     begin
       card1 = search_vars[:results].first  
     
-      parsed_content = Card::Content.new card1.content, self
+      parsed_content = Card::Content.new card1.raw_content, self
       unless String === parsed_content.__getobj__
         titles = parsed_content.map do |chunk|
           next if chunk.class != Card::Chunk::Include

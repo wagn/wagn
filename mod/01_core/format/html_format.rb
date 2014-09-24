@@ -58,7 +58,7 @@ class Card
     def layout_from_card_or_code name
       layout_card = Card.fetch name.to_s, :skip_virtual=>true, :skip_modules=>true
       if layout_card and layout_card.ok? :read
-        layout_card.content
+        layout_card.content   #ACT<content>
       elsif hardcoded_layout = LAYOUTS[name]
         hardcoded_layout
       else
@@ -106,7 +106,7 @@ class Card
     def wrap_body args={}
       css_classes = [ 'card-body' ]
       css_classes << args[:body_class]                  if args[:body_class]
-      css_classes += [ 'card-content', card.safe_set_keys ] if args[:content]
+      css_classes += [ 'card-content', card.safe_set_keys ] if args[:content]  #ACT<content>
       content_tag :div, :class=>css_classes.compact*' ' do
         yield args
       end
@@ -169,7 +169,7 @@ class Card
       
         if [ args[:optional_type_fieldset], args[:optional_name_fieldset] ].member? :show
           # display content field in fieldset for consistency with other fields
-          fieldset '', field, :editor=>:content
+          fieldset '', field, :editor=>:content   #ACT?
         else
           editor_wrap( :content ) { field }
         end
@@ -255,11 +255,13 @@ class Card
     def content_field form, options={}
       @form = form
       @nested = options[:nested]
-      revision_tracking = if card && !card.new_card? && !options[:skip_rev_id]
-        form.hidden_field :current_revision_id, :class=>'current_revision_id'
-      end
+      #revision_tracking = if card && !card.new_card? && !options[:skip_rev_id]
+        #form.hidden_field :current_revision_id, :class=>'current_revision_id'
+        #hidden_field_tag 'current_revision_id', card.actions.last.id, :class=>'current_revision_id'  #ACT<revision>
+        #end
       %{
-        #{ revision_tracking }
+        #{ #revision_tracking 
+         }
         #{ _render_editor options }
       }
     end

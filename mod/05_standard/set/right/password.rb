@@ -17,7 +17,7 @@ event :encrypt_password, :on=>:save, :after=>:process_subcards do
     #errors.add :password, 'need a valid salt'
     # turns out we have a lot of existing account without a salt.  not sure when that broke??
   end
-  if updates.for :content
+  if db_content_changed?
     unless Card::Env[:no_password_encryptions] # hack for import - fix with api for ignoring events
       self.content = Auth.encrypt content, salt
     end

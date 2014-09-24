@@ -5,27 +5,27 @@ describe Card::Loader do
   let(:format_double) { proxy Card::Format }
   let(:html_format_double) { proxy Card::HtmlFormat }
   it "should auto-load Card class methods from lib/wagn and mods" do
-    card_double.should_receive(:load_set_modules)
-    card_double.should_receive(:load_formats)
-    card_double.should_receive(:load_sets)
-    card_double.should_receive(:tracks).with(:any_args) # so Card still loads without core in failure testing
-    card_double.method(:version).should be
-    card_double.method(:type_card).should be
-    card_double.method(:file_path).should be
+    expect(card_double).to receive(:load_set_modules)
+    expect(card_double).to receive(:load_formats)
+    expect(card_double).to receive(:load_sets)
+    expect(card_double).to receive(:tracks).with(:any_args) # so Card still loads without core in failure testing
+    expect(card_double.method(:version)).to be
+    expect(card_double.method(:type_card)).to be
+    expect(card_double.method(:file_path)).to be
   end
   it "should define Card methods from modules" do
-    pat_all_double.method(:set_modules).should be
+    expect(pat_all_double.method(:set_modules)).to be
   end
   it "should define Formatter methods from modules" do
-    format_double.method(:render_core).should be
-    format_double.method(:_render_raw).should be
-    format_double.method(:render_core).should be
-    format_double.method(:_render_raw).should be
+    expect(format_double.method(:render_core)).to be
+    expect(format_double.method(:_render_raw)).to be
+    expect(format_double.method(:render_core)).to be
+    expect(format_double.method(:_render_raw)).to be
   end
   it "should define Formatter methods from modules" do
-    html_format_double.method(:render_core).should be
-    html_format_double.method(:_render_raw).should be
-    html_format_double.method(:render_core).should be
-    html_format_double.method(:_render_raw).should be
+    expect(html_format_double.method(:render_core)).to be
+    expect(html_format_double.method(:_render_raw)).to be
+    expect(html_format_double.method(:render_core)).to be
+    expect(html_format_double.method(:_render_raw)).to be
   end
 end

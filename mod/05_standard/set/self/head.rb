@@ -29,7 +29,7 @@ format :html do
   def head_buttons
     bits = []
     [:favicon, :logo].each do |name|
-      if c = Card[name] and c.type_id == ImageID and !c.content.blank?
+      if c = Card[name] and c.type_id == ImageID and !c.db_content.blank?
         bits << %{<link rel="shortcut icon" href="#{ subformat(c)._render_source :size=>:icon }" />}
         break
       end
@@ -48,6 +48,7 @@ format :html do
         bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{page_path root.card.name, opts} />}
       end
     end
+    bits << '<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">'
     bits.join "\n      "
   end
   

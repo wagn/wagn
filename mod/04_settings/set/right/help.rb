@@ -1,3 +1,3 @@
 format :html do
-#  include AddHelp::HtmlFormat
+  include AddHelp::HtmlFormat
 end

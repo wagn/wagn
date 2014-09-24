@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 class Card < ActiveRecord::Base
-
+  
   require_dependency 'card/active_record_ext'
   require_dependency 'card/codename'
   require_dependency 'card/query'
@@ -12,17 +12,20 @@ class Card < ActiveRecord::Base
   require_dependency 'card/auth'
   require_dependency 'card/loader'
 
-  has_many :revisions, :order => :id
+  #has_many :revisions, :order => :id
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
+  has_many :acts, :order => :id
+  has_many :actions, :order => :id
 
   cache_attributes 'name', 'type_id' # review - still worth it in Rails 3?
 
   cattr_accessor :set_patterns, :error_codes
   @@set_patterns, @@error_codes = [], {}
 
-  attr_writer :selected_revision_id #writer because read method is in mod (and does not override upon load)
-  attr_accessor :action, :supercard,
+  attr_writer :selected_action_id #writer because read method is in mod (and does not override upon load)
+  #old: :selected_revision_id #ACT
+  attr_accessor :action, :supercard, :current_act, :current_action, 
     :comment, :comment_author,    # obviated soon
     :update_referencers           # wrong mechanism for this
 
@@ -31,10 +34,9 @@ class Card < ActiveRecord::Base
   before_validation :approve
   around_save :store
   after_save :extend
-
+  
+  TRACKED_FIELDS = %w(name type_id db_content trash)
+  #binding.pry
   Loader.load_mods if count > 0
-    
-  tracks :content # we can phase this out and just use "dirty" handling once current content is stored in the cards table
 
 end
-

@@ -285,9 +285,7 @@ class Card
       content = card.raw_content || '' if content.nil?
 
       obj_content = Card::Content===content ? content : Card::Content.new( content, format=self, opts.delete(:content_opts) )
-
       card.update_references( obj_content, refresh=true ) if card.references_expired  # I thik we need this generalized
-
       obj_content.process_content_object do |chunk_opts|
         prepare_nest chunk_opts.merge(opts) { yield }
       end
@@ -435,7 +433,6 @@ class Card
       when @mode == :closed     ; !nested_card.known?  ? :closed_missing : :closed_content
       else                      ; view
       end
-    
       sub.render view, opts
       #end
     end
@@ -460,7 +457,7 @@ class Card
         args[:supercard] = root.card
       end
       if content=get_inclusion_content(options[:inc_name])
-        args[:content]=content
+        args[:content]=content #ACT
       end
       args
     end

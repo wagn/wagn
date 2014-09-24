@@ -17,7 +17,7 @@ Spork.prefork do
   end
   
   require 'rspec/rails'
-  require File.expand_path( '../../lib/wagn/wagn_spec_helper.rb', __FILE__ )
+  require File.expand_path( '../../lib/wagn/spec_helper.rb', __FILE__ )
   
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
@@ -32,8 +32,8 @@ Spork.prefork do
       :file_path => /\bspec\/controllers\//
     }
 
-    format_index = ARGV.find_index {|arg| arg =~ /--format/ }
-    formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation'
+    format_index = ARGV.find_index {|arg| arg =~ /--format|-f/ }
+    formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation' #'textmate'
     config.add_formatter formatter
     
     config.infer_spec_type_from_file_location!
@@ -49,7 +49,12 @@ Spork.prefork do
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
     
-
+    config.mock_with :rspec do |mocks|
+       mocks.syntax = [:should, :expect]
+     end
+    config.expect_with :rspec do |c|
+      c.syntax = [:should, :expect]
+    end
     config.before(:each) do
       Card::Auth.current_id = JOE_USER_ID
       Wagn::Cache.restore
@@ -72,6 +77,16 @@ end
 
 
 class Card
+  def self.create_or_update! name, args={}
+    Card::Auth.as_bot do
+      if c = Card.fetch(name)
+        c.update_attributes!(args)
+      else
+        Card.create! args.merge({:name=>name})
+      end
+    end
+  end
+  
   def self.gimme! name, args = {}
     Card::Auth.as_bot do
       c = Card.fetch( name, :new => args )
@@ -102,5 +117,11 @@ class Card
   end
 end
 
-RSpec::Core::ExampleGroup.send :include, Wagn::WagnSpecHelper
+RSpec::Core::ExampleGroup.send :include, Wagn::SpecHelper
+
+class ActiveSupport::BufferedLogger
+  def rspec msg
+    Thread.current['logger-output'] << msg
+  end
+end
 

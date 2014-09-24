@@ -6,7 +6,7 @@ module RenameMethods
     {
       :content     => card.content,
       #:updater_id  => card.updater_id,
-      :revisions   => card.revisions.count,
+      #:revisions   => card.actions.count,
       :referencers => card.referencers.map(&:name).sort,
       :referees => card.referees.map(&:name).sort,
       :dependents  => card.dependents.map(&:id)
@@ -15,9 +15,11 @@ module RenameMethods
 
   def assert_rename card, new_name
     attrs_before = name_invariant_attributes( card )
+    actions_count_before = card.actions.count
     card.name=new_name
     card.update_referencers = true
     card.save!
+    expect(card.actions.count).to eq(actions_count_before+1)
     assert_equal attrs_before, name_invariant_attributes(card)
     assert_equal new_name, card.name
     assert Card[new_name]
@@ -37,8 +39,8 @@ describe Card::Set::All::TrackedAttributes do
     it "should move plus keys into subcard hash" do
       raw_args = { 'name'=>'test', 'subcards'=>{ '+*oldway'=>{'content'=>'old'},  }, '+*newway'=>{'content'=>'new'} }
       subcards = Card.new.extract_subcard_args! raw_args
-      raw_args['subcards'].should be_nil
-      subcards.keys.sort.should == ['+*newway', '+*oldway']
+      expect(raw_args['subcards']).to be_nil
+      expect(subcards.keys.sort).to eq(['+*newway', '+*oldway'])
     end
   end
   
@@ -48,19 +50,19 @@ describe Card::Set::All::TrackedAttributes do
 
     it "should handle case variants" do
       @c = Card.create! :name=>'chump'
-      @c.name.should == 'chump'
+      expect(@c.name).to eq('chump')
       @c.name = 'Chump'
       @c.save!
-      @c.name.should == 'Chump'
+      expect(@c.name).to eq('Chump')
     end
 
     it "should handle changing from plus card to simple" do
       c = Card.create! :name=>'four+five'
       c.name = 'nine'
       c.save!
-      c.name.should == 'nine'
-      c.left_id.should== nil
-      c.right_id.should== nil
+      expect(c.name).to eq('nine')
+      expect(c.left_id).to eq(nil)
+      expect(c.right_id).to eq(nil)
     end
     
     #FIXME - following tests more about fetch than set_name.  this spec still needs lots of cleanup
@@ -70,16 +72,16 @@ describe Card::Set::All::TrackedAttributes do
       cards_should_be_added 0 do
         c=Card.fetch "Carrots", :new=>{}
         c.save
-        c.should be_instance_of(Card)
-        Card.fetch("Carrots").should be_instance_of(Card)
+        expect(c).to be_instance_of(Card)
+        expect(Card.fetch("Carrots")).to be_instance_of(Card)
       end
     end
 
     it "test_simple" do
       cards_should_be_added 1 do
-        Card['Boo!'].should be_nil
-        Card.create(:name=>"Boo!").should be_instance_of(Card)
-        Card['Boo!'].should be_instance_of(Card)
+        expect(Card['Boo!']).to be_nil
+        expect(Card.create(:name=>"Boo!")).to be_instance_of(Card)
+        expect(Card['Boo!']).to be_instance_of(Card)
       end
     end
 
@@ -88,17 +90,17 @@ describe Card::Set::All::TrackedAttributes do
       cards_should_be_added 1 do
         c=Card.fetch("Tomatoes", :new=>{})
         c.save
-        c.should be_instance_of(Card)
-        Card.fetch("Tomatoes").should be_instance_of(Card)
+        expect(c).to be_instance_of(Card)
+        expect(Card.fetch("Tomatoes")).to be_instance_of(Card)
       end
     end
 
     it "test_create_junction" do
       cards_should_be_added 3 do
-        Card.create(:name=>"Peach+Pear", :content=>"juicy").should be_instance_of(Card)
+        expect(Card.create(:name=>"Peach+Pear", :content=>"juicy")).to be_instance_of(Card)
       end
-      Card["Peach"].should be_instance_of(Card)
-      Card["Pear"].should be_instance_of(Card)
+      expect(Card["Peach"]).to be_instance_of(Card)
+      expect(Card["Pear"]).to be_instance_of(Card)
       assert_equal "juicy", Card["Peach+Pear"].content
     end
 
@@ -107,7 +109,7 @@ describe Card::Set::All::TrackedAttributes do
     def cards_should_be_added number
       number += Card.all.count
       yield
-      Card.all.count.should == number
+      expect(Card.all.count).to eq(number)
     end
 
   end
@@ -129,20 +131,20 @@ describe Card::Set::All::TrackedAttributes do
 
     it "clears cache for old name" do
       assert_rename Card['Menu'], 'manure'
-      Card['Menu'].should be_nil
+      expect(Card['Menu']).to be_nil
     end
   
     it "wipes old references by default" do
       c = Card['Menu']
       c.name = 'manure'
       c.save!
-      Card['manure'].references_from.size.should == 0
+      expect(Card['manure'].references_from.size).to eq(0)
     end
   
     it "picks up new references" do
       Card.create :name=>'kinds of poop', :content=>'[[manure]]'
       assert_rename Card['Menu'], 'manure'
-      Card['manure'].references_from.size.should == 2
+      expect(Card['manure'].references_from.size).to eq(2)
     end
 
     it "handles name variants" do

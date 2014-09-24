@@ -10,20 +10,20 @@ describe Card::Set::All::Name do
 
     it "should handle cards without names" do
       c = Card.create! :type=>'Book'
-      c.name.should== 'b1'
+      expect(c.name).to eq('b1')
     end
 
     it "should increment again if name already exists" do
       b1 = Card.create! :type=>'Book'
       b2 = Card.create! :type=>'Book'
-      b2.name.should== 'b2'
+      expect(b2.name).to eq('b2')
     end
 
     it "should handle trashed names" do
       b1 = Card.create! :type=>'Book'
       Card::Auth.as_bot { b1.delete }
       b1 = Card.create! :type=>'Book'
-      b1.name.should== 'b1'
+      expect(b1.name).to eq('b1')
     end
   end
   
@@ -34,13 +34,13 @@ describe Card::Set::All::Name do
     
     it 'should require admin permission' do
       @card.update_attributes :codename=>'structure'
-      @card.errors[:codename].first.should =~ /only admins/
+      expect(@card.errors[:codename].first).to match(/only admins/)
     end
     
     it 'should check uniqueness' do
       Card::Auth.as_bot do
         @card.update_attributes :codename=>'structure'
-        @card.errors[:codename].first.should =~ /already in use/
+        expect(@card.errors[:codename].first).to match(/already in use/)
       end
     end
     
@@ -53,9 +53,9 @@ describe Card::Set::All::Name do
       a.expire
       
       a = Card.find a.id
-      a.key.should == 'broken_a'
+      expect(a.key).to eq('broken_a')
       a.repair_key
-      a.key.should == 'a'
+      expect(a.key).to eq('a')
     end
   end
 end

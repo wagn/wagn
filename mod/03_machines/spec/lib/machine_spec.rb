@@ -20,10 +20,10 @@ shared_examples_for 'machine' do |filetype|
     end
     
     it 'has +machine_input card' do
-      machine.machine_input_card.real?.should be_true 
+      expect(machine.machine_input_card.real?).to be_truthy 
     end
     it 'has +machine_output card' do
-      machine.machine_output_card.real?.should be_true
+      expect(machine.machine_output_card.real?).to be_truthy
     end
     it "generates #{filetype} file" do 
       expect(machine.machine_output_path).to match(/\.#{filetype}$/)
@@ -127,11 +127,11 @@ We build the following structure:
     end
     
     it "contains items of all levels" do
-      subject.machine_input_card.item_cards.map(&:id).sort.should == @expected_items.map(&:id).sort
+      expect(subject.machine_input_card.item_cards.map(&:id).sort).to eq(@expected_items.map(&:id).sort)
     end
     
     it "preserves order of items" do
-      subject.machine_input_card.item_cards.map(&:id).should == @expected_items.map(&:id)
+      expect(subject.machine_input_card.item_cards.map(&:id)).to eq(@expected_items.map(&:id))
     end
   end
   

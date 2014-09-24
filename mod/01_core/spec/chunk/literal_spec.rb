@@ -3,11 +3,11 @@
 describe Card::Chunk::EscapedLiteral, "literal chunk tests" do
 
   it "should handle escaped link" do
-    render_content('write this: \[[text]]').should == 'write this: <span>[</span>[text]]'
+    expect(render_content('write this: \[[text]]')).to eq('write this: <span>[</span>[text]]')
   end
 
   it "should handle escaped inclusion" do
-    render_content('write this: \{{cardname}}').should == 'write this: <span>{</span>{cardname}}'
+    expect(render_content('write this: \{{cardname}}')).to eq('write this: <span>{</span>{cardname}}')
   end
 
 end

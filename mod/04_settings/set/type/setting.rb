@@ -35,7 +35,7 @@ view :core do |args|
               unless klass.anchorless?
                 previous_content = nil
                 rules.map do |rule|
-                  current_content = rule.content.strip
+                  current_content = rule.db_content.strip
                   duplicate = previous_content == current_content
                   changeover = previous_content && !duplicate
                   previous_content = current_content

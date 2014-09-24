@@ -23,7 +23,7 @@ end
 def rule setting_code, options={}
   options[:skip_modules] = true
   card = rule_card setting_code, options
-  card && card.content
+  card && card.content  #ACT<content>
 end
 
 def rule_card setting_code, options={}
@@ -58,7 +58,7 @@ module ClassMethods
   
   def setting name
     Auth.as_bot do
-      card=Card[name] and !card.content.strip.empty? and card.content
+      card=Card[name] and !card.db_content.strip.empty? and card.db_content
     end
   end
   

@@ -45,11 +45,9 @@ end
 
 def approve
   @action = identify_action
-
   # the following should really happen when type, name etc are changed
   reset_patterns
   include_set_modules
-  
   run_callbacks :approve
   expire_pieces if errors.any?
   errors.empty?
@@ -65,9 +63,22 @@ def identify_action
   end
 end
 
+def store_changes
+  @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
+  if @changed_fields.present?
+    @changed_fields.each{ |f| @current_action.changes.create :field => f, :value => self[f] }
+    #@changed_fields.each{ |f| Card::Change.create :field => f, :value => self[f], :card_action_id=>@current_action.id }
+  elsif @current_action and @current_action.changes.empty?
+    @current_action.delete
+  end
+end
+
+
+
 def store
   run_callbacks :store do
     yield
+    store_changes
     @virtual = false
   end
 rescue =>e
@@ -78,7 +89,6 @@ end
 
 
 def extend
-#    puts "extend called"
   run_callbacks :extend
 rescue =>e
   rescue_event e
@@ -118,10 +128,9 @@ end
 
 
 event :process_subcards, :after=>:approve, :on=>:save do
-  
   subcards.keys.each do |sub_name|
     opts = @subcards[sub_name] || {}
-    opts = { 'content' => opts } if String===opts
+    opts = { 'content' => opts } if String===opts  #ACT<content>
     ab_name = sub_name.to_name.to_absolute_name name
     next if ab_name.key == key # don't resave self!
 
@@ -149,7 +158,7 @@ event :approve_subcards, :after=>:process_subcards do
   subcards.each do |key, subcard|
     if !subcard.valid_subcard?
       subcard.errors.each do |field, err|
-        err = "#{field} #{err}" unless [:content, :abort].member? field
+        err = "#{field} #{err}" unless [:content, :abort].member? field   #ACT<content>
         errors.add subcard.relative_name, err
       end
     end

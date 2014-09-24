@@ -49,8 +49,7 @@ class Card::Query
       field, v = case field
         when "cond";     return "(#{sqlize(v)})"
         when "name";     ["#{table}.key",      [v].flatten.map(&:to_name).map(&:key)]
-        when "content";   join_alias = @cardspec.add_revision_join
-                         ["#{join_alias}.content", v]
+        when "content";  ["#{table}.db_content", v]
         else;            ["#{table}.#{safe_sql(field)}", v]
         end
 

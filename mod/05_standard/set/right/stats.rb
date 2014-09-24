@@ -10,7 +10,7 @@ view :core do |args|
         %{<table class="show-cache">
             <tr><th>Field</th><th>Cache Val</th><th>Database Val</th></tr>
             #{
-              [ :name, :updated_at, :updater_id, :current_revision_id, :content ].map do |field|
+              [ :name, :updated_at, :updater_id, :current_revision_id, :content ].map do |field|   #ACT
                 %{<tr>#{ [ field, cache_card.send(field), db_card.send(field) ].map() { |cell| "<td>#{cell}</td>"}.join }</tr>}
               end.join
             }

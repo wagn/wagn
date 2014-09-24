@@ -9,11 +9,12 @@ format do
     end
   end
   
-  def update_machine_output_live?
-    srid = card.selected_revision_id
+  def update_machine_output_live?  #ACT<revisionä>
+    #old: srid = card.selected_revision_id
+    said = card.selected_action_id
     card.left.kind_of? Machine and                                  # must be a machine
     !card.left.locked?         and                                  # machine must not already be running    
-    ( card.new_card? or !srid or srid == card.current_revision_id ) # must want current output (won't re-output old stuff)
+    ( card.new_card? or !said or said == card.last_action_id )      # must want current output (won't re-output old stuff)
   end
   
 end

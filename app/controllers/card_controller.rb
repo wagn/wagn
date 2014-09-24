@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 require_dependency 'card'
+require_dependency 'card/action'
 
 class CardController < ActionController::Base
 
@@ -48,28 +49,16 @@ class CardController < ActionController::Base
   ## the following methods need to be merged into #update
 
   def save_draft
-    if card.save_draft params[:card][:content]
+    if card.save_draft params[:card][:content]  
       render :nothing=>true
     else
       render_errors
     end
   end
 
-  def rollback
-    revision = card.revisions[params[:rev].to_i - 1]
-    card.update_attributes! :content=>revision.content
-    card.attachment_link revision.id
-    show
-  end
-
   def watch
-    watchers = card.fetch :trait=>:watchers, :new=>{}
-    watchers = watchers.refresh
-    myname = Card::Auth.current.name
-    watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
-    watchers.save!
-    ajax? ? show(:watch) : read
-    
+    toggle_subscription_for Card::Auth.current
+    ajax? ? show(:watch) : read    
   end
 
 
@@ -137,7 +126,7 @@ class CardController < ActionController::Base
           Card.fetch mark, :new=>opts
         end
       end
-    @card.selected_revision_id = params[:rev].to_i if params[:rev]
+    @card.selected_action_id = (action=@card.find_action_by_params(params) and action.id)
     
     Card::Env[:main_name] = params[:main] || (card && card.name) || ''
     render_errors if card.errors.any?

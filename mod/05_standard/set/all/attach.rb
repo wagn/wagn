@@ -1,23 +1,24 @@
-
-def attach_array(rev_id=nil)
-  c=if rev_id || self.new_card? || selected_revision_id==current_revision_id
-      self.content
-    else      
-      Card::Revision.find_by_id(selected_revision_id).content
-    end
+def attach_array
+  c= self.selected_content
+  # if self.new_card? || selected_action_id==last_action_id   #ACT why self.content for a given revision id?
+#       self.content
+#     else
+#       revision(selected_action_id)[:db_content]
+#       #old: Card::Revision.find_by_id(selected_revision_id).content  #ACT<revision> IMPORTANT
+#  end
   !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/)
 end
 
+#ask ethan
 def attach_array_set i, v
-  rev_id = ( cr = current_revision and cr.id )
-  c = attach_array rev_id
-  c = c[0..2] # make sure there is no mod set for uploaded files
-  
+  #old: rev_id = ( cr = current_revision and cr.id )
+  c = attach_array[0..2]  # make sure there is no mod set for uploaded files
   if c[i] != v
     c[i] = v
     self.content = c*"\n"
   end
 end
+
 def attach_file_name()    attach_array[0] end
 def attach_content_type() attach_array[1] end
 def attach_file_size()    attach_array[2] end
@@ -40,13 +41,24 @@ STYLES = %w{ icon small medium large original }
 
 
 def attachment_format(ext)
-  return nil unless ext.present? && attach
-  return nil unless original_ext = attach_extension
-  return original_ext if ['file', original_ext].member? ext
-  exts = MIME::Types[attach.content_type]
-  return nil unless exts
-  return ext if exts.find {|mt| mt.extensions.member? ext }
-  return exts[0].extensions[0]
+  if ext.present? and attach and original_ext=attach_extension 
+    if['file', original_ext].member? ext
+      original_ext
+    elsif exts = MIME::Types[attach.content_type] 
+      if exts.find {|mt| mt.extensions.member? ext }
+        ext
+      else
+        exts[0].extensions[0]
+      end
+    end
+  end   
+  # return nil unless ext.present? && attach
+  # return nil unless original_ext = attach_extension
+  # return original_ext if ['file', original_ext].member? ext
+  # exts = MIME::Types[attach.content_type]
+  # return nil unless exts
+  # return ext if exts.find {|mt| mt.extensions.member? ext }
+  # return exts[0].extensions[0]
 rescue => e
   Rails.logger.info "attachment_format issue: #{e.message}"
   nil
@@ -55,24 +67,41 @@ end
 # FIXME: test extension matches content type
 
 
-
-def attachment_link(rev_id) # create filesystem links to previous revision
+def attachment_symlink_to(previous_action_id) # create filesystem links to previous revision
   if styles = case type_code
         when 'File'; ['']
         when 'Image'; STYLES
       end
-    save_rev_id = selected_revision_id
+    save_action_id = selected_action_id
     links = {}
 
-    self.selected_revision_id = rev_id
+    self.selected_action_id = previous_action_id
     styles.each { |style|  links[style] = attach.path(style)          }
 
-    self.selected_revision_id = current_revision_id
-    styles.each { |style|  File.link links[style], attach.path(style) }
+    self.selected_action_id = last_action_id
+    styles.each { |style|  File.symlink links[style], attach.path(style) }
 
-    self.selected_revision_id = save_rev_id
+    self.selected_action_id = save_action_id
   end
 end
+# old: %(fold)
+# def attachment_link(rev_id) # create filesystem links to previous revision
+#   if styles = case type_code
+#         when 'File'; ['']
+#         when 'Image'; STYLES
+#       end
+#     save_rev_id = selected_revision_id
+#     links = {}
+#
+#     self.selected_revision_id = rev_id
+#     styles.each { |style|  links[style] = attach.path(style)          }
+#
+#     self.selected_revision_id = current_revision_id
+#     styles.each { |style|  File.link links[style], attach.path(style) }
+#
+#     self.selected_revision_id = save_rev_id
+#   end
+# end %(end)
 
 def before_post_attach
 #  Rails.logger.info "bpa called for #{name}"
@@ -97,7 +126,7 @@ def self.included(base)
 
     validates_each :attach do |rec, attr, value|
       if [Card::FileID, Card::ImageID].member? rec.type_id
-        max_size = (max = Card['*upload max']) ? max.content.to_i : 5
+        max_size = (max = Card['*upload max']) ? max.db_content.to_i : 5
         if value.size.to_i > max_size.megabytes
           rec.errors.add :file_size, "File cannot be larger than #{max_size} megabytes"
         end
@@ -137,6 +166,8 @@ module Paperclip::Interpolations
     at.instance.type_id==Card::FileID || style_name.blank? ? '' : "#{style_name}-"
   end
 
-  def revision_id(at, style_name) at.instance.selected_revision_id end
+  def revision_id(at, style_name) 
+    at.instance.selected_action_id 
+  end
 end
 

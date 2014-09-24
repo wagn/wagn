@@ -6,9 +6,9 @@ describe Card::Set::All::Templating do
     it "for User+*type+*structure should return all Users" do
       Card::Auth.as_bot do
         c=Card.create(:name=>'User+*type+*structure')
-        c.structuree_names.sort.should == [
+        expect(c.structuree_names.sort).to eq([
           "Joe Admin", "Joe Camel", "Joe User", "John", "No Count", "Sample User", "Sara", "u1", "u2", "u3"
-        ]
+        ])
       end
     end
   end
@@ -27,7 +27,7 @@ describe Card::Set::All::Templating do
     end
 
     it "should have default content" do
-      @jb.format._render_raw.should == 'Today!'
+      expect(@jb.format._render_raw).to eq('Today!')
     end
 
     it "should change type and content with template" do
@@ -37,8 +37,8 @@ describe Card::Set::All::Templating do
         @bt.save!
       end
       jb = @jb.refresh force=true
-      jb.format.render(:raw).should == 'Tomorrow'
-      jb.type_id.should == Card::PhraseID    
+      expect(jb.format.render(:raw)).to eq('Tomorrow')
+      expect(jb.type_id).to eq(Card::PhraseID)    
     end
   
     it "should have type and content overridden by (new) type_plus_right set" do
@@ -46,8 +46,8 @@ describe Card::Set::All::Templating do
         Card.create! :name=>'Basic+birthday+*type plus right+*structure', :type=>'PlainText', :content=>'Yesterday'
       end
       jb = @jb.refresh force=true
-      jb.raw_content.should == 'Yesterday'
-      jb.type_id.should == Card::PlainTextID
+      expect(jb.raw_content).to eq('Yesterday')
+      expect(jb.type_id).to eq(Card::PlainTextID)
     end
   end
 
@@ -61,11 +61,11 @@ describe Card::Set::All::Templating do
     end
 
     it "should have default cardtype" do
-      @jb.type_code.should == :date
+      expect(@jb.type_code).to eq(:date)
     end
 
     it "should have default content" do
-      Card['Jim+birthday'].content.should == 'Today!'
+      expect(Card['Jim+birthday'].content).to eq('Today!')
     end
   end
 
@@ -77,7 +77,7 @@ describe Card::Set::All::Templating do
     end
     
     it "should return templated content even if content is passed in" do
-      Card.new(:type=>'Date', :content=>'').format._render(:raw).should == 'Tomorrow'
+      expect(Card.new(:type=>'Date', :content=>'').format._render(:raw)).to eq('Tomorrow')
     end
     
     describe 'and right structure' do
@@ -89,12 +89,12 @@ describe Card::Set::All::Templating do
       end
       
       it "*right setting should override *type setting" do
-        Card['Jim+birthday'].raw_content.should == 'Today'
+        expect(Card['Jim+birthday'].raw_content).to eq('Today')
       end
 
       it "should defer to normal content when *structure rule's content is (exactly) '_self'" do
         Card::Auth.as_bot { Card.create! :name=>'Jim+birthday+*self+*structure', :content=>'_self' }
-        Card['Jim+birthday'].raw_content.should == 'Yesterday'
+        expect(Card['Jim+birthday'].raw_content).to eq('Yesterday')
       end
     end
   end

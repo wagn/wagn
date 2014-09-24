@@ -52,7 +52,7 @@ format do
 
     case
     when e = search_vars[:error]
-      %{#{e.class.to_s} :: #{e.message} :: #{card.content}}
+      %{#{e.class.to_s} :: #{e.message} :: #{card.raw_content}}
     when search_vars[:spec][:return] =='count'
       search_vars[:results].to_s
     when @mode == :template

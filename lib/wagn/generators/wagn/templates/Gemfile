@@ -95,6 +95,4 @@ group :debug do
 		gem 'debugger'
 	end
 end
-
-
 <% end %>

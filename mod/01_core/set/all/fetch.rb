@@ -21,7 +21,6 @@ module ClassMethods
   
   
   def fetch mark, opts={}
-
     mark = Card::Codename[mark] if Symbol === mark # id from codename
 
     if mark.present?

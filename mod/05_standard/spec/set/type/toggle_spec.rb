@@ -6,7 +6,7 @@ describe Card::Set::Type::Toggle do
   end
 
   it "should have yes/no as processed content" do
-    render_card(:core, :type=>'Toggle', :content=>"0").should == 'no'
-    render_card(:closed_content, :type=>'Toggle', :content=>"1").should == 'yes'
+    expect(render_card(:core, :type=>'Toggle', :content=>"0")).to eq('no')
+    expect(render_card(:closed_content, :type=>'Toggle', :content=>"1")).to eq('yes')
   end
 end

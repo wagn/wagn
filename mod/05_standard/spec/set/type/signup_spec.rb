@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-
+include Wagn::Location
 describe Card::Set::Type::Signup do
   
   before do
@@ -16,7 +16,7 @@ describe Card::Set::Type::Signup do
     
     it 'should prompt to signup' do
       Card::Auth.as :anonymous do
-        @form.match( /Sign up/ ).should be_true
+        expect(@form.match( /Sign up/ )).to be_truthy
       end
     end
   end
@@ -26,48 +26,49 @@ describe Card::Set::Type::Signup do
   context 'signup (without approval)' do
     before do
       ActionMailer::Base.deliveries = [] #needed?
-      
       Card::Auth.as_bot do
         Card.create! :name=>'User+*type+*create', :content=>'[[Anyone]]'
         Card.create! :name=>'*request+*to', :content=>'signups@wagn.org'
+
       end
-      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ 
-        '+*email'=>'wolf@wagn.org', '+*password'=>'wolf'
-      }
+      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{'+*email'=>'wolf@wagn.org',
+         '+*password'=>'wolf'}     
       @account = @signup.account
       @token = @account.token
     end
     
     it 'should create all the necessary cards' do
-      @signup.type_id.should == Card::SignupID
-      @account.email.should == 'wolf@wagn.org'
-      @account.status.should == 'pending'
-      @account.salt.should_not == ''
-      @account.password.length.should > 10 #encrypted
-      @account.token.should be_present
+      expect(@signup.type_id).to eq(Card::SignupID)
+      expect(@account.email).to eq('wolf@wagn.org')
+      expect(@account.status).to eq('pending')
+      expect(@account.salt).not_to eq('')
+      expect(@account.password.length).to be > 10 #encrypted
+      expect(@account.token).to be_present
     end
   
     it 'should send email with an appropriate link' do
+      @mail = ActionMailer::Base.deliveries.last
+      expect( @mail.body.raw_source ).to match(Card.setting( :title ))
     end
     
     it 'should create an authenticable token' do
-      @account.token.should == @token
-      @account.authenticate_by_token(@token).should == @signup.id
-      @account.fetch(:trait=> :token).should_not be_present
+      expect(@account.token).to eq(@token)
+      expect(@account.authenticate_by_token(@token)).to eq(@signup.id)
+      expect(@account.fetch(:trait=> :token)).not_to be_present
     end
     
     it 'should notify someone' do
-      ActionMailer::Base.deliveries.last.to.should == ['signups@wagn.org']
+      expect(ActionMailer::Base.deliveries.last.to).to eq(['signups@wagn.org'])
     end
     
     it 'should be activated by an update' do
       Card::Env.params[:token] = @token
       @signup.update_attributes({})
       #puts @signup.errors.full_messages * "\n"
-      @signup.errors.should be_empty
-      @signup.type_id.should == Card::UserID
-      @account.status.should == 'active'
-      Card[ @account.name ].active?.should be_true
+      expect(@signup.errors).to be_empty
+      expect(@signup.type_id).to eq(Card::UserID)
+      expect(@account.status).to eq('active')
+      expect(Card[ @account.name ].active?).to be_truthy
     end
     
     it 'should reject expired token and create new token' do
@@ -76,10 +77,10 @@ describe Card::Set::Type::Signup do
       Card::Env.params[:token] = @token
       
       result = @signup.update_attributes!({})
-      result.should == true                 # successfully completes save
-      @account.token.should_not == @token   # token gets updated
+      expect(result).to eq(true)                 # successfully completes save
+      expect(@account.token).not_to eq(@token)   # token gets updated
       success = Card::Env.params[:success]
-      success[:message].should =~ /expired/ # user notified of expired token
+      expect(success[:message]).to match(/expired/) # user notified of expired token
     end
   
   end
@@ -99,19 +100,19 @@ describe Card::Set::Type::Signup do
     
     
     it 'should create all the necessary cards, but no token' do
-      @signup.type_id.should == Card::SignupID
-      @account.email.should == 'wolf@wagn.org'
-      @account.status.should == 'pending'
-      @account.salt.should_not == ''
-      @account.password.length.should > 10 #encrypted
+      expect(@signup.type_id).to eq(Card::SignupID)
+      expect(@account.email).to eq('wolf@wagn.org')
+      expect(@account.status).to eq('pending')
+      expect(@account.salt).not_to eq('')
+      expect(@account.password.length).to be > 10 #encrypted
     end
     
     it 'should not create a token' do
-      @account.token.should_not be_present
+      expect(@account.token).not_to be_present
     end
     
     it 'should notify someone' do
-      ActionMailer::Base.deliveries.last.to.should == ['signups@wagn.org']
+      expect(ActionMailer::Base.deliveries.last.to).to eq(['signups@wagn.org'])
     end
     
     
@@ -123,7 +124,7 @@ describe Card::Set::Type::Signup do
         
         @signup = Card.fetch @signup.id
         @signup.save!
-        @signup.account.token.should be_present
+        expect(@signup.account.token).to be_present
       end
       
     end
@@ -136,9 +137,9 @@ describe Card::Set::Type::Signup do
         
         @signup = Card.fetch @signup.id
         @signup.save!
-        @signup.account.token.should_not be_present
-        @signup.type_id.should == Card::UserID
-        @signup.account.status.should == 'active'
+        expect(@signup.account.token).not_to be_present
+        expect(@signup.type_id).to eq(Card::UserID)
+        expect(@signup.account.status).to eq('active')
       end
     end
 
@@ -156,14 +157,44 @@ describe Card::Set::Type::Signup do
     end
     
     it 'should create all the necessary cards, but no password' do
-      @signup.type_id.should == Card::SignupID
-      @account.email.should == 'wolf@wagn.org'
-      @account.status.should == 'pending'
-      @account.salt.should_not == ''
-      @account.token.should be_present
-      @account.password.should_not be_present
+      expect(@signup.type_id).to eq(Card::SignupID)
+      expect(@account.email).to eq('wolf@wagn.org')
+      expect(@account.status).to eq('pending')
+      expect(@account.salt).not_to eq('')
+      expect(@account.token).to be_present
+      expect(@account.password).not_to be_present
     end
     
   end
 
+  # describe '#signup_notifications' do
+  #   before do
+  #     Card::Auth.as_bot do
+  #       Card.create! :name=>'*request+*to', :content=>'signups@wagn.org'
+  #     end
+  #     @user_name = 'Big Bad Wolf'
+  #     @user_email = 'wolf@wagn.org'
+  #     @signup = Card.create! :name=>@user_name, :type_id=>Card::SignupID, '+*account'=>{
+  #       '+*email'=>@user_email, '+*password'=>'wolf'}
+  #     ActionMailer::Base.deliveries = []
+  #     @signup.signup_notifications
+  #     @mail = ActionMailer::Base.deliveries.last
+  #   end
+  #
+  #   it 'send to correct address' do
+  #     expect(@mail.to).to eq(['signups@wagn.org'])
+  #   end
+  #
+  #   it 'contains request url' do
+  #      expect(@mail.body.raw_source).to include(wagn_url(@signup))
+  #   end
+  #
+  #   it 'contains user name' do
+  #     expect(@mail.body.raw_source).to include(@user_name)
+  #   end
+  #
+  #   it 'contains user email' do
+  #     expect(@mail.body.raw_source).to include(@user_email)
+  #   end
+  # end
 end

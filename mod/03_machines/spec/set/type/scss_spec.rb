@@ -25,7 +25,7 @@ describe Card::Set::Type::Scss do
   end
   
   it 'should not highlight code in css' do
-    @scss_card.format(:format=>:css).render_core.should_not =~ /CodeRay/
+    expect(@scss_card.format(:format=>:css).render_core).not_to match(/CodeRay/)
   end
   
   it_should_behave_like "machine input"  do

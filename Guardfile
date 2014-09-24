@@ -2,7 +2,7 @@
 # More info at https://github.com/guard/guard#readme
 
 #guard :rspec, cmd: 'bundle exec env COVERAGE=false rspec' do
-guard :rspec, cmd: 'bundle exec rspec' do
+guard :rspec, cmd: 'bundle exec wagn rspec' do
   
   watch(%r{^spec/.+_spec\.rb$})
   watch(%r{^lib/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb" }
@@ -21,7 +21,8 @@ guard :rspec, cmd: 'bundle exec rspec' do
 #  watch(%r{^app/views/(.+)/.*\.(erb|haml|slim)$})     { |m| "spec/features/#{m[1]}_spec.rb" }
 
   # Wagn mods
-  watch(%r{mods/(.+)\.rb})                            { |m| "spec/mods/#{m[1]}_spec.rb" }
+  watch(%r{^mod/(.+)\.rb})                            { |m| "mod/spec/#{m[1]}_spec.rb" }
+  watch(%r{^tmp/mod/(.+)\.rb})                            { |m| "mod/spec/#{m[1]}_spec.rb" }
 
 
   # Turnip features and steps

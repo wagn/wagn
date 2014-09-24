@@ -1,14 +1,15 @@
 # -*- encoding : utf-8 -*-
 
+require 'card/action'
 
 describe Card, "deleting card" do
   it "should require permission" do
     a = Card['a']
     Card::Auth.as :anonymous do
-      a.ok?(:delete).should == false
-      a.delete.should == false
-      a.errors[:permission_denied].should_not be_empty
-      Card['a'].trash.should == false
+      expect(a.ok?(:delete)).to eq(false)
+      expect(a.delete).to eq(false)
+      expect(a.errors[:permission_denied]).not_to be_empty
+      expect(Card['a'].trash).to eq(false)
     end
     
   end
@@ -22,13 +23,13 @@ describe Card, "deleted card" do
     end
   end
   it "should be in the trash" do
-    @c.trash.should be_true
+    expect(@c.trash).to be_truthy
   end
   it "should come out of the trash when a plus card is created" do
     Card::Auth.as_bot do
       Card.create(:name=>'A+*acct')
       c = Card[ 'A' ]
-      c.trash.should be_false
+      expect(c.trash).to be_falsey
     end
   end
 end
@@ -38,7 +39,7 @@ describe Card, "in trash" do
     Card.create(:name=>"Betty").delete
     c=Card.fetch "Betty", :new=>{}
     c.save
-    Card["Betty"].should be_instance_of(Card)
+    expect(Card["Betty"]).to be_instance_of(Card)
   end
 end
 
@@ -50,8 +51,8 @@ describe Card, "plus cards" do
       root = Card['zz']
       root.delete
 #      Rails.logger.info "ERRORS = #{root.errors.full_messages*''}"
-      Card.find(c.id).trash.should be_true
-      Card['zz'].should be_nil
+      expect(Card.find(c.id).trash).to be_truthy
+      expect(Card['zz']).to be_nil
     end
   end
 end
@@ -61,7 +62,7 @@ describe Card do
   context "with revisions" do
     before do Card::Auth.as_bot { @c = Card["Wagn Bot"] } end
     it "should not be removable" do
-      @c.delete.should_not be_true
+      expect(@c.delete).not_to be_truthy
     end
   end
 
@@ -72,7 +73,7 @@ describe Card do
       end
     end
     it "should be removable" do
-      @c.delete!.should be_true
+      expect(@c.delete!).to be_truthy
     end
   end
 end
@@ -101,11 +102,11 @@ describe Card, "dependent removal" do
   end
 
   it "should be trash" do
-    @c.trash.should be_true
+    expect(@c.trash).to be_truthy
   end
 
   it "should not be findable by name" do
-    Card["A+B+C"].should == nil
+    expect(Card["A+B+C"]).to eq(nil)
   end
 end
 
@@ -122,13 +123,13 @@ describe Card, "rename to trashed name" do
   end
 
   it "should rename b to a" do
-    @b.name.should == 'A'
+    expect(@b.name).to eq('A')
   end
 
   it "should rename a to a*trash" do
-    (c = Card.find(@a.id)).cardname.to_s.should == 'A*trash'
-    c.name.should == 'A*trash'
-    c.key.should == 'a*trash'
+    expect((c = Card.find(@a.id)).cardname.to_s).to eq('A*trash')
+    expect(c.name).to eq('A*trash')
+    expect(c.key).to eq('a*trash')
   end
 end
 
@@ -142,16 +143,16 @@ describe Card, "sent to trash" do
   end
 
   it "should be trash" do
-    @c.trash.should == true
+    expect(@c.trash).to eq(true)
   end
 
   it "should not be findable by name" do
-    Card["basicname"].should == nil
+    expect(Card["basicname"]).to eq(nil)
   end
 
-  it "should still have revision" do
-    @c.revisions.length.should == 1
-    @c.current_revision.content.should == 'basiccontent'
+  it "should still have actions" do
+    expect(@c.actions.count).to eq(2)
+    expect(@c.last_change_on(:db_content).value).to eq('basiccontent')
   end
 end
 
@@ -165,19 +166,19 @@ describe Card, "revived from trash" do
   end
 
   it "should not be trash" do
-    @c.trash.should == false
+    expect(@c.trash).to eq(false)
   end
 
-  it "should have 2 revisions" do
-    @c.revisions.length.should == 2
+  it "should have 3 actions" do
+    expect(@c.actions.count).to eq(3)
   end
 
-  it "should still have old revisions" do
-    @c.revisions[0].content.should == 'basiccontent'
+  it "should still have old content" do
+    expect(@c.nth_revision(1)[:db_content]).to eq('basiccontent')
   end
 
-  it "should have a new revision" do
-    @c.content.should == 'revived content'
+  it "should have the same content" do
+    expect(@c.content).to eq('revived content')
 #    Card.fetch(@c.name).content.should == 'revived content'
   end
 end
@@ -207,19 +208,19 @@ describe Card, "junction revival" do
   end
 
   it "should not be trash" do
-    @c.trash.should == false
+    expect(@c.trash).to eq(false)
   end
 
-  it "should have 2 revisions" do
-    @c.revisions.length.should == 2
+  it "should have 3 actions" do
+    expect(@c.actions.count).to eq(3)
   end
 
-  it "should still have old revisions" do
-    @c.revisions[0].content.should == 'basiccontent'
+  it "should still have old action" do
+    expect(@c.nth_revision(1)[:db_content]).to eq('basiccontent')
   end
 
-  it "should have a new revision" do
-    @c.content.should == 'revived content'
+  it "should have old content" do
+    expect(@c.db_content).to eq('revived content')
   end
 end
 

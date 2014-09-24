@@ -19,7 +19,7 @@ class CreateNewRevisionTables < ActiveRecord::Migration
   end
   
   def up
-    #remove_column :cards, :db_content
+    remove_column :cards, :db_content
     drop_table :card_acts
     drop_table :card_actions
     drop_table :card_changes

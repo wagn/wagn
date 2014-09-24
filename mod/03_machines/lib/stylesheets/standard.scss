@@ -301,6 +301,10 @@ $action-white: #fdfdfd;
 $act-gray:  #b7b7b7;
 $act-background: #dfdfdf;
 
+.history-slot {
+  overflow: hidden;
+  clear: both;
+}
 
 .history-header {
     padding: 10px 10px 10px 10px;
@@ -322,6 +326,7 @@ $act-background: #dfdfdf;
     .head {
         float: left;
         margin-right:10px;
+        min-width: 130px;
     }
     .nr {
         float: left;   

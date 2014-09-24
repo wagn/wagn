@@ -47,22 +47,29 @@ class CreateNewRevisionTables < ActiveRecord::Migration
       t.text    :value 
     end
     
-    
+    puts "Move revisions to action table"
+    count = 0
     created = Set.new
     TmpRevision.find_each do |rev|
       act = TmpAct.create(:id=>rev.id, :card_id=>rev.card_id, :actor_id=>rev.creator_id, :acted_at=>rev.created_at)
       if created.include? rev.card_id
-        action = TmpAction.create(:id=>rev.id, :card_id=>rev.card_id, :card_act_id=>act.id, :action_type=>1)
+        action = TmpAction.create( {:id=>rev.id, :card_id=>rev.card_id, :card_act_id=>act.id, :action_type=>1}, :without_protection=>true)
         TmpChange.create(:card_action_id=>action.id, :field=>2, :value=>rev.content )
       else
-        action = TmpAction.create(:id=>rev.id, :card_id=>rev.card_id, :card_act_id=>act.id, :action_type=>0)
+        action = TmpAction.create( {:id=>rev.id, :card_id=>rev.card_id, :card_act_id=>act.id, :action_type=>0}, :without_protection=>true)
         TmpChange.create(:card_action_id=>action.id, :field=>0, :value=>rev.card.name)
         TmpChange.create(:card_action_id=>action.id, :field=>1, :value=>rev.card.type_id)
         TmpChange.create(:card_action_id=>action.id, :field=>2, :value=>rev.content )
         created.add rev.card_id
       end
+      if count == 100
+        puts "another 100"
+        count = 0
+      end 
+      count += 1
     end 
         
+    puts "Finished revisions"
     TmpCard.find_each do |card|
       card.update_column(:db_content,card.tmp_revision.content) if card.tmp_revision
     end

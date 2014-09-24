@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 class CreateNewRevisionTables < ActiveRecord::Migration
   class TmpRevision < ActiveRecord::Base
+    has_one :tmp_card, :foreign_key=>:card_id
     self.table_name = 'card_revisions'
   end
   class TmpAct < ActiveRecord::Base
@@ -57,8 +58,8 @@ class CreateNewRevisionTables < ActiveRecord::Migration
         TmpChange.create(:card_action_id=>action.id, :field=>2, :value=>rev.content )
       else
         action = TmpAction.create( {:id=>rev.id, :card_id=>rev.card_id, :card_act_id=>act.id, :action_type=>0}, :without_protection=>true)
-        TmpChange.create(:card_action_id=>action.id, :field=>0, :value=>rev.card.name)
-        TmpChange.create(:card_action_id=>action.id, :field=>1, :value=>rev.card.type_id)
+        TmpChange.create(:card_action_id=>action.id, :field=>0, :value=>rev.tmp_card.name)
+        TmpChange.create(:card_action_id=>action.id, :field=>1, :value=>rev.tmp_card.type_id)
         TmpChange.create(:card_action_id=>action.id, :field=>2, :value=>rev.content )
         created.add rev.card_id
       end

@@ -1,6 +1,7 @@
 format do
   view :not_found do |args|
     if update_machine_output_live?
+      Wagn::Cache.reset_global
       root.error_status = 302      
       card.left.update_machine_output
       wagn_path card.left.machine_output_url
@@ -9,7 +10,7 @@ format do
     end
   end
   
-  def update_machine_output_live?  #ACT<revisionä>
+  def update_machine_output_live?  #ACT<revision>
     #old: srid = card.selected_revision_id
     said = card.selected_action_id
     card.left.kind_of? Machine and                                  # must be a machine

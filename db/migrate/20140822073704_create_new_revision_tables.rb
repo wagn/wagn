@@ -48,32 +48,44 @@ class CreateNewRevisionTables < ActiveRecord::Migration
       t.text    :value 
     end
     
-    puts "Move revisions to action table..."
-    count = 0
+    # delete cardless revisions
+    TmpRevision.where( TmpCard.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
+    
     created = Set.new
     TmpRevision.find_each do |rev|
-      act = TmpAct.create(:id=>rev.id, :card_id=>rev.card_id, :actor_id=>rev.creator_id, :acted_at=>rev.created_at)
+#     TmpAct.create(:card_id=>rev.card_id, :actor_id=>rev.creator_id, :acted_at=>rev.created_at)
+      TmpAct.connection.execute "INSERT INTO card_acts (id, card_id, actor_id, acted_at) VALUES 
+                                                      (#{rev.id}, #{rev.card_id}, #{rev.creator_id}, #{rev.created_at})"
+      
       if created.include? rev.card_id
-        action = TmpAction.create( {:id=>rev.id, :card_id=>rev.card_id, :card_act_id=>act.id, :action_type=>1}, :without_protection=>true)
-        TmpChange.create(:card_action_id=>action.id, :field=>2, :value=>rev.content )
+        TmpAction.connection.execute "INSERT INTO card_actions (id, card_id, card_act_id, action_type) VALUES 
+                                                               (#{rev.id}, #{rev.card_id}, #{rev.id}, 1)"
+        TmpChange.connection.execute "INSERT INTO card_changes (card_action_id, field, value) VALUES 
+                                                               (#{rev.id}, 2, #{rev.content})"
+        #action = TmpAction.create( {:id=>rev.id, :card_id=>rev.card_id, :card_act_id=>act.id, :action_type=>1}, :without_protection=>true)
+        #TmpChange.create(:card_action_id=>action.id, :field=>2, :value=>rev.content )
       else
-        action = TmpAction.create( {:id=>rev.id, :card_id=>rev.card_id, :card_act_id=>act.id, :action_type=>0}, :without_protection=>true)
-        TmpChange.create(:card_action_id=>action.id, :field=>0, :value=>rev.tmp_card.name)
-        TmpChange.create(:card_action_id=>action.id, :field=>1, :value=>rev.tmp_card.type_id)
-        TmpChange.create(:card_action_id=>action.id, :field=>2, :value=>rev.content )
+        TmpAction.connection.execute "INSERT INTO card_actions (id, card_id, card_act_id, action_type) VALUES 
+                                                              (#{rev.id}, #{rev.card_id}, #{rev.id}, 0)"
+        
+        if tmp_card = rev.tmp_card
+          TmpChange.connection.execute "INSERT INTO card_changes (card_action_id, field, value) VALUES 
+              (#{rev.id}, 0, #{tmp_card.name}), 
+              (#{rev.id}, 1, #{tmp_card.type_id}),
+              (#{rev.id}, 2, #{rev.content})"
+        end
+        #action = TmpAction.create( {:id=>rev.id, :card_id=>rev.card_id, :card_act_id=>act.id, :action_type=>0}, :without_protection=>true)
+        # TmpChange.create(:card_action_id=>action.id, :field=>0, :value=>tmp_card.name)
+        # TmpChange.create(:card_action_id=>action.id, :field=>1, :value=>tmp_card.type_id)
+        # TmpChange.create(:card_action_id=>action.id, :field=>2, :value=>rev.content )
         created.add rev.card_id
       end
-      if count == 100
-        puts "another 100"
-        count = 0
-      end 
-      count += 1
     end 
-    puts "Finished revisions. Updating card table ... "
+
     TmpCard.find_each do |card|
       card.update_column(:db_content,card.tmp_revision.content) if card.tmp_revision
     end
-    puts "Finshed card table"
+
     #drop_table :card_revisions
     #remove_column :cards, :current_revision
   end

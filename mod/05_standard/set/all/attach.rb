@@ -167,7 +167,7 @@ module Paperclip::Interpolations
   end
 
   def revision_id(at, style_name) 
-    at.instance.selected_action_id 
+    at.instance.selected_content_action_id 
   end
 end
 

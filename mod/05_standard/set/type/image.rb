@@ -32,14 +32,15 @@ format :html do
   end
 
 
-  view :diff do |args|
+  view :content_changes do |args|
     out = ''
-    if @show_diff and @previous_revision
-      card.selected_revision_id=@previous_revision.id
-      out << _render_core
+    size = args[:diff_type]==:summary ? :icon : :medium
+    if !args[:hide_diff] and args[:action]
+      card.selected_action_id=card.last_change_on(:db_content,:before=>args[:action]).card_action_id
+      out << Card::Diff.render_added_chunk(_render_core(:size=>size))
     end
-    card.selected_revision_id=@revision.id
-    out << _render_core
+    card.selected_action_id=args[:action].id
+    out <<  Card::Diff.render_deleted_chunk(_render_core(:size=>size))
     out
   end
 

@@ -18,8 +18,6 @@ module Card::Diff
   end
 
   class DiffBuilder
-
-    
     def initialize(old_version, new_version, opts={})
       @old_version, @new_version = old_version, new_version
       @opts = opts

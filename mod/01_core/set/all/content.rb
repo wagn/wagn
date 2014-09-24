@@ -39,25 +39,32 @@ def chunk_list #override to customize by set
 end
 
 def selected_action_id
-  @selected_action_id || (current_action and current_action.id) || last_action_id || 0
+  @selected_action_id || (@current_action and @current_action.id) || last_action_id || 0
 end
-
 
 def selected_action
   Card::Action.find(selected_action_id)
 end
-#old
-# def selected_revision_id
-#   @selected_revision_id || current_revision_id || 0
-# end
+
+def selected_content_action_id
+  @selected_action_id || last_content_action_id
+end
+def selected_content_action
+  Card::Action.find(selected_content_action_id)
+end
 
 
 def last_action_id
   last_action and last_action.id
 end
-
 def last_action
   actions.last
+end
+def last_content_action
+  last_change_on(:db_content).action
+end
+def last_content_action_id
+  last_change_on(:db_content).card_action_id
 end
 
 

@@ -1,5 +1,4 @@
-
-REVISIONS_PER_PAGE = 10
+REVISIONS_PER_PAGE = Wagn.config.revisions_per_page
 # has to be called always and before :set_name and :process_subcards
 def create_act_and_action
   #@current_act = (@supercard ? @supercard.current_act : Card::Act.create(:ip_address=>Env.ip)) #acts.build(:ip_address=>Env.ip
@@ -179,11 +178,11 @@ format :html do
       %i.fa.fa-arrow-right.arrow
       -if action_view == :summary 
         %span.content-diff
-          = content_changes action, action_view, hide_diff
+          = render_content_changes :action=>action, :diff_type=>action_view, :hide_diff=>hide_diff
   -if action.new_content? and action_view == :expanded
     .expanded
       %span.content-diff
-        = content_changes action, action_view, hide_diff
+        = render_content_changes :action=>action, :diff_type=>action_view, :hide_diff=>hide_diff
         }
     end
   end
@@ -209,11 +208,11 @@ format :html do
     "(#{change})"
   end
   
-  def content_changes action, diff_type, hide_diff=false
-    if hide_diff 
-      action.new_values[:new_content]
+  view :content_changes do |args|
+    if args[:hide_diff ]
+      args[:action].new_values[:new_content]
     else 
-      action.content_diff(diff_type)
+      args[:action].content_diff(args[:diff_type])
     end
   end
 

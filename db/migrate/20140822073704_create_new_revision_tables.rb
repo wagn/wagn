@@ -54,7 +54,7 @@ class CreateNewRevisionTables < ActiveRecord::Migration
     # delete cardless revisions
     TmpRevision.delete_cardless
     
-    CONN = TmpRevision.connection
+    conn = TmpRevision.connection
     
     created = Set.new
     TmpRevision.find_each do |rev|
@@ -66,7 +66,7 @@ class CreateNewRevisionTables < ActiveRecord::Migration
         TmpAction.connection.execute "INSERT INTO card_actions (id, card_id, card_act_id, action_type) VALUES 
                                                                ('#{rev.id}', '#{rev.card_id}', '#{rev.id}', 1)"
         TmpChange.connection.execute "INSERT INTO card_changes (card_action_id, field, value) VALUES 
-                                                               ('#{rev.id}', 2, #{CONN.quote(rev.content)})"
+                                                               ('#{rev.id}', 2, #{conn.quote(rev.content)})"
         #action = TmpAction.create( {:id=>rev.id, :card_id=>rev.card_id, :card_act_id=>act.id, :action_type=>1}, :without_protection=>true)
         #TmpChange.create(:card_action_id=>action.id, :field=>2, :value=>rev.content )
       else
@@ -75,9 +75,9 @@ class CreateNewRevisionTables < ActiveRecord::Migration
         
         if tmp_card = rev.tmp_card
           TmpChange.connection.execute "INSERT INTO card_changes (card_action_id, field, value) VALUES 
-              ('#{rev.id}', 0, #{CONN.quote tmp_card.name}), 
+              ('#{rev.id}', 0, #{conn.quote tmp_card.name}), 
               ('#{rev.id}', 1, '#{tmp_card.type_id}'),
-              ('#{rev.id}', 2, #{CONN.quote(rev.content)})"
+              ('#{rev.id}', 2, #{conn.quote(rev.content)})"
         end
         #action = TmpAction.create( {:id=>rev.id, :card_id=>rev.card_id, :card_act_id=>act.id, :action_type=>0}, :without_protection=>true)
         # TmpChange.create(:card_action_id=>action.id, :field=>0, :value=>tmp_card.name)

@@ -1,5 +1,5 @@
 
-REVISIONS_PER_PAGE = 2
+REVISIONS_PER_PAGE = 10
 # has to be called always and before :set_name and :process_subcards
 def create_act_and_action
   #@current_act = (@supercard ? @supercard.current_act : Card::Act.create(:ip_address=>Env.ip)) #acts.build(:ip_address=>Env.ip

@@ -10,11 +10,11 @@ module Card::Diff
   end
   
   def self.render_added_chunk text
-    "<ins class='diffins'>#{text}</ins>"
+    "<ins class='diffins diff-green'>#{text}</ins>"
   end
   
   def self.render_deleted_chunk text, count=true
-    "<del class='diffdel'>#{text}</del>"
+    "<del class='diffdel diff-red'>#{text}</del>"
   end
 
   class DiffBuilder

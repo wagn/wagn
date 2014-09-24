@@ -191,7 +191,6 @@ module Card::Diff
     end
     
  
-    
     def new_aggregated_lcs
       new_lcs.inject([]) do |res, change_block|
         last_action = nil
@@ -206,7 +205,6 @@ module Card::Diff
           end
           last_action = change.action
         end
-        binding.pry
         res
       end
     end

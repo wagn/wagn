@@ -39,7 +39,7 @@ def chunk_list #override to customize by set
 end
 
 def selected_action_id
-  @selected_action_id || last_action_id || (current_action and current_action.id) || 0
+  @selected_action_id || (current_action and current_action.id) || last_action_id || 0
 end
 
 

@@ -47,7 +47,7 @@ class CreateNewRevisionTables < ActiveRecord::Migration
       t.text    :value 
     end
     
-    puts "Move revisions to action table"
+    puts "Move revisions to action table..."
     count = 0
     created = Set.new
     TmpRevision.find_each do |rev|
@@ -68,11 +68,11 @@ class CreateNewRevisionTables < ActiveRecord::Migration
       end 
       count += 1
     end 
-        
-    puts "Finished revisions"
+    puts "Finished revisions. Updating card table ... "
     TmpCard.find_each do |card|
       card.update_column(:db_content,card.tmp_revision.content) if card.tmp_revision
     end
+    puts "Finshed card table"
     #drop_table :card_revisions
     #remove_column :cards, :current_revision
   end

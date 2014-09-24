@@ -3,6 +3,9 @@ class CreateNewRevisionTables < ActiveRecord::Migration
   class TmpRevision < ActiveRecord::Base
     belongs_to :tmp_card, :foreign_key=>:card_id
     self.table_name = 'card_revisions'
+    def self.delete_cardless
+      TmpRevision.where( TmpCard.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
+    end
   end
   class TmpAct < ActiveRecord::Base
     self.table_name = 'card_acts'
@@ -49,7 +52,7 @@ class CreateNewRevisionTables < ActiveRecord::Migration
     end
     
     # delete cardless revisions
-    TmpRevision.where( TmpCard.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
+    TmpRevision.delete_cardless
     
     created = Set.new
     TmpRevision.find_each do |rev|
